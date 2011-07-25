@@ -1179,32 +1179,32 @@ function Display()
 	$context['user_menu_items_show'] = array();
 	$context['user_menu_items'] = array(
 		'pr' => array(
-			'caption' => JavaScriptEscape($txt['usermenu_profile']),
+			'caption' => 'usermenu_profile',
 			'action' => '\'\'',
 			'class' => '\'profile_button\'',
 		),
 		'pm' => array(
-			'caption' => JavaScriptEscape($txt['pm_menu_send']),
+			'caption' => 'usermenu_sendpm',
 			'action' => '\'' . $scripturl . '?action=pm;sa=send;u=%id%\'',
 			'class' => '\'pm_button\'',
 		),
 		'we' => array(
-			'caption' => JavaScriptEscape($txt['usermenu_website']),
+			'caption' => 'usermenu_website',
 			'action' => '\'%special%\'',
 			'class' => '\'www_button\'',
 		),
 		'po' => array(
-			'caption' => JavaScriptEscape($txt['usermenu_showposts']),
+			'caption' => 'usermenu_showposts',
 			'action' => $short_profiles ? '\'?area=showposts\'' : '\'' . $scripturl . '?action=profile;u=%id%;area=showposts\'',
 			'class' => '\'post_button\'',
 		),
 		'ab' => array(
-			'caption' => JavaScriptEscape($txt['usermenu_addbuddy']),
+			'caption' => 'usermenu_addbuddy',
 			'action' => '\'' . $scripturl . '?action=buddy;u=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'contact_button\'',
 		),
 		'rb' => array(
-			'caption' => JavaScriptEscape($txt['usermenu_removebuddy']),
+			'caption' => 'usermenu_removebuddy',
 			'action' => '\'' . $scripturl . '?action=buddy;u=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'contact_button\'',
 		),
@@ -1214,36 +1214,35 @@ function Display()
 	$context['action_menu_items_show'] = array();
 	$context['action_menu_items'] = array(
 		'ap' => array(
-			'caption' => JavaScriptEscape($txt['approve']),
+			'caption' => 'acme_approve',
 			'action' => '\'' . $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'approve_button\'',
 		),
 		're' => array(
-			'caption' => JavaScriptEscape($txt['remove']),
+			'caption' => 'acme_remove',
 			'action' => '\'' . $scripturl . '?action=deletemsg;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'remove_button\'',
 			'custom' => JavaScriptEscape('onclick="return confirm(' . JavaScriptEscape($txt['remove_message_confirm']) . ');"'),
 		),
 		'sp' => array(
-			'caption' => JavaScriptEscape($txt['split']),
+			'caption' => 'acme_split',
 			'action' => '\'' . $scripturl . '?action=splittopics;topic=' . $context['current_topic'] . ';at=%id%\'',
 			'class' => '\'split_button\'',
 		),
 		'me' => array(
-			'caption' => JavaScriptEscape($txt['merge_double']),
+			'caption' => 'acme_merge',
 			'action' => '\'' . $scripturl . '?action=mergeposts;pid=%id%;msgid=%special%;topic=' . $context['current_topic'] . '\'',
 			'class' => '\'mergepost_button\'',
 		),
 		'rs' => array(
-			'caption' => JavaScriptEscape($txt['restore_message']),
+			'caption' => 'acme_restore',
 			'action' => '\'' . $scripturl . '?action=restoretopic;msgs=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'restore_button\'',
 		),
 		'rp' => array(
-			'caption' => JavaScriptEscape($txt['report']),
+			'caption' => 'acme_report',
 			'action' => '\'' . $scripturl . '?action=report;topic=' . $context['current_topic'] . ';msg=%id%\'',
 			'class' => '\'report_button\'',
-			'title' => JavaScriptEscape($txt['report_to_mod']),
 		),
 	);
 

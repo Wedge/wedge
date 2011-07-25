@@ -507,6 +507,8 @@ input[type=file]
 	min-height: 0
 	h4 a
 		color: #fff
+	.new_icon
+		margin: 2px 5px 0 10px
 	li.nodrop h4
 		background-image: none
 	h4:hover, h4.hove

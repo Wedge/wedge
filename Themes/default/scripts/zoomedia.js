@@ -255,6 +255,8 @@
 					}
 				}).attr('src', $fullsize);
 			}
+			else
+				$zoom_close.show();
 			return false;
 		}
 

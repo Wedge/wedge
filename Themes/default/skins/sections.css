@@ -271,9 +271,6 @@ img.new_posts
 	overflow: auto
 	width: 100%
 
-.postarea
-	margin: 0 0 0 15em
-
 .postheader extends .flow_hidden
 	width: 100%
 	display: table

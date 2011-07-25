@@ -494,8 +494,11 @@ function template_main()
 				continue;
 			$context['footer_js'] .= '
 		' . $key . ': [ ';
-			foreach ($pmi as $item)
-				$context['footer_js'] .= $item . ', ';
+			foreach ($pmi as $type => $item)
+				if ($type === 'caption')
+					$context['footer_js'] .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
+				else
+					$context['footer_js'] .= $item . ', ';
 			$context['footer_js'] = substr($context['footer_js'], 0, -2) . ' ],';
 		}
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
@@ -519,8 +522,11 @@ function template_main()
 				continue;
 			$context['footer_js'] .= '
 		' . $key . ': [ ';
-			foreach ($pmi as $item)
-				$context['footer_js'] .= $item . ', ';
+			foreach ($pmi as $type => $item)
+				if ($type === 'caption')
+					$context['footer_js'] .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
+				else
+					$context['footer_js'] .= $item . ', ';
 			$context['footer_js'] = substr($context['footer_js'], 0, -2) . ' ],';
 		}
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '

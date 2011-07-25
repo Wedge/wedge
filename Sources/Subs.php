@@ -2848,7 +2848,7 @@ function setupMenuContext()
 				),
 			),
 			'pm' => array(
-				'title' => !$user_info['is_guest'] && $context['user']['unread_messages'] > 0 ? '<span style="color: red">' . $txt['pm_short'] . '</span>' : $txt['pm_short'],
+				'title' => $txt['pm_short'],
 				'href' => $scripturl . '?action=pm',
 				'show' => $context['allow_pm'],
 				'sub_items' => array(
@@ -3002,7 +3002,7 @@ function setupMenuContext()
 	if (!$user_info['is_guest'] && $context['user']['unread_messages'] > 0 && isset($menu_items['pm']))
 	{
 		$menu_items['pm']['alttitle'] = $menu_items['pm']['title'] . ' [' . $context['user']['unread_messages'] . ']';
-		$menu_items['pm']['title'] .= '&nbsp;[<strong>' . $context['user']['unread_messages'] . '</strong>]';
+		$menu_items['pm']['title'] .= '<div class="new_icon" title="' . $txt['new'] . '"></div>[<strong>' . $context['user']['unread_messages'] . '</strong>]&nbsp;';
 	}
 }
 

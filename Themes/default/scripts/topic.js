@@ -652,14 +652,14 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 	for (; i < j; i++)
 	{
 		pms = this.strings[aLinkList[i]];
-		sLink = pms[1] ? pms[1].replace(/%id%/, id).replace(/%special%/, special) : oLink.href;
+		sLink = pms[2] ? pms[2].replace(/%id%/, id).replace(/%special%/, special) : oLink.href;
 		if (!acme && sLink.charAt(0) == '?')
 			sLink = oLink.href + sLink;
 
 		sHTML += '<li><a href="' + sLink + '"'
-			+ (pms[2] ? ' class="' + pms[2] + '"' : '')
-			+ (pms[3] ? ' title="' + pms[3] + '"' : '')
-			+ (pms[4] ? ' ' + pms[4] : '') + '' // Custom data, such as events?
+			+ (pms[3] ? ' class="' + pms[3] + '"' : '')
+			+ (pms[4] ? ' ' + pms[4] : '') // Custom data, such as events?
+			+ (pms[1] ? ' title="' + pms[1] + '"' : '')
 			+ '>' + pms[0] + '</a></li>';
 	}
 	parent.addClass('show');
