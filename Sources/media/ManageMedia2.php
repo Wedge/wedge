@@ -1417,7 +1417,7 @@ function aeva_admin_bans_delete()
 	wesql::query('
 		DELETE FROM {db_prefix}media_variables
 		WHERE id = {int:id}
-		AND type = {string:type}',
+			AND type = {string:type}',
 		array(
 			'id' => (int) $_REQUEST['in'],
 			'type' => 'ban',

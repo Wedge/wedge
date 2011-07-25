@@ -677,12 +677,8 @@ function comma_format($number, $override_decimal_count = false)
 function number_context($string, $number)
 {
 	global $txt;
-	if (isset($txt[$string . '_' . $number]))
-	{
-		return sprintf($txt[$string . '_' . $number], comma_format($number));
-	}
-	else
-		return sprintf($txt[$string . '_n'], comma_format($number));
+
+	return sprintf($txt[$string . '_' . (isset($txt[$string . '_' . $number]) ? $number : 'n')], comma_format($number));
 }
 
 /**
@@ -705,10 +701,8 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if (!$offset_type)
 		$time = $log_time + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600;
 	// Just the forum offset?
-	elseif ($offset_type == 'forum')
-		$time = $log_time + $modSettings['time_offset'] * 3600;
 	else
-		$time = $log_time;
+		$time = $log_time + ($offset_type == 'forum' ? $modSettings['time_offset'] * 3600 : 0);
 
 	// We can't have a negative date (on Windows, at least.)
 	if ($log_time < 0)

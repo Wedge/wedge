@@ -222,9 +222,8 @@ function scheduled_approval_notification()
 
 	// Delete it all!
 	wesql::query('
-		DELETE FROM {db_prefix}approval_queue',
-		array(
-		)
+		TRUNCATE {db_prefix}approval_queue',
+		array()
 	);
 
 	// If nothing quit now.

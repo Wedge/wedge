@@ -1418,14 +1418,34 @@ function aeva_deleteItems($id, $rmFiles = true, $log = true)
 	$deleted_comments = aeva_deleteComments($c_id, false);
 
 	// Some more stuff.....
-	wesql::query("DELETE FROM {db_prefix}media_variables WHERE val4 IN ({array_int:media}) AND type = {string:type}",array('media' => $ids, 'type' => 'item_report'));
+	wesql::query('
+		DELETE FROM {db_prefix}media_variables
+		WHERE val4 IN ({array_int:media})
+			AND type = {string:type}',
+		array(
+			'media' => $ids,
+			'type' => 'item_report',
+		)
+	);
 	$total_deleted = wesql::affected_rows();
 	if ($total_deleted > 0)
 		aeva_increaseSettings('num_reported_items', -$total_deleted);
 
 	// Some logs
-	wesql::query("DELETE FROM {db_prefix}media_log_media WHERE id_media IN ({array_int:id})",array('id' => $ids));
-	wesql::query("DELETE FROM {db_prefix}media_log_ratings WHERE id_media IN ({array_int:id})",array('id' => $ids));
+	wesql::query('
+		DELETE FROM {db_prefix}media_log_media
+		WHERE id_media IN ({array_int:id})',
+		array(
+			'id' => $ids,
+		)
+	);
+	wesql::query('
+		DELETE FROM {db_prefix}media_log_ratings
+		WHERE id_media IN ({array_int:id})',
+		array(
+			'id' => $ids,
+		)
+	);
 	aeva_updateWeighted();
 
 	// Update the album's id_last_media
@@ -1527,8 +1547,11 @@ function aeva_deleteComments($id, $log = true)
 
 	// Start deleting them
 	wesql::query('
-		DELETE FROM {db_prefix}media_comments WHERE id_comment IN ({array_int:comment})',
-		array('comment' => $ids)
+		DELETE FROM {db_prefix}media_comments
+		WHERE id_comment IN ({array_int:comment})',
+		array(
+			'comment' => $ids,
+		)
 	);
 
 	// Update the stats
@@ -1542,8 +1565,13 @@ function aeva_deleteComments($id, $log = true)
 		);
 
 	wesql::query('
-		DELETE FROM {db_prefix}media_variables WHERE val4 IN ({array_int:media}) AND type = {string:type}',
-		array('media' => $ids, 'type' => 'comment_report')
+		DELETE FROM {db_prefix}media_variables
+		WHERE val4 IN ({array_int:media})
+			AND type = {string:type}',
+		array(
+			'media' => $ids,
+			'type' => 'comment_report',
+		)
 	);
 	$total_deleted = wesql::affected_rows();
 	aeva_increaseSettings('num_reported_comments', -$total_deleted);

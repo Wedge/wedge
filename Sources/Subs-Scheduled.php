@@ -58,7 +58,8 @@ function ImperativeTask()
 	}
 
 	if (!empty($done_tasks))
-		wesql::query('DELETE FROM {db_query}scheduled_imperative
+		wesql::query('
+			DELETE FROM {db_query}scheduled_imperative
 			WHERE id_instr IN ({array_int:tasks})',
 			array(
 				'tasks' => $done_tasks,

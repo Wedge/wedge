@@ -570,8 +570,8 @@ function SetQuickGroups()
 			// Delete the previous permissions...
 			wesql::query('
 				DELETE FROM {db_prefix}permissions
-				WHERE id_group IN ({array_int:group_list})
-					' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
+				WHERE id_group IN ({array_int:group_list})' . (empty($context['illegal_permissions']) ? '' : '
+					AND permission NOT IN ({array_string:illegal_permissions})'),
 				array(
 					'group_list' => $_POST['group'],
 					'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
@@ -661,8 +661,8 @@ function SetQuickGroups()
 				wesql::query('
 					DELETE FROM {db_prefix}permissions
 					WHERE id_group IN ({array_int:current_group_list})
-						AND permission = {string:current_permission}
-						' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
+						AND permission = {string:current_permission}' . (empty($context['illegal_permissions']) ? '' : '
+						AND permission NOT IN ({array_string:illegal_permissions})'),
 					array(
 						'current_group_list' => $_POST['group'],
 						'current_permission' => $permission,
@@ -947,8 +947,8 @@ function ModifyMembergroup2()
 	{
 		wesql::query('
 			DELETE FROM {db_prefix}permissions
-			WHERE id_group = {int:current_group}
-			' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
+			WHERE id_group = {int:current_group}' . (empty($context['illegal_permissions']) ? '' : '
+				AND permission NOT IN ({array_string:illegal_permissions})'),
 			array(
 				'current_group' => $_GET['group'],
 				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
@@ -1281,8 +1281,8 @@ function setPermissionLevel($level, $group, $profile = 'null')
 
 		wesql::query('
 			DELETE FROM {db_prefix}permissions
-			WHERE id_group = {int:current_group}
-			' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
+			WHERE id_group = {int:current_group}' . (empty($context['illegal_permissions']) ? '' : '
+				AND permission NOT IN ({array_string:illegal_permissions})'),
 			array(
 				'current_group' => $group,
 				'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
@@ -1868,8 +1868,8 @@ function save_inline_permissions($permissions)
 	// Remove the old permissions...
 	wesql::query('
 		DELETE FROM {db_prefix}permissions
-		WHERE permission IN ({array_string:permissions})
-		' . (empty($context['illegal_permissions']) ? '' : ' AND permission NOT IN ({array_string:illegal_permissions})'),
+		WHERE permission IN ({array_string:permissions})' . (empty($context['illegal_permissions']) ? '' : '
+			AND permission NOT IN ({array_string:illegal_permissions})'),
 		array(
 			'illegal_permissions' => !empty($context['illegal_permissions']) ? $context['illegal_permissions'] : array(),
 			'permissions' => $permissions,
