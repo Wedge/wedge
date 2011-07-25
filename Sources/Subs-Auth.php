@@ -236,7 +236,7 @@ function adminLogin()
 	// They used a wrong password, log it and unset that.
 	if (isset($_POST['admin_hash_pass']) || isset($_POST['admin_pass']))
 	{
-		$txt['security_wrong'] = sprintf($txt['security_wrong'], isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $txt['unknown'], $_SERVER['HTTP_USER_AGENT'], $user_info['ip']);
+		$txt['security_wrong'] = sprintf($txt['security_wrong'], isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $txt['unknown'], $_SERVER['HTTP_USER_AGENT'], format_ip($user_info['ip']));
 		log_error($txt['security_wrong'], 'critical');
 
 		if (isset($_POST['admin_hash_pass']))

@@ -31,7 +31,7 @@ class wedbPackages
 
 			$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'ban_items',
 			'board_members', 'board_permissions', 'boards', 'calendar', 'calendar_holidays', 'categories', 'collapsed_categories',
-			'custom_fields', 'drafts', 'group_moderators', 'log_actions', 'log_activity', 'log_banned', 'log_boards', 'log_comments',
+			'custom_fields', 'drafts', 'group_moderators', 'log_actions', 'log_activity', 'log_boards', 'log_comments',
 			'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_intrusion', 'log_mark_read', 'log_notify',
 			'log_online', 'log_packages', 'log_polls', 'log_reported', 'log_reported_comments', 'log_scheduled_tasks',
 			'log_search_messages', 'log_search_results', 'log_search_subjects', 'log_search_topics', 'log_topics', 'mail_queue',

@@ -59,12 +59,6 @@ if (!defined('SMF'))
 		- uses the browse_triggers sub template of the ManageBans template.
 		- uses sub-tabs for browsing by IP, hostname, email or username.
 
-	array BanLog()
-		- show a list of logged access attempts by banned users.
-		- is accessed by ?action=admin;area=ban;sa=log.
-		- allows sorting of several columns.
-		- also handles deletion of (a selection of) log entries.
-
 	string range2ip(array $low, array $high)
 		- reverse function of ip2range().
 		- converts a given array of IP numbers to a single string
@@ -96,7 +90,6 @@ function Ban()
 		'edittrigger' => 'BanEditTrigger',
 		'edit' => 'BanEdit',
 		'list' => 'BanList',
-		'log' => 'BanLog',
 	);
 
 	// Default the sub-action to 'view ban list'.
@@ -125,11 +118,6 @@ function Ban()
 				'description' => $txt['ban_trigger_browse_description'],
 				'href' => $scripturl . '?action=admin;area=ban;sa=browse',
 				'is_selected' => $_REQUEST['sa'] == 'browse',
-			),
-			'log' => array(
-				'description' => $txt['ban_log_description'],
-				'href' => $scripturl . '?action=admin;area=ban;sa=log',
-				'is_selected' => $_REQUEST['sa'] == 'log',
 			),
 		),
 	);
@@ -1354,191 +1342,6 @@ function list_getNumBanTriggers($trigger_type)
 	wesql::free_result($request);
 
 	return $num_triggers;
-}
-
-function BanLog()
-{
-	global $scripturl, $context, $txt, $context;
-
-	// Delete one or more entries.
-	if (!empty($_POST['removeAll']) || (!empty($_POST['removeSelected']) && !empty($_POST['remove'])))
-	{
-		checkSession();
-
-		// 'Delete all entries' button was pressed.
-		if (!empty($_POST['removeAll']))
-			wesql::query('
-				TRUNCATE {db_prefix}log_banned',
-				array(
-				)
-			);
-
-		// 'Delete selection' button was pressed.
-		else
-		{
-			// Make sure every entry is integer.
-			foreach ($_POST['remove'] as $index => $log_id)
-				$_POST['remove'][$index] = (int) $log_id;
-
-			wesql::query('
-				DELETE FROM {db_prefix}log_banned
-				WHERE id_ban_log IN ({array_int:ban_list})',
-				array(
-					'ban_list' => $_POST['remove'],
-				)
-			);
-		}
-	}
-
-	$listOptions = array(
-		'id' => 'ban_log',
-		'items_per_page' => 30,
-		'base_href' => $context['admin_area'] == 'ban' ? $scripturl . '?action=admin;area=ban;sa=log' : $scripturl . '?action=admin;area=logs;sa=banlog',
-		'default_sort_col' => 'date',
-		'get_items' => array(
-			'function' => 'list_getBanLogEntries',
-		),
-		'get_count' => array(
-			'function' => 'list_getNumBanLogEntries',
-		),
-		'no_items_label' => $txt['ban_log_no_entries'],
-		'columns' => array(
-			'ip' => array(
-				'header' => array(
-					'value' => $txt['ban_log_ip'],
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=trackip;searchip=%1$s">%1$s</a>',
-						'params' => array(
-							'ip' => false,
-						),
-					),
-				),
-				'sort' => array(
-					'default' => 'lb.ip',
-					'reverse' => 'lb.ip DESC',
-				),
-			),
-			'email' => array(
-				'header' => array(
-					'value' => $txt['ban_log_email'],
-				),
-				'data' => array(
-					'db_htmlsafe' => 'email',
-				),
-				'sort' => array(
-					'default' => 'lb.email = \'\', lb.email',
-					'reverse' => 'lb.email != \'\', lb.email DESC',
-				),
-			),
-			'member' => array(
-				'header' => array(
-					'value' => $txt['ban_log_member'],
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=profile;u=%1$d">%2$s</a>',
-						'params' => array(
-							'id_member' => false,
-							'real_name' => false,
-						),
-					),
-				),
-				'sort' => array(
-					'default' => 'IFNULL(mem.real_name, 1=1), mem.real_name',
-					'reverse' => 'IFNULL(mem.real_name, 1=1) DESC, mem.real_name DESC',
-				),
-			),
-			'date' => array(
-				'header' => array(
-					'value' => $txt['ban_log_date'],
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						return timeformat($rowData[\'log_time\']);
-					'),
-				),
-				'sort' => array(
-					'default' => 'lb.log_time DESC',
-					'reverse' => 'lb.log_time',
-				),
-			),
-			'check' => array(
-				'header' => array(
-					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
-						'params' => array(
-							'id_ban_log' => false,
-						),
-					),
-					'style' => 'text-align: center',
-				),
-			),
-		),
-		'form' => array(
-			'href' => $context['admin_area'] == 'ban' ? $scripturl . '?action=admin;area=ban;sa=log' : $scripturl . '?action=admin;area=logs;sa=banlog',
-			'include_start' => true,
-			'include_sort' => true,
-		),
-		'additional_rows' => array(
-			array(
-				'position' => 'below_table_data',
-				'value' => '
-					<input type="submit" name="removeSelected" value="' . $txt['ban_log_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_log_remove_selected_confirm']) . ');" class="delete">
-					<input type="submit" name="removeAll" value="' . $txt['ban_log_remove_all'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_log_remove_all_confirm']) . ');" class="delete">',
-				'style' => 'text-align: right;',
-			),
-		),
-	);
-
-	loadSource('Subs-List');
-	createList($listOptions);
-
-	$context['page_title'] = $txt['ban_log'];
-	loadSubTemplate('show_list');
-	$context['default_list'] = 'ban_log';
-}
-
-function list_getBanLogEntries($start, $items_per_page, $sort)
-{
-	$request = wesql::query('
-		SELECT lb.id_ban_log, lb.id_member, lb.ip, IFNULL(lb.email, {string:dash}) AS email, lb.log_time, IFNULL(mem.real_name, {string:blank_string}) AS real_name
-		FROM {db_prefix}log_banned AS lb
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lb.id_member)
-		ORDER BY ' . $sort . '
-		LIMIT ' . $start . ', ' . $items_per_page,
-		array(
-			'blank_string' => '',
-			'dash' => '-',
-		)
-	);
-	$log_entries = array();
-	while ($row = wesql::fetch_assoc($request))
-	{
-		$row['ip'] = format_ip($row);
-		$log_entries[] = $row;
-	}
-	wesql::free_result($request);
-
-	return $log_entries;
-}
-
-function list_getNumBanLogEntries()
-{
-	$request = wesql::query('
-		SELECT COUNT(*)
-		FROM {db_prefix}log_banned AS lb',
-		array(
-		)
-	);
-	list ($num_entries) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	return $num_entries;
 }
 
 function range2ip($low, $high)

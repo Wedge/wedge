@@ -379,7 +379,6 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			// Number formatting, timezones.
 			array('text', 'time_format'),
-			array('select', 'number_format', array('1234.00' => '1234.00', '1,234.00' => '1,234.00', '1.234,00' => '1.234,00', '1 234,00' => '1 234,00', '1234,00' => '1234,00')),
 			array('float', 'time_offset'),
 			'default_timezone' => array('select', 'default_timezone', array()),
 		'',
@@ -1913,7 +1912,6 @@ function ModifyPruningSettings($return_config = false)
 			// Various logs that could be pruned.
 			array('int', 'pruneErrorLog', 'postinput' => $txt['days_word']), // Error log.
 			array('int', 'pruneModLog', 'postinput' => $txt['days_word']), // Moderation log.
-			array('int', 'pruneBanLog', 'postinput' => $txt['days_word']), // Ban hit log.
 			array('int', 'pruneReportLog', 'postinput' => $txt['days_word']), // Report to moderator log.
 			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word']), // Log of the scheduled tasks and how long they ran.
 			array('int', 'pruneSpiderHitLog', 'postinput' => $txt['days_word']), // Log of the scheduled tasks and how long they ran.
@@ -1961,9 +1959,9 @@ function ModifyPruningSettings($return_config = false)
 
 	// Get the actual values
 	if (!empty($modSettings['pruningOptions']))
-		@list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneBanLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
+		@list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
 	else
-		$modSettings['pruneErrorLog'] = $modSettings['pruneModLog'] = $modSettings['pruneBanLog'] = $modSettings['pruneReportLog'] = $modSettings['pruneScheduledTaskLog'] = $modSettings['pruneSpiderHitLog'] = 0;
+		$modSettings['pruneErrorLog'] = $modSettings['pruneModLog'] = $modSettings['pruneReportLog'] = $modSettings['pruneScheduledTaskLog'] = $modSettings['pruneSpiderHitLog'] = 0;
 
 	prepareDBSettingContext($config_vars);
 }

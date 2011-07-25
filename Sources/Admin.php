@@ -445,7 +445,6 @@ function Admin()
 						'list' => array($txt['ban_edit_list']),
 						'add' => array($txt['ban_add_new']),
 						'browse' => array($txt['ban_trigger_browse']),
-						'log' => array($txt['ban_log']),
 					),
 				),
 				'',
@@ -555,7 +554,6 @@ function Admin()
 						'',
 						'adminlog' => array($txt['log_admin'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
 						'modlog' => array($txt['log_moderation'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
-						'banlog' => array($txt['log_ban'], 'manage_bans'),
 						'spiderlog' => array($txt['log_spider'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
 						'tasklog' => array($txt['log_scheduled'], 'admin_forum'),
 						'',
@@ -965,7 +963,6 @@ function AdminLogs()
 		'errorlog' => array('ManageErrors', 'ViewErrorLog'),
 		'adminlog' => array('Modlog', 'ViewModlog'),
 		'modlog' => array('Modlog', 'ViewModlog'),
-		'banlog' => array('ManageBans', 'BanLog'),
 		'spiderlog' => array('ManageSearchEngines', 'SpiderLog'),
 		'tasklog' => array('ManageScheduledTasks', 'TaskLog'),
 		'pruning' => array('ManageSettings', 'ModifyPruningSettings'),
@@ -991,9 +988,6 @@ function AdminLogs()
 			),
 			'modlog' => array(
 				'description' => $txt['moderation_log_desc'],
-			),
-			'banlog' => array(
-				'description' => $txt['ban_log_description'],
 			),
 			'spiderlog' => array(
 				'description' => $txt['spider_log_desc'],

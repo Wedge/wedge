@@ -648,9 +648,6 @@ function comma_format($number, $override_decimal_count = false)
 	global $txt;
 	static $thousands_separator = null, $decimal_separator = null, $decimal_count = null;
 
-	// !!! Should, perhaps, this just be handled in the language files, and not a mod setting?
-	// (French uses 1 234,00 for example... what about a multilingual forum?)
-
 	// Cache these values...
 	if ($decimal_separator === null)
 	{

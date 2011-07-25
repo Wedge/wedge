@@ -1419,7 +1419,7 @@ function scheduled_weekly_maintenance()
 	if (!empty($modSettings['pruningOptions']))
 	{
 		if (!empty($modSettings['pruningOptions']) && strpos($modSettings['pruningOptions'], ',') !== false)
-			list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneBanLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
+			list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
 
 		if (!empty($modSettings['pruneErrorLog']))
 		{
@@ -1447,20 +1447,6 @@ function scheduled_weekly_maintenance()
 				array(
 					'log_time' => $t,
 					'moderation_log' => 1,
-				)
-			);
-		}
-
-		if (!empty($modSettings['pruneBanLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneBanLog'] * 86400;
-
-			wesql::query('
-				DELETE FROM {db_prefix}log_banned
-				WHERE log_time < {int:log_time}',
-				array(
-					'log_time' => $t,
 				)
 			);
 		}

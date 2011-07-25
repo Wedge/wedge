@@ -557,13 +557,6 @@ function log_ban($ban_ids = array(), $email = null)
 	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
 		return;
 
-	wesql::insert('',
-		'{db_prefix}log_banned',
-		array('id_member' => 'int', 'ip' => 'int', 'email' => 'string', 'log_time' => 'int'),
-		array($user_info['id'], get_ip_identifier($user_info['ip']), ($email === null ? ($user_info['is_guest'] ? '' : $user_info['email']) : $email), time()),
-		array('id_ban_log')
-	);
-
 	// One extra point for these bans.
 	if (!empty($ban_ids))
 		wesql::query('

@@ -231,16 +231,6 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	wesql::query('
-		UPDATE {db_prefix}log_banned
-		SET id_member = {int:guest_id}
-		WHERE id_member IN ({array_int:users})',
-		array(
-			'guest_id' => 0,
-			'users' => $users,
-		)
-	);
-
-	wesql::query('
 		UPDATE {db_prefix}log_errors
 		SET id_member = {int:guest_id}
 		WHERE id_member IN ({array_int:users})',
