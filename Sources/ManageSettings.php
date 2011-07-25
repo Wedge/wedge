@@ -399,8 +399,14 @@ function ModifyBasicSettings($return_config = false)
 	$all_zones = timezone_identifiers_list();
 
 	// Make sure we set the value to the same as the printed value.
+	$useful_regions = array('America', 'Antartica', 'Arctic', 'Asia', 'Atlantic', 'Europe', 'Indian', 'Pacific');
 	foreach ($all_zones as $zone)
+	{
+		list($region, $country) = explode('/', $zone, 2);
+		if (!in_array($region, $useful_regions))
+			continue;
 		$config_vars['default_timezone'][2][$zone] = $zone;
+	}
 
 	if ($return_config)
 		return $config_vars;

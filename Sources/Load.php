@@ -72,6 +72,8 @@ function reloadSettings()
 	// Setting the timezone is a requirement.
 	if (isset($modSettings['default_timezone']))
 		date_default_timezone_set($modSettings['default_timezone']);
+	else
+		date_default_timezone_set(@date_default_timezone_get()); // At least attempt to use what the host has to try to prevent lots and lots of errors spewing everywhere.
 
 	// Check the load averages?
 	if (!empty($modSettings['loadavg_enable']))
