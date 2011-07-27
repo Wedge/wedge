@@ -471,6 +471,9 @@ ul.moderation_notes
 	td div.marginleft
 		margin: 0 0 0 1ex
 
+.monospace
+	font: 9pt/1.2em "Lucida Console", "Courier New", monospace
+
 /* Miscellaneous.
 ------------------------------------------------- */
 #admincenter, #manage_boards, #manage_maintenance, #manage_mail

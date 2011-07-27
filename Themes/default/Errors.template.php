@@ -176,7 +176,7 @@ function template_show_file()
 	theme_base_css() . '
 </head>
 <body>', '
-	<table class="nodrag cp0 cs3">';
+	<table class="nodrag cp0 cs3 monospace">';
 
 	foreach ($context['file_data']['contents'] as $index => $line)
 	{

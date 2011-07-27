@@ -147,7 +147,8 @@ function template_summary()
 				<dt>', $txt['gender'], ': </dt>
 				<dd>', $context['member']['gender']['name'], '</dd>';
 
-	echo '
+	if ($context['member']['age'] !== $txt['not_applicable'])
+		echo '
 				<dt>', $txt['age'], ':</dt>
 				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $settings['images_url'] . '/cake.png">' : ''), '</dd>';
 
@@ -1461,7 +1462,7 @@ function template_profile_theme_settings()
 						<label><input type="checkbox" name="default_options[show_no_signatures]" id="show_no_signatures" value="1"', !empty($context['member']['options']['show_no_signatures']) ? ' checked' : '', '> ', $txt['show_no_signatures'], '</label>
 					</li>';
 
-	if ($modSettings['allow_no_censored'])
+	if (!empty($modSettings['allow_no_censored']))
 		echo '
 					<li>
 						<input type="hidden" name="default_options[show_no_censored]" value="0">

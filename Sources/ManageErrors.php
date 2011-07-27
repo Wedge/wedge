@@ -165,7 +165,7 @@ function ViewErrorLog()
 				'file' => $row['file'],
 				'line' => $row['line'],
 				'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'],
-				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 800, 600, false, true);">' . $row['file'] . '</a>' : $row['file'],
+				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 800, 560, false, true);">' . $row['file'] . '</a>' : $row['file'],
 				'search' => base64_encode($row['file']),
 			);
 		}
@@ -370,8 +370,8 @@ function ViewFile()
 		fatal_lang_error('error_bad_file', true, array(htmlspecialchars($file)));
 
 	// Get the min and max lines
-	$min = $line - 20 <= 0 ? 1 : $line - 20;
-	$max = $line + 21; // One additional line to make everything work out correctly
+	$min = $line - 15 <= 0 ? 1 : $line - 15;
+	$max = $line + 16; // One additional line to make everything work out correctly
 
 	if ($max <= 0 || $min >= $max)
 		fatal_lang_error('error_bad_line');
