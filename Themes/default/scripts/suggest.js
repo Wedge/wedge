@@ -405,7 +405,7 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 
 	// We're only actually interested in the last string.
 	var sSearchString = this.oTextHandle.value.replace(/^("[^"]+",[ ]*)+/, '').replace(/^([^,]+,[ ]*)+/, '');
-	if (sSearchString.substr(0, 1) == '"')
+	if (sSearchString[0] == '"')
 		sSearchString = sSearchString.substr(1);
 
 	// Stop replication ASAP.
@@ -454,11 +454,14 @@ smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
 	if (typeof this.oXmlRequestHandle == 'object' && this.oXmlRequestHandle != null)
 		this.oXmlRequestHandle.abort();
 
-	// Clean the text handle.
-	sSearchString = sSearchString.php_to8bit().php_urlencode();
-
 	// Get the document.
-	getXMLDocument.call(this, this.sRetrieveURL.replace(/%scripturl%/g, we_prepareScriptUrl()).replace(/%suggest_type%/g, this.opt.sSearchType).replace(/%search%/g, sSearchString).replace(/%sessionVar%/g, this.opt.sSessionVar).replace(/%sessionID%/g, this.opt.sSessionId).replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
+	getXMLDocument.call(this, this.sRetrieveURL
+		.replace(/%scripturl%/g, we_prepareScriptUrl())
+		.replace(/%suggest_type%/g, this.opt.sSearchType)
+		.replace(/%search%/g, sSearchString.php_urlencode())
+		.replace(/%sessionVar%/g, this.opt.sSessionVar)
+		.replace(/%sessionID%/g, this.opt.sSessionId)
+		.replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
 
 	return true;
 };

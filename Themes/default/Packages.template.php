@@ -1119,7 +1119,7 @@ function template_control_chmod()
 
 		var sPostData = "";
 		for (i = 0; i < 5; i++)
-			sPostData = sPostData + (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + escape(document.getElementById(oPostData[i]).value);
+			sPostData += (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + document.getElementById(oPostData[i]).value.php_urlencode();
 
 		// Post the data out.
 		sendXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\', sPostData, testFTPResults);
@@ -1231,7 +1231,7 @@ function template_file_permissions()
 		else if (can_ajax)
 		{
 			ajax_indicator(true);
-			getXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;onlyfind=\' + escape(folderReal) + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
+			getXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;onlyfind=\' + folderReal.php_urlencode() + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
 		}
 		// Otherwise reload.
 		else
@@ -1249,7 +1249,7 @@ function template_file_permissions()
 	{
 		ajax_indicator(true);
 
-		getXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + escape(this.path) + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
+		getXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + this.path.php_urlencode() + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
 	}
 	function repeatString(sString, iTime)
 	{

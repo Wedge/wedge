@@ -62,7 +62,7 @@ String.prototype.php_to8bit = function ()
 String.prototype.php_strtr = function (sFrom, sTo)
 {
 	return this.replace(new RegExp('[' + sFrom + ']', 'g'), function (sMatch) {
-		return sTo.charAt(sFrom.indexOf(sMatch));
+		return sTo[sFrom.indexOf(sMatch)];
 	});
 };
 
@@ -77,7 +77,7 @@ String.prototype.php_strtolower = function ()
 
 String.prototype.php_urlencode = function ()
 {
-	return escape(this).replace(/\+/g, '%2b').replace('*', '%2a').replace('/', '%2f').replace('@', '%40');
+	return encodeURIComponent(this);
 };
 
 String.prototype.php_htmlspecialchars = function ()
@@ -752,8 +752,8 @@ function JumpTo(opt)
 	var sContainer = opt.sContainerId;
 
 	$('#' + sContainer).html(opt.sJumpToTemplate
-		.replace(/%select_id%/, sContainer + '_select')
-		.replace(/%dropdown_list%/, '<select name="' + sContainer + '_select" id="' + sContainer + '_select"><option>=> ' + opt.sPlaceholder + '</option></select>'))
+		.replace('%select_id%', sContainer + '_select')
+		.replace('%dropdown_list%', '<select name="' + sContainer + '_select" id="' + sContainer + '_select"><option>=> ' + opt.sPlaceholder + '</option></select>'))
 		.find('select').focus(grabJumpToContent);
 };
 

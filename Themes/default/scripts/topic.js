@@ -79,7 +79,7 @@ function modify_topic_save(cur_session_id, cur_session_var)
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
-	x.push('subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode());
+	x.push('subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_urlencode());
 	x.push('topic=' + qm.elements.topic.value);
 	x.push('msg=' + qm.elements.msg.value);
 
@@ -279,8 +279,8 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
-	x.push('subject=' + escape(qm.subject.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B"));
-	x.push('message=' + escape(qm.message.value.replace(/&#/g, "&#38;#").php_to8bit()).replace(/\+/g, "%2B"));
+	x.push('subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_urlencode());
+	x.push('message=' + qm.message.value.replace(/&#/g, "&#38;#").php_urlencode());
 	x.push('topic=' + qm.elements.topic.value);
 	x.push('msg=' + qm.elements.msg.value);
 

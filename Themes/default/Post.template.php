@@ -336,9 +336,9 @@ function template_main()
 			{
 				// Handle the WYSIWYG editor.
 				if (textFields[i] == ' . JavaScriptEscape($context['postbox']->id) . ' && ' . JavaScriptEscape('oEditorHandle_' . $context['postbox']->id) . ' && oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled)
-					x.push("message_mode=1&" + textFields[i] + "=" + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode());
+					x.push("message_mode=1&" + textFields[i] + "=" + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, "&#38;#").php_urlencode());
 				else
-					x.push(textFields[i] + "=" + postmod[textFields[i]].value.replace(/&#/g, "&#38;#").php_to8bit().php_urlencode());
+					x.push(textFields[i] + "=" + postmod[textFields[i]].value.replace(/&#/g, "&#38;#").php_urlencode());
 			}
 		for (var i = 0, n = numericFields.length; i < n; i++)
 			if (numericFields[i] in postmod && "value" in postmod[numericFields[i]])

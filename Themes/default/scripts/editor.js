@@ -920,7 +920,7 @@ smc_Editor.prototype.requestParsedMessage = function(bView)
 	}
 
 	// Get the text.
-	var sText = this.getText(true, !bView).replace(/&#/g, "&#38;#").php_to8bit().php_urlencode();
+	var sText = this.getText(true, !bView).replace(/&#/g, "&#38;#").php_urlencode();
 
 	sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=' + (bView ? 1 : 0) + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onToggleDataReceived);
 };
@@ -980,11 +980,8 @@ smc_Editor.prototype.spellCheckStart = function()
 
 	// If we're in HTML mode we need to get the non-HTML text.
 	if (this.bRichTextEnabled)
-	{
-		var sText = escape(this.getText(true, 1).php_to8bit());
-		sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=0;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onSpellCheckDataReceived);
-	}
-	// Otherwise start spellchecking right away.
+		sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=0;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + this.getText(true, 1).php_urlencode(), this.onSpellCheckDataReceived);
+	// Otherwise start spell-checking right away.
 	else
 		spellCheck(this.sFormId, this.opt.sUniqueId);
 
@@ -1009,10 +1006,7 @@ smc_Editor.prototype.spellCheckEnd = function()
 {
 	// If HTML edit put the text back!
 	if (this.bRichTextEnabled)
-	{
-		var sText = escape(this.getText(true, 0).php_to8bit());
-		sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=1;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, smf_editorArray[this.iArrayPosition].onSpellCheckCompleteDataReceived);
-	}
+		sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=1;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + this.getText(true, 0).php_urlencode(), smf_editorArray[this.iArrayPosition].onSpellCheckCompleteDataReceived);
 	else
 		this.setFocus();
 };

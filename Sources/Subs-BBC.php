@@ -114,7 +114,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$bbcode = array(
 				'tag' => $row['tag'],
 				'block_level' => !empty($row['block_level']),
-				'trim' => 'trim_wpace',
+				'trim' => $row['trim_wspace'],
 			);
 			if ($row['bbctype'] !== 'parsed')
 				$bbcode['type'] = $row['bbctype'];
@@ -779,7 +779,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$pos += strlen($tag['before']) - 1 + 2;
 		}
 		// Trim the urls
-		elseif (($tag['type'] == 'unparsed_content' && $tag['tag'] == 'url'))
+		elseif ($tag['type'] == 'unparsed_content' && $tag['tag'] == 'url')
 		{
 			$pos2 = stripos($message, '[/' . substr($message, $pos + 1, 3) . ']', $pos1);
 			if ($pos2 === false)
