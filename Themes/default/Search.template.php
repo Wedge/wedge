@@ -50,7 +50,7 @@ function template_main()
 				</div>';
 
 		echo '
-				<a href="', $scripturl, '?action=search;advanced" onclick="this.href += \';search=\' + escape(document.forms.searchform.search.value);">', $txt['search_advanced'], '</a>
+				<a href="', $scripturl, '?action=search;advanced" onclick="this.href += \';search=\' + encodeURIComponent(document.forms.searchform.search.value);">', $txt['search_advanced'], '</a>
 				<input type="hidden" name="advanced" value="0">
 			</div>
 		</fieldset>';
@@ -60,8 +60,8 @@ function template_main()
 	else
 	{
 		add_js_inline('
-	if (document.forms.searchform.search.value.indexOf("%u") != -1)
-		document.forms.searchform.search.value = unescape(document.forms.searchform.search.value);');
+	if (document.forms.searchform.search.value.indexOf("%") != -1)
+		document.forms.searchform.search.value = decodeURIComponent(document.forms.searchform.search.value);');
 
 		echo '
 		<div class="roundframe">

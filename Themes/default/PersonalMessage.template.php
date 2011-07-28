@@ -666,7 +666,7 @@ function template_search()
 					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="search">
 					<input type="submit" name="submit" value="', $txt['pm_search_go'], '">
 				</div>
-				<a href="', $scripturl, '?action=pm;sa=search;advanced" onclick="this.href += \';search=\' + escape(document.forms.searchform.search.value);">', $txt['pm_search_advanced'], '</a>
+				<a href="', $scripturl, '?action=pm;sa=search;advanced" onclick="this.href += \';search=\' + encodeURIComponent(document.forms.searchform.search.value);">', $txt['pm_search_advanced'], '</a>
 				<input type="hidden" name="advanced" value="0">
 			</div>
 		</fieldset>';
@@ -676,8 +676,8 @@ function template_search()
 	else
 	{
 		add_js('
-	if (document.forms.searchform.search.value.indexOf("%u") != -1)
-		document.forms.searchform.search.value = unescape(document.forms.searchform.search.value);');
+	if (document.forms.searchform.search.value.indexOf("%") != -1)
+		document.forms.searchform.search.value = decodeURIComponent(document.forms.searchform.search.value);');
 
 		echo '
 		<fieldset id="advanced_search">
