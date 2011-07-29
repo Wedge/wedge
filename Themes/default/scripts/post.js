@@ -167,6 +167,16 @@ function splitQuote(oEvent)
 	return true;
 };
 
+String.prototype.easyReplace = function (oReplacements)
+{
+	var sResult = this, sSearch;
+	for (sSearch in oReplacements)
+		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), oReplacements[sSearch]);
+
+	return sResult;
+};
+
+
 /*
 	A smiley is worth
 	a thousands words.

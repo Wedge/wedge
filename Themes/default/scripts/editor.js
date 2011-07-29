@@ -886,7 +886,7 @@ smc_Editor.prototype.removeFormatting = function()
 // Upload/add a media file (picture, video...)
 smc_Editor.prototype.addMedia = function()
 {
-	reqWin(we_prepareScriptUrl() + 'action=media;sa=post;noh=' + (this.opt ? this.opt.sUniqueId : this.sUniqueId), Math.min(1000, self.screen.availWidth-50), Math.min(700, self.screen.availHeight-50), false, true);
+	reqWin(we_prepareScriptUrl() + 'action=media;sa=post;noh=' + (this.opt ? this.opt.sUniqueId : this.sUniqueId), Math.min(1000, self.screen.availWidth-50), Math.min(700, self.screen.availHeight-50), false, true, true);
 
 	return true;
 };

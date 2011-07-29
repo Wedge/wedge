@@ -58,48 +58,20 @@ String.prototype.php_unhtmlspecialchars = function ()
 	return this.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
 };
 
-String.prototype.php_addslashes = function ()
-{
-	return this.replace(/\\/g, '\\\\').replace(/'/g, '\\\'');
-};
-
-String.prototype._replaceEntities = function (sInput, sDummy, sNum)
-{
-	return String.fromCharCode(parseInt(sNum, 10));
-};
-
 String.prototype.removeEntities = function ()
 {
-	return this.replace(/&(amp;)?#(\d+);/g, this._replaceEntities);
-};
-
-String.prototype.easyReplace = function (oReplacements)
-{
-	var sResult = this;
-	for (var sSearch in oReplacements)
-		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), oReplacements[sSearch]);
-
-	return sResult;
+	return this.replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) {
+		return String.fromCharCode(parseInt(sNum, 10));
+	});
 };
 
 // Open a new popup window.
-function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
+function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asWindow)
 {
 	var
 		help_page = from && from.href ? from.href : from,
-		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8,
+		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8, nextSib,
 		helf = '#helf', $helf = $(helf), previousTarget = $helf.data('src'), auto = 'auto', title = $(from).text();
-
-	// Try and get the title for the current link.
-	if (!title)
-	{
-		var nextSib = from.nextSibling;
-		// Newlines are seen as stand-alone text nodes, so skip these...
-		while (nextSib && nextSib.nodeType == 3 && $(nextSib).text().trim() == '')
-			nextSib = nextSib.nextSibling;
-		// Get the final text, remove any dfn (description) tags, and trim the rest.
-		title = $.trim($(nextSib).clone().find('dfn').remove().end().text());
-	}
 
 	alternateWidth = alternateWidth ? alternateWidth : 480;
 	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
@@ -110,6 +82,23 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag)
 	}
 	else
 		noScrollbars = noScrollbars && (noScrollbars === true);
+
+	if (asWindow)
+	{
+		window.open(help_page, 'requested_popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=' + (noScrollbars ? 'no' : 'yes') + ',width=' + (alternateWidth ? alternateWidth : 480) + ',height=' + (alternateHeight ? alternateHeight : 220) + ',resizable=no');
+		return false;
+	}
+
+	// Try and get the title for the current link.
+	if (!title)
+	{
+		nextSib = from.nextSibling;
+		// Newlines are seen as stand-alone text nodes, so skip these...
+		while (nextSib && nextSib.nodeType == 3 && $(nextSib).text().trim() == '')
+			nextSib = nextSib.nextSibling;
+		// Get the final text, remove any dfn (description) tags, and trim the rest.
+		title = $.trim($(nextSib).clone().find('dfn').remove().end().text());
+	}
 
 	// If the reqWin event was created on the fly, it'll bubble up to the body and cancel itself... Avoid that.
 	$.event.fix(window.event || {}).stopPropagation();
@@ -804,5 +793,4 @@ menu_show_shim = _sh
 _fillSelect = _fs
 _changeState = _cs
 grabJumpToContent = gjtc
-_replaceEntities = _re
 */
