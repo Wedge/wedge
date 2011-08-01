@@ -289,6 +289,17 @@ function loadUserSettings()
 			$user_info['possibly_robot'] = (strpos($_SERVER['HTTP_USER_AGENT'], 'Mozilla') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') === false) || preg_match('~(?:bot|slurp|crawl|spider)~', strtolower($_SERVER['HTTP_USER_AGENT']));
 	}
 
+	// Figure out the new time offset.
+	if (!empty($user_settings['timezone']))
+	{
+		// Get the offsets from UTC for the server, then for the user.+
+		$tz_system = new DateTimeZone(@date_default_timezone_get());
+		$tz_user = new DateTimeZone($user_settings['timezone']);
+		$time_system = new DateTime("now", $tz_system);
+		$time_user = new DateTime("now", $tz_user);
+		$offset = ($tz_user->getOffset($time_user) - $tz_system->getOffset($time_system)) / 3600; // Convert to hours in the process.
+	}
+
 	// Set up the $user_info array.
 	$user_info += array(
 		'id' => $id_member,
@@ -306,7 +317,7 @@ function loadUserSettings()
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
 		'posts' => empty($user_settings['posts']) ? 0 : $user_settings['posts'],
 		'time_format' => empty($user_settings['time_format']) ? $modSettings['time_format'] : $user_settings['time_format'],
-		'time_offset' => empty($user_settings['time_offset']) ? 0 : $user_settings['time_offset'],
+		'time_offset' => isset($offset) ? $offset : (empty($user_settings['time_offset']) ? 0 : $user_settings['time_offset']),
 		'avatar' => array(
 			'url' => isset($user_settings['avatar']) ? $user_settings['avatar'] : '',
 			'filename' => empty($user_settings['filename']) ? '' : $user_settings['filename'],
