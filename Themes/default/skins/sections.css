@@ -730,8 +730,6 @@ dl.poll_options
 	margin-bottom: 0
 	&.settings dt
 		width: 40%
-	&.settings dd
-		width: 59%
 
 .move_topic
 	width: 710px

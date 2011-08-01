@@ -307,6 +307,25 @@ function MoveTopic2()
 			'update_post_count' => empty($pcounter),
 		);
 		createPost($msgOptions, $topicOptions, $posterOptions);
+
+		// Now, we've made a redirection topic. Are we going to prune it sometime in the future?
+		if (!empty($_POST['redirection_time']))
+		{
+			$time = (int) $_POST['redirection_time'];
+			if ($time > 0 && $time < 9999) // to prevent overflow for a while!
+			{
+				loadSource('Subs-Scheduled');
+				$task = array(
+					'function' => 'imperative_removeTopic',
+					'parameters' => array(
+						'topic' => $topicOptions['id'],
+						'use_recycle' => false,
+						'update_postcount' => empty($pcounter),
+					),
+				);
+				addNextImperative($time * 86400 + time(), $task);
+			}
+		}
 	}
 
 	$request = wesql::query('

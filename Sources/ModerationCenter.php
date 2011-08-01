@@ -721,6 +721,12 @@ function recountOpenReports()
 {
 	global $user_info, $context;
 
+	if (empty($user_info['mod_cache']))
+	{
+		loadSource('Subs-Auth');
+		rebuildModCache();
+	}
+
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_reported

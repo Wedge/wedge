@@ -52,14 +52,16 @@ function ImperativeTask()
 		if (empty($task['details']['parameters']))
 			$task['details']['parameters'] = array();
 
-		$response = call_user_func_array($task['details']['function'], $task['details']['parameters']);
-		if ($response)
+		$response = call_user_func_array($task['details']['function'], array($task['details']['parameters']));
+		if (!empty($response))
 			$done_tasks[] = $task['id'];
+		else
+			log_error('Imperative task ' . $task['details']['function'] . ' did not complete successfully. Task details: ' . serialize($task), 'general'); // !!! Probably for debugging but won't hurt to leave in place for now.
 	}
 
 	if (!empty($done_tasks))
 		wesql::query('
-			DELETE FROM {db_query}scheduled_imperative
+			DELETE FROM {db_prefix}scheduled_imperative
 			WHERE id_instr IN ({array_int:tasks})',
 			array(
 				'tasks' => $done_tasks,
@@ -116,6 +118,7 @@ function addNextImperative($time, $task)
 		return false;
 
 	wesql::insert('insert',
+		'{db_prefix}scheduled_imperative',
 		array(
 			'instr_time' => 'int', 'instr_details' => 'string',
 		),
@@ -135,4 +138,19 @@ function addNextImperative($time, $task)
 	return true;
 }
 
+/**
+ * Removes a topic at a time at a time scheduled in the future, such as pruning redirection topics.
+ *
+ * @param array $details An array containing elements 'topic' (integer of the topic to be removed), 'use_recycle' (whether the deleted topic should be removed to the recycle bin or permanetly deleted), and 'update_postcount' (whether to update the post count of the user who made the post)
+ */
+function imperative_removeTopic($details)
+{
+	if (empty($details['topic']) || !isset($details['use_recycle'], $details['update_postcount']))
+		return false;
+
+	loadSource('RemoveTopic');
+	removeTopics($details['topic'], $details['update_postcount'], $details['use_recycle']);
+
+	return true;
+} 
 ?>

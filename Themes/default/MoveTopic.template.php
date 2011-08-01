@@ -67,6 +67,20 @@ function template_main()
 							<dd>
 								<textarea name="reason" rows="3" cols="40">', $txt['movetopic_default'], '</textarea>
 							</dd>
+							<dt>
+								', $txt['moveTopic_redirection_period'], '
+							</dt>
+							<dd>
+								<select name="redirection_time">';
+
+	$days = array(1, 3, 5, 7, 10, 15, 30, 60, 90);
+	foreach($days as $day)
+		echo '
+									<option value="', $day, '">', $txt['moveTopic_redirection_' . $day . 'day'], '</option>';
+		echo '
+									<option value="0">', $txt['moveTopic_redirection_perm'], '</option>
+								</select>
+							</dd>
 						</dl>
 					</fieldset>
 					<div class="righttext">

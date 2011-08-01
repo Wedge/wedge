@@ -1882,7 +1882,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	function smfImperativeTask()
 	{
 		var tempImage = new Image();
-		tempImage.src = "' . $scripturl . '?imperative;ts=' . $ts . '";
+		tempImage.src = "' . $scripturl . '?imperative;ts=' . time() . '";
 	}
 	setTimeout(smfImperativeTask, 1);');
 
