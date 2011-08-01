@@ -87,18 +87,19 @@ function template_aeva_admin_submissions()
 					<td><a href="#" onclick="return admin_toggle(', $item['id'], ');"><div class="foldable" id="toggle_img_', $item['id'], '"></div></a></td>
 					<td><a href="', $item['item_link'], '">', $item['title'], '</a></td>
 					<td>', $item['poster'], '</td>
-					<td><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], ';xml\');">', $txt['media_admin_approve'], '</a>
+					<td>
+						<img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], ';xml\');">', $txt['media_admin_approve'], '</a>
 						<img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
-						<img src="', $settings['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ') && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>
-						', $filter == 'items' ? '<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $settings['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
+						<img src="', $settings['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ') && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
+						<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $settings['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
 					</td>', $filter != 'albums' ? '
 					<td>' . $item['posted_on'] . '</td>' : '', '
 					<td><input type="checkbox" name="items[]" value="', $item['id'], '" id="items[]"></td>
 				</tr>
 				<tr id="tr_expand_' . $item['id'] . '" class="windowbg', $alt ? '2' : '', '" style="display: none">
-					<td colspan="', $filter == 'albums' ? 4 : 5, '">
-						', !empty($item['description']) ? '<div>' . $txt['media_add_desc'] .' : '. $item['description'] . '</div>' : '',
-						!empty($item['keywords']) ? '<div>' . $txt['media_keywords'] . ' : ' . $item['keywords'] . '</div>' : '', '
+					<td colspan="', $filter == 'albums' ? 4 : 5, '">', !empty($item['description']) ? '
+						<div>' . $txt['media_add_desc'] .' : '. $item['description'] . '</div>' : '', !empty($item['keywords']) ? '
+						<div>' . $txt['media_keywords'] . ' : ' . $item['keywords'] . '</div>' : '', '
 					</td>
 				</tr>';
 		$alt = !$alt;
@@ -264,7 +265,7 @@ function template_aeva_admin_maintenance_prune()
 	}
 	elseif (!empty($context['aeva_maintain_album']))
 		echo '
-				<tr style="display: none"><td><input type="hidden" name="albums[]" value="' . $context['aeva_maintain_album'] . '"></td></tr>';
+				<tr class="hide"><td><input type="hidden" name="albums[]" value="' . $context['aeva_maintain_album'] . '"></td></tr>';
 
 	echo '
 				<tr>
@@ -518,15 +519,14 @@ function template_aeva_admin_about()
 			function version_compare(v1, v2)
 			{
 				var numVer = function (v) { return !v ? 0 : (isNaN(v) ? vm[v] || -1 : parseFloat(v)); },
-					vm = { "a": 0.1, "b": 0.2, "c": 0.3 }, prepVer = function (v)
-					{
+					vm = { "a": 0.1, "b": 0.2, "c": 0.3 }, prepVer = function (v) {
 						v = v.replace(/[_\-+]/g, ".").replace(/([^.\d]+)/g, ".$1.").replace(/\.{2,}/g, ".");
 						return (!v.length ? [-2] : v.split("."));
 					};
 				v1 = prepVer(v1);
 				v2 = prepVer(v2);
-				var x = Math.max(v1.length, v2.length);
-				for (var i = 0; i < x; i++)
+				var i, x = Math.max(v1.length, v2.length);
+				for (i = 0; i < x; i++)
 				{
 					if (v1[i] == v2[i])
 						continue;

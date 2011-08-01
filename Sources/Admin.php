@@ -492,9 +492,10 @@ function Admin()
 					'subsections' => array(
 						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($modSettings['mail_queue'])),
 						'',
-						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
+						'settings' => array($txt['mailqueue_settings'], 'admin_forum', 'enabled' => !empty($modSettings['mail_queue'])),
 					),
 				),
+				'',
 				'maintain' => array(
 					'label' => $txt['maintain_title'],
 					'file' => 'ManageMaintenance',

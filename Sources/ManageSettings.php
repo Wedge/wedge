@@ -404,10 +404,7 @@ function ModifyBasicSettings($return_config = false)
 	{
 		if (strpos($zone, '/') === false)
 			continue;
-
-		list($region, $country) = explode('/', $zone, 2);
-		if (!in_array($region, $useful_regions))
-			continue;
+		list ($region, $country) = explode('/', $zone, 2);
 		if (isset($useful_regions[$region]))
 			$config_vars['default_timezone'][2][$zone] = $zone;
 	}

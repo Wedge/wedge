@@ -59,7 +59,7 @@ function template_main()
 						<label><input type="checkbox" name="enforce_subject"> ', $txt['moveTopic4'], '.</label>
 					</fieldset>
 					<label><input type="checkbox" name="postRedirect"', $context['is_approved'] ? ' checked' : '', ' onclick="', $context['is_approved'] ? '' : 'if (this.checked && !confirm(' . JavaScriptEscape($txt['move_topic_unapproved_js']) . ')) return false; ', '$(\'#reasonArea\').toggle(this.checked);"> ', $txt['moveTopic1'], '.</label>
-					<fieldset id="reasonArea" style="margin-top: 1ex;', $context['is_approved'] ? '' : 'display: none;', '">
+					<fieldset id="reasonArea" style="margin-top: 1ex', $context['is_approved'] ? '' : '; display: none', '">
 						<dl class="settings">
 							<dt>
 								', $txt['moved_why'], '
@@ -73,11 +73,11 @@ function template_main()
 							<dd>
 								<select name="redirection_time">';
 
-	$days = array(1, 3, 5, 7, 10, 15, 30, 60, 90);
-	foreach($days as $day)
+	foreach (array(1, 3, 5, 7, 10, 15, 30, 60, 90) as $day)
 		echo '
-									<option value="', $day, '">', $txt['moveTopic_redirection_' . $day . 'day'], '</option>';
-		echo '
+									<option value="', $day, '">', number_context('moveTopic_redirection_day', $day), '</option>';
+
+	echo '
 									<option value="0">', $txt['moveTopic_redirection_perm'], '</option>
 								</select>
 							</dd>
