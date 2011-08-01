@@ -625,7 +625,7 @@ function aeva_utf2entities($source, $is_file = true, $limit = 255, $is_utf = fal
 	{
 		if ($cut_long_words)
 		{
-			$cw = is_integer($cut_long_words) ? round($cut_long_words/2) + 1 : round($limit/3) + 1;
+			$cw = is_int($cut_long_words) ? round($cut_long_words/2) + 1 : round($limit/3) + 1;
 			$str = preg_replace('/(\w{'.$cw.'})(\w+)/u', '$1&shy;$2', $str);
 		}
 		return $str;

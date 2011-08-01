@@ -158,7 +158,7 @@ class westr extends westr_mb
 		if (strlen($needle) === 1)
 		{
 			$result = array_search($needle, array_slice($haystack_arr, $offset));
-			return is_int($result) ? $result + $offset : false;
+			return ((int) $result) === $result ? $result + $offset : false;
 		}
 		else
 		{
@@ -167,7 +167,7 @@ class westr extends westr_mb
 			$needle_arr[0] = isset($needle_arr[0]) ? $needle_arr[0] : '';
 
 			$result = array_search($needle_arr[0], array_slice($haystack_arr, $offset));
-			while (is_int($result))
+			while (((int) $result) === $result)
 			{
 				$offset += $result;
 				if (array_slice($haystack_arr, $offset, $needle_size) === $needle_arr)
@@ -212,12 +212,11 @@ class westr extends westr_mb
 	}
 
 	/**
-	 * Equivalent of htmlspecialchars, but faster. PHP 5.2.3 adds a double_encode flag
-	 * which we could set to false to avoid the extra str_replace, but we can't for now.
+	 * An alias for htmlspecialchars, preventing double encoding.
 	 */
 	public static function safe($string, $quote_style = ENT_COMPAT)
 	{
-		return str_replace('&amp;amp;', '&amp;', htmlspecialchars($string, $quote_style, 'UTF-8'));
+		return htmlspecialchars($string, $quote_style, 'UTF-8', false);
 	}
 
 	/**
@@ -259,7 +258,7 @@ class westr extends westr_mb
 
 		if ($cut_long_words)
 		{
-			$cw = is_integer($cut_long_words) ? round($cut_long_words / 2) + 1 : round($max_length / 3) + 1;
+			$cw = is_int($cut_long_words) ? round($cut_long_words / 2) + 1 : round($max_length / 3) + 1;
 			$work = preg_replace('~(\w{' . $cw . '})(\w+)~u', '$1&shy;$2', $work);
 		}
 

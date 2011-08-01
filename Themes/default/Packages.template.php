@@ -1115,11 +1115,10 @@ function template_control_chmod()
 			2: "ftp_username",
 			3: "ftp_password",
 			4: "ftp_path"
-		}
+		}, sPostData = "";
 
-		var sPostData = "";
 		for (i = 0; i < 5; i++)
-			sPostData += (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + document.getElementById(oPostData[i]).value.php_urlencode();
+			sPostData += (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + $("#" + oPostData[i]).val().php_urlencode();
 
 		// Post the data out.
 		sendXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\', sPostData, testFTPResults);
@@ -1132,10 +1131,10 @@ function template_control_chmod()
 		var wasSuccess = false;
 		var message = ' . JavaScriptEscape($txt['package_ftp_test_failed']) . ';
 
-		var results = oXMLDoc.getElementsByTagName(\'results\')[0].getElementsByTagName(\'result\');
+		var results = oXMLDoc.getElementsByTagName("results")[0].getElementsByTagName("result");
 		if (results.length > 0)
 		{
-			if (results[0].getAttribute(\'success\') == 1)
+			if (results[0].getAttribute("success") == 1)
 				wasSuccess = true;
 			message = results[0].firstChild.nodeValue;
 		}
@@ -1211,33 +1210,26 @@ function template_file_permissions()
 	function expandFolder(folderIdent, folderReal)
 	{
 		// See if it already exists.
-		var possibleTags = document.getElementsByTagName("tr");
 		var foundOne = false;
 
-		for (var i = 0; i < possibleTags.length; i++)
-		{
-			if (possibleTags[i].id.indexOf("content_" + folderIdent + ":-:") == 0)
-			{
-				possibleTags[i].style.display = possibleTags[i].style.display == "none" ? "" : "none";
-				foundOne = true;
-			}
-		}
+		$(\'tr[id^="content_\' + folderIdent + \':-:"]\').each(function (tr) {
+			$(this).toggle();
+			foundOne = true;
+		});
 
-		// Got something then we\'re done.
+		// Got something? Then we\'re done.
 		if (foundOne)
 			return false;
 
 		// Otherwise we need to get the wicked thing.
-		else if (can_ajax)
+		if (can_ajax)
 		{
 			ajax_indicator(true);
-			getXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;onlyfind=\' + folderReal.php_urlencode() + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
+			getXMLDocument(we_prepareScriptUrl() + "action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
 		}
-		// Otherwise reload.
-		else
-			return true;
 
-		return false;
+		// Otherwise reload.
+		return !can_ajax;
 	}
 	function dynamicExpandFolder()
 	{
@@ -1249,14 +1241,11 @@ function template_file_permissions()
 	{
 		ajax_indicator(true);
 
-		getXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;fileoffset=\' + (parseInt(this.offset) + ', $context['file_limit'], ') + \';onlyfind=\' + this.path.php_urlencode() + \';sa=perms;xml;', $context['session_query'], '\', onNewFolderReceived);
+		getXMLDocument(we_prepareScriptUrl() + "action=admin;area=packages;fileoffset=" + (parseInt(this.offset) + ', $context['file_limit'], ') + ";onlyfind=" + this.path.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
 	}
 	function repeatString(sString, iTime)
 	{
-		if (iTime < 1)
-			return \'\';
-		else
-			return sString + repeatString(sString, iTime - 1);
+		return iTime < 1 ? "" : sString + repeatString(sString, iTime - 1);
 	}
 	// Create a named element dynamically - thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
 	function createNamedElement(type, name, customFields)
@@ -1271,9 +1260,8 @@ function template_file_permissions()
 		{
 			element = document.createElement("<" + type + \' name="\' + name + \'"\' + customFields + ">");
 		}
-		catch (e)
-		{
-		}
+		catch (e) {}
+
 		if (!element || element.nodeName != type.toUpperCase())
 		{
 			// Non-IE browser; use canonical method to create named element
@@ -1339,7 +1327,7 @@ function template_file_permissions()
 				curCol.width = "40%";
 
 				// This is the name.
-				var fileName = document.createTextNode(fileItems[i].firstChild.nodeValue);
+				var fileName = document.createTextNode(String.fromCharCode(160) + fileItems[i].firstChild.nodeValue);
 
 				// Start by wacking in the spaces.
 				curCol.innerHTML = repeatString("&nbsp;", curLevel);
@@ -1356,6 +1344,7 @@ function template_file_permissions()
 					linkData.onclick = dynamicExpandFolder;
 
 					var folderImage = document.createElement("img");
+					folderImage.style.verticalAlign = "bottom";
 					folderImage.src = \'', addcslashes($settings['default_images_url'], "\\"), '/board.gif\';
 					linkData.appendChild(folderImage);
 
@@ -1498,7 +1487,7 @@ function template_file_permissions()
 
 		if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 			echo '
-					<img src="', $settings['default_images_url'], '/board.gif">';
+					<img src="', $settings['default_images_url'], '/board.gif" class="bottom">';
 
 		echo '
 					', $name, '
@@ -1605,7 +1594,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 
 			if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 				echo '
-					<img src="', $settings['default_images_url'], '/board.gif">';
+					<img src="', $settings['default_images_url'], '/board.gif" class="bottom">';
 
 			echo '
 					', $name, '
