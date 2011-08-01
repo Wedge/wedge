@@ -648,6 +648,10 @@ function comma_format($number, $override_decimal_count = false)
 	global $txt;
 	static $thousands_separator = null, $decimal_separator = null, $decimal_count = null;
 
+	// Skip formatting if number needs no separators. (is_integer($number) && abs($number) < 1000, optimized for speed.)
+	if (((int) $number) === $number && $number > -1000 && $number < 1000)
+		return $number;
+
 	// Cache these values...
 	if ($decimal_separator === null)
 	{
@@ -672,13 +676,14 @@ function comma_format($number, $override_decimal_count = false)
  *
  * @param $string The prefix in $txt to check against.
  * @param $number The number of items to look for.
+ * @param bool $format_comma Specify whether to comma-format the number.
  * @return The string as found in $txt (note: the case where _n is used but not present will return an error, it is up to the language files to present a minimum fallback)
  */
-function number_context($string, $number)
+function number_context($string, $number, $format_comma = true)
 {
 	global $txt;
 
-	return sprintf($txt[$string . '_' . (isset($txt[$string . '_' . $number]) ? $number : 'n')], comma_format($number));
+	return sprintf($txt[$string . '_' . (isset($txt[$string . '_' . $number]) ? $number : 'n')], $format_comma ? comma_format($number) : $number);
 }
 
 /**

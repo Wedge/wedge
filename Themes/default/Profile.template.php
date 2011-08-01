@@ -318,7 +318,7 @@ function template_showDrafts()
 
 	if (!empty($modSettings['pruneSaveDrafts']))
 		echo '
-			<br><br>', $modSettings['pruneSaveDrafts'] == 1 ? $txt['draftAutoPurge_1'] : sprintf($txt['draftAutoPurge_n'], $modSettings['pruneSaveDrafts']);
+			<br><br>', number_context('draftAutoPurge', $modSettings['pruneSaveDrafts']);
 
 	echo '
 		</p>

@@ -800,9 +800,7 @@ function MessageFolder()
 				$recipients[$id][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
 			if ($context['folder'] == 'sent' && $user_info['id'] == $posters[$id])
-			{
 				$context['message_replied'][$id] = (isset($context['message_replied'][$id]) ? $context['message_replied'][$id] : 0) + (($row['is_read'] & 2) >> 1);
-			}
 			elseif ($user_info['id'] == $row['id_member_to'])
 			{
 				$context['message_replied'][$id] = $row['is_read'] & 2;
@@ -940,7 +938,8 @@ function prepareMessageContext($type = 'subject', $reset = false)
 			'is_unread' => &$context['message_unread'][$subject['id_pm']],
 			'is_selected' => !empty($temp_pm_selected) && in_array($subject['id_pm'], $temp_pm_selected),
 		);
-		wedge_checkReplied($output, $subject['id_pm']);
+		if ($output['is_replied_to'])
+			$output['replied_msg'] = number_context('pm_is_replied_to_sent', $output['is_replied_to'], false);
 
 		return $output;
 	}
@@ -1009,25 +1008,12 @@ function prepareMessageContext($type = 'subject', $reset = false)
 		'is_unread' => &$context['message_unread'][$message['id_pm']],
 		'is_selected' => !empty($temp_pm_selected) && in_array($message['id_pm'], $temp_pm_selected),
 	);
-	wedge_checkReplied($output, $message['id_pm']);
+	if ($output['is_replied_to'])
+		$output['replied_msg'] = number_context('pm_is_replied_to_sent', $output['is_replied_to'], false);
 
 	$counter++;
 
 	return $output;
-}
-
-function wedge_checkReplied(&$output, $id)
-{
-	if (!$output['is_replied_to'])
-		return;
-
-	global $context, $txt;
-
-	$nb = &$context['message_replied'][$id];
-	if ($nb == 1 || $context['folder'] != 'sent')
-		$output['replied_msg'] = $txt['pm_is_replied_to' . ($context['folder'] == 'sent' ? '_sent_1' : '')];
-	else
-		$output['replied_msg'] = sprintf($txt['pm_is_replied_to_sent_n'], $nb);
 }
 
 function MarkUnread()
@@ -1574,6 +1560,8 @@ function MessageSearch2()
 				'link' => '<a href="' . $href . '">' . $row['subject'] . '</a>',
 				'counter' => ++$counter,
 			);
+			if ($context['personal_messages']['is_replied_to'])
+				$context['personal_messages']['replied_msg'] = number_context('pm_is_replied_to_sent', $context['personal_messages']['is_replied_to'], false);
 		}
 		wesql::free_result($request);
 	}

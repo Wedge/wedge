@@ -265,7 +265,7 @@ function template_sidebar_above()
 
 		if (!empty($context['open_mod_reports']) && $context['show_open_reports'])
 			echo '
-				<li><a href="', $scripturl, '?action=moderate;area=reports">', sprintf($txt['mod_reports_waiting'], $context['open_mod_reports']), '</a></li>';
+				<li><a href="', $scripturl, '?action=moderate;area=reports">', number_context('mod_reports_waiting', $context['open_mod_reports']), '</a></li>';
 
 		echo '
 			</ul>
