@@ -46,7 +46,7 @@ function RemoveTopic2()
 		redirectexit();
 
 	$request = wesql::query('
-		SELECT t.id_member_started, ms.subject, t.approved, b.wedge_type
+		SELECT t.id_member_started, ms.subject, t.approved, b.board_type
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)

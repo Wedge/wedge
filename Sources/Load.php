@@ -544,7 +544,7 @@ function loadBoard()
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.skin,
 				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
-				bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends, b.wedge_type, b.sort_method,
+				bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends, b.board_type, b.sort_method,
 				b.sort_override, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
@@ -602,7 +602,7 @@ function loadBoard()
 				'banned_member' => $row['banned'],
 				'friends' => $row['friends'],
 				'language' => $row['language'],
-				'type' => $row['wedge_type'],
+				'type' => $row['board_type'],
 				'sort_method' => $row['sort_method'],
 				'sort_override' => $row['sort_override'],
 			);
@@ -2008,12 +2008,24 @@ function execSubTemplate($sub_template_name, $fatal = false)
 
 	// Figure out what the template function is named.
 	$theme_function = 'template_' . $sub_template_name;
-	if (function_exists($theme_function))
+	$theme_function_before = $theme_function . '_before';
+	$theme_function_override = $theme_function . '_override';
+	$theme_function_after = $theme_function . '_after';
+
+	if (function_exists($theme_function_before))
+		$theme_function_before();
+
+	if (function_exists($theme_function_override))
+		$theme_function_override();
+	elseif (function_exists($theme_function))
 		$theme_function();
 	elseif ($fatal === false)
 		fatal_lang_error('theme_template_error', 'template', array((string) $sub_template_name));
 	elseif ($fatal !== 'ignore')
 		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the %s sub template!', (string) $sub_template_name), 'template'));
+
+	if (function_exists($theme_function_after))
+		$theme_function_after();
 
 	// Are we showing debugging for templates? Just make sure not to do it before the doctype...
 	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $sub_template_name !== 'init' && ob_get_length() > 0 && !isset($_REQUEST['xml']))
@@ -2144,9 +2156,9 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			break;
 		}
 
-		// The index language file contains the locale. If that's what we're loading, we're changing locales, so reload that.
+		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that.
 		if ($found && $template === 'index')
-			$user_info['setlocale'] = setlocale(LC_ALL, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
+			$user_info['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
 	}
 
 	// Keep track of what we're up to soldier.
