@@ -67,10 +67,8 @@ function MessageIndex()
 	{
 		$session_name = session_name();
 		foreach ($_GET as $k => $v)
-		{
 			if (!in_array($k, array('board', 'start', $session_name)))
 				$context['robot_no_index'] = true;
-		}
 	}
 	if (!empty($_REQUEST['start']) && (!is_numeric($_REQUEST['start']) || $_REQUEST['start'] % $context['messages_per_page'] != 0))
 		$context['robot_no_index'] = true;
@@ -84,32 +82,29 @@ function MessageIndex()
 	}
 
 	// Make sure the starting place makes sense and construct the page index.
-	if (isset($_REQUEST['sort']))
-		$context['page_index'] = constructPageIndex($scripturl . '?board=' . $board . '.%1$d;sort=' . $_REQUEST['sort'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $board_info['total_topics'], $maxindex, true);
-	else
-		$context['page_index'] = constructPageIndex($scripturl . '?board=' . $board . '.%1$d', $_REQUEST['start'], $board_info['total_topics'], $maxindex, true);
-	$context['start'] = &$_REQUEST['start'];
+	$context['start'] = (int) $_REQUEST['start'];
+	$context['page_index'] = constructPageIndex($scripturl . '?board=' . $board . '.%1$d' . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . (isset($_REQUEST['desc']) ? ';desc' : ''), $context['start'], $board_info['total_topics'], $maxindex, true);
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . '?board=' . $board . '.' . $context['start'];
 
 	$context['links'] = array(
-		'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.0' : '',
-		'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.' . ($_REQUEST['start'] - $context['topics_per_page']) : '',
-		'next' => $_REQUEST['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . ($_REQUEST['start'] + $context['topics_per_page']) : '',
-		'last' => $_REQUEST['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . (floor(($board_info['total_topics'] - 1) / $context['topics_per_page']) * $context['topics_per_page']) : '',
+		'first' => $context['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.0' : '',
+		'prev' => $context['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.' . ($context['start'] - $context['topics_per_page']) : '',
+		'next' => $context['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . ($context['start'] + $context['topics_per_page']) : '',
+		'last' => $context['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . (floor(($board_info['total_topics'] - 1) / $context['topics_per_page']) * $context['topics_per_page']) : '',
 		'up' => $board_info['parent'] == 0 ? $scripturl . '?' : $scripturl . '?board=' . $board_info['parent'] . '.0'
 	);
 
 	$context['page_info'] = array(
-		'current_page' => $_REQUEST['start'] / $context['topics_per_page'] + 1,
+		'current_page' => $context['start'] / $context['topics_per_page'] + 1,
 		'num_pages' => floor(($board_info['total_topics'] - 1) / $context['topics_per_page']) + 1
 	);
 
 	if (isset($_REQUEST['all']) && !empty($modSettings['enableAllMessages']) && $maxindex > $modSettings['enableAllMessages'])
 	{
 		$maxindex = $modSettings['enableAllMessages'];
-		$_REQUEST['start'] = 0;
+		$context['start'] = $_REQUEST['start'] = 0;
 	}
 
 	// Build a list of the board's moderators.
@@ -266,7 +261,7 @@ function MessageIndex()
 	$context['sort_direction'] = $ascending ? 'up' : 'down';
 
 	// Calculate the fastest way to get the topics.
-	$start = (int) $_REQUEST['start'];
+	$start = $context['start'];
 	if ($start > ($board_info['total_topics'] - 1) / 2)
 	{
 		$ascending = !$ascending;
@@ -434,7 +429,7 @@ function MessageIndex()
 
 				// We can't pass start by reference.
 				$start = -1;
-				$pages .= constructPageIndex($scripturl . '?topic=' . $row['id_topic'] . '.%1$d', $start, $row['num_replies'] + 1, $context['messages_per_page'], true);
+				$pages .= constructPageIndex($scripturl . '?topic=' . $row['id_topic'] . '.%1$d', $start, $row['num_replies'] + 1, $context['messages_per_page'], true, false);
 
 				// If we can use all, show all.
 				if (!empty($modSettings['enableAllMessages']) && $row['num_replies'] + 1 < $modSettings['enableAllMessages'])

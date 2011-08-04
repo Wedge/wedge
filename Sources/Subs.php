@@ -483,13 +483,14 @@ function updateSettings($changeArray, $update = false)
  * - If $modSettings['compactTopicPagesEnable'] is empty, no compaction of page items is used and all pages are displayed; if enabled, only the first, last and the display will consist of multiple contiguous items centered on the current page (stated as $modSettings['compactTopicPagesContiguous'], halved, either side of the current page)
  *
  * @param string $base_url The basic URL to be used for each link.
- * @param int &$start The start position, by reference. If this is not a multiple of the number of items per page, it is sanitised to be so and the value will persist upon the function's return.
+ * @param int &$start The start position, by reference. If this is not a multiple of the number of items per page, it is sanitized to be so and the value will persist upon the function's return.
  * @param int $max_value The total number of items you are paginating for.
  * @param int $num_per_page The number of items to be displayed on a given page. $start will be forced to be a multiple of this value.
  * @param bool $flexible_start Whether a ;start=x component should be introduced into the URL automatically (see above)
+ * @param bool $show_prevnext Whether the Previous and Next links should be shown (should be on only when navigating the list)
  * @return string The complete HTML of the page index that was requested.
  */
-function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flexible_start = false)
+function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
 	global $modSettings, $txt;
 
@@ -537,7 +538,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 		$pageindex = '';
 
 		// First of all, do we want a 'next' button to take us closer to the first (most interesting) page?
-		if ($start >= $num_per_page)
+		if ($show_prevnext && $start >= $num_per_page)
 			$pageindex .= sprintf($base_link, $start - $num_per_page, $txt['previous_next_back']);
 
 		// Show the first page. (>1< ... 6 7 [8] 9 10 ... 15)
@@ -587,7 +588,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 			$pageindex .= sprintf($base_link, $tmpMaxPages, $tmpMaxPages / $num_per_page + 1);
 
 		// Finally, the next link.
-		if ($start + $num_per_page < $max_value)
+		if ($show_prevnext && $start + $num_per_page < $max_value)
 			$pageindex .= sprintf($base_link, $start + $num_per_page, $txt['previous_next_forward']);
 	}
 

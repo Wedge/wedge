@@ -28,9 +28,7 @@ if (is_ie || is_webkit || is_ff)
 
 // Toggles the element height and width styles of an image.
 addLoadEvent(function () {
-	$('img.resized').each(function () {
-		$(this).css('cursor', 'pointer').click(function() {
-			this.style.width = this.style.height = (this.style.width == 'auto' ? null : 'auto');
-		});
+	$('img.resized').css('cursor', 'pointer').click(function() {
+		this.style.width = this.style.height = (this.style.width == 'auto' ? null : 'auto');
 	});
 });

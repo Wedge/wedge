@@ -92,17 +92,6 @@ p.moderators
 	dd
 		text-align: right
 
-#ic_login
-	padding: .5em
-	height: 2em
-	ul li
-		margin, padding: 0
-		float: left
-		width: 20%
-		text-align: center
-		label
-			display: block
-
 // The small stats
 #index_common_stats
 	display: block

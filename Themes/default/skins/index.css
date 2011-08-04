@@ -217,8 +217,6 @@ ul#noava
 			display: block
 			padding: 0 2px
 			line-height: 160%
-			&.rd, &.stats
-				display: inline
 			&.links
 				margin: 0 -8px
 				a
@@ -847,6 +845,7 @@ ul.reset, ul.reset li
 
 .bbc_img
 	border: 0
+	max-width: 650px
 
 .bbc_table
 	font, color: inherit

@@ -19,10 +19,6 @@ function template_show_list($list_id = null)
 	$list_id = $list_id === null ? $context['default_list'] : $list_id;
 	$cur_list = &$context[$list_id];
 
-	// These are the main tabs that is used all around the template.
-	if (!empty($settings['use_tabs']) && isset($cur_list['list_menu'], $cur_list['list_menu']['show_on']) && ($cur_list['list_menu']['show_on'] == 'both' || $cur_list['list_menu']['show_on'] == 'top'))
-		template_create_list_menu($cur_list['list_menu'], 'top');
-
 	if (isset($cur_list['form']))
 		echo '
 	<form action="', $cur_list['form']['href'], '" method="post"', empty($cur_list['form']['name']) ? '' : ' name="' . $cur_list['form']['name'] . '" id="' . $cur_list['form']['name'] . '"', ' accept-charset="UTF-8">
@@ -43,9 +39,6 @@ function template_show_list($list_id = null)
 					', $cur_list['cat'], '
 				</we:cat>
 			</div>';
-	// This is for the old style menu with the arrows "> Test | Test 1"
-	if (empty($settings['use_tabs']) && isset($cur_list['list_menu'], $cur_list['list_menu']['show_on']) && ($cur_list['list_menu']['show_on'] == 'both' || $cur_list['list_menu']['show_on'] == 'top'))
-		template_create_list_menu($cur_list['list_menu'], 'top');
 
 	if (isset($cur_list['additional_rows']['top_of_list']))
 		template_additional_rows('top_of_list', $cur_list);
@@ -197,10 +190,6 @@ function template_show_list($list_id = null)
 	</form>';
 	}
 
-	// Tabs at the bottom.  Usually bottom alligned.
-	if (!empty($settings['use_tabs']) && isset($cur_list['list_menu'], $cur_list['list_menu']['show_on']) && ($cur_list['list_menu']['show_on'] == 'both' || $cur_list['list_menu']['show_on'] == 'bottom'))
-		template_create_list_menu($cur_list['list_menu'], 'bottom');
-
 	if (isset($cur_list['javascript']))
 		add_js($cur_list['javascript']);
 }
@@ -213,127 +202,6 @@ function template_additional_rows($row_position, $cur_list)
 		echo '
 		<div class="additional_row', empty($row['class']) ? '' : ' ' . $row['class'], '"', empty($row['style']) ? '' : ' style="' . $row['style'] . '"', '>', $row['value'], '
 		</div>';
-}
-
-function template_create_list_menu($list_menu, $direction = 'top')
-{
-	global $context, $settings;
-
-	/**
-		// This is use if you want your generic lists to have tabs.
-		$cur_list['list_menu'] = array(
-			// This is the style to use. Tabs or Buttons (Text 1 | Text 2).
-			// By default tabs, are selected if not set.
-			// The main difference between tabs and buttons is that tabs get highlighted when selected.
-			// If style is set to buttons and use tabs is disabled, then we change the style to old-style tabs.
-			'style' => 'tabs',
-			// The position of the tabs/buttons. Left or Right. Set to left by default.
-			'position' => 'left',
-			// This is used by the old styled menu. We *need* to know the total number of columns to span.
-			'columns' => 0,
-			// This gives you the option to show tabs only at the top, bottom or both.
-			// By default they are just shown at the top.
-			'show_on' => 'top',
-			// Links. This is the core of the array. It has all the info that we need.
-			'links' => array(
-				'name' => array(
-					// This will tell users where to go when they click it.
-					'href' => $scripturl . '?action=theaction',
-					// The actual name that shows up for the link.
-					'label' => $txt['name'],
-					// If we use tabs instead of buttons we highlight the current tab.
-					// Must use conditions to determine if it's selected or not.
-					'is_selected' => isset($_REQUEST['name']),
-				),
-			),
-		);
-	*/
-
-	// Are we using right-to-left orientation?
-	$first = $context['right_to_left'] ? 'last' : 'first';
-	$last = $context['right_to_left'] ? 'first' : 'last';
-
-	// Tabs take preference over buttons in certain cases.
-	if (empty($settings['use_tabs']) && $list_menu['style'] == 'button')
-		$list_menu['style'] = 'tabs';
-
-	if (!isset($list_menu['style']) || isset($list_menu['style']) && $list_menu['style'] == 'tabs')
-	{
-		if (!empty($settings['use_tabs']))
-		{
-			echo '
-		<table class="cp0 cs0" style="margin-', $list_menu['position'], ': 10px; width: 100%;">
-			<tr>', $list_menu['position'] == 'right' ? '
-				<td>&nbsp;</td>' : '', '
-				<td style="text-align: ', $list_menu['position'], '">
-					<table class="cp0 cs0">
-						<tr>
-							<td class="', $direction == 'top' ? 'mirror' : 'main', 'tab_', $first, '">&nbsp;</td>';
-
-			foreach ($list_menu['links'] as $link)
-			{
-				if ($link['is_selected'])
-					echo '
-							<td class="', $direction == 'top' ? 'mirror' : 'main', 'tab_active_', $first, '">&nbsp;</td>
-							<td class="', $direction == 'top' ? 'mirrortab' : 'maintab', '_active_back">
-								<a href="', $link['href'], '">', $link['label'], '</a>
-							</td>
-							<td class="', $direction == 'top' ? 'mirror' : 'main', 'tab_active_', $last, '">&nbsp;</td>';
-				else
-					echo '
-							<td class="', $direction == 'top' ? 'mirror' : 'main', 'tab_back">
-								<a href="', $link['href'], '">', $link['label'], '</a>
-							</td>';
-			}
-
-			echo '
-							<td class="', $direction == 'top' ? 'mirror' : 'main', 'tab_', $last, '">&nbsp;</td>
-						</tr>
-					</table>
-				</td>', $list_menu['position'] == 'left' ? '
-				<td>&nbsp;</td>' : '', '
-			</tr>
-		</table>';
-		}
-		else
-		{
-			echo '
-			<tr class="titlebg">
-				<td colspan="', $context['colspan'], '">';
-
-			$links = array();
-			foreach ($list_menu['links'] as $link)
-				$links[] = ($link['is_selected'] ? '<img src="' . $settings['images_url'] . '/selected.gif"> ' : '') . '<a href="' . $link['href'] . '">' . $link['label'] . '</a>';
-
-			echo '
-				', implode(' | ', $links), '
-				</td>
-			</tr>';
-		}
-	}
-	elseif (isset($list_menu['style']) && $list_menu['style'] == 'buttons')
-	{
-		$links = array();
-		foreach ($list_menu['links'] as $link)
-			$links[] = '<a href="' . $link['href'] . '">' . $link['label'] . '</a>';
-
-		echo '
-		<table class="cp0 cs0" style="margin-', $list_menu['position'], ': 10px; width: 100%;">
-			<tr>', $list_menu['position'] == 'right' ? '
-				<td>&nbsp;</td>' : '', '
-				<td style="text-align: ', $list_menu['position'], '">
-					<table class="cp0 cs0">
-						<tr>
-							<td class="', $direction == 'top' ? 'mirror' : 'main', 'tab_', $first, '">&nbsp;</td>
-							<td class="', $direction == 'top' ? 'mirror' : 'main', 'tab_back">', implode(' &nbsp;|&nbsp; ', $links), '</td>
-							<td class="', $direction == 'top' ? 'mirror' : 'main', 'tab_', $last, '">&nbsp;</td>
-						</tr>
-					</table>
-				</td>', $list_menu['position'] == 'left' ? '
-				<td>&nbsp;</td>' : '', '
-			</tr>
-		</table>';
-	}
 }
 
 ?>

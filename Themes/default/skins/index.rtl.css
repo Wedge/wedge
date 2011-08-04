@@ -164,10 +164,6 @@ th.last_th
 	dd
 		text-align: left
 
-#ic_login ul li
-	float: right
-	width: 20%
-
 // The small stats
 #index_common_stats
 	text-align: left

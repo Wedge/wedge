@@ -367,7 +367,7 @@ function ViewMemberlist()
 			// Checkboxes.
 			elseif ($param_info['type'] == 'checkbox')
 			{
-				// Each checkbox or no checkbox at all is checked -> ignore.
+				// All checkboxes or none at all are checked? Ignore.
 				if (!is_array($_POST[$param_name]) || count($_POST[$param_name]) == 0 || count($_POST[$param_name]) == count($param_info['values']))
 					continue;
 
@@ -387,14 +387,14 @@ function ViewMemberlist()
 		// Set up the membergroup query part.
 		$mg_query_parts = array();
 
-		// Primary membergroups, but only if at least was was not selected.
+		// Primary membergroups, but only if at least one was not selected.
 		if (!empty($_POST['membergroups'][1]) && count($context['membergroups']) != count($_POST['membergroups'][1]))
 		{
 			$mg_query_parts[] = 'mem.id_group IN ({array_int:group_check})';
 			$where_params['group_check'] = $_POST['membergroups'][1];
 		}
 
-		// Additional membergroups (these are only relevant if not all primary groups where selected!).
+		// Additional membergroups. These are only relevant if not all primary groups were selected!
 		if (!empty($_POST['membergroups'][2]) && (empty($_POST['membergroups'][1]) || count($context['membergroups']) != count($_POST['membergroups'][1])))
 			foreach ($_POST['membergroups'][2] as $mg)
 			{
@@ -406,7 +406,7 @@ function ViewMemberlist()
 		if (!empty($mg_query_parts))
 			$query_parts[] = '(' . implode(' OR ', $mg_query_parts) . ')';
 
-		// Get all selected post count related membergroups.
+		// Get all selected postcount-based membergroups.
 		if (!empty($_POST['postgroups']) && count($_POST['postgroups']) != count($context['postgroups']))
 		{
 			$query_parts[] = 'id_post_group IN ({array_int:post_groups})';
@@ -425,8 +425,9 @@ function ViewMemberlist()
 	// Construct the additional URL part with the query info in it.
 	$context['params_url'] = $context['sub_action'] == 'query' ? ';sa=query;params=' . $search_params : '';
 
-	// Get the title and sub template ready..
+	// Get the title and subtemplate ready...
 	$context['page_title'] = $txt['admin_members'];
+	$percent_scripturl = strtr($scripturl, array('%' => '%%'));
 
 	$listOptions = array(
 		'id' => 'member_list',
@@ -456,8 +457,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'db' => 'id_member',
-					'class' => 'windowbg',
-					'style' => 'text-align: center;',
+					'class' => 'center',
 				),
 				'sort' => array(
 					'default' => 'id_member',
@@ -470,7 +470,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . strtr($scripturl, array('%' => '%%')) . '?action=profile;u=%1$d">%2$s</a>',
+						'format' => '<a href="' . $percent_scripturl . '?action=profile;u=%1$d">%2$s</a>',
 						'params' => array(
 							'id_member' => false,
 							'member_name' => false,
@@ -488,7 +488,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . strtr($scripturl, array('%' => '%%')) . '?action=profile;u=%1$d">%2$s</a>',
+						'format' => '<a href="' . $percent_scripturl . '?action=profile;u=%1$d">%2$s</a>',
 						'params' => array(
 							'id_member' => false,
 							'real_name' => false,
@@ -511,7 +511,6 @@ function ViewMemberlist()
 							'email_address' => true,
 						),
 					),
-					'class' => 'windowbg',
 				),
 				'sort' => array(
 					'default' => 'email_address',
@@ -524,7 +523,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . strtr($scripturl, array('%' => '%%')) . '?action=trackip;searchip=%1$s">%1$s</a>',
+						'format' => '<a href="' . $percent_scripturl . '?action=trackip;searchip=%1$s">%1$s</a>',
 						'params' => array(
 							'member_ip' => false,
 						),
@@ -597,8 +596,7 @@ function ViewMemberlist()
 
 						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_member\'] . \'"\' . ($rowData[\'id_member\'] == $user_info[\'id\'] || $rowData[\'id_group\'] == 1 || in_array(1, explode(\',\', $rowData[\'additional_groups\'])) ? \' disabled\' : \'\') . \'>\';
 					'),
-					'class' => 'windowbg',
-					'style' => 'text-align: center',
+					'class' => 'center',
 				),
 			),
 		),
@@ -611,7 +609,6 @@ function ViewMemberlist()
 			array(
 				'position' => 'below_table_data',
 				'value' => '<input type="submit" name="delete_members" value="' . $txt['admin_delete_members'] . '" onclick="return confirm(' . JavaScriptEscape($txt['confirm_delete_members']) . ');" class="delete">',
-				'style' => 'text-align: right;',
 			),
 		),
 	);
@@ -794,6 +791,8 @@ function MembersAwaitingActivation()
 			document.forms.postForm.submit();
 	}';
 
+	$percent_scripturl = strtr($scripturl, array('%' => '%%'));
+
 	$listOptions = array(
 		'id' => 'approve_list',
 		'items_per_page' => $modSettings['defaultMaxMembers'],
@@ -823,8 +822,7 @@ function MembersAwaitingActivation()
 				),
 				'data' => array(
 					'db' => 'id_member',
-					'class' => 'windowbg',
-					'style' => 'text-align: center;',
+					'class' => 'center',
 				),
 				'sort' => array(
 					'default' => 'id_member',
@@ -837,7 +835,7 @@ function MembersAwaitingActivation()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . strtr($scripturl, array('%' => '%%')) . '?action=profile;u=%1$d">%2$s</a>',
+						'format' => '<a href="' . $percent_scripturl . '?action=profile;u=%1$d">%2$s</a>',
 						'params' => array(
 							'id_member' => false,
 							'member_name' => false,
@@ -860,7 +858,6 @@ function MembersAwaitingActivation()
 							'email_address' => true,
 						),
 					),
-					'class' => 'windowbg',
 				),
 				'sort' => array(
 					'default' => 'email_address',
@@ -873,7 +870,7 @@ function MembersAwaitingActivation()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => '<a href="' . strtr($scripturl, array('%' => '%%')) . '?action=trackip;searchip=%1$s">%1$s</a>',
+						'format' => '<a href="' . $percent_scripturl . '?action=trackip;searchip=%1$s">%1$s</a>',
 						'params' => array(
 							'member_ip' => false,
 						),
@@ -945,8 +942,7 @@ function MembersAwaitingActivation()
 							'id_member' => false,
 						),
 					),
-					'class' => 'windowbg',
-					'style' => 'text-align: center',
+					'class' => 'center',
 				),
 			),
 		),
@@ -1002,7 +998,7 @@ function MembersAwaitingActivation()
 		$listOptions['additional_rows'][] = array(
 			'position' => 'above_column_headers',
 			'value' => $filterOptions,
-			'style' => 'text-align: center;',
+			'class' => 'center',
 		);
 	}
 
@@ -1011,8 +1007,7 @@ function MembersAwaitingActivation()
 		$listOptions['additional_rows'][] = array(
 			'position' => 'above_column_headers',
 			'value' => '<strong>' . $txt['admin_browse_filter_show'] . ':</strong> ' . $context['available_filters'][0]['desc'],
-			'class' => 'smalltext',
-			'style' => 'text-align: left;',
+			'class' => 'smalltext left',
 		);
 
 	// Can they see all IP addresses? If not, they shouldn't see any.
