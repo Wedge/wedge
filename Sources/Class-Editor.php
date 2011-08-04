@@ -1601,7 +1601,7 @@ class wedit
 			$this->bbc[$row][count($tagRow) - 1]['isLast'] = true;
 
 		// Set a flag for later in the template
-		$this->show_bbc = !empty($modSettings['enableBBC']) && !empty($settings['show_bbc']);
+		$this->show_bbc = !empty($modSettings['enableBBC']);
 
 		// Deal with disabled tags
 		$disabled_tags = array();
