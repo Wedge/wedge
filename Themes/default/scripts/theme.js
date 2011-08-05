@@ -6,7 +6,7 @@
 
 // The purpose of this code is to fix the height of overflow: auto blocks,
 // because some browsers can't figure it out for themselves. (Opera FTW!)
-function smf_codeBoxFix()
+if (is_ie || is_webkit || is_ff)
 {
 	$('code').each(function () {
 		var cliwid = this.clientWidth, scrwid = this.scrollWidth, offhei = this.offsetHeight, sty = this.currentStyle, hei = sty.height;
@@ -22,13 +22,7 @@ function smf_codeBoxFix()
 	});
 }
 
-// Add a fix for code stuff?
-if (is_ie || is_webkit || is_ff)
-	addLoadEvent(smf_codeBoxFix);
-
 // Toggles the element height and width styles of an image.
-addLoadEvent(function () {
-	$('img.resized').css('cursor', 'pointer').click(function() {
-		this.style.width = this.style.height = (this.style.width == 'auto' ? null : 'auto');
-	});
+$('img.resized').css('cursor', 'pointer').click(function() {
+	this.style.width = this.style.height = (this.style.width == 'auto' ? null : 'auto');
 });

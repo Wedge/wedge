@@ -94,7 +94,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 	{
 		nextSib = from.nextSibling;
 		// Newlines are seen as stand-alone text nodes, so skip these...
-		while (nextSib && nextSib.nodeType == 3 && $(nextSib).text().trim() == '')
+		while (nextSib && nextSib.nodeType == 3 && $.trim($(nextSib).text()) === '')
 			nextSib = nextSib.nextSibling;
 		// Get the final text, remove any dfn (description) tags, and trim the rest.
 		title = $.trim($(nextSib).clone().find('dfn').remove().end().text());
@@ -148,7 +148,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 // Checks if the passed input's value is nothing.
 function isEmptyText(theField)
 {
-	return ($.trim(theField.value) == '');
+	return $.trim(theField.value) === '';
 }
 
 // Only allow form submission ONCE.
@@ -180,11 +180,11 @@ function in_array(variable, theArray)
 function selectRadioByName(oRadioGroup, sName)
 {
 	if (!('length' in oRadioGroup))
-		return (oRadioGroup.checked = true);
+		return oRadioGroup.checked = true;
 
 	for (var i = 0, n = oRadioGroup.length; i < n; i++)
 		if (oRadioGroup[i].value == sName)
-			return (oRadioGroup[i].checked = true);
+			return oRadioGroup[i].checked = true;
 
 	return false;
 }
@@ -214,9 +214,9 @@ function _sessionKeepAlive()
 		tempImage.src = we_prepareScriptUrl() + 'action=keepalive;time=' + curTime;
 		_lastKeepAliveCheck = curTime;
 	}
-	setTimeout('_sessionKeepAlive();', 1200000);
+	setTimeout(_sessionKeepAlive, 1200000);
 }
-setTimeout('_sessionKeepAlive();', 1200000);
+setTimeout(_sessionKeepAlive, 1200000);
 
 // Set a theme option through javascript.
 function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_var, additional_vars)
@@ -332,22 +332,20 @@ function smc_Toggle(oOptions)
 		this._changeState(true, true, true);
 
 	// Initialize the images to be clickable.
-	var i, n;
+	var i, n, toggle_me = function () {
+		$(this).data('that').toggle();
+		this.blur();
+		return false;
+	};
+
 	if ('aSwapImages' in this.opt)
 		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
-			$('#' + this.opt.aSwapImages[i].sId).show().css('visibility', 'visible').data('that', this).click(function () {
-				$(this).data('that').toggle();
-				this.blur();
-			}).css('cursor', 'pointer').mousedown(false);
+			$('#' + this.opt.aSwapImages[i].sId).show().css('visibility', 'visible').data('that', this).click(toggle_me).css('cursor', 'pointer').mousedown(false);
 
 	// Initialize links.
 	if ('aSwapLinks' in this.opt)
 		for (i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
-			$('#' + this.opt.aSwapLinks[i].sId).show().data('that', this).click(function () {
-				$(this).data('that').toggle();
-				this.blur();
-				return false;
-			});
+			$('#' + this.opt.aSwapLinks[i].sId).show().data('that', this).click(toggle_me);
 };
 
 // Collapse or expand the section.
@@ -447,12 +445,6 @@ function we_prepareScriptUrl()
 	var finalUrl = we_script.indexOf('?') == -1 ? we_script + '?' : we_script +
 		(we_script.charAt(we_script.length - 1) == '?' || we_script.charAt(we_script.length - 1) == '&' || we_script.charAt(we_script.length - 1) == ';' ? '' : ';');
 	return finalUrl.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
-}
-
-// Alias for onload() event.
-function addLoadEvent(fNewOnload)
-{
-	$(window).load(typeof fNewOnload == 'string' ? new Function(fNewOnload) : fNewOnload);
 }
 
 // Get the text in a code tag.
@@ -563,7 +555,7 @@ function smc_saveEntities(sFormName, aElementNames, sMask)
  * Dropdown menu in JS with CSS fallback, Wedge style.
  * It may not show, but it took me years to refine it. -- Nao
  */
-var menu_baseId = hoverable = 0, menu_delay = [], menu_ieshim = [];
+var menu_baseId = hoverable = 0, menu_delay = [], menu_ieshim = [], hove = 'hove';
 
 function initMenu(menu)
 {
@@ -584,7 +576,7 @@ function initMenu(menu)
 			.bind('mouseleave blur', menu_hide_me)
 			.mousedown(false)
 			.click(function () {
-				$('.hove').removeClass('hove');
+				$('.' + hove).removeClass(hove);
 				$('ul', menu).css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 				if (is_ie6)
 					$('li', menu).each(function () { menu_show_shim(false, this.id); });
@@ -635,10 +627,10 @@ function menu_show_me()
 			menu_show_shim(true, id, hasul);
 	}
 
-	if (!is_top || !$('h4', this).first().addClass('hove').length)
-		$(this).addClass('hove').parentsUntil('.menu>li').each(function () {
+	if (!is_top || !$('h4', this).first().addClass(hove).length)
+		$(this).addClass(hove).parentsUntil('.menu>li').each(function () {
 			if (this.nodeName == 'LI')
-				$(this).addClass('hove');
+				$(this).addClass(hove);
 		});
 
 	if (!is_visible)
@@ -656,19 +648,20 @@ function menu_hide_me(e)
 {
 	// The deepest level should hide the hover class immediately.
 	if (!$(this).children('ul').length)
-		$(this).removeClass('hove');
+		$(this).children().andSelf().removeClass(hove);
 
 	// Are we leaving the menu entirely, and thus triggering the time
 	// threshold, or are we just switching to another menu item?
+	var id = this.id;
 	$(e.relatedTarget).parents('.menu').length ?
-		menu_hide_children(this.id) :
-		menu_delay[this.id.substring(2)] = setTimeout('menu_hide_children("' + this.id + '")', 250);
+		menu_hide_children(id) :
+		menu_delay[id.substring(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
 }
 
 // Hide all children menus.
 function menu_hide_children(id)
 {
-	$('#' + id).children().andSelf().removeClass('hove').find('ul')
+	$('#' + id).children().andSelf().removeClass(hove).find('ul')
 		.css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 
 	if (is_ie6)
@@ -733,9 +726,9 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 			sChildLevelPrefix = new Array(aBoardsAndCategories[i].level + 1).join('==');
 
 		// Show the board/category option, with special treatment for the current one.
-		sList += '<option value="' + (isCategory ? '#c' + aBoardsAndCategories[i].id : aBoardsAndCategories[i].url) + '"'
-				+ (!isCategory && aBoardsAndCategories[i].id == this.opt.iBoardId ? ' style="background: #d0f5d5">=> ' + aBoardsAndCategories[i].name + ' &lt;=' : '>'
-				+ (isCategory ? '' : sChildLevelPrefix + '=> ') + aBoardsAndCategories[i].name) + '</option>';
+		sList += '<option value="' + (isCategory ? '#c' + aBoardsAndCategories[i].id : aBoardsAndCategories[i].url) + '"' +
+				(!isCategory && aBoardsAndCategories[i].id == this.opt.iBoardId ? ' style="background: #d0f5d5">=> ' + aBoardsAndCategories[i].name + ' &lt;='
+				: '>' + (isCategory ? '' : sChildLevelPrefix + '=> ') + aBoardsAndCategories[i].name) + '</option>';
 
 		if (isCategory)
 			sList += oDashOption;

@@ -2348,7 +2348,7 @@ function setupThemeContext($forceload = false)
 		add_js('
 	var smf_avatarMaxWidth = ' . (int) $modSettings['avatar_max_width_external'] . ';
 	var smf_avatarMaxHeight = ' . (int) $modSettings['avatar_max_height_external'] . ';
-	addLoadEvent(smf_avatarResize);');
+	$(window).load(smf_avatarResize);');
 
 	// This looks weird, but it's because BoardIndex.php references the variable.
 	$context['common_stats']['latest_member'] = array(

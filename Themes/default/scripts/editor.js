@@ -162,7 +162,7 @@ function smc_Editor(oOptions)
 		}).css({ display: 'none', margin: 0 }).appendTo(this.oTextHandle.parentNode)[0];
 
 		// Create some handy shortcuts.
-		this.oFrameDocument = this.oFrameHandle.contentDocument ? this.oFrameHandle.contentDocument : ('contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow.document : this.oFrameHandle.document);
+		this.oFrameDocument = this.oFrameHandle.contentDocument || ('contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow.document : this.oFrameHandle.document);
 		this.oFrameWindow = 'contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow : this.oFrameHandle.document.parentWindow;
 
 		// Create the debug window... and stick this under the main frame - make it invisible by default.
