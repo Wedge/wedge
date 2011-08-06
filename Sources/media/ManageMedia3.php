@@ -16,10 +16,6 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-//////////////////////////////////
-define('AEVA_SITELIST_VERSION', '5');
-//////////////////////////////////
-
 // Handles the admin pages
 function aeva_admin_embed()
 {
@@ -90,7 +86,6 @@ function aeva_admin_embed()
 		'hr4'						=> array('hr', 'config'),
 		'embed_noscript'			=> array('yesno', 'config'),
 		'embed_expins'				=> array('yesno', 'config'),
-		'embed_checkadmin'			=> array('yesno', 'config'),
 		'hr5'						=> array('hr', 'config'),
 		'embed_max_width'			=> array('small_text', 'config', null, null, $txt['media_pixels']),
 		'embed_max_per_post'		=> array('small_text', 'config', null, null, $txt['media_lower_items']),
@@ -285,114 +280,6 @@ function aeva_admin_embed()
 	}
 }
 
-function aeva_update_sitelist()
-{
-	global $modSettings, $context;
-
-	@set_time_limit(900);
-	$data = @aeva_fetch('http://noisen.com/aeva_latest.js');
-	if (!defined('AEVA_MEDIA_VERSION'))
-		loadSource('media/Subs-Media');
-
-	$latest_version = preg_match('~ver = "([^"]+)"~', $data, $latest_version) ? $latest_version[1] : AEVA_MEDIA_VERSION;
-	$latest_sitelist = preg_match('~lis = "([^"]+)"~', $data, $latest_sitelist) ? $latest_sitelist[1] : AEVA_SITELIST_VERSION;
-	$current_id = !empty($modSettings['aeva_latest_sitelist']) ? $modSettings['aeva_latest_sitelist'] : $latest_sitelist;
-
-	if ($latest_sitelist != $current_id)
-	{
-		$new_sitelist = @aeva_fetch('http://noisen.com/sitelist.txt');
-		if ((substr($new_sitelist, -2) == '?' . '>') && (preg_match('~\$aeva_min \= ([0-9]+)~', $new_sitelist, $aeva_min) ? $aeva_min[1] : 0) <= AEVA_SITELIST_VERSION)
-		{
-			$sites = array();
-			@include($sourcedir . '/media/Subs-Aeva-Sites.php');
-			$my_file = fopen($sourcedir . '/media/Subs-Aeva-Sites.php', 'w');
-			if (!$my_file)
-				return;
-			fwrite($my_file, $new_sitelist, strlen($new_sitelist));
-			fclose($my_file);
-			aeva_show_sitelist_updates();
-			$sites = array();
-			$update_me = true;
-		}
-	}
-
-	updateSettings(array('embed_latest_version' => $latest_version, 'embed_latest_sitelist' => $latest_sitelist, 'embed_version_test' => time()));
-
-	if (empty($update_me))
-		return;
-
-	// Now it'll be easier to just simulate calling the Aeva admin area to save the updated sitelist, won't it?
-	$ps = $_POST;
-	$_POST['submit_aeva'] = true;
-	$context['embed_auto_updating'] = true;
-	foreach ($modSettings as $ms => $cms)
-		if (substr($ms, 0, 6) == 'embed_' && !empty($cms))
-			$_POST[$ms] = $cms;
-	unset($_REQUEST['sa']);
-	aeva_admin_embed();
-	$_POST = $ps;
-	unset($ps);
-	$url = 'http' . (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off' ? '' : 's') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-	$url = str_ireplace(array(';checkaeva', '&checkaeva', 'checkaeva'), '', $url);
-	redirectexit($url, false);
-}
-
-function aeva_show_sitelist_updates()
-{
-	global $sites, $txt, $modSettings;
-
-	if (!isset($txt['media']) && loadLanguage('Media') == false)
-		loadLanguage('Media', 'english');
-
-	$alu = empty($modSettings['embed_list_updates']) ? '' : $modSettings['embed_list_updates'];
-	$old_sites = $new_sites = array();
-	foreach ($sites as $s)
-		$old_sites[$s['id']] = $s['title'] . '@' . serialize($s);
-
-	$sites = array();
-	@include($sourcedir . '/media/Subs-Aeva-Sites.php');
-	foreach ($sites as $s)
-		$new_sites[$s['id']] = $s['title'] . '@' . serialize($s);
-	unset($sites);
-
-	$sites_added = array_diff_key($new_sites, $old_sites);
-	$sites_removed = array_diff_key($old_sites, $new_sites);
-	$sites_modified = array();
-	foreach (array_keys($new_sites) as $a)
-		if (isset($old_sites[$a]) && $old_sites[$a] != $new_sites[$a])
-			$sites_modified[] = $new_sites[$a];
-
-	$msg = '';
-	if (count($sites_added) > 0)
-	{
-		$msg .= '<br>' . $txt['embed_sitelist_added'] . ' ';
-		foreach ($sites_added as $s)
-			$msg .= substr($s, 0, strpos($s, '@')) . ', ';
-		$msg = substr($msg, 0, -2) . '<br>';
-	}
-	if (count($sites_removed) > 0)
-	{
-		$msg .= '<br>' . $txt['embed_sitelist_removed'] . ' ';
-		foreach ($sites_removed as $s)
-			$msg .= substr($s, 0, strpos($s, '@')) . ', ';
-		$msg = substr($msg, 0, -2) . '<br>';
-	}
-	if (count($sites_modified) > 0)
-	{
-		$msg .= '<br>' . $txt['embed_sitelist_modified'] . ' ';
-		foreach ($sites_modified as $s)
-			$msg .= substr($s, 0, strpos($s, '@')) . ', ';
-		$msg = substr($msg, 0, -2) . '<br>';
-	}
-	unset($sites_added, $sites_removed, $sites_modified);
-
-	// Nothing changed? Then it's a false alarm, keep it silent.
-	if (empty($msg))
-		return;
-
-	updateSettings(array('embed_list_updates' => empty($alu) ? '<span style="color: red">' . $txt['embed_sitelist_updated'] . '</span><br>' . $msg : $alu . $msg));
-}
-
 // Removes disabled sites, and removes information we won't need.
 function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 {
@@ -471,19 +358,20 @@ function aeva_write_file($arrays)
 
 	// Comment header - left-justified
 	$page = '<?php
-/********************************************************************************
-* Aeva-Sites.php
-* By Rene-Gilles Deberdt
-*********************************************************************************
-* The full/complete definitions are stored in Subs-Aeva-Sites.php
-* This is a GENERATED php file containing ONLY ENABLED sites for Aeva Media,
-* and is created when enabling/disabling sites via the admin panel.
-* It\'s more efficient this way.
-*********************************************************************************
-* This program is distributed in the hope that it is and will be useful, but
-* WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE.
-********************************************************************************/
+/**
+ * Wedge
+ *
+ * This PHP file was GENERATED by Wedge. It contains ONLY sites ENABLED for auto-embedding,
+ * and is created when enabling/disabling sites via the admin panel. It\'s more efficient this way.
+ * The complete list of available websites is stored in <Subs-Aeva-Sites.php>
+ * Uses portions written by Karl Benson.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 ';
 

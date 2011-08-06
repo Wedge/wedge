@@ -813,28 +813,6 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 		if ($can_unseen && empty($media_unseen))
 			aeva_markAllSeen();
 	}
-
-	if (!isset($txt['embed_current_version']) && (empty($_REQUEST['action']) || $_REQUEST['action'] != 'admin'))
-		return;
-
-	if (!isset($txt['embed_current_version']))
-		loadLanguage('ManageMedia');
-
-	$scu = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-	if (strpos($scu, 'checkaeva') === false)
-		$scu .= (strpos($scu, '?') !== false ? ';' : '?') . 'checkaeva';
-	$sotop = isset($modSettings['aeva_latest_version']) ? my_version_compare($modSettings['aeva_latest_version'], AEVA_MEDIA_VERSION) : 0;
-	$context['aeva_update_show_on_top'] = $sotop <= 0;
-
-	$context['aeva_update_message'] = ($sotop ? '<span style="color: red; font-weight: bold">' . sprintf($txt['media_new_version'], 'http://custom.simplemachines.org/mods/index.php?mod=977', $modSettings['aeva_latest_version'])
-		. '</span><br>' : '') . sprintf($txt['embed_current_version'], AEVA_MEDIA_VERSION) . ' (<a href="' . $scu . '">' . $txt['media_check_now'] . '</a>)'
-		. (isset($modSettings['aeva_version_test']) ? '<br>' . $txt['media_last_check'] . ': ' . timeformat($modSettings['aeva_version_test']) : '');
-
-	if (empty($context['aeva_auto_updating']) && !empty($modSettings['aeva_list_updates']))
-	{
-		$context['aeva_update_message'] .= '<hr>' . $modSettings['aeva_list_updates'];
-		updateSettings(array('aeva_list_updates' => ''));
-	}
 }
 
 function my_version_compare($v1, $v2)

@@ -3547,7 +3547,7 @@ function ApplyRules($all_messages = false)
 	global $user_info, $context, $options;
 
 	// Want this - duh!
-	loadRules();
+	LoadRules();
 
 	// No rules?
 	if (empty($context['rules']))

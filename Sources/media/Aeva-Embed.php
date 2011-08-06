@@ -19,20 +19,10 @@ if (!defined('SMF'))
 function aeva_main(&$message)
 {
 	global $context, $modSettings, $sites, $upto, $user_info, $sourcedir;
-	static $aeva_update_list = true;
 
 	// Auto-embedding is disabled. We shouldn't have got this far, but if we have... get out of here.
 	if (empty($modSettings['embed_enabled']))
 		return $message;
-
-	// If lookups are available, retrieve the latest version for both Aeva and its site list
-	if ($aeva_update_list && !empty($modSettings['embed_lookups']) && (empty($modSettings['embed_version_test']) ||
-	((time() - 24*3600) >= $modSettings['embed_version_test']) || (isset($_GET['checkaeva']) && (empty($modSettings['embed_checkadmin']) || $user_info['is_admin']))))
-	{
-		loadSource('media/ManageMedia3');
-		aeva_update_sitelist();
-	}
-	$aeva_update_list = false;
 
 	// Attempt to load all Enabled Sites, if not already loaded
 	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
