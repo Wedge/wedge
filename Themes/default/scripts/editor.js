@@ -1121,7 +1121,7 @@ smc_Editor.prototype.checkShortcut = function(oEvent)
 
 	// Let's take a look at each of our shortcuts shall we?
 	for (var i = 0, n = this.aKeyboardShortcuts.length; i < n; i++)
-		if (oEvent.altKey == this.aKeyboardShortcuts[i].alt && oEvent.ctrlKey == this.aKeyboardShortcuts[i].ctrl && oEvent.keyCode == this.aKeyboardShortcuts[i].key)
+		if (oEvent.altKey == this.aKeyboardShortcuts[i].alt && oEvent.ctrlKey == this.aKeyboardShortcuts[i].ctrl && oEvent.which == this.aKeyboardShortcuts[i].key)
 			sReturnCode = this.aKeyboardShortcuts[i].code; // Found something?
 
 	return sReturnCode;
