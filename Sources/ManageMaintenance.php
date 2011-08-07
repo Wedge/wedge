@@ -1429,7 +1429,7 @@ function AdminBoardRecount()
 // Perform a detailed version check.  A very good thing ;).
 function VersionDetail()
 {
-	global $forum_version, $txt, $context;
+	global $txt, $context;
 
 	isAllowedTo('admin_forum');
 
@@ -1468,7 +1468,7 @@ function VersionDetail()
 	);
 
 	// Make it easier to manage for the template.
-	$context['forum_version'] = $forum_version;
+	$context['forum_version'] = WEDGE_VERSION;
 
 	loadSubTemplate('view_versions');
 	$context['page_title'] = $txt['admin_version_check'];

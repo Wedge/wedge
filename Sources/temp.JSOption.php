@@ -20,7 +20,7 @@ define('WEDGE_NO_LOG', 1);
 	Its tasks include changing theme settings, installing and removing
 	themes, choosing the current theme, and editing themes.  This is done in:
 
-	void Jsoption()
+	void JSOption()
 		- sets a theme option without outputting anything.
 		- can be used with javascript, via a dummy image... (which doesn't
 		  require the page to reload.)
@@ -31,7 +31,7 @@ define('WEDGE_NO_LOG', 1);
 */
 
 // Set an option via javascript.
-function Jsoption()
+function JSOption()
 {
 	global $settings, $user_info, $options;
 

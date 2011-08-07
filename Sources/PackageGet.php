@@ -190,7 +190,7 @@ function PackageServers()
 // Browse a server's list of packages.
 function PackageGBrowse()
 {
-	global $txt, $boardurl, $context, $scripturl, $boarddir, $forum_version, $context;
+	global $txt, $boardurl, $context, $scripturl, $boarddir, $context;
 
 	if (isset($_GET['server']))
 	{
@@ -310,7 +310,7 @@ function PackageGBrowse()
 			$default_title = westr::htmlspecialchars($listing->fetch('default-website/@title'));
 	}
 
-	$the_version = strtr($forum_version, array('Wedge ' => ''));
+	$the_version = WEDGE_VERSION;
 	if (!empty($_SESSION['version_emulate']))
 		$the_version = $_SESSION['version_emulate'];
 

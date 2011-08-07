@@ -1060,7 +1060,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 // Parses a addon-info.xml file - method can be 'install', 'upgrade', or 'uninstall'.
 function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install', $previous_version = '')
 {
-	global $boarddir, $forum_version, $context, $temp_path, $language;
+	global $boarddir, $context, $temp_path, $language;
 
 	// Mayday! That action doesn't exist!!
 	if (empty($packageXML) || !$packageXML->exists($method))
@@ -1068,7 +1068,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 
 	// We haven't found the package script yet...
 	$script = false;
-	$the_version = strtr($forum_version, array('Wedge ' => ''));
+	$the_version = WEDGE_VERSION;
 
 	// Emulation support...
 	if (!empty($_SESSION['version_emulate']))

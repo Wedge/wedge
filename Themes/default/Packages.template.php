@@ -451,7 +451,7 @@ function template_examine()
 
 function template_browse()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings, $forum_version;
+	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	echo '
 	<div id="admincenter">
@@ -524,7 +524,7 @@ function template_browse()
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['package_emulate'], ':</strong>
-							<dfn><a href="#" onclick="$(\'#ve\').val(\'', $forum_version, '\'); return false">', $txt['package_emulate_revert'], '</a></dfn>
+							<dfn><a href="#" onclick="$(\'#ve\').val(\'', WEDGE_VERSION, '\'); return false">', $txt['package_emulate_revert'], '</a></dfn>
 						</dt>
 						<dd>
 							<input type="text" name="version_emulate" id="ve" value="', $context['forum_version'], '" size="25">

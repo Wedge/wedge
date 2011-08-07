@@ -291,8 +291,7 @@ class wesql
 
 	public static function serious_error($db_string, $connection = null)
 	{
-		global $txt, $context, $webmaster_email, $modSettings;
-		global $forum_version, $db_last_error, $db_persist;
+		global $txt, $context, $webmaster_email, $modSettings, $db_last_error, $db_persist;
 		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
 
 		// Get the file and line numbers.
@@ -461,8 +460,8 @@ class wesql
 			$context['error_message'] = $txt['try_again'];
 
 		// A database error is often the sign of a database in need of upgrade. Check forum versions, and if not identical suggest an upgrade... (not for Demo/CVS versions!)
-		if (allowedTo('admin_forum') && !empty($forum_version) && $forum_version != 'Wedge ' . @$modSettings['smfVersion'] && strpos($forum_version, 'Demo') === false && strpos($forum_version, 'CVS') === false)
-			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], $forum_version, $modSettings['smfVersion']);
+		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$modSettings['smfVersion'] && strpos(WEDGE_VERSION, 'Demo') === false && strpos(WEDGE_VERSION, 'CVS') === false)
+			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, $modSettings['smfVersion']);
 
 		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
 			$context['error_message'] .= '<br><br>' . preg_replace('~(\r\n|\r|\n)~', '<br>$1', $db_string);

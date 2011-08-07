@@ -927,7 +927,7 @@ function PackageInstall()
 			elseif ($action['type'] == 'code' && !empty($action['filename']))
 			{
 				// This is just here as reference for what is available.
-				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $forum_version;
+				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings;
 
 				// Now include the file and be done with it ;).
 				require($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']);
@@ -936,7 +936,7 @@ function PackageInstall()
 			elseif ($action['type'] == 'database' && !empty($action['filename']) && (!$context['uninstalling'] || !empty($_POST['do_db_changes'])))
 			{
 				// These can also be there for database changes.
-				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $forum_version;
+				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings;
 				global $db_package_log;
 
 				// We'll likely want the package specific database functionality!
@@ -1252,12 +1252,12 @@ function PackageRemove()
 // Browse a list of installed packages.
 function PackageBrowse()
 {
-	global $txt, $boarddir, $scripturl, $context, $forum_version;
+	global $txt, $boarddir, $scripturl, $context;
 
 	$context['page_title'] .= ' - ' . $txt['browse_packages'];
 	loadSubTemplate('browse');
 
-	$context['forum_version'] = $forum_version;
+	$context['forum_version'] = WEDGE_VERSION;
 
 	$instmods = loadInstalledPackages();
 
@@ -1269,7 +1269,7 @@ function PackageBrowse()
 			'version' => $installed_mod['version'],
 		);
 
-	$the_version = strtr($forum_version, array('Wedge ' => ''));
+	$the_version = WEDGE_VERSION;
 
 	// Here we have a little code to help those who class themselves as something of gods, version emulation ;)
 	if (isset($_GET['version_emulate']))
@@ -1277,13 +1277,10 @@ function PackageBrowse()
 		if ($_GET['version_emulate'] === 0 && isset($_SESSION['version_emulate']))
 			unset($_SESSION['version_emulate']);
 		elseif ($_GET['version_emulate'] !== 0)
-			$_SESSION['version_emulate'] = strtr($_GET['version_emulate'], array('-' => ' ', '+' => ' ', 'Wedge ' => ''));
+			$_SESSION['version_emulate'] = strtr($_GET['version_emulate'], array('-' => ' ', '+' => ' '));
 	}
 	if (!empty($_SESSION['version_emulate']))
-	{
-		$context['forum_version'] = 'Wedge ' . $_SESSION['version_emulate'];
-		$the_version = $_SESSION['version_emulate'];
-	}
+		$context['forum_version'] = $the_version = $_SESSION['version_emulate'];
 
 	// Get a list of all the ids installed, so the latest packages won't include already installed ones.
 	$context['installed_mods'] = array_keys($installed_mods);

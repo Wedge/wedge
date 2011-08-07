@@ -16,7 +16,7 @@ if (!defined('SMF'))
 
 define('WEDGE_NO_LOG', 1);
 
-function Jseditor()
+function JSEditor()
 {
 	global $context;
 

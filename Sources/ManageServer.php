@@ -596,7 +596,7 @@ function ManageLanguages()
 // Interface for adding a new language
 function AddLanguage()
 {
-	global $context, $forum_version, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	// Are we searching for new languages courtesy of Simple Machines?
 	if (!empty($_POST['smf_add_sub']))
@@ -608,7 +608,7 @@ function AddLanguage()
 
 		// We're going to use this URL.
 		// !!! @todo: Update with Wedge language files.
-		$url = 'http://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('Wedge ' => '')));
+		$url = 'http://download.simplemachines.org/fetch_language.php?version=' . urlencode(WEDGE_VERSION);
 
 		// Load the data and stick it into an array.
 		$language_list = new xmlArray(fetch_web_data($url), true);
@@ -650,7 +650,7 @@ function AddLanguage()
 // Download a language file from the Simple Machines website.
 function DownloadLanguage()
 {
-	global $context, $forum_version, $boarddir, $txt, $scripturl, $modSettings;
+	global $context, $boarddir, $txt, $scripturl, $modSettings;
 
 	loadLanguage('ManageSettings');
 	loadSource('Subs-Package');
@@ -693,7 +693,7 @@ function DownloadLanguage()
 		elseif (!empty($install_files))
 		{
 			// !!! @todo: Update with Wedge language files.
-			$archive_content = read_tgz_file('http://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('Wedge ' => ''))) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
+			$archive_content = read_tgz_file('http://download.simplemachines.org/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
 			// Make sure the files aren't stuck in the cache.
 			package_flush_cache();
 			$context['install_complete'] = sprintf($txt['languages_download_complete_desc'], $scripturl . '?action=admin;area=languages');
@@ -705,7 +705,7 @@ function DownloadLanguage()
 	// Open up the old china.
 	// !!! @todo: Update with Wedge language files.
 	if (!isset($archive_content))
-		$archive_content = read_tgz_file('http://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('Wedge ' => ''))) . ';fetch=' . urlencode($_GET['did']), null);
+		$archive_content = read_tgz_file('http://download.simplemachines.org/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), null);
 
 	if (empty($archive_content))
 		fatal_error($txt['add_language_error_no_response']);
@@ -1014,8 +1014,7 @@ function DownloadLanguage()
 // This lists all the current languages and allows editing of them.
 function ModifyLanguages()
 {
-	global $txt, $context, $scripturl;
-	global $user_info, $language, $boarddir, $forum_version;
+	global $txt, $context, $scripturl, $user_info, $language, $boarddir;
 
 	// Setting a new default?
 	if (!empty($_POST['set_default']) && !empty($_POST['def_language']))

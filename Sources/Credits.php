@@ -27,7 +27,7 @@ if (!defined('SMF'))
 
 function Credits($in_admin = false)
 {
-	global $context, $modSettings, $forum_copyright, $forum_version, $boardurl, $txt, $user_info;
+	global $context, $modSettings, $forum_copyright, $boardurl, $txt, $user_info;
 
 	// Don't blink. Don't even blink. Blink and you're dead.
 	loadLanguage('Who');
@@ -178,7 +178,7 @@ function Credits($in_admin = false)
 	);
 
 	$context['copyrights'] = array(
-		'smf' => sprintf($forum_copyright, $forum_version),
+		'wedge' => sprintf($forum_copyright, WEDGE_VERSION),
 		'images' => array(
 			'flags' => '<a href="http://famfamfam.com/lab/icons/flags/">FamFamFam Flags</a> &copy; Mark James, 2005',
 			'icons' => '<a href="http://www.everaldo.com/crystal/">Crystal Icons</a> &copy; Crystal Project, 2001-11',

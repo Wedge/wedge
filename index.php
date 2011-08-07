@@ -16,7 +16,6 @@
  * @version 0.1
  */
 
-$forum_version = 'Wedge 0.1';
 define('WEDGE_VERSION', '0.1');
 
 // Knock knock! We're entering through the front door.
@@ -81,13 +80,13 @@ $action_list = array(
 	'dlattach' => array('Dlattach.php', 'Dlattach'),
 	'emailuser' => array('SendTopic.php', 'EmailUser'),
 	'feed' => array('Feed.php', 'Feed'),
-	'findmember' => array('Findmember.php', 'Findmember'),
+	'findmember' => array('FindMember.php', 'FindMember'),
 	'groups' => array('Groups.php', 'Groups'),
 	'help' => array('Help.php', 'Help'),
 	'im' => array('PersonalMessage.php', 'MessageMain'),
-	'jseditor' => array('Jseditor.php', 'Jseditor'),
+	'jseditor' => array('JSEditor.php', 'JSEditor'),
 	'jsmodify' => array('JSModify.php', 'JSModify'),
-	'jsoption' => array('Jsoption.php', 'Jsoption'),
+	'jsoption' => array('JSOption.php', 'JSOption'),
 	'lock' => array('Lock.php', 'Lock'),
 	'login' => array('Login.php', 'Login'),
 	'login2' => array('Login2.php', 'Login2'),
@@ -107,7 +106,7 @@ $action_list = array(
 	'poll' => array('Poll.php', 'Poll'),
 	'post' => array('Post.php', 'Post'),
 	'post2' => array('Post2.php', 'Post2'),
-	'printpage' => array('Printpage.php', 'PrintPage'),
+	'printpage' => array('PrintPage.php', 'PrintPage'),
 	'profile' => array('Profile.php', 'ModifyProfile'),
 	'quotefast' => array('QuoteFast.php', 'QuoteFast'),
 	'quickmod' => array('QuickMod.php', 'QuickModeration'),
@@ -130,7 +129,7 @@ $action_list = array(
 	'theme' => array('Themes.php', 'ThemesMain'),
 	'trackip' => array('Profile-View.php', 'trackIP'),
 	'unread' => array('Unread.php', 'Unread'),
-	'unreadreplies' => array('Unreadreplies.php', 'Unreadreplies'),
+	'unreadreplies' => array('UnreadReplies.php', 'UnreadReplies'),
 	'verificationcode' => array('VerificationCode.php', 'VerificationCode'),
 	'viewquery' => array('ViewQuery.php', 'ViewQuery'),
 	'viewremote' => array('ViewRemote.php', 'ViewRemote'),

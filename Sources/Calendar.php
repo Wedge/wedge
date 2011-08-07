@@ -308,7 +308,7 @@ function CalendarPost()
 
 function iCalDownload()
 {
-	global $forum_version, $context, $modSettings;
+	global $context, $modSettings;
 
 	// Goes without saying that this is required.
 	if (!isset($_REQUEST['eventid']))
@@ -340,7 +340,7 @@ function iCalDownload()
 	$filecontents = '';
 	$filecontents .= 'BEGIN:VCALENDAR' . "\n";
 	$filecontents .= 'VERSION:2.0' . "\n";
-	$filecontents .= 'PRODID:-//Wedge.org//Wedge ' . (empty($forum_version) ? '0.1' : strtr($forum_version, array('Wedge ' => ''))) . '//EN' . "\n";
+	$filecontents .= 'PRODID:-//Wedge.org//Wedge ' . (!defined('WEDGE_VERSION') ? '0.1' : WEDGE_VERSION) . '//EN' . "\n";
 	$filecontents .= 'BEGIN:VEVENT' . "\n";
 	$filecontents .= 'DTSTART:' . $date . "\n";
 	$filecontents .= 'DTEND:' . $date . "\n";

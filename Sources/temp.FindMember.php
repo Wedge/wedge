@@ -16,7 +16,7 @@ if (!defined('SMF'))
 
 define('WEDGE_NO_LOG', 1);
 
-function Findmember()
+function FindMember()
 {
 	global $context, $scripturl, $user_info;
 

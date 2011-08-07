@@ -61,8 +61,8 @@ define('WEDGE_NO_LOG', 1);
 // Show an xml file representing recent information or a profile.
 function Feed()
 {
-	global $topic, $board, $board_info, $context, $scripturl, $txt, $modSettings;
-	global $query_this, $forum_version, $user_info, $domain;
+	global $topic, $board, $board_info, $context, $scripturl, $txt;
+	global $modSettings, $query_this, $user_info, $domain;
 
 	// If it's not enabled, die.
 	if (empty($modSettings['xmlnews_enable']))
@@ -321,7 +321,7 @@ function Feed()
 	<link rel="alternate" type="text/html" href="', $scripturl, '" />
 	<updated>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</updated>
 	<subtitle type="html">', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</subtitle>
-	<generator uri="http://wedge.org" version="', trim(str_replace('Wedge', '', $forum_version)), '">
+	<generator uri="http://wedge.org" version="', WEDGE_VERSION, '">
 		Wedge
 	</generator>
 	<author>

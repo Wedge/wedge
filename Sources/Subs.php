@@ -1719,10 +1719,10 @@ function template_header()
  */
 function theme_copyright()
 {
-	global $forum_copyright, $forum_version;
+	global $forum_copyright;
 
 	// For SSI and other things, skip the version number.
-	echo sprintf($forum_copyright, empty($forum_version) ? 'Wedge' : $forum_version);
+	echo defined('WEDGE_VERSION') ? sprintf($forum_copyright, WEDGE_VERSION) : sprintf(str_replace('Wedge %1$s', 'Wedge', $forum_copyright), WEDGE_VERSION);
 }
 
 /**

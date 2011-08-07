@@ -14,7 +14,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-function Unreadreplies()
+function UnreadReplies()
 {
 	global $board, $txt, $scripturl;
 	global $user_info, $context, $settings, $modSettings, $options;

@@ -147,7 +147,7 @@ function aeva_admin_init()
 // The good old "about" page :)
 function aeva_admin_about()
 {
-	global $context, $txt, $scripturl, $forum_version, $amSettings, $memberContext, $boarddir, $settings;
+	global $context, $txt, $scripturl, $amSettings, $memberContext, $boarddir, $settings;
 
 	$sa = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('index', 'readme', 'changelog')) ? $_REQUEST['sa'] : 'index';
 
@@ -277,7 +277,7 @@ function aeva_admin_about()
 		'magickwand' => isset($data['mw']) ? $txt['media_yes'] : $txt['media_no'],
 		'imagemagick' => isset($imv) ? $txt['media_yes'] . ' ' . $imv : $txt['media_no'],
 		'php' => phpversion(),
-		'wedge' => $forum_version,
+		'wedge' => WEDGE_VERSION,
 		'safe_mode' => $data['safe_mode'],
 	);
 

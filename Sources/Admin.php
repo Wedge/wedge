@@ -44,7 +44,7 @@ if (!defined('SMF'))
 // The main admin handling function.
 function Admin()
 {
-	global $forum_version, $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $boardurl;
+	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $boardurl;
 
 	// Load the language and templates....
 	loadLanguage('Admin');
@@ -685,7 +685,7 @@ function Admin()
 
 	// Set up the sidebar information, like the news and so on, and introduce all the JavaScript we'll need.
 	$context['can_admin'] = allowedTo('admin_forum');
-	$context['forum_version'] = $forum_version;
+	$context['forum_version'] = WEDGE_VERSION;
 	setupAdminSidebar();
 
 	// Now - finally - call the right place!
@@ -755,16 +755,14 @@ function setupAdminSidebar()
 		sDaysShort: [\'', implode('\', \'', $txt['days_short']), '\'],
 
 		bLoadVersions: true,
-		sWedgeVersionContainerId: \'wedgeVersion\',
-		sYourVersionContainerId: \'yourVersion\',
 		sVersionOutdatedTemplate: ' . JavaScriptEscape('
 			<span class="alert">%currentVersion%</span>
 		') . ',
 
 		bLoadUpdateNotification: true,
-		sUpdateNotificationDefaultTitle: ' . JavaScriptEscape($txt['update_available']) . ',
-		sUpdateNotificationDefaultMessage: ' . JavaScriptEscape($txt['update_message']) . ',
-		sUpdateNotificationLink: we_script + \'?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query'] . '\'
+		sUpdateTitle: ' . JavaScriptEscape($txt['update_available']) . ',
+		sUpdateMessage: ' . JavaScriptEscape($txt['update_message']) . ',
+		sUpdateLink: we_script + \'?action=admin;area=packages;pgdownload;auto;package=%package%;' . $context['session_query'] . '\'
 	});');
 }
 

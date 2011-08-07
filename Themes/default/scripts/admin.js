@@ -52,10 +52,10 @@ we_AdminIndex.prototype.setAnnouncements = function ()
 
 	for (i = 0, k = ann.length; i < k; i++)
 		sMessages += opt.sAnnouncementMessageTemplate
-						.replace('%href%', ann[i].href)
-						.replace('%subject%', ann[i].subject)
-						.replace('%time%', ann[i].time.replace(/\$(shortmonth|month|shortday|day)-(\d+)/g, time_replace))
-						.replace('%message%', ann[i].message);
+			.replace('%href%', ann[i].href)
+			.replace('%subject%', ann[i].subject)
+			.replace('%time%', ann[i].time.replace(/\$(shortmonth|month|shortday|day)-(\d+)/g, time_replace))
+			.replace('%message%', ann[i].message);
 
 	$('#' + opt.sAnnouncementContainerId).html(opt.sAnnouncementTemplate.replace('%content%', sMessages));
 };
@@ -65,14 +65,14 @@ we_AdminIndex.prototype.showCurrentVersion = function ()
 	if (!('smfVersion' in window))
 		return;
 
-	$('#' + this.opt.sWedgeVersionContainerId).html(window.smfVersion);
+	$('#wedgeVersion').html(window.smfVersion);
 
 	var
-		oYourVersionContainer = $('#' + this.opt.sYourVersionContainerId),
+		oYourVersionContainer = $('#yourVersion'),
 		sCurrentVersion = oYourVersionContainer.html();
 
 	if (sCurrentVersion != window.smfVersion)
-		oYourVersionContainer.html(this.opt.sVersionOutdatedTemplate.replace('%currentVersion%', sCurrentVersion));
+		oYourVersionContainer.wrap('<span class="alert"></span>');
 };
 
 we_AdminIndex.prototype.checkUpdateAvailable = function ()
@@ -80,21 +80,17 @@ we_AdminIndex.prototype.checkUpdateAvailable = function ()
 	if (!('smfUpdatePackage' in window))
 		return;
 
-	// Are we setting a custom title and message?
-	var
-		sTitle = 'smfUpdateTitle' in window ? window.smfUpdateTitle : this.opt.sUpdateNotificationDefaultTitle,
-		sMessage = 'smfUpdateNotice' in window ? window.smfUpdateNotice : this.opt.sUpdateNotificationDefaultMessage;
-
-	$('#update_title').html(sTitle);
-	$('#update_message').html(sMessage);
+	// Show custom or generic title and message.
+	// If it's a critical update, make the title more visible.
+	$('#update_title')
+		.html(window.smfUpdateTitle || this.opt.sUpdateTitle)
+		.css('smfUpdateCritical' in window ? { color: '#ffcc99', fontSize: '1.2em' } : {});
+	$('#update_message')
+		.html(window.smfUpdateNotice || this.opt.sUpdateMessage);
 	$('#update_section').show();
 
 	// Parse in the package download URL if it exists in the string.
-	$('#update-link').attr('href', this.opt.sUpdateNotificationLink.replace('%package%', window.smfUpdatePackage));
-
-	// Is it a critical update? Then make it more visible.
-	if ('smfUpdateCritical' in window)
-		$('#update_title').css({ color: '#ffcc99', fontSize: '1.2em' });
+	$('#update-link').attr('href', this.opt.sUpdateLink.replace('%package%', window.smfUpdatePackage));
 };
 
 
@@ -195,10 +191,10 @@ we_ViewVersions.prototype.determineVersions = function ()
 			'Languages',
 			'Templates'
 		],
-		that = this,
-		i, n, sFilename, sYourVersion, sVersionType;
+		that = this, i, n = sSections.length, sFilename,
+		sYourVersion, sVersionType, sCurVersionType;
 
-	for (i = 0, n = sSections.length; i < n; i++)
+	for (i = 0; i < n; i++)
 	{
 		// Collapse all sections.
 		$('#' + sSections[i]).hide();
@@ -215,10 +211,11 @@ we_ViewVersions.prototype.determineVersions = function ()
 
 	for (sFilename in window.smfVersions)
 	{
-		if (!$('#current' + sFilename).length)
+		var sID = sFilename.replace(/\./g, '\\.');
+		if (!$('#current' + sID).length)
 			continue;
 
-		sYourVersion = $('#your' + sFilename).html(), sCurVersionType;
+		sYourVersion = $('#your' + sID).html();
 
 		for (sVersionType in oLowVersion)
 			if (sFilename.substr(0, sVersionType.length) == sVersionType)
@@ -229,22 +226,22 @@ we_ViewVersions.prototype.determineVersions = function ()
 
 		if (typeof sCurVersionType != 'undefined')
 		{
-			if ((this.compareVersions(oHighYour[sCurVersionType], sYourVersion) || oHighYour[sCurVersionType] == '??') && !oLowVersion[sCurVersionType])
+			if ((oHighYour[sCurVersionType] == '??' || this.compareVersions(oHighYour[sCurVersionType], sYourVersion)) && !oLowVersion[sCurVersionType])
 				oHighYour[sCurVersionType] = sYourVersion;
-			if (this.compareVersions(oHighCurrent[sCurVersionType], smfVersions[sFilename]) || oHighCurrent[sCurVersionType] == '??')
+			if (oHighCurrent[sCurVersionType] == '??' || this.compareVersions(oHighCurrent[sCurVersionType], smfVersions[sFilename]))
 				oHighCurrent[sCurVersionType] = smfVersions[sFilename];
 
 			if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
 			{
 				oLowVersion[sCurVersionType] = sYourVersion;
-				$('#your' + sFilename).css('color', 'red');
+				$('#your' + sID).css('color', 'red');
 			}
 		}
 		else if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
 			oLowVersion[sCurVersionType] = sYourVersion;
 
-		$('#current' + sFilename).html(smfVersions[sFilename]);
-		$('#your' + sFilename).html(sYourVersion);
+		$('#current' + sID).html(smfVersions[sFilename]);
+		$('#your' + sID).html(sYourVersion);
 	}
 
 	if (!('smfLanguageVersions' in window))
@@ -252,7 +249,7 @@ we_ViewVersions.prototype.determineVersions = function ()
 
 	for (sFilename in window.smfLanguageVersions)
 	{
-		for (i = 0; i < this.opt.aKnownLanguages.length; i++)
+		for (i = 0, n = this.opt.aKnownLanguages.length; i < n; i++)
 		{
 			if ($('#current' + sFilename + this.opt.aKnownLanguages[i]).html(smfLanguageVersions[sFilename]).length)
 				continue;
@@ -272,26 +269,13 @@ we_ViewVersions.prototype.determineVersions = function ()
 		}
 	}
 
-	$('#yourSources').html(oLowVersion.Sources ? oLowVersion.Sources : oHighYour.Sources);
 	$('#currentSources').html(oHighCurrent.Sources);
-	if (oLowVersion.Sources)
-		$('#yourSources').css('color', 'red');
-
-	$('#yourDefault').html(oLowVersion.Default ? oLowVersion.Default : oHighYour.Default);
 	$('#currentDefault').html(oHighCurrent.Default);
-	if (oLowVersion.Default)
-		$('#yourDefault').css('color', 'red');
-
-	if ($('#Templates').length)
-	{
-		$('#yourTemplates').html(oLowVersion.Templates ? oLowVersion.Templates : oHighYour.Templates);
-		$('#currentTemplates').html(oHighCurrent.Templates);
-		if (oLowVersion.Templates)
-			$('#yourTemplates').css('color', 'red');
-	}
-
-	$('#yourLanguages').html(oLowVersion.Languages ? oLowVersion.Languages : oHighYour.Languages);
+	$('#currentTemplates').html(oHighCurrent.Templates);
 	$('#currentLanguages').html(oHighCurrent.Languages);
-	if (oLowVersion.Languages)
-		$('#yourLanguages').css('color', 'red');
+
+	oLowVersion.Sources ? $('#yourSources').html(oLowVersion.Sources).css('color', 'red') : $('#yourSources').html(oHighYour.Sources);
+	oLowVersion.Default ? $('#yourDefault').html(oLowVersion.Default).css('color', 'red') : $('#yourDefault').html(oHighYour.Default);
+	oLowVersion.Templates ? $('#yourTemplates').html(oLowVersion.Templates).css('color', 'red') : $('#yourTemplates').html(oHighYour.Templates);
+	oLowVersion.Languages ? $('#yourLanguages').html(oLowVersion.Languages).css('color', 'red') : $('#yourLanguages').html(oHighYour.Languages);
 };

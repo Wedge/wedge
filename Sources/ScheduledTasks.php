@@ -1242,7 +1242,7 @@ function loadEssentialThemeData()
 
 function scheduled_fetchRemoteFiles()
 {
-	global $txt, $language, $settings, $forum_version, $modSettings;
+	global $txt, $language, $settings, $modSettings;
 
 	// What files do we want to get
 	$request = wesql::query('
@@ -1255,13 +1255,11 @@ function scheduled_fetchRemoteFiles()
 	$js_files = array();
 
 	while ($row = wesql::fetch_assoc($request))
-	{
 		$js_files[$row['id_file']] = array(
 			'filename' => $row['filename'],
 			'path' => $row['path'],
-			'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode($forum_version)),
+			'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode(WEDGE_VERSION)),
 		);
-	}
 
 	wesql::free_result($request);
 
