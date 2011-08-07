@@ -465,19 +465,17 @@ function template_browse()
 		</div>';
 
 	// Make a list of already installed mods so nothing is listed twice ;)
+	// !!! Unused: window.weInstalledPackages = ["', implode('", "', $context['installed_mods']), '"];
 	add_js('
-	window.smfForum_scripturl = "', $scripturl, '";
-	window.smfForum_sessionid = "', $context['session_id'], '";
-	window.smfForum_sessionvar = "', $context['session_var'], '";
-	window.smfInstalledPackages = ["', implode('", "', $context['installed_mods']), '"];
-	window.smfVersion = "', $context['forum_version'], '";');
+	window.weSessionQuery = "', $context['session_query'], '";
+	window.weVersion = "', $context['forum_version'], '";');
 
 	if (empty($modSettings['disable_smf_js']))
 		add_js_file($scripturl . '?action=viewremote;filename=latest-packages.js', true);
 
 	add_js('
-	if (typeof(window.smfLatestPackages) != "undefined")
-		$("#packagesLatest").html(window.smfLatestPackages);');
+	if (typeof window.weLatestPackages != "undefined")
+		$("#packagesLatest").html(window.weLatestPackages);');
 
 	echo '
 		<br>

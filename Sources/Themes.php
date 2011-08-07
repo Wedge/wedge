@@ -1261,7 +1261,7 @@ function ThemeInstall()
 <theme-info xmlns="http://www.simplemachines.org/xml/theme-info" xmlns:smf="http://www.simplemachines.org/">
 	<!-- For the id, always use something unique - put your name, a colon, and then the package name. -->
 	<id>smf:' . westr::strtolower(str_replace(array(' '), '_', $_REQUEST['copy'])) . '</id>
-	<version>' . $modSettings['smfVersion'] . '</version>
+	<version>' . $modSettings['weVersion'] . '</version>
 	<!-- Theme name, used purely for aesthetics. -->
 	<name>' . $_REQUEST['copy'] . '</name>
 	<!-- Author: your email address or contact information. The name attribute is optional. -->

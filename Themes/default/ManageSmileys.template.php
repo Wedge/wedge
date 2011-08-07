@@ -32,17 +32,12 @@ function template_editsets()
 	</div>
 	<br class="clear">';
 
-	add_js('
-	window.smfForum_scripturl = "', $scripturl, '";
-	window.smfForum_sessionid = "', $context['session_id'], '";
-	window.smfForum_sessionvar = "', $context['session_var'], '";');
-
 	if (empty($modSettings['disable_smf_js']))
 		add_js_file($scripturl . '?action=viewremote;filename=latest-smileys.js', true);
 
 	add_js('
-	if (typeof(window.smfLatestSmileys) != "undefined")
-		$("#smileysLatest").html(window.smfLatestSmileys);', !empty($context['selected_set']) ? '
+	if (typeof window.weLatestSmileys != "undefined")
+		$("#smileysLatest").html(window.weLatestSmileys);', !empty($context['selected_set']) ? '
 	changeSet("' . $context['selected_set'] . '");' : '');
 }
 

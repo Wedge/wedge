@@ -450,9 +450,6 @@ function template_main()
 				});
 			}
 		}
-
-		if (typeof(smf_codeFix) != "undefined")
-			smf_codeFix();
 	}');
 
 	// Code for showing and hiding additional options.

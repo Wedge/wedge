@@ -534,13 +534,10 @@ function template_main_blog()
 
 	function modify_topic_keypress(e)
 	{
-		if (typeof(e.keyCode) != "undefined" && e.keyCode == 13)
+		if (e.which == 13)
 		{
 			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
-			if (typeof(e.preventDefault) == "undefined")
-				e.returnValue = false;
-			else
-				e.preventDefault();
+			e.preventDefault();
 		}
 	}');
 }

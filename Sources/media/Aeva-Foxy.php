@@ -1518,7 +1518,7 @@ function scrollMe()
 
 function setItemStyle(idx)
 {
-	if (typeof(idx) == "undefined" || (currentState[currentPlayer] != "PLAYING" && currentState[currentPlayer] != "IDLE"))
+	if (typeof idx == "undefined" || (currentState[currentPlayer] != "PLAYING" && currentState[currentPlayer] != "IDLE"))
 		return;
 
 	var foxLength = foxp[currentPlayer].length;

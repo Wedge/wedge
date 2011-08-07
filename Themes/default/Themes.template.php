@@ -171,17 +171,15 @@ function template_main()
 	<br class="clear">';
 
 	add_js('
-	window.smfForum_scripturl = "', $scripturl, '";
-	window.smfForum_sessionid = "', $context['session_id'], '";
-	window.smfForum_sessionvar = "', $context['session_var'], '";
-	window.smfThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
+	window.weSessionQuery = "', $context['session_query'], '";
+	window.weThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
 
 	if (empty($modSettings['disable_smf_js']))
 		add_js_file($scripturl . '?action=viewremote;filename=latest-themes.js', true);
 
 	add_js('
-	if (typeof(window.smfLatestThemes) != "undefined")
-		$("#themeLatest").html(window.smfLatestThemes);');
+	if (typeof window.weLatestThemes != "undefined")
+		$("#themeLatest").html(window.weLatestThemes);');
 }
 
 function template_list_themes()

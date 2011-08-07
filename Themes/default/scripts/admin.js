@@ -62,16 +62,16 @@ we_AdminIndex.prototype.setAnnouncements = function ()
 
 we_AdminIndex.prototype.showCurrentVersion = function ()
 {
-	if (!('smfVersion' in window))
+	if (!('weVersion' in window))
 		return;
 
-	$('#wedgeVersion').html(window.smfVersion);
+	$('#wedgeVersion').html(window.weVersion);
 
 	var
 		oYourVersionContainer = $('#yourVersion'),
 		sCurrentVersion = oYourVersionContainer.html();
 
-	if (sCurrentVersion != window.smfVersion)
+	if (sCurrentVersion != window.weVersion)
 		oYourVersionContainer.wrap('<span class="alert"></span>');
 };
 
@@ -206,10 +206,10 @@ we_ViewVersions.prototype.determineVersions = function ()
 		});
 	}
 
-	if (!('smfVersions' in window))
-		window.smfVersions = {};
+	if (!('weVersions' in window))
+		window.weVersions = {};
 
-	for (sFilename in window.smfVersions)
+	for (sFilename in window.weVersions)
 	{
 		var sID = sFilename.replace(/\./g, '\\.');
 		if (!$('#current' + sID).length)
@@ -228,19 +228,19 @@ we_ViewVersions.prototype.determineVersions = function ()
 		{
 			if ((oHighYour[sCurVersionType] == '??' || this.compareVersions(oHighYour[sCurVersionType], sYourVersion)) && !oLowVersion[sCurVersionType])
 				oHighYour[sCurVersionType] = sYourVersion;
-			if (oHighCurrent[sCurVersionType] == '??' || this.compareVersions(oHighCurrent[sCurVersionType], smfVersions[sFilename]))
-				oHighCurrent[sCurVersionType] = smfVersions[sFilename];
+			if (oHighCurrent[sCurVersionType] == '??' || this.compareVersions(oHighCurrent[sCurVersionType], weVersions[sFilename]))
+				oHighCurrent[sCurVersionType] = weVersions[sFilename];
 
-			if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
+			if (this.compareVersions(sYourVersion, weVersions[sFilename]))
 			{
 				oLowVersion[sCurVersionType] = sYourVersion;
 				$('#your' + sID).css('color', 'red');
 			}
 		}
-		else if (this.compareVersions(sYourVersion, smfVersions[sFilename]))
+		else if (this.compareVersions(sYourVersion, weVersions[sFilename]))
 			oLowVersion[sCurVersionType] = sYourVersion;
 
-		$('#current' + sID).html(smfVersions[sFilename]);
+		$('#current' + sID).html(weVersions[sFilename]);
 		$('#your' + sID).html(sYourVersion);
 	}
 

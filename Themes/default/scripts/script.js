@@ -489,15 +489,15 @@ function smfSelectText(oCurElement, bActOnElement)
 // A function needed to discern HTML entities from non-western characters.
 function smc_saveEntities(sFormName, aElementNames, sMask)
 {
-	var i, f = document.forms, e = f[sFormName].elements, n = e.length;
+	var i, f = document.forms, nm = f[sFormName], e = nm.elements, n = e.length;
 	if (typeof sMask == 'string')
 		for (i = 0; i < n; i++)
 			if (e[i].id.substr(0, sMask.length) == sMask)
 				aElementNames.push(e[i].name);
 
 	for (i = 0, n = aElementNames.length; i < n; i++)
-		if (aElementNames[i] in f[sFormName])
-			f[sFormName][aElementNames[i]].value = f[sFormName][aElementNames[i]].value.replace(/&#/g, '&#38;#');
+		if (aElementNames[i] in nm)
+			nm[aElementNames[i]].value = nm[aElementNames[i]].value.replace(/&#/g, '&#38;#');
 }
 
 (function ($) {

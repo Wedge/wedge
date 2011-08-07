@@ -230,10 +230,10 @@ function template_view_versions()
 	), true);
 
 	add_js('
-	if (window.smfVersion)
+	if (window.weVersion)
 	{
-		$("#wedgeVersion").html(window.smfVersion);
-		if ($("#yourVersion").text() != window.smfVersion)
+		$("#wedgeVersion").html(window.weVersion);
+		if ($("#yourVersion").text() != window.weVersion)
 			$("#yourVersion").wrap(\'<span class="alert"></span>\');
 	}');
 

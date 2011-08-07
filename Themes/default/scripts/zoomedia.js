@@ -80,7 +80,7 @@
 						hide();
 				},
 				'keyup.zoom': function (e) {
-					if (active && e.keyCode == 27)
+					if (active && e.which == 27)
 						hide();
 				}
 			});

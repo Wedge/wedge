@@ -460,8 +460,8 @@ class wesql
 			$context['error_message'] = $txt['try_again'];
 
 		// A database error is often the sign of a database in need of upgrade. Check forum versions, and if not identical suggest an upgrade... (not for Demo/CVS versions!)
-		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$modSettings['smfVersion'] && strpos(WEDGE_VERSION, 'Demo') === false && strpos(WEDGE_VERSION, 'CVS') === false)
-			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, $modSettings['smfVersion']);
+		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$modSettings['weVersion'] && strpos(WEDGE_VERSION, 'Demo') === false && strpos(WEDGE_VERSION, 'CVS') === false)
+			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, $modSettings['weVersion']);
 
 		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
 			$context['error_message'] .= '<br><br>' . preg_replace('~(\r\n|\r|\n)~', '<br>$1', $db_string);

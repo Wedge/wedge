@@ -175,7 +175,7 @@ function highlightWord()
 		)[0],
 
 		// We could use scrollIntoView, but it's just not that great anyway.
-		spellview_height = typeof(sv.currentStyle) != "undefined" ? parseInt(sv.currentStyle.height, 10) : sv.offsetHeight,
+		spellview_height = typeof sv.currentStyle != "undefined" ? parseInt(sv.currentStyle.height, 10) : sv.offsetHeight,
 		word_position = $("#h1")[0].offsetTop,
 		current_position = sv.scrollTop;
 
@@ -231,7 +231,7 @@ function nextWord(ignoreall)
 	}
 
 	// Check to see if word is supposed to be ignored.
-	if (typeof(ignoredWords[misps[wordindex].word]) != "undefined")
+	if (typeof ignoredWords[misps[wordindex].word] != "undefined")
 	{
 		nextWord(false);
 		return false;
