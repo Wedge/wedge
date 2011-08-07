@@ -1,16 +1,18 @@
 <?php
-/********************************************************************************
-* Subs-Aeva-Sites.php for Aeva Media
-* By René-Gilles Deberdt (created by Karl Benson)
-*********************************************************************************
-* These are the COMPLETE definitions for the AeMe mod.
-* In most circumstances you will however use a GENERATED php file containing only
-* ENABLED sites and based on your settings. It's more efficient this way.
-*********************************************************************************
-* This program is distributed in the hope that it is and will be useful, but
-* WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE.
-********************************************************************************/
+/**
+ * Wedge
+ *
+ * These are all of the websites available for automatic embedding in posts.
+ * In most circumstances you will however use a GENERATED php file containing only
+ * ENABLED sites and based on your settings. It's more efficient this way.
+ * Uses portions written by Karl Benson.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Prevent attempts to access this file directly
 if (!defined('SMF'))
@@ -18,9 +20,6 @@ if (!defined('SMF'))
 
 // Create a global variable to store all the sites in.
 global $sites;
-
-// Minimum build that will be able to handle this file.
-$aeva_min = 5;
 
 $sites = array(
 	// Local files

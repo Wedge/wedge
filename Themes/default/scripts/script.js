@@ -163,8 +163,8 @@ function submitonce()
 
 function submitThisOnce(oControl)
 {
-	// Hateful, hateful fix for Safari 1.3 beta.
-	if (!is_safari || vers > 2)
+	// Hateful fix for Safari 1.3 beta.
+	if (!is_safari || vers >= 2)
 		$('textarea', 'form' in oControl ? oControl.form : oControl).attr('readOnly', true);
 
 	return !_formSubmitted;
@@ -192,7 +192,7 @@ function selectRadioByName(oRadioGroup, sName)
 // Invert all checkboxes at once by clicking a single checkbox.
 function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 {
-	for (var i = 0; i < oForm.length; i++)
+	for (var i = 0, n = oForm.length; i < n; i++)
 	{
 		if (!('name' in oForm[i]) || (typeof sMask == 'string' && oForm[i].name.substr(0, sMask.length) != sMask && oForm[i].id.substr(0, sMask.length) != sMask))
 			continue;

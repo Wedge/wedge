@@ -14,20 +14,11 @@
 
 function template_aeva_admin_above()
 {
-	global $context;
-
-	if (!empty($context['aeva_update_message']) && !empty($context['aeva_update_show_on_top']))
-		template_show_version_update();
-
 	template_aeva_subtabs();
 }
 
 function template_aeva_admin_below()
 {
-	global $context;
-
-	if (!empty($context['aeva_update_message']) && empty($context['aeva_update_show_on_top']))
-		template_show_version_update();
 }
 
 function template_aeva_admin_enclose_table_above()

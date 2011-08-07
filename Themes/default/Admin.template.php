@@ -233,10 +233,8 @@ function template_view_versions()
 	if (window.smfVersion)
 	{
 		$("#wedgeVersion").html(window.smfVersion);
-
-		var yourVer = $("#yourVersion"), currentVersion = yourVer.text();
-		if (currentVersion != window.smfVersion)
-			yourVer.wrap(\'<span class="alert"></span>\');
+		if ($("#yourVersion").text() != window.smfVersion)
+			$("#yourVersion").wrap(\'<span class="alert"></span>\');
 	}');
 
 	// And pass through the versions in case we want to make use of any of them.
@@ -273,10 +271,10 @@ function template_view_versions()
 							', $txt['admin_smfpackage'], '
 						</td>
 						<td class="windowbg">
-							<em id="yourSMF">', $context['forum_version'], '</em>
+							<em id="yourWedge">', $context['forum_version'], '</em>
 						</td>
 						<td class="windowbg">
-							<em id="currentSMF">??</em>
+							<em id="currentWedge">??</em>
 						</td>
 					</tr>';
 

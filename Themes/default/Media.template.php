@@ -60,16 +60,6 @@ function template_aeva_header()
 	</p>';
 }
 
-function template_show_version_update()
-{
-	global $context;
-
-	echo '
-	<div class="windowbg wrc" style="margin: 0 0 8px">
-		', $context['aeva_update_message'], '
-	</div>';
-}
-
 function template_aeva_subtabs()
 {
 	global $context;

@@ -89,10 +89,10 @@ if (!defined('SMF'))
 	void ManageRules()
 		// !!!
 
-	void LoadRules()
+	void loadRules()
 		// !!!
 
-	void ApplyRules()
+	void applyRules()
 		// !!!
 */
 
@@ -179,7 +179,7 @@ function MessageMain()
 			'unread_messages' => 0,
 		);
 
-		ApplyRules();
+		applyRules();
 		updateMemberData($user_info['id'], array('new_pm' => 0));
 		wesql::query('
 			UPDATE {db_prefix}pm_recipients
@@ -2921,7 +2921,7 @@ function ManageLabels()
 		$rule_changes = array();
 
 		// Will most likely need this.
-		LoadRules();
+		loadRules();
 
 		// Adding a new label?
 		if (isset($_POST['add']))
@@ -3331,7 +3331,7 @@ function ManageRules()
 	loadSubTemplate('rules');
 
 	// Load them... load them!!
-	LoadRules();
+	loadRules();
 
 	// Likely to need all the groups!
 	$request = wesql::query('
@@ -3365,7 +3365,7 @@ function ManageRules()
 	{
 		checkSession('get');
 
-		ApplyRules(true);
+		applyRules(true);
 		redirectexit('action=pm;sa=manrules');
 	}
 	// Editing a specific one?
@@ -3542,12 +3542,12 @@ function ManageRules()
 }
 
 // This will apply rules to all unread messages. If all_messages is set will, clearly, do it to all!
-function ApplyRules($all_messages = false)
+function applyRules($all_messages = false)
 {
 	global $user_info, $context, $options;
 
 	// Want this - duh!
-	LoadRules();
+	loadRules();
 
 	// No rules?
 	if (empty($context['rules']))
@@ -3645,7 +3645,7 @@ function ApplyRules($all_messages = false)
 }
 
 // Load up all the rules for the current user.
-function LoadRules($reload = false)
+function loadRules($reload = false)
 {
 	global $user_info, $context;
 
