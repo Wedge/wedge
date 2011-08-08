@@ -33,14 +33,14 @@ function aeva_main(&$message)
 		$context['embed_mg_hack'] = true;
 
 	// If we can't use generated version (either just after install, OR permissions meant generated version
-	// couldn't be created, OR it can't be found), load the full un-optimized version
+	// couldn't be created, OR it can't be found), load the full un-optimized version and just keep the popular sites for performance.
 	if (empty($sites))
 	{
 		loadSource(
 			file_exists($sourcedir . '/media/Aeva-Sites-Custom.php') ? array('media/Subs-Aeva-Sites', 'media/Aeva-Sites-Custom') : 'media/Subs-Aeva-Sites'
 		);
 
-		// We're using the full version, so need to sort out local ones.  Fortunately these come first
+		// We're using the full version, so we just keep allowed local embeds and popular sites.
 		foreach ($sites as $a => $b)
 		{
 			if (substr($b['id'], 0, 6) == 'local_')
@@ -49,9 +49,9 @@ function aeva_main(&$message)
 				if (empty($modSettings['embed_' . $b['plugin']]))
 					unset($sites[$a]);
 			}
-			// No more local ones
-			else
-				break;
+			// No more local ones, from now on only the popular sites will be kept.
+			elseif ($b['type'] !== 'pop')
+				unset($sites[$a]);
 		}
 	}
 

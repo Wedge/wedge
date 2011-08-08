@@ -91,7 +91,7 @@ else
 
 		public static function entity_clean($string)
 		{
-			return preg_replace_callback('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~', 'self::entity_fix', $string);
+			return preg_replace_callback('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~', 'westr_entity::entity_fix', $string);
 		}
 
 		public static function htmlspecialchars($string, $quote_style = ENT_COMPAT)
@@ -263,7 +263,7 @@ class westr extends westr_mb
 		}
 
 		$replace_counter = 0;
-		$work = preg_replace_callback("~\x14~", 'self::restore_entities', $work) . ($ellipsis && $len > $max_length ? '&hellip;' : '');
+		$work = preg_replace_callback("~\x14~", 'westr::restore_entities', $work) . ($ellipsis && $len > $max_length ? '&hellip;' : '');
 
 		// Make sure to close any opened tags after preparsing the string...
 		if (strpos($work, '<') !== false)

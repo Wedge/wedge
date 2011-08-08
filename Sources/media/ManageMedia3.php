@@ -101,8 +101,8 @@ function aeva_admin_embed()
 	// Clear sites that may have already been loaded (possibly for news and such)
 	$sites = array();
 
-	// Avoid errors - we'll use full in an emergency
-	$definitions = 'full';
+	// Avoid errors - we'll use default in an emergency
+	$definitions = 'default';
 
 	// Attempt to load enabled sites
 	if (file_exists($sourcedir . '/media/Subs-Aeva-Generated-Sites.php'))
@@ -112,7 +112,7 @@ function aeva_admin_embed()
 
 	// Site definitions
 	if (empty($sites))
-		$definitions = 'full';
+		$definitions = 'default';
 	elseif ($sites[0] == 'none')
 	{
 		// No enabled sites
@@ -161,9 +161,11 @@ function aeva_admin_embed()
 		$s['disabled'] = !empty($s['disabled']);
 
 		// Override the default setting, based on which sites are enabled
-		if ($definitions == 'generated')
+		if ($definitions === 'generated')
 			$s['disabled'] = empty($enabled_sites[$s['id']]);
-		elseif ($definitions == 'none')
+		elseif ($definitions === 'default')
+			$s['disabled'] = $s['type'] !== 'pop';
+		elseif ($definitions === 'none')
 			$s['disabled'] = true;
 
 		// Checkall - whether the checkall setting for each section is checked. It won't be if just one is unchecked.
@@ -453,7 +455,7 @@ function aeva_settings(&$dest, &$array, $type, $checkall)
 {
 	global $txt, $modSettings, $settings;
 
-	$dest['embed_' . $type] = array('title', 'sites', null, null, null, 'force_title' => '<strong>' . $txt['embed_' . $type . '_sites'] . ' (' . count($array) . ')</strong> - <input type="checkbox" id="checkall_' . $type . '" onclick="invertAll(this, this.form, \'embed_' . $type . '\');" ' . (!empty($checkall[$type]) ? ' checked' : '') . '><label class="smalltext" for="checkall_' . $type . '"> <em>' . $txt['media_select'] . '</em></label>');
+	$dest['embed_' . $type] = array('title', 'sites', null, null, null, 'force_title' => '<strong>' . $txt['embed_' . $type . '_sites'] . ' (' . count($array) . ')</strong> - <label><input type="checkbox" id="checkall_' . $type . '" onclick="invertAll(this, this.form, \'embed_' . $type . '\');" ' . (!empty($checkall[$type]) ? ' checked' : '') . '>&nbsp; <em>' . $txt['media_select'] . '</em></label>');
 	$dest['embed_' . $type . '_items'] = array('checkbox_line', 'sites', array(), true, null, 'skip_left' => true);
 
 	// Now for the magic block builder

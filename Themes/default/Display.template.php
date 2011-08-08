@@ -899,8 +899,8 @@ function template_display_statistics()
 					', $txt['topic_stats'], '
 				</we:title2>
 				<p>
-					', $txt['read'], ' ', $context['num_views'], ' ', $txt['times'], '
-					<br>', $context['num_replies'], ' ', $txt['replies'], '
+					', number_context('views', $context['num_views']), '
+					<br>', number_context('replies', $context['num_replies']), '
 				</p>';
 }
 

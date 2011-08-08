@@ -355,8 +355,6 @@ img.new_posts
 	font: $post_font
 	padding: .1em 0
 	clear: right
-	.first-post &
-		font-size: 110%
 
 // The user menu in the post display.
 .usermenu, .acmenu

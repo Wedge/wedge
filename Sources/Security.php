@@ -953,17 +953,21 @@ function boardsAllowedTo($permissions, $check_access = true)
 	return $boards;
 }
 
+/**
+ * Should this user's email address be shown?
+ *
+ * If you're guest and the forum is set to hide email for guests: no.
+ * If the user is post-banned: no.
+ * If it's your own profile and you've set your address hidden: yes_permission_override.
+ * If you're a moderator with sufficient permissions: yes_permission_override.
+ * If the user has set their email address to be hidden: no.
+ * Otherwise: no_through_forum for forum-based send email.
+ *
+ * @return string Returns either 'no', 'no_through_forum' or 'yes_permission_override'.
+ */
 function showEmailAddress($userProfile_hideEmail, $userProfile_id)
 {
 	global $modSettings, $user_info;
-
-	// Should this users email address be shown?
-	// If you're guest and the forum is set to hide email for guests: no.
-	// If the user is post-banned: no.
-	// If it's your own profile and you've set your address hidden: yes_permission_override.
-	// If you're a moderator with sufficient permissions: yes_permission_override.
-	// If the user has set their email address to be hidden: no.
-	// Otherwise: no_through_forum for forum-based send email.
 
 	return (!empty($modSettings['guest_hideContacts']) && $user_info['is_guest']) || isset($_SESSION['ban']['cannot_post']) ? 'no' : ((!$user_info['is_guest'] && $user_info['id'] == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
 }

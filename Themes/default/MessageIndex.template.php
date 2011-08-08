@@ -134,8 +134,8 @@ function template_main_board()
 						</div>
 					</td>
 					<td class="stats ', $color_class, '">
-						', $topic['replies'], ' ', $txt['replies'], '
-						<br>', $topic['views'], ' ', $txt['views'], '
+						', number_context('replies', $topic['replies']), '
+						<br>', number_context('views', $topic['views']), '
 					</td>
 					<td class="lastpost ', $alternate_class, '">
 						<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
@@ -402,8 +402,8 @@ function template_main_blog()
 						</div>
 					</td>
 					<td class="stats ', $color_class, '">
-						', $topic['replies'], ' ', $txt['replies'], '
-						<br>', $topic['views'], ' ', $txt['views'], '
+						', number_context('replies', $topic['replies']), '
+						<br>', number_context('views', $topic['views']), '
 					</td>';
 
 			// Show the quick moderation options?
@@ -602,7 +602,7 @@ function template_messageindex_childboards()
 					</td>
 					<td class="stats windowbg">
 						<p>', number_context($board['is_redirect'] ? 'redirects' : 'posts', $board['posts']), ' <br>
-						', $board['is_redirect'] ? '' : number_context('board_topics', $board['topics']), '
+						', $board['is_redirect'] ? '' : number_context('topics', $board['topics']), '
 						</p>
 					</td>
 					<td class="lastpost">';
