@@ -2258,7 +2258,7 @@ function setupThemeContext($forceload = false)
 	for ($i = 0, $n = count($context['news_lines']); $i < $n; $i++)
 		$context['fader_news_lines'][$i] = strtr(addslashes($context['news_lines'][$i]), array('/' => '\/', '<a href=' => '<a hre" + "f='));
 
-	$context['random_news_line'] = $context['news_lines'][mt_rand(0, count($context['news_lines']) - 1)];
+	$context['random_news_line'] = $n > 0 ? $context['news_lines'][mt_rand(0, $n - 1)] : '';
 
 	if (!$user_info['is_guest'])
 	{
