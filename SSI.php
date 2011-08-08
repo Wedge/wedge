@@ -636,7 +636,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 		<table class="ssi_table">
 			<tr class="left">
 				<th>', $txt['board'], '</th>
-				<th>', $txt['board_topics'], '</th>
+				<th>', $txt['topics'], '</th>
 				<th>', $txt['posts'], '</th>
 			</tr>';
 	foreach ($boards as $board)

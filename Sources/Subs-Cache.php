@@ -27,7 +27,7 @@ function add_js()
 	{
 		$footer_coding = true;
 		$context['footer_js'] .= '
-<script><!-- // --><[!CDATA[';
+<script><!-- // --><![CDATA[';
 	}
 	$args = func_get_args();
 	$context['footer_js'] .= implode('', $args);

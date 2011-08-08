@@ -1483,8 +1483,9 @@ th.last_th
 
 $main_font = Arial, sans-serif
 $menu_font = $main_font
-$post_font = $main_font
 $head_font = "PT Sans", $main_font
+
+$post_font = 10.5pt/135% "Segoe UI", "PT Sans", "Trebuchet MS", Verdana, $main_font
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""

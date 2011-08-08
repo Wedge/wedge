@@ -631,9 +631,12 @@ function template_messageindex_childboards()
 				foreach ($board['children'] as $child)
 				{
 					if (!$child['is_redirect'])
-						$child['link'] = '<a href="' . $child['href'] . '" ' . ($child['new'] ? 'class="new_posts" ' : '') . 'title="' . ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $txt['new_posts'] . ' (' . $txt['board_topics'] . ': ' . comma_format($child['topics']) . ', ' . $txt['posts'] . ': ' . comma_format($child['posts']) . ')"><div class="new_icon new_posts"></div>' : '') . '</a>';
+					{
+						$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('topics', $child['topics']) . ', ' . number_context('posts', $child['posts']) . ')';
+						$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '"><div class="new_icon new_posts"></div>' : '') . '</a>';
+					}
 					else
-						$child['link'] = '<a href="' . $child['href'] . '" title="' . comma_format($child['posts']) . ' ' . $txt['redirects'] . '">' . $child['name'] . '</a>';
+						$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('redirects', $child['posts']) . '">' . $child['name'] . '</a>';
 
 					// Has it posts awaiting approval?
 					if ($child['can_approve_posts'] && ($child['unapproved_posts'] | $child['unapproved_topics']))
@@ -728,7 +731,7 @@ function template_messageindex_statistics()
 					', $txt[$type . '_stats'], '
 				</we:title2>
 				<p>
-					', $board_info['num_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $board_info['total_topics'], ' ', $txt['topics'], '<br>
+					', $board_info['num_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', number_context('topics', $board_info['total_topics']), '<br>
 				</p>';
 }
 

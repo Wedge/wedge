@@ -302,6 +302,7 @@ img.new_posts
 		padding: 0
 		margin: 0 1em 0 1.5em
 		line-height: 1.2em
+		font-size: 90%
 
 	h4
 		margin: .2em 0 .2em 1.1em
@@ -321,6 +322,9 @@ img.new_posts
 
 	li.stars, li.avatar, li.blurb, li.postcount, li.im_icons ul
 		margin-top: .5em
+
+	li.blurb
+		color: #888
 
 	li.avatar
 		overflow: hidden
@@ -348,10 +352,11 @@ img.new_posts
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
-	font-family: $post_font
-	line-height: 130%
+	font: $post_font
 	padding: .1em 0
 	clear: right
+	.first-post &
+		font-size: 110%
 
 // The user menu in the post display.
 .usermenu, .acmenu
