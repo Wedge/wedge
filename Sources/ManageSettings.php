@@ -250,37 +250,6 @@ function ModifyCoreFeatures($return_config = false)
 				recacheSpiderNames();
 			'),
 		),
-		// Warning.
-		'w' => array(
-			'url' => 'action=admin;area=securitysettings;sa=moderation',
-			'setting' => 'warning_enabled',
-			'setting_callback' => create_function('$value', '
-				global $modSettings;
-				list ($modSettings[\'warning_enable\'], $modSettings[\'user_limit\'], $modSettings[\'warning_decrement\']) = explode(\',\', $modSettings[\'warning_settings\']);
-				$warning_settings = ($value ? 1 : 0) . \',\' . $modSettings[\'user_limit\'] . \',\' . $modSettings[\'warning_decrement\'];
-				if (!$value)
-				{
-					$returnSettings = array(
-						\'warning_watch\' => 0,
-						\'warning_moderate\' => 0,
-						\'warning_mute\' => 0,
-					);
-				}
-				elseif (empty($modSettings[\'warning_enable\']) && $value)
-				{
-					$returnSettings = array(
-						\'warning_watch\' => 10,
-						\'warning_moderate\' => 35,
-						\'warning_mute\' => 60,
-					);
-				}
-				else
-					$returnSettings = array();
-
-				$returnSettings[\'warning_settings\'] = $warning_settings;
-				return $returnSettings;
-			'),
-		),
 	);
 
 	// Anyone who would like to add a core feature?
@@ -545,22 +514,12 @@ function ModifyModerationSettings($return_config = false)
 	{
 		checkSession();
 
-		// Make sure these don't have an effect.
-		if (substr($modSettings['warning_settings'], 0, 1) != 1)
-		{
-			$_POST['warning_watch'] = 0;
-			$_POST['warning_moderate'] = 0;
-			$_POST['warning_mute'] = 0;
-		}
-		else
-		{
-			$_POST['warning_watch'] = min($_POST['warning_watch'], 100);
-			$_POST['warning_moderate'] = $modSettings['postmod_active'] ? min($_POST['warning_moderate'], 100) : 0;
-			$_POST['warning_mute'] = min($_POST['warning_mute'], 100);
-		}
+		$_POST['warning_watch'] = min($_POST['warning_watch'], 100);
+		$_POST['warning_moderate'] = $modSettings['postmod_active'] ? min($_POST['warning_moderate'], 100) : 0;
+		$_POST['warning_mute'] = min($_POST['warning_mute'], 100);
 
 		// Fix the warning setting array!
-		$_POST['warning_settings'] = '1,' . min(100, (int) $_POST['user_limit']) . ',' . min(100, (int) $_POST['warning_decrement']);
+		$_POST['warning_settings'] = min(100, (int) $_POST['user_limit']) . ',' . min(100, (int) $_POST['warning_decrement']);
 		$save_vars = $config_vars;
 		$save_vars[] = array('text', 'warning_settings');
 		unset($save_vars['rem1'], $save_vars['rem2']);
@@ -570,7 +529,7 @@ function ModifyModerationSettings($return_config = false)
 	}
 
 	// We actually store lots of these together - for efficiency.
-	list ($modSettings['warning_enable'], $modSettings['user_limit'], $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
+	list ($modSettings['user_limit'], $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
 
 	$context['post_url'] = $scripturl . '?action=admin;area=securitysettings;save;sa=moderation';
 	$context['settings_title'] = $txt['moderation_settings'];

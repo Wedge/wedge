@@ -1586,8 +1586,6 @@ function loadAllPermissions($loadType = 'classic')
 		$hiddenPermissions[] = 'calendar_post';
 		$hiddenPermissions[] = 'calendar_edit';
 	}
-	if (empty($modSettings['warning_enabled']))
-		$hiddenPermissions[] = 'issue_warning';
 
 	// Post moderation?
 	if (!$modSettings['postmod_active'])

@@ -74,13 +74,13 @@ function issueWarning($memID)
 	global $context, $cur_profile, $memberContext;
 
 	// Get all the actual settings.
-	list ($modSettings['warning_enable'], $modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
+	list ($modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
 
 	// This stores any legitimate errors.
 	$issueErrors = array();
 
 	// Doesn't hurt to be overly cautious.
-	if (empty($modSettings['warning_enable']) || ($context['user']['is_owner'] && !$cur_profile['warning']) || !allowedTo('issue_warning'))
+	if (($context['user']['is_owner'] && !$cur_profile['warning']) || !allowedTo('issue_warning'))
 		fatal_lang_error('no_access', false);
 
 	// Make sure things which are disabled stay disabled.

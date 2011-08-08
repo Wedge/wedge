@@ -82,10 +82,10 @@ function summary($memID)
 		'page_title' => sprintf($txt['profile_of_username'], $memberContext[$memID]['name']),
 		'can_send_pm' => allowedTo('pm_send'),
 		'can_have_buddy' => allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']),
-		'can_issue_warning' => !empty($modSettings['warning_enabled']) && allowedTo('issue_warning') && $modSettings['warning_settings'][0] == 1,
+		'can_issue_warning' => allowedTo('issue_warning'),
 	);
 	$context['member'] = &$memberContext[$memID];
-	$context['can_view_warning'] = !empty($modSettings['warning_enabled']) && (allowedTo('issue_warning') && !$context['user']['is_owner']) || (!empty($modSettings['warning_show']) && ($modSettings['warning_show'] > 1 || $context['user']['is_owner']));
+	$context['can_view_warning'] = (allowedTo('issue_warning') && !$context['user']['is_owner']) || (!empty($modSettings['warning_show']) && ($modSettings['warning_show'] > 1 || $context['user']['is_owner']));
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . '?action=profile;u=' . $memID;
@@ -94,7 +94,7 @@ function summary($memID)
 	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
 
 	// See if they have broken any warning levels...
-	list ($modSettings['warning_enable'], $modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
+	list ($modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
 	if (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $context['member']['warning'])
 		$context['warning_status'] = $txt['profile_warning_is_muted'];
 	elseif (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $context['member']['warning'])
