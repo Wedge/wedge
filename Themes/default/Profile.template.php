@@ -61,9 +61,9 @@ function template_summary()
 				<ul class="reset">';
 
 	// What about if we allow email only via the forum??
-	if ($context['member']['show_email'] === 'yes' || $context['member']['show_email'] === 'no_through_forum' || $context['member']['show_email'] === 'yes_permission_override')
+	if ($context['member']['show_email'] === 'no_through_forum' || $context['member']['show_email'] === 'yes_permission_override')
 		echo '
-					<li><a href="', $scripturl, '?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes' || $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', $settings['images_url'], '/email_sm.gif" alt="', $txt['email'], '"></a></li>';
+					<li><a href="', $scripturl, '?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', $settings['images_url'], '/email_sm.gif" alt="', $txt['email'], '"></a></li>';
 
 	// Don't show an icon if they haven't specified a website.
 	if ($context['member']['website']['url'] !== '' && !isset($context['disabled_fields']['website']))
@@ -120,14 +120,8 @@ function template_summary()
 				<dt>', $txt['profile_posts'], ': </dt>
 				<dd>', $context['member']['posts'], ' (', $context['member']['posts_per_day'], ' ', $txt['posts_per_day'], ')</dd>';
 
-	// Only show the email address fully if it's not hidden - and we reveal the email.
-	if ($context['member']['show_email'] == 'yes')
-		echo '
-				<dt>', $txt['email'], ': </dt>
-				<dd><a href="', $scripturl, '?action=emailuser;sa=email;uid=', $context['member']['id'], '">', $context['member']['email'], '</a></dd>';
-
-	// ... Or if the one looking at the profile is an admin they can see it anyway.
-	elseif ($context['member']['show_email'] == 'yes_permission_override')
+	// Only show the email address fully if the one looking at the profile is an admin they can see it anyway.
+	if ($context['member']['show_email'] == 'yes_permission_override')
 		echo '
 				<dt>', $txt['email'], ': </dt>
 				<dd><em><a href="', $scripturl, '?action=emailuser;sa=email;uid=', $context['member']['id'], '">', $context['member']['email'], '</a></em></dd>';

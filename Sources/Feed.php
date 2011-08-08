@@ -524,7 +524,7 @@ function getXmlNews($xml_format)
 				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 				'description' => cdata_parse($row['body']),
-				'author' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['poster_email'] : null,
+				'author' => (showEmailAddress(!empty($row['hide_email']), $row['id_member']) == 'yes_permission_override') ? $row['poster_email'] : null,
 				'comments' => $scripturl . '?action=post;topic=' . $row['id_topic'] . '.0',
 				'category' => cdata_parse($row['bname']),
 				'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['poster_time']),
@@ -541,7 +541,7 @@ function getXmlNews($xml_format)
 				),
 				'author' => array(
 					'name' => cdata_parse($row['poster_name']),
-					'email' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['poster_email'] : null,
+					'email' => (showEmailAddress(!empty($row['hide_email']), $row['id_member']) == 'yes_permission_override') ? $row['poster_email'] : null,
 					'uri' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : '',
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
@@ -641,7 +641,7 @@ function getXmlRecent($xml_format)
 				'title' => cdata_parse($row['subject']),
 				'link' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 				'description' => cdata_parse($row['body']),
-				'author' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['poster_email'] : null,
+				'author' => (showEmailAddress(!empty($row['hide_email']), $row['id_member']) == 'yes_permission_override') ? $row['poster_email'] : null,
 				'category' => cdata_parse($row['bname']),
 				'comments' => $scripturl . '?action=post;topic=' . $row['id_topic'] . '.0',
 				'pubDate' => gmdate('D, d M Y H:i:s \G\M\T', $row['poster_time']),
@@ -658,7 +658,7 @@ function getXmlRecent($xml_format)
 				),
 				'author' => array(
 					'name' => cdata_parse($row['poster_name']),
-					'email' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['poster_email'] : null,
+					'email' => (showEmailAddress(!empty($row['hide_email']), $row['id_member']) == 'yes_permission_override') ? $row['poster_email'] : null,
 					'uri' => !empty($row['id_member']) ? $scripturl . '?action=profile;u=' . $row['id_member'] : ''
 				),
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
@@ -706,7 +706,7 @@ function getXmlProfile($xml_format)
 			'content' => cdata_parse(isset($profile['group']) ? $profile['group'] : $profile['post_group']),
 			'author' => array(
 				'name' => $profile['real_name'],
-				'email' => in_array(showEmailAddress(!empty($profile['hide_email']), $profile['id']), array('yes', 'yes_permission_override')) ? $profile['email'] : null,
+				'email' => (showEmailAddress(!empty($profile['hide_email']), $profile['id']) == 'yes_permission_override') ? $profile['email'] : null,
 				'uri' => !empty($profile['website']) ? $profile['website']['url'] : ''
 			),
 			'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $user_profile[$profile['id']]['date_registered']),

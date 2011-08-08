@@ -491,10 +491,6 @@ function template_group_members()
 		elseif ($member['show_email'] == 'no_through_forum')
 			echo '
 							<a href="', $scripturl, '?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a>';
-		// ... otherwise it must be a 'yes', show it and show it fully.
-		else
-			echo '
-							<a href="mailto:', $member['email'], '">', $member['email'], '</a>';
 
 		echo '
 						</td>

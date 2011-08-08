@@ -384,7 +384,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 			'id' => $row['id_member'],
 			'name' => $row['real_name'],
 			'username' => $row['member_name'],
-			'email' => in_array(showEmailAddress(!empty($row['hide_email']), $row['id_member']), array('yes', 'yes_permission_override')) ? $row['email_address'] : '',
+			'email' => (showEmailAddress(!empty($row['hide_email']), $row['id_member']) == 'yes_permission_override') ? $row['email_address'] : '',
 			'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
 		);

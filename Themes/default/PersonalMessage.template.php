@@ -281,7 +281,7 @@ function template_folder()
 						<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['www']), '</a></li>';
 
 					// Don't show the email address if they want it hidden.
-					if (in_array($message['member']['show_email'], array('yes', 'yes_permission_override', 'no_through_forum')))
+					if (in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 						echo '
 						<li><a href="', $scripturl, '?action=emailuser;sa=email;uid=', $message['member']['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
 
