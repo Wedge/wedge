@@ -106,7 +106,7 @@ function template_set_password()
 						</span>
 					</dd>
 				</dl>
-				<p class="align_center"><input type="submit" value="', $txt['save'], '" class="save"></p>
+				<p class="floatright"><input type="submit" value="', $txt['save'], '" class="save"></p>
 			</div>
 		</div>
 		<input type="hidden" name="code" value="', $context['code'], '">
@@ -165,7 +165,7 @@ function template_ask()
 
 	echo '
 				</dl>
-				<p class="align_center"><input type="submit" value="', $txt['save'], '" class="save"></p>
+				<p class="floatright"><input type="submit" value="', $txt['save'], '" class="save"></p>
 			</div>
 		</div>
 		<input type="hidden" name="uid" value="', $context['remind_user'], '">

@@ -214,7 +214,7 @@ function template_notes()
 			echo '
 					</ul>
 					<div class="pagesection notes">
-						<span class="smalltext">', $txt['pages'], ': ', $context['page_index'], '</span>
+						<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 					</div>';
 		}
 
@@ -243,7 +243,7 @@ function template_reported_posts()
 				', $context['view_closed'] ? $txt['mc_reportedp_closed'] : $txt['mc_reportedp_active'], '
 			</we:cat>
 			<div class="pagesection">
-				<div class="pages">', $txt['pages'], ': ', $context['page_index'], '</div>
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 			</div>';
 
 	// Make the buttons.
@@ -291,9 +291,7 @@ function template_reported_posts()
 
 	echo '
 			<div class="pagesection">
-				<div class="floatleft">
-					', $txt['pages'], ': ', $context['page_index'], '
-				</div>
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 				<div class="floatright">
 					', !$context['view_closed'] ? '<input type="submit" name="close_selected" value="' . $txt['mc_reportedp_close_selected'] . '" class="delete">' : '', '
 				</div>
@@ -329,9 +327,9 @@ function template_unapproved_posts()
 			</div>';
 	else
 		echo '
-				<div class="pagesection">
-					<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
-				</div>';
+			<div class="pagesection">
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+			</div>';
 
 	foreach ($context['unapproved_items'] as $item)
 	{
@@ -374,9 +372,7 @@ function template_unapproved_posts()
 
 	if (!empty($context['unapproved_items']))
 		echo '
-				<div class="floatleft">
-					<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
-				</div>';
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>';
 
 	echo '
 			</div>
@@ -413,7 +409,7 @@ function template_unapproved_attachments()
 	{
 		echo '
 			<div class="pagesection">
-				<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 			</div>
 			<table class="table_grid w100 cs0">
 			<thead>
@@ -466,9 +462,7 @@ function template_unapproved_attachments()
 
 	if (!empty($context['unapproved_items']))
 		echo '
-				<div class="floatleft">
-					<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], '</div>
-				</div>';
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>';
 
 	echo '
 			</div>

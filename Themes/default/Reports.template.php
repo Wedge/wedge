@@ -75,7 +75,7 @@ function template_main()
 		<div id="report_buttons">';
 
 	if (!empty($report_buttons))
-		template_button_strip($report_buttons, 'right');
+		template_button_strip($report_buttons);
 
 	echo '
 		</div>';

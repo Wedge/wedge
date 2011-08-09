@@ -168,11 +168,8 @@ function template_folder()
 
 			// Show the conversation buttons.
 			echo '
-	<div class="pagesection">';
-
-			template_button_strip($conversation_buttons, 'right');
-
-			echo '
+	<div class="pagesection">',
+		template_button_strip($conversation_buttons), '
 	</div>';
 		}
 
@@ -477,27 +474,20 @@ function template_folder()
 
 		if (empty($context['display_mode']))
 			echo '
-
 	<div class="pagesection">
-		<div class="floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>
+		<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		<div class="floatright"><input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" style="font-weight: normal;" onclick="if (!confirm(', JavaScriptEscape($txt['delete_selected_confirm']), ')) return false;" class="delete"></div>
 	</div>';
 
 		// Show a few buttons if we are in conversation mode and outputting the first message.
 		elseif ($context['display_mode'] == 2 && isset($conversation_buttons))
-		{
 			echo '
-
-	<div class="pagesection">';
-
-			template_button_strip($conversation_buttons, 'right');
-
-			echo '
+	<div class="pagesection">',
+		template_button_strip($conversation_buttons), '
 	</div>';
-		}
 
 		echo '
-		<br>';
+	<br>';
 	}
 
 	// Individual messages = bottom list!
@@ -590,7 +580,7 @@ function template_subject_list()
 	</tbody>
 	</table>
 	<div class="pagesection">
-		<div class="floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>
+		<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		<div class="floatright">&nbsp;';
 
 	if ($context['show_delete'])
@@ -757,7 +747,7 @@ function template_search_results()
 			', $txt['pm_search_results'], '
 		</we:cat>
 		<div class="pagesection">
-			<strong>', $txt['pages'], ':</strong> ', $context['page_index'], '
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 	// complete results ?
@@ -851,9 +841,8 @@ function template_search_results()
 
 	echo '
 		<div class="pagesection">
-			<strong>', $txt['pages'], ':</strong> ', $context['page_index'], '
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
-
 }
 
 function template_send()
@@ -1660,7 +1649,7 @@ function template_pm_drafts()
 	echo '
 		</p>
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 	// Button shortcuts
@@ -1707,7 +1696,7 @@ function template_pm_drafts()
 	// Show more page numbers.
 	echo '
 		<div class="pagesection" style="margin-bottom: 0">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 	// A great, big, threatening button which must not be pressed under any circumstances, am I right?

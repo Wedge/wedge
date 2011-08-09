@@ -50,7 +50,7 @@ p.moderators
 
 .mark_read
 	padding: 0 .5em
-	.buttonlist ul
+	.buttonlist
 		padding-top: 0
 
 // The newsfader
@@ -163,8 +163,6 @@ img.new_posts
 		clear: right
 	.buttonlist
 		float: right
-	#pagelinks
-		padding-top: 1em
 
 #moderationbuttons
 	overflow: hidden
@@ -409,7 +407,7 @@ img.new_posts
 	cursor: pointer
 
 // The quick buttons
-div.quickbuttons_wrap
+.quickbuttons_wrap
 	padding: .2em 0
 	width: 100%
 	float: left
@@ -520,6 +518,33 @@ img.smiley
 		margin: 1em 0
 	div
 		padding: 0 .5em
+
+ul.buttonlist extends ul.quickbuttons
+	margin-right: -8px
+	overflow: hidden
+	padding-right: 1%
+	ul
+		padding: 5px
+		margin: 0
+		li
+			margin, padding: 0
+			list-style: none
+			float: left
+	a
+		padding: 4px
+		color: #000
+		background: #f3f3f3
+		height, line-height: 15px
+		text-decoration: none
+		border: 1px solid rgba(0,0,0, .07)
+		border-radius: 6px
+		&.active
+			background: #8a8ca5
+			color: #fff
+			font-weight: bold
+		:hover
+			background: #fd9604
+			color: #fff
 
 /* Styles for the quick reply area.
 ---------------------------------------------------- */
@@ -705,11 +730,7 @@ dl.poll_options
 
 /* Styles for the recent messages section.
 ---------------------------------------------------- */
-#readbuttons_top .pagelinks
-	padding-bottom: 1em
-	width: 60%
-
-#readbuttons .pagelinks
+#readbuttons nav
 	padding-top: 1em
 	width: 60%
 
@@ -883,9 +904,7 @@ tr.titlebg td
 .side_section .title
 	margin-bottom: 5px
 
-tr.windowbg td,
-tr.approvebg td,
-tr.highlight td
+tr.windowbg td
 	padding: .3em .7em
 
 #credits
@@ -905,44 +924,40 @@ tr.highlight td
 		width: 100%
 		thead
 			border-bottom: 1px solid #fff
+		td
+			font-size: 1em
 
 	// The subject column
-	td
-		font-size: 1em
-	td.subject
+	.subject
 		padding: 5px 8px
-	td.subject p,
-	td.stats
+		background-repeat: no-repeat
+		background-position: 99% .5em
+		&.sticky
+			background-image: url($images/icons/quick_sticky.gif)
+		&.locked
+			background-image: url($images/icons/quick_lock.gif)
+		&.sticky.locked
+			background-image: url($images/icons/quick_sticky_lock.gif)
+		&.my
+			background-image: url($images/icons/quick_my.gif)
+			background-repeat: no-repeat
+			background-position: 99% .5em
+		&.sticky.my
+			background-image: url($images/icons/quick_sticky_my.gif)
+		&.locked.my
+			background-image: url($images/icons/quick_lock_my.gif)
+		&.sticky.locked.my
+			background-image: url($images/icons/quick_sticky_lock_my.gif)
+	.subject p,
+	.stats
 		font-size: .85em
 		padding: 0
 		margin: 0
-	td.lastpost
+	.lastpost
+		background-image: none
 		font-size: .85em
 		line-height: 1.3em
 		padding: 4px
-	td.stickybg2,
-	td.lockedbg2,
-	td.locked_sticky2
-		background-repeat: no-repeat
-		background-position: 99% .5em
-	td.stickybg2
-		background-image: url($images/icons/quick_sticky.gif)
-	td.lockedbg2
-		background-image: url($images/icons/quick_lock.gif)
-	td.locked_sticky2
-		background-image: url($images/icons/quick_sticky_lock.gif)
-	td.stickybg2.my
-		background-image: url($images/icons/quick_sticky_my.gif)
-	td.lockedbg2.my
-		background-image: url($images/icons/quick_lock_my.gif)
-	td.locked_sticky2.my
-		background-image: url($images/icons/quick_sticky_lock_my.gif)
-	td.lastpost
-		background-image: none
-	td.windowbg2.my
-		background-image: url($images/icons/quick_my.gif)
-		background-repeat: no-repeat
-		background-position: 99% .5em
 
 /* Styles for (fatal) errors.
 ------------------------------------------------- */

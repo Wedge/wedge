@@ -975,48 +975,45 @@ tr.catbg, tr.titlebg
 
 // The page navigation area
 .pagesection
+	clear: left
 	font-size: .9em
 	padding: .2em
 	overflow: hidden
 	margin-bottom: 1px
 	.floatright input
 		margin-top: 3px
-
-.pagelinks
-	padding: .6em 0 .4em
-	span
-		font-weight: bold
+	nav
+		float: left
+		padding: .3em 0 .3em
+		span
+			font-weight: bold
 
 // Colors for background of posts requiring approval
-.approvebg
+.approve
 	color: #000
 	background-color: #ffeaea
-
-.approvebg2 extends .approvebg
-	background-color: #fff2f2
+	.windowbg2&
+		background-color: #fff2f2
 
 // Color for background of *topics* requiring approval
-.approvetbg
+.approvet
 	color: #000
 	background-color: #e4a17c
-
-.approvetbg2 extends .approvetbg
-	background-color: #f3bd9f
+	.windowbg2&
+		background-color: #f3bd9f
 
 // Sticky topics get a different background
-.stickybg
+.sticky
 	background: #e8d8cf
-
-.stickybg2 extends .stickybg
-	background: #f2e3d9
+	.windowbg2&
+		background: #f2e3d9
 
 // Locked posts get a different shade, too!
-.lockedbg
+.locked
 	background: #d4dce2
 	font-style: italic
-
-.lockedbg2 extends .lockedbg
-	background: #d8e1e7
+	.windowbg2&
+		background: #d8e1e7
 
 // Sometimes there will be an error when you post
 .error
@@ -1392,55 +1389,6 @@ h6.alt2
 #sidebar_toggle
 	float: right
 	margin: 3px 0 0 7px
-
-/* Styles for the standard button lists.
-------------------------------------------------------- */
-
-.buttonlist
-	margin-right: -8px
-	overflow: hidden
-	ul
-		padding: 5px
-		margin: 0 .2em 0 0
-		li
-			margin, padding: 0
-			list-style: none
-			float: left
-	a
-		display: block
-		text-transform: uppercase
-		text-decoration: none
-		font-family: Tahoma
-		font-size: 10px
-		color: #000
-		border: 1px solid rgba(0,0,0, .07)
-		background: #e8e8e8
-		height, line-height: 17px
-		padding: 0 7px
-		margin: 0 0 0 4px
-		border-radius: 6px
-		:hover
-			background: #fd9604
-			color: #fff
-	a.active
-		background: #5a6c85 !important
-		color: #fff
-		font-weight: bold
-		:hover
-			color: #ddf
-
-.align_top ul li a, .align_bottom ul li a
-	margin: 0 12px 0 0
-
-// The navigation list
-#navigation
-	margin: 0
-	font-size: .9em
-	padding: 1em .4em
-	li
-		float: none
-		font-size: .95em
-		display: inline
 
 /* Styles for a typical table.
 ------------------------------------------------------- */

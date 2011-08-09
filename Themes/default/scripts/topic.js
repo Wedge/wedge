@@ -370,7 +370,7 @@ InTopicModeration.prototype.handleClick = function(oCheckbox)
 	{
 		// Make sure it can go somewhere.
 		if (!$('#' + display).length)
-			$('<div id="' + display + '" class="' + (opt.sButtonStripClass ? opt.sButtonStripClass : 'buttonlist floatleft') + '"><ul></ul></div>').appendTo('#' + button_strip);
+			$('<ul id="' + display + '" class="' + (opt.sButtonStripClass ? opt.sButtonStripClass : 'buttonlist floatleft') + '"></ul>').appendTo('#' + button_strip);
 		else
 			$('#' + display).show();
 

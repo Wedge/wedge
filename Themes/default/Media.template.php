@@ -146,8 +146,8 @@ function template_aeva_home()
 	<div id="recent_pics">',
 		$view == 'normal' ? aeva_listItems($context['recent_items']) : aeva_listFiles($context['recent_items']), '
 	</div>
-	<div class="pagelinks">
-		', $txt['media_pages'], ': ', $context['aeva_page_index'], '
+	<div class="pagesection">
+		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 	</div>';
 	}
 
@@ -704,7 +704,9 @@ function template_aeva_item_comments()
 			</span>
 		</td></tr>
 		</table>
-		<div class="pagelinks">', $txt['media_pages'], ': ', $item['com_page_index'], '</div>';
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $item['com_page_index'], '</nav>
+		</div>';
 
 		$alternative = false;
 		foreach ($item['comments'] as $c)
@@ -758,7 +760,9 @@ function template_aeva_item_comments()
 			</td></tr>' : '', '
 			</table>
 		</div>
-		<div class="pagelinks">', $txt['media_pages'], ': ', $item['com_page_index'], '</div>';
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $item['com_page_index'], '</nav>
+		</div>';
 		}
 	}
 
@@ -1021,40 +1025,38 @@ function template_aeva_viewAlbum()
 	if ($can_edit_items || aeva_allowedTo('multi_download') || aeva_allowedTo('access_unseen'))
 	{
 		echo '
-			<div class="buttonlist data">
-				<ul>';
+			<ul class="buttonlist data">';
 
 		if ($context['aeva_can_add_item'])
 			echo '
-					<li><a href="', $galurl, 'sa=post;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/camera_add.png"> ', $txt['media_add_item'], '</span></a></li>';
+				<li><a href="', $galurl, 'sa=post;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/camera_add.png"> ', $txt['media_add_item'], '</span></a></li>';
 
 		if ($context['aeva_can_multi_upload'])
 			echo '
-					<li><a href="', $galurl, 'sa=mass;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/camera_mass.png"> ', $txt['media_multi_upload'], '</span></a></li>';
+				<li><a href="', $galurl, 'sa=mass;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/camera_mass.png"> ', $txt['media_multi_upload'], '</span></a></li>';
 
 		if ($can_moderate_here)
 		{
 			echo '
-					<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/folder_edit.png"> ', $txt['media_edit_this_item'], '</span></a></li>';
+				<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/folder_edit.png"> ', $txt['media_edit_this_item'], '</span></a></li>';
 			if ($user_info['is_admin'])
 				echo '
-					<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
+				<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
 			if (aeva_allowedTo('moderate') && $album_data['approved'] == 0)
 				echo '
-					<li><a href="', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> ', $txt['media_admin_approve'], '</span></a></li>';
+				<li><a href="', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;type=albums;in=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> ', $txt['media_admin_approve'], '</span></a></li>';
 		}
 
 		if (aeva_allowedTo('multi_download'))
 			echo '
-					<li><a href="', $galurl, 'sa=massdown;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/download.png" title="', $txt['media_multi_download'], '"> ', $txt['media_multi_download'], '</span></a></li>';
+				<li><a href="', $galurl, 'sa=massdown;album=', $album_data['id'], '"><span><img src="', $settings['images_aeva'], '/download.png" title="', $txt['media_multi_download'], '"> ', $txt['media_multi_download'], '</span></a></li>';
 
 		if (aeva_allowedTo('access_unseen'))
 			echo '
-					<li><a href="', $galurl, 'sa=album;in=', $album_data['id'], ';markseen;', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/eye.png" title="', $txt['media_mark_album_as_seen'], '"> ', $txt['media_mark_album_as_seen'], '</span></a></li>';
+				<li><a href="', $galurl, 'sa=album;in=', $album_data['id'], ';markseen;', $context['session_query'], '"><span><img src="', $settings['images_aeva'], '/eye.png" title="', $txt['media_mark_album_as_seen'], '"> ', $txt['media_mark_album_as_seen'], '</span></a></li>';
 
 		echo '
-				</ul>
-			</div>';
+			</ul>';
 	}
 	$can_edit_items |= $can_add_playlist;
 
@@ -1100,11 +1102,11 @@ function template_aeva_viewAlbum()
 		($context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_asc'] . '</b>' : ' <a href="'.$galurl.'sa=album;in='.$album_data['id'].(isset($_REQUEST['sort']) ? ';sort='.$_REQUEST['sort'] : '').';asc;' . ($album_data['view'] == 'normal' ? 'nw' : 'fw') . '">' . $txt['media_sort_order_asc'] . '</a>'),
 		(!$context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_desc'] . '</b>' : ' <a href="'.$galurl.'sa=album;in='.$album_data['id'] . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '').';desc;' . ($album_data['view'] == 'normal' ? 'nw' : 'fw') . '">'.$txt['media_sort_order_desc'].'</a>'), '
 		</div>
-		<div class="pagelinks page_index">
-			', $txt['media_pages'], ': ', $context['aeva_page_index'], '
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 		</div>',
 		$album_data['view'] == 'normal' ? aeva_listItems($context['aeva_items'], true, '', $can_edit_items) : aeva_listFiles($context['aeva_items'], $can_edit_items), '
-		<div class="pagelinks page_index" style="margin-top: 8px">', $can_edit_items ? '
+		<div class="pagesection" style="margin-top: 8px">', $can_edit_items ? '
 			<div class="aeva_quickmod_bar">
 				<label><input type="checkbox" id="check_all" onclick="invertAll(this, this.form, \'mod_item[\');"> ' . $txt['check_all'] . '</label>&nbsp;
 				<select name="aeva_modtype" id="modtype" tabindex="' . $context['tabindex']++ . '"' . ($can_add_playlist ? ' onchange="$(\'#aeva_my_playlists\').toggle(this.value == \'playlist\');"' : '') . '>' . ($can_approve_here ? '
@@ -1128,7 +1130,7 @@ function template_aeva_viewAlbum()
 				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return $(\'#modtype\').val() == \'delete\' ? confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ') : true;">
 			</div>' : '', '
-			', $txt['media_pages'], ': ', $context['aeva_page_index'], '
+			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 		</div>', $can_edit_items ? '
 	</form>' : '', '
 	</div>';
@@ -1139,7 +1141,7 @@ function template_aeva_unseen()
 	global $context, $txt, $galurl, $scripturl;
 
 	echo '
-	<div class="pagelinks align_left page_index">';
+	<div class="pagesection">';
 
 	if (!empty($context['aeva_items']))
 	{
@@ -1151,13 +1153,13 @@ function template_aeva_unseen()
 	}
 
 	echo '
-		', $txt['media_pages'], ': ', $context['aeva_page_index'], '
+		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 	</div>
 	<div id="unseen_items" style="clear: both">', !empty($context['aeva_items']) ? aeva_listItems($context['aeva_items']) : '<br><div class="notice">' . $txt['media_no_listing'] . '</div>', '
 	</div>
-	<div class="pagelinks align_left page_index">', !empty($context['aeva_items']) ? '
-		' . template_button_strip($mark_seen) : '', '
-		', $txt['media_pages'], ': ', $context['aeva_page_index'], '
+	<div class="pagesection">',
+		!empty($context['aeva_items']) ? template_button_strip($mark_seen) : '', '
+		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 	</div>';
 }
 
@@ -1258,24 +1260,26 @@ function template_aeva_viewUserAlbums()
 
 	$colspan = (isset($amSettings['album_columns']) ? max(1, (int) $amSettings['album_columns']) : 1) * 2;
 	echo '
-	<div class="pagelinks" style="padding: 0">', $txt['media_pages'], ': ', $context['aeva_page_index'], '</div>';
+	<div class="pagesection">
+		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
+	</div>';
 
 	$can_feed = empty($amSettings['disable_feed']);
 	foreach ($context['aeva_user_albums'] as $id => $album)
 	{
 		$first = current($album);
 		echo '
-	<div class="cat_heading">
-		<we:title>
-			', empty($first['owner']['id']) ? '' : $txt['media_owner'] . ': ' . aeva_profile($id, $first['owner']['name']), $can_feed ?
-			' <a href="' . $galurl . 'sa=feed;user=' . $id . ';albums"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
-		</we:title>
-	</div>';
+	<we:title>
+		', empty($first['owner']['id']) ? '' : $txt['media_owner'] . ': ' . aeva_profile($id, $first['owner']['name']), $can_feed ?
+		' <a href="' . $galurl . 'sa=feed;user=' . $id . ';albums"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
+	</we:title>';
 
 		aeva_listChildren($album);
 	}
 	echo '
-	<div class="pagelinks">', $txt['media_pages'], ': ', $context['aeva_page_index'], '</div>';
+	<div class="pagesection">
+		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
+	</div>';
 }
 
 function template_aeva_album_cp()
@@ -1778,11 +1782,15 @@ function template_aeva_profile_viewitems()
 			', $txt['media_profile_viewitems_desc'], '
 		</p>
 
-		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>
 		<div id="recent_items">',
 			aeva_listItems($context['aeva_items']), '
 		</div>
-		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>';
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>';
 
 	template_aeva_below();
 }
@@ -1801,7 +1809,9 @@ function template_aeva_profile_viewcoms()
 			', $txt['media_profile_viewcoms_desc'], '
 		</p>
 
-		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>
 		<div>';
 
 	// Recent comments!
@@ -1818,7 +1828,9 @@ function template_aeva_profile_viewcoms()
 
 	echo '
 		</div>
-		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>';
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>';
 	template_aeva_below();
 }
 
@@ -1836,7 +1848,9 @@ function template_aeva_profile_viewvotes()
 			', $txt['media_profile_viewvotes_desc'], '
 		</p>
 
-		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>
 		<div style="padding: 4px 0">';
 
 	if (!empty($context['aeva_ratingLogs']))
@@ -1865,7 +1879,9 @@ function template_aeva_profile_viewvotes()
 
 	echo '
 		</div>
-		<div class="pagelinks">', $txt['media_pages'], ': ', $context['page_index'], '</div>';
+		<div class="pagesection">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+		</div>';
 	template_aeva_below();
 }
 
@@ -1885,7 +1901,7 @@ function template_aeva_whoRatedWhat()
 				<td style="width: 25%">', $txt['media_date'], '</td>
 			</tr>
 			<tr>
-				<td class="windowbg2" colspan="3">', $txt['media_pages'], ': ', $context['page_index'], '</td>
+				<td class="windowbg2" colspan="3">', $txt['pages'], ': ', $context['page_index'], '</td>
 			</tr>';
 
 		foreach ($context['item']['rating_logs'] as $log)

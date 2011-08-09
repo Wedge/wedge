@@ -22,7 +22,7 @@ function template_main()
 			', $txt['recent_posts'], '
 		</we:cat>
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
@@ -30,7 +30,7 @@ function template_main()
 	foreach ($context['posts'] as $post)
 	{
 		echo '
-			<div class="', $post['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' core_posts wrc">
+			<div class="windowbg', $post['alternate'] == 0 ? '' : '2', ' core_posts wrc">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5>', $post['board']['link'], ' / ', $post['link'], '</h5>
@@ -76,7 +76,7 @@ function template_main()
 
 	echo '
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>
 	</div>';
 }
@@ -116,10 +116,10 @@ function template_unread()
 			<div class="pagesection">';
 
 		if (!empty($mark_read))
-			template_button_strip($mark_read, 'right');
+			template_button_strip($mark_read);
 
 		echo '
-				<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 			</div>';
 
 		echo '
@@ -156,27 +156,23 @@ function template_unread()
 
 		foreach ($context['topics'] as $topic)
 		{
-			// Calculate the color class of the topic.
-			if ($topic['is_sticky'] && $topic['is_locked'])
-				$color_class = 'stickybg locked_sticky';
-			// Sticky topics should get a different color, too.
-			elseif ($topic['is_sticky'])
-				$color_class = 'stickybg';
-			// Locked topics get special treatment as well.
-			elseif ($topic['is_locked'])
-				$color_class = 'lockedbg';
-			// Last, but not least: regular topics.
-			else
-				$color_class = 'windowbg';
+			$color_class = '';
+			// Is it a sticky, or locked topic? Or both?
+			if ($topic['is_sticky'])
+				$color_class .= ' sticky';
+			if ($topic['is_locked'])
+				$color_class = ' locked';
 
-			$color_class2 = !empty($color_class) ? $color_class . '2' : '';
+			// Some columns require a different shade of the color class.
+			$alternate_class = 'windowbg2' . $color_class;
+			$color_class = 'windowbg' . $color_class;
 
 			echo '
 						<tr>
-							<td class="', $color_class, ' icon windowbg">
+							<td class="', $color_class, ' icon">
 								<img src="', $topic['first_post']['icon_url'], '">
 							</td>
-							<td class="subject windowbg2 ', $color_class2, $topic['is_posted_in'] ? ' my' : '', '">
+							<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
 								<div>
 									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['first_post']['link'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
 									<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '"><div class="new_icon" title="', $txt['new'], '"></div></a>
@@ -187,12 +183,12 @@ function template_unread()
 									</p>
 								</div>
 							</td>
-							<td class="', $color_class, ' stats windowbg">
+							<td class="', $color_class, ' stats">
 								', $topic['replies'], ' ', $txt['replies'], '
 								<br>
 								', $topic['views'], ' ', $txt['views'], '
 							</td>
-							<td class="', $color_class2, ' lastpost windowbg2">
+							<td class="', $alternate_class, ' lastpost">
 								<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
 								', $topic['last_post']['time'], '<br>
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
@@ -220,10 +216,10 @@ function template_unread()
 			<div class="pagesection" id="readbuttons">';
 
 		if (!empty($mark_read))
-			template_button_strip($mark_read, 'right');
+			template_button_strip($mark_read);
 
 		echo '
-				<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 			</div>';
 	}
 	else
@@ -280,10 +276,10 @@ function template_replies()
 			<div class="pagesection">';
 
 		if (!empty($mark_read))
-			template_button_strip($mark_read, 'right');
+			template_button_strip($mark_read);
 
 		echo '
-				<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 			</div>';
 
 		echo '
@@ -320,27 +316,23 @@ function template_replies()
 
 		foreach ($context['topics'] as $topic)
 		{
-			// Calculate the color class of the topic.
-			if ($topic['is_sticky'] && $topic['is_locked'])
-				$color_class = 'stickybg locked_sticky';
-			// Sticky topics should get a different color, too.
-			elseif ($topic['is_sticky'])
-				$color_class = 'stickybg';
-			// Locked topics get special treatment as well.
-			elseif ($topic['is_locked'])
-				$color_class = 'lockedbg';
-			// Last, but not least: regular topics.
-			else
-				$color_class = 'windowbg';
+			$color_class = '';
+			// Is it a sticky, or locked topic? Or both?
+			if ($topic['is_sticky'])
+				$color_class .= ' sticky';
+			if ($topic['is_locked'])
+				$color_class = ' locked';
 
-			$color_class2 = !empty($color_class) ? $color_class . '2' : '';
+			// Some columns require a different shade of the color class.
+			$alternate_class = 'windowbg2' . $color_class;
+			$color_class = 'windowbg' . $color_class;
 
 			echo '
 						<tr>
-							<td class="', $color_class, ' icon windowbg">
+							<td class="', $color_class, ' icon">
 								<img src="', $topic['first_post']['icon_url'], '">
 							</td>
-							<td class="subject ', $color_class2, ' windowbg2">
+							<td class="subject ', $alternate_class, '">
 								<div>
 									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['first_post']['link'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
 									<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '"><div class="new_icon" title="', $txt['new'], '"></div></a>
@@ -351,12 +343,12 @@ function template_replies()
 									</p>
 								</div>
 							</td>
-							<td class="', $color_class, ' stats windowbg">
+							<td class="', $color_class, ' stats">
 								', $topic['replies'], ' ', $txt['replies'], '
 								<br>
 								', $topic['views'], ' ', $txt['views'], '
 							</td>
-							<td class="', $color_class2, ' lastpost windowbg2">
+							<td class="', $alternate_class, ' lastpost">
 								<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
 								', $topic['last_post']['time'], '<br>
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
@@ -375,8 +367,9 @@ function template_replies()
 					</tbody>
 				</table>
 			</div>
-			<div class="pagesection">', !empty($mark_read) ? template_button_strip($mark_read, 'right') : '', '
-				<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<div class="pagesection">', !empty($mark_read) ?
+				template_button_strip($mark_read) : '', '
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 			</div>';
 	}
 	else

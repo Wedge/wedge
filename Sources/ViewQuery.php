@@ -85,7 +85,7 @@ function ViewQuery()
 	</style>
 </head>
 <body id="help_popup">
-	<div class="description wrc">';
+	<div class="windowbg wrc">';
 
 	foreach ($_SESSION['debug'] as $q => $query_data)
 	{

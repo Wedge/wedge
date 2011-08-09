@@ -214,7 +214,7 @@ function template_summary()
 		{
 			echo '
 				<dt class="clear"><span class="alert">', $txt['user_is_banned'], '</span>&nbsp;[<a href="#" onclick="$(\'#ban_info\').toggle(); return false;">' . $txt['view_ban'] . '</a>]</dt>
-				<dt class="clear" id="ban_info" style="display: none;">
+				<dt class="clear hide" id="ban_info">
 					<strong>', $txt['user_banned_by_following'], ':</strong>';
 
 			foreach ($context['member']['bans'] as $ban)
@@ -318,7 +318,7 @@ function template_showDrafts()
 		</p>
 
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 	// Button shortcuts
@@ -367,8 +367,8 @@ function template_showDrafts()
 
 	// Show more page numbers.
 	echo '
-		<div class="pagesection" style="margin-bottom: 0;">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+		<div class="pagesection" style="margin-bottom: 0">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 	// A great, big, threatening button which must not be pressed under any circumstances, am I right?
@@ -393,7 +393,7 @@ function template_showPosts()
 			', (!isset($context['attachments']) && empty($context['is_topics']) ? $txt['showMessages'] : (!empty($context['is_topics']) ? $txt['showTopics'] : $txt['showAttachments'])), ' - ', $context['member']['name'], '
 		</we:cat>
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 	// Button shortcuts
@@ -508,7 +508,7 @@ function template_showPosts()
 		foreach ($context['attachments'] as $attachment)
 		{
 			echo '
-				<tr class="', $attachment['approved'] ? ($alternate ? 'windowbg' : 'windowbg2') : 'approvebg', '">
+				<tr class="windowbg', $alternate ? '' : '2', $attachment['approved'] ? '' : ' approve', '">
 					<td><a href="', $scripturl, '?action=dlattach;topic=', $attachment['topic'], '.0;attach=', $attachment['id'], '">', $attachment['filename'], '</a>', !$attachment['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '', '</td>
 					<td class="center">', $attachment['downloads'], '</td>
 					<td><a href="', $scripturl, '?topic=', $attachment['topic'], '.msg', $attachment['msg'], '#msg', $attachment['msg'], '" rel="nofollow">', $attachment['subject'], '</a></td>
@@ -532,8 +532,8 @@ function template_showPosts()
 	}
 	// Show more page numbers.
 	echo '
-		<div class="pagesection" style="margin-bottom: 0;">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+		<div class="pagesection" style="margin-bottom: 0">
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 }
 
@@ -766,7 +766,7 @@ function template_trackIP()
 
 		foreach ($context['whois_servers'] as $server)
 			echo '
-			<a href="', $server['url'], '" target="_blank" class="new_win"', isset($context['auto_whois_server']) && $context['auto_whois_server']['name'] == $server['name'] ? ' style="font-weight: bold;"' : '', '>', $server['name'], '</a><br>';
+			<a href="', $server['url'], '" target="_blank" class="new_win"', isset($context['auto_whois_server']) && $context['auto_whois_server']['name'] == $server['name'] ? ' style="font-weight: bold"' : '', '>', $server['name'], '</a><br>';
 
 		echo '
 		</div>
@@ -1018,8 +1018,8 @@ function template_statPanel()
 		{
 			echo '
 					<li', $time_of_day['is_last'] ? ' class="last"' : '', '>
-						<div class="bar" style="padding-top: ', ((int) (100 - $time_of_day['relative_percent'])), 'px;" title="', sprintf($txt['statPanel_activityTime_posts'], $time_of_day['posts'], $time_of_day['posts_percent']), '">
-							<div style="height: ', (int) $time_of_day['relative_percent'], 'px;">
+						<div class="bar" style="padding-top: ', ((int) (100 - $time_of_day['relative_percent'])), 'px" title="', sprintf($txt['statPanel_activityTime_posts'], $time_of_day['posts'], $time_of_day['posts_percent']), '">
+							<div style="height: ', (int) $time_of_day['relative_percent'], 'px">
 								<span>', sprintf($txt['statPanel_activityTime_posts'], $time_of_day['posts'], $time_of_day['posts_percent']), '</span>
 							</div>
 						</div>
@@ -1062,7 +1062,7 @@ function template_statPanel()
 			echo '
 						<dt>', $board['link'], '</dt>
 						<dd>
-							<div class="profile_pie" style="background-position: -', ((int) ($board['posts_percent'] / 5) * 20), 'px 0;" title="', sprintf($txt['statPanel_topBoards_memberposts'], $board['posts'], $board['total_posts_member'], $board['posts_percent']), '">
+							<div class="profile_pie" style="background-position: -', ((int) ($board['posts_percent'] / 5) * 20), 'px 0" title="', sprintf($txt['statPanel_topBoards_memberposts'], $board['posts'], $board['total_posts_member'], $board['posts_percent']), '">
 								', sprintf($txt['statPanel_topBoards_memberposts'], $board['posts'], $board['total_posts_member'], $board['posts_percent']), '
 							</div>
 							<span>', empty($context['hide_num_posts']) ? $board['posts'] : '', '</span>
@@ -1097,7 +1097,7 @@ function template_statPanel()
 			echo '
 						<dt>', $activity['link'], '</dt>
 						<dd>
-							<div class="profile_pie" style="background-position: -', ((int) ($activity['percent'] / 5) * 20), 'px 0;" title="', sprintf($txt['statPanel_topBoards_posts'], $activity['posts'], $activity['total_posts'], $activity['posts_percent']), '">
+							<div class="profile_pie" style="background-position: -', ((int) ($activity['percent'] / 5) * 20), 'px 0" title="', sprintf($txt['statPanel_topBoards_posts'], $activity['posts'], $activity['total_posts'], $activity['posts_percent']), '">
 								', sprintf($txt['statPanel_topBoards_posts'], $activity['posts'], $activity['total_posts'], $activity['posts_percent']), '
 							</div>
 							<span>', $activity['percent'], '%</span>
@@ -1648,7 +1648,7 @@ function template_groupMembership()
 				</we:cat>
 				<div class="roundframe">
 					', $txt['request_group_membership_desc'], ':
-					<textarea name="reason" rows="4" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%') . ';"></textarea>
+					<textarea name="reason" rows="4" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%') . '"></textarea>
 					<div class="righttext" style="margin: 0.5em 0.5% 0">
 						<input type="hidden" name="gid" value="', $context['group_request']['id'], '">
 						<input type="submit" name="req" value="', $txt['submit_request'], '" class="submit">
@@ -1833,7 +1833,7 @@ function template_ignoreboards()
 						<ul>';
 
 			echo '
-							<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em;">
+							<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em">
 								<label><input type="checkbox" id="ignore_brd', $board['id'], '" name="ignore_brd[', $board['id'], ']" value="', $board['id'], '"', $board['selected'] ? ' checked' : '', '> ', $board['name'], '</label>
 							</li>';
 		}
@@ -1904,9 +1904,9 @@ function template_viewWarning()
 				<dd>
 					<div>
 						<div>
-							<div style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
+							<div style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative">
 								<div id="warning_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['member']['warning'], '%</div>
-								<div id="warning_progress" style="width: ', $context['member']['warning'], '%; height: 12pt; z-index: 1; background-color: ', $context['current_color'], ';">&nbsp;</div>
+								<div id="warning_progress" style="width: ', $context['member']['warning'], '%; height: 12pt; z-index: 1; background-color: ', $context['current_color'], '">&nbsp;</div>
 							</div>
 						</div>
 					</div>
@@ -2117,7 +2117,7 @@ function template_issueWarning()
 					<strong>', $txt['profile_warning_notify_body'], ':</strong>
 				</dt>
 				<dd>
-					<select name="warn_temp" id="warn_temp" disabled onchange="populateNotifyTemplate();" style="font-size: x-small;">
+					<select name="warn_temp" id="warn_temp" disabled onchange="populateNotifyTemplate();" style="font-size: x-small">
 						<option value="-1">', $txt['profile_warning_notify_template'], '</option>
 						<option value="-1">------------------------------</option>';
 
@@ -2127,7 +2127,7 @@ function template_issueWarning()
 
 		echo '
 					</select>
-					<span class="smalltext" id="new_template_link" style="display: none;">[<a href="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" class="new_win">', $txt['profile_warning_new_template'], '</a>]</span><br>
+					<span class="smalltext hide" id="new_template_link">[<a href="', $scripturl, '?action=moderate;area=warnings;sa=templateedit;tid=0" target="_blank" class="new_win">', $txt['profile_warning_new_template'], '</a>]</span><br>
 					<textarea name="warn_body" id="warn_body" cols="40" rows="8">', $context['warning_data']['notify_body'], '</textarea>
 				</dd>';
 	}
@@ -2193,7 +2193,9 @@ function template_issueWarning()
 	echo '
 		</tbody>
 	</table>
-	<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>';
+	<div class="pagesection">
+		<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+	</div>';
 
 	if (!$context['user']['is_owner'])
 		add_js('
@@ -2659,7 +2661,7 @@ function template_profile_timeformat_modify()
 						<dfn>', $txt['date_format'], '</dfn>
 					</dt>
 					<dd>
-						<select name="easyformat" onchange="document.forms.creator.time_format.value = $(this).val();" style="margin-bottom: 4px;">';
+						<select name="easyformat" onchange="document.forms.creator.time_format.value = $(this).val();" style="margin-bottom: 4px">';
 
 	// Help the user by showing a list of common time formats.
 	foreach ($context['easy_timeformats'] as $time_format)
@@ -2757,14 +2759,14 @@ function template_authentication_method()
 							</dt>
 							<dd>
 								<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
-								<span id="smf_autov_pwmain_div" style="display: none;"><img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif"></span>
+								<span id="smf_autov_pwmain_div" class="hide"><img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif"></span>
 							</dd>
 							<dt>
 								<em>', $txt['verify_pass'], ':</em>
 							</dt>
 							<dd>
 								<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
-								<span id="smf_autov_pwverify_div" style="display: none;"><img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif"></span>
+								<span id="smf_autov_pwverify_div" class="hide"><img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif"></span>
 							</dd>
 						</dl>
 					</dd>

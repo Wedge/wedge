@@ -51,7 +51,7 @@ function template_aeva_admin_submissions()
 					<td>', $txt['media_admin_total_submissions'], ': ', $context['aeva_total'], '</td>
 				</tr>
 				<tr class="windowbg2">
-					<td>', $txt['media_pages'], ': ', $context['aeva_page_index'], '</td>
+					<td>', $txt['pages'], ': ', $context['aeva_page_index'], '</td>
 				</tr>
 			</table>';
 
@@ -280,7 +280,7 @@ function template_aeva_admin_modlog()
 			</tr>' : '', '
 			<tr>
 				<td class="catbg">
-					', $txt['media_pages'], ': ', $context['aeva_page_index'], '
+					', $txt['pages'], ': ', $context['aeva_page_index'], '
 				</td>
 			</tr>
 		</table>
@@ -377,7 +377,7 @@ function template_aeva_admin_bans()
 				<td>', $txt['media_admin_moderation'], '</td>
 			</tr>
 			<tr class="windowbg2">
-				<td colspan="5">', $txt['media_pages'], ': ', $context['aeva_page_index'], '</td>
+				<td colspan="5">', $txt['pages'], ': ', $context['aeva_page_index'], '</td>
 			</tr>';
 
 	foreach ($context['aeva_bans'] as $ban)

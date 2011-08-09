@@ -25,7 +25,7 @@ function template_main()
 			</we:title2>
 			<div class="topic_table" id="mlist">
 				<div class="pagesection">
-					<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>';
+					<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>';
 		echo '
 					<div class="selectbox floatright">', $txt['who_show1'], '
 						<select name="showtop" onchange="document.forms.whoFilter.show.value=this.value; document.forms.whoFilter.submit();">';
@@ -104,7 +104,7 @@ function template_main()
 				</table>
 			</div>
 			<div class="pagesection">
-				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>';
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>';
 
 	echo '
 				<div class="selectbox floatright">', $txt['who_show1'], '

@@ -1339,6 +1339,7 @@ function prepareDisplayContext($reset = false)
 	censorText($message['subject']);
 
 	$merge_max_limit_length = true;
+	$merge_safe = false;
 
 	// Avoid having too large a post if we do any merger.
 	if (empty($modSettings['merge_post_ignore_length']) && $modSettings['max_messageLength'] > 0)
@@ -1350,10 +1351,7 @@ function prepareDisplayContext($reset = false)
 
 		$context['current_post_length'] = westr::strlen(un_htmlspecialchars($message['body']));
 		if (!isset($context['last_post_length']))
-		{
 			$context['last_post_length'] = 0;
-			$merge_safe = false;
-		}
 		else
 			$merge_safe = ($context['current_post_length'] + $context['last_post_length'] + $context['correct_post_length']) < $modSettings['max_messageLength'];
 	}

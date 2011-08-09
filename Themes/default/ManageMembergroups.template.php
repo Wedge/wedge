@@ -449,7 +449,9 @@ function template_group_members()
 				', $txt['membergroups_members_group_members'], '
 			</we:title2>
 			<br>
-			<div class="pagesection">', $txt['pages'], ': ', $context['page_index'], '</div>
+			<div class="pagesection">
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
+			</div>
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
@@ -507,8 +509,8 @@ function template_group_members()
 	echo '
 				</tbody>
 			</table>
-			<div class="pagesection flow_hidden">
-				<div class="floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>';
+			<div class="pagesection">
+				<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>';
 
 	if (!empty($context['group']['assignable']))
 		echo '

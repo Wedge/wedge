@@ -262,7 +262,7 @@ function template_results()
 			<img src="', $settings['images_url'], '/buttons/search.gif">', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 		</we:cat>
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 		$quickmod = JavaScriptEscape($txt['quickmod_confirm']);
@@ -271,13 +271,13 @@ function template_results()
 		{
 			$color_class = '';
 			if ($topic['is_sticky'])
-				$color_class = 'stickybg';
+				$color_class .= ' sticky';
 			if ($topic['is_locked'])
-				$color_class .= 'lockedbg';
+				$color_class .= ' locked';
 
 			echo '
 		<div class="search_results_posts">
-			<div class="', $message['alternate'] == 0 ? 'windowbg' : 'windowbg2', ' wrc core_posts">
+			<div class="windowbg', $message['alternate'] == 0 ? '' : '2', ' wrc core_posts', $color_class, '">
 				<div class="flow_auto">';
 
 			foreach ($topic['matches'] as $message)
@@ -339,7 +339,7 @@ function template_results()
 		if (!empty($context['topics']))
 			echo '
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 		if ($show_checkboxes)
@@ -395,7 +395,7 @@ function template_results()
 			<img src="' . $settings['images_url'] . '/buttons/search.gif">&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 		</we:cat>
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
 		if (empty($context['topics']))
@@ -450,7 +450,7 @@ function template_results()
 
 		echo '
 		<div class="pagesection">
-			<span>', $txt['pages'], ': ', $context['page_index'], '</span>
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 	}
 }

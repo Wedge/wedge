@@ -618,7 +618,6 @@ function aeva_mgSearch()
 		$pageindexURL .= ';' . implode(';', $field_query);
 		$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 		$context['aeva_page_index'] = constructPageIndex($pageindexURL, $start, $total_items, empty($context['current_board']) ? 15 : 30);
-		$context['aeva_page_index'] = strpos($context['aeva_page_index'], '<a ') === false ? '' : "\n\t" . '<div class="pagelinks">' . $txt['media_pages'] . ': ' . $context['aeva_page_index'] . '</div>';
 		wesql::free_result($request);
 
 		// Sub template
@@ -636,8 +635,8 @@ function aeva_mgSearch()
 			$context['aeva_foxy_rendered_search'] = aeva_foxy_album(substr($id_list, 0, -1), 'ids');
 			if (!empty($context['aeva_page_index']) && strpos($context['aeva_page_index'], '<a') !== false)
 				$context['aeva_foxy_rendered_search'] = str_replace('<!-- aeva_page_index -->', '
-	<div class="pagelinks page_index clear">
-		' . $txt['media_pages'] . ': ' . $context['aeva_page_index'] . '
+	<div class="pagesection">
+		<nav>' . $txt['pages'] . ': ' . $context['aeva_page_index'] . '</nav>
 	</div>', $context['aeva_foxy_rendered_search']);
 		}
 	}

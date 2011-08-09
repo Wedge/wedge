@@ -30,8 +30,9 @@ function template_main()
 
 	echo '
 		</we:cat>
-		<div class="pagesection">', template_button_strip($memberlist_buttons, 'right'), '
-			<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>
+		<div class="pagesection">',
+			template_button_strip($memberlist_buttons), '
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>
 
 		<div id="mlist" class="topic_table">
@@ -120,7 +121,7 @@ function template_main()
 
 	echo '
 		<div class="pagesection">
-			<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], '</div>';
+			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>';
 
 	// If it is displaying the result of a search show a "search again" link to edit their criteria.
 	if (isset($context['old_search']))
@@ -153,8 +154,8 @@ function template_search()
 				<img src="' . $settings['images_url'] . '/buttons/search.gif">' : '', '
 				', $txt['mlist_search'], '
 			</we:cat>
-			<div class="pagesection">
-				', template_button_strip($memberlist_buttons, 'right'), '
+			<div class="pagesection">',
+				template_button_strip($memberlist_buttons), '
 			</div>';
 
 	// Display the input boxes for the form.

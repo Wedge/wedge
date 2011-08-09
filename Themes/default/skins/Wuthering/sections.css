@@ -1,37 +1,4 @@
 
-/* Styles for the board index.
-------------------------------------------------- */
-
-// The board title!
-#board_list td.info a.subject
-	color: #d97b33
-
-// Onto the posts
-#forumposts .cat final
-	margin-bottom: 3px
-
-/* Styles for sidebar menus.
-------------------------------------------------------- */
-.left_menu
-	list-style: none
-	margin: .5em 0
-	li
-		padding: 0 0 0 1em
-
-.side_section .title
-	margin-bottom: 5px
-
-tr.windowbg td, tr.approvebg td, tr.highlight2 td
-	padding: .3em .7em
-
-/* Styles for the statistics center.
-------------------------------------------------- */
-#statistics
-	.title final
-		margin: 4px 0
-	.cat final
-		text-align: center
-
 /* Styles for the calendar section.
 ------------------------------------------------- */
 #calendar .cat final
@@ -39,7 +6,6 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 
 #main_grid table
 	.cat final
-		text-align: center
 		border-top: 2px solid #fff
 		border-bottom: none
 	&.weeklist .title2 final
@@ -49,12 +15,26 @@ tr.windowbg td, tr.approvebg td, tr.highlight2 td
 
 /* More hacks.
 ------------------------------------------------- */
+#forumposts .cat final
+	margin-bottom: 3px
+
+.left_menu
+	list-style: none
+	margin: .5em 0
+	li
+		padding: 0 0 0 1em
+
+#statistics
+	.title final
+		margin: 4px 0
+	.cat final
+		text-align: center
+
 #upshrinkHeaderIC
-	p.pminfo
-		margin: 0
-		padding: .5em
 	.cat final, .title2 final
 		font-size: 1.1em
 
 dfn
 	line-height: 140%
+
+$board_col = #d97b33

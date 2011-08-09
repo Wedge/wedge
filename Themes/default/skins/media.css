@@ -94,9 +94,6 @@ iframe.aext
 	text-align: right
 	padding: 6px
 
-.page_index
-	padding: 6px
-
 .notice
 	padding: 10px
 	text-align: center
@@ -105,7 +102,7 @@ iframe.aext
 	.data
 		padding: 0
 		overflow: auto
-	.buttonlist ul
+	.buttonlist
 		padding-left: 0
 		img
 			vertical-align: middle
@@ -150,8 +147,6 @@ iframe.aext
 		vertical-align: middle
 	.comment_sort_options
 		float: right
-	.page_index
-		padding: 5px
 
 #itembox
 	display: table

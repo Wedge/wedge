@@ -97,7 +97,7 @@ th.last_th
 
 /* Styles for the standard button lists.
 ------------------------------------------------------- */
-.buttonlist ul
+.buttonlist
 	margin: 0 0 0 0.2em
 	li
 		float: right
@@ -106,9 +106,6 @@ th.last_th
 			margin-right: 12px
 			span
 				left: 8px
-
-.align_top ul li a, .align_bottom ul li a
-	margin: 0 0 0 12px
 
 #context_menus
 	padding-left: 0
@@ -458,17 +455,9 @@ tr.titlebg td
 ------------------------------------------------------- */
 .topic_table
 
-	td.stickybg2
+	.sticky,
+	.locked
 		background-position: 2% 4px
-
-	td.lockedbg2
-		background-position: 2% 4px
-
-	td.locked_sticky2
-		background-position: 2% 4px
-
-	td.lastpost
-		background-image: none
 
 
 /* Styles for (fatal) errors.

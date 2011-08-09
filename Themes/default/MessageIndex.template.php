@@ -28,8 +28,8 @@ function template_main_board()
 	{
 		echo '
 	<div class="pagesection">
-		<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'],
-		'&nbsp;&nbsp;<a href="#bot"><strong>', $txt['go_down'], '</strong></a></div>', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
+		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
 	</div>';
 
 		// If Quick Moderation is enabled start the form.
@@ -94,24 +94,20 @@ function template_main_board()
 
 		foreach ($context['topics'] as $topic)
 		{
+			$color_class = '';
 			// Is this topic pending approval, or does it have any posts pending approval?
 			if ($context['can_approve_posts'] && $topic['unapproved_posts'])
-				$color_class = !$topic['approved'] ? 'approvetbg' : 'approvebg';
-			// We start with locked and sticky topics.
-			elseif ($topic['is_sticky'] && $topic['is_locked'])
-				$color_class = 'stickybg locked_sticky';
+				$color_class .= !$topic['approved'] ? ' approvet' : ' approve';
 			// Sticky topics should get a different color, too.
-			elseif ($topic['is_sticky'])
-				$color_class = 'stickybg';
+			if ($topic['is_sticky'])
+				$color_class .= ' sticky';
 			// Locked topics get special treatment as well.
-			elseif ($topic['is_locked'])
-				$color_class = 'lockedbg';
-			// Last, but not least: regular topics.
-			else
-				$color_class = 'windowbg';
+			if ($topic['is_locked'])
+				$color_class = ' locked';
 
 			// Some columns require a different shade of the color class.
-			$alternate_class = $color_class . '2';
+			$alternate_class = 'windowbg2' . $color_class;
+			$color_class = 'windowbg' . $color_class;
 
 			echo '
 				<tr>
@@ -234,9 +230,10 @@ function template_main_board()
 	</form>';
 
 		echo '
-	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
+	<div class="pagesection">', empty($context['button_list']) ? '' :
+		template_button_strip($context['button_list']), '
 		<p class="floatright" id="message_index_jump_to">&nbsp;</p>
-		<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></div>
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 	</div>';
 	}
 
@@ -296,8 +293,8 @@ function template_main_blog()
 		', $board_info['name'], '
 	</we:cat>
 	<div class="pagesection">
-		<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'],
-		'&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a></div>', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a></nav>',
+		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
 	</div>';
 
 		// If Quick Moderation is enabled start the form.
@@ -361,24 +358,20 @@ function template_main_blog()
 
 		foreach ($context['topics'] as $topic)
 		{
+			$color_class = '';
 			// Is this topic pending approval, or does it have any posts pending approval?
 			if ($context['can_approve_posts'] && $topic['unapproved_posts'])
-				$color_class = !$topic['approved'] ? 'approvetbg' : 'approvebg';
-			// We start with locked and sticky topics.
-			elseif ($topic['is_sticky'] && $topic['is_locked'])
-				$color_class = 'stickybg locked_sticky';
+				$color_class .= !$topic['approved'] ? ' approvet' : ' approve';
 			// Sticky topics should get a different color, too.
-			elseif ($topic['is_sticky'])
-				$color_class = 'stickybg';
+			if ($topic['is_sticky'])
+				$color_class .= ' sticky';
 			// Locked topics get special treatment as well.
 			elseif ($topic['is_locked'])
-				$color_class = 'lockedbg';
-			// Last, but not least: regular topics.
-			else
-				$color_class = 'windowbg';
+				$color_class = ' locked';
 
 			// Some columns require a different shade of the color class.
-			$alternate_class = $color_class . '2';
+			$alternate_class = 'windowbg2' . $color_class;
+			$color_class = 'windowbg' . $color_class;
 
 			echo '
 				<tr>
@@ -497,9 +490,10 @@ function template_main_blog()
 	</form>';
 
 		echo '
-	<div class="pagesection">', empty($context['button_list']) ? '' : template_button_strip($context['button_list'], 'right'), '
+	<div class="pagesection">', empty($context['button_list']) ? '' :
+		template_button_strip($context['button_list']), '
 		<p class="floatright" id="message_index_jump_to">&nbsp;</p>
-		<div class="pagelinks">', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></div>
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 	</div>';
 	}
 

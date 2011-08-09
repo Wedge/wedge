@@ -79,8 +79,9 @@ function template_main()
 	}
 
 	echo '
-			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
-				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#lastPost"><strong>', $txt['go_down'], '</strong></a></div>
+			<div class="pagesection">',
+				template_button_strip($normal_buttons), '
+				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#lastPost"><strong>', $txt['go_down'], '</strong></a></nav>
 			</div>', $context['browser']['is_ie6'] ? '
 			<div class="clear"></div>' : '';
 
@@ -114,7 +115,7 @@ function template_main()
 				<a id="msg', $message['id'], '"></a>', $message['first_new'] ? '<a id="new"></a>' : '';
 
 		echo '
-				<div class="', $message['approved'] ? ($message['alternate'] == 0 ? 'windowbg' : 'windowbg2') : 'approvebg', ' wrc', $message['id'] == $context['first_message'] ? ' first-post' : '', $context['post_position'] != 'left' ? ' ' . $context['post_position'] . '-side' : '', '">
+				<div class="windowbg', $message['alternate'] == 0 ? ' wrc' : '2 wrc', $message['approved'] ? '' : ' approve', $message['id'] == $context['first_message'] ? ' first-post' : '', $context['post_position'] != 'left' ? ' ' . $context['post_position'] . '-side' : '', '">
 					<div class="post_wrapper">';
 
 		// Show information about the poster of this message.
@@ -328,8 +329,9 @@ function template_main()
 
 	// Show the page index... "Pages: [1]".
 	echo '
-			<div class="pagesection">', template_button_strip($normal_buttons, 'right'), '
-				<div class="pagelinks floatleft">', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></div>
+			<div class="pagesection">',
+				template_button_strip($normal_buttons), '
+				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 			</div>';
 
 	// Show the jumpto box, or... Actually let JavaScript do it.

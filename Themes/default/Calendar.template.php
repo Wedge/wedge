@@ -25,7 +25,7 @@ function template_main()
 		'post_event' => array('test' => 'can_post', 'text' => 'calendar_post_event', 'image' => 'calendarpe.gif', 'lang' => true, 'url' => $scripturl . '?action=calendar;sa=post;month=' . $context['current_month'] . ';year=' . $context['current_year'] . ';' . $context['session_query']),
 	);
 
-	template_button_strip($calendar_buttons, 'right');
+	template_button_strip($calendar_buttons);
 
 	// Show some controls to allow easy calendar navigation.
 	echo '

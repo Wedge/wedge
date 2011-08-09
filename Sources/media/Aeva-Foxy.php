@@ -357,8 +357,8 @@ function aeva_foxy_playlists()
 	wesql::free_result($result);
 
 	$pi = '
-	<div class="pagelinks page_index">
-		' . $txt['media_pages'] . ': ' . $context['aeva_page_index'] . '
+	<div class="pagesection">
+		<nav>' . $txt['pages'] . ': ' . $context['aeva_page_index'] . '</nav>
 	</div>';
 
 	$o = '
