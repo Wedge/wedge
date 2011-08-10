@@ -709,7 +709,7 @@ function cache_put_data($key, $value, $ttl = 120)
 		$st = microtime(true);
 	}
 
-	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-SMF-' . strtr($key, ':', '-');
+	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-Wedge-' . strtr($key, ':', '-');
 	$value = $value === null ? null : serialize($value);
 
 	// The simple yet efficient memcached.
@@ -739,9 +739,9 @@ function cache_put_data($key, $value, $ttl = 120)
 	{
 		// An extended key is needed to counteract a bug in APC.
 		if ($value === null)
-			apc_delete($key . 'smf');
+			apc_delete($key . 'wedge');
 		else
-			apc_store($key . 'smf', $value, $ttl);
+			apc_store($key . 'wedge', $value, $ttl);
 	}
 	// Zend Platform/ZPS/etc.
 	elseif (function_exists('output_cache_put'))
@@ -807,10 +807,10 @@ function cache_get_data($key, $ttl = 120)
 		$st = microtime(true);
 	}
 
-	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-SMF-' . strtr($key, ':', '-');
+	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-Wedge-' . strtr($key, ':', '-');
 
 	// Okay, let's go for it memcached!
-	if (function_exists('memcache_get') && isset($modSettings['cache_memcached']) && trim($modSettings['cache_memcached']) != '')
+	if (isset($modSettings['cache_memcached']) && function_exists('memcache_get') && trim($modSettings['cache_memcached']) !== '')
 	{
 		// Not connected yet?
 		if (empty($memcached))
@@ -825,13 +825,13 @@ function cache_get_data($key, $ttl = 120)
 		$value = eaccelerator_get($key);
 	// This is the free APC from PECL.
 	elseif (function_exists('apc_fetch'))
-		$value = apc_fetch($key . 'smf');
+		$value = apc_fetch($key . 'wedge');
 	// Zend's pricey stuff.
 	elseif (function_exists('output_cache_get'))
 		$value = output_cache_get($key, $ttl);
 	elseif (function_exists('xcache_get') && ini_get('xcache.var_size') > 0)
 		$value = xcache_get($key);
-	// Otherwise it's SMF data!
+	// Otherwise it's the file cache!
 	elseif (file_exists($cachedir . '/data_' . $key . '.php') && filesize($cachedir . '/data_' . $key . '.php') > 10)
 	{
 		require($cachedir . '/data_' . $key . '.php');

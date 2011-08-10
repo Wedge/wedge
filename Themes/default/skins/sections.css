@@ -446,7 +446,7 @@ ul.quickbuttons extends ul.reset
 	.remove_button
 		background-position: 0 -30px
 	.approve_button
-		background-position: 0 -90px
+		background-position: 3px -90px
 	.restore_button
 		background-position: 0 -120px
 	.reply_button

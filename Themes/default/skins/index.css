@@ -1140,6 +1140,7 @@ dl#feed
 	color: gray
 
 .cat extends .catbase
+	clear: left
 	background-color: #b3afa9
 	color: white
 	a
