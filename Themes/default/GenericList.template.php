@@ -152,7 +152,6 @@ function template_show_list($list_id = null)
 				<div class="floatright">',
 					template_additional_rows('bottom_of_list', $cur_list), '
 				</div>';
-		}
 
 		echo '
 			</div>';

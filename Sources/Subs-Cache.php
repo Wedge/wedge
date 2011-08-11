@@ -207,8 +207,13 @@ function add_css_file($original_files = array(), $add_link = false)
 	if (!$add_link)
 		return $final_script;
 
-	$context['header'] .= '
+	$eat_this = '
 	<link rel="stylesheet" href="' . $final_script . '">';
+
+	if (isset($context['last_minute_header']))
+		$context['last_minute_header'] .= $eat_this;
+	else
+		$context['header'] .= $eat_this;
 }
 
 /**

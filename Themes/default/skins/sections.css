@@ -532,7 +532,7 @@ ul.buttonlist extends ul.quickbuttons
 			float: left
 	a
 		padding: 4px
-		color: #000
+		color: #679
 		background: #f3f3f3
 		height, line-height: 15px
 		text-decoration: none
@@ -639,6 +639,8 @@ ul.post_options
 		img
 			margin: 0 1px 0 0
 			vertical-align: top
+	> div
+		margin: 0
 	select
 		margin: 0 2px
 
@@ -647,6 +649,8 @@ ul.post_options
 	margin: .5em
 	max-height: 120px
 	overflow-y: auto
+	.smpost
+		margin: 0 2px
 
 #preview_body extends .windowbg
 

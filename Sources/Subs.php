@@ -1281,6 +1281,9 @@ function ob_sessrewrite($buffer)
 			'$1', $buffer
 		);
 
+	if (!empty($context['last_minute_header']))
+		$buffer = preg_replace("~\n</head>~", $context['last_minute_header'] . "\n</head>", $buffer, 1);
+
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']))
 	{

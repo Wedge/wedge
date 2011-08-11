@@ -142,6 +142,9 @@ function template_html_above()
 		echo '
 	<link rel="next" href="', $scripturl, '?topic=', $context['next_topic'], '.0">';
 
+	// Output any remaining HTML headers. (Mods may easily add code there.)
+	echo $context['header'];
+
 	if ($context['browser']['is_iphone'])
 		echo '
 	<meta name="viewport" content="width=device-width; initial-scale=0.5; maximum-scale=2.0; minimum-scale=0.5; user-scalable=1;">';
@@ -156,12 +159,11 @@ function template_html_above()
 	<meta name="robots" content="noindex">';
 
 	echo '
-	<meta name="generator" content="Wedge">';
-
-	// Output any remaining HTML headers. (Mods may easily add code there.)
-	echo $context['header'], '
+	<meta name="generator" content="Wedge">
 </head>
 <body>';
+
+	$context['last_minute_header'] = '';
 }
 
 function template_body_above()
