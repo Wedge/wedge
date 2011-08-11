@@ -146,9 +146,9 @@ function template_html_above()
 		echo '
 	<meta name="viewport" content="width=device-width; initial-scale=0.5; maximum-scale=2.0; minimum-scale=0.5; user-scalable=1;">';
 
-	if (!empty($context['meta_keywords']))
+	if (!empty($context['meta_description']))
 		echo '
-	<meta name="keywords" content="' . $context['meta_keywords'] . '">';
+	<meta name="description" content="', $context['meta_description'], '">';
 
 	// Please don't index these, Mr Robotto.
 	if (!empty($context['robot_no_index']))

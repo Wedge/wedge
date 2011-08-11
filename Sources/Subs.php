@@ -2369,7 +2369,6 @@ function setupThemeContext($forceload = false)
 
 	// Set some specific vars.
 	$context['page_title_html_safe'] = westr::htmlspecialchars(un_htmlspecialchars($context['page_title']));
-	$context['meta_keywords'] = !empty($modSettings['meta_keywords']) ? westr::htmlspecialchars($modSettings['meta_keywords']) : '';
 }
 
 /**

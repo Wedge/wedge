@@ -51,6 +51,9 @@ function MessageIndex()
 
 	$context['name'] = $board_info['name'];
 	$context['description'] = $board_info['description'];
+	if (!empty($context['description']))
+		$context['meta_description'] = strip_tags($context['description']); // The description allows for raw HTML.
+
 	// How many topics do we have in total?
 	$board_info['total_topics'] = allowedTo('approve_posts') ? $board_info['num_topics'] + $board_info['unapproved_topics'] : $board_info['num_topics'] + $board_info['unapproved_user_topics'];
 

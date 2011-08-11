@@ -344,8 +344,6 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'titlesEnable'),
 			array('text', 'default_personal_text'),
 		'',
-			array('text', 'meta_keywords', 'size' => 50),
-		'',
 			// Number formatting, timezones.
 			array('text', 'time_format'),
 			array('float', 'time_offset'),

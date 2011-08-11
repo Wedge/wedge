@@ -657,7 +657,7 @@ function template_messageindex_whoviewing()
 	echo '
 		<we:title2>
 			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
-		</we:title>
+		</we:title2>
 		<p>';
 
 	if ($settings['display_who_viewing'] == 1)
