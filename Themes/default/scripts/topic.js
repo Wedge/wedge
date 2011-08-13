@@ -358,7 +358,7 @@ function InTopicModeration(oOptions)
 		).show();
 }
 
-InTopicModeration.prototype.handleClick = function(oCheckbox)
+InTopicModeration.prototype.handleClick = function (oCheckbox)
 {
 	var
 		opt = this.opt,
@@ -578,7 +578,7 @@ IconList.prototype.onWindowMouseDown = function ()
 };
 
 // Collapse the list of icons.
-IconList.prototype.collapseList = function()
+IconList.prototype.collapseList = function ()
 {
 	this.onBoxHover(this.oClickedIcon, false);
 	this.oContainerDiv.hide();

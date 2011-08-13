@@ -575,6 +575,42 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 }
 
 /**
+ * Builds the special smiley CSS file, directly minified.
+ *
+ * @param string $set The current smiley folder
+ * @param array $smileys The list of smileys to cache
+ */
+function wedge_cache_smileys($set, $smileys)
+{
+	global $cachedir, $context, $modSettings;
+
+	$final = '';
+	$path = $modSettings['smileys_dir'] . '/' . $set . '/';
+	$url  = $modSettings['smileys_url'] . '/' . $set . '/';
+	updateSettings(array('smiley_cache_' . str_replace('.', '', $context['smiley_ext']) . '_' . $set => $context['smiley_now']));
+
+	// Delete all remaining cached versions, if any (e.g. *.cgz for Safari.)
+	foreach (glob($cachedir . '/smileys-' . $set . '-*.*') as $del)
+		@unlink($del);
+
+	foreach ($smileys as $name => $smiley)
+	{
+		$filename = $path . $smiley['file'];
+		if (!file_exists($filename))
+			continue;
+		list ($width, $height) = getimagesize($filename);
+		$ext = strtolower(substr($filename, strrpos($filename, '.') + 1));
+		$final .= '.smiley_' . $name . '{width:' . $width . 'px;height:' . $height . 'px;display:inline-block;zoom:1;*display:inline;text-indent:-999em;margin:0 3px;background:url('
+				. ($smiley['embed'] ? 'data:image/' . $ext . ';base64,' . base64_encode(file_get_contents($filename)) : $url . $smiley['file']) . ')}';
+	}
+
+	if ($context['smiley_gzip'])
+		$final = gzencode($final, 9);
+
+	file_put_contents($cachedir . '/smileys-' . $set . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
+}
+
+/**
  * Shows the base CSS file, i.e. index.css and any other files added through {@link wedge_add_css()}.
  */
 function theme_base_css()
@@ -617,10 +653,23 @@ function theme_base_js($indenting = 0)
 }
 
 /**
+ * A helper function that retrieves the extension for a given filename. ".*.gz" is recognized as a full extension.
+ *
+ * @param string $file The string to process. Yeah really.
+ */
+function wedge_get_extension($file)
+{
+	$ext = substr(strrchr($file, '.'), 1);
+	if ($ext === 'gz')
+		return substr(strrchr(substr($file, 0, -3), '.'), 1) . '.gz';
+	return $ext;
+}
+
+/**
  * Cleans some or all of the files stored in the file cache.
  *
  * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, typically 'data', to prune 'data_*.php' files.
- * @param string $extensions Optional, a comma-separated list of 3-char file extensions that should be pruned. 'php' by default. Use '.js' instead of 'js' for JavaScript files.
+ * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. 'php' by default.
  * @todo Figure out a better way of doing this and get rid of $sourcedir being globalled again.
  */
 function clean_cache($type = '', $extensions = 'php')
@@ -633,11 +682,12 @@ function clean_cache($type = '', $extensions = 'php')
 
 	// Remove the files in SMF's own disk cache, if any
 	$dh = scandir($cachedir);
-	$ext = array_flip(explode(',', $extensions));
+	$exts = array_flip(explode(',', $extensions));
 	$len = strlen($type);
 	foreach ($dh as $file)
-		if ($file !== '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || substr($file, 0, $len) == $type) && isset($exts[substr($file, -3)]))
-			@unlink($cachedir . '/' . $file);
+		if ($file !== '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || substr($file, 0, $len) == $type))
+			if (!$extensions || isset($exts[wedge_get_extension($file)]))
+				@unlink($cachedir . '/' . $file);
 
 	// Invalidate cache, to be sure!
 	// ... as long as Load.php can be modified, anyway.

@@ -1103,7 +1103,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
  */
 function parsesmileys(&$message)
 {
-	global $modSettings, $txt, $user_info, $context, $smileyPregReplace;
+	global $user_info, $smileyPregReplace;
 	static $smileyPregSearch = array();
 
 	// No smiley set at all?!
@@ -1113,46 +1113,55 @@ function parsesmileys(&$message)
 	// If the smiley array hasn't been set, do it now.
 	if (empty($smileyPregSearch))
 	{
-		// Use the default smileys if it is disabled. (better for "portability" of smileys.)
+		global $modSettings, $txt, $context, $cachedir, $user_info;
+
+		// Use the default smileys if it is disabled. (Better for "portability" of smileys.)
 		if (empty($modSettings['smiley_enable']))
 		{
 			$smileysfrom = array('>:D', ':D', '::)', '>:(', ':))', ':)', ';)', ';D', ':(', ':o', '8)', ':P', '???', ':-[', ':-X', ':-*', ':\'(', ':-\\', '^-^', 'O0', 'C:-)', '0:)', ':edit:');
 			$smileysto = array('evil.gif', 'cheesy.gif', 'rolleyes.gif', 'angry.gif', 'laugh.gif', 'smiley.gif', 'wink.gif', 'grin.gif', 'sad.gif', 'shocked.gif', 'cool.gif', 'tongue.gif', 'huh.gif', 'embarrassed.gif', 'lipsrsealed.gif', 'kiss.gif', 'cry.gif', 'undecided.gif', 'azn.gif', 'afro.gif', 'police.gif', 'angel.gif', 'edit.gif');
-			$smileysdescs = array('', $txt['icon_cheesy'], $txt['icon_rolleyes'], $txt['icon_angry'], '', $txt['icon_smiley'], $txt['icon_wink'], $txt['icon_grin'], $txt['icon_sad'], $txt['icon_shocked'], $txt['icon_cool'], $txt['icon_tongue'], $txt['icon_huh'], $txt['icon_embarrassed'], $txt['icon_lips'], $txt['icon_kiss'], $txt['icon_cry'], $txt['icon_undecided'], '', '', '', '', '');
+			$smileysdescs = array('', $txt['icon_cheesy'], $txt['icon_rolleyes'], $txt['icon_angry'], '', $txt['icon_smiley'], $txt['icon_wink'], $txt['icon_grin'], $txt['icon_sad'], $txt['icon_shocked'], $txt['icon_cool'], $txt['icon_tongue'], $txt['icon_huh'], $txt['icon_embarrassed'], $txt['icon_lips'], $txt['icon_kiss'], $txt['icon_cry'], $txt['icon_undecided'], '', '', '', '', $txt['icon_edit']);
+			$smileysdiv = array();
+			foreach ($smileysto as $file)
+				$smileysdiv[] = array('embed' => true, 'name' => str_replace('.', '_', $file));
 		}
 		else
 		{
 			// Load the smileys in reverse order by length so they don't get parsed wrong.
-			if (($temp = cache_get_data('parsing_smileys', 480)) == null)
+			if (($temp = cache_get_data('smiley_parser', 480)) == null || !isset($temp[3]) || !is_array($temp[3]))
 			{
 				$result = wesql::query('
-					SELECT code, filename, description
+					SELECT code, filename, description, hidden
 					FROM {db_prefix}smileys',
-					array(
-					)
+					array()
 				);
 				$smileysfrom = array();
 				$smileysto = array();
 				$smileysdescs = array();
+				$smileysdiv = array();
 				while ($row = wesql::fetch_assoc($result))
 				{
 					$smileysfrom[] = $row['code'];
 					$smileysto[] = $row['filename'];
 					$smileysdescs[] = $row['description'];
+					$smileysdiv[] = array(
+						'embed' => $row['hidden'] == 0,
+						'name' => preg_replace(array('~[^\w]~', '~_+~'), array('_', '_'), $row['filename'])
+					);
 				}
 				wesql::free_result($result);
 
-				cache_put_data('parsing_smileys', array($smileysfrom, $smileysto, $smileysdescs), 480);
+				cache_put_data('smiley_parser', array($smileysfrom, $smileysto, $smileysdescs, $smileysdiv), 480);
 			}
 			else
-				list ($smileysfrom, $smileysto, $smileysdescs) = $temp;
+				list ($smileysfrom, $smileysto, $smileysdescs, $smileysdiv) = $temp;
 		}
 
 		// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)
 		for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 		{
 			$safe = htmlspecialchars($smileysfrom[$i], ENT_QUOTES); // !!! Use westr version?
-			$smileyCode = '<img src="' . htmlspecialchars($modSettings['smileys_url'] . '/' . $user_info['smiley_set'] . '/' . $smileysto[$i]) . '" alt="' . strtr($safe, array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')). '" title="' . strtr(htmlspecialchars($smileysdescs[$i]), array(':' => '&#58;', '(' => '&#40;', ')' => '&#41;', '$' => '&#36;', '[' => '&#091;')) . '" class="smiley">';
+			$smileyCode = '<div class="smiley_' . $smileysdiv[$i]['name'] . '">' . $safe . '</div>';
 
 			$smileyPregReplace[$smileysfrom[$i]] = $smileyCode;
 			$searchParts[] = preg_quote($smileysfrom[$i], '~');
@@ -1163,6 +1172,27 @@ function parsesmileys(&$message)
 				$searchParts[] = preg_quote($safe, '~');
 			}
 		}
+
+		$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+		$context['smiley_gzip'] = $can_gzip;
+		$context['smiley_ext'] = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
+		$var_name = 'smiley_cache_' . str_replace('.', '', $context['smiley_ext']) . '_' . $user_info['smiley_set'];
+		$context['smiley_now'] = empty($modSettings[$var_name]) ? time() : $modSettings[$var_name];
+
+		if (!file_exists($cachedir . '/smileys-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
+		{
+			// We're only going to cache the smileys that show up on the post editor by default.
+			// The reason is to help save bandwidth by only storing whatever is most likely to be used.
+			$cache = array();
+			for ($i = 0; $i < $n; $i++)
+				$cache[$smileysdiv[$i]['name']] = array('embed' => $smileysdiv[$i]['embed'], 'file' => $smileysto[$i]);
+			if (!empty($cache))
+			{
+				loadSource('Subs-Cache');
+				wedge_cache_smileys($user_info['smiley_set'], $cache);
+			}
+		}
+
 		$smileyPregSearch = '~(?<=[>:?.\s\x{A0}[\]()*\\\;]|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~u';
 	}
 
@@ -1174,8 +1204,25 @@ function parsesmileys(&$message)
 function replace_smileys($match)
 {
 	global $smileyPregReplace;
+	static $smiley_css_done = false;
 
-	return isset($smileyPregReplace[$match[1]]) ? $smileyPregReplace[$match[1]] : '';
+	if (isset($smileyPregReplace[$match[1]]))
+	{
+		if (!$smiley_css_done && strpos($smileyPregReplace[$match[1]], '<div') !== -1)
+		{
+			global $boardurl, $modSettings, $context, $user_info;
+
+			$smiley_css_done = true;
+			$css_file = '
+	<link rel="stylesheet" href="' . $boardurl . '/cache/smileys-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
+			if (isset($context['last_minute_header']))
+				$context['last_minute_header'] .= $css_file;
+			else
+				$context['header'] .= $css_file;
+		}
+		return $smileyPregReplace[$match[1]];
+	}
+	return '';
 }
 
 /**

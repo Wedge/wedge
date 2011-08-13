@@ -85,7 +85,7 @@ function smc_AutoSuggest(oOptions)
 }
 
 // Was it an enter key - if so assume they are trying to select something.
-smc_AutoSuggest.prototype.handleKey = function(oEvent)
+smc_AutoSuggest.prototype.handleKey = function (oEvent)
 {
 	// Get the keycode of the key that was pressed.
 	var iKeyPress = oEvent.which;
@@ -157,13 +157,13 @@ smc_AutoSuggest.prototype.handleKey = function(oEvent)
 };
 
 // Functions for integration.
-smc_AutoSuggest.prototype.registerCallback = function(sCallbackType, sCallback)
+smc_AutoSuggest.prototype.registerCallback = function (sCallbackType, sCallback)
 {
 	this.oCallback[sCallbackType] = sCallback;
 };
 
 // Positions the box correctly on the window.
-smc_AutoSuggest.prototype.positionDiv = function()
+smc_AutoSuggest.prototype.positionDiv = function ()
 {
 	// Only do it once.
 	if (this.bPositionComplete)
@@ -182,7 +182,7 @@ smc_AutoSuggest.prototype.positionDiv = function()
 };
 
 // Do something after clicking an item.
-smc_AutoSuggest.prototype.itemClicked = function(oCurElement)
+smc_AutoSuggest.prototype.itemClicked = function (oCurElement)
 {
 	// Is there a div that we are populating?
 	if (this.bItemList)
@@ -282,14 +282,14 @@ smc_AutoSuggest.prototype.autoSuggestHide = function ()
 };
 
 // Do the actual hiding after a timeout.
-smc_AutoSuggest.prototype.autoSuggestActualHide = function()
+smc_AutoSuggest.prototype.autoSuggestActualHide = function ()
 {
 	$(this.oSuggestDivHandle).hide();
 	this.oSelectedDiv = null;
 };
 
 // Show the box.
-smc_AutoSuggest.prototype.autoSuggestShow = function()
+smc_AutoSuggest.prototype.autoSuggestShow = function ()
 {
 	if (this.oHideTimer)
 	{
@@ -303,7 +303,7 @@ smc_AutoSuggest.prototype.autoSuggestShow = function()
 };
 
 // Populate the actual div.
-smc_AutoSuggest.prototype.populateDiv = function(aResults)
+smc_AutoSuggest.prototype.populateDiv = function (aResults)
 {
 	// Cannot have any children yet.
 	$(this.oSuggestDivHandle).empty();

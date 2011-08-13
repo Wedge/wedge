@@ -119,7 +119,7 @@ function EditSmileySettings($return_config = false)
 	global $modSettings, $context, $settings, $txt, $boarddir, $scripturl;
 
 	// The directories...
-	$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
+	$context['smileys_dir'] = $modSettings['smileys_dir'];
 	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
 
 	// Get the names of the smiley sets.
@@ -170,9 +170,7 @@ function EditSmileySettings($return_config = false)
 			sortSmileyTable();
 
 		saveDBSettings($config_vars);
-
-		cache_put_data('parsing_smileys', null, 480);
-		cache_put_data('posting_smileys', null, 480);
+		cleanSmileyCache();
 
 		redirectexit('action=admin;area=smileys;sa=settings');
 	}
@@ -208,8 +206,7 @@ function EditSmileySets()
 				'smiley_sets_default' => in_array($modSettings['smiley_sets_default'], $set_paths) ? $modSettings['smiley_sets_default'] : $set_paths[0],
 			));
 
-			cache_put_data('parsing_smileys', null, 480);
-			cache_put_data('posting_smileys', null, 480);
+			cleanSmileyCache();
 		}
 		// Add a new smiley set.
 		elseif (!empty($_POST['add']))
@@ -256,8 +253,7 @@ function EditSmileySets()
 			if (!empty($_POST['smiley_sets_import']))
 				ImportSmileys($_POST['smiley_sets_path']);
 
-			cache_put_data('parsing_smileys', null, 480);
-			cache_put_data('posting_smileys', null, 480);
+			cleanSmileyCache();
 		}
 	}
 
@@ -304,7 +300,7 @@ function EditSmileySets()
 			$context['current_set']['is_new'] = false;
 
 			// Calculate whether there are any smileys in the directory that can be imported.
-			if (!empty($modSettings['smiley_enable']) && !empty($modSettings['smileys_dir']) && is_dir($modSettings['smileys_dir'] . '/' . $context['current_set']['path']))
+			if (!empty($modSettings['smiley_enable']) && is_dir($modSettings['smileys_dir'] . '/' . $context['current_set']['path']))
 			{
 				$smileys = array();
 				$dir = dir($modSettings['smileys_dir'] . '/' . $context['current_set']['path']);
@@ -337,7 +333,7 @@ function EditSmileySets()
 
 		// Retrieve all potential smiley set directories.
 		$context['smiley_set_dirs'] = array();
-		if (!empty($modSettings['smileys_dir']) && is_dir($modSettings['smileys_dir']))
+		if (is_dir($modSettings['smileys_dir']))
 		{
 			$dir = dir($modSettings['smileys_dir']);
 			while ($entry = $dir->read())
@@ -504,7 +500,7 @@ function AddSmiley()
 	global $modSettings, $context, $settings, $txt, $boarddir;
 
 	// Get a list of all known smiley sets.
-	$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
+	$context['smileys_dir'] = $modSettings['smileys_dir'];
 	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
 	$context['smiley_sets'] = explode(',', $modSettings['smiley_sets_known']);
 	$set_names = explode("\n", $modSettings['smiley_sets_names']);
@@ -699,8 +695,7 @@ function AddSmiley()
 			array('id_smiley')
 		);
 
-		cache_put_data('parsing_smileys', null, 480);
-		cache_put_data('posting_smileys', null, 480);
+		cleanSmileyCache();
 
 		// No errors? Out of here!
 		redirectexit('action=admin;area=smileys;sa=editsmileys');
@@ -858,8 +853,7 @@ function EditSmileys()
 			sortSmileyTable();
 		}
 
-		cache_put_data('parsing_smileys', null, 480);
-		cache_put_data('posting_smileys', null, 480);
+		cleanSmileyCache();
 	}
 
 	// Load all known smiley sets.
@@ -971,7 +965,7 @@ function EditSmileys()
 						'value' => $txt['smileys_description'],
 					),
 					'data' => array(
-						'function' => create_function('$rowData', empty($modSettings['smileys_dir']) || !is_dir($modSettings['smileys_dir']) ? '
+						'function' => create_function('$rowData', !is_dir($modSettings['smileys_dir']) ? '
 							return htmlspecialchars($rowData[\'description\']);
 						' : '
 							global $context, $txt, $modSettings;
@@ -1089,7 +1083,7 @@ function EditSmileys()
 	elseif ($context['sub_action'] == 'modifysmiley')
 	{
 		// Get a list of all known smiley sets.
-		$context['smileys_dir'] = empty($modSettings['smileys_dir']) ? $boarddir . '/Smileys' : $modSettings['smileys_dir'];
+		$context['smileys_dir'] = $modSettings['smileys_dir'];
 		$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
 		$context['smiley_sets'] = explode(',', $modSettings['smiley_sets_known']);
 		$set_names = explode("\n", $modSettings['smiley_sets_names']);
@@ -1248,8 +1242,7 @@ function EditSmileyOrder()
 			)
 		);
 
-		cache_put_data('parsing_smileys', null, 480);
-		cache_put_data('posting_smileys', null, 480);
+		cleanSmileyCache();
 	}
 
 	$request = wesql::query('
@@ -1332,9 +1325,6 @@ function EditSmileyOrder()
 					);
 		}
 	}
-
-	cache_put_data('parsing_smileys', null, 480);
-	cache_put_data('posting_smileys', null, 480);
 }
 
 function InstallSmileySet()
@@ -1368,8 +1358,7 @@ function InstallSmileySet()
 		'smiley_sets_names' => $modSettings['smiley_sets_names'] . "\n" . strtok(basename(isset($_FILES['set_gz']) ? $_FILES['set_gz']['name'] : $_REQUEST['set_gz']), '.'),
 	));
 
-	cache_put_data('parsing_smileys', null, 480);
-	cache_put_data('posting_smileys', null, 480);
+	cleanSmileyCache();
 
 	// !!! Add some confirmation?
 	redirectexit('action=admin;area=smileys');
@@ -1380,7 +1369,7 @@ function ImportSmileys($smileyPath)
 {
 	global $modSettings;
 
-	if (empty($modSettings['smileys_dir']) || !is_dir($modSettings['smileys_dir'] . '/' . $smileyPath))
+	if (!is_dir($modSettings['smileys_dir'] . '/' . $smileyPath))
 		fatal_lang_error('smiley_set_unable_to_import');
 
 	$smileys = array();
@@ -1438,8 +1427,7 @@ function ImportSmileys($smileyPath)
 		// Make sure the smiley codes are still in the right order.
 		sortSmileyTable();
 
-		cache_put_data('parsing_smileys', null, 480);
-		cache_put_data('posting_smileys', null, 480);
+		cleanSmileyCache();
 	}
 }
 
@@ -1737,6 +1725,14 @@ function sortSmileyTable()
 
 	// Remove the sorting column.
 	wedbPackages::remove_column('{db_prefix}smileys', 'temp_order');
+}
+
+// A helper function to easily wipe out the smiley cache, both in the file cache and in the CSS cache.
+function cleanSmileyCache()
+{
+	cache_put_data('smiley_parser', null, 480);
+	cache_put_data('smiley_poster', null, 480);
+	clean_cache('smileys', 'css,cgz,css.gz');
 }
 
 ?>

@@ -262,7 +262,7 @@ function smc_Editor(oOptions)
 }
 
 // Return the current text.
-smc_Editor.prototype.getText = function(bPrepareEntities, bModeOverride)
+smc_Editor.prototype.getText = function (bPrepareEntities, bModeOverride)
 {
 	var sText, bCurMode = typeof bModeOverride != 'undefined' ? bModeOverride : this.bRichTextEnabled;
 
@@ -288,7 +288,7 @@ smc_Editor.prototype.getText = function(bPrepareEntities, bModeOverride)
 };
 
 // Return the current text.
-smc_Editor.prototype.unprotectText = function(sText)
+smc_Editor.prototype.unprotectText = function (sText)
 {
 	// This restores smlt, smgt and smamp into boring entities, to unprotect against XML'd information like quotes.
 	sText = sText.replace(/#smlt#/g, '&lt;').replace(/#smgt#/g, '&gt;').replace(/#smamp#/g, '&amp;');
@@ -297,7 +297,7 @@ smc_Editor.prototype.unprotectText = function(sText)
 	return sText;
 };
 
-smc_Editor.prototype.editorKeyUp = function()
+smc_Editor.prototype.editorKeyUp = function ()
 {
 	if (this.opt.oDrafts)
 		this.opt.oDrafts.needsUpdate(true);
@@ -306,7 +306,7 @@ smc_Editor.prototype.editorKeyUp = function()
 	this.updateEditorControls();
 };
 
-smc_Editor.prototype.editorBlur = function()
+smc_Editor.prototype.editorBlur = function ()
 {
 	if (!is_ie)
 		return;
@@ -314,7 +314,7 @@ smc_Editor.prototype.editorBlur = function()
 	// !!! Need to do something here.
 };
 
-smc_Editor.prototype.editorFocus = function()
+smc_Editor.prototype.editorFocus = function ()
 {
 	if (!is_ie)
 		return;
@@ -323,7 +323,7 @@ smc_Editor.prototype.editorFocus = function()
 };
 
 // Rebuild the breadcrumb etc - and set things to the correct context.
-smc_Editor.prototype.updateEditorControls = function()
+smc_Editor.prototype.updateEditorControls = function ()
 {
 	// Everything else is specific to HTML mode.
 	if (!this.bRichTextEnabled)
@@ -455,14 +455,14 @@ smc_Editor.prototype.updateEditorControls = function()
 };
 
 // Set the HTML content to be that of the text box - if we are in wysiwyg mode.
-smc_Editor.prototype.doSubmit = function()
+smc_Editor.prototype.doSubmit = function ()
 {
 	if (this.bRichTextEnabled)
 		this.oTextHandle.value = this.oFrameDocument.body.innerHTML;
 };
 
 // Populate the box with text.
-smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, iMoveCursorBack)
+smc_Editor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iMoveCursorBack)
 {
 	if (bForceEntityReverse)
 		sText = this.unprotectText(sText);
@@ -529,7 +529,7 @@ smc_Editor.prototype.insertText = function(sText, bClear, bForceEntityReverse, i
 };
 
 // Special handler for WYSIWYG.
-smc_Editor.prototype.smf_execCommand = function(sCommand, bUi, sValue)
+smc_Editor.prototype.smf_execCommand = function (sCommand, bUi, sValue)
 {
 	if (this.opt.oDrafts)
 		this.opt.oDrafts.needsUpdate(true);
@@ -537,12 +537,13 @@ smc_Editor.prototype.smf_execCommand = function(sCommand, bUi, sValue)
 	return this.oFrameDocument.execCommand(sCommand, bUi, sValue);
 };
 
-smc_Editor.prototype.insertSmiley = function(oSmileyProperties)
+smc_Editor.prototype.insertSmiley = function (oSmileyProperties)
 {
+	var handle = this.oTextHandle, smileytext = oSmileyProperties[0];
+
 	// In text mode we just add it in as we always did.
 	if (!this.bRichTextEnabled)
 	{
-		var handle = this.oTextHandle, smileytext = oSmileyProperties.sCode;
 		if ('createTextRange' in handle)
 		{
 			var sel = 'caretPos' in handle ? handle.caretPos.duplicate() : null;
@@ -558,28 +559,25 @@ smc_Editor.prototype.insertSmiley = function(oSmileyProperties)
 	}
 	// Otherwise we need to do a whole image...
 	else
-	{
-		var iUniqueSmileyId = 1000 + Math.floor(Math.random() * 100000);
-		this.insertText('<img src="' + oSmileyProperties.sSrc + '" id="smiley_' + iUniqueSmileyId + '_' + oSmileyProperties.sSrc.replace(/^.*\//, '') + '" onresizestart="return false;" class="bottom" title="' + oSmileyProperties.sDescription.php_htmlspecialchars() + '" style="padding: 0 3px">');
-	}
+		this.insertText('<img alt="' + oSmileyProperties[0].php_htmlspecialchars() + '" class="smiley_' + oSmileyProperties[1] + '" src="' + we_theme_url + '/images/blank.gif" onresize="return false;" title="' + oSmileyProperties[2].php_htmlspecialchars() + '">');
 };
 
-smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
+smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 {
 	this.setFocus();
+	var sCode = oButtonProperties[3], sText, bbcode;
 
 	// A special SMF function?
-	if (oButtonProperties.sCode in this.oSmfExec)
-		this[this.oSmfExec[oButtonProperties.sCode]]();
+	if (sCode in this.oSmfExec)
+		this[this.oSmfExec[sCode]]();
 
 	else
 	{
 		// In text this is easy...
-		var sText, bbcode;
 		if (!this.bRichTextEnabled)
 		{
 			// URL popup?
-			if (oButtonProperties.sCode == 'url')
+			if (sCode == 'url')
 			{
 				// Ask them where to link to.
 				sText = prompt(oEditorStrings.prompt_text_url, 'http://');
@@ -591,7 +589,7 @@ smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
 			}
 			// img popup?
-			else if (oButtonProperties.sCode == 'img')
+			else if (sCode == 'img')
 			{
 				// Ask them where to link to.
 				sText = prompt(oEditorStrings.prompt_text_img, 'http://');
@@ -601,31 +599,31 @@ smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 				bbcode = '[img]' + sText + '[/img]';
 				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
 			}
-			// Replace?
-			else if (!('sAfter' in oButtonProperties) || oButtonProperties.sAfter == null)
-				replaceText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), this.oTextHandle);
+			// Replace? (No After)
+			else if (oButtonProperties[5] === '')
+				replaceText(oButtonProperties[4].replace(/\\n/g, '\n'), this.oTextHandle);
 
 			// Surround!
 			else
-				surroundText(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'), this.oTextHandle);
+				surroundText(oButtonProperties[4].replace(/\\n/g, '\n'), oButtonProperties[5].replace(/\\n/g, '\n'), this.oTextHandle);
 		}
 		else
 		{
 			// Is it easy?
-			if (oButtonProperties.sCode in this.oSimpleExec)
-				this.smf_execCommand(this.oSimpleExec[oButtonProperties.sCode], false, null);
+			if (sCode in this.oSimpleExec)
+				this.smf_execCommand(this.oSimpleExec[sCode], false, null);
 
 			// A link?
-			else if (oButtonProperties.sCode == 'url' || oButtonProperties.sCode == 'email' || oButtonProperties.sCode == 'ftp')
-				this.insertLink(oButtonProperties.sCode);
+			else if (sCode == 'url' || sCode == 'email' || sCode == 'ftp')
+				this.insertLink(sCode);
 
 			// Maybe an image?
-			else if (oButtonProperties.sCode == 'img')
+			else if (sCode == 'img')
 				this.insertImage();
 
 			// Everything else means doing something ourselves.
-			else if ('sBefore' in oButtonProperties)
-				this.insertCustomHTML(oButtonProperties.sBefore.replace(/\\n/g, '\n'), oButtonProperties.sAfter.replace(/\\n/g, '\n'));
+			else if (oButtonProperties[4] !== '')
+				this.insertCustomHTML(oButtonProperties[4].replace(/\\n/g, '\n'), oButtonProperties[5].replace(/\\n/g, '\n'));
 		}
 	}
 
@@ -639,7 +637,7 @@ smc_Editor.prototype.handleButtonClick = function(oButtonProperties)
 };
 
 // Changing a select box?
-smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
+smc_Editor.prototype.handleSelectChange = function (oSelectProperties)
 {
 	this.setFocus();
 
@@ -648,7 +646,7 @@ smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
 		return true;
 
 	// Changing font face?
-	if (oSelectProperties.sName == 'sel_face')
+	if (oSelectProperties[1] == 'sel_face')
 	{
 		if (!this.bRichTextEnabled)
 		{
@@ -664,7 +662,7 @@ smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
 		}
 	}
 	// Font size?
-	else if (oSelectProperties.sName == 'sel_size')
+	else if (oSelectProperties[1] == 'sel_size')
 	{
 		if (!this.bRichTextEnabled)
 		{
@@ -675,7 +673,7 @@ smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
 			this.smf_execCommand('fontsize', false, sValue);
 	}
 	// Or color even?
-	else if (oSelectProperties.sName == 'sel_color')
+	else if (oSelectProperties[1] == 'sel_color')
 	{
 		if (!this.bRichTextEnabled)
 		{
@@ -695,7 +693,7 @@ smc_Editor.prototype.handleSelectChange = function(oSelectProperties)
 };
 
 // Put in some custom HTML.
-smc_Editor.prototype.insertCustomHTML = function(sLeftTag, sRightTag)
+smc_Editor.prototype.insertCustomHTML = function (sLeftTag, sRightTag)
 {
 	var sSelection = this.getSelect(true, true);
 	if (sSelection.length == 0)
@@ -713,7 +711,7 @@ smc_Editor.prototype.insertCustomHTML = function(sLeftTag, sRightTag)
 };
 
 // Insert a URL link.
-smc_Editor.prototype.insertLink = function(sType)
+smc_Editor.prototype.insertLink = function (sType)
 {
 	var sPromptText = sType == 'email' ? oEditorStrings.prompt_text_email : (sType == 'ftp' ? oEditorStrings.prompt_text_ftp : oEditorStrings.prompt_text_url);
 
@@ -744,7 +742,7 @@ smc_Editor.prototype.insertLink = function(sType)
 	}
 };
 
-smc_Editor.prototype.insertImage = function(sSrc)
+smc_Editor.prototype.insertImage = function (sSrc)
 {
 	if (!sSrc)
 	{
@@ -755,7 +753,7 @@ smc_Editor.prototype.insertImage = function(sSrc)
 	this.smf_execCommand('insertimage', false, sSrc);
 };
 
-smc_Editor.prototype.getSelect = function(bWantText, bWantHTMLText)
+smc_Editor.prototype.getSelect = function (bWantText, bWantHTMLText)
 {
 	if (is_ie && 'selection' in this.oFrameDocument)
 	{
@@ -798,7 +796,7 @@ smc_Editor.prototype.getSelect = function(bWantText, bWantHTMLText)
 	return this.oFrameDocument.getSelection();
 };
 
-smc_Editor.prototype.getRange = function()
+smc_Editor.prototype.getRange = function ()
 {
 	// Get the current selection.
 	var oSelection = this.getSelect();
@@ -813,7 +811,7 @@ smc_Editor.prototype.getRange = function()
 };
 
 // Get the current element.
-smc_Editor.prototype.getCurElement = function()
+smc_Editor.prototype.getCurElement = function ()
 {
 	var oRange = this.getRange();
 
@@ -834,7 +832,7 @@ smc_Editor.prototype.getCurElement = function()
 	}
 };
 
-smc_Editor.prototype.getParentElement = function(oNode)
+smc_Editor.prototype.getParentElement = function (oNode)
 {
 	if (oNode.nodeType == 1)
 		return oNode;
@@ -852,7 +850,7 @@ smc_Editor.prototype.getParentElement = function(oNode)
 };
 
 // Remove formatting for the selected text.
-smc_Editor.prototype.removeFormatting = function()
+smc_Editor.prototype.removeFormatting = function ()
 {
 	// Do both at once.
 	if (this.bRichTextEnabled)
@@ -884,7 +882,7 @@ smc_Editor.prototype.removeFormatting = function()
 };
 
 // Upload/add a media file (picture, video...)
-smc_Editor.prototype.addMedia = function()
+smc_Editor.prototype.addMedia = function ()
 {
 	reqWin(we_prepareScriptUrl() + 'action=media;sa=post;noh=' + (this.opt ? this.opt.sUniqueId : this.sUniqueId), Math.min(1000, self.screen.availWidth-50), Math.min(700, self.screen.availHeight-50), false, true, true);
 
@@ -892,7 +890,7 @@ smc_Editor.prototype.addMedia = function()
 };
 
 // Toggle wysiwyg/normal mode.
-smc_Editor.prototype.toggleView = function(bView)
+smc_Editor.prototype.toggleView = function (bView)
 {
 	if (!this.bRichTextPossible)
 	{
@@ -910,7 +908,7 @@ smc_Editor.prototype.toggleView = function(bView)
 };
 
 // Request the message in a different form.
-smc_Editor.prototype.requestParsedMessage = function(bView)
+smc_Editor.prototype.requestParsedMessage = function (bView)
 {
 	// Replace with a force reload.
 	if (!can_ajax)
@@ -925,7 +923,7 @@ smc_Editor.prototype.requestParsedMessage = function(bView)
 	sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=' + (bView ? 1 : 0) + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + sText, this.onToggleDataReceived);
 };
 
-smc_Editor.prototype.onToggleDataReceived = function(oXMLDoc)
+smc_Editor.prototype.onToggleDataReceived = function (oXMLDoc)
 {
 	var sText = '';
 	for (var i = 0, j = oXMLDoc.getElementsByTagName('message')[0].childNodes.length; i < j; i++)
@@ -962,7 +960,7 @@ smc_Editor.prototype.onToggleDataReceived = function(oXMLDoc)
 };
 
 // Set the focus for the editing window.
-smc_Editor.prototype.setFocus = function(force_both)
+smc_Editor.prototype.setFocus = function (force_both)
 {
 	if (!this.bRichTextEnabled)
 		this.oTextHandle.focus();
@@ -973,7 +971,7 @@ smc_Editor.prototype.setFocus = function(force_both)
 };
 
 // Start up the spellchecker!
-smc_Editor.prototype.spellCheckStart = function()
+smc_Editor.prototype.spellCheckStart = function ()
 {
 	if (!spellCheck)
 		return false;
@@ -989,7 +987,7 @@ smc_Editor.prototype.spellCheckStart = function()
 };
 
 // This contains the spellcheckable text.
-smc_Editor.prototype.onSpellCheckDataReceived = function(oXMLDoc)
+smc_Editor.prototype.onSpellCheckDataReceived = function (oXMLDoc)
 {
 	var sText = '';
 	for (var i = 0; i < oXMLDoc.getElementsByTagName('message')[0].childNodes.length; i++)
@@ -1002,7 +1000,7 @@ smc_Editor.prototype.onSpellCheckDataReceived = function(oXMLDoc)
 };
 
 // Function called when the Spellchecker is finished and ready to pass back.
-smc_Editor.prototype.spellCheckEnd = function()
+smc_Editor.prototype.spellCheckEnd = function ()
 {
 	// If HTML edit put the text back!
 	if (this.bRichTextEnabled)
@@ -1012,7 +1010,7 @@ smc_Editor.prototype.spellCheckEnd = function()
 };
 
 // The corrected text.
-smc_Editor.prototype.onSpellCheckCompleteDataReceived = function(oXMLDoc)
+smc_Editor.prototype.onSpellCheckCompleteDataReceived = function (oXMLDoc)
 {
 	var sText = '';
 	for (var i = 0; i < oXMLDoc.getElementsByTagName('message')[0].childNodes.length; i++)
@@ -1022,7 +1020,7 @@ smc_Editor.prototype.onSpellCheckCompleteDataReceived = function(oXMLDoc)
 	this.setFocus();
 };
 
-smc_Editor.prototype.resizeTextArea = function(newHeight, newWidth, is_change)
+smc_Editor.prototype.resizeTextArea = function (newHeight, newWidth, is_change)
 {
 	// Work out what the new height is.
 	if (is_change)
@@ -1047,7 +1045,7 @@ smc_Editor.prototype.resizeTextArea = function(newHeight, newWidth, is_change)
 };
 
 // A utility instruction to save repetition when trying to work out what to change on a height/width.
-smc_Editor.prototype._calculateNewDimension = function(old_size, change_size)
+smc_Editor.prototype._calculateNewDimension = function (old_size, change_size)
 {
 	// We'll assume pixels but may not be.
 	var new_size, changeReg = change_size.toString().match(/(-)?(\d+)(\D*)/), curReg = old_size.toString().match(/(\d+)(\D*)/);
@@ -1077,7 +1075,7 @@ smc_Editor.prototype._calculateNewDimension = function(old_size, change_size)
 };
 
 // Register default keyboard shortcuts.
-smc_Editor.prototype.registerDefaultShortcuts = function()
+smc_Editor.prototype.registerDefaultShortcuts = function ()
 {
 	if (!is_ff)
 		return;
@@ -1090,7 +1088,7 @@ smc_Editor.prototype.registerDefaultShortcuts = function()
 };
 
 // Register a keyboard shortcut.
-smc_Editor.prototype.registerShortcut = function(sLetter, sModifiers, sCodeName)
+smc_Editor.prototype.registerShortcut = function (sLetter, sModifiers, sCodeName)
 {
 	if (!sCodeName)
 		return;
@@ -1111,7 +1109,7 @@ smc_Editor.prototype.registerShortcut = function(sLetter, sModifiers, sCodeName)
 };
 
 // Check whether the key has triggered a shortcut?
-smc_Editor.prototype.checkShortcut = function(oEvent)
+smc_Editor.prototype.checkShortcut = function (oEvent)
 {
 	// To be a shortcut it needs to be one of these, duh!
 	if (!oEvent.altKey && !oEvent.ctrlKey)
@@ -1128,7 +1126,7 @@ smc_Editor.prototype.checkShortcut = function(oEvent)
 };
 
 // The actual event check for the above!
-smc_Editor.prototype.shortcutCheck = function(oEvent)
+smc_Editor.prototype.shortcutCheck = function (oEvent)
 {
 	var sFoundCode = this.checkShortcut(oEvent);
 
@@ -1174,7 +1172,7 @@ smc_Editor.prototype.shortcutCheck = function(oEvent)
 };
 
 // This is the method called after clicking the resize bar.
-smc_Editor.prototype.startResize = function(oEvent)
+smc_Editor.prototype.startResize = function (oEvent)
 {
 	if (!oEvent || window.smf_oCurrentResizeEditor != null)
 		return true;
@@ -1197,7 +1195,7 @@ smc_Editor.prototype.startResize = function(oEvent)
 };
 
 // This is kind of a cheat, as it only works over the IFRAME.
-smc_Editor.prototype.resizeOverIframe = function(oEvent)
+smc_Editor.prototype.resizeOverIframe = function (oEvent)
 {
 	if (!oEvent || window.smf_oCurrentResizeEditor == null)
 		return true;
@@ -1217,7 +1215,7 @@ smc_Editor.prototype.resizeOverIframe = function(oEvent)
 };
 
 // This resizes an editor.
-smc_Editor.prototype.resizeOverDocument = function(oEvent)
+smc_Editor.prototype.resizeOverDocument = function (oEvent)
 {
 	if (!oEvent || window.smf_oCurrentResizeEditor == null)
 		return true;
@@ -1231,7 +1229,7 @@ smc_Editor.prototype.resizeOverDocument = function(oEvent)
 	return false;
 };
 
-smc_Editor.prototype.endResize = function(oEvent)
+smc_Editor.prototype.endResize = function (oEvent)
 {
 	if (window.smf_oCurrentResizeEditor == null)
 		return true;

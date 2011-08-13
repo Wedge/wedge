@@ -64,7 +64,6 @@ class wedit
 
 			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
 			add_js('
-	var smf_smileys_url = \'' . $settings['smileys_url'] . '\';
 	var oEditorStrings = {
 		wont_work: ' . JavaScriptEscape($txt['rich_edit_wont_work']) . ',
 		func_disabled: ' . JavaScriptEscape($txt['rich_edit_function_disabled']) . ',
@@ -126,7 +125,7 @@ class wedit
 
 	public static function bbc_to_html($text)
 	{
-		global $modSettings;
+		global $modSettings, $settings;
 
 		// Turn line breaks back into br's.
 		$text = strtr($text, array("\r" => '', "\n" => '<br>'));
@@ -169,9 +168,8 @@ class wedit
 		);
 		$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
 
-		// Parse unique ID's and disable javascript into the smileys - using the double space.
-		$i = 1;
-		$text = preg_replace('~(?:\s|&nbsp;)?<(img\ssrc="' . preg_quote($modSettings['smileys_url'], '~') . '/[^<>]+?/([^<>]+?)"\s*)[^<>]*?class="smiley">~e', '\'<\' . ' . 'stripslashes(\'$1\') . \'alt="" onresizestart="return false;" id="smiley_\' . ' . "\$" . 'i++ . \'_$2" style="padding: 0 3px">\'', $text);
+		// Parse smileys into something browsable.
+		$text = preg_replace('~(?:\s|&nbsp;)?<div\sclass="smiley_([^<>]+?)"[^<>]*?>([^<]*)</div>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley_$1" src="' . $settings['images_url'] . '/blank.gif">\'', $text);
 
 		return $text;
 	}
@@ -217,61 +215,8 @@ class wedit
 		$text = preg_replace('~\\<\\!--.*?-->~i', '', $text);
 		$text = preg_replace('~\\<\\!\\[CDATA\\[.*?\\]\\]\\>~i', '', $text);
 
-		// Do the smileys ultra first!
-		preg_match_all('~<img\s+[^<>]*?id="*smiley_\d+_([^<>]+?)[\s"/>]\s*[^<>]*?/*>(?:\s)?~i', $text, $matches);
-		if (!empty($matches[0]))
-		{
-			// Easy if it's not custom.
-			if (empty($modSettings['smiley_enable']))
-			{
-				$smileysfrom = array('>:D', ':D', '::)', '>:(', ':)', ';)', ';D', ':(', ':o', '8)', ':P', '???', ':-[', ':-X', ':-*', ':\'(', ':-\\', '^-^', 'O0', 'C:-)', '0:)', ':edit:');
-				$smileysto = array('evil.gif', 'cheesy.gif', 'rolleyes.gif', 'angry.gif', 'smiley.gif', 'wink.gif', 'grin.gif', 'sad.gif', 'shocked.gif', 'cool.gif', 'tongue.gif', 'huh.gif', 'embarrassed.gif', 'lipsrsealed.gif', 'kiss.gif', 'cry.gif', 'undecided.gif', 'azn.gif', 'afro.gif', 'police.gif', 'angel.gif', 'edit.gif');
-
-				foreach ($matches[1] as $k => $file)
-				{
-					$found = array_search($file, $smileysto);
-					// Note the weirdness here is to stop double spaces between smileys.
-					if ($found)
-						$matches[1][$k] = '-[]-smf_smily_start#|#' . htmlspecialchars($smileysfrom[$found]) . '-[]-smf_smily_end#|#';
-					else
-						$matches[1][$k] = '';
-				}
-			}
-			else
-			{
-				// Load all the smileys.
-				$names = array();
-				foreach ($matches[1] as $file)
-					$names[] = $file;
-				$names = array_unique($names);
-
-				if (!empty($names))
-				{
-					$request = wesql::query('
-						SELECT code, filename
-						FROM {db_prefix}smileys
-						WHERE filename IN ({array_string:smiley_filenames})',
-						array(
-							'smiley_filenames' => $names,
-						)
-					);
-					$mappings = array();
-					while ($row = wesql::fetch_assoc($request))
-						$mappings[$row['filename']] = htmlspecialchars($row['code']);
-					wesql::free_result($request);
-
-					foreach ($matches[1] as $k => $file)
-						if (isset($mappings[$file]))
-							$matches[1][$k] = '-[]-smf_smily_start#|#' . $mappings[$file] . '-[]-smf_smily_end#|#';
-				}
-			}
-
-			// Replace the tags!
-			$text = str_replace($matches[0], $matches[1], $text);
-
-			// Now sort out spaces
-			$text = str_replace(array('-[]-smf_smily_end#|#-[]-smf_smily_start#|#', '-[]-smf_smily_end#|#', '-[]-smf_smily_start#|#'), ' ', $text);
-		}
+		// Do the smileys ultra fast!
+		$text = preg_replace('~<img alt="([^>"]+)" class="smiley_[^"]+".*?>(?:\s)?~e', 'un_htmlspecialchars(\' $1\')', $text);
 
 		// Only try to buy more time if the client didn't quit.
 		if (connection_aborted() && $context['server']['is_apache'])
@@ -1634,95 +1579,102 @@ class wedit
 
 		// Load smileys - don't bother to run a query if we're not using the database's ones anyhow.
 		if (empty($modSettings['smiley_enable']) && $user_info['smiley_set'] != 'none')
+		{
 			$this->smileys['postform'][] = array(
 				'smileys' => array(
 					array(
 						'code' => ':)',
-						'filename' => 'smiley.gif',
+						'class' => 'smiley_gif',
 						'description' => $txt['icon_smiley'],
 					),
 					array(
 						'code' => ';)',
-						'filename' => 'wink.gif',
+						'class' => 'wink_gif',
 						'description' => $txt['icon_wink'],
 					),
 					array(
 						'code' => ':D',
-						'filename' => 'cheesy.gif',
+						'class' => 'cheesy_gif',
 						'description' => $txt['icon_cheesy'],
 					),
 					array(
 						'code' => ';D',
-						'filename' => 'grin.gif',
+						'class' => 'grin_gif',
 						'description' => $txt['icon_grin']
 					),
 					array(
 						'code' => '>:(',
-						'filename' => 'angry.gif',
+						'class' => 'angry_gif',
 						'description' => $txt['icon_angry'],
 					),
 					array(
 						'code' => ':(',
-						'filename' => 'sad.gif',
+						'class' => 'sad_gif',
 						'description' => $txt['icon_sad'],
 					),
 					array(
 						'code' => ':o',
-						'filename' => 'shocked.gif',
+						'class' => 'shocked_gif',
 						'description' => $txt['icon_shocked'],
 					),
 					array(
 						'code' => '8)',
-						'filename' => 'cool.gif',
+						'class' => 'cool_gif',
 						'description' => $txt['icon_cool'],
 					),
 					array(
 						'code' => '???',
-						'filename' => 'huh.gif',
+						'class' => 'huh_gif',
 						'description' => $txt['icon_huh'],
 					),
 					array(
 						'code' => '::)',
-						'filename' => 'rolleyes.gif',
+						'class' => 'rolleyes_gif',
 						'description' => $txt['icon_rolleyes'],
 					),
 					array(
 						'code' => ':P',
-						'filename' => 'tongue.gif',
+						'class' => 'tongue_gif',
 						'description' => $txt['icon_tongue'],
 					),
 					array(
 						'code' => ':-[',
-						'filename' => 'embarrassed.gif',
+						'class' => 'embarrassed_gif',
 						'description' => $txt['icon_embarrassed'],
 					),
 					array(
 						'code' => ':-X',
-						'filename' => 'lipsrsealed.gif',
+						'class' => 'lipsrsealed_gif',
 						'description' => $txt['icon_lips'],
 					),
 					array(
 						'code' => ':-\\',
-						'filename' => 'undecided.gif',
+						'class' => 'undecided_gif',
 						'description' => $txt['icon_undecided'],
 					),
 					array(
 						'code' => ':-*',
-						'filename' => 'kiss.gif',
+						'class' => 'kiss_gif',
 						'description' => $txt['icon_kiss'],
 					),
 					array(
 						'code' => ':\'(',
-						'filename' => 'cry.gif',
+						'class' => 'cry_gif',
 						'description' => $txt['icon_cry'],
+					),
+					array(
+						'code' => ':edit:',
+						'class' => 'edit_gif',
+						'description' => $txt['icon_edit'],
 						'isLast' => true,
 					),
 				),
 				'isLast' => true,
 			);
+		}
 		elseif ($user_info['smiley_set'] != 'none')
 		{
-			if (($temp = cache_get_data('posting_smileys', 480)) == null)
+			if (($temp = cache_get_data('smiley_poster', 480)) == null)
 			{
 				$request = wesql::query('
 					SELECT code, filename, description, smiley_row, hidden
@@ -1734,7 +1686,7 @@ class wedit
 				);
 				while ($row = wesql::fetch_assoc($request))
 				{
-					$row['filename'] = htmlspecialchars($row['filename']);
+					$row['class'] = preg_replace(array('~[^\w]~', '~_+~'), array('_', '_'), $row['filename']);
 					$row['description'] = htmlspecialchars($row['description']);
 
 					$this->smileys[empty($row['hidden']) ? 'postform' : 'popup'][$row['smiley_row']]['smileys'][] = $row;
@@ -1750,7 +1702,7 @@ class wedit
 						$this->smileys[$section][count($smileyRows) - 1]['isLast'] = true;
 				}
 
-				cache_put_data('posting_smileys', $this->smileys, 480);
+				cache_put_data('smiley_poster', $this->smileys, 480);
 			}
 			else
 				$this->smileys = $temp;
@@ -2270,37 +2222,24 @@ class wedit
 			' . $location . ': [';
 				foreach ($smileyRows as $smileyRow)
 				{
-					$context['footer_js'] .= '
-				[';
+					$context['footer_js'] .= '[';
 					foreach ($smileyRow['smileys'] as $smiley)
 						$context['footer_js'] .= '
-					{
-						sCode: ' . JavaScriptEscape($smiley['code']) . ',
-						sSrc: ' . JavaScriptEscape($settings['smileys_url'] . '/' . $smiley['filename']) . ',
-						sDescription: ' . JavaScriptEscape($smiley['description']) . '
-					}' . (empty($smiley['isLast']) ? ',' : '');
+				[' . JavaScriptEscape($smiley['code']) . ', ' . JavaScriptEscape($smiley['class']) . ', ' . JavaScriptEscape($smiley['description']) . ']' . (empty($smiley['isLast']) ? ',' : '');
 
 				$context['footer_js'] .= '
-				]' . (empty($smileyRow['isLast']) ? ',' : '');
+			]' . (empty($smileyRow['isLast']) ? ',
+			' : '');
 				}
-				$context['footer_js'] .= '
-			]' . ($location === 'postform' ? ',' : '');
+				$context['footer_js'] .= ']' . ($location === 'postform' ? ',' : '');
 			}
 
 			add_js('
 		},
-		sSmileyBoxTemplate: ' . JavaScriptEscape('
-			%smileyRows% %moreSmileys%
-		') . ',
-		sSmileyRowTemplate: ' . JavaScriptEscape('
-			<div>%smileyRow%</div>
-		') . ',
-		sSmileyTemplate: ' . JavaScriptEscape('
-			<img src="%smileySource%" class="bottom" alt="%smileyDescription%" title="%smileyDescription%" id="%smileyId%">
-		') . ',
-		sMoreSmileysTemplate: ' . JavaScriptEscape('
-			<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>
-		') . ',
+		sSmileyRowTemplate: ' . JavaScriptEscape('<div>%smileyRow%</div>') . ',
+		sSmileyTemplate: ' . JavaScriptEscape('<div class="smiley_%smileySource% smpost" title="%smileyDesc%" id="%smileyId%"></div>') . ',
+		sSmileyBoxTemplate: ' . JavaScriptEscape('<div id="' . $smileycontainer . '_rows">%smileyRows%</div><div id="' . $smileycontainer . '_more">%moreSmileys%</div>') . ',
+		sMoreSmileysTemplate: ' . JavaScriptEscape('<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>') . ',
 		sMoreSmileysLinkId: ' . JavaScriptEscape('moreSmileys_' . $this->id) . '
 	});');
 		}
@@ -2324,25 +2263,23 @@ class wedit
 				foreach ($buttonRow as $tag)
 				{
 					// Is there a "before" part for this bbc button? If not, it can't be a button!!
+					// In order, we show: sType, bEnabled, sImage/sPos, sCode, sBefore, sAfter, sDescription.
 					if (isset($tag['before']))
 						$context['footer_js'] .= '
-				{
-					sType: \'button\',
-					bEnabled: ' . (empty($this->disabled_tags[$tag['code']]) ? 'true' : 'false') . ',' . (!is_array($tag['image']) ? '
-					sImage: ' . JavaScriptEscape($settings['images_url'] . '/bbc/' . $tag['image'] . '.gif') : '
-					sPos: [' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . ']') . ',
-					sCode: ' . JavaScriptEscape($tag['code']) . ',
-					sBefore: ' . JavaScriptEscape($tag['before']) . ',
-					sAfter: ' . (isset($tag['after']) ? JavaScriptEscape($tag['after']) : 'null') . ',
-					sDescription: ' . JavaScriptEscape($tag['description']) . '
-				}' . (empty($tag['isLast']) ? ',' : '');
+				[' .
+					'"button", ' . (empty($this->disabled_tags[$tag['code']]) ? '1, ' : '0, ') . (!is_array($tag['image']) ?
+					JavaScriptEscape($settings['images_url'] . '/bbc/' . $tag['image'] . '.gif') . ', ' :
+					'[' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . '], ') .
+					JavaScriptEscape($tag['code']) . ', ' .
+					JavaScriptEscape($tag['before']) . ', ' .
+					(isset($tag['after']) ? JavaScriptEscape($tag['after']) : '""') . ', ' .
+					JavaScriptEscape($tag['description']) .
+				']' . (empty($tag['isLast']) ? ',' : '');
 
 					// Must be a divider then.
 					else
 						$context['footer_js'] .= '
-				{
-					sType: \'divider\'
-				}' . (empty($tag['isLast']) ? ',' : '');
+				[]' . (empty($tag['isLast']) ? ',' : '');
 				}
 
 				// Add the select boxes to the first row.
@@ -2351,67 +2288,28 @@ class wedit
 					// Show the font drop down...
 					if (!isset($this->disabled_tags['font']))
 						$context['footer_js'] .= ',
-				{
-					sType: \'select\',
-					sName: \'sel_face\',
-					oOptions: {
-						\'\': ' . JavaScriptEscape($txt['font_face']) . ',
-						\'courier new\': \'Courier New\',
-						\'arial\': \'Arial\',
-						\'arial black\': \'Arial Black\',
-						\'impact\': \'Impact\',
-						\'verdana\': \'Verdana\',
-						\'times new roman\': \'Times New Roman\',
-						\'georgia\': \'Georgia\',
-						\'andale mono\': \'Andale Mono\',
-						\'trebuchet ms\': \'Trebuchet MS\',
-						\'segoe ui\': \'Segoe UI\'
-					}
-				}';
+				["select", "sel_face", {
+					"": ' . JavaScriptEscape($txt['font_face']) . ', "courier new": "Courier New",
+					"arial": "Arial", "arial black": "Arial Black", "impact": "Impact",
+					"verdana": "Verdana", "times new roman": "Times New Roman", "georgia": "Georgia",
+					"andale mono": "Andale Mono", "trebuchet ms": "Trebuchet MS", "segoe ui": "Segoe UI"
+				}]';
 
 					// Font sizes anyone?
 					if (!isset($this->disabled_tags['size']))
 						$context['footer_js'] .= ',
-				{
-					sType: \'select\',
-					sName: \'sel_size\',
-					oOptions: {
-						\'\': ' . JavaScriptEscape($txt['font_size']) . ',
-						\'1\': \'6pt\',
-						\'2\': \'8pt\',
-						\'3\': \'10pt\',
-						\'4\': \'12pt\',
-						\'5\': \'14pt\',
-						\'6\': \'18pt\',
-						\'7\': \'24pt\'
-					}
-				}';
+				["select", "sel_size", { "": ' . JavaScriptEscape($txt['font_size']) . ', 1: "6pt", 2: "8pt", 3: "10pt", 4: "12pt", 5: "14pt", 6: "18pt", 7: "24pt" }]';
 
 					// Print a drop down list for all the colors we allow!
 					if (!isset($this->disabled_tags['color']))
 						$context['footer_js'] .= ',
-				{
-					sType: \'select\',
-					sName: \'sel_color\',
-					oOptions: {
-						\'\': ' . JavaScriptEscape($txt['change_color']) . ',
-						\'black\': ' . JavaScriptEscape($txt['black']) . ',
-						\'red\': ' . JavaScriptEscape($txt['red']) . ',
-						\'yellow\': ' . JavaScriptEscape($txt['yellow']) . ',
-						\'pink\': ' . JavaScriptEscape($txt['pink']) . ',
-						\'green\': ' . JavaScriptEscape($txt['green']) . ',
-						\'orange\': ' . JavaScriptEscape($txt['orange']) . ',
-						\'purple\': ' . JavaScriptEscape($txt['purple']) . ',
-						\'blue\': ' . JavaScriptEscape($txt['blue']) . ',
-						\'beige\': ' . JavaScriptEscape($txt['beige']) . ',
-						\'brown\': ' . JavaScriptEscape($txt['brown']) . ',
-						\'teal\': ' . JavaScriptEscape($txt['teal']) . ',
-						\'navy\': ' . JavaScriptEscape($txt['navy']) . ',
-						\'maroon\': ' . JavaScriptEscape($txt['maroon']) . ',
-						\'limegreen\': ' . JavaScriptEscape($txt['lime_green']) . ',
-						\'white\': ' . JavaScriptEscape($txt['white']) . '
-					}
-				}';
+				["select", "sel_color", {
+					"": ' . JavaScriptEscape($txt['change_color']) . ',
+					"black": ' . JavaScriptEscape($txt['black']) . ', "red": ' . JavaScriptEscape($txt['red']) . ', "yellow": ' . JavaScriptEscape($txt['yellow']) . ', "pink": ' . JavaScriptEscape($txt['pink']) . ',
+					"green": ' . JavaScriptEscape($txt['green']) . ', "orange": ' . JavaScriptEscape($txt['orange']) . ', "purple": ' . JavaScriptEscape($txt['purple']) . ', "blue": ' . JavaScriptEscape($txt['blue']) . ',
+					"beige": ' . JavaScriptEscape($txt['beige']) . ', "brown": ' . JavaScriptEscape($txt['brown']) . ', "teal": ' . JavaScriptEscape($txt['teal']) . ', "navy": ' . JavaScriptEscape($txt['navy']) . ',
+					"maroon": ' . JavaScriptEscape($txt['maroon']) . ', "limegreen": ' . JavaScriptEscape($txt['lime_green']) . ', "white": ' . JavaScriptEscape($txt['white']) . '
+				}]';
 				}
 				$context['footer_js'] .= '
 			]' . ($i == count($this->bbc) - 1 ? '' : ',');
@@ -2419,23 +2317,13 @@ class wedit
 
 			add_js('
 		],
-		sButtonTemplate: ' . JavaScriptEscape('
-			<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>
-		') . ',
+		sButtonTemplate: ' . JavaScriptEscape('<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>') . ',
 		sButtonBackgroundPos: [0, 22],
 		sButtonBackgroundPosHover: [0, 0],
 		sActiveButtonBackgroundPos: [0, 0],
-		sDividerTemplate: ' . JavaScriptEscape('
-			<div class="bbc_divider"></div>
-		') . ',
-		sSelectTemplate: ' . JavaScriptEscape('
-			<select name="%selectName%" id="%selectId%" style="margin: 4px 0 0 3px; padding: 1px; font-size: 9pt;">
-				%selectOptions%
-			</select>
-		') . ',
-		sButtonRowTemplate: ' . JavaScriptEscape('
-			<div>%buttonRow%</div>
-		') . '
+		sDividerTemplate: ' . JavaScriptEscape('<div class="bbc_divider"></div>') . ',
+		sSelectTemplate: ' . JavaScriptEscape('<select name="%selectName%" id="%selectId%" style="margin: 4px 0 0 3px; padding: 1px; font-size: 9pt">%selectOptions%</select>') . ',
+		sButtonRowTemplate: ' . JavaScriptEscape('<div>%buttonRow%</div>') . '
 	});');
 		}
 
