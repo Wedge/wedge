@@ -456,7 +456,7 @@ function loadProfileFields($force_reload = false)
 			'type' => 'text',
 			'label' => $txt['personal_text'],
 			'log_change' => true,
-			'input_attr' => array('maxlength="50"'),
+			'input_attr' => array(' maxlength="50"'),
 			'size' => 50,
 			'permission' => 'profile_extra',
 		),
@@ -503,7 +503,7 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['name'],
 			'subtext' => $txt['display_name_desc'],
 			'log_change' => true,
-			'input_attr' => array('maxlength="60"'),
+			'input_attr' => array(' maxlength="60"'),
 			'permission' => 'profile_identity',
 			'enabled' => !empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum'),
 			'input_validate' => create_function('&$value', '

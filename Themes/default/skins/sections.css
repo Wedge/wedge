@@ -634,15 +634,15 @@ ul.post_options
 #bbcBox_message
 	margin: .75em .5em
 	div
-		margin: .2em 0
+		margin: 2px
+	div, img
 		vertical-align: top
-		img
-			margin: 0 1px 0 0
-			vertical-align: top
 	> div
 		margin: 0
 	select
 		margin: 0 2px
+	.bbc_button div
+		margin: 2px 0
 
 // The smiley strip
 #smileyBox_message

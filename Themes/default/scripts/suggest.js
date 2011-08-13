@@ -242,7 +242,7 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 	$('<div></div>', { id: eid }).html(
 		this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
 		.replace(/%item_href%/g, we_prepareScriptUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
-		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_images_url).replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
+		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + "/images").replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
 	).appendTo(this.oItemList);
 
 	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)

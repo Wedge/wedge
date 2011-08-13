@@ -426,13 +426,13 @@ function template_html_below()
 
 	echo "\n", theme_base_js(), '
 <script><!-- // --><![CDATA[
-	var we_script = "', $scripturl, '";
-	var we_default_theme_url = "', $settings['default_theme_url'], '";
-	var we_theme_url = "', $settings['theme_url'], '";
-	var we_images_url = "', $settings['images_url'], '";
-	var we_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ';
-	var ajax_notification_text = "', $txt['ajax_in_progress'], '";
-	var ajax_notification_cancel_text = "', $txt['modify_cancel'], '";
+	var
+		we_script = "', $scripturl, '",
+		we_default_theme_url = "', $settings['default_theme_url'], '",
+		we_theme_url = "', $settings['theme_url'], '",
+		we_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ',
+		ajax_notification_text = "', $txt['ajax_in_progress'], '",
+		ajax_notification_cancel_text = "', $txt['modify_cancel'], '";
 
 	initMenu("main_menu");
 

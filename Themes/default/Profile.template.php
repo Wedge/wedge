@@ -1208,12 +1208,12 @@ function template_edit_options()
 			// Maybe it's a text box - very likely!
 			elseif (in_array($field['type'], array('int', 'float', 'text', 'password', 'url', 'email')))
 				echo '
-						<input type="', $field['type'] == 'int' || $field['type'] == 'float' ? 'text' : $field['type'], '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '" ', $field['input_attr'], '>';
+						<input type="', $field['type'] == 'int' || $field['type'] == 'float' ? 'text' : $field['type'], '" name="', $key, '" id="', $key, '" size="', empty($field['size']) ? 30 : $field['size'], '" value="', $field['value'], '"', $field['input_attr'], '>';
 
 			// You "checking" me out? ;)
 			elseif ($field['type'] == 'check')
 				echo '
-						<input type="hidden" name="', $key, '" value="0"><input type="checkbox" name="', $key, '" id="', $key, '" ', !empty($field['value']) ? ' checked' : '', ' value="1" ', $field['input_attr'], '>';
+						<input type="hidden" name="', $key, '" value="0"><input type="checkbox" name="', $key, '" id="', $key, '"', !empty($field['value']) ? ' checked' : '', ' value="1"', $field['input_attr'], '>';
 
 			// Always fun - select boxes!
 			elseif ($field['type'] == 'select')

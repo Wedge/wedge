@@ -216,7 +216,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 			alt = '*';
 
 		imageHandle.attr({
-			src: we_images_url + '/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check.gif' : 'field_valid.gif') : 'field_invalid.gif'),
+			src: we_theme_url + '/images/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check.gif' : 'field_valid.gif') : 'field_invalid.gif'),
 			alt: alt,
 			title: alt
 		});

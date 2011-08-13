@@ -807,7 +807,7 @@ function template_edit_style()
 
 	function refreshPreview(check)
 	{
-		var identical = document.forms.stylesheetForm.entire_file.value.replace(/url\([./]+images/gi, "url(" + we_images_url) == refreshPreviewCache;
+		var identical = document.forms.stylesheetForm.entire_file.value.replace(/url\([./]+images/gi, "url(" + we_theme_url + "/images") == refreshPreviewCache;
 
 		// Don\'t reflow the whole thing if nothing changed!!
 		if (check && identical)
@@ -815,7 +815,7 @@ function template_edit_style()
 		refreshPreviewCache = document.forms.stylesheetForm.entire_file.value;
 
 		// Replace the paths for images.
-		refreshPreviewCache = refreshPreviewCache.replace(/url\([./]+images/gi, "url(" + we_images_url);
+		refreshPreviewCache = refreshPreviewCache.replace(/url\([./]+images/gi, "url(" + we_theme_url + "/images");
 
 		// Try to do it without a complete reparse.
 		if (identical)
@@ -851,7 +851,7 @@ function template_edit_style()
 			var stylesheetMatch = new RegExp(\'<link rel="stylesheet"[^>]+href="[^"]+\' + editFilename + \'[^>]*>\');
 
 			// Replace the paths for images.
-			preview_sheet = preview_sheet.replace(/url\([./]+images/gi, "url(" + we_images_url);
+			preview_sheet = preview_sheet.replace(/url\([./]+images/gi, "url(" + we_theme_url + "/images");
 			data = data.replace(stylesheetMatch, "<style id=\"css_preview_sheet\">" + preview_sheet + "<" + "/style>");
 
 			frames["css_preview_box"].document.open();
