@@ -8,6 +8,7 @@
 body
 	background: #faefe6
 	color: #333
+	padding: 0
 
 #wedge extends .grad700
 	padding: 15px 0
@@ -62,10 +63,12 @@ body
 	h2, p
 		color: #000
 	h1
-		margin: 38px 0 0 30px
+		float: right
+		margin: 20px 30px 0 0
 		a
 			color: #78a
-			font: italic bold 3.2em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			font: italic bold 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			letter-spacing: -2px
 			text-shadow: white 0 1px 2px
 	input.search
 		background-color: rgb(235,225,215)
@@ -259,3 +262,4 @@ tr.titlebg
 ------------------------------------------------------- */
 
 $subcat_font = normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS"
+$post_font = 9.5pt/140% "Segoe UI", Verdana, $main_font

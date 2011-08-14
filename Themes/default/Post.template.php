@@ -162,7 +162,7 @@ function template_main()
 		template_make_poll();
 
 	// Show the actual posting area...
-	echo "\n", $context['postbox']->outputEditor(), "\n";
+	echo "\n", $context['postbox']->outputEditor();
 
 	// If this message has been edited in the past - display when it was.
 	if (isset($context['last_modified']))
@@ -286,8 +286,7 @@ function template_main()
 				<p class="smalltext" id="shortcuts">
 					', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '
 				</p>
-				<p id="post_confirm_buttons">
-					', $context['postbox']->outputButtons();
+				<div id="post_confirm_buttons">', $context['postbox']->outputButtons();
 
 	// Option to delete an event if user is editing one.
 	if ($context['make_event'] && !$context['event']['new'])
@@ -295,7 +294,7 @@ function template_main()
 					<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" onclick="return confirm(', JavaScriptEscape($txt['event_delete_confirm']), ');">';
 
 	echo '
-				</p>
+				</div>
 			</div>
 			<br class="clear">';
 

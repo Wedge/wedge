@@ -7,6 +7,7 @@
 body
 	background: #efead2
 	color: #333
+	padding: 0
 
 #content div.frame
 	padding: 0 40px 4px
@@ -15,8 +16,14 @@ body
 	border-width: 0 1px 0 0
 	border-radius: 0
 	background: none
+	text-align: right
 	.column
-		padding: 5px 15px 10px
+		padding: 5px 25px 10px 15px
+
+.wehead
+	color: #224
+	a
+		color: #444
 
 #top_section
 	background: darken(hue($main_bg, -50), 10%) url($images/theme/grad250.png) 0 -150px repeat-x
@@ -27,9 +34,12 @@ body
 	h1
 		margin: 38px 0 0 30px
 		a
-			color: #999
-			font: italic bold 3.2em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			color: #866
+			font: italic bold 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			letter-spacing: -2px
 			text-shadow: white 0 1px 2px
+		:first-letter
+			color: #555
 
 #wedgelogo
 	background: none
@@ -43,7 +53,7 @@ body
 #linktree
 	padding: 0
 	ul
-		padding: 0 20px
+		padding: 7px 20px
 		margin: 0
 		background: hue($menu_bg, -5%)
 
@@ -174,6 +184,4 @@ $alphamix = rgb(241,243,234)
 $main_bg  = rgb(241,243,234)
 $main_bg  = rgb(246,248,239)
 $head_bg  = rgba(233,235,186,.66)
-
-#sidebar
-	text-align: right
+$post_font = 9.5pt/140% "Lucida Sans Unicode", Verdana, $main_font

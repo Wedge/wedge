@@ -178,8 +178,8 @@ function add_css_file($original_files = array(), $add_link = false)
 	}
 
 	$folder = end($context['css_folders']);
-	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
-	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 7) : $folder);
+	$id = $is_default_theme || $settings['theme_dir'] === 'default' ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
+	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
 	$id .= (empty($id) ? '' : '-') . implode('-', $original_files) . '-';
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
@@ -268,7 +268,7 @@ function wedge_cache_css()
 	}
 
 	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
-	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 7) : $folder) . '-';
+	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder) . '-';
 
 	// The deepest skin gets CSS/JavaScript attention.
 	if (!empty($set))

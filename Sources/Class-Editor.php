@@ -1661,6 +1661,42 @@ class wedit
 						'code' => ':\'(',
 						'class' => 'cry_gif',
 						'description' => $txt['icon_cry'],
+						'isLast' => true,
+					),
+				),
+				'isLast' => true,
+			);
+			$this->smileys['popup'][] = array(
+				'smileys' => array(
+					array(
+						'code' => 'O0',
+						'class' => 'afro_gif',
+						'description' => '', // $txt['icon_evil'],
+					),
+					array(
+						'code' => '>:D',
+						'class' => 'evil_gif',
+						'description' => '', // $txt['icon_evil'],
+					),
+					array(
+						'code' => '^-^',
+						'class' => 'azn_gif',
+						'description' => '', // $txt['icon_evil'],
+					),
+					array(
+						'code' => ':))',
+						'class' => 'laugh_gif',
+						'description' => '', // $txt['icon_evil'],
+					),
+					array(
+						'code' => 'O:-)',
+						'class' => 'angel_gif',
+						'description' => '', // $txt['icon_evil'],
+					),
+					array(
+						'code' => 'C:-)',
+						'class' => 'police_gif',
+						'description' => '', // $txt['icon_evil'],
 					),
 					array(
 						'code' => ':edit:',
@@ -2228,7 +2264,7 @@ class wedit
 
 			if (empty($smiley_css_done) && strpos($context['last_minute_header'], $boardurl . $filename) === false)
 				$context['last_minute_header'] .= '
-	<link rel="stylesheet" src="' . $boardurl . $filename . '">';
+	<link rel="stylesheet" href="' . $boardurl . $filename . '">';
 
 			add_js('
 	var oSmileyBox_' . $this->id . ' = new smc_SmileyBox({
