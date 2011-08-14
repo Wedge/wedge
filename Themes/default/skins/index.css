@@ -411,7 +411,7 @@ textarea
 	font: 100%/130% $main_font
 
 input[type=submit], input[type=button], .ie_button
-	background: #d6e6e6 url($images/theme/bevel.png)
+	background: #e5e5e5 url($images/theme/bevel.png)
 	border: 1px solid
 	border-color: #ccc #999 #999 #ccc
 	cursor: pointer

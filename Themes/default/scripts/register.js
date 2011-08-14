@@ -1,5 +1,16 @@
+/*!
+ * Wedge
+ *
+ * Helper functions for the registration process
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
-function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
+function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 {
 	this.addVerify = addVerificationField;
 	this.autoSetup = autoSetup;
@@ -26,7 +37,7 @@ function smfRegister(formID, passwordDifficultyLevel, regTextStrings)
 		// Get the handles.
 		var
 			imageHandle = $('#' + fieldID + '_img'),
-			// !!! Look like this one is never used...
+			// !!! Looks like this one is never used...
 			divHandle = $('#' + fieldID + '_div'),
 			eventHandler = false;
 

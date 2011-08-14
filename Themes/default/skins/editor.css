@@ -9,6 +9,9 @@
 	background: #fff
 	color: #000
 
+.rich_editor .smiley
+	margin: 0 2px
+
 // The resize handle.
 .richedit_resize
 	height: 5px

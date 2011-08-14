@@ -47,10 +47,7 @@ function template_registration_form()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	add_js_file(array(
-		'scripts/register.js',
-		'scripts/profile.js'
-	));
+	add_js_file('scripts/register.js');
 
 	add_js('
 	function verifyAgree()
@@ -96,6 +93,18 @@ function template_registration_form()
 		}
 	}
 
+	function autoDetectTimeOffset(currentTime)
+	{
+		var localTime = new Date(), serverTime = typeof currentTime != "number" ? currentTime : new Date(currentTime);
+
+		if (!localTime.getTime() || !serverTime.getTime())
+			return 0;
+
+		// Get the difference between the two, set it up so that the sign will tell us who is ahead of whom.
+		// Currently only supports timezones in hourly increments. Our apologies to India.
+		return Math.round((localTime.getTime() - serverTime.getTime())/3600000) % 24;
+	}
+
 	var regTextStrings = {
 		"username_valid": ' . JavaScriptEscape($txt['registration_username_available']) . ',
 		"username_invalid": ' . JavaScriptEscape($txt['registration_username_unavailable']) . ',
@@ -107,7 +116,7 @@ function template_registration_form()
 		"password_valid": ' . JavaScriptEscape($txt['registration_password_valid']) . '
 	};
 
-	var verificationHandle = new smfRegister("registration", ' . (empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength']) . ', regTextStrings);
+	var verificationHandle = new weRegister("registration", ' . (empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength']) . ', regTextStrings);
 
 	// Update the authentication status.
 	updateAuthMethod();

@@ -169,7 +169,7 @@ class wedit
 		$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
 
 		// Parse smileys into something browsable.
-		$text = preg_replace('~(?:\s|&nbsp;)?<div\sclass="smiley_([^<>]+?)"[^<>]*?>([^<]*)</div>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley_$1" src="' . $settings['images_url'] . '/blank.gif">\'', $text);
+		$text = preg_replace('~(?:\s|&nbsp;)?<div class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</div>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley $1" onresizestart="return false;" src="' . $settings['images_url'] . '/blank.gif">\'', $text);
 
 		return $text;
 	}
@@ -216,7 +216,7 @@ class wedit
 		$text = preg_replace('~\\<\\!\\[CDATA\\[.*?\\]\\]\\>~i', '', $text);
 
 		// Do the smileys ultra fast!
-		$text = preg_replace('~<img alt="([^>"]+)" class="smiley_[^"]+".*?>(?:\s)?~e', 'un_htmlspecialchars(\' $1\')', $text);
+		$text = preg_replace('~<img alt="([^"]+)" class="smiley ([^"]+)".*?>(?:\s)?~e', '\' <div class="smiley $2">\' . un_htmlspecialchars(\'$1\') . \'</div>\'', $text);
 
 		// Only try to buy more time if the client didn't quit.
 		if (connection_aborted() && $context['server']['is_apache'])
@@ -2176,10 +2176,10 @@ class wedit
 
 	public function outputEditor()
 	{
-		global $context, $settings, $options, $txt, $modSettings, $scripturl;
+		global $context, $settings, $options, $txt, $modSettings, $scripturl, $user_info, $boarddir, $boardurl, $smiley_css_done;
 
-		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? ('smileyBox_' . $this->id) : $this->editorOptions['custom_smiley_div'];
-		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? ('bbcBox_' . $this->id) : $this->editorOptions['custom_bbc_div'];
+		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? 'smileyBox_' . $this->id : $this->editorOptions['custom_smiley_div'];
+		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? 'bbcBox_' . $this->id : $this->editorOptions['custom_bbc_div'];
 
 		// Output the bbc area
 		if ($this->show_bbc && empty($this->editorOptions['custom_bbc_div']))
@@ -2209,10 +2209,31 @@ class wedit
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
 		{
+			$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+			$context['smiley_gzip'] = $can_gzip;
+			$context['smiley_ext'] = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
+			$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'];
+			$dummy = '';
+			$max = 0;
+
+			// Retrieve the current smiley cache's URL. If not available, attempt to regenerate it.
+			while (empty($exists) && $max++ < 3)
+			{
+				$context['smiley_now'] = empty($modSettings[$var_name]) ? time() : $modSettings[$var_name];
+				$filename = '/cache/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
+				$exists = file_exists($boarddir . $filename);
+				if (!$exists)
+					parsesmileys($dummy);
+			}
+
+			if (empty($smiley_css_done) && strpos($context['last_minute_header'], $boardurl . $filename) === false)
+				$context['last_minute_header'] .= '
+	<link rel="stylesheet" src="' . $boardurl . $filename . '">';
+
 			add_js('
 	var oSmileyBox_' . $this->id . ' = new smc_SmileyBox({
-		sUniqueId: ' . JavaScriptEscape($smileycontainer) . ',
-		sContainerDiv: ' . JavaScriptEscape($smileycontainer) . ',
+		id: ' . JavaScriptEscape($this->id) . ',
+		sContainer: ' . JavaScriptEscape($smileycontainer) . ',
 		sClickHandler: function (o) { oEditorHandle_' . $this->id . '.insertSmiley(o); },
 		oSmileyLocations: {');
 
@@ -2237,8 +2258,8 @@ class wedit
 			add_js('
 		},
 		sSmileyRowTemplate: ' . JavaScriptEscape('<div>%smileyRow%</div>') . ',
-		sSmileyTemplate: ' . JavaScriptEscape('<div class="smiley_%smileySource% smpost" title="%smileyDesc%" id="%smileyId%"></div>') . ',
-		sSmileyBoxTemplate: ' . JavaScriptEscape('<div id="' . $smileycontainer . '_rows">%smileyRows%</div><div id="' . $smileycontainer . '_more">%moreSmileys%</div>') . ',
+		sSmileyTemplate: ' . JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"></div>') . ',
+		sSmileyBoxTemplate: ' . JavaScriptEscape('<div class="inline-block">%smileyRows%<div class="more"></div></div> <div class="inline-block">%moreSmileys%</div>') . ',
 		sMoreSmileysTemplate: ' . JavaScriptEscape('<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>') . ',
 		sMoreSmileysLinkId: ' . JavaScriptEscape('moreSmileys_' . $this->id) . '
 	});');
@@ -2248,11 +2269,10 @@ class wedit
 		{
 			add_js('
 	var oBBCBox_' . $this->id . ' = new smc_BBCButtonBox({
-		sUniqueId: ' . JavaScriptEscape($bbccontainer) . ',
-		sContainerDiv: ' . JavaScriptEscape($bbccontainer) . ',
+		sContainer: ' . JavaScriptEscape($bbccontainer) . ',
 		sButtonClickHandler: function (o) { oEditorHandle_' . $this->id . '.handleButtonClick(o); },
 		sSelectChangeHandler: function (o) { oEditorHandle_' . $this->id . '.handleSelectChange(o); },
-		sSprite: ' . JavaScriptEscape($settings['images_url'] . '/bbc/sprite.png') . ',
+		sSprite: we_theme_url + \'/images/bbc/sprite.png\',
 		aButtonRows: [');
 
 			// Here loop through the array, printing the images/rows/separators!

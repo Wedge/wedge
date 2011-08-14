@@ -1,13 +1,14 @@
-
 /*!
- * This file is under the SMF license.
- * All code changes compared against SMF 2.0 are protected
- * by the Wedge license, http://wedge.org/license/
+ * Wedge
  *
- *	The post editor.
- *	Features:
- *		- A plain text post editor
- *		- A WYSIWTF (What you see is WTF) post editor
+ * smc_Editor manages the post editor for you, both in its plain text and WYSIWTF versions.
+ * (I did say WYSIWTF, no typos here.)
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
  */
 
 function smc_Editor(oOptions)
@@ -559,7 +560,7 @@ smc_Editor.prototype.insertSmiley = function (oSmileyProperties)
 	}
 	// Otherwise we need to do a whole image...
 	else
-		this.insertText('<img alt="' + oSmileyProperties[0].php_htmlspecialchars() + '" class="smiley_' + oSmileyProperties[1] + '" src="' + we_theme_url + '/images/blank.gif" onresize="return false;" title="' + oSmileyProperties[2].php_htmlspecialchars() + '">');
+		this.insertText('<img alt="' + oSmileyProperties[0].php_htmlspecialchars() + '" class="smiley ' + oSmileyProperties[1] + '" src="' + we_theme_url + '/images/blank.gif" onresize="return false;" title="' + oSmileyProperties[2].php_htmlspecialchars() + '">');
 };
 
 smc_Editor.prototype.handleButtonClick = function (oButtonProperties)

@@ -1,3 +1,14 @@
+/*!
+ * Wedge
+ *
+ * Helper functions for the spell-checker popup.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // These are variables the popup is going to want to access...
 var spell_formname, spell_fieldname;

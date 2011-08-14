@@ -1,5 +1,14 @@
-
-// This file contains javascript associated with the captcha visual verification stuff.
+/*!
+ * Wedge
+ *
+ * This file contains javascript associated with the captcha visual verification stuff.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 function smfCaptcha(imageURL, uniqueID)
 {

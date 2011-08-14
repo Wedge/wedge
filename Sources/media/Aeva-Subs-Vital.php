@@ -479,13 +479,14 @@ function aeva_initZoom($autosize, $peralbum = array())
 ');
 	return;
 
-	// !!! WIP !! @todo: Remove this.
+	// !!! WIP !! @todo: Convert this to the new format...
 
+/*
 	$not_single = empty($peralbum) ? 'true' : 'false';
 	$fadein = empty($peralbum) || !empty($peralbum['fadeinout']) ? 'true' : 'false';
 
 	add_js(empty($peralbum) ? '
-	hs.Expander.prototype.onInit = function()
+	hs.Expander.prototype.onInit = function ()
 	{
 		for (var i = 0, j = this.a.attributes, k = j.length; i < k; i++)
 		{
@@ -534,6 +535,7 @@ function aeva_initZoom($autosize, $peralbum = array())
 	hs.allowSizeReduction = false;');
 
 	return;
+*/
 }
 
 // Gets an encrypted filename

@@ -1104,7 +1104,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 function parsesmileys(&$message)
 {
 	global $user_info, $smileyPregReplace;
-	static $smileyPregSearch = array();
+	static $smileyPregSearch = '';
 
 	// No smiley set at all?!
 	if ($user_info['smiley_set'] == 'none')
@@ -1113,7 +1113,7 @@ function parsesmileys(&$message)
 	// If the smiley array hasn't been set, do it now.
 	if (empty($smileyPregSearch))
 	{
-		global $modSettings, $txt, $context, $cachedir, $user_info;
+		global $modSettings, $txt, $context, $cachedir;
 
 		// Use the default smileys if it is disabled. (Better for "portability" of smileys.)
 		if (empty($modSettings['smiley_enable']))
@@ -1161,7 +1161,7 @@ function parsesmileys(&$message)
 		for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 		{
 			$safe = htmlspecialchars($smileysfrom[$i], ENT_QUOTES); // !!! Use westr version?
-			$smileyCode = '<div class="smiley_' . $smileysdiv[$i]['name'] . '">' . $safe . '</div>';
+			$smileyCode = '<div class="smiley ' . $smileysdiv[$i]['name'] . '">' . $safe . '</div>';
 
 			$smileyPregReplace[$smileysfrom[$i]] = $smileyCode;
 			$searchParts[] = preg_quote($smileysfrom[$i], '~');
@@ -1179,7 +1179,7 @@ function parsesmileys(&$message)
 		$var_name = 'smiley_cache_' . str_replace('.', '', $context['smiley_ext']) . '_' . $user_info['smiley_set'];
 		$context['smiley_now'] = empty($modSettings[$var_name]) ? time() : $modSettings[$var_name];
 
-		if (!file_exists($cachedir . '/smileys-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
+		if (!file_exists($cachedir . '/smileys-' . $context['browser']['agent'] . $user_info['smiley_set'] . '-' . '-' . $context['smiley_now'] . $context['smiley_ext']))
 		{
 			// We're only going to cache the smileys that show up on the post editor by default.
 			// The reason is to help save bandwidth by only storing whatever is most likely to be used.
@@ -1203,18 +1203,17 @@ function parsesmileys(&$message)
 // Quick preg_replace_callback...
 function replace_smileys($match)
 {
-	global $smileyPregReplace;
-	static $smiley_css_done = false;
+	global $smileyPregReplace, $smiley_css_done;
 
 	if (isset($smileyPregReplace[$match[1]]))
 	{
-		if (!$smiley_css_done && strpos($smileyPregReplace[$match[1]], '<div') !== -1)
+		if (empty($smiley_css_done))
 		{
 			global $boardurl, $modSettings, $context, $user_info;
 
 			$smiley_css_done = true;
 			$css_file = '
-	<link rel="stylesheet" href="' . $boardurl . '/cache/smileys-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
+	<link rel="stylesheet" href="' . $boardurl . '/cache/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
 			if (isset($context['last_minute_header']))
 				$context['last_minute_header'] .= $css_file;
 			else

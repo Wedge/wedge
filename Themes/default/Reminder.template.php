@@ -124,7 +124,7 @@ function template_set_password()
 		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
 		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
 	};
-	var verificationHandle = new smfRegister("reminder_form", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);');
+	var verificationHandle = new weRegister("reminder_form", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);');
 }
 
 function template_ask()
@@ -183,7 +183,7 @@ function template_ask()
 		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
 		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
 	};
-	var verificationHandle = new smfRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);');
+	var verificationHandle = new weRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);');
 }
 
 ?>

@@ -582,15 +582,16 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
  */
 function wedge_cache_smileys($set, $smileys)
 {
-	global $cachedir, $context, $modSettings;
+	global $cachedir, $context, $modSettings, $browser;
 
 	$final = '';
 	$path = $modSettings['smileys_dir'] . '/' . $set . '/';
 	$url  = $modSettings['smileys_url'] . '/' . $set . '/';
-	updateSettings(array('smiley_cache_' . str_replace('.', '', $context['smiley_ext']) . '_' . $set => $context['smiley_now']));
+	$agent = $browser['agent'];
+	updateSettings(array('smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $agent . '-' . $set => $context['smiley_now']));
 
 	// Delete all remaining cached versions, if any (e.g. *.cgz for Safari.)
-	foreach (glob($cachedir . '/smileys-' . $set . '-*.*') as $del)
+	foreach (glob($cachedir . '/smileys-' . $set . '-' . $agent . '-*' . $context['smiley_ext']) as $del)
 		@unlink($del);
 
 	foreach ($smileys as $name => $smiley)
@@ -598,16 +599,19 @@ function wedge_cache_smileys($set, $smileys)
 		$filename = $path . $smiley['file'];
 		if (!file_exists($filename))
 			continue;
+		// Only small files should be embedded, really. We're saving on hits, not bandwidth.
+		if (($browser['is_ie'] && $browser['version'] < 7) || ($smiley['embed'] && filesize($filename) > 4096))
+			$smiley['embed'] = false;
 		list ($width, $height) = getimagesize($filename);
 		$ext = strtolower(substr($filename, strrpos($filename, '.') + 1));
-		$final .= '.smiley_' . $name . '{width:' . $width . 'px;height:' . $height . 'px;display:inline-block;zoom:1;*display:inline;text-indent:-999em;margin:0 3px;background:url('
+		$final .= '.' . $name . '{width:' . $width . 'px;height:' . $height . 'px;background:url('
 				. ($smiley['embed'] ? 'data:image/' . $ext . ';base64,' . base64_encode(file_get_contents($filename)) : $url . $smiley['file']) . ')}';
 	}
 
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 
-	file_put_contents($cachedir . '/smileys-' . $set . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
+	file_put_contents($cachedir . '/smileys-' . $agent . '-' . $set . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
 }
 
 /**

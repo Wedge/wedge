@@ -1,11 +1,15 @@
-
 /*!
+ * Wedge
+ *
  * Zoomedia is the lightbox component for all media Wedge.
  * Developed by Nao.
  * Uses portions by Steve Smith (http://orderedlist.com/)
  *
- * This file is released under the Wedge license.
- * More details at http://wedge.org/license/
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
  */
 
 (function ($) {

@@ -559,7 +559,7 @@ function template_aeva_admin_about()
 				str += "\n</div>";
 				$("#aeva_news").html(str);
 			}
-			window.onload = function()
+			window.onload = function ()
 			{
 				checkVersion();
 				fetchNews();

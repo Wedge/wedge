@@ -1,8 +1,14 @@
-
-/*
-	Helper functions.
-	Can safely be called by mods.
-*/
+/*!
+ * Wedge
+ *
+ * Helper functions for manipulating text and sending posts
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Checks for variable in theArray.
 function array_search(variable, theArray)
@@ -193,10 +199,10 @@ function smc_SmileyBox(oOptions)
 	that.getSmileyRowsContent('postform');
 
 	// Inject the HTML.
-	$('#' + oOptions.sContainerDiv).html(oOptions.sSmileyBoxTemplate.easyReplace({
+	$('#' + oOptions.sContainer).html(oOptions.sSmileyBoxTemplate.easyReplace({
 		smileyRows: that.oSmileyRowsContent.postform,
 		moreSmileys: oOptions.oSmileyLocations.popup.length == 0 ? '' : oOptions.sMoreSmileysTemplate.easyReplace({
-			moreSmileysId: oOptions.sUniqueId + '_addMoreSmileys'
+			moreSmileysId: oOptions.sContainer + '_addMoreSmileys'
 		})
 	}));
 
@@ -205,12 +211,12 @@ function smc_SmileyBox(oOptions)
 
 	// Initialize the [more] button.
 	if (oOptions.oSmileyLocations.popup.length > 0)
-		$('#' + oOptions.sUniqueId + '_addMoreSmileys').click(function () {
+		$('#' + oOptions.sContainer + '_addMoreSmileys').click(function () {
 			$(this).hide();
 
 			// Get the popup smiley HTML, add the new smileys to the list and activate them.
 			that.getSmileyRowsContent('popup');
-			$('#' + oOptions.sContainerDiv).append(that.oSmileyRowsContent.popup);
+			$('#' + oOptions.sContainer + ' .more').hide().html(that.oSmileyRowsContent.popup).slideDown();
 			that.initSmileys('popup');
 
 			return false;
@@ -235,7 +241,7 @@ smc_SmileyBox.prototype.getSmileyRowsContent = function (sLocation)
 				smileySource: aSmileyRow[iSmileyIndex][1].php_htmlspecialchars(),
 				smileyDesc: aSmileyRow[iSmileyIndex][2].php_htmlspecialchars(),
 				smileyCode: aSmileyRow[iSmileyIndex][0].php_htmlspecialchars(),
-				smileyId: this.opt.sUniqueId + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString()
+				smileyId: this.opt.sContainer + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString()
 			});
 
 		this.oSmileyRowsContent[sLocation] += this.opt.sSmileyRowTemplate.easyReplace({
@@ -249,7 +255,7 @@ smc_SmileyBox.prototype.initSmileys = function (sLocation)
 	var that = this, iSmileyRowIndex = 0, iSmileyRowCount = this.opt.oSmileyLocations[sLocation].length;
 	for (; iSmileyRowIndex < iSmileyRowCount; iSmileyRowIndex++)
 		for (var iSmileyIndex = 0, iSmileyCount = this.opt.oSmileyLocations[sLocation][iSmileyRowIndex].length; iSmileyIndex < iSmileyCount; iSmileyIndex++)
-			$('#' + that.opt.sUniqueId + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString())
+			$('#' + that.opt.sContainer + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString())
 				.css('cursor', 'pointer')
 				.click(function () {
 					// Dissect the id to determine its exact smiley properties.
@@ -284,7 +290,7 @@ function smc_BBCButtonBox(oOptions)
 					if (oCurButton[1])
 					{
 						sRowContent += oOptions.sButtonTemplate.easyReplace({
-							buttonId: oOptions.sUniqueId.php_htmlspecialchars() + '_button_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString(),
+							buttonId: oOptions.sContainer.php_htmlspecialchars() + '_button_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString(),
 							buttonSrc: (is_sprite ? oOptions.sSprite : oCurButton[2]).php_htmlspecialchars(),
 							posX: is_sprite ? oCurButton[2][0] : 0,
 							posY: is_sprite ? oCurButton[2][1] + 2 : 2,
@@ -308,7 +314,7 @@ function smc_BBCButtonBox(oOptions)
 
 					sRowContent += oOptions.sSelectTemplate.easyReplace({
 						selectName: oCurButton[1],
-						selectId: oOptions.sUniqueId.php_htmlspecialchars() + '_select_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString(),
+						selectId: oOptions.sContainer.php_htmlspecialchars() + '_select_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString(),
 						selectOptions: sOptions
 					});
 
@@ -328,7 +334,7 @@ function smc_BBCButtonBox(oOptions)
 		});
 	}
 
-	$('#' + oOptions.sContainerDiv).html(sBbcContent);
+	$('#' + oOptions.sContainer).html(sBbcContent);
 
 	for (iButtonRowIndex = 0, iRowCount = oOptions.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{
@@ -341,7 +347,7 @@ function smc_BBCButtonBox(oOptions)
 					if (!oCurButton[1])
 						break;
 
-					oCurButton.oImg = document.getElementById(oOptions.sUniqueId.php_htmlspecialchars() + '_button_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString());
+					oCurButton.oImg = document.getElementById(oOptions.sContainer.php_htmlspecialchars() + '_button_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString());
 					oCurButton.oImg.style.cursor = 'pointer';
 					if ('sButtonBackgroundPos' in oOptions)
 					{
@@ -358,7 +364,7 @@ function smc_BBCButtonBox(oOptions)
 				break;
 
 				case 'select':
-					oCurButton.oSelect = document.getElementById(oOptions.sUniqueId.php_htmlspecialchars() + '_select_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString());
+					oCurButton.oSelect = document.getElementById(oOptions.sContainer.php_htmlspecialchars() + '_select_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString());
 
 					oCurButton.oSelect.instanceRef = this;
 					oCurButton.oSelect.onchange = oCurButton.onchange = function () {

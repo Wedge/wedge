@@ -1,3 +1,15 @@
+/*!
+ * Wedge
+ *
+ * we_AdminIndex contains general-purpose helper functions for the admin area
+ * we_ViewVersions contains helper functions to help comparing version numbers in the admin area
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 /*
 	we_AdminIndex(oOptions)

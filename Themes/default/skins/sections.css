@@ -502,8 +502,11 @@ ul.usermenuitem li a
 	margin: 0 1em 0 0
 	border-top: 1px solid #bbb
 
-img.smiley
+.smiley extends .inline-block
 	vertical-align: bottom
+	text-indent: -999em
+	font: 0/0 Arial
+	overflow: hidden
 
 .signature
 	#forumposts &, .post &

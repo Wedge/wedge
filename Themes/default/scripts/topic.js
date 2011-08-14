@@ -1,10 +1,13 @@
-
 /*!
- * topic.js
+ * Wedge
+ *
  * Helper functions for topic pages
  *
- * This file is released under the Wedge license.
- * More details at http://wedge.org/license/
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
  */
 
 var cur_topic_id, cur_msg_id, cur_subject_div, buff_subject, in_edit_mode = 0;

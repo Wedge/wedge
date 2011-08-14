@@ -1,7 +1,13 @@
 /*!
- * This file is under the SMF license.
- * All code changes compared against SMF 2.0 are protected
- * by the Wedge license, http://wedge.org/license/
+ * Wedge
+ *
+ * Functions required by the current theme.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
  */
 
 // The purpose of this code is to fix the height of overflow: auto blocks,
@@ -9,7 +15,7 @@
 if (is_ie || is_webkit || is_ff)
 {
 	$('code').each(function () {
-		var cliwid = this.clientWidth, scrwid = this.scrollWidth, offhei = this.offsetHeight, sty = this.currentStyle, hei = sty.height;
+		var cliwid = this.clientWidth, scrwid = this.scrollWidth, offhei = this.offsetHeight, sty = this.currentStyle, hei = sty ? sty.height : '';
 
 		if (is_webkit && offhei < 20)
 			this.style.height = (offhei + 20) + 'px';

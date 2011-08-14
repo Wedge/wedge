@@ -16,12 +16,10 @@ function template_profile_above()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
-	add_js_file('scripts/profile.js');
-
 	// Prevent Chrome from auto completing fields when viewing/editing other members' profiles
 	if ($context['browser']['is_chrome'] && !$context['user']['is_owner'])
 		add_js('
-	disableAutoComplete();');
+	$(\'input[type="text"], input[type="password"]\').attr("autocomplete", "off");');
 
 	// If an error occurred while trying to save previously, give the user a clue!
 	if (!empty($context['post_errors']))
@@ -2678,6 +2676,19 @@ function template_profile_timeoffset_modify()
 {
 	global $txt, $context;
 
+	add_js('
+	function autoDetectTimeOffset(currentTime)
+	{
+		var localTime = new Date(), serverTime = typeof currentTime != "number" ? currentTime : new Date(currentTime);
+
+		if (!localTime.getTime() || !serverTime.getTime())
+			return 0;
+
+		// Get the difference between the two, set it up so that the sign will tell us who is ahead of whom.
+		// Currently only supports timezones in hourly increments. Our apologies to India.
+		return Math.round((localTime.getTime() - serverTime.getTime())/3600000) % 24;
+	}');
+
 	echo '
 					<dt>
 						<strong', (isset($context['modify_error']['bad_offset']) ? ' class="error"' : ''), '>', $txt['time_offset'], ':</strong>
@@ -2805,7 +2816,7 @@ function template_authentication_method()
 		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
 		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
 	};
-	var verificationHandle = new smfRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
+	var verificationHandle = new weRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);
 	var currentAuthMethod = "passwd";
 
 	function updateAuthMethod()
