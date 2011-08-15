@@ -880,7 +880,7 @@ function template_edit_profile_field()
 
 	echo '
 	<div id="admincenter">
-		<form action="', $scripturl, '?action=admin;area=featuresettings;sa=profileedit;fid=', $context['fid'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=memberoptions;sa=profileedit;fid=', $context['fid'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>

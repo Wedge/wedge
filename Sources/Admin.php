@@ -81,8 +81,6 @@ function Admin()
 						'basic' => array($txt['mods_cat_features']),
 						'',
 						'layout' => array($txt['mods_cat_layout']),
-						'sig' => array($txt['signature_settings_short']),
-						'profile' => array($txt['custom_profile_shorttitle']),
 						'pretty' => array($txt['pretty_urls']),
 					),
 				),
@@ -445,6 +443,18 @@ function Admin()
 						'list' => array($txt['ban_edit_list']),
 						'add' => array($txt['ban_add_new']),
 						'browse' => array($txt['ban_trigger_browse']),
+					),
+				),
+				'memberoptions' => array(
+					'label' => $txt['themeadmin_reset_title'],
+					'file' => 'ManageMemberOptions',
+					'function' => 'ManageMemberOptions',
+					'icon' => 'corefeatures.gif',
+					'permission' => 'admin_forum',
+					'subsections' => array(
+						'options' => array($txt['configure_options']),
+						'sig' => array($txt['signature_settings_short']),
+						'profile' => array($txt['custom_profile_shorttitle']),
 					),
 				),
 				'',
@@ -818,8 +828,8 @@ function AdminSearchInternal()
 
 	// All the files we need to include.
 	$include_files = array(
-		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageCalendar', 'ManageMail', 'ManagePaid', 'ManagePermissions',
-		'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys',
+		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageCalendar', 'ManageMail', 'ManageMemberOptions', 'ManagePaid',
+		'ManagePermissions', 'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys',
 	);
 	loadSource($include_files);
 
@@ -859,7 +869,8 @@ function AdminSearchInternal()
 		array('ModifyCoreFeatures', 'area=corefeatures'),
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
 		array('ModifyLayoutSettings', 'area=featuresettings;sa=layout'),
-		array('ModifySignatureSettings', 'area=featuresettings;sa=sig'),
+		array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
+		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
 		array('ModifyGeneralSecuritySettings', 'area=securitysettings;sa=general'),
 		array('ModifySpamSettings', 'area=securitysettings;sa=spam'),
 		array('ModifyModerationSettings', 'area=securitysettings;sa=moderation'),
