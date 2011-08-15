@@ -19,6 +19,8 @@ body
 	text-align: right
 	.column
 		padding: 5px 25px 10px 15px
+	#edgehide &
+		background-color: #f6f8ef
 
 .wehead
 	color: #224
@@ -71,6 +73,21 @@ body
 		li a
 			color: #679
 
+#sidebar ul
+	list-style-type: none
+
+dl#feed dt
+	float: right
+
+#userbox
+	img.avatar
+		margin: 0 0 0 14px
+		float: right
+	ul
+		margin: 0 92px 0 0
+	p
+		padding: 8px 0 0
+		clear: right
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
@@ -79,7 +96,7 @@ body
 	background: $menu_bg
 
 #main_menu
-	padding: 5px 0 2px
+	padding: 5px 0 0
 	h4 a
 		color: #000
 	h4:hover, h4.hove
@@ -106,6 +123,8 @@ body
 .bbc_code code, .php_code code
 	background: #eef5ec
 
+.usermenuitem
+	background-color: #ece8e5 !important
 
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */

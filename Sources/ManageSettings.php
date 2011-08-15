@@ -832,6 +832,13 @@ function ModifyPrettyURLs()
 			'value' => !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : '',
 		),
 	);
+	// The action filter should always be last, because it's generic.
+	if (isset($modSettings['pretty_filters']['actions']))
+	{
+		$action = $modSettings['pretty_filters']['actions'];
+		unset($modSettings['pretty_filters']['actions']);
+		$modSettings['pretty_filters']['actions'] = $action;
+	}
 	$context['pretty']['filters'] = $modSettings['pretty_filters'];
 
 	// Are we repopulating now?

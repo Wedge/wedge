@@ -582,11 +582,11 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
  */
 function wedge_cache_smileys($set, $smileys)
 {
-	global $cachedir, $context, $modSettings, $browser;
+	global $cachedir, $context, $modSettings, $browser, $boardurl;
 
 	$final = '';
 	$path = $modSettings['smileys_dir'] . '/' . $set . '/';
-	$url  = $modSettings['smileys_url'] . '/' . $set . '/';
+	$url  = '..' . str_replace($boardurl, '', $modSettings['smileys_url']) . '/' . $set . '/';
 	$agent = $browser['agent'];
 	updateSettings(array('smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $agent . '-' . $set => $context['smiley_now']));
 
@@ -600,7 +600,7 @@ function wedge_cache_smileys($set, $smileys)
 		if (!file_exists($filename))
 			continue;
 		// Only small files should be embedded, really. We're saving on hits, not bandwidth.
-		if (($browser['is_ie'] && $browser['version'] < 7) || ($smiley['embed'] && filesize($filename) > 4096))
+		if (($browser['is_ie'] && $browser['version'] < 7) || ($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
 			$smiley['embed'] = false;
 		list ($width, $height) = getimagesize($filename);
 		$ext = strtolower(substr($filename, strrpos($filename, '.') + 1));

@@ -158,7 +158,7 @@ function Post2()
 		if ($topic_info['locked'] != 0 && !allowedTo('moderate_board'))
 			fatal_lang_error('topic_locked', false);
 
-		// Sorry, multiple polls aren't allowed... yet.  You should stop giving me ideas :P.
+		// Sorry, multiple polls aren't allowed... yet.
 		if (isset($_REQUEST['poll']) && $topic_info['id_poll'] > 0)
 			unset($_REQUEST['poll']);
 
@@ -201,7 +201,7 @@ function Post2()
 				$_POST['lock'] = empty($_POST['lock']) ? 0 : 1;
 		}
 
-		// So you wanna (un)sticky this...let's see.
+		// So you wanna (un)sticky this... Let's see.
 		if (isset($_POST['sticky']) && ($_POST['sticky'] == $topic_info['is_sticky'] || !allowedTo('make_sticky')))
 			unset($_POST['sticky']);
 
@@ -904,7 +904,7 @@ function Post2()
 		);
 	}
 
-	// Turn notification on or off.  (note this just blows smoke if it's already on or off.)
+	// Turn notification on or off. (Note this just blows smoke if it's already on or off.)
 	if (!empty($_POST['notify']) && allowedTo('mark_any_notify'))
 	{
 		wesql::insert('ignore',

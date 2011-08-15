@@ -345,7 +345,7 @@ function pretty_filter_profiles($urls)
 			$url['match1'] = $matches[1];
 			$url['match3'] = $matches[4];
 			if ($url['profile_id'] > 0)
-				$query_data[] = $url['profile_id'];
+				$query_data[$url['profile_id']] = true;
 			else
 				$url['replacement'] = $boardurl . '/~' . ($url['this_is_me'] ? '/' : 'guest/') . $url['match1'] . $url['match3'];
 		}
@@ -358,10 +358,10 @@ function pretty_filter_profiles($urls)
 		$query = wesql::query('
 			SELECT id_member, member_name
 			FROM {db_prefix}members
-			WHERE id_member IN (' . implode(', ', array_keys(array_flip($query_data))) . ')');
+			WHERE id_member IN (' . implode(', ', array_keys($query_data)) . ')');
 		while ($row = wesql::fetch_assoc($query))
 		{
-			$memberNames[$row['id_member']] = urlencode($row['member_name']); // !!! utf8_encode()?
+			$memberNames[$row['id_member']] = urlencode($row['member_name']);
 			if (strpos($memberNames[$row['id_member']], '%2B') !== false) // Stupid mod_rewrite bug!
 				$memberNames[$row['id_member']] = urlencode(str_replace('+', ' ', $memberNames[$row['id_member']]));
 			// !!! Try this!!!
