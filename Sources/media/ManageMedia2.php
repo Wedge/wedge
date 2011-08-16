@@ -1268,7 +1268,7 @@ function aeva_admin_bans_add()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAttributeMemberSuggest = new smc_AutoSuggest({
+	var oAttributeMemberSuggest = new weAutoSuggest({
 		sSelf: \'oAttributeMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',

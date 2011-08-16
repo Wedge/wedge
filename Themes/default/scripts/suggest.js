@@ -10,7 +10,7 @@
  * @version 0.1
  */
 
-function smc_AutoSuggest(oOptions)
+function weAutoSuggest(oOptions)
 {
 	if (!can_ajax)
 		return false;
@@ -94,7 +94,7 @@ function smc_AutoSuggest(oOptions)
 }
 
 // Was it an enter key - if so assume they are trying to select something.
-smc_AutoSuggest.prototype.handleKey = function (oEvent)
+weAutoSuggest.prototype.handleKey = function (oEvent)
 {
 	// Get the keycode of the key that was pressed.
 	var iKeyPress = oEvent.which;
@@ -166,13 +166,13 @@ smc_AutoSuggest.prototype.handleKey = function (oEvent)
 };
 
 // Functions for integration.
-smc_AutoSuggest.prototype.registerCallback = function (sCallbackType, sCallback)
+weAutoSuggest.prototype.registerCallback = function (sCallbackType, sCallback)
 {
 	this.oCallback[sCallbackType] = sCallback;
 };
 
 // Positions the box correctly on the window.
-smc_AutoSuggest.prototype.positionDiv = function ()
+weAutoSuggest.prototype.positionDiv = function ()
 {
 	// Only do it once.
 	if (this.bPositionComplete)
@@ -191,7 +191,7 @@ smc_AutoSuggest.prototype.positionDiv = function ()
 };
 
 // Do something after clicking an item.
-smc_AutoSuggest.prototype.itemClicked = function (oCurElement)
+weAutoSuggest.prototype.itemClicked = function (oCurElement)
 {
 	// Is there a div that we are populating?
 	if (this.bItemList)
@@ -207,7 +207,7 @@ smc_AutoSuggest.prototype.itemClicked = function (oCurElement)
 };
 
 // Remove the last searched for name from the search box.
-smc_AutoSuggest.prototype.removeLastSearchString = function ()
+weAutoSuggest.prototype.removeLastSearchString = function ()
 {
 	// Remove the text we searched for from the div.
 	var
@@ -237,7 +237,7 @@ smc_AutoSuggest.prototype.removeLastSearchString = function ()
 };
 
 // Add a result if not already done.
-smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
+weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 {
 	// Increase the internal item count.
 	this.iItemCount++;
@@ -269,7 +269,7 @@ smc_AutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmi
 };
 
 // Delete an item that has been added, if at all?
-smc_AutoSuggest.prototype.deleteAddedItem = function (sItemId)
+weAutoSuggest.prototype.deleteAddedItem = function (sItemId)
 {
 	// Remove the div if it exists.
 	if (!($('#suggest_' + this.opt.sControlId + '_' + sItemId).remove().length))
@@ -284,21 +284,21 @@ smc_AutoSuggest.prototype.deleteAddedItem = function (sItemId)
 };
 
 // Hide the box.
-smc_AutoSuggest.prototype.autoSuggestHide = function ()
+weAutoSuggest.prototype.autoSuggestHide = function ()
 {
 	// Delay to allow events to propagate through....
 	this.oHideTimer = setTimeout(this.opt.sSelf + '.autoSuggestActualHide();', 250);
 };
 
 // Do the actual hiding after a timeout.
-smc_AutoSuggest.prototype.autoSuggestActualHide = function ()
+weAutoSuggest.prototype.autoSuggestActualHide = function ()
 {
 	$(this.oSuggestDivHandle).hide();
 	this.oSelectedDiv = null;
 };
 
 // Show the box.
-smc_AutoSuggest.prototype.autoSuggestShow = function ()
+weAutoSuggest.prototype.autoSuggestShow = function ()
 {
 	if (this.oHideTimer)
 	{
@@ -312,7 +312,7 @@ smc_AutoSuggest.prototype.autoSuggestShow = function ()
 };
 
 // Populate the actual div.
-smc_AutoSuggest.prototype.populateDiv = function (aResults)
+weAutoSuggest.prototype.populateDiv = function (aResults)
 {
 	// Cannot have any children yet.
 	$(this.oSuggestDivHandle).empty();
@@ -342,19 +342,19 @@ smc_AutoSuggest.prototype.populateDiv = function (aResults)
 };
 
 // Refocus the element.
-smc_AutoSuggest.prototype.itemMouseEnter = function (oCurElement)
+weAutoSuggest.prototype.itemMouseEnter = function (oCurElement)
 {
 	this.oSelectedDiv = oCurElement;
 	oCurElement.className = 'auto_suggest_item_hover';
 };
 
 // Unfocus the element
-smc_AutoSuggest.prototype.itemMouseLeave = function (oCurElement)
+weAutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 {
 	oCurElement.className = 'auto_suggest_item';
 };
 
-smc_AutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
+weAutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 {
 	var aItems = $('item', oXMLDoc), i, ac = [];
 
@@ -387,7 +387,7 @@ smc_AutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 };
 
 // Get a new suggestion.
-smc_AutoSuggest.prototype.autoSuggestUpdate = function ()
+weAutoSuggest.prototype.autoSuggestUpdate = function ()
 {
 	// If there's a callback then call it.
 	if ('onBeforeUpdate' in this.oCallback && typeof this.oCallback.onBeforeUpdate == 'string')

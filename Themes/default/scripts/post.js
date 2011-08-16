@@ -189,7 +189,7 @@ String.prototype.easyReplace = function (oReplacements)
 	a thousands words.
 */
 
-function smc_SmileyBox(oOptions)
+function weSmileyBox(oOptions)
 {
 	var that = this;
 	that.opt = oOptions;
@@ -224,7 +224,7 @@ function smc_SmileyBox(oOptions)
 }
 
 // Loop through the smileys to setup the HTML.
-smc_SmileyBox.prototype.getSmileyRowsContent = function (sLocation)
+weSmileyBox.prototype.getSmileyRowsContent = function (sLocation)
 {
 	// If it's already defined, don't bother.
 	if (sLocation in this.oSmileyRowsContent)
@@ -250,7 +250,7 @@ smc_SmileyBox.prototype.getSmileyRowsContent = function (sLocation)
 	}
 };
 
-smc_SmileyBox.prototype.initSmileys = function (sLocation)
+weSmileyBox.prototype.initSmileys = function (sLocation)
 {
 	var that = this, iSmileyRowIndex = 0, iSmileyRowCount = this.opt.oSmileyLocations[sLocation].length;
 	for (; iSmileyRowIndex < iSmileyRowCount; iSmileyRowIndex++)
@@ -273,7 +273,7 @@ smc_SmileyBox.prototype.initSmileys = function (sLocation)
 	and 2 for Red Dwarf.
 */
 
-function smc_BBCButtonBox(oOptions)
+function weButtonBox(oOptions)
 {
 	this.opt = oOptions;
 
@@ -376,19 +376,19 @@ function smc_BBCButtonBox(oOptions)
 	}
 }
 
-smc_BBCButtonBox.prototype.handleButtonMouseOver = function (oButtonImg)
+weButtonBox.prototype.handleButtonMouseOver = function (oButtonImg)
 {
 	oButtonImg.bHover = true;
 	this.updateButtonStatus(oButtonImg);
 };
 
-smc_BBCButtonBox.prototype.handleButtonMouseOut = function (oButtonImg)
+weButtonBox.prototype.handleButtonMouseOut = function (oButtonImg)
 {
 	oButtonImg.bHover = false;
 	this.updateButtonStatus(oButtonImg);
 };
 
-smc_BBCButtonBox.prototype.updateButtonStatus = function (oButtonImg)
+weButtonBox.prototype.updateButtonStatus = function (oButtonImg)
 {
 	var sNewPos = 0;
 	if (oButtonImg.bHover && oButtonImg.bIsActive && 'sActiveButtonBackgroundPosHover' in this.opt)
@@ -404,7 +404,7 @@ smc_BBCButtonBox.prototype.updateButtonStatus = function (oButtonImg)
 		oButtonImg.style.backgroundPosition = '-' + sNewPos[0] + 'px -' + sNewPos[1] + 'px';
 };
 
-smc_BBCButtonBox.prototype.handleButtonClick = function (oButtonImg)
+weButtonBox.prototype.handleButtonClick = function (oButtonImg)
 {
 	// Dissect the id attribute...
 	var aMatches = oButtonImg.id.match(/(\d+)_(\d+)$/);
@@ -424,7 +424,7 @@ smc_BBCButtonBox.prototype.handleButtonClick = function (oButtonImg)
 	return false;
 };
 
-smc_BBCButtonBox.prototype.handleSelectChange = function (oSelectControl)
+weButtonBox.prototype.handleSelectChange = function (oSelectControl)
 {
 	// Dissect the id attribute...
 	var aMatches = oSelectControl.id.match(/(\d+)_(\d+)$/);
@@ -443,7 +443,7 @@ smc_BBCButtonBox.prototype.handleSelectChange = function (oSelectControl)
 	return true;
 };
 
-smc_BBCButtonBox.prototype.setActive = function (aButtons)
+weButtonBox.prototype.setActive = function (aButtons)
 {
 	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{
@@ -459,7 +459,7 @@ smc_BBCButtonBox.prototype.setActive = function (aButtons)
 	}
 };
 
-smc_BBCButtonBox.prototype.emulateClick = function (sCode)
+weButtonBox.prototype.emulateClick = function (sCode)
 {
 	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{
@@ -476,7 +476,7 @@ smc_BBCButtonBox.prototype.emulateClick = function (sCode)
 	return false;
 };
 
-smc_BBCButtonBox.prototype.setSelect = function (sSelectName, sValue)
+weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 {
 	if (!('sButtonClickHandler' in this.opt))
 		return;

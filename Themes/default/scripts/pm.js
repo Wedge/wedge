@@ -29,7 +29,7 @@ function smf_PersonalMessageSend(oOptions)
 		$('#' + this.opt.sBccLinkId).data('that', this).click(function () { return !!$(this).data('that').showBcc(); });
 	}
 
-	this.oToAutoSuggest = new smc_AutoSuggest({
+	this.oToAutoSuggest = new weAutoSuggest({
 		sSelf: this.opt.sSelf + '.oToAutoSuggest',
 		sSessionId: this.opt.sSessionId,
 		sSessionVar: this.opt.sSessionVar,
@@ -43,7 +43,7 @@ function smf_PersonalMessageSend(oOptions)
 	});
 	this.oToAutoSuggest.registerCallback('onBeforeAddItem', this.oToAutoSuggest.callbackAddItem);
 
-	this.oBccAutoSuggest = new smc_AutoSuggest({
+	this.oBccAutoSuggest = new weAutoSuggest({
 		sSelf: this.opt.sSelf + '.oBccAutoSuggest',
 		sSessionId: this.opt.sSessionId,
 		sSessionVar: this.opt.sSessionVar,

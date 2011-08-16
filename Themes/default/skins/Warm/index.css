@@ -76,8 +76,15 @@ body
 #sidebar ul
 	list-style-type: none
 
-dl#feed dt
-	float: right
+dl#feed
+	dt, dd
+		display: inline
+		float: none
+		margin: auto
+	// Force a line-break. Nice hack! :)
+	dd:after
+		content: "\A"
+		white-space: pre
 
 #userbox
 	img.avatar

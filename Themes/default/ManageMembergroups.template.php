@@ -339,7 +339,7 @@ function template_edit_group()
 		add_js_file('scripts/suggest.js');
 
 		add_js('
-	var oModeratorSuggest = new smc_AutoSuggest({
+	var oModeratorSuggest = new weAutoSuggest({
 		sSelf: "oModeratorSuggest",
 		sSessionId: "', $context['session_id'], '",
 		sSessionVar: "', $context['session_var'], '",
@@ -544,7 +544,7 @@ function template_group_members()
 		add_js_file('scripts/suggest.js');
 
 		add_js('
-	var oAddMemberSuggest = new smc_AutoSuggest({
+	var oAddMemberSuggest = new weAutoSuggest({
 		sSelf: "oAddMemberSuggest",
 		sSessionId: "', $context['session_id'], '",
 		sSessionVar: "', $context['session_var'], '",

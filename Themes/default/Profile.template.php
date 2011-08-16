@@ -599,7 +599,7 @@ function template_editBuddies()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAddBuddySuggest = new smc_AutoSuggest({
+	var oAddBuddySuggest = new weAutoSuggest({
 		sSelf: \'oAddBuddySuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
@@ -671,7 +671,7 @@ function template_editIgnoreList()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAddIgnoreSuggest = new smc_AutoSuggest({
+	var oAddIgnoreSuggest = new weAutoSuggest({
 		sSelf: \'oAddIgnoreSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',

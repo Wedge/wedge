@@ -386,7 +386,7 @@ function template_modify_user_subscription()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAddMemberSuggest = new smc_AutoSuggest({
+	var oAddMemberSuggest = new weAutoSuggest({
 		sSelf: \'oAddMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',

@@ -193,7 +193,7 @@ function template_email_members()
 
 	add_js('
 	$("#advanced_select_div").show();
-	var oMemberSuggest = new smc_AutoSuggest({
+	var oMemberSuggest = new weAutoSuggest({
 		sSelf: \'oMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',
@@ -205,7 +205,7 @@ function template_email_members()
 		sItemListContainerId: \'members_container\',
 		aListItems: []
 	});
-	var oExcludeMemberSuggest = new smc_AutoSuggest({
+	var oExcludeMemberSuggest = new weAutoSuggest({
 		sSelf: \'oExcludeMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',

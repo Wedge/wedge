@@ -827,6 +827,7 @@ ul.reset, ul.reset li
 		padding: 3px 1em
 		overflow: auto
 		white-space: pre
+		max-width: 50em
 		// Show a scrollbar after about 24 lines.
 		max-height: 24em
 

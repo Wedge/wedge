@@ -45,7 +45,7 @@ function smf_StatsCenter(oOptions)
 			oCurYear.bIsCollapsed = !$(oCurYear.oCollapseImage).hasClass('fold');
 
 			// Setup the toggle element for the year.
-			oCurYear.oToggle = new smc_Toggle({
+			oCurYear.oToggle = new weToggle({
 				bCurrentlyCollapsed: oCurYear.bIsCollapsed,
 				instanceRef: that,
 				sYearId: sYearId,
@@ -89,7 +89,7 @@ function smf_StatsCenter(oOptions)
 			var sLinkText = $('#' + oOptions.sMonthLinkIdPrefix + sMonthId).html();
 
 			// Setup the toggle element for the month.
-			oCurMonth.oToggle = new smc_Toggle({
+			oCurMonth.oToggle = new weToggle({
 				bCurrentlyCollapsed: oCurMonth.bIsCollapsed,
 				instanceRef: that,
 				sMonthId: sMonthId,

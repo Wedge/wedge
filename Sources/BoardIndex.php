@@ -136,7 +136,7 @@ function BoardIndex()
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 
 	add_js('
-	var oInfoCenterToggle = new smc_Toggle({
+	var oInfoCenterToggle = new weToggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_header_ic']) ? 'false' : 'true', ',
 		aSwappableContainers: [
 			\'upshrinkHeaderIC\'

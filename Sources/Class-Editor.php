@@ -2267,7 +2267,7 @@ class wedit
 	<link rel="stylesheet" href="' . $boardurl . $filename . '">';
 
 			add_js('
-	var oSmileyBox_' . $this->id . ' = new smc_SmileyBox({
+	var oSmileyBox_' . $this->id . ' = new weSmileyBox({
 		id: ' . JavaScriptEscape($this->id) . ',
 		sContainer: ' . JavaScriptEscape($smileycontainer) . ',
 		sClickHandler: function (o) { oEditorHandle_' . $this->id . '.insertSmiley(o); },
@@ -2304,7 +2304,7 @@ class wedit
 		if ($this->show_bbc)
 		{
 			add_js('
-	var oBBCBox_' . $this->id . ' = new smc_BBCButtonBox({
+	var oBBCBox_' . $this->id . ' = new weButtonBox({
 		sContainer: ' . JavaScriptEscape($bbccontainer) . ',
 		sButtonClickHandler: function (o) { oEditorHandle_' . $this->id . '.handleButtonClick(o); },
 		sSelectChangeHandler: function (o) { oEditorHandle_' . $this->id . '.handleSelectChange(o); },
@@ -2413,7 +2413,7 @@ class wedit
 
 		// Now it's all drawn out we'll actually setup the box.
 		add_js('
-	var oEditorHandle_' . $this->id . ' = new smc_Editor({
+	var oEditorHandle_' . $this->id . ' = new weEditor({
 		sSessionId: ' . JavaScriptEscape($context['session_id']) . ',
 		sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
 		sFormId: ' . JavaScriptEscape($this->form) . ',

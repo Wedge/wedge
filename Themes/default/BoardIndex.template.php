@@ -224,7 +224,7 @@ function template_boardindex_newsfader()
 		iFadeDelay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
 	});
 
-	var smfNewsFadeToggle = new smc_Toggle({
+	var smfNewsFadeToggle = new weToggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_news_fader']) ? 'false' : 'true', ',
 		aSwappableContainers: [\'smfFadeScroller\'],
 		aSwapImages: [

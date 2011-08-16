@@ -458,7 +458,7 @@ function template_main()
 		foreach ($ignoredMsgs as $msgid)
 		{
 			add_js('
-	aIgnoreToggles[' . $msgid . '] = new smc_Toggle({
+	aIgnoreToggles[' . $msgid . '] = new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
 			\'msg_' . $msgid . '_extra_info\',

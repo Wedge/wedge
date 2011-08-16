@@ -256,7 +256,7 @@ function template_ban_edit()
 	// Auto suggest only needed for adding new bans, not editing
 	if ($context['ban']['is_new'] && empty($_REQUEST['u']))
 		add_js('
-	var oAddMemberSuggest = new smc_AutoSuggest({
+	var oAddMemberSuggest = new weAutoSuggest({
 		sSelf: "oAddMemberSuggest",
 		sSessionId: "', $context['session_id'], '",
 		sSessionVar: "', $context['session_var'], '",
@@ -337,7 +337,7 @@ function template_ban_edit_trigger()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAddMemberSuggest = new smc_AutoSuggest({
+	var oAddMemberSuggest = new weAutoSuggest({
 		sSelf: \'oAddMemberSuggest\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',

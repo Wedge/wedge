@@ -436,7 +436,7 @@ function template_html_below()
 
 	initMenu("main_menu");
 
-	var oMainHeaderToggle = new smc_Toggle({
+	var oMainHeaderToggle = new weToggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
 		aSwappableContainers: [\'upper_section\'],
 		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],

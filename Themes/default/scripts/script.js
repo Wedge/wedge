@@ -280,8 +280,8 @@ function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 }
 
 
-// *** smc_Cookie class.
-function smc_Cookie(oOptions)
+// *** weCookie class.
+function weCookie(oOptions)
 {
 	this.opt = oOptions;
 	this._cookies = {};
@@ -297,19 +297,19 @@ function smc_Cookie(oOptions)
 	}
 };
 
-smc_Cookie.prototype.get = function (sKey)
+weCookie.prototype.get = function (sKey)
 {
 	return sKey in this._cookies ? this._cookies[sKey] : null;
 };
 
-smc_Cookie.prototype.set = function (sKey, sValue)
+weCookie.prototype.set = function (sKey, sValue)
 {
 	document.cookie = sKey + '=' + encodeURIComponent(sValue);
 };
 
 
-// *** smc_Toggle class.
-function smc_Toggle(oOptions)
+// *** weToggle class.
+function weToggle(oOptions)
 {
 	this.opt = oOptions;
 	this._collapsed = false;
@@ -319,7 +319,7 @@ function smc_Toggle(oOptions)
 	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
 	{
 		// Initialize the cookie handler.
-		this._cookie = new smc_Cookie({});
+		this._cookie = new weCookie({});
 
 		// Check if the cookie is set.
 		var cookieValue = this._cookie.get(this.opt.oCookieOptions.sCookieName);
@@ -349,7 +349,7 @@ function smc_Toggle(oOptions)
 };
 
 // Collapse or expand the section.
-smc_Toggle.prototype._changeState = function (bCollapse, bInit, bNow)
+weToggle.prototype._changeState = function (bCollapse, bInit, bNow)
 {
 	// Default bInit to false.
 	bInit = !!bInit;
@@ -395,7 +395,7 @@ smc_Toggle.prototype._changeState = function (bCollapse, bInit, bNow)
 };
 
 // Reverse the current state.
-smc_Toggle.prototype.toggle = function ()
+weToggle.prototype.toggle = function ()
 {
 	this._changeState(!this._collapsed);
 };
@@ -487,7 +487,7 @@ function smfSelectText(oCurElement, bActOnElement)
 }
 
 // A function needed to discern HTML entities from non-western characters.
-function smc_saveEntities(sFormName, aElementNames, sMask)
+function weSaveEntities(sFormName, aElementNames, sMask)
 {
 	var i, f = document.forms, nm = f[sFormName], e = nm.elements, n = e.length;
 	if (typeof sMask == 'string')

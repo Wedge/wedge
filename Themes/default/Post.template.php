@@ -44,7 +44,7 @@ function template_main()
 	// Start the form and display the link tree.
 
 	echo '
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); smc_saveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
+		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); weSaveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
@@ -433,7 +433,7 @@ function template_main()
 		{
 			for (var i = 0; i < numIgnoredReplies; i++)
 			{
-				aIgnoreToggles[ignored_replies[i]] = new smc_Toggle({
+				aIgnoreToggles[ignored_replies[i]] = new weToggle({
 					bCurrentlyCollapsed: true,
 					aSwappableContainers: [
 						"msg_" + ignored_replies[i] + "_body",
@@ -463,7 +463,7 @@ function template_main()
 	$("#postAttachment2").hide();');
 
 		add_js('
-	var oSwapAdditionalOptions = new smc_Toggle({
+	var oSwapAdditionalOptions = new weToggle({
 		bCurrentlyCollapsed: ', $fold ? 'true' : 'false', ',
 		funcOnBeforeCollapse: function () { $("#additional_options").val("0"); },
 		funcOnBeforeExpand: function () { $("#additional_options").val("1"); },
@@ -779,7 +779,7 @@ function template_show_previous_posts()
 
 	foreach ($ignored_posts as $post_id)
 		add_js('
-	aIgnoreToggles[' . $post_id . '] = new smc_Toggle({
+	aIgnoreToggles[' . $post_id . '] = new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
 			"msg_' . $post_id . '_body",
