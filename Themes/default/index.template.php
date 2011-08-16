@@ -592,7 +592,7 @@ function template_button_strip($button_strip, $direction = 'right', $strip_optio
 	$buttons[count($buttons) - 1] = str_replace('class="button_strip_', 'class="last button_strip_', $buttons[count($buttons) - 1]);
 
 	echo '
-				<ul class="buttonlist', !empty($direction) ? ' float' . $direction : '', '"', (empty($buttons) ? ' style="display: none"' : ''), (!empty($strip_options['id']) ? ' id="' . $strip_options['id'] . '"': ''), '>',
+				<ul class="buttonlist', !empty($direction) ? ' float' . $direction : '', empty($buttons) ? ' hide' : '', '"', !empty($strip_options['id']) ? ' id="' . $strip_options['id'] . '"': '', '>',
 					implode('', $buttons), '
 				</ul>';
 }

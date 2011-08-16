@@ -392,7 +392,7 @@ function template_merge_extra_options()
 	echo '
 						<option value="0">', $txt['merge_custom_subject'], ':</option>
 					</select>
-					<br><input type="text" name="custom_subject" size="60" id="custom_subject" class="custom_subject" style="display: none">
+					<br><input type="text" name="custom_subject" size="60" id="custom_subject" class="custom_subject hide">
 					<br>
 					<label><input type="checkbox" name="enforce_subject" id="enforce_subject" value="1"> ', $txt['merge_enforce_subject'], '</label>
 				</fieldset>';

@@ -21,7 +21,7 @@ function template_info_center_begin()
 			<div id="upshrink_ic" title="', $txt['upshrink_description'], '"', empty($options['collapse_header_ic']) ? ' class="fold"' : '', '></div>
 			', $txt['info_center_title'], '
 		</we:title>
-		<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' style="display: none"', '>';
+		<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' class="hide"', '>';
 }
 
 // This is the "Recent Posts" bar.

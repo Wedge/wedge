@@ -207,7 +207,7 @@ function template_unread()
 			$mark_read['readall'] = array('text' => 'unread_topics_all', 'image' => 'markreadall.gif', 'lang' => true, 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'class' => 'active');
 		else
 			echo '
-					<tr style="display: none"><td></td></tr>';
+					<tr class="hide"><td></td></tr>';
 
 		echo '
 					</tbody>

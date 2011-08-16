@@ -448,7 +448,7 @@ function we_prepareScriptUrl()
 }
 
 // Get the text in a code tag.
-function smfSelectText(oCurElement, bActOnElement)
+function weSelectText(oCurElement, bActOnElement)
 {
 	// The place we're looking for is one div up, and next door - if it's auto detect.
 	var oCodeArea = (typeof bActOnElement == 'boolean' && bActOnElement) ? $('#' + oCurElement)[0] : oCurElement.parentNode.nextSibling, oCurRange;

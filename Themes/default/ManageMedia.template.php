@@ -87,7 +87,7 @@ function template_aeva_admin_submissions()
 					<td>' . $item['posted_on'] . '</td>' : '', '
 					<td><input type="checkbox" name="items[]" value="', $item['id'], '" id="items[]"></td>
 				</tr>
-				<tr id="tr_expand_' . $item['id'] . '" class="windowbg', $alt ? '2' : '', '" style="display: none">
+				<tr id="tr_expand_' . $item['id'] . '" class="windowbg', $alt ? '2' : '', ' hide">
 					<td colspan="', $filter == 'albums' ? 4 : 5, '">', !empty($item['description']) ? '
 						<div>' . $txt['media_add_desc'] .' : '. $item['description'] . '</div>' : '', !empty($item['keywords']) ? '
 						<div>' . $txt['media_keywords'] . ' : ' . $item['keywords'] . '</div>' : '', '
@@ -216,7 +216,7 @@ function template_aeva_admin_maintenance_prune()
 						</table>
 					</td>
 				</tr>
-				<tr id="com_prune_opts" style="display: none">
+				<tr id="com_prune_opts" class="hide">
 					<td style="padding: 0; margin: 0; border: 0">
 						<table class="w100 cp8 cs0">
 							<tr class="catbg">
@@ -439,7 +439,7 @@ function template_aeva_admin_about()
 					<tr><td height="207">
 						<table class="w100 cp4 cs1 windowbg" style="height: 172px">
 							<tr>
-								<td class="windowbg w50">', $txt['media_admin_smf_ver'], ': ', $context['aeva_data']['wedge'], '</td>
+								<td class="windowbg w50">', $txt['media_admin_wedge_ver'], ': ', $context['aeva_data']['wedge'], '</td>
 								<td class="windowbg w50">', $txt['media_admin_php_ver'], ': ', $context['aeva_data']['php'], '</td>
 							</tr>
 							<tr>
@@ -601,7 +601,7 @@ function template_aeva_admin_perms()
 				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ');">', $prof['albums'], '</a></td>
 				<td', !empty($prof['undeletable']) ? ' title="' . $txt['media_permissions_undeletable'] . '"' : '', '><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(', $prof['id'], ', this, ', JavaScriptEscape($txt['quickmod_confirm']), ');"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
 			</tr>
-			<tr class="windowbg', $alt ? '2' : '', '" id="albums_' . $prof['id'] . '" style="display: none">
+			<tr class="windowbg', $alt ? '2' : '', ' hide" id="albums_' . $prof['id'] . '">
 				<td colspan="3" id="albums_td_' . $prof['id'] . '"></td>
 			</tr>';
 	}
@@ -736,7 +736,7 @@ function template_aeva_admin_quotas()
 				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ', \';prof=', $prof['id'], ';xml\');">', $prof['albums'], '</a></td>
 				<td><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(', $prof['id'], ', this, ', JavaScriptEscape($txt['quickmod_confirm']), ');"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
 			</tr>
-			<tr class="windowbg', $alt ? '2' : '', '" id="albums_' . $prof['id'] . '" style="display: none">
+			<tr class="windowbg', $alt ? '2' : '', ' hide" id="albums_' . $prof['id'] . '">
 				<td colspan="3" id="albums_td_' . $prof['id'] . '"></td>
 			</tr>';
 	}

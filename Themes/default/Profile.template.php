@@ -2053,7 +2053,7 @@ function template_issueWarning()
 	echo '
 				</dt>
 				<dd>
-					<div id="warndiv1" style="display: none">
+					<div id="warndiv1" class="hide">
 						<div>
 							<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeWarnLevel(-5); return false;" onmousedown="return false;">[-]</a></span>
 							<div class="floatleft" id="warning_contain" style="font-size: 8pt; height: 12pt; width: ', $context['warningBarWidth'], 'px; border: 1px solid black; background-color: white; padding: 1px; position: relative">
@@ -2361,7 +2361,7 @@ function template_profile_group_manage()
 
 	echo '
 						</span>
-						<a href="#" onclick="$(\'#additional_groupsList\').show(); $(\'#additional_groupsLink\').hide(); return false;" id="additional_groupsLink" style="display: none">', $txt['additional_membergroups_show'], '</a>
+						<a href="#" onclick="$(\'#additional_groupsList\').show(); $(\'#additional_groupsLink\').hide(); return false;" id="additional_groupsLink" class="hide">', $txt['additional_membergroups_show'], '</a>
 					</dd>';
 
 	// No need to hide the additional group list if it's short enough...
@@ -2488,7 +2488,7 @@ function template_profile_avatar_select()
 								</select>
 							</div>
 							<div>
-								<select name="file" id="file" style="display: none" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
+								<select name="file" id="file" class="hide" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
 							</div>
 							<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '"></div>
 						</div>';

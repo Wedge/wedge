@@ -194,7 +194,7 @@ function aeva_foxy_playlist()
 			$context['aeva_extra_data'] .= '<tr class="windowbg' . ($curpos % 2 == 0 ? '' : '2') . '"><td class="right">' . $m['play_order'] . '.</td>
 			<td><strong><a href="' . $galurl . 'sa=item;in=' . $m['id'] . '">' . $m['title'] . '</a></strong> <a href="#" onclick="return foxyComment(' . $m['id'] . ');"><img src="' . $settings['default_images_url'] . '/aeva/user_comment.png"></a>' . (!empty($m['description']) ? '
 			<div style="display: block" id="foxyDescription' . $m['id'] . '">' . parse_bbc($m['description']) . '</div>' : '') . '
-			<div style="display: none" id="foxyComment' . $m['id'] . '">
+			<div class="hide" id="foxyComment' . $m['id'] . '">
 				<form action="' . $galurl . 'sa=playlists;in=' . $id . ';edit;des=' . $m['id'] . ';' . $context['session_query'] . '" method="post">
 					<textarea name="txt' . $m['id'] . '" cols="60" rows="3">' . $m['description'] . '</textarea>
 					<input type="submit" value="' . $txt['media_submit'] . '">
@@ -1308,7 +1308,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			$box .= '<br><img src="' . $settings['images_aeva'] . '/star' . $star . '.gif" class="aevera" alt="' . $altstar . '">';
 
 			$box .= ' <a href="#" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;"><img src="' . $settings['images_aeva'] . '/magnifier.png" width="16" height="16" alt="' . $txt['media_who_rated_what'] . '" title="' . $txt['media_who_rated_what'] . '" class="aevera"></a></div>
-			<div class="vote_details" style="padding: 12px 0 0 12px; display: none">';
+			<div class="vote_details hide" style="padding: 12px 0 0 12px">';
 
 			// All votes
 			$req = 'SELECT p.id_member, p.rating, m.real_name

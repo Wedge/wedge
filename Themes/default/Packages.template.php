@@ -221,7 +221,7 @@ function template_view_package()
 				{
 					echo '
 					<tr class="windowbg', $alternate ? '' : '2', '">
-						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" style="display: none">' : '', '</td>
+						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" class="hide">' : '', '</td>
 						<td style="width: 30px" class="center">
 							<input type="checkbox" name="theme_changes[]" value="', !empty($action['value']) ? $action['value'] : '', '" id="dummy_theme_', $id, '"', (!empty($action['not_mod']) ? '' : ' disabled'), !empty($context['themes_locked']) ? ' checked' : '', '>
 						</td>
@@ -511,7 +511,7 @@ function template_browse()
 			</div>
 		</div>
 		<form action="', $scripturl, '?action=admin;area=packages;sa=browse" method="get">
-			<div id="advanced_box" style="display: none;">
+			<div id="advanced_box" class="hide">
 				<we:title>
 					', $txt['package_advanced_options'], '
 				</we:title>
@@ -739,7 +739,7 @@ function template_servers()
 			', $txt['package_upload_title'], '
 		</we:title>
 		<div class="windowbg wrc">
-			<form action="' . $scripturl . '?action=admin;area=packages;get;sa=upload" method="post" accept-charset="UTF-8" enctype="multipart/form-data" style="margin-bottom: 0;">
+			<form action="' . $scripturl . '?action=admin;area=packages;get;sa=upload" method="post" accept-charset="UTF-8" enctype="multipart/form-data" style="margin-bottom: 0">
 				<dl class="settings">
 					<dt>
 						<strong>' . $txt['package_upload_select'] . ':</strong>
@@ -1010,7 +1010,7 @@ function template_control_chmod()
 				', sprintf($txt['package_ftp_why'], '$(\'#need_writable_list\').show(); return false;'), '<br>
 				<div id="need_writable_list" class="smalltext">
 					', $txt['package_ftp_why_file_list'], '
-					<ul style="display: inline;">';
+					<ul style="display: inline">';
 
 		if (!empty($context['notwritable_files']))
 			foreach ($context['notwritable_files'] as $file)
@@ -1023,13 +1023,13 @@ function template_control_chmod()
 	}
 
 	echo '
-				<div id="ftp_error_div" style="', (!empty($context['package_ftp']['error']) ? '' : 'display:none;'), 'padding: 1px; margin: 1ex;"><div class="windowbg2" id="ftp_error_innerdiv" style="padding: 1ex;">
+				<div id="ftp_error_div" style="', !empty($context['package_ftp']['error']) ? '' : 'display: none; ', 'padding: 1px; margin: 1ex"><div class="windowbg2" id="ftp_error_innerdiv" style="padding: 1ex">
 					<tt id="ftp_error_message">', !empty($context['package_ftp']['error']) ? $context['package_ftp']['error'] : '', '</tt>
 				</div></div>';
 
 	if (!empty($context['package_ftp']['destination']))
 		echo '
-				<form action="', $context['package_ftp']['destination'], '" method="post" accept-charset="UTF-8" style="margin: 0;">';
+				<form action="', $context['package_ftp']['destination'], '" method="post" accept-charset="UTF-8" style="margin: 0">';
 
 	echo '
 					<fieldset>
@@ -1065,7 +1065,7 @@ function template_control_chmod()
 	if (empty($context['package_ftp']['form_elements_only']))
 		echo '
 
-					<div class="righttext" style="margin: 1ex;">
+					<div class="righttext" style="margin: 1ex">
 						<span id="test_ftp_placeholder_full"></span>
 						<input type="submit" value="', $txt['package_proceed'], '" class="submit">
 					</div>';
@@ -1608,7 +1608,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 				<td style="width: 8%" class="perm_custom"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="custom"></td>
 				<td style="width: 8%" class="perm_nochange"><input type="radio" name="permStatus[', $ident . '/' . $name, ']" value="no_change" checked></td>
 			</tr>
-			<tr id="insert_div_loc_' . $cur_ident . '" style="display: none;"><td></td></tr>';
+			<tr id="insert_div_loc_' . $cur_ident . '" class="hide"><td></td></tr>';
 
 			if (!empty($dir['contents']))
 				template_permission_show_contents($ident . '/' . $name, $dir['contents'], $level + 1, !empty($dir['more_files']));
@@ -1643,7 +1643,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 
 		echo '
 		<table class="table_grid w100 cs0">
-			<tr style="display: none"><td></td></tr>';
+			<tr class="hide"><td></td></tr>';
 	}
 }
 
@@ -1673,11 +1673,11 @@ function template_action_permissions()
 
 	echo '
 			<div class="windowbg wrc">
-				<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
+				<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex">
 					<strong>', $progress_message, '</strong>
-					<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
-						<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $progress_percent, '%</div>
-						<div style="width: ', $progress_percent, '%; height: 12pt; z-index: 1; background-color: #98b8f4;">&nbsp;</div>
+					<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative">
+						<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $progress_percent, '%</div>
+						<div style="width: ', $progress_percent, '%; height: 12pt; z-index: 1; background-color: #98b8f4">&nbsp;</div>
 					</div>
 				</div>';
 
@@ -1689,11 +1689,11 @@ function template_action_permissions()
 
 		echo '
 				<br>
-				<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex;">
+				<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex">
 					<strong>', $file_progress_message, '</strong>
-					<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative;">
-						<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold;">', $file_progress_percent, '%</div>
-						<div style="width: ', $file_progress_percent, '%; height: 12pt; z-index: 1; background-color: #c1ffc1;">&nbsp;</div>
+					<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative">
+						<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $file_progress_percent, '%</div>
+						<div style="width: ', $file_progress_percent, '%; height: 12pt; z-index: 1; background-color: #c1ffc1">&nbsp;</div>
 					</div>
 				</div>';
 	}

@@ -51,7 +51,7 @@ function template_main()
 	echo '
 					</dl>
 					<label><input type="checkbox" name="reset_subject" id="reset_subject" onclick="$(\'#subjectArea\').toggle(this.checked);"> ', $txt['moveTopic2'], '.</label><br>
-					<fieldset id="subjectArea" style="display: none">
+					<fieldset id="subjectArea" class="hide">
 						<dl class="settings">
 							<dt><strong>', $txt['moveTopic3'], ':</strong></dt>
 							<dd><input type="text" name="custom_subject" size="30" value="', $context['subject'], '"></dd>

@@ -46,7 +46,7 @@ function template_edit_news()
 
 	// This provides an empty text box to add a news item to the site.
 	echo '
-					<tr id="moreNews" class="windowbg2 center" style="display: none;">
+					<tr id="moreNews" class="windowbg2 center hide">
 						<td><div id="moreNewsItems"></div></td>
 						<td></td>
 						<td></td>
@@ -54,7 +54,7 @@ function template_edit_news()
 				</tbody>
 			</table>
 			<div class="floatleft padding">
-				<div id="moreNewsItems_link" style="display: none;"><a href="#" onclick="addNewsItem(); return false;">', $txt['editnews_clickadd'], '</a></div>';
+				<div id="moreNewsItems_link" class="hide"><a href="#" onclick="addNewsItem(); return false;">', $txt['editnews_clickadd'], '</a></div>';
 
 	add_js('
 	$("#moreNewsItems_link").show();
@@ -122,7 +122,7 @@ function template_email_members()
 			<div class="hide" id="advanced_select_div">
 				<we:cat>
 					<a href="#" onclick="return toggleAdvanced();" id="goadvanced"><img src="', $settings['images_url'], '/selected.gif" alt="', $txt['advanced'], '" style="vertical-align: 0">&nbsp;', $txt['advanced'], '</a>
-					<a href="#" onclick="return toggleAdvanced();" id="gosimple" style="display: none"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" style="vertical-align: 0">&nbsp;<strong>', $txt['simple'], '</strong></a>
+					<a href="#" onclick="return toggleAdvanced();" id="gosimple" class="hide"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" style="vertical-align: 0">&nbsp;<strong>', $txt['simple'], '</strong></a>
 				</we:cat>
 			</div>
 

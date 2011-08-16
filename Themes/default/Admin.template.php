@@ -447,7 +447,6 @@ function template_view_versions()
 		It also contains the function, swapOption, that toggles showing the detailed information for each of
 		the file categories. (Sources, languages, and templates.)
 	*/
-	add_js_file($scripturl . '?action=viewremote;filename=detailed-version.js', true);
 	add_js_file('scripts/admin.js');
 
 	add_js('
@@ -1271,7 +1270,7 @@ function template_core_features()
 				<div class="features">
 					<div class="windowbg', $alternate < 2 ? '2' : '', ' wrc">
 						<img class="features_image ping" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '">
-						<div class="features_switch" id="js_feature_', $id, '" style="display: none">
+						<div id="js_feature_', $id, '" class="features_switch hide">
 							<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_query'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
 								<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '"><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" class="ping" id="switch_', $id, '" style="margin-top: 1.3em" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '">
 							</a>
@@ -1332,8 +1331,8 @@ function template_add_language()
 
 	echo '
 				</fieldset>
-				<div class="righttext">
-					', $context['browser']['is_ie'] ? '<input type="text" name="ie_fix" style="display: none"> ' : '', '
+				<div class="righttext">', $context['browser']['is_ie'] ? '
+					<input type="text" name="ie_fix" class="hide"> ' : '', '
 					<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="submit">
 				</div>
 			</div>';
@@ -1762,11 +1761,12 @@ function template_callback_question_answer_list()
 			</dd>';
 
 	echo '
-		<dt id="add_more_question_placeholder" style="display: none"></dt><dd></dd>
-		<dt id="add_more_link_div" style="display: none">
-			<a href="#" onclick="addAnotherQuestion(); return false;">&#171; ', $txt['setup_verification_add_more'], ' &#187;</a>
-
-		</dt><dd></dd>';
+			<dt id="add_more_question_placeholder" class="hide"></dt>
+			<dd></dd>
+			<dt id="add_more_link_div" class="hide">
+				<a href="#" onclick="addAnotherQuestion(); return false;">&#171; ', $txt['setup_verification_add_more'], ' &#187;</a>
+			</dt>
+			<dd></dd>';
 
 	// Create a named element dynamically
 	// Thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/

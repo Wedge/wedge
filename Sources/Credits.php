@@ -75,7 +75,7 @@ function Credits($in_admin = false)
 			),
 		),
 		array(
-			'title' => $txt['credits_smf_team'],
+			'title' => $txt['credits_smf2_team'],
 			'groups' => array(
 				array(
 					'title' => $txt['credits_groups_founder'],

@@ -714,7 +714,7 @@ function template_search()
 				<we:title2>
 					<a href="#" onclick="expandCollapseLabels(); return false;"><div class="foldable" id="expandLabelsIcon"></div></a> <a href="#" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
 				</we:title2>
-				<ul id="searchLabelsExpand" class="reset" ', $context['check_all'] ? 'style="display: none;"' : '', '>';
+				<ul id="searchLabelsExpand" class="reset', $context['check_all'] ? ' hide' : '', '">';
 
 			foreach ($context['search_labels'] as $label)
 				echo '
@@ -929,7 +929,7 @@ function template_send()
 
 	// A link to add BCC
 	echo '
-					<span class="smalltext" id="bcc_link_container" style="display: none">&nbsp;<a href="#" id="bcc_link">', $txt['make_bcc'], '</a> <a href="', $scripturl, '?action=help;in=pm_bcc" onclick="return reqWin(this);">(?)</a></span>
+					<span class="smalltext hide" id="bcc_link_container">&nbsp;<a href="#" id="bcc_link">', $txt['make_bcc'], '</a> <a href="', $scripturl, '?action=help;in=pm_bcc" onclick="return reqWin(this);">(?)</a></span>
 				</dd>';
 
 	// This BCC row will be hidden by default if JavaScript is enabled.
@@ -1343,7 +1343,7 @@ function template_add_rule()
 
 		criteriaNum++;
 
-		$("#criteriaAddHere").append(\'<br><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" style="display: none;"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value=""><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" style="display: none;"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
+		$("#criteriaAddHere").append(\'<br><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" class="hide"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value=""><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" class="hide"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
 
 	foreach ($context['groups'] as $id => $group)
 		add_js('<option value="' . $id . '">' . strtr($group, array("'" => "\'")) . '<\' + \'/option>');
@@ -1360,7 +1360,7 @@ function template_add_rule()
 
 		actionNum++;
 
-		$("#actionAddHere").append(\'<br><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" style="display: none;"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>');
+		$("#actionAddHere").append(\'<br><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" class="hide"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>');
 
 	foreach ($context['labels'] as $label)
 		if ($label['id'] != -1)
@@ -1516,10 +1516,10 @@ function template_add_rule()
 					<option value="msg"', $criteria['t'] == 'msg' ? ' selected' : '', '>', $txt['pm_rule_msg'], '</option>
 					<option value="bud"', $criteria['t'] == 'bud' ? ' selected' : '', '>', $txt['pm_rule_bud'], '</option>
 				</select>
-				<span id="defdiv', $k, '" ', !in_array($criteria['t'], array('gid', 'bud')) ? '' : 'style="display: none;"', '>
+				<span id="defdiv', $k, '"', $criteria['t'] != 'gid' && $criteria['t'] != 'bud' ? '' : ' class="hide"', '>
 					<input type="text" name="ruledef[', $k, ']" id="ruledef', $k, '" onkeyup="rebuildRuleDesc();" value="', in_array($criteria['t'], array('mid', 'sub', 'msg')) ? $criteria['v'] : '', '">
 				</span>
-				<span id="defseldiv', $k, '" ', $criteria['t'] == 'gid' ? '' : 'style="display: none;"', '>
+				<span id="defseldiv', $k, '"', $criteria['t'] == 'gid' ? '' : ' class="hide"', '>
 					<select name="ruledefgroup[', $k, ']" id="ruledefgroup', $k, '" onchange="rebuildRuleDesc();">
 						<option value="">', $txt['pm_rule_sel_group'], '</option>';
 
@@ -1539,7 +1539,7 @@ function template_add_rule()
 
 	echo '
 				<span id="criteriaAddHere"></span><br>
-				<a href="#" onclick="addCriteriaOption(); return false;" id="addonjs1" style="display: none;">(', $txt['pm_rule_criteria_add'], ')</a>
+				<a href="#" onclick="addCriteriaOption(); return false;" id="addonjs1" class="hide">(', $txt['pm_rule_criteria_add'], ')</a>
 				<br><br>
 				', $txt['pm_rule_logic'], ':
 				<select name="rule_logic" id="logic" onchange="rebuildRuleDesc();">
@@ -1589,7 +1589,7 @@ function template_add_rule()
 
 	echo '
 				<span id="actionAddHere"></span><br>
-				<a href="#" onclick="addActionOption(); return false;" id="addonjs2" style="display: none;">(', $txt['pm_rule_add_action'], ')</a>
+				<a href="#" onclick="addActionOption(); return false;" id="addonjs2" class="hide">(', $txt['pm_rule_add_action'], ')</a>
 			</fieldset>
 		</div>
 		<br class="clear">

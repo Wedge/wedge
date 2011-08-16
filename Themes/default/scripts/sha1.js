@@ -53,9 +53,6 @@ String.prototype.php_strtolower = function ()
 
 function hashLoginPassword(doForm, cur_session_id)
 {
-	if (!cur_session_id)
-		cur_session_id = smf_session_id;
-
 	// Are they using an email address?
 	if (doForm.user.value.indexOf('@') != -1)
 		return;
@@ -72,9 +69,6 @@ function hashLoginPassword(doForm, cur_session_id)
 
 function hashAdminPassword(doForm, username, cur_session_id)
 {
-	if (!cur_session_id)
-		cur_session_id = smf_session_id;
-
 	doForm.admin_hash_pass.value = hex_sha1(hex_sha1(username.php_to8bit().php_strtolower() + doForm.admin_pass.value.php_to8bit()) + cur_session_id);
 	doForm.admin_pass.value = doForm.admin_pass.value.replace(/./g, '*');
 }

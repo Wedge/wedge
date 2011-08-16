@@ -123,7 +123,7 @@ function template_main()
 				<we:title2>
 					<a href="#" onclick="expandCollapseBoards(); return false;"><div class="foldable" id="expandBoardsIcon" style="margin: 2px 2px -2px 0"></div></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
 				</we:title2>
-				<div class="flow_auto" id="searchBoardsExpand"', $context['boards_check_all'] ? ' style="display: none;"' : '', '>
+				<div id="searchBoardsExpand" class="flow_auto', $context['boards_check_all'] ? ' hide' : '', '">
 					<ul class="ignoreboards floatleft">';
 
 			$i = 0;

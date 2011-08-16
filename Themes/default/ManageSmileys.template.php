@@ -301,7 +301,7 @@ function template_addsmiley()
 						</dd>
 					</dl>
 				</fieldset>
-				<fieldset id="ul_settings" style="display: none">
+				<fieldset id="ul_settings" class="hide">
 					<dl class="settings">
 						<dt>
 							<strong>', $txt['smileys_add_upload_choose'], ':</strong>
@@ -317,7 +317,7 @@ function template_addsmiley()
 							<input type="checkbox" name="sameall" id="sameall" checked onclick="swapUploads(); selectMethod(\'upload\');">
 						</dd>
 					</dl>
-					<dl id="uploadMore" class="settings" style="display: none">';
+					<dl id="uploadMore" class="settings hide">';
 
 	foreach ($context['smiley_sets'] as $smiley_set)
 		echo '

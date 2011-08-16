@@ -321,7 +321,7 @@ function template_maintain_topics()
 					<p>
 						<a href="#rotLink" onclick="swapRot(); return false;"><div class="foldable" title="+" id="rotIcon"></div></a> <a href="#rotLink" onclick="swapRot(); return false;" id="rotText" style="font-weight: bold;">', $txt['maintain_old_all'], '</a>
 					</p>
-					<div style="display: none;" id="rotPanel" class="flow_hidden">
+					<div class="flow_hidden hide" id="rotPanel">
 						<div class="floatleft" style="width: 49%">';
 
 	// This is the "middle" of the list.

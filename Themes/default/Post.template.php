@@ -48,7 +48,7 @@ function template_main()
 
 	// If the user wants to see how their message looks - the preview section is where it's at!
 	echo '
-			<div id="preview_section"', isset($context['preview_message']) ? '' : ' style="display: none;"', '>
+			<div id="preview_section"', isset($context['preview_message']) ? '' : ' class="hide"', '>
 				<we:cat>
 					<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
 				</we:cat>
@@ -73,10 +73,10 @@ function template_main()
 
 	// If an error occurred, explain what happened.
 	echo '
-				<div class="errorbox"', empty($context['post_error']['messages']) ? ' style="display: none"' : '', ' id="errors">
+				<div class="errorbox', empty($context['post_error']['messages']) ? ' hide' : '', '" id="errors">
 					<dl>
 						<dt>
-							<strong style="', empty($context['error_type']) || $context['error_type'] != 'serious' ? 'display: none;' : '', '" id="error_serious">', $txt['error_while_submitting'], '</strong>
+							<strong', empty($context['error_type']) || $context['error_type'] != 'serious' ? ' class="hide"' : '', ' id="error_serious">', $txt['error_while_submitting'], '</strong>
 						</dt>
 						<dd class="error" id="error_list">
 							', empty($context['post_error']['messages']) ? '' : implode('<br>', $context['post_error']['messages']), '
@@ -96,7 +96,7 @@ function template_main()
 
 	// If it's locked, show a message to warn the replyer.
 	echo '
-				<p class="information"', $context['locked'] ? '' : ' style="display: none"', ' id="lock_warning">
+				<p class="information', $context['locked'] ? '' : ' hide', '" id="lock_warning">
 					', $txt['topic_locked_no_reply'], '
 				</p>';
 
@@ -421,7 +421,7 @@ function template_main()
 			newPostsHTML += \'<br class="clear">\';
 
 			if (ignoring)
-				newPostsHTML += \'<div id="msg_\' + id + \'_ignored_prompt" class="smalltext">' . $txt['ignoring_user'] . '<a href="#" id="msg_\' + id + \'_ignored_link" style="display: none;">' . $txt['show_ignore_user_post'] . '</a></div>\';
+				newPostsHTML += \'<div id="msg_\' + id + \'_ignored_prompt" class="smalltext">' . $txt['ignoring_user'] . '<a href="#" id="msg_\' + id + \'_ignored_link" class="hide">' . $txt['show_ignore_user_post'] . '</a></div>\';
 
 			newPostsHTML += \'<div class="list_posts smalltext" id="msg_\' + id + \'_body">\' + $("message", this).text() + \'<\' + \'/div></div></div>\';
 		});
@@ -762,7 +762,7 @@ function template_show_previous_posts()
 			echo '
 					<div id="msg_', $post['id'], '_ignored_prompt" class="smalltext">
 						', $txt['ignoring_user'], '
-						<a href="#" id="msg_', $post['id'], '_ignored_link" style="display: none;">', $txt['show_ignore_user_post'], '</a>
+						<a href="#" id="msg_', $post['id'], '_ignored_link" class="hide">', $txt['show_ignore_user_post'], '</a>
 					</div>';
 
 		echo '

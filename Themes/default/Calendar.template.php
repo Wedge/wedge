@@ -355,7 +355,7 @@ function template_show_month_grid($grid_name)
 
 						// Stop at ten?
 						if ($count == 10 && $use_js_hide)
-							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" onclick="$(\'#bdhide_', $day['day'], '\').show(); $(\'#bdhidelink_', $day['day'], '\').hide(); return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" style="display: none;">, ';
+							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" onclick="$(\'#bdhide_', $day['day'], '\').show(); $(\'#bdhidelink_', $day['day'], '\').hide(); return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" class="hide">, ';
 
 						$count++;
 					}

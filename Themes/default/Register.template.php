@@ -155,7 +155,7 @@ function template_registration_form()
 						<dt><strong><label for="smf_autov_username">', $txt['username'], ':</label></strong></dt>
 						<dd>
 							<input type="text" name="user" id="smf_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" required>
-							<span id="smf_autov_username_div" style="display: none">
+							<span id="smf_autov_username_div" class="hide">
 								<a id="smf_autov_username_link" href="#">
 									<img id="smf_autov_username_img" src="', $settings['images_url'], '/icons/field_check.gif">
 								</a>
@@ -198,7 +198,7 @@ function template_registration_form()
 						<dt><strong><label for="smf_autov_pwmain">', $txt['choose_pass'], ':</label></strong></dt>
 						<dd>
 							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
-							<span id="smf_autov_pwmain_div" style="display: none;">
+							<span id="smf_autov_pwmain_div" class="hide">
 								<img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif">
 							</span>
 						</dd>
@@ -207,7 +207,7 @@ function template_registration_form()
 						<dt><strong><label for="smf_autov_pwverify">', $txt['verify_pass'], ':</label></strong></dt>
 						<dd>
 							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
-							<span id="smf_autov_pwverify_div" style="display: none;">
+							<span id="smf_autov_pwverify_div" class="hide">
 								<img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif">
 							</span>
 						</dd>

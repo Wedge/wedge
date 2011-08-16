@@ -773,7 +773,7 @@ function template_aeva_item_comments()
 				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="quickReplyExpand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
 				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['media_comment_this_item'], '</a>
 			</we:cat>
-			<div id="quickReplyOptions" style="display: none">
+			<div id="quickReplyOptions" class="hide">
 				<div class="roundframe wrc">
 					<form action="'.$galurl.'sa=comment;in='.$item['id_media'].'" method="post">
 						<div>
@@ -781,12 +781,12 @@ function template_aeva_item_comments()
 							<img src="'.$settings['images_aeva'].'/comment.png" class="middle"> <a href="' . $galurl . 'sa=comment;in=' . $item['id_media'] . '">' . $txt['media_switch_fulledit'] . '</a>
 						</div>
 						<div class="quickReplyContent">
-							<div id="bbcBox_message" style="display: none"></div>
-							<div id="smileyBox_message" style="display: none"></div>',
+							<div id="bbcBox_message" class="hide"></div>
+							<div id="smileyBox_message" class="hide"></div>',
 							$context['postbox']->outputEditor(), '
 						</div>
 						<div class="floatleft padding">
-							<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" style="display: none" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
+							<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
 						</div>
 						<div class="righttext padding">',
 							$context['postbox']->outputButtons(), '
@@ -1119,7 +1119,7 @@ function template_aeva_viewAlbum()
 		if ($can_edit_items && $can_add_playlist)
 		{
 			echo '
-				<select name="aeva_playlist" id="aeva_my_playlists" style="display: none">';
+				<select name="aeva_playlist" id="aeva_my_playlists" class="hide">';
 			foreach ($context['aeva_my_playlists'] as $p)
 				echo '
 					<option value="' . $p['id'] . '">' . $p['name'] . '</option>';
@@ -1341,7 +1341,7 @@ function template_aeva_album_cp()
 		echo '
 				</td>
 			</tr>
-			<tr class="windowbg" style="display: none" id="tr_expand_', $album['id'], '">
+			<tr class="windowbg hide" id="tr_expand_', $album['id'], '">
 				<td colspan="4">
 					<img src="" id="img_', $album['id'], '" style="float: left; margin-right: 8px">
 					<div>', $txt['media_items'], ': ', $album['num_items'], '</div>', !empty($album['description']) ? '
@@ -1685,7 +1685,7 @@ function template_aeva_multiUpload()
 			<div class="current-text" id="current_text"></div>
 
 			<ul id="current_list">
-				<li id="remove_me" style="display: none"></li>
+				<li id="remove_me" class="hide"></li>
 			</ul>
 			<br class="clear">
 			<div style="text-align: center" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>

@@ -52,7 +52,7 @@ function template_moderation_center()
 
 function template_latest_news()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $settings, $options, $context, $txt, $scripturl, $modSettings;
 
 	echo '
 		<we:cat>
@@ -65,10 +65,11 @@ function template_latest_news()
 
 	// This requires a lot of javascript...
 	//!!! Put this in its own file!!
-	add_js_file(array(
-		$scripturl . '?action=viewremote;filename=current-version.js',
-		$scripturl . '?action=viewremote;filename=latest-news.js'
-	), true);
+	if (empty($modSettings['disable_smf_js']))
+		add_js_file(array(
+			$scripturl . '?action=viewremote;filename=current-version.js',
+			$scripturl . '?action=viewremote;filename=latest-news.js'
+		), true);
 	add_js_file('scripts/admin.js');
 
 	add_js('

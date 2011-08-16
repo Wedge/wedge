@@ -580,24 +580,24 @@ function template_modify_group_simple($type)
 					echo '
 						<td colspan="3" style="width: 10px">
 							<div id="group_select_div_', $id_group, '">
-								<input type="checkbox" id="group_select_', $id_group, '" name="group_select_', $id_group, '" onclick="determineGroupState(\'', $id_group, '\', this.checked ? \'on\' : \'off\');" style="display: none"', $disable_field, '>
+								<input type="checkbox" id="group_select_', $id_group, '" name="group_select_', $id_group, '" onclick="determineGroupState(\'', $id_group, '\', this.checked ? \'on\' : \'off\');" class="hide"', $disable_field, '>
 							</div>
 						</td>';
 				else
 					echo '
 						<td class="center">
 							<div id="group_select_div_on_', $id_group, '">
-								<input type="radio" id="group_select_on_', $id_group, '" name="group_select_', $id_group, '" value="on" onclick="determineGroupState(\'', $id_group, '\', \'on\');" style="display: none"', $disable_field, '>
+								<input type="radio" id="group_select_on_', $id_group, '" name="group_select_', $id_group, '" value="on" onclick="determineGroupState(\'', $id_group, '\', \'on\');" class="hide"', $disable_field, '>
 							</div>
 						</td>
 						<td class="center">
 							<div id="group_select_div_off_', $id_group, '">
-								<input type="radio" id="group_select_off_', $id_group, '" name="group_select_', $id_group, '" value="off" onclick="determineGroupState(\'', $id_group, '\', \'off\');" style="display: none"', $disable_field, '>
+								<input type="radio" id="group_select_off_', $id_group, '" name="group_select_', $id_group, '" value="off" onclick="determineGroupState(\'', $id_group, '\', \'off\');" class="hide"', $disable_field, '>
 							</div>
 						</td>
 						<td class="center">
 							<div id="group_select_div_deny_', $id_group, '">
-								<input type="radio" id="group_select_deny_', $id_group, '" name="group_select_', $id_group, '" value="deny" onclick="determineGroupState(\'', $id_group, '\', \'deny\');" style="display: none"', $disable_field, '>
+								<input type="radio" id="group_select_deny_', $id_group, '" name="group_select_', $id_group, '" value="deny" onclick="determineGroupState(\'', $id_group, '\', \'deny\');" class="hide"', $disable_field, '>
 							</div>
 						</td>';
 				echo '
@@ -612,7 +612,7 @@ function template_modify_group_simple($type)
 			if ($permission['hidden'] || $permissionGroup['hidden'])
 			{
 				echo '
-					<tr style="display: none;">
+					<tr class="hide">
 						<td>
 							<input type="hidden" name="perm[', $type, '][', $permission['id'], ']" value="', $permission['select'] == 'denied' && !empty($modSettings['permission_enable_deny']) ? 'deny' : $permission['select'], '">
 						</td>
@@ -843,7 +843,7 @@ function template_modify_group_classic($type)
 				if ($permission['hidden'] || $permissionGroup['hidden'])
 				{
 					echo '
-					<tr style="display: none">
+					<tr class="hide">
 						<td>';
 
 					if ($permission['has_own_any'])
@@ -1011,7 +1011,7 @@ function template_inline_permissions()
 	echo '
 		</fieldset>
 
-		<a href="#" onclick="$(\'#', $context['current_permission'], '\').show(); $(\'#', $context['current_permission'], '_groups_link\').hide(); return false;" id="', $context['current_permission'], '_groups_link" style="display: none">[ ', $txt['avatar_select_permission'], ' ]</a>';
+		<a href="#" onclick="$(\'#', $context['current_permission'], '\').show(); $(\'#', $context['current_permission'], '_groups_link\').hide(); return false;" id="', $context['current_permission'], '_groups_link" class="hide">[ ', $txt['avatar_select_permission'], ' ]</a>';
 
 	add_js('
 	$("#', $context['current_permission'], '").hide();

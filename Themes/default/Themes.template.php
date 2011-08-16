@@ -47,7 +47,7 @@ function template_main()
 
 	echo '
 						</div>
-						<a href="#" onclick="$(\'#known_themes_list\').show(); $(\'#known_themes_link\').hide(); return false; " id="known_themes_link" style="display: none;">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
+						<a href="#" onclick="$(\'#known_themes_list\').show(); $(\'#known_themes_link\').hide(); return false; " id="known_themes_link" class="hide">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
 					</dd>
 					<dt>
 						<label for="theme_guests">', $txt['theme_guests'], ':</label>
@@ -876,7 +876,7 @@ function template_edit_style()
 	}');
 
 	echo '
-		<iframe id="css_preview_box" name="css_preview_box" src="about:blank" style="display: none; margin-bottom: 2ex; border: 1px solid black; width: 99%; height: 400px" seamless="seamless"></iframe>';
+		<iframe id="css_preview_box" name="css_preview_box" src="about:blank" style="display: none; margin-bottom: 2ex; border: 1px solid black; width: 99%; height: 400px" seamless></iframe>';
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '

@@ -314,7 +314,7 @@ function template_edit_group()
 							<br>
 							<label><input type="checkbox" id="checkall_check" onclick="invertAll(this, this.form, \'boardaccess\');"> <em>', $txt['check_all'], '</em></label>
 						</fieldset>
-						<a href="#" onclick="$(\'#visible_boards\').show(); $(\'#visible_boards_link\').hide(); return false;" id="visible_boards_link" style="display: none;">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
+						<a href="#" onclick="$(\'#visible_boards\').show(); $(\'#visible_boards_link\').hide(); return false;" id="visible_boards_link" class="hide">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
 					</dd>';
 
 		add_js_inline('
