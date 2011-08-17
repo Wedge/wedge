@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file has functions in it to do with character set and string

@@ -15,7 +15,7 @@
  */
 
 // Prevent attempts to access this file directly
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 // Create a global variable to store all the sites in.

@@ -338,7 +338,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 			case 'video/mp4':
 			case 'video/3gpp':
 
-				if ((isset($_GET['action']) && $_GET['action'] == '.xml') || isset($_GET['xml']) || SMF == 'SSI')
+				if ((isset($_GET['action']) && $_GET['action'] == '.xml') || isset($_GET['xml']) || WEDGE == 'SSI')
 				{
 					$output .= '
 		<embed src="' . aeva_theme_url('player.swf') . '" flashvars="file=' . $galurl . 'sa=media;in=' . $id_file . $increm

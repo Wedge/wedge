@@ -19,7 +19,7 @@
 define('WEDGE_VERSION', '0.1');
 
 // Knock knock! We're entering through the front door.
-define('SMF', 1);
+define('WEDGE', 1);
 
 // Get everything started up...
 if (function_exists('set_magic_quotes_runtime'))

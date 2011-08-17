@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file contains those functions pertaining to posting, and other such
@@ -375,7 +375,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 	}
 
 	// If they are using SSI there is a good chance obExit will never be called.  So let's be nice and flush it for them.
-	if (SMF === 'SSI')
+	if (WEDGE === 'SSI')
 		return AddMailQueue(true);
 
 	return true;

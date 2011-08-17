@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /* This file contains some useful functions for members and membergroups.

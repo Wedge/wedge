@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 class wesql
@@ -396,7 +396,7 @@ class wesql
 				if (in_array($query_errno, array(2006, 2013)) && self::$_db_con == $connection)
 				{
 					// Are we in SSI mode? If so try that username and password first
-					if (SMF == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
+					if (WEDGE == 'SSI' && !empty($ssi_db_user) && !empty($ssi_db_passwd))
 					{
 						if (empty($db_persist))
 							self::$_db_con = @mysql_connect($db_server, $ssi_db_user, $ssi_db_passwd);

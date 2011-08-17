@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*

@@ -12,7 +12,7 @@
  * @version 0.1
  */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	For compatibility reasons, PMs may be called "instant messages".

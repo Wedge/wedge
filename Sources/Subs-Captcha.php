@@ -13,7 +13,7 @@
 
 /* TrueType fonts supplied by www.LarabieFonts.com */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file deals with producing CAPTCHA images.

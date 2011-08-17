@@ -13,7 +13,7 @@
 
 /* Original module by Aaron O'Neil - aaron@mud-master.com */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file has only one real task... showing the calendar.  Posting is done

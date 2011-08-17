@@ -13,7 +13,7 @@
 
 /* Original module by Mach8 - We'll never forget you. */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	This file handles merging and splitting topics... it does this with:

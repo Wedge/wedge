@@ -23,7 +23,7 @@
 	not anyone associated with Wedge. JUST SO WE'RE CLEAR! >8D
 */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 // Build the table of pretty topic URLs

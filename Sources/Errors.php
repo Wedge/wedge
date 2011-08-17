@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /**
@@ -296,7 +296,7 @@ function setup_fatal_error_context($error_message)
 		return false;
 
 	// Maybe they came from dlattach or similar?
-	if (SMF != 'SSI' && empty($context['theme_loaded']))
+	if (WEDGE != 'SSI' && empty($context['theme_loaded']))
 		loadTheme();
 
 	// Don't bother indexing errors mate...
@@ -320,7 +320,7 @@ function setup_fatal_error_context($error_message)
 	}
 
 	// If this is SSI, what do they want us to do?
-	if (SMF == 'SSI')
+	if (WEDGE == 'SSI')
 	{
 		if (!empty($ssi_on_error_method) && $ssi_on_error_method !== true && is_callable($ssi_on_error_method))
 			$ssi_on_error_method();

@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 if (isset($sourcedir))
@@ -997,7 +997,7 @@ function writeLog($force = false)
 		$_SESSION['timeOnlineUpdated'] = time();
 
 	// Set their login time, if not already done within the last minute.
-	if (SMF != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60)
+	if (WEDGE != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60)
 	{
 		// Don't count longer than 15 minutes.
 		if (time() - $_SESSION['timeOnlineUpdated'] > 60 * 15)
@@ -2740,7 +2740,7 @@ function setupMenuContext()
 
 	// Recalculate the number of unseen media items
 	// !!! @todo: The SSI test is only here for as long as we're executing the Media DB installer separately.
-	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1 && SMF !== 'SSI')
+	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1 && WEDGE !== 'SSI')
 	{
 		loadSource('media/Subs-Media');
 		loadMediaSettings();

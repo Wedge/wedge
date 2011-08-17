@@ -12,7 +12,7 @@
  * @version 0.1
  */
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 // Main auto embed function
@@ -276,7 +276,7 @@ function aeva_build_object($input)
 		return preg_replace(array('~http://~i', '@#[\w/\.~-]*@'), array('noae://', ''), $input[0], 1) . ' ' . $txt['media_too_many_embeds'];
 
 	$arr = &$sites[$upto];
-	$use_object_init = (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']) || SMF == 'SSI' || !empty($modSettings['embed_noscript']) || !empty($context['embed_mg_hack']);
+	$use_object_init = (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']) || WEDGE == 'SSI' || !empty($modSettings['embed_noscript']) || !empty($context['embed_mg_hack']);
 	$use_object = $use_object_init || (!empty($arr['plugin']) && $arr['plugin'] != 'flash') || !empty($arr['allow-script']) || ($arr['id'] == 'yav' && $context['browser']['is_firefox']);
 
 	$object = $input[1];
@@ -421,7 +421,7 @@ function aeva_build_object($input)
 			$object_params .= '<param name="flashvars" value="<flashvars>">';
 	}
 
-	if (!empty($plugin) && (isset($_REQUEST['xml']) || SMF == 'SSI'))
+	if (!empty($plugin) && (isset($_REQUEST['xml']) || WEDGE == 'SSI'))
 	{
 		if ($swfobjects++ === 0)
 			$swfobjects = rand(1000,9999);

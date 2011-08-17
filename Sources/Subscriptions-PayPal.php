@@ -14,7 +14,7 @@
 // This won't be dedicated without this - this must exist in each gateway!
 // SMF Payment Gateway: paypal
 
-if (!defined('SMF'))
+if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 class paypal_display
