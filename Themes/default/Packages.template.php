@@ -470,7 +470,7 @@ function template_browse()
 	window.weSessionQuery = "', $context['session_query'], '";
 	window.weVersion = "', $context['forum_version'], '";');
 
-	if (empty($modSettings['disable_smf_js']))
+	if (empty($modSettings['disable_wedge_js']))
 		add_js_file($scripturl . '?action=viewremote;filename=latest-packages.js', true);
 
 	add_js('

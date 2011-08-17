@@ -252,7 +252,7 @@ function template_view_versions()
 				<thead>
 					<tr class="catbg left">
 						<th scope="col" class="first_th w50">
-							<strong>', $txt['admin_smffile'], '</strong>
+							<strong>', $txt['admin_wedgefile'], '</strong>
 						</th>
 						<th scope="col" class="w25">
 							<strong>', $txt['dvc_your'], '</strong>
@@ -268,7 +268,7 @@ function template_view_versions()
 	echo '
 					<tr>
 						<td class="windowbg">
-							', $txt['admin_smfpackage'], '
+							', $txt['admin_wedgepackage'], '
 						</td>
 						<td class="windowbg">
 							<em id="yourWedge">', $context['forum_version'], '</em>
@@ -1321,13 +1321,13 @@ function template_add_language()
 			</we:cat>
 			<div class="windowbg wrc">
 				<fieldset>
-					<legend>', $txt['add_language_smf'], '</legend>
-					<label class="smalltext">', $txt['add_language_smf_browse'], '</label>
+					<legend>', $txt['add_language_wedge'], '</legend>
+					<label class="smalltext">', $txt['add_language_wedge_browse'], '</label>
 					<input type="text" name="smf_add" size="40" value="', !empty($context['smf_search_term']) ? $context['smf_search_term'] : '', '">';
 
-	if (!empty($context['smf_error']))
+	if (!empty($context['wedge_error']))
 		echo '
-					<div class="smalltext error">', $txt['add_language_error_' . $context['smf_error']], '</div>';
+					<div class="smalltext error">', $txt['add_language_error_' . $context['wedge_error']], '</div>';
 
 	echo '
 				</fieldset>
@@ -1338,31 +1338,29 @@ function template_add_language()
 			</div>';
 
 	// Had some results?
-	if (!empty($context['smf_languages']))
+	if (!empty($context['wedge_languages']))
 	{
 		echo '
-			<div class="information">', $txt['add_language_smf_found'], '</div>
+			<div class="information">', $txt['add_language_wedge_found'], '</div>
 
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
 						<th class="first_th" scope="col">', $txt['name'], '</th>
-						<th scope="col">', $txt['add_language_smf_desc'], '</th>
-						<th scope="col">', $txt['add_language_smf_version'], '</th>
-						<th scope="col">', $txt['add_language_smf_utf8'], '</th>
-						<th class="last_th" scope="col">', $txt['add_language_smf_install'], '</th>
+						<th scope="col">', $txt['add_language_wedge_desc'], '</th>
+						<th scope="col">', $txt['add_language_wedge_version'], '</th>
+						<th class="last_th" scope="col">', $txt['add_language_wedge_install'], '</th>
 					</tr>
 				</thead>
 				<tbody>';
 
-		foreach ($context['smf_languages'] as $language)
+		foreach ($context['wedge_languages'] as $language)
 			echo '
 					<tr class="windowbg2 left">
 						<td>', $language['name'], '</td>
 						<td>', $language['description'], '</td>
 						<td>', $language['version'], '</td>
-						<td class="center">', $language['utf8'] ? $txt['yes'] : $txt['no'], '</td>
-						<td><a href="', $language['link'], '">', $txt['add_language_smf_install'], '</a></td>
+						<td><a href="', $language['link'], '">', $txt['add_language_wedge_install'], '</a></td>
 					</tr>';
 
 		echo '
@@ -1537,7 +1535,7 @@ function template_download_language()
 	echo '
 			<div class="righttext padding">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="submit" name="do_install" value="', $txt['add_language_smf_install'], '" class="submit">
+				<input type="submit" name="do_install" value="', $txt['add_language_wedge_install'], '" class="submit">
 			</div>
 		</form>
 	</div>

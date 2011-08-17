@@ -615,10 +615,10 @@ function AddLanguage()
 
 		// Check it exists.
 		if (!$language_list->exists('languages'))
-			$context['smf_error'] = 'no_response';
+			$context['wedge_error'] = 'no_response';
 		else
 		{
-			$context['smf_languages'] = array();
+			$context['wedge_languages'] = array();
 			$language_list = $language_list->path('languages[0]');
 			if ($language_list->exists('language'))
 			{
@@ -629,18 +629,17 @@ function AddLanguage()
 					if (!empty($context['smf_search_term']) && strpos($file->fetch('name'), westr::strtolower($context['smf_search_term'])) === false)
 						continue;
 
-					$context['smf_languages'][] = array(
+					$context['wedge_languages'][] = array(
 						'id' => $file->fetch('id'),
 						'name' => westr::ucwords($file->fetch('name')),
 						'version' => $file->fetch('version'),
-						'utf8' => $file->fetch('utf8'),
 						'description' => $file->fetch('description'),
 						'link' => $scripturl . '?action=admin;area=languages;sa=downloadlang;did=' . $file->fetch('id') . ';' . $context['session_query'],
 					);
 				}
 			}
-			if (empty($context['smf_languages']))
-				$context['smf_error'] = 'no_files';
+			if (empty($context['wedge_languages']))
+				$context['wedge_error'] = 'no_files';
 		}
 	}
 

@@ -336,7 +336,7 @@ function smf_main()
 		}
 	}
 
-	// Compatibility with SMF
+	// Compatibility with SMF feeds
 	if ($action === '.xml')
 		$action = 'feed';
 

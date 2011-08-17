@@ -65,7 +65,7 @@ function template_latest_news()
 
 	// This requires a lot of javascript...
 	//!!! Put this in its own file!!
-	if (empty($modSettings['disable_smf_js']))
+	if (empty($modSettings['disable_wedge_js']))
 		add_js_file(array(
 			$scripturl . '?action=viewremote;filename=current-version.js',
 			$scripturl . '?action=viewremote;filename=latest-news.js'

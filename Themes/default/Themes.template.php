@@ -174,7 +174,7 @@ function template_main()
 	window.weSessionQuery = "', $context['session_query'], '";
 	window.weThemes_writable = ', $context['can_create_new'] ? 'true' : 'false', ';');
 
-	if (empty($modSettings['disable_smf_js']))
+	if (empty($modSettings['disable_wedge_js']))
 		add_js_file($scripturl . '?action=viewremote;filename=latest-themes.js', true);
 
 	add_js('

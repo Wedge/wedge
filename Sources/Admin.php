@@ -733,7 +733,7 @@ function setupAdminSidebar()
 	loadSubTemplate(array('admin_live_news', 'admin_support_info'), 'sidebar');
 
 	// The below functions include all the scripts needed from the wedge.org site. The language and format are passed for internationalization.
-	if (empty($modSettings['disable_smf_js']))
+	if (empty($modSettings['disable_wedge_js']))
 		add_js_file(array(
 			$scripturl . '?action=viewremote;filename=current-version.js',
 			$scripturl . '?action=viewremote;filename=latest-news.js'
