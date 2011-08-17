@@ -781,8 +781,8 @@ function EditCustomProfiles()
 		$request = wesql::query('
 			SELECT
 				id_field, col_name, field_name, field_desc, field_type, field_length, field_options,
-				show_reg, show_display, show_profile, private, active, default_value, can_search,
-				bbc, mask, enclose, placement
+				show_reg, show_display, show_profile, private, guest_access, active, default_value,
+				can_search, bbc, mask, enclose, placement
 			FROM {db_prefix}custom_fields
 			WHERE id_field = {int:current_field}',
 			array(
@@ -817,6 +817,7 @@ function EditCustomProfiles()
 				'options' => strlen($row['field_options']) > 1 ? explode(',', $row['field_options']) : array('', '', ''),
 				'active' => $row['active'],
 				'private' => $row['private'],
+				'guest_access' => $row['guest_access'],
 				'can_search' => $row['can_search'],
 				'mask' => $row['mask'],
 				'regex' => substr($row['mask'], 0, 5) == 'regex' ? substr($row['mask'], 5) : '',
@@ -846,6 +847,7 @@ function EditCustomProfiles()
 			'options' => array('', '', ''),
 			'active' => true,
 			'private' => false,
+			'guest_access' => false,
 			'can_search' => false,
 			'mask' => 'nohtml',
 			'regex' => '',
@@ -978,6 +980,7 @@ function EditCustomProfiles()
 		$show_profile = $_POST['profile_area'];
 		$active = isset($_POST['active']) ? 1 : 0;
 		$private = isset($_POST['private']) ? (int) $_POST['private'] : 0;
+		$guest_access = isset($_POST['guest_access']) && $private < 2 ? 1 : 0;
 		$can_search = isset($_POST['can_search']) ? 1 : 0;
 
 		// Some masking stuff...
@@ -1127,7 +1130,8 @@ function EditCustomProfiles()
 					field_type = {string:field_type}, field_length = {int:field_length},
 					field_options = {string:field_options}, show_reg = {int:show_reg},
 					show_display = {int:show_display}, show_profile = {string:show_profile},
-					private = {int:private}, active = {int:active}, default_value = {string:default_value},
+					private = {int:private}, guest_access = {int:guest_access},
+					active = {int:active}, default_value = {string:default_value},
 					can_search = {int:can_search}, bbc = {int:bbc}, mask = {string:mask},
 					enclose = {string:enclose}, placement = {int:placement}
 				WHERE id_field = {int:current_field}',
@@ -1136,6 +1140,7 @@ function EditCustomProfiles()
 					'show_reg' => $show_reg,
 					'show_display' => $show_display,
 					'private' => $private,
+					'guest_access' => $guest_access,
 					'active' => $active,
 					'can_search' => $can_search,
 					'bbc' => $bbc,
@@ -1174,15 +1179,15 @@ function EditCustomProfiles()
 					'col_name' => 'string', 'field_name' => 'string', 'field_desc' => 'string',
 					'field_type' => 'string', 'field_length' => 'string', 'field_options' => 'string',
 					'show_reg' => 'int', 'show_display' => 'int', 'show_profile' => 'string',
-					'private' => 'int', 'active' => 'int', 'default_value' => 'string', 'can_search' => 'int',
-					'bbc' => 'int', 'mask' => 'string', 'enclose' => 'string', 'placement' => 'int',
+					'private' => 'int', 'guest_access' => 'int', 'active' => 'int', 'default_value' => 'string',
+					'can_search' => 'int', 'bbc' => 'int', 'mask' => 'string', 'enclose' => 'string', 'placement' => 'int',
 				),
 				array(
 					$colname, $_POST['field_name'], $_POST['field_desc'],
 					$_POST['field_type'], $field_length, $field_options,
 					$show_reg, $show_display, $show_profile,
-					$private, $active, $default, $can_search,
-					$bbc, $mask, $enclose, $placement,
+					$private, $guest_access, $active, $default,
+					$can_search, $bbc, $mask, $enclose, $placement,
 				),
 				array('id_field')
 			);
@@ -1228,7 +1233,7 @@ function EditCustomProfiles()
 		checkSession();
 
 		$request = wesql::query('
-			SELECT col_name, field_name, field_type, bbc, enclose, placement
+			SELECT col_name, field_name, field_type, bbc, enclose, placement, guest_access
 			FROM {db_prefix}custom_fields
 			WHERE show_display = {int:is_displayed}
 				AND active = {int:active}
@@ -1252,6 +1257,7 @@ function EditCustomProfiles()
 				'bbc' => $row['bbc'] ? '1' : '0',
 				'placement' => !empty($row['placement']) ? $row['placement'] : '0',
 				'enclose' => !empty($row['enclose']) ? $row['enclose'] : '',
+				'show_guest' => !empty($row['guest_access']),
 			);
 		}
 		wesql::free_result($request);

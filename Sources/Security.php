@@ -969,7 +969,7 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
 {
 	global $modSettings, $user_info;
 
-	return (!empty($modSettings['guest_hideContacts']) && $user_info['is_guest']) || isset($_SESSION['ban']['cannot_post']) ? 'no' : ((!$user_info['is_guest'] && $user_info['id'] == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
+	return $user_info['is_guest'] || isset($_SESSION['ban']['cannot_post']) ? 'no' : ((!$user_info['is_guest'] && $user_info['id'] == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
 }
 
 /**

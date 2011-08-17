@@ -1269,6 +1269,8 @@ function loadMemberContext($user, $display_custom_fields = false)
 		{
 			if (empty($custom['title']) || empty($profile['options'][$custom['colname']]))
 				continue;
+			elseif ($user_info['is_guest'] && empty($custom['show_guest']))
+				continue;
 
 			$value = $profile['options'][$custom['colname']];
 

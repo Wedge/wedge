@@ -156,7 +156,7 @@ function CustomEmail()
 	global $context, $modSettings, $user_info, $txt, $scripturl;
 
 	// Can the user even see this information?
-	if ($user_info['is_guest'] && !empty($modSettings['guest_hideContacts']))
+	if ($user_info['is_guest'])
 		fatal_lang_error('no_access', false);
 
 	// Are we sending to a user?

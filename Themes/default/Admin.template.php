@@ -838,7 +838,7 @@ function template_edit_profile_field()
 	global $context, $txt, $settings, $scripturl;
 
 	// All the javascript for this page - quite a bit!
-	add_js_inline('
+	add_js('
 	function updateInputBoxes()
 	{
 		var curType = document.getElementById("field_type").value;
@@ -866,6 +866,9 @@ function template_edit_profile_field()
 			document.getElementById("display").checked = false;
 			document.getElementById("display").disabled = true;
 		}
+
+		// Able to show to guests?
+		$("#guest_access_dt, #guest_access_dd").css("display", privStatus >= 2 ? "none" : "");
 	}
 	updateInputBoxes();');
 
@@ -1115,6 +1118,13 @@ function template_edit_profile_field()
 								<option value="2"', $context['field']['private'] == 2 ? ' selected' : '', '>', $txt['custom_edit_privacy_owner'], '</option>
 								<option value="3"', $context['field']['private'] == 3 ? ' selected' : '', '>', $txt['custom_edit_privacy_none'], '</option>
 							</select>
+						</dd>
+						<dt id="guest_access_dt">
+							<strong>', $txt['custom_edit_guest_access'], ':</strong>
+							<dfn>', $txt['custom_edit_guest_access_desc'], '</dfn>
+						</dt>
+						<dd id="guest_access_dd">
+							<input type="checkbox" name="guest_access"', $context['field']['guest_access'] ? ' checked' : '', '>
 						</dd>
 						<dt id="can_search_dt">
 							<strong>', $txt['custom_edit_can_search'], ':</strong>
