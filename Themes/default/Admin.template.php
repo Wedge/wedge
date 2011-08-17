@@ -841,34 +841,21 @@ function template_edit_profile_field()
 	add_js('
 	function updateInputBoxes()
 	{
-		var curType = document.getElementById("field_type").value;
-		var privStatus = document.getElementById("private").value;
-		document.getElementById("max_length_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-		document.getElementById("max_length_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-		document.getElementById("dimension_dt").style.display = curType == "textarea" ? "" : "none";
-		document.getElementById("dimension_dd").style.display = curType == "textarea" ? "" : "none";
-		document.getElementById("bbc_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-		document.getElementById("bbc_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-		document.getElementById("options_dt").style.display = curType == "select" || curType == "radio" ? "" : "none";
-		document.getElementById("options_dd").style.display = curType == "select" || curType == "radio" ? "" : "none";
-		document.getElementById("default_dt").style.display = curType == "check" ? "" : "none";
-		document.getElementById("default_dd").style.display = curType == "check" ? "" : "none";
-		document.getElementById("mask_dt").style.display = curType == "text" ? "" : "none";
-		document.getElementById("mask").style.display = curType == "text" ? "" : "none";
-		document.getElementById("can_search_dt").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-		document.getElementById("can_search_dd").style.display = curType == "text" || curType == "textarea" ? "" : "none";
-		document.getElementById("regex_div").style.display = curType == "text" && document.getElementById("mask").value == "regex" ? "" : "none";
-		document.getElementById("display").disabled = false;
+		var curType = $("#field_type").val(), privStatus = $("#private").val();
+		$("#max_length_dt, #max_length_dd, #bbc_dt, #bbc_dd, #can_search_dt, #can_search_dd").toggle(curType == "text" || curType == "textarea");
+		$("#dimension_dt, #dimension_dd").toggle(curType == "textarea");
+		$("#options_dt, #options_dd").toggle(curType == "select" || curType == "radio");
+		$("#default_dt, #default_dd").toggle(curType == "check");
+		$("#mask_dt, #mask_dd").toggle(curType == "text");
+		$("#regex_div").toggle(curType == "text" && $("#mask").val() == "regex");
+		$("#display").attr("disabled", false);
 
 		// Cannot show this on the topic
 		if (curType == "textarea" || privStatus >= 2)
-		{
-			document.getElementById("display").checked = false;
-			document.getElementById("display").disabled = true;
-		}
+			$("#display").attr("checked", false).attr("disabled", true);
 
 		// Able to show to guests?
-		$("#guest_access_dt, #guest_access_dd").css("display", privStatus >= 2 ? "none" : "");
+		$("#guest_access_dt, #guest_access_dd").toggle(privStatus < 2);
 	}
 	updateInputBoxes();');
 
@@ -1095,7 +1082,7 @@ function template_edit_profile_field()
 							<strong>', $txt['custom_edit_mask'], ':</strong>
 							<dfn>', $txt['custom_edit_mask_desc'], '</dfn>
 						</dt>
-						<dd>
+						<dd id="mask_dd">
 							<select name="mask" id="mask" onchange="updateInputBoxes();">
 								<option value="nohtml"', $context['field']['mask'] == 'nohtml' ? ' selected' : '', '>', $txt['custom_edit_mask_nohtml'], '</option>
 								<option value="email"', $context['field']['mask'] == 'email' ? ' selected' : '', '>', $txt['custom_edit_mask_email'], '</option>
