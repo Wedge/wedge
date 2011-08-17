@@ -649,7 +649,7 @@ function ModifyProfile($post_errors = array())
 				updateSettings(array('calendar_updated' => time()));
 
 			// Anything worth logging?
-			if (!empty($context['log_changes']) && !empty($modSettings['modlog_enabled']))
+			if (!empty($context['log_changes']) && !empty($modSettings['log_enabled_profile']))
 			{
 				$log_changes = array();
 				foreach ($context['log_changes'] as $k => $v)

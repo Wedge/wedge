@@ -423,7 +423,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	updateStats('postgroups', $members);
 
 	// Do the log.
-	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
+	if (!empty($log_inserts) && !empty($modSettings['log_enabled_admin']))
 		wesql::insert('',
 			'{db_prefix}log_actions',
 			array(
@@ -584,7 +584,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 			0, 0, 0, serialize(array('group' => $group_names[$group], 'member' => $member)),
 		);
 
-	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
+	if (!empty($log_inserts) && !empty($modSettings['log_enabled_admin']))
 		wesql::insert('',
 			'{db_prefix}log_actions',
 			array(

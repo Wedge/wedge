@@ -1050,7 +1050,7 @@ function tracking($memID)
 	);
 
 	// Moderation must be on to track edits.
-	if (empty($modSettings['modlog_enabled']))
+	if (empty($modSettings['log_enabled_moderate']))
 		unset($context[$context['profile_menu_name']]['tab_data']['edits']);
 
 	// Set a page title.

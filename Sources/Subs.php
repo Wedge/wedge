@@ -1925,6 +1925,10 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 		'admin' => 3,
 	);
 
+	// No point in doing anything else, if the relevant log isn't even enabled.
+	if (!isset($log_types[$log_type]) || empty($modSettings['log_enabled_' . $log_type]))
+		return false;
+
 	if (!is_array($extra))
 		trigger_error('logAction(): data is not an array with action \'' . $action . '\'', E_USER_NOTICE);
 
@@ -1971,10 +1975,6 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 		}
 		wesql::free_result($request);
 	}
-
-	// No point in doing anything else, if the log isn't even enabled.
-	if (empty($modSettings['modlog_enabled']) || !isset($log_types[$log_type]))
-		return false;
 
 	if (isset($extra['member']) && !is_numeric($extra['member']))
 		trigger_error('logAction(): data\'s member is not a number', E_USER_NOTICE);
@@ -2822,7 +2822,7 @@ function setupMenuContext()
 					'modlog' => array(
 						'title' => $txt['modlog_view'],
 						'href' => $scripturl . '?action=moderate;area=modlog',
-						'show' => !empty($modSettings['modlog_enabled']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'show' => !empty($modSettings['log_enabled_moderate']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
 					),
 					'reports' => array(
 						'title' => $txt['mc_reported_posts'],

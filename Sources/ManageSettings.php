@@ -197,11 +197,6 @@ function ModifyCoreFeatures($return_config = false)
 			'url' => 'action=admin;area=media',
 			'setting' => 'media_enabled',
 		),
-		// Moderation Log
-		'ml' => array(
-			'url' => 'action=admin;area=logs;sa=modlog',
-			'setting' => 'modlog_enabled',
-		),
 		// Post Moderation
 		'pm' => array(
 			'url' => 'action=admin;area=permissions;sa=postmod',
@@ -685,8 +680,12 @@ function ModifyLogSettings($return_config = false)
 	$config_vars = array(
 			array('check', 'enableErrorLogging'),
 			array('check', 'enableErrorQueryLogging'),
-			array('title', 'logPruning'),
+		'',
+			array('check', 'log_enabled_moderate'),
+			array('check', 'log_enabled_admin'),
+			array('check', 'log_enabled_profile'),
 			// Even do the pruning?
+			array('title', 'logPruning'),
 			// The array indexes are there so we can remove/change them before saving.
 			'pruningOptions' => array('check', 'pruningOptions'),
 		'',
@@ -712,6 +711,11 @@ function ModifyLogSettings($return_config = false)
 		checkSession();
 
 		$savevar = array(
+			array('check', 'enableErrorLogging'),
+			array('check', 'enableErrorQueryLogging'),
+			array('check', 'log_enabled_moderate'),
+			array('check', 'log_enabled_admin'),
+			array('check', 'log_enabled_profile'),
 			array('text', 'pruningOptions')
 		);
 
@@ -720,7 +724,7 @@ function ModifyLogSettings($return_config = false)
 			$vals = array();
 			foreach ($config_vars as $index => $dummy)
 			{
-				if (!is_array($dummy) || $index == 'pruningOptions')
+				if (!is_array($dummy) || strpos($dummy[1], 'prune') !== 0) // Make sure for this that we only bother with the actual prune variables.
 					continue;
 
 				$vals[] = empty($_POST[$dummy[1]]) || $_POST[$dummy[1]] < 0 ? 0 : (int) $_POST[$dummy[1]];

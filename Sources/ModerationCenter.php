@@ -56,7 +56,7 @@ function ModerationMain($dont_call = false)
 				),
 				'modlog' => array(
 					'label' => $txt['modlog_view'],
-					'enabled' => !empty($modSettings['modlog_enabled']) && $context['can_moderate_boards'],
+					'enabled' => !empty($modSettings['log_enabled_moderate']) && $context['can_moderate_boards'],
 					'file' => 'Modlog',
 					'function' => 'ViewModlog',
 				),

@@ -563,8 +563,8 @@ function Admin()
 					'subsections' => array(
 						'errorlog' => array($txt['log_error'], 'admin_forum', 'enabled' => !empty($modSettings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'),
 						'',
-						'adminlog' => array($txt['log_admin'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
-						'modlog' => array($txt['log_moderation'], 'admin_forum', 'enabled' => !empty($modSettings['modlog_enabled'])),
+						'adminlog' => array($txt['log_admin'], 'admin_forum', 'enabled' => !empty($modSettings['log_enabled_admin'])),
+						'modlog' => array($txt['log_moderation'], 'admin_forum', 'enabled' => !empty($modSettings['log_enabled_moderate'])),
 						'spiderlog' => array($txt['log_spider'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
 						'tasklog' => array($txt['log_scheduled'], 'admin_forum'),
 						'',

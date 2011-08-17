@@ -168,7 +168,7 @@ function deleteMembers($users, $check_not_admin = false)
 	}
 
 	// Do the actual logging...
-	if (!empty($log_inserts) && !empty($modSettings['modlog_enabled']))
+	if (!empty($log_inserts) && !empty($modSettings['log_enabled_admin']))
 		wesql::insert('',
 			'{db_prefix}log_actions',
 			array(
