@@ -728,6 +728,9 @@ function loadCustomFields($memID, $area = 'summary')
 	elseif ($area != 'summary')
 		$where .= ' AND show_profile = {string:area}';
 
+	if ($user_info['is_guest'])
+		$where .= ' AND guest_access = 1';
+
 	// Load all the relevant fields - and data.
 	$request = wesql::query('
 		SELECT
