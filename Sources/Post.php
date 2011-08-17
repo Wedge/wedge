@@ -1152,7 +1152,7 @@ function Post()
 			// add height and width for the editor
 			'height' => '175px',
 			'width' => '100%',
-			'drafts' => !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
+			'drafts' => !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']) || !empty($_REQUEST['msg']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
 		)
 	);
 

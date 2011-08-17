@@ -2670,7 +2670,7 @@ function saveDraft($is_pm, $id_context = 0)
 {
 	global $context, $txt, $board, $user_info, $modSettings;
 
-	if ($user_info['is_guest'] || !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']))
+	if ($user_info['is_guest'] || !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']) || !empty($_REQUEST['msg']))
 		return false;
 
 	// Clean up what we may or may not have
