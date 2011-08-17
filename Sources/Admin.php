@@ -446,7 +446,7 @@ function Admin()
 					),
 				),
 				'memberoptions' => array(
-					'label' => $txt['themeadmin_reset_title'],
+					'label' => $txt['member_options_title'],
 					'file' => 'ManageMemberOptions',
 					'function' => 'ManageMemberOptions',
 					'icon' => 'corefeatures.gif',
