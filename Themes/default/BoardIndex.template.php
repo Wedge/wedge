@@ -203,7 +203,7 @@ function template_boardindex_newsfader()
 			<div id="newsupshrink" title="', $txt['upshrink_description'], '"', empty($options['collapse_news_fader']) ? ' class="fold"' : '', '></div>
 			', $txt['news'], '
 		</we:cat>
-		<ul class="reset" id="smfFadeScroller">';
+		<ul class="reset" id="fadeScroller">';
 
 			foreach ($context['news_lines'] as $news)
 				echo '
@@ -219,14 +219,14 @@ function template_boardindex_newsfader()
 		add_js('
 	var oNewsFader = new wedge_NewsFader({
 		sSelf: \'oNewsFader\',
-		sFaderControlId: \'smfFadeScroller\',
+		sFaderControlId: \'fadeScroller\',
 		sItemTemplate: ', JavaScriptEscape('<strong>%1$s</strong>'), ',
 		iFadeDelay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
 	});
 
 	var smfNewsFadeToggle = new weToggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_news_fader']) ? 'false' : 'true', ',
-		aSwappableContainers: [\'smfFadeScroller\'],
+		aSwappableContainers: [\'fadeScroller\'],
 		aSwapImages: [
 			{
 				sId: \'newsupshrink\',

@@ -219,15 +219,15 @@ function _sessionKeepAlive()
 setTimeout(_sessionKeepAlive, 1200000);
 
 // Set a theme option through javascript.
-function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_var, additional_vars)
+function we_setThemeOption(option, value, theme, cur_session_id, cur_session_var, additional_vars)
 {
 	var tempImage = new Image();
 	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + cur_session_var + '=' + cur_session_id + (additional_vars || '') + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
 }
 
-function smf_avatarResize()
+function we_avatarResize()
 {
-	var tempAvatars = [], j = 0;
+	var tempAvatars = [], j = 0, maxWidth = we_avatarMaxSize[0], maxHeight = we_avatarMaxSize[1];
 	$('img.avatar').each(function () {
 		tempAvatars[j] = new Image();
 		tempAvatars[j].avatar = this;
@@ -236,15 +236,15 @@ function smf_avatarResize()
 			var ava = this.avatar;
 			ava.width = this.width;
 			ava.height = this.height;
-			if (smf_avatarMaxWidth != 0 && this.width > smf_avatarMaxWidth)
+			if (maxWidth != 0 && this.width > maxWidth)
 			{
-				ava.height = (smf_avatarMaxWidth * this.height) / this.width;
-				ava.width = smf_avatarMaxWidth;
+				ava.height = (maxWidth * this.height) / this.width;
+				ava.width = maxWidth;
 			}
-			if (smf_avatarMaxHeight != 0 && ava.height > smf_avatarMaxHeight)
+			if (maxHeight != 0 && ava.height > maxHeight)
 			{
-				ava.width = (smf_avatarMaxHeight * ava.width) / ava.height;
-				ava.height = smf_avatarMaxHeight;
+				ava.width = (maxHeight * ava.width) / ava.height;
+				ava.height = maxHeight;
 			}
 		}).attr('src', this.src);
 	});
@@ -386,7 +386,7 @@ weToggle.prototype._changeState = function (bCollapse, bInit, bNow)
 		this._cookie.set(op.sCookieName, this._collapsed ? '1' : '0');
 
 	if ('oThemeOptions' in this.opt && (op = this.opt.oThemeOptions) && op.bUseThemeSettings)
-		smf_setThemeOption(op.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in op ? op.sThemeId : null, op.sSessionId, op.sSessionVar, 'sAdditionalVars' in op ? op.sAdditionalVars : null);
+		we_setThemeOption(op.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in op ? op.sThemeId : null, op.sSessionId, op.sSessionVar, 'sAdditionalVars' in op ? op.sAdditionalVars : null);
 };
 
 // Reverse the current state.
@@ -427,7 +427,7 @@ function ajaxRating2(XMLDoc)
 
 // Find the actual position of an item.
 // This is a dummy replacement for add-ons -- might be removed later.
-function smf_itemPos(itemHandle)
+function we_itemPos(itemHandle)
 {
 	var offset = $(itemHandle).offset();
 	return [offset.left, offset.top];

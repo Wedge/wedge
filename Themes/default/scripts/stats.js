@@ -10,7 +10,7 @@
  * @version 0.1
  */
 
-function smf_StatsCenter(oOptions)
+function weStatsCenter(oOptions)
 {
 	this.oTable = $('#' + oOptions.sTableId);
 
@@ -130,7 +130,7 @@ function smf_StatsCenter(oOptions)
 		this.oYears[this.opt.aCollapsedYears[i]].oToggle.toggle();
 };
 
-smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
+weStatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {
 	// Tell Wedge that all underlying months have disappeared.
 	var oMon = this.oYears[oToggle.opt.sYearId].oMonths, m = oMon.length, i;
@@ -139,7 +139,7 @@ smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 			oMon[i].oToggle.changeState(true);
 };
 
-smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
+weStatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 {
 	if (!oToggle.bCollapsed)
 	{
@@ -157,7 +157,7 @@ smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 	}
 };
 
-smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
+weStatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 {
 	// Ignore if we're still loading the previous batch.
 	if (this.bIsLoading)
@@ -175,7 +175,7 @@ smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 		getXMLDocument(we_prepareScriptUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
 };
 
-smf_StatsCenter.prototype.onDocReceived = function (oXMLDoc)
+weStatsCenter.prototype.onDocReceived = function (oXMLDoc)
 {
 	// Loop through all the months we got from the XML.
 	var that = this;

@@ -52,7 +52,7 @@ function template_registration_form()
 	add_js('
 	function verifyAgree()
 	{
-		if (currentAuthMethod == \'passwd\' && document.forms.registration.smf_autov_pwmain.value != document.forms.registration.smf_autov_pwverify.value)
+		if (currentAuthMethod == \'passwd\' && document.forms.registration.we_autov_pwmain.value != document.forms.registration.we_autov_pwverify.value)
 		{
 			alert(' . JavaScriptEscape($txt['register_passwords_differ_js']) . ');
 			return false;
@@ -74,9 +74,9 @@ function template_registration_form()
 
 		var is_pw = currentAuthMethod == "passwd";
 		document.forms.registration.openid_url.disabled = is_pw;
-		document.forms.registration.smf_autov_pwmain.disabled = !is_pw;
-		document.forms.registration.smf_autov_pwverify.disabled = !is_pw;
-		$("#smf_autov_pwmain_div, #smf_autov_pwverify_div, #password1_group, #password2_group").toggle(is_pw);
+		document.forms.registration.we_autov_pwmain.disabled = !is_pw;
+		document.forms.registration.we_autov_pwverify.disabled = !is_pw;
+		$("#we_autov_pwmain_div, #we_autov_pwverify_div, #password1_group, #password2_group").toggle(is_pw);
 		$("#openid_group").toggle(!is_pw);
 
 		if (is_pw)
@@ -87,8 +87,8 @@ function template_registration_form()
 		}
 		else
 		{
-			document.forms.registration.smf_autov_pwmain.style.backgroundColor = "";
-			document.forms.registration.smf_autov_pwverify.style.backgroundColor = "";
+			document.forms.registration.we_autov_pwmain.style.backgroundColor = "";
+			document.forms.registration.we_autov_pwverify.style.backgroundColor = "";
 			document.forms.registration.openid_url.style.backgroundColor = "#FFF0F0";
 		}
 	}
@@ -152,18 +152,18 @@ function template_registration_form()
 			<div class="windowbg2 wrc">
 				<fieldset>
 					<dl class="register_form">
-						<dt><strong><label for="smf_autov_username">', $txt['username'], ':</label></strong></dt>
+						<dt><strong><label for="we_autov_username">', $txt['username'], ':</label></strong></dt>
 						<dd>
-							<input type="text" name="user" id="smf_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" required>
-							<span id="smf_autov_username_div" class="hide">
-								<a id="smf_autov_username_link" href="#">
-									<img id="smf_autov_username_img" src="', $settings['images_url'], '/icons/field_check.gif">
+							<input type="text" name="user" id="we_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" required>
+							<span id="we_autov_username_div" class="hide">
+								<a id="we_autov_username_link" href="#">
+									<img id="we_autov_username_img" src="', $settings['images_url'], '/icons/field_check.gif">
 								</a>
 							</span>
 						</dd>
-						<dt><strong><label for="smf_autov_reserve1">', $txt['email'], ':</label></strong></dt>
+						<dt><strong><label for="we_autov_reserve1">', $txt['email'], ':</label></strong></dt>
 						<dd>
-							<input type="email" name="email" id="smf_autov_reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '" required>
+							<input type="email" name="email" id="we_autov_reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '" required>
 						</dd>
 						<dt><strong><label for="allow_email">', $txt['allow_user_email'], ':</label></strong></dt>
 						<dd>
@@ -195,20 +195,20 @@ function template_registration_form()
 
 	echo '
 					<dl class="register_form" id="password1_group">
-						<dt><strong><label for="smf_autov_pwmain">', $txt['choose_pass'], ':</label></strong></dt>
+						<dt><strong><label for="we_autov_pwmain">', $txt['choose_pass'], ':</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
-							<span id="smf_autov_pwmain_div" class="hide">
-								<img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif">
+							<input type="password" name="passwrd1" id="we_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
+							<span id="we_autov_pwmain_div" class="hide">
+								<img id="we_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif">
 							</span>
 						</dd>
 					</dl>
 					<dl class="register_form" id="password2_group">
-						<dt><strong><label for="smf_autov_pwverify">', $txt['verify_pass'], ':</label></strong></dt>
+						<dt><strong><label for="we_autov_pwverify">', $txt['verify_pass'], ':</label></strong></dt>
 						<dd>
-							<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
-							<span id="smf_autov_pwverify_div" class="hide">
-								<img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif">
+							<input type="password" name="passwrd2" id="we_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
+							<span id="we_autov_pwverify_div" class="hide">
+								<img id="we_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif">
 							</span>
 						</dd>
 					</dl>';

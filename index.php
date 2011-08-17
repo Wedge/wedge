@@ -141,7 +141,7 @@ cleanRequest();
 
 // Seed the random generator.
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 42)
-	smf_seed_generator();
+	we_seed_generator();
 
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
 if (isset($_GET['scheduled']))
@@ -205,7 +205,7 @@ if (isset($_GET['openid_restore_post']) && !empty($_SESSION['openid']['saved_dat
 }
 
 // What function shall we execute? (done like this for memory's sake.)
-$function = smf_main();
+$function = wedge_main();
 
 // Do some logging, unless this is an attachment, avatar, toggle of editor buttons, theme option, XML feed etc.
 if (empty($_REQUEST['action']) || !defined('WEDGE_NO_LOG'))
@@ -238,7 +238,7 @@ if (!empty($context['app_error_count']))
 	);
 
 // The main controlling function.
-function smf_main()
+function wedge_main()
 {
 	global $modSettings, $settings, $user_info, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
 

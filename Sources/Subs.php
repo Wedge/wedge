@@ -2349,9 +2349,8 @@ function setupThemeContext($forceload = false)
 	// Resize avatars the fancy, but non-GD requiring way.
 	if ($modSettings['avatar_action_too_large'] == 'option_js_resize' && (!empty($modSettings['avatar_max_width_external']) || !empty($modSettings['avatar_max_height_external'])))
 		add_js('
-	var smf_avatarMaxWidth = ' . (int) $modSettings['avatar_max_width_external'] . ';
-	var smf_avatarMaxHeight = ' . (int) $modSettings['avatar_max_height_external'] . ';
-	$(window).load(smf_avatarResize);');
+	var we_avatarMaxSize = [' . (int) $modSettings['avatar_max_width_external'] . ', ' . (int) $modSettings['avatar_max_height_external'] . '];
+	$(window).load(we_avatarResize);');
 
 	// This looks weird, but it's because BoardIndex.php references the variable.
 	$context['common_stats']['latest_member'] = array(
@@ -3033,7 +3032,7 @@ function setupMenuContext()
  *
  * This function updates $modSettings['rand_sand'] which is used in generating tokens for major Wedge actions. It is updated if not found or on a 1/250 chance of regeneration per page load (both regular index.php and SSI.php use)
  */
-function smf_seed_generator()
+function we_seed_generator()
 {
 	global $modSettings;
 

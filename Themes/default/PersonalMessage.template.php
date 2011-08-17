@@ -1003,7 +1003,7 @@ function template_send()
 	));
 
 	add_js('
-	var oPersonalMessageSend = new smf_PersonalMessageSend({
+	var oPersonalMessageSend = new wePersonalMessageSend({
 		sSelf: \'oPersonalMessageSend\',
 		sSessionId: \'', $context['session_id'], '\',
 		sSessionVar: \'', $context['session_var'], '\',

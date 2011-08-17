@@ -2707,7 +2707,7 @@ function sessionGC($max_lifetime)
  * Initialize the database connection to be used.
  *
  * - Begin by loading the relevant function set (currently the MySQL driver)
- * - Initiate the database connection with {@link smf_db_initiate()}
+ * - Initiate the database connection through the wesql object.
  * - If the connection fails, revert to a fatal error to the user.
  * - If in SSI mode, ensure the database prefix is attended to.
  * - The global variable $db_connection will hold the connection data.

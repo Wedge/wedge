@@ -599,12 +599,12 @@ function AddLanguage()
 	global $context, $txt, $scripturl;
 
 	// Are we searching for new languages courtesy of Simple Machines?
-	if (!empty($_POST['smf_add_sub']))
+	if (!empty($_POST['we_add_sub']))
 	{
 		// Need fetch_web_data.
 		loadSource(array('Subs-Package', 'Class-Package'));
 
-		$context['smf_search_term'] = htmlspecialchars(trim($_POST['smf_add']));
+		$context['we_search_term'] = htmlspecialchars(trim($_POST['we_add']));
 
 		// We're going to use this URL.
 		// !!! @todo: Update with Wedge language files.
@@ -626,7 +626,7 @@ function AddLanguage()
 				foreach ($lang_files as $file)
 				{
 					// Were we searching?
-					if (!empty($context['smf_search_term']) && strpos($file->fetch('name'), westr::strtolower($context['smf_search_term'])) === false)
+					if (!empty($context['we_search_term']) && strpos($file->fetch('name'), westr::strtolower($context['we_search_term'])) === false)
 						continue;
 
 					$context['wedge_languages'][] = array(

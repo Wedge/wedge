@@ -381,7 +381,7 @@ function template_main()
 		add_js_file('scripts/stats.js');
 
 		add_js('
-	var oStatsCenter = new smf_StatsCenter({
+	var oStatsCenter = new weStatsCenter({
 		sTableId: \'stats\',
 
 		reYearPattern: /year_(\d+)/,

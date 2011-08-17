@@ -2769,15 +2769,15 @@ function template_authentication_method()
 								<em>', $txt['choose_pass'], ':</em>
 							</dt>
 							<dd>
-								<input type="password" name="passwrd1" id="smf_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
-								<span id="smf_autov_pwmain_div" class="hide"><img id="smf_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif"></span>
+								<input type="password" name="passwrd1" id="we_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
+								<span id="we_autov_pwmain_div" class="hide"><img id="we_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif"></span>
 							</dd>
 							<dt>
 								<em>', $txt['verify_pass'], ':</em>
 							</dt>
 							<dd>
-								<input type="password" name="passwrd2" id="smf_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
-								<span id="smf_autov_pwverify_div" class="hide"><img id="smf_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif"></span>
+								<input type="password" name="passwrd2" id="we_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
+								<span id="we_autov_pwverify_div" class="hide"><img id="we_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif"></span>
 							</dd>
 						</dl>
 					</dd>
@@ -2830,9 +2830,9 @@ function template_authentication_method()
 
 		var is_pw = currentAuthMethod == "passwd";
 		document.forms.creator.openid_url.disabled = is_pw;
-		document.forms.creator.smf_autov_pwmain.disabled = !is_pw;
-		document.forms.creator.smf_autov_pwverify.disabled = !is_pw;
-		$("#smf_autov_pwmain_div, #smf_autov_pwverify_div, #auth_pass_div").toggle(is_pw);
+		document.forms.creator.we_autov_pwmain.disabled = !is_pw;
+		document.forms.creator.we_autov_pwverify.disabled = !is_pw;
+		$("#we_autov_pwmain_div, #we_autov_pwverify_div, #auth_pass_div").toggle(is_pw);
 		$("#auth_openid_div").toggle(!is_pw);
 
 		if (is_pw)
@@ -2843,8 +2843,8 @@ function template_authentication_method()
 		}
 		else
 		{
-			document.forms.creator.smf_autov_pwmain.style.backgroundColor = "";
-			document.forms.creator.smf_autov_pwverify.style.backgroundColor = "";
+			document.forms.creator.we_autov_pwmain.style.backgroundColor = "";
+			document.forms.creator.we_autov_pwverify.style.backgroundColor = "";
 			document.forms.creator.openid_url.style.backgroundColor = "#FCE184";
 		}
 	}

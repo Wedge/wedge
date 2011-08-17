@@ -1323,7 +1323,7 @@ function template_add_language()
 				<fieldset>
 					<legend>', $txt['add_language_wedge'], '</legend>
 					<label class="smalltext">', $txt['add_language_wedge_browse'], '</label>
-					<input type="text" name="smf_add" size="40" value="', !empty($context['smf_search_term']) ? $context['smf_search_term'] : '', '">';
+					<input type="text" name="we_add" size="40" value="', !empty($context['we_search_term']) ? $context['we_search_term'] : '', '">';
 
 	if (!empty($context['wedge_error']))
 		echo '
@@ -1333,7 +1333,7 @@ function template_add_language()
 				</fieldset>
 				<div class="righttext">', $context['browser']['is_ie'] ? '
 					<input type="text" name="ie_fix" class="hide"> ' : '', '
-					<input type="submit" name="smf_add_sub" value="', $txt['search'], '" class="submit">
+					<input type="submit" name="we_add_sub" value="', $txt['search'], '" class="submit">
 				</div>
 			</div>';
 
