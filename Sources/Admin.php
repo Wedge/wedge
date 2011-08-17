@@ -568,7 +568,7 @@ function Admin()
 						'spiderlog' => array($txt['log_spider'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
 						'tasklog' => array($txt['log_scheduled'], 'admin_forum'),
 						'',
-						'pruning' => array($txt['log_pruning'], 'admin_forum'),
+						'settings' => array($txt['log_settings'], 'admin_forum'),
 					),
 				),
 				'repairboards' => array(
@@ -895,7 +895,7 @@ function AdminSearchInternal()
 		array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
 		array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
 		array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
-		array('ModifyPruningSettings', 'area=logs;sa=pruning'),
+		array('ModifyLogSettings', 'area=logs;sa=settings'),
 	);
 
 	// It will probably never be used by anyone, but anyway...
@@ -975,7 +975,7 @@ function AdminLogs()
 		'modlog' => array('Modlog', 'ViewModlog'),
 		'spiderlog' => array('ManageSearchEngines', 'SpiderLog'),
 		'tasklog' => array('ManageScheduledTasks', 'TaskLog'),
-		'pruning' => array('ManageSettings', 'ModifyPruningSettings'),
+		'settings' => array('ManageSettings', 'ModifyLogSettings'),
 	);
 
 	$sub_action = isset($_REQUEST['sa'], $log_functions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'errorlog';
@@ -1005,8 +1005,8 @@ function AdminLogs()
 			'tasklog' => array(
 				'description' => $txt['scheduled_log_desc'],
 			),
-			'pruning' => array(
-				'description' => $txt['log_pruning_desc'],
+			'settings' => array(
+				'description' => $txt['log_settings_desc'],
 			),
 		),
 	);

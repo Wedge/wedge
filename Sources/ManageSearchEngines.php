@@ -60,7 +60,7 @@ function ManageSearchEngineSettings($return_config = false)
 	);
 
 	// Set up a message.
-	$context['settings_message'] = '<span class="smalltext">' . sprintf($txt['spider_settings_desc'], $scripturl . '?action=admin;area=logs;sa=pruning;' . $context['session_query']) . '</span>';
+	$context['settings_message'] = '<span class="smalltext">' . sprintf($txt['spider_settings_desc'], $scripturl . '?action=admin;area=logs;sa=settings;' . $context['session_query']) . '</span>';
 
 	// Do some javascript.
 	$javascript_function = '

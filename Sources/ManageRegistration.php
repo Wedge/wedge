@@ -46,6 +46,7 @@ function RegCenter()
 
 	// Loading, always loading.
 	loadLanguage('Login');
+	loadLanguage('ManageSettings'); // Login is used outside the admin panel too, no point bulking that up.
 	loadTemplate('Register');
 
 	// Next create the tabs for the template.
@@ -274,6 +275,9 @@ function ModifyRegistrationSettings($return_config = false)
 			array('check', 'enableOpenID'),
 			array('check', 'notify_new_registration'),
 			array('check', 'send_welcomeEmail'),
+		'',
+			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),
+			array('int', 'failed_login_threshold'),
 		'',
 			array('int', 'coppaAge', 'subtext' => $txt['setting_coppaAge_desc'], 'onchange' => 'checkCoppa();'),
 			array('select', 'coppaType', array($txt['setting_coppaType_reject'], $txt['setting_coppaType_approval']), 'onchange' => 'checkCoppa();'),

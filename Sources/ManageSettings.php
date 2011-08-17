@@ -44,7 +44,7 @@ if (!defined('WEDGE'))
 	void ModifySpamSettings()
 		// !!!
 
-	void ModifyPruningSettings()
+	void ModifyLogSettings()
 		// !!!
 
 	void disablePostModeration()
@@ -382,18 +382,11 @@ function ModifyGeneralSecuritySettings($return_config = false)
 	$config_vars = array(
 			array('check', 'guest_hideContacts'),
 		'',
-			array('int', 'failed_login_threshold'),
-		'',
-			array('check', 'enableErrorLogging'),
-			array('check', 'enableErrorQueryLogging'),
 			array('check', 'securityDisable'),
 		'',
 			// Reactive on email, and approve on delete
 			array('check', 'send_validation_onChange'),
 			array('check', 'approveAccountDeletion'),
-		'',
-			// Password strength.
-			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),
 		'',
 			// Reporting of personal messages?
 			array('check', 'enableReportPM'),
@@ -682,16 +675,19 @@ function ModifySpamSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
-function ModifyPruningSettings($return_config = false)
+function ModifyLogSettings($return_config = false)
 {
 	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
 
 	// Make sure we understand what's going on.
 	loadLanguage('ManageSettings');
 
-	$context['page_title'] = $txt['log_pruning'];
+	$context['page_title'] = $txt['log_settings'];
 
 	$config_vars = array(
+			array('check', 'enableErrorLogging'),
+			array('check', 'enableErrorQueryLogging'),
+			array('title', 'logPruning'),
 			// Even do the pruning?
 			// The array indexes are there so we can remove/change them before saving.
 			'pruningOptions' => array('check', 'pruningOptions'),
@@ -737,11 +733,11 @@ function ModifyPruningSettings($return_config = false)
 			$_POST['pruningOptions'] = '';
 
 		saveDBSettings($savevar);
-		redirectexit('action=admin;area=logs;sa=pruning');
+		redirectexit('action=admin;area=logs;sa=settings');
 	}
 
-	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=pruning';
-	$context['settings_title'] = $txt['log_pruning'];
+	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=settings';
+	$context['settings_title'] = $txt['log_settings'];
 	loadSubTemplate('show_settings');
 
 	// Get the actual values
