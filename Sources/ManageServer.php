@@ -598,7 +598,7 @@ function AddLanguage()
 {
 	global $context, $txt, $scripturl;
 
-	// Are we searching for new languages courtesy of Simple Machines?
+	// Are we searching for new languages courtesy of Wedge?
 	if (!empty($_POST['we_add_sub']))
 	{
 		// Need fetch_web_data.
@@ -646,7 +646,7 @@ function AddLanguage()
 	loadSubTemplate('add_language');
 }
 
-// Download a language file from the Simple Machines website.
+// Download a language file from the Wedge website.
 function DownloadLanguage()
 {
 	global $context, $boarddir, $txt, $scripturl, $modSettings;

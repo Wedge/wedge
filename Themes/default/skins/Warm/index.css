@@ -154,10 +154,10 @@ tr.titlebg th, tr.catbg th
 	padding: 0 6px
 
 .windowbg
-	background: rgba(75%, 50%, 50%, .1) // #e9e8de
+	background: #efebe2
 
 .windowbg2
-	background: rgba(50%, 50%, 75%, .1) // #e4edeb
+	background: #e8f1f0
 
 .windowbg3
 	background: rgba(50%, 75%, 50%, .1) // #cacdd3
