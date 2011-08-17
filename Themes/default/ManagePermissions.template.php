@@ -449,11 +449,11 @@ function template_modify_group()
 	}
 	else
 		add_js('
-	window.smf_usedDeny = false;
+	window.weUsedDeny = false;
 
 	function warnAboutDeny()
 	{
-		return window.smf_usedDeny ? confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ') : true;
+		return window.weUsedDeny ? confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ') : true;
 	}');
 
 	echo '
@@ -634,7 +634,7 @@ function template_modify_group_simple($type)
 					echo '
 						<td class="top" style="width: 10px; padding-bottom: 2px"><input type="radio" id="select_on_', $permission['id'], '" name="perm[', $type, '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked' : '', ' value="on" onclick="determineGroupState(\'', $id_group, '\');"', $disable_field, '></td>
 						<td class="top" style="width: 10px; padding-bottom: 2px"><input type="radio" id="select_off_', $permission['id'], '" name="perm[', $type, '][', $permission['id'], ']"', $permission['select'] == 'off' ? ' checked' : '', ' value="off" onclick="determineGroupState(\'', $id_group, '\');"', $disable_field, '></td>
-						<td class="top" style="width: 10px; padding-bottom: 2px"><input type="radio" id="select_deny_', $permission['id'], '" name="perm[', $type, '][', $permission['id'], ']"', $permission['select'] == 'denied' ? ' checked' : '', ' value="deny" onclick="window.smf_usedDeny = true; determineGroupState(\'', $id_group, '\');"', $disable_field, '></td>';
+						<td class="top" style="width: 10px; padding-bottom: 2px"><input type="radio" id="select_deny_', $permission['id'], '" name="perm[', $type, '][', $permission['id'], ']"', $permission['select'] == 'denied' ? ' checked' : '', ' value="deny" onclick="window.weUsedDeny = true; determineGroupState(\'', $id_group, '\');"', $disable_field, '></td>';
 
 				echo '
 					</tr>';
@@ -910,7 +910,7 @@ function template_modify_group_classic($type)
 							echo '
 						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'on' ? ' checked' : '', ' value="on" onclick="document.forms.permissionForm.', $permission['own']['id'], '_on.checked = true;"', $disable_field, '></td>
 						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select'] == 'off' ? ' checked' : '', ' value="off"', $disable_field, '></td>
-						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select']== 'denied' ? ' checked' : '', ' value="deny" id="', $permission['any']['id'], '_deny" onclick="window.smf_usedDeny = true;"', $disable_field, '></td>';
+						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['any']['id'], ']"', $permission['any']['select']== 'denied' ? ' checked' : '', ' value="deny" id="', $permission['any']['id'], '_deny" onclick="window.weUsedDeny = true;"', $disable_field, '></td>';
 
 						echo '
 					</tr>';
@@ -927,7 +927,7 @@ function template_modify_group_classic($type)
 							echo '
 						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'on' ? ' checked' : '', ' value="on"', $disable_field, '></td>
 						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'off' ? ' checked' : '', ' value="off"', $disable_field, '></td>
-						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'denied' ? ' checked' : '', ' value="deny" onclick="window.smf_usedDeny = true;"', $disable_field, '></td>';
+						<td><input type="radio" name="perm[', $permission_type['id'], '][', $permission['id'], ']"', $permission['select'] == 'denied' ? ' checked' : '', ' value="deny" onclick="window.weUsedDeny = true;"', $disable_field, '></td>';
 
 						echo '
 					</tr>';

@@ -523,7 +523,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 				$final = substr_replace($final, "\n" . $comment . "\n", strpos($final, 'WEDGE_COMMENT();'), 16);
 
 		/*
-			Adding a semicolon after a function/prototype declaration is mandatory in Packer.
+			Adding a semicolon after a function/prototype var declaration is mandatory in Packer.
 			The original SMF code didn't bother with that, and developers are advised NOT to
 			follow that 'advice'. If you can't fix your scripts, uncomment the following
 			block. Semicolons will be added automatically, at a small performance cost.
@@ -684,7 +684,7 @@ function clean_cache($type = '', $extensions = 'php')
 	if (!is_dir($cachedir))
 		return;
 
-	// Remove the files in SMF's own disk cache, if any
+	// Remove the files in Wedge's own disk cache, if any
 	$dh = scandir($cachedir);
 	$exts = array_flip(explode(',', $extensions));
 	$len = strlen($type);
@@ -819,7 +819,7 @@ function cache_put_data($key, $value, $ttl = 120)
 			@unlink($cachedir . '/data_' . $key . '.php');
 		else
 		{
-			$cache_data = '<' . '?php if (!defined(\'SMF\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}?' . '>';
+			$cache_data = '<' . '?php if (!defined(\'WEDGE\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}?' . '>';
 			$fh = @fopen($cachedir . '/data_' . $key . '.php', 'w');
 			if ($fh)
 			{

@@ -15,7 +15,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /*	Support for PHP's BC Math library is required in some areas.
-	void smf_openID_validate(string openid_url, bool allow_immediate_validation = true)
+	void we_openID_validate(string openid_url, bool allow_immediate_validation = true)
 		- openid_uri is the URI given by the user
 		- Validates the URI and changes it to a fully canonicalize URL
 		- Determines the IDP server and delegation
@@ -23,18 +23,18 @@ if (!defined('WEDGE'))
 		- Redirects the user to the IDP for validation
 */
 
-function smf_openID_validate($openid_uri, $return = false, $save_fields = array(), $return_action = null)
+function we_openID_validate($openid_uri, $return = false, $save_fields = array(), $return_action = null)
 {
 	global $scripturl, $boardurl, $modSettings;
 
-	$openid_url = smf_openID_canonize($openid_uri);
+	$openid_url = we_openID_canonize($openid_uri);
 
-	$response_data = smf_openID_getServerInfo($openid_url);
+	$response_data = we_openID_getServerInfo($openid_url);
 	if ($response_data === false)
 		return 'no_data';
 
-	if (($assoc = smf_openID_getAssociation($response_data['server'])) == null)
-		$assoc = smf_openID_makeAssociation($response_data['server']);
+	if (($assoc = we_openID_getAssociation($response_data['server'])) == null)
+		$assoc = we_openID_makeAssociation($response_data['server']);
 
 	// Before we go wherever it is we are going, store the GET and POST data, because it might be useful when we get back.
 	$request_time = time();
@@ -58,7 +58,7 @@ function smf_openID_validate($openid_uri, $return = false, $save_fields = array(
 	);
 
 	// If they are logging in but don't yet have an account or they are registering, let's request some additional information
-	if (($_REQUEST['action'] == 'login2' && !smf_openid_member_exists($openid_url)) || ($_REQUEST['action'] == 'register' || $_REQUEST['action'] == 'register2'))
+	if (($_REQUEST['action'] == 'login2' && !we_openID_member_exists($openid_url)) || ($_REQUEST['action'] == 'register' || $_REQUEST['action'] == 'register2'))
 	{
 		// Email is required.
 		$parameters[] = 'openid.sreg.required=email';
@@ -75,7 +75,7 @@ function smf_openID_validate($openid_uri, $return = false, $save_fields = array(
 }
 
 // Revalidate a user using OpenID. Note that this function will not return when authentication is required.
-function smf_openID_revalidate()
+function we_openID_revalidate()
 {
 	global $user_settings;
 
@@ -85,13 +85,13 @@ function smf_openID_revalidate()
 		return true;
 	}
 	else
-		smf_openID_validate($user_settings['openid_uri'], false, null, 'revalidate');
+		we_openID_validate($user_settings['openid_uri'], false, null, 'revalidate');
 
 	// We shouldn't get here.
 	trigger_error('Hacking attempt...', E_USER_ERROR);
 }
 
-function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
+function we_openID_getAssociation($server, $handle = null, $no_delete = false)
 {
 	if (!$no_delete)
 	{
@@ -127,7 +127,7 @@ function smf_openID_getAssociation($server, $handle = null, $no_delete = false)
 	return $return;
 }
 
-function smf_openID_makeAssociation($server)
+function we_openID_makeAssociation($server)
 {
 	global $modSettings, $p;
 
@@ -136,7 +136,7 @@ function smf_openID_makeAssociation($server)
 	);
 
 	// We'll need to get our keys for the Diffie-Hellman key exchange.
-	$dh_keys = smf_openID_setup_DH();
+	$dh_keys = we_openID_setup_DH();
 
 	// If we don't support DH we'll have to see if the provider will accept no encryption.
 	if ($dh_keys === false)
@@ -200,7 +200,7 @@ function smf_openID_makeAssociation($server)
 	);
 }
 
-function smf_openID_removeAssociation($handle)
+function we_openID_removeAssociation($handle)
 {
 	wesql::query('
 		DELETE FROM {db_prefix}openid_assoc
@@ -211,7 +211,7 @@ function smf_openID_removeAssociation($handle)
 	);
 }
 
-function smf_openID_return()
+function we_openID_return()
 {
 	global $user_info, $user_profile, $modSettings, $context, $sc, $user_settings;
 
@@ -226,19 +226,19 @@ function smf_openID_return()
 	if ($_GET['openid_mode'] != 'id_res')
 		fatal_lang_error('openid_not_resolved');
 
-	// SMF has this annoying habit of removing the + from the base64 encoding.  So let's put them back.
+	// Wedge has this annoying habit of removing the + from the base64 encoding.  So let's put them back.
 	foreach (array('openid_assoc_handle', 'openid_invalidate_handle', 'openid_sig', 'sf') as $key)
 		if (isset($_GET[$key]))
 			$_GET[$key] = str_replace(' ', '+', $_GET[$key]);
 
 	// Did they tell us to remove any associations?
 	if (!empty($_GET['openid_invalidate_handle']))
-		smf_openid_removeAssociation($_GET['openid_invalidate_handle']);
+		we_openID_removeAssociation($_GET['openid_invalidate_handle']);
 
-	$server_info = smf_openid_getServerInfo($_GET['openid_identity']);
+	$server_info = we_openID_getServerInfo($_GET['openid_identity']);
 
 	// Get the association data.
-	$assoc = smf_openID_getAssociation($server_info['server'], $_GET['openid_assoc_handle'], true);
+	$assoc = we_openID_getAssociation($server_info['server'], $_GET['openid_assoc_handle'], true);
 	if ($assoc === null)
 		fatal_lang_error('openid_no_assoc');
 
@@ -354,7 +354,7 @@ function smf_openID_return()
 	}
 }
 
-function smf_openID_canonize($uri)
+function we_openID_canonize($uri)
 {
 	// !!! Add in discovery.
 
@@ -367,7 +367,7 @@ function smf_openID_canonize($uri)
 	return $uri;
 }
 
-function smf_openid_member_exists($url)
+function we_openID_member_exists($url)
 {
 	$request = wesql::query('
 		SELECT mem.id_member, mem.member_name
@@ -384,7 +384,7 @@ function smf_openid_member_exists($url)
 }
 
 // Prepare for a Diffie-Hellman key exchange.
-function smf_openID_setup_DH($regenerate = false)
+function we_openID_setup_DH($regenerate = false)
 {
 	global $p, $g;
 
@@ -399,10 +399,10 @@ function smf_openID_setup_DH($regenerate = false)
 	// Make sure the scale is set.
 	bcscale(0);
 
-	return smf_openID_get_keys($regenerate);
+	return we_openID_get_keys($regenerate);
 }
 
-function smf_openID_get_keys($regenerate)
+function we_openID_get_keys($regenerate)
 {
 	global $modSettings, $p, $g;
 
@@ -418,7 +418,7 @@ function smf_openID_get_keys($regenerate)
 	}
 
 	// Dang it, now we have to do math. And it's not just ordinary math, it's the evil big integer math. This will take a few seconds.
-	$private = smf_openid_generate_private_key();
+	$private = we_openID_generate_private_key();
 	$public = bcpowmod($g, $private, $p);
 
 	// Now that we did all that work, let's save it so we don't have to keep doing it.
@@ -431,7 +431,7 @@ function smf_openID_get_keys($regenerate)
 	);
 }
 
-function smf_openid_generate_private_key()
+function we_openID_generate_private_key()
 {
 	global $p;
 	static $cache = array();
@@ -465,7 +465,7 @@ function smf_openid_generate_private_key()
 	return bcadd(bcmod($num, $p), 1);
 }
 
-function smf_openID_getServerInfo($openid_url)
+function we_openID_getServerInfo($openid_url)
 {
 	loadSource('Subs-Package');
 

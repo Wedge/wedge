@@ -241,7 +241,7 @@ function error_handler($error_level, $error_string, $file, $line)
 				echo '>';
 		}
 
-		// Debugging!  This should look like a PHP error message.
+		// Debugging! This should look like a PHP error message.
 		echo '<br>
 <strong>', $error_level % 255 == E_ERROR ? 'Error' : ($error_level % 255 == E_WARNING ? 'Warning' : 'Notice'), '</strong>: ', $error_string, ' in <strong>', $file, '</strong> on line <strong>', $line, '</strong><br>';
 	}
@@ -257,17 +257,17 @@ function error_handler($error_level, $error_string, $file, $line)
 	if ($file == 'Unknown')
 		return;
 
-	// If this is an E_ERROR or E_USER_ERROR.... die.  Violently so.
+	// If this is an E_ERROR or E_USER_ERROR.... die. Violently so.
 	if ($error_level % 255 == E_ERROR)
 		obExit(false);
 	else
 		return;
 
-	// If this is an E_ERROR, E_USER_ERROR, E_WARNING, or E_USER_WARNING.... die.  Violently so.
+	// If this is an E_ERROR, E_USER_ERROR, E_WARNING, or E_USER_WARNING.... die. Violently so.
 	if ($error_level % 255 == E_ERROR || $error_level % 255 == E_WARNING)
 		fatal_error(allowedTo('admin_forum') ? $message : $error_string, false);
 
-	// We should NEVER get to this point.  Any fatal error MUST quit, or very bad things can happen.
+	// We should NEVER get to this point. Any fatal error MUST quit, or very bad things can happen.
 	if ($error_level % 255 == E_ERROR)
 		die('Hacking attempt...');
 }
@@ -282,7 +282,8 @@ function error_handler($error_level, $error_string, $file, $line)
  * - Check whether we are using SSI and if so whether SSI-specific fatal error handling is indicated.
  * - Finally, pass control to {@link obExit()} to end execution.
  *
- * IMPORTANT: If you are creating a bridge to SMF or modifying this function, you MUST make ABSOLUTELY SURE that this function quits and DOES NOT RETURN TO NORMAL PROGRAM FLOW.  Otherwise, security error messages will not be shown, and your forum will be in a very easily hackable state.
+ * IMPORTANT: If you are creating a bridge to Wedge or modifying this function, you MUST make ABSOLUTELY SURE that this function quits and
+ * DOES NOT RETURN TO NORMAL PROGRAM FLOW. Otherwise, security error messages will not be shown, and your forum will be in a very easily hackable state.
  *
  * @param string $error_message The error message to be displayed.
  */
@@ -378,7 +379,7 @@ function show_db_error($loadavg = false)
 
 			// Language files aren't loaded yet :(.
 			$db_error = @wesql::error($db_connection);
-			@mail($webmaster_email, $mbname . ': SMF Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\nMySQL reported:\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that SMF could not connect to the database, contact your host if this continues.');
+			@mail($webmaster_email, $mbname . ': Wedge Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\nMySQL reported:\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that Wedge could not connect to the database, contact your host if this continues.');
 		}
 	}
 
@@ -405,10 +406,10 @@ function show_db_error($loadavg = false)
 	</head>
 	<body>
 		<h3>Temporarily Unavailable</h3>
-		Due to high stress on the server the forum is temporarily unavailable.  Please try again later.
+		Due to high stress on the server the forum is temporarily unavailable. Please try again later.
 	</body>
 </html>';
-	// What to do?  Language files haven't and can't be loaded yet...
+	// What to do? Language files haven't and can't be loaded yet...
 	else
 		echo '<!DOCTYPE html>
 <html>
@@ -418,7 +419,7 @@ function show_db_error($loadavg = false)
 	</head>
 	<body>
 		<h3>Connection Problems</h3>
-		Sorry, SMF was unable to connect to the database.  This may be caused by the server being busy.  Please try again later.
+		Sorry, Wedge was unable to connect to the database. This may be caused by the server being busy. Please try again later.
 	</body>
 </html>';
 

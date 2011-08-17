@@ -1724,7 +1724,7 @@ function get_file_listing($path, $relative)
 	foreach ($entries as $entry)
 	{
 		// Skip all dot files, including .htaccess.
-		if (substr($entry, 0, 1) == '.' || $entry == 'CVS')
+		if (substr($entry, 0, 1) == '.')
 			continue;
 
 		if (is_dir($path . '/' . $entry))

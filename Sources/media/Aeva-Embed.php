@@ -676,7 +676,7 @@ function aeva_autolink_urls($input)
 	// Parse any URLs....
 	if (preg_match('~http://|www\.~i', $input))
 	{
-		// Modified from SMF code, adding support for [center], [li], [td] and closing tags.
+		// Also supports [center], [li], [td], [youtube] and closing tags.
 		$input = strtr($input, array('&#039;' => '\'', '&quot;' => '>">', '"' => '<"<', '&lt;' => '<lt<'));
 		$input = preg_replace(
 			array(
@@ -844,7 +844,7 @@ function embed_lookups_obtain_callback($input)
 			for ($j = 0; $j < $arr['lookup-urldecode']; $j++)
 				$actual = urldecode($actual);
 
-		// Unencode some html characters to prevent double encoding by SMF
+		// Unencode some html characters to prevent double encoding by Wedge
 		if (!empty($arr['lookup-unencode']))
 			$actual = un_htmlspecialchars($actual);
 
@@ -1130,7 +1130,7 @@ function aeva_fetch($url, $test_connection = false)
 		return false;
 
 	$data = '';
-	@ini_set('user_agent', 'Opera/9.21 (PHP/SMF/Aeva; U; fr)');
+	@ini_set('user_agent', 'Mozilla/4.0 (Compatible; PHP/Wedge; http://wedge.org)');
 	aeva_download_to_string($url, $data);
 	if (!empty($data))
 		return $data;
@@ -1143,7 +1143,7 @@ function aeva_fetch($url, $test_connection = false)
 	// I want this, from there, and I'm not going to be bothering you for more (probably.)
 	fwrite($fp, 'GET ' . $match[6] . ' HTTP/1.0' . "\r\n");
 	fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? '443' : '') : ':' . $match[5]) . "\r\n");
-	fwrite($fp, 'User-Agent: Opera/9.21 (PHP/SMF/Aeva; U; fr)' . "\r\n");
+	fwrite($fp, 'User-Agent: Mozilla/4.0 (Compatible; PHP/Wedge; http://wedge.org)' . "\r\n");
 	fwrite($fp, 'Connection: close' . "\r\n\r\n");
 
 	// Make sure we get a response.

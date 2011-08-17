@@ -233,8 +233,8 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 	$crc = unpack('Vcrc32/Visize', substr($data, strlen($data) - 8, 8));
 	$data = @gzinflate(substr($data, $offset, strlen($data) - 8 - $offset));
 
-	// smf_crc32 and crc32 may not return the same results, so we accept either.
-	if ($crc['crc32'] != smf_crc32($data) && $crc['crc32'] != crc32($data))
+	// wedge_crc32 and crc32 may not return the same results, so we accept either.
+	if ($crc['crc32'] != wedge_crc32($data) && $crc['crc32'] != crc32($data))
 		return false;
 
 	$blocks = strlen($data) / 512 - 1;
@@ -1081,7 +1081,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 		// They specified certain versions this part is for.
 		if ($this_method->exists('@for'))
 		{
-			// Don't keep going if this won't work for this version of SMF.
+			// Don't keep going if this won't work for this version of Wedge.
 			if (!matchPackageVersion($the_version, $this_method->fetch('@for')))
 				continue;
 		}
@@ -2431,7 +2431,7 @@ function package_create_backup($id = 'backup')
 			continue;
 		while ($entry = $listing->read())
 		{
-			if (preg_match('~^(\.{1,2}|CVS|backup.*|help|images|.*\~)$~', $entry) != 0)
+			if (preg_match('~^(\.{1,2}|backup.*|help|images|.*\~)$~', $entry) != 0)
 				continue;
 
 			$filepath = realpath($dir . '/' . $entry);
@@ -2581,7 +2581,7 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 		{
 			fwrite($fp, 'GET ' . $match[6] . ' HTTP/1.0' . "\r\n");
 			fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? ':443' : '') : ':' . $match[5]) . "\r\n");
-			fwrite($fp, 'User-Agent: PHP/SMF' . "\r\n");
+			fwrite($fp, 'User-Agent: PHP/Wedge' . "\r\n");
 			if ($keep_alive)
 				fwrite($fp, 'Connection: Keep-Alive' . "\r\n\r\n");
 			else
@@ -2591,7 +2591,7 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 		{
 			fwrite($fp, 'POST ' . $match[6] . ' HTTP/1.0' . "\r\n");
 			fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? ':443' : '') : ':' . $match[5]) . "\r\n");
-			fwrite($fp, 'User-Agent: PHP/SMF' . "\r\n");
+			fwrite($fp, 'User-Agent: PHP/Wedge' . "\r\n");
 			if ($keep_alive)
 				fwrite($fp, 'Connection: Keep-Alive' . "\r\n");
 			else
@@ -2667,9 +2667,9 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 
 // crc32 doesn't work as expected on 64-bit functions - make our own.
 // http://www.php.net/crc32#79567
-if (!function_exists('smf_crc32'))
+if (!function_exists('wedge_crc32'))
 {
-	function smf_crc32($number)
+	function wedge_crc32($number)
 	{
 		$crc = crc32($number);
 

@@ -927,7 +927,7 @@ function writeLog($force = false)
 	// Guests use 0, members use their session ID.
 	$session_id = $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
 
-	// Grab the last all-of-SMF-specific log_online deletion time.
+	// Grab the last all-of-Wedge-specific log_online deletion time.
 	$do_delete = cache_get_data('log_online-update', 30) < time() - 30;
 
 	// If the last click wasn't a long time ago, and there was a last click...
@@ -2182,7 +2182,7 @@ function url_image_size($url)
 		if ($fp != false)
 		{
 			// Send the HEAD request (since we don't have to worry about chunked, HTTP/1.1 is fine here.)
-			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/SMF' . "\r\n" . 'Connection: close' . "\r\n\r\n");
+			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/Wedge' . "\r\n" . 'Connection: close' . "\r\n\r\n");
 
 			// Read in the HTTP/1.1 or whatever.
 			$test = substr(fgets($fp, 11), -1);
@@ -2482,9 +2482,9 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 }
 
 /**
- * Converts a single IP string in SMF terms into an array showing ranges, which is suitable for database use.
+ * Converts a single IP string in Wedge terms into an array showing ranges, which is suitable for database use.
  *
- * @param string $fullip A string in SMF format representing a single IP address, a range or wildcard (e.g. 127.0.0.1, 127.0.0.10-20 or 127.0.0.*) - if 'unknown' is passed, the effective IP address will be 255.255.255.255.
+ * @param string $fullip A string in Wedge format representing a single IP address, a range or wildcard (e.g. 127.0.0.1, 127.0.0.10-20 or 127.0.0.*) - if 'unknown' is passed, the effective IP address will be 255.255.255.255.
  * @return array An array of 4 elements, representing each dotted number. Each element consists of a subarray, with 'low' and 'high' elements showing the limits of the range. For a single IP dot component, these will be the same (1 in the 127.0.0.1 example); for a range it will be the lower and upper bounds (10 and 20 respectively for 127.0.0.10-20); for a wildcard it will use 0-255 instead of the *.
  */
 function ip2range($fullip)
@@ -3031,7 +3031,7 @@ function setupMenuContext()
 /**
  * Generates a random seed to be used application-wide.
  *
- * This function updates $modSettings['rand_sand'] which is used in generating tokens for major SMF actions. It is updated if not found or on a 1/250 chance of regeneration per page load (both regular index.php and SSI.php use)
+ * This function updates $modSettings['rand_sand'] which is used in generating tokens for major Wedge actions. It is updated if not found or on a 1/250 chance of regeneration per page load (both regular index.php and SSI.php use)
  */
 function smf_seed_generator()
 {

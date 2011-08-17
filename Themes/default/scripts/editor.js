@@ -54,7 +54,7 @@ function weEditor(oOptions)
 	};
 
 	// Codes to call a private function
-	this.oSmfExec = {
+	this.oWedgeExec = {
 		add_media: 'addMedia',
 		unformat: 'removeFormatting',
 		toggle: 'toggleView'
@@ -129,7 +129,7 @@ function weEditor(oOptions)
 	};
 
 	this.sFormId = 'sFormId' in this.opt ? this.opt.sFormId : 'postmodify';
-	this.iArrayPosition = smf_editorArray.length;
+	this.iArrayPosition = weEditors.length;
 
 	// Current resize state.
 	this.oweEditorCurrentResize = {};
@@ -244,7 +244,7 @@ function weEditor(oOptions)
 	if (sizer.length && (!is_opera || is_opera95up) && !(is_chrome && !this.bRichTextEnabled))
 	{
 		// Currently nothing is being resized... I assume!
-		window.smf_oCurrentResizeEditor = null;
+		window.weCurrentResizeEditor = null;
 		sizer.css('display', '').mousedown(this.aEventWrappers.startResize);
 	}
 
@@ -518,7 +518,7 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 					oSelection.getRangeAt(0).insertNode(this.oFrameDocument.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
 				}
 
-				this.smf_execCommand('inserthtml', false, typeof iMoveCursorBack == 'undefined' ? sText : sText.substr(0, sText.length - iMoveCursorBack));
+				this.we_execCommand('inserthtml', false, typeof iMoveCursorBack == 'undefined' ? sText : sText.substr(0, sText.length - iMoveCursorBack));
 			}
 		}
 		else
@@ -530,7 +530,7 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 };
 
 // Special handler for WYSIWYG.
-weEditor.prototype.smf_execCommand = function (sCommand, bUi, sValue)
+weEditor.prototype.we_execCommand = function (sCommand, bUi, sValue)
 {
 	if (this.opt.oDrafts)
 		this.opt.oDrafts.needsUpdate(true);
@@ -568,9 +568,9 @@ weEditor.prototype.handleButtonClick = function (oButtonProperties)
 	this.setFocus();
 	var sCode = oButtonProperties[3], sText, bbcode;
 
-	// A special SMF function?
-	if (sCode in this.oSmfExec)
-		this[this.oSmfExec[sCode]]();
+	// A special Wedge function?
+	if (sCode in this.oWedgeExec)
+		this[this.oWedgeExec[sCode]]();
 
 	else
 	{
@@ -612,7 +612,7 @@ weEditor.prototype.handleButtonClick = function (oButtonProperties)
 		{
 			// Is it easy?
 			if (sCode in this.oSimpleExec)
-				this.smf_execCommand(this.oSimpleExec[sCode], false, null);
+				this.we_execCommand(this.oSimpleExec[sCode], false, null);
 
 			// A link?
 			else if (sCode == 'url' || sCode == 'email' || sCode == 'ftp')
@@ -658,8 +658,8 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 		else // WYSIWYG
 		{
 			if (is_webkit)
-				this.smf_execCommand('styleWithCSS', false, true);
-			this.smf_execCommand('fontname', false, sValue);
+				this.we_execCommand('styleWithCSS', false, true);
+			this.we_execCommand('fontname', false, sValue);
 		}
 	}
 	// Font size?
@@ -671,7 +671,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
-			this.smf_execCommand('fontsize', false, sValue);
+			this.we_execCommand('fontsize', false, sValue);
 	}
 	// Or color even?
 	else if (oSelectProperties[1] == 'sel_color')
@@ -682,7 +682,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
-			this.smf_execCommand('forecolor', false, sValue);
+			this.we_execCommand('forecolor', false, sValue);
 	}
 
 	this.updateEditorControls();
@@ -718,7 +718,7 @@ weEditor.prototype.insertLink = function (sType)
 
 	// IE has a nice prompt for this - others don't.
 	if (sType != 'email' && sType != 'ftp' && is_ie)
-		this.smf_execCommand('createlink', true, 'http://');
+		this.we_execCommand('createlink', true, 'http://');
 
 	else
 	{
@@ -735,8 +735,8 @@ weEditor.prototype.insertLink = function (sType)
 
 		if (oCurText.toString().length != 0)
 		{
-			this.smf_execCommand('unlink');
-			this.smf_execCommand('createlink', false, sText);
+			this.we_execCommand('unlink');
+			this.we_execCommand('createlink', false, sText);
 		}
 		else
 			this.insertText('<a href="' + sText + '">' + sText + '</a>');
@@ -751,7 +751,7 @@ weEditor.prototype.insertImage = function (sSrc)
 		if (!sSrc || sSrc.length < 10)
 			return;
 	}
-	this.smf_execCommand('insertimage', false, sSrc);
+	this.we_execCommand('insertimage', false, sSrc);
 };
 
 weEditor.prototype.getSelect = function (bWantText, bWantHTMLText)
@@ -856,8 +856,8 @@ weEditor.prototype.removeFormatting = function ()
 	// Do both at once.
 	if (this.bRichTextEnabled)
 	{
-		this.smf_execCommand('removeformat');
-		this.smf_execCommand('unlink');
+		this.we_execCommand('removeformat');
+		this.we_execCommand('unlink');
 	}
 	// Otherwise do a crude move indeed.
 	else
@@ -1005,7 +1005,7 @@ weEditor.prototype.spellCheckEnd = function ()
 {
 	// If HTML edit put the text back!
 	if (this.bRichTextEnabled)
-		sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=1;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + this.getText(true, 0).php_urlencode(), smf_editorArray[this.iArrayPosition].onSpellCheckCompleteDataReceived);
+		sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=1;' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';xml', 'message=' + this.getText(true, 0).php_urlencode(), weEditors[this.iArrayPosition].onSpellCheckCompleteDataReceived);
 	else
 		this.setFocus();
 };
@@ -1175,10 +1175,10 @@ weEditor.prototype.shortcutCheck = function (oEvent)
 // This is the method called after clicking the resize bar.
 weEditor.prototype.startResize = function (oEvent)
 {
-	if (!oEvent || window.smf_oCurrentResizeEditor != null)
+	if (!oEvent || window.weCurrentResizeEditor != null)
 		return true;
 
-	window.smf_oCurrentResizeEditor = this.iArrayPosition;
+	window.weCurrentResizeEditor = this.iArrayPosition;
 
 	this.oweEditorCurrentResize.old_y = oEvent.pageY;
 	this.oweEditorCurrentResize.old_rel_y = null;
@@ -1198,7 +1198,7 @@ weEditor.prototype.startResize = function (oEvent)
 // This is kind of a cheat, as it only works over the IFRAME.
 weEditor.prototype.resizeOverIframe = function (oEvent)
 {
-	if (!oEvent || window.smf_oCurrentResizeEditor == null)
+	if (!oEvent || window.weCurrentResizeEditor == null)
 		return true;
 
 	if (this.oweEditorCurrentResize.old_rel_y == null)
@@ -1218,7 +1218,7 @@ weEditor.prototype.resizeOverIframe = function (oEvent)
 // This resizes an editor.
 weEditor.prototype.resizeOverDocument = function (oEvent)
 {
-	if (!oEvent || window.smf_oCurrentResizeEditor == null)
+	if (!oEvent || window.weCurrentResizeEditor == null)
 		return true;
 
 	var iNewHeight = oEvent.pageY - this.oweEditorCurrentResize.old_y + this.oweEditorCurrentResize.cur_height;
@@ -1232,10 +1232,10 @@ weEditor.prototype.resizeOverDocument = function (oEvent)
 
 weEditor.prototype.endResize = function (oEvent)
 {
-	if (window.smf_oCurrentResizeEditor == null)
+	if (window.weCurrentResizeEditor == null)
 		return true;
 
-	window.smf_oCurrentResizeEditor = null;
+	window.weCurrentResizeEditor = null;
 
 	// Remove the event...
 	$(is_ie ? document : window).unbind('mousemove', this.aEventWrappers.resizeOverDocument);

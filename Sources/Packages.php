@@ -274,7 +274,7 @@ function PackageInstallTest()
 
 		$actions = parsePackageInfo($packageInfo['xml'], true, 'uninstall');
 
-		// Gadzooks!  There's no uninstaller at all!?
+		// Gadzooks! There's no uninstaller at all!?
 		if (empty($actions))
 		{
 			deltree($boarddir . '/Packages/temp');
@@ -860,7 +860,7 @@ function PackageInstall()
 	{
 		$install_log = parsePackageInfo($packageInfo['xml'], false, 'uninstall');
 
-		// Gadzooks!  There's no uninstaller at all!?
+		// Gadzooks! There's no uninstaller at all!?
 		if (empty($install_log))
 			fatal_lang_error('package_uninstall_cannot', false);
 
@@ -1119,7 +1119,7 @@ function PackageList()
 
 	loadSource('Subs-Package');
 
-	// No package?  Show him or her the door.
+	// No package? Show him or her the door.
 	if (!isset($_REQUEST['package']) || $_REQUEST['package'] == '')
 		redirectexit('action=admin;area=packages');
 
@@ -1147,11 +1147,11 @@ function ExamineFile()
 
 	loadSource('Subs-Package');
 
-	// No package?  Show him or her the door.
+	// No package? Show him or her the door.
 	if (!isset($_REQUEST['package']) || $_REQUEST['package'] == '')
 		redirectexit('action=admin;area=packages');
 
-	// No file?  Show him or her the door.
+	// No file? Show him or her the door.
 	if (!isset($_REQUEST['file']) || $_REQUEST['file'] == '')
 		redirectexit('action=admin;area=packages');
 
@@ -1338,10 +1338,10 @@ function PackageBrowse()
 			$packageInfo['can_uninstall'] = false;
 			$packageInfo['can_upgrade'] = false;
 
-			// This package is currently NOT installed.  Check if it can be.
+			// This package is currently NOT installed. Check if it can be.
 			if (!$packageInfo['is_installed'] && $packageInfo['xml']->exists('install'))
 			{
-				// Check if there's an install for *THIS* version of SMF.
+				// Check if there's an install for *THIS* version of Wedge.
 				$installs = $packageInfo['xml']->set('install');
 				foreach ($installs as $install)
 				{
@@ -1353,15 +1353,15 @@ function PackageBrowse()
 					}
 				}
 			}
-			// An already installed, but old, package.  Can we upgrade it?
+			// An already installed, but old, package. Can we upgrade it?
 			elseif ($packageInfo['is_installed'] && !$packageInfo['is_current'] && $packageInfo['xml']->exists('upgrade'))
 			{
 				$upgrades = $packageInfo['xml']->set('upgrade');
 
-				// First go through, and check against the current version of SMF.
+				// First go through, and check against the current version of Wedge.
 				foreach ($upgrades as $upgrade)
 				{
-					// Even if it is for this SMF, is it for the installed version of the mod?
+					// Even if it is for this Wedge, is it for the installed version of the mod?
 					if (!$upgrade->exists('@for') || matchPackageVersion($the_version, $upgrade->fetch('@for')))
 						if (!$upgrade->exists('@from') || matchPackageVersion($installed_mods[$packageInfo['id']]['version'], $upgrade->fetch('@from')))
 						{
@@ -1370,12 +1370,12 @@ function PackageBrowse()
 						}
 				}
 			}
-			// Note that it has to be the current version to be uninstallable.  Shucks.
+			// Note that it has to be the current version to be uninstallable. Shucks.
 			elseif ($packageInfo['is_installed'] && $packageInfo['is_current'] && $packageInfo['xml']->exists('uninstall'))
 			{
 				$uninstalls = $packageInfo['xml']->set('uninstall');
 
-				// Can we find any uninstallation methods that work for this SMF version?
+				// Can we find any uninstallation methods that work for this Wedge version?
 				foreach ($uninstalls as $uninstall)
 					if (!$uninstall->exists('@for') || matchPackageVersion($the_version, $uninstall->fetch('@for')))
 					{

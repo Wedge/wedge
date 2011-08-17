@@ -459,8 +459,8 @@ class wesql
 		else
 			$context['error_message'] = $txt['try_again'];
 
-		// A database error is often the sign of a database in need of upgrade. Check forum versions, and if not identical suggest an upgrade... (not for Demo/CVS versions!)
-		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$modSettings['weVersion'] && strpos(WEDGE_VERSION, 'Demo') === false && strpos(WEDGE_VERSION, 'CVS') === false)
+		// A database error is often the sign of a database in need of upgrade. Check forum versions, and if not identical suggest an upgrade... (not for SVN versions!)
+		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$modSettings['weVersion'] && strpos(WEDGE_VERSION, 'SVN') === false)
 			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, $modSettings['weVersion']);
 
 		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
@@ -620,7 +620,7 @@ class wesql
 			break;
 
 			case 'identifier':
-				// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for SMF.
+				// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for Wedge.
 				return '`' . strtr($replacement, array('`' => '', '.' => '')) . '`';
 			break;
 

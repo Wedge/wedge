@@ -695,7 +695,7 @@ function template_servers()
 							<strong>' . $txt['server_name'] . ':</strong>
 						</dt>
 						<dd>
-							<input type="text" name="servername" size="44" value="SMF">
+							<input type="text" name="servername" size="44" value="Wedge">
 						</dd>
 						<dt>
 							<strong>' . $txt['serverurl'] . ':</strong>

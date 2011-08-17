@@ -220,7 +220,7 @@ function PackageGBrowse()
 		if (isset($_GET['relative']))
 			$url = $url . (substr($url, -1) == '/' ? '' : '/') . $_GET['relative'];
 
-		// Clear any "absolute" URL.  Since "server" is present, "absolute" is garbage.
+		// Clear any "absolute" URL. Since "server" is present, "absolute" is garbage.
 		unset($_GET['absolute']);
 	}
 	elseif (isset($_GET['absolute']) && $_GET['absolute'] != '')
@@ -231,7 +231,7 @@ function PackageGBrowse()
 		$name = '';
 		$_GET['package'] = $url . '/packages.xml?language=' . $context['user']['language'];
 
-		// Clear any "relative" URL.  Since "server" is not present, "relative" is garbage.
+		// Clear any "relative" URL. Since "server" is not present, "relative" is garbage.
 		unset($_GET['relative']);
 
 		$token = checkConfirm('get_absolute_url');
@@ -250,7 +250,7 @@ function PackageGBrowse()
 	else
 		fatal_lang_error('couldnt_connect', false);
 
-	// Attempt to connect.  If unsuccessful... try the URL.
+	// Attempt to connect. If unsuccessful... try the URL.
 	if (!isset($_GET['package']) || file_exists($_GET['package']))
 		$_GET['package'] = $url . '/packages.xml?language=' . $context['user']['language'];
 
@@ -265,7 +265,7 @@ function PackageGBrowse()
 	loadSource('Class-Package');
 	$listing = new xmlArray(fetch_web_data($_GET['package']), true);
 
-	// Errm.... empty file?  Try the URL....
+	// Errm.... empty file? Try the URL....
 	if (!$listing->exists('package-list'))
 		fatal_lang_error('packageget_unable', false, array($url . '/index.php'));
 
@@ -394,7 +394,7 @@ function PackageGBrowse()
 				$package['is_current'] = $package['is_installed'] && ($installed_mods[$package['id']] == $package['version']);
 				$package['is_newer'] = $package['is_installed'] && ($installed_mods[$package['id']] > $package['version']);
 
-				// This package is either not installed, or installed but old.  Is it supported on this version of SMF?
+				// This package is either not installed, or installed but old. Is it supported on this version of Wedge?
 				if (!$package['is_installed'] || (!$package['is_current'] && !$package['is_newer']))
 				{
 					if ($thisPackage->exists('version/@for'))
@@ -427,7 +427,7 @@ function PackageGBrowse()
 
 					if (!empty($package['author']['email']))
 					{
-						// Only put the "mailto:" if it looks like a valid email address.  Some may wish to put a link to an SMF IM Form or other web mail form.
+						// Only put the "mailto:" if it looks like a valid email address. Some may wish to put a link to an Wedge IM Form or other web mail form.
 						$package['author']['href'] = preg_match('~^[\w.-]+@\w[\w.-]+\w$~', $package['author']['email']) != 0 ? 'mailto:' . $package['author']['email'] : $package['author']['email'];
 						$package['author']['link'] = '<a href="' . $package['author']['href'] . '">' . $package['author']['name'] . '</a>';
 					}
@@ -595,7 +595,7 @@ function PackageDownload()
 	create_chmod_control(array($boarddir . '/Packages/' . $package_name), array('destination_url' => $scripturl . '?action=admin;area=packages;get;sa=download' . (isset($_GET['server']) ? ';server=' . $_GET['server'] : '') . (isset($_REQUEST['auto']) ? ';auto' : '') . ';package=' . $_REQUEST['package'] . (isset($_REQUEST['conflict']) ? ';conflict' : '') . ';' . $context['session_query'], 'crash_on_error' => true));
 	package_put_contents($boarddir . '/Packages/' . $package_name, fetch_web_data($url . $_REQUEST['package']));
 
-	// Done!  Did we get this package automatically?
+	// Done! Did we get this package automatically?
 	if (preg_match('~^http://[\w-]+\.simplemachines\.org/~', $_REQUEST['package']) == 1 && strpos($_REQUEST['package'], 'dlattach') === false && isset($_REQUEST['auto']))
 		redirectexit('action=admin;area=packages;sa=install;package=' . $package_name);
 

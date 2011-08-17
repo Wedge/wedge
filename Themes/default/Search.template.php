@@ -128,7 +128,7 @@ function template_main()
 
 			$i = 0;
 
-			// I offered this code to SMF back in June 2010, and the other devs promptly rejected it. Their loss!
+			// Vanity card #342. I offered this code to SMF back in June 2010, and the other devs promptly rejected it. Their loss!
 			// Categories MUST be taken into account by $i, in case they each have very different numbers of boards. -- Nao
 
 			$limit = max(12, ceil(($context['num_boards'] + count($context['categories'])) / 2));

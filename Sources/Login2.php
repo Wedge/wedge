@@ -117,7 +117,7 @@ function Login2()
 	if (!empty($_POST['openid_identifier']) && !empty($modSettings['enableOpenID']))
 	{
 		loadSource('Subs-OpenID');
-		if (($open_id = smf_openID_validate($_POST['openid_identifier'])) !== 'no_data')
+		if (($open_id = we_openID_validate($_POST['openid_identifier'])) !== 'no_data')
 			return $open_id;
 	}
 
@@ -190,7 +190,7 @@ function Login2()
 	$user_settings = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	// Figure out the password using SMF's encryption - if what they typed is right.
+	// Figure out the password using Wedge's encryption - if what they typed is right.
 	if (isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40)
 	{
 		// Needs upgrading?
@@ -301,7 +301,7 @@ function Login2()
 		if (strpos(strtolower(PHP_OS), 'win') !== 0)
 			$other_passwords[] = sha1_smf(strtolower($user_settings['member_name']) . un_htmlspecialchars($_POST['passwrd']));
 
-		// Whichever encryption it was using, let's make it use SMF's now ;).
+		// Whichever encryption it was using, let's make it use Wedge's now ;)
 		if (in_array($user_settings['passwd'], $other_passwords))
 		{
 			$user_settings['passwd'] = $sha_passwd;

@@ -42,7 +42,7 @@ if (!defined('WEDGE'))
 		- requires the admin_forum permission.
 		- uses the convert_utf8 sub template of the Admin template.
 		- only works if UTF-8 is not the global character set.
-		- supports all character sets used by SMF's language files.
+		- supports all character sets used by Wedge's language files.
 		- redirects to ?action=admin;area=maintain after finishing.
 		- is linked from the maintenance screen (if applicable).
 		- accessed by ?action=admin;area=maintain;sa=database;activity=convertutf8.
@@ -347,7 +347,7 @@ function ConvertUtf8()
 	// Show me your badge!
 	isAllowedTo('admin_forum');
 
-	// The character sets used in SMF's language files with their db equivalent.
+	// The character sets used in Wedge's language files with their DB equivalent.
 	$charsets = array(
 		// Chinese-traditional.
 		'big5' => 'big5',
@@ -387,7 +387,7 @@ function ConvertUtf8()
 
 	wesql::free_result($request);
 
-	// Character sets supported by both MySQL and SMF's language files.
+	// Character sets supported by both MySQL and Wedge's language files.
 	$charsets = array_intersect($charsets, $db_charsets);
 
 	// This is for the first screen telling backups is good.
@@ -914,7 +914,7 @@ function OptimizeTables()
 	// If there aren't any tables then I believe that would mean the world has exploded...
 	$context['num_tables'] = count($tables);
 	if ($context['num_tables'] == 0)
-		fatal_error('You appear to be running SMF in a flat file mode... fantastic!', false);
+		fatal_error('You appear to be running Wedge in a flat file mode... fantastic!', false);
 
 	// For each table....
 	$context['optimized_tables'] = array();

@@ -178,7 +178,7 @@ function ModifyModSettings()
 	$subActions[$_REQUEST['sa']]();
 }
 
-// This is an overall control panel enabling/disabling lots of SMF's key feature components.
+// This is an overall control panel enabling/disabling lots of Wedge's key feature components.
 function ModifyCoreFeatures($return_config = false)
 {
 	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
@@ -703,7 +703,7 @@ function ModifyPruningSettings($return_config = false)
 			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word']), // Log of the scheduled tasks and how long they ran.
 			array('int', 'pruneSpiderHitLog', 'postinput' => $txt['days_word']), // Log of the scheduled tasks and how long they ran.
 			// If you add any additional logs make sure to add them after this point.  Additionally, make sure you add them to the weekly scheduled task.
-			// Mod Developers: Do NOT use the pruningOptions master variable for this as SMF Core may overwrite your setting in the future!
+			// Add-on developers: do NOT use the pruningOptions master variable for this as Wedge may overwrite your setting in the future!
 	);
 
 	if ($return_config)

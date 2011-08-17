@@ -1237,14 +1237,14 @@ function highlight_php_code($code)
 	global $context;
 
 	// Remove special characters.
-	$code = un_htmlspecialchars(strtr($code, array('<br>' => "\n", "\t" => 'SMF_TAB();', '&#91;' => '[')));
+	$code = un_htmlspecialchars(strtr($code, array('<br>' => "\n", "\t" => 'WEDGE_TAB();', '&#91;' => '[')));
 
 	$oldlevel = error_reporting(0);
 	$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
 	error_reporting($oldlevel);
 
-	// Yes, I know this is kludging it, but this is the best way to preserve tabs from PHP :P.
-	$buffer = preg_replace('~SMF_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<span class="bbc_pre">' . "\t" . '</span>', $buffer);
+	// Yes, I know this is kludging it, but this is the best way to preserve tabs from PHP :P
+	$buffer = preg_replace('~WEDGE_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<span class="bbc_pre">' . "\t" . '</span>', $buffer);
 
 	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
 }

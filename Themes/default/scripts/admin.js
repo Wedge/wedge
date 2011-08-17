@@ -89,20 +89,20 @@ we_AdminIndex.prototype.showCurrentVersion = function ()
 
 we_AdminIndex.prototype.checkUpdateAvailable = function ()
 {
-	if (!('smfUpdatePackage' in window))
+	if (!('weUpdatePackage' in window))
 		return;
 
 	// Show custom or generic title and message.
 	// If it's a critical update, make the title more visible.
 	$('#update_title')
-		.html(window.smfUpdateTitle || this.opt.sUpdateTitle)
-		.css('smfUpdateCritical' in window ? { color: '#ffcc99', fontSize: '1.2em' } : {});
+		.html(window.weUpdateTitle || this.opt.sUpdateTitle)
+		.css('weUpdateCritical' in window ? { color: '#ffcc99', fontSize: '1.2em' } : {});
 	$('#update_message')
-		.html(window.smfUpdateNotice || this.opt.sUpdateMessage);
+		.html(window.weUpdateNotice || this.opt.sUpdateMessage);
 	$('#update_section').show();
 
 	// Parse in the package download URL if it exists in the string.
-	$('#update-link').attr('href', this.opt.sUpdateLink.replace('%package%', window.smfUpdatePackage));
+	$('#update-link').attr('href', this.opt.sUpdateLink.replace('%package%', window.weUpdatePackage));
 };
 
 
@@ -256,24 +256,24 @@ we_ViewVersions.prototype.determineVersions = function ()
 		$('#your' + sID).html(sYourVersion);
 	}
 
-	if (!('smfLanguageVersions' in window))
-		window.smfLanguageVersions = {};
+	if (!('weLanguageVersions' in window))
+		window.weLanguageVersions = {};
 
-	for (sFilename in window.smfLanguageVersions)
+	for (sFilename in window.weLanguageVersions)
 	{
 		for (i = 0, n = this.opt.aKnownLanguages.length; i < n; i++)
 		{
-			if ($('#current' + sFilename + this.opt.aKnownLanguages[i]).html(smfLanguageVersions[sFilename]).length)
+			if ($('#current' + sFilename + this.opt.aKnownLanguages[i]).html(weLanguageVersions[sFilename]).length)
 				continue;
 
 			sYourVersion = $('#your' + sFilename + this.opt.aKnownLanguages[i]).html();
 
 			if ((this.compareVersions(oHighYour.Languages, sYourVersion) || oHighYour.Languages == '??') && !oLowVersion.Languages)
 				oHighYour.Languages = sYourVersion;
-			if (this.compareVersions(oHighCurrent.Languages, smfLanguageVersions[sFilename]) || oHighCurrent.Languages == '??')
-				oHighCurrent.Languages = smfLanguageVersions[sFilename];
+			if (this.compareVersions(oHighCurrent.Languages, weLanguageVersions[sFilename]) || oHighCurrent.Languages == '??')
+				oHighCurrent.Languages = weLanguageVersions[sFilename];
 
-			if (this.compareVersions(sYourVersion, smfLanguageVersions[sFilename]))
+			if (this.compareVersions(sYourVersion, weLanguageVersions[sFilename]))
 			{
 				oLowVersion.Languages = sYourVersion;
 				$('#your' + sFilename + this.opt.aKnownLanguages[i]).css('color', 'red');

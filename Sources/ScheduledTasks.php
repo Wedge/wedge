@@ -481,7 +481,7 @@ function scheduled_daily_maintenance()
 	if (!empty($modSettings['enableOpenID']))
 	{
 		loadSource('Subs-OpenID');
-		smf_openID_setup_DH(true);
+		we_openID_setup_DH(true);
 	}
 	elseif (!empty($modSettings['dh_keys']))
 		wesql::query('

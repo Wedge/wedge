@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 
 /*	This file has the primary job of showing and editing people's profiles.
 	It also allows the user to change some of their or another's preferences,
-	and such things.  It uses the following functions:
+	and such things. It uses the following functions:
 
 	void ModifyProfile(array errors = none)
 		// !!!
@@ -66,7 +66,7 @@ function ModifyProfile($post_errors = array())
 	$context['user']['is_owner'] = $memID == $user_info['id'];
 
 	/* Define all the sections within the profile area!
-		We start by defining the permission required - then SMF takes this and turns it into the relevant context ;)
+		We start by defining the permission required - then Wedge takes this and turns it into the relevant context ;)
 		Possible fields:
 			For Section:
 				string $title:		Section title.
@@ -559,7 +559,7 @@ function ModifyProfile($post_errors = array())
 			if (!empty($user_settings['openid_uri']))
 			{
 				loadSource('Subs-OpenID');
-				smf_openID_revalidate();
+				we_openID_revalidate();
 			}
 			else
 			{

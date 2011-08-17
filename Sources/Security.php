@@ -14,8 +14,8 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-/*	This file has the very important job of insuring forum security.  This
-	task includes banning and permissions, namely.  It does this by providing
+/*	This file has the very important job of insuring forum security. This
+	task includes banning and permissions, namely. It does this by providing
 	the following functions:
 
 	void validateSession()
@@ -110,7 +110,7 @@ function validateSession()
 	// If we're using XML give an additional ten minutes grace as an admin can't log on in XML mode.
 	$refreshTime = isset($_GET['xml']) ? 4200 : 3600;
 
-	// Is the security option off?  Or are they already logged in?
+	// Is the security option off? Or are they already logged in?
 	if (!empty($modSettings['securityDisable']) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time()))
 		return;
 
@@ -147,7 +147,7 @@ function validateSession()
 	if (!empty($user_settings['openid_uri']))
 	{
 		loadSource('Subs-OpenID');
-		smf_openID_revalidate();
+		we_openID_revalidate();
 
 		$_SESSION['admin_time'] = time();
 		return;
@@ -216,7 +216,7 @@ function is_not_guest($message = '')
 	trigger_error('Hacking attempt...', E_USER_ERROR);
 }
 
-// Do banning related stuff.  (ie. disallow access....)
+// Do banning related stuff. (ie. disallow access....)
 function is_not_banned($forceCheck = false)
 {
 	global $txt, $modSettings, $context, $user_info;
@@ -229,7 +229,7 @@ function is_not_banned($forceCheck = false)
 	// Only check the ban every so often. (to reduce load.)
 	if ($forceCheck || !isset($_SESSION['ban']) || empty($modSettings['banLastUpdated']) || ($_SESSION['ban']['last_checked'] < $modSettings['banLastUpdated']) || $_SESSION['ban']['id_member'] != $user_info['id'] || $_SESSION['ban']['ip'] != $user_info['ip'] || $_SESSION['ban']['ip2'] != $user_info['ip2'] || (isset($user_info['email'], $_SESSION['ban']['email']) && $_SESSION['ban']['email'] != $user_info['email']))
 	{
-		// Innocent until proven guilty.  (but we know you are! :P)
+		// Innocent until proven guilty. (But we know you are! :P)
 		$_SESSION['ban'] = array(
 			'last_checked' => time(),
 			'id_member' => $user_info['id'],
@@ -384,7 +384,7 @@ function is_not_banned($forceCheck = false)
 				)
 			);
 
-		// 'Log' the user out.  Can't have any funny business... (save the name!)
+		// 'Log' the user out. Can't have any funny business... (save the name!)
 		$old_name = isset($user_info['name']) && $user_info['name'] != '' ? $user_info['name'] : $txt['guest_title'];
 		$user_info['name'] = '';
 		$user_info['username'] = '';
@@ -433,7 +433,7 @@ function is_not_banned($forceCheck = false)
 			)
 		);
 
-		// 'Log' the user out.  Can't have any funny business... (save the name!)
+		// 'Log' the user out. Can't have any funny business... (save the name!)
 		$old_name = isset($user_info['name']) && $user_info['name'] != '' ? $user_info['name'] : $txt['guest_title'];
 		$user_info['name'] = '';
 		$user_info['username'] = '';
@@ -453,7 +453,7 @@ function is_not_banned($forceCheck = false)
 			'language' => $user_info['language'],
 		);
 
-		// SMF's Wipe 'n Clean(r) erases all traces.
+		// Wedge's Wipe 'n Clean(r) erases all traces.
 		$_GET['action'] = '';
 		$_GET['board'] = '';
 		$_GET['topic'] = '';
@@ -610,7 +610,7 @@ function isBannedEmail($email, $restriction, $error)
 	}
 	wesql::free_result($request);
 
-	// You're in biiig trouble.  Banned for the rest of this session!
+	// You're in biiig trouble. Banned for the rest of this session!
 	if (isset($_SESSION['ban']['cannot_access']))
 	{
 		log_ban($_SESSION['ban']['cannot_access']['ids']);
@@ -680,7 +680,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 
 		$parsed_url = parse_url($boardurl);
 
-		// Are global cookies on?  If so, let's check them ;).
+		// Are global cookies on? If so, let's check them ;)
 		if (!empty($modSettings['globalCookies']))
 		{
 			if (preg_match('~(?:[^.]+\.)?([^.]{3,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
@@ -709,7 +709,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	}
 
 	if (strtolower($_SERVER['HTTP_USER_AGENT']) == 'hacker')
-		fatal_error('Sound the alarm!  It\'s a hacker!  Close the castle gates!!', false);
+		fatal_error('Sound the alarm! It\'s a hacker! Close the castle gates!!', false);
 
 	// Everything is ok, return an empty string.
 	if (!isset($error))
@@ -730,7 +730,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	else
 		return $error;
 
-	// We really should never fall through here, for very important reasons.  Let's make sure.
+	// We really should never fall through here, for very important reasons. Let's make sure.
 	trigger_error('Hacking attempt...', E_USER_ERROR);
 }
 

@@ -12,7 +12,7 @@
  */
 
 // This won't be dedicated without this - this must exist in each gateway!
-// SMF Payment Gateway: paypal
+// Wedge Payment Gateway: paypal
 
 if (!defined('WEDGE'))
 	die('Hacking attempt...');

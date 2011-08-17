@@ -11,9 +11,9 @@
  */
 
 var
+	weEditors = [],
 	_formSubmitted = false,
 	_lastKeepAliveCheck = new Date().getTime(),
-	smf_editorArray = [],
 
 	// Basic browser detection
 	ua = navigator.userAgent.toLowerCase(),
@@ -157,8 +157,8 @@ function submitonce()
 	_formSubmitted = true;
 
 	// If there are any editors warn them submit is coming!
-	for (var i = 0; i < smf_editorArray.length; i++)
-		smf_editorArray[i].doSubmit();
+	for (var i = 0; i < weEditors.length; i++)
+		weEditors[i].doSubmit();
 }
 
 function submitThisOnce(oControl)
@@ -221,13 +221,8 @@ setTimeout(_sessionKeepAlive, 1200000);
 // Set a theme option through javascript.
 function smf_setThemeOption(option, value, theme, cur_session_id, cur_session_var, additional_vars)
 {
-	if (!cur_session_id)
-		cur_session_id = smf_session_id;
-	if (!additional_vars)
-		additional_vars = '';
-
 	var tempImage = new Image();
-	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + cur_session_var + '=' + cur_session_id + additional_vars + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
+	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + cur_session_var + '=' + cur_session_id + (additional_vars || '') + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
 }
 
 function smf_avatarResize()

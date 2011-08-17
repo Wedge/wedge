@@ -1700,9 +1700,9 @@ function authentication($memID, $saving = false)
 		elseif ($_POST['authenticate'] == 'openid' && !empty($_POST['openid_identifier']))
 		{
 			loadSource('Subs-OpenID');
-			$_POST['openid_identifier'] = smf_openID_canonize($_POST['openid_identifier']);
+			$_POST['openid_identifier'] = we_openID_canonize($_POST['openid_identifier']);
 
-			if (smf_openid_member_exists($_POST['openid_identifier']))
+			if (we_openID_member_exists($_POST['openid_identifier']))
 				$post_errors[] = 'openid_in_use';
 			elseif (empty($post_errors))
 			{
@@ -1711,7 +1711,7 @@ function authentication($memID, $saving = false)
 				{
 					$_SESSION['new_openid_uri'] = $_POST['openid_identifier'];
 
-					smf_openID_validate($_POST['openid_identifier'], false, null, 'change_uri');
+					we_openID_validate($_POST['openid_identifier'], false, null, 'change_uri');
 				}
 				else
 					updateMemberData($memID, array('openid_uri' => $_POST['openid_identifier']));

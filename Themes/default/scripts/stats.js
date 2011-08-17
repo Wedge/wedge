@@ -132,7 +132,7 @@ function smf_StatsCenter(oOptions)
 
 smf_StatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {
-	// Tell SMF that all underlying months have disappeared.
+	// Tell Wedge that all underlying months have disappeared.
 	var oMon = this.oYears[oToggle.opt.sYearId].oMonths, m = oMon.length, i;
 	for (i = 0; i < m; i++)
 		if (oMon[i].oToggle.opt.aSwappableContainers.length > 0)
@@ -143,7 +143,7 @@ smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 {
 	if (!oToggle.bCollapsed)
 	{
-		// Tell SMF that it the state has changed.
+		// Tell Wedge that the state has changed.
 		getXMLDocument(we_prepareScriptUrl() + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
 
 		// Remove the month rows from the year toggle.

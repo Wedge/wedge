@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
 		- get a list of versions that are currently installed on the server.
 
 	void getFileVersions(array versionOptions)
-		- get detailed version information about the physical SMF files on the
+		- get detailed version information about the physical Wedge files on the
 		  server.
 		- the input parameter allows to set whether to include SSI.php and
 		  whether the results should be sorted.

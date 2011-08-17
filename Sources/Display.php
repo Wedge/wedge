@@ -1573,7 +1573,7 @@ function loadAttachmentContext($id_msg)
 						list ($attachment['thumb_width'], $attachment['thumb_height']) = $size;
 						$thumb_size = filesize($filename . '_thumb');
 
-						// These are the only valid image types for SMF.
+						// These are the only valid image types for Wedge.
 						$validImageTypes = array(1 => 'gif', 2 => 'jpeg', 3 => 'png', 5 => 'psd', 6 => 'bmp', 7 => 'tiff', 8 => 'tiff', 9 => 'jpeg', 14 => 'iff');
 
 						// What about the extension?

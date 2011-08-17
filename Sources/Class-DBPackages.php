@@ -63,7 +63,7 @@ class wedbPackages
 		$full_table_name = str_replace('{db_prefix}', $real_prefix, $table_name);
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
-		// First - no way do we touch SMF tables.
+		// First - no way do we touch Wedge tables.
 		if (in_array(strtolower($table_name), self::$reservedTables))
 			return false;
 

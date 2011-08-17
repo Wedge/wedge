@@ -94,8 +94,8 @@ class wedit
 				add_js('
 	function spellCheckDone()
 	{
-		for (i = 0; i < smf_editorArray.length; i++)
-			setTimeout("smf_editorArray[" + i + "].spellCheckEnd()", 150);
+		for (i = 0; i < weEditors.length; i++)
+			setTimeout("weEditors[" + i + "].spellCheckEnd()", 150);
 	}');
 			}
 		}
@@ -501,7 +501,7 @@ class wedit
 			// Keep track of the number of nested list levels.
 			$listDepth = 0;
 
-			// Map what we can expect from the HTML to what is supported by SMF.
+			// Map what we can expect from the HTML to what is supported by Wedge.
 			$listTypeMapping = array(
 				'1' => 'decimal',
 				'A' => 'upper-alpha',
@@ -2430,7 +2430,7 @@ class wedit
 		aProtectTags: ["' . implode('", "', array_flip(array_flip($unparsed_tags))) . '"]') . (empty($closed_tags) ? '' : ',
 		aClosedTags: ["' . implode('", "', array_flip(array_flip($closed_tags))) . '"]') . '
 	});
-	smf_editorArray.push(oEditorHandle_' . $this->id . ');');
+	weEditors.push(oEditorHandle_' . $this->id . ');');
 	}
 
 	public function outputButtons()
