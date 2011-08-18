@@ -176,6 +176,7 @@ function ModifySettings()
 		'cache' => 'ModifyCacheSettings',
 		'loads' => 'ModifyLoadBalancingSettings',
 		'proxy' => 'ModifyProxySettings',
+		'debug' => 'ModifyDebugSettings',
 	);
 
 	if (strpos(strtolower(PHP_OS), 'win') === 0)
@@ -240,22 +241,6 @@ function ModifyGeneralSettings($return_config = false)
 		), 'jquery_origin'),
 		'',
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
-		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
-		'',
-		array('db_show_debug', $txt['db_show_debug'], 'file', 'check', null, 'db_show_debug'),
-		array('db_show_debug_who', $txt['db_show_debug_who'], 'db', 'select', array(
-			// !!! Hideous long format to cope with the lack of preparsing done by preparseServerSettingsContext and template expectations
-			'admin' => array('admin', $txt['db_show_debug_admin']),
-			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
-			'regular' => array('regular', $txt['db_show_debug_regular']),
-			'any' => array('any', $txt['db_show_debug_any']),
-		), 'db_show_debug_who'),
-		array('db_show_debug_who_log', $txt['db_show_debug_who_log'], 'db', 'select', array(
-			'admin' => array('admin', $txt['db_show_debug_admin']),
-			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
-			'regular' => array('regular', $txt['db_show_debug_regular']),
-			'any' => array('any', $txt['db_show_debug_any']),
-		), 'db_show_debug_who_log'),
 	);
 
 	if ($return_config)
@@ -557,6 +542,48 @@ function ModifyProxySettings($return_config = false)
 
 	// Prepare the template.
 	prepareDBSettingContext($config_vars);
+}
+
+function ModifyDebugSettings($return_config = false)
+{
+	global $scripturl, $context, $txt, $modSettings, $cachedir;
+
+	$config_vars = array(
+		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
+		array('timeLoadPageEnable', $txt['timeLoadPageEnable'], 'db', 'check', null, 'timeLoadPageEnable'),
+		'',
+		array('db_show_debug', $txt['db_show_debug'], 'file', 'check', null, 'db_show_debug'),
+		array('db_show_debug_who', $txt['db_show_debug_who'], 'db', 'select', array(
+			// !!! Hideous long format to cope with the lack of preparsing done by preparseServerSettingsContext and template expectations
+			'admin' => array('admin', $txt['db_show_debug_admin']),
+			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
+			'regular' => array('regular', $txt['db_show_debug_regular']),
+			'any' => array('any', $txt['db_show_debug_any']),
+		), 'db_show_debug_who'),
+		array('db_show_debug_who_log', $txt['db_show_debug_who_log'], 'db', 'select', array(
+			'admin' => array('admin', $txt['db_show_debug_admin']),
+			'mod' => array('mod', $txt['db_show_debug_admin_mod']),
+			'regular' => array('regular', $txt['db_show_debug_regular']),
+			'any' => array('any', $txt['db_show_debug_any']),
+		), 'db_show_debug_who_log'),
+	);
+
+	if ($return_config)
+		return $config_vars;
+
+	// Setup the template stuff.
+	$context['post_url'] = $scripturl . '?action=admin;area=serversettings;sa=debug;save';
+	$context['settings_title'] = $txt['general_settings'];
+
+	// Saving settings?
+	if (isset($_REQUEST['save']))
+	{
+		saveSettings($config_vars);
+		redirectexit('action=admin;area=serversettings;sa=debug;' . $context['session_query']);
+	}
+
+	// Fill the config array.
+	prepareServerSettingsContext($config_vars);
 }
 
 // This is the main function for the language area.

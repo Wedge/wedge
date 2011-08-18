@@ -419,9 +419,6 @@ function ModifyLayoutSettings($return_config = false)
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
 			array('check', 'onlineEnable'),
 			array('check', 'enableVBStyleLogin'),
-		'',
-			// This is sort of like debugging.
-			array('check', 'timeLoadPageEnable'),
 	);
 
 	if ($return_config)
