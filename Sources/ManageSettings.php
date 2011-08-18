@@ -380,9 +380,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 			// Reactive on email, and approve on delete
 			array('check', 'send_validation_onChange'),
 			array('check', 'approveAccountDeletion'),
-		'',
-			// Reporting of personal messages?
-			array('check', 'enableReportPM'),
 	);
 
 	if ($return_config)
@@ -417,7 +414,6 @@ function ModifyLayoutSettings($return_config = false)
 		'',
 			// Stuff that just is everywhere - today, search, online, etc.
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
-			array('check', 'onlineEnable'),
 			array('check', 'enableVBStyleLogin'),
 	);
 

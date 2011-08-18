@@ -3156,7 +3156,7 @@ function ReportMessage()
 	global $user_info, $language, $modSettings;
 
 	// Check that this feature is even enabled!
-	if (empty($modSettings['enableReportPM']) || empty($_REQUEST['pmsg']))
+	if (empty($_REQUEST['pmsg']))
 		fatal_lang_error('no_access', false);
 
 	$pmsg = (int) $_REQUEST['pmsg'];

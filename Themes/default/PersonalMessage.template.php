@@ -184,7 +184,7 @@ function template_folder()
 			<h4>';
 
 			// Show online and offline buttons?
-			if (!empty($modSettings['onlineEnable']) && !$message['member']['is_guest'])
+			if (!$message['member']['is_guest'])
 				echo '
 				<img src="', $message['member']['online']['image_href'], '" alt="', $message['member']['online']['text'], '">';
 
@@ -378,7 +378,7 @@ function template_folder()
 			</div>
 			<div class="post">
 				<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>
-				<div class="smalltext reportlinks">', (!empty($modSettings['enableReportPM']) && $context['folder'] != 'sent' ? '
+				<div class="smalltext reportlinks">', $context['folder'] != 'sent' ? '
 					<div class="righttext"><a href="' . $scripturl . '?action=pm;sa=report;l=' . $context['current_label_id'] . ';pmsg=' . $message['id'] . '">' . $txt['pm_report_to_admin'] . '</a></div>' : '');
 
 			echo '

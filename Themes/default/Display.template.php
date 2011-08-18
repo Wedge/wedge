@@ -544,7 +544,7 @@ function template_userbox(&$message)
 							<h4>';
 
 	// Show online and offline buttons?
-	if (!empty($modSettings['onlineEnable']) && !$message['member']['is_guest'])
+	if (!$message['member']['is_guest'])
 		echo '
 								', $context['can_send_pm'] ? '<a href="' . $message['member']['online']['href'] . '" title="' . $message['member']['online']['label'] . '">' : '', '<img src="', $message['member']['online']['image_href'], '" alt="', $message['member']['online']['text'], '">', $context['can_send_pm'] ? '</a>' : '';
 
