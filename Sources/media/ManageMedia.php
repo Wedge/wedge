@@ -183,7 +183,7 @@ function aeva_admin_about()
 			$readme = substr_replace($readme, '', strpos($readme, '; padding-top: 12px'), 19);
 		}
 		else
-			$readme = parse_bbc(str_replace('%1', AEVA_MEDIA_VERSION, $readme));
+			$readme = parse_bbc($readme);
 		$context['aeva_readme_file'] = str_replace(array('& ', '<pre></pre>'), array('&amp; ', ''), $readme);
 		return;
 	}

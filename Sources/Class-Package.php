@@ -656,7 +656,7 @@ if (!class_exists('ftp_connection'))
 		public $connection, $error, $last_message, $pasv;
 
 		// Create a new FTP connection...
-		public function __construct($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@simplemachines.org')
+		public function __construct($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@wedge.org')
 		{
 			// Initialize variables.
 			$this->connection = 'no_connection';
@@ -667,7 +667,7 @@ if (!class_exists('ftp_connection'))
 				$this->connect($ftp_server, $ftp_port, $ftp_user, $ftp_pass);
 		}
 
-		public function connect($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@simplemachines.org')
+		public function connect($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@wedge.org')
 		{
 			if (substr($ftp_server, 0, 6) == 'ftp://')
 				$ftp_server = substr($ftp_server, 6);

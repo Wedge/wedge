@@ -81,9 +81,8 @@ if (!defined('WEDGE'))
 
 	void VersionDetail()
 		- parses the comment headers in all files for their version information
-		  and outputs that for some javascript to check with simplemachines.org.
-		- does not connect directly with simplemachines.org, but rather
-		  expects the client to.
+		  and outputs that for some javascript to check with wedge.org.
+		- does not connect directly with wedge.org, instead expects the client to.
 		- requires the admin_forum permission.
 		- uses the view_versions admin area.
 		- loads the view_versions sub template (in the Admin template.)
@@ -902,7 +901,7 @@ function OptimizeTables()
 	$context['page_title'] = $txt['database_optimize'];
 	loadSubTemplate('optimize');
 
-	// Only optimize the tables related to this smf install, not all the tables in the db
+	// Only optimize the tables related to this Wedge install, not all the tables in the DB...
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
 
 	// Get a list of tables, as well as how many there are.

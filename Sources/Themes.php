@@ -1258,9 +1258,9 @@ function ThemeInstall()
 
 		// Let's add a theme_info.xml to this theme.
 		$xml_info = '<?xml version="1.0"?' . '>
-<theme-info xmlns="http://www.simplemachines.org/xml/theme-info" xmlns:smf="http://www.simplemachines.org/">
+<theme-info xmlns="http://wedge.org/files/xml/theme-info.dtd" xmlns:we="http://wedge.org/">
 	<!-- For the id, always use something unique - put your name, a colon, and then the package name. -->
-	<id>smf:' . westr::strtolower(str_replace(array(' '), '_', $_REQUEST['copy'])) . '</id>
+	<id>wedge:' . westr::strtolower(str_replace(array(' '), '_', $_REQUEST['copy'])) . '</id>
 	<version>' . $modSettings['weVersion'] . '</version>
 	<!-- Theme name, used purely for aesthetics. -->
 	<name>' . $_REQUEST['copy'] . '</name>
@@ -1309,9 +1309,9 @@ function ThemeInstall()
 			$extracted = read_tgz_file($_FILES['theme_gz']['tmp_name'], $boarddir . '/Themes/' . $theme_name, false, true);
 		elseif (isset($_REQUEST['theme_gz']))
 		{
-			// Check that the theme is from simplemachines.org, for now... maybe add mirroring later.
-			if (preg_match('~^http://[\w-]+\.simplemachines\.org/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
-				fatal_lang_error('not_on_simplemachines');
+			// Check that the theme is from wedge.org, for now... maybe add mirroring later.
+			if (preg_match('~^http://[\w-]+\.wedge\.org/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
+				fatal_lang_error('package_not_on_wedge');
 
 			$extracted = read_tgz_file($_REQUEST['theme_gz'], $boarddir . '/Themes/' . $theme_name, false, true);
 		}

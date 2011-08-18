@@ -15,10 +15,6 @@
 if (!defined('WEDGE'))
 	die('Hacking Attempt...');
 
-////////////////////////////////////////////
-define('AEVA_MEDIA_VERSION', '2.10');
-////////////////////////////////////////////
-
 /* This file contains vital functions used by the gallery in order to function
 
 	void media_is_not_banned()
@@ -760,7 +756,6 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 		while ($row = wesql::fetch_assoc($request))
 			$amSettings[$row['name']] = $row['value'];
 		wesql::free_result($request);
-		$amSettings['version'] = AEVA_MEDIA_VERSION;
 
 		// Cache the settings
 		if ($amSettings['enable_cache'])

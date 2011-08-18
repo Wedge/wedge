@@ -138,7 +138,7 @@ function template_credits()
 
 	<div id="admincenter">';
 
-	// Display latest support questions from simplemachines.org.
+	// Display latest support questions from wedge.org
 	echo '
 		<we:cat>
 			<a href="', $scripturl, '?action=help;in=latest_support" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
@@ -239,13 +239,13 @@ function template_view_versions()
 
 	// And pass through the versions in case we want to make use of any of them.
 	add_js('
-	var smfSupportVersions = {};
+	var weSupportVersions = {};
 
-	smfSupportVersions.forum = "', $context['forum_version'], '";');
+	weSupportVersions.forum = "', $context['forum_version'], '";');
 
 	foreach ($context['current_versions'] as $variable => $version)
 		add_js('
-	smfSupportVersions.', $variable, ' = "', $version['version'], '";');
+	weSupportVersions.', $variable, ' = "', $version['version'], '";');
 
 	echo '
 			<table class="table_grid w100 cs0">

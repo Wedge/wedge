@@ -361,11 +361,11 @@ function template_main()
 			$(postmod.preview).click(function () { return true; }).click();
 
 		// Show the preview section.
-		$("#preview_subject").html($("smf preview subject", XMLDoc).text());
-		$("#preview_body").html($("smf preview body", XMLDoc).text()).attr("class", "post");
+		$("#preview_subject").html($("we preview subject", XMLDoc).text());
+		$("#preview_body").html($("we preview body", XMLDoc).text()).attr("class", "post");
 
 		// Show a list of errors (if any).
-		var errors = $("smf errors", XMLDoc), errorList = [];
+		var errors = $("we errors", XMLDoc), errorList = [];
 		$("error", errors).each(function () {
 			errorList.push($(this).text());
 		});
@@ -393,7 +393,7 @@ function template_main()
 
 		// Set the new last message id.
 		if ("last_msg" in postmod)
-			postmod.last_msg.value = $("smf last_msg", XMLDoc).text();
+			postmod.last_msg.value = $("we last_msg", XMLDoc).text();
 
 		// Remove the new image from old-new replies!
 		for (i = 0; i < new_replies.length; i++)
@@ -403,7 +403,7 @@ function template_main()
 		var ignored_replies = [], ignoring;
 		var newPostsHTML = "", id;
 
-		$("smf new_posts post", XMLDoc).each(function () {
+		$("we new_posts post", XMLDoc).each(function () {
 			id = $(this).attr("id");
 			new_replies.push(id);
 

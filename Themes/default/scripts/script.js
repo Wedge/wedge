@@ -674,7 +674,7 @@ function grabJumpToContent()
 
 	ajax_indicator(true);
 
-	$('smf item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
+	$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
 		aBoardsAndCategories.push({
 			id: parseInt(this.getAttribute('id'), 10),
 			isCategory: this.getAttribute('type') == 'category',

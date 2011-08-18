@@ -101,8 +101,8 @@ function modify_topic_done(XMLDoc)
 	}
 
 	var
-		subject = $('smf message subject', XMLDoc),
-		error = $('smf message error', XMLDoc);
+		subject = $('we message subject', XMLDoc),
+		error = $('we message error', XMLDoc);
 
 	ajax_indicator(false);
 
@@ -301,7 +301,7 @@ QuickModify.prototype.onModifyDone = function (XMLDoc)
 	ajax_indicator(false);
 
 	var
-		message = $('smf message', XMLDoc),
+		message = $('we message', XMLDoc),
 		body = $('body', message),
 		error = $('error', message);
 
@@ -528,7 +528,7 @@ IconList.prototype.onIconsReceived = function (oXMLDoc)
 {
 	var sItems = '', br = this.opt.sBackReference, bord = this.opt.sItemBorder, bg = this.opt.sItemBackground;
 
-	$('smf icon', oXMLDoc).each(function () {
+	$('we icon', oXMLDoc).each(function () {
 		sItems += '<div onmouseover="' + br + '.onItemHover(this, true)" onmouseout="' + br + '.onItemHover(this, false);" onmousedown="' + br + '.onItemMouseDown(this, \'' + $(this).attr('value') + '\');" style="padding: 3px 0px; margin-left: auto; margin-right: auto; border: ' + bord + '; background: ' + bg + '"><img src="' + $(this).attr('url') + '" alt="' + $(this).attr('name') + '" title="' + $(this).text() + '"></div>';
 	});
 
@@ -563,7 +563,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 		var oXMLDoc = getXMLDocument(we_prepareScriptUrl() + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';icon=' + sNewIcon + ';xml');
 		ajax_indicator(false);
 
-		var oMessage = $('smf message', oXMLDoc.responseXML);
+		var oMessage = $('we message', oXMLDoc.responseXML);
 		if (!($('error', oMessage).length))
 		{
 			if (this.opt.bShowModify && $('modified', oMessage).length)

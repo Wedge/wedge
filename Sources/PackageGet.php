@@ -596,7 +596,7 @@ function PackageDownload()
 	package_put_contents($boarddir . '/Packages/' . $package_name, fetch_web_data($url . $_REQUEST['package']));
 
 	// Done! Did we get this package automatically?
-	if (preg_match('~^http://[\w-]+\.simplemachines\.org/~', $_REQUEST['package']) == 1 && strpos($_REQUEST['package'], 'dlattach') === false && isset($_REQUEST['auto']))
+	if (preg_match('~^http://[\w-]+\.wedge\.org/~', $_REQUEST['package']) == 1 && strpos($_REQUEST['package'], 'dlattach') === false && isset($_REQUEST['auto']))
 		redirectexit('action=admin;area=packages;sa=install;package=' . $package_name);
 
 	// You just downloaded a mod from SERVER_NAME_GOES_HERE.

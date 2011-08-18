@@ -1863,12 +1863,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$ts = $type == 'mailq' ? $modSettings['mail_next_send'] : $modSettings['next_task_time'];
 
 			add_js('
-	function smfAutoTask()
+	function weAutoTask()
 	{
 		var tempImage = new Image();
 		tempImage.src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
 	}
-	setTimeout(smfAutoTask, 1);');
+	setTimeout(weAutoTask, 1);');
 		}
 	}
 
@@ -1881,12 +1881,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	if ($modSettings['next_imperative'] < time())
 		add_js('
-	function smfImperativeTask()
+	function weImperativeTask()
 	{
 		var tempImage = new Image();
 		tempImage.src = "' . $scripturl . '?imperative;ts=' . time() . '";
 	}
-	setTimeout(smfImperativeTask, 1);');
+	setTimeout(weImperativeTask, 1);');
 
 	// Any files to include at this point?
 	if (!empty($modSettings['integrate_theme_include']))

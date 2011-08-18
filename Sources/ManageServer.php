@@ -633,7 +633,7 @@ function AddLanguage()
 
 		// We're going to use this URL.
 		// !!! @todo: Update with Wedge language files.
-		$url = 'http://download.simplemachines.org/fetch_language.php?version=' . urlencode(WEDGE_VERSION);
+		$url = 'http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION);
 
 		// Load the data and stick it into an array.
 		$language_list = new xmlArray(fetch_web_data($url), true);
@@ -717,7 +717,7 @@ function DownloadLanguage()
 		elseif (!empty($install_files))
 		{
 			// !!! @todo: Update with Wedge language files.
-			$archive_content = read_tgz_file('http://download.simplemachines.org/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
+			$archive_content = read_tgz_file('http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
 			// Make sure the files aren't stuck in the cache.
 			package_flush_cache();
 			$context['install_complete'] = sprintf($txt['languages_download_complete_desc'], $scripturl . '?action=admin;area=languages');
@@ -729,7 +729,7 @@ function DownloadLanguage()
 	// Open up the old china.
 	// !!! @todo: Update with Wedge language files.
 	if (!isset($archive_content))
-		$archive_content = read_tgz_file('http://download.simplemachines.org/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), null);
+		$archive_content = read_tgz_file('http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), null);
 
 	if (empty($archive_content))
 		fatal_error($txt['add_language_error_no_response']);

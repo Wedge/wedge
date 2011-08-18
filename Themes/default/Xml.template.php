@@ -16,9 +16,9 @@ function template_sendbody()
 	global $context;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
+<we>
 	<message view="', $context['view'], '">', cleanXml($context['message']), '</message>
-</smf>';
+</we>';
 }
 
 function template_quotefast()
@@ -26,9 +26,9 @@ function template_quotefast()
 	global $context;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
+<we>
 	<quote>', cleanXml($context['quote']['xml']), '</quote>
-</smf>';
+</we>';
 }
 
 function template_modifyfast()
@@ -36,10 +36,10 @@ function template_modifyfast()
 	global $context;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
+<we>
 	<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
 	<message id="msg_', $context['message']['id'], '"><![CDATA[', cleanXml($context['message']['body']), ']]></message>
-</smf>';
+</we>';
 }
 
 function template_modifydone()
@@ -47,7 +47,7 @@ function template_modifydone()
 	global $context, $txt;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
+<we>
 	<message id="msg_', $context['message']['id'], '">';
 	if (empty($context['message']['errors']))
 	{
@@ -61,7 +61,7 @@ function template_modifydone()
 		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '" in_body="', cleanXml($context['message']['error_in_body']) ? '1' : '0', '"><![CDATA[', implode('<br>', $context['message']['errors']), ']]></error>';
 	echo '
 	</message>
-</smf>';
+</we>';
 }
 
 function template_modifytopicdone()
@@ -69,7 +69,7 @@ function template_modifytopicdone()
 	global $context, $txt;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
+<we>
 	<message id="msg_', $context['message']['id'], '">';
 	if (empty($context['message']['errors']))
 	{
@@ -84,7 +84,7 @@ function template_modifytopicdone()
 		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '"><![CDATA[', cleanXml(implode('<br>', $context['message']['errors'])), ']]></error>';
 	echo '
 	</message>
-</smf>';
+</we>';
 }
 
 function template_post()
@@ -92,7 +92,7 @@ function template_post()
 	global $context;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
+<we>
 	<preview>
 		<subject><![CDATA[', $context['preview_subject'], ']]></subject>
 		<body><![CDATA[', $context['preview_message'], ']]></body>
@@ -129,7 +129,7 @@ function template_post()
 	}
 
 	echo '
-</smf>';
+</we>';
 }
 
 function template_stats()
@@ -137,7 +137,7 @@ function template_stats()
 	global $context, $modSettings;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>';
+<we>';
 	foreach ($context['yearly'] as $year)
 		foreach ($year['months'] as $month);
 		{
@@ -150,7 +150,7 @@ function template_stats()
 	</month>';
 		}
 		echo '
-</smf>';
+</we>';
 }
 
 function template_split()
@@ -158,7 +158,7 @@ function template_split()
 	global $context;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
+<we>
 	<pageIndex section="not_selected" startFrom="', $context['not_selected']['start'], '"><![CDATA[', $context['not_selected']['page_index'], ']]></pageIndex>
 	<pageIndex section="selected" startFrom="', $context['selected']['start'], '"><![CDATA[', $context['selected']['page_index'], ']]></pageIndex>';
 	foreach ($context['changes'] as $change)
@@ -176,7 +176,7 @@ function template_split()
 	</change>';
 	}
 	echo '
-</smf>';
+</we>';
 }
 
 // This is just to hold off some errors if people are stupid.
@@ -198,7 +198,7 @@ function template_results()
 	global $context, $txt;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>';
+<we>';
 
 	if (empty($context['topics']))
 		echo '
@@ -253,7 +253,7 @@ function template_results()
 	}
 
 	echo '
-</smf>';
+</we>';
 }
 
 function template_jump_to()
@@ -261,7 +261,7 @@ function template_jump_to()
 	global $context, $scripturl, $modSettings;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>';
+<we>';
 	$beginning = !empty($modSettings['pretty_enable_filters']) ? $scripturl . '?' : '';
 	foreach ($context['jump_to'] as $category)
 	{
@@ -272,7 +272,7 @@ function template_jump_to()
 	<item type="board" level="', $board['child_level'], '" id="', $board['id'], '" url="', $beginning, 'board=', $board['id'], '.0"><![CDATA[', cleanXml($board['name']), ']]></item>';
 	}
 	echo '
-</smf>';
+</we>';
 }
 
 function template_message_icons()
@@ -280,12 +280,12 @@ function template_message_icons()
 	global $context;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>';
+<we>';
 	foreach ($context['icons'] as $icon)
 		echo '
 	<icon value="', $icon['value'], '" url="', $icon['url'], '"><![CDATA[', cleanXml($icon['name']), ']]></icon>';
 	echo '
-</smf>';
+</we>';
 }
 
 function template_check_username()
@@ -293,9 +293,9 @@ function template_check_username()
 	global $context;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<smf>
+<we>
 	<username valid="', $context['valid_username'] ? 1 : 0, '">', cleanXml($context['checked_username']), '</username>
-</smf>';
+</we>';
 }
 
 // This prints XML in it's most generic form.
@@ -306,7 +306,7 @@ function template_generic_xml()
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>';
 
 	// Show the data.
-	template_generic_xml_recursive($context['xml_data'], 'smf', '', -1);
+	template_generic_xml_recursive($context['xml_data'], 'we', '', -1);
 }
 
 // Recursive function for displaying generic XML data.

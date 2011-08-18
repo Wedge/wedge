@@ -26,8 +26,8 @@ function Spellcheck()
 {
 	global $txt, $context;
 
-	// A list of "words" we know about but pspell doesn't.
-	$known_words = array('smf', 'php', 'mysql', 'www', 'gif', 'jpeg', 'png', 'http');
+	// A list of "words" we know about but pspell may not.
+	$known_words = array('wedge', 'smf', 'php', 'mysql', 'www', 'gif', 'jpeg', 'jpg', 'png', 'http', 'bbc');
 
 	loadLanguage('Post');
 	loadTemplate('Post');

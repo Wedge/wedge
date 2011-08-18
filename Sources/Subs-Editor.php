@@ -135,7 +135,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	if ($thisVerification['show_visual'] && !WIRELESS)
 		add_js('
 	$(\'.vv_special\').remove();
-	var verification' . $verificationOptions['id'] . 'Handle = new smfCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '");');
+	var verification' . $verificationOptions['id'] . 'Handle = new weCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '");');
 
 	// Is there actually going to be anything?
 	if (empty($thisVerification['show_visual']) && empty($thisVerification['number_questions']))

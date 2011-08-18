@@ -103,7 +103,7 @@ function template_main()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 
-	// Link to simplemachines.org for latest themes and info!
+	// Link to wedge.org for latest themes and info!
 	echo '
 		<br>
 		<we:cat>

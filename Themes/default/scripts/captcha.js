@@ -10,7 +10,7 @@
  * @version 0.1
  */
 
-function smfCaptcha(imageURL, uniqueID)
+function weCaptcha(imageURL, uniqueID)
 {
 	// Change the images.
 	function refreshImages()

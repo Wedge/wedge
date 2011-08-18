@@ -429,10 +429,6 @@ function template_aeva_admin_about()
 
 		<table class="w100" style="margin-top: 8px">
 			<tr><td style="width: 40%" class="top">
-				<table class="w100 cp0 cs1 bordercolor">
-					<tr class="catbg center"><td style="padding: 6px">', $txt['media_admin_live'], '</td></tr>
-					<tr><td class="windowbg2" height="207" id="aeva_news">&nbsp;</td></tr>
-				</table>
 			</td><td id="servInfo" class="top">
 				<table class="w100 cp0 cs1 bordercolor">
 					<tr class="catbg center"><td style="padding: 6px">', $txt['media_admin_about_header'], '</td></tr>
@@ -458,10 +454,6 @@ function template_aeva_admin_about()
 							</tr>
 							<tr>
 								<td colspan="2" class="windowbg2">', $txt['media_admin_installed_on'], ': ', timeformat($amSettings['installed_on']), '</td>
-							</tr>
-							<tr>
-								<td class="windowbg2">', $txt['media_version'], ': <span id="curVer">', $amSettings['version'], '</span></td>
-								<td class="windowbg2">', $txt['media_latest_version'], ': <span id="latestVer">???</span></td>
 							</tr>
 						</table>
 					</td></tr>
@@ -502,69 +494,7 @@ function template_aeva_admin_about()
 					!empty($moderators) ? '<div>'.$txt['media_admin_moderators'].': '.implode(', ', $moderators).'</div>' : '', '
 				</td>
 			</tr>
-		</table>
-
-		<script src="http://noisen.com/aeva_latest.js"></script>
-		<script src="http://noisen.com/aeva_news.js"></script>
-		<script><!-- // --><![CDATA[
-			function version_compare(v1, v2)
-			{
-				var numVer = function (v) { return !v ? 0 : (isNaN(v) ? vm[v] || -1 : parseFloat(v)); },
-					vm = { "a": 0.1, "b": 0.2, "c": 0.3 }, prepVer = function (v) {
-						v = v.replace(/[_\-+]/g, ".").replace(/([^.\d]+)/g, ".$1.").replace(/\.{2,}/g, ".");
-						return (!v.length ? [-2] : v.split("."));
-					};
-				v1 = prepVer(v1);
-				v2 = prepVer(v2);
-				var i, x = Math.max(v1.length, v2.length);
-				for (i = 0; i < x; i++)
-				{
-					if (v1[i] == v2[i])
-						continue;
-					v1[i] = numVer(v1[i]);
-					v2[i] = numVer(v2[i]);
-					if (v1[i] < v2[i])
-						return true;
-					else if (v1[i] > v2[i])
-						return false;
-				}
-				return false;
-			}
-			function checkVersion()
-			{
-				if (window.ver == "undefined")
-					return;
-
-				$("#latestVer").html("<a href=\"http://custom.simplemachines.org/mods/index.php?mod=977\">" + window.ver + "</a>");
-				var curVer = $("#curVer"), curVerText = curVer.text();
-				curVer.css({
-					color: curVerText != window.ver ? (version_compare(curVerText, window.ver) ? "red" : "black") : "green",
-					fontWeight: "bold"
-				});
-			}
-			function fetchNews()
-			{
-				if (window.news == "undefined")
-					return;
-
-				var str = "<div id=\"actNews\" style=\"height: 190px; overflow: auto; padding: 4px\" class=\"smalltext\">";
-				for (i = 0, j = window.news.length; i < j && window.news[i]; i++)
-				{
-					var sdate = new Date(Date.parse(window.news[i].time));
-					str += "\n		<div style=\"padding-bottom: 2px\"><a href=\"" + window.news[i].href + "\">" + window.news[i].title + "</a> ' . strtolower($txt['media_on_date']) . ' " + sdate.toLocaleDateString() + "</div>";
-					str += "\n		<div style=\"padding-left: 2ex; margin-bottom: 1.5ex; border-top: 1px dashed\">";
-					str += "\n			" + window.news[i].message;
-					str += "\n		</div>";
-				}
-				str += "\n</div>";
-				$("#aeva_news").html(str);
-			}
-			window.onload = function ()
-			{
-				checkVersion();
-				fetchNews();
-			}
-		// ]]></script>';
+		</table>';
 }
 
 function template_aeva_admin_perms()
