@@ -178,6 +178,9 @@ function ModifySettings()
 		'proxy' => 'ModifyProxySettings',
 	);
 
+	if (strpos(strtolower(PHP_OS), 'win') === 0)
+		unset($subActions['loads']);
+
 	// By default we're editing the core settings
 	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'general';
 	$context['sub_action'] = $_REQUEST['sa'];
@@ -450,23 +453,18 @@ function ModifyLoadBalancingSettings($return_config = false)
 	$disabled = true;
 	$context['settings_message'] = $txt['loadavg_disabled_conf'];
 
-	if (strpos(strtolower(PHP_OS), 'win') === 0)
-		$context['settings_message'] = $txt['loadavg_disabled_windows'];
+	$modSettings['load_average'] = @file_get_contents('/proc/loadavg');
+	if (!empty($modSettings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $modSettings['load_average'], $matches) !== 0)
+		$modSettings['load_average'] = (float) $matches[1];
+	elseif (($modSettings['load_average'] = @`uptime`) !== null && preg_match('~load averages?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $modSettings['load_average'], $matches) !== 0)
+		$modSettings['load_average'] = (float) $matches[1];
 	else
-	{
-		$modSettings['load_average'] = @file_get_contents('/proc/loadavg');
-		if (!empty($modSettings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $modSettings['load_average'], $matches) !== 0)
-			$modSettings['load_average'] = (float) $matches[1];
-		elseif (($modSettings['load_average'] = @`uptime`) !== null && preg_match('~load averages?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $modSettings['load_average'], $matches) !== 0)
-			$modSettings['load_average'] = (float) $matches[1];
-		else
-			unset($modSettings['load_average']);
+		unset($modSettings['load_average']);
 
-		if (!empty($modSettings['load_average']))
-		{
-			$context['settings_message'] = sprintf($txt['loadavg_warning'], $modSettings['load_average']);
-			$disabled = false;
-		}
+	if (!empty($modSettings['load_average']))
+	{
+		$context['settings_message'] = sprintf($txt['loadavg_warning'], $modSettings['load_average']);
+		$disabled = false;
 	}
 
 	// Start with a simple checkbox.

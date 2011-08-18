@@ -489,7 +489,7 @@ function Admin()
 						'cookie' => array($txt['cookies_sessions_settings']),
 						'',
 						'cache' => array($txt['caching_settings']),
-						'loads' => array($txt['load_balancing_settings']),
+						'loads' => array($txt['load_balancing_settings'], 'enabled' => strpos(strtolower(PHP_OS), 'win') !== 0),
 						'proxy' => array($txt['proxy_settings']),
 					),
 				),
