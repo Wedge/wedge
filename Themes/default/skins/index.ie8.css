@@ -30,7 +30,7 @@ input.new
 	background-position: 4px -94px
 
 #upper_section h1
-	filter: glow(color=#666666, strength=3)
+	filter: glow(color=#777777, strength=3)
 
 .postheader
 	display: block
@@ -39,9 +39,3 @@ input.new
 	float: left
 	display: block
 	width: 47%
-
-ul.quickbuttons
-	display: block
-	width: 40%
-	li
-		width: 1%

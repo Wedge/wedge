@@ -91,7 +91,7 @@ function QuoteFast()
 		// Make the body HTML if need be.
 		if (!empty($_REQUEST['mode']))
 		{
-			$row['body'] = strtr($row['body'], array('&lt;' => '#smlt#', '&gt;' => '#smgt#', '&amp;' => '#smamp#'));
+			$row['body'] = strtr($row['body'], array('&lt;' => '#welt#', '&gt;' => '#wegt#', '&amp;' => '#weamp#'));
 			$row['body'] = wedit::bbc_to_html($row['body']);
 			$lb = '<br>';
 		}

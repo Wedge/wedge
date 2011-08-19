@@ -271,18 +271,18 @@ weEditor.prototype.getText = function (bPrepareEntities, bModeOverride)
 	{
 		sText = this.oTextHandle.value;
 		if (bPrepareEntities)
-			sText = sText.replace(/</g, '#smlt#').replace(/>/g, '#smgt#').replace(/&/g, '#smamp#');
+			sText = sText.replace(/</g, '#welt#').replace(/>/g, '#wegt#').replace(/&/g, '#weamp#');
 	}
 	else
 	{
 		sText = this.oFrameDocument.body.innerHTML;
 		if (bPrepareEntities)
-			sText = sText.replace(/&lt;/g, '#smlt#').replace(/&gt;/g, '#smgt#').replace(/&amp;/g, '#smamp#');
+			sText = sText.replace(/&lt;/g, '#welt#').replace(/&gt;/g, '#wegt#').replace(/&amp;/g, '#weamp#');
 	}
 
 	// Clean it up - including removing semi-colons.
 	if (bPrepareEntities)
-		sText = sText.replace(/&nbsp;/g, ' ').replace(/;/g, '#smcol#');
+		sText = sText.replace(/&nbsp;/g, ' ').replace(/;/g, '#wecol#');
 
 	// Return it.
 	return sText;
@@ -291,8 +291,8 @@ weEditor.prototype.getText = function (bPrepareEntities, bModeOverride)
 // Return the current text.
 weEditor.prototype.unprotectText = function (sText)
 {
-	// This restores smlt, smgt and smamp into boring entities, to unprotect against XML'd information like quotes.
-	sText = sText.replace(/#smlt#/g, '&lt;').replace(/#smgt#/g, '&gt;').replace(/#smamp#/g, '&amp;');
+	// This restores welt, wegt and weamp into boring entities, to unprotect against XML'd information like quotes.
+	sText = sText.replace(/#welt#/g, '&lt;').replace(/#wegt#/g, '&gt;').replace(/#weamp#/g, '&amp;');
 
 	// Return it.
 	return sText;

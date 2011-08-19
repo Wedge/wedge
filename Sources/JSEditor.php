@@ -34,13 +34,13 @@ function JSEditor()
 	// Return the right thing for the mode.
 	if ($context['view'])
 	{
-		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#smcol#' => ';', '#smlt#' => '&lt;', '#smgt#' => '&gt;', '#smamp#' => '&amp;'));
+		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#wecol#' => ';', '#welt#' => '&lt;', '#wegt#' => '&gt;', '#weamp#' => '&amp;'));
 		$context['message'] = wedit::bbc_to_html($_REQUEST['message']);
 	}
 	else
 	{
 		$_REQUEST['message'] = un_htmlspecialchars($_REQUEST['message']);
-		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#smcol#' => ';', '#smlt#' => '&lt;', '#smgt#' => '&gt;', '#smamp#' => '&amp;'));
+		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#wecol#' => ';', '#welt#' => '&lt;', '#wegt#' => '&gt;', '#weamp#' => '&amp;'));
 
 		$context['message'] = wedit::html_to_bbc($_REQUEST['message']);
 	}

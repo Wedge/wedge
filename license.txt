@@ -1,5 +1,7 @@
 
-Wedge License Agreement
+===============================================================================
+                            Wedge License Agreement
+===============================================================================
 
 Definitions
 -------------------------------------------------------------------------------
@@ -20,7 +22,7 @@ derivative of this Package.
 v. The Software is defined as an installed copy of this Package, a Modified
 Package, or a derivative of this Package.
 
-vi. The Wedgeward Website is defined as http://www.wedge.org/.
+vi. The Wedgeward Website is defined as http://wedge.org/.
 
 vii. Wedgeward is defined as the copyright holders of the Wedge package
 (Peter Spicer and René-Gilles Deberdt), and the product of their association.
@@ -42,8 +44,8 @@ fees for hosting the Software may, however, be imposed.
 	d. Any Distribution of this Package, whether as a Modified Package
 or not, requires express written consent from Wedgeward.
 	e. Your name is not Jonathan Valentin (aka "vbgamer45") or Alex Kühne
-(aka "Akyhne") or you work with Samson Software of Bloomingdale, Illinois.
-Yes, they're our official hall of shame.
+(aka "Akyhne"), and you don't work with any company associated with them,
+including but not limited to Samson Software of Bloomingdale, Illinois.
 
 2. You may make Modifications to this Package or a derivative of it, and
 distribute your Modifications in a form that is separate from the Package,

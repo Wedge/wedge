@@ -534,6 +534,7 @@ input[type=file]
 		border, padding: 0
 
 .menu li ul
+	background: #f7fcf7
 	background: $menu_bg
 	position: absolute
 	display: block
@@ -1450,7 +1451,8 @@ $ie-max-width {ie6} = "width"
 $main_bg = #fffdfa
 $head_bg = rgba(221, 200, 137, .66)
 $menu_bg = -prefix-linear-gradient(rgba(230, 234, 230, .95), rgba(255, 255, 255, .95))
-$menu_bg {ie} = rgb(247, 252, 247)
+$menu_bg {ie6,ie7,ie8} = #f7fcf7
+$menu_bg {ie9} = rgba(242, 246, 242, .90)
 $menu_border = rgba(220, 224, 220, .95)
 $board_col = #d97b33
 $footer_bg = #e8e3cb
