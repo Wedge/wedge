@@ -93,10 +93,10 @@ function template_aeva_subtabs()
 
 function template_aeva_home()
 {
-	global $context, $amSettings, $txt, $galurl, $scripturl, $settings;
+	global $context, $amSettings, $txt, $galurl, $scripturl, $settings, $modSettings;
 
 	$has_albums = count($context['aeva_albums']) > 0;
-	$can_feed = empty($amSettings['disable_feed']);
+	$can_feed = if (!empty($modSettings['xmlnews_enable']));
 
 	// The Albums!
 	echo '
@@ -253,7 +253,7 @@ function show_prevnext($id, $url)
 
 function template_aeva_item_init()
 {
-	global $item, $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
+	global $item, $galurl, $context, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
 
 	add_js_file('scripts/topic.js');
 
@@ -338,7 +338,7 @@ function template_aeva_item_wrap_begin()
 
 function template_aeva_item_main()
 {
-	global $item, $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
+	global $item, $galurl, $context, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
 
 	echo '
 		<div id="media-item">',
@@ -676,10 +676,11 @@ function template_aeva_item_playlists()
 
 function template_aeva_item_comments()
 {
-	global $item, $galurl, $txt, $amSettings, $settings, $context, $scripturl, $user_info, $options;
+	global $item, $galurl, $txt, $settings, $modSettings;
+	global $context, $scripturl, $user_info, $options;
 
 	echo '
-		<we:cat>', empty($amSettings['disable_feed']) ? '
+		<we:cat>', !empty($modSettings['xmlnews_enable']) ? '
 			<a href="' . $galurl . 'sa=feed;item=' . $item['id_media'] . ';type=comments" style="text-decoration: none">
 				<span class="feed_icon"></span>
 				' . $txt['media_comments'] . '
@@ -818,7 +819,7 @@ function template_aeva_done()
 function template_aeva_form()
 {
 	// This is a pretty global template used for forms like reporting, commenting, adding, editing etc.
-	global $amSettings, $context, $txt, $galurl;
+	global $context, $txt, $galurl;
 	static $chk = 1, $colspan = 0;
 
 	echo '
@@ -988,7 +989,7 @@ function template_aeva_form()
 
 function template_aeva_viewAlbum()
 {
-	global $context, $txt, $galurl, $scripturl, $amSettings, $settings, $user_info;
+	global $context, $txt, $galurl, $scripturl, $modSettings, $settings, $user_info;
 
 	$album_data = &$context['album_data'];
 
@@ -1006,7 +1007,7 @@ function template_aeva_viewAlbum()
 	echo '</td>
 		<td style="padding: 12px 12px 6px 12px">
 			<div class="mg_large mg_pb4">', !empty($album_data['passwd']) ? aeva_lockedAlbum($album_data['passwd'], $album_data['id'], $album_data['owner']) : '',
-			$album_data['name'], empty($amSettings['disable_feed']) ? '&nbsp;&nbsp;&nbsp;<span class="title_feed">
+			$album_data['name'], !empty($modSettings['xmlnews_enable']) ? '&nbsp;&nbsp;&nbsp;<span class="title_feed">
 			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . '"><span class="feed_icon"></span> ' . $txt['media_items'] . '</a>
 			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>
 			<div>', $album_data['type2'], !empty($album_data['owner']['id']) ? '
@@ -1068,7 +1069,7 @@ function template_aeva_viewAlbum()
 	if (!empty($context['aeva_sub_albums']))
 	{
 		echo '
-		<div class="titlebg" style="padding: 4px">', $txt['media_sub_albums'], empty($amSettings['disable_feed']) ? '&nbsp;&nbsp;&nbsp;<span class="title_feed">
+		<div class="titlebg" style="padding: 4px">', $txt['media_sub_albums'], !empty($modSettings['xmlnews_enable']) ? '&nbsp;&nbsp;&nbsp;<span class="title_feed">
 			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';children"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_items'] . '</a>
 			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';children;type=comments"><img src="' . $settings['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>';
 		aeva_listChildren($context['aeva_sub_albums']);
@@ -1264,7 +1265,7 @@ function template_aeva_viewUserAlbums()
 		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 	</div>';
 
-	$can_feed = empty($amSettings['disable_feed']);
+	$can_feed = !empty($modSettings['xmlnews_enable']);
 	foreach ($context['aeva_user_albums'] as $id => $album)
 	{
 		$first = current($album);
@@ -1633,7 +1634,7 @@ function template_aeva_multiUpload_xml()
 
 function template_aeva_multiUpload()
 {
-	global $context, $txt, $galurl, $amSettings, $settings, $boardurl;
+	global $context, $txt, $galurl, $settings, $boardurl;
 
 	echo '
 	<we:title>
@@ -1696,10 +1697,10 @@ function template_aeva_multiUpload()
 // Profile summary template
 function template_aeva_profile_summary()
 {
-	global $txt, $galurl, $context, $settings, $scripturl, $user_info, $galurl, $amSettings;
+	global $txt, $galurl, $context, $settings, $scripturl, $user_info, $galurl, $modSettings;
 
 	$member = &$context['aeva_member'];
-	$can_feed = empty($amSettings['disable_feed']);
+	$can_feed = !empty($modSettings['xmlnews_enable']);
 
 	echo '
 		<we:cat>

@@ -259,15 +259,11 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 	else
 		$exclude_boards = empty($exclude_boards) ? array() : (is_array($exclude_boards) ? $exclude_boards : array($exclude_boards));
 
-	// What about including certain boards - note we do some protection here as pre-2.0 didn't have this parameter.
+	// What about including certain boards - note we do some protection here as older versions didn't have this parameter.
 	if (is_array($include_boards) || (int) $include_boards === $include_boards)
-	{
 		$include_boards = is_array($include_boards) ? $include_boards : array($include_boards);
-	}
 	elseif ($include_boards != null)
-	{
 		$include_boards = array();
-	}
 
 	// Let's restrict the query boys (and girls)
 	$query_where = '
