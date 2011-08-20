@@ -96,7 +96,7 @@ function template_aeva_home()
 	global $context, $amSettings, $txt, $galurl, $scripturl, $settings, $modSettings;
 
 	$has_albums = count($context['aeva_albums']) > 0;
-	$can_feed = if (!empty($modSettings['xmlnews_enable']));
+	$can_feed = !empty($modSettings['xmlnews_enable']);
 
 	// The Albums!
 	echo '
