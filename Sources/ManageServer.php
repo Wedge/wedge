@@ -411,15 +411,15 @@ function ModifyCacheSettings($return_config = false)
 	$context['settings_message'] = $txt['caching_information'];
 
 	// Detect an optimizer?
-	if (function_exists('eaccelerator_put'))
+	if (is_callable('eaccelerator_put'))
 		$detected = 'eAccelerator';
-	elseif (function_exists('apc_store'))
+	elseif (is_callable('apc_store'))
 		$detected = 'APC';
-	elseif (function_exists('output_cache_put'))
+	elseif (is_callable('output_cache_put'))
 		$detected = 'Zend';
-	elseif (function_exists('memcache_set'))
+	elseif (is_callable('memcache_set'))
 		$detected = 'Memcached';
-	elseif (function_exists('xcache_set'))
+	elseif (is_callable('xcache_set'))
 		$detected = 'XCache';
 	else
 		$detected = 'no_caching';

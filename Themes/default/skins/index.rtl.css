@@ -88,8 +88,7 @@ th.last_th
 // The dropdown menu toggle image
 #menu_toggle
 	float: left
-	margin: 0 0 0 10px
-	padding-top: 3px
+	margin: 10px 0 0 7px
 
 .menu
 	float, clear: right

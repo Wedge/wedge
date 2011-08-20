@@ -1386,8 +1386,8 @@ h6.alt2
 
 // The dropdown menu toggle icon
 #menu_toggle
-	float: right
-	margin: 3px 10px 0 0
+	float: left
+	margin: 10px 7px 0 0
 
 #sidebar_toggle
 	float: right

@@ -1905,18 +1905,25 @@ function CopyTemplate()
 /**
  * Get a list of all skins available for a given theme folder.
  */
-function wedge_get_skin_list($dir, $files = array())
+function wedge_get_skin_list($dir, $files = array(), &$root = array())
 {
 	global $settings;
 
 	$skins = array();
+	$is_root = empty($root);
+	if ($is_root)
+		$root =& $skins;
+	if (empty($files))
+		$files = scandir($dir);
 
-	$files = empty($files) ? scandir($dir) : $files;
 	foreach ($files as $file)
 	{
 		$this_dir = $dir . '/' . $file;
-		if ($file === 'cache' || $file === '.' || $file === '..' || !is_dir($this_dir))
+		// If we're in the root, skip anything but the '.' folder. Otherwise, skip all '.' folders. It makes sense, really.
+		if (($is_root && $file !== '.') || (!$is_root && $file === '.') || $file === '..' || !is_dir($this_dir))
 			continue;
+		if ($is_root)
+			$this_dir = $dir;
 		$these_files = scandir($this_dir);
 		if (!in_array('index.css', $these_files))
 			continue;
@@ -1926,7 +1933,7 @@ function wedge_get_skin_list($dir, $files = array())
 			$setxml = file_get_contents($this_dir . '/skin.xml');
 			$skin = array(
 				'name' => preg_match('~<name>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</name>~sui', $setxml, $match) ? trim($match[1]) : $file,
-				'type' => preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add',
+				'type' => $is_root ? 'replace' : (preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add'),
 				'comment' => preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
 			);
 		}
@@ -1936,12 +1943,21 @@ function wedge_get_skin_list($dir, $files = array())
 				'type' => 'add',
 				'comment' => '',
 			);
-		$minus_this = strpos($this_dir, '/skins/') + ($skin['type'] == 'add' ? 1 : 8);
-		$skin['dir'] = substr($this_dir, $minus_this);
-		$skins[$this_dir] = $skin;
-		$sub_skins = wedge_get_skin_list($this_dir, $these_files);
+		$skin['dir'] = substr($this_dir, strpos($this_dir, $is_root ? '/skins' : '/skins/') + 1);
+		if ($skin['type'] == 'add')
+			$skins[$this_dir] = $skin;
+		else
+			$root[$this_dir] = $skin;
+
+		if ($is_root || $file !== '.')
+			$sub_skins = wedge_get_skin_list($this_dir, $these_files, $root);
 		if (!empty($sub_skins))
-			$skins[$this_dir]['skins'] = $sub_skins;
+		{
+			if ($skin['type'] == 'add')
+				$skins[$this_dir]['skins'] = $sub_skins;
+			else
+				$root[$this_dir]['skins'] = $sub_skins;
+		}
 	}
 	return $skins;
 }

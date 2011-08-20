@@ -551,7 +551,7 @@ function template_pick()
 				</p>
 				<br>
 				<p>
-					<em class="smalltext">', $theme['num_users'], ' ', $theme['num_users'] == 1 ? $txt['theme_user'] : $txt['theme_users'], '</em>
+					<em class="smalltext">', number_context('theme_users', $theme['num_users']), '</em>
 				</p>
 				<br>
 				<ul class="reset">
@@ -581,14 +581,21 @@ function template_pick()
 	<br class="clear">';
 }
 
-function template_list_skins(&$theme, $theme_id)
+function template_list_skins(&$theme, $theme_id, $theme_url = '', $theme_dir = '')
 {
 	global $txt, $context, $scripturl;
+
+	if (empty($theme_url))
+	{
+		$theme_dir = $theme['theme_dir'];
+		$theme_url = $theme['theme_url'];
+	}
 
 	foreach ($theme['skins'] as $sty)
 	{
 		$target = $theme_id . '_' . base64_encode($sty['dir']);
-		$thumbnail_href = isset($theme['theme_dir']) && file_exists($theme['theme_dir'] . '/' . $sty['dir'] . '/thumbnail.jpg') ? $theme['theme_url'] . '/' . $sty['dir'] . '/thumbnail.jpg' : '';
+		$thumbnail_href = file_exists($theme_dir . '/' . $sty['dir'] . '/thumbnail.jpg') ? $theme_url . '/' . $sty['dir'] . '/thumbnail.jpg' : '';
+
 		echo '
 				<div class="roundframe clear_right" style="margin: 8px">', $thumbnail_href ? '
 					<div class="floatright">
@@ -604,7 +611,7 @@ function template_list_skins(&$theme, $theme_id)
 					</ul>';
 
 		if (!empty($sty['skins']))
-			template_list_skins($sty, $theme_id);
+			template_list_skins($sty, $theme_id, $theme_url, $theme_dir);
 
 		echo '
 				</div>';
