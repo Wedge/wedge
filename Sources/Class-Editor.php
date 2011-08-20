@@ -216,7 +216,7 @@ class wedit
 		$text = preg_replace('~\\<\\!\\[CDATA\\[.*?\\]\\]\\>~i', '', $text);
 
 		// Do the smileys ultra fast!
-		$text = preg_replace('~<img alt="([^"]+)" class="smiley ([^"]+)".*?>(?:\s)?~e', '\' <div class="smiley $2">\' . un_htmlspecialchars(\'$1\') . \'</div>\'', $text);
+		$text = preg_replace('~<img[^>]*\salt="([^"]+)"[^>]*\sclass="smiley ([^"]+)".*?>(?:\s)?~e', '\' <div class="smiley $2">\' . un_htmlspecialchars(\'$1\') . \'</div>\'', $text);
 
 		// Only try to buy more time if the client didn't quit.
 		if (connection_aborted() && $context['server']['is_apache'])
