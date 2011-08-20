@@ -534,17 +534,19 @@ function template_pick()
 	// Just go through each theme and show its information - thumbnail, etc.
 	foreach ($context['available_themes'] as $theme)
 	{
-		$thumbnail = '/' . (empty($theme['id']) ? $modSettings['theme_skin_guests'] : 'skins') . '/thumbnail.jpg';
+		$id_extra = $modSettings['theme_guests'] === $theme['id'] ? '_' . base64_encode($modSettings['theme_skin_guests']) : '';
+		$thumbnail = '/' . (empty($theme['id']) || $id_extra ? $modSettings['theme_skin_guests'] : 'skins') . '/thumbnail.jpg';
 		$thumbnail_href = file_exists($theme['theme_dir'] . $thumbnail) ? $theme['theme_url'] . $thumbnail : '';
 
 		echo '
 			<div style="margin: 8px 0"></div>
 			<we:title>
-				<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_query'], '">', $theme['name'], '</a>
+				<a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], $id_extra, ';', $context['session_query'], '">', $theme['name'], '</a>', $context['current_theme'] == $theme['id'] ? '
+				(' . $txt['current_theme'] . ')' : '', '
 			</we:title>
 			<div class="', $theme['selected'] ? 'windowbg' : 'windowbg2', ' wrc flow_hidden">', $thumbnail_href ? '
 				<div class="floatright">
-					<a href="' . $scripturl . '?action=theme;sa=pick;u=' . $context['current_member'] . ';theme=' . $theme['id'] . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $theme['id'] . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $theme['id'] . '" class="padding"></a>
+					<a href="' . $scripturl . '?action=theme;sa=pick;u=' . $context['current_member'] . ';theme=' . $theme['id'] . $id_extra . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $theme['id'] . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $theme['id'] . '" class="padding"></a>
 				</div>' : '', '
 				<p>
 					', $theme['description'], '
@@ -555,8 +557,8 @@ function template_pick()
 				</p>
 				<br>
 				<ul class="reset">
-					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_query'], '" id="theme_use_', $theme['id'], '">[', $txt['theme_set'], ']</a></li>
-					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_query'], '" id="theme_preview_', $theme['id'], '">[', $txt['theme_preview'], ']</a></li>
+					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], $id_extra, ';', $context['session_query'], '" id="theme_use_', $theme['id'], '">[', $txt['theme_set'], ']</a></li>
+					<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], $id_extra, ';', $context['session_query'], '" id="theme_preview_', $theme['id'], '">[', $txt['theme_preview'], ']</a></li>
 				</ul>';
 
 		if ($theme['id'] !== 0 && !empty($theme['skins']))
@@ -581,9 +583,9 @@ function template_pick()
 	<br class="clear">';
 }
 
-function template_list_skins(&$theme, $theme_id, $theme_url = '', $theme_dir = '')
+function template_list_skins(&$theme, $theme_id, $theme_url = '', $theme_dir = '', $is_child = false)
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context, $scripturl, $modSettings;
 
 	if (empty($theme_url))
 	{
@@ -595,23 +597,27 @@ function template_list_skins(&$theme, $theme_id, $theme_url = '', $theme_dir = '
 	{
 		$target = $theme_id . '_' . base64_encode($sty['dir']);
 		$thumbnail_href = file_exists($theme_dir . '/' . $sty['dir'] . '/thumbnail.jpg') ? $theme_url . '/' . $sty['dir'] . '/thumbnail.jpg' : '';
+		$is_current_skin = $context['current_skin'] == $sty['dir'] && ($context['current_theme'] == $theme_id || (empty($context['current_theme']) && $modSettings['theme_guests'] == $theme_id));
 
 		echo '
-				<div class="roundframe clear_right" style="margin: 8px">', $thumbnail_href ? '
+				<div class="roundframe clear_right', $is_current_skin ? ' current_skin' : '', '" style="margin: ', $is_child ? '8px 8px 8px 14px' : '8px', '">', $thumbnail_href ? '
 					<div class="floatright">
-						<a href="' . $scripturl . '?action=theme;sa=pick;u=' . $context['current_member'] . ';theme=' . $target . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"></a>
+						<a href="' . $scripturl . '?action=theme;sa=pick;u=' . $context['current_member'] . ';theme=' . $target . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"' . ($is_child ? ' style="max-width: 75px"' : '') . '></a>
 					</div>' : '', '
 					<we:title2>
 						', $sty['name'], '
 					</we:title2>
-					<p>', $sty['comment'], '</p>
+					<p>', $sty['comment'], '</p>';
+
+		if (!$is_current_skin)
+			echo '
 					<ul class="reset">
 						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';th=', $target, ';', $context['session_query'], '" id="theme_use_', $target, '_', '">[', $txt['theme_skin_set'], ']</a></li>
 						<li><a href="', $scripturl, '?action=theme;sa=pick;u=', $context['current_member'], ';theme=', $target, ';', $context['session_query'], '" id="theme_preview_', $target, '_', '">[', $txt['theme_skin_preview'], ']</a></li>
 					</ul>';
 
 		if (!empty($sty['skins']))
-			template_list_skins($sty, $theme_id, $theme_url, $theme_dir);
+			template_list_skins($sty, $theme_id, $theme_url, $theme_dir, true);
 
 		echo '
 				</div>';

@@ -1180,6 +1180,8 @@ dl#feed
 	text-shadow: white 0 1px 2px
 	&, a
 		color: channels(gray,0,0,30%)
+	.current_skin > & final
+		background: #fafafa
 
 .cat final, .title final
 	font: bold 1.2em/1.2em $head_font

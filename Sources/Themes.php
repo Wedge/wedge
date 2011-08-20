@@ -55,7 +55,7 @@ if (!defined('WEDGE'))
 	void PickTheme()
 		- allows user or administrator to pick a new theme with an interface.
 		- can edit everyone's (u = 0), guests' (u = -1), or a specific user's.
-		- uses the Themes template. (pick sub template.)
+		- uses the Themes template (pick subtemplate.)
 		- accessed with ?action=admin;area=theme;sa=pick.
 
 	void ThemeInstall()
