@@ -955,7 +955,7 @@ function PickTheme()
 
 		$th = explode('_', $_GET['th']);
 		$id = (int) $th[0];
-		$css = isset($th[1]) ? base64_decode($th[1]) : 'skins';
+		$css = isset($th[1]) ? base64_decode($th[1]) : '';
 
 		// Save for this user.
 		if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
@@ -964,7 +964,7 @@ function PickTheme()
 				'id_theme' => $id,
 				'skin' => $css
 			));
-			redirectexit('action=profile;area=theme');
+			redirectexit('action=theme;sa=pick;u=' . $user_info['id']);
 		}
 
 		// For everyone.
@@ -1001,14 +1001,14 @@ function PickTheme()
 	{
 		$context['current_member'] = $user_info['id'];
 		$context['current_theme'] = $user_info['theme'];
-		$context['current_skin'] = $user_info['skin'];
+		$context['current_skin'] = empty($user_info['theme']) ? '' : $user_info['skin'];
 	}
 	// Everyone can't choose just one.
 	elseif ($_REQUEST['u'] == '0')
 	{
 		$context['current_member'] = 0;
 		$context['current_theme'] = 0;
-		$context['current_skin'] = 'skins';
+		$context['current_skin'] = '';
 	}
 	// Guests and such...
 	elseif ($_REQUEST['u'] == '-1')

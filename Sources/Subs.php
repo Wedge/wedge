@@ -3010,7 +3010,7 @@ function setupMenuContext()
 	elseif ($context['current_action'] == 'search2')
 		$current_action = 'search';
 	elseif ($context['current_action'] == 'theme')
-		$current_action = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'pick' ? 'profile' : 'admin';
+		$current_action = isset($_REQUEST['u']) && $_REQUEST['u'] > 0 ? 'profile' : 'admin';
 	elseif ($context['current_action'] == 'register2')
 		$current_action = 'register';
 	elseif ($context['current_action'] == 'login2' || ($user_info['is_guest'] && $context['current_action'] == 'reminder'))

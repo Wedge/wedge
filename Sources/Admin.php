@@ -652,7 +652,7 @@ function Admin()
 	// The admin search function used to depend on the front page, but really, there's no need to put that into the menu...
 	// Note that we have to explicitly override the default menu behaviour here because the menu code never expects to have items from outside it.
 	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
-	if (!empty($_REQUEST['area']) && $_REQUEST['area'] == 'search')
+	if (isset($_REQUEST['area']) && $_REQUEST['area'] == 'search')
 	{
 		$admin_include_data['current_area'] = 'search';
 		$admin_include_data['function'] = 'AdminSearch';

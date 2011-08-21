@@ -30,3 +30,7 @@
 		display: none
 	td.lastpost
 		width: 40%
+
+#navi .menu h4
+	font-size: 1.5em
+	line-height: 1.1em
