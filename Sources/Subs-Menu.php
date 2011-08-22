@@ -150,11 +150,15 @@ function createMenu($menuData, $menuOptions = array())
 						// Did it have subsections?
 						if (!empty($area['subsections']))
 						{
+							$first_sa = null;
 							$here['subsections'] = array();
 							foreach ($area['subsections'] as $sa => $sub)
 							{
 								if (!empty($sub) && (empty($sub[1]) || allowedTo($sub[1])) && (!isset($sub['enabled']) || !empty($sub['enabled'])))
 								{
+									if ($first_sa === null)
+										$first_sa = $sa;
+
 									$here['subsections'][$sa] = array('label' => $sub[0]);
 									// Custom URL?
 									if (isset($sub['url']))
@@ -167,7 +171,7 @@ function createMenu($menuData, $menuOptions = array())
 										if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == $sa)
 											$menu_context['current_subsection'] = $sa;
 										// Otherwise is it the default?
-										elseif (!isset($menu_context['current_subsection']) && !empty($sub[2]))
+										elseif (!isset($menu_context['current_subsection']) && $first_sa == $sa)
 											$menu_context['current_subsection'] = $sa;
 									}
 								}
