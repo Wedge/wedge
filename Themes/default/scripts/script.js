@@ -252,9 +252,9 @@ function we_avatarResize()
 
 
 // Shows the page numbers by clicking the dots (in compact view).
-function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
+function expandPages(spanNode, firstPage, lastPage, perPage)
 {
-	var replacement = '', i, oldLastPage = 0, perPageLimit = 50;
+	var replacement = '', i = firstPage, oldLastPage, perPageLimit = 50, baseURL = $(spanNode).data('href');
 
 	// Prevent too many pages to be loaded at once.
 	if ((lastPage - firstPage) / perPage > perPageLimit)
@@ -264,14 +264,13 @@ function expandPages(spanNode, baseURL, firstPage, lastPage, perPage)
 	}
 
 	// Calculate the new pages.
-	for (i = firstPage; i < lastPage; i += perPage)
-		replacement += '<a class="navPages" href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ';
+	for (; i < lastPage; i += perPage)
+		replacement += '<a href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ';
 
-	if (oldLastPage > 0)
-		replacement += '<span style="font-weight: bold; cursor: pointer" onclick="expandPages(this, \'' + baseURL + '\', ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');"> &hellip; </span> ';
+	if (oldLastPage)
+		replacement += '<a data-href="' + baseURL + '" onclick="expandPages(this, ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');">&hellip;</a> ';
 
-	// The dots were bold, the page numbers are not (in most cases). Replace the dots by the new page links.
-	$(spanNode).unbind('click').css('fontWeight', 'normal').html(replacement);
+	$(spanNode).before(replacement).remove();
 }
 
 

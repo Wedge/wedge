@@ -311,7 +311,7 @@ function loadUserSettings()
 		'is_guest' => $id_member == 0,
 		'is_admin' => in_array(1, $user_info['groups']),
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
-		'skin' => empty($user_settings['skin']) ? 'skins' : $user_settings['skin'],
+		'skin' => empty($user_settings['id_theme']) ? '' : $user_settings['skin'],
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
@@ -513,7 +513,7 @@ function loadBoard()
 	{
 		$board_info = array(
 			'moderators' => array(),
-			'skin' => 'skins',
+			'skin' => '',
 		);
 		return;
 	}
@@ -682,7 +682,7 @@ function loadBoard()
 			// Otherwise the topic is invalid, there are no moderators, etc.
 			$board_info = array(
 				'moderators' => array(),
-				'skin' => 'skins',
+				'skin' => '',
 				'error' => 'exist',
 			);
 			$topic = null;
@@ -1466,7 +1466,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Time to determine our CSS list...
 	// First, load our requested skin folder.
-	$context['skin'] = empty($skin) ? 'skins' : ($skin === 'skins' || strpos($skin, 'skins/') === 0 ? '' : 'skins/') . $skin;
+	$context['skin'] = empty($skin) ?
+		(empty($id_theme) ? $modSettings['theme_skin_guests'] : 'skins') :
+		($skin === 'skins' || strpos($skin, 'skins/') === 0 ? '' : 'skins/') . $skin;
 	$folders = explode('/', $context['skin']);
 	$context['css_folders'] = array();
 	$current_folder = '';
@@ -2536,7 +2538,7 @@ function loadSession()
 			@session_write_close();
 
 		// This is here to stop people from using bad junky PHPSESSIDs.
-		if (isset($_REQUEST[session_name()]) && preg_match('~^[A-Za-z0-9]{16,32}$~', $_REQUEST[session_name()]) == 0 && !isset($_COOKIE[session_name()]))
+		if (isset($_REQUEST[session_name()]) && preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $_REQUEST[session_name()]) == 0 && !isset($_COOKIE[session_name()]))
 		{
 			$session_id = md5(md5('we_sess_' . time()) . mt_rand());
 			$_REQUEST[session_name()] = $session_id;
@@ -2606,7 +2608,7 @@ function sessionClose()
  */
 function sessionRead($session_id)
 {
-	if (preg_match('~^[A-Za-z0-9]{16,32}$~', $session_id) == 0)
+	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
 		return false;
 
 	// Look for it in the database.
@@ -2634,7 +2636,7 @@ function sessionRead($session_id)
  */
 function sessionWrite($session_id, $data)
 {
-	if (preg_match('~^[A-Za-z0-9]{16,32}$~', $session_id) == 0)
+	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
 		return false;
 
 	// First try to update an existing row...
@@ -2669,7 +2671,7 @@ function sessionWrite($session_id, $data)
  */
 function sessionDestroy($session_id)
 {
-	if (preg_match('~^[A-Za-z0-9]{16,32}$~', $session_id) == 0)
+	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
 		return false;
 
 	// Just delete the row...

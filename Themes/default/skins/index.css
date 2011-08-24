@@ -231,10 +231,10 @@ ul#noava
 a
 	color: #de874d // b96f17, c06002
 	text-decoration: none
+	cursor: pointer
 	:hover
 		color: #a54
 		text-decoration: underline
-		cursor: pointer
 
 // Inside a post, if you publish a link, you want it to stand out...
 .post a
@@ -987,7 +987,7 @@ tr.catbg, tr.titlebg
 	nav
 		float: left
 		padding: .3em 0 .3em
-		span
+		a[data-href]
 			font-weight: bold
 
 // Colors for background of posts requiring approval
