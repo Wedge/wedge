@@ -130,7 +130,7 @@ function pretty_filter_topics($urls)
 {
 	global $boardurl, $scripturl, $modSettings, $context;
 
-	$pattern = '~(.*[?;&])topic=([.a-zA-Z0-9]+)(.*)~S';
+	$pattern = '~(.*[?;&])topic=([.a-zA-Z0-9$%]+)(.*)~S';
 	$query_data = array();
 	foreach ($urls as &$url)
 	{
@@ -278,7 +278,7 @@ function pretty_filter_boards($urls)
 {
 	global $boardurl, $scripturl, $modSettings, $context;
 
-	$pattern = '~(.*[?;&])board=([.0-9]+)(?:;(cat|tag)=([^;&]+))?(?:;month=(\d{6,8}))?(.*)~S';
+	$pattern = '~(.*[?;&])board=([.0-9$%]+)(?:;(cat|tag)=([^;&]+))?(?:;month=(\d{6,8}))?(.*)~S';
 	$bo_list = array();
 	foreach ($urls as &$url)
 	{

@@ -234,10 +234,10 @@ function ThemeAdmin()
 		if (!empty($_POST['theme_reset']))
 		{
 			$reset = explode('_', $_POST['theme_reset']);
-			if ((int) $reset[0] == 0 || in_array($reset[0], $_POST['options']['known_themes']))
+			if ((int) $reset[0] === 0 || in_array($reset[0], $_POST['options']['known_themes']))
 				updateMemberData(null, array(
-					'id_theme' => (int) $_POST['theme_reset'],
-					'skin' => isset($reset[1]) ? base64_decode($reset[1]) : 'skins'
+					'id_theme' => (int) $reset[0],
+					'skin' => isset($reset[1]) ? base64_decode($reset[1]) : ''
 				));
 		}
 
