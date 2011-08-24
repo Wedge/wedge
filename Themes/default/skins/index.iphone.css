@@ -31,6 +31,8 @@
 	td.lastpost
 		width: 40%
 
-#navi .menu h4
-	font-size: 1.5em
-	line-height: 1.1em
+#navi
+	padding: 8px 4px 4px
+	.menu h4
+		font-size: 1.5em
+		line-height: 1.1em

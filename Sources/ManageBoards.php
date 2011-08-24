@@ -68,7 +68,7 @@ if (!defined('WEDGE'))
 // The controller; doesn't do anything, just delegates.
 function ManageBoards()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	// Everything's gonna need this.
 	loadLanguage('ManageBoards');
@@ -420,7 +420,7 @@ function EditBoard()
 			'posts' => 0,
 			'topics' => 0,
 			'theme' => 0,
-			'skin' => 'skins',
+			'skin' => '',
 			'profile' => 1,
 			'override_theme' => 0,
 			'redirect' => '',

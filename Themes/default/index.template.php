@@ -35,7 +35,7 @@ function template_init()
 	if (!empty($context['javascript_files']))
 	{
 		$context['javascript_files'][] = 'scripts/theme.js';
-		if ($context['user']['is_guest'] && !empty($context['show_login_bar']))
+		if ($context['user']['is_guest'] && empty($context['disable_login_hashing']) && !empty($context['show_login_bar']))
 			$context['javascript_files'][] = 'scripts/sha1.js';
 	}
 

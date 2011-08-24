@@ -245,7 +245,7 @@ function weEditor(oOptions)
 	{
 		// Currently nothing is being resized... I assume!
 		window.weCurrentResizeEditor = null;
-		sizer.css('display', '').mousedown(this.aEventWrappers.startResize);
+		sizer.show().mousedown(this.aEventWrappers.startResize);
 	}
 
 	// Set the text - if WYSIWYG is enabled that is.

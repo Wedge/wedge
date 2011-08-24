@@ -15,7 +15,8 @@ function template_login()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
-	$context['javascript_files'][] = 'scripts/sha1.js';
+	if (empty($context['disable_login_hashing']))
+		$context['javascript_files'][] = 'scripts/sha1.js';
 
 	echo '
 		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
@@ -83,7 +84,8 @@ function template_kick_guest()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	// This isn't that much... just like normal login but with a message at the top.
-	$context['javascript_files'][] = 'scripts/sha1.js';
+	if (empty($context['disable_login_hashing']))
+		$context['javascript_files'][] = 'scripts/sha1.js';
 
 	echo '
 	<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
@@ -147,7 +149,8 @@ function template_maintenance()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Display the administrator's message at the top.
-	$context['javascript_files'][] = 'scripts/sha1.js';
+	if (empty($context['disable_login_hashing']))
+		$context['javascript_files'][] = 'scripts/sha1.js';
 
 	echo '
 <form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>

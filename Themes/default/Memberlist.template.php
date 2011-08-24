@@ -70,27 +70,27 @@ function template_main()
 		foreach ($context['members'] as $member)
 		{
 			echo '
-				<tr ', empty($member['sort_letter']) ? '' : ' id="letter' . $member['sort_letter'] . '"', '>
+				<tr class="windowbg center"', empty($member['sort_letter']) ? '' : ' id="letter' . $member['sort_letter'] . '"', '>
 					<td class="windowbg2">
 						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', $settings['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '">' : $member['online']['label'], $context['can_send_pm'] ? '</a>' : '', '
 					</td>
-					<td class="windowbg left">', $member['link'], '</td>
+					<td class="left">', $member['link'], '</td>
 					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
 
 		if (!isset($context['disabled_fields']['website']))
 			echo '
-					<td class="windowbg">', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . $settings['images_url'] . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '"></a>' : '', '</td>';
+					<td>', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . $settings['images_url'] . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '"></a>' : '', '</td>';
 
 		// Group and date.
 		echo '
-					<td class="windowbg left">', empty($member['group']) ? $member['post_group'] : $member['group'], '</td>
-					<td class="windowbg left">', $member['registered_date'], '</td>';
+					<td>', empty($member['group']) ? $member['post_group'] : $member['group'], '</td>
+					<td>', $member['registered_date'], '</td>';
 
 		if (!isset($context['disabled_fields']['posts']))
 		{
 			echo '
 					<td class="windowbg2 nowrap" style="width: 15px">', $member['posts'], '</td>
-					<td class="windowbg statsbar" style="width: 120px">';
+					<td class="statsbar" style="width: 120px">';
 
 			if (!empty($member['post_percent']))
 				echo '

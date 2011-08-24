@@ -61,7 +61,7 @@ function onDocReceived_modify_topic(XMLDoc)
 	buff_subject = cur_subject_div.html();
 
 	// Here we hide any other things they want hiding on edit.
-	set_hidden_topic_areas('none');
+	set_hidden_topic_areas(false);
 
 	modify_topic_show_edit($('subject', XMLDoc).text());
 	ajax_indicator(false);
@@ -70,7 +70,7 @@ function onDocReceived_modify_topic(XMLDoc)
 function modify_topic_cancel()
 {
 	cur_subject_div.html(buff_subject);
-	set_hidden_topic_areas('');
+	set_hidden_topic_areas(true);
 
 	in_edit_mode = 0;
 	return false;
@@ -110,17 +110,17 @@ function modify_topic_done(XMLDoc)
 		return false;
 
 	modify_topic_hide_edit(subject.text());
-	set_hidden_topic_areas('');
+	set_hidden_topic_areas(true);
 	in_edit_mode = 0;
 
 	return false;
 }
 
 // Simply restore any hidden bits during topic editing.
-function set_hidden_topic_areas(set_style)
+function set_hidden_topic_areas(state)
 {
 	for (var i = 0; i < hide_prefixes.length; i++)
-		$('#' + hide_prefixes[i] + cur_msg_id).css('display', set_style);
+		$('#' + hide_prefixes[i] + cur_msg_id).toggle(state);
 }
 
 // *** QuickReply object.

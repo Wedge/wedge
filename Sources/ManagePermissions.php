@@ -344,10 +344,8 @@ function PermissionIndex()
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
-		{
 			if (isset($context['groups'][(int) $row['id_group']]) && (!empty($row['add_deny']) || $row['id_group'] != -1))
 				$context['groups'][(int) $row['id_group']]['num_permissions'][empty($row['add_deny']) ? 'denied' : 'allowed'] += $row['num_permissions'];
-		}
 		wesql::free_result($request);
 	}
 	else

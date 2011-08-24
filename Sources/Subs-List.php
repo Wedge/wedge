@@ -133,7 +133,7 @@ function createList($listOptions)
 
 			// A modified value (inject the database values).
 			elseif (isset($column['data']['eval']))
-				$cur_data['value'] = eval(preg_replace('~%([a-zA-Z0-9\-_]+)%~', '$list_item[\'$1\']', $column['data']['eval']));
+				$cur_data['value'] = eval(preg_replace('~%([a-zA-Z0-9_-]+)%~', '$list_item[\'$1\']', $column['data']['eval']));
 
 			// A literal value.
 			elseif (isset($column['data']['value']))
