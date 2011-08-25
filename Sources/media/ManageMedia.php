@@ -229,11 +229,6 @@ function aeva_admin_about()
 			'site' => 'http://www.longtailvideo.com/players/jw-flv-player/',
 			'position' => 'FLV video player, free for non-commercial use',
 		),
-		'Icons' => array(
-			'name' => 'FamFamFam',
-			'site' => 'http://famfamfam.com',
-			'position' => 'Free silk icons used by the gallery. Also used the tiny Diagona icons from <a href="http://p.yusukekamiyamane.com/">Y&#363;suke Kamiyamane</a>.',
-		),
 		'Testers' => array(
 			'name' => 'All of you!',
 			'site' => 'http://wedge.org',

@@ -915,12 +915,10 @@ tr.windowbg td
 	padding: .3em .7em
 
 #credits
-	p, .intro
+	.intro
 		font-style: italic
-	p
-		margin: 8px 4px 0
-	.list
-		padding: 5px 0 5px 30px
+	ul.last
+		margin-bottom: 0
 
 /* Styles for the board index's topic table.
 ------------------------------------------------------- */

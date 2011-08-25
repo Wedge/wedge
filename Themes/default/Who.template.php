@@ -126,13 +126,59 @@ function template_main()
 
 function template_credits()
 {
-	global $context, $txt;
+	global $context, $txt, $scripturl;
 
 	// The most important part - the credits :P
 	echo '
-	<div class="main_section" id="credits">
+	<div class="main_section" id="credits">';
+
+ 	if (!empty($context['site_credits']))
+ 	{
+		echo '
 		<we:cat>
-			', $txt['credits'], '
+			', $txt['credits_site'], '
+		</we:cat>';
+
+		if (!empty($context['site_credits']['admins']))
+		{
+			echo '
+		<div', empty($context['site_credits']['mods']) ? '' : ' style="width: 49%; float: left; margin: 0 .5%"', '>
+			<div class="windowbg2 wrc">
+				<h6 class="top">', number_context('credits_admins', count($context['site_credits']['admins'])), '</h6>
+				<ul class="last">';
+
+			foreach ($context['site_credits']['admins'] as $admin)
+				echo '
+					<li><a href="', $scripturl, '?action=profile;u=', $admin['id_member'], '">', $admin['real_name'], '</a></li>';
+
+			echo '
+				</ul>
+			</div>
+		</div>';
+		}
+
+		if (!empty($context['site_credits']['mods']))
+		{
+			echo '
+		<div', empty($context['site_credits']['admins']) ? '' : ' style="width: 49%; float: left; margin: 0 .5%"', '>
+			<div class="windowbg2 wrc">
+				<h6 class="top">', number_context('credits_moderators', count($context['site_credits']['mods'])), '</h6>
+				<ul class="last">';
+
+			foreach ($context['site_credits']['mods'] as $mod)
+				echo '
+					<li><a href="', $scripturl, '?action=profile;u=', $mod['id_member'], '">', $mod['real_name'], '</a></li>';
+
+			echo '
+				</ul>
+			</div>
+		</div>';
+		}
+	}
+
+	echo '
+		<we:cat>
+			', $txt['credits_software'], '
 		</we:cat>';
 
 	foreach ($context['credits'] as $section)
@@ -155,16 +201,18 @@ function template_credits()
 		echo '
 			<div class="windowbg2 wrc">';
 
-		$top = true;
+		$i = 0;
+		$max = count($section['groups']);
 		foreach ($section['groups'] as $group)
 		{
+			$i++;
 			if (empty($group['members']))
 				continue;
 
 			if (isset($group['title']))
 				echo '
-				<h6', $top ? ' class="top"' : '', '>', $group['title'], '</h6>
-				<ul>
+				<h6', $i === 1 ? ' class="top"' : '', '>', $group['title'], '</h6>
+				<ul', $i === $max ? ' class="last"' : '', '>
 					<li>', implode('</li>
 					<li>', $group['members']), '</li>
 				</ul>';
@@ -182,23 +230,32 @@ function template_credits()
 	}
 
 	echo '
-		<div class="clear">
-			<we:cat>
-				', $txt['credits_copyright'], '
-			</we:cat>
-			<div class="windowbg wrc">
-				<h6 class="top">', $txt['credits_forum'], '</h6>
-				<div class="list">', $context['copyrights']['wedge'], '</div>
-				<h6>', $txt['credits_images'], '</h6>
-				<div class="list">', implode('</div><div class="list">', $context['copyrights']['images']), '</div>';
+		<div class="clear"></div>
+		<we:cat>
+			', $txt['credits_copyright'], '
+		</we:cat>
+		<div class="windowbg wrc">
+			<h6 class="top">', $txt['credits_forum'], '</h6>
+			<ul>
+				<li>', $context['copyrights']['wedge'], '</li>
+			</ul>';
 
 	if (!empty($context['copyrights']['mods']))
 		echo '
-				<h6>', $txt['credits_modifications'], '</h6>
-				<div class="list">', implode('</div><div class="list">', $context['copyrights']['mods']), '</div>';
+			<h6>', $txt['credits_modifications'], '</h6>
+			<ul>
+				<li>', implode('</li>
+				<li>', $context['copyrights']['mods']), '</li>
+			</ul>';
 
 	echo '
-			</div>
+			<h6>', $txt['credits_images'], '</h6>
+			<ul class="last">
+				<li>', implode('</li>
+				<li>', $context['copyrights']['images']), '</li>
+			</ul>';
+
+	echo '
 		</div>
 	</div>';
 }

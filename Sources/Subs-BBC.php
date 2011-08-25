@@ -309,8 +309,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						$alt = empty($matches[3][$match]) ? '' : ' alt=' . preg_replace('~^&quot;|&quot;$~', '', $matches[3][$match]);
 
 						// Remove action= from the URL - no funny business, now.
-						if (preg_match('~action(=|%3d)(?!dlattach)~i', $imgtag) != 0)
-							$imgtag = preg_replace('~action(?:=|%3d)(?!dlattach)~i', 'action-', $imgtag);
+						if (preg_match('~action(=|%3d)(?!dlattach|media)~i', $imgtag) != 0)
+							$imgtag = preg_replace('~action(?:=|%3d)(?!dlattach|media)~i', 'action-', $imgtag);
 
 						// Check if the image is larger than allowed.
 						if (!empty($modSettings['max_image_width']) && !empty($modSettings['max_image_height']))
@@ -368,7 +368,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 						// Only do this if the preg survives.
 						if (is_string($result = preg_replace(array(
-							'~(?<=[\s>.(;\'"]|^)((?:http|https)://[\w\-_%@:|]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w\~%.@!,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i',
+							'~(?<=[\s>.(;\'"]|^)((?:http|https)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w\~%.@!,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i',
 							'~(?<=[\s>.(;\'"]|^)((?:ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w\~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i',
 							'~(?<=[\s>(\'<]|^)(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w\~%.@!,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i'
 						), array(

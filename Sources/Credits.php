@@ -32,8 +32,21 @@ function Credits($in_admin = false)
 	// Don't blink. Don't even blink. Blink and you're dead.
 	loadLanguage('Who');
 
+	$context['site_credits'] = array();
+	$query = wesql::query('
+		SELECT id_member, real_name, id_group, additional_groups
+		FROM {db_prefix}members
+		WHERE id_group IN (1, 2)
+			OR FIND_IN_SET(1, additional_groups)
+			OR FIND_IN_SET(2, additional_groups)',
+		array()
+	);
+	while ($row = wesql::fetch_assoc($query))
+		$context['site_credits'][$row['id_group'] == 1 || (!empty($row['additional_groups']) && in_array(1, explode(',', $row['additional_groups']))) ? 'admins' : 'mods'][] = $row;
+	wesql::free_result($query);
+
 	$context['credits'] = array(
-		array(
+		'wedge' => array(
 			'pretext' => $txt['credits_intro'],
 			'title' => $txt['credits_team'],
 			'groups' => array(
@@ -62,30 +75,54 @@ function Credits($in_admin = false)
 						'Dragooon (Shitiz Garg)',
 						'live627 (John Rayes)',
 						'TE (Thorsten Eurich)',
-						'[Unknown]',
 					),
 				),
 				array(
-					'title' => $txt['credits_groups_support'],
+					'title' => $txt['credits_special'],
 					'members' => array(
 						'Dismal Shadow (Edwin Mendez)',
 						'MultiformeIngegno (Lorenzo Raffio)',
+						'Norodo',
+						'[Unknown]',
 					),
 				),
+				// These aren't used for now...
+				/*
+				array(
+					'title' => $txt['credits_groups_support'],
+					'members' => array(
+					),
+				),
+				array(
+					'title' => $txt['credits_groups_docs'],
+					'members' => array(
+					),
+				),
+				array(
+					'title' => $txt['credits_groups_customize'],
+					'members' => array(
+					),
+				),
+				array(
+					'title' => $txt['credits_groups_marketing'],
+					'members' => array(
+					),
+				),
+				array(
+					'title' => $txt['credits_groups_internationalizers'],
+					'members' => array(
+					),
+				),
+				*/
 			),
 		),
-		array(
+		'smf' => array(
 			'title' => $txt['credits_smf2_team'],
 			'groups' => array(
 				array(
 					'title' => $txt['credits_groups_founder'],
 					'members' => array(
 						'Unknown W. "[Unknown]" Brackets',
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_ps'],
-					'members' => array(
 					),
 				),
 				array(
@@ -107,41 +144,6 @@ function Credits($in_admin = false)
 						'winrules',
 					),
 				),
-				array(
-					'title' => $txt['credits_groups_consultants'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_support'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_customize'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_docs'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_marketing'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_internationalizers'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_servers'],
-					'members' => array(
-					),
-				),
 			),
 		),
 	);
@@ -152,36 +154,18 @@ function Credits($in_admin = false)
 			'title' => $txt['credits_groups_translation'],
 			'groups' => array(
 				array(
-					'title' => $txt['credits_groups_translation'],
+					'title' => $txt['credits_groups_language'],
 					'members' => $txt['translation_credits'],
 				),
 			),
 		);
 
-	$context['credits'][] = array(
-		'title' => $txt['credits_special'],
-		'posttext' => $txt['credits_anyone'],
-		'groups' => array(
-			array(
-				'title' => $txt['credits_groups_beta'],
-				'members' => array(
-					$txt['credits_beta_message'],
-				),
-			),
-			array(
-				'title' => $txt['credits_groups_translators'],
-				'members' => array(
-					$txt['credits_translators_message'],
-				),
-			),
-		),
-	);
-
 	$context['copyrights'] = array(
 		'wedge' => sprintf($forum_copyright, WEDGE_VERSION),
 		'images' => array(
-			'flags' => '<a href="http://famfamfam.com/lab/icons/flags/">FamFamFam Flags</a> &copy; Mark James, 2005',
-			'icons' => '<a href="http://www.everaldo.com/crystal/">Crystal Icons</a> &copy; Crystal Project, 2001-11',
+			'famfamfam' => '<a href="http://famfamfam.com/">FamFamFam</a> Flags &amp; Silk &copy; Mark James, 2005',
+			'icons' => '<a href="http://www.everaldo.com/crystal/">Crystal Icons</a> &copy; Crystal Project, 2001-2011',
+			'diagona' => '<a href="http://p.yusukekamiyamane.com/">Diagona</a> &copy; Y&#363;suke Kamiyamane',
 		),
 		'mods' => array(
 		),
