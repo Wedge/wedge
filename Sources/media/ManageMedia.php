@@ -208,34 +208,6 @@ function aeva_admin_about()
 		),
 	);
 
-	$context['aeva_thanks'] = array(
-		'GetID3' => array(
-			'name' => 'GetID3 script',
-			'site' => 'http://getid3.org',
-			'position' => 'Video data parser/analyzer',
-		),
-		'Exifixer' => array(
-			'name' => 'Exifixer',
-			'site' => 'http://www.zenphoto.org/trac/wiki/ExifixerLibrary',
-			'position' => 'Exif metadata parsing library',
-		),
-		'YUIU' => array(
-			'name' => 'Yahoo! UI Uploader',
-			'site' => 'http://developer.yahoo.com/yui/',
-			'position' => 'Flash/Ajax-based mass uploader. Progress bars from <a href="http://digitarald.de/project/fancyupload/">FancyUpload</a>.',
-		),
-		'JW Player' => array(
-			'name' => 'JW Player',
-			'site' => 'http://www.longtailvideo.com/players/jw-flv-player/',
-			'position' => 'FLV video player, free for non-commercial use',
-		),
-		'Testers' => array(
-			'name' => 'All of you!',
-			'site' => 'http://wedge.org',
-			'position' => 'Thanks to the Wedge community who cared about the project and spent time to help us find bugs!',
-		),
-	);
-
 	$data = array('safe_mode' => ini_get('safe_mode'));
 
 	if (media_handler::testFFMPEG())

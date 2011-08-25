@@ -463,19 +463,6 @@ function template_aeva_admin_about()
 
 		<table class="w100 cp4 cs1 bordercolor" style="margin-top: 8px">
 			<tr class="titlebg">
-				<td>', $txt['media_admin_thanks'], '</td>
-			</tr>
-			<tr class="windowbg2">
-				<td class="smalltext">';
-
-	foreach ($context['aeva_thanks'] as $credit)
-		echo '
-					', isset($credit['site']) ? '<a href="' . $credit['site'] . '">' . $credit['name'] . '</a>' : $credit['name'], ' - ', $credit['position'], '<br>';
-
-	echo '
-				</td>
-			</tr>
-			<tr class="titlebg">
 				<td>', $txt['media_admin_about_modd'], '</td>
 			</tr>';
 

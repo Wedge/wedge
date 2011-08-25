@@ -82,38 +82,10 @@ function Credits($in_admin = false)
 					'members' => array(
 						'Dismal Shadow (Edwin Mendez)',
 						'MultiformeIngegno (Lorenzo Raffio)',
+						'[Unknown] &amp; Karl Benson',
 						'Norodo',
-						'[Unknown]',
 					),
 				),
-				// These aren't used for now...
-				/*
-				array(
-					'title' => $txt['credits_groups_support'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_docs'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_customize'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_marketing'],
-					'members' => array(
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_internationalizers'],
-					'members' => array(
-					),
-				),
-				*/
 			),
 		),
 		'smf' => array(
@@ -122,14 +94,14 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_founder'],
 					'members' => array(
-						'Unknown W. "[Unknown]" Brackets',
+						'[Unknown] (Unknown W. Brackets)',
 					),
 				),
 				array(
 					'title' => $txt['credits_groups_dev'],
 					'members' => array(
 						'Aaron (Aaron van Geffen)',
-						'Antechinus',
+						'Antechinus (Peter Sharpe)',
 						'Bloc (Bjoern Kristiansen)',
 						'Compuart (Hendrik Jan Visser)',
 						'Grudge' . ($user_info['is_admin'] ? ' (Matt Wolf)' : ''),
@@ -166,6 +138,12 @@ function Credits($in_admin = false)
 			'famfamfam' => '<a href="http://famfamfam.com/">FamFamFam</a> Flags &amp; Silk &copy; Mark James, 2005',
 			'icons' => '<a href="http://www.everaldo.com/crystal/">Crystal Icons</a> &copy; Crystal Project, 2001-2011',
 			'diagona' => '<a href="http://p.yusukekamiyamane.com/">Diagona</a> &copy; Y&#363;suke Kamiyamane',
+		),
+		'tools' => array(
+			'idtags' => '<a href="http://getid3.org">GetID3</a>',
+			'exif' => '<a href="http://www.zenphoto.org/trac/wiki/ExifixerLibrary">Exifixer</a>',
+			'player' => '<a href="http://www.longtailvideo.com/players/jw-flv-player/">JW Player</a>',
+			'uploader' => '<a href="http://developer.yahoo.com/yui/">Yahoo! UI Uploader</a>',
 		),
 		'mods' => array(
 		),

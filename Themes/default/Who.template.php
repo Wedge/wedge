@@ -192,14 +192,8 @@ function template_credits()
 		echo '
 		<div style="width: 49%; float: left; margin: 0 .5%">';
 
-		if (isset($section['title']))
-			echo '
-			<we:title>
-				', $section['title'], '
-			</we:title>';
-
 		echo '
-			<div class="windowbg2 wrc">';
+			<we:block class="windowbg2 wrc" header="', westr::safe($section['title']), '">';
 
 		$i = 0;
 		$max = count($section['groups']);
@@ -225,7 +219,7 @@ function template_credits()
 				<p class="posttext">', $section['posttext'], '</p>';
 
 		echo '
-			</div>
+			</we:block>
 		</div>';
 	}
 
@@ -249,6 +243,15 @@ function template_credits()
 			</ul>';
 
 	echo '
+			<h6>', $txt['credits_tools'], '</h6>
+			<ul>';
+
+	foreach ($context['copyrights']['tools'] as $name => $str)
+		echo '
+				<li>', $str, isset($txt['credits_tools_' . $name]) ? ' &ndash; ' . $txt['credits_tools_' . $name] : '', '</li>';
+
+	echo '
+			</ul>
 			<h6>', $txt['credits_images'], '</h6>
 			<ul class="last">
 				<li>', implode('</li>
