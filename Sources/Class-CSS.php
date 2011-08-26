@@ -251,10 +251,10 @@ class wecss_var extends wecss
 		// The only reason we're not accepting ":" in declarations is that
 		// we want to be able to do this: (Check the last line carefully)
 		//
-		// (index.css)	$border-pos = right
-		// (rtl.css)	$border-pos = left
-		// (index.css)	.class
-		//					border-$border-pos: 1px solid $border-col;
+		// (index.css)		$border-pos = right
+		// (index.rtl.css)	$border-pos = left
+		// (index.css)		.class
+		//						border-$border-pos: 1px solid $border-col;
 
 		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*("?)(.*)\\3;?\s*$~m', $css, $matches))
 		{

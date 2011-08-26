@@ -149,7 +149,7 @@ function add_css_file($original_files = array(), $add_link = false)
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
-	$skin = empty($context['skin']) ? 'skins' : $context['skin'];
+	$skin = empty($context['skin']) ? $modSettings['theme_skin_guests'] : $context['skin'];
 
 	foreach ($files as $i => &$file)
 	{
@@ -250,7 +250,7 @@ function wedge_cache_css()
 		{
 			$set = file_get_contents($fold . '/skin.xml');
 			// If this is a replace-type skin, erase all of the parent files.
-			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && trim($match[1]) === 'replace')
+			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
 				$css = array();
 		}
 

@@ -482,7 +482,7 @@ function template_modify_board()
 
 	foreach ($context['themes'] as $theme)
 	{
-		echo '<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] && $context['board']['skin'] == 'skins' ? ' selected' : '', '>', $theme['name'], '</option>';
+		echo '<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] && (empty($context['board']['skin']) || $context['board']['skin'] == 'skins') ? ' selected' : '', '>', $theme['name'], '</option>';
 		if (!empty($theme['skins']))
 			wedge_show_skins($theme, $theme['skins'], 1, $context['board']['theme'], $context['board']['skin']);
 	}

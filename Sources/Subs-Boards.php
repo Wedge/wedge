@@ -831,7 +831,7 @@ function createBoard($boardOptions)
 		'posts_count' => true,
 		'override_theme' => false,
 		'board_theme' => 0,
-		'board_skin' => 'skins',
+		'board_skin' => '',
 		'access_groups' => array(),
 		'board_description' => '',
 		'profile' => 1,

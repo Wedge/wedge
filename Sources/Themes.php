@@ -1211,12 +1211,12 @@ function ThemeInstall()
 		if (function_exists('apache_reset_timeout'))
 			@apache_reset_timeout();
 
-		// Create subdirectories for css and javascript files.
+		// Create subdirectories for CSS and JavaScript files.
 		mkdir($theme_dir . '/skins', 0777);
 		mkdir($theme_dir . '/scripts', 0777);
 
 		// Copy over the default non-theme files.
-		$to_copy = array('/index.php', '/index.template.php', '/skins/index.css', '/skins/rtl.css', '/scripts/theme.js');
+		$to_copy = array('/index.php', '/index.template.php', '/skins/index.css', '/skins/index.rtl.css', '/scripts/theme.js');
 		foreach ($to_copy as $file)
 		{
 			copy($settings['default_theme_dir'] . $file, $theme_dir . $file);
