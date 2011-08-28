@@ -373,11 +373,10 @@ function template_body_below()
 	if (!empty($context['bottom_linktree']))
 		theme_linktree(false, true);
 
-	// Show the "Powered by" and "Valid" logos, as well as the copyright.
+	// Show the short copyright. Please don't remove it, free software deserves credit.
 	echo '
 	<div id="footer"><div class="frame">
-		<ul class="reset">
-			<li class="copyright">', theme_copyright(), '</li>';
+		<ul class="reset">';
 
 	// Show the load time?
 	if ($context['show_load_time'])
@@ -385,6 +384,7 @@ function template_body_below()
 			<li class="stats"><!-- insert stats here --></li>';
 
 	echo '
+			<li class="copyright">', $txt['copyright'], '</li>
 			<li class="links">
 				<a id="site_credits" href="', $scripturl, '?action=credits">', $txt['site_credits'], '</a> |
 				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |

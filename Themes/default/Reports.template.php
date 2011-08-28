@@ -243,10 +243,10 @@ function template_print()
 // Footer of the print page.
 function template_print_below()
 {
-	global $context, $settings, $options;
+	global $txt;
 
 	echo '
-	<div class="copyright">', theme_copyright(), '</div>
+	<div class="copyright">', $txt['copyright'], '</div>
 </body>
 </html>';
 }

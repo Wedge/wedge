@@ -133,7 +133,7 @@ function Credits($in_admin = false)
 		);
 
 	$context['copyrights'] = array(
-		'wedge' => sprintf($forum_copyright, WEDGE_VERSION),
+		'wedge' => $txt['copyright'],
 		'images' => array(
 			'famfamfam' => '<a href="http://famfamfam.com/">FamFamFam</a> Flags &amp; Silk &copy; Mark James, 2005',
 			'icons' => '<a href="http://www.everaldo.com/crystal/">Crystal Icons</a> &copy; Crystal Project, 2001-2011',

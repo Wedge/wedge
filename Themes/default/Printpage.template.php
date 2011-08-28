@@ -124,13 +124,11 @@ function template_main()
 
 function template_print_below()
 {
-	global $context, $settings, $options;
+	global $txt;
 
 	echo '
 		</dl>
-		<div id="footer" class="smalltext">
-			', theme_copyright(), '
-		</div>
+		<div id="footer" class="smalltext">', $txt['copyright'], '</div>
 	</body>
 </html>';
 }

@@ -1718,17 +1718,6 @@ function template_header()
 }
 
 /**
- * Shows the copyright notice.
- */
-function theme_copyright()
-{
-	global $forum_copyright;
-
-	// For SSI and other things, skip the version number.
-	echo defined('WEDGE_VERSION') ? sprintf($forum_copyright, WEDGE_VERSION) : sprintf(str_replace('Wedge %1$s', 'Wedge', $forum_copyright), WEDGE_VERSION);
-}
-
-/**
  * Ensure the content below the main content is loaded, i.e. the footer and including the copyright (and displaying a large warning if copyright has been hidden)
  *
  * Several things occur here.
