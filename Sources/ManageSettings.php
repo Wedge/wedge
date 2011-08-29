@@ -375,8 +375,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
 
 	$config_vars = array(
-			array('check', 'securityDisable'),
-		'',
 			// Reactive on email, and approve on delete
 			array('check', 'send_validation_onChange'),
 			array('check', 'approveAccountDeletion'),

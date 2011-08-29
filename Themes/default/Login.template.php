@@ -207,7 +207,7 @@ function template_admin_login()
 	echo '
 			<strong>', $txt['password'], ':</strong>
 			<input type="password" name="admin_pass" size="24">
-			<a href="', $scripturl, '?action=help;in=securityDisable_why" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a><br>
+			<br>
 			<input type="submit" style="margin-top: 1em" value="', $txt['login'], '" class="submit">';
 
 	// Make sure to output all the old post data.
