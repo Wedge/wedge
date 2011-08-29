@@ -149,7 +149,7 @@ function add_css_file($original_files = array(), $add_link = false)
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
-	$skin = empty($context['skin']) ? $modSettings['theme_skin_guests'] : $context['skin'];
+	$skin = !empty($context['skin']) ? $context['skin'] : (!empty($modSettings['theme_skin_guests']) ? $modSettings['theme_skin_guests'] : 'skins');
 
 	foreach ($files as $i => &$file)
 	{
