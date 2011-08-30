@@ -425,7 +425,7 @@ function EditBoard()
 			'override_theme' => 0,
 			'redirect' => '',
 			'redirect_newtab' => 0,
-			'url' => $_SERVER['HTTP_HOST'] . '/' . 'enter-a-name',
+			'url' => $_SERVER['HTTP_HOST'] . '/enter-a-name',
 			'category' => (int) $_REQUEST['cat'],
 			'no_children' => true,
 			'language' => '',

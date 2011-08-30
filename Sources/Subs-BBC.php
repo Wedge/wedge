@@ -1176,10 +1176,10 @@ function parsesmileys(&$message)
 		$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 		$context['smiley_gzip'] = $can_gzip;
 		$context['smiley_ext'] = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
-		$var_name = 'smiley_cache_' . str_replace('.', '', $context['smiley_ext']) . '_' . $user_info['smiley_set'];
+		$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'];
 		$context['smiley_now'] = empty($modSettings[$var_name]) ? time() : $modSettings[$var_name];
 
-		if (!file_exists($cachedir . '/smileys-' . $context['browser']['agent'] . $user_info['smiley_set'] . '-' . '-' . $context['smiley_now'] . $context['smiley_ext']))
+		if (!file_exists($cachedir . '/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
 		{
 			// We're only going to cache the smileys that show up on the post editor by default.
 			// The reason is to help save bandwidth by only storing whatever is most likely to be used.

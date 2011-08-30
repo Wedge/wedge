@@ -377,11 +377,12 @@ function template_folder()
 				</ul>
 			</div>
 			<div class="post">
-				<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>
-				<div class="smalltext reportlinks">', $context['folder'] != 'sent' ? '
-					<div class="righttext"><a href="' . $scripturl . '?action=pm;sa=report;l=' . $context['current_label_id'] . ';pmsg=' . $message['id'] . '">' . $txt['pm_report_to_admin'] . '</a></div>' : '');
+				<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>';
 
-			echo '
+			if ($context['folder'] != 'sent')
+				echo '
+				<div class="smalltext reportlinks righttext">
+					<a href="', $scripturl, '?action=pm;sa=report;l=', $context['current_label_id'], ';pmsg=', $message['id'], '">', $txt['pm_report_to_admin'], '</a>
 				</div>';
 
 			// Are there any custom profile fields for above the signature?

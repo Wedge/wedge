@@ -107,7 +107,7 @@ function template_html_above()
 	// Declare HTML5, and show right to left and the character set for ease of translating.
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_dictionary']) ? ' lang="' . $txt['lang_dictionary'] . '"' : '', '>
-<!-- Powered by Wedge, (c) Wedgeward 2010-2011 - http://wedge.org -->
+<!-- Powered by Wedge, (c) Wedgeward - http://wedge.org -->
 <head>
 	<meta charset="utf-8">';
 
@@ -271,7 +271,7 @@ function template_sidebar_above()
 
 		echo '
 			</ul>
-			<p>', $context['current_time'], '</p>';
+			<p class="now">', $context['current_time'], '</p>';
 
 		// Is the forum in maintenance mode?
 		if ($context['in_maintenance'] && $context['user']['is_admin'])

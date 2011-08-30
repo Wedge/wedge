@@ -568,6 +568,9 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 	if (isset($jquery, $jquery[1]))
 		$final = str_replace('WEDGE_JQUERY();', trim($jquery[1]) . "\n", $final);
 
+	// Remove the copyright years and version information, in case you're a paranoid android.
+	$final = preg_replace("~/\*!(?:[^*]|\*[^/])*?@package wedge.*?\*/~s", "/*!\n * @package wedge\n * @copyright Wedgeward, wedge.org\n * @license http://wedge.org/license/\n */", $final);
+
 	if ($gzip)
 		$final = gzencode($final, 9);
 
@@ -591,7 +594,7 @@ function wedge_cache_smileys($set, $smileys)
 	updateSettings(array('smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $agent . '-' . $set => $context['smiley_now']));
 
 	// Delete all remaining cached versions, if any (e.g. *.cgz for Safari.)
-	foreach (glob($cachedir . '/smileys-' . $set . '-' . $agent . '-*' . $context['smiley_ext']) as $del)
+	foreach (glob($cachedir . '/smileys-' . $agent . '-' . $set . '-*' . $context['smiley_ext']) as $del)
 		@unlink($del);
 
 	foreach ($smileys as $name => $smiley)

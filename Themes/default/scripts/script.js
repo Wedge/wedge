@@ -545,9 +545,9 @@ function weSaveEntities(sFormName, aElementNames, sMask)
 })(jQuery);
 
 
-/*!
- * Dropdown menu in JS with CSS fallback, Wedge style.
- * It may not show, but it took me years to refine it. -- Nao
+/**
+ * Dropdown menu in JS with CSS fallback, Nao style.
+ * May not show, but it took years to refine it.
  */
 var menu_baseId = hoverable = 0, menu_delay = [], menu_ieshim = [], hove = 'hove';
 
@@ -571,7 +571,7 @@ function initMenu(menu)
 			.mousedown(false)
 			.click(function () {
 				$('.' + hove).removeClass(hove);
-				$('ul', menu).css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+				$('ul', menu).css({ visibility: 'hidden', opacity: is_ie8down ? 1 : 0});
 				if (is_ie6)
 					$('li', menu).each(function () { menu_show_shim(false, this.id); });
 			});
@@ -656,7 +656,7 @@ function menu_hide_me(e)
 function menu_hide_children(id)
 {
 	$('#' + id).children().andSelf().removeClass(hove).find('ul')
-		.css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+		.css({ visibility: 'hidden', opacity: is_ie8down ? 1 : 0});
 
 	if (is_ie6)
 		menu_show_shim(false, id);
@@ -773,6 +773,7 @@ _formSubmitted = _f
 menu_hide_children = _h
 menu_hide_me = _hm
 menu_ieshim = _ie
+hoverable = _ho
 _lastKeepAliveCheck = _k
 _collapsed = _o
 menu_show_me = _sm

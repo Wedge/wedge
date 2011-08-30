@@ -1,4 +1,4 @@
-/*!
+/**
  * Wedge
  *
  * Functions required by the current theme.
