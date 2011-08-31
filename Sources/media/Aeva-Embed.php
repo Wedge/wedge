@@ -253,7 +253,7 @@ function aeva_match($input)
 
 	// Call the object builder for each successful match (force then remove a leading <br> to match videos at the beginning, too.)
 	return preg_replace_callback(
-		'`(<br>|<aeva-begin>|</blockquote>(?:\s|&nbsp;)*)?<a href="(' . $regex . '[^"]*)"[^>]*>(.*?)</a>`i',
+		'`(<(?:(?:br|aeva-begin)>(?:<(?!br>)|[^<])*(?<!\s|&nbsp;))|</div>(?:\s|&nbsp;)*)?<a href="(' . $regex . '[^"]*)"[^>]*>(.*?)</a>`i',
 		'aeva_build_object',
 		'<aeva-begin>' . $input
 	);
@@ -265,15 +265,15 @@ function aeva_build_object($input)
 	global $context, $modSettings, $sites, $upto, $boardurl, $txt;
 	static $swfobjects = 0;
 
-	// Load the language files, English if no translated version is available
+	// Load the language files, English if no translated version is available.
 	if (!isset($txt['aeva']) && loadLanguage('Media') == false)
 		loadLanguage('Media', 'english');
 
 	if (empty($input[1]) && empty($modSettings['embed_incontext']))
-		return preg_replace(array('~http://~i', '@#[\w/\.~-]*@'), array('noae://', ''), $input[0], 1);
+		return preg_replace(array('~http://~i', '@#[\w/.~-]*@'), array('noae://', ''), $input[0], 1);
 
 	if ($context['aeva']['remaining'] == 0)
-		return preg_replace(array('~http://~i', '@#[\w/\.~-]*@'), array('noae://', ''), $input[0], 1) . ' ' . $txt['media_too_many_embeds'];
+		return preg_replace(array('~http://~i', '@#[\w/.~-]*@'), array('noae://', ''), $input[0], 1) . ' ' . $txt['media_too_many_embeds'];
 
 	$arr = &$sites[$upto];
 	$use_object_init = (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']) || WEDGE == 'SSI' || !empty($modSettings['embed_noscript']) || !empty($context['embed_mg_hack']);
@@ -380,7 +380,7 @@ function aeva_build_object($input)
 
 		// Add some information for the user that external embedding of this clip is disallowed by the video's author
 		if ($ion == 'noexternalembed')
-			return preg_replace(array('~http://~i', '@#noext[\w/\.~-]*@'), array('noae://', ''), $input[0]) . ' ' . $txt['media_noexternalembedding'];
+			return preg_replace(array('~http://~i', '@#noext[\w/.~-]*@'), array('noae://', ''), $input[0]) . ' ' . $txt['media_noexternalembedding'];
 
 		if (is_array($arr['movie']) && isset($arr['movie'][$ion]))
 			$movie_type = $ion;
@@ -676,12 +676,11 @@ function aeva_autolink_urls($input)
 	// Parse any URLs....
 	if (preg_match('~http://|www\.~i', $input))
 	{
-		// Also supports [center], [li], [td], [youtube] and closing tags.
 		$input = strtr($input, array('&#039;' => '\'', '&quot;' => '>">', '"' => '<"<', '&lt;' => '<lt<'));
 		$input = preg_replace(
 			array(
-				'`(^|[\s>\.(;\'"]|\[(?:center|li|td|youtube|/\w+)])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w\~%\.@,\?&;=#+:\'\\\\-]*|[\(\{][\w\~%\.@,\?&;=#(){}+:\'\\\\-]*)*[/\w\~%@\?;=#}\\\\-]?)`i',
-				'`(^|[\s>\.(;\'"]|\[(?:center|li|td|youtube|/\w+)])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w\~%\.@,\?&;=#+:\'\\\\-]*|[\(\{][\w\~%\.@,\?&;=#(){}+:\'\\\\-]*)*[/\w\~%@\?;=#}\\\\-])`i'),
+				'`(^|[]\s>.(;\'"])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`i',
+				'`(^|[]\s>.(;\'"])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'),
 			array(
 				'$1[url]$2[/url]',
 				'$1[url=http://$2]$2[/url]'
@@ -979,7 +978,7 @@ function aeva_fix_html($input)
 				continue;
 
 			// Re-use the embed pattern
-			$regex = str_replace('$1', '(' . $site['pattern'] . ')(?:[^"\>]*?)', $site['fix-html-pattern']);
+			$regex = str_replace('$1', '(' . $site['pattern'] . ')[^">]*?', $site['fix-html-pattern']);
 			// Complete the pattern with delimiter and utf8 support. If starting with a <, make sure to escape it
 			$regex = '`' . ($regex[0] == '<' ? '\\' : '') . $regex . '`isu';
 
@@ -1243,7 +1242,7 @@ function aeva_generate_embed_thumb($link, $id_album, $id_file = 0, $folder = '')
 	$thumbs = array(
 		'YouTube' => array(
 			'func' => 'youtubeCreateThumb',
-			'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:&|&amp;|/|\?|;|\%3F|\%2F)(?:video_id=|v(?:/|=|\%3D|\%2F))|\.be)([\w-]{11})',
+			'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))|\.be)([\w-]{11})',
 		),
 		'Dailymotion' => array(
 			'func' => 'dailymotionCreateThumb',
