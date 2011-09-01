@@ -49,7 +49,8 @@ function cleanRequest()
 		$boardurl = 'http://' . $_SERVER['HTTP_HOST'];
 		$scripturl = $boardurl . (isset($_COOKIE[session_name()]) ? '/' : '/index.php');
 	}
-	else */
+	else
+*/
 	$scripturl = $boardurl . '/index.php';
 
 	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
@@ -130,24 +131,13 @@ function cleanRequest()
 		}
 	}
 
-	// There's no query string, but there is a URL... try to get the data from there.
-	if (!empty($_SERVER['REQUEST_URI']))
+	// Compatibility with older URLs. Replace 'index.php/a,b,c/d/e,f' with 'a=b,c&d=&e=f' and parse it into $_GET.
+	if (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], basename($scripturl) . '/') !== false)
 	{
-		// Remove the .html, assuming there is one.
-		if (substr($_SERVER['REQUEST_URI'], strrpos($_SERVER['REQUEST_URI'], '.'), 4) == '.htm')
-			$request = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '.'));
-		else
-			$request = $_SERVER['REQUEST_URI'];
-
-		// !!! smflib.
-		// Replace 'index.php/a,b,c/d/e,f' with 'a=b,c&d=&e=f' and parse it into $_GET.
-		if (strpos($request, basename($scripturl) . '/') !== false)
-		{
-			parse_str(substr(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($request, strpos($request, basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
-			if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
-				$temp = $removeMagicQuoteFunction($temp);
-			$_GET += $temp;
-		}
+		parse_str(substr(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
+		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
+			$temp = $removeMagicQuoteFunction($temp);
+		$_GET += $temp;
 	}
 
 	if (isset($_GET['board']) && is_numeric($_GET['board']))
@@ -241,7 +231,7 @@ function cleanRequest()
 	}
 
 	// Don't bother going further if we've come here from a *REAL* 404.
-	if (strpos($full_request, '?') === false && in_array(strtolower(substr($full_request, -4)), array('.gif', '.jpg', 'jpeg', '.png')))
+	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png')))
 	{
 		loadLanguage('Errors');
 
@@ -306,7 +296,8 @@ function cleanRequest()
 		else
 			$board = 0;
 
-		$_REQUEST['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
+		if (empty($_REQUEST['topic']))
+			$_REQUEST['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 
 		// This is for "Who's Online" because it might come via POST - and it should be an int here.
 		$_GET['board'] = $board;

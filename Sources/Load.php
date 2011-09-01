@@ -1920,10 +1920,7 @@ function loadSource($source_name)
 {
 	global $sourcedir;
 
-	if (!is_array($source_name))
-		$source_name = array($source_name);
-
-	foreach ($source_name as $file)
+	foreach ((array) $source_name as $file)
 		require_once($sourcedir . '/' . $file . '.php');
 }
 
