@@ -258,7 +258,7 @@ function template_boardindex_below()
 
 		// Mark read button.
 		$mark_read_button = array(
-			'markread' => array('text' => 'mark_as_read', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=all;' . $context['session_query']),
+			'markread' => array('text' => 'mark_as_read', 'url' => $scripturl . '?action=markasread;sa=all;' . $context['session_query']),
 		);
 
 		echo '

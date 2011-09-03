@@ -103,7 +103,7 @@ function template_main_board()
 				$color_class .= ' sticky';
 			// Locked topics get special treatment as well.
 			if ($topic['is_locked'])
-				$color_class = ' locked';
+				$color_class .= ' locked';
 
 			// Some columns require a different shade of the color class.
 			$alternate_class = 'windowbg2' . $color_class;
@@ -367,7 +367,7 @@ function template_main_blog()
 				$color_class .= ' sticky';
 			// Locked topics get special treatment as well.
 			elseif ($topic['is_locked'])
-				$color_class = ' locked';
+				$color_class .= ' locked';
 
 			// Some columns require a different shade of the color class.
 			$alternate_class = 'windowbg2' . $color_class;

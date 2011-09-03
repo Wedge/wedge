@@ -22,7 +22,7 @@ function template_main()
 
 	// Build the calendar button array.
 	$calendar_buttons = array(
-		'post_event' => array('test' => 'can_post', 'text' => 'calendar_post_event', 'image' => 'calendarpe.gif', 'lang' => true, 'url' => $scripturl . '?action=calendar;sa=post;month=' . $context['current_month'] . ';year=' . $context['current_year'] . ';' . $context['session_query']),
+		'post_event' => array('test' => 'can_post', 'text' => 'calendar_post_event', 'url' => $scripturl . '?action=calendar;sa=post;month=' . $context['current_month'] . ';year=' . $context['current_year'] . ';' . $context['session_query']),
 	);
 
 	template_button_strip($calendar_buttons);

@@ -33,16 +33,12 @@ function template_report_type()
 
 	// Go through each type of report they can run.
 	foreach ($context['report_types'] as $type)
-	{
 		echo '
 					<dt>
 						<label><input type="radio" id="rt_', $type['id'], '" name="rt" value="', $type['id'], '"', $type['is_first'] ? ' checked' : '', '>
 						<strong>', $type['title'], '</strong></label>
-					</dt>';
-		if (isset($type['description']))
-			echo '
-					<dd>', $type['description'], '</dd>';
-	}
+					</dt>', isset($type['description']) ? '
+					<dd>' . $type['description'] . '</dd>' : '';
 
 	echo '
 				</dl>
@@ -63,9 +59,9 @@ function template_main()
 
 	// Build the reports button array.
 	$report_buttons = array(
-			'generate_reports' => array('text' => 'generate_reports', 'image' => 'print.gif', 'lang' => true, 'url' => $scripturl . '?action=admin;area=reports', 'class' => 'active'),
-			'print' => array('text' => 'print', 'image' => 'print.gif', 'lang' => true, 'url' => $scripturl . '?action=admin;area=reports;rt=' . $context['report_type']. ';st=print', 'custom' => 'target="_blank"'),
-		);
+		'generate_reports' => array('text' => 'generate_reports', 'url' => $scripturl . '?action=admin;area=reports', 'class' => 'active'),
+		'print' => array('text' => 'print', 'url' => $scripturl . '?action=admin;area=reports;rt=' . $context['report_type']. ';st=print', 'custom' => 'target="_blank"'),
+	);
 
 	echo '
 	<div id="admincenter">

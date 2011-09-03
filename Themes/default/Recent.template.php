@@ -99,16 +99,11 @@ function template_unread()
 
 	// Generate the button strip.
 	$mark_read = array(
-		'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_query']),
+		'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_query']),
 	);
 
 	if ($show_checkboxes)
-		$mark_read['markselectread'] = array(
-			'text' => 'quick_mod_markread',
-			'image' => 'markselectedread.gif',
-			'lang' => true,
-			'url' => 'javascript:document.quickModForm.submit();',
-		);
+		$mark_read['markselectread'] = array('text' => 'quick_mod_markread', 'url' => 'javascript:document.quickModForm.submit();');
 
 	if (!empty($context['topics']))
 	{
@@ -161,7 +156,7 @@ function template_unread()
 			if ($topic['is_sticky'])
 				$color_class .= ' sticky';
 			if ($topic['is_locked'])
-				$color_class = ' locked';
+				$color_class .= ' locked';
 
 			// Some columns require a different shade of the color class.
 			$alternate_class = 'windowbg2' . $color_class;
@@ -204,7 +199,7 @@ function template_unread()
 		}
 
 		if (!empty($context['topics']))
-			$mark_read['readall'] = array('text' => 'unread_topics_all', 'image' => 'markreadall.gif', 'lang' => true, 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'class' => 'active');
+			$mark_read['readall'] = array('text' => 'unread_topics_all', 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'class' => 'active');
 		else
 			echo '
 					<tr class="hide"><td></td></tr>';
@@ -258,16 +253,11 @@ function template_replies()
 	{
 		// Generate the button strip.
 		$mark_read = array(
-			'markread' => array('text' => 'mark_as_read', 'image' => 'markread.gif', 'lang' => true, 'url' => $scripturl . '?action=markasread;sa=unreadreplies;topics=' . $context['topics_to_mark'] . ';' . $context['session_query']),
+			'markread' => array('text' => 'mark_as_read', 'url' => $scripturl . '?action=markasread;sa=unreadreplies;topics=' . $context['topics_to_mark'] . ';' . $context['session_query']),
 		);
 
 		if ($show_checkboxes)
-			$mark_read['markselectread'] = array(
-				'text' => 'quick_mod_markread',
-				'image' => 'markselectedread.gif',
-				'lang' => true,
-				'url' => 'javascript:document.quickModForm.submit();',
-			);
+			$mark_read['markselectread'] = array('text' => 'quick_mod_markread', 'url' => 'javascript:document.quickModForm.submit();');
 	}
 
 	if (!empty($context['topics']))
@@ -321,7 +311,7 @@ function template_replies()
 			if ($topic['is_sticky'])
 				$color_class .= ' sticky';
 			if ($topic['is_locked'])
-				$color_class = ' locked';
+				$color_class .= ' locked';
 
 			// Some columns require a different shade of the color class.
 			$alternate_class = 'windowbg2' . $color_class;

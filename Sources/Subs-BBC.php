@@ -206,7 +206,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		// If we are not doing every tag only do ones we are interested in.
 		foreach ($master_codes as &$code)
 			if (empty($parse_tags) || in_array($code['tag'], $parse_tags))
-				$bbc_codes[$code['tag'][0]][] = $code;
+				$bbc_codes[substr($code['tag'], 0, 1)][] = $code;
 	}
 
 	// Shall we take the time to cache this?
