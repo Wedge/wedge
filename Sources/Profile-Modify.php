@@ -53,7 +53,7 @@ if (!defined('WEDGE'))
 	array getAvatars(string directory, int level)
 		// !!!
 
-	void theme(int id_member)
+	void options(int id_member)
 		// !!!
 
 	void authentication(int id_member, bool saving = false)
@@ -309,38 +309,6 @@ function loadProfileFields($force_reload = false)
 			'preload' => 'profileLoadGroups',
 			'log_change' => true,
 			'input_validate' => 'profileSaveGroups',
-		),
-		'id_theme' => array(
-			'type' => 'callback',
-			'callback_func' => 'theme_pick',
-			'permission' => 'profile_extra',
-			'enabled' => $modSettings['theme_allow'] || allowedTo('admin_forum'),
-			'preload' => create_function('', '
-				global $context, $cur_profile, $txt;
-
-				$request = wesql::query(\'
-					SELECT value
-					FROM {db_prefix}themes
-					WHERE id_theme = {int:id_theme}
-						AND variable = {string:variable}
-					LIMIT 1\', array(
-						\'id_theme\' => $cur_profile[\'id_theme\'],
-						\'variable\' => \'name\',
-					)
-				);
-				list ($name) = wesql::fetch_row($request);
-				wesql::free_result($request);
-
-				$context[\'member\'][\'theme\'] = array(
-					\'id\' => $cur_profile[\'id_theme\'],
-					\'name\' => empty($cur_profile[\'id_theme\']) ? $txt[\'theme_forum_default\'] : $name
-				);
-				return true;
-			'),
-			'input_validate' => create_function('&$value', '
-				$value = (int) $value;
-				return true;
-			'),
 		),
 		'lngfile' => array(
 			'type' => 'select',
@@ -1146,7 +1114,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 	if ($sanitize && isset($_POST['customfield']))
 		$_POST['customfield'] = htmlspecialchars__recursive($_POST['customfield']);
 
-	$where = $area == 'register' ? 'show_reg != 0' : 'show_profile = {string:area}';
+	$where = $area === 'register' ? 'show_reg != 0' : 'show_profile = {string:area}';
 
 	// Load the fields we are saving too - make sure we save valid data (etc).
 	$request = wesql::query('
@@ -1156,7 +1124,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			AND active = {int:is_active}',
 		array(
 			'is_active' => 1,
-			'area' => $area,
+			'area' => $area === 'theme' ? 'options' : $area,
 		)
 	);
 	$changes = array();
@@ -1628,20 +1596,20 @@ function getAvatars($directory, $level)
 	return $result;
 }
 
-function theme($memID)
+function options($memID)
 {
-	global $txt, $context, $user_profile, $modSettings, $settings, $user_info;
+	global $txt, $context;
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
-		loadCustomFields($memID, 'theme');
+		loadCustomFields($memID, 'options');
 
 	loadSubTemplate('edit_options');
-	$context['page_desc'] = $txt['theme_info'];
+	$context['page_desc'] = $txt['options_info'];
 
 	setupProfileContext(
 		array(
-			'id_theme', 'smiley_set', 'hr',
+			'smiley_set', 'hr',
 			'time_format', 'time_offset', 'hr',
 			'theme_settings',
 		)

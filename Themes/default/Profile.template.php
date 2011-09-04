@@ -2699,20 +2699,6 @@ function template_profile_timeoffset_modify()
 					</dd>';
 }
 
-// Theme?
-function template_profile_theme_pick()
-{
-	global $txt, $context, $scripturl;
-
-	echo '
-					<dt>
-						<strong>', $txt['current_theme'], ':</strong>
-					</dt>
-					<dd>
-						', $context['member']['theme']['name'], ' <a href="', $scripturl, '?action=theme;sa=pick;u=', $context['id_member'], ';', $context['session_query'], '">', $txt['change'], '</a>
-					</dd>';
-}
-
 // Smiley set picker.
 function template_profile_smiley_pick()
 {

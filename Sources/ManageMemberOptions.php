@@ -804,7 +804,7 @@ function EditCustomProfiles()
 				'name' => $row['field_name'],
 				'desc' => $row['field_desc'],
 				'colname' => $row['col_name'],
-				'profile_area' => $row['show_profile'],
+				'profile_area' => $row['show_profile'] === 'theme' ? 'options' : $row['show_profile'],
 				'reg' => $row['show_reg'],
 				'display' => $row['show_display'],
 				'type' => $row['field_type'],

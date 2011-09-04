@@ -195,11 +195,21 @@ function ModifyProfile($post_errors = array())
 						'any' => array('profile_extra_any', 'profile_title_any'),
 					),
 				),
-				'theme' => array(
-					'label' => $txt['theme'],
+				'options' => array(
+					'label' => $txt['options'],
 					'file' => 'Profile-Modify',
-					'function' => 'theme',
+					'function' => 'options',
 					'sc' => 'post',
+					'permission' => array(
+						'own' => array('profile_extra_any', 'profile_extra_own'),
+						'any' => array('profile_extra_any'),
+					),
+				),
+				'',
+				'skin' => array(
+					'label' => $txt['change_skin'],
+					'enabled' => !empty($modSettings['theme_allow']) || allowedTo('admin_forum'),
+					'custom_url' => $scripturl . '?action=skin;u=' . $context['id_member'],
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
 						'any' => array('profile_extra_any'),
@@ -613,7 +623,7 @@ function ModifyProfile($post_errors = array())
 		{
 			authentication($memID, true);
 		}
-		elseif (in_array($current_area, array('account', 'forumprofile', 'theme', 'pmprefs')))
+		elseif (in_array($current_area, array('account', 'forumprofile', 'options', 'pmprefs')))
 			saveProfileFields();
 		else
 		{
@@ -739,7 +749,7 @@ function loadCustomFields($memID, $area = 'summary')
 		FROM {db_prefix}custom_fields
 		WHERE ' . $where,
 		array(
-			'area' => $area,
+			'area' => $area === 'theme' ? 'options' : $area,
 		)
 	);
 	$context['custom_fields'] = array();

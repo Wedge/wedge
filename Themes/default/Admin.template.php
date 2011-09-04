@@ -974,7 +974,7 @@ function template_edit_profile_field()
 								<option value="none"', $context['field']['profile_area'] == 'none' ? ' selected' : '', '>', $txt['custom_edit_profile_none'], '</option>
 								<option value="account"', $context['field']['profile_area'] == 'account' ? ' selected' : '', '>', $txt['account'], '</option>
 								<option value="forumprofile"', $context['field']['profile_area'] == 'forumprofile' ? ' selected' : '', '>', $txt['forumprofile'], '</option>
-								<option value="theme"', $context['field']['profile_area'] == 'theme' ? ' selected' : '', '>', $txt['theme'], '</option>
+								<option value="options"', $context['field']['profile_area'] == 'options' ? ' selected' : '', '>', $txt['options'], '</option>
 							</select>
 						</dd>
 						<dt>

@@ -56,7 +56,7 @@ if (!defined('WEDGE'))
 		- allows user or administrator to pick a new theme with an interface.
 		- can edit everyone's (u = 0), guests' (u = -1), or a specific user's.
 		- uses the Themes template (pick subtemplate.)
-		- accessed with ?action=admin;area=theme;sa=pick.
+		- accessed with ?action=theme;sa=pick or ?action=skin.
 
 	void ThemeInstall()
 		- installs new themes, either from a gzip or copy of the default.
@@ -936,13 +936,15 @@ function PickTheme()
 {
 	global $txt, $context, $modSettings, $user_info, $language, $settings, $scripturl;
 
-	loadLanguage('Profile');
+	loadLanguage('Themes');
 	loadTemplate('Themes');
+
+	$u = isset($_REQUEST['u']) ? $_REQUEST['u'] : null;
 
 	// Build the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=theme;sa=pick;u=' . (!empty($_REQUEST['u']) ? (int) $_REQUEST['u'] : 0),
-		'name' => $txt['theme_pick'],
+		'url' => $u === null ? $scripturl . '?action=skin' : ($scripturl . ($u > 0 ? '?action=skin;u=' : '?action=theme;sa=pick;u=') . (int) $u),
+		'name' => $txt['change_skin'],
 	);
 
 	$_SESSION['id_theme'] = 0;
@@ -958,17 +960,17 @@ function PickTheme()
 		$css = isset($th[1]) ? base64_decode($th[1]) : '';
 
 		// Save for this user.
-		if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
+		if ($u === null || !allowedTo('admin_forum'))
 		{
 			updateMemberData($user_info['id'], array(
 				'id_theme' => $id,
 				'skin' => $css
 			));
-			redirectexit('action=theme;sa=pick;u=' . $user_info['id']);
+			redirectexit('action=skin');
 		}
 
 		// For everyone.
-		if ($_REQUEST['u'] == '0')
+		if ($u == '0')
 		{
 			updateMemberData(null, array(
 				'id_theme' => $id,
@@ -977,7 +979,7 @@ function PickTheme()
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
 		// Change the default/guest theme.
-		elseif ($_REQUEST['u'] == '-1')
+		elseif ($u == '-1')
 		{
 			updateSettings(array(
 				'theme_guests' => $id,
@@ -988,39 +990,39 @@ function PickTheme()
 		// Change a specific member's theme.
 		else
 		{
-			updateMemberData((int) $_REQUEST['u'], array(
+			updateMemberData((int) $u, array(
 				'id_theme' => $id,
 				'skin' => $css
 			));
-			redirectexit('action=profile;u=' . (int) $_REQUEST['u'] . ';area=theme');
+			redirectexit('action=skin;u=' . (int) $u);
 		}
 	}
 
 	// Figure out who the current member is, and what theme they've chosen.
-	if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
+	if ($u === null || !allowedTo('admin_forum'))
 	{
-		$context['current_member'] = $user_info['id'];
+		$context['specify_member'] = '';
 		$context['current_theme'] = $user_info['theme'];
 		$context['current_skin'] = empty($user_info['theme']) ? '' : $user_info['skin'];
 	}
 	// Everyone can't choose just one.
-	elseif ($_REQUEST['u'] == '0')
+	elseif ($u == '0')
 	{
-		$context['current_member'] = 0;
+		$context['specify_member'] = ';u=0';
 		$context['current_theme'] = 0;
 		$context['current_skin'] = '';
 	}
 	// Guests and such...
-	elseif ($_REQUEST['u'] == '-1')
+	elseif ($u == '-1')
 	{
-		$context['current_member'] = -1;
+		$context['specify_member'] = ';u=-1';
 		$context['current_theme'] = $modSettings['theme_guests'];
 		$context['current_skin'] = $modSettings['theme_skin_guests'];
 	}
 	// Someone else :P
 	else
 	{
-		$context['current_member'] = (int) $_REQUEST['u'];
+		$context['specify_member'] = ';u=' . (int) $u;
 
 		$request = wesql::query('
 			SELECT id_theme, skin
@@ -1028,7 +1030,7 @@ function PickTheme()
 			WHERE id_member = {int:current_member}
 			LIMIT 1',
 			array(
-				'current_member' => $context['current_member'],
+				'current_member' => (int) $u,
 			)
 		);
 		list ($context['current_theme'], $context['current_skin']) = wesql::fetch_row($request);
@@ -1131,7 +1133,7 @@ function PickTheme()
 	$settings['images_url'] = $current_images_url;
 
 	// As long as we're not doing the default theme...
-	if (!isset($_REQUEST['u']) || $_REQUEST['u'] >= 0)
+	if ($u === null || $u >= 0)
 	{
 		if ($guest_theme != 0)
 			$context['available_themes'][0] = $context['available_themes'][$guest_theme];
@@ -1144,7 +1146,7 @@ function PickTheme()
 
 	ksort($context['available_themes']);
 
-	$context['page_title'] = $txt['theme_pick'];
+	$context['page_title'] = $txt['change_skin'];
 	loadSubTemplate('pick');
 }
 

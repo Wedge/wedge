@@ -2855,6 +2855,12 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=profile;area=forumprofile',
 						'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
 					),
+					'',
+					'skin' => array(
+						'title' => $txt['change_skin'],
+						'href' => $scripturl . '?action=skin',
+						'show' => allowedTo(array('profile_extra_any', 'profile_extra_own')),
+					),
 				),
 			),
 			'pm' => array(
