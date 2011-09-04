@@ -170,14 +170,14 @@ function cleanRequest()
 			if (preg_match('@/~([^/]*)@', $full_request, $m))
 			{
 				if ($m[1] == '')
-					$_REQUEST['u'] = $_GET['u'] = $user_info['id'];
+					$_GET['u'] = 0;
 				else
-					$_REQUEST['user'] = $_GET['user'] = urldecode($m[1]);
-				$_REQUEST['action'] = $_GET['action'] = 'profile';
+					$_GET['user'] = urldecode($m[1]);
+				$_GET['action'] = 'profile';
 			}
 			// If URL has the form domain.com/do/action, it's an action. Really.
 			elseif (preg_match('@/do/([a-zA-Z0-9]+)@', $full_request, $m) && isset($action_list[$m[1]]))
-				$_REQUEST['action'] = $_GET['action'] = $m[1];
+				$_GET['action'] = $m[1];
 		}
 		else
 		{

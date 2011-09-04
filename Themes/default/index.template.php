@@ -428,11 +428,11 @@ function template_html_below()
 <script><!-- // --><![CDATA[
 	var
 		we_script = "', $scripturl, '",
-		we_default_theme_url = "', $settings['default_theme_url'], '",
-		we_theme_url = "', $settings['theme_url'], '",
+		we_default_theme_url = ', $settings['theme_url'] === $settings['theme_url'] ? 'we_theme_url = ' : '', '"', $settings['default_theme_url'], '", ', $settings['theme_url'] === $settings['theme_url'] ? '' : '
+		we_theme_url = "' . $settings['theme_url'] . '",', '
 		we_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ',
-		ajax_notification_text = "', $txt['ajax_in_progress'], '",
-		ajax_notification_cancel_text = "', $txt['modify_cancel'], '";
+		we_loading = "', $txt['ajax_in_progress'], '",
+		we_cancel = "', $txt['modify_cancel'], '";
 
 	initMenu("main_menu");
 
@@ -582,14 +582,14 @@ function template_button_strip($button_strip, $direction = 'right', $strip_optio
 	foreach ($button_strip as $key => $value)
 		if (!isset($value['test']) || !empty($context[$value['test']]))
 			$buttons[] = '
-					<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="button_strip_' . $key . (!empty($value['class']) ? ' ' . $value['class'] : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
+					<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="buttonstrip ' . $key . (!empty($value['class']) ? ' ' . $value['class'] : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
 
 	// No buttons? No button strip either.
 	if (empty($buttons))
 		return;
 
 	// Make the last one, as easy as possible.
-	$buttons[count($buttons) - 1] = str_replace('class="button_strip_', 'class="last button_strip_', $buttons[count($buttons) - 1]);
+	$buttons[count($buttons) - 1] = str_replace('class="buttonstrip ', 'class="last buttonstrip ', $buttons[count($buttons) - 1]);
 
 	echo '
 				<ul class="buttonlist', !empty($direction) ? ' float' . $direction : '', empty($buttons) ? ' hide' : '', '"', !empty($strip_options['id']) ? ' id="' . $strip_options['id'] . '"': '', '>',

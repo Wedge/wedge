@@ -400,7 +400,7 @@ function ajax_indicator(turn_on)
 	// Create the div for the indicator, and add the image, link to turn it off, and loading text.
 	if (turn_on)
 		$('<div id="ajax_in_progress"></div>').html('<a href="#" onclick="ajax_indicator(false);"' +
-			(ajax_notification_cancel_text ? ' title="' + ajax_notification_cancel_text + '"' : '') + '></a>' + ajax_notification_text
+			(we_cancel ? ' title="' + we_cancel + '"' : '') + '></a>' + we_loading
 		).css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {}).appendTo('body');
 	else
 		$('#ajax_in_progress').remove();
@@ -607,7 +607,7 @@ function menu_show_me()
 {
 	var
 		hasul = $('ul', this)[0], style = hasul ? hasul.style : {}, is_visible = style.visibility == 'visible',
-		id = this.id, parent = this.parentNode, is_top = parent.className == 'menu', d = document.dir;
+		id = this.id, parent = this.parentNode, is_top = parent.className == 'menu', d = document.dir, w = parent.clientWidth;
 
 	if (hoverable && is_visible)
 		return menu_hide_children(id);
@@ -616,7 +616,7 @@ function menu_show_me()
 	{
 		style.visibility = 'visible';
 		style.opacity = 1;
-		style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? parseInt($('span', this).css('width'), 10) : parent.clientWidth - 5) + 'px';
+		style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? parseInt($('span', this).css('width'), 10) : w - 5) + 'px';
 		if (is_ie6)
 			menu_show_shim(true, id, hasul);
 	}
@@ -629,8 +629,8 @@ function menu_show_me()
 
 	if (!is_visible)
 		$('ul', this).first()
-			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: parent.clientWidth })
-			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 0 : 27 } : { marginLeft: parent.clientWidth - 5 }, 'fast');
+			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w })
+			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 0 : 27 } : { marginLeft: w - 5 }, 'fast');
 
 	clearTimeout(menu_delay[id.substring(2)]);
 
