@@ -377,7 +377,7 @@ $sites = array(
 		'website' => 'http://www.atom.com',
 		'type' => 'video',
 		// http://media.mtvnservices.com/mgid:hcx:content:atom.com:c857bc81-8a75-4527-901d-9492b860f29c
-		'pattern' => '(http://media\.mtvnservices\.com/mgid:hcx:content:atom\.com:(?:(?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12})))',
+		'pattern' => '(http://media\.mtvnservices\.com/mgid:hcx:content:atom\.com:[0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})',
 		'movie' => '$2',
 		'size' => array(425, 354),
 		'fix-html-pattern' => '<embed src="$1"[^<>]*?></embed>(?:<div[^<>]*?><a[^<>]*?><img[^<>]*?></a> <a[^<>]*?>[^<>]*?</a>[^<>]*?<a[^<>]*?>[^<>]*?</a>[^<>]*?<a[^<>]*?>[^<>]*?</a></div>)?',
@@ -385,7 +385,7 @@ $sites = array(
 		// http://www.atom.com/funny_videos/mccaingels_103/
 		// http://www.atom.com/funny_videos/3EFBFFFF01859D7E0017009CF056/ (user content)
 		'lookup-url' => 'http://(?:www\.)?atom\.com/[\w-]*?/[\w-]*?/',
-		'lookup-pattern' => 'mgid:hcx:content:atom\.com:((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))',
+		'lookup-pattern' => 'mgid:hcx:content:atom\.com:([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})',
 		'lookup-final-url' => 'http://media.mtvnservices.com/mgid:hcx:content:atom.com:$1',
 	),
 	array(
@@ -515,11 +515,11 @@ $sites = array(
 		'title' => 'CarPix Tv',
 		'website' => 'http://carpixtv.vidiac.com',
 		'type' => 'video',
-		'pattern' => 'http://carpixtv\.vidiac\.com/video/((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))\.htm',
+		'pattern' => 'http://carpixtv\.vidiac\.com/video/([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})\.htm',
 		'movie' => 'http://carpixtv.vidiac.com/vidiac.swf?video=$2',
 		'size' => array(428, 352),
 		// http://carpixtv.vidiac.com/video/ad98f9ea-70c7-4987-a724-9b1300cf1f18.htm
-		'fix-html-pattern' => '<embed src="http://(?:carpixtv\.)?vidiac.com/[^<>]*?video=((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))[^<>]*?(?:/>|></embed>)(?:<br/><a href="http://vidiac.com/[^<>]*?">[^<>]*?</a>)?',
+		'fix-html-pattern' => '<embed src="http://(?:carpixtv\.)?vidiac.com/[^<>]*?video=([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})[^<>]*?(?:/>|></embed>)(?:<br/><a href="http://vidiac.com/[^<>]*?">[^<>]*?</a>)?',
 		'fix-html-url' => 'http://carpixtv.vidiac.com/video/$1.htm',
 	),
 	array(
@@ -590,7 +590,7 @@ $sites = array(
 		'title' => 'ClipFish (New)',
 		'website' => 'http://www.clipfish.de',
 		'type' => 'video',
-		'pattern' => 'http://(?:www\.)?clipfish\.de/(?:video)?player\.(?:swf|php)[^"]*?videoid=((?:[a-z0-9]{18})(?:==)?|(?:[a-z0-9]{6})(?:==)?)',
+		'pattern' => 'http://(?:www\.)?clipfish\.de/(?:video)?player\.(?:swf|php)[^"]*?videoid=([a-z0-9]{18}(?:==)?|[a-z0-9]{6}(?:==)?)',
 		'movie' => 'http://www.clipfish.de/videoplayer.swf?as=0&videoid=$2%3D%3D&r=1',
 		'size' => array(464, 380),
 		// http://clipfish.de/video/2651310/britney-singt-schief
@@ -748,13 +748,13 @@ $sites = array(
 		'title' => 'Current',
 		'website' => 'http://www.current.com',
 		'type' => 'video',
-		'pattern' => '(http://(?:www\.)?current\.com/e/(?:\d{8}))',
+		'pattern' => '(http://(?:www\.)?current\.com/e/\d{8})',
 		'movie' => '$2',
 		'size' => array(400, 400),
 		// http://current.com/e/88997642
 		'fix-html-pattern' => '<object [^>]*>\s{0,3}<param name="movie" value="$1">.*?</object>',
 		'fix-html-url' => '$2',
-		'lookup-url' => 'http://(?:www\.)?current\.com/items/(?:\d{8})_(?:[\w-]*)',
+		'lookup-url' => 'http://(?:www\.)?current\.com/items/\d{8}_[\w-]*',
 		'lookup-pattern' => 'so\.addVariable\(\'permalink\',\s\'http://current\.com/items/(\d{8})_[\w-]*?\'\);',
 		'lookup-final-url' => 'http://www.current.com/e/$1',
 		// The videos share the same link as the other pages, so we're only supporting it with a lookup.
@@ -837,7 +837,7 @@ $sites = array(
 		'title' => 'DotSub (w/o Captions)',
 		'website' => 'http://www.dotsub.com',
 		'type' => 'video',
-		'pattern' => 'http://(?:www\.)?dotsub\.com/(?:media/|view/)((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))',
+		'pattern' => 'http://(?:www\.)?dotsub\.com/(?:media/|view/)([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})',
 		'movie' => 'http://dotsub.com/static/players/embed8l.swf?mediauri=http://dotsub.com/media/$2/em/flv/en',
 		'size' => array(480, 392),
 		// http://dotsub.com/view/0c504c81-cebc-4370-bf94-b20fce57c38f
@@ -863,7 +863,7 @@ $sites = array(
 		'website' => 'http://www.dropshots.com',
 		'type' => 'video',
 		'title' => 'dropshots.com',
-		'pattern' => '(http://media(?:\d{0,2})\.dropshots\.com/photos(?:(?:/(?:\d{1,10})){1,3})\.flv)',
+		'pattern' => '(http://media\d{0,2}\.dropshots\.com/photos(?:/\d{1,10}){1,3}\.flv)',
 		'movie' => 'http://www.dropshots.com/dropshotsplayer.swf?url=$2',
 		'size' => array(480, 385),
 		// http://media1.dropshots.com/photos/99384/20061116/181618.flv
@@ -900,7 +900,7 @@ $sites = array(
 		'size' => array(566, 355),
 		// http://videocdn.easw.easports.com/easportsworld/media/7499/912A0001_1_FLV_VIDEO_OUh.flv
 		'fix-html-pattern' => '\s{0,8}<object [^>]*>\s{0,8}<param name="movie" value="[^"]*?file=$1[^<>]*?/>.*?</object>(?:\s{0,9}<div style="font-family: Arial, sans-serif; font-size: 11px;">.*?</div>(?:\s{0,8}<img[^<>]*?/>)?)?',
-		'lookup-url' => 'http://(?:www\.)?easportsworld\.com/[\w-]{1,12}/video/(?:\d{1,12})',
+		'lookup-url' => 'http://(?:www\.)?easportsworld\.com/[\w-]{1,12}/video/\d{1,12}',
 		'lookup-pattern' => 'flashvars\.file\s=\s\'(http://videocdn\.easw\.easports\.com/easportsworld/media/\d{1,12}/[\w-]*?\.flv)\';',
 		// http://www.easportsworld.com/en_US/video/342
 	),
@@ -909,15 +909,15 @@ $sites = array(
 		'title' => 'EbaumsWorld Audio',
 		'website' => 'http://www.ebaumsworld.com/audio/',
 		'type' => 'audio',
-		'pattern' => '(?:http://www\.ebaumsworld\.com/mediaplayer\.swf\?file=)?(http://media\.ebaumsworld\.com/(?:mediaFiles/)?(?:audio/(?!play/)|(?:[0-9/]{8}))[\w-]*?/[\w-]*?\.mp3)',
+		'pattern' => '(?:http://www\.ebaumsworld\.com/mediaplayer\.swf\?file=)?(http://media\.ebaumsworld\.com/(?:mediaFiles/)?(?:audio/(?!play/)|[0-9/]{8})[\w-]*?/[\w-]*?\.mp3)',
 		'movie' => 'http://www.ebaumsworld.com/mediaplayer.swf?file=$2&showeq=true&displayheight=50',
 		'size' => array(440, 70),
 		'show-link' => true,
 		// http://media.ebaumsworld.com/audio/mikeyp/Armaggedon.mp3
 		// http://media.ebaumsworld.com/2007/10/john-madden-impressons.mp3
-		'fix-html-pattern' => '<embed src="http://www\.ebaumsworld\.com/mediaplayer\.swf" flashvars="pageurl=http://www\.ebaumsworld\.com/audio/play/(?:\d{1,12})&(?:amp;)?file=$1[^<>]*?>',
-		'lookup-url' => 'http://(?:www\.)?ebaumsworld\.com/audio/play/(?:\d{1,12})/?',
-		'lookup-pattern' => '<link rel="video_src" href="http://www\.ebaumsworld\.com/mediaplayer\.swf\?[^"\>]*?file=(http://media\.ebaumsworld\.com/(?:mediaFiles/)?(?:audio/|(?:[0-9/]{8}))[\w-]*?/[\w-]*?\.mp3)',
+		'fix-html-pattern' => '<embed src="http://www\.ebaumsworld\.com/mediaplayer\.swf" flashvars="pageurl=http://www\.ebaumsworld\.com/audio/play/\d{1,12}&(?:amp;)?file=$1[^<>]*?>',
+		'lookup-url' => 'http://(?:www\.)?ebaumsworld\.com/audio/play/\d{1,12}/?',
+		'lookup-pattern' => '<link rel="video_src" href="http://www\.ebaumsworld\.com/mediaplayer\.swf\?[^"\>]*?file=(http://media\.ebaumsworld\.com/(?:mediaFiles/)?(?:audio/|[0-9/]{8})[\w-]*?/[\w-]*?\.mp3)',
 		// http://www.ebaumsworld.com/audio/play/386708/
 	),
 	array(
@@ -1083,7 +1083,7 @@ $sites = array(
 		'website' => 'http://www.gametube.org',
 		'type' => 'video',
 		'title' => 'Gametube.org',
-		'pattern' => 'http://(?:www\.)?gametube\.org/(?:\#/video/|htmlVideo\.jsp\?id=|miniPlayer\.swf\?vidId=)((?:[0-9a-z]{1,3})/(?:[a-z0-9_-]{26})=)',
+		'pattern' => 'http://(?:www\.)?gametube\.org/(?:\#/video/|htmlVideo\.jsp\?id=|miniPlayer\.swf\?vidId=)([0-9a-z]{1,3}/(?:[a-z0-9_-]{26})=)',
 		'movie' => 'http://www.gametube.org/miniPlayer.swf?vidId=$2',
 		'size' => array(425, 335),
 		// http://www.gametube.org/#/video/C/66yt67h3i00TvlCxFLd_m16dEY=
@@ -1162,13 +1162,13 @@ $sites = array(
 		'title' => 'GotGame',
 		'website' => 'http://www.gotgame.com',
 		'type' => 'video',
-		'pattern' => '(http://tv\.gotgame\.com/flvideo/(?:\d{1,10})\.flv)',
+		'pattern' => '(http://tv\.gotgame\.com/flvideo/\d{1,10}\.flv)',
 		'movie' => 'http://tv.gotgame.com/player/FlowPlayerDark.swf?config=%7Bembedded%3Atrue%2CshowFullScreenButton%3Atrue%2CshowMuteVolumeButton%3Atrue%2CshowMenu%3Atrue%2CautoBuffering%3Afalse%2CautoPlay%3Afalse%2CinitialScale%3A%27fit%27%2CmenuItems%3A%5Bfalse%2Cfalse%2Cfalse%2Cfalse%2Ctrue%2Ctrue%2Cfalse%5D%2CusePlayOverlay%3Afalse%2CshowPlayListButtons%3Atrue%2CplayList%3A%5B%7Burl%3A%27$2%27%7D%5D%2CcontrolBarGloss%3A%27high%27%2CshowVolumeSlider%3Atrue%2Cloop%3Afalse%2CcontrolBarBackgroundColor%3A%270x808080%27%7D',
 		'size' => array(516, 320),
 		// http://tv.gotgame.com/flvideo/52.flv
 		'fix-html-pattern' => '<iframe src=http://tv\.gotgame\.com/index_embed\.php\?vkey=([a-f0-9]{20})[^<>]*?></iframe>',
 		'fix-html-url' => 'http://tv.gotgame.com/view_video.php?vkey=$1',
-		'lookup-url' => 'http://tv.gotgame.com/view_video.php?vkey=(?:[a-f0-9]{20})',
+		'lookup-url' => 'http://tv.gotgame.com/view_video.php?vkey=[a-f0-9]{20}',
 		'lookup-pattern' => 'config={videoFile: \'(http://tv\.gotgame\.com/flvideo/(\d{1,10})\.flv)\',',
 		// http://tv.gotgame.com/view_video.php?vkey=a42caddbd0694a4e9bdc
 	),
@@ -1234,13 +1234,13 @@ $sites = array(
 		'title' => 'Hulu (Usa Only)',
 		'website' => 'http://www.hulu.com',
 		'type' => 'pop',
-		'pattern' => '(http://(?:www\.)?hulu\.com/embed/(?:[\w-]{10,32}))',
+		'pattern' => '(http://(?:www\.)?hulu\.com/embed/[\w-]{10,32})',
 		'movie' => '$2',
 		'size' => array(512, 296),
 		// http://www.hulu.com/embed/OzYt2MT63f4K9G2lmnb3OQ
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1"></param><embed src="$1"[^<>]*?></embed></object>',
-		'lookup-url' => 'http://(?:www\.)?hulu\.com/watch/(?:\d{1,12})/[\w-]{5,50}',
-		'lookup-pattern' => '<link\srel="video_src"\shref="(http://(?:www\.)?hulu\.com/embed/(?:[\w-]{10,50}))',
+		'lookup-url' => 'http://(?:www\.)?hulu\.com/watch/\d{1,12}/[\w-]{5,50}',
+		'lookup-pattern' => '<link\srel="video_src"\shref="(http://(?:www\.)?hulu\.com/embed/[\w-]{10,50})',
 		'lookup-title' => true,
 		// http://www.hulu.com/watch/32750/nbc-today-show-in-speech-obama-blasts-mccain
 	),
@@ -1266,7 +1266,7 @@ $sites = array(
 		'title' => 'Video.i.ua',
 		'website' => 'http://video.i.ua',
 		'type' => 'video',
-		'pattern' => '(http://i1\.i\.ua/video/vp3\.swf\?9&(?:amp;)?userID=(?:\d{1,20})&(?:amp;)?videoID=(?:\d{1,20})&(?:amp;)?playTime=(?:\d{1,20})&(?:amp;)?repeat=0&(?:amp;)?autostart=0&(?:amp;)?videoSize=(?:\d{1,20})&(?:amp;)?userStatus=(?:\d{1,2})&(?:amp;)?notPreview=(?:\d{1,2})&(?:amp;)?mID=m?(?:\d{1,2}))',
+		'pattern' => '(http://i1\.i\.ua/video/vp3\.swf\?9&(?:amp;)?userID=\d{1,20}&(?:amp;)?videoID=\d{1,20}&(?:amp;)?playTime=\d{1,20}&(?:amp;)?repeat=0&(?:amp;)?autostart=0&(?:amp;)?videoSize=\d{1,20}&(?:amp;)?userStatus=\d{1,2}&(?:amp;)?notPreview=\d{1,2}&(?:amp;)?mID=m?\d{1,2})',
 		'movie' => '$2',
 		'size' => array(450, 349),
 		// http://i1.i.ua/video/vp2.swf?9&userID=247839&videoID=57480&playTime=226&repeat=0&autostart=0&videoSize=21006136&userStatus=0&notPreview=0&mID=2
@@ -1281,7 +1281,7 @@ $sites = array(
 		'title' => 'IGN',
 		'website' => 'http://www.ign.com',
 		'type' => 'pop',
-		'pattern' => 'http://(?:(?:[a-z0-9]*?\.){0,3})ign\.com/[\w-]*?/objects/(\d{1,10})/(?:[\w-]*?/)?videos/',
+		'pattern' => 'http://(?:[a-z0-9]*?\.){0,3}ign\.com/[\w-]*?/objects/(\d{1,10})/(?:[\w-]*?/)?videos/',
 		'movie' => 'http://videomedia.ign.com/ev/ev.swf?object_ID=$2',
 		'size' => array(433, 360),
 		// http://uk.movies.ign.com/dor/objects/826378/quantum-of-solace/videos/quantum_timdezeeuw.html
@@ -1327,7 +1327,7 @@ $sites = array(
 		// http://media.imeem.com/m/k8RLAG2sN7
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
 		'fix-html-url' => '$2/aus=false/',
-		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:(?:[\w-]{1,50}/){1,2})music/[\w-]{8}/[\w-]*?',
+		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:[\w-]{1,50}/){1,2}music/[\w-]{8}/[\w-]*?',
 		'lookup-pattern' => '<link rel="video_src" href="(http://media\.imeem\.com/m/[\w-]{10})"',
 		// http://www.imeem.com/aftermatt/music/d4D9mpAN/billy_gilman_elizabeth
 		// http://www.imeem.com/mimko/music/5cY4fSzj/lucky_star_no_minna_ikuzou_kumikyoku_lucky_star_douga/
@@ -1343,7 +1343,7 @@ $sites = array(
 		// http://media.imeem.com/pl/5ei3osBD06
 		// Known bug, since there is no link difference between imeem video and music playlists, we use the larger size
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
-		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:(?:[\w-]{1,50}/){1,2})playlist/[\w-]{8}/',
+		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:[\w-]{1,50}/){1,2}playlist/[\w-]{8}/',
 		'lookup-pattern' => 'contentKey:\s"([\w-]{10})"',
 		'lookup-final-url' => 'http://media.imeem.com/pl/$1',
 		// http://www.imeem.com/die2liveart/playlist/TIaAC0O6/nickelback_music_playlist/
@@ -1359,7 +1359,7 @@ $sites = array(
 		'size' => array(400, 271),
 		// http://media.imeem.com/v/zww-dvfR8y
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
-		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:(?:[\w-]{1,50}/){1,2})video/[\w-]{8}/',
+		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:[\w-]{1,50}/){1,2}video/[\w-]{8}/',
 		'lookup-pattern' => '<link\srel="video_src"\shref="(http://media\.imeem\.com/v/[\w-]{10})',
 		// http://www.imeem.com/mimko/video/nZcbN48j/code_geass_r2_episode_8_animation_video/
 		// http://www.imeem.com/avrillavigne/video/8mC-OCEr/avril_lavigne_the_best_damn_thing_music_video/
@@ -1369,7 +1369,7 @@ $sites = array(
 		'title' => 'ImageShack',
 		'website' => 'http://www.imageshack.us',
 		'type' => 'pop',
-		'pattern' => 'http://img(\d{1,5})\.imageshack\.us/(?:my\.php\?image=|img(?:\d{1,5})/(?:\d{1,8})/|flvplayer\.swf\?f=T)([\w-]{1,20})\.flv',
+		'pattern' => 'http://img(\d{1,5})\.imageshack\.us/(?:my\.php\?image=|img\d{1,5}/\d{1,8}/|flvplayer\.swf\?f=T)([\w-]{1,20})\.flv',
 		'movie' => 'http://img$2.imageshack.us/flvplayer.swf?f=T$3&autostart=false',
 		'size' => array(424, 338),
 		// http://img531.imageshack.us/my.php?image=duganja2.flv
@@ -1380,7 +1380,7 @@ $sites = array(
 		'title' => 'IndyaRocks',
 		'website' => 'http://www.indyarocks.com',
 		'type' => 'video',
-		'pattern' => 'http://(?:www\.)?indyarocks\.com/videos/(?:(?:(?:[^"-]*?-){1,10})|embed-)(\d{1,8})',
+		'pattern' => 'http://(?:www\.)?indyarocks\.com/videos/(?:(?:[^"-]*?-){1,10}|embed-)(\d{1,8})',
 		'movie' => 'http://www.indyarocks.com/videos/embed-$2',
 		'size' => array(425, 350),
 		// http://www.indyarocks.com/videos/Greenpeace-earth-is-breathing-Commercial-177158
@@ -1666,13 +1666,13 @@ $sites = array(
 		'title' => 'Milliyet',
 		'website' => 'http://video.milliyet.com.tr',
 		'type' => 'video',
-		'pattern' => '(http://video\.milliyet\.com\.tr/m\.swf\?id=(?:\d{1,12})&(?:amp;)?tarih=(?:\d{4})/(?:\d{2})/(?:\d{1,2}))',
+		'pattern' => '(http://video\.milliyet\.com\.tr/m\.swf\?id=\d{1,12}&(?:amp;)?tarih=\d{4}/\d{2}/\d{1,2})',
 		'movie' => '$2',
 		'size' => array(340, 325),
 		// http://video.milliyet.com.tr/m.swf?id=20732&tarih=2008/09/11
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
 		'fix-html-url' => '$2',
-		'lookup-url' => 'http://video\.milliyet\.com\.tr/default\.asp\?id=(?:\d{1,12})',
+		'lookup-url' => 'http://video\.milliyet\.com\.tr/default\.asp\?id=\d{1,12}',
 		'lookup-pattern' => 'FlashObject\("m\.swf\?(id=\d{1,12}&(?:amp;)?tarih=\d{4}/\d{2}/\d{1,2})",',
 		'lookup-final-url' => 'http://video.milliyet.com.tr/m.swf?$1',
 		// http://video.milliyet.com.tr/default.asp?id=20732
@@ -1742,14 +1742,14 @@ $sites = array(
 		'title' => 'Mp3tube',
 		'website' => 'http://www.mp3tube.net',
 		'type' => 'audio',
-		'pattern' => '(http://(?:www\.)?mp3tube\.net\/play\.swf\?id=(?:[0-9a-f]{32}))',
+		'pattern' => '(http://(?:www\.)?mp3tube\.net\/play\.swf\?id=[0-9a-f]{32})',
 		'movie' => '$2',
 		'size' => array(260, 60),
 		'show-link' => true,
 		// http://www.mp3tube.net/play.swf?id=4264554e8bdedc3d625b42409179fb91
 		'fix-html-pattern' => '(?:<font face="Arial" size="2">&nbsp;<a target="_blank" href="http://www\.mp3tube\.net/[^<>"]*?">[^<>]*?</a></font><br>)?<object classid[^<>]*?><param name="movie" value="$1" />.*?</object>',
 		'lookup-url' => 'http://(?:www\.)?mp3tube\.net/(?:[^/]*/)?musics/[\w-]*?/\d{1,6}/',
-		'lookup-pattern' => '(http://www\.mp3tube\.net\/play\.swf\?id=(?:[0-9a-f]{32}))',
+		'lookup-pattern' => '(http://www\.mp3tube\.net\/play\.swf\?id=[0-9a-f]{32})',
 		// http://mp3tube.net/musics/Beethoven-Gravacao-Moonlight-Sonata/101887/
 	),
 	array(
@@ -1762,7 +1762,7 @@ $sites = array(
 		'size' => array(432, 364),
 		// http://video.msn.com/video.aspx?vid=e039eb60-1ba0-4b47-ab0d-941626231c8f
 		// http://video.msn.com/?mkt=en-gb&playlist=videoByUuids:uuids:ea839b0c-833d-4e64-ad54-17a1a4b90464
-		'fix-html-pattern' => '<embed src="http://images\.(?:soapbox|video)\.msn\.com/flash/soapbox1_1\.swf" [^>]*flashvars="c=v&(?:amp;)?v=((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))&(?:amp;)?ifs=true&(?:amp;)?fr=msnvideo&(?:amp;)?mkt=en-US&(?:amp;)?brand="></embed>(?:<br /><a href="http://video\.msn\.com/[^<>]*?>[^<>]*?</a>)?',
+		'fix-html-pattern' => '<embed src="http://images\.(?:soapbox|video)\.msn\.com/flash/soapbox1_1\.swf" [^>]*flashvars="c=v&(?:amp;)?v=([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})&(?:amp;)?ifs=true&(?:amp;)?fr=msnvideo&(?:amp;)?mkt=en-US&(?:amp;)?brand="></embed>(?:<br /><a href="http://video\.msn\.com/[^<>]*?>[^<>]*?</a>)?',
 		'fix-html-url' => 'http://video.msn.com/video.aspx?mkt=en-US&vid=$1',
 	),
 	array(
@@ -1829,14 +1829,14 @@ $sites = array(
 		'title' => 'MySoccerMedia',
 		'website' => 'http://www.mysoccermedia.com',
 		'type' => 'video',
-		'pattern' => '(http://(?:www\.)?mysoccermedia\.com/videos/(?:[0-9a-f]{14,16})\.flv)',
+		'pattern' => '(http://(?:www\.)?mysoccermedia\.com/videos/[0-9a-f]{14,16}\.flv)',
 		'movie' => 'http://mysoccermedia.com/soccer_pl2_playBt.swf?video_flv=$2',
 		'size' => array(443, 310),
 		'show-link' => true,
 		// http://mysoccermedia.com/videos/74483e11660ed6e.flv
-		'fix-html-pattern' => '<object [^>]*><param name="movie" value="http://(?:www\.)?mysoccermedia\.com/soccer_pl5_bt\?video_flv=(http://(?:www\.)?mysoccermedia\.com/videos/(?:[0-9a-f]{14,16})\.flv)" />.*?</object>',
-		'lookup-url' => 'http://(?:www\.)?mysoccermedia\.com/(?:index\.php)?\?module=(?:detail|video)&video_id=(?:\d{1,10})',
-		'lookup-pattern' => '(http://mysoccermedia\.com/videos/(?:[0-9a-f]{14,16})\.flv)',
+		'fix-html-pattern' => '<object [^>]*><param name="movie" value="http://(?:www\.)?mysoccermedia\.com/soccer_pl5_bt\?video_flv=(http://(?:www\.)?mysoccermedia\.com/videos/[0-9a-f]{14,16}\.flv)" />.*?</object>',
+		'lookup-url' => 'http://(?:www\.)?mysoccermedia\.com/(?:index\.php)?\?module=(?:detail|video)&video_id=\d{1,10}',
+		'lookup-pattern' => '(http://mysoccermedia\.com/videos/[0-9a-f]{14,16}\.flv)',
 		// http://mysoccermedia.com/index.php?module=detail&video_id=1034
 		// http://mysoccermedia.com/?module=video&video_id=1380&lang_id=1
 	),
@@ -1849,7 +1849,7 @@ $sites = array(
 		'movie' => '$2',
 		'size' => array(425, 350),
 		// http://www.seehaha.com/flash/player.swf?vidFileName=31614080605619086.flv
-		'lookup-url' => 'http://(?:www\.)?myshows\.cn/myplayvideo\.aspx\?vid=(?:\d{1,10})',
+		'lookup-url' => 'http://(?:www\.)?myshows\.cn/myplayvideo\.aspx\?vid=\d{1,10}',
 		'lookup-pattern' => '<embed src="(http://www\.seehaha\.com/flash/player\.swf\?vidFileName=\d*\.flv)"',
 	),
 	array(
@@ -1901,7 +1901,7 @@ $sites = array(
 		// http://myvi.ru/ru/flash/player/oYgfJNg6z-zbk2XKv_Ak6rWauEDWoOLAf6Dpkxgj0t2I1
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1" /><param name="wmode" value="window" /><param name="allowFullScreen" value="true" /><embed[^<>]*?></embed></object>',
 		'fix-html-url' => '$2',
-		'lookup-url' => 'http://(?:www\.)?myvi\.ru/ru/videodetail\.aspx\?video=[\w-]{32}&(?:amp;)?ap=(?:\d{1})',
+		'lookup-url' => 'http://(?:www\.)?myvi\.ru/ru/videodetail\.aspx\?video=[\w-]{32}&(?:amp;)?ap=\d',
 		'lookup-pattern' => '&lt;param name=&quot;movie&quot; value=&quot;(http://(?:www\.)?myvi\.ru/ru/flash/player/[\w-]{45})&quot; />',
 		// http://myvi.ru/ru/videodetail.aspx?video=1bccf0fba502452e825f40e5bc7e2dd0&ap=0
 	),
@@ -1926,7 +1926,7 @@ $sites = array(
 		'movie' => '$2?autostart=false&autoplay=false',
 		'size' => array(480, 400),
 		// http://uploads.ungrounded.net/123000/123876_peonbond1.swf
-		'lookup-url' => 'http://(?:www\.)?newgrounds\.com/portal/view/(?:\d{1,10})',
+		'lookup-url' => 'http://(?:www\.)?newgrounds\.com/portal/view/\d{1,10}',
 		'lookup-pattern' => '\'(http://uploads\.ungrounded\.net/\d{1,12}/\d{1,12}_[\w-]*?\.swf)\'',
 		// http://www.newgrounds.com/portal/view/123876
 	),
@@ -2181,14 +2181,14 @@ $sites = array(
 		'title' => 'Sharkle',
 		'website' => 'http://www.sharkle.com',
 		'type' => 'video',
-		'pattern' => '(http://(?:www\.)?sharkle\.com/externalPlayer/(?:(?:(?:[0-9a-z]{1,25})/){3}))',
+		'pattern' => '(http://(?:www\.)?sharkle\.com/externalPlayer/(?:[0-9a-z]{1,25}/){3})',
 		'movie' => '$2',
 		'size' => array(340, 310),
 		'show-link' => true,
 		// http://www.sharkle.com/externalPlayer/59083/4iyii41ya/3/
 		'fix-html-pattern' => '<embed src=$1 wmode=transparent width=\d* height=\d* type=application/x-shockwave-flash></embed>',
-		'lookup-url' => 'http://(?:www\.)?sharkle\.com/video/(?:\d{1,10})',
-		'lookup-pattern' => '<embed src=(http://(?:www\.)?sharkle\.com/externalPlayer/(?:(?:(?:[0-9a-z]{1,25})/){3}))',
+		'lookup-url' => 'http://(?:www\.)?sharkle\.com/video/\d{1,10}',
+		'lookup-pattern' => '<embed src=(http://(?:www\.)?sharkle\.com/externalPlayer/(?:[0-9a-z]{1,25}/){3})',
 		// http://www.sharkle.com/video/59083/
 	),
 	array(
@@ -2265,7 +2265,7 @@ $sites = array(
 		'title' => 'Space.tv.cctv.com',
 		'website' => 'http://space.tv.cctv.com',
 		'type' => 'video',
-		'pattern' => 'http://((?:(?:[a-z0-9]{1,10})\.){0,2})?cctv\.com/act/video\.jsp\?videoId=VIDE(\d{16})',
+		'pattern' => 'http://((?:[a-z0-9]{1,10}\.){0,2})?cctv\.com/act/video\.jsp\?videoId=VIDE(\d{16})',
 		'movie' => 'http://$2cctv.com/playcfg/player_new.swf?id=VIDE$3&site=http://$2cctv.com&method=http',
 		'size' => array(500, 400),
 		// http://space.tv.cctv.com/act/video.jsp?videoId=VIDE1212992324839168
@@ -2287,15 +2287,15 @@ $sites = array(
 		'title' => 'Streetfire',
 		'website' => 'http://www.streetfire.net',
 		'type' => 'video',
-		'pattern' => 'http://(?:www\.|videos\.)?streetfire\.net/(?:vidiac\.swf\?video=|video/)((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))(?:\.htm)?',
+		'pattern' => 'http://(?:www\.|videos\.)?streetfire\.net/(?:vidiac\.swf\?video=|video/)([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})(?:\.htm)?',
 		'movie' => 'http://videos.streetfire.net/vidiac.swf?video=$2',
 		'size' => array(428, 352),
 		// http://videos.streetfire.net/video/c47d3e81-ee2a-4cc7-84d7-9b0701566c76.htm
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1.*?</object>',
 		'fix-html-url' => 'http://videos.streetfire.net/video/$2.htm',
 		// http://videos.streetfire.net/video/How-To-Almost-Trash-Your_180164.htm
-		'lookup-url' => 'http://(?:www\.|videos\.)?streetfire\.net/video/(?:(?!:[0-9a-z]{8}(?:(?:-[0-9a-z]{4}){3})-[0-9a-z]{12})[\w-]*?)\.htm',
-		'lookup-pattern' => '<link rel="video_src" href="http://videos\.streetfire\.net/vidiac\.swf\?video=((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))" />',
+		'lookup-url' => 'http://(?:www\.|videos\.)?streetfire\.net/video/[0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12}[\w-]*?\.htm',
+		'lookup-pattern' => '<link rel="video_src" href="http://videos\.streetfire\.net/vidiac\.swf\?video=([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})" />',
 		'lookup-final-url' => 'http://videos.streetfire.net/video/$1.htm',
 		'lookup-title' => true,
 	),
@@ -2308,7 +2308,7 @@ $sites = array(
 		'movie' => 'http://images.stupidvideos.com/images/player/player.swf?sa=1&sk=7&si=2&i=$2',
 		'size' => array(451, 433),
 		//http://www.stupidvideos.com/video/Woman_Vs_Parking_Gate/#170731
-		'fix-html-pattern' => '<object [^>]*><param name="movie" value="http://images\.stupidvideos\.com/images/player/player\.swf\?sa=1&(?:amp;)?sk=(?:\d{1})&(?:amp;)?si=(?:\d{1})&(?:amp;)?i=(\d{1,10})"></param><embed[^<>]*?></embed></object>',
+		'fix-html-pattern' => '<object [^>]*><param name="movie" value="http://images\.stupidvideos\.com/images/player/player\.swf\?sa=1&(?:amp;)?sk=\d&(?:amp;)?si=\d&(?:amp;)?i=(\d{1,10})"></param><embed[^<>]*?></embed></object>',
 		'fix-html-url' => 'http://images.stupidvideos.com/images/player/player.swf?sa=1&sk=7&si=2&i=$1',
 		'lookup-url' => 'http://(?:www\.)?stupidvideos\.com/video/(?:[^"\]\#]*)',
 		'lookup-pattern' => 'var videoID = \'(\d{1,10})\';',
@@ -2449,13 +2449,13 @@ $sites = array(
 		'website' => 'http://www.tu.tv',
 		'type' => 'video',
 		'title' => 'Tu.tv',
-		'pattern' => '(http://tu\.tv/tutvweb\.swf\?xtp=(?:\d{1,10}))',
+		'pattern' => '(http://tu\.tv/tutvweb\.swf\?xtp=\d{1,10})',
 		'movie' => '$2',
 		'size' => array(425, 350),
 		// http://tu.tv/tutvweb.swf?xtp=312541
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="http://tu\.tv/[^"]*?xtp=(\d{1,10})"></param><param name="wmode" value="transparent"></param><embed[^<>]*?></embed></object>(?:<br /><a href="http://www\.tu\.tv"><img[^<>]*?></a><br />)?',
 		'fix-html-url' => 'http://tu.tv/tutvweb.swf?xtp=$1',
-		'lookup-url' => 'http://(?:www\.)?tu\.tv/videos/(?:[\w-]{3,50})',
+		'lookup-url' => 'http://(?:www\.)?tu\.tv/videos/[\w-]{3,50}',
 		'lookup-pattern' => '/videoFull/\?codVideo=(\d{1,10})',
 		'lookup-final-url' => 'http://tu.tv/tutvweb.swf?xtp=$1',
 		// http://tu.tv/videos/un-chico-astuto-en-un-examen
@@ -2547,13 +2547,13 @@ $sites = array(
 		'title' => 'VideoJug',
 		'website' => 'http://www.videojug.com',
 		'type' => 'video',
-		'pattern' => '(http://(?:www\.)videojug\.com/film/player\?id=(?:[0-9a-z]{8})(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})',
+		'pattern' => '(http://(?:www\.)videojug\.com/film/player\?id=[0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})',
 		'movie' => '$2',
 		'size' => array(400, 345),
 		// http://www.videojug.com/film/player?id=6bdae9a1-d8c8-5c06-3b58-ff0008ca6bff
 		'fix-html-pattern' => '<object classid[^<>]*?><param name="movie" value="$1" />.*?</object>(?:<br /><a href="http://www\.videojug\.com/film/[^<>]*?>[^<>]*?</a>)?',
-		'lookup-url' => 'http://(?:www\.)?videojug\.com/film/(?:[\w-]{3,50})',
-		'lookup-pattern' => '(http://(?:www\.)videojug\.com/film/player\?id=(?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))',
+		'lookup-url' => 'http://(?:www\.)?videojug\.com/film/[\w-]{3,50}',
+		'lookup-pattern' => '(http://(?:www\.)videojug\.com/film/player\?id=[0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})',
 		// http://www.videojug.com/film/how-to-fake-abs-for-the-summer
 	),
 	array(
@@ -2573,11 +2573,11 @@ $sites = array(
 		'title' => 'Vidiac',
 		'website' => 'http://www.vidiac.com',
 		'type' => 'video',
-		'pattern' => 'http://(?:www\.)?vidiac\.com/video/((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))\.htm',
+		'pattern' => 'http://(?:www\.)?vidiac\.com/video/([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})\.htm',
 		'movie' => 'http://www.vidiac.com/vidiac.swf?video=$2',
 		'size' => array(428, 352),
 		// http://www.vidiac.com/video/b3645fb3-e6f6-4b40-ae26-0ae2bd56c0a3.htm
-		'fix-html-pattern' => '<embed src="http://www\.vidiac\.com/vidiac\.swf" FlashVars="video=((?:[0-9a-z]{8})(?:(?:-(?:[0-9a-z]{4})){3})-(?:[0-9a-z]{12}))[^<>]*?></embed>',
+		'fix-html-pattern' => '<embed src="http://www\.vidiac\.com/vidiac\.swf" FlashVars="video=([0-9a-z]{8}(?:-[0-9a-z]{4}){3}-[0-9a-z]{12})[^<>]*?></embed>',
 		'fix-html-url' => 'http://www.vidiac.com/video/$1.htm',
 	),
 	array(
@@ -2585,13 +2585,13 @@ $sites = array(
 		'title' => 'Viddler',
 		'website' => 'http://www.viddler.com',
 		'type' => 'video',
-		'pattern' => '(http://www\.viddler\.com/(?:player|simple)/(?:[0-9a-f]{8})/)',
+		'pattern' => '(http://www\.viddler\.com/(?:player|simple)/[0-9a-f]{8}/)',
 		'movie' => '$2',
 		'size' => array(437, 288),
 		// http://www.viddler.com/player/6d7b8644/
 		'fix-html-pattern' => '<object classid[^<>]*?>(?:<param name="flashvars"[^<>]*?>)?<param name="movie" value="$1" />.*?</object>',
-		'lookup-url' => 'http://(?:www\.)?viddler\.com/explore/[\w-]*?/videos/(?:\d{1,10})',
-		'lookup-pattern' => '<link\srel="video_src"\shref="(http://www\.viddler\.com/player/(?:[0-9a-f]{8})/)"/>',
+		'lookup-url' => 'http://(?:www\.)?viddler\.com/explore/[\w-]*?/videos/\d{1,10}',
+		'lookup-pattern' => '<link\srel="video_src"\shref="(http://www\.viddler\.com/player/[0-9a-f]{8}/)"/>',
 		// http://www.viddler.com/explore/titlepage/videos/28/
 	),
 	array(
@@ -2626,7 +2626,7 @@ $sites = array(
 		'title' => 'VideoNuz',
 		'website' => 'http://www.videonuz.com',
 		'type' => 'video',
-		'pattern' => '(http://(?:www\.)?videonuz\.com/videonuz\.swf\?videoLink=video_(?:[0-9a-z]{8,12})\.flv&(?:amp;)?resim=video_([0-9a-z]{8,12})\.(?:jpg|gif))',
+		'pattern' => '(http://(?:www\.)?videonuz\.com/videonuz\.swf\?videoLink=video_[0-9a-z]{8,12}\.flv&(?:amp;)?resim=video_([0-9a-z]{8,12})\.(?:jpg|gif))',
 		'movie' => '$2',
 		'size' => array(400, 325),
 		// http://www.videonuz.com/videonuz.swf?videoLink=video_wejpjpofuq.flv&resim=video_gqteiqhplf.jpg
@@ -2634,7 +2634,7 @@ $sites = array(
 		'fix-html-url' => '$2',
 		'lookup-url' => 'http://(?:www\.)videonuz\.com/(?:medyaizle\.php\?haber_id=)?(\d{1,12})',
 		'lookup-actual-url' => 'http://www.videonuz.com/medyaizle.php?haber_id=$1',
-		'lookup-pattern' => '<param name="movie" value="(http://(?:www\.)?videonuz\.com/videonuz\.swf\?videoLink=video_(?:[0-9a-z]{8,12})\.flv&(?:amp;)?resim=video_([0-9a-z]{8,12})\.(?:jpg|gif))">',
+		'lookup-pattern' => '<param name="movie" value="(http://(?:www\.)?videonuz\.com/videonuz\.swf\?videoLink=video_[0-9a-z]{8,12}\.flv&(?:amp;)?resim=video_([0-9a-z]{8,12})\.(?:jpg|gif))">',
 		// http://www.videonuz.com/15646_Spor_porto---fb-volkandan-super-kurtaris-guiza-sari-kart__1.htm
 		// http://www.videonuz.com/medyaizle.php?haber_id=15646
 	),
@@ -2643,14 +2643,14 @@ $sites = array(
 		'title' => 'VidiLife',
 		'website' => 'http://www.vidilife.com',
 		'type' => 'video',
-		'pattern' => '(http://(?:www\.)?vidilife\.com/flash/flvplayer\.swf\?xml=http://(?:www\.)?vidilife\.com/media/play_flash_xml\.cfm\?id=(?:[0-9a-f]{8})-(?:[0-9a-f]{4})-(?:[0-9a-f]{4})-(?:[0-9a-f]{4})-(?:[0-9a-f]{1}))',
+		'pattern' => '(http://(?:www\.)?vidilife\.com/flash/flvplayer\.swf\?xml=http://(?:www\.)?vidilife\.com/media/play_flash_xml\.cfm\?id=[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f])',
 		'movie' => '$2',
 		'size' => array(445, 363),
 		// http://www.vidilife.com/flash/flvplayer.swf?xml=http://www.vidiLife.com/media/play_flash_xml.cfm?id=A3C2545D-2BA0-41B0-BA02-B&f=flash8&embed=true
 		'fix-html-pattern' => '(?:<table[^<>]*?><tr><td>)?<embed[^<>]*?src=\'http://www\.vidilife\.com/flash/flvplayer\.swf\?xml=http%3A%2F%2Fwww%2EvidiLife%2Ecom%2Fmedia%2Fplay%5Fflash%5Fxml%2Ecfm%3Fid%3D([0-9a-f]{8})%252D([0-9a-f]{4})%252D([0-9a-f]{4})%252D([0-9a-f]{4})%252D([0-9a-f]{1})%26f%3Dflash8%26embed%3Dtrue\'[^<>]*?></embed>(?:<img[^<>]*?></td></tr><tr><td align=\'right\'><strong><a[^<>]*?>[^<>]*?</a></strong></td></tr></table>)?',
 		'fix-html-url' => 'http://www.vidilife.com/flash/flvplayer.swf?xml=http://www.vidilife.com/media/play_flash_xml.cfm?id=$1-$2-$3-$4-$5',
-		'lookup-url' => 'http://(?:www\.)?vidilife\.com/video_play_(?:\d{1,10})_[\w-]*?\.htm',
-		'lookup-pattern' => 'src=\'(http://www\.vidilife\.com/flash/flvplayer\.swf\?xml=http%3A%2F%2Fwww%2EvidiLife%2Ecom%2Fmedia%2Fplay%5Fflash%5Fxml%2Ecfm%3Fid%3D(?:[0-9a-f]{8})%252D(?:[0-9a-f]{4})%252D(?:[0-9a-f]{4})%252D(?:[0-9a-f]{4})%252D(?:[0-9a-f]{1})%26f%3Dflash8%26embed%3Dtrue)\'',
+		'lookup-url' => 'http://(?:www\.)?vidilife\.com/video_play_\d{1,10}_[\w-]*?\.htm',
+		'lookup-pattern' => 'src=\'(http://www\.vidilife\.com/flash/flvplayer\.swf\?xml=http%3A%2F%2Fwww%2EvidiLife%2Ecom%2Fmedia%2Fplay%5Fflash%5Fxml%2Ecfm%3Fid%3D[0-9a-f]{8}%252D[0-9a-f]{4}%252D[0-9a-f]{4}%252D[0-9a-f]{4}%252D[0-9a-f]%26f%3Dflash8%26embed%3Dtrue)\'',
 		'lookup-urldecode' => 2, // do it twice
 		// http://vidilife.com/video_play_1176601_SpiderMan_Drops_E.htm?hmtrknew=SpiderMan_Drops_E
 	),
@@ -2676,7 +2676,7 @@ $sites = array(
 		'size' => array(425, 343),
 		// http://www.vidivodo.com/VideoPlayerShare.swf?lang=en&vidID=164690&vCode=v200807062126330164690&dura=116&File=vidservers/server01/videos/2008/07/06/21/v200807062126330164690.flv
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1"></param><param name="wmode" value="transparent"></param><embed [^<>]*?></embed></object>',
-		'lookup-url' => 'http://(?:www\.)?vidivodo\.com/(?:\d{1,12})/(?:[\w-]*)',
+		'lookup-url' => 'http://(?:www\.)?vidivodo\.com/\d{1,12}/(?:[\w-]*)',
 		'lookup-pattern' => '<link\srel="video_src"\shref="(http://www\.vidivodo\.com/VideoPlayerShare\.swf\?lang=[0-9a-z]*?&(?:amp;)?vidID=\d*&(?:amp;)?vCode=v\d*&(?:amp;)?dura=\d*&(?:amp;)?File=http://video\d*\.vidivodo\.com/vidservers/server\d*/videos/\d{4}/\d{2}/\d{2}/\d*/v\d*\.flv)"/>',
 		'lookup-urldecode' => 1,
 		// http://www.vidivodo.com/164690/james-bond-quantum-of-solace
@@ -2708,7 +2708,7 @@ $sites = array(
 		'title' => 'VSocial (Type2)',
 		'website' => 'http://www.vsocial.com/vsandbox/',
 		'type' => 'video',
-		'pattern' => '(http://(?:www\.)?vsocial\.com/ups/(?:[a-f0-9]{32}))',
+		'pattern' => '(http://(?:www\.)?vsocial\.com/ups/[a-f0-9]{32})',
 		'movie' => '$2',
 		'size' => array(410, 400),
 		// http://www.vsocial.com/ups/acb6e0ea047ee8f7868f19716b41f8cf
@@ -2753,8 +2753,8 @@ $sites = array(
 		// http://www.wipido.com/profile/video/embedconfig/1049%3Ftemplate%3Dgamersyde
 		'fix-html-pattern' => '<iframe src="http://www\.wipido\.com/main/video/external/(\d{1,10})[^<>]*?></iframe>',
 		'fix-html-url' => 'http://www.wipido.com/video/$1',
-		'lookup-url' => 'http://(?:www\.)?gamersyde\.com/stream_(?:\d{1,12})_en\.html',
-		'lookup-pattern' => 'o\.addVariable\(\'config\',\s\'(http://www\.wipido\.com/profile/video/embedconfig/(?:\d{1,12})%3Ftemplate%3Dgamersyde)\'\);',
+		'lookup-url' => 'http://(?:www\.)?gamersyde\.com/stream_\d{1,12}_en\.html',
+		'lookup-pattern' => 'o\.addVariable\(\'config\',\s\'(http://www\.wipido\.com/profile/video/embedconfig/\d{1,12}%3Ftemplate%3Dgamersyde)\'\);',
 		// http://gamersyde.com/stream_7398_en.html - gamershyde use wipido to host their vids.
 	),
 	array(

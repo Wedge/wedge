@@ -1,12 +1,15 @@
 <?php
-/********************************************************************************
-* Aeva-Sites-Custom.php
-* By Rene-Gilles Deberdt
-*********************************************************************************
-* This program is distributed in the hope that it is and will be useful, but
-* WITHOUT ANY WARRANTIES; without even any implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE.
-********************************************************************************/
+/**
+ * Wedge
+ *
+ * Sample for a site integration using Aeva.
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
 
 // Prevent attempts to access this file directly
 if (!defined('WEDGE'))
@@ -20,11 +23,11 @@ global $sites;
 -- READ ME FIRST! --
 --------------------
 
-This is the file where you can include additional websites and settings that are not provided in the Aeva Media package.
+This is the file where you can include additional websites and settings that are not provided in the Wedge package.
 Its name is "Aeva-Sites-Custom-Example.php", you just need to rename it to "Aeva-Sites-Custom.php" and fill it with
-your custom site definitions. They will never be deleted when upgrading Aeva Media.
+your custom site definitions. They will never be deleted when upgrading Wedge.
 
-Upload the file to your Sources folder, go to the Admin area, check out the Aeva Media > Auto-Embed > Site list section,
+Upload the file to your Sources folder, go to the Admin area, check out the Forum > Auto-Embedding > Site list section,
 enable the custom sites at the bottom and save your choices. You can now start embedding them in your posts.
 
 Use the 'custom' type to make it easier to find your sites in the site list.

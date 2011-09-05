@@ -416,8 +416,6 @@ ul.quickbuttons extends ul.reset
 	padding: 0 3% 0 0
 	clear, text-align: right
 	vertical-align: bottom
-	font: 400 12px/20px "Trebuchet MS", Tahoma, sans-serif
-	text-transform: uppercase
 	#forumposts &
 		display: table-cell
 	li extends .inline-block
@@ -534,7 +532,7 @@ ul.buttonlist extends ul.quickbuttons
 			list-style: none
 			float: left
 	a
-		padding: 4px
+		padding: 3px 4px 4px
 		color: #679
 		background: #f3f3f3
 		height, line-height: 15px

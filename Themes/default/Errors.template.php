@@ -104,10 +104,10 @@ function template_error_log()
 					</a>
 					', $error['time'], '<br>';
 
-		if ($error['member']['session'] != '')
+		if (!empty($error['member']['session']))
 			echo '
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=session;value=', $error['member']['session'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_session'], '"><img src="', $settings['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_session'], '"></a>
-					', $error['member']['session'], '<br>';
+					', $txt['session'], ': ', $error['member']['session'], '<br>';
 
 		echo '
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=error_type;value=', $error['error_type']['type'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $settings['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>

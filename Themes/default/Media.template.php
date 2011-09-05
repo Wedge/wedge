@@ -849,8 +849,7 @@ function template_aeva_form()
 			if ($e['type'] == 'hr')
 			{
 				echo '
-			<tr><td colspan="2" style="padding: 0"></td></tr>
-			<tr><td colspan="2" style="padding: 1px 0 0 0; border-top: 1px dotted #aaa"></td></tr>';
+			<tr><td colspan="2" style="padding: 1px 0"></td></tr>';
 				continue;
 			}
 
