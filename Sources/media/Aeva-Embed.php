@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 // Main auto embed function
-function aeva_main(&$message)
+function aeva_main($message)
 {
 	global $context, $modSettings, $sites, $upto, $user_info, $sourcedir;
 
@@ -65,9 +65,9 @@ function aeva_main(&$message)
 			'noae' => true,
 			'noembed' => true,
 			'<noembed>' => false,
-			),
-		$message,
-		true);
+		),
+		$message, true
+	);
 
 	// No embeddable links, so reverse protection and get out of here as fast as possible.
 	if (!empty($context['aeva']['skip']))
@@ -82,32 +82,71 @@ function aeva_main(&$message)
 	if (empty($context['aeva']))
 		$context['aeva'] = array();
 
-	// ... Start embedding ;)
-	$j = count($sites);
+	// This array will contain the number of embeddable links we have per site (YouTube, etc.) in $message.
+	$has = array();
 
 	// Set / redo the limits
 	aeva_limits();
 
-	// For each enabled site to the end, attempt to embed
-	for ($upto = 0; $upto < $j; $upto++)
+	// Find embeddable links for each enabled site to the end
+	for ($upto = 0, $j = count($sites); $upto < $j; $upto++)
 	{
-		$message = aeva_match($message);
+		$has_any = aeva_match($message);
+
+		if ($has_any)
+			$has[$upto] = $has_any;
 
 		// If no active http links remain (making further embedding impossible), then stop
-		if (stripos($message, '<a href="http://') === false)
+		if ($has_any && strpos($message, '<a href="http://') === false)
 			break;
 	}
 
+	// Do we need to ensure the link isn't inside a sentence?
+	if (empty($modSettings['embed_incontext']))
+	{
+		// First, we start by making a test string with all div tags turned into linebreaks,
+		// because they act the same way, and all other tags removed (except for <aeva>).
+		$test = '<br>' . strip_tags(preg_replace('~</?div(?:\s[^>]*)?>~s', '<br>', $message), '<br><aeva>') . '<br>';
+		$offset = 0;
+
+		// Now, we get a list of all <aeva> tags (i.e. videos to embed), as well as their position.
+		preg_match_all('`<aeva .*?</aeva>`', $test, $matches, PREG_OFFSET_CAPTURE);
+		preg_match_all('`<aeva .*?</aeva>`', $message, $original_matches, PREG_OFFSET_CAPTURE);
+
+		foreach ($matches[0] as $i => &$match)
+		{
+			// Now we get the entire test string before the current <aeva> and after it.
+			$len = strlen($match[0]);
+			$first = substr($test, 0, $match[1]);
+			$last  = substr($test, $match[1] + $len);
+
+			// We remove everything up to the <br>'s closest to the link...
+			$final = substr($first, strrpos($first, '<br>') + 4) . substr($last, 0, strpos ($last,  '<br>'));
+
+			// ...and remove whitespace and other <aeva>'s. If there's anything left, it means we're in a sentence. Hail to the king.
+			if (trim(preg_replace('`<aeva .*?</aeva>`', '', $final)) !== '')
+			{
+				$message = substr_replace($message, str_replace(array('<aeva ', '</aeva>'), array('<a ', '</a>'), $match[0]), $original_matches[0][$i][1] + $offset, $len);
+				$offset += 6;
+			}
+		}
+	}
+
+	// ... Start embedding ;)
+	foreach ($has as $upto => $num)
+		if ($num > 0)
+			aeva_match($message, true);
+
 	// Reverse protections and return the finished embedded content
-	return aeva_reverse_protection(str_replace('<aeva-begin>', '', $message));
+	return aeva_reverse_protection($message);
 }
 
 // Protects urls in places we don't want to touch, from being embedded or autolinked.
 // aeva_protection(
-//		array('<noembed>' => false),	= bbc/html items to protect => whether to retain it
-//			$message,					= Content
-//			true						= If no http links remain, return non-protected and sets $context['embed_skip']
-//		);
+//		array('<noembed>' => false),	= BBC/html item to protect => whether to retain it
+//		$message,						= Content
+//		true							= If no http links remain, return non-protected and set $context['embed_skip']
+// );
 function aeva_protection($array = array(), $input, $reverse = false)
 {
 	// Return if either is empty
@@ -154,10 +193,11 @@ function aeva_protection($array = array(), $input, $reverse = false)
 			);
 
 		$unaltered = $input;
-		// Protect the item.  Those in the array don't want autolinking, those not do!
+
+		// Protect the item. Those in the array won't be autolinked.
 		$input = in_array($item, array('html', 'code', 'php', '<noembed>', 'noae')) ? aeva_protect_recursive($input) : aeva_protect_recursive_autolink($input);
 
-		// Recursive error? Check for null/empty
+		// Recursive error? Check for null/empty.
 		if (empty($input))
 		{
 			// Set this variable to prevent further embedding for this topic.
@@ -166,15 +206,15 @@ function aeva_protection($array = array(), $input, $reverse = false)
 			return $unaltered;
 		}
 
-		// Oh crumbs! Remove any leftovers which could screw up recursions
+		// Oh crumbs! Remove any leftovers which could screw up recursions.
 		$input = aeva_crumbs($input);
 	}
 
 	// Tidy up
 	unset($unaltered);
 
-	// No links remaining?  No further embedding possible, so set this variable before we return
-	if ($reverse === true && stripos($input, '<a href="http://') === false)
+	// No links remaining? No further embedding possible, so set this variable before we return.
+	if ($reverse === true && strpos($input, '<a href="http://') === false)
 		$context['aeva']['skip'] = true;
 
 	return $input;
@@ -183,8 +223,8 @@ function aeva_protection($array = array(), $input, $reverse = false)
 // Protect noembed & autolink items from embedding *before* BBC parsing - wrap quotes, but don't protect
 function aeva_preprotect(&$message, $cache_id)
 {
-	if ((stripos($message, 'http://') === false && stripos($message, '[noembed]') === false) || strpos($cache_id, 'sig') !== false)
-		return;
+	if ((strpos($message, 'http://') === false && stripos($message, '[noembed]') === false) || strpos($cache_id, 'sig') !== false)
+		return false;
 
 	global $modSettings, $context;
 
@@ -203,6 +243,8 @@ function aeva_preprotect(&$message, $cache_id)
 
 	// Protect all these items
 	$message = aeva_protection($array, $message, false);
+
+	return true;
 }
 
 // Remove any breadcrumbs (leftovers) remaining
@@ -215,25 +257,27 @@ function aeva_crumbs($input)
 // Reverses protections, and also clears any leftovers in one go.
 function aeva_reverse_protection($input)
 {
-	return str_ireplace(array('http://noae://', 'noae://', '[noae]', '[/noae]', '[noembed]', '[/noembed]'), array('http://', 'http://'), $input);
+	return str_ireplace(array('[noembed]', '[/noembed]'), '', str_replace(array('noae://', '[noae]', '[/noae]'), array('http://'), $input));
 }
 
 // Callback, only build the embed on each match
-function aeva_match($input)
+function aeva_match(&$message, $for_real = false)
 {
 	global $context, $sites, $upto, $boardurl, $modSettings;
+	static $local_done = false;
 
-	// Prevent stupid loop/crash. Also, if loading full version, return if disabled
+	// Prevent stupid loop/crash. Also, if loading full version, return if disabled.
 	if (empty($sites[$upto]['pattern']) || !empty($sites[$upto]['disabled']))
-		return $input;
+		return 0;
 
-	// This copy of the regex we will modify
-	$regex = $sites[$upto]['pattern'];
+	// I don't think we'll be saving $sites later, so we'll just
+	// transform {local} variables in it so it's only done once...
+	$regex =& $sites[$upto]['pattern'];
 
 	// Local files embed - do some magic
-	if (strpos($regex, '{local}') !== false)
+	if (!$local_done && strpos($regex, '{local}') !== false)
 	{
-		// Parse the boardurl to grab the domain we're on.
+		// Parse the boardurl to grab the domain we're on
 		if (!empty($modSettings['embed_nonlocal']))
 			$regex = str_replace('{local}', '[a-z]+://[^"]+?/', $regex);
 		else
@@ -244,19 +288,25 @@ function aeva_match($input)
 
 			// We can't parse your domain, so return to avoid errors
 			if (empty($x['host']))
-				return $input;
+				return 0;
 
-			$regex = str_replace('{local}', preg_quote($x['scheme'], '`') . '://(?:(?:(?:[a-z0-9-]{1,32})\.){0,3})' . preg_quote($x['host'], '`') . '/', $regex);
-			unset($x);
+			$regex = str_replace('{local}', preg_quote($x['scheme'], '`') . '://(?:[a-z0-9-]{1,32}\.){0,3}' . preg_quote($x['host'], '`') . '/', $regex);
 		}
 	}
+	// Local sites are at the beginning. If this site isn't local, we can stop looking.
+	else
+		$local_done = true;
 
-	// Call the object builder for each successful match (force then remove a leading <br> to match videos at the beginning, too.)
-	return preg_replace_callback(
-		'`(<(?:(?:br|aeva-begin)>(?:<(?!br>)|[^<])*(?<!\s|&nbsp;))|</div>(?:\s|&nbsp;)*)?<a href="(' . $regex . '[^"]*)"[^>]*>(.*?)</a>`i',
-		'aeva_build_object',
-		'<aeva-begin>' . $input
-	);
+	// Match everything, and do the actual embedding.
+	if ($for_real)
+	{
+		$message = preg_replace_callback('`<aeva href="(' . $regex . '[^"]*)"[^>]*>(.*?)</aeva>`', 'aeva_build_object', $message);
+		return;
+	}
+
+	// Match everything, and return the number of existing embeddable links for this site.
+	$message = preg_replace('`<a (href="' . $regex . '[^"]*"[^>]*>.*?)</a>`', '<aeva $1</aeva>', $message, -1, $has_any);
+	return $has_any;
 }
 
 // The core function: replace matched links with the full embedded object.
@@ -269,17 +319,15 @@ function aeva_build_object($input)
 	if (!isset($txt['aeva']) && loadLanguage('Media') == false)
 		loadLanguage('Media', 'english');
 
-	if (empty($input[1]) && empty($modSettings['embed_incontext']))
-		return preg_replace(array('~http://~i', '@#[\w/.~-]*@'), array('noae://', ''), $input[0], 1);
-
 	if ($context['aeva']['remaining'] == 0)
-		return preg_replace(array('~http://~i', '@#[\w/.~-]*@'), array('noae://', ''), $input[0], 1) . ' ' . $txt['media_too_many_embeds'];
+		return str_replace(array('<aeva href="http://', '</aeva>'), array('<a href="noae://', '</a>'), preg_replace('`#[\w/.~-]*`', '', $input[0], 1)) . ' ' . $txt['media_too_many_embeds'];
 
 	$arr = &$sites[$upto];
 	$use_object_init = (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']) || WEDGE == 'SSI' || !empty($modSettings['embed_noscript']) || !empty($context['embed_mg_hack']);
 	$use_object = $use_object_init || (!empty($arr['plugin']) && $arr['plugin'] != 'flash') || !empty($arr['allow-script']) || ($arr['id'] == 'yav' && $context['browser']['is_firefox']);
 
-	$object = $input[1];
+	$object = $extra_js = '';
+	$link = '<a href="<aeva-link>" target="_blank" class="aeva_link bbc_link new_win"><aeva-title></a>';
 
 	if (!isset($context['browser']['is_ie8']) && !$context['browser']['is_ie'])
 		$context['browser']['is_ie'] = $context['browser']['is_ie8'] = strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 8') !== false;
@@ -358,12 +406,12 @@ function aeva_build_object($input)
 	$tentative_title = array_pop($input);
 
 	// Get the option list, such as videolink#hq-w500-h400
-	$options = strrchr($input[2], '#');
+	$options = strrchr($input[1], '#');
 	$opt = empty($options) ? array() : str_replace('~', '-', explode('-', substr($options, 1)));
 
 	// Strip the #options out of the original link
-	$input[2] = preg_replace('~#.*~', '', $input[2]);
-	$input = preg_replace('`(#[^"<]*)`e', 'str_replace("~", "-", "$1")', $input);
+	$input[1] = preg_replace('~#.*~', '', $input[1]);
+	$input = preg_replace('~(#[^"<]*)~e', 'str_replace("~", "-", "$1")', $input);
 	if ($tentative_title && substr($tentative_title, 0, 7) !== 'http://')
 		$title = $tentative_title;
 
@@ -380,7 +428,7 @@ function aeva_build_object($input)
 
 		// Add some information for the user that external embedding of this clip is disallowed by the video's author
 		if ($ion == 'noexternalembed')
-			return preg_replace(array('~http://~i', '@#noext[\w/.~-]*@'), array('noae://', ''), $input[0]) . ' ' . $txt['media_noexternalembedding'];
+			return str_replace(array('<aeva href="http://', '</aeva>'), array('<a href="noae://', '</a>'), preg_replace('`#noext[\w/.~-]*`', '', $input[0])) . ' ' . $txt['media_noexternalembedding'];
 
 		if (is_array($arr['movie']) && isset($arr['movie'][$ion]))
 			$movie_type = $ion;
@@ -430,7 +478,7 @@ function aeva_build_object($input)
 	{
 		$scr = '
 	<style>
-		.maeva { font: 8pt/11pt Tahoma, Arial, helvetica, sans-serif; overflow: auto }
+		.maeva { font-size: 8pt; line-height: 11pt; overflow: auto }
 		.maeva a:link, .maeva a:visited { text-decoration: none !important; border-bottom: 0 !important }
 		.aeva_dq { font-weight: bold }
 		.aeva_t { text-align: left; padding-top: 3px }
@@ -438,43 +486,31 @@ function aeva_build_object($input)
 		a.aeva_dq:link { color: inherit }
 	</style>';
 
-		 if (!$use_object_init)
-			$scr .= '
-	<script src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script>';
-		$scr .= '
-	<script><!-- // --><![CDATA[';
-
 		if (!$use_object_init)
-			$scr .= '
-		aevams = {' . substr($swo_params, 1) . '};
-		aeinst = "' . (empty($modSettings['embed_expins']) ? $boardurl . '/expressInstall.swf' : '') . '";';
-
-		if (!$use_object_init && !$fixed_size)
-			$scr .= '
-		function aevatq(q, id, w, h)
 		{
-			var yt = document.getElementById("aevawi"+id);
-			document.getElementById("sae"+id).style.width = w;
-			document.getElementById("saeva"+id).style.height = h;
-			var dat = yt.data != "" ? yt.data : yt.movie;
-			var aq = document.getElementById("aqc"+id).childNodes;
-			for (var i = 0; i < aq.length; i++)
-				if (aq.item(i).href)
-					aq.item(i).className = aq.item(i).href.indexOf("(" + q + ",") > 0 ? "aeva_dq" : "";
-			swfobject.createSWF({ data: dat, width: w, height: h }, aevams, "aevawi" + id);
-			document.cookie = "aeva_quality=" + q + ";path=/";
-		}';
+			add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', true);
+			add_js('
+	aevams = {', substr($swo_params, 1), '};', !empty($modSettings['embed_expins']) ? '
+	aeinst = "' . $boardurl . '/expressInstall.swf";' : '');
 
-		$scr .= '
-	// ]]></script>';
-
-		$temp = ob_get_contents();
-		if (($pos_head = strpos($temp, '</head>')) !== false)
-		{
-			ob_clean();
-			echo substr_replace($temp, $scr . "\n" . '</head>', $pos_head, 7);
-			unset($temp);
+			if (!$fixed_size)
+				add_js('
+	function aevatq(q, id, w, h)
+	{
+		var yt = $("#aevawi" + id)[0];
+		$("#sae" + id).css("width", w);
+		$("#saeva" + id).css("height", h);
+		var dat = yt.data != "" ? yt.data : yt.movie;
+		$("#aqc" + id).children("a").each(function () {
+			this.className = this.href.indexOf("(" + q + ",") > 0 ? "aeva_dq" : "";
+		});
+		swfobject.createSWF({ data: dat, width: w, height: h }, aevams, "aevawi" + id);
+		document.cookie = "aeva_quality=" + q + ";path=/";
+	}');
 		}
+
+		if (isset($context['last_minute_header']))
+			$context['last_minute_header'] .= $scr;
 		else
 			$context['header'] .= $scr;
 	}
@@ -511,8 +547,8 @@ function aeva_build_object($input)
 	$swp = $sw == '100%' ? $sw : $sw . 'px';
 	$shp = $sh == '100%' ? $sh : $sh . 'px';
 
-	$show_raw_link = (isset($title) && (empty($modSettings['embed_titles']) || $modSettings['embed_titles'] < 2))
-				  || (!empty($modSettings['embed_includeurl']) && !empty($arr['show-link']) && empty($context['embed_mg_calling']));
+	$show_raw_link = (isset($title) && (empty($modSettings['embed_titles']) || $modSettings['embed_titles'] < 2)) ||
+					 (!empty($modSettings['embed_includeurl']) && !empty($arr['show-link']) && empty($context['embed_mg_calling']));
 	$show_something_below = $show_raw_link || (!$use_object && $sw != $altw);
 
 	if (!empty($plugin))
@@ -544,21 +580,19 @@ function aeva_build_object($input)
 
 		// <noembed> tag containing raw link in case Flash is disabled. However, don't include it if we're going to show the raw link anyway.
 		if (!$show_raw_link)
-			$object .= '<noembed><a href="<aeva-link>" target="_blank" class="aeva_link bbc_link new_win"><aeva-title></a></noembed>';
+			$object .= '<noembed>' . $link . '</noembed>';
 
 		// If using <object> remember to close it
 		if ($context['browser']['is_ie'])
 			$object .= '</object>';
 	}
 	else
-		$object .= '
-	<div id="aevid' . $swfobjects . '">' . ($show_raw_link ? '' : '
-		<a href="<aeva-link>" target="_blank" class="aeva_link bbc_link new_win"><aeva-title></a>
-	') . '</div>
-	<script><!-- // --><![CDATA[
-		swfobject.embedSWF("<aeva-embed>", "aevid' . $swfobjects . '", "' . $sw . '", "' . $sh . '", "9", aeinst, {}, ' .
-		(!empty($arr['show-flashvars']) ? '{' . substr($swo_params, 1) . ',flashvars:"<flashvars>"}' : 'aevams') . ', {id:"aevawi' . $swfobjects . '"});
-	// ]]></script>';
+	{
+		$object .= '<div id="aevid' . $swfobjects . '">' . ($show_raw_link ? '' : $link) . '</div>';
+		$extra_js .= '
+	swfobject.embedSWF("<aeva-embed>", "aevid' . $swfobjects . '", "' . $sw . '", "' . $sh . '", "9", ' . (!empty($modSettings['embed_expins']) ? 'aeinst, ' : '""') . ', {}, ' . (!empty($arr['show-flashvars']) ?
+		'{' . substr($swo_params, 1) . ',flashvars:"<flashvars>"}' : 'aevams') . ', {id:"aevawi' . $swfobjects . '"});';
+	}
 
 	// Any extra - required for RealPlayer since it needs dual embeds, and fix the width/height while we're at it
 	if (!empty($plugin['extra']))
@@ -572,7 +606,7 @@ function aeva_build_object($input)
 		$object .= '</td>';
 
 	if ($show_something_below && empty($plugin))
-		$object .= '<br><a href="<aeva-link>" target="_blank" class="aeva_link bbc_link new_win"><aeva-title></a>';
+		$object .= '<br>' . $link;
 	elseif ($show_something_below)
 	{
 		$object .= '</tr>
@@ -580,17 +614,14 @@ function aeva_build_object($input)
 
 		// Include the original link? Don't do it if AM's gallery is calling for integration, because it would create a double embed.
 		if ($show_raw_link)
-			$object .= '<a href="<aeva-link>" target="_blank" class="aeva_link bbc_link new_win"><aeva-title></a>';
+			$object .= $link;
 
 		$object .= '</td><td class="aeva_q" id="aqc' . $swfobjects . '">';
 
 		// Only show the Normal | Large links if we can actually enlarge the object and the 'fixed size' parameter isn't set.
 		if (!$use_object && !$fixed_size && $sw != $altw)
-		{
-			$object .= '
-	<a href="javascript:aevatq(0, ' . $swfobjects . ', ' . min($sw, $altw) . ', ' . min($sh, $alth) . ');" ' . ($sw < $altw ? 'class="aeva_dq" ' : '') . 'title="-">' . $txt['media_small'] . '</a> |
-	<a href="javascript:aevatq(1, ' . $swfobjects . ', ' . max($sw, $altw) . ', ' . max($sh, $alth) . ');" ' . ($sw > $altw ? 'class="aeva_dq" ' : '') . 'title="+">' . $txt['media_large'] . '</a>';
-		}
+			$object .= '<a href="javascript:aevatq(0, ' . $swfobjects . ', ' . min($sw, $altw) . ', ' . min($sh, $alth) . ');" ' . ($sw < $altw ? 'class="aeva_dq" ' : '') . 'title="-">' . $txt['media_small'] . '</a>'
+				  . ' | <a href="javascript:aevatq(1, ' . $swfobjects . ', ' . max($sw, $altw) . ', ' . max($sh, $alth) . ');" ' . ($sw > $altw ? 'class="aeva_dq" ' : '') . 'title="+">' . $txt['media_large'] . '</a>';
 
 		$object .= '</td>';
 	}
@@ -602,23 +633,27 @@ function aeva_build_object($input)
 		$object = str_replace(array('{width}', '{height}', '{int:width}', '{int:height}'), array($swp, $shp, $sw, $sh), $object);
 
 	// Replace the $1, $2, $3 etc
-	for ($i = 2; $i < count($input); $i++)
+	for ($i = 1, $j = count($input); $i < $j; $i++)
 	{
 		if (strpos($object, '(') || strpos($embed, '('))
 		{
 			// (&option=$1|&nothing) will say &option=test if $1 is 'test', and &nothing if $1 is empty
-			$object = preg_replace('~\(([^$()|]*)\$' . ($i-1) . '([^$()|]*)\|([^)]*)\)~', empty($input[$i]) ? '$3' : '${1}' . $input[$i] . '$2', $object);
-			$embed = preg_replace('~\(([^$()|]*)\$' . ($i-1) . '([^$()|]*)\|([^)]*)\)~', empty($input[$i]) ? '$3' : '${1}' . str_replace('&amp;', '&', $input[$i]) . '$2', $embed);
+			$object = preg_replace('~\(([^$()|]*)\$' . $i . '([^$()|]*)\|([^)]*)\)~', empty($input[$i]) ? '$3' : '${1}' . $input[$i] . '$2', $object);
+			$embed  = preg_replace('~\(([^$()|]*)\$' . $i . '([^$()|]*)\|([^)]*)\)~', empty($input[$i]) ? '$3' : '${1}' . str_replace('&amp;', '&', $input[$i]) . '$2', $embed);
 		}
-		$object = str_replace('$' . ($i-1), $input[$i], $object);
-		$embed = str_replace('$' . ($i-1), str_replace('&amp;', '&', $input[$i]), $embed);
+		$object = str_replace('$' . $i, $input[$i], $object);
+		$embed = str_replace('$' . $i, str_replace('&amp;', '&', $input[$i]), $embed);
 	}
 
 	// All ampersands need to be &amp;, however some may be already encoded. So to prevent double-encoding, convert them back to &, then back again
 	$object = str_replace(
-		array('&amp;', '&', '&amp;nbsp;', '&amp;amp;', '<aeva-embed>', '<aeva-link>', '<aeva-title>'),
-		array('&', '&amp;', '&nbsp;', '&amp;', $embed, $input[2], isset($title) ? $title : $input[2]),
-		$object);
+		array('&amp;', '&', '&amp;nbsp;', '&amp;amp;', '<aeva-link>', '<aeva-title>'),
+		array('&', '&amp;', '&nbsp;', '&amp;', $input[1], isset($title) ? $title : $input[1]),
+		$object
+	);
+	add_js(
+		str_replace('<aeva-embed>', $embed, $extra_js)
+	);
 	if (strpos($object, '<flashvars>') !== false)
 		$object = str_replace('<flashvars>', substr(strrchr($embed, '?'), 1), $object);
 
@@ -629,8 +664,7 @@ function aeva_build_object($input)
 		$context['aeva']['remaining_per_page'] -= 1;
 	}
 
-	// Protect http links inside the object from being double embedded
-	return str_ireplace('http://', 'noae://', $object);
+	return $object;
 }
 
 // Limits change, so this keeps track between nolimits vs limits, limits per page vs post
@@ -669,7 +703,7 @@ function aeva_autolink_urls($input)
 {
 	global $context, $modSettings;
 
-	// Should haven't got here if autolinking of urls is disabled
+	// Should haven't got here if autolinking of URLs is disabled
 	if (empty($modSettings['autoLinkUrls']))
 		return $input;
 
@@ -679,12 +713,13 @@ function aeva_autolink_urls($input)
 		$input = strtr($input, array('&#039;' => '\'', '&quot;' => '>">', '"' => '<"<', '&lt;' => '<lt<'));
 		$input = preg_replace(
 			array(
-				'`(^|[]\s>.(;\'"])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`i',
-				'`(^|[]\s>.(;\'"])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'),
-			array(
+				'`(^|[]\s>.(;\'"])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`',
+				'`(^|[]\s>.(;\'"])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'
+			), array(
 				'$1[url]$2[/url]',
 				'$1[url=http://$2]$2[/url]'
-			), $input);
+			), $input
+		);
 		$input = strtr($input, array('>">' => '&quot;', '<"<' => '"', '<lt<' => '&lt;'));
 	}
 
@@ -695,7 +730,7 @@ function aeva_autolink_urls($input)
 // Protects [noae] bbcoded items - recursive. Used instead of the ACTUAL tag to prevent infinite loop.
 // The tags are lost on each recursion.
 // Known issue: anchor settings remain visible when video isn't embedded. No known "good" solution?
-function aeva_protect_recursive_autolink($input)
+function aeva_protect_recursive($input, $autolink = false)
 {
 	global $context;
 
@@ -707,36 +742,24 @@ function aeva_protect_recursive_autolink($input)
 	if (is_array($input))
 	{
 		// Auto-Link items that might have been protected before (we want html version - so false)
-		$input = aeva_autolink_urls($input[1]);
+		if ($autolink)
+			$input[1] = aeva_autolink_urls($input[1]);
 
-		// Changing the http:// will prevent ALL of the links matching sites.
-		$input = str_ireplace('http://', 'noae://', $input);
+		// Changing http:// to noae:// should prevent ALL of the links from matching a site.
+		$input = str_replace('http://', 'noae://', $input[1]);
 	}
 
-	// GODDESS of all regexps - works for complex nested bbcode.
-	return preg_replace_callback('~\[noae]((?>[^[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
-		'aeva_protect_recursive_autolink', $input);
+	// The goddess of all regexps - works for complex nested bbcode.
+	return preg_replace_callback(
+		'~\[noae]((?>[^[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
+		'aeva_protect_recursive' . ($autolink ? '_autolink' : ''),
+		$input
+	);
 }
 
-// Same as function above, but without autolinking inside
-// Protects [noae] bbcoded items - recursive. Used instead of the ACTUAL tag to prevent infinite loop.
-// The tags are lost on each recursion.
-function aeva_protect_recursive($input)
+function aeva_protect_recursive_autolink($input)
 {
-	global $context;
-
-	// Prevent error if null or empty
-	if (empty($input))
-		return false;
-
-	// Matches found
-	if (is_array($input))
-		// Changing the http:// will prevent ALL of the links matching sites.
-		$input = str_ireplace('http://', 'noae://', $input[1]);
-
-	// GODDESS of all regexps - works for complex nested bbcode.
-	return preg_replace_callback('~\[noae]((?>[^[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
-		'aeva_protect_recursive', $input);
+	return aeva_protect_recursive($input, true);
 }
 
 // The 'Lookup' function to grab a page and match a regex
@@ -760,7 +783,7 @@ function aeva_lookup_and_match($regex, $url, $fetch_title = '')
 	{
 		foreach ($fetch_title as $search_title)
 		{
-			if (!preg_match('~' . $search_title . '~is', $data, $output) || empty($output[1]) || trim($output[1]) == '')
+			if (!preg_match('~' . $search_title . '~is', $data, $output) || empty($output[1]) || trim($output[1]) === '')
 				continue;
 			$ret['title'] = preg_replace('~\s+~', ' ', trim(strip_tags($output[1])));
 			break;
@@ -788,7 +811,7 @@ function embed_lookups_obtain_callback($input)
 	// On callback this is an array
 	if (is_array($input))
 	{
-		// Secondary url  - we use the variable in another url.
+		// Secondary url - we use the variable in another url.
 		$url = !empty($arr['lookup-actual-url']) ? str_replace('$1', $input[3], $arr['lookup-actual-url']) : $input[2];
 
 		// Search for a title if: link has no existing title, current video site has a title lookup, or all video sites
@@ -886,7 +909,7 @@ function embed_lookups_match($input)
 			$input = embed_lookups_obtain_callback($input);
 
 	// Undo All protection
-	$input = str_replace(array('http://noae://', 'noae://'), 'http://', $input);
+	$input = str_replace('noae://', 'http://', $input);
 
 	// All sites are done.
 	return $input;
@@ -918,11 +941,7 @@ function aeva_onposting($input)
 		$array['quote'] = true;
 
 	// Protect all these items
-	$input = aeva_protection(
-		$array,
-		$input,
-		false
-	);
+	$input = aeva_protection($array, $input, false);
 
 	// Attempt to Load - Enabled Sites
 	if (empty($sites) && file_exists($sourcedir . '/media/Aeva-Sites.php'))
@@ -947,11 +966,8 @@ function aeva_onposting($input)
 	if (!empty($modSettings['embed_lookups']))
 		$input = embed_lookups_match($input);
 
-	// Undo All protection
-	$input = str_replace(array('http://noae://', 'noae://'), 'http://', $input);
-
-	// Go lookup then return
-	return $input;
+	// Undo all protection and return
+	return str_replace('noae://', 'http://', $input);
 }
 
 // Noobs might use the full embed code provided by the site, so try to fix it on posting (replace with an embeddable link and save some db space as well)
@@ -1011,28 +1027,26 @@ function aeva_fix_html($input)
 	return $input;
 }
 
-/* Do not attempt to auto-embed if Aeva is disabled, or for
- - Printer-friendly pages
- - Messages that don't contain links
- - Signatures/Wysiwyg window (or anywhere where $context['embed_disable'] is set)
- - SSI functions such as ssi_recentTopics() (they tend to crash your browser) */
-
+/*
+	Do not attempt to auto-embed if Aeva is disabled, or for
+	- Printer-friendly pages ($smileys === 'print')
+	- Messages that don't contain links
+	- Signatures/Wysiwyg window (or anywhere where $context['embed_disable'] is set)
+	- SSI functions such as ssi_recentTopics() (they tend to crash your browser)
+*/
 function aeva_parse_bbc2(&$message, &$smileys, &$cache_id)
 {
 	global $context, $modSettings, $txt;
 
-	if (strlen($message) > 10 & empty($context['uninstalling']))
+	if (empty($context['uninstalling']))
 	{
-		if (!empty($modSettings['embed_enabled']) && empty($context['embed_disable']) && stripos($message, 'http://') !== false && $smileys !== 'print' && strpos($cache_id, 'sig') === false)
+		if (!empty($modSettings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && $smileys !== 'print' && strpos($cache_id, 'sig') === false)
 			$message = aeva_main($message);
 		else
 		{
 			// Removes any noembed
-			$message = aeva_protection(
-				array('noembed' => false),
-				$message,
-				false
-			);
+			$message = aeva_protection(array('noembed' => false), $message, false);
+
 			// And reverses any protection already in place
 			$message = aeva_reverse_protection($message);
 		}

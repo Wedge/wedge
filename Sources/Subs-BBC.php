@@ -159,7 +159,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		{
 			if (!function_exists('aeva_preprotect'))
 				loadSource('media/Aeva-Embed');
-			aeva_preprotect($message, $cache_id);
+			$has_link = aeva_preprotect($message, $cache_id);
 		}
 	}
 
@@ -1012,9 +1012,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	if (empty($parse_tags) && empty($context['uninstalling']))
 	{
 		// Do the actual embedding
-		if (!function_exists('aeva_parse_bbc2'))
-			loadSource('media/Aeva-Embed');
-		aeva_parse_bbc2($message, $smileys, $cache_id);
+		if (!empty($has_link))
+		{
+			if (!function_exists('aeva_parse_bbc2'))
+				loadSource('media/Aeva-Embed');
+			aeva_parse_bbc2($message, $smileys, $cache_id);
+		}
 
 		if (function_exists('aeva_parse_bbc') && stripos($message, '[media') !== false)
 			aeva_parse_bbc($message, $cache_id);
