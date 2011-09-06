@@ -1016,7 +1016,7 @@ function DownloadLanguage()
 					'function' => create_function('$rowData', '
 						return \'<input type="checkbox" name="copy_file[]" value="\' . $rowData[\'generaldest\'] . \'"\' . ($rowData[\'default_copy\'] ? \' checked\' : \'\') . \'>\';
 					'),
-					'style' => 'text-align: center; width: 4%;',
+					'style' => 'text-align: center; width: 4%',
 				),
 			),
 		),
@@ -1071,9 +1071,9 @@ function ModifyLanguages()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						return \'<input type="radio" name="def_language" value="\' . $rowData[\'id\'] . \'" \' . ($rowData[\'default\'] ? \'checked\' : \'\') . \' onclick="highlightSelected(\\\'list_language_list_\' . $rowData[\'id\'] . \'\\\');">\';
+						return \'<input type="radio" name="def_language" value="\' . $rowData[\'id\'] . \'" \' . ($rowData[\'default\'] ? \'checked\' : \'\') . \' onclick="highlightSelected(\\\'#list_language_list_\' . $rowData[\'id\'] . \'\\\');">\';
 					'),
-					'style' => 'text-align: center; width: 8%;',
+					'style' => 'text-align: center; width: 8%',
 				),
 			),
 			'name' => array(
@@ -1113,24 +1113,18 @@ function ModifyLanguages()
 			array(
 				'position' => 'below_table_data',
 				'value' => '<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '"><input type="submit" name="set_default" value="' . $txt['save'] . '"' . (is_writable($boarddir . '/Settings.php') ? '' : ' disabled') . ' class="save">',
-				'style' => 'text-align: right;',
+				'style' => 'text-align: right',
 			),
 		),
 		// For highlighting the default.
 		'javascript' => '
-	var prevClass = "";
 	var prevDiv = "";
 	function highlightSelected(box)
 	{
-		if (prevClass != "")
-			prevDiv.className = prevClass;
-
-		prevDiv = document.getElementById(box);
-		prevClass = prevDiv.className;
-
-		prevDiv.className = "highlight";
+		$(prevDiv).removeClass("highlight");
+		prevDiv = $(box).addClass("highlight");
 	}
-	highlightSelected("list_language_list_' . ($language == '' ? 'english' : $language). '");',
+	highlightSelected("#list_language_list_' . ($language == '' ? 'english' : $language). '");',
 	);
 
 	// Display a warning if we cannot edit the default setting.

@@ -590,7 +590,7 @@ function aeva_build_object($input)
 	{
 		$object .= '<div id="aevid' . $swfobjects . '">' . ($show_raw_link ? '' : $link) . '</div>';
 		$extra_js .= '
-	swfobject.embedSWF("<aeva-embed>", "aevid' . $swfobjects . '", "' . $sw . '", "' . $sh . '", "9", ' . (!empty($modSettings['embed_expins']) ? 'aeinst, ' : '""') . ', {}, ' . (!empty($arr['show-flashvars']) ?
+	swfobject.embedSWF("<aeva-embed>", "aevid' . $swfobjects . '", "' . $sw . '", "' . $sh . '", "9", ' . (!empty($modSettings['embed_expins']) ? 'aeinst' : '""') . ', {}, ' . (!empty($arr['show-flashvars']) ?
 		'{' . substr($swo_params, 1) . ',flashvars:"<flashvars>"}' : 'aevams') . ', {id:"aevawi' . $swfobjects . '"});';
 	}
 
