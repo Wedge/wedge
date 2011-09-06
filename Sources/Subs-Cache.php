@@ -143,7 +143,7 @@ function add_css_file($original_files = array(), $add_link = false)
 	$files = $original_files = array_keys(array_flip($original_files));
 
 	foreach ($files as $file)
-		foreach ($context['css_generic_files'] as $gen)
+		foreach ($context['css_suffixes'] as $gen)
 			$files[] = $file . '.' . $gen;
 
 	$latest_date = 0;
@@ -184,7 +184,7 @@ function add_css_file($original_files = array(), $add_link = false)
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-	$id .= implode('-', $context['css_generic_files']);
+	$id .= implode('-', $context['css_suffixes']);
 
 	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
 	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
@@ -217,9 +217,9 @@ function add_css_file($original_files = array(), $add_link = false)
 }
 
 /**
- * Create a compact CSS file that concatenates and compresses a list of existing CSS files, also fixing relative paths.
+ * Analyzes the list of required CSS files and returns (or generates) the final file, as well as custom skin settings.
  *
- * @return int Returns the current timestamp, for use in caching
+ * The CSS file list is taken from $context['css_main_files'], along with custom.css and css_suffixes variations.
  */
 function wedge_cache_css()
 {
@@ -237,7 +237,7 @@ function wedge_cache_css()
 
 	// Add all possible variations of a file name.
 	foreach ($css_files as $file)
-		foreach ($context['css_generic_files'] as $gen)
+		foreach ($context['css_suffixes'] as $gen)
 			$css_files[] = $file . '.' . $gen;
 
 	foreach ($context['css_folders'] as &$folder)
@@ -318,7 +318,7 @@ function wedge_cache_css()
 
 	unset($context['css_main_files'][0], $context['css_main_files'][1]);
 	$id .= implode('-', $context['css_main_files']) . (empty($context['css_main_files']) ? '' : '-');
-	$id .= implode('-', $context['css_generic_files']);
+	$id .= implode('-', $context['css_suffixes']);
 
 	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
 	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
@@ -335,6 +335,9 @@ function wedge_cache_css()
 		wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext);
 }
 
+/**
+ * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
+ */
 function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext)
 {
 	global $settings, $modSettings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;

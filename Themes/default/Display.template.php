@@ -30,7 +30,7 @@ function template_main()
 
 	// Show the anchor for the top and for the first message. If the first message is new, say so.
 	echo '
-			<a id="top"></a><a id="msg', $context['first_message'], '"></a>', $context['first_new_message'] ? '<a id="new"></a>' : '';
+			<a id="msg', $context['first_message'], '"></a>', $context['first_new_message'] ? '<a id="new"></a>' : '';
 
 	// Build the normal button array.
 	$normal_buttons = array(
@@ -81,7 +81,7 @@ function template_main()
 	echo '
 			<div class="pagesection">',
 				template_button_strip($normal_buttons), '
-				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#lastPost"><strong>', $txt['go_down'], '</strong></a></nav>
+				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="$(\'html, body\').animate({ scrollTop: $(document).height() - $(window).height() }, 1000); return false;"><strong>', $txt['go_down'], '</strong></a></nav>
 			</div>', $context['browser']['is_ie6'] ? '
 			<div class="clear"></div>' : '';
 
@@ -324,14 +324,13 @@ function template_main()
 
 	echo '
 				</form>
-			</div>
-			<a id="lastPost"></a>';
+			</div>';
 
 	// Show the page index... "Pages: [1]".
 	echo '
 			<div class="pagesection">',
 				template_button_strip($normal_buttons), '
-				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
+				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="$(\'html, body\').animate({ scrollTop: 0 }, 1000); return false;"><strong>', $txt['go_up'], '</strong></a></nav>
 			</div>';
 
 	// Show the jumpto box, or... Actually let JavaScript do it.

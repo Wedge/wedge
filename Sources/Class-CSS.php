@@ -177,7 +177,7 @@ class wecss_mixin extends wecss
 				// Remove the mixin declaration
 				$css = str_replace($mixin[0], '', $css);
 
-				if (!empty($mixin[1]) && !array_intersect(explode(',', strtolower($mixin[1])), $context['css_generic_files']))
+				if (!empty($mixin[1]) && !array_intersect(explode(',', strtolower($mixin[1])), $context['css_suffixes']))
 					continue;
 
 				// Create our mixin entry...
@@ -243,7 +243,7 @@ class wecss_var extends wecss
 		// Double quotes are only required for empty strings.
 		// Authors can specific conditions for the variable to be set,
 		// depending on the browser, rtl, guest or member, i.e. anything
-		// set in $context['css_generic_files']. Like this:
+		// set in $context['css_suffixes']. Like this:
 		//
 		//		$variable = "rgba(2,4,6,.5)";
 		//		$variable {ie6,ie7,ie8} = rgb(1,2,3);
@@ -261,7 +261,7 @@ class wecss_var extends wecss
 			foreach ($matches[0] as $i => &$dec)
 			{
 				$css = str_replace($dec, '', $css);
-				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_generic_files']))
+				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_suffixes']))
 					$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
 				// We need to keep this one for later...
 				if ($matches[1][$i] === '$alphamix')

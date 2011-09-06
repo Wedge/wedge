@@ -169,8 +169,8 @@ function template_unread()
 							</td>
 							<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
 								<div>
-									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['first_post']['link'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
-									<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '"><div class="new_icon" title="', $txt['new'], '"></div></a>
+									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_href'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
+									<a href="', $topic['new_href'], '"><div class="new_icon" title="', $txt['new'], '"></div></a>
 									<p>
 										', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
 										', $txt['in'], ' <em>', $topic['board']['link'], '</em>
@@ -324,8 +324,8 @@ function template_replies()
 							</td>
 							<td class="subject ', $alternate_class, '">
 								<div>
-									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['first_post']['link'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
-									<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '"><div class="new_icon" title="', $txt['new'], '"></div></a>
+									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_href'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
+									<a href="', $topic['new_href'], '"><div class="new_icon" title="', $txt['new'], '"></div></a>
 									<p>
 										', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
 										', $txt['in'], ' <em>', $topic['board']['link'], '</em>

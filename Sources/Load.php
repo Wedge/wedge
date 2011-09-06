@@ -1478,9 +1478,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['css_folders'][] = substr($current_folder, 1);
 	}
 
-	// Then, we need a list of generic CSS files.
+	// Then, we need to list the CSS files that will be part of our main CSS file.
 	$context['css_main_files'] = array('index', 'sections');
-	$context['css_generic_files'] = array();
+	$context['css_suffixes'] = array();
 
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
 
@@ -1830,18 +1830,18 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Add Webkit fixes -- there are so many popular browsers based on it.
 	if ($context['browser']['is_webkit'] && !empty($context['browser']['agent']) && $context['browser']['agent'] !== 'webkit')
-		$context['css_generic_files'][] = 'webkit';
+		$context['css_suffixes'][] = 'webkit';
 
 	// Add any potential browser-based fixes.
 	if (!empty($context['browser']['agent']))
-		$context['css_generic_files'][] = $context['browser']['agent'];
+		$context['css_suffixes'][] = $context['browser']['agent'];
 
 	// RTL languages require an additional stylesheet.
 	if ($context['right_to_left'])
-		$context['css_generic_files'][] = 'rtl';
+		$context['css_suffixes'][] = 'rtl';
 
 	// We also have a special stylesheet for guests/members. May become useful.
-	$context['css_generic_files'][] = $user_info['is_guest'] ? 'guest' : 'member';
+	$context['css_suffixes'][] = $user_info['is_guest'] ? 'guest' : 'member';
 
 	$context['tabindex'] = 1;
 
