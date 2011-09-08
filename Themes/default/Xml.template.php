@@ -188,7 +188,7 @@ if (!function_exists('template_button_strip'))
 	function template_menu()
 	{
 	}
-	function theme_linktree()
+	function template_linktree()
 	{
 	}
 }

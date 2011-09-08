@@ -1105,25 +1105,24 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  * - Recursive calls to this function will attempt to be blocked.
  * - The stats cache will be flushed to the tables (so instead of issuing queries that potentially update the same values multiple times, they are only updated on closedown)
  * - A call will be put in to work on the mail queue.
- * - Make sure the page title is sanitised.
+ * - Make sure the page title is sanitized.
  * - Begin the session ID injecting output buffer.
  * - Ensure any hooked buffers are called.
- * - Display the header if correct to display then main page content, then the contents of $context['include_after_template'], followed by footer if correct to display, and lastly by debug data if enabled and available.
+ * - Display the headers if needed, then the main page content, then the footer if needed, and lastly the debug data if enabled and available.
  * - Store the user agent string from the browser for security comparisons next page load.
  *
- * @param mixed $header Whether to issue the header templates or not (often including the main menu). Normally this will be the case, because normally you will require standard templating (i.e pass null, or true here when calling from elsewhere in the app), or false if you require raw content output.
- * @param mixed $do_footer Nominally this follows $header, with one important difference. Whereas with $header, null means to have headers, with $do_footer, null means to inherit from $header. So to have headers, a null/null combination is usually desirable (as index.php does), or to have raw output, simply pass $header as false and omit this parameter.
- * @param bool $from_index If this function is being called in the normal process of execution, this will be true, which enables this function to return so it can be called again later (so the header can be issued, followed by normal processing, followed by the footer, which is all driven by this function). Normally there will be no need to change this because when calling from elsewhere, execution is intended to end.
- * @param boom $from_fatal_error If obExit is being called in resolution of a fatal error, this must be set. It is used in ensuring obExit cascades correctly for header/footer when a fatal error has been encountered. Note that the error handler itself should attend to this (and thus, should be called instead of invoking this with an error message)
+ * @param mixed $start Whether to issue the header templates or not. Normally this will be the case, because normally you will require standard templating (i.e pass null, or true here when calling from elsewhere in the app), or false if you require raw content output.
+ * @param mixed $do_finish Nominally this follows $start, with one important difference. Whereas with $start, null means to have headers, with $do_finish, null means to inherit from $start. So to have headers, a null/null combination is usually desirable (as index.php does), or to have raw output, simply pass $start as false and omit this parameter.
+ * @param bool $from_index If this function is being called in the normal process of execution, this will be true, which enables this function to return so it can be called again later (so the headers can be issued, followed by normal processing, followed by the footer, which is all driven by this function). Normally there will be no need to change this because when calling from elsewhere, execution is intended to end.
+ * @param boom $from_fatal_error If obExit is being called in resolution of a fatal error, this must be set. It is used in ensuring obExit cascades correctly for headers/footer when a fatal error has been encountered. Note that the error handler itself should attend to this (and thus, should be called instead of invoking this with an error message)
  */
-function obExit($header = null, $do_footer = null, $from_index = false, $from_fatal_error = false)
+function obExit($start = null, $do_finish = null, $from_index = false, $from_fatal_error = false)
 {
 	global $context, $settings, $modSettings, $txt;
-	static $header_done = false, $footer_done = false, $level = 0, $has_fatal_error = false;
+	static $start_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
-	++$level;
-	if ($level > 1 && !$from_fatal_error && !$has_fatal_error)
+	if (++$level > 1 && !$from_fatal_error && !$has_fatal_error)
 		exit;
 	if ($from_fatal_error)
 		$has_fatal_error = true;
@@ -1135,12 +1134,12 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 	if (!empty($context['flush_mail']))
 		AddMailQueue(true);
 
-	$do_header = $header === null ? !$header_done : $header;
-	if ($do_footer === null)
-		$do_footer = $do_header;
+	$do_start = $start === null ? !$start_done : $start;
+	if ($do_finish === null)
+		$do_finish = $do_start;
 
-	// Has the template/header been done yet?
-	if ($do_header)
+	// Has the template been started yet?
+	if ($do_start)
 	{
 		// Was the page title set last minute? Also update the HTML safe one.
 		if (!empty($context['page_title']) && empty($context['page_title_html_safe']))
@@ -1149,6 +1148,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 		// Start up the session URL fixer.
 		ob_start('ob_sessrewrite');
 
+		// Run any possible extra output buffers as provided by mods.
 		if (!empty($settings['output_buffers']) && is_string($settings['output_buffers']))
 			$buffers = explode(',', $settings['output_buffers']);
 		elseif (!empty($settings['output_buffers']))
@@ -1160,6 +1160,7 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 			$buffers = array_merge($modSettings['hooks']['buffer'], $buffers);
 
 		if (!empty($buffers))
+		{
 			foreach ($buffers as $function)
 			{
 				$call = strpos($function, '::') !== false ? array_map('trim', explode('::', $function)) : trim($function);
@@ -1168,63 +1169,31 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 				if (is_callable($call))
 					ob_start($call);
 			}
+		}
 
 		// Display the screen in the logical order.
-		template_header();
-		$header_done = true;
+		start_output();
+		$start_done = true;
 	}
 
-	if ($do_footer)
+	if ($do_finish)
 	{
-		if (WIRELESS && !isset($context['sub_template']))
+		if (WIRELESS && !isset($context['layers']['main']))
 			fatal_lang_error('wireless_error_notyet', false);
 
-		// We can either get side, top and/or main sub-templates, either as a string or an array of strings.
-		if (empty($context['sidebar_template']))
-			$context['sidebar_template'] = array();
-		if (empty($context['top_template']))
-			$context['top_template'] = array();
-		if (empty($context['sub_template']))
-			$context['sub_template'] = array('main');
-
-		// If we're calling from a page that wants to hide the UI, don't show the sidebar
-		if (empty($context['hide_chrome']))
-		{
-			execSubTemplate('sidebar_above', 'ignore');
-			foreach ((array) $context['sidebar_template'] as $key => $template)
-				execSubTemplate($template);
-			execSubTemplate('sidebar_below', 'ignore');
-		}
-
-		execSubTemplate('main_above', 'ignore');
-		// If we're calling from a page that wants to hide the UI, don't show the menus/tabs
-		if (empty($context['hide_chrome']))
-			foreach ((array) $context['top_template'] as $template)
-				execSubTemplate($template);
-		foreach ((array) $context['sub_template'] as $template)
-			execSubTemplate($template);
-		execSubTemplate('main_below', 'ignore');
-
-		// Just so we don't get caught in an endless loop of errors from the footer...
-		if (!$footer_done)
-		{
-			$footer_done = true;
-			template_footer();
-
-			if (!isset($_REQUEST['xml']) && empty($context['hide_chrome']))
-				db_debug_junk();
-		}
+		if (!empty($context['skeleton_array']))
+			render_skeleton(reset($context['skeleton_array']), key($context['skeleton_array']));
 	}
 
 	// Remember this URL in case someone doesn't like sending HTTP_REFERER.
 	if (strpos($_SERVER['REQUEST_URL'], 'action=dlattach') === false && strpos($_SERVER['REQUEST_URL'], 'action=viewremote') === false)
 		$_SESSION['old_url'] = $_SERVER['REQUEST_URL'];
 
-	// For session check verfication.... don't switch browsers...
+	// For session check verification.... Don't switch browsers...
 	$_SESSION['USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
 
 	// Hand off the output to the portal, etc. we're integrated with.
-	call_hook('exit', array($do_footer && !WIRELESS));
+	call_hook('exit', array($do_finish && !WIRELESS));
 
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index || WIRELESS)
@@ -1239,6 +1208,40 @@ function obExit($header = null, $do_footer = null, $from_index = false, $from_fa
 			);
 		exit;
 	}
+}
+
+/**
+ * This is where we render the HTML page!
+ */
+function render_skeleton(&$here, $key)
+{
+	global $context;
+
+	// Show the _above part of the layer
+	$temp = $key . '_above';
+	if (function_exists('template_' . $temp))
+		execSubTemplate($temp, 'ignore');
+
+	if ($key === 'top' || $key === 'main')
+		while_we_re_here();
+
+	foreach ($here as $id => $temp)
+	{
+		// If the item is an array, then it's a layer. Otherwise, it's a sub-template.
+		if (is_array($temp))
+			render_skeleton($temp, $id);
+		else
+			execSubTemplate($id, 'ignore');
+	}
+
+	// Show the _below part of the layer
+	$temp = $key . '_below';
+	if (function_exists('template_' . $temp))
+		execSubTemplate($temp, 'ignore');
+
+	// !! We should probably move this directly to template_html_below() and forget the buffering thing...
+	if ($key === 'html' && !isset($_REQUEST['xml']) && empty($context['hide_chrome']))
+		db_debug_junk();
 }
 
 /**
@@ -1576,21 +1579,63 @@ function pretty_scripts_restore($match)
 /**
  * A quick alias to tell Wedge to hide sub-templates that don't belong to the main flow.
  *
- * @param array $layers An array with the layers we actually want to show. Usually empty.
+ * @param array $layers An array with the layers we want to keep. Usually empty.
  */
 function hideChrome($layers = null)
 {
 	global $context;
 
-	// Removing layers such as sidebar and top area.
-	$context['template_layers'] = $layers === null ? array() : $layers;
+	// Not XML or equivalent situation?
+	if (!empty($context['skeleton_array']))
+	{
+		// We only keep the main layer and content. (e.g. we're inside an Ajax frame)
+		if ($layers === null)
+			$context['skeleton_array'] = array(
+				'main' => $context['layers']['main']
+			);
+		// Or we only keep the HTML headers, body definition and content (e.g. we're inside a popup window)
+		elseif ($layers === 'html')
+			$context['skeleton_array'] = array(
+				'html' => array(
+					'body' => array(
+						'main' => $context['layers']['main']
+					)
+				)
+			);
+		// Or finally... Do we want to keep/add a specific layer, like 'print' maybe?
+		else
+			$context['skeleton_array'] = array(
+				'html' => array(
+					'body' => array(
+						$layer => array(
+							'main' => $context['layers']['main']
+						)
+					)
+				)
+			);
+		build_skeleton_indexes($context['skeleton_array']);
+	}
 
 	// Nothing to see here, sir.
 	$context['hide_chrome'] = true;
+}
 
-	// This is a bit of a hack, but it's likely 'content' is linked
-	// with 'sidebar', so we need to strip it down to the minimum.
-	$context['blocks']['content'] = array('has_if' => false, 'body' => '{body}');
+/**
+ * Rebuild $context['layers'] according to current skeleton.
+ * The skeleton builder doesn't call this because it does it automatically.
+ */
+function build_skeleton_indexes(&$here)
+{
+	global $context;
+
+	foreach ($here as $id => &$item)
+	{
+		if (is_array($item))
+		{
+			$context['layers'][$id] =& $item;
+			build_skeleton_indexes($item);
+		}
+	}
 }
 
 /**
@@ -1600,14 +1645,11 @@ function hideChrome($layers = null)
  * - {@link setupThemeContext()} is called to get some key values.
  * - Issue HTTP headers that cause browser-side caching to be turned off (old expires and last modified). This is turned off for attachments errors, though.
  * - Issue MIME type header
- * - Step through the template layers from outermost, and ensure those happen.
- * - If using a conventional theme (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
- * - If the user is post-banned, provide a nice warning for them.
  * - If the settings dictate it so, update the theme settings to use the default images and path.
  */
-function template_header()
+function start_output()
 {
-	global $txt, $modSettings, $context, $settings, $user_info, $boarddir, $cachedir;
+	global $modSettings, $context, $settings;
 
 	if (!isset($_REQUEST['xml']))
 		setupThemeContext();
@@ -1624,90 +1666,7 @@ function template_header()
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 
-	$checked_securityFiles = false;
-	$showed_banned = false;
-	$showed_behav_error = false;
-	foreach ($context['template_layers'] as $layer)
-	{
-		execSubTemplate($layer . '_above', true);
-
-		if ($layer !== 'main' && $layer !== 'body')
-			continue;
-
-		// May seem contrived, but this is done in case the body and main layer aren't there...
-		// Was there a security error for the admin?
-		if ($context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
-		{
-			$showed_behav_error = true;
-			loadLanguage('Security');
-
-			echo '
-			<div class="errorbox">
-				<p class="alert">!!</p>
-				<h3>', $txt['behavior_admin'], '</h3>
-				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
-			</div>';
-		}
-		elseif (allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
-		{
-			$checked_securityFiles = true;
-			$securityFiles = array('install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
-			foreach ($securityFiles as $i => $securityFile)
-			{
-				if (!file_exists($boarddir . '/' . $securityFile))
-					unset($securityFiles[$i]);
-			}
-
-			if (!empty($securityFiles) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
-			{
-				echo '
-		<div class="errorbox">
-			<p class="alert">!!</p>
-			<h3>', empty($securityFiles) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>
-			<p>';
-
-				foreach ($securityFiles as $securityFile)
-				{
-					echo '
-				', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
-
-					if ($securityFile == 'Settings.php~' || $securityFile == 'Settings_bak.php~')
-						echo '
-				', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
-				}
-
-				if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
-					echo '
-				<strong>', $txt['cache_writable'], '</strong><br>';
-
-				echo '
-			</p>
-		</div>';
-			}
-		}
-		// If the user is banned from posting inform them of it.
-		elseif (isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
-		{
-			$showed_banned = true;
-			echo '
-				<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
-					', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
-
-			if (!empty($_SESSION['ban']['cannot_post']['reason']))
-				echo '
-					<div style="padding-left: 4ex; padding-top: 1ex">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
-
-			if (!empty($_SESSION['ban']['expire_time']))
-				echo '
-					<div>', sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)), '</div>';
-			else
-				echo '
-					<div>', $txt['your_ban_expires_never'], '</div>';
-
-			echo '
-				</div>';
-		}
-	}
+	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
 
 	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
 	{
@@ -1718,29 +1677,91 @@ function template_header()
 }
 
 /**
- * Ensure the content below the main content is loaded, i.e. the footer and including the copyright (and displaying a large warning if copyright has been hidden)
+ * Use the opportunity to show some potential errors while we're showing the top or main layer...
  *
- * Several things occur here.
- * - Load time and query count are moved into $context.
- * - Theme dirs and paths are re-established from the master values (as opposed to being modified through any other page)
- * - Template layers after the main content are executed in reverse order of the layers (deepest layer first)
- * - If not in SSI or wireless, and there were template layers, check the theme did display the copyright, and if not, displaying a big message and log this in the error log.
+ * - If using a conventional theme (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
+ * - If the user is post-banned, provide a nice warning for them.
  */
-function template_footer()
+function while_we_re_here()
 {
-	global $context, $settings, $modSettings;
+	global $txt, $modSettings, $context, $user_info, $boarddir, $cachedir;
 
-	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
+	$checked_securityFiles = false;
+	$showed_banned = false;
+	$showed_behav_error = false;
 
-	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
+	// May seem contrived, but this is done in case the body and main layer aren't there...
+	// Was there a security error for the admin?
+	if ($context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
 	{
-		$settings['theme_url'] = $settings['actual_theme_url'];
-		$settings['images_url'] = $settings['actual_images_url'];
-		$settings['theme_dir'] = $settings['actual_theme_dir'];
-	}
+		$showed_behav_error = true;
+		loadLanguage('Security');
 
-	foreach (array_reverse($context['template_layers']) as $layer)
-		execSubTemplate($layer . '_below', true);
+		echo '
+			<div class="errorbox">
+				<p class="alert">!!</p>
+				<h3>', $txt['behavior_admin'], '</h3>
+				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
+			</div>';
+	}
+	elseif (allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
+	{
+		$checked_securityFiles = true;
+		$securityFiles = array('import.php', 'install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
+
+		foreach ($securityFiles as $i => $securityFile)
+			if (!file_exists($boarddir . '/' . $securityFile))
+				unset($securityFiles[$i]);
+
+		if (!empty($securityFiles) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
+		{
+				echo '
+		<div class="errorbox">
+			<p class="alert">!!</p>
+			<h3>', empty($securityFiles) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>
+			<p>';
+
+			foreach ($securityFiles as $securityFile)
+			{
+				echo '
+				', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
+
+				if ($securityFile == 'Settings.php~' || $securityFile == 'Settings_bak.php~')
+					echo '
+				', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
+			}
+
+			if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
+				echo '
+				<strong>', $txt['cache_writable'], '</strong><br>';
+
+			echo '
+			</p>
+		</div>';
+		}
+	}
+	// If the user is banned from posting, inform them of it.
+	elseif (isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
+	{
+		$showed_banned = true;
+		echo '
+				<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
+					', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
+
+		if (!empty($_SESSION['ban']['cannot_post']['reason']))
+			echo '
+					<div style="padding-left: 4ex; padding-top: 1ex">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
+
+		if (!empty($_SESSION['ban']['expire_time']))
+			echo '
+					<div>', sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)), '</div>';
+		else
+			echo '
+					<div>', $txt['your_ban_expires_never'], '</div>';
+
+		echo '
+				</div>';
+	}
 }
 
 /**
@@ -2554,7 +2575,7 @@ function host_from_ip($ip)
 	if (preg_match('~\d{2,3}(\.\d{1,3}){3}~', $ip) && !isset($host) && is_callable('dns_get_record'))
 	{
 		$details = dns_get_record(implode('.', array_reverse(explode('.', $ip))) . '.in-addr.arpa', DNS_PTR);
-        if (!empty($details[0]['target']))
+		if (!empty($details[0]['target']))
 			$host = $details[0]['target'];
 	}
 

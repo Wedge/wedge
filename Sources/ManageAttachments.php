@@ -285,7 +285,7 @@ function ManageAvatarSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 
 	// Add a layer for the javascript.
-	$context['template_layers'][] = 'avatar_settings';
+	loadLayer('avatar_settings');
 	loadSubTemplate('show_settings');
 }
 

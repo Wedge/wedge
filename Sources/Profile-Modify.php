@@ -972,7 +972,6 @@ function makeThemeChanges($memID, $id_theme)
 		'smiley_sets_default',
 		'theme_dir',
 		'theme_id',
-		'theme_layers',
 		'theme_templates',
 		'theme_url',
 	);

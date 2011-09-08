@@ -159,8 +159,9 @@ if (isset($_REQUEST['ssi_ban']) || (isset($ssi_ban) && $ssi_ban === true))
 // Load the stuff like the menu bar, etc.
 if (isset($ssi_layers))
 {
-	$context['template_layers'] = $ssi_layers;
-	template_header();
+	foreach (array_reverse($ssi_layers) as $layer)
+		loadLayer($layer);
+	start_output();
 }
 else
 	setupThemeContext();
@@ -195,7 +196,7 @@ return true;
 function ssi_shutdown()
 {
 	if (!isset($_GET['ssi_function']) || $_GET['ssi_function'] != 'shutdown')
-		template_footer();
+		finish_output();
 }
 
 // Display a welcome message, like:  Hey, User, you have 0 messages, 0 are new.

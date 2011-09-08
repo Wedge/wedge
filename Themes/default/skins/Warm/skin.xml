@@ -44,6 +44,83 @@
 	]]></comment>
 
 	<!--
+		Layout skeleton. The following uses pseudo-HTML to represent the final array.
+			- use <tags></tags> to define layers (i.e. a function
+			  called as a wrapper around other functions)
+			- use <self closing tags /> to define sub-templates
+
+		Overrides the theme's $context['skeleton'] variable.
+	-->
+
+	<skeleton>
+		<html>
+			<body>
+				<wrapper>
+					<header />
+					<menu />
+					<linktree />
+					<content_wrap>
+						<sidebar_wrap>
+							<sidebar></sidebar>
+						</sidebar_wrap>
+						<offside_wrap>
+							<main_wrap>
+								<top></top>
+								<main></main>
+							</main_wrap>
+						</offside_wrap>
+					</content_wrap>
+					<footer />
+				</wrapper>
+			</body>
+		</html>
+
+		<!-- The html layer will show the html tag, the HTML headers and the JavaScript delayed events at the end. -->
+		<html>
+			<!-- Just the body tag. Mainly used as an anchor for adding layers right after it. -->
+			<body>
+				<!-- A global wrapper is not mandatory, but recommended for easy layout modifications. -->
+				<wrapper>
+					<!-- A sidebar wrapper is necessary if you want maximum compatibility. It should open and close a table, or a compatible div. -->
+					<sidebar_wrap>
+						<sidebar>
+							<!-- This is where Wedge will insert any side information. -->
+						</sidebar>
+					</sidebar_wrap>
+
+					<!-- We usually need to add a wrapper after the sidebar that will be defined as a table cell. -->
+					<offside_wrap>
+
+						<!-- The header area: menu, top bar, things like that... -->
+						<header />
+
+						<!-- The main menu. -->
+						<menu />
+
+						<!-- The navigation bar (linktree.) -->
+						<linktree />
+
+						<content_wrap>
+							<main_wrap>
+								<top>
+									<!-- If you need to add any content before the main entry point, this is your choice layer. -->
+								</top>
+
+								<main>
+									<!-- The main entry point, where all pages add their contextual content by default. -->
+								</main>
+							</main_wrap>
+						</content_wrap>
+
+						<!-- Credits, validation links... -->
+						<footer />
+					</offside_wrap>
+				</wrapper>
+			</body>
+		</html>
+	</skeleton>
+
+	<!--
 		Code. This section allows you to define extra JavaScript that should be
 		added at the end of the page. You can specify a target browser using the
 		"for" keyword. You can also require some JavaScript files to be loaded,
@@ -97,5 +174,8 @@
 			{body}
 	</block>
 	<block name="title"><header class="title">{body}</header></block>
+
+	<block name="offside"><div id="offside">{body}</div></div></block>
+	<block name="offside" for="ie6,ie7"><td class="top">{body}</td></tr></table></block>
 
 </skin>

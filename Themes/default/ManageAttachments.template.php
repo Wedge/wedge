@@ -12,10 +12,6 @@
  */
 
 // Template template wraps around the simple settings page to add javascript functionality.
-function template_avatar_settings_above()
-{
-}
-
 function template_avatar_settings_below()
 {
 	add_js_inline('

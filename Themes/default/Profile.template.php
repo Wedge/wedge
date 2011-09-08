@@ -11,10 +11,10 @@
  * @version 0.1
  */
 
-// Template for the profile side bar - goes before any other profile template.
-function template_profile_above()
+// Template for the profile header - goes before any other profile template.
+function template_profile_top()
 {
-	global $context, $settings, $options, $scripturl, $modSettings, $txt;
+	global $context;
 
 	// Prevent Chrome from auto completing fields when viewing/editing other members' profiles
 	if ($context['browser']['is_chrome'] && !$context['user']['is_owner'])
@@ -32,11 +32,6 @@ function template_profile_above()
 					<div class="windowbg" id="profile_success">
 						', $context['profile_updated'], '
 					</div>';
-}
-
-// Template for closing off table started in profile_above.
-function template_profile_below()
-{
 }
 
 // This template displays users details without any option to edit them.

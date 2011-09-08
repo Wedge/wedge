@@ -21,7 +21,7 @@
 
 	- sidebar (a list of sub-templates that should be shown in the sidebar)
 	- main (a list of sub-templates that should be shown in the main contents area)
-	- theme_linktree (displays the link tree, using the data in the $context['linktree'] variable)
+	- template_linktree (displays the link tree, using the data in the $context['linktree'] variable)
 	- template_menu (displays the menu, using the data in $context['menu_items'])
 	- template_button_strip (displays contextual buttons)
 */
@@ -83,10 +83,10 @@ function template_init()
 
 		// Now for a little trick -- since IE6 and IE7 need to be in a table, we're closing here
 		// the table that was opened in the sidebar block.
-		'content'	=> array(
-			'ie6'	=> '<td id="main_content" class="top">{body}</td></tr></table>',
-			'ie7'	=> '<td id="main_content" class="top">{body}</td></tr></table>',
-			'else'	=> '<div id="main_content">{body}</div></div>',
+		'offside'	=> array(
+			'ie6'	=> '<td class="top">{body}</td></tr></table>',
+			'ie7'	=> '<td class="top">{body}</td></tr></table>',
+			'else'	=> '{body}</div>',
 		),
 
 		// The main header of the website. Feel free to redefine it in your skins and themes.
@@ -97,6 +97,39 @@ function template_init()
 			{body}',
 
 	);
+}
+
+// The magical function where the layer/subtemplate layout is established.
+// A layer is an array of subtemplates. Layers have '_above' and '_below' functions,
+// but they're not mandatory. Subtemplates only have one function but can be overloaded.
+// You can comment your skeleton with the usual <!-- HTML comment --> tags.
+// Finally, you can redefine a skeleton through skin.xml (see the Warm skin for a sample.)
+function template_skeleton()
+{
+	global $context;
+
+	$context['skeleton'] = '
+		<html>
+			<body>
+				<wrapper>
+					<header />
+					<menu />
+					<linktree />
+					<content_wrap>
+						<sidebar_wrap>
+							<sidebar></sidebar>
+						</sidebar_wrap>
+						<offside_wrap>
+							<main_wrap>
+								<top></top>
+								<main></main>
+							</main_wrap>
+						</offside_wrap>
+					</content_wrap>
+					<footer />
+				</wrapper>
+			</body>
+		</html>';
 }
 
 // The main sub template above the content.
@@ -160,18 +193,33 @@ function template_html_above()
 
 	echo '
 	<meta name="generator" content="Wedge">
-</head>
-<body>';
+</head>';
 
+	// Okay, we've shown the headers... If anyone wants to add something to them, use this. Because I'm nice.
 	$context['last_minute_header'] = '';
 }
 
 function template_body_above()
 {
+	echo '
+<body>';
+}
+
+// The main content should go here.
+function template_wrapper_above()
+{
+	global $settings;
+
+	echo '
+<div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '';
+}
+
+// Show the header area.
+function template_header()
+{
 	global $context, $settings, $options, $scripturl, $txt, $modSettings, $user_info;
 
 	echo '
-<div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '', '
 	<div id="header"><div class="frame">
 		<div id="top_section"><div class="frame">
 			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
@@ -197,9 +245,8 @@ function template_body_above()
 			</form>';
 	}
 
-	// !!! @todo: cache this for at least a minute. Also add a skin changer, and cache it as well.
-	$languages = glob($settings['theme_dir'] . '/languages/Flag.*.png');
-	if (count($languages) > 1)
+	// !!! @todo: run getLanguages() even for guests, or find a quicker solution.
+	if (!empty($modSettings['userLanguage']) && !empty($context['languages']) && count($context['languages']) > 1)
 	{
 		$lng = $user_info['url'];
 		$lng .= strpos($lng, '?') !== false ? ';' : '?';
@@ -208,9 +255,9 @@ function template_body_above()
 
 		echo '
 			<p>';
-		foreach (array_map('basename', $languages) as $language)
+		foreach ($context['languages'] as $language)
 			echo '
-				<a href="' . $lng . 'language=' . substr($language, 5, -4) . '"><img src="' . $settings['theme_url'] . '/languages/' . $language . '" title="' . westr::ucwords(westr::htmlspecialchars(substr($language, 5, -4))) . '"></a>';
+				<a href="' . $lng . 'language=' . $language['filename'] . '"><img src="' . $settings['theme_url'] . '/languages/Flag.' . $language['filename'] . '.png" title="' . westr::htmlspecialchars($language['name']) . '"></a>';
 		echo '
 			</p>';
 	}
@@ -227,24 +274,18 @@ function template_body_above()
 			<we:header logo="', $context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:header>
 		</div></div>
 	</div></div>';
+}
 
-	// Show the menu here, according to the menu sub template.
-	template_menu();
-
-	// Show the navigation tree.
-	theme_linktree();
-
-	// The main content should go here.
-	echo '
-
-	<div id="content"><div class="frame">';
+function template_sidebar_wrap_above()
+{
+	echo '<we:sidebar>';
 }
 
 function template_sidebar_above()
 {
-	global $txt, $scripturl, $context;
+	global $txt, $scripturl, $context, $modSettings;
 
-	echo '<we:sidebar>
+	echo '
 		<we:title>
 			<span class="greeting">', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</span>
 		</we:title>
@@ -313,7 +354,7 @@ function template_sidebar_above()
 // This function is only added to the list if the feeds are available, so we don't even need to check anything.
 function template_sidebar_feed()
 {
-	global $topic, $board, $txt, $context, $scripturl, $modSettings, $settings, $board_info;
+	global $topic, $board, $txt, $context, $scripturl, $board_info;
 
 	echo '
 		<we:title>
@@ -345,69 +386,71 @@ function template_sidebar_feed()
 		</dl>';
 }
 
-function template_sidebar_below()
+function template_sidebar_wrap_below()
 {
 	echo '
 		</we:sidebar>';
 }
 
-function template_main_above()
+function template_offside_wrap_above()
 {
 	echo '
-		<we:content>';
+		<we:offside>';
 }
 
-function template_main_below()
+function template_offside_wrap_below()
 {
 	echo '
-		</we:content>';
+		</we:offside>';
+}
+
+function template_content_wrap_above()
+{
+	echo '
+	<div id="content"><div class="frame">';
+}
+
+function template_main_wrap_above()
+{
+	echo '
+	<div id="main_content">';
+}
+
+function template_main_wrap_below()
+{
+	echo '
+	</div>';
+}
+
+function template_content_wrap_below()
+{
+	echo '
+	</div></div>';
+}
+
+function template_wrapper_below()
+{
+	global $settings;
+
+	echo !empty($settings['forum_width']) ? '</div>' : '', '
+</div>';
 }
 
 function template_body_below()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings, $footer_coding;
 
 	echo '
-	</div></div>';
-
-	if (!empty($context['bottom_linktree']))
-		theme_linktree(false, true);
-
-	// Show the short copyright. Please don't remove it, free software deserves credit.
-	echo '
-	<div id="footer"><div class="frame">
-		<ul class="reset">';
-
-	// Show the load time?
-	if ($context['show_load_time'])
-		echo '
-			<li class="stats"><!-- insert stats here --></li>';
-
-	echo '
-			<li class="copyright">', $txt['copyright'], '</li>
-			<li class="links">
-				<a id="site_credits" href="', $scripturl, '?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
-				<a id="button_wap2" href="', $scripturl, '?wap2" class="new_win">', $txt['wap2'], '</a>
-			</li>
-		</ul>
-	</div></div>', !empty($settings['forum_width']) ? '</div>' : '', '
-</div>
 ', $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'] ? '' : '
 <script><!-- // --><![CDATA[
 	function noi_resize()
 	{
-		var d = document, e1 = d.getElementById("edge"), e2 = d.getElementById("edgehide"), m = d.getElementById("main_content"), w = m ? m.clientWidth : 0;
+		var d = document, g = "getElementById", e1 = d[g]("edge"), e2 = d[g]("edgehide"), m = d[g]("main_content"), w = m ? m.clientWidth : 0;
 		if (w && w < 728 && !wedge_side && e1) { wedge_side = 1; e1.id = "edgehide"; }
 		else if (w >= 952 && wedge_side && e2) { wedge_side = 0; e2.id = "edge"; }
 	}
 	wedge_side = 0; noi_resize(); window.onresize = noi_resize;
 // ]]></script>';
-}
-
-function template_html_below()
-{
-	global $context, $settings, $options, $scripturl, $txt, $modSettings, $footer_coding;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// JavaScript section -- files to include, main vars and functions to start.
@@ -462,11 +505,16 @@ function template_html_below()
 <script><!-- // --><![CDATA[' : '', '
 	<!-- insert inline events here -->
 // ]]></script>
-</body></html>';
+</body>';
 }
 
-// Show a linktree. This is that thing that shows "My Community | General Category | General Discussion"..
-function theme_linktree($force_show = false, $on_bottom = false)
+function template_html_below()
+{
+	echo '</html>';
+}
+
+// Show a linktree - the thing that says "My Community > General Category > General Discussion"...
+function template_linktree($force_show = false, $on_bottom = false)
 {
 	global $context, $settings, $options, $shown_linktree;
 
@@ -542,7 +590,7 @@ function template_menu()
 				echo '
 				<li><a href="', $sub_item['href'], '"', isset($sub_item['target']) ? ' target="' . $sub_item['target'] . '"' : '', '>', $sub_item['title'], '</a>';
 
-				// 3rd level menus
+				// 3rd-level menus
 				if (!empty($sub_item['sub_items']))
 				{
 					echo '
@@ -563,6 +611,35 @@ function template_menu()
 	}
 	echo '
 	</ul></div>';
+}
+
+// The same footer area...
+function template_footer()
+{
+	global $context, $txt, $scripturl;
+
+	if (!empty($context['bottom_linktree']))
+		template_linktree(false, true);
+
+	echo '
+	<div id="footer"><div class="frame">
+		<ul class="reset">';
+
+	// Show the load time?
+	if ($context['show_load_time'])
+		echo '
+			<li class="stats"><!-- insert stats here --></li>';
+
+	// Show the short copyright. Please don't remove it, free software deserves credit.
+	echo '
+			<li class="copyright">', $txt['copyright'], '</li>
+			<li class="links">
+				<a id="site_credits" href="', $scripturl, '?action=credits">', $txt['site_credits'], '</a> |
+				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
+				<a id="button_wap2" href="', $scripturl, '?wap2" class="new_win">', $txt['wap2'], '</a>
+			</li>
+		</ul>
+	</div></div>';
 }
 
 // Generate a strip of buttons.

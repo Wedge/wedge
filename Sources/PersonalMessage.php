@@ -432,7 +432,7 @@ function messageIndexBar($area)
 
 	// obExit will know what to do!
 	if (!WIRELESS)
-		$context['template_layers'][] = 'pm';
+		loadLayer('pm');
 }
 
 // A folder, ie. inbox/sent etc.

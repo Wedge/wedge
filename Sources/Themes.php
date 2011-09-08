@@ -1235,27 +1235,18 @@ function ThemeInstall()
 
 		// Let's get some data for the new theme.
 		$request = wesql::query('
-			SELECT variable, value
+			SELECT value
 			FROM {db_prefix}themes
-			WHERE variable IN ({string:theme_templates}, {string:theme_layers})
+			WHERE variable = {string:theme_templates}
 				AND id_member = {int:no_member}
 				AND id_theme = {int:default_theme}',
 			array(
 				'no_member' => 0,
 				'default_theme' => 1,
 				'theme_templates' => 'theme_templates',
-				'theme_layers' => 'theme_layers',
 			)
 		);
-		while ($row = wesql::fetch_assoc($request))
-		{
-			if ($row['variable'] == 'theme_templates')
-				$theme_templates = $row['value'];
-			elseif ($row['variable'] == 'theme_layers')
-				$theme_layers = $row['value'];
-			else
-				continue;
-		}
+		list ($theme_templates) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		// Let's add a theme_info.xml to this theme.
@@ -1270,8 +1261,6 @@ function ThemeInstall()
 	<author name="Author">dummy@dummy.com</author>
 	<!-- Website... where to get updates and more information. -->
 	<website>http://wedge.org/</website>
-	<!-- Template layers to use, defaults to "html,body". -->
-	<layers>' . (empty($theme_layers) ? 'html,body' : $theme_layers) . '</layers>
 	<!-- Templates to load on startup. Default is "index". -->
 	<templates>' . (empty($theme_templates) ? 'index' : $theme_templates) . '</templates>
 	<!-- Base this theme off another? Default is blank, or no. It could be "default". -->
@@ -1338,7 +1327,6 @@ function ThemeInstall()
 
 			$xml_elements = array(
 				'name' => 'name',
-				'theme_layers' => 'layers',
 				'theme_templates' => 'templates',
 				'based_on' => 'based-on',
 			);
@@ -1453,13 +1441,12 @@ function EditTheme()
 		$request = wesql::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
-			WHERE variable IN ({string:name}, {string:theme_dir}, {string:theme_templates}, {string:theme_layers})
+			WHERE variable IN ({string:name}, {string:theme_dir}, {string:theme_templates})
 				AND id_member = {int:no_member}',
 			array(
 				'name' => 'name',
 				'theme_dir' => 'theme_dir',
 				'theme_templates' => 'theme_templates',
-				'theme_layers' => 'theme_layers',
 				'no_member' => 0,
 			)
 		);

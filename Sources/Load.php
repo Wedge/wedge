@@ -1511,7 +1511,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		while ($row = wesql::fetch_assoc($result))
 		{
 			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_layers', 'theme_templates', 'theme_url')))
+			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_templates', 'theme_url')))
 				continue;
 
 			// If this is the theme_dir of the default theme, store it.
@@ -1727,9 +1727,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Wireless mode? Load up the wireless stuff.
 	if (WIRELESS)
 	{
-		$context['template_layers'] = array(WIRELESS_PROTOCOL);
 		loadTemplate('Wireless');
 		loadLanguage('Wireless+index+Modifications');
+		hideChrome(WIRELESS_PROTOCOL);
 	}
 	// Output is fully XML, so no need for the index template.
 	elseif (isset($_REQUEST['xml']))
@@ -1759,12 +1759,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// ...and attempt to load their associated language files.
 		$required_files = implode('+', array_merge($templates, array('Modifications')));
 		loadLanguage($required_files, '', false);
-
-		// Custom template layers?
-		if (isset($settings['theme_layers']))
-			$context['template_layers'] = explode(',', $settings['theme_layers']);
-		else
-			$context['template_layers'] = array('html', 'body');
 	}
 
 	// Initialize our JS files to cache right before we run template_init().
@@ -1781,11 +1775,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['javascript_files'] = array('scripts/script.js');
 	}
 
-	// Initialize the theme
+	// Initialize the theme and load the default blocks.
 	execSubTemplate('init', 'ignore');
 
 	// Now we initialize the search/replace pairs for template blocks.
-	// They can be set up in a skin's skin.xml file.
+	// They can be overloaded in a skin's skin.xml file.
 	$context['blocks'] = array();
 
 	if (!empty($settings['blocks']))
@@ -1802,6 +1796,21 @@ function loadTheme($id_theme = 0, $initialize = true)
 			);
 		}
 	}
+
+	// Now we'll override all of these...
+	loadSource('Subs-Cache');
+	$context['skeleton'] = '';
+	wedge_get_skin_options();
+
+	// Did we find an override for the skeleton? If not, load the default one.
+	if (empty($context['skeleton']))
+		execSubTemplate('skeleton', 'ignore');
+
+	// Now we have a $context['skeleton'] (original or overridden), we can turn it into an array.
+	$context['skeleton_array'] = array();
+	$context['layers'] = array();
+	preg_match_all('~<(?!!)(/)?(\w+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
+	build_skeleton($match, $context['skeleton_array']);
 
 	// Guests may still need a name
 	if ($context['user']['is_guest'] && empty($context['user']['name']))
@@ -1910,6 +1919,36 @@ function loadTheme($id_theme = 0, $initialize = true)
 }
 
 /**
+ * Build the multi-dimensional layout skeleton array from an single-dimension array of tags.
+ */
+function build_skeleton(&$arr, &$dest, &$pos = 0, $name = '')
+{
+	global $context;
+
+	for ($c = count($arr); $pos < $c;)
+	{
+		$tag =& $arr[$pos++];
+
+		// Ending a layer?
+		if (!empty($tag[1]))
+		{
+			$context['layers'][$name] =& $dest;
+			return;
+		}
+
+		// Starting a layer?
+		if (empty($tag[3]))
+		{
+			$dest[$tag[2]] = array();
+			build_skeleton($arr, $dest[$tag[2]], $pos, $tag[2]);
+		}
+		// Then it's a sub-template...
+		else
+			$dest[$tag[2]] = true;
+	}
+}
+
+/**
  * Loads a named source file for later use.
  *
  * This function does not do any error handling as if this breaks, something is usually seriously wrong that error catching isn't going to solve.
@@ -2009,23 +2048,22 @@ function execSubTemplate($sub_template_name, $fatal = false)
 
 	// Figure out what the template function is named.
 	$theme_function = 'template_' . $sub_template_name;
-	$theme_function_before = $theme_function . '_before';
-	$theme_function_override = $theme_function . '_override';
-	$theme_function_after = $theme_function . '_after';
 
-	if (function_exists($theme_function_before))
+	// !!! Doing these tests is relatively slow, but there aren't that many. In case performance worsens,
+	// !!! we should cache the function list (get_defined_functions()) and isset() against the cache.
+	if (function_exists($theme_function_before = $theme_function . '_before'))
 		$theme_function_before();
 
-	if (function_exists($theme_function_override))
+	if (function_exists($theme_function_override = $theme_function . '_override'))
 		$theme_function_override();
 	elseif (function_exists($theme_function))
 		$theme_function();
 	elseif ($fatal === false)
 		fatal_lang_error('theme_template_error', 'template', array((string) $sub_template_name));
 	elseif ($fatal !== 'ignore')
-		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the %s sub template!', (string) $sub_template_name), 'template'));
+		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the "%s" sub-template!', (string) $sub_template_name), 'template'));
 
-	if (function_exists($theme_function_after))
+	if (function_exists($theme_function_after = $theme_function . '_after'))
 		$theme_function_after();
 
 	// Are we showing debugging for templates? Just make sure not to do it before the doctype...
@@ -2038,32 +2076,91 @@ function execSubTemplate($sub_template_name, $fatal = false)
  * Build a list of sub-templates.
  *
  * @param string $sub_templates The name of the function(s) (without template_ prefix) to be called.
- * @param string $target Which flow to load this function in. Can either be 'main' (main contents), 'top' (above the main area), or 'sidebar' (sidebar area).
+ * @param string $target Which layer to load this function in, e.g. 'main' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc.
  * @param boolean $overwrite Overwrite existing sub-templates. Useful if you provide a default sub-template and then override it.
  */
 function loadSubTemplate($sub_templates, $target = 'main', $overwrite = true)
 {
 	global $context;
 
-	$sub_templates = (array) $sub_templates;
+	$sub_templates = array_flip((array) $sub_templates);
 
-	// Don't bother with sidebar/top elements in Wireless mode.
-	if (WIRELESS && $target != 'main')
+	// Don't bother with non-main elements in Wireless mode. Also, sidebar blocks shouldn't be overwritten. The more, the merrier.
+	if (!WIRELESS || $target === 'main')
+		$context['layers'][$target] = $overwrite && $target !== 'sidebar' ? $sub_templates : array_merge($context['layers'][$target], $sub_templates);
+}
+
+/**
+ * Add a layer dynamically.
+ *
+ * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_above' and 'template_layer_below' functions.
+ * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the 'main' layer (which doesn't accept any positioning, either.)
+ * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
+ */
+function loadLayer($layer, $target = 'main', $where = 'parent')
+{
+	global $context;
+
+	/*
+		This is the full list of $where possibilities.
+		<layer> is $layer, <target> is $target, and <sub> is anything already inside <target>, sub-template or layer.
+		(It's a work in progress...)
+
+		parent		wrap around the target (default)						<layer><target><sub /></target></layer>
+		child		insert between the target and its current children		<target><layer><sub /></layer></target>
+		replace		replace the layer but not its current contents			<layer>         <sub />        </layer>
+		erase		replace the layer and empty its contents				<layer>                        </layer>
+		before		add before the item										<layer></layer><target><sub /></target>
+		after		add after the item										<target><sub /></target><layer></layer>
+		add-start	add as a child to the target, in first position			<target><layer></layer><sub /></target>
+		add-end		add as a child to the target, in last position			<target><sub /><layer></layer></target>
+	*/
+
+	// Not a valid layer..? Enter brooding mode.
+	if (!isset($context['layers'][$target]) || !is_array($context['layers'][$target]))
 		return;
 
-	// Is it a regular sub-template?
-	if ($target === 'main')
-		$context['sub_template'] = $overwrite ? $sub_templates :
-			array_merge(isset($context['sub_template']) ? $context['sub_template'] : array('main'), $sub_templates);
+	if ($where === 'parent' || $target === 'main')
+	{
+		$valid = false;
+		foreach ($context['layers'] as $id => &$lay)
+		{
+			if (isset($lay[$target]) && is_array($lay[$target]))
+			{
+				$valid = true;
+				break;
+			}
+		}
+		if ($valid)
+			skeleton_insert_layer($layer, $lay, $target);
+		return;
+	}
 
-	// Or a protected sub-template at the top?
-	elseif ($target === 'top')
-		$context['top_template'] = $overwrite ? $sub_templates :
-			array_merge(isset($context['top_template']) ? $context['top_template'] : array(), $sub_templates);
+	if ($where === 'child')
+	{
+		$context['layers'][$target] = array($layer => $context['layers'][$target]);
+		$context['layers'][$layer] =& $context['layers'][$target][$layer];
+	}
 
-	// A sidebar block, maybe? We never overwrite these. They're actual blocks...
-	else
-		$context['sidebar_template'] = array_merge(isset($context['sidebar_template']) ? $context['sidebar_template'] : array(), $sub_templates);
+	// !!! This is a work in progress, so the rest will be developed as time permits...
+}
+
+function skeleton_insert_layer(&$source, &$dest, $target = 'main', $where = 'parent')
+{
+	global $context;
+
+	$temp = array();
+	foreach ($dest as $key => $value)
+	{
+		if ($key === $target)
+			$temp[$source] = array($key => $value);
+		else
+			$temp[$key] = $value;
+	}
+	$dest = $temp;
+	// !! This seems to work, and I'm the first surprised.
+	// !! If it ends up breaking, use build_skeleton_indexes() instead!
+	$context['layers'][$source] =& $dest[$source];
 }
 
 /**

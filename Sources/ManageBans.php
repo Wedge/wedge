@@ -1010,10 +1010,8 @@ function BanEdit()
 	// If we're in wireless mode remove the admin template layer and use a special template.
 	if (WIRELESS)
 	{
+		hideChrome('html');
 		loadSubTemplate(WIRELESS_PROTOCOL . '_ban_edit');
-		foreach ($context['template_layers'] as $k => $v)
-			if (strpos($v, 'generic_menu') === 0)
-				unset($context['template_layers'][$k]);
 	}
 	else
 		loadSubTemplate('ban_edit');

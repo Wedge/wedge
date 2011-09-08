@@ -186,10 +186,10 @@ elseif (!isset($_SESSION['nowap']) && isset($_SERVER['HTTP_ACCEPT']) && strpos($
 if (!defined('WIRELESS'))
 	define('WIRELESS', isset($_REQUEST['wap2']));
 
-// Some settings and headers are different for wireless protocols.
 if (WIRELESS)
 {
-	define('WIRELESS_PROTOCOL', isset($_REQUEST['wap2']) ? 'wap2' : '');
+	// !!! Could simply hardcode wap2 into the files...
+	define('WIRELESS_PROTOCOL', 'wap2');
 
 	// Some cellphones can't handle output compression...
 	$modSettings['enableCompressedOutput'] = '0';

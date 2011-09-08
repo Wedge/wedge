@@ -23,7 +23,7 @@ function aeva_admin_embed()
 
 	// Our sub-template
 	loadSubTemplate('aeva_form');
-	$context['template_layers'][] = 'aeva_admin_enclose_table';
+	loadLayer('aeva_admin_enclose_table');
 
 	$context['current_area'] = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'sites' ? 'sites' : 'config';
 

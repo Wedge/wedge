@@ -131,7 +131,7 @@ function aeva_admin_init()
 		),
 	);
 
-	$context['template_layers'][] = 'aeva_admin';
+	loadLayer('aeva_admin');
 
 	$context['page_title'] = $txt['media_title'] . ' - ' . $txt['media_admin_labels_' . $_REQUEST['area']];
 
@@ -286,7 +286,7 @@ function aeva_admin_settings()
 
 	// Our sub-template
 	loadSubTemplate('aeva_form');
-	$context['template_layers'][] = 'aeva_admin_enclose_table';
+	loadLayer('aeva_admin_enclose_table');
 
 	$context['current_area'] = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('meta', 'layout')) ? $_REQUEST['sa'] : 'config';
 

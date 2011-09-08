@@ -2262,7 +2262,7 @@ class wedit
 					parsesmileys($dummy);
 			}
 
-			if (empty($smiley_css_done)
+			if (empty($smiley_css_done))
 			{
 				if (isset($context['last_minute_header']) && strpos($context['last_minute_header'], $boardurl . $filename) === false)
 					$context['last_minute_header'] .= '

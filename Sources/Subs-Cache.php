@@ -217,62 +217,43 @@ function add_css_file($original_files = array(), $add_link = false)
 }
 
 /**
- * Analyzes the list of required CSS files and returns (or generates) the final file, as well as custom skin settings.
- *
- * The CSS file list is taken from $context['css_main_files'], along with custom.css and css_suffixes variations.
+ * Analyzes the current skin's skin.xml file (and those above it) and retrieves its options.
  */
-function wedge_cache_css()
+function wedge_get_skin_options()
 {
-	global $settings, $modSettings, $css_vars, $context, $db_show_debug, $cachedir, $boarddir, $boardurl, $scripturl;
+	global $settings, $context, $scripturl;
 
-	// Mix CSS files together!
-	$css = array();
-	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
 	$context['extra_skin_css'] = '';
 
-	// Make sure custom.css, if available, is added last.
-	$css_files = array_merge($context['css_main_files'], (array) 'custom');
-
-	// Add all possible variations of a file name.
-	foreach ($css_files as $file)
-		foreach ($context['css_suffixes'] as $gen)
-			$css_files[] = $file . '.' . $gen;
+	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
+	$context['skin_folders'] = array();
 
 	foreach ($context['css_folders'] as &$folder)
 	{
 		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
+		$context['skin_folders'][] = array($fold, $target);
 
 		if (file_exists($fold . 'skin.xml'))
 		{
 			$set = file_get_contents($fold . '/skin.xml');
-			// If this is a replace-type skin, erase all of the parent files.
+			// If this is a replace-type skin, forget all of the parent folders.
 			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
-				$css = array();
-		}
-
-		foreach ($css_files as &$file)
-		{
-			$add = $fold . $file . '.css';
-			if (file_exists($add))
-			{
-				$css[] = $add;
-				if ($db_show_debug === true)
-					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
-				$latest_date = max($latest_date, filemtime($add));
-			}
+				$context['skin_folders'] = array($fold, $target);
 		}
 	}
 
-	$id = $is_default_theme ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
-	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder) . '-';
+	$context['skin_uses_default_theme'] = $is_default_theme;
 
 	// The deepest skin gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
+		if (strpos($set, '</skeleton>') !== false && preg_match('~<skeleton>(.*?)</skeleton>~s', $set, $match))
+			$context['skeleton'] = $match[1];
+
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
 				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
@@ -312,6 +293,52 @@ function wedge_cache_css()
 			}
 		}
 	}
+}
+
+/**
+ * Analyzes the list of required CSS files and returns (or generates) the final file.
+ *
+ * The CSS file list is taken from $context['css_main_files'], along with custom.css and css_suffixes variations.
+ */
+function wedge_cache_css()
+{
+	global $settings, $modSettings, $context, $db_show_debug, $cachedir, $boardurl;
+
+	// Mix CSS files together!
+	$css = array();
+	$latest_date = 0;
+	$is_default_theme = true;
+	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+	$context['extra_skin_css'] = '';
+
+	// Make sure custom.css, if available, is added last.
+	$files = array_merge($context['css_main_files'], (array) 'custom');
+
+	// Add all possible variations of a file name.
+	foreach ($files as $file)
+		foreach ($context['css_suffixes'] as $gen)
+			$files[] = $file . '.' . $gen;
+
+	foreach ($context['skin_folders'] as &$folder)
+	{
+		$fold = $folder[0];
+		$target = $folder[1];
+		foreach ($files as &$file)
+		{
+			$add = $fold . $file . '.css';
+			if (file_exists($add))
+			{
+				$css[] = $add;
+				if ($db_show_debug === true)
+					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
+				$latest_date = max($latest_date, filemtime($add));
+			}
+		}
+	}
+
+	$folder = end($context['css_folders']);
+	$id = $context['skin_uses_default_theme'] ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
+	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder) . '-';
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
@@ -755,11 +782,11 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  * - or a custom file cache
  *
  * @param string $key A string that denotes the identity of the data being saved, and for later retrieval.
- * @param mixed $value The raw data to be cached. This may be any data type but it will be serialized prior to being stored in the cache.
+ * @param mixed $val The raw data to be cached. This may be any data type but it will be serialized prior to being stored in the cache.
  * @param int $ttl The time the cache is valid for, in seconds. If a request to retrieve is received after this time, the item will not be retrieved.
  * @todo Remove cache types that are obsolete and no longer maintained.
  */
-function cache_put_data($key, $value, $ttl = 120)
+function cache_put_data($key, $val, $ttl = 120)
 {
 	global $boardurl, $sourcedir, $modSettings, $memcached;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
@@ -770,12 +797,12 @@ function cache_put_data($key, $value, $ttl = 120)
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
-		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $value === null ? 0 : strlen(serialize($value)));
+		$cache_hits[$cache_count] = array('k' => $key, 'd' => 'put', 's' => $val === null ? 0 : strlen(serialize($val)));
 		$st = microtime(true);
 	}
 
 	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-Wedge-' . strtr($key, ':', '-');
-	$value = $value === null ? null : serialize($value);
+	$val = $val === null ? null : serialize($val);
 
 	// The simple yet efficient memcached.
 	if (function_exists('memcache_set') && isset($modSettings['cache_memcached']) && trim($modSettings['cache_memcached']) != '')
@@ -786,7 +813,7 @@ function cache_put_data($key, $value, $ttl = 120)
 		if (!$memcached)
 			return;
 
-		memcache_set($memcached, $key, $value, 0, $ttl);
+		memcache_set($memcached, $key, $val, 0, $ttl);
 	}
 	// eAccelerator...
 	elseif (function_exists('eaccelerator_put'))
@@ -794,38 +821,38 @@ function cache_put_data($key, $value, $ttl = 120)
 		if (mt_rand(0, 10) == 1)
 			eaccelerator_gc();
 
-		if ($value === null)
+		if ($val === null)
 			@eaccelerator_rm($key);
 		else
-			eaccelerator_put($key, $value, $ttl);
+			eaccelerator_put($key, $val, $ttl);
 	}
 	// Alternative PHP Cache, ahoy!
 	elseif (function_exists('apc_store'))
 	{
 		// An extended key is needed to counteract a bug in APC.
-		if ($value === null)
+		if ($val === null)
 			apc_delete($key . 'wedge');
 		else
-			apc_store($key . 'wedge', $value, $ttl);
+			apc_store($key . 'wedge', $val, $ttl);
 	}
 	// Zend Platform/ZPS/etc.
 	elseif (function_exists('output_cache_put'))
-		output_cache_put($key, $value);
+		output_cache_put($key, $val);
 	elseif (function_exists('xcache_set') && ini_get('xcache.var_size') > 0)
 	{
-		if ($value === null)
+		if ($val === null)
 			xcache_unset($key);
 		else
-			xcache_set($key, $value, $ttl);
+			xcache_set($key, $val, $ttl);
 	}
 	// Otherwise custom cache?
 	else
 	{
-		if ($value === null)
+		if ($val === null)
 			@unlink($cachedir . '/data_' . $key . '.php');
 		else
 		{
-			$cache_data = '<' . '?php if (!defined(\'WEDGE\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}?' . '>';
+			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$expired=time()>' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';?' . '>';
 			$fh = @fopen($cachedir . '/data_' . $key . '.php', 'w');
 			if ($fh)
 			{
@@ -883,41 +910,41 @@ function cache_get_data($key, $ttl = 120)
 		if (!$memcached)
 			return;
 
-		$value = memcache_get($memcached, $key);
+		$val = memcache_get($memcached, $key);
 	}
 	// Again, eAccelerator.
 	elseif (function_exists('eaccelerator_get'))
-		$value = eaccelerator_get($key);
+		$val = eaccelerator_get($key);
 	// This is the free APC from PECL.
 	elseif (function_exists('apc_fetch'))
-		$value = apc_fetch($key . 'wedge');
+		$val = apc_fetch($key . 'wedge');
 	// Zend's pricey stuff.
 	elseif (function_exists('output_cache_get'))
-		$value = output_cache_get($key, $ttl);
+		$val = output_cache_get($key, $ttl);
 	elseif (function_exists('xcache_get') && ini_get('xcache.var_size') > 0)
-		$value = xcache_get($key);
+		$val = xcache_get($key);
 	// Otherwise it's the file cache!
 	elseif (file_exists($cachedir . '/data_' . $key . '.php') && filesize($cachedir . '/data_' . $key . '.php') > 10)
 	{
 		require($cachedir . '/data_' . $key . '.php');
-		if (!empty($expired) && isset($value))
+		if (isset($val) && !$expired)
 		{
 			@unlink($cachedir . '/data_' . $key . '.php');
-			unset($value);
+			unset($val);
 		}
 	}
 
 	if (isset($db_show_debug) && $db_show_debug === true)
 	{
 		$cache_hits[$cache_count]['t'] = microtime(true) - $st;
-		$cache_hits[$cache_count]['s'] = isset($value) ? strlen($value) : 0;
+		$cache_hits[$cache_count]['s'] = isset($val) ? strlen($val) : 0;
 	}
 
-	if (empty($value))
+	if (empty($val))
 		return null;
 	// If it's broke, it's broke... so give up on it.
 	else
-		return @unserialize($value);
+		return @unserialize($val);
 }
 
 /**

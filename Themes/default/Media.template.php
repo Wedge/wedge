@@ -891,7 +891,7 @@ function template_aeva_form()
 							echo '<textarea name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>', isset($e['value']) ? $e['value'] : '', '</textarea>';
 					break;
 					case 'file';
-						echo '<input type="file" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" size="51"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>', isset($e['add_text']) ? ' ' . $e['add_text'] : '';
+						echo '<input type="file" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>', isset($e['add_text']) ? ' ' . $e['add_text'] : '';
 					break;
 					case 'hidden';
 						echo '<input type="hidden" name="', $e['fieldname'], '" value="', $e['value'], '"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';

@@ -9,8 +9,15 @@ body
 	color: #333
 	padding: 0
 
+#offside
+	display: table-cell
+
 #content div.frame
-	padding: 0 40px 4px
+	padding: 0 20px 4px
+
+#edge
+	padding: 0
+	background: #f6f8ef
 
 #sidebar
 	border-width: 0 1px 0 0
@@ -57,10 +64,10 @@ body
 	ul
 		padding: 7px 20px
 		margin: 0
-		background: hue($menu_bg, -5%)
 
 #main_content
-	padding-top: 16px
+	display: block
+	padding: 16px 8px 0
 
 #footer
 	border-top: 2px solid darken($footer_bg, 20%)
