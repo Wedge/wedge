@@ -2438,8 +2438,14 @@ class wedit
 		global $context, $txt;
 
 		foreach ($this->editorOptions['buttons'] as $button)
+		{
+			$class = (!empty($button['class']) ? $button['class'] : '') . ($button['name'] == 'post_button' ? ' submit' : '');
+			if (!empty($class))
+				$class = ' class="' . trim($class) . '"';
+
 			echo '
-		<input type="submit" name="', $button['name'], '" value="', $button['button_text'], '" tabindex="', $context['tabindex']++, '"', !empty($button['onclick']) ? ' onclick="' . $button['onclick'] . '"' : '', !empty($button['accesskey']) ? ' accesskey="' . $button['accesskey'] . '"' : '', $button['name'] == 'post_button' ? ' class="submit"' : '', '>';
+		<input type="submit" name="', $button['name'], '" value="', $button['button_text'], '" tabindex="', $context['tabindex']++, '"', !empty($button['onclick']) ? ' onclick="' . $button['onclick'] . '"' : '', !empty($button['accesskey']) ? ' accesskey="' . $button['accesskey'] . '"' : '', $class, '>';
+		}
 
 		// These two buttons get added semi-magically rather than not.
 		if ($this->editorOptions['drafts'] != 'none')
