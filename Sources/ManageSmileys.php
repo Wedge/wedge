@@ -1658,7 +1658,7 @@ function EditMessageIcons()
 	// If we're adding/editing an icon we'll need a list of boards
 	if ($context['sub_action'] == 'editicon' || isset($_POST['add']))
 	{
-		// Force the sub_template just in case.
+		// Force the sub-template, just in case.
 		loadSubTemplate('editicon');
 
 		$context['new_icon'] = !isset($_GET['icon']);

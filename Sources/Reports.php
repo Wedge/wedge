@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 		- decides which type of report to generate, if this isn't passed
 		  through the querystring it will set the report_type sub-template to
 		  force the user to choose which type.
-		- when generating a report chooses which sub_template to use.
+		- when generating a report chooses which sub-template to use.
 		- depends on the cal_enabled setting, and many of the other cal_
 		  settings.
 		- will call the relevant report generation function.

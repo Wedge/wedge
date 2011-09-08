@@ -268,12 +268,12 @@ class wedit
 							break;
 
 							case 'text-decoration':
-								if ($style_value == 'underline')
+								if ($style_value === 'underline')
 								{
 									$curCloseTags .= '[/u]';
 									$replacement .= '[u]';
 								}
-								elseif ($style_value == 'line-through')
+								elseif ($style_value === 'line-through')
 								{
 									$curCloseTags .= '[/s]';
 									$replacement .= '[s]';
@@ -281,17 +281,17 @@ class wedit
 							break;
 
 							case 'text-align':
-								if ($style_value == 'left')
+								if ($style_value === 'left')
 								{
 									$curCloseTags .= '[/left]';
 									$replacement .= '[left]';
 								}
-								elseif ($style_value == 'center')
+								elseif ($style_value === 'center')
 								{
 									$curCloseTags .= '[/center]';
 									$replacement .= '[center]';
 								}
-								elseif ($style_value == 'right')
+								elseif ($style_value === 'right')
 								{
 									$curCloseTags .= '[/right]';
 									$replacement .= '[right]';
@@ -299,7 +299,7 @@ class wedit
 							break;
 
 							case 'font-style':
-								if ($style_value == 'italic')
+								if ($style_value === 'italic')
 								{
 									$curCloseTags .= '[/i]';
 									$replacement .= '[i]';
@@ -465,11 +465,11 @@ class wedit
 			$tags = array();
 			foreach ($attribs as $s => $v)
 			{
-				if ($s == 'size')
+				if ($s === 'size')
 					$tags[] = array('[size=' . (int) trim($v) . ']', '[/size]');
-				elseif ($s == 'face')
+				elseif ($s === 'face')
 					$tags[] = array('[font=' . trim(strtolower($v)) . ']', '[/font]');
-				elseif ($s == 'color')
+				elseif ($s === 'color')
 					$tags[] = array('[color=' . trim(strtolower($v)) . ']', '[/color]');
 			}
 
@@ -718,11 +718,11 @@ class wedit
 			{
 				if (in_array($attrib, array('width', 'height')))
 					$params .= ' ' . $attrib . '=' . (int) $value;
-				elseif ($attrib == 'alt' && trim($value) != '')
+				elseif ($attrib === 'alt' && trim($value) != '')
 					$params .= ' alt=' . trim($value);
-				elseif ($attrib == 'align' && trim($value) != '')
+				elseif ($attrib === 'align' && trim($value) != '')
 					$params .= ' align=' . trim($value);
-				elseif ($attrib == 'src')
+				elseif ($attrib === 'src')
 					$src = trim($value);
 			}
 
@@ -812,7 +812,7 @@ class wedit
 			$attrs = wedit::fetchTagAttributes($matches[1]);
 			foreach ($attrs as $attrib => $value)
 			{
-				if ($attrib == 'href')
+				if ($attrib === 'href')
 				{
 					$href = trim($value);
 
@@ -821,7 +821,7 @@ class wedit
 						$tag_type = 'ftp';
 
 					// Or is this a link to an email address?
-					elseif (substr($href, 0, 7) == 'mailto:')
+					elseif (substr($href, 0, 7) === 'mailto:')
 					{
 						$tag_type = 'email';
 						$href = substr($href, 7);
@@ -840,10 +840,10 @@ class wedit
 				}
 
 				// External URL?
-				if ($attrib == 'target' && $tag_type == 'url')
+				if ($attrib === 'target' && $tag_type === 'url')
 				{
-					if (trim($value) == '_blank')
-						$tag_type == 'iurl';
+					if (trim($value) === '_blank')
+						$tag_type === 'iurl';
 				}
 			}
 
@@ -882,7 +882,7 @@ class wedit
 		for ($i = 0; $i < strlen($text); $i++)
 		{
 			// We're either moving from the key to the attribute or we're in a string and this is fine.
-			if ($text{$i} == '=')
+			if ($text{$i} === '=')
 			{
 				if ($tag_state == 0)
 					$tag_state = 1;
@@ -890,7 +890,7 @@ class wedit
 					$value .= '=';
 			}
 			// A space is either moving from an attribute back to a potential key or in a string is fine.
-			elseif ($text{$i} == ' ')
+			elseif ($text{$i} === ' ')
 			{
 				if ($tag_state == 2)
 					$value .= ' ';
@@ -902,7 +902,7 @@ class wedit
 				}
 			}
 			// A quote?
-			elseif ($text{$i} == '"')
+			elseif ($text{$i} === '"')
 			{
 				// Must be either going into or out of a string.
 				if ($tag_state == 1)
@@ -958,7 +958,7 @@ class wedit
 		{
 			if (!isset($disabled[$tag['tag']]))
 				$valid_tags[$tag['tag']] = !empty($tag['block_level']);
-			if (isset($tag['type']) && $tag['type'] == 'closed')
+			if (isset($tag['type']) && $tag['type'] === 'closed')
 				$self_closing_tags[] = $tag['tag'];
 		}
 
@@ -1558,7 +1558,7 @@ class wedit
 		$this->disabled_tags = array();
 		foreach ($disabled_tags as $tag)
 		{
-			if ($tag == 'list')
+			if ($tag === 'list')
 				$this->disabled_tags['orderlist'] = true;
 
 			$this->disabled_tags[trim($tag)] = true;
@@ -1768,9 +1768,9 @@ class wedit
 		$message = preg_replace('~\.{100,}~', '...', $message);
 
 		// Trim off trailing quotes - these often happen by accident.
-		while (substr($message, -7) == '[quote]')
+		while (substr($message, -7) === '[quote]')
 			$message = substr($message, 0, -7);
-		while (substr($message, 0, 8) == '[/quote]')
+		while (substr($message, 0, 8) === '[/quote]')
 			$message = substr($message, 8);
 
 		// Find all code blocks, work out whether we'd be parsing them, then ensure they are all closed.
@@ -2157,13 +2157,13 @@ class wedit
 					break;
 			}
 
-			if (!$found && $protocols[0] == 'http')
+			if (!$found && $protocols[0] === 'http')
 			{
-				if (substr($replace, 0, 1) == '/')
+				if (substr($replace, 0, 1) === '/')
 					$replace = $domain_url . $replace;
-				elseif (substr($replace, 0, 1) == '?')
+				elseif (substr($replace, 0, 1) === '?')
 					$replace = $scripturl . $replace;
-				elseif (substr($replace, 0, 1) == '#' && $embeddedUrl)
+				elseif (substr($replace, 0, 1) === '#' && $embeddedUrl)
 				{
 					$replace = '#' . preg_replace('~[^A-Za-z0-9_\-#]~', '', substr($replace, 1));
 					$this_tag = 'iurl';
@@ -2172,7 +2172,7 @@ class wedit
 				else
 					$replace = $protocols[0] . '://' . $replace;
 			}
-			elseif (!$found && $protocols[0] == 'ftp')
+			elseif (!$found && $protocols[0] === 'ftp')
 				$replace = $protocols[0] . '://' . preg_replace('~^(?!ftps?)[^:]+://~', '', $replace);
 			elseif (!$found)
 				$replace = $protocols[0] . '://' . $replace;
@@ -2262,9 +2262,15 @@ class wedit
 					parsesmileys($dummy);
 			}
 
-			if (empty($smiley_css_done) && strpos($context['last_minute_header'], $boardurl . $filename) === false)
-				$context['last_minute_header'] .= '
+			if (empty($smiley_css_done)
+			{
+				if (isset($context['last_minute_header']) && strpos($context['last_minute_header'], $boardurl . $filename) === false)
+					$context['last_minute_header'] .= '
 	<link rel="stylesheet" href="' . $boardurl . $filename . '">';
+				elseif (strpos($context['header'], $boardurl . $filename) === false)
+					$context['header'] .= '
+	<link rel="stylesheet" href="' . $boardurl . $filename . '">';
+			}
 
 			add_js('
 	var oSmileyBox_' . $this->id . ' = new weSmileyBox({
@@ -2405,9 +2411,9 @@ class wedit
 		$closed_tags = array();
 		foreach ($all_tags as $tag)
 		{
-			if (isset($tag['type']) && $tag['type'] == 'closed')
+			if (isset($tag['type']) && $tag['type'] === 'closed')
 				$closed_tags[] = $tag['tag'];
-			elseif (isset($tag['type']) && $tag['type'] == 'unparsed_content')
+			elseif (isset($tag['type']) && $tag['type'] === 'unparsed_content')
 				$unparsed_tags[] = $tag['tag'];
 		}
 
@@ -2439,7 +2445,7 @@ class wedit
 
 		foreach ($this->editorOptions['buttons'] as $button)
 		{
-			$class = (!empty($button['class']) ? $button['class'] : '') . ($button['name'] == 'post_button' ? ' submit' : '');
+			$class = (!empty($button['class']) ? $button['class'] : '') . ($button['name'] === 'post_button' ? ' submit' : '');
 			if (!empty($class))
 				$class = ' class="' . trim($class) . '"';
 

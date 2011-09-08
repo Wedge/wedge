@@ -165,7 +165,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array())
 	}
 
 	// If we have no theme stuff we can't have the language file...
-	if (empty($context['theme_loaded']))
+	if (empty($context['theme_loaded']) && !isset($txt[$error]))
 		die($error);
 
 	$reload_lang_file = true;
