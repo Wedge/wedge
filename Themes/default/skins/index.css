@@ -1149,8 +1149,8 @@ dl#feed
 	color: white
 	a
 		color: white
-		font-family: $main_font
 		font-weight: 400
+		font-size: 95%
 		text-decoration: underline
 		text-shadow: none
 		:hover

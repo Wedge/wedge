@@ -54,18 +54,18 @@ function template_init()
 	/* Set the following variable to true if this theme requires the optional theme strings file to be loaded. */
 	$settings['require_theme_strings'] = false;
 
-	/* You can define blocks for your theme, with default contents. Then, skins can override them through
+	/* You can define macros for your theme, with default contents. Then, skins can override them through
 		the skin.xml file (see the skins/Warm/skin.xml file for a sample implementation.)
-		Block names are case-sensitive, for performance reasons. */
+		Macro names are case-sensitive, for performance reasons. */
 
-	$settings['blocks'] = array(
+	$settings['macros'] = array(
 
 		// We start with the header bars. Nothing special about them...
 		'title'		=> '<header class="title">{body}</header>',
 		'title2'	=> '<header class="title2">{body}</header>',
 		'cat'		=> '<header class="cat">{body}</header>',
 
-		// Now with a regular content block. You may add a class, title and/or footer to it. If you don't specify a title,
+		// Now with a regular content macro. You may add a class, title and/or footer to it. If you don't specify a title,
 		// everything between the <if:title> tags will be hidden. Same for the footer and class.
 		'block'		=> '<section class="block<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>'
 						. '<if:header><header>{header}</header></if:header>'
@@ -74,7 +74,7 @@ function template_init()
 
 		// Our sidebar. Note that we can serve different content to different browsers by using an array
 		// with browser names and a "else" fallback. This can also be done in skin.xml
-		// with the <block name="..." for="ie6,ie7"> keyword.
+		// with the <macro name="..." for="ie6,ie7"> keyword.
 		'sidebar'	=> array(
 			'ie6'	=> '<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
 			'ie7'	=> '<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
@@ -82,7 +82,7 @@ function template_init()
 		),
 
 		// Now for a little trick -- since IE6 and IE7 need to be in a table, we're closing here
-		// the table that was opened in the sidebar block.
+		// the table that was opened in the sidebar macro.
 		'offside'	=> array(
 			'ie6'	=> '<td class="top">{body}</td></tr></table>',
 			'ie7'	=> '<td class="top">{body}</td></tr></table>',
@@ -122,7 +122,9 @@ function template_skeleton()
 						<offside_wrap>
 							<main_wrap>
 								<top></top>
-								<main></main>
+								<main>
+									<main />
+								</main>
 							</main_wrap>
 						</offside_wrap>
 					</content_wrap>

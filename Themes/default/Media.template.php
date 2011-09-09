@@ -260,8 +260,8 @@ function template_aeva_item_init()
 	add_js('
 	var oQuickReply = new QuickReply({
 		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
-		sContainerId: "quickReplyOptions",
-		sImageId: "quickReplyExpand",
+		sContainerId: "qr_options",
+		sImageId: "qr_expand",
 		sJumpAnchor: "quickreply",
 		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
 		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",
@@ -769,19 +769,19 @@ function template_aeva_item_comments()
 
 	if (aeva_allowedTo('comment'))
 		echo '
-		<div id="quickreplybox" style="padding-top: 4px">
+		<div id="quickreply" style="padding-top: 4px">
 			<we:cat>
-				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="quickReplyExpand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
+				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="qr_expand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
 				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['media_comment_this_item'], '</a>
 			</we:cat>
-			<div id="quickReplyOptions" class="hide">
+			<div id="qr_options" class="hide">
 				<div class="roundframe wrc">
 					<form action="'.$galurl.'sa=comment;in='.$item['id_media'].'" method="post">
 						<div>
 							<h3>'.$txt['media_commenting_this_item'].'</h3>
 							<img src="'.$settings['images_aeva'].'/comment.png" class="middle"> <a href="' . $galurl . 'sa=comment;in=' . $item['id_media'] . '">' . $txt['media_switch_fulledit'] . '</a>
 						</div>
-						<div class="quickReplyContent">
+						<div class="qr_content">
 							<div id="bbcBox_message" class="hide"></div>
 							<div id="smileyBox_message" class="hide"></div>',
 							$context['postbox']->outputEditor(), '

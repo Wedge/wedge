@@ -1425,10 +1425,10 @@ function ob_sessrewrite($buffer)
 
 	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
-	// It's case-insensitive, but always slower -- noticeably so with hundreds of blocks.
+	// It's case-insensitive, but always slower -- noticeably so with hundreds of macros.
 
-	// Don't waste time replacing blocks if there's none in the first place.
-	if (!empty($context['blocks']) && strpos($buffer, '<we:') !== false)
+	// Don't waste time replacing macros if there are none in the first place.
+	if (!empty($context['macros']) && strpos($buffer, '<we:') !== false)
 	{
 		// Case-sensitive version - you themers please don't use <We> or <WE> tags, or I'll tell your momma.
 		while (strpos($buffer, '<we:') !== false)
@@ -1445,19 +1445,19 @@ function ob_sessrewrite($buffer)
 				if ($end_code === false)
 					$end_code = strlen($buffer);
 
-				// Did we find a block with no nested blocks?
+				// Did we find a macro with no nested macros?
 				if ($next_code !== false && $end_code > $next_code)
 				{
 					$p += 4;
 					continue;
 				}
 
-				// We don't like unknown blocks in this town.
-				$block = isset($context['blocks'][$code]) ? $context['blocks'][$code] : array('has_if' => false, 'body' => '');
-				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $block['body']);
+				// We don't like unknown macros in this town.
+				$macro = isset($context['macros'][$code]) ? $context['macros'][$code] : array('has_if' => false, 'body' => '');
+				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $macro['body']);
 
-				// Has it got an <if:param> block?
-				if ($block['has_if'])
+				// Has it got an <if:param> section?
+				if ($macro['has_if'])
 				{
 					preg_match_all('~([a-z][^\s="]*)="([^"]+)"~', substr($buffer, $p, $gt - $p), $params);
 

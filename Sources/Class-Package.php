@@ -538,7 +538,7 @@ class xmlArray
 			elseif ($inComment)
 				continue;
 
-			// Handle Cdata blocks.
+			// Handle CDATA blocks.
 			elseif (!$inComment && $part === '<![CDATA[')
 				$inCdata = true;
 			elseif ($inCdata && $part === ']]>')

@@ -280,13 +280,13 @@ function wedge_get_skin_options()
 			}
 		}
 
-		if (strpos($set, '</block>') !== false && preg_match_all('~<block\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</block>~s', $set, $matches, PREG_SET_ORDER))
+		if (strpos($set, '</macro>') !== false && preg_match_all('~<macro\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</macro>~s', $set, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $match)
 			{
 				if (!empty($match[2]) && !in_array($context['browser']['agent'], explode(',', $match[2])))
 					continue;
-				$context['blocks'][$match[1]] = array(
+				$context['macros'][$match[1]] = array(
 					'has_if' => strpos($match[3], '<if:') !== false,
 					'body' => str_replace(array('{scripturl}'), array($scripturl), trim($match[3]))
 				);

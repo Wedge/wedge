@@ -557,7 +557,10 @@ ul.buttonlist extends ul.quickbuttons
 		padding-left: 8%
 		padding-right: 8%
 
-#quickReplyOptions
+#quickreply a
+	font-family: $main_font
+
+#qr_options
 	form textarea
 		height: 100px
 		margin: .25em 0 0
@@ -1542,7 +1545,7 @@ span.hidelink
 	float: right
 	margin: 2px -2px 0 0
 
-#quickReplyExpand, #postMoreExpand, #newsupshrink
+#qr_expand, #postMoreExpand, #newsupshrink
 	base: .foldable
 
 /* Board status icons.

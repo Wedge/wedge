@@ -1738,7 +1738,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		loadTemplate('Xml');
 		hideChrome();
 	}
-	// These actions don't require the index template at all. Meaning: don't use blocks in their templates...
+	// These actions don't require the index template at all. Meaning: don't use macros in their templates...
 	elseif (!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
 	{
 		loadLanguage('index+Modifications');
@@ -1775,22 +1775,22 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['javascript_files'] = array('scripts/script.js');
 	}
 
-	// Initialize the theme and load the default blocks.
+	// Initialize the theme and load the default macros.
 	execSubTemplate('init', 'ignore');
 
-	// Now we initialize the search/replace pairs for template blocks.
+	// Now we initialize the search/replace pairs for macros.
 	// They can be overloaded in a skin's skin.xml file.
-	$context['blocks'] = array();
+	$context['macros'] = array();
 
-	if (!empty($settings['blocks']))
+	if (!empty($settings['macros']))
 	{
-		foreach ($settings['blocks'] as $name => $contents)
+		foreach ($settings['macros'] as $name => $contents)
 		{
 			if (is_array($contents))
 				$contents = isset($contents[$context['browser']['agent']]) ? $contents[$context['browser']['agent']] :
 						(isset($contents['else']) ? $contents['else'] : '{body}');
 
-			$context['blocks'][$name] = array(
+			$context['macros'][$name] = array(
 				'has_if' => strpos($contents, '<if:') !== false,
 				'body' => str_replace(array('{scripturl}'), array($scripturl), trim($contents)),
 			);

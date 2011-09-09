@@ -785,56 +785,53 @@ function template_quick_reply()
 	global $settings, $options, $txt, $context, $scripturl, $modSettings;
 
 	echo '
-			<a id="quickreply"></a>
-			<div id="quickreplybox">
+			<div id="quickreply">
 				<we:cat>
-					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="quickReplyExpand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
+					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="qr_expand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
 					<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['quick_reply'], '</a>
 				</we:cat>
-				<div id="quickReplyOptions"', $options['display_quick_reply'] == 2 ? '' : ' class="hide"', '>
-					<div class="roundframe">
-						<p class="smalltext lefttext">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
-						<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
-						<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
-						<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
-						<br>' : '', '
-						<form action="', $scripturl, '?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
-							<input type="hidden" name="topic" value="', $context['current_topic'], '">
-							<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
-							<input type="hidden" name="icon" value="xx">
-							<input type="hidden" name="from_qr" value="1">
-							<input type="hidden" name="notify" value="', $context['is_marked_notify'] || !empty($options['auto_notify']) ? '1' : '0', '">
-							<input type="hidden" name="not_approved" value="', !$context['can_reply_approved'], '">
-							<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? '0' : '1', '">
-							<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">
-							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-							<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">';
+				<div id="qr_options" class="roundframe', $options['display_quick_reply'] == 2 ? '' : ' hide', '">
+					<p class="smalltext lefttext">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
+					<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
+					<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
+					<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
+					<br>' : '', '
+					<form action="', $scripturl, '?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
+						<input type="hidden" name="topic" value="', $context['current_topic'], '">
+						<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
+						<input type="hidden" name="icon" value="xx">
+						<input type="hidden" name="from_qr" value="1">
+						<input type="hidden" name="notify" value="', $context['is_marked_notify'] || !empty($options['auto_notify']) ? '1' : '0', '">
+						<input type="hidden" name="not_approved" value="', !$context['can_reply_approved'], '">
+						<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? '0' : '1', '">
+						<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">
+						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+						<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">';
 
 	// Guests just need more.
 	if ($context['user']['is_guest'])
 			echo '
-							<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
-							<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br>';
+						<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
+						<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br>';
 
 	// Is visual verification enabled?
 	if ($context['require_verification'])
 		echo '
-							<strong>', $txt['verification'], ':</strong>', template_control_verification($context['visual_verification_id'], 'quick_reply'), '<br>';
+						<strong>', $txt['verification'], ':</strong>', template_control_verification($context['visual_verification_id'], 'quick_reply'), '<br>';
 
 	echo '
-							<div class="quickReplyContent">
-								<div id="bbcBox_message" class="hide"></div>
-								<div id="smileyBox_message" class="hide"></div>',
-								$context['postbox']->outputEditor(), '
-							</div>
-							<div class="floatleft padding">
-								<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
-							</div>
-							<div class="righttext padding">',
-								$context['postbox']->outputButtons(), '
-							</div>
-						</form>
-					</div>
+						<div class="qr_content">
+							<div id="bbcBox_message" class="hide"></div>
+							<div id="smileyBox_message" class="hide"></div>',
+							$context['postbox']->outputEditor(), '
+						</div>
+						<div class="floatleft padding">
+							<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
+						</div>
+						<div class="righttext padding">',
+							$context['postbox']->outputButtons(), '
+						</div>
+					</form>
 				</div>
 			</div>';
 
@@ -843,8 +840,8 @@ function template_quick_reply()
 		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
 		iTopicId: ' . $context['current_topic'] . ',
 		iStart: ' . $context['start'] . ',
-		sContainerId: "quickReplyOptions",
-		sImageId: "quickReplyExpand",
+		sContainerId: "qr_options",
+		sImageId: "qr_expand",
 		sJumpAnchor: "quickreply",
 		sBbcDiv: "', $context['postbox']->show_bbc ? 'bbcBox_message' : '', '",
 		sSmileyDiv: "', !empty($context['postbox']->smileys['postform']) || !empty($context['postbox']->smileys['popup']) ? 'smileyBox_message' : '', '",

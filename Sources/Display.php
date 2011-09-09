@@ -1159,10 +1159,10 @@ function Display()
 						'accesskey' => 'p',
 					),
 				),
-				// Add height and width for the editor
-				'height' => '100px',
+				// Add height and width for the editor. The textarea can be bigger if it's collapsed by default.
+				'height' => $options['display_quick_reply'] == 2 ? '100px' : '150px',
 				'width' => '100%',
-				'drafts' => (!allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts'])) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
+				'drafts' => !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
 				// Now, since we're custom styling these, we need our own divs. For shame!
 				'custom_bbc_div' => 'bbcBox_message',
 				'custom_smiley_div' => 'smileyBox_message',

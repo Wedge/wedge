@@ -53,28 +53,6 @@
 	-->
 
 	<skeleton>
-		<html>
-			<body>
-				<wrapper>
-					<header />
-					<menu />
-					<linktree />
-					<content_wrap>
-						<sidebar_wrap>
-							<sidebar></sidebar>
-						</sidebar_wrap>
-						<offside_wrap>
-							<main_wrap>
-								<top></top>
-								<main></main>
-							</main_wrap>
-						</offside_wrap>
-					</content_wrap>
-					<footer />
-				</wrapper>
-			</body>
-		</html>
-
 		<!-- The html layer will show the html tag, the HTML headers and the JavaScript delayed events at the end. -->
 		<html>
 			<!-- Just the body tag. Mainly used as an anchor for adding layers right after it. -->
@@ -108,6 +86,7 @@
 
 								<main>
 									<!-- The main entry point, where all pages add their contextual content by default. -->
+									<main />
 								</main>
 							</main_wrap>
 						</content_wrap>
@@ -160,22 +139,22 @@
 	]]></css>
 
 	<!--
-		Blocks. These examples are actually fairly useless since they just
-		repeat the default blocks defined in index.template.php, but it makes
-		it easier to get the point. Use these settings to override any blocks
+		Macros. These examples are actually fairly useless since they just
+		repeat the default macros defined in index.template.php, but it makes
+		it easier to get the point. Use these settings to override any macros
 		set up in the theme with your own versions. Makes it easier to change
 		the header banner with limited effort.
 	-->
 
-	<block name="header">
+	<macro name="header">
 			<if:logo><h1>
 				<a href="{scripturl}">{logo}</a>
 			</h1></if:logo>
 			{body}
-	</block>
-	<block name="title"><header class="title">{body}</header></block>
+	</macro>
+	<macro name="title"><header class="title">{body}</header></macro>
 
-	<block name="offside"><div id="offside">{body}</div></div></block>
-	<block name="offside" for="ie6,ie7"><td class="top">{body}</td></tr></table></block>
+	<macro name="offside"><div id="offside">{body}</div></div></macro>
+	<macro name="offside" for="ie6,ie7"><td class="top">{body}</td></tr></table></macro>
 
 </skin>
