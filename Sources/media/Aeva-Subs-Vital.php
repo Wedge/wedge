@@ -53,11 +53,8 @@
 	array aeva_splitTags(string string, string separation)
 		- Splits keywords from a comma-separated list
 
-	bool aeva_is_utf8(string string)
-		- Tests whether current string is in UTF-8 format (really not needed though)
-
-	string aeva_utf2entities(string source, bool is_file, int limit, bool is_utf, bool ellipsis, bool check_multibyte, bool cut_long_words, int hard_limit)
-		- Converts a string to numeric entities. Has plenty of parameters because I suck at doing this clearly. But at least it works. Usually.
+	string aeva_string(string source, bool is_filename, int limit, bool ellipsis, bool check_multibyte, bool cut_long_words)
+		- Applies various freebies to strings. Has plenty of parameters because I suck at doing this clearly. But at least it works. Usually.
 
 	string aeva_entities2utf(array mixed)
 		// !!!
@@ -606,34 +603,24 @@ function aeva_splitTags($string, $separator = ',')
 	return $elements;
 }
 
-function aeva_is_utf8(&$string)
+function aeva_string($str, $is_filename = true, $limit = 255, $ellipsis = true, $check_multibyte = false, $cut_long_words = false)
 {
-	return preg_match('/^(?:[\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-\xBF]|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}|\xED[\x80-\x9F][\x80-\xBF]|\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2})*$/', $string);
-}
-
-function aeva_utf2entities($source, $is_file = true, $limit = 255, $is_utf = false, $ellipsis = true, $check_multibyte = false, $cut_long_words = false, $hard_limit = 0)
-{
-	global $context, $amSettings, $modSettings;
+	global $modSettings;
 
 	if (!empty($modSettings['embed_enabled']) && function_exists('aeva_onposting'))
-		$source = aeva_onposting($source);
+		$str = aeva_onposting($str);
 
-	$do = empty($amSettings['entities_convert']) ? 0 : $amSettings['entities_convert'];
-	$is_utf |= $do == 2 ? false : aeva_is_utf8($source);
-	$str = ($do == 1 && $is_utf) || ($do == 2) || !$is_utf ? $source : (is_callable('mb_encode_numericentity') ?
-				mb_encode_numericentity($source, array(0x80, 0x2ffff, 0, 0xffff), 'UTF-8') : aeva_utf2entities_internal($source));
-	$strlen = is_callable('mb_strlen') ? 'mb_strlen' : 'strlen';
-	if ($limit == 0 || ($strlen($str) <= $limit && (!$hard_limit || strlen($str) <= $hard_limit)))
+	if ($limit === 0 || westr::strlen($str) <= $limit)
 	{
 		if ($cut_long_words)
 		{
-			$cw = is_int($cut_long_words) ? round($cut_long_words/2) + 1 : round($limit/3) + 1;
-			$str = preg_replace('/(\w{'.$cw.'})(\w+)/u', '$1&shy;$2', $str);
+			$cw = is_int($cut_long_words) ? round($cut_long_words / 2) + 1 : round($limit / 3) + 1;
+			$str = preg_replace('~(\w{'.$cw.'})(\w+)~u', '$1&shy;$2', $str);
 		}
 		return $str;
 	}
 
-	$ext = $is_file ? strrchr($str, '.') : '';
+	$ext = $is_filename ? strrchr($str, '.') : '';
 	$base = !empty($ext) ? substr($str, 0, -strlen($ext)) : $str;
 	return westr::cut($base, $limit, $check_multibyte, $cut_long_words, $ellipsis, false, $hard_limit) . $ext;
 }
@@ -646,41 +633,6 @@ function aeva_entities2utf($mixed)
 	$mixed = preg_replace('/&#(\d+);/me', 'aeva_utf8_chr($1)', $mixed);
 	$mixed = preg_replace('/&#x(\d+);/me', 'aeva_utf8_chr(0x$1)', $mixed);
 	return $mixed;
-}
-
-function aeva_utf2entities_internal($source)
-{
-	$decrement = array(4 => 240, 3 => 224, 2 => 192, 1 => 0);
-	$shift = array(1 => array(0 => 0), 2 => array(0 => 6, 1 => 0), 3 => array(0 => 12, 1 => 6, 2 => 0), 4 => array(0 => 18, 1 => 12, 2 => 6, 3 => 0));
-	$pos = 0;
-	$len = strlen($source);
-	$encodedString = '';
-	while ($pos < $len)
-	{
-		$charPos = substr($source, $pos, 1);
-		$asciiPos = ord($charPos);
-		if ($asciiPos < 128)
-		{
-			$encodedString .= htmlentities($charPos);
-			$pos++;
-			continue;
-		}
-		$i = ($asciiPos >= 240) && ($asciiPos <= 255) ? 4 : ((($asciiPos >= 224) && ($asciiPos <= 239)) ? 3 : ((($asciiPos >= 192) && ($asciiPos <= 223)) ? 2 : 1));
-		$thisLetter = substr($source, $pos, $i);
-		$pos += $i;
-		$thisLen = strlen($thisLetter);
-		$thisPos = 0;
-		$decimalCode = 0;
-		while ($thisPos < $thisLen)
-		{
-			$thisCharOrd = ord(substr($thisLetter, $thisPos, 1));
-			$charNum = intval($thisCharOrd - ($thisPos == 0 ? $decrement[$thisLen] : 128));
-			$decimalCode += ($charNum << $shift[$thisLen][$thisPos]);
-			$thisPos++;
-		}
-		$encodedString .= strlen($encodedString.'&#'.$decimalCode.';') <= 255 ? '&#'.$decimalCode.';' : '';
-	}
-	return $encodedString;
 }
 
 function aeva_utf8_chr($code)

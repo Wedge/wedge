@@ -1400,10 +1400,10 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 
 		// Get their name (limit to 80 chars), description, groups and password
 		$name = westr::htmlspecialchars($_POST['name']);
-		$name = aeva_utf2entities($name, false, 80 + strlen($name) - strlen($_POST['name']), false, false, true, 20, 255);
+		$name = aeva_string($name, false, 80 + strlen($name) - strlen($_POST['name']), false, true, 20, 255);
 		if (empty($name))
 			fatal_lang_error('media_admin_name_left_empty', false);
-		$desc = westr::htmlspecialchars(aeva_utf2entities($_POST['desc'], false, 0));
+		$desc = westr::htmlspecialchars(aeva_string($_POST['desc'], false, 0));
 		wedit::preparsecode($name);
 		wedit::preparsecode($desc);
 		$passwd = !empty($_POST['passwd']) ? $_POST['passwd'] : '';
@@ -2101,8 +2101,8 @@ function aeva_massUpload()
 		$fame = $file['filename'];
 		$name = $title = preg_replace('/[;|\s\._-]+/', ' ', substr($fame, 0, strlen($fame) - strlen(aeva_getExt($fame)) - 1));
 
-		$fame = aeva_utf2entities($fame);
-		$name = aeva_utf2entities($name);
+		$fame = aeva_string($fame);
+		$name = aeva_string($name);
 
 		// Create the item
 		$fOpts = array(

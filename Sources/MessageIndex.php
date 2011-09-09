@@ -508,6 +508,7 @@ function MessageIndex()
 				'new_from' => $row['new_from'],
 				'newtime' => $row['new_from'],
 				'new_href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new',
+				'new_link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['new_from'] . '#new">' . $row['first_subject'] . '</a>',
 				'pages' => $pages,
 				'replies' => comma_format($row['num_replies']),
 				'views' => comma_format($row['num_views']),

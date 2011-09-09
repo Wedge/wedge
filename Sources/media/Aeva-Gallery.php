@@ -1305,7 +1305,7 @@ function aeva_mgComment()
 		}
 
 		loadSource('Class-Editor');
-		$comment = westr::htmlspecialchars(aeva_utf2entities($_POST['comment'], false, 0));
+		$comment = westr::htmlspecialchars(aeva_string($_POST['comment'], false, 0));
 		wedit::preparsecode($comment);
 		if (empty($comment))
 			fatal_lang_error('media_comment_left_empty');
@@ -1777,8 +1777,8 @@ function aeva_mgPost()
 
 		// Get the data
 		$name = westr::htmlspecialchars($_POST['title']);
-		$name = aeva_utf2entities($name, false, 255 + strlen($name) - strlen($_POST['title']), false, false, true, true, 255);
-		$desc = aeva_utf2entities(westr::htmlspecialchars($_POST['desc']), false, 0, false, false);
+		$name = aeva_string($name, false, 255 + strlen($name) - strlen($_POST['title']), false, true, true, 255);
+		$desc = aeva_string(westr::htmlspecialchars($_POST['desc']), false, 0, false);
 		wedit::preparsecode($name);
 		wedit::preparsecode($desc);
 
@@ -1850,8 +1850,8 @@ function aeva_mgPost()
 			if (empty($name))
 				$name = preg_replace('/[;|\s\._-]+/', ' ', substr($fame, 0, strlen($fame) - strlen($fame_ext) - 1));
 
-			$fame = aeva_utf2entities($fame);
-			$name = aeva_utf2entities($name);
+			$fame = aeva_string($fame);
+			$name = aeva_string($name);
 
 			// Delete any old file if editing
 			if ($editing)
@@ -2171,7 +2171,7 @@ function aeva_mgEditCom()
 			// We need this for everything else.
 			$_POST['comment'] = $_REQUEST['comment'];
 		}
-		$new_message = westr::htmlspecialchars(aeva_utf2entities($_POST['comment'], false, 0));
+		$new_message = westr::htmlspecialchars(aeva_string($_POST['comment'], false, 0));
 		if (empty($new_message))
 			fatal_lang_error('media_comment_left_empty');
 

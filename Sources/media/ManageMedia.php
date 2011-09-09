@@ -301,7 +301,6 @@ function aeva_admin_settings()
 		'use_metadata_date' => array('yesno', 'config'),
 		'enable_cache' => array('yesno', 'config'),
 		'image_handler' => array('radio', 'config'),
-		'entities_convert' => array('select', 'config'),
 
 		'title_security' => array('title', 'config'),
 		'item_edit_unapprove' => array('yesno', 'config'),
@@ -367,11 +366,6 @@ function aeva_admin_settings()
 	foreach ($info as $in)
 		$settings['show_info'][2]['show_info_'.$in] = array($txt['media_meta_'.$in], !empty($amSettings['show_info_'.$in]), 'force_name' => 'show_info_'.$in);
 
-	$sho = isset($_POST['entities_convert']) ? $_POST['entities_convert'] : (empty($amSettings['entities_convert']) ? 0 : $amSettings['entities_convert']);
-	$settings['entities_convert'][2][0] = array($txt['media_entities_always'], $sho == 0);
-	$settings['entities_convert'][2][1] = array($txt['media_entities_no_utf'], $sho == 1);
-	$settings['entities_convert'][2][2] = array($txt['media_entities_never'], $sho == 2);
-
 	$sho = isset($_POST['prev_next']) ? $_POST['prev_next'] : (empty($amSettings['prev_next']) ? 0 : $amSettings['prev_next']);
 	$settings['prev_next'][2][0] = array($txt['media_prevnext_small'], $sho == 0);
 	$settings['prev_next'][2][1] = array($txt['media_prevnext_big'], $sho == 1);
@@ -418,7 +412,7 @@ function aeva_admin_settings()
 		if (isset($_POST['max_dir_size']) && $_POST['max_dir_size'] < (($_POST['max_file_size'] * 5) + 47))
 			$_POST['max_dir_size'] = ($_POST['max_file_size'] * 5) + 47;
 		if (isset($_POST['welcome']))
-			$_POST['welcome'] = aeva_utf2entities($_POST['welcome'], false, 0);
+			$_POST['welcome'] = aeva_string($_POST['welcome'], false, 0);
 		if (isset($_POST['my_docs']) && (empty($amSettings['my_docs']) || $amSettings['my_docs'] != $_POST['my_docs']))
 		{
 			$new_docs = array_map('trim', explode(',', strtolower($_POST['my_docs'])));
@@ -633,8 +627,8 @@ function aeva_admin_FTPImport()
 			$fame = $file[0][0];
 			$name = $title = preg_replace('/[;|\s\._-]+/', ' ', substr($fame, 0, strlen($fame) - strlen(aeva_getExt($fame)) - 1));
 
-			$fame = aeva_utf2entities($fame);
-			$name = aeva_utf2entities($name);
+			$fame = aeva_string($fame);
+			$name = aeva_string($name);
 
 			// Create the file
 			$fOpts = array(

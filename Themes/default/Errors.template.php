@@ -117,7 +117,8 @@ function template_error_log()
 			<tr class="windowbg', $error['alternate'] ? '2' : '', '">
 				<td colspan="2" class="middle">
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=url;value=', $error['url']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"><img src="', $settings['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"></a>
-					<a href="', $error['url']['html'], '">', $error['url']['html'], '</a>
+					', strlen($error['url']['html']) > 80 ? '<a href="' . $error['url']['html'] . '" title="' . $error['url']['html'] . '">' . westr::cut($error['url']['html'], 80) . '</a>'
+					 : '<a href="' . $error['url']['html'] . '">' . $error['url']['html'] . '</a>', '
 					<br class="clear">
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=message;value=', $error['message']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_message'], '"><img src="', $settings['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_message'], '"></a>
 					', $error['message']['html'];

@@ -751,14 +751,16 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 	if ($hotmail_fix)
 	{
 		$entityConvert = create_function('$c', '
-			if (strlen($c) === 1 && ord($c[0]) <= 0x7F)
+			$len = strlen($c);
+			$cc = ord($c[0]);
+			if ($len === 1 && $cc <= 0x7F)
 				return $c;
-			elseif (strlen($c) === 2 && ord($c[0]) >= 0xC0 && ord($c[0]) <= 0xDF)
-				return "&#" . (((ord($c[0]) ^ 0xC0) << 6) + (ord($c[1]) ^ 0x80)) . ";";
-			elseif (strlen($c) === 3 && ord($c[0]) >= 0xE0 && ord($c[0]) <= 0xEF)
-				return "&#" . (((ord($c[0]) ^ 0xE0) << 12) + ((ord($c[1]) ^ 0x80) << 6) + (ord($c[2]) ^ 0x80)) . ";";
-			elseif (strlen($c) === 4 && ord($c[0]) >= 0xF0 && ord($c[0]) <= 0xF7)
-				return "&#" . (((ord($c[0]) ^ 0xF0) << 18) + ((ord($c[1]) ^ 0x80) << 12) + ((ord($c[2]) ^ 0x80) << 6) + (ord($c[3]) ^ 0x80)) . ";";
+			elseif ($len === 2 && $cc >= 0xC0 && $cc <= 0xDF)
+				return "&#" . ((($cc ^ 0xC0) << 6) + (ord($c[1]) ^ 0x80)) . ";";
+			elseif ($len === 3 && $cc >= 0xE0 && $cc <= 0xEF)
+				return "&#" . ((($cc ^ 0xE0) << 12) + ((ord($c[1]) ^ 0x80) << 6) + (ord($c[2]) ^ 0x80)) . ";";
+			elseif ($len === 4 && $cc >= 0xF0 && $cc <= 0xF7)
+				return "&#" . ((($cc ^ 0xF0) << 18) + ((ord($c[1]) ^ 0x80) << 12) + ((ord($c[2]) ^ 0x80) << 6) + (ord($c[3]) ^ 0x80)) . ";";
 			else
 				return "";');
 

@@ -219,8 +219,7 @@ function cleanRequest()
 			// URL: /p15/ (board index, page 2)
 			elseif (preg_match('~^/p(\d+)~', $ru, $m))
 			{
-				$_GET[$m[1]] = $m[2];
-				$_GET['start'] = empty($m[3]) ? 0 : $m[3];
+				$_GET['start'] = empty($m[1]) ? 0 : $m[1];
 				$_GET['pretty'] = 1;
 			}
 		}

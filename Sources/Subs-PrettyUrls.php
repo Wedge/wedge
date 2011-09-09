@@ -101,7 +101,7 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 
 function entity_replace($string)
 {
-	$num = substr($string, 0, 1) === 'x' ? hexdec(substr($string, 1)) : (int) $string;
+	$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
 	$rep = $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? '' : ($num < 0x80 ?
 	chr($num) : ($num == 0 || ($num >= 0x80 && $num < 0x100) ? '-' : ($num < 0x800 ?
 	chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ?

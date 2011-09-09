@@ -136,7 +136,7 @@ function aeva_foxy_playlist()
 					array(
 						'pl' => $id,
 						'media' => $desid,
-						'description' => westr::htmlspecialchars(aeva_utf2entities($_POST['txt' . $desid], false)),
+						'description' => westr::htmlspecialchars(aeva_string($_POST['txt' . $desid], false)),
 					)
 				);
 				redirectexit($context['aeva_form_url']);
@@ -232,7 +232,7 @@ function aeva_foxy_playlist()
 	if (isset($_POST['submit_aeva']) && aeva_allowedTo('add_playlists'))
 	{
 		$name = westr::htmlspecialchars($_POST['title']);
-		$desc = westr::htmlspecialchars(aeva_utf2entities($_POST['desc'], false, 0));
+		$desc = westr::htmlspecialchars(aeva_string($_POST['desc'], false, 0));
 		wedit::preparsecode($name);
 		wedit::preparsecode($desc);
 
@@ -699,7 +699,7 @@ function aeva_foxy_notify_items($album, $items)
 		loadLanguage('Media');
 
 	$msgOptions = array(
-		'subject' => $txt['media_topic'] . ': ' . westr::htmlspecialchars(aeva_utf2entities($name, false)),
+		'subject' => $txt['media_topic'] . ': ' . westr::htmlspecialchars(aeva_string($name, false)),
 		'body' => '[media id=' . implode(',', $items) . ' type=box]',
 		'icon' => 'xx',
 		'smileys_enabled' => 1,

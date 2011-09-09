@@ -1421,7 +1421,7 @@ function ob_sessrewrite($buffer)
 		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
 	}
 	else
-		$buffer = str_replace("\n\t<!-- insert inline events here -->\n", '', $buffer);
+		$buffer = str_replace("\n\t<!-- insert inline events here -->", '', $buffer);
 
 	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
@@ -1686,9 +1686,7 @@ function while_we_re_here()
 {
 	global $txt, $modSettings, $context, $user_info, $boarddir, $cachedir;
 
-	$checked_securityFiles = false;
-	$showed_banned = false;
-	$showed_behav_error = false;
+	static $checked_securityFiles = false, $showed_banned = false, $showed_behav_error = false;
 
 	// May seem contrived, but this is done in case the body and main layer aren't there...
 	// Was there a security error for the admin?
