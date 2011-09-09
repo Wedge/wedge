@@ -1808,8 +1808,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Now we have a $context['skeleton'] (original or overridden), we can turn it into an array.
 	$context['skeleton_array'] = array();
+	$context['layer_hints'] = array();
 	$context['layers'] = array();
-	preg_match_all('~<(?!!)(/)?(\w+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
+	preg_match_all('~<(?!!)(/)?([\w:]+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
 	build_skeleton($match, $context['skeleton_array']);
 
 	// Guests may still need a name
@@ -1939,8 +1940,13 @@ function build_skeleton(&$arr, &$dest, &$pos = 0, $name = '')
 		// Starting a layer?
 		if (empty($tag[3]))
 		{
-			$dest[$tag[2]] = array();
-			build_skeleton($arr, $dest[$tag[2]], $pos, $tag[2]);
+			$layer = explode(':', $tag[2]);
+			$dest[$layer[0]] = array();
+			if (isset($layer[1]))
+				foreach (explode(',', $layer[1]) as $hint)
+					$context['layer_hints'][$hint] = $layer[0];
+
+			build_skeleton($arr, $dest[$layer[0]], $pos, $layer[0]);
 		}
 		// Then it's a sub-template...
 		else
@@ -2084,10 +2090,22 @@ function loadSubTemplate($sub_templates, $target = 'main', $overwrite = true)
 	global $context;
 
 	$sub_templates = array_flip((array) $sub_templates);
+	foreach ((array) $target as $layer)
+	{
+		// Is the target layer wishful thinking?
+		if ($layer[0] === ':' && isset($context['layer_hints'][substr($layer, 1)]))
+			$to = $context['layer_hints'][substr($layer, 1)];
+		elseif (isset($context['layers'][$layer]))
+			$to = $layer;
+		if (isset($to))
+			break;
+	}
+	if (empty($to))
+		$to = 'main';
 
 	// Don't bother with non-main elements in Wireless mode. Also, sidebar blocks shouldn't be overwritten. The more, the merrier.
-	if (!WIRELESS || $target === 'main')
-		$context['layers'][$target] = $overwrite && $target !== 'sidebar' ? $sub_templates : array_merge($context['layers'][$target], $sub_templates);
+	if (!WIRELESS || $to === 'main')
+		$context['layers'][$to] = $overwrite && $to !== 'sidebar' ? $sub_templates : array_merge($context['layers'][$to], $sub_templates);
 }
 
 /**

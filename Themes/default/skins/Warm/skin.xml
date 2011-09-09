@@ -45,9 +45,17 @@
 
 	<!--
 		Layout skeleton. The following uses pseudo-HTML to represent the final array.
+
 			- use <tags></tags> to define layers (i.e. a function
 			  called as a wrapper around other functions)
+
 			- use <self closing tags /> to define sub-templates
+
+			- use a colon (:) to define hints, e.g. <layer:top,main> would mean
+			  "<layer> is the default destination for ':top' and ':main' layer requests.
+			  For instance, if you know a layer is going to be on the left of the screen,
+			  or in the sidebar, and you want mods to be able to add elements to that layer
+			  without knowing its name, name it <whatever:left> or <whatever:side>.
 
 		Overrides the theme's $context['skeleton'] variable.
 	-->
@@ -61,7 +69,7 @@
 				<wrapper>
 					<!-- A sidebar wrapper is necessary if you want maximum compatibility. It should open and close a table, or a compatible div. -->
 					<sidebar_wrap>
-						<sidebar>
+						<sidebar:side>
 							<!-- This is where Wedge will insert any side information. -->
 						</sidebar>
 					</sidebar_wrap>
@@ -80,11 +88,11 @@
 
 						<content_wrap>
 							<main_wrap>
-								<top>
+								<top:top>
 									<!-- If you need to add any content before the main entry point, this is your choice layer. -->
 								</top>
 
-								<main>
+								<main:main>
 									<!-- The main entry point, where all pages add their contextual content by default. -->
 									<main />
 								</main>

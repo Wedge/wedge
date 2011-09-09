@@ -61,7 +61,7 @@ function CalendarMain()
 
 	// This is gonna be needed...
 	loadTemplate('Calendar');
-	loadSubTemplate('sidebar', 'sidebar');
+	loadSubTemplate('sidebar', array(':side', 'sidebar'));
 	loadSubTemplate('main');
 
 	// You can't do anything if the calendar is off.

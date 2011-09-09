@@ -117,12 +117,12 @@ function template_skeleton()
 					<linktree />
 					<content_wrap>
 						<sidebar_wrap>
-							<sidebar></sidebar>
+							<sidebar:side></sidebar>
 						</sidebar_wrap>
 						<offside_wrap>
 							<main_wrap>
-								<top></top>
-								<main>
+								<top:top></top>
+								<main:main>
 									<main />
 								</main>
 							</main_wrap>
