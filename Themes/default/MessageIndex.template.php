@@ -260,14 +260,14 @@ function template_main_board()
 	var mouse_on_div;
 	$(document).click(function () {
 		if (is_editing() && mouse_on_div == 0)
-			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
+			modify_topic_save();
 	});
 
 	function modify_topic_keypress(e)
 	{
 		if (e.which == 13)
 		{
-			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
+			modify_topic_save();
 			e.preventDefault();
 		}
 	}');
@@ -523,14 +523,14 @@ function template_main_blog()
 	function modify_topic_click()
 	{
 		if (is_editing() && mouse_on_div == 0)
-			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
+			modify_topic_save();
 	}
 
 	function modify_topic_keypress(e)
 	{
 		if (e.which == 13)
 		{
-			modify_topic_save("' . $context['session_id'] . '", "' . $context['session_var'] . '");
+			modify_topic_save();
 			e.preventDefault();
 		}
 	}');

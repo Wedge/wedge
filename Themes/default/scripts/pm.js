@@ -31,8 +31,6 @@ function wePersonalMessageSend(oOptions)
 
 	this.oToAutoSuggest = new weAutoSuggest({
 		sSelf: this.opt.sSelf + '.oToAutoSuggest',
-		sSessionId: this.opt.sSessionId,
-		sSessionVar: this.opt.sSessionVar,
 		sControlId: this.opt.sToControlId,
 		sPostName: 'recipient_to',
 		sURLMask: 'action=profile;u=%item_id%',
@@ -45,8 +43,6 @@ function wePersonalMessageSend(oOptions)
 
 	this.oBccAutoSuggest = new weAutoSuggest({
 		sSelf: this.opt.sSelf + '.oBccAutoSuggest',
-		sSessionId: this.opt.sSessionId,
-		sSessionVar: this.opt.sSessionVar,
 		sControlId: this.opt.sBccControlId,
 		sPostName: 'recipient_bcc',
 		sURLMask: 'action=profile;u=%item_id%',

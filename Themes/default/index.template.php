@@ -448,10 +448,10 @@ function template_body_below()
 	function noi_resize()
 	{
 		var d = document, g = "getElementById", e1 = d[g]("edge"), e2 = d[g]("edgehide"), m = d[g]("main_content"), w = m ? m.clientWidth : 0;
-		if (w && w < 728 && !wedge_side && e1) { wedge_side = 1; e1.id = "edgehide"; }
-		else if (w >= 952 && wedge_side && e2) { wedge_side = 0; e2.id = "edge"; }
+		if (w && w < 728 && !we_side && e1) { we_side = 1; e1.id = "edgehide"; }
+		else if (w >= 952 && we_side && e2) { we_side = 0; e2.id = "edge"; }
 	}
-	wedge_side = 0; noi_resize(); window.onresize = noi_resize;
+	we_side = 0; noi_resize(); window.onresize = noi_resize;
 // ]]></script>';
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
@@ -475,6 +475,8 @@ function template_body_below()
 		we_script = "', $scripturl, '",
 		we_default_theme_url = ', $settings['theme_url'] === $settings['theme_url'] ? 'we_theme_url = ' : '', '"', $settings['default_theme_url'], '", ', $settings['theme_url'] === $settings['theme_url'] ? '' : '
 		we_theme_url = "' . $settings['theme_url'] . '",', '
+		we_sessid = "', $context['session_id'], '",
+		we_sessvar = "', $context['session_var'], '",
 		we_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ',
 		we_loading = "', $txt['ajax_in_progress'], '",
 		we_cancel = "', $txt['modify_cancel'], '";
@@ -485,16 +487,8 @@ function template_body_below()
 		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
 		aSwappableContainers: [\'upper_section\'],
 		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],
-		oThemeOptions: {
-			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-			sOptionName: \'collapse_header\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSessionId: \'', $context['session_id'], '\'
-		},
-		oCookieOptions: {
-			bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
-			sCookieName: \'upshrink\'
-		}
+		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_header\' },
+		oCookieOptions: { bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ', sCookieName: \'upshrink\' }
 	});', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))

@@ -388,8 +388,6 @@ function template_modify_user_subscription()
 	add_js('
 	var oAddMemberSuggest = new weAutoSuggest({
 		sSelf: \'oAddMemberSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'name_control\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');

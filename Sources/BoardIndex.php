@@ -138,25 +138,10 @@ function BoardIndex()
 	add_js('
 	var oInfoCenterToggle = new weToggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_header_ic']) ? 'false' : 'true', ',
-		aSwappableContainers: [
-			\'upshrinkHeaderIC\'
-		],
-		aSwapImages: [
-			{
-				sId: \'upshrink_ic\',
-				altExpanded: ' . JavaScriptEscape($txt['upshrink_description']) . '
-			}
-		],
-		oThemeOptions: {
-			bUseThemeSettings: ' . ($context['user']['is_guest'] ? 'false' : 'true') . ',
-			sOptionName: \'collapse_header_ic\',
-			sSessionVar: \'' . $context['session_var'] . '\',
-			sSessionId: \'' . $context['session_id'] . '\'
-		},
-		oCookieOptions: {
-			bUseCookie: ' . ($context['user']['is_guest'] ? 'true' : 'false') . ',
-			sCookieName: \'upshrinkIC\'
-		}
+		aSwappableContainers: [\'upshrinkHeaderIC\'],
+		aSwapImages: [{ sId: \'upshrink_ic\', altExpanded: ' . JavaScriptEscape($txt['upshrink_description']) . ' }],
+		oThemeOptions: { bUseThemeSettings: ' . ($context['user']['is_guest'] ? 'false' : 'true') . ', sOptionName: \'collapse_header_ic\' },
+		oCookieOptions: { bUseCookie: ' . ($context['user']['is_guest'] ? 'true' : 'false') . ', sCookieName: \'upshrinkIC\' }
 	});');
 
 	if (empty($modSettings['display_flags']))

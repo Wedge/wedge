@@ -578,8 +578,6 @@ function template_modify_board()
 	add_js('
 	var oModeratorSuggest = new weAutoSuggest({
 		sSelf: \'oModeratorSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'moderators\',
 		bItemList: true,
 		sPostName: \'moderator_list\',

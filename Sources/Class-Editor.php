@@ -2395,8 +2395,6 @@ class wedit
 			add_js('
 	var oAutoSave = new wedge_autoDraft({
 		sSelf: \'oAutoSave\',
-		sSessionId: ' . JavaScriptEscape($context['session_id']) . ',
-		sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
 		sForm: \'postmodify\',
 		sEditor: ' . JavaScriptEscape($this->id) . ',
 		sType: ' . JavaScriptEscape($this->editorOptions['drafts']) . ',
@@ -2420,8 +2418,6 @@ class wedit
 		// Now it's all drawn out we'll actually setup the box.
 		add_js('
 	var oEditorHandle_' . $this->id . ' = new weEditor({
-		sSessionId: ' . JavaScriptEscape($context['session_id']) . ',
-		sSessionVar: ' . JavaScriptEscape($context['session_var']) . ',
 		sFormId: ' . JavaScriptEscape($this->form) . ',
 		sUniqueId: ' . JavaScriptEscape($this->id) . ',
 		bRTL: ' . ($txt['lang_rtl'] ? 'true' : 'false') . ',

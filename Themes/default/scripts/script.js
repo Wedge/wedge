@@ -219,10 +219,10 @@ function _sessionKeepAlive()
 setTimeout(_sessionKeepAlive, 1200000);
 
 // Set a theme option through javascript.
-function we_setThemeOption(option, value, theme, cur_session_id, cur_session_var, additional_vars)
+function we_setThemeOption(option, value, theme, additional_vars)
 {
 	var tempImage = new Image();
-	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + cur_session_var + '=' + cur_session_id + (additional_vars || '') + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
+	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + we_sessvar + '=' + we_sessid + (additional_vars || '') + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
 }
 
 function we_avatarResize()
@@ -385,7 +385,7 @@ weToggle.prototype._changeState = function (bCollapse, bInit, bNow)
 		this._cookie.set(op.sCookieName, this._collapsed ? '1' : '0');
 
 	if ('oThemeOptions' in this.opt && (op = this.opt.oThemeOptions) && op.bUseThemeSettings)
-		we_setThemeOption(op.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in op ? op.sThemeId : null, op.sSessionId, op.sSessionVar, 'sAdditionalVars' in op ? op.sAdditionalVars : null);
+		we_setThemeOption(op.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in op ? op.sThemeId : null, 'sAdditionalVars' in op ? op.sAdditionalVars : null);
 };
 
 // Reverse the current state.

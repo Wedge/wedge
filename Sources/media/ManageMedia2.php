@@ -1270,8 +1270,6 @@ function aeva_admin_bans_add()
 	add_js('
 	var oAttributeMemberSuggest = new weAutoSuggest({
 		sSelf: \'oAttributeMemberSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'banning\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');

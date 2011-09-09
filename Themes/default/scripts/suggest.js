@@ -468,8 +468,8 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		.replace(/%scripturl%/g, we_prepareScriptUrl())
 		.replace(/%suggest_type%/g, this.opt.sSearchType)
 		.replace(/%search%/g, sSearchString.php_urlencode())
-		.replace(/%sessionVar%/g, this.opt.sSessionVar)
-		.replace(/%sessionID%/g, this.opt.sSessionId)
+		.replace(/%sessionVar%/g, we_sessvar)
+		.replace(/%sessionID%/g, we_sessid)
 		.replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
 
 	return true;

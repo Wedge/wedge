@@ -88,7 +88,7 @@ function template_main()
 	// Show the topic information - icon, subject, etc.
 	echo '
 			<div id="forumposts">
-				<form action="', $scripturl, '?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\') : false">';
+				<form action="', $scripturl, '?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave() : false">';
 
 	$ignoredMsgs = array();
 	$removableMessageIDs = array();
@@ -381,8 +381,6 @@ function template_main()
 		sSelf: \'oInTopicModeration\',
 		sCheckboxContainerMask: \'in_topic_mod_check_\',
 		aMessageIds: [' . implode(',', $removableMessageIDs) . '],
-		sSessionId: \'' . $context['session_id'] . '\',
-		sSessionVar: \'' . $context['session_var'] . '\',
 		sButtonStrip: \'moderationbuttons\',
 		sButtonStripDisplay: \'moderationbuttons_strip\',
 		bUseImageButton: false,
@@ -411,7 +409,7 @@ function template_main()
 					<input type="hidden" name="topic" value="' . $context['current_topic'] . '">
 					<input type="hidden" name="msg" value="%msg_id%">
 					<div class="righttext">
-						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return oQuickModify.modifySave(\'' . $context['session_id'] . '\', \'' . $context['session_var'] . '\');" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
+						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return oQuickModify.modifySave();" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['modify_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
 					</div>
 				</div>') . ',
 			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
@@ -433,8 +431,6 @@ function template_main()
 			bShowModify: ', $settings['show_modify'] ? 'true' : 'false', ',
 			iBoardId: ' . $context['current_board'] . ',
 			iTopicId: ' . $context['current_topic'] . ',
-			sSessionId: "' . $context['session_id'] . '",
-			sSessionVar: "' . $context['session_var'] . '",
 			sLabelIconList: "' . $txt['message_icon'] . '",
 			sBoxBackground: "transparent",
 			sBoxBackgroundHover: "#ffffff",

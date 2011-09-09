@@ -227,22 +227,9 @@ function template_boardindex_newsfader()
 	var weNewsFadeToggle = new weToggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_news_fader']) ? 'false' : 'true', ',
 		aSwappableContainers: [\'fadeScroller\'],
-		aSwapImages: [
-			{
-				sId: \'newsupshrink\',
-				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '
-			}
-		],
-		oThemeOptions: {
-			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-			sOptionName: \'collapse_news_fader\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSessionId: \'', $context['session_id'], '\'
-		},
-		oCookieOptions: {
-			bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
-			sCookieName: \'newsupshrink\'
-		}
+		aSwapImages: [{ sId: \'newsupshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],
+		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_news_fader\' },
+		oCookieOptions: { bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ', sCookieName: \'newsupshrink\' }
 	});');
 	}
 }

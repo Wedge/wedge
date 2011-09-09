@@ -261,8 +261,6 @@ function template_maintain_members()
 	add_js('
 	var oAttributeMemberSuggest = new weAutoSuggest({
 		sSelf: \'oAttributeMemberSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'to\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');

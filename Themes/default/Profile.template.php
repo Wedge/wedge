@@ -596,8 +596,6 @@ function template_editBuddies()
 	add_js('
 	var oAddBuddySuggest = new weAutoSuggest({
 		sSelf: \'oAddBuddySuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'new_buddy\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
@@ -668,8 +666,6 @@ function template_editIgnoreList()
 	add_js('
 	var oAddIgnoreSuggest = new weAutoSuggest({
 		sSelf: \'oAddIgnoreSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'new_ignore\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');

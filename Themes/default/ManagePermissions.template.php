@@ -192,19 +192,12 @@ function template_permission_index()
 	var oPermissionsPanelToggle = new weToggle({
 		bCurrentlyCollapsed: ', empty($context['show_advanced_options']) ? 'true' : 'false', ',
 		aSwappableContainers: [\'permissions_panel_advanced\'],
-		aSwapImages: [
-			{
-				sId: \'permissions_panel_toggle\',
-				altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '
-			}
-		],
+		aSwapImages: [{ sId: \'permissions_panel_toggle\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],
 		oThemeOptions: {
 			bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
+			sAdditionalVars: \';admin_key=app\',
 			sOptionName: \'admin_preferences\',
-			sSessionVar: \'', $context['session_var'], '\',
-			sSessionId: \'', $context['session_id'], '\',
-			sThemeId: \'1\',
-			sAdditionalVars: \';admin_key=app\'
+			sThemeId: \'1\'
 		}
 	});
 

@@ -76,7 +76,7 @@ function modify_topic_cancel()
 	return false;
 }
 
-function modify_topic_save(cur_session_id, cur_session_var)
+function modify_topic_save()
 {
 	if (!in_edit_mode)
 		return true;
@@ -87,7 +87,7 @@ function modify_topic_save(cur_session_id, cur_session_var)
 	x.push('msg=' + qm.elements.msg.value);
 
 	ajax_indicator(true);
-	sendXMLDocument(we_prepareScriptUrl() + "action=jsmodify;topic=" + qm.elements.topic.value + ";" + cur_session_var + "=" + cur_session_id + ";xml", x.join("&"), modify_topic_done);
+	sendXMLDocument(we_prepareScriptUrl() + "action=jsmodify;topic=" + qm.elements.topic.value + ";" + we_sessvar + "=" + we_sessid + ";xml", x.join("&"), modify_topic_done);
 
 	return false;
 }
@@ -275,7 +275,7 @@ QuickModify.prototype.modifyCancel = function ()
 };
 
 // The function called after a user wants to save his precious message.
-QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
+QuickModify.prototype.modifySave = function ()
 {
 	// We cannot save if we weren't in edit mode.
 	if (!this.sCurMessageId)
@@ -289,7 +289,7 @@ QuickModify.prototype.modifySave = function (sSessionId, sSessionVar)
 
 	// Send in the Ajax request and let's hope for the best.
 	ajax_indicator(true);
-	sendXMLDocument.call(this, we_prepareScriptUrl() + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + sSessionVar + "=" + sSessionId + ";xml", x.join("&"), this.onModifyDone);
+	sendXMLDocument.call(this, we_prepareScriptUrl() + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + we_sessvar + "=" + we_sessid + ";xml", x.join("&"), this.onModifyDone);
 
 	return false;
 };
@@ -430,7 +430,7 @@ InTopicModeration.prototype.handleSubmit = function (sSubmitType)
 	// Make sure this form isn't submitted in another way than this function.
 	var
 		oForm = $('#' + this.opt.sFormId)[0],
-		oInput = $('<input type="hidden" name="' + this.opt.sSessionVar + '" />').val(this.opt.sSessionId).appendTo(oForm);
+		oInput = $('<input type="hidden" name="' + we_sessvar + '" />').val(we_sessid).appendTo(oForm);
 
 	if (sSubmitType == 'remove')
 	{
@@ -560,7 +560,7 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 	if (this.iCurMessageId != 0)
 	{
 		ajax_indicator(true);
-		var oXMLDoc = getXMLDocument(we_prepareScriptUrl() + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + this.opt.sSessionVar + '=' + this.opt.sSessionId + ';icon=' + sNewIcon + ';xml');
+		var oXMLDoc = getXMLDocument(we_prepareScriptUrl() + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + we_sessvar + '=' + we_sessid + ';icon=' + sNewIcon + ';xml');
 		ajax_indicator(false);
 
 		var oMessage = $('we message', oXMLDoc.responseXML);

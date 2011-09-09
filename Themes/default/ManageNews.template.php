@@ -195,8 +195,6 @@ function template_email_members()
 	$("#advanced_select_div").show();
 	var oMemberSuggest = new weAutoSuggest({
 		sSelf: \'oMemberSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'members\',
 		bItemList: true,
 		sPostName: \'member_list\',
@@ -207,8 +205,6 @@ function template_email_members()
 	});
 	var oExcludeMemberSuggest = new weAutoSuggest({
 		sSelf: \'oExcludeMemberSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'exclude_members\',
 		bItemList: true,
 		sPostName: \'exclude_member_list\',

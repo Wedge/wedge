@@ -643,8 +643,6 @@ wedge_autoDraft.prototype.draftSend = function ()
 		localVars = {
 			removeString: this.opt.sRemove,
 			lastSavedDiv: this.opt.sLastNote,
-			sessvar: this.opt.sSessionVar,
-			sessid: this.opt.sSessionId,
 			object: this
 		};
 
@@ -653,7 +651,7 @@ wedge_autoDraft.prototype.draftSend = function ()
 		draftInfo.message = $('#html_' + this.opt.sEditor).html();
 
 	// This isn't nice either, but nicer than the above, sorry.
-	draftInfo[this.opt.sSessionVar] = this.opt.sSessionId;
+	draftInfo[we_sessvar] = we_sessid;
 
 	// Depending on what we're doing, there might be other things we need to save, like topic details or PM recipients.
 	if (this.opt.sType == 'auto_post')
@@ -686,7 +684,7 @@ wedge_autoDraft.prototype.draftSend = function ()
 		var
 			obj = $('#lastsave', data),
 			draft_id = obj.attr('draft'),
-			url = obj.attr('url').replace(/DraftId/, draft_id).replace(/SessVar/, localVars.sessvar).replace(/SessId/, localVars.sessid);
+			url = obj.attr('url').replace(/DraftId/, draft_id).replace(/SessVar/, we_sessvar).replace(/SessId/, we_sessid);
 
 		$('#draft_id').val(draft_id);
 		$('#' + localVars.lastSavedDiv).html(obj.text() + ' &nbsp; <a href="#" id="remove_draft">' + localVars.removeString + '</a>');

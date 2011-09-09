@@ -258,8 +258,6 @@ function template_ban_edit()
 		add_js('
 	var oAddMemberSuggest = new weAutoSuggest({
 		sSelf: "oAddMemberSuggest",
-		sSessionId: "', $context['session_id'], '",
-		sSessionVar: "', $context['session_var'], '",
 		sControlId: "user",
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});
@@ -339,8 +337,6 @@ function template_ban_edit_trigger()
 	add_js('
 	var oAddMemberSuggest = new weAutoSuggest({
 		sSelf: \'oAddMemberSuggest\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sControlId: \'user\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});

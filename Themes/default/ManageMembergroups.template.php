@@ -341,8 +341,6 @@ function template_edit_group()
 		add_js('
 	var oModeratorSuggest = new weAutoSuggest({
 		sSelf: "oModeratorSuggest",
-		sSessionId: "', $context['session_id'], '",
-		sSessionVar: "', $context['session_var'], '",
 		sControlId: "group_moderators",
 		bItemList: true,
 		sPostName: "moderator_list",
@@ -546,8 +544,6 @@ function template_group_members()
 		add_js('
 	var oAddMemberSuggest = new weAutoSuggest({
 		sSelf: "oAddMemberSuggest",
-		sSessionId: "', $context['session_id'], '",
-		sSessionVar: "', $context['session_var'], '",
 		sControlId: "toAdd",
 		bItemList: true,
 		sPostName: "member_add",

@@ -1006,8 +1006,6 @@ function template_send()
 	add_js('
 	var oPersonalMessageSend = new wePersonalMessageSend({
 		sSelf: \'oPersonalMessageSend\',
-		sSessionId: \'', $context['session_id'], '\',
-		sSessionVar: \'', $context['session_var'], '\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		sToControlId: \'to_control\',
 		aToRecipients: [');
