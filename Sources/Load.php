@@ -2130,48 +2130,65 @@ function loadLayer($layer, $target = 'main', $where = 'parent')
 		erase		replace the layer and empty its contents				<layer>                        </layer>
 		before		add before the item										<layer></layer><target><sub /></target>
 		after		add after the item										<target><sub /></target><layer></layer>
-		add-start	add as a child to the target, in first position			<target><layer></layer><sub /></target>
-		add-end		add as a child to the target, in last position			<target><sub /><layer></layer></target>
+		firstchild	add as a child to the target, in first position			<target><layer></layer><sub /></target>
+		lastchild	add as a child to the target, in last position			<target><sub /><layer></layer></target>
 	*/
 
 	// Not a valid layer..? Enter brooding mode.
 	if (!isset($context['layers'][$target]) || !is_array($context['layers'][$target]))
 		return;
 
-	if ($where === 'parent' || $target === 'main')
+	if ($target === 'main' || $where === 'parent' || $where === 'before' || $where === 'after')
 	{
-		$valid = false;
-		foreach ($context['layers'] as $id => &$lay)
-		{
-			if (isset($lay[$target]) && is_array($lay[$target]))
-			{
-				$valid = true;
-				break;
-			}
-		}
-		if ($valid)
-			skeleton_insert_layer($layer, $lay, $target);
+		skeleton_insert_layer($layer, $target, $target === 'main' ? 'parent' : $where);
 		return;
 	}
-
-	if ($where === 'child')
+	elseif ($where === 'child')
 	{
 		$context['layers'][$target] = array($layer => $context['layers'][$target]);
 		$context['layers'][$layer] =& $context['layers'][$target][$layer];
+		return;
 	}
-
-	// !!! This is a work in progress, so the rest will be developed as time permits...
+	elseif ($where === 'replace' || $where === 'erase')
+	{
+		skeleton_insert_layer($layer, $target, $where);
+		unset($context['layers'][$target]);
+		return;
+	}
+	elseif ($where === 'firstchild' || $where === 'lastchild')
+	{
+		if ($where === 'firstchild')
+			$context['layers'][$target] = array_merge(array($layer => array()), $context['layers'][$target]);
+		else
+			$context['layers'][$target][$layer] = array();
+		$context['layers'][$layer] =& $context['layers'][$target][$layer];
+	}
 }
 
 function skeleton_insert_layer(&$source, &$dest, $target = 'main', $where = 'parent')
 {
 	global $context;
 
+	foreach ($context['layers'] as $id => &$lay)
+	{
+		if (isset($lay[$target]) && is_array($lay[$target]))
+		{
+			$dest = $lay;
+			break;
+		}
+	}
+
 	$temp = array();
 	foreach ($dest as $key => $value)
 	{
 		if ($key === $target)
-			$temp[$source] = array($key => $value);
+		{
+			if ($where === 'after')
+				$temp[$key] = $value;
+			$temp[$source] = $where === 'parent' ? array($key => $value) : ($where === 'erase' ? array() : ($where === 'replace' ? $value : array()));
+			if ($where === 'before')
+				$temp[$key] = $value;
+		}
 		else
 			$temp[$key] = $value;
 	}
