@@ -213,7 +213,7 @@ function error_handler($error_level, $error_string, $file, $line)
 		$array = debug_backtrace();
 		for ($i = 0; $i < count($array); $i++)
 		{
-			if ($array[$i]['function'] != 'execSubTemplate')
+			if ($array[$i]['function'] != 'execBlock')
 				continue;
 
 			// This is a bug in PHP, with eval, it seems!
@@ -312,12 +312,12 @@ function setup_fatal_error_context($error_message)
 
 	// Display the error message - wireless?
 	if (defined('WIRELESS') && WIRELESS)
-		loadSubTemplate(WIRELESS_PROTOCOL . '_error');
+		loadBlock(WIRELESS_PROTOCOL . '_error');
 	// Load the template and set the sub template.
 	else
 	{
 		loadTemplate('Errors');
-		loadSubTemplate('fatal_error');
+		loadBlock('fatal_error');
 	}
 
 	// If this is SSI, what do they want us to do?
@@ -326,7 +326,7 @@ function setup_fatal_error_context($error_message)
 		if (!empty($ssi_on_error_method) && $ssi_on_error_method !== true && is_callable($ssi_on_error_method))
 			$ssi_on_error_method();
 		elseif (empty($ssi_on_error_method) || $ssi_on_error_method !== true)
-			execSubTemplate('fatal_error');
+			execBlock('fatal_error');
 
 		// No layers?
 		if (empty($ssi_on_error_method) || $ssi_on_error_method !== true)

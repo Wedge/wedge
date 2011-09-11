@@ -52,7 +52,7 @@ if (!defined('WEDGE'))
 		// !!!
 
 	void DownloadLanguage()
-		- Uses the ManageSettings template and the download_language sub-template.
+		- Uses the ManageSettings template and the download_language block.
 		- Requires a valid download ID ("did") in the URL.
 		- Also handles installing language files.
 		- Attempts to chmod things as needed.
@@ -167,7 +167,7 @@ function ModifySettings()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['admin_server_settings'];
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 
 	$subActions = array(
 		'general' => 'ModifyGeneralSettings',
@@ -594,7 +594,7 @@ function ManageLanguages()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['edit_languages'];
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 
 	$subActions = array(
 		'edit' => 'ModifyLanguages',
@@ -668,7 +668,7 @@ function AddLanguage()
 		}
 	}
 
-	loadSubTemplate('add_language');
+	loadBlock('add_language');
 }
 
 // Download a language file from the Wedge website.
@@ -685,7 +685,7 @@ function DownloadLanguage()
 
 	// Some lovely context.
 	$context['download_id'] = $_GET['did'];
-	loadSubTemplate('download_language');
+	loadBlock('download_language');
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'add';
 
 	// Can we actually do the installation - and do they want to?
@@ -1138,7 +1138,7 @@ function ModifyLanguages()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'language_list';
 }
 
@@ -1275,7 +1275,7 @@ function ModifyLanguage()
 	// Select the languages tab.
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'edit';
 	$context['page_title'] = $txt['edit_languages'];
-	loadSubTemplate('modify_language_entries');
+	loadBlock('modify_language_entries');
 
 	$context['lang_id'] = $_GET['lid'];
 	list ($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '+') === false ? array(1, '') : explode('+', $_REQUEST['tfid']);

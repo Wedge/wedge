@@ -224,11 +224,11 @@ function Unread()
 	);
 
 	if (WIRELESS)
-		loadSubTemplate(WIRELESS_PROTOCOL . '_recent');
+		loadBlock(WIRELESS_PROTOCOL . '_recent');
 	else
 	{
 		loadTemplate('Recent');
-		loadSubTemplate('unread');
+		loadBlock('unread');
 	}
 
 	// Setup the default topic icons... for checking they exist and the like ;)
@@ -503,7 +503,7 @@ function Unread()
 	}
 
 	loadTemplate('MessageIndex');
-	loadSubTemplate('messageindex_legend', array(':side', 'sidebar'));
+	loadBlock('messageindex_legend', array(':side', 'sidebar'));
 
 	$context['topics'] = array();
 	$topic_ids = array();

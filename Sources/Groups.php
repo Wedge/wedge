@@ -173,7 +173,7 @@ function GroupList()
 		}
 	}
 
-	loadSubTemplate('group_index');
+	loadBlock('group_index');
 	$context['page_title'] = $txt['viewing_groups'];
 
 	// Making a list is not hard with this beauty.
@@ -240,7 +240,7 @@ function GroupList()
 	// Create the request list.
 	createList($listOptions);
 
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'group_lists';
 }
 
@@ -613,7 +613,7 @@ function MembergroupMembers()
 	wesql::free_result($request);
 
 	// Select the template.
-	loadSubTemplate('group_members');
+	loadBlock('group_members');
 	$context['page_title'] = $txt['membergroups_members_title'] . ': ' . $context['group']['name'];
 }
 
@@ -624,7 +624,7 @@ function GroupRequests()
 
 	// Set up the template stuff...
 	$context['page_title'] = $txt['mc_group_requests'];
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 
 	// Verify we can be here.
 	if ($user_info['mod_cache']['gq'] == '0=1')
@@ -647,7 +647,7 @@ function GroupRequests()
 		if ($_POST['req_action'] == 'reason')
 		{
 			// Different sub template...
-			loadSubTemplate('group_request_reason');
+			loadBlock('group_request_reason');
 			// And a limitation. We don't care that the page number bit makes no sense, as we don't need it!
 			$where .= ' AND lgr.id_request IN ({array_int:request_ids})';
 			$where_parameters['request_ids'] = $_POST['groupr'];

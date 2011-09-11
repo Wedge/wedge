@@ -106,7 +106,7 @@ function aeva_admin_maintenance()
 		'subtext' => $txt['media_admin_maintenance_prune_subtext'],
 	);
 
-	loadSubTemplate('aeva_admin_maintenance');
+	loadBlock('aeva_admin_maintenance');
 
 	$task = 'aeva_admin_maintenance_' . (isset($_REQUEST['sa']) ? $_REQUEST['sa'] : '');
 	if (function_exists($task))
@@ -786,7 +786,7 @@ function aeva_admin_maintenance_prune()
 		// Generate the reports and quit
 		$context['aeva_maintenance_done'] = true;
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_prune_done_items'], $deleted['items'], $deleted['comments'], $deleted['files']);
-		loadSubTemplate('aeva_admin_maintenance');
+		loadBlock('aeva_admin_maintenance');
 		return;
 	}
 
@@ -842,12 +842,12 @@ function aeva_admin_maintenance_prune()
 		// Generate the reports and quit
 		$context['aeva_maintenance_done'] = true;
 		$context['aeva_maintenance_message'] = sprintf($txt['media_admin_prune_done_comments'], $deleted);
-		loadSubTemplate('aeva_admin_maintenance');
+		loadBlock('aeva_admin_maintenance');
 		return;
 	}
 
 	// If user hasn't submitted anything, just show them the cool page.
-	loadSubTemplate('aeva_admin_maintenance_prune');
+	loadBlock('aeva_admin_maintenance_prune');
 }
 
 // Rename all thumbnails (item & gallery icon)
@@ -1238,7 +1238,7 @@ function aeva_admin_bans()
 	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query'], $_REQUEST['start'], $total_logs, 20);
 
 	// Finish it off
-	loadSubTemplate('aeva_admin_bans');
+	loadBlock('aeva_admin_bans');
 }
 
 // Adds a ban
@@ -1302,7 +1302,7 @@ function aeva_admin_bans_add()
 			'subtext' => $txt['media_admin_expires_on_help'],
 		),
 	);
-	loadSubTemplate('aeva_form');
+	loadBlock('aeva_form');
 
 	// Adding?
 	if (isset($_POST['submit_aeva']))
@@ -1492,7 +1492,7 @@ function aeva_admin_bans_edit()
 			'subtext' => $txt['media_admin_expires_on_help'],
 		),
 	);
-	loadSubTemplate('aeva_form');
+	loadBlock('aeva_form');
 
 	// Adding?
 	if (isset($_POST['submit_aeva']))

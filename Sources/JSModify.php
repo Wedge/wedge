@@ -231,7 +231,7 @@ function JSModify()
 
 	if (isset($_REQUEST['xml']))
 	{
-		loadSubTemplate('modifydone');
+		loadBlock('modifydone');
 		if (empty($post_errors) && isset($msgOptions['subject'], $msgOptions['body']))
 		{
 			$context['message'] = array(
@@ -254,7 +254,7 @@ function JSModify()
 		// Topic?
 		elseif (empty($post_errors))
 		{
-			loadSubTemplate('modifytopicdone');
+			loadBlock('modifytopicdone');
 			$context['message'] = array(
 				'id' => $row['id_msg'],
 				'modified' => array(

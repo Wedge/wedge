@@ -107,7 +107,7 @@ function Spellcheck()
 	);';
 
 	// And instruct the template system to just show the spellcheck sub template.
-	loadSubTemplate('spellcheck');
+	loadBlock('spellcheck');
 	hideChrome();
 }
 

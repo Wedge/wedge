@@ -94,11 +94,11 @@ function Login2()
 	loadLanguage('Login');
 	// Load the template stuff - wireless or normal.
 	if (WIRELESS)
-		loadSubTemplate(WIRELESS_PROTOCOL . '_login');
+		loadBlock(WIRELESS_PROTOCOL . '_login');
 	else
 	{
 		loadTemplate('Login');
-		loadSubTemplate('login');
+		loadBlock('login');
 	}
 
 	// Set up the default/fallback stuff.

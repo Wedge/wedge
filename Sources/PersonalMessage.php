@@ -84,7 +84,7 @@ if (!defined('WEDGE'))
 		  the whole admin team.
 		- will forward on a copy of the original message without allowing the
 		  reporter to make changes.
-		- uses the report_message sub-template.
+		- uses the report_message block.
 
 	void ManageRules()
 		// !!!
@@ -113,7 +113,7 @@ function MessageMain()
 	loadLanguage('PersonalMessage');
 
 	if (WIRELESS)
-		loadSubTemplate(WIRELESS_PROTOCOL . '_pm');
+		loadBlock(WIRELESS_PROTOCOL . '_pm');
 	else
 		loadTemplate('PersonalMessage');
 
@@ -874,7 +874,7 @@ function MessageFolder()
 
 	$context['can_send_pm'] = allowedTo('pm_send');
 	if (!WIRELESS)
-		loadSubTemplate('folder');
+		loadBlock('folder');
 	$context['page_title'] = $txt['pm_inbox'];
 
 	// Finally mark the relevant messages as read.
@@ -1112,7 +1112,7 @@ function MessageSearch()
 
 	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($modSettings['simpleSearch']) && !isset($_REQUEST['advanced']);
 	$context['page_title'] = $txt['pm_search_title'];
-	loadSubTemplate('search');
+	loadBlock('search');
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
 		'name' => $txt['pm_search_bar_title'],
@@ -1568,7 +1568,7 @@ function MessageSearch2()
 
 	// Finish off the context.
 	$context['page_title'] = $txt['pm_search_title'];
-	loadSubTemplate('search_results');
+	loadBlock('search_results');
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'search';
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
@@ -1589,7 +1589,7 @@ function MessagePost()
 	if (!WIRELESS)
 	{
 		loadTemplate('PersonalMessage');
-		loadSubTemplate('send');
+		loadBlock('send');
 	}
 
 	// Needed for the WYSIWYG editor.
@@ -1932,7 +1932,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
 	if (!WIRELESS)
-		loadSubTemplate('send');
+		loadBlock('send');
 
 	$context['page_title'] = $txt['send_message'];
 
@@ -2593,7 +2593,7 @@ function MessageKillAllQuery()
 	global $txt, $context;
 
 	// Only have to set up the template....
-	loadSubTemplate('ask_delete');
+	loadBlock('ask_delete');
 	$context['page_title'] = $txt['delete_all'];
 	$context['delete_all'] = $_REQUEST['f'] == 'all';
 
@@ -2683,7 +2683,7 @@ function MessagePrune()
 		'name' => $txt['pm_prune']
 	);
 
-	loadSubTemplate('prune');
+	loadBlock('prune');
 	$context['page_title'] = $txt['pm_prune'];
 }
 
@@ -2901,7 +2901,7 @@ function ManageLabels()
 	);
 
 	$context['page_title'] = $txt['pm_manage_labels'];
-	loadSubTemplate('labels');
+	loadBlock('labels');
 
 	$the_labels = array();
 	// Add all existing labels to the array to save, slashing them as necessary...
@@ -3170,7 +3170,7 @@ function ReportMessage()
 	// If we're here, just send the user to the template, with a few useful context bits.
 	if (!isset($_POST['report']))
 	{
-		loadSubTemplate('report_message');
+		loadBlock('report_message');
 
 		// !!! I don't like being able to pick who to send it to.  Favoritism, etc. sucks.
 		// Now, get all the administrators.
@@ -3312,7 +3312,7 @@ function ReportMessage()
 			loadLanguage('PersonalMessage', '', false);
 
 		// Leave them with a template.
-		loadSubTemplate('report_message_complete');
+		loadBlock('report_message_complete');
 	}
 }
 
@@ -3328,7 +3328,7 @@ function ManageRules()
 	);
 
 	$context['page_title'] = $txt['pm_manage_rules'];
-	loadSubTemplate('rules');
+	loadBlock('rules');
 
 	// Load them... load them!!
 	loadRules();
@@ -3372,7 +3372,7 @@ function ManageRules()
 	if (isset($_GET['add']))
 	{
 		$context['rid'] = isset($_GET['rid'], $context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
-		loadSubTemplate('add_rule');
+		loadBlock('add_rule');
 
 		// Current rule information...
 		if ($context['rid'])
@@ -3775,7 +3775,7 @@ function MessageDrafts()
 
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
-	loadSubTemplate('pm_drafts');
+	loadBlock('pm_drafts');
 	$context['page_title'] = $txt['showDrafts'];
 
 	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))

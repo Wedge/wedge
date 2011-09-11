@@ -425,7 +425,7 @@ function ViewMemberlist()
 	// Construct the additional URL part with the query info in it.
 	$context['params_url'] = $context['sub_action'] == 'query' ? ';sa=query;params=' . $search_params : '';
 
-	// Get the title and subtemplate ready...
+	// Get the title and template block ready...
 	$context['page_title'] = $txt['admin_members'];
 	$percent_scripturl = strtr($scripturl, array('%' => '%%'));
 
@@ -624,7 +624,7 @@ function ViewMemberlist()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'member_list';
 }
 
@@ -670,7 +670,7 @@ function SearchMembers()
 	wesql::free_result($request);
 
 	$context['page_title'] = $txt['admin_members'];
-	loadSubTemplate('search_members');
+	loadBlock('search_members');
 }
 
 // List all members who are awaiting approval / activation
@@ -680,7 +680,7 @@ function MembersAwaitingActivation()
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
-	loadSubTemplate('admin_browse');
+	loadBlock('admin_browse');
 	$context['browse_type'] = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? 'activate' : 'approve');
 	if (isset($context['tabs'][$context['browse_type']]))
 		$context['tabs'][$context['browse_type']]['is_selected'] = true;

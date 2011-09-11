@@ -185,7 +185,7 @@ function ManageMaintenance()
 	$context['page_title'] = $txt['maintain_title'];
 	$context['sub_action'] = $subAction;
 	if (!empty($subActions[$subAction]['template']))
-		loadSubTemplate($subActions[$subAction]['template']);
+		loadBlock($subActions[$subAction]['template']);
 
 	// Finally fall through to what we are doing.
 	$subActions[$subAction]['function']();
@@ -436,7 +436,7 @@ function ConvertUtf8()
 		$context['charset_list'] = array_keys($charsets);
 
 		$context['page_title'] = $txt['utf8_title'];
-		loadSubTemplate('convert_utf8');
+		loadBlock('convert_utf8');
 		return;
 	}
 
@@ -710,11 +710,11 @@ function ConvertEntities()
 	// The first step is just a text screen with some explanation.
 	if ($context['first_step'])
 	{
-		loadSubTemplate('convert_entities');
+		loadBlock('convert_entities');
 		return;
 	}
 	// Otherwise use the generic "not done" template.
-	loadSubTemplate('not_done');
+	loadBlock('not_done');
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = 3;
 
@@ -899,7 +899,7 @@ function OptimizeTables()
 	$opttab = 0;
 
 	$context['page_title'] = $txt['database_optimize'];
-	loadSubTemplate('optimize');
+	loadBlock('optimize');
 
 	// Only optimize the tables related to this Wedge install, not all the tables in the DB...
 	$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
@@ -951,7 +951,7 @@ function AdminBoardRecount()
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '3';
-	loadSubTemplate('not_done');
+	loadBlock('not_done');
 
 	// Try for as much time as possible.
 	@set_time_limit(600);
@@ -1469,7 +1469,7 @@ function VersionDetail()
 	// Make it easier to manage for the template.
 	$context['forum_version'] = WEDGE_VERSION;
 
-	loadSubTemplate('view_versions');
+	loadBlock('view_versions');
 	$context['page_title'] = $txt['admin_version_check'];
 }
 
@@ -1605,7 +1605,7 @@ function MaintainRecountPosts()
 	$context['continue_countdown'] = '3';
 	$context['continue_post_data'] = '';
 	$context['continue_get_data'] = '';
-	loadSubTemplate('not_done');
+	loadBlock('not_done');
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 	$context['start_time'] = time();
 
@@ -1741,7 +1741,7 @@ function MaintainMassMoveTopics()
 	$context['continue_countdown'] = '3';
 	$context['continue_post_data'] = '';
 	$context['continue_get_data'] = '';
-	loadSubTemplate('not_done');
+	loadBlock('not_done');
 	$context['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 	$context['start_time'] = time();
 

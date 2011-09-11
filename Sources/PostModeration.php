@@ -291,7 +291,7 @@ function UnapprovedPosts()
 	}
 	wesql::free_result($request);
 
-	loadSubTemplate('unapproved_posts');
+	loadBlock('unapproved_posts');
 }
 
 // View all unapproved attachments.
@@ -446,7 +446,7 @@ function UnapprovedAttachments()
 	}
 	wesql::free_result($request);
 
-	loadSubTemplate('unapproved_attachments');
+	loadBlock('unapproved_attachments');
 }
 
 // Approve a post, just the one.

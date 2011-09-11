@@ -53,7 +53,7 @@ function aeva_foxy_playlist()
 
 	if (!isset($_GET['new']) && !isset($_GET['edit']) && !isset($_GET['delete']) && !isset($_GET['from'], $_GET['to']) && !isset($_GET['des']))
 	{
-		loadSubTemplate('aeva_playlist');
+		loadBlock('aeva_playlist');
 		$context['aeva_foxy_rendered_playlist'] = $id ? aeva_foxy_album($id, 'playl') : aeva_foxy_playlists();
 		return;
 	}
@@ -261,7 +261,7 @@ function aeva_foxy_playlist()
 		redirectexit($scripturl . '?action=media;sa=playlists' . ($id ? ';done=' . $id : ''));
 	}
 
-	loadSubTemplate('aeva_form');
+	loadBlock('aeva_form');
 }
 
 function aeva_foxy_playlists()

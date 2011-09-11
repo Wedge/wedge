@@ -35,18 +35,18 @@ function MessageIndex()
 	}
 
 	if (WIRELESS)
-		loadSubTemplate(WIRELESS_PROTOCOL . '_messageindex');
+		loadBlock(WIRELESS_PROTOCOL . '_messageindex');
 	else
 	{
 		loadTemplate('MessageIndex');
 
-		// Did someone save a conventional draft of a new topic? If so, add it as a subtemplate but make sure we don't screw other things up.
+		// Did someone save a conventional draft of a new topic? If so, add it as a block but make sure we don't screw other things up.
 		$templates = array();
 		if (isset($_GET['draftsaved']))
 			$templates[] = 'messageindex_draft';
 		$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
-		loadSubTemplate($templates);
-		loadSubTemplate('messageindex_statistics', array(':side', 'sidebar'));
+		loadBlock($templates);
+		loadBlock('messageindex_statistics', array(':side', 'sidebar'));
 	}
 
 	$context['name'] = $board_info['name'];
@@ -222,7 +222,7 @@ function MessageIndex()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('board');
-		loadSubTemplate('messageindex_whoviewing', array(':side', 'sidebar'));
+		loadBlock('messageindex_whoviewing', array(':side', 'sidebar'));
 	}
 
 	// Default sort methods.
@@ -607,7 +607,7 @@ function MessageIndex()
 	// If there are children, but no topics and no ability to post topics...
 	$context['no_topic_listing'] = !empty($context['boards']) && empty($context['topics']) && !$context['can_post_new'];
 	if (!$context['no_topic_listing'])
-		loadSubTemplate('messageindex_legend', array(':side', 'sidebar'));
+		loadBlock('messageindex_legend', array(':side', 'sidebar'));
 
 	// Create the button set...
 	$context['button_list'] = array(

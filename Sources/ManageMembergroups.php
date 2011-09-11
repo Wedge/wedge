@@ -550,7 +550,7 @@ function AddMembergroup()
 
 	// Just show the 'add membergroup' screen.
 	$context['page_title'] = $txt['membergroups_new_group'];
-	loadSubTemplate('new_group');
+	loadBlock('new_group');
 	$context['post_group'] = isset($_REQUEST['postgroup']);
 	$context['undefined_group'] = !isset($_REQUEST['postgroup']) && !isset($_REQUEST['generalgroup']);
 	$context['allow_protected'] = allowedTo('admin_forum');
@@ -1033,7 +1033,7 @@ function EditMembergroup()
 		$context['inheritable_groups'][$row['id_group']] = $row['group_name'];
 	wesql::free_result($request);
 
-	loadSubTemplate('edit_group');
+	loadBlock('edit_group');
 	$context['page_title'] = $txt['membergroups_edit_group'];
 }
 
@@ -1042,7 +1042,7 @@ function ModifyMembergroupsettings()
 {
 	global $context, $scripturl, $modSettings, $txt;
 
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 	$context['page_title'] = $txt['membergroups_settings'];
 
 	// Needed for the settings functions.

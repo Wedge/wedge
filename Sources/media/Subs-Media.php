@@ -983,7 +983,7 @@ function aeva_loadAlbum($album_id = 0)
 	{
 		if ($album_allowed == 'passwd')
 		{
-			loadSubTemplate('aeva_form');
+			loadBlock('aeva_form');
 			$context['aeva_form_url'] = $galurl.'sa=album;in=' . $album_info['id_album'];
 			$context['aeva_form_headers'] = array(
 				array($txt['media_passwd_protected']),
@@ -2765,7 +2765,7 @@ function aeva_listMemberAlbums($id_member)
 	}
 }
 
-// Sub-template for showing children albums
+// Block for showing children albums
 function aeva_listChildren(&$albums, $skip_table = false)
 {
 	global $amSettings, $galurl, $settings, $txt, $user_info, $context;
@@ -2836,7 +2836,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 	</table></div>';
 }
 
-// Sub-template for showing item lists
+// Block for showing item lists
 function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = false)
 {
 	global $scripturl, $txt, $galurl, $settings, $context, $amSettings, $modSettings, $user_info;

@@ -719,7 +719,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 			$listOptions['additional_rows'][1]['value'] = sprintf($txt['package_restore_permissions_action_done'], $scripturl . '?action=admin;area=packages;sa=perms;' . $context['session_query']);
 			unset($listOptions['columns']['check'], $listOptions['form'], $listOptions['additional_rows'][0]);
 
-			loadSubTemplate('show_list');
+			loadBlock('show_list');
 			$context['default_list'] = 'restore_file_permissions';
 		}
 		else
@@ -860,7 +860,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 		if (!empty($chmodOptions['crash_on_error']))
 		{
 			$context['page_title'] = $txt['package_ftp_necessary'];
-			loadSubTemplate('ftp_required');
+			loadBlock('ftp_required');
 			obExit();
 		}
 	}
@@ -1025,7 +1025,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 			return $files;
 
 		$context['page_title'] = $txt['package_ftp_necessary'];
-		loadSubTemplate('ftp_required');
+		loadBlock('ftp_required');
 		obExit();
 	}
 	else

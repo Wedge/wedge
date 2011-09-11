@@ -38,12 +38,12 @@ function BoardIndex()
 
 	// For wireless, we use the Wireless template...
 	if (WIRELESS)
-		loadSubTemplate(WIRELESS_PROTOCOL . '_boardindex');
+		loadBlock(WIRELESS_PROTOCOL . '_boardindex');
 	else
 	{
 		loadTemplate('BoardIndex');
 		loadTemplate('BoardIndexInfoCenter');
-		loadSubTemplate(array(
+		loadBlock(array(
 			'info_center_begin',
 			'info_center_recentposts',
 			'info_center_calendar',
@@ -52,7 +52,7 @@ function BoardIndex()
 			'info_center_personalmsg',
 			'info_center_end',
 		), 'sidebar');
-		loadSubTemplate(array(
+		loadBlock(array(
 			'boardindex_ministats',
 			'boardindex_newsfader',
 			'boardindex',

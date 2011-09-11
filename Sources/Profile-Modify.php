@@ -1241,7 +1241,7 @@ function editBuddyIgnoreLists($memID)
 	);
 
 	// Pass on to the actual function.
-	loadSubTemplate($subActions[$context['list_area']][0]);
+	loadBlock($subActions[$context['list_area']][0]);
 	$subActions[$context['list_area']][0]($memID);
 }
 
@@ -1465,7 +1465,7 @@ function account($memID)
 	if (allowedTo(array('profile_identity_own', 'profile_identity_any')))
 		loadCustomFields($memID, 'account');
 
-	loadSubTemplate('edit_options');
+	loadBlock('edit_options');
 	$context['page_desc'] = $txt['account_info'];
 
 	setupProfileContext(
@@ -1487,7 +1487,7 @@ function forumProfile($memID)
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
 		loadCustomFields($memID, 'forumprofile');
 
-	loadSubTemplate('edit_options');
+	loadBlock('edit_options');
 	$context['page_desc'] = $txt['forumProfile_info'];
 
 	setupProfileContext(
@@ -1508,7 +1508,7 @@ function pmprefs($memID)
 	loadThemeOptions($memID);
 	loadCustomFields($memID, 'pmprefs');
 
-	loadSubTemplate('edit_options');
+	loadBlock('edit_options');
 	$context['page_desc'] = $txt['pm_settings_desc'];
 
 	setupProfileContext(
@@ -1603,7 +1603,7 @@ function options($memID)
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
 		loadCustomFields($memID, 'options');
 
-	loadSubTemplate('edit_options');
+	loadBlock('edit_options');
 	$context['page_desc'] = $txt['options_info'];
 
 	setupProfileContext(
@@ -1689,7 +1689,7 @@ function authentication($memID, $saving = false)
 	// Some stuff.
 	$context['member']['openid_uri'] = $cur_profile['openid_uri'];
 	$context['auth_method'] = empty($cur_profile['openid_uri']) ? 'password' : 'openid';
-	loadSubTemplate('authentication_method');
+	loadBlock('authentication_method');
 }
 
 // Display the notifications and settings for changes.
@@ -2928,7 +2928,7 @@ function profileSendActivation()
 	// Send them to the done-with-registration-login screen.
 	loadTemplate('Register');
 
-	loadSubTemplate('after');
+	loadBlock('after');
 	$context['page_title'] = $txt['profile'];
 	$context['title'] = $txt['activate_changed_email_title'];
 	$context['description'] = $txt['activate_changed_email_desc'];

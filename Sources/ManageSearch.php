@@ -142,7 +142,7 @@ function EditSearchSettings($return_config = false)
 		return $config_vars;
 
 	$context['page_title'] = $txt['search_settings_title'];
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 
 	// We'll need this for the settings.
 	loadSource('ManageServer');
@@ -168,7 +168,7 @@ function EditWeights()
 	global $txt, $context, $modSettings;
 
 	$context['page_title'] = $txt['search_weights_title'];
-	loadSubTemplate('modify_weights');
+	loadBlock('modify_weights');
 
 	$factors = array(
 		'search_weight_frequency',
@@ -204,7 +204,7 @@ function EditSearchMethod()
 
 	$context[$context['admin_menu_name']]['current_subsection'] = 'method';
 	$context['page_title'] = $txt['search_method_title'];
-	loadSubTemplate('select_search_method');
+	loadBlock('select_search_method');
 	$context['supports_fulltext'] = wedbSearch::supports('fulltext');
 
 	// Load any apis.
@@ -484,13 +484,13 @@ function CreateMessageIndex()
 	// Step 0: let the user determine how they like their index.
 	if ($context['step'] === 0)
 	{
-		loadSubTemplate('create_index');
+		loadBlock('create_index');
 	}
 
 	// Step 1: insert all the words.
 	if ($context['step'] === 1)
 	{
-		loadSubTemplate('create_index_progress');
+		loadBlock('create_index_progress');
 
 		if ($context['start'] === 0)
 		{
@@ -610,7 +610,7 @@ function CreateMessageIndex()
 		{
 			$stop_words = $context['start'] === 0 || empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
 			$stop = time() + 3;
-			loadSubTemplate('create_index_progress');
+			loadBlock('create_index_progress');
 			$max_messages = ceil(60 * $modSettings['totalMessages'] / 100);
 
 			while (time() < $stop)
@@ -656,7 +656,7 @@ function CreateMessageIndex()
 	// Step 3: remove words not distinctive enough.
 	if ($context['step'] === 3)
 	{
-		loadSubTemplate('create_index_done');
+		loadBlock('create_index_done');
 
 		updateSettings(array('search_index' => 'custom', 'search_custom_index_config' => serialize($context['index_settings'])));
 		wesql::query('

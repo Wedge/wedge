@@ -83,7 +83,7 @@ function Report()
 	$context['message_id'] = $_REQUEST['msg'];
 
 	$context['page_title'] = $txt['report_to_mod'];
-	loadSubTemplate('report');
+	loadBlock('report');
 }
 
 /**

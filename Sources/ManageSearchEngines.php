@@ -104,7 +104,7 @@ function ManageSearchEngineSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['settings'];
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 
 	// Are we saving them - are we??
 	if (isset($_GET['save']))
@@ -288,7 +288,7 @@ function ViewSpiders()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'spider_list';
 }
 
@@ -332,7 +332,7 @@ function EditSpider()
 	// Some standard stuff.
 	$context['id_spider'] = !empty($_GET['sid']) ? (int) $_GET['sid'] : 0;
 	$context['page_title'] = $context['id_spider'] ? $txt['spiders_edit'] : $txt['spiders_add'];
-	loadSubTemplate('spider_edit');
+	loadBlock('spider_edit');
 
 	// Are we saving?
 	if (!empty($_POST['save']))
@@ -723,7 +723,7 @@ function SpiderLog()
 	}
 
 	$context['page_title'] = $txt['spider_log'];
-	loadSubTemplate('show_spider_log');
+	loadBlock('show_spider_log');
 	$context['default_list'] = 'spider_log';
 }
 
@@ -907,7 +907,7 @@ function SpiderStats()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'spider_stat_list';
 }
 

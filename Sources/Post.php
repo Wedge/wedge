@@ -95,7 +95,7 @@ function Post()
 
 	if (isset($_REQUEST['xml']))
 	{
-		loadSubTemplate('post');
+		loadBlock('post');
 
 		// Just in case of an earlier error...
 		$context['preview_message'] = '';
@@ -1232,7 +1232,7 @@ function Post()
 
 	// Finally, load the template.
 	if (WIRELESS)
-		loadSubTemplate(WIRELESS_PROTOCOL . '_post');
+		loadBlock(WIRELESS_PROTOCOL . '_post');
 	elseif (!isset($_REQUEST['xml']))
 		loadTemplate('Post');
 }

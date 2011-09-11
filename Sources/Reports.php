@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 /*	This file is exclusively for generating reports to help assist forum
 	administrators keep track of their forum configuration and state. The
 	core report generation is done in two areas. Firstly, a report "generator"
-	will fill context with relevant data. Secondly, the choice of sub-template
+	will fill context with relevant data. Secondly, the choice of block
 	will determine how this data is shown to the user. It has the following
 	functions:
 
@@ -25,9 +25,9 @@ if (!defined('WEDGE'))
 		- requires the admin_forum permission.
 		- loads the Reports template and language files.
 		- decides which type of report to generate, if this isn't passed
-		  through the querystring it will set the report_type sub-template to
+		  through the querystring it will set the report_type block to
 		  force the user to choose which type.
-		- when generating a report chooses which sub-template to use.
+		- when generating a report chooses which block to use.
 		- depends on the cal_enabled setting, and many of the other cal_
 		  settings.
 		- will call the relevant report generation function.
@@ -143,7 +143,7 @@ function ReportsMain()
 	// If they haven't choosen a report type which is valid, send them off to the report type chooser!
 	if (empty($_REQUEST['rt']) || !isset($context['report_types'][$_REQUEST['rt']]))
 	{
-		loadSubTemplate('report_type');
+		loadBlock('report_type');
 		return;
 	}
 	$context['report_type'] = $_REQUEST['rt'];
@@ -161,7 +161,7 @@ function ReportsMain()
 	// Specific template? Use that instead of main!
 	if (isset($_REQUEST['st'], $reportTemplates[$_REQUEST['st']]))
 	{
-		loadSubTemplate($_REQUEST['st']);
+		loadBlock($_REQUEST['st']);
 
 		// Are we disabling the other layers - print friendly for example?
 		if ($reportTemplates[$_REQUEST['st']]['layers'] !== null)

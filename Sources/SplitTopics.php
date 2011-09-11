@@ -47,8 +47,8 @@ if (!defined('WEDGE'))
 	void SplitSelectTopics()
 		- allows the user to select the messages to be split.
 		- is accessed with ?action=splittopics;sa=selectTopics.
-		- uses 'select' subtemplate of the SplitTopics template or, for
-		  Ajax, the 'split' subtemplate of the Xml template.
+		- uses 'select' block of the SplitTopics template or, for
+		  Ajax, the 'split' block of the Xml template.
 		- supports Ajax for adding/removing a message to the selection.
 		- uses a session variable to store the selected topics.
 		- shows two independent page indexes for both the selected and
@@ -188,7 +188,7 @@ function SplitIndex()
 		'id' => $_GET['at'],
 		'subject' => $_REQUEST['subname']
 	);
-	loadSubTemplate('ask');
+	loadBlock('ask');
 	$context['page_title'] = $txt['split'];
 }
 
@@ -274,7 +274,7 @@ function SplitSelectTopics()
 	$context['new_subject'] = $_REQUEST['subname'];
 
 	// Using the "select" sub template.
-	loadSubTemplate(isset($_REQUEST['xml']) ? 'split' : 'select');
+	loadBlock(isset($_REQUEST['xml']) ? 'split' : 'select');
 
 	// Are we using a custom messages per page?
 	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
@@ -970,7 +970,7 @@ function MergeIndex()
 	if (empty($context['topics']) && count($context['boards']) <= 1)
 		fatal_lang_error('merge_need_more_topics');
 
-	loadSubTemplate('merge');
+	loadBlock('merge');
 }
 
 // Now that the topic IDs are known, do the proper merging.
@@ -1171,7 +1171,7 @@ function MergeExecute($topics = array())
 			$context['topics'][$id]['selected'] = $topic['id'] == $firstTopic;
 
 		$context['page_title'] = $txt['merge'];
-		loadSubTemplate('merge_extra_options');
+		loadBlock('merge_extra_options');
 		return;
 	}
 
@@ -1586,7 +1586,7 @@ function MergeDone()
 	$context['target_topic'] = (int) $_GET['to'];
 
 	$context['page_title'] = $txt['merge'];
-	loadSubTemplate('merge_done');
+	loadBlock('merge_done');
 }
 
 function MergePosts($error_report = true)

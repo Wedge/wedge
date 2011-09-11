@@ -314,7 +314,7 @@ function BanList()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'ban_list';
 }
 
@@ -1011,17 +1011,17 @@ function BanEdit()
 	if (WIRELESS)
 	{
 		hideChrome('html');
-		loadSubTemplate(WIRELESS_PROTOCOL . '_ban_edit');
+		loadBlock(WIRELESS_PROTOCOL . '_ban_edit');
 	}
 	else
-		loadSubTemplate('ban_edit');
+		loadBlock('ban_edit');
 }
 
 function BanEditTrigger()
 {
 	global $context;
 
-	loadSubTemplate('ban_edit_trigger');
+	loadBlock('ban_edit_trigger');
 
 	if (empty($_REQUEST['bg']))
 		fatal_lang_error('ban_not_found', false);
@@ -1284,7 +1284,7 @@ function BanBrowseTriggers()
 	createList($listOptions);
 
 	// The list is the only thing to show, so make it the default sub template.
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'ban_trigger_list';
 }
 

@@ -21,8 +21,7 @@ function aeva_admin_embed()
 {
 	global $context, $scripturl, $txt, $modSettings, $sourcedir;
 
-	// Our sub-template
-	loadSubTemplate('aeva_form');
+	loadBlock('aeva_form');
 	loadLayer('aeva_admin_enclose_table');
 
 	$context['current_area'] = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'sites' ? 'sites' : 'config';

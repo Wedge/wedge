@@ -34,13 +34,13 @@ function Login()
 
 	// In wireless?  If so, use the correct sub template.
 	if (WIRELESS)
-		loadSubTemplate(WIRELESS_PROTOCOL . '_login');
+		loadBlock(WIRELESS_PROTOCOL . '_login');
 	// Otherwise, we need to load the Login template/language file.
 	else
 	{
 		loadLanguage('Login');
 		loadTemplate('Login');
-		loadSubTemplate('login');
+		loadBlock('login');
 	}
 
 	// Get the template ready.... not really much else to do.

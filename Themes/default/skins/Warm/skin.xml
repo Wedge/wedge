@@ -46,10 +46,9 @@
 	<!--
 		Layout skeleton. The following uses pseudo-HTML to represent the final array.
 
-			- use <tags></tags> to define layers (i.e. a function
-			  called as a wrapper around other functions)
+			- use <tags></tags> to define layers (functions called as wrappers around other functions)
 
-			- use <self closing tags /> to define sub-templates
+			- use <self closing tags /> to define blocks (i.e. straightforward functions)
 
 			- use a colon (:) to define hints, e.g. <layer:top,main> would mean
 			  "<layer> is the default destination for ':top' and ':main' layer requests.

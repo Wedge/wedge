@@ -284,7 +284,7 @@ function ViewErrorLog()
 	// And this is pretty basic ;)
 	$context['page_title'] = $txt['errlog'];
 	$context['has_filter'] = isset($filter);
-	loadSubTemplate('error_log');
+	loadBlock('error_log');
 
 	// Don't rewrite any URLs, we need them to remain exact!
 	$modSettings['pretty_filters'] = array();
@@ -392,7 +392,7 @@ function ViewFile()
 
 	hideChrome();
 	loadTemplate('Errors');
-	loadSubTemplate('show_file');
+	loadBlock('show_file');
 }
 
 ?>

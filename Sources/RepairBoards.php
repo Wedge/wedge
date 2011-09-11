@@ -52,7 +52,7 @@ function RepairBoards()
 
 	// Print out the top of the webpage.
 	$context['page_title'] = $txt['admin_repair'];
-	loadSubTemplate('repair_boards');
+	loadBlock('repair_boards');
 	$context[$context['admin_menu_name']]['current_subsection'] = 'general';
 
 	// Load the language file.
@@ -144,7 +144,7 @@ function pauseRepairProcess($to_fix, $current_step_description, $max_substep = 0
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '2';
-	loadSubTemplate('not_done');
+	loadBlock('not_done');
 
 	// Change these two if more steps are added!
 	if (empty($max_substep))

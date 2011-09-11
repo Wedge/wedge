@@ -68,7 +68,7 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 	// Will need the utility functions from here.
 	loadSource('ManageServer');
 
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 
 	// By default do the basic settings.
 	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($defaultAction) ? $defaultAction : array_pop(array_keys($subActions)));
@@ -298,7 +298,7 @@ function ModifyCoreFeatures($return_config = false)
 	if ($context['is_new_install'])
 		updateSettings(array('media_enabled' => 1));
 
-	loadSubTemplate('core_features');
+	loadBlock('core_features');
 	$context['page_title'] = $txt['core_settings_title'];
 }
 
@@ -730,7 +730,7 @@ function ModifyLogSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=settings';
 	$context['settings_title'] = $txt['log_settings'];
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 
 	// Get the actual values
 	if (!empty($modSettings['pruningOptions']))
@@ -808,7 +808,7 @@ function ModifyPrettyURLs()
 {
 	global $context, $modSettings, $settings, $txt;
 
-	loadSubTemplate('pretty_urls');
+	loadBlock('pretty_urls');
 	$context['page_title'] = $txt['admin_pretty_urls'];
 
 	// Core settings

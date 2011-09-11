@@ -27,7 +27,7 @@ function JSEditor()
 
 	loadSource('Class-Editor');
 
-	loadSubTemplate('sendbody');
+	loadBlock('sendbody');
 
 	$context['view'] = (int) $_REQUEST['view'];
 

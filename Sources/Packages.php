@@ -160,7 +160,7 @@ function PackageInstallTest()
 	);
 	$context['page_title'] .= ' - ' . ($context['uninstalling'] ? $txt['package_uninstall_actions'] : $txt['install_actions']);
 
-	loadSubTemplate('view_package');
+	loadBlock('view_package');
 
 	if (!file_exists($boarddir . '/Packages/' . $context['filename']))
 	{
@@ -719,7 +719,7 @@ function PackageInstall()
 	);
 	$context['page_title'] .= ' - ' . ($context['uninstalling'] ? $txt['uninstall'] : $txt['extracting']);
 
-	loadSubTemplate('extract_package');
+	loadBlock('extract_package');
 
 	if (!file_exists($boarddir . '/Packages/' . $context['filename']))
 		fatal_lang_error('package_no_file', false);
@@ -1128,7 +1128,7 @@ function PackageList()
 		'name' => $txt['list_file']
 	);
 	$context['page_title'] .= ' - ' . $txt['list_file'];
-	loadSubTemplate('list');
+	loadBlock('list');
 
 	// The filename...
 	$context['filename'] = $_REQUEST['package'];
@@ -1173,7 +1173,7 @@ function ExamineFile()
 		'name' => $txt['package_examine_file']
 	);
 	$context['page_title'] .= ' - ' . $txt['package_examine_file'];
-	loadSubTemplate('examine');
+	loadBlock('examine');
 
 	// The filename...
 	$context['package'] = $_REQUEST['package'];
@@ -1255,7 +1255,7 @@ function PackageBrowse()
 	global $txt, $boarddir, $scripturl, $context;
 
 	$context['page_title'] .= ' - ' . $txt['browse_packages'];
-	loadSubTemplate('browse');
+	loadBlock('browse');
 
 	$context['forum_version'] = WEDGE_VERSION;
 
@@ -1427,7 +1427,7 @@ function PackageOptions()
 		$default_username = '';
 
 	$context['page_title'] = $txt['package_settings'];
-	loadSubTemplate('install_options');
+	loadBlock('install_options');
 
 	$context['package_ftp_server'] = isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost';
 	$context['package_ftp_port'] = isset($modSettings['package_port']) ? $modSettings['package_port'] : '21';
@@ -1510,7 +1510,7 @@ function ViewOperations()
 	$context['operations']['replace'] = parse_bbc('[code=' . $txt[$operation_text] . ']' . $context['operations']['replace'] . '[/code]');
 
 	// No layers
-	loadSubTemplate('view_operations');
+	loadBlock('view_operations');
 	hideChrome();
 }
 
@@ -1555,7 +1555,7 @@ function PackagePermissions()
 
 	// Define the template.
 	$context['page_title'] = $txt['package_file_perms'];
-	loadSubTemplate('file_permissions');
+	loadBlock('file_permissions');
 
 	// Define what files we're interested in, as a tree.
 	$context['file_tree'] = array(
@@ -1820,7 +1820,7 @@ function PackagePermissions()
 	if (isset($_GET['xml']))
 	{
 		loadTemplate('Xml');
-		loadSubTemplate('generic_xml');
+		loadBlock('generic_xml');
 		hideChrome();
 	}
 }
@@ -1997,7 +1997,7 @@ function PackagePermissionsAction()
 	$timeout_limit = 5;
 
 	$context['method'] = $_POST['method'] == 'individual' ? 'individual' : 'predefined';
-	loadSubTemplate('action_permissions');
+	loadBlock('action_permissions');
 	$context['page_title'] = $txt['package_file_perms_applying'];
 	$context['back_look_data'] = isset($_POST['back_look']) ? $_POST['back_look'] : array();
 
@@ -2220,7 +2220,7 @@ function PackageFTPTest()
 
 	// Deal with the template stuff.
 	loadTemplate('Xml');
-	loadSubTemplate('generic_xml');
+	loadBlock('generic_xml');
 	hideChrome();
 
 	// Define the return data, this is simple.

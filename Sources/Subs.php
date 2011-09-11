@@ -1220,24 +1220,24 @@ function render_skeleton(&$here, $key)
 	// Show the _above part of the layer
 	$temp = $key . '_above';
 	if (function_exists('template_' . $temp))
-		execSubTemplate($temp, 'ignore');
+		execBlock($temp, 'ignore');
 
 	if ($key === 'top' || $key === 'main')
 		while_we_re_here();
 
 	foreach ($here as $id => $temp)
 	{
-		// If the item is an array, then it's a layer. Otherwise, it's a sub-template.
+		// If the item is an array, then it's a layer. Otherwise, it's a block.
 		if (is_array($temp))
 			render_skeleton($temp, $id);
 		else
-			execSubTemplate($id, 'ignore');
+			execBlock($id, 'ignore');
 	}
 
 	// Show the _below part of the layer
 	$temp = $key . '_below';
 	if (function_exists('template_' . $temp))
-		execSubTemplate($temp, 'ignore');
+		execBlock($temp, 'ignore');
 
 	// !! We should probably move this directly to template_html_below() and forget the buffering thing...
 	if ($key === 'html' && !isset($_REQUEST['xml']) && empty($context['hide_chrome']))
@@ -1577,7 +1577,7 @@ function pretty_scripts_restore($match)
 }
 
 /**
- * A quick alias to tell Wedge to hide sub-templates that don't belong to the main flow.
+ * A quick alias to tell Wedge to hide blocks that don't belong to the main flow.
  *
  * @param array $layers An array with the layers we want to keep. Usually empty.
  */
@@ -1771,7 +1771,7 @@ function while_we_re_here()
  * - Get the list of included files, and strip out the long paths to the board dir, replacing with a . for "current directory"; also collate the size of included files.
  * - Examine the DB query cache, and see if any warnings have been issued from queries.
  * - Grab the page content, and remove the trailing ending of body and html tags, so the footer information can replace them (and still leave legal HTML)
- * - Output the list of included templates, subtemplates, language files, properly included (through loadTemplate) stylesheets, and master list of files.
+ * - Output the list of included templates, blocks, language files, properly included (through loadTemplate) stylesheets, and master list of files.
  * - If caching is enabled, also include the list of cache items included, how much data was loaded and how long was spent on caching retrieval.
  * - Additionally, if we already have a list of queries in session (i.e. the query list is expanded), display that too, stripping out ones that we can't send for EXPLAIN.
  * - Finally, clear cached language files.
@@ -1842,7 +1842,7 @@ function db_debug_junk()
 	$temp = '
 <div class="smalltext" style="text-align: left; margin: 1ex">
 	' . $txt['debug_templates'] . count($context['debug']['templates']) . ': <em>' . implode(', ', $context['debug']['templates']) . '</em>.<br>
-	' . $txt['debug_subtemplates'] . count($context['debug']['sub_templates']) . ': <em>' . implode(', ', $context['debug']['sub_templates']) . '</em>.<br>
+	' . $txt['debug_blocks'] . count($context['debug']['blocks']) . ': <em>' . implode(', ', $context['debug']['blocks']) . '</em>.<br>
 	' . $txt['debug_language_files'] . count($context['debug']['language_files']) . ': <em>' . implode(', ', $context['debug']['language_files']) . '</em>.<br>
 	' . $txt['debug_stylesheets'] . count($context['debug']['sheets']) . ': <em>' . implode(', ', $context['debug']['sheets']) . '</em>.<br>
 	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').css(\'display\', \'inline\'); this.style.display = \'none\';">' . $txt['debug_show'] . '</a><span id="debug_include_info" class="hide"><em>' . implode(', ', $files) . '</em></span>)<br>';

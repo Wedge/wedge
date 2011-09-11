@@ -166,7 +166,7 @@ function Credits($in_admin = false)
 	if (!$in_admin)
 	{
 		loadTemplate('Who');
-		loadSubTemplate('credits');
+		loadBlock('credits');
 		$context['robot_no_index'] = true;
 		$context['page_title'] = $txt['credits_site'];
 	}

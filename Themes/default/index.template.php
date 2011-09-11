@@ -13,17 +13,10 @@
 
 /*
 	This template is probably the most important one in the theme.
-	It contains the html and body layers, as well as the init sub-
-	template, which can be missing, and should be used to load any
-	data and set any hardcoded options. The html layer sets the HTML
-	headers, while the body layer shows the actual header, contents
-	and footer of the page, split this way:
-
-	- sidebar (a list of sub-templates that should be shown in the sidebar)
-	- main (a list of sub-templates that should be shown in the main contents area)
-	- template_linktree (displays the link tree, using the data in the $context['linktree'] variable)
-	- template_menu (displays the menu, using the data in $context['menu_items'])
-	- template_button_strip (displays contextual buttons)
+	It defines the skeleton, i.e. the list of layers and blocks, starting
+	with the html, body, main and sidebar layers among others.
+	It also defines various blocks of interest like linktree (which displays
+	the navigation hierarchy), menu (for the main menu), or button_strip.
 */
 
 // Initialize the template... mainly little settings.
@@ -99,9 +92,9 @@ function template_init()
 	);
 }
 
-// The magical function where the layer/subtemplate layout is established.
-// A layer is an array of subtemplates. Layers have '_above' and '_below' functions,
-// but they're not mandatory. Subtemplates only have one function but can be overloaded.
+// The magical function where the layer/block layout is established.
+// A layer is an array of blocks. Layers have '_above' and '_below' functions,
+// but they're not mandatory. Blocks only have one function but can be overloaded.
 // You can comment your skeleton with the usual <!-- HTML comment --> tags.
 // Finally, you can redefine a skeleton through skin.xml (see the Warm skin for a sample.)
 function template_skeleton()

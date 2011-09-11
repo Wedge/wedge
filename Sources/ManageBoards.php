@@ -33,10 +33,10 @@ if (!defined('WEDGE'))
 	void EditCategory()
 		- screen for editing and repositioning a category.
 		- called by ?action=admin;area=manageboards;sa=cat
-		- uses the modify_category sub-template of the ManageBoards template.
+		- uses the modify_category block of the ManageBoards template.
 		- requires manage_boards permission.
 		- also used to show the confirm deletion of category screen
-		  (sub-template confirm_category_delete).
+		  (block confirm_category_delete).
 
 	void EditCategory2()
 		- function for handling a submitted form saving the category.
@@ -48,10 +48,10 @@ if (!defined('WEDGE'))
 	void EditBoard()
 		- screen for editing and repositioning a board.
 		- called by ?action=admin;area=manageboards;sa=board
-		- uses the modify_board sub-template of the ManageBoards template.
+		- uses the modify_board block of the ManageBoards template.
 		- requires manage_boards permission.
 		- also used to show the confirm deletion of category screen
-		  (sub-template confirm_board_delete).
+		  (block confirm_board_delete).
 
 	void EditBoard2()
 		- function for handling a submitted form saving the board.
@@ -298,12 +298,12 @@ function EditCategory()
 	}
 	if (!isset($_REQUEST['delete']))
 	{
-		loadSubTemplate('modify_category');
+		loadBlock('modify_category');
 		$context['page_title'] = $_REQUEST['sa'] == 'newcat' ? $txt['mboards_new_cat_name'] : $txt['catEdit'];
 	}
 	else
 	{
-		loadSubTemplate('confirm_category_delete');
+		loadBlock('confirm_category_delete');
 		$context['page_title'] = $txt['mboards_delete_cat'];
 	}
 }
@@ -593,12 +593,12 @@ function EditBoard()
 
 	if (!isset($_REQUEST['delete']))
 	{
-		loadSubTemplate('modify_board');
+		loadBlock('modify_board');
 		$context['page_title'] = $txt['boardsEdit'];
 	}
 	else
 	{
-		loadSubTemplate('confirm_board_delete');
+		loadBlock('confirm_board_delete');
 		$context['page_title'] = $txt['mboards_delete_board'];
 	}
 }
@@ -796,7 +796,7 @@ function EditBoardSettings($return_config = false)
 	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
 
 	loadTemplate('ManageBoards');
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 
 	// Add some JavaScript stuff for the recycle box.
 	add_js('

@@ -43,7 +43,7 @@ function ManageMemberOptions()
 
 	// Will need the utility functions from here.
 	loadSource('ManageServer');
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 	
 	$context['page_title'] = $txt['themeadmin_reset_title'];
 
@@ -141,7 +141,7 @@ function ModifySignatureSettings($return_config = false)
 
 	// Setup the template.
 	$context['page_title'] = $txt['signature_settings'];
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 
 	// Disable the max smileys option if we don't allow smileys at all!
 	add_js('
@@ -463,7 +463,7 @@ function pauseSignatureApplySettings()
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '2';
-	loadSubTemplate('not_done');
+	loadBlock('not_done');
 
 	// Specific stuff to not break this template!
 	$context[$context['admin_menu_name']]['current_subsection'] = 'sig';
@@ -483,7 +483,7 @@ function ShowCustomProfiles()
 	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
 
 	$context['page_title'] = $txt['custom_profile_title'];
-	loadSubTemplate('show_custom_profile');
+	loadBlock('show_custom_profile');
 
 	// What about standard fields they can tweak?
 	$standard_fields = array('location', 'gender', 'website', 'posts', 'warning_status');
@@ -771,7 +771,7 @@ function EditCustomProfiles()
 	$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;
 	$context[$context['admin_menu_name']]['current_subsection'] = 'profile';
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
-	loadSubTemplate('edit_profile_field');
+	loadBlock('edit_profile_field');
 
 	// Load the profile language for section names.
 	loadLanguage('Profile');

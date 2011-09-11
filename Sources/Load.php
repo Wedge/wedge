@@ -1398,7 +1398,7 @@ function detectBrowser()
  * - Set up common server-side settings for later reference (in case of server configuration specific tweaks)
  * - Ensure the forum name is the first item in the link tree.
  * - Load the wireless template or the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
- * - Initialize the theme by calling the init subtemplate.
+ * - Initialize the theme by calling the init block.
  * - Load any theme specific language files.
  * - See if scheduled tasks need to be loaded, if so add the call into the HTML header so they will be triggered next page load.
  * - Call the load_theme hook.
@@ -1776,7 +1776,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Initialize the theme and load the default macros.
-	execSubTemplate('init', 'ignore');
+	execBlock('init', 'ignore');
 
 	// Now we initialize the search/replace pairs for macros.
 	// They can be overloaded in a skin's skin.xml file.
@@ -1804,7 +1804,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Did we find an override for the skeleton? If not, load the default one.
 	if (empty($context['skeleton']))
-		execSubTemplate('skeleton', 'ignore');
+		execBlock('skeleton', 'ignore');
 
 	// Now we have a $context['skeleton'] (original or overridden), we can turn it into an array.
 	$context['skeleton_array'] = array();
@@ -1948,7 +1948,7 @@ function build_skeleton(&$arr, &$dest, &$pos = 0, $name = '')
 
 			build_skeleton($arr, $dest[$layer[0]], $pos, $layer[0]);
 		}
-		// Then it's a sub-template...
+		// Then it's a block...
 		else
 			$dest[$tag[2]] = true;
 	}
@@ -2033,27 +2033,27 @@ function loadTemplate($template_name, $fatal = true)
 }
 
 /**
- * Actually display a sub template.
+ * Actually display a template block.
  *
  * This is called by the header and footer templates to actually have content output to the buffer; this directs which template_ functions are called, including logging them for debugging purposes.
  *
  * Additionally, if debug is part of the URL (?debug or ;debug), there will be divs added for administrators to mark where template layers begin and end, with orange background and red borders.
  *
- * @param string $sub_template_name The name of the function (without template_ prefix) to be called.
+ * @param string $block_name The name of the function (without template_ prefix) to be called.
  * @param mixed $fatal Whether to die fatally on a template not being available; if passed as boolean false, it is a fatal error through the usual template layers and including forum header. Also accepted is the string 'ignore' which means to skip the error; otherwise end execution with a basic text error message.
  */
-function execSubTemplate($sub_template_name, $fatal = false)
+function execBlock($block_name, $fatal = false)
 {
 	global $context, $settings, $options, $txt, $db_show_debug;
 
-	if (empty($sub_template_name))
+	if (empty($block_name))
 		return;
 
 	if ($db_show_debug === true)
-		$context['debug']['sub_templates'][] = $sub_template_name;
+		$context['debug']['blocks'][] = $block_name;
 
 	// Figure out what the template function is named.
-	$theme_function = 'template_' . $sub_template_name;
+	$theme_function = 'template_' . $block_name;
 
 	// !!! Doing these tests is relatively slow, but there aren't that many. In case performance worsens,
 	// !!! we should cache the function list (get_defined_functions()) and isset() against the cache.
@@ -2065,31 +2065,31 @@ function execSubTemplate($sub_template_name, $fatal = false)
 	elseif (function_exists($theme_function))
 		$theme_function();
 	elseif ($fatal === false)
-		fatal_lang_error('theme_template_error', 'template', array((string) $sub_template_name));
+		fatal_lang_error('theme_template_error', 'template', array((string) $block_name));
 	elseif ($fatal !== 'ignore')
-		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the "%s" sub-template!', (string) $sub_template_name), 'template'));
+		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the "%s" template block!', (string) $block_name), 'template'));
 
 	if (function_exists($theme_function_after = $theme_function . '_after'))
 		$theme_function_after();
 
 	// Are we showing debugging for templates? Just make sure not to do it before the doctype...
-	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $sub_template_name !== 'init' && ob_get_length() > 0 && !isset($_REQUEST['xml']))
+	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $block_name !== 'init' && ob_get_length() > 0 && !isset($_REQUEST['xml']))
 		echo '
-<div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold;">---- ', $sub_template_name, ' ends ----</div>';
+<div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold;">---- ', $block_name, ' ends ----</div>';
 }
 
 /**
- * Build a list of sub-templates.
+ * Build a list of template blocks.
  *
- * @param string $sub_templates The name of the function(s) (without template_ prefix) to be called.
+ * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
  * @param string $target Which layer to load this function in, e.g. 'main' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc.
- * @param boolean $overwrite Overwrite existing sub-templates. Useful if you provide a default sub-template and then override it.
+ * @param boolean $overwrite Overwrite existing blocks. Useful if you provide a default block and then override it.
  */
-function loadSubTemplate($sub_templates, $target = 'main', $overwrite = true)
+function loadBlock($blocks, $target = 'main', $overwrite = true)
 {
 	global $context;
 
-	$sub_templates = array_flip((array) $sub_templates);
+	$blocks = array_flip((array) $blocks);
 	foreach ((array) $target as $layer)
 	{
 		// Is the target layer wishful thinking?
@@ -2105,7 +2105,7 @@ function loadSubTemplate($sub_templates, $target = 'main', $overwrite = true)
 
 	// Don't bother with non-main elements in Wireless mode. Also, sidebar blocks shouldn't be overwritten. The more, the merrier.
 	if (!WIRELESS || $to === 'main')
-		$context['layers'][$to] = $overwrite && $to !== 'sidebar' ? $sub_templates : array_merge($context['layers'][$to], $sub_templates);
+		$context['layers'][$to] = $overwrite && $to !== 'sidebar' ? $blocks : array_merge($context['layers'][$to], $blocks);
 }
 
 /**
@@ -2121,7 +2121,7 @@ function loadLayer($layer, $target = 'main', $where = 'parent')
 
 	/*
 		This is the full list of $where possibilities.
-		<layer> is $layer, <target> is $target, and <sub> is anything already inside <target>, sub-template or layer.
+		<layer> is $layer, <target> is $target, and <sub> is anything already inside <target>, block or layer.
 		(It's a work in progress...)
 
 		parent		wrap around the target (default)						<layer><target><sub /></target></layer>

@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
  *
  * - The topic must be specified in the URL (topic=xyz)
  * - Permission to access the topic is ascertained elsewhere where $topic is resolved as standard from the URL component.
- * - Unlike normal pages, this uses the printpage templates only; this consists of a printpage template layer (above/below pair) with the main subtemplate resolving the post content.
+ * - Unlike normal pages, this uses the printpage templates only; this consists of a printpage template layer (above/below pair) with the main block resolving the post content.
  * - Accessed via ?action=printpage.
  * - There is a directive to the search engines not to index this page both specified here ($context['robot_no_index']), as well as explicitly stated in the template (without checking $context). Additionally the page does direct to the regular topic view as the canonical URL.
  * - Unlike the regular topic view, which includes pagination and a callback system to save memory, this function does neither, calling all the posts in a single query and building an array of every possible post at once. For very long topics this can cause memory issues.

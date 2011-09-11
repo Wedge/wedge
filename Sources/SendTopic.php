@@ -270,7 +270,7 @@ function CustomEmail()
 			redirectexit();
 	}
 
-	loadSubTemplate('custom_email');
+	loadBlock('custom_email');
 	$context['page_title'] = $txt['send_email'];
 }
 

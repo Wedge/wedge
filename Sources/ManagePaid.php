@@ -163,7 +163,7 @@ function ModifySubscriptionSettings($return_config = false)
 
 	// Some important context stuff
 	$context['page_title'] = $txt['settings'];
-	loadSubTemplate('show_settings');
+	loadBlock('show_settings');
 	$context['settings_message'] = $txt['paid_note'];
 	$context[$context['admin_menu_name']]['current_subsection'] = 'settings';
 
@@ -368,7 +368,7 @@ function ViewSubscriptions()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'subscription_list';
 }
 
@@ -381,7 +381,7 @@ function ModifySubscription()
 	$context['action_type'] = $context['sub_id'] ? (isset($_REQUEST['delete']) ? 'delete' : 'edit') : 'add';
 
 	// Setup the template.
-	loadSubTemplate($context['action_type'] == 'delete' ? 'delete_subscription' : 'modify_subscription');
+	loadBlock($context['action_type'] == 'delete' ? 'delete_subscription' : 'modify_subscription');
 	$context['page_title'] = $txt['paid_' . $context['action_type'] . '_subscription'];
 
 	// Delete it?
@@ -862,7 +862,7 @@ function ViewSubscribedUsers()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	loadSubTemplate('show_list');
+	loadBlock('show_list');
 	$context['default_list'] = 'subscribed_users_list';
 }
 
@@ -937,7 +937,7 @@ function ModifyUserSubscription()
 	$context['action_type'] = $context['log_id'] ? 'edit' : 'add';
 
 	// Setup the template.
-	loadSubTemplate('modify_user_subscription');
+	loadBlock('modify_user_subscription');
 	$context['page_title'] = $txt[$context['action_type'] . '_subscriber'];
 
 	// If we haven't been passed the subscription ID get it.

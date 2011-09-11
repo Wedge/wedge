@@ -20,7 +20,7 @@ if (!defined('WEDGE'))
  * - Accessed via ?action=help;in=xyz and subsequently $_GET['in'] is used as the identifier of the help to display.
  * - Identifies where a help string may be located (normally the Help language file, but if the string starts with permissionhelp, it also loads the permissions strings)
  * - steps through whether to use $helptxt (for administrative help strings as $txt[$_GET['in']] will be the option description), $txt (for permissions) or if not found, simply uses the provided string.
- * - Uses the Help template, popup subtemplate, removing all layers.
+ * - Uses the Help template, popup block, removing all layers.
  */
 function Help()
 {
@@ -46,7 +46,7 @@ function Help()
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['help'];
 
 	// Just show the popup sub template.
-	loadSubTemplate('popup');
+	loadBlock('popup');
 
 	// What help string should be used?
 	if (isset($helptxt[$_GET['in']]))

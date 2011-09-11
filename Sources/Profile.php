@@ -537,8 +537,8 @@ function ModifyProfile($post_errors = array())
 		);
 
 	// Set the template for this area and add the profile layer.
-	loadSubTemplate($profile_include_data['function']);
-	loadSubTemplate('profile_top', array(':top', 'top'));
+	loadBlock($profile_include_data['function']);
+	loadBlock('profile_top', array(':top', 'top'));
 
 	// All the subactions that require a user password in order to validate.
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
@@ -546,7 +546,7 @@ function ModifyProfile($post_errors = array())
 
 	// If we're in wireless then we have a cut down template...
 	if (WIRELESS && isset($context['layers']['main']['summary']))
-		loadSubTemplate(WIRELESS_PROTOCOL . '_profile');
+		loadBlock(WIRELESS_PROTOCOL . '_profile');
 
 	// These will get populated soon!
 	$post_errors = array();

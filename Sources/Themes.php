@@ -55,7 +55,7 @@ if (!defined('WEDGE'))
 	void PickTheme()
 		- allows user or administrator to pick a new theme with an interface.
 		- can edit everyone's (u = 0), guests' (u = -1), or a specific user's.
-		- uses the Themes template (pick subtemplate.)
+		- uses the Themes template (pick block.)
 		- accessed with ?action=theme;sa=pick or ?action=skin.
 
 	void ThemeInstall()
@@ -357,7 +357,7 @@ function ThemeList()
 	$context['reset_dir'] = realpath($boarddir . '/Themes');
 	$context['reset_url'] = $boardurl . '/Themes';
 
-	loadSubTemplate('list_themes');
+	loadBlock('list_themes');
 }
 
 // Administrative global settings.
@@ -442,7 +442,7 @@ function SetThemeOptions()
 				unset($context['themes'][$k]);
 
 		loadTemplate('Themes');
-		loadSubTemplate('reset_list');
+		loadBlock('reset_list');
 
 		return;
 	}
@@ -663,9 +663,9 @@ function SetThemeOptions()
 
 	// Let the theme take care of the settings.
 	loadTemplate('Settings');
-	execSubTemplate('options');
+	execBlock('options');
 
-	loadSubTemplate('set_options');
+	loadBlock('set_options');
 	$context['page_title'] = $txt['theme_settings'];
 
 	$context['options'] = $context['theme_options'];
@@ -764,7 +764,7 @@ function SetThemeSettings()
 	loadTheme($_GET['th'], false);
 
 	// Sadly we really do need to init the template.
-	execSubTemplate('init', 'ignore');
+	execBlock('init', 'ignore');
 
 	// Also load the actual themes language file - in case of special settings.
 	loadLanguage('Settings', '', true, true);
@@ -773,7 +773,7 @@ function SetThemeSettings()
 
 	// Let the theme take care of the settings.
 	loadTemplate('Settings');
-	execSubTemplate('settings');
+	execBlock('settings');
 
 	// Submitting!
 	if (isset($_POST['submit']))
@@ -831,7 +831,7 @@ function SetThemeSettings()
 		redirectexit('action=admin;area=theme;sa=settings;th=' . $_GET['th'] . ';' . $context['session_query']);
 	}
 
-	loadSubTemplate('set_settings');
+	loadBlock('set_settings');
 	$context['page_title'] = $txt['theme_settings'];
 
 	foreach ($settings as $setting => $dummy)
@@ -864,7 +864,7 @@ function SetThemeSettings()
 	loadTheme($old_id, false);
 
 	// Reinit just incase.
-	execSubTemplate('init', 'ignore');
+	execBlock('init', 'ignore');
 
 	$settings = $old_settings;
 
@@ -1147,7 +1147,7 @@ function PickTheme()
 	ksort($context['available_themes']);
 
 	$context['page_title'] = $txt['change_skin'];
-	loadSubTemplate('pick');
+	loadBlock('pick');
 }
 
 function ThemeInstall()
@@ -1181,7 +1181,7 @@ function ThemeInstall()
 		list ($theme_name) = wesql::fetch_row($result);
 		wesql::free_result($result);
 
-		loadSubTemplate('installed');
+		loadBlock('installed');
 		$context['page_title'] = $txt['theme_installed'];
 		$context['installed_theme'] = array(
 			'id' => (int) $_GET['theme_id'],
@@ -1496,7 +1496,7 @@ function EditTheme()
 			}
 		}
 
-		loadSubTemplate('edit_list');
+		loadBlock('edit_list');
 
 		return 'no_themes';
 	}
@@ -1553,7 +1553,7 @@ function EditTheme()
 		else
 			$context['theme_files'] = get_file_listing($theme_dir, '');
 
-		loadSubTemplate('edit_browse');
+		loadBlock('edit_browse');
 
 		return;
 	}
@@ -1627,7 +1627,7 @@ function EditTheme()
 			loadLanguage('Errors');
 
 			$context['session_error'] = true;
-			loadSubTemplate('edit_file');
+			loadBlock('edit_file');
 
 			// Recycle the submitted data.
 			$context['entire_file'] = htmlspecialchars($_POST['entire_file']);
@@ -1645,13 +1645,13 @@ function EditTheme()
 
 	if (substr($_REQUEST['filename'], -4) == '.css')
 	{
-		loadSubTemplate('edit_style');
+		loadBlock('edit_style');
 
 		$context['entire_file'] = htmlspecialchars(strtr(file_get_contents($theme_dir . '/' . $_REQUEST['filename']), array("\t" => '   ')));
 	}
 	elseif (substr($_REQUEST['filename'], -13) == '.template.php')
 	{
-		loadSubTemplate('edit_template');
+		loadBlock('edit_template');
 
 		if (!isset($error_file))
 			$file_data = file($theme_dir . '/' . $_REQUEST['filename']);
@@ -1685,7 +1685,7 @@ function EditTheme()
 	}
 	else
 	{
-		loadSubTemplate('edit_file');
+		loadBlock('edit_file');
 
 		$context['entire_file'] = htmlspecialchars(strtr(file_get_contents($theme_dir . '/' . $_REQUEST['filename']), array("\t" => '   ')));
 	}
@@ -1888,7 +1888,7 @@ function CopyTemplate()
 		$dir->close();
 	}
 
-	loadSubTemplate('copy_template');
+	loadBlock('copy_template');
 }
 
 /**

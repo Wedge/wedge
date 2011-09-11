@@ -191,7 +191,7 @@ function is_not_guest($message = '')
 	if (WIRELESS)
 	{
 		$context['login_error'] = $message ? $message : $txt['only_members_can_access'];
-		loadSubTemplate(WIRELESS_PROTOCOL . '_login');
+		loadBlock(WIRELESS_PROTOCOL . '_login');
 	}
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
 	elseif (!isset($context['layers']['main']))
@@ -202,7 +202,7 @@ function is_not_guest($message = '')
 	else
 	{
 		loadTemplate('Login');
-		loadSubTemplate('kick_guest');
+		loadBlock('kick_guest');
 		$context['robot_no_index'] = true;
 	}
 
@@ -1081,7 +1081,7 @@ function checkUserBehavior()
 			loadLanguage('Security');
 
 			// Figure out what we're going to tell the user
-			loadSubTemplate('fatal_error');
+			loadBlock('fatal_error');
 			$context['no_back_link'] = true;
 			$context['robot_no_index'] = true;
 			$context['page_title'] = $txt['http_error'] . ' ' . $error;
@@ -1094,7 +1094,7 @@ function checkUserBehavior()
 			$context['error_message'] = str_replace('{email_address}', str_replace("@", "+REMOVEME@REMOVEME.", $webmaster_email), $context['error_message']);
 			$context['error_message'] = str_replace('{incident}', '#' . $error_id, $context['error_message']);
 
-			// And we're done. Spit out header if appropriate, footer+subtemplate.htmlspecialchars(str_replace("@", "+nospam@nospam.", bb2_email()))
+			// And we're done. Spit out header if appropriate, footer and blocks.
 			obExit(null, true, false, true);
 		}
 	}

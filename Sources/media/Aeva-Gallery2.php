@@ -308,7 +308,7 @@ function aeva_moveItems()
 	add_linktree($galurl . 'sa=item;in=' . $items[0]['id_media'], $items[0]['title']);
 	add_linktree($galurl . 'sa=move;in=' . $items[0]['id_media'], $txt['media_moving']);
 
-	loadSubTemplate('aeva_form');
+	loadBlock('aeva_form');
 }
 
 function aeva_unseen()
@@ -417,11 +417,10 @@ function aeva_unseen()
 
 	$context['aeva_page_index'] = constructPageIndex($galurl . 'sa=unseen' . (isset($_REQUEST['album']) ? ';album=' . (int) $_REQUEST['album'] : ''), $start, $total_items, $per_page);
 
-	// Sub template and page title
 	$context['aeva_header']['data']['title'] = $txt['media_viewing_unseen'];
 	$context['page_title'] = $txt['media_viewing_unseen'];
-	loadSubTemplate('aeva_unseen');
 	$context['aeva_current'] = 'unseen';
+	loadBlock('aeva_unseen');
 	add_linktree($galurl . 'sa=unseen', $txt['media_viewing_unseen']);
 }
 
@@ -620,8 +619,7 @@ function aeva_mgSearch()
 		$context['aeva_page_index'] = constructPageIndex($pageindexURL, $start, $total_items, empty($context['current_board']) ? 15 : 30);
 		wesql::free_result($request);
 
-		// Sub template
-		loadSubTemplate('aeva_search_results');
+		loadBlock('aeva_search_results');
 		$context['aeva_searching_for'] = westr::htmlspecialchars($_REQUEST['search']);
 		$context['aeva_total_results'] = $total_items;
 
@@ -642,7 +640,7 @@ function aeva_mgSearch()
 	}
 	else
 	{
-		loadSubTemplate('aeva_search_searching');
+		loadBlock('aeva_search_searching');
 		$context['aeva_albums'] = $albums;
 	}
 }
@@ -689,7 +687,7 @@ function aeva_listAlbums()
 	$context['aeva_page_index'] = constructPageIndex($pageindexURL, $start, $total_items, $per_page);
 
 	// End this
-	loadSubTemplate('aeva_viewUserAlbums');
+	loadBlock('aeva_viewUserAlbums');
 	add_linktree($galurl . 'sa=vua', $txt['media_albums']);
 	$context['aeva_header']['data']['title'] = $txt['media_albums'];
 	$context['page_title'] = $txt['media_gallery'];
@@ -771,10 +769,10 @@ function aeva_mgStats()
 		'top_items_voters' => aeva_getTopItems(5, 'voters'),
 	);
 
+	loadBlock('aeva_stats');
 	$context['aeva_header']['data']['title'] = $txt['media_stats'];
-	$context['page_title'] = $txt['media_gallery'].' - '.$txt['media_stats'];
+	$context['page_title'] = $txt['media_gallery'] . ' - ' . $txt['media_stats'];
 	$context['aeva_current'] = 'stats';
-	loadSubTemplate('aeva_stats');
 	add_linktree($galurl . 'sa=stats', $txt['media_stats']);
 }
 
@@ -808,8 +806,7 @@ function aeva_albumCP($is_admin = false)
 		else
 			$sa[$_REQUEST['sa']][0]();
 
-	// Sub-Template
-	loadSubTemplate('aeva_album_cp');
+	loadBlock('aeva_album_cp');
 	loadLanguage('ManageMedia');
 
 	// Load the albums
@@ -884,8 +881,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 
 	$is_edit = !$is_add;
 
-	// Sub-Template
-	loadSubTemplate('aeva_form');
+	loadBlock('aeva_form');
 	$albums = array();
 	$primary_groups = array(0 => 0);
 
@@ -1995,7 +1991,7 @@ function aeva_massUpload()
 
 	if (empty($_REQUEST['upcook']))
 	{
-		loadSubTemplate('aeva_multiUpload');
+		loadBlock('aeva_multiUpload');
 		$max_php_size = (int) min(aeva_getPHPSize('upload_max_filesize'), aeva_getPHPSize('post_max_size'));
 
 		// Get the allowed type
@@ -2047,7 +2043,7 @@ function aeva_massUpload()
 	}
 
 	// Are we submitting?
-	loadSubTemplate('aeva_multiUpload_xml');
+	loadBlock('aeva_multiUpload_xml');
 	$context['errors'] = array();
 	$context['items'] = array();
 	$context['aeva_mu_id'] = mt_rand(1,10000000);
@@ -2311,8 +2307,7 @@ function aeva_profileSummary($memID)
 	foreach ($context['aeva_member']['top_albums'] as $k => $v)
 		$context['aeva_member']['top_albums'][$k]['percent'] = round(($v['total_items'] * 100) / $max);
 
-	// Sub template
-	loadSubTemplate('aeva_profile_summary');
+	loadBlock('aeva_profile_summary');
 	$context['page_title'] = $txt['media_profile_sum_pt'];
 }
 
@@ -2336,8 +2331,7 @@ function aeva_profileItems($memID)
 	// Load the items
 	$context['aeva_items'] = aeva_getMediaItems((int) $_REQUEST['start'], 20, 'm.id_media DESC', true, array(), 'm.id_member = '.$memID);
 
-	// Sub template
-	loadSubTemplate('aeva_profile_viewitems');
+	loadBlock('aeva_profile_viewitems');
 	$context['page_title'] = $txt['media_profile_viewitems'];
 }
 
@@ -2360,8 +2354,7 @@ function aeva_profileComments($memID)
 	// Load the items
 	$context['aeva_coms'] = aeva_getMediaComments((int) $_REQUEST['start'], 20, false, array(), 'com.id_member = '.$memID);
 
-	// Sub template
-	loadSubTemplate('aeva_profile_viewcoms');
+	loadBlock('aeva_profile_viewcoms');
 	$context['page_title'] = $txt['media_profile_viewcoms'];
 }
 
@@ -2448,8 +2441,7 @@ function aeva_profileVotes($memID)
 		$context['aeva_otherVoters'][] = $row;
 	wesql::free_result($request);
 
-	// Sub template
-	loadSubTemplate('aeva_profile_viewvotes');
+	loadBlock('aeva_profile_viewvotes');
 	$context['page_title'] = $txt['media_profile_viewvotes'];
 }
 
@@ -2498,8 +2490,7 @@ function aeva_whoRatedWhat()
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 	$context['page_index'] = constructPageIndex($galurl . 'sa=whoratedwhat;in=' . $context['item']['id_media'], $_REQUEST['start'], $context['item']['voters'], 20);
 
-	// Sub template
-	loadSubTemplate('aeva_whoRatedWhat');
+	loadBlock('aeva_whoRatedWhat');
 
 	add_linktree($galurl . 'sa=item;in=' . $context['item']['id_media'], $context['item']['title']);
 	add_linktree($galurl . 'sa=whoratedwhat;in=' . $context['item']['id_media'], $txt['media_who_rated_what']);
@@ -2556,8 +2547,8 @@ function aeva_massDownload()
 		),
 	);
 
+	loadBlock('aeva_form');
 	$context['page_title'] = $txt['media_multi_download'];
-	loadSubTemplate('aeva_form');
 	add_linktree(
 		$galurl . 'sa=album;in=' . $context['aeva_album']['id'],
 		$context['aeva_album']['name']
@@ -2673,7 +2664,7 @@ function aeva_massDownloadCreate()
 		// Save it...
 		$zip->saveFile($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album']);
 
-		loadSubTemplate('aeva_done');
+		loadBlock('aeva_done');
 		$context['aeva_done_txt'] = sprintf($txt['media_multi_dl_wait'], $_SESSION['aeva_mdl']['num_done'], $compte);
 		$context['header'] .= '
 	<meta http-equiv="refresh" content="2"; url=' . $galurl . 'sa=massdown;do=create">';
