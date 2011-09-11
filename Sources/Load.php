@@ -2083,11 +2083,20 @@ function execBlock($block_name, $fatal = false)
  *
  * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
  * @param string $target Which layer to load this function in, e.g. 'main' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc.
- * @param boolean $overwrite Overwrite existing blocks. Useful if you provide a default block and then override it.
+ * @param boolean $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
  */
-function loadBlock($blocks, $target = 'main', $overwrite = true)
+function loadBlock($blocks, $target = 'main', $where = 'replace')
 {
 	global $context;
+
+	/*
+		This is the full list of $where possibilities.
+		<block> is our source block, <layer> is our $target layer, and <sub> is anything already inside <layer>, block or layer.
+
+		replace		replace existing blocks and layers with this	<layer>       <block />     </layer>
+		add			add block at the end of the layer				<layer> <other /> <block /> </layer>
+		first		add in first position							<layer> <block /> <other /> </layer>
+	*/
 
 	$blocks = array_flip((array) $blocks);
 	foreach ((array) $target as $layer)
@@ -2100,12 +2109,18 @@ function loadBlock($blocks, $target = 'main', $overwrite = true)
 		if (isset($to))
 			break;
 	}
-	if (empty($to))
-		$to = 'main';
+	$target = empty($to) ? 'main' : $to;
 
-	// Don't bother with non-main elements in Wireless mode. Also, sidebar blocks shouldn't be overwritten. The more, the merrier.
-	if (!WIRELESS || $to === 'main')
-		$context['layers'][$to] = $overwrite && $to !== 'sidebar' ? $blocks : array_merge($context['layers'][$to], $blocks);
+	// Don't bother with non-main elements in Wireless mode.
+	if (WIRELESS && $target !== 'main')
+		return;
+
+	if ($where === 'replace' || $where === false)
+		$context['layers'][$target] = $blocks;
+	elseif ($where === 'add' || $where === true)
+		$context['layers'][$target] = array_merge($blocks, $context['layers'][$target]);
+	elseif ($where === 'first')
+		$context['layers'][$target] = array_merge(array_reverse($blocks), $context['layers'][$target]);
 }
 
 /**
@@ -2122,16 +2137,15 @@ function loadLayer($layer, $target = 'main', $where = 'parent')
 	/*
 		This is the full list of $where possibilities.
 		<layer> is $layer, <target> is $target, and <sub> is anything already inside <target>, block or layer.
-		(It's a work in progress...)
 
-		parent		wrap around the target (default)						<layer><target><sub /></target></layer>
-		child		insert between the target and its current children		<target><layer><sub /></layer></target>
-		replace		replace the layer but not its current contents			<layer>         <sub />        </layer>
-		erase		replace the layer and empty its contents				<layer>                        </layer>
-		before		add before the item										<layer></layer><target><sub /></target>
-		after		add after the item										<target><sub /></target><layer></layer>
-		firstchild	add as a child to the target, in first position			<target><layer></layer><sub /></target>
-		lastchild	add as a child to the target, in last position			<target><sub /><layer></layer></target>
+		parent		wrap around the target (default)						<layer> <target> <sub /> </target> </layer>
+		child		insert between the target and its current children		<target> <layer> <sub /> </layer> </target>
+		replace		replace the layer but not its current contents			<layer>          <sub />           </layer>
+		erase		replace the layer and empty its contents				<layer>                            </layer>
+		before		add before the item										<layer> </layer> <target> <sub /> </target>
+		after		add after the item										<target> <sub /> </target> <layer> </layer>
+		firstchild	add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
+		lastchild	add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
 	*/
 
 	// Not a valid layer..? Enter brooding mode.
@@ -2193,6 +2207,7 @@ function skeleton_insert_layer(&$source, &$dest, $target = 'main', $where = 'par
 			$temp[$key] = $value;
 	}
 	$dest = $temp;
+
 	// !! This seems to work, and I'm the first surprised.
 	// !! If it ends up breaking, use build_skeleton_indexes() instead!
 	$context['layers'][$source] =& $dest[$source];
