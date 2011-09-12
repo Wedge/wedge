@@ -2090,13 +2090,17 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 	global $context;
 
 	/*
-		This is the full list of $where possibilities.
+		This is the full list of $where possibilities. 'replace' is the default, meant for use in the main layer.
 		<blocks> is our source block(s), <layer> is our $target layer, and <other> is anything already inside <layer>, block or layer.
 
 		replace		replace existing blocks with this, leave layers in		<layer> <blocks /> <other /> </layer>
 		erase		replace existing blocks AND layers with this			<layer>       <blocks />     </layer>
+
 		add			add block(s) at the end of the layer					<layer> <other /> <blocks /> </layer>
 		first		add block(s) at the beginning of the layer				<layer> <blocks /> <other /> </layer>
+
+		before		add block(s) before the specified layer or block		    <blocks /> <layer-or-block />
+		after		add block(s) after the specified layer or block			    <layer-or-block /> <blocks />
 	*/
 
 	$blocks = array_flip((array) $blocks);
@@ -2110,7 +2114,7 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 		if (isset($to))
 			break;
 	}
-	$target = empty($to) ? 'main' : $to;
+	$target = empty($to) ? ($where === 'before' || $where === 'after' ? (is_array($target) ? reset($target) : $target) : 'main') : $to;
 
 	// Don't bother with non-main elements in Wireless mode.
 	if (WIRELESS && $target !== 'main')
@@ -2163,6 +2167,23 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 		$context['layers'][$target] = array_merge($blocks, $context['layers'][$target]);
 	elseif ($where === 'first')
 		$context['layers'][$target] = array_merge(array_reverse($blocks), $context['layers'][$target]);
+	elseif ($where === 'before' || $where === 'after')
+	{
+		foreach ($context['layers'] as &$layer)
+		{
+			if (isset($layer[$target]))
+			{
+				$keys = array_keys($layer);
+				$val = array_values($layer);
+				$offset = array_search($target, $keys) + ($where === 'after' ? 1 : 0);
+				array_splice($keys, $offset, 0, array_keys($blocks));
+				array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
+				$layer = array_combine($keys, $val);
+				build_skeleton_indexes($context['skeleton_array']);
+				break;
+			}
+		}
+	}
 }
 
 /**
@@ -2182,10 +2203,13 @@ function loadLayer($layer, $target = 'main', $where = 'parent')
 
 		parent		wrap around the target (default)						<layer> <target> <sub /> </target> </layer>
 		child		insert between the target and its current children		<target> <layer> <sub /> </layer> </target>
+
 		replace		replace the layer but not its current contents			<layer>          <sub />           </layer>
 		erase		replace the layer and empty its contents				<layer>                            </layer>
+
 		before		add before the item										<layer> </layer> <target> <sub /> </target>
 		after		add after the item										<target> <sub /> </target> <layer> </layer>
+
 		firstchild	add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
 		lastchild	add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
 	*/
