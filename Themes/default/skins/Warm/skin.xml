@@ -50,11 +50,13 @@
 
 			- use <self closing tags /> to define blocks (i.e. straightforward functions)
 
-			- use a colon (:) to define hints, e.g. <layer:top,main> would mean
-			  "<layer> is the default destination for ':top' and ':main' layer requests.
+			- use a colon (:) to define hints, e.g. <mylayer:top,main> would mean
+			  "<mylayer> is the default destination for ':top' and ':main' layer requests.
 			  For instance, if you know a layer is going to be on the left of the screen,
 			  or in the sidebar, and you want mods to be able to add elements to that layer
-			  without knowing its name, name it <whatever:left> or <whatever:side>.
+			  without knowing its name, name it <whatever:left> or <whatever:side>. Mods can
+			  then later call loadBlock('my_block', array(':left', ':side'), 'add') to add
+			  their code to the left side, or if not found in the skin, the default sidebar.
 
 		Overrides the theme's $context['skeleton'] variable.
 	-->
@@ -68,7 +70,7 @@
 				<wrapper>
 					<!-- A sidebar wrapper is necessary if you want maximum compatibility. It should open and close a table, or a compatible div. -->
 					<sidebar_wrap>
-						<sidebar:side>
+						<sidebar:left,side>
 							<!-- This is where Wedge will insert any side information. -->
 						</sidebar>
 					</sidebar_wrap>

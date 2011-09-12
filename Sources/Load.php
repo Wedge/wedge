@@ -1810,7 +1810,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['skeleton_array'] = array();
 	$context['layer_hints'] = array();
 	$context['layers'] = array();
-	preg_match_all('~<(?!!)(/)?([\w:]+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
+	preg_match_all('~<(?!!)(/)?([\w:,]+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
 	build_skeleton($match, $context['skeleton_array']);
 
 	// Guests may still need a name
@@ -2091,11 +2091,12 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 
 	/*
 		This is the full list of $where possibilities.
-		<block> is our source block, <layer> is our $target layer, and <sub> is anything already inside <layer>, block or layer.
+		<blocks> is our source block(s), <layer> is our $target layer, and <other> is anything already inside <layer>, block or layer.
 
-		replace		replace existing blocks and layers with this	<layer>       <block />     </layer>
-		add			add block at the end of the layer				<layer> <other /> <block /> </layer>
-		first		add in first position							<layer> <block /> <other /> </layer>
+		replace		replace existing blocks with this, leave layers in		<layer> <blocks /> <other /> </layer>
+		erase		replace existing blocks AND layers with this			<layer>       <blocks />     </layer>
+		add			add block(s) at the end of the layer					<layer> <other /> <blocks /> </layer>
+		first		add block(s) at the beginning of the layer				<layer> <blocks /> <other /> </layer>
 	*/
 
 	$blocks = array_flip((array) $blocks);
@@ -2115,9 +2116,50 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 	if (WIRELESS && $target !== 'main')
 		return;
 
-	if ($where === 'replace' || $where === false)
-		$context['layers'][$target] = $blocks;
-	elseif ($where === 'add' || $where === true)
+	// If a mod requests to replace the contents of the sidebar, just smile politely.
+	if (($where === 'replace' || $where === 'erase') && $target === (isset($context['layer_hints']['side']) ? $context['layer_hints']['side'] : 'sidebar'))
+		$where = 'add';
+
+	if ($where === 'replace' || $where === 'erase')
+	{
+		$has_arrays = false;
+		if ($where === 'replace')
+			foreach ($context['layers'][$target] as $item)
+				$has_arrays |= is_array($item);
+
+		// Most likely case: no child layers (or erase all). Replace away!
+		if (!$has_arrays)
+		{
+			$context['layers'][$target] = $blocks;
+			return;
+		}
+		// Otherwise, we're in for some fun... :-/
+		$keys = array_keys($context['layers'][$target]);
+		foreach ($keys as $id)
+		{
+			$item =& $context['layers'][$target][$id];
+			if (!is_array($item))
+			{
+				// We're going to insert our block(s) right before the first block we find...
+				if (!isset($offset))
+				{
+					$val = array_values($context['layers'][$target]);
+					$offset = array_search($id, $keys, true);
+					array_splice($keys, $offset, 0, array_keys($blocks));
+					array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
+					$context['layers'][$target] = array_combine($keys, $val);
+				}
+				// ...And then we delete the other block(s) and leave the layers where they are.
+				unset($context['layers'][$target][$id]);
+			}
+		}
+		// So, we found a layer but no blocks..? Add our blocks at the end.
+		if (!isset($offset))
+			$context['layers'][$target] += $blocks;
+		else
+			build_skeleton_indexes($context['skeleton_array']);
+	}
+	elseif ($where === 'add')
 		$context['layers'][$target] = array_merge($blocks, $context['layers'][$target]);
 	elseif ($where === 'first')
 		$context['layers'][$target] = array_merge(array_reverse($blocks), $context['layers'][$target]);
