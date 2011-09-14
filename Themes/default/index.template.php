@@ -115,9 +115,9 @@ function template_skeleton()
 						<offside_wrap>
 							<main_wrap>
 								<top:top></top>
-								<main:main>
+								<context:main>
 									<main />
-								</main>
+								</context>
 							</main_wrap>
 						</offside_wrap>
 					</content_wrap>

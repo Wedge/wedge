@@ -545,7 +545,7 @@ function ModifyProfile($post_errors = array())
 	$context['require_password'] = $check_password && empty($user_settings['openid_uri']);
 
 	// If we're in wireless then we have a cut down template...
-	if (WIRELESS && isset($context['layers']['main']['summary']))
+	if (WIRELESS && isset($context['layers']['context']['summary']))
 		loadBlock(WIRELESS_PROTOCOL . '_profile');
 
 	// These will get populated soon!

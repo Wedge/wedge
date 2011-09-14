@@ -93,10 +93,10 @@
 									<!-- If you need to add any content before the main entry point, this is your choice layer. -->
 								</top>
 
-								<main:main>
+								<context:main>
 									<!-- The main entry point, where all pages add their contextual content by default. -->
 									<main />
-								</main>
+								</context>
 							</main_wrap>
 						</content_wrap>
 

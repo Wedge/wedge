@@ -816,7 +816,7 @@ function loadPermissions()
 	}
 
 	// If it is detected as a robot, and we are restricting permissions as a special group - then implement this.
-	$spider_restrict = $user_info['possibly_robot'] && !empty($modSettings['spider_group']) ? ' OR (id_group = {int:spider_group} && add_deny = 0)' : '';
+	$spider_restrict = $user_info['possibly_robot'] && !empty($modSettings['spider_group']) ? ' OR (id_group = {int:spider_group} AND add_deny = 0)' : '';
 
 	if (empty($user_info['permissions']))
 	{
@@ -1718,11 +1718,20 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	if (!isset($txt))
 		$txt = array();
+
+	// These simple actions will skip the index template entirely. Don't use macros in their templates!
 	$simpleActions = array(
 		'findmember',
 		'printpage',
 		'spellcheck',
 	);
+
+	// Initializing the Wedge templating magic.
+	$context['macros'] = array();
+	$context['skeleton'] = '';
+	$context['skeleton_array'] = array();
+	$context['layer_hints'] = array();
+	$context['layers'] = array();
 
 	// Wireless mode? Load up the wireless stuff.
 	if (WIRELESS)
@@ -1731,16 +1740,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 		loadLanguage('Wireless+index+Modifications');
 		hideChrome(WIRELESS_PROTOCOL);
 	}
-	// Output is fully XML, so no need for the index template.
-	elseif (isset($_REQUEST['xml']))
+	// Output is fully XML or a simple action?
+	elseif (isset($_REQUEST['xml']) || !empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
 	{
-		loadLanguage('index+Modifications');
-		loadTemplate('Xml');
-		hideChrome();
-	}
-	// These actions don't require the index template at all. Meaning: don't use macros in their templates...
-	elseif (!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
-	{
+		if (isset($_REQUEST['xml']))
+			loadTemplate('Xml');
 		loadLanguage('index+Modifications');
 		hideChrome();
 	}
@@ -1759,59 +1763,53 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// ...and attempt to load their associated language files.
 		$required_files = implode('+', array_merge($templates, array('Modifications')));
 		loadLanguage($required_files, '', false);
-	}
 
-	// Initialize our JS files to cache right before we run template_init().
-	if (empty($modSettings['jquery_origin']) || $modSettings['jquery_origin'] === 'local')
-		$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js');
-	else
-	{
-		$remote = array(
-			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
-			'jquery' =>		'http://code.jquery.com/jquery-1.5.2.min.js',
-			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
-		);
-		$context['remote_javascript_files'] = array($remote[$modSettings['jquery_origin']]);
-		$context['javascript_files'] = array('scripts/script.js');
-	}
-
-	// Initialize the theme and load the default macros.
-	execBlock('init', 'ignore');
-
-	// Now we initialize the search/replace pairs for macros.
-	// They can be overloaded in a skin's skin.xml file.
-	$context['macros'] = array();
-
-	if (!empty($settings['macros']))
-	{
-		foreach ($settings['macros'] as $name => $contents)
+		// Initialize our JS files to cache right before we run template_init().
+		if (empty($modSettings['jquery_origin']) || $modSettings['jquery_origin'] === 'local')
+			$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js');
+		else
 		{
-			if (is_array($contents))
-				$contents = isset($contents[$context['browser']['agent']]) ? $contents[$context['browser']['agent']] :
-						(isset($contents['else']) ? $contents['else'] : '{body}');
-
-			$context['macros'][$name] = array(
-				'has_if' => strpos($contents, '<if:') !== false,
-				'body' => str_replace(array('{scripturl}'), array($scripturl), trim($contents)),
+			$remote = array(
+				'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
+				'jquery' =>		'http://code.jquery.com/jquery-1.5.2.min.js',
+				'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
 			);
+			$context['remote_javascript_files'] = array($remote[$modSettings['jquery_origin']]);
+			$context['javascript_files'] = array('scripts/script.js');
 		}
+
+		// Initialize the theme and load the default macros.
+		execBlock('init', 'ignore');
+
+		// Now we initialize the search/replace pairs for macros.
+		// They can be overloaded in a skin's skin.xml file.
+		if (!empty($settings['macros']))
+		{
+			foreach ($settings['macros'] as $name => $contents)
+			{
+				if (is_array($contents))
+					$contents = isset($contents[$context['browser']['agent']]) ? $contents[$context['browser']['agent']] :
+							(isset($contents['else']) ? $contents['else'] : '{body}');
+
+				$context['macros'][$name] = array(
+					'has_if' => strpos($contents, '<if:') !== false,
+					'body' => str_replace(array('{scripturl}'), array($scripturl), trim($contents)),
+				);
+			}
+		}
+
+		// Now we'll override all of these...
+		loadSource('Subs-Cache');
+		wedge_get_skin_options();
+
+		// Did we find an override for the skeleton? If not, load the default one.
+		if (empty($context['skeleton']))
+			execBlock('skeleton', 'ignore');
+
+		// Now we have a $context['skeleton'] (original or overridden), we can turn it into an array.
+		preg_match_all('~<(?!!)(/)?([\w:,]+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
+		build_skeleton($match, $context['skeleton_array']);
 	}
-
-	// Now we'll override all of these...
-	loadSource('Subs-Cache');
-	$context['skeleton'] = '';
-	wedge_get_skin_options();
-
-	// Did we find an override for the skeleton? If not, load the default one.
-	if (empty($context['skeleton']))
-		execBlock('skeleton', 'ignore');
-
-	// Now we have a $context['skeleton'] (original or overridden), we can turn it into an array.
-	$context['skeleton_array'] = array();
-	$context['layer_hints'] = array();
-	$context['layers'] = array();
-	preg_match_all('~<(?!!)(/)?([\w:,]+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
-	build_skeleton($match, $context['skeleton_array']);
 
 	// Guests may still need a name
 	if ($context['user']['is_guest'] && empty($context['user']['name']))
@@ -2082,10 +2080,10 @@ function execBlock($block_name, $fatal = false)
  * Build a list of template blocks.
  *
  * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
- * @param string $target Which layer to load this function in, e.g. 'main' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc.
+ * @param string $target Which layer to load this function in, e.g. 'context' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc.
  * @param boolean $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
  */
-function loadBlock($blocks, $target = 'main', $where = 'replace')
+function loadBlock($blocks, $target = 'context', $where = 'replace')
 {
 	global $context;
 
@@ -2114,11 +2112,11 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 		if (isset($to))
 			break;
 	}
-	$target = empty($to) ? ($where === 'before' || $where === 'after' ? (is_array($target) ? reset($target) : $target) : 'main') : $to;
-
-	// Don't bother with non-main elements in Wireless mode.
-	if (WIRELESS && $target !== 'main')
+	// Don't bother with non-main elements in Wireless and XML modes.
+	if (empty($to) && (WIRELESS || isset($_REQUEST['xml'])))
 		return;
+
+	$target = empty($to) ? ($where === 'before' || $where === 'after' ? (is_array($target) ? reset($target) : $target) : 'context') : $to;
 
 	// If a mod requests to replace the contents of the sidebar, just smile politely.
 	if (($where === 'replace' || $where === 'erase') && $target === (isset($context['layer_hints']['side']) ? $context['layer_hints']['side'] : 'sidebar'))
@@ -2127,7 +2125,7 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 	if ($where === 'replace' || $where === 'erase')
 	{
 		$has_arrays = false;
-		if ($where === 'replace')
+		if ($where === 'replace' && isset($context['layers'][$target]))
 			foreach ($context['layers'][$target] as $item)
 				$has_arrays |= is_array($item);
 
@@ -2135,6 +2133,9 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 		if (!$has_arrays)
 		{
 			$context['layers'][$target] = $blocks;
+			// If we erase, we might have to deleted layer entries.
+			if ($where === 'erase')
+				build_skeleton_indexes();
 			return;
 		}
 		// Otherwise, we're in for some fun... :-/
@@ -2157,11 +2158,11 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 				unset($context['layers'][$target][$id]);
 			}
 		}
+
 		// So, we found a layer but no blocks..? Add our blocks at the end.
 		if (!isset($offset))
 			$context['layers'][$target] += $blocks;
-		else
-			build_skeleton_indexes($context['skeleton_array']);
+		build_skeleton_indexes();
 	}
 	elseif ($where === 'add')
 		$context['layers'][$target] = array_merge($blocks, $context['layers'][$target]);
@@ -2179,7 +2180,7 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
 				array_splice($keys, $offset, 0, array_keys($blocks));
 				array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
 				$layer = array_combine($keys, $val);
-				build_skeleton_indexes($context['skeleton_array']);
+				build_skeleton_indexes();
 				break;
 			}
 		}
@@ -2190,10 +2191,10 @@ function loadBlock($blocks, $target = 'main', $where = 'replace')
  * Add a layer dynamically.
  *
  * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_above' and 'template_layer_below' functions.
- * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the 'main' layer (which doesn't accept any positioning, either.)
+ * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the 'context' layer (which doesn't accept any positioning, either.)
  * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
  */
-function loadLayer($layer, $target = 'main', $where = 'parent')
+function loadLayer($layer, $target = 'context', $where = 'parent')
 {
 	global $context;
 
@@ -2218,9 +2219,9 @@ function loadLayer($layer, $target = 'main', $where = 'parent')
 	if (!isset($context['layers'][$target]) || !is_array($context['layers'][$target]))
 		return;
 
-	if ($target === 'main' || $where === 'parent' || $where === 'before' || $where === 'after')
+	if ($target === 'context' || $where === 'parent' || $where === 'before' || $where === 'after')
 	{
-		skeleton_insert_layer($layer, $target, $target === 'main' ? 'parent' : $where);
+		skeleton_insert_layer($layer, $target, $target === 'context' ? 'parent' : $where);
 		return;
 	}
 	elseif ($where === 'child')
@@ -2245,7 +2246,7 @@ function loadLayer($layer, $target = 'main', $where = 'parent')
 	}
 }
 
-function skeleton_insert_layer(&$source, &$dest, $target = 'main', $where = 'parent')
+function skeleton_insert_layer(&$source, $target = 'context', $where = 'parent')
 {
 	global $context;
 
@@ -2253,10 +2254,14 @@ function skeleton_insert_layer(&$source, &$dest, $target = 'main', $where = 'par
 	{
 		if (isset($lay[$target]) && is_array($lay[$target]))
 		{
-			$dest = $lay;
+			$dest =& $lay;
 			break;
 		}
 	}
+	if (!isset($dest) && isset($context['layers']['context']))
+		$dest =& $context['layers']['context'];
+	if (!isset($dest))
+		return;
 
 	$temp = array();
 	foreach ($dest as $key => $value)
@@ -2272,11 +2277,9 @@ function skeleton_insert_layer(&$source, &$dest, $target = 'main', $where = 'par
 		else
 			$temp[$key] = $value;
 	}
-	$dest = $temp;
 
-	// !! This seems to work, and I'm the first surprised.
-	// !! If it ends up breaking, use build_skeleton_indexes() instead!
-	$context['layers'][$source] =& $dest[$source];
+	$dest = $temp;
+	build_skeleton_indexes();
 }
 
 /**

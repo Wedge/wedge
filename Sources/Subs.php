@@ -1178,7 +1178,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 
 	if ($do_finish)
 	{
-		if (WIRELESS && !isset($context['layers']['main']))
+		if (WIRELESS && !isset($context['layers']['context']))
 			fatal_lang_error('wireless_error_notyet', false);
 
 		if (!empty($context['skeleton_array']))
@@ -1222,7 +1222,7 @@ function render_skeleton(&$here, $key)
 	if (function_exists('template_' . $temp))
 		execBlock($temp, 'ignore');
 
-	if ($key === 'top' || $key === 'main')
+	if ($key === 'top' || $key === 'context')
 		while_we_re_here();
 
 	foreach ($here as $id => $temp)
@@ -1577,54 +1577,64 @@ function pretty_scripts_restore($match)
 }
 
 /**
- * A quick alias to tell Wedge to hide blocks that don't belong to the main flow.
+ * A quick alias to tell Wedge to hide blocks that don't belong to the main flow (context layer).
  *
- * @param array $layers An array with the layers we want to keep. Usually empty.
+ * @param array $layer The layers we want to keep, or 'html' for the main html/body layers. Leave empty to just keep the context layer.
  */
-function hideChrome($layers = null)
+function hideChrome($layer = '')
 {
 	global $context;
 
-	// Not XML or equivalent situation?
-	if (!empty($context['skeleton_array']))
-	{
-		// We only keep the main layer and content. (e.g. we're inside an Ajax frame)
-		if ($layers === null)
-			$context['skeleton_array'] = array(
-				'main' => $context['layers']['main']
-			);
-		// Or we only keep the HTML headers, body definition and content (e.g. we're inside a popup window)
-		elseif ($layers === 'html')
-			$context['skeleton_array'] = array(
-				'html' => array(
-					'body' => array(
-						'main' => $context['layers']['main']
-					)
+	if (empty($context['layers']['context']))
+		$context['layers']['context'] = array('main' => true);
+
+	// We only keep the context layer and its content. (e.g. we're inside an Ajax frame)
+	if (empty($layer))
+		$context['skeleton_array'] = array(
+			'dummy' => array(
+				'context' => $context['layers']['context']
+			)
+		);
+	// Or we only keep the HTML headers, body definition and content (e.g. we're inside a popup window)
+	elseif ($layer === 'html')
+		$context['skeleton_array'] = array(
+			'html' => array(
+				'body' => array(
+					'context' => $context['layers']['context']
 				)
-			);
-		// Or finally... Do we want to keep/add a specific layer, like 'print' maybe?
-		else
-			$context['skeleton_array'] = array(
-				'html' => array(
-					'body' => array(
-						$layer => array(
-							'main' => $context['layers']['main']
-						)
-					)
+			)
+		);
+	// Or finally... Do we want to keep/add a specific layer, like 'print' or wireless maybe?
+	else
+		$context['skeleton_array'] = array(
+			'dummy' => array(
+				$layer => array(
+					'context' => $context['layers']['context']
 				)
-			);
-		build_skeleton_indexes($context['skeleton_array']);
-	}
+			)
+		);
+	build_skeleton_indexes();
 
 	// Nothing to see here, sir.
 	$context['hide_chrome'] = true;
 }
 
 /**
- * Rebuild $context['layers'] according to current skeleton.
+ * Rebuilds $context['layers'] according to current skeleton.
  * The skeleton builder doesn't call this because it does it automatically.
  */
-function build_skeleton_indexes(&$here)
+function build_skeleton_indexes()
+{
+	global $context;
+
+	// We only reset the list of references, it won't impact the skeleton array.
+	$context['layers'] = array();
+
+	// !!! Saly, array_walk_recursive() won't trigger on child arrays... :(
+	build_skeleton_indexes_recursive($context['skeleton_array']);
+}
+
+function build_skeleton_indexes_recursive(&$here)
 {
 	global $context;
 
@@ -1633,7 +1643,7 @@ function build_skeleton_indexes(&$here)
 		if (is_array($item))
 		{
 			$context['layers'][$id] =& $item;
-			build_skeleton_indexes($item);
+			build_skeleton_indexes_recursive($item);
 		}
 	}
 }
@@ -1677,7 +1687,7 @@ function start_output()
 }
 
 /**
- * Use the opportunity to show some potential errors while we're showing the top or main layer...
+ * Use the opportunity to show some potential errors while we're showing the top or context layer...
  *
  * - If using a conventional theme (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
  * - If the user is post-banned, provide a nice warning for them.
@@ -1688,7 +1698,7 @@ function while_we_re_here()
 
 	static $checked_securityFiles = false, $showed_banned = false, $showed_behav_error = false;
 
-	// May seem contrived, but this is done in case the body and main layer aren't there...
+	// May seem contrived, but this is done in case the body and context layer aren't there...
 	// Was there a security error for the admin?
 	if ($context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
 	{
