@@ -616,7 +616,7 @@ function menu_show_me()
 	{
 		style.visibility = 'visible';
 		style.opacity = 1;
-		style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? parseInt($('span', this).css('width'), 10) : w - 5) + 'px';
+		style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? $('span', this).width() || 0 : w - 5) + 'px';
 		if (is_ie6)
 			menu_show_shim(true, id, hasul);
 	}

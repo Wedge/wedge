@@ -603,7 +603,7 @@ function aeva_splitTags($string, $separator = ',')
 	return $elements;
 }
 
-function aeva_string($str, $is_filename = true, $limit = 255, $ellipsis = true, $check_multibyte = false, $cut_long_words = false)
+function aeva_string($str, $is_filename = true, $limit = 255, $ellipsis = true, $check_multibyte = false, $cut_long_words = false, $hard_limit = 0)
 {
 	global $modSettings;
 
@@ -637,10 +637,10 @@ function aeva_entities2utf($mixed)
 
 function aeva_utf8_chr($code)
 {
-	if ($code<128) return chr($code);
-	elseif ($code<2048) return chr(($code>>6)+192).chr(($code&63)+128);
-	elseif ($code<65536) return chr(($code>>12)+224).chr((($code>>6)&63)+128).chr(($code&63)+128);
-	elseif ($code<2097152) return chr($code>>18+240).chr((($code>>12)&63)+128).chr(($code>>6)&63+128).chr($code&63+128);
+	if ($code < 128) return chr($code);
+	if ($code < 2048) return chr(($code >> 6) + 192) . chr(($code & 63) + 128);
+	if ($code < 65536) return chr(($code >> 12) + 224) . chr((($code >> 6) & 63) + 128) . chr(($code & 63) + 128);
+	if ($code < 2097152) return chr($code >> 18 + 240) . chr((($code >> 12) & 63) + 128) . chr(($code >> 6) & 63 + 128) . chr($code & 63 + 128);
 }
 
 ?>
