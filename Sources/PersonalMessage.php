@@ -110,6 +110,18 @@ function MessageMain()
 	// This file contains the basic functions for sending a PM.
 	loadSource('Subs-Post');
 
+	// Are we saving a draft? Sadly if we are, we have to do it here and refix everything ourselves.
+	if (isset($_REQUEST['draft']))
+	{
+		$session_timeout = checkSession('post', '', false) != '';
+		$draft = saveDraft(true, isset($_REQUEST['replied_to']) ? (int) $_REQUEST['replied_to'] : 0);
+		if (!empty($draft) && !$session_timeout)
+			if (isset($_GET['xml']))
+				draftXmlReturn($draft, true);
+			else
+				redirectexit('action=pm;draftsaved');
+	}
+
 	loadLanguage('PersonalMessage');
 
 	if (WIRELESS)
@@ -122,7 +134,7 @@ function MessageMain()
 		$context['message_limit'] = 0;
 	elseif (($context['message_limit'] = cache_get_data('msgLimit:' . $user_info['id'], 360)) === null)
 	{
-		// !!! Why do we do this?  It seems like if they have any limit we should use it.
+		// !!! Why do we do this? It seems like if they have any limit we should use it.
 		$request = wesql::query('
 			SELECT MAX(max_messages) AS top_limit, MIN(max_messages) AS bottom_limit
 			FROM {db_prefix}membergroups
@@ -246,7 +258,7 @@ function MessageMain()
 	$context['current_label'] = &$context['labels'][(int) $context['current_label_id']]['name'];
 	$context['folder'] = !isset($_REQUEST['f']) || $_REQUEST['f'] != 'sent' ? 'inbox' : 'sent';
 
-	// This is convenient.  Do you know how annoying it is to do this every time?!
+	// This is convenient. Do you know how annoying it is to do this every time?!
 	$context['current_label_redirect'] = 'action=pm;f=' . $context['folder'] . (isset($_GET['start']) ? ';start=' . $_GET['start'] : '') . (isset($_REQUEST['l']) ? ';l=' . $_REQUEST['l'] : '');
 	$context['can_issue_warning'] = allowedTo('issue_warning');
 
@@ -305,6 +317,7 @@ function messageIndexBar($area)
 				'',
 				'inbox' => array(
 					'label' => $txt['inbox'],
+					'notice' => '',
 					'custom_url' => $scripturl . '?action=pm',
 				),
 				'sent' => array(
@@ -314,6 +327,7 @@ function messageIndexBar($area)
 				'',
 				'showdrafts' => array(
 					'label' => $txt['pm_menu_drafts'],
+					'notice' => '',
 					'custom_url' => $scripturl . '?action=pm;sa=showdrafts',
 					'permission' => allowedTo('save_pm_draft'),
 				),
@@ -423,7 +437,7 @@ function messageIndexBar($area)
 	$pm_include_data = createMenu($pm_areas, $menuOptions);
 	unset($pm_areas);
 
-	// Make a note of the Unique ID for this menu.
+	// Make a note of the unique ID for this menu.
 	$context['pm_menu_id'] = $context['max_menu_id'];
 	$context['pm_menu_name'] = 'menu_data_' . $context['pm_menu_id'];
 
@@ -873,9 +887,10 @@ function MessageFolder()
 		$messages_request = false;
 
 	$context['can_send_pm'] = allowedTo('pm_send');
+	$context['page_title'] = $txt['pm_inbox'];
+
 	if (!WIRELESS)
 		loadBlock('folder');
-	$context['page_title'] = $txt['pm_inbox'];
 
 	// Finally mark the relevant messages as read.
 	if ($context['folder'] != 'sent' && !empty($context['labels'][(int) $context['current_label_id']]['unread_messages']))
@@ -889,7 +904,7 @@ function MessageFolder()
 	}
 }
 
-// Get a personal message for the theme.  (used to save memory.)
+// Get a personal message for the theme. (Used to save memory.)
 function prepareMessageContext($type = 'subject', $reset = false)
 {
 	global $txt, $scripturl, $modSettings, $context, $messages_request, $memberContext, $recipients;
@@ -1239,7 +1254,7 @@ function MessageSearch2()
 	$labelQuery = '';
 	if ($context['folder'] == 'inbox' && !empty($search_params['advanced']) && $context['currently_using_labels'])
 	{
-		// Came here from pagination?  Put them back into $_REQUEST for sanitization.
+		// Came here from pagination? Put them back into $_REQUEST for sanitization.
 		if (isset($search_params['labels']))
 			$_REQUEST['searchlabel'] = explode(',', $search_params['labels']);
 
@@ -1585,6 +1600,7 @@ function MessagePost()
 	isAllowedTo('pm_send');
 
 	loadLanguage('PersonalMessage');
+
 	// Just in case it was loaded from somewhere else.
 	if (!WIRELESS)
 	{
@@ -1742,7 +1758,7 @@ function MessagePost()
 		'bcc' => array(),
 	);
 
-	// Sending by ID?  Replying to all?  Fetch the real_name(s).
+	// Sending by ID? Replying to all? Fetch the real_name(s).
 	if (isset($_REQUEST['u']))
 	{
 		// If the user is replying to all, get all the other members this was sent to..
@@ -2099,17 +2115,6 @@ function MessagePost2()
 	loadLanguage('PersonalMessage', '', false);
 
 	$session_timeout = checkSession('post', '', false) != '';
-
-	// Are we saving a draft? Sadly if we are, we have to do it here and refix everything ourselves.
-	if (isset($_REQUEST['draft']))
-	{
-		$draft = saveDraft(true, isset($_REQUEST['replied_to']) ? (int) $_REQUEST['replied_to'] : 0);
-		if (!empty($draft) && !$session_timeout)
-			if (isset($_GET['xml']))
-				draftXmlReturn($draft, true);
-			else
-				redirectexit($context['current_label_redirect'] . ';draftsaved');
-	}
 
 	// Extract out the spam settings - it saves database space!
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
@@ -2542,7 +2547,7 @@ function MessageActionsApply()
 		{
 			$labels = $row['labels'] == '' ? array('-1') : explode(',', trim($row['labels']));
 
-			// Already exists?  Then... unset it!
+			// Already exists? Then... unset it!
 			$id_label = array_search($to_label[$row['id_pm']], $labels);
 			if ($id_label !== false && $label_type[$row['id_pm']] !== 'add')
 				unset($labels[$id_label]);
@@ -3172,7 +3177,7 @@ function ReportMessage()
 	{
 		loadBlock('report_message');
 
-		// !!! I don't like being able to pick who to send it to.  Favoritism, etc. sucks.
+		// !!! I don't like being able to pick who to send it to. Favoritism, etc. sucks.
 		// Now, get all the administrators.
 		$request = wesql::query('
 			SELECT id_member, real_name
@@ -3799,7 +3804,7 @@ function MessageDrafts()
 	$maxIndex = (int) $modSettings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=pm;area=showdrafts', $context['start'], $msgCount, $maxIndex);
+	$context['page_index'] = constructPageIndex($scripturl . '?action=pm;sa=showdrafts', $context['start'], $msgCount, $maxIndex);
 	$context['current_page'] = $context['start'] / $maxIndex;
 
 	// Reverse the query if we're past 50% of the pages for better performance.
