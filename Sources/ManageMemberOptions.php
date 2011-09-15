@@ -81,7 +81,7 @@ function ManageMemberOptions()
 
 function ModifyMemberSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
+	global $txt, $scripturl, $context, $settings, $modSettings;
 
 	$config_vars = array(
 			// Basic stuff, titles, flash, permissions...
@@ -480,7 +480,7 @@ function pauseSignatureApplySettings()
 // Show all the custom profile fields available to the user.
 function ShowCustomProfiles()
 {
-	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
+	global $txt, $scripturl, $context, $settings, $modSettings;
 
 	$context['page_title'] = $txt['custom_profile_title'];
 	loadBlock('show_custom_profile');
@@ -765,7 +765,7 @@ function list_getProfileFieldSize()
 // Edit some profile fields?
 function EditCustomProfiles()
 {
-	global $txt, $scripturl, $context, $settings, $sc;
+	global $txt, $scripturl, $context, $settings;
 
 	// Sort out the context!
 	$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;

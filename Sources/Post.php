@@ -70,9 +70,8 @@ if (!defined('WEDGE'))
  */
 function Post()
 {
-	global $txt, $scripturl, $topic, $modSettings, $board;
-	global $user_info, $sc, $board_info, $context, $settings;
-	global $options, $language;
+	global $txt, $scripturl, $topic, $modSettings, $board, $user_info;
+	global $board_info, $context, $settings, $options, $language;
 
 	loadLanguage('Post');
 

@@ -21,7 +21,7 @@ if (!defined('WEDGE'))
 // Entry point for the moderation center.
 function ModerationMain($dont_call = false)
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options;
+	global $txt, $context, $scripturl, $modSettings, $user_info, $settings, $options;
 
 	// Don't run this twice... and don't conflict with the admin bar.
 	if (isset($context['admin_area']))

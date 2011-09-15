@@ -1405,7 +1405,7 @@ function detectBrowser()
  */
 function loadTheme($id_theme = 0, $initialize = true)
 {
-	global $user_info, $user_settings, $board_info, $sc, $boarddir, $footer_coding;
+	global $user_info, $user_settings, $board_info, $boarddir, $footer_coding;
 	global $txt, $boardurl, $scripturl, $mbname, $modSettings, $language;
 	global $context, $settings, $options, $ssi_theme;
 

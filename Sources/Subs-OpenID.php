@@ -213,7 +213,7 @@ function we_openID_removeAssociation($handle)
 
 function we_openID_return()
 {
-	global $user_info, $user_profile, $modSettings, $context, $sc, $user_settings;
+	global $user_info, $user_profile, $modSettings, $context, $user_settings;
 
 	// Is OpenID even enabled?
 	if (empty($modSettings['enableOpenID']))

@@ -2693,7 +2693,11 @@ function saveDraft($is_pm, $id_context = 0)
 	wedit::preparsecode($message);
 
 	if (westr::htmltrim(westr::htmlspecialchars($subject)) === '' && westr::htmltrim(westr::htmlspecialchars($_POST['message']), ENT_QUOTES) === '')
+	{
+		if (!isset($txt['empty_draft']))
+			loadLanguage('Post');
 		fatal_lang_error('empty_draft', false);
+	}
 
 	$extra = array();
 

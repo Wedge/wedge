@@ -303,7 +303,7 @@ function MessageMain()
 // A sidebar to easily access different areas of the section
 function messageIndexBar($area)
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $settings, $user_info, $options;
+	global $txt, $context, $scripturl, $modSettings, $settings, $user_info, $options;
 
 	$pm_areas = array(
 		'folders' => array(

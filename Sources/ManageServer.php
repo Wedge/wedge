@@ -2051,7 +2051,7 @@ function prepareDBSettingContext(&$config_vars)
 // Helper function. Saves settings by putting them in Settings.php or saving them in the settings table.
 function saveSettings(&$config_vars)
 {
-	global $boarddir, $sc, $cookiename, $modSettings, $user_settings, $context, $cachedir;
+	global $boarddir, $cookiename, $modSettings, $user_settings, $context, $cachedir;
 
 	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))
