@@ -44,7 +44,7 @@ if (!defined('WEDGE'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $sc, $modSettings, $user_info, $settings, $options, $boardurl;
+	global $txt, $context, $scripturl, $modSettings, $user_info, $settings, $options, $boardurl;
 
 	// Load the language and templates....
 	loadLanguage('Admin');

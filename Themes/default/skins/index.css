@@ -312,7 +312,7 @@ em
 	background-repeat: no-repeat
 
 .wedgesymbol
-	background: transparent url($images/wedgesight.png) 99% 75% no-repeat
+	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
 
 // "With rounded corners" class, for modern browsers...
 .wrc, .wrc_top, .wrc_bottom

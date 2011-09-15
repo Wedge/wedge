@@ -34,6 +34,12 @@ body
 	a
 		color: #444
 
+@remove
+	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
+
+.wedgesymbol
+	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
+
 #top_section
 	background: darken(hue($main_bg, -50), 10%) url($images/theme/grad250.png) 0 -150px repeat-x
 
@@ -73,8 +79,6 @@ body
 	border-top: 2px solid darken($footer_bg, 20%)
 	background: $footer_bg
 	color: #333
-	div.frame extends .minilogo
-		background-position: 99% 17px
 	ul
 		padding: 0
 		li a
