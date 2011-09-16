@@ -1296,7 +1296,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 		{
 			$nrating = sprintf('%.2f', $total_rating / $nvotes);
 
-			$rating = substr($nrating, 0, 1);
+			$rating = $nrating[0];
 			$finr = substr($nrating, 2, 2);
 			if ($finr < 25) $star = $rating;
 			elseif ($finr < 75) $star = $rating . '5';
@@ -1569,7 +1569,7 @@ function setItemStyle(idx)
 		if (in_array('votes', $details) || in_array('none', $details))
 		{
 			$nrating = $i['voters'] == 0 ? 0 : sprintf('%.2f', $i['rating'] / $i['voters']);
-			$rating = substr($nrating, 0, 1);
+			$rating = $nrating[0];
 			$finr = substr($nrating, 2, 2);
 			$star = $finr < 25 ? $rating : ($finr < 75 ? $rating . '5' : $rating + 1);
 			$altstar = strlen($star) > 1 ? $rating . '.5' : $star;

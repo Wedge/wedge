@@ -485,7 +485,7 @@ function MessageFolder()
 	// Set up some basic theme stuff.
 	$context['from_or_to'] = $context['folder'] != 'sent' ? 'from' : 'to';
 	$context['get_pmessage'] = 'prepareMessageContext';
-	$context['signature_enabled'] = substr($modSettings['signature_settings'], 0, 1) == 1;
+	$context['signature_enabled'] = $modSettings['signature_settings'][0] == 1;
 
 	$labelQuery = $context['folder'] != 'sent' ? '
 			AND FIND_IN_SET(' . $context['current_label_id'] . ', pmr.labels) != 0' : '';

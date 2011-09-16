@@ -2728,7 +2728,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 	if (!$settings['use_image_buttons'])
 		return $txt[$alt];
 	elseif (!empty($settings['use_buttons']))
-		return '<img src="' . $settings['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>' . ($label != '' ? '<strong>' . $txt[$label] . '</strong>' : '');
+		return '<img src="' . $settings['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>&nbsp;' . ($label != '' ? '<strong>' . $txt[$label] . '</strong>' : '');
 	else
 		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
 }

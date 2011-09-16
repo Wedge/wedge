@@ -272,10 +272,10 @@ function updateSettingsFile($config_vars)
 	for ($i = 0, $n = count($settingsArray); $i < $n; $i++)
 	{
 		// Don't trim or bother with it if it's not a variable.
-		if (substr($settingsArray[$i], 0, 1) != '$')
+		if ($settingsArray[$i][0] !== '$')
 			continue;
 
-		$settingsArray[$i] = trim($settingsArray[$i]) . "\n";
+		$settingsArray[$i] = rtrim($settingsArray[$i]) . "\n";
 
 		// Look through the variables to set....
 		foreach ($config_vars as $var => $val)

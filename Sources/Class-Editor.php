@@ -734,7 +734,7 @@ class wedit
 				{
 					$baseURL = (isset($parsedURL['scheme']) ? $parsedURL['scheme'] : 'http') . '://' . $parsedURL['host'] . (empty($parsedURL['port']) ? '' : ':' . $parsedURL['port']);
 
-					if (substr($src, 0, 1) === '/')
+					if ($src[0] === '/')
 						$src = $baseURL . $src;
 					else
 						$src = $baseURL . (empty($parsedURL['path']) ? '/' : preg_replace('~/(?:index\\.php)?$~', '', $parsedURL['path'])) . '/' . $src;
@@ -821,7 +821,7 @@ class wedit
 						$tag_type = 'ftp';
 
 					// Or is this a link to an email address?
-					elseif (substr($href, 0, 7) === 'mailto:')
+					elseif (strpos($href, 'mailto:') === 0)
 					{
 						$tag_type = 'email';
 						$href = substr($href, 7);
@@ -832,7 +832,7 @@ class wedit
 					{
 						$baseURL = (isset($parsedURL['scheme']) ? $parsedURL['scheme'] : 'http') . '://' . $parsedURL['host'] . (empty($parsedURL['port']) ? '' : ':' . $parsedURL['port']);
 
-						if (substr($href, 0, 1) === '/')
+						if ($href[0] === '/')
 							$href = $baseURL . $href;
 						else
 							$href = $baseURL . (empty($parsedURL['path']) ? '/' : preg_replace('~/(?:index\\.php)?$~', '', $parsedURL['path'])) . '/' . $href;
@@ -985,7 +985,7 @@ class wedit
 				// We're only interested in tags, not text.
 				if ($isTag)
 				{
-					$isClosingTag = substr($match, 1, 1) === '/';
+					$isClosingTag = $match[1] === '/';
 					$tagName = substr($match, $isClosingTag ? 2 : 1, -1);
 
 					// We're closing the exact same tag that we opened.
@@ -2159,11 +2159,11 @@ class wedit
 
 			if (!$found && $protocols[0] === 'http')
 			{
-				if (substr($replace, 0, 1) === '/')
+				if ($replace[0] === '/')
 					$replace = $domain_url . $replace;
-				elseif (substr($replace, 0, 1) === '?')
+				elseif ($replace[0] === '?')
 					$replace = $scripturl . $replace;
-				elseif (substr($replace, 0, 1) === '#' && $embeddedUrl)
+				elseif ($replace[0] === '#' && $embeddedUrl)
 				{
 					$replace = '#' . preg_replace('~[^A-Za-z0-9_\-#]~', '', substr($replace, 1));
 					$this_tag = 'iurl';

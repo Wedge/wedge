@@ -204,7 +204,7 @@ function aeva_get_dir_map($path)
 		$files = scandir($dirname);
 		foreach ($files as $file)
 		{
-			if ($file != '.' && $file != '..' && is_readable($dirname . '/' . $file) && substr($file, 0, 1) != '.')
+			if ($file[0] !== '.' && is_readable($dirname . '/' . $file))
 			{
 				if (is_dir($dirname . '/' . $file))
 				{

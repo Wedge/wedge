@@ -441,7 +441,7 @@ class wedbPackages
 			SHOW FIELDS
 			FROM {raw:table_name}',
 			array(
-				'table_name' => substr($table_name, 0, 1) == '`' ? $table_name : '`' . $table_name . '`',
+				'table_name' => $table_name[0] === '`' ? $table_name : '`' . $table_name . '`',
 			)
 		);
 		$columns = array();
@@ -502,7 +502,7 @@ class wedbPackages
 			SHOW KEYS
 			FROM {raw:table_name}',
 			array(
-				'table_name' => substr($table_name, 0, 1) == '`' ? $table_name : '`' . $table_name . '`',
+				'table_name' => $table_name[0] === '`' ? $table_name : '`' . $table_name . '`',
 			)
 		);
 		$indexes = array();

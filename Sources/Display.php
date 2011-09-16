@@ -204,7 +204,7 @@ function Display()
 		}
 
 		// Start from a certain time index, not a message.
-		if (substr($_REQUEST['start'], 0, 4) == 'from')
+		if (strpos($_REQUEST['start'], 'from') === 0)
 		{
 			$timestamp = (int) substr($_REQUEST['start'], 4);
 			if ($timestamp === 0)
@@ -234,7 +234,7 @@ function Display()
 		}
 
 		// Link to a message...
-		elseif (substr($_REQUEST['start'], 0, 3) == 'msg')
+		elseif (strpos($_REQUEST['start'], 'msg') === 0)
 		{
 			$virtual_msg = (int) substr($_REQUEST['start'], 3);
 			if (!$topicinfo['unapproved_posts'] && $virtual_msg >= $topicinfo['id_last_msg'])
@@ -400,7 +400,7 @@ function Display()
 	}
 
 	// Are we showing signatures - or disabled fields?
-	$context['signature_enabled'] = substr($modSettings['signature_settings'], 0, 1) == 1;
+	$context['signature_enabled'] = $modSettings['signature_settings'][0] == 1;
 	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
 
 	// Censor the title...
@@ -1049,15 +1049,15 @@ function Display()
 		);
 
 		// Go to the last message if the given time is beyond the time of the last message.
-		if (isset($context['start_from']) && $context['start_from'] >= $topicinfo['num_replies'])
-			$context['start_from'] = $topicinfo['num_replies'];
+		if (isset($context['start_from']) && $context['start_from'] >= $context['total_visible_posts'])
+			$context['start_from'] = $context['total_visible_posts'] - 1;
 
 		// Since the anchor information is needed on the top of the page we load these variables beforehand.
 		$context['first_message'] = isset($messages[$firstIndex]) ? $messages[$firstIndex] : $messages[0];
 		if (empty($options['view_newest_first']))
 			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['start_from'];
 		else
-			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $topicinfo['num_replies'] - $context['start_from'];
+			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['total_visible_posts'] - 1 - $context['start_from'];
 	}
 	else
 	{

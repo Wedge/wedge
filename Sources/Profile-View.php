@@ -161,7 +161,7 @@ function summary($memID)
 	}
 
 	// Is the signature even enabled on this forum?
-	$context['signature_enabled'] = substr($modSettings['signature_settings'], 0, 1) == 1;
+	$context['signature_enabled'] = $modSettings['signature_settings'][0] == 1;
 
 	// How about, are they banned?
 	$context['member']['bans'] = array();
