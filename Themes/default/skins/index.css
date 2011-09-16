@@ -642,6 +642,23 @@ li.separator
 #main_content .menu
 	margin-bottom: 4px
 
+.menu strong
+	color: #fff
+	font-size: 8pt
+	text-transform: uppercase
+	background-color: rgba(255,0,0,.8)
+	gradient: #f55a61, #d63c47
+	border-radius: 5px
+	float: right
+	padding: 2px 4px
+	margin: -2px -4px 0 8px
+
+.menu h4 strong
+	margin: -3px 2px 0 8px
+	font-weight: 700
+	gradient: #d55a61, #b63c47
+	float: none
+
 /* Top-level menu icons.
 ------------------------------------------------------- */
 // It may look complicated, but it isn't. Just fetch documentation on
@@ -1150,7 +1167,6 @@ dl#feed
 	a
 		color: white
 		font-weight: 400
-		font-size: 95%
 		text-decoration: underline
 		text-shadow: none
 		:hover

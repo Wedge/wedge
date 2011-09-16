@@ -396,50 +396,38 @@ function MarkRead()
 		markBoardsRead($boards, isset($_REQUEST['unread']));
 
 		foreach ($boards as $b)
-		{
 			if (isset($_SESSION['topicseen_cache'][$b]))
 				$_SESSION['topicseen_cache'][$b] = array();
-		}
 
-		if (!isset($_REQUEST['unread']))
+		if (isset($_REQUEST['unread']))
+			redirectexit(empty($board_info['parent']) ? '' : 'board=' . $board_info['parent'] . '.0');
+
+		// Find all the boards this user can see.
+		$result = wesql::query('
+			SELECT b.id_board
+			FROM {db_prefix}boards AS b
+			WHERE b.id_parent IN ({array_int:parent_list})
+				AND {query_see_board}',
+			array(
+				'parent_list' => $boards,
+			)
+		);
+		if (wesql::num_rows($result) > 0)
 		{
-			// Find all the boards this user can see.
-			$result = wesql::query('
-				SELECT b.id_board
-				FROM {db_prefix}boards AS b
-				WHERE b.id_parent IN ({array_int:parent_list})
-					AND {query_see_board}',
-				array(
-					'parent_list' => $boards,
-				)
+			$logBoardInserts = '';
+			while ($row = wesql::fetch_assoc($result))
+				$logBoardInserts[] = array($modSettings['maxMsgID'], $user_info['id'], $row['id_board']);
+
+			wesql::insert('replace',
+				'{db_prefix}log_boards',
+				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
+				$logBoardInserts,
+				array('id_member', 'id_board')
 			);
-			if (wesql::num_rows($result) > 0)
-			{
-				$logBoardInserts = '';
-				while ($row = wesql::fetch_assoc($result))
-					$logBoardInserts[] = array($modSettings['maxMsgID'], $user_info['id'], $row['id_board']);
-
-				wesql::insert('replace',
-					'{db_prefix}log_boards',
-					array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-					$logBoardInserts,
-					array('id_member', 'id_board')
-				);
-			}
-			wesql::free_result($result);
-
-			if (empty($board))
-				redirectexit();
-			else
-				redirectexit('board=' . $board . '.0');
 		}
-		else
-		{
-			if (empty($board_info['parent']))
-				redirectexit();
-			else
-				redirectexit('board=' . $board_info['parent'] . '.0');
-		}
+		wesql::free_result($result);
+
+		redirectexit(empty($board) ? '' : 'board=' . $board . '.0');
 	}
 }
 
@@ -676,9 +664,12 @@ function modifyBoard($board_id, &$boardOptions)
 				' . implode(',
 				', $boardUpdates) . '
 			WHERE id_board = {int:selected_board}',
-			array_merge($boardUpdateParameters, array(
-				'selected_board' => $board_id,
-			))
+			array_merge(
+				$boardUpdateParameters,
+				array(
+					'selected_board' => $board_id
+				)
+			)
 		);
 
 	// Set moderators of this board.

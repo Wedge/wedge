@@ -33,9 +33,9 @@ function template_init()
 	}
 
 	/* Use images from default theme when using templates from the default theme?
-		if this is 'always', images from the default theme will be used.
-		if this is 'defaults', images from the default theme will only be used with default templates.
-		if this is 'never' or isn't set at all, images from the default theme will not be used. */
+		- 'always': images from the default theme will be used.
+		- 'defaults': images from the default theme will only be used with default templates.
+		- 'never' or nothing: images from the default theme will not be used. */
 	$settings['use_default_images'] = 'never';
 
 	/* Use plain buttons - as opposed to text buttons? */
@@ -92,11 +92,13 @@ function template_init()
 	);
 }
 
-// The magical function where the layer/block layout is established.
-// A layer is an array of blocks. Layers have '_above' and '_below' functions,
-// but they're not mandatory. Blocks only have one function but can be overloaded.
-// You can comment your skeleton with the usual <!-- HTML comment --> tags.
-// Finally, you can redefine a skeleton through skin.xml (see the Warm skin for a sample.)
+/*
+	The magical function where the layer/block layout is established.
+	A layer is an array of blocks. Layers have '_above' and '_below' functions,
+	but they're not mandatory. Blocks only have one function but can be overloaded.
+	You can comment your skeleton with the usual <!-- HTML comment --> tags.
+	Finally, you can redefine a skeleton through skin.xml (see the Warm skin for a sample.)
+*/
 function template_skeleton()
 {
 	global $context;
@@ -145,7 +147,11 @@ function template_html_above()
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
 	echo theme_base_css(), '
-	<title>', $context['page_title_html_safe'], '</title>
+	<title>', $context['page_title_html_safe'], '</title>';
+
+	// If the forum is in a sub-folder, in which case it needs to explicitly set a favicon URL.
+	if (strpos(trim(substr($boardurl, strpos($boardurl, '://') + 3), '/'), '/') !== false)
+		echo '
 	<link rel="shortcut icon" href="', $boardurl, '/favicon.ico" type="image/vnd.microsoft.icon">';
 
 	// Present a canonical url for search engines to prevent duplicate content in their indices.
@@ -561,7 +567,8 @@ function template_menu()
 		echo '
 		<li id="item_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>
 			<span class="m_' . $act . '"></span>
-			<h4><a href="', $item['href'], '"', isset($item['target']) ? ' target="' . $item['target'] . '"' : '', '>', $item['title'], '</a></h4>';
+			<h4><a href="', $item['href'], '"', isset($item['target']) ? ' target="' . $item['target'] . '"' : '', '>',
+			$item['title'], !empty($item['notice']) ? '<strong>' . $item['notice'] . '</strong>' : '', '</a></h4>';
 
 		if (!empty($item['sub_items']))
 		{
@@ -577,7 +584,8 @@ function template_menu()
 					continue;
 				}
 				echo '
-				<li><a href="', $sub_item['href'], '"', isset($sub_item['target']) ? ' target="' . $sub_item['target'] . '"' : '', '>', $sub_item['title'], '</a>';
+				<li><a href="', $sub_item['href'], '"', isset($sub_item['target']) ? ' target="' . $sub_item['target'] . '"' : '', '>',
+				$sub_item['title'], !empty($sub_item['notice']) ? '<strong>' . $sub_item['notice'] . '</strong>' : '', '</a>';
 
 				// 3rd-level menus
 				if (!empty($sub_item['sub_items']))

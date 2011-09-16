@@ -2756,8 +2756,7 @@ function setupMenuContext()
 	$context['allow_pm'] = allowedTo('pm_read');
 
 	// Recalculate the number of unseen media items
-	// !!! @todo: The SSI test is only here for as long as we're executing the Media DB installer separately.
-	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1 && WEDGE !== 'SSI')
+	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
 	{
 		loadSource('media/Subs-Media');
 		loadMediaSettings();
@@ -2765,7 +2764,7 @@ function setupMenuContext()
 
 	$cacheTime = $modSettings['lastActive'] * 60;
 
-	$error_count = allowedTo('admin_forum') ? (!empty($modSettings['app_error_count']) ? ' (<strong>' . $modSettings['app_error_count'] . '</strong>)' : '') : '';
+	$error_count = allowedTo('admin_forum') ? (!empty($modSettings['app_error_count']) ? $modSettings['app_error_count'] : '') : '';
 
 	// All the items we can possible want and then some, try pulling the final list of items from cache first.
 	if (($menu_items = cache_get_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
@@ -2807,7 +2806,8 @@ function setupMenuContext()
 				),
 			),
 			'admin' => array(
-				'title' => $txt['admin'] . $error_count,
+				'title' => $txt['admin'],
+				'notice' => $error_count ? $txt['new'] : '',
 				'href' => $scripturl . ($context['allow_admin'] ? '?action=admin' : '?action=moderate'),
 				'show' => $context['allow_admin'] || $context['allow_moderation_center'],
 				'sub_items' => array(
@@ -2817,7 +2817,8 @@ function setupMenuContext()
 						'show' => allowedTo('admin_forum'),
 					),
 					'errorlog' => array(
-						'title' => $txt['errlog'] . $error_count,
+						'title' => $txt['errlog'],
+						'notice' => $error_count,
 						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
 						'show' => allowedTo('admin_forum') && !empty($modSettings['enableErrorLogging']),
 					),
@@ -2894,11 +2895,13 @@ function setupMenuContext()
 			),
 			'pm' => array(
 				'title' => $txt['pm_short'],
+				'notice' => $user_info['is_guest'] || !$context['user']['unread_messages'] ? '' : $txt['new'],
 				'href' => $scripturl . '?action=pm',
 				'show' => $context['allow_pm'],
 				'sub_items' => array(
 					'pm_read' => array(
 						'title' => $txt['pm_menu_read'],
+						'notice' => $user_info['is_guest'] || !$context['user']['unread_messages'] ? '' : $context['user']['unread_messages'],
 						'href' => $scripturl . '?action=pm',
 						'show' => allowedTo('pm_read'),
 					),
@@ -3043,12 +3046,6 @@ function setupMenuContext()
 		$current_action = 'moderate';
 
 	$menu_items[$current_action]['active_item'] = true;
-
-	if (!$user_info['is_guest'] && $context['user']['unread_messages'] > 0 && isset($menu_items['pm']))
-	{
-		$menu_items['pm']['alttitle'] = $menu_items['pm']['title'] . ' [' . $context['user']['unread_messages'] . ']';
-		$menu_items['pm']['title'] .= '<div class="new_icon" title="' . $txt['new'] . '"></div>[<strong>' . $context['user']['unread_messages'] . '</strong>]&nbsp;';
-	}
 }
 
 /**

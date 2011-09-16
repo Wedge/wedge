@@ -435,7 +435,7 @@ class wecss_color extends wecss
 			}
 		}
 
-		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()]+)';
+		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()\n,]+)';
 		$css = preg_replace_callback('~(\n[\t ]*)gradient\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wecss_color::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
