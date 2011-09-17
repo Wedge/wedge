@@ -654,7 +654,7 @@ li.separator
 	margin: -2px -4px 0 8px
 
 .menu h4 strong
-	margin: -3px 2px 0 8px
+	margin: -3px 0 0 4px
 	font-weight: 700
 	gradient: #d55a61, #b63c47
 	float: none
@@ -847,7 +847,6 @@ ul.reset, ul.reset li
 		padding: 3px 1em
 		overflow: auto
 		white-space: pre
-		max-width: 50em
 		// Show a scrollbar after about 24 lines.
 		max-height: 24em
 

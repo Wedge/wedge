@@ -241,6 +241,8 @@ img.new_posts
 #forumposts
 	.wrc
 		display: table
+		// Without this, wide code blocks will break layout.
+		table-layout: fixed
 		width: 100%
 		padding: 0
 
@@ -936,6 +938,7 @@ tr.windowbg td
 	// The subject column
 	.subject
 		padding: 5px 8px
+		background-image: none
 		background-repeat: no-repeat
 		background-position: 99% .5em
 		&.sticky
@@ -1202,7 +1205,7 @@ dl
 	float: left
 
 .list_posts
-	border-top: 2px solid #b3b3bf
+	border-top: 1px solid #b3b3bf
 	padding-top: 12px
 	margin-top: 6px
 	overflow: auto

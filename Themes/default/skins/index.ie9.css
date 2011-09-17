@@ -1,3 +1,6 @@
 
 #upper_section h1
 	filter: glow(color=#666666, strength=2)
+
+.menu h4 strong
+	float: right

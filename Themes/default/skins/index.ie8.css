@@ -39,3 +39,6 @@ input.new
 	float: left
 	display: block
 	width: 47%
+
+.menu h4 strong
+	float: right

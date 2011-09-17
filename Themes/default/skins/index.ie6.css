@@ -11,8 +11,10 @@
 	li li
 		border-bottom: 1px solid #fff8f1
 
-.menu li ul
-	margin-top: 0
+	li ul
+		margin-top: 0
+	strong
+		float: none
 
 li.hove
 	background-color: #e2ebe7
