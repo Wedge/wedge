@@ -105,44 +105,8 @@ li.separator
 #quickreply
 	clear: both
 
-#forumposts
-	.postarea
-		margin: 0
-		float: right
-	.cat
-		clear: both
-
-.post_wrapper
-	display: block
-	margin: 0 -1.2em
-
-.postheader
-	display: block
-
-.poster
-	float: left
-	padding-right: 0
-
-.keyinfo
-	padding-bottom: 6px
-	float: left
-	display: block
-	width: 47%
-
 .moderatorbar
 	display: block
-
-ul.quickbuttons
-	display: block
-	width: 40%
-	li
-		width: 1%
-
-.inner
-	clear: both
-
-.post
-	word-wrap: break-word
 
 .buttonlist a
 	text-decoration: none
@@ -216,6 +180,62 @@ ul.quickbuttons
 
 .richedit_resize
 	padding: 0 !important
+
+
+/* Topic pages - post list
+------------------------------------------------------- */
+
+#forumposts .wrc
+	display: block
+
+.post_wrapper
+	display: block
+	width: auto
+	overflow: auto
+
+.postarea
+	display: block
+	float: right
+	width: 80%
+	padding: 0
+
+.post
+	padding: 0 12px 0 14px
+
+.poster
+	background-color: transparent
+	display: block
+	float: left
+	width: 20%
+	padding-right: 0
+
+ul.quickbuttons
+	float: right
+
+#forumposts
+	.cat
+		clear: both
+
+.postheader
+	display: block
+
+.keyinfo
+	padding-bottom: 6px
+	float: left
+	display: block
+	width: 47%
+
+ul.quickbuttons
+	display: block
+	width: 40%
+	li
+		width: 1%
+
+.inner
+	clear: both
+
+.post
+	word-wrap: break-word
 
 
 /* Misc hacks

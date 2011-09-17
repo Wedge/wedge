@@ -101,6 +101,35 @@ ul.quickbuttons
 	padding: 0 !important
 
 
+/* Topic pages - post list
+------------------------------------------------------- */
+
+#forumposts .wrc
+	display: block
+
+.post_wrapper
+	display: block
+	width: auto
+	overflow: auto
+
+.postarea
+	display: block
+	float: left
+	width: 80%
+	padding-left: 0
+
+.post
+	padding: 0 12px 0 14px
+
+.poster
+	display: block
+	float: right
+	width: 20%
+	padding-right: 0
+
+ul.quickbuttons
+	float: right
+
 /* Misc hacks
 ------------------------------------------------------- */
 #linktree
