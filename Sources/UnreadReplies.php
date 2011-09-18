@@ -454,7 +454,7 @@ function UnreadReplies()
 	);
 
 	loadTemplate('MessageIndex');
-	loadBlock('messageindex_legend', array(':side', 'sidebar'));
+	loadBlock('messageindex_legend', 'sidebar');
 
 	$context['topics'] = array();
 	$topic_ids = array();

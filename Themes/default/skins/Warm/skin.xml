@@ -44,7 +44,8 @@
 	]]></comment>
 
 	<!--
-		Layout skeleton. The following uses pseudo-HTML to represent the final array.
+		Layout skeleton. Overrides the theme's $context['skeleton'] variable.
+		The following uses pseudo-HTML to represent the final array.
 
 			- use <tags></tags> to define layers (functions called as wrappers around other functions)
 
@@ -54,11 +55,10 @@
 			  "<mylayer> is the default destination for ':top' and ':main' layer requests.
 			  For instance, if you know a layer is going to be on the left of the screen,
 			  or in the sidebar, and you want mods to be able to add elements to that layer
-			  without knowing its name, name it <whatever:left> or <whatever:side>. Mods can
-			  then later call loadBlock('my_block', array(':left', ':side'), 'add') to add
-			  their code to the left side, or if not found in the skin, the default sidebar.
-
-		Overrides the theme's $context['skeleton'] variable.
+			  without knowing its name, name it <whatever:left> or <whatever:left,top> if you
+			  want it to capture 'top' calls as well. Mods can then later call:
+					loadBlock('my_block', array(':left', 'sidebar'), 'add')
+			  This will add their code to the left side, or if not found in the skin, the sidebar.
 	-->
 
 	<skeleton>
@@ -70,7 +70,7 @@
 				<wrapper>
 					<!-- A sidebar wrapper is necessary if you want maximum compatibility. It should open and close a table, or a compatible div. -->
 					<sidebar_wrap>
-						<sidebar:left,side>
+						<sidebar:left>
 							<!-- This is where Wedge will insert any side information. -->
 						</sidebar>
 					</sidebar_wrap>
@@ -93,7 +93,7 @@
 									<!-- If you need to add any content before the main entry point, this is your choice layer. -->
 								</top>
 
-								<context:main>
+								<context>
 									<!-- The main entry point, where all pages add their contextual content by default. -->
 									<main />
 								</context>

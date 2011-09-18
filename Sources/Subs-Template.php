@@ -1228,7 +1228,7 @@ function loadBlock($blocks, $target = 'context', $where = 'replace')
 		return;
 
 	// If a mod requests to replace the contents of the sidebar, just smile politely.
-	if (($where === 'replace' || $where === 'erase') && $target === (isset($context['layer_hints']['side']) ? $context['layer_hints']['side'] : 'sidebar'))
+	if (($where === 'replace' || $where === 'erase') && $target === 'sidebar')
 		$where = 'add';
 
 	if ($where === 'replace' || $where === 'erase')
@@ -1247,6 +1247,7 @@ function loadBlock($blocks, $target = 'context', $where = 'replace')
 				build_skeleton_indexes();
 			return;
 		}
+
 		// Otherwise, we're in for some fun... :-/
 		$keys = array_keys($context['layers'][$target]);
 		foreach ($keys as $id)
@@ -1274,7 +1275,7 @@ function loadBlock($blocks, $target = 'context', $where = 'replace')
 		build_skeleton_indexes();
 	}
 	elseif ($where === 'add')
-		$context['layers'][$target] = array_merge($blocks, $context['layers'][$target]);
+		$context['layers'][$target] = array_merge($context['layers'][$target], $blocks);
 	elseif ($where === 'first')
 		$context['layers'][$target] = array_merge(array_reverse($blocks), $context['layers'][$target]);
 	elseif ($where === 'before' || $where === 'after')
@@ -1328,21 +1329,17 @@ function loadLayer($layer, $target = 'context', $where = 'parent')
 	if (!isset($context['layers'][$target]) || !is_array($context['layers'][$target]))
 		return;
 
-	if ($target === 'context' || $where === 'parent' || $where === 'before' || $where === 'after')
+	if ($where === 'parent' || $where === 'before' || $where === 'after' || $where === 'replace' || $where === 'erase')
 	{
-		skeleton_insert_layer($layer, $target, $target === 'context' ? 'parent' : $where);
+		skeleton_insert_layer($layer, $target, $where);
+		if ($where === 'replace' || $where === 'erase')
+			unset($context['layers'][$target]);
 		return;
 	}
 	elseif ($where === 'child')
 	{
 		$context['layers'][$target] = array($layer => $context['layers'][$target]);
 		$context['layers'][$layer] =& $context['layers'][$target][$layer];
-		return;
-	}
-	elseif ($where === 'replace' || $where === 'erase')
-	{
-		skeleton_insert_layer($layer, $target, $where);
-		unset($context['layers'][$target]);
 		return;
 	}
 	elseif ($where === 'firstchild' || $where === 'lastchild')

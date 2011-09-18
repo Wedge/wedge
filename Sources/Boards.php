@@ -43,21 +43,28 @@ function Boards()
 	{
 		loadTemplate('Boards');
 		loadTemplate('InfoCenter');
-		loadBlock(array(
-			'info_center_begin',
-			'info_center_recentposts',
-			'info_center_calendar',
-			'info_center_statistics',
-			'info_center_usersonline',
-			'info_center_personalmsg',
-			'info_center_end',
-		), 'sidebar');
-		loadBlock(array(
-			'boards_ministats',
-			'boards_newsfader',
-			'boards',
-			'boards_below',
-		));
+		// We load the info center into our sidebar...
+		loadBlock(
+			array(
+				'info_center_begin',
+				'info_center_recentposts',
+				'info_center_calendar',
+				'info_center_statistics',
+				'info_center_usersonline',
+				'info_center_personalmsg',
+				'info_center_end',
+			),
+			'sidebar'
+		);
+		// And the rest into our context layer.
+		loadBlock(
+			array(
+				'boards_ministats',
+				'boards_newsfader',
+				'boards',
+				'boards_below',
+			)
+		);
 	}
 
 	// Set a canonical URL for this page.

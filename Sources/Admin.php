@@ -747,7 +747,7 @@ function setupAdminSidebar()
 		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
 
 	// Add the blocks into the sidebar.
-	loadBlock(array('admin_live_news', 'admin_support_info'), array(':side', 'sidebar'));
+	loadBlock(array('admin_live_news', 'admin_support_info'), 'sidebar');
 
 	// The below functions include all the scripts needed from the wedge.org site. The language and format are passed for internationalization.
 	if (empty($modSettings['disable_wedge_js']))

@@ -112,7 +112,7 @@ function template_skeleton()
 					<linktree />
 					<content_wrap>
 						<sidebar_wrap>
-							<sidebar:left,side></sidebar>
+							<sidebar:left></sidebar>
 						</sidebar_wrap>
 						<offside_wrap>
 							<main_wrap>

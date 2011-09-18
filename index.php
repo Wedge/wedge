@@ -226,7 +226,7 @@ $function();
 
 // Just quickly sneak the feed stuff in...
 if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_feed'))
-	loadBlock('sidebar_feed', array(':side', 'sidebar'), 'add');
+	loadBlock('sidebar_feed', 'sidebar', 'add');
 
 obExit(null, null, true);
 
@@ -328,8 +328,6 @@ function wedge_main()
 	elseif (empty($action))
 	{
 		// Action and board are both empty... Go home!
-		// Some add-ons may want to specify default "front page" behavior through the 'default_action' hook.
-		// If they do, they shall return the name of the function they want to call.
 		if (empty($board) && empty($topic))
 			return index_action();
 
@@ -371,12 +369,14 @@ function index_action($hook_action = 'default_action')
 {
 	global $modSettings, $sourcedir;
 
-	$functions = call_hook($hook_action);
-	foreach ($functions as $func)
-		if (!empty($func))
+	// Some add-ons may want to specify default "front page" behavior through the 'default_action' hook, and/or a
+	// last-minute fallback ('fallback_action'). If they do, they shall return the name of the function they want to call.
+	foreach (call_hook($hook_action) as $func)
+		if (!empty($func) && is_callable($func))
 			return $func;
 
-	if (isset($modSettings['default_index']) && file_exists($sourcedir . '/' . $modSettings['default_index'] . '.php'))
+	// Otherwise, if the admin specified a custom homepage, fall back to it, unless we're in Wireless mode.
+	if (!WIRELESS && isset($modSettings['default_index']) && file_exists($sourcedir . '/' . $modSettings['default_index'] . '.php'))
 	{
 		loadSource($modSettings['default_index']);
 		return $modSettings['default_index'];
