@@ -71,6 +71,7 @@ $action_list = array(
 	'ajax' => array('Ajax.php', 'Ajax'),
 	'announce' => array('Announce.php', 'Announce'),
 	'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
+	'boards' => array('Boards.php', 'Boards'),
 	'buddy' => array('Buddy.php', 'Buddy'),
 	'calendar' => array('Calendar.php', 'CalendarMain'),
 	'collapse' => array('Collapse.php', 'Collapse'),
@@ -220,7 +221,7 @@ if (empty($_REQUEST['action']) || !defined('WEDGE_NO_LOG'))
 		trackStats(array('hits' => '+'));
 }
 
-// After all this time... after everything we saw, after everything we lost... I have only one thing to say to you... bye!
+// After all this time... After everything we saw, after everything we lost... I have only one thing to say to you... Bye!
 $function();
 
 // Just quickly sneak the feed stuff in...
@@ -271,7 +272,14 @@ function wedge_main()
 
 	// Check the request for anything hinky.
 	checkUserBehavior();
-	call_hook('behavior');
+
+	// Allow add-ons to check for the request as well, and manipulate $action.
+	call_hook('behavior', array(&$action));
+
+	// Last chance to get the board ID if we have a default one. Use the 'behavior' hook to force it.
+	if (empty($action) && empty($board) && empty($topic) && isset($modSettings['default_index']))
+		if (strpos($modSettings['default_index'], 'board') === 0)
+			$board = (int) substr($modSettings['default_index'], 5);
 
 	// Load the current board's information.
 	loadBoard();
@@ -290,8 +298,9 @@ function wedge_main()
 	is_not_banned();
 
 	// If we are in a topic and don't have permission to approve it then duck out now.
-	if (!empty($topic) && $action !== 'feed' && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts') && ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest']))
-		fatal_lang_error('not_a_topic', false);
+	if (!empty($topic) && $action !== 'feed' && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts'))
+		if ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest'])
+			fatal_lang_error('not_a_topic', false);
 
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
 	if (!empty($maintenance) && !allowedTo('admin_forum'))
@@ -303,7 +312,7 @@ function wedge_main()
 			loadSource($action);
 			return $action;
 		}
-		// Don't even try it, sonny.
+		// Welcome. You are unauthorized. Your death will now be implemented.
 		else
 		{
 			loadSource('Subs-Auth');
@@ -318,20 +327,14 @@ function wedge_main()
 	}
 	elseif (empty($action))
 	{
-		// Some add-ons may want to specify default "front page" behavior. If they do, they will return the name of the function they want to call.
-		$functions = call_hook('default_action');
-		foreach ($functions as $func)
-			if (!empty($func))
-				return $func;
-
-		// Action and board are both empty... BoardIndex!
+		// Action and board are both empty... Go home!
+		// Some add-ons may want to specify default "front page" behavior through the 'default_action' hook.
+		// If they do, they shall return the name of the function they want to call.
 		if (empty($board) && empty($topic))
-		{
-			loadSource('BoardIndex');
-			return 'BoardIndex';
-		}
+			return index_action();
+
 		// Topic is empty, and action is empty.... MessageIndex!
-		elseif (empty($topic))
+		if (empty($topic))
 		{
 			loadSource('MessageIndex');
 			return 'MessageIndex';
@@ -353,16 +356,7 @@ function wedge_main()
 
 	// Get the function and file to include - if it's not there, do the board index.
 	if (empty($action) || !isset($action_list[$action]))
-	{
-		// Some add-ons may want to specify default handling behavior - if no known action was used.
-		$functions = call_hook('fallback_action');
-		foreach ($functions as $func)
-			if (!empty($func))
-				return $func;
-		// Fall through to the board index then...
-		loadSource('BoardIndex');
-		return 'BoardIndex';
-	}
+		return index_action('fallback_action');
 
 	// Otherwise, it was set - so let's go to that action.
 	// !!! Fix this $sourcedir for loadSource
@@ -371,6 +365,25 @@ function wedge_main()
 	else
 		require_once($sourcedir . '/' . $action_list[$action][0]);
 	return $action_list[$action][1];
+}
+
+function index_action($hook_action = 'default_action')
+{
+	global $modSettings, $sourcedir;
+
+	$functions = call_hook($hook_action);
+	foreach ($functions as $func)
+		if (!empty($func))
+			return $func;
+
+	if (isset($modSettings['default_index']) && file_exists($sourcedir . '/' . $modSettings['default_index'] . '.php'))
+	{
+		loadSource($modSettings['default_index']);
+		return $modSettings['default_index'];
+	}
+
+	loadSource('Boards');
+	return 'Boards';
 }
 
 ?>

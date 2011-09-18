@@ -32,7 +32,7 @@ function template_wap2_above()
 	<body>';
 }
 
-function template_wap2_boardindex()
+function template_wap2_boards()
 {
 	global $context, $settings, $options, $scripturl, $txt;
 

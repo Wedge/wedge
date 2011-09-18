@@ -18,7 +18,7 @@ if (!defined('WEDGE'))
 
 	void Who()
 		- prepares the who's online data for the Who template.
-		- uses the Who template (main sub template.) and language file.
+		- uses the Who template (main block) and language file.
 		- requires the who_view permission.
 		- is enabled with the who_enabled setting.
 		- is accessed via ?action=who.

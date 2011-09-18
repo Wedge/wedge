@@ -29,7 +29,7 @@ function PrintPage()
 {
 	global $topic, $txt, $scripturl, $context, $user_info, $board_info, $modSettings;
 
-	// Redirect to the boardindex if no valid topic id is provided.
+	// Redirect to the board list if no valid topic id is provided.
 	if (empty($topic))
 		redirectexit();
 
@@ -48,7 +48,7 @@ function PrintPage()
 			'current_topic' => $topic,
 		)
 	);
-	// Redirect to the boardindex if no valid topic id is provided.
+	// Redirect to the board list if no valid topic id is provided.
 	if (wesql::num_rows($request) == 0)
 		redirectexit();
 	$row = wesql::fetch_assoc($request);

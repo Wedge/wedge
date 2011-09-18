@@ -583,7 +583,6 @@ function aeva_admin_FTPImport()
 	if (!isset($amSettings['tmp_ftp_num_files']) || empty($_REQUEST['start']))
 		aeva_updateSettings('tmp_ftp_num_files', count($files), true);
 
-	// Sub Template
 	loadBlock('aeva_admin_ftpimport');
 	$context['is_halted'] = false;
 	$context['ftp_done'] = (int) $_REQUEST['start'];
@@ -816,7 +815,6 @@ function aeva_admin_perms()
 			$context['aeva_profiles'][$row['id_perm_profile']]['albums'] = $row['total'];
 	wesql::free_result($request);
 
-	// Sub template...
 	loadBlock('aeva_admin_perms');
 	// Page title
 	$context['page_title'] = $txt['media_admin_labels_perms'];

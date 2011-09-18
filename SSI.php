@@ -44,8 +44,8 @@ $ssi_error_reporting = error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : 
 /*
   Set this to one of three values depending on what you want to happen in the case of a fatal error.
 
-	false:	Default, will just load the error sub template and die - not putting any theme layers around it.
-	true:	Will load the error sub template AND put the Wedge layers around it (Not useful if on total custom pages.)
+	false:	Default, will just load the error block and die - not putting any theme layers around it.
+	true:	Will load the error block AND put the Wedge layers around it (Not useful if on totally custom pages.)
 	string:	Name of a callback function to call in the event of an error to allow you to define your own methods. Will die after function returns.
 */
 $ssi_on_error_method = false;

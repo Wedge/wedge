@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-function template_boardindex()
+function template_boards()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings, $language;
 
@@ -174,10 +174,9 @@ function template_boardindex()
 	}
 	echo '
 	</table>';
-
 }
 
-function template_boardindex_ministats()
+function template_boards_ministats()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
@@ -190,7 +189,7 @@ function template_boardindex_ministats()
 	</div>';
 }
 
-function template_boardindex_newsfader()
+function template_boards_newsfader()
 {
 	// Show the news fader?  (assuming there are things to show...)
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
@@ -234,7 +233,7 @@ function template_boardindex_newsfader()
 	}
 }
 
-function template_boardindex_below()
+function template_boards_below()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 

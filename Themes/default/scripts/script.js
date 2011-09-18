@@ -720,9 +720,8 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 			sChildLevelPrefix = new Array(aBoardsAndCategories[i].level + 1).join('==');
 
 		// Show the board/category option, with special treatment for the current one.
-		sList += '<option value="' + (isCategory ? '#c' + aBoardsAndCategories[i].id : aBoardsAndCategories[i].url) + '"' +
-				(!isCategory && aBoardsAndCategories[i].id == this.opt.iBoardId ? ' style="background: #d0f5d5">=> ' + aBoardsAndCategories[i].name + ' &lt;='
-				: '>' + (isCategory ? '' : sChildLevelPrefix + '=> ') + aBoardsAndCategories[i].name) + '</option>';
+		sList += '<option value="' + aBoardsAndCategories[i].url + '"' + (!isCategory && aBoardsAndCategories[i].id == this.opt.iBoardId ? ' style="background: #d0f5d5">=> '
+				+ aBoardsAndCategories[i].name + ' &lt;=' : '>' + (isCategory ? '' : sChildLevelPrefix + '=> ') + aBoardsAndCategories[i].name) + '</option>';
 
 		if (isCategory)
 			sList += oDashOption;

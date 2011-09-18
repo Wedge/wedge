@@ -17,8 +17,7 @@ if (!defined('WEDGE'))
 /*	array getBoardIndex(array boardIndexOptions)
 		- Fetches a list of boards and (optional) categories including
 		  statistical information, child boards and moderators.
-		- Used by both the board index (main data) and the message index (child
-		  boards).
+		- Used by both the board list (main data) and the message index (child boards).
 		- Depending on the include_categories setting returns an associative
 		  array with categories->boards->child_boards or an associative array
 		  with boards->child_boards.

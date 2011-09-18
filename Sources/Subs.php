@@ -1541,7 +1541,7 @@ function setupThemeContext($forceload = false)
 	var we_avatarMaxSize = [' . (int) $modSettings['avatar_max_width_external'] . ', ' . (int) $modSettings['avatar_max_height_external'] . '];
 	$(window).load(we_avatarResize);');
 
-	// This looks weird, but it's because BoardIndex.php references the variable.
+	// This looks weird, but it's because Boards.php references the variable.
 	$context['common_stats']['latest_member'] = array(
 		'id' => $modSettings['latestMember'],
 		'name' => $modSettings['latestRealName'],

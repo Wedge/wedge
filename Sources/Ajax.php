@@ -68,13 +68,13 @@ function GetJumpTo()
 			$context['jump_to'][$id_cat]['boards'][$id_board]['name'] = un_htmlspecialchars(strip_tags($board['name']));
 	}
 
-	// Pretty URLs need to be rewritten. Just these ones...
+	// Pretty URLs need to be rewritten.
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
 		ob_start('ob_sessrewrite');
 		$insideurl = preg_quote($scripturl, '~');
-		$context['pretty']['search_patterns'][]  = '~(url=)"' . $insideurl . '([^<"]*?[?;&](board)=[^#<"]+)~';
-		$context['pretty']['replace_patterns'][] = '~(url=)"' . $insideurl . '([^<"]*?[?;&](board)=([^#<"]+"))~';
+		$context['pretty']['search_patterns'][] =  '~(url=)"' . $insideurl . '([^<"]*?[?;&](board|action)=[^"#]+)~';
+		$context['pretty']['replace_patterns'][] = '~(url=)"' . $insideurl . '([^<"]*?[?;&](board|action)=([^"]+"))~';
 	}
 
 	loadBlock('jump_to');

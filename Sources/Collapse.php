@@ -43,9 +43,9 @@ function Collapse()
 		collapseCategories(array((int) $_REQUEST['c']), $_REQUEST['sa'], array($user_info['id']));
 	}
 
-	// And go back to the board index.
-	loadSource('BoardIndex');
-	BoardIndex();
+	// And go back to the board list.
+	loadSource('Boards');
+	Boards();
 }
 
 ?>

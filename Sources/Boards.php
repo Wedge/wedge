@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
  *
  * Unlike most actions within the forum, this action is explicitly not listed within the action array in index.php, because it is the default action; if no known action, board or topic is specified, this function will be used.
  *
- * - Loads the boardindex template, or alternatively uses the wireless version
+ * - Loads the Boards template, or alternatively uses the wireless version
  * - Defines the canonical URL of the page to be the principal forum URL (as $scripturl) in case we fell through to here (if action is one the forum is not aware of, and there is no topic or board, this action will be called)
  * - Ordinarily, the board index page will be directed to be indexed, however this is turned off in the event that $_GET is non-empty.
  * - The board list is then loaded from {@link getBoardIndex()} in Subs-BoardIndex.php.
@@ -32,17 +32,17 @@ if (!defined('WEDGE'))
  * - If the calendar is enabled, load the events as directed by the options (holidays, birthdays, events, all based on number of days) - this is managed from cache, or {@link cache_getRecentEvents()} in Subs-Calendar.php.
  * - Finally, set up the page title to include the board name with the localized ' - Index' string.
  */
-function BoardIndex()
+function Boards()
 {
 	global $txt, $user_info, $modSettings, $context, $settings, $scripturl, $options;
 
 	// For wireless, we use the Wireless template...
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_boardindex');
+		loadBlock(WIRELESS_PROTOCOL . '_boards');
 	else
 	{
-		loadTemplate('BoardIndex');
-		loadTemplate('BoardIndexInfoCenter');
+		loadTemplate('Boards');
+		loadTemplate('InfoCenter');
 		loadBlock(array(
 			'info_center_begin',
 			'info_center_recentposts',
@@ -53,10 +53,10 @@ function BoardIndex()
 			'info_center_end',
 		), 'sidebar');
 		loadBlock(array(
-			'boardindex_ministats',
-			'boardindex_newsfader',
-			'boardindex',
-			'boardindex_below',
+			'boards_ministats',
+			'boards_newsfader',
+			'boards',
+			'boards_below',
 		));
 	}
 
@@ -103,7 +103,7 @@ function BoardIndex()
 		$latestPostOptions = array(
 			'number_posts' => $settings['number_recent_posts'],
 		);
-		$context['latest_posts'] = cache_quick_get('boardindex-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent.php', 'cache_getLastPosts', array($latestPostOptions));
+		$context['latest_posts'] = cache_quick_get('boards-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent.php', 'cache_getLastPosts', array($latestPostOptions));
 	}
 
 	$settings['display_recent_bar'] = !empty($settings['number_recent_posts']) ? $settings['number_recent_posts'] : 0;

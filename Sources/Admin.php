@@ -23,7 +23,7 @@ if (!defined('WEDGE'))
 
 	void AdminHome()
 		- prepares all the data necessary for the administration front page.
-		- uses the Admin template along with the admin sub template.
+		- uses the Admin template along with the admin block.
 		- requires the moderate_forum, manage_membergroups, manage_bans,
 		  admin_forum, manage_permissions, manage_attachments, manage_smileys,
 		  manage_boards, edit_news, or send_mail permission.

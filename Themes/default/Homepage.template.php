@@ -1,0 +1,28 @@
+<?php
+/**
+ * Wedge
+ *
+ * Displays the custom homepage. Hack away!
+ *
+ * @package wedge
+ * @copyright 2010-2011 Wedgeward, wedge.org
+ * @license http://wedge.org/license/
+ *
+ * @version 0.1
+ */
+
+function template_main()
+{
+	global $context, $settings, $options, $txt, $scripturl, $modSettings, $language;
+
+	echo '
+		<h1>
+			Welcome, hacker!
+		</h1>
+		<ul>
+			<li><a href="', $scripturl, '?action=boards">Board index</a></li>
+			<li><a href="', $scripturl, '?action=pm">Personal messages</a></li>
+		</ul>';
+}
+
+?>

@@ -631,7 +631,7 @@ function cache_getOffsetIndependentEvents($days_to_index)
 	);
 }
 
-// Called from the BoardIndex to display the current day's events on the board index.
+// Called from the homepage to display the current day's events on it.
 function cache_getRecentEvents($eventOptions)
 {
 	global $modSettings, $user_info, $scripturl;

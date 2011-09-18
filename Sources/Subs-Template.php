@@ -215,7 +215,6 @@ function ob_sessrewrite($buffer)
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
-		// !!! $insideurl = str_replace(array('.','/',':','?'), array('\.','\/','\:','\?'), $scripturl);
 		$insideurl = preg_quote($scripturl, '~');
 		$use_cache = !empty($modSettings['pretty_enable_cache']);
 		$session_var = $context['session_var'];
@@ -227,7 +226,7 @@ function ob_sessrewrite($buffer)
 
 		// Find all URLs in the buffer
 		$context['pretty']['search_patterns'][] =  '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action)=[^"\'#]+)~';
-		$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action)=([^"]+\"|[^\']+\'))~';
+		$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action)=([^"]+"|[^\']+\'))~';
 		$urls_query = array();
 		$uncached_urls = array();
 
@@ -1225,6 +1224,8 @@ function loadBlock($blocks, $target = 'context', $where = 'replace')
 		return;
 
 	$target = empty($to) ? ($where === 'before' || $where === 'after' ? (is_array($target) ? reset($target) : $target) : 'context') : $to;
+	if (!isset($context['layers'][$target]))
+		return;
 
 	// If a mod requests to replace the contents of the sidebar, just smile politely.
 	if (($where === 'replace' || $where === 'erase') && $target === (isset($context['layer_hints']['side']) ? $context['layer_hints']['side'] : 'sidebar'))

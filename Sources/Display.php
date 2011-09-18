@@ -967,7 +967,7 @@ function Display()
 		elseif (isset($_SESSION['topicseen_cache'][$board]))
 			$_SESSION['topicseen_cache'][$board]--;
 
-		// Mark board as seen if we came using last post link from BoardIndex. (or other places...)
+		// Mark board as seen if we came using the last post link from the board list or other places.
 		if (isset($_REQUEST['boardseen']))
 		{
 			wesql::insert('replace',
