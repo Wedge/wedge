@@ -52,7 +52,7 @@ class wedbPackages
 	}
 
 	// Create a table.
-	public static function create_table($table_name, $columns, $indexes = array(), $parameters = array(), $if_exists = 'ignore', $error = 'fatal')
+	public static function create_table($table_name, $columns, $indexes = array(), $if_exists = 'ignore', $error = 'fatal')
 	{
 		global $db_package_log, $db_prefix;
 
@@ -61,81 +61,217 @@ class wedbPackages
 
 		// With or without the database name, the fullname looks like this.
 		$full_table_name = str_replace('{db_prefix}', $real_prefix, $table_name);
+		$orig_name = $table_name;
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
 		// First - no way do we touch Wedge tables.
 		if (in_array(strtolower($table_name), self::$reservedTables))
 			return false;
 
-		// Log that we'll want to remove this on uninstall.
-		$db_package_log[] = array('remove_table', $table_name);
-
 		$tables = wedbExtra::list_tables();
+		$creating = true;
 		if (in_array($full_table_name, $tables))
 		{
-			// This is a sad day... drop the table? If not, return false (error) by default.
+			// This is a sad day... drop the table?
 			if ($if_exists == 'overwrite')
 				self::drop_table($table_name);
-			else
-				return $if_exists == 'ignore';
+			elseif ($if_exists == 'error')
+				return false;
+			elseif ($if_exists == 'update')
+				$creating = false;
 		}
 
-		// Righty - let's do the damn thing!
-		$table_query = 'CREATE TABLE ' . $table_name . "\n" . '(';
-		foreach ($columns as $column)
+		if ($creating)
 		{
-			// Auto increment is easy here!
-			if (!empty($column['auto']))
+			// Righty - let's do the damn thing!
+			$table_query = 'CREATE TABLE ' . $table_name . "\n" . '(';
+			foreach ($columns as $column)
 			{
-				$default = 'auto_increment';
+				// Auto increment is easy here!
+				if (!empty($column['auto']))
+				{
+					$default = 'auto_increment';
+				}
+				elseif (isset($column['default']) && $column['default'] !== null && $column['type'] != 'text' && $column['type'] != 'mediumtext')
+					$default = 'default \'' . wesql::escape_string($column['default']) . '\'';
+				else
+					$default = '';
+
+				// Sort out the size... and stuff...
+				$column['size'] = isset($column['size']) && is_numeric($column['size']) ? $column['size'] : null;
+
+				// Allow unsigned integers
+				$unsigned = in_array($column['type'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column['unsigned']) ? 'unsigned ' : '';
+
+				list ($type, $size) = self::calculate_type($column['type'], $column['size'], $unsigned);
+
+				if ($size !== null)
+					$type .= '(' . $size . ')';
+				elseif (!empty($column['values']))
+					$type .= '(' . $column['values'] . ')';
+
+				// Now just put it together!
+				$table_query .= "\n\t`" . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (!empty($column['null']) ? '' : 'NOT NULL') . ' ' . $default . ',';
 			}
-			elseif (isset($column['default']) && $column['default'] !== null)
-				$default = 'default \'' . wesql::escape_string($column['default']) . '\'';
-			else
-				$default = '';
 
-			// Sort out the size... and stuff...
-			$column['size'] = isset($column['size']) && is_numeric($column['size']) ? $column['size'] : null;
-			list ($type, $size) = self::calculate_type($column['type'], $column['size']);
-
-			// Allow unsigned integers
-			$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column['unsigned']) ? 'unsigned ' : '';
-
-			if ($size !== null)
-				$type = $type . '(' . $size . ')';
-
-			// Now just put it together!
-			$table_query .= "\n\t`" .$column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (!empty($column['null']) ? '' : 'NOT NULL') . ' ' . $default . ',';
-		}
-
-		// Loop through the indexes next...
-		foreach ($indexes as $index)
-		{
-			$columns = implode(',', $index['columns']);
-
-			// Is it the primary?
-			if (isset($index['type']) && $index['type'] == 'primary')
-				$table_query .= "\n\t" . 'PRIMARY KEY (' . implode(',', $index['columns']) . '),';
-			else
+			// Loop through the indexes next...
+			foreach ($indexes as $index)
 			{
+				$columns = implode(',', $index['columns']);
+
+				// Is it the primary?
+				if (isset($index['type']) && $index['type'] == 'primary')
+					$table_query .= "\n\t" . 'PRIMARY KEY (' . implode(',', $index['columns']) . '),';
+				else
+				{
+					if (empty($index['name']))
+						$index['name'] = implode('_', $index['columns']);
+					$table_query .= "\n\t" . (isset($index['type']) && $index['type'] == 'unique' ? 'UNIQUE' : 'KEY') . ' ' . $index['name'] . ' (' . $columns . '),';
+				}
+			}
+
+			// No trailing commas!
+			if (substr($table_query, -1) == ',')
+				$table_query = substr($table_query, 0, -1);
+
+			$table_query .= ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci';
+		}
+		else
+		{
+			// Uh-oh, the table exists, so now we have to do funky stuff.
+			$changes = array();
+
+			// Firstly, get the current columns
+			$current_columns = self::list_columns($orig_name, true);
+
+			// Go through each of the columns of the requested table and figure out what's the same and what's different.
+			$numeric_types = array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float', 'double', 'real');
+			foreach ($columns as $id => $column)
+			{
+				if (!isset($current_columns[$column['name']]))
+				{
+					// The column is new, add it to the list of columns to be added
+					$column['size'] = isset($column['size']) && is_numeric($column['size']) ? $column['size'] : null;
+
+					// Allow unsigned integers
+					$unsigned = in_array($column['type'], $numeric_types) && !empty($column['unsigned']) ? 'unsigned ' : '';
+
+					list ($type, $size) = self::calculate_type($column['type'], $column['size'], $unsigned);
+
+					if ($size !== null)
+						$type .= '(' . $size . ')';
+					elseif (!empty($column['values']) && ($column['type'] == 'set' || $column['type'] == 'enum'))
+						$type .= '(' . $column['values'] . ')';
+
+					$changes[] = 'ADD `' . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column['null']) ? 'NOT NULL' : '') . ' ' .
+						(!isset($column['default']) || $column['type'] == 'text' || $column['type'] == 'mediumtext' ? '' : 'default \'' . wesql::escape_string($column['default']) . '\'') . ' ' .
+						(empty($column['auto']) ? '' : 'auto_increment primary key');
+				}
+				else
+				{
+					// The column already exists, does it need changing?
+					$column['size'] = isset($column['size']) && is_numeric($column['size']) ? $column['size'] : null;
+
+					// Allow unsigned integers
+					$unsigned = in_array($column['type'], $numeric_types) && !empty($column['unsigned']) ? 'unsigned ' : '';
+
+					list ($type, $size) = self::calculate_type($column['type'], $column['size'], $unsigned);
+
+					$changing = false;
+					if (in_array($column['type'], $numeric_types))
+					{
+						if ($column['type'] != $current_columns[$column['name']]['type'] || $size != $current_columns[$column['name']]['size'])
+							$changing = true;
+
+						$new_auto = !empty($column['auto']);
+						$old_auto = !empty($current_column['auto']);
+						$changing |= $old_auto != $new_auto;
+
+						$new_unsigned = !empty($column['unsigned']);
+						$old_unsigned = !empty($current_column['unsigned']);
+						$changing |= $new_unsigned != $old_unsigned;
+					}
+					elseif ($column['type'] == 'char' || $column['type'] == 'varchar')
+					{
+						if ($column['type'] != $current_columns[$column['name']]['type'] || $size != $current_columns[$column['name']]['size'])
+							$changing = true;
+					}
+					elseif (($column['type'] == 'set' || $column['type'] == 'enum') && !empty($column['values']))
+					{
+						// This is how it comes through from MySQL normally.
+						$new_type = $column['type'] . '(' . $column['values'] . ')';
+						if ($new_type != $current_columns[$column['name']]['type'])
+							$changing = true;
+					}
+					elseif ($column['type'] != $current_columns[$column['name']]['type'])
+						$changing = true;
+
+					if ($column['type'] != 'text' && $column['type'] != 'mediumtext')
+					{
+						$old_default = !is_null($current_columns[$column['name']]['default']) ? $current_columns[$column['name']]['default'] : null;
+						$new_default = isset($column['default']) ? $column['default'] : null;
+						$changing = $old_default !== $new_default;
+					}
+
+					if ($changing)
+					{
+						if ($size !== null)
+							$type .= '(' . $size . ')';
+						elseif (!empty($column['values']) && ($column['type'] == 'set' || $column['type'] == 'enum'))
+							$type .= '(' . $column['values'] . ')';
+
+						$changes[] = 'MODIFY `' . $column['name'] . '` ' . $type . ' ' . (!empty($unsigned) ? $unsigned : '') . (empty($column['null']) ? 'NOT NULL' : '') . ' ' .
+							(!isset($column['default']) || $column['type'] == 'text' || $column['type'] == 'mediumtext' ? '' : 'default \'' . wesql::escape_string($column['default']) . '\'') . ' ' .
+							(empty($column['auto']) ? '' : 'auto_increment primary key');
+					}
+				}
+			}
+
+			$current_indexes = self::list_indexes($orig_name, true);
+			// !!! There's no safe automatic way to change primary or unique keys on a table without knowing the table's contents.
+			// This should be left to add-ons to handle if they have to do it: the add-on manifest should list the clean install
+			// and an enable script should detect the state of any indexes that have to change and do it itself.
+			// The reality is that while this sounds like a huge limitation, any well designed add-on should have already accounted
+			// for this in its design, by not having to change something so fundamental in a table that existed in a prior version.
+			// Case example: changing primary key with existing data, if basing on a new column it's possible that the column
+			// will cause duplicate rows against the new primary key.
+			foreach ($indexes as $id => $index)
+			{
+				// So, skip any new indexes that are primary or unique, as per above.
+				if ($index['type'] == 'primary' || $index['type'] == 'unique')
+					continue;
+
 				if (empty($index['name']))
 					$index['name'] = implode('_', $index['columns']);
-				$table_query .= "\n\t" . (isset($index['type']) && $index['type'] == 'unique' ? 'UNIQUE' : 'KEY') . ' ' . $index['name'] . ' (' . $columns . '),';
+
+				if (empty($current_indexes[$index['name']]))
+					$changes[] = 'ADD INDEX ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
+				else
+				{
+					$new_columns = implode('_', $index['columns']);
+					$old_columns = implode('_', $current_indexes[$index['name']]['columns']);
+					if ($new_columns != $old_columns)
+					{
+						// There's no MODIFY INDEX function in MySQL.
+						$changes[] = 'DROP INDEX ' . $index['name'];
+						$changes[] = 'ADD INDEX ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
+					}
+				}
 			}
+
+			if (!empty($changes))
+				$table_query = 'ALTER TABLE ' . $table_name . '
+					' . implode(',
+					', $changes);
 		}
 
-		// No trailing commas!
-		if (substr($table_query, -1) == ',')
-			$table_query = substr($table_query, 0, -1);
-
-		$table_query .= ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci';
-
 		// Create the table!
-		wesql::query($table_query,
-			array(
-				'security_override' => true,
-			)
-		);
+		if (!empty($table_query))
+			wesql::query($table_query,
+				array(
+					'security_override' => true,
+				)
+			);
 	}
 
 	// Drop a table.
@@ -196,10 +332,11 @@ class wedbPackages
 
 		// Get the specifics...
 		$column_info['size'] = isset($column_info['size']) && is_numeric($column_info['size']) ? $column_info['size'] : null;
-		list ($type, $size) = self::calculate_type($column_info['type'], $column_info['size']);
 
 		// Allow unsigned integers
-		$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
+		$unsigned = in_array($column_info['type'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
+
+		list ($type, $size) = self::calculate_type($column_info['type'], $column_info['size'], $unsigned);
 
 		if ($size !== null)
 			$type = $type . '(' . $size . ')';
@@ -280,7 +417,7 @@ class wedbPackages
 		if (!isset($column_info['unsigned']) || !in_array($column_info['type'], array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')))
 			$column_info['unsigned'] = '';
 
-		list ($type, $size) = self::calculate_type($column_info['type'], $column_info['size']);
+		list ($type, $size) = self::calculate_type($column_info['type'], $column_info['size'], !empty($column_info['unsigned']));
 
 		// Allow for unsigned integers
 		$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
@@ -409,10 +546,39 @@ class wedbPackages
 		return false;
 	}
 
-	// Get the schema formatted name for a type.
-	public static function calculate_type($type_name, $type_size = null, $reverse = false)
+	// Get the schema formatted name for a type, especially important for numeric fields.
+	public static function calculate_type($type_name, $type_size = null, $unsigned = true)
 	{
-		// MySQL is actually the generic baseline.
+		if ($type_size === null)
+		{
+			switch ($type_name)
+			{
+				case 'tinyint':
+					$type_size = $unsigned ? 3 : 4; // 0 to 255 (3) vs -128 (4) to 127
+					break;
+				case 'smallint':
+					$type_size = $unsigned ? 5 : 6; // 0 to 65535 (5) vs -32768 (6) to 32767
+					break;
+				case 'mediumint':
+					$type_size = 8; // 0 to 16777215 (8) vs -8388608 (8) to 8388607
+					break;
+				case 'int':
+					$type_size = $unsigned ? 10 : 11; // 0 to 4294967296 (10) vs -2147483648 (11) to 2147483647
+					break;
+				case 'bigint':
+					$type_size = 20; // 0 to 18446744073709551616 (20) vs -9223372036854775808 (20) to 9223372036854775807
+					break;
+				case 'varchar':
+				case 'char':
+					$type_size = 50; // There must be a size set for varchars/chars by default.
+					break;
+			}
+		}
+
+		// In case something stupid like text(255) was specified, deal with it.
+		if (in_array($type_name, array('text', 'mediumtext', 'set', 'enum')))
+			$type_size = null;
+
 		return array($type_name, $type_size);
 	}
 
@@ -431,7 +597,7 @@ class wedbPackages
 	}
 
 	// Return column information for a table.
-	public static function list_columns($table_name, $detail = false, $parameters = array())
+	public static function list_columns($table_name, $detail = false)
 	{
 		global $db_prefix;
 
@@ -473,7 +639,7 @@ class wedbPackages
 				$columns[$row['Field']] = array(
 					'name' => $row['Field'],
 					'null' => $row['Null'] != 'YES' ? false : true,
-					'default' => isset($row['Default']) ? $row['Default'] : null,
+					'default' => !is_null($row['Default']) ? $row['Default'] : null,
 					'type' => $type,
 					'size' => $size,
 					'auto' => $auto,

@@ -126,6 +126,82 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 }
 
 /**
+ * This function adds one or more minified, gzipped files to the footer JavaScript, specifically for add-ons to use.
+ *
+ * @param string $addon_name The name of the add-on in question, e.g. Arantor:MyAddon.
+ * @param mixed $files A filename or an array of filenames, with a relative path set to the add-on's folder.
+ * @param boolean $is_direct_url Set to true if you want to add complete URLs (e.g. external libraries), with no minification and no gzipping.
+ * @param boolean $is_out_of_flow Set to true if you want to get the URL immediately and not put it into the JS flow. Used for jQuery/script.js.
+ * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
+ */
+function add_addon_js_file($addon_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
+{
+	global $context, $addonsdir, $cachedir, $boardurl, $footer_coding;
+	static $done_files = array();
+	if (empty($context['addons_dir'][$addon_name]))
+		return;
+
+	if (!is_array($files))
+		$files = (array) $files;
+
+	// Direct URL may as well reuse the main handler once we provide the right (full) URLs for it.
+	if ($is_direct_url)
+	{
+		foreach ($files as $k => $v)
+			$files[$k] = $context['addons_url'][$addon_name] . '/' . $v;
+		return add_js_file($files, true, $is_out_of_flow);
+	}
+
+	// OK, we're going to be caching files.
+	if (empty($done_files[$addon_name]))
+		$done_files[$addon_name] = array_flip(array_flip($files));
+	else
+	{
+		$files = array_diff(array_keys(array_flip($files)), $done_files[$addon_name]);
+		$done_files[$addon_name] = array_merge($done_files[$addon_name], $files);
+	}
+
+	$id = '';
+	$latest_date = 0;
+
+	foreach ($files as &$file)
+	{
+		$full_path = $context['addons_dir'][$addon_name] . '/' . $file;
+		if (!file_exists($full_path))
+			continue;
+
+		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
+		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
+		$latest_date = max($latest_date, filemtime($full_path));
+	}
+
+	$id = substr(strrchr($context['addons_dir'][$addon_name], '/'), 1) . '-' . $id;
+	$id = !empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
+
+	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
+
+	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
+	if (!file_exists($final_file))
+		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext, true);
+
+	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
+
+	// Do we just want the URL?
+	if ($is_out_of_flow)
+		return $final_script;
+
+	if (!empty($footer_coding))
+	{
+		$footer_coding = false;
+		$context['footer_js'] .= '
+// ]]></script>';
+	}
+	$context['footer_js'] .= '
+<script src="' . $final_script . '"></script>';
+}
+
+/**
  * This function adds one or more minified, gzipped files to the header stylesheets. It takes care of everything. Good boy.
  *
  * @param mixed $original_files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current skin.
@@ -200,6 +276,79 @@ function add_css_file($original_files = array(), $add_link = false)
 	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
 	if (!file_exists($final_file))
 		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext);
+
+	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
+
+	// Do we just want the URL?
+	if (!$add_link)
+		return $final_script;
+
+	$eat_this = '
+	<link rel="stylesheet" href="' . $final_script . '">';
+
+	if (isset($context['last_minute_header']))
+		$context['last_minute_header'] .= $eat_this;
+	else
+		$context['header'] .= $eat_this;
+}
+
+function add_addon_css_file($addon_name, $original_files = array(), $add_link = false)
+{
+	global $context, $modSettings, $settings, $cachedir, $boardurl, $addonsdir;
+	if (empty($context['addons_dir'][$addon_name]))
+		return;
+
+	if (!is_array($original_files))
+		$original_files = (array) $original_files;
+
+	// Delete all duplicates.
+	$files = array_keys(array_flip($original_files));
+	$basefiles = array();
+
+	foreach ($files as $file)
+	{
+		$basefiles[] = substr(strrchr($file, '/'), 1);
+		foreach ($context['css_suffixes'] as $gen)
+			$files[] = $file . '.' . $gen;
+	}
+
+	$latest_date = 0;
+
+	foreach ($files as $i => &$file)
+	{
+		$full_path = $context['addons_dir'][$addon_name] . '/' . $file . '.css';
+		if (!file_exists($full_path))
+		{
+			unset($files[$i]);
+			continue;
+		}
+
+		$file = $full_path;
+		$latest_date = max($latest_date, filemtime($full_path));
+	}
+
+	$addonurl = '..' . str_replace($boardurl, '', $context['addons_url'][$addon_name]);
+
+	$id = $context['enabled_addons'][$addon_name] . '-' . implode('-', $basefiles) . '-';
+
+	// We need to cache different versions for different browsers, even if we don't have overrides available.
+	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
+	$id .= implode('-', $context['css_suffixes']);
+
+	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
+	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
+		$id = preg_replace('~(?:^webkit-|-webkit(?=-)|-webkit$)~', '', $id, 1);
+
+	if (isset($context['user']) && $context['user']['language'] !== 'english')
+		$id .= '-' . $context['user']['language'];
+
+	$id = (!empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) : $id) . '-';
+	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
+
+	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
+	if (!file_exists($final_file))
+		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext, $context['addons_url'][$addon_name]);
 
 	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
 
@@ -365,7 +514,7 @@ function wedge_cache_css()
 /**
  * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
  */
-function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext)
+function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext, $addon_path = '')
 {
 	global $settings, $modSettings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
 
@@ -411,6 +560,10 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		'$theme' => '..' . str_replace($boardurl, '', $settings['theme_url']),
 		'$root' => '../',
 	);
+	if (!empty($addon_path))
+		$css_vars['$addondir'] = $addon_path;
+	else
+		unset($css_vars['$addondir']);
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ($css as $file)
@@ -483,14 +636,19 @@ function wedge_fix_browser_css($matches)
  * @param string $final_file Final name of the file to create (obfuscated, with date, etc.)
  * @param array $js List of all JS files to concatenate
  * @param bool $gzip Should we gzip the resulting file?
+ * @param string $ext The file extension to use.
+ * @param bool $full_path Whether or not the file list provided is using a full physical path or not, typically not (so it falls to the theme directory instead)
  * @return int Returns the current timestamp, for use in caching
  */
-function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext)
+function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext, $full_path = false)
 {
 	global $settings, $modSettings, $comments, $cachedir;
 
 	$final = '';
-	$dir = $settings['theme_dir'] . '/';
+	if ($full_path)
+		$dir = '';
+	else
+		$dir = $settings['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	foreach (glob($cachedir . '/' . $id. '*' . $ext) as $del)

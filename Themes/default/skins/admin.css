@@ -64,6 +64,9 @@ ol.search_results
 	text-align: center
 	vertical-align: top
 
+.addon_item extends .admin_item
+	width: 40px
+
 #wedge_news
 	overflow-y: auto
 	max-height: 10.5em

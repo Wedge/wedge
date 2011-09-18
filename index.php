@@ -54,16 +54,17 @@ if (!empty($maintenance) && $maintenance == 2)
 // Initate the database connection and define some database functions to use.
 loadDatabase();
 
-// Load the settings from the settings table, and perform operations like optimizing.
-reloadSettings();
-
 // Unserialize the array of pretty board URLs
 $context = array(
 	'pretty' => array('db_count' => 0),
 	'app_error_count' => 0,
 );
 
-// Here's the monstrous $action array - $action => array($file, $function).
+// Load the settings from the settings table, and perform operations like optimizing.
+reloadSettings();
+
+// Here's the monstrous $action array - $action => array($file, $function, $addon_id).
+// Only add $addon_id if it's for an add-on, otherwise just have two items in the list.
 $action_list = array(
 	'activate' => array('Activate.php', 'Activate'),
 	'admin' => array('Admin.php', 'Admin'),
@@ -317,6 +318,12 @@ function wedge_main()
 	}
 	elseif (empty($action))
 	{
+		// Some add-ons may want to specify default "front page" behavior. If they do, they will return the name of the function they want to call.
+		$functions = call_hook('default_action');
+		foreach ($functions as $func)
+			if (!empty($func))
+				return $func;
+
 		// Action and board are both empty... BoardIndex!
 		if (empty($board) && empty($topic))
 		{
@@ -347,6 +354,11 @@ function wedge_main()
 	// Get the function and file to include - if it's not there, do the board index.
 	if (empty($action) || !isset($action_list[$action]))
 	{
+		// Some add-ons may want to specify default handling behavior - if no known action was used.
+		$functions = call_hook('fallback_action');
+		foreach ($functions as $func)
+			if (!empty($func))
+				return $func;
 		// Fall through to the board index then...
 		loadSource('BoardIndex');
 		return 'BoardIndex';
@@ -354,7 +366,10 @@ function wedge_main()
 
 	// Otherwise, it was set - so let's go to that action.
 	// !!! Fix this $sourcedir for loadSource
-	require_once($sourcedir . '/' . $action_list[$action][0]);
+	if (isset($action_list[$action][2]))
+		loadAddonSource($action_list[$action][2], $action_list[$action][0]);
+	else
+		require_once($sourcedir . '/' . $action_list[$action][0]);
 	return $action_list[$action][1];
 }
 

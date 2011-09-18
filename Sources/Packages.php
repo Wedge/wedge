@@ -66,7 +66,7 @@ function Packages()
 	loadTemplate('Packages');
 	add_css_file('admin', true);
 
-	$context['page_title'] = $txt['package'];
+	$context['page_title'] = $txt['addon_manager'];
 
 	// Delegation makes the world... that is, the package manager go 'round.
 	$subActions = array(

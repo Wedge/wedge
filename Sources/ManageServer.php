@@ -304,6 +304,8 @@ function ModifyDatabaseSettings($return_config = false)
 		array('boarddir', $txt['boarddir'], 'file', 'text', 36),
 		array('sourcedir', $txt['sourcesdir'], 'file', 'text', 36),
 		array('cachedir', $txt['cachedir'], 'file', 'text', 36),
+		array('addonsdir', $txt['addonsdir'], 'file', 'text', 36),
+		array('addonsurl', $txt['addonsurl'], 'file', 'text', 36),
 	);
 
 	if ($return_config)
@@ -1278,7 +1280,24 @@ function ModifyLanguage()
 	loadBlock('modify_language_entries');
 
 	$context['lang_id'] = $_GET['lid'];
-	list ($theme_id, $file_id) = empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '+') === false ? array(1, '') : explode('+', $_REQUEST['tfid']);
+	if (empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '|') === false)
+		list ($theme_id, $file_id) = array(1, '');
+	else
+	{
+		$parts = explode('|', $_REQUEST['tfid']);
+		if (count($parts) == 2)
+			list ($theme_id, $file_id) = $parts;
+		else
+		{
+			// In add-ons, the entry supplied is not theme_id|lang file, but add-on_id|path|lang
+			$theme_id = array_shift($parts);
+			$file_id = array_pop($parts);
+			$path = implode('/', $parts);
+		}
+	}
+	if (!isset($path))
+		$path = '';
+	$path .= '/';
 
 	// Clean the ID - just in case.
 	preg_match('~([A-Za-z0-9_-]+)~', $context['lang_id'], $matches);
@@ -1323,38 +1342,75 @@ function ModifyLanguage()
 			$images_dirs[$id] = $data['theme_dir'] . '/images/' . $context['lang_id'];
 	}
 
-	$current_file = $file_id ? $lang_dirs[$theme_id] . '/' . $file_id . '.' . $context['lang_id'] . '.php' : '';
+	// Now add the possible permutations for add-ons. This is pretty hairy stuff.
+	// To avoid lots of rewriting that really isn't that necessary, we can reuse the code given here, just with a little crafty manipulation.
+	if (!empty($context['addons_dir']))
+	{
+		foreach ($context['addons_dir'] as $addon_id => $addon_path)
+		{
+			$themes[$addon_id] = array(
+				'name' => substr(strrchr($addon_id, ':'), 1),
+				'theme_dir' => $addon_path,
+			);
+			$lang_dirs[$addon_id] = array('' => $addon_path);
+			// We really might as well use SPL for this. I mean, we could do it otherwise but this is almost certainly faster.
+			$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($addon_path), RecursiveIteratorIterator::SELF_FIRST);
+			foreach ($objects as $name => $object)
+				if (is_dir($name))
+				{
+					$local_path = str_replace($addon_path, '', $name) . '|';
+					$lang_dirs[$addon_id][$local_path] = $name;
+				}
+
+			if (empty($lang_dirs[$addon_id]))
+				unset($lang_dirs[$addon_id], $themes[$addon_id]);
+		}
+	}
+
+	if (isset($context['addons_dir'][$theme_id]))
+		$current_file = $file_id ? $context['addons_dir'][$theme_id] . $path . $file_id . '.' . $context['lang_id'] . '.php' : '';
+	else
+		$current_file = $file_id ? $lang_dirs[$theme_id] . $path . $file_id . '.' . $context['lang_id'] . '.php' : '';
 
 	// Now for every theme get all the files and stick them in context!
 	$context['possible_files'] = array();
-	foreach ($lang_dirs as $theme => $theme_dir)
+	foreach ($lang_dirs as $theme => $theme_dirs)
 	{
-		// Open it up.
-		$dir = dir($theme_dir);
-		while ($entry = $dir->read())
+		// Depending on where we came from, we might be looking at a single folder or an add-on's potentially many subfolders.
+		// If we're looking at an add-on, the array will be the possible folders for the prefixing as array keys, with the values as full paths
+		// and the prefixing keys will contain the | delimiter as needed.
+		if (!is_array($theme_dirs))
+			$theme_dirs = array('' => $theme_dirs);
+
+		foreach ($theme_dirs as $path_prefix => $theme_dir)
 		{
-			// We're only after the files for this language.
-			if (preg_match('~^([A-Za-z]+)\.' . $context['lang_id'] . '\.php$~', $entry, $matches) == 0)
-				continue;
+			// Open it up.
+			$dir = dir($theme_dir);
+			while ($entry = $dir->read())
+			{
+				// We're only after the files for this language.
+				if (preg_match('~^([A-Za-z0-9_]+)\.' . $context['lang_id'] . '\.php$~', $entry, $matches) == 0)
+					continue;
 
-			//!!! Temp!
-			if ($matches[1] == 'EmailTemplates')
-				continue;
+				//!!! Temp!
+				if ($matches[1] == 'EmailTemplates')
+					continue;
 
-			if (!isset($context['possible_files'][$theme]))
-				$context['possible_files'][$theme] = array(
-					'id' => $theme,
-					'name' => $themes[$theme]['name'],
-					'files' => array(),
+				if (!isset($context['possible_files'][$theme]))
+					$context['possible_files'][$theme] = array(
+						'id' => $theme,
+						'name' => $themes[$theme]['name'],
+						'files' => array(),
+					);
+
+				$context['possible_files'][$theme]['files'][] = array(
+					'id' => $path_prefix . $matches[1],
+					'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
+					'selected' => $theme_id == $theme && $file_id == $matches[1],
 				);
-
-			$context['possible_files'][$theme]['files'][] = array(
-				'id' => $matches[1],
-				'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
-				'selected' => $theme_id == $theme && $file_id == $matches[1],
-			);
+			}
+			$dir->close();
 		}
-		$dir->close();
 	}
 
 	// We no longer wish to speak this language.
@@ -2081,7 +2137,7 @@ function saveSettings(&$config_vars)
 		'cookiename',
 		'webmaster_email',
 		'db_name', 'db_user', 'db_server', 'db_prefix', 'ssi_db_user',
-		'boarddir', 'sourcedir', 'cachedir',
+		'boarddir', 'sourcedir', 'cachedir', 'addonsdir',
 	);
 	// All the numeric variables.
 	$config_ints = array(

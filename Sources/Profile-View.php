@@ -1615,6 +1615,8 @@ function TrackIP($memID = 0)
 	// Create the error list.
 	createList($listOptions);
 
+	call_hook('track_ip', array(&$ip_string, &$ip_var));
+
 	$context['single_ip'] = strpos($context['ip'], '*') === false;
 	if ($context['single_ip'])
 	{

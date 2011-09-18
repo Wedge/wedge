@@ -283,6 +283,13 @@ function getBoardIndex($boardIndexOptions)
 	if (!empty($boardIndexOptions['set_latest_post']) && !empty($latest_post['ref']))
 		$context['latest_post'] = $latest_post['ref'];
 
+	$params = array(&$boardIndexOptions);
+	if ($boardIndexOptions)
+		$params[] = &$categories;
+	else
+		$params[] = &$this_category;
+	call_hook('get_boardindex', $params);
+
 	return $boardIndexOptions['include_categories'] ? $categories : $this_category;
 }
 

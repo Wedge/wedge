@@ -582,11 +582,27 @@ function Admin()
 			),
 		),
 		'addons' => array(
-			'title' => $txt['package'],
+			'title' => $txt['addon_manager'],
 			'permission' => array('admin_forum'),
 			'areas' => array(
+				'addons' => array(
+					'label' => $txt['addon_manager'],
+					'file' => 'ManageAddons',
+					'function' => 'AddonsHome',
+					'permission' => array('admin_forum'),
+					'icon' => 'packages.gif',
+					'bigicon' => 'addon_manager.png',
+					'subsections' => array(
+						'addons' => array($txt['addon_manager']),
+						/*'browse' => array($txt['browse_packages']),
+						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
+						'perms' => array($txt['package_file_perms']),
+						'',
+						'options' => array($txt['package_settings']),*/
+					),
+				),
 				'packages' => array(
-					'label' => $txt['package'],
+					'label' => 'Packages (old)',
 					'file' => 'Packages',
 					'function' => 'Packages',
 					'permission' => array('admin_forum'),

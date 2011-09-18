@@ -509,7 +509,12 @@ function ModifyProfile($post_errors = array())
 
 	// File to include?
 	if (isset($profile_include_data['file']))
-		loadSource($profile_include_data['file']);
+	{
+		if (is_array($profile_include_data['file']))
+			loadAddonSource($profile_include_data['file'][0], $profile_include_data['file'][1]);
+		else
+			loadSource($profile_include_data['file']);
+	}
 
 	// Make sure that the area function does exist!
 	if (!isset($profile_include_data['function']) || !function_exists($profile_include_data['function']))

@@ -1074,6 +1074,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		}
 	}
 
+	// Is there anything we want to do just before we go home?
+	call_hook('post_bbc_parse', array(&$message, &$smileys, $cache_id));
+
 	// Cache the output if it took some time...
 	if (isset($cache_key, $cache_t) && microtime(true) - $cache_t > 0.05)
 		cache_put_data($cache_key, $message, 240);

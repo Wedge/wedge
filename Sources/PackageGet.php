@@ -48,7 +48,7 @@ function PackageGet()
 	loadTemplate('Packages');
 	add_css_file('admin', true);
 
-	$context['page_title'] = $txt['package'];
+	$context['page_title'] = $txt['addon_manager'];
 
 	// Here is a list of all the potentially valid actions.
 	$subActions = array(

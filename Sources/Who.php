@@ -68,6 +68,7 @@ function Who()
 	// Load the 'Who' template.
 	loadTemplate('Who');
 	loadLanguage('Who');
+	call_lang_hook('lang_who');
 
 	// Sort out... the column sorting.
 	$sort_methods = array(

@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $txt, $context, $sourcedir;
+	global $modSettings, $boarddir, $txt, $context, $sourcedir, $addonsdir, $addonsurl;
 
 	// Most database systems have not set UTF-8 as their default input charset.
 	wesql::query('
@@ -65,6 +65,28 @@ function reloadSettings()
 
 		if (!empty($modSettings['cache_enable']))
 			cache_put_data('modSettings', $modSettings, 90);
+	}
+
+	// Deal with loading add-ons.
+	$context['enabled_addons'] = array();
+	if (!empty($modSettings['enabled_addons']))
+	{
+		// Step through the list we think we have enabled.
+		$addons = explode(',', $modSettings['enabled_addons']);
+		foreach ($addons as $addon)
+		{
+			if (!empty($modSettings['addon_' . $addon]) && file_exists($addonsdir . '/' . $addon . '/addon-info.xml'))
+			{
+				$addon_details = @unserialize($modSettings['addon_' . $addon]);
+				$context['enabled_addons'][$addon_details['id']] = $addon;
+				$this_addondir = $context['addons_dir'][$addon_details['id']] = $addonsdir . '/' . $addon;
+				$context['addons_url'][$addon_details['id']] = $addonsurl . '/' . $addon;
+				unset($addon_details['id']);
+				foreach ($addon_details as $hook => $functions)
+					foreach ($functions as $function)
+						$modSettings['hooks'][$hook][] = strtr($function, array('$addondir' => $this_addondir));
+			}
+		}
 	}
 
 	loadSource('Class-String');
@@ -1737,7 +1759,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (WIRELESS)
 	{
 		loadTemplate('Wireless');
-		loadLanguage('Wireless+index+Modifications');
+		loadLanguage('Wireless+index');
 		hideChrome(WIRELESS_PROTOCOL);
 	}
 	// Output is fully XML or a simple action?
@@ -1745,7 +1767,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		if (isset($_REQUEST['xml']))
 			loadTemplate('Xml');
-		loadLanguage('index+Modifications');
+		loadLanguage('index');
 		hideChrome();
 	}
 	else
@@ -1761,7 +1783,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			loadTemplate($template);
 
 		// ...and attempt to load their associated language files.
-		$required_files = implode('+', array_merge($templates, array('Modifications')));
+		$required_files = implode('+', $templates);
 		loadLanguage($required_files, '', false);
 
 		// Initialize our JS files to cache right before we run template_init().
@@ -1915,6 +1937,79 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// We are ready to go.
 	$context['theme_loaded'] = true;
+}
+
+function loadAddonSource($addon_name, $source_name)
+{
+	global $context;
+	if (empty($context['addons_dir'][$addon_name]))
+		return;
+
+	foreach ((array) $source_name as $file)
+		require_once($context['addons_dir'][$addon_name] . '/' . $file . '.php');
+}
+
+function loadAddonTemplate($addon_name, $template_name, $fatal = true)
+{
+	global $context, $settings;
+	if (empty($context['addons_dir'][$addon_name]))
+		return;
+
+	// We may as well reuse the normal template loader. Might rewrite this later, however.
+	$old_templates = $settings['template_dirs'];
+	$settings['template_dirs'] = array($context['addons_dir'][$addon_name]);
+	loadTemplate($template_name, $fatal);
+	$settings['template_dirs'] = $old_templates;
+}
+
+function loadAddonLanguage($addon_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
+{
+	global $context, $modSettings, $user_info, $language, $txt, $db_show_debug;
+	static $already_loaded = array();
+	if (empty($context['addons_dir'][$addon_name]))
+		return;
+
+	// Default to the user's language.
+	if ($lang == '')
+		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
+
+	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
+		return $lang;
+
+	$attempts = array();
+	// If true, pass through to the next language attempt even if it's a match. But if it's not English, see about loading that *first*.
+	if (empty($modSettings['disable_language_fallback']) && $lang !== 'english')
+		$attempts['english'] = true;
+
+	// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
+	$attempts[$lang] = false;
+	$attempts[$language] = false;
+
+	foreach ($attempts as $load_lang => $continue)
+	{
+		$file = $context['addons_dir'][$addon_name] . '/' . $template_name . '.' . $load_lang . '.php';
+		if (file_exists($file))
+		{
+			template_include($file);
+			$found = true;
+		}
+		if ($found && !$continue)
+			break;
+	}
+
+	// Oops, didn't find it. Log it.
+	if (!$found)
+		log_error(sprintf($txt['theme_language_error'], '(' . $addon_name . ') ' . $template_name . '.' . $lang, 'template'));
+
+	// Keep track of what we're up to soldier.
+	if ($db_show_debug === true)
+		$context['debug']['language_files'][] = $template_name . '.' . $lang . ' (' . $addon_name . ')';
+
+	// Remember what we have loaded, and in which language.
+	$already_loaded[$addon_name . ':' . $template_name] = $lang;
+
+	// Return the language actually loaded.
+	return $lang;
 }
 
 /**

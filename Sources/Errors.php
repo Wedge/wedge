@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
-	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context, $full_request;
+	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context, $full_request, $addonsdir;
 
 	// Check if error logging is actually on.
 	if (empty($modSettings['enableErrorLogging']))
@@ -90,6 +90,15 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Make sure the category that was specified is a valid one
 	$error_type = in_array($error_type, $known_error_types) && $error_type !== true ? $error_type : 'general';
+
+	// There may be an alternate case of error type: it might be add-on related.
+	if (!empty($file) && strpos($file, $addonsdir) === 0)
+		foreach ($context['addons_dir'] as $addon_id => $addon_path)
+			if (strpos($file, $addon_path) === 0)
+			{
+				$error_type = $addon_id;
+				break;
+			}
 
 	// Don't log the same error countless times, as we can get in a cycle of depression...
 	$error_info = array($user_info['id'], time(), get_ip_identifier($user_info['ip']), $query_string, $error_message, (string) $sc, $error_type, $file, $line);

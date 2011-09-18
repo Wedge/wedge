@@ -116,8 +116,14 @@ function AutoTask()
 			);
 			$affected_rows = wesql::affected_rows();
 
+			// Does this task need us to load a file? The filename will be addon;fullpath-to-file
 			if (!empty($row['sourcefile']))
-				loadSource($row['sourcefile']);
+			{
+				if (strpos($row['sourcefile'], 'addon;') === 0)
+					require_once(substr($row['sourcefile'], 6) . '.php');
+				else
+					loadSource($row['sourcefile']);
+			}
 
 			// The function must exist or we are wasting our time, plus do some timestamp checking, and database check!
 			if (function_exists('scheduled_' . $row['task']) && (!isset($_GET['ts']) || $_GET['ts'] == $row['next_time']) && $affected_rows)
@@ -1237,7 +1243,7 @@ function loadEssentialThemeData()
 		require_once($sourcedir . '/Subs.php');
 	}
 
-	loadLanguage('index+Modifications');
+	loadLanguage('index');
 }
 
 function scheduled_fetchRemoteFiles()

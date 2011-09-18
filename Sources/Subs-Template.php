@@ -81,12 +81,19 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 		{
 			foreach ($buffers as $function)
 			{
-				$call = strpos($function, '::') !== false ? array_map('trim', explode('::', $function)) : trim($function);
+				$fun = explode('|', trim($function));
+				$call = strpos($fun[0], '::') !== false ? explode('::', $fun[0]) : $fun[0];
 
-				// Is it valid?
-				if (is_callable($call))
-					ob_start($call);
+				// We might need to load some stuff here.
+				if (!empty($fun[1]))
+				{
+					if (!empty($fun[2]) && $fun[2] === 'addon')
+						require_once($fun[1] . '.php');
+					else
+						loadSource($fun[1]);
+				}
 			}
+			
 		}
 
 		// Display the screen in the logical order.

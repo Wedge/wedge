@@ -1999,7 +1999,7 @@ function setupMenuContext()
 						'show' => allowedTo('manage_permissions'),
 					),
 					'packages' => array(
-						'title' => $txt['package'],
+						'title' => $txt['addon_manager'],
 						'href' => $scripturl . '?action=admin;area=packages',
 						'show' => allowedTo('admin_forum'),
 					),
@@ -2259,16 +2259,69 @@ function call_hook($hook, $parameters = array())
 
 		// Load any required file.
 		if (!empty($fun[1]))
-			loadSource($fun[1]);
+		{
+			// We might be loading addon files, we might not. This can't be set by add_hook, but by the hook manager.
+			if (!empty($fun[2]) && $fun[2] === 'addon')
+				require_once($fun[1] . '.php');
+			else
+				loadSource($fun[1]);
+		}
 
 		// If it isn't valid, remove it from our list.
 		if (is_callable($call))
 			$results[$fun[0]] = call_user_func_array($call, $parameters);
 		else
-			remove_hook($call, $function);
+			remove_hook($hook, $call, !empty($fun[1]) ? $fun[1] : '');
 	}
 
 	return $results;
+}
+
+function call_lang_hook($hook)
+{
+	global $modSettings, $user_info, $language;
+
+	if (empty($modSettings['hooks'][$hook]))
+		return false;
+
+	static $lang = null;
+	if ($lang === null)
+		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
+
+	foreach ($modSettings['hooks'][$hook] as $function)
+	{
+		$found = false;
+		// Was this a language file hook? There won't be a function if it is. It should be in the form of path/filename without a language or extension, e.g. /path/Addons/myaddon/myfile (where .english.php is added later)
+		if ($function[0] === '|')
+		{
+			// So, we're looking at files that we're calling for, and they're language files.
+			$path = trim(substr($function, 1));
+			$attempts = array();
+			// If true, pass through to the next language attempt even if it's a match. But if it's not English, see about loading that *first*.
+			if (empty($modSettings['disable_language_fallback']) && $lang !== 'english')
+				$attempts['english'] = true;
+
+			// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
+			$attempts[$lang] = false;
+			$attempts[$language] = false;
+			
+			foreach ($attempts as $load_lang => $continue)
+			{
+				$file = $path . '.' . $load_lang . '.php';
+				if (file_exists($file))
+				{
+					template_include($file);
+					$found = true;
+				}
+				if ($found && !$continue)
+					break;
+			}
+		}
+
+		// Oops, didn't find it. Log it. Remember, we don't have a full filename but the full path and the start of the filename, so get the last file part.
+		if (!$found)
+			log_error(sprintf($txt['theme_language_error'], substr($path, strrpos($path, DIRECTORY_SEPARATOR)) . '.' . $lang, 'template'));
+	}
 }
 
 /**
@@ -2287,6 +2340,8 @@ function add_hook($hook, $function, $file = '', $register = true)
 	global $modSettings, $sourcedir;
 
 	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file)) . '.php'))
+		$file = '';
+	if (strpos($file, '|') !== false)
 		$file = '';
 
 	$function .= '|' . $file;
@@ -2333,7 +2388,7 @@ function remove_hook($hook, $function, $file = '')
 
 	$function .= '|' . $file;
 
-	// You can only remove it's available.
+	// You can only remove it if it's available.
 	if (empty($modSettings['hooks'][$hook]) || !in_array($function, $modSettings['hooks'][$hook]))
 		return;
 

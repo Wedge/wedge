@@ -68,13 +68,13 @@ require_once($sourcedir . '/Security.php');
 // Initate the database connection and define some database functions to use.
 loadDatabase();
 
-// Load installed 'Mods' settings.
-reloadSettings();
-
 // Unserialize the array of pretty board URLs
 $context = array(
 	'pretty' => array('db_count' => 0)
 );
+
+// Load installed 'Mods' settings.
+reloadSettings();
 
 // Clean the request variables.
 cleanRequest();
@@ -151,6 +151,9 @@ if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
 
 // Load the current or SSI theme. (just use $ssi_theme = id_theme;)
 loadTheme(isset($ssi_theme) ? (int) $ssi_theme : 0);
+
+// Deal with anything that SSI (only) wants.
+call_hook('ssi');
 
 // Take care of any banning that needs to be done.
 if (isset($_REQUEST['ssi_ban']) || (isset($ssi_ban) && $ssi_ban === true))
