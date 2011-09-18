@@ -1011,7 +1011,7 @@ function BanEdit()
 	if (WIRELESS)
 	{
 		hideChrome('html');
-		loadBlock(WIRELESS_PROTOCOL . '_ban_edit');
+		loadBlock('wap2_ban_edit');
 	}
 	else
 		loadBlock('ban_edit');

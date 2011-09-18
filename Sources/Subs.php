@@ -511,7 +511,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 
 	// Wireless will need the protocol on the URL somewhere.
 	if (WIRELESS)
-		$base_url .= ';' . WIRELESS_PROTOCOL;
+		$base_url .= ';wap2';
 
 	$base_link = '<a href="' . ($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . '">%2$s</a> ';
 
@@ -1046,9 +1046,9 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$char = strpos($setLocation, '?') === false ? '?' : ';';
 
 		if (strpos($setLocation, '#') !== false)
-			$setLocation = strtr($setLocation, array('#' => $char . WIRELESS_PROTOCOL . '#'));
+			$setLocation = strtr($setLocation, array('#' => $char . 'wap2#'));
 		else
-			$setLocation .= $char . WIRELESS_PROTOCOL;
+			$setLocation .= $char . 'wap2';
 	}
 	elseif ($add)
 		$setLocation = $scripturl . ($setLocation != '' ? '?' . $setLocation : '');

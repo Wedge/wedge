@@ -94,7 +94,7 @@ function Login2()
 	loadLanguage('Login');
 	// Load the template stuff - wireless or normal.
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_login');
+		loadBlock('wap2_login');
 	else
 	{
 		loadTemplate('Login');

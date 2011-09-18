@@ -551,7 +551,7 @@ function ModifyProfile($post_errors = array())
 
 	// If we're in wireless then we have a cut down template...
 	if (WIRELESS && isset($context['layers']['context']['summary']))
-		loadBlock(WIRELESS_PROTOCOL . '_profile');
+		loadBlock('wap2_profile');
 
 	// These will get populated soon!
 	$post_errors = array();

@@ -35,7 +35,7 @@ function MessageIndex()
 	}
 
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_messageindex');
+		loadBlock('wap2_messageindex');
 	else
 	{
 		loadTemplate('MessageIndex');

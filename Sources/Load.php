@@ -1760,7 +1760,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	{
 		loadTemplate('Wireless');
 		loadLanguage('Wireless+index');
-		hideChrome(WIRELESS_PROTOCOL);
+		hideChrome('wap2');
 	}
 	// Output is fully XML or a simple action?
 	elseif (isset($_REQUEST['xml']) || !empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))

@@ -1231,7 +1231,7 @@ function Post()
 
 	// Finally, load the template.
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_post');
+		loadBlock('wap2_post');
 	elseif (!isset($_REQUEST['xml']))
 		loadTemplate('Post');
 }

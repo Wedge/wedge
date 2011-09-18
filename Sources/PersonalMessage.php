@@ -125,7 +125,7 @@ function MessageMain()
 	loadLanguage('PersonalMessage');
 
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_pm');
+		loadBlock('wap2_pm');
 	else
 		loadTemplate('PersonalMessage');
 

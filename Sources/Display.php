@@ -72,7 +72,7 @@ function Display()
 
 	// Load the proper template and/or sub template.
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_display');
+		loadBlock('wap2_display');
 	else
 		loadTemplate('Display');
 

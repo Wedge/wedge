@@ -191,7 +191,7 @@ function is_not_guest($message = '')
 	if (WIRELESS)
 	{
 		$context['login_error'] = $message ? $message : $txt['only_members_can_access'];
-		loadBlock(WIRELESS_PROTOCOL . '_login');
+		loadBlock('wap2_login');
 	}
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
 	elseif (!isset($context['layers']['context']))

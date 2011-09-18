@@ -32,9 +32,9 @@ function Login()
 	if (!$context['user']['is_guest'])
 		redirectexit();
 
-	// In wireless?  If so, use the correct sub template.
+	// In wireless?  If so, use the correct block.
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_login');
+		loadBlock('wap2_login');
 	// Otherwise, we need to load the Login template/language file.
 	else
 	{

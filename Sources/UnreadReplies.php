@@ -228,7 +228,7 @@ function UnreadReplies()
 	);
 
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_recent');
+		loadBlock('wap2_recent');
 	else
 	{
 		loadTemplate('Recent');

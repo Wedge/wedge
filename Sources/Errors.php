@@ -321,7 +321,7 @@ function setup_fatal_error_context($error_message)
 
 	// Display the error message - wireless?
 	if (defined('WIRELESS') && WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_error');
+		loadBlock('wap2_error');
 	// Load the template and set the sub template.
 	else
 	{

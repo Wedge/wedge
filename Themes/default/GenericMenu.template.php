@@ -94,6 +94,9 @@ function template_generic_menu_dropdown()
 	echo '
 <ul id="amen', $mid > 1 ? '_' . ($mid - 1) : '', '" class="css menu">';
 
+	// IE6 needs an extra space to avoid breaking layout. Ah ah.
+	$end_a = $context['browser']['is_ie6'] ? ' </a>' : '</a>';
+
 	// Main areas first.
 	foreach ($menu_context['sections'] as $section)
 	{
@@ -127,7 +130,7 @@ function template_generic_menu_dropdown()
 
 			echo '
 			<li', $class, '>
-				<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '">', $area['icon'], $area['label'], '</a>';
+				<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '">', $area['icon'], $area['label'], $end_a;
 
 			// Is there any subsections?
 			if (!empty($area['subsections']))

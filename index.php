@@ -190,9 +190,6 @@ if (!defined('WIRELESS'))
 
 if (WIRELESS)
 {
-	// !!! Could simply hardcode wap2 into the files...
-	define('WIRELESS_PROTOCOL', 'wap2');
-
 	// Some cellphones can't handle output compression...
 	$modSettings['enableCompressedOutput'] = '0';
 	// !!! Do we want these hard coded?

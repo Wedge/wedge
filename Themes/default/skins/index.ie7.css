@@ -54,10 +54,6 @@
 	display: block
 	width: 47%
 
-ul.quickbuttons
-	display: block
-	width: 40%
-
 /* Overrides for the profile template
 ------------------------------------------------------- */
 #basicinfo h4
@@ -128,6 +124,8 @@ ul.quickbuttons
 	padding-right: 0
 
 ul.quickbuttons
+	display: block
+	width: 40%
 	float: right
 
 /* Misc hacks
@@ -161,8 +159,8 @@ li.separator
 		padding: 0 8px
 	hr
 		position: absolute
-		margin: 6px 0 0 55px
-		width: 50px
+		margin: 6px 0 0 0
+		width: 16px
 		display: block
 
 #context_menus h4:hover

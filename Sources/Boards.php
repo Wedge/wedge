@@ -38,7 +38,7 @@ function Boards()
 
 	// For wireless, we use the Wireless template...
 	if (WIRELESS)
-		loadBlock(WIRELESS_PROTOCOL . '_boards');
+		loadBlock('wap2_boards');
 	else
 	{
 		loadTemplate('Boards');
