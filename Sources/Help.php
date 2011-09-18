@@ -34,6 +34,7 @@ function Help()
 
 	// Load the admin help language file and template.
 	loadLanguage('Help');
+	call_lang_hook('lang_help');
 
 	// Permission specific help?
 	if (isset($_GET['in']) && substr($_GET['in'], 0, 14) == 'permissionhelp')

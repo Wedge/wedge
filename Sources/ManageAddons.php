@@ -21,6 +21,7 @@ function AddonsHome()
 	// General stuff
 	loadLanguage('ManageAddons');
 	loadTemplate('ManageAddons');
+	define('WEDGE_ADDON', 1); // Any scripts that are run from here, should *really* test that this is defined and exit if not.
 
 	$subActions = array(
 		'list' => 'ListAddons',
@@ -542,6 +543,19 @@ function EnableAddon()
 		}
 	}
 
+	// Database changes: enable script
+	if (!empty($manifest->database->scripts->enable))
+	{
+		$file = (string) $manifest->database->scripts->enable;
+		$full_path = strtr($file, array('$addondir' => $addonsdir . '/' . $_GET['addon']));
+		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$addondir/') !== 0 || !file_exists($full_path))
+			fatal_lang_error('fatal_install_enable_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
+
+		// This is just here as reference for what is available.
+		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $addonsdir;
+		require($full_path);
+	}
+
 	// Adding settings
 	if (!empty($manifest->settings))
 	{
@@ -682,6 +696,19 @@ function DisableAddon()
 
 	// Disabling is much simpler than enabling.
 
+	// Database changes: disable script
+	if (!empty($manifest->database->scripts->disable))
+	{
+		$file = (string) $manifest->database->scripts->disable;
+		$full_path = strtr($file, array('$addondir' => $addonsdir . '/' . $_GET['addon']));
+		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$addondir/') !== 0 || !file_exists($full_path))
+			fatal_lang_error('fatal_install_enable_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
+
+		// This is just here as reference for what is available.
+		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $addonsdir;
+		require($full_path);
+	}
+
 	// Any scheduled tasks to disable?
 	if (!empty($manifest->scheduledtasks))
 	{
@@ -726,6 +753,7 @@ function knownHooks()
 {
 	return array(
 		'language' => array(
+			'lang_help',
 			'lang_who',
 		),
 		'function' => array(
