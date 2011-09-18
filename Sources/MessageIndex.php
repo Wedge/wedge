@@ -212,6 +212,7 @@ function MessageIndex()
 		'include_categories' => false,
 		'base_level' => $board_info['child_level'] + 1,
 		'parent_id' => $board_info['id'],
+		'category' => 0,
 		'set_latest_post' => false,
 		'countChildPosts' => !empty($modSettings['countChildPosts']),
 	);

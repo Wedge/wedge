@@ -50,7 +50,7 @@ function Recent()
 				fatal_lang_error('no_access', false);
 
 			$context['linktree'][] = array(
-				'url' => $scripturl . '#category_' . (int) $_REQUEST['c'],
+				'url' => $scripturl . '?action=boards;c=' . (int) $_REQUEST['c'],
 				'name' => $name
 			);
 		}
@@ -264,8 +264,8 @@ function Recent()
 			'category' => array(
 				'id' => $row['id_cat'],
 				'name' => $row['cname'],
-				'href' => $scripturl . '#category_' . $row['id_cat'],
-				'link' => '<a href="' . $scripturl . '#category_' . $row['id_cat'] . '">' . $row['cname'] . '</a>'
+				'href' => $scripturl . '?action=boards;c=' . $row['id_cat'],
+				'link' => '<a href="' . $scripturl . '?action=boards;c=' . $row['id_cat'] . '">' . $row['cname'] . '</a>'
 			),
 			'board' => array(
 				'id' => $row['id_board'],

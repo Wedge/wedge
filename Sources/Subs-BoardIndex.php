@@ -56,12 +56,14 @@ function getBoardIndex($boardIndexOptions)
 			LEFT JOIN {db_prefix}collapsed_categories AS cc ON (cc.id_cat = c.id_cat AND cc.id_member = {int:current_member})' : '')) . '
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
 			LEFT JOIN {db_prefix}members AS mods_mem ON (mods_mem.id_member = mods.id_member)
-		WHERE {query_see_board}' . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
+		WHERE {query_see_board}' . (empty($boardIndexOptions['category']) ? '' : '
+			AND b.id_cat = {int:category}') . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
 			AND b.child_level >= {int:child_level}') : '
 			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)),
 		array(
 			'current_member' => $user_info['id'],
 			'child_level' => $boardIndexOptions['base_level'],
+			'category' => $boardIndexOptions['category'],
 			'blank_string' => '',
 		)
 	);
@@ -88,10 +90,10 @@ function getBoardIndex($boardIndexOptions)
 					'id' => $row_board['id_cat'],
 					'name' => $row_board['cat_name'],
 					'is_collapsed' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1 && $row_board['is_collapsed'] > 0,
-					'can_collapse' => isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1,
+					'can_collapse' => (isset($row_board['can_collapse']) && $row_board['can_collapse'] == 1) && empty($_GET['c']),
 					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_query'] . '#category_' . $row_board['id_cat'] : '',
 					'collapse_image' => isset($row_board['can_collapse']) ? '<div class="catfold' . ($row_board['is_collapsed'] > 0 ? '' : ' fold') . '"></div>' : '',
-					'href' => $scripturl . '#category_' . $row_board['id_cat'],
+					'href' => $scripturl . '?action=boards;c=' . $row_board['id_cat'],
 					'boards' => array(),
 					'new' => false,
 				);

@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function Collapse()
 {
-	global $user_info, $context;
+	global $user_info, $context, $modSettings;
 
 	// Just in case, no need, no need.
 	$context['robot_no_index'] = true;
@@ -44,8 +44,7 @@ function Collapse()
 	}
 
 	// And go back to the board list.
-	loadSource('Boards');
-	Boards();
+	redirectexit(empty($modSettings['default_index']) ? '' : 'action=boards');
 }
 
 ?>

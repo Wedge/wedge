@@ -733,7 +733,7 @@ function loadBoard()
 		$context['linktree'] = array_merge(
 			$context['linktree'],
 			array(array(
-				'url' => $scripturl . '#category_' . $board_info['cat']['id'],
+				'url' => $scripturl . '?action=boards;c=' . $board_info['cat']['id'],
 				'name' => $board_info['cat']['name']
 			)),
 			array_reverse($board_info['parent_boards']),

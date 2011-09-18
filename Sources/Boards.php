@@ -68,7 +68,7 @@ function Boards()
 	}
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl;
+	$context['canonical_url'] = $scripturl . (isset($_GET['action']) && $_GET['action'] === 'boards' ? '?action=boards' . (isset($_GET['c']) ? ';c=' . $_GET['c'] : '') : '');
 
 	// Do not let search engines index anything if there is a random thing in $_GET.
 	if (!empty($_GET))
@@ -80,6 +80,7 @@ function Boards()
 		'include_categories' => true,
 		'base_level' => 0,
 		'parent_id' => 0,
+		'category' => isset($_GET['c']) ? (int) $_GET['c'] : 0,
 		'set_latest_post' => true,
 		'countChildPosts' => !empty($modSettings['countChildPosts']),
 	);
