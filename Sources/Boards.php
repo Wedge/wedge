@@ -54,7 +54,8 @@ function Boards()
 				'info_center_personalmsg',
 				'info_center_end',
 			),
-			'sidebar'
+			'sidebar',
+			'add'
 		);
 		// And the rest into our context layer.
 		loadBlock(

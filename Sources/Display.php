@@ -410,7 +410,7 @@ function Display()
 	// Set the userbox position to the right. Later on, allow users to determine position of sidebar & userbox.
 	$context['post_position'] = 'right';
 
-	loadBlock('display_statistics', 'sidebar');
+	loadBlock('display_statistics', 'sidebar', 'add');
 
 	// Default this topic to not marked for notifications... of course...
 	$context['is_marked_notify'] = false;
@@ -426,7 +426,7 @@ function Display()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('topic');
-		loadBlock('display_whoviewing', 'sidebar');
+		loadBlock('display_whoviewing', 'sidebar', 'add');
 	}
 
 	// If all is set, but not allowed... just unset it.

@@ -1255,7 +1255,7 @@ function aeva_viewItem()
 		'aeva_item_comments',
 	));
 	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'])
-		loadBlock('aeva_item_details', 'sidebar');
+		loadBlock('aeva_item_details', 'sidebar', 'add');
 }
 
 function aeva_mgComment()

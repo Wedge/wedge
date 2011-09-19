@@ -503,7 +503,7 @@ function Unread()
 	}
 
 	loadTemplate('MessageIndex');
-	loadBlock('messageindex_legend', 'sidebar');
+	loadBlock('messageindex_legend', 'sidebar', 'add');
 
 	$context['topics'] = array();
 	$topic_ids = array();

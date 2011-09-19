@@ -650,7 +650,7 @@ li.separator
 	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
 	border-radius: 7px
 	float: right
-	padding: 2px 4px
+	padding: 2px 5px
 	margin: -2px -4px 0 8px
 
 .menu h4 strong

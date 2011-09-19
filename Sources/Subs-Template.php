@@ -106,8 +106,10 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 		if (WIRELESS && !isset($context['layers']['context']))
 			fatal_lang_error('wireless_error_notyet', false);
 
-		if (!empty($context['skeleton_array']))
-			render_skeleton(reset($context['skeleton_array']), key($context['skeleton_array']));
+		if (empty($context['layers']['context']))
+			fatal_error('The context layer was removed. You can NOT force me to render something so screwed up.');
+
+		render_skeleton(reset($context['skeleton_array']), key($context['skeleton_array']));
 	}
 
 	// Remember this URL in case someone doesn't like sending HTTP_REFERER.
@@ -142,10 +144,8 @@ function render_skeleton(&$here, $key)
 {
 	global $context;
 
-	// Show the _above part of the layer
-	$temp = $key . '_above';
-	if (function_exists('template_' . $temp))
-		execBlock($temp, 'ignore');
+	// Show the _above part of the layer.
+	execBlock($key . '_above', 'ignore');
 
 	if ($key === 'top' || $key === 'context')
 		while_we_re_here();
@@ -160,9 +160,7 @@ function render_skeleton(&$here, $key)
 	}
 
 	// Show the _below part of the layer
-	$temp = $key . '_below';
-	if (function_exists('template_' . $temp))
-		execBlock($temp, 'ignore');
+	execBlock($key . '_below', 'ignore');
 
 	// !! We should probably move this directly to template_html_below() and forget the buffering thing...
 	if ($key === 'html' && !isset($_REQUEST['xml']) && empty($context['hide_chrome']))
@@ -1209,39 +1207,37 @@ function loadBlock($blocks, $target = 'context', $where = 'replace')
 	*/
 
 	$blocks = array_flip((array) $blocks);
+	$hints =& $context['layer_hints'];
 	foreach ((array) $target as $layer)
 	{
 		// Is the target layer wishful thinking?
-		if ($layer[0] === ':' && isset($context['layer_hints'][substr($layer, 1)]))
-			$to = $context['layer_hints'][substr($layer, 1)];
+		if ($layer[0] === ':' && ($hint = substr($layer, 1)) && isset($hints[$hint], $context['layers'][$hints[$hint]]))
+			$to = $hints[$hint];
 		elseif (isset($context['layers'][$layer]))
 			$to = $layer;
 		if (isset($to))
 			break;
 	}
-	// Don't bother with non-main elements in Wireless and XML modes.
-	if (empty($to) && (WIRELESS || isset($_REQUEST['xml'])))
-		return;
-
-	$target = empty($to) ? ($where === 'before' || $where === 'after' ? (is_array($target) ? reset($target) : $target) : 'context') : $to;
-	if (!isset($context['layers'][$target]))
+	// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
+	// The add-on should provide a 'context' fallback if it considers it vital to show the block, e.g. array('sidebar', 'context').
+	if (empty($to))
 		return;
 
 	// If a mod requests to replace the contents of the sidebar, just smile politely.
-	if (($where === 'replace' || $where === 'erase') && $target === 'sidebar')
+	if (($where === 'replace' || $where === 'erase') && $to === 'sidebar')
 		$where = 'add';
 
 	if ($where === 'replace' || $where === 'erase')
 	{
 		$has_arrays = false;
-		if ($where === 'replace' && isset($context['layers'][$target]))
-			foreach ($context['layers'][$target] as $item)
+		if ($where === 'replace' && isset($context['layers'][$to]))
+			foreach ($context['layers'][$to] as $item)
 				$has_arrays |= is_array($item);
 
 		// Most likely case: no child layers (or erase all). Replace away!
 		if (!$has_arrays)
 		{
-			$context['layers'][$target] = $blocks;
+			$context['layers'][$to] = $blocks;
 			// If we erase, we might have to deleted layer entries.
 			if ($where === 'erase')
 				build_skeleton_indexes();
@@ -1249,44 +1245,44 @@ function loadBlock($blocks, $target = 'context', $where = 'replace')
 		}
 
 		// Otherwise, we're in for some fun... :-/
-		$keys = array_keys($context['layers'][$target]);
+		$keys = array_keys($context['layers'][$to]);
 		foreach ($keys as $id)
 		{
-			$item =& $context['layers'][$target][$id];
+			$item =& $context['layers'][$to][$id];
 			if (!is_array($item))
 			{
 				// We're going to insert our block(s) right before the first block we find...
 				if (!isset($offset))
 				{
-					$val = array_values($context['layers'][$target]);
+					$val = array_values($context['layers'][$to]);
 					$offset = array_search($id, $keys, true);
 					array_splice($keys, $offset, 0, array_keys($blocks));
 					array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
-					$context['layers'][$target] = array_combine($keys, $val);
+					$context['layers'][$to] = array_combine($keys, $val);
 				}
 				// ...And then we delete the other block(s) and leave the layers where they are.
-				unset($context['layers'][$target][$id]);
+				unset($context['layers'][$to][$id]);
 			}
 		}
 
 		// So, we found a layer but no blocks..? Add our blocks at the end.
 		if (!isset($offset))
-			$context['layers'][$target] += $blocks;
+			$context['layers'][$to] += $blocks;
 		build_skeleton_indexes();
 	}
 	elseif ($where === 'add')
-		$context['layers'][$target] = array_merge($context['layers'][$target], $blocks);
+		$context['layers'][$to] = array_merge($context['layers'][$to], $blocks);
 	elseif ($where === 'first')
-		$context['layers'][$target] = array_merge(array_reverse($blocks), $context['layers'][$target]);
+		$context['layers'][$to] = array_merge(array_reverse($blocks), $context['layers'][$to]);
 	elseif ($where === 'before' || $where === 'after')
 	{
 		foreach ($context['layers'] as &$layer)
 		{
-			if (isset($layer[$target]))
+			if (isset($layer[$to]))
 			{
 				$keys = array_keys($layer);
 				$val = array_values($layer);
-				$offset = array_search($target, $keys) + ($where === 'after' ? 1 : 0);
+				$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
 				array_splice($keys, $offset, 0, array_keys($blocks));
 				array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
 				$layer = array_combine($keys, $val);
@@ -1386,6 +1382,50 @@ function skeleton_insert_layer(&$source, $target = 'context', $where = 'parent')
 
 	$dest = $temp;
 	build_skeleton_indexes();
+}
+
+// Helper function to remove a block from the page. Works on any layer.
+function removeBlock($block)
+{
+	global $context;
+
+	foreach ($context['layers'] as $id => &$layer)
+	{
+		if (isset($layer[$block]))
+		{
+			unset($context['layers'][$id][$block]);
+			break;
+		}
+	}
+}
+
+// Helper function to remove a layer from the page.
+function removeLayer($layer)
+{
+	global $context;
+
+	// Determine whether removing this layer would also remove the context layer. Which you may not.
+	$current = 'context';
+	$loop = true;
+	while ($loop)
+	{
+		$loop = false;
+		foreach ($context['layers'] as $id => &$curlay)
+		{
+			if (isset($curlay[$current]))
+			{
+				// There there! Go away now, we won't tell your parents.
+				if ($id === $layer)
+					return false;
+				$current = $id;
+				$loop = true;
+			}
+		}
+	}
+
+	// This isn't a direct parent of 'context', so we can safely remove it.
+	unset($context['layers'][$layer]);
+	return true;
 }
 
 ?>

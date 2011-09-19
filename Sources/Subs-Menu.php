@@ -300,13 +300,7 @@ function destroyMenu($menu_id = 'last')
 	if (!isset($context[$menu_name]))
 		return false;
 
-	$name = $context[$menu_name]['template_name'];
-	$location = strpos($name, '_sidebar') !== false ? 'sidebar' : 'top';
-
-	$layer_index = array_search($name, $context[$location . '_template']);
-	if ($layer_index !== false)
-		unset($context[$location . '_template'][$layer_index]);
-
+	removeBlock($context[$menu_name]['template_name']);
 	unset($context[$menu_name]);
 }
 
