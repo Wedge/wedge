@@ -106,7 +106,7 @@ function template_generic_menu_dropdown()
 
 		echo '
 	<li', $section['id'] == $menu_context['current_section'] ? ' class="chosen"' : '', '>
-		<h4>', $section['title'], '</h4>', !empty($section['areas']) ? '
+		<h4>', $section['title'], !empty($section['notice']) ? '<strong>' . $section['notice'] . '</strong>' : '', '</h4>', !empty($section['areas']) ? '
 		<ul>' : '';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
@@ -130,7 +130,8 @@ function template_generic_menu_dropdown()
 
 			echo '
 			<li', $class, '>
-				<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '">', $area['icon'], $area['label'], $end_a;
+				<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '">',
+				$area['icon'], $area['label'], !empty($area['notice']) ? '<strong>' . $area['notice'] . '</strong>' : '', $end_a;
 
 			// Is there any subsections?
 			if (!empty($area['subsections']))

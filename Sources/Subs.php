@@ -1926,21 +1926,23 @@ function setupMenuContext()
 	$context['allow_moderation_center'] = $context['user']['can_mod'];
 	$context['allow_pm'] = allowedTo('pm_read');
 
-	// Recalculate the number of unseen media items
-	if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
-	{
-		loadSource('media/Subs-Media');
-		loadMediaSettings();
-	}
-
 	$cacheTime = $modSettings['lastActive'] * 60;
-
-	$error_count = allowedTo('admin_forum') ? (!empty($modSettings['app_error_count']) ? $modSettings['app_error_count'] : '') : '';
 
 	// All the items we can possible want and then some, try pulling the final list of items from cache first.
 	if (($menu_items = cache_get_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
 	{
+		// Recalculate the number of unseen media items
+		if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
+		{
+			loadSource('media/Subs-Media');
+			loadMediaSettings();
+		}
+
+		$error_count = allowedTo('admin_forum') ? (!empty($modSettings['app_error_count']) ? $modSettings['app_error_count'] : '') : '';
+		$can_view_unseen = allowedTo('media_access_unseen') && isset($user_info['media_unseen']) && $user_info['media_unseen'] > 0;
+		$has_new_pm = !$user_info['is_guest'] && !empty($context['user']['unread_messages']);
 		$is_b = !empty($board_info['id']);
+
 		$items = array(
 			'home' => array(
 				'title' => $txt['home'],
@@ -2066,13 +2068,13 @@ function setupMenuContext()
 			),
 			'pm' => array(
 				'title' => $txt['pm_short'],
-				'notice' => $user_info['is_guest'] || !$context['user']['unread_messages'] ? '' : $txt['new'],
+				'notice' => $has_new_pm ? $txt['new'] : '',
 				'href' => $scripturl . '?action=pm',
 				'show' => $context['allow_pm'],
 				'sub_items' => array(
 					'pm_read' => array(
 						'title' => $txt['pm_menu_read'],
-						'notice' => $user_info['is_guest'] || !$context['user']['unread_messages'] ? '' : $context['user']['unread_messages'],
+						'notice' => $has_new_pm ? $context['user']['unread_messages'] : '',
 						'href' => $scripturl . '?action=pm',
 						'show' => allowedTo('pm_read'),
 					),
@@ -2107,19 +2109,21 @@ function setupMenuContext()
 				),
 			),
 			'media' => array(
-				'title' => (isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media') . (!allowedTo('media_access_unseen') || empty($user_info['media_unseen']) || $user_info['media_unseen'] == -1 ? '' : ' [<b>' . $user_info['media_unseen'] . '</b>]'),
+				'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
+				'notice' => $can_view_unseen ? $txt['new'] : '',
 				'href' => $scripturl . '?action=media',
 				'show' => !empty($modSettings['media_enabled']) && allowedTo('media_access'),
 				'sub_items' => array(
 					'home' => array(
 						'title' => $txt['media_home'],
 						'href' => $scripturl . '?action=media',
-						'show' => allowedTo('media_access_unseen') && !empty($user_info['media_unseen']) && $user_info['media_unseen'] != -1,
+						'show' => $can_view_unseen,
 					),
 					'unseen' => array(
 						'title' => $txt['media_unseen'],
+						'notice' => $can_view_unseen ? $user_info['media_unseen'] : '',
 						'href' => $scripturl . '?action=media;sa=unseen',
-						'show' => allowedTo('media_access_unseen') && !empty($user_info['media_unseen']) && $user_info['media_unseen'] != -1,
+						'show' => $can_view_unseen,
 					),
 				),
 			),

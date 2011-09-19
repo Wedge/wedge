@@ -144,7 +144,7 @@ function cleanRequest()
 		$board = (int) $_GET['board'];
 	elseif (!empty($modSettings['pretty_enable_filters']))
 	{
-		// !!! Authorize URLs like noisen.com:80
+		// !!! Authorize URLs with a port number
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
 		$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
 
@@ -176,8 +176,11 @@ function cleanRequest()
 				$_GET['action'] = 'profile';
 			}
 			// If URL has the form domain.com/do/action, it's an action. Really.
-			elseif (preg_match('@/do/([a-zA-Z0-9]+)@', $full_request, $m) && isset($action_list[$m[1]]))
+			elseif (preg_match('~/do/([a-zA-Z0-9]+)~', $full_request, $m) && isset($action_list[$m[1]]))
 				$_GET['action'] = $m[1];
+			// URL: /category/42/ (shows the board list, hiding all categories but number 42)
+			elseif (preg_match('~/category/(\d+)~', $full_request, $m) && (int) $m[1] > 0)
+				$_GET['category'] = (int) $m[1];
 		}
 		else
 		{
@@ -193,7 +196,7 @@ function cleanRequest()
 
 			if (isset($_GET['topic']))
 			{
-				// If we've got a topic ID, we can recover the board ID easily!
+				// If we have a topic ID, what else to ask for?!
 			}
 			// URL: /2010/12/25/?something or /2010/p15/ (get all topics from Christmas 2010, or page 2 of all topics from 2010)
 			elseif (preg_match('~^/(2\d{3}(?:/\d{2}(?:/[0-3]\d)?)?)(?:/p(\d+))?~', $ru, $m))

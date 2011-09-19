@@ -620,9 +620,12 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
  */
 function wedge_fix_browser_css($matches)
 {
-	global $context, $prefix;
+	global $browser, $prefix;
 
-	if (!empty($prefix) && (!$context['browser']['is_opera'] || strpos($matches[0], 'bo') !== 0))
+	if ($browser['is_ie'] && $browser['version'] >= 9 && strpos($matches[0], 'border-radius') === 0)
+		return $matches[0];
+
+	if (!empty($prefix) && (!$browser['is_opera'] || strpos($matches[0], 'bo') !== 0))
 		return $prefix . $matches[0];
 
 	return $matches[0];

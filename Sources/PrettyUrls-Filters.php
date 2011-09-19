@@ -26,8 +26,10 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-// Build the table of pretty topic URLs
-// This function used to do a lot more, it no longer does, but I still kept the same name.
+/**
+ * Build the table of pretty topic URLs
+ * This function used to do a lot more, it no longer does, but I still kept the same name.
+ */
 function pretty_synchronize_topic_urls()
 {
 	global $modSettings;
@@ -89,43 +91,37 @@ function pretty_synchronize_topic_urls()
 	}
 }
 
-// Filter miscellaneous action urls
+/**
+ * Filter miscellaneous action URLs
+ * A bit hackish, but we're going to do category URLs as well.
+ *	- Categories are really just a shortcut to action=boards with an extra param.
+ *	- And this is the fastest function to do it in (only takes an extra millisecond)
+ */
 function pretty_filter_actions($urls)
 {
 	global $boardurl;
 
-/*
-	$pattern = array(
-		'~.*[?;&]action=media;sa=media;in=([0-9]+);(thumba?|preview)(.*)~S',
-		'~.*[?;&]action=media;sa=(album|item|media);in=([0-9]+)(.*)~S',
-		'~.*[?;&]action=(media|pm)(.*)~S',
-		// '~.*[?;&]action=helpdesk(.*)~S', // This is just an example for a custom action and a different subdomain name...
-	);
-	$replacement = array(
-		'http://media.wedgeo.com/$2/$1/?$3',
-		'http://media.wedgeo.com/$1/$2/?$3',
-		'http://$1.wedgeo.com/?$2',
-		// 'http://tracker.wedgeo.com/?$1', // See? That's easy.
-	);
+	$action_pattern = '~(.*)\baction=([^;]+)~S';
+	$action_replacement = $boardurl . '/do/$2/$1';
+	$cat_pattern = '~(.*)\bcategory=([^;]+)~S';
+	$cat_replacement = $boardurl . '/category/$2/$1';
 
-	// A failed strpos is about twice as fast as a failed preg_match. Of course,
-	// the optimization depends on how many action-type layouts can be found on the page...
 	foreach ($urls as &$url)
-		if (!isset($url['replacement']) && strpos($url['url'], 'action=') !== false && preg_match('~action=(?:media|pm|helpdesk)~', $url['url'])) // |admin
-			$url['replacement'] = preg_replace($pattern, $replacement, $url['url']);
-	return $urls;
-*/
+	{
+		if (isset($url['replacement']))
+			continue;
+		if (strpos($url['url'], 'action=') !== false && preg_match($action_pattern, $url['url']))
+			$url['replacement'] = preg_replace($action_pattern, $action_replacement, $url['url']);
+		elseif (strpos($url['url'], 'category=') !== false && preg_match($cat_pattern, $url['url']))
+			$url['replacement'] = preg_replace($cat_pattern, $cat_replacement, $url['url']);
+	}
 
-	// A much simpler version that accounts for all actions...
-	$pattern = '~(.*)\baction=([^;]+)~S';
-	$replacement = $boardurl . '/do/$2/$1';
-	foreach ($urls as &$url)
-		if (!isset($url['replacement']) && strpos($url['url'], 'action=') !== false && preg_match($pattern, $url['url']))
-			$url['replacement'] = preg_replace($pattern, $replacement, $url['url']);
 	return $urls;
 }
 
-// Filter topic urls
+/**
+ *	Filter topic URLs
+ */
 function pretty_filter_topics($urls)
 {
 	global $boardurl, $modSettings, $context;
@@ -260,7 +256,9 @@ function pretty_filter_topics($urls)
 	return $urls;
 }
 
-// Filter board urls
+/**
+ * Filter board URLs
+ */
 function pretty_filter_boards($urls)
 {
 	global $boardurl, $context;
@@ -315,7 +313,9 @@ function pretty_filter_boards($urls)
 	return $urls;
 }
 
-// Filter profiles
+/**
+ * Filter profile URLs
+ */
 function pretty_filter_profiles($urls)
 {
 	global $boardurl;

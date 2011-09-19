@@ -274,9 +274,14 @@ function wedge_main()
 	call_hook('behavior', array(&$action));
 
 	// Last chance to get the board ID if we have a default one. Use the 'behavior' hook to force it.
-	if (empty($action) && empty($board) && empty($topic) && isset($modSettings['default_index']))
-		if (strpos($modSettings['default_index'], 'board') === 0)
-			$board = (int) substr($modSettings['default_index'], 5);
+	if (empty($action) && empty($board) && empty($topic))
+	{
+		if (isset($_GET['category']) && is_numeric($_GET['category']))
+			$action = 'boards';
+		elseif (isset($modSettings['default_index']))
+			if (strpos($modSettings['default_index'], 'board') === 0)
+				$board = (int) substr($modSettings['default_index'], 5);
+	}
 
 	// Load the current board's information.
 	loadBoard();

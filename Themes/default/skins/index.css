@@ -558,13 +558,12 @@ input[type=file]
 	margin-left: 160px
 	margin-top: -24px
 
-.menu li
+.menu li extends .inline-block
 	list-style: none
 	cursor: pointer
 	height: auto
-	display: block
-	float: left
-	margin, padding: 0
+	padding: 0
+	margin: 0 0 0 -3px
 	li
 		display: block
 		float: none
@@ -654,7 +653,7 @@ li.separator
 	margin: -2px -4px 0 8px
 
 .menu h4 strong
-	margin: -3px 0 0 4px
+	margin: 0 0 0 4px
 	font-weight: 700
 	gradient: #d55a61, #b63c47
 	float: none

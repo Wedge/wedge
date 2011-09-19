@@ -217,7 +217,7 @@ function UnreadReplies()
 		wesql::free_result($request);
 
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=boards;c=' . (int) $_REQUEST['c'][0],
+			'url' => $scripturl . '?category=' . (int) $_REQUEST['c'][0],
 			'name' => $name,
 		);
 	}

@@ -43,8 +43,13 @@ function createMenu($menuData, $menuOptions = array())
 			cache_put_data('theme_settings-' . $theme . ':' . $user_info['id'], null, 60);
 
 		// Redirect as this seems to work best.
-		$redirect_url = isset($menuOptions['toggle_redirect_url']) ? $menuOptions['toggle_redirect_url'] : 'action=' . (isset($_GET['action']) ? $_GET['action'] : 'admin') . (isset($_GET['u']) ? ';u=' . $_GET['u'] : '') . ';area=' . (isset($_GET['area']) ? $_GET['area'] : 'index') . ';sa=' . (isset($_GET['sa']) ? $_GET['sa'] : 'settings') . ';' . $context['session_query'];
-		redirectexit($redirect_url);
+		redirectexit(
+			isset($menuOptions['toggle_redirect_url']) ? $menuOptions['toggle_redirect_url'] : 'action=' .
+			(isset($_GET['action']) ? $_GET['action'] : 'admin') .
+			(isset($_GET['u']) ? ';u=' . $_GET['u'] : '') . ';area=' .
+			(isset($_GET['area']) ? $_GET['area'] : 'index') . ';sa=' .
+			(isset($_GET['sa']) ? $_GET['sa'] : 'settings') . ';' . $context['session_query']
+		);
 	}
 
 	// Work out where we should get our images from.
@@ -133,11 +138,17 @@ function createMenu($menuData, $menuOptions = array())
 					// If this is hidden from view don't do the rest.
 					if (empty($area['hidden']))
 					{
-						$menu_context['sections'][$section_id]['title'] = $section['title'];
-						$here = array('label' => isset($area['label']) ? $area['label'] : $txt[$area_id]);
+						if (!isset($menu_context['sections'][$section_id]['title']))
+						{
+							$menu_context['sections'][$section_id]['title'] = $section['title'];
+							$menu_context['sections'][$section_id]['id'] = $section_id;
+							if (isset($section['notice']))
+								$menu_context['sections'][$section_id]['notice'] = $section['notice'];
+						}
 
-						// We'll need the ID as well...
-						$menu_context['sections'][$section_id]['id'] = $section_id;
+						$here = array('label' => isset($area['label']) ? $area['label'] : $txt[$area_id]);
+						if (isset($area['notice']))
+							$here['notice'] = $area['notice'];
 
 						// Does this area have a custom URL?
 						if (isset($area['custom_url']))
