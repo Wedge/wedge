@@ -563,6 +563,7 @@ input[type=file]
 	cursor: pointer
 	height: auto
 	padding: 0
+	// Until white-space-collapsing is finalized...
 	margin: 0 0 0 -3px
 	li
 		display: block

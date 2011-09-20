@@ -152,5 +152,6 @@ function imperative_removeTopic($details)
 	removeTopics($details['topic'], $details['update_postcount'], $details['use_recycle']);
 
 	return true;
-} 
+}
+
 ?>

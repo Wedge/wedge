@@ -2308,7 +2308,7 @@ function call_lang_hook($hook)
 			// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
 			$attempts[$lang] = false;
 			$attempts[$language] = false;
-			
+
 			foreach ($attempts as $load_lang => $continue)
 			{
 				$file = $path . '.' . $load_lang . '.php';

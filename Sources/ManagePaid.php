@@ -138,7 +138,6 @@ function ModifySubscriptionSettings($return_config = false)
 			array('text', 'paid_currency_symbol', 'subtext' => $txt['paid_currency_symbol_desc'], 'size' => 8, 'force_div_id' => 'custom_currency_symbol_div'),
 			array('check', 'paidsubs_test', 'subtext' => $txt['paidsubs_test_desc'], 'onclick' => 'return $(\'#paidsubs_test\').attr(\'checked\') ? confirm(' . JavaScriptEscape($txt['paidsubs_test_confirm']) . ') : true;'),
 		));
-	
 
 		// Now load all the other gateway settings.
 		$gateways = loadPaymentGateways();

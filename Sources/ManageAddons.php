@@ -447,7 +447,7 @@ function EnableAddon()
 					'columns' => array(),
 					'indexes' => array(),
 				);
-				
+
 				// Basic formalities.
 				if (empty($this_table['name']) || ($this_table['if-exists'] != 'update' && $this_table['if-exists'] != 'ignore') || empty($table->columns))
 					continue;

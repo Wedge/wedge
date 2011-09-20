@@ -798,7 +798,7 @@ function template_edit_style()
 
 		// Revert to the theme they actually use ;)
 		var tempImage = new Image();
-		tempImage.src = we_prepareScriptUrl() + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + (new Date().getTime());
+		tempImage.src = we_prepareScriptUrl() + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + (+new Date());
 
 		refreshPreviewCache = null;
 		refreshPreview(false);

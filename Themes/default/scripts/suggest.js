@@ -470,7 +470,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		.replace(/%search%/g, sSearchString.php_urlencode())
 		.replace(/%sessionVar%/g, we_sessvar)
 		.replace(/%sessionID%/g, we_sessid)
-		.replace(/%time%/g, new Date().getTime()), this.onSuggestionReceived);
+		.replace(/%time%/g, +new Date()), this.onSuggestionReceived);
 
 	return true;
 };

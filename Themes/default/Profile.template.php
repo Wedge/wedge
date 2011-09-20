@@ -2670,14 +2670,14 @@ function template_profile_timeoffset_modify()
 	add_js('
 	function autoDetectTimeOffset(currentTime)
 	{
-		var localTime = new Date(), serverTime = typeof currentTime != "number" ? currentTime : new Date(currentTime);
+		var localTime = +new Date(), serverTime = typeof currentTime != "number" ? currentTime : +new Date(currentTime);
 
-		if (!localTime.getTime() || !serverTime.getTime())
+		if (!localTime || !serverTime)
 			return 0;
 
 		// Get the difference between the two, set it up so that the sign will tell us who is ahead of whom.
 		// Currently only supports timezones in hourly increments. Our apologies to India.
-		return Math.round((localTime.getTime() - serverTime.getTime())/3600000) % 24;
+		return Math.round((localTime - serverTime) / 3600000) % 24;
 	}');
 
 	echo '

@@ -44,7 +44,7 @@ function ManageMemberOptions()
 	// Will need the utility functions from here.
 	loadSource('ManageServer');
 	loadBlock('show_settings');
-	
+
 	$context['page_title'] = $txt['themeadmin_reset_title'];
 
 	$subActions = array(

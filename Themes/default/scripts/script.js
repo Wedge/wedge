@@ -13,7 +13,7 @@
 var
 	weEditors = [],
 	_formSubmitted = false,
-	_lastKeepAliveCheck = new Date().getTime(),
+	_lastKeepAliveCheck = +new Date(),
 
 	// Basic browser detection
 	ua = navigator.userAgent.toLowerCase(),
@@ -205,7 +205,7 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 // Keep the session alive - always!
 function _sessionKeepAlive()
 {
-	var curTime = new Date().getTime();
+	var curTime = +new Date();
 
 	// Prevent a Firefox bug from hammering the server.
 	if (we_script && curTime - _lastKeepAliveCheck > 900000)
@@ -222,7 +222,7 @@ setTimeout(_sessionKeepAlive, 1200000);
 function we_setThemeOption(option, value, theme, additional_vars)
 {
 	var tempImage = new Image();
-	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + we_sessvar + '=' + we_sessid + (additional_vars || '') + (theme == null ? '' : '&th=' + theme) + ';time=' + (new Date().getTime());
+	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + we_sessvar + '=' + we_sessid + (additional_vars || '') + (theme == null ? '' : '&th=' + theme) + ';time=' + (+new Date());
 }
 
 function we_avatarResize()

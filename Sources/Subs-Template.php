@@ -93,7 +93,6 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 						loadSource($fun[1]);
 				}
 			}
-			
 		}
 
 		// Display the screen in the logical order.

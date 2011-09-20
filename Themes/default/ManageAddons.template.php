@@ -62,7 +62,7 @@ function template_browse()
 		}
 		$max_icons = max($max_icons, count($icons[$id]));
 	}
-	
+
 	// Print out the content.
 	foreach ($context['available_addons'] as $id => $addon)
 	{
