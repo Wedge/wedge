@@ -125,7 +125,7 @@ function Register($reg_errors = array())
 		$selectedLanguage = empty($_SESSION['language']) ? $language : $_SESSION['language'];
 
 		// Do we have any languages?
-		if (empty($context['languages']))
+		if (!isset($context['languages']))
 			getLanguages();
 
 		// Try to find our selected language.

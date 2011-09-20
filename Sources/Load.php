@@ -141,8 +141,7 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $modSettings, $user_settings;
-	global $cookiename, $user_info, $language;
+	global $context, $modSettings, $user_settings, $cookiename, $user_info, $language;
 
 	$id_member = 0;
 
@@ -372,17 +371,19 @@ function loadUserSettings()
 		unset($user_info['ignoreboards'][$tmp]);
 
 	// Do we have any languages to validate this?
-	if (!empty($modSettings['userLanguage']) && (!empty($_GET['language']) || !empty($_SESSION['language'])))
-		$languages = getLanguages();
-
-	// Allow the user to change their language if it's valid.
-	if (!empty($modSettings['userLanguage']) && !empty($_GET['language']) && isset($languages[strtr($_GET['language'], './\\:', '____')]))
+	if (!empty($modSettings['userLanguage']))
 	{
-		$user_info['language'] = strtr($_GET['language'], './\\:', '____');
-		$_SESSION['language'] = $user_info['language'];
+		getLanguages();
+
+		// Allow the user to change their language if it's valid.
+		if (!empty($_GET['language']) && isset($context['languages'][strtr($_GET['language'], './\\:', '____')]))
+		{
+			$user_info['language'] = strtr($_GET['language'], './\\:', '____');
+			$_SESSION['language'] = $user_info['language'];
+		}
+		elseif (!empty($_SESSION['language']) && isset($context['languages'][strtr($_SESSION['language'], './\\:', '____')]))
+			$user_info['language'] = strtr($_SESSION['language'], './\\:', '____');
 	}
-	elseif (!empty($modSettings['userLanguage']) && !empty($_SESSION['language']) && isset($languages[strtr($_SESSION['language'], './\\:', '____')]))
-		$user_info['language'] = strtr($_SESSION['language'], './\\:', '____');
 
 	// Just build this here, it makes it easier to change/use - administrators can see all boards.
 	if ($user_info['is_admin'])
@@ -2216,56 +2217,48 @@ function getLanguages($use_cache = true)
 {
 	global $context, $settings, $modSettings;
 
-	// Either we don't use the cache, or it's expired.
-	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) == null)
+	// If we want to retrieve from the cache, and it's already cached in memory or the actual cache isn't expired, then we're good to go.
+	if ($use_cache && (isset($context['languages']) || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) !== null))
+		return;
+
+	// If we don't have our theme information yet, let's get it.
+	if (empty($settings['default_theme_dir']))
+		loadTheme(0, false);
+
+	// Default language directories to try.
+	$language_directories = array(
+		$settings['default_theme_dir'] . '/languages',
+		$settings['actual_theme_dir'] . '/languages',
+	);
+
+	// We possibly have a base theme directory.
+	if (!empty($settings['base_theme_dir']))
+		$language_directories[] = $settings['base_theme_dir'] . '/languages';
+
+	// Remove any duplicates.
+	$language_directories = array_flip(array_flip($language_directories));
+
+	foreach ($language_directories as $language_dir)
 	{
-		// If we don't have our theme information yet, let's get it.
-		if (empty($settings['default_theme_dir']))
-			loadTheme(0, false);
-
-		// Default language directories to try.
-		$language_directories = array(
-			$settings['default_theme_dir'] . '/languages',
-			$settings['actual_theme_dir'] . '/languages',
-		);
-
-		// We possibly have a base theme directory.
-		if (!empty($settings['base_theme_dir']))
-			$language_directories[] = $settings['base_theme_dir'] . '/languages';
-
-		// Remove any duplicates.
-		$language_directories = array_unique($language_directories);
-
-		foreach ($language_directories as $language_dir)
+		// Look for the index language files.... (About twice faster than a full scandir/opendir.)
+		$dir = glob($language_dir . '/index.*.php', GLOB_MARK);
+		foreach ($dir as $entry)
 		{
-			// Can't look in here... doesn't exist!
-			if (!file_exists($language_dir))
-				continue;
+			preg_match('~/index\.([^/]+)\.php$~', $entry, $matches);
 
-			$dir = dir($language_dir);
-			while ($entry = $dir->read())
-			{
-				// Look for the index language file....
-				if (!preg_match('~^index\.(.+)\.php$~', $entry, $matches))
-					continue;
+			$context['languages'][$matches[1]] = array(
+				'name' => westr::ucwords(strtr($matches[1], array('_' => ' '))),
+				'selected' => false,
+				'filename' => $matches[1],
+				'location' => $entry,
+			);
 
-				$context['languages'][$matches[1]] = array(
-					'name' => westr::ucwords(strtr($matches[1], array('_' => ' '))),
-					'selected' => false,
-					'filename' => $matches[1],
-					'location' => $language_dir . '/index.' . $matches[1] . '.php',
-				);
-
-			}
-			$dir->close();
 		}
-
-		// Let's cash in on this deal.
-		if (!empty($modSettings['cache_enable']))
-			cache_put_data('known_languages', $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 	}
 
-	return $context['languages'];
+	// Let's cash in on this deal.
+	if (!empty($modSettings['cache_enable']))
+		cache_put_data('known_languages', $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 }
 
 /**

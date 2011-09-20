@@ -150,12 +150,8 @@ function ReportsMain()
 
 	// What are valid templates for showing reports?
 	$reportTemplates = array(
-		'main' => array(
-			'layers' => null,
-		),
-		'print' => array(
-			'layers' => array('print'),
-		),
+		'main'	=> false,
+		'print'	=> 'print',
 	);
 
 	// Specific template? Use that instead of main!
@@ -164,8 +160,8 @@ function ReportsMain()
 		loadBlock($_REQUEST['st']);
 
 		// Are we disabling the other layers - print friendly for example?
-		if ($reportTemplates[$_REQUEST['st']]['layers'] !== null)
-			hideChrome($reportTemplates[$_REQUEST['st']]['layers']);
+		if ($reportTemplates[$_REQUEST['st']])
+			hideChrome($reportTemplates[$_REQUEST['st']]);
 	}
 
 	// Make the page title more descriptive.

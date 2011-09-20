@@ -117,9 +117,9 @@ function template_skeleton()
 						<offside_wrap>
 							<main_wrap>
 								<top:top></top>
-								<context:main>
+								<default>
 									<main />
-								</context>
+								</default>
 							</main_wrap>
 						</offside_wrap>
 					</content_wrap>
@@ -246,8 +246,7 @@ function template_header()
 			</form>';
 	}
 
-	// !!! @todo: run getLanguages() even for guests, or find a quicker solution.
-	if (!empty($modSettings['userLanguage']) && !empty($context['languages']) && count($context['languages']) > 1)
+	if (isset($context['languages']) && count($context['languages']) > 1)
 	{
 		$lng = $user_info['url'];
 		$lng .= strpos($lng, '?') !== false ? ';' : '?';

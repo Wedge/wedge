@@ -51,12 +51,12 @@
 
 			- use <self closing tags /> to define blocks (i.e. straightforward functions)
 
-			- use a colon (:) to define hints, e.g. <mylayer:top,main> would mean
-			  "<mylayer> is the default destination for ':top' and ':main' layer requests.
+			- use a colon (:) to define hints, e.g. <mylayer:top,topleft> would mean
+			  "<mylayer> is the default destination for ':top' and ':topleft' layer requests.
 			  For instance, if you know a layer is going to be on the left of the screen,
-			  or in the sidebar, and you want mods to be able to add elements to that layer
-			  without knowing its name, name it <whatever:left> or <whatever:left,top> if you
-			  want it to capture 'top' calls as well. Mods can then later call:
+			  and you want mods to be able to add elements to that layer without knowing its
+			  name, name it <whatever:left> or <whatever:left,top> if you want it to capture
+			  'top' calls as well. Mods can then later call:
 					loadBlock('my_block', array(':left', 'sidebar'), 'add')
 			  This will add their code to the left side, or if not found in the skin, the sidebar.
 	-->
@@ -93,10 +93,10 @@
 									<!-- If you need to add any content before the main entry point, this is your choice layer. -->
 								</top>
 
-								<context>
-									<!-- The main entry point, where all pages add their contextual content by default. -->
+								<default>
+									<!-- The main entry point, where all pages add their content by default. -->
 									<main />
-								</context>
+								</default>
 							</main_wrap>
 						</content_wrap>
 

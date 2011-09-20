@@ -56,7 +56,7 @@ function PrintPage()
 
 	// Let's "output" all that info.
 	loadTemplate('Printpage');
-	hideChrome(array('print'));
+	hideChrome('print');
 
 	$context['board_name'] = $board_info['name'];
 	$context['category_name'] = $board_info['cat']['name'];

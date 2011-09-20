@@ -194,7 +194,7 @@ function is_not_guest($message = '')
 		loadBlock('wap2_login');
 	}
 	// Apparently we're not in a position to handle this now. Let's go to a safer location for now.
-	elseif (!isset($context['layers']['context']))
+	elseif (!isset($context['layers']['default']))
 	{
 		$_SESSION['login_url'] = $scripturl . '?' . $_SERVER['QUERY_STRING'];
 		redirectexit('action=login');

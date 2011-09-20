@@ -103,11 +103,11 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 
 	if ($do_finish)
 	{
-		if (WIRELESS && !isset($context['layers']['context']))
+		if (WIRELESS && !isset($context['layers']['default']))
 			fatal_lang_error('wireless_error_notyet', false);
 
-		if (empty($context['layers']['context']))
-			fatal_error('The context layer was removed. You can NOT force me to render something so screwed up.');
+		if (empty($context['layers']['default']))
+			fatal_lang_error('default_layer_missing');
 
 		render_skeleton(reset($context['skeleton_array']), key($context['skeleton_array']));
 	}
@@ -147,7 +147,7 @@ function render_skeleton(&$here, $key)
 	// Show the _above part of the layer.
 	execBlock($key . '_above', 'ignore');
 
-	if ($key === 'top' || $key === 'context')
+	if ($key === 'top' || $key === 'default')
 		while_we_re_here();
 
 	foreach ($here as $id => $temp)
@@ -507,14 +507,14 @@ function hideChrome($layer = '')
 {
 	global $context;
 
-	if (empty($context['layers']['context']))
-		$context['layers']['context'] = array('main' => true);
+	if (empty($context['layers']['default']))
+		$context['layers']['default'] = array('main' => true);
 
 	// We only keep the context layer and its content. (e.g. we're inside an Ajax frame)
 	if (empty($layer))
 		$context['skeleton_array'] = array(
 			'dummy' => array(
-				'context' => $context['layers']['context']
+				'default' => $context['layers']['default']
 			)
 		);
 	// Or we only keep the HTML headers, body definition and content (e.g. we're inside a popup window)
@@ -522,7 +522,7 @@ function hideChrome($layer = '')
 		$context['skeleton_array'] = array(
 			'html' => array(
 				'body' => array(
-					'context' => $context['layers']['context']
+					'default' => $context['layers']['default']
 				)
 			)
 		);
@@ -531,7 +531,7 @@ function hideChrome($layer = '')
 		$context['skeleton_array'] = array(
 			'dummy' => array(
 				$layer => array(
-					'context' => $context['layers']['context']
+					'default' => $context['layers']['default']
 				)
 			)
 		);
@@ -1185,10 +1185,10 @@ function execBlock($block_name, $fatal = false)
  * Build a list of template blocks.
  *
  * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
- * @param string $target Which layer to load this function in, e.g. 'context' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc.
+ * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc.
  * @param boolean $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
  */
-function loadBlock($blocks, $target = 'context', $where = 'replace')
+function loadBlock($blocks, $target = 'default', $where = 'replace')
 {
 	global $context;
 
@@ -1219,7 +1219,7 @@ function loadBlock($blocks, $target = 'context', $where = 'replace')
 			break;
 	}
 	// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
-	// The add-on should provide a 'context' fallback if it considers it vital to show the block, e.g. array('sidebar', 'context').
+	// The add-on should provide a 'default' fallback if it considers it vital to show the block, e.g. array('sidebar', 'default').
 	if (empty($to))
 		return;
 
@@ -1297,10 +1297,10 @@ function loadBlock($blocks, $target = 'context', $where = 'replace')
  * Add a layer dynamically.
  *
  * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_above' and 'template_layer_below' functions.
- * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the 'context' layer (which doesn't accept any positioning, either.)
+ * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the default layer (which doesn't accept any positioning, either.)
  * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
  */
-function loadLayer($layer, $target = 'context', $where = 'parent')
+function loadLayer($layer, $target = 'default', $where = 'parent')
 {
 	global $context;
 
@@ -1348,7 +1348,7 @@ function loadLayer($layer, $target = 'context', $where = 'parent')
 	}
 }
 
-function skeleton_insert_layer(&$source, $target = 'context', $where = 'parent')
+function skeleton_insert_layer(&$source, $target = 'default', $where = 'parent')
 {
 	global $context;
 
@@ -1360,8 +1360,8 @@ function skeleton_insert_layer(&$source, $target = 'context', $where = 'parent')
 			break;
 		}
 	}
-	if (!isset($dest) && isset($context['layers']['context']))
-		$dest =& $context['layers']['context'];
+	if (!isset($dest) && isset($context['layers']['default']))
+		$dest =& $context['layers']['default'];
 	if (!isset($dest))
 		return;
 
@@ -1405,7 +1405,7 @@ function removeLayer($layer)
 	global $context;
 
 	// Determine whether removing this layer would also remove the context layer. Which you may not.
-	$current = 'context';
+	$current = 'default';
 	$loop = true;
 	while ($loop)
 	{
@@ -1423,7 +1423,7 @@ function removeLayer($layer)
 		}
 	}
 
-	// This isn't a direct parent of 'context', so we can safely remove it.
+	// This isn't a direct parent of 'default', so we can safely remove it.
 	unset($context['layers'][$layer]);
 	return true;
 }
