@@ -27,10 +27,15 @@ if (!defined('WEDGE'))
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
 	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context, $full_request, $addonsdir;
+	static $addon_dir = null;
 
 	// Check if error logging is actually on.
 	if (empty($modSettings['enableErrorLogging']))
 		return $error_message;
+
+	// Windows does funny things. Fix the pathing to make sense on Windows.
+	if ($addon_dir === null)
+		$addon_dir = DIRECTORY_SEPARATOR === '/' ? $addonsdir : str_replace(DIRECTORY_SEPARATOR, '/', $addonsdir);
 
 	// Basically, htmlspecialchars it minus &. (for entities!)
 	$error_message = strtr($error_message, array('<' => '&lt;', '>' => '&gt;', '"' => '&quot;'));
@@ -92,13 +97,15 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	$error_type = in_array($error_type, $known_error_types) && $error_type !== true ? $error_type : 'general';
 
 	// There may be an alternate case of error type: it might be add-on related.
-	if (!empty($file) && strpos($file, $addonsdir) === 0)
+	if (!empty($file) && strpos($file, $addon_dir) === 0)
 		foreach ($context['addons_dir'] as $addon_id => $addon_path)
+		{
 			if (strpos($file, $addon_path) === 0)
 			{
 				$error_type = $addon_id;
 				break;
 			}
+		}
 
 	// Don't log the same error countless times, as we can get in a cycle of depression...
 	$error_info = array($user_info['id'], time(), get_ip_identifier($user_info['ip']), $query_string, $error_message, (string) $sc, $error_type, $file, $line);
@@ -107,7 +114,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		// Insert the error into the database.
 		wesql::insert('',
 			'{db_prefix}log_errors',
-			array('id_member' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string-65534', 'message' => 'string-65534', 'session' => 'string', 'error_type' => 'string', 'file' => 'string-255', 'line' => 'int'),
+			array('id_member' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string-65534', 'message' => 'string-65534', 'session' => 'string', 'error_type' => 'string-255', 'file' => 'string-255', 'line' => 'int'),
 			$error_info,
 			array('id_error')
 		);

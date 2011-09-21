@@ -131,6 +131,9 @@ function ViewErrorLog()
 			$search_message = wesql::escape_wildcard_string($row['message']);
 		$show_message = strtr(strtr(preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '$1', $row['message']), array("\r" => '', '<br>' => "\n", '<' => '&lt;', '>' => '&gt;', '"' => '&quot;')), array("\n" => '<br>'));
 
+		if (strpos($row['error_type'], ':') !== false && empty($txt['errortype_' . $row['error_type']]))
+			$txt['errortype_' . $row['error_type']] = substr(strrchr($row['error_type'], ':'), 1);
+
 		$context['errors'][$row['id_error']] = array(
 			'alternate' => $i %2 == 0,
 			'member' => array(
@@ -152,7 +155,7 @@ function ViewErrorLog()
 			'id' => $row['id_error'],
 			'error_type' => array(
 				'type' => $row['error_type'],
-				'name' => isset($txt['errortype_'.$row['error_type']]) ? $txt['errortype_'.$row['error_type']] : $row['error_type'],
+				'name' => isset($txt['errortype_' . $row['error_type']]) ? $txt['errortype_' . $row['error_type']] : $row['error_type'],
 			),
 			'file' => array(),
 		);
