@@ -2283,7 +2283,7 @@ function call_hook($hook, $parameters = array())
 
 function call_lang_hook($hook)
 {
-	global $modSettings, $user_info, $language;
+	global $modSettings, $user_info, $language, $txt;
 
 	if (empty($modSettings['hooks'][$hook]))
 		return false;
@@ -2299,7 +2299,8 @@ function call_lang_hook($hook)
 		if ($function[0] === '|')
 		{
 			// So, we're looking at files that we're calling for, and they're language files.
-			$path = trim(substr($function, 1));
+			$parts = explode('|', $function);
+			$path = trim($parts[1]);
 			$attempts = array();
 			// If true, pass through to the next language attempt even if it's a match. But if it's not English, see about loading that *first*.
 			if (empty($modSettings['disable_language_fallback']) && $lang !== 'english')
