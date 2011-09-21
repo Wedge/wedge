@@ -717,7 +717,12 @@ function Admin()
 
 	// Now - finally - call the right place!
 	if (isset($admin_include_data['file']))
-		loadSource($admin_include_data['file']);
+	{
+		if (is_array($admin_include_data['file']))
+			loadAddonSource($admin_include_data['file'][0], $admin_include_data['file'][1]);
+		else
+			loadSource($admin_include_data['file']);
+	}
 
 	$admin_include_data['function']();
 }
