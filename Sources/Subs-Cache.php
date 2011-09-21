@@ -164,16 +164,19 @@ function add_addon_js_file($addon_name, $files = array(), $is_direct_url = false
 	$id = '';
 	$latest_date = 0;
 
-	foreach ($files as &$file)
+	foreach ($files as $k => &$file)
 	{
-		$full_path = $context['addons_dir'][$addon_name] . '/' . $file;
-		if (!file_exists($full_path))
-			continue;
+		$file = $context['addons_dir'][$addon_name] . '/' . $file;
+		if (!file_exists($file))
+			unset($files[$k]);
 
 		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
 		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
-		$latest_date = max($latest_date, filemtime($full_path));
+		$latest_date = max($latest_date, filemtime($file));
 	}
+
+	if (empty($files))
+		return;
 
 	$id = substr(strrchr($context['addons_dir'][$addon_name], '/'), 1) . '-' . $id;
 	$id = !empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
