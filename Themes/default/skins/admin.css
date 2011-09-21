@@ -137,6 +137,9 @@ fieldset dl
 .information a
 	font-weight: bold
 
+.disabled
+	color: #777777
+
 
 /* Styles for the package manager.
 ------------------------------------------------- */
