@@ -283,8 +283,8 @@ function createMenu($menuData, $menuOptions = array())
 	{
 		loadTemplate(isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'GenericMenu');
 		$menu_context['template_name'] = (isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'generic_menu') . $menuOptions['menu_type'];
-		loadBlock($menu_context['template_name'], empty($options['use_sidebar_menu']) ? array(':top', 'top') : 'sidebar', 'add');
-		loadBlock('generic_tabs', array(':top', 'top'), 'add');
+		loadBlock($menu_context['template_name'], empty($options['use_sidebar_menu']) ? 'top' : 'sidebar', 'add');
+		loadBlock('generic_tabs', 'top', 'add');
 	}
 
 	// Check we had something - for sanity sake.

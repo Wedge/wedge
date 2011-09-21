@@ -501,11 +501,10 @@ function weSaveEntities(sFormName, aElementNames, sMask)
 	// This way, you can drag the element, but still access UI elements within it.
 	$.fn.dragslide = function () {
 		var origin = this.selector;
-		return this.each(function () {
-			$(this).css("cursor", "move").find(".nodrag").css("cursor", "default");
-
+		return this
+			.css("cursor", "move").find(".nodrag").css("cursor", "default").end()
 			// Start the dragging process
-			$(this).mousedown(function (e) {
+			.mousedown(function (e) {
 				if ($(e.target).parentsUntil(origin).andSelf().hasClass("nodrag"))
 					return true;
 				is_fixed = this.style.position == "fixed";
@@ -519,7 +518,6 @@ function weSaveEntities(sFormName, aElementNames, sMask)
 
 				return false;
 			});
-		});
 	};
 
 	// Updates the position during the dragging process
@@ -622,10 +620,7 @@ function menu_show_me()
 	}
 
 	if (!is_top || !$('h4', this).first().addClass(hove).length)
-		$(this).addClass(hove).parentsUntil('.menu>li').each(function () {
-			if (this.nodeName == 'LI')
-				$(this).addClass(hove);
-		});
+		$(this).addClass(hove).parentsUntil('.menu>li').filter('li').addClass(hove);
 
 	if (!is_visible)
 		$('ul', this).first()
@@ -741,7 +736,7 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 function _linkMagic()
 {
 	$('a[title!="-"]').each(function () {
-		var hre = $(this).attr('href');
+		var hre = this.href;
 		if (typeof hre == 'string' && hre.length > 0 && (hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
 			$(this).addClass('xt');
 	});

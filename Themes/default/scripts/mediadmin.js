@@ -33,9 +33,8 @@ function admin_toggle(id)
 
 function admin_toggle_all()
 {
-	$('tr').each(function () {
-		if (this.id.substr(0, 9) == 'tr_expand')
-			admin_toggle(this.id.substr(10));
+	$('tr[id^="tr_expand"]').each(function () {
+		admin_toggle(this.id.substr(10));
 	});
 
 	return false;

@@ -288,10 +288,7 @@ function template_maintain_topics()
 		$("#rotIcon").toggleClass("fold", rotSwap);
 		$("#rotText").html(rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ');
 		$("#rotPanel").slideToggle(rotSwap);
-		$("#rotPanel input").each(function () {
-			if (this.type.toLowerCase() == "checkbox")
-				this.checked = !rotSwap;
-		});
+		$("#rotPanel input[type=checkbox]").attr("checked", !rotSwap);
 	}');
 
 	echo '

@@ -543,7 +543,7 @@ function ModifyProfile($post_errors = array())
 
 	// Set the template for this area and add the profile layer.
 	loadBlock($profile_include_data['function']);
-	loadBlock('profile_top', array(':top', 'top'), 'add');
+	loadBlock('profile_top', array('top', 'default'), 'add');
 
 	// All the subactions that require a user password in order to validate.
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);

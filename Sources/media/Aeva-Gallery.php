@@ -412,7 +412,7 @@ function aeva_initGallery($gal_url = null)
 
 	if (!isset($_REQUEST['xml']))
 	{
-		loadBlock(array('aeva_header', 'aeva_subtabs'), array(':top', 'top'), 'add');
+		loadBlock(array('aeva_header', 'aeva_subtabs'), 'top', 'add');
 
 		// Start the linktree
 		$context['linktree'] = array();

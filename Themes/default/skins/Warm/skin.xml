@@ -47,18 +47,18 @@
 		Layout skeleton. Overrides the theme's $context['skeleton'] variable.
 		The following uses pseudo-HTML to represent the final array.
 
-			- use <tags></tags> to define layers (functions called as wrappers around other functions)
+			- Use <tags></tags> to define layers (functions called as wrappers around other functions)
 
-			- use <self closing tags /> to define blocks (i.e. straightforward functions)
+			- Use <self closing tags /> to define blocks (i.e. straightforward functions)
 
-			- use a colon (:) to define hints, e.g. <mylayer:top,topleft> would mean
-			  "<mylayer> is the default destination for ':top' and ':topleft' layer requests.
-			  For instance, if you know a layer is going to be on the left of the screen,
-			  and you want mods to be able to add elements to that layer without knowing its
-			  name, name it <whatever:left> or <whatever:left,top> if you want it to capture
-			  'top' calls as well. Mods can then later call:
-					loadBlock('my_block', array(':left', 'sidebar'), 'add')
-			  This will add their code to the left side, or if not found in the skin, the sidebar.
+			- If you have a block that you need to make sure will show up, make sure to specify an array.
+			  e.g. loadBlock('my_block', array('my_layer', 'sidebar', 'default'), 'add') will try
+			  to add my_block to my_layer, and if not found to sidebar. It will fall back to
+			  default if nothing is found -- the only layer guaranteed to be in the template.
+
+			- DEFAULT is the only required layer. All of the non-wrap layers below are recommended.
+			  All blocks are also recommended -- modders will often try to send them data.
+			  Rule of thumb: try to keep everything in your own themes and skins!
 	-->
 
 	<skeleton>
@@ -70,7 +70,7 @@
 				<wrapper>
 					<!-- A sidebar wrapper is necessary if you want maximum compatibility. It should open and close a table, or a compatible div. -->
 					<sidebar_wrap>
-						<sidebar:left>
+						<sidebar>
 							<!-- This is where Wedge will insert any side information. -->
 						</sidebar>
 					</sidebar_wrap>
@@ -89,10 +89,9 @@
 
 						<content_wrap>
 							<main_wrap>
-								<top:top>
-									<!-- If you need to add any content before the main entry point, this is your choice layer. -->
+								<top>
+									<!-- Used by menus, and anything that needs to be shown before the main entry point. -->
 								</top>
-
 								<default>
 									<!-- The main entry point, where all pages add their content by default. -->
 									<main />

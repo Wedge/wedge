@@ -561,13 +561,8 @@ function build_skeleton(&$arr, &$dest, &$pos = 0, $name = '')
 		// Starting a layer?
 		if (empty($tag[3]))
 		{
-			$layer = explode(':', $tag[2]);
-			$dest[$layer[0]] = array();
-			if (isset($layer[1]))
-				foreach (explode(',', $layer[1]) as $hint)
-					$context['layer_hints'][$hint] = $layer[0];
-
-			build_skeleton($arr, $dest[$layer[0]], $pos, $layer[0]);
+			$dest[$tag[2]] = array();
+			build_skeleton($arr, $dest[$tag[2]], $pos, $tag[2]);
 		}
 		// Then it's a block...
 		else
@@ -1206,16 +1201,14 @@ function loadBlock($blocks, $target = 'default', $where = 'replace')
 	*/
 
 	$blocks = array_flip((array) $blocks);
-	$hints =& $context['layer_hints'];
+	// Find the first target layer that isn't wishful thinking.
 	foreach ((array) $target as $layer)
 	{
-		// Is the target layer wishful thinking?
-		if ($layer[0] === ':' && ($hint = substr($layer, 1)) && isset($hints[$hint], $context['layers'][$hints[$hint]]))
-			$to = $hints[$hint];
-		elseif (isset($context['layers'][$layer]))
+		if (isset($context['layers'][$layer]))
+		{
 			$to = $layer;
-		if (isset($to))
 			break;
+		}
 	}
 	// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
 	// The add-on should provide a 'default' fallback if it considers it vital to show the block, e.g. array('sidebar', 'default').
@@ -1320,8 +1313,8 @@ function loadLayer($layer, $target = 'default', $where = 'parent')
 		lastchild	add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
 	*/
 
-	// Not a valid layer..? Enter brooding mode.
-	if (!isset($context['layers'][$target]) || !is_array($context['layers'][$target]))
+	// Target layer doesn't exist..? Enter brooding mode.
+	if (!isset($context['layers'][$target]))
 		return;
 
 	if ($where === 'parent' || $where === 'before' || $where === 'after' || $where === 'replace' || $where === 'erase')
@@ -1347,22 +1340,39 @@ function loadLayer($layer, $target = 'default', $where = 'parent')
 	}
 }
 
-function skeleton_insert_layer(&$source, $target = 'default', $where = 'parent')
+/**
+ * Find a block or layer's parent layer.
+ *
+ * @param string $child The name of the block or layer. Really.
+ * @return mixed Returns either the name of the parent layer, or FALSE if not found.
+ */
+function skeleton_find_parent($child)
 {
 	global $context;
 
-	foreach ($context['layers'] as $id => &$lay)
-	{
-		if (isset($lay[$target]) && is_array($lay[$target]))
-		{
-			$dest =& $lay;
-			break;
-		}
-	}
-	if (!isset($dest) && isset($context['layers']['default']))
-		$dest =& $context['layers']['default'];
-	if (!isset($dest))
+	foreach ($context['layers'] as $id => &$layer)
+		if (isset($layer[$child]))
+			return $id;
+
+	return false;
+}
+
+/**
+ * Insert a layer to the skeleton.
+ *
+ * @param string $source Name of the layer to insert.
+ * @param string $target Name of the parent layer to target.
+ * @param string $where Determines where to position the source layer relative to the target.
+ */
+function skeleton_insert_layer($source, $target = 'default', $where = 'parent')
+{
+	global $context;
+
+	$lay = skeleton_find_parent($target);
+	$lay = $lay ? $lay : 'default';
+	if (!isset($context['layers'][$lay]))
 		return;
+	$dest =& $context['layers'][$lay];
 
 	$temp = array();
 	foreach ($dest as $key => $value)
@@ -1388,20 +1398,22 @@ function removeBlock($block)
 {
 	global $context;
 
-	foreach ($context['layers'] as $id => &$layer)
-	{
-		if (isset($layer[$block]))
-		{
-			unset($context['layers'][$id][$block]);
-			break;
-		}
-	}
+	$layer = skeleton_find_parent($block);
+	// If it's a block, remove it. Otherwise it's a layer. Bad coder!
+	if (!is_array($context['layers'][$layer][$block]))
+		unset($context['layers'][$layer][$block]);
+	else
+		removeLayer($block);
 }
 
 // Helper function to remove a layer from the page.
 function removeLayer($layer)
 {
 	global $context;
+
+	// Does the layer at least exist...?
+	if (!isset($context['layers'][$layer]) || $layer === 'default')
+		return false;
 
 	// Determine whether removing this layer would also remove the context layer. Which you may not.
 	$current = 'default';

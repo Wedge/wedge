@@ -530,7 +530,7 @@ function wedgeAttachSelect(oOptions)
 	this.checkActive = function ()
 	{
 		var session_attach = 0;
-		$('input[type="checkbox"]').each(function () {
+		$('input[type=checkbox]').each(function () {
 			if (this.name == 'attach_del[]' && this.checked == true)
 				session_attach++;
 		});
