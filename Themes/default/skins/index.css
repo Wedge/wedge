@@ -549,7 +549,7 @@ input[type=file]
 	visibility: hidden
 	opacity, padding: 0
 	transition: opacity .3s ease
-	margin-top: 27px
+	margin-top: 30px
 
 .css > li > ul
 	transition: opacity .15s ease
@@ -568,6 +568,7 @@ input[type=file]
 	li
 		display: block
 		float: none
+		margin: 0
 		white-space: nowrap
 
 .css h4:hover, h4.hove
@@ -658,6 +659,14 @@ li.separator
 	font-weight: 700
 	gradient: #d55a61, #b63c47
 	float: none
+
+.menu li.menu-top
+	position: absolute
+	top: -8px
+	width: 100%
+	height: 8px
+	padding-bottom: 3px
+	background: url($images/theme/menurow.gif) no-repeat
 
 /* Top-level menu icons.
 ------------------------------------------------------- */
@@ -1469,10 +1478,10 @@ $ie-max-width {ie6} = "width"
 
 $main_bg = #fffdfa
 $head_bg = rgba(221, 200, 137, .66)
-$menu_bg = -prefix-linear-gradient(rgba(230, 234, 230, .95), rgba(255, 255, 255, .95))
-$menu_bg {ie6,ie7,ie8} = #f7fcf7
-$menu_bg {ie9} = rgba(242, 246, 242, .90)
 $menu_border = rgba(220, 224, 220, .95)
+$menu_bg = -prefix-linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
+$menu_bg {ie9} =           average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
+$menu_bg {ie6,ie7,ie8} =   #f7fcf7
 $board_col = #d97b33
 $footer_bg = #e8e3cb
 $window_bg = #f2f3ea // #f9f6f0

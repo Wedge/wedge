@@ -554,6 +554,7 @@ function initMenu(menu)
 	menu = $('#' + menu).show().css('visibility', 'visible');
 	menu[0].style.opacity = 1;
 	$('h4:not(:has(a))', menu).wrapInner('<a href="#" onclick="hoverable = 1; menu_show_me.call(this.parentNode.parentNode); hoverable = 0; return false;"></a>');
+	$('h4+ul', menu).prepend('<li class="menu-top"></li>');
 
 	var k = menu_baseId;
 	$('li', menu).each(function () {
@@ -625,7 +626,7 @@ function menu_show_me()
 	if (!is_visible)
 		$('ul', this).first()
 			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w })
-			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 0 : 27 } : { marginLeft: w - 5 }, 'fast');
+			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 3 : 30 } : { marginLeft: w - 5 }, 'fast');
 
 	clearTimeout(menu_delay[id.substring(2)]);
 

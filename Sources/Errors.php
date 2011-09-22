@@ -97,7 +97,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	$error_type = in_array($error_type, $known_error_types) && $error_type !== true ? $error_type : 'general';
 
 	// There may be an alternate case of error type: it might be add-on related.
-	if (!empty($file) && strpos($file, $addon_dir) === 0)
+	if (!empty($file) && !empty($addon_dir) && strpos($file, $addon_dir) === 0)
 		foreach ($context['addons_dir'] as $addon_id => $addon_path)
 		{
 			if (strpos($file, $addon_path) === 0)

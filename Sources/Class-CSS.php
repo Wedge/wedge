@@ -335,7 +335,7 @@ class wecss_color extends wecss
 		$nodupes = array();
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
-		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|complement|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
+		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
 		{
 			foreach ($matches[0] as $i => &$dec)
 			{
@@ -377,8 +377,21 @@ class wecss_color extends wecss
 
 				// This is where we run our color functions...
 
+				if ($code === 'average' && !empty($rgb[0]))
+				{
+					// Extract the second color from our list. Technically, we COULD
+					// have an infinite number of colors... Is it any useful, though?
+					$rgb2 = wecss::string2color(ltrim(substr($m, strlen($rgb[0])), ', '));
+					$color2 = $rgb2[1];
+					$hsl2 = $rgb2[2] ? $rgb2[2] : wecss::rgb2hsl($rgb2[1][0], $rgb2[1][1], $rgb2[1][2], $rgb2[1][3]);
+					$hsl['h'] = ($hsl['h'] + $hsl2['h']) / 2;
+					$hsl['s'] = ($hsl['s'] + $hsl2['s']) / 2;
+					$hsl['l'] = ($hsl['l'] + $hsl2['l']) / 2;
+					$hsl['a'] = ($hsl['a'] + $hsl2['a']) / 2;
+				}
+
 				// Change alpha (transparency) level
-				if ($code === 'alpha')
+				elseif ($code === 'alpha')
 					$hsl['a'] += $parg[0] ? $hsl['a'] * $parg[0] : $arg[0];
 
 				// Darken the color (brightness down)
