@@ -463,7 +463,7 @@ function Display()
 		{
 			// No limit! (actually, there is a limit, but...)
 			$context['messages_per_page'] = -1;
-			$context['page_index'] .= empty($modSettings['compactTopicPagesEnable']) ? '<strong>' . $txt['all'] . '</strong> ' : '[<strong>' . $txt['all'] . '</strong>] ';
+			$context['page_index'] .= '[<strong>' . $txt['all'] . '</strong>] ';
 
 			// Set start back to 0...
 			$_REQUEST['start'] = 0;

@@ -406,8 +406,7 @@ function ModifyLayoutSettings($return_config = false)
 
 	$config_vars = array(
 			// Pagination stuff.
-			array('check', 'compactTopicPagesEnable'),
-			array('int', 'compactTopicPagesContiguous', null, $txt['contiguous_page_display'] . '<dfn>' . str_replace(' ', '&nbsp;', '"3" ' . $txt['to_display'] . ': <strong>1 ... 4 [5] 6 ... 9</strong>') . '<br>' . str_replace(' ', '&nbsp;', '"5" ' . $txt['to_display'] . ': <strong>1 ... 3 4 [5] 6 7 ... 9</strong>') . '</dfn>'),
+			array('int', 'compactTopicPagesContiguous'),
 		'',
 			// Stuff that just is everywhere - today, search, online, etc.
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
