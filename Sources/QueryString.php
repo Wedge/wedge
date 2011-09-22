@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
  *
  * By the time we're done, everything should have slashes (regardless of php.ini).
  *
- * - Defines $scripturl (as $boardurl . '/index.php')
+ * - Defines $scripturl ($boardurl + index.php if needed)
  * - Identifies which function to run to handle magic_quotes.
  * - Removes $HTTP_POST_* if set.
  * - Aborts if someone is trying to set $GLOBALS via $_REQUEST or the cookies (in the case of register_globals being on)
@@ -39,19 +39,9 @@ function cleanRequest()
 
 	define('INVALID_IP', '00000000000000000000000000000000');
 
-/*
-	// Makes it easier to refer to things this way.
-	// !!! Change this once the feature is deemed to be stable.
-	// !!! Also make sure the original $boardurl is saved, for Atom's sake.
-
-	if (!empty($modSettings['pretty_filters']['boards']))
-	{
-		$boardurl = 'http://' . $_SERVER['HTTP_HOST'];
-		$scripturl = $boardurl . (isset($_COOKIE[session_name()]) ? '/' : '/index.php');
-	}
-	else
-*/
-	$scripturl = $boardurl . '/index.php';
+	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
+	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)
+	$scripturl = $boardurl . (!empty($modSettings['pretty_remove_index']) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
 
 	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
 	$removeMagicQuoteFunction = @ini_get('magic_quotes_sybase') || strtolower(@ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';

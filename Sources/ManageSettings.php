@@ -794,7 +794,7 @@ function ModifyGeneralModSettings($return_config = false)
 
 /*
 	Pretty URLs - custom version for Wedge.
-	Distributed under the New BSD license.
+	Contains portions distributed under the New BSD license.
 	See PrettyUrls-Filters.php for more details.
 */
 
@@ -811,15 +811,6 @@ function ModifyPrettyURLs()
 	loadBlock('pretty_urls');
 	$context['page_title'] = $txt['admin_pretty_urls'];
 
-	// Core settings
-	$context['pretty']['settings']['core'] = array(
-		array(
-			'id' => 'pretty_enable_cache',
-			'label' => $txt['pretty_cache'],
-			'type' => 'text',
-			'value' => !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : '',
-		),
-	);
 	// The action filter should always be last, because it's generic.
 	if (isset($modSettings['pretty_filters']['actions']))
 	{
@@ -848,6 +839,7 @@ function ModifyPrettyURLs()
 			array(
 				'pretty_enable_filters' => $is_enabled,
 				'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
+				'pretty_remove_index' => isset($_POST['pretty_remove_index']) ? ($_POST['pretty_remove_index'] == 'on' ? 'on' : '') : '',
 				'pretty_filters' => serialize($modSettings['pretty_filters']),
 			)
 		);
@@ -866,7 +858,10 @@ function ModifyPrettyURLs()
 		redirectexit('action=admin;area=featuresettings;sa=pretty');
 	}
 
-	$context['pretty']['settings']['cache'] = !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : 0;
+	$context['pretty']['settings'] = array(
+		'cache' => !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : 0,
+		'index' => !empty($modSettings['pretty_remove_index']) ? $modSettings['pretty_remove_index'] : 0,
+	);
 }
 
 ?>

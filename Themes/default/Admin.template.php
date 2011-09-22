@@ -1958,8 +1958,12 @@ function template_pretty_urls()
 	echo '
 			<hr>
 			<label>
-				<input type="checkbox" name="pretty_cache"', ($context['pretty']['settings']['cache'] ? ' checked' : ''), '>
+				<input type="checkbox" name="pretty_cache"', $context['pretty']['settings']['cache'] ? ' checked' : '', '>
 				', $txt['pretty_cache'], '
+			</label>
+			<label>
+				<input type="checkbox" name="pretty_remove_index"', $context['pretty']['settings']['index'] ? ' checked' : '', '>
+				', $txt['pretty_remove_index'], '
 			</label>
 			<div class="floatright">
 				<input type="submit" name="save" value="', $txt['pretty_save'], '">
