@@ -590,10 +590,10 @@ function menu_show_shim(showsh, ieid, j)
 
 	$(menu_ieshim[iem]).css(showsh ?
 		{
-			top: j.offsetTop + j.offsetParent.offsetTop,
+			top: j.offsetTop + j.offsetParent.offsetTop + 3,
 			left: j.offsetLeft + j.offsetParent.offsetLeft,
 			width: j.offsetWidth + 1,
-			height: j.offsetHeight + 1,
+			height: j.offsetHeight - 2,
 			display: 'block'
 		} : {
 			display: 'none'

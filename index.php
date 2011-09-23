@@ -223,7 +223,7 @@ $function();
 
 // Just quickly sneak the feed stuff in...
 if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_feed'))
-	loadBlock('sidebar_feed', 'sidebar', 'add');
+	loadBlock('sidebar_feed', 'sidebar');
 
 obExit(null, null, true);
 

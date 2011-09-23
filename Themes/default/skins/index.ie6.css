@@ -15,6 +15,11 @@
 		margin-top: 0
 	strong
 		float: none
+		padding-top, padding-bottom: 0
+		background-color: #c63c57 !important
+
+.menu li li.menu-top
+	border: 0
 
 li.hove
 	background-color: #e2ebe7
@@ -34,8 +39,7 @@ li.separator
 	display: none
 	z-index: 9
 	position: absolute
-	left: 0
-	top: 0
+	left, top: 0
 	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0)
 
 // Sub-area non-dropdown menus in the admin area

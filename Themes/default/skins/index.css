@@ -558,18 +558,27 @@ input[type=file]
 	margin-left: 160px
 	margin-top: -24px
 
-.menu li extends .inline-block
+.menu li
 	list-style: none
 	cursor: pointer
 	height: auto
-	padding: 0
+	margin, padding: 0
+	float: left
+	display: block
+
+// This is the same as above, but for anything else than IE6. Uh.
+.menu > li
+	display: inline-block
 	// Until white-space-collapsing is finalized...
 	margin: 0 0 0 -3px
-	li
-		display: block
-		float: none
-		margin: 0
-		white-space: nowrap
+	padding: 0
+	float: none
+
+.menu li li
+	display: block
+	float: none
+	margin: 0
+	white-space: nowrap
 
 .css h4:hover, h4.hove
 	background-color: rgba(0,0,0, .075)

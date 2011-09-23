@@ -61,7 +61,7 @@ function CalendarMain()
 
 	// This is gonna be needed...
 	loadTemplate('Calendar');
-	loadBlock('sidebar', 'sidebar', 'add');
+	loadBlock('sidebar', 'sidebar');
 
 	// You can't do anything if the calendar is off.
 	if (empty($modSettings['cal_enabled']))

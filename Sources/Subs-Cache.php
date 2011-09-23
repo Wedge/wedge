@@ -461,7 +461,6 @@ function wedge_cache_css()
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
-	$context['extra_skin_css'] = '';
 
 	// Make sure custom.css, if available, is added last.
 	$files = array_merge($context['css_main_files'], (array) 'custom');

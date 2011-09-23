@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-function template_info_center_begin()
+function template_info_center_above()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
@@ -215,7 +215,7 @@ function template_info_center_personalmsg()
 			</p>';
 }
 
-function template_info_center_end()
+function template_info_center_below()
 {
 	echo '
 		</div>';

@@ -200,6 +200,7 @@ function ob_sessrewrite($buffer)
 
 	call_hook('dynamic_rewrite', array(&$buffer));
 
+	// If guests/users can't view user profiles, we might as well unlink them!
 	if (!allowedTo('profile_view_any'))
 		$buffer = preg_replace(
 			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
@@ -1179,10 +1180,10 @@ function execBlock($block_name, $fatal = false)
  * Build a list of template blocks.
  *
  * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
- * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc.
- * @param boolean $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
+ * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc. Leave empty (or 'default') to use the default.
+ * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions. Leave empty to use the contextual default ('replace' for the default layer, 'add' otherwise.)
  */
-function loadBlock($blocks, $target = 'default', $where = 'replace')
+function loadBlock($blocks, $target = '', $where = '')
 {
 	global $context;
 
@@ -1204,6 +1205,8 @@ function loadBlock($blocks, $target = 'default', $where = 'replace')
 	// Find the first target layer that isn't wishful thinking.
 	foreach ((array) $target as $layer)
 	{
+		if (empty($layer))
+			$layer = 'default';
 		if (isset($context['layers'][$layer]))
 		{
 			$to = $layer;
@@ -1218,6 +1221,10 @@ function loadBlock($blocks, $target = 'default', $where = 'replace')
 	// If a mod requests to replace the contents of the sidebar, just smile politely.
 	if (($where === 'replace' || $where === 'erase') && $to === 'sidebar')
 		$where = 'add';
+
+	// If no position is specified, we use the contextual default: 'replace' for the main layer, 'add' for others.
+	if (empty($where))
+		$where = $to === 'default' ? 'replace' : 'add';
 
 	if ($where === 'replace' || $where === 'erase')
 	{
@@ -1292,7 +1299,7 @@ function loadBlock($blocks, $target = 'default', $where = 'replace')
  * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the default layer (which doesn't accept any positioning, either.)
  * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
  */
-function loadLayer($layer, $target = 'default', $where = 'parent')
+function loadLayer($layer, $target = '', $where = 'parent')
 {
 	global $context;
 
@@ -1312,6 +1319,9 @@ function loadLayer($layer, $target = 'default', $where = 'parent')
 		firstchild	add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
 		lastchild	add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
 	*/
+
+	if (empty($target))
+		$target = 'default';
 
 	// Target layer doesn't exist..? Enter brooding mode.
 	if (!isset($context['layers'][$target]))

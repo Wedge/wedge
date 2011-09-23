@@ -44,18 +44,16 @@ function Boards()
 		loadTemplate('Boards');
 		loadTemplate('InfoCenter');
 		// We load the info center into our sidebar...
+		loadLayer('info_center', 'sidebar', 'lastchild');
 		loadBlock(
 			array(
-				'info_center_begin',
 				'info_center_recentposts',
 				'info_center_calendar',
 				'info_center_statistics',
 				'info_center_usersonline',
 				'info_center_personalmsg',
-				'info_center_end',
 			),
-			'sidebar',
-			'add'
+			'info_center'
 		);
 		// And the rest into our context layer.
 		loadBlock(

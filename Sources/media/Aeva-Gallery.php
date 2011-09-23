@@ -412,7 +412,7 @@ function aeva_initGallery($gal_url = null)
 
 	if (!isset($_REQUEST['xml']))
 	{
-		loadBlock(array('aeva_header', 'aeva_subtabs'), 'top', 'add');
+		loadBlock(array('aeva_header', 'aeva_subtabs'), 'top');
 
 		// Start the linktree
 		$context['linktree'] = array();
@@ -1255,7 +1255,7 @@ function aeva_viewItem()
 		'aeva_item_comments',
 	));
 	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'])
-		loadBlock('aeva_item_details', 'sidebar', 'add');
+		loadBlock('aeva_item_details', 'sidebar');
 }
 
 function aeva_mgComment()

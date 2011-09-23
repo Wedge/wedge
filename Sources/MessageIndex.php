@@ -46,7 +46,7 @@ function MessageIndex()
 			$templates[] = 'messageindex_draft';
 		$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
 		loadBlock($templates);
-		loadBlock('messageindex_statistics', 'sidebar', 'add');
+		loadBlock('messageindex_statistics', 'sidebar');
 	}
 
 	$context['name'] = $board_info['name'];
@@ -223,7 +223,7 @@ function MessageIndex()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('board');
-		loadBlock('messageindex_whoviewing', 'sidebar', 'add');
+		loadBlock('messageindex_whoviewing', 'sidebar');
 	}
 
 	// Default sort methods.
@@ -608,7 +608,7 @@ function MessageIndex()
 	// If there are children, but no topics and no ability to post topics...
 	$context['no_topic_listing'] = !empty($context['boards']) && empty($context['topics']) && !$context['can_post_new'];
 	if (!$context['no_topic_listing'])
-		loadBlock('messageindex_legend', 'sidebar', 'add');
+		loadBlock('messageindex_legend', 'sidebar');
 
 	// Create the button set...
 	$context['button_list'] = array(

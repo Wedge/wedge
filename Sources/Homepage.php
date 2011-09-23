@@ -43,16 +43,14 @@ function Homepage()
 	// We first create an info layer at the end of the main block and inject the info center into it.
 	// For the purpose of our sample, we're using the opportunity to skip the calendar and recent posts.
 	loadTemplate('InfoCenter');
-	loadLayer('info', 'default', 'lastchild');
+	loadLayer('info_center', 'default', 'lastchild');
 	loadBlock(
 		array(
-			'info_center_begin',
 			'info_center_statistics',
 			'info_center_usersonline',
 			'info_center_personalmsg',
-			'info_center_end',
 		),
-		'info'
+		'info_center'
 	);
 
 	/*

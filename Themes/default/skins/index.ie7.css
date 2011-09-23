@@ -166,11 +166,15 @@ li.separator
 #context_menus h4:hover
 	background-color: #ebe7e2
 
+// Annoying hacks...
 .menu
-	li ul
-		margin-top: 0
 	strong
 		float: none
+		padding-top, padding-bottom: 0
+	> li
+		display: inline
+		margin-left: 2px
+		vertical-align: top
 
 input[type=submit]
 	overflow: visible

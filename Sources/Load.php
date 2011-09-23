@@ -1753,7 +1753,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = '';
 	$context['skeleton_array'] = array();
-	$context['layer_hints'] = array();
 	$context['layers'] = array();
 
 	// Wireless mode? Load up the wireless stuff.
