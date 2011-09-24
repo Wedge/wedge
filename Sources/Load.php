@@ -1985,6 +1985,7 @@ function loadAddonLanguage($addon_name, $template_name, $lang = '', $fatal = tru
 	$attempts[$lang] = false;
 	$attempts[$language] = false;
 
+	$found = false;
 	foreach ($attempts as $load_lang => $continue)
 	{
 		$file = $context['addons_dir'][$addon_name] . '/' . $template_name . '.' . $load_lang . '.php';

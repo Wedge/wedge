@@ -23,6 +23,18 @@ function AddonsHome()
 	loadTemplate('ManageAddons');
 	define('WEDGE_ADDON', 1); // Any scripts that are run from here, should *really* test that this is defined and exit if not.
 
+	// Because our good friend the GenericMenu complains otherwise.
+	$context[$context['admin_menu_name']]['tab_data'] = array(
+		'title' => $txt['addon_manager'],
+		'description' => $txt['addon_manager_desc'],
+		'tabs' => array(
+			'addons' => array(
+			),
+			'find' => array(
+			),
+		),
+	);
+
 	$subActions = array(
 		'list' => 'ListAddons',
 		'readme' => 'AddonReadme',
@@ -45,17 +57,6 @@ function ListAddons()
 	loadBlock('browse');
 	$context['page_title'] = $txt['addon_manager'];
 	getLanguages(true);
-
-	$context[$context['admin_menu_name']]['tab_data'] = array(
-		'title' => $txt['addon_manager'],
-		'description' => $txt['addon_manager_desc'],
-		'tabs' => array(
-			'addons' => array(
-			),
-			'find' => array(
-			),
-		),
-	);
 
 	$context['available_addons'] = array();
 
@@ -84,17 +85,27 @@ function ListAddons()
 
 					$addon = array(
 						'folder' => $folder,
-						'name' => $manifest->name,
+						'name' => (string) $manifest->name,
 						'author' => $manifest->author,
-						'author_url' => $manifest->author['url'],
+						'author_url' => (string) $manifest->author['url'],
+						'author_email' => (string) $manifest->author['email'],
+						'website' => (string) $manifest->website,
 						'version' => $manifest->version,
 						'description' => $manifest->description,
 						'hooks' => array(),
 						'readmes' => array(),
-						'acp_url' => $manifest->{'acp_url'},
+						'acp_url' => $manifest->{'acp-url'},
 						'install_errors' => array(),
 						'enabled' => false,
 					);
+
+					// Do some sanity checking, to validate that any given URL or email are at least vaguely legal.
+					if (empty($addon['author_url']) || (strpos($addon['author_url'], 'http://') !== 0 && strpos($addon['author_url'], 'https://') !== 0))
+						$addon['author_url'] = '';
+					if (empty($addon['website']) || (strpos($addon['website'], 'http://') !== 0 && strpos($addon['website'], 'https://') !== 0))
+						$addon['website'] = '';
+					if (empty($addon['author_email']) || !is_valid_email($addon['author_email']))
+						$addon['author_email'] = '';
 
 					$min_versions = array();
 					if (!empty($manifest->{'min-versions'}))
@@ -127,6 +138,14 @@ function ListAddons()
 						preg_match('~^\d(\.\d){2}~', $min_versions['mysql'] . '.0.0', $matches);
 						if (!empty($matches[0]) && version_compare($matches[0], $mysql_version, '>='))
 							$addon['install_errors']['minmysql'] = sprintf($txt['install_error_minmysql'], $matches[0], $mysql_version);
+					}
+
+					// Required functions?
+					if (!empty($manifest->{'required-functions'}))
+					{
+						$required_functions = testRequiredFunctions($manifest->{'required_functions'});
+						if (!empty($required_functions))
+							$addon['install_errors']['reqfunc'] = sprintf($txt['install_error_reqfunc'], implode(', ', $required_functions));
 					}
 
 					// Hooks associated with this add-on.
@@ -375,6 +394,14 @@ function EnableAddon()
 		preg_match('~^\d(\.\d){2}~', $min_versions['mysql'] . '.0.0', $matches);
 		if (!empty($matches[0]) && version_compare($matches[0], $mysql_version, '>='))
 			fatal_lang_error('fatal_install_error_minmysql', false, array($matches[0], $mysql_version));
+	}
+
+	// Required functions?
+	if (!empty($manifest->{'required-functions'}))
+	{
+		$required_functions = testRequiredFunctions($manifest->{'required_functions'});
+		if (!empty($required_functions))
+			fatal_lang_error('fatal_install_error_reqfunc', false, array(implode(', ', $required_functions)));
 	}
 
 	// Hooks associated with this add-on.
@@ -702,7 +729,7 @@ function DisableAddon()
 		$file = (string) $manifest->database->scripts->disable;
 		$full_path = strtr($file, array('$addondir' => $addonsdir . '/' . $_GET['addon']));
 		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$addondir/') !== 0 || !file_exists($full_path))
-			fatal_lang_error('fatal_install_enable_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
+			fatal_lang_error('fatal_install_disable_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
 
 		// This is just here as reference for what is available.
 		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $addonsdir;
@@ -747,6 +774,203 @@ function DisableAddon()
 	);
 
 	redirectexit('action=admin;area=addons');
+}
+
+function RemoveAddon()
+{
+	global $scripturl, $txt, $context, $addonsdir;
+
+	// Did they specify a plugin, and is it a valid one?
+	$valid = true;
+
+	if (isset($_GET['addon']))
+	{
+		// So, one's specified. Make sure it doesn't start with a . (which rules out ., .. and 'hidden' files) and also that it doesn't contain directory separators. No sneaky trying to get out the box.
+		if (strpos($_GET['addon'], DIRECTORY_SEPARATOR) !== false || $_GET['addon'][0] == '.' || !file_exists($addonsdir . '/' . $_GET['addon'] . '/addon-info.xml'))
+			$valid = false;
+	}
+	else
+		$valid = false;
+
+	//libxml_use_internal_errors(true);
+	if (filetype($addonsdir . '/' . $_GET['addon']) != 'dir' || !file_exists($addonsdir . '/' . $_GET['addon'] . '/addon-info.xml'))
+		fatal_lang_error('fatal_not_valid_addon', false);
+
+	$manifest = simplexml_load_file($addonsdir . '/' . $_GET['addon'] . '/addon-info.xml');
+	if ($manifest === false || empty($manifest->name) || empty($manifest->version))
+		fatal_lang_error('fatal_not_valid_addon_remove', false);
+
+	// Already installed?
+	if (in_array($_GET['addon'], $context['enabled_addons']))
+		fatal_lang_error('remove_addon_already_enabled', false);
+
+	$context['addon_name'] = (string) $manifest->name . ' ' . (string) $manifest->version;
+
+	// Now then, what are we doing here?
+	if (!isset($_GET['commit']))
+	{
+		// Just displaying the form.
+		loadBlock('remove');
+		$context['page_title'] = $txt['remove_addon'];
+	}
+	else
+	{
+		checkSession();
+		// !!! Check that the folder is deleteable, and if not, exit gracefully to screen where we can collect the relevant details.
+		$all_writable = true;
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($addonsdir . '/' . $_GET['addon']), RecursiveIteratorIterator::SELF_FIRST);
+		foreach ($iterator as $path)
+			if (!$path->isWritable())
+			{
+				if (@chmod($path->__toString(), $path->isDir() ? 0777 : 0666) == false)
+					$all_writable = false;
+				break;
+			}
+
+		if (!$all_writable)
+			fatal_lang_error('remove_addon_files_pre_still_there', false);
+
+		// See whether we're saving or removing the data
+		if (isset($_POST['nodelete']))
+			commitRemoveAddon(false);
+		elseif (isset($_POST['delete']))
+			commitRemoveAddon(true);
+		else
+		{
+			// Just displaying the form anyway.
+			loadBlock('remove');
+			$context['page_title'] = $txt['remove_addon'];
+		}
+	}
+}
+
+// This ugly function detals with actually removing an add-on.
+function commitRemoveAddon($fullclean = false)
+{
+	global $scripturl, $txt, $context, $addonsdir;
+
+	// So, as far as we know, it's valid to remove, because RemoveAddon() should have checked all this for us, even writability.
+
+	// Database changes: remove/remove-clean script
+	if (!$fullclean && !empty($manifest->database->scripts->remove))
+		$file = (string) $manifest->database->scripts->remove;
+	elseif ($fullclean && !empty($manifest->database->scripts->{'remove-clean'}))
+		$file = (string) $manifest->database->scripts->{'remove-clean'};
+
+	if (!empty($file))
+	{
+		$full_path = strtr($file, array('$addondir' => $addonsdir . '/' . $_GET['addon']));
+		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$addondir/') !== 0 || !file_exists($full_path))
+			fatal_lang_error('fatal_install_remove_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
+
+		// This is just here as reference for what is available.
+		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $addonsdir;
+		require($full_path);
+	}
+
+	if ($fullclean && !empty($manifest->database))
+	{
+		// Pass each table we find to the drop-table routine. That already does its own checking as to whether the table exists or not.
+		if (!empty($manifest->database->tables))
+		{
+			$tables = $manifest->database->tables->children();
+			foreach ($tables as $table)
+				if ($table->getName() == 'table')
+					weDBPackages::drop_table((string) $table['name']);
+		}
+	}
+
+	// Need to remove scheduled tasks. We can leave normal settings in, but scheduled tasks need to be removed, because they will mangle if accidentally run otherwise.
+	if (!empty($manifest->scheduledtasks))
+	{
+		$tasks = array();
+		$tasks_listed = $manifest->scheduledtasks->children();
+		foreach ($tasks_listed as $task)
+		{
+			if ($task->getName() != 'task')
+				continue;
+			$name = (string) $task['name'];
+			if (!empty($name))
+				$tasks[] = $name;
+		}
+		if (!empty($tasks))
+			wesql::query('
+				DELETE FROM {db_prefix}scheduled_tasks
+				WHERE task IN ({array_string:tasks})',
+				array(
+					'tasks' => $tasks,
+				)
+			);
+	}
+
+	// Clean settings, including the master storage for this add-on's hooks if it was ever used. Make sure to flush caches.
+	$clean_settings = array('addon_' . $_GET['addon']);
+	if ($fullclean && !empty($manifest->settings))
+	{
+		$settings_listed = $manifest->settings->children();
+		foreach ($settings_listed as $setting)
+			if ($setting->getName() == 'setting')
+				$clean_settings[] = (string) $setting['name'];
+	}
+	wesql::query('
+		DELETE FROM {db_prefix}settings
+		WHERE variable IN ({array_string:clean_settings})',
+		array(
+			'clean_settings' => $clean_settings,
+		)
+	);
+
+	updateSettings(
+		array(
+			'settings_updated' => time(),
+		)
+	);
+
+	// Lastly, actually do the delete.
+	$result = deleteFiletree($addonsdir . '/' . $_GET['addon']);
+	if (empty($result))
+		fatal_lang_error('remove_addon_files_still_there', false, $_GET['addon']);
+	else
+		redirectexit('action=admin;area=addons'); // It was successful, so disappear back to the add-on list.
+}
+
+// Return true on success.
+function deleteFiletree($rootpath)
+{
+	$rootpath = realpath($rootpath);
+	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootpath), RecursiveIteratorIterator::CHILD_FIRST);
+	foreach ($iterator as $path)
+		if ($path->isDir())
+			@rmdir($path->__toString());
+		else
+			@unlink($path->__toString());
+
+	@rmdir($rootpath);
+
+	return (!file_exists($rootpath));
+}
+
+// Accepts the <required-functions> element and returns an array of functions that aren't available.
+function testRequiredFunctions($manifest_element)
+{
+	$required_functions = array();
+	$functions = $manifest_element->children();
+	foreach ($functions as $function)
+	{
+		if ($function->getName() != 'php-function')
+			continue;
+		$function = trim((string) $function[0]);
+		if (!empty($function))
+			$required_functions[$function] = true;
+	}
+	foreach ($required_functions as $function => $dummy)
+		if (is_callable($function))
+			unset($required_functions[$function]);
+
+	if (empty($required_functions))
+		return array();
+	else
+		return array_keys($required_functions); // Can't array-flip because we will end up overwriting our values.
 }
 
 function knownHooks()

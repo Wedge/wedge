@@ -72,8 +72,12 @@ function template_boards()
 				<td class="icon"', !empty($board['children']) ? ' rowspan="2"' : '', '>
 					<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
 
+				// If this board is told to have a custom icon, use it.
+				if (!empty($board['custom_class']))
+					echo '
+						<div class="boardstatus ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '"></div>';
 				// If the board or children is new, show an indicator.
-				if ($board['new'] || $board['children_new'])
+				elseif ($board['new'] || $board['children_new'])
 					echo '
 						<div class="boardstate_', $board['new'] ? 'new' : 'on', '" title="', $txt['new_posts'], '"></div>';
 				// Is it a redirection board?
