@@ -484,7 +484,7 @@ function EnableAddon()
 				{
 					if ($column->getName() != 'column')
 						continue;
-					// Like most things with SimpleXML, we just try to get everything, then make sense of it after.
+					// Like most things with SimpleXML, we just try to get everything, then make sense of it after. Note that you can call for an attribute even if it isn't stated, and no error will result.
 					$this_col = array(
 						'name' => (string) $column['name'],
 						'type' => (string) $column['type'],
@@ -535,6 +535,8 @@ function EnableAddon()
 					else
 					{
 						unset($this_col['auto'], $this_col['unsigned']);
+						if (empty($this_col['default']) && !isset($column['default']))
+							unset($this_col['default']);
 						if (strpos($this_col['values'], ',') === false)
 							continue;
 					}
