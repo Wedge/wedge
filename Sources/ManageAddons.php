@@ -85,13 +85,13 @@ function ListAddons()
 
 					$addon = array(
 						'folder' => $folder,
-						'name' => (string) $manifest->name,
-						'author' => $manifest->author,
+						'name' => westr::htmlspecialchars((string) $manifest->name),
+						'author' => westr::htmlspecialchars($manifest->author),
 						'author_url' => (string) $manifest->author['url'],
 						'author_email' => (string) $manifest->author['email'],
 						'website' => (string) $manifest->website,
-						'version' => $manifest->version,
-						'description' => $manifest->description,
+						'version' => westr::htmlspecialchars($manifest->version),
+						'description' => westr::htmlspecialchars($manifest->description),
 						'hooks' => array(),
 						'readmes' => array(),
 						'acp_url' => $manifest->{'acp-url'},
@@ -325,7 +325,7 @@ function AddonReadme()
 		{
 			$name = (string) $manifest->name;
 			if (!empty($manifest->version))
-				$name .= ' ' . ((string) $manifest->version);
+				$name .= ' ' . westr::htmlspecialchars((string) $manifest->version);
 
 			$name = '<h6 class="top">' . $name . '</h6>';
 		}
@@ -401,7 +401,7 @@ function EnableAddon()
 	{
 		$required_functions = testRequiredFunctions($manifest->{'required_functions'});
 		if (!empty($required_functions))
-			fatal_lang_error('fatal_install_error_reqfunc', false, array(implode(', ', $required_functions)));
+			fatal_lang_error('fatal_install_error_reqfunc', false, westr::htmlspecialchars(implode(', ', $required_functions)));
 	}
 
 	// Hooks associated with this add-on.
@@ -443,7 +443,7 @@ function EnableAddon()
 	foreach ($hooks_missing as $hook_type => $hook_list)
 		$missing_hooks_flatten = array_merge($missing_hooks_flatten, $hook_list);
 	if (!empty($missing_hooks_flatten))
-		fatal_lang_error('fatal_install_error_missinghook', false, implode(', ', $missing_hooks_flatten));
+		fatal_lang_error('fatal_install_error_missinghook', false, westr::htmlspecialchars(implode(', ', $missing_hooks_flatten)));
 
 	// Add this point, we appear to have everything we need, so let's start committing things.
 
@@ -806,7 +806,7 @@ function RemoveAddon()
 	if (in_array($_GET['addon'], $context['enabled_addons']))
 		fatal_lang_error('remove_addon_already_enabled', false);
 
-	$context['addon_name'] = (string) $manifest->name . ' ' . (string) $manifest->version;
+	$context['addon_name'] = westr::htmlspecialchars((string) $manifest->name . ' ' . (string) $manifest->version);
 
 	// Now then, what are we doing here?
 	if (!isset($_GET['commit']))
