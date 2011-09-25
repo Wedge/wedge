@@ -72,14 +72,18 @@
 					<sidebar_wrap>
 						<sidebar>
 							<!-- This is where Wedge will insert any side information. -->
+							<search_box />
+							<language_selector />
+							<random_news />
 						</sidebar>
 					</sidebar_wrap>
 
 					<!-- We usually need to add a wrapper after the sidebar that will be defined as a table cell. -->
 					<offside_wrap>
 
-						<!-- The header area: menu, top bar, things like that... -->
-						<header />
+						<header>
+							<!-- The header layer: top bar, logo, things like that... -->
+						</header>
 
 						<!-- The main menu. -->
 						<menu />

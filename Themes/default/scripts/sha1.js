@@ -42,7 +42,7 @@ String.prototype.php_strtr = function (sFrom, sTo)
 // Simulate PHP's strtolower (in SOME cases, PHP uses ISO-8859-1 case folding.)
 String.prototype.php_strtolower = function ()
 {
-	return typeof we_iso_case_folding == 'boolean' && we_iso_case_folding == true ? this.php_strtr(
+	return typeof we_iso_case_folding == 'boolean' && we_iso_case_folding ? this.php_strtr(
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZ\x8a\x8c\x8e\x9f\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde',
 		'abcdefghijklmnopqrstuvwxyz\x9a\x9c\x9e\xff\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe'
 	) : this.php_strtr(

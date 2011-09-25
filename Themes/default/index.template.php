@@ -107,7 +107,12 @@ function template_skeleton()
 		<html>
 			<body>
 				<wrapper>
-					<header />
+					<header>
+						<logo_toggler />
+						<search_box />
+						<language_selector />
+						<random_news />
+					</header>
 					<menu />
 					<linktree />
 					<content_wrap>
@@ -215,58 +220,18 @@ function template_wrapper_above()
 <div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '';
 }
 
-// Show the header area.
-function template_header()
+// Start the header layer.
+function template_header_above()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings, $user_info;
-
 	echo '
 	<div id="header"><div class="frame">
-		<div id="top_section"><div class="frame">
-			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
+		<div id="top_section"><div class="frame">';
+}
 
-	if (!empty($context['allow_search']))
-	{
-		echo '
-			<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-				<input type="search" name="search" value="" class="search">
-				<input type="submit" name="submit" value="', $txt['search'], '">
-				<input type="hidden" name="advanced" value="0">';
-
-		// Search within current topic?
-		if (!empty($context['current_topic']))
-			echo '
-				<input type="hidden" name="topic" value="', $context['current_topic'], '">';
-		// Or within current board?
-		elseif (!empty($context['current_board']))
-			echo '
-				<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
-
-		echo '
-			</form>';
-	}
-
-	if (isset($context['languages']) && count($context['languages']) > 1)
-	{
-		$lng = $user_info['url'];
-		$lng .= strpos($lng, '?') !== false ? ';' : '?';
-		if (strpos($lng, 'language=') !== false)
-			$lng = preg_replace('~([;&?])language=[a-z]+[;&]~i', '$1', $lng);
-
-		echo '
-			<p>';
-		foreach ($context['languages'] as $language)
-			echo '
-				<a href="' . $lng . 'language=' . $language['filename'] . '"><img src="' . $settings['theme_url'] . '/languages/Flag.' . $language['filename'] . '.png" title="' . westr::htmlspecialchars($language['name']) . '"></a>';
-		echo '
-			</p>';
-	}
-
-	// Show a random news item? (or you could pick one from news_lines...)
-	if (!empty($settings['enable_news']) && !empty($context['random_news_line']))
-		echo '
-			<h2>', $txt['news'], '</h2>
-			<p>', $context['random_news_line'], '</p>';
+// End the header layer.
+function template_header_below()
+{
+	global $context, $options;
 
 	echo '
 		</div></div>
@@ -274,6 +239,85 @@ function template_header()
 			<we:header logo="', $context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:header>
 		</div></div>
 	</div></div>';
+}
+
+function template_search_box()
+{
+	global $context, $scripturl, $txt;
+
+	if (empty($context['allow_search']))
+		return;
+
+	echo '
+			<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
+				<input type="search" name="search" value="" class="search">
+				<input type="submit" name="submit" value="', $txt['search'], '">
+				<input type="hidden" name="advanced" value="0">';
+
+	// Search within current topic?
+	if (!empty($context['current_topic']))
+			echo '
+				<input type="hidden" name="topic" value="', $context['current_topic'], '">';
+	// Or within current board?
+	elseif (!empty($context['current_board']))
+		echo '
+				<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
+
+	echo '
+			</form>';
+}
+
+function template_language_selector()
+{
+	global $context, $user_info, $settings;
+
+	if (empty($context['languages']) || count($context['languages']) < 2)
+		return;
+
+	$lng = $user_info['url'];
+	$lng .= strpos($lng, '?') !== false ? ';' : '?';
+	if (strpos($lng, 'language=') !== false)
+		$lng = preg_replace('~([;&?])language=[a-z]+[;&]~i', '$1', $lng);
+
+	echo '
+			<p>';
+
+	foreach ($context['languages'] as $language)
+		echo '
+				<a href="' . $lng . 'language=' . $language['filename'] . '"><img src="' . $settings['theme_url'] . '/languages/Flag.' . $language['filename'] . '.png" title="' . westr::htmlspecialchars($language['name']) . '"></a>';
+
+	echo '
+			</p>';
+}
+
+function template_random_news()
+{
+	global $txt, $context, $settings;
+
+	// Show a random news item? (or you could pick one from news_lines...)
+	if (empty($settings['enable_news']) || empty($context['random_news_line']))
+		return;
+
+	echo '
+			<h2>', $txt['news'], '</h2>
+			<p>', $context['random_news_line'], '</p>';
+}
+
+function template_logo_toggler()
+{
+	global $options, $txt, $context;
+
+	add_js('
+	var oMainHeaderToggle = new weToggle({
+		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
+		aSwappableContainers: [\'upper_section\'],
+		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],
+		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_header\' },
+		oCookieOptions: { bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ', sCookieName: \'upshrink\' }
+	});');
+
+	echo '
+			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
 }
 
 function template_sidebar_wrap_above()
@@ -474,20 +518,12 @@ function template_body_below()
 		we_default_theme_url = ', $settings['theme_url'] === $settings['theme_url'] ? 'we_theme_url = ' : '', '"', $settings['default_theme_url'], '", ', $settings['theme_url'] === $settings['theme_url'] ? '' : '
 		we_theme_url = "' . $settings['theme_url'] . '",', '
 		we_sessid = "', $context['session_id'], '",
-		we_sessvar = "', $context['session_var'], '",
-		we_iso_case_folding = ', $context['server']['iso_case_folding'] ? 'true' : 'false', ',
+		we_sessvar = "', $context['session_var'], '",', $context['server']['iso_case_folding'] && in_array('scripts/sha1.js', $context['javascript_files']) ? '
+		we_iso_case_folding = true' : '', '
 		we_loading = "', $txt['ajax_in_progress'], '",
 		we_cancel = "', $txt['modify_cancel'], '";
 
-	initMenu("main_menu");
-
-	var oMainHeaderToggle = new weToggle({
-		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
-		aSwappableContainers: [\'upper_section\'],
-		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],
-		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_header\' },
-		oCookieOptions: { bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ', sCookieName: \'upshrink\' }
-	});', $context['show_pm_popup'] ? '
+	initMenu("main_menu");', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
 		window.open(we_prepareScriptUrl() + "action=pm");' : '';

@@ -5,7 +5,7 @@
  */
 
 body
-	background: #efead2
+	background: #f6f8ef
 	color: #333
 	padding: 0
 
@@ -28,6 +28,12 @@ body
 		padding: 5px 25px 10px 15px
 	#edgehide &
 		background-color: #f6f8ef
+	input.search
+		width: 90px
+		margin-right: 4px
+
+#top_section
+	display: none
 
 .wehead
 	color: #224
@@ -39,9 +45,6 @@ body
 
 .wedgesymbol
 	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
-
-#top_section
-	background: darken(hue($main_bg, -50), 10%) url($images/theme/grad250.png) 0 -150px repeat-x
 
 #header
 	h2, p
@@ -177,7 +180,7 @@ tr.titlebg th, tr.catbg th
 .catbase
 	background: rgba(0,0,0, .03)
 	text-shadow: white 0 1px 2px
-	font: 700 1.1em/20px "Lucida Sans Unicode", "Trebuchet MS", Verdana, Arial, sans-serif
+	font: 700 1.1em/20px $main_font
 	img
 		vertical-align: -2px
 
@@ -218,6 +221,9 @@ tr.titlebg th, tr.catbg th
 	font-family: inherit
 	font-size: 1.1em
 
+#upshrink_ic
+	margin: 4px 0 0 4px
+
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
@@ -225,4 +231,5 @@ $alphamix = rgb(241,243,234)
 $main_bg  = rgb(241,243,234)
 $main_bg  = rgb(246,248,239)
 $head_bg  = rgba(233,235,186,.66)
+$main_font = "PT Sans", "Segoe UI", "Trebuchet MS", Arial, sans-serif
 $post_font = 9.5pt/140% "Lucida Sans Unicode", Verdana, $main_font

@@ -20,7 +20,7 @@ body
 	background: none
 
 #navi extends .grad250
-	background-position: 0 -180px
+	background-position: 0 -200px
 	background-color: #faf8f6
 	border: 1px solid #999
 	border-width: 0 1px
@@ -89,7 +89,7 @@ body
 		padding: .5em 20px
 		display: block
 		margin: 0
-		font: 90% Verdana
+		font-size: 110%
 		border: 0
 		background: none
 		li
@@ -116,6 +116,12 @@ body
 		li a
 			color: #679
 
+@remove
+	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
+
+.wedgesymbol
+	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
+
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
 
@@ -133,7 +139,7 @@ a, #linktree a
 ------------------------------------------------------- */
 
 .menu
-	font: 90% Verdana
+	font-size: 110%
 
 #main_menu
 	border-width: 1px 0
@@ -203,7 +209,7 @@ a, #linktree a
 	margin-top: 8px
 	overflow: auto
 	text-shadow: none
-	font: italic 1.2em/20px "Segoe UI", "Lucida Grande", "Trebuchet MS", Verdana, Arial, sans-serif
+	font: italic 1.2em/20px $main_font
 
 .cat final
 	background-color: #e5eee5
@@ -260,5 +266,6 @@ tr.titlebg
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
-$subcat_font = normal 1.1em "Segoe UI", "Lucida Grande", "Trebuchet MS"
-$post_font = 9.5pt/140% "Segoe UI", Verdana, $main_font
+$main_font = "Segoe UI", Arial, sans-serif
+$subcat_font = normal 1.1em main_font
+$post_font = 10.5pt/140% $main_font
