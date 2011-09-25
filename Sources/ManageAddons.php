@@ -93,6 +93,7 @@ function ListAddons()
 						'version' => westr::htmlspecialchars($manifest->version),
 						'description' => westr::htmlspecialchars($manifest->description),
 						'hooks' => array(),
+						'provide_hooks' => array(),
 						'readmes' => array(),
 						'acp_url' => $manifest->{'acp-url'},
 						'install_errors' => array(),
@@ -165,13 +166,19 @@ function ListAddons()
 										$addon['hooks']['language'][] = $each_hook['point'];
 									break;
 								case 'provides':
-									// Only deal with hooks provided by a plugin if it's enabled.
-									if (in_array($folder, $context['enabled_addons']))
-									{
-										$provided_hooks = $each_hook->children();
-										if (!empty($hook['type']) && ($hook['type'] == 'function' || $hook['type'] == 'language'))
-											$hooks[$hook['type']][] = $hook;
-									}
+									$provided_hooks = $each_hook->children();
+
+									foreach ($provided_hooks as $hook)
+										if (!empty($hook['type']) && ((string) $hook['type'] == 'function' || (string) $hook['type'] == 'language'))
+										{
+											// Only deal with hooks provided by a plugin if it's enabled.
+											if (in_array($folder, $context['enabled_addons']))
+												$hooks[(string) $hook['type']][] = (string) $hook;
+											
+											if (empty($addon['provide_hooks'][(string) $hook['type']]))
+												$addon['provide_hooks'][(string) $hook['type']] = array();
+											$addon['provide_hooks'][(string) $hook['type']][] = (string) $hook;
+										}
 									break;
 							}
 						}
@@ -219,14 +226,15 @@ function ListAddons()
 			if (!empty($context['available_addons'][$id]['install_errors']['missinghook']))
 				break;
 
-			foreach ($required_hooks as $hook)
+			// Hmm, just make sure there's actually something available for what we're doing to do in a minute.
+			if (empty($addon['provide_hooks'][$hook_type]))
+				$addon['provide_hooks'][$hook_type] = array();
+
+			$missing_hooks = array_diff($required_hooks, $hooks[$hook_type], $addon['provide_hooks'][$hook_type]);
+			if (count($missing_hooks) > 0)
 			{
-				$missing_hooks = array_diff($required_hooks, $hooks[$hook_type]);
-				if (count($missing_hooks) > 0)
-				{
-					$context['available_addons'][$id]['install_errors']['missinghook'] = $txt['install_error_missinghook'] . ' (' . implode(', ', $missing_hooks) . ')';
-					break; // I'd use break 2 but that's deprecated in PHP 5.4.
-				}
+				$context['available_addons'][$id]['install_errors']['missinghook'] = $txt['install_error_missinghook'] . ' (' . implode(', ', $missing_hooks) . ')';
+				break; // I'd use break 2 but that's deprecated in PHP 5.4.
 			}
 		}
 	}
@@ -368,6 +376,7 @@ function EnableAddon()
 
 	// OK, so we need to go through and validate that we have everything we need.
 	$min_versions = array();
+	$check_for = array('php', 'mysql');
 	if (!empty($manifest->{'min-versions'}))
 	{
 		$versions = $manifest->{'min-versions'}->children();
@@ -427,6 +436,29 @@ function EnableAddon()
 	// Now we have a list of the hooks this add-on needs. Are they all accounted for?
 	$hooks_missing = array();
 	$hooks_available = knownHooks();
+	$hooks_provided = array();
+
+	// Technically, an add-on can also call its own hooks
+	if (!empty($manifest->hooks) && !empty($manifest->hooks->provides))
+	{
+		$provides = $manifest->hooks->provides->children();
+		foreach ($provides as $provided)
+		{
+			$attrs = $provided->attributes();
+			$hooks_available[(string) $attrs['type']][] = (string) $provided;
+			$hooks_provided[(string) $attrs['type']][] = (string) $provided;
+		}
+	}
+
+	// Add all the other hooks available
+	foreach ($context['enabled_addons'] as $addon)
+	{
+		$addon = unserialize($modSettings['addon_' . $addon]);
+		foreach ($addon['provides'] as $hook_type => $hooks)
+			foreach ($hooks as $hook)
+				$hooks_available[$hook_type][] = $hook;
+	}
+
 	foreach ($hooks_required as $hook_type => $hook_list)
 	{
 		if (empty($hook_list))
@@ -672,6 +704,7 @@ function EnableAddon()
 	// Lastly, commit the hooks themselves.
 	$addon_details = array(
 		'id' => (string) $manifest['id'],
+		'provides' => $hooks_provided,
 	);
 	foreach ($hook_data as $point => $details)
 		foreach ($details as $hooked_details)

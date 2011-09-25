@@ -82,7 +82,7 @@ function reloadSettings()
 				$context['enabled_addons'][$addon_details['id']] = $addon;
 				$this_addondir = $context['addons_dir'][$addon_details['id']] = $sane_path . '/' . $addon;
 				$context['addons_url'][$addon_details['id']] = $addonsurl . '/' . $addon;
-				unset($addon_details['id']);
+				unset($addon_details['id'], $addon_details['provides']);
 				foreach ($addon_details as $hook => $functions)
 					foreach ($functions as $function)
 						$modSettings['hooks'][$hook][] = strtr($function, array('$addondir' => $this_addondir));
