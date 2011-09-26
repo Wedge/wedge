@@ -179,87 +179,71 @@ function template_credits()
 	echo '
 		<we:cat>
 			', $txt['credits_software'], '
-		</we:cat>';
+		</we:cat>
+
+		<div style="width: 49%; float: left; margin: 0 .5%">';
 
 	foreach ($context['credits'] as $section)
 	{
-		if (isset($section['pretext']))
-			echo '
-		<div class="windowbg wrc intro">
-			', $section['pretext'], '
-		</div>';
-
-		echo '
-		<div style="width: 49%; float: left; margin: 0 .5%">';
-
 		echo '
 			<we:block class="windowbg2 wrc" header="', westr::safe($section['title']), '">';
 
 		$i = 0;
 		$max = count($section['groups']);
 		foreach ($section['groups'] as $group)
-		{
-			$i++;
-			if (empty($group['members']))
-				continue;
-
-			if (isset($group['title']))
-				echo '
+			echo '
 				<h6', $i === 1 ? ' class="top"' : '', '>', $group['title'], '</h6>
 				<ul', $i === $max ? ' class="last"' : '', '>
 					<li>', implode('</li>
 					<li>', $group['members']), '</li>
 				</ul>';
 
-			$top = false;
-		}
-
 		if (isset($section['posttext']))
 			echo '
 				<p class="posttext">', $section['posttext'], '</p>';
 
 		echo '
-			</we:block>
-		</div>';
+			</we:block>';
 	}
 
 	echo '
-		<div class="clear"></div>
-		<we:cat>
-			', $txt['credits_copyright'], '
-		</we:cat>
-		<div class="windowbg wrc">
-			<h6 class="top">', $txt['credits_forum'], '</h6>
-			<ul>
-				<li>', $context['copyrights']['wedge'], '</li>
-			</ul>';
+		</div>
+		<div style="width: 49%; float: left; margin: 0 .5%">
+			<we:block class="windowbg wrc" header="', westr::safe($txt['credits_copyright']), '">
+				<h6 class="top">', $txt['credits_forum'], '</h6>
+				<ul>
+					<li>', implode('</li>
+					<li style="padding-top: 8px">', $context['copyrights']['software']), '</li>
+				</ul>';
 
 	if (!empty($context['copyrights']['mods']))
 		echo '
-			<h6>', $txt['credits_modifications'], '</h6>
-			<ul>
-				<li>', implode('</li>
-				<li>', $context['copyrights']['mods']), '</li>
-			</ul>';
+				<h6>', $txt['credits_modifications'], '</h6>
+				<ul>
+					<li>', implode('</li>
+					<li>', $context['copyrights']['mods']), '</li>
+				</ul>';
 
 	echo '
-			<h6>', $txt['credits_tools'], '</h6>
-			<ul>';
+				<h6>', $txt['credits_tools'], '</h6>
+				<ul>';
 
 	foreach ($context['copyrights']['tools'] as $name => $str)
 		echo '
-				<li>', $str, isset($txt['credits_tools_' . $name]) ? ' &ndash; ' . $txt['credits_tools_' . $name] : '', '</li>';
+					<li>', $str, isset($txt['credits_tools_' . $name]) ? ' &ndash; ' . $txt['credits_tools_' . $name] : '', '</li>';
 
 	echo '
-			</ul>
-			<h6>', $txt['credits_images'], '</h6>
-			<ul class="last">
-				<li>', implode('</li>
-				<li>', $context['copyrights']['images']), '</li>
-			</ul>';
+				</ul>
+				<h6>', $txt['credits_images'], '</h6>
+				<ul class="last">
+					<li>', implode('</li>
+					<li>', $context['copyrights']['images']), '</li>
+				</ul>';
 
 	echo '
+			</we:block>
 		</div>
+		<div class="clear"></div>
 	</div>';
 }
 ?>

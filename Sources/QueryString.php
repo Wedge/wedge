@@ -156,20 +156,20 @@ function cleanRequest()
 			$board = 0;
 			unset($_GET['board']);
 
-			// If URL has the form domain.com/~User, it's a profile request.
-			if (preg_match('@/~([^/]*)@', $full_request, $m))
+			// URL has the form domain.com/profile/User?
+			if (preg_match('`/' . (isset($modSettings['pretty_prefix_profile']) ? $modSettings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $full_request, $m))
 			{
-				if ($m[1] == '')
+				if (empty($m[1]))
 					$_GET['u'] = 0;
 				else
 					$_GET['user'] = urldecode($m[1]);
 				$_GET['action'] = 'profile';
 			}
 			// If URL has the form domain.com/do/action, it's an action. Really.
-			elseif (preg_match('~/do/([a-zA-Z0-9]+)~', $full_request, $m) && isset($action_list[$m[1]]))
+			elseif (preg_match('`/' . (isset($modSettings['pretty_prefix_action']) ? $modSettings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)`', $full_request, $m) && isset($action_list[$m[1]]))
 				$_GET['action'] = $m[1];
 			// URL: /category/42/ (shows the board list, hiding all categories but number 42)
-			elseif (preg_match('~/category/(\d+)~', $full_request, $m) && (int) $m[1] > 0)
+			elseif (preg_match('`/category/(\d+)`', $full_request, $m) && (int) $m[1] > 0)
 				$_GET['category'] = (int) $m[1];
 		}
 		else

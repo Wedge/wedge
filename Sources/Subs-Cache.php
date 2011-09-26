@@ -138,6 +138,7 @@ function add_addon_js_file($addon_name, $files = array(), $is_direct_url = false
 {
 	global $context, $addonsdir, $cachedir, $boardurl, $footer_coding;
 	static $done_files = array();
+
 	if (empty($context['addons_dir'][$addon_name]))
 		return;
 
@@ -298,6 +299,7 @@ function add_css_file($original_files = array(), $add_link = false)
 function add_addon_css_file($addon_name, $original_files = array(), $add_link = false)
 {
 	global $context, $modSettings, $settings, $cachedir, $boardurl, $addonsdir;
+
 	if (empty($context['addons_dir'][$addon_name]))
 		return;
 

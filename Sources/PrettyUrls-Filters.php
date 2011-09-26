@@ -99,10 +99,10 @@ function pretty_synchronize_topic_urls()
  */
 function pretty_filter_actions($urls)
 {
-	global $boardurl;
+	global $boardurl, $modSettings;
 
 	$action_pattern = '~(.*)\baction=([^;]+)~S';
-	$action_replacement = $boardurl . '/do/$2/$1';
+	$action_replacement = $boardurl . '/' . (isset($modSettings['pretty_prefix_action']) ? $modSettings['pretty_prefix_action'] : 'do/') . '$2/$1';
 	$cat_pattern = '~(.*)\bcategory=([^;]+)~S';
 	$cat_replacement = $boardurl . '/category/$2/$1';
 
@@ -318,10 +318,12 @@ function pretty_filter_boards($urls)
  */
 function pretty_filter_profiles($urls)
 {
-	global $boardurl;
+	global $boardurl, $modSettings;
 
 	$pattern = '~(.*)\baction=profile(;u=([0-9]+))?(.*)~S';
 	$query_data = array();
+	$prefix = '/' . (isset($modSettings['pretty_prefix_profile']) ? $modSettings['pretty_prefix_profile'] : 'profile/');
+	$me_postfix = substr($prefix, -1) === '/' ? '' : '/';
 	foreach ($urls as &$url)
 	{
 		// Get the profile data ready to query the database with
@@ -334,7 +336,7 @@ function pretty_filter_profiles($urls)
 			if ($url['profile_id'] > 0)
 				$query_data[$url['profile_id']] = true;
 			else
-				$url['replacement'] = $boardurl . '/~' . ($url['this_is_me'] ? '/' : 'guest/') . $url['match1'] . $url['match3'];
+				$url['replacement'] = $boardurl . $prefix . ($url['this_is_me'] ? $me_postfix : 'guest/') . $url['match1'] . $url['match3'];
 		}
 	}
 
@@ -359,7 +361,7 @@ function pretty_filter_profiles($urls)
 		// Build the replacement URLs
 		foreach ($urls as &$url)
 			if (isset($url['profile_id']))
-				$url['replacement'] = $boardurl . '/~' . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? '/' : 'guest/')) . $url['match1'] . $url['match3'];
+				$url['replacement'] = $boardurl . $prefix . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? $me_postfix : 'guest/')) . $url['match1'] . $url['match3'];
 	}
 	return $urls;
 }

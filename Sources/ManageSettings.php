@@ -834,12 +834,21 @@ function ModifyPrettyURLs()
 		foreach ($modSettings['pretty_filters'] as $id => &$filter)
 			$is_enabled |= ($filter = isset($_POST['pretty_filter_' . $id]) ? 1 : 0);
 
+		$action = isset($_POST['pretty_prefix_action']) ? $_POST['pretty_prefix_action'] : 'do/';
+		if ($action != '' && $action != 'do/')
+			$action = 'do/';
+		$profile = isset($_POST['pretty_prefix_profile']) ? $_POST['pretty_prefix_profile'] : 'profile/';
+		if ($profile != '~' && $profile != 'profile/')
+			$profile = 'profile/';
+
 		updateSettings(
 			array(
 				'pretty_enable_filters' => $is_enabled,
 				'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
 				'pretty_remove_index' => isset($_POST['pretty_remove_index']) ? ($_POST['pretty_remove_index'] == 'on' ? 'on' : '') : '',
 				'pretty_filters' => serialize($modSettings['pretty_filters']),
+				'pretty_prefix_action' => $action,
+				'pretty_prefix_profile' => $profile,
 			)
 		);
 		$modSettings['pretty_filters'] = unserialize($modSettings['pretty_filters']);

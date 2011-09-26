@@ -47,7 +47,6 @@ function Credits($in_admin = false)
 
 	$context['credits'] = array(
 		'wedge' => array(
-			'pretext' => $txt['credits_intro'],
 			'title' => $txt['credits_team'],
 			'groups' => array(
 				array(
@@ -88,36 +87,6 @@ function Credits($in_admin = false)
 				),
 			),
 		),
-		'smf' => array(
-			'title' => $txt['credits_smf2_team'],
-			'groups' => array(
-				array(
-					'title' => $txt['credits_groups_founder'],
-					'members' => array(
-						'[Unknown] (Unknown W. Brackets)',
-					),
-				),
-				array(
-					'title' => $txt['credits_groups_dev'],
-					'members' => array(
-						'Aaron (Aaron van Geffen)',
-						'Antechinus (Peter Sharpe)',
-						'Bloc (Bjoern Kristiansen)',
-						'Compuart (Hendrik Jan Visser)',
-						'Grudge' . ($user_info['is_admin'] ? ' (Matt Wolf)' : ''),
-						'JayBachatero (Juan Hernandez)',
-						'Nao &#23578; (Ren&eacute;-Gilles Deberdt)',
-						'Norv',
-						'Orstio (Theodore Hildebrandt)',
-						'regularexpression (Karl Benson)',
-						'[SiNaN] (Selman Eser)',
-						'TE (Thorsten Eurich)',
-						'Thantos (Michael Miller)',
-						'winrules',
-					),
-				),
-			),
-		),
 	);
 
 	// Give the translators some credit for their hard work.
@@ -133,7 +102,25 @@ function Credits($in_admin = false)
 		);
 
 	$context['copyrights'] = array(
-		'wedge' => $txt['copyright'],
+		'software' => array(
+			'wedge' => $txt['credits_wedge'],
+			'smf2' => sprintf($txt['credits_smf2'], implode(', ', array(
+				'[Unknown]',
+				'Aaron (Aaron van Geffen)',
+				'Antechinus (Peter Sharpe)',
+				'Bloc (Bjoern Kristiansen)',
+				'Compuart (Hendrik Jan Visser)',
+				'Grudge',
+				'JayBachatero (Juan Hernandez)',
+				'Nao &#23578; (Ren&eacute;-Gilles Deberdt)',
+				'Norv',
+				'Orstio (Theodore Hildebrandt)',
+				'regularexpression (Karl Benson)',
+				'[SiNaN] (Selman Eser)',
+				'TE (Thorsten Eurich)',
+				'Thantos (Michael Miller)',
+			)), 'winrules'),
+		),
 		'images' => array(
 			'famfamfam' => '<a href="http://famfamfam.com/">FamFamFam</a> Flags &amp; Silk &copy; Mark James, 2005',
 			'icons' => '<a href="http://www.everaldo.com/crystal/">Crystal Icons</a> &copy; Crystal Project, 2001-2011',

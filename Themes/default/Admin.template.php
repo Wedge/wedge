@@ -1910,7 +1910,7 @@ function template_repair_boards()
 // Pretty URLs
 function template_pretty_urls()
 {
-	global $context, $scripturl, $txt;
+	global $context, $scripturl, $txt, $modSettings, $boardurl;
 
 	if (!empty($context['pretty']['chrome']['menu']))
 	{
@@ -1946,14 +1946,41 @@ function template_pretty_urls()
 
 	// Display the filters
 	if (!empty($context['pretty']['filters']))
+	{
 		foreach ($context['pretty']['filters'] as $id => $enabled)
+		{
 			echo '
 			<div>
 				<label>
-					<input type="checkbox" name="pretty_filter_', $id, '"', $enabled ? ' checked' : '', '>
+					<input type="checkbox" name="pretty_filter_', $id, '"', $enabled ? ' checked' : '',
+					$id === 'actions' || $id === 'profiles' ? ' onclick="$(\'select[name=pretty_prefix_' . substr($id, 0, -1) . ']\').slideToggle(200);"' : '', '>
 					', $txt['pretty_filter_' . $id], '
-				</label>
+				</label>';
+
+			if ($id === 'actions')
+			{
+				$prefix = empty($modSettings['pretty_prefix_action']) ? '' : $modSettings['pretty_prefix_action'];
+				echo '
+				<select name="pretty_prefix_action" class="pretty_prefix', $enabled ? '' : ' hide', '">
+					<option value=""', $prefix == '' ? ' selected' : '', '>', $boardurl, '/action</option>
+					<option value="do/"', $prefix == 'do/' ? ' selected' : '', '>', $boardurl, '/do/action</option>
+				</select>';
+			}
+
+			if ($id === 'profiles')
+			{
+				$prefix = empty($modSettings['pretty_prefix_profile']) ? '' : $modSettings['pretty_prefix_profile'];
+				echo '
+				<select name="pretty_prefix_profile" class="pretty_prefix', $enabled ? '' : ' hide', '">
+					<option value="~"', $prefix == '~' ? ' selected' : '', '>', $boardurl, '/~UserName/</option>
+					<option value="profile/"', $prefix == 'profile/' ? ' selected' : '', '>', $boardurl, '/profile/UserName/</option>
+				</select>';
+			}
+
+			echo '
 			</div>';
+		}
+	}
 
 	echo '
 			<hr>

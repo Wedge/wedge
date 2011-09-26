@@ -891,6 +891,7 @@ function AdminSearchInternal()
 		array('ModifyCoreFeatures', 'area=corefeatures'),
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
 		array('ModifyLayoutSettings', 'area=featuresettings;sa=layout'),
+		array('ModifyPrettyURLs', 'area=featuresettings;sa=pretty'),
 		array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
 		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
 		array('ModifyGeneralSecuritySettings', 'area=securitysettings;sa=general'),

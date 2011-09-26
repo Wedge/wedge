@@ -490,3 +490,6 @@ ul.moderation_notes
 	color: #888
 	font-size: 0.9em
 	padding: 0.5em 0 1em 3em
+
+.pretty_prefix
+	margin: 0 0 1em 3em
