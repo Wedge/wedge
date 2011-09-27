@@ -220,7 +220,6 @@ function ListAddons()
 	// 2. Having passed through everything once, we will have figured out what dependencies and provisions there are. Apply that too.
 	foreach ($context['available_addons'] as $id => $addon)
 	{
-		$can_use = true;
 		foreach ($addon['hooks'] as $hook_type => $required_hooks)
 		{
 			if (!empty($context['available_addons'][$id]['install_errors']['missinghook']))
@@ -234,7 +233,7 @@ function ListAddons()
 			if (count($missing_hooks) > 0)
 			{
 				$context['available_addons'][$id]['install_errors']['missinghook'] = $txt['install_error_missinghook'] . ' (' . implode(', ', $missing_hooks) . ')';
-				break; // I'd use break 2 but that's deprecated in PHP 5.4.
+				break 2;
 			}
 		}
 	}

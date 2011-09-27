@@ -744,7 +744,6 @@ function modifyBoard($board_id, &$boardOptions)
 	clean_cache('data');
 
 	// Update the pretty board URLs
-	// @todo: fix all hardcoded stuff...
 	if (isset($boardOptions['pretty_url']) || isset($boardOptions['pretty_url_dom']))
 	{
 		$dom = isset($boardOptions['pretty_url_dom']) ? strtolower($boardOptions['pretty_url_dom']) : '';
@@ -774,7 +773,7 @@ function modifyBoard($board_id, &$boardOptions)
 		// Can't be a number
 		if (is_numeric($pretty_url))
 			// Add suffix '-bboard_id' to the pretty url
-			$new_name .= ($pretty_url != '' ? '-b' : 'b') . $board_id;
+			$new_name .= ($pretty_url != '' ? '-' : 'b') . $board_id;
 
 		// Can't be already in use
 		$in_use = is_already_taken($new_name, $board_id, $id_owner);

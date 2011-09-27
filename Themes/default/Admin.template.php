@@ -37,8 +37,8 @@ function template_admin()
 			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright">
 				<input type="search" name="search_term" placeholder="', $txt['admin_search'], '" class="search">
 				<select name="search_type">
-					<option value="internal"', (empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : ''), '>', $txt['admin_search_type_internal'], '</option>
-					<option value="member"', (!empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : ''), '>', $txt['admin_search_type_member'], '</option>
+					<option value="internal"', empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : '', '>', $txt['admin_search_type_internal'], '</option>
+					<option value="member"', !empty($context['admin_preferences']['sb']) && $context['admin_preferences']['sb'] == 'member' ? ' selected' : '', '>', $txt['admin_search_type_member'], '</option>
 				</select>
 				<input type="submit" name="search_go" id="search_go" value="', $txt['admin_search_go'], '">
 			</form>
@@ -645,8 +645,8 @@ function template_show_settings()
 				echo '
 
 			<we:cat>
-				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', ($config_var['help'] ? '
-					<a href="' . $scripturl . '?action=help;in=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : ''), '
+				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', $config_var['help'] ? '
+					<a href="' . $scripturl . '?action=help;in=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 					', $config_var['label'], '
 				</div>
 			</we:cat>';
@@ -685,7 +685,7 @@ function template_show_settings()
 			if (in_array($config_var['type'], array('message', 'warning')))
 			{
 				echo '
-					<dd', $config_var['type'] == 'warning' ? ' class="alert"' : '', (!empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : ''), '>
+					<dd', $config_var['type'] == 'warning' ? ' class="alert"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : '', '>
 						', $config_var['label'], '
 					</dd>';
 			}
@@ -704,40 +704,40 @@ function template_show_settings()
 				if ($config_var['help'])
 					echo '
 						<label><a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=help;in=', $config_var['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-						<span id="span_', $config_var['name'], '"', ($config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['label'], $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span></label>
+						<span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span></label>
 					</dt>';
 				else
 					echo '
-						<label><a id="setting_', $config_var['name'], '"></a> <span id="span_', $config_var['name'], '"', ($config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : '')), '>', $config_var['label'], $subtext, ($config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : ''), '</span></label>
+						<label><a id="setting_', $config_var['name'], '"></a> <span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span></label>
 					</dt>';
 
 				echo '
-					<dd', (!empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : ''), '>', $config_var['preinput'];
+					<dd', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '_dd"' : '', '>', $config_var['preinput'];
 
 				// Show a check box.
 				if ($config_var['type'] == 'check')
 					echo '
-						<input type="checkbox"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '"', ($config_var['value'] ? ' checked' : ''), ' value="1">';
+						<input type="checkbox"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '"', $config_var['value'] ? ' checked' : '', ' value="1">';
 				// Escape (via htmlspecialchars.) the text box.
 				elseif ($config_var['type'] == 'password')
 					echo '
-						<input type="password"', $disabled, $javascript, ' name="', $config_var['name'], '[0]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' value="*#fakepass#*" onfocus="this.value = \'\'; this.form.', $config_var['name'], '.disabled = false;"><br>
-						<input type="password" disabled id="', $config_var['name'], '" name="', $config_var['name'], '[1]"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), '>';
+						<input type="password"', $disabled, $javascript, ' name="', $config_var['name'], '[0]"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', ' value="*#fakepass#*" onfocus="this.value = \'\'; this.form.', $config_var['name'], '.disabled = false;"><br>
+						<input type="password" disabled id="', $config_var['name'], '" name="', $config_var['name'], '[1]"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', '>';
 				// Show a selection box.
 				elseif ($config_var['type'] == 'select')
 				{
 					echo '
-						<select name="', $config_var['name'], '" id="', $config_var['name'], '" ', $javascript, $disabled, (!empty($config_var['multiple']) ? ' multiple' : ''), '>';
+						<select name="', $config_var['name'], '" id="', $config_var['name'], '" ', $javascript, $disabled, !empty($config_var['multiple']) ? ' multiple' : '', '>';
 					foreach ($config_var['data'] as $option)
 						echo '
-							<option value="', $option[0], '"', (($option[0] == $config_var['value'] || (!empty($config_var['multiple']) && in_array($option[0], $config_var['value']))) ? ' selected' : ''), '>', $option[1], '</option>';
+							<option value="', $option[0], '"', $option[0] == $config_var['value'] || (!empty($config_var['multiple']) && in_array($option[0], $config_var['value'])) ? ' selected' : '', '>', $option[1], '</option>';
 					echo '
 						</select>';
 				}
 				// Text area?
 				elseif ($config_var['type'] == 'large_text')
 					echo '
-						<textarea rows="', ($config_var['size'] ? $config_var['size'] : 4), '" cols="30" ', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '">', $config_var['value'], '</textarea>';
+						<textarea rows="', $config_var['size'] ? $config_var['size'] : 4, '" cols="30" ', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '">', $config_var['value'], '</textarea>';
 				// Permission group?
 				elseif ($config_var['type'] == 'permissions')
 					theme_inline_permissions($config_var['name']);
@@ -769,7 +769,7 @@ function template_show_settings()
 				// Assume it must be a text box.
 				else
 					echo '
-						<input type="text"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), '>';
+						<input type="text"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', '>';
 
 				echo !empty($config_var['postinput']) ? '
 						' . $config_var['postinput'] : '', '
@@ -800,7 +800,7 @@ function template_show_settings()
 		echo '
 				<hr>
 				<div class="righttext">
-					<input type="submit" value="', $txt['save'], '"', (!empty($context['save_disabled']) ? ' disabled' : ''), !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit">
+					<input type="submit" value="', $txt['save'], '"', !empty($context['save_disabled']) ? ' disabled' : '', !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit">
 				</div>';
 
 	if ($is_open)
@@ -1272,7 +1272,7 @@ function template_core_features()
 								<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '"><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" class="ping" id="switch_', $id, '" style="margin-top: 1.3em" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '">
 							</a>
 						</div>
-						<h4>', ($feature['enabled'] && $feature['url'] ? '<a href="' . $feature['url'] . '">' . $feature['title'] . '</a>' : $feature['title']), '</h4>
+						<h4>', $feature['enabled'] && $feature['url'] ? '<a href="' . $feature['url'] . '">' . $feature['title'] . '</a>' : $feature['title'], '</h4>
 						<p>', $feature['desc'], '</p>
 						<div id="plain_feature_', $id, '">
 							<label><input type="radio" name="feature_plain_', $id, '" value="1"', $feature['enabled'] ? ' checked' : '', '> ', $txt['core_settings_enabled'], '</label>
@@ -1463,13 +1463,13 @@ function template_download_language()
 						<div class="smalltext">', $txt['languages_download_dest'], ': ', $file['destination'], '</div>
 					</td>
 					<td>
-						<span style="color: ', ($file['writable'] ? 'green' : 'red'), '">', ($file['writable'] ? $txt['yes'] : $txt['no']), '</span>
+						<span style="color: ', $file['writable'] ? 'green' : 'red', '">', $file['writable'] ? $txt['yes'] : $txt['no'], '</span>
 					</td>
 					<td>
 						', $file['exists'] ? ($file['exists'] == 'same' ? $txt['languages_download_exists_same'] : $txt['languages_download_exists_different']) : $txt['no'], '
 					</td>
 					<td>
-						<input type="checkbox" name="copy_file[]" value="', $file['generaldest'], '"', ($file['default_copy'] ? ' checked' : ''), '>
+						<input type="checkbox" name="copy_file[]" value="', $file['generaldest'], '"', $file['default_copy'] ? ' checked' : '', '>
 					</td>
 				</tr>';
 			$alternate = !$alternate;
@@ -1592,25 +1592,25 @@ function template_modify_language_entries()
 						', $txt['languages_locale'], ':
 					</dt>
 					<dd>
-						<input type="text" name="locale" size="20" value="', $context['primary_settings']['locale'], '"', (empty($context['file_entries']) ? '' : ' disabled'), '>
+						<input type="text" name="locale" size="20" value="', $context['primary_settings']['locale'], '"', empty($context['file_entries']) ? '' : ' disabled', '>
 					</dd>
 					<dt>
 						', $txt['languages_dictionary'], ':
 					</dt>
 					<dd>
-						<input type="text" name="dictionary" size="20" value="', $context['primary_settings']['dictionary'], '"', (empty($context['file_entries']) ? '' : ' disabled'), '>
+						<input type="text" name="dictionary" size="20" value="', $context['primary_settings']['dictionary'], '"', empty($context['file_entries']) ? '' : ' disabled', '>
 					</dd>
 					<dt>
 						', $txt['languages_spelling'], ':
 					</dt>
 					<dd>
-						<input type="text" name="spelling" size="20" value="', $context['primary_settings']['spelling'], '"', (empty($context['file_entries']) ? '' : ' disabled'), '>
+						<input type="text" name="spelling" size="20" value="', $context['primary_settings']['spelling'], '"', empty($context['file_entries']) ? '' : ' disabled', '>
 					</dd>
 					<dt>
 						', $txt['languages_rtl'], ':
 					</dt>
 					<dd>
-						<input type="checkbox" name="rtl"', $context['primary_settings']['rtl'] ? ' checked' : '', (empty($context['file_entries']) ? '' : ' disabled'), '>
+						<input type="checkbox" name="rtl"', $context['primary_settings']['rtl'] ? ' checked' : '', empty($context['file_entries']) ? '' : ' disabled', '>
 					</dd>
 				</dl>
 				</fieldset>

@@ -16,21 +16,23 @@ if (!defined('WEDGE'))
 
 /*	It contains only the following function:
 
-	void Homepage()
+	void Welcome()
 		- prepares the homepage data.
-		- uses the Homepage template (main block) and language file.
-		- is accessed via index.php, if $modSettings['default_index'] == 'custom'.
+		- uses the Welcome template (main block) and language file.
+		- is accessed via index.php, if $modSettings['default_index'] == 'Welcome'.
+		- to create your own custom entry point, just set $modSettings['default_index'] to 'Homepage'
+		  and create your own Homepage.php file so it won't be overwritten by Wedge updates!
 */
 
 // Welcome to the show.
-function Homepage()
+function Welcome()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings, $language, $user_info;
 
-	// Load the 'Homepage' template.
-	loadTemplate('Homepage');
+	// Load the 'Welcome' template.
+	loadTemplate('Welcome');
 	// We don't have language files for now, but in case we add them...
-	// loadLanguage('Homepage');
+	// loadLanguage('Welcome');
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;

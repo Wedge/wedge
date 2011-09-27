@@ -652,10 +652,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 	global $settings, $modSettings, $comments, $cachedir;
 
 	$final = '';
-	if ($full_path)
-		$dir = '';
-	else
-		$dir = $settings['theme_dir'] . '/';
+	$dir = $full_path ? '' : $settings['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	foreach (glob($cachedir . '/' . $id. '*' . $ext) as $del)
