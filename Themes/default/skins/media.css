@@ -69,18 +69,6 @@ iframe.aext
 	h4
 		padding: 0 6px 2px
 
-#media-details
-	dt
-		font-weight: 700
-		font-size, line-height: .9em
-		width: auto
-		margin: 5px 0
-	dd
-		float: left
-		clear: both
-		width: auto
-		margin-left: 8px
-
 .info_list
 	padding, margin: 0
 	li
@@ -166,6 +154,16 @@ iframe.aext
 	display: table-cell
 	vertical-align: middle
 	overflow: visible
+	dt
+		font-weight: 700
+		font-size, line-height: .9em
+		width: auto
+		margin: 5px 0
+	dd
+		float: left
+		clear: both
+		width: auto
+		margin-left: 8px
 	#viewitem &
 		width: 220px
 		.block
@@ -174,6 +172,17 @@ iframe.aext
 		width: auto
 		.block
 			gradient: rgba(255,255,255, .3)
+
+@media all and (max-width: 800px)
+	#media-item
+		display: block
+	#viewitem #media-details
+		display: block
+		width: auto
+		section
+			width: 40%
+			float: left
+			margin-left: 2%
 
 .selected a
 	color: inherit !important
