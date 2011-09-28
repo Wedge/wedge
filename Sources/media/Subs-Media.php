@@ -201,9 +201,8 @@ if (!defined('WEDGE'))
 	void aeva_mkdir(string dir, octal chmod)
 		- Creates a folder via mkdir or, if PHP safe mode is enabled, try to create it via FTP
 
-	void aeva_addHeaders(bool add_to_headers, bool use_zoomedia = true)
+	void aeva_addHeaders(bool autosize = true, bool use_zoomedia = true)
 		- Adds the Aeva declarations to the headers
-		- If add_to_headers is true, it replaces the buffer instead of using $context['header']
 
 	void aeva_loadLanguage(string str)
 		- Makes sure $txt[$str] is available by loading language files
@@ -2568,7 +2567,7 @@ function aeva_showThumbnail($data)
 	$is_playlist = in_array($type, array('media_album', 'audio_album', 'video_album', 'photo_album', 'playlist'));
 	$no_zoom = empty($amSettings['use_zoom']) || (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']);
 
-	aeva_addHeaders(false, true, !$no_zoom);
+	aeva_addHeaders(true, !$no_zoom);
 	$box = '';
 
 	if ($is_playlist)
@@ -3548,7 +3547,7 @@ function aeva_markAllSeen()
 		wesql::query('OPTIMIZE TABLE {db_prefix}media_log_media', array());
 }
 
-function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_zoomedia = true)
+function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 {
 	global $context, $txt, $modSettings, $amSettings, $scripturl;
 
@@ -3563,26 +3562,14 @@ function aeva_addHeaders($add_to_headers = false, $autosize = true, $use_zoomedi
 	<link rel="stylesheet" href="' . add_css_file('zoom') . '" media="screen">');
 
 	if ((empty($_GET['action']) || $_GET['action'] != 'media') && (($context['browser']['is_firefox'] && $pfx = 'moz') || ($context['browser']['is_safari'] && $pfx = 'webkit')))
-		$zoom .= '
-	<style>
+		add_css('
 		.pics td { -' . $pfx . '-border-radius: 5px; }
-		.aeva_rounded { -' . $pfx . '-border-radius: 5px; }
-	</style>';
+		.aeva_rounded { -' . $pfx . '-border-radius: 5px; }');
 
 	if ($use_zoomedia)
 		$zoom .= aeva_initZoom($autosize, isset($context['album_data'], $context['album_data']['options']) ? $context['album_data']['options'] : array());
 
-	if ($add_to_headers || (ob_get_length() === 0))
-		$context['header'] .= $zoom;
-	else
-	{
-		$temp = ob_get_contents();
-		ob_clean();
-
-		echo substr_replace($temp, $zoom . "\n" . '</head>', stripos($temp, '</head>'), 7);
-		unset($temp);
-	}
-
+	$context['header'] .= $zoom;
 	$context['mg_headers_sent'] = true;
 }
 

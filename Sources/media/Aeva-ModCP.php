@@ -71,7 +71,7 @@ function aeva_modCP_submissions()
 			$do[$_REQUEST['do']][0]();
 
 	loadSource('media/Subs-Media');
-	aeva_addHeaders(true);
+	aeva_addHeaders();
 
 	loadTemplate('ManageMedia');
 	loadBlock('aeva_admin_submissions');

@@ -206,6 +206,21 @@ function add_addon_js_file($addon_name, $files = array(), $is_direct_url = false
 }
 
 /**
+ * This function adds a string to the header's inline CSS.
+ * Several strings can be passed as parameters, allowing for easier conversion from an "echo" to an "add_css()" call.
+ */
+function add_css()
+{
+	global $context;
+
+	if (empty($context['header_css']))
+		$context['header_css'] = '';
+
+	$args = func_get_args();
+	$context['header_css'] .= ($args[0][0] !== "\n" ? "\n" : '') . implode('', $args);
+}
+
+/**
  * This function adds one or more minified, gzipped files to the header stylesheets. It takes care of everything. Good boy.
  *
  * @param mixed $original_files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current skin.
@@ -287,13 +302,8 @@ function add_css_file($original_files = array(), $add_link = false)
 	if (!$add_link)
 		return $final_script;
 
-	$eat_this = '
+	$context['header'] .= '
 	<link rel="stylesheet" href="' . $final_script . '">';
-
-	if (isset($context['last_minute_header']))
-		$context['last_minute_header'] .= $eat_this;
-	else
-		$context['header'] .= $eat_this;
 }
 
 function add_addon_css_file($addon_name, $original_files = array(), $add_link = false)
@@ -361,92 +371,8 @@ function add_addon_css_file($addon_name, $original_files = array(), $add_link = 
 	if (!$add_link)
 		return $final_script;
 
-	$eat_this = '
+	$context['header'] .= '
 	<link rel="stylesheet" href="' . $final_script . '">';
-
-	if (isset($context['last_minute_header']))
-		$context['last_minute_header'] .= $eat_this;
-	else
-		$context['header'] .= $eat_this;
-}
-
-/**
- * Analyzes the current skin's skin.xml file (and those above it) and retrieves its options.
- */
-function wedge_get_skin_options()
-{
-	global $settings, $context, $scripturl;
-
-	$is_default_theme = true;
-	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
-	$context['extra_skin_css'] = '';
-
-	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
-	$context['skin_folders'] = array();
-
-	foreach ($context['css_folders'] as &$folder)
-	{
-		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
-		$is_default_theme &= $target === 'default_theme_';
-		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
-		$context['skin_folders'][] = array($fold, $target);
-
-		if (file_exists($fold . 'skin.xml'))
-		{
-			$set = file_get_contents($fold . '/skin.xml');
-			// If this is a replace-type skin, forget all of the parent folders.
-			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
-				$context['skin_folders'] = array($fold, $target);
-		}
-	}
-
-	$context['skin_uses_default_theme'] = $is_default_theme;
-
-	// The deepest skin gets CSS/JavaScript attention.
-	if (!empty($set))
-	{
-		if (strpos($set, '</skeleton>') !== false && preg_match('~<skeleton>(.*?)</skeleton>~s', $set, $match))
-			$context['skeleton'] = $match[1];
-
-		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
-			foreach ($matches as $match)
-				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
-					$context['extra_skin_css'] .= rtrim($match[2], "\t");
-
-		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
-		{
-			foreach ($matches as $match)
-			{
-				if (!empty($match[1]) && !in_array($context['browser']['agent'], explode(',', $match[1])))
-					continue;
-
-				if (!empty($match[2]))
-				{
-					$includes = array_map('trim', explode(',', $match[2]));
-					// If we have an include param in the code tag, it should either use 'scripts/something.js' (in which case it'll
-					// find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
-					if (strpos($match[2], '$here') !== false)
-						foreach ($includes as &$scr)
-							$scr = str_replace('$here', str_replace($settings['theme_dir'] . '/', '', $folder), $scr);
-					add_js_file($includes);
-				}
-				add_js(rtrim($match[3], "\t"));
-			}
-		}
-
-		if (strpos($set, '</macro>') !== false && preg_match_all('~<macro\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</macro>~s', $set, $matches, PREG_SET_ORDER))
-		{
-			foreach ($matches as $match)
-			{
-				if (!empty($match[2]) && !in_array($context['browser']['agent'], explode(',', $match[2])))
-					continue;
-				$context['macros'][$match[1]] = array(
-					'has_if' => strpos($match[3], '<if:') !== false,
-					'body' => str_replace(array('{scripturl}'), array($scripturl), trim($match[3]))
-				);
-			}
-		}
-	}
 }
 
 /**
@@ -823,15 +749,14 @@ function theme_base_css()
 	echo '
 	<link rel="stylesheet" href="', $context['cached_css'], '">';
 
-	if (!empty($context['extra_skin_css']))
+	if (!empty($context['header_css']))
 	{
 		global $user_info;
 
 		// Replace $behavior with the forum's root URL in context, because pretty URLs complicate things in IE.
-		if (strpos($context['extra_skin_css'], '$behavior') !== false)
-			$context['extra_skin_css'] = str_replace('$behavior', strpos($boardurl, '://' . $user_info['host']) !== false ? $boardurl
-				: preg_replace('~(?<=://)([^/]+)~', $user_info['host'], $boardurl), $context['extra_skin_css']);
-		echo "\n\t<style>", $context['extra_skin_css'], "\t</style>";
+		if (strpos($context['header_css'], '$behavior') !== false)
+			$context['header_css'] = str_replace('$behavior', strpos($boardurl, '://' . $user_info['host']) !== false ? $boardurl
+				: preg_replace('~(?<=://)([^/]+)~', $user_info['host'], $boardurl), $context['header_css']);
 	}
 }
 
@@ -865,9 +790,87 @@ function wedge_get_extension($file)
 }
 
 /**
+ * Analyzes the current skin's skin.xml file (and those above it) and retrieves its options.
+ */
+function wedge_get_skin_options()
+{
+	global $settings, $context, $scripturl;
+
+	$is_default_theme = true;
+	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+
+	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
+	$context['skin_folders'] = array();
+
+	foreach ($context['css_folders'] as &$folder)
+	{
+		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
+		$is_default_theme &= $target === 'default_theme_';
+		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
+		$context['skin_folders'][] = array($fold, $target);
+
+		if (file_exists($fold . 'skin.xml'))
+		{
+			$set = file_get_contents($fold . '/skin.xml');
+			// If this is a replace-type skin, forget all of the parent folders.
+			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
+				$context['skin_folders'] = array($fold, $target);
+		}
+	}
+
+	$context['skin_uses_default_theme'] = $is_default_theme;
+
+	// The deepest skin gets CSS/JavaScript attention.
+	if (!empty($set))
+	{
+		if (strpos($set, '</skeleton>') !== false && preg_match('~<skeleton>(.*?)</skeleton>~s', $set, $match))
+			$context['skeleton'] = $match[1];
+
+		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
+			foreach ($matches as $match)
+				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
+					add_css(rtrim($match[2], "\t"));
+
+		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
+		{
+			foreach ($matches as $match)
+			{
+				if (!empty($match[1]) && !in_array($context['browser']['agent'], explode(',', $match[1])))
+					continue;
+
+				if (!empty($match[2]))
+				{
+					$includes = array_map('trim', explode(',', $match[2]));
+					// If we have an include param in the code tag, it should either use 'scripts/something.js' (in which case it'll
+					// find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
+					if (strpos($match[2], '$here') !== false)
+						foreach ($includes as &$scr)
+							$scr = str_replace('$here', str_replace($settings['theme_dir'] . '/', '', $folder), $scr);
+					add_js_file($includes);
+				}
+				add_js(rtrim($match[3], "\t"));
+			}
+		}
+
+		if (strpos($set, '</macro>') !== false && preg_match_all('~<macro\s+name="([^"]+)"(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</macro>~s', $set, $matches, PREG_SET_ORDER))
+		{
+			foreach ($matches as $match)
+			{
+				if (!empty($match[2]) && !in_array($context['browser']['agent'], explode(',', $match[2])))
+					continue;
+				$context['macros'][$match[1]] = array(
+					'has_if' => strpos($match[3], '<if:') !== false,
+					'body' => str_replace(array('{scripturl}'), array($scripturl), trim($match[3]))
+				);
+			}
+		}
+	}
+}
+
+/**
  * Cleans some or all of the files stored in the file cache.
  *
- * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, typically 'data', to prune 'data_*.php' files.
+ * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, to prune 'type_*.php' files. 'data' is a special case, as it gets its own subfolder.
  * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. 'php' by default.
  * @todo Figure out a better way of doing this and get rid of $sourcedir being globalled again.
  */
@@ -876,21 +879,22 @@ function clean_cache($type = '', $extensions = 'php')
 	global $cachedir, $sourcedir;
 
 	// No directory = no game.
-	if (!is_dir($cachedir))
+	$folder = $cachedir . ($type === 'data' ? '/data' . ($type = '') : '');
+	if (!is_dir($folder))
 		return;
 
-	// Remove the files in Wedge's own disk cache, if any
-	$dh = scandir($cachedir);
+	// Remove the files in Wedge's own disk cache, if any.
+	$dh = scandir($folder);
 	$exts = array_flip(explode(',', $extensions));
 	$len = strlen($type);
 	foreach ($dh as $file)
 		if ($file !== '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || substr($file, 0, $len) == $type))
 			if (!$extensions || isset($exts[wedge_get_extension($file)]))
-				@unlink($cachedir . '/' . $file);
+				@unlink($folder . '/' . $file);
 
 	// Invalidate cache, to be sure!
-	// ... as long as Load.php can be modified, anyway.
-	@touch($sourcedir . '/Load.php');
+	// ...as long as Collapse.php can be modified, anyway.
+	@touch($sourcedir . '/Collapse.php');
 	clearstatcache();
 }
 
@@ -963,7 +967,7 @@ function cache_put_data($key, $val, $ttl = 120)
 		$st = microtime(true);
 	}
 
-	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-Wedge-' . strtr($key, ':', '-');
+	$key = md5($boardurl . filemtime($sourcedir . '/Collapse.php')) . '-Wedge-' . strtr($key, ':', '-');
 	$val = $val === null ? null : serialize($val);
 
 	// The simple yet efficient memcached.
@@ -1011,11 +1015,11 @@ function cache_put_data($key, $val, $ttl = 120)
 	else
 	{
 		if ($val === null)
-			@unlink($cachedir . '/data_' . $key . '.php');
+			@unlink($cachedir . '/data/' . $key . '.php');
 		else
 		{
 			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$expired=time()>' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';?' . '>';
-			$fh = @fopen($cachedir . '/data_' . $key . '.php', 'w');
+			$fh = @fopen($cachedir . '/data/' . $key . '.php', 'w');
 			if ($fh)
 			{
 				// Write the file.
@@ -1028,7 +1032,7 @@ function cache_put_data($key, $val, $ttl = 120)
 				// Check that the cache write was successful; all the data should be written
 				// If it fails due to low diskspace, remove the cache file
 				if ($cache_bytes != strlen($cache_data))
-					@unlink($cachedir . '/data_' . $key . '.php');
+					@unlink($cachedir . '/data/' . $key . '.php');
 			}
 		}
 	}
@@ -1061,7 +1065,7 @@ function cache_get_data($key, $ttl = 120)
 		$st = microtime(true);
 	}
 
-	$key = md5($boardurl . filemtime($sourcedir . '/Load.php')) . '-Wedge-' . strtr($key, ':', '-');
+	$key = md5($boardurl . filemtime($sourcedir . '/Collapse.php')) . '-Wedge-' . strtr($key, ':', '-');
 
 	// Okay, let's go for it memcached!
 	if (isset($modSettings['cache_memcached']) && function_exists('memcache_get') && trim($modSettings['cache_memcached']) !== '')
@@ -1086,12 +1090,12 @@ function cache_get_data($key, $ttl = 120)
 	elseif (function_exists('xcache_get') && ini_get('xcache.var_size') > 0)
 		$val = xcache_get($key);
 	// Otherwise it's the file cache!
-	elseif (file_exists($cachedir . '/data_' . $key . '.php') && filesize($cachedir . '/data_' . $key . '.php') > 10)
+	elseif (file_exists($cachedir . '/data/' . $key . '.php') && filesize($cachedir . '/data/' . $key . '.php') > 10)
 	{
-		require($cachedir . '/data_' . $key . '.php');
+		require($cachedir . '/data/' . $key . '.php');
 		if (isset($val) && !$expired)
 		{
-			@unlink($cachedir . '/data_' . $key . '.php');
+			@unlink($cachedir . '/data/' . $key . '.php');
 			unset($val);
 		}
 	}

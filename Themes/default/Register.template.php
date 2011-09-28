@@ -260,7 +260,7 @@ function template_registration_form()
 			{
 					echo '
 						<dt>
-							<strong', !empty($field['is_error']) ? ' style="color: red;"' : '', '>', $field['label'], ':</strong>';
+							<strong', !empty($field['is_error']) ? ' style="color: red"' : '', '>', $field['label'], ':</strong>';
 
 				// Does it have any subtext to show?
 				if (!empty($field['subtext']))
@@ -330,7 +330,7 @@ function template_registration_form()
 		foreach ($context['custom_fields'] as $field)
 			echo '
 						<dt>
-							<strong', !empty($field['is_error']) ? ' style="color: red;"' : '', '>', $field['name'], ':</strong>
+							<strong', !empty($field['is_error']) ? ' style="color: red"' : '', '>', $field['name'], ':</strong>
 							<dfn>', $field['desc'], '</dfn>
 						</dt>
 						<dd>', $field['input_html'], '</dd>';
@@ -472,14 +472,12 @@ function template_verification_sound()
 	<meta name="robots" content="noindex">
 	<title>', $context['page_title'], '</title>',
 	theme_base_css(),
-	theme_base_js(1), '
-	<style>';
+	theme_base_js(1);
 
 	// Just show the help text and a "close window" link.
 	echo '
-	</style>
 </head>
-<body style="margin: 1ex;">
+<body style="margin: 1ex">
 	<div class="popuptext centertext">
 		<audio src="', $context['verification_sound_href'], '" controls="controls">';
 
@@ -629,7 +627,7 @@ function template_edit_agreement()
 	{
 		echo '
 			<div class="information">
-				<form action="', $scripturl, '?action=admin;area=regcenter" id="change_reg" method="post" accept-charset="UTF-8" style="display: inline;">
+				<form action="', $scripturl, '?action=admin;area=regcenter" id="change_reg" method="post" accept-charset="UTF-8" style="display: inline">
 					<strong>', $txt['admin_agreement_select_language'], ':</strong>&nbsp;
 					<select name="agree_lang" onchange="$(\'#change_reg\').submit();" tabindex="', $context['tabindex']++, '">';
 

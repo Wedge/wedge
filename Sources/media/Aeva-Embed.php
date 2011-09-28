@@ -476,15 +476,13 @@ function aeva_build_object($input)
 	}
 	elseif (!empty($plugin) && !$swfobjects++)
 	{
-		$scr = '
-	<style>
+		add_css('
 		.maeva { font-size: 8pt; line-height: 11pt; overflow: auto }
 		.maeva a:link, .maeva a:visited { text-decoration: none !important; border-bottom: 0 !important }
 		.aeva_dq { font-weight: bold }
 		.aeva_t { text-align: left; padding-top: 3px }
 		.aeva_q { text-align: right; padding-top: 3px }
-		a.aeva_dq:link { color: inherit }
-	</style>';
+		a.aeva_dq:link { color: inherit }');
 
 		if (!$use_object_init)
 		{
@@ -508,11 +506,6 @@ function aeva_build_object($input)
 		document.cookie = "aeva_quality=" + q + ";path=/";
 	}');
 		}
-
-		if (isset($context['last_minute_header']))
-			$context['last_minute_header'] .= $scr;
-		else
-			$context['header'] .= $scr;
 	}
 
 	$embed = empty($movie_type) ? $default_movie : (isset($arr['movie'][$movie_type]) ? $arr['movie'][$movie_type] : $default_movie);

@@ -1217,12 +1217,8 @@ function replace_smileys($match)
 			global $boardurl, $modSettings, $context, $user_info;
 
 			$smiley_css_done = true;
-			$css_file = '
+			$context['header'] .= '
 	<link rel="stylesheet" href="' . $boardurl . '/cache/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
-			if (isset($context['last_minute_header']))
-				$context['last_minute_header'] .= $css_file;
-			else
-				$context['header'] .= $css_file;
 		}
 		return $smileyPregReplace[$match[1]];
 	}

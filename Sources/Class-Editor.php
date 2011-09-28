@@ -2262,15 +2262,9 @@ class wedit
 					parsesmileys($dummy);
 			}
 
-			if (empty($smiley_css_done))
-			{
-				if (isset($context['last_minute_header']) && strpos($context['last_minute_header'], $boardurl . $filename) === false)
-					$context['last_minute_header'] .= '
+			if (empty($smiley_css_done) && strpos($context['header'], $boardurl . $filename) === false)
+				$context['header'] .= '
 	<link rel="stylesheet" href="' . $boardurl . $filename . '">';
-				elseif (strpos($context['header'], $boardurl . $filename) === false)
-					$context['header'] .= '
-	<link rel="stylesheet" href="' . $boardurl . $filename . '">';
-			}
 
 			add_js('
 	var oSmileyBox_' . $this->id . ' = new weSmileyBox({

@@ -573,12 +573,12 @@ function aeva_home()
 		wesql::free_result($request);
 		$sort = aeva_sortBox(false, $count_items, $start, $per_page);
 		$context['recent_items'] = aeva_getMediaItems($start, $per_page, $sort);
-		aeva_addHeaders(true);
+		aeva_addHeaders();
 	}
 	if (!empty($amSettings['random_item_limit']) && $amSettings['random_item_limit'] > 0)
 	{
 		$context['random_items'] = aeva_getMediaItems(0, $amSettings['random_item_limit'], 'RAND()');
-		aeva_addHeaders(true);
+		aeva_addHeaders();
 	}
 	if (!empty($amSettings['recent_comments_limit']) && $amSettings['recent_comments_limit'] > 0)
 		$context['recent_comments'] = aeva_getMediaComments(0, $amSettings['recent_comments_limit']);
@@ -736,7 +736,7 @@ function aeva_viewAlbum()
 	loadBlock('aeva_viewAlbum');
 	$context['page_title'] = $current_album['name'];
 
-	aeva_addHeaders(true, empty($current_album['options']['autosize']) || $current_album['options']['autosize'] == 'yes');
+	aeva_addHeaders(empty($current_album['options']['autosize']) || $current_album['options']['autosize'] == 'yes');
 }
 
 function aeva_PrevNextThumb($myurl, &$prev)

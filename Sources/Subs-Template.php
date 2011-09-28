@@ -207,8 +207,13 @@ function ob_sessrewrite($buffer)
 			'$1', $buffer
 		);
 
-	if (!empty($context['last_minute_header']))
-		$buffer = preg_replace("~\n</head>~", $context['last_minute_header'] . "\n</head>", $buffer, 1);
+	// Plugins may add inline CSS with add_css()...
+	if (!empty($context['header_css']))
+		$context['header'] .= "\n\t<style>" . $context['header_css'] . "\n\t</style>";
+
+	// ...or headers by manipulating $context['header']. They're only added if the page has a 'html' layer (which usually holds the <head> area.)
+	if (!empty($context['header']) && isset($context['layers']['html']) && ($where = strpos($buffer, "\n</head>")) !== false)
+		$buffer = substr_replace($buffer, $context['header'], $where, 0);
 
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']))
