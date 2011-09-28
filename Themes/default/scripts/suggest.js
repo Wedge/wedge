@@ -103,7 +103,7 @@ weAutoSuggest.prototype.handleKey = function (oEvent)
 	if (iKeyPress == 9)
 	{
 		if (this.aDisplayData.length > 0)
-			this.oSelectedDiv != null ? this.itemClicked(this.oSelectedDiv) : this.removeLastSearchString();
+			this.oSelectedDiv != null ? this.itemClicked(this.oSelectedDiv) : this.handleSubmit();
 	}
 	// Enter. (Returns false to prevent submitting the form.)
 	else if (iKeyPress == 13)
@@ -170,6 +170,50 @@ weAutoSuggest.prototype.registerCallback = function (sCallbackType, sCallback)
 {
 	this.oCallback[sCallbackType] = sCallback;
 };
+
+// User hit submit?
+weAutoSuggest.prototype.handleSubmit = function()
+{
+	var bReturnValue = true, entryId = entryName = null, i = 0;
+
+	// Do we have something that matches the current text?
+	for (; i < this.aCache.length; i++)
+	{
+		var sLastSearch = this.sLastSearch.toLowerCase(), entry = this.aCache[i];
+
+		if (sLastSearch == entry.sItemName.toLowerCase().substr(0, sLastSearch.length))
+		{
+			// Exact match?
+			if (sLastSearch.length == entry.sItemName.length)
+			{
+				// This is the one!
+				entryId = entry.sItemId;
+				entryName = entry.sItemName;
+				break;
+			}
+			// Not an exact match, but it'll do for now.
+			else
+			{
+				// If we have two matches don't find anything.
+				if (entryId != null)
+					bReturnValue = false;
+				else
+				{
+					entryId = entry.sItemId;
+					entryName = entry.sItemName;
+				}
+			}
+		}
+	}
+
+	if (entryId == null || !bReturnValue)
+		return bReturnValue;
+	else
+	{
+		this.addItemLink(entryId, entryName, true);
+		return false;
+	}
+}
 
 // Positions the box correctly on the window.
 weAutoSuggest.prototype.positionDiv = function ()
@@ -264,8 +308,11 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	// If we came from a submit, and there's still more to go, turn on auto add for all the other things.
 	this.bDoAutoAdd = this.oTextHandle.value != '' && bFromSubmit;
 
-	// Update the fellow..
+	// Update the fellow...
 	this.autoSuggestUpdate();
+
+	// We'll need to recalculate the auto-suggest's position.
+	this.bPositionComplete = false;
 };
 
 // Delete an item that has been added, if at all?

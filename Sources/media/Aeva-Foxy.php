@@ -176,24 +176,25 @@ function aeva_foxy_playlist()
 			}
 		}
 
+		add_js('
+	function foxyComment(id)
+	{
+		$("#foxyDescription" + id).hide();
+		$("#foxyComment" + id).show();
+		return false;
+	}');
+
 		$context['aeva_extra_data'] = '
-	<script><!-- // --><![CDATA[
-		function foxyComment(id)
-		{
-			var sh1 = document.getElementById("foxyDescription" + id), sh2 = document.getElementById("foxyComment" + id);
-			if (sh1) sh1.style.display = "none";
-			if (sh2) sh2.style.display = "block";
-			return false;
-		}
-	// ]]></script>
-	<table class="cp4 cs0 center" style="width: 90%; padding-top: 16px">';
+		<table class="cp4 cs0 center" style="width: 90%; padding-top: 16px">';
+
 		$curpos = $prev = 0;
 		foreach ($my_playlist_data as $m)
 		{
 			$next = $curpos < count($pos)-1 ? $pos[++$curpos] : 0;
-			$context['aeva_extra_data'] .= '<tr class="windowbg' . ($curpos % 2 == 0 ? '' : '2') . '"><td class="right">' . $m['play_order'] . '.</td>
+			$context['aeva_extra_data'] .= '
+			<tr class="windowbg' . ($curpos % 2 == 0 ? '' : '2') . '"><td class="right">' . $m['play_order'] . '.</td>
 			<td><strong><a href="' . $galurl . 'sa=item;in=' . $m['id'] . '">' . $m['title'] . '</a></strong> <a href="#" onclick="return foxyComment(' . $m['id'] . ');"><img src="' . $settings['default_images_url'] . '/aeva/user_comment.png"></a>' . (!empty($m['description']) ? '
-			<div style="display: block" id="foxyDescription' . $m['id'] . '">' . parse_bbc($m['description']) . '</div>' : '') . '
+			<div id="foxyDescription' . $m['id'] . '">' . parse_bbc($m['description']) . '</div>' : '') . '
 			<div class="hide" id="foxyComment' . $m['id'] . '">
 				<form action="' . $galurl . 'sa=playlists;in=' . $id . ';edit;des=' . $m['id'] . ';' . $context['session_query'] . '" method="post">
 					<textarea name="txt' . $m['id'] . '" cols="60" rows="3">' . $m['description'] . '</textarea>
@@ -207,7 +208,8 @@ function aeva_foxy_playlist()
 			$prev = $curpos > 0 ? $pos[$curpos-1] : 0;
 		}
 
-		$context['aeva_extra_data'] .= '</table>';
+		$context['aeva_extra_data'] .= '
+		</table>';
 	}
 
 	// Construct the form
@@ -1606,39 +1608,40 @@ function aeva_foxy_fill_player(&$playlist, $swo = 1, $type = 'audio', &$details,
 <div id="info"></div>
 </td></tr></table>' . (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'search' ? '<!-- aeva_page_index -->' : '');
 
-	$tx .= '
-	<script><!-- // --><![CDATA[
-		foxLength = ' . count($playlist) . ';
-		function recreatePlayer' . $swo . '(fid)
-		{
-			if (currentPlayer != ' . $swo . ')
-				player[currentPlayer].sendEvent("STOP");
-			currentPlayer = ' . $swo . ';
-			if (!lnFlag && player[' . $swo . '])
-				player[' . $swo . '].sendEvent("ITEM", fid);
-		}
-		foxp[' . $swo . '] = [[';
+	add_js('
+	foxLength = ', count($playlist), ';
+	function recreatePlayer', $swo, '(fid)
+	{
+		if (currentPlayer != ', $swo, ')
+			player[currentPlayer].sendEvent("STOP");
+		currentPlayer = ', $swo, ';
+		if (!lnFlag && player[', $swo, '])
+			player[', $swo, '].sendEvent("ITEM", fid);
+	}
+	foxp[', $swo, '] = [[');
+
 	$arrtypes = array('image' => 0, 'video' => 1, 'sound' => 2);
 	foreach ($playlist as $i)
-		$tx .= $i['id'] . ',' . $i['duration'] . ',' . $arrtypes[$i['type']] . ',"' . $i['ext'] . '"], [';
+		$context['footer_js'] .= $i['id'] . ',' . $i['duration'] . ',' . $arrtypes[$i['type']] . ',"' . $i['ext'] . '"], [';
 	$first = reset($playlist);
-	$tx = substr($tx, 0, -3) . '];
-		myplaylist[' . $swo . '] = [];
-		for (var k = 0; k < ' . count($playlist) . '; k++)
-		{
-			myid = foxp[' . $swo . '][k][0];
-			myext = foxp[' . $swo . '][k][3];
-			myduration = foxp[' . $swo . '][k][1];
-			mytype = ["image", "video", "sound"][foxp[' . $swo . '][k][2]];
-			myplaylist[' . $swo . '][k] = { file: myfile + myid + (mytype == "image" ? ";preview" : "") + ";." + myext, image: myfile + myid + (mytype == "image" ? ";preview" : ";thumba"), type: mytype, duration: myduration };
-		}
-		var fvars = { file: myfile + "' . $first['id'] . '", ' . (!empty($pcol) ? 'backcolor: "' . $pcol . '", ' : '') . (!empty($bcol) ? 'screencolor: "' . $bcol . '", ' : '')
-		. 'image: myfile + "' . $first['id'] . ($first['type'] == 'image' ? ';preview' : ';thumba') . '", plugins: "' . aeva_theme_url('eq.swf') . '", showdigits: "true", repeat: "always", type: "' . $first['type'] . '", duration: "' . floor($first['duration']) . '" };
-		swfobject.embedSWF("' . aeva_theme_url('player.swf') . '", "aefoxy' . $swo . '", "100%", "' . $thei . '", "9", "' . $boardurl . '/expressInstall.swf", '
-		. 'fvars, { allowFullscreen: "true", allowScriptAccess: "always" }, { id: "player' . $swo . '", name: "player' . $swo . '" });
-	// ]]></script>';
+	$context['footer_js'] = substr($context['footer_js'], 0, -3) . '];';
 
-// screencolor: "E7E4D9"
+	add_js('
+	myplaylist[', $swo, '] = [];
+	for (var k = 0; k < ', count($playlist), '; k++)
+	{
+		myid = foxp[', $swo, '][k][0];
+		myext = foxp[', $swo, '][k][3];
+		myduration = foxp[', $swo, '][k][1];
+		mytype = ["image", "video", "sound"][foxp[', $swo, '][k][2]];
+		myplaylist[', $swo, '][k] = { file: myfile + myid + (mytype == "image" ? ";preview" : "") + ";." + myext, image: myfile + myid + (mytype == "image" ? ";preview" : ";thumba"), type: mytype, duration: myduration };
+	}
+	var fvars = { file: myfile + "', $first['id'], '", ', !empty($pcol) ? 'backcolor: "' . $pcol . '", ' : '', !empty($bcol) ? 'screencolor: "' . $bcol . '", ' : '',
+	'image: myfile + "', $first['id'], $first['type'] == 'image' ? ';preview' : ';thumba', '", plugins: "', aeva_theme_url('eq.swf'), '", showdigits: "true", repeat: "always", type: "', $first['type'], '", duration: "', floor($first['duration']), '" };
+	swfobject.embedSWF("', aeva_theme_url('player.swf'), '", "aefoxy', $swo, '", "100%", "', $thei, '", "9", "', $boardurl, '/expressInstall.swf", ',
+	'fvars, { allowFullscreen: "true", allowScriptAccess: "always" }, { id: "player', $swo, '", name: "player', $swo, '" });');
+
+	// !! alternative screencolor: "E7E4D9"
 
 	return array($tx, $player);
 }

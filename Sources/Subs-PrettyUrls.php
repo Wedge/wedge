@@ -133,7 +133,14 @@ function trimpercent($str)
 // Check a new pretty URL against the list of existing boards to ensure there won't be a conflict.
 function is_already_taken($url, $id, $id_owner)
 {
-	global $context;
+	global $context, $action_list;
+
+	// Is the board name in the action list?
+	$board_name = substr($url, strlen($boardurl) + 1);
+	$board_name = substr($board_name, 0, strpos($board_name, '/') ? strpos($board_name, '/') : PHP_INT_MAX);
+	$forbidden = array_merge($action_list, array('do' => true));
+	if (isset($forbidden[$board_name]))
+		return -1;
 
 	$query = wesql::query('
 		SELECT id_board, url, id_owner
