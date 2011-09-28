@@ -481,7 +481,7 @@ function Display()
 	);
 
 	// Build a list of this board's moderators.
-	$context['moderators'] = &$board_info['moderators'];
+	$context['moderators'] =& $board_info['moderators'];
 	$context['link_moderators'] = array();
 	if (!empty($board_info['moderators']))
 	{

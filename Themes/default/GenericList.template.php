@@ -17,7 +17,7 @@ function template_show_list($list_id = null)
 
 	// Get a shortcut to the current list.
 	$list_id = $list_id === null ? $context['default_list'] : $list_id;
-	$cur_list = &$context[$list_id];
+	$cur_list =& $context[$list_id];
 
 	if (isset($cur_list['form']))
 		echo '

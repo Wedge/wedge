@@ -2639,12 +2639,12 @@ function user_info_callback($matches)
 		return '';
 
 	$use_ref = true;
-	$ref = &$user_info;
+	$ref =& $user_info;
 
 	foreach (explode('.', $matches[1]) as $index)
 	{
 		if ($use_ref && isset($ref[$index]))
-			$ref = &$ref[$index];
+			$ref =& $ref[$index];
 		else
 		{
 			$use_ref = false;

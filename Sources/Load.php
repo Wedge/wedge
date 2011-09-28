@@ -486,7 +486,7 @@ function loadBoard()
 
 	// Assume they are not a moderator.
 	$user_info['is_mod'] = false;
-	$context['user']['is_mod'] = &$user_info['is_mod'];
+	$context['user']['is_mod'] =& $user_info['is_mod'];
 
 	// Start the linktree off empty..
 	$context['linktree'] = array();
@@ -754,7 +754,7 @@ function loadBoard()
 	}
 
 	// Set the template contextual information.
-	$context['user']['is_mod'] = &$user_info['is_mod'];
+	$context['user']['is_mod'] =& $user_info['is_mod'];
 	$context['current_topic'] = $topic;
 	$context['current_board'] = $board;
 

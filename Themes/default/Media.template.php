@@ -990,7 +990,7 @@ function template_aeva_viewAlbum()
 {
 	global $context, $txt, $galurl, $scripturl, $modSettings, $settings, $user_info;
 
-	$album_data = &$context['album_data'];
+	$album_data =& $context['album_data'];
 
 	// Show some album data
 	echo '
@@ -1698,7 +1698,7 @@ function template_aeva_profile_summary()
 {
 	global $txt, $galurl, $context, $settings, $scripturl, $user_info, $galurl, $modSettings;
 
-	$member = &$context['aeva_member'];
+	$member =& $context['aeva_member'];
 	$can_feed = !empty($modSettings['xmlnews_enable']);
 
 	echo '

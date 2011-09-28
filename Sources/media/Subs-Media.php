@@ -287,7 +287,7 @@ function aeva_getAlbumParents($current, $master, $simple = false)
 
 	if (isset($context['aeva_album']))
 	{
-		$a = &$context['aeva_album'];
+		$a =& $context['aeva_album'];
 		if (empty($a['parent']))
 			return $simple ? array($a['id']) : array(0 => $a);
 	}
@@ -1193,7 +1193,7 @@ function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $or
 			if ($separate_children)
 				$albums[$a['parent']]['sub_albums'][$i] = $albums[$i];
 			else
-				$albums[$a['parent']]['sub_albums'][$i] = &$albums[$i];
+				$albums[$a['parent']]['sub_albums'][$i] =& $albums[$i];
 
 			// If there is a child-level problem, we fix it!
 			if (isset($albums[$a['parent']]['child_level']) && $a['child_level'] != $albums[$a['parent']]['child_level'] + 1)
@@ -1222,8 +1222,8 @@ function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $or
 		aeva_getOverallTotal($albums[$id], $dat);
 
 	// Assign them to the global space
-	$context['aeva_albums'] = &$albums;
-	$context['aeva_album_list'] = &$album_list;
+	$context['aeva_albums'] =& $albums;
+	$context['aeva_album_list'] =& $album_list;
 }
 
 // Gets album list

@@ -245,7 +245,7 @@ function template_show_month_grid($grid_name)
 	if (!isset($context['calendar_grid_' . $grid_name]))
 		return false;
 
-	$calendar_data = &$context['calendar_grid_' . $grid_name];
+	$calendar_data =& $context['calendar_grid_' . $grid_name];
 	$colspan = !empty($calendar_data['show_week_links']) ? 8 : 7;
 
 	if (empty($calendar_data['disable_title']))
@@ -412,7 +412,7 @@ function template_show_week_grid($grid_name)
 	if (!isset($context['calendar_grid_' . $grid_name]))
 		return false;
 
-	$calendar_data = &$context['calendar_grid_' . $grid_name];
+	$calendar_data =& $context['calendar_grid_' . $grid_name];
 
 	// Loop through each month (At least one) and print out each day.
 	foreach ($calendar_data['months'] as $month_data)

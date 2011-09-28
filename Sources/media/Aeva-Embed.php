@@ -322,7 +322,7 @@ function aeva_build_object($input)
 	if ($context['aeva']['remaining'] == 0)
 		return str_replace(array('<aeva href="http://', '</aeva>'), array('<a href="noae://', '</a>'), preg_replace('`#[\w/.~-]*`', '', $input[0], 1)) . ' ' . $txt['media_too_many_embeds'];
 
-	$arr = &$sites[$upto];
+	$arr =& $sites[$upto];
 	$use_object_init = (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']) || WEDGE == 'SSI' || !empty($modSettings['embed_noscript']) || !empty($context['embed_mg_hack']);
 	$use_object = $use_object_init || (!empty($arr['plugin']) && $arr['plugin'] != 'flash') || !empty($arr['allow-script']) || ($arr['id'] == 'yav' && $context['browser']['is_firefox']);
 
@@ -799,7 +799,7 @@ function embed_lookups_obtain_callback($input)
 {
 	global $context, $sites, $upto, $modSettings;
 
-	$arr = &$sites[$upto];
+	$arr =& $sites[$upto];
 
 	// On callback this is an array
 	if (is_array($input))

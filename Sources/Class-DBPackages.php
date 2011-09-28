@@ -228,13 +228,16 @@ class wedbPackages
 			}
 
 			$current_indexes = self::list_indexes($orig_name, true);
-			// !!! There's no safe automatic way to change primary or unique keys on a table without knowing the table's contents.
-			// This should be left to add-ons to handle if they have to do it: the add-on manifest should list the clean install
-			// and an enable script should detect the state of any indexes that have to change and do it itself.
-			// The reality is that while this sounds like a huge limitation, any well designed add-on should have already accounted
-			// for this in its design, by not having to change something so fundamental in a table that existed in a prior version.
-			// Case example: changing primary key with existing data, if basing on a new column it's possible that the column
-			// will cause duplicate rows against the new primary key.
+
+			/*	There's no safe automatic way to change primary or unique keys on a table without knowing the table's contents.
+				This should be left to add-ons to handle if they have to do it: the add-on manifest should list the clean install
+				and an enable script should detect the state of any indexes that have to change and do it itself.
+
+				The reality is that while this sounds like a huge limitation, any well designed add-on should have already accounted
+				for this in its design, by not having to change something so fundamental in a table that existed in a prior version.
+				Case example: changing primary key with existing data, if basing on a new column it's possible that the column
+				will cause duplicate rows against the new primary key. */
+
 			foreach ($indexes as $id => $index)
 			{
 				// So, skip any new indexes that are primary or unique, as per above.

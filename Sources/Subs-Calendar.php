@@ -687,7 +687,7 @@ function cache_getRecentEvents($eventOptions)
 		foreach ($cached_data['events'][$loop_date] as $ev => $event)
 		{
 			// Create a shortcut variable for easier access.
-			$this_event = &$cached_data['events'][$loop_date][$ev];
+			$this_event =& $cached_data['events'][$loop_date][$ev];
 
 			// Skip duplicates.
 			if (isset($duplicates[$this_event['topic'] . $this_event['title']]))

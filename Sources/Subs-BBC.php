@@ -1066,7 +1066,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				preg_match_all(\'~<foot:(\d+)>~\', $match[0], $mat);
 				foreach ($mat[1] as $note)
 				{
-					$n = &$addnote[$note];
+					$n =& $addnote[$note];
 					$msg .= \'<tr><td class="footnum"><a id="footnote\' . $n[0] . \'" href="#footlink\' . $n[0] . \'">&nbsp;\' . $n[1] . \'.&nbsp;</a></td><td class="footnote">\'
 						 . (stripos($n[2], \'[nb]\', 1) === false ? $n[2] : parse_bbc($n[2])) . \'</td></tr>\';
 				}

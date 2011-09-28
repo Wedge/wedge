@@ -525,7 +525,7 @@ function template_modify_group_simple($type)
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Simple only has one column so we only need bother ourself with that one.
-	$permission_data = &$context['permissions'][$type]['columns'][0];
+	$permission_data =& $context['permissions'][$type]['columns'][0];
 
 	// Short cut for disabling fields we can't change.
 	$disable_field = $context['profile']['can_modify'] ? '' : ' disabled';
@@ -787,7 +787,7 @@ function template_modify_group_classic($type)
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
-	$permission_type = &$context['permissions'][$type];
+	$permission_type =& $context['permissions'][$type];
 	$disable_field = $context['profile']['can_modify'] ? '' : ' disabled';
 
 	foreach ($permission_type['columns'] as $column)

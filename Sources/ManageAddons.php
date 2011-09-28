@@ -120,7 +120,7 @@ function ListAddons()
 					// So, minimum versions? PHP?
 					if (!empty($min_versions['php']))
 					{
-						// Users might be insert 5 or 5.3 or 5.3.0. version_compare considers 5.3 to be less than 5.3.0. So we have to normalise it.
+						// Users might insert 5 or 5.3 or 5.3.0. version_compare considers 5.3 to be less than 5.3.0. So we have to normalize it.
 						preg_match('~^\d(\.\d){2}~', $min_versions['php'] . '.0.0', $matches);
 						if (!empty($matches[0]) && version_compare($matches[0], PHP_VERSION, '>='))
 							$addon['install_errors']['minphp'] = sprintf($txt['install_error_minphp'], $matches[0], PHP_VERSION);
@@ -387,7 +387,7 @@ function EnableAddon()
 	// So, minimum versions? PHP?
 	if (!empty($min_versions['php']))
 	{
-		// Users might be insert 5 or 5.3 or 5.3.0. version_compare considers 5.3 to be less than 5.3.0. So we have to normalise it.
+		// Users might insert 5 or 5.3 or 5.3.0. version_compare considers 5.3 to be less than 5.3.0. So we have to normalize it.
 		preg_match('~^\d(\.\d){2}~', $min_versions['php'] . '.0.0', $matches);
 		if (!empty($matches[0]) && version_compare($matches[0], PHP_VERSION, '>='))
 			fatal_lang_error('fatal_install_error_minphp', false, array($matches[0], PHP_VERSION));
@@ -1077,4 +1077,5 @@ function knownHooks()
 		),
 	);
 }
+
 ?>

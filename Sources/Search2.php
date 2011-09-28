@@ -1499,7 +1499,7 @@ function Search2()
 	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
 		cache_put_data('search_start:' . ($user_info['is_guest'] ? $user_info['ip'] : $user_info['id']), null, 90);
 
-	$context['key_words'] = &$searchArray;
+	$context['key_words'] =& $searchArray;
 
 	// Setup the default topic icons... for checking they exist and the like!
 	$stable_icons = stable_icons();

@@ -803,7 +803,7 @@ function db_debug_junk()
 			if (!empty($qq['w']))
 				$warnings += count($qq['w']);
 
-		$_SESSION['debug'] = &$db_cache;
+		$_SESSION['debug'] =& $db_cache;
 	}
 
 	$temp = '

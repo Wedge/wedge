@@ -296,7 +296,7 @@ function EditSmileySets()
 			);
 		else
 		{
-			$context['current_set'] = &$context['smiley_sets'][$_GET['set']];
+			$context['current_set'] =& $context['smiley_sets'][$_GET['set']];
 			$context['current_set']['is_new'] = false;
 
 			// Calculate whether there are any smileys in the directory that can be imported.

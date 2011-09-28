@@ -154,7 +154,7 @@ function aeva_admin_embed()
 	// Prepare to organize the sites into specific sections
 	foreach (array_keys($sites) as $site)
 	{
-		$s = &$sites[$site];
+		$s =& $sites[$site];
 
 		// Make sure it has the enabled setting
 		$s['disabled'] = !empty($s['disabled']);

@@ -45,7 +45,7 @@ function Login()
 
 	// Get the template ready.... not really much else to do.
 	$context['page_title'] = $txt['login'];
-	$context['default_username'] = &$_REQUEST['u'];
+	$context['default_username'] =& $_REQUEST['u'];
 	$context['default_password'] = '';
 	$context['never_expire'] = false;
 

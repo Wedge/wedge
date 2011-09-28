@@ -75,10 +75,10 @@ class GIF_Animator
 		for ($i = 0; $i <= $this->frame_num; $i++)
 		{
 			// Cleans the code up a little if we're not farting around with $this->stuff everywhere
-			$image = &$this->buffer[$i]['image'];
-			$delay = &$this->buffer[$i]['delay'];
-			$transparent_idx = &$this->buffer[$i]['transparency'];
-			$disposal = &$this->buffer[$i]['disposal'] << 2; // the numbers in disposal are bit numbers
+			$image =& $this->buffer[$i]['image'];
+			$delay =& $this->buffer[$i]['delay'];
+			$transparent_idx =& $this->buffer[$i]['transparency'];
+			$disposal =& $this->buffer[$i]['disposal'] << 2; // the numbers in disposal are bit numbers
 
 			$local_byte = $this->byteAt($i, 10); // this is to do with GCT
 

@@ -16,7 +16,7 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 {
 	global $context, $settings, $options, $txt, $modSettings;
 
-	$verify_context = &$context['controls']['verification'][$verify_id];
+	$verify_context =& $context['controls']['verification'][$verify_id];
 
 	// Keep track of where we are.
 	if (empty($verify_context['tracking']) || $reset)

@@ -27,7 +27,7 @@ function createList($listOptions)
 
 	// All the context data will be easily accessible by using a reference.
 	$context[$listOptions['id']] = array();
-	$list_context = &$context[$listOptions['id']];
+	$list_context =& $context[$listOptions['id']];
 
 	// Figure out the sort.
 	if (empty($listOptions['default_sort_col']))

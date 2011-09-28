@@ -688,7 +688,7 @@ function setupProfileContext($fields)
 		if (isset($profile_fields[$field]))
 		{
 			// Shortcut.
-			$cur_field = &$profile_fields[$field];
+			$cur_field =& $profile_fields[$field];
 
 			// Does it have a preload and does that preload succeed?
 			if (isset($cur_field['preload']) && !$cur_field['preload']())
@@ -724,7 +724,7 @@ function setupProfileContext($fields)
 			if ($cur_field['type'] != 'hidden')
 			{
 				$last_type = $cur_field['type'];
-				$context['profile_fields'][$field] = &$profile_fields[$field];
+				$context['profile_fields'][$field] =& $profile_fields[$field];
 			}
 		}
 		// Bodge in a line break - without doing two in a row ;)
@@ -878,7 +878,7 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 	global $user_info, $txt, $modSettings, $user_profile, $context, $settings;
 
 	// These make life easier....
-	$old_profile = &$user_profile[$memID];
+	$old_profile =& $user_profile[$memID];
 
 	// Permissions...
 	if ($context['user']['is_owner'])
@@ -3043,7 +3043,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 
 	checkSession(isset($_GET['gid']) ? 'get' : 'post');
 
-	$old_profile = &$user_profile[$memID];
+	$old_profile =& $user_profile[$memID];
 	$context['can_manage_membergroups'] = allowedTo('manage_membergroups');
 	$context['can_manage_protected'] = allowedTo('admin_forum');
 

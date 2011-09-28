@@ -1333,8 +1333,8 @@ function setupThemeContext($forceload = false)
 
 	if (!$user_info['is_guest'])
 	{
-		$context['user']['messages'] = &$user_info['messages'];
-		$context['user']['unread_messages'] = &$user_info['unread_messages'];
+		$context['user']['messages'] =& $user_info['messages'];
+		$context['user']['unread_messages'] =& $user_info['unread_messages'];
 
 		// Personal message popup...
 		if ($user_info['unread_messages'] > (isset($_SESSION['unread_messages']) ? $_SESSION['unread_messages'] : 0))

@@ -626,7 +626,7 @@ function aeva_viewAlbum()
 	global $context, $txt, $amSettings, $user_info, $galurl, $scripturl;
 
 	$album = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
-	$current_album = &$context['aeva_album'];
+	$current_album =& $context['aeva_album'];
 	$is_owner = !$user_info['is_guest'] && $user_info['id'] == $current_album['owner']['id'];
 
 	if (empty($album) || empty($current_album))
@@ -707,7 +707,7 @@ function aeva_viewAlbum()
 	foreach ($context['aeva_album_list'] as $album)
 		if ($context['aeva_albums'][$album]['parent'] == $current_album['id'])
 			$context['aeva_sub_albums'][$album] = $context['aeva_albums'][$album];
-	$master_album = &$context['aeva_albums'][$current_album['master']];
+	$master_album =& $context['aeva_albums'][$current_album['master']];
 
 	// What is the view eh?
 	$current_album['view'] = isset($_REQUEST['nw']) ? 'normal' : (isset($_REQUEST['fw']) ? 'filestack' : (!empty($current_album['options']['view']) ? $current_album['options']['view'] : 'normal'));
@@ -1236,7 +1236,7 @@ function aeva_viewItem()
 			$albums[$list] = array(str_repeat('-', $context['aeva_albums'][$list]['child_level']).' '.westr::cut($context['aeva_albums'][$list]['name'], 42), $list == $item_data['album_id'], null);
 		}
 		$albums['sep' . ++$sep] = array('', false, '');
-		$context['aeva_move_albums'] = &$albums;
+		$context['aeva_move_albums'] =& $albums;
 	}
 
 	// Custom fields?

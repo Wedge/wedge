@@ -382,7 +382,7 @@ class xmlArray
 			}
 
 			// Create a new element in the array.
-			$el = &$current[];
+			$el =& $current[];
 			$el['name'] = $match[1];
 
 			// If this ISN'T empty, remove the close tag and parse the inner data.

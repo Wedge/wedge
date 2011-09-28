@@ -129,7 +129,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			'questions' => array(),
 			'do_empty_field' => empty($verificationsOptions['no_empty_field']),
 		);
-	$thisVerification = &$context['controls']['verification'][$verificationOptions['id']];
+	$thisVerification =& $context['controls']['verification'][$verificationOptions['id']];
 
 	// Add javascript for the object.
 	if ($thisVerification['show_visual'] && !WIRELESS)

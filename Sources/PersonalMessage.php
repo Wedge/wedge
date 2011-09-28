@@ -255,7 +255,7 @@ function MessageMain()
 
 	// Some stuff for the labels...
 	$context['current_label_id'] = isset($_REQUEST['l'], $context['labels'][(int) $_REQUEST['l']]) ? (int) $_REQUEST['l'] : -1;
-	$context['current_label'] = &$context['labels'][(int) $context['current_label_id']]['name'];
+	$context['current_label'] =& $context['labels'][(int) $context['current_label_id']]['name'];
 	$context['folder'] = !isset($_REQUEST['f']) || $_REQUEST['f'] != 'sent' ? 'inbox' : 'sent';
 
 	// This is convenient. Do you know how annoying it is to do this every time?!
@@ -398,8 +398,8 @@ function messageIndexBar($area)
 			$pm_areas['labels']['title'] .= ' (' . $unread_in_labels . ')';
 	}
 
-	$pm_areas['folders']['areas']['inbox']['unread_messages'] = &$context['labels'][-1]['unread_messages'];
-	$pm_areas['folders']['areas']['inbox']['messages'] = &$context['labels'][-1]['messages'];
+	$pm_areas['folders']['areas']['inbox']['unread_messages'] =& $context['labels'][-1]['unread_messages'];
+	$pm_areas['folders']['areas']['inbox']['messages'] =& $context['labels'][-1]['messages'];
 	if (!empty($context['labels'][-1]['unread_messages']))
 	{
 		$pm_areas['folders']['areas']['inbox']['label'] .= ' (<strong>' . $context['labels'][-1]['unread_messages'] . '</strong>)';

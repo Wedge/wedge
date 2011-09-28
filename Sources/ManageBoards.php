@@ -434,7 +434,7 @@ function EditBoard()
 	else
 	{
 		// Just some easy shortcuts.
-		$curBoard = &$boards[$_REQUEST['boardid']];
+		$curBoard =& $boards[$_REQUEST['boardid']];
 		$context['board'] = $boards[$_REQUEST['boardid']];
 		$context['board']['name'] = htmlspecialchars(strtr($context['board']['name'], array('&amp;' => '&')));
 		$context['board']['description'] = htmlspecialchars($context['board']['description']);

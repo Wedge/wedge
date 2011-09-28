@@ -1117,7 +1117,7 @@ function PickTheme()
 			continue;
 
 		// The thumbnail needs the correct path.
-		$settings['images_url'] = &$theme_data['images_url'];
+		$settings['images_url'] =& $theme_data['images_url'];
 
 		if (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . $user_info['language'] . '.php'))
 			include($theme_data['theme_dir'] . '/languages/Settings.' . $user_info['language'] . '.php');

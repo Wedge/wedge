@@ -2270,7 +2270,7 @@ function aeva_profileSummary($memID)
 
 	// Load the albums
 	aeva_getAlbums('a.album_of = ' . $memID, 1, true, 'a.child_level, a.a_order', '', true, true, true);
-	$context['aeva_member']['user_albums'] = &$context['aeva_albums'];
+	$context['aeva_member']['user_albums'] =& $context['aeva_albums'];
 
 	// Load top albums
 	$request = wesql::query('

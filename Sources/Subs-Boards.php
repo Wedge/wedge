@@ -1172,7 +1172,7 @@ function getBoardTree($restrict = false)
 					'is_first' => empty($cat_tree[$row['id_cat']]['children']),
 					'children' => array()
 				);
-				$boards[$row['id_board']]['tree'] = &$cat_tree[$row['id_cat']]['children'][$row['id_board']];
+				$boards[$row['id_board']]['tree'] =& $cat_tree[$row['id_cat']]['children'][$row['id_board']];
 			}
 			else
 			{
@@ -1197,7 +1197,7 @@ function getBoardTree($restrict = false)
 					'is_first' => empty($boards[$row['id_parent']]['tree']['children']),
 					'children' => array()
 				);
-				$boards[$row['id_board']]['tree'] = &$boards[$row['id_parent']]['tree']['children'][$row['id_board']];
+				$boards[$row['id_board']]['tree'] =& $boards[$row['id_parent']]['tree']['children'][$row['id_board']];
 			}
 		}
 	}

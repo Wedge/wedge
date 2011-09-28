@@ -112,7 +112,7 @@ function getBoardIndex($boardIndexOptions)
 				continue;
 
 			// Let's save some typing.  Climbing the array might be slower, anyhow.
-			$this_category = &$categories[$row_board['id_cat']]['boards'];
+			$this_category =& $categories[$row_board['id_cat']]['boards'];
 		}
 
 		// This is a parent board.
@@ -189,7 +189,7 @@ function getBoardIndex($boardIndexOptions)
 			$this_category[$row_board['id_parent']]['children_new'] |= empty($row_board['is_read']);
 
 			// This is easier to use in many cases for the theme....
-			$this_category[$row_board['id_parent']]['link_children'][] = &$this_category[$row_board['id_parent']]['children'][$row_board['id_board']]['link'];
+			$this_category[$row_board['id_parent']]['link_children'][] =& $this_category[$row_board['id_parent']]['children'][$row_board['id_board']]['link'];
 		}
 		// Child of a child... just add it on...
 		elseif (!empty($boardIndexOptions['countChildPosts']))
@@ -285,10 +285,10 @@ function getBoardIndex($boardIndexOptions)
 		$context['latest_post'] = $latest_post['ref'];
 
 	$params = array(&$boardIndexOptions);
-	if ($boardIndexOptions)
-		$params[] = &$categories;
+	if ($boardIndexOptions['include_categories'])
+		$params[] =& $categories;
 	else
-		$params[] = &$this_category;
+		$params[] =& $this_category;
 	call_hook('get_boardindex', $params);
 
 	return $boardIndexOptions['include_categories'] ? $categories : $this_category;

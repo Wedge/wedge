@@ -219,7 +219,7 @@ function ViewErrorLog()
 	// Filtering anything?
 	if (isset($filter))
 	{
-		$context['filter'] = &$filter;
+		$context['filter'] =& $filter;
 
 		// Set the filtering context.
 		if ($filter['variable'] == 'id_member')
@@ -244,7 +244,7 @@ function ViewErrorLog()
 			$context['filter']['value']['html'] = $context['filtering_ip']; // we already stored this earlier!
 		}
 		else
-			$context['filter']['value']['html'] = &$filter['value']['sql'];
+			$context['filter']['value']['html'] =& $filter['value']['sql'];
 	}
 
 	$context['error_types'] = array();
