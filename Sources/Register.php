@@ -123,10 +123,7 @@ function Register($reg_errors = array())
 	if (!empty($modSettings['userLanguage']))
 	{
 		$selectedLanguage = empty($_SESSION['language']) ? $language : $_SESSION['language'];
-
-		// Do we have any languages?
-		if (!isset($context['languages']))
-			getLanguages();
+		getLanguages();
 
 		// Try to find our selected language.
 		foreach ($context['languages'] as $key => $lang)
@@ -332,9 +329,7 @@ function Register2($verifiedOpenID = false)
 	// Validate the passed language file.
 	if (isset($_POST['lngfile']) && !empty($modSettings['userLanguage']))
 	{
-		// Do we have any languages?
-		if (empty($context['languages']))
-			getLanguages();
+		getLanguages();
 
 		// Did we find it?
 		if (isset($context['languages'][$_POST['lngfile']]))

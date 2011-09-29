@@ -30,9 +30,6 @@
 		- If permissions is an array, performs test on all permissions
 		- If single_true is false, makes sures that all the returned tests are true otherwise it returns false. If true, it requires only one true to pass.
 
-	int aeva_get_size(string path)
-		- Returns the size of a directory or file
-
 	array aeva_get_dir_map(string path)
 		- Returns the whole map of the directory
 		- Returns all the folders, sub-folders (and so on), as well as their files
@@ -107,10 +104,8 @@ function aeva_allowedTo($perms, $single_true = false)
 
 	if (empty($perms))
 		return false;
-
 	if (allowedTo('media_manage'))
 		return true;
-
 	if (!is_array($perms))
 		return !in_array($perms, $context['aeva_album_permissions']) ? allowedTo('media_' . $perms) : isset($context['aeva_album']) && in_array($perms, $context['aeva_album']['permissions']);
 
@@ -121,35 +116,6 @@ function aeva_allowedTo($perms, $single_true = false)
 	return $single_true ? in_array(true, $tests) : !in_array(false, $tests);
 }
 
-// Gets the size for a file or a directory
-function aeva_get_size($path)
-{
-	if (!is_readable($path))
-		return false;
-
-	if (!is_dir($path))
-		return filesize($path);
-
-	$dirname_stack[] = $path;
-	$size = 0;
-
-	do {
-		$dirname = array_shift($dirname_stack);
-		$files = scandir($dirname);
-		foreach ($files as $file)
-		{
-			if ($file != '.' && $file != '..' && is_readable($dirname . '/' . $file))
-			{
-				if (is_dir($dirname . '/' . $file))
-					$dirname_stack[] = $dirname . '/' . $file;
-				$size += filesize($dirname . '/' . $file);
-			}
-		}
-	} while (count($dirname_stack) > 0);
-
-	return $size;
-}
-
 function aeva_get_num_files($path)
 {
 	// Counts number of items in a directory
@@ -158,26 +124,9 @@ function aeva_get_num_files($path)
 	if (!is_dir($path))
 		return false;
 
-	$dirname_stack[] = $path;
-	$num_files = 0;
+	$files = scandir($path);
 
-	do
-	{
-		$dirname = array_shift($dirname_stack);
-		$files = scandir($dirname);
-		foreach ($files as $file)
-		{
-			if ($file != '.' && $file != '..' && is_readable($dirname . '/' . $file))
-			{
-				if (is_dir($dirname . '/' . $file))
-					$dirname_stack[] = $dirname . '/' . $file;
-				$num_files++;
-			}
-		}
-	}
-	while (count($dirname_stack) > 0);
-
-	return $num_files;
+	return count($files) - (in_array('.', $files) ? 1 : 0) - (in_array('..', $files) ? 1 : 0);
 }
 
 function aeva_get_dir_map($path)

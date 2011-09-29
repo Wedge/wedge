@@ -295,7 +295,6 @@ function aeva_admin_settings()
 		'data_dir_path' => array('text', 'config'),
 		'data_dir_url' => array('text', 'config'),
 		'max_dir_files' => array('small_text', 'config'),
-		'max_dir_size' => array('small_text', 'config', null, null, $txt['media_kb']),
 		'enable_re-rating' => array('yesno', 'config'),
 		'use_metadata_date' => array('yesno', 'config'),
 		'enable_cache' => array('yesno', 'config'),
@@ -407,9 +406,6 @@ function aeva_admin_settings()
 	// Submitting?
 	if (isset($_POST['submit_aeva']))
 	{
-		// Perform a check for folder size versus file size.
-		if (isset($_POST['max_dir_size']) && $_POST['max_dir_size'] < (($_POST['max_file_size'] * 5) + 47))
-			$_POST['max_dir_size'] = ($_POST['max_file_size'] * 5) + 47;
 		if (isset($_POST['welcome']))
 			$_POST['welcome'] = aeva_string($_POST['welcome'], false, 0);
 		if (isset($_POST['my_docs']) && (empty($amSettings['my_docs']) || $amSettings['my_docs'] != $_POST['my_docs']))

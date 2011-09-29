@@ -954,7 +954,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  */
 function cache_put_data($key, $val, $ttl = 120)
 {
-	global $boardurl, $sourcedir, $modSettings, $memcached;
+	global $boardurl, $sourcedir, $modSettings, $memcached, $cache_type;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($modSettings['cache_enable']) && !empty($modSettings))
@@ -970,8 +970,11 @@ function cache_put_data($key, $val, $ttl = 120)
 	$key = md5($boardurl . filemtime($sourcedir . '/Collapse.php')) . '-Wedge-' . strtr($key, ':', '-');
 	$val = $val === null ? null : serialize($val);
 
+	if (empty($cache_type))
+		get_cache_type();
+
 	// The simple yet efficient memcached.
-	if (function_exists('memcache_set') && isset($modSettings['cache_memcached']) && trim($modSettings['cache_memcached']) != '')
+	if ($cache_type === 'memcached')
 	{
 		// Not connected yet?
 		if (empty($memcached))
@@ -981,8 +984,7 @@ function cache_put_data($key, $val, $ttl = 120)
 
 		memcache_set($memcached, $key, $val, 0, $ttl);
 	}
-	// eAccelerator...
-	elseif (function_exists('eaccelerator_put'))
+	elseif ($cache_type === 'eaccelerator')
 	{
 		if (mt_rand(0, 10) == 1)
 			eaccelerator_gc();
@@ -992,8 +994,7 @@ function cache_put_data($key, $val, $ttl = 120)
 		else
 			eaccelerator_put($key, $val, $ttl);
 	}
-	// Alternative PHP Cache, ahoy!
-	elseif (function_exists('apc_store'))
+	elseif ($cache_type === 'apc')
 	{
 		// An extended key is needed to counteract a bug in APC.
 		if ($val === null)
@@ -1001,24 +1002,23 @@ function cache_put_data($key, $val, $ttl = 120)
 		else
 			apc_store($key . 'wedge', $val, $ttl);
 	}
-	// Zend Platform/ZPS/etc.
-	elseif (function_exists('output_cache_put'))
+	elseif ($cache_type === 'zend')
 		output_cache_put($key, $val);
-	elseif (function_exists('xcache_set') && ini_get('xcache.var_size') > 0)
+	elseif ($cache_type === 'xcache')
 	{
 		if ($val === null)
 			xcache_unset($key);
 		else
 			xcache_set($key, $val, $ttl);
 	}
-	// Otherwise custom cache?
+	// Otherwise file cache?
 	else
 	{
 		if ($val === null)
 			@unlink($cachedir . '/data/' . $key . '.php');
 		else
 		{
-			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$expired=time()>' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';?' . '>';
+			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=time()<' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';?' . '>';
 			$fh = @fopen($cachedir . '/data/' . $key . '.php', 'w');
 			if ($fh)
 			{
@@ -1052,7 +1052,7 @@ function cache_put_data($key, $val, $ttl = 120)
  */
 function cache_get_data($key, $ttl = 120)
 {
-	global $boardurl, $sourcedir, $modSettings, $memcached;
+	global $boardurl, $sourcedir, $modSettings, $memcached, $cache_type;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
 	if (empty($modSettings['cache_enable']) && !empty($modSettings))
@@ -1067,8 +1067,10 @@ function cache_get_data($key, $ttl = 120)
 
 	$key = md5($boardurl . filemtime($sourcedir . '/Collapse.php')) . '-Wedge-' . strtr($key, ':', '-');
 
-	// Okay, let's go for it memcached!
-	if (isset($modSettings['cache_memcached']) && function_exists('memcache_get') && trim($modSettings['cache_memcached']) !== '')
+	if (empty($cache_type))
+		get_cache_type();
+
+	if ($cache_type === 'memcached')
 	{
 		// Not connected yet?
 		if (empty($memcached))
@@ -1078,22 +1080,19 @@ function cache_get_data($key, $ttl = 120)
 
 		$val = memcache_get($memcached, $key);
 	}
-	// Again, eAccelerator.
-	elseif (function_exists('eaccelerator_get'))
+	elseif ($cache_type === 'eaccelerator')
 		$val = eaccelerator_get($key);
-	// This is the free APC from PECL.
-	elseif (function_exists('apc_fetch'))
+	elseif ($cache_type === 'apc')
 		$val = apc_fetch($key . 'wedge');
-	// Zend's pricey stuff.
-	elseif (function_exists('output_cache_get'))
+	elseif ($cache_type === 'zend')
 		$val = output_cache_get($key, $ttl);
-	elseif (function_exists('xcache_get') && ini_get('xcache.var_size') > 0)
+	elseif ($cache_type === 'xcache')
 		$val = xcache_get($key);
 	// Otherwise it's the file cache!
 	elseif (file_exists($cachedir . '/data/' . $key . '.php') && filesize($cachedir . '/data/' . $key . '.php') > 10)
 	{
 		require($cachedir . '/data/' . $key . '.php');
-		if (isset($val) && !$expired)
+		if (empty($valid))
 		{
 			@unlink($cachedir . '/data/' . $key . '.php');
 			unset($val);
@@ -1106,11 +1105,31 @@ function cache_get_data($key, $ttl = 120)
 		$cache_hits[$cache_count]['s'] = isset($val) ? strlen($val) : 0;
 	}
 
-	if (empty($val))
-		return null;
-	// If it's broke, it's broke... so give up on it.
-	else
-		return @unserialize($val);
+	// If the operation requires re-caching, return null to let the script know.
+	return empty($val) ? null : unserialize($val);
+}
+
+function get_cache_type()
+{
+	global $cache_type, $modSettings;
+
+	$cache_type = 'file';
+
+	// Okay, let's go for it memcached!
+	if (isset($modSettings['cache_memcached']) && function_exists('memcache_get') && function_exists('memcache_set') && trim($modSettings['cache_memcached']) !== '')
+		$cache_type = 'memcached';
+	// eAccelerator.
+	elseif (function_exists('eaccelerator_get') && function_exists('eaccelerator_put'))
+		$cache_type = 'eaccelerator';
+	// Alternative PHP Cache from PECL.
+	elseif (function_exists('apc_fetch') && function_exists('apc_store'))
+		$cache_type = 'apc';
+	// Zend Platform/ZPS/pricey stuff.
+	elseif (function_exists('output_cache_get') && function_exists('output_cache_put'))
+		$cache_type = 'zend';
+	// XCache
+	elseif (function_exists('xcache_get') && function_exists('xcache_set') && ini_get('xcache.var_size') > 0)
+		$cache_type = 'xcache';
 }
 
 /**

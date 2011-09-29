@@ -593,7 +593,7 @@ function aeva_getSuitableDir($album_id)
 	{
 		$row = wesql::fetch_assoc($request);
 		$path_to_dir = $path_to_album . '/' . $row['val2'];
-		if ((aeva_get_num_files($path_to_dir) >= $amSettings['max_dir_files']) || (aeva_get_size($path_to_dir) >= $amSettings['max_dir_size'] * 1024))
+		if (aeva_get_num_files($path_to_dir) >= $amSettings['max_dir_files'])
 		{
 			$new_dir = aeva_createAlbumSubdir($album_id);
 			if (!$new_dir)

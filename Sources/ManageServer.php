@@ -1147,13 +1147,7 @@ function ModifyLanguages()
 // How many languages?
 function list_getNumLanguages()
 {
-	global $context;
-
-	// If the value isn't set yet -- do it now.
-	if (!isset($context['languages']))
-		getLanguages();
-
-	return count($context['languages']);
+	return count(getLanguages());
 }
 
 // Fetch the actual language information.

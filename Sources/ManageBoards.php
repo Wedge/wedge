@@ -560,7 +560,7 @@ function EditBoard()
 		list ($context['board']['last_moderator_id']) = array_slice(array_keys($context['board']['moderators']), -1);
 
 	// Get all the languages
-	getLanguages(true);
+	getLanguages();
 
 	// Get all the themes...
 	$request = wesql::query('

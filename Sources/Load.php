@@ -373,8 +373,7 @@ function loadUserSettings()
 		unset($user_info['ignoreboards'][$tmp]);
 
 	// Do we have any languages to validate this?
-	if (!empty($modSettings['userLanguage']) && (!empty($_GET['language']) || !empty($_SESSION['language'])))
-		$languages = getLanguages();
+	$languages = getLanguages();
 
 	// Allow the user to change their language if it's valid.
 	if (!empty($modSettings['userLanguage']) && !empty($_GET['language']) && isset($languages[strtr($_GET['language'], './\\:', '____')]))
@@ -1572,7 +1571,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// This theme first.
 	$settings['template_dirs'][] = $settings['theme_dir'];
 
-	// Based on theme (if there is one).
+	// Based on theme (if there is one.)
 	if (!empty($settings['base_theme_dir']))
 		$settings['template_dirs'][] = $settings['base_theme_dir'];
 
@@ -2217,54 +2216,50 @@ function getLanguages($use_cache = true)
 {
 	global $context, $settings, $modSettings;
 
-	// Either we don't use the cache, or it's expired.
-	if (!$use_cache || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) == null)
+	// If the language array is already filled, or we wanna use the cache and it's not expired...
+	if ($use_cache && (isset($context['languages']) || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) !== null))
+		return $context['languages'];
+
+	// If we don't have our theme information yet, let's get it.
+	if (empty($settings['default_theme_dir']))
+		loadTheme(0, false);
+
+	// Default language directories to try.
+	$language_directories = array(
+		$settings['default_theme_dir'] . '/languages',
+		$settings['actual_theme_dir'] . '/languages',
+	);
+
+	// We possibly have a base theme directory.
+	if (!empty($settings['base_theme_dir']))
+		$language_directories[] = $settings['base_theme_dir'] . '/languages';
+
+	// Initialize the array, otherwise if it's empty, Wedge won't cache it.
+	$context['languages'] = array();
+
+	// Go through all unique directories.
+	foreach (array_unique($language_directories) as $language_dir)
 	{
-		// If we don't have our theme information yet, let's get it.
-		if (empty($settings['default_theme_dir']))
-			loadTheme(0, false);
+		// Can't look in here... doesn't exist!
+		if (!file_exists($language_dir))
+			continue;
 
-		// Default language directories to try.
-		$language_directories = array(
-			$settings['default_theme_dir'] . '/languages',
-			$settings['actual_theme_dir'] . '/languages',
-		);
-
-		// We possibly have a base theme directory.
-		if (!empty($settings['base_theme_dir']))
-			$language_directories[] = $settings['base_theme_dir'] . '/languages';
-
-		// Remove any duplicates.
-		$language_directories = array_unique($language_directories);
-
-		foreach ($language_directories as $language_dir)
+		$dir = glob($language_dir . '/index.*.php');
+		foreach ($dir as $entry)
 		{
-			// Can't look in here... doesn't exist!
-			if (!file_exists($language_dir))
+			if (!preg_match('~/index\.([^.]+)\.php$~', $entry, $matches))
 				continue;
-
-			$dir = dir($language_dir);
-			while ($entry = $dir->read())
-			{
-				// Look for the index language file....
-				if (!preg_match('~^index\.(.+)\.php$~', $entry, $matches))
-					continue;
-
-				$context['languages'][$matches[1]] = array(
-					'name' => westr::ucwords(strtr($matches[1], array('_' => ' '))),
-					'selected' => false,
-					'filename' => $matches[1],
-					'location' => $language_dir . '/index.' . $matches[1] . '.php',
-				);
-
-			}
-			$dir->close();
+			$context['languages'][$matches[1]] = array(
+				'name' => westr::ucwords(strtr($matches[1], array('_' => ' '))),
+				'filename' => $matches[1],
+				'location' => $entry,
+			);
 		}
-
-		// Let's cash in on this deal.
-		if (!empty($modSettings['cache_enable']))
-			cache_put_data('known_languages', $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 	}
+
+	// Let's cash in on this deal.
+	if (!empty($modSettings['cache_enable']))
+		cache_put_data('known_languages', $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
 
 	return $context['languages'];
 }

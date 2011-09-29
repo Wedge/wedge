@@ -56,7 +56,7 @@ function ListAddons()
 
 	loadBlock('browse');
 	$context['page_title'] = $txt['addon_manager'];
-	getLanguages(true);
+	getLanguages();
 
 	$context['available_addons'] = array();
 
@@ -280,7 +280,7 @@ function AddonReadme()
 	// Did they specify a language, and is it valid?
 	if (isset($_GET['lang']))
 	{
-		getLanguages(true);
+		getLanguages();
 		if (!isset($context['languages'][$_GET['lang']]))
 			$valid = false;
 	}
