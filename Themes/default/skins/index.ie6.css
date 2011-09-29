@@ -361,3 +361,13 @@ body
 
 .smiley
 	text-indent: 0
+
+// IE6 totally screws up the menus without all of these together.
+ul.usermenuitem, ul.acmenuitem
+	float: none
+	width: auto
+	li
+		display: block
+		width: 120px
+		a
+			text-align: right

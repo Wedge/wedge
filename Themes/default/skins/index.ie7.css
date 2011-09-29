@@ -128,6 +128,16 @@ ul.quickbuttons
 	width: 40%
 	float: right
 
+// IE7 totally screws up the menus without all of these together.
+ul.usermenuitem, ul.acmenuitem
+	float: none
+	width: auto
+	li
+		display: block !important
+		a
+			float: none !important
+			text-align: right
+
 /* Misc hacks
 ------------------------------------------------------- */
 #linktree
@@ -171,6 +181,7 @@ li.separator
 	strong
 		float: none
 		padding-top, padding-bottom: 0
+		margin-right: 8px
 	> li
 		display: inline
 		margin-left: 2px

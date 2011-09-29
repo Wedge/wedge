@@ -1093,10 +1093,7 @@ function cache_get_data($key, $ttl = 120)
 	{
 		require($cachedir . '/data/' . $key . '.php');
 		if (empty($valid))
-		{
 			@unlink($cachedir . '/data/' . $key . '.php');
-			unset($val);
-		}
 	}
 
 	if (isset($db_show_debug) && $db_show_debug === true)
