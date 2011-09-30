@@ -1,6 +1,6 @@
 <?php
 
-// This file is here solely to protect your Packages directory.
+// This file is here solely to protect your Plugins directory.
 
 // Look for Settings.php....
 if (file_exists(dirname(dirname(__FILE__)) . '/Settings.php'))

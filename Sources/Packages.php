@@ -66,7 +66,7 @@ function Packages()
 	loadTemplate('Packages');
 	add_css_file('admin', true);
 
-	$context['page_title'] = $txt['addon_manager'];
+	$context['page_title'] = $txt['plugin_manager'];
 
 	// Delegation makes the world... that is, the package manager go 'round.
 	$subActions = array(
@@ -173,9 +173,9 @@ function PackageInstallTest()
 	{
 		$context['extracted_files'] = read_tgz_file($boarddir . '/Packages/' . $context['filename'], $boarddir . '/Packages/temp');
 
-		if ($context['extracted_files'] && !file_exists($boarddir . '/Packages/temp/addon-info.xml'))
+		if ($context['extracted_files'] && !file_exists($boarddir . '/Packages/temp/plugin-info.xml'))
 			foreach ($context['extracted_files'] as $file)
-				if (basename($file['filename']) == 'addon-info.xml')
+				if (basename($file['filename']) == 'plugin-info.xml')
 				{
 					$context['base_path'] = dirname($file['filename']) . '/';
 					break;
@@ -738,9 +738,9 @@ function PackageInstall()
 	{
 		$context['extracted_files'] = read_tgz_file($boarddir . '/Packages/' . $context['filename'], $boarddir . '/Packages/temp');
 
-		if (!file_exists($boarddir . '/Packages/temp/addon-info.xml'))
+		if (!file_exists($boarddir . '/Packages/temp/plugin-info.xml'))
 			foreach ($context['extracted_files'] as $file)
-				if (basename($file['filename']) == 'addon-info.xml')
+				if (basename($file['filename']) == 'plugin-info.xml')
 				{
 					$context['base_path'] = dirname($file['filename']) . '/';
 					break;
@@ -1301,7 +1301,7 @@ function PackageBrowse()
 		$dirs = array();
 		foreach ($dir as $package)
 		{
-			if ($package == '.' || $package == '..' || $package == 'temp' || (!(is_dir($boarddir . '/Packages/' . $package) && file_exists($boarddir . '/Packages/' . $package . '/addon-info.xml')) && substr(strtolower($package), -7) != '.tar.gz' && substr(strtolower($package), -4) != '.tgz' && substr(strtolower($package), -4) != '.zip'))
+			if ($package == '.' || $package == '..' || $package == 'temp' || (!(is_dir($boarddir . '/Packages/' . $package) && file_exists($boarddir . '/Packages/' . $package . '/plugin-info.xml')) && substr(strtolower($package), -7) != '.tar.gz' && substr(strtolower($package), -4) != '.tgz' && substr(strtolower($package), -4) != '.zip'))
 				continue;
 
 			// Skip directories or files that are named the same.
@@ -1460,9 +1460,9 @@ function ViewOperations()
 	{
 		$context['extracted_files'] = read_tgz_file($boarddir . '/Packages/' . $context['filename'], $boarddir . '/Packages/temp');
 
-		if ($context['extracted_files'] && !file_exists($boarddir . '/Packages/temp/addon-info.xml'))
+		if ($context['extracted_files'] && !file_exists($boarddir . '/Packages/temp/plugin-info.xml'))
 			foreach ($context['extracted_files'] as $file)
-				if (basename($file['filename']) == 'addon-info.xml')
+				if (basename($file['filename']) == 'plugin-info.xml')
 				{
 					$context['base_path'] = dirname($file['filename']) . '/';
 					break;

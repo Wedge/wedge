@@ -63,8 +63,8 @@ $context = array(
 // Load the settings from the settings table, and perform operations like optimizing.
 reloadSettings();
 
-// Here's the monstrous $action array - $action => array($file, $function, $addon_id).
-// Only add $addon_id if it's for an add-on, otherwise just have two items in the list.
+// Here's the monstrous $action array - $action => array($file, $function, $plugin_id).
+// Only add $plugin_id if it's for a plugin, otherwise just have two items in the list.
 $action_list = array(
 	'activate' => array('Activate.php', 'Activate'),
 	'admin' => array('Admin.php', 'Admin'),
@@ -270,7 +270,7 @@ function wedge_main()
 	// Check the request for anything hinky.
 	checkUserBehavior();
 
-	// Allow add-ons to check for the request as well, and manipulate $action.
+	// Allow plugins to check for the request as well, and manipulate $action.
 	call_hook('behavior', array(&$action));
 
 	// Last chance to get the board ID if we have a default one. Use the 'behavior' hook to force it.
@@ -361,7 +361,7 @@ function wedge_main()
 	// Otherwise, it was set - so let's go to that action.
 	// !!! Fix this $sourcedir for loadSource
 	if (isset($action_list[$action][2]))
-		loadAddonSource($action_list[$action][2], $action_list[$action][0]);
+		loadPluginSource($action_list[$action][2], $action_list[$action][0]);
 	else
 		require_once($sourcedir . '/' . $action_list[$action][0]);
 	return $action_list[$action][1];
@@ -371,7 +371,7 @@ function index_action($hook_action = 'default_action')
 {
 	global $modSettings, $sourcedir;
 
-	// Some add-ons may want to specify default "front page" behavior through the 'default_action' hook, and/or a
+	// Some plugins may want to specify default "front page" behavior through the 'default_action' hook, and/or a
 	// last-minute fallback ('fallback_action'). If they do, they shall return the name of the function they want to call.
 	foreach (call_hook($hook_action) as $func)
 		if (!empty($func) && is_callable($func))

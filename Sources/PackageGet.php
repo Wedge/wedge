@@ -48,7 +48,7 @@ function PackageGet()
 	loadTemplate('Packages');
 	add_css_file('admin', true);
 
-	$context['page_title'] = $txt['addon_manager'];
+	$context['page_title'] = $txt['plugin_manager'];
 
 	// Here is a list of all the potentially valid actions.
 	$subActions = array(
@@ -675,7 +675,7 @@ function PackageUpload()
 	{
 		foreach ($dir as $package)
 		{
-			if ($package == '.' || $package == '..' || $package == 'temp' || $package == $packageName || (!(is_dir($boarddir . '/Packages/' . $package) && file_exists($boarddir . '/Packages/' . $package . '/addon-info.xml')) && substr(strtolower($package), -7) != '.tar.gz' && substr(strtolower($package), -4) != '.tgz' && substr(strtolower($package), -4) != '.zip'))
+			if ($package == '.' || $package == '..' || $package == 'temp' || $package == $packageName || (!(is_dir($boarddir . '/Packages/' . $package) && file_exists($boarddir . '/Packages/' . $package . '/plugin-info.xml')) && substr(strtolower($package), -7) != '.tar.gz' && substr(strtolower($package), -4) != '.tgz' && substr(strtolower($package), -4) != '.zip'))
 				continue;
 
 			$packageInfo = getPackageInfo($package);

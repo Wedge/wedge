@@ -1880,7 +1880,7 @@ function setupMenuContext()
 						'show' => allowedTo('manage_permissions'),
 					),
 					'packages' => array(
-						'title' => $txt['addon_manager'],
+						'title' => $txt['plugin_manager'],
 						'href' => $scripturl . '?action=admin;area=packages',
 						'show' => allowedTo('admin_forum'),
 					),
@@ -2143,8 +2143,8 @@ function call_hook($hook, $parameters = array())
 		// Load any required file.
 		if (!empty($fun[1]))
 		{
-			// We might be loading addon files, we might not. This can't be set by add_hook, but by the hook manager.
-			if (!empty($fun[2]) && $fun[2] === 'addon')
+			// We might be loading plugin files, we might not. This can't be set by add_hook, but by the hook manager.
+			if (!empty($fun[2]) && $fun[2] === 'plugin')
 				require_once($fun[1] . '.php');
 			else
 				loadSource($fun[1]);
@@ -2174,7 +2174,7 @@ function call_lang_hook($hook)
 	foreach ($modSettings['hooks'][$hook] as $function)
 	{
 		$found = false;
-		// Was this a language file hook? There won't be a function if it is. It should be in the form of path/filename without a language or extension, e.g. /path/Addons/myaddon/myfile (where .english.php is added later)
+		// Was this a language file hook? There won't be a function if it is. It should be in the form of path/filename without a language or extension, e.g. /path/Plugins/myplugin/myfile (where .english.php is added later)
 		if ($function[0] === '|')
 		{
 			// So, we're looking at files that we're calling for, and they're language files.

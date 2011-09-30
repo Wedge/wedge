@@ -87,7 +87,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 				// We might need to load some stuff here.
 				if (!empty($fun[1]))
 				{
-					if (!empty($fun[2]) && $fun[2] === 'addon')
+					if (!empty($fun[2]) && $fun[2] === 'plugin')
 						require_once($fun[1] . '.php');
 					else
 						loadSource($fun[1]);
@@ -1219,7 +1219,7 @@ function loadBlock($blocks, $target = '', $where = '')
 		}
 	}
 	// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
-	// The add-on should provide a 'default' fallback if it considers it vital to show the block, e.g. array('sidebar', 'default').
+	// Plugins should provide a 'default' fallback if they considers it vital to show the block, e.g. array('sidebar', 'default').
 	if (empty($to))
 		return;
 

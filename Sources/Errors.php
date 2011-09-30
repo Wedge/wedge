@@ -26,16 +26,16 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
-	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context, $full_request, $addonsdir;
-	static $addon_dir = null;
+	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context, $full_request, $pluginsdir;
+	static $plugin_dir = null;
 
 	// Check if error logging is actually on.
 	if (empty($modSettings['enableErrorLogging']))
 		return $error_message;
 
 	// Windows does funny things. Fix the pathing to make sense on Windows.
-	if ($addon_dir === null)
-		$addon_dir = DIRECTORY_SEPARATOR === '/' ? $addonsdir : str_replace(DIRECTORY_SEPARATOR, '/', $addonsdir);
+	if ($plugin_dir === null)
+		$plugin_dir = DIRECTORY_SEPARATOR === '/' ? $pluginsdir : str_replace(DIRECTORY_SEPARATOR, '/', $pluginsdir);
 
 	// Basically, htmlspecialchars it minus &. (for entities!)
 	$error_message = strtr($error_message, array('<' => '&lt;', '>' => '&gt;', '"' => '&quot;'));
@@ -96,13 +96,13 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	// Make sure the category that was specified is a valid one
 	$error_type = in_array($error_type, $known_error_types) && $error_type !== true ? $error_type : 'general';
 
-	// There may be an alternate case of error type: it might be add-on related.
-	if (!empty($file) && strpos($file, $addon_dir) === 0)
-		foreach ($context['addons_dir'] as $addon_id => $addon_path)
+	// There may be an alternate case of error type: it might be plugin-related.
+	if (!empty($file) && strpos($file, $plugin_dir) === 0)
+		foreach ($context['plugins_dir'] as $plugin_id => $plugin_path)
 		{
-			if (strpos($file, $addon_path) === 0)
+			if (strpos($file, $plugin_path) === 0)
 			{
-				$error_type = $addon_id;
+				$error_type = $plugin_id;
 				break;
 			}
 		}

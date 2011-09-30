@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays the currently available add-ons.
+ * Displays the currently available plugins.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -15,34 +15,34 @@ function template_browse()
 {
 	global $context, $settings, $options, $scripturl, $txt;
 
-	if (empty($context['available_addons']))
+	if (empty($context['available_plugins']))
 		echo '
-	<div class="information">', $txt['no_addons_found'], '</div>';
+	<div class="information">', $txt['no_plugins_found'], '</div>';
 
 	$use_bg2 = true;
 	// Just before printing content, go through and work out what icons we're going to display. Need to do it first though, because we need to know how many icons we're working on.
 	$icons = array();
 	$max_icons = 0;
-	foreach ($context['available_addons'] as $id => $addon)
+	foreach ($context['available_plugins'] as $id => $plugin)
 	{
 		$icons[$id] = array();
-		if (!empty($addon['install_errors']))
+		if (!empty($plugin['install_errors']))
 			continue;
 
-		if ($addon['enabled'])
+		if ($plugin['enabled'])
 		{
 			$item = array(
 				array(
 					'icon' => 'switch_on.png',
-					'url' => $scripturl . '?action=admin;area=addons;sa=disable;addon=' . $addon['folder'] . ';' . $context['session_query'],
-					'title' => $txt['disable_addon']
+					'url' => $scripturl . '?action=admin;area=plugins;sa=disable;plugin=' . $plugin['folder'] . ';' . $context['session_query'],
+					'title' => $txt['disable_plugin']
 				)
 			);
 
-			if (!empty($addon['acp_url']))
+			if (!empty($plugin['acp_url']))
 				$item[] = array(
-					'icon' => 'addon_settings.png',
-					'url' => $scripturl . '?' . $addon['acp_url'],
+					'icon' => 'plugin_settings.png',
+					'url' => $scripturl . '?' . $plugin['acp_url'],
 					'title' => $txt['admin_modifications'],
 				);
 
@@ -53,13 +53,13 @@ function template_browse()
 			$item = array(
 				array(
 					'icon' => 'switch_off.png',
-					'url' => $scripturl . '?action=admin;area=addons;sa=enable;addon=' . $addon['folder'] . ';' . $context['session_query'],
-					'title' => $txt['enable_addon'],
+					'url' => $scripturl . '?action=admin;area=plugins;sa=enable;plugin=' . $plugin['folder'] . ';' . $context['session_query'],
+					'title' => $txt['enable_plugin'],
 				),
 				array(
-					'icon' => 'addon_remove.png',
-					'url' => $scripturl . '?action=admin;area=addons;sa=remove;addon=' . $addon['folder'],
-					'title' => $txt['remove_addon'],
+					'icon' => 'plugin_remove.png',
+					'url' => $scripturl . '?action=admin;area=plugins;sa=remove;plugin=' . $plugin['folder'],
+					'title' => $txt['remove_plugin'],
 				),
 			);
 
@@ -69,61 +69,61 @@ function template_browse()
 	}
 
 	// Print out the content.
-	foreach ($context['available_addons'] as $id => $addon)
+	foreach ($context['available_plugins'] as $id => $plugin)
 	{
 		echo '
 	<fieldset class="windowbg', $use_bg2 ? '2' : '', ' wrc">
-		<legend>', $addon['name'], ' ', $addon['version'], '</legend>';
+		<legend>', $plugin['name'], ' ', $plugin['version'], '</legend>';
 
-		// Add-on buttons. They're floated right, so need to be first. Besides which, the floating means they need to be in reverse order :/
-		if (!empty($addon['install_errors']))
+		// Plugin buttons. They're floated right, so need to be first. Besides which, the floating means they need to be in reverse order :/
+		if (!empty($plugin['install_errors']))
 			echo '
-		<div class="floatright"><strong>', $txt['install_errors'], '</strong><br>', implode('<br>', $addon['install_errors']), '</div>';
+		<div class="floatright"><strong>', $txt['install_errors'], '</strong><br>', implode('<br>', $plugin['install_errors']), '</div>';
 		else
 		{
 			for ($i = $max_icons - 1; $i >= 0; $i--)
 				if (!isset($icons[$id][$i]))
 					echo '
-			<div class="addon_item inline_block floatright">&nbsp;</div>';
+			<div class="plugin_item inline_block floatright">&nbsp;</div>';
 				else
 					echo '
-			<div class="addon_item inline_block floatright">
+			<div class="plugin_item inline_block floatright">
 				<a href="', $icons[$id][$i]['url'], '">
 					<img src="', $settings['images_url'], '/admin/', $icons[$id][$i]['icon'], '"', !empty($icons[$id][$i]['title']) ? ' title="' . $icons[$id][$i]['title'] . '"' : '', '>
 				</a>
 			</div>';
 		}
 
-		// Add-on description
-		if (!empty($addon['description']))
+		// Plugin description
+		if (!empty($plugin['description']))
 			echo '
-		<p>', $addon['description'], '</p>';
+		<p>', $plugin['description'], '</p>';
 
-		// Add-on author, including links home.
+		// Plugin author, including links home.
 		echo '
-		<div class="smalltext inline-block floatleft" style="width:33%">', $txt['addon_written_by'], ': ', $addon['author'];
-		if (!empty($addon['author_url']))
+		<div class="smalltext inline-block floatleft" style="width:33%">', $txt['plugin_written_by'], ': ', $plugin['author'];
+		if (!empty($plugin['author_url']))
 			echo '
-		&nbsp;<a href="', $addon['author_url'], '" target="_blank"><img src="', $settings['images_url'], '/icons/profile_sm.gif" title="', $txt['addon_author_url'], '"></a>';
+		&nbsp;<a href="', $plugin['author_url'], '" target="_blank"><img src="', $settings['images_url'], '/icons/profile_sm.gif" title="', $txt['plugin_author_url'], '"></a>';
 
-		if (!empty($addon['website']))
+		if (!empty($plugin['website']))
 			echo '
-		&nbsp;<a href="', $addon['website'], '" target="_blank"><img src="', $settings['images_url'], '/www.gif" title="', sprintf($txt['addon_website'], $addon['name']), '"></a>';
+		&nbsp;<a href="', $plugin['website'], '" target="_blank"><img src="', $settings['images_url'], '/www.gif" title="', sprintf($txt['plugin_website'], $plugin['name']), '"></a>';
 
-		if (!empty($addon['author_email']))
+		if (!empty($plugin['author_email']))
 			echo '
-		&nbsp;<a href="mailto:', $addon['author_email'], '"><img src="', $settings['images_url'], '/email_sm.gif" title="', $txt['addon_author_email'], '"></a>';
+		&nbsp;<a href="mailto:', $plugin['author_email'], '"><img src="', $settings['images_url'], '/email_sm.gif" title="', $txt['plugin_author_email'], '"></a>';
 
 		echo '</div>';
 
-		// Add-on readmes
-		if (!empty($addon['readmes']))
+		// Plugin readmes
+		if (!empty($plugin['readmes']))
 		{
 			echo '
-		<div class="smalltext floatleft inline-block">', $txt['addon_readmes'], ':';
+		<div class="smalltext floatleft inline-block">', $txt['plugin_readmes'], ':';
 
-			foreach ($addon['readmes'] as $readme => $state)
-				echo ' &nbsp;<a href="', $scripturl, '?action=admin;area=addons;sa=readme;addon=', rawurlencode($addon['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', $settings['theme_url'], '/languages/Flag.', $readme, '.png"></a>';
+			foreach ($plugin['readmes'] as $readme => $state)
+				echo ' &nbsp;<a href="', $scripturl, '?action=admin;area=plugins;sa=readme;plugin=', rawurlencode($plugin['folder']), ';lang=', $readme, '" onclick="return reqWin(this);"><img src="', $settings['theme_url'], '/languages/Flag.', $readme, '.png"></a>';
 
 			echo '
 		</div>';
@@ -142,20 +142,20 @@ function template_remove()
 	global $context, $settings, $options, $scripturl, $txt;
 
 	echo '
-	<form action="', $scripturl, '?action=admin;area=addons;sa=remove;addon=', $_GET['addon'], ';commit" method="post">
+	<form action="', $scripturl, '?action=admin;area=plugins;sa=remove;plugin=', $_GET['plugin'], ';commit" method="post">
 		<div class="windowbg2 wrc">
-			<p><strong>', sprintf($txt['remove_addon_desc'], $context['addon_name']), '</strong></p>
-			<p>', $txt['remove_addon_blurb'], '</p>
+			<p><strong>', sprintf($txt['remove_plugin_desc'], $context['plugin_name']), '</strong></p>
+			<p>', $txt['remove_plugin_blurb'], '</p>
 			<fieldset>
-				<legend>', $txt['remove_addon_nodelete'], '</legend>
-				', $txt['remove_addon_nodelete_desc'], '<br>
-				<input name="nodelete" type="submit" class="save floatright" value="', $txt['remove_addon_nodelete'], '">
+				<legend>', $txt['remove_plugin_nodelete'], '</legend>
+				', $txt['remove_plugin_nodelete_desc'], '<br>
+				<input name="nodelete" type="submit" class="save floatright" value="', $txt['remove_plugin_nodelete'], '">
 			</fieldset>
 			<br>
 			<fieldset>
-				<legend>', $txt['remove_addon_delete'], '</legend>
-				', $txt['remove_addon_delete_desc'], '<br>
-				<input name="delete" type="submit" class="delete floatright" value="', $txt['remove_addon_delete'], '">
+				<legend>', $txt['remove_plugin_delete'], '</legend>
+				', $txt['remove_plugin_delete_desc'], '<br>
+				<input name="delete" type="submit" class="delete floatright" value="', $txt['remove_plugin_delete'], '">
 			</fieldset>';
 
 	echo '

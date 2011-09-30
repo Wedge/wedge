@@ -1209,7 +1209,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 	$new_topic = empty($topicOptions['id']);
 
-	// Does an add-on want to manipulate all new posts/topics before they're created?
+	// Does a plugin want to manipulate all new posts/topics before they're created?
 	// (e.g. check for user agent and change the icon based on that.)
 	call_hook('create_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions, &$new_topic));
 
@@ -1813,7 +1813,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
 	$topicOptions['sticky_mode'] = isset($topicOptions['sticky_mode']) ? $topicOptions['sticky_mode'] : null;
 
-	// Does an add-on want to manipulate posts/topics before they're modified?
+	// Does a plugin want to manipulate posts/topics before they're modified?
 	call_hook('modify_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions));
 
 	// This is longer than it has to be, but makes it so we only set/change what we have to.

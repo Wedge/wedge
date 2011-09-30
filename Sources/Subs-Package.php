@@ -73,7 +73,7 @@ if (!defined('WEDGE'))
 	array getPackageInfo(string filename)
 		- loads a package's information and returns a representative array.
 		- expects the file to be a package in Packages/.
-		- returns a error string if the addon-info is invalid.
+		- returns a error string if the plugin-info is invalid.
 		- returns a basic array of id, version, filename, and similar
 		  information.
 		- in the array returned, an xmlArray is available in 'xml'.
@@ -83,8 +83,8 @@ if (!defined('WEDGE'))
 
 	array parsePackageInfo(xmlArray &package, bool testing_only = true,
 			string method = 'install', string previous_version = '')
-		- parses the actions in addon-info.xml files from packages.
-		- package should be an xmlArray with addon-info as its base.
+		- parses the actions in plugin-info.xml files from packages.
+		- package should be an xmlArray with plugin-info as its base.
 		- testing_only should be true if the package should not actually
 		  be applied.
 		- method is upgrade, install, or uninstall. Its default is install.
@@ -524,18 +524,18 @@ function getPackageInfo($gzfilename)
 {
 	global $boarddir;
 
-	// Extract addon-info.xml from downloaded file. (*/ is used because it could be in any directory.)
+	// Extract plugin-info.xml from downloaded file. (*/ is used because it could be in any directory.)
 	if (strpos($gzfilename, 'http://') !== false)
-		$packageInfo = read_tgz_data(fetch_web_data($gzfilename, '', true), '*/addon-info.xml', true);
+		$packageInfo = read_tgz_data(fetch_web_data($gzfilename, '', true), '*/plugin-info.xml', true);
 	else
 	{
 		if (!file_exists($boarddir . '/Packages/' . $gzfilename))
 			return 'package_get_error_not_found';
 
 		if (is_file($boarddir . '/Packages/' . $gzfilename))
-			$packageInfo = read_tgz_file($boarddir . '/Packages/' . $gzfilename, '*/addon-info.xml', true);
-		elseif (file_exists($boarddir . '/Packages/' . $gzfilename . '/addon-info.xml'))
-			$packageInfo = file_get_contents($boarddir . '/Packages/' . $gzfilename . '/addon-info.xml');
+			$packageInfo = read_tgz_file($boarddir . '/Packages/' . $gzfilename, '*/plugin-info.xml', true);
+		elseif (file_exists($boarddir . '/Packages/' . $gzfilename . '/plugin-info.xml'))
+			$packageInfo = file_get_contents($boarddir . '/Packages/' . $gzfilename . '/plugin-info.xml');
 		else
 			return 'package_get_error_missing_xml';
 	}
@@ -544,15 +544,15 @@ function getPackageInfo($gzfilename)
 	if (empty($packageInfo))
 		return 'package_get_error_is_zero';
 
-	// Parse addon-info.xml into an xmlArray.
+	// Parse plugin-info.xml into an xmlArray.
 	loadSource('Class-Package');
 	$packageInfo = new xmlArray($packageInfo);
 
 	// !!! Error message of some sort?
-	if (!$packageInfo->exists('addon-info[0]'))
+	if (!$packageInfo->exists('plugin-info[0]'))
 		return 'package_get_error_packageinfo_corrupt';
 
-	$packageInfo = $packageInfo->path('addon-info[0]');
+	$packageInfo = $packageInfo->path('plugin-info[0]');
 
 	$package = $packageInfo->to_array();
 	$package['xml'] = $packageInfo;
@@ -1057,7 +1057,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 	return $files;
 }
 
-// Parses a addon-info.xml file - method can be 'install', 'upgrade', or 'uninstall'.
+// Parses a plugin-info.xml file - method can be 'install', 'upgrade', or 'uninstall'.
 function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install', $previous_version = '')
 {
 	global $boarddir, $context, $temp_path, $language;
@@ -1195,7 +1195,7 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 			);
 		}
 
-		$this_action = &$return[];
+		$this_action =& $return[];
 		$this_action = array(
 			'type' => $actionType,
 			'filename' => $action->fetch('@name'),

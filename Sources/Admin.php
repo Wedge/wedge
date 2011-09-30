@@ -581,19 +581,19 @@ function Admin()
 				),
 			),
 		),
-		'addons' => array(
-			'title' => $txt['addon_manager'],
+		'plugins' => array(
+			'title' => $txt['plugin_manager'],
 			'permission' => array('admin_forum'),
 			'areas' => array(
-				'addons' => array(
-					'label' => $txt['addon_manager'],
-					'file' => 'ManageAddons',
-					'function' => 'AddonsHome',
+				'plugins' => array(
+					'label' => $txt['plugin_manager'],
+					'file' => 'ManagePlugins',
+					'function' => 'PluginsHome',
 					'permission' => array('admin_forum'),
 					'icon' => 'packages.gif',
-					'bigicon' => 'addon_manager.png',
+					'bigicon' => 'plugin_manager.png',
 					'subsections' => array(
-						'addons' => array($txt['addon_manager']),
+						'plugins' => array($txt['plugin_manager']),
 						/*'browse' => array($txt['browse_packages']),
 						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
 						'perms' => array($txt['package_file_perms']),
@@ -607,7 +607,7 @@ function Admin()
 					'function' => 'Packages',
 					'permission' => array('admin_forum'),
 					'icon' => 'packages.gif',
-					'bigicon' => 'addon_manager.png',
+					'bigicon' => 'plugin_manager.png',
 					'subsections' => array(
 						'browse' => array($txt['browse_packages']),
 						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
@@ -621,7 +621,7 @@ function Admin()
 					'file' => 'ManageSettings',
 					'function' => 'ModifyModSettings',
 					'icon' => 'modifications.gif',
-					'bigicon' => 'addon_settings.png',
+					'bigicon' => 'plugin_settings.png',
 					'subsections' => array(
 						'general' => array($txt['mods_cat_modifications_misc']),
 						// Mod Authors, don't edit these lines. Instead, add the 'admin_area' hook
@@ -719,7 +719,7 @@ function Admin()
 	if (isset($admin_include_data['file']))
 	{
 		if (is_array($admin_include_data['file']))
-			loadAddonSource($admin_include_data['file'][0], $admin_include_data['file'][1]);
+			loadPluginSource($admin_include_data['file'][0], $admin_include_data['file'][1]);
 		else
 			loadSource($admin_include_data['file']);
 	}

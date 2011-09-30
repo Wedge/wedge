@@ -511,7 +511,7 @@ function ModifyProfile($post_errors = array())
 	if (isset($profile_include_data['file']))
 	{
 		if (is_array($profile_include_data['file']))
-			loadAddonSource($profile_include_data['file'][0], $profile_include_data['file'][1]);
+			loadPluginSource($profile_include_data['file'][0], $profile_include_data['file'][1]);
 		else
 			loadSource($profile_include_data['file']);
 	}

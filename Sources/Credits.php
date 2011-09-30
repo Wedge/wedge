@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
  *
  * - Uses the Who language file.
  * - Builds $context['credits'] to list the different teams behind application development, and the people who contributed.
- * - Adds $context['copyright']['mods'] where add-on developers can add their copyrights without touching the footer or anything else.
+ * - Adds $context['copyright']['mods'] where plugin developers can add their copyrights without touching the footer or anything else.
  * - Calls the 'place_credit' hook to enable modders to add to this page.
  *
  * @param bool $in_admin If calling from the admin panel, this should be true, to prevent loading the template that is normally loaded where this function would be called as a regular action (action=credits)
@@ -137,8 +137,8 @@ function Credits($in_admin = false)
 	);
 
 	/*
-		To Add-on Authors:
-		You may add a copyright statement to this array for your add-ons.
+		To Plugin Authors:
+		You may add a copyright statement to this array for your plugins.
 		Do NOT edit the file, it could get messy. Simply call an add_hook('place_credit', 'my_function', 'my_source_file')
 		where my_function will simply add your copyright to $context['copyrights']['mods'].
 		You may also add credits at the end of the $context['credits'] array, following the same structure.

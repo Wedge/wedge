@@ -116,10 +116,10 @@ function AutoTask()
 			);
 			$affected_rows = wesql::affected_rows();
 
-			// Does this task need us to load a file? The filename will be addon;fullpath-to-file
+			// Does this task need us to load a file? The filename will be plugin;fullpath-to-file
 			if (!empty($row['sourcefile']))
 			{
-				if (strpos($row['sourcefile'], 'addon;') === 0)
+				if (strpos($row['sourcefile'], 'plugin;') === 0)
 					require_once(substr($row['sourcefile'], 6) . '.php');
 				else
 					loadSource($row['sourcefile']);

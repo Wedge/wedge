@@ -126,20 +126,20 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 }
 
 /**
- * This function adds one or more minified, gzipped files to the footer JavaScript, specifically for add-ons to use.
+ * This function adds one or more minified, gzipped files to the footer JavaScript, specifically for plugins to use.
  *
- * @param string $addon_name The name of the add-on in question, e.g. Arantor:MyAddon.
- * @param mixed $files A filename or an array of filenames, with a relative path set to the add-on's folder.
+ * @param string $plugin_name The name of the plugin in question, e.g. Arantor:MyPlugin.
+ * @param mixed $files A filename or an array of filenames, with a relative path set to the plugin's folder.
  * @param boolean $is_direct_url Set to true if you want to add complete URLs (e.g. external libraries), with no minification and no gzipping.
  * @param boolean $is_out_of_flow Set to true if you want to get the URL immediately and not put it into the JS flow. Used for jQuery/script.js.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_addon_js_file($addon_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
+function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $addonsdir, $cachedir, $boardurl, $footer_coding;
+	global $context, $pluginsdir, $cachedir, $boardurl, $footer_coding;
 	static $done_files = array();
 
-	if (empty($context['addons_dir'][$addon_name]))
+	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
 	if (!is_array($files))
@@ -149,17 +149,17 @@ function add_addon_js_file($addon_name, $files = array(), $is_direct_url = false
 	if ($is_direct_url)
 	{
 		foreach ($files as $k => $v)
-			$files[$k] = $context['addons_url'][$addon_name] . '/' . $v;
+			$files[$k] = $context['plugins_url'][$plugin_name] . '/' . $v;
 		return add_js_file($files, true, $is_out_of_flow);
 	}
 
 	// OK, we're going to be caching files.
-	if (empty($done_files[$addon_name]))
-		$done_files[$addon_name] = array_flip(array_flip($files));
+	if (empty($done_files[$plugin_name]))
+		$done_files[$plugin_name] = array_flip(array_flip($files));
 	else
 	{
-		$files = array_diff(array_keys(array_flip($files)), $done_files[$addon_name]);
-		$done_files[$addon_name] = array_merge($done_files[$addon_name], $files);
+		$files = array_diff(array_keys(array_flip($files)), $done_files[$plugin_name]);
+		$done_files[$plugin_name] = array_merge($done_files[$plugin_name], $files);
 	}
 
 	$id = '';
@@ -167,7 +167,7 @@ function add_addon_js_file($addon_name, $files = array(), $is_direct_url = false
 
 	foreach ($files as $k => &$file)
 	{
-		$file = $context['addons_dir'][$addon_name] . '/' . $file;
+		$file = $context['plugins_dir'][$plugin_name] . '/' . $file;
 		if (!file_exists($file))
 			unset($files[$k]);
 
@@ -179,7 +179,7 @@ function add_addon_js_file($addon_name, $files = array(), $is_direct_url = false
 	if (empty($files))
 		return;
 
-	$id = substr(strrchr($context['addons_dir'][$addon_name], '/'), 1) . '-' . $id;
+	$id = substr(strrchr($context['plugins_dir'][$plugin_name], '/'), 1) . '-' . $id;
 	$id = !empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
 	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
@@ -306,11 +306,11 @@ function add_css_file($original_files = array(), $add_link = false)
 	<link rel="stylesheet" href="' . $final_script . '">';
 }
 
-function add_addon_css_file($addon_name, $original_files = array(), $add_link = false)
+function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false)
 {
-	global $context, $modSettings, $settings, $cachedir, $boardurl, $addonsdir;
+	global $context, $modSettings, $settings, $cachedir, $boardurl, $pluginsdir;
 
-	if (empty($context['addons_dir'][$addon_name]))
+	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
 	if (!is_array($original_files))
@@ -331,7 +331,7 @@ function add_addon_css_file($addon_name, $original_files = array(), $add_link = 
 
 	foreach ($files as $i => &$file)
 	{
-		$full_path = $context['addons_dir'][$addon_name] . '/' . $file . '.css';
+		$full_path = $context['plugins_dir'][$plugin_name] . '/' . $file . '.css';
 		if (!file_exists($full_path))
 		{
 			unset($files[$i]);
@@ -342,9 +342,9 @@ function add_addon_css_file($addon_name, $original_files = array(), $add_link = 
 		$latest_date = max($latest_date, filemtime($full_path));
 	}
 
-	$addonurl = '..' . str_replace($boardurl, '', $context['addons_url'][$addon_name]);
+	$pluginurl = '..' . str_replace($boardurl, '', $context['plugins_url'][$plugin_name]);
 
-	$id = $context['enabled_addons'][$addon_name] . '-' . implode('-', $basefiles) . '-';
+	$id = $context['enabled_plugins'][$plugin_name] . '-' . implode('-', $basefiles) . '-';
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
@@ -363,7 +363,7 @@ function add_addon_css_file($addon_name, $original_files = array(), $add_link = 
 
 	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
 	if (!file_exists($final_file))
-		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext, $context['addons_url'][$addon_name]);
+		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext, $context['plugins_url'][$plugin_name]);
 
 	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
 
@@ -444,7 +444,7 @@ function wedge_cache_css()
 /**
  * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
  */
-function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext, $addon_path = '')
+function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext, $plugin_path = '')
 {
 	global $settings, $modSettings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
 
@@ -490,10 +490,10 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		'$theme' => '..' . str_replace($boardurl, '', $settings['theme_url']),
 		'$root' => '../',
 	);
-	if (!empty($addon_path))
-		$css_vars['$addondir'] = $addon_path;
+	if (!empty($plugin_path))
+		$css_vars['$plugindir'] = $plugin_path;
 	else
-		unset($css_vars['$addondir']);
+		unset($css_vars['$plugindir']);
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ($css as $file)

@@ -304,8 +304,8 @@ function ModifyDatabaseSettings($return_config = false)
 		array('boarddir', $txt['boarddir'], 'file', 'text', 36),
 		array('sourcedir', $txt['sourcesdir'], 'file', 'text', 36),
 		array('cachedir', $txt['cachedir'], 'file', 'text', 36),
-		array('addonsdir', $txt['addonsdir'], 'file', 'text', 36),
-		array('addonsurl', $txt['addonsurl'], 'file', 'text', 36),
+		array('pluginsdir', $txt['pluginsdir'], 'file', 'text', 36),
+		array('pluginsurl', $txt['pluginsurl'], 'file', 'text', 36),
 	);
 
 	if ($return_config)
@@ -1286,7 +1286,7 @@ function ModifyLanguage()
 			list ($theme_id, $file_id) = $parts;
 		else
 		{
-			// In add-ons, the entry supplied is not theme_id|lang file, but add-on_id|path|lang
+			// In plugins, the entry supplied is not theme_id|lang file, but plugin_id|path|lang
 			$theme_id = array_shift($parts);
 			$file_id = array_pop($parts);
 			$path = implode('/', $parts);
@@ -1339,33 +1339,33 @@ function ModifyLanguage()
 			$images_dirs[$id] = $data['theme_dir'] . '/images/' . $context['lang_id'];
 	}
 
-	// Now add the possible permutations for add-ons. This is pretty hairy stuff.
+	// Now add the possible permutations for plugins. This is pretty hairy stuff.
 	// To avoid lots of rewriting that really isn't that necessary, we can reuse the code given here, just with a little crafty manipulation.
-	if (!empty($context['addons_dir']))
+	if (!empty($context['plugins_dir']))
 	{
-		foreach ($context['addons_dir'] as $addon_id => $addon_path)
+		foreach ($context['plugins_dir'] as $plugin_id => $plugin_path)
 		{
-			$themes[$addon_id] = array(
-				'name' => substr(strrchr($addon_id, ':'), 1),
-				'theme_dir' => $addon_path,
+			$themes[$plugin_id] = array(
+				'name' => substr(strrchr($plugin_id, ':'), 1),
+				'theme_dir' => $plugin_path,
 			);
-			$lang_dirs[$addon_id] = array('' => $addon_path);
+			$lang_dirs[$plugin_id] = array('' => $plugin_path);
 			// We really might as well use SPL for this. I mean, we could do it otherwise but this is almost certainly faster.
-			$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($addon_path), RecursiveIteratorIterator::SELF_FIRST);
+			$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($plugin_path), RecursiveIteratorIterator::SELF_FIRST);
 			foreach ($objects as $name => $object)
 				if (is_dir($name))
 				{
-					$local_path = str_replace($addon_path, '', $name) . '|';
-					$lang_dirs[$addon_id][$local_path] = $name;
+					$local_path = str_replace($plugin_path, '', $name) . '|';
+					$lang_dirs[$plugin_id][$local_path] = $name;
 				}
 
-			if (empty($lang_dirs[$addon_id]))
-				unset($lang_dirs[$addon_id], $themes[$addon_id]);
+			if (empty($lang_dirs[$plugin_id]))
+				unset($lang_dirs[$plugin_id], $themes[$plugin_id]);
 		}
 	}
 
-	if (isset($context['addons_dir'][$theme_id]))
-		$current_file = $file_id ? $context['addons_dir'][$theme_id] . $path . $file_id . '.' . $context['lang_id'] . '.php' : '';
+	if (isset($context['plugins_dir'][$theme_id]))
+		$current_file = $file_id ? $context['plugins_dir'][$theme_id] . $path . $file_id . '.' . $context['lang_id'] . '.php' : '';
 	else
 		$current_file = $file_id ? $lang_dirs[$theme_id] . $path . $file_id . '.' . $context['lang_id'] . '.php' : '';
 
@@ -1373,8 +1373,8 @@ function ModifyLanguage()
 	$context['possible_files'] = array();
 	foreach ($lang_dirs as $theme => $theme_dirs)
 	{
-		// Depending on where we came from, we might be looking at a single folder or an add-on's potentially many subfolders.
-		// If we're looking at an add-on, the array will be the possible folders for the prefixing as array keys, with the values as full paths
+		// Depending on where we came from, we might be looking at a single folder or a plugin's potentially many subfolders.
+		// If we're looking at a plugin, the array will be the possible folders for the prefixing as array keys, with the values as full paths
 		// and the prefixing keys will contain the | delimiter as needed.
 		if (!is_array($theme_dirs))
 			$theme_dirs = array('' => $theme_dirs);
@@ -2134,7 +2134,7 @@ function saveSettings(&$config_vars)
 		'cookiename',
 		'webmaster_email',
 		'db_name', 'db_user', 'db_server', 'db_prefix', 'ssi_db_user',
-		'boarddir', 'sourcedir', 'cachedir', 'addonsdir',
+		'boarddir', 'sourcedir', 'cachedir', 'pluginsdir',
 	);
 	// All the numeric variables.
 	$config_ints = array(

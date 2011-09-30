@@ -1502,7 +1502,7 @@ function template_add_rule()
 	foreach ($context['rule']['criteria'] as $k => $criteria)
 	{
 		if (!$isFirst && $criteria['t'] == '')
-			echo '<div id="removeonjs1">';
+			echo '<div id="removejs1">';
 		elseif (!$isFirst)
 			echo '<br>';
 
@@ -1538,7 +1538,7 @@ function template_add_rule()
 
 	echo '
 				<span id="criteriaAddHere"></span><br>
-				<a href="#" onclick="addCriteriaOption(); return false;" id="addonjs1" class="hide">(', $txt['pm_rule_criteria_add'], ')</a>
+				<a href="#" onclick="addCriteriaOption(); return false;" id="addjs1" class="hide">(', $txt['pm_rule_criteria_add'], ')</a>
 				<br><br>
 				', $txt['pm_rule_logic'], ':
 				<select name="rule_logic" id="logic" onchange="rebuildRuleDesc();">
@@ -1557,7 +1557,7 @@ function template_add_rule()
 	foreach ($context['rule']['actions'] as $k => $action)
 	{
 		if (!$isFirst && $action['t'] == '')
-			echo '<div id="removeonjs2">';
+			echo '<div id="removejs2">';
 		elseif (!$isFirst)
 			echo '<br>';
 
@@ -1588,7 +1588,7 @@ function template_add_rule()
 
 	echo '
 				<span id="actionAddHere"></span><br>
-				<a href="#" onclick="addActionOption(); return false;" id="addonjs2" class="hide">(', $txt['pm_rule_add_action'], ')</a>
+				<a href="#" onclick="addActionOption(); return false;" id="addjs2" class="hide">(', $txt['pm_rule_add_action'], ')</a>
 			</fieldset>
 		</div>
 		<br class="clear">
@@ -1620,12 +1620,12 @@ function template_add_rule()
 	// If this isn't a new rule and we have JS enabled remove the JS compatibility stuff.
 	if ($context['rid'])
 		add_js('
-	$("#removeonjs1").hide();
-	$("#removeonjs2").hide();');
+	$("#removejs1").hide();
+	$("#removejs2").hide();');
 
 	add_js('
-	$("#addonjs1").show();
-	$("#addonjs2").show();');
+	$("#addjs1").show();
+	$("#addjs2").show();');
 }
 
 // For displaying the saved drafts.

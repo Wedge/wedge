@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $txt, $context, $sourcedir, $addonsdir, $addonsurl;
+	global $modSettings, $boarddir, $txt, $context, $sourcedir, $pluginsdir, $pluginsurl;
 
 	// Most database systems have not set UTF-8 as their default input charset.
 	wesql::query('
@@ -67,25 +67,25 @@ function reloadSettings()
 			cache_put_data('modSettings', $modSettings, 90);
 	}
 
-	// Deal with loading add-ons.
-	$context['enabled_addons'] = array();
-	if (!empty($modSettings['enabled_addons']))
+	// Deal with loading plugins.
+	$context['enabled_plugins'] = array();
+	if (!empty($modSettings['enabled_plugins']))
 	{
 		// Step through the list we think we have enabled.
-		$addons = explode(',', $modSettings['enabled_addons']);
-		$sane_path = str_replace('\\', '/', $addonsdir);
-		foreach ($addons as $addon)
+		$plugins = explode(',', $modSettings['enabled_plugins']);
+		$sane_path = str_replace('\\', '/', $pluginsdir);
+		foreach ($plugins as $plugin)
 		{
-			if (!empty($modSettings['addon_' . $addon]) && file_exists($sane_path . '/' . $addon . '/addon-info.xml'))
+			if (!empty($modSettings['plugin_' . $plugin]) && file_exists($sane_path . '/' . $plugin . '/plugin-info.xml'))
 			{
-				$addon_details = @unserialize($modSettings['addon_' . $addon]);
-				$context['enabled_addons'][$addon_details['id']] = $addon;
-				$this_addondir = $context['addons_dir'][$addon_details['id']] = $sane_path . '/' . $addon;
-				$context['addons_url'][$addon_details['id']] = $addonsurl . '/' . $addon;
-				unset($addon_details['id'], $addon_details['provides']);
-				foreach ($addon_details as $hook => $functions)
+				$plugin_details = @unserialize($modSettings['plugin_' . $plugin]);
+				$context['enabled_plugins'][$plugin_details['id']] = $plugin;
+				$this_plugindir = $context['plugins_dir'][$plugin_details['id']] = $sane_path . '/' . $plugin;
+				$context['plugins_url'][$plugin_details['id']] = $pluginsurl . '/' . $plugin;
+				unset($plugin_details['id'], $plugin_details['provides']);
+				foreach ($plugin_details as $hook => $functions)
 					foreach ($functions as $function)
-						$modSettings['hooks'][$hook][] = strtr($function, array('$addondir' => $this_addondir));
+						$modSettings['hooks'][$hook][] = strtr($function, array('$plugindir' => $this_plugindir));
 			}
 		}
 	}
@@ -1938,34 +1938,34 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['theme_loaded'] = true;
 }
 
-function loadAddonSource($addon_name, $source_name)
+function loadPluginSource($plugin_name, $source_name)
 {
 	global $context;
-	if (empty($context['addons_dir'][$addon_name]))
+	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
 	foreach ((array) $source_name as $file)
-		require_once($context['addons_dir'][$addon_name] . '/' . $file . '.php');
+		require_once($context['plugins_dir'][$plugin_name] . '/' . $file . '.php');
 }
 
-function loadAddonTemplate($addon_name, $template_name, $fatal = true)
+function loadPluginTemplate($plugin_name, $template_name, $fatal = true)
 {
 	global $context, $settings;
-	if (empty($context['addons_dir'][$addon_name]))
+	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
 	// We may as well reuse the normal template loader. Might rewrite this later, however.
 	$old_templates = $settings['template_dirs'];
-	$settings['template_dirs'] = array($context['addons_dir'][$addon_name]);
+	$settings['template_dirs'] = array($context['plugins_dir'][$plugin_name]);
 	loadTemplate($template_name, $fatal);
 	$settings['template_dirs'] = $old_templates;
 }
 
-function loadAddonLanguage($addon_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
+function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
 {
 	global $context, $modSettings, $user_info, $language, $txt, $db_show_debug;
 	static $already_loaded = array();
-	if (empty($context['addons_dir'][$addon_name]))
+	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
 	// Default to the user's language.
@@ -1987,7 +1987,7 @@ function loadAddonLanguage($addon_name, $template_name, $lang = '', $fatal = tru
 	$found = false;
 	foreach ($attempts as $load_lang => $continue)
 	{
-		$file = $context['addons_dir'][$addon_name] . '/' . $template_name . '.' . $load_lang . '.php';
+		$file = $context['plugins_dir'][$plugin_name] . '/' . $template_name . '.' . $load_lang . '.php';
 		if (file_exists($file))
 		{
 			template_include($file);
@@ -1999,14 +1999,14 @@ function loadAddonLanguage($addon_name, $template_name, $lang = '', $fatal = tru
 
 	// Oops, didn't find it. Log it.
 	if (!$found)
-		log_error(sprintf($txt['theme_language_error'], '(' . $addon_name . ') ' . $template_name . '.' . $lang, 'template'));
+		log_error(sprintf($txt['theme_language_error'], '(' . $plugin_name . ') ' . $template_name . '.' . $lang, 'template'));
 
 	// Keep track of what we're up to soldier.
 	if ($db_show_debug === true)
-		$context['debug']['language_files'][] = $template_name . '.' . $lang . ' (' . $addon_name . ')';
+		$context['debug']['language_files'][] = $template_name . '.' . $lang . ' (' . $plugin_name . ')';
 
 	// Remember what we have loaded, and in which language.
-	$already_loaded[$addon_name . ':' . $template_name] = $lang;
+	$already_loaded[$plugin_name . ':' . $template_name] = $lang;
 
 	// Return the language actually loaded.
 	return $lang;
