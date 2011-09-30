@@ -70,7 +70,7 @@ if (!defined('WEDGE'))
  */
 function Post()
 {
-	global $txt, $scripturl, $topic, $modSettings, $board, $user_info;
+	global $txt, $scripturl, $topic, $topic_info, $modSettings, $board, $user_info;
 	global $board_info, $context, $settings, $options, $language;
 
 	loadLanguage('Post');
@@ -696,6 +696,7 @@ function Post()
 		// No check is needed, since nothing is really posted.
 		checkSubmitOnce('free');
 	}
+
 	// Editing a message...
 	elseif (isset($_REQUEST['msg']) && !empty($topic))
 	{
@@ -786,6 +787,7 @@ function Post()
 		$context['destination'] = 'post2;start=' . $_REQUEST['start'] . ';msg=' . $_REQUEST['msg'] . ';' . $context['session_query'] . (isset($_REQUEST['poll']) ? ';poll' : '');
 		$context['submit_label'] = $txt['save'];
 	}
+
 	// Posting...
 	else
 	{
@@ -875,6 +877,9 @@ function Post()
 			$form_message = '';
 		}
 	}
+
+	// Did we provide the message with a parent?
+	$context['msg_parent'] = isset($_REQUEST['parent']) ? $_REQUEST['parent'] : (isset($_REQUEST['quote']) ? $_REQUEST['quote'] : 0);
 
 	// !!! This won't work if you're posting an event.
 	if (allowedTo('post_attachment') || allowedTo('post_unapproved_attachments'))

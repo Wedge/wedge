@@ -307,6 +307,7 @@ function template_main()
 			<input type="hidden" name="additional_options" id="additional_options" value="', $context['show_additional_options'] ? '1' : '0', '">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">
+			<input type="hidden" name="parent" value="', $context['msg_parent'], '">
 		</form>';
 
 	// The functions used to preview posts without loading a new page.

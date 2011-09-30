@@ -179,6 +179,29 @@ function Post2()
 				isAllowedTo('post_reply_own');
 		}
 
+		// If the script provided a parent ID, make sure it's in the current topic...
+		if (!empty($_REQUEST['parent']))
+		{
+			$request = wesql::query('
+				SELECT id_msg
+				FROM {db_prefix}messages
+				WHERE id_msg = {int:parent}
+				AND id_topic = {int:id_topic}
+				LIMIT 1',
+				array(
+					'parent' => $_REQUEST['parent'],
+					'id_topic' => $topic,
+				)
+			);
+
+			// If it isn't, then let's just say we replied to the first post.
+			if (wesql::num_rows($request) == 0)
+				$_REQUEST['parent'] = $topic_info['id_first_msg'];
+			wesql::free_result($request);
+		}
+		else
+			$_REQUEST['parent'] = $topic_info['id_first_msg'];
+
 		if (isset($_POST['lock']))
 		{
 			// Nothing is changed to the lock.
@@ -759,6 +782,7 @@ function Post2()
 	// Collect all parameters for the creation or modification of a post.
 	$msgOptions = array(
 		'id' => empty($_REQUEST['msg']) ? 0 : (int) $_REQUEST['msg'],
+		'parent' => empty($_REQUEST['parent']) ? 0 : (int) $_REQUEST['parent'],
 		'subject' => $_POST['subject'],
 		'body' => $_POST['message'],
 		'icon' => preg_replace('~[./\\\\*:"\'<>]~', '', $_POST['icon']),

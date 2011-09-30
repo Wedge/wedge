@@ -20,10 +20,10 @@ ul.quickbuttons
 ------------------------------------------------- */
 
 #personal_messages
+	.wrc extends #forumposts .wrc
 	.pm
 		overflow: auto
 		clear: both
-		padding: .9em 0
 	#author, #topic_title
 		float: left
 	#author
@@ -51,6 +51,9 @@ ul.quickbuttons
 			background: #f10909
 	.reportlinks
 		padding: .5em 1.3em
+
+#personal_drafts ul.quickbuttons
+	padding-right: 0
 
 #searchLabelsExpand li
 	padding: .3em .5em

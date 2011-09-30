@@ -1143,6 +1143,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$msgOptions['smileys_enabled'] = !empty($msgOptions['smileys_enabled']);
 	$msgOptions['attachments'] = empty($msgOptions['attachments']) ? array() : $msgOptions['attachments'];
 	$msgOptions['approved'] = isset($msgOptions['approved']) ? (int) $msgOptions['approved'] : 1;
+	$msgOptions['parent'] = isset($msgOptions['parent']) ? (int) $msgOptions['parent'] : 0;
 	$topicOptions['id'] = empty($topicOptions['id']) ? 0 : (int) $topicOptions['id'];
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
@@ -1220,12 +1221,14 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	wesql::insert('',
 		'{db_prefix}messages',
 		array(
-			'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'subject' => 'string-255', 'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : 'string-65534'),
+			'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'subject' => 'string-255', 'id_parent' => 'int',
+			'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : 'string-65534'),
 			'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'int',
 			'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int',
 		),
 		array(
-			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $msgOptions['subject'], $msgOptions['body'],
+			$topicOptions['board'], $topicOptions['id'], $posterOptions['id'], $msgOptions['subject'], $msgOptions['parent'],
+			$msgOptions['body'],
 			$posterOptions['name'], $posterOptions['email'], time(), get_ip_identifier($posterOptions['ip']),
 			$msgOptions['smileys_enabled'] ? 1 : 0, '', $msgOptions['icon'], $msgOptions['approved'],
 		),
@@ -1249,7 +1252,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			)
 		);
 
-	// Insert a new topic (if the topicID was left empty.)
+	// Insert a new topic (if the topic ID was left empty.)
 	if ($new_topic)
 	{
 		wesql::insert('',

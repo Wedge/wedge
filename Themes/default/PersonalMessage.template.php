@@ -16,7 +16,11 @@ function template_pm_above()
 {
 	global $context, $settings, $options, $txt, $scripturl;
 
-	echo '
+	if ($context['page_title'] === $txt['showDrafts'])
+		echo '
+	<div id="personal_drafts">';
+	else
+		echo '
 	<div id="personal_messages">';
 
 	// Show the capacity bar, if available.
@@ -178,7 +182,7 @@ function template_folder()
 			$window_class = $message['alternate'] == 0 ? 'windowbg' : 'windowbg2';
 
 			echo '
-	<div class="', $window_class, ' wrc pm">
+	<div class="', $window_class, ' wrc pm"><div class="post_wrapper">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';
@@ -196,7 +200,7 @@ function template_folder()
 			// Show the member's custom title, if they have one.
 			if (isset($message['member']['title']) && $message['member']['title'] != '')
 				echo '
-				<li class="title">', $message['member']['title'], '</li>';
+				<li class="mtitle">', $message['member']['title'], '</li>';
 
 			// Show the member's primary group (like 'Administrator') if they have one.
 			if (isset($message['member']['group']) && $message['member']['group'] != '')
@@ -312,7 +316,7 @@ function template_folder()
 			</ul>
 		</div>
 		<div class="postarea">
-			<div class="flow_hidden">
+			<div class="postheader">
 				<div class="keyinfo">
 					<h5 id="subject_', $message['id'], '">
 						', $message['subject'], '
@@ -330,7 +334,7 @@ function template_folder()
 				echo '(', $txt['pm_undisclosed_recipients'], ')';
 
 			echo '
-						<strong> ', $txt['on'], ':</strong> ', $message['time'], ' &#187;
+						', $message['time'], ' &#187;
 					</span>';
 
 			// If we're in the sent items, show who it was sent to besides the "To:" people.
@@ -364,10 +368,10 @@ function template_folder()
 				// This is for "forwarding" - even if the member is gone.
 				else
 					echo '
-					<li class="forward_button"><a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $txt['reply_quote'], '</a></li>';
+					<li><a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="forward_button">', $txt['reply_quote'], '</a></li>';
 			}
 			echo '
-					<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');">', $txt['delete'], '</a></li>';
+					<li><a href="', $scripturl, '?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');" class="remove_button">', $txt['delete'], '</a></li>';
 
 			if (empty($context['display_mode']))
 				echo '
@@ -458,19 +462,19 @@ function template_folder()
 
 			echo '
 			</div>
-			<br class="clear">
-		</div>
-		<div class="moderatorbar">';
+			<br class="clear">';
 
 		if (!empty($context['message_can_unread'][$message['id']]))
 			echo '
-			<div class="righttext reportlinks">
-				<a href="', $scripturl, '?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_query'], '">', $txt['mark_unread'], '</a>
+			<div class="moderatorbar">
+				<div class="righttext reportlinks">
+					<a href="', $scripturl, '?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_query'], '">', $txt['mark_unread'], '</a>
+				</div>
 			</div>';
 
 		echo '
 		</div>
-	</div>';
+	</div></div>';
 		}
 
 		if (empty($context['display_mode']))
@@ -1666,8 +1670,8 @@ function template_pm_drafts()
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5><strong>', $post['subject'], '</strong></h5>
-					<div class="smalltext"><strong>', $txt['pm_to'], ':</strong> ', empty($post['recipients']['to']) ? $txt['no_recipients'] : implode(', ', $post['recipients']['to']), (empty($post['recipients']['bcc']) ? '' : ', <strong>' . $txt['pm_bcc'] . ':</strong> ' . implode(', ', $post['recipients']['bcc'])), '</div>
-					<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
+					<div class="smalltext"><strong>', $txt['pm_to'], ':</strong> ', empty($post['recipients']['to']) ? '<span class="alert">' . $txt['no_recipients'] . '</span>' : implode(', ', $post['recipients']['to']), (empty($post['recipients']['bcc']) ? '' : ', <strong>' . $txt['pm_bcc'] . ':</strong> ' . implode(', ', $post['recipients']['bcc'])), '
+					', $post['time'], '</div>
 				</div>
 				<div class="list_posts">
 					', $post['body'], '
