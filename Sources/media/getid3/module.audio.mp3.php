@@ -623,13 +623,8 @@ class getid3_mp3 extends getid3_handler
 
 
 				// should be safe to leave this at 'vbr' and let it be overriden to 'cbr' if a CBR preset/mode is used by LAME
-//				if (substr($headerstring, $VBRidOffset, strlen('Info')) == 'Xing') {
-					$thisfile_mpeg_audio['bitrate_mode'] = 'vbr';
-					$thisfile_mpeg_audio['VBR_method']   = 'Xing';
-//				} else {
-//					$ScanAsCBR = true;
-//					$thisfile_mpeg_audio['bitrate_mode'] = 'cbr';
-//				}
+				$thisfile_mpeg_audio['bitrate_mode'] = 'vbr';
+				$thisfile_mpeg_audio['VBR_method']   = 'Xing';
 
 				$thisfile_mpeg_audio['xing_flags_raw'] = getid3_lib::BigEndian2Int(substr($headerstring, $VBRidOffset + 4, 4));
 
@@ -899,16 +894,7 @@ class getid3_mp3 extends getid3_handler
 				}
 			} else {
 				if ((($info['avdataend'] - $info['avdataoffset']) - $ExpectedNumberOfAudioBytes) == 1) {
-				//	$prenullbytefileoffset = ftell($this->getid3->fp);
-				//	fseek($this->getid3->fp, $info['avdataend'], SEEK_SET);
-				//	$PossibleNullByte = fread($this->getid3->fp, 1);
-				//	fseek($this->getid3->fp, $prenullbytefileoffset, SEEK_SET);
-				//	if ($PossibleNullByte === "\x00") {
-						$info['avdataend']--;
-				//		$info['warning'][] = 'Extra null byte at end of MP3 data assumed to be RIFF padding and therefore ignored';
-				//	} else {
-				//		$info['warning'][] = 'Too much data in file: expecting '.$ExpectedNumberOfAudioBytes.' bytes of audio data, found '.($info['avdataend'] - $info['avdataoffset']).' ('.(($info['avdataend'] - $info['avdataoffset']) - $ExpectedNumberOfAudioBytes).' bytes too many)';
-				//	}
+					$info['avdataend']--;
 				} else {
 					$info['warning'][] = 'Too much data in file: expecting '.$ExpectedNumberOfAudioBytes.' bytes of audio data, found '.($info['avdataend'] - $info['avdataoffset']).' ('.(($info['avdataend'] - $info['avdataoffset']) - $ExpectedNumberOfAudioBytes).' bytes too many)';
 				}
@@ -962,109 +948,6 @@ class getid3_mp3 extends getid3_handler
 			}
 
 		}
-
-
-		//if (false) {
-		//    // experimental side info parsing section - not returning anything useful yet
-		//
-		//    $SideInfoBitstream = getid3_lib::BigEndian2Bin($SideInfoData);
-		//    $SideInfoOffset = 0;
-		//
-		//    if ($thisfile_mpeg_audio['version'] == '1') {
-		//        if ($thisfile_mpeg_audio['channelmode'] == 'mono') {
-		//            // MPEG-1 (mono)
-		//            $thisfile_mpeg_audio['side_info']['main_data_begin'] = substr($SideInfoBitstream, $SideInfoOffset, 9);
-		//            $SideInfoOffset += 9;
-		//            $SideInfoOffset += 5;
-		//        } else {
-		//            // MPEG-1 (stereo, joint-stereo, dual-channel)
-		//            $thisfile_mpeg_audio['side_info']['main_data_begin'] = substr($SideInfoBitstream, $SideInfoOffset, 9);
-		//            $SideInfoOffset += 9;
-		//            $SideInfoOffset += 3;
-		//        }
-		//    } else { // 2 or 2.5
-		//        if ($thisfile_mpeg_audio['channelmode'] == 'mono') {
-		//            // MPEG-2, MPEG-2.5 (mono)
-		//            $thisfile_mpeg_audio['side_info']['main_data_begin'] = substr($SideInfoBitstream, $SideInfoOffset, 8);
-		//            $SideInfoOffset += 8;
-		//            $SideInfoOffset += 1;
-		//        } else {
-		//            // MPEG-2, MPEG-2.5 (stereo, joint-stereo, dual-channel)
-		//            $thisfile_mpeg_audio['side_info']['main_data_begin'] = substr($SideInfoBitstream, $SideInfoOffset, 8);
-		//            $SideInfoOffset += 8;
-		//            $SideInfoOffset += 2;
-		//        }
-		//    }
-		//
-		//    if ($thisfile_mpeg_audio['version'] == '1') {
-		//        for ($channel = 0; $channel < $info['audio']['channels']; $channel++) {
-		//            for ($scfsi_band = 0; $scfsi_band < 4; $scfsi_band++) {
-		//                $thisfile_mpeg_audio['scfsi'][$channel][$scfsi_band] = substr($SideInfoBitstream, $SideInfoOffset, 1);
-		//                $SideInfoOffset += 2;
-		//            }
-		//        }
-		//    }
-		//    for ($granule = 0; $granule < (($thisfile_mpeg_audio['version'] == '1') ? 2 : 1); $granule++) {
-		//        for ($channel = 0; $channel < $info['audio']['channels']; $channel++) {
-		//            $thisfile_mpeg_audio['part2_3_length'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 12);
-		//            $SideInfoOffset += 12;
-		//            $thisfile_mpeg_audio['big_values'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 9);
-		//            $SideInfoOffset += 9;
-		//            $thisfile_mpeg_audio['global_gain'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 8);
-		//            $SideInfoOffset += 8;
-		//            if ($thisfile_mpeg_audio['version'] == '1') {
-		//                $thisfile_mpeg_audio['scalefac_compress'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 4);
-		//                $SideInfoOffset += 4;
-		//            } else {
-		//                $thisfile_mpeg_audio['scalefac_compress'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 9);
-		//                $SideInfoOffset += 9;
-		//            }
-		//            $thisfile_mpeg_audio['window_switching_flag'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 1);
-		//            $SideInfoOffset += 1;
-		//
-		//            if ($thisfile_mpeg_audio['window_switching_flag'][$granule][$channel] == '1') {
-		//
-		//                $thisfile_mpeg_audio['block_type'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 2);
-		//                $SideInfoOffset += 2;
-		//                $thisfile_mpeg_audio['mixed_block_flag'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 1);
-		//                $SideInfoOffset += 1;
-		//
-		//                for ($region = 0; $region < 2; $region++) {
-		//                    $thisfile_mpeg_audio['table_select'][$granule][$channel][$region] = substr($SideInfoBitstream, $SideInfoOffset, 5);
-		//                    $SideInfoOffset += 5;
-		//                }
-		//                $thisfile_mpeg_audio['table_select'][$granule][$channel][2] = 0;
-		//
-		//                for ($window = 0; $window < 3; $window++) {
-		//                    $thisfile_mpeg_audio['subblock_gain'][$granule][$channel][$window] = substr($SideInfoBitstream, $SideInfoOffset, 3);
-		//                    $SideInfoOffset += 3;
-		//                }
-		//
-		//            } else {
-		//
-		//                for ($region = 0; $region < 3; $region++) {
-		//                    $thisfile_mpeg_audio['table_select'][$granule][$channel][$region] = substr($SideInfoBitstream, $SideInfoOffset, 5);
-		//                    $SideInfoOffset += 5;
-		//                }
-		//
-		//                $thisfile_mpeg_audio['region0_count'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 4);
-		//                $SideInfoOffset += 4;
-		//                $thisfile_mpeg_audio['region1_count'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 3);
-		//                $SideInfoOffset += 3;
-		//                $thisfile_mpeg_audio['block_type'][$granule][$channel] = 0;
-		//            }
-		//
-		//            if ($thisfile_mpeg_audio['version'] == '1') {
-		//                $thisfile_mpeg_audio['preflag'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 1);
-		//                $SideInfoOffset += 1;
-		//            }
-		//            $thisfile_mpeg_audio['scalefac_scale'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 1);
-		//            $SideInfoOffset += 1;
-		//            $thisfile_mpeg_audio['count1table_select'][$granule][$channel] = substr($SideInfoBitstream, $SideInfoOffset, 1);
-		//            $SideInfoOffset += 1;
-		//        }
-		//    }
-		//}
 
 		return true;
 	}

@@ -850,7 +850,7 @@ class wecss_math extends wecss
 {
 	function process(&$css)
 	{
-		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(em|ex|px|pt|pc|deg|rad|grad|in|cm|mm|ms|s|hz|khz)|\b(?:round|ceil|floor|abs|fmod|min|max|rand)\()+)\)~i', $css, $matches))
+		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(em|ex|px|pt|pc|rem|deg|rad|grad|in|cm|mm|ms|s|hz|khz)|\b(?:round|ceil|floor|abs|fmod|min|max|rand)\()+)\)~i', $css, $matches))
 			return;
 
 		$done = array();

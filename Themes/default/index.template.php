@@ -268,8 +268,8 @@ function template_language_selector()
 	if (empty($context['languages']) || count($context['languages']) < 2)
 		return;
 
-	$lng = $user_info['url'];
-	$lng .= strpos($lng, '?') !== false ? ';' : '?';
+	$qmark = strpos($user_info['url'], '?');
+	$lng = $qmark === false ? substr(strrchr($user_info['url'], '/'), 1) . '?' : substr($user_info['url'], strrpos(substr($user_info['url'], 0, $qmark), '/') + 1) . ';';
 	if (strpos($lng, 'language=') !== false)
 		$lng = preg_replace('~([;&?])language=[a-z]+[;&]~i', '$1', $lng);
 

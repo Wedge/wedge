@@ -786,36 +786,8 @@ class getid3_quicktime extends getid3_handler
 					$sttsEntriesDataOffset += 4;
 
 					$frames_count += $atom_structure['time_to_sample_table'][$i]['sample_count'];
-
-					// THIS SECTION REPLACED WITH CODE IN "stbl" ATOM
-					//if (!empty($info['quicktime']['time_scale']) && ($atom_structure['time_to_sample_table'][$i]['sample_duration'] > 0)) {
-					//	$stts_new_framerate = $info['quicktime']['time_scale'] / $atom_structure['time_to_sample_table'][$i]['sample_duration'];
-					//	if ($stts_new_framerate <= 60) {
-					//		// some atoms have durations of "1" giving a very large framerate, which probably is not right
-					//		$info['video']['frame_rate'] = max($info['video']['frame_rate'], $stts_new_framerate);
-					//	}
-					//}
-					//
-					//$FrameRateCalculatorArray[($info['quicktime']['time_scale'] / $atom_structure['time_to_sample_table'][$i]['sample_duration'])] += $atom_structure['time_to_sample_table'][$i]['sample_count'];
 				}
 				$info['quicktime']['stts_framecount'][] = $frames_count;
-				//$sttsFramesTotal  = 0;
-				//$sttsSecondsTotal = 0;
-				//foreach ($FrameRateCalculatorArray as $frames_per_second => $frame_count) {
-				//	if (($frames_per_second > 60) || ($frames_per_second < 1)) {
-				//		// not video FPS information, probably audio information
-				//		$sttsFramesTotal  = 0;
-				//		$sttsSecondsTotal = 0;
-				//		break;
-				//	}
-				//	$sttsFramesTotal  += $frame_count;
-				//	$sttsSecondsTotal += $frame_count / $frames_per_second;
-				//}
-				//if (($sttsFramesTotal > 0) && ($sttsSecondsTotal > 0)) {
-				//	if (($sttsFramesTotal / $sttsSecondsTotal) > $info['video']['frame_rate']) {
-				//		$info['video']['frame_rate'] = $sttsFramesTotal / $sttsSecondsTotal;
-				//	}
-				//}
 				break;
 
 
@@ -1310,8 +1282,6 @@ class getid3_quicktime extends getid3_handler
 
 			case "\x00\x00\x00\x00":
 			case 'meta': // METAdata atom
-				// some kind of metacontainer, may contain a big data dump such as:
-				// mdta keys  mdtacom.apple.quicktime.make (mdtacom.apple.quicktime.creationdate ,mdtacom.apple.quicktime.location.ISO6709 $mdtacom.apple.quicktime.software !mdtacom.apple.quicktime.model ilst   data DEApple 0  (data DE2011-05-11T17:54:04+0200 2  *data DE+52.4936+013.3897+040.247/   data DE4.3.1  data DEiPhone 4
 				// http://www.geocities.com/xhelmboyx/quicktime/formats/qti-layout.txt
 
 	            $atom_structure['version']   =          getid3_lib::BigEndian2Int(substr($atom_data, 0, 1));

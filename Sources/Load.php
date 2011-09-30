@@ -142,8 +142,7 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $modSettings, $user_settings;
-	global $cookiename, $user_info, $language;
+	global $modSettings, $user_settings, $cookiename, $user_info, $language;
 
 	$id_member = 0;
 
@@ -363,7 +362,7 @@ function loadUserSettings()
 	$user_info['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];
 	$user_info['server'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $user_info['host'];
 
-	// Also contains the query string.
+	// The URL in your address bar. Also contains the query string.
 	// Do not print this without sanitizing first!
 	$user_info['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $user_info['server'] : substr($user_info['server'], 0, strpos($user_info['server'], '/')) . '//' . $_SERVER['HTTP_HOST']) . $_SERVER['REQUEST_URI'];
 
