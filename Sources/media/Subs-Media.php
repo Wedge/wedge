@@ -3517,8 +3517,6 @@ function aeva_mkdir($dir, $chmod)
 function media_resetUnseen($id = null)
 {
 	updateMemberData($id, array('media_unseen' => '-1'));
-	if ($id === null && function_exists('clean_cache'))
-		clean_cache('member_data');
 }
 
 // Set current user's Unseen counter to zero and mark all items as seen.

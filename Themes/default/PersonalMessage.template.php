@@ -383,11 +383,19 @@ function template_folder()
 			<div class="post">
 				<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>';
 
-			if ($context['folder'] != 'sent')
+			if ($context['folder'] != 'sent' || !empty($context['message_can_unread'][$message['id']]))
+			{
 				echo '
-				<div class="smalltext reportlinks righttext">
-					<a href="', $scripturl, '?action=pm;sa=report;l=', $context['current_label_id'], ';pmsg=', $message['id'], '">', $txt['pm_report_to_admin'], '</a>
+				<div class="reportlinks righttext">';
+				if ($context['folder'] != 'sent')
+					echo '
+					<a href="', $scripturl, '?action=pm;sa=report;l=', $context['current_label_id'], ';pmsg=', $message['id'], '">', $txt['pm_report_to_admin'], '</a>&nbsp;';
+				if (!empty($context['message_can_unread'][$message['id']]))
+					echo '
+					&nbsp;<a href="', $scripturl, '?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_query'], '">', $txt['mark_unread'], '</a>';
+				echo '
 				</div>';
+			}
 
 			// Are there any custom profile fields for above the signature?
 			if (!empty($message['member']['custom_fields']))
@@ -462,17 +470,7 @@ function template_folder()
 
 			echo '
 			</div>
-			<br class="clear">';
-
-		if (!empty($context['message_can_unread'][$message['id']]))
-			echo '
-			<div class="moderatorbar">
-				<div class="righttext reportlinks">
-					<a href="', $scripturl, '?action=pm;sa=markunread;pmid=', $message['id'], ';', $context['session_query'], '">', $txt['mark_unread'], '</a>
-				</div>
-			</div>';
-
-		echo '
+			<br class="clear">
 		</div>
 	</div></div>';
 		}

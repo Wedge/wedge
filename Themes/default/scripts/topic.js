@@ -167,7 +167,7 @@ QuickReply.prototype.swap = function ()
 {
 	var cont = $('#' + this.opt.sContainerId);
 	$('#' + this.opt.sImageId).toggleClass('fold', this.bCollapsed);
-	this.bCollapsed ? cont.slideDown(200) : cont.slideUp(200);
+	this.bCollapsed ? cont.slideDown(150) : cont.slideUp(200);
 
 	this.bCollapsed = !this.bCollapsed;
 	return false;

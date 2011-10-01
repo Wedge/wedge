@@ -2232,13 +2232,11 @@ class wedit
 	$("#', $this->id, '").bind("select click keyup change", function () { this.caretPos = document.selection.createRange().duplicate(); });');
 
 		echo '
-		<div>
-			<div style="width: 98.8%">
-				<div>
-					<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" tabindex="', $context['tabindex']++, '" style="width: ', $this->width, '; height: ', $this->height, ';', isset($context['post_error']['no_message']) || isset($context['post_error']['long_message']) ? ' border: 1px solid red;' : '', '">', $this->value, '</textarea>
-				</div>
-				<div id="', $this->id, '_resizer" style="width: ', $this->width, '; padding: 0 2px" class="hide richedit_resize"></div>
+		<div class="writer">
+			<div>
+				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" tabindex="', $context['tabindex']++, '" style="width: ', $this->width, '; height: ', $this->height, ';', isset($context['post_error']['no_message']) || isset($context['post_error']['long_message']) ? ' border: 1px solid red;' : '', '">', $this->value, '</textarea>
 			</div>
+			<div id="', $this->id, '_resizer" style="width: ', $this->width, '; padding: 0 2px" class="hide richedit_resize"></div>
 		</div>
 		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0">';
 

@@ -562,6 +562,9 @@ ul.buttonlist extends ul.quickbuttons
 #quickreply a
 	font-family: $main_font
 
+.qr_content
+	padding-left: 10px
+
 #qr_options
 	form textarea
 		height: 100px

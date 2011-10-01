@@ -879,7 +879,7 @@ function clean_cache($type = '', $extensions = 'php')
 	global $cachedir, $sourcedir;
 
 	// No directory = no game.
-	$folder = $cachedir . ($type === 'data' ? '/data' . ($type = '') : '');
+	$folder = $cachedir . ($type === '' ? '/data' : '');
 	if (!is_dir($folder))
 		return;
 
