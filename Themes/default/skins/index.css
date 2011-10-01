@@ -323,6 +323,8 @@ em
 	// !!! border: 1px solid rgba(0,0,0, .1)
 	p
 		margin: 0 0 .5em
+	p:first-child:last-child
+		margin-top: .5em
 
 .wrc_top
 	border-radius: 12px 12px 0 0
@@ -1461,6 +1463,11 @@ th.first_th
 
 th.last_th
 	border-radius: 0 8px 0 0
+
+/* Don't touch this -- this hack dynamically adds language flags.
+------------------------------------------------------- */
+
+{%dynamic_language_flags:hello%}
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */

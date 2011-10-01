@@ -425,7 +425,7 @@ function ajaxRating2(XMLDoc)
 }
 
 // Find the actual position of an item.
-// This is a dummy replacement for add-ons -- might be removed later.
+// This is a dummy replacement for plugins -- might be removed later.
 function we_itemPos(itemHandle)
 {
 	var offset = $(itemHandle).offset();

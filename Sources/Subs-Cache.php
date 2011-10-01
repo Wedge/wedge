@@ -460,6 +460,7 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	loadSource('Class-CSS');
 
 	$plugins = array(
+		new wecss_dynamic(),	// Dynamic replacements through callback functions
 		new wecss_mixin(),		// CSS mixins (mixin hello($world: 0))
 		new wecss_var(),		// CSS variables ($hello_world)
 		new wecss_color(),		// CSS color transforms
@@ -559,6 +560,26 @@ function wedge_fix_browser_css($matches)
 		return $prefix . $matches[0];
 
 	return $matches[0];
+}
+
+function dynamic_language_flags($match)
+{
+	global $context, $modSettings;
+
+	if (empty($context['languages']) || count($context['languages']) < 2)
+		return;
+
+	$rep = '';
+	foreach ($context['languages'] as $language)
+	{
+		$icon = '/languages/Flag.' . $language['filename'] . '.png';
+		$rep .= '
+.flag_' . $language['filename'] . ' extends .inline-block
+	background: url($theme'. $icon . ') no-repeat
+	width: width($theme_dir'. $icon . ')px
+	height: height($theme_dir'. $icon . ')px';
+	}
+	return $rep;
 }
 
 /**
@@ -888,7 +909,7 @@ function clean_cache($type = '', $extensions = 'php')
 	$exts = array_flip(explode(',', $extensions));
 	$len = strlen($type);
 	foreach ($dh as $file)
-		if ($file !== '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || substr($file, 0, $len) == $type))
+		if ($file !== '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || strpos($file, $type) !== false))
 			if (!$extensions || isset($exts[wedge_get_extension($file)]))
 				@unlink($folder . '/' . $file);
 

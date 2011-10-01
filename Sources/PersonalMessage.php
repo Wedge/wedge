@@ -1561,7 +1561,8 @@ function MessageSearch2()
 			$row['body'] = parse_bbc($row['body'], true, 'pm' . $row['id_pm']);
 
 			$href = $scripturl . '?action=pm;f=' . $context['folder'] . (isset($context['first_label'][$row['id_pm']]) ? ';l=' . $context['first_label'][$row['id_pm']] : '') . ';pmid=' . ($context['display_mode'] == 2 && isset($real_pm_ids[$head_pms[$row['id_pm']]]) ? $real_pm_ids[$head_pms[$row['id_pm']]] : $row['id_pm']) . '#msg' . $row['id_pm'];
-			$context['personal_messages'][] = array(
+			$is_replied_to =& $context['message_replied'][$row['id_pm']];
+			$context['personal_messages'][$row['id_pm']] = array(
 				'id' => $row['id_pm'],
 				'member' => &$memberContext[$row['id_member_from']],
 				'subject' => $row['subject'],
@@ -1570,13 +1571,12 @@ function MessageSearch2()
 				'recipients' => &$recipients[$row['id_pm']],
 				'labels' => &$context['message_labels'][$row['id_pm']],
 				'fully_labeled' => count($context['message_labels'][$row['id_pm']]) == count($context['labels']),
-				'is_replied_to' => &$context['message_replied'][$row['id_pm']],
+				'replied_msg' => $is_replied_to ? number_context('pm_is_replied_to_sent', $is_replied_to, false) : 0,
+				'is_replied_to' => $is_replied_to,
 				'href' => $href,
 				'link' => '<a href="' . $href . '">' . $row['subject'] . '</a>',
 				'counter' => ++$counter,
 			);
-			if ($context['personal_messages']['is_replied_to'])
-				$context['personal_messages']['replied_msg'] = number_context('pm_is_replied_to_sent', $context['personal_messages']['is_replied_to'], false);
 		}
 		wesql::free_result($request);
 	}

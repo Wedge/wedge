@@ -231,6 +231,20 @@ class wecss_mixin extends wecss
 	}
 }
 
+// Find {%dynamic_function%}, then execute dynamic_function() to replace them.
+// You may add parameters to the function call: {%dynamic_function:param%}, then
+// declare your function as dynamic_language_flags($match), where $match[1] is the param.
+class wecss_dynamic extends wecss
+{
+	function process(&$css)
+	{
+		if (preg_match_all('~{%([a-z0-9_]+)(?::([^%]+))?%}~i', $css, $functions, PREG_SET_ORDER))
+			foreach ($functions as $func)
+				if (is_callable($func[1]))
+					$css = preg_replace_callback('~{%' . $func[1] . '(?::([^%]+))?%}~i', $func[1], $css);
+	}
+}
+
 class wecss_var extends wecss
 {
 	function process(&$css)

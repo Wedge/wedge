@@ -278,7 +278,7 @@ function template_language_selector()
 
 	foreach ($context['languages'] as $language)
 		echo '
-				<a href="' . $lng . 'language=' . $language['filename'] . '"><img src="' . $settings['theme_url'] . '/languages/Flag.' . $language['filename'] . '.png" title="' . westr::htmlspecialchars($language['name']) . '"></a>';
+				<a href="' . $lng . 'language=' . $language['filename'] . '" class="flag_' . $language['filename'] . '" title="' . westr::htmlspecialchars($language['name']) . '"></a>';
 
 	echo '
 			</p>';

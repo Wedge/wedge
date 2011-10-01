@@ -280,7 +280,6 @@ function template_main()
 		// Are there any custom profile fields for above the signature?
 		if (!empty($message['member']['custom_fields']))
 		{
-			$shown = false;
 			foreach ($message['member']['custom_fields'] as $custom)
 			{
 				if ($custom['placement'] != 2 || empty($custom['value']))
@@ -295,7 +294,7 @@ function template_main()
 				echo '
 									<li>', $custom['value'], '</li>';
 			}
-			if ($shown)
+			if (!empty($shown))
 				echo '
 								</ul>
 							</div>';
