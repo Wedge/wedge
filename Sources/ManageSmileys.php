@@ -1732,7 +1732,7 @@ function cleanSmileyCache()
 {
 	cache_put_data('smiley_parser', null, 480);
 	cache_put_data('smiley_poster', null, 480);
-	clean_cache('smileys', 'css,cgz,css.gz');
+	clean_cache('css,cgz,css.gz', 'smileys');
 }
 
 ?>

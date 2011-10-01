@@ -891,16 +891,16 @@ function wedge_get_skin_options()
 /**
  * Cleans some or all of the files stored in the file cache.
  *
- * @param string $type Optional, designates the file prefix that must be matched in order to be cleared from the file cache folder, to prune 'type_*.php' files. 'data' is a special case, as it gets its own subfolder.
- * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. 'php' by default.
+ * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. Leave empty to clear the regular data cache (data sub-folder.)
+ * @param string $type Optional, designates a filter to match the file names against before they can be cleared from the cache folder. Leave empty to clear the regular data cache (data sub-folder.)
  * @todo Figure out a better way of doing this and get rid of $sourcedir being globalled again.
  */
-function clean_cache($type = '', $extensions = 'php')
+function clean_cache($extensions = 'php', $filter = '')
 {
 	global $cachedir, $sourcedir;
 
 	// No directory = no game.
-	$folder = $cachedir . ($type === '' ? '/data' : '');
+	$folder = $cachedir . ($type === '' && $extensions === 'php' ? '/data' : '');
 	if (!is_dir($folder))
 		return;
 
@@ -909,7 +909,7 @@ function clean_cache($type = '', $extensions = 'php')
 	$exts = array_flip(explode(',', $extensions));
 	$len = strlen($type);
 	foreach ($dh as $file)
-		if ($file !== '.' && $file !== '..' && $file !== 'index.php' && $file !== '.htaccess' && (!$type || strpos($file, $type) !== false))
+		if ($file[0] !== '.' && $file !== 'index.php' && (!$type || strpos($file, $type) !== false))
 			if (!$extensions || isset($exts[wedge_get_extension($file)]))
 				@unlink($folder . '/' . $file);
 

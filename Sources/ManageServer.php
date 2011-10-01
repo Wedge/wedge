@@ -1028,7 +1028,8 @@ function DownloadLanguage()
 	if (!empty($modSettings['cache_enable']))
 	{
 		cache_put_data('known_languages', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
-		cache_put_data('known_languages_all', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
+		// Delete all cached CSS files.
+		clean_cache('css,cgz,css.gz');
 	}
 
 	loadSource('Subs-List');
@@ -1461,7 +1462,8 @@ function ModifyLanguage()
 		if (!empty($modSettings['cache_enable']))
 		{
 			cache_put_data('known_languages', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
-			cache_put_data('known_languages_all', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
+			// Delete all cached CSS files.
+			clean_cache('css,cgz,css.gz');
 		}
 
 		// Seventh, if we deleted the default language, set us back to English?
