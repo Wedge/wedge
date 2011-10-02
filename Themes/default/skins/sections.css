@@ -534,7 +534,7 @@ ul.buttonlist extends ul.quickbuttons
 			list-style: none
 			float: left
 	a
-		padding: 3px 4px 4px
+		padding: 3px 5px 4px
 		color: #679
 		background: #f3f3f3
 		height, line-height: 15px

@@ -1829,6 +1829,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// Now we have a $context['skeleton'] (original or overridden), we can turn it into an array.
 		preg_match_all('~<(?!!)(/)?([\w:,]+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
 		build_skeleton($match, $context['skeleton_array']);
+		unset($context['skeleton']);
 	}
 
 	// Guests may still need a name

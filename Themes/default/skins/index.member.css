@@ -15,6 +15,18 @@ ul.quickbuttons
 		background-image: url($images/im_on.gif)
 		background-position: 0 0
 
+// These may be, but it's unlikely, and they won't bother if the icons don't show up anyway.
+ul.buttonlist
+	a.lock, a.sticky, a.add_poll
+		padding-left: 22px
+		background-image: url($images/small_lock.gif)
+		background-position: 6px 5px
+		background-repeat: no-repeat
+	a.sticky
+		padding-left: 23px
+		background-image: url($images/small_stick.gif)
+	a.add_poll
+		background-image: url($images/small_poll.gif)
 
 /* Styles for the personal messages section.
 ------------------------------------------------- */

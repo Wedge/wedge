@@ -124,7 +124,7 @@ function ViewErrorLog()
 	$context['errors'] = array();
 	$members = array();
 
-	for ($i = 0; $row = wesql::fetch_assoc($request); $i ++)
+	for ($i = 0; $row = wesql::fetch_assoc($request); $i++)
 	{
 		$search_message = preg_replace('~&lt;span class=&quot;remove&quot;&gt;(.+?)&lt;/span&gt;~', '%', wesql::escape_wildcard_string($row['message']));
 		if ($search_message == $filter['value']['sql'])

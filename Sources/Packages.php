@@ -64,7 +64,6 @@ function Packages()
 	loadSource('Subs-Package');
 	loadLanguage('Packages');
 	loadTemplate('Packages');
-	add_css_file('admin', true);
 
 	$context['page_title'] = $txt['plugin_manager'];
 

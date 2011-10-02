@@ -582,6 +582,43 @@ function dynamic_language_flags($match)
 	return $rep;
 }
 
+function dynamic_admin_menu_icons($match)
+{
+	global $context, $modSettings, $admin_areas, $ina;
+
+	function array_search_key($needle, &$arr)
+	{
+		global $ina;
+
+		foreach ($arr as $key => &$val)
+		{
+			if (!is_array($val))
+				continue;
+			if (isset($val[$needle]))
+				$ina[] = array($key, $val[$needle]);
+			else
+				array_search_key($needle, $val);
+		}
+	}
+
+	$ina = array();
+	array_search_key('icon', $admin_areas);
+
+	$rep = '';
+	foreach ($ina as $val)
+	{
+		$icon = '/images/admin/' . $val[1];
+		$rep .= '
+.admenu_icon_' . $val[0] . ' extends .inline-block
+	background: url($theme'. $icon . ') no-repeat
+	width: width($theme_dir'. $icon . ')px
+	height: height($theme_dir'. $icon . ')px';
+	}
+	unset($ina);
+
+	return $rep;
+}
+
 /**
  * Create a compact JS file that concatenates and compresses a list of existing JS files.
  *
@@ -904,9 +941,14 @@ function clean_cache($extensions = 'php', $filter = '')
 	if (!is_dir($folder))
 		return;
 
+	if ($extensions === 'css')
+		$extensions = array('css', 'cgz', 'css.gz');
+	elseif ($extensions === 'js')
+		$extensions = array('js', 'jgz', 'js.gz');
+
 	// Remove the files in Wedge's own disk cache, if any.
 	$dh = scandir($folder);
-	$exts = array_flip(explode(',', $extensions));
+	$exts = array_flip((array) $extensions);
 	$len = strlen($type);
 	foreach ($dh as $file)
 		if ($file[0] !== '.' && $file !== 'index.php' && (!$type || strpos($file, $type) !== false))

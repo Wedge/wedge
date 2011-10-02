@@ -44,12 +44,11 @@ if (!defined('WEDGE'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $modSettings, $user_info, $settings, $options, $boardurl;
+	global $txt, $context, $scripturl, $modSettings, $user_info;
+	global $settings, $options, $boardurl, $admin_areas;
 
-	// Load the language and templates....
+	// Load the language strings for use in the menu...
 	loadLanguage('Admin');
-	loadTemplate('Admin');
-	add_css_file('admin', true);
 
 	// No indexing evil stuff.
 	$context['robot_no_index'] = true;
@@ -648,14 +647,18 @@ function Admin()
 		}
 	}
 
-	// Let modders modify admin areas easily.
-	// You can insert a top-level menu into the admin menu by doing something like this in your hook:
+	// Let modders modify admin areas easily. You can insert a top-level menu
+	// into the admin menu (global $admin_areas) by doing something like this in your hook:
 	// $admin_areas = array_merge(array_splice($admin_areas, 0, 2), $my_top_level_menu_array, $admin_areas);
 
-	call_hook('admin_areas', array(&$admin_areas));
+	call_hook('admin_areas');
 
 	// Make sure the administrator has a valid session...
 	validateSession();
+
+	// Load the template, and build the CSS file (we need the admin menu to be filled at this point.)
+	loadTemplate('Admin');
+	add_css_file(array('admin', 'admenu'), true);
 
 	// Actually create the menu!
 	$admin_include_data = createMenu($admin_areas, $menuOptions);

@@ -46,7 +46,6 @@ function PackageGet()
 	// Use the Packages template... no reason to separate.
 	loadLanguage('Packages');
 	loadTemplate('Packages');
-	add_css_file('admin', true);
 
 	$context['page_title'] = $txt['plugin_manager'];
 

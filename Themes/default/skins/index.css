@@ -1467,7 +1467,7 @@ th.last_th
 /* Don't touch this -- this hack dynamically adds language flags.
 ------------------------------------------------------- */
 
-{%dynamic_language_flags:hello%}
+{%language_flags%}
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */

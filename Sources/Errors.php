@@ -58,13 +58,10 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$user_info['ip'] = '';
 
 	// Find the best query string we can...
-	if (!empty($full_request))
-		$query_string = substr($scripturl, 0, strpos($scripturl, '://') + 3) . $full_request;
-	else
-		$query_string = empty($_SERVER['QUERY_STRING']) ? (empty($_SERVER['REQUEST_URL']) ? '' : str_replace($scripturl, '', $_SERVER['REQUEST_URL'])) : $_SERVER['QUERY_STRING'];
+	$query_string = $user_info['url'];
 
 	// Are we using shortened or pretty URLs here?
-	$is_short = strpos($query_string, $scripturl);
+	$is_short = strpos($query_string, $scripturl . '?');
 	$has_protocol = strpos($query_string, '://') > 0;
 
 	// Just so we know what board error messages are from. If it's a pretty URL, we already know that.

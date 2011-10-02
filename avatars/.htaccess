@@ -1,0 +1,5 @@
+<IfModule mod_headers.c>
+	Header set Cache-Control "max-age=2592000"
+	Header set Expires "Thu, 21 March 2025 03:42:00 GMT"
+	Header set Vary "Accept-Encoding"
+</IfModule>
