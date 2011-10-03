@@ -69,6 +69,7 @@ function reloadSettings()
 
 	// Deal with loading plugins.
 	$context['enabled_plugins'] = array();
+	$context['extra_actions'] = array();
 	if (!empty($modSettings['enabled_plugins']))
 	{
 		// Step through the list we think we have enabled.
@@ -82,7 +83,10 @@ function reloadSettings()
 				$context['enabled_plugins'][$plugin_details['id']] = $plugin;
 				$this_plugindir = $context['plugins_dir'][$plugin_details['id']] = $sane_path . '/' . $plugin;
 				$context['plugins_url'][$plugin_details['id']] = $pluginsurl . '/' . $plugin;
-				unset($plugin_details['id'], $plugin_details['provides']);
+				if (isset($plugin_details['actions']))
+					foreach ($plugin_details['actions'] as $action)
+						$context['extra_actions'][$action['action']] = array($action['filename'], $action['function'], $plugin_details['id']);
+				unset($plugin_details['id'], $plugin_details['provides'], $plugin_details['actions']);
 				foreach ($plugin_details as $hook => $functions)
 					foreach ($functions as $function)
 						$modSettings['hooks'][$hook][] = strtr($function, array('$plugindir' => $this_plugindir));

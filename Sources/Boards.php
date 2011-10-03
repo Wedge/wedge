@@ -153,6 +153,8 @@ function Boards()
 
 	if (empty($modSettings['display_flags']))
 		$modSettings['display_flags'] = 'none';
+
+	call_hook('info_center');
 }
 
 ?>

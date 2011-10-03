@@ -705,6 +705,29 @@ function EnablePlugin()
 		'id' => (string) $manifest['id'],
 		'provides' => $hooks_provided,
 	);
+	// We make a special exception for last-minute actions.
+	if (!empty($manifest->actions))
+	{
+		$actions = $manifest->actions->children();
+		$new_actions = array();
+		foreach ($actions as $action)
+		{
+			if ($action->getName() != 'action')
+				continue;
+
+			//<action action="myaction" function="myfunction" filename="$plugindir/MyFile.php" />
+			$this_action = array(
+				'action' => (string) $action['action'],
+				'function' => (string) $action['function'],
+				'filename' => (string) $action['filename'],
+			);
+			if (!empty($this_action['action']) && !empty($this_action['function']) && !empty($this_action['filename']))
+				$new_actions[] = $this_action;
+		}
+		if (!empty($new_actions))
+			$plugin_details['actions'] = $new_actions;
+	}
+
 	foreach ($hook_data as $point => $details)
 		foreach ($details as $hooked_details)
 			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|plugin';
@@ -1070,6 +1093,7 @@ function knownHooks()
 			'bbc_buttons',
 			'place_credit',
 			'get_boardindex',
+			'info_center',
 			'media_areas',
 			'profile_areas',
 			'ssi',

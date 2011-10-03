@@ -139,6 +139,9 @@ $action_list = array(
 	'who' => array('Who.php', 'Who'),
 );
 
+if (!empty($context['extra_actions']))
+	$action_list = array_merge($action_list, $context['extra_actions']);
+
 // Clean the request variables, add slashes, etc.
 cleanRequest();
 
