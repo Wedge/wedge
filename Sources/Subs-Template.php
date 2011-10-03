@@ -108,7 +108,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 		if (empty($context['layers']['default']))
 			fatal_lang_error('default_layer_missing');
 
-		render_skeleton(reset($context['skeleton_array']), key($context['skeleton_array']));
+		skeleton_render(reset($context['skeleton_array']), key($context['skeleton_array']));
 	}
 
 	// Remember this URL in case someone doesn't like sending HTTP_REFERER.
@@ -139,7 +139,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 /**
  * This is where we render the HTML page!
  */
-function render_skeleton(&$here, $key)
+function skeleton_render(&$here, $key)
 {
 	global $context;
 
@@ -153,7 +153,7 @@ function render_skeleton(&$here, $key)
 	{
 		// If the item is an array, then it's a layer. Otherwise, it's a block.
 		if (is_array($temp))
-			render_skeleton($temp, $id);
+			skeleton_render($temp, $id);
 		else
 			execBlock($id, 'ignore');
 	}
@@ -540,7 +540,7 @@ function hideChrome($layer = '')
 				)
 			)
 		);
-	build_skeleton_indexes();
+	skeleton_reindex();
 
 	// Nothing to see here, sir.
 	$context['hide_chrome'] = true;
@@ -549,7 +549,7 @@ function hideChrome($layer = '')
 /**
  * Build the multi-dimensional layout skeleton array from an single-dimension array of tags.
  */
-function build_skeleton(&$arr, &$dest, &$pos = 0, $name = '')
+function skeleton_build(&$arr, &$dest, &$pos = 0, $name = '')
 {
 	global $context;
 
@@ -568,7 +568,7 @@ function build_skeleton(&$arr, &$dest, &$pos = 0, $name = '')
 		if (empty($tag[3]))
 		{
 			$dest[$tag[2]] = array();
-			build_skeleton($arr, $dest[$tag[2]], $pos, $tag[2]);
+			skeleton_build($arr, $dest[$tag[2]], $pos, $tag[2]);
 		}
 		// Then it's a block...
 		else
@@ -580,18 +580,18 @@ function build_skeleton(&$arr, &$dest, &$pos = 0, $name = '')
  * Rebuilds $context['layers'] according to current skeleton.
  * The skeleton builder doesn't call this because it does it automatically.
  */
-function build_skeleton_indexes()
+function skeleton_reindex()
 {
 	global $context;
 
 	// We only reset the list of references, it won't impact the skeleton array.
 	$context['layers'] = array();
 
-	// !!! Saly, array_walk_recursive() won't trigger on child arrays... :(
-	build_skeleton_indexes_recursive($context['skeleton_array']);
+	// !!! Sadly, array_walk_recursive() won't trigger on child arrays... :(
+	skeleton_reindex_recursive($context['skeleton_array']);
 }
 
-function build_skeleton_indexes_recursive(&$here)
+function skeleton_reindex_recursive(&$here)
 {
 	global $context;
 
@@ -600,7 +600,7 @@ function build_skeleton_indexes_recursive(&$here)
 		if (is_array($item))
 		{
 			$context['layers'][$id] =& $item;
-			build_skeleton_indexes_recursive($item);
+			skeleton_reindex_recursive($item);
 		}
 	}
 }
@@ -1207,6 +1207,7 @@ function loadBlock($blocks, $target = '', $where = '')
 	*/
 
 	$blocks = array_flip((array) $blocks);
+
 	// Find the first target layer that isn't wishful thinking.
 	foreach ((array) $target as $layer)
 	{
@@ -1218,10 +1219,26 @@ function loadBlock($blocks, $target = '', $where = '')
 			break;
 		}
 	}
-	// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
-	// Plugins should provide a 'default' fallback if they considers it vital to show the block, e.g. array('sidebar', 'default').
+
+	// No valid layer found.
 	if (empty($to))
-		return;
+	{
+		// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
+		// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
+		if ($where !== 'before' && $where !== 'after')
+			return false;
+		// Or maybe we're looking for a block..?
+		$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($context['skeleton_array'])));
+		foreach ((array) $target as $block)
+		{
+			if (isset($all_blocks[$block]))
+			{
+				$to = $block;
+				break;
+			}
+		}
+		unset($all_blocks);
+	}
 
 	// If a mod requests to replace the contents of the sidebar, just smile politely.
 	if (($where === 'replace' || $where === 'erase') && $to === 'sidebar')
@@ -1242,10 +1259,10 @@ function loadBlock($blocks, $target = '', $where = '')
 		if (!$has_arrays)
 		{
 			$context['layers'][$to] = $blocks;
-			// If we erase, we might have to deleted layer entries.
+			// If we erase, we might have to delete layer entries.
 			if ($where === 'erase')
-				build_skeleton_indexes();
-			return;
+				skeleton_reindex();
+			return $to;
 		}
 
 		// Otherwise, we're in for some fun... :-/
@@ -1272,7 +1289,7 @@ function loadBlock($blocks, $target = '', $where = '')
 		// So, we found a layer but no blocks..? Add our blocks at the end.
 		if (!isset($offset))
 			$context['layers'][$to] += $blocks;
-		build_skeleton_indexes();
+		skeleton_reindex();
 	}
 	elseif ($where === 'add')
 		$context['layers'][$to] = array_merge($context['layers'][$to], $blocks);
@@ -1282,19 +1299,22 @@ function loadBlock($blocks, $target = '', $where = '')
 	{
 		foreach ($context['layers'] as &$layer)
 		{
-			if (isset($layer[$to]))
-			{
-				$keys = array_keys($layer);
-				$val = array_values($layer);
-				$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
-				array_splice($keys, $offset, 0, array_keys($blocks));
-				array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
-				$layer = array_combine($keys, $val);
-				build_skeleton_indexes();
-				break;
-			}
+			if (!isset($layer[$to]))
+				continue;
+
+			$keys = array_keys($layer);
+			$val = array_values($layer);
+			$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
+			array_splice($keys, $offset, 0, array_keys($blocks));
+			array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
+			$layer = array_combine($keys, $val);
+			skeleton_reindex();
+			break;
 		}
 	}
+	else
+		return false;
+	return $to;
 }
 
 /**
@@ -1330,20 +1350,18 @@ function loadLayer($layer, $target = '', $where = 'parent')
 
 	// Target layer doesn't exist..? Enter brooding mode.
 	if (!isset($context['layers'][$target]))
-		return;
+		return false;
 
 	if ($where === 'parent' || $where === 'before' || $where === 'after' || $where === 'replace' || $where === 'erase')
 	{
 		skeleton_insert_layer($layer, $target, $where);
 		if ($where === 'replace' || $where === 'erase')
-			unset($context['layers'][$target]);
-		return;
+			removeLayer($target);
 	}
 	elseif ($where === 'child')
 	{
 		$context['layers'][$target] = array($layer => $context['layers'][$target]);
 		$context['layers'][$layer] =& $context['layers'][$target][$layer];
-		return;
 	}
 	elseif ($where === 'firstchild' || $where === 'lastchild')
 	{
@@ -1353,6 +1371,9 @@ function loadLayer($layer, $target = '', $where = 'parent')
 			$context['layers'][$target][$layer] = array();
 		$context['layers'][$layer] =& $context['layers'][$target][$layer];
 	}
+	else
+		return false;
+	return $target;
 }
 
 /**
@@ -1370,6 +1391,21 @@ function skeleton_find_parent($child)
 			return $id;
 
 	return false;
+}
+
+function skeleton_remove_item($item, $from = array(), $level = 0)
+{
+	global $context;
+
+	if (empty($from))
+		$from = $context['skeleton_array'];
+
+	$ret = array();
+	foreach ($from as $key => $val)
+		if ($key !== $item)
+			$ret[$key] = is_array($val) && !empty($val) ? skeleton_remove_item($item, $val, $level + 1) : $val;
+
+	return $ret;
 }
 
 /**
@@ -1390,7 +1426,7 @@ function skeleton_insert_layer($source, $target = 'default', $where = 'parent')
 	$dest =& $context['layers'][$lay];
 
 	$temp = array();
-	foreach ($dest as $key => $value)
+	foreach ($dest as $key => &$value)
 	{
 		if ($key === $target)
 		{
@@ -1405,7 +1441,9 @@ function skeleton_insert_layer($source, $target = 'default', $where = 'parent')
 	}
 
 	$dest = $temp;
-	build_skeleton_indexes();
+	// We need to reindex, in case the layer had child layers.
+	if ($where !== 'after' && $where !== 'before')
+		skeleton_reindex();
 }
 
 // Helper function to remove a block from the page. Works on any layer.
@@ -1450,7 +1488,8 @@ function removeLayer($layer)
 	}
 
 	// This isn't a direct parent of 'default', so we can safely remove it.
-	unset($context['layers'][$layer]);
+	$context['skeleton_array'] = skeleton_remove_item($layer);
+	skeleton_reindex();
 	return true;
 }
 
