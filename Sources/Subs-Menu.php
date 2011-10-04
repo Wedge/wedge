@@ -202,8 +202,10 @@ function createMenu($menuData, $menuOptions = array())
 
 					// Update the context if required - as we can have areas pretending to be others. ;)
 					$menu_context['current_section'] = $section_id;
-					$menu_context['current_area'] = isset($area['select']) ? $area['select'] : $area_id;
-
+					if (isset($area['select']))
+						$menu_context['current_area'] = $_GET['area'] = $area['select'];
+					else
+						$menu_context['current_area'] = $area_id;
 					// This will be the data we return.
 					$include_data = $area;
 				}
