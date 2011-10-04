@@ -177,7 +177,7 @@ ul.packages li
 
 #find_code, #replace_code
 	display: block
-	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
+	font-family: $mono_font
 	font-size: x-small
 	background: #eef
 	line-height: 1.5em
@@ -268,7 +268,7 @@ pre.file_content
 	padding: 0 0.5em
 
 #boardtheme
-	font-family: "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
+	font-family: $mono_font
 
 
 /* Styles for the manage members section.
@@ -477,7 +477,7 @@ ul.moderation_notes
 		margin: 0 0 0 1ex
 
 .monospace
-	font: 9pt/1.2em "Lucida Console", "Courier New", monospace
+	font: 9pt/1.2em $mono_font
 
 /* Miscellaneous.
 ------------------------------------------------- */
@@ -492,3 +492,5 @@ ul.moderation_notes
 
 .pretty_prefix
 	margin: 0 0 1em 3em
+
+$mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace

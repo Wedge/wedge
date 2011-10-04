@@ -860,7 +860,7 @@ ul.reset, ul.reset li
 .bbc_code, .php_code
 	code
 		display: block
-		font: 8pt/1.5em "dejavu sans mono", "monaco", "lucida console", "courier new", monospace
+		font: 8pt/1.5em $mono_font
 		background: rgba(240, 235, 255, .5)
 		border-top: 2px solid #999
 		border-bottom: 2px solid #999
@@ -902,7 +902,7 @@ ul.reset, ul.reset li
 	text-align: left
 
 .bbc_tt
-	font-family: "dejavu sans mono", monaco, "lucida console", "courier new", monospace
+	font-family: $mono_font
 
 .bbc_pre
 	display: inline
@@ -1481,6 +1481,7 @@ th.last_th
 $main_font = Arial, sans-serif
 $menu_font = $main_font
 $head_font = "PT Sans", $main_font
+$mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace
 
 $post_font = 9pt/140% Verdana, $main_font
 

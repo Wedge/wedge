@@ -213,7 +213,7 @@ weAutoSuggest.prototype.handleSubmit = function()
 		this.addItemLink(entryId, entryName, true);
 		return false;
 	}
-}
+};
 
 // Positions the box correctly on the window.
 weAutoSuggest.prototype.positionDiv = function ()

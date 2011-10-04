@@ -114,9 +114,7 @@ function RepairBoards()
 		));
 
 		if (!empty($salvageBoardID))
-		{
 			$context['redirect_to_recount'] = true;
-		}
 
 		$_SESSION['repairboards_to_fix'] = null;
 		$_SESSION['repairboards_to_fix2'] = null;
