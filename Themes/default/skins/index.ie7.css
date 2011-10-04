@@ -199,6 +199,10 @@ input.save
 	background-position: 4px -62px
 input.new
 	background-position: 4px -94px
+input.spell
+	background-position: 4px -125px
+input.cancel
+	background-position: 0 100px
 
 // IE7 needs inline-block to be reset to inline separately... How annoying.
 .inline-block

@@ -873,7 +873,7 @@ function RemovePlugin()
 	else
 	{
 		checkSession();
-		// !!! Check that the folder is deleteable, and if not, exit gracefully to screen where we can collect the relevant details.
+		// !!! Check that the folder is deletable, and if not, exit gracefully to screen where we can collect the relevant details.
 		$all_writable = true;
 		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($pluginsdir . '/' . $_GET['plugin']), RecursiveIteratorIterator::SELF_FIRST);
 		foreach ($iterator as $path)
@@ -901,7 +901,7 @@ function RemovePlugin()
 	}
 }
 
-// This ugly function detals with actually removing a plugin.
+// This ugly function deals with actually removing a plugin.
 function commitRemovePlugin($fullclean = false)
 {
 	global $scripturl, $txt, $context, $pluginsdir;

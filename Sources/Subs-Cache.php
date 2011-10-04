@@ -562,6 +562,7 @@ function wedge_fix_browser_css($matches)
 	return $matches[0];
 }
 
+// Dynamic function to cache language flags into index.css
 function dynamic_language_flags($match)
 {
 	global $context, $modSettings;
@@ -582,6 +583,7 @@ function dynamic_language_flags($match)
 	return $rep;
 }
 
+// Dynamic function to cache admin menu icons into admenu.css
 function dynamic_admin_menu_icons($match)
 {
 	global $context, $modSettings, $admin_areas, $ina;

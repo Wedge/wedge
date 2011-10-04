@@ -28,6 +28,10 @@ input.save
 	background-position: 4px -62px
 input.new
 	background-position: 4px -94px
+input.spell
+	background-position: 4px -125px
+input.cancel
+	background-position: 0 100px
 
 #upper_section h1
 	filter: glow(color=#777777, strength=3)

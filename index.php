@@ -51,7 +51,7 @@ require_once($sourcedir . '/Security.php');
 if (!empty($maintenance) && $maintenance == 2)
 	show_db_error();
 
-// Initate the database connection and define some database functions to use.
+// Initiate the database connection and define some database functions to use.
 loadDatabase();
 
 // Unserialize the array of pretty board URLs
