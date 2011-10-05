@@ -88,8 +88,6 @@ function Admin()
 					'function' => 'ModifySecuritySettings',
 					'icon' => 'security.gif',
 					'subsections' => array(
-						'general' => array($txt['mods_cat_security_general']),
-						'',
 						'spam' => array($txt['antispam_title']),
 						'moderation' => array($txt['moderation_settings_short']),
 					),
@@ -895,7 +893,6 @@ function AdminSearchInternal()
 		array('ModifyPrettyURLs', 'area=featuresettings;sa=pretty'),
 		array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
 		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
-		array('ModifyGeneralSecuritySettings', 'area=securitysettings;sa=general'),
 		array('ModifySpamSettings', 'area=securitysettings;sa=spam'),
 		array('ModifyModerationSettings', 'area=securitysettings;sa=moderation'),
 		array('ModifyGeneralModSettings', 'area=modsettings;sa=general'),
@@ -931,7 +928,7 @@ function AdminSearchInternal()
 		$config_vars = $setting_area[0](true);
 
 		foreach ($config_vars as $var)
-			if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch')))
+			if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc')))
 				$search_data['settings'][] = array($var[(isset($var[2]) && in_array($var[2], array('file', 'db'))) ? 0 : 1], $setting_area[1]);
 	}
 

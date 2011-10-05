@@ -32,9 +32,6 @@ if (!defined('WEDGE'))
 	void ModifyBasicSettings()
 		// !!!
 
-	void ModifyGeneralSecuritySettings()
-		// !!!
-
 	void ModifyModerationSettings()
 		// !!!
 
@@ -112,12 +109,11 @@ function ModifySecuritySettings()
 	$context['page_title'] = $txt['admin_security_moderation'];
 
 	$subActions = array(
-		'general' => 'ModifyGeneralSecuritySettings',
 		'spam' => 'ModifySpamSettings',
 		'moderation' => 'ModifyModerationSettings',
 	);
 
-	loadGeneralSettingParameters($subActions, 'general');
+	loadGeneralSettingParameters($subActions, 'spam');
 
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -125,8 +121,6 @@ function ModifySecuritySettings()
 		'help' => 'securitysettings',
 		'description' => $txt['security_settings_desc'],
 		'tabs' => array(
-			'general' => array(
-			),
 			'spam' => array(
 				'description' => $txt['antispam_Settings_desc'],
 			),
@@ -360,37 +354,6 @@ function ModifyBasicSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=basic';
 	$context['settings_title'] = $txt['mods_cat_features'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-// Settings really associated with general security aspects.
-function ModifyGeneralSecuritySettings($return_config = false)
-{
-	global $txt, $scripturl, $context, $settings, $modSettings;
-
-	$config_vars = array(
-			// Reactive on email, and approve on delete
-			array('check', 'send_validation_onChange'),
-			array('check', 'approveAccountDeletion'),
-	);
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		saveDBSettings($config_vars);
-
-		writeLog();
-		redirectexit('action=admin;area=securitysettings;sa=general');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=securitysettings;save;sa=general';
-	$context['settings_title'] = $txt['mods_cat_security_general'];
 
 	prepareDBSettingContext($config_vars);
 }

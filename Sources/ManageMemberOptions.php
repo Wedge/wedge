@@ -90,6 +90,7 @@ function ModifyMemberSettings($return_config = false)
 			array('check', 'allow_hideOnline'),
 			array('check', 'titlesEnable'),
 			array('text', 'default_personal_text'),
+			array('check', 'approveAccountDeletion'),
 	);
 
 	if ($return_config)
