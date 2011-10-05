@@ -3502,7 +3502,7 @@ function aeva_mkdir($dir, $chmod)
 
 	if (isset($context['media_ftp']) && ini_get('safe_mode'))
 	{
-		loadSource(array('Subs-Package', 'Class-Package'));
+		loadSource(array('Subs-Package', 'Class-FTP')); // !!! Is Subs-Package needed here? Seems to me only the FTP connection is.
 		$media_ftp = new ftp_connection($context['media_ftp']['server'], $context['media_ftp']['port'], $context['media_ftp']['username'], $context['media_ftp']['password']);
 		$success = $media_ftp->create_dir($context['media_ftp']['media'] . $dir);
 		$media_ftp->chmod($context['media_ftp']['media'] . $dir, $chmod);

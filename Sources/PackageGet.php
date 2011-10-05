@@ -134,7 +134,7 @@ function PackageServers()
 	{
 		if (isset($_POST['ftp_username']))
 		{
-			loadSource('Class-Package');
+			loadSource('Class-FTP');
 			$ftp = new ftp_connection($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
 
 			if ($ftp->error === false)
@@ -152,7 +152,7 @@ function PackageServers()
 		{
 			if (!isset($ftp))
 			{
-				loadSource('Class-Package');
+				loadSource('Class-FTP');
 				$ftp = new ftp_connection(null);
 			}
 			elseif ($ftp->error !== false && !isset($ftp_error))

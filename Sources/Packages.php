@@ -1537,7 +1537,7 @@ function PackagePermissions()
 
 	if (empty($package_ftp) && !isset($_POST['skip_ftp']))
 	{
-		loadSource('Class-Package');
+		loadSource('Class-FTP');
 		$ftp = new ftp_connection(null);
 		list ($username, $detect_path, $found_path) = $ftp->detect_path($boarddir);
 

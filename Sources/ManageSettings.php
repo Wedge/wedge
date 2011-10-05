@@ -35,9 +35,6 @@ if (!defined('WEDGE'))
 	void ModifyGeneralSecuritySettings()
 		// !!!
 
-	void ModifyLayoutSettings()
-		// !!!
-
 	void ModifyModerationSettings()
 		// !!!
 
@@ -84,7 +81,6 @@ function ModifyFeatureSettings()
 
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
-		'layout' => 'ModifyLayoutSettings',
 		'pretty' => 'ModifyPrettyURLs',
 	);
 
@@ -97,8 +93,6 @@ function ModifyFeatureSettings()
 		'description' => sprintf($txt['modSettings_desc'], $settings['theme_id'], $context['session_id'], $context['session_var']),
 		'tabs' => array(
 			'basic' => array(
-			),
-			'layout' => array(
 			),
 			'pretty' => array(
 				'description' => $txt['pretty_urls_desc'],
@@ -317,6 +311,7 @@ function ModifyBasicSettings($return_config = false)
 			array('text', 'time_format'),
 			array('float', 'time_offset'),
 			'default_timezone' => array('select', 'default_timezone', array()),
+			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
 		'',
 			// Who's online?
 			array('check', 'who_enabled'),
@@ -396,39 +391,6 @@ function ModifyGeneralSecuritySettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=securitysettings;save;sa=general';
 	$context['settings_title'] = $txt['mods_cat_security_general'];
-
-	prepareDBSettingContext($config_vars);
-}
-
-function ModifyLayoutSettings($return_config = false)
-{
-	global $txt, $scripturl, $context, $settings;
-
-	$config_vars = array(
-			// Pagination stuff.
-			array('int', 'compactTopicPagesContiguous'),
-		'',
-			// Stuff that just is everywhere - today, search, online, etc.
-			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
-			array('check', 'enableVBStyleLogin'),
-	);
-
-	if ($return_config)
-		return $config_vars;
-
-	// Saving?
-	if (isset($_GET['save']))
-	{
-		checkSession();
-
-		saveDBSettings($config_vars);
-		writeLog();
-
-		redirectexit('action=admin;area=featuresettings;sa=layout');
-	}
-
-	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=layout';
-	$context['settings_title'] = $txt['mods_cat_layout'];
 
 	prepareDBSettingContext($config_vars);
 }
@@ -803,9 +765,13 @@ function ModifyGeneralModSettings($return_config = false)
 //			i.e. if (preg_match('~://[^/]+/[^/]+~', $boardurl))
 
 // Shell for all the Pretty URL interfaces
-function ModifyPrettyURLs()
+function ModifyPrettyURLs($return_config = false)
 {
 	global $context, $modSettings, $settings, $txt;
+
+	// For the administrative search function not to get upset.
+	if ($return_config)
+		return array();
 
 	loadBlock('pretty_urls');
 	$context['page_title'] = $txt['admin_pretty_urls'];
@@ -826,7 +792,6 @@ function ModifyPrettyURLs()
 		$output = pretty_synchronize_topic_urls();
 		$context['reset_output'] = $output . $txt['pretty_converted'];
 	}
-
 	// Are we saving settings now?
 	elseif (isset($_REQUEST['save']))
 	{

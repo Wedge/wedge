@@ -751,7 +751,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 	if (!empty($_SESSION['pack_ftp']['connected']))
 	{
 		// Load the file containing the ftp_connection class.
-		loadSource('Class-Package');
+		loadSource('Class-FTP');
 
 		$package_ftp = new ftp_connection($_SESSION['pack_ftp']['server'], $_SESSION['pack_ftp']['port'], $_SESSION['pack_ftp']['username'], package_crypt($_SESSION['pack_ftp']['password']));
 	}
@@ -759,7 +759,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 	// Just got a submission did we?
 	if (empty($package_ftp) && isset($_POST['ftp_username']))
 	{
-		loadSource('Class-Package');
+		loadSource('Class-FTP');
 		$ftp = new ftp_connection($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
 
 		// We're connected, jolly good!
@@ -825,7 +825,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 		{
 			if (!isset($ftp))
 			{
-				loadSource('Class-Package');
+				loadSource('Class-FTP');
 				$ftp = new ftp_connection(null);
 			}
 			elseif ($ftp->error !== false && !isset($ftp_error))
@@ -937,7 +937,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 	elseif (isset($_SESSION['pack_ftp']))
 	{
 		// Load the file containing the ftp_connection class.
-		loadSource('Class-Package');
+		loadSource('Class-FTP');
 
 		$package_ftp = new ftp_connection($_SESSION['pack_ftp']['server'], $_SESSION['pack_ftp']['port'], $_SESSION['pack_ftp']['username'], package_crypt($_SESSION['pack_ftp']['password']));
 
@@ -977,7 +977,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 	}
 	elseif (isset($_POST['ftp_username']))
 	{
-		loadSource('Class-Package');
+		loadSource('Class-FTP');
 		$ftp = new ftp_connection($_POST['ftp_server'], $_POST['ftp_port'], $_POST['ftp_username'], $_POST['ftp_password']);
 
 		if ($ftp->error === false)
@@ -995,7 +995,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 	{
 		if (!isset($ftp))
 		{
-			loadSource('Class-Package');
+			loadSource('Class-FTP');
 			$ftp = new ftp_connection(null);
 		}
 		elseif ($ftp->error !== false && !isset($ftp_error))
@@ -2529,8 +2529,7 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 		return false;
 	elseif ($match[1] == 'ftp')
 	{
-		// Include the file containing the ftp_connection class.
-		loadSource('Class-Package');
+		loadSource('Class-FTP');
 
 		// Establish a connection and attempt to enable passive mode.
 		$ftp = new ftp_connection(($match[2] ? 'ssl://' : '') . $match[3], empty($match[5]) ? 21 : $match[5], 'anonymous', $webmaster_email);

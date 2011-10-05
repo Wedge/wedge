@@ -79,7 +79,6 @@ function Admin()
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
 						'',
-						'layout' => array($txt['mods_cat_layout']),
 						'pretty' => array($txt['pretty_urls']),
 					),
 				),
@@ -893,7 +892,6 @@ function AdminSearchInternal()
 	$settings_search = array(
 		array('ModifyCoreFeatures', 'area=corefeatures'),
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
-		array('ModifyLayoutSettings', 'area=featuresettings;sa=layout'),
 		array('ModifyPrettyURLs', 'area=featuresettings;sa=pretty'),
 		array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
 		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),

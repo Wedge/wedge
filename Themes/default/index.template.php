@@ -674,7 +674,7 @@ function template_footer()
  * - The function accepts a start position, for calculating the page out of the list of possible pages, however if the value is not the start of an actual page, the function will sanitise the value so that it will be the actual start of the 'page' of content. It also will sanitise where the start is beyond the last item.
  * - Parameters such as wireless being in the URL are also managed.
  * - Many URLs in the application are in the form of item=x.y format, e.g. index.php?topic=1.20 to denote topic 1, 20 items in. This can be achieved by specifying $flexible_start as true, and %1$d in the basic URL component, e.g. passing the base URL as index.php?topic=1.%1$d
- * - Only the first and last pages are linked to, and the display will consist of multiple contiguous items centered on the current page (stated as $modSettings['compactTopicPagesContiguous'], halved, either side of the current page)
+ * - Only the first and last pages are linked to, and the display will consist of 5 contiguous items centered on the current page, so displaying the current page and 2 page-links either side)
  *
  * @param string $base_url The basic URL to be used for each link.
  * @param int &$start The start position, by reference. If this is not a multiple of the number of items per page, it is sanitized to be so and the value will persist upon the function's return.
@@ -709,8 +709,11 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	$base_link = '<a href="' . ($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . '">%2$s</a> ';
 	$pageindex = '';
 
-	// If they didn't enter an odd value, pretend they did.
-	$PageContiguous = floor((int) $modSettings['compactTopicPagesContiguous'] / 2);
+	// The number of items to show contiguously, e.g. ">1< ... 6 7 [8] 9 10 ... 15" has 5 contiguous items. If you want to change it, here's the place.
+	$contiguous_items = 5;
+	
+	// If it's not odd, deal with it.
+	$PageContiguous = floor((int) $contiguous_items / 2);
 
 	// First of all, do we want a 'next' button to take us closer to the first (most interesting) page?
 	if ($show_prevnext && $start >= $num_per_page)
