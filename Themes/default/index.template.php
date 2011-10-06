@@ -709,29 +709,26 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 	$base_link = '<a href="' . ($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . '">%2$s</a> ';
 	$pageindex = '';
 
-	// The number of items to show contiguously, e.g. ">1< ... 6 7 [8] 9 10 ... 15" has 5 contiguous items. If you want to change it, here's the place.
-	$contiguous_items = 5;
-	
-	// If it's not odd, deal with it.
-	$PageContiguous = floor((int) $contiguous_items / 2);
+	// The number of items to show on each side of the current page, e.g. "6 7 [8] 9 10" if $contiguous = 2. If you want to change it, here's the place.
+	$contiguous = isset($modSettings['compactTopicPagesContiguous']) ? $modSettings['compactTopicPagesContiguous'] >> 1 : 2;
 
 	// First of all, do we want a 'next' button to take us closer to the first (most interesting) page?
 	if ($show_prevnext && $start >= $num_per_page)
 		$pageindex .= sprintf($base_link, $start - $num_per_page, $txt['previous_next_back']);
 
 	// Show the first page. (>1< ... 6 7 [8] 9 10 ... 15)
-	if ($start > $num_per_page * $PageContiguous)
+	if ($start > $num_per_page * $contiguous)
 		$pageindex .= sprintf($base_link, 0, '1');
 
 	// Show the ... after the first page. (1 >...< 6 7 [8] 9 10 ... 15)
-	if ($start > $num_per_page * ($PageContiguous + 1))
+	if ($start > $num_per_page * ($contiguous + 1))
 	{
 		$base_page = $flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d';
-		$pageindex .= '<a data-href="' . $base_page . '" onclick="expandPages(this, ' . $num_per_page . ', ' . ($start - $num_per_page * $PageContiguous) . ', ' . $num_per_page . ');">&hellip;</a> ';
+		$pageindex .= '<a data-href="' . $base_page . '" onclick="expandPages(this, ' . $num_per_page . ', ' . ($start - $num_per_page * $contiguous) . ', ' . $num_per_page . ');">&hellip;</a> ';
 	}
 
 	// Show the pages before the current one. (1 ... >6 7< [8] 9 10 ... 15)
-	for ($nCont = $PageContiguous; $nCont >= 1; $nCont--)
+	for ($nCont = $contiguous; $nCont >= 1; $nCont--)
 		if ($start >= $num_per_page * $nCont)
 		{
 			$tmpStart = $start - $num_per_page * $nCont;
@@ -746,7 +743,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 
 	// Show the pages after the current one... (1 ... 6 7 [8] >9 10< ... 15)
 	$tmpMaxPages = (int) (($max_value - 1) / $num_per_page) * $num_per_page;
-	for ($nCont = 1; $nCont <= $PageContiguous; $nCont++)
+	for ($nCont = 1; $nCont <= $contiguous; $nCont++)
 		if ($start + $num_per_page * $nCont <= $tmpMaxPages)
 		{
 			$tmpStart = $start + $num_per_page * $nCont;
@@ -754,15 +751,15 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 		}
 
 	// Show the '...' part near the end. (1 ... 6 7 [8] 9 10 >...< 15)
-	if ($start + $num_per_page * ($PageContiguous + 1) < $tmpMaxPages)
+	if ($start + $num_per_page * ($contiguous + 1) < $tmpMaxPages)
 	{
 		if (!isset($base_page))
 			$base_page = $flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d';
-		$pageindex .= '<a data-href="' . $base_page . '" onclick="expandPages(this, ' . ($start + $num_per_page * ($PageContiguous + 1)) . ', ' . $tmpMaxPages . ', ' . $num_per_page . ');">&hellip;</a> ';
+		$pageindex .= '<a data-href="' . $base_page . '" onclick="expandPages(this, ' . ($start + $num_per_page * ($contiguous + 1)) . ', ' . $tmpMaxPages . ', ' . $num_per_page . ');">&hellip;</a> ';
 	}
 
 	// Show the last number in the list. (1 ... 6 7 [8] 9 10 ... >15<)
-	if ($start + $num_per_page * $PageContiguous < $tmpMaxPages)
+	if ($start + $num_per_page * $contiguous < $tmpMaxPages)
 		$pageindex .= sprintf($base_link, $tmpMaxPages, $tmpMaxPages / $num_per_page + 1);
 
 	// Finally, the next link.

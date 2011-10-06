@@ -1833,30 +1833,30 @@ function template_repair_boards()
 		if (!empty($context['to_fix']))
 		{
 			echo '
-				', $txt['errors_found'], ':
-				<ul>';
+			', $txt['errors_found'], ':
+			<ul>';
 
 			foreach ($context['repair_errors'] as $error)
 				echo '
-					<li>
-						', $error, '
-					</li>';
+				<li>
+					', $error, '
+				</li>';
 
 			echo '
-				</ul>
-				<p>
-					', $txt['errors_fix'], '
-				</p>
-				<p class="padding">
-					<strong><a href="', $scripturl, '?action=admin;area=repairboards;fixErrors;', $context['session_query'], '">', $txt['yes'], '</a> - <a href="', $scripturl, '?action=admin;area=maintain">', $txt['no'], '</a></strong>
-				</p>';
+			</ul>
+			<p>
+				', $txt['errors_fix'], '
+			</p>
+			<p class="padding">
+				<strong><a href="', $scripturl, '?action=admin;area=repairboards;fixErrors;', $context['session_query'], '">', $txt['yes'], '</a> - <a href="', $scripturl, '?action=admin;area=maintain">', $txt['no'], '</a></strong>
+			</p>';
 		}
 		else
 			echo '
-				<p>', $txt['maintain_no_errors'], '</p>
-				<p class="padding">
-					<a href="', $scripturl, '?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
-				</p>';
+			<p>', $txt['maintain_no_errors'], '</p>
+			<p class="padding">
+				<a href="', $scripturl, '?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
+			</p>';
 
 	}
 	else
@@ -1864,26 +1864,25 @@ function template_repair_boards()
 		if (!empty($context['redirect_to_recount']))
 		{
 			echo '
-				<p>
-					', $txt['errors_do_recount'], '
-				</p>
-				<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-					<input type="submit" name="recount" id="recount_now" value="', westr::htmlspecialchars($txt['errors_recount_now']), '">
-				</form>';
+			<p>
+				', $txt['errors_do_recount'], '
+			</p>
+			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="submit" name="recount" id="recount_now" value="', westr::htmlspecialchars($txt['errors_recount_now']), '">
+			</form>';
 		}
 		else
 		{
 			echo '
-				<p>', $txt['errors_fixed'], '</p>
-				<p class="padding">
-					<a href="', $scripturl, '?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
-				</p>';
+			<p>', $txt['errors_fixed'], '</p>
+			<p class="padding">
+				<a href="', $scripturl, '?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
+			</p>';
 		}
 	}
 
 	echo '
-			</div>
 		</div>
 	</div>
 	<br class="clear">';
