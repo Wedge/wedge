@@ -323,8 +323,8 @@ em
 	// !!! border: 1px solid rgba(0,0,0, .1)
 	p
 		margin: 0 0 .5em
-	p:first-child:last-child
-		margin-top: .5em
+		:only-child
+			margin-top: .5em
 
 .wrc_top
 	border-radius: 12px 12px 0 0

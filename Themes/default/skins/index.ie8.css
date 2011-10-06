@@ -47,3 +47,8 @@ input.cancel
 .menu h4 strong
 	float: right
 	padding-top, padding-bottom: 0
+
+// Because IE8 doesn't support :only-child...
+.wrc, .wrc_top, .wrc_bottom
+	p:first-child:last-child
+		margin-top: .5em
