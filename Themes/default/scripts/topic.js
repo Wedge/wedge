@@ -18,6 +18,26 @@ function is_editing()
 	return in_edit_mode == 1;
 }
 
+function go_up()
+{
+	$("html, body").animate(
+		{ scrollTop: $(document).height() - $(window).height() },
+		1000
+	);
+
+	return false;
+}
+
+function go_down()
+{
+	$("html, body").animate(
+		{ scrollTop: 0 },
+		1000
+	);
+
+	return false;
+}
+
 // For templating, shown when an inline edit is made.
 function modify_topic_show_edit(subject)
 {

@@ -691,9 +691,8 @@ function JumpTo(opt)
 	this.opt = opt;
 	var sContainer = opt.sContainerId;
 
-	$('#' + sContainer).html(opt.sJumpToTemplate
-		.replace('%select_id%', sContainer + '_select')
-		.replace('%dropdown_list%', '<select name="' + sContainer + '_select" id="' + sContainer + '_select"><option>=> ' + opt.sPlaceholder + '</option></select>'))
+	$('#' + sContainer).find('label')
+		.append('<select id="' + sContainer + '_select"><option>=> ' + opt.sPlaceholder + '</option></select>')
 		.find('select').focus(grabJumpToContent);
 };
 

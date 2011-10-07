@@ -658,6 +658,7 @@ function template_topic_poll()
 function template_quick_reply()
 {
 	global $settings, $options, $txt, $context, $scripturl, $modSettings;
+
 	if (!$context['can_reply'] || empty($options['display_quick_reply']))
 	{
 		echo '
@@ -740,7 +741,7 @@ function template_quick_reply()
 
 function template_display_whoviewing()
 {
-	global $txt, $context, $settings;
+	global $context, $txt, $settings;
 
 	echo '
 			<we:title2>
@@ -813,7 +814,8 @@ function template_linked_calendar()
 	foreach ($context['linked_calendar_events'] as $event)
 		echo '
 						<li>
-							', ($event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" title="' . $txt['modify'] . '" class="edit_event"></a> ' : ''), '<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
+							', $event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" title="' . $txt['modify'] . '" class="edit_event"></a> ' : '',
+							'<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
 						</li>';
 
 	echo '
@@ -824,22 +826,24 @@ function template_linked_calendar()
 
 function template_topic_buttons_upper()
 {
-	global $txt, $context;
+	global $context, $txt;
+
 	echo '
 			<div class="pagesection">',
 				template_button_strip($context['nav_buttons']['normal']), '
-				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="$(\'html, body\').animate({ scrollTop: $(document).height() - $(window).height() }, 1000); return false;"><strong>', $txt['go_down'], '</strong></a></nav>
+				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="return go_down();"><strong>', $txt['go_down'], '</strong></a></nav>
 			</div>', $context['browser']['is_ie6'] ? '
 			<div class="clear"></div>' : '';
 }
 
 function template_topic_buttons_lower()
 {
-	global $txt, $context;
+	global $context, $txt;
+
 	echo '
 			<div class="pagesection">',
 				template_button_strip($context['nav_buttons']['normal']), '
-				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="$(\'html, body\').animate({ scrollTop: 0 }, 1000); return false;"><strong>', $txt['go_up'], '</strong></a></nav>
+				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="return go_up();"><strong>', $txt['go_up'], '</strong></a></nav>
 			</div>';
 }
 
@@ -847,10 +851,10 @@ function template_jumpto()
 {
 	global $context, $txt;
 
-	// Show the jumpto box, or... Actually let JavaScript do it.
+	// Show the quick access box, or... Actually let JavaScript do it.
 	echo '
 			<div class="posthead">', $context['prevnext_prev'], '
-				<div id="display_jump_to"></div>', $context['prevnext_next'], '
+				<div id="display_jump_to"><label>', $txt['jump_to'], ': </label></div>', $context['prevnext_next'], '
 			</div>';
 
 	add_js('
@@ -858,8 +862,7 @@ function template_jumpto()
 	{
 		aJumpTo.push(new JumpTo({
 			iBoardId: ' . $context['current_board'] . ',
-			sContainerId: "display_jump_to",
-			sJumpToTemplate: \'<label for="%select_id%">' . $txt['jump_to'] . ':<\/label> %dropdown_list%\',
+			sContainerId: \'display_jump_to\',
 			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
 		}));
 	}');
@@ -868,6 +871,7 @@ function template_jumpto()
 function template_mod_buttons()
 {
 	global $context;
+
 	echo '
 			<div id="moderationbuttons">', template_button_strip($context['nav_buttons']['mod'], 'left', array('id' => 'moderationbuttons_strip')), '</div>';
 }
@@ -875,7 +879,7 @@ function template_mod_buttons()
 // Show statistical style information...
 function template_display_statistics()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $txt, $settings;
 
 	if (!$settings['show_stats_index'])
 		return;

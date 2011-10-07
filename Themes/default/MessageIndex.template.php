@@ -232,7 +232,7 @@ function template_main_board()
 		echo '
 	<div class="pagesection">', empty($context['button_list']) ? '' :
 		template_button_strip($context['button_list']), '
-		<p class="floatright" id="message_index_jump_to">&nbsp;</p>
+		<p class="floatright" id="message_index_jump_to"><label>', $txt['jump_to'], ': </label></p>
 		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 	</div>';
 	}
@@ -244,8 +244,7 @@ function template_main_board()
 	if (can_ajax)
 		aJumpTo.push(new JumpTo({
 			iBoardId: ' . $context['current_board'] . ',
-			sContainerId: "message_index_jump_to",
-			sJumpToTemplate: "<label for=\"%select_id%\">' . $txt['jump_to'] . ':<\/label> %dropdown_list%",
+			sContainerId: \'message_index_jump_to\',
 			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
 		}));');
 
@@ -492,7 +491,7 @@ function template_main_blog()
 		echo '
 	<div class="pagesection">', empty($context['button_list']) ? '' :
 		template_button_strip($context['button_list']), '
-		<p class="floatright" id="message_index_jump_to">&nbsp;</p>
+		<p class="floatright" id="message_index_jump_to"><label>', $txt['jump_to'], ': </label></p>
 		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 	</div>';
 	}
@@ -505,7 +504,6 @@ function template_main_blog()
 		aJumpTo.push(new JumpTo({
 			iBoardId: ' . $context['current_board'] . ',
 			sContainerId: "message_index_jump_to",
-			sJumpToTemplate: "<label for=\"%select_id%\">' . $txt['jump_to'] . ':<\/label> %dropdown_list%",
 			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
 		}));');
 

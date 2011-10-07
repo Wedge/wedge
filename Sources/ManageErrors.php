@@ -373,7 +373,7 @@ function ViewFile()
 		fatal_lang_error('error_bad_file', true, array(htmlspecialchars($file)));
 
 	// Get the min and max lines
-	$min = $line - 15 <= 0 ? 1 : $line - 15;
+	$min = max(1, $line - 15);
 	$max = $line + 16; // One additional line to make everything work out correctly
 
 	if ($max <= 0 || $min >= $max)
@@ -395,6 +395,9 @@ function ViewFile()
 
 	if ($context['is_ajax'])
 		hideChrome();
+	else
+		$context['page_title'] = $context['file_data']['file'];
+
 	loadTemplate('Errors');
 	loadBlock('show_file');
 }
