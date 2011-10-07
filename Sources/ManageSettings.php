@@ -302,7 +302,6 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'allow_guestAccess'),
 		'',
 			// Number formatting, timezones.
-			array('text', 'time_format'),
 			array('float', 'time_offset'),
 			'default_timezone' => array('select', 'default_timezone', array()),
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),

@@ -560,9 +560,6 @@ function SendMailing($clean_only = false)
 		}
 	}
 
-	// Use the default time format.
-	$user_info['time_format'] = $modSettings['time_format'];
-
 	$variables = array(
 		'{$board_url}',
 		'{$current_time}',

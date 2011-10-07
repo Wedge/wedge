@@ -342,7 +342,7 @@ function loadUserSettings()
 		'ip' => $_SERVER['REMOTE_ADDR'],
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
 		'posts' => empty($user_settings['posts']) ? 0 : $user_settings['posts'],
-		'time_format' => empty($user_settings['time_format']) ? $modSettings['time_format'] : $user_settings['time_format'],
+		'time_format' => empty($user_settings['time_format']) ? '' : $user_settings['time_format'],
 		'time_offset' => isset($offset) ? $offset : (empty($user_settings['time_offset']) ? 0 : $user_settings['time_offset']),
 		'avatar' => array(
 			'url' => isset($user_settings['avatar']) ? $user_settings['avatar'] : '',
@@ -2124,7 +2124,11 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that.
 		if ($found && $template === 'index')
+		{
 			$user_info['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
+			if (empty($user_info['time_format']))
+				$user_info['time_format'] = $txt['time_format'];
+		}
 	}
 
 	// Keep track of what we're up to soldier.

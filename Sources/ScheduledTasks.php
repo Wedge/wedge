@@ -1260,11 +1260,13 @@ function scheduled_fetchRemoteFiles()
 
 	$js_files = array();
 
+	loadEssentialThemeData();
+
 	while ($row = wesql::fetch_assoc($request))
 		$js_files[$row['id_file']] = array(
 			'filename' => $row['filename'],
 			'path' => $row['path'],
-			'parameters' => sprintf($row['parameters'], $language, urlencode($modSettings['time_format']), urlencode(WEDGE_VERSION)),
+			'parameters' => sprintf($row['parameters'], $language, urlencode($txt['time_format']), urlencode(WEDGE_VERSION)),
 		);
 
 	wesql::free_result($request);
@@ -1273,7 +1275,6 @@ function scheduled_fetchRemoteFiles()
 	loadSource('Subs-Package');
 
 	// Just in case we run into a problem.
-	loadEssentialThemeData();
 	loadLanguage('Errors', $language, false);
 
 	foreach ($js_files as $id_file => $file)

@@ -2646,7 +2646,7 @@ function template_profile_timeformat_modify()
 	echo '
 					<dt>
 						<a href="', $scripturl, '?action=help;in=time_format" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-						<strong>', $txt['time_format'], ':</strong>
+						<strong>', $txt['choose_time_format'], ':</strong>
 						<dfn>', $txt['date_format'], '</dfn>
 					</dt>
 					<dd>

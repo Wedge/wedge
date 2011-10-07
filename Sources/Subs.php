@@ -645,9 +645,6 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 		foreach (array('%a' => 'days_short', '%A' => 'days', '%b' => 'months_short', '%B' => 'months') as $token => $text_label)
 			if (strpos($str, $token) !== false)
 				$str = str_replace($token, $txt[$text_label][(int) strftime($token === '%a' || $token === '%A' ? '%w' : '%m', $time)], $str);
-
-		if (strpos($str, '%p') !== false)
-			$str = str_replace('%p', strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm'], $str);
 	}
 
 	// Windows doesn't support %e; on some versions, strftime fails altogether if used, so let's prevent that.
