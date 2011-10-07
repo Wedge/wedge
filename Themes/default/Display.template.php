@@ -11,79 +11,12 @@
  * @version 0.1
  */
 
-function template_main()
+function template_display_posts()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	// OK, we're going to need this!
 	add_js_file('scripts/topic.js');
-
-	// Let them know, if their report was a success!
-	if ($context['report_sent'])
-		echo '
-			<div class="windowbg" id="profile_success">
-				', $txt['report_sent'], '
-			</div>';
-
-	// Or let them know if their draft was saved.
-	template_display_draft();
-
-	// Show the anchor for the top and for the first message. If the first message is new, say so.
-	echo '
-			<a id="msg', $context['first_message'], '"></a>', $context['first_new_message'] ? '<a id="new"></a>' : '';
-
-	// Build the normal button array.
-	$normal_buttons = array(
-		'reply' => array('test' => 'can_reply', 'text' => 'reply', 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'class' => 'active'),
-		($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_topic' : 'enable_topic')]) . ');"', 'url' => $scripturl . '?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-		'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-		'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'url' => $scripturl . '?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
-		'print' => array('text' => 'print', 'class' => 'new_win', 'custom' => 'rel="nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0'),
-	);
-
-	// Allow adding new buttons easily.
-	call_hook('display_buttons', array(&$normal_buttons));
-
-	// Show the topic title, previous/next links and page index... "Pages: [1]".
-	echo '
-			<div class="posthead">', $context['prevnext_prev'], '
-				<div id="top_subject">', $context['subject'], '</div>', $context['prevnext_next'], '
-			</div>';
-
-
-	// Is this topic also a poll?
-	if ($context['is_poll'])
-		template_topic_poll();
-
-	// Does this topic have some events linked to it?
-	if (!empty($context['linked_calendar_events']))
-	{
-		echo '
-			<div class="linked_events">
-				<we:title>
-					', $txt['calendar_linked_events'], '
-				</we:title>
-				<div class="windowbg wrc">
-					<ul class="reset">';
-
-		foreach ($context['linked_calendar_events'] as $event)
-			echo '
-						<li>
-							', ($event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" title="' . $txt['modify'] . '" class="edit_event"></a> ' : ''), '<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
-						</li>';
-
-		echo '
-					</ul>
-				</div>
-			</div>';
-	}
-
-	echo '
-			<div class="pagesection">',
-				template_button_strip($normal_buttons), '
-				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="$(\'html, body\').animate({ scrollTop: $(document).height() - $(window).height() }, 1000); return false;"><strong>', $txt['go_down'], '</strong></a></nav>
-			</div>', $context['browser']['is_ie6'] ? '
-			<div class="clear"></div>' : '';
 
 	// Show the topic information - icon, subject, etc.
 	echo '
@@ -325,55 +258,6 @@ function template_main()
 				</form>
 			</div>';
 
-	// Show the page index... "Pages: [1]".
-	echo '
-			<div class="pagesection">',
-				template_button_strip($normal_buttons), '
-				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="$(\'html, body\').animate({ scrollTop: 0 }, 1000); return false;"><strong>', $txt['go_up'], '</strong></a></nav>
-			</div>';
-
-	// Show the jumpto box, or... Actually let JavaScript do it.
-	echo '
-			<div class="posthead">', $context['prevnext_prev'], '
-				<div id="display_jump_to"></div>', $context['prevnext_next'], '
-			</div>';
-
-	// Show the lower breadcrumbs.
-	$context['bottom_linktree'] = true;
-
-	$mod_buttons = array(
-		'move' => array('test' => 'can_move', 'text' => 'move_topic', 'url' => $scripturl . '?action=movetopic;topic=' . $context['current_topic'] . '.0'),
-		'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['are_sure_remove_topic']) . ');"', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_query']),
-		'lock' => array('test' => 'can_lock', 'text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'url' => $scripturl . '?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-		'sticky' => array('test' => 'can_sticky', 'text' => empty($context['is_sticky']) ? 'set_sticky' : 'set_nonsticky', 'url' => $scripturl . '?action=sticky;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-		'merge' => array('test' => 'can_merge', 'text' => 'merge', 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']),
-		'calendar' => array('test' => 'calendar_post', 'text' => 'calendar_link', 'url' => $scripturl . '?action=post;calendar;msg=' . $context['topic_first_message'] . ';topic=' . $context['current_topic'] . '.0'),
-		'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'url' => $scripturl . '?action=poll;sa=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
-	);
-
-	// Restore topic. Eh? No monkey business.
-	if ($context['can_restore_topic'])
-		$mod_buttons[] = array('text' => 'restore_topic', 'url' => $scripturl . '?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_query']);
-
-	// Allow adding new mod buttons easily.
-	call_hook('mod_buttons', array(&$mod_buttons));
-
-	echo '
-			<div id="moderationbuttons">', template_button_strip($mod_buttons, 'left', array('id' => 'moderationbuttons_strip')), '</div>';
-
-	if ($context['can_reply'] && !empty($options['display_quick_reply']))
-		template_quick_reply();
-	else
-		echo '
-			<br class="clear">';
-
-	if ($context['show_spellchecking'] && (empty($context['footer']) || strpos($context['footer'], '"spell_form"') === false))
-	{
-		$context['footer'] .= '
-<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value=""></form>';
-		add_js_file('scripts/spellcheck.js');
-	}
-
 	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $context['can_remove_post'])
 		add_js('
 	var oInTopicModeration = new InTopicModeration({
@@ -416,13 +300,6 @@ function template_main()
 			sTemplateSubjectNormal: ' . JavaScriptEscape('<a href="' . $scripturl . '?topic=' . $context['current_topic'] . '.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>') . ',
 			sErrorBorderStyle: \'1px solid red\'
 		});
-
-		aJumpTo.push(new JumpTo({
-			iBoardId: ' . $context['current_board'] . ',
-			sContainerId: "display_jump_to",
-			sJumpToTemplate: \'<label for="%select_id%">' . $txt['jump_to'] . ':<\/label> %dropdown_list%\',
-			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
-		}));
 
 		aIconLists.push(new IconList({
 			sBackReference: "aIconLists[" + aIconLists.length + "]",
@@ -694,6 +571,9 @@ function template_topic_poll()
 {
 	global $settings, $options, $context, $txt, $scripturl, $modSettings;
 
+	if (empty($context['is_poll']))
+		return;
+
 	// Build the poll moderation button array.
 	$poll_buttons = array(
 		'vote' => array('test' => 'allow_return_vote', 'text' => 'poll_return_vote', 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start']),
@@ -778,6 +658,12 @@ function template_topic_poll()
 function template_quick_reply()
 {
 	global $settings, $options, $txt, $context, $scripturl, $modSettings;
+	if (!$context['can_reply'] || empty($options['display_quick_reply']))
+	{
+		echo '
+			<br class="clear">';
+		return;
+	}
 
 	echo '
 			<div id="quickreply">
@@ -843,6 +729,13 @@ function template_quick_reply()
 		sSwitchMode: "switch_mode",
 		bUsingWysiwyg: ', $context['postbox']->rich_active ? 'true' : 'false', '
 	});');
+
+	if ($context['show_spellchecking'] && (empty($context['footer']) || strpos($context['footer'], '"spell_form"') === false))
+	{
+		$context['footer'] .= '
+<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value=""></form>';
+		add_js_file('scripts/spellcheck.js');
+	}
 }
 
 function template_display_whoviewing()
@@ -867,6 +760,17 @@ function template_display_whoviewing()
 			</p>';
 }
 
+function template_report_success()
+{
+	global $context, $txt;
+
+	if ($context['report_sent'])
+		echo '
+			<div class="windowbg" id="profile_success">
+				', $txt['report_sent'], '
+			</div>';
+}
+
 function template_display_draft()
 {
 	global $context, $txt, $scripturl;
@@ -876,6 +780,96 @@ function template_display_draft()
 	<div class="windowbg" id="profile_success">
 		', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
 	</div>';
+}
+
+function template_title_upper()
+{
+	global $context;
+
+	// Show the anchor for the top and for the first message. If the first message is new, say so. Then the title and prev/next navigation.
+	echo '
+			<a id="msg', $context['first_message'], '"></a>', $context['first_new_message'] ? '<a id="new"></a>' : '', '
+			<div class="posthead">', $context['prevnext_prev'], '
+				<div id="top_subject">', $context['subject'], '</div>', $context['prevnext_next'], '
+			</div>';
+}
+
+function template_linked_calendar()
+{
+	global $context, $settings, $txt;
+
+	// Does this topic have some events linked to it?
+	if (empty($context['linked_calendar_events']))
+		return;
+
+	echo '
+			<div class="linked_events">
+				<we:title>
+					', $txt['calendar_linked_events'], '
+				</we:title>
+				<div class="windowbg wrc">
+					<ul class="reset">';
+
+	foreach ($context['linked_calendar_events'] as $event)
+		echo '
+						<li>
+							', ($event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" title="' . $txt['modify'] . '" class="edit_event"></a> ' : ''), '<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
+						</li>';
+
+	echo '
+					</ul>
+				</div>
+			</div>';
+}
+
+function template_topic_buttons_upper()
+{
+	global $txt, $context;
+	echo '
+			<div class="pagesection">',
+				template_button_strip($context['nav_buttons']['normal']), '
+				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="$(\'html, body\').animate({ scrollTop: $(document).height() - $(window).height() }, 1000); return false;"><strong>', $txt['go_down'], '</strong></a></nav>
+			</div>', $context['browser']['is_ie6'] ? '
+			<div class="clear"></div>' : '';
+}
+
+function template_topic_buttons_lower()
+{
+	global $txt, $context;
+	echo '
+			<div class="pagesection">',
+				template_button_strip($context['nav_buttons']['normal']), '
+				<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], ' &nbsp;&nbsp;<a href="#" onclick="$(\'html, body\').animate({ scrollTop: 0 }, 1000); return false;"><strong>', $txt['go_up'], '</strong></a></nav>
+			</div>';
+}
+
+function template_jumpto()
+{
+	global $context, $txt;
+
+	// Show the jumpto box, or... Actually let JavaScript do it.
+	echo '
+			<div class="posthead">', $context['prevnext_prev'], '
+				<div id="display_jump_to"></div>', $context['prevnext_next'], '
+			</div>';
+
+	add_js('
+	if (can_ajax)
+	{
+		aJumpTo.push(new JumpTo({
+			iBoardId: ' . $context['current_board'] . ',
+			sContainerId: "display_jump_to",
+			sJumpToTemplate: \'<label for="%select_id%">' . $txt['jump_to'] . ':<\/label> %dropdown_list%\',
+			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
+		}));
+	}');
+}
+
+function template_mod_buttons()
+{
+	global $context;
+	echo '
+			<div id="moderationbuttons">', template_button_strip($context['nav_buttons']['mod'], 'left', array('id' => 'moderationbuttons_strip')), '</div>';
 }
 
 // Show statistical style information...

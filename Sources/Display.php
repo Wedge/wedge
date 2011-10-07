@@ -74,7 +74,10 @@ function Display()
 	if (WIRELESS)
 		loadBlock('wap2_display');
 	else
+	{
 		loadTemplate('Display');
+		loadBlock(array('report_success', 'display_draft', 'title_upper', 'topic_poll', 'linked_calendar', 'topic_buttons_upper', 'display_posts', 'topic_buttons_lower', 'jumpto', 'mod_buttons', 'quick_reply'));
+	}
 
 	// Not only does a prefetch make things slower for the server, but it makes it impossible to know if they read it.
 	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
@@ -492,6 +495,9 @@ function Display()
 		// And show it after the board's name.
 		$context['linktree'][count($context['linktree']) - 2]['extra_after'] = ' (' . (count($context['link_moderators']) == 1 ? $txt['moderator'] : $txt['moderators']) . ': ' . implode(', ', $context['link_moderators']) . ')';
 	}
+
+	// Show it at the page foot too.
+	$context['bottom_linktree'] = true;
 
 	// Information about the current topic...
 	$context['is_locked'] = $topicinfo['locked'];
@@ -1252,6 +1258,33 @@ function Display()
 		foreach ($context['action_menu_items'] as &$action)
 			$action['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/do/$1/?', $action['action']);
 	}
+
+	// Lastly, set up the navigation items that we're going to be using.
+	$context['nav_buttons'] = array(
+		'normal' => array(
+			'reply' => array('test' => 'can_reply', 'text' => 'reply', 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'class' => 'active'),
+			($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_topic' : 'enable_topic')]) . ');"', 'url' => $scripturl . '?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'url' => $scripturl . '?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
+			'print' => array('text' => 'print', 'class' => 'new_win', 'custom' => 'rel="nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0'),
+		),
+		'mod' => array(
+			'move' => array('test' => 'can_move', 'text' => 'move_topic', 'url' => $scripturl . '?action=movetopic;topic=' . $context['current_topic'] . '.0'),
+			'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['are_sure_remove_topic']) . ');"', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_query']),
+			'lock' => array('test' => 'can_lock', 'text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'url' => $scripturl . '?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'sticky' => array('test' => 'can_sticky', 'text' => empty($context['is_sticky']) ? 'set_sticky' : 'set_nonsticky', 'url' => $scripturl . '?action=sticky;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'merge' => array('test' => 'can_merge', 'text' => 'merge', 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']),
+			'calendar' => array('test' => 'calendar_post', 'text' => 'calendar_link', 'url' => $scripturl . '?action=post;calendar;msg=' . $context['topic_first_message'] . ';topic=' . $context['current_topic'] . '.0'),
+			'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'url' => $scripturl . '?action=poll;sa=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
+		),
+	);
+
+	// Restore topic. Eh? No monkey business.
+	if ($context['can_restore_topic'])
+		$context['nav_buttons']['mod']['restore'] = array('text' => 'restore_topic', 'url' => $scripturl . '?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_query']);
+
+	// Generic processing that doesn't apply to per-post handling.
+	call_hook('display_main');
 }
 
 // Callback for the message display.

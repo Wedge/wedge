@@ -1051,8 +1051,7 @@ function knownHooks()
 			'display_prepare_post',
 			'display_post_done',
 			'messageindex_buttons',
-			'display_buttons',
-			'mod_buttons',
+			'display_main',
 			// Admin
 			'admin_areas',
 			'admin_search',
