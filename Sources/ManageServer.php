@@ -1951,6 +1951,10 @@ function prepareServerSettingsContext(&$config_vars)
 			);
 		}
 	}
+
+	$context['was_saved'] = !empty($_SESSION['settings_saved']);
+	if (empty($context['was_saved_this_page']))
+		unset($_SESSION['settings_saved']);
 }
 
 // Helper function, it sets up the context for database settings.
@@ -2101,6 +2105,10 @@ function prepareDBSettingContext(&$config_vars)
 			);
 		}
 	}
+
+	$context['was_saved'] = !empty($_SESSION['settings_saved']);
+	if (empty($context['was_saved_this_page']))
+		unset($_SESSION['settings_saved']);
 }
 
 // Helper function. Saves settings by putting them in Settings.php or saving them in the settings table.
@@ -2205,6 +2213,9 @@ function saveSettings(&$config_vars)
 	// Save the new database-based settings, if any.
 	if (!empty($new_settings))
 		saveDBSettings($new_settings);
+
+	$context['was_saved_this_page'] = true;
+	$_SESSION['settings_saved'] = true;
 }
 
 // Helper function for saving database settings.
@@ -2277,6 +2288,9 @@ function saveDBSettings(&$config_vars)
 		loadSource('ManagePermissions');
 		save_inline_permissions($inlinePermissions);
 	}
+
+	$context['was_saved_this_page'] = true;
+	$_SESSION['settings_saved'] = true;
 }
 
 ?>

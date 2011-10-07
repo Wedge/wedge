@@ -606,6 +606,12 @@ function template_show_settings()
 {
 	global $context, $txt, $settings, $scripturl;
 
+	if ($context['was_saved'])
+		echo '
+	<div class="windowbg" id="profile_success">
+		', $txt['changes_saved'], '
+	</div>';
+
 	echo '
 	<div id="admincenter">
 		<form action="', $context['post_url'], '" method="post" accept-charset="UTF-8"', !empty($context['force_form_onsubmit']) ? ' onsubmit="' . $context['force_form_onsubmit'] . '"' : '', '>';
