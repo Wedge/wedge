@@ -155,7 +155,7 @@ function skeleton_render(&$here, $key)
 		if (is_array($temp))
 			skeleton_render($temp, $id);
 		else
-			execBlock($id, 'ignore');
+			execBlock($id);
 	}
 
 	// Show the _below part of the layer
@@ -681,28 +681,28 @@ function while_we_re_here()
 		if (!empty($securityFiles) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
 		{
 			echo '
-		<div class="errorbox">
-			<p class="alert">!!</p>
-			<h3>', empty($securityFiles) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>
-			<p>';
+			<div class="errorbox">
+				<p class="alert">!!</p>
+				<h3>', empty($securityFiles) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>
+				<p>';
 
 			foreach ($securityFiles as $securityFile)
 			{
 				echo '
-				', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
+					', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
 
 				if ($securityFile == 'Settings.php~' || $securityFile == 'Settings_bak.php~')
 					echo '
-				', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
+					', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
 			}
 
 			if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
 				echo '
-				<strong>', $txt['cache_writable'], '</strong><br>';
+					<strong>', $txt['cache_writable'], '</strong><br>';
 
 			echo '
-			</p>
-		</div>';
+				</p>
+			</div>';
 		}
 	}
 	// If the user is banned from posting, inform them of it.
@@ -710,22 +710,22 @@ function while_we_re_here()
 	{
 		$showed_banned = true;
 		echo '
-				<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
-					', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
+			<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
+				', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
 
 		if (!empty($_SESSION['ban']['cannot_post']['reason']))
 			echo '
-					<div style="padding-left: 4ex; padding-top: 1ex">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
+				<div style="padding-left: 4ex; padding-top: 1ex">', $_SESSION['ban']['cannot_post']['reason'], '</div>';
 
 		if (!empty($_SESSION['ban']['expire_time']))
 			echo '
-					<div>', sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)), '</div>';
+				<div>', sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)), '</div>';
 		else
 			echo '
-					<div>', $txt['your_ban_expires_never'], '</div>';
+				<div>', $txt['your_ban_expires_never'], '</div>';
 
 		echo '
-				</div>';
+			</div>';
 	}
 }
 

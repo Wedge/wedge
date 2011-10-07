@@ -1371,7 +1371,7 @@ function checkUserRequest_useragent()
 			return $context['behavior_error'] = 'behav_not_msnbot';
 	}
 	// Is it claiming to be Googlebot, even?
-	elseif (stripos($context['http_headers']['User-Agent'], 'Googlebot') !== FALSE || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false ||  || stripos($context['http_headers']['User-Agent'], 'Google Web Preview') !== false)
+	elseif (stripos($context['http_headers']['User-Agent'], 'Googlebot') !== FALSE || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false || stripos($context['http_headers']['User-Agent'], 'Google Web Preview') !== false)
 	{
 		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19'))) || (empty($modSettings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
 			return $context['behavior_error'] = 'behav_not_googlebot';
