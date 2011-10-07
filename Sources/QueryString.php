@@ -234,7 +234,7 @@ function cleanRequest()
 		updateOnlineWithError('404 Not Found', false);
 		if (!empty($modSettings['enableErrorLogging']))
 		{
-			log_error('File not found');
+			log_error('File not found', 'filenotfound');
 			loadSource('ManageErrors');
 			updateErrorCount();
 		}

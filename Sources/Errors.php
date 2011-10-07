@@ -88,6 +88,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		'user',
 		'template',
 		'debug',
+		'filenotfound',
 	);
 
 	// Make sure the category that was specified is a valid one
