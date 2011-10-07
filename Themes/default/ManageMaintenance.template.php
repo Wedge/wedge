@@ -34,21 +34,6 @@ function template_maintain_database()
 				<span><input type="submit" value="', $txt['maintain_run_now'], '" class="submit"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
-		</div>
-
-		<we:title>
-			<a href="', $scripturl, '?action=help;in=maintenance_backup" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-			', $txt['maintain_backup'], '
-		</we:title>
-		<div class="windowbg2 wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=database;activity=backup" method="post" accept-charset="UTF-8">
-				<p>', $txt['maintain_backup_info'], '</p>
-				<p><label><input type="checkbox" name="struct" id="struct" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').is(\':checked\') && !$(\'#data\').is(\':checked\'));" checked> ', $txt['maintain_backup_struct'], '</label><br>
-				<label><input type="checkbox" name="data" id="data" onclick="$(\'#submitDump\').attr(\'disabled\', !$(\'#struct\').is(\':checked\') && !$(\'#data\').is(\':checked\'));" checked> ', $txt['maintain_backup_data'], '</label><br>
-				<label><input type="checkbox" name="compress" id="compress" value="gzip" checked> ', $txt['maintain_backup_gz'], '</label></p>
-				<p><input type="submit" value="', $txt['maintain_backup_save'], '" id="submitDump" onclick="return $(\'#struct\').is(\':checked\') || $(\'#data\').is(\':checked\');" class="save"></p>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</form>
 		</div>';
 
 	echo '
