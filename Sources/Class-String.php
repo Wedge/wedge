@@ -86,7 +86,7 @@ else
 		public static function entity_fix($string)
 		{
 			$num = $string[1][0] === 'x' ? hexdec(substr($string[1], 1)) : (int) $string[1];
-			return $num < 32 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num == 0x202E ? '' : '&#' . $num . ';';
+			return $num < 32 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202D || $num == 0x202E ? '' : '&#' . $num . ';';
 		}
 
 		public static function entity_clean($string)
