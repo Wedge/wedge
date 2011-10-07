@@ -542,7 +542,7 @@ function hideChrome($layer = '')
 		);
 	skeleton_reindex();
 
-	// Nothing to see here, sir.
+	// Give plugins/themes a simple way to know we're hiding it all.
 	$context['hide_chrome'] = true;
 }
 
@@ -680,7 +680,7 @@ function while_we_re_here()
 
 		if (!empty($securityFiles) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
 		{
-				echo '
+			echo '
 		<div class="errorbox">
 			<p class="alert">!!</p>
 			<h3>', empty($securityFiles) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>

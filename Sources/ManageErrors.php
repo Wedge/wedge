@@ -393,7 +393,8 @@ function ViewFile()
 		'file' => strtr($file, array('"' => '\\"')),
 	);
 
-	hideChrome();
+	if ($context['is_ajax'])
+		hideChrome();
 	loadTemplate('Errors');
 	loadBlock('show_file');
 }

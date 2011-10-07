@@ -169,14 +169,7 @@ function template_show_file()
 {
 	global $context;
 
-	echo !empty($context['hide_chrome']) ? '' : '<!DOCTYPE html>
-<html' . ($context['right_to_left'] ? ' dir="rtl"' : '') . '>
-<head>
-	<meta charset="utf-8">
-	<title>' . $context['file_data']['file'] . '</title>' .
-	theme_base_css() . '
-</head>
-<body>', '
+	echo '
 	<table class="nodrag cp0 cs3 monospace">';
 
 	foreach ($context['file_data']['contents'] as $index => $line)
@@ -191,9 +184,7 @@ function template_show_file()
 	}
 
 	echo '
-	</table>', !empty($context['hide_chrome']) ? '' : '
-</body>
-</html>';
+	</table>';
 }
 
 ?>
