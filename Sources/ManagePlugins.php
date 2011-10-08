@@ -1059,6 +1059,7 @@ function knownHooks()
 			'core_features',
 			'plugin_settings',
 			'output_error',
+			'spam_settings',
 			// User related
 			'login',
 			'validate_login',
@@ -1086,6 +1087,11 @@ function knownHooks()
 			'redirect',
 			'exit',
 			'dynamic_rewrite',
+			// Verification/CAPTCHA points
+			'verification_setup',
+			'verification_test',
+			'verification_refresh',
+			'verification_display',
 			// Miscellaneous
 			'css_color',
 			'buddy',

@@ -128,6 +128,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			'text_value' => '',
 			'questions' => array(),
 			'do_empty_field' => empty($verificationsOptions['no_empty_field']),
+			'other_vv' => array(),
 		);
 	$thisVerification =& $context['controls']['verification'][$verificationOptions['id']];
 
@@ -137,8 +138,18 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	$(\'.vv_special\').remove();
 	var verification' . $verificationOptions['id'] . 'Handle = new weCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '");');
 
+	// Add any that are going to be hooked.
+	$other_vv = call_hook('verification_setup', array(&$verificationOptions['id']));
+	if (!empty($other_vv))
+		foreach ($other_vv as $k => $v)
+			if (empty($v))
+				unset($other_vv[$k]);
+
+	if (!empty($other_vv))
+		$thisVerification['other_vv'] = $other_vv;
+
 	// Is there actually going to be anything?
-	if (empty($thisVerification['show_visual']) && empty($thisVerification['number_questions']))
+	if (empty($thisVerification['show_visual']) && empty($thisVerification['number_questions']) && empty($thisVerification['other_vv']))
 		return false;
 	elseif (!$isNew && !$do_test)
 		return true;
@@ -178,6 +189,14 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	// This can also force a fresh, although unlikely.
 	if (($thisVerification['show_visual'] && empty($_SESSION[$verificationOptions['id'] . '_vv']['code'])) || ($thisVerification['number_questions'] && empty($_SESSION[$verificationOptions['id'] . '_vv']['q'])))
 		$force_refresh = true;
+
+	if (!empty($thisVerification['other_vv']))
+		foreach ($thisVerification['other_vv'] as $ver)
+			if (!empty($ver['force_refresh']))
+			{
+				$force_refresh = true;
+				break;
+			}
 
 	$verification_errors = array();
 
@@ -223,6 +242,9 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 		if ($thisVerification['do_empty_field'] && !empty($_SESSION[$verificationOptions['id'] . '_vv']['empty_field']) && !empty($_REQUEST[$_SESSION[$verificationOptions['id'] . '_vv']['empty_field']]))
 			$verification_errors[] = 'wrong_verification_answer';
+
+		if (!empty($thisVerification['other_vv']))
+			call_hook('verification_test', array(&$verificationOptions['id'], &$verification_errors));
 	}
 
 	// Any errors means we refresh potentially.
@@ -279,6 +301,9 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 				foreach (array_rand($modSettings['question_id_cache'], $thisVerification['number_questions']) as $index)
 					$questionIDs[] = $modSettings['question_id_cache'][$index];
 		}
+
+		if (!empty($thisVerification['other_vv']))
+			call_hook('verification_refresh', array(&$verificationOptions['id']));
 	}
 	else
 	{

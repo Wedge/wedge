@@ -85,6 +85,8 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 			break;
 	}
 
+	call_hook('verification_display', array(&$verify_id));
+
 	// Assume we found something, always,
 	$verify_context['tracking']++;
 
