@@ -141,7 +141,7 @@ function Activate()
 		elseif ($row['validation_code'] == '')
 		{
 			loadLanguage('Profile');
-			fatal_error($txt['registration_not_approved'] . ' <a href="' . $scripturl . '?action=activate;user=' . $row['member_name'] . '">' . $txt['here'] . '</a>.', false);
+			fatal_lang_error('registration_not_approved', false, array($scripturl . '?action=activate;user=' . $_row['member_name']));
 		}
 
 		loadBlock('retry_activate');

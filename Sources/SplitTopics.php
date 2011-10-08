@@ -1599,7 +1599,7 @@ function MergePosts($error_report = true)
 
 	if (empty($_REQUEST['msgid']) || !is_numeric($_REQUEST['msgid']) || $_REQUEST['msgid'] < 1 || empty($_REQUEST['pid']) || !is_numeric($_REQUEST['pid']) || $_REQUEST['pid'] < 1 || empty($_REQUEST['topic']) || !is_numeric($_REQUEST['topic']) || $_REQUEST['topic'] < 1)
 		if ($error_report)
-			fatal_error($txt['merge_error_noid'], false);
+			fatal_lang_error('merge_error_noid', false);
 		else
 			return;
 
@@ -1687,7 +1687,7 @@ function MergePosts($error_report = true)
 			// First check the length of the post, if the limit is reached don't merge it! Also, the Automatic Merge will not work!
 			if (empty($modSetting['merge_post_ignore_length']) && $modSettings['max_messageLength'] < $newpostlength)
 				if ($error_report)
-					fatal_error($txt['merge_error_length'], false);
+					fatal_lang_error('merge_error_length', false);
 				else
 					return;
 
@@ -1770,12 +1770,12 @@ function MergePosts($error_report = true)
 		}
 		else
 			if ($error_report)
-				fatal_error($txt['merge_error_dbpo'], false);
+				fatal_lang_error('merge_error_dbpo', false);
 			else
 				return;
 	}
 	elseif ($error_report)
-		fatal_error($txt['merge_error_notf'], false);
+		fatal_lang_error('merge_error_notf', false);
 	else
 		return;
 }

@@ -219,7 +219,7 @@ function MLAll()
 	if (!is_numeric($_REQUEST['start']))
 	{
 		if (preg_match('~^[^\'\\\\/]~u', westr::strtolower($_REQUEST['start']), $match) === 0)
-			fatal_error('Hacker?', false);
+			fatal_lang_error('name_invalid_character', false);
 
 		$_REQUEST['start'] = $match[0];
 

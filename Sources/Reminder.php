@@ -118,15 +118,16 @@ function RemindPick()
 	{
 		// Awaiting approval...
 		if (trim($row['validation_code']) == '')
-			fatal_error($txt['registration_not_approved'] . ' <a href="' . $scripturl . '?action=activate;user=' . $_POST['user'] . '">' . $txt['here'] . '</a>.', false);
+			fatal_lang_error('registration_not_approved', false, array($scripturl . '?action=activate;user=' . $_POST['user']));
 		else
-			fatal_error($txt['registration_not_activated'] . ' <a href="' . $scripturl . '?action=activate;user=' . $_POST['user'] . '">' . $txt['here'] . '</a>.', false);
+			fatal_lang_error('registration_not_activated', false, array($scripturl . '?action=activate;user=' . $_POST['user']));
 	}
 
 	// You can't get emailed if you have no email address.
 	$row['email_address'] = trim($row['email_address']);
+	
 	if ($row['email_address'] == '')
-		fatal_error($txt['no_reminder_email'] . '<br>' . $txt['send_email'] . ' <a href="mailto:' . $webmaster_email . '">webmaster</a> ' . $txt['to_ask_password'] . '.');
+		fatal_lang_error('no_reminder_email', 'user', array($webmaster_email));
 
 	// If they have no secret question then they can only get emailed the item, or they are requesting the email, send them an email.
 	if (empty($row['secret_question']) || (isset($_POST['reminder_type']) && $_POST['reminder_type'] == 'email'))
@@ -247,7 +248,7 @@ function setPassword2()
 		// Stop brute force attacks like this.
 		validatePasswordFlood($_POST['u'], $flood_value, false);
 
-		fatal_error($txt['invalid_activation_code'], false);
+		fatal_lang_error('invalid_activation_code', false);
 	}
 
 	// Just in case, flood control.

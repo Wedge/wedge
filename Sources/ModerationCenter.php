@@ -1868,7 +1868,7 @@ function ModifyWarningTemplate()
 
 		// Need something in both boxes.
 		if (empty($_POST['template_body']) || empty($_POST['template_title']))
-			fatal_error($txt['mc_warning_template_error_empty']);
+			fatal_lang_error('mc_warning_template_error_empty');
 
 		// Safety first.
 		$_POST['template_title'] = westr::htmlspecialchars($_POST['template_title']);

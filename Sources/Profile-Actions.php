@@ -622,7 +622,7 @@ function subscriptions($memID)
 
 	// No gateways yet?
 	if (empty($gateways))
-		fatal_error($txt['paid_admin_not_setup_gateway']);
+		fatal_lang_error('paid_admin_not_setup_gateway');
 
 	// Get the current subscriptions.
 	$request = wesql::query('
@@ -755,7 +755,7 @@ function subscriptions($memID)
 
 		// Bugger?!
 		if (empty($context['gateways']))
-			fatal_error($txt['paid_admin_not_setup_gateway']);
+			fatal_lang_error('paid_admin_not_setup_gateway');
 
 		// Now we are going to assume they want to take this out ;)
 		$new_data = array($context['sub']['id'], $context['value'], $period, 'prepay');

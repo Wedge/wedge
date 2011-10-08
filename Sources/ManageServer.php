@@ -702,7 +702,7 @@ function DownloadLanguage()
 		{
 			// Check it's not very bad.
 			if (strpos($file, '..') !== false || (substr($file, 0, 6) != 'Themes' && !preg_match('~agreement\.[A-Za-z-_0-9]+\.txt$~', $file)))
-				fatal_error($txt['languages_download_illegal_paths']);
+				fatal_lang_error('languages_download_illegal_paths');
 
 			$chmod_files[] = $boarddir . '/' . $file;
 			$install_files[] = $file;
@@ -734,7 +734,7 @@ function DownloadLanguage()
 		$archive_content = read_tgz_file('http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), null);
 
 	if (empty($archive_content))
-		fatal_error($txt['add_language_error_no_response']);
+		fatal_lang_error('add_language_error_no_response');
 
 	// Now for each of the files, let's do some *stuff*
 	$context['files'] = array(

@@ -139,6 +139,11 @@ function template_summary()
 				<dt>', $txt['age'], ':</dt>
 				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $settings['images_url'] . '/cake.png">' : ''), '</dd>';
 
+	if (!empty($context['member']['action']))
+		echo '
+				<dt>', $txt['current_action'], '</dt>
+				<dd>', $context['member']['action'], '</dd>';
+
 	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']))
 		echo '
 				<dt>', $txt['location'], ':</dt>

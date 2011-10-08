@@ -906,10 +906,8 @@ function OptimizeTables()
 	foreach ($temp_tables as $table)
 		$tables[] = array('table_name' => $table);
 
-	// If there aren't any tables then I believe that would mean the world has exploded...
+	// We're getting this for the display later. We could, theoretically, test to make sure it's non-zero, but if it's zero, we shouldn't have made it this far anyway (e.g. the settings table, the members table would have been queried)
 	$context['num_tables'] = count($tables);
-	if ($context['num_tables'] == 0)
-		fatal_error('You appear to be running Wedge in a flat file mode... fantastic!', false);
 
 	// For each table....
 	$context['optimized_tables'] = array();

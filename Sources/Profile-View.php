@@ -140,7 +140,8 @@ function summary($memID)
 	else
 		$context['can_see_ip'] = false;
 
-	if (!empty($modSettings['who_enabled']))
+	// Can we see what the user is doing?
+	if (!empty($modSettings['who_enabled']) && allowedTo('who_view'))
 	{
 		loadSource('Who');
 		$action = determineActions($user_profile[$memID]['url']);

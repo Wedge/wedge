@@ -848,11 +848,10 @@ function PackageInstall()
 	wesql::free_result($request);
 
 	// Wait, it's not installed yet!
-	// !!! TODO: Replace with a better error message!
 	if (!isset($old_version) && $context['uninstalling'])
 	{
 		deltree($boarddir . '/Packages/temp');
-		fatal_error('Hacker?', false);
+		fatal_error('no_access', false);
 	}
 	// Uninstalling?
 	elseif ($context['uninstalling'])
@@ -2048,7 +2047,7 @@ function PackagePermissionsAction()
 			if ($validate_custom)
 			{
 				if (preg_match('~^[4567][4567][4567]$~', $context['custom_value']) == false)
-					fatal_error($txt['chmod_value_invalid']);
+					fatal_lang_error('chmod_value_invalid');
 			}
 
 			// Nothing to do?
