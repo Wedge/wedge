@@ -1309,7 +1309,7 @@ function loadBlock($blocks, $target = '', $where = '')
 			$val = array_values($layer);
 			$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
 			array_splice($keys, $offset, 0, array_keys($blocks));
-			array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
+			array_splice($val, $offset, 0, $blocks);
 			$layer = array_combine($keys, $val);
 			skeleton_reindex();
 			break;

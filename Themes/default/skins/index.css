@@ -492,7 +492,6 @@ input[type=file]
 
 .menu
 	font-family: $menu_font
-	line-height: 120%
 	min-height: 2em
 	display: block
 	margin: 0
@@ -507,7 +506,6 @@ input[type=file]
 #main_menu
 	padding: 5px 0 0
 	float: left
-	width: 100%
 	min-height: 0
 	h4 a
 		color: #fff
@@ -532,7 +530,6 @@ input[type=file]
 	background-position: 98% 3px
 	padding: 3px 19px 3px 6px
 	font-weight: normal
-	margin-bottom: 5px
 	margin-right: 2px
 	a
 		border, padding: 0
@@ -656,19 +653,22 @@ li.separator
 
 .menu strong
 	color: #fff
-	font-size: 8pt
+	font-size: 85%
 	text-transform: uppercase
 	background-color: rgba(255,0,0,.8)
 	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
 	border-radius: 7px
 	float: right
-	padding: 2px 5px
-	margin: -2px -4px 0 8px
+	padding: 4px 5px 5px
+	line-height: 100%
+	margin: -1px -4px 0 8px
 
 .menu h4 strong
 	margin: 0 0 0 4px
 	font-weight: 700
+	font-size: 80%
 	gradient: #d55a61, #b63c47
+	padding: 2px 5px 1px
 	float: none
 
 .menu li.menu-top
@@ -688,7 +688,7 @@ li.separator
 	float: left
 	width, height: 16px
 	padding: 0
-	margin: 3px 4px 0 2px
+	margin: 4px 4px 0 2px
 	background-repeat: no-repeat
 	background-image: url($images/icons/sprite.png)
 	background-position: -74px 0
@@ -717,7 +717,7 @@ li.separator
 	width: 14px
 
 .m_media extends .m_home
-	background-position: -55px 0
+	background-position: -54px 0
 	width: 18px
 
 .m_mlist extends .m_home

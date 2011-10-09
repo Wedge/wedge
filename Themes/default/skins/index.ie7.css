@@ -180,7 +180,6 @@ li.separator
 .menu
 	strong
 		float: none
-		padding-top, padding-bottom: 0
 		margin-right: 8px
 	> li
 		display: inline
