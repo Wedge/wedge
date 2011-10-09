@@ -95,7 +95,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	$error_type = in_array($error_type, $known_error_types) && $error_type !== true ? $error_type : 'general';
 
 	// There may be an alternate case of error type: it might be plugin-related.
-	if (!empty($file) && strpos($file, $plugin_dir) === 0)
+	if (!empty($plugin_dir) && strpos($file, $plugin_dir) === 0)
 		foreach ($context['plugins_dir'] as $plugin_id => $plugin_path)
 		{
 			if (strpos($file, $plugin_path) === 0)

@@ -652,8 +652,11 @@ function start_output()
 function while_we_re_here()
 {
 	global $txt, $modSettings, $context, $user_info, $boarddir, $cachedir;
+	static $checked_security_files = false, $showed_banned = false, $showed_behav_error = false;
 
-	static $checked_securityFiles = false, $showed_banned = false, $showed_behav_error = false;
+	// If this page was loaded through jQuery, it's likely we've already had the warning shown in its container...
+	if ($context['is_ajax'])
+		return;
 
 	// May seem contrived, but this is done in case the body and context layer aren't there...
 	// Was there a security error for the admin?
@@ -669,31 +672,31 @@ function while_we_re_here()
 				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
 			</div>';
 	}
-	elseif (allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
+	elseif (allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_security_files)
 	{
-		$checked_securityFiles = true;
-		$securityFiles = array('import.php', 'install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
+		$checked_security_files = true;
+		$security_files = array('import.php', 'install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
 
-		foreach ($securityFiles as $i => $securityFile)
-			if (!file_exists($boarddir . '/' . $securityFile))
-				unset($securityFiles[$i]);
+		foreach ($security_files as $i => $security_file)
+			if (!file_exists($boarddir . '/' . $security_file))
+				unset($security_files[$i]);
 
-		if (!empty($securityFiles) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
+		if (!empty($security_files) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
 		{
 			echo '
 			<div class="errorbox">
 				<p class="alert">!!</p>
-				<h3>', empty($securityFiles) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>
+				<h3>', empty($security_files) ? $txt['cache_writable_head'] : $txt['security_risk'], '</h3>
 				<p>';
 
-			foreach ($securityFiles as $securityFile)
+			foreach ($security_files as $security_file)
 			{
 				echo '
-					', $txt['not_removed'], '<strong>', $securityFile, '</strong>!<br>';
+					', $txt['not_removed'], '<strong>', $security_file, '</strong>!<br>';
 
-				if ($securityFile == 'Settings.php~' || $securityFile == 'Settings_bak.php~')
+				if ($security_file == 'Settings.php~' || $security_file == 'Settings_bak.php~')
 					echo '
-					', sprintf($txt['not_removed_extra'], $securityFile, substr($securityFile, 0, -1)), '<br>';
+					', sprintf($txt['not_removed_extra'], $security_file, substr($security_file, 0, -1)), '<br>';
 			}
 
 			if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
