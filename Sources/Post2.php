@@ -715,7 +715,7 @@ function Post2()
 				if (in_array('bad_filename', $attachmentOptions['errors']))
 				{
 					checkSubmitOnce('free');
-					fatal_error(basename($attachmentOptions['name']) . '.<br>' . $txt['restricted_filename'] . '.', 'critical');
+					fatal_lang_error('restricted_filename', 'critical', array(basename($attachmentOptions['name'])));
 				}
 				if (in_array('taken_filename', $attachmentOptions['errors']))
 				{

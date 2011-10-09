@@ -851,7 +851,7 @@ function PackageInstall()
 	if (!isset($old_version) && $context['uninstalling'])
 	{
 		deltree($boarddir . '/Packages/temp');
-		fatal_error('no_access', false);
+		fatal_lang_error('no_access', false);
 	}
 	// Uninstalling?
 	elseif ($context['uninstalling'])

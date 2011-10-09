@@ -416,7 +416,7 @@ function is_not_banned($forceCheck = false)
 		writeLog(true);
 
 		// You banned, sucka!
-		fatal_error(sprintf($txt['your_ban'], $old_name) . (empty($_SESSION['ban']['cannot_access']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_access']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']), 'user');
+		fatal_lang_error('your_ban'], 'user', array($old_name, (empty($_SESSION['ban']['cannot_access']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_access']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never'])));
 
 		// If we get here, something's gone wrong.... but let's try anyway.
 		trigger_error('Hacking attempt...', E_USER_ERROR);
@@ -462,7 +462,7 @@ function is_not_banned($forceCheck = false)
 		loadSource('Logout');
 		Logout(true, false);
 
-		fatal_error(sprintf($txt['your_ban'], $old_name) . (empty($_SESSION['ban']['cannot_login']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_login']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']) . '<br>' . $txt['ban_continue_browse'], 'user');
+		fatal_lang_error('your_ban', 'user', array($old_name, (empty($_SESSION['ban']['cannot_login']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_login']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never']) . '<br>' . $txt['ban_continue_browse']));
 	}
 
 	// Fix up the banning permissions.
@@ -616,7 +616,7 @@ function isBannedEmail($email, $restriction, $error)
 		log_ban($_SESSION['ban']['cannot_access']['ids']);
 		$_SESSION['ban']['last_checked'] = time();
 
-		fatal_error(sprintf($txt['your_ban'], $txt['guest_title']) . $_SESSION['ban']['cannot_access']['reason'], false);
+		fatal_lang_error('your_ban', false, array($txt['guest_title'], $_SESSION['ban']['cannot_access']['reason']));
 	}
 
 	if (!empty($ban_ids))
@@ -709,7 +709,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	}
 
 	if (strtolower($_SERVER['HTTP_USER_AGENT']) == 'hacker')
-		fatal_error('Sound the alarm! It\'s a hacker! Close the castle gates!!', false);
+		fatal_lang_error('no_access', false);
 
 	// Everything is ok, return an empty string.
 	if (!isset($error))

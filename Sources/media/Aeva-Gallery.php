@@ -1808,11 +1808,11 @@ function aeva_mgPost()
 			{
 				foreach ($value as $val)
 					if (!in_array($val, $field['options']))
-						fatal_error(sprintf($txt['media_cf_invalid'], $field['name']));
+						fatal_lang_error('media_cf_invalid', 'user', array($field['name']));
 
 				// Nothing set?
 				if (empty($value) && $field['required'])
-					fatal_error(sprintf($txt['media_cf_empty'], $field['name']));
+					fatal_lang_error('media_cf_empty', 'user', array($field['name']));
 				elseif (empty($value))
 					continue;
 
@@ -1822,14 +1822,14 @@ function aeva_mgPost()
 			elseif (in_array($field['type'], array('radio', 'select')))
 			{
 				if (empty($value) && $field['required'])
-					fatal_error(sprintf($txt['media_cf_empty'], $field['name']));
+					fatal_lang_error('media_cf_empty', 'user', array($field['name']));
 				elseif (empty($value))
 					continue;
 				elseif (!in_array($value, $field['options']))
-					fatal_error(sprintf($txt['media_cf_invalid'], $field['name']));
+					fatal_lang_error('media_cf_invalid', 'user', array($field['name']));
 			}
 			elseif (empty($value) && $field['required'])
-				fatal_error(sprintf($txt['media_cf_empty'], $field['name']));
+				fatal_lang_error('media_cf_empty', 'user', array($field['name']));
 			else
 				$value = westr::htmlspecialchars($value);
 

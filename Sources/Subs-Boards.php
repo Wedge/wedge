@@ -503,7 +503,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 			// People can be creative, in many ways...
 			if (isChildOf($id_parent, $board_id))
-				fatal_error('mboards_parent_own_child_error', false);
+				fatal_lang_error('mboards_parent_own_child_error', false);
 			elseif ($id_parent == $board_id)
 				fatal_lang_error('mboards_board_own_child_error', false);
 
