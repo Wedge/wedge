@@ -81,7 +81,7 @@ function Activate()
 
 		// !!! Separate the sprintf?
 		if (!is_valid_email($_POST['new_email']))
-			fatal_lang_error('valid_email_needed'], false, array(htmlspecialchars($_POST['new_email'])));
+			fatal_lang_error('valid_email_needed', false, array(htmlspecialchars($_POST['new_email'])));
 
 		// Make sure their email isn't banned.
 		isBannedEmail($_POST['new_email'], 'cannot_register', $txt['ban_register_prohibited']);

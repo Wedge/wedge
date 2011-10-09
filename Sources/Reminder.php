@@ -125,7 +125,7 @@ function RemindPick()
 
 	// You can't get emailed if you have no email address.
 	$row['email_address'] = trim($row['email_address']);
-	
+
 	if ($row['email_address'] == '')
 		fatal_lang_error('no_reminder_email', 'user', array($webmaster_email));
 

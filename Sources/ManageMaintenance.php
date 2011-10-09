@@ -385,7 +385,7 @@ function ConvertUtf8()
 	// Character sets supported by both MySQL and Wedge's language files.
 	$charsets = array_intersect($charsets, $db_charsets);
 
-	// This is for the first screen telling backups is good.
+	// This is for the first screen telling backups are good.
 	if (!isset($_POST['proceed']))
 	{
 		// Use the messages.body column as indicator for the database charset.

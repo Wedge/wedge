@@ -1419,7 +1419,7 @@ function ModifyLanguage()
 		// !!! Todo: FTP Controls?
 		loadSource('Subs-Package');
 
-		// First, Make a backup?
+		// First, make a backup?
 		if (!empty($modSettings['package_make_backups']) && (!isset($_SESSION['last_backup_for']) || $_SESSION['last_backup_for'] != $context['lang_id'] . '$$$'))
 		{
 			$_SESSION['last_backup_for'] = $context['lang_id'] . '$$$';

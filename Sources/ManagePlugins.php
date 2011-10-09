@@ -174,7 +174,7 @@ function ListPlugins()
 											// Only deal with hooks provided by a plugin if it's enabled.
 											if (in_array($folder, $context['enabled_plugins']))
 												$hooks[(string) $hook['type']][] = (string) $hook;
-											
+
 											if (empty($plugin['provide_hooks'][(string) $hook['type']]))
 												$plugin['provide_hooks'][(string) $hook['type']] = array();
 											$plugin['provide_hooks'][(string) $hook['type']][] = (string) $hook;

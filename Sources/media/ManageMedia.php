@@ -883,7 +883,7 @@ function aeva_admin_perms_quick()
 	// OK roll out the actions, is it copying?
 	if ($type == 'copy')
 	{
-		// Lets dump the permissions of the groups
+		// Let's dump the permissions of the groups
 		wesql::query('
 			DELETE FROM {db_prefix}media_perms
 			WHERE id_group IN ({array_int:groups})

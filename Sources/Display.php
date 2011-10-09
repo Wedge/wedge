@@ -1250,13 +1250,15 @@ function Display()
 	);
 
 	$su = '~' . preg_quote($scripturl, '~');
+
 	// A total hack for pretty URLs... Wanna spend more processing time on this detail? I don't think so!
 	if (!empty($modSettings['pretty_filters']['actions']))
 	{
+		$action_prefix = isset($modSettings['pretty_prefix_action']) ? $modSettings['pretty_prefix_action'] : 'do/';
 		foreach ($context['user_menu_items'] as &$user)
-			$user['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/do/$1/?', $user['action']);
+			$user['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/' . $action_prefix . '$1/?', $user['action']);
 		foreach ($context['action_menu_items'] as &$action)
-			$action['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/do/$1/?', $action['action']);
+			$action['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/' . $action_prefix . '$1/?', $action['action']);
 	}
 
 	// Lastly, set up the navigation items that we're going to be using.

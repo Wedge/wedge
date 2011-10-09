@@ -692,7 +692,7 @@ function while_we_re_here()
 			foreach ($security_files as $security_file)
 			{
 				echo '
-					', $txt['not_removed'], '<strong>', $security_file, '</strong>!<br>';
+					', sprintf($txt['not_removed'], $security_file), '<br>';
 
 				if ($security_file == 'Settings.php~' || $security_file == 'Settings_bak.php~')
 					echo '
