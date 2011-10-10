@@ -446,7 +446,7 @@ function messageIndexBar($area)
 
 	// obExit will know what to do!
 	if (!WIRELESS)
-		loadLayer('pm');
+		wetem::layer('pm');
 }
 
 // A folder, ie. inbox/sent etc.

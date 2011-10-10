@@ -45,8 +45,8 @@ function Welcome()
 	// We first create an info layer at the end of the main block and inject the info center into it.
 	// For the purpose of our sample, we're using the opportunity to skip the calendar and recent posts.
 	loadTemplate('InfoCenter');
-	loadLayer('info_center', 'default', 'lastchild');
-	loadBlock(
+	wetem::layer('info_center', 'default', 'lastchild');
+	wetem::load(
 		array(
 			'info_center_statistics',
 			'info_center_usersonline',

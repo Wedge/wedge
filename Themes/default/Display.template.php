@@ -824,7 +824,7 @@ function template_linked_calendar()
 			</div>';
 }
 
-function template_topic_buttons_upper()
+function template_postlist_above()
 {
 	global $context, $txt;
 
@@ -836,7 +836,7 @@ function template_topic_buttons_upper()
 			<div class="clear"></div>' : '';
 }
 
-function template_topic_buttons_lower()
+function template_postlist_below()
 {
 	global $context, $txt;
 
@@ -847,7 +847,7 @@ function template_topic_buttons_lower()
 			</div>';
 }
 
-function template_jumpto()
+function template_quick_access()
 {
 	global $context, $txt;
 

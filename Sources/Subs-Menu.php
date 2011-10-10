@@ -285,8 +285,8 @@ function createMenu($menuData, $menuOptions = array())
 	{
 		loadTemplate(isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'GenericMenu');
 		$menu_context['template_name'] = (isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'generic_menu') . $menuOptions['menu_type'];
-		loadBlock($menu_context['template_name'], empty($options['use_sidebar_menu']) ? 'top' : 'sidebar');
-		loadBlock('generic_tabs', 'top');
+		wetem::load($menu_context['template_name'], empty($options['use_sidebar_menu']) ? 'top' : 'sidebar');
+		wetem::load('generic_tabs', 'top');
 	}
 
 	// Check we had something - for sanity sake.
@@ -313,7 +313,7 @@ function destroyMenu($menu_id = 'last')
 	if (!isset($context[$menu_name]))
 		return false;
 
-	removeBlock($context[$menu_name]['template_name']);
+	wetem::remove($context[$menu_name]['template_name']);
 	unset($context[$menu_name]);
 }
 

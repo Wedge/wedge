@@ -101,15 +101,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 	}
 
 	if ($do_finish)
-	{
-		if (WIRELESS && !isset($context['layers']['default']))
-			fatal_lang_error('wireless_error_notyet', false);
-
-		if (empty($context['layers']['default']))
-			fatal_lang_error('default_layer_missing');
-
-		skeleton_render(reset($context['skeleton_array']), key($context['skeleton_array']));
-	}
+		wetem::render();
 
 	// Remember this URL in case someone doesn't like sending HTTP_REFERER.
 	if (strpos($_SERVER['REQUEST_URL'], 'action=dlattach') === false && strpos($_SERVER['REQUEST_URL'], 'action=viewremote') === false)
@@ -134,36 +126,6 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 			);
 		exit;
 	}
-}
-
-/**
- * This is where we render the HTML page!
- */
-function skeleton_render(&$here, $key)
-{
-	global $context;
-
-	// Show the _above part of the layer.
-	execBlock($key . '_above', 'ignore');
-
-	if ($key === 'top' || $key === 'default')
-		while_we_re_here();
-
-	foreach ($here as $id => $temp)
-	{
-		// If the item is an array, then it's a layer. Otherwise, it's a block.
-		if (is_array($temp))
-			skeleton_render($temp, $id);
-		else
-			execBlock($id);
-	}
-
-	// Show the _below part of the layer
-	execBlock($key . '_below', 'ignore');
-
-	// !! We should probably move this directly to template_html_below() and forget the buffering thing...
-	if ($key === 'html' && !isset($_REQUEST['xml']) && empty($context['hide_chrome']))
-		db_debug_junk();
 }
 
 /**
@@ -212,7 +174,7 @@ function ob_sessrewrite($buffer)
 		$context['header'] .= "\n\t<style>" . $context['header_css'] . "\n\t</style>";
 
 	// ...or headers by manipulating $context['header']. They're only added if the page has a 'html' layer (which usually holds the <head> area.)
-	if (!empty($context['header']) && isset($context['layers']['html']) && ($where = strpos($buffer, "\n</head>")) !== false)
+	if (!empty($context['header']) && wetem::has_layer('html') && ($where = strpos($buffer, "\n</head>")) !== false)
 		$buffer = substr_replace($buffer, $context['header'], $where, 0);
 
 	// Rewrite the buffer with pretty URLs!
@@ -504,108 +466,6 @@ function pretty_scripts_restore($match)
 }
 
 /**
- * A quick alias to tell Wedge to hide blocks that don't belong to the main flow (context layer).
- *
- * @param array $layer The layers we want to keep, or 'html' for the main html/body layers. Leave empty to just keep the context layer.
- */
-function hideChrome($layer = '')
-{
-	global $context;
-
-	if (empty($context['layers']['default']))
-		$context['layers']['default'] = array('main' => true);
-
-	// We only keep the context layer and its content. (e.g. we're inside an Ajax frame)
-	if (empty($layer))
-		$context['skeleton_array'] = array(
-			'dummy' => array(
-				'default' => $context['layers']['default']
-			)
-		);
-	// Or we only keep the HTML headers, body definition and content (e.g. we're inside a popup window)
-	elseif ($layer === 'html')
-		$context['skeleton_array'] = array(
-			'html' => array(
-				'body' => array(
-					'default' => $context['layers']['default']
-				)
-			)
-		);
-	// Or finally... Do we want to keep/add a specific layer, like 'print' or wireless maybe?
-	else
-		$context['skeleton_array'] = array(
-			'dummy' => array(
-				$layer => array(
-					'default' => $context['layers']['default']
-				)
-			)
-		);
-	skeleton_reindex();
-
-	// Give plugins/themes a simple way to know we're hiding it all.
-	$context['hide_chrome'] = true;
-}
-
-/**
- * Build the multi-dimensional layout skeleton array from an single-dimension array of tags.
- */
-function skeleton_build(&$arr, &$dest, &$pos = 0, $name = '')
-{
-	global $context;
-
-	for ($c = count($arr); $pos < $c;)
-	{
-		$tag =& $arr[$pos++];
-
-		// Ending a layer?
-		if (!empty($tag[1]))
-		{
-			$context['layers'][$name] =& $dest;
-			return;
-		}
-
-		// Starting a layer?
-		if (empty($tag[3]))
-		{
-			$dest[$tag[2]] = array();
-			skeleton_build($arr, $dest[$tag[2]], $pos, $tag[2]);
-		}
-		// Then it's a block...
-		else
-			$dest[$tag[2]] = true;
-	}
-}
-
-/**
- * Rebuilds $context['layers'] according to current skeleton.
- * The skeleton builder doesn't call this because it does it automatically.
- */
-function skeleton_reindex()
-{
-	global $context;
-
-	// We only reset the list of references, it won't impact the skeleton array.
-	$context['layers'] = array();
-
-	// !!! Sadly, array_walk_recursive() won't trigger on child arrays... :(
-	skeleton_reindex_recursive($context['skeleton_array']);
-}
-
-function skeleton_reindex_recursive(&$here)
-{
-	global $context;
-
-	foreach ($here as $id => &$item)
-	{
-		if (is_array($item))
-		{
-			$context['layers'][$id] =& $item;
-			skeleton_reindex_recursive($item);
-		}
-	}
-}
-
-/**
  * Ensures content above the main page content is loaded, including HTTP page headers.
  *
  * Several things happen here.
@@ -644,7 +504,7 @@ function start_output()
 }
 
 /**
- * Use the opportunity to show some potential errors while we're showing the top or context layer...
+ * Use the opportunity to show some potential errors while we're showing the top or default layer...
  *
  * - If using a conventional theme (with body or main layers), and the user is an admin, check whether certain files are present, and if so give the admin a warning. These include the installer, repair-settings and backups of the Settings files (with php~ extensions)
  * - If the user is post-banned, provide a nice warning for them.
@@ -658,9 +518,9 @@ function while_we_re_here()
 	if ($context['is_ajax'])
 		return;
 
-	// May seem contrived, but this is done in case the body and context layer aren't there...
+	// May seem contrived, but this is done in case the body and default layer aren't there...
 	// Was there a security error for the admin?
-	if ($context['user']['is_admin'] && !empty($context['behavior_error']) && !$showed_behav_error)
+	if (!$showed_behav_error && $context['user']['is_admin'] && !empty($context['behavior_error']))
 	{
 		$showed_behav_error = true;
 		loadLanguage('Security');
@@ -672,7 +532,7 @@ function while_we_re_here()
 				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
 			</div>';
 	}
-	elseif (allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_security_files)
+	elseif (!$checked_security_files && !$user_info['is_guest'] && allowedTo('admin_forum'))
 	{
 		$checked_security_files = true;
 		$security_files = array('import.php', 'install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
@@ -709,7 +569,7 @@ function while_we_re_here()
 		}
 	}
 	// If the user is banned from posting, inform them of it.
-	elseif (isset($_SESSION['ban']['cannot_post']) && !$showed_banned)
+	elseif (!$showed_banned && isset($_SESSION['ban']['cannot_post']))
 	{
 		$showed_banned = true;
 		echo '
@@ -897,8 +757,7 @@ function db_debug_junk()
 function template_include($filename, $once = false)
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
-	global $user_info, $boardurl, $boarddir;
-	global $maintenance, $mtitle, $mmessage;
+	global $user_info, $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
 	// We want to be able to figure out any errors...
@@ -1185,315 +1044,501 @@ function execBlock($block_name, $fatal = false)
 }
 
 /**
- * Build a list of template blocks.
+ * This is the template object.
  *
- * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
- * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc. Leave empty (or 'default') to use the default.
- * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions. Leave empty to use the contextual default ('replace' for the default layer, 'add' otherwise.)
+ * It is used to manage the skeleton array that holds
+ * all of the layers and blocks in the template.
+ *
+ * The skeleton itself can't be accessed from outside the object.
+ * Thus, you'll have to rely on the public functions to manipulate it.
+ *
+ * wetem::load()	- add a block to a layer or next to a block
+ * wetem::layer()	- add a layer to a layer or next to it
+ * wetem::hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
+ * wetem::remove()	- remove a block or layer from the skeleton
+ * wetem::has()		- does the skeleton have this block or layer in it?
+ *					  - ::has_block($block) forces a test for blocks only
+ *					  - ::has_layer($layer) forces a test for layers only
  */
-function loadBlock($blocks, $target = '', $where = '')
+
+class wetem
 {
-	global $context;
+	protected static $instance;				// container for self
+	protected static $skeleton = array();	// store the full skeleton array
+	protected static $layers = array();		// store shortcuts to individual layers
+	protected static $hidden = false;		// did we call hide()?
 
-	/*
-		This is the full list of $where possibilities. 'replace' is the default, meant for use in the main layer.
-		<blocks> is our source block(s), <layer> is our $target layer, and <other> is anything already inside <layer>, block or layer.
-
-		replace		replace existing blocks with this, leave layers in		<layer> <blocks /> <other /> </layer>
-		erase		replace existing blocks AND layers with this			<layer>       <blocks />     </layer>
-
-		add			add block(s) at the end of the layer					<layer> <other /> <blocks /> </layer>
-		first		add block(s) at the beginning of the layer				<layer> <blocks /> <other /> </layer>
-
-		before		add block(s) before the specified layer or block		    <blocks /> <layer-or-block />
-		after		add block(s) after the specified layer or block			    <layer-or-block /> <blocks />
-	*/
-
-	$blocks = array_flip((array) $blocks);
-
-	// Find the first target layer that isn't wishful thinking.
-	foreach ((array) $target as $layer)
+	// What kind of class are you, anyway? One of a kind!
+	private function __clone()
 	{
-		if (empty($layer))
-			$layer = 'default';
-		if (isset($context['layers'][$layer]))
+		return false;
+	}
+
+	// Bootstrap's bootstraps
+	public static function getInstance()
+	{
+		// Squeletto ergo sum
+		if (self::$instance == null)
+			self::$instance = new self();
+
+		return self::$instance;
+	}
+
+	// Does the skeleton hold a specific layer or block?
+	public static function has($item)
+	{
+		return (bool) self::find_parent($item);
+	}
+
+	// Does the skeleton hold a specific block?
+	public static function has_block($layer)
+	{
+		return !isset(self::$layers[$block]) && self::find_parent($block) !== false;
+	}
+
+	// Does the skeleton hold a specific layer?
+	public static function has_layer($layer)
+	{
+		return isset(self::$layers[$layer]);
+	}
+
+	/**
+	 * This is where we render the HTML page!
+	 */
+	public static function render()
+	{
+		if (WIRELESS && !isset(self::$layers['default']))
+			fatal_lang_error('wireless_error_notyet', false);
+
+		if (empty(self::$layers['default']))
+			fatal_lang_error('default_layer_missing');
+
+		self::render_recursive(reset(self::$skeleton), key(self::$skeleton));
+	}
+
+	private static function render_recursive(&$here, $key)
+	{
+		// Show the _above part of the layer.
+		execBlock($key . '_above', 'ignore');
+
+		if ($key === 'top' || $key === 'default')
+			while_we_re_here();
+
+		foreach ($here as $id => $temp)
 		{
-			$to = $layer;
-			break;
+			// If the item is an array, then it's a layer. Otherwise, it's a block.
+			if (is_array($temp))
+				self::render_recursive($temp, $id);
+			else
+				execBlock($id);
+		}
+
+		// Show the _below part of the layer
+		execBlock($key . '_below', 'ignore');
+
+		// !! We should probably move this directly to template_html_below() and forget the buffering thing...
+		if ($key === 'html' && !isset($_REQUEST['xml']) && !self::$hidden)
+			db_debug_junk();
+	}
+
+	/**
+	 * Build the multi-dimensional layout skeleton array from an single-dimension array of tags.
+	 */
+	public static function build(&$arr)
+	{
+		self::parse($arr, self::$skeleton);
+	}
+
+	private static function parse(&$arr, &$dest, &$pos = 0, $name = '')
+	{
+		for ($c = count($arr); $pos < $c;)
+		{
+			$tag =& $arr[$pos++];
+
+			// Ending a layer?
+			if (!empty($tag[1]))
+			{
+				self::$layers[$name] =& $dest;
+				return;
+			}
+
+			// Starting a layer?
+			if (empty($tag[3]))
+			{
+				$dest[$tag[2]] = array();
+				self::parse($arr, $dest[$tag[2]], $pos, $tag[2]);
+			}
+			// Then it's a block...
+			else
+				$dest[$tag[2]] = true;
 		}
 	}
 
-	// No valid layer found.
-	if (empty($to))
+	/**
+	 * Rebuilds $layers according to current skeleton.
+	 * The skeleton builder doesn't call this because it does it automatically.
+	 */
+	private static function reindex()
 	{
-		// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
-		// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
-		if ($where !== 'before' && $where !== 'after')
-			return false;
-		// Or maybe we're looking for a block..?
-		$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($context['skeleton_array'])));
-		foreach ((array) $target as $block)
+		// We only reset the list of references, it won't impact the skeleton array.
+		self::$layers = array();
+
+		// !!! Sadly, array_walk_recursive() won't trigger on child arrays... :(
+		self::reindex_recursive(self::$skeleton);
+	}
+
+	private static function reindex_recursive(&$here)
+	{
+		foreach ($here as $id => &$item)
 		{
-			if (isset($all_blocks[$block]))
+			if (is_array($item))
 			{
-				$to = $block;
+				self::$layers[$id] =& $item;
+				self::reindex_recursive($item);
+			}
+		}
+	}
+
+	/**
+	 * A quick alias to tell Wedge to hide blocks that don't belong to the main flow (default layer).
+	 *
+	 * @param array $layer The layers we want to keep, or 'html' for the main html/body layers. Leave empty to just keep the default layer.
+	 */
+	public static function hide($layer = '')
+	{
+		global $context;
+
+		if (empty(self::$layers['default']))
+			self::$layers['default'] = array('main' => true);
+
+		// We only keep the default layer and its content. (e.g. we're inside an Ajax frame)
+		if (empty($layer))
+			self::$skeleton = array(
+				'dummy' => array(
+					'default' => self::$layers['default']
+				)
+			);
+		// Or we only keep the HTML headers, body definition and content (e.g. we're inside a popup window)
+		elseif ($layer === 'html')
+			self::$skeleton = array(
+				'html' => array(
+					'body' => array(
+						'default' => self::$layers['default']
+					)
+				)
+			);
+		// Or finally... Do we want to keep/add a specific layer, like 'print' or wireless maybe?
+		else
+			self::$skeleton = array(
+				'dummy' => array(
+					$layer => array(
+						'default' => self::$layers['default']
+					)
+				)
+			);
+		self::reindex();
+
+		// Give plugins/themes a simple way to know we're hiding it all.
+		$context['hide_chrome'] = self::$hidden = true;
+	}
+
+	/**
+	 * Build a list of template blocks.
+	 *
+	 * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
+	 * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc. Leave empty (or 'default') to use the default.
+	 * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions. Leave empty to use the contextual default ('replace' for the default layer, 'add' otherwise.)
+	 */
+	public static function load($blocks, $target = '', $where = '')
+	{
+		/*
+			This is the full list of $where possibilities. 'replace' is the default, meant for use in the main layer.
+			<blocks> is our source block(s), <layer> is our $target layer, and <other> is anything already inside <layer>, block or layer.
+
+			replace		replace existing blocks with this, leave layers in		<layer> <blocks /> <other /> </layer>
+			erase		replace existing blocks AND layers with this			<layer>       <blocks />     </layer>
+
+			add			add block(s) at the end of the layer					<layer> <other /> <blocks /> </layer>
+			first		add block(s) at the beginning of the layer				<layer> <blocks /> <other /> </layer>
+
+			before		add block(s) before the specified layer or block		    <blocks /> <layer-or-block />
+			after		add block(s) after the specified layer or block			    <layer-or-block /> <blocks />
+		*/
+
+		$blocks = array_flip((array) $blocks);
+
+		// Find the first target layer that isn't wishful thinking.
+		foreach ((array) $target as $layer)
+		{
+			if (empty($layer))
+				$layer = 'default';
+			if (isset(self::$layers[$layer]))
+			{
+				$to = $layer;
 				break;
 			}
 		}
-		unset($all_blocks);
-	}
 
-	// If a mod requests to replace the contents of the sidebar, just smile politely.
-	if (($where === 'replace' || $where === 'erase') && $to === 'sidebar')
-		$where = 'add';
-
-	// If no position is specified, we use the contextual default: 'replace' for the main layer, 'add' for others.
-	if (empty($where))
-		$where = $to === 'default' ? 'replace' : 'add';
-
-	if ($where === 'replace' || $where === 'erase')
-	{
-		$has_arrays = false;
-		if ($where === 'replace' && isset($context['layers'][$to]))
-			foreach ($context['layers'][$to] as $item)
-				$has_arrays |= is_array($item);
-
-		// Most likely case: no child layers (or erase all). Replace away!
-		if (!$has_arrays)
+		// No valid layer found.
+		if (empty($to))
 		{
-			$context['layers'][$to] = $blocks;
-			// If we erase, we might have to delete layer entries.
-			if ($where === 'erase')
-				skeleton_reindex();
-			return $to;
-		}
-
-		// Otherwise, we're in for some fun... :-/
-		$keys = array_keys($context['layers'][$to]);
-		foreach ($keys as $id)
-		{
-			$item =& $context['layers'][$to][$id];
-			if (!is_array($item))
+			// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
+			// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
+			if ($where !== 'before' && $where !== 'after')
+				return false;
+			// Or maybe we're looking for a block..?
+			$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator(self::$skeleton)));
+			foreach ((array) $target as $block)
 			{
-				// We're going to insert our block(s) right before the first block we find...
-				if (!isset($offset))
+				if (isset($all_blocks[$block]))
 				{
-					$val = array_values($context['layers'][$to]);
-					$offset = array_search($id, $keys, true);
-					array_splice($keys, $offset, 0, array_keys($blocks));
-					array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
-					$context['layers'][$to] = array_combine($keys, $val);
+					$to = $block;
+					break;
 				}
-				// ...And then we delete the other block(s) and leave the layers where they are.
-				unset($context['layers'][$to][$id]);
 			}
+			unset($all_blocks);
 		}
 
-		// So, we found a layer but no blocks..? Add our blocks at the end.
-		if (!isset($offset))
-			$context['layers'][$to] += $blocks;
-		skeleton_reindex();
-	}
-	elseif ($where === 'add')
-		$context['layers'][$to] = array_merge($context['layers'][$to], $blocks);
-	elseif ($where === 'first')
-		$context['layers'][$to] = array_merge(array_reverse($blocks), $context['layers'][$to]);
-	elseif ($where === 'before' || $where === 'after')
-	{
-		foreach ($context['layers'] as &$layer)
-		{
-			if (!isset($layer[$to]))
-				continue;
+		// If a mod requests to replace the contents of the sidebar, just smile politely.
+		if (($where === 'replace' || $where === 'erase') && $to === 'sidebar')
+			$where = 'add';
 
-			$keys = array_keys($layer);
-			$val = array_values($layer);
-			$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
-			array_splice($keys, $offset, 0, array_keys($blocks));
-			array_splice($val, $offset, 0, $blocks);
-			$layer = array_combine($keys, $val);
-			skeleton_reindex();
-			break;
-		}
-	}
-	else
-		return false;
-	return $to;
-}
+		// If no position is specified, we use the contextual default: 'replace' for the main layer, 'add' for others.
+		if (empty($where))
+			$where = $to === 'default' ? 'replace' : 'add';
 
-/**
- * Add a layer dynamically.
- *
- * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_above' and 'template_layer_below' functions.
- * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the default layer (which doesn't accept any positioning, either.)
- * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
- */
-function loadLayer($layer, $target = '', $where = 'parent')
-{
-	global $context;
-
-	/*
-		This is the full list of $where possibilities.
-		<layer> is $layer, <target> is $target, and <sub> is anything already inside <target>, block or layer.
-
-		parent		wrap around the target (default)						<layer> <target> <sub /> </target> </layer>
-		child		insert between the target and its current children		<target> <layer> <sub /> </layer> </target>
-
-		replace		replace the layer but not its current contents			<layer>          <sub />           </layer>
-		erase		replace the layer and empty its contents				<layer>                            </layer>
-
-		before		add before the item										<layer> </layer> <target> <sub /> </target>
-		after		add after the item										<target> <sub /> </target> <layer> </layer>
-
-		firstchild	add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
-		lastchild	add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
-	*/
-
-	if (empty($target))
-		$target = 'default';
-
-	// Target layer doesn't exist..? Enter brooding mode.
-	if (!isset($context['layers'][$target]))
-		return false;
-
-	if ($where === 'parent' || $where === 'before' || $where === 'after' || $where === 'replace' || $where === 'erase')
-	{
-		skeleton_insert_layer($layer, $target, $where);
 		if ($where === 'replace' || $where === 'erase')
-			removeLayer($target);
-	}
-	elseif ($where === 'child')
-	{
-		$context['layers'][$target] = array($layer => $context['layers'][$target]);
-		$context['layers'][$layer] =& $context['layers'][$target][$layer];
-	}
-	elseif ($where === 'firstchild' || $where === 'lastchild')
-	{
-		if ($where === 'firstchild')
-			$context['layers'][$target] = array_merge(array($layer => array()), $context['layers'][$target]);
-		else
-			$context['layers'][$target][$layer] = array();
-		$context['layers'][$layer] =& $context['layers'][$target][$layer];
-	}
-	else
-		return false;
-	return $target;
-}
-
-/**
- * Find a block or layer's parent layer.
- *
- * @param string $child The name of the block or layer. Really.
- * @return mixed Returns either the name of the parent layer, or FALSE if not found.
- */
-function skeleton_find_parent($child)
-{
-	global $context;
-
-	foreach ($context['layers'] as $id => &$layer)
-		if (isset($layer[$child]))
-			return $id;
-
-	return false;
-}
-
-function skeleton_remove_item($item, $from = array(), $level = 0)
-{
-	global $context;
-
-	if (empty($from))
-		$from = $context['skeleton_array'];
-
-	$ret = array();
-	foreach ($from as $key => $val)
-		if ($key !== $item)
-			$ret[$key] = is_array($val) && !empty($val) ? skeleton_remove_item($item, $val, $level + 1) : $val;
-
-	return $ret;
-}
-
-/**
- * Insert a layer to the skeleton.
- *
- * @param string $source Name of the layer to insert.
- * @param string $target Name of the parent layer to target.
- * @param string $where Determines where to position the source layer relative to the target.
- */
-function skeleton_insert_layer($source, $target = 'default', $where = 'parent')
-{
-	global $context;
-
-	$lay = skeleton_find_parent($target);
-	$lay = $lay ? $lay : 'default';
-	if (!isset($context['layers'][$lay]))
-		return;
-	$dest =& $context['layers'][$lay];
-
-	$temp = array();
-	foreach ($dest as $key => &$value)
-	{
-		if ($key === $target)
 		{
-			if ($where === 'after')
-				$temp[$key] = $value;
-			$temp[$source] = $where === 'parent' ? array($key => $value) : ($where === 'erase' ? array() : ($where === 'replace' ? $value : array()));
-			if ($where === 'before')
-				$temp[$key] = $value;
-		}
-		else
-			$temp[$key] = $value;
-	}
+			$has_arrays = false;
+			if ($where === 'replace' && isset(self::$layers[$to]))
+				foreach (self::$layers[$to] as $item)
+					$has_arrays |= is_array($item);
 
-	$dest = $temp;
-	// We need to reindex, in case the layer had child layers.
-	if ($where !== 'after' && $where !== 'before')
-		skeleton_reindex();
-}
-
-// Helper function to remove a block from the page. Works on any layer.
-function removeBlock($block)
-{
-	global $context;
-
-	$layer = skeleton_find_parent($block);
-	// If it's a block, remove it. Otherwise it's a layer. Bad coder!
-	if (!is_array($context['layers'][$layer][$block]))
-		unset($context['layers'][$layer][$block]);
-	else
-		removeLayer($block);
-}
-
-// Helper function to remove a layer from the page.
-function removeLayer($layer)
-{
-	global $context;
-
-	// Does the layer at least exist...?
-	if (!isset($context['layers'][$layer]) || $layer === 'default')
-		return false;
-
-	// Determine whether removing this layer would also remove the context layer. Which you may not.
-	$current = 'default';
-	$loop = true;
-	while ($loop)
-	{
-		$loop = false;
-		foreach ($context['layers'] as $id => &$curlay)
-		{
-			if (isset($curlay[$current]))
+			// Most likely case: no child layers (or erase all). Replace away!
+			if (!$has_arrays)
 			{
-				// There there! Go away now, we won't tell your parents.
-				if ($id === $layer)
-					return false;
-				$current = $id;
-				$loop = true;
+				self::$layers[$to] = $blocks;
+				// If we erase, we might have to delete layer entries.
+				if ($where === 'erase')
+					self::reindex();
+				return $to;
+			}
+
+			// Otherwise, we're in for some fun... :-/
+			$keys = array_keys(self::$layers[$to]);
+			foreach ($keys as $id)
+			{
+				$item =& self::$layers[$to][$id];
+				if (!is_array($item))
+				{
+					// We're going to insert our block(s) right before the first block we find...
+					if (!isset($offset))
+					{
+						$val = array_values(self::$layers[$to]);
+						$offset = array_search($id, $keys, true);
+						array_splice($keys, $offset, 0, array_keys($blocks));
+						array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
+						self::$layers[$to] = array_combine($keys, $val);
+					}
+					// ...And then we delete the other block(s) and leave the layers where they are.
+					unset(self::$layers[$to][$id]);
+				}
+			}
+
+			// So, we found a layer but no blocks..? Add our blocks at the end.
+			if (!isset($offset))
+				self::$layers[$to] += $blocks;
+			self::reindex();
+		}
+		elseif ($where === 'add')
+			self::$layers[$to] = array_merge(self::$layers[$to], $blocks);
+		elseif ($where === 'first')
+			self::$layers[$to] = array_merge(array_reverse($blocks), self::$layers[$to]);
+		elseif ($where === 'before' || $where === 'after')
+		{
+			foreach (self::$layers as &$layer)
+			{
+				if (!isset($layer[$to]))
+					continue;
+
+				$keys = array_keys($layer);
+				$val = array_values($layer);
+				$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
+				array_splice($keys, $offset, 0, array_keys($blocks));
+				array_splice($val, $offset, 0, $blocks);
+				$layer = array_combine($keys, $val);
+				self::reindex();
+				break;
 			}
 		}
+		else
+			return false;
+		return $to;
 	}
 
-	// This isn't a direct parent of 'default', so we can safely remove it.
-	$context['skeleton_array'] = skeleton_remove_item($layer);
-	skeleton_reindex();
-	return true;
+	/**
+	 * Add a layer dynamically.
+	 *
+	 * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_above' and 'template_layer_below' functions.
+	 * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the default layer (which doesn't accept any positioning, either.)
+	 * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
+	 */
+	public static function layer($layer, $target = '', $where = 'parent')
+	{
+		/*
+			This is the full list of $where possibilities.
+			<layer> is $layer, <target> is $target, and <sub> is anything already inside <target>, block or layer.
+
+			parent		wrap around the target (default)						<layer> <target> <sub /> </target> </layer>
+			child		insert between the target and its current children		<target> <layer> <sub /> </layer> </target>
+
+			replace		replace the layer but not its current contents			<layer>          <sub />           </layer>
+			erase		replace the layer and empty its contents				<layer>                            </layer>
+
+			before		add before the item										<layer> </layer> <target> <sub /> </target>
+			after		add after the item										<target> <sub /> </target> <layer> </layer>
+
+			firstchild	add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
+			lastchild	add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
+		*/
+
+		if (empty($target))
+			$target = 'default';
+
+		// Target layer doesn't exist..? Enter brooding mode.
+		if (!isset(self::$layers[$target]))
+			return false;
+
+		if ($where === 'parent' || $where === 'before' || $where === 'after' || $where === 'replace' || $where === 'erase')
+		{
+			self::insert_layer($layer, $target, $where);
+			if ($where === 'replace' || $where === 'erase')
+				self::remove_layer($target);
+		}
+		elseif ($where === 'child')
+		{
+			self::$layers[$target] = array($layer => self::$layers[$target]);
+			self::$layers[$layer] =& self::$layers[$target][$layer];
+		}
+		elseif ($where === 'firstchild' || $where === 'lastchild')
+		{
+			if ($where === 'firstchild')
+				self::$layers[$target] = array_merge(array($layer => array()), self::$layers[$target]);
+			else
+				self::$layers[$target][$layer] = array();
+			self::$layers[$layer] =& self::$layers[$target][$layer];
+		}
+		else
+			return false;
+		return $target;
+	}
+
+	/**
+	 * Find a block or layer's parent layer.
+	 *
+	 * @param string $child The name of the block or layer. Really.
+	 * @return mixed Returns either the name of the parent layer, or FALSE if not found.
+	 */
+	private static function find_parent($child)
+	{
+		foreach (self::$layers as $id => &$layer)
+			if (isset($layer[$child]))
+				return $id;
+
+		return false;
+	}
+
+	/**
+	 * Insert a layer to the skeleton.
+	 *
+	 * @param string $source Name of the layer to insert.
+	 * @param string $target Name of the parent layer to target.
+	 * @param string $where Determines where to position the source layer relative to the target.
+	 */
+	private static function insert_layer($source, $target = 'default', $where = 'parent')
+	{
+		$lay = self::find_parent($target);
+		$lay = $lay ? $lay : 'default';
+		if (!isset(self::$layers[$lay]))
+			return;
+		$dest =& self::$layers[$lay];
+
+		$temp = array();
+		foreach ($dest as $key => &$value)
+		{
+			if ($key === $target)
+			{
+				if ($where === 'after')
+					$temp[$key] = $value;
+				$temp[$source] = $where === 'parent' ? array($key => $value) : ($where === 'erase' ? array() : ($where === 'replace' ? $value : array()));
+				if ($where === 'before')
+					$temp[$key] = $value;
+			}
+			else
+				$temp[$key] = $value;
+		}
+
+		$dest = $temp;
+		// We need to reindex, in case the layer had child layers.
+		if ($where !== 'after' && $where !== 'before')
+			self::reindex();
+	}
+
+	// Helper function to remove a block or layer from the page.
+	public static function remove($block)
+	{
+		$layer = self::find_parent($block);
+		// If it's a block, remove it. Otherwise it's a layer, make sure it's removable.
+		if (!is_array(self::$layers[$layer][$block]))
+			unset(self::$layers[$layer][$block]);
+		else
+			self::remove_layer($block);
+	}
+
+	// Helper function to remove a layer from the page.
+	private static function remove_layer($layer)
+	{
+		// Does the layer at least exist...?
+		if (!isset(self::$layers[$layer]) || $layer === 'default')
+			return false;
+
+		// Determine whether removing this layer would also remove the default layer. Which you may not.
+		$current = 'default';
+		$loop = true;
+		while ($loop)
+		{
+			$loop = false;
+			foreach (self::$layers as $id => &$curlay)
+			{
+				if (isset($curlay[$current]))
+				{
+					// There there! Go away now, we won't tell your parents.
+					if ($id === $layer)
+						return false;
+					$current = $id;
+					$loop = true;
+				}
+			}
+		}
+
+		// This isn't a direct parent of 'default', so we can safely remove it.
+		self::$skeleton = self::remove_item($layer);
+		self::reindex();
+		return true;
+	}
+
+	private static function remove_item($item, $from = array(), $level = 0)
+	{
+		if (empty($from))
+			$from = self::$skeleton;
+
+		$ret = array();
+		foreach ($from as $key => $val)
+			if ($key !== $item)
+				$ret[$key] = is_array($val) && !empty($val) ? self::remove_item($item, $val, $level + 1) : $val;
+
+		return $ret;
+	}
 }
 
 ?>

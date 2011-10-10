@@ -72,11 +72,30 @@ function Display()
 
 	// Load the proper template and/or sub template.
 	if (WIRELESS)
-		loadBlock('wap2_display');
+		wetem::load('wap2_display');
 	else
 	{
 		loadTemplate('Display');
-		loadBlock(array('report_success', 'display_draft', 'title_upper', 'topic_poll', 'linked_calendar', 'topic_buttons_upper', 'display_posts', 'topic_buttons_lower', 'jumpto', 'mod_buttons', 'quick_reply'));
+		wetem::load(
+			array(
+				'report_success',
+				'display_draft',
+				'title_upper',
+				'topic_poll',
+				'linked_calendar',
+			)
+		);
+		wetem::layer('postlist', 'default', 'child');
+		wetem::load('display_posts', 'postlist');
+		wetem::load(
+			array(
+				'quick_access',
+				'mod_buttons',
+				'quick_reply'
+			),
+			'',
+			'add'
+		);
 	}
 
 	// Not only does a prefetch make things slower for the server, but it makes it impossible to know if they read it.
@@ -413,7 +432,7 @@ function Display()
 	// Set the userbox position to the right. Later on, allow users to determine position of sidebar & userbox.
 	$context['post_position'] = 'right';
 
-	loadBlock('display_statistics', 'sidebar');
+	wetem::load('display_statistics', 'sidebar');
 
 	// Default this topic to not marked for notifications... of course...
 	$context['is_marked_notify'] = false;

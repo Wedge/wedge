@@ -760,7 +760,7 @@ function loadBoard()
 	$context['current_topic'] = $topic;
 	$context['current_board'] = $board;
 
-	// Hacker... you can't see this topic, I'll tell you that. (but moderators can!)
+	// Hacker... you can't see this topic, I'll tell you that. (But moderators can!)
 	if (!empty($board_info['error']) && ($board_info['error'] != 'access' || !$user_info['is_mod']))
 	{
 		// The permissions and theme need loading, just to make sure everything goes smoothly.
@@ -1754,15 +1754,14 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Initializing the Wedge templating magic.
 	$context['macros'] = array();
 	$context['skeleton'] = '';
-	$context['skeleton_array'] = array();
-	$context['layers'] = array();
+	wetem::getInstance();
 
 	// Wireless mode? Load up the wireless stuff.
 	if (WIRELESS)
 	{
 		loadTemplate('Wireless');
 		loadLanguage('Wireless+index');
-		hideChrome('wap2');
+		wetem::hide('wap2');
 	}
 	// Output is fully XML or a simple action?
 	elseif (isset($_REQUEST['xml']) || !empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
@@ -1770,7 +1769,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if (isset($_REQUEST['xml']))
 			loadTemplate('Xml');
 		loadLanguage('index');
-		hideChrome();
+		wetem::hide();
 	}
 	else
 	{
@@ -1830,9 +1829,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if (empty($context['skeleton']))
 			execBlock('skeleton', 'ignore');
 
-		// Now we have a $context['skeleton'] (original or overridden), we can turn it into an array.
+		// Now we have a $context['skeleton'] (original or overridden), we can feed it to the template object.
 		preg_match_all('~<(?!!)(/)?([\w:,]+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
-		skeleton_build($match, $context['skeleton_array']);
+		wetem::build($match);
 		unset($context['skeleton']);
 	}
 

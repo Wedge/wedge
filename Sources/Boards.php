@@ -38,14 +38,14 @@ function Boards()
 
 	// For wireless, we use the Wireless template...
 	if (WIRELESS)
-		loadBlock('wap2_boards');
+		wetem::load('wap2_boards');
 	else
 	{
 		loadTemplate('Boards');
 		loadTemplate('InfoCenter');
 		// We load the info center into our sidebar...
-		loadLayer('info_center', 'sidebar', 'lastchild');
-		loadBlock(
+		wetem::layer('info_center', 'sidebar', 'lastchild');
+		wetem::load(
 			array(
 				'info_center_recentposts',
 				'info_center_calendar',
@@ -55,8 +55,8 @@ function Boards()
 			),
 			'info_center'
 		);
-		// And the rest into our context layer.
-		loadBlock(
+		// And the rest into our default layer.
+		wetem::load(
 			array(
 				'boards_ministats',
 				'boards_newsfader',
