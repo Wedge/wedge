@@ -94,6 +94,10 @@ function ListPlugins()
 						'description' => westr::htmlspecialchars($manifest->description),
 						'hooks' => array(),
 						'provide_hooks' => array(),
+						'optional_hooks' => array(
+							'function' => array(),
+							'language' => array(),
+						),
 						'readmes' => array(),
 						'acp_url' => $manifest->{'acp-url'},
 						'install_errors' => array(),
@@ -160,10 +164,14 @@ function ListPlugins()
 								case 'function':
 									if (!empty($each_hook['point']))
 										$plugin['hooks']['function'][] = $each_hook['point'];
+									if (!empty($each_hook['optional']) && $each_hook['optional'] == 'yes')
+										$plugin['optional_hooks']['function'][] = $each_hook['point'];
 									break;
 								case 'language':
 									if (!empty($each_hook['point']))
 										$plugin['hooks']['language'][] = $each_hook['point'];
+									if (!empty($each_hook['optional']) && $each_hook['optional'] == 'yes')
+										$plugin['optional_hooks']['language'][] = $each_hook['point'];
 									break;
 								case 'provides':
 									$provided_hooks = $each_hook->children();
@@ -229,7 +237,7 @@ function ListPlugins()
 			if (empty($plugin['provide_hooks'][$hook_type]))
 				$plugin['provide_hooks'][$hook_type] = array();
 
-			$missing_hooks = array_diff($required_hooks, $hooks[$hook_type], $plugin['provide_hooks'][$hook_type]);
+			$missing_hooks = array_diff($required_hooks, $hooks[$hook_type], $plugin['provide_hooks'][$hook_type], $plugin['optional_hooks'][$hook_type]);
 			if (count($missing_hooks) > 0)
 			{
 				$context['available_plugins'][$id]['install_errors']['missinghook'] = $txt['install_error_missinghook'] . ' (' . implode(', ', $missing_hooks) . ')';
@@ -415,6 +423,10 @@ function EnablePlugin()
 	// Hooks associated with this plugin.
 	$hooks_required = array();
 	$hook_data = array();
+	$optional_hooks = array(
+		'function' => array(),
+		'language' => array(),
+	);
 	if (!empty($manifest->hooks))
 	{
 		$hooks_listed = $manifest->hooks->children();
@@ -429,6 +441,8 @@ function EnablePlugin()
 					'function' => $each_hook['function'],
 					'filename' => $each_hook['filename'],
 				);
+				if (!empty($each_hook['optional']) && $each_hook['optional'] == 'yes')
+					$optional_hooks[$hook][] = $point;
 			}
 		}
 	}
@@ -462,7 +476,7 @@ function EnablePlugin()
 	{
 		if (empty($hook_list))
 			continue;
-		$hooks_missing[$hook_type] = array_diff($hook_list, $hooks_available[$hook_type]);
+		$hooks_missing[$hook_type] = array_diff($hook_list, $hooks_available[$hook_type], $optional_hooks[$hook_type]);
 		if (empty($hooks_missing[$hook_type]))
 			unset($hooks_missing[$hook_type]);
 	}
