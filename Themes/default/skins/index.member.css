@@ -32,8 +32,7 @@ ul.buttonlist
 ------------------------------------------------- */
 
 #personal_messages
-	.wrc extends #forumposts .wrc
-	.pm
+	.pm extends #forumposts .wrc
 		overflow: auto
 		clear: both
 	#author, #topic_title

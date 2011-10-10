@@ -2364,6 +2364,8 @@ function getPmRecipients(&$recipientList, &$namedRecipientList, &$namesNotFound)
 
 			if (!empty($namedRecipientList[$recipientType]))
 			{
+				if (!function_exists('findMembers'))
+					loadSource('Subs-Auth');
 				$foundMembers = findMembers($namedRecipientList[$recipientType]);
 
 				// Assume all are not found, until proven otherwise.
