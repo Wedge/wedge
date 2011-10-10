@@ -26,8 +26,6 @@ function template_browse()
 	foreach ($context['available_plugins'] as $id => $plugin)
 	{
 		$icons[$id] = array();
-		if (!empty($plugin['install_errors']))
-			continue;
 
 		if ($plugin['enabled'])
 		{
@@ -50,17 +48,19 @@ function template_browse()
 		}
 		else
 		{
-			$item = array(
-				array(
+			$item = array();
+
+			if (empty($plugin['install_errors']))
+				$item[0] = array(
 					'icon' => 'switch_off.png',
 					'url' => $scripturl . '?action=admin;area=plugins;sa=enable;plugin=' . $plugin['folder'] . ';' . $context['session_query'],
 					'title' => $txt['enable_plugin'],
-				),
-				array(
-					'icon' => 'plugin_remove.png',
-					'url' => $scripturl . '?action=admin;area=plugins;sa=remove;plugin=' . $plugin['folder'],
-					'title' => $txt['remove_plugin'],
-				),
+				);
+
+			$item[1] = array(
+				'icon' => 'plugin_remove.png',
+				'url' => $scripturl . '?action=admin;area=plugins;sa=remove;plugin=' . $plugin['folder'],
+				'title' => $txt['remove_plugin'],
 			);
 
 			$icons[$id] = $item;
@@ -75,24 +75,24 @@ function template_browse()
 	<fieldset class="windowbg', $use_bg2 ? '2' : '', ' wrc">
 		<legend>', $plugin['name'], ' ', $plugin['version'], '</legend>';
 
-		// Plugin buttons. They're floated right, so need to be first. Besides which, the floating means they need to be in reverse order :/
-		if (!empty($plugin['install_errors']))
-			echo '
-		<div class="floatright"><strong>', $txt['install_errors'], '</strong><br>', implode('<br>', $plugin['install_errors']), '</div>';
-		else
+		for ($i = $max_icons - 1; $i >= 0; $i--)
 		{
-			for ($i = $max_icons - 1; $i >= 0; $i--)
-				if (!isset($icons[$id][$i]))
-					echo '
+			if (!isset($icons[$id][$i]))
+				echo '
 			<div class="plugin_item inline_block floatright">&nbsp;</div>';
-				else
-					echo '
+			else
+				echo '
 			<div class="plugin_item inline_block floatright">
 				<a href="', $icons[$id][$i]['url'], '">
 					<img src="', $settings['images_url'], '/admin/', $icons[$id][$i]['icon'], '"', !empty($icons[$id][$i]['title']) ? ' title="' . $icons[$id][$i]['title'] . '"' : '', '>
 				</a>
 			</div>';
 		}
+
+		// Plugin buttons. They're floated right, so need to be first. Besides which, the floating means they need to be in reverse order :/
+		if (!empty($plugin['install_errors']))
+			echo '
+		<div class="floatright smalltext errorbox"><strong>', $txt['install_errors'], '</strong><br>', implode('<br>', $plugin['install_errors']), '</div>';
 
 		// Plugin description
 		if (!empty($plugin['description']))
