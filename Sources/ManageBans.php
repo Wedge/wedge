@@ -1010,7 +1010,7 @@ function BanEdit()
 	// If we're in wireless mode remove the admin template layer and use a special template.
 	if (WIRELESS)
 	{
-		hideChrome('html');
+		wetem::hide('html');
 		wetem::load('wap2_ban_edit');
 	}
 	else

@@ -84,7 +84,7 @@ function aeva_initGallery($gal_url = null)
 
 	// If we're in a popup, don't show the theme's body area.
 	if (isset($_REQUEST['noh']))
-		hideChrome('html');
+		wetem::hide('html');
 
 	// If you are not allowed to enter......What are you doing here?
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] != 'media')

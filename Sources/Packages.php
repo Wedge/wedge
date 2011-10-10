@@ -1509,7 +1509,7 @@ function ViewOperations()
 
 	// No layers
 	wetem::load('view_operations');
-	hideChrome();
+	wetem::hide();
 }
 
 // Allow the admin to reset permissions on files.
@@ -1819,7 +1819,7 @@ function PackagePermissions()
 	{
 		loadTemplate('Xml');
 		wetem::load('generic_xml');
-		hideChrome();
+		wetem::hide();
 	}
 }
 
@@ -2219,7 +2219,7 @@ function PackageFTPTest()
 	// Deal with the template stuff.
 	loadTemplate('Xml');
 	wetem::load('generic_xml');
-	hideChrome();
+	wetem::hide();
 
 	// Define the return data, this is simple.
 	$context['xml_data'] = array(

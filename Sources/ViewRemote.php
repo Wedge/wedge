@@ -21,7 +21,7 @@ function ViewRemote()
 {
 	global $context, $modSettings;
 
-	hideChrome();
+	wetem::hide();
 	@ini_set('memory_limit', '32M');
 
 	if (empty($_REQUEST['filename']) || !is_string($_REQUEST['filename']))

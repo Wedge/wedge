@@ -41,7 +41,7 @@ function Help()
 		loadLanguage('ManagePermissions');
 
 	loadTemplate('Help');
-	hideChrome();
+	wetem::hide();
 
 	// Set the page title to something relevant.
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['help'];

@@ -1014,7 +1014,7 @@ function ShowNotice()
 
 	$context['page_title'] = $txt['show_notice'];
 	wetem::load('show_notice');
-	hideChrome();
+	wetem::hide();
 
 	loadTemplate('ModerationCenter');
 

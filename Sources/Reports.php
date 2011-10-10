@@ -161,7 +161,7 @@ function ReportsMain()
 
 		// Are we disabling the other layers - print friendly for example?
 		if ($reportTemplates[$_REQUEST['st']])
-			hideChrome($reportTemplates[$_REQUEST['st']]);
+			wetem::hide($reportTemplates[$_REQUEST['st']]);
 	}
 
 	// Make the page title more descriptive.

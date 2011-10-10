@@ -108,7 +108,7 @@ function Spellcheck()
 
 	// And instruct the template system to just show the spellcheck block.
 	wetem::load('spellcheck');
-	hideChrome();
+	wetem::hide();
 }
 
 ?>

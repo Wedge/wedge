@@ -394,7 +394,7 @@ function ViewFile()
 	);
 
 	if ($context['is_ajax'])
-		hideChrome();
+		wetem::hide();
 	else
 		$context['page_title'] = $context['file_data']['file'];
 

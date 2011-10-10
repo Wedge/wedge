@@ -269,7 +269,7 @@ function PluginReadme()
 	// Let's start and fire up the template. We're reusing the nice popup, so load templates and set up various things.
 	loadTemplate('Help');
 	loadLanguage('Help');
-	hideChrome();
+	wetem::hide();
 	$context['page_title'] = $txt['plugin_manager'] . ' - ' . $txt['help'];
 	wetem::load('popup');
 
