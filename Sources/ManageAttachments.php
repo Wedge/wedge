@@ -203,7 +203,7 @@ function ManageAttachmentSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=attachments';
 	prepareDBSettingContext($config_vars);
 
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 }
 
 function ManageAvatarSettings($return_config = false)
@@ -286,14 +286,14 @@ function ManageAvatarSettings($return_config = false)
 
 	// Add a layer for the javascript.
 	wetem::layer('avatar_settings');
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 }
 
 function BrowseFiles()
 {
 	global $context, $txt, $scripturl, $options, $modSettings;
 
-	loadBlock('browse');
+	wetem::load('browse');
 
 	// Attachments or avatars?
 	$context['browse_type'] = isset($_REQUEST['avatars']) ? 'avatars' : (isset($_REQUEST['thumbs']) ? 'thumbs' : 'attachments');
@@ -568,7 +568,7 @@ function MaintainFiles()
 {
 	global $context, $modSettings, $txt;
 
-	loadBlock('maintenance');
+	wetem::load('maintenance');
 
 	if (!empty($modSettings['currentAttachmentUploadDir']))
 		$attach_dirs = unserialize($modSettings['attachmentUploadDir']);
@@ -1386,7 +1386,7 @@ function RepairAttachments()
 	// Got here we must be doing well - just the template! :D
 	$context['page_title'] = $txt['repair_attachments'];
 	$context[$context['admin_menu_name']]['current_subsection'] = 'maintenance';
-	loadBlock('attachment_repair');
+	wetem::load('attachment_repair');
 
 	// What stage are we at?
 	$context['completed'] = $fix_errors ? true : false;
@@ -1411,7 +1411,7 @@ function pauseAttachmentMaintenance($to_fix, $max_substep = 0)
 	$context['page_title'] = $txt['not_done_title'];
 	$context['continue_post_data'] = '';
 	$context['continue_countdown'] = '2';
-	loadBlock('not_done');
+	wetem::load('not_done');
 
 	// Specific stuff to not break this template!
 	$context[$context['admin_menu_name']]['current_subsection'] = 'maintenance';
@@ -1726,7 +1726,7 @@ function ManageAttachmentPaths()
 	// Fix up our template.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'attachments';
 	$context['page_title'] = $txt['attach_path_manage'];
-	loadBlock('attachment_paths');
+	wetem::load('attachment_paths');
 }
 
 // Prepare the actual attachment directories to be displayed in the list.

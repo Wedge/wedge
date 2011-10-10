@@ -295,7 +295,7 @@ function ViewModlog()
 	// Create the watched user list.
 	createList($listOptions);
 
-	loadBlock('show_list');
+	wetem::load('show_list');
 	$context['default_list'] = 'moderation_log_list';
 }
 
@@ -504,7 +504,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		{
 			foreach ($topics[$row['id_topic']] as $action)
 			{
-				$this_action = &$entries[$action];
+				$this_action =& $entries[$action];
 
 				// This isn't used in the current theme.
 				$this_action['topic'] = array(
@@ -539,7 +539,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		{
 			foreach ($messages[$row['id_msg']] as $action)
 			{
-				$this_action = &$entries[$action];
+				$this_action =& $entries[$action];
 
 				// This isn't used in the current theme.
 				$this_action['message'] = array(

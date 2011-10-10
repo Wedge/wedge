@@ -27,7 +27,7 @@ function JSEditor()
 
 	loadSource('Class-Editor');
 
-	loadBlock('sendbody');
+	wetem::load('sendbody');
 
 	$context['view'] = (int) $_REQUEST['view'];
 

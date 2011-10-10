@@ -506,7 +506,7 @@ function MLSearch()
 		// What do we search for by default?
 		$context['search_defaults'] = array('name', 'email');
 
-		loadBlock('search');
+		wetem::load('search');
 		$context['old_search'] = isset($_GET['search']) ? $_GET['search'] : (isset($_POST['search']) ? htmlspecialchars($_POST['search']) : '');
 	}
 

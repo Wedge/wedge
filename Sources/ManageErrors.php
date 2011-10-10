@@ -287,7 +287,7 @@ function ViewErrorLog()
 	// And this is pretty basic ;)
 	$context['page_title'] = $txt['errlog'];
 	$context['has_filter'] = isset($filter);
-	loadBlock('error_log');
+	wetem::load('error_log');
 
 	// Don't rewrite any URLs, we need them to remain exact!
 	$modSettings['pretty_filters'] = array();
@@ -399,7 +399,7 @@ function ViewFile()
 		$context['page_title'] = $context['file_data']['file'];
 
 	loadTemplate('Errors');
-	loadBlock('show_file');
+	wetem::load('show_file');
 }
 
 ?>

@@ -62,7 +62,7 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 	// Will need the utility functions from here.
 	loadSource('ManageServer');
 
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 
 	// By default do the basic settings.
 	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($defaultAction) ? $defaultAction : array_pop(array_keys($subActions)));
@@ -286,7 +286,7 @@ function ModifyCoreFeatures($return_config = false)
 	if ($context['is_new_install'])
 		updateSettings(array('media_enabled' => 1));
 
-	loadBlock('core_features');
+	wetem::load('core_features');
 	$context['page_title'] = $txt['core_settings_title'];
 }
 
@@ -655,7 +655,7 @@ function ModifyLogSettings($return_config = false)
 
 	$context['post_url'] = $scripturl . '?action=admin;area=logs;save;sa=settings';
 	$context['settings_title'] = $txt['log_settings'];
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 
 	// Get the actual values
 	if (!empty($modSettings['pruningOptions']))
@@ -737,7 +737,7 @@ function ModifyPrettyURLs($return_config = false)
 	if ($return_config)
 		return array();
 
-	loadBlock('pretty_urls');
+	wetem::load('pretty_urls');
 	$context['page_title'] = $txt['admin_pretty_urls'];
 
 	// The action filter should always be last, because it's generic.

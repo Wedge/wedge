@@ -224,11 +224,11 @@ function Unread()
 	);
 
 	if (WIRELESS)
-		loadBlock('wap2_recent');
+		wetem::load('wap2_recent');
 	else
 	{
 		loadTemplate('Recent');
-		loadBlock('unread');
+		wetem::load('unread');
 	}
 
 	// Setup the default topic icons... for checking they exist and the like ;)
@@ -503,7 +503,7 @@ function Unread()
 	}
 
 	loadTemplate('MessageIndex');
-	loadBlock('messageindex_legend', 'sidebar');
+	wetem::load('messageindex_legend', 'sidebar');
 
 	$context['topics'] = array();
 	$topic_ids = array();

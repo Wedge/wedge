@@ -61,7 +61,7 @@ function CalendarMain()
 
 	// This is gonna be needed...
 	loadTemplate('Calendar');
-	loadBlock('sidebar', 'sidebar');
+	wetem::load('sidebar', 'sidebar');
 
 	// You can't do anything if the calendar is off.
 	if (empty($modSettings['cal_enabled']))
@@ -297,7 +297,7 @@ function CalendarPost()
 
 	// Template, sub template, etc.
 	loadTemplate('Calendar');
-	loadBlock('event_post');
+	wetem::load('event_post');
 
 	$context['page_title'] = isset($_REQUEST['eventid']) ? $txt['calendar_edit'] : $txt['calendar_post_event'];
 	$context['linktree'][] = array(

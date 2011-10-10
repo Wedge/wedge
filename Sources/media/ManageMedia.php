@@ -152,7 +152,7 @@ function aeva_admin_about()
 	$sa = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('index', 'readme', 'changelog')) ? $_REQUEST['sa'] : 'index';
 
 	// Call the template
-	loadBlock('aeva_admin_about');
+	wetem::load('aeva_admin_about');
 
 	if ($sa == 'readme' || $sa == 'changelog')
 	{
@@ -284,7 +284,7 @@ function aeva_admin_settings()
 {
 	global $context, $scripturl, $amSettings, $modSettings, $txt;
 
-	loadBlock('aeva_form');
+	wetem::load('aeva_form');
 	wetem::layer('aeva_admin_enclose_table');
 
 	$context['current_area'] = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('meta', 'layout')) ? $_REQUEST['sa'] : 'config';
@@ -579,7 +579,7 @@ function aeva_admin_FTPImport()
 	if (!isset($amSettings['tmp_ftp_num_files']) || empty($_REQUEST['start']))
 		aeva_updateSettings('tmp_ftp_num_files', count($files), true);
 
-	loadBlock('aeva_admin_ftpimport');
+	wetem::load('aeva_admin_ftpimport');
 	$context['is_halted'] = false;
 	$context['ftp_done'] = (int) $_REQUEST['start'];
 
@@ -811,7 +811,7 @@ function aeva_admin_perms()
 			$context['aeva_profiles'][$row['id_perm_profile']]['albums'] = $row['total'];
 	wesql::free_result($request);
 
-	loadBlock('aeva_admin_perms');
+	wetem::load('aeva_admin_perms');
 	// Page title
 	$context['page_title'] = $txt['media_admin_labels_perms'];
 }
@@ -1020,7 +1020,7 @@ function aeva_admin_perms_view()
 	wesql::free_result($request);
 
 	$context['membergroups'] = $groups;
-	loadBlock('aeva_admin_perms_view');
+	wetem::load('aeva_admin_perms_view');
 }
 
 // Editing one membergroup?
@@ -1161,7 +1161,7 @@ function aeva_admin_perms_edit()
 		redirectexit($context['base_url'] . ';sa=view;in=' . $rid);
 	}
 
-	loadBlock('aeva_form');
+	wetem::load('aeva_form');
 }
 
 function aeva_admin_perms_albums()
@@ -1328,7 +1328,7 @@ function aeva_admin_quotas()
 			$context['aeva_profiles'][$row['id_quota_profile']]['albums'] = $row['total'];
 	wesql::free_result($request);
 
-	loadBlock('aeva_admin_quotas');
+	wetem::load('aeva_admin_quotas');
 	$context['page_title'] = $txt['media_admin_labels_quotas'];
 }
 
@@ -1389,7 +1389,7 @@ function aeva_admin_quotas_view()
 	}
 
 	$context['membergroups'] = aeva_getMembergroups();
-	loadBlock('aeva_admin_quota_view');
+	wetem::load('aeva_admin_quota_view');
 }
 
 // Editing a single membergroup?
@@ -1499,7 +1499,7 @@ function aeva_admin_quotas_edit()
 			'size' => 10,
 			'next' => ' ' . $txt['media_kb'],
 		);
-	loadBlock('aeva_form');
+	wetem::load('aeva_form');
 
 	// Submitting?
 	if (isset($_POST['submit_aeva']))
@@ -1616,7 +1616,7 @@ function aeva_admin_fields()
 	// Load the fields :D
 	$context['custom_fields'] = aeva_loadCustomFields();
 
-	loadBlock('aeva_admin_fields');
+	wetem::load('aeva_admin_fields');
 }
 
 // Editing/adding a field?
@@ -1726,7 +1726,7 @@ function aeva_admin_fields_edit()
 	);
 	$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_fields;sa=edit;in=' . $field['id'] . ';' . $context['session_query'];
 
-	loadBlock('aeva_form');
+	wetem::load('aeva_form');
 
 	// Submitting?
 	if (isset($_POST['submit_aeva']))

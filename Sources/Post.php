@@ -94,7 +94,7 @@ function Post()
 
 	if (isset($_REQUEST['xml']))
 	{
-		loadBlock('post');
+		wetem::load('post');
 
 		// Just in case of an earlier error...
 		$context['preview_message'] = '';
@@ -1236,7 +1236,7 @@ function Post()
 
 	// Finally, load the template.
 	if (WIRELESS)
-		loadBlock('wap2_post');
+		wetem::load('wap2_post');
 	elseif (!isset($_REQUEST['xml']))
 		loadTemplate('Post');
 }

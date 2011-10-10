@@ -94,11 +94,11 @@ function Login2()
 	loadLanguage('Login');
 	// Load the template stuff - wireless or normal.
 	if (WIRELESS)
-		loadBlock('wap2_login');
+		wetem::load('wap2_login');
 	else
 	{
 		loadTemplate('Login');
-		loadBlock('login');
+		wetem::load('login');
 	}
 
 	// Set up the default/fallback stuff.

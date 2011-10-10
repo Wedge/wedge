@@ -88,7 +88,7 @@ function Register($reg_errors = array())
 		$current_step = 1;
 
 	// Show the user the right form.
-	loadBlock($current_step == 1 ? 'registration_agreement' : 'registration_form');
+	wetem::load($current_step == 1 ? 'registration_agreement' : 'registration_form');
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
 	$context['current_forum_time_js'] = time() + $modSettings['time_offset'] * 3600;
@@ -498,7 +498,7 @@ function Register2($verifiedOpenID = false)
 	{
 		unset($_SESSION['register']); // Don't need the time gate now.
 		loadTemplate('Register');
-		loadBlock('after');
+		wetem::load('after');
 		$context += array(
 			'page_title' => $txt['register'],
 			'title' => $txt['registration_successful'],
@@ -522,7 +522,7 @@ function RegisterCheckUsername()
 
 	// This is XML!
 	loadTemplate('Xml');
-	loadBlock('check_username');
+	wetem::load('check_username');
 	$context['checked_username'] = isset($_GET['username']) ? $_GET['username'] : '';
 	$context['valid_username'] = true;
 

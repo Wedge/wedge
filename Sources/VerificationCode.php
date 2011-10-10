@@ -34,7 +34,7 @@ function VerificationCode()
 		loadTemplate('Register');
 
 		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
-		loadBlock('verification_sound');
+		wetem::load('verification_sound');
 		hideChrome();
 
 		obExit();

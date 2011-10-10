@@ -25,7 +25,7 @@ function FindMember()
 	loadSource('Subs-Auth');
 
 	if (WIRELESS)
-		loadBlock('wap2_pm');
+		wetem::load('wap2_pm');
 
 	if (isset($_REQUEST['search']))
 		$context['last_search'] = westr::htmlspecialchars($_REQUEST['search'], ENT_QUOTES);

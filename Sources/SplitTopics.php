@@ -188,7 +188,7 @@ function SplitIndex()
 		'id' => $_GET['at'],
 		'subject' => $_REQUEST['subname']
 	);
-	loadBlock('ask');
+	wetem::load('ask');
 	$context['page_title'] = $txt['split'];
 }
 
@@ -274,7 +274,7 @@ function SplitSelectTopics()
 	$context['new_subject'] = $_REQUEST['subname'];
 
 	// Using the "select" sub template.
-	loadBlock(isset($_REQUEST['xml']) ? 'split' : 'select');
+	wetem::load(isset($_REQUEST['xml']) ? 'split' : 'select');
 
 	// Are we using a custom messages per page?
 	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
@@ -970,7 +970,7 @@ function MergeIndex()
 	if (empty($context['topics']) && count($context['boards']) <= 1)
 		fatal_lang_error('merge_need_more_topics');
 
-	loadBlock('merge');
+	wetem::load('merge');
 }
 
 // Now that the topic IDs are known, do the proper merging.
@@ -1171,7 +1171,7 @@ function MergeExecute($topics = array())
 			$context['topics'][$id]['selected'] = $topic['id'] == $firstTopic;
 
 		$context['page_title'] = $txt['merge'];
-		loadBlock('merge_extra_options');
+		wetem::load('merge_extra_options');
 		return;
 	}
 
@@ -1586,7 +1586,7 @@ function MergeDone()
 	$context['target_topic'] = (int) $_GET['to'];
 
 	$context['page_title'] = $txt['merge'];
-	loadBlock('merge_done');
+	wetem::load('merge_done');
 }
 
 function MergePosts($error_report = true)

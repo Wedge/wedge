@@ -154,7 +154,7 @@ function RemindPick()
 			updateMemberData($row['id_member'], array('validation_code' => substr(md5($password), 0, 10)));
 
 		// Set up the template.
-		loadBlock('sent');
+		wetem::load('sent');
 
 		// Dont really.
 		return;
@@ -166,7 +166,7 @@ function RemindPick()
 	}
 
 	// No we're here setup the context for template number 2!
-	loadBlock('reminder_pick');
+	wetem::load('reminder_pick');
 	$context['current_member'] = array(
 		'id' => $row['id_member'],
 		'name' => $row['member_name'],
@@ -185,7 +185,7 @@ function setPassword()
 		fatal_lang_error('no_access', false);
 
 	// Fill the context array.
-	loadBlock('set_password');
+	wetem::load('set_password');
 	$context += array(
 		'page_title' => $txt['reminder_set_password'],
 		'code' => $_REQUEST['code'],
@@ -260,7 +260,7 @@ function setPassword2()
 	call_hook('reset_pass', array($username, $username, $_POST['passwrd1']));
 
 	loadTemplate('Login');
-	loadBlock('login');
+	wetem::load('login');
 	$context += array(
 		'page_title' => $txt['reminder_password_set'],
 		'default_username' => $username,
@@ -311,7 +311,7 @@ function SecretAnswerInput()
 	$context['remind_type'] = '';
 	$context['secret_question'] = $row['secret_question'];
 
-	loadBlock('ask');
+	wetem::load('ask');
 }
 
 function SecretAnswer2()
@@ -352,7 +352,7 @@ function SecretAnswer2()
 	// If it's OpenID this is where the music ends.
 	if (!empty($row['openid_uri']))
 	{
-		loadBlock('sent');
+		wetem::load('sent');
 		$context['description'] = sprintf($txt['reminder_openid_is'], $row['openid_uri']);
 		return;
 	}
@@ -380,7 +380,7 @@ function SecretAnswer2()
 
 	// Tell them it went fine.
 	loadTemplate('Login');
-	loadBlock('login');
+	wetem::load('login');
 	$context += array(
 		'page_title' => $txt['reminder_password_set'],
 		'default_username' => $row['member_name'],

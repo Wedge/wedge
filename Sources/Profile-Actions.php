@@ -697,7 +697,7 @@ function subscriptions($memID)
 			}
 		}
 
-		loadBlock('paid_done');
+		wetem::load('paid_done');
 		return;
 	}
 	// If this is confirmation then it's simpler...
@@ -813,13 +813,13 @@ function subscriptions($memID)
 		}
 
 		// Change the template.
-		loadBlock('choose_payment');
+		wetem::load('choose_payment');
 
 		// Quit.
 		return;
 	}
 	else
-		loadBlock('user_subscription');
+		wetem::load('user_subscription');
 }
 
 ?>

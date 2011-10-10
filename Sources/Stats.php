@@ -62,7 +62,7 @@ function Stats()
 		if (!empty($_REQUEST['collapse']))
 			obExit(false);
 
-		loadBlock('stats');
+		wetem::load('stats');
 		getDailyStats('YEAR(date) = {int:year} AND MONTH(date) = {int:month}', array('year' => $year, 'month' => $month));
 		$context['yearly'][$year]['months'][$month]['date'] = array(
 			'month' => sprintf('%02d', $month),
@@ -149,7 +149,7 @@ function Stats()
 		'number' => comma_format($modSettings['mostOnline']),
 		'date' => timeformat($modSettings['mostDate'])
 	);
-	$context['latest_member'] = &$context['common_stats']['latest_member'];
+	$context['latest_member'] =& $context['common_stats']['latest_member'];
 
 	// Male vs. female ratio - let's calculate this only every four minutes.
 	if (($context['gender'] = cache_get_data('stats_gender', 240)) == null)

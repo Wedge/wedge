@@ -47,7 +47,7 @@ function Help()
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['help'];
 
 	// Just show the popup sub template.
-	loadBlock('popup');
+	wetem::load('popup');
 
 	// What help string should be used?
 	if (isset($helptxt[$_GET['in']]))

@@ -42,7 +42,7 @@ function Suggest($checkRegistered = null)
 		$_REQUEST['suggest_type'] = 'member';
 
 	$function = 'Suggest_Search_' . $searchTypes[$_REQUEST['suggest_type']];
-	loadBlock('generic_xml');
+	wetem::load('generic_xml');
 	$context['xml_data'] = $function();
 }
 

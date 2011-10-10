@@ -34,13 +34,13 @@ function Login()
 
 	// In wireless?  If so, use the correct block.
 	if (WIRELESS)
-		loadBlock('wap2_login');
+		wetem::load('wap2_login');
 	// Otherwise, we need to load the Login template/language file.
 	else
 	{
 		loadLanguage('Login');
 		loadTemplate('Login');
-		loadBlock('login');
+		wetem::load('login');
 	}
 
 	// Get the template ready.... not really much else to do.

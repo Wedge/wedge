@@ -71,7 +71,7 @@ function ManageSmileys()
 
 	$context['page_title'] = $txt['smileys_manage'];
 	$context['sub_action'] = $_REQUEST['sa'];
-	loadBlock($context['sub_action']);
+	wetem::load($context['sub_action']);
 
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -151,7 +151,7 @@ function EditSmileySettings($return_config = false)
 
 	// Setup the basics of the settings template.
 	loadSource('ManageServer');
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 
 	// Finish up the form...
 	$context['post_url'] = $scripturl . '?action=admin;area=smileys;save;sa=settings';
@@ -280,7 +280,7 @@ function EditSmileySets()
 
 		// Force the process to continue.
 		$context['sub_action'] = 'modifyset';
-		loadBlock('modifyset');
+		wetem::load('modifyset');
 	}
 	// If we're modifying or adding a smileyset, some context info needs to be set.
 	if ($context['sub_action'] == 'modifyset')
@@ -1077,7 +1077,7 @@ function EditSmileys()
 
 		// The list is the only thing to show, so make it the main template.
 		$context['default_list'] = 'smiley_list';
-		loadBlock('show_list');
+		wetem::load('show_list');
 	}
 	// Modifying smileys.
 	elseif ($context['sub_action'] == 'modifysmiley')
@@ -1659,7 +1659,7 @@ function EditMessageIcons()
 	if ($context['sub_action'] == 'editicon' || isset($_POST['add']))
 	{
 		// Force the template block, just in case.
-		loadBlock('editicon');
+		wetem::load('editicon');
 
 		$context['new_icon'] = !isset($_GET['icon']);
 

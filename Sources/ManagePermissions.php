@@ -388,7 +388,7 @@ function PermissionIndex()
 	$context['can_modify'] = empty($_REQUEST['pid']) || $_REQUEST['pid'] == 1 || $_REQUEST['pid'] > 4;
 
 	// Load the proper template.
-	loadBlock('permission_index');
+	wetem::load('permission_index');
 }
 
 function PermissionByBoard()
@@ -459,7 +459,7 @@ function PermissionByBoard()
 		}
 	}
 
-	loadBlock('by_board');
+	wetem::load('by_board');
 }
 
 function SetQuickGroups()
@@ -848,7 +848,7 @@ function ModifyMembergroup()
 				foreach ($permissionArray['permissions'] as $perm)
 				{
 					// Create a shortcut for the current permission.
-					$curPerm = &$context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['permissions'][$perm['id']];
+					$curPerm =& $context['permissions'][$permissionType]['columns'][$position][$permissionGroup]['permissions'][$perm['id']];
 					if ($tmp['view'] == 'classic')
 					{
 						if ($perm['has_own_any'])
@@ -867,7 +867,7 @@ function ModifyMembergroup()
 			}
 		}
 	}
-	loadBlock('modify_group');
+	wetem::load('modify_group');
 	$context['page_title'] = $txt['permissions_modify_group'];
 }
 
@@ -1016,7 +1016,7 @@ function GeneralPermissionSettings($return_config = false)
 		return $config_vars;
 
 	$context['page_title'] = $txt['permission_settings_title'];
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 
 	// Needed for the inline permission functions, and the settings template.
 	loadSource('ManageServer');
@@ -1924,7 +1924,7 @@ function EditPermissionProfiles()
 
 	// Setup the template, first for fun.
 	$context['page_title'] = $txt['permissions_profile_edit'];
-	loadBlock('edit_profiles');
+	wetem::load('edit_profiles');
 
 	// If we're creating a new one do it first.
 	if (isset($_POST['create']) && trim($_POST['profile_name']) != '')
@@ -2262,7 +2262,7 @@ function ModifyPostModeration()
 	checkSession('get');
 
 	$context['page_title'] = $txt['permissions_post_moderation'];
-	loadBlock('postmod_permissions');
+	wetem::load('postmod_permissions');
 	$context['current_profile'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 1;
 
 	// Load all the permission profiles.

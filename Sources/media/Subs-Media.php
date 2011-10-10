@@ -982,7 +982,7 @@ function aeva_loadAlbum($album_id = 0)
 	{
 		if ($album_allowed == 'passwd')
 		{
-			loadBlock('aeva_form');
+			wetem::load('aeva_form');
 			$context['aeva_form_url'] = $galurl.'sa=album;in=' . $album_info['id_album'];
 			$context['aeva_form_headers'] = array(
 				array($txt['media_passwd_protected']),

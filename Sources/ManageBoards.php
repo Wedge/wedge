@@ -298,12 +298,12 @@ function EditCategory()
 	}
 	if (!isset($_REQUEST['delete']))
 	{
-		loadBlock('modify_category');
+		wetem::load('modify_category');
 		$context['page_title'] = $_REQUEST['sa'] == 'newcat' ? $txt['mboards_new_cat_name'] : $txt['catEdit'];
 	}
 	else
 	{
-		loadBlock('confirm_category_delete');
+		wetem::load('confirm_category_delete');
 		$context['page_title'] = $txt['mboards_delete_cat'];
 	}
 }
@@ -593,12 +593,12 @@ function EditBoard()
 
 	if (!isset($_REQUEST['delete']))
 	{
-		loadBlock('modify_board');
+		wetem::load('modify_board');
 		$context['page_title'] = $txt['boardsEdit'];
 	}
 	else
 	{
-		loadBlock('confirm_board_delete');
+		wetem::load('confirm_board_delete');
 		$context['page_title'] = $txt['mboards_delete_board'];
 	}
 }
@@ -796,7 +796,7 @@ function EditBoardSettings($return_config = false)
 	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
 
 	loadTemplate('ManageBoards');
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 
 	// Add some JavaScript stuff for the recycle box.
 	add_js('

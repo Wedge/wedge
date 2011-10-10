@@ -270,7 +270,7 @@ function CustomEmail()
 			redirectexit();
 	}
 
-	loadBlock('custom_email');
+	wetem::load('custom_email');
 	$context['page_title'] = $txt['send_email'];
 }
 

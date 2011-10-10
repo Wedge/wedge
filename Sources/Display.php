@@ -448,7 +448,7 @@ function Display()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('topic');
-		loadBlock('display_whoviewing', 'sidebar');
+		wetem::load('display_whoviewing', 'sidebar');
 	}
 
 	// If all is set, but not allowed... just unset it.

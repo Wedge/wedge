@@ -125,7 +125,7 @@ function MessageMain()
 	loadLanguage('PersonalMessage');
 
 	if (WIRELESS)
-		loadBlock('wap2_pm');
+		wetem::load('wap2_pm');
 	else
 		loadTemplate('PersonalMessage');
 
@@ -890,7 +890,7 @@ function MessageFolder()
 	$context['page_title'] = $txt['pm_inbox'];
 
 	if (!WIRELESS)
-		loadBlock('folder');
+		wetem::load('folder');
 
 	// Finally mark the relevant messages as read.
 	if ($context['folder'] != 'sent' && !empty($context['labels'][(int) $context['current_label_id']]['unread_messages']))
@@ -1127,7 +1127,7 @@ function MessageSearch()
 
 	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($modSettings['simpleSearch']) && !isset($_REQUEST['advanced']);
 	$context['page_title'] = $txt['pm_search_title'];
-	loadBlock('search');
+	wetem::load('search');
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
 		'name' => $txt['pm_search_bar_title'],
@@ -1583,7 +1583,7 @@ function MessageSearch2()
 
 	// Finish off the context.
 	$context['page_title'] = $txt['pm_search_title'];
-	loadBlock('search_results');
+	wetem::load('search_results');
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'search';
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=pm;sa=search',
@@ -1605,7 +1605,7 @@ function MessagePost()
 	if (!WIRELESS)
 	{
 		loadTemplate('PersonalMessage');
-		loadBlock('send');
+		wetem::load('send');
 	}
 
 	// Needed for the WYSIWYG editor.
@@ -1948,7 +1948,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
 	if (!WIRELESS)
-		loadBlock('send');
+		wetem::load('send');
 
 	$context['page_title'] = $txt['send_message'];
 
@@ -2598,7 +2598,7 @@ function MessageKillAllQuery()
 	global $txt, $context;
 
 	// Only have to set up the template....
-	loadBlock('ask_delete');
+	wetem::load('ask_delete');
 	$context['page_title'] = $txt['delete_all'];
 	$context['delete_all'] = $_REQUEST['f'] == 'all';
 
@@ -2688,7 +2688,7 @@ function MessagePrune()
 		'name' => $txt['pm_prune']
 	);
 
-	loadBlock('prune');
+	wetem::load('prune');
 	$context['page_title'] = $txt['pm_prune'];
 }
 
@@ -2906,7 +2906,7 @@ function ManageLabels()
 	);
 
 	$context['page_title'] = $txt['pm_manage_labels'];
-	loadBlock('labels');
+	wetem::load('labels');
 
 	$the_labels = array();
 	// Add all existing labels to the array to save, slashing them as necessary...
@@ -3175,7 +3175,7 @@ function ReportMessage()
 	// If we're here, just send the user to the template, with a few useful context bits.
 	if (!isset($_POST['report']))
 	{
-		loadBlock('report_message');
+		wetem::load('report_message');
 
 		// !!! I don't like being able to pick who to send it to. Favoritism, etc. sucks.
 		// Now, get all the administrators.
@@ -3317,7 +3317,7 @@ function ReportMessage()
 			loadLanguage('PersonalMessage', '', false);
 
 		// Leave them with a template.
-		loadBlock('report_message_complete');
+		wetem::load('report_message_complete');
 	}
 }
 
@@ -3333,7 +3333,7 @@ function ManageRules()
 	);
 
 	$context['page_title'] = $txt['pm_manage_rules'];
-	loadBlock('rules');
+	wetem::load('rules');
 
 	// Load them... load them!!
 	loadRules();
@@ -3377,7 +3377,7 @@ function ManageRules()
 	if (isset($_GET['add']))
 	{
 		$context['rid'] = isset($_GET['rid'], $context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
-		loadBlock('add_rule');
+		wetem::load('add_rule');
 
 		// Current rule information...
 		if ($context['rid'])
@@ -3780,7 +3780,7 @@ function MessageDrafts()
 
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
-	loadBlock('pm_drafts');
+	wetem::load('pm_drafts');
 	$context['page_title'] = $txt['showDrafts'];
 
 	if (empty($_REQUEST['viewscount']) || !is_numeric($_REQUEST['viewscount']))

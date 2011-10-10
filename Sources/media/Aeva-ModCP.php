@@ -74,7 +74,7 @@ function aeva_modCP_submissions()
 	aeva_addHeaders();
 
 	loadTemplate('ManageMedia');
-	loadBlock('aeva_admin_submissions');
+	wetem::load('aeva_admin_submissions');
 
 	// Let's get the data we need
 	$filter = isset($_REQUEST['filter']) && in_array($_REQUEST['filter'], array('items', 'coms', 'albums')) ? $_REQUEST['filter'] : (isset($_REQUEST['type']) && in_array($_REQUEST['type'], array('items', 'coms', 'albums')) ? $_REQUEST['type'] : 'items');
@@ -507,7 +507,7 @@ function aeva_modCP_reports()
 	$context['aeva_report_type'] = $type;
 
 	loadTemplate('ManageMedia');
-	loadBlock('aeva_admin_reports');
+	wetem::load('aeva_admin_reports');
 	// HTML headers
 	$context['header'] .= '
 	<script src="' . add_js_file('scripts/mediadmin.js', false, true) . '"></script>';
@@ -755,7 +755,7 @@ function aeva_modCP_modLog()
 		$context['aeva_filter'] = sprintf($txt['media_admin_modlog_filter'], $scripturl . '?action=profile;u=' . $id_member, $member_name);
 
 	loadTemplate('ManageMedia');
-	loadBlock('aeva_admin_modlog');
+	wetem::load('aeva_admin_modlog');
 
 	// HTML headers
 	$context['header'] .= '

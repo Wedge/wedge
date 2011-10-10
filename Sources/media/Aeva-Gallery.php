@@ -412,7 +412,7 @@ function aeva_initGallery($gal_url = null)
 
 	if (!isset($_REQUEST['xml']))
 	{
-		loadBlock(array('aeva_header', 'aeva_subtabs'), 'top');
+		wetem::load(array('aeva_header', 'aeva_subtabs'), 'top');
 
 		// Start the linktree
 		$context['linktree'] = array();
@@ -515,7 +515,7 @@ function aeva_home()
 	global $galurl, $txt, $context, $amSettings, $user_info;
 
 	// Templates
-	loadBlock('aeva_home');
+	wetem::load('aeva_home');
 
 	$context['aeva_current'] = 'home';
 	$context['aeva_welcome'] = parse_bbc(!empty($amSettings['welcome']) ? $amSettings['welcome'] : (isset($txt['media_welcome']) ? $txt['media_welcome'] : $txt['media_default_welcome']));
@@ -733,7 +733,7 @@ function aeva_viewAlbum()
 
 	// Finish this by loading the template and page title
 	$context['album_data'] = $current_album;
-	loadBlock('aeva_viewAlbum');
+	wetem::load('aeva_viewAlbum');
 	$context['page_title'] = $current_album['name'];
 
 	aeva_addHeaders(empty($current_album['options']['autosize']) || $current_album['options']['autosize'] == 'yes');
@@ -914,7 +914,7 @@ function aeva_viewItem()
 	if (isset($_REQUEST['xml'], $_POST['rating']))
 	{
 		$context['item_data'] = $item_data;
-		loadBlock('aeva_xml_rated');
+		wetem::load('aeva_xml_rated');
 		return true;
 	}
 
@@ -1244,7 +1244,7 @@ function aeva_viewItem()
 
 	// End it!
 	$context['item_data'] = $item_data;
-	loadBlock(array(
+	wetem::load(array(
 		'aeva_item_init',
 		'aeva_item_prevnext',
 		'aeva_item_wrap_begin',
@@ -1255,7 +1255,7 @@ function aeva_viewItem()
 		'aeva_item_comments',
 	));
 	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'])
-		loadBlock('aeva_item_details', 'sidebar');
+		wetem::load('aeva_item_details', 'sidebar');
 }
 
 function aeva_mgComment()
@@ -1338,7 +1338,7 @@ function aeva_mgComment()
 		redirectexit($galurl.'sa=item;in='.$item_data['id_media'].'#com'.$id_comment);
 	}
 	else
-		loadBlock('aeva_form');
+		wetem::load('aeva_form');
 
 	// Linktree
 	$parents = aeva_getAlbumParents($item_data['album_id'], $item_data['master']);
@@ -1395,7 +1395,7 @@ function aeva_mgReport()
 	$reporting_title = $type == 'com' ? $txt['media_comment'].': <a href="'.$galurl.'sa=item;in='.$dat['id_media'].'#com'.$dat['id_comment'].'">'.$dat['title'].'</a> '.$txt['media_by'].' <a href="'.$scripturl.'?action=profile;u='.$dat['id_member'].'">'.$dat['member_name'].'</a>'
 		: '<a href="'.$galurl.'sa=item;in='.$dat['id_media'].'">'.$dat['title'].'</a>';
 
-	loadBlock('aeva_form');
+	wetem::load('aeva_form');
 
 	// load up the form!
 	$context['aeva_form'] = array(
@@ -1432,7 +1432,7 @@ function aeva_mgReport()
 				array('item_report', $user_info['id'], time(), $reason, $dat['id_media'], $dat['title'])
 		);
 		aeva_increaseSettings($type == 'com' ? 'num_reported_comments' : 'num_reported_items');
-		loadBlock('aeva_done');
+		wetem::load('aeva_done');
 		$return = $scripturl . '?action=media;' . ($type == 'com' ? 'sa=item;in=' . $dat['id_media'] : 'sa=album;in=' . $dat['id_album']);
 		$context['aeva_done_txt'] = sprintf($txt['media_reported'], $return);
 	}
@@ -1710,7 +1710,7 @@ function aeva_mgPost()
 	if ($editing && aeva_allowedTo('moderate'))
 		$context['aeva_form']['silent'] = array('perm' => false);
 
-	loadBlock('aeva_form');
+	wetem::load('aeva_form');
 
 	// Custom field stuff...
 	// Load the fields....
@@ -2190,7 +2190,7 @@ function aeva_mgEditCom()
 		redirectexit($galurl.'sa=item;in='.$com_data['id_media'].'#com'.$com_data['id_comment']);
 	}
 	else
-		loadBlock('aeva_form');
+		wetem::load('aeva_form');
 
 	// Linktree
 	$parents = aeva_getAlbumParents($com_data['album_id'], $com_data['master']);

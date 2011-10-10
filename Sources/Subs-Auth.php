@@ -204,7 +204,7 @@ function KickGuest()
 	if (strpos($_SERVER['REQUEST_URL'], 'dlattach') === false)
 		$_SESSION['login_url'] = $_SERVER['REQUEST_URL'];
 
-	loadBlock('kick_guest');
+	wetem::load('kick_guest');
 	$context['page_title'] = $txt['login'];
 }
 
@@ -220,9 +220,9 @@ function InMaintenance()
 	header('HTTP/1.1 503 Service Temporarily Unavailable');
 
 	// Basic template stuff..
-	loadBlock('maintenance');
-	$context['title'] = &$mtitle;
-	$context['description'] = &$mmessage;
+	wetem::load('maintenance');
+	$context['title'] =& $mtitle;
+	$context['description'] =& $mmessage;
 	$context['page_title'] = $txt['maintain_mode'];
 }
 
@@ -257,7 +257,7 @@ function adminLogin()
 		$context['post_data'] .= adminLogin_outputPostVars($k, $v);
 
 	// Now we'll use the admin_login sub template of the Login template.
-	loadBlock('admin_login');
+	wetem::load('admin_login');
 
 	// And title the page something like "Login".
 	if (!isset($context['page_title']))

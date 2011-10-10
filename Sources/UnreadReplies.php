@@ -228,11 +228,11 @@ function UnreadReplies()
 	);
 
 	if (WIRELESS)
-		loadBlock('wap2_recent');
+		wetem::load('wap2_recent');
 	else
 	{
 		loadTemplate('Recent');
-		loadBlock('replies');
+		wetem::load('replies');
 	}
 
 	// Setup the default topic icons... for checking they exist and the like ;)
@@ -454,7 +454,7 @@ function UnreadReplies()
 	);
 
 	loadTemplate('MessageIndex');
-	loadBlock('messageindex_legend', 'sidebar');
+	wetem::load('messageindex_legend', 'sidebar');
 
 	$context['topics'] = array();
 	$topic_ids = array();

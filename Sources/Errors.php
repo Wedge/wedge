@@ -326,12 +326,12 @@ function setup_fatal_error_context($error_message)
 
 	// Display the error message - wireless?
 	if (defined('WIRELESS') && WIRELESS)
-		loadBlock('wap2_error');
+		wetem::load('wap2_error');
 	// Load the template and set the sub template.
 	else
 	{
 		loadTemplate('Errors');
-		loadBlock('fatal_error');
+		wetem::load('fatal_error');
 	}
 
 	// If this is SSI, what do they want us to do?

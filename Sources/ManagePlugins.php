@@ -54,7 +54,7 @@ function ListPlugins()
 {
 	global $scripturl, $txt, $context, $pluginsdir;
 
-	loadBlock('browse');
+	wetem::load('browse');
 	$context['page_title'] = $txt['plugin_manager'];
 	getLanguages();
 
@@ -271,7 +271,7 @@ function PluginReadme()
 	loadLanguage('Help');
 	hideChrome();
 	$context['page_title'] = $txt['plugin_manager'] . ' - ' . $txt['help'];
-	loadBlock('popup');
+	wetem::load('popup');
 
 	// Did they specify a plugin, and is it a valid one?
 	$valid = true;
@@ -881,7 +881,7 @@ function RemovePlugin()
 	if (!isset($_GET['commit']))
 	{
 		// Just displaying the form.
-		loadBlock('remove');
+		wetem::load('remove');
 		$context['page_title'] = $txt['remove_plugin'];
 	}
 	else
@@ -909,7 +909,7 @@ function RemovePlugin()
 		else
 		{
 			// Just displaying the form anyway.
-			loadBlock('remove');
+			wetem::load('remove');
 			$context['page_title'] = $txt['remove_plugin'];
 		}
 	}

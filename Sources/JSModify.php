@@ -231,7 +231,7 @@ function JSModify()
 
 	if (isset($_REQUEST['xml']))
 	{
-		loadBlock('modifydone');
+		wetem::load('modifydone');
 		if (empty($post_errors) && isset($msgOptions['subject'], $msgOptions['body']))
 		{
 			$context['message'] = array(
@@ -254,7 +254,7 @@ function JSModify()
 		// Topic?
 		elseif (empty($post_errors))
 		{
-			loadBlock('modifytopicdone');
+			wetem::load('modifytopicdone');
 			$context['message'] = array(
 				'id' => $row['id_msg'],
 				'modified' => array(

@@ -732,7 +732,7 @@ function AdminHome()
 {
 	global $txt, $scripturl, $context, $user_info, $boardurl, $modSettings;
 
-	loadBlock('admin');
+	wetem::load('admin');
 	$context['page_title'] = $txt['admin_center'];
 
 	// For readability.
@@ -752,7 +752,7 @@ function setupAdminSidebar()
 		$context['more_admins_link'] = '<a href="' . $scripturl . '?action=moderate;area=viewgroups;sa=members;group=1">' . $txt['more'] . '</a>';
 
 	// Add the blocks into the sidebar.
-	loadBlock(array('admin_live_news', 'admin_support_info'), 'sidebar');
+	wetem::load(array('admin_live_news', 'admin_support_info'), 'sidebar');
 
 	// The below functions include all the scripts needed from the wedge.org site. The language and format are passed for internationalization.
 	if (empty($modSettings['disable_wedge_js']))
@@ -814,7 +814,7 @@ function AdminSearch()
 	$context['search_type'] = !isset($_REQUEST['search_type']) || !isset($subactions[$_REQUEST['search_type']]) ? 'internal' : $_REQUEST['search_type'];
 	$context['search_term'] = isset($_REQUEST['search_term']) ? westr::htmlspecialchars($_REQUEST['search_term'], ENT_QUOTES) : '';
 
-	loadBlock('admin_search_results');
+	wetem::load('admin_search_results');
 	$context['page_title'] = $txt['admin_search_results'];
 
 	// Keep track of what the admin wants.

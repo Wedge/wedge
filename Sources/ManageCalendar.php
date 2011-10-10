@@ -166,7 +166,7 @@ function ModifyHolidays()
 
 	// Since the list is the only thing to show, use the default list template.
 	$context['default_list'] = 'holiday_list';
-	loadBlock('show_list');
+	wetem::load('show_list');
 }
 
 // This function is used for adding/editing a specific holiday
@@ -178,7 +178,7 @@ function EditHoliday()
 
 	$context['is_new'] = !isset($_REQUEST['holiday']);
 	$context['page_title'] = $context['is_new'] ? $txt['holidays_add'] : $txt['holidays_edit'];
-	loadBlock('edit_holiday');
+	wetem::load('edit_holiday');
 
 	// Cast this for safety...
 	if (isset($_REQUEST['holiday']))
@@ -330,7 +330,7 @@ function ModifyCalendarSettings($return_config = false)
 
 	// Some important context stuff
 	$context['page_title'] = $txt['calendar_settings'];
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 
 	// Get the final touches in place.
 	$context['post_url'] = $scripturl . '?action=admin;area=managecalendar;save;sa=settings';

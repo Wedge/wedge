@@ -39,7 +39,7 @@ function Activate()
 			fatal_lang_error('no_access', false);
 
 		$context['member_id'] = 0;
-		loadBlock('resend');
+		wetem::load('resend');
 		$context['page_title'] = $txt['invalid_activation_resend'];
 		$context['can_activate'] = empty($modSettings['registration_method']) || $modSettings['registration_method'] == 1;
 		$context['default_username'] = isset($_GET['user']) ? $_GET['user'] : '';
@@ -63,7 +63,7 @@ function Activate()
 	// Does this user exist at all?
 	if (wesql::num_rows($request) == 0)
 	{
-		loadBlock('retry_activate');
+		wetem::load('retry_activate');
 		$context['page_title'] = $txt['invalid_userid'];
 		$context['member_id'] = 0;
 
@@ -144,7 +144,7 @@ function Activate()
 			fatal_lang_error('registration_not_approved', false, array($scripturl . '?action=activate;user=' . $_row['member_name']));
 		}
 
-		loadBlock('retry_activate');
+		wetem::load('retry_activate');
 		$context['page_title'] = $txt['invalid_activation_code'];
 		$context['member_id'] = $row['id_member'];
 
@@ -167,7 +167,7 @@ function Activate()
 		adminNotify('activation', $row['id_member'], $row['member_name']);
 	}
 
-	loadBlock('login');
+	wetem::load('login');
 	$context += array(
 		'page_title' => $txt['registration_successful'],
 		'default_username' => $row['member_name'],

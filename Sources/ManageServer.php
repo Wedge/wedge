@@ -167,7 +167,7 @@ function ModifySettings()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['admin_server_settings'];
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 
 	$subActions = array(
 		'general' => 'ModifyGeneralSettings',
@@ -596,7 +596,7 @@ function ManageLanguages()
 	loadLanguage('ManageSettings');
 
 	$context['page_title'] = $txt['edit_languages'];
-	loadBlock('show_settings');
+	wetem::load('show_settings');
 
 	$subActions = array(
 		'edit' => 'ModifyLanguages',
@@ -670,7 +670,7 @@ function AddLanguage()
 		}
 	}
 
-	loadBlock('add_language');
+	wetem::load('add_language');
 }
 
 // Download a language file from the Wedge website.
@@ -687,7 +687,7 @@ function DownloadLanguage()
 
 	// Some lovely context.
 	$context['download_id'] = $_GET['did'];
-	loadBlock('download_language');
+	wetem::load('download_language');
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'add';
 
 	// Can we actually do the installation - and do they want to?
@@ -1141,7 +1141,7 @@ function ModifyLanguages()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	loadBlock('show_list');
+	wetem::load('show_list');
 	$context['default_list'] = 'language_list';
 }
 
@@ -1275,7 +1275,7 @@ function ModifyLanguage()
 	// Select the languages tab.
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'edit';
 	$context['page_title'] = $txt['edit_languages'];
-	loadBlock('modify_language_entries');
+	wetem::load('modify_language_entries');
 
 	$context['lang_id'] = $_GET['lid'];
 	if (empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '|') === false)

@@ -357,7 +357,7 @@ function ThemeList()
 	$context['reset_dir'] = realpath($boarddir . '/Themes');
 	$context['reset_url'] = $boardurl . '/Themes';
 
-	loadBlock('list_themes');
+	wetem::load('list_themes');
 }
 
 // Administrative global settings.
@@ -442,7 +442,7 @@ function SetThemeOptions()
 				unset($context['themes'][$k]);
 
 		loadTemplate('Themes');
-		loadBlock('reset_list');
+		wetem::load('reset_list');
 
 		return;
 	}
@@ -665,7 +665,7 @@ function SetThemeOptions()
 	loadTemplate('Settings');
 	execBlock('options');
 
-	loadBlock('set_options');
+	wetem::load('set_options');
 	$context['page_title'] = $txt['theme_settings'];
 
 	$context['options'] = $context['theme_options'];
@@ -831,7 +831,7 @@ function SetThemeSettings()
 		redirectexit('action=admin;area=theme;sa=settings;th=' . $_GET['th'] . ';' . $context['session_query']);
 	}
 
-	loadBlock('set_settings');
+	wetem::load('set_settings');
 	$context['page_title'] = $txt['theme_settings'];
 
 	foreach ($settings as $setting => $dummy)
@@ -1147,7 +1147,7 @@ function PickTheme()
 	ksort($context['available_themes']);
 
 	$context['page_title'] = $txt['change_skin'];
-	loadBlock('pick');
+	wetem::load('pick');
 }
 
 function ThemeInstall()
@@ -1181,7 +1181,7 @@ function ThemeInstall()
 		list ($theme_name) = wesql::fetch_row($result);
 		wesql::free_result($result);
 
-		loadBlock('installed');
+		wetem::load('installed');
 		$context['page_title'] = $txt['theme_installed'];
 		$context['installed_theme'] = array(
 			'id' => (int) $_GET['theme_id'],
@@ -1496,7 +1496,7 @@ function EditTheme()
 			}
 		}
 
-		loadBlock('edit_list');
+		wetem::load('edit_list');
 
 		return 'no_themes';
 	}
@@ -1553,7 +1553,7 @@ function EditTheme()
 		else
 			$context['theme_files'] = get_file_listing($theme_dir, '');
 
-		loadBlock('edit_browse');
+		wetem::load('edit_browse');
 
 		return;
 	}
@@ -1627,7 +1627,7 @@ function EditTheme()
 			loadLanguage('Errors');
 
 			$context['session_error'] = true;
-			loadBlock('edit_file');
+			wetem::load('edit_file');
 
 			// Recycle the submitted data.
 			$context['entire_file'] = htmlspecialchars($_POST['entire_file']);
@@ -1645,13 +1645,13 @@ function EditTheme()
 
 	if (substr($_REQUEST['filename'], -4) == '.css')
 	{
-		loadBlock('edit_style');
+		wetem::load('edit_style');
 
 		$context['entire_file'] = htmlspecialchars(strtr(file_get_contents($theme_dir . '/' . $_REQUEST['filename']), array("\t" => '   ')));
 	}
 	elseif (substr($_REQUEST['filename'], -13) == '.template.php')
 	{
-		loadBlock('edit_template');
+		wetem::load('edit_template');
 
 		if (!isset($error_file))
 			$file_data = file($theme_dir . '/' . $_REQUEST['filename']);
@@ -1685,7 +1685,7 @@ function EditTheme()
 	}
 	else
 	{
-		loadBlock('edit_file');
+		wetem::load('edit_file');
 
 		$context['entire_file'] = htmlspecialchars(strtr(file_get_contents($theme_dir . '/' . $_REQUEST['filename']), array("\t" => '   ')));
 	}
@@ -1888,7 +1888,7 @@ function CopyTemplate()
 		$dir->close();
 	}
 
-	loadBlock('copy_template');
+	wetem::load('copy_template');
 }
 
 /**

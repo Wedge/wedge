@@ -77,7 +77,7 @@ function GetJumpTo()
 		$context['pretty']['replace_patterns'][] = '~(url=)"' . $insideurl . '([^<"]*?[?;&](board|action)=([^"]+"))~';
 	}
 
-	loadBlock('jump_to');
+	wetem::load('jump_to');
 }
 
 /**
@@ -94,7 +94,7 @@ function ListMessageIcons()
 	loadSource('Subs-Editor');
 	$context['icons'] = getMessageIcons($board);
 
-	loadBlock('message_icons');
+	wetem::load('message_icons');
 }
 
 ?>
