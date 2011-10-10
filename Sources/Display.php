@@ -83,18 +83,13 @@ function Display()
 				'title_upper',
 				'topic_poll',
 				'linked_calendar',
-			)
-		);
-		wetem::layer('postlist', 'default', 'child');
-		wetem::load('display_posts', 'postlist');
-		wetem::load(
-			array(
+				'postlist' => array(
+					'display_posts',
+				),
 				'quick_access',
 				'mod_buttons',
 				'quick_reply'
-			),
-			'',
-			'add'
+			)
 		);
 	}
 

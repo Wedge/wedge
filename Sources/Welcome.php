@@ -42,17 +42,19 @@ function Welcome()
 		$context['robot_no_index'] = true;
 
 	// In this case, we want to load the info center as well -- but not in the sidebar.
-	// We first create an info layer at the end of the main block and inject the info center into it.
+	// We will simply create the info_center layer at the end of the main block and inject the blocks into it.
 	// For the purpose of our sample, we're using the opportunity to skip the calendar and recent posts.
 	loadTemplate('InfoCenter');
-	wetem::layer('info_center', 'default', 'lastchild');
 	wetem::load(
 		array(
-			'info_center_statistics',
-			'info_center_usersonline',
-			'info_center_personalmsg',
+			'info_center' => array(
+				'info_center_statistics',
+				'info_center_usersonline',
+				'info_center_personalmsg',
+			),
 		),
-		'info_center'
+		'default',
+		'add'
 	);
 
 	/*

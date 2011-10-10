@@ -1043,6 +1043,7 @@ function execBlock($block_name, $fatal = false)
 <div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold;">---- ', $block_name, ' ends ----</div>';
 }
 
+
 /**
  * This is the template object.
  *
@@ -1170,9 +1171,9 @@ final class wetem
 	/**
 	 * Add blocks or layers to the skeleton.
 	 *
-	 * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
-	 * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc. Leave empty (or 'default') to use the default.
-	 * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions. Leave empty to use the contextual default ('replace' for the default layer, 'add' otherwise.)
+	 * @param string $blocks The name of the blocks or layers to be added.
+	 * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc. Leave empty (or 'default') to use the default. You may also specify a block name if you specify 'before' or 'after' in $where.
+	 * @param string $where Where should we add the item? Check the comments inside the function for a fully documented list of positions. Leave empty to use the contextual default ('replace' for the default layer, 'add' otherwise.)
 	 */
 	public static function load($blocks, $target = '', $where = '')
 	{
@@ -1180,17 +1181,18 @@ final class wetem
 			This is the full list of $where possibilities. 'replace' is the default, meant for use in the main layer.
 			<blocks> is our source block(s), <layer> is our $target layer, and <other> is anything already inside <layer>, block or layer.
 
-			replace		replace existing blocks with this, leave layers in		<layer> <blocks /> <other /> </layer>
-			erase		replace existing blocks AND layers with this			<layer>       <blocks />     </layer>
+			replace		replace existing blocks with this, leave layers in		<layer> <ITEMS /> <other /> </layer>
+			erase		replace existing blocks AND layers with this			<layer>      <ITEMS />      </layer>
 
-			add			add block(s) at the end of the layer					<layer> <other /> <blocks /> </layer>
-			first		add block(s) at the beginning of the layer				<layer> <blocks /> <other /> </layer>
+			add			add block(s) at the end of the layer					<layer> <other /> <ITEMS /> </layer>
+			first		add block(s) at the beginning of the layer				<layer> <ITEMS /> <other /> </layer>
 
-			before		add block(s) before the specified layer or block		    <blocks /> <layer-or-block />
-			after		add block(s) after the specified layer or block			    <layer-or-block /> <blocks />
+			before		add block(s) before the specified layer or block		    <ITEMS /> <layer-or-block />
+			after		add block(s) after the specified layer or block			    <layer-or-block /> <ITEMS />
 		*/
 
-		$blocks = array_flip((array) $blocks);
+		$blocks = self::list_blocks((array) $blocks);
+		$has_layer = count($blocks) !== count($blocks, COUNT_RECURSIVE);
 
 		// Find the first target layer that isn't wishful thinking.
 		foreach ((array) $target as $layer)
@@ -1207,10 +1209,11 @@ final class wetem
 		// No valid layer found.
 		if (empty($to))
 		{
-			// If we try to insert a sideback block in minimal (hide_chrome), Wireless or XML, it will fail.
+			// If we try to insert a sideback block in minimal mode (hide_chrome), Wireless or XML, it will fail.
 			// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
 			if ($where !== 'before' && $where !== 'after')
 				return false;
+
 			// Or maybe we're looking for a block..?
 			$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator(self::$skeleton)));
 			foreach ((array) $target as $block)
@@ -1234,17 +1237,12 @@ final class wetem
 
 		if ($where === 'replace' || $where === 'erase')
 		{
-			$has_arrays = false;
-			if ($where === 'replace' && isset(self::$layers[$to]))
-				foreach (self::$layers[$to] as $item)
-					$has_arrays |= is_array($item);
-
 			// Most likely case: no child layers (or erase all). Replace away!
-			if (!$has_arrays)
+			if ($where === 'erase' || !isset(self::$layers[$to]) || count(self::$layers[$to]) === count(self::$layers[$to], COUNT_RECURSIVE))
 			{
 				self::$layers[$to] = $blocks;
 				// If we erase, we might have to delete layer entries.
-				if ($where === 'erase')
+				if ($where === 'erase' || $has_layer)
 					self::reindex();
 				return $to;
 			}
@@ -1256,7 +1254,7 @@ final class wetem
 				$item =& self::$layers[$to][$id];
 				if (!is_array($item))
 				{
-					// We're going to insert our block(s) right before the first block we find...
+					// We're going to insert our item(s) right before the first block we find...
 					if (!isset($offset))
 					{
 						$val = array_values(self::$layers[$to]);
@@ -1273,12 +1271,17 @@ final class wetem
 			// So, we found a layer but no blocks..? Add our blocks at the end.
 			if (!isset($offset))
 				self::$layers[$to] += $blocks;
+
 			self::reindex();
+			return $to;
 		}
+
 		elseif ($where === 'add')
-			self::$layers[$to] = array_merge(self::$layers[$to], $blocks);
+			self::$layers[$to] += $blocks;
+
 		elseif ($where === 'first')
 			self::$layers[$to] = array_merge(array_reverse($blocks), self::$layers[$to]);
+
 		elseif ($where === 'before' || $where === 'after')
 		{
 			foreach (self::$layers as &$layer)
@@ -1292,17 +1295,23 @@ final class wetem
 				array_splice($keys, $offset, 0, array_keys($blocks));
 				array_splice($val, $offset, 0, $blocks);
 				$layer = array_combine($keys, $val);
+
 				self::reindex();
-				break;
+				return $to;
 			}
 		}
 		else
 			return false;
+
+		if ($has_layer)
+			self::reindex();
 		return $to;
 	}
 
 	/**
 	 * Add a layer dynamically.
+	 *
+	 * Although you can add layers through ::load(), ::layer() will allow you to make actions that aren't otherwise possible in ::load(), such as renaming a layer, or adding a containing layer to another.
 	 *
 	 * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_above' and 'template_layer_below' functions.
 	 * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the default layer (which doesn't accept any positioning, either.)
@@ -1317,14 +1326,14 @@ final class wetem
 			parent		wrap around the target (default)						<layer> <target> <sub /> </target> </layer>
 			child		insert between the target and its current children		<target> <layer> <sub /> </layer> </target>
 
-			replace		replace the layer but not its current contents			<layer>          <sub />           </layer>
-			erase		replace the layer and empty its contents				<layer>                            </layer>
+			rename		replace the layer but not its current contents			<layer>          <sub />           </layer>
+			replace		replace the layer and empty its contents				<layer>                            </layer>
 
 			before		add before the item										<layer> </layer> <target> <sub /> </target>
 			after		add after the item										<target> <sub /> </target> <layer> </layer>
 
-			firstchild	add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
-			lastchild	add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
+			add			add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
+			first		add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
 		*/
 
 		if (empty($target))
@@ -1334,10 +1343,10 @@ final class wetem
 		if (!isset(self::$layers[$target]))
 			return false;
 
-		if ($where === 'parent' || $where === 'before' || $where === 'after' || $where === 'replace' || $where === 'erase')
+		if ($where === 'parent' || $where === 'before' || $where === 'after' || $where === 'rename' || $where === 'replace')
 		{
 			self::insert_layer($layer, $target, $where);
-			if ($where === 'replace' || $where === 'erase')
+			if ($where === 'rename' || $where === 'replace')
 				self::remove_layer($target);
 		}
 		elseif ($where === 'child')
@@ -1345,9 +1354,9 @@ final class wetem
 			self::$layers[$target] = array($layer => self::$layers[$target]);
 			self::$layers[$layer] =& self::$layers[$target][$layer];
 		}
-		elseif ($where === 'firstchild' || $where === 'lastchild')
+		elseif ($where === 'first' || $where === 'add')
 		{
-			if ($where === 'firstchild')
+			if ($where === 'first')
 				self::$layers[$target] = array_merge(array($layer => array()), self::$layers[$target]);
 			else
 				self::$layers[$target][$layer] = array();
@@ -1415,7 +1424,7 @@ final class wetem
 	private static function render_recursive(&$here, $key)
 	{
 		// Show the _above part of the layer.
-		self::exec($key . '_above', 'ignore');
+		execBlock($key . '_above', 'ignore');
 
 		if ($key === 'top' || $key === 'default')
 			while_we_re_here();
@@ -1426,15 +1435,28 @@ final class wetem
 			if (is_array($temp))
 				self::render_recursive($temp, $id);
 			else
-				self::exec($id);
+				execBlock($id);
 		}
 
 		// Show the _below part of the layer
-		self::exec($key . '_below', 'ignore');
+		execBlock($key . '_below', 'ignore');
 
 		// !! We should probably move this directly to template_html_below() and forget the buffering thing...
 		if ($key === 'html' && !isset($_REQUEST['xml']) && !self::$hidden)
 			db_debug_junk();
+	}
+
+	private static function list_blocks($items)
+	{
+		$blocks = array();
+		foreach ($items as $key => $val)
+		{
+			if (is_array($val))
+				$blocks[$key] = self::list_blocks($val);
+			else
+				$blocks[$val] = true;
+		}
+		return $blocks;
 	}
 
 	// Helper function to remove a block or layer from the page.
@@ -1486,7 +1508,7 @@ final class wetem
 			{
 				if ($where === 'after')
 					$temp[$key] = $value;
-				$temp[$source] = $where === 'parent' ? array($key => $value) : ($where === 'erase' ? array() : ($where === 'replace' ? $value : array()));
+				$temp[$source] = $where === 'parent' ? array($key => $value) : ($where === 'replace' ? array() : ($where === 'rename' ? $value : array()));
 				if ($where === 'before')
 					$temp[$key] = $value;
 			}

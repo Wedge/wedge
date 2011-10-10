@@ -44,16 +44,17 @@ function Boards()
 		loadTemplate('Boards');
 		loadTemplate('InfoCenter');
 		// We load the info center into our sidebar...
-		wetem::layer('info_center', 'sidebar', 'lastchild');
 		wetem::load(
 			array(
-				'info_center_recentposts',
-				'info_center_calendar',
-				'info_center_statistics',
-				'info_center_usersonline',
-				'info_center_personalmsg',
+				'info_center' => array(
+					'info_center_recentposts',
+					'info_center_calendar',
+					'info_center_statistics',
+					'info_center_usersonline',
+					'info_center_personalmsg',
+				),
 			),
-			'info_center'
+			'sidebar'
 		);
 		// And the rest into our default layer.
 		wetem::load(
