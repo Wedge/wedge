@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 		- shows a list of members.
 		- called by ?action=admin;area=viewmembers;sa=all or ?action=admin;area=viewmembers;sa=query.
 		- requires the moderate_forum permission.
-		- uses the view_members sub template of the ManageMembers template.
+		- uses the view_members block of the ManageMembers template.
 		- allows sorting on several columns.
 		- handles deletion of selected members.
 		- handles the search query sent by ?action=admin;area=viewmembers;sa=search.
@@ -36,7 +36,7 @@ if (!defined('WEDGE'))
 		- search the member list, using one or more criteria.
 		- called by ?action=admin;area=viewmembers;sa=search.
 		- requires the moderate_forum permission.
-		- uses the search_members sub template of the ManageMembers template.
+		- uses the search_members block of the ManageMembers template.
 		- form is submitted to action=admin;area=viewmembers;sa=query.
 
 	void MembersAwaitingActivation()
@@ -44,7 +44,7 @@ if (!defined('WEDGE'))
 		- called by ?action=admin;area=viewmembers;sa=browse;type=approve or
 		  ?action=admin;area=viewmembers;sa=browse;type=activate.
 		- requires the moderate_forum permission.
-		- uses the admin_browse sub template of the ManageMembers template.
+		- uses the admin_browse block of the ManageMembers template.
 		- allows instant approval or activation of (a selection of) members.
 		- list can be sorted on different columns.
 		- form submits to ?action=admin;area=viewmembers;sa=approve.

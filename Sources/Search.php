@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
 	void Search()
 		- shows the screen to search forum posts (action=search), and uses the
 		  simple version if the simpleSearch setting is enabled.
-		- uses the main sub template of the Search template.
+		- uses the main block of the Search template.
 		- uses the Search language file.
 		- requires the search_posts permission.
 		- decodes and loads search parameters given in the URL (if any).

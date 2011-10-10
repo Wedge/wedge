@@ -27,13 +27,13 @@ if (!defined('WEDGE'))
 	void ManageAttachmentSettings()
 		- show/change attachment settings.
 		- default sub action for the 'Attachments and Avatars' center.
-		- uses the 'attachments' sub template.
+		- uses the 'attachments' block.
 		- called by index.php?action=admin;area=manageattachments;sa=attachements.
 
 	void ManageAvatarSettings()
 		- show/change avatar settings.
 		- called by index.php?action=admin;area=manageattachments;sa=avatars.
-		- uses the 'avatars' sub template.
+		- uses the 'avatars' block.
 		- show/set permissions for permissions: 'profile_server_avatar',
 		  'profile_upload_avatar' and 'profile_remote_avatar'.
 
@@ -41,14 +41,14 @@ if (!defined('WEDGE'))
 		- show a list of attachment or avatar files.
 		- called by ?action=admin;area=manageattachments;sa=browse for attachments and
 		  ?action=admin;area=manageattachments;sa=browse;avatars for avatars.
-		- uses the 'browse' sub template
+		- uses the 'browse' block
 		- allows sorting by name, date, size and member.
 		- paginates results.
 
 	void MaintainFiles()
 		- show several file maintenance options.
 		- called by ?action=admin;area=manageattachments;sa=maintain.
-		- uses the 'maintain' sub template.
+		- uses the 'maintain' block.
 		- calculates file statistics (total file size, number of attachments,
 		  number of avatars, attachment space available).
 

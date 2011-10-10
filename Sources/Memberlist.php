@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
 		- if a subaction is not specified, lists all registered members.
 		- allows searching for members with the 'search' sub action.
 		- calls MLAll or MLSearch depending on the sub action.
-		- uses the Memberlist template with the main sub template.
+		- uses the Memberlist template with the main block.
 		- requires the view_mlist permission.
 		- is accessed via ?action=mlist.
 
@@ -36,12 +36,12 @@ if (!defined('WEDGE'))
 		- used to search for members or display search results.
 		- called by MemberList().
 		- if variable 'search' is empty displays search dialog box, using the
-		  search sub template.
+		  search block.
 		- calls printMemberListRows to retrieve the results of the query.
 
 	void printMemberListRows(resource request)
 		- retrieves results of the request passed to it
-		- puts results of request into the context for the sub template.
+		- puts results of request into the context for the block.
 */
 
 // Show a listing of the registered members.

@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 /*	void Notify()
 		- is called to turn off/on notification for a particular topic.
 		- must be called with a topic specified in the URL.
-		- uses the Notify template (main sub template.) when called with no sa.
+		- uses the Notify template (main block.) when called with no sa.
 		- the sub action can be 'on', 'off', or nothing for what to do.
 		- requires the mark_any_notify permission.
 		- upon successful completion of action will direct user back to topic.
@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
 	void BoardNotify()
 		- is called to turn off/on notification for a particular board.
 		- must be called with a board specified in the URL.
-		- uses the Notify template. (notify_board sub template.)
+		- uses the Notify template. (notify_board block.)
 		- only uses the template if no sub action is used. (on/off)
 		- requires the mark_notify permission.
 		- redirects the user back to the board after it is done.

@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-// The main sub template - for theme administration.
+// The main block - for theme administration.
 function template_main()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;

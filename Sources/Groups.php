@@ -23,7 +23,7 @@ if (!defined('WEDGE'))
 		- show a list of members that are part of a given membergroup.
 		- called by ?action=moderate;area=viewgroups;sa=members;group=x
 		- requires the manage_membergroups permission.
-		- uses the group_members sub template of ManageMembergroups.
+		- uses the group_members block of ManageMembergroups.
 		- allows to add and remove members from the selected membergroup.
 		- allows sorting on several columns.
 		- redirects to itself.
@@ -646,7 +646,7 @@ function GroupRequests()
 		// If we are giving a reason (And why shouldn't we?), then we don't actually do much.
 		if ($_POST['req_action'] == 'reason')
 		{
-			// Different sub template...
+			// Different block...
 			wetem::load('group_request_reason');
 			// And a limitation. We don't care that the page number bit makes no sense, as we don't need it!
 			$where .= ' AND lgr.id_request IN ({array_int:request_ids})';

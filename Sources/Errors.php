@@ -237,7 +237,7 @@ function error_handler($error_level, $error_string, $file, $line)
 		}
 
 		if (isset($array[$i]) && !empty($array[$i]['args']))
-			$file = realpath($settings['current_include_filename']) . ' (' . $array[$i]['args'][0] . ' sub template - eval?)';
+			$file = realpath($settings['current_include_filename']) . ' (' . $array[$i]['args'][0] . ' block - eval?)';
 		else
 			$file = realpath($settings['current_include_filename']) . ' (eval?)';
 	}
@@ -347,7 +347,7 @@ function setup_fatal_error_context($error_message)
 			exit;
 	}
 
-	// We want whatever for the header, and a footer. (footer includes sub template!)
+	// We want whatever for the header, and a footer. (footer includes block!)
 	obExit(null, true, false, true);
 
 	trigger_error('Hacking attempt...', E_USER_ERROR);

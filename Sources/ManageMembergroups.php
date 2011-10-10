@@ -38,7 +38,7 @@ if (!defined('WEDGE'))
 		- allows to add a membergroup and set some initial properties.
 		- called by ?action=admin;area=membergroups;sa=add.
 		- requires the manage_membergroups permission.
-		- uses the new_group sub template of ManageMembergroups.
+		- uses the new_group block of ManageMembergroups.
 		- allows to use a predefined permission profile or copy one from
 		  another group.
 		- redirects to action=admin;area=membergroups;sa=edit;group=x.
@@ -53,7 +53,7 @@ if (!defined('WEDGE'))
 		- screen to edit a specific membergroup.
 		- called by ?action=admin;area=membergroups;sa=edit;group=x.
 		- requires the manage_membergroups permission.
-		- uses the edit_group sub template of ManageMembergroups.
+		- uses the edit_group block of ManageMembergroups.
 		- also handles the delete button of the edit form.
 		- redirects to ?action=admin;area=membergroups.
 
@@ -62,7 +62,7 @@ if (!defined('WEDGE'))
 		- called by ?action=admin;area=membergroups;sa=settings
 		- requires the admin_forum permission (and manage_permissions for
 		  changing permissions)
-		- uses membergroup_settings sub template of ManageMembergroups.
+		- uses membergroup_settings block of ManageMembergroups.
 		- redirects to itself.
 */
 

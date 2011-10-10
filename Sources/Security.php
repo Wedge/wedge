@@ -206,7 +206,7 @@ function is_not_guest($message = '')
 		$context['robot_no_index'] = true;
 	}
 
-	// Use the kick_guest sub template...
+	// Use the kick_guest block...
 	$context['kick_message'] = $message;
 	$context['page_title'] = $txt['login'];
 

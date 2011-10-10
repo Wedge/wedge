@@ -67,7 +67,7 @@ if (!defined('WEDGE'))
 
 	void EditTheme()
 		- shows an interface for editing the templates.
-		- uses the Themes template and edit_template/edit_style sub template.
+		- uses the Themes template and edit_template/edit_style block.
 		- accessed via ?action=admin;area=theme;sa=edit
 
 	// !!! Update this for the new package manager?

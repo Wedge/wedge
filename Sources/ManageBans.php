@@ -37,10 +37,10 @@ if (!defined('WEDGE'))
 		- the screen for adding new bans and modifying existing ones.
 		- adding new bans:
 			- is accesssed by ?action=admin;area=ban;sa=add.
-			- uses the ban_edit sub template of the ManageBans template.
+			- uses the ban_edit block of the ManageBans template.
 		- modifying existing bans:
 			- is accesssed by ?action=admin;area=ban;sa=edit;bg=x
-			- uses the ban_edit sub template of the ManageBans template.
+			- uses the ban_edit block of the ManageBans template.
 			- shows a list of ban triggers for the specified ban.
 		- handles submitted forms that add, modify or remove ban triggers.
 
@@ -48,15 +48,15 @@ if (!defined('WEDGE'))
 		- the screen for adding new ban triggers or modifying existing ones.
 		- adding new ban triggers:
 			- is accessed by ?action=admin;area=ban;sa=edittrigger;bg=x
-			- uses the ban_edit_trigger sub template of ManageBans.
+			- uses the ban_edit_trigger block of ManageBans.
 		- editing existing ban triggers:
 			- is accessed by ?action=admin;area=ban;sa=edittrigger;bg=x;bi=y
-			- uses the ban_edit_trigger sub template of ManageBans.
+			- uses the ban_edit_trigger block of ManageBans.
 
 	void BanBrowseTriggers()
 		- screen for showing the banned enities
 		- is accessed by ?action=admin;area=ban;sa=browse
-		- uses the browse_triggers sub template of the ManageBans template.
+		- uses the browse_triggers block of the ManageBans template.
 		- uses sub-tabs for browsing by IP, hostname, email or username.
 
 	string range2ip(array $low, array $high)
@@ -1283,7 +1283,7 @@ function BanBrowseTriggers()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	// The list is the only thing to show, so make it the default sub template.
+	// The list is the only thing to show, so make it the default block.
 	wetem::load('show_list');
 	$context['default_list'] = 'ban_trigger_list';
 }

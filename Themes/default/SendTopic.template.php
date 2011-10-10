@@ -12,10 +12,10 @@
  */
 
 //------------------------------------------------------------------------------
-/*	This template contains two humble sub templates - main. Its job is pretty
-	simple: it collects the information we need to actually send the topic.
+/*	This template contains two humble blocks - main and report. main's job is
+	pretty simple: it collects the information we need to actually send the topic.
 
-	The main sub template gets shown from:
+	The main block gets shown from:
 		'?action=emailuser;sa=sendtopic;topic=##.##'
 	And should submit to:
 		'?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.' . $context['start']
@@ -28,7 +28,7 @@
 		send: this just needs to be set, as by the submit button.
 		sc: the session id, or $context['session_id'].
 
-	The report sub template gets shown from:
+	The report block gets shown from:
 		'?action=report;topic=##.##;msg=##'
 	It should submit to:
 		'?action=report;topic=' . $context['current_topic'] . '.' . $context['start']

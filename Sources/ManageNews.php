@@ -23,7 +23,7 @@ if (!defined('WEDGE'))
 
 	void EditNews()
 		- changes the current news items for the forum.
-		- uses the ManageNews template and edit_news sub template.
+		- uses the ManageNews template and edit_news block.
 		- called by ?action=admin;area=news.
 		- requires the edit_news permission.
 		- writes an entry into the moderation log.
@@ -32,21 +32,21 @@ if (!defined('WEDGE'))
 
 	void SelectMailingMembers()
 		- allows a user to select the membergroups to send their mailing to.
-		- uses the ManageNews template and email_members sub template.
+		- uses the ManageNews template and email_members block.
 		- called by ?action=admin;area=news;sa=mailingmembers.
 		- requires the send_mail permission.
 		- form is submitted to ?action=admin;area=news;mailingcompose.
 
 	void ComposeMailing()
 		- shows a form to edit a forum mailing and its recipients.
-		- uses the ManageNews template and email_members_compose sub template.
+		- uses the ManageNews template and email_members_compose block.
 		- called by ?action=admin;area=news;sa=mailingcompose.
 		- requires the send_mail permission.
 		- form is submitted to ?action=admin;area=news;sa=mailingsend.
 
 	void SendMailing(bool clean_only = false)
 		- handles the sending of the forum mailing in batches.
-		- uses the ManageNews template and email_members_send sub template.
+		- uses the ManageNews template and email_members_send block.
 		- called by ?action=admin;area=news;sa=mailingsend
 		- requires the send_mail permission.
 		- redirects to itself when more batches need to be sent.
@@ -55,7 +55,7 @@ if (!defined('WEDGE'))
 
 	void NewsSettings()
 		- set general news and newsletter settings and permissions.
-		- uses the ManageNews template and news_settings sub template.
+		- uses the ManageNews template and news_settings block.
 		- called by ?action=admin;area=news;sa=settings.
 		- requires the forum_admin permission.
 */

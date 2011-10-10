@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
 		- depends on the cal_enabled setting, and many of the other cal_
 		  settings.
 		- uses the calendar_start_day theme option. (Monday/Sunday)
-		- uses the main sub template in the Calendar template.
+		- uses the main block in the Calendar template.
 		- goes to the month and year passed in 'month' and 'year' by
 		  get or post.
 		- accessed through ?action=calendar.
@@ -35,7 +35,7 @@ if (!defined('WEDGE'))
 		- calls Post() function if event is linked to a post.
 		- calls insertEvent() to insert the event if not linked to post.
 		- requires the calendar_post permission to use.
-		- uses the event_post sub template in the Calendar template.
+		- uses the event_post block in the Calendar template.
 		- is accessed with ?action=calendar;sa=post.
 
 	void iCalDownload()
@@ -295,7 +295,7 @@ function CalendarPost()
 			isAllowedTo('calendar_edit_own');
 	}
 
-	// Template, sub template, etc.
+	// Template, block, etc.
 	loadTemplate('Calendar');
 	wetem::load('event_post');
 

@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 /*	void MoveTopic()
 		- is called to allow moderator to give reason for topic move.
 		- must be called with a topic specified.
-		- uses the MoveTopic template and main sub template.
+		- uses the MoveTopic template and main block.
 		- if the member is the topic starter requires the move_own permission,
 		  otherwise the move_any permission.
 		- is accessed via ?action=movetopic.

@@ -40,7 +40,7 @@ if (!defined('WEDGE'))
 	void ConvertUtf8()
 		- converts the data and database tables to UTF-8 character set.
 		- requires the admin_forum permission.
-		- uses the convert_utf8 sub template of the Admin template.
+		- uses the convert_utf8 block of the Admin template.
 		- only works if UTF-8 is not the global character set.
 		- supports all character sets used by Wedge's language files.
 		- redirects to ?action=admin;area=maintain after finishing.
@@ -50,7 +50,7 @@ if (!defined('WEDGE'))
 	void ConvertEntities()
 		- converts HTML-entities to UTF-8 characters.
 		- requires the admin_forum permission.
-		- uses the convert_entities sub template of the Admin template.
+		- uses the convert_entities block of the Admin template.
 		- only works if UTF-8 has been set as database and global character set.
 		- is divided in steps of 10 seconds.
 		- is linked from the maintenance screen (if applicable).
@@ -85,7 +85,7 @@ if (!defined('WEDGE'))
 		- does not connect directly with wedge.org, instead expects the client to.
 		- requires the admin_forum permission.
 		- uses the view_versions admin area.
-		- loads the view_versions sub template (in the Admin template.)
+		- loads the view_versions block (in the Admin template.)
 		- accessed through ?action=admin;area=maintain;sa=routine;activity=version.
 
 	void MaintainReattributePosts()

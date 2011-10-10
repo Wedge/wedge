@@ -62,7 +62,7 @@ if (!defined('WEDGE'))
 
 	void EditBoardSettings()
 		- a screen to set a few general board and category settings.
-		- uses the modify_general_settings sub template.
+		- uses the modify_general_settings block.
 */
 
 // The controller; doesn't do anything, just delegates.

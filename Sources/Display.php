@@ -21,7 +21,7 @@ if (!defined('WEDGE'))
 	void Display()
 		- loads the posts in a topic up so they can be displayed.
 		- supports wireless, using wap2 and the Wireless templates.
-		- uses the main sub template of the Display template.
+		- uses the main block of the Display template.
 		- requires a topic, and can go to the previous or next topic from it.
 		- jumps to the correct post depending on a number/time/IS_MSG passed.
 		- depends on the messages_per_page, defaultMaxMessages and enableAllMessages settings.
@@ -70,7 +70,7 @@ function Display()
 		redirectexit($url, false);
 	}
 
-	// Load the proper template and/or sub template.
+	// Load the proper template and/or block.
 	if (WIRELESS)
 		wetem::load('wap2_display');
 	else

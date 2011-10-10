@@ -40,7 +40,7 @@ if (!defined('WEDGE'))
 		- if the user is adding a poll to a topic, must contain the variable
 		  'add' in the url.
 		- uses the Post language file.
-		- uses the Poll template (main sub template.).
+		- uses the Poll template (main block.).
 		- user must have poll_edit_any/poll_add_any permission for the relevant
 		  action.
 		- otherwise must be poll starter with poll_edit_own permission for

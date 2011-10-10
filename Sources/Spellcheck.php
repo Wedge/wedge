@@ -106,7 +106,7 @@ function Spellcheck()
 	$context['spell_js'] .= '
 	);';
 
-	// And instruct the template system to just show the spellcheck sub template.
+	// And instruct the template system to just show the spellcheck block.
 	wetem::load('spellcheck');
 	hideChrome();
 }

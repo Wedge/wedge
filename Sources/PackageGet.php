@@ -521,7 +521,7 @@ function PackageDownload()
 {
 	global $txt, $scripturl, $boarddir, $context;
 
-	// Use the downloaded sub template.
+	// Use the downloaded block.
 	wetem::load('downloaded');
 
 	// Security is good...

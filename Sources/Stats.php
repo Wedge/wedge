@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
 
 	void Stats()
 		- gets all the statistics in order and puts them in.
-		- uses the Stats template and language file. (and main sub template.)
+		- uses the Stats template and language file. (and main block.)
 		- requires the view_stats permission.
 		- accessed from ?action=stats.
 

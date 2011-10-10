@@ -46,7 +46,7 @@ function Help()
 	// Set the page title to something relevant.
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['help'];
 
-	// Just show the popup sub template.
+	// Just show the popup block.
 	wetem::load('popup');
 
 	// What help string should be used?

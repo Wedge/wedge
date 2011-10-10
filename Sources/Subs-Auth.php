@@ -34,16 +34,16 @@ if (!defined('WEDGE'))
 	void KickGuest()
 		- throws guests out to the login screen when guest access is off.
 		- sets $_SESSION['login_url'] to $_SERVER['REQUEST_URL'].
-		- uses the 'kick_guest' sub template found in Login.template.php.
+		- uses the 'kick_guest' block found in Login.template.php.
 
 	void InMaintenance()
 		- display a message about being in maintenance mode.
-		- display a login screen with sub template 'maintenance'.
+		- display a login screen with block 'maintenance'.
 
 	void adminLogin()
 		- double check the verity of the admin by asking for his or her
 		  password.
-		- loads Login.template.php and uses the admin_login sub template.
+		- loads Login.template.php and uses the admin_login block.
 		- sends data to template so the admin is sent on to the page they
 		  wanted if their password is correct, otherwise they can try
 		  again.
@@ -256,7 +256,7 @@ function adminLogin()
 	foreach ($_POST as $k => $v)
 		$context['post_data'] .= adminLogin_outputPostVars($k, $v);
 
-	// Now we'll use the admin_login sub template of the Login template.
+	// Now we'll use the admin_login block of the Login template.
 	wetem::load('admin_login');
 
 	// And title the page something like "Login".

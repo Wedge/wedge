@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
 	void SetCensor()
 		- shows an interface to set and test word censoring.
 		- requires the admin_forum permission.
-		- uses the Admin template and the edit_censored sub template.
+		- uses the Admin template and the edit_censored block.
 		- tests the censored word if one was posted.
 		- uses the censor_vulgar, censor_proper, censorWholeWord, and
 		  censorIgnoreCase settings.
@@ -33,20 +33,20 @@ if (!defined('WEDGE'))
 	void ModifyPostSettings()
 		- set any setting related to posts and posting.
 		- requires the admin_forum permission
-		- uses the edit_post_settings sub template of the Admin template.
+		- uses the edit_post_settings block of the Admin template.
 		- accessed from ?action=admin;area=postsettings;sa=posts.
 
 	void ModifyBBCSettings()
 		- set a few Bulletin Board Code settings.
 		- requires the admin_forum permission
-		- uses the edit_bbc_settings sub template of the Admin template.
+		- uses the edit_bbc_settings block of the Admin template.
 		- accessed from ?action=admin;area=postsettings;sa=bbc.
 		- loads a list of Bulletin Board Code tags to allow disabling tags.
 
 	void ModifyTopicSettings()
 		- set any setting related to topics.
 		- requires the admin_forum permission
-		- uses the edit_topic_settings sub template of the Admin template.
+		- uses the edit_topic_settings block of the Admin template.
 		- accessed from ?action=admin;area=postsettings;sa=topics.
 
 	void ModifyDraftSettings()

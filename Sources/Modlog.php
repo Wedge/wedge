@@ -18,7 +18,7 @@ if (!defined('WEDGE'))
 		- prepares the information from the moderation log for viewing.
 		- disallows the deletion of events within twenty-four hours of now.
 		- requires the admin_forum permission.
-		- uses the Modlog template, main sub template.
+		- uses the Modlog template, main block.
 		- is accessed via ?action=moderate;area=modlog.
 
 	int list_getModLogEntries()

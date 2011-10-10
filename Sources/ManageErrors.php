@@ -18,7 +18,7 @@ if (!defined('WEDGE'))
 
 	void ViewErrorLog()
 		- sets all the context up to show the error log for maintenance.
-		- uses the Errors template and error_log sub template.
+		- uses the Errors template and error_log block.
 		- requires the maintain_forum permission.
 		- uses the 'view_errors' administration area.
 		- accessed from ?action=admin;area=logs;sa=errorlog.

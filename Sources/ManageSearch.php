@@ -29,19 +29,19 @@ if (!defined('WEDGE'))
 		- edit some general settings related to the search function.
 		- called by ?action=admin;area=managesearch;sa=settings.
 		- requires the admin_forum permission.
-		- uses the 'modify_settings' sub template of the ManageSearch template.
+		- uses the 'modify_settings' block of the ManageSearch template.
 
 	void EditWeights()
 		- edit the relative weight of the search factors.
 		- called by ?action=admin;area=managesearch;sa=weights.
 		- requires the admin_forum permission.
-		- uses the 'modify_weights' sub template of the ManageSearch template.
+		- uses the 'modify_weights' block of the ManageSearch template.
 
 	void EditSearchMethod()
 		- edit the search method and search index used.
 		- called by ?action=admin;area=managesearch;sa=method.
 		- requires the admin_forum permission.
-		- uses the 'select_search_method' sub template of the ManageSearch
+		- uses the 'select_search_method' block of the ManageSearch
 		  template.
 		- allows to create and delete a fulltext index on the messages table.
 		- allows to delete a custom index (that CreateMessageIndex() created).
@@ -53,7 +53,7 @@ if (!defined('WEDGE'))
 		- linked from the EditSearchMethod screen.
 		- requires the admin_forum permission.
 		- uses the 'create_index', 'create_index_progress', and
-		  'create_index_done' sub templates of the ManageSearch template.
+		  'create_index_done' blocks of the ManageSearch template.
 		- depending on the size of the message table, the process is divided
 		  in steps.
 

@@ -25,7 +25,7 @@ define('WEDGE_NO_LOG', 1);
 		- uses the Stats language file.
 		- outputs an Atom feed, unless the 'type' get parameter
 		  is set to 'rss' or 'rss2'.
-		- does not use any templates, sub templates, or template layers.
+		- does not use any templates, blocks, or template layers.
 		- is accessed via ?action=feed.
 
 	void dumpTags(array data, int indentation, string tag = use_array,
@@ -687,7 +687,7 @@ function getXmlProfile($xml_format)
 		return array();
 
 	// Okay, I admit it, I'm lazy. Stupid $_GET['u'] is long and hard to type.
-	$profile = &$memberContext[$_GET['u']];
+	$profile =& $memberContext[$_GET['u']];
 	$data = array();
 
 	if ($xml_format == 'rss' || $xml_format == 'rss2')

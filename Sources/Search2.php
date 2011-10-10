@@ -20,13 +20,13 @@ if (!defined('WEDGE'))
 		- checks user input and searches the messages table for messages
 		  matching the query.
 		- requires the search_posts permission.
-		- uses the results sub template of the Search template.
+		- uses the results block of the Search template.
 		- uses the Search language file.
 		- stores the results into the search cache.
 		- show the results of the search query.
 
 	array prepareSearchContext(bool reset = false)
-		- callback function for the results sub template.
+		- callback function for the results block.
 		- loads the necessary contextual data to show a search result.
 
 	int searchSort(string $wordA, string $wordB)

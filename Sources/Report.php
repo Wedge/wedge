@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 /**
  * Creates a form for the user to report a message to moderators.
  *
- * - uses the ReportToModerator template, main sub template.
+ * - uses the ReportToModerator template, main block.
  * - requires the report_any permission.
  * - uses ReportToModerator2() if post data was sent.
  * - accessed through ?action=report.

@@ -79,7 +79,7 @@ function RegCenter()
  *
  * - Accessed by ?action=admin;area=regcenter;sa=register
  * - Unlike most of the administration panel, this option merely requires moderate_forum rather than admin_forum permission.
- * - Uses the admin_register sub template within the Register template.
+ * - Uses the admin_register block within the Register template.
  * - Also allows the administrator to set the primary group for the user, and whether to email them of the new details, and/or whether to make them confirm receipt of the email notification (as per Email Activation)
  */
 function AdminRegister()
@@ -161,7 +161,7 @@ function AdminRegister()
  *
  * - Allows the administrator to disable it, and/or provide editing facilities.
  * - Accessed by ?action=admin;area=regcenter;sa=agreement
- * - Calls upon the edit_agreement sub template of the Admin template.
+ * - Calls upon the edit_agreement block of the Admin template.
  * - Requires the admin_forum permission.
  * - If multiple languages are provided, it will attempt to edit agreement.language.txt in the top level board directory, or failing that, agreement.txt.
  */
@@ -216,7 +216,7 @@ function EditAgreement()
  * Display (and save) the options for usernames that are not allowed within the forum registration (and that users cannot change to later)
  *
  * - Accessed via ?action=admin;area=regcenter;sa=reservednames (within the registration center in the admin panel)
- * - Unlike most of the smaller admin functions, this relies on its own template (reserved_words sub template of Register template), to manage the large textarea that forms the entry point for reserved names.
+ * - Unlike most of the smaller admin functions, this relies on its own template (reserved_words block of Register template), to manage the large textarea that forms the entry point for reserved names.
  * - Provides access to the options: reserved words to be checked as whole words (as opposed to matching anywhere), matching case too, and whether it is set on username and/or display name.
  * - It should be noted that the method used to display the textarea's contents (i.e. one name per line) is the way it is internally stored too; it is important to note there is no XSS protection here (intentionally)
  * - Requires admin_forum permission.

@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
 		- screen shown before the actual split.
 		- is accessed with ?action=splittopics;sa=index.
 		- default sub action for ?action=splittopics.
-		- uses 'ask' sub template of the SplitTopics template.
+		- uses 'ask' block of the SplitTopics template.
 		- redirects to SplitSelectTopics if the message given turns out to be
 		  the first message of a topic.
 		- shows the user three ways to split the current topic.
@@ -82,7 +82,7 @@ if (!defined('WEDGE'))
 		- allows to pick a topic to merge the current topic with.
 		- is accessed with ?action=mergetopics;sa=index
 		- default sub action for ?action=mergetopics.
-		- uses 'merge' sub template of the SplitTopics template.
+		- uses 'merge' block of the SplitTopics template.
 		- allows to set a different target board.
 
 	void MergeExecute(array topics = request)
@@ -91,7 +91,7 @@ if (!defined('WEDGE'))
 			- shows topics to be merged and allows to set some merge options.
 			- is accessed by ?action=mergetopics;sa=options.and can also
 			  internally be called by QuickModeration().
-			- uses 'merge_extra_options' sub template of the SplitTopics
+			- uses 'merge_extra_options' block of the SplitTopics
 			  template.
 		- the actual merge:
 			- is accessed with ?action=mergetopics;sa=execute.
@@ -103,7 +103,7 @@ if (!defined('WEDGE'))
 	void MergeDone()
 		- shows a 'merge completed' screen.
 		- is accessed with ?action=mergetopics;sa=done.
-		- uses 'merge_done' sub template of the SplitTopics template.
+		- uses 'merge_done' block of the SplitTopics template.
 */
 
 // Split a topic into two separate topics... in case it got offtopic, etc.
@@ -273,7 +273,7 @@ function SplitSelectTopics()
 	// Some stuff for our favorite template.
 	$context['new_subject'] = $_REQUEST['subname'];
 
-	// Using the "select" sub template.
+	// Using the "select" block.
 	wetem::load(isset($_REQUEST['xml']) ? 'split' : 'select');
 
 	// Are we using a custom messages per page?

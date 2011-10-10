@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
 
 	void SendTopic()
 		- sends information about a topic to a friend.
-		- uses the SendTopic template, with the main sub template.
+		- uses the SendTopic template, with the main block.
 		- requires the send_topic permission.
 		- redirects back to the first page of the topic when done.
 		- is accessed via ?action=emailuser;sa=sendtopic.
