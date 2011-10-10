@@ -1000,7 +1000,7 @@ function loadTemplate($template_name, $fatal = true)
 /**
  * Actually display a template block.
  *
- * This is called by the header and footer templates to actually have content output to the buffer; this directs which template_ functions are called, including logging them for debugging purposes.
+ * This is called by the wetem object to actually have content output to the buffer; this directs which template_ functions are called, including logging them for debugging purposes.
  *
  * Additionally, if debug is part of the URL (?debug or ;debug), there will be divs added for administrators to mark where template layers begin and end, with orange background and red borders.
  *
@@ -1052,8 +1052,8 @@ function execBlock($block_name, $fatal = false)
  * The skeleton itself can't be accessed from outside the object.
  * Thus, you'll have to rely on the public functions to manipulate it.
  *
- * wetem::load()	- add a block to a layer or next to a block
- * wetem::layer()	- add a layer to a layer or next to it
+ * wetem::load()	- inject a block or layer to a given position in the skeleton
+ * wetem::layer()	- inject a layer to a layer or next to it
  * wetem::hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
  * wetem::remove()	- remove a block or layer from the skeleton
  * wetem::has()		- does the skeleton have this block or layer in it?
@@ -1061,12 +1061,12 @@ function execBlock($block_name, $fatal = false)
  *					  - ::has_layer($layer) forces a test for layers only
  */
 
-class wetem
+final class wetem
 {
-	protected static $instance;				// container for self
-	protected static $skeleton = array();	// store the full skeleton array
-	protected static $layers = array();		// store shortcuts to individual layers
-	protected static $hidden = false;		// did we call hide()?
+	private static $instance;				// container for self
+	private static $skeleton = array();		// store the full skeleton array
+	private static $layers = array();		// store shortcuts to individual layers
+	private static $hidden = false;			// did we call hide()?
 
 	// What kind of class are you, anyway? One of a kind!
 	private function __clone()
@@ -1103,6 +1103,14 @@ class wetem
 	}
 
 	/**
+	 * Build the multi-dimensional layout skeleton array from an single-dimension array of tags.
+	 */
+	public static function build(&$arr)
+	{
+		self::parse($arr, self::$skeleton);
+	}
+
+	/**
 	 * This is where we render the HTML page!
 	 */
 	public static function render()
@@ -1114,89 +1122,6 @@ class wetem
 			fatal_lang_error('default_layer_missing');
 
 		self::render_recursive(reset(self::$skeleton), key(self::$skeleton));
-	}
-
-	private static function render_recursive(&$here, $key)
-	{
-		// Show the _above part of the layer.
-		execBlock($key . '_above', 'ignore');
-
-		if ($key === 'top' || $key === 'default')
-			while_we_re_here();
-
-		foreach ($here as $id => $temp)
-		{
-			// If the item is an array, then it's a layer. Otherwise, it's a block.
-			if (is_array($temp))
-				self::render_recursive($temp, $id);
-			else
-				execBlock($id);
-		}
-
-		// Show the _below part of the layer
-		execBlock($key . '_below', 'ignore');
-
-		// !! We should probably move this directly to template_html_below() and forget the buffering thing...
-		if ($key === 'html' && !isset($_REQUEST['xml']) && !self::$hidden)
-			db_debug_junk();
-	}
-
-	/**
-	 * Build the multi-dimensional layout skeleton array from an single-dimension array of tags.
-	 */
-	public static function build(&$arr)
-	{
-		self::parse($arr, self::$skeleton);
-	}
-
-	private static function parse(&$arr, &$dest, &$pos = 0, $name = '')
-	{
-		for ($c = count($arr); $pos < $c;)
-		{
-			$tag =& $arr[$pos++];
-
-			// Ending a layer?
-			if (!empty($tag[1]))
-			{
-				self::$layers[$name] =& $dest;
-				return;
-			}
-
-			// Starting a layer?
-			if (empty($tag[3]))
-			{
-				$dest[$tag[2]] = array();
-				self::parse($arr, $dest[$tag[2]], $pos, $tag[2]);
-			}
-			// Then it's a block...
-			else
-				$dest[$tag[2]] = true;
-		}
-	}
-
-	/**
-	 * Rebuilds $layers according to current skeleton.
-	 * The skeleton builder doesn't call this because it does it automatically.
-	 */
-	private static function reindex()
-	{
-		// We only reset the list of references, it won't impact the skeleton array.
-		self::$layers = array();
-
-		// !!! Sadly, array_walk_recursive() won't trigger on child arrays... :(
-		self::reindex_recursive(self::$skeleton);
-	}
-
-	private static function reindex_recursive(&$here)
-	{
-		foreach ($here as $id => &$item)
-		{
-			if (is_array($item))
-			{
-				self::$layers[$id] =& $item;
-				self::reindex_recursive($item);
-			}
-		}
 	}
 
 	/**
@@ -1243,7 +1168,7 @@ class wetem
 	}
 
 	/**
-	 * Build a list of template blocks.
+	 * Add blocks or layers to the skeleton.
 	 *
 	 * @param string $blocks The name of the function(s) (without template_ prefix) to be called.
 	 * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc. Leave empty (or 'default') to use the default.
@@ -1434,6 +1359,97 @@ class wetem
 	}
 
 	/**
+	 * Builds the skeleton array (self::$skeleton) and the layers array (self::$layers)
+	 * based on the contents of $context['skeleton'].
+	 */
+	private static function parse(&$arr, &$dest, &$pos = 0, $name = '')
+	{
+		for ($c = count($arr); $pos < $c;)
+		{
+			$tag =& $arr[$pos++];
+
+			// Ending a layer?
+			if (!empty($tag[1]))
+			{
+				self::$layers[$name] =& $dest;
+				return;
+			}
+
+			// Starting a layer?
+			if (empty($tag[3]))
+			{
+				$dest[$tag[2]] = array();
+				self::parse($arr, $dest[$tag[2]], $pos, $tag[2]);
+			}
+			// Then it's a block...
+			else
+				$dest[$tag[2]] = true;
+		}
+	}
+
+	/**
+	 * Rebuilds $layers according to the current skeleton.
+	 * The skeleton builder doesn't call this because it does it automatically.
+	 */
+	private static function reindex()
+	{
+		// We only reset the list of references, it won't impact the skeleton array.
+		self::$layers = array();
+
+		// !!! Sadly, array_walk_recursive() won't trigger on child arrays... :(
+		self::reindex_recursive(self::$skeleton);
+	}
+
+	private static function reindex_recursive(&$here)
+	{
+		foreach ($here as $id => &$item)
+		{
+			if (is_array($item))
+			{
+				self::$layers[$id] =& $item;
+				self::reindex_recursive($item);
+			}
+		}
+	}
+
+	private static function render_recursive(&$here, $key)
+	{
+		// Show the _above part of the layer.
+		self::exec($key . '_above', 'ignore');
+
+		if ($key === 'top' || $key === 'default')
+			while_we_re_here();
+
+		foreach ($here as $id => $temp)
+		{
+			// If the item is an array, then it's a layer. Otherwise, it's a block.
+			if (is_array($temp))
+				self::render_recursive($temp, $id);
+			else
+				self::exec($id);
+		}
+
+		// Show the _below part of the layer
+		self::exec($key . '_below', 'ignore');
+
+		// !! We should probably move this directly to template_html_below() and forget the buffering thing...
+		if ($key === 'html' && !isset($_REQUEST['xml']) && !self::$hidden)
+			db_debug_junk();
+	}
+
+	// Helper function to remove a block or layer from the page.
+	public static function remove($item)
+	{
+		$layer = self::find_parent($item);
+		// If it's a valid block, just remove it.
+		if ($layer && !is_array(self::$layers[$layer][$item]))
+			unset(self::$layers[$layer][$item]);
+		// Otherwise it's a layer, make sure it's removable.
+		elseif (isset(self::$layers[$layer]))
+			self::remove_layer($block);
+	}
+
+	/**
 	 * Find a block or layer's parent layer.
 	 *
 	 * @param string $child The name of the block or layer. Really.
@@ -1482,17 +1498,6 @@ class wetem
 		// We need to reindex, in case the layer had child layers.
 		if ($where !== 'after' && $where !== 'before')
 			self::reindex();
-	}
-
-	// Helper function to remove a block or layer from the page.
-	public static function remove($block)
-	{
-		$layer = self::find_parent($block);
-		// If it's a block, remove it. Otherwise it's a layer, make sure it's removable.
-		if (!is_array(self::$layers[$layer][$block]))
-			unset(self::$layers[$layer][$block]);
-		else
-			self::remove_layer($block);
 	}
 
 	// Helper function to remove a layer from the page.

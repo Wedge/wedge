@@ -227,7 +227,7 @@ function error_handler($error_level, $error_string, $file, $line)
 		$array = debug_backtrace();
 		for ($i = 0; $i < count($array); $i++)
 		{
-			if ($array[$i]['function'] != 'execBlock')
+			if ($array[$i]['function'] !== 'execBlock')
 				continue;
 
 			// This is a bug in PHP, with eval, it seems!
@@ -327,7 +327,7 @@ function setup_fatal_error_context($error_message)
 	// Display the error message - wireless?
 	if (defined('WIRELESS') && WIRELESS)
 		wetem::load('wap2_error');
-	// Load the template and set the sub template.
+	// Load the template and set the block.
 	else
 	{
 		loadTemplate('Errors');

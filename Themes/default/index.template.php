@@ -134,7 +134,7 @@ function template_skeleton()
 		</html>';
 }
 
-// The main sub template above the content.
+// The main block above the content.
 function template_html_above()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings, $boardurl;

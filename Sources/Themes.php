@@ -658,16 +658,16 @@ function SetThemeOptions()
 	loadTheme($_GET['th'], false);
 
 	loadLanguage('Profile');
-	//!!! Should we just move these options so they are no longer theme dependant?
+	// !!! Should we just move these options so they are no longer theme dependant?
 	loadLanguage('PersonalMessage');
 
-	// Let the theme take care of the settings.
 	loadTemplate('Settings');
+
+	// Let the theme take care of the settings.
 	execBlock('options');
 
 	wetem::load('set_options');
 	$context['page_title'] = $txt['theme_settings'];
-
 	$context['options'] = $context['theme_options'];
 	$context['theme_settings'] = $settings;
 
