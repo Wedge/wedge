@@ -2871,7 +2871,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 			if (!function_exists('aeva_main'))
 				loadSource('media/Aeva-Embed');
 			$match = preg_replace(array('~\[url=([^]]+)]([^[]+)\[/url]~', '~\[url]([^[]+)\[/url]~'), array('<a href="$1">$2</a>', '<a href="$1"></a>'), $i['embed_url']);
-			$match = substr(strtolower($match), 0, 4) === 'http' ? '<a href="' . $match . '">Test</a>' : $match;
+			$match = strpos($match, '://') !== false ? '<a href="' . $match . '">Test</a>' : $match;
 			$match = aeva_main($match);
 			preg_match('~"(\d+)", "(\d+)"~', $match, $siz);
 			if (empty($siz))
