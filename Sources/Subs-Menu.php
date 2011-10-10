@@ -156,7 +156,7 @@ function createMenu($menuData, $menuOptions = array())
 
 						// Does it have its own icon and bigicon?
 						$here['icon'] = empty($area['icon']) ? '' : (strpos($area['icon'], '://') !== false ? '<img src="' . $area['icon'] . '">' : '<div class="admenu_icon_' . $area_id . '"></div>') . '&nbsp;&nbsp;';
-						$here['bigicon'] = empty($area['bigicon']) ? '' : '<img src="' . (strpos($area['bigicon'], '://') !== 0 ? $context['menu_image_path'] . '/' . $area['bigicon'] : $area['bigicon']) . '">';
+						$here['bigicon'] = empty($area['bigicon']) ? '' : '<img src="' . (strpos($area['bigicon'], '://') === false ? $context['menu_image_path'] . '/' . $area['bigicon'] : $area['bigicon']) . '">';
 
 						// Did it have subsections?
 						if (!empty($area['subsections']))
