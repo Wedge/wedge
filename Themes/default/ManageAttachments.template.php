@@ -12,7 +12,7 @@
  */
 
 // Template template wraps around the simple settings page to add javascript functionality.
-function template_avatar_settings_below()
+function template_avatar_settings_after()
 {
 	add_js_inline('
 	function updateFormStatus()

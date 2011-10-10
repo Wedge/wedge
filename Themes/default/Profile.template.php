@@ -141,7 +141,7 @@ function template_summary()
 
 	if (!empty($context['member']['action']))
 		echo '
-				<dt>', $txt['current_action'], '</dt>
+				<dt>', $txt['current_action'], ':</dt>
 				<dd>', $context['member']['action'], '</dd>';
 
 	if (!isset($context['disabled_fields']['location']) && !empty($context['member']['location']))

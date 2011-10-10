@@ -149,7 +149,7 @@ function template_main()
 }
 
 // Header of the print page!
-function template_print_above()
+function template_report_before()
 {
 	global $context, $settings, $options, $txt;
 
@@ -237,7 +237,7 @@ function template_print()
 }
 
 // Footer of the print page.
-function template_print_below()
+function template_report_after()
 {
 	global $txt;
 

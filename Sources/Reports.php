@@ -148,20 +148,15 @@ function ReportsMain()
 	}
 	$context['report_type'] = $_REQUEST['rt'];
 
-	// What are valid templates for showing reports?
-	$reportTemplates = array(
-		'main'	=> false,
-		'print'	=> 'print',
-	);
-
 	// Specific template? Use that instead of main!
-	if (isset($_REQUEST['st'], $reportTemplates[$_REQUEST['st']]))
+	if (isset($_REQUEST['st']))
 	{
-		wetem::load($_REQUEST['st']);
+		if ($_REQUEST['st'] === 'main' || $_REQUEST['st'] === 'print')
+			wetem::load($_REQUEST['st']);
 
 		// Are we disabling the other layers - print friendly for example?
-		if ($reportTemplates[$_REQUEST['st']])
-			wetem::hide($reportTemplates[$_REQUEST['st']]);
+		if ($_REQUEST['st'] === 'print')
+			wetem::hide('report');
 	}
 
 	// Make the page title more descriptive.

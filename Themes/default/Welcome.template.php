@@ -27,13 +27,22 @@ function template_main()
 	</div>';
 }
 
-function template_info_above()
+function template_info_before()
 {
 	echo '
 		<div class="roundframe">';
 }
 
-function template_info_below()
+// This one is just here to show you that layers can get _before_before,
+// _before_override, _before_after and _after_* overrides ;)
+// It only works on layers, though!
+function template_info_center_before_after()
+{
+	echo '
+		<div style="height: 8px"></div>';
+}
+
+function template_info_after()
 {
 	echo '
 		</div>';

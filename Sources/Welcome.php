@@ -47,10 +47,12 @@ function Welcome()
 	loadTemplate('InfoCenter');
 	wetem::load(
 		array(
-			'info_center' => array(
-				'info_center_statistics',
-				'info_center_usersonline',
-				'info_center_personalmsg',
+			'info' => array(
+				'info_center' => array(
+					'info_center_statistics',
+					'info_center_usersonline',
+					'info_center_personalmsg',
+				),
 			),
 		),
 		'default',

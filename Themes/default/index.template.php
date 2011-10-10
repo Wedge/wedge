@@ -94,7 +94,7 @@ function template_init()
 
 /*
 	The magical function where the layer/block layout is established.
-	A layer is an array of blocks. Layers have '_above' and '_below' functions,
+	A layer is an array of blocks. Layers have '_before' and '_after' functions,
 	but they're not mandatory. Blocks only have one function but can be overloaded.
 	You can comment your skeleton with the usual <!-- HTML comment --> tags.
 	Finally, you can redefine a skeleton through skin.xml (see the Warm skin for a sample.)
@@ -135,7 +135,7 @@ function template_skeleton()
 }
 
 // The main block above the content.
-function template_html_above()
+function template_html_before()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings, $boardurl;
 
@@ -199,14 +199,14 @@ function template_html_above()
 </head>';
 }
 
-function template_body_above()
+function template_body_before()
 {
 	echo '
 <body>';
 }
 
 // The main content should go here.
-function template_wrapper_above()
+function template_wrapper_before()
 {
 	global $settings;
 
@@ -215,7 +215,7 @@ function template_wrapper_above()
 }
 
 // Start the header layer.
-function template_header_above()
+function template_header_before()
 {
 	echo '
 	<div id="header"><div class="frame">
@@ -223,7 +223,7 @@ function template_header_above()
 }
 
 // End the header layer.
-function template_header_below()
+function template_header_after()
 {
 	global $context, $options;
 
@@ -314,12 +314,12 @@ function template_logo_toggler()
 			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
 }
 
-function template_sidebar_wrap_above()
+function template_sidebar_wrap_before()
 {
 	echo '<we:sidebar>';
 }
 
-function template_sidebar_above()
+function template_sidebar_before()
 {
 	global $txt, $scripturl, $context, $modSettings;
 
@@ -424,49 +424,49 @@ function template_sidebar_feed()
 		</dl>';
 }
 
-function template_sidebar_wrap_below()
+function template_sidebar_wrap_after()
 {
 	echo '
 		</we:sidebar>';
 }
 
-function template_offside_wrap_above()
+function template_offside_wrap_before()
 {
 	echo '
 		<we:offside>';
 }
 
-function template_offside_wrap_below()
+function template_offside_wrap_after()
 {
 	echo '
 		</we:offside>';
 }
 
-function template_content_wrap_above()
+function template_content_wrap_before()
 {
 	echo '
 	<div id="content"><div class="frame">';
 }
 
-function template_main_wrap_above()
+function template_main_wrap_before()
 {
 	echo '
 	<div id="main_content">';
 }
 
-function template_main_wrap_below()
+function template_main_wrap_after()
 {
 	echo '
 	</div>';
 }
 
-function template_content_wrap_below()
+function template_content_wrap_after()
 {
 	echo '
 	</div></div>';
 }
 
-function template_wrapper_below()
+function template_wrapper_after()
 {
 	global $settings;
 
@@ -474,7 +474,7 @@ function template_wrapper_below()
 </div>';
 }
 
-function template_body_below()
+function template_body_after()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings, $footer_coding;
 
@@ -531,7 +531,7 @@ function template_body_below()
 </body>';
 }
 
-function template_html_below()
+function template_html_after()
 {
 	echo '</html>';
 }

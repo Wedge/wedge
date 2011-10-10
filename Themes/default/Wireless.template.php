@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-function template_wap2_above()
+function template_wap2_before()
 {
 	global $context, $settings, $options, $user_info;
 
@@ -634,7 +634,7 @@ function template_wap2_ban_edit()
 	</form>';
 }
 
-function template_wap2_below()
+function template_wap2_after()
 {
 	global $context, $settings, $options, $txt;
 

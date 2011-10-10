@@ -11,7 +11,7 @@
  * @version 0.1
  */
 
-function template_print_above()
+function template_print_before()
 {
 	global $context, $settings, $options, $txt;
 
@@ -122,7 +122,7 @@ function template_main()
 			</dd>';
 }
 
-function template_print_below()
+function template_print_after()
 {
 	global $txt;
 

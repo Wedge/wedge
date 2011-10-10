@@ -824,7 +824,7 @@ function template_linked_calendar()
 			</div>';
 }
 
-function template_postlist_above()
+function template_postlist_before()
 {
 	global $context, $txt;
 
@@ -836,7 +836,7 @@ function template_postlist_above()
 			<div class="clear"></div>' : '';
 }
 
-function template_postlist_below()
+function template_postlist_after()
 {
 	global $context, $txt;
 

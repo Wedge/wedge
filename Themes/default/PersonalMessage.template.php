@@ -12,7 +12,7 @@
  */
 
 // This is the main sidebar for the personal messages section.
-function template_pm_above()
+function template_pm_before()
 {
 	global $context, $settings, $options, $txt, $scripturl;
 
@@ -48,7 +48,7 @@ function template_pm_above()
 }
 
 // Just the end of the index bar, nothing special.
-function template_pm_below()
+function template_pm_after()
 {
 	global $context, $settings, $options;
 

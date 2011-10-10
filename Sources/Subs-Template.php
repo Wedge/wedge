@@ -1311,9 +1311,10 @@ final class wetem
 	/**
 	 * Add a layer dynamically.
 	 *
-	 * Although you can add layers through ::load(), ::layer() will allow you to make actions that aren't otherwise possible in ::load(), such as renaming a layer, or adding a containing layer to another.
+	 * A layer is a special block that contains other blocks/layers instead of a dedicated template function.
+	 * Although you can add layers through ::load(), ::layer() will allow you actions that aren't otherwise possible in ::load(), such as renaming a layer, or adding a containing layer to another.
 	 *
-	 * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_above' and 'template_layer_below' functions.
+	 * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_before' and 'template_layer_after' functions.
 	 * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the default layer (which doesn't accept any positioning, either.)
 	 * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
 	 */
@@ -1329,11 +1330,13 @@ final class wetem
 			rename		replace the layer but not its current contents			<layer>          <sub />           </layer>
 			replace		replace the layer and empty its contents				<layer>                            </layer>
 
-			before		add before the item										<layer> </layer> <target> <sub /> </target>
-			after		add after the item										<target> <sub /> </target> <layer> </layer>
+			The following can also be done through wetem::load(array('layer' => array()), 'target', 'before/after/add/first'):
 
 			add			add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
 			first		add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
+
+			before		add before the item										<layer> </layer> <target> <sub /> </target>
+			after		add after the item										<target> <sub /> </target> <layer> </layer>
 		*/
 
 		if (empty($target))
@@ -1423,8 +1426,8 @@ final class wetem
 
 	private static function render_recursive(&$here, $key)
 	{
-		// Show the _above part of the layer.
-		execBlock($key . '_above', 'ignore');
+		// Show the _before part of the layer.
+		execBlock($key . '_before', 'ignore');
 
 		if ($key === 'top' || $key === 'default')
 			while_we_re_here();
@@ -1438,10 +1441,10 @@ final class wetem
 				execBlock($id);
 		}
 
-		// Show the _below part of the layer
-		execBlock($key . '_below', 'ignore');
+		// Show the _after part of the layer
+		execBlock($key . '_after', 'ignore');
 
-		// !! We should probably move this directly to template_html_below() and forget the buffering thing...
+		// !! We should probably move this directly to template_html_after() and forget the buffering thing...
 		if ($key === 'html' && !isset($_REQUEST['xml']) && !self::$hidden)
 			db_debug_junk();
 	}

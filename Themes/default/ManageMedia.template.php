@@ -12,16 +12,16 @@
  * @version 0.1
  */
 
-function template_aeva_admin_above()
+function template_aeva_admin_before()
 {
 	template_aeva_subtabs();
 }
 
-function template_aeva_admin_below()
+function template_aeva_admin_after()
 {
 }
 
-function template_aeva_admin_enclose_table_above()
+function template_aeva_admin_enclose_table_before()
 {
 	echo '
 		<table class="w100 cp0 cs0">
@@ -29,7 +29,7 @@ function template_aeva_admin_enclose_table_above()
 				<td>';
 }
 
-function template_aeva_admin_enclose_table_below()
+function template_aeva_admin_enclose_table_after()
 {
 	echo '
 				</td>

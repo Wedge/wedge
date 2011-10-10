@@ -1594,10 +1594,6 @@ function template_aeva_stats()
 		</table>';
 }
 
-function template_aeva_below()
-{
-}
-
 function template_aeva_text_editor()
 {
 	global $context;
@@ -1765,7 +1761,6 @@ function template_aeva_profile_summary()
 			</table>
 		</div>';
 	}
-	template_aeva_below();
 }
 
 // Template for viewing all items from a single member
@@ -1791,8 +1786,6 @@ function template_aeva_profile_viewitems()
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
-
-	template_aeva_below();
 }
 
 // Template for viewing all items from a single member
@@ -1831,7 +1824,6 @@ function template_aeva_profile_viewcoms()
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
-	template_aeva_below();
 }
 
 // Template for viewing all votes from a single member
@@ -1882,7 +1874,6 @@ function template_aeva_profile_viewvotes()
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
-	template_aeva_below();
 }
 
 // Who rated what list
