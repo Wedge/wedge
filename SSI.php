@@ -212,7 +212,7 @@ function ssi_welcome($output_method = 'echo')
 		if ($context['user']['is_guest'])
 			echo sprintf($txt['welcome_guest'], $txt['guest_title']);
 		else
-			echo $txt['hello_member'], ' <strong>', $context['user']['name'], '</strong>', allowedTo('pm_read') ? ', ' . $txt['msg_alert_you_have'] . ' <a href="' . $scripturl . '?action=pm">' . $context['user']['messages'] . ' ' . ($context['user']['messages'] == '1' ? $txt['message_lowercase'] : $txt['msg_alert_messages']) . '</a>' . $txt['newmessages4'] . ' ' . $context['user']['unread_messages'] . ' ' . ($context['user']['unread_messages'] == '1' ? $txt['newmessages0'] : $txt['newmessages1']) : '', '.';
+			echo $txt['hello_member'], ' <strong>', $context['user']['name'], '</strong>', allowedTo('pm_read') ? ', ' . strtr(number_context('you_have_msg', $context['user']['messages']), array('{scripturl}' => $scripturl, '{new}' => number_context('unread_pms', $context['user']['unread_messages']))) : '';
 	}
 	// Don't echo... then do what?!
 	else

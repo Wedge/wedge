@@ -210,7 +210,7 @@ function template_info_center_personalmsg()
 			<p class="pminfo">
 				<strong><a href="', $scripturl, '?action=pm">', $txt['personal_message'], '</a></strong>
 				<span class="smalltext">
-					', $txt['you_have'], ' ', comma_format($context['user']['messages']), ' ', $context['user']['messages'] == 1 ? $txt['message_lowercase'] : $txt['msg_alert_messages'], '.... ', $txt['click'], ' <a href="', $scripturl, '?action=pm">', $txt['here'], '</a> ', $txt['to_view'], '
+					', number_context('youve_got_pms', $context['user']['messages']), sprintf($txt['click_to_view_them'], $scripturl . '?action=pm">'), '
 				</span>
 			</p>';
 }
