@@ -1317,54 +1317,6 @@ $sites = array(
 		// http://www.imdb.com/video/screenplay/vi2719285273/player
 	),
 	array(
-		'id' => 'imm',
-		'title' => 'Imeem',
-		'website' => 'http://www.imeem.com',
-		'type' => 'audio',
-		'pattern' => '(http://media\.imeem\.com/m/[\w-]{10})',
-		'movie' => '$2/aus=false/',
-		'size' => array(300, 110),
-		// http://media.imeem.com/m/k8RLAG2sN7
-		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
-		'fix-html-url' => '$2/aus=false/',
-		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:[\w-]{1,50}/){1,2}music/[\w-]{8}/[\w-]*?',
-		'lookup-pattern' => '<link rel="video_src" href="(http://media\.imeem\.com/m/[\w-]{10})"',
-		// http://www.imeem.com/aftermatt/music/d4D9mpAN/billy_gilman_elizabeth
-		// http://www.imeem.com/mimko/music/5cY4fSzj/lucky_star_no_minna_ikuzou_kumikyoku_lucky_star_douga/
-	),
-	array(
-		'id' => 'imp',
-		'title' => 'Imeem (Playlists)',
-		'website' => 'http://www.imeem.com',
-		'type' => 'other',
-		'pattern' => '(http://media\.imeem\.com/pl/[\w-]{10})',
-		'movie' => '$2/aus=false/',
-		'size' => array(460, 390),
-		// http://media.imeem.com/pl/5ei3osBD06
-		// Known bug, since there is no link difference between imeem video and music playlists, we use the larger size
-		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
-		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:[\w-]{1,50}/){1,2}playlist/[\w-]{8}/',
-		'lookup-pattern' => 'contentKey:\s"([\w-]{10})"',
-		'lookup-final-url' => 'http://media.imeem.com/pl/$1',
-		// http://www.imeem.com/die2liveart/playlist/TIaAC0O6/nickelback_music_playlist/
-		// http://www.imeem.com/avrillavigne/playlist/yLoIa1DY/avril_lavigne_introduces_the_best_damn_thing_music_video_vid/
-	),
-	array(
-		'id' => 'imv',
-		'title' => 'Imeem',
-		'website' => 'http://www.imeem.com/video/',
-		'type' => 'video',
-		'pattern' => '(http://media\.imeem\.com/v/[\w-]{10})',
-		'movie' => '$2/aus=false/',
-		'size' => array(400, 271),
-		// http://media.imeem.com/v/zww-dvfR8y
-		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
-		'lookup-url' => 'http://(?:www\.)?imeem\.com/(?:[\w-]{1,50}/){1,2}video/[\w-]{8}/',
-		'lookup-pattern' => '<link\srel="video_src"\shref="(http://media\.imeem\.com/v/[\w-]{10})',
-		// http://www.imeem.com/mimko/video/nZcbN48j/code_geass_r2_episode_8_animation_video/
-		// http://www.imeem.com/avrillavigne/video/8mC-OCEr/avril_lavigne_the_best_damn_thing_music_video/
-	),
-	array(
 		'id' => 'ima',
 		'title' => 'ImageShack',
 		'website' => 'http://www.imageshack.us',

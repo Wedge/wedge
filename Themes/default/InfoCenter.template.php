@@ -205,13 +205,11 @@ function template_info_center_personalmsg()
 	echo '
 			<we:title2>
 				', $context['allow_pm'] ? '<a href="' . $scripturl . '?action=pm">' : '', '<img src="', $settings['images_url'], '/message_sm.gif" alt="', $txt['personal_message'], '">', $context['allow_pm'] ? '</a>' : '', '
-				', $txt['personal_message'], '
+				', $txt['personal_messages'], '
 			</we:title2>
 			<p class="pminfo">
-				<strong><a href="', $scripturl, '?action=pm">', $txt['personal_message'], '</a></strong>
-				<span class="smalltext">
-					', number_context('youve_got_pms', $context['user']['messages']), sprintf($txt['click_to_view_them'], $scripturl . '?action=pm">'), '
-				</span>
+				', number_context('youve_got_pms', $context['user']['messages']), '
+				', sprintf($txt['click_to_view_them'], $scripturl . '?action=pm'), '
 			</p>';
 }
 

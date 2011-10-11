@@ -961,7 +961,7 @@ weEditor.prototype.onToggleDataReceived = function (oXMLDoc)
 };
 
 // Set the focus for the editing window.
-weEditor.prototype.setFocus = function (force_both)
+weEditor.prototype.setFocus = function ()
 {
 	if (!this.bRichTextEnabled)
 		this.oTextHandle.focus();
