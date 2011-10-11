@@ -276,7 +276,6 @@ function ListPlugins()
 					if ($plugin['enabled'] || $plugin['id'] != $disabled)
 						continue;
 					$context['available_plugins'][$id]['install_errors']['duplicate_id'] = $txt['install_error_duplicate_id'] . ' (' . $plugin['id'] . ')';
-					break;
 				}
 			}
 	}

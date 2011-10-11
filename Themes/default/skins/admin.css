@@ -64,9 +64,6 @@ ol.search_results
 	text-align: center
 	vertical-align: top
 
-.plugin_item extends .admin_item
-	width: 40px
-
 #wedge_news
 	overflow-y: auto
 	max-height: 10.5em
@@ -109,6 +106,13 @@ ol.search_results
 #yourVersion, #wedgeVersion
 	white-space: nowrap
 
+/* Plugin manager goodies
+------------------------------------------------------- */
+.plugin_item extends .admin_item
+	width: 40px
+
+.plugin_error
+	max-width: 40%
 
 /* Common admin center classes.
 ------------------------------------------------------- */

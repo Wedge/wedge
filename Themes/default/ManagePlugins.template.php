@@ -105,7 +105,7 @@ function template_browse()
 		// Plugin buttons. They're floated right, so need to be first. Besides which, the floating means they need to be in reverse order :/
 		if (!empty($plugin['install_errors']))
 			echo '
-		<div class="floatright smalltext errorbox"><strong>', $txt['install_errors'], '</strong><br>', implode('<br>', $plugin['install_errors']), '</div>';
+		<div class="floatright smalltext errorbox plugin_error"><strong>', $txt['install_errors'], '</strong><br>', implode('<br>', $plugin['install_errors']), '</div>';
 
 		// Plugin description
 		if (!empty($plugin['description']))
