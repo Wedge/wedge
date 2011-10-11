@@ -20,7 +20,7 @@ class wedbPackages
 
 	public static function getInstance()
 	{
-		global $db_package_log, $db_prefix;
+		global $db_prefix;
 
 		// Quero ergo sum
 		if (self::$instance == null)
@@ -45,7 +45,6 @@ class wedbPackages
 
 			// We in turn may need the extra stuff.
 			wesql::extend('extra');
-			$db_package_log = array();
 		}
 
 		return self::$instance;
@@ -54,7 +53,7 @@ class wedbPackages
 	// Create a table.
 	public static function create_table($table_name, $columns, $indexes = array(), $if_exists = 'ignore', $error = 'fatal')
 	{
-		global $db_package_log, $db_prefix;
+		global $db_prefix;
 
 		// Strip out the table name, we might not need it in some cases
 		$real_prefix = preg_match('~^(`?)(.+?)\\1\\.(.*?)$~', $db_prefix, $match) === 1 ? $match[3] : $db_prefix;
@@ -314,12 +313,9 @@ class wedbPackages
 	// Add a column.
 	public static function add_column($table_name, $column_info, $if_exists = 'update')
 	{
-		global $db_package_log, $txt, $db_prefix;
+		global $txt, $db_prefix;
 
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
-
-		// Log that we will want to uninstall this!
-		$db_package_log[] = array('remove_column', $table_name, $column_info['name']);
 
 		// Does it exist - if so don't add it again!
 		$columns = self::list_columns($table_name, false);
@@ -446,7 +442,7 @@ class wedbPackages
 	// Add an index.
 	public static function add_index($table_name, $index_info, $if_exists = 'update')
 	{
-		global $db_package_log, $db_prefix;
+		global $db_prefix;
 
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
@@ -466,9 +462,6 @@ class wedbPackages
 		}
 		else
 			$index_info['name'] = $index_info['name'];
-
-		// Log that we are going to want to remove this!
-		$db_package_log[] = array('remove_index', $table_name, $index_info['name']);
 
 		// Let's get all our indexes.
 		$indexes = self::list_indexes($table_name, true);

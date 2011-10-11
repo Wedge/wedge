@@ -949,7 +949,7 @@ function commitRemovePlugin($fullclean, &$manifest)
 		if (!empty($manifest->database->columns))
 			foreach ($manifest->database->columns->column as $column)
 				if (!empty($column['name']) && !empty($column['table']))
-					weDBPackages::drop_column((string) $column['table'], (string) $column['name']);
+					weDBPackages::remove_column((string) $column['table'], (string) $column['name']);
 	}
 
 	// Need to remove scheduled tasks. We can leave normal settings in, but scheduled tasks need to be removed, because they will mangle if accidentally run otherwise.
@@ -1045,11 +1045,8 @@ function deleteFiletree($rootpath)
 function testRequiredFunctions($manifest_element)
 {
 	$required_functions = array();
-	$functions = $manifest_element->children();
-	foreach ($functions as $function)
+	foreach ($manifest_element->{'php-function'} as $function)
 	{
-		if ($function->getName() != 'php-function')
-			continue;
 		$function = trim((string) $function[0]);
 		if (!empty($function))
 			$required_functions[$function] = true;
