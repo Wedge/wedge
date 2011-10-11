@@ -301,7 +301,7 @@ function Feed()
 	<channel>
 		<title>', $feed_title, '</title>
 		<link>', $scripturl, '</link>
-		<description>', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</description>
+		<description>', cdata_parse(strip_tags(str_replace('{forum_name}', $context['forum_name'], $txt['xml_feed_desc']))), '</description>
 		<language>', strtolower(strtr($txt['lang_locale'], '_', '-')), '</language>';
 
 		// Output all of the associative array, start indenting with 2 tabs, and name everything "item".
@@ -320,7 +320,7 @@ function Feed()
 	<title>', $feed_title, '</title>
 	<link rel="alternate" type="text/html" href="', $scripturl, '" />
 	<updated>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</updated>
-	<subtitle type="html">', cdata_parse(strip_tags($txt['xml_feed_desc'])), '</subtitle>
+	<subtitle type="html">', cdata_parse(strip_tags(str_replace('{forum_name}', $context['forum_name'], $txt['xml_feed_desc']))), '</subtitle>
 	<generator uri="http://wedge.org" version="', WEDGE_VERSION, '">
 		Wedge
 	</generator>

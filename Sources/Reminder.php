@@ -240,7 +240,12 @@ function setPassword2()
 
 	// What - it's not?
 	if ($passwordError != null)
+	{
+		if ($passwordError == 'short')
+			$txt['profile_error_password_short'] = sprintf($txt['profile_error_password_short'], empty($modSettings['password_strength']) ? 4 : 8);
+
 		fatal_lang_error('profile_error_password_' . $passwordError, false);
+	}
 
 	// Quit if this code is not right.
 	if (empty($_POST['code']) || substr($realCode, 0, 10) != substr(md5($_POST['code']), 0, 10))

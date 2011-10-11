@@ -717,7 +717,7 @@ function scheduled_daily_digest()
 			'move' => $txt['digest_mod_act_move'],
 			'merge' => $txt['digest_mod_act_merge'],
 			'split' => $txt['digest_mod_act_split'],
-			'bye' => $txt['regards_team'],
+			'bye' => str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
 		);
 	}
 
@@ -795,7 +795,7 @@ function scheduled_daily_digest()
 			$email['body'] .= "\n";
 
 		// Then just say our goodbyes!
-		$email['body'] .= "\n\n" . $txt['regards_team'];
+		$email['body'] .= "\n\n" . str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']);
 
 		// Send it - low priority!
 		sendmail($email['email'], $email['subject'], $email['body'], null, null, false, 4);

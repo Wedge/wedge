@@ -1038,12 +1038,6 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 	if (empty($txt['media']))
 		loadLanguage('Media');
 
-	if (!isset($txt['by']))
-	{
-		$txt['by'] = $txt[525];
-		$txt['modify'] = $txt[17];
-	}
-
 	$box = $exts = '';
 	$pwid = !empty($wid) ? $wid : (!empty($amSettings['audio_player_width']) ? min($amSettings['max_preview_width'], max(100, (int) $amSettings['audio_player_width'])) : 500);
 

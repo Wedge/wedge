@@ -68,7 +68,6 @@ function Who()
 	// Load the 'Who' template.
 	loadTemplate('Who');
 	loadLanguage('Who');
-	call_lang_hook('lang_who');
 
 	// Sort out... the column sorting.
 	$sort_methods = array(
@@ -273,11 +272,12 @@ function Who()
 
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $txt, $user_info, $modSettings, $settings;
+	global $txt, $user_info, $modSettings, $settings, $scripturl;
 
 	if (!allowedTo('who_view'))
 		return array();
 	loadLanguage('Who');
+	call_lang_hook('lang_who');
 
 	// Display of errors may be applicable. It's only for people with POWARZ you can't comprehend though.
 	if (allowedTo('moderate_forum'))
@@ -457,6 +457,8 @@ function determineActions($urls, $preferred_prefix = false)
 			// Unlisted or unknown action.
 			else
 				$data[$k] = $txt['who_unknown'];
+
+			$data[$k] = str_replace('{scripturl}', $scripturl, $data[$k]);
 		}
 
 		// Maybe the action is integrated into another system?

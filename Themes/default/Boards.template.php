@@ -125,9 +125,10 @@ function template_boards()
 				if (!empty($board['last_post']['id']))
 					echo '
 					<p>
-						<strong>', $txt['last_post'], '</strong> ', $txt['by'], ' ', $board['last_post']['member']['link'], '<br>
-						', $txt['in'], ' ', $board['last_post']['link'], '<br>
-						', $txt['on'], ' ', $board['last_post']['time'], '
+						', strtr($txt['board_index_last_post'], array(
+							'{member_link}' => $board['last_post']['member']['link'],
+							'{post_link}' => $board['last_post']['link'],
+							'{post_time}' => $board['last_post']['time'])), '
 					</p>';
 
 				echo '

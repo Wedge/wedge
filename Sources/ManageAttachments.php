@@ -152,6 +152,8 @@ function ManageAttachmentSettings($return_config = false)
 	global $txt, $modSettings, $scripturl, $context, $options;
 
 	$context['valid_upload_dir'] = is_dir($modSettings['attachmentUploadDir']) && is_writable($modSettings['attachmentUploadDir']);
+	$txt['attachmentUploadDir'] = str_replace('{scripturl}', $scripturl, $txt['attachmentUploadDir']);
+	$txt['attachmentUploadDir_multiple_configure'] = str_replace('{scripturl}', $scripturl, $txt['attachmentUploadDir_multiple_configure']);
 
 	$config_vars = array(
 		array('title', 'attachment_manager_settings'),
@@ -1732,7 +1734,7 @@ function ManageAttachmentPaths()
 // Prepare the actual attachment directories to be displayed in the list.
 function list_getAttachDirs()
 {
-	global $modSettings, $context, $txt;
+	global $modSettings, $context, $txt, $scripturl;
 
 	// The dirs should already have been unserialized but just in case...
 	if (!is_array($modSettings['attachmentUploadDir']))
@@ -1769,7 +1771,7 @@ function list_getAttachDirs()
 			'path' => $dir,
 			'current_size' => $size,
 			'num_files' => $expected_files[$id],
-			'status' => ($error ? '<span class="error">' : '') . sprintf($txt['attach_dir_' . $status], $context['session_id'], $context['session_var']) . ($error ? '</span>' : ''),
+			'status' => ($error ? '<span class="error">' : '') . sprintf($txt['attach_dir_' . $status], $scripturl, $context['session_query']) . ($error ? '</span>' : ''),
 		);
 	}
 
