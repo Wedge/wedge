@@ -316,19 +316,10 @@ function PluginReadme()
 	wetem::load('popup');
 
 	// Did they specify a plugin, and is it a valid one?
-	$valid = true;
-
-	if (isset($_GET['plugin']))
-	{
-		// So, one's specified. Make sure it doesn't start with a . (which rules out ., .. and 'hidden' files) and also that it doesn't contain directory separators. No sneaky trying to get out the box.
-		if (strpos($_GET['plugin'], DIRECTORY_SEPARATOR) !== false || $_GET['plugin'][0] == '.' || !file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'))
-			$valid = false;
-	}
-	else
-		$valid = false;
+	$valid = isViablePlugin();
 
 	// Did they specify a language, and is it valid?
-	if (isset($_GET['lang']))
+	if ($valid && isset($_GET['lang']))
 	{
 		getLanguages();
 		if (!isset($context['languages'][$_GET['lang']]))
@@ -396,20 +387,8 @@ function EnablePlugin()
 
 	checkSession('request');
 
-	// Did they specify a plugin, and is it a valid one?
-	$valid = true;
-
-	if (isset($_GET['plugin']))
-	{
-		// So, one's specified. Make sure it doesn't start with a . (which rules out ., .. and 'hidden' files) and also that it doesn't contain directory separators. No sneaky trying to get out the box.
-		if (strpos($_GET['plugin'], DIRECTORY_SEPARATOR) !== false || $_GET['plugin'][0] == '.' || !file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'))
-			$valid = false;
-	}
-	else
-		$valid = false;
-
 	//libxml_use_internal_errors(true);
-	if (filetype($pluginsdir . '/' . $_GET['plugin']) != 'dir' || !file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'))
+	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
 	$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
@@ -495,14 +474,12 @@ function EnablePlugin()
 
 	// Technically, a plugin can also call its own hooks.
 	if (!empty($manifest->hooks) && !empty($manifest->hooks->provides))
-	{
 		foreach ($manifest->hooks->provides->hook as $provided)
 		{
 			$attrs = $provided->attributes();
 			$hooks_available[(string) $attrs['type']][] = (string) $provided;
 			$hooks_provided[(string) $attrs['type']][] = (string) $provided;
 		}
-	}
 
 	// Add all the other hooks available
 	foreach ($context['enabled_plugins'] as $plugin)
@@ -536,6 +513,10 @@ function EnablePlugin()
 	// Database changes
 	if (!empty($manifest->database))
 	{
+		$valid_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'float', 'real', 'double', 'text', 'mediumtext', 'char', 'varchar', 'set', 'enum');
+		$int_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint');
+		$float_types = array('float', 'real', 'double');
+
 		wesql::extend('packages');
 		$new_tables = $new_columns = $new_indexes = array();
 		$existing_columns = $existing_indexes = array();
@@ -545,9 +526,6 @@ function EnablePlugin()
 		// First, pass through and collate a list of tables, columns and indexes that we are expecting to deal with. That way we know what we're going to have to query for.
 		if (!empty($manifest->database->tables))
 		{
-			$valid_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'float', 'real', 'double', 'text', 'mediumtext', 'char', 'varchar', 'set', 'enum');
-			$int_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint');
-			$float_types = array('float', 'real', 'double');
 			foreach ($manifest->database->tables->table as $table)
 			{
 				$this_table = array(
@@ -561,11 +539,8 @@ function EnablePlugin()
 				if (empty($this_table['name']) || ($this_table['if-exists'] != 'update' && $this_table['if-exists'] != 'ignore') || empty($table->columns))
 					continue;
 
-				$columns = $table->columns->children();
-				foreach ($columns as $column)
+				foreach ($table->columns->column as $column)
 				{
-					if ($column->getName() != 'column')
-						continue;
 					// Like most things with SimpleXML, we just try to get everything, then make sense of it after. Note that you can call for an attribute even if it isn't stated, and no error will result.
 					$this_col = array(
 						'name' => (string) $column['name'],
@@ -577,10 +552,7 @@ function EnablePlugin()
 						'unsigned' => (string) $column['unsigned'],
 						'default' => (string) $column['default'],
 					);
-					if (empty($this_col['name']))
-						continue;
-
-					if (!in_array($this_col['type'], $valid_types))
+					if (empty($this_col['name']) || !in_array($this_col['type'], $valid_types))
 						continue;
 
 					$this_col['null'] = $this_col['null'] == 'yes'; // Columns should be NOT NULL unless specifically needed as such.
@@ -626,21 +598,15 @@ function EnablePlugin()
 					$this_table['columns'][] = $this_col;
 				}
 
-				$table_children = $table->children();
-				foreach ($table_children as $index)
+				foreach ($table->index as $index)
 				{
-					if ($index->getName() != 'index')
-						continue;
-
 					$this_index = array(
 						'type' => strtolower((string) $index['type']),
 						'name' => (string) $index['name'],
 						'columns' => array(),
 					);
-					$index_children = $index->children();
-					foreach ($index_children as $index_field)
-						if ($index_field->getName() == 'field')
-							$this_index['columns'][] = (string) $index_field[0];
+					foreach ($index->field as $index_field)
+						$this_index['columns'][] = (string) $index_field[0];
 
 					if (!empty($this_index['columns']))
 						$this_table['indexes'][] = $this_index;
@@ -652,20 +618,77 @@ function EnablePlugin()
 				wedbPackages::create_table($this_table['name'], $this_table['columns'], $this_table['indexes'], $this_table['if-exists']);
 			}
 		}
+
+		// Other database changes: adding new columns
+		if (!empty($manifest->database->columns))
+		{
+			foreach ($manifest->database->columns->column as $column)
+			{
+				// Like most things with SimpleXML, we just try to get everything, then make sense of it after. Note that you can call for an attribute even if it isn't stated, and no error will result.
+				$this_col = array(
+					'name' => (string) $column['name'],
+					'type' => (string) $column['type'],
+					'size' => (string) $column['size'],
+					'null' => (string) $column['null'],
+					'values' => (string) $column['values'], // For SET and ENUM types.
+					'auto' => (string) $column['autoincrement'],
+					'unsigned' => (string) $column['unsigned'],
+					'default' => (string) $column['default'],
+				);
+				$table_name = (string) $column['table'];
+				if (empty($this_col['name']) || empty($table_name) || !in_array($this_col['type'], $valid_types))
+					continue;
+
+				$this_col['null'] = $this_col['null'] == 'yes'; // Columns should be NOT NULL unless specifically needed as such.
+				$this_col['auto'] = $this_col['auto'] == 'yes'; // The column should not be auto-increment unless specifically needed as such.
+				$this_col['unsigned'] = $this_col['unsigned'] != 'no'; // Columns should be unsigned where possible.
+
+				// Apply some type-specific rules before doing something clever.
+				if (in_array($this_col['type'], $int_types))
+				{
+					// Int columns can be auto inc, can be unsigned etc. Just needs to have an integer default, or expressly not specify one.
+					if ($this_col['default'] == '')
+						unset($this_col['default']);
+					else
+						$this_col['default'] = (int) $this_col['default'];
+				}
+				elseif (in_array($this_col['type'], $float_types))
+				{
+					// Float columns, like int columns, have to have a meaningful default. But they can't be auto inc.
+					if ($this_col['default'] == '')
+						unset($this_col['default']);
+					else
+						$this_col['default'] = (float) $this_col['default'];
+					$this_col['auto'] = false;
+				}
+				elseif ($this_col['type'] == 'text' || $this_col['type'] == 'mediumtext')
+				{
+					// Block text columns can't have a default, can't be auto inc and can't be unsigned.
+					unset($this_col['auto'], $this_col['unsigned'], $this_col['default']);
+				}
+
+				// This applies to everything but set and enum: get rid of the values. If it IS set or enum, check it does have values.
+				if ($this_col['type'] != 'set' && $this_col['type'] != 'enum')
+					unset($this_col['values']);
+				else
+				{
+					unset($this_col['auto'], $this_col['unsigned']);
+					if (empty($this_col['default']) && !isset($column['default']))
+						unset($this_col['default']);
+					if (strpos($this_col['values'], ',') === false)
+						continue;
+				}
+
+				// There's really no point in being clever and trying the work that's in create_table.
+				// You can't call create_table on the core tables, and add_column already checks to see if it exists and promptly updates if not.
+				wedbPackages::add_column($table_name, $this_col, 'update');
+			}
+		}
 	}
 
 	// Database changes: enable script
 	if (!empty($manifest->database->scripts->enable))
-	{
-		$file = (string) $manifest->database->scripts->enable;
-		$full_path = strtr($file, array('$plugindir' => $pluginsdir . '/' . $_GET['plugin']));
-		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$plugindir/') !== 0 || !file_exists($full_path))
-			fatal_lang_error('fatal_install_enable_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
-
-		// This is just here as reference for what is available.
-		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $pluginsdir;
-		require($full_path);
-	}
+		executePluginScript('enable', (string) $manifest->database->scripts->enable);
 
 	// Adding settings
 	if (!empty($manifest->settings))
@@ -675,10 +698,8 @@ function EnablePlugin()
 		{
 			$setting_name = (string) $setting['name'];
 			$setting_default = (string) $setting['default'];
-			if (empty($setting_name) || $setting_default == '')
-				continue;
-			// Add it to the list to be updated if we haven't already got this one.
-			if (!isset($modSettings[$setting_name]))
+			// Add it to the list to be updated if we haven't already got this one, and it's not empty, as updateSettings won't set actually-empty ones.
+			if (!empty($setting_name) && $setting_default != '' && !isset($modSettings[$setting_name]))
 				$new_settings[$setting_name] = $setting_default;
 		}
 
@@ -769,10 +790,7 @@ function EnablePlugin()
 		foreach ($details as $hooked_details)
 			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|plugin';
 
-	if (!empty($modSettings['enabled_plugins']))
-		$enabled_plugins = explode(',', $modSettings['enabled_plugins']);
-	else
-		$enabled_plugins = array();
+	$enabled_plugins = !empty($modSettings['enabled_plugins']) ? explode(',', $modSettings['enabled_plugins']) : array();
 	$enabled_plugins[] = $_GET['plugin'];
 	updateSettings(
 		array(
@@ -791,20 +809,8 @@ function DisablePlugin()
 
 	checkSession('request');
 
-	// Did they specify a plugin, and is it a valid one?
-	$valid = true;
-
-	if (isset($_GET['plugin']))
-	{
-		// So, one's specified. Make sure it doesn't start with a . (which rules out ., .. and 'hidden' files) and also that it doesn't contain directory separators. No sneaky trying to get out the box.
-		if (strpos($_GET['plugin'], DIRECTORY_SEPARATOR) !== false || $_GET['plugin'][0] == '.' || !file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'))
-			$valid = false;
-	}
-	else
-		$valid = false;
-
 	//libxml_use_internal_errors(true);
-	if (filetype($pluginsdir . '/' . $_GET['plugin']) != 'dir' || !file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'))
+	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
 	$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
@@ -819,28 +825,15 @@ function DisablePlugin()
 
 	// Database changes: disable script
 	if (!empty($manifest->database->scripts->disable))
-	{
-		$file = (string) $manifest->database->scripts->disable;
-		$full_path = strtr($file, array('$plugindir' => $pluginsdir . '/' . $_GET['plugin']));
-		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$plugindir/') !== 0 || !file_exists($full_path))
-			fatal_lang_error('fatal_install_disable_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
-
-		// This is just here as reference for what is available.
-		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $pluginsdir;
-		require($full_path);
-	}
+		executePluginScript('disable', (string) $manifest->database->scripts->disable);
 
 	// Any scheduled tasks to disable?
 	if (!empty($manifest->scheduledtasks))
 	{
-		$tasks_listed = $manifest->scheduledtasks->children();
 		$tasks_to_disable = array();
-		foreach ($tasks_listed as $task)
+		foreach ($manifest->scheduledtasks->task as $task)
 		{
-			if ($task->getName() != 'task')
-				continue;
-
-			$task['name'] = (string) $task['name'];
+			$task['name'] = trim((string) $task['name']);
 			if (!empty($task['name']))
 				$tasks_to_disable[] = $task['name'];
 		}
@@ -874,20 +867,8 @@ function RemovePlugin()
 {
 	global $scripturl, $txt, $context, $pluginsdir;
 
-	// Did they specify a plugin, and is it a valid one?
-	$valid = true;
-
-	if (isset($_GET['plugin']))
-	{
-		// So, one's specified. Make sure it doesn't start with a . (which rules out ., .. and 'hidden' files) and also that it doesn't contain directory separators. No sneaky trying to get out the box.
-		if (strpos($_GET['plugin'], DIRECTORY_SEPARATOR) !== false || $_GET['plugin'][0] == '.' || !file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'))
-			$valid = false;
-	}
-	else
-		$valid = false;
-
 	//libxml_use_internal_errors(true);
-	if (filetype($pluginsdir . '/' . $_GET['plugin']) != 'dir' || !file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'))
+	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
 	$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
@@ -926,9 +907,9 @@ function RemovePlugin()
 
 		// See whether we're saving or removing the data
 		if (isset($_POST['nodelete']))
-			commitRemovePlugin(false);
+			commitRemovePlugin(false, $manifest);
 		elseif (isset($_POST['delete']))
-			commitRemovePlugin(true);
+			commitRemovePlugin(true, $manifest);
 		else
 		{
 			// Just displaying the form anyway.
@@ -939,7 +920,7 @@ function RemovePlugin()
 }
 
 // This ugly function deals with actually removing a plugin.
-function commitRemovePlugin($fullclean = false)
+function commitRemovePlugin($fullclean, &$manifest)
 {
 	global $scripturl, $txt, $context, $pluginsdir;
 
@@ -952,38 +933,32 @@ function commitRemovePlugin($fullclean = false)
 		$file = (string) $manifest->database->scripts->{'remove-clean'};
 
 	if (!empty($file))
-	{
-		$full_path = strtr($file, array('$plugindir' => $pluginsdir . '/' . $_GET['plugin']));
-		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$plugindir/') !== 0 || !file_exists($full_path))
-			fatal_lang_error('fatal_install_remove_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
-
-		// This is just here as reference for what is available.
-		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $pluginsdir;
-		require($full_path);
-	}
+		executePluginScript('remove', $file);
 
 	if ($fullclean && !empty($manifest->database))
 	{
+		wesql::extend('packages');
+
 		// Pass each table we find to the drop-table routine. That already does its own checking as to whether the table exists or not.
 		if (!empty($manifest->database->tables))
-		{
-			$tables = $manifest->database->tables->children();
-			foreach ($tables as $table)
-				if ($table->getName() == 'table')
+			foreach ($manifest->database->tables->table as $table)
+				if (!empty($table['name']))
 					weDBPackages::drop_table((string) $table['name']);
-		}
+
+		// And columns.
+		if (!empty($manifest->database->columns))
+			foreach ($manifest->database->columns->column as $column)
+				if (!empty($column['name']) && !empty($column['table']))
+					weDBPackages::drop_column((string) $column['table'], (string) $column['name']);
 	}
 
 	// Need to remove scheduled tasks. We can leave normal settings in, but scheduled tasks need to be removed, because they will mangle if accidentally run otherwise.
 	if (!empty($manifest->scheduledtasks))
 	{
 		$tasks = array();
-		$tasks_listed = $manifest->scheduledtasks->children();
-		foreach ($tasks_listed as $task)
+		foreach ($manifest->scheduledtasks->task as $task)
 		{
-			if ($task->getName() != 'task')
-				continue;
-			$name = (string) $task['name'];
+			$name = trim((string) $task['name']);
 			if (!empty($name))
 				$tasks[] = $name;
 		}
@@ -1000,12 +975,9 @@ function commitRemovePlugin($fullclean = false)
 	// Clean settings, including the master storage for this plugin's hooks if it was ever used. Make sure to flush caches.
 	$clean_settings = array('plugin_' . $_GET['plugin']);
 	if ($fullclean && !empty($manifest->settings))
-	{
-		$settings_listed = $manifest->settings->children();
-		foreach ($settings_listed as $setting)
-			if ($setting->getName() == 'setting')
-				$clean_settings[] = (string) $setting['name'];
-	}
+		foreach ($manifest->settings->setting as $setting)
+			$clean_settings[] = (string) $setting['name'];
+
 	wesql::query('
 		DELETE FROM {db_prefix}settings
 		WHERE variable IN ({array_string:clean_settings})',
@@ -1026,6 +998,31 @@ function commitRemovePlugin($fullclean = false)
 		fatal_lang_error('remove_plugin_files_still_there', false, $_GET['plugin']);
 	else
 		redirectexit('action=admin;area=plugins'); // It was successful, so disappear back to the plugin list.
+}
+
+// Handles running any change-state scripts, e.g. on-enable. The type is primarily for the error message if the file couldn't be found.
+function executePluginScript($type, $file)
+{
+	global $pluginsdir;
+
+	if (!empty($file))
+	{
+		$full_path = strtr($file, array('$plugindir' => $pluginsdir . '/' . $_GET['plugin']));
+		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$plugindir/') !== 0 || !file_exists($full_path))
+			fatal_lang_error('fatal_install_' . $type . '_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
+
+		// This is just here as reference for what is available.
+		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $pluginsdir;
+		require($full_path);
+	}
+}
+
+// Identify whether the plugin requested is a viable plugin or not.
+function isViablePlugin()
+{
+	global $pluginsdir;
+
+	return (!empty($_GET['plugin']) && strpos($_GET['plugin'], DIRECTORY_SEPARATOR) === false && $_GET['plugin'][0] != '.' && filetype($pluginsdir . '/' . $_GET['plugin']) == 'dir' && file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'));
 }
 
 // Return true on success.

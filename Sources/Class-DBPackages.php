@@ -312,7 +312,7 @@ class wedbPackages
 	}
 
 	// Add a column.
-	public static function add_column($table_name, $column_info, $parameters = array(), $if_exists = 'update', $error = 'fatal')
+	public static function add_column($table_name, $column_info, $if_exists = 'update')
 	{
 		global $db_package_log, $txt, $db_prefix;
 
@@ -342,7 +342,9 @@ class wedbPackages
 		list ($type, $size) = self::calculate_type($column_info['type'], $column_info['size'], $unsigned);
 
 		if ($size !== null)
-			$type = $type . '(' . $size . ')';
+			$type .= '(' . $size . ')';
+		elseif (!empty($column_info['values']))
+			$type .= '(' . $column['values'] . ')';
 
 		// Now add the thing!
 		$query = '
@@ -360,7 +362,7 @@ class wedbPackages
 	}
 
 	// Remove a column.
-	public static function remove_column($table_name, $column_name, $parameters = array(), $error = 'fatal')
+	public static function remove_column($table_name, $column_name)
 	{
 		global $db_prefix;
 
@@ -387,7 +389,7 @@ class wedbPackages
 	}
 
 	// Change a column.
-	public static function change_column($table_name, $old_column, $column_info, $parameters = array(), $error = 'fatal')
+	public static function change_column($table_name, $old_column, $column_info)
 	{
 		global $db_prefix;
 
@@ -427,6 +429,8 @@ class wedbPackages
 
 		if ($size !== null)
 			$type = $type . '(' . $size . ')';
+		elseif (!empty($column_info['values']))
+			$type .= '(' . $column['values'] . ')';
 
 		wesql::query('
 			ALTER TABLE ' . $table_name . '
@@ -440,7 +444,7 @@ class wedbPackages
 	}
 
 	// Add an index.
-	public static function add_index($table_name, $index_info, $parameters = array(), $if_exists = 'update', $error = 'fatal')
+	public static function add_index($table_name, $index_info, $if_exists = 'update')
 	{
 		global $db_package_log, $db_prefix;
 
