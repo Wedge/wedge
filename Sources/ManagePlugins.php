@@ -80,11 +80,12 @@ function ListPlugins()
 				if (filetype($pluginsdir . '/' . $folder) == 'dir' && file_exists($pluginsdir . '/' . $folder . '/plugin-info.xml'))
 				{
 					$manifest = simplexml_load_file($pluginsdir . '/' . $folder . '/plugin-info.xml');
-					if ($manifest === false || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
+					if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 						continue;
 
 					$plugin = array(
 						'folder' => $folder,
+						'id' => (string) $manifest['id'],
 						'name' => westr::htmlspecialchars((string) $manifest->name),
 						'author' => westr::htmlspecialchars($manifest->author),
 						'author_url' => (string) $manifest->author['url'],
@@ -251,14 +252,36 @@ function ListPlugins()
 		foreach ($context['available_plugins'] as $id => $plugin)
 			if (empty($plugin['install_errors']) && in_array($plugin['folder'], $original))
 			{
-				$context['enabled_plugins'][] = $plugin['folder'];
+				$context['enabled_plugins'][$plugin['id']] = $plugin['folder'];
 				$context['available_plugins'][$id]['enabled'] = true;
 			}
 
 		updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
 	}
 
-	// 4. Deal with any filtering. We have to do it here, rather than later, simply because we need to have processed everything beforehand.
+	// 4. Go through the remaining disabled plugins and check that they're not trying to activate where there's another plugin with the same id already enabled.
+	$by_id = array(
+		'enabled' => array(),
+		'disabled' => array(),
+	);
+	foreach ($context['available_plugins'] as $id => $plugin)
+		$by_id[$plugin['enabled'] ? 'enabled' : 'disabled'][] = $plugin['id'];
+	if (!empty($by_id['enabled']) && !empty($by_id['disabled']))
+	{
+		foreach ($by_id['disabled'] as $disabled)
+			if (in_array($disabled, $by_id['enabled']))
+			{
+				foreach ($context['available_plugins'] as $id => $plugin)
+				{
+					if ($plugin['enabled'] || $plugin['id'] != $disabled)
+						continue;
+					$context['available_plugins'][$id]['install_errors']['duplicate_id'] = $txt['install_error_duplicate_id'] . ' (' . $plugin['id'] . ')';
+					break;
+				}
+			}
+	}
+
+	// 5. Deal with any filtering. We have to do it here, rather than earlier, simply because we need to have processed everything beforehand.
 	$context['filter_plugins'] = array(
 		'all' => 0,
 		'enabled' => 0,
@@ -391,12 +414,15 @@ function EnablePlugin()
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
 	$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
-	if ($manifest === false || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
+	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
-	// Already installed?
+	// Already installed? Or another with the same id?
 	if (in_array($_GET['plugin'], $context['enabled_plugins']))
 		fatal_lang_error('fatal_already_enabled', false);
+
+	if (isset($context['enabled_plugins'][(string) $manifest['id']]))
+		fatal_lang_error('fatal_duplicate_id', false);
 
 	// OK, so we need to go through and validate that we have everything we need.
 	$min_versions = array();
