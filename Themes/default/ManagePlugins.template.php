@@ -15,9 +15,22 @@ function template_browse()
 {
 	global $context, $settings, $options, $scripturl, $txt;
 
+	// Showing the filtering.
+	$items = array();
+	foreach ($context['filter_plugins'] as $k => $v)
+		$items[] = $k != $context['current_filter'] ? '<a href="' . $scripturl . '?action=admin;area=plugins;filter=' . $k . '">' . sprintf($txt['plugin_filter_' . $k], $v) . '</a>' : '<strong>' . sprintf($txt['plugin_filter_' . $k], $v) . '</strong>';
+
+	echo '
+	<p class="description">', $txt['plugin_filter'], ' ', implode(' | ', $items), '</p>';
+
+	// Nothing to show? Might as well just get gone, then.
 	if (empty($context['available_plugins']))
+	{
 		echo '
-	<div class="information">', $txt['no_plugins_found'], '</div>';
+	<div class="information">', $txt['no_plugins_found'], '</div>
+	<br class="clear">';
+		return;
+	}
 
 	$use_bg2 = true;
 	// Just before printing content, go through and work out what icons we're going to display. Need to do it first though, because we need to know how many icons we're working on.

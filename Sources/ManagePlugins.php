@@ -215,7 +215,7 @@ function ListPlugins()
 					}
 
 					// OK, add to the list.
-					$context['available_plugins'][$plugin['name'] . $folder] = $plugin;
+					$context['available_plugins'][strtolower($plugin['name'] . $folder)] = $plugin;
 				}
 			}
 			closedir($handle);
@@ -259,6 +259,29 @@ function ListPlugins()
 			}
 
 		updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
+	}
+
+	// 4. Deal with any filtering. We have to do it here, rather than later, simply because we need to have processed everything beforehand.
+	$context['filter_plugins'] = array(
+		'all' => 0,
+		'enabled' => 0,
+		'disabled' => 0,
+		'install_errors' => 0,
+	);
+	$context['current_filter'] = isset($_GET['filter']) && isset($context['filter_plugins'][$_GET['filter']]) ? $_GET['filter'] : 'all';
+	foreach ($context['available_plugins'] as $id => $plugin)
+	{
+		if (!empty($plugin['install_errors']))
+			$type = 'install_errors';
+		elseif (!empty($plugin['enabled']))
+			$type = 'enabled';
+		else
+			$type = 'disabled';
+
+		$context['filter_plugins']['all']++;
+		$context['filter_plugins'][$type]++;
+		if ($context['current_filter'] !== 'all' && $context['current_filter'] !== $type)
+			unset($context['available_plugins'][$id]);
 	}
 }
 
