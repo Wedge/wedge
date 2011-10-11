@@ -195,11 +195,8 @@ function ListPlugins()
 					// Readme files. $context['languages'] contains all the languages we have - no sense offering readmes we don't have installed languages for.
 					if (!empty($manifest->readmes))
 					{
-						$readmes = $manifest->readmes->children();
-						foreach ($readmes as $readme)
+						foreach ($manifest->readmes->readme as $readme)
 						{
-							if ($readme->getName() !== 'readme')
-								continue;
 							$lang = (string) $readme['lang'];
 							if (!empty($lang) && isset($context['languages'][$lang]))
 								$plugin['readmes'][$lang] = true;
@@ -325,12 +322,9 @@ function PluginReadme()
 
 		if (!empty($manifest->readmes))
 		{
-			$readmes = $manifest->readmes->children();
 			$readme_found = false;
-			foreach ($readmes as $readme)
+			foreach ($manifest->readmes->readme as $readme)
 			{
-				if ($readme->getName() !== 'readme')
-					continue;
 				$lang = (string) $readme['lang'];
 				if ($_GET['lang'] == $lang)
 				{
@@ -477,8 +471,7 @@ function EnablePlugin()
 	// Technically, a plugin can also call its own hooks.
 	if (!empty($manifest->hooks) && !empty($manifest->hooks->provides))
 	{
-		$provides = $manifest->hooks->provides->children();
-		foreach ($provides as $provided)
+		foreach ($manifest->hooks->provides->hook as $provided)
 		{
 			$attrs = $provided->attributes();
 			$hooks_available[(string) $attrs['type']][] = (string) $provided;
@@ -530,12 +523,8 @@ function EnablePlugin()
 			$valid_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'float', 'real', 'double', 'text', 'mediumtext', 'char', 'varchar', 'set', 'enum');
 			$int_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint');
 			$float_types = array('float', 'real', 'double');
-			$tables = $manifest->database->tables->children();
-			foreach ($tables as $table)
+			foreach ($manifest->database->tables->table as $table)
 			{
-				if ($table->getName() != 'table')
-					continue;
-
 				$this_table = array(
 					'name' => (string) $table['name'],
 					'if-exists' => (string) $table['if-exists'],
@@ -657,12 +646,8 @@ function EnablePlugin()
 	if (!empty($manifest->settings))
 	{
 		$new_settings = array();
-		$settings_listed = $manifest->settings->children();
-		foreach ($settings_listed as $setting)
+		foreach ($manifest->settings->setting as $setting)
 		{
-			// Validate the setting is potentially valid.
-			if ($setting->getName() != 'setting')
-				continue;
 			$setting_name = (string) $setting['name'];
 			$setting_default = (string) $setting['default'];
 			if (empty($setting_name) || $setting_default == '')
@@ -681,14 +666,9 @@ function EnablePlugin()
 	if (!empty($manifest->scheduledtasks))
 	{
 		$new_tasks = array();
-		$tasks_listed = $manifest->scheduledtasks->children();
 		$valid_freq = array('minute', 'hour', 'day', 'week');
-		foreach ($tasks_listed as $task)
+		foreach ($manifest->scheduledtasks->task as $task)
 		{
-			if ($task->getName() != 'task')
-				continue;
-
-			// <task runevery="1" runfreq="day" name="shd_scheduled" file="$plugindir/src/SimpleDesk-Scheduled" />
 			$this_task = array(
 				'runevery' => (int) $task['runevery'],
 				'runfreq' => (string) $task['runfreq'],
@@ -745,14 +725,9 @@ function EnablePlugin()
 	// We make a special exception for last-minute actions.
 	if (!empty($manifest->actions))
 	{
-		$actions = $manifest->actions->children();
 		$new_actions = array();
-		foreach ($actions as $action)
+		foreach ($manifest->actions->action as $action)
 		{
-			if ($action->getName() != 'action')
-				continue;
-
-			//<action action="myaction" function="myfunction" filename="$plugindir/MyFile.php" />
 			$this_action = array(
 				'action' => (string) $action['action'],
 				'function' => (string) $action['function'],

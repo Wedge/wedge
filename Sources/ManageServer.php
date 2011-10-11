@@ -629,7 +629,7 @@ function AddLanguage()
 	if (!empty($_POST['we_add_sub']))
 	{
 		// Need fetch_web_data.
-		loadSource(array('Subs-Package', 'Class-Package'));
+		loadSource('Subs-Package');
 
 		$context['we_search_term'] = htmlspecialchars(trim($_POST['we_add']));
 
@@ -638,33 +638,29 @@ function AddLanguage()
 		$url = 'http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION);
 
 		// Load the data and stick it into an array.
-		$language_list = new xmlArray(fetch_web_data($url), true);
+		$language_list = simplexml_load_string(fetch_web_data($url));
 
 		// Check it exists.
-		if (!$language_list->exists('languages'))
+		if (empty($language_list->language))
 			$context['wedge_error'] = 'no_response';
 		else
 		{
 			$context['wedge_languages'] = array();
-			$language_list = $language_list->path('languages[0]');
-			if ($language_list->exists('language'))
+			foreach ($language_list->language as $this_lang)
 			{
-				$lang_files = $language_list->set('language');
-				foreach ($lang_files as $file)
-				{
-					// Were we searching?
-					if (!empty($context['we_search_term']) && strpos($file->fetch('name'), westr::strtolower($context['we_search_term'])) === false)
-						continue;
+				$lang_name = (string) $this_lang->name;
+				if (!empty($context['we_search_term']) && strpos($lang_name, westr::strtolower($context['we_search_term'])) === false)
+					continue;
 
-					$context['wedge_languages'][] = array(
-						'id' => $file->fetch('id'),
-						'name' => westr::ucwords($file->fetch('name')),
-						'version' => $file->fetch('version'),
-						'description' => $file->fetch('description'),
-						'link' => $scripturl . '?action=admin;area=languages;sa=downloadlang;did=' . $file->fetch('id') . ';' . $context['session_query'],
-					);
-				}
+				$context['wedge_languages'][] = array(
+					'id' => (string) $this_lang->id,
+					'name' => westr::ucwords($lang_name),
+					'version' => (string) $this_lang->version,
+					'description' => (string) $this_lang->description,
+					'link' => $scripturl . '?action=admin;area=languages;sa=downloadlang;did=' . (string) $this_lang->id . ';' . $context['session_query'],
+				);
 			}
+
 			if (empty($context['wedge_languages']))
 				$context['wedge_error'] = 'no_files';
 		}
