@@ -37,7 +37,7 @@ function Help()
 	call_lang_hook('lang_help');
 
 	// Permission specific help?
-	if (isset($_GET['in']) && substr($_GET['in'], 0, 14) == 'permissionhelp')
+	if (substr($_GET['in'], 0, 14) == 'permissionhelp')
 		loadLanguage('ManagePermissions');
 
 	loadTemplate('Help');
@@ -50,16 +50,11 @@ function Help()
 	wetem::load('popup');
 
 	// What help string should be used?
-	if (isset($helptxt[$_GET['in']]))
-		$context['help_text'] = $helptxt[$_GET['in']];
-	elseif (isset($txt[$_GET['in']]))
-		$context['help_text'] = $txt[$_GET['in']];
-	else
-		$context['help_text'] = $_GET['in'];
+	$context['help_text'] = isset($helptxt[$_GET['in']]) ? $helptxt[$_GET['in']] : (isset($txt[$_GET['in']]) ? $txt[$_GET['in']] : $_GET['in']);
 
 	// Does this text contain a link that we should fill in?
-	if (preg_match('~%([0-9]+\$)?s\?~', $context['help_text'], $match))
-		$context['help_text'] = sprintf($context['help_text'], $scripturl, $context['session_id'], $context['session_var']);
+	if (strpos($context['help_text'], '%1$s') !== false)
+		$context['help_text'] = sprintf($context['help_text'], $scripturl, $context['session_query']);
 }
 
 ?>

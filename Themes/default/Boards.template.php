@@ -128,7 +128,8 @@ function template_boards()
 						', strtr($txt['board_index_last_post'], array(
 							'{member_link}' => $board['last_post']['member']['link'],
 							'{post_link}' => $board['last_post']['link'],
-							'{post_time}' => $board['last_post']['time'])), '
+							'{post_time}' => $board['last_post']['time'])
+						), '
 					</p>';
 
 				echo '

@@ -623,7 +623,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 
 		// Is this the current year? Then why bother printing out the year?
 		if ($then['year'] == $now['year'])
-			$show_today = str_replace(' %Y', '', $user_info['time_format']);
+			$show_today = str_replace(array(', %Y', ' %Y'), '', $user_info['time_format']);
 	}
 
 	$str = !is_bool($show_today) ? $show_today : $user_info['time_format'];
@@ -2031,7 +2031,7 @@ function setupMenuContext()
 			),
 			'logout' => array(
 				'title' => $txt['logout'],
-				'href' => $scripturl . '?action=logout;%1$s=%2$s',
+				'href' => $scripturl . '?action=logout;' . $context['session_query'],
 				'show' => !$user_info['is_guest'],
 			),
 		);
@@ -2073,10 +2073,6 @@ function setupMenuContext()
 	}
 
 	$context['menu_items'] =& $menu_items;
-
-	// Logging out requires the session id in the url.
-	if (isset($menu_items['logout']))
-		$menu_items['logout']['href'] = sprintf($menu_items['logout']['href'], $context['session_var'], $context['session_id']);
 
 	// Figure out which action we are doing so we can set the active tab.
 	// Default to home.

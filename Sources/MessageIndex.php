@@ -489,7 +489,7 @@ function MessageIndex()
 						'href' => !empty($row['last_id_member']) ? $scripturl . '?action=profile;u=' . $row['last_id_member'] : '',
 						'link' => !empty($row['last_id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['last_id_member'] . '">' . $row['last_display_name'] . '</a>' : $row['last_display_name']
 					),
-					'time' => timeformat($row['last_poster_time']),
+					'time' => on_timeformat($row['last_poster_time']),
 					'timestamp' => forum_time(true, $row['last_poster_time']),
 					'subject' => $row['last_subject'],
 					'preview' => $row['last_body'],
