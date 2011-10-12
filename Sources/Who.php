@@ -458,7 +458,7 @@ function determineActions($urls, $preferred_prefix = false)
 			else
 				$data[$k] = $txt['who_unknown'];
 
-			$data[$k] = str_replace('{scripturl}', $scripturl, $data[$k]);
+			$data[$k] = str_replace(array('{scripturl}', '{forum_name}'), array($scripturl, $context['forum_name']), $data[$k]);
 		}
 
 		// Maybe the action is integrated into another system?

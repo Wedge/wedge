@@ -1487,7 +1487,7 @@ function forumProfile($memID)
 		loadCustomFields($memID, 'forumprofile');
 
 	wetem::load('edit_options');
-	$context['page_desc'] = $txt['forumProfile_info'];
+	$context['page_desc'] = str_replace('{forum_name_safe}', $context['forum_name_html_safe'], $txt['forumProfile_info']);
 
 	setupProfileContext(
 		array(

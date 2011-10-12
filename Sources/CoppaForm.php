@@ -65,8 +65,8 @@ function CoppaForm()
 			$context['ul'] = '<u>' . str_repeat('&nbsp;', 26) . '</u>';
 			wetem::hide();
 			wetem::load('coppa_form');
-			$context['page_title'] = $txt['coppa_form_title'];
-			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}'), array($context['ul'], $context['ul'], $username), $txt['coppa_form_body']);
+			$context['page_title'] = str_replace('{forum_name_safe}', $context['forum_name_html_safe'], $txt['coppa_form_title']);
+			$context['coppa_body'] = str_replace(array('{PARENT_NAME}', '{CHILD_NAME}', '{USER_NAME}', '{forum_name_safe}'), array($context['ul'], $context['ul'], $username, $context['forum_name_html_safe'])), $txt['coppa_form_body']);
 		}
 		// Downloading.
 		else
@@ -93,7 +93,7 @@ function CoppaForm()
 		$context['page_title'] = $txt['coppa_title'];
 
 		$context['coppa'] = array(
-			'body' => str_replace('{MINIMUM_AGE}', $modSettings['coppaAge'], $txt['coppa_after_registration']),
+			'body' => str_replace(array('{MINIMUM_AGE}', '{forum_name_safe}'), array($modSettings['coppaAge'], $context['forum_name_html_safe']), $txt['coppa_after_registration']),
 			'many_options' => !empty($modSettings['coppaPost']) && !empty($modSettings['coppaFax']),
 			'post' => empty($modSettings['coppaPost']) ? '' : $modSettings['coppaPost'],
 			'fax' => empty($modSettings['coppaFax']) ? '' : $modSettings['coppaFax'],
