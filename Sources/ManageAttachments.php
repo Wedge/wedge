@@ -152,8 +152,6 @@ function ManageAttachmentSettings($return_config = false)
 	global $txt, $modSettings, $scripturl, $context, $options;
 
 	$context['valid_upload_dir'] = is_dir($modSettings['attachmentUploadDir']) && is_writable($modSettings['attachmentUploadDir']);
-	$txt['attachmentUploadDir'] = str_replace('{scripturl}', $scripturl, $txt['attachmentUploadDir']);
-	$txt['attachmentUploadDir_multiple_configure'] = str_replace('{scripturl}', $scripturl, $txt['attachmentUploadDir_multiple_configure']);
 
 	$config_vars = array(
 		array('title', 'attachment_manager_settings'),

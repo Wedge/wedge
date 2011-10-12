@@ -342,7 +342,7 @@ function template_sidebar_before()
 		// Are there any members waiting for approval?
 		if (!empty($context['unapproved_members']))
 			echo '
-				<li>', str_replace('{scripturl}', $scripturl, number_context('approve_members_waiting', $context['unapproved_members'])), '</li>';
+				<li>', number_context('approve_members_waiting', $context['unapproved_members']), '</li>';
 
 		if (!empty($context['open_mod_reports']) && $context['show_open_reports'])
 			echo '

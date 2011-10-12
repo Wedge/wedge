@@ -227,7 +227,7 @@ function template_email_members_compose()
 				', $txt['admin_newsletters'], '
 			</we:cat>
 			<div class="information">
-				', str_replace('{scripturl}', $scripturl, $txt['email_variables']), '
+				', $txt['email_variables'], '
 			</div>
 			<div class="windowbg wrc">
 				<p>

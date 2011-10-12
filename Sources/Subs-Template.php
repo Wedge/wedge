@@ -365,6 +365,9 @@ function ob_sessrewrite($buffer)
 		}
 	}
 
+	// Very fast on-the-fly replacement of {scripturl}...
+	$buffer = str_replace('{scripturl}', $scripturl, $buffer);
+
 	if (!empty($context['debugging_info']))
 		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</body>'), 0);
 
@@ -806,7 +809,7 @@ function template_include($filename, $once = false)
 			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="{scripturl}?theme=1">use the default theme</a>.';
 		}
 
-		$txt['template_parse_error_details'] = str_replace(array('{board_url}', '{scripturl}'), array($boardurl, $scripturl), $txt['template_parse_error_details']);
+		$txt['template_parse_error_details'] = str_replace('{board_url}', $boardurl, $txt['template_parse_error_details']);
 
 		// First, let's get the doctype and language information out of the way.
 		echo '<!DOCTYPE html>

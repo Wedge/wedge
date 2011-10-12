@@ -24,7 +24,7 @@ function template_moderation_center()
 		<div class="information">
 			<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
 			<p>
-				', str_replace('{scripturl}', $scripturl, $txt['mc_description']), '
+				', $txt['mc_description'], '
 			</p>
 
 		</div>';

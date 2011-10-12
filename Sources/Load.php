@@ -1816,7 +1816,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 				$context['macros'][$name] = array(
 					'has_if' => strpos($contents, '<if:') !== false,
-					'body' => str_replace(array('{scripturl}'), array($scripturl), trim($contents)),
+					'body' => trim($contents),
 				);
 			}
 		}
