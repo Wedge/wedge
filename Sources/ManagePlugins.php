@@ -461,6 +461,7 @@ function EnablePlugin()
 				$hook_data[$point][] = array(
 					'function' => $each_hook['function'],
 					'filename' => $each_hook['filename'],
+					'priority' => $hook == 'language' ? '' : '|' . (!empty($each_hook['priority']) ? min(max((int) $each_hook['priority'], 1), 100) : 50), // Language hooks do not need priority.
 				);
 				if (!empty($each_hook['optional']) && $each_hook['optional'] == 'yes')
 					$optional_hooks[$hook][] = $point;
@@ -788,7 +789,7 @@ function EnablePlugin()
 
 	foreach ($hook_data as $point => $details)
 		foreach ($details as $hooked_details)
-			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|plugin';
+			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|plugin' . $hooked_details['priority'];
 
 	$enabled_plugins = !empty($modSettings['enabled_plugins']) ? explode(',', $modSettings['enabled_plugins']) : array();
 	$enabled_plugins[] = $_GET['plugin'];

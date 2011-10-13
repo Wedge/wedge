@@ -75,6 +75,7 @@ function reloadSettings()
 		// Step through the list we think we have enabled.
 		$plugins = explode(',', $modSettings['enabled_plugins']);
 		$sane_path = str_replace('\\', '/', $pluginsdir);
+		$hook_stack = array();
 		foreach ($plugins as $plugin)
 		{
 			if (!empty($modSettings['plugin_' . $plugin]) && file_exists($sane_path . '/' . $plugin . '/plugin-info.xml'))
@@ -87,10 +88,24 @@ function reloadSettings()
 					foreach ($plugin_details['actions'] as $action)
 						$context['extra_actions'][$action['action']] = array($action['filename'], $action['function'], $plugin_details['id']);
 				unset($plugin_details['id'], $plugin_details['provides'], $plugin_details['actions']);
+
 				foreach ($plugin_details as $hook => $functions)
 					foreach ($functions as $function)
-						$modSettings['hooks'][$hook][] = strtr($function, array('$plugindir' => $this_plugindir));
+					{
+						$priority = (int) substr(strrchr($function, '|'), 1);
+						$hook_stack[$hook][$priority][] = strtr($function, array('$plugindir' => $this_plugindir));
+					}
 			}
+		}
+
+		// Having got all the hooks, figure out the priority ordering and commit to the master list.
+		foreach ($hook_stack as $hook => $hooks_by_priority)
+		{
+			krsort($hooks_by_priority);
+			if (!isset($modSettings['hooks'][$hook]))
+				$modSettings['hooks'][$hook] = array();
+			foreach ($hooks_by_priority as $priority => $hooks)
+				$modSettings['hooks'][$hook] = array_merge($modSettings['hooks'][$hook], $hooks);
 		}
 	}
 
