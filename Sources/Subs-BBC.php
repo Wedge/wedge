@@ -61,7 +61,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
  */
 function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
 {
-	global $txt, $scripturl, $context, $modSettings, $user_info;
+	global $txt, $context, $modSettings, $user_info;
 	static $master_codes = null, $bbc_codes = array(), $bbc_types = array(), $itemcodes = array(), $no_autolink_tags = array();
 	static $disabled, $feet = 0;
 

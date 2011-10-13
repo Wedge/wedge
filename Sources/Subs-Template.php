@@ -257,8 +257,8 @@ function ob_sessrewrite($buffer)
 		}
 	}
 
-	// Very fast on-the-fly replacement of <we:scripturl>...
-	$buffer = str_replace('<we:scripturl>', $scripturl, $buffer);
+	// Very fast on-the-fly replacement of <URL>...
+	$buffer = str_replace('<URL>', $scripturl, $buffer);
 
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']))
@@ -806,7 +806,7 @@ function template_include($filename, $once = false)
 		{
 			$txt['template_parse_error'] = 'Template Parse Error!';
 			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="<we:scripturl>?theme=1">use the default theme</a>.';
+			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="<URL>?theme=1">use the default theme</a>.';
 		}
 
 		$txt['template_parse_error_details'] = str_replace('{board_url}', $boardurl, $txt['template_parse_error_details']);
@@ -1410,8 +1410,10 @@ final class wetem
 	 */
 	private static function reindex()
 	{
-		// We only reset the list of references, it won't impact the skeleton array.
+		// Save $skeleton as raw data to ensure it doesn't get erased next.
+		$transit = unserialize(serialize(self::$skeleton));
 		self::$layers = array();
+		self::$skeleton = $transit;
 
 		// !!! Sadly, array_walk_recursive() won't trigger on child arrays... :(
 		self::reindex_recursive(self::$skeleton);

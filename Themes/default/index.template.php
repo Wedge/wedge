@@ -85,7 +85,7 @@ function template_init()
 		// The main header of the website. Feel free to redefine it in your skins and themes.
 		'header'	=> '
 			<if:logo><h1>
-				<a href="<we:scripturl>">{logo}</a>
+				<a href="<URL>">{logo}</a>
 			</h1></if:logo>
 			{body}',
 
