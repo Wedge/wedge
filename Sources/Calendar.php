@@ -20,7 +20,7 @@ if (!defined('WEDGE'))
 	in Post.php - this just has the following functions:
 
 	void CalendarMain()
-		- loads the specified month's events, holidays, and birthdays.
+		- loads the specified month's events and holidays.
 		- requires the calendar_view permission.
 		- depends on the cal_enabled setting, and many of the other cal_
 		  settings.
@@ -101,7 +101,6 @@ function CalendarMain()
 	// Load all the context information needed to show the calendar grid.
 	$calendarOptions = array(
 		'start_day' => !empty($options['calendar_start_day']) ? $options['calendar_start_day'] : 0,
-		'show_birthdays' => in_array($modSettings['cal_showbdays'], array(1, 2)),
 		'show_events' => in_array($modSettings['cal_showevents'], array(1, 2)),
 		'show_holidays' => in_array($modSettings['cal_showholidays'], array(1, 2)),
 		'show_week_num' => true,
@@ -118,7 +117,6 @@ function CalendarMain()
 		$context['calendar_grid_main'] = getCalendarGrid($curPage['month'], $curPage['year'], $calendarOptions);
 
 	// Load up the previous and next months.
-	$calendarOptions['show_birthdays'] = $calendarOptions['show_events'] = $calendarOptions['show_holidays'] = false;
 	$calendarOptions['short_day_titles'] = true;
 	$calendarOptions['show_next_prev'] = false;
 	$calendarOptions['show_week_links'] = false;
@@ -136,7 +134,6 @@ function CalendarMain()
 	$context['current_day'] = $curPage['day'];
 	$context['current_month'] = $curPage['month'];
 	$context['current_year'] = $curPage['year'];
-	$context['show_all_birthdays'] = isset($_GET['showbd']);
 
 	// Set the page title to mention the month or week, too
 	$context['page_title'] .= ' - ' . ($context['view_week'] ? sprintf($txt['calendar_week_title'], $context['calendar_grid_main']['week_number'], ($context['calendar_grid_main']['week_number'] == 53 ? $context['current_year'] - 1 : $context['current_year'])) : $txt['months'][$context['current_month']] . ' ' . $context['current_year']);

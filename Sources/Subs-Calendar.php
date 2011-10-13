@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Contains several functions for retrieving and manipulating calendar events, birthdays and holidays.
+ * Contains several functions for retrieving and manipulating calendar events and holidays.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -14,16 +14,7 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-/*	array getBirthdayRange(string earliest_date, string latest_date)
-		- finds all the birthdays in the specified range of days.
-		- earliest_date and latest_date are inclusive, and should both be in
-		  the YYYY-MM-DD format.
-		- works with birthdays set for no year, or any other year, and
-		  respects month and year boundaries.
-		- returns an array of days, each of which an array of birthday
-		  information for the context.
-
-	array getEventRange(string earliest_date, string latest_date,
+/*	array getEventRange(string earliest_date, string latest_date,
 			bool use_permissions = true)
 		- finds all the posted calendar events within a date range.
 		- both the earliest_date and latest_date should be in the standard
@@ -62,8 +53,8 @@ if (!defined('WEDGE'))
 		  within which the passed date sits.
 
 	array cache_getOffsetIndependentEvents(int days_to_index)
-		- cache callback function used to retrieve the birthdays, holidays, and
-		  events between now and now + days_to_index.
+		- cache callback function used to retrieve the holidays and events
+		  between now and now + days_to_index.
 		- widens the search range by an extra 24 hours to support time offset
 		  shifts.
 		- used by the cache_getRecentEvents function to get the information
@@ -71,9 +62,9 @@ if (!defined('WEDGE'))
 		  account.
 
 	array cache_getRecentEvents(array eventOptions)
-		- cache callback function used to retrieve the upcoming birthdays,
-		  holidays, and events within the given period, taking into account
-		  the users time offset.
+		- cache callback function used to retrieve the upcoming holidays
+		  and events within the given period, taking into account the users
+		  time offset.
 		- used by the board index and SSI to show the upcoming events.
 
 	void validateEventPost()
@@ -97,64 +88,6 @@ if (!defined('WEDGE'))
 		- removes an event.
 		- does no permission checks.
 */
-
-// Get all birthdays within the given time range.
-function getBirthdayRange($low_date, $high_date)
-{
-	global $scripturl, $modSettings;
-
-	// We need to search for any birthday in this range, and whatever year that birthday is on.
-	$year_low = (int) substr($low_date, 0, 4);
-	$year_high = (int) substr($high_date, 0, 4);
-
-	// Collect all of the birthdays for this month.  I know, it's a painful query.
-	$result = wesql::query('
-		SELECT id_member, real_name, YEAR(birthdate) AS birth_year, birthdate
-		FROM {db_prefix}members
-		WHERE YEAR(birthdate) != {string:year_one}
-			AND MONTH(birthdate) != {int:no_month}
-			AND DAYOFMONTH(birthdate) != {int:no_day}
-			AND YEAR(birthdate) <= {int:max_year}
-			AND (
-				DATE_FORMAT(birthdate, {string:year_low}) BETWEEN {date:low_date} AND {date:high_date}' . ($year_low == $year_high ? '' : '
-				OR DATE_FORMAT(birthdate, {string:year_high}) BETWEEN {date:low_date} AND {date:high_date}') . '
-			)
-			AND is_activated = {int:is_activated}',
-		array(
-			'is_activated' => 1,
-			'no_month' => 0,
-			'no_day' => 0,
-			'year_one' => '0001',
-			'year_low' => $year_low . '-%m-%d',
-			'year_high' => $year_high . '-%m-%d',
-			'low_date' => $low_date,
-			'high_date' => $high_date,
-			'max_year' => $year_high,
-		)
-	);
-	$bday = array();
-	while ($row = wesql::fetch_assoc($result))
-	{
-		if ($year_low != $year_high)
-			$age_year = substr($row['birthdate'], 5) < substr($high_date, 5) ? $year_high : $year_low;
-		else
-			$age_year = $year_low;
-
-		$bday[$age_year . substr($row['birthdate'], 4)][] = array(
-			'id' => $row['id_member'],
-			'name' => $row['real_name'],
-			'age' => $row['birth_year'] > 4 && $row['birth_year'] <= $age_year ? $age_year - $row['birth_year'] : null,
-			'is_last' => false
-		);
-	}
-	wesql::free_result($result);
-
-	// Set is_last, so the themes know when to stop placing separators.
-	foreach ($bday as $mday => $array)
-		$bday[$mday][count($array) - 1]['is_last'] = true;
-
-	return $bday;
-}
 
 // Get all events within the given time range.
 function getEventRange($low_date, $high_date, $use_permissions = true)
@@ -408,8 +341,7 @@ function getCalendarGrid($month, $year, $calendarOptions)
 	if (($month_info['last_day']['day_of_month'] + $nShift) % 7)
 		$nRows++;
 
-	// Fetch the arrays for birthdays, posted events, and holidays.
-	$bday = $calendarOptions['show_birthdays'] ? getBirthdayRange($month_info['first_day']['date'], $month_info['last_day']['date']) : array();
+	// Fetch the arrays for posted events and holidays.
 	$events = $calendarOptions['show_events'] ? getEventRange($month_info['first_day']['date'], $month_info['last_day']['date']) : array();
 	$holidays = $calendarOptions['show_holidays'] ? getHolidayRange($month_info['first_day']['date'], $month_info['last_day']['date']) : array();
 
@@ -482,7 +414,6 @@ function getCalendarGrid($month, $year, $calendarOptions)
 				'is_first_day' => !empty($calendarOptions['show_week_num']) && (($month_info['first_day']['day_of_week'] + $nDay - 1) % 7 == $calendarOptions['start_day']),
 				'holidays' => !empty($holidays[$date]) ? $holidays[$date] : array(),
 				'events' => !empty($events[$date]) ? $events[$date] : array(),
-				'birthdays' => !empty($bday[$date]) ? $bday[$date] : array()
 			);
 		}
 	}
@@ -539,10 +470,9 @@ function getCalendarWeek($month, $year, $day, $calendarOptions)
 	$calendarGrid['next_week']['month'] = (int) strftime('%m', $nextWeekTimestamp);
 	$calendarGrid['next_week']['year'] = (int) strftime('%Y', $nextWeekTimestamp);
 
-	// Fetch the arrays for birthdays, posted events, and holidays.
+	// Fetch the arrays for posted events and holidays.
 	$startDate = strftime('%Y-%m-%d', $curTimestamp);
 	$endDate = strftime('%Y-%m-%d', $nextWeekTimestamp);
-	$bday = $calendarOptions['show_birthdays'] ? getBirthdayRange($startDate, $endDate) : array();
 	$events = $calendarOptions['show_events'] ? getEventRange($startDate, $endDate) : array();
 	$holidays = $calendarOptions['show_holidays'] ? getHolidayRange($startDate, $endDate) : array();
 
@@ -595,7 +525,6 @@ function getCalendarWeek($month, $year, $day, $calendarOptions)
 			'is_today' => $date == $today['date'],
 			'holidays' => !empty($holidays[$date]) ? $holidays[$date] : array(),
 			'events' => !empty($events[$date]) ? $events[$date] : array(),
-			'birthdays' => !empty($bday[$date]) ? $bday[$date] : array()
 		);
 
 		// Make the last day what the current day is and work out what the next day is.
@@ -623,7 +552,6 @@ function cache_getOffsetIndependentEvents($days_to_index)
 	return array(
 		'data' => array(
 			'holidays' => getHolidayRange($low_date, $high_date),
-			'birthdays' => getBirthdayRange($low_date, $high_date),
 			'events' => getEventRange($low_date, $high_date, false),
 		),
 		'refresh_eval' => 'return \'' . strftime('%Y%m%d', forum_time(false)) . '\' != strftime(\'%Y%m%d\', forum_time(false)) || (!empty($modSettings[\'calendar_updated\']) && ' . time() . ' < $modSettings[\'calendar_updated\']);',
@@ -644,7 +572,6 @@ function cache_getRecentEvents($eventOptions)
 
 	$return_data = array(
 		'calendar_holidays' => array(),
-		'calendar_birthdays' => array(),
 		'calendar_events' => array(),
 	);
 
@@ -659,18 +586,6 @@ function cache_getRecentEvents($eventOptions)
 	{
 		if (isset($cached_data['holidays'][strftime('%Y-%m-%d', $i)]))
 			$return_data['calendar_holidays'] = array_merge($return_data['calendar_holidays'], $cached_data['holidays'][strftime('%Y-%m-%d', $i)]);
-	}
-
-	// Happy Birthday, guys and gals!
-	for ($i = $now; $i < $now + $days_for_index; $i += 86400)
-	{
-		$loop_date = strftime('%Y-%m-%d', $i);
-		if (isset($cached_data['birthdays'][$loop_date]))
-		{
-			foreach ($cached_data['birthdays'][$loop_date] as $index => $dummy)
-				$cached_data['birthdays'][strftime('%Y-%m-%d', $i)][$index]['is_today'] = $loop_date === $today['date'];
-			$return_data['calendar_birthdays'] = array_merge($return_data['calendar_birthdays'], $cached_data['birthdays'][$loop_date]);
-		}
 	}
 
 	$duplicates = array();
@@ -708,9 +623,6 @@ function cache_getRecentEvents($eventOptions)
 			$return_data['calendar_events'] = array_merge($return_data['calendar_events'], $cached_data['events'][$loop_date]);
 	}
 
-	// Mark the last item so that a list separator can be used in the template.
-	for ($i = 0, $n = count($return_data['calendar_birthdays']); $i < $n; $i++)
-		$return_data['calendar_birthdays'][$i]['is_last'] = !isset($return_data['calendar_birthdays'][$i + 1]);
 	for ($i = 0, $n = count($return_data['calendar_events']); $i < $n; $i++)
 		$return_data['calendar_events'][$i]['is_last'] = !isset($return_data['calendar_events'][$i + 1]);
 
@@ -732,18 +644,16 @@ function cache_getRecentEvents($eventOptions)
 					$cache_block[\'data\'][\'calendar_events\'][$k][\'can_edit\'] = allowedTo(\'calendar_edit_any\') || ($event[\'poster\'] == $user_info[\'id\'] && allowedTo(\'calendar_edit_own\'));
 
 					// The added session code makes this URL not cachable.
-					$cache_block[\'data\'][\'calendar_events\'][$k][\'modify_href\'] = $scripturl . \'?action=\' . ($event[\'topic\'] == 0 ? \'calendar;sa=post;\' : \'post;msg=\' . $event[\'msg\'] . \';topic=\' . $event[\'topic\'] . \'.0;calendar;\') . \'eventid=\' . $event[\'id\'] . \';\' . $context[\'session_var\'] . \'=\' . $context[\'session_id\'];
+					$cache_block[\'data\'][\'calendar_events\'][$k][\'modify_href\'] = $scripturl . \'?action=\' . ($event[\'topic\'] == 0 ? \'calendar;sa=post;\' : \'post;msg=\' . $event[\'msg\'] . \';topic=\' . $event[\'topic\'] . \'.0;calendar;\') . \'eventid=\' . $event[\'id\'] . \';\' . $context[\'session_query\'];
 				}
 			}
 
 			if (empty($params[0][\'include_holidays\']))
 				$cache_block[\'data\'][\'calendar_holidays\'] = array();
-			if (empty($params[0][\'include_birthdays\']))
-				$cache_block[\'data\'][\'calendar_birthdays\'] = array();
 			if (empty($params[0][\'include_events\']))
 				$cache_block[\'data\'][\'calendar_events\'] = array();
 
-			$cache_block[\'data\'][\'show_calendar\'] = !empty($cache_block[\'data\'][\'calendar_holidays\']) || !empty($cache_block[\'data\'][\'calendar_birthdays\']) || !empty($cache_block[\'data\'][\'calendar_events\']);',
+			$cache_block[\'data\'][\'show_calendar\'] = !empty($cache_block[\'data\'][\'calendar_holidays\']) || !empty($cache_block[\'data\'][\'calendar_events\']);',
 	);
 }
 

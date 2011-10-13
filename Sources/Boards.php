@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
  * - If the configuration asks for the last x latest posts, fetch them. (This is achieved from cache, or {@link cache_getLastPosts()} in Subs-Recent.php, and honors user preference of ignored boards)
  * - Preset some flags for the template (whether to show a bar above the most recent posts), and whether to show the member bar; both in the information center.
  * - Set up some general permissions checks for the template (i.e. whether to show some of the stats, whether to show the member list link)
- * - If the calendar is enabled, load the events as directed by the options (holidays, birthdays, events, all based on number of days) - this is managed from cache, or {@link cache_getRecentEvents()} in Subs-Calendar.php.
+ * - If the calendar is enabled, load the events as directed by the options (holidays, events, all based on number of days) - this is managed from cache, or {@link cache_getRecentEvents()} in Subs-Calendar.php.
  * - Finally, set up the page title to include the board name with the localized ' - Index' string.
  */
 function Boards()
@@ -123,10 +123,9 @@ function Boards()
 	// Load the calendar?
 	if (!empty($modSettings['cal_enabled']) && allowedTo('calendar_view'))
 	{
-		// Retrieve the calendar data (events, birthdays, holidays).
+		// Retrieve the calendar data (events, holidays).
 		$eventOptions = array(
 			'include_holidays' => $modSettings['cal_showholidays'] > 1,
-			'include_birthdays' => $modSettings['cal_showbdays'] > 1,
 			'include_events' => $modSettings['cal_showevents'] > 1,
 			'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
 		);

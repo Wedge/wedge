@@ -310,7 +310,7 @@ function template_show_month_grid($grid_name)
 
 		/* Every day has the following:
 			day (# in month), is_today (is this day *today*?), is_first_day (first day of the week?),
-			holidays, events, birthdays. (last three are lists.) */
+			holidays, events. (last two are lists.) */
 		foreach ($week['days'] as $day)
 		{
 			// If this is today, make it a different color and show a border.
@@ -336,36 +336,6 @@ function template_show_month_grid($grid_name)
 				if (!empty($day['holidays']))
 					echo '
 						<div class="smalltext holiday">', $txt['calendar_prompt'], ' ', implode(', ', $day['holidays']), '</div>';
-
-				// Show any birthdays...
-				if (!empty($day['birthdays']))
-				{
-					echo '
-						<div class="smalltext">
-							<span class="birthday">', $txt['birthdays'], '</span>';
-
-					/* Each of the birthdays has:
-						id, name (person), age (if they have one set?), and is_last. (last in list?) */
-					$use_js_hide = empty($context['show_all_birthdays']) && count($day['birthdays']) > 15;
-					$count = 0;
-					foreach ($day['birthdays'] as $member)
-					{
-						echo '
-								<a href="', $scripturl, '?action=profile;u=', $member['id'], '">', $member['name'], isset($member['age']) ? ' (' . $member['age'] . ')' : '', '</a>', $member['is_last'] || ($count == 10 && $use_js_hide)? '' : ', ';
-
-						// Stop at ten?
-						if ($count == 10 && $use_js_hide)
-							echo '<span class="hidelink" id="bdhidelink_', $day['day'], '">...<br><a href="', $scripturl, '?action=calendar;month=', $calendar_data['current_month'], ';year=', $calendar_data['current_year'], ';showbd" onclick="$(\'#bdhide_', $day['day'], '\').show(); $(\'#bdhidelink_', $day['day'], '\').hide(); return false;">(', sprintf($txt['calendar_click_all'], count($day['birthdays'])), ')</a></span><span id="bdhide_', $day['day'], '" class="hide">, ';
-
-						$count++;
-					}
-					if ($use_js_hide)
-						echo '
-							</span>';
-
-					echo '
-						</div>';
-				}
 
 				// Any special posted events?
 				if (!empty($day['events']))
@@ -468,22 +438,6 @@ function template_show_week_grid($grid_name)
 			if (!empty($day['holidays']))
 				echo '
 						<div class="smalltext holiday">', $txt['calendar_prompt'], ' ', implode(', ', $day['holidays']), '</div>';
-
-			// Show any birthdays...
-			if (!empty($day['birthdays']))
-			{
-				echo '
-						<div class="smalltext">
-							<span class="birthday">', $txt['birthdays'], '</span>';
-
-				/* Each of the birthdays has:
-					id, name (person), age (if they have one set?), and is_last. (last in list?) */
-				foreach ($day['birthdays'] as $member)
-					echo '
-							<a href="', $scripturl, '?action=profile;u=', $member['id'], '">', $member['name'], isset($member['age']) ? ' (' . $member['age'] . ')' : '', '</a>', $member['is_last'] ? '' : ', ';
-				echo '
-						</div>';
-			}
 
 			// Any special posted events?
 			if (!empty($day['events']))

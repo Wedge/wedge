@@ -101,10 +101,9 @@ function Welcome()
 	// Load the calendar?
 	if (!empty($modSettings['cal_enabled']) && allowedTo('calendar_view'))
 	{
-		// Retrieve the calendar data (events, birthdays, holidays).
+		// Retrieve the calendar data (events, holidays).
 		$eventOptions = array(
 			'include_holidays' => $modSettings['cal_showholidays'] > 1,
-			'include_birthdays' => $modSettings['cal_showbdays'] > 1,
 			'include_events' => $modSettings['cal_showevents'] > 1,
 			'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
 		);

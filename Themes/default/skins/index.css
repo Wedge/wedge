@@ -1063,10 +1063,7 @@ tr.catbg, tr.titlebg
 .alert
 	color: red
 
-// Calendar colors for birthdays, events and holidays
-.birthday
-	color: #920ac4
-
+// Calendar colors for events and holidays
 .event
 	color: #078907
 

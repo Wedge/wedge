@@ -1505,28 +1505,6 @@ function ssi_news($output_method = 'echo')
 	echo $context['random_news_line'];
 }
 
-// Show today's birthdays.
-function ssi_todaysBirthdays($output_method = 'echo')
-{
-	global $scripturl, $modSettings, $user_info;
-
-	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
-		return array();
-
-	$eventOptions = array(
-		'include_birthdays' => true,
-		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-	);
-	$return = cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-	if ($output_method != 'echo')
-		return $return['calendar_birthdays'];
-
-	foreach ($return['calendar_birthdays'] as $member)
-		echo '
-			<a href="', $scripturl, '?action=profile;u=', $member['id'], '">' . $member['name'] . (isset($member['age']) ? ' (' . $member['age'] . ')' : '') . '</a>' . (!$member['is_last'] ? ', ' : '');
-}
-
 // Show today's holidays.
 function ssi_todaysHolidays($output_method = 'echo')
 {
@@ -1575,7 +1553,7 @@ function ssi_todaysEvents($output_method = 'echo')
 	}
 }
 
-// Show all calendar entires for today. (birthdays, holodays, and events.)
+// Show all calendar entries for today. (holidays, and events.)
 function ssi_todaysCalendar($output_method = 'echo')
 {
 	global $modSettings, $txt, $scripturl, $user_info;
@@ -1584,7 +1562,6 @@ function ssi_todaysCalendar($output_method = 'echo')
 		return array();
 
 	$eventOptions = array(
-		'include_birthdays' => true,
 		'include_holidays' => true,
 		'include_events' => true,
 		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
@@ -1597,16 +1574,6 @@ function ssi_todaysCalendar($output_method = 'echo')
 	if (!empty($return['calendar_holidays']))
 		echo '
 			<span class="holiday">' . $txt['calendar_prompt'] . ' ' . implode(', ', $return['calendar_holidays']) . '<br /></span>';
-	if (!empty($return['calendar_birthdays']))
-	{
-		echo '
-			<span class="birthday">' . $txt['birthdays_upcoming'] . '</span> ';
-		foreach ($return['calendar_birthdays'] as $member)
-			echo '
-			<a href="', $scripturl, '?action=profile;u=', $member['id'], '">', $member['name'], isset($member['age']) ? ' (' . $member['age'] . ')' : '', '</a>', !$member['is_last'] ? ', ' : '';
-		echo '
-			<br />';
-	}
 	if (!empty($return['calendar_events']))
 	{
 		echo '

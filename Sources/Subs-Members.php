@@ -432,11 +432,6 @@ function deleteMembers($users, $check_not_admin = false)
 		);
 	wesql::free_result($request);
 
-	// Make sure no member's birthday is still sticking in the calendar...
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
-
 	updateStats('member');
 }
 

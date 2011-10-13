@@ -72,7 +72,7 @@ function template_info_center_recentposts()
 		</div>';
 }
 
-// Show information about events, birthdays, and holidays on the calendar.
+// Show information about events and holidays on the calendar.
 function template_info_center_calendar()
 {
 	global $context, $settings, $options, $txt, $scripturl, $modSettings;
@@ -91,20 +91,6 @@ function template_info_center_calendar()
 	if (!empty($context['calendar_holidays']))
 		echo '
 				<span class="holiday">', $txt['calendar_prompt'], ' ', implode(', ', $context['calendar_holidays']), '</span><br>';
-
-	// People's birthdays. Like mine. And yours, I guess. Kidding.
-	if (!empty($context['calendar_birthdays']))
-	{
-		echo '
-				<span class="birthday">', $context['calendar_only_today'] ? $txt['birthdays'] : $txt['birthdays_upcoming'], '</span> ';
-
-		/* Each member in calendar_birthdays has:
-			id, name (person), age (if they have one set?), is_last. (last in list?), and is_today (birthday is today?) */
-
-		foreach ($context['calendar_birthdays'] as $member)
-			echo '
-				<a href="', $scripturl, '?action=profile;u=', $member['id'], '">', $member['is_today'] ? '<strong>' : '', $member['name'], $member['is_today'] ? '</strong>' : '', isset($member['age']) ? ' (' . $member['age'] . ')' : '', '</a>', $member['is_last'] ? '<br>' : ', ';
-	}
 
 	// Events like community get-togethers.
 	if (!empty($context['calendar_events']))

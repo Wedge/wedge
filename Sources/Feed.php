@@ -225,8 +225,6 @@ function Feed()
 	// Show in Atom, or RSS?
 	$xml_format = isset($_GET['type']) && in_array($_GET['type'], array('rss', 'rss2', 'atom')) ? $_GET['type'] : 'atom';
 
-	// !!! Birthdays?
-
 	// List all the different types of data they can pull.
 	$subActions = array(
 		'recent' => array('getXmlRecent', 'recent-post'),

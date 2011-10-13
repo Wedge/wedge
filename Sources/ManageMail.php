@@ -266,16 +266,7 @@ function list_getMailQueueSize()
 
 function ModifyMailSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $birthdayEmails, $modSettings;
-
-	loadLanguage('EmailTemplates');
-
-	$body = $birthdayEmails[empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email']]['body'];
-	$subject = $birthdayEmails[empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email']]['subject'];
-
-	$emails = array();
-	foreach ($birthdayEmails as $index => $dummy)
-		$emails[$index] = $index;
+	global $txt, $scripturl, $context, $modSettings;
 
 	$config_vars = array(
 			// Mail queue stuff, this rocks ;)
@@ -289,10 +280,6 @@ function ModifyMailSettings($return_config = false)
 			array('text', 'smtp_port'),
 			array('text', 'smtp_username'),
 			array('password', 'smtp_password'),
-		'',
-			array('select', 'birthday_email', $emails, 'value' => empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email'], 'javascript' => 'onchange="fetch_birthday_preview()"'),
-			'birthday_subject' => array('var_message', 'birthday_subject', 'var_message' => $birthdayEmails[empty($modSettings['birthday_email']) ? 'happy_birthday' : $modSettings['birthday_email']]['subject'], 'disabled' => true, 'size' => strlen($subject) + 3),
-			'birthday_body' => array('var_message', 'birthday_body', 'var_message' => westr::nl2br($body), 'disabled' => true, 'size' => ceil(strlen($body) / 25)),
 	);
 
 	if ($return_config)
@@ -309,9 +296,6 @@ function ModifyMailSettings($return_config = false)
 		}
 		checkSession();
 
-		// We don't want to save the subject and body previews.
-		unset($config_vars['birthday_subject'], $config_vars['birthday_body']);
-
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=mailqueue;sa=settings');
 	}
@@ -320,29 +304,6 @@ function ModifyMailSettings($return_config = false)
 	$context['settings_title'] = $txt['mailqueue_settings'];
 
 	prepareDBSettingContext($config_vars);
-
-	add_js('
-	var bDay = {');
-
-	$i = 0;
-	foreach ($birthdayEmails as $index => $email)
-	{
-		$is_last = ++$i == count($birthdayEmails);
-		add_js('
-		', $index, ': {
-			subject: ', JavaScriptEscape($email['subject']), ',
-			body: ', JavaScriptEscape(westr::nl2br($email['body'])), '
-		}', !$is_last ? ',' : '');
-	}
-
-	add_js('
-	};
-	function fetch_birthday_preview()
-	{
-		var index = $(\'#birthday_email\').val();
-		$(\'#birthday_subject\').html(bDay[index].subject);
-		$(\'#birthday_body\').html(bDay[index].body);
-	}');
 }
 
 // This function clears the mail queue of all emails, and at the end redirects to browse.

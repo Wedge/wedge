@@ -759,7 +759,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $settings, $options, $txt, $helptxt, $scripturl, $modSettings;
 	global $user_info, $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 

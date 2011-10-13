@@ -2154,7 +2154,7 @@ function call_hook($hook, $parameters = array())
 
 function call_lang_hook($hook)
 {
-	global $modSettings, $user_info, $language, $txt;
+	global $modSettings, $user_info, $language, $txt, $helptxt;
 
 	if (empty($modSettings['hooks'][$hook]))
 		return false;
