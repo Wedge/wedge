@@ -160,7 +160,7 @@
 
 	<macro name="header">
 			<if:logo><h1>
-				<a href="{scripturl}">{logo}</a>
+				<a href="<we:scripturl>">{logo}</a>
 			</h1></if:logo>
 			{body}
 	</macro>

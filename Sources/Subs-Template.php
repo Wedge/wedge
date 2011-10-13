@@ -177,6 +177,89 @@ function ob_sessrewrite($buffer)
 	if (!empty($context['header']) && wetem::has_layer('html') && ($where = strpos($buffer, "\n</head>")) !== false)
 		$buffer = substr_replace($buffer, $context['header'], $where, 0);
 
+	// Moving all inline events (<code onclick="event();">) to the footer, to make
+	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
+	$context['delayed_events'] = array();
+	$cut = explode("<!-- JavaScript area -->\n", $buffer);
+
+	// If the placeholder isn't there, it means we're probably not in a default index template,
+	// and we probably don't need to postpone any events. Otherwise, go ahead and do the magic!
+	if (!empty($cut[1]))
+		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^">]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
+
+	if (!empty($context['delayed_events']))
+	{
+		$thing = 'var eves = {';
+		foreach ($context['delayed_events'] as $eve)
+			$thing .= '
+		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
+		$thing = substr($thing, 0, -1) . '
+	};
+	$("*[data-eve]").each(function() {
+		for (var eve = 0, elis = $(this).data("eve"), eil = elis.length; eve < eil; eve++)
+			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
+	});';
+		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
+	}
+	else
+		$buffer = str_replace("\n\t<!-- insert inline events here -->", '', $buffer);
+
+	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
+	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
+	// It's case-insensitive, but always slower -- noticeably so with hundreds of macros.
+
+	// Don't waste time replacing macros if there are none in the first place.
+	if (!empty($context['macros']) && strpos($buffer, '<we:') !== false)
+	{
+		// Case-sensitive version - you themers please don't use <We> or <WE> tags, or I'll tell your momma.
+		while (strpos($buffer, '<we:') !== false)
+		{
+			$p = 0;
+			while (($p = strpos($buffer, '<we:', $p)) !== false)
+			{
+				$space = strpos($buffer, ' ', $p);
+				$gt = strpos($buffer, '>', $p);
+				$code = substr($buffer, $p + 4, min($space, $gt) - $p - 4);
+				$end_code = strpos($buffer, '</we:' . strtolower($code), $p + 4);
+				$next_code = strpos($buffer, '<we:', $p + 4);
+
+				if ($end_code === false)
+					$end_code = strlen($buffer);
+
+				// Did we find a macro with no nested macros?
+				if ($next_code !== false && $end_code > $next_code)
+				{
+					$p += 4;
+					continue;
+				}
+
+				// We don't like unknown macros in this town.
+				$macro = isset($context['macros'][$code]) ? $context['macros'][$code] : array('has_if' => false, 'body' => '');
+				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $macro['body']);
+
+				// Has it got an <if:param> section?
+				if ($macro['has_if'])
+				{
+					preg_match_all('~([a-z][^\s="]*)="([^"]+)"~', substr($buffer, $p, $gt - $p), $params);
+
+					// Remove <if> and its contents if the param is not used in the template. Otherwise, clean up the <if> tag...
+					while (preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
+						foreach ($ifs as $ifi)
+							$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
+
+					// ...And replace with the contents.
+					if (!empty($params))
+						foreach ($params[1] as $id => $param)
+							$body = str_replace('{' . $param . '}', $params[2][$id], $body);
+				}
+				$buffer = str_replace(substr($buffer, $p, $end_code + strlen($code) + 6 - $p), $body, $buffer);
+			}
+		}
+	}
+
+	// Very fast on-the-fly replacement of <we:scripturl>...
+	$buffer = str_replace('<we:scripturl>', $scripturl, $buffer);
+
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']))
 	{
@@ -284,89 +367,6 @@ function ob_sessrewrite($buffer)
 		if ($context['pretty']['scriptID'] > 0)
 			$buffer = preg_replace_callback('~' . chr(20) . '([0-9]+)' . chr(20) . '~', 'pretty_scripts_restore', $buffer);
 	}
-
-	// Moving all inline events (<code onclick="event();">) to the footer, to make
-	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
-	$context['delayed_events'] = array();
-	$cut = explode("<!-- JavaScript area -->\n", $buffer);
-
-	// If the placeholder isn't there, it means we're probably not in a default index template,
-	// and we probably don't need to postpone any events. Otherwise, go ahead and do the magic!
-	if (!empty($cut[1]))
-		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^">]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
-
-	if (!empty($context['delayed_events']))
-	{
-		$thing = 'var eves = {';
-		foreach ($context['delayed_events'] as $eve)
-			$thing .= '
-		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
-		$thing = substr($thing, 0, -1) . '
-	};
-	$("*[data-eve]").each(function() {
-		for (var eve = 0, elis = $(this).data("eve"), eil = elis.length; eve < eil; eve++)
-			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
-	});';
-		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
-	}
-	else
-		$buffer = str_replace("\n\t<!-- insert inline events here -->", '', $buffer);
-
-	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
-	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
-	// It's case-insensitive, but always slower -- noticeably so with hundreds of macros.
-
-	// Don't waste time replacing macros if there are none in the first place.
-	if (!empty($context['macros']) && strpos($buffer, '<we:') !== false)
-	{
-		// Case-sensitive version - you themers please don't use <We> or <WE> tags, or I'll tell your momma.
-		while (strpos($buffer, '<we:') !== false)
-		{
-			$p = 0;
-			while (($p = strpos($buffer, '<we:', $p)) !== false)
-			{
-				$space = strpos($buffer, ' ', $p);
-				$gt = strpos($buffer, '>', $p);
-				$code = substr($buffer, $p + 4, min($space, $gt) - $p - 4);
-				$end_code = strpos($buffer, '</we:' . strtolower($code), $p + 4);
-				$next_code = strpos($buffer, '<we:', $p + 4);
-
-				if ($end_code === false)
-					$end_code = strlen($buffer);
-
-				// Did we find a macro with no nested macros?
-				if ($next_code !== false && $end_code > $next_code)
-				{
-					$p += 4;
-					continue;
-				}
-
-				// We don't like unknown macros in this town.
-				$macro = isset($context['macros'][$code]) ? $context['macros'][$code] : array('has_if' => false, 'body' => '');
-				$body = str_replace('{body}', substr($buffer, $gt + 1, $end_code - $gt - 1), $macro['body']);
-
-				// Has it got an <if:param> section?
-				if ($macro['has_if'])
-				{
-					preg_match_all('~([a-z][^\s="]*)="([^"]+)"~', substr($buffer, $p, $gt - $p), $params);
-
-					// Remove <if> and its contents if the param is not used in the template. Otherwise, clean up the <if> tag...
-					while (preg_match_all('~<if:([^>]+)>((?' . '>[^<]+|<(?!/?if:\\1>))*?)</if:\\1>~i', $body, $ifs, PREG_SET_ORDER))
-						foreach ($ifs as $ifi)
-							$body = str_replace($ifi[0], !empty($params) && in_array($ifi[1], $params[1]) ? $ifi[2] : '', $body);
-
-					// ...And replace with the contents.
-					if (!empty($params))
-						foreach ($params[1] as $id => $param)
-							$body = str_replace('{' . $param . '}', $params[2][$id], $body);
-				}
-				$buffer = str_replace(substr($buffer, $p, $end_code + strlen($code) + 6 - $p), $body, $buffer);
-			}
-		}
-	}
-
-	// Very fast on-the-fly replacement of {scripturl}...
-	$buffer = str_replace('{scripturl}', $scripturl, $buffer);
 
 	if (!empty($context['debugging_info']))
 		$buffer = substr_replace($buffer, $context['debugging_info'], strrpos($buffer, '</body>'), 0);
@@ -806,7 +806,7 @@ function template_include($filename, $once = false)
 		{
 			$txt['template_parse_error'] = 'Template Parse Error!';
 			$txt['template_parse_error_message'] = 'It seems something has gone sour on the forum with the template system. This problem should only be temporary, so please come back later and try again. If you continue to see this message, please contact the administrator.<br><br>You can also try <a href="javascript:location.reload();">refreshing this page</a>.';
-			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="{scripturl}?theme=1">use the default theme</a>.';
+			$txt['template_parse_error_details'] = 'There was a problem loading the <tt><strong>%1$s</strong></tt> template or language file. Please check the syntax and try again - remember, single quotes (<tt>\'</tt>) often have to be escaped with a slash (<tt>\\</tt>). To see more specific error information from PHP, try <a href="{board_url}%1$s" class="extern">accessing the file directly</a>.<br><br>You may want to try to <a href="javascript:location.reload();">refresh this page</a> or <a href="<we:scripturl>?theme=1">use the default theme</a>.';
 		}
 
 		$txt['template_parse_error_details'] = str_replace('{board_url}', $boardurl, $txt['template_parse_error_details']);

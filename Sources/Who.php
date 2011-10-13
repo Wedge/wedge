@@ -272,7 +272,7 @@ function Who()
 
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $txt, $user_info, $modSettings, $settings, $scripturl;
+	global $context, $txt, $user_info, $modSettings, $settings, $scripturl;
 
 	if (!allowedTo('who_view'))
 		return array();
