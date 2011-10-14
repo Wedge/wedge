@@ -954,6 +954,7 @@ function commitRemovePlugin($fullclean, &$manifest)
 	}
 
 	// Need to remove scheduled tasks. We can leave normal settings in, but scheduled tasks need to be removed, because they will mangle if accidentally run otherwise.
+	// We also should prune the entries from the task log.
 	if (!empty($manifest->scheduledtasks))
 	{
 		$tasks = array();
@@ -964,13 +965,37 @@ function commitRemovePlugin($fullclean, &$manifest)
 				$tasks[] = $name;
 		}
 		if (!empty($tasks))
-			wesql::query('
-				DELETE FROM {db_prefix}scheduled_tasks
+		{
+			$task_ids = array();
+			$query = wesql::query('
+				SELECT id_task
+				FROM {db_prefix}scheduled_tasks
 				WHERE task IN ({array_string:tasks})',
 				array(
 					'tasks' => $tasks,
 				)
 			);
+			while ($row = wesql::fetch_row($query))
+				$task_ids[] = $row[0];
+			wesql::free_result($query);
+			if (!empty($task_ids))
+			{
+				wesql::query('
+					DELETE FROM {db_prefix}scheduled_tasks
+					WHERE id_task IN ({array_int:tasks})',
+					array(
+						'tasks' => $task_ids,
+					)
+				);
+				wesql::query('
+					DELETE FROM {db_prefix}log_scheduled_tasks
+					WHERE id_task IN ({array_int:tasks})',
+					array(
+						'tasks' => $task_ids,
+					)
+				);
+			}
+		}
 	}
 
 	// Clean settings, including the master storage for this plugin's hooks if it was ever used. Make sure to flush caches.

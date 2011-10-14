@@ -1383,7 +1383,7 @@ function ModifyLanguage()
 			while ($entry = $dir->read())
 			{
 				// We're only after the files for this language.
-				if (preg_match('~^([A-Za-z0-9_]+)\.' . $context['lang_id'] . '\.php$~', $entry, $matches) == 0)
+				if (preg_match('~^([A-Za-z0-9_-]+)\.' . $context['lang_id'] . '\.php$~', $entry, $matches) == 0)
 					continue;
 
 				//!!! Temp!
