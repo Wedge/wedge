@@ -1112,6 +1112,7 @@ function knownHooks()
 			'create_post_after',
 			'modify_post_before',
 			'modify_post_after',
+			'remove_topics',
 			// Process flow and execution
 			'default_action',
 			'fallback_action',

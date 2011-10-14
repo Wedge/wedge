@@ -544,6 +544,8 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		);
 	}
 
+	call_hook('remove_topics', array(&$topics, &$decreasePostCount, &$ignoreRecycling));
+
 	// Update the totals...
 	updateStats('message');
 	updateStats('topic');

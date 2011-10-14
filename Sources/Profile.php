@@ -659,10 +659,6 @@ function ModifyProfile($post_errors = array())
 			elseif (isset($profile_vars['real_name']))
 				updateSettings(array('memberlist_updated' => time()));
 
-			// If the member changed his/her birthdate, update calendar statistics.
-			if (isset($profile_vars['birthdate']) || isset($profile_vars['real_name']))
-				updateSettings(array('calendar_updated' => time()));
-
 			// Anything worth logging?
 			if (!empty($context['log_changes']) && !empty($modSettings['log_enabled_profile']))
 			{
