@@ -1076,7 +1076,7 @@ function knownHooks()
 			'detect_browser',
 			'load_theme',
 			'menu_items',
-			'actions',
+			'action_list',
 			'behavior',
 			// Threads and posts display
 			'post_bbc_parse',

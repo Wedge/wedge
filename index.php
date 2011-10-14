@@ -355,7 +355,7 @@ function wedge_main()
 		$action = 'feed';
 
 	// Allow modifying $action_list easily. (It's a global by now.)
-	call_hook('actions');
+	call_hook('action_list');
 
 	// Get the function and file to include - if it's not there, do the board index.
 	if (empty($action) || !isset($action_list[$action]))
