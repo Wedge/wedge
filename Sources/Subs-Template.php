@@ -162,13 +162,6 @@ function ob_sessrewrite($buffer)
 
 	call_hook('dynamic_rewrite', array(&$buffer));
 
-	// If guests/users can't view user profiles, we might as well unlink them!
-	if (!allowedTo('profile_view_any'))
-		$buffer = preg_replace(
-			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
-			'$1', $buffer
-		);
-
 	// Plugins may add inline CSS with add_css()...
 	if (!empty($context['header_css']))
 		$context['header'] .= "\n\t<style>" . $context['header_css'] . "\n\t</style>";
@@ -259,6 +252,13 @@ function ob_sessrewrite($buffer)
 
 	// Very fast on-the-fly replacement of <URL>...
 	$buffer = str_replace('<URL>', $scripturl, $buffer);
+
+	// If guests/users can't view user profiles, we might as well unlink them!
+	if (!allowedTo('profile_view_any'))
+		$buffer = preg_replace(
+			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
+			'$1', $buffer
+		);
 
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']))

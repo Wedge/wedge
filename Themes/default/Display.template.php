@@ -21,7 +21,7 @@ function template_display_posts()
 	// Show the topic information - icon, subject, etc.
 	echo '
 			<div id="forumposts">
-				<form action="', $scripturl, '?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave() : false">';
+				<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave() : false">';
 
 	$ignoredMsgs = array();
 	$removableMessageIDs = array();
@@ -81,17 +81,17 @@ function template_display_posts()
 		// Can they reply? Have they turned on quick reply?
 		if ($context['can_quote'] && !empty($options['display_quick_reply']))
 			echo '
-									<li><a href="', $scripturl, '?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last_msg=', $context['topic_last_message'], '" class="quote_button" id="quote_button_', $message['id'], '" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
+									<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" id="quote_button_', $message['id'], '" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
 
 		// So... quick reply is off, but they *can* reply?
 		elseif ($context['can_quote'])
 			echo '
-									<li><a href="', $scripturl, '?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last_msg=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
+									<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
 
 		// Can the user modify the contents of this post?
 		if ($message['can_modify'])
 			echo '
-									<li><a href="', $scripturl, '?action=post;msg=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
+									<li><a href="<URL>?action=post;msg=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
 
 		if (!empty($context['action_menu'][$message['id']]))
 			echo '
@@ -154,7 +154,7 @@ function template_display_posts()
 										<legend>', $txt['attach_awaiting_approve'];
 
 					if ($context['can_approve'])
-						echo '&nbsp;[<a href="', $scripturl, '?action=attachapprove;sa=all;mid=', $message['id'], ';', $context['session_query'], '">', $txt['approve_all'], '</a>]';
+						echo '&nbsp;[<a href="<URL>?action=attachapprove;sa=all;mid=', $message['id'], ';', $context['session_query'], '">', $txt['approve_all'], '</a>]';
 
 					echo '</legend>';
 				}
@@ -173,7 +173,7 @@ function template_display_posts()
 
 				if (!$attachment['is_approved'] && $context['can_approve'])
 					echo '
-										[<a href="', $scripturl, '?action=attachapprove;sa=approve;aid=', $attachment['id'], ';', $context['session_query'], '">', $txt['approve'], '</a>]&nbsp;|&nbsp;[<a href="', $scripturl, '?action=attachapprove;sa=reject;aid=', $attachment['id'], ';', $context['session_query'], '">', $txt['delete'], '</a>] ';
+										[<a href="<URL>?action=attachapprove;sa=approve;aid=', $attachment['id'], ';', $context['session_query'], '">', $txt['approve'], '</a>]&nbsp;|&nbsp;[<a href="<URL>?action=attachapprove;sa=reject;aid=', $attachment['id'], ';', $context['session_query'], '">', $txt['delete'], '</a>] ';
 				echo '
 										(', $attachment['size'], ($attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] . ' - ' . $txt['attach_viewed'] : ' - ' . $txt['attach_downloaded']) . ' ' . $attachment['downloads'] . ' ' . $txt['attach_times'] . '.)<br>';
 			}
@@ -204,7 +204,7 @@ function template_display_posts()
 		if ($context['can_issue_warning'] && !$message['is_message_author'] && !$message['member']['is_guest'])
 			echo '
 								<div class="report">
-									<a href="', $scripturl, '?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $settings['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>
+									<a href="<URL>?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $settings['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>
 								</div>';
 
 		echo '
@@ -409,7 +409,7 @@ function template_display_posts()
 
 function template_userbox(&$message)
 {
-	global $context, $modSettings, $txt, $settings, $scripturl;
+	global $context, $modSettings, $txt, $settings;
 
 	echo '
 							<h4>';
@@ -449,7 +449,7 @@ function template_userbox(&$message)
 		if (!empty($settings['show_user_images']) && empty($options['show_no_avatars']) && !empty($message['member']['avatar']['image']))
 			echo '
 								<li class="avatar">
-									<a href="', $scripturl, '?action=profile;u=', $message['member']['id'], '">
+									<a href="<URL>?action=profile;u=', $message['member']['id'], '">
 										', $message['member']['avatar']['image'], '
 									</a>
 								</li>';
@@ -507,12 +507,12 @@ function template_userbox(&$message)
 		// Are we showing the warning status?
 		if ($message['member']['can_see_warning'])
 			echo '
-								<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '<a href="' . $scripturl . '?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $settings['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
+								<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $settings['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
 	}
 	// Otherwise, show the guest's email.
 	elseif (!empty($message['member']['email']) && in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-								<li class="email"><a href="', $scripturl, '?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
+								<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
 
 	echo '
 							</ul>';
@@ -520,7 +520,7 @@ function template_userbox(&$message)
 
 function template_profile_icons(&$message)
 {
-	global $context, $settings, $txt, $scripturl;
+	global $context, $settings, $txt;
 
 	echo '
 								<li class="profile">
@@ -538,12 +538,12 @@ function template_profile_icons(&$message)
 	// Don't show the email address if they want it hidden.
 	if (in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-										<li><a href="', $scripturl, '?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
+										<li><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
 
 	// Since we know this person isn't a guest, you *can* message them.
 	if ($context['can_send_pm'])
 		echo '
-										<li><a href="', $scripturl, '?action=pm;sa=send;u=', $message['member']['id'], '" title="', $message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline'], '">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/im_' . ($message['member']['online']['is_online'] ? 'on' : 'off') . '.gif" alt="' . ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']) . '">' : ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']), '</a></li>';
+										<li><a href="<URL>?action=pm;sa=send;u=', $message['member']['id'], '" title="', $message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline'], '">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/im_' . ($message['member']['online']['is_online'] ? 'on' : 'off') . '.gif" alt="' . ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']) . '">' : ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']), '</a></li>';
 
 	// Show the IP address if you're suitably privileged.
 	if ($message['can_see_ip'] && !empty($message['member']['ip']))
@@ -551,16 +551,16 @@ function template_profile_icons(&$message)
 		// Because this seems just a touch convoluted if a single line.
 		if (!$context['can_moderate_forum'])
 			echo '
-										<li><a href="', $scripturl, '?action=help;in=see_member_ip" onclick="return reqWin(this);" class="helpc"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
+										<li><a href="<URL>?action=help;in=see_member_ip" onclick="return reqWin(this);" class="helpc"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
 		else
 			echo '
-										<li><a href="', $scripturl, '?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
+										<li><a href="<URL>?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
 	}
 
 	// Maybe they want to report this post to the moderator(s)?
 	if ($context['can_report_moderator'] && !$message['is_message_author'])
 		echo '
-										<li><a href="', $scripturl, '?topic=', $context['current_topic'], '.0;action=report;msg=', $message['id'], '"><img src="', $settings['images_url'], '/report.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
+										<li><a href="<URL>?topic=', $context['current_topic'], '.0;action=report;msg=', $message['id'], '"><img src="', $settings['images_url'], '/report.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
 
 	echo '
 									</ul>
@@ -569,19 +569,19 @@ function template_profile_icons(&$message)
 
 function template_topic_poll()
 {
-	global $settings, $options, $context, $txt, $scripturl, $modSettings;
+	global $settings, $options, $context, $txt, $modSettings;
 
 	if (empty($context['is_poll']))
 		return;
 
 	// Build the poll moderation button array.
 	$poll_buttons = array(
-		'vote' => array('test' => 'allow_return_vote', 'text' => 'poll_return_vote', 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start']),
-		'results' => array('test' => 'show_view_results_button', 'text' => 'poll_results', 'url' => $scripturl . '?topic=' . $context['current_topic'] . '.' . $context['start'] . ';viewresults'),
-		'change_vote' => array('test' => 'allow_change_vote', 'text' => 'poll_change_vote', 'url' => $scripturl . '?action=poll;sa=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_query']),
-		'lock' => array('test' => 'allow_lock_poll', 'text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'url' => $scripturl . '?action=poll;sa=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-		'edit' => array('test' => 'allow_edit_poll', 'text' => 'poll_edit', 'url' => $scripturl . '?action=poll;sa=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']),
-		'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['poll_remove_warn']) . ');"', 'url' => $scripturl . '?action=poll;sa=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+		'vote' => array('test' => 'allow_return_vote', 'text' => 'poll_return_vote', 'url' => '<URL>?topic=' . $context['current_topic'] . '.' . $context['start']),
+		'results' => array('test' => 'show_view_results_button', 'text' => 'poll_results', 'url' => '<URL>?topic=' . $context['current_topic'] . '.' . $context['start'] . ';viewresults'),
+		'change_vote' => array('test' => 'allow_change_vote', 'text' => 'poll_change_vote', 'url' => '<URL>?action=poll;sa=vote;topic=' . $context['current_topic'] . '.' . $context['start'] . ';poll=' . $context['poll']['id'] . ';' . $context['session_query']),
+		'lock' => array('test' => 'allow_lock_poll', 'text' => (!$context['poll']['is_locked'] ? 'poll_lock' : 'poll_unlock'), 'url' => '<URL>?action=poll;sa=lockvoting;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+		'edit' => array('test' => 'allow_edit_poll', 'text' => 'poll_edit', 'url' => '<URL>?action=poll;sa=editpoll;topic=' . $context['current_topic'] . '.' . $context['start']),
+		'remove_poll' => array('test' => 'can_remove_poll', 'text' => 'poll_remove', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['poll_remove_warn']) . ');"', 'url' => '<URL>?action=poll;sa=removepoll;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 	);
 
 	$show_voters = ($context['poll']['show_results'] || !$context['allow_vote']) && $context['allow_poll_view'];
@@ -626,7 +626,7 @@ function template_topic_poll()
 	else
 	{
 		echo '
-					<form action="', $scripturl, '?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
+					<form action="<URL>?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
 
 		// Show a warning if they are allowed more than one option.
 		if ($context['poll']['allowed_warning'])
@@ -657,7 +657,7 @@ function template_topic_poll()
 
 function template_quick_reply()
 {
-	global $settings, $options, $txt, $context, $scripturl, $modSettings;
+	global $settings, $options, $txt, $context, $modSettings;
 
 	if (!$context['can_reply'] || empty($options['display_quick_reply']))
 	{
@@ -678,7 +678,7 @@ function template_quick_reply()
 					<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
 					<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
 					<br>' : '', '
-					<form action="', $scripturl, '?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
+					<form action="<URL>?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
 						<input type="hidden" name="topic" value="', $context['current_topic'], '">
 						<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
 						<input type="hidden" name="icon" value="xx">
@@ -686,7 +686,7 @@ function template_quick_reply()
 						<input type="hidden" name="notify" value="', $context['is_marked_notify'] || !empty($options['auto_notify']) ? '1' : '0', '">
 						<input type="hidden" name="not_approved" value="', !$context['can_reply_approved'], '">
 						<input type="hidden" name="goback" value="', empty($options['return_to_post']) ? '0' : '1', '">
-						<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">
+						<input type="hidden" name="last" value="', $context['topic_last_message'], '">
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 						<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">';
 
@@ -734,7 +734,7 @@ function template_quick_reply()
 	if ($context['show_spellchecking'] && (empty($context['footer']) || strpos($context['footer'], '"spell_form"') === false))
 	{
 		$context['footer'] .= '
-<form action="' . $scripturl . '?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value=""></form>';
+<form action="<URL>?action=spellcheck" method="post" accept-charset="UTF-8" name="spell_form" id="spell_form" target="spellWindow"><input type="hidden" name="spellstring" value=""></form>';
 		add_js_file('scripts/spellcheck.js');
 	}
 }
@@ -774,12 +774,12 @@ function template_report_success()
 
 function template_display_draft()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	if ($context['draft_saved'])
 		echo '
 	<div class="windowbg" id="profile_success">
-		', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
+		', str_replace('{draft_link}', '<URL>?action=profile;area=showdrafts', $txt['draft_saved']), '
 	</div>';
 }
 

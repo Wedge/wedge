@@ -239,7 +239,7 @@ function Post2()
 		}
 
 		// If the number of replies has changed, if the setting is enabled, go back to Post() - which handles the error.
-		if (empty($options['no_new_reply_warning']) && isset($_POST['last_msg']) && $topic_info['id_last_msg'] > $_POST['last_msg'])
+		if (empty($options['no_new_reply_warning']) && isset($_POST['last']) && $topic_info['id_last_msg'] > $_POST['last'])
 		{
 			$_REQUEST['preview'] = true;
 			loadSource('Post');

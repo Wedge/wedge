@@ -352,18 +352,18 @@ function Post()
 	// See if any new replies have come along.
 	if (empty($_REQUEST['msg']) && !empty($topic))
 	{
-		if (empty($options['no_new_reply_warning']) && isset($_REQUEST['last_msg']) && $context['topic_last_message'] > $_REQUEST['last_msg'])
+		if (empty($options['no_new_reply_warning']) && isset($_REQUEST['last']) && $context['topic_last_message'] > $_REQUEST['last'])
 		{
 			$request = wesql::query('
 				SELECT COUNT(*)
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
-					AND id_msg > {int:last_msg}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					AND id_msg > {int:last}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 					AND approved = {int:approved}') . '
 				LIMIT 1',
 				array(
 					'current_topic' => $topic,
-					'last_msg' => (int) $_REQUEST['last_msg'],
+					'last' => (int) $_REQUEST['last'],
 					'approved' => 1,
 				)
 			);
@@ -373,12 +373,12 @@ function Post()
 			if (!empty($context['new_replies']))
 			{
 				if ($context['new_replies'] == 1)
-					$txt['error_new_reply'] = isset($_GET['last_msg']) ? $txt['error_new_reply_reading'] : $txt['error_new_reply'];
+					$txt['error_new_reply'] = isset($_GET['last']) ? $txt['error_new_reply_reading'] : $txt['error_new_reply'];
 				else
-					$txt['error_new_replies'] = sprintf(isset($_GET['last_msg']) ? $txt['error_new_replies_reading'] : $txt['error_new_replies'], $context['new_replies']);
+					$txt['error_new_replies'] = sprintf(isset($_GET['last']) ? $txt['error_new_replies_reading'] : $txt['error_new_replies'], $context['new_replies']);
 
 				// If they've come from the display page then we treat the error differently....
-				if (isset($_GET['last_msg']))
+				if (isset($_GET['last']))
 					$newRepliesError = $context['new_replies'];
 				else
 					$context['post_error'][$context['new_replies'] == 1 ? 'new_reply' : 'new_replies'] = true;
