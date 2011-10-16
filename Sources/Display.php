@@ -389,8 +389,6 @@ function Display()
 			list ($next_topic, $next_title) = array($prev_topic, $prev_title);
 			$prev_topic = $prev_title = '';
 		}
-		$context['prev_topic'] = $prev_topic;
-		$context['next_topic'] = $next_topic;
 	}
 
 	// Create a previous/next string if the selected theme has it as a selected option.
@@ -464,12 +462,12 @@ function Display()
 		'num_pages' => floor(($context['total_visible_posts'] - 1) / $context['messages_per_page']) + 1,
 	);
 
-	// Figure out all the link to the next/prev/first/last/etc. for wireless mainly.
+	// Figure out all the link to the next/prev/first/last/up for Wireless and header <link>.
 	$context['links'] = array(
-		'first' => $_REQUEST['start'] >= $context['messages_per_page'] ? $scripturl . '?topic=' . $topic . '.0' : '',
-		'prev' => $_REQUEST['start'] >= $context['messages_per_page'] ? $scripturl . '?topic=' . $topic . '.' . ($_REQUEST['start'] - $context['messages_per_page']) : '',
-		'next' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? $scripturl . '?topic=' . $topic. '.' . ($_REQUEST['start'] + $context['messages_per_page']) : '',
-		'last' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? $scripturl . '?topic=' . $topic. '.' . (floor($context['total_visible_posts'] / $context['messages_per_page']) * $context['messages_per_page']) : '',
+		'first' => $_REQUEST['start'] >= $context['messages_per_page'] ? '<URL>?topic=' . $topic . '.0' : '',
+		'prev' => $_REQUEST['start'] >= $context['messages_per_page'] ? '<URL>?topic=' . $topic . '.' . ($_REQUEST['start'] - $context['messages_per_page']) : '',
+		'next' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? '<URL>?topic=' . $topic. '.' . ($_REQUEST['start'] + $context['messages_per_page']) : '',
+		'last' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? '<URL>?topic=' . $topic. '.' . (floor($context['total_visible_posts'] / $context['messages_per_page']) * $context['messages_per_page']) : '',
 		'up' => $scripturl . '?board=' . $board . '.0'
 	);
 
@@ -530,7 +528,7 @@ function Display()
 	$context['mark_unread_time'] = $topicinfo['new_from'];
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl . '?topic=' . $topic . '.' . $context['start'];
+	$context['canonical_url'] = $scripturl . '?topic=' . $topic . '.' . $context['start'] . ($can_show_all ? ';all' : '');
 
 	// For quick reply we need a response prefix in the default forum language.
 	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix', 600)))

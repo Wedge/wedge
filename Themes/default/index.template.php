@@ -137,9 +137,11 @@ function template_skeleton()
 // The main block above the content.
 function template_html_before()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings, $boardurl;
+	global $context, $settings, $options, $txt, $modSettings, $boardurl;
 
-	// Declare HTML5, and show right to left and the character set for ease of translating.
+	// Declare our HTML5 doctype, and whether to show right to left.
+	// The charset is already specified in the headers so it may be omitted,
+	// but the specs recommend leaving them in, if the document is viewed offline.
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_dictionary']) ? ' lang="' . $txt['lang_dictionary'] . '"' : '', '>
 <!-- Powered by Wedge, (c) Wedgeward - http://wedge.org -->
@@ -166,20 +168,23 @@ function template_html_before()
 
 	// Show all the relative links, such as search.
 	echo '
-	<link rel="search" href="', $scripturl, '?action=search">';
+	<link rel="search" href="<URL>?action=search">';
 
 	// If feeds are enabled, advertise the presence of one.
 	if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']))
 		echo '
-	<link rel="alternate" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '" href="', $scripturl, '?action=feed">';
+	<link rel="alternate" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '" href="<URL>?action=feed">';
 
-	// If we're viewing a topic, these should be the previous and next topics, respectively.
-	if (!empty($context['prev_topic']))
-		echo '
-	<link rel="prev" href="', $scripturl, '?topic=', $context['prev_topic'], '.0">';
-	if (!empty($context['next_topic']))
-		echo '
-	<link rel="next" href="', $scripturl, '?topic=', $context['next_topic'], '.0">';
+	// If we're viewing a topic, we should link to the previous and next pages, respectively. Search engines like this.
+	if (empty($context['robot_no_index']))
+	{
+		if (!empty($context['links']['prev']))
+			echo '
+	<link rel="prev" href="', $context['links']['prev'], '">';
+		if (!empty($context['links']['next']))
+			echo '
+	<link rel="next" href="', $context['links']['next'], '">';
+	}
 
 	if ($context['browser']['is_iphone'])
 		echo '
@@ -237,13 +242,13 @@ function template_header_after()
 
 function template_search_box()
 {
-	global $context, $scripturl, $txt;
+	global $context, $txt;
 
 	if (empty($context['allow_search']))
 		return;
 
 	echo '
-			<form id="search_form" action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
+			<form id="search_form" action="<URL>?action=search2" method="post" accept-charset="UTF-8">
 				<input type="search" name="search" value="" class="search">
 				<input type="submit" name="submit" value="', $txt['search'], '">
 				<input type="hidden" name="advanced" value="0">';
@@ -321,7 +326,7 @@ function template_sidebar_wrap_before()
 
 function template_sidebar_before()
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $context, $modSettings;
 
 	echo '
 		<we:title>
@@ -336,8 +341,8 @@ function template_sidebar_before()
 			<ul id="noava">' : '
 			' . $context['user']['avatar']['image'] . '
 			<ul>', '
-				<li><a href="', $scripturl, '?action=unread">', $txt['show_unread'], '</a></li>
-				<li><a href="', $scripturl, '?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
+				<li><a href="<URL>?action=unread">', $txt['show_unread'], '</a></li>
+				<li><a href="<URL>?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
 
 		// Are there any members waiting for approval?
 		if (!empty($context['unapproved_members']))
@@ -346,7 +351,7 @@ function template_sidebar_before()
 
 		if (!empty($context['open_mod_reports']) && $context['show_open_reports'])
 			echo '
-				<li><a href="', $scripturl, '?action=moderate;area=reports">', number_context('mod_reports_waiting', $context['open_mod_reports']), '</a></li>';
+				<li><a href="<URL>?action=moderate;area=reports">', number_context('mod_reports_waiting', $context['open_mod_reports']), '</a></li>';
 
 		echo '
 			</ul>
@@ -361,7 +366,7 @@ function template_sidebar_before()
 	elseif (!empty($context['show_login_bar']))
 	{
 		echo '
-			<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
+			<form id="guest_form" action="<URL>?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 				<div class="info">', $txt['login_or_register'], '</div>
 				<input type="text" name="user" size="10">
 				<input type="password" name="passwrd" size="10">
@@ -388,7 +393,7 @@ function template_sidebar_before()
 // This function is only added to the list if the feeds are available, so we don't even need to check anything.
 function template_sidebar_feed()
 {
-	global $topic, $board, $txt, $context, $scripturl, $board_info;
+	global $topic, $board, $txt, $context, $board_info;
 
 	echo '
 		<we:title>
@@ -401,19 +406,19 @@ function template_sidebar_feed()
 	if (!empty($topic))
 		echo '
 			<dt>', $txt['feed_current_topic'], '</dt>
-			<dd>', sprintf($txt['feed_posts'], $scripturl . '?topic=' . $topic . ';action=feed'), '</dd>';
+			<dd>', sprintf($txt['feed_posts'], '<URL>?topic=' . $topic . ';action=feed'), '</dd>';
 
 	// Board level feed
 	if (!empty($board))
 	{
-		$feed = $scripturl . '?board=' . $board_info['id'] . ';action=feed';
+		$feed = '<URL>?board=' . $board_info['id'] . ';action=feed';
 		echo '
 			<dt>', $board_info['type'] == 'blog' ? $txt['feed_current_blog'] : $txt['feed_current_board'], '</dt>
 			<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>';
 	}
 
 	// Forum-wide and end
-	$feed = $scripturl . '?action=feed';
+	$feed = '<URL>?action=feed';
 	echo '
 			<dt>', $txt['feed_everywhere'], '</dt>
 			<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>
@@ -472,7 +477,7 @@ function template_wrapper_after()
 
 function template_body_after()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings, $footer_coding;
+	global $context, $settings, $options, $txt, $modSettings, $footer_coding;
 
 	echo '
 ', $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'] ? '' : '
@@ -503,7 +508,7 @@ function template_body_after()
 	echo "\n", theme_base_js(), '
 <script><!-- // --><![CDATA[
 	var
-		we_script = "', $scripturl, '",
+		we_script = "<URL>",
 		we_default_theme_url = ', $settings['theme_url'] === $settings['theme_url'] ? 'we_theme_url = ' : '', '"', $settings['default_theme_url'], '", ', $settings['theme_url'] === $settings['theme_url'] ? '' : '
 		we_theme_url = "' . $settings['theme_url'] . '",', '
 		we_sessid = "', $context['session_id'], '",
@@ -537,14 +542,15 @@ function template_linktree($force_show = false, $on_bottom = false)
 {
 	global $context, $settings, $options, $shown_linktree;
 
-	echo '
-	<div id="linktree', $on_bottom ? '_bt' : '', '">';
+	// itemtype is provided for validation purposes.
+ 	echo '
+	<div id="linktree', $on_bottom ? '_bt' : '', '" itemscope itemtype="http://schema.org/WebPage">';
 
 	// If linktree is empty, just return - also allow an override.
 	if (!empty($context['linktree']) && ($linksize = count($context['linktree'])) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
 	{
 		echo '
-		<ul>';
+		<ul itemprop="breadcrumb">';
 
 		// Each tree item has a URL and name. Some may have extra_before and extra_after.
 		$num = 0;
@@ -579,7 +585,7 @@ function template_linktree($force_show = false, $on_bottom = false)
 // Show the menu up top. Something like [home] [profile] [logout]...
 function template_menu()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $settings, $options, $txt;
 
 	echo '
 	<div id="navi"><ul id="main_menu" class="css menu">';
@@ -638,7 +644,7 @@ function template_menu()
 // The same footer area...
 function template_footer()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	if (!empty($context['bottom_linktree']))
 		template_linktree(false, true);
@@ -656,9 +662,9 @@ function template_footer()
 	echo '
 			<li class="copyright">', $txt['copyright'], '</li>
 			<li class="links">
-				<a id="site_credits" href="', $scripturl, '?action=credits">', $txt['site_credits'], '</a> |
+				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
 				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
-				<a id="button_wap2" href="', $scripturl, '?wap2" class="new_win">', $txt['wap2'], '</a>
+				<a id="button_wap2" href="<URL>?wap2" class="new_win">', $txt['wap2'], '</a>
 			</li>
 		</ul>
 	</div></div>';
@@ -768,7 +774,7 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 // Generate a strip of buttons.
 function template_button_strip($button_strip, $direction = 'right', $strip_options = array())
 {
-	global $settings, $context, $txt, $scripturl;
+	global $settings, $context, $txt;
 
 	if (!is_array($strip_options))
 		$strip_options = array();
