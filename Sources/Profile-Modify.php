@@ -56,9 +56,6 @@ if (!defined('WEDGE'))
 	void options(int id_member)
 		// !!!
 
-	void authentication(int id_member, bool saving = false)
-		// !!!
-
 	void notification(int id_member)
 		// !!!
 
@@ -383,7 +380,6 @@ function loadProfileFields($force_reload = false)
 			'subtext' => $txt['password_strength'],
 			'size' => 20,
 			'value' => '',
-			'enabled' => empty($cur_profile['openid_uri']),
 			'permission' => 'profile_identity',
 			'save_key' => 'passwd',
 			// Note this will only work if passwrd2 also exists!
@@ -414,7 +410,6 @@ function loadProfileFields($force_reload = false)
 		'passwrd2' => array(
 			'type' => 'password',
 			'label' => $txt['verify_pass'],
-			'enabled' => empty($cur_profile['openid_uri']),
 			'size' => 20,
 			'value' => '',
 			'permission' => 'profile_identity',
@@ -1612,83 +1607,6 @@ function options($memID)
 			'theme_settings',
 		)
 	);
-}
-
-// Changing authentication method? Only appropriate for people using OpenID.
-function authentication($memID, $saving = false)
-{
-	global $context, $cur_profile, $txt, $post_errors, $modSettings;
-
-	loadLanguage('Login');
-
-	// We are saving?
-	if ($saving)
-	{
-		// Moving to password passed authentication?
-		if ($_POST['authenticate'] == 'passwd')
-		{
-			// Didn't enter anything?
-			if ($_POST['passwrd1'] == '')
-				$post_errors[] = 'no_password';
-			// Do the two entries for the password even match?
-			elseif (!isset($_POST['passwrd2']) || $_POST['passwrd1'] != $_POST['passwrd2'])
-				$post_errors[] = 'bad_new_password';
-			// Is it valid?
-			else
-			{
-				loadSource('Subs-Auth');
-				$passwordErrors = validatePassword($_POST['passwrd1'], $cur_profile['member_name'], array($cur_profile['real_name'], $cur_profile['email_address']));
-
-				// Were there errors?
-				if ($passwordErrors != null)
-					$post_errors[] = 'password_' . $passwordErrors;
-			}
-
-			if (empty($post_errors))
-			{
-				// Hook?
-				call_hook('reset_pass', array($cur_profile['member_name'], $cur_profile['member_name'], $_POST['passwrd1']));
-
-				// Go then.
-				$passwd = sha1(strtolower($cur_profile['member_name']) . un_htmlspecialchars($_POST['passwrd1']));
-
-				// Do the important bits.
-				updateMemberData($memID, array('openid_uri' => '', 'passwd' => $passwd));
-				if ($context['user']['is_owner'])
-					setLoginCookie(60 * $modSettings['cookieTime'], $memID, sha1(sha1(strtolower($cur_profile['member_name']) . un_htmlspecialchars($_POST['passwrd2'])) . $cur_profile['password_salt']));
-
-				redirectexit('action=profile;u=' . $memID);
-			}
-
-			return true;
-		}
-		// Not right yet!
-		elseif ($_POST['authenticate'] == 'openid' && !empty($_POST['openid_identifier']))
-		{
-			loadSource('Subs-OpenID');
-			$_POST['openid_identifier'] = we_openID_canonize($_POST['openid_identifier']);
-
-			if (we_openID_member_exists($_POST['openid_identifier']))
-				$post_errors[] = 'openid_in_use';
-			elseif (empty($post_errors))
-			{
-				// Authenticate using the new OpenID URI first to make sure they didn't make a mistake.
-				if ($context['user']['is_owner'])
-				{
-					$_SESSION['new_openid_uri'] = $_POST['openid_identifier'];
-
-					we_openID_validate($_POST['openid_identifier'], false, null, 'change_uri');
-				}
-				else
-					updateMemberData($memID, array('openid_uri' => $_POST['openid_identifier']));
-			}
-		}
-	}
-
-	// Some stuff.
-	$context['member']['openid_uri'] = $cur_profile['openid_uri'];
-	$context['auth_method'] = empty($cur_profile['openid_uri']) ? 'password' : 'openid';
-	wetem::load('authentication_method');
 }
 
 // Display the notifications and settings for changes.

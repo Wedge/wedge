@@ -216,20 +216,6 @@ function ModifyProfile($post_errors = array())
 					),
 				),
 				'',
-				'authentication' => array(
-					'label' => $txt['authentication'],
-					'file' => 'Profile-Modify',
-					'function' => 'authentication',
-					'enabled' => !empty($modSettings['enableOpenID']) || !empty($cur_profile['openid_uri']),
-					'sc' => 'post',
-					'hidden' => empty($modSettings['enableOpenID']) && empty($cur_profile['openid_uri']),
-					'password' => true,
-					'permission' => array(
-						'own' => array('profile_identity_any', 'profile_identity_own'),
-						'any' => array('profile_identity_any'),
-					),
-				),
-				'',
 				'notification' => array(
 					'label' => $txt['notification'],
 					'file' => 'Profile-Modify',
@@ -423,7 +409,7 @@ function ModifyProfile($post_errors = array())
 			else
 				$profile_areas[$section_id]['areas'][$area_id]['permission'] = $area['permission'][$context['user']['is_owner'] ? 'own' : 'any'];
 
-			// Password required - only if not on OpenID.
+			// Password required?
 			if (!empty($area['password']))
 				$context['password_areas'][] = $area_id;
 		}
@@ -547,7 +533,7 @@ function ModifyProfile($post_errors = array())
 
 	// All the subactions that require a user password in order to validate.
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
-	$context['require_password'] = $check_password && empty($user_settings['openid_uri']);
+	$context['require_password'] = $check_password;
 
 	// If we're in wireless then we have a cut down template...
 	if (WIRELESS && wetem::has('summary'))
@@ -570,32 +556,23 @@ function ModifyProfile($post_errors = array())
 
 		if ($check_password)
 		{
-			// If we're using OpenID try to revalidate.
-			if (!empty($user_settings['openid_uri']))
-			{
-				loadSource('Subs-OpenID');
-				we_openID_revalidate();
-			}
-			else
-			{
-				// You didn't even enter a password!
-				if (trim($_POST['oldpasswrd']) == '')
-					$post_errors[] = 'no_password';
+			// You didn't even enter a password!
+			if (trim($_POST['oldpasswrd']) == '')
+				$post_errors[] = 'no_password';
 
-				// Since the password got modified due to all the $_POST cleaning, let's undo it so we can get the correct password
-				$_POST['oldpasswrd'] = un_htmlspecialchars($_POST['oldpasswrd']);
+			// Since the password got modified due to all the $_POST cleaning, let's undo it so we can get the correct password
+			$_POST['oldpasswrd'] = un_htmlspecialchars($_POST['oldpasswrd']);
 
-				// Does a hook want to check passwords?
-				$good_password = in_array(true, call_hook('verify_password', array($cur_profile['member_name'], $_POST['oldpasswrd'], false)), true);
+			// Does a hook want to check passwords?
+			$good_password = in_array(true, call_hook('verify_password', array($cur_profile['member_name'], $_POST['oldpasswrd'], false)), true);
 
-				// Bad password!!!
-				if (!$good_password && $user_info['passwd'] != sha1(strtolower($cur_profile['member_name']) . $_POST['oldpasswrd']))
-					$post_errors[] = 'bad_password';
+			// Bad password!!!
+			if (!$good_password && $user_info['passwd'] != sha1(strtolower($cur_profile['member_name']) . $_POST['oldpasswrd']))
+				$post_errors[] = 'bad_password';
 
-				// Warn other elements not to jump the gun and do custom changes!
-				if (in_array('bad_password', $post_errors))
-					$context['password_auth_failed'] = true;
-			}
+			// Warn other elements not to jump the gun and do custom changes!
+			if (in_array('bad_password', $post_errors))
+				$context['password_auth_failed'] = true;
 		}
 
 		// Change the IP address in the database.
@@ -622,11 +599,6 @@ function ModifyProfile($post_errors = array())
 
 			// Whatever we've done, we have nothing else to do here...
 			redirectexit('action=profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=groupmembership' . (!empty($msg) ? ';msg=' . $msg : ''));
-		}
-		// Authentication changes?
-		elseif ($current_area == 'authentication')
-		{
-			authentication($memID, true);
 		}
 		elseif (in_array($current_area, array('account', 'forumprofile', 'options', 'pmprefs')))
 			saveProfileFields();

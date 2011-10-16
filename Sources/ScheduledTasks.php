@@ -481,21 +481,6 @@ function scheduled_daily_maintenance()
 			)
 		);
 
-	// Regenerate the Diffie-Hellman keys if OpenID is enabled.
-	if (!empty($modSettings['enableOpenID']))
-	{
-		loadSource('Subs-OpenID');
-		we_openID_setup_DH(true);
-	}
-	elseif (!empty($modSettings['dh_keys']))
-		wesql::query('
-			DELETE FROM {db_prefix}settings
-			WHERE variable = {string:dh_keys}',
-			array(
-				'dh_keys' => 'dh_keys',
-			)
-		);
-
 	// Clear out any old drafts if appropriate.
 	if (!empty($modSettings['pruneSaveDrafts']))
 		wesql::query('

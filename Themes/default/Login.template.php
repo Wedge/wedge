@@ -45,16 +45,7 @@ function template_login()
 					<dd><input type="text" name="user" size="20" value="', $context['default_username'], '"></dd>
 					<dt>', $txt['password'], ':</dt>
 					<dd><input type="password" name="passwrd" value="', $context['default_password'], '" size="20"></dd>
-				</dl>';
-
-	if (!empty($modSettings['enableOpenID']))
-		echo '<p><strong>&mdash;', $txt['or'], '&mdash;</strong></p>
-				<dl>
-					<dt>', $txt['openid'], ':</dt>
-					<dd><input type="text" name="openid_identifier" class="openid_login" size="17">&nbsp;<em><a href="', $scripturl, '?action=help;in=register_openid" onclick="return reqWin(this);">(?)</a></em></dd>
-				</dl><hr>';
-
-	echo '
+				</dl>
 				<dl>
 					<dt>', $txt['mins_logged_in'], ':</dt>
 					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $modSettings['cookieTime'], '"', $context['never_expire'] ? ' disabled' : '', '></dd>
@@ -113,20 +104,7 @@ function template_kick_guest()
 					<dt>', $txt['username'], ':</dt>
 					<dd><input type="text" name="user" size="20"></dd>
 					<dt>', $txt['password'], ':</dt>
-					<dd><input type="password" name="passwrd" size="20"></dd>';
-
-	if (!empty($modSettings['enableOpenID']))
-		echo '
-				</dl>
-				<p><strong>&mdash;', $txt['or'], '&mdash;</strong></p>
-				<dl>
-					<dt>', $txt['openid'], ':</dt>
-					<dd><input type="text" name="openid_identifier" class="openid_login" size="17"></dd>
-				</dl>
-				<hr>
-				<dl>';
-
-	echo '
+					<dd><input type="password" name="passwrd" size="20"></dd>
 					<dt>', $txt['mins_logged_in'], ':</dt>
 					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $modSettings['cookieTime'], '"></dd>
 					<dt>', $txt['always_logged_in'], ':</dt>

@@ -38,10 +38,6 @@ function Logout($internal = false, $redirect = true)
 	if (isset($_SESSION['pack_ftp']))
 		$_SESSION['pack_ftp'] = null;
 
-	// They cannot be open ID verified any longer.
-	if (isset($_SESSION['openid']))
-		unset($_SESSION['openid']);
-
 	// It won't be first login anymore.
 	unset($_SESSION['first_login']);
 

@@ -143,15 +143,6 @@ function validateSession()
 			return;
 		}
 	}
-	// OpenID?
-	if (!empty($user_settings['openid_uri']))
-	{
-		loadSource('Subs-OpenID');
-		we_openID_revalidate();
-
-		$_SESSION['admin_time'] = time();
-		return;
-	}
 
 	// Need to type in a password for that, man.
 	adminLogin();

@@ -3,7 +3,3 @@
 	overflow: hidden
 	.info
 		padding: 4px 0
-
-.openid_login
-	background: white url($images/openid.gif) no-repeat
-	padding-left: 18px

@@ -255,7 +255,7 @@ function SetReserve()
 }
 
 /**
- * Allows the admin to modify some generation registration settings, such as the method of account creation (instant, member email confirmation, admin approval per account, disabled), whether OpenID is enabled, sending emails on registration and so on.
+ * Allows the admin to modify some generation registration settings, such as the method of account creation (instant, member email confirmation, admin approval per account, disabled), sending emails on registration and so on.
  *
  * - COPPA compliance settings are managed here too.
  * - Accessed by ?action=admin;area=regcenter;sa=settings.
@@ -272,7 +272,6 @@ function ModifyRegistrationSettings($return_config = false)
 
 	$config_vars = array(
 			array('select', 'registration_method', array($txt['setting_registration_standard'], $txt['setting_registration_activate'], $txt['setting_registration_approval'], $txt['setting_registration_disabled'])),
-			array('check', 'enableOpenID'),
 			array('check', 'notify_new_registration'),
 			array('check', 'send_welcomeEmail'),
 			array('check', 'send_validation_onChange'),

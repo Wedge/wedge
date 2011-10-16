@@ -50,11 +50,11 @@ function template_reminder_pick()
 				<p><strong>', $txt['authentication_options'], ':</strong></p>
 				<p>
 					<label><input type="radio" name="reminder_type" id="reminder_type_email" value="email" checked></dt>
-					', $txt['authentication_' . $context['account_type'] . '_email'], '</label></dd>
+					', $txt['authentication_password_email'], '</label></dd>
 				</p>
 				<p>
 					<label><input type="radio" name="reminder_type" id="reminder_type_secret" value="secret">
-					', $txt['authentication_' . $context['account_type'] . '_secret'], '</label>
+					', $txt['authentication_password_secret'], '</label>
 				</p>
 				<p class="centertext"><input type="submit" value="', $txt['reminder_continue'], '" class="submit"></p>
 			</div>
@@ -139,15 +139,12 @@ function template_ask()
 				', $txt['authentication_reminder'], '
 			</we:cat>
 			<div class="roundframe">
-				<p class="smalltext">', $context['account_type'] == 'password' ? $txt['enter_new_password'] : $txt['openid_secret_reminder'], '</p>
+				<p class="smalltext">', $txt['enter_new_password'], '</p>
 				<dl>
 					<dt>', $txt['secret_question'], ':</dt>
 					<dd>', $context['secret_question'], '</dd>
 					<dt>', $txt['secret_answer'], ':</dt>
-					<dd><input type="text" name="secret_answer" size="22"></dd>';
-
-	if ($context['account_type'] == 'password')
-		echo '
+					<dd><input type="text" name="secret_answer" size="22"></dd>
 					<dt>', $txt['choose_pass'], ': </dt>
 					<dd>
 						<input type="password" name="passwrd1" id="we_autov_pwmain" size="22">
@@ -161,9 +158,7 @@ function template_ask()
 						<span id="we_autov_pwverify_div" class="hide">
 							<img id="we_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif">
 						</span>
-					</dd>';
-
-	echo '
+					</dd>
 				</dl>
 				<p class="floatright"><input type="submit" value="', $txt['save'], '" class="save"></p>
 			</div>
@@ -174,8 +169,7 @@ function template_ask()
 
 	add_js_file('scripts/register.js');
 
-	if ($context['account_type'] == 'password')
-		add_js('
+	add_js('
 	var regTextStrings = {
 		"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
 		"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',

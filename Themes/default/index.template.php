@@ -375,10 +375,6 @@ function template_sidebar_before()
 				<input type="submit" value="', $txt['login'], '" class="submit"><br>
 				<div class="info">', $txt['quick_login_dec'], '</div>';
 
-		if (!empty($modSettings['enableOpenID']))
-			echo '
-				<br><input type="text" name="openid_identifier" id="openid_url" size="25" class="openid_login">';
-
 		echo '
 				<input type="hidden" name="hash_passwrd" value="">
 			</form>';

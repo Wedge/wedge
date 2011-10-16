@@ -466,15 +466,6 @@ function registerMember(&$regOptions, $return_errors = false)
 			fatal_lang_error('register_only_once', false);
 	}
 
-	// What method of authorization are we going to use?
-	if (empty($regOptions['auth_method']) || !in_array($regOptions['auth_method'], array('password', 'openid')))
-	{
-		if (!empty($regOptions['openid']))
-			$regOptions['auth_method'] = 'openid';
-		else
-			$regOptions['auth_method'] = 'password';
-	}
-
 	// No name?!  How can you register with no name?
 	if (empty($regOptions['username']))
 		$reg_errors[] = array('lang', 'need_username');
@@ -532,13 +523,13 @@ function registerMember(&$regOptions, $return_errors = false)
 
 		// Password isn't legal?
 		if ($passwordError != null)
-			$reg_errors[] = array('lang', 'profile_error_password_' . $passwordError);
-	}
+		{
+			if ($passwordError == 'short')
+				$txt['profile_error_password_short'] = sprintf($txt['profile_error_password_short'], empty($modSettings['password_strength']) ? 4 : 8);
 
-	// If they are using an OpenID that hasn't been verified yet error out.
-	// !!! Change this so they can register without having to attempt a login first
-	if ($regOptions['auth_method'] == 'openid' && (empty($_SESSION['openid']['verified']) || $_SESSION['openid']['openid_uri'] != $regOptions['openid']))
-		$reg_errors[] = array('lang', 'openid_not_verified');
+			$reg_errors[] = array('lang', 'profile_error_password_' . $passwordError);
+		}
+	}
 
 	// You may not be allowed to register this email.
 	if (!empty($regOptions['check_email_ban']))
@@ -642,7 +633,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		'additional_groups' => '',
 		'ignore_boards' => '',
 		'smiley_set' => '',
-		'openid_uri' => (!empty($regOptions['openid']) ? $regOptions['openid'] : ''),
 	);
 
 	// Setup the activation status on this new account so it is correct - firstly is it an under age account?
@@ -799,9 +789,8 @@ function registerMember(&$regOptions, $return_errors = false)
 				'USERNAME' => $regOptions['username'],
 				'PASSWORD' => $regOptions['password'],
 				'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
-				'OPENID' => !empty($regOptions['openid']) ? $regOptions['openid'] : '',
 			);
-			$emaildata = loadEmailTemplate('register_' . ($regOptions['auth_method'] == 'openid' ? 'openid_' : '') . 'immediate', $replacements);
+			$emaildata = loadEmailTemplate('register_immediate', $replacements);
 			sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 		}
 
@@ -816,7 +805,6 @@ function registerMember(&$regOptions, $return_errors = false)
 			'USERNAME' => $regOptions['username'],
 			'PASSWORD' => $regOptions['password'],
 			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
-			'OPENID' => !empty($regOptions['openid']) ? $regOptions['openid'] : '',
 		);
 
 		if ($regOptions['require'] == 'activation')
@@ -830,7 +818,7 @@ function registerMember(&$regOptions, $return_errors = false)
 				'COPPALINK' => $scripturl . '?action=coppa;u=' . $memberID,
 			);
 
-		$emaildata = loadEmailTemplate('register_' . ($regOptions['auth_method'] == 'openid' ? 'openid_' : '') . ($regOptions['require'] == 'activation' ? 'activate' : 'coppa'), $replacements);
+		$emaildata = loadEmailTemplate('register_' . ($regOptions['require'] == 'activation' ? 'activate' : 'coppa'), $replacements);
 
 		sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 	}
@@ -842,10 +830,9 @@ function registerMember(&$regOptions, $return_errors = false)
 			'USERNAME' => $regOptions['username'],
 			'PASSWORD' => $regOptions['password'],
 			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
-			'OPENID' => !empty($regOptions['openid']) ? $regOptions['openid'] : '',
 		);
 
-		$emaildata = loadEmailTemplate('register_' . ($regOptions['auth_method'] == 'openid' ? 'openid_' : '') . 'pending', $replacements);
+		$emaildata = loadEmailTemplate('register_pending', $replacements);
 
 		sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 

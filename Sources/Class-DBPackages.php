@@ -35,7 +35,7 @@ class wedbPackages
 			'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_intrusion', 'log_mark_read', 'log_notify',
 			'log_online', 'log_packages', 'log_polls', 'log_reported', 'log_reported_comments', 'log_scheduled_tasks',
 			'log_search_messages', 'log_search_results', 'log_search_subjects', 'log_search_topics', 'log_topics', 'mail_queue',
-			'membergroups', 'members', 'message_icons', 'messages', 'moderators', 'openid_assoc', 'package_servers',
+			'membergroups', 'members', 'message_icons', 'messages', 'moderators', 'package_servers',
 			'permission_profiles', 'permissions', 'personal_messages', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls',
 			'pretty_topic_urls', 'pretty_urls_cache', 'scheduled_tasks', 'sessions', 'settings', 'smileys', 'spiders',
 			'subscriptions', 'subscriptions_groups', 'themes', 'topics');

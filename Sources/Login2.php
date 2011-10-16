@@ -114,13 +114,6 @@ function Login2()
 		'name' => $txt['login'],
 	);
 
-	if (!empty($_POST['openid_identifier']) && !empty($modSettings['enableOpenID']))
-	{
-		loadSource('Subs-OpenID');
-		if (($open_id = we_openID_validate($_POST['openid_identifier'])) !== 'no_data')
-			return $open_id;
-	}
-
 	// You forgot to type your username, dummy!
 	if (!isset($_POST['user']) || $_POST['user'] == '')
 	{
@@ -152,8 +145,7 @@ function Login2()
 
 	// Load the data up!
 	$request = wesql::query('
-		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt,
-			openid_uri, passwd_flood
+		SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, passwd_flood
 		FROM {db_prefix}members
 		WHERE member_name = {string:user_name}
 		LIMIT 1',
@@ -167,8 +159,7 @@ function Login2()
 		wesql::free_result($request);
 
 		$request = wesql::query('
-			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, openid_uri,
-			passwd_flood
+			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, passwd_flood
 			FROM {db_prefix}members
 			WHERE email_address = {string:user_name}
 			LIMIT 1',

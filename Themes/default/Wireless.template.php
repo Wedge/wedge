@@ -192,13 +192,6 @@ function template_wap2_login()
 			<p class="win">', $txt['password'], ':</p>
 			<p class="win"><input type="password" name="passwrd" size="10" /></p>';
 
-	// Open ID?
-	if (!empty($modSettings['enableOpenID']))
-		echo '
-			<p class="win"><strong>&mdash;', $txt['or'], '&mdash;</strong></p>
-			<p class="win">', $txt['openid'], ':</p>
-			<p class="win"><input type="text" name="openid_identifier" class="openid_login" size="17" /></p>';
-
 	echo '
 			<p class="win"><input type="submit" value="', $txt['login'], '" class="submit" /><input type="hidden" name="cookieneverexp" value="1" /></p>
 			<p class="cat">', $txt['wireless_navigation'], '</p>

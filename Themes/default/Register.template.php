@@ -61,38 +61,6 @@ function template_registration_form()
 		return true;
 	}
 
-	var currentAuthMethod = "passwd";
-
-	function updateAuthMethod()
-	{
-		// What authentication method is being used?
-		currentAuthMethod = $("#auth_openid").is(":checked") ? "openid" : "passwd";
-
-		// No openID?
-		if (!$("#auth_openid").length)
-			return;
-
-		var is_pw = currentAuthMethod == "passwd";
-		document.forms.registration.openid_url.disabled = is_pw;
-		document.forms.registration.we_autov_pwmain.disabled = !is_pw;
-		document.forms.registration.we_autov_pwverify.disabled = !is_pw;
-		$("#we_autov_pwmain_div, #we_autov_pwverify_div, #password1_group, #password2_group").toggle(is_pw);
-		$("#openid_group").toggle(!is_pw);
-
-		if (is_pw)
-		{
-			verificationHandle.refreshMainPassword();
-			verificationHandle.refreshVerifyPassword();
-			document.forms.registration.openid_url.style.backgroundColor = "";
-		}
-		else
-		{
-			document.forms.registration.we_autov_pwmain.style.backgroundColor = "";
-			document.forms.registration.we_autov_pwverify.style.backgroundColor = "";
-			document.forms.registration.openid_url.style.backgroundColor = "#FFF0F0";
-		}
-	}
-
 	function autoDetectTimeOffset(currentTime)
 	{
 		var localTime = +new Date(), serverTime = typeof currentTime != "number" ? currentTime : +new Date(currentTime);
@@ -117,9 +85,6 @@ function template_registration_form()
 	};
 
 	var verificationHandle = new weRegister("registration", ' . (empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength']) . ', regTextStrings);
-
-	// Update the authentication status.
-	updateAuthMethod();
 
 	$(\'#time_offset\').val(autoDetectTimeOffset(' . $context['current_forum_time_js'] . '000));');
 
@@ -169,31 +134,7 @@ function template_registration_form()
 						<dd>
 							<input type="checkbox" name="allow_email" id="allow_email" tabindex="', $context['tabindex']++, '">
 						</dd>
-					</dl>';
-
-	// If OpenID is enabled, give the user a choice between password and OpenID.
-	if (!empty($modSettings['enableOpenID']))
-	{
-		echo '
-					<dl class="register_form" id="authentication_group">
-						<dt>
-							<strong>', $txt['authenticate_label'], ':</strong>
-							<a href="', $scripturl, '?action=help;in=register_openid" onclick="return reqWin(this);">(?)</a>
-						</dt>
-						<dd>
-							<label id="option_auth_pass">
-								<input type="radio" name="authenticate" value="passwd" id="auth_pass" tabindex="', $context['tabindex']++, '"', empty($context['openid']) ? ' checked ' : '', ' onclick="updateAuthMethod();">
-								', $txt['authenticate_password'], '
-							</label>
-							<label id="option_auth_openid">
-								<input type="radio" name="authenticate" value="openid" id="auth_openid" tabindex="', $context['tabindex']++, '"', !empty($context['openid']) ? ' checked ' : '', ' onclick="updateAuthMethod();">
-								', $txt['authenticate_openid'], '
-							</label>
-						</dd>
-					</dl>';
-	}
-
-	echo '
+					</dl>
 					<dl class="register_form" id="password1_group">
 						<dt><strong><label for="we_autov_pwmain">', $txt['choose_pass'], ':</label></strong></dt>
 						<dd>
@@ -211,23 +152,7 @@ function template_registration_form()
 								<img id="we_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif">
 							</span>
 						</dd>
-					</dl>';
-
-	// If OpenID is enabled, give the user a choice between password and OpenID.
-	if (!empty($modSettings['enableOpenID']))
-	{
-		echo '
-
-					<dl class="register_form" id="openid_group">
-						<dt><strong>', $txt['authenticate_openid_url'], ':</strong></dt>
-						<dd>
-							<input type="text" name="openid_identifier" id="openid_url" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['openid']) ? $context['openid'] : '', '" class="openid_login">
-						</dd>
-					</dl>';
-
-	}
-
-	echo '
+					</dl>
 				</fieldset>
 			</div>';
 
