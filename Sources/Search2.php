@@ -1667,7 +1667,7 @@ function prepareSearchContext($reset = false)
 				'id' => $message['first_member_id'],
 				'name' => $message['first_member_name'],
 				'href' => !empty($message['first_member_id']) ? $scripturl . '?action=profile;u=' . $message['first_member_id'] : '',
-				'link' => !empty($message['first_member_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $message['first_member_id'] . '" title="' . $txt['profile_of'] . ' ' . $message['first_member_name'] . '">' . $message['first_member_name'] . '</a>' : $message['first_member_name']
+				'link' => !empty($message['first_member_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $message['first_member_id'] . '" title="' . $txt['view_profile'] . '">' . $message['first_member_name'] . '</a>' : $message['first_member_name']
 			)
 		),
 		'last_post' => array(
@@ -1683,7 +1683,7 @@ function prepareSearchContext($reset = false)
 				'id' => $message['last_member_id'],
 				'name' => $message['last_member_name'],
 				'href' => !empty($message['last_member_id']) ? $scripturl . '?action=profile;u=' . $message['last_member_id'] : '',
-				'link' => !empty($message['last_member_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $message['last_member_id'] . '" title="' . $txt['profile_of'] . ' ' . $message['last_member_name'] . '">' . $message['last_member_name'] . '</a>' : $message['last_member_name']
+				'link' => !empty($message['last_member_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $message['last_member_id'] . '" title="' . $txt['view_profile'] . '">' . $message['last_member_name'] . '</a>' : $message['last_member_name']
 			)
 		),
 		'board' => array(

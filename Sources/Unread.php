@@ -600,7 +600,7 @@ function Unread()
 					'name' => $row['first_poster_name'],
 					'id' => $row['id_first_member'],
 					'href' => $scripturl . '?action=profile;u=' . $row['id_first_member'],
-					'link' => !empty($row['id_first_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_first_member'] . '" title="' . $txt['profile_of'] . ' ' . $row['first_poster_name'] . '">' . $row['first_poster_name'] . '</a>' : $row['first_poster_name']
+					'link' => !empty($row['id_first_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_first_member'] . '" title="' . $txt['view_profile'] . '">' . $row['first_poster_name'] . '</a>' : $row['first_poster_name']
 				),
 				'time' => timeformat($row['first_poster_time']),
 				'timestamp' => forum_time(true, $row['first_poster_time']),
