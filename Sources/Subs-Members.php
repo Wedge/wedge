@@ -497,24 +497,19 @@ function registerMember(&$regOptions, $return_errors = false)
 		$validation_code = generateValidationCode();
 
 	// If you haven't put in a password generate one.
-	if ($regOptions['interface'] == 'admin' && $regOptions['password'] == '' && $regOptions['auth_method'] == 'password')
+	if ($regOptions['interface'] == 'admin' && $regOptions['password'] == '')
 	{
 		mt_srand(time() + 1277);
 		$regOptions['password'] = generateValidationCode();
 		$regOptions['password_check'] = $regOptions['password'];
 	}
 	// Does the first password match the second?
-	elseif ($regOptions['password'] != $regOptions['password_check'] && $regOptions['auth_method'] == 'password')
+	elseif ($regOptions['password'] != $regOptions['password_check'])
 		$reg_errors[] = array('lang', 'passwords_dont_match');
 
 	// That's kind of easy to guess...
 	if ($regOptions['password'] == '')
-	{
-		if ($regOptions['auth_method'] == 'password')
-			$reg_errors[] = array('lang', 'no_password');
-		else
-			$regOptions['password'] = sha1(mt_rand());
-	}
+		$reg_errors[] = array('lang', 'no_password');
 
 	// Now perform hard password validation as required.
 	if (!empty($regOptions['check_password_strength']))

@@ -626,20 +626,25 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 		// Is this the current year? Then why bother printing out the year?
 		if ($then['year'] == $now['year'])
 		{
-			// Determine what to delete from the string. This should take care of all common permutations,
-			// but custom years like Japanese or Chinese (<year ideogram><year>) are still going to be a problem.
-			if (!isset($year_shortcut))
+			if ($format === $txt['time_format'])
+				$show_today = $txt['time_format_this_year'];
+			else
 			{
-				if (strpos($format, ', %Y') !== false)
-					$y = ', %Y';
-				elseif (strpos($format, ' %Y') !== false)
-					$y = ' %Y';
-				elseif (preg_match('~[./-]%Y|%Y[./-]~', $format, $match))
-					$y = $match[0];
-				$year_shortcut = isset($y) ? $y : false;
+				// Determine what to delete from the string. This should take care of all common permutations,
+				// but we'll give up on more complex formats like Japanese or Chinese (i.e. <year ideogram><year>)
+				if (!isset($year_shortcut))
+				{
+					if (strpos($format, ', %Y') !== false)
+						$y = ', %Y';
+					elseif (strpos($format, ' %Y') !== false)
+						$y = ' %Y';
+					elseif (preg_match('~[./-]%Y|%Y[./-]~', $format, $match))
+						$y = $match[0];
+					$year_shortcut = isset($y) ? $y : false;
+				}
+				if (!empty($year_shortcut))
+					$show_today = str_replace($year_shortcut, '', $format);
 			}
-			if (!empty($year_shortcut))
-				$show_today = str_replace($year_shortcut, '', $format);
 		}
 	}
 

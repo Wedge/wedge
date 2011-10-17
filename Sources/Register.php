@@ -324,7 +324,6 @@ function Register2()
 		'email' => !empty($_POST['email']) ? $_POST['email'] : '',
 		'password' => !empty($_POST['passwrd1']) ? $_POST['passwrd1'] : '',
 		'password_check' => !empty($_POST['passwrd2']) ? $_POST['passwrd2'] : '',
-		'auth_method' => !empty($_POST['authenticate']) ? $_POST['authenticate'] : '',
 		'check_reserved_name' => true,
 		'check_password_strength' => true,
 		'check_email_ban' => true,
