@@ -581,7 +581,7 @@ function number_context($string, $number, $format_comma = true)
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $context, $user_info, $txt, $modSettings;
-	static $non_twelve_hour;
+	static $non_twelve_hour, $year_shortcut;
 
 	// Offset the time.
 	if (!$offset_type)
@@ -594,6 +594,8 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if ($log_time < 0)
 		$log_time = 0;
 
+	$format =& $user_info['time_format'];
+
 	// Today and Yesterday?
 	if ($modSettings['todayMod'] >= 1 && $show_today === true)
 	{
@@ -604,10 +606,10 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 		$now = @getdate($nowtime);
 
 		// Try to make something of a time format string...
-		$s = strpos($user_info['time_format'], '%S') === false ? '' : ':%S';
-		if (strpos($user_info['time_format'], '%H') === false && strpos($user_info['time_format'], '%T') === false)
+		$s = strpos($format, '%S') === false ? '' : ':%S';
+		if (strpos($format, '%H') === false && strpos($format, '%T') === false)
 		{
-			$h = strpos($user_info['time_format'], '%l') === false ? '%I' : '%l';
+			$h = strpos($format, '%l') === false ? '%I' : '%l';
 			$today_fmt = $h . ':%M' . $s . ' %p';
 		}
 		else
@@ -623,15 +625,30 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 
 		// Is this the current year? Then why bother printing out the year?
 		if ($then['year'] == $now['year'])
-			$show_today = str_replace(array(', %Y', ' %Y'), '', $user_info['time_format']);
+		{
+			// Determine what to delete from the string. This should take care of all common permutations,
+			// but custom years like Japanese or Chinese (<year ideogram><year>) are still going to be a problem.
+			if (!isset($year_shortcut))
+			{
+				if (strpos($format, ', %Y') !== false)
+					$y = ', %Y';
+				elseif (strpos($format, ' %Y') !== false)
+					$y = ' %Y';
+				elseif (preg_match('~[./-]%Y|%Y[./-]~', $format, $match))
+					$y = $match[0];
+				$year_shortcut = isset($y) ? $y : false;
+			}
+			if (!empty($year_shortcut))
+				$show_today = str_replace($year_shortcut, '', $format);
+		}
 	}
 
-	$str = !is_bool($show_today) ? $show_today : $user_info['time_format'];
+	$str = !is_bool($show_today) ? $show_today : $format;
 
 	if (!isset($non_twelve_hour))
 		$non_twelve_hour = trim(strftime('%p')) === '';
 	if ($non_twelve_hour && strpos($str, '%p') !== false)
-		$str = str_replace('%p', strftime('%H', $time) < 12 ? $txt['time_am'] : $txt['time_pm'], $str);
+		$str = str_replace('%p', strftime('%H', $time) < 12 ? 'am' : 'pm', $str);
 
 	if ($user_info['setlocale'])
 	{
