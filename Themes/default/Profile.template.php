@@ -39,6 +39,8 @@ function template_summary()
 {
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
+	$group = !empty($context['member']['group']) ? 'group' : 'post_group';
+
 	// Display the basic information about the user
 	echo '
 <div id="profileview" class="flow_auto">
@@ -49,11 +51,12 @@ function template_summary()
 	<div id="basicinfo">
 		<div class="windowbg wrc">
 			<div class="flow_auto">
-				<div class="username"><h4>', $context['member']['name'], ' <span class="position">', (!empty($context['member']['group']) ? $context['member']['group'] : $context['member']['post_group']), '</span></h4></div>
+				<div class="username"><h4', empty($context['member'][$group . '_color']) ? '' : ' style="color: ' . $context['member'][$group . '_color'] . '"', '>',
+				$context['member']['name'], ' <span class="position">', $context['member'][$group], '</span></h4></div>
 				', $context['member']['avatar']['image'], '
 				<ul class="reset">';
 
-	// What about if we allow email only via the forum??
+	// What about if we allow email only via the forum?
 	if ($context['member']['show_email'] === 'no_through_forum' || $context['member']['show_email'] === 'yes_permission_override')
 		echo '
 					<li><a href="', $scripturl, '?action=emailuser;sa=email;uid=', $context['member']['id'], '" title="', $context['member']['show_email'] == 'yes_permission_override' ? $context['member']['email'] : '', '" rel="nofollow"><img src="', $settings['images_url'], '/email_sm.gif" alt="', $txt['email'], '"></a></li>';

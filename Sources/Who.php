@@ -163,7 +163,7 @@ function Who()
 	$request = wesql::query('
 		SELECT
 			lo.log_time, lo.id_member, lo.url, li.member_ip AS ip, mem.real_name,
-			lo.session, mg.online_color, IFNULL(mem.show_online, 1) AS show_online,
+			lo.session, IFNULL(mem.show_online, 1) AS show_online,
 			lo.id_spider
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)
@@ -198,8 +198,7 @@ function Who()
 			'timestamp' => forum_time(true, $row['log_time']),
 			'query' => $actions,
 			'is_hidden' => $row['show_online'] == 0,
-			'id_spider' => $row['id_spider'],
-			'color' => empty($row['online_color']) ? '' : $row['online_color']
+			'id_spider' => $row['id_spider']
 		);
 
 		$url_data[$row['session']] = array($row['url'], $row['id_member']);

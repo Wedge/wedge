@@ -141,7 +141,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 function ob_sessrewrite($buffer)
 {
 	global $scripturl, $modSettings, $user_info, $context, $db_prefix, $session_var;
-	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache;
+	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache, $member_colors;
 
 	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
 	if ($scripturl == '' || !defined('SID'))
@@ -253,11 +253,40 @@ function ob_sessrewrite($buffer)
 	// Very fast on-the-fly replacement of <URL>...
 	$buffer = str_replace('<URL>', $scripturl, $buffer);
 
+	if (($member_colors = cache_get_data('member-colors', 5000)) === null)
+	{
+		$member_colors = array('group' => array(), 'color' => array());
+		$request = wesql::query('
+			SELECT m.id_member, m.id_post_group, g.id_group, g.online_color
+			FROM {db_prefix}members AS m
+			INNER JOIN {db_prefix}membergroups AS g ON g.online_color != {string:blank}
+				AND ((m.id_group = g.id_group) OR (m.id_post_group = g.id_group))',
+			array(
+				'blank' => '',
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+		{
+			if (empty($row['online_color']))
+				continue;
+			if (empty($member_colors['group'][$row['id_member']]) || $row['id_group'] !== $row['id_post_group'])
+				$member_colors['group'][$row['id_member']] = $row['id_group'];
+			$member_colors['color'][$row['id_group']] = $row['online_color'];
+		}
+		wesql::free_result($request);
+		cache_put_data('member-colors', $member_colors, 5000);
+	}
+
 	// If guests/users can't view user profiles, we might as well unlink them!
 	if (!allowedTo('profile_view_any'))
 		$buffer = preg_replace(
 			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
 			'$1', $buffer
+		);
+	else
+		$buffer = preg_replace_callback(
+			'~<a((?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile;(?:[^"]+;)?u=(\d+)"[^>]*)>(.*?)</a>~',
+			'wedge_profile_colors', $buffer
 		);
 
 	// Rewrite the buffer with pretty URLs!
@@ -412,6 +441,15 @@ function wedge_event_delayer($match)
 			$eve_list[] = $dupes[$dupe];
 	}
 	return rtrim($match[0], ' />') . ' data-eve="[' . implode(',', $eve_list) . ']">';
+}
+
+function wedge_profile_colors($match)
+{
+	global $member_colors;
+
+	if (!isset($member_colors['group'][$match[2]]) || strpos($match[1], 'bbc_link') !== false)
+		return '<a' . $match[1] . '>' . $match[3] . '</a>';
+	return '<a' . $match[1] . ' style="color: ' . $member_colors['color'][$member_colors['group'][$match[2]]] . '">' . $match[3] . '</a>';
 }
 
 // Remove and save script tags

@@ -311,8 +311,6 @@ img.new_posts
 		text-overflow: ellipsis
 		:hover, &.show
 			overflow: visible
-		a, &
-			color: #c06002
 
 	ul ul
 		margin: .3em 1em 0 0

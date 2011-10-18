@@ -32,7 +32,6 @@ function getMembersOnlineStats($membersOnlineOptions)
 		'log_time',
 		'real_name',
 		'show_online',
-		'online_color',
 		'group_name',
 	);
 	// Default the sorting method to 'most recent online members first'.
@@ -67,8 +66,8 @@ function getMembersOnlineStats($membersOnlineOptions)
 	// Load the users online right now.
 	$request = wesql::query('
 		SELECT
-			lo.id_member, lo.log_time, lo.id_spider, mem.real_name, mem.member_name, mem.show_online,
-			mg.online_color, mg.id_group, mg.group_name
+			lo.id_member, lo.log_time, lo.id_spider, mem.real_name, mem.member_name,
+			mem.show_online, mg.id_group, mg.group_name
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lo.id_member)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:reg_mem_group} THEN mem.id_post_group ELSE mem.id_group END)',
@@ -99,11 +98,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 			continue;
 		}
 
-		// Some basic color coding...
-		if (!empty($row['online_color']))
-			$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" style="color: ' . $row['online_color'] . ';">' . $row['real_name'] . '</a>';
-		else
-			$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+		$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 
 		// Buddies get counted and highlighted.
 		$is_buddy = in_array($row['id_member'], $user_info['buddies']);
@@ -133,8 +128,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		if (!isset($membersOnlineStats['online_groups'][$row['id_group']]))
 			$membersOnlineStats['online_groups'][$row['id_group']] = array(
 				'id' => $row['id_group'],
-				'name' => $row['group_name'],
-				'color' => $row['online_color']
+				'name' => $row['group_name']
 			);
 	}
 	wesql::free_result($request);
@@ -263,8 +257,8 @@ function getMembersOnlineDetails($type = 'board')
 
 	$request = wesql::query('
 		SELECT
-			lo.id_member, lo.log_time, mem.real_name, mem.member_name, mem.show_online,
-			mg.online_color, mg.id_group, mg.group_name
+			lo.id_member, lo.log_time, mem.real_name, mem.member_name,
+			mem.show_online, mg.id_group, mg.group_name
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lo.id_member)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:reg_member_group} THEN mem.id_post_group ELSE mem.id_group END)
@@ -280,10 +274,7 @@ function getMembersOnlineDetails($type = 'board')
 		if (empty($row['id_member']))
 			continue;
 
-		if (!empty($row['online_color']))
-			$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '" style="color: ' . $row['online_color'] . ';">' . $row['real_name'] . '</a>';
-		else
-			$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+		$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 
 		$is_buddy = in_array($row['id_member'], $user_info['buddies']);
 		if ($is_buddy)

@@ -252,6 +252,10 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				'members' => $parameter1,
 			)
 		);
+
+		// If one of the members switched to a different postgroup, clear the group color cache for them.
+		if (wesql::affected_rows() > 0)
+			cache_put_data('member-colors', null, 5000);
 	}
 	else
 		trigger_error('updateStats(): Invalid statistic type \'' . $type . '\'', E_USER_NOTICE);
