@@ -1167,7 +1167,9 @@ function cache_get_data($key, $ttl = 120)
 	}
 
 	// If the operation requires re-caching, return null to let the script know.
-	return empty($val) ? null : unserialize($val);
+	if (isset($val))
+		return unserialize($val);
+	return null;
 }
 
 function get_cache_type()

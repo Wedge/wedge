@@ -903,7 +903,7 @@ function RemovePlugin()
 		if (isset($_POST['nodelete']))
 			$context['remote_callback']['post_data']['nodelete'] = 1;
 
-		// Check that the entire tree is deleteable.
+		// Check that the entire tree is deletable.
 		$all_writable = true;
 		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($pluginsdir . '/' . $_GET['plugin']), RecursiveIteratorIterator::SELF_FIRST);
 		foreach ($iterator as $path)

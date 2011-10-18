@@ -81,3 +81,5 @@ class weFileWritable
 		return true;
 	}
 }
+
+?>
