@@ -178,4 +178,9 @@ function template_remove()
 	<br class="clear">';
 }
 
+function template_request_connect_details()
+{
+
+}
+
 ?>

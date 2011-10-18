@@ -868,6 +868,8 @@ function RemovePlugin()
 {
 	global $scripturl, $txt, $context, $pluginsdir;
 
+	loadSource('Subs-Plugins');
+
 	//libxml_use_internal_errors(true);
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
@@ -892,25 +894,36 @@ function RemovePlugin()
 	else
 	{
 		checkSession();
-		// !!! Check that the folder is deletable, and if not, exit gracefully to screen where we can collect the relevant details.
+
+		// OK, so we're purging stuff. That means it needs to be deletable. In case we need to call for FTP etc, make sure we know how to get back here.
+		$context['remote_callback'] = array(
+			'url' => '<URL>?action=admin;area=plugins;sa=remove;plugin=' . $_GET['plugin'] . ';commit;' . $context['session_query'],
+			'post_data' => array(),
+		);
+		if (isset($_POST['nodelete']))
+			$context['remote_callback']['post_data']['nodelete'] = 1;
+
+		// Check that the entire tree is deleteable.
 		$all_writable = true;
 		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($pluginsdir . '/' . $_GET['plugin']), RecursiveIteratorIterator::SELF_FIRST);
 		foreach ($iterator as $path)
 			if (!$path->isWritable())
 			{
-				if (@chmod($path->__toString(), $path->isDir() ? 0777 : 0666) == false)
-					$all_writable = false;
+				$all_writable = false;
 				break;
 			}
 
-		if (!$all_writable)
+		// Call for the remote(or local) connector. If we pass this point, we have a class instance that we must pass on to operations.
+		$remote_class = getWritableObject();
+
+		if (empty($remote_class))
 			fatal_lang_error('remove_plugin_files_pre_still_there', false);
 
 		// See whether we're saving or removing the data
 		if (isset($_POST['nodelete']))
-			commitRemovePlugin(false, $manifest);
+			commitRemovePlugin(false, $manifest, $remote_class);
 		elseif (isset($_POST['delete']))
-			commitRemovePlugin(true, $manifest);
+			commitRemovePlugin(true, $manifest, $remote_class);
 		else
 		{
 			// Just displaying the form anyway.
@@ -921,7 +934,7 @@ function RemovePlugin()
 }
 
 // This ugly function deals with actually removing a plugin.
-function commitRemovePlugin($fullclean, &$manifest)
+function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 {
 	global $scripturl, $txt, $context, $pluginsdir;
 
@@ -1019,7 +1032,7 @@ function commitRemovePlugin($fullclean, &$manifest)
 	);
 
 	// Lastly, actually do the delete.
-	$result = deleteFiletree($pluginsdir . '/' . $_GET['plugin']);
+	$result = deleteFiletree($remote_class, $pluginsdir . '/' . $_GET['plugin'], true);
 	if (empty($result))
 		fatal_lang_error('remove_plugin_files_still_there', false, $_GET['plugin']);
 	else
@@ -1049,22 +1062,6 @@ function isViablePlugin()
 	global $pluginsdir;
 
 	return (!empty($_GET['plugin']) && strpos($_GET['plugin'], DIRECTORY_SEPARATOR) === false && $_GET['plugin'][0] != '.' && filetype($pluginsdir . '/' . $_GET['plugin']) == 'dir' && file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'));
-}
-
-// Return true on success.
-function deleteFiletree($rootpath)
-{
-	$rootpath = realpath($rootpath);
-	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootpath), RecursiveIteratorIterator::CHILD_FIRST);
-	foreach ($iterator as $path)
-		if ($path->isDir())
-			@rmdir($path->__toString());
-		else
-			@unlink($path->__toString());
-
-	@rmdir($rootpath);
-
-	return (!file_exists($rootpath));
 }
 
 // Accepts the <required-functions> element and returns an array of functions that aren't available.
@@ -1123,7 +1120,9 @@ function knownHooks()
 			'logout',
 			'change_member_data',
 			'verify_password',
+			'verify_user',
 			'reset_pass',
+			'register',
 			'activate',
 			'delete_member',
 			'track_ip',
