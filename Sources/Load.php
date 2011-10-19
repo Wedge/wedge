@@ -980,12 +980,12 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			IFNULL(lo.log_time, 0) AS is_online, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
-			mem.birthdate, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login,
-			mem.id_post_group, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online, mem.media_items, mem.media_comments,
-			mem.buddy_list, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank_string}) AS member_group,
-			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.is_activated, mem.warning,
-			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank_string} THEN pg.stars ELSE mg.stars END AS stars' . (!empty($modSettings['titlesEnable']) ? ',
-			mem.usertitle' : '');
+			mem.birthdate, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile,
+			mem.id_group, mem.time_offset, mem.show_online, mem.media_items, mem.media_comments, mem.buddy_list, mem.warning,
+			mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank}) AS member_group,
+			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank}) AS post_group, mem.is_activated,
+			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank} THEN pg.stars ELSE mg.stars END AS stars'
+			. (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '');
 		$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
@@ -998,14 +998,14 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			IFNULL(lo.log_time, 0) AS is_online, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
-			mem.birthdate, mem.posts, mem.last_login, mem.media_items,
-			mem.media_comments, mem.member_ip, mem.member_ip2, mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list,
-			mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from, mem.time_offset' . (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '') . ',
-			mem.time_format, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
-			mem.total_time_logged_in, mem.id_post_group, mem.notify_announcements, mem.notify_regularity, mem.notify_send_body,
-			mem.notify_types, lo.url, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank_string}) AS member_group,
-			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.ignore_boards, mem.warning,
-			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank_string} THEN pg.stars ELSE mg.stars END AS stars, mem.password_salt, mem.pm_prefs';
+			mem.birthdate, mem.posts, mem.last_login, mem.media_items, mem.media_comments, mem.member_ip, mem.member_ip2,
+			mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list, mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from,
+			mem.time_offset, mem.time_format, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
+			mem.total_time_logged_in, mem.id_post_group, mem.notify_announcements, mem.notify_regularity, mem.notify_send_body, mem.warning,
+			mem.notify_types, lo.url, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank}) AS member_group,
+			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank}) AS post_group, mem.ignore_boards,
+			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank} THEN pg.stars ELSE mg.stars END AS stars, mem.password_salt, mem.pm_prefs'
+			. (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '');
 		$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
@@ -1030,7 +1030,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			FROM {db_prefix}members AS mem' . $select_tables . '
 			WHERE mem.' . ($is_name ? 'member_name' : 'id_member') . (count($users) == 1 ? ' = {' . ($is_name ? 'string' : 'int') . ':users}' : ' IN ({' . ($is_name ? 'array_string' : 'array_int') . ':users})'),
 			array(
-				'blank_string' => '',
+				'blank' => '',
 				'users' => count($users) == 1 ? current($users) : $users,
 			)
 		);

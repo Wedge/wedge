@@ -5,7 +5,7 @@
  */
 
 body
-	background: #f6f8ef
+	background: $body_bg
 	color: #333
 	padding: 0
 
@@ -17,13 +17,17 @@ body
 
 #edge
 	padding: 0
-	background: #f6f8ef
 
 #sidebar
-	border-width: 0 1px 0 0
-	border-radius: 0
-	background: none
+	border, border-radius: 0
+	background: $side_bg
 	text-align: right
+	a
+		color: #765
+		text-decoration: underline
+		border: 0
+	header
+		color: #744
 	.column
 		padding: 5px 25px 10px 15px
 	#edgehide &
@@ -79,7 +83,7 @@ body
 	padding: 16px 8px 0
 
 #footer
-	border-top: 2px solid darken($footer_bg, 20%)
+	border-top: 5px solid average($footer_bg, $body_bg)
 	background: $footer_bg
 	color: #333
 	ul
@@ -109,6 +113,13 @@ dl#feed
 	p
 		padding: 8px 0 0
 		clear: right
+
+#wedge_news
+	direction: rtl
+	dt, dd
+		direction: ltr
+	dt
+		margin: 0 1em
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
@@ -227,9 +238,12 @@ tr.titlebg th, tr.catbg th
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
 
-$alphamix = rgb(241,243,234)
-$main_bg  = rgb(241,243,234)
-$main_bg  = rgb(246,248,239)
-$head_bg  = rgba(233,235,186,.66)
+$alphamix  = rgb(241,243,234)
+$main_bg   = rgb(241,243,234)
+$main_bg   = rgb(246,248,239)
+$head_bg   = rgba(233,235,186,.66)
+$body_bg   = #f6f8ef
+$side_bg   = #e8e3cb
+$footer_bg = lighten($side_bg, 5%)
 $main_font = "PT Sans", "Segoe UI", "Trebuchet MS", Arial, sans-serif
 $post_font = 9.5pt/140% "Lucida Sans Unicode", Verdana, $main_font

@@ -173,9 +173,6 @@ function GroupList()
 		}
 	}
 
-	wetem::load('group_index');
-	$context['page_title'] = $txt['viewing_groups'];
-
 	// Making a list is not hard with this beauty.
 	loadSource('Subs-List');
 
@@ -242,6 +239,7 @@ function GroupList()
 
 	wetem::load('show_list');
 	$context['default_list'] = 'group_lists';
+	$context['page_title'] = $txt['viewing_groups'];
 }
 
 // Get the group information for the list.

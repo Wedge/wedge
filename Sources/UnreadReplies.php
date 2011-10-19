@@ -30,10 +30,6 @@ function UnreadReplies()
 		die;
 	}
 
-	// If they're requesting 'all', they don't want just replies.
-	if (isset($_GET['all']))
-		redirectexit('action=unread;all');
-
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
 	$context['page_title'] = $txt['unread_replies'];
@@ -525,7 +521,7 @@ function UnreadReplies()
 				$pages = '&#171; ' . $tmppages[0] . ' ' . $tmppages[1] . ' ... ' . $tmppages[count($tmppages) - 2] . ' ' . $tmppages[count($tmppages) - 1];
 
 			if (!empty($modSettings['enableAllMessages']) && $topic_length < $modSettings['enableAllMessages'])
-				$pages .= ' &nbsp;<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;all">' . $txt['all'] . '</a>';
+				$pages .= ' &nbsp;<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
 			$pages .= ' &#187;';
 		}
 		else

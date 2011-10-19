@@ -18,7 +18,6 @@ function template_main()
 	template_show_list('regular_membergroups_list');
 	echo '<br><br>';
 	template_show_list('post_count_membergroups_list');
-
 }
 
 function template_new_group()
@@ -303,12 +302,12 @@ function template_edit_group()
 						<dfn>' . $txt['membergroups_new_board_post_groups'] . '</dfn>' : '', '
 					</dt>
 					<dd>
-						<fieldset id="visible_boards" style="width: 95%;">
+						<fieldset id="visible_boards" style="width: 95%">
 							<legend><a href="#" onclick="$(\'#visible_boards\').hide(); $(\'#visible_boards_link\').show(); return false;">', $txt['membergroups_new_board_desc'], '</a></legend>';
 
 		foreach ($context['boards'] as $board)
 			echo '
-							<div style="margin-left: ', $board['child_level'], 'em;"><label><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '"', $board['selected'] ? ' checked' : '', '> ', $board['name'], '</label></div>';
+							<div style="margin-left: ', $board['child_level'], 'em"><label><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '"', $board['selected'] ? ' checked' : '', '> ', $board['name'], '</label></div>';
 
 		echo '
 							<br>
@@ -401,7 +400,7 @@ function template_group_members()
 						<strong>', $txt['name'], ':</strong>
 					</dt>
 					<dd>
-						<span ', $context['group']['online_color'] ? 'style="color: ' . $context['group']['online_color'] . ';"' : '', '>', $context['group']['name'], '</span> ', $context['group']['stars'], '
+						<span ', $context['group']['online_color'] ? 'style="color: ' . $context['group']['online_color'] . '"' : '', '>', $context['group']['name'], '</span> ', $context['group']['stars'], '
 					</dd>';
 
 	// Any description to show?
@@ -577,7 +576,7 @@ function template_group_request_reason()
 					</dt>
 					<dd>
 						<input type="hidden" name="groupr[]" value="', $request['id'], '">
-						<textarea name="groupreason[', $request['id'], ']" rows="3" cols="40" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . ';"></textarea>
+						<textarea name="groupreason[', $request['id'], ']" rows="3" cols="40" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . '"></textarea>
 					</dd>';
 
 	echo '

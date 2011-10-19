@@ -478,14 +478,14 @@ function Display()
 		{
 			// No limit! (actually, there is a limit, but...)
 			$context['messages_per_page'] = -1;
-			$context['page_index'] .= '[<strong>' . $txt['all'] . '</strong>] ';
+			$context['page_index'] .= '[<strong>' . $txt['all_pages'] . '</strong>] ';
 
 			// Set start back to 0...
 			$_REQUEST['start'] = 0;
 		}
 		// They aren't using it, but the *option* is there, at least.
 		else
-			$context['page_index'] .= '&nbsp;<a href="' . $scripturl . '?topic=' . $topic . '.0;all">' . $txt['all'] . '</a> ';
+			$context['page_index'] .= '&nbsp;<a href="' . $scripturl . '?topic=' . $topic . '.0;all">' . $txt['all_pages'] . '</a> ';
 	}
 
 	// Build the link tree.

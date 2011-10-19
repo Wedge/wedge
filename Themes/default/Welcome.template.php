@@ -30,7 +30,7 @@ function template_main()
 function template_info_before()
 {
 	echo '
-		<div class="roundframe">';
+		<div class="roundframe" style="margin: 16px 0">';
 }
 
 // This one is just here to show you that layers can get _before_before,

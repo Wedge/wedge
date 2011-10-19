@@ -634,13 +634,11 @@ function cache_getMembergroupList()
 	$request = wesql::query('
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups
-		WHERE min_posts = {int:min_posts}
-			AND hidden = {int:not_hidden}
+		WHERE hidden = {int:not_hidden}
 			AND id_group != {int:mod_group}
 			AND online_color != {string:blank_string}
 		ORDER BY group_name',
 		array(
-			'min_posts' => -1,
 			'not_hidden' => 0,
 			'mod_group' => 3,
 			'blank_string' => '',

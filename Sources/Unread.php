@@ -32,7 +32,7 @@ function Unread()
 
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
-	$context['page_title'] = $txt['unread_topics_all'];
+	$context['page_title'] = $txt['unread_topics'];
 
 	if (!empty($context['load_average']) && !empty($modSettings['loadavg_allunread']) && $context['load_average'] >= $modSettings['loadavg_allunread'])
 		fatal_lang_error('loadavg_allunread_disabled', false);
@@ -220,7 +220,7 @@ function Unread()
 
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=unread' . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'],
-		'name' => $txt['unread_topics_all'],
+		'name' => $txt['unread_topics'],
 	);
 
 	if (WIRELESS)
@@ -574,7 +574,7 @@ function Unread()
 				$pages = '&#171; ' . $tmppages[0] . ' ' . $tmppages[1] . ' ... ' . $tmppages[count($tmppages) - 2] . ' ' . $tmppages[count($tmppages) - 1];
 
 			if (!empty($modSettings['enableAllMessages']) && $topic_length < $modSettings['enableAllMessages'])
-				$pages .= ' &nbsp;<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;all">' . $txt['all'] . '</a>';
+				$pages .= ' &nbsp;<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
 			$pages .= ' &#187;';
 		}
 		else

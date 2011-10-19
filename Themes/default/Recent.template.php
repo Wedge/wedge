@@ -199,7 +199,7 @@ function template_unread()
 		}
 
 		if (!empty($context['topics']))
-			$mark_read['readall'] = array('text' => 'unread_topics_all', 'url' => $scripturl . '?action=unread;all' . $context['querystring_board_limits'], 'class' => 'active');
+			$mark_read['readall'] = array('text' => 'unread_topics', 'url' => $scripturl . '?action=unread' . $context['querystring_board_limits'], 'class' => 'active');
 		else
 			echo '
 					<tr class="hide"><td></td></tr>';
