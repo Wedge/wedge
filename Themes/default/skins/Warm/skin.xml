@@ -126,7 +126,7 @@
 		iOS devices to show the sidebar below the main content.
 	-->
 
-	<code for="ie6" include="scripts/pngfix.js,scripts/ie6hover.js"><![CDATA[
+	<code for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	DD_belatedPNG.fix('.ping,#wedgelogo,#footer,#footer div.frame');
@@ -145,6 +145,8 @@
 		Example:
 			.windowbg { behavior: url($behavior/Themes/default/PIE.htc); }
 	-->
+
+	<css include="http://fonts.googleapis.com/css?family=Droid+Sans:400,700"></css>
 
 	<css for="no_browser"><![CDATA[
 	.ie_sucks_anyway {}

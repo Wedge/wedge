@@ -468,10 +468,10 @@ input.cancel extends input.submit
 		background-color: #fff5e8
 
 input.search
-	background: #fdfaf9 url($images/filter.gif) 5px 2px no-repeat
+	background: #fdfaf9 url($images/filter.gif) 5px 3px no-repeat
 	padding-left: 24px
 	#header &
-		background: rgb(235,235,215) url($images/filter.gif) 5px 2px no-repeat
+		background: rgb(235,235,215) url($images/filter.gif) 5px 3px no-repeat
 
 // All input elements that are checkboxes or radio buttons shouldn't have a border around them.
 input[type=checkbox], input[type=radio]

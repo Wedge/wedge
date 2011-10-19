@@ -886,10 +886,21 @@ function wedge_get_skin_options()
 		if (strpos($set, '</skeleton>') !== false && preg_match('~<skeleton>(.*?)</skeleton>~s', $set, $match))
 			$context['skeleton'] = $match[1];
 
-		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
+		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
-				if (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1])))
-					add_css(rtrim($match[2], "\t"));
+			{
+				if (!empty($match[3]) && (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1]))))
+					add_css(rtrim($match[3], "\t"));
+				if (!empty($match[2]))
+				{
+					$includes = array_map('trim', explode(' ', $match[2]));
+					// Wedge currently only supports providing a full URI in <css include=""> statements.
+					foreach ($includes as $css_file)
+						if (strpos($css_file, '://') !== false)
+							$context['header'] .= '
+	<link rel="stylesheet" href="' . $css_file . '">';
+				}
+			}
 
 		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
 		{
@@ -900,9 +911,9 @@ function wedge_get_skin_options()
 
 				if (!empty($match[2]))
 				{
-					$includes = array_map('trim', explode(',', $match[2]));
-					// If we have an include param in the code tag, it should either use 'scripts/something.js' (in which case it'll
-					// find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
+					$includes = array_map('trim', explode(' ', $match[2]));
+					// If we have an include param in the code tag, it should either use a full URI, or 'scripts/something.js' (in which case
+					// it'll find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
 					if (strpos($match[2], '$here') !== false)
 						foreach ($includes as &$scr)
 							$scr = str_replace('$here', str_replace($settings['theme_dir'] . '/', '', $folder), $scr);

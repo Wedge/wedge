@@ -548,7 +548,7 @@ function MemberGroupsReport()
 
 		$group = array(
 			'name' => $row['group_name'],
-			'color' => empty($row['online_color']) ? '-' : '<span style="color: ' . $row['online_color'] . ';">' . $row['online_color'] . '</span>',
+			'color' => empty($row['online_color']) ? '-' : '<span style="color: ' . $row['online_color'] . '">' . $row['online_color'] . '</span>',
 			'min_posts' => $row['min_posts'] == -1 ? 'N/A' : $row['min_posts'],
 			'max_messages' => $row['max_messages'],
 			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
