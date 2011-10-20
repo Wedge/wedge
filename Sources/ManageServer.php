@@ -638,7 +638,7 @@ function AddLanguage()
 
 		// Load the data and stick it into an array.
 		$weget = new weget($url);
-		$data = weget->get();
+		$data = $weget->get();
 		$language_list = simplexml_load_string($data);
 
 		// Check it exists.

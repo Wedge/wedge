@@ -181,6 +181,8 @@ class weget
 		global $webmaster_email;
 		static $redir_level = 0;
 
+		$chunked = false;
+
 		$data = '';
 
 		if ($this->protocol == 'ftp')
@@ -279,6 +281,8 @@ class weget
 				// Unless we've got a Content-Length header. That one's useful.
 				if (preg_match('~content-length:\s*(\d+)~i', $header, $match) != 0)
 					$content_length = $match[1];
+				elseif (preg_match('~transfer-encoding:\s*chunked~i', $header) != 0)
+					$chunked = true;
 
 				continue;
 			}
@@ -298,7 +302,24 @@ class weget
 			fclose($fp);
 		}
 
-		return $data;
+		return $chunked ? $this->unchunk($data) : $data;
+	}
+
+	// Courtesy of http://www.php.net/manual/en/function.fsockopen.php#96146
+	private function unchunk($data)
+	{
+		$fp = 0;
+		$outData = "";
+		while ($fp < strlen($data))
+		{
+			$rawnum = substr($data, $fp, strpos(substr($data, $fp), "\r\n") + 2);
+			$num = hexdec(trim($rawnum));
+			$fp += strlen($rawnum);
+			$chunk = substr($data, $fp, $num);
+			$outData .= $chunk;
+			$fp += strlen($chunk);
+		}
+		return $outData;
 	}
 }
 
