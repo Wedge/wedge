@@ -241,14 +241,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// This saves time by doing our break long words checks here.
 	if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
 	{
-		if ($context['browser']['is_gecko'])
-			$breaker = '<span style="margin: 0 -0.5ex 0 0"> </span>';
-		// Opera...
-		elseif ($context['browser']['is_opera'])
-			$breaker = '<span style="margin: 0 -0.65ex 0 -1px"> </span>';
-		// Internet Explorer...
-		else
-			$breaker = '<span style="width: 0; margin: 0 -0.6ex 0 -1px"> </span>';
+		$breaker = '&shy;';
 
 		// PCRE will not be happy if we don't give it a short.
 		$modSettings['fixLongWords'] = (int) min(65535, $modSettings['fixLongWords']);
@@ -272,7 +265,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$last_pos = max($last_pos, 0);
 
 			// Pick a block of data to do some raw fixing on.
-			$data = substr($message, $last_pos, $pos - $last_pos);
+			$data = $orig_data = substr($message, $last_pos, $pos - $last_pos);
 
 			// Take care of some HTML!
 			if (!empty($modSettings['enablePostHTML']) && strpos($data, '&lt;') !== false)
@@ -401,7 +394,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			}
 
 			// If it wasn't changed, no copying or other boring stuff has to happen!
-			if ($data != substr($message, $last_pos, $pos - $last_pos))
+			if ($data != $orig_data)
 			{
 				$message = substr($message, 0, $last_pos) . $data . substr($message, $pos);
 
