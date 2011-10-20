@@ -421,14 +421,6 @@ function Post2()
 		$post_errors[] = 'long_message';
 	else
 	{
-		// On quick edit, only call if message is set.
-		if (!empty($_POST['message']))
-		{
-			if (!function_exists('aeva_onposting'))
-				loadSource('media/Aeva-Embed');
-			$_POST['message'] = aeva_onposting($_POST['message']);
-		}
-
 		// Prepare the message a bit for some additional testing.
 		$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
 
