@@ -170,6 +170,18 @@ function ob_sessrewrite($buffer)
 	if (!empty($context['header']) && wetem::has_layer('html') && ($where = strpos($buffer, "\n</head>")) !== false)
 		$buffer = substr_replace($buffer, $context['header'], $where, 0);
 
+	// Hidden variable 'minify_html' will minify inline JavaScript and remove tabs for maximum gains.
+	// !! Please note that minifying JS is horribly slow (about as slow as generating the page itself),
+	// !! hence the hidden aspect. @todo: cache every single match against its MD5 or something.
+	if (!empty($modSettings['minify_html']))
+	{
+		// Only use JSMin, whatever your preference is. It's 3 times faster than Packer.
+		loadSource('Class-JSMin');
+		preg_match_all('~<script><!-- // --><!\[CDATA\[\n(.*?)\n// ]]></script>~s', $buffer, $matches, PREG_SET_ORDER);
+		foreach ($matches as $match)
+			$buffer = str_replace($match[1], JSMin::minify($match[1]), $buffer);
+	}
+
 	// Moving all inline events (<code onclick="event();">) to the footer, to make
 	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
 	$context['delayed_events'] = array();
@@ -192,10 +204,10 @@ function ob_sessrewrite($buffer)
 		for (var eve = 0, elis = $(this).data("eve"), eil = elis.length; eve < eil; eve++)
 			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
 	});';
-		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
+		$buffer = substr_replace($buffer, $thing, strpos($buffer, empty($modSettings['minify_html']) ? '<!-- insert inline events here -->' : '<!--insert inline events here-->'), 34);
 	}
 	else
-		$buffer = str_replace("\n\t<!-- insert inline events here -->", '', $buffer);
+		$buffer = str_replace(empty($modSettings['minify_html']) ? "\n\t<!-- insert inline events here -->" : "\n\t<!--insert inline events here-->", '', $buffer);
 
 	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
@@ -253,6 +265,7 @@ function ob_sessrewrite($buffer)
 	// Very fast on-the-fly replacement of <URL>...
 	$buffer = str_replace('<URL>', $scripturl, $buffer);
 
+	// Load cached membergroup colors.
 	if (($member_colors = cache_get_data('member-colors', 5000)) === null)
 	{
 		$member_colors = array('group' => array(), 'color' => array());
@@ -283,11 +296,16 @@ function ob_sessrewrite($buffer)
 			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
 			'$1', $buffer
 		);
+	// Now we'll color profile links based on membergroup.
 	else
 		$buffer = preg_replace_callback(
 			'~<a((?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile;(?:[^"]+;)?u=(\d+)"[^>]*)>(.*?)</a>~',
 			'wedge_profile_colors', $buffer
 		);
+
+	// Fast on-the-fly replacement of whitespace...
+	if (!empty($modSettings['minify_html']))
+		$buffer = preg_replace("~\n\t+~", "\n", $buffer);
 
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($modSettings['pretty_enable_filters']))

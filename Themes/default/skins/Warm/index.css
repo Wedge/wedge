@@ -13,6 +13,7 @@ body
 	display: table-cell
 
 #content div.frame
+	margin: 0
 	padding: 0 20px 4px
 
 #edge
@@ -81,6 +82,7 @@ body
 #main_content
 	display: block
 	padding: 16px 8px 0
+	overflow: hidden
 
 #footer
 	border-top: 5px solid average($footer_bg, $body_bg)
