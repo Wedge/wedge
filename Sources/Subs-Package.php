@@ -149,10 +149,6 @@ if (!defined('WEDGE'))
 	string package_crypt(string password)
 		// !!!
 
-	string fetch_web_data(string url, string post_data = '',
-			bool keep_alive = false)
-		// !!!
-
 	Creating your own package server:
 	---------------------------------------------------------------------------
 		// !!!
@@ -167,7 +163,9 @@ function read_tgz_file($gzfilename, $destination, $single_file = false, $overwri
 {
 	if (substr($gzfilename, 0, 7) == 'http://')
 	{
-		$data = fetch_web_data($gzfilename);
+		loadSource('Class-WebGet');
+		$weget = new weget($gzfilename);
+		$data = $weget->get();
 
 		if ($data === false)
 			return false;
@@ -526,7 +524,11 @@ function getPackageInfo($gzfilename)
 
 	// Extract plugin-info.xml from downloaded file. (*/ is used because it could be in any directory.)
 	if (strpos($gzfilename, 'http://') !== false)
-		$packageInfo = read_tgz_data(fetch_web_data($gzfilename, '', true), '*/plugin-info.xml', true);
+	{
+		loadSource('Class-WebGet');
+		$weget = new weget($gzfilename);
+		$packageInfo = read_tgz_data($weget->get(), '*/plugin-info.xml', true);
+	}
 	else
 	{
 		if (!file_exists($boarddir . '/Packages/' . $gzfilename))
@@ -2514,154 +2516,6 @@ function package_create_backup($id = 'backup')
 
 	$fwrite($output, pack('a1024', ''));
 	$fclose($output);
-}
-
-// Get the contents of a URL, irrespective of allow_url_fopen.
-function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection_level = 0)
-{
-	global $webmaster_email;
-	static $keep_alive_dom = null, $keep_alive_fp = null;
-
-	preg_match('~^(http|ftp)(s)?://([^/:]+)(:(\d+))?(.+)$~', $url, $match);
-
-	// An FTP url. We should try connecting and RETRieving it...
-	if (empty($match[1]))
-		return false;
-	elseif ($match[1] == 'ftp')
-	{
-		loadSource('Class-FTP');
-
-		// Establish a connection and attempt to enable passive mode.
-		$ftp = new ftp_connection(($match[2] ? 'ssl://' : '') . $match[3], empty($match[5]) ? 21 : $match[5], 'anonymous', $webmaster_email);
-		if ($ftp->error !== false || !$ftp->passive())
-			return false;
-
-		// I want that one *points*!
-		fwrite($ftp->connection, 'RETR ' . $match[6] . "\r\n");
-
-		// Since passive mode worked (or we would have returned already!) open the connection.
-		$fp = @fsockopen($ftp->pasv['ip'], $ftp->pasv['port'], $err, $err, 5);
-		if (!$fp)
-			return false;
-
-		// The server should now say something in acknowledgement.
-		$ftp->check_response(150);
-
-		$data = '';
-		while (!feof($fp))
-			$data .= fread($fp, 4096);
-		fclose($fp);
-
-		// All done, right? Good.
-		$ftp->check_response(226);
-		$ftp->close();
-	}
-	// This is more likely; a standard HTTP URL.
-	elseif (isset($match[1]) && $match[1] == 'http')
-	{
-		if ($keep_alive && $match[3] == $keep_alive_dom)
-			$fp = $keep_alive_fp;
-		if (empty($fp))
-		{
-			// Open the socket on the port we want...
-			$fp = @fsockopen(($match[2] ? 'ssl://' : '') . $match[3], empty($match[5]) ? ($match[2] ? 443 : 80) : $match[5], $err, $err, 5);
-			if (!$fp)
-				return false;
-		}
-
-		if ($keep_alive)
-		{
-			$keep_alive_dom = $match[3];
-			$keep_alive_fp = $fp;
-		}
-
-		// I want this, from there, and I'm not going to be bothering you for more (probably.)
-		if (empty($post_data))
-		{
-			fwrite($fp, 'GET ' . $match[6] . ' HTTP/1.0' . "\r\n");
-			fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? ':443' : '') : ':' . $match[5]) . "\r\n");
-			fwrite($fp, 'User-Agent: PHP/Wedge' . "\r\n");
-			if ($keep_alive)
-				fwrite($fp, 'Connection: Keep-Alive' . "\r\n\r\n");
-			else
-				fwrite($fp, 'Connection: close' . "\r\n\r\n");
-		}
-		else
-		{
-			fwrite($fp, 'POST ' . $match[6] . ' HTTP/1.0' . "\r\n");
-			fwrite($fp, 'Host: ' . $match[3] . (empty($match[5]) ? ($match[2] ? ':443' : '') : ':' . $match[5]) . "\r\n");
-			fwrite($fp, 'User-Agent: PHP/Wedge' . "\r\n");
-			if ($keep_alive)
-				fwrite($fp, 'Connection: Keep-Alive' . "\r\n");
-			else
-				fwrite($fp, 'Connection: close' . "\r\n");
-			fwrite($fp, 'Content-Type: application/x-www-form-urlencoded' . "\r\n");
-			fwrite($fp, 'Content-Length: ' . strlen($post_data) . "\r\n\r\n");
-			fwrite($fp, $post_data);
-		}
-
-		$response = fgets($fp, 768);
-
-		// Redirect in case this location is permanently or temporarily moved.
-		if ($redirection_level < 3 && preg_match('~^HTTP/\S+\s+30[127]~i', $response) === 1)
-		{
-			$header = '';
-			$location = '';
-			while (!feof($fp) && trim($header = fgets($fp, 4096)) != '')
-				if (strpos($header, 'Location:') !== false)
-					$location = trim(substr($header, strpos($header, ':') + 1));
-
-			if (empty($location))
-				return false;
-			else
-			{
-				if (!$keep_alive)
-					fclose($fp);
-				return fetch_web_data($location, $post_data, $keep_alive, $redirection_level + 1);
-			}
-		}
-
-		// Make sure we get a 200 OK.
-		elseif (preg_match('~^HTTP/\S+\s+20[01]~i', $response) === 0)
-			return false;
-
-		// Skip the headers...
-		while (!feof($fp) && trim($header = fgets($fp, 4096)) != '')
-		{
-			if (preg_match('~content-length:\s*(\d+)~i', $header, $match) != 0)
-				$content_length = $match[1];
-			elseif (preg_match('~connection:\s*close~i', $header) != 0)
-			{
-				$keep_alive_dom = null;
-				$keep_alive = false;
-			}
-
-			continue;
-		}
-
-		$data = '';
-		if (isset($content_length))
-		{
-			while (!feof($fp) && strlen($data) < $content_length)
-				$data .= fread($fp, $content_length - strlen($data));
-		}
-		else
-		{
-			while (!feof($fp))
-				$data .= fread($fp, 4096);
-		}
-
-		if (!$keep_alive)
-			fclose($fp);
-	}
-	else
-	{
-		// Umm, this shouldn't happen?
-		trigger_error('fetch_web_data(): Bad URL', E_USER_NOTICE);
-		$data = false;
-	}
-
-	return $data;
 }
 
 // crc32 doesn't work as expected on 64-bit functions - make our own.

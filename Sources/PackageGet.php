@@ -261,8 +261,10 @@ function PackageGBrowse()
 	@set_time_limit(600);
 
 	// Read packages.xml and parse into xmlArray. (the true tells it to trim things ;).)
-	loadSource('Class-Package');
-	$listing = new xmlArray(fetch_web_data($_GET['package']), true);
+	loadSource(array('Class-Package', 'Class-WebGet'));
+	$weget = new weget($_GET['package']);
+	$data = $weget->get();
+	$listing = new xmlArray($data, true);
 
 	// Errm.... empty file? Try the URL....
 	if (!$listing->exists('package-list'))
@@ -592,7 +594,10 @@ function PackageDownload()
 
 	// Use FTP if necessary.
 	create_chmod_control(array($boarddir . '/Packages/' . $package_name), array('destination_url' => $scripturl . '?action=admin;area=packages;get;sa=download' . (isset($_GET['server']) ? ';server=' . $_GET['server'] : '') . (isset($_REQUEST['auto']) ? ';auto' : '') . ';package=' . $_REQUEST['package'] . (isset($_REQUEST['conflict']) ? ';conflict' : '') . ';' . $context['session_query'], 'crash_on_error' => true));
-	package_put_contents($boarddir . '/Packages/' . $package_name, fetch_web_data($url . $_REQUEST['package']));
+	loadSource('Class-WebGet');
+	$weget = new weget($url . $_REQUEST['package']);
+	$data = $weget->get();
+	package_put_contents($boarddir . '/Packages/' . $package_name, $data);
 
 	// Done! Did we get this package automatically?
 	if (preg_match('~^http://[\w-]+\.wedge\.org/~', $_REQUEST['package']) == 1 && strpos($_REQUEST['package'], 'dlattach') === false && isset($_REQUEST['auto']))

@@ -628,8 +628,7 @@ function AddLanguage()
 	// Are we searching for new languages courtesy of Wedge?
 	if (!empty($_POST['we_add_sub']))
 	{
-		// Need fetch_web_data.
-		loadSource('Subs-Package');
+		loadSource('Class-WebGet');
 
 		$context['we_search_term'] = htmlspecialchars(trim($_POST['we_add']));
 
@@ -638,7 +637,9 @@ function AddLanguage()
 		$url = 'http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION);
 
 		// Load the data and stick it into an array.
-		$language_list = simplexml_load_string(fetch_web_data($url));
+		$weget = new weget($url);
+		$data = weget->get();
+		$language_list = simplexml_load_string($data);
 
 		// Check it exists.
 		if (empty($language_list->language))

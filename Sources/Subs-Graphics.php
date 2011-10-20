@@ -267,7 +267,7 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 		'15' => 'wbmp'
 	);
 
-	loadSource('Subs-Package');
+	loadSource('Class-WebGet');
 	@ini_set('memory_limit', '90M');
 
 	$success = false;
@@ -276,7 +276,8 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 	$fp_destination = fopen($destination, 'wb');
 	if ($fp_destination && substr($source, 0, 7) == 'http://')
 	{
-		$fileContents = fetch_web_data($source);
+		$weget = new weget($source);
+		$fileContents = $weget->get();
 
 		fwrite($fp_destination, $fileContents);
 		fclose($fp_destination);

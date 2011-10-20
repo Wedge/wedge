@@ -875,9 +875,10 @@ function template_include($filename, $once = false)
 </html>';
 		else
 		{
-			loadSource('Subs-Package');
+			loadSource('Class-WebGet');
+			$weget = new weget($boardurl . strtr($filename, array($boarddir => '', strtr($boarddir, '\\', '/') => '')));
+			$error = $weget->get();
 
-			$error = fetch_web_data($boardurl . strtr($filename, array($boarddir => '', strtr($boarddir, '\\', '/') => '')));
 			if (empty($error))
 				$error = isset($php_errormsg) ? $php_errormsg : '';
 

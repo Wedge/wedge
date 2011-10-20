@@ -1254,8 +1254,9 @@ function scheduled_fetchRemoteFiles()
 
 	wesql::free_result($request);
 
-	// We're gonna need fetch_web_data() to pull this off.
-	loadSource('Subs-Package');
+	loadSource('Class-WebGet');
+	// This is only a dummy. weget requires being given a URL, but it doesn't have to actually use it.
+	$weget = new weget('http://wedge.org/');
 
 	// Just in case we run into a problem.
 	loadLanguage('Errors', $language, false);
@@ -1267,7 +1268,7 @@ function scheduled_fetchRemoteFiles()
 		$url = $server . (!empty($file['path']) ? $file['path'] : $file['path']) . $file['filename'] . (!empty($file['parameters']) ? '?' . $file['parameters'] : '');
 
 		// Get the file
-		$file_data = fetch_web_data($url);
+		$file_data = $weget->get($url);
 
 		// If we got an error - give up - the site might be down.
 		if ($file_data === false)

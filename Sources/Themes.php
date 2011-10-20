@@ -1603,7 +1603,7 @@ function EditTheme()
 				fwrite($fp, $_POST['entire_file']);
 				fclose($fp);
 
-				// !!! Use fetch_web_data()?
+				// !!! Use Class-WebGet()?
 				$error = @file_get_contents($theme_url . '/tmp_' . session_id() . '.php');
 				$error = strtr($error, array('<b>' => '<strong>', '</b>' => '</strong>'));
 				if (preg_match('~ <strong>\d+</strong><br\s*/?\>$~i', $error) != 0)

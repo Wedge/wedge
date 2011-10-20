@@ -1258,45 +1258,64 @@ function url_image_size($url)
 	// Get the host to pester...
 	preg_match('~^\w+://(.+?)/(.*)$~', $url, $match);
 
-	// Can't figure it out, just try the image size.
+	// OK, so whatever happens, we will need to get the image. We could use built-in methods here but there's no point downloading a huge file
+	// when invariably we only want the header and, generally, we can do the job ourselves anyway.
+
 	if ($url == '' || $url === 'http://' || $url === 'https://')
 		return false;
-	elseif (!isset($match[1]))
-		$size = @getimagesize($url);
-	else
+
+	loadSource('Class-WebGet');
+	$weget = new weget($url);
+	$weget->addRange(0, 16383); // While 1KB would be enough for most image types, it might not be for some JPEG variants, for which 16KB is much more likely to work.
+	$data = $weget->get();
+
+	if ($data !== false)
 	{
-		// Try to connect to the server... give it half a second.
-		$temp = 0;
-		$fp = @fsockopen($match[1], 80, $temp, $temp, 0.5);
-
-		// Successful? Continue...
-		if ($fp != false)
+		// OK, so we have the file header. Now let's do something useful with it. GIF max sizes are 16 bit each way.
+		if (strpos($data, 'GIF8') === 0)
 		{
-			// Send the HEAD request (since we don't have to worry about chunked, HTTP/1.1 is fine here.)
-			fwrite($fp, 'HEAD /' . $match[2] . ' HTTP/1.1' . "\r\n" . 'Host: ' . $match[1] . "\r\n" . 'User-Agent: PHP/Wedge' . "\r\n" . 'Connection: close' . "\r\n\r\n");
+			// It's a GIF. Doesn't really matter which subformat though. Note that things are little endian.
+			$width = (ord(substr($data, 7, 1)) << 8) + (ord(substr($data, 6, 1)));
+			$height = (ord(substr($data, 9, 1)) << 8) + (ord(substr($data, 8, 1)));
 
-			// Read in the HTTP/1.1 or whatever.
-			$test = substr(fgets($fp, 11), -1);
-			fclose($fp);
-
-			// See if it returned a 404/403 or something.
-			if ($test < 4)
+			if (!empty($width))
+				$size = array($width, $height);
+		}
+		elseif (strpos($data, "\89PNG") === 0)
+		{
+			// Seems to be a PNG. Let's look for the signature of the header chunk, minimum 12 bytes in. PNG max sizes are (signed) 32 bits each way.
+			$pos = strpos($data, 'IHDR');
+			if ($pos >= 12)
 			{
-				$size = @getimagesize($url);
+				$width = (ord(substr($data, $pos + 4, 1)) << 24) + (ord(substr($data, $pos + 5, 1)) << 16) + (ord(substr($data, $pos + 6, 1)) << 8) + (ord(substr($data, $pos + 7, 1)));
+				$height = (ord(substr($data, $pos + 8, 1)) << 24) + (ord(substr($data, $pos + 9, 1)) << 16) + (ord(substr($data, $pos + 10, 1)) << 8) + (ord(substr($data, $pos + 11, 1)));
+				if ($width > 0 && $height > 0)
+					$size = array($width, $height);
+			}
+		}
+		elseif (strpos($data, "\xFF\xD8") === 0) !== false)
+		{
+			// JPEG? Hmm, JPEG is tricky. Well, we found the SOI marker as expected and an APP0 marker, so good chance it is JPEG compliant.
+			// Need to step through the file looking for JFIF blocks.
+			$pos = 2;
+			$filelen = strlen($data);
+			while ($pos < $filelen)
+			{
+				$length = (ord(substr($data, $pos + 2, 1)) << 8) + (ord(substr($data, $pos + 3, 1)));
+				$block = substr($data, $pos, 2);
+				if ($block == "\xFF\xC0" || $block == "\xFF\xC2")
+					break;
 
-				// This probably means allow_url_fopen is off, let's try GD.
-				if ($size === false && function_exists('imagecreatefromstring'))
-				{
-					loadSource('Subs-Package');
+				$pos += $length + 2;
+			}
 
-					// It's going to hate us for doing this, but another request...
-					$image = @imagecreatefromstring(fetch_web_data($url));
-					if ($image !== false)
-					{
-						$size = array(imagesx($image), imagesy($image));
-						imagedestroy($image);
-					}
-				}
+			if ($pos > 2)
+			{
+				// Big endian. SOF block is marker (2 bytes), block size (2 bytes), bits/pixel density (1 byte), image height (2 bytes), image width (2 bytes)
+				$width = (ord(substr($data, $pos + 7, 1)) << 8) + (ord(substr($data, $pos + 8, 1)));
+				$height = (ord(substr($data, $pos + 5, 1)) << 8) + (ord(substr($data, $pos + 6, 1)));
+				if ($width > 0 && $height > 0)
+					$size = array($width, $height);
 			}
 		}
 	}
