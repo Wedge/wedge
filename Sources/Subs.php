@@ -1293,7 +1293,7 @@ function url_image_size($url)
 					$size = array($width, $height);
 			}
 		}
-		elseif (strpos($data, "\xFF\xD8") === 0) !== false)
+		elseif (strpos($data, "\xFF\xD8") === 0)
 		{
 			// JPEG? Hmm, JPEG is tricky. Well, we found the SOI marker as expected and an APP0 marker, so good chance it is JPEG compliant.
 			// Need to step through the file looking for JFIF blocks.
