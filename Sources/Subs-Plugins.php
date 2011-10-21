@@ -164,7 +164,7 @@ function deleteFiletree(&$class, $dir, $delete_dir = true)
 			$remote_file = !empty($_SESSION['pack_ftp']['path']) ? strtr($full_path, array($_SESSION['pack_ftp']['path'] => '')) : $full_path;
 			if (!is_writable($full_path))
 				$class->chmod($remote_file, 0666);
-			
+
 			$class->unlink($remote_file);
 		}
 		else

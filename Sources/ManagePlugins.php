@@ -1193,7 +1193,7 @@ function editPluginRepo()
 			$context['repository']['name'] = trim(htmlspecialchars($_POST['name']));
 		if (empty($context['repository']['name']))
 			fatal_lang_error('plugins_auth_no_name', false);
-			
+
 		if (isset($_POST['url']))
 			$context['repository']['url'] = trim($_POST['url']);
 		if (empty($context['repository']['url']))

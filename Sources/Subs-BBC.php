@@ -240,12 +240,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 	// This saves time by doing our break long words checks here.
 	if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
-	{
-		$breaker = '&shy;';
-
 		// PCRE will not be happy if we don't give it a short.
 		$modSettings['fixLongWords'] = (int) min(65535, $modSettings['fixLongWords']);
-	}
 
 	$pos = -1;
 
@@ -297,7 +293,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 						$alt = empty($matches[3][$match]) ? '' : ' alt=' . preg_replace('~^&quot;|&quot;$~', '', $matches[3][$match]);
 
 						// Remove action= from the URL - no funny business, now.
-						if (preg_match('~action(=|%3d)(?!dlattach|media)~i', $imgtag) === 1)
+						if (preg_match('~action(?:=|%3d)(?!dlattach|media)~i', $imgtag) === 1)
 							$imgtag = preg_replace('~action(?:=|%3d)(?!dlattach|media)~i', 'action-', $imgtag);
 
 						// Check if the image is larger than allowed.
@@ -384,12 +380,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				if (westr::strlen($data) > $modSettings['fixLongWords'])
 				{
 					// This is done in a roundabout way because $breaker has "long words" :P.
-					$data = strtr($data, array($breaker => '< >', '&nbsp;' => "\xC2\xA0"));
+					$data = strtr($data, array('&shy;' => '< >', '&nbsp;' => "\xC2\xA0"));
 					$data = preg_replace(
 						'~(?<=[>;:!? \x{A0}\]()]|^)([\w\pL.]{' . $modSettings['fixLongWords'] . ',})~eu',
 						'preg_replace(\'/(.{' . ($modSettings['fixLongWords'] - 1) . '})/u\', \'\\$1< >\', \'$1\')',
 						$data);
-					$data = strtr($data, array('< >' => $breaker, "\xC2\xA0" => '&nbsp;'));
+					$data = strtr($data, array('< >' => '&shy;', "\xC2\xA0" => '&nbsp;'));
 				}
 			}
 
