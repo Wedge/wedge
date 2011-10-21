@@ -114,6 +114,11 @@ ol.search_results
 .plugin_error
 	max-width: 40%
 
+.plugin_auth
+	width: 16px
+	height: 16px
+	background: url($images/admin/members.gif) no-repeat
+
 /* Common admin center classes.
 ------------------------------------------------------- */
 #admincenter hr

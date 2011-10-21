@@ -30,7 +30,8 @@ function PluginsHome()
 		'tabs' => array(
 			'plugins' => array(
 			),
-			'find' => array(
+			'add' => array(
+				'description' => $txt['plugins_add_desc'],
 			),
 		),
 	);
@@ -41,6 +42,7 @@ function PluginsHome()
 		'enable' => 'EnablePlugin',
 		'disable' => 'DisablePlugin',
 		'remove' => 'RemovePlugin',
+		'add' => 'AddPlugin',
 	);
 
 	// By default do the basic settings.
@@ -1084,6 +1086,212 @@ function testRequiredFunctions($manifest_element)
 		return array_keys($required_functions); // Can't array-flip because we will end up overwriting our values.
 }
 
+// This is a routing agent to the relevant aspect of adding plugins to the system.
+function AddPlugin()
+{
+	global $txt, $context;
+
+	// We store some indication of each repo's state. It gives us a chance to figure out if sites are broken or not.
+	define('REPO_INACTIVE', 0);
+	define('REPO_ACTIVE', 1);
+	define('REPO_ERROR', 2);
+
+	if (!empty($_GET['browserepo']))
+		browsePluginRepo();
+	elseif (!empty($_GET['editrepo']))
+		editPluginRepo();
+	elseif (!empty($_GET['upload']))
+		uploadPlugin();
+	else
+	{
+		wetem::load('add_plugins');
+		$context['page_title'] = $txt['plugins_add_plugins'];
+
+		// OK, so let's get the details of the repos to list.
+		$context['plugin_repositories'] = array();
+		$query = wesql::query('
+			SELECT id_server, name, username, password, status
+			FROM {db_prefix}package_servers
+			ORDER BY name');
+		while ($row = wesql::fetch_assoc($query))
+			$context['plugin_repositories'][$row['id_server']] = array(
+				'name' => $row['name'],
+				'auth' => !empty($row['username']) && !empty($row['password']),
+				'status' => $row['status'],
+			);
+		wesql::free_result($query);
+	}
+}
+
+function browsePluginRepo()
+{
+
+}
+
+function editPluginRepo()
+{
+	global $context, $txt;
+
+	// Are we perhaps deleting? Y U NO LIEK ME?
+	if (isset($_GET['delete'], $_GET['editrepo']))
+	{
+		checkSession();
+		$repo_id = (int) $_GET['editrepo'];
+		if ($repo_id > 0)
+			wesql::query('
+				DELETE FROM {db_prefix}package_servers
+				WHERE id_server = {int:repo}',
+				array(
+					'repo' => $repo_id,
+				)
+			);
+
+		// Whether we deleted it, or if it wasn't valid and it was just nonsense, go back to the repo listing.
+		redirectexit('action=admin;area=plugins;sa=add');
+	}
+
+	// Are we saving?
+	if (isset($_GET['save'], $_GET['editrepo']))
+	{
+		// Is it pre-existing? If so, get the details of it.
+		$repo_id = (int) $_GET['editrepo'];
+		if ($repo_id > 0)
+		{
+			$query = wesql::query('
+				SELECT id_server, name, url, username, password, status
+				FROM {db_prefix}package_servers
+				WHERE id_server = {int:repo}',
+				array(
+					'repo' => $repo_id,
+				)
+			);
+			while ($row = wesql::fetch_assoc($query))
+				$context['repository'] = array(
+					'name' => $row['name'],
+					'url' => $row['url'],
+					'username' => $row['username'],
+					'password' => $row['password'],
+					'status' => $row['status'],
+				);
+			wesql::free_result($query);
+			if (!empty($context['repository']))
+				$context['repository']['id_server'] = $repo_id;
+			else
+				fatal_lang_error('plugins_edit_invalid_error', false);
+		}
+		else
+			$context['repository'] = array(
+				'name' => '',
+				'url' => '',
+				'username' => '',
+				'password' => '',
+				'status' => REPO_INACTIVE,
+			);
+
+		// Now, let's see if we have some details.
+		if (isset($_POST['name']))
+			$context['repository']['name'] = trim(htmlspecialchars($_POST['name']));
+		if (empty($context['repository']['name']))
+			fatal_lang_error('plugins_auth_no_name', false);
+			
+		if (isset($_POST['url']))
+			$context['repository']['url'] = trim($_POST['url']);
+		if (empty($context['repository']['url']))
+			fatal_lang_error('plugins_auth_no_url', false);
+
+		if (!empty($_POST['active']))
+			$context['repository']['status'] = REPO_ACTIVE;
+
+		// Username/password is tricky. If password's given, username should be too.
+		if (!empty($_POST['password']))
+		{
+			if (empty($_POST['username']) || trim($_POST['username']) == '')
+				fatal_lang_error('plugins_auth_pwd_nouser', false);
+			$context['repository']['username'] = htmlspecialchars($_POST['username']);
+			$context['repository']['password'] = sha1(strtolower($context['repository']['username']) . $_POST['password']);
+		}
+		else
+		{
+			// We didn't get a password. Did we get a username?
+			if (empty($_POST['username']))
+			{
+				$context['repository']['username'] = '';
+				$context['repository']['password'] = '';
+			}
+			// We didn't get a password, and the username is different. Since the password is hashed using the username... we need a new password too.
+			elseif (htmlspecialchars($_POST['username']) != $context['repository']['username'])
+				fatal_lang_error('plugins_auth_diffuser', false);
+		}
+
+		// OK, time for the final save.
+		$columns = array_flip(array_keys($context['repository']));
+		foreach ($columns as $k => $v)
+			$columns[$k] = $k == 'id_server' || $k == 'status' ? 'int' : 'string';
+
+		wesql::insert(isset($columns['id_server']) ? 'replace' : 'insert',
+			'{db_prefix}package_servers',
+			$columns,
+			$context['repository'],
+			array('id_server')
+		);
+
+		redirectexit('action=admin;area=plugins;sa=add');
+	}
+
+	// We're reusing the same tab but it has a different description now.
+	$context[$context['admin_menu_name']]['tab_data']['tabs']['add']['description'] = $txt['plugins_edit_repo_desc'];
+
+	if ($_GET['editrepo'] != 'add')
+	{
+		$repo_id = (int) $_GET['editrepo'];
+		if ($repo_id > 0)
+		{
+			$query = wesql::query('
+				SELECT id_server, name, url, username, password, status
+				FROM {db_prefix}package_servers
+				WHERE id_server = {int:repo}',
+				array(
+					'repo' => $repo_id,
+				)
+			);
+			while ($row = wesql::fetch_assoc($query))
+				$context['repository'] = array(
+					'id' => $row['id_server'],
+					'name' => $row['name'],
+					'url' => htmlspecialchars($row['url']),
+					'username' => $row['username'],
+					'password' => !empty($row['password']), // We don't actually need the password, just to know if we have one
+					'status' => $row['status'],
+				);
+			wesql::free_result($query);
+			if (empty($context['repository']))
+				$context['tried_to_find'] = true;
+			else
+				$context['page_title'] = $txt['plugins_edit_repo'];
+		}
+	}
+
+	// Either we're adding or we had a nonsense value given. Either way, display the add dialogue.
+	if (empty($context['repository']))
+	{
+		$context['page_title'] = $txt['plugins_add_repo'];
+		$context['repository'] = array(
+			'id' => 'new',
+			'name' => '',
+			'url' => 'http://',
+			'username' => '',
+			'status' => REPO_ACTIVE,
+		);
+	}
+
+	wetem::load('edit_repo');
+}
+
+function uploadPlugin()
+{
+
+}
+
 function knownHooks()
 {
 	return array(
@@ -1131,6 +1339,7 @@ function knownHooks()
 			'illegal_perms',
 			'illegal_guest_perms',
 			// Content creation
+			'outgoing_email',
 			'personal_message',
 			'create_post_before',
 			'create_post_after',
@@ -1160,6 +1369,7 @@ function knownHooks()
 			'profile_areas',
 			'ssi',
 			'whos_online',
+			'suggest',
 		),
 	);
 }

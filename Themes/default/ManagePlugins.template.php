@@ -183,4 +183,146 @@ function template_request_connect_details()
 
 }
 
+function template_add_plugins()
+{
+	global $context, $txt;
+
+	// First, the download/browse facility, including the 'add repository' button
+	echo '
+		<we:cat>', $txt['plugins_add_download'], '</we:cat>
+		<p class="description">', $txt['plugins_add_download_desc'], '</p>
+		<table class="table_grid cs0" style="width: 100%">
+			<thead>
+				<tr class="catbg">
+					<th scope="col" class="first_th" style="text-align: left; width: 55%">', $txt['plugins_repository'], '</th>
+					<th scope="col" style="width: 15%">', $txt['plugins_active'], '</th>
+					<th scope="col" style="width: 15%"></th>
+					<th scope="col" style="width: 15%" class="last_th"></th>
+				</tr>
+			</thead>
+			<tbody>';
+
+	if (empty($context['plugin_repositories']))
+	{
+		echo '
+				<tr class="windowbg">
+					<td class="centertext" colspan="4">', $txt['plugins_no_repos'], '</td>
+				</tr>';
+	}
+	else
+	{
+		$use_bg2 = false;
+		foreach ($context['plugin_repositories'] as $repo_id => $repo)
+		{
+			echo '
+				<tr class="windowbg', $use_bg2 ? '2' : '', '">
+					<td>', $repo['name'], $repo['auth'] ? ' <span class="plugin_auth inline-block" title="' . $txt['plugins_repo_auth'] . '"></span>' : '', '</td>
+					<td class="centertext">';
+
+			// While it's fairly straightforward here, it may be more complex in future.
+			switch ($repo['status'])
+			{
+				case REPO_ACTIVE:
+					echo $txt['yes'];
+					break;
+				case REPO_INACTIVE:
+					echo $txt['no'];
+					break;
+				case REPO_ERROR:
+					echo $txt['plugins_repo_error'], ' <a href="<URL>?action=help;in=error_plugin_repo" onclick="return reqWin(this);" class="help"></a>';
+					break;
+			}
+
+			echo '</td>
+					<td class="centertext"><a href="<URL>?action=admin;area=plugins;sa=add;browserepo=', $repo_id, '">', $txt['plugins_browse'], '</a></td>
+					<td class="centertext"><a href="<URL>?action=admin;area=plugins;sa=add;editrepo=', $repo_id, '">', $txt['plugins_modify'], '</a></td>
+				</tr>';
+
+			$use_bg2 = !$use_bg2;
+		}
+	}
+
+	echo '
+			</tbody>
+		</table>
+		<form action="<URL>?action=admin;area=plugins;sa=add;editrepo=add" method="post">
+			<div class="floatright">
+				<div class="additional_row" style="text-align: right;"><input type="submit" name="new" value="', $txt['plugins_add_repo'], '" class="new"></div>
+			</div>
+		</form>
+		<br class="clear">';
+
+	// Then the upload form.
+	echo '
+		<br>
+		<we:cat>', $txt['plugins_add_upload'], '</we:cat>
+		<p class="description">', $txt['plugins_add_upload_desc'], '</p>
+		<div class="windowbg wrc">
+			<form action="<URL>?action=admin;area=plugins;sa=add;upload" method="post" accept-charset="UTF-8" enctype="multipart/form-data" style="margin-bottom: 0">
+				<dl class="settings">
+					<dt>
+						<strong>', $txt['plugins_add_upload_file'], '</strong>
+					</dt>
+					<dd>
+						<input type="file" name="plugin">
+					</dd>
+				</dl>
+				<div class="righttext">
+					<input type="submit" value="', $txt['plugins_upload_plugin'], '" class="save">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				</div>
+			</form>
+		</div>
+		<br class="clear">';
+}
+
+function template_edit_repo()
+{
+	global $context, $txt;
+
+	if (!empty($context['tried_to_find']))
+		echo '
+		<div class="errorbox">', $txt['plugins_edit_invalid'], '</div>';
+
+	echo '
+		<we:cat>', $txt['plugins_repo_details'], '</we:cat>
+		<p class="description">', $txt['plugins_repo_details_desc'], '</p>
+		<form action="<URL>?action=admin;area=plugins;sa=add;editrepo=', $context['repository']['id'], ';save" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
+			<div class="windowbg2 wrc">
+				<fieldset>
+					<legend>', $txt['plugins_repo_details'], '</legend>
+					<dl class="settings">
+						<dt>', $txt['plugins_repo_name'], '</dt>
+						<dd><input type="text" name="name" size="44" value="', $context['repository']['name'], '">
+						<dt>', $txt['plugins_repo_address'], '</dt>
+						<dd><input type="text" name="url" size="44" value="', $context['repository']['url'], '">
+						<dt><a href="<URL>?action=help;in=plugins_repo_active" onclick="return reqWin(this);" class="help"></a> ', $txt['plugins_repo_active'], '</dt>
+						<dd>
+							<input type="checkbox" name="active"', $context['repository']['status'] == REPO_ACTIVE ? ' checked="checked"' : '', '>', $context['repository']['status'] == REPO_ERROR ? '
+							' . $txt['plugins_repo_error'] . ' <a href="<URL>?action=help;in=error_plugin_repo" onclick="return reqWin(this);" class="help"></a>' : '', '
+						</dd>
+					</dl>
+				</fieldset>
+				<fieldset>
+					<legend>', $txt['plugins_repo_auth'], '</legend>
+					<p>', $txt['plugins_repo_auth_desc'], '</p>
+					<dl class="settings">
+						<dt>', $txt['plugins_repo_username'], '</dt>
+						<dd><input type="text" name="username" size="44" value="', $context['repository']['username'], '">
+						<dt>
+							', $txt['plugins_repo_password'], !empty($context['repository']['password']) ? '
+							<span class="smalltext">(<a href="<URL>?action=help;in=plugins_password_blank" onclick="return reqWin(this);">' . $txt['plugins_repo_password_blank'] . '</a>)' : '', '
+						</dt>
+						<dd><input type="password" name="password" size="44" value=""></dd>
+					</dl>
+				</fieldset>
+				<div class="righttext">
+					<input type="submit" value="', $txt['save'], '" class="save">
+					<input type="submit" name="delete" value="', $txt['plugins_repo_delete'], '" class="delete" onclick="return confirm(', JavaScriptEscape($txt['plugins_repo_delete_confirm']), ');">
+				</div>
+			</div>
+			<input type="hidden" name="', $context['session_var'], '" id="', $context['session_id'], '">
+		</form>';
+}
+
 ?>
