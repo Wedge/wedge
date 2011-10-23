@@ -1267,6 +1267,7 @@ function url_image_size($url)
 	loadSource('Class-WebGet');
 	$weget = new weget($url);
 	$weget->addRange(0, 16383); // While 1KB would be enough for most image types, it might not be for some JPEG variants, for which 16KB is much more likely to work.
+	$weget->addHeader('Accept', 'image/png,image/gif,image/jpeg;q=0.9,*/*;q=0.8');
 	$data = $weget->get();
 
 	if ($data !== false)
