@@ -137,15 +137,14 @@ function template_skeleton()
 // The main block above the content.
 function template_html_before()
 {
-	global $context, $settings, $options, $txt, $modSettings, $boardurl;
+	global $context, $settings, $options, $txt, $modSettings, $boardurl, $topic;
 
 	// Declare our HTML5 doctype, and whether to show right to left.
 	// The charset is already specified in the headers so it may be omitted,
 	// but the specs recommend leaving them in, if the document is viewed offline.
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_dictionary']) ? ' lang="' . $txt['lang_dictionary'] . '"' : '', '>
-<!-- Powered by Wedge, (c) Wedgeward - http://wedge.org -->
-<head>
+<head>', empty($topic) ? '' : '
 	<meta charset="utf-8">';
 
 	// Our alltime favorites don't really like HTML5...
@@ -154,6 +153,7 @@ function template_html_before()
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
 	echo theme_base_css(), '
+	<!-- Powered by Wedge, © Wedgeward - http://wedge.org -->
 	<title>', $context['page_title_html_safe'], '</title>';
 
 	// If the forum is in a sub-folder, in which case it needs to explicitly set a favicon URL.

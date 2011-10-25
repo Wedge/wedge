@@ -138,7 +138,7 @@ dl#feed
 		background-color: rgba(0,0,0, .075)
 		background-position: 98% 2px
 		li.chosen &
-			background-position: 98% -28px
+			background-position: 98% -27px
 		a
 			color: #000
 	li.chosen h4

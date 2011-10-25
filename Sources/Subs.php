@@ -496,7 +496,7 @@ function cleanXml($string)
 }
 
 /**
- * Sanitize strings that might be passed through to JavaScript.
+ * Sanitizes strings that might be passed through to JavaScript.
  *
  * Multiple instances of scripts will need to be adjusted through the codebase if passed to JavaScript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead)
  *
@@ -521,7 +521,7 @@ function JavaScriptEscape($string)
 }
 
 /**
- * Format a number in a localized fashion.
+ * Formats a number in a localized fashion.
  *
  * Each of the language packs should declare $txt['number_format'] in the index language file, which is simply a string that consists of the number 1234.00 localized to that region. This function detects the thousands and decimal separators, and uses those in its place. It also detects the number of digits in the decimal position, and rounds to that many digits. Note that the style is cached locally (statically) for the life of the page.
  *
@@ -572,7 +572,7 @@ function number_context($string, $number, $format_comma = true)
 }
 
 /**
- * Format a given timestamp, optionally applying the forum and user offsets, for display including 'Today' and 'Yesterday' prefixes.
+ * Formats a given timestamp, optionally applying the forum and user offsets, for display including 'Today' and 'Yesterday' prefixes.
  *
  * This function also applies the date/time format string the admin can specify in the admin panel (Features and Options / General) user can specify in their Look and Layout Preferences through strftime.
  *
@@ -601,7 +601,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	$format =& $user_info['time_format'];
 
 	// Today and Yesterday?
-	if ($modSettings['todayMod'] >= 1 && $show_today === true)
+	if ($show_today === true && $modSettings['todayMod'] >= 1)
 	{
 		// Get the current time.
 		$nowtime = forum_time();
@@ -682,7 +682,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 }
 
 /**
- * Format a time, and add "on" if not "today" or "yesterday"
+ * Formats a time, and adds "on" if not "today" or "yesterday"
  *
  * @param int $log_time See timeformat()
  * @param mixed $show_today See timeformat()
@@ -693,12 +693,15 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 function on_timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $txt;
+
 	$ret = timeformat($log_time, $show_today, $offset_type);
-	return is_numeric($ret[0]) ? sprintf($txt['on_date'], $ret) : $ret;
+	if (strpos($ret, '<strong>') === false)
+		return sprintf($txt['on_date'], $ret);
+	return $ret;
 }
 
 /**
- * Returns 'On March 21' or 'Today', depending on the date. Used when templating.
+ * Returns 'On March 21' or 'Today', depending on the date. Not actually used in Wedge, though.
  *
  * @param int $time Human-readable date
  * @param bool $upper Set to true if this starts a sentence or a block
@@ -708,7 +711,10 @@ function on_timeformat($log_time, $show_today = true, $offset_type = false)
 function on_date($time, $upper = false)
 {
 	global $txt;
-	return is_numeric($time[0]) ? ($upper ? ucfirst(sprintf($txt['on_date'], $ret)) : sprintf($txt['on_date'], $ret)) : $ret;
+
+	if (strpos($ret, '<strong>') === false)
+		return $upper ? ucfirst(sprintf($txt['on_date'], $ret)) : sprintf($txt['on_date'], $ret);
+	return $ret;
 }
 
 /**
