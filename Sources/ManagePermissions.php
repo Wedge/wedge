@@ -1728,7 +1728,7 @@ function loadAllPermissions($loadType = 'classic')
 }
 
 // Initialize a form with inline permissions.
-function init_inline_permissions($permissions, $excluded_groups = array())
+function init_inline_permissions($permission_details)
 {
 	global $context, $txt, $modSettings;
 
@@ -1736,15 +1736,12 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 	loadTemplate('ManagePermissions');
 	$context['can_change_permissions'] = allowedTo('manage_permissions');
 
-	if (empty($modSettings['allow_guestAccess']))
-	{
-		$excluded_groups[] = -1;
-		$excluded_groups = array_unique($excluded_groups);
-	}
-
 	// Nothing to initialize here.
 	if (!$context['can_change_permissions'])
 		return;
+
+	// Permissions itself is an array of permission-name to groups that can't have it. We only actually need the list of permissions for most things here.
+	$permissions = array_keys($permission_details);
 
 	// Load the permission settings for guests
 	foreach ($permissions as $permission)
@@ -1810,14 +1807,20 @@ function init_inline_permissions($permissions, $excluded_groups = array())
 	}
 	wesql::free_result($request);
 
-	// Some permissions cannot be given to certain groups. Remove the groups.
-	foreach ($excluded_groups as $group)
+	// Firstly, deal with the case that guests do not have access.
+	if (empty($modSettings['allow_guestAccess']))
 	{
 		foreach ($permissions as $permission)
-		{
-			if (isset($context[$permission][$group]))
-				unset($context[$permission][$group]);
-		}
+			unset($context[$permission][-1]);
+	}
+
+	// Some permissions cannot be given to certain groups. Remove the groups.
+	foreach ($permission_details as $permission => $excluded_groups)
+	{
+		if (empty($excluded_groups))
+			continue;
+		foreach ($excluded_groups as $group)
+			unset($context[$permission][$group]);
 	}
 }
 
@@ -1833,7 +1836,7 @@ function theme_inline_permissions($permission)
 }
 
 // Save the permissions of a form containing inline permissions.
-function save_inline_permissions($permissions)
+function save_inline_permissions($permission_details)
 {
 	global $context;
 
@@ -1847,6 +1850,9 @@ function save_inline_permissions($permissions)
 	// Check they can't do certain things.
 	loadIllegalPermissions();
 
+	// Now set up much as we do in the other functions.
+	$permissions = array_keys($permission_details);
+
 	$insertRows = array();
 	foreach ($permissions as $permission)
 	{
@@ -1855,8 +1861,9 @@ function save_inline_permissions($permissions)
 
 		foreach ($_POST[$permission] as $id_group => $value)
 		{
-			if (in_array($value, array('on', 'deny')) && (empty($context['illegal_permissions']) || !in_array($permission, $context['illegal_permissions'])))
-				$insertRows[] = array((int) $id_group, $permission, $value == 'on' ? 1 : 0);
+			$id_group = (int) $id_group;
+			if (in_array($value, array('on', 'deny')) && (empty($context['illegal_permissions']) || !in_array($permission, $context['illegal_permissions'])) && !in_array($id_group, $permission_details[$permission]))
+				$insertRows[] = array($id_group, $permission, $value == 'on' ? 1 : 0);
 		}
 	}
 

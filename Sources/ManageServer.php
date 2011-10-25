@@ -1977,7 +1977,7 @@ function prepareDBSettingContext(&$config_vars)
 
 			// Special case for inline permissions
 			if ($config_var[0] == 'permissions' && allowedTo('manage_permissions'))
-				$inlinePermissions[] = $config_var[1];
+				$inlinePermissions[$config_var[1]] = isset($config_var['exclude']) ? $config_var['exclude'] : array();
 			elseif ($config_var[0] == 'permissions')
 				continue;
 
@@ -2054,7 +2054,7 @@ function prepareDBSettingContext(&$config_vars)
 	if (!empty($inlinePermissions) && allowedTo('manage_permissions'))
 	{
 		loadSource('ManagePermissions');
-		init_inline_permissions($inlinePermissions, isset($context['permissions_excluded']) ? $context['permissions_excluded'] : array());
+		init_inline_permissions($inlinePermissions);
 	}
 
 	// What about any BBC selection boxes?
@@ -2273,7 +2273,7 @@ function saveDBSettings(&$config_vars)
 		}
 		// Permissions?
 		elseif ($var[0] == 'permissions')
-			$inlinePermissions[] = $var[1];
+			$inlinePermissions[$var[1]] = isset($var['exclude']) ? $var['exclude'] : array();
 	}
 
 	if (!empty($setArray))
