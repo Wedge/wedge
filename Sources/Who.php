@@ -306,6 +306,9 @@ function determineActions($urls, $preferred_prefix = false)
 		'viewmembers' => array('moderate_forum'),
 	);
 
+	// And if plugins want to make use of this too...
+	call_hook('who_allowed', array(&$allowedActions));
+
 	if (!is_array($urls))
 		$url_list = array(array($urls, $user_info['id']));
 	else
@@ -570,6 +573,9 @@ function determineActions($urls, $preferred_prefix = false)
 		}
 		wesql::free_result($result);
 	}
+
+	// While the above whos_online hook is good for more complex cases than action=x;sa=y, it's not particularly efficient if you're dealing with multiple lookups and so on. Thus the bulk hook too.	
+	call_hook('whos_online_complete', array(&$urls, &$data));
 
 	if (!is_array($urls))
 		return isset($data[0]) ? $data[0] : false;

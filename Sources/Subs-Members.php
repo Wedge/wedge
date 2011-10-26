@@ -145,6 +145,9 @@ function deleteMembers($users, $check_not_admin = false)
 			unset($user_log_details[$id]);
 	}
 
+	// Might as well pass all the details over to hooks to deal with. This way, plugins can also, if they need, manipulate this list.
+	call_hook('delete_member_multiple', array(&$user_log_details, &$admins));
+
 	// No one left?
 	if (empty($users))
 		return;
@@ -154,7 +157,7 @@ function deleteMembers($users, $check_not_admin = false)
 	foreach ($user_log_details as $user)
 	{
 		// Hooks rock!
-		call_hook('delete_member', array($user[0]));
+		call_hook('delete_member', array($user));
 
 		// Add it to the administration log for future reference.
 		$log_inserts[] = array(

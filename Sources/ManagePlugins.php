@@ -1091,6 +1091,10 @@ function AddPlugin()
 {
 	global $txt, $context;
 
+	// Both uploading and downloading require gzinflate. If it isn't there, none of this stuff will work, and there's no point in trying it.
+	if (!is_callable('gzinflate'))
+		fatal_lang_error('plugins_no_gzinflate', false);
+
 	// We store some indication of each repo's state. It gives us a chance to figure out if sites are broken or not.
 	define('REPO_INACTIVE', 0);
 	define('REPO_ACTIVE', 1);
@@ -1125,7 +1129,37 @@ function AddPlugin()
 
 function browsePluginRepo()
 {
+	global $context, $user_info;
 
+	$repo_id = (int) $_GET['browserepo'];
+	if ($repo_id > 0)
+	{
+		$query = wesql::query('
+			SELECT id_server, name, url, username, password
+			FROM {db_prefix}package_servers
+			WHERE id_server = {int:repo}',
+			array(
+				'repo' => $repo_id,
+			)
+		);
+		while ($row = wesql::fetch_assoc($query))
+			$context['repository'] = array(
+				'name' => $row['name'],
+				'url' => $row['url'],
+				'username' => $row['username'],
+				'password' => $row['password'],
+			);
+		wesql::free_result($query);
+	}
+	if (empty($context['repository']))
+		fatal_lang_error('plugins_browse_invalid_error', false);
+
+	// So, now we're cooking.
+	loadSource('Class-WebGet');
+	$weget = new weget($context['repository']['url']);
+	// Using auth? Attach the supplied username and password, but be sure to salt and hash it first. (Yes, this is re-hashing an existing hash, however it is resalted.)
+	if (!empty($context['repository']['username']) && !empty($context['repository']['password']))
+		$weget->addPostVar('auth', $context['repository']['username'] . '=' . sha1(strtolower($context['repository']['url']) . $context['repository']['password']));
 }
 
 function editPluginRepo()
@@ -1198,6 +1232,8 @@ function editPluginRepo()
 			$context['repository']['url'] = trim($_POST['url']);
 		if (empty($context['repository']['url']))
 			fatal_lang_error('plugins_auth_no_url', false);
+		elseif (strpos($context['repository']['url'], 'http://') !== 0 && strpos($context['repository']['url'], 'https://') !== 0)
+			fatal_lang_error('plugins_auth_invalid_url', false);
 
 		if (!empty($_POST['active']))
 			$context['repository']['status'] = REPO_ACTIVE;
@@ -1333,6 +1369,7 @@ function knownHooks()
 			'register',
 			'activate',
 			'delete_member',
+			'delete_member_multiple',
 			'track_ip',
 			// User permissions
 			'load_permissions',
@@ -1354,10 +1391,15 @@ function knownHooks()
 			'exit',
 			'dynamic_rewrite',
 			// Verification/CAPTCHA points
+			'add_captcha',
 			'verification_setup',
 			'verification_test',
 			'verification_refresh',
 			'verification_display',
+			// Who's Online
+			'who_allowed',
+			'whos_online',
+			'whos_online_complete'
 			// Miscellaneous
 			'css_color',
 			'buddy',
@@ -1368,7 +1410,6 @@ function knownHooks()
 			'media_areas',
 			'profile_areas',
 			'ssi',
-			'whos_online',
 			'suggest',
 		),
 	);
