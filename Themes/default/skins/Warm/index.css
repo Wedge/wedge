@@ -9,6 +9,9 @@ body
 	color: #333
 	padding: 0
 
+em
+	font-family: $ita_font
+
 #offside
 	display: table-cell
 
@@ -248,4 +251,5 @@ $body_bg   = #f6f8ef
 $side_bg   = #e8e3cb
 $footer_bg = lighten($side_bg, 5%)
 $main_font = "Droid Sans", "PT Sans", "Segoe UI", "Trebuchet MS", Arial, sans-serif
+$ita_font = "Segoe UI", "Trebuchet MS", Arial, sans-serif
 $post_font = 9.5pt/140% "Lucida Sans Unicode", Verdana, $main_font

@@ -547,7 +547,7 @@ function weSaveEntities(sFormName, aElementNames, sMask)
  * Dropdown menu in JS with CSS fallback, Nao style.
  * May not show, but it took years to refine it.
  */
-var menu_baseId = hoverable = 0, menu_delay = [], menu_ieshim = [], hove = 'hove';
+var menu_baseId = hoverable = 0, menu_delay = [], hove = 'hove';
 
 function initMenu(menu)
 {
@@ -558,12 +558,6 @@ function initMenu(menu)
 
 	var k = menu_baseId;
 	$('li', menu).each(function () {
-		if (is_ie6)
-		{
-			$(this).keyup(menu_show_me);
-			document.write('<iframe src="" id="shim' + k + '" class="iefs" frameborder="0" scrolling="no"></iframe>');
-			menu_ieshim[k] = $('#shim' + k)[0];
-		}
 		$(this).attr('id', 'li' + k++)
 			.bind('mouseenter focus', menu_show_me)
 			.bind('mouseleave blur', menu_hide_me)
@@ -571,34 +565,12 @@ function initMenu(menu)
 			.click(function () {
 				$('.' + hove).removeClass(hove);
 				$('ul', menu).css({ visibility: 'hidden', opacity: is_ie8down ? 1 : 0});
-				if (is_ie6)
-					$('li', menu).each(function () { menu_show_shim(false, this.id); });
 			});
 	});
 	menu_baseId = k;
 
 	// Now that JS is ready to take action... Disable the pure CSS menu!
 	$('.css.menu').removeClass('css');
-}
-
-// Without this, IE6 would show form elements in front of the menu. Bad IE6.
-function menu_show_shim(showsh, ieid, j)
-{
-	var iem = ieid.substring(2);
-	if (!menu_ieshim[iem])
-		return;
-
-	$(menu_ieshim[iem]).css(showsh ?
-		{
-			top: j.offsetTop + j.offsetParent.offsetTop + 3,
-			left: j.offsetLeft + j.offsetParent.offsetLeft,
-			width: j.offsetWidth + 1,
-			height: j.offsetHeight - 2,
-			display: 'block'
-		} : {
-			display: 'none'
-		}
-	);
 }
 
 // Entering a menu entry?
@@ -616,8 +588,6 @@ function menu_show_me()
 		style.visibility = 'visible';
 		style.opacity = 1;
 		style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? $('span', this).width() || 0 : w - 5) + 'px';
-		if (is_ie6)
-			menu_show_shim(true, id, hasul);
 	}
 
 	if (!is_top || !$('h4', this).first().addClass(hove).length)
@@ -625,8 +595,8 @@ function menu_show_me()
 
 	if (!is_visible)
 		$('ul', this).first()
-			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w })
-			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 3 : 30 } : { marginLeft: w - 5 }, 'fast');
+			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 9 : 36 } : { marginLeft: w })
+			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 }, 'fast');
 
 	clearTimeout(menu_delay[id.substring(2)]);
 
@@ -651,11 +621,7 @@ function menu_hide_me(e)
 // Hide all children menus.
 function menu_hide_children(id)
 {
-	$('#' + id).children().andSelf().removeClass(hove).find('ul')
-		.css({ visibility: 'hidden', opacity: is_ie8down ? 1 : 0});
-
-	if (is_ie6)
-		menu_show_shim(false, id);
+	$('#' + id).children().andSelf().removeClass(hove).find('ul').css({ visibility: 'hidden', opacity: is_ie8down ? 1 : 0});
 }
 
 

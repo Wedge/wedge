@@ -506,7 +506,6 @@ input[type=file]
 #main_menu
 	padding: 5px 0 0
 	float: left
-	min-height: 0
 	h4 a
 		color: #fff
 	.new_icon
@@ -673,11 +672,11 @@ li.separator
 
 .menu li.menu-top
 	position: absolute
-	top: -8px
+	top: -11px
 	width: 100%
-	height: 8px
+	height: 11px
 	padding-bottom: 3px
-	background: url($images/theme/menurow.gif) no-repeat
+	background: url($images/theme/menurow.gif) no-repeat 0 3px
 
 /* Top-level menu icons.
 ------------------------------------------------------- */

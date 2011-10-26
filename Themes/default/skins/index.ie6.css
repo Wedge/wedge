@@ -34,14 +34,6 @@ li.separator
 		width: 16px
 		display: block
 
-// This is a dummy iframe that hides form elements when they're overlapped by a menu entry.
-.iefs
-	display: none
-	z-index: 9
-	position: absolute
-	left, top: 0
-	filter: progid:DXImageTransform.Microsoft.Alpha(style=0, opacity=0)
-
 // Sub-area non-dropdown menus in the admin area
 #context_menus
 	h4

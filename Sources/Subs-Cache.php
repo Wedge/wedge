@@ -667,7 +667,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 				$cont = preg_replace("~/\* Optimize:\n(.*?)\n\*/~s", '', $cont);
 		}
 		// An UglifyJS-inspired trick. We're taking it on the safe side though.
-		$cont = preg_replace(array('~(?<=[ \t])false(?=[,; ])~', '~(?<=[ \t])true(?=[,; ])~'), array('!1', '!0'), $cont);
+		$cont = preg_replace(array('~\bfalse\b~', '~\btrue\b~'), array('!1', '!0'), $cont);
 		$final .= $cont;
 	}
 
