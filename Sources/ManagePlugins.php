@@ -1349,6 +1349,7 @@ function knownHooks()
 			'display_prepare_post',
 			'display_post_done',
 			'messageindex_buttons',
+			'display_message_list',
 			'display_main',
 			// Admin
 			'admin_areas',
@@ -1366,6 +1367,7 @@ function knownHooks()
 			'verify_password',
 			'verify_user',
 			'reset_pass',
+			'other_passwords',
 			'register',
 			'activate',
 			'delete_member',
@@ -1405,7 +1407,7 @@ function knownHooks()
 			// Who's Online
 			'who_allowed',
 			'whos_online',
-			'whos_online_complete'
+			'whos_online_complete',
 			// Miscellaneous
 			'css_color',
 			'buddy',

@@ -864,6 +864,8 @@ function Display()
 		$times[$row['id_msg']] = $row['poster_time'];
 	}
 	wesql::free_result($request);
+
+	call_hook('display_message_list', array(&$messages, &$times, &$all_posters));
 	$posters = array_unique($all_posters);
 
 	// When was the last time this topic was replied to? Should we warn them about it?

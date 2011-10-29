@@ -252,6 +252,9 @@ function Login2()
 
 			// APBoard 2 Login Method.
 			$other_passwords[] = md5(crypt($_POST['passwrd'], 'CRYPT_MD5'));
+
+			// Anything else?
+			call_hook('other_passwords', array(&$other_passwords));
 		}
 		// The hash should be 40 if it's SHA-1, so we're safe with more here too.
 		elseif (strlen($user_settings['passwd']) == 32)
