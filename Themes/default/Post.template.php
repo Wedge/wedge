@@ -12,65 +12,39 @@
  */
 
 // The main template for the post page.
-function template_main()
+function template_postform_before()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings, $counter;
-
-	// When using Go Back due to fatal_error, allow the form to be
-	// re-submitted with changes, through a non-standard DOM event.
-	if ($context['browser']['is_firefox'])
-		add_js_inline('
-	window.addEventListener("pageshow", function () { document.forms.postmodify.message.readOnly = false; }, false);');
-
-	// Start with message icons - and any missing from this theme.
-	add_js_inline('
-	var icon_urls = {');
-	foreach ($context['icons'] as $icon)
-		add_js_inline('
-		"' . $icon['value'] . '": "' . $icon['url'] . '"' . ($icon['is_last'] ? '' : ','));
-	add_js_inline('
-	};');
-
-	// The actual message icon selector.
-	add_js_inline('
-	function showimage()
-	{
-		document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
-	}');
-
-	add_js('
-	var postmod = document.forms.postmodify;');
-
-	// Start the form and display the link tree.
-
+	global $context, $txt;
+	// Start the form, the header and the container for all the markup
 	echo '
-		<form action="', $scripturl, '?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); weSaveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">';
-
-	// If the user wants to see how their message looks - the preview section is where it's at!
-	echo '
-			<div id="preview_section"', isset($context['preview_message']) ? '' : ' class="hide"', '>
-				<we:cat>
-					<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
-				</we:cat>
-				<div class="windowbg wrc">
-					<div class="post" id="preview_body">
-						', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
-					</div>
-				</div><br>
-			</div>';
-
-	if ($context['make_event'] && (!$context['event']['new'] || !empty($context['current_board'])))
-		echo '
-			<input type="hidden" name="eventid" value="', $context['event']['id'], '">';
-
-	// Start the main table.
-	echo '
+		<form action="<URL>?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); weSaveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
-			<div class="roundframe">', isset($context['current_topic']) ? '
-				<input type="hidden" name="topic" value="' . $context['current_topic'] . '">' : '';
+			<div class="roundframe">';
+}
 
+function template_preview()
+{
+	global $context;
+
+	// If the user wants to see how their message looks - the preview section is where it's at!
+	echo '
+		<div id="preview_section"', isset($context['preview_message']) ? '' : ' class="hide"', '>
+			<we:cat>
+				<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
+			</we:cat>
+			<div class="windowbg wrc">
+				<div class="post" id="preview_body">
+					', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
+				</div>
+			</div><br>
+		</div>';
+}
+
+function template_post_errors()
+{
+	global $context, $txt;
 	// If an error occurred, explain what happened.
 	echo '
 				<div class="errorbox', empty($context['post_error']['messages']) ? ' hide' : '', '" id="errors">
@@ -83,7 +57,11 @@ function template_main()
 						</dd>
 					</dl>
 				</div>';
+}
 
+function template_post_approval()
+{
+	global $context, $txt;
 	// If this won't be approved let them know!
 	if (!$context['becomes_approved'])
 	{
@@ -93,16 +71,21 @@ function template_main()
 					<input type="hidden" name="not_approved" value="1">
 				</p>';
 	}
+}
 
+function template_post_locked()
+{
+	global $context, $txt;
 	// If it's locked, show a message to warn the replyer.
 	echo '
 				<p class="information', $context['locked'] ? '' : ' hide', '" id="lock_warning">
 					', $txt['topic_locked_no_reply'], '
 				</p>';
+}
 
-	// The post header... important stuff
-	echo '
-				<dl id="post_header">';
+function template_post_name_email()
+{
+	global $context, $txt, $modSettings;
 
 	// Guests have to put in their name and email...
 	if (isset($context['name'], $context['email']))
@@ -124,42 +107,12 @@ function template_main()
 						<input type="email" name="email" value="', $context['email'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
 					</dd>';
 	}
+}
 
-	// Now show the subject box for this post.
-	echo '
-					<dt>
-						<span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span>
-					</dt>
-					<dd>
-						<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">
-					</dd>
-					<dt class="clear_left">
-						', $txt['message_icon'], ':
-					</dt>
-					<dd>
-						<select name="icon" id="icon" onchange="showimage();">';
-
-	// Loop through each message icon allowed, adding it to the drop down list.
-	foreach ($context['icons'] as $icon)
-		echo '
-							<option value="', $icon['value'], '"', $icon['value'] == $context['icon'] ? ' selected' : '', '>', $icon['name'], '</option>';
-
-	echo '
-						</select>
-						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px">
-					</dd>
-				</dl>
-				<hr class="clear">';
-
-	// Are you posting a calendar event?
-	// !!! Use the template list system for this.
-	if ($context['make_event'])
-		template_make_event();
-
-	// If this is a poll then display all the poll options!
-	// !!! Use the template list system for this.
-	if ($context['make_poll'])
-		template_make_poll();
+// Now display the editor box and last modified if applicable.
+function template_postbox()
+{
+	global $context, $txt;
 
 	// Show the actual posting area...
 	echo "\n", $context['postbox']->outputEditor();
@@ -171,7 +124,12 @@ function template_main()
 					<strong>', $txt['last_edit'], ':</strong>
 					', $context['last_modified'], '
 				</div>';
+}
 
+function template_post_additional_options()
+{
+	// !!! This needs to be rewritten to be extensible, declared in Post.php and available as a simple list to be iterated over.
+	global $settings, $txt, $options, $context;
 	// If the admin has enabled the hiding of the additional options - show a link and image for it.
 	if (!empty($settings['additional_options_collapsable']))
 		echo '
@@ -193,7 +151,11 @@ function template_main()
 						<li><label><input type="checkbox" name="approve" id="approve" value="2"' . ($context['show_approval'] === 2 ? ' checked' : '') . '> ' . $txt['approve_this_post'] . '</label></li>' : '', '
 					</ul>
 				</div>';
+}
 
+function template_post_attachments()
+{
+	global $context, $txt, $modSettings;
 	// If this post already has attachments on it - give information about them.
 	if (!empty($context['current_attachments']))
 	{
@@ -270,6 +232,11 @@ function template_main()
 		add_js('
 	});');
 	}
+}
+
+function template_post_verification()
+{
+	global $context, $txt;
 
 	// Is visual verification enabled?
 	if ($context['require_verification'])
@@ -280,29 +247,39 @@ function template_main()
 					</span>
 					', template_control_verification($context['visual_verification_id'], 'all'), '
 				</div>';
+}
+
+function template_post_buttons()
+{
+	global $context, $txt;
 
 	// Finally, the submit buttons.
 	echo '
 				<p class="smalltext" id="shortcuts">
 					', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '
 				</p>
-				<div id="post_confirm_buttons">', $context['postbox']->outputButtons();
+				<div id="post_confirm_buttons">', $context['postbox']->outputButtons(), '</div>';
+}
 
-	// Option to delete an event if user is editing one.
-	if ($context['make_event'] && !$context['event']['new'])
-		echo '
-					<input type="submit" name="deleteevent" value="', $txt['event_delete'], '" onclick="return confirm(', JavaScriptEscape($txt['event_delete_confirm']), ');">';
+function template_postform_after()
+{
+	global $context, $settings, $counter, $txt;
 
+	// We've finished with the main form elements, so finish the UI for it.
 	echo '
-				</div>
 			</div>
 			<br class="clear">';
 
-	// Assuming this isn't a new topic pass across the last message id.
+	// The stuff we need for later: the topic number if we have one, the last message if we have one, then the general form items.
+	if (isset($context['current_topic']))
+		echo '
+				<input type="hidden" name="topic" value="', $context['current_topic'], '">';
+
 	if (isset($context['topic_last_message']))
 		echo '
 			<input type="hidden" name="last_msg" value="', $context['topic_last_message'], '">';
 
+	// We always need this stuff.
 	echo '
 			<input type="hidden" name="additional_options" id="additional_options" value="', $context['show_additional_options'] ? '1' : '0', '">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -310,8 +287,29 @@ function template_main()
 			<input type="hidden" name="parent" value="', $context['msg_parent'], '">
 		</form>';
 
-	// The functions used to preview posts without loading a new page.
+	// When using Go Back due to fatal_error, allow the form to be re-submitted with changes, through a non-standard DOM event.
+	if ($context['browser']['is_firefox'])
+		add_js('
+	window.addEventListener("pageshow", function () { document.forms.postmodify.message.readOnly = false; }, false);');
+
+	// Message icons - and any missing from this theme - followed by the selector helper.
+	add_js_inline('
+	var icon_urls = {');
+	foreach ($context['icons'] as $icon)
+		add_js_inline('
+		"' . $icon['value'] . '": "' . $icon['url'] . '"' . ($icon['is_last'] ? '' : ','));
+	add_js_inline('
+	};
+
+	function showimage()
+	{
+		document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
+	};');
+
+	// More general stuff, before diving into the preview functions.
 	add_js('
+	var postmod = document.forms.postmodify;
+
 	var current_board = ' . (empty($context['current_board']) ? 'null' : $context['current_board']) . ';
 	var make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ';
 	var txt_preview_title = "' . $txt['preview_title'] . '";
@@ -495,7 +493,48 @@ function template_main()
 		template_show_previous_posts();
 }
 
-// Poll making
+function template_post_header_before()
+{
+	echo '
+				<dl id="post_header">';
+}
+
+function template_post_subject()
+{
+	global $context, $txt;
+	// Now show the subject box for this post.
+	echo '
+					<dt>
+						<span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span>
+					</dt>
+					<dd>
+						<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">
+					</dd>
+					<dt class="clear_left">
+						', $txt['message_icon'], ':
+					</dt>
+					<dd>
+						<select name="icon" id="icon" onchange="showimage();">';
+
+	// Loop through each message icon allowed, adding it to the drop down list.
+	foreach ($context['icons'] as $icon)
+		echo '
+							<option value="', $icon['value'], '"', $icon['value'] == $context['icon'] ? ' selected' : '', '>', $icon['name'], '</option>';
+
+	echo '
+						</select>
+						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px">
+					</dd>';
+}
+
+function template_post_header_after()
+{
+	echo '
+				</dl>
+				<hr class="clear">';
+}
+
+// If this is a poll then display all the poll options!
 function template_make_poll()
 {
 	global $context, $txt;
@@ -599,14 +638,13 @@ function template_make_poll()
 				</div>';
 }
 
-// Event making
+// Are you posting a calendar event?
 function template_make_event()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings, $counter;
+	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	// We want to ensure we show the current days in a month etc... This is done here.
-	if ($context['make_event'])
-		add_js('
+	add_js('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays()
@@ -721,12 +759,16 @@ function template_make_event()
 
 	echo '
 				</div>';
+
+	if (!$context['event']['new'] || !empty($context['current_board']))
+		echo '
+			<input type="hidden" name="eventid" value="', $context['event']['id'], '">';
 }
 
 // Previous post handling
 function template_show_previous_posts()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings, $counter;
+	global $context, $settings, $options, $txt, $scripturl, $modSettings;
 
 	echo '
 		<div id="recent" class="flow_hidden main_section">

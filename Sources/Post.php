@@ -1129,6 +1129,8 @@ function Post()
 		}
 
 		wesql::free_result($query);
+
+		call_hook('post_form_load_draft');
 	}
 
 	// Now create the editor.
@@ -1238,7 +1240,46 @@ function Post()
 	if (WIRELESS)
 		wetem::load('wap2_post');
 	elseif (!isset($_REQUEST['xml']))
+	{
 		loadTemplate('Post');
+		wetem::load(
+			array(
+				'preview', // It doesn't need to be actually in the form at all, there's no form elements in it (or shouldn't be)
+				'postform' => array(
+					'post_errors',
+					'post_approval',
+					'post_locked',
+					'post_header' => array(
+						'post_name_email',
+						'post_subject',
+					),
+					'postbox',
+					'post_additional_options',
+					'post_attachments',
+					'post_verification',
+					'post_buttons',
+				),
+			)
+		);
+
+		// Now, we add some things dynamically.
+		if ($context['make_event'])
+			wetem::load('make_event', 'postbox', 'before');
+
+		if ($context['make_poll'])
+			wetem::load('make_poll', 'postbox', 'before');
+	}
+
+	// Also, add in the delete-event button for a calendar.
+	if ($context['make_event'] && !$context['event']['new'])
+		$context['postbox']->addButton(
+			'deleteevent',
+			$txt['event_delete'],
+			'return confirm(' . JavaScriptEscape($txt['event_delete_confirm']) . ');'
+		);
+
+	// Add in any last minute changes.
+	call_hook('post_form');
 }
 
 /**

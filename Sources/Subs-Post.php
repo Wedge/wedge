@@ -2739,6 +2739,8 @@ function saveDraft($is_pm, $id_context = 0)
 		$extra['smileys_enabled'] = !isset($_POST['ns']) ? 1 : 0;
 
 		// !!! Locking, sticky?
+
+		call_hook('save_post_draft', array(&$subject, &$message, &$extra, &$is_pm, &$id_context));
 	}
 	else
 	{
@@ -2749,6 +2751,8 @@ function saveDraft($is_pm, $id_context = 0)
 		getPmRecipients($recipientList, $namedRecipientList, $namesNotFound);
 		// So at this point, $recipientList is an array of 'to' and 'bcc' each containing an array of member ids, just ripe for saving.
 		$extra['recipients'] = $recipientList;
+
+		call_hook('save_pm_draft', array(&$subject, &$message, &$extra, &$is_pm, &$id_context));
 	}
 	$extra = serialize($extra);
 

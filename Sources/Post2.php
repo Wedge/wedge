@@ -112,6 +112,10 @@ function Post2()
 	if (checkSession('post', '', false) != '')
 		$post_errors[] = 'session_timeout';
 
+	// It's possible, though a bit unlikely, that you might want to do something generally to posting that requires doing something really quite bizarre.
+	// In fact you might want to do something that requires you bypass all the usual flow of operations, so here you can if you need to, though you can return to normal flow if needed.
+	call_hook('post_pre_validate', array(&$post_errors));
+
 	// Wrong verification code?
 	if (!$user_info['is_admin'] && !$user_info['is_mod'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1)))
 	{
@@ -480,6 +484,9 @@ function Post2()
 		$_POST['guestname'] = $user_info['username'];
 		$_POST['email'] = $user_info['email'];
 	}
+
+	// OK, we've made all the checks we're going to make here. Time to engage any hooks. Most of this stuff is in $_POST, so very little to pass.
+	call_hook('post_post_validate', array(&$post_errors, &$posterIsGuest));
 
 	// Any mistakes?
 	if (!empty($post_errors))

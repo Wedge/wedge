@@ -1383,6 +1383,12 @@ function knownHooks()
 			'modify_post_before',
 			'modify_post_after',
 			'remove_topics',
+			'post_form',
+			'post_form_load_draft',
+			'post_pre_validate',
+			'post_post_validate',
+			'save_post_draft',
+			'save_pm_draft',
 			// Process flow and execution
 			'default_action',
 			'fallback_action',
