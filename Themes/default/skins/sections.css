@@ -238,6 +238,12 @@ img.new_posts
 
 /* Post styling (still in the Display template)
 ---------------------------------------------------- */
+
+// Alternating backgrounds for posts, and several other sections of the forum.
+.postbg extends .windowbg
+.postbg2 extends .windowbg2
+	background-color: transparent
+
 #forumposts
 	.wrc
 		display: table
@@ -659,7 +665,7 @@ ul.post_options
 	.smpost
 		margin: 0 2px
 
-#preview_body extends .windowbg
+#preview_body extends .postbg
 
 /* Styles for edit event section
 ---------------------------------------------------- */
@@ -791,7 +797,7 @@ dl.send_mail
 	width: 49%
 
 ul.split_messages
-	li.windowbg
+	li.postbg
 		margin: 1px
 	li a.split_icon
 		padding: 0 .5em

@@ -2204,7 +2204,7 @@ function MessagePost2()
 		wedit::preparsecode($message);
 
 		// Make sure there's still some content left without the tags.
-		if (westr::htmltrim(strip_tags(parse_bbc(westr::htmlspecialchars($message, ENT_QUOTES), false), '<img>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
+		if (westr::htmltrim(strip_tags(parse_bbc(westr::htmlspecialchars($message, ENT_QUOTES), false), '<img><object><embed><iframe><video><audio>')) === '' && (!allowedTo('admin_forum') || strpos($message, '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
 

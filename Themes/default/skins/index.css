@@ -359,7 +359,7 @@ em
 	a
 		color: #eed
 
-// Alternating backgrounds for posts, and several other sections of the forum.
+// Alternating generic backgrounds
 .windowbg extends .grad700
 	color: #444
 	background-color: $window_bg
@@ -1009,9 +1009,6 @@ tr.catbg, tr.titlebg
 		font-size: 11px
 		margin-top: 3px
 
-.postbg
-	border-left, border-right: 1px solid #7f7f7f
-
 // The page navigation area
 .pagesection
 	clear: left
@@ -1031,7 +1028,7 @@ tr.catbg, tr.titlebg
 .approve
 	color: #000
 	background-color: #ffeaea
-	.windowbg2&
+	.postbg2&
 		background-color: #fff2f2
 
 // Color for background of *topics* requiring approval
@@ -1379,7 +1376,7 @@ table
 #help_page, #helf
 	h2 extends .title2
 		margin-bottom: 12px !important
-	.windowbg
+	.windowbg2 final
 		border: 1px solid #d0d0d0
 
 /* Intertitles
@@ -1422,7 +1419,7 @@ h6.alt2
 // The dropdown menu toggle icon
 #menu_toggle
 	float: left
-	margin: 10px 7px 0 0
+	margin: 10px 12px 0 0
 
 #sidebar_toggle
 	float: right

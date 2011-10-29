@@ -136,6 +136,7 @@ function cleanRequest()
 		// !!! Authorize URLs with a port number
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
 		$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
+		$query_string = str_replace(substr($boardurl, strpos($boardurl, '://') + 3), '/', $full_request);
 
 		$query = wesql::query('
 			SELECT id_board, url
@@ -156,7 +157,7 @@ function cleanRequest()
 			unset($_GET['board']);
 
 			// URL has the form domain.com/profile/User?
-			if (preg_match('`/' . (isset($modSettings['pretty_prefix_profile']) ? $modSettings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $full_request, $m))
+			if (preg_match('`/' . (isset($modSettings['pretty_prefix_profile']) ? $modSettings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $query_string, $m))
 			{
 				if (empty($m[1]))
 					$_GET['u'] = 0;
@@ -165,7 +166,7 @@ function cleanRequest()
 				$_GET['action'] = 'profile';
 			}
 			// If URL has the form domain.com/do/action, it's an action. Really.
-			elseif (preg_match('`/' . (isset($modSettings['pretty_prefix_action']) ? $modSettings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)`', $full_request, $m) && isset($action_list[$m[1]]))
+			elseif (preg_match('`/' . (isset($modSettings['pretty_prefix_action']) ? $modSettings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)`', $query_string, $m) && isset($action_list[$m[1]]))
 				$_GET['action'] = $m[1];
 			// URL: /category/42/ (shows the board list, hiding all categories but number 42)
 			elseif (preg_match('`/category/(\d+)`', $full_request, $m) && (int) $m[1] > 0)

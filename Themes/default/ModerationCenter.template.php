@@ -256,7 +256,7 @@ function template_reported_posts()
 	foreach ($context['reports'] as $report)
 	{
 		echo '
-			<div class="', $report['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
+			<div class="postbg', $report['alternate'] ? '' : '2', ' wrc">
 				<div>
 					<div class="floatright">
 						<a href="', $report['report_href'], '">', $details_button, '</a>
@@ -340,7 +340,7 @@ function template_unapproved_posts()
 				<span class="smalltext floatleft"><a href="', $scripturl, '?category=', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
 				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
 			</we:title>
-			<div class="', $item['alternate'] ? 'windowbg' : 'windowbg2', ' wrc">
+			<div class="postbg', $item['alternate'] ? '' : '2', ' wrc">
 				<div class="post">', $item['body'], '</div>
 				<span class="floatright">
 					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';approve=', $item['id'], '">', $approve_button, '</a>';
@@ -426,7 +426,7 @@ function template_unapproved_attachments()
 
 		foreach ($context['unapproved_items'] as $item)
 			echo '
-				<tr class="', $item['alternate'] ? 'windowbg' : 'windowbg2', '">
+				<tr class="postbg', $item['alternate'] ? '' : '2', '">
 					<td>
 						', $item['filename'], '
 					</td>
@@ -558,7 +558,7 @@ function template_viewmodreport()
 		foreach ($context['entries'] as $entry)
 		{
 			echo '
-					<tr class="', $alt ? 'windowbg2' : 'windowbg', '">
+					<tr class="windowbg', $alt ? '2' : '', '">
 						<td>', $entry['action'], '</td>
 						<td>', $entry['time'], '</td>
 						<td>', $entry['moderator']['link'], '</td>
@@ -566,7 +566,7 @@ function template_viewmodreport()
 						<td>', $entry['ip'], '</td>
 					</tr>
 					<tr>
-						<td colspan="5" class="', $alt ? 'windowbg2' : 'windowbg', '">';
+						<td colspan="5" class="windowbg', $alt ? '2' : '', '">';
 
 			foreach ($entry['extra'] as $key => $value)
 				echo '

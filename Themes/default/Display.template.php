@@ -48,7 +48,7 @@ function template_display_posts()
 				<a id="msg', $message['id'], '"></a>', $message['first_new'] ? '<a id="new"></a>' : '';
 
 		echo '
-				<div class="windowbg', $message['alternate'] == 0 ? ' wrc' : '2 wrc', $message['approved'] ? '' : ' approve', $message['id'] == $context['first_message'] ? ' first-post' : '', $context['post_position'] != 'left' ? ' ' . $context['post_position'] . '-side' : '', '">
+				<div class="postbg', $message['alternate'] == 0 ? ' wrc' : '2 wrc', $message['approved'] ? '' : ' approve', $message['id'] == $context['first_message'] ? ' first-post' : '', $context['post_position'] != 'left' ? ' ' . $context['post_position'] . '-side' : '', '">
 					<div class="post_wrapper">';
 
 		// Show information about the poster of this message.

@@ -333,7 +333,7 @@ function template_showDrafts()
 	{
 		echo '
 		<div class="topic">
-			<div class="', $post['alternate'] == 0 ? 'windowbg2' : 'windowbg', ' wrc core_posts">
+			<div class="postbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5><strong>', $post['board']['link'], ' / ', $post['topic']['link'], '</strong></h5>
@@ -413,7 +413,7 @@ function template_showPosts()
 		{
 			echo '
 		<div class="topic">
-			<div class="', $post['alternate'] == 0 ? 'windowbg2' : 'windowbg', ' wrc core_posts">
+			<div class="postbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">';
 
@@ -450,7 +450,7 @@ function template_showPosts()
 
 			echo '
 					<h5><strong><a href="', $scripturl, '?board=', $post['board']['id'], '.0">', $post['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $post['topic'], '.', $post['start'], '#msg', $post['id'], '">', $post['subject'], '</a></strong></h5>
-					<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
+					<span class="smalltext">&#171;&nbsp;', $post['time'], '&nbsp;&#187;</span>
 				</div>
 				<div class="list_posts">';
 
@@ -509,7 +509,7 @@ function template_showPosts()
 		foreach ($context['attachments'] as $attachment)
 		{
 			echo '
-				<tr class="windowbg', $alternate ? '' : '2', $attachment['approved'] ? '' : ' approve', '">
+				<tr class="postbg', $alternate ? '' : '2', $attachment['approved'] ? '' : ' approve', '">
 					<td><a href="', $scripturl, '?action=dlattach;topic=', $attachment['topic'], '.0;attach=', $attachment['id'], '">', $attachment['filename'], '</a>', !$attachment['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '', '</td>
 					<td class="center">', $attachment['downloads'], '</td>
 					<td><a href="', $scripturl, '?topic=', $attachment['topic'], '.msg', $attachment['msg'], '#msg', $attachment['msg'], '" rel="nofollow">', $attachment['subject'], '</a></td>
@@ -518,19 +518,20 @@ function template_showPosts()
 			$alternate = !$alternate;
 		}
 
-	// No posts? Just end the table with an informative message.
-	if ((isset($context['attachments']) && empty($context['attachments'])) || (!isset($context['attachments']) && empty($context['posts'])))
-		echo '
+		// No posts? Just end the table with an informative message.
+		if ((isset($context['attachments']) && empty($context['attachments'])) || (!isset($context['attachments']) && empty($context['posts'])))
+			echo '
 				<tr>
 					<td class="windowbg2 padding center" colspan="4">
 						', isset($context['attachments']) ? $txt['show_attachments_none'] : ($context['is_topics'] ? $txt['show_topics_none'] : $txt['show_posts_none']), '
 					</td>
 				</tr>';
 
-		echo '
+			echo '
 			</tbody>
 		</table>';
 	}
+
 	// Show more page numbers.
 	echo '
 		<div class="pagesection" style="margin-bottom: 0">
@@ -638,7 +639,7 @@ function template_editIgnoreList()
 	foreach ($context['ignore_list'] as $member)
 	{
 		echo '
-			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' center">
+			<tr class="windowbg', $alternate ? '' : '2', ' center">
 				<td class="left">', $member['link'], '</td>
 				<td><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '"></a></td>
 				<td>', ($member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>'), '</td>
@@ -1669,7 +1670,7 @@ function template_groupMembership()
 		foreach ($context['groups']['member'] as $group)
 		{
 			echo '
-					<tr class="', $alternate ? 'windowbg' : 'windowbg2', '" id="primdiv_', $group['id'], '">';
+					<tr class="windowbg', $alternate ? '' : '2', '" id="primdiv_', $group['id'], '">';
 
 				if ($context['can_edit_primary'])
 					echo '
@@ -1724,7 +1725,7 @@ function template_groupMembership()
 			foreach ($context['groups']['available'] as $group)
 			{
 				echo '
-					<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
+					<tr class="windowbg', $alternate ? '' : '2', '">
 						<td>
 							<strong>', (empty($group['color']) ? $group['name'] : '<span style="color: ' . $group['color'] . '">' . $group['name'] . '</span>'), '</strong>', (!empty($group['desc']) ? '
 							<dfn>' . $group['desc'] . '</dfn>' : ''), '
@@ -1746,6 +1747,7 @@ function template_groupMembership()
 					</tr>';
 				$alternate = !$alternate;
 			}
+
 			echo '
 				</tbody>
 			</table>';
@@ -2160,7 +2162,7 @@ function template_issueWarning()
 	{
 		$alternate = !$alternate;
 		echo '
-			<tr class="', $alternate ? 'windowbg' : 'windowbg2', '">
+			<tr class="postbg', $alternate ? '' : '2', '">
 				<td class="smalltext">', $warning['issuer']['link'], '</td>
 				<td class="smalltext">', $warning['time'], '</td>
 				<td class="smalltext">

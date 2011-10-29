@@ -332,9 +332,6 @@ input.cancel
 	display: inline // IE6 double margin bug fix
 	filter: glow(color=#666666, strength=3)
 
-.windowbg
-	background-image: none
-
 hr
 	clear: both
 

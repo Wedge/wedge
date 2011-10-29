@@ -14,7 +14,7 @@
 /**
  * Uses some code and ideas from Shaun Inman's CSS Cacheer library
  * http://www.shauninman.com/archive/2008/05/30/check_out_css_cacheer
- * Also implements concepts and ideas from Sass (http://sass-lang.com)
+ * Also implements some ideas from Sass (http://sass-lang.com)
  */
 
 class wecss
@@ -606,7 +606,7 @@ class wecss_nesting extends wecss
 			}
 
 			// A quick hack to avoid extending selectors with a direct child selector if we're in IE6 - it would cancel ALL extends in the batch.
-			// !!! Need to figure out an alternative solution redirecting these selectors to jQuery ($('something > something').addClass('.ie6_emulate_xxx'))
+			// @todo: figure out an alternative solution redirecting these selectors to jQuery ($('something > something').addClass('.ie6_emulate_xxx'))
 			if (strpos($node['selector'], 'extends') !== false && (!$browser['is_ie6'] || strpos($node['selector'], '>') === false))
 			{
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
@@ -615,11 +615,11 @@ class wecss_nesting extends wecss
 				{
 					$save_selector = $node['selector'];
 					$node['selector'] = $m[1];
-					$path = $this->parseAncestorSelectors($this->getAncestorSelectors($node));
+					$path = $this->parse_ancestors($this->get_ancestors($node));
 					// In case we extend directly from a parent's property, make sure to keep only one parent if we have several.
 					if (strpos($m[2], '&') !== false)
 					{
-						$parent = $this->parseAncestorSelectors($this->getAncestorSelectors($this->rules[$node['parent']]));
+						$parent = $this->parse_ancestors($this->get_ancestors($this->rules[$node['parent']]));
 						if (strpos($parent, ',') !== false)
 							$parent = substr($parent, 0, strpos($parent, ','));
 						$m[2] = str_replace('&', $parent, $m[2]);
@@ -646,8 +646,8 @@ class wecss_nesting extends wecss
 				$selectors = preg_split('/,\s*/', $this->rules[$node['parent']]['selector']);
 				foreach ($selectors as &$here)
 				{
-					$parent = empty($this->rules[$node['parent']]['parent']) ? array() : $this->getAncestorSelectors($this->rules[$this->rules[$node['parent']]['parent']]);
-					$path = $this->parseAncestorSelectors(array_merge((array) $here, $parent));
+					$parent = empty($this->rules[$node['parent']]['parent']) ? array() : $this->get_ancestors($this->rules[$this->rules[$node['parent']]['parent']]);
+					$path = $this->parse_ancestors(array_merge((array) $here, $parent));
 					if (strpos($node['value'], '&') !== false)
 					{
 						if (strpos($path, ',') !== false)
@@ -697,7 +697,7 @@ class wecss_nesting extends wecss
 		// Do the proper nesting
 		foreach ($this->rules as &$node)
 		{
-			// !!! Should this only check for @media and @-*-keyframes, or actually give the same treatment to all @ commands?
+			// @todo: should this only check for @media and @-*-keyframes, or actually give the same treatment to all @ commands?
 			if ($node['selector'][0] === '@' && (strpos($node['selector'], '@media') === 0 || preg_match('~@(?:-[a-z]+-)?keyframes~i', $node['selector'])))
 			{
 				$standard_nest = $node['selector'];
@@ -705,7 +705,7 @@ class wecss_nesting extends wecss
 				continue;
 			}
 
-			$selector = str_replace('&gt;', '>', $this->parseAncestorSelectors($this->getAncestorSelectors($node)));
+			$selector = str_replace('&gt;', '>', $this->parse_ancestors($this->get_ancestors($node)));
 			$selectors = $done = array();
 			$changed = true;
 
@@ -718,7 +718,7 @@ class wecss_nesting extends wecss
 					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
 					if (strpos($selector, $base[0]) !== false)
 					{
-						// !!! This will fail on any strings with commas. If you have a good reason to use them, please share.
+						// Note: this will fail on any strings with commas. If you have a good reason to use them, please share.
 						if (empty($selectors))
 							$selectors = explode(',', $selector);
 						$beginning = isset($alpha[$base[0][0]]) ? '(?<![a-z0-9_-])' : '';
@@ -776,15 +776,15 @@ class wecss_nesting extends wecss
 			$css .= '}';
 	}
 
-	private function getAncestorSelectors(&$node)
+	private function get_ancestors(&$node)
 	{
 		if (empty($node['parent']))
 			return (array) $node['selector'];
 
-		return array_merge((array) $node['selector'], $this->getAncestorSelectors($this->rules[$node['parent']]));
+		return array_merge((array) $node['selector'], $this->get_ancestors($this->rules[$node['parent']]));
 	}
 
-	private function parseAncestorSelectors($ancestors = array())
+	private function parse_ancestors($ancestors = array())
 	{
 		$growth = array();
 		foreach ($ancestors as $selector)

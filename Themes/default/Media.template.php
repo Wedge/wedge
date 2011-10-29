@@ -714,7 +714,7 @@ function template_aeva_item_comments()
 		{
 			$alternative = !$alternative;
 			echo '
-		<div class="windowbg', $alternative ? '' : '2', ' wrc">
+		<div class="postbg', $alternative ? '' : '2', ' wrc">
 			<table class="w100 cp0 cs0 tlf"><tr>
 			<td style="width: 20%"', $c['is_edited'] ? ' rowspan="2"' : '', ' class="top">', empty($c['member']['id']) ? '
 				<h4>' . $txt['guest'] . '</h4>' : '

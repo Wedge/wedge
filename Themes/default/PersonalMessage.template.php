@@ -179,7 +179,7 @@ function template_folder()
 
 		while ($message = $context['get_pmessage']('message'))
 		{
-			$window_class = $message['alternate'] == 0 ? 'windowbg' : 'windowbg2';
+			$window_class = $message['alternate'] == 0 ? 'postbg' : 'postbg2';
 
 			echo '
 	<div class="', $window_class, ' wrc pm"><div class="post_wrapper">
@@ -791,7 +791,7 @@ function template_search_results()
 
 			echo '</h3>
 			</div>
-			<div class="windowbg', $alternate ? '2' : '', ' wrc">
+			<div class="postbg', $alternate ? '2' : '', ' wrc">
 				', $message['body'], '
 				<p class="pm_reply righttext middletext">';
 
@@ -819,7 +819,7 @@ function template_search_results()
 		{
 			// !!! No context at all of the search?
 			echo '
-			<tr class="', $alternate ? 'windowbg' : 'windowbg2', ' top">
+			<tr class="windowbg', $alternate ? '2' : '', ' top">
 				<td>', $message['time'], '</td>
 				<td>', $message['link'], '</td>
 				<td>', $message['member']['link'], '</td>
@@ -993,7 +993,7 @@ function template_send()
 	<we:title>
 		', $txt['subject'], ': ', $context['quoted_message']['subject'], '
 	</we:title>
-	<div class="windowbg2 wrc clear">
+	<div class="postbg2 wrc clear">
 		<span class="smalltext floatright">', $txt['on'], ': ', $context['quoted_message']['time'], '</span>
 		<strong>', $txt['from'], ': ', $context['quoted_message']['member']['name'], '</strong>
 		<hr>
@@ -1664,7 +1664,7 @@ function template_pm_drafts()
 	{
 		echo '
 		<div class="topic">
-			<div class="', $post['alternate'] == 0 ? 'windowbg2' : 'windowbg', ' wrc core_posts">
+			<div class="postbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5><strong>', $post['subject'], '</strong></h5>

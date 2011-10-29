@@ -392,7 +392,7 @@ function viewDrafts($memID)
 				'locked' => !empty($row['locked']),
 				'no_edit' => !empty($row['id_context']) && empty($row['id_topic']),
 			),
-			'time' => timeformat($row['post_time']),
+			'time' => on_timeformat($row['post_time']),
 			'timestamp' => forum_time(true, $row['post_time']),
 			'icon' => $row['extra']['post_icon'],
 		);
@@ -666,7 +666,7 @@ function showPosts($memID)
 			'topic' => $row['id_topic'],
 			'subject' => $row['subject'],
 			'start' => 'msg' . $row['id_msg'],
-			'time' => timeformat($row['poster_time']),
+			'time' => on_timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'id' => $row['id_msg'],
 			'can_reply' => false,
