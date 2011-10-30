@@ -1092,9 +1092,9 @@ function execBlock($block_name, $fatal = false)
 	elseif (function_exists($theme_function))
 		$theme_function();
 	elseif ($fatal === false)
-		fatal_lang_error('theme_template_error', 'template', array((string) $block_name));
+		fatal_lang_error('template_block_error', 'template', array((string) $block_name));
 	elseif ($fatal !== 'ignore')
-		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load the "%s" template block!', (string) $block_name), 'template'));
+		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['template_block_error'] : 'Unable to load the "%s" template block!', (string) $block_name), 'template'));
 
 	if (function_exists($theme_function_after = $theme_function . '_after'))
 		$theme_function_after();
@@ -1102,7 +1102,7 @@ function execBlock($block_name, $fatal = false)
 	// Are we showing debugging for templates? Just make sure not to do it before the doctype...
 	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $block_name !== 'init' && ob_get_length() > 0 && !isset($_REQUEST['xml']))
 		echo '
-<div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold;">---- ', $block_name, ' ends ----</div>';
+<div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold">---- ', $block_name, ' ends ----</div>';
 }
 
 
@@ -1351,13 +1351,7 @@ final class wetem
 				if (!isset($layer[$to]))
 					continue;
 
-				$keys = array_keys($layer);
-				$val = array_values($layer);
-				$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
-				array_splice($keys, $offset, 0, array_keys($blocks));
-				array_splice($val, $offset, 0, $blocks);
-				$layer = array_combine($keys, $val);
-
+				array_insert($layer, $to, $blocks, $where);
 				self::reindex();
 				return $to;
 			}

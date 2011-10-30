@@ -306,6 +306,9 @@ function template_logo_toggler()
 {
 	global $options, $txt, $context;
 
+	echo '
+			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
+
 	add_js('
 	var oMainHeaderToggle = new weToggle({
 		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
@@ -314,9 +317,6 @@ function template_logo_toggler()
 		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_header\' },
 		oCookieOptions: { bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ', sCookieName: \'upshrink\' }
 	});');
-
-	echo '
-			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
 }
 
 function template_sidebar_wrap_before()
@@ -515,7 +515,7 @@ function template_body_after()
 		we_sessvar = "', $context['session_var'], '",', $context['server']['iso_case_folding'] && in_array('scripts/sha1.js', $context['javascript_files']) ? '
 		we_iso_case_folding = true' : '', '
 		we_loading = "', $txt['ajax_in_progress'], '",
-		we_cancel = "', $txt['modify_cancel'], '";
+		we_cancel = "', $txt['form_cancel'], '";
 
 	initMenu("main_menu");', $context['show_pm_popup'] ? '
 

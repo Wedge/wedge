@@ -1983,7 +1983,7 @@ class wedit
 			}
 		}
 
-		// Change breaks back to \n's and &nsbp; back to spaces.
+		// Change breaks back to \n's and &nbsp; back to spaces.
 		return preg_replace('~<br\s*/?\>~', "\n", str_replace('&nbsp;', ' ', implode('', $parts)));
 	}
 

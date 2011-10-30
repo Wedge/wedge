@@ -480,6 +480,25 @@ function updateSettings($changeArray, $update = false)
 }
 
 /**
+ * Inserts elements into an indexed array, before or after a specific key.
+ * This will only work if $array doesn't have keys in common with $input.
+ *
+ * @param array $input The array to be modified
+ * @param string $to The target array key
+ * @param array $array The array to insert
+ * @param string $where Set to 'after' to insert $array after $to, or 'before' to insert before it.
+ */
+function array_insert(&$input, $to, $array, $where = 'before')
+{
+	$keys = array_keys($input);
+	$val = array_values($input);
+	$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
+	array_splice($keys, $offset, 0, array_keys($array));
+	array_splice($val, $offset, 0, $array);
+	$input = array_combine($keys, $val);
+}
+
+/**
  * Prunes non valid XML/XHTML characters from a string intended for XML/XHTML transport use.
  *
  * Primarily this function removes non-printable control codes from an XML output (tab, CR, LF are preserved), including non valid UTF-8 character signatures if appropriate.
@@ -2218,6 +2237,7 @@ function call_lang_hook($hook)
 	foreach ($modSettings['hooks'][$hook] as $function)
 	{
 		$found = false;
+
 		// Was this a language file hook? There won't be a function if it is. It should be in the form of path/filename without a language or extension, e.g. /path/Plugins/myplugin/myfile (where .english.php is added later)
 		if ($function[0] === '|')
 		{
@@ -2225,6 +2245,7 @@ function call_lang_hook($hook)
 			$parts = explode('|', $function);
 			$path = trim($parts[1]);
 			$attempts = array();
+
 			// If true, pass through to the next language attempt even if it's a match. But if it's not English, see about loading that *first*.
 			if (empty($modSettings['disable_language_fallback']) && $lang !== 'english')
 				$attempts['english'] = true;
@@ -2279,8 +2300,7 @@ function add_hook($hook, $function, $file = '', $register = true)
 	elseif (!$register && !isset($modSettings['hooks'][$hook]))
 		$modSettings['hooks'][$hook] = array();
 
-	// Do nothing if it's already there, except if we're
-	// asking for registration and it isn't registered yet.
+	// Do nothing if it's already there, except if we're asking for registration and it isn't registered yet.
 	if ((!$register || in_array($function, $modSettings['registered_hooks'][$hook])) && ($in_hook = in_array($function, $modSettings['hooks'][$hook])))
 		return;
 

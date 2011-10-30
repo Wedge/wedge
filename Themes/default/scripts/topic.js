@@ -21,7 +21,7 @@ function is_editing()
 function go_up()
 {
 	$("html, body").animate(
-		{ scrollTop: $(document).height() - $(window).height() },
+		{ scrollTop: 0 },
 		1000
 	);
 
@@ -31,7 +31,7 @@ function go_up()
 function go_down()
 {
 	$("html, body").animate(
-		{ scrollTop: 0 },
+		{ scrollTop: $(document).height() - $(window).height() },
 		1000
 	);
 
