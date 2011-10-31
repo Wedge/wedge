@@ -59,7 +59,6 @@ function ViewErrorLog()
 	$filters = array(
 		'id_member' => $txt['username'],
 		'ip' => $txt['ip_address'],
-		'session' => $txt['session'],
 		'url' => $txt['error_url'],
 		'message' => $txt['error_message'],
 		'error_type' => $txt['error_type'],
@@ -111,7 +110,7 @@ function ViewErrorLog()
 
 	// Find and sort out the errors.
 	$request = wesql::query('
-		SELECT id_error, id_member, ip, li.member_ip AS display_ip, url, log_time, message, session, error_type, file, line
+		SELECT id_error, id_member, ip, li.member_ip AS display_ip, url, log_time, message, error_type, file, line
 		FROM {db_prefix}log_errors AS le
 			LEFT JOIN {db_prefix}log_ips AS li ON (le.ip = li.id_ip)' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : '') . '
@@ -140,7 +139,6 @@ function ViewErrorLog()
 				'id' => $row['id_member'],
 				'ip' => $row['ip'],
 				'display_ip' => format_ip($row['display_ip']),
-				'session' => $row['session']
 			),
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],

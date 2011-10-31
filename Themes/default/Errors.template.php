@@ -102,14 +102,7 @@ function template_error_log()
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? '' : ';desc', $context['has_filter'] ? $context['filter']['href'] : '', '" title="', $txt['reverse_direction'], '">
 						<img src="', $settings['images_url'], '/sort_', $context['sort_direction'], '.gif" alt="', $txt['reverse_direction'], '">
 					</a>
-					', $error['time'], '<br>';
-
-		if (!empty($error['member']['session']))
-			echo '
-					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=session;value=', $error['member']['session'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_session'], '"><img src="', $settings['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_session'], '"></a>
-					', $txt['session'], ': ', $error['member']['session'], '<br>';
-
-		echo '
+					', $error['time'], '<br>
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=error_type;value=', $error['error_type']['type'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $settings['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
 					', $txt['error_type'], ': ', $error['error_type']['name'], '
 				</td>

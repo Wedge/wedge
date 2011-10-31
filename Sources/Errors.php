@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
-	global $txt, $modSettings, $sc, $user_info, $scripturl, $last_error, $context, $full_request, $pluginsdir;
+	global $txt, $modSettings, $user_info, $scripturl, $last_error, $context, $full_request, $pluginsdir;
 	static $plugin_dir = null;
 
 	// Check if error logging is actually on.
@@ -133,13 +133,13 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$file = '';
 
 	// Don't log the same error countless times, as we can get in a cycle of depression...
-	$error_info = array($user_info['id'], time(), get_ip_identifier($user_info['ip']), $query_string, $error_message, (string) $sc, $error_type, $file, $line);
+	$error_info = array($user_info['id'], time(), get_ip_identifier($user_info['ip']), $query_string, $error_message, $error_type, $file, $line);
 	if (empty($last_error) || $last_error != $error_info)
 	{
 		// Insert the error into the database.
 		wesql::insert('',
 			'{db_prefix}log_errors',
-			array('id_member' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string-65534', 'message' => 'string-65534', 'session' => 'string', 'error_type' => 'string-255', 'file' => 'string-255', 'line' => 'int'),
+			array('id_member' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string-65534', 'message' => 'string-65534', 'error_type' => 'string-255', 'file' => 'string-255', 'line' => 'int'),
 			$error_info,
 			array('id_error')
 		);
