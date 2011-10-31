@@ -44,7 +44,30 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	// Add a file and line to the error message?
 	// Don't use the actual txt entries for file and line but instead use %1$s for file and %2$s for line
 	if ($file == null)
-		$file = '';
+	{
+		// We weren't given a filename but we need it at least for identifying if this is a plugin or not. We need to find if we came here via the fatal error handlers first.
+		$array = debug_backtrace();
+		for ($i = 0, $c = count($array); $i < $c; $i++)
+			if (!empty($array[$i]['function']) && in_array($array[$i]['function'], array('fatal_error', 'fatal_lang_error')))
+			{
+				$found_filename = $array[$i]['file'];
+				break;
+			}
+
+		// Hmm, did we find it? Maybe they called log_error directly?
+		if (!isset($found_filename))
+			for ($i = 0; $i < $c; $i++)
+			{
+				if (!empty($array[$i]['function']) && $array[$i]['function'] == 'log_error')
+				{
+					$found_filename = $array[$i]['file'];
+					break;
+				}
+			}
+
+		if (isset($found_filename))
+			$file = str_replace('\\', '/', $found_filename);
+	}
 	else
 		// Windows-style slashes don't play well, let's convert them to Unix style.
 		$file = str_replace('\\', '/', $file);
@@ -104,6 +127,10 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 				break;
 			}
 		}
+
+	// If we found the filename manually, unlog it now.
+	if (isset($found_filename))
+		$file = '';
 
 	// Don't log the same error countless times, as we can get in a cycle of depression...
 	$error_info = array($user_info['id'], time(), get_ip_identifier($user_info['ip']), $query_string, $error_message, (string) $sc, $error_type, $file, $line);
