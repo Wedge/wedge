@@ -75,7 +75,7 @@ function template_boards()
 				// If this board is told to have a custom icon, use it.
 				if (!empty($board['custom_class']))
 					echo '
-						<div class="boardstatus ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '"></div>';
+						<div class="boardstatus ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
 				// If the board or children is new, show an indicator.
 				elseif ($board['new'] || $board['children_new'])
 					echo '
