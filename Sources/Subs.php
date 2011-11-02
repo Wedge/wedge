@@ -486,16 +486,14 @@ function updateSettings($changeArray, $update = false)
  * @param array $input The array to be modified
  * @param string $to The target array key
  * @param array $array The array to insert
- * @param string $where Set to 'after' to insert $array after $to, or 'before' to insert before it.
+ * @param boolean $after Set to true to insert $array after $to, leave empty to insert before it.
  */
-function array_insert(&$input, $to, $array, $where = 'before')
+function array_insert($input, $to, $array, $after = false)
 {
-	$keys = array_keys($input);
-	$val = array_values($input);
-	$offset = array_search($to, $keys) + ($where === 'after' ? 1 : 0);
-	array_splice($keys, $offset, 0, array_keys($array));
-	array_splice($val, $offset, 0, $array);
-	$input = array_combine($keys, $val);
+	$offset = array_search($to, array_keys($input));
+	if ($after)
+		$offset++;
+	return array_merge(array_slice($input, 0, $offset, true), $array, array_slice($input, $offset, null, true));
 }
 
 /**

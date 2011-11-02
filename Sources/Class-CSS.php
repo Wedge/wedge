@@ -883,7 +883,7 @@ class wecss_math extends wecss
 }
 
 // IE 6/7/8 don't support rgba/hsla, so we're replacing them with regular rgb colors mixed with an alpha variable.
-// The only exception is the gradient function, because it accepts a #aarrggbb value.
+// The only exception is the gradient function. It accepts a #aarrggbb value, and only that, so IE6/7/8/9 get the treatment.
 class wecss_rgba extends wecss
 {
 	// Converts from a string (possibly rgba) value to a rgb string
@@ -928,7 +928,8 @@ class wecss_rgba extends wecss
 	{
 		global $browser;
 
-		$css = preg_replace_callback('~(colorstr=)' . ($browser['is_ie8down'] ? '?' : '') . '((?:rgba|hsla?)\([^()]*\))~i', 'wecss_rgba::rgba2rgb', $css);
+		$ie_sucks = $browser['version'] < 10;
+		$css = preg_replace_callback('~(colorstr=)' . ($ie_sucks ? '?' : '') . '((?:rgba' . ($ie_sucks ? '?' : '') . '|hsla?)\([^()]*\))~i', 'wecss_rgba::rgba2rgb', $css);
 	}
 }
 

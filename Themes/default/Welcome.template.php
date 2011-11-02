@@ -13,16 +13,14 @@
 
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings, $language;
-
 	echo '
 	<div class="windowbg2 wrc">
 		<h1>
 			Welcome, hacker!
 		</h1>
 		<ul>
-			<li><a href="', $scripturl, '?action=boards">Board index</a></li>
-			<li><a href="', $scripturl, '?action=pm">Personal messages</a></li>
+			<li><a href="<URL>?action=boards">Board index</a></li>
+			<li><a href="<URL>?action=pm">Personal messages</a></li>
 		</ul>
 	</div>';
 }

@@ -205,7 +205,7 @@ function ssi_shutdown()
 // Display a welcome message, like:  Hey, User, you have 0 messages, 0 are new.
 function ssi_welcome($output_method = 'echo')
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	if ($output_method == 'echo')
 	{
@@ -254,8 +254,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 // Recent post list: Board | Subject by | Poster | Date
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
-	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
-	global $modSettings;
+	global $context, $settings, $txt, $db_prefix, $user_info, $modSettings;
 
 	// Excluding certain boards...
 	if ($exclude_boards === null && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0)

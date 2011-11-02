@@ -26,15 +26,14 @@
 		r_name: receiver's name.
 		r_email: receiver's email address.
 		send: this just needs to be set, as by the submit button.
-		sc: the session id, or $context['session_id'].
 
 	The report block gets shown from:
 		'?action=report;topic=##.##;msg=##'
 	It should submit to:
 		'?action=report;topic=' . $context['current_topic'] . '.' . $context['start']
-	It only needs to send the following fields:
+	It only needs to send the following field:
+		email: sender's email, if they're a guest.
 		comment: an additional comment to give the moderator.
-		sc: the session id, or $context['session_id'].
 */
 
 // This is where we get information about who they want to send the topic to, etc.
