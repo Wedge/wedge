@@ -382,6 +382,7 @@ function loadProfileFields($force_reload = false)
 			'value' => '',
 			'permission' => 'profile_identity',
 			'save_key' => 'passwd',
+
 			// Note this will only work if passwrd2 also exists!
 			'input_validate' => create_function('&$value', '
 				global $user_info, $cur_profile;
@@ -414,14 +415,6 @@ function loadProfileFields($force_reload = false)
 			'value' => '',
 			'permission' => 'profile_identity',
 			'is_dummy' => true,
-		),
-		'personal_text' => array(
-			'type' => 'text',
-			'label' => $txt['personal_text'],
-			'log_change' => true,
-			'input_attr' => array(' maxlength="50"'),
-			'size' => 50,
-			'permission' => 'profile_extra',
 		),
 		// This does ALL the pm settings
 		'pm_prefs' => array(
@@ -1486,7 +1479,7 @@ function forumProfile($memID)
 
 	setupProfileContext(
 		array(
-			'avatar_choice', 'hr', 'personal_text', 'hr',
+			'avatar_choice', 'hr',
 			'bday1', 'location', 'gender', 'hr',
 			'usertitle', 'signature', 'hr',
 			'website_title', 'website_url',

@@ -490,7 +490,7 @@ function updateSettings($changeArray, $update = false)
  */
 function array_insert($input, $to, $array, $after = false)
 {
-	$offset = array_search($to, array_keys($input));
+	$offset = array_search($to, array_keys($input), true);
 	if ($after)
 		$offset++;
 	return array_merge(array_slice($input, 0, $offset, true), $array, array_slice($input, $offset, null, true));

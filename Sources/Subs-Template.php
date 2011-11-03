@@ -1313,17 +1313,13 @@ final class wetem
 			$keys = array_keys(self::$layers[$to]);
 			foreach ($keys as $id)
 			{
-				$item =& self::$layers[$to][$id];
-				if (!is_array($item))
+				if (!is_array(self::$layers[$to][$id]))
 				{
 					// We're going to insert our item(s) right before the first block we find...
 					if (!isset($offset))
 					{
-						$val = array_values(self::$layers[$to]);
 						$offset = array_search($id, $keys, true);
-						array_splice($keys, $offset, 0, array_keys($blocks));
-						array_splice($val, $offset, 0, array_fill(0, count($blocks), true));
-						self::$layers[$to] = array_combine($keys, $val);
+						self::$layers[$to] = array_merge(array_slice(self::$layers[$to], 0, $offset, true), $blocks, array_slice(self::$layers[$to], $offset, null, true));
 					}
 					// ...And then we delete the other block(s) and leave the layers where they are.
 					unset(self::$layers[$to][$id]);
@@ -1351,7 +1347,7 @@ final class wetem
 				if (!isset($layer[$to]))
 					continue;
 
-				array_insert($layer, $to, $blocks, $where);
+				$layer = array_insert($layer, $to, $blocks, $where);
 				self::reindex();
 				return $to;
 			}
