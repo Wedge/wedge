@@ -257,13 +257,13 @@ function Register2()
 	$possible_strings = array(
 		'website_url', 'website_title',
 		'location', 'birthdate',
-		'time_format',
-		'buddy_list',
-		'pm_ignore_list',
-		'smiley_set',
+		'buddy_list', 'pm_ignore_list',
 		'signature', 'personal_text', 'avatar',
-		'lngfile',
 		'secret_question', 'secret_answer',
+		'time_format',
+		'smiley_set',
+		'lngfile',
+		'data',
 	);
 	$possible_ints = array(
 		'pm_email_notify',

@@ -33,6 +33,9 @@ function Ajax()
 		'messageicons' => array(
 			'function' => 'ListMessageIcons',
 		),
+		'thought' => array(
+			'function' => 'Thought',
+		),
 	);
 	if (!isset($_REQUEST['sa'], $sub_actions[$_REQUEST['sa']]))
 		fatal_lang_error('no_access', false);
@@ -53,10 +56,12 @@ function GetJumpTo()
 	global $user_info, $context, $modSettings, $scripturl;
 
 	// Find the boards/cateogories they can see.
+	// Note: you can set $context['current_category'] if you have too many boards and it kills performance.
 	loadSource('Subs-MessageIndex');
 	$boardListOptions = array(
 		'use_permissions' => true,
 		'selected_board' => isset($context['current_board']) ? $context['current_board'] : 0,
+		'current_category' => isset($context['current_category']) ? $context['current_category'] : null, // null to list all categories
 	);
 	$context['jump_to'] = getBoardList($boardListOptions);
 
@@ -95,6 +100,98 @@ function ListMessageIcons()
 	$context['icons'] = getMessageIcons($board);
 
 	wetem::load('message_icons');
+}
+
+function Thought()
+{
+	global $user_info;
+
+	// !! We need $user_info if we're going to allow the editing of older messages... Don't forget to compare id_members!
+	if (!empty($_POST['text']) && !$user_info['is_guest'])
+	{
+		// !! Should we use censorText at store time, or display time...? $context['user'] (Load.php:1696) begs to differ.
+		$text = westr::htmlspecialchars(trim($_POST['text']));
+		if (empty($text))
+			die();
+		$percent = 0;
+
+		// Original thought ID (in case of an edit.)
+		$oid = isset($_POST['oid']) ? (int) $_POST['oid'] : 0;
+
+		// Is this a public thought?
+		$privacy = isset($_POST['privacy']) && is_numeric($_POST['privacy']) && $_POST['privacy'] <= 3 ? (int) $_POST['privacy'] : 0;
+
+		if (empty($_POST['parent']))
+			similar_text($user_info['thought'], $text, $percent);
+
+		/*
+			// Delete thoughts when they're older than 3 years...?
+			// Commented out because it's only useful if your forum is very busy.
+			wesql::query('
+				DELETE FROM {db_prefix}thoughts
+				WHERE updated < UNIX_TIMESTAMP() - 3*365*24*3600
+			');
+		*/
+
+		// Overwrite previous thought if it's just an edit, e.g. it's 90% similar to its earlier incarnation.
+		if (!empty($oid))
+		{
+			$request = wesql::query('
+				SELECT id_thought, id_member
+				FROM {db_prefix}thoughts
+				WHERE id_parent = 0 AND id_member = {int:id_member}
+				ORDER BY id_thought DESC LIMIT 1', array('id_member' => $user_info['id'])
+			);
+			list ($last_thought, $last_member) = wesql::fetch_row($request);
+			wesql::free_result($request);
+		}
+
+		if (!empty($last_thought) && (allowedTo('moderate') || $last_member === $user_info['id']))
+			wesql::query('
+				UPDATE {db_prefix}thoughts
+				SET updated = {raw:updated}, thought = {string:thought}, privacy = {int:privacy}
+				WHERE id_thought = {int:id_thought}', array(
+					'id_thought' => $last_thought,
+					'privacy' => $privacy,
+					'updated' => $percent >= 90 ? 'updated' : time(),
+					'thought' => $text
+				)
+			);
+		else
+		{
+			// Okay, so this is a new thought... Insert it, we'll cache it if it's not a comment.
+			wesql::query('
+				INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
+				VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {int:privacy}, {int:updated}, {string:thought})', array(
+					'id_parent' => !empty($_POST['parent']) ? (int) $_POST['parent'] : 0,
+					'id_member' => $user_info['id'],
+					'id_master' => !empty($_POST['master']) ? (int) $_POST['master'] : 0,
+					'privacy' => $privacy,
+					'updated' => time(),
+					'thought' => $text
+				)
+			);
+			if (empty($_POST['parent']))
+				$last_thought = wesql::insert_id();
+		}
+
+		// Only update the thought area if it's a public comment, and isn't a comment on another thought...
+		if (empty($_POST['parent']) && !empty($last_thought))
+		{
+			updateMyData(array(
+				'id_thought' => $last_thought,
+				'thought' => $text
+			));
+			// If the thought is public, we can store it as personal text. We'll also parse it now,
+			// for performance reasons. Personal texts are likely to change, so BBC changes
+			// shouldn't have a major influence on these fields. Correct me if I'm wrong.
+			if ($privacy === 0)
+				updateMemberData($user_info['id'], array('personal_text' => parse_bbc_inline($text)));
+		}
+	}
+
+	// Wedge isn't expecting any feedback.
+	die();
 }
 
 ?>

@@ -318,7 +318,7 @@ class wesql
 		if ($query_errno != 1213 && $query_errno != 1205 && function_exists('log_error'))
 			log_error($txt['database_error'] . ': ' . $query_error . (!empty($modSettings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
 
-		// Database error auto fixing ;).
+		// Database error auto fixing ;)
 		if (function_exists('cache_get_data') && (!isset($modSettings['autoFixDatabase']) || $modSettings['autoFixDatabase'] == '1'))
 		{
 			// Force caching on, just for the error checking.
@@ -461,7 +461,7 @@ class wesql
 
 		// A database error is often the sign of a database in need of upgrade. Check forum versions, and if not identical suggest an upgrade... (not for SVN versions!)
 		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$modSettings['weVersion'] && strpos(WEDGE_VERSION, 'SVN') === false)
-			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, $modSettings['weVersion']);
+			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, @$modSettings['weVersion']);
 
 		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
 			$context['error_message'] .= '<br><br>' . preg_replace('~(\r\n|\r|\n)~', '<br>$1', $db_string);

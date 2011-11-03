@@ -292,9 +292,28 @@ function template_summary()
 			</div>';
 
 	echo '
-		</div>
+		</div>';
+
+	// @todo: this is a placeholder... Seriously.
+	if (!empty($context['thoughts']))
+	{
+		echo '
+		<div class="windowbg wrc">
+			<dl style="border: 0; padding-bottom: 0; margin-bottom: 0">';
+
+		foreach ($context['thoughts'] as $thought)
+			echo '
+				<dt>', $thought['updated'], '</dt>
+				<dd>', $thought['text'], '</dd>';
+
+		echo '
+			</dl>
+		</div>';
+	}
+
+	echo '
 	</div>
-<div class="clear"></div>
+	<div class="clear"></div>
 </div>';
 }
 

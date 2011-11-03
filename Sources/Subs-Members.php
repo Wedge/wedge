@@ -410,7 +410,16 @@ function deleteMembers($users, $check_not_admin = false)
 		)
 	);
 
-	// These users are nobody's buddy nomore.
+	// !!! Also update other thoughts' id_master and id_parent...?
+	wesql::query('
+		DELETE FROM {db_prefix}thoughts
+		WHERE id_member IN ({array_int:users})',
+		array(
+			'users' => $users,
+		)
+	);
+
+	// These users are nobody's buddy no more.
 	$request = wesql::query('
 		SELECT id_member, pm_ignore_list, buddy_list
 		FROM {db_prefix}members
@@ -611,7 +620,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'member_ip2' => $regOptions['interface'] == 'admin' ? '127.0.0.1' : $_SERVER['BAN_CHECK_IP'],
 		'validation_code' => $validation_code,
 		'real_name' => $regOptions['username'],
-		'personal_text' => $modSettings['default_personal_text'],
+		'personal_text' => '',
 		'pm_email_notify' => 1,
 		'id_theme' => 0,
 		'id_post_group' => 4,
@@ -631,6 +640,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'additional_groups' => '',
 		'ignore_boards' => '',
 		'smiley_set' => '',
+		'data' => '',
 	);
 
 	// Setup the activation status on this new account so it is correct - firstly is it an under age account?

@@ -355,7 +355,28 @@ function template_sidebar_before()
 
 		echo '
 			</ul>
-			<p class="now">', $context['current_time'], '</p>';
+			<p class="now">', $context['current_time'], '</p>
+
+			<we:title>
+				', $txt['thought'], ' &raquo;
+				<a href="#" onclick="oThought.showEdit(\'\', \'\', \'\'); return false;">', $txt['new'], '</a> |
+				<a href="#" onclick="oThought.showEdit(\'\'); return false;">', $txt['modify'], '</a>
+			</we:title>
+			<div class="normaltext">
+				<div id="thought_update">';
+
+		$thought = empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'];
+		$thought_id = isset($context['user']['data']['id_thought']) ? $context['user']['data']['id_thought'] : 0;
+
+		echo $thought, '</div>';
+
+		add_js('
+	oThought = new Thought({
+		aPrivacy: ["', $txt['privacy_public'], '","', $txt['privacy_members'], '","', $txt['privacy_friends'], '","', $txt['privacy_self'], '"],
+		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '",
+		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
+		sLabelThought: ', JavaScriptEscape($txt['thought']), '
+	});');
 
 		// Is the forum in maintenance mode?
 		if ($context['in_maintenance'] && $context['user']['is_admin'])

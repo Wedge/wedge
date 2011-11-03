@@ -75,3 +75,40 @@ ul.buttonlist
 #addrule fieldset
 	clear: both
 	margin-top: 10px
+
+/* Styles for entering thoughts.
+------------------------------------------------- */
+
+.thought_box, #thought_update, #thought_form input[type="text"]
+	font-size: 9.5pt
+	padding: 3px
+	cursor: pointer
+	border: 1px solid transparent
+	width: 208px
+	margin: 8px 0
+	:hover
+		border: 1px solid #adadff
+		background: #fff
+		color: #000
+
+#thought_form input
+	margin: 0 1px 4px 2px
+	padding: 2px 4px
+	background-position: 0 100px, 0 0, 0 0
+
+span.thoughtreply
+	img.tq
+		visibility: hidden
+		cursor: pointer
+	:hover img.tq
+		visibility: visible
+
+.thought ul
+	margin, padding: 0 0 0 8px
+	padding: 0 0 0 8px
+
+.thought li
+	margin, padding: 0
+
+span.thought
+	font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif

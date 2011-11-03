@@ -465,7 +465,7 @@ function template_userbox(&$message)
 								<li class="gender">', $txt['gender'], ': ', $message['member']['gender']['image'], '</li>';
 
 		// Show their personal text?
-		if (!empty($settings['show_blurb']) && $message['member']['blurb'] != '')
+		if (!empty($settings['show_blurb']) && $message['member']['blurb'] !== '')
 			echo '
 								<li class="blurb">', $message['member']['blurb'], '</li>';
 

@@ -25,7 +25,10 @@ var
 	is_webkit = $.browser.webkit, is_chrome = ua.indexOf('chrome') != -1, is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
 	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && vers == 6, is_ie7 = is_ie && vers == 7,
-	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down;
+	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down,
+
+	// Globals used in script.js
+	menu_baseId = hoverable = 0, menu_delay = [], hove = 'hove', aJumpTo = [], oThought;
 
 // Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback)
@@ -273,127 +276,11 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 	$(spanNode).before(replacement).remove();
 }
 
-
-// *** weCookie class.
-function weCookie(oOptions)
+function selectText(box)
 {
-	this.opt = oOptions;
-	this._cookies = {};
-
-	if ('cookie' in document && document.cookie != '')
-	{
-		var aCookieList = document.cookie.split(';');
-		for (var i = 0, n = aCookieList.length; i < n; i++)
-		{
-			var aNameValuePair = aCookieList[i].split('=');
-			this._cookies[aNameValuePair[0].replace(/^\s+|\s+$/g, '')] = decodeURIComponent(aNameValuePair[1]);
-		}
-	}
-};
-
-weCookie.prototype.get = function (sKey)
-{
-	return sKey in this._cookies ? this._cookies[sKey] : null;
-};
-
-weCookie.prototype.set = function (sKey, sValue)
-{
-	document.cookie = sKey + '=' + encodeURIComponent(sValue);
-};
-
-
-// *** weToggle class.
-function weToggle(oOptions)
-{
-	this.opt = oOptions;
-	this._collapsed = false;
-	this._cookie = null;
-
-	// If cookies are enabled and they were set, override the initial state.
-	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
-	{
-		// Initialize the cookie handler.
-		this._cookie = new weCookie({});
-
-		// Check if the cookie is set.
-		var cookieValue = this._cookie.get(this.opt.oCookieOptions.sCookieName);
-		if (cookieValue != null)
-			this.opt.bCurrentlyCollapsed = cookieValue == '1';
-	}
-
-	// If the init state is set to be collapsed, collapse it.
-	if (this.opt.bCurrentlyCollapsed)
-		this._changeState(true, true, true);
-
-	// Initialize the images to be clickable.
-	var i, n, toggle_me = function () {
-		$(this).data('that').toggle();
-		this.blur();
-		return false;
-	};
-
-	if ('aSwapImages' in this.opt)
-		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
-			$('#' + this.opt.aSwapImages[i].sId).show().css('visibility', 'visible').data('that', this).click(toggle_me).css('cursor', 'pointer').mousedown(false);
-
-	// Initialize links.
-	if ('aSwapLinks' in this.opt)
-		for (i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
-			$('#' + this.opt.aSwapLinks[i].sId).show().data('that', this).click(toggle_me);
-};
-
-// Collapse or expand the section.
-weToggle.prototype._changeState = function (bCollapse, bInit, bNow)
-{
-	// Default bInit to false.
-	bInit = !!bInit;
-	var i, n, o, op, iSpeed = bNow ? 0 : 300;
-
-	// Handle custom function hook before collapse.
-	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
-		this.opt.funcOnBeforeCollapse.call(this);
-
-	// Handle custom function hook before expand.
-	else if (!bInit && !bCollapse && 'funcOnBeforeExpand' in this.opt)
-		this.opt.funcOnBeforeExpand.call(this);
-
-	// Loop through all the images that need to be toggled.
-	if ('aSwapImages' in this.opt)
-	{
-		op = this.opt.aSwapImages;
-		for (i = 0, n = op.length; i < n; i++)
-		{
-			var sAlt = bCollapse && op[i].altCollapsed ? op[i].altCollapsed : op[i].altExpanded, icon = $('#' + op[i].sId);
-			icon.toggleClass('fold', !bCollapse).attr('title', sAlt);
-		}
-	}
-
-	// Loop through all the links that need to be toggled.
-	if ('aSwapLinks' in this.opt)
-		for (i = 0, op = this.opt.aSwapLinks, n = op.length; i < n; i++)
-			$('#' + op[i].sId).html(bCollapse && op[i].msgCollapsed ? op[i].msgCollapsed : op[i].msgExpanded);
-
-	// Now go through all the sections to be collapsed.
-	for (i = 0, op = this.opt.aSwappableContainers, n = op.length; i < n; i++)
-		(o = $('#' + op[i])) && bCollapse ? o.slideUp(iSpeed) : o.slideDown(iSpeed);
-
-	// Update the new state.
-	this._collapsed = bCollapse;
-
-	// Update the cookie, if desired.
-	if ('oCookieOptions' in this.opt && (op = this.opt.oCookieOptions) && op.bUseCookie)
-		this._cookie.set(op.sCookieName, this._collapsed ? '1' : '0');
-
-	if ('oThemeOptions' in this.opt && (op = this.opt.oThemeOptions) && op.bUseThemeSettings)
-		we_setThemeOption(op.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in op ? op.sThemeId : null, 'sAdditionalVars' in op ? op.sAdditionalVars : null);
-};
-
-// Reverse the current state.
-weToggle.prototype.toggle = function ()
-{
-	this._changeState(!this._collapsed);
-};
-
+	box.focus();
+	box.select();
+}
 
 function ajax_indicator(turn_on)
 {
@@ -404,12 +291,6 @@ function ajax_indicator(turn_on)
 		).css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {}).appendTo('body');
 	else
 		$('#ajax_in_progress').remove();
-}
-
-function selectText(box)
-{
-	box.focus();
-	box.select();
 }
 
 // Rating boxes in Media area
@@ -547,7 +428,6 @@ function weSaveEntities(sFormName, aElementNames, sMask)
  * Dropdown menu in JS with CSS fallback, Nao style.
  * May not show, but it took years to refine it.
  */
-var menu_baseId = hoverable = 0, menu_delay = [], hove = 'hove';
 
 function initMenu(menu)
 {
@@ -625,10 +505,128 @@ function menu_hide_children(id)
 }
 
 
-// This'll contain all JumpTo objects on the page.
-var aJumpTo = [];
+// *** weCookie class.
+function weCookie(oOptions)
+{
+	this.opt = oOptions;
+	this._cookies = {};
 
-// This function will retrieve the contents needed for the jump to boxes.
+	if ('cookie' in document && document.cookie != '')
+	{
+		var aCookieList = document.cookie.split(';');
+		for (var i = 0, n = aCookieList.length; i < n; i++)
+		{
+			var aNameValuePair = aCookieList[i].split('=');
+			this._cookies[aNameValuePair[0].replace(/^\s+|\s+$/g, '')] = decodeURIComponent(aNameValuePair[1]);
+		}
+	}
+};
+
+weCookie.prototype.get = function (sKey)
+{
+	return sKey in this._cookies ? this._cookies[sKey] : null;
+};
+
+weCookie.prototype.set = function (sKey, sValue)
+{
+	document.cookie = sKey + '=' + encodeURIComponent(sValue);
+};
+
+
+// *** weToggle class.
+function weToggle(oOptions)
+{
+	this.opt = oOptions;
+	this._collapsed = false;
+	this._cookie = null;
+
+	// If cookies are enabled and they were set, override the initial state.
+	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
+	{
+		// Initialize the cookie handler.
+		this._cookie = new weCookie({});
+
+		// Check if the cookie is set.
+		var cookieValue = this._cookie.get(this.opt.oCookieOptions.sCookieName);
+		if (cookieValue != null)
+			this.opt.bCurrentlyCollapsed = cookieValue == '1';
+	}
+
+	// If the init state is set to be collapsed, collapse it.
+	if (this.opt.bCurrentlyCollapsed)
+		this._changeState(true, true, true);
+
+	// Initialize the images to be clickable.
+	var i, n, toggle_me = function () {
+		$(this).data('that').toggle();
+		this.blur();
+		return false;
+	};
+
+	if ('aSwapImages' in this.opt)
+		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
+			$('#' + this.opt.aSwapImages[i].sId).show().css('visibility', 'visible').data('that', this).click(toggle_me).css('cursor', 'pointer').mousedown(false);
+
+	// Initialize links.
+	if ('aSwapLinks' in this.opt)
+		for (i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
+			$('#' + this.opt.aSwapLinks[i].sId).show().data('that', this).click(toggle_me);
+};
+
+// Collapse or expand the section.
+weToggle.prototype._changeState = function (bCollapse, bInit, bNow)
+{
+	// Default bInit to false.
+	bInit = !!bInit;
+	var i, n, o, op, iSpeed = bNow ? 0 : 300;
+
+	// Handle custom function hook before collapse.
+	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
+		this.opt.funcOnBeforeCollapse.call(this);
+
+	// Handle custom function hook before expand.
+	else if (!bInit && !bCollapse && 'funcOnBeforeExpand' in this.opt)
+		this.opt.funcOnBeforeExpand.call(this);
+
+	// Loop through all the images that need to be toggled.
+	if ('aSwapImages' in this.opt)
+	{
+		op = this.opt.aSwapImages;
+		for (i = 0, n = op.length; i < n; i++)
+		{
+			var sAlt = bCollapse && op[i].altCollapsed ? op[i].altCollapsed : op[i].altExpanded, icon = $('#' + op[i].sId);
+			icon.toggleClass('fold', !bCollapse).attr('title', sAlt);
+		}
+	}
+
+	// Loop through all the links that need to be toggled.
+	if ('aSwapLinks' in this.opt)
+		for (i = 0, op = this.opt.aSwapLinks, n = op.length; i < n; i++)
+			$('#' + op[i].sId).html(bCollapse && op[i].msgCollapsed ? op[i].msgCollapsed : op[i].msgExpanded);
+
+	// Now go through all the sections to be collapsed.
+	for (i = 0, op = this.opt.aSwappableContainers, n = op.length; i < n; i++)
+		(o = $('#' + op[i])) && bCollapse ? o.slideUp(iSpeed) : o.slideDown(iSpeed);
+
+	// Update the new state.
+	this._collapsed = bCollapse;
+
+	// Update the cookie, if desired.
+	if ('oCookieOptions' in this.opt && (op = this.opt.oCookieOptions) && op.bUseCookie)
+		this._cookie.set(op.sCookieName, this._collapsed ? '1' : '0');
+
+	if ('oThemeOptions' in this.opt && (op = this.opt.oThemeOptions) && op.bUseThemeSettings)
+		we_setThemeOption(op.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in op ? op.sThemeId : null, 'sAdditionalVars' in op ? op.sAdditionalVars : null);
+};
+
+// Reverse the current state.
+weToggle.prototype.toggle = function ()
+{
+	this._changeState(!this._collapsed);
+};
+
+
+// This function will retrieve the contents needed for the JumpTo boxes.
 function grabJumpToContent()
 {
 	var aBoardsAndCategories = [], i, n;
@@ -695,6 +693,67 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 	});
 };
 
+
+// *** Thought class.
+function Thought(oOptions)
+{
+	if (!can_ajax)
+		return;
+
+	this.opt = oOptions;
+	$('#thought_update')
+		.attr('title', this.opt.sLabelThought)
+		.click(function () { oThought.showEdit(''); })
+};
+
+// Show the input after the user has clicked the text.
+Thought.prototype.showEdit = function (tid, mid, oid, text)
+{
+	this.cancelEdit();
+	this.opt.isNew = typeof text == 'string';
+
+	var
+		thought = $('#thought_update' + tid), was_personal = thought.html(), opt = this.opt, privacy = opt.aPrivacy,
+		cur_text = opt.isNew ? text : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : thought.html().php_htmlspecialchars());
+
+	thought.hide().after('\
+		<form id="thought_form">\
+			<input type="text" maxlength="255" id="ntho">\
+			<select id="npriv">\
+				<option value="0">' + privacy[0] + '</option>\
+				<option value="1">' + privacy[1] + '</option>\
+				<option value="2">' + privacy[2] + '</option>\
+				<option value="3">' + privacy[3] + '</option>\
+			</select>\
+			<input type="hidden" id="noid" value="' + (oid ? oid : 0) + '">\
+			<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.onInputSubmit(\'' + tid + '\', \'' + (mid ? mid : tid) + '\'); return false;" class="save">\
+			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancelEdit(); return false;" class="cancel">\
+		</form>');
+	$('#ntho').focus().val(cur_text);
+};
+
+// Make that personal text editable (again)!
+Thought.prototype.cancelEdit = function ()
+{
+	$('#thought_form').prev().show().end().remove();
+};
+
+// Event handler for clicking submit.
+Thought.prototype.onInputSubmit = function (tid, mid)
+{
+	var new_thought = $('#ntho').val();
+
+	ajax_indicator(true);
+	sendXMLDocument(
+		we_prepareScriptUrl() + 'action=ajax;sa=thought',
+		'parent=' + tid + '&master=' + mid + '&oid=' + escape($('#noid').val()) + '&privacy=' + escape($('#npriv').val()) + '&text=' + escape(new_thought)
+	);
+
+	if (new_thought != '')
+		$('#thought_update' + tid).html(new_thought);
+	this.cancelEdit();
+	ajax_indicator(false);
+};
 
 /*
 // This will add an extra class to any external links, except those with title="-".

@@ -262,6 +262,33 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 }
 
 /**
+ * Update the members table's data field with serialized data.
+ *
+ * This function is mainly an alias to easily store custom data.
+ * The data field is a convenient way to store data that is only used by the member related to it, such as the current thought for display in the sidebar.
+ *
+ * @param array $data A key/value pair array that contains the field to be updated and the new value.
+ */
+function updateMyData($data)
+{
+	global $user_info;
+
+	if (empty($data) || !is_array($data))
+		return;
+
+	foreach ($data as $key => $val)
+		$user_info['data'][$key] = $val;
+
+	// @todo: should we add a hook for individual variables in the data field?
+	updateMemberData(
+		$user_info['id'],
+		array(
+			'data' => serialize($user_info['data'])
+		)
+	);
+}
+
+/**
  * Update the members table with data.
  *
  * This function ensures the member table is updated for one, multiple or all users. Note:
@@ -317,7 +344,7 @@ function updateMemberData($members, $data)
 		if (count($vars_to_integrate) != 0)
 		{
 			// Fetch a list of member_names if necessary
-			if ((!is_array($members) && $members === $user_info['id']) || (is_array($members) && count($members) == 1 && in_array($user_info['id'], $members)))
+			if ((array) $members === (array) $user_info['id'])
 				$member_names = array($user_info['username']);
 			else
 			{
@@ -369,14 +396,11 @@ function updateMemberData($members, $data)
 		}
 
 		// Ensure posts, instant_messages, and unread_messages don't overflow or underflow.
-		if (in_array($var, array('posts', 'instant_messages', 'unread_messages')))
+		if (in_array($var, array('posts', 'instant_messages', 'unread_messages')) && preg_match('~^' . $var . ' (\+ |- |\+ -)([\d]+)~', $val, $match))
 		{
-			if (preg_match('~^' . $var . ' (\+ |- |\+ -)([\d]+)~', $val, $match))
-			{
-				if ($match[1] != '+ ')
-					$val = 'CASE WHEN ' . $var . ' <= ' . abs($match[2]) . ' THEN 0 ELSE ' . $val . ' END';
-				$type = 'raw';
-			}
+			if ($match[1] != '+ ')
+				$val = 'CASE WHEN ' . $var . ' <= ' . abs($match[2]) . ' THEN 0 ELSE ' . $val . ' END';
+			$type = 'raw';
 		}
 
 		$setString .= ' ' . $var . ' = {' . $type . ':p_' . $var . '},';

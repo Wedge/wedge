@@ -244,7 +244,114 @@ function summary($memID)
 		wesql::free_result($request);
 	}
 
+	// The infamous thought system from Noisen...
+	// Not exactly optimized for speed, but we can always rewrite it later.
+	$context['thoughts'] = $thoughts = array();
+	$request = wesql::query('
+		SELECT id_thought
+		FROM {db_prefix}thoughts
+		WHERE id_member = {int:id_member}', array(
+			'id_member' => $memID,
+		)
+	);
+	$think = array();
+	while ($row = wesql::fetch_row($request))
+		$think[] = $row[0];
+	wesql::free_result($request);
+
+	if (!empty($think))
+	{
+		$request = wesql::query('
+			SELECT
+				h.updated, h.thought, h.id_thought, h.id_parent, h.id_member,
+				h.id_master, h2.id_member AS id_parent_owner,
+				m.real_name AS owner_name, mp.real_name AS parent_name
+			FROM
+				{db_prefix}thoughts AS h
+			LEFT JOIN
+				{db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
+			LEFT JOIN
+				{db_prefix}members AS m ON (h.id_member = m.id_member)
+			LEFT JOIN
+				{db_prefix}members AS mp ON (h2.id_member = mp.id_member)
+			WHERE
+				h.id_thought IN ({array_int:think})
+				OR h.id_master IN ({array_int:think})
+				OR h.id_parent IN ({array_int:think})
+			ORDER BY h.id_thought', array(
+				'think' => $think,
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+		{
+			$thought = array(
+				'id' => $row['id_thought'],
+				'id_member' => $row['id_member'],
+				'id_parent' => $row['id_parent'],
+				'id_master' => $row['id_master'],
+				'id_parent_owner' => $row['id_parent_owner'],
+				'owner_name' => $row['owner_name'],
+				'updated' => timeformat($row['updated']),
+				'text' => $row['thought'],
+			);
+			if (empty($thought['id_master'])) // !! Alternatively, add: || $row['id_master'] != $row['id_member']
+				$thoughts[$thought['id']] = $thought;
+			else
+			{
+				if (!isset($thoughts[$thought['id_master']]))
+				{
+					$thought['text'] = '@[url=' . $scripturl . '?action=profile;u=' . $row['id_parent_owner'] . '#t' . $row['id_parent'] . ']' . $row['parent_name'] . '[/url]> ' . $row['thought'];
+					$thoughts[$thought['id_master']] = $thought;
+				}
+				elseif ($thought['id_master'] === $thought['id_parent'] || !isset($thoughts[$thought['id_master']]['sub']))
+					$thoughts[$thought['id_master']]['sub'][$thought['id']] = $thought;
+				else
+					populate_sub_thoughts($thoughts[$thought['id_master']]['sub'], $thought);
+			}
+		}
+		wesql::free_result($request);
+		foreach (array_reverse(array_keys($thoughts)) as $nb)
+			$context['thoughts'][$nb] = $thoughts[$nb];
+	}
+
+/*
+	// Retrieve thought comments...
+	// !! Should this be removed?
+	if (!empty($context['thoughts']))
+	{
+		$request = wesql::query('
+			SELECT h.updated, h.thought, h.id_thought, h.id_parent, h.id_member, m.real_name
+			FROM {db_prefix}thoughts AS h
+			LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
+			WHERE id_parent IN ({array_int:thoughts})
+			ORDER BY updated ASC', array(
+				'thoughts' => array_keys($context['thoughts']),
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+			$context['thoughts'][$row['id_parent']]['comments'][] = array(
+				'id' => $row['id_thought'],
+				'id_member' => $row['id_member'],
+				'member_name' => $row['real_name'],
+				'updated' => timeformat($row['updated']),
+				'text' => $row['thought'],
+			);
+		wesql::free_result($request);
+	}
+*/
+
 	loadCustomFields($memID);
+}
+
+function populate_sub_thoughts(&$here, &$thought)
+{
+	foreach ($here as &$tho)
+	{
+		if ($tho['id'] == $thought['id_parent'])
+			$tho['sub'][$thought['id']] = $thought;
+		elseif (isset($tho['sub']))
+			populate_sub_thoughts($tho['sub'], $thought);
+	}
 }
 
 // View the drafts of the user.

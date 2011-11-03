@@ -212,6 +212,7 @@ function loadUserSettings()
 				)
 			);
 			$user_settings = wesql::fetch_assoc($request);
+			$user_settings['data'] = unserialize($user_settings['data']);
 			wesql::free_result($request);
 
 			if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
@@ -365,6 +366,7 @@ function loadUserSettings()
 			'custom_dir' => !empty($user_settings['attachment_type']) && $user_settings['attachment_type'] == 1,
 			'id_attach' => isset($user_settings['id_attach']) ? $user_settings['id_attach'] : 0
 		),
+		'data' => isset($user_settings['data']) ? $user_settings['data'] : array(),
 		'smiley_set' => isset($user_settings['smiley_set']) ? $user_settings['smiley_set'] : '',
 		'messages' => empty($user_settings['instant_messages']) ? 0 : $user_settings['instant_messages'],
 		'unread_messages' => empty($user_settings['unread_messages']) ? 0 : $user_settings['unread_messages'],
@@ -1688,10 +1690,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'is_mod' => &$user_info['is_mod'],
 		// A user can mod if they have permission to see the mod center, or they are a board/group/approval moderator.
 		'can_mod' => allowedTo('access_mod_center') || (!$user_info['is_guest'] && ($user_info['mod_cache']['gq'] != '0=1' || $user_info['mod_cache']['bq'] != '0=1' || ($modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap'])))),
-		'username' => $user_info['username'],
-		'language' => $user_info['language'],
-		'email' => $user_info['email'],
-		'ignoreusers' => $user_info['ignoreusers'],
+		'username' => &$user_info['username'],
+		'language' => &$user_info['language'],
+		'email' => &$user_info['email'],
+		'ignoreusers' => &$user_info['ignoreusers'],
+		'data' => &$user_info['data'],
 	);
 	if (!$context['user']['is_guest'])
 		$context['user']['name'] = $user_info['name'];
