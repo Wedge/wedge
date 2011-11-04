@@ -133,19 +133,24 @@ function Thought()
 			');
 		*/
 
-		// Overwrite previous thought if it's just an edit, e.g. it's 90% similar to its earlier incarnation.
+		// Is it an edit?
 		if (!empty($oid))
 		{
 			$request = wesql::query('
 				SELECT id_thought, id_member
 				FROM {db_prefix}thoughts
-				WHERE id_parent = 0 AND id_member = {int:id_member}
-				ORDER BY id_thought DESC LIMIT 1', array('id_member' => $user_info['id'])
+				WHERE id_thought = {int:original_id}
+				AND id_member = {int:id_member}',
+				array(
+					'id_member' => $user_info['id'],
+					'original_id' => $oid,
+				)
 			);
 			list ($last_thought, $last_member) = wesql::fetch_row($request);
 			wesql::free_result($request);
 		}
 
+		// Overwrite previous thought if it's just an edit, e.g. it's 90% similar to its earlier incarnation.
 		if (!empty($last_thought) && (allowedTo('moderate') || $last_member === $user_info['id']))
 			wesql::query('
 				UPDATE {db_prefix}thoughts

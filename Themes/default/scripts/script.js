@@ -703,18 +703,17 @@ function Thought(oOptions)
 	this.opt = oOptions;
 	$('#thought_update')
 		.attr('title', this.opt.sLabelThought)
-		.click(function () { oThought.showEdit(''); })
+		.click(function () { oThought.edit(''); })
 };
 
 // Show the input after the user has clicked the text.
-Thought.prototype.showEdit = function (tid, mid, oid, text)
+Thought.prototype.edit = function (tid, mid, is_new, text)
 {
-	this.cancelEdit();
-	this.opt.isNew = typeof text == 'string';
+	this.cancel();
 
 	var
 		thought = $('#thought_update' + tid), was_personal = thought.html(), opt = this.opt, privacy = opt.aPrivacy,
-		cur_text = opt.isNew ? text : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : thought.html().php_htmlspecialchars());
+		cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : thought.html().php_unhtmlspecialchars());
 
 	thought.hide().after('\
 		<form id="thought_form">\
@@ -725,21 +724,21 @@ Thought.prototype.showEdit = function (tid, mid, oid, text)
 				<option value="2">' + privacy[2] + '</option>\
 				<option value="3">' + privacy[3] + '</option>\
 			</select>\
-			<input type="hidden" id="noid" value="' + (oid ? oid : 0) + '">\
-			<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.onInputSubmit(\'' + tid + '\', \'' + (mid ? mid : tid) + '\'); return false;" class="save">\
-			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancelEdit(); return false;" class="cancel">\
+			<input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '">\
+			<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save">\
+			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
 		</form>');
 	$('#ntho').focus().val(cur_text);
 };
 
 // Make that personal text editable (again)!
-Thought.prototype.cancelEdit = function ()
+Thought.prototype.cancel = function ()
 {
 	$('#thought_form').prev().show().end().remove();
 };
 
 // Event handler for clicking submit.
-Thought.prototype.onInputSubmit = function (tid, mid)
+Thought.prototype.submit = function (tid, mid)
 {
 	var new_thought = $('#ntho').val();
 
@@ -751,7 +750,7 @@ Thought.prototype.onInputSubmit = function (tid, mid)
 
 	if (new_thought != '')
 		$('#thought_update' + tid).html(new_thought);
-	this.cancelEdit();
+	this.cancel();
 	ajax_indicator(false);
 };
 
@@ -762,7 +761,7 @@ function _linkMagic()
 {
 	$('a[title!="-"]').each(function () {
 		var hre = this.href;
-		if (typeof hre == 'string' && hre.length > 0 && (hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
+		if (hre && hre.length > 0 && (hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
 			$(this).addClass('xt');
 	});
 }

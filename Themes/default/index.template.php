@@ -356,19 +356,25 @@ function template_sidebar_before()
 		echo '
 			</ul>
 			<p class="now">', $context['current_time'], '</p>
+		</div>';
 
-			<we:title>
-				', $txt['thought'], ' &raquo;
-				<a href="#" onclick="oThought.showEdit(\'\', \'\', \'\'); return false;">', $txt['new'], '</a> |
-				<a href="#" onclick="oThought.showEdit(\'\'); return false;">', $txt['modify'], '</a>
-			</we:title>
-			<div class="normaltext">
-				<div id="thought_update">';
+		// Is the forum in maintenance mode?
+		if ($context['in_maintenance'] && $context['user']['is_admin'])
+			echo '
+		<p class="notice">', $txt['maintain_mode_on'], '</p>';
 
-		$thought = empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'];
+		// This is where we'll show the Thought postbox.
 		$thought_id = isset($context['user']['data']['id_thought']) ? $context['user']['data']['id_thought'] : 0;
 
-		echo $thought, '</div>';
+		echo '
+		<we:title>
+			', $txt['thought'], ' &raquo;
+			<a href="#" onclick="oThought.edit(\'\', \'\', true); return false;">', $txt['new'], '</a> |
+			<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['modify'], '</a>
+		</we:title>
+		<div id="thought_update" data-oid="', $thought_id, '">';
+
+		echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</div>';
 
 		add_js('
 	oThought = new Thought({
@@ -377,11 +383,6 @@ function template_sidebar_before()
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '
 	});');
-
-		// Is the forum in maintenance mode?
-		if ($context['in_maintenance'] && $context['user']['is_admin'])
-			echo '
-			<p class="notice">', $txt['maintain_mode_on'], '</p>';
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
 	elseif (!empty($context['show_login_bar']))
@@ -403,11 +404,9 @@ function template_sidebar_before()
 
 		echo '
 				<input type="hidden" name="hash_passwrd" value="">
-			</form>';
-	}
-
-	echo '
+			</form>
 		</div>';
+	}
 }
 
 // This natty little function adds feed links to the sidebar. Mostly autonomous, it's lovely for that.
@@ -508,7 +507,7 @@ function template_body_after()
 		var d = document, g = "getElementById", e1 = d[g]("edge"), e2 = d[g]("edgehide"), m = d[g]("main_content"), w = m ? m.clientWidth : 0;
 		if (w && w < 728 && !we_side && e1) { we_side = 1; e1.id = "edgehide"; } else if (w >= 952 && we_side && e2) { we_side = 0; e2.id = "edge"; }
 	}
-	we_side = 0; noi_resize(); window.onresize = noi_resize;
+	we_side = 0; noi_resize();
 // ]]></script>';
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
@@ -538,6 +537,7 @@ function template_body_after()
 		we_loading = "', $txt['ajax_in_progress'], '",
 		we_cancel = "', $txt['form_cancel'], '";
 
+	$(window).resize(noi_resize).resize();
 	initMenu("main_menu");', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))

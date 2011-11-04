@@ -77,19 +77,19 @@ body extends .grad700
 	border: 1px solid #ccc
 	background: #f2f3ea
 	border-radius: 8px
+	a
+		color: #a54
+		border-bottom: 1px dotted #600
+		text-decoration: none
 	.column
 		padding: 8px 12px 12px
 
 #userbox
 	overflow: hidden
 	margin: 1em 0
-	a
-		color: #a54
-		border-bottom: 1px dotted #600
-		text-decoration: none
 	img.avatar
-		float: left
-		margin: 0 1em 0 0
+		float: right
+		margin: 0 .2em 0 1em
 		padding: 0
 		$ie-max-width: 70px
 	p
@@ -99,7 +99,7 @@ body extends .grad700
 		margin: 0
 	ul
 		padding: 0
-		margin: 0 0 0 92px
+		margin: 0 0 0 12px
 		list-style-type: disc
 		li
 			font-size: .9em

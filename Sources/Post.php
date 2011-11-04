@@ -606,7 +606,7 @@ function Post()
 					IFNULL(a.size, -1) AS filesize, a.filename, a.id_attach,
 					a.approved AS attachment_approved, t.id_member_started AS id_member_poster,
 					m.poster_time
-			FROM {db_prefix}messages AS m
+				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 					LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = m.id_msg AND a.attachment_type = {int:attachment_type})
 				WHERE m.id_msg = {int:id_msg}
