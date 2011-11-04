@@ -121,9 +121,6 @@ function Thought()
 		// Is this a public thought?
 		$privacy = isset($_POST['privacy']) && is_numeric($_POST['privacy']) && $_POST['privacy'] <= 3 ? (int) $_POST['privacy'] : 0;
 
-		if (empty($_POST['parent']))
-			similar_text($user_info['thought'], $text, $percent);
-
 		/*
 			// Delete thoughts when they're older than 3 years...?
 			// Commented out because it's only useful if your forum is very busy.
@@ -137,7 +134,7 @@ function Thought()
 		if (!empty($oid))
 		{
 			$request = wesql::query('
-				SELECT id_thought, id_member
+				SELECT id_thought, id_member, thought
 				FROM {db_prefix}thoughts
 				WHERE id_thought = {int:original_id}
 				AND id_member = {int:id_member}',
@@ -146,12 +143,16 @@ function Thought()
 					'original_id' => $oid,
 				)
 			);
-			list ($last_thought, $last_member) = wesql::fetch_row($request);
+			list ($last_thought, $last_member, $last_text) = wesql::fetch_row($request);
 			wesql::free_result($request);
 		}
 
-		// Overwrite previous thought if it's just an edit, e.g. it's 90% similar to its earlier incarnation.
+		// Overwrite previous thought if it's just an edit.
 		if (!empty($last_thought) && (allowedTo('moderate') || $last_member === $user_info['id']))
+		{
+			similar_text($last_text, $text, $percent);
+
+			// If it's similar to the earlier version, don't update the time.
 			wesql::query('
 				UPDATE {db_prefix}thoughts
 				SET updated = {raw:updated}, thought = {string:thought}, privacy = {int:privacy}
@@ -162,6 +163,7 @@ function Thought()
 					'thought' => $text
 				)
 			);
+		}
 		else
 		{
 			// Okay, so this is a new thought... Insert it, we'll cache it if it's not a comment.
