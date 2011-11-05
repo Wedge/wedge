@@ -1598,9 +1598,9 @@ span.hidelink
 	text-decoration: none
 
 .feed_icon extends .inline-block
-	background: url($images/icons/feed.png) no-repeat
-	width: width($images_dir/icons/feed.png)px
-	height: height($images_dir/icons/feed.png)px
+	background: url($images/icons/feed.gif) no-repeat
+	width: width($images_dir/icons/feed.gif)px
+	height: height($images_dir/icons/feed.gif)px
 	text-decoration: none
 	vertical-align: -3px
 	.catfeed &

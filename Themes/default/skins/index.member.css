@@ -112,3 +112,10 @@ span.thoughtreply
 
 span.thought
 	font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
+
+.thought_icon extends .inline-block
+	background: url($images/icons/thought.png) no-repeat 0 1px
+	width: width($images_dir/icons/thought.png)px
+	height: height($images_dir/icons/thought.png)px
+	text-decoration: none
+	vertical-align: -3px

@@ -1177,12 +1177,13 @@ dl#feed
 	background-color: #b3afa9
 	color: white
 	a
-		color: white
+		color: #fda !important
 		font-weight: 400
-		text-decoration: underline
+		text-decoration: underline !important
 		text-shadow: none
+		border-bottom: 0 !important
 		:hover
-			color: #fc9
+			color: #fff !important
 	img
 		padding-right: 4px
 

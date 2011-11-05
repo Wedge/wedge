@@ -210,7 +210,7 @@ tr.titlebg th, tr.catbg th
 	font-size: 1.2em
 	background: none
 	a
-		color: lighten(channels(gray, 30%), 10%)
+		color: lighten(channels(gray, 30%), 10%) !important
 
 .cat final
 	border: 1px solid rgba(0,0,0, 0.15)

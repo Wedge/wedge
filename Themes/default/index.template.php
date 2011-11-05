@@ -368,7 +368,8 @@ function template_sidebar_before()
 
 		echo '
 		<we:title>
-			', $txt['thought'], ' &raquo;
+			<div class="thought_icon"></div>
+			', $txt['thought'], ' |
 			<a href="#" onclick="oThought.edit(\'\', \'\', true); return false;">', $txt['new'], '</a> |
 			<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['modify'], '</a>
 		</we:title>
