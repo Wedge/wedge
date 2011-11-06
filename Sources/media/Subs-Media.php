@@ -1839,7 +1839,7 @@ function aeva_insertFileID($id, $filesize, $filename, $width, $height, $director
 		return wesql::insert_id();
 	}
 
-	$request = wesql::query('
+	wesql::query('
 		UPDATE {db_prefix}media_files
 		SET filesize = {int:filesize}, width = {int:width}, height = {int:height}, meta = {string:meta}, filename = {string:filename}'
 		. (!empty($directory) ? ', directory = {string:directory}' : '') . (!empty($id_album) ? ', id_album = {int:id_album}' : '') . '
@@ -3481,7 +3481,7 @@ function aeva_updateWeighted()
 	list ($voters, $ratings, $co) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	$request = wesql::query('
+	wesql::query('
 		UPDATE {db_prefix}media_items
 		SET weighted = ({float:avg_rating} + rating) / ({float:avg_voters} + voters)
 		WHERE voters > 0',
@@ -3524,7 +3524,7 @@ function aeva_markAllSeen()
 {
 	global $user_info;
 
-	$request = wesql::query('
+	wesql::query('
 		DELETE FROM {db_prefix}media_log_media WHERE id_member = {int:member}',
 		array('member' => $user_info['id'])
 	);

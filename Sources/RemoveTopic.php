@@ -917,11 +917,10 @@ function removeMessage($message, $decreasePostCount = true)
 				)
 			);
 	}
+	// Temp query to update children's parent IDs. Maybe in the future
+	// we won't delete the parent at all, only mark them as deleted...
 	else
-	{
-		// Temp query to update children's parent IDs. Maybe in the future
-		// we won't delete the parent at all, only mark them as deleted...
-		$request = wesql::query('
+		wesql::query('
 			UPDATE {db_prefix}messages AS m1
 			INNER JOIN (SELECT id_parent FROM {db_prefix}messages WHERE id_msg = {int:msg}) AS m2
 			SET m1.id_parent = m2.id_parent
@@ -930,8 +929,6 @@ function removeMessage($message, $decreasePostCount = true)
 				'msg' => $message,
 			)
 		);
-		wesql::free_result($request);
-	}
 
 	wesql::query('
 		UPDATE {db_prefix}boards

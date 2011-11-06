@@ -512,7 +512,7 @@ function ModifySpamSettings($return_config = false)
 						$count_questions--;
 					}
 					else
-						$request = wesql::query('
+						wesql::query('
 							UPDATE {db_prefix}log_comments
 							SET body = {string:question}, recipient_name = {string:answer}
 							WHERE comment_type = {string:ver_test}

@@ -2015,7 +2015,7 @@ function aeva_mgPost()
 				if (empty($media_file) && !empty($icon_filename))
 				{
 					@unlink($amSettings['data_dir_path'] . '/' . $icon_dir . '/' . aeva_getEncryptedFilename($icon_filename, $album_icon, true));
-					$request = wesql::query('
+					wesql::query('
 						DELETE FROM {db_prefix}media_files
 						WHERE id_file = {int:file}',
 						array('file' => $album_icon)
@@ -2041,7 +2041,7 @@ function aeva_mgPost()
 				if (empty($media_file) && !empty($icon_filename))
 				{
 					@unlink($amSettings['data_dir_path'] . '/' . $icon_dir . '/' . aeva_getEncryptedFilename($icon_filename, $big_icon));
-					$request = wesql::query('
+					wesql::query('
 						DELETE FROM {db_prefix}media_files
 						WHERE id_file = {int:file}',
 						array('file' => $big_icon)
@@ -2049,7 +2049,7 @@ function aeva_mgPost()
 				}
 			}
 
-			$request = wesql::query('
+			wesql::query('
 				UPDATE {db_prefix}media_albums
 				SET icon = {int:icon}, bigicon = {int:bigicon}
 				WHERE id_album = {int:id_album}',

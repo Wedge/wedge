@@ -496,13 +496,13 @@ function aeva_admin_maintenance_recount()
 	aeva_updateSettings('num_reported_comments', (int) $total_reported_comments);
 
 	// Step 12
-	$request = wesql::query('
+	wesql::query('
 		UPDATE {db_prefix}media_items AS m, {db_prefix}members AS mem
 		SET m.member_name = mem.real_name
 		WHERE m.id_member = mem.id_member',
 		array()
 	);
-	$request = wesql::query('
+	wesql::query('
 		UPDATE {db_prefix}media_items AS m, {db_prefix}members AS mem
 		SET m.last_edited_name = mem.real_name
 		WHERE m.last_edited_by = mem.id_member',
@@ -665,14 +665,14 @@ function aeva_admin_maintenance_finderrors()
 	// Now, we will silently attribute big icons to albums that only have a small icon, where possible. (It's a quick query anyway...)
 	// We take the album icon's parent item, and check its preview. If it's not empty, use it as the big icon. Otherwise, if it's empty but the item is a picture,
 	// It means the file itself is small enough, so we use that. Otherwise, set the big icon to 0.
-	$request = wesql::query('
+	wesql::query('
 		UPDATE {db_prefix}media_albums AS a, {db_prefix}media_items AS m
 		SET a.bigicon = IF(m.id_preview > 0, m.id_preview, IF(m.type = {string:image}, m.id_file, 0))
 		WHERE a.bigicon = 0 AND a.icon != 0 AND m.id_thumb = a.icon',
 		array('image' => 'image')
 	);
 	// Delete bigicon entries where the file's database entry doesn't exist. (Shouldn't happen, but I found one in my own gallery, so...)
-	$request = wesql::query('
+	wesql::query('
 		UPDATE {db_prefix}media_albums AS a
 		LEFT JOIN {db_prefix}media_files AS m ON (m.id_file = a.bigicon)
 		SET a.bigicon = 0

@@ -658,7 +658,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 	// Do the updates (if any).
 	if (!empty($boardUpdates))
-		$request = wesql::query('
+		wesql::query('
 			UPDATE {db_prefix}boards
 			SET
 				' . implode(',

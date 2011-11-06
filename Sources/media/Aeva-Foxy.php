@@ -67,7 +67,7 @@ function aeva_foxy_playlist()
 		// Check the session
 		checkSession('get');
 
-		$request = wesql::query('
+		wesql::query('
 			DELETE FROM {db_prefix}media_playlists
 			WHERE id_playlist = {int:pl}',
 			array('pl' => $id)
