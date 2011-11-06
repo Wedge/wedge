@@ -282,15 +282,17 @@ function selectText(box)
 	box.select();
 }
 
-function ajax_indicator(turn_on)
+// Create the div for the indicator, and add the image, link to turn it off, and loading text.
+function show_ajax()
 {
-	// Create the div for the indicator, and add the image, link to turn it off, and loading text.
-	if (turn_on)
-		$('<div id="ajax_in_progress"></div>').html('<a href="#" onclick="ajax_indicator(false);"' +
-			(we_cancel ? ' title="' + we_cancel + '"' : '') + '></a>' + we_loading
-		).css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {}).appendTo('body');
-	else
-		$('#ajax_in_progress').remove();
+	$('<div id="ajax_in_progress"></div>')
+		.html('<a href="#" onclick="hide_ajax();"' + (we_cancel ? ' title="' + we_cancel + '"' : '') + '></a>' + we_loading)
+		.css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {}).appendTo('body');
+}
+
+function hide_ajax()
+{
+	$('#ajax_in_progress').remove();
 }
 
 // Rating boxes in Media area
@@ -631,7 +633,7 @@ function grabJumpToContent()
 {
 	var aBoardsAndCategories = [], i, n;
 
-	ajax_indicator(true);
+	show_ajax();
 
 	$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
 		aBoardsAndCategories.push({
@@ -643,7 +645,7 @@ function grabJumpToContent()
 		});
 	});
 
-	ajax_indicator(false);
+	hide_ajax();
 
 	for (i = 0, n = aJumpTo.length; i < n; i++)
 		aJumpTo[i]._fillSelect(aBoardsAndCategories);
@@ -712,17 +714,16 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 	this.cancel();
 
 	var
-		thought = $('#thought_update' + tid), was_personal = thought.html(), opt = this.opt, privacy = opt.aPrivacy,
-		cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : thought.html().php_unhtmlspecialchars());
+		thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(), opt = this.opt, privacies = opt.aPrivacy, privacy = thought.data('prv'),
+		cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : was_personal.php_unhtmlspecialchars()), pr = '';
+	for (var p in privacies)
+		pr += '\
+				<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
 
 	thought.hide().after('\
 		<form id="thought_form">\
 			<input type="text" maxlength="255" id="ntho">\
-			<select id="npriv">\
-				<option value="0">' + privacy[0] + '</option>\
-				<option value="1">' + privacy[1] + '</option>\
-				<option value="2">' + privacy[2] + '</option>\
-				<option value="3">' + privacy[3] + '</option>\
+			<select id="npriv">' + pr + '\
 			</select>\
 			<input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '">\
 			<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save">\
@@ -737,21 +738,38 @@ Thought.prototype.cancel = function ()
 	$('#thought_form').prev().show().end().remove();
 };
 
+// Event handler for removal requests.
+Thought.prototype.remove = function (tid)
+{
+	var to_del = $('#thought_update' + tid);
+
+	show_ajax();
+
+	sendXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=thought;remove', 'oid=' + to_del.data('oid'));
+
+	// We'll be assuming Wedge uses table tags to show thought lists.
+	to_del.parents('tr').first().remove();
+
+	hide_ajax();
+};
+
 // Event handler for clicking submit.
 Thought.prototype.submit = function (tid, mid)
 {
 	var new_thought = $('#ntho').val();
 
-	ajax_indicator(true);
+	show_ajax();
+
 	sendXMLDocument(
 		we_prepareScriptUrl() + 'action=ajax;sa=thought',
-		'parent=' + tid + '&master=' + mid + '&oid=' + escape($('#noid').val()) + '&privacy=' + escape($('#npriv').val()) + '&text=' + escape(new_thought)
+		'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + new_thought.php_urlencode()
 	);
 
 	if (new_thought != '')
-		$('#thought_update' + tid).html(new_thought);
+		$('#thought_update' + tid + ' span').html(new_thought.php_htmlspecialchars());
 	this.cancel();
-	ajax_indicator(false);
+
+	hide_ajax();
 };
 
 /*

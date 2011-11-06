@@ -1104,7 +1104,7 @@ function template_control_chmod()
 	}
 	function testFTP()
 	{
-		ajax_indicator(true);
+		show_ajax();
 
 		// What we need to post.
 		var oPostData = {
@@ -1123,7 +1123,7 @@ function template_control_chmod()
 	}
 	function testFTPResults(oXMLDoc)
 	{
-		ajax_indicator(false);
+		hide_ajax();
 
 		// This assumes it went wrong!
 		var wasSuccess = false;
@@ -1222,7 +1222,7 @@ function template_file_permissions()
 		// Otherwise we need to get the wicked thing.
 		if (can_ajax)
 		{
-			ajax_indicator(true);
+			show_ajax();
 			getXMLDocument(we_prepareScriptUrl() + "action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
 		}
 
@@ -1237,7 +1237,7 @@ function template_file_permissions()
 	}
 	function dynamicAddMore()
 	{
-		ajax_indicator(true);
+		show_ajax();
 
 		getXMLDocument(we_prepareScriptUrl() + "action=admin;area=packages;fileoffset=" + (parseInt(this.offset) + ', $context['file_limit'], ') + ";onlyfind=" + this.path.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
 	}
@@ -1272,7 +1272,7 @@ function template_file_permissions()
 	// Getting something back?
 	function onNewFolderReceived(oXMLDoc)
 	{
-		ajax_indicator(false);
+		hide_ajax();
 
 		var fileItems = $("folders folder", oXMLDoc);
 

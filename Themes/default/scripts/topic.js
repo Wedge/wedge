@@ -69,7 +69,7 @@ function modify_topic(topic_id, first_msg_id)
 	in_edit_mode = 1;
 	cur_topic_id = topic_id;
 
-	ajax_indicator(true);
+	show_ajax();
 	getXMLDocument(we_prepareScriptUrl() + "action=quotefast;quote=" + first_msg_id + ";modify;xml", onDocReceived_modify_topic);
 }
 
@@ -84,7 +84,7 @@ function onDocReceived_modify_topic(XMLDoc)
 	set_hidden_topic_areas(false);
 
 	modify_topic_show_edit($('subject', XMLDoc).text());
-	ajax_indicator(false);
+	hide_ajax();
 }
 
 function modify_topic_cancel()
@@ -106,7 +106,7 @@ function modify_topic_save()
 	x.push('topic=' + qm.elements.topic.value);
 	x.push('msg=' + qm.elements.msg.value);
 
-	ajax_indicator(true);
+	show_ajax();
 	sendXMLDocument(we_prepareScriptUrl() + "action=jsmodify;topic=" + qm.elements.topic.value + ";" + we_sessvar + "=" + we_sessid + ";xml", x.join("&"), modify_topic_done);
 
 	return false;
@@ -124,7 +124,7 @@ function modify_topic_done(XMLDoc)
 		subject = $('we message subject', XMLDoc),
 		error = $('we message error', XMLDoc);
 
-	ajax_indicator(false);
+	hide_ajax();
 
 	if (!subject.length || error.length)
 		return false;
@@ -164,7 +164,7 @@ QuickReply.prototype.quote = function (iMessage)
 	}
 	else
 	{
-		ajax_indicator(true);
+		show_ajax();
 		getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), this.onQuoteReceived);
 
 		// Move the view to the quick reply box.
@@ -179,7 +179,7 @@ QuickReply.prototype.onQuoteReceived = function (oXMLDoc)
 {
 	oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
 
-	ajax_indicator(false);
+	hide_ajax();
 };
 
 // The function handling the swapping of the quick reply.
@@ -235,7 +235,7 @@ QuickModify.prototype.modifyMsg = function (iMessage)
 		this.modifyCancel();
 
 	// Send out the Ajax request to get more info
-	ajax_indicator(true);
+	show_ajax();
 
 	getXMLDocument.call(this, we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';modify;xml', this.onMessageReceived);
 };
@@ -244,7 +244,7 @@ QuickModify.prototype.modifyMsg = function (iMessage)
 QuickModify.prototype.onMessageReceived = function (XMLDoc)
 {
 	// Hide the 'loading...' sign.
-	ajax_indicator(false);
+	hide_ajax();
 
 	// Grab the message ID.
 	var sId = $('message', XMLDoc).attr('id');
@@ -308,7 +308,7 @@ QuickModify.prototype.modifySave = function ()
 	x.push('msg=' + qm.elements.msg.value);
 
 	// Send in the Ajax request and let's hope for the best.
-	ajax_indicator(true);
+	show_ajax();
 	sendXMLDocument.call(this, we_prepareScriptUrl() + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + we_sessvar + "=" + we_sessid + ";xml", x.join("&"), this.onModifyDone);
 
 	return false;
@@ -318,7 +318,7 @@ QuickModify.prototype.modifySave = function ()
 QuickModify.prototype.onModifyDone = function (XMLDoc)
 {
 	// We've finished the loading part.
-	ajax_indicator(false);
+	hide_ajax();
 
 	var
 		message = $('we message', XMLDoc),
@@ -526,7 +526,7 @@ IconList.prototype.openPopup = function (oDiv, iMessageId)
 		}).appendTo('body');
 
 		// Start to fetch its contents.
-		ajax_indicator(true);
+		show_ajax();
 		getXMLDocument.call(this, we_prepareScriptUrl() + 'action=ajax;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
 	}
 
@@ -558,7 +558,7 @@ IconList.prototype.onIconsReceived = function (oXMLDoc)
 	if (is_ie)
 		this.oContainerDiv.css('width', this.oContainerDiv.clientWidth);
 
-	ajax_indicator(false);
+	hide_ajax();
 };
 
 // Event handler for hovering over the icons.
@@ -579,9 +579,9 @@ IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
 {
 	if (this.iCurMessageId != 0)
 	{
-		ajax_indicator(true);
+		show_ajax();
 		var oXMLDoc = getXMLDocument(we_prepareScriptUrl() + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + we_sessvar + '=' + we_sessid + ';icon=' + sNewIcon + ';xml');
-		ajax_indicator(false);
+		hide_ajax();
 
 		var oMessage = $('we message', oXMLDoc.responseXML);
 		if (!($('error', oMessage).length))

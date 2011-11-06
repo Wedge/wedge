@@ -165,8 +165,7 @@ weStatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 
 	if (oToggle.opt.aSwappableContainers.length == 0)
 	{
-		if ('ajax_indicator' in window)
-			ajax_indicator(true);
+		show_ajax();
 		this.oXmlRequestHandle = getXMLDocument.call(this, we_prepareScriptUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
 		this.bIsLoading = true;
 	}
@@ -208,5 +207,5 @@ weStatsCenter.prototype.onDocReceived = function (oXMLDoc)
 	});
 
 	this.bIsLoading = false;
-	ajax_indicator(false);
+	hide_ajax();
 };

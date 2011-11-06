@@ -91,10 +91,12 @@ ul.buttonlist
 		background: #fff
 		color: #000
 
-#thought_form input
-	margin: 0 1px 4px 2px
-	padding: 2px 4px
-	background-position: 0 100px, 0 0, 0 0
+#thought_form
+	display: inline-block
+	input
+		margin: 0 1px 4px 2px
+		padding: 2px 4px
+		background-position: 0 100px, 0 0, 0 0
 
 span.thoughtreply
 	img.tq
@@ -114,8 +116,20 @@ span.thought
 	font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
 
 .thought_icon extends .inline-block
-	background: url($images/icons/thought.png) no-repeat 0 1px
-	width: width($images_dir/icons/thought.png)px
-	height: height($images_dir/icons/thought.png)px
 	text-decoration: none
 	vertical-align: -3px
+	background: url($images/icons/thought.png) no-repeat
+	width: width($images_dir/icons/thought.png)px
+	height: height($images_dir/icons/thought.png)px
+
+td.thought
+	.thought_actions
+		display: inline
+		position: absolute
+		margin: -3px 0 0 3px
+		opacity: 0
+		visibility: hidden
+		transition: opacity .5s ease
+	:hover .thought_actions
+		opacity: 1
+		visibility: visible

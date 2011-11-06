@@ -365,6 +365,7 @@ function template_sidebar_before()
 
 		// This is where we'll show the Thought postbox.
 		$thought_id = isset($context['user']['data']['id_thought']) ? $context['user']['data']['id_thought'] : 0;
+		$thought_prv = isset($context['user']['data']['thought_privacy']) ? $context['user']['data']['thought_privacy'] : 1;
 
 		echo '
 		<we:title>
@@ -373,13 +374,13 @@ function template_sidebar_before()
 			<a href="#" onclick="oThought.edit(\'\', \'\', true); return false;">', $txt['new'], '</a> |
 			<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['modify'], '</a>
 		</we:title>
-		<div id="thought_update" data-oid="', $thought_id, '">';
+		<div id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
 
-		echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</div>';
+		echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>';
 
 		add_js('
 	oThought = new Thought({
-		aPrivacy: ["', $txt['privacy_public'], '","', $txt['privacy_members'], '","', $txt['privacy_friends'], '","', $txt['privacy_self'], '"],
+		aPrivacy: ["', $txt['privacy_everywhere'], '","', $txt['privacy_public'], '","', $txt['privacy_members'], '","', $txt['privacy_friends'], '","', $txt['privacy_self'], '"],
 		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '

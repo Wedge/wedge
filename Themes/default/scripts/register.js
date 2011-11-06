@@ -197,7 +197,7 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 			return false;
 
 		if (!is_auto)
-			ajax_indicator(true);
+			show_ajax();
 
 		// Request a search on that username.
 		getXMLDocument(we_prepareScriptUrl() + 'action=register;sa=usernamecheck;xml;username=' + curUsername.php_urlencode(), checkUsernameCallback);
@@ -215,7 +215,7 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 		verificationFields.username[1].className = verificationFields.username[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
 		setVerificationImage(verificationFields.username[2], isValid, alt);
 
-		ajax_indicator(false);
+		hide_ajax();
 	}
 
 	// Set the image to be the correct type.

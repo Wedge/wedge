@@ -275,11 +275,17 @@ function summary($memID)
 			LEFT JOIN
 				{db_prefix}members AS mp ON (h2.id_member = mp.id_member)
 			WHERE
-				h.id_thought IN ({array_int:think})
+				(h.id_thought IN ({array_int:think})
 				OR h.id_master IN ({array_int:think})
-				OR h.id_parent IN ({array_int:think})
-			ORDER BY h.id_thought', array(
+				OR h.id_parent IN ({array_int:think}))
+			AND
+				(h.id_member = {int:me}
+				OR (h.privacy' . ($user_info['is_guest'] ? ' IN (0, 1))' : ' IN (0, 1, 2))
+				OR (h.privacy = 3 AND (FIND_IN_SET({int:me}, m.buddy_list) != 0))') . ')
+			ORDER BY h.id_thought',
+			array(
 				'think' => $think,
+				'me' => $user_info['id'],
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -310,6 +316,7 @@ function summary($memID)
 			}
 		}
 		wesql::free_result($request);
+
 		foreach (array_reverse(array_keys($thoughts)) as $nb)
 			$context['thoughts'][$nb] = $thoughts[$nb];
 	}
