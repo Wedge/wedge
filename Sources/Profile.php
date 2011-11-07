@@ -111,6 +111,16 @@ function ModifyProfile($post_errors = array())
 						'any' => array(),
 					),
 				),
+				'thoughts' => array(
+					'label' => $txt['thoughts'],
+					'file' => 'Profile-View',
+					'function' => 'viewThoughts',
+					'enabled' => true, // @todo: add a counter and enable based on it being non-zero?
+					'permission' => array(
+						'own' => 'profile_view_own',
+						'any' => array(),
+					),
+				),
 				'showposts' => array(
 					'label' => $txt['showPosts'],
 					'file' => 'Profile-View',

@@ -244,8 +244,20 @@ function summary($memID)
 		wesql::free_result($request);
 	}
 
-	// The infamous thought system from Noisen...
-	// Not exactly optimized for speed, but we can always rewrite it later.
+	loadCustomFields($memID);
+}
+
+// The infamous thought system from Noisen.com...
+// Not exactly optimized for speed, but we can always rewrite it later.
+function viewThoughts($memID)
+{
+	global $context, $txt, $user_info;
+
+	// Some initial context.
+	wetem::load('showThoughts');
+	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
+	$context['page_title'] = $txt['thoughts'] . ' - ' . $context['member']['name'];
+
 	$context['thoughts'] = $thoughts = array();
 	$request = wesql::query('
 		SELECT id_thought
@@ -265,15 +277,15 @@ function summary($memID)
 			SELECT
 				h.updated, h.thought, h.id_thought, h.id_parent, h.id_member,
 				h.id_master, h2.id_member AS id_parent_owner,
-				m.real_name AS owner_name, mp.real_name AS parent_name
+				m.real_name AS owner_name, m2.real_name AS parent_name
 			FROM
 				{db_prefix}thoughts AS h
 			LEFT JOIN
-				{db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
-			LEFT JOIN
 				{db_prefix}members AS m ON (h.id_member = m.id_member)
 			LEFT JOIN
-				{db_prefix}members AS mp ON (h2.id_member = mp.id_member)
+				{db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
+			LEFT JOIN
+				{db_prefix}members AS m2 ON (h2.id_member = m2.id_member)
 			WHERE
 				(h.id_thought IN ({array_int:think})
 				OR h.id_master IN ({array_int:think})
@@ -304,15 +316,15 @@ function summary($memID)
 				$thoughts[$thought['id']] = $thought;
 			else
 			{
-				if (!isset($thoughts[$thought['id_master']]))
+				if (!isset($thoughts[$row['id_master']]))
 				{
-					$thought['text'] = '@[url=' . $scripturl . '?action=profile;u=' . $row['id_parent_owner'] . '#t' . $row['id_parent'] . ']' . $row['parent_name'] . '[/url]> ' . $row['thought'];
-					$thoughts[$thought['id_master']] = $thought;
+					$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '#t' . $row['id_parent'] . '" class="bbc_link">' . $row['parent_name'] . '</a>&gt; ' . $row['thought'];
+					$thoughts[$row['id_master']] = $thought;
 				}
-				elseif ($thought['id_master'] === $thought['id_parent'] || !isset($thoughts[$thought['id_master']]['sub']))
-					$thoughts[$thought['id_master']]['sub'][$thought['id']] = $thought;
+				elseif ($row['id_master'] === $row['id_parent'] || !isset($thoughts[$row['id_master']]['sub']))
+					$thoughts[$row['id_master']]['sub'][$row['id_thought']] = $thought;
 				else
-					populate_sub_thoughts($thoughts[$thought['id_master']]['sub'], $thought);
+					populate_sub_thoughts($thoughts[$row['id_master']]['sub'], $thought);
 			}
 		}
 		wesql::free_result($request);
@@ -323,7 +335,7 @@ function summary($memID)
 
 /*
 	// Retrieve thought comments...
-	// !! Should this be removed?
+	// !! Should this be used at all?
 	if (!empty($context['thoughts']))
 	{
 		$request = wesql::query('
@@ -346,8 +358,6 @@ function summary($memID)
 		wesql::free_result($request);
 	}
 */
-
-	loadCustomFields($memID);
 }
 
 function populate_sub_thoughts(&$here, &$thought)
