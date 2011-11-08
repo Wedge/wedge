@@ -556,6 +556,13 @@ function moveTopics($topics, $toBoard)
 		)
 	);
 
+	if (!empty($modSettings['pretty_enable_cache']))
+		wesql::query('
+			DELETE FROM {db_prefix}pretty_urls_cache
+			WHERE (url_id LIKE "%topic=' . implode('%") OR (url_id LIKE "%topic=', $topics) . '%")',
+			array()
+		);
+
 	// If this was going to the recycle bin, check what messages are being recycled, and remove them from the queue.
 	if ($isRecycleDest && ($totalUnapprovedTopics || $totalUnapprovedPosts))
 	{

@@ -697,15 +697,27 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 
 
 // *** Thought class.
-function Thought(oOptions)
+function Thought(opt)
 {
 	if (!can_ajax)
 		return;
 
-	this.opt = oOptions;
+	this.opt = opt;
 	$('#thought_update')
-		.attr('title', this.opt.sLabelThought)
+		.attr('title', opt.sLabelThought)
 		.click(function () { oThought.edit(''); })
+	$('.thought').each(function () {
+		var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
+		if (tid)
+		{
+			thought.after('\
+		<div class="thought_actions">\
+			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ');">\
+			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ', true);">\
+			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">\
+		</div>');
+		}
+	});
 };
 
 // Show the input after the user has clicked the text.

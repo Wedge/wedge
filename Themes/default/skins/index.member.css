@@ -112,7 +112,7 @@ span.thoughtreply
 .thought li
 	margin, padding: 0
 
-span.thought
+.my.thought
 	font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
 
 .thought_icon extends .inline-block
@@ -123,6 +123,7 @@ span.thought
 	height: height($images_dir/icons/thought.png)px
 
 td.thought
+	padding: 4px !important
 	.thought_actions
 		display: inline
 		position: absolute

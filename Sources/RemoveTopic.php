@@ -536,13 +536,11 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		)
 	);
 	if (!empty($modSettings['pretty_enable_cache']))
-	{
 		wesql::query('
 			DELETE FROM {db_prefix}pretty_urls_cache
 			WHERE (url_id LIKE "%topic=' . implode('%") OR (url_id LIKE "%topic=', $topics) . '%")',
 			array()
 		);
-	}
 
 	call_hook('remove_topics', array(&$topics, &$decreasePostCount, &$ignoreRecycling));
 

@@ -374,14 +374,14 @@ function template_sidebar_before()
 			<a href="#" onclick="oThought.edit(\'\', \'\', true); return false;">', $txt['new'], '</a> |
 			<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['modify'], '</a>
 		</we:title>
-		<div id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
+		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
 
 		echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>';
 
 		add_js('
 	oThought = new Thought({
 		aPrivacy: ["', $txt['privacy_everywhere'], '","', $txt['privacy_public'], '","', $txt['privacy_members'], '","', $txt['privacy_friends'], '","', $txt['privacy_self'], '"],
-		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '",
+		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '", sEdit: "', $txt['modify'], '", sReply: "', $txt['reply'], '", sDelete: "', $txt['delete'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '
 	});');
