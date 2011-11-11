@@ -1,18 +1,4 @@
 
-/* Styles for the calendar section.
-------------------------------------------------- */
-#calendar .cat final
-	margin-bottom: 4px
-
-#main_grid table
-	.cat final
-		border-top: 2px solid #fff
-		border-bottom: none
-	&.weeklist .title2 final
-		margin: 0
-		height: 23px
-		line-height: 27px
-
 /* More hacks.
 ------------------------------------------------- */
 #forumposts .cat final

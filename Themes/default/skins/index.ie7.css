@@ -60,12 +60,6 @@
 	word-wrap: break-word
 
 
-/* Overrides for the calendar template
-------------------------------------------------- */
-#main_grid table.weeklist .title
-	margin: 2px 0 -4px 0
-
-
 /* Overrides for the personal messages template
 ------------------------------------------------------- */
 #postmodify dl

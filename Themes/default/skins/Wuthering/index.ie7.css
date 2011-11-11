@@ -10,11 +10,6 @@
 #upper_section .frame
 	filter: none
 
-/* Overrides for the calendar template
-------------------------------------------------- */
-#main_grid table.weeklist .title2
-	margin: 2px 0 -4px 0
-
 /* Misc hacks
 ------------------------------------------------------- */
 .cat final
