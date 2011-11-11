@@ -15,14 +15,14 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /**
- * Handles showing the post screen, loading a post to be modified (or quoted), as well as previews and display of errors. Additionally, new polls or calendar events too.
+ * Handles showing the post screen, loading a post to be modified (or quoted), as well as previews and display of errors and polls too.
  *
  * Requested primarily from ?action=post, however will be called from ?action=post2 internally in the event of errors or non-inline preview (e.g. from quick reply)
  *
  * - Loads the Post language file, and the editor components.
  * - If this is a reply, there shouldn't be a poll attached, so remove it.
  * - Tell robots not to index.
- * - Validate that we're posting in a board (and not just to the calendar)
+ * - Validate that we're posting in a board (or, that some external integration is happy for us to post outside of a board)
  * - We may be handling inline previews via XML, so prepare for that.
  * - If we don't have a topic id but just a message id, find the topic id if available (if not, assume it's a new message)
  * - Check things we can check if we have an existing topic (and grab them): whether it's locked, stickied, notifications on it, whether there's a poll, some message ids and the subject.
@@ -32,7 +32,6 @@ if (!defined('WEDGE'))
  * - Perform other checks, such as whether we can receive notifications, whether it can be announced.
  * - If the topic is locked and you do not have moderate_board, you cannot post. (Need to unlock first otherwise.)
  * - Are polls enabled and user trying to post a poll? Check permissions in that case (e.g. coming from add poll button) and if all allowed, set up the default empty choices, plus grab anything that's in $_POST (e.g. coming from Post2()) or use blank defaults.
- * - Are calendar events enabled, and this is an event? See if we can get anything from $_REQUEST, otherwise use blank defaults, and check permissions. If the user is trying to edit an event but can't, redirect them to the calendar handler {@link CalendarPost()}. Otherwise grab the event's information... or otherwise it's a new event, in which case set up everything as defaults (today's date, all things empty, if not otherwise from $_POST) and check it's all feasible. Lastly, grab a list of boards the linked topic could be in. And get the last day of the month so we can sanitize that too.
  * - If we have a topic and no message, we're replying. Time to check two things: one, that there's been no replies since we started writing (and if there was, check whether the user cares from $options['no_new_reply_warning']) and log that as a warning if they do care; two, whether this topic is older than the 'default old' topics without a reply, typically 120 days.
  * - Work out what the response prefix would be (the Re: in front of replies), in the default forum language, and cache it.
  * - Work out whether we have post content to work with (or an error) - if not, set up the subject, message and icon as defaults. Otherwise... if there's no error thus far but we have content, check for no subject, no message, over-long message, if it's a guest attempt to make some sense of guest name and email (like in Post2()), if it's a poll check for a question - but note that the user was actually attempting to preview if they came here without any actual errors previously known about.
@@ -73,7 +72,15 @@ function Post()
 	global $txt, $scripturl, $topic, $topic_info, $modSettings, $board, $user_info;
 	global $board_info, $context, $settings, $options, $language;
 
+	$context['form_fields'] = array(
+		'text' => array('subject', 'icon', 'guestname', 'email', 'evtitle', 'question', 'topic'),
+		'numeric' => array('board', 'topic', 'last_msg', 'poll_max_votes', 'poll_expire', 'poll_change_vote', 'poll_hide'),
+		'checkbox' => array('ns'),
+	);
+
 	loadLanguage('Post');
+
+	call_hook('post_form_pre');
 
 	// Needed for the editor and message icons.
 	loadSource(array('Subs-Editor', 'Class-Editor'));
@@ -82,12 +89,10 @@ function Post()
 	if (isset($_REQUEST['poll']) && !empty($topic) && !isset($_REQUEST['msg']))
 		unset($_REQUEST['poll']);
 
-	// Posting an event?
-	$context['make_event'] = isset($_REQUEST['calendar']);
 	$context['robot_no_index'] = true;
 
 	// You must be posting to *some* board.
-	if (empty($board) && !$context['make_event'])
+	if (empty($board) && empty($context['allow_no_board']))
 		fatal_lang_error('no_board', false);
 
 	loadSource('Subs-Post');
@@ -178,7 +183,7 @@ function Post()
 	else
 	{
 		$context['becomes_approved'] = true;
-		if ((!$context['make_event'] || !empty($board)))
+		if (!empty($board))
 		{
 			if ($modSettings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
 				$context['becomes_approved'] = false;
@@ -248,102 +253,6 @@ function Post()
 			array('id' => 3, 'number' => 4, 'label' => '', 'is_last' => false),
 			array('id' => 4, 'number' => 5, 'label' => '', 'is_last' => true)
 		);
-	}
-
-	if ($context['make_event'])
-	{
-		// They might want to pick a board.
-		if (!isset($context['current_board']))
-			$context['current_board'] = 0;
-
-		// Start loading up the event info.
-		$context['event'] = array();
-		$context['event']['title'] = isset($_REQUEST['evtitle']) ? htmlspecialchars(stripslashes($_REQUEST['evtitle'])) : '';
-
-		$context['event']['id'] = isset($_REQUEST['eventid']) ? (int) $_REQUEST['eventid'] : -1;
-		$context['event']['new'] = $context['event']['id'] == -1;
-
-		// Permissions check!
-		isAllowedTo('calendar_post');
-
-		// Editing an event?  (but NOT previewing!?)
-		if (!$context['event']['new'] && !isset($_REQUEST['subject']))
-		{
-			// If the user doesn't have permission to edit the post in this topic, redirect them.
-			if ((empty($id_member_poster) || $id_member_poster != $user_info['id'] || !allowedTo('modify_own')) && !allowedTo('modify_any'))
-			{
-				loadSource('Calendar');
-				return CalendarPost();
-			}
-
-			// Get the current event information.
-			$request = wesql::query('
-				SELECT
-					id_member, title, MONTH(start_date) AS month, DAYOFMONTH(start_date) AS day,
-					YEAR(start_date) AS year, (TO_DAYS(end_date) - TO_DAYS(start_date)) AS span
-				FROM {db_prefix}calendar
-				WHERE id_event = {int:id_event}
-				LIMIT 1',
-				array(
-					'id_event' => $context['event']['id'],
-				)
-			);
-			$row = wesql::fetch_assoc($request);
-			wesql::free_result($request);
-
-			// Make sure the user is allowed to edit this event.
-			if ($row['id_member'] != $user_info['id'])
-				isAllowedTo('calendar_edit_any');
-			elseif (!allowedTo('calendar_edit_any'))
-				isAllowedTo('calendar_edit_own');
-
-			$context['event']['month'] = $row['month'];
-			$context['event']['day'] = $row['day'];
-			$context['event']['year'] = $row['year'];
-			$context['event']['title'] = $row['title'];
-			$context['event']['span'] = $row['span'] + 1;
-		}
-		else
-		{
-			$today = getdate();
-
-			// You must have a month and year specified!
-			if (!isset($_REQUEST['month']))
-				$_REQUEST['month'] = $today['mon'];
-			if (!isset($_REQUEST['year']))
-				$_REQUEST['year'] = $today['year'];
-
-			$context['event']['month'] = (int) $_REQUEST['month'];
-			$context['event']['year'] = (int) $_REQUEST['year'];
-			$context['event']['day'] = isset($_REQUEST['day']) ? $_REQUEST['day'] : ($_REQUEST['month'] == $today['mon'] ? $today['mday'] : 0);
-			$context['event']['span'] = isset($_REQUEST['span']) ? $_REQUEST['span'] : 1;
-
-			// Make sure the year and month are in the valid range.
-			if ($context['event']['month'] < 1 || $context['event']['month'] > 12)
-				fatal_lang_error('invalid_month', false);
-			if ($context['event']['year'] < $modSettings['cal_minyear'] || $context['event']['year'] > $modSettings['cal_maxyear'])
-				fatal_lang_error('invalid_year', false);
-
-			// Get a list of boards they can post in.
-			$boards = boardsAllowedTo('post_new');
-			if (empty($boards))
-				fatal_lang_error('cannot_post_new', 'user');
-
-			// Load a list of boards for this event in the context.
-			loadSource('Subs-MessageIndex');
-			$boardListOptions = array(
-				'included_boards' => in_array(0, $boards) ? null : $boards,
-				'not_redirection' => true,
-				'use_permissions' => true,
-				'selected_board' => empty($context['current_board']) ? $modSettings['cal_defaultboard'] : $context['current_board'],
-			);
-			$context['event']['categories'] = getBoardList($boardListOptions);
-		}
-
-		// Find the last day of the month.
-		$context['event']['last_day'] = (int) strftime('%d', mktime(0, 0, 0, $context['event']['month'] == 12 ? 1 : $context['event']['month'] + 1, 0, $context['event']['month'] == 12 ? $context['event']['year'] + 1 : $context['event']['year']));
-
-		$context['event']['board'] = !empty($board) ? $board : $modSettings['cal_defaultboard'];
 	}
 
 	if (empty($context['post_errors']))
@@ -1061,8 +970,6 @@ function Post()
 	// What are you doing?  Posting a poll, modifying, previewing, new post, or reply...
 	if (isset($_REQUEST['poll']))
 		$context['page_title'] = $txt['new_poll'];
-	elseif ($context['make_event'])
-		$context['page_title'] = $context['event']['id'] == -1 ? $txt['calendar_post_event'] : $txt['calendar_edit'];
 	elseif (isset($_REQUEST['msg']))
 		$context['page_title'] = $txt['modify_msg'];
 	elseif (isset($_REQUEST['subject'], $context['preview_subject']))
@@ -1161,6 +1068,9 @@ function Post()
 			'drafts' => !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']) || !empty($_REQUEST['msg']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
 		)
 	);
+
+	// Add the postbox to the list of fields in the form.
+	$context['form_fields']['text'][] = $context['postbox']->id;
 
 	$context['attached'] = '';
 	$context['make_poll'] = isset($_REQUEST['poll']);
@@ -1263,20 +1173,9 @@ function Post()
 		);
 
 		// Now, we add some things dynamically.
-		if ($context['make_event'])
-			wetem::load('make_event', 'postbox', 'before');
-
 		if ($context['make_poll'])
 			wetem::load('make_poll', 'postbox', 'before');
 	}
-
-	// Also, add in the delete-event button for a calendar.
-	if ($context['make_event'] && !$context['event']['new'])
-		$context['postbox']->addButton(
-			'deleteevent',
-			$txt['event_delete'],
-			'return confirm(' . JavaScriptEscape($txt['event_delete_confirm']) . ');'
-		);
 
 	// Add in any last minute changes.
 	call_hook('post_form');

@@ -109,9 +109,8 @@ function RepairBoards()
 		));
 		updateStats('message');
 		updateStats('topic');
-		updateSettings(array(
-			'calendar_updated' => time(),
-		));
+
+		call_hook('repair_errors_finished');
 
 		if (!empty($salvageBoardID))
 			$context['redirect_to_recount'] = true;
@@ -744,36 +743,6 @@ function loadForumTests()
 			),
 			'messages' => array('repair_missing_polls', 'id_topic', 'id_poll'),
 		),
-		'missing_calendar_topics' => array(
-			'substeps' => array(
-				'step_size' => 1000,
-				'step_max' => '
-					SELECT MAX(id_topic)
-					FROM {db_prefix}calendar'
-			),
-			'check_query' => '
-				SELECT cal.id_topic, cal.id_event
-				FROM {db_prefix}calendar AS cal
-					LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = cal.id_topic)
-				WHERE cal.id_topic != 0
-					AND cal.id_topic BETWEEN {STEP_LOW} AND {STEP_HIGH}
-					AND t.id_topic IS NULL
-				ORDER BY cal.id_topic',
-			'fix_collect' => array(
-				'index' => 'id_topic',
-				'process' => create_function('$events', '
-					wesql::query(\'
-						UPDATE {db_prefix}calendar
-						SET id_topic = 0, id_board = 0
-						WHERE id_topic IN ({array_int:events})\',
-						array(
-							\'events\' => $events
-						)
-					);
-				'),
-			),
-			'messages' => array('repair_missing_calendar_topics', 'id_event', 'id_topic'),
-		),
 		'missing_log_topics' => array(
 			'substeps' => array(
 				'step_size' => 150,
@@ -1300,6 +1269,8 @@ function loadForumTests()
 			'messages' => array('repair_group_request_missing_group', 'id_group'),
 		),
 	);
+
+	call_hook('repair_errors_tests', array(&$errorTests));
 }
 
 function findForumErrors($do_fix = false)

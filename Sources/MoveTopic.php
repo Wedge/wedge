@@ -35,7 +35,7 @@ if (!defined('WEDGE'))
 		- performs the changes needed to move topics to new boards.
 		- topics is an array of the topics to move, and destination_board is
 		  where they should be moved to.
-		- updates message, topic and calendar statistics.
+		- updates message and topic statistics.
 		- does not check permissions. (assumes they have been checked!)
 */
 
@@ -410,6 +410,9 @@ function moveTopics($topics, $toBoard)
 	// Are we moving to the recycle board?
 	$isRecycleDest = !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $toBoard;
 
+	// Make sure anything that's hooked to topics is also updated
+	call_hook('move_topics', array(&$topics, &$toBoard, &$isRecycleDest));
+
 	// Determine the source boards...
 	$request = wesql::query('
 		SELECT id_board, approved, COUNT(*) AS num_topics, SUM(unapproved_posts) AS unapproved_posts,
@@ -659,15 +662,6 @@ function moveTopics($topics, $toBoard)
 			'topics' => $topics,
 		)
 	);
-	wesql::query('
-		UPDATE {db_prefix}calendar
-		SET id_board = {int:id_board}
-		WHERE id_topic IN ({array_int:topics})',
-		array(
-			'id_board' => $toBoard,
-			'topics' => $topics,
-		)
-	);
 
 	// Mark target board as seen, if it was already marked as seen before.
 	$request = wesql::query('
@@ -708,9 +702,6 @@ function moveTopics($topics, $toBoard)
 	// Update 'em pesky stats.
 	updateStats('topic');
 	updateStats('message');
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
 }
 
 ?>

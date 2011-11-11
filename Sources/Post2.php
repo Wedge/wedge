@@ -15,7 +15,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /**
- * Handles all the receipts of message posting, including calendar events, attachments and polls.
+ * Handles all the receipts of message posting, including attachments and polls.
  *
  * Accessed via ?action=post2 (be it from the main reply page with all the goodies or the quick reply page)
  *
@@ -35,7 +35,6 @@ if (!defined('WEDGE'))
  * - Is it a guest doing this? If so, check whether the name and email we've requested could be valid (e.g. not over-long, valid email address, not a banned email address)
  * - Check the message and subject exist and aren't empty (and the message isn't too long)
  * - Assuming we have a message, use our custom htmlspecialchars on it, preparse it for BBC compliance and safety, and see if there's still a message after we strip all the tags (except images) from it.
- * - If we're posting a calendar event (and everything's on for that), check there's a title there too.
  * - Is there a poll (and polls are on)? Check we're either doing a new topic+poll or adding one to an existing topic (and not via edit post). Validate permissions (either new or can-add-to-(my/any)-posts), check there's a subject and answers (and validate using the recursive HTML trim option, pruning empty ones, erroring if less than 2 choices left)
  * - If the user is a guest, validate the name isn't reserved, otherwise store the member's name+email ready.
  * - OK, at this point, we're done with checking stuff. If there are errors now, throw it over to {@link Post()} to display, and advise that we're previewing in the process.
@@ -50,7 +49,6 @@ if (!defined('WEDGE'))
  * - Is this a poll? If so, insert the question details, followed by all the possible answers into the DB.
  * - Collate the main arrays of details, $msgOptions, $topicOptions and $posterOptions.
  * - If this is an edit, divert to {@link modifyPost()} otherwise head to {@link createPost()} to create the new post (and topic if appropriate).
- * - If this is an event being linked to the calendar, manage that too.
  * - If this is a new event being posted, validate the contents, check permissions, delete it if that's what the request said to do, update if necessary (including the master cache value)
  * - Mark this board read, and all its hierarchical parents, for the person making the edit.
  * - If the user asks to be notified on the topic's replies, add them to the notification list (assuming they have permission)
@@ -437,8 +435,6 @@ function Post2()
 		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img><object><embed><iframe><video><audio>')) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
 			$post_errors[] = 'no_message';
 	}
-	if (isset($_POST['calendar']) && !isset($_REQUEST['deleteevent']) && westr::htmltrim($_POST['evtitle']) === '')
-		$post_errors[] = 'no_event';
 
 	// Validate the poll...
 	if (isset($_REQUEST['poll']) && $modSettings['pollMode'] == '1')
@@ -828,86 +824,6 @@ function Post2()
 
 		if (isset($topicOptions['id']))
 			$topic = $topicOptions['id'];
-	}
-
-	// Editing or posting an event?
-	if (isset($_POST['calendar']) && (!isset($_REQUEST['eventid']) || $_REQUEST['eventid'] == -1))
-	{
-		loadSource('Subs-Calendar');
-
-		// Make sure they can link an event to this post.
-		canLinkEvent();
-
-		// Insert the event.
-		$eventOptions = array(
-			'board' => $board,
-			'topic' => $topic,
-			'title' => $_POST['evtitle'],
-			'member' => $user_info['id'],
-			'start_date' => sprintf('%04d-%02d-%02d', $_POST['year'], $_POST['month'], $_POST['day']),
-			'span' => isset($_POST['span']) && $_POST['span'] > 0 ? min((int) $modSettings['cal_maxspan'], (int) $_POST['span'] - 1) : 0,
-		);
-		insertEvent($eventOptions);
-	}
-	elseif (isset($_POST['calendar']))
-	{
-		$_REQUEST['eventid'] = (int) $_REQUEST['eventid'];
-
-		// Validate the post...
-		loadSource('Subs-Calendar');
-		validateEventPost();
-
-		// If you're not allowed to edit any events, you have to be the poster.
-		if (!allowedTo('calendar_edit_any'))
-		{
-			// Get the event's poster.
-			$request = wesql::query('
-				SELECT id_member
-				FROM {db_prefix}calendar
-				WHERE id_event = {int:id_event}',
-				array(
-					'id_event' => $_REQUEST['eventid'],
-				)
-			);
-			$row2 = wesql::fetch_assoc($request);
-			wesql::free_result($request);
-
-			// Silly hacker, Trix are for kids. ...probably trademarked somewhere, this is FAIR USE! (parody...)
-			isAllowedTo('calendar_edit_' . ($row2['id_member'] == $user_info['id'] ? 'own' : 'any'));
-		}
-
-		// Delete it?
-		if (isset($_REQUEST['deleteevent']))
-			wesql::query('
-				DELETE FROM {db_prefix}calendar
-				WHERE id_event = {int:id_event}',
-				array(
-					'id_event' => $_REQUEST['eventid'],
-				)
-			);
-		// ... or just update it?
-		else
-		{
-			$span = !empty($modSettings['cal_allowspan']) && !empty($_REQUEST['span']) ? min((int) $modSettings['cal_maxspan'], (int) $_REQUEST['span'] - 1) : 0;
-			$start_time = mktime(0, 0, 0, (int) $_REQUEST['month'], (int) $_REQUEST['day'], (int) $_REQUEST['year']);
-
-			wesql::query('
-				UPDATE {db_prefix}calendar
-				SET end_date = {date:end_date},
-					start_date = {date:start_date},
-					title = {string:title}
-				WHERE id_event = {int:id_event}',
-				array(
-					'end_date' => strftime('%Y-%m-%d', $start_time + $span * 86400),
-					'start_date' => strftime('%Y-%m-%d', $start_time),
-					'id_event' => $_REQUEST['eventid'],
-					'title' => westr::htmlspecialchars($_REQUEST['evtitle'], ENT_QUOTES),
-				)
-			);
-		}
-		updateSettings(array(
-			'calendar_updated' => time(),
-		));
 	}
 
 	// Marking read should be done even for editing messages....

@@ -121,16 +121,6 @@ function template_options()
 			'default' => true,
 		),
 		array(
-			'id' => 'calendar_start_day',
-			'label' => $txt['calendar_start_day'],
-			'options' => array(
-				0 => $txt['days'][0],
-				1 => $txt['days'][1],
-				6 => $txt['days'][6],
-			),
-			'default' => true,
-		),
-		array(
 			'id' => 'display_quick_reply',
 			'label' => $txt['display_quick_reply'],
 			'options' => array(
@@ -151,6 +141,9 @@ function template_options()
 			'default' => true,
 		),
 	);
+
+	// !!! Must find a better way of doing this.
+	call_hook('theme_options');
 }
 
 function template_settings()
@@ -264,6 +257,9 @@ function template_settings()
 			'label' => $txt['additional_options_collapsable'],
 		),
 	);
+
+	// !!! Must find a better way of doing this.
+	call_hook('theme_settings');
 }
 
 ?>

@@ -28,8 +28,6 @@ if (!defined('WEDGE'))
 		  through the querystring it will set the report_type block to
 		  force the user to choose which type.
 		- when generating a report chooses which block to use.
-		- depends on the cal_enabled setting, and many of the other cal_
-		  settings.
 		- will call the relevant report generation function.
 		- if generating report will call finishTables before returning.
 		- accessed through ?action=admin;area=reports.

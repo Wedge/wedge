@@ -1412,7 +1412,7 @@ function setupThemeContext($forceload = false)
 	$context['current_action'] = isset($_GET['action']) ? $_GET['action'] : '';
 
 	// Get some news...
-	$context['news_lines'] = cache_quick_get('news_lines', 'ManageNews.php', 'cache_getNews', array());
+	$context['news_lines'] = cache_quick_get('news_lines', 'ManageNews', 'cache_getNews', array());
 	$context['fader_news_lines'] = array();
 	// Gotta be special for the javascript.
 	for ($i = 0, $n = count($context['news_lines']); $i < $n; $i++)
@@ -1890,7 +1890,6 @@ function setupMenuContext()
 	$context['allow_admin'] = allowedTo(array('admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_attachments', 'manage_smileys'));
 	$context['allow_edit_profile'] = !$user_info['is_guest'] && allowedTo(array('profile_view_own', 'profile_view_any', 'profile_identity_own', 'profile_identity_any', 'profile_extra_own', 'profile_extra_any', 'profile_remove_own', 'profile_remove_any', 'moderate_forum', 'manage_membergroups', 'profile_title_own', 'profile_title_any'));
 	$context['allow_memberlist'] = allowedTo('view_mlist');
-	$context['allow_calendar'] = allowedTo('calendar_view') && !empty($modSettings['cal_enabled']);
 	$context['allow_moderation_center'] = $context['user']['can_mod'];
 	$context['allow_pm'] = allowedTo('pm_read');
 
@@ -2056,23 +2055,6 @@ function setupMenuContext()
 						'title' => $txt['pm_menu_drafts'],
 						'href' => $scripturl . '?action=pm;sa=showdrafts',
 						'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($modSettings['masterSavePmDrafts']),
-					),
-				),
-			),
-			'calendar' => array(
-				'title' => $txt['calendar'],
-				'href' => $scripturl . '?action=calendar',
-				'show' => $context['allow_calendar'],
-				'sub_items' => array(
-					'view' => array(
-						'title' => $txt['calendar_menu'],
-						'href' => $scripturl . '?action=calendar',
-						'show' => allowedTo('calendar_post'),
-					),
-					'post' => array(
-						'title' => $txt['calendar_post_event'],
-						'href' => $scripturl . '?action=calendar;sa=post',
-						'show' => allowedTo('calendar_post'),
 					),
 				),
 			),

@@ -474,7 +474,6 @@ function banPermissions()
 	{
 		$denied_permissions = array(
 			'pm_send',
-			'calendar_post', 'calendar_edit_own', 'calendar_edit_any',
 			'poll_post',
 			'poll_add_own', 'poll_add_any',
 			'poll_edit_own', 'poll_edit_any',
@@ -494,6 +493,7 @@ function banPermissions()
 			'remove_own', 'remove_any',
 			'post_unapproved_topics', 'post_unapproved_replies_own', 'post_unapproved_replies_any',
 		);
+		call_hook('banned_perms', array(&$denied_permissions));
 		$user_info['permissions'] = array_diff($user_info['permissions'], $denied_permissions);
 	}
 	// Are they absolutely under moderation?

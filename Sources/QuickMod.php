@@ -531,6 +531,7 @@ function QuickModeration()
 
 	updateStats('topic');
 	updateStats('message');
+	// !!! How best to make this hookable?
 	updateSettings(array(
 		'calendar_updated' => time(),
 	));

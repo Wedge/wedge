@@ -29,7 +29,6 @@ if (!defined('WEDGE'))
  * - If the configuration asks for the last x latest posts, fetch them. (This is achieved from cache, or {@link cache_getLastPosts()} in Subs-Recent.php, and honors user preference of ignored boards)
  * - Preset some flags for the template (whether to show a bar above the most recent posts), and whether to show the member bar; both in the information center.
  * - Set up some general permissions checks for the template (i.e. whether to show some of the stats, whether to show the member list link)
- * - If the calendar is enabled, load the events as directed by the options (holidays, events, all based on number of days) - this is managed from cache, or {@link cache_getRecentEvents()} in Subs-Calendar.php.
  * - Finally, set up the page title to include the board name with the localized ' - Index' string.
  */
 function Boards()
@@ -48,7 +47,6 @@ function Boards()
 			array(
 				'info_center' => array(
 					'info_center_recentposts',
-					'info_center_calendar',
 					'info_center_statistics',
 					'info_center_usersonline',
 					'info_center_personalmsg',
@@ -99,7 +97,7 @@ function Boards()
 
 	// Are we showing all membergroups on the board index?
 	if (!empty($settings['show_group_key']))
-		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups.php', 'cache_getMembergroupList', array());
+		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups', 'cache_getMembergroupList', array());
 
 	// Track most online statistics? (Subs-MembersOnline.php)
 	if (!empty($modSettings['trackStats']))
@@ -111,7 +109,7 @@ function Boards()
 		$latestPostOptions = array(
 			'number_posts' => $settings['number_recent_posts'],
 		);
-		$context['latest_posts'] = cache_quick_get('boards-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent.php', 'cache_getLastPosts', array($latestPostOptions));
+		$context['latest_posts'] = cache_quick_get('boards-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent', 'cache_getLastPosts', array($latestPostOptions));
 	}
 
 	$settings['display_recent_bar'] = !empty($settings['number_recent_posts']) ? $settings['number_recent_posts'] : 0;
@@ -119,26 +117,6 @@ function Boards()
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	$context['show_member_list'] = allowedTo('view_mlist');
 	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
-
-	// Load the calendar?
-	if (!empty($modSettings['cal_enabled']) && allowedTo('calendar_view'))
-	{
-		// Retrieve the calendar data (events, holidays).
-		$eventOptions = array(
-			'include_holidays' => $modSettings['cal_showholidays'] > 1,
-			'include_events' => $modSettings['cal_showevents'] > 1,
-			'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-		);
-		$context += cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-		// Whether one or multiple days are shown on the board index.
-		$context['calendar_only_today'] = $modSettings['cal_days_for_index'] == 1;
-
-		// This is used to show the "how-do-I-edit" help.
-		$context['calendar_can_edit'] = allowedTo('calendar_edit_any');
-	}
-	else
-		$context['show_calendar'] = false;
 
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 

@@ -795,35 +795,6 @@ function template_title_upper()
 			</div>';
 }
 
-function template_linked_calendar()
-{
-	global $context, $settings, $txt;
-
-	// Does this topic have some events linked to it?
-	if (empty($context['linked_calendar_events']))
-		return;
-
-	echo '
-			<div class="linked_events">
-				<we:title>
-					', $txt['calendar_linked_events'], '
-				</we:title>
-				<div class="windowbg wrc">
-					<ul class="reset">';
-
-	foreach ($context['linked_calendar_events'] as $event)
-		echo '
-						<li>
-							', $event['can_edit'] ? '<a href="' . $event['modify_href'] . '"> <img src="' . $settings['images_url'] . '/icons/modify_small.gif" title="' . $txt['modify'] . '" class="edit_event"></a> ' : '',
-							'<strong>', $event['title'], '</strong>: ', $event['start_date'], ($event['start_date'] != $event['end_date'] ? ' - ' . $event['end_date'] : ''), '
-						</li>';
-
-	echo '
-					</ul>
-				</div>
-			</div>';
-}
-
 function template_postlist_before()
 {
 	global $context, $txt;

@@ -682,7 +682,7 @@ function ConvertUtf8()
 	redirectexit('action=admin;area=maintain;done=convertutf8');
 }
 
-// !!! This entire function is going to be deprecated. Leaving it here for now as it will form part of the converter later.
+// !!! Is this still needed now that we have TE's importer? If not, kill it.
 // Convert HTML-entities to their UTF-8 character equivalents.
 function ConvertEntities()
 {
@@ -722,8 +722,6 @@ function ConvertEntities()
 		'ban_groups',
 		'ban_items',
 		'boards',
-		'calendar',
-		'calendar_holidays',
 		'categories',
 		'log_errors',
 		'log_search_subjects',

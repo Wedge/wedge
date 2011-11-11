@@ -287,7 +287,6 @@ function determineActions($urls, $preferred_prefix = false)
 		'admin' => array('moderate_forum', 'manage_membergroups', 'manage_bans', 'admin_forum', 'manage_permissions', 'send_mail', 'manage_attachments', 'manage_smileys', 'manage_boards', 'edit_news'),
 		'ban' => array('manage_bans'),
 		'boardrecount' => array('admin_forum'),
-		'calendar' => array('calendar_view'),
 		'editnews' => array('edit_news'),
 		'mailing' => array('send_mail'),
 		'maintain' => array('admin_forum'),

@@ -1572,7 +1572,8 @@ function template_profile_theme_settings()
 						</select></label>
 					</li>';
 
-	if (!empty($modSettings['cal_enabled']))
+	// !!! This has really really got to go but it really depends on cleaning this whole area up. Until then, this is what's needed.
+	if (!empty($context['plugins_url']['Wedgeward:Calendar']))
 		echo '
 					<li>
 						<label>', $txt['calendar_start_day'], ':

@@ -72,45 +72,6 @@ function template_info_center_recentposts()
 		</div>';
 }
 
-// Show information about events and holidays on the calendar.
-function template_info_center_calendar()
-{
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
-
-	if (!$context['show_calendar'])
-		return;
-
-	echo '
-			<we:title2>
-				<a href="', $scripturl, '?action=calendar"><img src="', $settings['images_url'], '/icons/calendar.gif', '" alt="', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '"></a>
-				', $context['calendar_only_today'] ? $txt['calendar_today'] : $txt['calendar_upcoming'], '
-			</we:title2>
-			<p class="smalltext">';
-
-	// Holidays like "Christmas", "Chanukah", and "We Love [Unknown] Day" :P.
-	if (!empty($context['calendar_holidays']))
-		echo '
-				<span class="holiday">', $txt['calendar_prompt'], ' ', implode(', ', $context['calendar_holidays']), '</span><br>';
-
-	// Events like community get-togethers.
-	if (!empty($context['calendar_events']))
-	{
-		echo '
-				<span class="event">', $context['calendar_only_today'] ? $txt['events'] : $txt['events_upcoming'], '</span>';
-
-		/* Each event in calendar_events should have:
-			title, href, is_last, can_edit (are they allowed?), modify_href, and is_today. */
-
-		foreach ($context['calendar_events'] as $event)
-			echo $event['can_edit'] ? '
-				<a href="' . $event['modify_href'] . '" title="' . $txt['calendar_edit'] . '"><img src="' . $settings['images_url'] . '/icons/modify_small.gif"></a>' : '', '
-				', $event['href'] == '' ? '' : '<a href="' . $event['href'] . '">', $event['is_today'] ? '<strong>' . $event['title'] . '</strong>' : $event['title'], $event['href'] == '' ? '' : '</a>', $event['is_last'] ? '<br>' : ', ';
-	}
-
-	echo '
-			</p>';
-}
-
 // Show statistical style information...
 function template_info_center_statistics()
 {

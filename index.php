@@ -73,7 +73,6 @@ $action_list = array(
 	'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 	'boards' => array('Boards.php', 'Boards'),
 	'buddy' => array('Buddy.php', 'Buddy'),
-	'calendar' => array('Calendar.php', 'CalendarMain'),
 	'collapse' => array('Collapse.php', 'Collapse'),
 	'coppa' => array('CoppaForm.php', 'CoppaForm'),
 	'credits' => array('Credits.php', 'Credits'),

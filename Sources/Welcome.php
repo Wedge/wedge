@@ -43,7 +43,7 @@ function Welcome()
 
 	// In this case, we want to load the info center as well -- but not in the sidebar.
 	// We will simply create the info_center layer at the end of the main block and inject the blocks into it.
-	// For the purpose of our sample, we're using the opportunity to skip the calendar and recent posts.
+	// For the purpose of our sample, we're using the opportunity to skip the recent posts.
 	loadTemplate('InfoCenter');
 	wetem::load(
 		array(
@@ -77,7 +77,7 @@ function Welcome()
 
 	// Are we showing all membergroups on the board index?
 	if (!empty($settings['show_group_key']))
-		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups.php', 'cache_getMembergroupList', array());
+		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups', 'cache_getMembergroupList', array());
 
 	// Track most online statistics? (Subs-MembersOnline.php)
 	if (!empty($modSettings['trackStats']))
@@ -89,7 +89,7 @@ function Welcome()
 		$latestPostOptions = array(
 			'number_posts' => $settings['number_recent_posts'],
 		);
-		$context['latest_posts'] = cache_quick_get('boards-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent.php', 'cache_getLastPosts', array($latestPostOptions));
+		$context['latest_posts'] = cache_quick_get('boards-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent', 'cache_getLastPosts', array($latestPostOptions));
 	}
 
 	$settings['display_recent_bar'] = !empty($settings['number_recent_posts']) ? $settings['number_recent_posts'] : 0;
@@ -97,26 +97,6 @@ function Welcome()
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	$context['show_member_list'] = allowedTo('view_mlist');
 	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
-
-	// Load the calendar?
-	if (!empty($modSettings['cal_enabled']) && allowedTo('calendar_view'))
-	{
-		// Retrieve the calendar data (events, holidays).
-		$eventOptions = array(
-			'include_holidays' => $modSettings['cal_showholidays'] > 1,
-			'include_events' => $modSettings['cal_showevents'] > 1,
-			'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
-		);
-		$context += cache_quick_get('calendar_index_offset_' . ($user_info['time_offset'] + $modSettings['time_offset']), 'Subs-Calendar.php', 'cache_getRecentEvents', array($eventOptions));
-
-		// Whether one or multiple days are shown on the board index.
-		$context['calendar_only_today'] = $modSettings['cal_days_for_index'] == 1;
-
-		// This is used to show the "how-do-I-edit" help.
-		$context['calendar_can_edit'] = allowedTo('calendar_edit_any');
-	}
-	else
-		$context['show_calendar'] = false;
 
 	$context['page_title'] = isset($txt['homepage_title']) ? $txt['homepage_title'] : sprintf($txt['forum_index'], $context['forum_name']);
 

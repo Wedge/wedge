@@ -319,15 +319,14 @@ function template_postform_after()
 	{');
 
 	// !!! Currently not sending poll options and option checkboxes.
+	foreach ($context['form_fields'] as $field_type => $field_items)
+	{
+		array_walk($field_items, 'JavaScriptEscape');
+		add_js('
+		var ', $field_type, 'Fields = [' . implode(',', $field_items) . '];');
+	}
 	add_js('
 		var x = [];
-		var textFields = ["subject", ' . JavaScriptEscape($context['postbox']->id) . ', "icon", "guestname", "email", "evtitle", "question", "topic"];
-		var numericFields = [
-			"board", "topic", "last_msg",
-			"eventid", "calendar", "year", "month", "day",
-			"poll_max_votes", "poll_expire", "poll_change_vote", "poll_hide"
-		];
-		var checkboxFields = ["ns"];
 
 		for (var i = 0, n = textFields.length; i < n; i++)
 			if (textFields[i] in postmod)
@@ -636,133 +635,6 @@ function template_make_poll()
 						</dl>
 					</fieldset>
 				</div>';
-}
-
-// Are you posting a calendar event?
-function template_make_event()
-{
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
-
-	// We want to ensure we show the current days in a month etc... This is done here.
-	add_js('
-	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-	function generateDays()
-	{
-		var dayElement = $("#day")[0], year = $("#year").val(), monthElement = ("#month")[0];
-		var days, selected = dayElement.selectedIndex;
-
-		monthLength[1] = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
-
-		days = monthLength[monthElement.value - 1];
-		while (dayElement.options.length)
-			dayElement.options[0] = null;
-
-		for (i = 1; i <= days; i++)
-			dayElement.options.push(new Option(i, i));
-
-		if (selected < days)
-			dayElement.selectedIndex = selected;
-	}');
-
-	echo '
-				<div id="post_event">
-					<fieldset id="event_main">
-						<legend><span', isset($context['post_error']['no_event']) ? ' class="error"' : '', ' id="caption_evtitle">', $txt['calendar_event_title'], '</span></legend>
-						<input type="text" name="evtitle" maxlength="80" value="', $context['event']['title'], '" tabindex="', $context['tabindex']++, '" class="w75">
-						<div class="smalltext nowrap">
-							<input type="hidden" name="calendar" value="1">', $txt['calendar_year'], '
-							<select name="year" id="year" tabindex="', $context['tabindex']++, '" onchange="generateDays();">';
-
-	// Show a list of all the years we allow...
-	for ($year = $modSettings['cal_minyear']; $year <= $modSettings['cal_maxyear']; $year++)
-		echo '
-								<option value="', $year, '"', $year == $context['event']['year'] ? ' selected' : '', '>', $year, '&nbsp;</option>';
-
-	echo '
-							</select>
-							', $txt['calendar_month'], '
-							<select name="month" id="month" onchange="generateDays();">';
-
-	// There are 12 months per year - ensure that they all get listed.
-	for ($month = 1; $month <= 12; $month++)
-		echo '
-								<option value="', $month, '"', $month == $context['event']['month'] ? ' selected' : '', '>', $txt['months'][$month], '&nbsp;</option>';
-
-	echo '
-							</select>
-							', $txt['calendar_day'], '
-							<select name="day" id="day">';
-
-	// This prints out all the days in the current month - this changes dynamically as we switch months.
-	for ($day = 1; $day <= $context['event']['last_day']; $day++)
-		echo '
-								<option value="', $day, '"', $day == $context['event']['day'] ? ' selected' : '', '>', $day, '&nbsp;</option>';
-
-	echo '
-							</select>
-						</div>
-					</fieldset>';
-
-	if (!empty($modSettings['cal_allowspan']) || ($context['event']['new'] && $context['is_new_post']))
-	{
-		echo '
-					<fieldset id="event_options">
-						<legend>', $txt['calendar_event_options'], '</legend>
-						<div class="event_options smalltext">
-							<ul class="event_options">';
-
-		// If events can span more than one day then allow the user to select how long it should last.
-		if (!empty($modSettings['cal_allowspan']))
-		{
-			echo '
-								<li>
-									', $txt['calendar_numb_days'], '
-									<select name="span">';
-
-			for ($days = 1; $days <= $modSettings['cal_maxspan']; $days++)
-				echo '
-										<option value="', $days, '"', $days == $context['event']['span'] ? ' selected' : '', '>', $days, '&nbsp;</option>';
-
-			echo '
-									</select>
-								</li>';
-		}
-
-		// If this is a new event let the user specify which board they want the linked post to be put into.
-		if ($context['event']['new'] && $context['is_new_post'])
-		{
-			echo '
-								<li>
-									', $txt['calendar_post_in'], '
-									<select name="board">';
-			foreach ($context['event']['categories'] as $category)
-			{
-				echo '
-										<optgroup label="', $category['name'], '">';
-				foreach ($category['boards'] as $board)
-					echo '
-											<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '&nbsp;</option>';
-				echo '
-										</optgroup>';
-			}
-			echo '
-									</select>
-								</li>';
-		}
-
-		echo '
-							</ul>
-						</div>
-					</fieldset>';
-	}
-
-	echo '
-				</div>';
-
-	if (!$context['event']['new'] || !empty($context['current_board']))
-		echo '
-			<input type="hidden" name="eventid" value="', $context['event']['id'], '">';
 }
 
 // Previous post handling

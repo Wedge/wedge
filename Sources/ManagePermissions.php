@@ -1109,7 +1109,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 	// Restrictive - ie. guests.
 	$groupLevels['global']['restrict'] = array(
 		'search_posts',
-		'calendar_view',
 		'view_stats',
 		'who_view',
 		'profile_view_own',
@@ -1160,8 +1159,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 
 	// Moderator - ie. moderators :P.  They can do what standard can, and more.
 	$groupLevels['global']['moderator'] = array_merge($groupLevels['global']['standard'], array(
-		'calendar_post',
-		'calendar_edit_own',
 		'access_mod_center',
 		'issue_warning',
 	));
@@ -1193,7 +1190,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'manage_permissions',
 		'edit_news',
 		'view_ip_address_any',
-		'calendar_edit_any',
 		'profile_identity_any',
 		'profile_extra_any',
 		'profile_signature_any',
@@ -1422,7 +1418,6 @@ function loadAllPermissions($loadType = 'classic')
 			'simple' => array(
 				'view_basic_info',
 				'use_pm_system',
-				'post_calendar',
 				'edit_profile',
 				'delete_account',
 				'use_avatar',
@@ -1433,7 +1428,6 @@ function loadAllPermissions($loadType = 'classic')
 			'classic' => array(
 				'general',
 				'pm',
-				'calendar',
 				'maintenance',
 				'member_admin',
 				'profile',
@@ -1482,9 +1476,6 @@ function loadAllPermissions($loadType = 'classic')
 			'pm_send' => array(false, 'pm', 'use_pm_system'),
 			'save_pm_draft' => array(false, 'pm', 'use_pm_system'),
 			'auto_save_pm_draft' => array(false, 'pm', 'use_pm_system'),
-			'calendar_view' => array(false, 'calendar', 'view_basic_info'),
-			'calendar_post' => array(false, 'calendar', 'post_calendar'),
-			'calendar_edit' => array(true, 'calendar', 'post_calendar', 'moderate_general'),
 			'admin_forum' => array(false, 'maintenance', 'administrate'),
 			'manage_boards' => array(false, 'maintenance', 'administrate'),
 			'manage_attachments' => array(false, 'maintenance', 'administrate'),
@@ -1563,7 +1554,6 @@ function loadAllPermissions($loadType = 'classic')
 	// All permission groups that will be shown in the left column on classic view.
 	$leftPermissionGroups = array(
 		'general',
-		'calendar',
 		'maintenance',
 		'member_admin',
 		'topic',
@@ -1577,12 +1567,6 @@ function loadAllPermissions($loadType = 'classic')
 	$hiddenPermissions = array();
 	$relabelPermissions = array(); // Permissions to apply a different label to.
 	$relabelGroups = array(); // As above but for groups.
-	if (empty($modSettings['cal_enabled']))
-	{
-		$hiddenPermissions[] = 'calendar_view';
-		$hiddenPermissions[] = 'calendar_post';
-		$hiddenPermissions[] = 'calendar_edit';
-	}
 
 	// Post moderation?
 	if (!$modSettings['postmod_active'])
