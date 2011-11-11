@@ -304,7 +304,7 @@ function template_showThoughts()
 	echo '
 		<we:cat>
 			<img src="', $settings['images_url'], '/icons/profile_sm.gif">
-			', $txt['thoughts'], ' - ', $context['member']['name'], '
+			', $txt['showThoughts'], ' - ', $context['member']['name'], '
 		</we:cat>
 		<table class="windowbg wrc w100 cp8 cs8">';
 

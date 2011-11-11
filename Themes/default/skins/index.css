@@ -711,10 +711,6 @@ li.separator
 .m_pm_unread extends .m_home
 	background-position: -112px 0
 
-.m_calendar extends .m_home
-	background-position: -205px 0
-	width: 14px
-
 .m_media extends .m_home
 	background-position: -54px 0
 	width: 18px
@@ -1058,13 +1054,6 @@ tr.catbg, tr.titlebg
 // Messages that somehow need to attract the attention.
 .alert
 	color: red
-
-// Calendar colors for events and holidays
-.event
-	color: #078907
-
-.holiday
-	color: navy
 
 // Colors for warnings
 .warn_mute, .warn_ban

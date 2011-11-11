@@ -330,33 +330,6 @@ ul.post_options
 	margin: .3em 1em .3em 0
 
 
-/* Styles for edit event section
----------------------------------------------------- */
-#post_event
-
-	div.event_options
-		float: left
-
-	#event_main
-		input
-			margin: 0 0 1em 0
-			float: right
-
-		div.smalltext
-			float: left
-
-		select
-			margin: 0 0 0 1em
-
-	ul.event_main li
-		float: left
-
-	ul.event_options
-		padding: 0 .7em .7em 0
-		li select, li *[type=checkbox]
-			margin: 0 0 0 1em
-
-
 /* Styles for edit poll section.
 ---------------------------------------------------- */
 #edit_poll

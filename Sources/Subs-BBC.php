@@ -32,14 +32,12 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
 	return parse_bbc($message, $smileys, $cache_id, $short_list ?
 		array(
 			'b', 'u', 'i', 's',
-			'email', 'ftp', 'iurl', 'url',
-			'nobbc',
+			'email', 'ftp', 'iurl', 'url', 'nobbc',
 		) :
 		array(
 			'b', 'u', 'i', 's',
-			'email', 'ftp', 'iurl', 'url',
-			'abbr', 'me', 'nobbc', 'sub', 'sup', 'time',
-			'color', 'black', 'blue', 'green', 'red', 'white'
+			'email', 'ftp', 'iurl', 'url', 'nobbc',
+			'abbr', 'me', 'sub', 'sup', 'time', 'color',
 		)
 	);
 }

@@ -256,7 +256,7 @@ function viewThoughts($memID)
 	// Some initial context.
 	wetem::load('showThoughts');
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
-	$context['page_title'] = $txt['thoughts'] . ' - ' . $context['member']['name'];
+	$context['page_title'] = $txt['showThoughts'] . ' - ' . $context['member']['name'];
 
 	$context['thoughts'] = $thoughts = array();
 	$request = wesql::query('
@@ -2132,7 +2132,7 @@ function showPermissions($memID)
 		if (!isset($txt['permissionname_' . $row['permission']]))
 			continue;
 
-		// The name of the permission using the format 'permission name' - 'own/any topic/event/etc.'.
+		// The name of the permission using the format 'permission name' - 'own/any topic/etc.'.
 		if (in_array(substr($row['permission'], -4), array('_own', '_any')) && isset($txt['permissionname_' . substr($row['permission'], 0, -4)]))
 			$name = $txt['permissionname_' . substr($row['permission'], 0, -4)] . ' - ' . $txt['permissionname_' . $row['permission']];
 		else

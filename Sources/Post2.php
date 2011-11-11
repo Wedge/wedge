@@ -49,7 +49,6 @@ if (!defined('WEDGE'))
  * - Is this a poll? If so, insert the question details, followed by all the possible answers into the DB.
  * - Collate the main arrays of details, $msgOptions, $topicOptions and $posterOptions.
  * - If this is an edit, divert to {@link modifyPost()} otherwise head to {@link createPost()} to create the new post (and topic if appropriate).
- * - If this is a new event being posted, validate the contents, check permissions, delete it if that's what the request said to do, update if necessary (including the master cache value)
  * - Mark this board read, and all its hierarchical parents, for the person making the edit.
  * - If the user asks to be notified on the topic's replies, add them to the notification list (assuming they have permission)
  * - If this isn't a new topic, remove them from the notification log because we don't need to tell them about this post they just dealt with.

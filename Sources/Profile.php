@@ -112,7 +112,7 @@ function ModifyProfile($post_errors = array())
 					),
 				),
 				'thoughts' => array(
-					'label' => $txt['thoughts'],
+					'label' => $txt['showThoughts'],
 					'file' => 'Profile-View',
 					'function' => 'viewThoughts',
 					'enabled' => true, // @todo: add a counter and enable based on it being non-zero?

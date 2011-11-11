@@ -705,7 +705,7 @@ function Thought(opt)
 	this.opt = opt;
 	$('#thought_update')
 		.attr('title', opt.sLabelThought)
-		.click(function () { oThought.edit(''); })
+		.click(function () { oThought.edit(''); });
 	$('.thought').each(function () {
 		var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
 		if (tid)

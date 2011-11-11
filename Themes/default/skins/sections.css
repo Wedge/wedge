@@ -171,14 +171,6 @@ img.new_posts
 #moderationbuttons_strip
 	margin: 4px 0 0
 
-// Events
-.linked_events
-	padding: 1em 0
-
-.edit_event
-	margin: 0 1em
-	vertical-align: middle
-
 // Poll question
 #poll
 	overflow: hidden
@@ -666,51 +658,6 @@ ul.post_options
 		margin: 0 2px
 
 #preview_body extends .postbg
-
-/* Styles for edit event section
----------------------------------------------------- */
-#post_event
-
-	.roundframe
-		padding: 10px 12%
-
-	fieldset
-		padding: .5em
-		clear: both
-
-	#event_main
-		input
-			margin: 0 0 1em
-			float: left
-		div.smalltext
-			width: 33em
-			float: right
-
-	div.event_options
-		float: right
-
-	ul.event_main
-		overflow: hidden
-		padding: 0
-		li
-			list-style-type: none
-			margin: .2em 0
-			width: 49%
-			float: left
-
-	ul.event_options
-		overflow: hidden
-		margin: 0
-		padding: 0 0 .7em .7em
-		li
-			list-style-type: none
-			margin: 0
-			float: left
-		li select, li *[type=checkbox]
-			margin: 0 .2em 0 0
-
-	#event_main select
-		margin: 0 .2em 0 0
 
 /* Styles for edit poll section.
 ---------------------------------------------------- */
@@ -1442,14 +1389,8 @@ dl.stats
 			display: block
 			font-weight: bold
 
-a.modify_event
-	color: red
-
 span.hidelink
 	font-style: italic
-
-#calendar_navigation
-	text-align: center
 
 /* Styles for the memberlist section.
 ------------------------------------------------- */
