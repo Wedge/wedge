@@ -96,7 +96,12 @@ function reloadSettings()
 						$hook_stack[$hook][$priority][] = strtr($function, array('$plugindir' => $this_plugindir));
 					}
 			}
+			else
+				$reset_plugins = true;
 		}
+
+		if (isset($reset_plugins))
+			updateSettings(array('enabled_plugins' => implode(',', $context['enabled_plugins'])));
 
 		// Having got all the hooks, figure out the priority ordering and commit to the master list.
 		foreach ($hook_stack as $hook => $hooks_by_priority)
