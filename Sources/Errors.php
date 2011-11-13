@@ -164,9 +164,11 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
  * @param string $error The error message to output.
  * @param mixed $log The error category. See {@link log_error()} for more details (same specification)
  */
-function fatal_error($error, $log = 'general')
+function fatal_error($error, $log = 'general', $header = 403)
 {
 	global $txt, $context, $modSettings;
+
+	issue_http_header($header);
 
 	// We don't have $txt yet, but that's okay...
 	if (empty($txt))
@@ -193,10 +195,12 @@ function fatal_error($error, $log = 'general')
  * @param mixed $log The error category. See {@link log_error()} for more details (same specification)
  * @param array $sprintf An array of items to be format-printed into the string once located within $txt. For example, the message might use %1$s to indicate a relevant string; this value would be inserted into the array to be injected into the error message prior to saving to log.
  */
-function fatal_lang_error($error, $log = 'general', $sprintf = array())
+function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header = 403)
 {
 	global $txt, $language, $modSettings, $user_info, $context;
 	static $fatal_error_called = false;
+
+	issue_http_header($header);
 
 	// Try to load a theme if we don't have one.
 	if (empty($context['theme_loaded']) && empty($fatal_error_called))
