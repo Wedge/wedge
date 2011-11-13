@@ -79,6 +79,8 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$user_info['id'] = 0;
 	if (empty($user_info['ip']))
 		$user_info['ip'] = '';
+	if (empty($user_info['url']))
+		$user_info['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['REAL_HTTP_HOST']) . $_SERVER['REQUEST_URI'];
 
 	// Find the best query string we can...
 	$query_string = $user_info['url'];
