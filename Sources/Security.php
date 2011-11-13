@@ -1389,7 +1389,7 @@ function checkUserRequest_post()
 {
 	global $context, $modSettings;
 
-	if ($_SERVER['SERVER_PROTOCOL'] != 'POST')
+	if ($_SERVER['REQUEST_METHOD'] != 'POST')
 		return false;
 
 	// Catch a few completely broken spambots
