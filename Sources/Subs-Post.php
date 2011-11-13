@@ -185,7 +185,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 
 	// Construct the mail headers...
 	$headers = 'From: "' . $from_name . '" <' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . '>' . $line_break;
-	$headers .= $from !== null ? 'Reply-To: <' . $from . '>' . $line_break : '';
+	$headers .= $from !== null ? 'Reply-To: "' . $from_name . '" <' . $from . '>' . $line_break : '';
 	$headers .= 'Return-Path: ' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . $line_break;
 	$headers .= 'Date: ' . gmdate('D, d M Y H:i:s') . ' -0000' . $line_break;
 
