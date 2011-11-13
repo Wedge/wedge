@@ -19,7 +19,7 @@
 	$.ie6hover();
 	]]></code>
 
-	<code for="iphone"><![CDATA[
+	<code for="iphone,tablet"><![CDATA[
 	$('#main_content').insertBefore('#edge');
 	]]></code>
 

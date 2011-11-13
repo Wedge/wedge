@@ -118,7 +118,7 @@ function ModifyProfile($post_errors = array())
 					'enabled' => true, // @todo: add a counter and enable based on it being non-zero?
 					'permission' => array(
 						'own' => 'profile_view_own',
-						'any' => array(),
+						'any' => 'profile_view_any',
 					),
 				),
 				'showposts' => array(
