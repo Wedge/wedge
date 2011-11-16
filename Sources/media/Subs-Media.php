@@ -2079,7 +2079,7 @@ function aeva_createThumbFile($id_file, $file, &$options)
 	if (empty($theight))
 		$theight = $options['max_thumb_height'];
 
-	$new_filename = 'thumb_' . preg_replace('~^preview_~', '', $options['filename']) . ($mtype == 'video' ? '.jpg' : ($ext == 'png' ? '.png' : ''));
+	$new_filename = 'thumb_' . preg_replace('~^preview_~', '', $options['filename']) . ($mtype == 'video' ? '.jpg' : ($ext == 'png' && substr($options['filename'], -4) != '.png' ? '.png' : ''));
 	$id_thumb = aeva_insertFileID(
 		isset($options['force_id_thumb']) && $options['force_id_thumb'] > 4 ? $options['force_id_thumb'] : 0, $thumb->getFileSize(),
 		$new_filename, $twidth, $theight, $options['cur_dest'], $options['album']

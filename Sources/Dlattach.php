@@ -201,6 +201,8 @@ function Dlattach()
 	// Different browsers like different standards...
 	if ($context['browser']['is_ie8down'])
 		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)) . '"');
+	elseif ($context['browser']['is_safari'])
+		header('Content-Disposition: ' . $disposition . '; filename="' . $real_filename . '"');
 	else
 		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)));
 

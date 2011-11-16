@@ -2707,21 +2707,15 @@ function aeva_massDownloadSend()
 	header('ETag: ' . md5_file($path));
 	header('Content-Type: application/octet' . ($context['browser']['is_ie'] || $context['browser']['is_opera'] ? '' : '-') . 'stream');
 
-	$is_chrome = $context['browser']['is_safari'] && stripos($_SERVER['HTTP_USER_AGENT'], 'chrome') !== false;
 	$filename = aeva_entities2utf($filename);
 
-	// Stupid Safari doesn't support UTF-8 filenames...
-	if ($context['browser']['is_safari'] && !$is_chrome)
-		$filename = utf8_decode($filename);
-
 	$att = 'Content-Disposition: attachment; filename';
-
-	if ($context['browser']['is_firefox'])
-		header($att . '*="UTF-8\'\'' . $filename . '"');
-	elseif ($context['browser']['is_ie'] || $is_chrome)
-		header($att . '="' . rawurlencode($filename) . '"');
-	else
+	if ($context['browser']['is_ie8down'])
+		header($att . '="' . urlencode($filename) . '"');
+	elseif ($context['browser']['is_safari'])
 		header($att . '="' . $filename . '"');
+	else
+		header($att . '*=UTF-8\'\'' . rawurlencode($filename));
 
 	// If the file is over 1.5MB, readfile() may have some issues.
 	if (filesize($path) > 1572864 || @readfile($path) == null)
