@@ -2472,7 +2472,7 @@ function aeva_getMedia()
 
 		$att = 'Content-Disposition: attachment; filename';
 		if ($context['browser']['is_firefox'])
-			header($att . '*="UTF-8\'\'' . $filename . '"');
+			header($att . '*=UTF-8\'\'' . $filename);
 		elseif ($context['browser']['is_ie'] || $is_chrome)
 			header($att . '="' . rawurlencode($filename) . '"');
 		else

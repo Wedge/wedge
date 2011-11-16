@@ -95,7 +95,7 @@ function Dlattach()
 	if (!$is_approved && ($id_member == 0 || $user_info['id'] != $id_member) && ($attachment_type == 0 || $attachment_type == 3))
 		isAllowedTo('approve_posts');
 
-	// Update the download counter (unless it's a thumbnail).
+	// Update the download counter (unless it's a thumbnail.)
 	if (!$user_info['possibly_robot'] && $attachment_type != 3)
 		wesql::query('
 			UPDATE LOW_PRIORITY {db_prefix}attachments
@@ -138,7 +138,7 @@ function Dlattach()
 		{
 			ob_end_clean();
 
-			// Answer the question - no, it hasn't been modified ;).
+			// Answer the question - no, it hasn't been modified ;)
 			header('HTTP/1.1 304 Not Modified');
 			exit;
 		}
@@ -201,7 +201,6 @@ function Dlattach()
 	// Different browsers like different standards...
 	if ($context['browser']['is_ie8down'])
 		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)) . '"');
-
 	else
 		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)));
 

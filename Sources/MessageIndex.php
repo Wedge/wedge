@@ -573,7 +573,7 @@ function MessageIndex()
 			$context['can_remove'] |= ($started && allowedTo('remove_own'));
 		}
 
-		// Find the boards/cateogories they can move their topic to.
+		// Find the boards/categories they can move their topic to.
 		if ($options['display_quick_mod'] == 1 && $context['can_move'] && !empty($context['topics']))
 		{
 			loadSource('Subs-MessageIndex');
