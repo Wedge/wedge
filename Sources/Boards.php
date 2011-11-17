@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  * - If showing the group key/membergroup legend, this will be loaded next. (Either from cache, or {@link cache_getMembergroupList()} in Subs-Membergroups.php)
  * - If we are tracking statistics, see if we are at the point of 'most online' - achieved with {@link trackStatsUsersOnline()} in Subs-MembersOnline.php.
  * - If the configuration asks for the last x latest posts, fetch them. (This is achieved from cache, or {@link cache_getLastPosts()} in Subs-Recent.php, and honors user preference of ignored boards)
- * - Preset some flags for the template (whether to show a bar above the most recent posts), and whether to show the member bar; both in the information center.
+ * - Preset some flags for whether to show the member bar, in the information center.
  * - Set up some general permissions checks for the template (i.e. whether to show some of the stats, whether to show the member list link)
  * - Finally, set up the page title to include the board name with the localized ' - Index' string.
  */
@@ -46,7 +46,6 @@ function Boards()
 		wetem::load(
 			array(
 				'info_center' => array(
-					'info_center_recentposts',
 					'info_center_statistics',
 					'info_center_usersonline',
 					'info_center_personalmsg',
@@ -103,16 +102,6 @@ function Boards()
 	if (!empty($modSettings['trackStats']))
 		trackStatsUsersOnline($context['num_guests'] + $context['num_spiders'] + $context['num_users_online']);
 
-	// Retrieve the latest posts if the theme settings require it.
-	if (isset($settings['number_recent_posts']) && $settings['number_recent_posts'] > 1)
-	{
-		$latestPostOptions = array(
-			'number_posts' => $settings['number_recent_posts'],
-		);
-		$context['latest_posts'] = cache_quick_get('boards-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent', 'cache_getLastPosts', array($latestPostOptions));
-	}
-
-	$settings['display_recent_bar'] = !empty($settings['number_recent_posts']) ? $settings['number_recent_posts'] : 0;
 	$settings['show_member_bar'] &= allowedTo('view_mlist');
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	$context['show_member_list'] = allowedTo('view_mlist');

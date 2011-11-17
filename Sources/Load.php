@@ -1558,7 +1558,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		while ($row = wesql::fetch_assoc($result))
 		{
 			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'number_recent_posts', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_templates', 'theme_url')))
+			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_templates', 'theme_url')))
 				continue;
 
 			// If this is the theme_dir of the default theme, store it.

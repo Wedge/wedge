@@ -198,12 +198,6 @@ function template_settings()
 			'type' => 'number',
 		),
 		array(
-			'id' => 'number_recent_posts',
-			'label' => $txt['number_recent_posts'],
-			'description' => $txt['number_recent_posts_desc'],
-			'type' => 'number',
-		),
-		array(
 			'id' => 'show_stats_index',
 			'label' => $txt['show_stats_index'],
 		),

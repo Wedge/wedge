@@ -43,7 +43,6 @@ function Welcome()
 
 	// In this case, we want to load the info center as well -- but not in the sidebar.
 	// We will simply create the info_center layer at the end of the main block and inject the blocks into it.
-	// For the purpose of our sample, we're using the opportunity to skip the recent posts.
 	loadTemplate('InfoCenter');
 	wetem::load(
 		array(
@@ -83,16 +82,6 @@ function Welcome()
 	if (!empty($modSettings['trackStats']))
 		trackStatsUsersOnline($context['num_guests'] + $context['num_spiders'] + $context['num_users_online']);
 
-	// Retrieve the latest posts if the theme settings require it.
-	if (isset($settings['number_recent_posts']) && $settings['number_recent_posts'] > 1)
-	{
-		$latestPostOptions = array(
-			'number_posts' => $settings['number_recent_posts'],
-		);
-		$context['latest_posts'] = cache_quick_get('boards-latest_posts:' . md5($user_info['query_wanna_see_board'] . $user_info['language']), 'Subs-Recent', 'cache_getLastPosts', array($latestPostOptions));
-	}
-
-	$settings['display_recent_bar'] = !empty($settings['number_recent_posts']) ? $settings['number_recent_posts'] : 0;
 	$settings['show_member_bar'] &= allowedTo('view_mlist');
 	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
 	$context['show_member_list'] = allowedTo('view_mlist');

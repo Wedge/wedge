@@ -24,54 +24,6 @@ function template_info_center_before()
 		<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' class="hide"', '>';
 }
 
-// This is the "Recent Posts" bar.
-function template_info_center_recentposts()
-{
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
-
-	if (empty($settings['number_recent_posts']) || ($settings['number_recent_posts'] == 1 && empty($context['latest_post'])) || ($settings['number_recent_posts'] > 1 && empty($context['latest_posts'])))
-		return;
-
-	echo '
-			<we:title2>
-				<a href="', $scripturl, '?action=recent"><img src="', $settings['images_url'], '/post/xx.gif" alt="', $txt['recent_posts'], '"></a>
-				', $txt['recent_posts'], '
-			</we:title2>
-			<div id="recent_posts_content">';
-
-	// Only show one post.
-	if ($settings['number_recent_posts'] == 1)
-	{
-		// latest_post has link, href, time, subject, short_subject (shortened with...), and topic. (its id.)
-		echo '
-				<strong><a href="', $scripturl, '?action=recent">', $txt['recent_posts'], '</a></strong>
-				<p id="infocenter_onepost" class="middletext">
-					', $txt['recent_view'], ' &quot;', $context['latest_post']['link'], '&quot; ', $txt['recent_updated'], ' (', $context['latest_post']['time'], ')<br>
-				</p>';
-	}
-	// Show lots of posts.
-	elseif (!empty($context['latest_posts']))
-	{
-		echo '
-				<dl id="ic_recentposts" class="middletext">';
-
-		/* Each post in latest_posts has:
-			board (with an id, name, and link.), topic (the topic's id.), poster (with id, name, and link.),
-			subject, short_subject (shortened with...), time, link, and href. */
-
-		foreach ($context['latest_posts'] as $post)
-			echo '
-				<dt><strong>', $post['link'], '</strong> ', $txt['by'], ' ', $post['poster']['link'], ' (', $post['board']['link'], ')</dt>
-				<dd>', $post['time'], '</dd>';
-
-		echo '
-			</dl>';
-	}
-
-	echo '
-		</div>';
-}
-
 // Show statistical style information...
 function template_info_center_statistics()
 {
