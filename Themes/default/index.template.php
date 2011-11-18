@@ -501,8 +501,9 @@ function template_body_after()
 {
 	global $context, $settings, $options, $txt, $modSettings, $footer_coding;
 
+	$no_resize = $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'];
 	echo '
-', $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'] ? '' : '
+', $no_resize ? '' : '
 <script><!-- // --><![CDATA[
 	function noi_resize()
 	{
@@ -539,8 +540,8 @@ function template_body_after()
 		we_loading = "', $txt['ajax_in_progress'], '",
 		we_cancel = "', $txt['form_cancel'], '";
 
-	$(window).resize(noi_resize).resize();
-	initMenu("main_menu");', $context['show_pm_popup'] ? '
+	', $no_resize ? '' : '$(window).resize(noi_resize).resize();
+	', 'initMenu("main_menu");', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
 		window.open(we_prepareScriptUrl() + "action=pm");' : '';

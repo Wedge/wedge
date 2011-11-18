@@ -20,7 +20,7 @@
 	]]></code>
 
 	<code for="iphone,tablet"><![CDATA[
-	$('#main_content').insertBefore('#edge');
+	$('#sidebar').insertAfter('#main_content');
 	]]></code>
 
 </skin>

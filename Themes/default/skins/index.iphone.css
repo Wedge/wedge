@@ -17,7 +17,7 @@
 	margin-left: 8em
 
 // Sidebar should be at the bottom, in full width.
-#edge, #sidebar
+#sidebar
 	display: block
 	clear: both
 	width: 100%

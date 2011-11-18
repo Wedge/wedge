@@ -134,7 +134,7 @@
 	]]></code>
 
 	<code for="iphone,tablet"><![CDATA[
-	$('#main_content').insertBefore('#edge');
+	$('#sidebar').insertBefore('#footer');
 	]]></code>
 
 	<!--
