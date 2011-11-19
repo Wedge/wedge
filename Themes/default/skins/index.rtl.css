@@ -150,16 +150,6 @@ th.last_th
 	line-height: 19px
 	padding: 0 6px 0 0
 
-#ic_recentposts
-	dt
-		float: right
-	dd
-		text-align: left
-
-// The small stats
-#index_common_stats
-	text-align: left
-
 #upshrink_ic
 	float: left
 	margin: 4px 0 0 4px

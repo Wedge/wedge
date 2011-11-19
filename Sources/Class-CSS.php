@@ -538,7 +538,7 @@ class wecss_nesting extends wecss
 
 				// Do we have an extends/unextend line followed by a line on the same level or above it?
 				// If yes, this means we just extended a selector and should close it immediately.
-				if ($level >= $l[0] && (strpos($ex_string, ' extends ') !== false || strpos($ex_string, ' unextend') !== false))
+				if ($level >= $l[0] && (strpos($ex_string, ' extends ') !== false || strpos($ex_string, ' unextends ') !== false))
 					$tree .= " {\n}\n";
 
 				// Same level, and no continuation of a selector? We're probably in a list of properties.
@@ -592,12 +592,12 @@ class wecss_nesting extends wecss
 			}
 
 			// Reset inheritance based on the unextend keyword.
-			if (strpos($node['selector'], 'unextend') !== false)
+			if (strpos($node['selector'], ' unextends') !== false)
 			{
-				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)\s+unextends?(?=[\s,]|$)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 					$unextends[$m[1]] = $n;
-				$node['selector'] = preg_replace('~(?<=\s)unextends?(?=[\s,]|$)~i', '', $node['selector']);
+				$node['selector'] = preg_replace('~\bunextends\b~i', '', $node['selector']);
 				if (trim($node['selector'] == ''))
 				{
 					unset($this->rules[$n]);

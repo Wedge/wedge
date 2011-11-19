@@ -1124,11 +1124,102 @@ function execBlock($block_name, $fatal = false)
  *					  - ::has_layer($layer) forces a test for layers only
  */
 
+final class welay
+{
+	private $target;
+	private $is_layer = false;
+
+	function __construct($to = false)
+	{
+		$this->target = $to;
+		$this->is_layer = wetem::has_layer($to);
+	}
+
+	// Return the parent of a given layer or block.
+	function parent()
+	{
+		return wetem::get(wetem::find_parent($this->target));
+	}
+
+	// Add contents inside specified layer, at the end.
+	function append($blocks)
+	{
+		wetem::load($blocks, $this->target, 'add');
+		return $this;
+	}
+
+	// Add contents inside specified layer, at the beginning.
+	function prepend($blocks)
+	{
+		wetem::load($blocks, $this->target, 'first');
+		return $this;
+	}
+
+	// Add contents before the specified layer or block.
+	function before($blocks)
+	{
+		wetem::load($blocks, $this->target, 'before');
+		return $this;
+	}
+
+	// Add contents after the specified layer or block.
+	function after($blocks)
+	{
+		wetem::load($blocks, $this->target, 'after');
+		return $this;
+	}
+
+	// Replace specified layer's contents with our new contents. Leave its existing layers alone.
+	function replace($blocks)
+	{
+		wetem::load($blocks, $this->target, 'replace');
+		return $this;
+	}
+
+	// Replace specified layer's contents with our new contents.
+	function erase($blocks)
+	{
+		wetem::load($blocks, $this->target, 'erase');
+		return $this;
+	}
+
+	// Rename the current layer to $layer.
+	function rename($layer)
+	{
+		if ($this->is_layer)
+			wetem::layer($layer, $this->target, 'rename');
+		return $this;
+	}
+
+	// Wrap a new layer around the current one. (Equivalent to jQuery's wrap)
+	// @todo: accept blocks, as we should be able to add layers around them.
+	function wrap($layer)
+	{
+		if ($this->is_layer)
+			wetem::layer($layer, $this->target, 'parent');
+		return $this;
+	}
+
+	// Wrap a new layer around the current one's contents. (Equivalent to jQuery's wrapInner)
+	function inner($layer)
+	{
+		wetem::layer($layer, $this->target, 'child');
+		return $this;
+	}
+
+	// Remove specified layer/block from the skeleton. (Non-chainable)
+	function remove()
+	{
+		wetem::remove($this->target);
+	}
+}
+
 final class wetem
 {
 	private static $instance;				// container for self
 	private static $skeleton = array();		// store the full skeleton array
 	private static $layers = array();		// store shortcuts to individual layers
+	private static $obj = array();			// store shortcuts to individual layer/block objects
 	private static $hidden = false;			// did we call hide()?
 
 	// What kind of class are you, anyway? One of a kind!
@@ -1170,6 +1261,11 @@ final class wetem
 	 */
 	public static function build(&$arr)
 	{
+		// Unset any pending layer objects.
+		if (!empty(self::$obj))
+			foreach (self::$obj as &$layer)
+				$layer = null;
+
 		self::parse($arr, self::$skeleton);
 	}
 
@@ -1231,6 +1327,65 @@ final class wetem
 	}
 
 	/**
+	 * Returns the name of the first valid layer/block in the list, or false if nothing was found.
+	 *
+	 * @param string $targets A layer or block, or array of layers or blocks to look for. Leave empty to use the default layer.
+	 */
+	private static function find($targets = '')
+	{
+		// Find the first target layer that isn't wishful thinking.
+		foreach ((array) $targets as $layer)
+		{
+			if (empty($layer))
+				$layer = 'default';
+			if (isset(self::$layers[$layer]))
+			{
+				$to = $layer;
+				break;
+			}
+		}
+
+		// No valid layer found.
+		if (empty($to))
+		{
+			// If we try to insert a sideback block in minimal mode (hide_chrome), Wireless or XML, it will fail.
+			// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
+			if ($where !== 'before' && $where !== 'after')
+				return false;
+
+			// Or maybe we're looking for a block..?
+			$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator(self::$skeleton)));
+			foreach ((array) $targets as $block)
+			{
+				if (isset($all_blocks[$block]))
+				{
+					$to = $block;
+					break;
+				}
+			}
+			unset($all_blocks);
+		}
+		return $to;
+	}
+
+	/**
+	 * Returns a welay object representing the first layer or block we need.
+	 *
+	 * @param string $targets A layer or block, or array of layers or blocks to look for.
+	 */
+	public static function get($targets = '')
+	{
+		$to = self::find($targets);
+		// Not a valid block/layer? Return the default layer.
+		// @todo: add a proper error message for this... Like, 'Not a valid layer or block!'
+		if ($to === false)
+			$to = 'default';
+		if (!isset(self::$obj[$to]))
+			self::$obj[$to] = new welay($to);
+		return self::$obj[$to];
+	}
+
+	/**
 	 * Add blocks or layers to the skeleton.
 	 *
 	 * @param string $blocks The name of the blocks or layers to be added.
@@ -1256,38 +1411,7 @@ final class wetem
 		$blocks = self::list_blocks((array) $blocks);
 		$has_layer = count($blocks) !== count($blocks, COUNT_RECURSIVE);
 
-		// Find the first target layer that isn't wishful thinking.
-		foreach ((array) $target as $layer)
-		{
-			if (empty($layer))
-				$layer = 'default';
-			if (isset(self::$layers[$layer]))
-			{
-				$to = $layer;
-				break;
-			}
-		}
-
-		// No valid layer found.
-		if (empty($to))
-		{
-			// If we try to insert a sideback block in minimal mode (hide_chrome), Wireless or XML, it will fail.
-			// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
-			if ($where !== 'before' && $where !== 'after')
-				return false;
-
-			// Or maybe we're looking for a block..?
-			$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator(self::$skeleton)));
-			foreach ((array) $target as $block)
-			{
-				if (isset($all_blocks[$block]))
-				{
-					$to = $block;
-					break;
-				}
-			}
-			unset($all_blocks);
-		}
+		$to = self::find($target);
 
 		// If a mod requests to replace the contents of the sidebar, just smile politely.
 		if (($where === 'replace' || $where === 'erase') && $to === 'sidebar')
@@ -1380,15 +1504,16 @@ final class wetem
 			child		insert between the target and its current children		<target> <layer> <sub /> </layer> </target>
 
 			rename		replace the layer but not its current contents			<layer>          <sub />           </layer>
-			replace		replace the layer and empty its contents				<layer>                            </layer>
 
-			The following can also be done through wetem::load(array('layer' => array()), 'target', 'before/after/add/first'):
+			The following can also be done through wetem::load(array('layer' => array()), 'target', 'before/after/add/first/erase'):
 
 			add			add as a child to the target, in last position			<target> <sub /> <layer> </layer> </target>
 			first		add as a child to the target, in first position			<target> <layer> </layer> <sub /> </target>
 
 			before		add before the item										<layer> </layer> <target> <sub /> </target>
 			after		add after the item										<target> <sub /> </target> <layer> </layer>
+
+			erase		replace the target layer and empty its contents			<layer>                            </layer>
 		*/
 
 		if (empty($target))
@@ -1534,7 +1659,7 @@ final class wetem
 	 * @param string $child The name of the block or layer. Really.
 	 * @return mixed Returns either the name of the parent layer, or FALSE if not found.
 	 */
-	private static function find_parent($child)
+	public static function find_parent($child)
 	{
 		foreach (self::$layers as $id => &$layer)
 			if (isset($layer[$child]))
