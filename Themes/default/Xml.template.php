@@ -298,6 +298,16 @@ function template_check_username()
 </we>';
 }
 
+function template_thought()
+{
+	global $context;
+
+	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
+<we>
+	<thought id="', $context['return_thought']['id_thought'], '" privacy="', $context['return_thought']['privacy'], '"><![CDATA[', cleanXml($context['return_thought']['thought']), ']]></thought>
+</we>';
+}
+
 // This prints XML in it's most generic form.
 function template_generic_xml()
 {

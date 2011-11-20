@@ -104,7 +104,7 @@ function ListMessageIcons()
 
 function Thought()
 {
-	global $user_info;
+	global $context, $user_info;
 
 	// !! We need $user_info if we're going to allow the editing of older messages... Don't forget to check for sessions?
 	if ($user_info['is_guest'])
@@ -114,6 +114,8 @@ function Thought()
 	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text'])) : '';
 	if (empty($text) && !isset($_REQUEST['remove']))
 		die();
+
+	wetem::load('thought');
 
 	// Original thought ID (in case of an edit.)
 	$oid = isset($_POST['oid']) ? (int) $_POST['oid'] : 0;
@@ -233,7 +235,7 @@ function Thought()
 				if (!empty($personal_id_thought))
 					updateMemberData($member, array('personal_text' => parse_bbc_inline($personal_thought)));
 			}
-			die();
+			die;
 		}
 		// If it's similar to the earlier version, don't update the time.
 		else
@@ -266,6 +268,13 @@ function Thought()
 			$last_thought = wesql::insert_id();
 	}
 
+	// This is for use in the XML template.
+	$context['return_thought'] = array(
+		'id_thought' => $last_thought,
+		'thought' => parse_bbc_inline($text),
+		'privacy' => $privacy,
+	);
+
 	// Only update the thought area if it's a public comment, and isn't a comment on another thought...
 	if (empty($_POST['parent']) && !empty($last_thought))
 	{
@@ -280,9 +289,6 @@ function Thought()
 		if ($privacy === 0)
 			updateMemberData($user_info['id'], array('personal_text' => parse_bbc_inline($text)));
 	}
-
-	// Wedge isn't expecting any feedback.
-	die();
 }
 
 ?>

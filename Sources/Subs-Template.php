@@ -1131,6 +1131,8 @@ final class welay
 
 	function __construct($to = false)
 	{
+		if (!$to)
+			$to = 'default';
 		$this->target = $to;
 		$this->is_layer = wetem::has_layer($to);
 	}
@@ -1196,7 +1198,7 @@ final class welay
 	function wrap($layer)
 	{
 		if ($this->is_layer)
-			wetem::layer($layer, $this->target, 'parent');
+			wetem::layer($layer, $this->target);
 		return $this;
 	}
 

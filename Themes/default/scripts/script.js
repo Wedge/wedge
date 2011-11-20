@@ -13,7 +13,6 @@
 var
 	weEditors = [],
 	_formSubmitted = false,
-	_lastKeepAliveCheck = +new Date(),
 
 	// Basic browser detection
 	ua = navigator.userAgent.toLowerCase(),
@@ -42,7 +41,7 @@ function getXMLDocument(sUrl, funcCallback)
 // Send a post form to the server using Ajax.
 function sendXMLDocument(sUrl, sContent, funcCallback)
 {
-	$.ajax($.extend({}, { url: sUrl, data: sContent, type: 'POST', context: this }, typeof funcCallback != 'undefined' ? { success: funcCallback } : {}));
+	$.ajax($.extend({ url: sUrl, data: sContent, type: 'POST', context: this }, typeof funcCallback != 'undefined' ? { success: funcCallback } : {}));
 	return true;
 }
 
@@ -206,20 +205,23 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 }
 
 // Keep the session alive - always!
-function _sessionKeepAlive()
-{
-	var curTime = +new Date();
-
-	// Prevent a Firefox bug from hammering the server.
-	if (we_script && curTime - _lastKeepAliveCheck > 900000)
+(function () {
+	var lastKeepAliveCheck = +new Date();
+	function sessionKeepAlive()
 	{
-		var tempImage = new Image();
-		tempImage.src = we_prepareScriptUrl() + 'action=keepalive;time=' + curTime;
-		_lastKeepAliveCheck = curTime;
+		var curTime = +new Date();
+
+		// Prevent a Firefox bug from hammering the server.
+		if (we_script && curTime - lastKeepAliveCheck > 900000)
+		{
+			var tempImage = new Image();
+			tempImage.src = we_prepareScriptUrl() + 'action=keepalive;time=' + curTime;
+			lastKeepAliveCheck = curTime;
+		}
+		setTimeout(sessionKeepAlive, 1200000);
 	}
-	setTimeout(_sessionKeepAlive, 1200000);
-}
-setTimeout(_sessionKeepAlive, 1200000);
+	setTimeout(sessionKeepAlive, 1200000);
+})();
 
 // Set a theme option through javascript.
 function we_setThemeOption(option, value, theme, additional_vars)
@@ -299,12 +301,11 @@ function hide_ajax()
 function ajaxRating()
 {
 	$('#ratingElement').html('<img src="' + (typeof we_default_theme_url == "undefined" ? we_theme_url : we_default_theme_url) + '/images/loader.gif">');
-	sendXMLDocument($('#ratingForm').attr('action') + ';xml', 'rating=' + $('#rating').val(), ajaxRating2);
-}
-
-function ajaxRating2(XMLDoc)
-{
-	$('#ratingElement').html($('ratingObject', XMLDoc).text());
+	sendXMLDocument(
+		$('#ratingForm').attr('action') + ';xml',
+		'rating=' + $('#rating').val(),
+		function (XMLDoc) { $('#ratingElement').html($('ratingObject', XMLDoc).text()); }
+	);
 }
 
 // Find the actual position of an item.
@@ -732,7 +733,7 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 		pr += '\
 				<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
 
-	thought.hide().after('\
+	thought.toggle(is_new).after('\
 		<form id="thought_form">\
 			<input type="text" maxlength="255" id="ntho">\
 			<select id="npriv">' + pr + '\
@@ -768,20 +769,19 @@ Thought.prototype.remove = function (tid)
 // Event handler for clicking submit.
 Thought.prototype.submit = function (tid, mid)
 {
-	var new_thought = $('#ntho').val();
-
+	var that = this;
 	show_ajax();
 
 	sendXMLDocument(
 		we_prepareScriptUrl() + 'action=ajax;sa=thought',
-		'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + new_thought.php_urlencode()
+		'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
+		function (XMLDoc) {
+			var thought = $('thought', XMLDoc);
+			$('#thought_update' + thought.attr('id') + ' span').html(thought.text());
+			that.cancel();
+			hide_ajax();
+		}
 	);
-
-	if (new_thought != '')
-		$('#thought_update' + tid + ' span').html(new_thought.php_htmlspecialchars());
-	this.cancel();
-
-	hide_ajax();
 };
 
 /*
@@ -822,7 +822,6 @@ menu_hide_children = _h
 menu_hide_me = _hm
 menu_ieshim = _ie
 hoverable = _ho
-_lastKeepAliveCheck = _k
 _collapsed = _o
 menu_show_me = _sm
 menu_show_shim = _sh
