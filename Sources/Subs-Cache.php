@@ -1169,7 +1169,7 @@ function cache_get_data($key, $ttl = 120)
 	// Otherwise it's the file cache!
 	elseif (file_exists($cachedir . '/data/' . $key . '.php') && filesize($cachedir . '/data/' . $key . '.php') > 10)
 	{
-		require($cachedir . '/data/' . $key . '.php');
+		@include($cachedir . '/data/' . $key . '.php');
 		if (empty($valid))
 			@unlink($cachedir . '/data/' . $key . '.php');
 	}

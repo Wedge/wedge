@@ -409,6 +409,9 @@ function template_sidebar_before()
 			</form>
 		</div>';
 	}
+	else
+		echo '
+		</div>';
 }
 
 // This natty little function adds feed links to the sidebar. Mostly autonomous, it's lovely for that.
