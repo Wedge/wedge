@@ -69,42 +69,45 @@
 				<!-- A global wrapper is not mandatory, but recommended for easy layout modifications. -->
 				<wrapper>
 					<!-- A sidebar wrapper is necessary if you want maximum compatibility. It should open and close a table, or a compatible div. -->
-					<sidebar_wrap>
+					<sidebar_wrap indent="-1">
 						<sidebar>
 							<!-- This is where Wedge will insert any side information. -->
-							<search_box />
-							<language_selector />
-							<random_news />
+							<search_box indent="-1" />
+							<language_selector indent="-1" />
+							<random_news indent="-1" />
 						</sidebar>
 					</sidebar_wrap>
 
 					<!-- We usually need to add a wrapper after the sidebar that will be defined as a table cell. -->
-					<offside_wrap>
+					<offside_wrap indent="-1">
+						<indenter indent="1">
 
-						<header>
-							<!-- The header layer: top bar, logo, things like that... -->
-						</header>
+							<header>
+								<!-- The header layer: top bar, logo, things like that... -->
+							</header>
 
-						<!-- The main menu. -->
-						<menu />
+							<!-- The main menu. -->
+							<menu />
 
-						<!-- The navigation bar (linktree.) -->
-						<linktree />
+							<!-- The navigation bar (linktree.) -->
+							<linktree />
 
-						<content_wrap>
-							<main_wrap>
-								<top>
-									<!-- Used by menus, and anything that needs to be shown before the main entry point. -->
-								</top>
-								<default>
-									<!-- The main entry point, where all pages add their content by default. -->
-									<main />
-								</default>
-							</main_wrap>
-						</content_wrap>
+							<content_wrap>
+								<main_wrap>
+									<top>
+										<!-- Used by menus, and anything that needs to be shown before the main entry point. -->
+									</top>
+									<default>
+										<!-- The main entry point, where all pages add their content by default. -->
+										<main />
+									</default>
+								</main_wrap>
+							</content_wrap>
 
-						<!-- Credits, validation links... -->
-						<footer />
+							<!-- Credits, validation links... -->
+							<footer />
+
+						</indenter>
 					</offside_wrap>
 				</wrapper>
 			</body>

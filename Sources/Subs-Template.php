@@ -430,6 +430,11 @@ function ob_sessrewrite($buffer)
 		$buffer = str_replace('<!-- insert stats here -->', $loadTime, $buffer);
 	}
 
+	// Have we got any indentation adjustments to do...?
+	$max_loops = 100;
+	while (strpos($buffer, '<inden@zi=') !== false && $max_loops-- > 0)
+		$buffer = preg_replace_callback('~<inden@zi=([^=>]+)=(-?\d+)>((?' . '>[^<]|<(?!@))+?)</inden@zi=\\1>~s', 'wedge_indenazi', $buffer);
+
 	// Return the changed buffer.
 	return $buffer;
 }
@@ -468,6 +473,13 @@ function wedge_profile_colors($match)
 	if (!isset($member_colors['group'][$match[2]]) || strpos($match[1], 'bbc_link') !== false)
 		return '<a' . $match[1] . '>' . $match[3] . '</a>';
 	return '<a' . $match[1] . ' style="color: ' . $member_colors['color'][$member_colors['group'][$match[2]]] . '">' . $match[3] . '</a>';
+}
+
+function wedge_indenazi($match)
+{
+	if ($match[2] < 0)
+		return str_replace("\n" . str_repeat("\t", -$match[2]), "\n", $match[3]);
+	return str_replace("\n", "\n" . str_repeat("\t", $match[2]), $match[3]);
 }
 
 // Remove and save script tags
@@ -1122,6 +1134,10 @@ function execBlock($block_name, $fatal = false)
  * wetem::has()		- does the skeleton have this block or layer in it?
  *					  - ::has_block($block) forces a test for blocks only
  *					  - ::has_layer($layer) forces a test for layers only
+ *
+ * wetem::get('item')->chained()->actions()
+ *                  - retrieves the 'item' block or layer, and applies chained methods to it.
+ *                    This is basically a helper replacement for wetem::load().
  */
 
 final class welay
@@ -1221,6 +1237,7 @@ final class wetem
 	private static $instance;				// container for self
 	private static $skeleton = array();		// store the full skeleton array
 	private static $layers = array();		// store shortcuts to individual layers
+	private static $opt = array();			// options for individual layers/block
 	private static $obj = array();			// store shortcuts to individual layer/block objects
 	private static $hidden = false;			// did we call hide()?
 
@@ -1332,8 +1349,9 @@ final class wetem
 	 * Returns the name of the first valid layer/block in the list, or false if nothing was found.
 	 *
 	 * @param string $targets A layer or block, or array of layers or blocks to look for. Leave empty to use the default layer.
+	 * @param string $where The magic keyword. See definition for ::load().
 	 */
-	private static function find($targets = '')
+	private static function find($targets = '', $where = '')
 	{
 		// Find the first target layer that isn't wishful thinking.
 		foreach ((array) $targets as $layer)
@@ -1352,7 +1370,7 @@ final class wetem
 		{
 			// If we try to insert a sideback block in minimal mode (hide_chrome), Wireless or XML, it will fail.
 			// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
-			if ($where !== 'before' && $where !== 'after')
+			if (!empty($where) && $where !== 'before' && $where !== 'after')
 				return false;
 
 			// Or maybe we're looking for a block..?
@@ -1413,7 +1431,7 @@ final class wetem
 		$blocks = self::list_blocks((array) $blocks);
 		$has_layer = count($blocks) !== count($blocks, COUNT_RECURSIVE);
 
-		$to = self::find($target);
+		$to = self::find($target, $where);
 
 		// If a mod requests to replace the contents of the sidebar, just smile politely.
 		if (($where === 'replace' || $where === 'erase') && $to === 'sidebar')
@@ -1567,7 +1585,7 @@ final class wetem
 			}
 
 			// Starting a layer?
-			if (empty($tag[3]))
+			if (empty($tag[4]))
 			{
 				$dest[$tag[2]] = array();
 				self::parse($arr, $dest[$tag[2]], $pos, $tag[2]);
@@ -1575,6 +1593,14 @@ final class wetem
 			// Then it's a block...
 			else
 				$dest[$tag[2]] = true;
+
+			// Has this layer/block got any options? (Wedge only accepts indent="x" as of now.)
+			if (!empty($tag[3]))
+			{
+				preg_match_all('~(\w+)="([^"]+)"?~', $tag[3], $options, PREG_SET_ORDER);
+				foreach ($options as $option)
+					self::$opt[$option[1]][$tag[2]] = $option[2];
+			}
 		}
 	}
 
@@ -1607,6 +1633,9 @@ final class wetem
 
 	private static function render_recursive(&$here, $key)
 	{
+		if (isset(self::$opt['indent'][$key]))
+			echo '<inden@zi=', $key, '=', self::$opt['indent'][$key], '>';
+
 		// Show the _before part of the layer.
 		execBlock($key . '_before', 'ignore');
 
@@ -1618,12 +1647,21 @@ final class wetem
 			// If the item is an array, then it's a layer. Otherwise, it's a block.
 			if (is_array($temp))
 				self::render_recursive($temp, $id);
+			elseif (isset(self::$opt['indent'][$id]))
+			{
+				echo '<inden@zi=', $id, '=', self::$opt['indent'][$id], '>';
+				execBlock($id);
+				echo '</inden@zi=', $id, '>';
+			}
 			else
 				execBlock($id);
 		}
 
 		// Show the _after part of the layer
 		execBlock($key . '_after', 'ignore');
+
+		if (isset(self::$opt['indent'][$key]))
+			echo '</inden@zi=', $key, '>';
 
 		// !! We should probably move this directly to template_html_after() and forget the buffering thing...
 		if ($key === 'html' && !isset($_REQUEST['xml']) && !self::$hidden)

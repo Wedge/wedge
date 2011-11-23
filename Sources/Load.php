@@ -1839,7 +1839,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 				$context['macros'][$name] = array(
 					'has_if' => strpos($contents, '<if:') !== false,
-					'body' => trim($contents),
+					'body' => $contents,
 				);
 			}
 		}
@@ -1853,7 +1853,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			execBlock('skeleton', 'ignore');
 
 		// Now we have a $context['skeleton'] (original or overridden), we can feed it to the template object.
-		preg_match_all('~<(?!!)(/)?([\w:,]+)(\s*/)?\>~', $context['skeleton'], $match, PREG_SET_ORDER);
+		preg_match_all('~<(?!!)(/)?(\w+)\s*([^>]*?)(/?)\>~', $context['skeleton'], $match, PREG_SET_ORDER);
 		wetem::build($match);
 		unset($context['skeleton']);
 	}

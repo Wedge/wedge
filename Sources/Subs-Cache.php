@@ -931,7 +931,7 @@ function wedge_get_skin_options()
 					continue;
 				$context['macros'][$match[1]] = array(
 					'has_if' => strpos($match[3], '<if:') !== false,
-					'body' => trim($match[3])
+					'body' => $match[3]
 				);
 			}
 		}

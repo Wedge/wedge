@@ -69,17 +69,24 @@ function template_init()
 		// with browser names and a "else" fallback. This can also be done in skin.xml
 		// with the <macro name="..." for="ie6,ie7"> keyword.
 		'sidebar'	=> array(
-			'ie6'	=> '<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
-			'ie7'	=> '<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
-			'else'	=> '<div id="edge"><aside id="sidebar"><div class="column">{body}</div></aside>',
+			'ie6'	=> '
+	<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
+			'ie7'	=> '
+	<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
+			'else'	=> '
+	<div id="edge">
+		<aside id="sidebar"><div class="column">{body}</div></aside>',
 		),
 
 		// Now for a little trick -- since IE6 and IE7 need to be in a table, we're closing here
 		// the table that was opened in the sidebar macro.
 		'offside'	=> array(
-			'ie6'	=> '<td class="top">{body}</td></tr></table>',
-			'ie7'	=> '<td class="top">{body}</td></tr></table>',
-			'else'	=> '{body}</div>',
+			'ie6'	=> '<td class="top">{body}
+	</td></tr></table>',
+			'ie7'	=> '<td class="top">{body}
+	</td></tr></table>',
+			'else'	=> '{body}
+	</div>',
 		),
 
 		// The main header of the website. Feel free to redefine it in your skins and themes.
@@ -234,8 +241,8 @@ function template_header_after()
 
 	echo '
 		</div></div>
-		<div id="upper_section"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame">
-			<we:header logo="', $context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:header>
+		<div id="upper_section"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:header logo="',
+		$context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:header>
 		</div></div>
 	</div></div>';
 }
