@@ -762,11 +762,7 @@ header, footer, aside, section, article, nav
 .nowrap
 	white-space: nowrap
 
-// Default font sizes: small (8pt), normal (10pt), and large (14pt)
 .smalltext, tr.smalltext th
-	font-size: .85em
-
-.middletext
 	font-size: .9em
 	line-height: 1em
 

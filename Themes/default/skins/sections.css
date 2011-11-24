@@ -44,10 +44,6 @@ p.moderators
 		vertical-align: -5px
 		padding: 0 2px 0 10px
 
-#postbuttons_upper ul li a span
-	line-height: 19px
-	padding: 0 0 0 6px
-
 .mark_read
 	padding: 0 .5em
 	.buttonlist
@@ -82,15 +78,6 @@ p.moderators
 		&.pminfo
 			margin: 0
 			padding: .5em
-
-#ic_recentposts
-	margin: 0 0 .5em
-	padding: .5em
-	line-height: 1.3em
-	dt
-		float: left
-	dd
-		text-align: right
 
 // The small stats
 #index_common_stats
@@ -148,21 +135,6 @@ img.new_posts
 #top_subject, #display_jump_to
 	font-family: "PT Sans", $main_font
 	letter-spacing: -1px
-
-#postbuttons
-	div.buttons
-		padding: .5em
-		width: 40%
-		float: right
-	div.middletext
-		width: 60%
-	span
-		display: block
-		text-align: right
-	span.lower
-		clear: right
-	.buttonlist
-		float: right
 
 #moderationbuttons
 	overflow: hidden
