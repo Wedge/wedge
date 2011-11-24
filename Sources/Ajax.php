@@ -112,7 +112,7 @@ function Thought()
 
 	// !! Should we use censorText at store time, or display time...? $context['user'] (Load.php:1696) begs to differ.
 	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text'])) : '';
-	if (empty($text) && !isset($_REQUEST['remove']))
+	if (empty($text) && empty($_GET['in']) && !isset($_REQUEST['remove']))
 		die();
 
 	wetem::load('thought');
@@ -131,6 +131,31 @@ function Thought()
 			WHERE updated < UNIX_TIMESTAMP() - 3 * 365 * 24 * 3600
 		');
 	*/
+
+	// Are we asking for an existing thought?
+	if (!empty($_GET['in']))
+	{
+		$request = wesql::query('
+			SELECT id_thought, privacy, thought
+			FROM {db_prefix}thoughts
+			WHERE id_thought = {int:original_id}' . (allowedTo('moderate') ? '' : '
+			AND id_member = {int:id_member}'),
+			array(
+				'id_member' => $user_info['id'],
+				'original_id' => $_GET['in'],
+			)
+		);
+		list ($id_thought, $privacy, $thought) = wesql::fetch_row($request);
+		wesql::free_result($request);
+
+		$context['return_thought'] = array(
+			'id_thought' => $id_thought,
+			'thought' => un_htmlspecialchars($thought),
+			'privacy' => $privacy,
+		);
+
+		return;
+	}
 
 	// Is it an edit?
 	if (!empty($oid))

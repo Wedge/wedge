@@ -511,7 +511,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		this.oXmlRequestHandle.abort();
 
 	// Get the document.
-	getXMLDocument.call(this, this.sRetrieveURL
+	this.oXmlRequestHandle = getXMLDocument.call(this, this.sRetrieveURL
 		.replace(/%scripturl%/g, we_prepareScriptUrl())
 		.replace(/%suggest_type%/g, this.opt.sSearchType)
 		.replace(/%search%/g, sSearchString.php_urlencode())

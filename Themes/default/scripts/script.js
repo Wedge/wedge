@@ -30,18 +30,15 @@ var
 	menu_baseId = hoverable = 0, menu_delay = [], hove = 'hove', aJumpTo = [], oThought;
 
 // Load an XML document using Ajax.
-function getXMLDocument(sUrl, funcCallback)
+function getXMLDocument(sUrl, funcCallback, undefined)
 {
-	return $.ajax(typeof funcCallback != 'undefined' ?
-		{ url: sUrl, success: funcCallback, context: this } :
-		{ url: sUrl, async: false, context: this }
-	);
+	return $.ajax($.extend({ url: sUrl, context: this }, funcCallback !== undefined ? { success: funcCallback } : { async: false }));
 }
 
 // Send a post form to the server using Ajax.
-function sendXMLDocument(sUrl, sContent, funcCallback)
+function sendXMLDocument(sUrl, sContent, funcCallback, undefined)
 {
-	$.ajax($.extend({ url: sUrl, data: sContent, type: 'POST', context: this }, typeof funcCallback != 'undefined' ? { success: funcCallback } : {}));
+	$.ajax($.extend({ url: sUrl, data: sContent, type: 'POST', context: this }, funcCallback !== undefined ? { success: funcCallback } : {}));
 	return true;
 }
 
@@ -704,6 +701,8 @@ function Thought(opt)
 		return;
 
 	this.opt = opt;
+	this.ajaxUrl = we_prepareScriptUrl() + 'action=ajax;sa=thought;xml;';
+
 	$('#thought_update')
 		.attr('title', opt.sLabelThought)
 		.click(function () { oThought.edit(''); });
@@ -728,22 +727,26 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 
 	var
 		thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(), opt = this.opt, privacies = opt.aPrivacy, privacy = thought.data('prv'),
-		cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : was_personal.php_unhtmlspecialchars()), pr = '';
+		cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
+		was_personal.php_unhtmlspecialchars() : this.getText(tid))), pr = '';
 	for (var p in privacies)
-		pr += '\
-				<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
+		pr += '<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
 
 	thought.toggle(is_new).after('\
 		<form id="thought_form">\
 			<input type="text" maxlength="255" id="ntho">\
-			<select id="npriv">' + pr + '\
-			</select>\
+			<select id="npriv">' + pr + '</select>\
 			<input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '">\
 			<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save">\
 			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
 		</form>');
 	$('#ntho').focus().val(cur_text);
 };
+
+Thought.prototype.getText = function (id)
+{
+	return $('thought', getXMLDocument(this.ajaxUrl + 'in=' + id).responseXML).text();
+}
 
 // Make that personal text editable (again)!
 Thought.prototype.cancel = function ()
@@ -758,7 +761,7 @@ Thought.prototype.remove = function (tid)
 
 	show_ajax();
 
-	sendXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=thought;remove', 'oid=' + to_del.data('oid'));
+	sendXMLDocument(this.ajaxUrl + 'remove', 'oid=' + to_del.data('oid'));
 
 	// We'll be assuming Wedge uses table tags to show thought lists.
 	to_del.parents('tr').first().remove();
@@ -773,7 +776,7 @@ Thought.prototype.submit = function (tid, mid)
 	show_ajax();
 
 	sendXMLDocument(
-		we_prepareScriptUrl() + 'action=ajax;sa=thought',
+		that.ajaxUrl,
 		'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
 		function (XMLDoc) {
 			var thought = $('thought', XMLDoc);

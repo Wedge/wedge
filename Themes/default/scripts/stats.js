@@ -166,7 +166,7 @@ weStatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 	if (oToggle.opt.aSwappableContainers.length == 0)
 	{
 		show_ajax();
-		this.oXmlRequestHandle = getXMLDocument.call(this, we_prepareScriptUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
+		getXMLDocument.call(this, we_prepareScriptUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
 		this.bIsLoading = true;
 	}
 	// Silently let Wedge know this one is expanded.
