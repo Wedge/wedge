@@ -412,7 +412,7 @@ function aeva_initGallery($gal_url = null)
 
 	if (!isset($_REQUEST['xml']))
 	{
-		wetem::load(array('aeva_header', 'aeva_subtabs'), 'top');
+		wetem::add('top', array('aeva_header', 'aeva_subtabs'));
 
 		// Start the linktree
 		$context['linktree'] = array();
@@ -1255,7 +1255,7 @@ function aeva_viewItem()
 		'aeva_item_comments',
 	));
 	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'])
-		wetem::load('aeva_item_details', 'sidebar');
+		wetem::add('sidebar', 'aeva_item_details');
 }
 
 function aeva_mgComment()

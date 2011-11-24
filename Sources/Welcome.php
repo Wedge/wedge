@@ -44,7 +44,7 @@ function Welcome()
 	// In this case, we want to load the info center as well -- but not in the sidebar.
 	// We will simply create the info_center layer at the end of the main block and inject the blocks into it.
 	loadTemplate('InfoCenter');
-	wetem::load(
+	wetem::add(
 		array(
 			'info' => array(
 				'info_center' => array(
@@ -53,9 +53,7 @@ function Welcome()
 					'info_center_personalmsg',
 				),
 			),
-		),
-		'default',
-		'add'
+		)
 	);
 
 	/*

@@ -285,8 +285,8 @@ function createMenu($menuData, $menuOptions = array())
 	{
 		loadTemplate(isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'GenericMenu');
 		$menu_context['template_name'] = (isset($menuOptions['template_name']) ? $menuOptions['template_name'] : 'generic_menu') . $menuOptions['menu_type'];
-		wetem::load($menu_context['template_name'], empty($options['use_sidebar_menu']) ? 'top' : 'sidebar');
-		wetem::load('generic_tabs', 'top');
+		wetem::add(empty($options['use_sidebar_menu']) ? 'top' : 'sidebar', $menu_context['template_name']);
+		wetem::add('top', 'generic_tabs');
 	}
 
 	// Check we had something - for sanity sake.

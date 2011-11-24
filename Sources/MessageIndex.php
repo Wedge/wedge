@@ -46,7 +46,7 @@ function MessageIndex()
 			$templates[] = 'messageindex_draft';
 		$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
 		wetem::load($templates);
-		wetem::load('messageindex_statistics', 'sidebar');
+		wetem::add('sidebar', 'messageindex_statistics');
 	}
 
 	$context['name'] = $board_info['name'];
@@ -223,7 +223,7 @@ function MessageIndex()
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('board');
-		wetem::load('messageindex_whoviewing', 'sidebar');
+		wetem::add('sidebar', 'messageindex_whoviewing');
 	}
 
 	// Default sort methods.
@@ -608,7 +608,7 @@ function MessageIndex()
 	// If there are children, but no topics and no ability to post topics...
 	$context['no_topic_listing'] = !empty($context['boards']) && empty($context['topics']) && !$context['can_post_new'];
 	if (!$context['no_topic_listing'])
-		wetem::load('messageindex_legend', 'sidebar');
+		wetem::add('sidebar', 'messageindex_legend');
 
 	// Create the button set...
 	$context['button_list'] = array(

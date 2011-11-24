@@ -163,7 +163,7 @@ if (isset($_REQUEST['ssi_ban']) || (isset($ssi_ban) && $ssi_ban === true))
 if (isset($ssi_layers))
 {
 	foreach (array_reverse($ssi_layers) as $layer)
-		wetem::layer($layer);
+		wetem::outer($layer);
 	start_output();
 }
 else

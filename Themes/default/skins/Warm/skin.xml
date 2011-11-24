@@ -52,9 +52,9 @@
 			- Use <self closing tags /> to define blocks (i.e. straightforward functions)
 
 			- If you have a block that you need to make sure will show up, make sure to specify an array.
-			  e.g. wetem::load('my_block', array('my_layer', 'sidebar', 'default')) will try to add
-			  'my_block' to 'my_layer', and if not found to the sidebar. It will fall back to
-			  default if nothing is found -- the only layer guaranteed to be in the template.
+			  e.g. wetem::add(array('my_layer', 'sidebar', ''), 'my_block') will try to add 'my_block'
+			  to 'my_layer', and if not found to the sidebar. It will fall back to 'default' (i.e. '')
+			  if nothing is found -- the only layer guaranteed to be in the template.
 
 			- DEFAULT is the only required layer. All of the non-wrap layers below are recommended.
 			  All blocks are also recommended -- modders will often try to send them data.

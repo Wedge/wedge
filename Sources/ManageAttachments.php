@@ -285,7 +285,7 @@ function ManageAvatarSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 
 	// Add a layer for the javascript.
-	wetem::layer('avatar_settings');
+	wetem::outer('avatar_settings');
 	wetem::load('show_settings');
 }
 

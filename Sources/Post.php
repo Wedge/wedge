@@ -123,7 +123,7 @@ function Post()
 		wesql::free_result($request);
 	}
 
-	// Check if it's locked.  It isn't locked if no topic is specified.
+	// Check if it's locked. It isn't locked if no topic is specified.
 	if (!empty($topic))
 	{
 		$request = wesql::query('
@@ -225,7 +225,7 @@ function Post()
 		// New topic, new poll.
 		if (empty($topic))
 			isAllowedTo('poll_post');
-		// This is an old topic - but it is yours!  Can you add to it?
+		// This is an old topic - but it is yours! Can you add to it?
 		elseif ($user_info['id'] == $id_member_poster && !allowedTo('poll_add_any'))
 			isAllowedTo('poll_add_own');
 		// If you're not the owner, can you add to any poll?
@@ -930,7 +930,7 @@ function Post()
 						$dirSize += filesize($current_attach_dir . '/' . $file);
 					}
 
-					// Too big!  Maybe you could zip it or something...
+					// Too big! Maybe you could zip it or something...
 					if ($_FILES['attachment']['size'][$n] + $dirSize > $modSettings['attachmentDirSizeLimit'] * 1024)
 						fatal_lang_error('ran_out_of_space');
 				}
@@ -967,7 +967,7 @@ function Post()
 		$context['error_type'] = 'minor';
 	}
 
-	// What are you doing?  Posting a poll, modifying, previewing, new post, or reply...
+	// What are you doing? Posting a poll, modifying, previewing, new post, or reply...
 	if (isset($_REQUEST['poll']))
 		$context['page_title'] = $txt['new_poll'];
 	elseif (isset($_REQUEST['msg']))
@@ -1174,7 +1174,7 @@ function Post()
 
 		// Now, we add some things dynamically.
 		if ($context['make_poll'])
-			wetem::load('make_poll', 'postbox', 'before');
+			wetem::before('postbox', 'make_poll');
 	}
 
 	// Add in any last minute changes.

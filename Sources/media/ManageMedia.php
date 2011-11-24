@@ -131,7 +131,7 @@ function aeva_admin_init()
 		),
 	);
 
-	wetem::layer('aeva_admin');
+	wetem:outer('aeva_admin');
 
 	$context['page_title'] = $txt['media_title'] . ' - ' . $txt['media_admin_labels_' . $_REQUEST['area']];
 
@@ -285,7 +285,7 @@ function aeva_admin_settings()
 	global $context, $scripturl, $amSettings, $modSettings, $txt;
 
 	wetem::load('aeva_form');
-	wetem::layer('aeva_admin_enclose_table');
+	wetem::outer('aeva_admin_enclose_table');
 
 	$context['current_area'] = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('meta', 'layout')) ? $_REQUEST['sa'] : 'config';
 

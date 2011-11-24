@@ -450,7 +450,7 @@ function UnreadReplies()
 	);
 
 	loadTemplate('MessageIndex');
-	wetem::load('messageindex_legend', 'sidebar');
+	wetem::add('sidebar', 'messageindex_legend');
 
 	$context['topics'] = array();
 	$topic_ids = array();
