@@ -1290,13 +1290,13 @@ final class wetem
 	// Add contents before the specified layer or block.
 	static function before($target, $contents = '')
 	{
-		wetem::op($contents, $target, 'before');
+		return wetem::op($contents, $target, 'before');
 	}
 
 	// Add contents after the specified layer or block.
 	static function after($target, $contents = '')
 	{
-		wetem::op($contents, $target, 'after');
+		return wetem::op($contents, $target, 'after');
 	}
 
 	/**
@@ -1341,34 +1341,35 @@ final class wetem
 	// Replace specified layer's contents with our new contents. Leave its existing layers alone.
 	static function load($target, $contents = '')
 	{
-		wetem::op($contents, $target, 'load');
+		return wetem::op($contents, $target, 'load');
 	}
 
 	// Add contents inside specified layer, at the end. (jQuery equivalent: .append())
 	static function add($target, $contents = '')
 	{
-		wetem::op($contents, $target, 'add');
+		return wetem::op($contents, $target, 'add');
 	}
 
 	// Add contents inside specified layer, at the beginning. (jQuery equivalent: .prepend())
 	static function first($target, $contents = '')
 	{
-		wetem::op($contents, $target, 'first');
+		return wetem::op($contents, $target, 'first');
 	}
 
 	// Replace specified layer's contents with our new contents.
 	static function replace($target, $contents = '')
 	{
-		wetem::op($contents, $target, 'replace');
+		return wetem::op($contents, $target, 'replace');
 	}
 
 	// Rename the current layer to $target.
 	static function rename($target, $new_name)
 	{
-		if (empty($target) || $target == 'default' || !isset(self::$layers[$target]))
+		if (empty($target) || empty($new_name) || $target == 'default' || !isset(self::$layers[$target]))
 			return false;
-		self::insert_layer($new_name, $target, 'rename');
-		self::remove_layer($target);
+		$result = self::insert_layer($new_name, $target, 'rename');
+		$result &= self::remove_layer($target);
+		return $result ? $new_name : false;
 	}
 
 	// Wrap a new layer around the current one. (Equivalent to jQuery's wrap)
@@ -1379,7 +1380,7 @@ final class wetem
 			list ($target, $new_layer) = array('default', $target);
 		if (!isset(self::$layers[$target]))
 			return false;
-		self::insert_layer($new_layer, $target, 'outer');
+		return self::insert_layer($new_layer, $target, 'outer');
 	}
 
 	// Wrap a new layer around the current one's contents. (Equivalent to jQuery's wrapInner)
@@ -1391,6 +1392,7 @@ final class wetem
 			return false;
 		self::$layers[$target] = array($new_layer => self::$layers[$target]);
 		self::$layers[$new_layer] =& self::$layers[$target][$new_layer];
+		return $new_layer;
 	}
 
 	/**
@@ -1484,6 +1486,7 @@ final class wetem
 		}
 		else
 			return false;
+		return $layer;
 	}
 
 	/**********************************************************************
@@ -1656,12 +1659,12 @@ final class wetem
 	 * @param string $target Name of the parent layer to target.
 	 * @param string $where Determines where to position the source layer relative to the target.
 	 */
-	private static function insert_layer($source, $target = 'default', $where = 'parent')
+	private static function insert_layer($source, $target = 'default', $where = 'outer')
 	{
 		$lay = self::parent($target);
 		$lay = $lay ? $lay : 'default';
 		if (!isset(self::$layers[$lay]))
-			return;
+			return false;
 		$dest =& self::$layers[$lay];
 
 		$temp = array();
@@ -1671,7 +1674,7 @@ final class wetem
 			{
 				if ($where === 'after')
 					$temp[$key] = $value;
-				$temp[$source] = $where === 'parent' ? array($key => $value) : ($where === 'replace' ? array() : ($where === 'rename' ? $value : array()));
+				$temp[$source] = $where === 'outer' ? array($key => $value) : ($where === 'replace' ? array() : ($where === 'rename' ? $value : array()));
 				if ($where === 'before')
 					$temp[$key] = $value;
 			}
@@ -1683,6 +1686,7 @@ final class wetem
 		// We need to reindex, in case the layer had child layers.
 		if ($where !== 'after' && $where !== 'before')
 			self::reindex();
+		return true;
 	}
 
 	// Helper function to remove a layer from the page.

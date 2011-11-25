@@ -764,11 +764,9 @@ header, footer, aside, section, article, nav
 
 .smalltext, tr.smalltext th
 	font-size: .9em
-	line-height: 1em
 
 .normaltext
 	font-size: 1em
-	line-height: 1.2em
 
 .largetext
 	font-size: 1.4em
