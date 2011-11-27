@@ -126,6 +126,7 @@ function Thought()
 	/*
 		// Delete thoughts when they're older than 3 years...?
 		// Commented out because it's only useful if your forum is very busy...
+
 		wesql::query('
 			DELETE FROM {db_prefix}thoughts
 			WHERE updated < UNIX_TIMESTAMP() - 3 * 365 * 24 * 3600
@@ -161,16 +162,17 @@ function Thought()
 	if (!empty($oid))
 	{
 		$request = wesql::query('
-			SELECT id_thought, id_member, thought
-			FROM {db_prefix}thoughts
-			WHERE id_thought = {int:original_id}
-			AND id_member = {int:id_member}',
+			SELECT t.id_thought, t.thought, t.id_member, m.real_name
+			FROM {db_prefix}thoughts AS t
+			INNER JOIN {db_prefix}members AS m ON m.id_member = t.id_member
+			WHERE t.id_thought = {int:original_id}
+			AND t.id_member = {int:id_member}',
 			array(
 				'id_member' => $user_info['id'],
 				'original_id' => $oid,
 			)
 		);
-		list ($last_thought, $last_member, $last_text) = wesql::fetch_row($request);
+		list ($last_thought, $last_text, $last_member, $last_name) = wesql::fetch_row($request);
 		wesql::free_result($request);
 	}
 
@@ -289,8 +291,10 @@ function Thought()
 				'thought' => $text
 			)
 		);
-		if (empty($_POST['parent']))
-			$last_thought = wesql::insert_id();
+		$last_thought = wesql::insert_id();
+
+		$user_id = empty($last_member) ? $user_info['id'] : $last_member;
+		$user_name = empty($last_name) ? $user_info['name'] : $last_name;
 	}
 
 	// This is for use in the XML template.
@@ -298,6 +302,8 @@ function Thought()
 		'id_thought' => $last_thought,
 		'thought' => parse_bbc_inline($text),
 		'privacy' => $privacy,
+		'user_id' => empty($user_id) ? 0 : $user_id,
+		'user_name' => empty($user_name) ? '' : $user_name,
 	);
 
 	// Only update the thought area if it's a public comment, and isn't a comment on another thought...

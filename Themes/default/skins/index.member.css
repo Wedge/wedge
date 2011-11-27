@@ -105,12 +105,12 @@ span.thoughtreply
 	:hover img.tq
 		visibility: visible
 
-.thought ul
-	margin, padding: 0 0 0 8px
-	padding: 0 0 0 8px
-
-.thought li
-	margin, padding: 0
+.thought
+	ul
+		margin, padding: 0 0 0 8px
+		padding: 0 0 0 8px
+	li
+		margin, padding: 0
 
 .my.thought
 	font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
@@ -122,15 +122,22 @@ span.thoughtreply
 	width: width($images_dir/icons/thought.png)px
 	height: height($images_dir/icons/thought.png)px
 
-td.thought
-	padding: 4px !important
-	.thought_actions
-		display: inline
-		position: absolute
-		margin: -3px 0 0 3px
-		opacity: 0
-		visibility: hidden
-		transition: opacity .5s ease
-	:hover .thought_actions
-		opacity: 1
-		visibility: visible
+table.thought_list
+	td
+		padding: 4px !important
+		.thought_actions
+			display: none
+			opacity: 0
+			transition: opacity .5s ease
+		:hover .thought_actions
+			margin-top, margin-bottom: -4px
+			opacity: 1
+			display: inline-block
+	.bc, .bc2
+		width: 5%
+		white-space: nowrap
+	.bc2
+		background-color: rgba(0,0,0,.05)
+
+#new_thoughts
+	display: none

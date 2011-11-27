@@ -300,11 +300,22 @@ function template_check_username()
 
 function template_thought()
 {
-	global $context;
+	global $context, $txt;
+
+	if (!empty($context['return_thought']['user_id']))
+		loadLanguage('Post');
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>
-	<thought id="', $context['return_thought']['id_thought'], '" privacy="', $context['return_thought']['privacy'], '"><![CDATA[', cleanXml($context['return_thought']['thought']), ']]></thought>
+	<thought id="', $context['return_thought']['id_thought'], '" privacy="', $context['return_thought']['privacy'], '"><![CDATA[',
+	cleanXml($context['return_thought']['thought']), empty($txt['reload_page']) ? '' : ' <em class="smalltext">' . $txt['reload_page'] . '</em>', ']]></thought>';
+
+	if (!empty($txt['reload_page']))
+		echo '
+	<date><![CDATA[', timeformat(time()), ']]></date>
+	<user id="', $context['return_thought']['user_id'], '">', cleanXml($context['return_thought']['user_name']), '</user>';
+
+	echo '
 </we>';
 }
 

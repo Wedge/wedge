@@ -772,15 +772,17 @@ Thought.prototype.remove = function (tid)
 // Event handler for clicking submit.
 Thought.prototype.submit = function (tid, mid)
 {
-	var that = this;
+	var that = this, new_thought = $('#new_thoughts');
 	show_ajax();
 
 	sendXMLDocument(
 		that.ajaxUrl,
 		'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
 		function (XMLDoc) {
-			var thought = $('thought', XMLDoc);
-			$('#thought_update' + thought.attr('id') + ' span').html(thought.text());
+			var thought = $('thought', XMLDoc), tid = thought.attr('id'), new_id = '#thought_update' + tid, user = $('user', XMLDoc);
+			if (!$(new_id).length)
+				new_thought.after(new_thought.html().replace('{date}', $('date', XMLDoc).text()).replace('{uname}', user.text()).replace('{text}', thought.text()));
+			$(new_id + ' span').html(thought.text());
 			that.cancel();
 			hide_ajax();
 		}
