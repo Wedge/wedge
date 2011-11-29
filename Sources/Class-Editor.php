@@ -169,7 +169,7 @@ class wedit
 		$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
 
 		// Parse smileys into something browsable.
-		$text = preg_replace('~(?:\s|&nbsp;)?<div class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</div>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley $1" onresizestart="return false;" src="' . $settings['images_url'] . '/blank.gif">\'', $text);
+		$text = preg_replace('~(?:\s|&nbsp;)?<i class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</i>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley $1" onresizestart="return false;" src="' . $settings['images_url'] . '/blank.gif">\'', $text);
 
 		return $text;
 	}
@@ -765,6 +765,8 @@ class wedit
 			'~</strike>~i' => '[/s]',
 			'~<del(?:\s.*?)*?\>~i' => '[s]',
 			'~</del>~i' => '[/s]',
+			'~<ins(?:\s.*?)*?\>~i' => '[u]',
+			'~</ins>~i' => '[/u]',
 			'~<center(?:\s.*?)*?\>~i' => '[center]',
 			'~</center>~i' => '[/center]',
 			'~<pre(?:\s.*?)*?\>~i' => '[pre]',
@@ -788,8 +790,6 @@ class wedit
 			'~^\n\\[hr\\]~i' => '[hr]',
 			'~<blockquote(?:\s.*?)*?\>~i' => '&lt;blockquote&gt;',
 			'~</blockquote>~i' => '&lt;/blockquote&gt;',
-			'~<ins(?:\s.*?)*?\>~i' => '&lt;ins&gt;',
-			'~</ins>~i' => '&lt;/ins&gt;',
 		);
 		$text = preg_replace(array_keys($tags), array_values($tags), $text);
 

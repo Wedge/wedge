@@ -293,13 +293,13 @@ function ob_sessrewrite($buffer)
 	// If guests/users can't view user profiles, we might as well unlink them!
 	if (!allowedTo('profile_view_any'))
 		$buffer = preg_replace(
-			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
+			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?(?:[^"]+)?\baction=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
 			'$1', $buffer
 		);
 	// Now we'll color profile links based on membergroup.
 	else
 		$buffer = preg_replace_callback(
-			'~<a((?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?action=profile;(?:[^"]+;)?u=(\d+)"[^>]*)>(.*?)</a>~',
+			'~<a((?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?(?:[^"]+)?\baction=profile;(?:[^"]+;)?u=(\d+)"[^>]*)>(.*?)</a>~',
 			'wedge_profile_colors', $buffer
 		);
 

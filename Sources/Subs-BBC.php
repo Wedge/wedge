@@ -1153,7 +1153,7 @@ function parsesmileys(&$message)
 		for ($i = 0, $n = count($smileysfrom); $i < $n; $i++)
 		{
 			$safe = htmlspecialchars($smileysfrom[$i], ENT_QUOTES); // !!! Use westr version?
-			$smileyCode = '<div class="smiley ' . $smileysdiv[$i]['name'] . '">' . $safe . '</div>';
+			$smileyCode = '<i class="smiley ' . $smileysdiv[$i]['name'] . '">' . $safe . '</i>';
 
 			$smileyPregReplace[$smileysfrom[$i]] = $smileyCode;
 			$searchParts[] = preg_quote($smileysfrom[$i], '~');
