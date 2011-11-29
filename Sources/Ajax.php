@@ -293,7 +293,7 @@ function Thought()
 		);
 		$last_thought = wesql::insert_id();
 
-		$user_id = empty($last_member) ? $user_info['id'] : $last_member;
+		$user_id = empty($_POST['parent']) ? 0 : (empty($last_member) ? $user_info['id'] : $last_member);
 		$user_name = empty($last_name) ? $user_info['name'] : $last_name;
 	}
 

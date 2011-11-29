@@ -694,6 +694,10 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 };
 
 
+
+
+
+
 // *** Thought class.
 function Thought(opt)
 {
@@ -728,11 +732,12 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 	var
 		thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(), opt = this.opt, privacies = opt.aPrivacy, privacy = thought.data('prv'),
 		cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-		was_personal.php_unhtmlspecialchars() : this.getText(tid))), pr = '';
-	for (var p in privacies)
+		was_personal.php_unhtmlspecialchars() : this.getText(tid))), p, pr = '';
+	for (p in privacies)
 		pr += '<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
 
-	thought.toggle(is_new).after('\
+	// Hide current thought and edit/modify/delete links, and add tools to write new thought.
+	thought.toggle(is_new && tid).next().addClass('hide').after('\
 		<form id="thought_form">\
 			<input type="text" maxlength="255" id="ntho">\
 			<select id="npriv">' + pr + '</select>\
@@ -748,10 +753,12 @@ Thought.prototype.getText = function (id)
 	return $('thought', getXMLDocument(this.ajaxUrl + 'in=' + id).responseXML).text();
 }
 
+
+
 // Make that personal text editable (again)!
 Thought.prototype.cancel = function ()
 {
-	$('#thought_form').prev().show().end().remove();
+	$('#thought_form').prev().removeClass('hide').prev().show().end().end().remove();
 };
 
 // Event handler for removal requests.
@@ -772,14 +779,14 @@ Thought.prototype.remove = function (tid)
 // Event handler for clicking submit.
 Thought.prototype.submit = function (tid, mid)
 {
-	var that = this, new_thought = $('#new_thoughts');
+	var that = this;
 	show_ajax();
 
 	sendXMLDocument(
 		that.ajaxUrl,
 		'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
 		function (XMLDoc) {
-			var thought = $('thought', XMLDoc), tid = thought.attr('id'), new_id = '#thought_update' + tid, user = $('user', XMLDoc);
+			var thought = $('thought', XMLDoc), nid = tid ? thought.attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid, user = $('user', XMLDoc);
 			if (!$(new_id).length)
 				new_thought.after(new_thought.html().replace('{date}', $('date', XMLDoc).text()).replace('{uname}', user.text()).replace('{text}', thought.text()));
 			$(new_id + ' span').html(thought.text());
