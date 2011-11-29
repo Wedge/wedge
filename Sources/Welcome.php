@@ -31,6 +31,7 @@ function Welcome()
 
 	// Load the 'Welcome' template.
 	loadTemplate('Welcome');
+
 	// We don't have language files for now, but in case we add them...
 	// loadLanguage('Welcome');
 
@@ -44,8 +45,10 @@ function Welcome()
 	// In this case, we want to load the info center as well -- but not in the sidebar.
 	// We will simply create the info_center layer at the end of the main block and inject the blocks into it.
 	loadTemplate('InfoCenter');
+
 	wetem::add(
 		array(
+			'thoughts',
 			'info' => array(
 				'info_center' => array(
 					'info_center_statistics',

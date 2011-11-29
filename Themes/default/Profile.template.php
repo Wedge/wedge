@@ -306,7 +306,10 @@ function template_showThoughts()
 			<img src="', $settings['images_url'], '/icons/profile_sm.gif">
 			', $txt['showThoughts'], ' - ', $context['member']['name'], '
 		</we:cat>
-		<table class="windowbg wrc w100 cp8 cs8">';
+		<table class="windowbg wrc w100 cp8 cs0">';
+
+	// !! @todo: allow editing & replying to thoughts directly from within the Profile area...?
+	// onclick="oThought.edit(', $thought['id'], !empty($thought['id_master']) && $thought['id'] != $thought['id_master'] ? ', ' . $thought['id_master'] : '', ');"
 
 	$col = 2;
 	foreach ($context['thoughts'] as $thought)
@@ -314,16 +317,14 @@ function template_showThoughts()
 		$col = empty($col) ? 2 : '';
 		echo '
 			<tr><td class="windowbg', $col, ' smalltext thought"><ul><li>
-				<a id="t', $thought['id'], '"></a><span class="thoughtreply" onclick="oThought.edit(',
-				$thought['id'], !empty($thought['id_master']) && $thought['id'] != $thought['id_master'] ? ', ' . $thought['id_master'] : '', ');"><b>',
-				$context['member']['name'], '</b> (', $thought['updated'], ') &raquo; ', $thought['text'], '</span> <span id="update_thought_', $thought['id'], '"></span>';
+				<strong>', $context['member']['name'], '</strong> (', $thought['updated'], ') &raquo; ', $thought['text'], '</span>';
 
 		if (!empty($thought['sub']))
 			template_sub_thoughts($thought);
-		echo '</li></ul></td>
-			</tr>';
-	}
 
+		echo '
+			</li></ul></td></tr>';
+	}
 	echo '
 		</table>';
 }
@@ -335,21 +336,23 @@ function template_sub_thoughts(&$thought)
 	if (empty($thought['sub']))
 		return;
 
+	// !! @todo: allow editing & replying to thoughts directly from within the Profile area...?
+	// onclick="oThought.edit(', $tho['id'], !empty($tho['id_master']) && $tho['id'] != $tho['id_master'] ? ', ' . $tho['id_master'] : '', ');"
+
 	echo '<ul>';
 	foreach ($thought['sub'] as $tho)
 	{
 		echo '<li>';
+
 		if ($context['member']['id'] === $tho['id_member'])
-			echo '<b>', $tho['owner_name'], '</b>';
+			echo '<strong>', $tho['owner_name'], '</strong>';
 		else
 			echo '<a href="<URL>?action=profile;u=', $tho['id_member'], '">', $tho['owner_name'], '</a>';
-		echo ' (', $tho['updated'], ') &raquo;
-		<a id="t', $tho['id'], '"></a><span class="thoughtreply" onclick="aPersonalText[0].showEdit(', $tho['id'],
-		!empty($tho['id_master']) && $tho['id'] != $tho['id_master'] ? ', ' . $tho['id_master'] : '', ');">', parse_bbc($tho['text']), '</span>
-		<span id="update_thought_', $tho['id'], '"></span>';
+		echo ' (', $tho['updated'], ') &raquo; ', parse_bbc($tho['text']), '</span>';
 
 		if (!empty($tho['sub']))
 			template_sub_thoughts($tho);
+
 		echo '</li>';
 	}
 	echo '</ul>';
