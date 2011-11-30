@@ -751,9 +751,7 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 Thought.prototype.getText = function (id)
 {
 	return $('thought', getXMLDocument(this.ajaxUrl + 'in=' + id).responseXML).text();
-}
-
-
+};
 
 // Make that personal text editable (again)!
 Thought.prototype.cancel = function ()
