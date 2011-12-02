@@ -111,10 +111,12 @@ function Thought()
 		die;
 
 	// !! Should we use censorText at store time, or display time...? $context['user'] (Load.php:1696) begs to differ.
-	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text'])) : '';
+	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text']), ENT_QUOTES) : '';
 	if (empty($text) && empty($_GET['in']) && !isset($_REQUEST['remove']))
 		die();
 
+	if (!empty($text))
+		wedit::preparsecode($text);
 	wetem::load('thought');
 
 	// Original thought ID (in case of an edit.)
