@@ -414,25 +414,25 @@ function Post2()
 	}
 
 	// Check the subject and message.
-	if (!isset($_POST['subject']) || westr::htmltrim(westr::htmlspecialchars($_POST['subject'])) === '')
+	$_POST['subject'] = isset($_POST['subject']) ? westr::safe($_POST['subject'], ENT_NOQUOTES, false) : '';
+	$_POST['message'] = isset($_POST['message']) ? westr::safe($_POST['message'], ENT_NOQUOTES, false) : '';
+	if (empty($_POST['subject']) || westr::htmltrim($_POST['subject']) === '')
 		$post_errors[] = 'no_subject';
-	if (!isset($_POST['message']) || westr::htmltrim(westr::htmlspecialchars($_POST['message']), ENT_QUOTES) === '')
+	if (empty($_POST['message']) || westr::htmltrim($_POST['message']) === '')
 		$post_errors[] = 'no_message';
 	elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_POST['message']) > $modSettings['max_messageLength'])
 		$post_errors[] = 'long_message';
 	else
 	{
-		// Prepare the message a bit for some additional testing.
-		$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
-
 		// Preparse code. (Zef)
 		if ($user_info['is_guest'])
 			$user_info['name'] = $_POST['guestname'];
 		wedit::preparsecode($_POST['message']);
 
 		// Let's see if there's still some content left without the tags.
-		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img><object><embed><iframe><video><audio>')) === '' && (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false))
-			$post_errors[] = 'no_message';
+		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img><object><embed><iframe><video><audio>')) === '')
+			if (!allowedTo('admin_forum') || strpos($_POST['message'], '[html]') === false)
+				$post_errors[] = 'no_message';
 	}
 
 	// Validate the poll...
@@ -513,7 +513,7 @@ function Post2()
 	@set_time_limit(300);
 
 	// Add special html entities to the subject, name, and email.
-	$_POST['subject'] = strtr(westr::htmlspecialchars($_POST['subject']), array("\r" => '', "\n" => '', "\t" => ''));
+	$_POST['subject'] = strtr($_POST['subject'], array("\r" => '', "\n" => '', "\t" => ''));
 	$_POST['guestname'] = htmlspecialchars($_POST['guestname']);
 	$_POST['email'] = htmlspecialchars($_POST['email']);
 

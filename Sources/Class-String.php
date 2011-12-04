@@ -19,7 +19,9 @@ global $modSettings;
 class westr_foundation
 {
 	protected static $instance; // container for self
-	protected static $can_mb; // internals for checking multibyte function support
+	static $can_mb;				// does PHP support multibyte functions?
+	static $can_utf;			// does PHP support utf8_encode/decode functions? It does by default.
+	static $can_iconv;			// does PHP support iconv functions? It does by default.
 
 	const westr_SPACECHARS = '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}';
 
@@ -29,7 +31,7 @@ class westr_foundation
 		return false;
 	}
 
-	public static function getInstance()
+	static function getInstance()
 	{
 		global $modSettings;
 
@@ -38,6 +40,8 @@ class westr_foundation
 		{
 			self::$instance = new self();
 			self::$can_mb = is_callable('mb_internal_encoding');
+			self::$can_utf = is_callable('utf8_encode');
+			self::$can_iconv = is_callable('iconv');
 
 			if (self::$can_mb)
 				mb_internal_encoding('UTF-8');
@@ -46,6 +50,31 @@ class westr_foundation
 		}
 
 		return self::$instance;
+	}
+
+	static function is_utf8($string)
+	{
+		if (self::$can_mb)
+			return !!mb_detect_encoding($string, 'UTF-8', true);
+		return preg_match('`(?:[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-\xBF]|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}|\xED[\x80-\x9F][\x80-\xBF]|\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2})+`', $string);
+	}
+
+	static function to_utf8($string)
+	{
+		if (self::$can_utf)
+			return utf8_encode($string);
+		elseif (self::$can_mb) // Better than nothing...
+			return mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
+		elseif (self::$can_iconv)
+			return iconv('ISO-8859-1', 'UTF-8//IGNORE', $string);
+		return $string;
+	}
+
+	static function force_utf8($string)
+	{
+		if (!self::is_utf8($string))
+			return self::to_utf8($string);
+		return $string;
 	}
 }
 
@@ -57,21 +86,20 @@ if (!empty($modSettings['disableEntityCheck']))
 	class westr_entity extends westr_foundation
 	{
 		const westr_ENT_ANY = '&#021;|&quot;|&amp;|&lt;|&gt;|&nbsp;|.';
-		// !!! Alternatively, '&(?:#021|quot|amp|lt|gt|nbsp);|.';
 
-		public static function entity_fix($string)
+		static function entity_fix($string)
 		{
 			return $string;
 		}
 
-		public static function entity_clean($string)
+		static function entity_clean($string)
 		{
 			return $string;
 		}
 
-		public static function htmlspecialchars($string, $quote_style = ENT_COMPAT)
+		static function htmlspecialchars($string, $quote_style = ENT_COMPAT, $force_utf8 = false, $double_enc = true)
 		{
-			return htmlspecialchars($string, $quote_style, 'UTF-8');
+			return htmlspecialchars($force_utf8 ? self::force_utf8($string) : $string, $quote_style, 'UTF-8', $double_enc);
 		}
 	}
 }
@@ -80,22 +108,22 @@ else
 	// Entity checking version
 	class westr_entity extends westr_foundation
 	{
-		const westr_ENT_ANY = '&(?:#\d{1,7}|quot|amp|lt|gt|nbsp);|.';
+		const westr_ENT_ANY = '&quot;|&amp;|&lt;|&gt;|&nbsp;|&#\d{1,7};|.';
 
-		public static function entity_fix($string)
+		static function entity_fix($string)
 		{
 			$num = $string[1][0] === 'x' ? hexdec(substr($string[1], 1)) : (int) $string[1];
 			return $num < 32 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202D || $num === 0x202E ? '' : '&#' . $num . ';';
 		}
 
-		public static function entity_clean($string)
+		static function entity_clean($string)
 		{
 			return preg_replace_callback('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~', 'westr_entity::entity_fix', $string);
 		}
 
-		public static function htmlspecialchars($string, $quote_style = ENT_COMPAT)
+		static function htmlspecialchars($string, $quote_style = ENT_COMPAT, $force_utf8 = false, $double_enc = true)
 		{
-			return self::entity_clean(htmlspecialchars($string, $quote_style, 'UTF-8'));
+			return self::entity_clean(htmlspecialchars($force_utf8 ? self::force_utf8($string) : $string, $quote_style, 'UTF-8', $double_enc));
 		}
 	}
 }
@@ -105,17 +133,17 @@ if (is_callable('mb_strtolower'))
 	// With multibyte extension
 	class westr_mb extends westr_entity
 	{
-		public static function strtolower($string)
+		static function strtolower($string)
 		{
 			return mb_strtolower($string, 'UTF-8');
 		}
 
-		public static function strtoupper($string)
+		static function strtoupper($string)
 		{
 			return mb_strtoupper($string, 'UTF-8');
 		}
 
-		public static function strlen($string)
+		static function strlen($string)
 		{
 			return mb_strlen(preg_replace('~&(?:amp)?(?:#\d{1,7}|[a-zA-Z0-9]+);~', '_', $string));
 		}
@@ -126,17 +154,17 @@ else
 	// Without mb - Subs-Charset should have been loaded at this point though
 	class westr_mb extends westr_entity
 	{
-		public static function strtolower($string)
+		static function strtolower($string)
 		{
 			return utf8_strtolower($string);
 		}
 
-		public static function strtoupper($string)
+		static function strtoupper($string)
 		{
 			return utf8_strtoupper($string);
 		}
 
-		public static function strlen($string)
+		static function strlen($string)
 		{
 			return strlen(preg_replace('~&(?:amp)?(?:#\d{1,7}|[a-zA-Z0-9]+);|.~us', '_', $string));
 		}
@@ -145,12 +173,12 @@ else
 
 class westr extends westr_mb
 {
-	public static function htmltrim($string)
+	static function htmltrim($string)
 	{
 		return preg_replace('~^(?:[ \t\n\r\x0B\x00' . self::westr_SPACECHARS . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . self::westr_SPACECHARS . ']|&nbsp;)+$~u', '', self::entity_clean($string));
 	}
 
-	public static function strpos($haystack, $needle, $offset = 0)
+	static function strpos($haystack, $needle, $offset = 0)
 	{
 		$haystack_arr = preg_split('~(' . self::westr_ENT_ANY . ')~u', self::entity_clean($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 		$haystack_size = count($haystack_arr);
@@ -177,13 +205,13 @@ class westr extends westr_mb
 		}
 	}
 
-	public static function substr($string, $start, $length = null)
+	static function substr($string, $start, $length = null)
 	{
 		$ent_arr = preg_split('~(' . self::westr_ENT_ANY . ')~u', self::entity_clean($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 		return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
 	}
 
-	public static function truncate($string, $length)
+	static function truncate($string, $length)
 	{
 		preg_match('~^(' . self::westr_ENT_ANY . '){' . self::strlen(substr($string, 0, $length)) . '}~u', self::entity_clean($string), $matches);
 		$string = $matches[0];
@@ -192,12 +220,12 @@ class westr extends westr_mb
 		return $string;
 	}
 
-	public static function ucfirst($string)
+	static function ucfirst($string)
 	{
-		return westr::strtoupper(self::substr($string, 0, 1)) . self::substr($string, 1);
+		return self::strtoupper(self::substr($string, 0, 1)) . self::substr($string, 1);
 	}
 
-	public static function ucwords($string)
+	static function ucwords($string)
 	{
 		$words = preg_split('~([\s\r\n\t]+)~', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
 		for ($i = 0, $n = count($words); $i < $n; $i += 2)
@@ -205,17 +233,17 @@ class westr extends westr_mb
 		return implode('', $words);
 	}
 
-	public static function nl2br($string)
+	static function nl2br($string)
 	{
 		return preg_replace('~(\r\n|\r|\n)~', '<br>$1', $string);
 	}
 
 	/**
-	 * An alias for htmlspecialchars, preventing double encoding.
+	 * An alias for htmlspecialchars, preventing double encoding and forcing UTF-8 conversion by default, contrary to the original.
 	 */
-	public static function safe($string, $quote_style = ENT_COMPAT)
+	static function safe($string, $quote_style = ENT_COMPAT, $force_utf8 = true, $double_enc = false)
 	{
-		return htmlspecialchars($string, $quote_style, 'UTF-8', false);
+		return self::htmlspecialchars($string, $quote_style, $force_utf8, $double_enc);
 	}
 
 	/**
@@ -227,7 +255,7 @@ class westr extends westr_mb
 	 * $ellipsis will add a '...' sign at the end of any string that ends up being cut
 	 * $preparse will run the string through parse_bbc before cutting it
 	 */
-	public static function cut($string, $max_length = 255, $check_multibyte = true, $cut_long_words = true, $ellipsis = true, $preparse = false, $hard_limit = 0)
+	static function cut($string, $max_length = 255, $check_multibyte = true, $cut_long_words = true, $ellipsis = true, $preparse = false, $hard_limit = 0)
 	{
 		global $entities, $replace_counter, $context;
 		static $test_mb = false, $strlen;
@@ -279,7 +307,7 @@ class westr extends westr_mb
 	}
 
 	// Closes all open tags, in recursive order, in order for pages not to be broken and to validate.
-	public static function close_tags(&$str, $hard_limit)
+	static function close_tags(&$str, $hard_limit)
 	{
 		// Could be made faster with substr_count(), but it wouldn't always validate.
 		if (!preg_match_all('~<([^/\s>]+)(?:>|[^>]*?[^/]>)~', $str, $m) || empty($m[1]))

@@ -873,7 +873,7 @@ function embed_lookups_obtain_callback($input)
 			$actual = str_replace('$2', $url, $actual);
 		}
 		if (!empty($title))
-			$title = html_entity_decode(str_replace('&amp;', '&', $title), ENT_QUOTES);
+			$title = html_entity_decode(str_replace('&amp;', '&', westr::force_utf8($title)), ENT_QUOTES, 'UTF-8');
 		return !empty($title) ? '[' . $input[1] . '=' . $actual . ']' . $title . '[/' . $input[1] . ']' : str_replace($input[2], $actual, $input[0]);
 	}
 	else

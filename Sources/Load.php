@@ -115,6 +115,7 @@ function reloadSettings()
 	}
 
 	loadSource('Class-String');
+	westr::getInstance();
 
 	// Setting the timezone is a requirement.
 	if (isset($modSettings['default_timezone']))

@@ -436,8 +436,8 @@ function EditBoard()
 		// Just some easy shortcuts.
 		$curBoard =& $boards[$_REQUEST['boardid']];
 		$context['board'] = $boards[$_REQUEST['boardid']];
-		$context['board']['name'] = htmlspecialchars(strtr($context['board']['name'], array('&amp;' => '&')));
-		$context['board']['description'] = htmlspecialchars($context['board']['description']);
+		$context['board']['name'] = westr::safe($context['board']['name'], ENT_COMPAT, false);
+		$context['board']['description'] = westr::safe($context['board']['description'], ENT_COMPAT, false);
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
 		$context['board']['is_recycle'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $context['board']['id'];
 	}
@@ -652,8 +652,8 @@ function EditBoard2()
 			$boardOptions['access_groups'] = array_diff($boardOptions['access_groups'], array(-1));
 
 		// Change '1 & 2' to '1 &amp; 2', but not '&amp;' to '&amp;amp;'...
-		$boardOptions['board_name'] = preg_replace('~[&]([^;]{8}|[^;]{0,8}$)~', '&amp;$1', $_POST['board_name']);
-		$boardOptions['board_description'] = preg_replace('~[&]([^;]{8}|[^;]{0,8}$)~', '&amp;$1', $_POST['desc']);
+		$boardOptions['board_name'] = preg_replace('~&(?!amp;)~', '&amp;', $_POST['board_name']);
+		$boardOptions['board_description'] = preg_replace('~&(?!amp;)~', '&amp;', $_POST['desc']);
 		if (!empty($modSettings['pretty_filters']['boards']))
 		{
 			$boardOptions['pretty_url'] = $_POST['pretty_url'];
