@@ -908,9 +908,10 @@ tr.windowbg td
 	background-color: #ffe4e9
 	margin-bottom: 1em
 	h3
-		margin: 0
 		font-size: 1.1em
-		text-decoration: underline
+	ul
+		margin-bottom: 0
+		padding-left: 20px
 	p
 		margin: 1em 0 0
 	p.alert

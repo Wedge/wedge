@@ -694,8 +694,36 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 };
 
 
+// *** SelectBox class.
+function SelectBox(opt)
+{
+	if (!can_ajax)
+		return;
 
+	this.opt = opt;
+	var box = $(opt.oBox), pos = box.offset(), x = pos.left, y = pos.top;
+	box.hide().after($('<span>' + box.find(':selected').text() + '</span>')
+		.attr('title', opt.sLabelThought)
+		.click(function () { oThought.edit(''); })
+	);
+/*	$('.thought').each(function () {
+		var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
+		if (tid)
+		{
+			thought.after('\
+		<div class="thought_actions">\
+			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ');">\
+			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ', true);">\
+			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">\
+		</div>');
+		}
+	});*/
+};
 
+oSelect = new SelectBox({
+	sLabelThought: 'OK!',
+	oBox: $('select').first()
+});
 
 
 // *** Thought class.
@@ -746,12 +774,43 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
 		</form>');
 	$('#ntho').focus().val(cur_text);
+/*	oSelect = new SelectBox({
+		sLabelThought: 'OK!',
+		oBox: $('#npriv')
+	});*/
+	//$('select').selectBox();
 };
 
 Thought.prototype.getText = function (id)
 {
 	return $('thought', getXMLDocument(this.ajaxUrl + 'in=' + id).responseXML).text();
 };
+
+function we_selectbox()
+{
+	var that = $(this), id = that.attr('id'), title = $('option:selected', this).val() != '' ? $('option:selected', this).text() : that.attr('title');
+	that
+		.hide()
+		.after('<ul class="menu"><li id="' + id + '_li"><h4 class="hove"><a>' + title + '</a></h4><ul id="' + id + '_ul" style="visibility:visible;border-radius:0;opacity:1;display:none"></ul></li></ul>')
+		.change(function () { $(this).next().text($('option:selected', this).text()); })
+		.children('option').each(function () {
+			var here = $(this), txt = here.text();
+			$('#' + id + '_ul').append(txt == '-' ? '<li class="separator"><a><hr></a></li>' : '<li id="' + here.val() + '"><a>' + txt + '</a></li>');
+		});
+	$('#' + id + '_li').click(function () { $('#' + id + '_ul').show(); });
+	$(document).mousedown(function () { $('#' + id + '_ul').hide(); });
+	$('#' + id + '_ul').children('li').each(function () {
+		$(this)
+			.bind('mouseenter focus mouseleave blur', function () { $(this).toggleClass('hove'); })
+			.mousedown(function () {
+				$(this).parent().children('li').removeClass('active');
+				$(this).addClass('active');
+				$('#' + id).val($(this).attr('id'));
+			});
+	});
+};
+
+$('select').each(we_selectbox);
 
 // Make that personal text editable (again)!
 Thought.prototype.cancel = function ()

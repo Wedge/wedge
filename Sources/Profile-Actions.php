@@ -221,9 +221,9 @@ function issueWarning($memID)
 			$context['custom_error_title'] = $txt['profile_warning_errors_occured'];
 
 			// Fill in the suite of errors.
-			$context['post_errors'] = array();
+			$context['post_error'] = array();
 			foreach ($issueErrors as $error)
-				$context['post_errors'][] = $txt[$error];
+				$context['post_error'][] = $txt[$error];
 
 			// Try to remember some bits.
 			$context['warning_data'] = array(

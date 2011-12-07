@@ -200,13 +200,13 @@ function template_report()
 			</we:cat>
 			<div class="windowbg wrc">';
 
-	if (!empty($context['post_errors']))
+	if (!empty($context['post_error']))
 	{
 		echo '
 				<div class="errorbox">
 					<ul>';
 
-		foreach ($context['post_errors'] as $error)
+		foreach ($context['post_error'] as $error)
 			echo '
 						<li class="error">', $error, '</li>';
 

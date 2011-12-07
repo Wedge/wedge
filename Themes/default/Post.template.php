@@ -45,17 +45,17 @@ function template_preview()
 function template_post_errors()
 {
 	global $context, $txt;
+
+	if (empty($context['post_error']['messages']))
+		return;
+
 	// If an error occurred, explain what happened.
 	echo '
-				<div class="errorbox', empty($context['post_error']['messages']) ? ' hide' : '', '" id="errors">
-					<dl>
-						<dt>
-							<strong', empty($context['error_type']) || $context['error_type'] != 'serious' ? ' class="hide"' : '', ' id="error_serious">', $txt['error_while_submitting'], '</strong>
-						</dt>
-						<dd class="error" id="error_list">
-							', empty($context['post_error']['messages']) ? '' : implode('<br>', $context['post_error']['messages']), '
-						</dd>
-					</dl>
+				<div class="errorbox" id="errors">', empty($context['error_type']) || $context['error_type'] != 'serious' ? '' : '
+					<h3 id="error_serious">' . $txt['error_while_submitting'] . '</h3>', empty($context['post_error']['messages']) ? '' : '
+					<ul class="error" id="error_list">
+						<li>' . implode('</li><li>', $context['post_error']['messages']) . '</li>
+					</ul>', '
 				</div>';
 }
 

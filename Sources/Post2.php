@@ -385,7 +385,7 @@ function Post2()
 		$_POST['guestname'] = !isset($_POST['guestname']) ? '' : trim($_POST['guestname']);
 		$_POST['email'] = !isset($_POST['email']) ? '' : trim($_POST['email']);
 
-		if ($_POST['guestname'] == '' || $_POST['guestname'] == '_')
+		if ($_POST['guestname'] === '' || $_POST['guestname'] === '_')
 			$post_errors[] = 'no_name';
 		if (westr::strlen($_POST['guestname']) > 25)
 			$post_errors[] = 'long_name';
@@ -393,11 +393,11 @@ function Post2()
 		if (empty($modSettings['guest_post_no_email']))
 		{
 			// Only check if they changed it!
-			if (!isset($row) || $row['poster_email'] != $_POST['email'])
+			if ((!isset($row) || $row['poster_email'] != $_POST['email']) && !allowedTo('moderate_forum'))
 			{
-				if (!allowedTo('moderate_forum') && (!isset($_POST['email']) || $_POST['email'] == ''))
+				if ($_POST['email'] === '')
 					$post_errors[] = 'no_email';
-				if (!allowedTo('moderate_forum') && !is_valid_email($_POST['email']))
+				if (!is_valid_email($_POST['email']))
 					$post_errors[] = 'bad_email';
 			}
 
@@ -424,6 +424,30 @@ function Post2()
 		$post_errors[] = 'long_message';
 	else
 	{
+		$result = wesql::query('
+			SELECT tag
+			FROM {db_prefix}bbcode
+			WHERE bbctype != {string:closed}',
+			array(
+				'closed' => 'closed'
+			)
+		);
+		$codes = array();
+		while ($row = wesql::fetch_row($result))
+			$codes[] = $row[0];
+		wesql::free_result($result);
+
+		preg_match_all('~\[/?(' . implode('|', $codes) . ')]~i', $_POST['message'], $bbcs);
+		$bbcs = array_flip(array_flip($bbcs[1]));
+
+		foreach ($bbcs as $tag)
+		{
+			$openers = preg_match_all('~\[' . $tag . '(?:\s[^]]*)?]~i', $_POST['message'], $dummy);
+			$closers = preg_match_all('~\[/' . $tag . ']~i', $_POST['message'], $dummy);
+			if ($openers !== $closers)
+				$post_errors[] = array('mismatched_tags', $tag, $openers, $closers);
+		}
+
 		// Preparse code. (Zef)
 		if ($user_info['is_guest'])
 			$user_info['name'] = $_POST['guestname'];
@@ -486,22 +510,11 @@ function Post2()
 	// Any mistakes?
 	if (!empty($post_errors))
 	{
-		loadLanguage('Errors');
 		// Previewing.
 		$_REQUEST['preview'] = true;
 
-		$context['post_error'] = array('messages' => array());
-		foreach ($post_errors as $post_error)
-		{
-			$context['post_error'][$post_error] = true;
-			if ($post_error == 'long_message')
-				$txt['error_' . $post_error] = sprintf($txt['error_' . $post_error], $modSettings['max_messageLength']);
-
-			$context['post_error']['messages'][] = $txt['error_' . $post_error];
-		}
-
 		loadSource('Post');
-		return Post();
+		return Post($post_errors);
 	}
 
 	// Make sure the user isn't spamming the board.

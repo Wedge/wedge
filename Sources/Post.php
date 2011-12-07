@@ -67,7 +67,7 @@ if (!defined('WEDGE'))
  * @todo Is it possible to force something through approval if you edit the form manually?
  * @todo Censoring appears to be done out of sequence if previewing compared to parsing. Issue? Non-issue?
  */
-function Post()
+function Post($post_errors = array())
 {
 	global $txt, $scripturl, $topic, $topic_info, $modSettings, $board, $user_info;
 	global $board_info, $context, $settings, $options, $language;
@@ -255,8 +255,7 @@ function Post()
 		);
 	}
 
-	if (empty($context['post_errors']))
-		$context['post_errors'] = array();
+	$context['post_error'] = array('messages' => array());
 
 	// See if any new replies have come along.
 	if (empty($_REQUEST['msg']) && !empty($topic))
@@ -290,7 +289,7 @@ function Post()
 				if (isset($_GET['last']))
 					$newRepliesError = $context['new_replies'];
 				else
-					$context['post_error'][$context['new_replies'] == 1 ? 'new_reply' : 'new_replies'] = true;
+					$post_errors[] = $context['new_replies'] == 1 ? 'new_reply' : 'new_replies';
 
 				$modSettings['topicSummaryPosts'] = $context['new_replies'] > $modSettings['topicSummaryPosts'] ? max($modSettings['topicSummaryPosts'], 5) : $modSettings['topicSummaryPosts'];
 			}
@@ -315,17 +314,17 @@ function Post()
 	}
 
 	// Previewing, modifying, or posting?
-	if (isset($_REQUEST['message']) || !empty($context['post_error']))
+	if (isset($_REQUEST['message']) || !empty($post_errors))
 	{
 		// Validate inputs.
-		if (empty($context['post_error']))
+		if (empty($post_errors))
 		{
-			if (htmltrim__recursive(htmlspecialchars__recursive($_REQUEST['subject'])) == '')
-				$context['post_error']['no_subject'] = true;
-			if (htmltrim__recursive(htmlspecialchars__recursive($_REQUEST['message'])) == '')
-				$context['post_error']['no_message'] = true;
-			if (!empty($modSettings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
-				$context['post_error']['long_message'] = true;
+			if (empty($_REQUEST['subject']) || westr::htmltrim($_REQUEST['subject']) === '')
+				$post_errors[] = 'no_subject';
+			if (empty($_REQUEST['message']) || westr::htmltrim($_REQUEST['message']) === '')
+				$post_errors[] = 'no_message';
+			elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
+				$post_errors[] = 'long_message';
 
 			// Are you... a guest?
 			if ($user_info['is_guest'])
@@ -334,29 +333,29 @@ function Post()
 				$_REQUEST['email'] = !isset($_REQUEST['email']) ? '' : trim($_REQUEST['email']);
 
 				// Validate the name and email.
-				if (!isset($_REQUEST['guestname']) || trim(strtr($_REQUEST['guestname'], '_', ' ')) == '')
-					$context['post_error']['no_name'] = true;
+				if ($_REQUEST['guestname'] === '' || $_REQUEST['guestname'] === '_')
+					$post_errors[] = 'no_name';
 				elseif (westr::strlen($_REQUEST['guestname']) > 25)
-					$context['post_error']['long_name'] = true;
+					$post_errors[] = 'long_name';
 				else
 				{
 					loadSource('Subs-Members');
 					if (isReservedName(htmlspecialchars($_REQUEST['guestname']), 0, true, false))
-						$context['post_error']['bad_name'] = true;
+						$post_errors[] = 'bad_name';
 				}
 
 				if (empty($modSettings['guest_post_no_email']))
 				{
-					if (!isset($_REQUEST['email']) || $_REQUEST['email'] == '')
-						$context['post_error']['no_email'] = true;
+					if ($_REQUEST['email'] === '')
+						$post_errors[] = 'no_email';
 					elseif (!is_valid_email($_REQUEST['email']))
-						$context['post_error']['bad_email'] = true;
+						$post_errors[] = 'bad_email';
 				}
 			}
 
 			// This is self explanatory - got any questions?
 			if (isset($_REQUEST['question']) && trim($_REQUEST['question']) == '')
-				$context['post_error']['no_question'] = true;
+				$post_errors[] = 'no_question';
 
 			// This means they didn't click Post and get an error.
 			$really_previewing = true;
@@ -388,29 +387,44 @@ function Post()
 			$form_subject = westr::substr($form_subject, 0, 100);
 
 		// Have we inadvertently trimmed off the subject of useful information?
-		if (westr::htmltrim($form_subject) === '')
-			$context['post_error']['no_subject'] = true;
+		if (!in_array('no_subject', $post_errors) && westr::htmltrim($form_subject) === '')
+			$post_errors[] = 'no_subject';
+
+		$context['post_error'] = array('messages' => array());
 
 		// Any errors occurred?
-		if (!empty($context['post_error']))
+		if (!empty($post_errors))
 		{
 			loadLanguage('Errors');
 
-			$context['error_type'] = 'minor';
-
-			$context['post_error']['messages'] = array();
-			foreach ($context['post_error'] as $post_error => $dummy)
+			foreach ($post_errors as $error)
 			{
-				if ($post_error == 'messages')
-					continue;
-
-				if ($post_error == 'long_message')
-					$txt['error_' . $post_error] = sprintf($txt['error_' . $post_error], $modSettings['max_messageLength']);
-
-				$context['post_error']['messages'][] = $txt['error_' . $post_error];
+				if (is_array($error))
+				{
+					$error_id = $error[0];
+					// Not really used, but we'll still set that.
+					$context['post_error'][$error_id] = true;
+					if ($error_id === 'mismatched_tags')
+						$context['post_error']['messages'][] = sprintf(
+							$txt['error_mismatched_tags'],
+							$error[2] < $error[3] ? '[' . $error[1] . ']' : '[/' . $error[1] . ']',
+							max($error[2], $error[3]), min($error[2], $error[3])
+						);
+					else
+						$context['post_error']['messages'][] = $txt['error_' . $error_id];
+				}
+				else
+				{
+					$error_id = $error;
+					$context['post_error'][$error_id] = true;
+					if ($error_id === 'long_message')
+						$context['post_error']['messages'][] = sprintf($txt['error_' . $error_id], $modSettings['max_messageLength']);
+					else
+						$context['post_error']['messages'][] = $txt['error_' . $error_id];
+				}
 
 				// If it's not a minor error flag it as such.
-				if (!in_array($post_error, array('new_reply', 'not_approved', 'new_replies', 'old_topic', 'need_qr_verification')))
+				if (!in_array($error_id, array('new_reply', 'not_approved', 'new_replies', 'old_topic', 'need_qr_verification')))
 					$context['error_type'] = 'serious';
 			}
 		}

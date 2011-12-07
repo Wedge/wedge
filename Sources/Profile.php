@@ -625,7 +625,7 @@ function ModifyProfile($post_errors = array())
 		{
 			// Load the language file so we can give a nice explanation of the errors.
 			loadLanguage('Errors');
-			$context['post_errors'] = $post_errors;
+			$context['post_error'] = $post_errors;
 		}
 		elseif (!empty($profile_vars))
 		{

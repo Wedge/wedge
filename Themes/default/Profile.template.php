@@ -22,7 +22,7 @@ function template_profile_top()
 	$(\'input[type="text"], input[type="password"]\').attr("autocomplete", "off");');
 
 	// If an error occurred while trying to save previously, give the user a clue!
-	if (!empty($context['post_errors']))
+	if (!empty($context['post_error']))
 		echo '
 					', template_error_message();
 
@@ -2375,7 +2375,7 @@ function template_error_message()
 			<ul class="reset">';
 
 		// Cycle through each error and display an error message.
-		foreach ($context['post_errors'] as $error)
+		foreach ($context['post_error'] as $error)
 			echo '
 				<li>', isset($txt['profile_error_' . $error]) ? $txt['profile_error_' . $error] : $error, '.</li>';
 
