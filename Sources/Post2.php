@@ -437,16 +437,25 @@ function Post2()
 			$codes[] = $row[0];
 		wesql::free_result($result);
 
-		preg_match_all('~\[/?(' . implode('|', $codes) . ')]~i', $_POST['message'], $bbcs);
-		$bbcs = array_flip(array_flip($bbcs[1]));
+		preg_match_all('~\[(/)?(' . implode('|', $codes) . ')[^]]*]~i', $_POST['message'], $bbcs, PREG_SET_ORDER);
+		$bbc_type = $bbc_openers = array();
 
 		foreach ($bbcs as $tag)
 		{
-			$openers = preg_match_all('~\[' . $tag . '(?:\s[^]]*)?]~i', $_POST['message'], $dummy);
-			$closers = preg_match_all('~\[/' . $tag . ']~i', $_POST['message'], $dummy);
-			if ($openers !== $closers)
-				$post_errors[] = array('mismatched_tags', $tag, $openers, $closers);
+			$bbc_type[$tag[2]] = (isset($bbc_type[$tag[2]]) ? $bbc_type[$tag[2]] : 0) + ($tag[1] ? -1 : 1);
+			if ($bbc_type[$tag[2]] < 0)
+			{
+				$bbc_openers[$tag[2]] = isset($bbc_openers[$tag[2]]) ? $bbc_openers[$tag[2]] + 1 : 1;
+				$bbc_type[$tag[2]]++;
+			}
 		}
+
+		foreach ($bbc_openers as $tag => $num)
+			$post_errors[] = array('mismatched_tags', '[' . $tag . ']', $num);
+
+		foreach ($bbc_type as $tag => $num)
+			if ($num > 0)
+				$post_errors[] = array('mismatched_tags', '[/' . $tag . ']', $num);
 
 		// Preparse code. (Zef)
 		if ($user_info['is_guest'])

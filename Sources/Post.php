@@ -405,11 +405,7 @@ function Post($post_errors = array())
 					// Not really used, but we'll still set that.
 					$context['post_error'][$error_id] = true;
 					if ($error_id === 'mismatched_tags')
-						$context['post_error']['messages'][] = sprintf(
-							$txt['error_mismatched_tags'],
-							$error[2] < $error[3] ? '[' . $error[1] . ']' : '[/' . $error[1] . ']',
-							max($error[2], $error[3]), min($error[2], $error[3])
-						);
+						$context['post_error']['messages'][] = sprintf($txt['error_mismatched_tags'], $error[1], $error[2]);
 					else
 						$context['post_error']['messages'][] = $txt['error_' . $error_id];
 				}
