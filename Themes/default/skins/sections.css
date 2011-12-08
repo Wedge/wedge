@@ -920,6 +920,12 @@ tr.windowbg td
 		float: left
 		width: 1em
 		font-size: 1.5em
+	.bread
+		padding: 4px 8px
+		font-family: monospace
+		color: #000
+		strong
+			color: red
 
 /* Styles for the profile section.
 ------------------------------------------------- */

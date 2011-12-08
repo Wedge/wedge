@@ -1807,7 +1807,7 @@ class wedit
 			$message = '[code]' . $message;
 
 		// Now that we've fixed all the code tags, let's fix the img and url tags...
-		$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$parts = preg_split('~(\[/code]|\[code[^]]*])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		// Only mess with stuff outside [code] tags.
 		for ($i = 0, $n = count($parts); $i < $n; $i++)
@@ -1831,7 +1831,7 @@ class wedit
 					// We should edit them out, or else if an admin edits the message they will get shown...
 					else
 						while (strpos($parts[$i], '[html]') !== false)
-							$parts[$i] = preg_replace('~\[[/]?html\]~i', '', $parts[$i]);
+							$parts[$i] = preg_replace('~\[/?html\]~i', '', $parts[$i]);
 				}
 
 				// Let's look at the time tags...
@@ -1842,7 +1842,7 @@ class wedit
 				$parts[$i] = preg_replace('~\[/(?:black|blue|green|red|white)\]~', '[/color]', $parts[$i]);		// And now do the closing tags
 
 				// Make sure all tags are lowercase.
-				$parts[$i] = preg_replace('~\[([/]?)(list|li|table|tr|td)((\s[^\]]+)*)\]~ie', '\'[$1\' . strtolower(\'$2\') . \'$3]\'', $parts[$i]);
+				$parts[$i] = preg_replace('~\[(/?)(list|li|table|tr|td)((\s[^\]]+)*)\]~ie', '\'[$1\' . strtolower(\'$2\') . \'$3]\'', $parts[$i]);
 
 				$list_open = substr_count($parts[$i], '[list]') + substr_count($parts[$i], '[list ');
 				$list_close = substr_count($parts[$i], '[/list]');
@@ -1875,9 +1875,9 @@ class wedit
 					// Any remaining [/tr]s should have a [/td].
 					'~\[/tr\]~s' => '[/td][/tr]',
 					// Look for properly opened [li]s which aren't closed.
-					'~\[li\]([^\[\]]+?)\[li\]~s' => '[li]$1[_/li_][_li_]',
-					'~\[li\]([^\[\]]+?)\[/list\]~s' => '[_li_]$1[_/li_][/list]',
-					'~\[li\]([^\[\]]+?)$~s' => '[li]$1[/li]',
+					'~\[li\]([^][]+?)\[li\]~s' => '[li]$1[_/li_][_li_]',
+					'~\[li\]([^][]+?)\[/list\]~s' => '[_li_]$1[_/li_][/list]',
+					'~\[li\]([^][]+?)$~s' => '[li]$1[/li]',
 					// Lists - find correctly closed items/lists.
 					'~\[/li\]([\s\x{A0}]*)\[/list\]~su' => '[_/li_]$1[/list]',
 					// Find list items closed and then opened.
@@ -2193,6 +2193,44 @@ class wedit
 
 		if (!empty($replaces))
 			$message = strtr($message, $replaces);
+	}
+
+	public static function fixNesting($text, &$post_errors = null)
+	{
+		$do_fix = $post_errors === null;
+
+		$result = wesql::query('
+			SELECT tag
+			FROM {db_prefix}bbcode
+			WHERE bbctype != {string:closed}',
+			array(
+				'closed' => 'closed'
+			)
+		);
+		$codes = array();
+		while ($row = wesql::fetch_row($result))
+			$codes[] = $row[0];
+		wesql::free_result($result);
+
+		preg_match_all('~\[(/)?(' . implode('|', $codes) . '|nb)[^]]*]~i', $text, $bbcs, PREG_SET_ORDER);
+		$stack = array();
+
+		foreach ($bbcs as $tag)
+		{
+			if ($tag[1] && (empty($stack) || end($stack) !== $tag[2]))
+				$post_errors[] = array('mismatched_tags', $str . '<strong>' . $tag[0] . '</strong>');
+			elseif ($tag[1])
+				array_pop($stack);
+			else
+				$stack[] = $tag[2];
+			$str .= $tag[0] . ' ';
+		}
+
+		foreach (array_reverse($stack) as $tag)
+		{
+			$post_errors[] = array('missing_tags', $str . '<strong>[/' . $tag . ']</strong>');
+			$str .= '[/' . $tag . '] ';
+		}
 	}
 
 	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.

@@ -424,40 +424,9 @@ function Post2()
 		$post_errors[] = 'long_message';
 	else
 	{
-		$result = wesql::query('
-			SELECT tag
-			FROM {db_prefix}bbcode
-			WHERE bbctype != {string:closed}',
-			array(
-				'closed' => 'closed'
-			)
-		);
-		$codes = array();
-		while ($row = wesql::fetch_row($result))
-			$codes[] = $row[0];
-		wesql::free_result($result);
+		// Search for mismatched tags, and instead of fixing them, add them to $post_errors.
+		wedit::fixNesting($_POST['message'], $post_errors);
 
-		preg_match_all('~\[(/)?(' . implode('|', $codes) . ')[^]]*]~i', $_POST['message'], $bbcs, PREG_SET_ORDER);
-		$bbc_type = $bbc_openers = array();
-
-		foreach ($bbcs as $tag)
-		{
-			$bbc_type[$tag[2]] = (isset($bbc_type[$tag[2]]) ? $bbc_type[$tag[2]] : 0) + ($tag[1] ? -1 : 1);
-			if ($bbc_type[$tag[2]] < 0)
-			{
-				$bbc_openers[$tag[2]] = isset($bbc_openers[$tag[2]]) ? $bbc_openers[$tag[2]] + 1 : 1;
-				$bbc_type[$tag[2]]++;
-			}
-		}
-
-		foreach ($bbc_openers as $tag => $num)
-			$post_errors[] = array('mismatched_tags', '[' . $tag . ']', $num);
-
-		foreach ($bbc_type as $tag => $num)
-			if ($num > 0)
-				$post_errors[] = array('mismatched_tags', '[/' . $tag . ']', $num);
-
-		// Preparse code. (Zef)
 		if ($user_info['is_guest'])
 			$user_info['name'] = $_POST['guestname'];
 		wedit::preparsecode($_POST['message']);
