@@ -877,7 +877,6 @@ class wedit
 	{
 		$attribs = array();
 		$key = $value = '';
-		$strpos = 0;
 		$tag_state = 0; // 0 = key, 1 = attribute with no string, 2 = attribute with string
 		for ($i = 0; $i < strlen($text); $i++)
 		{
@@ -1751,14 +1750,14 @@ class wedit
 	}
 
 	// Parses some bbc before sending into the database...
-	public static function preparsecode(&$message, $previewing = false)
+	public static function preparsecode(&$message, $previewing = false, &$post_errors = null)
 	{
 		global $user_info, $modSettings, $context;
 
-		// This line makes all languages *theoretically* work even with the wrong charset ;).
+		// This line makes all languages *theoretically* work even with the wrong charset ;)
 		$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
 
-		// Clean up after nobbc ;).
+		// Clean up after nobbc ;)
 		$message = preg_replace('~\[nobbc\](.+?)\[/nobbc\]~ie', '\'[nobbc]\' . strtr(\'$1\', array(\'[\' => \'&#91;\', \']\' => \'&#93;\', \':\' => \'&#58;\', \'@\' => \'&#64;\')) . \'[/nobbc]\'', $message);
 
 		// Remove \r's... they're evil!
@@ -1773,38 +1772,36 @@ class wedit
 		while (substr($message, 0, 8) === '[/quote]')
 			$message = substr($message, 8);
 
-		// Find all code blocks, work out whether we'd be parsing them, then ensure they are all closed.
-		$in_tag = false;
-		$had_tag = false;
-		$codeopen = 0;
-		if (preg_match_all('~(\[(/)*code(?:=[^\]]+)?\])~is', $message, $matches))
-			foreach ($matches[0] as $index => $dummy)
+		// Find all code blocks, and ensure they follow the [code][/code] syntax closely.
+		if (preg_match_all('~\[(/?)code[^]]*]~i', $message, $matches))
+		{
+			$pos = 0;
+			$tags = array();
+			foreach ($matches[0] as $id => $tag)
 			{
-				// Closing?
-				if (!empty($matches[2][$index]))
-				{
-					// If it's closing and we're not in a tag we need to open it...
-					if (!$in_tag)
-						$codeopen = true;
-					// Either way we ain't in one any more.
-					$in_tag = false;
-				}
-				// Opening tag...
-				else
-				{
-					$had_tag = true;
-					// If we're in a tag don't do nought!
-					if (!$in_tag)
-						$in_tag = true;
-				}
+				$tag_pos = strpos($message, $tag, $pos);
+				$length = strlen($tag);
+				$tags[] = array($tag_pos, $length, $matches[1][$id] === '/');
+				$pos = $tag_pos + $length;
 			}
+			$was_closed = true;
+			$offset = 0;
+			foreach ($tags as $tag)
+			{
+				if ($was_closed === $tag[2]) // consecutive opening or closing tags, or closing tag at the beginning?
+				{
+					$message = substr($message, 0, $tag[0] + $offset) . ($was_closed ? '' : '&#91;code]') . substr($message, $tag[0] + $tag[1] + $offset);
+					$offset += ($was_closed ? 0 : 10) - $tag[1];
+				}
+				$was_closed = $tag[2];
+			}
+			if (!$was_closed) // no final closing tag?
+				$message .= '[/code]';
+		}
 
-		// If we have an open tag, close it.
-		if ($in_tag)
-			$message .= '[/code]';
-		// Open any ones that need to be open, only if we've never had a tag.
-		if ($codeopen && !$had_tag)
-			$message = '[code]' . $message;
+		self::fixNesting($message, $post_errors);
+		if (!empty($post_errors))
+			return;
 
 		// Now that we've fixed all the code tags, let's fix the img and url tags...
 		$parts = preg_split('~(\[/code]|\[code[^]]*])~i', $message, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -2195,42 +2192,214 @@ class wedit
 			$message = strtr($message, $replaces);
 	}
 
-	public static function fixNesting($text, &$post_errors = null)
+	public static function fixNesting(&$text, &$post_errors = null)
 	{
 		$do_fix = $post_errors === null;
 
 		$result = wesql::query('
-			SELECT tag
+			SELECT tag, block_level
 			FROM {db_prefix}bbcode
 			WHERE bbctype != {string:closed}',
 			array(
 				'closed' => 'closed'
 			)
 		);
-		$codes = array();
+		$is_block = array();
 		while ($row = wesql::fetch_row($result))
-			$codes[] = $row[0];
+			$is_block[$row[0]] = $row[1];
 		wesql::free_result($result);
+		$is_block['nb'] = 1;
 
-		preg_match_all('~\[(/)?(' . implode('|', $codes) . '|nb)[^]]*]~i', $text, $bbcs, PREG_SET_ORDER);
-		$stack = array();
+		preg_match_all('~\[(/)?(' . implode('|', array_keys($is_block)) . ')[^]]*]~', $text, $bbcs, PREG_SET_ORDER);
+		$bbcs = unserialize(strtolower(serialize($bbcs)));
+		$restart = true;
+		$last_safe = 0;
+		$m = 0;
 
-		foreach ($bbcs as $tag)
+		while (!empty($restart) && $m++ < 50)
 		{
-			if ($tag[1] && (empty($stack) || end($stack) !== $tag[2]))
-				$post_errors[] = array('mismatched_tags', $str . '<strong>' . $tag[0] . '</strong>');
-			elseif ($tag[1])
-				array_pop($stack);
-			else
-				$stack[] = $tag[2];
-			$str .= $tag[0] . ' ';
-		}
+			$restart = false;
+			$passthru = false;
+			$stack = $apos = array();
+			$offset = 0;
+			$last_pos = 0;
 
-		foreach (array_reverse($stack) as $tag)
-		{
-			$post_errors[] = array('missing_tags', $str . '<strong>[/' . $tag . ']</strong>');
-			$str .= '[/' . $tag . '] ';
+			// Add item positions within the string.
+			foreach ($bbcs as $id => &$tg)
+			{
+				$tg[3] = strpos($text, $tg[0], $last_pos);
+				$last_pos = $tg[3] + 1;
+			}
+
+			for ($id = 0, $bbc_len = count($bbcs); $id < $bbc_len; $id++)
+			{
+				$tag = $bbcs[$id];
+				$full_tag = $tag[0];
+				$is_closer = $tag[1];
+				$name = $tag[2];
+				$pos = $tag[3];
+
+				$is_special = $name === 'code' || $name === 'html' || $name === 'nobbc';
+				$latest = end($stack);
+
+				// Do we have a block opener but currently opened non-block tags?
+				if (!$is_closer && $is_block[$name] && !empty($stack) && !$is_block[$latest[1]])
+				{
+					$last = $bbcs[$latest[0]];
+					if (!$do_fix)
+					{
+						$post_errors[] = array(
+							'mismatched_tags',
+							substr($text, max(0, $last[3] - 50), min(50, $last[3]))
+							. '<strong>' . $last[0] . '</strong>'
+							. substr($text, $last[3] + strlen($last[0]), 50)
+						);
+						// Remove unclosed non-block tags, to prevent any further related errors.
+						while (($latest = end($stack)) && !$is_block[$latest[1]])
+							array_pop($stack);
+					}
+					else
+					{
+						$quant = array();
+						$found = false;
+						// Close all opened non-block tags so far.
+						for ($i = $id - 1; $i > 0; $i--)
+						{
+							$st = $bbcs[$i];
+							if ($st[1] || $is_block[$st[2]])
+								break;
+							else
+								$quant[$st[2]] = isset($quant[$st[2]]) ? $quant[$st[2]] + 1 : 1;
+						}
+						foreach ($quant as $opener => $add)
+						{
+							for ($i = 0; $i < $add; $i++)
+							{
+								array_splice($bbcs, $id, 0, array(array(0 => '[/' . $opener . ']', 1 => true, 2 => $opener, 3 => 0)));
+								$text = substr_replace($text, '[/' . $opener . ']', $pos + $offset, 0);
+								$offset += strlen($opener) + 3;
+								array_pop($stack);
+								$id++;
+							}
+						}
+						$restart = true;
+						break;
+					}
+				}
+				// So, we found a closer tag but the last opened tag doesn't match...? Someone needs a helping hand.
+				if (!$passthru && $is_closer && (empty($stack) || $latest[1] !== $name))
+				{
+					if (!$do_fix)
+					{
+						$post_errors[] = array(
+							'mismatched_tags',
+							substr($text, max(0, $pos - 50), min(50, $pos))
+							. '<strong>' . $full_tag . '</strong>'
+							. substr($text, $pos + strlen($full_tag), 50)
+						);
+						continue; // Ah! The easy way out...
+					}
+					// Is this a block-type closer, at the start of a new line, and
+					// that doesn't have a matching opened tag in the entire stack?
+					if ($is_block[$name] && ($pos === 0 || $text[$pos - 1] === "\n") && !in_array($name, $stack))
+					{
+						// Then maybe it's a typo? We'll just turn this into an opener!
+						$text = substr_replace($text, '[' . $name . ']', $pos, strlen($full_tag));
+						$bbcs[$id][0] = '[' . $name . ']';
+						$bbcs[$id][1] = false;
+						$restart = true;
+						break;
+					}
+					$quant = array();
+					$found = false;
+					foreach (array_reverse($stack) as $st)
+					{
+						// So, we meet again. An unrelated tag that isn't closed.
+						if ($st[1] !== $name)
+						{
+							// If we're inside a code block, then everything's allowed. NOTE: normally, we
+							// shouldn't be going through this, because $passthru would be set. Unless we meet
+							// something like [code][html][/html][/code]. So I left it in, just to be sure.
+							if ($st[1] === 'code' || $st[1] === 'html' || $st[1] === 'nobbc')
+							{
+								$quant = array();
+								break;
+							}
+							// If it's a block tag, we'll stop here and mark it as needing more work.
+							if ($is_block[$st[1]])
+							{
+								$found = $st[0];
+								break;
+							}
+							// If it's an opener, increase the number of items to close, otherwise decrease it.
+							$quant[$st[1]] = isset($quant[$st[1]]) ? $quant[$st[1]] + 1 : 1;
+						}
+						// Did we just find a tag of the same type? Then it just means we have to close the other openers.
+						elseif ($st[1] === $name)
+						{
+							$found = $st[0];
+							break;
+						}
+					}
+					// Was the matching opener found at all, or maybe we really need to close opened tags?
+					if ($found !== false || $is_block[$name])
+					{
+						$really_found = $bbcs[$found][2] === $name;
+						// Let's close all opened tags in between.
+						foreach ($quant as $key => $add)
+						{
+							for ($i = 0; $i < $add; $i++)
+							{
+								array_splice($bbcs, $id, 0, array(array(0 => '[/' . $key . ']', 1 => true, 2 => $key, 3 => 0)));
+								$text = substr_replace($text, '[/' . $key . ']', $pos + $offset, 0);
+								$offset += strlen($key) + 3;
+								array_pop($stack);
+								$id++;
+							}
+						}
+						// And now we remove the opener to our current closer... (Only if it was really found.)
+						if ($really_found)
+							array_pop($stack);
+					}
+					// If we didn't find a matching opener, or we had to stop searching...
+					if ($found === false || !$really_found)
+					{
+						// If the closer is a block tag, then we should open it no matter what, so the user can see any errors they made.
+						if ($is_block[$name])
+						{
+							array_splice($bbcs, $found ? $found + 1 : $id, 0, array(array(0 => '[' . $name . ']', 1 => false, 2 => $name, 3 => 0)));
+							$text = substr_replace($text, '[' . $name . ']', $bbcs[$found ? $found + 1 : $id][3], 0);
+						}
+						// Otherwise, who cares. Gone with it.
+						else
+						{
+							$text = substr_replace($text, '', $pos, strlen($full_tag));
+							unset($bbcs[$id]);
+							$bbcs = array_values($bbcs); // Re-index
+						}
+					}
+					$restart = true;
+					break;
+				}
+				elseif ($is_closer && (!$passthru || $is_special))
+				{
+					$passthru = false;
+					array_pop($stack);
+					if (empty($stack))
+						$last_safe = $id + 1;
+				}
+				elseif (!$passthru)
+				{
+					$stack[] = array($id, $name);
+					if ($is_special)
+						$passthru = true;
+				}
+			}
 		}
+		// Do we have any outstanding missing closers to fix?
+		if ($do_fix && !empty($stack))
+			foreach (array_reverse($stack) as $st)
+				$text .= '[/' . $st[1] . ']';
 	}
 
 	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.

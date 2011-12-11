@@ -424,12 +424,11 @@ function Post2()
 		$post_errors[] = 'long_message';
 	else
 	{
-		// Search for mismatched tags, and instead of fixing them, add them to $post_errors.
-		wedit::fixNesting($_POST['message'], $post_errors);
-
 		if ($user_info['is_guest'])
 			$user_info['name'] = $_POST['guestname'];
-		wedit::preparsecode($_POST['message']);
+
+		// preparsecode will fix common mistakes, as well as possibly return error messages if available.
+		wedit::preparsecode($_POST['message'], false, $post_errors);
 
 		// Let's see if there's still some content left without the tags.
 		if (westr::htmltrim(strip_tags(parse_bbc($_POST['message'], false), '<img><object><embed><iframe><video><audio>')) === '')
