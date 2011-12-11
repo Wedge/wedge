@@ -1950,6 +1950,8 @@ class wedit
 				foreach ($table_array as $tag)
 					$parts[$i] .= '[/' . $tag . ']';
 			}
+			if ($i % 4 == 2)
+				$parts[$i] = str_ireplace(array('[nb]', '[/nb]'), array('&#91;nb]', '&#91;/nb]'), $parts[$i]);
 		}
 
 		// Put it back together!
@@ -2239,7 +2241,7 @@ class wedit
 				$name = $tag[2];
 				$pos = $tag[3];
 
-				$is_special = $name === 'code' || $name === 'html' || $name === 'nobbc';
+				$is_special = $name === 'code' || $name === 'html' || $name === 'nobbc' || $name === 'php';
 				$latest = end($stack);
 
 				// Do we have a block opener but currently opened non-block tags?
@@ -2320,7 +2322,7 @@ class wedit
 							// If we're inside a code block, then everything's allowed. NOTE: normally, we
 							// shouldn't be going through this, because $passthru would be set. Unless we meet
 							// something like [code][html][/html][/code]. So I left it in, just to be sure.
-							if ($st[1] === 'code' || $st[1] === 'html' || $st[1] === 'nobbc')
+							if ($st[1] === 'code' || $st[1] === 'html' || $st[1] === 'nobbc' || $st[1] === 'php')
 							{
 								$quant = array();
 								break;
