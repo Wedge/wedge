@@ -694,38 +694,6 @@ JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
 };
 
 
-// *** SelectBox class.
-function SelectBox(opt)
-{
-	if (!can_ajax)
-		return;
-
-	this.opt = opt;
-	var box = $(opt.oBox), pos = box.offset(), x = pos.left, y = pos.top;
-	box.hide().after($('<span>' + box.find(':selected').text() + '</span>')
-		.attr('title', opt.sLabelThought)
-		.click(function () { oThought.edit(''); })
-	);
-/*	$('.thought').each(function () {
-		var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
-		if (tid)
-		{
-			thought.after('\
-		<div class="thought_actions">\
-			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ');">\
-			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ', true);">\
-			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">\
-		</div>');
-		}
-	});*/
-};
-
-oSelect = new SelectBox({
-	sLabelThought: 'OK!',
-	oBox: $('select').first()
-});
-
-
 // *** Thought class.
 function Thought(opt)
 {
@@ -774,11 +742,7 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
 		</form>');
 	$('#ntho').focus().val(cur_text);
-/*	oSelect = new SelectBox({
-		sLabelThought: 'OK!',
-		oBox: $('#npriv')
-	});*/
-	//$('select').selectBox();
+	$('#npriv').sb({ anim: 100, maxWidth: 85 });
 };
 
 Thought.prototype.getText = function (id)
@@ -786,6 +750,7 @@ Thought.prototype.getText = function (id)
 	return $('thought', getXMLDocument(this.ajaxUrl + 'in=' + id).responseXML).text();
 };
 
+/*
 function we_selectbox()
 {
 	var that = $(this), id = that.attr('id'), title = $('option:selected', this).val() != '' ? $('option:selected', this).text() : that.attr('title');
@@ -811,6 +776,7 @@ function we_selectbox()
 };
 
 $('select').each(we_selectbox);
+*/
 
 // Make that personal text editable (again)!
 Thought.prototype.cancel = function ()
