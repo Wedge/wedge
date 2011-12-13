@@ -1813,7 +1813,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 		// Initialize our JS files to cache right before we run template_init().
 		if (empty($modSettings['jquery_origin']) || $modSettings['jquery_origin'] === 'local')
-			$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js', 'scripts/jquery.sb.js');
+			$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js', 'scripts/sbox.js');
 		else
 		{
 			$remote = array(
@@ -1822,7 +1822,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 				'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
 			);
 			$context['remote_javascript_files'] = array($remote[$modSettings['jquery_origin']]);
-			$context['javascript_files'] = array('scripts/script.js', 'scripts/jquery.sb.js');
+			$context['javascript_files'] = array('scripts/script.js', 'scripts/sbox.js');
 		}
 
 		// Initialize the theme and load the default macros.

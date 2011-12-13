@@ -1344,81 +1344,76 @@ dl#feed
 	overflow-y: auto
 	z-index: 99999
 	box-shadow: 0 3px 5px rgba(0,0,0,.5)
+	// .selectbox.items.above
 
-// .selectbox.items.above
+	li
+		display: block
+		margin, padding: 0
+		/*white-space:nowrap; maybe necessary if using fixedWidth: false */
 
-.selectbox.items li
-	display: block
-	margin, padding: 0
-	/*white-space:nowrap; maybe necessary if using fixedWidth: false */
+	li.first
+		margin-top: 0
 
-.selectbox.items li.first
-	margin-top: 0
+	li > .item
+		color: #000
+		cursor: default
+		display: block
+		padding: 4px 6px
+		text-decoration: none
 
-.selectbox.items li>.item
-	color: #000
-	cursor: default
-	display: block
-	padding: 4px 6px
-	text-decoration: none
+	li > .item > .text
+		base: .inline-block
 
-.selectbox.items li > .item > .text
-	base: .inline-block
+	li.selected > .item
+		font-weight: bold
+		// border-bottom: 1px dotted #999
+		// border-top: 1px dotted #999
+		background-color: #f5eeee
 
-.selectbox.items li.selected > .item
-	font-weight: bold
-	// border-bottom: 1px dotted #999
-	// border-top: 1px dotted #999
-	background-color: #f5eeee
+	li.disabled > .item
+		color: #999
 
-.selectbox.items li.disabled > .item
-	color: #999
-.selectbox.items li.hover > .item
-	background-color: #3399ff
-	color: #fcfcfc
-.selectbox.items .value
-	display: none
+	li.hover > .item
+		background-color: #3399ff
+		color: #fcfcfc
 
-/* optgroup styles */
-.selectbox.items .optgroup .items
-	border: none
-	margin, padding: 0
-	box-shadow: none
+	.value
+		display: none
 
-.selectbox.items .optgroup > .label
-	cursor: default
-	font-weight: bold
-	line-height: 1em
-.selectbox.items .optgroup .items li > .item
-	padding-left: 1em
+	// optgroup styles
+	.optgroup
+		.items
+			border: none
+			margin, padding: 0
+			box-shadow: none
+			li > .item
+				padding-left: 1em
+		> .label
+			cursor: default
+			font-weight: bold
+			line-height: 1em
 
-/* easy rounding styles */
-.selectbox .round_sb.display
+/* the rest is to add rounding corners */
+.selectbox .display
 	padding: 2px 26px 2px 5px
 	border-radius: 5px
+	.btn
+		right, top: 2px
+		border-radius: 3px
 
-.selectbox .round_sb.display .arrow_btn
-	right, top: 2px
-	border-radius: 3px
-
-.selectbox.round_sb.items
+.selectbox.items
+	padding: 2px
 	border-radius: 5px
-
-.selectbox.round_sb.items > li > a
-	padding: 4px 6px
-
-.selectbox.round_sb.items > li.first > .item
-	border-radius: 5px 5px 0 0
-
-.selectbox.round_sb.items > li.last > .item
-	border-radius: 0 0 5px 5px
-
-/* for optgroups */
-.selectbox.round_sb.items > li
-	> .label
+	> li > a
+		padding: 4px 6px
+	> li.first > .item
+		border-radius: 5px 5px 0 0
+	> li.last > .item
+		border-radius: 0 0 5px 5px
+	> li > .label
 		line-height: 2.08em
 		padding: 4px 6px
-	> .items li > .item
+	> li > .items li > .item
 		padding: 4px 6px 4px 12px
 
 /* HTML5 overrides for deprecated alignment/width params
