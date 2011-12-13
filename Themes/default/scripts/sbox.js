@@ -88,13 +88,9 @@
 		{
 			var $e = $(this), obj = $e.data("sb");
 
-			// if it is defined or we allow instance access, then access
+			// if it is already created, then access
 			if (obj)
 			{
-				// call the access function if it exists (allows lazy loading)
-				if (obj.access)
-					obj.access.apply(obj, aps.call(args, 0));
-
 				// do something with the object
 				if (args.length > 0)
 				{
@@ -119,8 +115,11 @@
 				obj = new SelectBox();
 
 				// set the elem property and initialize the object
-				obj.elem = $e[0];
-				if (obj.init)
+				obj.elem = this;
+
+				// this plugin is not compatible with IE6 and below;
+				// a normal <select> will be displayed for old browsers
+				if (!is_ie6)
 					obj.init.apply(obj, aps.call(args, 0));
 
 				// associate it with the element
@@ -161,8 +160,33 @@
 			body = "body",
 			o = {},
 
-		loadSB = function ()
+		loadSB = function (opts)
 		{
+			// get the original <select> and <label>
+			$orig = $(self.elem);
+
+			// don't create duplicate SBs
+			if ($orig.hasClass("has_sb"))
+				return;
+
+			if ($orig.attr("id"))
+				$label = $("label[for='" + $orig.attr("id") + "']:first");
+			if (!$label || $label.size() === 0)
+				$label = $orig.closest("label");
+
+			// set the various options
+			o = $.extend({
+				anim: 200,			// animation duration: time to open/close dropdown in ms
+				ctx: body,			// body | self | any selector | a function that returns a selector (the original select is the context)
+				fixedWidth: false,	// if false, dropdown expands to widest and display conforms to whatever is selected
+				maxHeight: false,	// if an integer, show scrollbars if the dropdown is too tall
+				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
+				css: "selectbox",	// class to apply our markup
+
+				// markup appended to the display, typically for styling an arrow
+				arrow: "<div class='btn'><div></div></div>"
+			}, opts);
+
 			// create the new sb
 			$sb = $("<div class='sb " + o.css + " " + $orig.attr("class") + "' id='sb" + randInt() + "' role=listbox></div>")
 				.attr("aria-haspopup", true)
@@ -331,7 +355,7 @@
 			var isOpen = $sb.is(".open"), isFocused = $display.is(".focused");
 			closeSB(1);
 			destroySB(1);
-			self.init(o);
+			loadSB(o);
 			if (isOpen)
 			{
 				$orig.focus();
@@ -400,12 +424,6 @@
 			}
 		},
 
-		// since the context can change, we should get it dynamically
-		getDDCtx = function ()
-		{
-			return $ddCtx = (o.ddCtx === "self" ? $sb : ($.isFunction(o.ddCtx) ? $(o.ddCtx.call($orig[0])) : $(o.ddCtx)));
-		},
-
 		// DRY
 		getSelected = function ()
 		{
@@ -433,12 +451,11 @@
 		// show, reposition, and reset dropdown markup
 		openSB = function (instantOpen)
 		{
-			var dir, $ddCtx = getDDCtx();
+			var dir, $ddCtx = $(o.ctx);
 			blurAllButMe();
 			$sb.addClass("open");
-			$ddCtx.append($dd);
+			$dd.attr("aria-hidden", false).appendTo($ddCtx);
 			dir = positionSB();
-			$dd.attr("aria-hidden", false);
 			if (instantOpen)
 			{
 				$dd.show();
@@ -454,13 +471,12 @@
 		// position dropdown based on collision detection
 		positionSB = function ()
 		{
-			var $ddCtx = getDDCtx(),
+			var $ddCtx = $(o.ctx),
 				ddMaxHeight = 0,
-				dir = 0,
+				dir = 0, // 0 for drop-down, 1 for drop-up
 				ddY = 0,
 				ddX = $display.offsetFrom($ddCtx).x,
-				bottomSpace, topSpace,
-				bottomOffset, spaceDiff;
+				bottomSpace, topSpace;
 
 			// modify dropdown css for getting values
 			$dd
@@ -477,36 +493,19 @@
 			// figure out if we should show above/below the display box
 			bottomSpace = $(window).scrollTop() + $(window).height() - $display.offset().top - $display.outerHeight();
 			topSpace = $display.offset().top - $(window).scrollTop();
-			bottomOffset = $display.offsetFrom($ddCtx).y + $display.outerHeight();
-			spaceDiff = bottomSpace - topSpace + o.threshold;
 
-			if ($dd.outerHeight() < bottomSpace)
+			// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
+			if (($dd.outerHeight() <= bottomSpace) || (($dd.outerHeight() >= topSpace) && (bottomSpace + 50 >= topSpace)))
 			{
-				ddMaxHeight = o.maxHeight || bottomSpace;
-				ddY = bottomOffset;
 				dir = 1;
-			}
-			else if ($dd.outerHeight() < topSpace)
-			{
-				ddMaxHeight = o.maxHeight || topSpace;
-				ddY = $display.offsetFrom($ddCtx).y - Math.min(ddMaxHeight, $dd.outerHeight());
-			}
-			else if (spaceDiff >= 0)
-			{
+				ddY = $display.offsetFrom($ddCtx).y + $display.outerHeight();
 				ddMaxHeight = o.maxHeight || bottomSpace;
-				ddY = bottomOffset;
-				dir = 1;
 			}
-			else if (spaceDiff < 0)
-			{
-				ddMaxHeight = o.maxHeight || topSpace;
-				ddY = $display.offsetFrom($ddCtx).y - Math.min(ddMaxHeight, $dd.outerHeight());
-			}
+			// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
 			else
 			{
-				ddMaxHeight = o.maxHeight || "none";
-				ddY = bottomOffset;
-				dir = 1;
+				ddMaxHeight = o.maxHeight || topSpace;
+				ddY = $display.offsetFrom($ddCtx).y - Math.min(ddMaxHeight, $dd.outerHeight());
 			}
 
 			// modify dropdown css for display
@@ -602,9 +601,7 @@
 		// stop up/down/backspace/space from moving the page
 		stopPageHotkeys = function (e)
 		{
-			if (e.ctrlKey || e.altKey)
-				return;
-			if (in_array(e.which, [8,32,38,40]))
+			if (!e.altKey && !e.ctrlKey && in_array(e.which, [8,32,38,40]))
 				e.preventDefault();
 		},
 
@@ -615,7 +612,7 @@
 			for (i = $available.index($selected) + 1; i < $available.size(); i++)
 			{
 				t = $available.eq(i).find(".text").text();
-				if (t !== "" && t.substring(0,1).toLowerCase() === c.toLowerCase())
+				if (t !== "" && t[0].toLowerCase() === c.toLowerCase())
 				{
 					selectItem.call($available.eq(i)[0]);
 					return true;
@@ -689,11 +686,10 @@
 		// the user is typing -- try to select an item based on what they press
 		keyupSB = function (e)
 		{
-
 			if (e.altKey || e.ctrlKey)
 				return false;
 
-			if (e.which !== 38 && e.which !== 40)
+			if (e.which != 38 && e.which != 40)
 			{
 				// add to the search term
 				searchTerm += String.fromCharCode(e.keyCode);
@@ -702,14 +698,14 @@
 				{
 					// we found a match, continue with the current search term
 					clearTimeout(cstTimeout);
-					cstTimeout = setTimeout(clearSearchTerm, o.acTimeout);
+					cstTimeout = setTimeout(clearSearchTerm, 800);
 				}
 				else if (selectNextItemStartsWith(String.fromCharCode(e.keyCode)))
 				{
 					// we selected the next item that starts with what you just pressed
 					centerOnSelected();
 					clearTimeout(cstTimeout);
-					cstTimeout = setTimeout(clearSearchTerm, o.acTimeout);
+					cstTimeout = setTimeout(clearSearchTerm, 800);
 				}
 				else
 				{
@@ -771,45 +767,8 @@
 			$(document).unbind("mouseup", removeActiveState);
 		};
 
-		// constructor
-		this.init = function (opts)
-		{
-			// this plugin is not compatible with IE6 and below;
-			// a normal <select> will be displayed for old browsers
-			if (is_ie6)
-				return;
-
-			// get the original <select> and <label>
-			$orig = $(this.elem);
-			if ($orig.attr("id"))
-				$label = $("label[for='" + $orig.attr("id") + "']:first");
-			if (!$label || $label.size() === 0)
-				$label = $orig.closest("label");
-
-			// don't create duplicate SBs
-			if ($orig.hasClass("has_sb"))
-				return;
-
-			// set the various options
-			o = $.extend({
-				acTimeout: 800,		// time between each keyup for the user to create a search string
-				anim: 200,			// animation duration: time to open/close dropdown in ms
-				ddCtx: body,		// body | self | any selector | a function that returns a selector (the original select is the context)
-				threshold: 150,		// the minimum amount of extra space required above the selectbox for it to display a dropup
-				fixedWidth: false,	// if false, dropdown expands to widest and display conforms to whatever is selected
-				maxHeight: false,	// if an integer, show scrollbars if the dropdown is too tall
-				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
-				css: "selectbox",	// class to apply our markup
-
-				// markup appended to the display, typically for styling an arrow
-				arrow: "<div class='btn'><div></div></div>"
-			}, opts);
-
-			// generate the new sb
-			loadSB();
-		};
-
 		// public method interface
+		this.init = loadSB;
 		this.open = openSB;
 		this.close = closeSB;
 		this.refresh = reloadSB;
