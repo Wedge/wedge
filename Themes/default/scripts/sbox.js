@@ -57,6 +57,7 @@
 	{
 		return $(this).outerWidth(true) - $(this).width();
 	};
+
 	$.fn.offsetFrom = function (e)
 	{
 		var $e = $(e).offset(), $t = $(this).offset();
@@ -65,84 +66,85 @@
 			y: $t.top - $e.top
 		};
 	};
+
 	$.fn.maxWidth = function ()
 	{
 		var max = 0;
 		this.each(function () { max = Math.max(max, $(this).width()); });
 		return max;
 	};
+
 	// Trigger all handlers (i.e. only trigger the event handlers, not the events themselves.)
 	$.fn.tah = function (e)
 	{
 		return this.each(function () { $(this).triggerHandler(e); });
 	};
 
-	// jQuery-Proto
-	$.proto = function (clazz)
+	$.fn.sb = function ()
 	{
-		var name = "sb",			// The name of the jQuery function that will be called
-			undefined,				// safety net
-			access = "access";		// the name of the access function to be set on the object
+		var result, aps = Array.prototype.slice, args = arguments, undefined;
 
-		$.fn.sb = function ()
+		this.each(function ()
 		{
-			var result, args = arguments;
+			var $e = $(this), obj = $e.data("sb");
 
-			this.each(function ()
+			// if it is defined or we allow instance access, then access
+			if (obj)
 			{
-				var $e = $(this),
-					obj = $e.data(name),
-					isNew = !obj;
+				// call the access function if it exists (allows lazy loading)
+				if (obj.access)
+					obj.access.apply(obj, aps.call(args, 0));
 
-				// if the object is not defined for this element, then construct
-				if (isNew)
+				// do something with the object
+				if (args.length > 0)
 				{
-					// create the new object and restore init if necessary
-					obj = new clazz();
-
-					// set the elem property and initialize the object
-					obj.elem = $e[0];
-					if (obj.init)
-						obj.init.apply(obj, aps.call(args, 0));
-
-					// associate it with the element
-					$e.data(name, obj);
+					if ($.isFunction(obj[args[0]]))
+						// use the method access interface
+						result = obj[args[0]].apply(obj, aps.call(args, 1));
+					else if (args.length === 1)
+						// just retrieve the property
+						result = obj[args[0]];
+					else
+						// set the property
+						obj[args[0]] = args[1];
 				}
+				else if (result === undefined)
+					// return the first object if there are no args
+					result = $e.data("sb");
+			}
+			// if the object is not defined for this element, then construct
+			else
+			{
+				// create the new object and restore init if necessary
+				obj = new SelectBox();
 
-				// if it is defined or we allow instance access, then access
-				if (!isNew)
-				{
-					// call the access function if it exists (allows lazy loading)
-					if (obj[access])
-						obj[access].apply(obj, aps.call(args, 0));
+				// set the elem property and initialize the object
+				obj.elem = $e[0];
+				if (obj.init)
+					obj.init.apply(obj, aps.call(args, 0));
 
-					// do something with the object
-					if (args.length > 0)
-					{
-						if ($.isFunction(obj[args[0]]))
-							// use the method access interface
-							result = obj[args[0]].apply(obj, aps.call(args, 1));
-						else if (args.length === 1)
-							// just retrieve the property (leverage deep access with getObject if we can)
-							result = $.getObject ? $.getObject(args[0], obj) : obj[args[0]];
-						else
-							// set the property (leverage deep access with setObject if we can)
-							$.setObject ? $.setObject(args[0], args[1], obj) : obj[args[0]] = args[1];
-					}
-					else if (result === undefined)
-						// return the first object if there are no args
-						result = $e.data(name);
-				}
-			});
+				// associate it with the element
+				$e.data("sb", obj);
+			}
+		});
 
-			// chain if no results were returned from the clazz's method (it's a setter)
-			return result === undefined ? $(this) : result;
-		};
+		// chain if no results were returned from the class's method (it's a setter)
+		return result === undefined ? $(this) : result;
 	};
 
 	var
-		aps = Array.prototype.slice,
-		randInt = function () { return Math.ceil(Math.random() * 9e9); },
+		randInt = function () {
+			return Math.ceil(Math.random() * 9e9);
+		},
+
+		// formatting for the display
+		optionFormat = function (dom)
+		{
+			if ($(dom).size() <= 0)
+				return "";
+			var label = $(dom).attr("label");
+			return label && label.length > 0 ? label : $(dom).text();
+		},
 
 	SelectBox = function ()
 	{
@@ -218,7 +220,7 @@
 
 			// modify width based on fixedWidth/maxWidth options
 			if (!o.fixedWidth)
-				$sb.width(Math.min(o.maxWidth ? o.maxWidth : 9e9, $dd.find(".text, .optgroup").maxWidth() + $display.extraWidth() + 1));
+				$sb.width(Math.min(o.maxWidth || 9e9, $dd.find(".text, .optgroup").maxWidth() + $display.extraWidth() + 1));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
 
@@ -254,7 +256,7 @@
 				$items.filter(".disabled")
 					.click(false);
 				if (!is_ie8down)
-					$(window).resize($.throttle ? $.throttle(100, positionSBIfOpen) : delayPositionSB);
+					$(window).resize(delayPositionSB);
 			}
 			else
 			{
@@ -351,10 +353,10 @@
 		{
 			$(document)
 				.unbind("click", closeAndUnbind)
-				.unbind("keyup", keyupSB)
 				.unbind("keypress", stopPageHotkeys)
 				.unbind("keydown", stopPageHotkeys)
-				.unbind("keydown", keydownSB);
+				.unbind("keydown", keydownSB)
+				.unbind("keyup", keyupSB);
 		},
 
 		// trigger all sbs to close
@@ -442,7 +444,7 @@
 				$dd.show();
 				centerOnSelected();
 			}
-			else if (dir === "down")
+			else if (dir)
 				$dd.slideDown(o.anim, centerOnSelected);
 			else
 				$dd.fadeIn(o.anim, centerOnSelected);
@@ -454,19 +456,21 @@
 		{
 			var $ddCtx = getDDCtx(),
 				ddMaxHeight = 0,
-				ddX = $display.offsetFrom($ddCtx).x,
+				dir = 0,
 				ddY = 0,
-				dir = "",
+				ddX = $display.offsetFrom($ddCtx).x,
 				bottomSpace, topSpace,
 				bottomOffset, spaceDiff;
 
 			// modify dropdown css for getting values
-			$dd.removeClass("above");
-			$dd.show().css({
-				maxHeight: "none",
-				position: "relative",
-				visibility: "hidden"
-			});
+			$dd
+				// .removeClass("above")
+				.show()
+				.css({
+					maxHeight: "none",
+					position: "relative",
+					visibility: "hidden"
+				});
 			if (!o.fixedWidth)
 				$dd.width($display.outerWidth() - $dd.extraWidth() + 1);
 
@@ -474,36 +478,35 @@
 			bottomSpace = $(window).scrollTop() + $(window).height() - $display.offset().top - $display.outerHeight();
 			topSpace = $display.offset().top - $(window).scrollTop();
 			bottomOffset = $display.offsetFrom($ddCtx).y + $display.outerHeight();
-			spaceDiff = bottomSpace - topSpace + o.dropupThreshold;
+			spaceDiff = bottomSpace - topSpace + o.threshold;
+
 			if ($dd.outerHeight() < bottomSpace)
 			{
-				ddMaxHeight = o.maxHeight ? o.maxHeight : bottomSpace; // o.maxHeight || bottomSpace, but compresses to a tad less...?!
+				ddMaxHeight = o.maxHeight || bottomSpace;
 				ddY = bottomOffset;
-				dir = "down";
+				dir = 1;
 			}
 			else if ($dd.outerHeight() < topSpace)
 			{
-				ddMaxHeight = o.maxHeight ? o.maxHeight : topSpace;
+				ddMaxHeight = o.maxHeight || topSpace;
 				ddY = $display.offsetFrom($ddCtx).y - Math.min(ddMaxHeight, $dd.outerHeight());
-				dir = "up";
 			}
 			else if (spaceDiff >= 0)
 			{
-				ddMaxHeight = o.maxHeight ? o.maxHeight : bottomSpace;
+				ddMaxHeight = o.maxHeight || bottomSpace;
 				ddY = bottomOffset;
-				dir = "down";
+				dir = 1;
 			}
 			else if (spaceDiff < 0)
 			{
-				ddMaxHeight = o.maxHeight ? o.maxHeight : topSpace;
+				ddMaxHeight = o.maxHeight || topSpace;
 				ddY = $display.offsetFrom($ddCtx).y - Math.min(ddMaxHeight, $dd.outerHeight());
-				dir = "up";
 			}
 			else
 			{
-				ddMaxHeight = o.maxHeight ? o.maxHeight : "none";
+				ddMaxHeight = o.maxHeight || "none";
 				ddY = bottomOffset;
-				dir = "down";
+				dir = 1;
 			}
 
 			// modify dropdown css for display
@@ -514,8 +517,11 @@
 				position: "absolute",
 				visibility: "visible"
 			});
-			if (dir === "up")
-				$dd.addClass("above");
+
+			// We currently don't need to apply specific styles to drop-up list boxes.
+			//	if (!dir)
+			//		$dd.addClass("above");
+
 			return dir;
 		},
 
@@ -733,10 +739,10 @@
 			$sb.removeClass("focused");
 			$display.removeClass("active");
 			$(document)
-				.unbind("keyup", keyupSB)
-				.unbind("keydown", stopPageHotkeys)
 				.unbind("keypress", stopPageHotkeys)
-				.unbind("keydown", keydownSB);
+				.unbind("keydown", stopPageHotkeys)
+				.unbind("keydown", keydownSB)
+				.unbind("keyup", keyupSB);
 		},
 
 		// add hover class to an element
@@ -763,15 +769,6 @@
 		{
 			$display.removeClass("active");
 			$(document).unbind("mouseup", removeActiveState);
-		},
-
-		// formatting for the display; note that it will be wrapped with <a href='#'><span class='text'></span></a>
-		optionFormat = function (dom)
-		{
-			if ($(dom).size() <= 0)
-				return "";
-			var label = $(dom).attr("label");
-			return label && label.length > 0 ? label : $(dom).text();
 		};
 
 		// constructor
@@ -795,14 +792,14 @@
 
 			// set the various options
 			o = $.extend({
-				acTimeout: 800,			// time between each keyup for the user to create a search string
-				anim: 200,				// animation duration: time to open/close dropdown in ms
-				ddCtx: body,			// body | self | any selector | a function that returns a selector (the original select is the context)
-				dropupThreshold: 150,	// the minimum amount of extra space required above the selectbox for it to display a dropup
-				fixedWidth: false,		// if false, dropdown expands to widest and display conforms to whatever is selected
-				maxHeight: false,		// if an integer, show scrollbars if the dropdown is too tall
-				maxWidth: false,		// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
-				css: 'selectbox',		// class to apply our markup
+				acTimeout: 800,		// time between each keyup for the user to create a search string
+				anim: 200,			// animation duration: time to open/close dropdown in ms
+				ddCtx: body,		// body | self | any selector | a function that returns a selector (the original select is the context)
+				threshold: 150,		// the minimum amount of extra space required above the selectbox for it to display a dropup
+				fixedWidth: false,	// if false, dropdown expands to widest and display conforms to whatever is selected
+				maxHeight: false,	// if an integer, show scrollbars if the dropdown is too tall
+				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
+				css: "selectbox",	// class to apply our markup
 
 				// markup appended to the display, typically for styling an arrow
 				arrow: "<div class='btn'><div></div></div>"
@@ -823,7 +820,5 @@
 			reloadSB();
 		};
 	};
-
-	$.proto(SelectBox);
 
 }(jQuery, window));
