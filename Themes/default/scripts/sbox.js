@@ -77,12 +77,6 @@
 		return max;
 	};
 
-	// Trigger all handlers (i.e. only trigger the event handlers, not the events themselves.)
-	$.fn.tah = function (e)
-	{
-		return this.each(function () { $(this).triggerHandler(e); });
-	};
-
 	$.fn.sb = function ()
 	{
 		var result, slice = Array.prototype.slice, args = arguments, undefined;
@@ -147,17 +141,18 @@
 	SelectBox = function ()
 	{
 		var self = this,
-			$orig = null,
-			$label = null,
-			$sb = null,
-			$display = null,
-			$dd = null,
-			$items = null,
 			cstTimeout = null,
 			resizeTimeout = null,
 			searchTerm = "",
 			body = "body",
-			o = {},
+			o,
+			is_closing,
+			$display,
+			$orig,
+			$dd,
+			$sb,
+			$items,
+			$label,
 
 		loadSB = function (opts)
 		{
@@ -257,21 +252,30 @@
 			if (!$orig.is(":disabled"))
 			{
 				$orig
-					.bind("blur.sb", blurOrig)
-					.bind("focus.sb", focusOrig);
+					// loses focus if original is blurred
+					.bind("blur.sb", function () {
+						if (!$sb.is(".open"))
+							$display.triggerHandler("blur");
+					})
+					// causes focus if original is focused
+					.bind("focus.sb", function () {
+						blurAllButMe();
+						$display.triggerHandler("focus");
+					});
 				$display
 					.mouseup(addActiveState)
 					.mouseup(clickSB)
-					.click(false)
 					.focus(focusSB)
 					.blur(blurSB)
+					.mousedown(false)
+					.click(false)
 					.hover(addHoverState, removeHoverState);
-				getEnabled()
+				$items.not(".disabled")
 					.click(clickSBItem)
 					.hover(addHoverState, removeHoverState);
 				$dd.find(".optgroup")
-					.hover(addHoverState, removeHoverState)
-					.click(false);
+					.click(false)
+					.hover(addHoverState, removeHoverState);
 				$items.filter(".disabled")
 					.click(false);
 				if (!is_ie8down)
@@ -291,16 +295,13 @@
 		delayPositionSB = function ()
 		{
 			clearTimeout(resizeTimeout);
-			resizeTimeout = setTimeout(positionSBIfOpen, 50);
-		},
-
-		positionSBIfOpen = function ()
-		{
-			if ($sb.is(".open"))
-			{
-				positionSB();
-				openSB(1);
-			}
+			resizeTimeout = setTimeout(function () {
+				if ($sb.is(".open"))
+				{
+					positionSB();
+					openSB(1);
+				}
+			}, 50);
 		},
 
 		// create new markup from an <option>
@@ -318,20 +319,6 @@
 					.append($("<div class='text'></div>")
 					.html(optionFormat($option)))
 				);
-		},
-
-		// causes focus if original is focused
-		focusOrig = function ()
-		{
-			blurAllButMe();
-			$display.triggerHandler("focus");
-		},
-
-		// loses focus if original is blurred
-		blurOrig = function ()
-		{
-			if (!$sb.is(".open"))
-				$display.triggerHandler("blur");
 		},
 
 		// unbind and remove
@@ -378,24 +365,6 @@
 				.unbind("keyup", keyupSB);
 		},
 
-		// trigger all sbs to close
-		closeAll = function ()
-		{
-			$(".sb.open." + o.css).tah("close");
-		},
-
-		// to prevent multiple selects open at once
-		closeAllButMe = function ()
-		{
-			$(".sb.open." + o.css).not($sb[0]).tah("close");
-		},
-
-		// trigger all sbs to blur
-		blurAllButMe = function ()
-		{
-			$(".sb.focused." + o.css).not($sb[0]).find(".display").blur();
-		},
-
 		// hide and reset dropdown markup
 		closeSB = function (instantClose)
 		{
@@ -408,28 +377,26 @@
 				if (instantClose)
 					$sb.removeClass("open").append($dd.hide());
 				else
+				{
+					is_closing = true;
 					$dd.fadeOut(o.anim, function () {
 						$sb.removeClass("open").append($dd);
+						is_closing = false;
 					});
+				}
 			}
 		},
 
-		// DRY
-		getSelected = function ()
+		// trigger all select boxes to blur
+		blurAllButMe = function ()
 		{
-			return $items.filter(".selected");
-		},
-
-		// DRY
-		getEnabled = function ()
-		{
-			return $items.not(".disabled");
+			$(".sb.focused." + o.css).not($sb[0]).find(".display").blur();
 		},
 
 		// reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
 		centerOnSelected = function ()
 		{
-			$dd.scrollTop($dd.scrollTop() + getSelected().offsetFrom($dd).y - $dd.height() / 2 + getSelected().outerHeight(true) / 2);
+			$dd.scrollTop($dd.scrollTop() + $items.filter(".selected").offsetFrom($dd).y - $dd.height() / 2 + $items.filter(".selected").outerHeight(true) / 2);
 		},
 
 		// show, reposition, and reset dropdown markup
@@ -559,7 +526,7 @@
 		// iterate over all the options to see if any match the search term
 		findMatchingItem = function (term)
 		{
-			var i, t, $tNode, $available = getEnabled();
+			var i, t, $tNode, $available = $items.not(".disabled");
 			for (i = 0; i < $available.length; i++)
 			{
 				$tNode = $available.eq(i).find(".text");
@@ -592,7 +559,7 @@
 		// if a normal match fails, try matching the next element that starts with the pressed letter
 		selectNextItemStartsWith = function (c)
 		{
-			var i, t, $selected = getSelected(), $available = getEnabled();
+			var i, t, $selected = $items.filter(".selected"), $available = $items.not(".disabled");
 			for (i = $available.index($selected) + 1; i < $available.length; i++)
 			{
 				t = $available.eq(i).find(".text").text();
@@ -611,7 +578,7 @@
 			if (e.altKey || e.ctrlKey)
 				return false;
 
-			var $selected = getSelected(), $enabled = getEnabled();
+			var $selected = $items.filter(".selected"), $enabled = $items.not(".disabled");
 			switch (e.which)
 			{
 				case 9: // tab
@@ -703,7 +670,10 @@
 		// when the sb is focused (by tab or click), allow hotkey selection and kill all other selectboxes
 		focusSB = function ()
 		{
-			closeAllButMe();
+			// close all select boxes but this one, to prevent multiple selects open at once.
+			// triggerHandler calls the associated event without actually triggering the event itself.
+			$(".sb.open." + o.css).not($sb[0]).each(function () { $(this).triggerHandler("close"); });
+
 			$sb.addClass("focused");
 			$(document)
 				.click(closeAndUnbind)
@@ -728,7 +698,8 @@
 		// add hover class to an element
 		addHoverState = function ()
 		{
-			$(this).addClass("hover");
+			if (!is_closing)
+				$(this).addClass("hover");
 		},
 
 		// remove hover class from an element
@@ -757,11 +728,6 @@
 		this.close = closeSB;
 		this.refresh = reloadSB;
 		this.destroy = destroySB;
-		this.options = function (opts)
-		{
-			o = $.extend(o, opts);
-			reloadSB();
-		};
 	};
 
 }(jQuery, window));
