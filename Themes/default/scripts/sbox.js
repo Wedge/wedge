@@ -60,13 +60,16 @@
 
 	$.fn.offsetFrom = function (e)
 	{
-		var $e = $(e).offset(), $t = $(this).offset();
+		var $e = e.offset(), $t = $(this).offset();
 		return {
 			x: $t.left - $e.left,
 			y: $t.top - $e.top
 		};
 	};
 
+	// Returns the widest element's width from a list of elements.
+	// Here's an elegant alternative way of doing it, but compression is worse:
+	// return Math.max.apply(0, this.map(function () { return $(this).width(); }).get());
 	$.fn.maxWidth = function ()
 	{
 		var max = 0;
@@ -82,7 +85,7 @@
 
 	$.fn.sb = function ()
 	{
-		var result, aps = Array.prototype.slice, args = arguments, undefined;
+		var result, slice = Array.prototype.slice, args = arguments, undefined;
 
 		this.each(function ()
 		{
@@ -96,7 +99,7 @@
 				{
 					if ($.isFunction(obj[args[0]]))
 						// use the method access interface
-						result = obj[args[0]].apply(obj, aps.call(args, 1));
+						result = obj[args[0]].apply(obj, slice.call(args, 1));
 					else if (args.length === 1)
 						// just retrieve the property
 						result = obj[args[0]];
@@ -108,8 +111,10 @@
 					// return the first object if there are no args
 					result = $e.data("sb");
 			}
-			// if the object is not defined for this element, then construct
-			else
+			// if the object is not defined for this element, then construct.
+			// this plugin is not compatible with IE6 and below;
+			// a normal <select> will be displayed for old browsers
+			else if (!is_ie6)
 			{
 				// create the new object and restore init if necessary
 				obj = new SelectBox();
@@ -117,10 +122,7 @@
 				// set the elem property and initialize the object
 				obj.elem = this;
 
-				// this plugin is not compatible with IE6 and below;
-				// a normal <select> will be displayed for old browsers
-				if (!is_ie6)
-					obj.init.apply(obj, aps.call(args, 0));
+				obj.init.apply(obj, slice.call(args, 0));
 
 				// associate it with the element
 				$e.data("sb", obj);
@@ -137,12 +139,9 @@
 		},
 
 		// formatting for the display
-		optionFormat = function (dom)
+		optionFormat = function ($dom)
 		{
-			if ($(dom).size() <= 0)
-				return "";
-			var label = $(dom).attr("label");
-			return label && label.length > 0 ? label : $(dom).text();
+			return $dom.attr("label") || $dom.text() || "";
 		},
 
 	SelectBox = function ()
@@ -171,7 +170,7 @@
 
 			if ($orig.attr("id"))
 				$label = $("label[for='" + $orig.attr("id") + "']:first");
-			if (!$label || $label.size() === 0)
+			if (!$label || $label.length === 0)
 				$label = $orig.closest("label");
 
 			// set the various options
@@ -189,50 +188,45 @@
 
 			// create the new sb
 			$sb = $("<div class='sb " + o.css + " " + $orig.attr("class") + "' id='sb" + randInt() + "' role=listbox></div>")
+				.attr("aria-labelledby", $label.attr("id") || "")
 				.attr("aria-haspopup", true)
-				.attr("aria-labelledby", $label.attr("id") || "");
-			$(body).append($sb);
+				.appendTo(body);
 
 			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + randInt() + "'></div>")
 				// generate the display markup
-				.append(
-					$("<div class='text'></div>")
-						.append($orig.children().size() > 0 ? optionFormat($orig.find("option:selected")[0]) : "&nbsp;")
-				)
-				.append(o.arrow);
-			$sb.append($display);
+				.append($("<div class='text'></div>").append(optionFormat($orig.find("option:selected")) || "&nbsp;"))
+				.append(o.arrow)
+				.appendTo($sb);
 
 			// generate the dropdown markup
 			$dd = $("<ul class='" + o.css + " items " + $orig.attr("class") + "' id='sbdd" + randInt() + "' role=menu></ul>")
 				.attr("aria-hidden", true);
 			$sb.append($dd)
 				.attr("aria-owns", $dd.attr("id"));
-			if ($orig.children().size() === 0)
+			if ($orig.children().length === 0)
 				$dd.append(createOption().addClass("selected"));
 			else
-			{
-				$orig.children().each(function (i)
+				$orig.children().each(function ()
 				{
-					var $og = $(this), $ogItem, $ogList;
+					var $og = $(this), $ogList;
 					if ($og.is("optgroup"))
 					{
-						$ogItem = $("<li class='optgroup'><span class='label'>" + $og.attr("label") + "</span></li>")
-							.addClass($og.is(":disabled") ? "disabled" : "")
-							.attr("aria-disabled", !!$og.is(":disabled"));
 						$ogList = $("<ul class='items'></ul>");
-						$ogItem.append($ogList);
-						$dd.append($ogItem);
 						$og.children("option").each(function ()
 						{
-							$ogList.append(createOption(this)
+							$ogList.append(createOption($og)
 								.addClass($og.is(":disabled") ? "disabled" : "")
 								.attr("aria-disabled", !!$og.is(":disabled")));
 						});
+						$("<li class='optgroup'><span class='label'>" + $og.attr("label") + "</span></li>")
+							.addClass($og.is(":disabled") ? "disabled" : "")
+							.attr("aria-disabled", !!$og.is(":disabled"))
+							.append($ogList)
+							.appendTo($dd);
 					}
 					else
-						$dd.append(createOption(this));
+						$dd.append(createOption($og));
 				});
-			}
 
 			// cache all sb items
 			$items = $dd.find("li").not(".optgroup");
@@ -253,7 +247,8 @@
 
 			// these two lines fix a div/span display bug on load in ie7
 			positionSB();
-			flickerDisplay();
+			if (is_ie7)
+				$("." + o.css + " .display").hide().show();
 
 			// hide the dropdown now that it's initialized
 			$dd.hide();
@@ -311,7 +306,7 @@
 		// create new markup from an <option>
 		createOption = function ($option)
 		{
-			$option = $($option ? $option : "<option value=''>&nbsp;</option>");
+			$option = $option || $("<option>&nbsp;</option>");
 
 			return $("<li id='sbo" + randInt() + "' role=option></li>")
 				.data("orig", $option[0])
@@ -321,7 +316,7 @@
 				.attr("aria-disabled", !!$option.is(":disabled"))
 				.append($("<div class='item'></div>")
 					.append($("<div class='text'></div>")
-					.html(optionFormat($option[0])))
+					.html(optionFormat($option)))
 				);
 		},
 
@@ -389,16 +384,16 @@
 			$(".sb.open." + o.css).tah("close");
 		},
 
-		// trigger all sbs to blur
-		blurAllButMe = function ()
-		{
-			$(".sb.focused." + o.css).not($sb[0]).find(".display").blur();
-		},
-
 		// to prevent multiple selects open at once
 		closeAllButMe = function ()
 		{
 			$(".sb.open." + o.css).not($sb[0]).tah("close");
+		},
+
+		// trigger all sbs to blur
+		blurAllButMe = function ()
+		{
+			$(".sb.focused." + o.css).not($sb[0]).find(".display").blur();
 		},
 
 		// hide and reset dropdown markup
@@ -411,15 +406,10 @@
 				unbind();
 				$dd.attr("aria-hidden", true);
 				if (instantClose)
-				{
-					$dd.hide();
-					$sb.removeClass("open");
-					$sb.append($dd);
-				}
+					$sb.removeClass("open").append($dd.hide());
 				else
 					$dd.fadeOut(o.anim, function () {
-						$sb.removeClass("open");
-						$sb.append($dd);
+						$sb.removeClass("open").append($dd);
 					});
 			}
 		},
@@ -440,12 +430,6 @@
 		centerOnSelected = function ()
 		{
 			$dd.scrollTop($dd.scrollTop() + getSelected().offsetFrom($dd).y - $dd.height() / 2 + getSelected().outerHeight(true) / 2);
-		},
-
-		flickerDisplay = function ()
-		{
-			if (is_ie7)
-				$("." + o.css + " .display").hide().show(); // fix ie7 display bug
 		},
 
 		// show, reposition, and reset dropdown markup
@@ -525,7 +509,7 @@
 		},
 
 		// when the user explicitly clicks the display
-		clickSB = function (e)
+		clickSB = function ()
 		{
 			$sb.is(".open") ? closeSB() : openSB();
 			return false;
@@ -550,7 +534,7 @@
 			// update the title attr and the display markup
 			$display.find(".text")
 				.attr("title", $item.find(".text").html())
-				.html(optionFormat($item.data("orig")));
+				.html(optionFormat($($item.data("orig"))));
 
 			// trigger change on the old <select> if necessary
 			if (oldVal !== newVal)
@@ -558,7 +542,7 @@
 		},
 
 		// when the user explicitly clicks an item
-		clickSBItem = function (e)
+		clickSBItem = function ()
 		{
 			closeAndUnbind();
 			$orig.focus();
@@ -576,10 +560,10 @@
 		findMatchingItem = function (term)
 		{
 			var i, t, $tNode, $available = getEnabled();
-			for (i = 0; i < $available.size(); i++)
+			for (i = 0; i < $available.length; i++)
 			{
 				$tNode = $available.eq(i).find(".text");
-				t = $tNode.children().size() == 0 ? $tNode.text() : $tNode.find("*").text();
+				t = $tNode.children().length == 0 ? $tNode.text() : $tNode.find("*").text();
 				if (term.length > 0 && t.toLowerCase().match("^" + term.toLowerCase()))
 					return $available.eq(i);
 			}
@@ -609,7 +593,7 @@
 		selectNextItemStartsWith = function (c)
 		{
 			var i, t, $selected = getSelected(), $available = getEnabled();
-			for (i = $available.index($selected) + 1; i < $available.size(); i++)
+			for (i = $available.index($selected) + 1; i < $available.length; i++)
 			{
 				t = $available.eq(i).find(".text").text();
 				if (t !== "" && t[0].toLowerCase() === c.toLowerCase())
@@ -636,7 +620,7 @@
 					break;
 
 				case 35: // end
-					if ($selected.size() > 0)
+					if ($selected.length > 0)
 					{
 						e.preventDefault();
 						selectItem.call($enabled.filter(":last")[0]);
@@ -645,7 +629,7 @@
 					break;
 
 				case 36: // home
-					if ($selected.size() > 0)
+					if ($selected.length > 0)
 					{
 						e.preventDefault();
 						selectItem.call($enabled.filter(":first")[0]);
@@ -654,7 +638,7 @@
 					break;
 
 				case 38: // up
-					if ($selected.size() > 0)
+					if ($selected.length > 0)
 					{
 						if ($enabled.filter(":first")[0] !== $selected[0])
 						{
@@ -666,7 +650,7 @@
 					break;
 
 				case 40: // down
-					if ($selected.size() > 0)
+					if ($selected.length > 0)
 					{
 						if ($enabled.filter(":last")[0] !== $selected[0])
 						{
@@ -675,7 +659,7 @@
 							centerOnSelected();
 						}
 					}
-					else if ($items.size() > 1)
+					else if ($items.length > 1)
 					{
 						e.preventDefault();
 						selectItem.call($items.eq(0)[0]);
