@@ -131,7 +131,7 @@ function aeva_admin_init()
 		),
 	);
 
-	wetem:outer('aeva_admin');
+	wetem::outer('aeva_admin');
 
 	$context['page_title'] = $txt['media_title'] . ' - ' . $txt['media_admin_labels_' . $_REQUEST['area']];
 

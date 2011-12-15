@@ -150,16 +150,12 @@ a, #linktree a
 		color: #000
 	h4:hover, h4.hove
 		background-color: rgba(0,0,0, .075)
-		background-position: 98% 3px
-		li.chosen &
-			background-position: 98% -27px
+		background-position: 98% 4px
 		a
 			color: #000
 	li.chosen h4
-		padding-bottom: 3px
-		margin-bottom: 2px
-		border-radius: 6px
 		background-color: #fd9604
+		background-position: 98% -26px
 		a
 			color: #fff
 
@@ -238,9 +234,9 @@ a, #linktree a
 .title
 	color: #222
 	a
-		color: #777
+		color: #777 !important
 		:hover
-			color: #53616f
+			color: #53616f !important
 			text-decoration: none
 
 /* A few more header styles...

@@ -139,9 +139,7 @@ dl#feed
 		color: #000
 	h4:hover, h4.hove
 		background-color: rgba(0,0,0, .075)
-		background-position: 98% 2px
-		li.chosen &
-			background-position: 98% -27px
+		background-position: 98% 4px
 		a
 			color: #000
 	li.chosen h4

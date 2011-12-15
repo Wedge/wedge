@@ -13,6 +13,11 @@
 
 	li ul
 		margin-top: 0
+	li.subsection a extends .arrows
+		background-position: 98% -46px
+		padding: 6px 24px 6px 8px
+	li.subsection li a
+		background: none
 	strong
 		float: none
 		padding-top, padding-bottom: 0
@@ -364,3 +369,6 @@ ul.usermenuitem, ul.acmenuitem
 		width: 120px
 		a
 			text-align: right
+
+// IE6 doesn't deserve a hack.
+.windowbg unextends .grad700

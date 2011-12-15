@@ -605,10 +605,12 @@ class wecss_nesting extends wecss
 				}
 			}
 
-			// A quick hack to avoid extending selectors with a direct child selector if we're in IE6 - it would cancel ALL extends in the batch.
-			// @todo: figure out an alternative solution redirecting these selectors to jQuery ($('something > something').addClass('.ie6_emulate_xxx'))
-			if (strpos($node['selector'], 'extends') !== false && (!$browser['is_ie6'] || strpos($node['selector'], '>') === false))
+			if (strpos($node['selector'], 'extends') !== false)
 			{
+				// A quick hack to turn direct selectors into normal selectors when in IE6. This is because it ignores direct selectors, as well as
+				// any selectors declared alongside them. If you still want these selectors to inherit something, do it manually in *.ie6.css!
+				if ($browser['is_ie6'] && strpos($node['selector'], '>') !== false)
+					$node['selector'] = ' ';
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
 				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)

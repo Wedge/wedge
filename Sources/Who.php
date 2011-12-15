@@ -349,11 +349,11 @@ function determineActions($urls, $preferred_prefix = false)
 			}
 			// It's the board index!! It must be!
 			else
-				$data[$k] = $txt['who_index'];
+				$data[$k] = str_replace('{forum_name}', $context['forum_name'], $txt['who_index']);
 		}
 		// Probably an error or some goon?
 		elseif ($actions['action'] == '')
-			$data[$k] = $txt['who_index'];
+			$data[$k] = str_replace('{forum_name}', $context['forum_name'], $txt['who_index']);
 		// Some other normal action...?
 		else
 		{
