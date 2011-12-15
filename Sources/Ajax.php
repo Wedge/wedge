@@ -116,7 +116,10 @@ function Thought()
 		die();
 
 	if (!empty($text))
+	{
+		loadSource('Class-Editor');
 		wedit::preparsecode($text);
+	}
 	wetem::load('thought');
 
 	// Original thought ID (in case of an edit.)
