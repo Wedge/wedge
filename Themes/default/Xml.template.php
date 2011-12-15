@@ -266,7 +266,7 @@ function template_jump_to()
 	foreach ($context['jump_to'] as $category)
 	{
 		echo '
-	<item type="category" id="', $category['id'], '" url="', $beginning, 'category=', $category['id'], '"><![CDATA[', cleanXml($category['name']), ']]></item>';
+	<item type="cat"><![CDATA[', cleanXml($category['name']), ']]></item>';
 		foreach ($category['boards'] as $board)
 			echo '
 	<item type="board" level="', $board['child_level'], '" id="', $board['id'], '" url="', $beginning, 'board=', $board['id'], '.0"><![CDATA[', cleanXml($board['name']), ']]></item>';

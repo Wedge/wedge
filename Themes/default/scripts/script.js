@@ -27,7 +27,7 @@ var
 	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down,
 
 	// Globals used in script.js
-	menu_baseId = hoverable = 0, menu_delay = [], hove = 'hove', aJumpTo = [], oThought;
+	menu_baseId = 0, menu_delay = [], hove = 'hove', aJumpTo = [], oThought;
 
 // Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback, undefined)
@@ -431,9 +431,7 @@ function weSaveEntities(sFormName, aElementNames, sMask)
 
 function initMenu(menu)
 {
-	menu = $('#' + menu).show().css('visibility', 'visible');
-	menu[0].style.opacity = 1;
-	$('h4:not(:has(a))', menu).wrapInner('<a href="#" onclick="hoverable = 1; menu_show_me.call(this.parentNode.parentNode); hoverable = 0; return false;"></a>');
+	menu = $('#' + menu).show();
 	$('h4+ul', menu).prepend('<li class="menu-top"></li>');
 
 	var k = menu_baseId;
@@ -444,7 +442,7 @@ function initMenu(menu)
 			.mousedown(false)
 			.click(function () {
 				$('.' + hove).removeClass(hove);
-				$('ul', menu).css({ visibility: 'hidden', opacity: is_ie8down ? 1 : 0});
+				$('ul', menu).css({ visibility: 'hidden', opacity: +is_ie8down });
 			});
 	});
 	menu_baseId = k;
@@ -459,9 +457,6 @@ function menu_show_me()
 	var
 		hasul = $('ul', this)[0], style = hasul ? hasul.style : {}, is_visible = style.visibility == 'visible',
 		id = this.id, parent = this.parentNode, is_top = parent.className == 'menu', d = document.dir, w = parent.clientWidth;
-
-	if (hoverable && is_visible)
-		return menu_hide_children(id);
 
 	if (hasul)
 	{
@@ -501,7 +496,7 @@ function menu_hide_me(e)
 // Hide all children menus.
 function menu_hide_children(id)
 {
-	$('#' + id).children().andSelf().removeClass(hove).find('ul').css({ visibility: 'hidden', opacity: is_ie8down ? 1 : 0});
+	$('#' + id).children().andSelf().removeClass(hove).find('ul').css({ visibility: 'hidden', opacity: +is_ie8down });
 }
 
 
@@ -554,7 +549,7 @@ function weToggle(oOptions)
 
 	// If the init state is set to be collapsed, collapse it.
 	if (this.opt.bCurrentlyCollapsed)
-		this._changeState(true, true, true);
+		this.cs(true, true, true);
 
 	// Initialize the images to be clickable.
 	var i, n, toggle_me = function () {
@@ -573,8 +568,8 @@ function weToggle(oOptions)
 			$('#' + this.opt.aSwapLinks[i].sId).show().data('that', this).click(toggle_me);
 };
 
-// Collapse or expand the section.
-weToggle.prototype._changeState = function (bCollapse, bInit, bNow)
+// Change State - collapse or expand the section.
+weToggle.prototype.cs = function (bCollapse, bInit, bNow)
 {
 	// Default bInit to false.
 	bInit = !!bInit;
@@ -622,76 +617,64 @@ weToggle.prototype._changeState = function (bCollapse, bInit, bNow)
 // Reverse the current state.
 weToggle.prototype.toggle = function ()
 {
-	this._changeState(!this._collapsed);
+	this.cs(!this._collapsed);
 };
 
 
-// This function will retrieve the contents needed for the JumpTo boxes.
-function grabJumpToContent()
-{
-	var aBoardsAndCategories = [], i, n;
-
-	show_ajax();
-
-	$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
-		aBoardsAndCategories.push({
-			id: parseInt(this.getAttribute('id'), 10),
-			isCategory: this.getAttribute('type') == 'category',
-			name: $(this).text().removeEntities(),
-			url: this.getAttribute('url'),
-			level: parseInt(this.getAttribute('level'), 10)
-		});
-	});
-
-	hide_ajax();
-
-	for (i = 0, n = aJumpTo.length; i < n; i++)
-		aJumpTo[i]._fillSelect(aBoardsAndCategories);
-}
 
 // *** JumpTo class.
 function JumpTo(opt)
 {
 	this.opt = opt;
-	var sContainer = opt.sContainerId;
+	var sContainer = opt.sContainerId, aBoardsAndCategories = [], i, n;
 
 	$('#' + sContainer).find('label')
 		.append('<select id="' + sContainer + '_select"><option>=> ' + opt.sPlaceholder + '</option></select>')
-		.find('select').focus(grabJumpToContent);
+		.find('select').sb().focus(function ()
+		{
+			show_ajax();
+
+			$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
+				aBoardsAndCategories.push({
+					id: parseInt(this.getAttribute('id'), 10),
+					cat: this.getAttribute('type') == 'cat',
+					name: $(this).text().removeEntities(),
+					url: this.getAttribute('url'),
+					level: parseInt(this.getAttribute('level'), 10)
+				});
+			});
+
+			hide_ajax();
+
+			// Fill the jump to box with entries. Method of the JumpTo class.
+			for (i = 0, n = aJumpTo.length; i < n; i++)
+			{
+				var
+					that = aJumpTo[i], sList = '', k, p, $val,
+					$dropdownList = $('#' + that.opt.sContainerId + '_select').unbind('focus');
+
+				// Loop through all items to be added.
+				for (k = 0, p = aBoardsAndCategories.length; k < p; k++)
+				{
+					// Just for the record, we don't NEED to close the optgroup at the end
+					// of the list, even if it doesn't feel right. Saves us a few bytes...
+					if (aBoardsAndCategories[k].cat)
+						sList += '<optgroup label="' + aBoardsAndCategories[k].name + '">';
+					else
+						// Show the board option, with special treatment for the current one.
+						sList += '<option value="' + aBoardsAndCategories[k].url + '"' + (aBoardsAndCategories[k].id == that.opt.iBoardId ? ' style="background: #d0f5d5">=> ' + aBoardsAndCategories[k].name + ' &lt;='
+								: '>' + new Array(aBoardsAndCategories[k].level + 1).join('==') + '=> ' + aBoardsAndCategories[k].name) + '</option>';
+				}
+
+				// Add the remaining items after the currently selected item.
+				$dropdownList.append(sList).change(function () {
+					if (this.selectedIndex > 0 && ($val = $(this).val()))
+						window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
+				}).sb('refresh');
+			}
+		});
 };
 
-// Fill the jump to box with entries. Method of the JumpTo class.
-JumpTo.prototype._fillSelect = function (aBoardsAndCategories)
-{
-	var
-		sList = '', i, n, sChildLevelPrefix, isCategory, $val,
-		oDashOption = '<option disabled>------------------------------</option>',
-		$dropdownList = $('#' + this.opt.sContainerId + '_select').unbind('focus');
-
-	// Loop through all items to be added.
-	for (i = 0, n = aBoardsAndCategories.length; i < n; i++)
-	{
-		isCategory = aBoardsAndCategories[i].isCategory;
-
-		if (isCategory)
-			sList += oDashOption;
-		else
-			sChildLevelPrefix = new Array(aBoardsAndCategories[i].level + 1).join('==');
-
-		// Show the board/category option, with special treatment for the current one.
-		sList += '<option value="' + aBoardsAndCategories[i].url + '"' + (!isCategory && aBoardsAndCategories[i].id == this.opt.iBoardId ? ' style="background: #d0f5d5">=> '
-				+ aBoardsAndCategories[i].name + ' &lt;=' : '>' + (isCategory ? '' : sChildLevelPrefix + '=> ') + aBoardsAndCategories[i].name) + '</option>';
-
-		if (isCategory)
-			sList += oDashOption;
-	}
-
-	// Add the remaining items after the currently selected item.
-	$dropdownList.append(sList).change(function () {
-		if (this.selectedIndex > 0 && ($val = $(this).val()))
-			window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
-	});
-};
 
 
 // *** Thought class.
@@ -742,7 +725,7 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
 		</form>');
 	$('#ntho').focus().val(cur_text);
-	$('#npriv').sb({ anim: 100, maxWidth: 85 });
+	$('#npriv').sb({ maxWidth: 85 });
 };
 
 Thought.prototype.getText = function (id)
@@ -856,11 +839,7 @@ _formSubmitted = _f
 menu_hide_children = _h
 menu_hide_me = _hm
 menu_ieshim = _ie
-hoverable = _ho
 _collapsed = _o
 menu_show_me = _sm
 menu_show_shim = _sh
-_fillSelect = _fs
-_changeState = _cs
-grabJumpToContent = gjtc
 */

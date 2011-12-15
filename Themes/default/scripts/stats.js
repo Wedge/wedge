@@ -136,7 +136,7 @@ weStatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 	var oMon = this.oYears[oToggle.opt.sYearId].oMonths, m = oMon.length, i;
 	for (i = 0; i < m; i++)
 		if (oMon[i].oToggle.opt.aSwappableContainers.length > 0)
-			oMon[i].oToggle.changeState(true);
+			oMon[i].oToggle.cs(true);
 };
 
 weStatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
