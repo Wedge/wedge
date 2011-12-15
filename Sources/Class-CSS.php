@@ -321,8 +321,14 @@ class wecss_color extends wecss
 
 		// IE 6, 7 and 8 will need a filter to apply the transparency effect, except for IE9. Also, IE8 can do without hasLayout.
 		if ($browser['is_ie8down'] || ($browser['is_ie9'] && $bg1 != $bg2))
+		{
+			if (preg_match('~^#[0-9a-f]{3}$~i', $bg1))
+				$bg1 = '#' . $bg1[1] . $bg1[1] . $bg1[2] . $bg1[2] . $bg1[3] . $bg1[3];
+			if (preg_match('~^#[0-9a-f]{3}$~i', $bg2))
+				$bg2 = '#' . $bg2[1] . $bg2[1] . $bg2[2] . $bg2[2] . $bg2[3] . $bg2[3];
 			return $input[1] . 'background: none' . $input[1] . ($browser['is_ie6'] || $browser['is_ie7'] ? 'zoom: 1' . $input[1] : '') .
 				'filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')';
+		}
 
 		// Better than nothing...
 		if ($no_gradients)

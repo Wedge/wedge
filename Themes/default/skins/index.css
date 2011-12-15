@@ -312,7 +312,7 @@ em
 	background-repeat: no-repeat
 
 .wedgesymbol
-	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
+	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
 
 // "With rounded corners" class, for modern browsers...
 .wrc, .wrc_top, .wrc_bottom
@@ -1385,7 +1385,7 @@ dl#feed
 			li > .item
 				padding-left: 1em
 		> .label
-			gradient: #ffffff, darken(#ffffff, 5%)
+			gradient: #fff, darken(#fff, 5%)
 			color: #666
 			cursor: default
 			font-weight: bold

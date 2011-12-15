@@ -49,10 +49,10 @@ em
 		color: #444
 
 @remove
-	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
+	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
 
 .wedgesymbol
-	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
+	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
 
 #header
 	h2, p
