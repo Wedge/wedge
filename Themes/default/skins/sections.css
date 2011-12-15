@@ -107,7 +107,8 @@ img.new_posts
 	padding: 4px
 
 #message_index_jump_to
-	margin-top: 8px
+	margin-top: 0
+	float: right
 
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */

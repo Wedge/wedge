@@ -1303,23 +1303,22 @@ dl#feed
 
 .selectbox .display .btn
 	background: #dbdbdb url($images/select_arrow_bg.gif) repeat-x left center
+	position: absolute
 	border: 1px solid #707070
-	display: block
 	width: 1.08em
 	height: 1.15em
 	line-height: .92em
 	padding: 1px
-	position: absolute
 	right, top: 0
 	text-align: center
 
-.selectbox .display .btn div extends .inline-block
-	background: transparent url($images/select_arrow.gif) no-repeat center center
-	width: 7px
-	height: 4px
-	left: .33em
-	top: .5em
-	position: absolute
+	div extends .inline-block
+		background: transparent url($images/select_arrow.gif) no-repeat center center
+		position: absolute
+		width: 7px
+		height: 4px
+		left: .33em
+		top: .5em
 
 .selectbox .display.active .btn
 	box-shadow: inset 0 0 1px 1px #9eb0ba
@@ -1343,8 +1342,7 @@ dl#feed
 	overflow-x: hidden
 	overflow-y: auto
 	z-index: 99999
-	box-shadow: 0 3px 5px rgba(0,0,0,.5)
-	// .selectbox.items.above
+	box-shadow: 0 2px 5px rgba(0,0,0,.3)
 
 	li
 		display: block
@@ -1366,8 +1364,6 @@ dl#feed
 
 	li.selected > .item
 		font-weight: bold
-		// border-bottom: 1px dotted #999
-		// border-top: 1px dotted #999
 		background-color: #f5eeee
 
 	li.disabled > .item
@@ -1389,9 +1385,15 @@ dl#feed
 			li > .item
 				padding-left: 1em
 		> .label
+			gradient: #ffffff, darken(#ffffff, 5%)
+			color: #666
 			cursor: default
 			font-weight: bold
+			padding: 7px
 			line-height: 1em
+
+//	.selectbox.items.above
+//		box-shadow: 0 -2px 5px rgba(0,0,0,.3)
 
 /* the rest is to add rounding corners */
 .selectbox .display

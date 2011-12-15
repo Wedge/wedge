@@ -135,7 +135,7 @@
 		// formatting for the display
 		optionFormat = function ($dom)
 		{
-			return $dom.attr("label") || $dom.text() || "";
+			return $dom.text() || "";
 		},
 
 	SelectBox = function ()
@@ -209,11 +209,11 @@
 						$ogList = $("<ul class='items'></ul>");
 						$og.children("option").each(function ()
 						{
-							$ogList.append(createOption($og)
+							$ogList.append(createOption($(this))
 								.addClass($og.is(":disabled") ? "disabled" : "")
 								.attr("aria-disabled", !!$og.is(":disabled")));
 						});
-						$("<li class='optgroup'><span class='label'>" + $og.attr("label") + "</span></li>")
+						$("<li class='optgroup'><div class='label'>" + $og.attr("label") + "</div></li>")
 							.addClass($og.is(":disabled") ? "disabled" : "")
 							.attr("aria-disabled", !!$og.is(":disabled"))
 							.append($ogList)
@@ -312,6 +312,7 @@
 			return $("<li id='sbo" + randInt() + "' role=option></li>")
 				.data("orig", $option[0])
 				.data("value", $option.attr("value") || "")
+				.attr("style", $option.attr("style") || "")
 				.addClass($option.is(":selected") ? "selected" : "")
 				.addClass($option.is(":disabled") ? "disabled" : "")
 				.attr("aria-disabled", !!$option.is(":disabled"))

@@ -15,7 +15,7 @@ ul.quickbuttons
 		background-image: url($images/im_on.gif)
 		background-position: 0 0
 
-// These may be, but it's unlikely, and they won't bother if the icons don't show up anyway.
+// These may be seen by guests, but it's unlikely, and they won't bother if the icons don't show up anyway.
 ul.buttonlist
 	a.lock, a.sticky, a.add_poll
 		padding-left: 22px
