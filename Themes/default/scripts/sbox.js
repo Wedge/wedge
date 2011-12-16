@@ -408,8 +408,8 @@
 		// position dropdown based on collision detection
 		positionSB = function ()
 		{
-			var offs = $display.offsetFrom($ddCtx),
-				$ddCtx = $(o.ctx),
+			var $ddCtx = $(o.ctx),
+				offs = $display.offsetFrom($ddCtx),
 				ddMaxHeight = 0,
 				dir = 0, // 0 for drop-down, 1 for drop-up
 				ddY, bottomSpace, topSpace;
@@ -417,6 +417,11 @@
 			// modify dropdown css for getting values
 			$dd
 				.show()
+				.css({ // doesn't seem to be useful on my tests... Maybe a browser hack?
+					maxHeight: "none",
+					position: "relative",
+					visibility: "hidden"
+				})
 				.removeClass("above");
 			if (!o.fixed)
 				$dd.width($display.outerWidth() - $dd.extraWidth() + 1);
@@ -443,7 +448,9 @@
 			$dd.hide().css({
 				left: offs.x + ($ddCtx.is(body) ? parseInt($(body).css("marginLeft")) || 0 : 0),
 				top: offs.y + ddY + ($ddCtx.is(body) ? parseInt($(body).css("marginTop")) || 0 : 0),
-				maxHeight: ddMaxHeight
+				maxHeight: ddMaxHeight,
+				position: "absolute",
+				visibility: "visible"
 			}).addClass(dir ? "" : "above");
 
 			return dir;
