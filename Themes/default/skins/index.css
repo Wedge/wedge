@@ -1392,8 +1392,8 @@ dl#feed
 			padding: 7px
 			line-height: 1em
 
-//	.selectbox.items.above
-//		box-shadow: 0 -2px 5px rgba(0,0,0,.3)
+	.selectbox.items.above
+		box-shadow: 0 -2px 5px rgba(0,0,0,.3)
 
 /* the rest is to add rounding corners */
 .selectbox .display
