@@ -2533,24 +2533,24 @@ function template_profile_avatar_select()
 					</dt>
 					<dd>';
 
-	// If users are allowed to choose avatars stored on the server show selection boxes to choice them from.
+	// If users are allowed to choose avatars stored on the server show selection boxes to choose them from.
 	if (!empty($context['member']['avatar']['allow_server_stored']))
 	{
 		echo '
 						<div id="avatar_server_stored">
 							<div>
 								<select name="cat" id="cat" size="6" onchange="changeSel(\'\');" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');">';
+
 		// This lists all the file categories.
 		foreach ($context['avatars'] as $avatar)
 			echo '
 									<option value="', $avatar['filename'] . ($avatar['is_dir'] ? '/' : ''), '"', ($avatar['checked'] ? ' selected' : ''), '>', $avatar['name'], '</option>';
 
-		// !!! Hmm... Should we put all of this code to the end?
 		echo '
 								</select>
 							</div>
 							<div>
-								<select name="file" id="file" class="hide" onchange="showAvatar()" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
+								<select name="file" id="file" size="6" class="hide" onchange="showAvatar();" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
 							</div>
 							<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '"></div>
 						</div>';

@@ -68,48 +68,28 @@
 		};
 	};
 
-	// Returns the widest element's width from a list of elements.
-	// Here's an elegant alternative way of doing it, but compression is worse:
-	// return Math.max.apply(0, this.map(function () { return $(this).width(); }).get());
-	$.fn.maxWidth = function ()
-	{
-		var max = 0;
-		this.each(function () { max = Math.max(max, $(this).width()); });
-		return max;
-	};
-
 	// This plugin is not compatible with IE6 and below;
 	// a normal <select> will be displayed for old browsers
-	$.fn.sb = function ()
+	$.fn.sb = function (arg)
 	{
-		var arg = arguments[0] || 0;
-
-		this.each(function ()
+		// chain methods!
+		return this.each(function ()
 		{
 			var $e = $(this), obj = $e.data("sb");
 
 			// if it is already created, then check if we're trying to execute a function.
 			if (obj)
-			{
-				if ($.isFunction(obj[arg]))
-					// call the method defined in the castle of...
-					obj[arg]();
-			}
+				// call the method defined in the castle of...
+				arg && $.isFunction(obj[arg]) && obj[arg]();
 			// if the object is not defined for this element, then construct.
 			else if (!is_ie6)
 			{
-				// create the new object and restore init if necessary
-				obj = new SelectBox();
+				// create the new object and associate it with the element
+				$e.data("sb", obj = new SelectBox());
 
 				obj.init($e, obj, arg);
-
-				// associate it with the element
-				$e.data("sb", obj);
 			}
 		});
-
-		// chain methods!
-		return $(this);
 	};
 
 	var
@@ -144,8 +124,8 @@
 			self = this_object;
 			$orig = $original_select;
 
-			// don't create duplicate SBs
-			if ($orig.hasClass("has_sb"))
+			// don't create duplicate SBs or SBs for non-dropdown boxes
+			if ($orig.hasClass("has_sb") || $orig.attr("size"))
 				return;
 
 			var $label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
@@ -217,7 +197,11 @@
 
 			// modify width based on fixed/maxWidth options
 			if (!o.fixed)
-				$sb.width(Math.min(o.maxWidth || 9e9, $dd.find(".text, .optgroup").maxWidth() + $display.extraWidth() + 1));
+				$sb.width(Math.min(
+					o.maxWidth || 9e9,
+					// The 'apply' call below will return the widest width from a list of elements.
+					Math.max.apply(0, $dd.find(".text, .optgroup").map(function () { return $(this).width(); }).get()) + $display.extraWidth() + 1
+				));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
 
@@ -464,10 +448,8 @@
 		},
 
 		// when the user selects an item in any manner
-		selectItem = function ()
+		selectItem = function ($item)
 		{
-			var $item = $(this);
-
 			// update the original <select>
 			$orig.find("option").each(function () { this.selected = false; });
 			$item.data("orig").each(function () { this.selected = true; });
@@ -492,7 +474,7 @@
 		{
 			closeAndUnbind();
 			$orig.focus();
-			selectItem.call(this);
+			selectItem($(this));
 			return false;
 		},
 
@@ -508,7 +490,7 @@
 				t = $tNode.children().length == 0 ? $tNode.text() : $tNode.find("*").text();
 				if (term.length && t.toLowerCase().match("^" + term.toLowerCase()))
 				{
-					selectItem.call($available.eq(i)[0]);
+					selectItem($available.eq(i));
 					return true;
 				}
 			}
@@ -525,7 +507,7 @@
 				t = $available.eq(i).find(".text").text();
 				if (t !== "" && t[0].toLowerCase() === c.toLowerCase())
 				{
-					selectItem.call($available.eq(i)[0]);
+					selectItem($available.eq(i));
 					return true;
 				}
 			}
@@ -551,7 +533,7 @@
 					if ($selected.length)
 					{
 						e.preventDefault();
-						selectItem.call($enabled.filter(":last")[0]);
+						selectItem($enabled.filter(":last"));
 						centerOnSelected();
 					}
 					break;
@@ -560,7 +542,7 @@
 					if ($selected.length)
 					{
 						e.preventDefault();
-						selectItem.call($enabled.filter(":first")[0]);
+						selectItem($enabled.filter(":first"));
 						centerOnSelected();
 					}
 					break;
@@ -571,7 +553,7 @@
 						if ($enabled.filter(":first")[0] !== $selected[0])
 						{
 							e.preventDefault();
-							selectItem.call($enabled.eq($enabled.index($selected)-1)[0]);
+							selectItem($enabled.eq($enabled.index($selected) - 1));
 						}
 						centerOnSelected();
 					}
@@ -583,14 +565,14 @@
 						if ($enabled.filter(":last")[0] !== $selected[0])
 						{
 							e.preventDefault();
-							selectItem.call($enabled.eq($enabled.index($selected)+1)[0]);
+							selectItem($enabled.eq($enabled.index($selected) + 1));
 							centerOnSelected();
 						}
 					}
 					else if ($items.length > 1)
 					{
 						e.preventDefault();
-						selectItem.call($items.eq(0)[0]);
+						selectItem($items.eq(0));
 					}
 			}
 		},
@@ -696,3 +678,5 @@
 	};
 
 }(jQuery, window));
+
+$('select').sb();
