@@ -1314,7 +1314,7 @@ final class wetem
 			unset(self::$layers[$layer][$target]);
 		// Otherwise it's a layer, make sure it's removable.
 		elseif (isset(self::$layers[$layer]))
-			self::remove_layer($block);
+			self::remove_layer($target);
 	}
 
 	/**

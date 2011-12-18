@@ -77,26 +77,22 @@
 		{
 			var $e = $(this), obj = $e.data("sb");
 
-			// if it is already created, then check if we're trying to execute a function.
+			// if it is already created, then execute any functions passed to it, if they exist.
 			if (obj)
 				// call the method defined in the castle of...
 				arg && $.isFunction(obj[arg]) && obj[arg]();
 			// if the object is not defined for this element, then construct.
-			else if (!is_ie6)
+			// note: IE6 will use a default select box, and non-dropdowns are ignored.
+			else if (!is_ie6 && !$e.attr("size"))
 			{
-				// create the new object and associate it with the element
-				$e.data("sb", obj = new SelectBox());
-
+				// create the new object, associate it with the element and initialize it.
+				$e.data("sb", obj = new SelectBox);
 				obj.init($e, obj, arg);
 			}
 		});
 	};
 
 	var
-		randInt = function () {
-			return Math.ceil(Math.random() * 9e9);
-		},
-
 		// formatting for the display
 		optionFormat = function ($dom)
 		{
@@ -105,32 +101,26 @@
 
 	SelectBox = function ()
 	{
-		var self,
+		var rand = parseInt(Math.random() * 9e9),
 			cstTimeout = null,
 			resizeTimeout = null,
 			searchTerm = "",
 			body = "body",
-			is_closing,
+			$label,
 			$display,
 			$orig,
 			$dd,
 			$sb,
 			$items,
+			closing,
+			self,
 			o,
 
 		loadSB = function ($original_select, this_object, opts)
 		{
-			// get the original <select> and <label>
+			// get the original <select>
 			self = this_object;
 			$orig = $original_select;
-
-			// don't create duplicate SBs or SBs for non-dropdown boxes
-			if ($orig.hasClass("has_sb") || $orig.attr("size"))
-				return;
-
-			var $label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
-			if ($label.length == 0)
-				$label = $orig.closest("label");
 
 			// set the various options
 			o = $.extend({
@@ -145,20 +135,24 @@
 				arrow: "<div class='btn'><div></div></div>"
 			}, opts);
 
+			$label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
+			if ($label.length == 0)
+				$label = $orig.closest("label");
+
 			// create the new sb
-			$sb = $("<div class='sb " + o.css + " " + $orig.attr("class") + "' id='sb" + randInt() + "' role=listbox></div>")
+			$sb = $("<div class='sb " + o.css + " " + $orig.attr("class") + "' id='sb" + rand + "' role=listbox></div>")
 				.attr("aria-labelledby", $label.attr("id") || "")
 				.attr("aria-haspopup", true)
 				.appendTo(body);
 
-			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + randInt() + "'></div>")
+			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + rand + "'></div>")
 				// generate the display markup
 				.append($("<div class='text'></div>").append(optionFormat($orig.find("option:selected")) || "&nbsp;"))
 				.append(o.arrow)
 				.appendTo($sb);
 
 			// generate the dropdown markup
-			$dd = $("<ul class='" + o.css + " items " + $orig.attr("class") + "' id='sbdd" + randInt() + "' role=menu></ul>")
+			$dd = $("<ul class='" + o.css + " items " + $orig.attr("class") + "' id='sbdd" + rand + "' role=menu></ul>")
 				.attr("aria-hidden", true);
 			$sb.append($dd)
 				.attr("aria-owns", $dd.attr("id"));
@@ -219,23 +213,16 @@
 			// bind events
 			if (!$orig.is(":disabled"))
 			{
-				$orig
-					// loses focus if original is blurred
-					.bind("blur.sb", function () {
-						if (!$sb.is(".open"))
-							$display.triggerHandler("blur");
-					})
-					// causes focus if original is focused
-					.bind("focus.sb", function () {
-						blurAllButMe();
-						$display.triggerHandler("focus");
-					});
+				// causes focus if original is focused
+				$orig.bind("focus.sb", function () {
+					blurAllButMe();
+					focusSB();
+				});
 				$display
-					.mouseup(addActiveState)
 					.mouseup(clickSB)
 					.focus(focusSB)
 					.blur(blurSB)
-					.mousedown(false)
+					.mousedown(false) // prevent double clicks
 					.click(false)
 					.hover(addHoverState, removeHoverState);
 				$items.not(".disabled")
@@ -254,10 +241,25 @@
 				$sb.addClass("disabled").attr("aria-disabled");
 				$display.click(false);
 			}
+			$sb.bind("close.sb", closeSB);
+		},
 
-			// bind custom events
-			$sb.bind("close.sb", closeSB).bind("destroy.sb", destroySB);
-			$orig.bind("reload.sb", reloadSB);
+		// create new markup from an <option>
+		createOption = function ($option)
+		{
+			$option = $option || $("<option>&nbsp;</option>");
+
+			return $("<li id='sbo" + rand + "' role=option></li>")
+				.data("orig", $option)
+				.data("value", $option.attr("value") || "")
+				.attr("style", $option.attr("style") || "")
+				.addClass($option.is(":selected") ? "selected" : "")
+				.addClass($option.is(":disabled") ? "disabled" : "")
+				.attr("aria-disabled", !!$option.is(":disabled"))
+				.append($("<div class='item'></div>")
+					.append($("<div class='text'></div>")
+					.html(optionFormat($option)))
+				);
 		},
 
 		delayPositionSB = function ()
@@ -270,24 +272,6 @@
 					openSB(1);
 				}
 			}, 50);
-		},
-
-		// create new markup from an <option>
-		createOption = function ($option)
-		{
-			$option = $option || $("<option>&nbsp;</option>");
-
-			return $("<li id='sbo" + randInt() + "' role=option></li>")
-				.data("orig", $option)
-				.data("value", $option.attr("value") || "")
-				.attr("style", $option.attr("style") || "")
-				.addClass($option.is(":selected") ? "selected" : "")
-				.addClass($option.is(":disabled") ? "disabled" : "")
-				.attr("aria-disabled", !!$option.is(":disabled"))
-				.append($("<div class='item'></div>")
-					.append($("<div class='text'></div>")
-					.html(optionFormat($option)))
-				);
 		},
 
 		// unbind and remove
@@ -303,35 +287,16 @@
 		// destroy then load, maintaining open/focused state if applicable
 		reloadSB = function ()
 		{
-			var isOpen = $sb.is(".open"), isFocused = $display.is(".focused");
 			closeSB(1);
 			destroySB(1);
 			loadSB($orig, self, o);
-			if (isOpen)
+			if ($sb.is(".open"))
 			{
 				$orig.focus();
 				openSB(1);
 			}
-			else if (isFocused)
+			else if ($display.is(".focused"))
 				$orig.focus();
-		},
-
-		// when the user clicks outside the sb
-		closeAndUnbind = function ()
-		{
-			$sb.removeClass("focused");
-			closeSB();
-			unbind();
-		},
-
-		unbind = function ()
-		{
-			$(document)
-				.unbind("click", closeAndUnbind)
-				.unbind("keypress", stopPageHotkeys)
-				.unbind("keydown", stopPageHotkeys)
-				.unbind("keydown", keydownSB)
-				.unbind("keyup", keyupSB);
 		},
 
 		// hide and reset dropdown markup
@@ -341,25 +306,32 @@
 			{
 				$display.blur();
 				$items.removeClass("hover");
-				unbind();
+				$(document).unbind(".sb");
 				$dd.attr("aria-hidden", true);
 				if (instantClose)
 					$sb.removeClass("open").append($dd.hide());
 				else
 				{
-					is_closing = true;
+					closing = true;
 					$dd.fadeOut(o.anim, function () {
 						$sb.removeClass("open").append($dd);
-						is_closing = false;
+						closing = false;
 					});
 				}
 			}
 		},
 
+		// when the user clicks outside the sb
+		closeAndUnbind = function ()
+		{
+			$sb.removeClass("focused");
+			closeSB();
+		},
+
 		// trigger all select boxes to blur
 		blurAllButMe = function ()
 		{
-			$(".sb.focused." + o.css).not($sb[0]).find(".display").blur();
+			$(".sb.focused." + o.css).not($sb).find(".display").blur();
 		},
 
 		// reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
@@ -443,6 +415,10 @@
 		// when the user explicitly clicks the display
 		clickSB = function ()
 		{
+			// add active class to the display
+			$display.addClass("active");
+			$(document).mouseup(removeActiveState);
+
 			$sb.is(".open") ? closeSB() : openSB();
 			return false;
 		},
@@ -515,72 +491,46 @@
 		},
 
 		// go up/down using arrows or attempt to autocomplete based on string
-		keydownSB = function (e)
+		keyPress = function (e)
 		{
 			if (e.altKey || e.ctrlKey)
 				return;
 
 			var $selected = $items.filter(".selected"), $enabled = $items.not(".disabled");
 
-			switch (e.which)
+			if (e.keyCode == 8 || e.keyCode == 32) // backspace or space
+				e.preventDefault();
+
+			else if (e.keyCode == 9) // tab
 			{
-				case 9: // tab
-					closeSB();
-					blurSB();
-					break;
-
-				case 35: // end
-					if ($selected.length)
-					{
-						e.preventDefault();
-						selectItem($enabled.filter(":last"));
-						centerOnSelected();
-					}
-					break;
-
-				case 36: // home
-					if ($selected.length)
-					{
-						e.preventDefault();
-						selectItem($enabled.filter(":first"));
-						centerOnSelected();
-					}
-					break;
-
-				case 38: // up
-					if ($selected.length)
-					{
-						if ($enabled.filter(":first")[0] !== $selected[0])
-						{
-							e.preventDefault();
-							selectItem($enabled.eq($enabled.index($selected) - 1));
-						}
-						centerOnSelected();
-					}
-					break;
-
-				case 40: // down
-					if ($selected.length)
-					{
-						if ($enabled.filter(":last")[0] !== $selected[0])
-						{
-							e.preventDefault();
-							selectItem($enabled.eq($enabled.index($selected) + 1));
-							centerOnSelected();
-						}
-					}
-					else if ($items.length > 1)
-					{
-						e.preventDefault();
-						selectItem($items.eq(0));
-					}
+				closeSB();
+				blurSB();
 			}
-		},
-
-		// the user is typing -- try to select an item based on what they press
-		keyupSB = function (e)
-		{
-			if (!e.altKey && !e.ctrlKey && !in_array(e.which, [38,40]))
+			else if (e.keyCode == 35) // end
+			{
+				selectItem($enabled.filter(":last"));
+				centerOnSelected();
+				e.preventDefault();
+			}
+			else if (e.keyCode == 36) // home
+			{
+				selectItem($enabled.filter(":first"));
+				centerOnSelected();
+				e.preventDefault();
+			}
+			else if (e.keyCode == 38) // up
+			{
+				selectItem($enabled.eq($enabled.index($selected) - 1));
+				centerOnSelected();
+				e.preventDefault();
+			}
+			else if (e.keyCode == 40) // down
+			{
+				selectItem($enabled.eq(($enabled.index($selected) + 1) % $enabled.length));
+				centerOnSelected();
+				e.preventDefault();
+			}
+			else
 			{
 				// add to the search term
 				searchTerm += String.fromCharCode(e.keyCode);
@@ -607,27 +557,17 @@
 			}
 		},
 
-		// stop up/down/backspace/space from moving the page
-		stopPageHotkeys = function (e)
-		{
-			if (!e.altKey && !e.ctrlKey && in_array(e.which, [8,32,38,40]))
-				e.preventDefault();
-		},
-
 		// when the sb is focused (by tab or click), allow hotkey selection and kill all other selectboxes
 		focusSB = function ()
 		{
 			// close all select boxes but this one, to prevent multiple selects open at once.
-			// triggerHandler calls the associated event without actually triggering the event itself.
-			$(".sb.open." + o.css).not($sb[0]).each(function () { $(this).triggerHandler("close"); });
+			$(".sb.open." + o.css).not($sb).trigger("close");
 
 			$sb.addClass("focused");
 			$(document)
-				.click(closeAndUnbind)
-				.keyup(keyupSB)
-				.keypress(stopPageHotkeys)
-				.keydown(stopPageHotkeys)
-				.keydown(keydownSB);
+				.unbind(".sb")
+				.bind("keypress.sb", keyPress)
+				.bind("click.sb", closeAndUnbind);
 		},
 
 		// when the sb is blurred (by tab or click), disable hotkey selection
@@ -635,17 +575,13 @@
 		{
 			$sb.removeClass("focused");
 			$display.removeClass("active");
-			$(document)
-				.unbind("keypress", stopPageHotkeys)
-				.unbind("keydown", stopPageHotkeys)
-				.unbind("keydown", keydownSB)
-				.unbind("keyup", keyupSB);
+			$(document).unbind("keypress.sb");
 		},
 
 		// add hover class to an element
 		addHoverState = function ()
 		{
-			if (!is_closing)
+			if (!closing)
 				$(this).addClass("hover");
 		},
 
@@ -653,13 +589,6 @@
 		removeHoverState = function ()
 		{
 			$(this).removeClass("hover");
-		},
-
-		// add active class to the display
-		addActiveState = function ()
-		{
-			$display.addClass("active");
-			$(document).mouseup(removeActiveState);
 		},
 
 		// remove active class from an element
