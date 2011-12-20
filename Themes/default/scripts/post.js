@@ -112,10 +112,10 @@ function surroundText(text1, text2, oTextHandle)
 }
 
 // Split a quote (or any unclosed tag) if we press Enter inside it.
-function splitQuote(oEvent)
+function splitQuote(e)
 {
 	// Did we just press Enter?
-	if (oEvent.which != 13)
+	if (e.which != 13)
 		return true;
 
 	// Where are we, already?
@@ -123,15 +123,15 @@ function splitQuote(oEvent)
 		var selectionStart = this.selectionStart;
 	else
 	{
-		var range = document.selection.createRange(), dul = range.duplicate();
+		var selectionStart, range = document.selection.createRange(), dul = range.duplicate();
 		dul.moveToElementText(this);
 		dul.setEndPoint('EndToEnd', range);
-		var selectionStart = dul.text.length - range.text.length;
+		selectionStart = dul.text.length - range.text.length;
 	}
 
 	var
-		selection = this.value.substr(0, selectionStart), lcs = selection.toLowerCase(),
-		lcsl = lcs.length, pos = 0, tag, bbcode, has_slash, taglist = [], extag, log_tags = true,
+		selection = this.value.substr(0, selectionStart), lcs = selection.toLowerCase(), nextBreak, has_slash,
+		lcsl = lcs.length, pos = 0, tag, bbcode, taglist = [], baretags = [], baretag, extag, log_tags = true,
 		protect_tags = this.instanceRef.opt.aProtectTags, closed_tags = this.instanceRef.opt.aClosedTags;
 
 	// Build a list of opened tags...
@@ -141,35 +141,44 @@ function splitQuote(oEvent)
 		if (!pos)
 			break;
 		tag = selection.substring(pos, lcs.indexOf(']', pos + 1));
-		has_slash = tag.charAt(0) === '/' ? 1 : 0;
-		bbcode = tag.substr(has_slash);
+		has_slash = tag[0] == '/';
+		bbcode = tag.substr(+has_slash);
+		baretag = ((nextBreak = /[\s=]/.exec(bbcode)) ? bbcode.substr(0, bbcode.indexOf(nextBreak)) : bbcode).toLowerCase();
 
+		// Is it a closer tag?
 		if (has_slash)
 		{
+			// Maybe it's a loose tag. Ignore it.
 			if (!taglist.length)
 				break;
-			if (!log_tags && bbcode != taglist[taglist.length - 1].substr(0, bbcode.length))
+
+			// Or maybe we're looking for a protected tag's closer. If it isn't it, skip it.
+			if (!log_tags && baretag != baretags[baretags.length - 1])
 				continue;
+
+			// Otherwise, empty the stack until we find the equivalent opener. Normally, immediately.
 			do
 			{
-				extag = taglist.pop();
+				taglist.pop();
+				extag = baretags.pop();
 				log_tags |= in_array(extag, protect_tags);
 			}
-			while (extag && bbcode != extag.substr(0, bbcode.length).toLowerCase());
+			while (extag && baretag != extag);
 		}
-		else if (log_tags && !in_array(bbcode, closed_tags))
+		// Then it's an opener tag. If we're not within a protected tag loop,
+		// and it's not a self-closed tag, add it to the tag stack.
+		else if (log_tags && !in_array(baretag, closed_tags))
+		{
 			taglist.push(bbcode);
-		if (log_tags && in_array(bbcode, protect_tags))
-			log_tags = false;
+			baretags.push(baretag);
+
+			// If we just met a protected opener, like [code], we'll ignore all further tags until we find a closer for it.
+			log_tags &= !in_array(baretag, protect_tags);
+		}
 	}
 
-	var len = taglist.length, closers = [], j;
-	if (len)
-	{
-		for (j = 0; j < len; j++)
-			closers.push('[/' + (taglist[j].indexOf(' ') > 0 ? taglist[j].substr(0, taglist[j].indexOf(' ')) : taglist[j]) + ']');
-		surroundText(closers.reverse().join('') + '\n', '\n\n[' + taglist.join('][') + ']', this);
-	}
+	if (baretags.length)
+		surroundText('[/' + baretags.reverse().join('][/') + ']\n', '\n\n[' + taglist.join('][') + ']', this);
 
 	return true;
 };
