@@ -12,62 +12,33 @@
  */
 
 /*
-	jQuery-SelectBox
-
-	Traditional select elements are very difficult to style by themselves,
-	but they are also very usable and feature rich. This plugin attempts to
-	recreate all selectbox functionality and appearance while adding
-	animation and stylability.
-
 	This product includes software developed
 	by RevSystems, Inc (http://www.revsystems.com/) and its contributors
 
 	Copyright (c) 2010 RevSystems, Inc
 
-	Permission is hereby granted, free of charge, to any person obtaining a copy
-	of this software and associated documentation files (the "Software"), to deal
-	in the Software without restriction, including without limitation the rights
-	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	copies of the Software, and to permit persons to whom the Software is
-	furnished to do so, subject to the following conditions:
-
-	The above copyright notice and this permission notice shall be included in
-	all copies or substantial portions of the Software.
-
-	The end-user documentation included with the redistribution, if any, must 
-	include the following acknowledgment: "This product includes software developed 
-	by RevSystems, Inc (http://www.revsystems.com/) and its contributors", in the 
-	same place and form as other third-party acknowledgments. Alternately, this 
-	acknowledgment may appear in the software itself, in the same form and location 
-	as other such third-party acknowledgments.
-
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-	THE SOFTWARE.
+	The original license can be found in the file 'license.txt' at:
+	https://github.com/revsystems/jQuery-SelectBox
 */
 
-(function ($, window) {
+// Utility functions
+$.fn.extraWidth = function ()
+{
+	return $(this).outerWidth(true) - $(this).width();
+};
 
-	// Utility functions
-	$.fn.extraWidth = function ()
-	{
-		return $(this).outerWidth(true) - $(this).width();
+$.fn.offsetFrom = function (e)
+{
+	// We could cache the following offsets to halve the execution time, but even IE7 can run this 5000 times per second,
+	// so we might as well leave it that way and save 5 bytes in our gzipped file. Yes, I know, I'm crazy like that.
+	return {
+		x: $(this).offset().left - e.offset().left,
+		y: $(this).offset().top - e.offset().top
 	};
+};
 
-	$.fn.offsetFrom = function (e)
-	{
-		// We could cache the following offsets to halve the execution time, but even IE7 can run this 5000 times per second,
-		// so we might as well leave it that way and save 5 bytes in our gzipped file. Yes, I know, I'm crazy like that.
-		return {
-			x: $(this).offset().left - e.offset().left,
-			y: $(this).offset().top - e.offset().top
-		};
-	};
-
+(function ()
+{
 	// This plugin is not compatible with IE6 and below;
 	// a normal <select> will be displayed for old browsers
 	$.fn.sb = function (arg)
@@ -93,6 +64,8 @@
 	};
 
 	var
+		unique = 0,
+
 		// formatting for the display
 		optionFormat = function ($dom)
 		{
@@ -101,7 +74,7 @@
 
 	SelectBox = function ()
 	{
-		var rand = parseInt(Math.random() * 9e9),
+		var
 			cstTimeout = null,
 			resizeTimeout = null,
 			searchTerm = "",
@@ -140,19 +113,19 @@
 				$label = $orig.closest("label");
 
 			// create the new sb
-			$sb = $("<div class='sb " + o.css + " " + $orig.attr("class") + "' id='sb" + rand + "' role=listbox></div>")
+			$sb = $("<div class='sb " + o.css + " " + $orig.attr("class") + "' id='sb" + ++unique + "' role=listbox></div>")
 				.attr("aria-labelledby", $label.attr("id") || "")
 				.attr("aria-haspopup", true)
 				.appendTo(body);
 
-			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + rand + "'></div>")
+			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + unique + "'></div>")
 				// generate the display markup
 				.append($("<div class='text'></div>").append(optionFormat($orig.find("option:selected")) || "&nbsp;"))
 				.append(o.arrow)
 				.appendTo($sb);
 
 			// generate the dropdown markup
-			$dd = $("<ul class='" + o.css + " items " + $orig.attr("class") + "' id='sbdd" + rand + "' role=menu></ul>")
+			$dd = $("<ul class='" + o.css + " items " + $orig.attr("class") + "' id='sbdd" + unique + "' role=menu></ul>")
 				.attr("aria-hidden", true);
 			$sb.append($dd)
 				.attr("aria-owns", $dd.attr("id"));
@@ -249,7 +222,7 @@
 		{
 			$option = $option || $("<option>&nbsp;</option>");
 
-			return $("<li id='sbo" + rand + "' role=option></li>")
+			return $("<li id='sbo" + ++unique + "' role=option></li>")
 				.data("orig", $option)
 				.data("value", $option.attr("value") || "")
 				.attr("style", $option.attr("style") || "")
@@ -275,20 +248,19 @@
 		},
 
 		// unbind and remove
-		destroySB = function (internal)
+		destroySB = function ()
 		{
 			$sb.remove();
 			$orig.unbind(".sb").removeClass("has_sb");
 			$(window).unbind("resize", delayPositionSB);
-			if (!internal)
-				$orig.removeData("sb");
+			$orig.removeData("sb");
 		},
 
 		// destroy then load, maintaining open/focused state if applicable
 		reloadSB = function ()
 		{
 			closeSB(1);
-			destroySB(1);
+			destroySB();
 			loadSB($orig, self, o);
 			if ($sb.is(".open"))
 			{
@@ -456,32 +428,16 @@
 
 		// iterate over all the options to see if any match the search term.
 		// if we get a match for any options, select it.
-		selectMatchingItem = function (term)
+		selectMatchingItem = function (term, start)
 		{
-			var i, t, $tNode, $available = $items.not(".disabled");
+			var i, t, $available = $items.not(".disabled");
 
-			for (i = 0; i < $available.length; i++)
+			for (i = start; i < $available.length; i++)
 			{
-				$tNode = $available.eq(i).find(".text");
-				t = $tNode.children().length == 0 ? $tNode.text() : $tNode.find("*").text();
-				if (term.length && t.toLowerCase().match("^" + term.toLowerCase()))
-				{
-					selectItem($available.eq(i));
-					return true;
-				}
-			}
-			return false;
-		},
-
-		// if a normal match fails, try matching the next element that starts with the pressed letter
-		selectNextItemStartsWith = function (c)
-		{
-			var i, t, $selected = $items.filter(".selected"), $available = $items.not(".disabled");
-
-			for (i = $available.index($selected) + 1; i < $available.length; i++)
-			{
-				t = $available.eq(i).find(".text").text();
-				if (t !== "" && t[0].toLowerCase() === c.toLowerCase())
+				t = $available.eq(i).find(".text");
+				if (t.children().length)
+					t = t.find("*");
+				if (t.text().toLowerCase().match("^" + term.toLowerCase()))
 				{
 					selectItem($available.eq(i));
 					return true;
@@ -498,13 +454,23 @@
 
 			var $selected = $items.filter(".selected"), $enabled = $items.not(".disabled");
 
-			if (e.keyCode == 8 || e.keyCode == 32) // backspace or space
+			if (e.which == 32) // space (requires e.which instead of e.keyCode... confusing.)
+			{
+				if (!$sb.is(".open"))
+					openSB();
 				e.preventDefault();
-
-			else if (e.keyCode == 9) // tab
+			}
+			else if (e.keyCode == 9) // tab on an unopened select box?
+			{
+				if ($sb.is(".open"))
+					closeSB();
+				blurSB();
+			}
+			else if ((e.keyCode == 8 || e.keyCode == 13) && $sb.is(".open")) // backspace or return (with the select box open)
 			{
 				closeSB();
-				blurSB();
+				focusSB();
+				e.preventDefault();
 			}
 			else if (e.keyCode == 35) // end
 			{
@@ -535,13 +501,14 @@
 				// add to the search term
 				searchTerm += String.fromCharCode(e.keyCode);
 
-				if (selectMatchingItem(searchTerm))
+				if (selectMatchingItem(searchTerm, 0))
 				{
 					// we found a match, continue with the current search term
 					clearTimeout(cstTimeout);
 					cstTimeout = setTimeout(function () { searchTerm = ""; }, 800);
 				}
-				else if (selectNextItemStartsWith(String.fromCharCode(e.keyCode)))
+				// if a normal match fails, try matching the next element that starts with the pressed letter
+				else if (selectMatchingItem(String.fromCharCode(e.keyCode), $items.not(".disabled").index($items.filter(".selected")) + 1))
 				{
 					// we selected the next item that starts with what you just pressed
 					centerOnSelected();
@@ -603,9 +570,8 @@
 		this.open = openSB;
 		this.close = closeSB;
 		this.refresh = reloadSB;
-		this.destroy = destroySB;
 	};
 
-}(jQuery, window));
+}());
 
 $('select').sb();
