@@ -444,7 +444,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 
 	this.oRealTextHandle.val(this.oTextHandle.value);
 
-	if (isEmptyText(this.oTextHandle))
+	if ($.trim(this.oTextHandle.value) === '')
 	{
 		this.aCache = [];
 		this.populateDiv();

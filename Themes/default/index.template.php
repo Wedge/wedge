@@ -551,7 +551,7 @@ function template_body_after()
 		we_cancel = "', $txt['form_cancel'], '";
 
 	', $no_resize ? '' : '$(window).resize(noi_resize).resize();
-	', 'initMenu("main_menu");', $context['show_pm_popup'] ? '
+	', '$("#main_menu").menu();', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
 		window.open(we_prepareScriptUrl() + "action=pm");' : '';

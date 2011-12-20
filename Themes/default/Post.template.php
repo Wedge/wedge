@@ -542,9 +542,7 @@ function template_make_poll()
 	add_js('
 	function pollOptions()
 	{
-		var expire_time = $("#poll_expire")[0];
-
-		if (isEmptyText(expire_time) || expire_time.value == 0)
+		if ($.trim($("#poll_expire").val()) == 0)
 		{
 			postmod.poll_hide[2].disabled = true;
 			if (postmod.poll_hide[2].checked)

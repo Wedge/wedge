@@ -830,13 +830,11 @@ function template_quick_access()
 
 	add_js('
 	if (can_ajax)
-	{
 		aJumpTo.push(new JumpTo({
 			iBoardId: ' . $context['current_board'] . ',
 			sContainerId: \'display_jump_to\',
 			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
-		}));
-	}');
+		}));');
 }
 
 function template_mod_buttons()

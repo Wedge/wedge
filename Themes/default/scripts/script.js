@@ -25,9 +25,7 @@ var
 	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
 	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && vers == 6, is_ie7 = is_ie && vers == 7,
 	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down,
-
-	// Globals used in script.js
-	menu_baseId = 0, menu_delay = [], hove = 'hove', aJumpTo = [], oThought;
+	aJumpTo = [], oThought;
 
 // Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback, undefined)
@@ -144,12 +142,6 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 	return false;
 }
 
-// Checks if the passed input's value is nothing.
-function isEmptyText(theField)
-{
-	return $.trim(theField.value) === '';
-}
-
 // Only allow form submission ONCE.
 function submitonce()
 {
@@ -204,28 +196,23 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 // Keep the session alive - always!
 (function () {
 	var lastKeepAliveCheck = +new Date();
+
 	function sessionKeepAlive()
 	{
 		var curTime = +new Date();
 
 		// Prevent a Firefox bug from hammering the server.
-		if (we_script && curTime - lastKeepAliveCheck > 900000)
+		if (we_script && curTime - lastKeepAliveCheck > 9e5)
 		{
 			var tempImage = new Image();
 			tempImage.src = we_prepareScriptUrl() + 'action=keepalive;time=' + curTime;
 			lastKeepAliveCheck = curTime;
 		}
-		setTimeout(sessionKeepAlive, 1200000);
+		setTimeout(sessionKeepAlive, 12e5);
 	}
-	setTimeout(sessionKeepAlive, 1200000);
-})();
 
-// Set a theme option through javascript.
-function we_setThemeOption(option, value, theme, additional_vars)
-{
-	var tempImage = new Image();
-	tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + option + ';val=' + value + ';' + we_sessvar + '=' + we_sessid + (additional_vars || '') + (theme == null ? '' : '&th=' + theme) + ';time=' + (+new Date());
-}
+	setTimeout(sessionKeepAlive, 12e5);
+})();
 
 function we_avatarResize()
 {
@@ -375,8 +362,9 @@ function weSaveEntities(sFormName, aElementNames, sMask)
 			nm[aElementNames[i]].value = nm[aElementNames[i]].value.replace(/&#/g, '&#38;#');
 }
 
-(function ($) {
-	var origMouse, currentPos, is_moving = 0, is_fixed, currentDrag = 0;
+(function ()
+{
+	var origMouse, currentPos, is_fixed, currentDrag = 0;
 
 	// You may set an area as non-draggable by adding the nodrag class to it.
 	// This way, you can drag the element, but still access UI elements within it.
@@ -421,7 +409,7 @@ function weSaveEntities(sFormName, aElementNames, sMask)
 			if (currentDrag)
 				return !!(currentDrag = 0);
 		});
-})(jQuery);
+})();
 
 
 /**
@@ -429,81 +417,85 @@ function weSaveEntities(sFormName, aElementNames, sMask)
  * May not show, but it took years to refine it.
  */
 
-function initMenu(menu)
+(function ()
 {
-	menu = $('#' + menu).show();
-	$('h4+ul', menu).prepend('<li class="menu-top"></li>');
+	var menu_baseId = 0, menu_delay = [], hove = 'hove',
 
-	var k = menu_baseId;
-	$('li', menu).each(function () {
-		$(this).attr('id', 'li' + k++)
-			.bind('mouseenter focus', menu_show_me)
-			.bind('mouseleave blur', menu_hide_me)
-			.mousedown(false)
-			.click(function () {
-				$('.' + hove).removeClass(hove);
-				$('ul', menu).css({ visibility: 'hidden', opacity: +is_ie8down });
-			});
-	});
-	menu_baseId = k;
-
-	// Now that JS is ready to take action... Disable the pure CSS menu!
-	$('.css.menu').removeClass('css');
-}
-
-// Entering a menu entry?
-function menu_show_me()
-{
-	var
-		hasul = $('ul', this)[0], style = hasul ? hasul.style : {}, is_visible = style.visibility == 'visible',
-		id = this.id, parent = this.parentNode, is_top = parent.className == 'menu', d = document.dir, w = parent.clientWidth;
-
-	if (hasul)
+	// Entering a menu entry?
+	menu_show_me = function ()
 	{
-		style.visibility = 'visible';
-		style.opacity = 1;
-		style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? $('span', this).width() || 0 : w - 5) + 'px';
-	}
+		var
+			hasul = $('ul', this)[0], style = hasul ? hasul.style : {}, is_visible = style.visibility == 'visible',
+			id = this.id, parent = this.parentNode, is_top = parent.className == 'menu', d = document.dir, w = parent.clientWidth;
 
-	if (!is_top || !$('h4', this).first().addClass(hove).length)
-		$(this).addClass(hove).parentsUntil('.menu>li').filter('li').addClass(hove);
+		if (hasul)
+		{
+			style.visibility = 'visible';
+			style.opacity = 1;
+			style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? $('span', this).width() || 0 : w - 5) + 'px';
+		}
 
-	if (!is_visible)
-		$('ul', this).first()
-			.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 9 : 36 } : { marginLeft: w })
-			.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 }, 'fast');
+		if (!is_top || !$('h4', this).first().addClass(hove).length)
+			$(this).addClass(hove).parentsUntil('.menu>li').filter('li').addClass(hove);
 
-	clearTimeout(menu_delay[id.substring(2)]);
+		if (!is_visible)
+			$('ul', this).first()
+				.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 9 : 36 } : { marginLeft: w })
+				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 }, 'fast');
 
-	$(this).siblings('li').each(function () { menu_hide_children(this.id); });
-}
+		clearTimeout(menu_delay[id.substring(2)]);
 
-// Leaving a menu entry?
-function menu_hide_me(e)
-{
-	// The deepest level should hide the hover class immediately.
-	if (!$(this).children('ul').length)
-		$(this).children().andSelf().removeClass(hove);
+		$(this).siblings('li').each(function () { menu_hide_children(this.id); });
+	},
 
-	// Are we leaving the menu entirely, and thus triggering the time
-	// threshold, or are we just switching to another menu item?
-	var id = this.id;
-	$(e.relatedTarget).parents('.menu').length ?
-		menu_hide_children(id) :
-		menu_delay[id.substring(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
-}
+	// Leaving a menu entry?
+	menu_hide_me = function (e)
+	{
+		// The deepest level should hide the hover class immediately.
+		if (!$(this).children('ul').length)
+			$(this).children().andSelf().removeClass(hove);
 
-// Hide all children menus.
-function menu_hide_children(id)
-{
-	$('#' + id).children().andSelf().removeClass(hove).find('ul').css({ visibility: 'hidden', opacity: +is_ie8down });
-}
+		// Are we leaving the menu entirely, and thus triggering the time
+		// threshold, or are we just switching to another menu item?
+		var id = this.id;
+		$(e.relatedTarget).parents('.menu').length ?
+			menu_hide_children(id) :
+			menu_delay[id.substring(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
+	},
+
+	// Hide all children menus.
+	menu_hide_children = function (id)
+	{
+		$('#' + id).children().andSelf().removeClass(hove).find('ul').css({ visibility: 'hidden', opacity: +is_ie8down });
+	};
+
+	// Make sure to only call this on one element...
+	$.fn.menu = function ()
+	{
+		var elem = this.show();
+		$('h4+ul', elem).prepend('<li class="menu-top"></li>');
+
+		$('li', elem).each(function () {
+			$(this).attr('id', 'li' + menu_baseId++)
+				.bind('mouseenter focus', menu_show_me)
+				.bind('mouseleave blur', menu_hide_me)
+				.mousedown(false)
+				.click(function () {
+					$('.' + hove).removeClass(hove);
+					$('ul', elem).css({ visibility: 'hidden', opacity: +is_ie8down });
+				});
+		});
+
+		// Now that JS is ready to take action... Disable the pure CSS menu!
+		$('.css.menu').removeClass('css');
+		return this;
+	};
+})();
 
 
 // *** weCookie class.
-function weCookie(oOptions)
+function weCookie()
 {
-	this.opt = oOptions;
 	this._cookies = {};
 
 	if ('cookie' in document && document.cookie != '')
@@ -539,7 +531,7 @@ function weToggle(oOptions)
 	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
 	{
 		// Initialize the cookie handler.
-		this._cookie = new weCookie({});
+		this._cookie = new weCookie();
 
 		// Check if the cookie is set.
 		var cookieValue = this._cookie.get(this.opt.oCookieOptions.sCookieName);
@@ -549,7 +541,7 @@ function weToggle(oOptions)
 
 	// If the init state is set to be collapsed, collapse it.
 	if (this.opt.bCurrentlyCollapsed)
-		this.cs(true, true, true);
+		this.cs(true, true);
 
 	// Initialize the images to be clickable.
 	var i, n, toggle_me = function () {
@@ -569,11 +561,9 @@ function weToggle(oOptions)
 };
 
 // Change State - collapse or expand the section.
-weToggle.prototype.cs = function (bCollapse, bInit, bNow)
+weToggle.prototype.cs = function (bCollapse, bInit)
 {
-	// Default bInit to false.
-	bInit = !!bInit;
-	var i, n, o, op, iSpeed = bNow ? 0 : 300;
+	var i, n, o, op, iSpeed = bInit ? 0 : 300;
 
 	// Handle custom function hook before collapse.
 	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
@@ -610,8 +600,12 @@ weToggle.prototype.cs = function (bCollapse, bInit, bNow)
 	if ('oCookieOptions' in this.opt && (op = this.opt.oCookieOptions) && op.bUseCookie)
 		this._cookie.set(op.sCookieName, this._collapsed ? '1' : '0');
 
-	if ('oThemeOptions' in this.opt && (op = this.opt.oThemeOptions) && op.bUseThemeSettings)
-		we_setThemeOption(op.sOptionName, this._collapsed ? '1' : '0', 'sThemeId' in op ? op.sThemeId : null, 'sAdditionalVars' in op ? op.sAdditionalVars : null);
+	if (!bInit && 'oThemeOptions' in this.opt && (op = this.opt.oThemeOptions) && op.bUseThemeSettings)
+	{
+		// Set a theme option through javascript.
+		var tempImage = new Image();
+		tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + op.sOptionName + ';val=' + +this._collapsed + ';' + we_sessvar + '=' + we_sessid + (op.sAdditionalVars || '') + ('sThemeId' in op ? '&th=' + op.sThemeId : '') + ';time=' + (+new Date());
+	}
 };
 
 // Reverse the current state.
@@ -832,14 +826,7 @@ var
 	can_ajax = $.support.ajax;
 
 /* Optimize:
-menu_baseId = _b
-_cookie = _c
-menu_delay = _d
+_cookie = _k
+_collapsed = _c
 _formSubmitted = _f
-menu_hide_children = _h
-menu_hide_me = _hm
-menu_ieshim = _ie
-_collapsed = _o
-menu_show_me = _sm
-menu_show_shim = _sh
 */
