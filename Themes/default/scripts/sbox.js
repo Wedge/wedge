@@ -131,28 +131,22 @@ $.fn.offsetFrom = function (e)
 			else
 				$orig.children().each(function ()
 				{
-					var $og = $(this), $ogList;
+					var $og = $(this), $optgroup;
 					if ($og.is("optgroup"))
 					{
-						$ogList = $("<ul class='items'></ul>");
-						$og.children("option").each(function ()
-						{
-							$ogList.append(createOption($(this))
-								.addClass($og.is(":disabled") ? "disabled" : "")
-								.attr("aria-disabled", !!$og.is(":disabled")));
-						});
-						$("<li class='optgroup'><div class='label'>" + $og.attr("label") + "</div></li>")
-							.addClass($og.is(":disabled") ? "disabled" : "")
-							.attr("aria-disabled", !!$og.is(":disabled"))
-							.append($ogList)
-							.appendTo($dd);
+						$optgroup = $("<li class='optgroup'><div class='label'>" + $og.attr("label") + "</div></li>").appendTo($dd);
+						$og.find("option").each(function () { $dd.append(createOption($(this)).addClass('sub')); });
+						if ($og.is(":disabled"))
+							$optgroup.nextAll().andSelf()
+								.addClass("disabled")
+								.attr("aria-disabled", true);
 					}
 					else
 						$dd.append(createOption($og));
 				});
 
 			// cache all sb items
-			$items = $dd.find("li").not(".optgroup");
+			$items = $dd.children("li").not(".optgroup");
 
 			// for accessibility/styling
 			$sb.attr("aria-activedescendant", $items.filter(".selected").attr("id"));
@@ -198,7 +192,7 @@ $.fn.offsetFrom = function (e)
 				$items.not(".disabled")
 					.click(clickSBItem)
 					.hover(addHoverState, removeHoverState);
-				$dd.find(".optgroup")
+				$dd.children(".optgroup")
 					.click(false)
 					.hover(addHoverState, removeHoverState);
 				$items.filter(".disabled")
@@ -208,7 +202,7 @@ $.fn.offsetFrom = function (e)
 			}
 			else
 			{
-				$sb.addClass("disabled").attr("aria-disabled");
+				$sb.addClass("disabled").attr("aria-disabled", true);
 				$display.click(false);
 			}
 			$sb.bind("close.sb", closeSB);
@@ -227,10 +221,10 @@ $.fn.offsetFrom = function (e)
 				.attr("aria-disabled", !!$option.is(":disabled"))
 				.append(
 					$("<div class='item'></div>")
+						.attr("style", $option.attr("style") || "")
+						.addClass($option.attr("class"))
 						.append(
 							$("<div class='text'></div>")
-								.attr("style", $option.attr("style") || "")
-								.addClass($option.attr("class"))
 								.html(optionFormat($option))
 						)
 				);
@@ -408,7 +402,7 @@ $.fn.offsetFrom = function (e)
 
 			// update the title attr and the display markup
 			$display.find(".text")
-				.attr("title", $item.find(".text").html())
+				.attr("title", $item.find(".text").html().php_unhtmlspecialchars())
 				.html(optionFormat($item.data("orig")));
 
 			// trigger change on the old <select> if necessary
