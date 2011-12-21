@@ -75,10 +75,7 @@ $.fn.offsetFrom = function (e)
 	SelectBox = function ()
 	{
 		var
-			cstTimeout = null,
 			resizeTimeout = null,
-			searchTerm = "",
-			body = "body",
 			$label,
 			$display,
 			$orig,
@@ -98,10 +95,10 @@ $.fn.offsetFrom = function (e)
 			// set the various options
 			o = $.extend({
 				anim: 200,			// animation duration: time to open/close dropdown in ms
-				ctx: body,			// body | self | any selector | a function that returns a selector (the original select is the context)
 				fixed: false,		// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
 				maxHeight: false,	// if an integer, show scrollbars if the dropdown is too tall
 				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
+				ctx: "body",		// body | any selector
 				css: "selectbox",	// class to apply our markup
 
 				// markup appended to the display, typically for styling an arrow
@@ -116,7 +113,7 @@ $.fn.offsetFrom = function (e)
 			$sb = $("<div class='sb " + o.css + " " + $orig.attr("class") + "' id='sb" + ++unique + "' role=listbox></div>")
 				.attr("aria-labelledby", $label.attr("id") || "")
 				.attr("aria-haspopup", true)
-				.appendTo(body);
+				.appendTo("body");
 
 			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + unique + "'></div>")
 				// generate the display markup
@@ -225,13 +222,17 @@ $.fn.offsetFrom = function (e)
 			return $("<li id='sbo" + ++unique + "' role=option></li>")
 				.data("orig", $option)
 				.data("value", $option.attr("value") || "")
-				.attr("style", $option.attr("style") || "")
 				.addClass($option.is(":selected") ? "selected" : "")
 				.addClass($option.is(":disabled") ? "disabled" : "")
 				.attr("aria-disabled", !!$option.is(":disabled"))
-				.append($("<div class='item'></div>")
-					.append($("<div class='text'></div>")
-					.html(optionFormat($option)))
+				.append(
+					$("<div class='item'></div>")
+						.append(
+							$("<div class='text'></div>")
+								.attr("style", $option.attr("style") || "")
+								.addClass($option.attr("class"))
+								.html(optionFormat($option))
+						)
 				);
 		},
 
@@ -315,12 +316,10 @@ $.fn.offsetFrom = function (e)
 		// show, reposition, and reset dropdown markup
 		openSB = function (instantOpen)
 		{
-			var dir, $ddCtx = $(o.ctx);
-
 			blurAllButMe();
 			$sb.addClass("open");
-			$dd.attr("aria-hidden", false).appendTo($ddCtx);
-			dir = positionSB();
+			$dd.attr("aria-hidden", false).appendTo($(o.ctx));
+			var dir = positionSB();
 			if (instantOpen)
 			{
 				$dd.show();
@@ -374,8 +373,8 @@ $.fn.offsetFrom = function (e)
 
 			// modify dropdown css for display
 			$dd.hide().css({
-				left: offs.x + ($ddCtx.is(body) ? parseInt($(body).css("marginLeft")) || 0 : 0),
-				top: offs.y + ddY + ($ddCtx.is(body) ? parseInt($(body).css("marginTop")) || 0 : 0),
+				left: offs.x + ($ddCtx.is("body") ? parseInt($("body").css("marginLeft")) || 0 : 0),
+				top: offs.y + ddY + ($ddCtx.is("body") ? parseInt($("body").css("marginTop")) || 0 : 0),
 				maxHeight: ddMaxHeight,
 				position: "absolute",
 				visibility: "visible"
@@ -428,22 +427,23 @@ $.fn.offsetFrom = function (e)
 
 		// iterate over all the options to see if any match the search term.
 		// if we get a match for any options, select it.
-		selectMatchingItem = function (term, start)
+		selectMatchingItem = function (term)
 		{
-			var i, t, $available = $items.not(".disabled");
+			var $available = $items.not(".disabled"), from = $available.index($items.filter(".selected")) + 1, to = $available.length, i = from;
 
-			for (i = start; i < $available.length; i++)
+			while (true)
 			{
-				t = $available.eq(i).find(".text");
-				if (t.children().length)
-					t = t.find("*");
-				if (t.text().toLowerCase().match("^" + term.toLowerCase()))
-				{
-					selectItem($available.eq(i));
-					return true;
-				}
+				for (; i < to; i++)
+					if ($available.eq(i).text().toLowerCase().match("^" + term.toLowerCase()))
+						return selectItem($available.eq(i)) || true;
+
+				if (!from)
+					return false;
+
+				// Nothing found? Try to search again from the start...
+				to = from;
+				from = i = 0;
 			}
-			return false;
 		},
 
 		// go up/down using arrows or attempt to autocomplete based on string
@@ -496,32 +496,9 @@ $.fn.offsetFrom = function (e)
 				centerOnSelected();
 				e.preventDefault();
 			}
-			else
-			{
-				// add to the search term
-				searchTerm += String.fromCharCode(e.keyCode);
-
-				if (selectMatchingItem(searchTerm, 0))
-				{
-					// we found a match, continue with the current search term
-					clearTimeout(cstTimeout);
-					cstTimeout = setTimeout(function () { searchTerm = ""; }, 800);
-				}
-				// if a normal match fails, try matching the next element that starts with the pressed letter
-				else if (selectMatchingItem(String.fromCharCode(e.keyCode), $items.not(".disabled").index($items.filter(".selected")) + 1))
-				{
-					// we selected the next item that starts with what you just pressed
-					centerOnSelected();
-					clearTimeout(cstTimeout);
-					cstTimeout = setTimeout(function () { searchTerm = ""; }, 800);
-				}
-				else
-				{
-					// no matches were found, clear everything
-					searchTerm = "";
-					clearTimeout(cstTimeout);
-				}
-			}
+			// try matching the next element that starts with the pressed letter
+			else if (selectMatchingItem(String.fromCharCode(e.keyCode)))
+				e.preventDefault();
 		},
 
 		// when the sb is focused (by tab or click), allow hotkey selection and kill all other selectboxes
