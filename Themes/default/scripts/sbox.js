@@ -24,7 +24,7 @@
 // Utility functions
 $.fn.extraWidth = function ()
 {
-	return $(this).outerWidth(true) - $(this).width();
+	return this.outerWidth(true) - this.width();
 };
 
 $.fn.offsetFrom = function (e)
@@ -32,8 +32,8 @@ $.fn.offsetFrom = function (e)
 	// We could cache the following offsets to halve the execution time, but even IE7 can run this 5000 times per second,
 	// so we might as well leave it that way and save 5 bytes in our gzipped file. Yes, I know, I'm crazy like that.
 	return {
-		x: $(this).offset().left - e.offset().left,
-		y: $(this).offset().top - e.offset().top
+		x: this.offset().left - e.offset().left,
+		y: this.offset().top - e.offset().top
 	};
 };
 
@@ -48,18 +48,13 @@ $.fn.offsetFrom = function (e)
 		{
 			var $e = $(this), obj = $e.data("sb");
 
-			// if it is already created, then execute any functions passed to it, if they exist.
+			// if it is already created, then execute any functions passed to it, and pass it the castle of arg..uments.
 			if (obj)
-				// call the method defined in the castle of...
 				arg && $.isFunction(obj[arg]) && obj[arg]();
-			// if the object is not defined for this element, then construct.
-			// note: IE6 will use a default select box, and non-dropdowns are ignored.
-			else if (!is_ie6 && !$e.attr("size"))
-			{
-				// create the new object, associate it with the element and initialize it.
-				$e.data("sb", obj = new SelectBox);
-				obj.init($e, obj, arg);
-			}
+
+			// if the object is not defined for this element, and it's a drop-down, then create and initialize it.
+			else if (!$e.attr("size"))
+				$e.data("sb", new SelectBox($e, arg));
 		});
 	};
 
@@ -72,33 +67,26 @@ $.fn.offsetFrom = function (e)
 			return $dom.text() || "";
 		},
 
-	SelectBox = function ()
+	SelectBox = function ($orig, o)
 	{
 		var
 			resizeTimeout = null,
 			$label,
 			$display,
-			$orig,
 			$dd,
 			$sb,
 			$items,
-			self,
-			o,
 
-		loadSB = function ($original_select, this_object, opts)
+		loadSB = function ()
 		{
-			// get the original <select>
-			self = this_object;
-			$orig = $original_select;
-
 			// set the various options
 			o = $.extend({
-				anim: 200,			// animation duration: time to open/close dropdown in ms
+				anim: 150,			// animation duration: time to open/close dropdown in ms
 				fixed: false,		// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
 				maxHeight: false,	// if an integer, show scrollbars if the dropdown is too tall
 				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
 				css: "selectbox"	// class to apply our markup
-			}, opts);
+			}, o);
 
 			$label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
 			if ($label.length == 0)
@@ -178,9 +166,9 @@ $.fn.offsetFrom = function (e)
 					focusSB();
 				});
 				$display
-					.mouseup(clickSB)
-					.focus(focusSB)
 					.blur(blurSB)
+					.focus(focusSB)
+					.mouseup(clickSB)
 					.mousedown(false) // prevent double clicks
 					.click(false)
 					.hover(setHoverState);
@@ -251,7 +239,7 @@ $.fn.offsetFrom = function (e)
 		{
 			closeSB(1);
 			destroySB();
-			loadSB($orig, self, o);
+			loadSB();
 			if ($sb.is(".open"))
 			{
 				$orig.focus();
@@ -307,7 +295,7 @@ $.fn.offsetFrom = function (e)
 				centerOnSelected();
 			}
 			else if (showDown)
-				$dd.slideDown(o.anim, centerOnSelected);
+				$dd.animate({ height: "toggle", opacity: "toggle" }, o.anim, centerOnSelected);
 			else
 				$dd.fadeIn(o.anim, centerOnSelected);
 			$orig.focus();
@@ -499,6 +487,8 @@ $.fn.offsetFrom = function (e)
 			$display.removeClass("active");
 			$(document).unbind("mouseup", removeActiveState);
 		};
+
+		loadSB();
 
 		// public method interface
 		this.init = loadSB;
