@@ -184,13 +184,13 @@ $.fn.offsetFrom = function (e)
 					.blur(blurSB)
 					.mousedown(false) // prevent double clicks
 					.click(false)
-					.hover(addHoverState, removeHoverState);
+					.hover(setHoverState);
 				$items.not(".disabled")
 					.click(clickSBItem)
-					.hover(addHoverState, removeHoverState);
+					.hover(setHoverState); // this one is useless, but compresses to zero byte.
 				$dd.children(".optgroup")
 					.click(false)
-					.hover(addHoverState, removeHoverState);
+					.hover(setHoverState);
 				$items.filter(".disabled")
 					.click(false);
 				if (!is_ie8down)
@@ -212,8 +212,8 @@ $.fn.offsetFrom = function (e)
 			return $("<li id='sbo" + ++unique + "' role=option></li>")
 				.data("orig", $option)
 				.data("value", $option.attr("value") || "")
-				.addClass($option.is(":selected") ? "selected" : "")
-				.addClass($option.is(":disabled") ? "disabled" : "")
+				.toggleClass("selected", $option.is(":selected"))
+				.toggleClass("disabled", $option.is(":disabled"))
 				.attr("aria-disabled", !!$option.is(":disabled"))
 				.append(
 					$("<div class='item'></div>")
@@ -308,13 +308,13 @@ $.fn.offsetFrom = function (e)
 		{
 			blurAllButMe();
 			$sb.addClass("open").append($dd.attr("aria-hidden", false));
-			var dir = positionSB();
+			var showDown = positionSB();
 			if (instantOpen)
 			{
 				$dd.show();
 				centerOnSelected();
 			}
-			else if (dir)
+			else if (showDown)
 				$dd.slideDown(o.anim, centerOnSelected);
 			else
 				$dd.fadeIn(o.anim, centerOnSelected);
@@ -324,9 +324,6 @@ $.fn.offsetFrom = function (e)
 		// position dropdown based on collision detection
 		positionSB = function ()
 		{
-			var	ddMaxHeight, dir = 0, // 0 for drop-down, 1 for drop-up
-				ddY, bottomSpace, topSpace;
-
 			// modify dropdown css for getting values
 			$dd
 				.show()
@@ -338,32 +335,24 @@ $.fn.offsetFrom = function (e)
 			if (!o.fixed)
 				$dd.width($display.outerWidth() - $dd.extraWidth() + 1);
 
-			// figure out if we should show above/below the display box
-			bottomSpace = $(window).scrollTop() + $(window).height() - $display.offset().top - $display.outerHeight();
-			topSpace = $display.offset().top - $(window).scrollTop();
+			var
+				// figure out if we should show above/below the display box, first by calculating the free space around it.
+				bottomSpace = $(window).scrollTop() + $(window).height() - $display.offset().top - $display.outerHeight(),
+				topSpace = $display.offset().top - $(window).scrollTop(),
+				ddMaxHeight = Math.min(o.maxHeight || 9e9, $dd.outerHeight()),
 
-			// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
-			if (($dd.outerHeight() <= bottomSpace) || (($dd.outerHeight() >= topSpace) && (bottomSpace + 50 >= topSpace)))
-			{
-				dir = 1;
-				ddY = 0;
-				ddMaxHeight = o.maxHeight || bottomSpace;
-			}
-			// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
-			else
-			{
-				ddMaxHeight = o.maxHeight || topSpace;
-				ddY = -ddMaxHeight;
-			}
+				// if we have enough space below the button, or if we don't have enough room above either, show a dropdown.
+				// otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
+				showDown = ($dd.outerHeight() <= bottomSpace) || (($dd.outerHeight() >= topSpace) && (bottomSpace + 50 >= topSpace));
 
 			// modify dropdown css for display
 			$dd.hide().css({
-				marginTop: ddY,
-				maxHeight: ddMaxHeight,
+				marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight(),
+				maxHeight: Math.min(ddMaxHeight, showDown ? bottomSpace : topSpace), // 100,
 				visibility: "visible"
-			}).addClass(dir ? "" : "above");
+			}).toggleClass("above", !showDown);
 
-			return dir;
+			return showDown;
 		},
 
 		// when the user explicitly clicks the display
@@ -506,16 +495,10 @@ $.fn.offsetFrom = function (e)
 		},
 
 		// add hover class to an element
-		addHoverState = function ()
+		setHoverState = function ()
 		{
 			if (!closing)
-				$(this).addClass("hover");
-		},
-
-		// remove hover class from an element
-		removeHoverState = function ()
-		{
-			$(this).removeClass("hover");
+				$(this).toggleClass("hover");
 		},
 
 		// remove active class from an element
