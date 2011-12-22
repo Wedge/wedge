@@ -82,7 +82,6 @@ $.fn.offsetFrom = function (e)
 			$dd,
 			$sb,
 			$items,
-			closing,
 			self,
 			o,
 
@@ -201,7 +200,7 @@ $.fn.offsetFrom = function (e)
 				$sb.addClass("disabled").attr("aria-disabled", true);
 				$display.click(false);
 			}
-			$sb.bind("close.sb", closeSB);
+			$sb.bind("close", closeSB);
 		},
 
 		// create new markup from an <option>
@@ -270,17 +269,10 @@ $.fn.offsetFrom = function (e)
 				$display.blur();
 				$items.removeClass("hover");
 				$(document).unbind(".sb");
-				$dd.attr("aria-hidden", true);
-				if (instantClose)
-					$sb.removeClass("open").append($dd.hide());
-				else
-				{
-					closing = true;
-					$dd.fadeOut(o.anim, function () {
-						$sb.removeClass("open").append($dd);
-						closing = false;
-					});
-				}
+				$sb.removeClass("open");
+				$dd
+					.attr("aria-hidden", true)
+					.animate({ height: "toggle", opacity: "toggle" }, instantClose == 1 ? 0 : o.anim);
 			}
 		},
 
@@ -497,7 +489,7 @@ $.fn.offsetFrom = function (e)
 		// add hover class to an element
 		setHoverState = function ()
 		{
-			if (!closing)
+			if ($sb.is(".open"))
 				$(this).toggleClass("hover");
 		},
 
