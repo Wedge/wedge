@@ -1270,7 +1270,6 @@ dl#feed
 	font-family: arial
 	font-size: 1em
 	margin: 1px
-	position: relative
 
 	.display
 		background: #fff
@@ -1332,6 +1331,7 @@ dl#feed
 	margin: 0
 	overflow-x: hidden
 	overflow-y: auto
+	position: absolute
 	z-index: 999
 	box-shadow: 0 2px 5px rgba(0,0,0, .3)
 	padding: 2px

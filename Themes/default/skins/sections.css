@@ -1205,7 +1205,7 @@ dl
 	overflow: auto
 	margin: 0
 	padding: 0
-	li
+	> li
 		list-style: none
 		margin: 10px 0
 		padding: 0

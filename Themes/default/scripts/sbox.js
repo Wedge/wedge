@@ -98,11 +98,7 @@ $.fn.offsetFrom = function (e)
 				fixed: false,		// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
 				maxHeight: false,	// if an integer, show scrollbars if the dropdown is too tall
 				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
-				ctx: "body",		// body | any selector
-				css: "selectbox",	// class to apply our markup
-
-				// markup appended to the display, typically for styling an arrow
-				arrow: "<div class='btn'><div></div></div>"
+				css: "selectbox"	// class to apply our markup
 			}, opts);
 
 			$label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
@@ -118,7 +114,7 @@ $.fn.offsetFrom = function (e)
 			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + unique + "'></div>")
 				// generate the display markup
 				.append($("<div class='text'></div>").append(optionFormat($orig.find("option:selected")) || "&nbsp;"))
-				.append(o.arrow)
+				.append("<div class='btn'><div></div></div>")
 				.appendTo($sb);
 
 			// generate the dropdown markup
@@ -311,8 +307,7 @@ $.fn.offsetFrom = function (e)
 		openSB = function (instantOpen)
 		{
 			blurAllButMe();
-			$sb.addClass("open");
-			$dd.attr("aria-hidden", false).appendTo($(o.ctx));
+			$sb.addClass("open").append($dd.attr("aria-hidden", false));
 			var dir = positionSB();
 			if (instantOpen)
 			{
@@ -329,10 +324,7 @@ $.fn.offsetFrom = function (e)
 		// position dropdown based on collision detection
 		positionSB = function ()
 		{
-			var $ddCtx = $(o.ctx),
-				offs = $display.offsetFrom($ddCtx),
-				ddMaxHeight = 0,
-				dir = 0, // 0 for drop-down, 1 for drop-up
+			var	ddMaxHeight, dir = 0, // 0 for drop-down, 1 for drop-up
 				ddY, bottomSpace, topSpace;
 
 			// modify dropdown css for getting values
@@ -340,7 +332,6 @@ $.fn.offsetFrom = function (e)
 				.show()
 				.css({ // doesn't seem to be useful on my tests... Maybe a browser hack?
 					maxHeight: "none",
-					position: "relative",
 					visibility: "hidden"
 				})
 				.removeClass("above");
@@ -355,22 +346,20 @@ $.fn.offsetFrom = function (e)
 			if (($dd.outerHeight() <= bottomSpace) || (($dd.outerHeight() >= topSpace) && (bottomSpace + 50 >= topSpace)))
 			{
 				dir = 1;
-				ddY = $display.outerHeight();
+				ddY = 0;
 				ddMaxHeight = o.maxHeight || bottomSpace;
 			}
 			// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
 			else
 			{
 				ddMaxHeight = o.maxHeight || topSpace;
-				ddY = -Math.min(ddMaxHeight, $dd.outerHeight());
+				ddY = -ddMaxHeight;
 			}
 
 			// modify dropdown css for display
 			$dd.hide().css({
-				left: offs.x + ($ddCtx.is("body") ? parseInt($("body").css("marginLeft")) || 0 : 0),
-				top: offs.y + ddY + ($ddCtx.is("body") ? parseInt($("body").css("marginTop")) || 0 : 0),
+				marginTop: ddY,
 				maxHeight: ddMaxHeight,
-				position: "absolute",
 				visibility: "visible"
 			}).addClass(dir ? "" : "above");
 
