@@ -21,22 +21,6 @@
 	https://github.com/revsystems/jQuery-SelectBox
 */
 
-// Utility functions
-$.fn.extraWidth = function ()
-{
-	return this.outerWidth(true) - this.width();
-};
-
-$.fn.offsetFrom = function (e)
-{
-	// We could cache the following offsets to halve the execution time, but even IE7 can run this 5000 times per second,
-	// so we might as well leave it that way and save 5 bytes in our gzipped file. Yes, I know, I'm crazy like that.
-	return {
-		x: this.offset().left - e.offset().left,
-		y: this.offset().top - e.offset().top
-	};
-};
-
 (function ()
 {
 	// This plugin is not compatible with IE6 and below;
@@ -58,14 +42,7 @@ $.fn.offsetFrom = function (e)
 		});
 	};
 
-	var
-		unique = 0,
-
-		// formatting for the display
-		optionFormat = function ($dom)
-		{
-			return $dom.text() || "";
-		},
+	var unique = 0,
 
 	SelectBox = function ($orig, o)
 	{
@@ -131,8 +108,6 @@ $.fn.offsetFrom = function (e)
 			// cache all sb items
 			$items = $dd.children("li").not(".optgroup");
 
-			// for accessibility/styling
-			$sb.attr("aria-activedescendant", $items.filter(".selected").attr("id"));
 			$dd.children(":first").addClass("first");
 			$dd.children(":last").addClass("last");
 
@@ -141,13 +116,20 @@ $.fn.offsetFrom = function (e)
 				$sb.width(Math.min(
 					o.maxWidth || 9e9,
 					// The 'apply' call below will return the widest width from a list of elements.
-					Math.max.apply(0, $dd.find(".text, .optgroup").map(function () { return $(this).width(); }).get()) + $display.extraWidth() + 1
+					Math.max.apply(0, $dd.find(".text, .optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 1
 				));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
 
 			// place the new markup in its semantic location (hide/show fixes positioning bugs)
-			$orig.before($sb).addClass("has_sb").hide().show();
+			$orig
+				.before(
+					// for accessibility/styling, and an easy custom .trigger("close") shortcut.
+					$sb.attr("aria-activedescendant", $items.filter(".selected").attr("id")).bind("close", closeSB)
+				)
+				.addClass("has_sb")
+				.hide()
+				.show();
 
 			// these two lines fix a div/span display bug on load in ie7
 			positionSB();
@@ -165,30 +147,46 @@ $.fn.offsetFrom = function (e)
 					blurAllButMe();
 					focusSB();
 				});
+
 				$display
 					.blur(blurSB)
 					.focus(focusSB)
-					.mouseup(clickSB)
 					.mousedown(false) // prevent double clicks
-					.click(false)
-					.hover(setHoverState);
+					.hover(function () { $(this).toggleClass("hover"); })
+					// when the user explicitly clicks the display
+					.click(function ()
+					{
+						// add active class to the display
+						$display.toggleClass("active");
+						$sb.is(".open") ? closeSB() : openSB();
+						return false;
+					});
 				$items.not(".disabled")
-					.click(clickSBItem)
-					.hover(setHoverState); // this one is useless, but compresses to zero byte.
+					.hover(function () { if ($sb.is(".open")) $(this).toggleClass("hover"); })
+					.click(clickSBItem);
 				$dd.children(".optgroup")
-					.click(false)
-					.hover(setHoverState);
+					.click(false);
 				$items.filter(".disabled")
 					.click(false);
+
 				if (!is_ie8down)
-					$(window).resize(delayPositionSB);
+					$(window).bind("resize.sb", function ()
+					{
+						clearTimeout(resizeTimeout);
+						resizeTimeout = setTimeout(function () {
+							if ($sb.is(".open"))
+							{
+								positionSB();
+								openSB(1);
+							}
+						}, 50);
+					});
 			}
 			else
 			{
 				$sb.addClass("disabled").attr("aria-disabled", true);
 				$display.click(false);
 			}
-			$sb.bind("close", closeSB);
 		},
 
 		// create new markup from an <option>
@@ -199,46 +197,36 @@ $.fn.offsetFrom = function (e)
 			return $("<li id='sbo" + ++unique + "' role=option></li>")
 				.data("orig", $option)
 				.data("value", $option.attr("value") || "")
-				.toggleClass("selected", $option.is(":selected"))
-				.toggleClass("disabled", $option.is(":disabled"))
 				.attr("aria-disabled", !!$option.is(":disabled"))
+				.toggleClass("disabled", $option.is(":disabled"))
+				.toggleClass("selected", $option.is(":selected"))
 				.append(
 					$("<div class='item'></div>")
 						.attr("style", $option.attr("style") || "")
 						.addClass($option.attr("class"))
 						.append(
-							$("<div class='text'></div>")
-								.html(optionFormat($option))
+							$("<div class='text'></div>").html(optionFormat($option))
 						)
 				);
 		},
 
-		delayPositionSB = function ()
+		// formatting for the display
+		optionFormat = function ($dom)
 		{
-			clearTimeout(resizeTimeout);
-			resizeTimeout = setTimeout(function () {
-				if ($sb.is(".open"))
-				{
-					positionSB();
-					openSB(1);
-				}
-			}, 50);
-		},
-
-		// unbind and remove
-		destroySB = function ()
-		{
-			$sb.remove();
-			$orig.unbind(".sb").removeClass("has_sb");
-			$(window).unbind("resize", delayPositionSB);
-			$orig.removeData("sb");
+			return $dom.text() || "";
 		},
 
 		// destroy then load, maintaining open/focused state if applicable
 		reloadSB = function ()
 		{
 			closeSB(1);
-			destroySB();
+
+			// destroy existing data
+			$sb.remove();
+			$orig.unbind(".sb").removeClass("has_sb");
+			$(window).unbind(".sb");
+			$orig.removeData("sb");
+
 			loadSB();
 			if ($sb.is(".open"))
 			{
@@ -259,8 +247,8 @@ $.fn.offsetFrom = function (e)
 				$(document).unbind(".sb");
 				$sb.removeClass("open");
 				$dd
-					.attr("aria-hidden", true)
-					.animate({ height: "toggle", opacity: "toggle" }, instantClose == 1 ? 0 : o.anim);
+					.animate({ height: "toggle", opacity: "toggle" }, instantClose == 1 ? 0 : o.anim)
+					.attr("aria-hidden", true);
 			}
 		},
 
@@ -280,7 +268,12 @@ $.fn.offsetFrom = function (e)
 		// reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
 		centerOnSelected = function ()
 		{
-			$dd.scrollTop($dd.scrollTop() + $items.filter(".selected").offsetFrom($dd).y - $dd.height() / 2 + $items.filter(".selected").outerHeight(true) / 2);
+			$dd.scrollTop($dd.scrollTop() + $items.filter(".selected").offset().top - $dd.offset().top - $dd.height() / 2 + $items.filter(".selected").outerHeight(true) / 2);
+		},
+
+		extraWidth = function ($dom)
+		{
+			return $dom.outerWidth(true) - $dom.width();
 		},
 
 		// show, reposition, and reset dropdown markup
@@ -313,7 +306,7 @@ $.fn.offsetFrom = function (e)
 				})
 				.removeClass("above");
 			if (!o.fixed)
-				$dd.width($display.outerWidth() - $dd.extraWidth() + 1);
+				$dd.width($display.outerWidth() - extraWidth($dd) + 1);
 
 			var
 				// figure out if we should show above/below the display box, first by calculating the free space around it.
@@ -328,27 +321,20 @@ $.fn.offsetFrom = function (e)
 			// modify dropdown css for display
 			$dd.hide().css({
 				marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight(),
-				maxHeight: Math.min(ddMaxHeight, showDown ? bottomSpace : topSpace), // 100,
+				maxHeight: Math.min(ddMaxHeight, showDown ? bottomSpace : topSpace),
 				visibility: "visible"
 			}).toggleClass("above", !showDown);
 
 			return showDown;
 		},
 
-		// when the user explicitly clicks the display
-		clickSB = function ()
-		{
-			// add active class to the display
-			$display.addClass("active");
-			$(document).mouseup(removeActiveState);
-
-			$sb.is(".open") ? closeSB() : openSB();
-			return false;
-		},
-
 		// when the user selects an item in any manner
 		selectItem = function ($item)
 		{
+			// if we're selecting an item and the box is closed, open it.
+			if (!$sb.is(".open"))
+				openSB();
+
 			// update the original <select>
 			$orig.find("option").each(function () { this.selected = false; });
 			$item.data("orig").each(function () { this.selected = true; });
@@ -371,9 +357,9 @@ $.fn.offsetFrom = function (e)
 		// when the user explicitly clicks an item
 		clickSBItem = function ()
 		{
+			selectItem($(this));
 			closeAndUnbind();
 			$orig.focus();
-			selectItem($(this));
 			return false;
 		},
 
@@ -406,13 +392,7 @@ $.fn.offsetFrom = function (e)
 
 			var $selected = $items.filter(".selected"), $enabled = $items.not(".disabled");
 
-			if (e.which == 32) // space (requires e.which instead of e.keyCode... confusing.)
-			{
-				if (!$sb.is(".open"))
-					openSB();
-				e.preventDefault();
-			}
-			else if (e.keyCode == 9) // tab on an unopened select box?
+			if (e.keyCode == 9) // tab on an unopened select box?
 			{
 				if ($sb.is(".open"))
 					closeSB();
@@ -448,8 +428,9 @@ $.fn.offsetFrom = function (e)
 				centerOnSelected();
 				e.preventDefault();
 			}
-			// try matching the next element that starts with the pressed letter
-			else if (selectMatchingItem(String.fromCharCode(e.keyCode)))
+			// prevent spaces from triggering the original -- requires e.which instead of e.keyCode... confusing.
+			// also, try finding the next element that starts with the pressed letter. if found, select it.
+			else if (e.which == 32 || selectMatchingItem(String.fromCharCode(e.keyCode)))
 				e.preventDefault();
 		},
 
@@ -472,20 +453,6 @@ $.fn.offsetFrom = function (e)
 			$sb.removeClass("focused");
 			$display.removeClass("active");
 			$(document).unbind("keypress.sb");
-		},
-
-		// add hover class to an element
-		setHoverState = function ()
-		{
-			if ($sb.is(".open"))
-				$(this).toggleClass("hover");
-		},
-
-		// remove active class from an element
-		removeActiveState = function ()
-		{
-			$display.removeClass("active");
-			$(document).unbind("mouseup", removeActiveState);
 		};
 
 		loadSB();
