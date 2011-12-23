@@ -47,7 +47,7 @@
 	SelectBox = function ($orig, o)
 	{
 		var
-			resizeTimeout = null,
+			resizeTimeout,
 			$label,
 			$display,
 			$dd,
@@ -61,8 +61,7 @@
 				anim: 150,			// animation duration: time to open/close dropdown in ms
 				fixed: false,		// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
 				maxHeight: false,	// if an integer, show scrollbars if the dropdown is too tall
-				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
-				css: "selectbox"	// class to apply our markup
+				maxWidth: false		// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
 			}, o);
 
 			$label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
@@ -70,10 +69,9 @@
 				$label = $orig.closest("label");
 
 			// create the new sb
-			$sb = $("<div class='sb " + o.css + " " + $orig.attr("class") + "' id='sb" + ++unique + "' role=listbox></div>")
+			$sb = $("<div class='sbox " + $orig.attr("class") + "' id='sb" + ++unique + "' role=listbox></div>")
 				.attr("aria-labelledby", $label.attr("id") || "")
-				.attr("aria-haspopup", true)
-				.appendTo("body");
+				.attr("aria-haspopup", true);
 
 			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + unique + "'></div>")
 				// generate the display markup
@@ -82,7 +80,7 @@
 				.appendTo($sb);
 
 			// generate the dropdown markup
-			$dd = $("<ul class='" + o.css + " items " + $orig.attr("class") + "' id='sbdd" + unique + "' role=menu></ul>")
+			$dd = $("<ul class='items " + $orig.attr("class") + "' id='sbdd" + unique + "' role=menu></ul>")
 				.attr("aria-hidden", true);
 			$sb.append($dd)
 				.attr("aria-owns", $dd.attr("id"));
@@ -111,30 +109,23 @@
 			$dd.children(":first").addClass("first");
 			$dd.children(":last").addClass("last");
 
+			// place the new markup in its semantic location
+			$orig
+				.addClass("has_sb")
+				.before(
+					// for accessibility/styling, and an easy custom .trigger("close") shortcut.
+					$sb.attr("aria-activedescendant", $items.filter(".selected").attr("id")).bind("close", closeSB)
+				);
+
 			// modify width based on fixed/maxWidth options
 			if (!o.fixed)
 				$sb.width(Math.min(
 					o.maxWidth || 9e9,
 					// The 'apply' call below will return the widest width from a list of elements.
-					Math.max.apply(0, $dd.find(".text, .optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 1
+					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 1
 				));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
-
-			// place the new markup in its semantic location (hide/show fixes positioning bugs)
-			$orig
-				.before(
-					// for accessibility/styling, and an easy custom .trigger("close") shortcut.
-					$sb.attr("aria-activedescendant", $items.filter(".selected").attr("id")).bind("close", closeSB)
-				)
-				.addClass("has_sb")
-				.hide()
-				.show();
-
-			// these two lines fix a div/span display bug on load in ie7
-			positionSB();
-			if (is_ie7)
-				$("." + o.css + " .display").hide().show();
 
 			// hide the dropdown now that it's initialized
 			$dd.hide();
@@ -156,8 +147,7 @@
 					// when the user explicitly clicks the display
 					.click(function ()
 					{
-						// add active class to the display
-						$display.toggleClass("active");
+						$sb.toggleClass("focused");
 						$sb.is(".open") ? closeSB() : openSB();
 						return false;
 					});
@@ -223,9 +213,9 @@
 
 			// destroy existing data
 			$sb.remove();
-			$orig.unbind(".sb").removeClass("has_sb");
-			$(window).unbind(".sb");
 			$orig.removeData("sb");
+			$orig.removeClass("has_sb").unbind(".sb");
+			$(window).unbind(".sb");
 
 			loadSB();
 			if ($sb.is(".open"))
@@ -233,7 +223,7 @@
 				$orig.focus();
 				openSB(1);
 			}
-			else if ($display.is(".focused"))
+			else if ($sb.is(".focused"))
 				$orig.focus();
 		},
 
@@ -243,8 +233,8 @@
 			if ($sb.is(".open"))
 			{
 				$display.blur();
-				$items.removeClass("hover");
 				$(document).unbind(".sb");
+				$items.removeClass("hover");
 				$sb.removeClass("open");
 				$dd
 					.animate({ height: "toggle", opacity: "toggle" }, instantClose == 1 ? 0 : o.anim)
@@ -262,7 +252,7 @@
 		// trigger all select boxes to blur
 		blurAllButMe = function ()
 		{
-			$(".sb.focused." + o.css).not($sb).find(".display").blur();
+			$(".sbox.focused").not($sb).find(".display").blur();
 		},
 
 		// reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
@@ -438,7 +428,7 @@
 		focusSB = function ()
 		{
 			// close all select boxes but this one, to prevent multiple selects open at once.
-			$(".sb.open." + o.css).not($sb).trigger("close");
+			$(".sbox.open").not($sb).trigger("close");
 
 			$sb.addClass("focused");
 			$(document)
@@ -451,7 +441,6 @@
 		blurSB = function ()
 		{
 			$sb.removeClass("focused");
-			$display.removeClass("active");
 			$(document).unbind("keypress.sb");
 		};
 

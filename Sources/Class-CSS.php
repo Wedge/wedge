@@ -526,6 +526,11 @@ class wecss_nesting extends wecss
 		if (!$css_syntax)
 		{
 			// Nope? Then let's have fun with our simplified syntax.
+
+			// WARNING: make sure to only use always tabs OR always spaces, and do proper
+			// structure nesting. Otherwise, the file won't parse properly.
+			// You must conform. It is my sworn duty to see that you do conform.
+
 			$tree = preg_replace("~\n\s*\n~", "\n", $tree); // Delete blank lines
 			$tree = preg_replace_callback('~^([\t ]*)~m', 'wecss_nesting::indentation', $tree);
 			$branches = explode("\n", $tree);
