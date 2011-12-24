@@ -76,13 +76,12 @@
 			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + unique + "'></div>")
 				// generate the display markup
 				.append($("<div class='text'></div>").append(optionFormat($orig.find("option:selected")) || "&nbsp;"))
-				.append("<div class='btn'><div></div></div>")
-				.appendTo($sb);
+				.append("<div class='btn'><div></div></div>");
 
 			// generate the dropdown markup
 			$dd = $("<ul class='items " + $orig.attr("class") + "' id='sbdd" + unique + "' role=menu></ul>")
 				.attr("aria-hidden", true);
-			$sb.append($dd)
+			$sb.append($display, $dd)
 				.attr("aria-owns", $dd.attr("id"));
 			if ($orig.children().length == 0)
 				$dd.append(createOption().addClass("selected"));
@@ -92,8 +91,8 @@
 					var $og = $(this), $optgroup;
 					if ($og.is("optgroup"))
 					{
-						$optgroup = $("<li class='optgroup'><div class='label'>" + $og.attr("label") + "</div></li>").appendTo($dd);
-						$og.find("option").each(function () { $dd.append(createOption($(this)).addClass('sub')); });
+						$dd.append($optgroup = $("<li class='optgroup'><div class='label'>" + $og.attr("label") + "</div></li>"));
+						$og.find("option").each(function () { $dd.append(createOption($(this)).addClass("sub")); });
 						if ($og.is(":disabled"))
 							$optgroup.nextAll().andSelf()
 								.addClass("disabled")
@@ -111,7 +110,7 @@
 
 			// place the new markup in its semantic location
 			$orig
-				.addClass("has_sb")
+				.addClass("sb")
 				.before(
 					// for accessibility/styling, and an easy custom .trigger("close") shortcut.
 					$sb.attr("aria-activedescendant", $items.filter(".selected").attr("id")).bind("close", closeSB)
@@ -213,9 +212,12 @@
 
 			// destroy existing data
 			$sb.remove();
-			$orig.removeData("sb");
-			$orig.removeClass("has_sb").unbind(".sb");
-			$(window).unbind(".sb");
+			$orig
+				.removeClass("sb")
+				.removeData("sb")
+				.unbind(".sb");
+			$(window)
+				.unbind(".sb");
 
 			loadSB();
 			if ($sb.is(".open"))

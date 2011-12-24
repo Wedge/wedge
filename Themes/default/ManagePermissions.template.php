@@ -168,11 +168,11 @@ function template_permission_index()
 
 						if ($perm['has_own_any'])
 							echo '
-								<option value="', $permissionType['id'], '/', $perm['own']['id'], '">', $perm['name'], ' (', $perm['own']['name'], ')</option>
-								<option value="', $permissionType['id'], '/', $perm['any']['id'], '">', $perm['name'], ' (', $perm['any']['name'], ')</option>';
+									<option value="', $permissionType['id'], '/', $perm['own']['id'], '">', $perm['name'], ' (', $perm['own']['name'], ')</option>
+									<option value="', $permissionType['id'], '/', $perm['any']['id'], '">', $perm['name'], ' (', $perm['any']['name'], ')</option>';
 						else
 							echo '
-								<option value="', $permissionType['id'], '/', $perm['id'], '">', $perm['name'], '</option>';
+									<option value="', $permissionType['id'], '/', $perm['id'], '">', $perm['name'], '</option>';
 					}
 					echo '
 								</optgroup>';

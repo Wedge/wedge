@@ -544,6 +544,9 @@ input[type=file]
 	transition: opacity .3s ease
 	margin-top: 30px
 
+.css li ul
+	margin-top: 25px
+
 .css > li > ul
 	transition: opacity .15s ease
 
@@ -1260,22 +1263,24 @@ dl#feed
 --------------------------------------------------------- */
 
 /* applied to original <select> to hide */
-.has_sb
+select.sb
 	position: absolute
 	left: -999999em
 	text-indent: -999999em
 
-/* always visible styles */
 .sbox extends .inline-block
 	font-size: 1em
+	font-weight: 400
+	text-align: left
 	margin: 1px
 
 	.text extends .inline-block
 		vertical-align: baseline
 
-	/* display area (click to unfold the list) */
+	/* display area (always visible) */
 	.display
-		background: #fff
+		background: rgba(255,255,255,.5)
+		opacity: .9
 		border: 1px solid #abadb3
 		color: #000
 		cursor: default
@@ -1312,6 +1317,7 @@ dl#feed
 		color: #999
 
 	&.focused .display
+		background: #fff
 
 		.text
 			background-color: #39f
@@ -1355,14 +1361,14 @@ dl#feed
 			text-decoration: none
 
 		.selected .item
-			background-color: #f5eeee !important
+			background-color: #eee !important
 
 		.disabled .item
 			color: #999
 
 		.hover .item
-			background-color: #3399ff !important
-			color: #fcfcfc !important
+			background-color: #39f !important
+			color: #fff !important
 
 		// <optgroup> styles
 		.optgroup .label
