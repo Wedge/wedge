@@ -60,7 +60,7 @@
 			o = $.extend({
 				anim: 150,			// animation duration: time to open/close dropdown in ms
 				fixed: false,		// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
-				maxHeight: false,	// if an integer, show scrollbars if the dropdown is too tall
+				maxHeight: 500,		// show scrollbars if the dropdown is taller than 500 pixels (or the viewport height)
 				maxWidth: false		// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
 			}, o);
 
@@ -302,16 +302,16 @@
 				// figure out if we should show above/below the display box, first by calculating the free space around it.
 				bottomSpace = $(window).scrollTop() + $(window).height() - $display.offset().top - $display.outerHeight(),
 				topSpace = $display.offset().top - $(window).scrollTop(),
-				ddMaxHeight = Math.min(o.maxHeight || 9e9, $dd.outerHeight()),
 
 				// if we have enough space below the button, or if we don't have enough room above either, show a dropdown.
 				// otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
-				showDown = ($dd.outerHeight() <= bottomSpace) || (($dd.outerHeight() >= topSpace) && (bottomSpace + 50 >= topSpace));
+				showDown = ($dd.outerHeight() <= bottomSpace) || (($dd.outerHeight() >= topSpace) && (bottomSpace + 50 >= topSpace)),
+				ddMaxHeight = Math.min(o.maxHeight, $dd.outerHeight(), showDown ? bottomSpace : topSpace);
 
 			// modify dropdown css for display
 			$dd.hide().css({
 				marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight(),
-				maxHeight: Math.min(ddMaxHeight, showDown ? bottomSpace : topSpace),
+				maxHeight: ddMaxHeight - ($dd.outerHeight() - $dd.height()),
 				visibility: "visible"
 			}).toggleClass("above", !showDown);
 
@@ -321,6 +321,9 @@
 		// when the user selects an item in any manner
 		selectItem = function ($item)
 		{
+			// trigger change on the old <select> if necessary
+			var has_changed = $orig.val() !== $item.data("value");
+
 			// if we're selecting an item and the box is closed, open it.
 			if (!$sb.is(".open"))
 				openSB();
@@ -339,8 +342,7 @@
 				.attr("title", $item.find(".text").html().php_unhtmlspecialchars())
 				.html(optionFormat($item.data("orig")));
 
-			// trigger change on the old <select> if necessary
-			if ($orig.val() !== $item.data("value"))
+			if (has_changed)
 				$orig.change();
 		},
 
@@ -420,7 +422,7 @@
 			}
 			// prevent spaces from triggering the original -- requires e.which instead of e.keyCode... confusing.
 			// also, try finding the next element that starts with the pressed letter. if found, select it.
-			else if (e.which == 32 || selectMatchingItem(String.fromCharCode(e.keyCode)))
+			else if (e.which == 32 || selectMatchingItem(String.fromCharCode(e.which)))
 				e.preventDefault();
 		},
 

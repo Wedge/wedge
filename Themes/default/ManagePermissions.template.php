@@ -159,7 +159,7 @@ function template_permission_index()
 						continue;
 
 					echo '
-								<option value="" disabled>[', $permissionGroup['name'], ']</option>';
+								<optgroup label="', westr::safe($permissionGroup['name']), '">';
 
 					foreach ($permissionGroup['permissions'] as $perm)
 					{
@@ -168,12 +168,14 @@ function template_permission_index()
 
 						if ($perm['has_own_any'])
 							echo '
-								<option value="', $permissionType['id'], '/', $perm['own']['id'], '">&nbsp;&nbsp;&nbsp;', $perm['name'], ' (', $perm['own']['name'], ')</option>
-								<option value="', $permissionType['id'], '/', $perm['any']['id'], '">&nbsp;&nbsp;&nbsp;', $perm['name'], ' (', $perm['any']['name'], ')</option>';
+								<option value="', $permissionType['id'], '/', $perm['own']['id'], '">', $perm['name'], ' (', $perm['own']['name'], ')</option>
+								<option value="', $permissionType['id'], '/', $perm['any']['id'], '">', $perm['name'], ' (', $perm['any']['name'], ')</option>';
 						else
 							echo '
-								<option value="', $permissionType['id'], '/', $perm['id'], '">&nbsp;&nbsp;&nbsp;', $perm['name'], '</option>';
+								<option value="', $permissionType['id'], '/', $perm['id'], '">', $perm['name'], '</option>';
 					}
+					echo '
+								</optgroup>';
 				}
 			}
 		}

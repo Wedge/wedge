@@ -158,10 +158,10 @@ function template_modify_category()
 
 	if (isset($context['category']['is_new']))
 		echo '
-					<input type="submit" name="add" value="', $txt['mboards_add_cat_button'], '" onclick="return $.trim(this.form.cat_name.value) !== '';" tabindex="', $context['tabindex']++, '" class="new">';
+					<input type="submit" name="add" value="', $txt['mboards_add_cat_button'], '" onclick="return $.trim(this.form.cat_name.value) !== \'\';" tabindex="', $context['tabindex']++, '" class="new">';
 	else
 		echo '
-					<input type="submit" name="edit" value="', $txt['modify'], '" onclick="return $.trim(this.form.cat_name.value) !== '';" tabindex="', $context['tabindex']++, '" class="save">
+					<input type="submit" name="edit" value="', $txt['modify'], '" onclick="return $.trim(this.form.cat_name.value) !== \'\';" tabindex="', $context['tabindex']++, '" class="save">
 					<input type="submit" name="delete" value="', $txt['mboards_delete_cat'], '" onclick="return confirm(', JavaScriptEscape($txt['catConfirm']), ');" class="delete">';
 	echo '
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">';
@@ -557,10 +557,10 @@ function template_modify_board()
 	if (isset($context['board']['is_new']))
 		echo '
 					<input type="hidden" name="cur_cat" value="', $context['board']['category'], '">
-					<input type="submit" name="add" value="', $txt['mboards_new_board'], '" onclick="return $.trim(this.form.board_name.value) !== '';" class="new">';
+					<input type="submit" name="add" value="', $txt['mboards_new_board'], '" onclick="return $.trim(this.form.board_name.value) !== \'\';" class="new">';
 	else
 		echo '
-					<input type="submit" name="edit" value="', $txt['modify'], '" onclick="return $.trim(this.form.board_name.value) !== '';" class="save">';
+					<input type="submit" name="edit" value="', $txt['modify'], '" onclick="return $.trim(this.form.board_name.value) !== \'\';" class="save">';
 
 	if (!isset($context['board']['is_new']) && empty($context['board']['is_recycle']))
 		echo '
