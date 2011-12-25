@@ -32,9 +32,9 @@
 		{
 			var $e = $(this), obj = $e.data("sb");
 
-			// if it is already created, then execute any functions passed to it, and pass it the castle of arg..uments.
+			// if it is already created, then reload it.
 			if (obj)
-				arg && $.isFunction(obj[arg]) && obj[arg]();
+				obj.re();
 
 			// if the object is not defined for this element, and it's a drop-down, then create and initialize it.
 			else if (!$e.attr("size"))
@@ -59,9 +59,9 @@
 			// set the various options
 			o = $.extend({
 				anim: 150,			// animation duration: time to open/close dropdown in ms
-				fixed: false,		// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
 				maxHeight: 500,		// show scrollbars if the dropdown is taller than 500 pixels (or the viewport height)
-				maxWidth: false		// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
+				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
+				fixed: false		// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
 			}, o);
 
 			$label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
@@ -70,19 +70,24 @@
 
 			// create the new sb
 			$sb = $("<div class='sbox " + $orig.attr("class") + "' id='sb" + ++unique + "' role=listbox></div>")
+				// .attr("tabindex", $orig.attr("tabindex") || -1)
 				.attr("aria-labelledby", $label.attr("id") || "")
 				.attr("aria-haspopup", true);
 
 			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + unique + "'></div>")
 				// generate the display markup
-				.append($("<div class='text'></div>").append(optionFormat($orig.find("option:selected")) || "&nbsp;"))
+				.append(optionFormat($orig.find("option:selected"), "&nbsp;"))
 				.append("<div class='btn'><div></div></div>");
 
 			// generate the dropdown markup
+			// <div class='viewport'></div><ul class='overview
 			$dd = $("<ul class='items " + $orig.attr("class") + "' id='sbdd" + unique + "' role=menu></ul>")
 				.attr("aria-hidden", true);
+
 			$sb.append($display, $dd)
 				.attr("aria-owns", $dd.attr("id"));
+				//.scroll();
+
 			if ($orig.children().length == 0)
 				$dd.append(createOption().addClass("selected"));
 			else
@@ -121,7 +126,7 @@
 				$sb.width(Math.min(
 					o.maxWidth || 9e9,
 					// The 'apply' call below will return the widest width from a list of elements.
-					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 1
+					Math.max.apply(0, $dd.find(".text,.details,.optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 1
 				));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
@@ -193,16 +198,14 @@
 					$("<div class='item'></div>")
 						.attr("style", $option.attr("style") || "")
 						.addClass($option.attr("class"))
-						.append(
-							$("<div class='text'></div>").html(optionFormat($option))
-						)
+						.append(optionFormat($option))
 				);
 		},
 
 		// formatting for the display
-		optionFormat = function ($dom)
+		optionFormat = function ($dom, empty)
 		{
-			return $dom.text() || "";
+			return "<div class='text'>" + ($dom.text().replace(/\|/g, "</div><div class='details'>") || empty || "") + "</div>";
 		},
 
 		// destroy then load, maintaining open/focused state if applicable
@@ -212,9 +215,9 @@
 
 			// destroy existing data
 			$sb.remove();
+
 			$orig
 				.removeClass("sb")
-				.removeData("sb")
 				.unbind(".sb");
 			$(window)
 				.unbind(".sb");
@@ -295,8 +298,7 @@
 				.css({ // doesn't seem to be useful on my tests... Maybe a browser hack?
 					maxHeight: "none",
 					visibility: "hidden"
-				})
-				.removeClass("above");
+				});
 			if (!o.fixed)
 				$dd.width($display.outerWidth() - extraWidth($dd) + 1);
 
@@ -316,6 +318,7 @@
 				maxHeight: ddMaxHeight - ($dd.outerHeight() - $dd.height()),
 				visibility: "visible"
 			}).toggleClass("above", !showDown);
+			//$sb.scrollUpdate();
 
 			return showDown;
 		},
@@ -341,8 +344,8 @@
 
 			// update the title attr and the display markup
 			$display.find(".text")
-				.attr("title", $item.find(".text").html().php_unhtmlspecialchars())
-				.html(optionFormat($item.data("orig")));
+				.replaceWith(optionFormat($item.data("orig")))
+				.attr("title", $item.find(".text").html().php_unhtmlspecialchars());
 
 			if (has_changed)
 				$orig.change();
@@ -449,14 +452,168 @@
 		};
 
 		loadSB();
-
-		// public method interface
-		this.init = loadSB;
-		this.open = openSB;
-		this.close = closeSB;
-		this.refresh = reloadSB;
+		this.re = reloadSB;
 	};
 
 }());
+
+
+/**
+ * Tiny Scrollbar 1.66
+ * http://www.baijs.nl/tinyscrollbar/
+ *
+ * Copyright 2010, Maarten Baijs
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.opensource.org/licenses/gpl-2.0.php
+ *
+ * Date: 13 / 11 / 2011
+ * Depends on library: jQuery
+ */
+
+/*
+(function ()
+{
+	$.fn.scroll = function ()
+	{
+		this.each(function () { $(this).data('tsb', new Scrollbar(this)); });
+		return this;
+	};
+
+	$.fn.scrollUpdate = function (sScroll) { return $(this).data('tsb').update(sScroll); };
+
+	var Scrollbar = function (root)
+	{
+		var
+			oSelf = this,
+			iScroll, startPos = 0, iMouse = 0,
+			thumbAxis, viewportAxis, contentAxis,
+			contentRatio, scrollbarRatio,
+			oWrapper = root,
+			oViewport,
+			oContent,
+			oScrollbar,
+			oTrack,
+			oThumb;
+
+		this.update = function (sScroll)
+		{
+			viewportAxis = $('.viewport', root).height();
+			oContent = $('.overview', root);
+			oScrollbar = $('.scrollbar', root);
+			oTrack = $('.track', oScrollbar);
+			oThumb = $('.thumb', oScrollbar);
+
+			contentAxis = oContent.height();
+			contentRatio = viewportAxis / contentAxis;
+			oScrollbar.toggleClass('disable', contentRatio >= 1);
+			thumbAxis = Math.min(viewportAxis, Math.max(0, viewportAxis * contentRatio));
+			scrollbarRatio = contentAxis / viewportAxis;
+			iScroll = (sScroll == 'relative' && contentRatio <= 1) ? Math.min(contentAxis - viewportAxis, Math.max(0, iScroll)) : 0;
+			iScroll = (sScroll == 'bottom' && contentRatio <= 1) ? contentAxis - viewportAxis : isNaN(parseInt(sScroll)) ? iScroll : parseInt(sScroll);
+			setSize();
+		};
+
+		var setSize = function ()
+		{
+			oThumb.css('top', iScroll / scrollbarRatio);
+			oContent.css('top', -iScroll);
+			iMouse = oThumb.offset().top;
+			oScrollbar.css('height', viewportAxis);
+			oTrack.css('height', viewportAxis);
+			oThumb.css('height', thumbAxis);
+		},
+
+		setEvents = function ()
+		{
+			oThumb.bind('mousedown', start);
+			oThumb[0].ontouchstart = function (oEvent)
+			{
+				oEvent.preventDefault();
+				oThumb.unbind('mousedown');
+				start(oEvent.touches[0]);
+				return false;
+			};
+			oTrack.bind('mouseup', drag);
+			if (this.addEventListener)
+			{
+				oWrapper.addEventListener('DOMMouseScroll', wheel, false);
+				oWrapper.addEventListener('mousewheel', wheel, false);
+			}
+			else
+				oWrapper.onmousewheel = wheel;
+		},
+
+		start = function (oEvent)
+		{
+			iMouse = oEvent.pageY;
+			var oThumbDir = parseInt(oThumb.css('top'));
+			startPos = oThumbDir == 'auto' ? 0 : oThumbDir;
+			$(document).bind('mousemove', drag);
+			document.ontouchmove = function (oEvent)
+			{
+				$(document).unbind('mousemove');
+				drag(oEvent.touches[0]);
+			};
+			$(document).bind('mouseup', end);
+			oThumb.bind('mouseup', end);
+			oThumb[0].ontouchend = document.ontouchend = function (oEvent)
+			{
+				$(document).unbind('mouseup');
+				oThumb.unbind('mouseup');
+				end(oEvent.touches[0]);
+			};
+			return false;
+		},
+
+		wheel = function (oEvent)
+		{
+			if (contentRatio < 1)
+			{
+				oEvent = oEvent || window.event;
+				var iDelta = oEvent.wheelDelta ? oEvent.wheelDelta / 120 : -oEvent.detail / 3;
+
+				iScroll -= iDelta * 40; // how many pixels per wheel movement?
+				iScroll = Math.min((contentAxis - viewportAxis), Math.max(0, iScroll));
+				oThumb.css('top', iScroll / scrollbarRatio);
+				oContent.css('top', -iScroll);
+
+				oEvent = $.event.fix(oEvent);
+				oEvent.preventDefault();
+			}
+		},
+
+		end = function (oEvent)
+		{
+			$(document)
+				.unbind('mousemove', drag)
+				.unbind('mouseup', end);
+			oThumb.unbind('mouseup', end);
+			document.ontouchmove = oThumb[0].ontouchend = document.ontouchend = null;
+			return false;
+		},
+
+		drag = function (oEvent)
+		{
+			if (contentRatio < 1)
+			{
+				var curPos = Math.min(viewportAxis - thumbAxis, Math.max(0, startPos + oEvent.pageY - iMouse));
+				iScroll = curPos * scrollbarRatio;
+				oContent.css('top', -iScroll);
+				oThumb.css('top', curPos);
+			}
+			return false;
+		};
+
+		root = $(root);
+		root.prepend('<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>');
+		console.log(root.parent().parent());
+		//root = root.parent();
+		oSelf.update();
+		setEvents();
+		return oSelf;
+	};
+})();
+*/
 
 $('select').sb();

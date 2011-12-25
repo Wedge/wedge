@@ -1277,6 +1277,13 @@ select.sb
 	.text extends .inline-block
 		vertical-align: baseline
 
+	.details extends .inline-block
+		vertical-align: baseline
+		font-style: italic
+		font-size: .9em
+		padding: 3px
+		color: #666
+
 	/* display area (always visible) */
 	.display
 		background: rgba(255,255,255,.5)
