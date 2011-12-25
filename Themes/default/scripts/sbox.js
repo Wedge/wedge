@@ -123,7 +123,8 @@
 				$sb.width(Math.min(
 					o.maxWidth || 9e9,
 					// The 'apply' call below will return the widest width from a list of elements.
-					Math.max.apply(0, $dd.find(".text,.details,.optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 1
+					// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
+					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 1
 				));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
@@ -208,6 +209,8 @@
 		// destroy then load, maintaining open/focused state if applicable
 		reloadSB = function ()
 		{
+			var wasOpen = $sb.is(".open"), wasFocused = $sb.is(".focused");
+
 			closeSB(1);
 
 			// destroy existing data
@@ -220,12 +223,9 @@
 				.unbind(".sb");
 
 			loadSB();
-			if ($sb.is(".open"))
-			{
-				$orig.focus();
+			if (wasOpen)
 				openSB(1);
-			}
-			else if ($sb.is(".focused"))
+			else if (wasFocused)
 				$orig.focus();
 		},
 
@@ -269,21 +269,24 @@
 		},
 
 		// show, reposition, and reset dropdown markup
-		openSB = function (instantOpen)
+		openSB = function (reloading)
 		{
 			blurAllButMe();
 			$sb.addClass("open").append($dd.attr("aria-hidden", false));
 			var showDown = positionSB();
-			if (instantOpen)
+			if (reloading)
 			{
 				$dd.show();
 				centerOnSelected();
 			}
-			else if (showDown)
-				$dd.animate({ height: "toggle", opacity: "toggle" }, o.anim, centerOnSelected);
 			else
-				$dd.fadeIn(o.anim, centerOnSelected);
-			$orig.focus();
+			{
+				if (showDown)
+					$dd.animate({ height: "toggle", opacity: "toggle" }, o.anim, centerOnSelected);
+				else
+					$dd.fadeIn(o.anim, centerOnSelected);
+				$orig.focus();
+			}
 		},
 
 		// position dropdown based on collision detection

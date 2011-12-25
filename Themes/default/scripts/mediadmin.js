@@ -62,22 +62,14 @@ function getPermAlbums(id_profile, args)
 
 function permDelCheck(id, el, conf_text)
 {
-	if (!confirm(conf_text))
+	if (el.checked && !confirm(conf_text))
 	{
 		el.checked = '';
 		return;
 	}
 
-	var opts = document.getElementsByName('del_prof')[0].getElementsByTagName('option');
-
-	for (var i = 0; i < opts.length; i++)
-	{
-		if (opts[i].value == id)
-		{
-			opts[i].style.display = el.checked ? 'none' : '';
-			break;
-		}
-	}
+	$('select[name="del_prof"] option[value=' + id + ']').toggle(!el.checked);
+	$('select[name="del_prof"]').sb();
 }
 
 function aeva_prepareScriptUrl(sUrl)

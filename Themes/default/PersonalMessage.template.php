@@ -60,81 +60,50 @@ function template_folder()
 {
 	global $context, $settings, $options, $modSettings, $txt;
 
-	// The ever helpful javascript!
-	add_js_inline('
-	var allLabels = {};
-	var currentLabels = {};
+	// The ever helpful JavaScript!
+	add_js('
+	var currentLabels = [], allLabels = { ');
+
+	foreach ($context['labels'] as $label)
+		$context['footer_js'] .= '\'' . $label['id'] . '\': ' . JavaScriptEscape($label['name']) . ', ';
+
+	if (!empty($context['labels']))
+		$context['footer_js'] = substr($context['footer_js'], 0, -2);
+
+	add_js(' };
 	function loadLabelChoices()
 	{
-		var listing = document.forms.pmFolder.elements;
-		var theSelect = document.forms.pmFolder.pm_action;
-		var add, remove, toAdd = {length: 0}, toRemove = {length: 0};
+		var
+			listing = $("input[name=\'pms\[\]\']:checked", document.forms.pmFolder),
+			theSelect = document.forms.pmFolder.pm_action,
+			toAdd = "", toRemove = "", i, o, x;
 
 		if (theSelect.childNodes.length == 0)
-			return;');
+			return;
 
-	$pm_msg_label_apply = JavaScriptEscape($txt['pm_msg_label_apply']);
-	$pm_msg_label_remove = JavaScriptEscape($txt['pm_msg_label_remove']);
-
-	// This is done this way for internationalization reasons.
-	add_js_inline('
-		if (!(\'-1\' in allLabels))
+		for (i = 0; i < listing.length; i++)
 		{
-			for (var o = 0; o < theSelect.options.length; o++)
-				if (theSelect.options[o].value.substr(0, 4) == "rem_")
-					allLabels[theSelect.options[o].value.substr(4)] = theSelect.options[o].text;
-		}
-
-		for (var i = 0; i < listing.length; i++)
-		{
-			if (listing[i].name != "pms[]" || !listing[i].checked)
-				continue;
-
-			var alreadyThere = [], x;
+			var alreadyThere = [];
 			for (x in currentLabels[listing[i].value])
 			{
-				if (!(x in toRemove))
-				{
-					toRemove[x] = allLabels[x];
-					toRemove.length++;
-				}
+				if (!toRemove.match("<option value=\'rem_" + x + "\'"))
+					toRemove += "<option value=\'rem_" + x + "\'>" + allLabels[x] + "</option>";
 				alreadyThere[x] = allLabels[x];
 			}
-
 			for (x in allLabels)
-			{
-				if (!(x in alreadyThere))
-				{
-					toAdd[x] = allLabels[x];
-					toAdd.length++;
-				}
-			}
+				if (!(x in alreadyThere) && !toAdd.match("<option value=\'add_" + x + "\'"))
+					toAdd += "<option value=\'add_" + x + "\'>" + allLabels[x] + "</option>";
 		}
 
-		while (theSelect.options.length > 2)
-			theSelect.options[2] = null;
+		$("select[name=pm_action] optgroup").remove();
 
-		if (toAdd.length != 0)
-		{
-			theSelect.options.push(new Option(', $pm_msg_label_apply, ', ""));
-			theSelect.options[theSelect.options.length - 1].innerHTML = ', $pm_msg_label_apply, ';
-			theSelect.options[theSelect.options.length - 1].disabled = true;
+		if (toAdd)
+			$("select[name=pm_action]").append($("<optgroup></optgroup>").attr("label", ', JavaScriptEscape($txt['pm_msg_label_apply']), ').append(toAdd));
 
-			for (i in toAdd)
-				if (i != "length")
-					theSelect.options.push(new Option(toAdd[i], "add_" + i));
-		}
+		if (toRemove)
+			$("select[name=pm_action]").append($("<optgroup></optgroup>").attr("label", ', JavaScriptEscape($txt['pm_msg_label_remove']), ').append(toRemove));
 
-		if (toRemove.length != 0)
-		{
-			theSelect.options.push(new Option(', $pm_msg_label_remove, ', ""));
-			theSelect.options[theSelect.options.length - 1].innerHTML = ', $pm_msg_label_remove, ';
-			theSelect.options[theSelect.options.length - 1].disabled = true;
-
-			for (i in toRemove)
-				if (i != "length")
-					theSelect.options.push(new Option(toRemove[i], "rem_" + i));
-		}
+		$(theSelect).sb();
 	}');
 
 	echo '
@@ -375,7 +344,7 @@ function template_folder()
 
 			if (empty($context['display_mode']))
 				echo '
-					<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="$(\'#deletelisting', $message['id'], '\')[0].checked = this.checked;"></li>';
+					<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="$(\'#deletelisting', $message['id'], '\').attr(\'checked\', this.checked);"></li>';
 
 			echo '
 				</ul>
@@ -431,39 +400,43 @@ function template_folder()
 			{
 				echo '
 				<div class="labels righttext">';
+
 				// Add the label drop down box.
 				if (!empty($context['currently_using_labels']))
 				{
 					echo '
-					<select name="pm_actions[', $message['id'], ']" onchange="if (this.options[this.selectedIndex].value) form.submit();">
-						<option value="">', $txt['pm_msg_label_title'], ':</option>
-						<option value="" disabled>---------------</option>';
+					<select name="pm_actions[', $message['id'], ']" onchange="if ($(this).val()) this.form.submit();">
+						<option value="">', $txt['pm_msg_label_title'], '</option>';
 
 					// Are there any labels which can be added to this?
 					if (!$message['fully_labeled'])
 					{
 						echo '
-						<option value="" disabled>', $txt['pm_msg_label_apply'], ':</option>';
+						<optgroup label="', westr::safe($txt['pm_msg_label_apply']), '">';
+
 						foreach ($context['labels'] as $label)
 							if (!isset($message['labels'][$label['id']]))
 								echo '
-							<option value="', $label['id'], '">&nbsp;', $label['name'], '</option>';
+							<option value="', $label['id'], '">', $label['name'], '</option>';
+						echo '
+						</optgroup>';
 					}
 					// ... and are there any that can be removed?
 					if (!empty($message['labels']) && (count($message['labels']) > 1 || !isset($message['labels'][-1])))
 					{
 						echo '
-						<option value="" disabled>', $txt['pm_msg_label_remove'], ':</option>';
+						<optgroup label="', westr::safe($txt['pm_msg_label_remove']), '">';
+
 						foreach ($message['labels'] as $label)
 							echo '
-							<option value="', $label['id'], '">&nbsp;', $label['name'], '</option>';
+							<option value="', $label['id'], '">', $label['name'], '</option>';
+						echo '
+						</optgroup>';
 					}
 					echo '
-					</select>
-					<noscript>
-						<input type="submit" value="', $txt['pm_apply'], '" class="submit">
-					</noscript>';
+					</select>';
 				}
+
 				echo '
 				</div>';
 			}
@@ -519,8 +492,8 @@ function template_subject_list()
 			<th class="left" style="width: 22%">
 				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 			</th>
-			<th>
-				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="javascript:window.location=\'', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(\'#selPMView\').val();">';
+			<th class="left">
+				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="window.location=\'', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(\'#selPMView\').val();">';
 
 	foreach ($context['view_select_types'] as $display_mode => $display_desc)
 		echo '
@@ -528,9 +501,7 @@ function template_subject_list()
 
 	echo '
 				</select></span>
-				<span class="floatleft">
-					<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
-				</span>
+				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 			</th>
 			<th class="left" style="width: 15%">
 				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', ($context['from_or_to'] == 'from' ? $txt['from'] : $txt['to']), $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
@@ -541,6 +512,7 @@ function template_subject_list()
 		</tr>
 	</thead>
 	<tbody>';
+
 	if (!$context['show_delete'])
 		echo '
 		<tr class="windowbg2">
@@ -550,7 +522,7 @@ function template_subject_list()
 
 	while ($message = $context['get_pmessage']('subject'))
 	{
-		add_js_inline('
+		add_js('
 	currentLabels[', $message['id'], '] = {');
 
 		if (!empty($message['labels']))
@@ -558,13 +530,13 @@ function template_subject_list()
 			$first = true;
 			foreach ($message['labels'] as $label)
 			{
-				add_js_inline($first ? '' : ',', '
+				add_js($first ? '' : ',', '
 		"', $label['id'], '": "', $label['name'], '"');
 				$first = false;
 			}
 		}
 
-		add_js_inline('
+		add_js('
 	};');
 
 		echo '
@@ -574,7 +546,7 @@ function template_subject_list()
 			<td>', $message['time'], '</td>
 			<td>', ($context['display_mode'] != 0 && $context['current_pm'] == $message['id'] ? '<img src="' . $settings['images_url'] . '/selected.gif">' : ''), '<a href="', ($context['display_mode'] == 0 || $context['current_pm'] == $message['id'] ? '' : ('<URL>?action=pm;pmid=' . $message['id'] . ';kstart;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : ''))), '#msg', $message['id'], '">', $message['subject'], '</a>', $message['is_unread'] ? '&nbsp;<div class="new_icon" title="' . $txt['new'] . '"></div>' : '', '</td>
 			<td>', ($context['from_or_to'] == 'from' ? $message['member']['link'] : (empty($message['recipients']['to']) ? '' : implode(', ', $message['recipients']['to']))), '</td>
-			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked' : '', ' onclick="if ($(\'#deletedisplay', $message['id'], '\').length) $(\'#deletedisplay', $message['id'], '\')[0].checked = this.checked;"></td>
+			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked' : '', ' onclick="$(\'#deletedisplay', $message['id'], '\').attr(\'checked\', this.checked);"></td>
 		</tr>';
 		$next_alternate = !$next_alternate;
 	}
@@ -589,29 +561,10 @@ function template_subject_list()
 	if ($context['show_delete'])
 	{
 		if (!empty($context['currently_using_labels']) && $context['folder'] != 'sent')
-		{
 			echo '
-				<select name="pm_action" onchange="if (this.options[this.selectedIndex].value) this.form.submit();" onfocus="loadLabelChoices();">
-					<option value="">', $txt['pm_sel_label_title'], ':</option>
-					<option value="" disabled>---------------</option>';
-
-			echo '
-					<option value="" disabled>', $txt['pm_msg_label_apply'], ':</option>';
-			foreach ($context['labels'] as $label)
-				if ($label['id'] != $context['current_label_id'])
-					echo '
-					<option value="add_', $label['id'], '">&nbsp;', $label['name'], '</option>';
-			echo '
-					<option value="" disabled>', $txt['pm_msg_label_remove'], ':</option>';
-			foreach ($context['labels'] as $label)
-				echo '
-					<option value="rem_', $label['id'], '">&nbsp;', $label['name'], '</option>';
-			echo '
-				</select>
-				<noscript>
-					<input type="submit" value="', $txt['pm_apply'], '" class="submit">
-				</noscript>';
-		}
+				<select name="pm_action" onchange="if ($(this).val()) this.form.submit();" onfocus="loadLabelChoices();">
+					<option value="">', $txt['pm_sel_label_title'], '</option>
+				</select>';
 
 		echo '
 				<input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" onclick="if (!confirm(', JavaScriptEscape($txt['delete_selected_confirm']), ')) return false;" class="delete">';

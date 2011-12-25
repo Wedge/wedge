@@ -390,6 +390,9 @@ em
 form
 	margin, padding: 0
 
+select
+	visibility: hidden
+
 input, select, textarea
 	font: 95%/115% $main_font
 	color: #000
@@ -1264,6 +1267,7 @@ dl#feed
 
 /* applied to original <select> to hide */
 select.sb
+	visibility: visible
 	position: absolute
 	left: -999999em
 	text-indent: -999999em

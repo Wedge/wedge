@@ -109,6 +109,8 @@ img.new_posts
 #message_index_jump_to
 	margin-top: 0
 	float: right
+	.sbox
+		margin-top: 0
 
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
@@ -127,8 +129,8 @@ img.new_posts
 
 // The jump to box
 #display_jump_to extends .cell
-	select
-		font-size: 9pt
+	.sbox
+		font-size: 10pt
 		letter-spacing: 0
 		padding: 2px 2px 0
 		margin-left: 8px
