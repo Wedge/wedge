@@ -11,12 +11,13 @@
  */
 
 var
-	weEditors = [],
-	_formSubmitted = false,
+	weEditors = [], aJumpTo = [],
+	_formSubmitted = false, oThought,
 
 	// Basic browser detection
 	ua = navigator.userAgent.toLowerCase(),
 	vers = $.browser.version,
+	can_ajax = $.support.ajax,
 
 	// If you need support for more versions, just test for $.browser.version yourself...
 	is_opera = $.browser.opera, is_opera95up = is_opera && vers >= 9.5,
@@ -24,8 +25,7 @@ var
 	is_webkit = $.browser.webkit, is_chrome = ua.indexOf('chrome') != -1, is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
 	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && vers == 6, is_ie7 = is_ie && vers == 7,
-	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down,
-	aJumpTo = [], oThought;
+	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down;
 
 // Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback, undefined)
@@ -767,22 +767,6 @@ Thought.prototype.submit = function (tid, mid)
 		}
 	);
 };
-
-function _testStyle(sty, undefined)
-{
-	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ], i;
-	for (i in stys) if (_w.style[stys[i]] !== undefined) return true;
-	return false;
-}
-
-// Has your browser got the goods?
-// These variables aren't used, but you can now use them in your custom scripts.
-// In short: if (!can_borderradius) inject_rounded_border_emulation_hack();
-var
-	_w = document.createElement('wedgerocks'),
-	can_borderradius = _testStyle('borderRadius'),
-	can_boxshadow = _testStyle('boxShadow'),
-	can_ajax = $.support.ajax;
 
 /* Optimize:
 _cookie = _k

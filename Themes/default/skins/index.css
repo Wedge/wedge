@@ -1300,11 +1300,11 @@ select.sb
 		overflow: hidden
 		position: relative
 		text-decoration, outline: none
-		padding: 2px 24px 2px 3px
+		padding: 2px 24px 2px 2px
 		border-radius: 5px
 
 		.text
-			padding: 0 2px
+			padding: 0 3px
 
 		.btn
 			background: #dbdbdb url($images/select_arrow_bg.gif) repeat-x left center
@@ -1330,8 +1330,9 @@ select.sb
 		background: #fff
 
 		.text
-			background-color: #39f
+			border-radius: 3px 0 0 3px
 			border-color: #7b7d83
+			background-color: #39f
 			color: #fcfcfc
 
 		.btn

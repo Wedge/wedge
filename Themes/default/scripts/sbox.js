@@ -34,7 +34,7 @@
 
 			// if it is already created, then reload it.
 			if (obj)
-				obj.re();
+				obj.re(arg);
 
 			// if the object is not defined for this element, and it's a drop-down, then create and initialize it.
 			else if (!$e.attr("size"))
@@ -61,7 +61,7 @@
 				anim: 150,			// animation duration: time to open/close dropdown in ms
 				maxHeight: 500,		// show scrollbars if the dropdown is taller than 500 pixels (or the viewport height)
 				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
-				fixed: false		// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
+				fixed: true			// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
 			}, o);
 
 			$label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
@@ -124,7 +124,7 @@
 					o.maxWidth || 9e9,
 					// The 'apply' call below will return the widest width from a list of elements.
 					// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
-					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 4
+					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($(".text", $display)) - 2
 				));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
@@ -207,9 +207,10 @@
 		},
 
 		// destroy then load, maintaining open/focused state if applicable
-		reloadSB = function ()
+		reloadSB = function (opt)
 		{
 			var wasOpen = $sb.is(".open"), wasFocused = $sb.is(".focused");
+			o = $.extend(o, opt);
 
 			closeSB(1);
 
@@ -223,6 +224,7 @@
 				.unbind(".sb");
 
 			loadSB();
+
 			if (wasOpen)
 				openSB(1);
 			else if (wasFocused)
@@ -293,14 +295,10 @@
 		positionSB = function ()
 		{
 			// modify dropdown css for getting values
-			$dd
-				.show()
-				.css({ // doesn't seem to be useful on my tests... Maybe a browser hack?
-					maxHeight: "none",
-					visibility: "hidden"
-				});
-			if (!o.fixed)
-				$dd.width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
+			$dd.show().css({
+				maxHeight: "none",
+				visibility: "hidden"
+			}).width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
 
 			var
 				// figure out if we should show above/below the display box, first by calculating the free space around it.
@@ -315,7 +313,7 @@
 			// modify dropdown css for display
 			$dd.hide().css({
 				marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight(),
-				maxHeight: ddMaxHeight - ($dd.outerHeight() - $dd.height()),
+				maxHeight: ddMaxHeight - $dd.outerHeight() + $dd.height(),
 				visibility: "visible"
 			}).toggleClass("above", !showDown);
 
