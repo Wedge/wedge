@@ -768,22 +768,9 @@ Thought.prototype.submit = function (tid, mid)
 	);
 };
 
-/*
-// This will add an extra class to any external links, except those with title="-".
-// Ignored for now because it needs some improvement to the domain name detection.
-function _linkMagic()
-{
-	$('a[title!="-"]').each(function () {
-		var hre = this.href;
-		if (hre && hre.length > 0 && (hre.indexOf(window.location.hostname) == -1) && (hre.indexOf('://') != -1))
-			$(this).addClass('xt');
-	});
-}
-*/
-
 function _testStyle(sty, undefined)
 {
-	var uc = sty[0].toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ], i;
+	var uc = sty.charAt(0).toUpperCase() + sty.substr(1), stys = [ sty, 'Moz'+uc, 'Webkit'+uc, 'Khtml'+uc, 'ms'+uc, 'O'+uc ], i;
 	for (i in stys) if (_w.style[stys[i]] !== undefined) return true;
 	return false;
 }

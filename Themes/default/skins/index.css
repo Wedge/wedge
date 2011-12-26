@@ -1269,8 +1269,7 @@ dl#feed
 select.sb
 	visibility: visible
 	position: absolute
-	left: -999999em
-	text-indent: -999999em
+	left, text-indent: -999999em
 
 .sbox extends .inline-block
 	font-size: 1em
@@ -1312,7 +1311,7 @@ select.sb
 			position: absolute
 			border: 1px solid #707070
 			border-radius: 3px
-			width: 1.08em
+			width: 14px
 			height: 1.15em
 			line-height: 1em
 			padding: 1px

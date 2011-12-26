@@ -124,7 +124,7 @@
 					o.maxWidth || 9e9,
 					// The 'apply' call below will return the widest width from a list of elements.
 					// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
-					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 1
+					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).width(); }).get()) + extraWidth($display) + 4
 				));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
@@ -300,7 +300,7 @@
 					visibility: "hidden"
 				});
 			if (!o.fixed)
-				$dd.width($display.outerWidth() - extraWidth($dd) + 1);
+				$dd.width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
 
 			var
 				// figure out if we should show above/below the display box, first by calculating the free space around it.
