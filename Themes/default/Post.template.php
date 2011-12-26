@@ -513,7 +513,7 @@ function template_post_subject()
 						', $txt['message_icon'], ':
 					</dt>
 					<dd>
-						<select name="icon" id="icon" onchange="showimage();">';
+						<select name="icon" id="icon" tabindex="', $context['tabindex']++, '" onchange="showimage();">';
 
 	// Loop through each message icon allowed, adding it to the drop down list.
 	foreach ($context['icons'] as $icon)

@@ -1279,12 +1279,14 @@ select.sb
 
 	.text extends .inline-block
 		vertical-align: baseline
+		white-space: nowrap
+		text-overflow: ellipsis
 
-	.details extends .inline-block
-		vertical-align: baseline
+	.details
 		font-style: italic
 		font-size: .9em
 		padding: 3px
+		clear: left
 		color: #666
 
 	/* display area (always visible) */
@@ -1300,7 +1302,7 @@ select.sb
 		overflow: hidden
 		position: relative
 		text-decoration, outline: none
-		padding: 2px 24px 2px 2px
+		padding: 2px 22px 2px 2px
 		border-radius: 5px
 
 		.text

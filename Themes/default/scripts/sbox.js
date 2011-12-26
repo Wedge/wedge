@@ -47,6 +47,7 @@
 	SelectBox = function ($orig, o)
 	{
 		var
+			keyfunc = is_opera ? "keypress.sb" : "keydown.sb",
 			resizeTimeout,
 			$label,
 			$display,
@@ -124,7 +125,7 @@
 					o.maxWidth || 9e9,
 					// The 'apply' call below will return the widest width from a list of elements.
 					// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
-					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($(".text", $display)) - 2
+					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($(".text", $display))
 				));
 			else if (o.maxWidth && $sb.width() > o.maxWidth)
 				$sb.width(o.maxWidth);
@@ -324,7 +325,7 @@
 		selectItem = function ($item)
 		{
 			// trigger change on the old <select> if necessary
-			var has_changed = $orig.val() !== $item.data("value");
+			var has_changed = $orig.val() !== $item.data("value"), $oritex, oriwi;
 
 			// if we're selecting an item and the box is closed, open it.
 			if (!$sb.is(".open"))
@@ -340,9 +341,12 @@
 			$sb.attr("aria-activedescendant", $item.attr("id"));
 
 			// update the title attr and the display markup
-			$display.find(".text")
-				.replaceWith(optionFormat($item.data("orig")))
+			$oritex = $display.find(".text");
+			oriwi = $oritex.width();
+			$oritex
+				.html($item.find(".text").html())
 				.attr("title", $item.find(".text").html().php_unhtmlspecialchars());
+			$display.find(".text").stop(true).width(oriwi).animate({ width: $item.find(".text").width() });
 
 			if (has_changed)
 				$orig.change();
@@ -437,7 +441,7 @@
 			$sb.addClass("focused");
 			$(document)
 				.unbind(".sb")
-				.bind("keypress.sb", keyPress)
+				.bind(keyfunc, keyPress)
 				.bind("click.sb", closeAndUnbind);
 		},
 
@@ -445,7 +449,7 @@
 		blurSB = function ()
 		{
 			$sb.removeClass("focused");
-			$(document).unbind("keypress.sb");
+			$(document).unbind(keyfunc);
 		};
 
 		loadSB();
