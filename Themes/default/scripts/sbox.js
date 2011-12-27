@@ -133,6 +133,9 @@
 			// hide the dropdown now that it's initialized
 			$dd.hide();
 
+			// Attach the original select box's events, such as onclick, to our display area.
+			$display.attr("data-eve", $orig.data("eve"));
+
 			// bind events
 			if (!$orig.is(":disabled"))
 			{
@@ -210,7 +213,7 @@
 		// destroy then load, maintaining open/focused state if applicable
 		reloadSB = function (opt)
 		{
-			var wasOpen = $sb.is(".open"), wasFocused = $sb.is(".focused");
+			var wasOpen = $sb.is(".open");
 			o = $.extend(o, opt);
 
 			closeSB(1);
@@ -228,8 +231,6 @@
 
 			if (wasOpen)
 				openSB(1);
-			else if (wasFocused)
-				$orig.focus();
 		},
 
 		// hide and reset dropdown markup
@@ -288,7 +289,7 @@
 					$dd.animate({ height: "toggle", opacity: "toggle" }, o.anim, centerOnSelected);
 				else
 					$dd.fadeIn(o.anim, centerOnSelected);
-				$orig.focus();
+				$orig.triggerHandler("focus");
 			}
 		},
 
@@ -325,7 +326,9 @@
 		selectItem = function ($item)
 		{
 			// trigger change on the old <select> if necessary
-			var has_changed = $orig.val() !== $item.data("value"), $oritex, oriwi;
+			var
+				has_changed = $orig.val() !== $item.data("value"), $newtex = $item.find(".text"),
+				$oritex = $display.find(".text"), oriwi = $oritex.width();
 
 			// if we're selecting an item and the box is closed, open it.
 			if (!$sb.is(".open"))
@@ -341,15 +344,13 @@
 			$sb.attr("aria-activedescendant", $item.attr("id"));
 
 			// update the title attr and the display markup
-			$oritex = $display.find(".text");
-			oriwi = $oritex.width();
 			$oritex
-				.html($item.find(".text").html())
-				.attr("title", $item.find(".text").html().php_unhtmlspecialchars());
-			$display.find(".text").stop(true).width(oriwi).animate({ width: $item.find(".text").width() });
+				.html($newtex.html())
+				.attr("title", $newtex.text().php_unhtmlspecialchars())
+				.stop(true).width(oriwi).animate({ width: $newtex.width() });
 
 			if (has_changed)
-				$orig.change();
+				$orig.triggerHandler("change");
 		},
 
 		// when the user explicitly clicks an item
@@ -357,7 +358,7 @@
 		{
 			selectItem($(this));
 			closeAndUnbind();
-			$orig.focus();
+			$orig.triggerHandler("focus");
 			return false;
 		},
 

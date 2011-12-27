@@ -1086,14 +1086,17 @@ a.moderation_link
 		display: inline-block
 		width, height: 12px
 
-/* Lists with settings use these a lot.
+/* Definition lists
 ------------------------------------------------------- */
 
+dl
+	overflow: hidden
+	padding, margin: 0
+
+// Lists with settings use these a lot.
 dl.settings
 	clear: right
-	overflow: hidden
 	margin: 0 0 10px
-	padding: 0
 	dt, dd
 		float: left
 		padding: 0
@@ -1265,7 +1268,7 @@ dl#feed
 /* Custom Select box styles
 --------------------------------------------------------- */
 
-/* applied to original <select> to hide */
+/* Hide the original <select> */
 select.sb
 	visibility: visible
 	position: absolute
@@ -1401,6 +1404,10 @@ select.sb
 			border-radius: 5px 5px 0 0
 		li.last .item
 			border-radius: 0 0 5px 5px
+
+.cat .sbox
+	font-size: 14px
+	text-shadow: none
 
 /* HTML5 overrides for deprecated alignment/width params
 --------------------------------------------------------- */

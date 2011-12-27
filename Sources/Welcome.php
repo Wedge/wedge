@@ -136,6 +136,7 @@ function Welcome()
 			'me' => $user_info['id']
 		)
 	);
+	$is_touch = $context['browser']['is_iphone'] || $context['browser']['is_tablet'];
 	$thoughts = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
@@ -154,7 +155,7 @@ function Welcome()
 		);
 
 		$thought =& $thoughts[$row['id_thought']];
-		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"' . (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '') . '><span>' . $thought['text'] . '</span></span>';
+		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"' . (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '') . ($is_touch ? ' onclick="return true;"' : '') . '><span>' . $thought['text'] . '</span></span>';
 
 		if (!empty($row['id_parent_owner']))
 			$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . ';area=thoughts#t' . $row['id_parent'] . '" class="bbc_link">' . $row['parent_name'] . '</a>&gt; ' . $thought['text'];

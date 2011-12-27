@@ -889,8 +889,7 @@ tr.windowbg td
 	.subject p,
 	.stats
 		font-size: .85em
-		padding: 0
-		margin: 0
+		padding, margin: 0
 	.lastpost
 		background-image: none
 		font-size: .85em
@@ -918,8 +917,7 @@ tr.windowbg td
 	p
 		margin: 1em 0 0
 	p.alert
-		padding: 0
-		margin: 0
+		padding, margin: 0
 		float: left
 		width: 1em
 		font-size: 1.5em
@@ -932,10 +930,6 @@ tr.windowbg td
 
 /* Styles for the profile section.
 ------------------------------------------------- */
-dl
-	overflow: hidden
-	margin: 0
-	padding: 0
 
 // The basic user info on the left
 #basicinfo

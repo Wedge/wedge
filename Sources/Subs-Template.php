@@ -201,7 +201,7 @@ function ob_sessrewrite($buffer)
 		$thing = substr($thing, 0, -1) . '
 	};
 	$("*[data-eve]").each(function() {
-		for (var eve = 0, elis = $(this).data("eve"), eil = elis.length; eve < eil; eve++)
+		for (var eve = 0, elis = $(this).attr("data-eve").split(" "), eil = elis.length; eve < eil; eve++)
 			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
 	});';
 		$buffer = substr_replace($buffer, $thing, strpos($buffer, empty($modSettings['minify_html']) ? '<!-- insert inline events here -->' : '<!--insert inline events here-->'), 34);
@@ -463,7 +463,7 @@ function wedge_event_delayer($match)
 		else
 			$eve_list[] = $dupes[$dupe];
 	}
-	return rtrim($match[0], ' />') . ' data-eve="[' . implode(',', $eve_list) . ']">';
+	return rtrim($match[0], ' />') . ' data-eve="' . implode(' ', $eve_list) . '">';
 }
 
 function wedge_profile_colors($match)
