@@ -276,7 +276,8 @@
 		openSB = function (reloading)
 		{
 			blurAllButMe();
-			$sb.addClass("open").append($dd.attr("aria-hidden", false));
+			$sb.addClass("open");
+			$dd.attr("aria-hidden", false);
 			var showDown = positionSB();
 			if (reloading)
 			{

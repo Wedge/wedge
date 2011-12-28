@@ -144,7 +144,7 @@ function template_skeleton()
 // The main block above the content.
 function template_html_before()
 {
-	global $context, $settings, $options, $txt, $modSettings, $boardurl, $topic;
+	global $context, $user_info, $settings, $options, $txt, $modSettings, $boardurl, $topic;
 
 	// Declare our HTML5 doctype, and whether to show right to left.
 	// The charset is already specified in the headers so it may be omitted,
@@ -159,7 +159,11 @@ function template_html_before()
 		echo '
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
-	echo theme_base_css(), '
+	// If user is logged in and has loaded a page in the last 10 minutes,
+	// assume their script files are cached and execute them now.
+	$context['script_in_head'] = time() - $user_info['last_login'] < 600;
+
+	echo theme_base_css(), $context['script_in_head'] ? theme_base_js(1) : '', '
 	<!-- Powered by Wedge, © Wedgeward - http://wedge.org -->
 	<title>', $context['page_title_html_safe'], '</title>';
 
@@ -538,8 +542,9 @@ function template_body_after()
 <script><!-- // --><![CDATA[', $context['footer_js_inline'], '
 // ]]></script>';
 
-	echo "\n", theme_base_js(), '
+	echo !empty($context['script_in_head']) ? '
 <script><!-- // --><![CDATA[
+	$("select").sb();' : "\n" . theme_base_js() . '<script><!-- // --><![CDATA[', '
 	var
 		we_script = "<URL>",
 		we_default_theme_url = ', $settings['theme_url'] === $settings['theme_url'] ? 'we_theme_url = ' : '', '"', $settings['default_theme_url'], '", ', $settings['theme_url'] === $settings['theme_url'] ? '' : '
