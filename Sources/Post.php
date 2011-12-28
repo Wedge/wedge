@@ -324,7 +324,7 @@ function Post($post_errors = array())
 			if (empty($_REQUEST['message']) || westr::htmltrim($_REQUEST['message']) === '')
 				$post_errors[] = 'no_message';
 			elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
-				$post_errors[] = 'long_message';
+				$post_errors[] = array('long_message', $modSettings['max_messageLength']);
 
 			// Are you... a guest?
 			if ($user_info['is_guest'])
@@ -404,19 +404,13 @@ function Post($post_errors = array())
 					$error_id = $error[0];
 					// Not really used, but we'll still set that.
 					$context['post_error'][$error_id] = true;
-					if ($error_id === 'mismatched_tags' || $error_id === 'missing_tags')
-						$context['post_error']['messages'][] = sprintf($txt['error_' . $error_id], $error[1]);
-					else
-						$context['post_error']['messages'][] = $txt['error_' . $error_id];
+					$context['post_error']['messages'][] = sprintf($txt['error_' . $error_id], $error[1]);
 				}
 				else
 				{
 					$error_id = $error;
 					$context['post_error'][$error_id] = true;
-					if ($error_id === 'long_message')
-						$context['post_error']['messages'][] = sprintf($txt['error_' . $error_id], $modSettings['max_messageLength']);
-					else
-						$context['post_error']['messages'][] = $txt['error_' . $error_id];
+					$context['post_error']['messages'][] = $txt['error_' . $error_id];
 				}
 
 				// If it's not a minor error flag it as such.

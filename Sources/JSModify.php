@@ -118,7 +118,7 @@ function JSModify()
 		}
 		elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_POST['message']) > $modSettings['max_messageLength'])
 		{
-			$post_errors[] = 'long_message';
+			$post_errors[] = array('long_message', $modSettings['max_messageLength']);
 			unset($_POST['message']);
 		}
 		else
@@ -273,17 +273,12 @@ function JSModify()
 				'id' => $row['id_msg'],
 				'errors' => array(),
 				'error_in_subject' => in_array('no_subject', $post_errors),
-				'error_in_body' => in_array('no_message', $post_errors) || in_array('long_message', $post_errors),
+				'error_in_body' => in_array('no_message', $post_errors) || in_array(array('long_message', $modSettings['max_messageLength']), $post_errors),
 			);
 
 			loadLanguage('Errors');
 			foreach ($post_errors as $post_error)
-			{
-				if ($post_error == 'long_message')
-					$context['message']['errors'][] = sprintf($txt['error_' . $post_error], $modSettings['max_messageLength']);
-				else
-					$context['message']['errors'][] = $txt['error_' . $post_error];
-			}
+				$context['message']['errors'][] = is_array($post_error) ? sprintf($txt['error_' . $post_error[0]], $post_error[1]) : $txt['error_' . $post_error];
 		}
 	}
 	else

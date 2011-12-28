@@ -2443,7 +2443,7 @@ class wedit
 		echo '
 		<div class="writer">
 			<div>
-				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" tabindex="', $context['tabindex']++, '" style="width: ', $this->width, '; height: ', $this->height, ';', isset($context['post_error']['no_message']) || isset($context['post_error']['long_message']) ? ' border: 1px solid red;' : '', '">', $this->value, '</textarea>
+				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" tabindex="', $context['tabindex']++, '" style="width: ', $this->width, '; height: ', $this->height, isset($context['post_error']['no_message']) || in_array(array('long_message', $modSettings['max_messageLength']), $context['post_error']) ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
 			</div>
 			<div id="', $this->id, '_resizer" style="width: ', $this->width, '; padding: 0 2px" class="hide richedit_resize"></div>
 		</div>
@@ -2568,10 +2568,11 @@ class wedit
 						$context['footer_js'] .= ',
 				["select", "sel_color", {
 					"": ' . JavaScriptEscape($txt['change_color']) . ',
-					"black": ' . JavaScriptEscape($txt['black']) . ', "red": ' . JavaScriptEscape($txt['red']) . ', "yellow": ' . JavaScriptEscape($txt['yellow']) . ', "pink": ' . JavaScriptEscape($txt['pink']) . ',
-					"green": ' . JavaScriptEscape($txt['green']) . ', "orange": ' . JavaScriptEscape($txt['orange']) . ', "purple": ' . JavaScriptEscape($txt['purple']) . ', "blue": ' . JavaScriptEscape($txt['blue']) . ',
-					"beige": ' . JavaScriptEscape($txt['beige']) . ', "brown": ' . JavaScriptEscape($txt['brown']) . ', "teal": ' . JavaScriptEscape($txt['teal']) . ', "navy": ' . JavaScriptEscape($txt['navy']) . ',
-					"maroon": ' . JavaScriptEscape($txt['maroon']) . ', "limegreen": ' . JavaScriptEscape($txt['lime_green']) . ', "white": ' . JavaScriptEscape($txt['white']) . '
+					"black": ' . JavaScriptEscape($txt['black']) . ', "red": ' . JavaScriptEscape($txt['red']) . ', "orange": ' . JavaScriptEscape($txt['orange']) . ',
+					"limegreen": ' . JavaScriptEscape($txt['lime_green']) . ', "teal": ' . JavaScriptEscape($txt['teal']) . ', "green": ' . JavaScriptEscape($txt['green']) . ',
+					"blue": ' . JavaScriptEscape($txt['blue']) . ', "navy": ' . JavaScriptEscape($txt['navy']) . ', "purple": ' . JavaScriptEscape($txt['purple']) . ',
+					"brown": ' . JavaScriptEscape($txt['brown']) . ', "maroon": ' . JavaScriptEscape($txt['maroon']) . ', "pink": ' . JavaScriptEscape($txt['pink']) . ',
+					"yellow": ' . JavaScriptEscape($txt['yellow']) . ', "beige": ' . JavaScriptEscape($txt['beige']) . ', "white": ' . JavaScriptEscape($txt['white']) . '
 				}]';
 				}
 				$context['footer_js'] .= '

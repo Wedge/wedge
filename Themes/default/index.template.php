@@ -160,8 +160,9 @@ function template_html_before()
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
 	// If user is logged in and has loaded a page in the last 10 minutes,
-	// assume their script files are cached and execute them now.
-	$context['script_in_head'] = time() - $user_info['last_login'] < 600;
+	// assume their script files are cached and execute them now. For IE6,
+	// always put it below because our favorite browser is too slow anyway.
+	$context['script_in_head'] = !$context['browser']['is_ie6'] && (time() - $user_info['last_login'] < 600);
 
 	echo theme_base_css(), $context['script_in_head'] ? theme_base_js(1) : '', '
 	<!-- Powered by Wedge, © Wedgeward - http://wedge.org -->

@@ -311,15 +311,24 @@ function weButtonBox(oOptions)
 				break;
 
 				case 'select': // 0 = sType, 1 = sName, 2 = oOptions
-					var sOptions = '';
+					var sOptions = '', sSelectValue, sProt, optname = '%opt%';
 
 					// Fighting JavaScript's idea of order in a for loop... :P
 					if ('' in oCurButton[2])
 						sOptions = '<option value="">' + oCurButton[2][''].php_htmlspecialchars() + '</option>';
-					for (var sSelectValue in oCurButton[2])
+					for (sSelectValue in oCurButton[2])
+					{
 						// we've been through this before
+						if (oCurButton[1] == 'sel_face')
+							optname = '&lt;span style="font-family: %opt%"&gt;%opt%&lt;/span&gt;';
+						else if (oCurButton[1] == 'sel_size')
+							optname = '&lt;span style="font-size: %opt%"&gt;%opt%&lt;/span&gt;';
+						else if (oCurButton[1] == 'sel_color')
+							optname = '&lt;span style="color: %val%"&gt;&diams;&lt;/span&gt; %opt%';
+						sProt = sSelectValue.php_htmlspecialchars();
 						if (sSelectValue != '')
-							sOptions += '<option value="' + sSelectValue.php_htmlspecialchars() + '">' + oCurButton[2][sSelectValue].php_htmlspecialchars() + '</option>';
+							sOptions += '<option value="' + sProt + '">' + optname.replace(/%val%/g, sProt).replace(/%opt%/g, oCurButton[2][sSelectValue].php_htmlspecialchars()) + '</option>';
+					}
 
 					sRowContent += oOptions.sSelectTemplate.easyReplace({
 						selectName: oCurButton[1],
@@ -343,7 +352,7 @@ function weButtonBox(oOptions)
 		});
 	}
 
-	$('#' + oOptions.sContainer).html(sBbcContent);
+	$('#' + oOptions.sContainer).html(sBbcContent).find('select').sb();
 
 	for (iButtonRowIndex = 0, iRowCount = oOptions.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
 	{

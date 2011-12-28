@@ -2044,14 +2044,19 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	$context['post_error'] = array(
 		'messages' => array(),
 	);
-	foreach ($error_types as $error_type)
+	foreach ($error_types as $error)
 	{
-		$context['post_error'][$error_type] = true;
-		if (isset($txt['error_' . $error_type]))
+		if (is_array($error))
 		{
-			if ($error_type == 'long_message')
-				$txt['error_' . $error_type] = sprintf($txt['error_' . $error_type], $modSettings['max_messageLength']);
-			$context['post_error']['messages'][] = $txt['error_' . $error_type];
+			$context['post_error'][$error[0]] = true;
+			if (isset($txt['error_' . $error[0]]))
+				$context['post_error']['messages'][] = sprintf($txt['error_' . $error[0]], $error[1]);
+		}
+		else
+		{
+			$context['post_error'][$error] = true;
+			if (isset($txt['error_' . $error]))
+				$context['post_error']['messages'][] = $txt['error_' . $error];
 		}
 	}
 
@@ -2196,7 +2201,7 @@ function MessagePost2()
 	if (!isset($_REQUEST['message']) || $_REQUEST['message'] == '')
 		$post_errors[] = 'no_message';
 	elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
-		$post_errors[] = 'long_message';
+		$post_errors[] = array('long_message', $modSettings['max_messageLength']);
 	else
 	{
 		// Preparse the message.
@@ -2218,9 +2223,7 @@ function MessagePost2()
 		$context['require_verification'] = create_control_verification($verificationOptions, true);
 
 		if (is_array($context['require_verification']))
-		{
 			$post_errors = array_merge($post_errors, $context['require_verification']);
-		}
 	}
 
 	// If they did, give a chance to make ammends.

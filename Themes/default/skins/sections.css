@@ -619,8 +619,16 @@ ul.post_options
 		vertical-align: top
 	> div
 		margin: 0
-	select
-		margin: 0 2px
+	.display
+		height: 15px
+		line-height: 11px
+		font-size: 13px
+		margin: 0 2px 0
+		.btn
+			top: 1px
+			height: 9px
+		.btn div
+			margin-top: 3px
 	.bbc_button div
 		margin: 2px 0
 

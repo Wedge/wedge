@@ -421,7 +421,7 @@ function Post2()
 	if (empty($_POST['message']) || westr::htmltrim($_POST['message']) === '')
 		$post_errors[] = 'no_message';
 	elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_POST['message']) > $modSettings['max_messageLength'])
-		$post_errors[] = 'long_message';
+		$post_errors[] = array('long_message', $modSettings['max_messageLength']);
 	else
 	{
 		if ($user_info['is_guest'])
