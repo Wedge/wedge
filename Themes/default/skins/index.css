@@ -392,6 +392,8 @@ form
 
 select
 	visibility: hidden
+select[size]
+	visibility: visible
 
 input, select, textarea
 	font: 95%/115% $main_font
@@ -1283,7 +1285,6 @@ select.sb
 	.text extends .inline-block
 		vertical-align: baseline
 		white-space: nowrap
-		text-overflow: ellipsis
 
 	.details
 		font-style: italic

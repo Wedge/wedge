@@ -54,6 +54,7 @@
 			$dd,
 			$sb,
 			$items,
+			$orig_item,
 
 		loadSB = function ()
 		{
@@ -107,6 +108,7 @@
 
 			// cache all sb items
 			$items = $dd.children("li").not(".optgroup");
+			$orig_item = $items.filter(".selected");
 
 			$dd.children(":first").addClass("first");
 			$dd.children(":last").addClass("last");
@@ -116,7 +118,7 @@
 				.addClass("sb")
 				.before(
 					// for accessibility/styling, and an easy custom .trigger("close") shortcut.
-					$sb.attr("aria-activedescendant", $items.filter(".selected").attr("id")).bind("close", closeSB)
+					$sb.attr("aria-activedescendant", $orig_item.attr("id")).bind("close", closeSB)
 				);
 
 			// modify width based on fixed/maxWidth options
@@ -252,6 +254,8 @@
 		closeAndUnbind = function ()
 		{
 			$sb.removeClass("focused");
+			if ($orig.val() !== $items.filter(".selected").data("value"))
+				selectItem($orig_item);
 			closeSB();
 		},
 
@@ -298,7 +302,7 @@
 		positionSB = function ()
 		{
 			// modify dropdown css for getting values
-			$dd.show().css({
+			$dd.stop(true, true).show().css({
 				maxHeight: "none",
 				visibility: "hidden"
 			}).width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
@@ -326,18 +330,11 @@
 		// when the user selects an item in any manner
 		selectItem = function ($item)
 		{
-			// trigger change on the old <select> if necessary
-			var
-				has_changed = $orig.val() !== $item.data("value"), $newtex = $item.find(".text"),
-				$oritex = $display.find(".text"), oriwi = $oritex.width();
+			var $newtex = $item.find(".text"), $oritex = $display.find(".text"), oriwi = $oritex.width();
 
 			// if we're selecting an item and the box is closed, open it.
 			if (!$sb.is(".open"))
 				openSB();
-
-			// update the original <select>
-			$orig.find("option").each(function () { this.selected = false; });
-			$item.data("orig").each(function () { this.selected = true; });
 
 			// change the selection to this item
 			$items.removeClass("selected");
@@ -348,7 +345,20 @@
 			$oritex
 				.html($newtex.html())
 				.attr("title", $newtex.text().php_unhtmlspecialchars())
-				.stop(true).width(oriwi).animate({ width: $newtex.width() });
+				.stop(true, true).width(oriwi).animate({ width: $newtex.width() });
+		},
+
+		updateOriginal = function ($item)
+		{
+			// trigger change on the old <select> if necessary
+			var
+				$selected = $items.filter(".selected"),
+				has_changed = $orig.val() !== $selected.data("value");
+
+			// update the original <select>
+			$orig.find("option").attr("selected", false);
+			$selected.data("orig").attr("selected", true);
+			$orig_item = $selected;
 
 			if (has_changed)
 				$orig.triggerHandler("change");
@@ -358,6 +368,7 @@
 		clickSBItem = function ()
 		{
 			selectItem($(this));
+			updateOriginal();
 			closeAndUnbind();
 			$orig.triggerHandler("focus");
 			return false;
@@ -392,14 +403,28 @@
 
 			var $selected = $items.filter(".selected"), $enabled = $items.not(".disabled");
 
-			if (e.keyCode == 9) // tab on an unopened select box?
+			// user pressed tab? If the list is opened, confirm the selection and close it. Then either way, switch to the next DOM element.
+			if (e.keyCode == 9)
 			{
 				if ($sb.is(".open"))
+				{
+					updateOriginal();
 					closeSB();
+				}
 				blurSB();
 			}
-			else if ((e.keyCode == 8 || e.keyCode == 13) && $sb.is(".open")) // backspace or return (with the select box open)
+			// spaces should open or close the dropdown, cancelling the latest selection. Requires e.which instead of e.keyCode... confusing.
+			else if (e.which == 32)
 			{
+				// closeAndUnbind does the same job as closeSB, only it cancels the current selection.
+				$sb.is(".open") ? closeAndUnbind() : openSB();
+				focusSB();
+				e.preventDefault();
+			}
+			// backspace or return (with the select box open) will do the same as pressing tab, but will keep the current item focused.
+			else if ((e.keyCode == 8 || e.keyCode == 13) && $sb.is(".open"))
+			{
+				updateOriginal();
 				closeSB();
 				focusSB();
 				e.preventDefault();
@@ -428,9 +453,8 @@
 				centerOnSelected();
 				e.preventDefault();
 			}
-			// prevent spaces from triggering the original -- requires e.which instead of e.keyCode... confusing.
 			// also, try finding the next element that starts with the pressed letter. if found, select it.
-			else if (e.which == 32 || selectMatchingItem(String.fromCharCode(e.which)))
+			else if (selectMatchingItem(String.fromCharCode(e.which)))
 				e.preventDefault();
 		},
 

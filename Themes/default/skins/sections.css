@@ -613,24 +613,26 @@ ul.post_options
 // The BBC buttons
 #bbcBox_message
 	margin: .75em .5em
-	div
+	.bbc_button, .bbc_button div
 		margin: 2px
-	div, img
 		vertical-align: top
-	> div
-		margin: 0
-	.display
-		height: 15px
-		line-height: 11px
-		font-size: 13px
-		margin: 0 2px 0
-		.btn
-			top: 1px
-			height: 9px
-		.btn div
-			margin-top: 3px
 	.bbc_button div
 		margin: 2px 0
+	> div
+		margin: 0
+
+	// Custom styling for select boxes
+	.sbox
+		vertical-align: top
+		height: 15px
+	.display
+		line-height: 12px
+		font-size: 11px
+		margin: 0 2px 0
+		.text
+			padding: 2px
+		.btn
+			height: 12px
 
 // The smiley strip
 #smileyBox_message

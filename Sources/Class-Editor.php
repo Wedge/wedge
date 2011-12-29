@@ -2443,7 +2443,7 @@ class wedit
 		echo '
 		<div class="writer">
 			<div>
-				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" tabindex="', $context['tabindex']++, '" style="width: ', $this->width, '; height: ', $this->height, isset($context['post_error']['no_message']) || in_array(array('long_message', $modSettings['max_messageLength']), $context['post_error']) ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
+				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, isset($context['post_error']['no_message']) || in_array(array('long_message', $modSettings['max_messageLength']), $context['post_error']) ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
 			</div>
 			<div id="', $this->id, '_resizer" style="width: ', $this->width, '; padding: 0 2px" class="hide richedit_resize"></div>
 		</div>
@@ -2586,10 +2586,11 @@ class wedit
 		sButtonBackgroundPosHover: [0, 0],
 		sActiveButtonBackgroundPos: [0, 0],
 		sDividerTemplate: ' . JavaScriptEscape('<div class="bbc_divider"></div>') . ',
-		sSelectTemplate: ' . JavaScriptEscape('<select name="%selectName%" id="%selectId%" style="margin: 4px 0 0 3px; padding: 1px; font-size: 9pt">%selectOptions%</select>') . ',
+		sSelectTemplate: ' . JavaScriptEscape('<select name="%selectName%" id="%selectId%" tabindex="' . ($context['tabindex'] - 2) . '" style="margin: 4px 0 0 3px; padding: 1px; font-size: 9pt">%selectOptions%</select>') . ',
 		sButtonRowTemplate: ' . JavaScriptEscape('<div>%buttonRow%</div>') . '
 	});');
 		}
+		$context['tabindex']++;
 
 		$auto_drafts = in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm'));
 		// If we're doing it, let's add the auto saver for drafts.
