@@ -1378,14 +1378,10 @@ select.sb
 			text-decoration: none
 
 		.selected .item
-			background-color: #eee !important
+			background-color: #eee
 
 		.disabled .item
 			color: #999
-
-		.hover .item
-			background-color: #39f !important
-			color: #fff !important
 
 		// <optgroup> styles
 		.optgroup .label

@@ -1302,7 +1302,7 @@ function template_add_rule()
 	foreach ($context['groups'] as $id => $group)
 		add_js('<option value="' . $id . '">' . strtr($group, array("'" => "\'")) . '<\' + \'/option>');
 
-	add_js('<\' + \'/select><\' + \'/span>\');
+	add_js('<\' + \'/select><\' + \'/span>\').find("select").sb();
 	}
 
 	function addActionOption()
@@ -1320,7 +1320,7 @@ function template_add_rule()
 		if ($label['id'] != -1)
 			add_js('<option value="' . ($label['id'] + 1) . '">' . addslashes($label['name']) . '<\' + \'/option>');
 
-	add_js('<\' + \'/select><\' + \'/span>\');
+	add_js('<\' + \'/select><\' + \'/span>\').find("select").sb();
 	}
 
 	function updateRuleDef(optNum)
