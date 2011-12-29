@@ -65,14 +65,13 @@
 				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
 				fixed: true			// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
 			}, o);
-$orig.change(function () { $('#feed').append('Changed! '); });
+
 			$label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
 			if ($label.length == 0)
 				$label = $orig.closest("label");
 
 			// create the new sb
 			$sb = $("<div class='sbox " + $orig.attr("class") + "' id='sb" + ++unique + "' role=listbox></div>")
-				// .attr("tabindex", $orig.attr("tabindex") || -1)
 				.attr("aria-labelledby", $label.attr("id") || "")
 				.attr("aria-haspopup", true);
 
@@ -82,13 +81,11 @@ $orig.change(function () { $('#feed').append('Changed! '); });
 				.append("<div class='btn'><div></div></div>");
 
 			// generate the dropdown markup
-			// <div class='viewport'></div><ul class='overview
 			$dd = $("<ul class='items " + $orig.attr("class") + "' id='sbdd" + unique + "' role=menu></ul>")
 				.attr("aria-hidden", true);
 
 			$sb.append($display, $dd)
 				.attr("aria-owns", $dd.attr("id"));
-				//.scroll();
 
 			if ($orig.children().length == 0)
 				$dd.append(createOption().addClass("selected"));
@@ -219,12 +216,9 @@ $orig.change(function () { $('#feed').append('Changed! '); });
 		},
 
 		// formatting for the display
-		optionFormat = function ($dom, txt)
+		optionFormat = function ($dom, empty)
 		{
-			txt = $dom.text().replace(/\|/g, "</div><div class='details'>") || txt || "";
-			if (txt.match(/^--+$/g))
-				txt = '<hr>';
-			return "<div class='text'>" + txt + "</div>";
+			return "<div class='text'>" + ($dom.text().replace(/\|/g, "</div><div class='details'>") || empty || "") + "</div>";
 		},
 
 		// destroy then load, maintaining open/focused state if applicable
@@ -338,7 +332,6 @@ $orig.change(function () { $('#feed').append('Changed! '); });
 				maxHeight: ddMaxHeight - $dd.outerHeight() + $dd.height(),
 				visibility: "visible"
 			}).toggleClass("above", !showDown);
-			//$sb.scrollUpdate();
 
 			return showDown;
 		},
@@ -499,164 +492,5 @@ $orig.change(function () { $('#feed').append('Changed! '); });
 	};
 
 }());
-
-
-/**
- * Tiny Scrollbar 1.66
- * http://www.baijs.nl/tinyscrollbar/
- *
- * Copyright 2010, Maarten Baijs
- * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://www.opensource.org/licenses/mit-license.php
- * http://www.opensource.org/licenses/gpl-2.0.php
- *
- * Date: 13 / 11 / 2011
- * Depends on library: jQuery
- */
-
-/*
-(function ()
-{
-	$.fn.scroll = function ()
-	{
-		this.each(function () { $(this).data('tsb', new Scrollbar(this)); });
-		return this;
-	};
-
-	$.fn.scrollUpdate = function (sScroll) { return $(this).data('tsb').update(sScroll); };
-
-	var Scrollbar = function (root)
-	{
-		var
-			oSelf = this,
-			iScroll, startPos = 0, iMouse = 0,
-			thumbAxis, viewportAxis, contentAxis,
-			contentRatio, scrollbarRatio,
-			oWrapper = root,
-			oViewport,
-			oContent,
-			oScrollbar,
-			oTrack,
-			oThumb;
-
-		this.update = function (sScroll)
-		{
-			viewportAxis = $('.viewport', root).height();
-			oContent = $('.overview', root);
-			oScrollbar = $('.scrollbar', root);
-			oTrack = $('.track', oScrollbar);
-			oThumb = $('.thumb', oScrollbar);
-
-			contentAxis = oContent.height();
-			contentRatio = viewportAxis / contentAxis;
-			oScrollbar.toggleClass('disable', contentRatio >= 1);
-			thumbAxis = Math.min(viewportAxis, Math.max(0, viewportAxis * contentRatio));
-			scrollbarRatio = contentAxis / viewportAxis;
-			iScroll = (sScroll == 'relative' && contentRatio <= 1) ? Math.min(contentAxis - viewportAxis, Math.max(0, iScroll)) : 0;
-			iScroll = (sScroll == 'bottom' && contentRatio <= 1) ? contentAxis - viewportAxis : isNaN(parseInt(sScroll)) ? iScroll : parseInt(sScroll);
-			setSize();
-		};
-
-		var setSize = function ()
-		{
-			oThumb.css('top', iScroll / scrollbarRatio);
-			oContent.css('top', -iScroll);
-			iMouse = oThumb.offset().top;
-			oScrollbar.css('height', viewportAxis);
-			oTrack.css('height', viewportAxis);
-			oThumb.css('height', thumbAxis);
-		},
-
-		setEvents = function ()
-		{
-			oThumb.bind('mousedown', start);
-			oThumb[0].ontouchstart = function (oEvent)
-			{
-				oEvent.preventDefault();
-				oThumb.unbind('mousedown');
-				start(oEvent.touches[0]);
-				return false;
-			};
-			oTrack.bind('mouseup', drag);
-			if (this.addEventListener)
-			{
-				oWrapper.addEventListener('DOMMouseScroll', wheel, false);
-				oWrapper.addEventListener('mousewheel', wheel, false);
-			}
-			else
-				oWrapper.onmousewheel = wheel;
-		},
-
-		start = function (oEvent)
-		{
-			iMouse = oEvent.pageY;
-			var oThumbDir = parseInt(oThumb.css('top'));
-			startPos = oThumbDir == 'auto' ? 0 : oThumbDir;
-			$(document).bind('mousemove', drag);
-			document.ontouchmove = function (oEvent)
-			{
-				$(document).unbind('mousemove');
-				drag(oEvent.touches[0]);
-			};
-			$(document).bind('mouseup', end);
-			oThumb.bind('mouseup', end);
-			oThumb[0].ontouchend = document.ontouchend = function (oEvent)
-			{
-				$(document).unbind('mouseup');
-				oThumb.unbind('mouseup');
-				end(oEvent.touches[0]);
-			};
-			return false;
-		},
-
-		wheel = function (oEvent)
-		{
-			if (contentRatio < 1)
-			{
-				oEvent = oEvent || window.event;
-				var iDelta = oEvent.wheelDelta ? oEvent.wheelDelta / 120 : -oEvent.detail / 3;
-
-				iScroll -= iDelta * 40; // how many pixels per wheel movement?
-				iScroll = Math.min((contentAxis - viewportAxis), Math.max(0, iScroll));
-				oThumb.css('top', iScroll / scrollbarRatio);
-				oContent.css('top', -iScroll);
-
-				oEvent = $.event.fix(oEvent);
-				oEvent.preventDefault();
-			}
-		},
-
-		end = function (oEvent)
-		{
-			$(document)
-				.unbind('mousemove', drag)
-				.unbind('mouseup', end);
-			oThumb.unbind('mouseup', end);
-			document.ontouchmove = oThumb[0].ontouchend = document.ontouchend = null;
-			return false;
-		},
-
-		drag = function (oEvent)
-		{
-			if (contentRatio < 1)
-			{
-				var curPos = Math.min(viewportAxis - thumbAxis, Math.max(0, startPos + oEvent.pageY - iMouse));
-				iScroll = curPos * scrollbarRatio;
-				oContent.css('top', -iScroll);
-				oThumb.css('top', curPos);
-			}
-			return false;
-		};
-
-		root = $(root);
-		root.prepend('<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>');
-		console.log(root.parent().parent());
-		//root = root.parent();
-		oSelf.update();
-		setEvents();
-		return oSelf;
-	};
-})();
-*/
 
 $('select').sb();
