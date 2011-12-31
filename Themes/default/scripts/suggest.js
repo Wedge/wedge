@@ -292,7 +292,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 			return;
 
 	var eid = 'suggest_' + this.opt.sControlId + '_' + sItemId;
-	$('<div></div>', { id: eid }).html(
+	$('<div id="' + eid + '"></div>').html(
 		this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
 		.replace(/%item_href%/g, we_prepareScriptUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
 		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + "/images").replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)

@@ -2445,7 +2445,7 @@ class wedit
 			<div>
 				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, isset($context['post_error']['no_message']) || in_array(array('long_message', $modSettings['max_messageLength']), $context['post_error']) ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
 			</div>
-			<div id="', $this->id, '_resizer" style="width: ', $this->width, '; padding: 0 2px" class="hide richedit_resize"></div>
+			<div id="', $this->id, '_resizer" style="width: ', $this->width, '" class="hide richedit_resize"></div>
 		</div>
 		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0">';
 
@@ -2664,7 +2664,7 @@ class wedit
 
 		if (in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm')))
 			echo '
-		<div id="draft_lastautosave" class="clear righttext"></div>';
+		<span id="draft_lastautosave"></span>';
 	}
 }
 

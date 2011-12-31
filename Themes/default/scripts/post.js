@@ -10,16 +10,6 @@
  * @version 0.1
  */
 
-// Checks for variable in theArray.
-function array_search(variable, theArray)
-{
-	for (var i in theArray)
-		if (theArray[i] == variable)
-			return i;
-
-	return null;
-}
-
 // Replaces the currently selected text with the passed text.
 function replaceText(text, oTextHandle)
 {
@@ -114,8 +104,8 @@ function surroundText(text1, text2, oTextHandle)
 // Split a quote (or any unclosed tag) if we press Enter inside it.
 function splitQuote(e)
 {
-	// Did we just press Enter?
-	if (e.which != 13)
+	// Did we just press Shift+Enter?
+	if (e.which != 13 || !e.shiftKey)
 		return true;
 
 	// Where are we, already?
@@ -219,7 +209,7 @@ function weSmileyBox(oOptions)
 	that.initSmileys('postform');
 
 	// Initialize the [more] button.
-	if (oOptions.oSmileyLocations.popup.length > 0)
+	if (oOptions.oSmileyLocations.popup.length)
 		$('#' + oOptions.sContainer + '_addMoreSmileys').click(function () {
 			$(this).hide();
 
@@ -658,11 +648,8 @@ wedge_autoDraft.prototype.draftSend = function ()
 			message: $('#' + this.opt.sEditor).val(),
 			message_mode: $('#' + this.opt.sEditor + '_mode').val()
 		},
-		localVars = {
-			removeString: this.opt.sRemove,
-			lastSavedDiv: this.opt.sLastNote,
-			object: this
-		};
+		object = this,
+		lastSavedDiv = object.opt.sLastNote;
 
 	// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
 	if (draftInfo.message_mode == 1)
@@ -682,21 +669,18 @@ wedge_autoDraft.prototype.draftSend = function ()
 		// Since we're here, we only need to bother with the JS, since the auto suggest will be available and will have already sorted out user ids.
 		// This is not nice, though.
 		var recipients = [];
-		$('#' + this.opt.sForm + ' input[name="recipient_to\\[\\]"]').each(function () {
-			recipients.push($(this).val());
-		});
-		if (recipients.length > 0)
+		$('#' + this.opt.sForm + ' input[name="recipient_to\\[\\]"]').each(function () { recipients.push($(this).val()); });
+		if (recipients.length)
 			draftInfo['recipient_to[]'] = recipients;
 
 		recipients = [];
-		$('#' + this.opt.sForm + ' input[name="recipient_bcc\\[\\]"]').each(function () {
-			recipients.push($(this).val());
-		});
-		if (recipients.length > 0)
+		$('#' + this.opt.sForm + ' input[name="recipient_bcc\\[\\]"]').each(function () { recipients.push($(this).val()); });
+		if (recipients.length)
 			draftInfo['recipient_bcc[]'] = recipients;
 	}
 
-	$.post(sUrl + ';xml', draftInfo, function (data) {
+	$.post(sUrl + ';xml', draftInfo, function (data)
+	{
 		$('#remove_draft').unbind('click'); // Just in case bad stuff happens.
 
 		var
@@ -705,15 +689,15 @@ wedge_autoDraft.prototype.draftSend = function ()
 			url = obj.attr('url').replace(/DraftId/, draft_id).replace(/SessVar/, we_sessvar).replace(/SessId/, we_sessid);
 
 		$('#draft_id').val(draft_id);
-		$('#' + localVars.lastSavedDiv).html(obj.text() + ' &nbsp; <a href="#" id="remove_draft">' + localVars.removeString + '</a>');
+		$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val(object.opt.sRemove));
 		$('#remove_draft').click(function () {
 			$.get(url, function () {
-				$('#' + localVars.lastSavedDiv).empty();
+				$('#' + lastSavedDiv).empty();
 				$('#draft_id').val('0');
 			});
 			return false;
 		});
-		localVars.object.needsUpdate(false);
+		object.needsUpdate(false);
 	});
 	return false;
 };

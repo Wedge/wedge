@@ -255,10 +255,11 @@ function template_post_buttons()
 
 	// Finally, the submit buttons.
 	echo '
-				<p class="smalltext" id="shortcuts">
-					', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '
-				</p>
-				<div id="post_confirm_buttons">', $context['postbox']->outputButtons(), '</div>';
+				<div id="post_confirm_strip">', $context['postbox']->outputButtons(), '
+				</div>
+				<div id="shortcuts">
+					<span class="smalltext">', $context['browser']['is_opera'] ? $txt['shortcuts_opera'] : ($context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts']), '</span>
+				</div>';
 }
 
 function template_postform_after()

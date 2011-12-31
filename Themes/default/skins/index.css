@@ -806,18 +806,6 @@ ul.reset, ul.reset li
 /* Some BBC related styles.
 ------------------------------------------------------- */
 
-.bbc_divider, .bbc_button, .bbc_button div
-	display: inline-block
-	width: 23px
-	height: 22px
-
-.bbc_divider
-	width: 0
-	height: 19px
-	border-left: 1px solid #999
-	border-right: 1px solid #fff
-	margin: 3px 2px 3px 3px !important
-
 // The "Quote:" and "Code:" header parts...
 .bbc_code, .bbc_quote
 	header
@@ -1300,7 +1288,6 @@ select.sb
 		border: 1px solid #abadb3
 		color: #000
 		cursor: default
-		display: block
 		font-weight: normal
 		height, line-height: 1.46em
 		overflow: hidden
@@ -1310,6 +1297,7 @@ select.sb
 		border-radius: 5px
 
 		.text
+			display: block
 			padding: 0 3px
 
 		.btn
@@ -1405,6 +1393,9 @@ select.sb
 .cat .sbox
 	font-size: 14px
 	text-shadow: none
+
+#thought_form .sbox
+	font-size: 13px
 
 /* HTML5 overrides for deprecated alignment/width params
 --------------------------------------------------------- */

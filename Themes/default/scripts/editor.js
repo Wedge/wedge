@@ -158,16 +158,15 @@ function weEditor(oOptions)
 	if (this.bRichTextPossible)
 	{
 		// Make the iframe itself, stick it next to the current text area, and give it an ID.
-		this.oFrameHandle = $('<iframe></iframe>', {
-			'class': 'rich_editor_frame', src: 'about:blank', id: 'html_' + this.opt.sUniqueId, tabIndex: this.oTextHandle.tabIndex
-		}).css({ display: 'none', margin: 0 }).appendTo(this.oTextHandle.parentNode)[0];
+		this.oFrameHandle = $('<iframe class="rich_editor_frame" id="html_' + this.opt.sUniqueId + '" src="about:blank" tabindex="' + this.oTextHandle.tabIndex + '"></iframe>')
+			.css({ display: 'none', margin: 0 }).appendTo(this.oTextHandle.parentNode)[0];
 
 		// Create some handy shortcuts.
 		this.oFrameDocument = this.oFrameHandle.contentDocument || ('contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow.document : this.oFrameHandle.document);
 		this.oFrameWindow = 'contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow : this.oFrameHandle.document.parentWindow;
 
 		// Create the debug window... and stick this under the main frame - make it invisible by default.
-		this.oBreadHandle = $('<div></div>', { id: 'bread_' + this.opt.sUniqueId }).css({ visibility: 'visible', display: 'none' }).appendTo(this.oFrameHandle.parentNode)[0];
+		this.oBreadHandle = $('<div id="bread_' + this.opt.sUniqueId + '"></div>').css({ visibility: 'visible', display: 'none' }).appendTo(this.oFrameHandle.parentNode)[0];
 
 		// Size the iframe dimensions to something sensible.
 		$(this.oFrameHandle).css({ width: this.sEditWidth, height: this.sEditHeight, visibility: 'visible' });
@@ -335,14 +334,23 @@ weEditor.prototype.updateEditorControls = function ()
 		return;
 	}
 
-	var aCrumb = [];
-	var aAllCrumbs = [];
-	var iMaxLength = 6;
+	var
+		aCrumb = [], aAllCrumbs = [],
+		iMaxLength = 6, i = 0,
+		iNumCrumbs, sTree = '',
+		sCurFontName = '', sCurFontSize = '', sCurFontColor = '';
 
-	// What is the current element?
-	var oCurTag = this.getCurElement();
+		// What is the current element?
+		oCurTag = this.getCurElement(),
+		array_key = function (variable, theArray)
+		{
+			for (var i in theArray)
+				if (theArray[i] == variable)
+					return i;
 
-	var i = 0;
+			return null;
+		};
+
 	while (oCurTag !== null && typeof oCurTag == 'object' && oCurTag.nodeName.toLowerCase() != 'body' && i < iMaxLength)
 	{
 		aCrumb[i++] = oCurTag;
@@ -350,7 +358,6 @@ weEditor.prototype.updateEditorControls = function ()
 	}
 
 	// Now print out the tree.
-	var sTree = '', sCurFontName = '', sCurFontSize = '', sCurFontColor = '', iNumCrumbs;
 	for (i = 0, iNumCrumbs = aCrumb.length; i < iNumCrumbs; i++)
 	{
 		var sCrumbName = aCrumb[i].nodeName.toLowerCase();
@@ -397,7 +404,7 @@ weEditor.prototype.updateEditorControls = function ()
 					{
 						sCurFontColor = aCrumb[i].style.color;
 						if (in_array(sCurFontColor, this.oFontColors))
-							sCurFontColor = array_search(sCurFontColor, this.oFontColors);
+							sCurFontColor = array_key(sCurFontColor, this.oFontColors);
 						sCrumbName = 'color';
 					}
 
@@ -429,7 +436,7 @@ weEditor.prototype.updateEditorControls = function ()
 			{
 				sCurFontColor = aCrumb[i].getAttribute('color');
 				if (in_array(sCurFontColor, this.oFontColors))
-					sCurFontColor = array_search(sCurFontColor, this.oFontColors);
+					sCurFontColor = array_key(sCurFontColor, this.oFontColors);
 				sCrumbName = 'color';
 			}
 			// Something else - ignore.
@@ -640,9 +647,9 @@ weEditor.prototype.handleButtonClick = function (oButtonProperties)
 // Changing a select box?
 weEditor.prototype.handleSelectChange = function (oSelectProperties)
 {
+	var sel = $(oSelectProperties.oSelect), sValue = sel.val();
 	this.setFocus();
 
-	var sValue = oSelectProperties.oSelect.value;
 	if (sValue == '')
 		return true;
 
@@ -653,7 +660,6 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 		{
 			sValue = sValue.replace(/"/, '');
 			surroundText('[font=' + sValue + ']', '[/font]', this.oTextHandle);
-			oSelectProperties.oSelect.selectedIndex = 0;
 		}
 		else // WYSIWYG
 		{
@@ -666,10 +672,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 	else if (oSelectProperties[1] == 'sel_size')
 	{
 		if (!this.bRichTextEnabled)
-		{
 			surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]', this.oTextHandle);
-			oSelectProperties.oSelect.selectedIndex = 0;
-		}
 		else // WYSIWYG
 			this.we_execCommand('fontsize', false, sValue);
 	}
@@ -677,15 +680,16 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 	else if (oSelectProperties[1] == 'sel_color')
 	{
 		if (!this.bRichTextEnabled)
-		{
 			surroundText('[color=' + sValue + ']', '[/color]', this.oTextHandle);
-			oSelectProperties.oSelect.selectedIndex = 0;
-		}
 		else // WYSIWYG
 			this.we_execCommand('forecolor', false, sValue);
 	}
 
 	this.updateEditorControls();
+
+	// A hack to force removing focus from the select boxes...
+	sel.prev().removeClass('focused');
+	$(document).unbind('.sb');
 
 	if (this.opt.oDrafts)
 		this.opt.oDrafts.needsUpdate(true);
