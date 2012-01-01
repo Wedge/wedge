@@ -624,7 +624,7 @@ function JumpTo(opt)
 
 	$('#' + sContainer).find('label')
 		.append('<select id="' + sContainer + '_select"><option>=> ' + opt.sPlaceholder + '</option></select>')
-		.find('select').sb().focus(function ()
+		.find('select').sb({ fixed: true }).focus(function ()
 		{
 			show_ajax();
 
@@ -656,7 +656,7 @@ function JumpTo(opt)
 						sList += '<optgroup label="' + aBoardsAndCategories[k].name + '">';
 					else
 						// Show the board option, with special treatment for the current one.
-						sList += '<option value="' + aBoardsAndCategories[k].url + '"' + (aBoardsAndCategories[k].id == that.opt.iBoardId ? ' style="background: #d0f5d5">=> ' + aBoardsAndCategories[k].name + ' &lt;='
+						sList += '<option value="' + aBoardsAndCategories[k].url + '"' + (aBoardsAndCategories[k].id == that.opt.iBoardId ? ' disabled>=> ' + aBoardsAndCategories[k].name + ' &lt;='
 								: '>' + new Array(aBoardsAndCategories[k].level + 1).join('==') + '=> ' + aBoardsAndCategories[k].name) + '</option>';
 				}
 
@@ -664,7 +664,7 @@ function JumpTo(opt)
 				$dropdownList.append(sList).change(function () {
 					if (this.selectedIndex > 0 && ($val = $(this).val()))
 						window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
-				}).sb('refresh');
+				}).sb("focus");
 			}
 		});
 };
@@ -719,7 +719,7 @@ Thought.prototype.edit = function (tid, mid, is_new, text)
 			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
 		</form>');
 	$('#ntho').focus().val(cur_text);
-	$('#npriv').sb({ maxWidth: 85 });
+	$('#npriv').sb();
 };
 
 Thought.prototype.getText = function (id)

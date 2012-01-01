@@ -49,8 +49,10 @@
 		var
 			keyfunc = is_opera ? "keypress.sb" : "keydown.sb",
 			resizeTimeout,
-			$label,
+			has_changed,
+			$selected,
 			$display,
+			$label,
 			$dd,
 			$sb,
 			$items,
@@ -60,10 +62,9 @@
 		{
 			// set the various options
 			o = $.extend({
-				anim: 150,			// animation duration: time to open/close dropdown in ms
-				maxHeight: 500,		// show scrollbars if the dropdown is taller than 500 pixels (or the viewport height)
-				maxWidth: false,	// if an integer, prevent the display/dropdown from growing past this width; longer items will be clipped
-				fixed: true			// fixed width; if false, dropdown expands to widest and display conforms to whatever is selected
+				anim: 150,						// animation duration: time to open/close dropdown in ms
+				maxHeight: 500,					// show scrollbars if the dropdown is taller than 500 pixels (or the viewport height)
+				fixed: $orig.hasClass("fixed")	// fixed width; if true, dropdown expands to widest and display conforms to whatever is selected
 			}, o);
 
 			$label = $orig.attr("id") ? $("label[for='" + $orig.attr("id") + "']:first") : '';
@@ -84,7 +85,9 @@
 			$dd = $("<ul class='items " + $orig.attr("class") + "' id='sbdd" + unique + "' role=menu></ul>")
 				.attr("aria-hidden", true);
 
+			// for accessibility/styling, and an easy custom .trigger("close") shortcut.
 			$sb.append($display, $dd)
+				.bind("close", closeSB)
 				.attr("aria-owns", $dd.attr("id"));
 
 			if ($orig.children().length == 0)
@@ -108,7 +111,7 @@
 
 			// cache all sb items
 			$items = $dd.children("li").not(".optgroup");
-			$orig_item = $items.filter(".selected");
+			setSelected($orig_item = $items.filter(".selected"));
 
 			$dd.children(":first").addClass("first");
 			$dd.children(":last").addClass("last");
@@ -116,21 +119,12 @@
 			// place the new markup in its semantic location
 			$orig
 				.addClass("sb")
-				.before(
-					// for accessibility/styling, and an easy custom .trigger("close") shortcut.
-					$sb.attr("aria-activedescendant", $orig_item.attr("id")).bind("close", closeSB)
-				);
+				.before($sb);
 
-			// modify width based on fixed/maxWidth options
-			if (!o.fixed)
-				$sb.width(Math.min(
-					o.maxWidth || 9e9,
-					// The 'apply' call below will return the widest width from a list of elements.
-					// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
-					Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($(".text", $display))
-				));
-			else if (o.maxWidth && $sb.width() > o.maxWidth)
-				$sb.width(o.maxWidth);
+			// The 'apply' call below will return the widest width from a list of elements.
+			// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
+			if (o.fixed)
+				$sb.width(Math.max.apply(0, $dd.find(".text,.optgroup").map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($(".text", $display)));
 
 			// hide the dropdown now that it's initialized
 			$dd.hide();
@@ -155,20 +149,14 @@
 					// when the user explicitly clicks the display
 					.click(function ()
 					{
-						$sb.toggleClass("focused");
 						$sb.is(".open") ? closeSB() : openSB();
-						return false;
+						return false; // avoid bubbling to $(document).click(".sb")
 					});
 				$items.not(".disabled")
 					.hover(
-						function () {
-							if ($sb.is(".open"))
-							{
-								$(this).addClass("selected");
-								selectItem($(this));
-							}
-						},
-						function () { $(this).removeClass("selected"); }
+						// use selectItem() instead of setSelected() to do the display animation on hover.
+						function () { if ($sb.is(".open")) setSelected($(this)); },
+						function () { $(this).removeClass("selected"); $selected = $orig_item; }
 					)
 					.click(clickSBItem);
 				$dd.children(".optgroup")
@@ -180,13 +168,7 @@
 					$(window).bind("resize.sb", function ()
 					{
 						clearTimeout(resizeTimeout);
-						resizeTimeout = setTimeout(function () {
-							if ($sb.is(".open"))
-							{
-								positionSB();
-								openSB(1);
-							}
-						}, 50);
+						resizeTimeout = setTimeout(function () { if ($sb.is(".open")) openSB(); }, 50);
 					});
 			}
 			else
@@ -224,16 +206,15 @@
 		// destroy then load, maintaining open/focused state if applicable
 		reloadSB = function (opt)
 		{
-			var wasOpen = $sb.is(".open");
-			o = $.extend(o, opt);
+			var wasOpen = $sb.is(".open"), can_focus = opt !== "focus";
+			if (can_focus)
+				o = $.extend(o, opt);
 
 			closeSB(1);
 
 			// destroy existing data
 			$sb.remove();
-
-			$orig
-				.removeClass("sb")
+			$orig.removeClass("sb")
 				.unbind(".sb");
 			$(window)
 				.unbind(".sb");
@@ -241,7 +222,7 @@
 			loadSB();
 
 			if (wasOpen)
-				openSB(1);
+				openSB(!can_focus);
 		},
 
 		// hide and reset dropdown markup
@@ -251,7 +232,6 @@
 			{
 				$display.blur();
 				$(document).unbind(".sb");
-				$items.removeClass("selected");
 				$sb.removeClass("open");
 				$dd
 					.animate({ height: "toggle", opacity: "toggle" }, instantClose == 1 ? 0 : o.anim)
@@ -263,9 +243,9 @@
 		closeAndUnbind = function ()
 		{
 			$sb.removeClass("focused");
-			if ($orig.val() !== $items.filter(".selected").data("value"))
-				selectItem($orig_item);
 			closeSB();
+			if ($selected.data("value") !== $orig.val())
+				selectItem($orig_item, true);
 		},
 
 		// trigger all select boxes to blur
@@ -277,7 +257,7 @@
 		// reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
 		centerOnSelected = function ()
 		{
-			$dd.scrollTop($dd.scrollTop() + $items.filter(".selected").offset().top - $dd.offset().top - $dd.height() / 2 + $items.filter(".selected").outerHeight(true) / 2);
+			$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
 
 		extraWidth = function ($dom)
@@ -285,14 +265,14 @@
 			return $dom.outerWidth(true) - $dom.width();
 		},
 
-		// show, reposition, and reset dropdown markup
-		openSB = function (reloading)
+		// show, reposition, and reset dropdown markup.
+		openSB = function (no_focus)
 		{
 			blurAllButMe();
+			var showDown = positionSB(), is_open = $sb.is(".open");
 			$sb.addClass("open");
 			$dd.attr("aria-hidden", false);
-			var showDown = positionSB();
-			if (reloading)
+			if (is_open)
 			{
 				$dd.show();
 				centerOnSelected();
@@ -303,8 +283,9 @@
 					$dd.animate({ height: "toggle", opacity: "toggle" }, o.anim, centerOnSelected);
 				else
 					$dd.fadeIn(o.anim, centerOnSelected);
-				$orig.triggerHandler("focus");
 			}
+			// if calling from within the onfocus event, prevent an infinite loop.
+			no_focus ? focusSB() : $orig.focus();
 		},
 
 		// position dropdown based on collision detection
@@ -333,44 +314,58 @@
 				visibility: "visible"
 			}).toggleClass("above", !showDown);
 
+			$selected.addClass("selected");
+
 			return showDown;
 		},
 
 		// when the user selects an item in any manner
-		selectItem = function ($item)
+		selectItem = function ($item, no_open)
 		{
 			var $newtex = $item.find(".text"), $oritex = $display.find(".text"), oriwi = $oritex.width();
 
 			// if we're selecting an item and the box is closed, open it.
-			if (!$sb.is(".open"))
+			if (!no_open && !$sb.is(".open"))
 				openSB();
 
-			// change the selection to this item
-			$items.removeClass("selected");
-			$item.addClass("selected");
-			$sb.attr("aria-activedescendant", $item.attr("id"));
+			setSelected($item);
 
 			// update the title attr and the display markup
 			$oritex
-				.html($newtex.html())
-				.attr("title", $newtex.text().php_unhtmlspecialchars())
-				.stop(true, true).width(oriwi).animate({ width: $newtex.width() });
+				.html($newtex.html() || "&nbsp;")
+				.attr("title", $newtex.text().php_unhtmlspecialchars());
+			if (!o.fixed)
+				$oritex.stop(true, true).width(oriwi).animate({ width: $newtex.width() });
 		},
 
-		updateOriginal = function ($item)
+		setSelected = function ($item)
+		{
+			// change the selection to this item
+			$items.removeClass("selected");
+			$selected = $item.addClass("selected");
+			$sb.attr("aria-activedescendant", $selected.attr("id"));
+		},
+
+		focusOriginal = function ()
+		{
+			// trigger focus on the old <select>, BUT without triggering its events, because
+			// they might refresh the box and enter an infinite loop.
+			var $focuses = $.extend({}, $orig.data("events").focus), i;
+			$orig.unbind("focus").focus();
+			focusSB();
+			for (i in $focuses)
+				$orig.bind("focus", $focuses[i].handler);
+		},
+
+		updateOriginal = function ()
 		{
 			// trigger change on the old <select> if necessary
-			var
-				$selected = $items.filter(".selected"),
-				has_changed = $orig.val() !== $selected.data("value");
+			has_changed = $orig.val() !== $selected.data("value");
 
 			// update the original <select>
 			$orig.find("option").attr("selected", false);
 			$selected.data("orig").attr("selected", true);
 			$orig_item = $selected;
-
-			if (has_changed)
-				$orig.triggerHandler("change");
 		},
 
 		// when the user explicitly clicks an item
@@ -379,7 +374,14 @@
 			selectItem($(this));
 			updateOriginal();
 			closeAndUnbind();
-			$orig.triggerHandler("focus");
+			focusOriginal();
+
+			if (has_changed)
+			{
+				$orig.triggerHandler("change");
+				has_changed = false;
+			}
+
 			return false;
 		},
 
@@ -387,7 +389,7 @@
 		// if we get a match for any options, select it.
 		selectMatchingItem = function (term)
 		{
-			var $available = $items.not(".disabled"), from = $available.index($items.filter(".selected")) + 1, to = $available.length, i = from;
+			var $available = $items.not(".disabled"), from = $available.index($selected) + 1, to = $available.length, i = from;
 
 			while (true)
 			{
@@ -410,7 +412,7 @@
 			if (e.altKey || e.ctrlKey)
 				return;
 
-			var $selected = $items.filter(".selected"), $enabled = $items.not(".disabled");
+			var $enabled = $items.not(".disabled");
 
 			// user pressed tab? If the list is opened, confirm the selection and close it. Then either way, switch to the next DOM element.
 			if (e.keyCode == 9)
@@ -465,6 +467,12 @@
 			// also, try finding the next element that starts with the pressed letter. if found, select it.
 			else if (selectMatchingItem(String.fromCharCode(e.which)))
 				e.preventDefault();
+
+			if (has_changed)
+			{
+				$orig.triggerHandler("change");
+				has_changed = false;
+			}
 		},
 
 		// when the sb is focused (by tab or click), allow hotkey selection and kill all other selectboxes
@@ -493,4 +501,4 @@
 
 }());
 
-$('select').sb();
+$("select").sb();

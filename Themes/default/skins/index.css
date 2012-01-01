@@ -1396,6 +1396,7 @@ select.sb
 
 #thought_form .sbox
 	font-size: 13px
+	max-width: 85px
 
 /* HTML5 overrides for deprecated alignment/width params
 --------------------------------------------------------- */
@@ -1578,7 +1579,7 @@ th.last_th
 	border-radius: 0 8px 0 0
 
 /* Don't touch this -- this hack dynamically adds language flags.
-------------------------------------------------------- */
+------------------------------------------------------------------ */
 
 {%language_flags%}
 

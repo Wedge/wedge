@@ -75,11 +75,8 @@ function template_folder()
 	{
 		var
 			listing = $("input[name=\'pms\[\]\']:checked", document.forms.pmFolder),
-			theSelect = document.forms.pmFolder.pm_action,
+			theSelect = $(document.forms.pmFolder.pm_action),
 			toAdd = "", toRemove = "", i, o, x;
-
-		if (theSelect.childNodes.length == 0)
-			return;
 
 		for (i = 0; i < listing.length; i++)
 		{
@@ -95,15 +92,13 @@ function template_folder()
 					toAdd += "<option value=\'add_" + x + "\'>" + allLabels[x] + "</option>";
 		}
 
-		$("select[name=pm_action] optgroup").remove();
-
+		$(theSelect).children("optgroup").remove();
 		if (toAdd)
-			$("select[name=pm_action]").append($("<optgroup></optgroup>").attr("label", ', JavaScriptEscape($txt['pm_msg_label_apply']), ').append(toAdd));
-
+			theSelect.append($("<optgroup></optgroup>").attr("label", ', JavaScriptEscape($txt['pm_msg_label_apply']), ').append(toAdd));
 		if (toRemove)
-			$("select[name=pm_action]").append($("<optgroup></optgroup>").attr("label", ', JavaScriptEscape($txt['pm_msg_label_remove']), ').append(toRemove));
+			theSelect.append($("<optgroup></optgroup>").attr("label", ', JavaScriptEscape($txt['pm_msg_label_remove']), ').append(toRemove));
 
-		$(theSelect).sb();
+		$(theSelect).sb("focus");
 	}');
 
 	echo '
@@ -405,7 +400,7 @@ function template_folder()
 				if (!empty($context['currently_using_labels']))
 				{
 					echo '
-					<select name="pm_actions[', $message['id'], ']" onchange="if ($(this).val()) this.form.submit();">
+					<select name="pm_actions[', $message['id'], ']" onchange="if ($(this).val()) this.form.submit();" class="fixed">
 						<option value="">', $txt['pm_msg_label_title'], '</option>';
 
 					// Are there any labels which can be added to this?
@@ -493,7 +488,7 @@ function template_subject_list()
 				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 			</th>
 			<th class="left">
-				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="window.location=\'', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(\'#selPMView\').val();">';
+				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="window.location=\'', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(\'#selPMView\').val();" class="fixed">';
 
 	foreach ($context['view_select_types'] as $display_mode => $display_desc)
 		echo '
@@ -562,7 +557,7 @@ function template_subject_list()
 	{
 		if (!empty($context['currently_using_labels']) && $context['folder'] != 'sent')
 			echo '
-				<select name="pm_action" onchange="if ($(this).val()) this.form.submit();" onfocus="loadLabelChoices();">
+				<select name="pm_action" onchange="if ($(this).val()) this.form.submit();" onfocus="loadLabelChoices();" class="fixed">
 					<option value="">', $txt['pm_sel_label_title'], '</option>
 				</select>';
 
@@ -922,13 +917,12 @@ function template_send()
 
 	// Send, Preview, spellcheck buttons.
 	echo '
-			<p id="shortcuts">
+			<div id="post_confirm_strip">', $context['postbox']->outputButtons(), '
+			</div>
+			<div id="shortcuts">
 				<label><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked' : '', '> ', $txt['pm_save_outbox'], '</label>
-				<br><span class="smalltext">', $context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts'], '</span>
-			</p>
-			<p id="post_confirm_strip">
-				', $context['postbox']->outputButtons(), '
-			</p>
+				<span class="smalltext">', $context['browser']['is_opera'] ? $txt['shortcuts_opera'] : ($context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts']), '</span>
+			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">
 			<input type="hidden" name="replied_to" value="', !empty($context['quoted_message']['id']) ? $context['quoted_message']['id'] : 0, '">
