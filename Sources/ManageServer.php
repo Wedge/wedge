@@ -259,11 +259,11 @@ function ModifyGeneralSettings($return_config = false)
 		{
 			if (isset($_REQUEST[$cache]) && (!isset($modSettings[$cache]) || $_REQUEST[$cache] != $modSettings[$cache]) && is_callable('glob'))
 			{
-				array_map('unlink', glob($cachedir . '/*.j*'));
+				@array_map('unlink', glob($cachedir . '/*.j*'));
 				// Note: enableCompressedData should always be tested first in the array,
 				// so we can safely remove CSS files too.
 				if ($cache == 'enableCompressedData')
-					array_map('unlink', glob($cachedir . '/*.c*'));
+					@array_map('unlink', glob($cachedir . '/*.c*'));
 				break;
 			}
 		}

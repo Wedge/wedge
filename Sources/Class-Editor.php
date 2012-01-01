@@ -2440,10 +2440,12 @@ class wedit
 			add_js('
 	$("#', $this->id, '").bind("select click keyup change", function () { this.caretPos = document.selection.createRange().duplicate(); });');
 
+		$has_error = isset($context['post_error']) && (isset($context['post_error']['no_message']) || in_array(array('long_message', $modSettings['max_messageLength']), $context['post_error']));
 		echo '
 		<div class="writer">
 			<div>
-				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns, '" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, isset($context['post_error']['no_message']) || in_array(array('long_message', $modSettings['max_messageLength']), $context['post_error']) ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
+				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns,
+				'" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, $has_error ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
 			</div>
 			<div id="', $this->id, '_resizer" style="width: ', $this->width, '" class="hide richedit_resize"></div>
 		</div>
