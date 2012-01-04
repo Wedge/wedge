@@ -288,7 +288,7 @@ function template_folder()
 
 			// Show who the message was sent to.
 			echo '
-					<span class="smalltext">&#171; <strong> ', $txt['sent_to'], ':</strong> ';
+					<span class="smalltext"><strong> ', $txt['sent_to'], ':</strong> ';
 
 			// People it was sent directly to....
 			if (!empty($message['recipients']['to']))
@@ -298,17 +298,17 @@ function template_folder()
 				echo '(', $txt['pm_undisclosed_recipients'], ')';
 
 			echo '
-						', $message['time'], ' &#187;
+						', $message['time'], '
 					</span>';
 
 			// If we're in the sent items, show who it was sent to besides the "To:" people.
 			if (!empty($message['recipients']['bcc']))
 				echo '
-					<div class="smalltext">&#171; <strong> ', $txt['pm_bcc'], ':</strong> ', implode(', ', $message['recipients']['bcc']), ' &#187;</div>';
+					<div class="smalltext">&#171;&nbsp;<strong> ', $txt['pm_bcc'], ':</strong> ', implode(', ', $message['recipients']['bcc']), '&nbsp;&#187;</div>';
 
 			if (!empty($message['is_replied_to']))
 				echo '
-					<div class="smalltext">&#171; ', $message['replied_msg'], ' &#187;</div>';
+					<div class="smalltext">&#171;&nbsp;', $message['replied_msg'], '&nbsp;&#187;</div>';
 
 			echo '
 				</div>

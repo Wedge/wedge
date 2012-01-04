@@ -88,7 +88,8 @@
 			// for accessibility/styling, and an easy custom .trigger("close") shortcut.
 			$sb.append($display, $dd)
 				.bind("close", closeSB)
-				.attr("aria-owns", $dd.attr("id"));
+				.attr("aria-owns", $dd.attr("id"))
+				.find(".details").remove();
 
 			if ($orig.children().length == 0)
 				$dd.append(createOption().addClass("selected"));
@@ -356,12 +357,15 @@
 		setSelected = function ($item)
 		{
 			// If the select box has just been rebuilt, reset its selection.
-			// (also, !in_array($item[0], $items.get()) is faster but confusing.)
-			if (!$items.filter($item).length)
+			// Good to know: !$items.has($item).length is 60 times slower.
+			// !$items.filter($item).length is about 30 times slower.
+			// !in_array($item[0], $items.get()) is 5 to 6 times slower.
+			if (!$item[0].parentNode === $dd[0])
 				$item = $orig_item;
+
 			// change the selection to this item
-			$items.removeClass("selected");
 			$selected = $item.addClass("selected");
+			$items.not($selected).removeClass("selected");
 			$sb.attr("aria-activedescendant", $selected.attr("id"));
 		},
 

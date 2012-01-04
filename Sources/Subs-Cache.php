@@ -498,7 +498,7 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ($css as $file)
-		$final .= str_replace('$here', '..' . str_replace($boarddir, '', dirname($file)), file_get_contents($file));
+		$final .= str_replace('$here', '..' . str_replace('\\', '/', str_replace($boarddir, '', dirname($file))), file_get_contents($file));
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
