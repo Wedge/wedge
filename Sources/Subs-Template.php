@@ -199,12 +199,11 @@ function ob_sessrewrite($buffer)
 			$thing .= '
 		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
 		$thing = substr($thing, 0, -1) . '
-	};
-	$("*[data-eve]").each(function() {
-		for (var eve = 0, elis = $(this).attr("data-eve").split(" "), eil = elis.length; eve < eil; eve++)
-			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
-	});';
-		$buffer = substr_replace($buffer, $thing, strpos($buffer, empty($modSettings['minify_html']) ? '<!-- insert inline events here -->' : '<!--insert inline events here-->'), 34);
+	};';
+		if (empty($modSettings['minify_html']))
+			$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
+		else
+			$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!--insert inline events here-->'), 32);
 	}
 	else
 		$buffer = str_replace(empty($modSettings['minify_html']) ? "\n\t<!-- insert inline events here -->" : "\n\t<!--insert inline events here-->", '', $buffer);
@@ -435,8 +434,8 @@ function ob_sessrewrite($buffer)
 	while (strpos($buffer, '<inden@zi=') !== false && $max_loops-- > 0)
 		$buffer = preg_replace_callback('~<inden@zi=([^=>]+)=(-?\d+)>((?' . '>[^<]|<(?!@))+?)</inden@zi=\\1>~s', 'wedge_indenazi', $buffer);
 
-	// Return the changed buffer.
-	return $buffer;
+	// Return the changed buffer, and make a final optimization.
+	return str_replace("\n// ]]></script>\n<script><!-- // --><![CDATA[", '', $buffer);
 }
 
 // Move inline events to the end

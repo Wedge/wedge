@@ -806,9 +806,6 @@ function theme_base_css()
 	if (empty($context['cached_css']))
 		wedge_cache_css();
 
-	echo '
-	<link rel="stylesheet" href="', $context['cached_css'], '">';
-
 	if (!empty($context['header_css']))
 	{
 		global $user_info;
@@ -818,6 +815,9 @@ function theme_base_css()
 			$context['header_css'] = str_replace('$behavior', strpos($boardurl, '://' . $user_info['host']) !== false ? $boardurl
 				: preg_replace('~(?<=://)([^/]+)~', $user_info['host'], $boardurl), $context['header_css']);
 	}
+
+	return '
+	<link rel="stylesheet" href="' . $context['cached_css'] . '">';
 }
 
 /**
@@ -830,10 +830,10 @@ function theme_base_js($indenting = 0)
 	global $context;
 
 	$tab = str_repeat("\t", $indenting);
-	echo !empty($context['remote_javascript_files']) ? '
+	return (!empty($context['remote_javascript_files']) ? '
 ' . $tab . '<script src="' . implode('"></script>
-' . $tab . '<script src="', $context['remote_javascript_files']) . '"></script>' : '', '
-' . $tab . '<script src="', add_js_file($context['javascript_files'], false, true), '"></script>';
+' . $tab . '<script src="', $context['remote_javascript_files']) . '"></script>' : '') . '
+' . $tab . '<script src="' . add_js_file($context['javascript_files'], false, true) . '"></script>';
 }
 
 /**

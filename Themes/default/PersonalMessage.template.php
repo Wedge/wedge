@@ -98,7 +98,7 @@ function template_folder()
 		if (toRemove)
 			theSelect.append($("<optgroup></optgroup>").attr("label", ', JavaScriptEscape($txt['pm_msg_label_remove']), ').append(toRemove));
 
-		$(theSelect).sb("focus");
+		$(theSelect).sb();
 	}');
 
 	echo '

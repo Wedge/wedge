@@ -545,7 +545,11 @@ function template_body_after()
 
 	echo !empty($context['script_in_head']) ? '
 <script><!-- // --><![CDATA[
-	$("select").sb();' : "\n" . theme_base_js() . '<script><!-- // --><![CDATA[', '
+	<!-- insert inline events here -->
+	$("select").sb();' : '
+<script><!-- // --><![CDATA[
+	<!-- insert inline events here -->
+// ]]></script>' . "\n" . theme_base_js() . '<script><!-- // --><![CDATA[', '
 	var
 		we_script = "<URL>",
 		we_default_theme_url = ', $settings['theme_url'] === $settings['theme_url'] ? 'we_theme_url = ' : '', '"', $settings['default_theme_url'], '", ', $settings['theme_url'] === $settings['theme_url'] ? '' : '
@@ -567,7 +571,10 @@ function template_body_after()
 	// $context['footer_js'] assumes the <script> tag is already output.
 	echo $context['footer_js'], empty($footer_coding) ? '
 <script><!-- // --><![CDATA[' : '', '
-	<!-- insert inline events here -->
+	$("*[data-eve]").each(function() {
+		for (var eve = 0, elis = $(this).attr("data-eve").split(" "), eil = elis.length; eve < eil; eve++)
+			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
+	});
 // ]]></script>
 </body>';
 }

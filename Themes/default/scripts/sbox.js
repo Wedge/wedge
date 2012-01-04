@@ -23,7 +23,6 @@
 
 (function ()
 {
-	// This plugin is not compatible with IE6 and below;
 	// a normal <select> will be displayed for old browsers
 	$.fn.sb = function (arg)
 	{
@@ -49,6 +48,7 @@
 		var
 			keyfunc = is_opera ? "keypress.sb" : "keydown.sb",
 			resizeTimeout,
+			via_keyboard,
 			has_changed,
 			$selected,
 			$display,
@@ -76,13 +76,13 @@
 				.attr("aria-labelledby", $label.attr("id") || "")
 				.attr("aria-haspopup", true);
 
-			$display = $("<div class='display " + $orig.attr("class") + "' id='sbd" + unique + "'></div>")
+			$display = $("<div class='display' id='sbd" + unique + "'></div>")
 				// generate the display markup
 				.append(optionFormat($orig.find("option:selected"), "&nbsp;"))
 				.append("<div class='btn'><div></div></div>");
 
 			// generate the dropdown markup
-			$dd = $("<ul class='items " + $orig.attr("class") + "' id='sbdd" + unique + "' role=menu></ul>")
+			$dd = $("<ul class='items' id='sbdd" + unique + "' role=menu></ul>")
 				.attr("aria-hidden", true);
 
 			// for accessibility/styling, and an easy custom .trigger("close") shortcut.
@@ -129,8 +129,10 @@
 			// hide the dropdown now that it's initialized
 			$dd.hide();
 
-			// Attach the original select box's events, such as onclick, to our display area.
-			$display.attr("data-eve", $orig.data("eve"));
+			// Attach the original select box's event attributes to our display area.
+			if ($orig.attr("data-eve"))
+				for (var eve = 0, elis = $orig.attr("data-eve").split(" "), eil = elis.length; eve < eil; eve++)
+					$display.bind(eves[elis[eve]][0], eves[elis[eve]][1]);
 
 			// bind events
 			if (!$orig.is(":disabled"))
@@ -149,13 +151,14 @@
 					// when the user explicitly clicks the display
 					.click(function ()
 					{
-						$sb.is(".open") ? closeSB() : openSB();
+						// closeAndUnbind does the same job as closeSB, only it cancels the current selection.
+						$sb.hasClass("open") ? closeAndUnbind(1) : openSB(0, 1);
 						return false; // avoid bubbling to $(document).click(".sb")
 					});
 				$items.not(".disabled")
 					.hover(
 						// use selectItem() instead of setSelected() to do the display animation on hover.
-						function () { if ($sb.is(".open")) setSelected($(this)); },
+						function () { if ($sb.hasClass("open")) setSelected($(this)); },
 						function () { $(this).removeClass("selected"); $selected = $orig_item; }
 					)
 					.click(clickSBItem);
@@ -168,7 +171,7 @@
 					$(window).bind("resize.sb", function ()
 					{
 						clearTimeout(resizeTimeout);
-						resizeTimeout = setTimeout(function () { if ($sb.is(".open")) openSB(); }, 50);
+						resizeTimeout = setTimeout(function () { if ($sb.hasClass("open")) openSB(1); }, 50);
 					});
 			}
 			else
@@ -203,12 +206,21 @@
 			return "<div class='text'>" + ($dom.text().replace(/\|/g, "</div><div class='details'>") || empty || "") + "</div>";
 		},
 
+		/* Alternate version that takes care of horizontal lines. @todo: Needs a class, rather than a <hr>.
+
+		optionFormat = function ($dom, txt)
+		{
+			txt = $dom.text().replace(/\|/g, "</div><div class='details'>") || txt || "";
+			if (txt.match(/^--+$/g))
+				txt = '<hr>';
+			return "<div class='text'>" + txt + "</div>";
+		}, */
+
 		// destroy then load, maintaining open/focused state if applicable
 		reloadSB = function (opt)
 		{
-			var wasOpen = $sb.is(".open"), can_focus = opt !== "focus";
-			if (can_focus)
-				o = $.extend(o, opt);
+			var wasOpen = $sb.hasClass("open"), wasFocused = $sb.hasClass("focused");
+			o = $.extend(o, opt);
 
 			closeSB(1);
 
@@ -222,13 +234,15 @@
 			loadSB();
 
 			if (wasOpen)
-				openSB(!can_focus);
+				openSB(1);
+			else if (wasFocused)
+				focusSB();
 		},
 
 		// hide and reset dropdown markup
 		closeSB = function (instantClose)
 		{
-			if ($sb.is(".open"))
+			if ($sb.hasClass("open"))
 			{
 				$display.blur();
 				$(document).unbind(".sb");
@@ -240,12 +254,14 @@
 		},
 
 		// when the user clicks outside the sb
-		closeAndUnbind = function ()
+		closeAndUnbind = function (clicked_on_display)
 		{
 			$sb.removeClass("focused");
 			closeSB();
 			if ($selected.data("value") !== $orig.val())
 				selectItem($orig_item, true);
+			if (clicked_on_display === 1)
+				focusSB();
 		},
 
 		// trigger all select boxes to blur
@@ -266,31 +282,14 @@
 		},
 
 		// show, reposition, and reset dropdown markup.
-		openSB = function (no_focus)
+		openSB = function (instantOpen, doFocus)
 		{
 			blurAllButMe();
-			var showDown = positionSB(), is_open = $sb.is(".open");
-			$sb.addClass("open");
-			$dd.attr("aria-hidden", false);
-			if (is_open)
-			{
-				$dd.show();
-				centerOnSelected();
-			}
-			else
-			{
-				if (showDown)
-					$dd.animate({ height: "toggle", opacity: "toggle" }, o.anim, centerOnSelected);
-				else
-					$dd.fadeIn(o.anim, centerOnSelected);
-			}
-			// if calling from within the onfocus event, prevent an infinite loop.
-			no_focus ? focusSB() : $orig.focus();
-		},
 
-		// position dropdown based on collision detection
-		positionSB = function ()
-		{
+			// Focus the element before we actually open it. If called through a click,
+			// we'll also actually simulate the focus to trigger any related events.
+			doFocus ? $orig.triggerHandler("focus") : focusSB();
+
 			// modify dropdown css for getting values
 			$dd.stop(true, true).show().css({
 				maxHeight: "none",
@@ -316,7 +315,23 @@
 
 			$selected.addClass("selected");
 
-			return showDown;
+			$dd.attr("aria-hidden", false);
+			if ($sb.hasClass("open"))
+			{
+				$dd.show();
+				centerOnSelected();
+			}
+			else
+			{
+				// If opening via a key stroke, simulate a click.
+				if (via_keyboard)
+					$orig.triggerHandler("click");
+				if (showDown)
+					$dd.animate({ height: "toggle", opacity: "toggle" }, instantOpen ? 0 : o.anim, centerOnSelected);
+				else
+					$dd.fadeIn(instantOpen ? 0 : o.anim, centerOnSelected);
+			}
+			$sb.addClass("open");
 		},
 
 		// when the user selects an item in any manner
@@ -325,7 +340,7 @@
 			var $newtex = $item.find(".text"), $oritex = $display.find(".text"), oriwi = $oritex.width();
 
 			// if we're selecting an item and the box is closed, open it.
-			if (!no_open && !$sb.is(".open"))
+			if (!no_open && !$sb.hasClass("open"))
 				openSB();
 
 			setSelected($item);
@@ -340,21 +355,14 @@
 
 		setSelected = function ($item)
 		{
+			// If the select box has just been rebuilt, reset its selection.
+			// (also, !in_array($item[0], $items.get()) is faster but confusing.)
+			if (!$items.filter($item).length)
+				$item = $orig_item;
 			// change the selection to this item
 			$items.removeClass("selected");
 			$selected = $item.addClass("selected");
 			$sb.attr("aria-activedescendant", $selected.attr("id"));
-		},
-
-		focusOriginal = function ()
-		{
-			// trigger focus on the old <select>, BUT without triggering its events, because
-			// they might refresh the box and enter an infinite loop.
-			var $focuses = $.extend({}, $orig.data("events").focus), i;
-			$orig.unbind("focus").focus();
-			focusSB();
-			for (i in $focuses)
-				$orig.bind("focus", $focuses[i].handler);
 		},
 
 		updateOriginal = function ()
@@ -374,7 +382,7 @@
 			selectItem($(this));
 			updateOriginal();
 			closeAndUnbind();
-			focusOriginal();
+			focusSB();
 
 			if (has_changed)
 			{
@@ -413,11 +421,12 @@
 				return;
 
 			var $enabled = $items.not(".disabled");
+			via_keyboard = true;
 
 			// user pressed tab? If the list is opened, confirm the selection and close it. Then either way, switch to the next DOM element.
 			if (e.keyCode == 9)
 			{
-				if ($sb.is(".open"))
+				if ($sb.hasClass("open"))
 				{
 					updateOriginal();
 					closeSB();
@@ -427,13 +436,12 @@
 			// spaces should open or close the dropdown, cancelling the latest selection. Requires e.which instead of e.keyCode... confusing.
 			else if (e.which == 32)
 			{
-				// closeAndUnbind does the same job as closeSB, only it cancels the current selection.
-				$sb.is(".open") ? closeAndUnbind() : openSB();
+				$sb.hasClass("open") ? closeAndUnbind() : openSB();
 				focusSB();
 				e.preventDefault();
 			}
 			// backspace or return (with the select box open) will do the same as pressing tab, but will keep the current item focused.
-			else if ((e.keyCode == 8 || e.keyCode == 13) && $sb.is(".open"))
+			else if ((e.keyCode == 8 || e.keyCode == 13) && $sb.hasClass("open"))
 			{
 				updateOriginal();
 				closeSB();
@@ -473,6 +481,8 @@
 				$orig.triggerHandler("change");
 				has_changed = false;
 			}
+
+			via_keyboard = false;
 		},
 
 		// when the sb is focused (by tab or click), allow hotkey selection and kill all other selectboxes
@@ -501,4 +511,6 @@
 
 }());
 
-$("select").sb();
+// Only run through this if we are at the end of the page.
+if (window.eves)
+	$("select").sb();

@@ -664,12 +664,10 @@ function JumpTo(opt)
 				$dropdownList.append(sList).change(function () {
 					if (this.selectedIndex > 0 && ($val = $(this).val()))
 						window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
-				}).sb("focus");
+				}).sb();
 			}
 		});
 };
-
-
 
 // *** Thought class.
 function Thought(opt)

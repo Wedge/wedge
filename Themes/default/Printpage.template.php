@@ -99,6 +99,38 @@ function template_print_before()
 				color: black;
 				background-color: black;
 			}
+			.footnotes
+			{
+				border-top: 1px solid #888;
+				margin-top: 20px;
+				padding-top: 4px;
+			}
+			.footnotes td
+			{
+				font-size: smaller;
+				padding: 0 2px;
+			}
+			.footnotes a
+			{
+				text-decoration: none;
+			}
+			blockquote .footnotes
+			{
+				margin: 8px 0 4px;
+			}
+			.footnum
+			{
+				vertical-align: top;
+				text-align: right;
+				width: 30px;
+			}
+			a.fnotel
+			{
+				text-decoration: none;
+				vertical-align: super;
+				font-size: smaller;
+				line-height: normal;
+			}
 		</style>
 	</head>
 	<body>
