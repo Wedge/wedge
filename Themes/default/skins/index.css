@@ -1343,8 +1343,7 @@ select.sb
 		display: block
 		font-size: 1em
 		margin: 0
-		overflow-x: hidden
-		overflow-y: auto
+		overflow: hidden
 		position: absolute
 		z-index: 999
 		box-shadow: 0 2px 5px rgba(0,0,0, .3)
@@ -1389,6 +1388,34 @@ select.sb
 			border-radius: 5px 5px 0 0
 		li.last .item
 			border-radius: 0 0 5px 5px
+
+
+	/* custom scrollbar */
+	.overview
+		overflow: hidden
+		list-style: none
+		position: relative
+		left, top, padding, margin: 0
+	.scrollbar
+		position: absolute
+		width: 11px
+		background: #f0f3f0
+		background-position: 0 0
+		float: right
+	.track
+		position: relative
+		height: 100%
+		width: 11px
+	.thumb
+		background: #ddc
+		border-radius: 4px
+		height: 20px
+		width: 13px
+		cursor: pointer
+		overflow: hidden
+		position: absolute
+		top: 0
+		left: -1px
 
 .cat .sbox
 	font-size: 14px
