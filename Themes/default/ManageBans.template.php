@@ -110,7 +110,7 @@ function template_ban_edit()
 
 		if (empty($context['ban_suggestions']['member']['id']))
 			echo '
-							<input type="text" name="user" id="user" value="" size="40">';
+							<input type="text" name="user" id="user" value="" size="40" onfocus="$(\'#user_check\').attr(\'checked\', true);">';
 		else
 			echo '
 							', $context['ban_suggestions']['member']['link'], '
@@ -244,30 +244,19 @@ function template_ban_edit()
 	add_js_inline('
 	function updateFormStatus()
 	{
-		var full_ban_checked = document.getElementById("full_ban").checked;
-
-		document.getElementById("expire_date").disabled = !document.getElementById("expires_one_day").checked;
-		document.getElementById("cannot_post").disabled = full_ban_checked;
-		document.getElementById("cannot_register").disabled = full_ban_checked;
-		document.getElementById("cannot_login").disabled = full_ban_checked;
+		$("#expire_date").attr("disabled", !$("#expires_one_day").attr("checked"));
+		$("#cannot_post,#cannot_register,#cannot_login").attr("disabled", $("#full_ban").attr("checked"));
 	}
 	updateFormStatus();');
 
 	// Auto suggest only needed for adding new bans, not editing
 	if ($context['ban']['is_new'] && empty($_REQUEST['u']))
 		add_js('
-	var oAddMemberSuggest = new weAutoSuggest({
+	new weAutoSuggest({
 		sSelf: "oAddMemberSuggest",
 		sControlId: "user",
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
-	});
-
-	function onUpdateName(oAutoSuggest)
-	{
-		$("#user_check").attr("checked", true);
-		return true;
-	}
-	oAddMemberSuggest.registerCallback("onBeforeUpdate", onUpdateName);');
+	});');
 }
 
 function template_ban_edit_trigger()
@@ -291,7 +280,7 @@ function template_ban_edit_trigger()
 							', $txt['ban_on_ip'], '
 						</dt>
 						<dd>
-							<input type="text" name="ip" value="', $context['ban_trigger']['ip']['value'], '" size="50" onfocus="selectRadioByName(this.form.bantype, \'ip_ban\');">
+							<input type="text" name="ip" value="', $context['ban_trigger']['ip']['value'], '" size="50" onfocus="$(\':radio[value=ip_ban]\').attr(\'checked\', true);">
 						</dd>';
 
 	if (empty($modSettings['disableHostnameLookup']))
@@ -301,7 +290,7 @@ function template_ban_edit_trigger()
 							', $txt['ban_on_hostname'], '
 						</dt>
 						<dd>
-							<input type="text" name="hostname" value="', $context['ban_trigger']['hostname']['value'], '" size="50" onfocus="selectRadioByName(this.form.bantype, \'hostname_ban\');">
+							<input type="text" name="hostname" value="', $context['ban_trigger']['hostname']['value'], '" size="50" onfocus="$(\':radio[value=hostname_ban]\').attr(\'checked\', true);">
 						</dd>';
 
 	echo '
@@ -310,14 +299,14 @@ function template_ban_edit_trigger()
 							', $txt['ban_on_email'], '
 						</dt>
 						<dd>
-							<input type="email" name="email" value="', $context['ban_trigger']['email']['value'], '" size="50" onfocus="selectRadioByName(this.form.bantype, \'email_ban\');">
+							<input type="email" name="email" value="', $context['ban_trigger']['email']['value'], '" size="50" onfocus="$(\':radio[value=email_ban]\').attr(\'checked\', true);">
 						</dd>
 						<dt>
 							<input type="radio" name="bantype" value="user_ban"', $context['ban_trigger']['banneduser']['selected'] ? ' checked' : '', '>
 							', $txt['ban_on_username'], '
 						</dt>
 						<dd>
-							<input type="text" name="user" id="user" value="', $context['ban_trigger']['banneduser']['value'], '" size="50" onfocus="selectRadioByName(this.form.bantype, \'user_ban\');">
+							<input type="text" name="user" id="user" value="', $context['ban_trigger']['banneduser']['value'], '" size="50" onfocus="$(\':radio[value=user_ban]\').attr(\'checked\', true);">
 						</dd>
 					</dl>
 				</fieldset>
@@ -335,18 +324,11 @@ function template_ban_edit_trigger()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAddMemberSuggest = new weAutoSuggest({
+	new weAutoSuggest({
 		sSelf: \'oAddMemberSuggest\',
 		sControlId: \'user\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
-	});
-
-	function onUpdateName(oAutoSuggest)
-	{
-		selectRadioByName(oAutoSuggest.oTextHandle.form.bantype, \'user_ban\');
-		return true;
-	}
-	oAddMemberSuggest.registerCallback(\'onBeforeUpdate\', onUpdateName);');
+	});');
 }
 
 ?>

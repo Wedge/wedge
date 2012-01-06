@@ -136,16 +136,21 @@ function template_select_search_method()
 				<fieldset class="search_settings floatleft">
 					<legend>', $txt['search_index'], '</legend>
 					<dl>
-						<dt><input type="radio" name="search_index" value=""', empty($modSettings['search_index']) ? ' checked' : '', '>
-						', $txt['search_index_none'], '
+						<dt>
+							<label>
+								<input type="radio" name="search_index" value=""', empty($modSettings['search_index']) ? ' checked' : '', '>
+								', $txt['search_index_none'], '
+							</label>
 						</dt>';
 
 	if ($context['supports_fulltext'])
 	{
 		echo '
 						<dt>
-							<input type="radio" name="search_index" value="fulltext"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? ' checked' : '', empty($context['fulltext_index']) ? ' onclick="alert(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . '); selectRadioByName(this.form.search_index, \'fulltext\');"': '', '>
-							', $txt['search_method_fulltext_index'], '
+							<label>
+								<input type="radio" name="search_index" value="fulltext"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? ' checked' : '', empty($context['fulltext_index']) ? ' onclick="alert(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . '); return true;"': '', '>
+								', $txt['search_method_fulltext_index'], '
+							</label>
 						</dt>
 						<dd>
 							<span class="smalltext">';
@@ -168,8 +173,10 @@ function template_select_search_method()
 
 	echo '
 						<dt>
-							<input type="radio" name="search_index" value="custom"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="alert(' . JavaScriptEscape($txt['search_index_custom_warning']) . '); selectRadioByName(this.form.search_method, \'1\');"', '>
-							', $txt['search_index_custom'], '
+							<label>
+								<input type="radio" name="search_index" value="custom"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="alert(' . JavaScriptEscape($txt['search_index_custom_warning']) . '); return true;"', '>
+								', $txt['search_index_custom'], '
+							</label>
 						</dt>
 						<dd>
 							<span class="smalltext">';

@@ -2539,7 +2539,7 @@ function template_profile_avatar_select()
 		echo '
 						<div id="avatar_server_stored">
 							<div>
-								<select name="cat" id="cat" size="6" onchange="changeSel(\'\');" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');">';
+								<select name="cat" id="cat" size="6" onchange="changeSel(\'\');">';
 
 		// This lists all the file categories.
 		foreach ($context['avatars'] as $avatar)
@@ -2550,7 +2550,7 @@ function template_profile_avatar_select()
 								</select>
 							</div>
 							<div>
-								<select name="file" id="file" size="6" class="hide" onchange="showAvatar();" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'server_stored\');" disabled><option></option></select>
+								<select name="file" id="file" size="6" class="hide" onchange="showAvatar();" disabled><option></option></select>
 							</div>
 							<div><img id="avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $modSettings['avatar_url'] . '/blank.gif', '"></div>
 						</div>';
@@ -2657,14 +2657,14 @@ function template_profile_avatar_select()
 						<div id="avatar_external">
 							<div class="smalltext">', $txt['avatar_by_url'], '</div>
 							<br>
-							<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'external\');" onchange="if (typeof previewExternalAvatar != \'undefined\') previewExternalAvatar(this.value);">
+							<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onchange="if (typeof previewExternalAvatar != \'undefined\') previewExternalAvatar(this.value);">
 						</div>';
 
 	// If the user is able to upload avatars to the server show them an upload box.
 	if (!empty($context['member']['avatar']['allow_upload']))
 		echo '
 						<div id="avatar_upload">
-							<input type="file" name="attachment" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'upload\');">
+							<input type="file" name="attachment">
 							', ($context['member']['avatar']['id_attach'] > 0 ? '<br><br><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '"><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '">' : ''), '
 						</div>';
 
@@ -2741,7 +2741,7 @@ function template_profile_timeoffset_modify()
 	add_js('
 	function autoDetectTimeOffset(currentTime)
 	{
-		var localTime = +new Date(), serverTime = typeof currentTime != "number" ? currentTime : +new Date(currentTime);
+		var localTime = +new Date, serverTime = typeof currentTime != "number" ? currentTime : +new Date(currentTime);
 
 		if (!localTime || !serverTime)
 			return 0;

@@ -16,16 +16,29 @@ var
 
 	// Basic browser detection
 	ua = navigator.userAgent.toLowerCase(),
-	vers = $.browser.version,
 	can_ajax = $.support.ajax,
 
 	// If you need support for more versions, just test for $.browser.version yourself...
-	is_opera = $.browser.opera, is_opera95up = is_opera && vers >= 9.5,
-	is_ff = ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1 && !is_opera, is_gecko = !is_opera && ua.indexOf('gecko') != -1,
-	is_webkit = $.browser.webkit, is_chrome = ua.indexOf('chrome') != -1, is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
-	is_android = is_webkit && ua.indexOf('android') != -1, is_safari = is_webkit && !is_chrome && !is_iphone && !is_android,
-	is_ie = $.browser.msie && !is_opera, is_ie6 = is_ie && vers == 6, is_ie7 = is_ie && vers == 7,
-	is_ie8 = is_ie && vers == 8, is_ie8down = is_ie && vers < 9, is_ie9up = is_ie && !is_ie8down;
+	is_opera = $.browser.opera,
+	is_opera95up = is_opera && $.browser.version >= 9.5,
+
+	is_ff = !is_opera && ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1,
+	is_gecko = !is_opera && ua.indexOf('gecko') != -1,
+
+	// The webkit ones. Oh my, that's a long list... Right now we're only support iPhone/iPod Touch/iPad and generic Android browsers.
+	is_webkit = $.browser.webkit,
+	is_chrome = ua.indexOf('chrome') != -1,
+	is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
+	is_tablet = is_webkit && ua.indexOf('ipad') != -1,
+	is_android = is_webkit && ua.indexOf('android') != -1,
+	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android && !is_tablet,
+
+	is_ie = $.browser.msie && !is_opera,
+	is_ie6 = is_ie && $.browser.version == 6,
+	is_ie7 = is_ie && $.browser.version == 7,
+	is_ie8 = is_ie && $.browser.version == 8,
+	is_ie8down = is_ie && $.browser.version < 9,
+	is_ie9up = is_ie && !is_ie8down;
 
 // Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback, undefined)
@@ -53,13 +66,6 @@ String.prototype.php_htmlspecialchars = function ()
 String.prototype.php_unhtmlspecialchars = function ()
 {
 	return this.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
-};
-
-String.prototype.removeEntities = function ()
-{
-	return this.replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) {
-		return String.fromCharCode(parseInt(sNum, 10));
-	});
 };
 
 // Open a new popup window.
@@ -148,16 +154,12 @@ function submitonce()
 	_formSubmitted = true;
 
 	// If there are any editors warn them submit is coming!
-	for (var i = 0; i < weEditors.length; i++)
-		weEditors[i].doSubmit();
+	$.each(weEditors, function (key, val) { val.doSubmit(); });
 }
 
 function submitThisOnce(oControl)
 {
-	// Hateful fix for Safari 1.3 beta.
-	if (!is_safari || vers >= 2)
-		$('textarea', 'form' in oControl ? oControl.form : oControl).attr('readOnly', true);
-
+	$('textarea', oControl.form || oControl).attr('readOnly', true);
 	return !_formSubmitted;
 }
 
@@ -167,30 +169,14 @@ function in_array(variable, theArray)
 	return $.inArray(variable, theArray) != -1;
 }
 
-// Find a specific radio button in its group and select it.
-function selectRadioByName(oRadioGroup, sName)
-{
-	if (!('length' in oRadioGroup))
-		return oRadioGroup.checked = true;
-
-	for (var i = 0, n = oRadioGroup.length; i < n; i++)
-		if (oRadioGroup[i].value == sName)
-			return oRadioGroup[i].checked = true;
-
-	return false;
-}
-
 // Invert all checkboxes at once by clicking a single checkbox.
-function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
+function invertAll(oInvertCheckbox, oForm, sMask)
 {
-	for (var i = 0, n = oForm.length; i < n; i++)
+	$.each(oForm, function (key, val)
 	{
-		if (!('name' in oForm[i]) || (typeof sMask == 'string' && oForm[i].name.substr(0, sMask.length) != sMask && oForm[i].id.substr(0, sMask.length) != sMask))
-			continue;
-
-		if (!oForm[i].disabled || (typeof bIgnoreDisabled == 'boolean' && bIgnoreDisabled))
-			oForm[i].checked = oInvertCheckbox.checked;
-	}
+		if (val.name && !val.disabled && (!sMask || val.name.substr(0, sMask.length) == sMask || val.id.substr(0, sMask.length) == sMask))
+			val.checked = oInvertCheckbox.checked;
+	});
 }
 
 // Keep the session alive - always!
@@ -204,8 +190,7 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 		// Prevent a Firefox bug from hammering the server.
 		if (we_script && curTime - lastKeepAliveCheck > 9e5)
 		{
-			var tempImage = new Image();
-			tempImage.src = we_prepareScriptUrl() + 'action=keepalive;time=' + curTime;
+			new Image().src = we_prepareScriptUrl() + 'action=keepalive;time=' + curTime;
 			lastKeepAliveCheck = curTime;
 		}
 		setTimeout(sessionKeepAlive, 12e5);
@@ -216,12 +201,12 @@ function invertAll(oInvertCheckbox, oForm, sMask, bIgnoreDisabled)
 
 function we_avatarResize()
 {
-	var tempAvatars = [], j = 0, maxWidth = we_avatarMaxSize[0], maxHeight = we_avatarMaxSize[1];
+	var tempAvatars = [], i = 0, maxWidth = we_avatarMaxSize[0], maxHeight = we_avatarMaxSize[1];
 	$('img.avatar').each(function () {
-		tempAvatars[j] = new Image();
-		tempAvatars[j].avatar = this;
+		tempAvatars[i] = new Image();
+		tempAvatars[i].avatar = this;
 
-		$(tempAvatars[j++]).load(function () {
+		$(tempAvatars[i++]).load(function () {
 			var ava = this.avatar;
 			ava.width = this.width;
 			ava.height = this.height;
@@ -284,64 +269,58 @@ function hide_ajax()
 // Rating boxes in Media area
 function ajaxRating()
 {
-	$('#ratingElement').html('<img src="' + (typeof we_default_theme_url == "undefined" ? we_theme_url : we_default_theme_url) + '/images/loader.gif">');
+	show_ajax();
 	sendXMLDocument(
 		$('#ratingForm').attr('action') + ';xml',
 		'rating=' + $('#rating').val(),
-		function (XMLDoc) { $('#ratingElement').html($('ratingObject', XMLDoc).text()); }
+		function (XMLDoc) {
+			$('#ratingElement').html($('ratingObject', XMLDoc).text());
+			hide_ajax();
+		}
 	);
-}
-
-// Find the actual position of an item.
-// This is a dummy replacement for plugins -- might be removed later.
-function we_itemPos(itemHandle)
-{
-	var offset = $(itemHandle).offset();
-	return [offset.left, offset.top];
 }
 
 // This function takes the script URL and prepares it to allow the query string to be appended to it.
 // It also replaces the host name with the current one. Which is required for security reasons.
 function we_prepareScriptUrl()
 {
-	var finalUrl = we_script.indexOf('?') == -1 ? we_script + '?' : we_script +
-		(we_script.charAt(we_script.length - 1) == '?' || we_script.charAt(we_script.length - 1) == '&' || we_script.charAt(we_script.length - 1) == ';' ? '' : ';');
-	return finalUrl.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
+	return (we_script + (we_script.indexOf('?') == -1 ? '?' : (in_array(we_script.charAt(we_script.length - 1), ['?', '&', ';']) ? '' : ';')))
+			.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
 }
 
 // Get the text in a code tag.
-function weSelectText(oCurElement, bActOnElement)
+function weSelectText(oCurElement)
 {
 	// The place we're looking for is one div up, and next door - if it's auto detect.
-	var oCodeArea = (typeof bActOnElement == 'boolean' && bActOnElement) ? $('#' + oCurElement)[0] : oCurElement.parentNode.nextSibling, oCurRange;
+	var oCodeArea = oCurElement.parentNode.nextSibling, oCurRange;
 
-	if (typeof oCodeArea != 'object' || oCodeArea == null)
-		return false;
-
-	// Start off with IE
-	if ('createTextRange' in document.body)
+	if (!!oCodeArea)
 	{
-		oCurRange = document.body.createTextRange();
-		oCurRange.moveToElementText(oCodeArea);
-		oCurRange.select();
-	}
-	// Firefox et al.
-	else if (window.getSelection)
-	{
-		var oCurSelection = window.getSelection();
-		// Safari is special!
-		if (oCurSelection.setBaseAndExtent)
+		// Start off with IE
+		if ('createTextRange' in document.body)
 		{
-			var oLastChild = oCodeArea.lastChild;
-			oCurSelection.setBaseAndExtent(oCodeArea, 0, oLastChild, 'innerText' in oLastChild ? oLastChild.innerText.length : oLastChild.textContent.length);
+			oCurRange = document.body.createTextRange();
+			oCurRange.moveToElementText(oCodeArea);
+			oCurRange.select();
 		}
-		else
+		// Firefox et al.
+		else if (window.getSelection)
 		{
-			oCurRange = document.createRange();
-			oCurRange.selectNodeContents(oCodeArea);
+			var oCurSelection = window.getSelection();
+			// Safari is special!
+			if (oCurSelection.setBaseAndExtent)
+			{
+				var oLastChild = oCodeArea.lastChild;
+				oCurSelection.setBaseAndExtent(oCodeArea, 0, oLastChild, (oLastChild.innerText || oLastChild.textContent).length);
+			}
+			else
+			{
+				oCurRange = document.createRange();
+				oCurRange.selectNodeContents(oCodeArea);
 
-			oCurSelection.removeAllRanges();
-			oCurSelection.addRange(oCurRange);
+				oCurSelection.removeAllRanges();
+				oCurSelection.addRange(oCurRange);
+			}
 		}
 	}
 
@@ -349,17 +328,19 @@ function weSelectText(oCurElement, bActOnElement)
 }
 
 // A function needed to discern HTML entities from non-western characters.
-function weSaveEntities(sFormName, aElementNames, sMask)
+function weSaveEntities(sFormName, aElementNames, sMask, nm)
 {
-	var i, f = document.forms, nm = f[sFormName], e = nm.elements, n = e.length;
-	if (typeof sMask == 'string')
-		for (i = 0; i < n; i++)
-			if (e[i].id.substr(0, sMask.length) == sMask)
-				aElementNames.push(e[i].name);
+	nm = document.forms[sFormName];
+	if (sMask)
+		$.each(nm.elements, function (key, val) {
+			if (val.id.substr(0, sMask.length) == sMask)
+				aElementNames.push(val.name);
+		});
 
-	for (i = 0, n = aElementNames.length; i < n; i++)
-		if (aElementNames[i] in nm)
-			nm[aElementNames[i]].value = nm[aElementNames[i]].value.replace(/&#/g, '&#38;#');
+	$.each(aElementNames, function (key, val) {
+		if (nm[val])
+			nm[val].value = nm[val].value.replace(/&#/g, '&#38;#');
+	});
 }
 
 (function ()
@@ -496,278 +477,260 @@ function weSaveEntities(sFormName, aElementNames, sMask)
 // *** weCookie class.
 function weCookie()
 {
-	this._cookies = {};
+	var aNameValuePair, cookies = {};
 
-	if ('cookie' in document && document.cookie != '')
+	this.get = function (sKey) { return sKey in cookies ? cookies[sKey] : null; };
+	this.set = function (sKey, sValue) { document.cookie = sKey + '=' + encodeURIComponent(sValue); };
+
+	if (document.cookie)
 	{
-		var aCookieList = document.cookie.split(';');
-		for (var i = 0, n = aCookieList.length; i < n; i++)
+		$.each(document.cookie.split(';'), function (key, val)
 		{
-			var aNameValuePair = aCookieList[i].split('=');
-			this._cookies[aNameValuePair[0].replace(/^\s+|\s+$/g, '')] = decodeURIComponent(aNameValuePair[1]);
-		}
+			aNameValuePair = val.split('=');
+			cookies[aNameValuePair[0].replace(/^\s+|\s+$/g, '')] = decodeURIComponent(aNameValuePair[1]);
+		});
 	}
-};
-
-weCookie.prototype.get = function (sKey)
-{
-	return sKey in this._cookies ? this._cookies[sKey] : null;
-};
-
-weCookie.prototype.set = function (sKey, sValue)
-{
-	document.cookie = sKey + '=' + encodeURIComponent(sValue);
 };
 
 
 // *** weToggle class.
-function weToggle(oOptions)
+function weToggle(opt)
 {
-	this.opt = oOptions;
-	this._collapsed = false;
-	this._cookie = null;
+	var
+		that = this,
+		collapsed = false,
+		cookie = null,
+		cookieValue,
+		toggle_me = function () {
+			$(this).data('that').toggle();
+			this.blur();
+			return false;
+		};
+
+	// Change State - collapse or expand the section.
+	this.cs = function (bCollapse, bInit)
+	{
+		// Handle custom function hook before collapse.
+		if (!bInit && bCollapse && opt.funcOnBeforeCollapse)
+			opt.funcOnBeforeCollapse.call(this);
+
+		// Handle custom function hook before expand.
+		else if (!bInit && !bCollapse && opt.funcOnBeforeExpand)
+			opt.funcOnBeforeExpand.call(this);
+
+		// Loop through all the images that need to be toggled.
+		$.each(opt.aSwapImages || [], function (key, val) {
+			$('#' + val.sId).toggleClass('fold', !bCollapse).attr('title', bCollapse && val.altCollapsed ? val.altCollapsed : val.altExpanded);
+		});
+
+		// Loop through all the links that need to be toggled.
+		$.each(opt.aSwapLinks || [], function (key, val) {
+			$('#' + val.sId).html(bCollapse && val.msgCollapsed ? val.msgCollapsed : val.msgExpanded);
+		});
+
+		// Now go through all the sections to be collapsed.
+		$.each(opt.aSwappableContainers, function (key, val) {
+			bCollapse ? $('#' + val).slideUp(bInit ? 0 : 300) : $('#' + val).slideDown(bInit ? 0 : 300);
+		});
+
+		// Update the new state.
+		collapsed = +bCollapse;
+
+		// Update the cookie, if desired.
+		if (opt.oCookieOptions && opt.oCookieOptions.bUseCookie)
+			cookie.set(op.sCookieName, collapsed);
+
+		if (!bInit && opt.oThemeOptions && opt.oThemeOptions.bUseThemeSettings)
+			// Set a theme option through javascript.
+			new Image().src = we_prepareScriptUrl() + 'action=jsoption;var=' + op.sOptionName + ';val=' + collapsed + ';' + we_sessvar + '=' + we_sessid
+								+ (op.sAdditionalVars || '') + (op.sThemeId ? '&th=' + op.sThemeId : '') + ';time=' + +new Date();
+	};
+
+	// Reverse the current state.
+	this.toggle = function ()
+	{
+		this.cs(!collapsed);
+	};
 
 	// If cookies are enabled and they were set, override the initial state.
-	if ('oCookieOptions' in this.opt && this.opt.oCookieOptions.bUseCookie)
+	if (opt.oCookieOptions && opt.oCookieOptions.bUseCookie)
 	{
 		// Initialize the cookie handler.
-		this._cookie = new weCookie();
+		cookie = new weCookie();
 
 		// Check if the cookie is set.
-		var cookieValue = this._cookie.get(this.opt.oCookieOptions.sCookieName);
+		cookieValue = cookie.get(opt.oCookieOptions.sCookieName);
 		if (cookieValue != null)
-			this.opt.bCurrentlyCollapsed = cookieValue == '1';
+			opt.bCurrentlyCollapsed = cookieValue == '1';
 	}
 
 	// If the init state is set to be collapsed, collapse it.
-	if (this.opt.bCurrentlyCollapsed)
+	if (opt.bCurrentlyCollapsed)
 		this.cs(true, true);
 
 	// Initialize the images to be clickable.
-	var i, n, toggle_me = function () {
-		$(this).data('that').toggle();
-		this.blur();
-		return false;
-	};
 
-	if ('aSwapImages' in this.opt)
-		for (i = 0, n = this.opt.aSwapImages.length; i < n; i++)
-			$('#' + this.opt.aSwapImages[i].sId).show().css('visibility', 'visible').data('that', this).click(toggle_me).css('cursor', 'pointer').mousedown(false);
+	$.each(opt.aSwapImages || [], function (key, val) {
+		$('#' + val.sId).show().css('visibility', 'visible').data('that', that).click(toggle_me).css('cursor', 'pointer').mousedown(false);
+	});
 
 	// Initialize links.
-	if ('aSwapLinks' in this.opt)
-		for (i = 0, n = this.opt.aSwapLinks.length; i < n; i++)
-			$('#' + this.opt.aSwapLinks[i].sId).show().data('that', this).click(toggle_me);
+	$.each(opt.aSwapLinks || [], function (key, val) {
+		$('#' + val.sId).show().data('that', that).click(toggle_me);
+	});
 };
-
-// Change State - collapse or expand the section.
-weToggle.prototype.cs = function (bCollapse, bInit)
-{
-	var i, n, o, op, iSpeed = bInit ? 0 : 300;
-
-	// Handle custom function hook before collapse.
-	if (!bInit && bCollapse && 'funcOnBeforeCollapse' in this.opt)
-		this.opt.funcOnBeforeCollapse.call(this);
-
-	// Handle custom function hook before expand.
-	else if (!bInit && !bCollapse && 'funcOnBeforeExpand' in this.opt)
-		this.opt.funcOnBeforeExpand.call(this);
-
-	// Loop through all the images that need to be toggled.
-	if ('aSwapImages' in this.opt)
-	{
-		op = this.opt.aSwapImages;
-		for (i = 0, n = op.length; i < n; i++)
-		{
-			var sAlt = bCollapse && op[i].altCollapsed ? op[i].altCollapsed : op[i].altExpanded, icon = $('#' + op[i].sId);
-			icon.toggleClass('fold', !bCollapse).attr('title', sAlt);
-		}
-	}
-
-	// Loop through all the links that need to be toggled.
-	if ('aSwapLinks' in this.opt)
-		for (i = 0, op = this.opt.aSwapLinks, n = op.length; i < n; i++)
-			$('#' + op[i].sId).html(bCollapse && op[i].msgCollapsed ? op[i].msgCollapsed : op[i].msgExpanded);
-
-	// Now go through all the sections to be collapsed.
-	for (i = 0, op = this.opt.aSwappableContainers, n = op.length; i < n; i++)
-		(o = $('#' + op[i])) && bCollapse ? o.slideUp(iSpeed) : o.slideDown(iSpeed);
-
-	// Update the new state.
-	this._collapsed = bCollapse;
-
-	// Update the cookie, if desired.
-	if ('oCookieOptions' in this.opt && (op = this.opt.oCookieOptions) && op.bUseCookie)
-		this._cookie.set(op.sCookieName, this._collapsed ? '1' : '0');
-
-	if (!bInit && 'oThemeOptions' in this.opt && (op = this.opt.oThemeOptions) && op.bUseThemeSettings)
-	{
-		// Set a theme option through javascript.
-		var tempImage = new Image();
-		tempImage.src = we_prepareScriptUrl() + 'action=jsoption;var=' + op.sOptionName + ';val=' + +this._collapsed + ';' + we_sessvar + '=' + we_sessid + (op.sAdditionalVars || '') + ('sThemeId' in op ? '&th=' + op.sThemeId : '') + ';time=' + (+new Date());
-	}
-};
-
-// Reverse the current state.
-weToggle.prototype.toggle = function ()
-{
-	this.cs(!this._collapsed);
-};
-
 
 
 // *** JumpTo class.
 function JumpTo(opt)
 {
 	this.opt = opt;
-	var sContainer = opt.sContainerId, aBoardsAndCategories = [], i, n;
+	var sContainer = opt.sContainerId, aBoardsAndCategories = [];
 
 	$('#' + sContainer).find('label')
-		.append('<select id="' + sContainer + '_select"><option>=> ' + opt.sPlaceholder + '</option></select>')
-		.find('select').sb({ fixed: true }).focus(function ()
+		.append('<select id="' + sContainer + '_select" class="fixed"><option>=> ' + opt.sPlaceholder + '</option></select>')
+		.find('select').sb().focus(function ()
 		{
 			show_ajax();
 
 			$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
-				aBoardsAndCategories.push({
-					id: parseInt(this.getAttribute('id'), 10),
-					cat: this.getAttribute('type') == 'cat',
-					name: $(this).text().removeEntities(),
-					url: this.getAttribute('url'),
-					level: parseInt(this.getAttribute('level'), 10)
-				});
+				aBoardsAndCategories.push([
+					parseInt(this.getAttribute('id'), 10),		// 0 = id
+					this.getAttribute('type') == 'cat',			// 1 = category
+					// This removes entities from the name...
+					$(this).text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(parseInt(sNum, 10)); }),
+					this.getAttribute('url'),					// 3 = url
+					parseInt(this.getAttribute('level'), 10)	// 4 = level
+				]);
 			});
 
 			hide_ajax();
 
 			// Fill the jump to box with entries. Method of the JumpTo class.
-			for (i = 0, n = aJumpTo.length; i < n; i++)
+			$.each(aJumpTo, function (dummy, item)
 			{
-				var
-					that = aJumpTo[i], sList = '', k, p, $val,
-					$dropdownList = $('#' + that.opt.sContainerId + '_select').unbind('focus');
+				var sList = '', $val, $dropdownList = $('#' + item.opt.sContainerId + '_select').unbind('focus');
 
 				// Loop through all items to be added.
-				for (k = 0, p = aBoardsAndCategories.length; k < p; k++)
+				$.each(aBoardsAndCategories, function (key, val)
 				{
 					// Just for the record, we don't NEED to close the optgroup at the end
 					// of the list, even if it doesn't feel right. Saves us a few bytes...
-					if (aBoardsAndCategories[k].cat)
-						sList += '<optgroup label="' + aBoardsAndCategories[k].name + '">';
+					if (val[1])
+						sList += '<optgroup label="' + val[2] + '">';
 					else
 						// Show the board option, with special treatment for the current one.
-						sList += '<option value="' + aBoardsAndCategories[k].url + '"' + (aBoardsAndCategories[k].id == that.opt.iBoardId ? ' disabled>=> ' + aBoardsAndCategories[k].name + ' &lt;='
-								: '>' + new Array(aBoardsAndCategories[k].level + 1).join('==') + '=> ' + aBoardsAndCategories[k].name) + '</option>';
-				}
+						sList += '<option value="' + val[3] + '"' + (val[0] == item.opt.iBoardId ? ' disabled>=> ' + val[2] + ' &lt;='
+								: '>' + new Array(val[4] + 1).join('==') + '=> ' + val[2]) + '</option>';
+				});
 
 				// Add the remaining items after the currently selected item.
 				$dropdownList.append(sList).change(function () {
 					if (this.selectedIndex > 0 && ($val = $(this).val()))
 						window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
 				}).sb();
-			}
+			});
 		});
 };
+
 
 // *** Thought class.
 function Thought(opt)
 {
-	if (!can_ajax)
-		return;
+	var
+		ajaxUrl = we_prepareScriptUrl() + 'action=ajax;sa=thought;xml;',
 
-	this.opt = opt;
-	this.ajaxUrl = we_prepareScriptUrl() + 'action=ajax;sa=thought;xml;';
+		// Make that personal text editable (again)!
+		cancel = function () {
+			$('#thought_form').prev().removeClass('hide').prev().show().end().end().remove();
+		};
 
-	$('#thought_update')
-		.attr('title', opt.sLabelThought)
-		.click(function () { oThought.edit(''); });
-	$('.thought').each(function () {
-		var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
-		if (tid)
-		{
-			thought.after('\
+	// Show the input after the user has clicked the text.
+	this.edit = function (tid, mid, is_new, text, p)
+	{
+		cancel();
+
+		var
+			thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(), privacies = opt.aPrivacy, privacy = thought.data('prv'),
+
+			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
+			was_personal.php_unhtmlspecialchars() : $('thought', getXMLDocument(ajaxUrl + 'in=' + tid).responseXML).text())),
+
+			pr = '';
+
+		for (p in privacies)
+			pr += '<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
+
+		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
+		thought.toggle(is_new && tid).next().addClass('hide').after('\
+			<form id="thought_form">\
+				<input type="text" maxlength="255" id="ntho">\
+				<select id="npriv">' + pr + '</select>\
+				<input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '">\
+				<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save">\
+				<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
+			</form>');
+		$('#ntho').focus().val(cur_text);
+		$('#npriv').sb();
+	};
+
+	// Event handler for removal requests.
+	this.remove = function (tid)
+	{
+		var to_del = $('#thought_update' + tid);
+
+		show_ajax();
+
+		sendXMLDocument(ajaxUrl + 'remove', 'oid=' + to_del.data('oid'));
+
+		// We'll be assuming Wedge uses table tags to show thought lists.
+		to_del.parents('tr').first().remove();
+
+		hide_ajax();
+	};
+
+	// Event handler for clicking submit.
+	this.submit = function (tid, mid)
+	{
+		show_ajax();
+
+		sendXMLDocument(
+			ajaxUrl,
+			'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
+			function (XMLDoc) {
+				var thought = $('thought', XMLDoc), nid = tid ? thought.attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid, user = $('user', XMLDoc);
+				if (!$(new_id).length)
+					new_thought.after(new_thought.html().replace('{date}', $('date', XMLDoc).text()).replace('{uname}', user.text()).replace('{text}', thought.text()));
+				$(new_id + ' span').html(thought.text());
+				cancel();
+				hide_ajax();
+			}
+		);
+	};
+
+	this.cancel = cancel;
+
+	if (can_ajax)
+	{
+		$('#thought_update')
+			.attr('title', opt.sLabelThought)
+			.click(function () { oThought.edit(''); });
+		$('.thought').each(function () {
+			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
+			if (tid)
+			{
+				thought.after('\
 		<div class="thought_actions">\
 			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ');">\
 			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ', true);">\
 			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">\
 		</div>');
-		}
-	});
+			}
+		});
+	}
 };
 
-// Show the input after the user has clicked the text.
-Thought.prototype.edit = function (tid, mid, is_new, text)
-{
-	this.cancel();
-
-	var
-		thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(), opt = this.opt, privacies = opt.aPrivacy, privacy = thought.data('prv'),
-		cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-		was_personal.php_unhtmlspecialchars() : this.getText(tid))), p, pr = '';
-	for (p in privacies)
-		pr += '<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
-
-	// Hide current thought and edit/modify/delete links, and add tools to write new thought.
-	thought.toggle(is_new && tid).next().addClass('hide').after('\
-		<form id="thought_form">\
-			<input type="text" maxlength="255" id="ntho">\
-			<select id="npriv">' + pr + '</select>\
-			<input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '">\
-			<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save">\
-			<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
-		</form>');
-	$('#ntho').focus().val(cur_text);
-	$('#npriv').sb();
-};
-
-Thought.prototype.getText = function (id)
-{
-	return $('thought', getXMLDocument(this.ajaxUrl + 'in=' + id).responseXML).text();
-};
-
-// Make that personal text editable (again)!
-Thought.prototype.cancel = function ()
-{
-	$('#thought_form').prev().removeClass('hide').prev().show().end().end().remove();
-};
-
-// Event handler for removal requests.
-Thought.prototype.remove = function (tid)
-{
-	var to_del = $('#thought_update' + tid);
-
-	show_ajax();
-
-	sendXMLDocument(this.ajaxUrl + 'remove', 'oid=' + to_del.data('oid'));
-
-	// We'll be assuming Wedge uses table tags to show thought lists.
-	to_del.parents('tr').first().remove();
-
-	hide_ajax();
-};
-
-// Event handler for clicking submit.
-Thought.prototype.submit = function (tid, mid)
-{
-	var that = this;
-	show_ajax();
-
-	sendXMLDocument(
-		that.ajaxUrl,
-		'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
-		function (XMLDoc) {
-			var thought = $('thought', XMLDoc), nid = tid ? thought.attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid, user = $('user', XMLDoc);
-			if (!$(new_id).length)
-				new_thought.after(new_thought.html().replace('{date}', $('date', XMLDoc).text()).replace('{uname}', user.text()).replace('{text}', thought.text()));
-			$(new_id + ' span').html(thought.text());
-			that.cancel();
-			hide_ajax();
-		}
-	);
-};
 
 /* Optimize:
-_cookie = _k
-_collapsed = _c
 _formSubmitted = _f
 */

@@ -287,7 +287,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	this.iItemCount++;
 
 	// If there's a callback then call it. If it returns false, the item must not be added.
-	if ('oCallback' in this && 'onBeforeAddItem' in this.oCallback && typeof this.oCallback.onBeforeAddItem == 'string')
+	if ('oCallback' in this && 'onBeforeAddItem' in this.oCallback)
 		if (!this.oCallback.onBeforeAddItem(this.opt.sSelf, sItemId))
 			return;
 
@@ -295,7 +295,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	$('<div id="' + eid + '"></div>').html(
 		this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
 		.replace(/%item_href%/g, we_prepareScriptUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
-		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + "/images").replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
+		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + '/images').replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
 	).appendTo(this.oItemList);
 
 	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)
@@ -436,12 +436,6 @@ weAutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 // Get a new suggestion.
 weAutoSuggest.prototype.autoSuggestUpdate = function ()
 {
-	// If there's a callback then call it.
-	if ('onBeforeUpdate' in this.oCallback && typeof this.oCallback.onBeforeUpdate == 'string')
-		// If it returns false, the item must not be added.
-		if (!this.oCallback.onBeforeUpdate(this.opt.sSelf))
-			return false;
-
 	this.oRealTextHandle.val(this.oTextHandle.value);
 
 	if ($.trim(this.oTextHandle.value) === '')
