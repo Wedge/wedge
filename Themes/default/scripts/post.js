@@ -104,8 +104,8 @@ function surroundText(text1, text2, oTextHandle)
 // Split a quote (or any unclosed tag) if we press Enter inside it.
 function splitQuote(e)
 {
-	// Did we just press Shift+Enter?
-	if (e.which != 13 || !e.shiftKey)
+	// Did we just press Shift+Enter or Ctrl+Enter?
+	if (e.which != 13 || (!e.shiftKey && !e.ctrlKey))
 		return true;
 
 	// Where are we, already?

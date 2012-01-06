@@ -20,8 +20,8 @@ function template_modify_subscription()
 	add_js('
 	function toggleDuration(toChange)
 	{
-		$("#fixed_area").css("display", toChange == \'fixed\' ? "inline" : "none");
-		$("#flexible_area").css("display", toChange == \'fixed\' ? "none" : "inline");
+		$("#fixed_area").slideToggle(toChange == \'fixed\');
+		$("#flexible_area").slideToggle(toChange != \'fixed\');
 	}');
 
 	echo '
@@ -282,7 +282,7 @@ function template_modify_user_subscription()
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $context['sub_id'], ';lid=', $context['log_id'], '" method="post">
 			<we:cat>
-				', $txt['paid_' . $context['action_type'] . '_subscription'], ' - ', $context['current_subscription']['name'], '
+				', $txt[$context['action_type'] . '_subscriber'], ' - ', $context['current_subscription']['name'], '
 				', empty($context['sub']['username']) ? '' : ' (' . $txt['user'] . ': ' . $context['sub']['username'] . ')', '
 			</we:cat>
 			<div class="windowbg wrc">
@@ -321,7 +321,7 @@ function template_modify_user_subscription()
 
 	echo '
 					</select>&nbsp;
-					', (isset($txt['calendar_month']) ? $txt['calendar_month'] : ''), '&nbsp;
+					', (isset($txt['month']) ? $txt['month'] : ''), ':&nbsp;
 					<select name="month" id="month" onchange="generateDays(\'\');">';
 
 	// There are 12 months per year - ensure that they all get listed.
@@ -331,7 +331,7 @@ function template_modify_user_subscription()
 
 	echo '
 					</select>&nbsp;
-					', (isset($txt['calendar_day']) ? $txt['calendar_day'] : ''), '&nbsp;
+					', (isset($txt['day']) ? $txt['day'] : ''), ':&nbsp;
 					<select name="day" id="day">';
 
 	// This prints out all the days in the current month - this changes dynamically as we switch months.
@@ -355,7 +355,7 @@ function template_modify_user_subscription()
 
 	echo '
 					</select>&nbsp;
-					', (isset($txt['calendar_month']) ? $txt['calendar_month'] : ''), '&nbsp;
+					', (isset($txt['month']) ? $txt['month'] : ''), ':&nbsp;
 					<select name="monthend" id="monthend" onchange="generateDays(\'end\');">';
 
 	// There are 12 months per year - ensure that they all get listed.
@@ -365,7 +365,7 @@ function template_modify_user_subscription()
 
 	echo '
 					</select>&nbsp;
-					', (isset($txt['calendar_day']) ? $txt['calendar_day'] : ''), '&nbsp;
+					', (isset($txt['day']) ? $txt['day'] : ''), ':&nbsp;
 					<select name="dayend" id="dayend">';
 
 	// This prints out all the days in the current month - this changes dynamically as we switch months.
