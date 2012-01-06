@@ -94,7 +94,7 @@ function misp(word, start, end, suggestions)
 // checked is evaluated with pspell.
 function replaceWord()
 {
-	var strstart = "", strend;
+	var strstart = '', strend;
 
 	// If this isn't the beginning of the string then get all of the string
 	// that is before the word we are replacing.
@@ -139,7 +139,7 @@ function replaceAll()
 	{
 		if (misps[idx].word == origword)
 		{
-			var strstart = "";
+			var strstart = '';
 			if (misps[idx].start != 0)
 				strstart = mispstr.slice(0, misps[idx].start + localoffsetindex);
 
@@ -181,13 +181,13 @@ function highlightWord()
 
 		// Rebuild the string with a span wrapped around the misspelled word
 		// so we can highlight it in the div the user is viewing the string in.
-		sv = $("#spellview").html(
+		sv = $('#spellview').html(
 			(htmlspecialchars(strstart) + '<mark id="h1">' + misps[wordindex].word + '</mark>' + htmlspecialchars(strend)).replace(/_\|_/g, '<br>')
 		)[0],
 
 		// We could use scrollIntoView, but it's just not that great anyway.
-		spellview_height = typeof sv.currentStyle != "undefined" ? parseInt(sv.currentStyle.height, 10) : sv.offsetHeight,
-		word_position = $("#h1")[0].offsetTop,
+		spellview_height = typeof sv.currentStyle != 'undefined' ? parseInt(sv.currentStyle.height, 10) : sv.offsetHeight,
+		word_position = $('#h1')[0].offsetTop,
 		current_position = sv.scrollTop;
 
 	// The spellview is not tall enough!  Scroll down!
@@ -218,7 +218,7 @@ function nextWord(ignoreall)
 	// Draw it and quit if there are no more misspelled words to evaluate.
 	if (misps.length <= wordindex)
 	{
-		$("#spellview").html(htmlspecialchars(mispstr).replace(/_\|_/g, "<br>"));
+		$('#spellview').html(htmlspecialchars(mispstr).replace(/_\|_/g, '<br>'));
 
 		while (spellingForm.suggestions.options.length > 0)
 			spellingForm.suggestions.options[0] = null;
@@ -242,7 +242,7 @@ function nextWord(ignoreall)
 	}
 
 	// Check to see if word is supposed to be ignored.
-	if (typeof ignoredWords[misps[wordindex].word] != "undefined")
+	if (typeof ignoredWords[misps[wordindex].word] != 'undefined')
 	{
 		nextWord(false);
 		return false;
@@ -270,7 +270,7 @@ function nextWord(ignoreall)
 	}
 
 	if (spellingForm.suggestions.options.length == 0)
-		spellingForm.changeto.value = "";
+		spellingForm.changeto.value = '';
 
 	highlightWord();
 
@@ -279,10 +279,10 @@ function nextWord(ignoreall)
 
 function htmlspecialchars(thetext)
 {
-	return thetext.replace(/\</g, "&lt;").replace(/\>/g, "&gt;").replace(/\n/g, "<br>").replace(/\ \ /g, " &nbsp;");
+	return thetext.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace(/\n/g, '<br>').replace(/\ \ /g, ' &nbsp;');
 }
 
 function openSpellWin(width, height)
 {
-	window.open("", "spellWindow", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=" + width + ",height=" + height);
+	window.open('', 'spellWindow', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=' + width + ',height=' + height);
 }

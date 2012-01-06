@@ -878,9 +878,9 @@ weEditor.prototype.removeFormatting = function ()
 			return;
 
 		// Do bits that are likely to have attributes.
-		cText = cText.replace(RegExp("\\[/?(url|img|iurl|ftp|email|img|color|font|size|list|bdo).*?\\]", "g"), '');
+		cText = cText.replace(RegExp("\\[/?(url|img|iurl|ftp|email|img|color|font|size|list|bdo).*?\\]", 'g'), '');
 		// Then just anything that looks like BBC.
-		cText = cText.replace(RegExp("\\[/?[A-Za-z]+\\]", "g"), '');
+		cText = cText.replace(RegExp("\\[/?[A-Za-z]+\\]", 'g'), '');
 
 		replaceText(cText, this.oTextHandle);
 	}
@@ -923,7 +923,7 @@ weEditor.prototype.requestParsedMessage = function (bView)
 	}
 
 	// Get the text.
-	var sText = this.getText(true, !bView).replace(/&#/g, "&#38;#").php_urlencode();
+	var sText = this.getText(true, !bView).replace(/&#/g, '&#38;#').php_urlencode();
 
 	sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=' + (bView ? 1 : 0) + ';' + we_sessvar + '=' + we_sessid + ';xml', 'message=' + sText, this.onToggleDataReceived);
 };

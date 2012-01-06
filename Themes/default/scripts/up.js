@@ -17,15 +17,15 @@ var Yup = {
 	init: function(areas)
 	{
 		YUI = YAHOO.util;
-		Yup.currentProgress = $("#current_progress");
-		Yup.currentProgressText = $("#current_title");
-		Yup.currentProgressText2 = $("#current_text");
-		Yup.currentProgressText3 = $("#current_prog_perc");
-		Yup.overallProgress = $("#overall_progress");
-		Yup.overallProgressText = $("#overall_title");
-		Yup.overallProgressText2 = $("#overall_prog_perc");
-		Yup.list = $("#current_list");
-		Yup.browseBtn = $("#browseBtn");
+		Yup.currentProgress = $('#current_progress');
+		Yup.currentProgressText = $('#current_title');
+		Yup.currentProgressText2 = $('#current_text');
+		Yup.currentProgressText3 = $('#current_prog_perc');
+		Yup.overallProgress = $('#overall_progress');
+		Yup.overallProgressText = $('#overall_title');
+		Yup.overallProgressText2 = $('#overall_prog_perc');
+		Yup.list = $('#current_list');
+		Yup.browseBtn = $('#browseBtn');
 		Yup.php_limit = areas.php_limit;
 		Yup.quotas = areas.quotas;
 		Yup.txt = areas.text;
@@ -40,8 +40,8 @@ var Yup = {
 		Yup.lastDone = 0;
 		Yup.done = [];
 		Yup.fileFilters = areas.filters;
-		$("#upload").click(function () { Yup.startNext(); return false; });
-		$("#browse").css({
+		$('#upload').click(function () { Yup.startNext(); return false; });
+		$('#browse').css({
 			width: Yup.browseBtn.css('width'),
 			height: Yup.browseBtn.css('height')
 		});

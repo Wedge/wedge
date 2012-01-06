@@ -106,7 +106,7 @@ function str_hmac_sha1(key, data){ return binb2str(core_hmac_sha1(key, data));}
  */
 function sha1_vm_test()
 {
-	return hex_sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d";
+	return hex_sha1('abc') == 'a9993e364706816aba3e25717850c26c9cd0d89d';
 }
 
 /*
@@ -219,7 +219,7 @@ function str2binb(str)
  */
 function binb2str(bin)
 {
-	var i, str = "", mask = (1 << chrsz) - 1;
+	var i, str = '', mask = (1 << chrsz) - 1;
 	for (i = 0; i < bin.length * 32; i += chrsz)
 		str += String.fromCharCode((bin[i >> 5] >>> (24 - i%32)) & mask);
 	return str;
@@ -230,7 +230,7 @@ function binb2str(bin)
  */
 function binb2hex(binarray)
 {
-	var i, str = "", hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+	var i, str = '', hex_tab = hexcase ? '0123456789ABCDEF' : '0123456789abcdef';
 	for (i = 0; i < binarray.length * 4; i++)
 		str += hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8+4)) & 0xF) + hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8)) & 0xF);
 	return str;
@@ -241,7 +241,7 @@ function binb2hex(binarray)
  */
 function binb2b64(binarray)
 {
-	var i, j, str = "", tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	var i, j, str = '', tab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	for (i = 0; i < binarray.length * 4; i += 3)
 	{
 		var triplet = (((binarray[i >> 2] >> 8 * (3 - i %4)) & 0xFF) << 16)

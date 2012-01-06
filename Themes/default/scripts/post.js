@@ -518,7 +518,7 @@ function wedgeAttachSelect(oOptions)
 		if (!oOptions.attachment_ext)
 			return true; // We're not checking
 
-		var dot = filename.lastIndexOf(".");
+		var dot = filename.lastIndexOf('.');
 		if (!filename || filename.length == 0 || dot == -1)
 		{
 			oOptions.message_ext_error_final = oOptions.message_ext_error.replace(' ({ext})', '');

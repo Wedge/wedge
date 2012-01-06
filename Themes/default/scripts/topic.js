@@ -20,7 +20,7 @@ function is_editing()
 
 function go_up()
 {
-	$("html, body").animate(
+	$('html,body').animate(
 		{ scrollTop: 0 },
 		1000
 	);
@@ -30,7 +30,7 @@ function go_up()
 
 function go_down()
 {
-	$("html, body").animate(
+	$('html,body').animate(
 		{ scrollTop: $(document).height() - $(window).height() },
 		1000
 	);
@@ -70,7 +70,7 @@ function modify_topic(topic_id, first_msg_id)
 	cur_topic_id = topic_id;
 
 	show_ajax();
-	getXMLDocument(we_prepareScriptUrl() + "action=quotefast;quote=" + first_msg_id + ";modify;xml", onDocReceived_modify_topic);
+	getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + first_msg_id + ';modify;xml', onDocReceived_modify_topic);
 }
 
 function onDocReceived_modify_topic(XMLDoc)
@@ -102,12 +102,12 @@ function modify_topic_save()
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
-	x.push('subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_urlencode());
+	x.push('subject=' + qm.subject.value.replace(/&#/g, '&#38;#').php_urlencode());
 	x.push('topic=' + qm.elements.topic.value);
 	x.push('msg=' + qm.elements.msg.value);
 
 	show_ajax();
-	sendXMLDocument(we_prepareScriptUrl() + "action=jsmodify;topic=" + qm.elements.topic.value + ";" + we_sessvar + "=" + we_sessid + ";xml", x.join("&"), modify_topic_done);
+	sendXMLDocument(we_prepareScriptUrl() + 'action=jsmodify;topic=' + qm.elements.topic.value + ';' + we_sessvar + '=' + we_sessid + ';xml', x.join('&'), modify_topic_done);
 
 	return false;
 }
@@ -302,14 +302,14 @@ QuickModify.prototype.modifySave = function ()
 		return true;
 
 	var x = [], qm = document.forms.quickModForm;
-	x.push('subject=' + qm.subject.value.replace(/&#/g, "&#38;#").php_urlencode());
-	x.push('message=' + qm.message.value.replace(/&#/g, "&#38;#").php_urlencode());
+	x.push('subject=' + qm.subject.value.replace(/&#/g, '&#38;#').php_urlencode());
+	x.push('message=' + qm.message.value.replace(/&#/g, '&#38;#').php_urlencode());
 	x.push('topic=' + qm.elements.topic.value);
 	x.push('msg=' + qm.elements.msg.value);
 
 	// Send in the Ajax request and let's hope for the best.
 	show_ajax();
-	sendXMLDocument.call(this, we_prepareScriptUrl() + "action=jsmodify;topic=" + this.opt.iTopicId + ";" + we_sessvar + "=" + we_sessid + ";xml", x.join("&"), this.onModifyDone);
+	sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jsmodify;topic=' + this.opt.iTopicId + ';' + we_sessvar + '=' + we_sessid + ';xml', x.join('&'), this.onModifyDone);
 
 	return false;
 };
@@ -493,7 +493,7 @@ function IconList(oOptions)
 	// Replace all message icons by icons with hoverable and clickable div's.
 	for (var i = document.images.length - 1, iPrefixLength = this.opt.sIconIdPrefix.length; i >= 0; i--)
 		if (document.images[i].id.substr(0, iPrefixLength) == this.opt.sIconIdPrefix)
-			$(document.images[i]).replaceWith('<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: pointer; padding: 3px 3px 1px; text-align: center;"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0 2px') + '"></div>');
+			$(document.images[i]).replaceWith('<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: pointer; padding: 3px 3px 1px; text-align: center"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0 2px') + '"></div>');
 }
 
 // Event for the mouse hovering over the original icon.
@@ -549,7 +549,7 @@ IconList.prototype.onIconsReceived = function (oXMLDoc)
 	var sItems = '', br = this.opt.sBackReference, bord = this.opt.sItemBorder, bg = this.opt.sItemBackground;
 
 	$('we icon', oXMLDoc).each(function () {
-		sItems += '<div onmouseover="' + br + '.onItemHover(this, true)" onmouseout="' + br + '.onItemHover(this, false);" onmousedown="' + br + '.onItemMouseDown(this, \'' + $(this).attr('value') + '\');" style="padding: 3px 0px; margin-left: auto; margin-right: auto; border: ' + bord + '; background: ' + bg + '"><img src="' + $(this).attr('url') + '" alt="' + $(this).attr('name') + '" title="' + $(this).text() + '"></div>';
+		sItems += '<div onmouseover="' + br + '.onItemHover(this, true)" onmouseout="' + br + '.onItemHover(this, false)" onmousedown="' + br + '.onItemMouseDown(this, \'' + $(this).attr('value') + '\')" style="padding: 3px 0px; margin-left: auto; margin-right: auto; border: ' + bord + '; background: ' + bg + '"><img src="' + $(this).attr('url') + '" alt="' + $(this).attr('name') + '" title="' + $(this).text() + '"></div>';
 	});
 
 	this.oContainerDiv.html(sItems).show();
