@@ -378,6 +378,10 @@ ul.usermenuitem, ul.acmenuitem
 // IE6 doesn't deserve a hack.
 .windowbg unextends .grad700
 
+// Fix IE6's tendency to enlarge select boxes to full width. Tss.
+.sbox
+	width: 1%
+
 // Remove hasLayout from optgroup styling because it breaks item widths.
 .sbox .items .optgroup .label
 	zoom: normal

@@ -1,4 +1,10 @@
 
+// Copied from index.css... I know, a bit annoying, but IE6/7 need this.
+.inline-block
+	display: inline-block
+	mixin: ie-inline-block
+	vertical-align: middle
+
 // This is the editor's playground (textarea for non-wysiwyg, iframe for wysiwyg).
 .editor, .rich_editor_frame
 	border: 1px solid #808080
@@ -124,7 +130,7 @@ ul.post_options
 		color: #47a
 
 .bbc_divider, .bbc_button, .bbc_button div
-	display: inline-block
+	base: .inline-block
 	width: 23px
 	height: 22px
 
@@ -141,8 +147,8 @@ ul.post_options
 	float, text-align: right
 
 #draft_lastautosave
+	base: .inline-block
 	line-height: 1.7em
-	display: inline-block
 	clear: right
 
 #shortcuts
@@ -150,3 +156,8 @@ ul.post_options
 	label
 		display: block
 		padding-bottom: .8em
+
+// IE6 needs layout to show inline-block divs... And a default right margin from my experience.
+mixin {ie6,ie7} ie-inline-block
+	margin-right: 6px
+	zoom: 1

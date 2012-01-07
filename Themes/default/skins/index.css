@@ -1393,23 +1393,22 @@ select.sb
 	/* custom scrollbar */
 	.overview
 		overflow: hidden
-		list-style: none
 		position: relative
-		left, top, padding, margin: 0
+	.viewport
+		margin-right: 15px
 	.scrollbar
 		position: absolute
 		width: 11px
-		background: #f0f3f0
-		background-position: 0 0
+		background: #f5f8f5
 		float: right
 	.track
 		position: relative
-		height: 100%
 		width: 11px
 	.thumb
-		background: #ddc
-		border-radius: 4px
-		height: 20px
+		background: #e0e3e0
+		background: -prefix-linear-gradient(left, #ddd, #e0e6e0, #ccc)
+		border-radius: 6px
+		height: 18px
 		width: 13px
 		cursor: pointer
 		overflow: hidden

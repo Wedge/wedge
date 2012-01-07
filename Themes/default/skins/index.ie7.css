@@ -146,12 +146,6 @@ ul.usermenuitem, ul.acmenuitem
 .table_list a.collapse
 	width: 14px
 
-.bbc_divider, .bbc_button, .bbc_button div
-	display: inline
-
-.bbc_button
-	padding: 0 2px
-
 h4.hove
 	background: #e2ebe7 url($images/menu.gif) no-repeat 98% 4px
 

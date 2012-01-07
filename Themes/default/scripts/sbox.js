@@ -33,8 +33,8 @@
 			fixed = $orig.hasClass('fixed'), // should dropdown expand to widest and display conform to whatever is selected?
 			resizeTimeout,
 			via_keyboard,
-			has_scrollbar,
 			has_changed,
+			scrollbar,
 			$selected,
 			$display,
 			$label,
@@ -251,8 +251,8 @@
 		// reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
 		centerOnSelected = function ()
 		{
-			if (has_scrollbar)
-				has_scrollbar.scTo($selected.position().top, $selected.height());
+			if (scrollbar)
+				scrollbar.scTo($selected.position().top, $selected.height());
 			else
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
@@ -298,13 +298,13 @@
 				visibility: 'visible'
 			}).toggleClass('above', !showDown);
 
+			// create a custom scrollbar for our select box?
 			if (ddMaxHeight < ddHeight)
 			{
-				// create a custom scrollbar for our select box.
-				if (has_scrollbar)
-					has_scrollbar.update();
+				if (scrollbar)
+					scrollbar.update();
 				else
-					has_scrollbar = new ScrollBar($dd);
+					scrollbar = new ScrollBar($dd);
 			}
 
 			$selected.addClass('selected');
@@ -515,24 +515,13 @@
 		Copyright (c) 2010
 	*/
 
-	ScrollBar = function (root)
+	ScrollBar = function ($dd)
 	{
 		var
 			startPos = 0, iMouse, iScroll,
 			thumbAxis, viewportAxis, contentAxis,
 			oContent, oScrollbar, oTrack, oThumb,
 			curPos, scrollbarRatio,
-
-		start = function (e)
-		{
-			iMouse = e.pageY;
-			startPos = parseInt(oThumb.css('top')) || 0;
-			$(document)
-				.bind('mousemove.sc', drag)
-				.bind('mouseup.sc', end);
-			oThumb.bind('mouseup.sc', end);
-			return false;
-		},
 
 		wheel = function (e)
 		{
@@ -543,13 +532,6 @@
 			oContent.css('top', -iScroll);
 
 			e.preventDefault();
-		},
-
-		end = function ()
-		{
-			$(document).unbind('.sc');
-			oThumb.unbind('.sc');
-			return false;
 		},
 
 		drag = function (e)
@@ -572,9 +554,9 @@
 		this.scTo = scTo;
 		this.update = function ()
 		{
-			viewportAxis = root.find('.viewport').height();
-			oContent = root.find('.overview');
-			oScrollbar = root.find('.scrollbar');
+			viewportAxis = $dd.find('.viewport').height();
+			oContent = $dd.find('.overview');
+			oScrollbar = $dd.find('.scrollbar');
 			oTrack = oScrollbar.find('.track');
 			oThumb = oScrollbar.find('.thumb');
 			iScroll = 0;
@@ -592,49 +574,55 @@
 			oThumb.css('height', thumbAxis);
 		};
 
-		if (root.find('.viewport').length)
+		if ($dd.find('.viewport').length)
 			return;
 
-		root
+		$dd
 			.css({ display: 'block', visibility: 'hidden' })
 			.contents()
 			.wrapAll('<div class="viewport"><div class="overview"></div></div>');
 
-		root.append('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>');
+		$dd.append('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>');
 
-		root
-			.find('.scrollbar')
+		$dd.find('.scrollbar')
 			.css({
-				marginTop: -root.height(),
-				marginLeft: root.width() + 3,
-				height: root.height()
+				marginTop: -$dd.height(),
+				marginLeft: $dd.width() + 3,
+				height: $dd.height()
 			});
-		root
-			.find('.viewport')
-			.css({
-				height: root.height(),
-				marginRight: 15
-			});
-		root.width(root.width() + 15);
+
+		$dd.find('.viewport')
+			.height($dd.height());
+
+		$dd.width($dd.width() + 15);
+
 		this.update();
 
 		// set events
-		oTrack.bind('mouseup.sc', drag);
-		oThumb.bind('mousedown.s2', start);
-		if (root[0].addEventListener)
+		oTrack.click(drag);
+		oThumb.mousedown(function (e)
 		{
-			root[0].addEventListener('DOMMouseScroll', wheel, false);
-			root[0].addEventListener('mousewheel', wheel, false);
+			iMouse = e.pageY;
+			startPos = parseInt(oThumb.css('top')) || 0;
+			$(document)
+				.bind('mousemove.sc', drag)
+				.bind('mouseup.sc', function () { $(document).unbind('.sc'); return false; });
+			return false;
+		});
+		if ($dd[0].addEventListener)
+		{
+			$dd[0].addEventListener('DOMMouseScroll', wheel, false);
+			$dd[0].addEventListener('mousewheel', wheel, false);
 		}
 		else
-			root[0].onmousewheel = wheel;
+			$dd[0].onmousewheel = wheel;
 
-		root.css({ display: 'none', visibility: 'visible' });
+		$dd.css({ display: 'none', visibility: 'visible' });
 	};
 
 	// .sb() takes a select box and restyles it.
 	// a normal <select> will be displayed for old browsers
-	$.fn.sb = function (arg)
+	$.fn.sb = function ()
 	{
 		// chain methods!
 		return this.each(function ()
@@ -643,11 +631,11 @@
 
 			// if it is already created, then reload it.
 			if (obj)
-				obj.re(arg);
+				obj.re();
 
 			// if the object is not defined for this element, and it's a drop-down, then create and initialize it.
 			else if (!$e.attr('size'))
-				$e.data('sb', new SelectBox($e, arg));
+				$e.data('sb', new SelectBox($e));
 		});
 	};
 
