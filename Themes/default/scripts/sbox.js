@@ -1,8 +1,9 @@
 /**
  * Wedge
  *
- * Selectbox replacement plugin customized for Wedge.
- * Original code by RevSystems, modified by Nao.
+ * Selectbox replacement plugin for Wedge.
+ * Original code by RevSystems (.sb) and Maarten Baijs (.sc),
+ * Fixed, customized and optimized by Nao.
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -11,26 +12,28 @@
  * @version 0.1
  */
 
-/*
-	This product includes software developed
-	by RevSystems, Inc (http://www.revsystems.com/) and its contributors
-
-	Copyright (c) 2010 RevSystems, Inc
-
-	The original license can be found in the file 'license.txt' at:
-	https://github.com/revsystems/jQuery-SelectBox
-*/
-
 (function ()
 {
 	var unique = 0,
 
-	SelectBox = function ($orig, o)
+	/*
+		This product includes software developed
+		by RevSystems, Inc (http://www.revsystems.com/) and its contributors
+
+		Copyright (c) 2010 RevSystems, Inc
+
+		The original license can be found in the file 'license.txt' at:
+		https://github.com/revsystems/jQuery-SelectBox
+	*/
+
+	SelectBox = function ($orig)
 	{
 		var
 			keyfunc = is_opera ? 'keypress.sb' : 'keydown.sb',
+			fixed = $orig.hasClass('fixed'), // should dropdown expand to widest and display conform to whatever is selected?
 			resizeTimeout,
 			via_keyboard,
+			has_scrollbar,
 			has_changed,
 			$selected,
 			$display,
@@ -42,15 +45,6 @@
 
 		loadSB = function ()
 		{
-			// set the various options
-			o = $.extend({
-				// show scrollbars if the dropdown is taller than 500 pixels (or the viewport height).
-				// Touch-enabled phones have poor usability and shouldn't bother -- let them stretch all the way.
-				maxHeight: is_iphone || is_tablet ? 9e9 : 500,
-				anim: 150, // animation duration: time to open/close dropdown in ms
-				fixed: $orig.hasClass('fixed')	// fixed width; if true, dropdown expands to widest and display conforms to whatever is selected
-			}, o);
-
 			$label = $orig.attr('id') ? $('label[for="' + $orig.attr('id') + '"]:first') : '';
 			if ($label.length == 0)
 				$label = $orig.closest('label');
@@ -108,7 +102,7 @@
 
 			// The 'apply' call below will return the widest width from a list of elements.
 			// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
-			if (o.fixed)
+			if (fixed)
 				$sb.width(Math.max.apply(0, $dd.find('.text,.optgroup').map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($('.text', $display)));
 
 			// hide the dropdown now that it's initialized
@@ -202,10 +196,9 @@
 		}, */
 
 		// destroy then load, maintaining open/focused state if applicable
-		reloadSB = function (opt)
+		reloadSB = function ()
 		{
 			var wasOpen = $sb.hasClass('open'), wasFocused = $sb.hasClass('focused');
-			o = $.extend(o, opt);
 
 			closeSB(1);
 
@@ -233,7 +226,7 @@
 				$(document).unbind('.sb');
 				$sb.removeClass('open');
 				$dd
-					.animate({ height: 'toggle', opacity: 'toggle' }, instantClose == 1 ? 0 : o.anim)
+					.animate({ height: 'toggle', opacity: 'toggle' }, instantClose == 1 ? 0 : 150)
 					.attr('aria-hidden', true);
 			}
 		},
@@ -258,8 +251,8 @@
 		// reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
 		centerOnSelected = function ()
 		{
-			if ($dd.data('tsb'))
-				$dd.scTo($selected.position().top, $selected.height());
+			if (has_scrollbar)
+				has_scrollbar.scTo($selected.position().top, $selected.height());
 			else
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
@@ -290,9 +283,12 @@
 				bottomSpace = $(window).scrollTop() + $(window).height() - $display.offset().top - $display.outerHeight(),
 				topSpace = $display.offset().top - $(window).scrollTop(),
 
+				// show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).
+				// Touch-enabled phones have poor usability and shouldn't bother -- let them stretch all the way.
+				ddMaxHeight = Math.min(is_iphone || is_tablet ? 9e9 : 250, ddHeight, Math.max(bottomSpace + 50, topSpace)),
+
 				// if we have enough space below the button, or if we don't have enough room above either, show a dropdown.
 				// otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
-				ddMaxHeight = Math.min(o.maxHeight, ddHeight, Math.max(bottomSpace + 50, topSpace)),
 				showDown = (ddMaxHeight <= bottomSpace) || ((ddMaxHeight >= topSpace) && (bottomSpace + 50 >= topSpace));
 
 			// modify dropdown css for display
@@ -303,7 +299,13 @@
 			}).toggleClass('above', !showDown);
 
 			if (ddMaxHeight < ddHeight)
-				$dd.sc();
+			{
+				// create a custom scrollbar for our select box.
+				if (has_scrollbar)
+					has_scrollbar.update();
+				else
+					has_scrollbar = new ScrollBar($dd);
+			}
 
 			$selected.addClass('selected');
 
@@ -319,9 +321,9 @@
 				if (via_keyboard)
 					$orig.triggerHandler('click');
 				if (showDown)
-					$dd.animate({ height: 'toggle', opacity: 'toggle' }, instantOpen ? 0 : o.anim, centerOnSelected);
+					$dd.animate({ height: 'toggle', opacity: 'toggle' }, instantOpen ? 0 : 150, centerOnSelected);
 				else
-					$dd.fadeIn(instantOpen ? 0 : o.anim, centerOnSelected);
+					$dd.fadeIn(instantOpen ? 0 : 150, centerOnSelected);
 			}
 			$sb.addClass('open');
 		},
@@ -341,7 +343,7 @@
 			$oritex
 				.html($newtex.html() || '&nbsp;')
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
-			if (!o.fixed)
+			if (!fixed)
 				$oritex.stop(true, true).width(oriwi).animate({ width: $newtex.width() });
 		},
 
@@ -504,46 +506,39 @@
 		this.re = reloadSB;
 	},
 
+	/*
+		This product includes software developed
+		by Maarten Baijs (http://www.baijs.nl/tinyscrollbar/),
+		and originally released under the MIT license:
+		http://www.opensource.org/licenses/mit-license.php
+
+		Copyright (c) 2010
+	*/
+
 	ScrollBar = function (root)
 	{
 		var
 			startPos = 0, iMouse, iScroll,
 			thumbAxis, viewportAxis, contentAxis,
-			contentRatio, scrollbarRatio,
-			oWrapper,
-			oContent,
-			oScrollbar,
-			oTrack,
-			oThumb,
-			iDelta, curPos,
+			oContent, oScrollbar, oTrack, oThumb,
+			curPos, scrollbarRatio,
 
 		start = function (e)
 		{
 			iMouse = e.pageY;
 			startPos = parseInt(oThumb.css('top')) || 0;
-			document.ontouchmove = function (e)
-			{
-				$(document).unbind('mousemove.sc');
-				drag(e.touches[0]);
-			};
 			$(document)
 				.bind('mousemove.sc', drag)
 				.bind('mouseup.sc', end);
 			oThumb.bind('mouseup.sc', end);
-			oThumb[0].ontouchend = document.ontouchend = function (e)
-			{
-				$(document).unbind('mouseup.sc');
-				oThumb.unbind('mouseup.sc');
-				end(e.touches[0]);
-			};
 			return false;
 		},
 
 		wheel = function (e)
 		{
 			e = $.event.fix(e || window.event);
-			iDelta = e.wheelDelta ? e.wheelDelta / 120 : -e.detail / 3;
-			iScroll = Math.min((contentAxis - viewportAxis), Math.max(0, iScroll - iDelta * 40)); // 40 pixels per wheel movement
+			// Below: (e.wheelDelta * 40/120) or (-e.detail * 40/3) = 40 pixels per wheel movement
+			iScroll = Math.min(contentAxis - viewportAxis, Math.max(0, iScroll - (e.wheelDelta || -e.detail * 40) / 3));
 			oThumb.css('top', iScroll / scrollbarRatio);
 			oContent.css('top', -iScroll);
 
@@ -554,7 +549,6 @@
 		{
 			$(document).unbind('.sc');
 			oThumb.unbind('.sc');
-			document.ontouchmove = oThumb[0].ontouchend = document.ontouchend = null;
 			return false;
 		},
 
@@ -576,19 +570,18 @@
 		};
 
 		this.scTo = scTo;
-		this.update = function (sScroll)
+		this.update = function ()
 		{
-			viewportAxis = $('.viewport', root).height();
-			oContent = $('.overview', root);
-			oScrollbar = $('.scrollbar', root);
-			oTrack = $('.track', oScrollbar);
-			oThumb = $('.thumb', oScrollbar);
+			viewportAxis = root.find('.viewport').height();
+			oContent = root.find('.overview');
+			oScrollbar = root.find('.scrollbar');
+			oTrack = oScrollbar.find('.track');
+			oThumb = oScrollbar.find('.thumb');
+			iScroll = 0;
 
 			contentAxis = oContent.height();
-			contentRatio = viewportAxis / contentAxis;
-			thumbAxis = Math.min(viewportAxis, Math.max(0, viewportAxis * contentRatio));
 			scrollbarRatio = contentAxis / viewportAxis;
-			iScroll = parseInt(sScroll) || 0;
+			thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
 
 			// set size
 			iMouse = oThumb.offset().top;
@@ -599,46 +592,44 @@
 			oThumb.css('height', thumbAxis);
 		};
 
-		root = $(root).parent();
-		oWrapper = root[0];
-
-		var $dd = root.find('ul');
-		if ($dd.find('.viewport').length)
+		if (root.find('.viewport').length)
 			return;
-		$dd.css({ display: 'block', visibility: 'hidden' }).contents().wrapAll('<div class="viewport"><div class="overview"></div></div>');
-		$dd.append('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>');
-		root.find('.scrollbar').css({
-			marginTop: -$dd.height(),
-			marginLeft: $dd.width() + 3,
-			height: $dd.height()
-		});
-		root.find('.viewport').css({
-			height: $dd.height(),
-			marginRight: 15
-		});
-		$dd.width($dd.width() + 15);
+
+		root
+			.css({ display: 'block', visibility: 'hidden' })
+			.contents()
+			.wrapAll('<div class="viewport"><div class="overview"></div></div>');
+
+		root.append('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>');
+
+		root
+			.find('.scrollbar')
+			.css({
+				marginTop: -root.height(),
+				marginLeft: root.width() + 3,
+				height: root.height()
+			});
+		root
+			.find('.viewport')
+			.css({
+				height: root.height(),
+				marginRight: 15
+			});
+		root.width(root.width() + 15);
 		this.update();
 
 		// set events
 		oTrack.bind('mouseup.sc', drag);
 		oThumb.bind('mousedown.s2', start);
-		oThumb[0].ontouchstart = function (e)
+		if (root[0].addEventListener)
 		{
-			e.preventDefault();
-			oThumb.unbind('mousedown.s2');
-			start(e.touches[0]);
-			return false;
-		};
-		if (this.addEventListener)
-		{
-			oWrapper.addEventListener('DOMMouseScroll', wheel, false);
-			oWrapper.addEventListener('mousewheel', wheel, false);
+			root[0].addEventListener('DOMMouseScroll', wheel, false);
+			root[0].addEventListener('mousewheel', wheel, false);
 		}
 		else
-			oWrapper.onmousewheel = wheel;
+			root[0].onmousewheel = wheel;
 
-		$dd.css({ display: 'none', visibility: 'visible' });
-		return this;
+		root.css({ display: 'none', visibility: 'visible' });
 	};
 
 	// .sb() takes a select box and restyles it.
@@ -658,21 +649,6 @@
 			else if (!$e.attr('size'))
 				$e.data('sb', new SelectBox($e, arg));
 		});
-	};
-
-	// .sc() creates a custom scrollbar for our select box.
-	$.fn.sc = function (sScroll)
-	{
-		if (this.data('tsb'))
-			return this.data('tsb').update(sScroll);
-		this.data('tsb', new ScrollBar(this[0]));
-		return this;
-	};
-
-	$.fn.scTo = function (iTop, iHeight)
-	{
-		this.data('tsb').scTo(iTop, iHeight);
-		return this;
 	};
 
 })();
