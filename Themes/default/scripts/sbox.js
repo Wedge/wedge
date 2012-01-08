@@ -247,7 +247,7 @@
 		centerOnSelected = function ()
 		{
 			if (scrollbar)
-				scrollbar.scTo($selected.position().top, $selected.height());
+				scrollbar.st($selected.position().top, $selected.height());
 			else
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
@@ -515,7 +515,7 @@
 		var
 			startPos = 0, iMouse, iScroll = 0,
 			thumbAxis, viewportAxis, contentAxis,
-			oContent, oScrollbar, oTrack, oThumb,
+			$content, $scrollbar, $thumb,
 			curPos, scrollbarRatio,
 
 		wheel = function (e)
@@ -523,49 +523,46 @@
 			e = $.event.fix(e || window.event);
 			// Below: (e.wheelDelta * 40/120) or (-e.detail * 40/3) = 40 pixels per wheel movement
 			iScroll = Math.min(contentAxis - viewportAxis, Math.max(0, iScroll - (e.wheelDelta || -e.detail * 40) / 3));
-			oThumb.css('top', iScroll / scrollbarRatio);
-			oContent.css('top', -iScroll);
+			$thumb.css('top', iScroll / scrollbarRatio);
+			$content.css('top', -iScroll);
 
 			e.preventDefault();
 		},
 
 		drag = function (e)
 		{
-			scTo(startPos + e.pageY - iMouse, 0);
+			scrollTo(startPos + e.pageY - iMouse);
 			return false;
 		},
 
-		scTo = function (iTop, iHeight)
+		scrollTo = function (iTop, iHeight)
 		{
 			// Still buggy when moving the wheel after navigating the select box with the keyboard.
 			if (iHeight)
 				iTop = (iTop - viewportAxis / 2 + iHeight / 2) / scrollbarRatio;
 
 			curPos = Math.min(viewportAxis - thumbAxis, Math.max(0, iTop));
-			oThumb.css('top', curPos);
-			oContent.css('top', -curPos * scrollbarRatio);
+			$thumb.css('top', curPos);
+			$content.css('top', -curPos * scrollbarRatio);
 		};
 
-		this.scTo = scTo;
+		this.st = scrollTo;
 		this.update = function ()
 		{
-			viewportAxis = $dd.find('.viewport').height();
-			oContent = $dd.find('.overview');
-			oScrollbar = $dd.find('.scrollbar');
-			oTrack = oScrollbar.find('.track');
-			oThumb = oScrollbar.find('.thumb');
+			viewportAxis = $dd.height();
+			$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
+			$content = $dd.find('.overview');
+			contentAxis = $content.height();
+			$thumb = $scrollbar.find('div');
 
-			contentAxis = oContent.height();
 			scrollbarRatio = contentAxis / viewportAxis;
 			thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
 
 			// Set size.
-			iMouse = oThumb.offset().top;
-			oThumb.css('top', iScroll / scrollbarRatio);
-			oContent.css('top', -iScroll);
-			oScrollbar.height(viewportAxis);
-			oTrack.height(viewportAxis);
-			oThumb.height(thumbAxis);
+			iMouse = $thumb.offset().top;
+			$thumb.css('top', iScroll / scrollbarRatio);
+			$content.css('top', -iScroll);
+			$thumb.height(thumbAxis);
 		};
 
 		if ($dd.find('.viewport').length)
@@ -575,28 +572,22 @@
 			.contents()
 			.wrapAll('<div class="viewport"><div class="overview"></div></div>');
 
-		$dd.append('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>');
+		$dd.append('<div class="scrollbar"><div></div></div>');
 
 		$dd.find('.scrollbar')
-			.css({
-				marginTop: -$dd.height(),
-				marginLeft: $dd.width() + 3
-			})
 			.height($dd.height());
 
-		$dd.find('.viewport')
-			.height($dd.height());
-
-		$dd.width($dd.width() + 15);
+		$dd.width($dd.width() + 15)
+			.find('.viewport').height($dd.height());
 
 		this.update();
 
 		// Set events
-		oTrack.mousedown(drag);
-		oThumb.mousedown(function (e)
+		$scrollbar.mousedown(drag);
+		$thumb.mousedown(function (e)
 		{
 			iMouse = e.pageY;
-			startPos = parseInt(oThumb.css('top')) || 0;
+			startPos = parseInt($thumb.css('top')) || 0;
 			$(document)
 				.bind('mousemove.sc', drag)
 				.bind('mouseup.sc', function () { $(document).unbind('.sc'); return false; });
