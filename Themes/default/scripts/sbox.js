@@ -30,7 +30,7 @@
 	{
 		var
 			keyfunc = is_opera ? 'keypress.sb' : 'keydown.sb',
-			fixed = $orig.hasClass('fixed'), // should dropdown expand to widest and display conform to whatever is selected?
+			fixed = $orig.hasClass('fixed'), // Should dropdown expand to widest and display conform to whatever is selected?
 			resizeTimeout,
 			via_keyboard,
 			has_changed,
@@ -49,21 +49,21 @@
 			if ($label.length == 0)
 				$label = $orig.closest('label');
 
-			// create the new sb
+			// Create the new sb
 			$sb = $('<div class="sbox ' + $orig.attr('class') + '" id="sb' + ++unique + '" role=listbox></div>')
 				.attr('aria-labelledby', $label.attr('id') || '')
 				.attr('aria-haspopup', true);
 
 			$display = $('<div class="display" id="sbd' + unique + '"></div>')
-				// generate the display markup
+				// Generate the display markup
 				.append(optionFormat($orig.find('option:selected'), '&nbsp;'))
 				.append('<div class="btn"><div></div></div>');
 
-			// generate the dropdown markup
-			$dd = $('<ul class="items" id="sbdd' + unique + '" role=menu></ul>')
+			// Generate the dropdown markup
+			$dd = $('<ul class="items" id="sbdd' + unique + '" role=menu onselectstart="return false;"></ul>')
 				.attr('aria-hidden', true);
 
-			// for accessibility/styling, and an easy custom .trigger('close') shortcut.
+			// For accessibility/styling, and an easy custom .trigger('close') shortcut.
 			$sb.append($display, $dd)
 				.bind('close', closeSB)
 				.attr('aria-owns', $dd.attr('id'))
@@ -88,14 +88,14 @@
 						$dd.append(createOption($og));
 				});
 
-			// cache all sb items
+			// Cache all sb items
 			$items = $dd.children('li').not('.optgroup');
 			setSelected($orig_item = $items.filter('.selected'));
 
 			$dd.children(':first').addClass('first');
 			$dd.children(':last').addClass('last');
 
-			// place the new markup in its semantic location
+			// Place the new markup in its semantic location
 			$orig
 				.addClass('sb')
 				.before($sb);
@@ -105,7 +105,7 @@
 			if (fixed)
 				$sb.width(Math.max.apply(0, $dd.find('.text,.optgroup').map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($('.text', $display)));
 
-			// hide the dropdown now that it's initialized
+			// Hide the dropdown now that it's initialized
 			$dd.hide();
 
 			// Attach the original select box's event attributes to our display area.
@@ -113,10 +113,10 @@
 				for (var eve = 0, elis = $orig.attr('data-eve').split(' '), eil = elis.length; eve < eil; eve++)
 					$display.bind(eves[elis[eve]][0], eves[elis[eve]][1]);
 
-			// bind events
+			// Bind events
 			if (!$orig.is(':disabled'))
 			{
-				// causes focus if original is focused
+				// Causes focus if original is focused
 				$orig.bind('focus.sb', function () {
 					blurAllButMe();
 					focusSB();
@@ -125,26 +125,21 @@
 				$display
 					.blur(blurSB)
 					.focus(focusSB)
-					.mousedown(false) // prevent double clicks
+					.mousedown(false) // Prevent double clicks
 					.hover(function () { $(this).toggleClass('hover'); })
-					// when the user explicitly clicks the display
-					.click(function ()
-					{
-						// closeAndUnbind does the same job as closeSB, only it cancels the current selection.
-						$sb.hasClass('open') ? closeAndUnbind(1) : openSB(0, 1);
-						return false; // avoid bubbling to $(document).click('.sb')
-					});
+					// When the user explicitly clicks the display. closeAndUnbind calls closeSB and cancels the current selection.
+					.click(function () { $sb.hasClass('open') ? closeAndUnbind(1) : openSB(0, 1); });
 				$items.not('.disabled')
 					.hover(
-						// use selectItem() instead of setSelected() to do the display animation on hover.
+						// Use selectItem() instead of setSelected() to do the display animation on hover.
 						function () { if ($sb.hasClass('open')) setSelected($(this)); },
 						function () { $(this).removeClass('selected'); $selected = $orig_item; }
 					)
-					.click(clickSBItem);
+					.mousedown(clickSBItem);
 				$dd.children('.optgroup')
-					.click(false);
+					.mousedown(false);
 				$items.filter('.disabled')
-					.click(false);
+					.mousedown(false);
 
 				if (!is_ie8down)
 					$(window).bind('resize.sb', function ()
@@ -160,7 +155,7 @@
 			}
 		},
 
-		// create new markup from an <option>
+		// Create new markup from an <option>
 		createOption = function ($option)
 		{
 			$option = $option || $('<option>&nbsp;</option>');
@@ -179,7 +174,7 @@
 				);
 		},
 
-		// formatting for the display
+		// Formatting for the display
 		optionFormat = function ($dom, empty)
 		{
 			return '<div class="text">' + ($dom.text().replace(/\|/g, '</div><div class="details">') || empty || '') + '</div>';
@@ -195,14 +190,14 @@
 			return '<div class="text">' + txt + '</div>';
 		}, */
 
-		// destroy then load, maintaining open/focused state if applicable
+		// Destroy then load, maintaining open/focused state if applicable
 		reloadSB = function ()
 		{
 			var wasOpen = $sb.hasClass('open'), wasFocused = $sb.hasClass('focused');
 
 			closeSB(1);
 
-			// destroy existing data
+			// Destroy existing data
 			$sb.remove();
 			$orig.removeClass('sb')
 				.unbind('.sb');
@@ -217,7 +212,7 @@
 				focusSB();
 		},
 
-		// hide and reset dropdown markup
+		// Hide and reset dropdown markup
 		closeSB = function (instantClose)
 		{
 			if ($sb.hasClass('open'))
@@ -231,7 +226,7 @@
 			}
 		},
 
-		// when the user clicks outside the sb
+		// When the user clicks outside the sb
 		closeAndUnbind = function (clicked_on_display)
 		{
 			$sb.removeClass('focused');
@@ -242,13 +237,13 @@
 				focusSB();
 		},
 
-		// trigger all select boxes to blur
+		// Trigger all select boxes to blur
 		blurAllButMe = function ()
 		{
 			$('.sbox.focused').not($sb).find('.display').blur();
 		},
 
-		// reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
+		// Reposition the scroll of the dropdown so the selected option is centered (or appropriately onscreen)
 		centerOnSelected = function ()
 		{
 			if (scrollbar)
@@ -262,7 +257,7 @@
 			return $dom.outerWidth(true) - $dom.width();
 		},
 
-		// show, reposition, and reset dropdown markup.
+		// Show, reposition, and reset dropdown markup.
 		openSB = function (instantOpen, doFocus)
 		{
 			blurAllButMe();
@@ -271,36 +266,34 @@
 			// we'll also actually simulate the focus to trigger any related events.
 			doFocus ? $orig.triggerHandler('focus') : focusSB();
 
-			// modify dropdown css for getting values
-			$dd.stop(true, true).show().css({
-				maxHeight: 'none',
-				visibility: 'hidden'
-			}).width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
+			// Modify dropdown css for getting values
+			$dd.stop(true, true).show().css({ visibility: 'hidden' })
+				.width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
 
 			var
-				// figure out if we should show above/below the display box, first by calculating the free space around it.
+				// Figure out if we should show above/below the display box, first by calculating the free space around it.
 				ddHeight = $dd.outerHeight(),
 				bottomSpace = $(window).scrollTop() + $(window).height() - $display.offset().top - $display.outerHeight(),
 				topSpace = $display.offset().top - $(window).scrollTop(),
 
-				// show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).
+				// Show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).
 				// Touch-enabled phones have poor usability and shouldn't bother -- let them stretch all the way.
 				ddMaxHeight = Math.min(is_iphone || is_tablet ? 9e9 : 250, ddHeight, Math.max(bottomSpace + 50, topSpace)),
 
-				// if we have enough space below the button, or if we don't have enough room above either, show a dropdown.
-				// otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
+				// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
+				// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
 				showDown = (ddMaxHeight <= bottomSpace) || ((ddMaxHeight >= topSpace) && (bottomSpace + 50 >= topSpace));
 
-			// modify dropdown css for display
-			$dd.hide().css({
-				marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight(),
-				maxHeight: ddMaxHeight - ddHeight + $dd.height(),
-				visibility: 'visible'
+			// Modify dropdown css for display
+			$dd.css({
+				marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight()
 			}).toggleClass('above', !showDown);
 
-			// create a custom scrollbar for our select box?
+			// Create a custom scrollbar for our select box?
 			if (ddMaxHeight < ddHeight)
 			{
+				$dd.height(ddMaxHeight - ddHeight + $dd.height());
+
 				if (scrollbar)
 					scrollbar.update();
 				else
@@ -309,7 +302,9 @@
 
 			$selected.addClass('selected');
 
-			$dd.attr('aria-hidden', false);
+			$dd.css({ display: 'none', visibility: 'visible' })
+				.attr('aria-hidden', false);
+
 			if ($sb.hasClass('open'))
 			{
 				$dd.show();
@@ -328,18 +323,18 @@
 			$sb.addClass('open');
 		},
 
-		// when the user selects an item in any manner
+		// When the user selects an item in any manner
 		selectItem = function ($item, no_open)
 		{
 			var $newtex = $item.find('.text'), $oritex = $display.find('.text'), oriwi = $oritex.width();
 
-			// if we're selecting an item and the box is closed, open it.
+			// If we're selecting an item and the box is closed, open it.
 			if (!no_open && !$sb.hasClass('open'))
 				openSB();
 
 			setSelected($item);
 
-			// update the title attr and the display markup
+			// Update the title attr and the display markup
 			$oritex
 				.html($newtex.html() || '&nbsp;')
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
@@ -356,7 +351,7 @@
 			if (!$item[0].parentNode === $dd[0])
 				$item = $orig_item;
 
-			// change the selection to this item
+			// Change the selection to this item
 			$selected = $item.addClass('selected');
 			$items.not($selected).removeClass('selected');
 			$sb.attr('aria-activedescendant', $selected.attr('id'));
@@ -364,16 +359,16 @@
 
 		updateOriginal = function ()
 		{
-			// trigger change on the old <select> if necessary
+			// Trigger change on the old <select> if necessary
 			has_changed = $orig.val() !== $selected.data('value');
 
-			// update the original <select>
+			// Update the original <select>
 			$orig.find('option').attr('selected', false);
 			$selected.data('orig').attr('selected', true);
 			$orig_item = $selected;
 		},
 
-		// when the user explicitly clicks an item
+		// When the user explicitly clicks an item
 		clickSBItem = function ()
 		{
 			selectItem($(this));
@@ -390,8 +385,8 @@
 			return false;
 		},
 
-		// iterate over all the options to see if any match the search term.
-		// if we get a match for any options, select it.
+		// Iterate over all the options to see if any match the search term.
+		// If we get a match for any options, select it.
 		selectMatchingItem = function (term)
 		{
 			var $available = $items.not('.disabled'), from = $available.index($selected) + 1, to = $available.length, i = from;
@@ -411,7 +406,7 @@
 			}
 		},
 
-		// go up/down using arrows or attempt to autocomplete based on string
+		// Go up/down using arrows or attempt to autocomplete based on string
 		keyPress = function (e)
 		{
 			if (e.altKey || e.ctrlKey)
@@ -420,7 +415,7 @@
 			var $enabled = $items.not('.disabled');
 			via_keyboard = true;
 
-			// user pressed tab? If the list is opened, confirm the selection and close it. Then either way, switch to the next DOM element.
+			// User pressed tab? If the list is opened, confirm the selection and close it. Then either way, switch to the next DOM element.
 			if (e.keyCode == 9)
 			{
 				if ($sb.hasClass('open'))
@@ -430,14 +425,14 @@
 				}
 				blurSB();
 			}
-			// spaces should open or close the dropdown, cancelling the latest selection. Requires e.which instead of e.keyCode... confusing.
+			// Spaces should open or close the dropdown, cancelling the latest selection. Requires e.which instead of e.keyCode... confusing.
 			else if (e.which == 32)
 			{
 				$sb.hasClass('open') ? closeAndUnbind() : openSB();
 				focusSB();
 				e.preventDefault();
 			}
-			// backspace or return (with the select box open) will do the same as pressing tab, but will keep the current item focused.
+			// Backspace or return (with the select box open) will do the same as pressing tab, but will keep the current item focused.
 			else if ((e.keyCode == 8 || e.keyCode == 13) && $sb.hasClass('open'))
 			{
 				updateOriginal();
@@ -469,7 +464,7 @@
 				centerOnSelected();
 				e.preventDefault();
 			}
-			// also, try finding the next element that starts with the pressed letter. if found, select it.
+			// Also, try finding the next element that starts with the pressed letter. if found, select it.
 			else if (selectMatchingItem(String.fromCharCode(e.which)))
 				e.preventDefault();
 
@@ -482,20 +477,20 @@
 			via_keyboard = false;
 		},
 
-		// when the sb is focused (by tab or click), allow hotkey selection and kill all other selectboxes
+		// When the sb is focused (by tab or click), allow hotkey selection and kill all other selectboxes
 		focusSB = function ()
 		{
-			// close all select boxes but this one, to prevent multiple selects open at once.
+			// Close all select boxes but this one, to prevent multiple selects open at once.
 			$('.sbox.open').not($sb).trigger('close');
 
 			$sb.addClass('focused');
 			$(document)
 				.unbind('.sb')
 				.bind(keyfunc, keyPress)
-				.bind('click.sb', closeAndUnbind);
+				.bind('mousedown.sb', closeAndUnbind);
 		},
 
-		// when the sb is blurred (by tab or click), disable hotkey selection
+		// When the sb is blurred (by tab or click), disable hotkey selection
 		blurSB = function ()
 		{
 			$sb.removeClass('focused');
@@ -518,7 +513,7 @@
 	ScrollBar = function ($dd)
 	{
 		var
-			startPos = 0, iMouse, iScroll,
+			startPos = 0, iMouse, iScroll = 0,
 			thumbAxis, viewportAxis, contentAxis,
 			oContent, oScrollbar, oTrack, oThumb,
 			curPos, scrollbarRatio,
@@ -547,8 +542,8 @@
 				iTop = (iTop - viewportAxis / 2 + iHeight / 2) / scrollbarRatio;
 
 			curPos = Math.min(viewportAxis - thumbAxis, Math.max(0, iTop));
-			oContent.css('top', -curPos * scrollbarRatio);
 			oThumb.css('top', curPos);
+			oContent.css('top', -curPos * scrollbarRatio);
 		};
 
 		this.scTo = scTo;
@@ -559,26 +554,24 @@
 			oScrollbar = $dd.find('.scrollbar');
 			oTrack = oScrollbar.find('.track');
 			oThumb = oScrollbar.find('.thumb');
-			iScroll = 0;
 
 			contentAxis = oContent.height();
 			scrollbarRatio = contentAxis / viewportAxis;
 			thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
 
-			// set size
+			// Set size.
 			iMouse = oThumb.offset().top;
 			oThumb.css('top', iScroll / scrollbarRatio);
 			oContent.css('top', -iScroll);
-			oScrollbar.css('height', viewportAxis);
-			oTrack.css('height', viewportAxis);
-			oThumb.css('height', thumbAxis);
+			oScrollbar.height(viewportAxis);
+			oTrack.height(viewportAxis);
+			oThumb.height(thumbAxis);
 		};
 
 		if ($dd.find('.viewport').length)
 			return;
 
-		$dd
-			.css({ display: 'block', visibility: 'hidden' })
+		$dd.css({ display: 'block', visibility: 'hidden' })
 			.contents()
 			.wrapAll('<div class="viewport"><div class="overview"></div></div>');
 
@@ -587,9 +580,9 @@
 		$dd.find('.scrollbar')
 			.css({
 				marginTop: -$dd.height(),
-				marginLeft: $dd.width() + 3,
-				height: $dd.height()
-			});
+				marginLeft: $dd.width() + 3
+			})
+			.height($dd.height());
 
 		$dd.find('.viewport')
 			.height($dd.height());
@@ -598,8 +591,8 @@
 
 		this.update();
 
-		// set events
-		oTrack.click(drag);
+		// Set events
+		oTrack.mousedown(drag);
 		oThumb.mousedown(function (e)
 		{
 			iMouse = e.pageY;
@@ -621,19 +614,19 @@
 	};
 
 	// .sb() takes a select box and restyles it.
-	// a normal <select> will be displayed for old browsers
+	// A normal <select> will be displayed for old browsers
 	$.fn.sb = function ()
 	{
-		// chain methods!
+		// Chain methods!
 		return this.each(function ()
 		{
 			var $e = $(this), obj = $e.data('sb');
 
-			// if it is already created, then reload it.
+			// If it is already created, then reload it.
 			if (obj)
 				obj.re();
 
-			// if the object is not defined for this element, and it's a drop-down, then create and initialize it.
+			// If the object is not defined for this element, and it's a drop-down, then create and initialize it.
 			else if (!$e.attr('size'))
 				$e.data('sb', new SelectBox($e));
 		});

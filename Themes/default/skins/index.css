@@ -186,8 +186,8 @@ ul#noava
 	ul
 		padding: 7px
 		margin: 0 12px
-		overflow: hidden
 		list-style: none
+		overflow: hidden
 		border: 1px dotted #999
 		border-width: 0 0 1px 0
 		li extends .arrows
@@ -560,10 +560,10 @@ input[type=file]
 	margin-top: -24px
 
 .menu li
+	margin, padding: 0
 	list-style: none
 	cursor: pointer
 	height: auto
-	margin, padding: 0
 	float: left
 	display: block
 
@@ -1270,7 +1270,7 @@ select.sb
 	text-align: left
 	margin: 1px
 
-	.text extends .inline-block
+	.text
 		vertical-align: baseline
 		white-space: nowrap
 
@@ -1340,14 +1340,15 @@ select.sb
 		background: #fff
 		border: 1px solid #828790
 		border-radius: 5px
-		display: block
+		display: inline
 		font-size: 1em
+		padding: 2px
 		margin: 0
+		list-style: none
 		overflow: hidden
 		position: absolute
 		z-index: 999
 		box-shadow: 0 2px 5px rgba(0,0,0, .3)
-		padding: 2px
 
 		&.above
 			box-shadow: 0 -2px 5px rgba(0,0,0, .3)
@@ -1389,7 +1390,6 @@ select.sb
 		li.last .item
 			border-radius: 0 0 5px 5px
 
-
 	/* custom scrollbar */
 	.overview
 		overflow: hidden
@@ -1415,6 +1415,9 @@ select.sb
 		position: absolute
 		top: 0
 		left: -1px
+		:hover
+			background: #e8ece8
+			background: -prefix-linear-gradient(left, #ddd, #e8ece8, #ccc)
 
 .cat .sbox
 	font-size: 14px
