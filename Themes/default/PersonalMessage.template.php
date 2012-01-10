@@ -954,7 +954,6 @@ function template_send()
 
 	add_js('
 	var oPersonalMessageSend = new wePersonalMessageSend({
-		sSelf: \'oPersonalMessageSend\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		sToControlId: \'to_control\',
 		aToRecipients: [');

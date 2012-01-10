@@ -27,40 +27,40 @@ function weAutoSuggest(oOptions)
 	// It is probably when it attempts to find comments and make sure they aren't enclosed in strings.
 	// I don't know more. Let's keep it quiet, shall we?
 	var sItemTemplate = '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>';
-	sItemTemplate += '&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%" onclick="return %self%.deleteAddedItem(%item_id%);">';
+	sItemTemplate += '&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%">';
 
 	this.oTextHandle = oText;
 
 	this.oSuggestDivHandle = null;
-	this.sLastSearch = '';
-	this.sLastDirtySearch = '';
+	this.oXmlRequestHandle = null;
 	this.oSelectedDiv = null;
+	this.oHideTimer = null;
+	this.oCallback = {};
 	this.aCache = [];
 	this.aDisplayData = [];
-	this.oCallback = {};
-	this.bDoAutoAdd = false;
 	this.iItemCount = 0;
-	this.oHideTimer = null;
+	this.bDoAutoAdd = false;
 	this.bPositionComplete = false;
-	this.oXmlRequestHandle = null;
+	this.sLastDirtySearch = '';
+	this.sLastSearch = '';
 
-	this.sRetrieveURL = 'sRetrieveURL' in this.opt ? this.opt.sRetrieveURL : '%scripturl%action=suggest;suggest_type=%suggest_type%;search=%search%;%sessionVar%=%sessionID%;xml;time=%time%';
+	this.sRetrieveURL = this.opt.sRetrieveURL || '%scripturl%action=suggest;suggest_type=%suggest_type%;search=%search%;%sessionVar%=%sessionID%;xml;time=%time%';
 
 	// How many objects can we show at once?
-	this.iMaxDisplayQuantity = 'iMaxDisplayQuantity' in this.opt ? this.opt.iMaxDisplayQuantity : 15;
+	this.iMaxDisplayQuantity = this.opt.iMaxDisplayQuantity || 15;
 
 	// How many characters shall we start searching on?
-	this.iMinimumSearchChars = 'iMinimumSearchChars' in this.opt ? this.opt.iMinimumSearchChars : 3;
+	this.iMinimumSearchChars = this.opt.iMinimumSearchChars || 3;
 
 	// Should selected items be added to a list?
-	this.bItemList = 'bItemList' in this.opt ? this.opt.bItemList : false;
+	this.bItemList = !!this.opt.bItemList;
 
 	// Are there any items that should be added in advance?
-	this.aListItems = 'aListItems' in this.opt ? this.opt.aListItems : [];
+	this.aListItems = this.opt.aListItems || [];
 
-	this.sItemTemplate = 'sItemTemplate' in this.opt ? this.opt.sItemTemplate : sItemTemplate;
-	this.sTextDeleteItem = 'sTextDeleteItem' in this.opt ? this.opt.sTextDeleteItem : '';
-	this.sURLMask = 'sURLMask' in this.opt ? this.opt.sURLMask : '';
+	this.sItemTemplate = this.opt.sItemTemplate || sItemTemplate;
+	this.sTextDeleteItem = this.opt.sTextDeleteItem || '';
+	this.sURLMask = this.opt.sURLMask || '';
 
 	// Create a div that'll contain the results later on.
 	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest_div').appendTo('body')[0];
@@ -77,7 +77,7 @@ function weAutoSuggest(oOptions)
 
 	if (this.bItemList)
 	{
-		if ('sItemListContainerId' in this.opt)
+		if (this.opt.sItemListContainerId)
 			this.oItemList = $('#' + this.opt.sItemListContainerId)[0];
 		else
 		{
@@ -257,6 +257,7 @@ weAutoSuggest.prototype.removeLastSearchString = function ()
 	var
 		sTempText = this.oTextHandle.value.toLowerCase(),
 		iStartString = sTempText.indexOf(this.sLastSearch.toLowerCase());
+
 	// Just attempt to remove the bits we just searched for.
 	if (iStartString != -1)
 	{
@@ -287,20 +288,20 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	this.iItemCount++;
 
 	// If there's a callback then call it. If it returns false, the item must not be added.
-	if ('oCallback' in this && 'onBeforeAddItem' in this.oCallback)
-		if (!this.oCallback.onBeforeAddItem(this.opt.sSelf, sItemId))
+	if (this.oCallback && this.oCallback.onBeforeAddItem)
+		if (!this.oCallback.onBeforeAddItem.call(sItemId))
 			return;
 
-	var eid = 'suggest_' + this.opt.sControlId + '_' + sItemId;
-	$('<div id="' + eid + '"></div>').html(
-		this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
-		.replace(/%item_href%/g, we_prepareScriptUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
-		.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + '/images').replace(/%self%/g, this.opt.sSelf).replace(/%delete_text%/g, this.sTextDeleteItem)
-	).appendTo(this.oItemList);
-
-	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)
-	if ('oCallback' in this && 'onAfterAddItem' in this.oCallback && typeof this.oCallback.onAfterAddItem == 'string')
-		this.oCallback.onAfterAddItem(this.opt.sSelf, eid, this.iItemCount);
+	var that = this, eid = 'suggest_' + this.opt.sControlId + '_' + sItemId;
+	if (!$('#' + eid).length)
+	{
+		$('<div id="' + eid + '"></div>').html(
+			this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
+			.replace(/%item_href%/g, we_prepareScriptUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
+			.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + '/images').replace(/%delete_text%/g, this.sTextDeleteItem)
+		).appendTo(this.oItemList);
+		$('#' + eid).find('img').click(function () { that.deleteAddedItem(sItemId); });
+	}
 
 	// Clear the div a bit.
 	this.removeLastSearchString();
@@ -318,23 +319,16 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 // Delete an item that has been added, if at all?
 weAutoSuggest.prototype.deleteAddedItem = function (sItemId)
 {
-	// Remove the div if it exists.
-	if (!($('#suggest_' + this.opt.sControlId + '_' + sItemId).remove().length))
-		return false;
-
-	// Decrease the internal item count.
-	this.iItemCount--;
-
-	// If there's a registered callback, call it. (Note, this isn't used in Wedge at all.)
-	if ('oCallback' in this && 'onAfterDeleteItem' in this.oCallback && typeof this.oCallback.onAfterDeleteItem == 'string')
-		this.oCallback.onAfterDeleteItem(this.opt.sSelf, this.iItemCount);
+	// Remove the div if it exists...
+	if ($('#suggest_' + this.opt.sControlId + '_' + sItemId).remove().length)
+		this.iItemCount--; // ...And decrease the internal item count.
 };
 
 // Hide the box.
 weAutoSuggest.prototype.autoSuggestHide = function ()
 {
 	// Delay to allow events to propagate through....
-	this.oHideTimer = setTimeout(this.opt.sSelf + '.autoSuggestActualHide();', 250);
+	this.oHideTimer = setTimeout(this.autoSuggestActualHide, 250);
 };
 
 // Do the actual hiding after a timeout.
@@ -359,13 +353,13 @@ weAutoSuggest.prototype.autoSuggestShow = function ()
 };
 
 // Populate the actual div.
-weAutoSuggest.prototype.populateDiv = function (aResults)
+weAutoSuggest.prototype.populateDiv = function (aResults, undefined)
 {
 	// Cannot have any children yet.
 	$(this.oSuggestDivHandle).empty();
 
 	// Something to display?
-	if (typeof aResults == 'undefined')
+	if (aResults === undefined)
 	{
 		this.aDisplayData = [];
 		return true;

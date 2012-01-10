@@ -13,9 +13,20 @@
 function wePersonalMessageSend(oOptions)
 {
 	this.opt = oOptions;
-	this.oToAutoSuggest = null;
-	this.oBccAutoSuggest = null;
 	this.oToListContainer = null;
+
+	var
+		oToAutoSuggest = null,
+		oBccAutoSuggest = null,
+
+		// Prevent items to be added twice or to both the 'To' and 'Bcc'.
+		onAddItem = function (sSuggestId)
+		{
+			oToAutoSuggest.deleteAddedItem(sSuggestId);
+			oBccAutoSuggest.deleteAddedItem(sSuggestId);
+
+			return true;
+		};
 
 	if (!this.opt.bBccShowByDefault)
 	{
@@ -29,8 +40,7 @@ function wePersonalMessageSend(oOptions)
 		$('#' + this.opt.sBccLinkId).data('that', this).click(function () { return !!$(this).data('that').showBcc(); });
 	}
 
-	this.oToAutoSuggest = new weAutoSuggest({
-		sSelf: this.opt.sSelf + '.oToAutoSuggest',
+	oToAutoSuggest = new weAutoSuggest({
 		sControlId: this.opt.sToControlId,
 		sPostName: 'recipient_to',
 		sURLMask: 'action=profile;u=%item_id%',
@@ -39,10 +49,9 @@ function wePersonalMessageSend(oOptions)
 		sItemListContainerId: 'to_item_list_container',
 		aListItems: this.opt.aToRecipients
 	});
-	this.oToAutoSuggest.registerCallback('onBeforeAddItem', this.oToAutoSuggest.callbackAddItem);
+	oToAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);
 
-	this.oBccAutoSuggest = new weAutoSuggest({
-		sSelf: this.opt.sSelf + '.oBccAutoSuggest',
+	oBccAutoSuggest = new weAutoSuggest({
 		sControlId: this.opt.sBccControlId,
 		sPostName: 'recipient_bcc',
 		sURLMask: 'action=profile;u=%item_id%',
@@ -51,20 +60,11 @@ function wePersonalMessageSend(oOptions)
 		sItemListContainerId: 'bcc_item_list_container',
 		aListItems: this.opt.aBccRecipients
 	});
-	this.oBccAutoSuggest.registerCallback('onBeforeAddItem', this.oBccAutoSuggest.callbackAddItem);
+	oBccAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);
 };
 
 wePersonalMessageSend.prototype.showBcc = function ()
 {
 	// No longer hide it, show it to the world!
 	$('#' + this.opt.sBccDivId + ',#' + this.opt.sBccDivId2).show();
-};
-
-// Prevent items to be added twice or to both the 'To' and 'Bcc'.
-wePersonalMessageSend.prototype.callbackAddItem = function (oAutoSuggestInstance, sSuggestId)
-{
-	this.oToAutoSuggest.deleteAddedItem(sSuggestId);
-	this.oBccAutoSuggest.deleteAddedItem(sSuggestId);
-
-	return true;
 };
