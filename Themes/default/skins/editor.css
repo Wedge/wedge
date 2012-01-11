@@ -104,15 +104,8 @@ ul.post_options
 	// Custom styling for select boxes
 	.sbox
 		vertical-align: top
-		height: 15px
 	.display
-		line-height: 12px
 		font-size: 11px
-		margin: 0 2px 0
-		.text
-			padding: 2px
-		.btn
-			height: 12px
 
 // The smiley strip
 #smileyBox_message

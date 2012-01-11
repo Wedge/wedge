@@ -754,7 +754,7 @@ function MembersAwaitingActivation()
 	// Create an option list for actions allowed to be done with selected members.
 	$allowed_actions = '
 			<option selected value="">' . $txt['admin_browse_with_selected'] . ':</option>
-			<option value="" disabled>-----------------------------</option>';
+			<option class="hr"></option>';
 	foreach ($context['allowed_actions'] as $key => $desc)
 		$allowed_actions .= '
 			<option value="' . $key . '">' . $desc . '</option>';

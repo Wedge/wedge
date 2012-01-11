@@ -411,7 +411,7 @@ function SplitSelectTopics()
 		)
 	);
 	$context['messages'] = array();
-	for ($counter = 0; $row = wesql::fetch_assoc($request); $counter ++)
+	for ($counter = 0; $row = wesql::fetch_assoc($request); $counter++)
 	{
 		censorText($row['subject']);
 		censorText($row['body']);
@@ -452,7 +452,7 @@ function SplitSelectTopics()
 			)
 		);
 		$context['messages'] = array();
-		for ($counter = 0; $row = wesql::fetch_assoc($request); $counter ++)
+		for ($counter = 0; $row = wesql::fetch_assoc($request); $counter++)
 		{
 			censorText($row['subject']);
 			censorText($row['body']);

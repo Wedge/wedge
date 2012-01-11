@@ -494,7 +494,7 @@ function ModBlockGroupRequests()
 		array(
 		)
 	);
-	for ($i = 0; $row = wesql::fetch_assoc($request); $i ++)
+	for ($i = 0; $row = wesql::fetch_assoc($request); $i++)
 	{
 		$context['group_requests'][] = array(
 			'id' => $row['id_request'],

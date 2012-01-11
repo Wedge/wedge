@@ -1039,7 +1039,7 @@ function EditCustomProfiles()
 			// Make sure this is unique.
 			// !!! This may not be the most efficient way to do this.
 			$unique = false;
-			for ($i = 0; !$unique && $i < 9; $i ++)
+			for ($i = 0; !$unique && $i < 9; $i++)
 			{
 				$request = wesql::query('
 					SELECT id_field

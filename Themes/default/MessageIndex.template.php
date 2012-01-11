@@ -179,9 +179,9 @@ function template_main_board()
 			echo '
 				<tr class="titlebg">
 					<td colspan="5" class="round-bottom right">
-						<select class="qaction" name="qaction"', $context['can_move'] ? ' onchange="$(\'#moveItTo\').toggle($(this).val() == \'move\');"' : '', '>
+						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
 							<option value="">--- ', $txt['moderate'], ' ---</option>
-							<option value=""></option>', $context['can_remove'] ? '
+							<option class="hr"></option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
 							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
 							<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
@@ -439,8 +439,8 @@ function template_main_blog()
 			echo '
 				<tr class="titlebg">
 					<td colspan="5" class="right">
-						<select class="qaction" name="qaction"', $context['can_move'] ? ' onchange="this.form.moveItTo.disabled = (this.options[this.selectedIndex].value != \'move\');"' : '', '>
-							<option value="">--------</option>', $context['can_remove'] ? '
+						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
+							<option class="hr"></option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
 							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
 							<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
@@ -455,7 +455,7 @@ function template_main_blog()
 			if ($context['can_move'])
 			{
 				echo '
-						<select class="qaction" id="moveItTo" name="move_to" disabled>';
+						<select class="qaction" id="moveItTo" name="move_to">';
 
 				foreach ($context['move_to_boards'] as $category)
 				{
@@ -472,7 +472,7 @@ function template_main_blog()
 			}
 
 			echo '
-						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return document.forms.quickModForm.qaction.value != \'\' && confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');" class="qaction">
+						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return $(\'select[name=qaction]\').val() != \'\' && confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');" class="qaction">
 					</td>
 				</tr>';
 		}

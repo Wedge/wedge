@@ -767,7 +767,7 @@ function template_aeva_admin_ftpimport()
 	global $context, $scripturl, $txt, $settings;
 
 	$albumOpts_str = '
-	<option value="0">----</option>';
+	<option class="hr"></option>';
 
 	foreach ($context['aeva_album_list'] as $list)
 		$albumOpts_str .= '

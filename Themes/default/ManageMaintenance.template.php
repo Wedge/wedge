@@ -354,9 +354,9 @@ function template_maintain_topics()
 	foreach ($context['categories'] as $category)
 	{
 		echo '
-					<option disabled>--------------------------------------</option>
+					<option class="hr">option>
 					<option disabled>', $category['name'], '</option>
-					<option disabled>--------------------------------------</option>';
+					<option class="hr">option>';
 
 		foreach ($category['boards'] as $board)
 			echo '
@@ -373,9 +373,9 @@ function template_maintain_topics()
 	foreach ($context['categories'] as $category)
 	{
 		echo '
-					<option disabled>--------------------------------------</option>
+					<option class="hr">option>
 					<option disabled>', $category['name'], '</option>
-					<option disabled>--------------------------------------</option>';
+					<option class="hr">option>';
 
 		foreach ($category['boards'] as $board)
 			echo '

@@ -709,12 +709,13 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-						<label><a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=help;in=', $config_var['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-						<span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span></label>
+						<label for="', $config_var['name'], '"><a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=help;in=', $config_var['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+							<span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span>
+						</label>
 					</dt>';
 				else
 					echo '
-						<label><a id="setting_', $config_var['name'], '"></a> <span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span></label>
+						<label for="', $config_var['name'], '"><a id="setting_', $config_var['name'], '"></a> <span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span></label>
 					</dt>';
 
 				echo '

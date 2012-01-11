@@ -347,8 +347,8 @@ function template_results()
 			echo '
 		<div class="roundframe">
 			<div class="floatright">
-				<select name="qaction"', $context['can_move'] ? ' onchange="this.form.moveItTo.disabled = (this.options[this.selectedIndex].value != \'move\');"' : '', '>
-					<option value="">--------</option>', $context['can_remove'] ? '
+				<select class="fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
+					<option value="">--- ', $txt['moderate'], ' ---</option>', $context['can_remove'] ? '
 					<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
 					<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
 					<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
@@ -360,7 +360,7 @@ function template_results()
 			if ($context['can_move'])
 			{
 					echo '
-				<select id="moveItTo" name="move_to" disabled>';
+				<select id="moveItTo" name="move_to" class="hide">';
 
 					foreach ($context['move_to_boards'] as $category)
 					{

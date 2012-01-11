@@ -84,7 +84,7 @@ function template_show_list($list_id = null)
 		$i = 0;
 		foreach ($cur_list['headers'] as $col_header)
 		{
-			$i ++;
+			$i++;
 			if (empty($col_header['class']) && $i == 1)
 				$col_header['class'] = 'first_th';
 			elseif (empty($col_header['class']) && $i == $header_count)
