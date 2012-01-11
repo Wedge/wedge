@@ -247,10 +247,6 @@ a.new_win
 	:link, :visited
 		color: #679
 
-// We worship his shadow.
-.hide
-	display: none
-
 // Tables should show empty cells.
 table
 	empty-cells: show
@@ -382,6 +378,10 @@ em
 	text-align: center
 	display: table-cell
 	vertical-align: middle
+
+// We worship his shadow.
+.hide
+	display: none
 
 /* Styles for buttons and other form elements
 ------------------------------------------------------- */
@@ -1271,7 +1271,6 @@ select.sb
 	margin: 1px
 
 	.text
-		vertical-align: baseline
 		white-space: nowrap
 
 	.details
@@ -1294,23 +1293,22 @@ select.sb
 		position: relative
 		text-decoration, outline: none
 		padding: 2px 22px 2px 2px
-		border-radius: 5px
+		border-radius: 6px
 
-		.text
-			display: block
+		.text extends .inline-block
+			vertical-align: baseline
 			padding: 0 3px
 
 		.btn
 			background: #dbdbdb url($images/select_arrow_bg.gif) repeat-x left center
 			position: absolute
 			border: 1px solid #707070
-			border-radius: 3px
+			border-radius: 4px
 			width: 14px
-			height: 1.15em
 			line-height: 1em
 			padding: 1px
 			text-align: center
-			right, top: 2px
+			right, top, bottom: 2px
 
 			div extends .inline-block
 				background: transparent url($images/select_arrow.gif) no-repeat center center
@@ -1324,7 +1322,7 @@ select.sb
 		background: #fff
 
 		.text
-			border-radius: 3px 0 0 3px
+			border-radius: 4px 0 0 4px
 			border-color: #7b7d83
 			background-color: #39f
 			color: #fcfcfc
@@ -1338,8 +1336,8 @@ select.sb
 	/* Dropdown styles */
 	.items
 		background: #fff
-		border: 1px solid #828790
-		border-radius: 5px
+		border: 1px solid #cbcdd3
+		border-radius: 6px
 		display: inline
 		font-size: 1em
 		padding: 2px
@@ -1352,11 +1350,6 @@ select.sb
 
 		&.above
 			box-shadow: 0 -2px 5px rgba(0,0,0, .3)
-
-		li
-			display: block
-			margin, padding: 0
-			// white-space: nowrap may be necessary if using fixed: false
 
 		.item
 			color: #000
@@ -1371,6 +1364,11 @@ select.sb
 		.disabled .item
 			color: #999
 
+		.hr
+			border-top: 1px solid #ccc
+			padding, height: 0
+			margin: 2px
+
 		// <optgroup> styles
 		.optgroup .label
 			gradient: #fff, darken(#fff, 5%)
@@ -1383,12 +1381,10 @@ select.sb
 			padding-left: 1.5em
 
 		/* Rounded corners */
-		li a
-			padding: 4px 6px
-		li.first .item
-			border-radius: 5px 5px 0 0
-		li.last .item
-			border-radius: 0 0 5px 5px
+		.first .item
+			border-radius: 6px 6px 0 0
+		.last .item
+			border-radius: 0 0 6px 6px
 
 	/* Scrollbar viewport */
 	.overview, .viewport

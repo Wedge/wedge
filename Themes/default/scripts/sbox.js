@@ -2,8 +2,10 @@
  * Wedge
  *
  * Selectbox replacement plugin for Wedge.
- * Original code by RevSystems (.sb) and Maarten Baijs (.sc),
- * Fixed, customized and optimized by Nao.
+ *
+ * Developed and customized/optimized for Wedge by Nao.
+ * Contains portions by RevSystems (SelectBox)
+ * and Maarten Baijs (ScrollBar).
  *
  * @package wedge
  * @copyright 2010-2011 Wedgeward, wedge.org
@@ -37,7 +39,6 @@
 			scrollbar,
 			$selected,
 			$display,
-			$label,
 			$dd,
 			$sb,
 			$items,
@@ -45,22 +46,17 @@
 
 		loadSB = function ()
 		{
-			$label = $orig.attr('id') ? $('label[for="' + $orig.attr('id') + '"]:first') : '';
-			if ($label.length == 0)
-				$label = $orig.closest('label');
-
 			// Create the new sb
-			$sb = $('<div class="sbox ' + $orig.attr('class') + '" id="sb' + ++unique + '" role=listbox></div>')
-				.attr('aria-labelledby', $label.attr('id') || '')
+			$sb = $('<div class="sbox ' + $orig.attr('class') + '" id="sb' + ($orig.attr('id') || ++unique) + '" role=listbox></div>')
 				.attr('aria-haspopup', true);
 
-			$display = $('<div class="display" id="sbd' + unique + '"></div>')
+			$display = $('<div class="display" id="sbd' + ++unique + '"></div>')
 				// Generate the display markup
-				.append(optionFormat($orig.find('option:selected'), '&nbsp;'))
+				.append(optionFormat($orig.find('option:selected')))
 				.append('<div class="btn"><div></div></div>');
 
 			// Generate the dropdown markup
-			$dd = $('<ul class="items" id="sbdd' + unique + '" role=menu onselectstart="return false;"></ul>')
+			$dd = $('<div class="items" id="sbdd' + unique + '" role=menu onselectstart="return false;"></div>')
 				.attr('aria-hidden', true);
 
 			// For accessibility/styling, and an easy custom .trigger('close') shortcut.
@@ -77,19 +73,18 @@
 					var $og = $(this), $optgroup;
 					if ($og.is('optgroup'))
 					{
-						$dd.append($optgroup = $('<li class="optgroup"><div class="label">' + $og.attr('label') + '</div></li>'));
+						$dd.append($optgroup = $('<div class="optgroup"><div class="label">' + $og.attr('label') + '</div></div>'));
 						$og.find('option').each(function () { $dd.append(createOption($(this)).addClass('sub')); });
 						if ($og.is(':disabled'))
 							$optgroup.nextAll().andSelf()
-								.addClass('disabled')
-								.attr('aria-disabled', true);
+								.addClass('disabled').attr('aria-disabled', true);
 					}
 					else
 						$dd.append(createOption($og));
 				});
 
 			// Cache all sb items
-			$items = $dd.children('li').not('.optgroup');
+			$items = $dd.children().not('.optgroup');
 			setSelected($orig_item = $items.filter('.selected'));
 
 			$dd.children(':first').addClass('first');
@@ -158,13 +153,13 @@
 		// Create new markup from an <option>
 		createOption = function ($option)
 		{
-			$option = $option || $('<option>&nbsp;</option>');
+			$option = $option || $('<option></option>');
 
-			return $('<li id="sbo' + ++unique + '" role=option></li>')
+			return $('<div id="sbo' + ++unique + '" role=option></div>')
 				.data('orig', $option)
 				.data('value', $option.attr('value') || '')
 				.attr('aria-disabled', !!$option.is(':disabled'))
-				.toggleClass('disabled', $option.is(':disabled'))
+				.toggleClass('disabled', $option.is(':disabled,.hr'))
 				.toggleClass('selected', $option.is(':selected'))
 				.append(
 					$('<div class="item"></div>')
@@ -175,20 +170,10 @@
 		},
 
 		// Formatting for the display
-		optionFormat = function ($dom, empty)
+		optionFormat = function ($dom)
 		{
-			return '<div class="text">' + ($dom.text().replace(/\|/g, '</div><div class="details">') || empty || '') + '</div>';
+			return '<div class="text">' + ($dom.text().replace(/\|/g, '</div><div class="details">') || '&nbsp;') + '</div>';
 		},
-
-		/* Alternate version that takes care of horizontal lines. @todo: Needs a class, rather than a <hr>.
-
-		optionFormat = function ($dom, txt)
-		{
-			txt = $dom.text().replace(/\|/g, '</div><div class="details">') || txt || '';
-			if (txt.match(/^--+$/g))
-				txt = '<hr>';
-			return '<div class="text">' + txt + '</div>';
-		}, */
 
 		// Destroy then load, maintaining open/focused state if applicable
 		reloadSB = function ()
@@ -267,7 +252,7 @@
 			doFocus ? $orig.triggerHandler('focus') : focusSB();
 
 			// Modify dropdown css for getting values
-			$dd.stop(true, true).show().css({ visibility: 'hidden' })
+			$dd.stop(true, true).show().css('visibility', 'hidden')
 				.width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
 
 			var
@@ -285,9 +270,8 @@
 				showDown = (ddMaxHeight <= bottomSpace) || ((ddMaxHeight >= topSpace) && (bottomSpace + 50 >= topSpace));
 
 			// Modify dropdown css for display
-			$dd.css({
-				marginTop: showDown ? 0 : -ddMaxHeight - $display.outerHeight()
-			}).toggleClass('above', !showDown);
+			$dd.css('marginTop', showDown ? 0 : -ddMaxHeight - $display.outerHeight())
+				.toggleClass('above', !showDown);
 
 			// Create a custom scrollbar for our select box?
 			if (ddMaxHeight < ddHeight)
@@ -302,7 +286,7 @@
 
 			$selected.addClass('selected');
 
-			$dd.css({ display: 'none', visibility: 'visible' })
+			$dd.hide().css('visibility', 'visible')
 				.attr('aria-hidden', false);
 
 			if ($sb.hasClass('open'))
@@ -568,7 +552,7 @@
 		if ($dd.find('.viewport').length)
 			return;
 
-		$dd.css({ display: 'block', visibility: 'hidden' })
+		$dd.show().css('visibility', 'hidden')
 			.contents()
 			.wrapAll('<div class="viewport"><div class="overview"></div></div>');
 
@@ -601,7 +585,7 @@
 		else
 			$dd[0].onmousewheel = wheel;
 
-		$dd.css({ display: 'none', visibility: 'visible' });
+		$dd.hide().css('visibility', 'visible');
 	};
 
 	// .sb() takes a select box and restyles it.
