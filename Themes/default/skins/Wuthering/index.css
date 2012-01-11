@@ -117,10 +117,10 @@ body
 			color: #679
 
 @remove
-	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
+	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
 
 .wedgesymbol
-	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
+	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
