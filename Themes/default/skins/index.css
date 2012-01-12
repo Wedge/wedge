@@ -383,17 +383,190 @@ em
 .hide
 	display: none
 
+/* Custom Select box styles
+--------------------------------------------------------- */
+
+select
+	visibility: hidden
+select[size]
+	visibility: visible
+
+/* Hide the original <select> from view */
+select.sb
+	visibility: visible
+	position: absolute
+	left, text-indent: -999999em
+
+.sbox extends .inline-block
+	font-size: 1em
+	font-weight: 400
+	text-align: left
+	margin: 1px
+
+	.text
+		white-space: nowrap
+
+	.details
+		font-style: italic
+		font-size: .9em
+		padding: 3px
+		clear: left
+		color: #666
+
+	/* Display area (always visible) */
+	.display
+		background: rgba(255,255,255,.5)
+		opacity: .9
+		border: 1px solid #abadb3
+		color: #000
+		cursor: default
+		font-weight: normal
+		height, line-height: 1.46em
+		overflow: hidden
+		position: relative
+		text-decoration, outline: none
+		padding: 2px 22px 2px 2px
+		border-radius: 6px
+
+		.text extends .inline-block
+			vertical-align: baseline
+			padding: 0 3px
+
+		.btn
+			background: #dbdbdb url($images/select_arrow_bg.gif) repeat-x left center
+			position: absolute
+			border: 1px solid #707070
+			border-radius: 4px
+			width: 14px
+			line-height: 1em
+			padding: 1px
+			text-align: center
+			right, top, bottom: 2px
+
+			div extends .inline-block
+				background: transparent url($images/select_arrow.gif) no-repeat center center
+				width: 7px
+				height: 4px
+
+	&.disabled .display
+		color: #999
+
+	&.focused .display
+		background: #fff
+
+		.text
+			border-radius: 4px 0 0 4px
+			border-color: #7b7d83
+			background-color: #39f
+			color: #fcfcfc
+
+		.btn
+			box-shadow: inset 0 0 1px 1px #9eb0ba
+
+	&.focused .display .btn, .hover .btn
+		background-image: url($images/select_arrow_bg_hover.gif)
+
+	/* Dropdown styles */
+	.items
+		background: #fff
+		border: 1px solid #cbcdd3
+		border-radius: 6px
+		display: inline
+		font-size: 1em
+		padding: 2px
+		margin: 0
+		list-style: none
+		overflow: hidden
+		position: absolute
+		z-index: 999
+		box-shadow: 0 2px 5px rgba(0,0,0, .3)
+
+		&.above
+			box-shadow: 0 -2px 5px rgba(0,0,0, .3)
+
+		.item
+			color: #000
+			cursor: default
+			display: block
+			padding: 4px 6px
+			text-decoration: none
+
+		.selected .item
+			background-color: #eee
+
+		.disabled .item
+			color: #999
+
+		.hr
+			border-top: 1px solid #ccc
+			padding, height: 0
+			margin: 2px
+
+		// <optgroup> styles
+		.optgroup .label
+			gradient: #fff, darken(#fff, 5%)
+			color: #666
+			cursor: default
+			font-weight: bold
+			line-height: 1em
+			padding: 7px
+		.sub .item
+			padding-left: 1.5em
+
+		/* Rounded corners */
+		.first .item
+			border-radius: 6px 6px 0 0
+		.last .item
+			border-radius: 0 0 6px 6px
+
+	/* Scrollbar viewport */
+	.overview, .viewport
+		position: relative
+		float: left
+
+	/* The scrollbar itself */
+	.scrollbar
+		position: relative
+		float: right
+		right: 1px
+		width: 11px
+		background: #f5f8f5
+
+		/* Scrollbar thumb */
+		div
+			position: absolute
+			overflow: hidden
+			background: #e0e3e0
+			background: -prefix-linear-gradient(left, #ddd, #e0e6e0, #ccc)
+			border-radius: 6px
+			cursor: pointer
+			height: 18px
+			width: 13px
+			left: -1px
+			:hover
+				background: #e8ece8
+				background: -prefix-linear-gradient(left, #ddd, #e8ece8, #ccc)
+
+.cat .sbox
+	font-size: 14px
+	text-shadow: none
+
+tr.catbg .sbox, tr.titlebg .sbox
+	font-size: 11px
+
+#thought_form .sbox
+	font-size: 13px
+	max-width: 85px
+
+.qaction
+	font-size: .85em
+
 /* Styles for buttons and other form elements
 ------------------------------------------------------- */
 
 // Let's give all forms zero padding/margins
 form
 	margin, padding: 0
-
-select
-	visibility: hidden
-select[size]
-	visibility: visible
 
 input, select, textarea
 	font: 95%/115% $main_font
@@ -406,10 +579,6 @@ input, select, textarea
 	:hover, :focus
 		border: 1px solid #6f8da9
 
-select.qaction, input.qaction
-	font-size: .85em
-	padding: 0
-
 // The font size of textareas should be just a little bit larger.
 textarea
 	font: 100%/130% $main_font
@@ -419,7 +588,8 @@ input[type=submit], input[type=button], .ie_button
 	border: 1px solid
 	border-color: #ccc #999 #999 #ccc
 	cursor: pointer
-	height, line-height: 24px
+	height: 24px
+	line-height: 20px
 	font-size: 13px
 	border-radius: 5px
 	padding: 0 5px
@@ -984,12 +1154,6 @@ tr.catbg
 tr.titlebg
 	td extends .wefoot, th extends .wefoot
 
-tr.catbg, tr.titlebg
-	select
-		height: 17px
-		font-size: 11px
-		margin-top: 3px
-
 // The page navigation area
 .pagesection
 	clear: left
@@ -1254,173 +1418,6 @@ dl#feed
 	p
 		padding: .3em 1em
 		margin: 0
-
-/* Custom Select box styles
---------------------------------------------------------- */
-
-/* Hide the original <select> */
-select.sb
-	visibility: visible
-	position: absolute
-	left, text-indent: -999999em
-
-.sbox extends .inline-block
-	font-size: 1em
-	font-weight: 400
-	text-align: left
-	margin: 1px
-
-	.text
-		white-space: nowrap
-
-	.details
-		font-style: italic
-		font-size: .9em
-		padding: 3px
-		clear: left
-		color: #666
-
-	/* Display area (always visible) */
-	.display
-		background: rgba(255,255,255,.5)
-		opacity: .9
-		border: 1px solid #abadb3
-		color: #000
-		cursor: default
-		font-weight: normal
-		height, line-height: 1.46em
-		overflow: hidden
-		position: relative
-		text-decoration, outline: none
-		padding: 2px 22px 2px 2px
-		border-radius: 6px
-
-		.text extends .inline-block
-			vertical-align: baseline
-			padding: 0 3px
-
-		.btn
-			background: #dbdbdb url($images/select_arrow_bg.gif) repeat-x left center
-			position: absolute
-			border: 1px solid #707070
-			border-radius: 4px
-			width: 14px
-			line-height: 1em
-			padding: 1px
-			text-align: center
-			right, top, bottom: 2px
-
-			div extends .inline-block
-				background: transparent url($images/select_arrow.gif) no-repeat center center
-				width: 7px
-				height: 4px
-
-	&.disabled .display
-		color: #999
-
-	&.focused .display
-		background: #fff
-
-		.text
-			border-radius: 4px 0 0 4px
-			border-color: #7b7d83
-			background-color: #39f
-			color: #fcfcfc
-
-		.btn
-			box-shadow: inset 0 0 1px 1px #9eb0ba
-
-	&.focused .display .btn, .hover .btn
-		background-image: url($images/select_arrow_bg_hover.gif)
-
-	/* Dropdown styles */
-	.items
-		background: #fff
-		border: 1px solid #cbcdd3
-		border-radius: 6px
-		display: inline
-		font-size: 1em
-		padding: 2px
-		margin: 0
-		list-style: none
-		overflow: hidden
-		position: absolute
-		z-index: 999
-		box-shadow: 0 2px 5px rgba(0,0,0, .3)
-
-		&.above
-			box-shadow: 0 -2px 5px rgba(0,0,0, .3)
-
-		.item
-			color: #000
-			cursor: default
-			display: block
-			padding: 4px 6px
-			text-decoration: none
-
-		.selected .item
-			background-color: #eee
-
-		.disabled .item
-			color: #999
-
-		.hr
-			border-top: 1px solid #ccc
-			padding, height: 0
-			margin: 2px
-
-		// <optgroup> styles
-		.optgroup .label
-			gradient: #fff, darken(#fff, 5%)
-			color: #666
-			cursor: default
-			font-weight: bold
-			line-height: 1em
-			padding: 7px
-		.sub .item
-			padding-left: 1.5em
-
-		/* Rounded corners */
-		.first .item
-			border-radius: 6px 6px 0 0
-		.last .item
-			border-radius: 0 0 6px 6px
-
-	/* Scrollbar viewport */
-	.overview, .viewport
-		position: relative
-		float: left
-
-	/* The scrollbar itself */
-	.scrollbar
-		position: relative
-		float: right
-		right: 1px
-		width: 11px
-		background: #f5f8f5
-
-		/* Scrollbar thumb */
-		div
-			position: absolute
-			overflow: hidden
-			background: #e0e3e0
-			background: -prefix-linear-gradient(left, #ddd, #e0e6e0, #ccc)
-			border-radius: 6px
-			cursor: pointer
-			height: 18px
-			width: 13px
-			left: -1px
-			:hover
-				background: #e8ece8
-				background: -prefix-linear-gradient(left, #ddd, #e8ece8, #ccc)
-
-.cat .sbox
-	font-size: 14px
-	text-shadow: none
-
-#thought_form .sbox
-	font-size: 13px
-	max-width: 85px
 
 /* HTML5 overrides for deprecated alignment/width params
 --------------------------------------------------------- */

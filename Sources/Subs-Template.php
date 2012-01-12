@@ -1062,10 +1062,13 @@ function loadTemplate($template_name, $fatal = true)
 		loadTemplate($template_name);
 	}
 	// Cause an error otherwise.
-	elseif ($template_name != 'Errors' && $template_name != 'index' && $fatal)
-		fatal_lang_error('theme_template_error', 'template', array((string) $template_name));
 	elseif ($fatal)
-		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load Themes/default/%s.template.php!', (string) $template_name), 'template'));
+	{
+		if ($template_name != 'Errors' && $template_name != 'index')
+			fatal_lang_error('theme_template_error', 'template', array((string) $template_name));
+		else
+			die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load Themes/default/%s.template.php!', (string) $template_name), 'template'));
+	}
 	else
 		return false;
 }

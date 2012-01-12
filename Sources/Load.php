@@ -1807,6 +1807,11 @@ function loadTheme($id_theme = 0, $initialize = true)
 		foreach ($templates as $template)
 			loadTemplate($template);
 
+		// Users may also add a Custom.template.php file to their theme folder, to help them override
+		// or add code before or after a specific function, e.g. in the index template, without
+		// having to create a new theme. If it's not there, we'll just ignore that.
+		loadTemplate('Custom', false);
+
 		// ...and attempt to load their associated language files.
 		$required_files = implode('+', $templates);
 		loadLanguage($required_files, '', false);
