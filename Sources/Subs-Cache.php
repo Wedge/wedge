@@ -225,78 +225,76 @@ function add_css()
  *
  * @param mixed $original_files A filename or an array of filenames, with a relative path set to the theme root folder. Just specify the filename, like 'index', if it's a file from the current skin.
  * @param boolean $add_link Set to true if you want Wedge to automatically add the link tag around the URL and move it to the header.
+ * @param boolean $is_main Determines whether this is the primary CSS file list (index.css and other files), which gets special treatment.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_css_file($original_files = array(), $add_link = false)
+function add_css_file($original_files = array(), $add_link = false, $is_main = false)
 {
-	global $context, $modSettings, $settings, $cachedir, $boardurl;
+	global $settings, $modSettings, $context, $db_show_debug, $cachedir, $boardurl;
 
-	if (!is_array($original_files))
-		$original_files = (array) $original_files;
+	// Delete all duplicates and ensure $original_files is an array.
+	$files = $original_files = array_keys(array_flip((array) $original_files));
+	$latest_date = 0;
 
-	// Delete all duplicates.
-	$files = $original_files = array_keys(array_flip($original_files));
-
+	// Add all possible variations of a file name.
 	foreach ($files as $file)
 		foreach ($context['css_suffixes'] as $gen)
 			$files[] = $file . '.' . $gen;
 
-	$latest_date = 0;
-	$is_default_theme = true;
-	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
-	$skin = !empty($context['skin']) ? $context['skin'] : (!empty($modSettings['theme_skin_guests']) ? $modSettings['theme_skin_guests'] : 'skins');
-
-	foreach ($files as $i => &$file)
+	foreach ($context['skin_folders'] as $folder)
 	{
-		if (strpos($file, '.css') === false)
+		$fold = $folder[0];
+		$target = $folder[1];
+		foreach ($files as &$file)
 		{
-			$dir = $skin;
-			$ofile = $file;
-			$file = $dir . '/' . $ofile . '.css';
-			// Does this file at least exist in the current skin...? If not, try the parent skin, until our hands are empty.
-			while (!empty($dir) && !file_exists($settings['theme_dir'] . '/' . $file) && !file_exists($settings['default_theme_dir'] . '/' . $file))
+			$add = $fold . $file . '.css';
+			if (file_exists($add))
 			{
-				$dir = $dir === '.' ? '' : dirname($dir);
-				$file = $dir . '/' . $ofile . '.css';
+				$css[] = $add;
+				if ($db_show_debug === true)
+					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
+				$latest_date = max($latest_date, filemtime($add));
 			}
 		}
-		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
-		if (!$target)
-		{
-			unset($files[$i]);
-			continue;
-		}
-
-		$is_default_theme &= $target === 'default_theme_';
-		$file = $settings[$target . 'dir'] . '/' . $file;
-		$latest_date = max($latest_date, filemtime($file));
 	}
 
 	$folder = end($context['css_folders']);
-	$id = $is_default_theme || $settings['theme_dir'] === 'default' ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
+	$id = $context['skin_uses_default_theme'] || (!$is_main && $settings['theme_dir'] === 'default') ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
 	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
-	$id .= (empty($id) ? '' : '-') . implode('-', $original_files) . '-';
+
+	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
+
+	$id .= '-' . implode('-', array_diff($original_files, array('index', 'sections', 'custom')));
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-	$id .= implode('-', $context['css_suffixes']);
+	$id .= '-' . implode('-', $context['css_suffixes']);
 
 	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
 	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
-		$id = preg_replace('~(?:^webkit-|-webkit(?=-)|-webkit$)~', '', $id, 1);
+		$id = preg_replace('~\bwebkit\b~', '', $id, 1);
 
 	if (isset($context['user']) && $context['user']['language'] !== 'english')
 		$id .= '-' . $context['user']['language'];
 
-	$id = (!empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) : $id) . '-';
-	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
+	$has_dupes = 1;
+	while ($has_dupes) // Probably faster than a preg_replace!
+		$id = str_replace('--', '-', $id, $has_dupes);
 
-	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
+	if (!empty($modSettings['obfuscate_filenames']))
+		$id = md5(substr($id, 0, -1));
+
+	$full_name = $id . '-' . $latest_date . $ext;
+
+	$final_file = $cachedir . '/' . $full_name;
+	$final_script = $boardurl . '/cache/' . $full_name;
+
 	if (!file_exists($final_file))
-		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext);
+		wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext);
 
-	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
+	if ($is_main)
+		return $context['cached_css'] = $final_script;
 
 	// Do we just want the URL?
 	if (!$add_link)
@@ -352,7 +350,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 
 	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
 	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
-		$id = preg_replace('~(?:^webkit-|-webkit(?=-)|-webkit$)~', '', $id, 1);
+		$id = preg_replace('~(?:\bwebkit-|-webkit\b)~', '', $id, 1);
 
 	if (isset($context['user']) && $context['user']['language'] !== 'english')
 		$id .= '-' . $context['user']['language'];
@@ -373,72 +371,6 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 
 	$context['header'] .= '
 	<link rel="stylesheet" href="' . $final_script . '">';
-}
-
-/**
- * Analyzes the list of required CSS files and returns (or generates) the final file.
- *
- * The CSS file list is taken from $context['css_main_files'], along with custom.css and css_suffixes variations.
- */
-function wedge_cache_css()
-{
-	global $settings, $modSettings, $context, $db_show_debug, $cachedir, $boardurl;
-
-	// Mix CSS files together!
-	$css = array();
-	$latest_date = 0;
-	$is_default_theme = true;
-	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
-
-	// Make sure custom.css, if available, is added last.
-	$files = array_merge($context['css_main_files'], (array) 'custom');
-
-	// Add all possible variations of a file name.
-	foreach ($files as $file)
-		foreach ($context['css_suffixes'] as $gen)
-			$files[] = $file . '.' . $gen;
-
-	foreach ($context['skin_folders'] as &$folder)
-	{
-		$fold = $folder[0];
-		$target = $folder[1];
-		foreach ($files as &$file)
-		{
-			$add = $fold . $file . '.css';
-			if (file_exists($add))
-			{
-				$css[] = $add;
-				if ($db_show_debug === true)
-					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
-				$latest_date = max($latest_date, filemtime($add));
-			}
-		}
-	}
-
-	$folder = end($context['css_folders']);
-	$id = $context['skin_uses_default_theme'] ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
-	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder) . '-';
-
-	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
-
-	unset($context['css_main_files'][0], $context['css_main_files'][1]);
-	$id .= implode('-', $context['css_main_files']) . (empty($context['css_main_files']) ? '' : '-');
-	$id .= implode('-', $context['css_suffixes']);
-
-	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
-	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
-		$id = preg_replace('~(?:^webkit-|-webkit(?=-)|-webkit$)~', '', $id, 1);
-
-	if (isset($context['user']) && $context['user']['language'] !== 'english')
-		$id .= '-' . $context['user']['language'];
-
-	$context['cached_css'] = $boardurl . '/cache/' . $id . '-' . $latest_date . $ext;
-	$final_file = $cachedir . '/' . $id . '-' . $latest_date . $ext;
-
-	// Is the file already cached and not outdated? If not, recache it.
-	if (!file_exists($final_file) || filemtime($final_file) < $latest_date)
-		wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext);
 }
 
 /**
@@ -803,8 +735,9 @@ function theme_base_css()
 	global $context, $boardurl;
 
 	// We only generate the cached file at the last moment (i.e. when first needed.)
+	// Make sure custom.css, if available, is added last.
 	if (empty($context['cached_css']))
-		wedge_cache_css();
+		add_css_file(array_merge($context['css_main_files'], (array) 'custom'), false, true);
 
 	if (!empty($context['header_css']))
 	{
