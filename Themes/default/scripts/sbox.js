@@ -203,12 +203,12 @@
 			if ($sb.hasClass('open'))
 			{
 				$display.blur();
-				$(document).unbind('.sb');
 				$sb.removeClass('open');
 				$dd
 					.animate({ height: 'toggle', opacity: 'toggle' }, instantClose == 1 ? 0 : 150)
 					.attr('aria-hidden', true);
 			}
+			$(document).unbind('.sb');
 		},
 
 		// When the user clicks outside the sb

@@ -351,6 +351,28 @@ function weSaveEntities(sFormName, aElementNames, sMask, nm)
 	// This way, you can drag the element, but still access UI elements within it.
 	$.fn.dragslide = function () {
 		var origin = this.selector;
+
+		// Updates the position during the dragging process
+		$(document)
+			.mousemove(function (e) {
+				if (currentDrag)
+				{
+					// If it's in a fixed position, it's a bottom-right aligned popup.
+					$(currentDrag).css(is_fixed ? {
+						right: currentPos.X - e.pageX + origMouse.X,
+						bottom: currentPos.Y - e.pageY + origMouse.Y
+					} : {
+						left: currentPos.X + e.pageX - origMouse.X,
+						top: currentPos.Y + e.pageY - origMouse.Y
+					});
+					return false;
+				}
+			})
+			.mouseup(function () {
+				if (currentDrag)
+					return !!(currentDrag = 0);
+			});
+
 		return this
 			.css("cursor", "move").find(".nodrag").css("cursor", "default").end()
 			// Start the dragging process
@@ -370,26 +392,6 @@ function weSaveEntities(sFormName, aElementNames, sMask, nm)
 			});
 	};
 
-	// Updates the position during the dragging process
-	$(document)
-		.mousemove(function (e) {
-			if (currentDrag)
-			{
-				// If it's in a fixed position, it's a bottom-right aligned popup.
-				$(currentDrag).css(is_fixed ? {
-					right: currentPos.X - e.pageX + origMouse.X,
-					bottom: currentPos.Y - e.pageY + origMouse.Y
-				} : {
-					left: currentPos.X + e.pageX - origMouse.X,
-					top: currentPos.Y + e.pageY - origMouse.Y
-				});
-				return false;
-			}
-		})
-		.mouseup(function () {
-			if (currentDrag)
-				return !!(currentDrag = 0);
-		});
 })();
 
 
