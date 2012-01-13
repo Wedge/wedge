@@ -494,6 +494,10 @@ ul.moderation_notes
 	& .wrc
 		margin-bottom: 4px
 
+// Profile fields
+#regex_div
+	font-family: $mono_font
+
 .pretty_filter
 	color: #888
 	font-size: 0.9em

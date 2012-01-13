@@ -236,6 +236,10 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$files = $original_files = array_keys(array_flip((array) $original_files));
 	$latest_date = 0;
 
+	// If we didn't go through the regular theme initialization flow, get the skin options.
+	if (!isset($context['skin_folders']))
+		wedge_get_skin_options();
+
 	// Add all possible variations of a file name.
 	foreach ($files as $file)
 		foreach ($context['css_suffixes'] as $gen)

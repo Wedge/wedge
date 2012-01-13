@@ -33,7 +33,7 @@ h4.hove
 li.hove
 	background: #e2ebe7
 
-#upper_section .frame
+#upper_section .frame, #upper_section h1
 	filter: none
 
 .cat

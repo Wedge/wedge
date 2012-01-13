@@ -938,7 +938,7 @@ function template_edit_profile_field()
 					$("textarea[name=\"" + i + "\"]").html(insertTemplate.templates[field][i]);
 					break;
 				default: // everything else (which should be input[type="text"] or select and thus support .val()
-					$("[name=\"" + i + "\"]").val(insertTemplate.templates[field][i]);
+					$("[name=\"" + i + "\"]").val(insertTemplate.templates[field][i]).sb();
 					break;
 			}
 		}
@@ -1097,9 +1097,7 @@ function template_edit_profile_field()
 								<option value="regex"', substr($context['field']['mask'], 0, 5) == 'regex' ? ' selected' : '', '>', $txt['custom_edit_mask_regex'], '</option>
 							</select>
 							<br>
-							<span id="regex_div">
-								<input type="text" name="regex" value="', $context['field']['regex'], '" size="30">
-							</span>
+							<input type="text" name="regex" id="regex_div" value="', $context['field']['regex'], '" size="30">
 						</dd>
 						<dt>
 							<strong>', $txt['custom_edit_privacy'], ':</strong>
