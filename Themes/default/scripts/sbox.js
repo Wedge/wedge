@@ -310,7 +310,7 @@
 		// When the user selects an item in any manner
 		selectItem = function ($item, no_open)
 		{
-			var $newtex = $item.find('.text'), $oritex = $display.find('.text'), oriwi = $oritex.width();
+			var $newtex = $item.find('.text'), $oritex = $display.find('.text'), oriwi = $oritex.width(), newwi;
 
 			// If we're selecting an item and the box is closed, open it.
 			if (!no_open && !$sb.hasClass('open'))
@@ -320,10 +320,12 @@
 
 			// Update the title attr and the display markup
 			$oritex
+				.css('width', 'auto')
 				.html($newtex.html() || '&nbsp;')
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
+			newwi = $oritex.width();
 			if (!fixed)
-				$oritex.stop(true, true).width(oriwi).animate({ width: $newtex.width() });
+				$oritex.stop(true, true).width(oriwi).animate({ width: newwi });
 		},
 
 		setSelected = function ($item)
@@ -500,7 +502,7 @@
 			startPos = 0, iMouse, iScroll = 0,
 			thumbAxis, viewportAxis, contentAxis,
 			$content, $scrollbar, $thumb,
-			curPos, scrollbarRatio,
+			curPos, scrollbarRatio, newwi,
 
 		wheel = function (e)
 		{
@@ -552,16 +554,19 @@
 		if ($dd.find('.viewport').length)
 			return;
 
-		$dd.show().css('visibility', 'hidden')
+		newwi = $dd.show()
+			.css('visibility', 'hidden')
+			.css('width', 'auto')
 			.contents()
-			.wrapAll('<div class="viewport"><div class="overview"></div></div>');
+			.wrapAll('<div class="viewport"><div class="overview"></div></div>')
+			.width();
 
 		$dd.append('<div class="scrollbar"><div></div></div>');
 
 		$dd.find('.scrollbar')
 			.height($dd.height());
 
-		$dd.width($dd.width() + 15)
+		$dd.width(newwi + 15)
 			.find('.viewport').height($dd.height());
 
 		this.update();

@@ -403,7 +403,8 @@ select.sb
 	text-align: left
 	margin: 1px
 
-	.text
+	.text extends .inline-block
+		vertical-align: baseline
 		white-space: nowrap
 
 	.details
@@ -428,8 +429,7 @@ select.sb
 		padding: 2px 22px 2px 2px
 		border-radius: 6px
 
-		.text extends .inline-block
-			vertical-align: baseline
+		.text
 			padding: 0 3px
 
 		.btn
@@ -504,7 +504,7 @@ select.sb
 
 		// <optgroup> styles
 		.optgroup .label
-			gradient: #fff, darken(#fff, 5%)
+			gradient: #fff, #e5eeee
 			color: #666
 			cursor: default
 			font-weight: bold
