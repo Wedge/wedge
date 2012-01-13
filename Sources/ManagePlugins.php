@@ -397,11 +397,14 @@ function EnablePlugin()
 	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
+	// Since we might use this in a few places...
+	$manifest_id = (string) $manifest['id'];
+
 	// Already installed? Or another with the same id?
 	if (in_array($_GET['plugin'], $context['enabled_plugins']))
 		fatal_lang_error('fatal_already_enabled', false);
 
-	if (isset($context['enabled_plugins'][(string) $manifest['id']]))
+	if (isset($context['enabled_plugins'][$manifest_id]))
 		fatal_lang_error('fatal_duplicate_id', false);
 
 	// OK, so we need to go through and validate that we have everything we need.
@@ -766,6 +769,240 @@ function EnablePlugin()
 		}
 	}
 
+	// Adding any bbcodes indicated in the plugin manifest.
+	if (!empty($manifest->bbcodes))
+	{
+		$new_bbcode = array();
+		$valid_types = array('parsed', 'unparsed_equals', 'parsed_equals', 'unparsed_content', 'closed', 'unparsed_commas', 'unparsed_commas_content', 'unparsed_equals_content');
+		$valid_quoted = array('none', 'optional', 'required');
+		$valid_trim = array('none', 'inside', 'outside', 'both');
+		foreach ($manifest->bbcodes->bbcode as $bbcode)
+		{
+			// bbcode must declare itself as having a tag and what type of tag it is
+			if (empty($bbcode['tag']) || empty($bbcode['type']))
+				continue;
+
+			$this_bbcode = array(
+				'tag' => (string) $bbcode['tag'],
+				'bbctype' => (string) $bbcode['type'],
+				'before_code' => !empty($bbcode->{'before-code'}) ? (string) $bbcode->{'before-code'} : '',
+				'after_code' => !empty($bbcode->{'after-code'}) ? (string) $bbcode->{'after-code'} : '',
+				'content' => !empty($bbcode->content) ? (string) $bbcode->content : '',
+				'disabled_before' => !empty($bbcode->disabled->{'before-code'}) ? (string) $bbcode->disabled->{'before-code'} : '',
+				'disabled_after' => !empty($bbcode->disabled->{'after-code'}) ? (string) $bbcode->disabled->{'after-code'} : '',
+				'disabled_content' => !empty($bbcode->disabled->content) ? (string) $bbcode->disabled->content : '',
+				'block_level' => !empty($bbcode['block-level']) && ((string) $bbcode['block-level'] == 'yes') ? 1 : 0,
+				'test' => !empty($bbcode->test) ? (string) $bbcode->test : '',
+				'validate_func' => !empty($bbcode->{'validate-func'}) ? (string) $bbcode->{'validate-func'} : '',
+				'disallow_children' => '',
+				'require_parents' => '',
+				'require_children' => '',
+				'parsed_tags_allowed' => '',
+				'quoted' => !empty($bbcode['quoted']) ? (string) $bbcode['quoted'] : 'none',
+				'params' => '',
+				'trim_wspace' => !empty($bbcode['trim_wspace']) ? (string) $bbcode['trim_wspace'] : 'none',
+				'id_plugin' => $manifest_id,
+			);
+
+			// Checking the type and some other stuff. Doing it here after we've typecast them. It won't always work cleanly otherwise.
+			if (!in_array($this_bbcode['bbctype'], $valid_types) || !in_array($this_bbcode['quoted'], $valid_quoted) || !in_array($this_bbcode['trim_wspace'], $valid_trim))
+				continue;
+
+			// OK, now we need to parse the remaining content that we couldn't have done in the above because of our nice XML structure.
+			if (!empty($bbcode->{'disallow-children'}))
+			{
+				$temp = array();
+				foreach ($bbcode->{'disallow-children'}->child as $child)
+					$temp[] = (string) $child;
+				if (!empty($temp))
+					$this_bbcode['disallow_children'] = implode(',', $temp);
+			}
+
+			if (!empty($bbcode->{'require-parents'}))
+			{
+				$temp = array();
+				foreach ($bbcode->{'require-parents'}->{'parent-tag'} as $parent)
+					$temp[] = (string) $parent;
+				if (!empty($temp))
+					$this_bbcode['require_parents'] = implode(',', $temp);
+			}
+
+			if (!empty($bbcode->{'require-children'}))
+			{
+				$temp = array();
+				foreach ($bbcode->{'require-children'}->child as $child)
+					$temp[] = (string) $child;
+				if (!empty($temp))
+					$this_bbcode['require_children'] = implode(',', $temp);
+			}
+
+			if (!empty($bbcode->{'parsed-tags-allowed'}))
+			{
+				$temp = array();
+				foreach ($bbcode->{'parsed-tags-allowed'}->bbc as $tag)
+					$temp[] = (string) $tag;
+				if (!empty($temp))
+					$this_bbcode['parsed_tags_allowed'] = implode(',', $temp);
+			}
+
+			// Lastly, parameters
+			if (!empty($bbcode->params))
+			{
+				$params = array();
+				foreach ($bbcode->params->param as $param)
+				{
+					// Collect parameters. Note that we don't need to store stuff if it is default values.
+					if (empty($param['name']))
+						continue;
+					$this_param = array();
+					// Typically a parameter will not require quotes, and will not be optional.
+					if (!empty($param['quoted']) && (string) $param['quoted'] == 'yes')
+						$this_param['quoted'] = true;
+					if (!empty($param['optional']) && (string) $param['optional'] == 'yes')
+						$this_param['optional'] = true;
+
+					// Now get the other stuff.
+					if (!empty($param->match))
+						$this_param['match'] = (string) $param->match;
+					if (!empty($param->validate))
+						$this_param['validate'] = (string) $param->validate;
+					if (!empty($param->value) && empty($this_param['validate']))
+						$this_param['value'] = (string) $param->value; // Can't use these two together.
+
+					if (!empty($this_param))
+						$params[(string) $param['name']] = $this_param;
+				}
+
+				if (!empty($params))
+					$this_bbcode['params'] = serialize($params);
+			}
+
+			// Now, before we commit this one, we need to make some sense of the type of bbcode because different types require different content.
+			// A lot of the simplest rules can be dealt with by simply checking for certain content that's specific to each type and if found, excluding it.
+			// And checking for things that must be provided. Note that I'm leaving it split in case anything changes in the future.
+			$rules = array();
+			switch ($this_bbcode['bbctype'])
+			{
+				case 'parsed':
+					$rules = array(
+						'require' => array('before_code', 'after_code'),
+						'disallow' => array('content', 'validate_func', 'parsed_tags_allowed'),
+					);
+					break;
+				case 'unparsed_equals':
+					$rules = array(
+						'require' => array('before_code', 'after_code'),
+						'disallow' => array('content', 'parsed_tags_allowed'),
+					);
+					break;
+				case 'parsed_equals':
+					$rules = array(
+						'require' => array('before_code', 'after_code'),
+						'disallow' => array('content'),
+					);
+					break;
+				case 'unparsed_content':
+					$rules = array(
+						'require' => array('content'),
+						'disallow' => array('before_code', 'after_code', 'parsed_tags_allowed'),
+					);
+					break;
+				case 'closed':
+					if ($this_bbcode['trim_wspace'] == 'inside' || $this_bbcode['trim_wspace'] == 'both')
+						continue;
+					$rules = array(
+						'require' => array('content'),
+						'disallow' => array('before_code', 'after_code', 'test', 'params', 'disallow_children', 'require_children', 'require_parents', 'validate_func', 'parsed_tags_allowed'),
+					);
+					break;
+				case 'unparsed_commas':
+					$rules = array(
+						'require' => array('before_code', 'after_code'),
+						'disallow' => array('content', 'parsed_tags_allowed'),
+					);
+					break;
+				case 'unparsed_commas_content':
+					$rules = array(
+						'require' => array('content'),
+						'disallow' => array('before_code', 'after_code', 'parsed_tags_allowed'),
+					);
+					break;
+				case 'unparsed_equals_content':
+					$rules = array(
+						'require' => array('content'),
+						'disallow' => array('before_code', 'after_code', 'parsed_tags_allowed'),
+					);
+					break;
+			}
+
+			if (!empty($rules['disallow']))
+			{
+				$found = false;
+				foreach ($rules['disallow'] as $item)
+					if (!empty($this_bbcode[$item]))
+					{
+						$found = true;
+						break;
+					}
+
+				if ($found)
+					continue;
+			}
+
+			if (!empty($rules['require']))
+			{
+				$found = true;
+				foreach ($rules['require'] as $item)
+					if (empty($this_bbcode[$item]))
+					{
+						$found = false;
+						break;
+					}
+
+				if (!$found)
+					continue;
+			}
+
+			// Other rules
+			// Can't specify a quoting-parameters type for things that don't support quotable parameters.
+			if ($this_bbcode['quoted'] != 'none' && $this_bbcode['bbctype'] != 'unparsed_equals' && $this_bbcode['bbctype'] != 'parsed_equals')
+				continue;
+
+			$new_bbcode[] = $this_bbcode;
+		}
+
+		// Any to do?
+		if (!empty($new_bbcode))
+		{
+			wesql::insert('replace',
+				'{db_prefix}bbcode',
+				array(
+					'tag' => 'string',
+					'bbctype' => 'string',
+					'before_code' => 'string',
+					'after_code' => 'string',
+					'content' => 'string',
+					'disabled_before' => 'string',
+					'disabled_after' => 'string',
+					'disabled_content' => 'string',
+					'block_level' => 'string',
+					'test' => 'string',
+					'validate_func' => 'string',
+					'disallow_children' => 'string',
+					'require_parents' => 'string',
+					'require_children' => 'string',
+					'parsed_tags_allowed' => 'string',
+					'quoted' => 'string',
+					'params' => 'string',
+					'trim_wspace' => 'string',
+					'id_plugin' => 'string',
+				),
+				$new_bbcode,
+				array('id_bbcode')
+			);
+		}
+	}
+
 	// Lastly, commit the hooks themselves.
 	$plugin_details = array(
 		'id' => (string) $manifest['id'],
@@ -817,7 +1054,7 @@ function DisablePlugin()
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
 	$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
-	if ($manifest === false || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
+	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
 	// Already installed?
@@ -850,6 +1087,18 @@ function DisablePlugin()
 					'tasks' => $tasks_to_disable,
 				)
 			);
+	}
+
+	// Any bbcode to disable?
+	if (!empty($manifest->bbcodes))
+	{
+		wesql::query('
+			DELETE FROM {db_prefix}bbcode
+			WHERE id_plugin = {string:plugin}',
+			array(
+				'plugin' => (string) $manifest['id'],
+			)
+		);
 	}
 
 	// Note that the internal cache of per-plugin hook info is cleared, not removed. When actually removing the plugin, then we'd purge it.
