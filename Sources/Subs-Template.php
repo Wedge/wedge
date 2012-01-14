@@ -432,7 +432,7 @@ function ob_sessrewrite($buffer)
 	// Have we got any indentation adjustments to do...?
 	$max_loops = 100;
 	while (strpos($buffer, '<inden@zi=') !== false && $max_loops-- > 0)
-		$buffer = preg_replace_callback('~<inden@zi=([^=>]+)=(-?\d+)>((?' . '>[^<]|<(?!@))+?)</inden@zi=\\1>~s', 'wedge_indenazi', $buffer);
+		$buffer = preg_replace_callback('~<inden@zi=([^=>]+)=(-?\d+)>(.*?)</inden@zi=\\1>~s', 'wedge_indenazi', $buffer);
 
 	// Return the changed buffer, and make a final optimization.
 	return str_replace("\n// ]]></script>\n<script><!-- // --><![CDATA[", '', $buffer);

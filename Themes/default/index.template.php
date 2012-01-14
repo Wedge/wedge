@@ -144,7 +144,7 @@ function template_skeleton()
 // The main block above the content.
 function template_html_before()
 {
-	global $context, $user_info, $settings, $options, $txt, $modSettings, $boardurl, $topic;
+	global $context, $settings, $options, $txt, $modSettings, $boardurl, $topic;
 
 	// Declare our HTML5 doctype, and whether to show right to left.
 	// The charset is already specified in the headers so it may be omitted,
@@ -159,12 +159,7 @@ function template_html_before()
 		echo '
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
-	// If user is logged in and has loaded a page in the last 10 minutes,
-	// assume their script files are cached and execute them now. For IE6,
-	// always put it below because our favorite browser is too slow anyway.
-	$context['script_in_head'] = !$context['browser']['is_ie6'] && (time() - $user_info['last_login'] < 600);
-
-	echo theme_base_css(), $context['script_in_head'] ? theme_base_js(1) : '', '
+	echo theme_base_css(), '
 	<!-- Powered by Wedge, © Wedgeward - http://wedge.org -->
 	<title>', $context['page_title_html_safe'], '</title>';
 
@@ -392,7 +387,7 @@ function template_sidebar_before()
 
 		add_js('
 	oThought = new Thought({
-		aPrivacy: ["', $txt['privacy_everywhere'], '","', $txt['privacy_public'], '","', $txt['privacy_members'], '","', $txt['privacy_friends'], '","', $txt['privacy_self'], '"],
+		aPrivacy: { 1: "', $txt['privacy_public'], '", 5: "', $txt['privacy_members'], '", 8: "', $txt['privacy_self'], '" },
 		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '", sEdit: "', $txt['modify'], '", sReply: "', $txt['reply'], '", sDelete: "', $txt['delete'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '
@@ -514,7 +509,7 @@ function template_wrapper_after()
 
 function template_body_after()
 {
-	global $context, $settings, $options, $txt, $modSettings, $footer_coding;
+	global $context, $settings, $options, $txt, $modSettings, $user_info, $footer_coding;
 
 	$no_resize = $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'];
 	echo '
@@ -543,13 +538,24 @@ function template_body_after()
 <script><!-- // --><![CDATA[', $context['footer_js_inline'], '
 // ]]></script>';
 
-	echo !empty($context['script_in_head']) ? '
+	// If user is logged in and has loaded a page in the last 10 minutes,
+	// assume their script files are cached and run them in the header.
+	// IE 6-8 should always put it below because they're too slow anyway.
+	if (!$context['browser']['is_ie8down'] && (time() - $user_info['last_login'] < 600))
+	{
+		$context['header'] .= theme_base_js(1);
+		echo '
 <script><!-- // --><![CDATA[
 	<!-- insert inline events here -->
-	$("select").sb();' : '
+	$("select").sb();';
+	}
+	else
+		echo '
 <script><!-- // --><![CDATA[
 	<!-- insert inline events here -->
-// ]]></script>' . "\n" . theme_base_js() . '<script><!-- // --><![CDATA[', '
+// ]]></script>', "\n", theme_base_js(), '<script><!-- // --><![CDATA[';
+
+	echo '
 	var
 		we_script = "<URL>",
 		we_default_theme_url = ', $settings['theme_url'] === $settings['theme_url'] ? 'we_theme_url = ' : '', '"', $settings['default_theme_url'], '", ', $settings['theme_url'] === $settings['theme_url'] ? '' : '
