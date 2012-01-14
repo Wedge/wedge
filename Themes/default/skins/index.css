@@ -583,62 +583,67 @@ input, select, textarea
 textarea
 	font: 100%/130% $main_font
 
+// No need to style input[type=reset], not using it.
 input[type=submit], input[type=button], .ie_button
 	background: #e5e5e5 url($images/theme/bevel.png)
-	border: 1px solid
-	border-color: #ccc #999 #999 #ccc
+	margin: 0
+	outline: none
 	cursor: pointer
-	height: 24px
-	line-height: 20px
 	font-size: 13px
-	border-radius: 5px
-	padding: 0 5px
+	line-height: normal
+	border-width: 1px
+	border-radius: 6px
+	box-shadow: 0 1px 2px rgba(0,0,0,.1)
+	padding: 3px 5px 4px
 	color: #555
+
 	:hover
 		background-color: #dee
 		color: #000
 
 input.submit
-	background: url($images/buttons.png) no-repeat $bevel
-	padding-left: 24px
+	background: url($images/buttons/submit.png) no-repeat $bevel
 	background-color: #e2f3ea
-	background-position: 4px 3px, 0 0, 0 0
-	:hover
+	padding-left: 23px
+	:hover final
 		background-color: #e8f9f0
 
-input.delete extends input.submit
-	background-color: #f5efe9
-	background-position: 4px -29px, 0 0, 0 0
-	:hover
-		background-color: #fbf5ef
-
 input.save extends input.submit
+	background: url($images/buttons/save.png) no-repeat $bevel
 	background-color: #dff3e8
-	background-position: 4px -61px, 0 0, 0 0
 	:hover
 		background-color: #e5f9ed
 
+input.delete extends input.submit
+	background: url($images/buttons/delete.png) no-repeat $bevel
+	background-color: #f5efe9
+	:hover
+		background-color: #fbf5ef
+
 input.new extends input.submit
+	background: url($images/buttons/new.png) no-repeat $bevel
 	background-color: #e0eaf6
-	background-position: 4px -93px, 0 0, 0 0
 	:hover
 		background-color: #e6f0fc
 
 input.spell extends input.submit
+	background: url($images/buttons/spell.png) no-repeat $bevel
 	background-color: #e0eaf6
-	background-position: 4px -125px, 0 0, 0 0
 	:hover
 		background-color: #e6f0fc
 
-input.cancel extends input.submit
+input.cancel
 	background-color: #fff0e3
-	background-position: 0 100px, 0 0, 0 0
 	padding-left: 5px
 	:hover
 		background-color: #fff5e8
 
+// Declare position only here, so that inherited classes can also set it.
+input.submit
+	background-position: 5px center, 0 0, 0 0
+
 input.search
-	background: #fdfaf9 url($images/filter.gif) 5px 3px no-repeat
+	background: #fdfaf9 url($images/filter.gif) 5px 4px no-repeat
 	height, padding-left: 24px
 	#header &
 		background: rgb(235,235,215) url($images/filter.gif) 5px 4px no-repeat
@@ -1609,8 +1614,9 @@ th.last_th
 
 /*
 	They can be put anywhere, they'll be considered as globals.
-	They can even be redefined later in the source code, even in a
-	satellite stylesheet, and will take effect in parent files as well.
+	They can contain other variables in their definition.
+	They can be rewritten later in the CSS file, or any CSS file
+	included with it. The new value will be used everywhere.
 */
 
 $main_font = Arial, sans-serif

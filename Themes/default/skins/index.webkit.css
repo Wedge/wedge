@@ -11,3 +11,9 @@
 // Thank you Apple, we like your iPod but we don't want iTunes search boxes in our browsers.
 input[type=search]
 	-webkit-appearance: textfield
+
+input[type=submit], input[type=button]
+	padding: 3px 5px 4px
+
+input.submit
+	padding-left: 23px

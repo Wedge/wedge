@@ -19,19 +19,14 @@
 
 /* Misc hacks
 ------------- */
+
+input[type=button], input[type=submit]
+	padding: 3px 4px
+
 // Old IEs reset background-position to 0 if you provide them with multiples values :-/
 input.submit
-	background-position: 4px 2px
-input.delete
-	background-position: 4px -30px
-input.save
-	background-position: 4px -62px
-input.new
-	background-position: 4px -94px
-input.spell
-	background-position: 4px -125px
-input.cancel
-	background-position: 0 100px
+	padding-left: 23px
+	background-position: 4px center
 
 #upper_section h1
 	filter: glow(color=#777777, strength=3)
