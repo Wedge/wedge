@@ -133,7 +133,8 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	$use_sendmail = empty($modSettings['mail_type']) || $modSettings['smtp_host'] == '';
 
 	// Line breaks need to be \r\n only in windows or for SMTP.
-	$line_break = $context['server']['is_windows'] || !$use_sendmail ? "\r\n" : "\n";
+	// ($context['server']['is_windows'] isn't always loaded at this point.)
+	$line_break = strpos(PHP_OS, 'WIN') === 0 || !$use_sendmail ? "\r\n" : "\n";
 
 	// So far so good.
 	$mail_result = true;

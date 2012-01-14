@@ -475,12 +475,13 @@ function cleanRequest()
 	$_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ? htmlspecialchars(wesql::unescape_string($_SERVER['HTTP_USER_AGENT']), ENT_QUOTES) : '';
 
 	// Some final checking.
-	// !!! This is irrelevant now or at the very least, in need of updating.
 	/*
-	if (preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $_SERVER['BAN_CHECK_IP']) === 0)
-		$_SERVER['BAN_CHECK_IP'] = '';
-	if ($_SERVER['REMOTE_ADDR'] == 'unknown')
-		$_SERVER['REMOTE_ADDR'] = '';*/
+		// !!! This is irrelevant now or at the very least, in need of updating.
+		if (preg_match('~^((([1]?\d)?\d|2[0-4]\d|25[0-5])\.){3}(([1]?\d)?\d|2[0-4]\d|25[0-5])$~', $_SERVER['BAN_CHECK_IP']) === 0)
+			$_SERVER['BAN_CHECK_IP'] = '';
+		if ($_SERVER['REMOTE_ADDR'] == 'unknown')
+			$_SERVER['REMOTE_ADDR'] = '';
+	*/
 }
 
 /**

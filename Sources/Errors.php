@@ -58,7 +58,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		if (!isset($found_filename))
 			for ($i = 0; $i < $c; $i++)
 			{
-				if (!empty($array[$i]['function']) && $array[$i]['function'] == 'log_error')
+				if (isset($array[$i]['function']) && $array[$i]['function'] == 'log_error')
 				{
 					$found_filename = $array[$i]['file'];
 					break;
@@ -220,7 +220,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 	if ($log || (!empty($modSettings['enableErrorLogging']) && $modSettings['enableErrorLogging'] == 2))
 	{
 		loadLanguage('Errors', $language);
-		$reload_lang_file = $language != $user_info['language'];
+		$reload_lang_file = !empty($user_info['language']) && $language != $user_info['language'];
 		$error_message = empty($sprintf) ? $txt[$error] : vsprintf($txt[$error], $sprintf);
 		log_error($error_message, $log);
 	}
@@ -490,7 +490,7 @@ function updateOnlineWithError($error, $is_lang, $sprintf = array())
 	if (empty($modSettings['who_enabled']))
 		return;
 
-	$session_id = $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
+	$session_id = !isset($user_info['is_guest']) || $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
 
 	// First, we have to get the online log, because we need to break apart the serialized string.
 	$query = wesql::query('
