@@ -58,6 +58,8 @@
 			- 'default' is the only required layer. All of the non-wrap layers below are recommended.
 			  All blocks are also recommended -- modders will often try to send them data.
 			  Rule of thumb: try to keep everything in your own themes and skins!
+
+			- The indent="x" parameter, where x < 0 or x > 0, will indent the layer's content by x tabs.
 	-->
 
 	<skeleton>

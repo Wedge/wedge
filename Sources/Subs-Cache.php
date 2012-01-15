@@ -804,15 +804,16 @@ function wedge_get_skin_options()
 		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
-		$context['skin_folders'][] = array($fold, $target);
 
 		if (file_exists($fold . 'skin.xml'))
 		{
 			$set = file_get_contents($fold . '/skin.xml');
 			// If this is a replace-type skin, forget all of the parent folders.
 			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
-				$context['skin_folders'] = array($fold, $target);
+				$context['skin_folders'] = array();
 		}
+
+		$context['skin_folders'][] = array($fold, $target);
 	}
 
 	$context['skin_uses_default_theme'] = $is_default_theme;
