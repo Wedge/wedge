@@ -5,7 +5,7 @@
  * This file provides the primary view for the board index; also known as the list of all boards, and the default home page of the forum.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

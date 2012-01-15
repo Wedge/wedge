@@ -5,7 +5,7 @@
  * This is the file which all subscription gateways should call when a payment has been received - it sorts out the user status.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

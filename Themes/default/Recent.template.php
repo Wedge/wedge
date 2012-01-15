@@ -5,7 +5,7 @@
  * Displays the following lists: very recent posts, unread posts and unread replies (unread posts in topics you replied to before.)
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

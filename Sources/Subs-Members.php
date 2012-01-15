@@ -5,7 +5,7 @@
  * Has various supporting functions for member management.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

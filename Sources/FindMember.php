@@ -5,7 +5,7 @@
  * This file handles searches for users when in WAP2 mode (for sending them a message)
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

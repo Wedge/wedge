@@ -5,7 +5,7 @@
  * This file contains the code necessary to display interesting data feeds, normally XML.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

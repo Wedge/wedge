@@ -5,7 +5,7 @@
  * Finds and retrieves information about posted topics, messages, and whatever you haven't read yet.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

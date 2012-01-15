@@ -5,7 +5,7 @@
  * Collects the data needed to show a list of boards for the board index (and sub-boards in the message index)
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

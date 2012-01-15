@@ -84,4 +84,4 @@ INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING IN ANY WAY
 OUT OF THE USE OR MISUSE OF THIS PACKAGE.
 
 	Last Update: March 24, 2011
-	(c) 2010-2011 by Wedgeward (Peter Spicer & René-Gilles Deberdt)
+	(c) 2010-2012 by Wedgeward (Peter Spicer & René-Gilles Deberdt)

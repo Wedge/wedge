@@ -5,7 +5,7 @@
  * Displays fatal errors, the error log, and handles showing buggy lines within file context, to help with debugging.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

@@ -5,7 +5,7 @@
  * This file handles the parsing of BBC (Bulletin Board Code). Let's just say it's important on its own.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

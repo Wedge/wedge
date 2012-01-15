@@ -5,7 +5,7 @@
  * This file handles saving posts, or redirecting back to Post() in Post.php in the event of not being able to make the post for some reason.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

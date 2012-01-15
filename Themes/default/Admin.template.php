@@ -5,7 +5,7 @@
  * The main administration template, including the home page, credits, file versions, censored words, pending-completion, generic settings handling and more.
  *
  * @package wedge
- * @copyright 2010-2011 Wedgeward, wedge.org
+ * @copyright 2010-2012 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
