@@ -2557,7 +2557,7 @@ class wedit
 					"": ' . JavaScriptEscape($txt['font_face']) . ', "courier new": "Courier New",
 					"arial": "Arial", "arial black": "Arial Black", "impact": "Impact",
 					"verdana": "Verdana", "times new roman": "Times New Roman", "georgia": "Georgia",
-					"andale mono": "Andale Mono", "trebuchet ms": "Trebuchet MS", "segoe ui": "Segoe UI"
+					"trebuchet ms": "Trebuchet MS", "segoe ui": "Segoe UI"
 				}]';
 
 					// Font sizes anyone?

@@ -20,10 +20,12 @@
 			- replace (discard the root style and consider this as the basic style)
 
 		Warnings:
-			- If you use "replace", make sure to copy all of the root CSS files (editor.css, etc) into your subfolder.
-			- These files should have their url() paths modified accordingly. e.g., url($images) instead of url(../images)
+			- All files should have their url() paths modified accordingly. e.g., url($images) instead of url(../images)
 			- If you're offering nested skins (/skins/skin1/skin2/), skin2 can only be of the "add" type,
-			  otherwise it should obviously be set in a top-level folder. (/skins/skin2/)
+			  otherwise it should obviously be set directly below the top-level folder. (/skins/skin2/)
+			- If you use "replace", you don't have to copy all files from the top-level skin, Wedge will automatically
+			  retrieve the top-level files if any are missing from your skin. If you do import a file for further
+			  modifications, though, make sure  you import all satellite files (*.something.css) into your skin as well.
 	-->
 
 	<type>

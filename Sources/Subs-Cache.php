@@ -245,18 +245,44 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		foreach ($context['css_suffixes'] as $gen)
 			$files[] = $file . '.' . $gen;
 
+	$fallback_folder = $settings[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/' . reset($context['css_folders']) . '/';
+	$found_files = array();
+
 	foreach ($context['skin_folders'] as $folder)
 	{
 		$fold = $folder[0];
 		$target = $folder[1];
+		if ($fold === $fallback_folder)
+			$fallback_folder = '';
 		foreach ($files as &$file)
 		{
 			$add = $fold . $file . '.css';
 			if (file_exists($add))
 			{
 				$css[] = $add;
+				$found_files[] = $file;
 				if ($db_show_debug === true)
 					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
+				$latest_date = max($latest_date, filemtime($add));
+			}
+		}
+	}
+
+	// The following code is only executed if parsing a replace-type skin and one of the files wasn't found.
+	if (!empty($fallback_folder))
+	{
+		$not_found = array_diff($files, $found_files);
+		foreach ($not_found as $file)
+		{
+			// If this is a satellite file (*.ie6.css or whatever), only include it if the main file wasn't found as well.
+			if (strpos($file, '.') !== false && !in_array(substr($file, 0, strpos($file, '.')), $not_found))
+				continue;
+			$add = $fallback_folder . $file . '.css';
+			if (file_exists($add))
+			{
+				$css[] = $add;
+				if ($db_show_debug === true)
+					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$context['skin_uses_default_theme'] ? 'default_theme_url' : 'theme_url']) . ')';
 				$latest_date = max($latest_date, filemtime($add));
 			}
 		}
