@@ -917,7 +917,7 @@ function template_aeva_form()
 							echo '<div><label><input id="radio', $chk++, '" name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" value="', $value, '"', is_array($name) && isset($name[1]) && $name[1] === true ? ' checked' : '', ' type="radio"', isset($e['custom']) ? ' ' . $e['custom'] : '', '> ', is_array($name) ? $name[0] : $name, '</label></div>';
 					break;
 					case 'yesno';
-						echo '<div><select name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '"><option value="1"', !empty($e['value']) ? ' selected' : '', ' style="color: green">', $txt['media_yes'], '</option><option value="0"', empty($e['value']) ? ' selected' : '', ' style="color: red">', $txt['media_no'], '</option></select></div>';
+						echo '<select name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '"><option value="1"', !empty($e['value']) ? ' selected' : '', ' style="color: green">', $txt['media_yes'], '</option><option value="0"', empty($e['value']) ? ' selected' : '', ' style="color: red">', $txt['media_no'], '</option></select>';
 					break;
 					case 'passwd';
 						echo '<input name="', $e['fieldname'], '" tabindex="', $context['tabindex']++, '" value="', isset($e['value']) ? $e['value'] : '', '" type="password"', isset($e['custom']) ? ' ' . $e['custom'] : '', '>';

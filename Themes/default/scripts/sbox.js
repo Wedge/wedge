@@ -205,7 +205,7 @@
 				$display.blur();
 				$sb.removeClass('open');
 				$dd
-					.animate({ height: 'toggle', opacity: 'toggle' }, instantClose == 1 ? 0 : 150)
+					.animate(is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100)
 					.attr('aria-hidden', true);
 			}
 			$(document).unbind('.sb');
@@ -278,10 +278,11 @@
 			{
 				$dd.height(ddMaxHeight - ddHeight + $dd.height());
 
-				if (scrollbar)
-					scrollbar.update();
-				else
+				if (!scrollbar)
+				{
 					scrollbar = new ScrollBar($dd);
+					centerOnSelected();
+				}
 			}
 
 			$selected.addClass('selected');
@@ -289,21 +290,11 @@
 			$dd.hide().css('visibility', 'visible')
 				.attr('aria-hidden', false);
 
-			if ($sb.hasClass('open'))
-			{
-				$dd.show();
-				centerOnSelected();
-			}
-			else
-			{
-				// If opening via a key stroke, simulate a click.
-				if (via_keyboard)
-					$orig.triggerHandler('click');
-				if (showDown)
-					$dd.animate({ height: 'toggle', opacity: 'toggle' }, instantOpen ? 0 : 150, centerOnSelected);
-				else
-					$dd.fadeIn(instantOpen ? 0 : 150, centerOnSelected);
-			}
+			// If opening via a key stroke, simulate a click.
+			if (via_keyboard)
+				$orig.triggerHandler('click');
+			// Animate height, except for Opera where issues with the inline-block status may lead to glitches.
+			$dd.animate(!showDown || is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantOpen ? 0 : 150);
 			$sb.addClass('open');
 		},
 
@@ -502,7 +493,7 @@
 			startPos = 0, iMouse, iScroll = 0,
 			thumbAxis, viewportAxis, contentAxis,
 			$content, $scrollbar, $thumb,
-			curPos, scrollbarRatio, newwi,
+			scrollbarRatio, newwi,
 
 		wheel = function (e)
 		{
@@ -523,13 +514,12 @@
 
 		scrollTo = function (iTop, iHeight)
 		{
-			// Still buggy when moving the wheel after navigating the select box with the keyboard.
 			if (iHeight)
 				iTop = (iTop - viewportAxis / 2 + iHeight / 2) / scrollbarRatio;
 
-			curPos = Math.min(viewportAxis - thumbAxis, Math.max(0, iTop));
-			$thumb.css('top', curPos);
-			$content.css('top', -curPos * scrollbarRatio);
+			iScroll = Math.min(viewportAxis - thumbAxis, Math.max(0, iTop)) * scrollbarRatio;
+			$thumb.css('top', iScroll / scrollbarRatio);
+			$content.css('top', -iScroll);
 		};
 
 		this.st = scrollTo;
@@ -546,18 +536,13 @@
 
 			// Set size.
 			iMouse = $thumb.offset().top;
-			$thumb.css('top', iScroll / scrollbarRatio);
-			$content.css('top', -iScroll);
 			$thumb.height(thumbAxis);
 		};
 
 		if ($dd.find('.viewport').length)
 			return;
 
-		newwi = $dd.show()
-			.css('visibility', 'hidden')
-			.css('width', 'auto')
-			.contents()
+		newwi = $dd.css('width', 'auto').contents()
 			.wrapAll('<div class="viewport"><div class="overview"></div></div>')
 			.width();
 
@@ -589,8 +574,6 @@
 		}
 		else
 			$dd[0].onmousewheel = wheel;
-
-		$dd.hide().css('visibility', 'visible');
 	};
 
 	// .sb() takes a select box and restyles it.
