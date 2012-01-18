@@ -19,21 +19,21 @@ var
 	can_ajax = $.support.ajax,
 
 	// If you need support for more versions, just test for $.browser.version yourself...
-	is_opera = $.browser.opera,
+	is_opera = !!$.browser.opera,
 	is_opera95up = is_opera && $.browser.version >= 9.5,
 
 	is_ff = !is_opera && ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1,
 	is_gecko = !is_opera && ua.indexOf('gecko') != -1,
 
 	// The webkit ones. Oh my, that's a long list... Right now we're only support iPhone/iPod Touch/iPad and generic Android browsers.
-	is_webkit = $.browser.webkit,
+	is_webkit = !!$.browser.webkit,
 	is_chrome = ua.indexOf('chrome') != -1,
 	is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
 	is_tablet = is_webkit && ua.indexOf('ipad') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1,
 	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android && !is_tablet,
 
-	is_ie = $.browser.msie && !is_opera,
+	is_ie = !!$.browser.msie && !is_opera,
 	is_ie6 = is_ie && $.browser.version == 6,
 	is_ie7 = is_ie && $.browser.version == 7,
 	is_ie8 = is_ie && $.browser.version == 8,
