@@ -1615,7 +1615,7 @@ function MessagePost()
 	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
 
 	// Set the title...
-	$context['page_title'] = $txt['send_message'];
+	$context['page_title'] = $txt['new_message'];
 
 	$context['reply'] = isset($_REQUEST['pmsg']) || isset($_REQUEST['quote']);
 	$_REQUEST['draft_id'] = isset($_REQUEST['draft_id']) ? (int) $_REQUEST['draft_id'] : 0;

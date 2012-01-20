@@ -16,15 +16,14 @@ function weEditor(oOptions)
 	this.opt = oOptions;
 
 	// Create some links to the editor object.
-	this.oTextHandle = this.oFrameHandle = this.oFrameDocument = null;
-	this.oFrameWindow = this.oBreadHandle = null;
+	this.oTextHandle = this.oFrameHandle = null;
+	this.oFrameDocument = this.oFrameWindow = null;
 	this.sCurrentText = 'sText' in this.opt ? this.opt.sText : '';
 
 	// How big?
-	this.sEditWidth = 'sEditWidth' in this.opt ? this.opt.sEditWidth : '70%';
-	this.sEditHeight = 'sEditHeight' in this.opt ? this.opt.sEditHeight : 150;
+	this.sEditWidth = this.opt.sEditWidth || '70%';
+	this.sEditHeight = this.opt.sEditHeight || 150;
 
-	this.showDebug = false;
 	this.bRichTextEnabled = 'bWysiwyg' in this.opt && this.opt.bWysiwyg;
 	this.bRichTextPossible = !this.opt.bRichEditOff && (is_ie || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
 
@@ -32,8 +31,7 @@ function weEditor(oOptions)
 	this.aKeyboardShortcuts = [];
 
 	// This tracks the cursor position on IE to avoid refocus problems.
-	this.cursorX = 0;
-	this.cursorY = 0;
+	this.cursorX = this.cursorY = 0;
 
 	// This is all the elements that can have a simple execCommand.
 	this.oSimpleExec = {
@@ -128,7 +126,7 @@ function weEditor(oOptions)
 		limegreen: '#32cd32'
 	};
 
-	this.sFormId = 'sFormId' in this.opt ? this.opt.sFormId : 'postmodify';
+	this.sFormId = this.opt.sFormId || 'postmodify';
 	this.iArrayPosition = weEditors.length;
 
 	// Current resize state.
@@ -137,13 +135,11 @@ function weEditor(oOptions)
 	// Define the event wrapper functions.
 	var oCaller = this;
 	this.aEventWrappers = {
-		editorKeyUp: function(oEvent) {return oCaller.editorKeyUp(oEvent);},
-		shortcutCheck: function(oEvent) {return oCaller.shortcutCheck(oEvent);},
-		editorBlur: function(oEvent) {return oCaller.editorBlur(oEvent);},
-		editorFocus: function(oEvent) {return oCaller.editorFocus(oEvent);},
-		startResize: function(oEvent) {return oCaller.startResize(oEvent);},
-		resizeOverDocument: function(oEvent) {return oCaller.resizeOverDocument(oEvent);},
-		endResize: function(oEvent) {return oCaller.endResize(oEvent);},
+		editorKeyUp: function (oEvent) { return oCaller.editorKeyUp(oEvent); },
+		shortcutCheck: function (oEvent) { return oCaller.shortcutCheck(oEvent); },
+		startResize: function (oEvent) { return oCaller.startResize(oEvent); },
+		resizeOverDocument: function (oEvent) { return oCaller.resizeOverDocument(oEvent); },
+		endResize: function (oEvent) { return oCaller.endResize(oEvent); },
 		resizeOverIframe: function(oEvent) {return oCaller.resizeOverIframe(oEvent);}
 	};
 
@@ -165,15 +161,8 @@ function weEditor(oOptions)
 		this.oFrameDocument = this.oFrameHandle.contentDocument || ('contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow.document : this.oFrameHandle.document);
 		this.oFrameWindow = 'contentWindow' in this.oFrameHandle ? this.oFrameHandle.contentWindow : this.oFrameHandle.document.parentWindow;
 
-		// Create the debug window... and stick this under the main frame - make it invisible by default.
-		this.oBreadHandle = $('<div id="bread_' + this.opt.sUniqueId + '"></div>').css({ visibility: 'visible', display: 'none' }).appendTo(this.oFrameHandle.parentNode)[0];
-
 		// Size the iframe dimensions to something sensible.
 		$(this.oFrameHandle).css({ width: this.sEditWidth, height: this.sEditHeight, visibility: 'visible' });
-
-		// Only bother formatting the debug window if debug is enabled.
-		if (this.showDebug)
-			$(this.oBreadHandle).addClass('windowbg2').css({ width: this.sEditWidth, height: 20, border: '1px black solid', display: '' });
 
 		// Populate the editor with nothing by default.
 		if (!is_opera95up)
@@ -225,7 +214,6 @@ function weEditor(oOptions)
 		// Show the iframe only if wysiwyrg is on - and hide the text area.
 		this.oTextHandle.style.display = this.bRichTextEnabled ? 'none' : '';
 		this.oFrameHandle.style.display = this.bRichTextEnabled ? '' : 'none';
-		this.oBreadHandle.style.display = this.bRichTextEnabled ? '' : 'none';
 	}
 	// If we can't do advanced stuff, then just do the basics.
 	else
@@ -287,16 +275,6 @@ weEditor.prototype.getText = function (bPrepareEntities, bModeOverride)
 	return sText;
 };
 
-// Return the current text.
-weEditor.prototype.unprotectText = function (sText)
-{
-	// This restores welt, wegt and weamp into boring entities, to unprotect against XML'd information like quotes.
-	sText = sText.replace(/#welt#/g, '&lt;').replace(/#wegt#/g, '&gt;').replace(/#weamp#/g, '&amp;');
-
-	// Return it.
-	return sText;
-};
-
 weEditor.prototype.editorKeyUp = function ()
 {
 	if (this.opt.oDrafts)
@@ -304,22 +282,6 @@ weEditor.prototype.editorKeyUp = function ()
 
 	// Rebuild the breadcrumb.
 	this.updateEditorControls();
-};
-
-weEditor.prototype.editorBlur = function ()
-{
-	if (!is_ie)
-		return;
-
-	// !!! Need to do something here.
-};
-
-weEditor.prototype.editorFocus = function ()
-{
-	if (!is_ie)
-		return;
-
-	// !!! Need to do something here.
 };
 
 // Rebuild the breadcrumb etc - and set things to the correct context.
@@ -337,8 +299,7 @@ weEditor.prototype.updateEditorControls = function ()
 	var
 		aCrumb = [], aAllCrumbs = [],
 		iMaxLength = 6, i = 0,
-		iNumCrumbs, sTree = '',
-		sCurFontName = '', sCurFontSize = '', sCurFontColor = '';
+		iNumCrumbs, sCurFontName = '', sCurFontSize = '', sCurFontColor = '';
 
 		// What is the current element?
 		oCurTag = this.getCurElement(),
@@ -444,7 +405,6 @@ weEditor.prototype.updateEditorControls = function ()
 				continue;
 		}
 
-		sTree += (i != 0 ? '&nbsp;<strong>&gt;</strong>' : '') + '&nbsp;' + sCrumbName;
 		aAllCrumbs.push(sCrumbName);
 	}
 
@@ -457,9 +417,6 @@ weEditor.prototype.updateEditorControls = function ()
 	this.opt.oBBCBox.setSelect('sel_face', sCurFontName);
 	this.opt.oBBCBox.setSelect('sel_size', sCurFontSize);
 	this.opt.oBBCBox.setSelect('sel_color', sCurFontColor);
-
-	if (this.showDebug)
-		this.oBreadHandle.innerHTML = sTree;
 };
 
 // Set the HTML content to be that of the text box - if we are in wysiwyg mode.
@@ -469,11 +426,108 @@ weEditor.prototype.doSubmit = function ()
 		this.oTextHandle.value = this.oFrameDocument.body.innerHTML;
 };
 
+
+// Replaces the currently selected text with the passed text.
+weEditor.prototype.replaceText = function (text)
+{
+	var oTextHandle = this.oTextHandle;
+
+	// Attempt to create a text range (IE).
+	if ('caretPos' in oTextHandle && oTextHandle.createTextRange)
+	{
+		var caretPos = oTextHandle.caretPos;
+
+		caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text + ' ' : text;
+		caretPos.select();
+	}
+	// Mozilla text range replace.
+	else if ('selectionStart' in oTextHandle)
+	{
+		var begin = oTextHandle.value.substr(0, oTextHandle.selectionStart);
+		var end = oTextHandle.value.substr(oTextHandle.selectionEnd);
+		var scrollPos = oTextHandle.scrollTop;
+
+		oTextHandle.value = begin + text + end;
+
+		if (oTextHandle.setSelectionRange)
+		{
+			oTextHandle.focus();
+			var ma, goForward = is_opera && (ma = text.match(/\n/g)) ? ma.length : 0;
+			oTextHandle.setSelectionRange(begin.length + text.length + goForward, begin.length + text.length + goForward);
+		}
+		oTextHandle.scrollTop = scrollPos;
+	}
+	// Just put it on the end.
+	else
+	{
+		oTextHandle.value += text;
+		oTextHandle.focus(oTextHandle.value.length - 1);
+	}
+}
+
+// Surrounds the selected text with text1 and text2.
+weEditor.prototype.surroundText = function (text1, text2)
+{
+	var oTextHandle = this.oTextHandle;
+
+	// Can a text range be created?
+	if ('caretPos' in oTextHandle && oTextHandle.createTextRange)
+	{
+		var caretPos = oTextHandle.caretPos, temp_length = caretPos.text.length;
+
+		caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text1 + caretPos.text + text2 + ' ' : text1 + caretPos.text + text2;
+
+		if (temp_length == 0)
+		{
+			caretPos.moveStart('character', -text2.length);
+			caretPos.moveEnd('character', -text2.length);
+			caretPos.select();
+		}
+		else
+			oTextHandle.focus(caretPos);
+	}
+	// Mozilla text range wrap.
+	else if ('selectionStart' in oTextHandle)
+	{
+		var
+			begin = oTextHandle.value.substr(0, oTextHandle.selectionStart),
+			selection = oTextHandle.value.substr(oTextHandle.selectionStart, oTextHandle.selectionEnd - oTextHandle.selectionStart),
+			end = oTextHandle.value.substr(oTextHandle.selectionEnd),
+			newCursorPos = oTextHandle.selectionStart,
+			scrollPos = oTextHandle.scrollTop;
+
+		oTextHandle.value = begin + text1 + selection + text2 + end;
+
+		if (oTextHandle.setSelectionRange)
+		{
+			var
+				t1 = is_opera ? text1.match(/\n/g) : '',
+				t2 = is_opera ? text2.match(/\n/g) : '',
+				goForward1 = t1 ? t1.length : 0,
+				goForward2 = t2 ? t2.length : 0;
+
+			if (selection.length == 0)
+				oTextHandle.setSelectionRange(newCursorPos + text1.length + goForward1, newCursorPos + text1.length + goForward1);
+			else
+				oTextHandle.setSelectionRange(newCursorPos, newCursorPos + text1.length + selection.length + text2.length + goForward1 + goForward2);
+			oTextHandle.focus();
+		}
+		oTextHandle.scrollTop = scrollPos;
+	}
+	// Just put them on the end, then.
+	else
+	{
+		oTextHandle.value += text1 + text2;
+		oTextHandle.focus(oTextHandle.value.length - 1);
+	}
+}
+
 // Populate the box with text.
 weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iMoveCursorBack)
 {
+	// This restores welt, wegt and weamp into boring entities, to unprotect against XML'd information like quotes.
 	if (bForceEntityReverse)
-		sText = this.unprotectText(sText);
+		sText = sText.replace(/#welt#/g, '&lt;').replace(/#wegt#/g, '&gt;').replace(/#weamp#/g, '&amp;');
 
 	// Erase it all?
 	if (bClear)
@@ -506,7 +560,7 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 
 			var oRange = this.getRange();
 
-			if (oRange.pasteHTML)
+			if (oRange && oRange.pasteHTML)
 			{
 				oRange.pasteHTML(sText);
 
@@ -518,18 +572,19 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 			}
 			else
 			{
-				// If the cursor needs to be positioned, insert the last fragment first.
-				if (typeof iMoveCursorBack != 'undefined' && iMoveCursorBack > 0 && sText.length > iMoveCursorBack)
+				iMoveCursorBack = iMoveCursorBack || 0;
+				this.we_execCommand('inserthtml', false, sText.substr(0, sText.length - iMoveCursorBack));
+
+				// Does the cursor needs to be repositioned?
+				if (iMoveCursorBack)
 				{
-					var oSelection = this.getSelect(false, false);
+					var oSelection = this.getSelect();
 					oSelection.getRangeAt(0).insertNode(this.oFrameDocument.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
 				}
-
-				this.we_execCommand('inserthtml', false, typeof iMoveCursorBack == 'undefined' ? sText : sText.substr(0, sText.length - iMoveCursorBack));
 			}
 		}
 		else
-			replaceText(sText, this.oTextHandle);
+			this.replaceText(sText);
 	}
 
 	if (this.opt.oDrafts)
@@ -594,7 +649,7 @@ weEditor.prototype.handleButtonClick = function (oButtonProperties)
 
 				var sDesc = prompt(oEditorStrings.prompt_text_desc);
 				bbcode = !sDesc || sDesc == '' ? '[url]' + sText + '[/url]' : '[url=' + sText + ']' + sDesc + '[/url]';
-				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
+				this.replaceText(bbcode.replace(/\\n/g, '\n'));
 			}
 			// img popup?
 			else if (sCode == 'img')
@@ -605,15 +660,15 @@ weEditor.prototype.handleButtonClick = function (oButtonProperties)
 					return;
 
 				bbcode = '[img]' + sText + '[/img]';
-				replaceText(bbcode.replace(/\\n/g, '\n'), this.oTextHandle);
+				this.replaceText(bbcode.replace(/\\n/g, '\n'));
 			}
 			// Replace? (No After)
 			else if (oButtonProperties[5] === '')
-				replaceText(oButtonProperties[4].replace(/\\n/g, '\n'), this.oTextHandle);
+				this.replaceText(oButtonProperties[4].replace(/\\n/g, '\n'));
 
 			// Surround!
 			else
-				surroundText(oButtonProperties[4].replace(/\\n/g, '\n'), oButtonProperties[5].replace(/\\n/g, '\n'), this.oTextHandle);
+				this.surroundText(oButtonProperties[4].replace(/\\n/g, '\n'), oButtonProperties[5].replace(/\\n/g, '\n'));
 		}
 		else
 		{
@@ -659,7 +714,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 		if (!this.bRichTextEnabled)
 		{
 			sValue = sValue.replace(/"/, '');
-			surroundText('[font=' + sValue + ']', '[/font]', this.oTextHandle);
+			this.surroundText('[font=' + sValue + ']', '[/font]');
 		}
 		else // WYSIWYG
 		{
@@ -672,7 +727,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 	else if (oSelectProperties[1] == 'sel_size')
 	{
 		if (!this.bRichTextEnabled)
-			surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]', this.oTextHandle);
+			this.surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]');
 		else // WYSIWYG
 			this.we_execCommand('fontsize', false, sValue);
 	}
@@ -680,7 +735,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 	else if (oSelectProperties[1] == 'sel_color')
 	{
 		if (!this.bRichTextEnabled)
-			surroundText('[color=' + sValue + ']', '[/color]', this.oTextHandle);
+			this.surroundText('[color=' + sValue + ']', '[/color]');
 		else // WYSIWYG
 			this.we_execCommand('forecolor', false, sValue);
 	}
@@ -737,7 +792,7 @@ weEditor.prototype.insertLink = function (sType)
 		// Check if we have text selected and if not force us to have some.
 		var oCurText = this.getSelect(true, true);
 
-		if (oCurText.toString().length != 0)
+		if (oCurText.toString().length)
 		{
 			this.we_execCommand('unlink');
 			this.we_execCommand('createlink', false, sText);
@@ -882,7 +937,7 @@ weEditor.prototype.removeFormatting = function ()
 		// Then just anything that looks like BBC.
 		cText = cText.replace(RegExp("\\[/?[A-Za-z]+\\]", 'g'), '');
 
-		replaceText(cText, this.oTextHandle);
+		this.replaceText(cText);
 	}
 };
 
@@ -940,15 +995,12 @@ weEditor.prototype.onToggleDataReceived = function (oXMLDoc)
 	if (this.bRichTextEnabled)
 	{
 		this.oFrameHandle.style.display = '';
-		if (this.showDebug)
-			this.oBreadHandle.style.display = '';
 		this.oTextHandle.style.display = 'none';
 	}
 	else
 	{
 		sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 		this.oFrameHandle.style.display = 'none';
-		this.oBreadHandle.style.display = 'none';
 		this.oTextHandle.style.display = '';
 	}
 

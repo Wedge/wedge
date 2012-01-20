@@ -1599,21 +1599,6 @@ $sites = array(
 		'fix-html-url' => 'http://video.mail.ru/mail/$1$4/$2$5/$3$6.html',
 	),
 	array(
-		'id' => 'mgv',
-		'title' => 'MegaVideo',
-		'website' => 'http://www.megavideo.com',
-		'type' => 'pop',
-		'pattern' => 'http://(?:www\.)?megavideo\.com/(?:\?[^"]*?v=|v/)([0-9a-z]{8})',
-		'movie' => 'http://www.megavideo.com/v/$2.0.0',
-		'size' => array(432, 351),
-		// http://www.megavideo.com/?v=LQ24A1SZ
-		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1">.*?</object>',
-		'lookup-url' => 'http://(?:www\.)?megavideo\.com/(?:\?[^"]*?d=|d/)([0-9a-z]{8})',
-		'lookup-pattern' => 'name="movie" value="(http://www\.megavideo\.com/v/\w+)">',
-		'lookup-final-url' => '$1',
-		'lookup-title' => false,
-	),
-	array(
 		'id' => 'mil',
 		'title' => 'Milliyet',
 		'website' => 'http://video.milliyet.com.tr',
