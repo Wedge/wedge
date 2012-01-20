@@ -535,13 +535,13 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 	{
 		if (this.bRichTextEnabled)
 		{
-			this.oFrameDocument.body.innerHTML = sText;
+			$(this.oFrameDocument.body).height($(this.oFrameHandle).height()).html(sText);
 
 			// Trick the cursor into coming back!
-			if (is_ff || is_opera)
+			if (is_opera || is_ff)
 			{
-				// For some obscure reason, FF3 Beta 2 and some
-				// Opera versions may require this.
+				// For some obscure reason, some Opera versions still require this.
+				// Firefox also needs it to focus, although it doesn't actually blink.
 				this.oFrameDocument.body.contentEditable = false;
 				this.oFrameDocument.designMode = 'off';
 				this.oFrameDocument.designMode = 'on';
@@ -1085,7 +1085,10 @@ weEditor.prototype.resizeTextArea = function (newHeight)
 {
 	// Do the HTML editor - but only if it's enabled!
 	if (this.bRichTextPossible)
+	{
+		$(this.oFrameDocument.body).height(newHeight);
 		$(this.oFrameHandle).height(newHeight);
+	}
 
 	// Do the text box regardless!
 	this.oText.height(newHeight);
