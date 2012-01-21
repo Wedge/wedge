@@ -10,6 +10,7 @@
 	border: 1px solid #808080
 	padding: 2px !important
 	margin: 0
+	resize: none
 
 .rich_editor, .rich_editor_frame
 	background: #fff

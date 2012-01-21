@@ -138,9 +138,8 @@ function weEditor(oOptions)
 		editorKeyUp: function (oEvent) { return oCaller.editorKeyUp(oEvent); },
 		shortcutCheck: function (oEvent) { return oCaller.shortcutCheck(oEvent); },
 		startResize: function (oEvent) { return oCaller.startResize(oEvent); },
-		resizeOverDocument: function (oEvent) { return oCaller.resizeOverDocument(oEvent); },
-		endResize: function (oEvent) { return oCaller.endResize(oEvent); },
-		resizeOverIframe: function(oEvent) {return oCaller.resizeOverIframe(oEvent);}
+		resizeOver: function (oEvent) { return oCaller.resizeOver(oEvent); },
+		endResize: function (oEvent) { return oCaller.endResize(oEvent); }
 	};
 
 	// Get a reference to the textarea.
@@ -203,13 +202,11 @@ function weEditor(oOptions)
 		this.oText
 			.bind('keydown', this.aEventWrappers.shortcutCheck)
 			.bind('keydown', splitQuote);
+
 		if (this.opt.oDrafts)
 			this.oText.keyup(function () {
 				oCaller.opt.oDrafts.needsUpdate(true); // This is established earlier in this function.
 			});
-
-		if (is_ie)
-			$(this.oFrameDocument).blur(this.aEventWrappers.editorBlur).focus(this.aEventWrappers.editorFocus);
 
 		// Show the iframe only if wysiwyrg is on - and hide the text area.
 		this.oText.toggle(!this.bRichTextEnabled);
@@ -228,11 +225,11 @@ function weEditor(oOptions)
 
 	// Show the resizer.
 	var sizer = $('#' + this.opt.sUniqueId + '_resizer');
-	if (sizer.length && (!is_opera || is_opera95up) && !(is_chrome && !this.bRichTextEnabled))
+	if (sizer.length && (!is_opera || is_opera95up))
 	{
 		// Currently nothing is being resized... I assume!
 		window.weCurrentResizeEditor = null;
-		sizer.show().mousedown(this.aEventWrappers.startResize);
+		sizer.show().bind('mousedown', this.aEventWrappers.startResize);
 	}
 
 	// Set the text - if WYSIWYG is enabled that is.
@@ -535,7 +532,7 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 	{
 		if (this.bRichTextEnabled)
 		{
-			$(this.oFrameDocument.body).height($(this.oFrameHandle).height()).html(sText);
+			$(this.oFrameDocument.body).html(sText);
 
 			// Trick the cursor into coming back!
 			if (is_opera || is_ff)
@@ -1081,19 +1078,6 @@ weEditor.prototype.onSpellCheckCompleteDataReceived = function (oXMLDoc)
 	this.setFocus();
 };
 
-weEditor.prototype.resizeTextArea = function (newHeight)
-{
-	// Do the HTML editor - but only if it's enabled!
-	if (this.bRichTextPossible)
-	{
-		$(this.oFrameDocument.body).height(newHeight);
-		$(this.oFrameHandle).height(newHeight);
-	}
-
-	// Do the text box regardless!
-	this.oText.height(newHeight);
-};
-
 // Register default keyboard shortcuts.
 weEditor.prototype.registerDefaultShortcuts = function ()
 {
@@ -1200,51 +1184,35 @@ weEditor.prototype.startResize = function (oEvent)
 	window.weCurrentResizeEditor = this.iArrayPosition;
 
 	this.oCurrentResize.old_y = oEvent.pageY;
-	this.oCurrentResize.old_rel_y = null;
 	this.oCurrentResize.cur_height = this.oText.height();
 
 	// Set the necessary events for resizing.
-	$(is_ie ? document : window).mousemove(this.aEventWrappers.resizeOverDocument);
-
-	if (this.bRichTextPossible)
-		$(this.oFrameDocument).mousemove(this.aEventWrappers.resizeOverIframe).mouseup(this.aEventWrappers.endResize);
-
-	$(document).mouseup(this.aEventWrappers.endResize);
+	$(document)
+		.bind('mousemove', this.aEventWrappers.resizeOver)
+		.bind('mouseup', this.aEventWrappers.endResize);
 
 	return false;
 };
 
-// This is kind of a cheat, as it only works over the IFRAME.
-weEditor.prototype.resizeOverIframe = function (oEvent)
+weEditor.prototype.resizeTextArea = function (newHeight)
 {
-	if (!oEvent || window.weCurrentResizeEditor == null)
-		return true;
+	newHeight = Math.max(30, newHeight);
 
-	if (this.oCurrentResize.old_rel_y == null)
-		this.oCurrentResize.old_rel_y = oEvent.pageY;
-	else
-	{
-		var iNewHeight = oEvent.pageY - this.oCurrentResize.old_rel_y + this.oCurrentResize.cur_height;
-		if (iNewHeight < 0)
-			this.endResize();
-		else
-			this.resizeTextArea(iNewHeight);
-	}
+	// Do the HTML editor - but only if it's enabled!
+	if (this.bRichTextPossible)
+		$(this.oFrameHandle).height(newHeight);
 
-	return false;
+	// Do the text box regardless!
+	this.oText.height(newHeight);
 };
 
 // This resizes an editor.
-weEditor.prototype.resizeOverDocument = function (oEvent)
+weEditor.prototype.resizeOver = function (oEvent)
 {
 	if (!oEvent || window.weCurrentResizeEditor == null)
 		return true;
 
-	var iNewHeight = oEvent.pageY - this.oCurrentResize.old_y + this.oCurrentResize.cur_height;
-	if (iNewHeight < 0)
-		this.endResize();
-	else
-		this.resizeTextArea(iNewHeight);
+	this.resizeTextArea(oEvent.pageY - this.oCurrentResize.old_y + this.oCurrentResize.cur_height);
 
 	return false;
 };
@@ -1257,15 +1225,9 @@ weEditor.prototype.endResize = function (oEvent)
 	window.weCurrentResizeEditor = null;
 
 	// Remove the event...
-	$(is_ie ? document : window).unbind('mousemove', this.aEventWrappers.resizeOverDocument);
-
-	if (this.bRichTextPossible)
-		$(this.oFrameDocument).unbind('mousemove', this.aEventWrappers.resizeOverIframe);
-
-	$(document).unbind('mouseup', this.aEventWrappers.endResize);
-
-	if (this.bRichTextPossible)
-		$(this.oFrameDocument).unbind('mouseup', this.aEventWrappers.endResize);
+	$(document)
+		.unbind('mousemove', this.aEventWrappers.resizeOver)
+		.unbind('mouseup', this.aEventWrappers.endResize);
 
 	return false;
 };
