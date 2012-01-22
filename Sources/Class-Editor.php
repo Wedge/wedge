@@ -2624,13 +2624,12 @@ class wedit
 		add_js('
 	var oEditorHandle_' . $this->id . ' = new weEditor({
 		sFormId: ' . JavaScriptEscape($this->form) . ',
-		sUniqueId: ' . JavaScriptEscape($this->id) . ',
-		bRTL: ' . ($txt['lang_rtl'] ? 'true' : 'false') . ',
-		bWysiwyg: ' . ($this->rich_active ? 'true' : 'false') . ',
+		sUniqueId: ' . JavaScriptEscape($this->id) . ($this->rich_active ? ',
+		bWysiwyg: true' : '') . ',
 		sText: ' . JavaScriptEscape($this->rich_active ? $this->rich_value : '') . ',
 		sEditWidth: ' . JavaScriptEscape($this->width) . ',
-		sEditHeight: ' . JavaScriptEscape($this->height) . ',
-		bRichEditOff: ' . (empty($modSettings['disable_wysiwyg']) ? 'false' : 'true') . ',
+		sEditHeight: ' . JavaScriptEscape($this->height) . (empty($modSettings['disable_wysiwyg']) ? '' : ',
+		bRichEditOff: true') . ',
 		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
 		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . ',
 		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . (empty($unparsed_tags) ? '' : ',
