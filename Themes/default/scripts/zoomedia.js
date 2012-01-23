@@ -29,7 +29,7 @@
 			options = options || {},
 			lang = options.lang || {},
 			outline = options.outline || '',
-			duration = options.expand || 800,
+			duration = options.expand || 500,
 
 			zooming = active = false,
 			original_size = {},

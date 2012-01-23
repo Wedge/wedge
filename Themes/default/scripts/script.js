@@ -644,7 +644,7 @@ function Thought(opt)
 
 		// Make that personal text editable (again)!
 		cancel = function () {
-			$('#thought_form').prev().removeClass('hide').prev().show().end().end().remove();
+			$('#thought_form').siblings().show().end().remove();
 		};
 
 	// Show the input after the user has clicked the text.
@@ -664,14 +664,14 @@ function Thought(opt)
 			pr += '<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
 
 		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
-		thought.toggle(is_new && tid).next().addClass('hide').after('\
+		thought.toggle(is_new && tid).after('\
 			<form id="thought_form">\
 				<input type="text" maxlength="255" id="ntho">\
 				<select id="npriv">' + pr + '</select>\
 				<input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '">\
 				<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save">\
 				<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
-			</form>');
+			</form>').siblings('.thought_actions').hide();
 		$('#ntho').focus().val(cur_text);
 		$('#npriv').sb();
 	};
