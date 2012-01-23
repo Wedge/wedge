@@ -587,9 +587,10 @@ class wecss_nesting extends wecss
 		/******************************************************************************
 		 Rebuild parsed CSS
 		 ******************************************************************************/
-		$css = $standard_nest = '';
 
+		$css = $standard_nest = '';
 		$bases = $removals = $unextends = array();
+
 		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
 		foreach ($this->rules as $n => &$node)
 		{
@@ -836,6 +837,7 @@ class wecss_nesting extends wecss
 		$rule = 'rule';
 		$prop = 'property';
 
+		// This is where we analyze the nesting levels and rebuild the original structure.
 		foreach ($tags as &$tag)
 		{
 			if (empty($tag[1]))
@@ -859,7 +861,9 @@ class wecss_nesting extends wecss
 					);
 				}
 			}
-			else
+			// If the nesting is broken, $level will be < 0 and will generate an esoteric error.
+			// We should skip that, at least until we have a nice and clear error message for that.
+			elseif ($level > 0)
 				$level--;
 		}
 

@@ -90,11 +90,13 @@ function template_admin_live_news()
 {
 	global $txt, $scripturl;
 	echo '
+		<section>
 			<we:title>
 				<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['live'], '
 			</we:title>
-			<div id="wedge_news">', $txt['lfyi'], '</div>';
+			<div id="wedge_news">', $txt['lfyi'], '</div>
+		</section>';
 }
 
 // Display version numbers and who the admins are.
@@ -103,6 +105,7 @@ function template_admin_support_info()
 	global $scripturl, $txt, $context;
 	// Show the user version information from their server.
 	echo '
+		<section>
 			<we:title>
 				', $txt['support_title'], '
 			</we:title>
@@ -125,7 +128,8 @@ function template_admin_support_info()
 				(', $context['more_admins_link'], ')';
 
 	echo '
-			</div>';
+			</div>
+		</section>';
 }
 
 // Show some support information and credits to those who helped make this.

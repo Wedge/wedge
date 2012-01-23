@@ -26,6 +26,7 @@ function template_generic_menu_sidebar()
 	{
 		// Show the section header - and pump up the line spacing for readability.
 		echo '
+	<section>
 		<we:title2>';
 
 		if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
@@ -57,22 +58,20 @@ function template_generic_menu_sidebar()
 			// Is this the current area, or just some area?
 			if ($i == $menu_context['current_area'])
 			{
-				echo '
-				<strong><a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a></strong>';
+				echo '<strong><a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a></strong>';
 
 				if (empty($context['tabs']))
 					$context['tabs'] = isset($area['subsections']) ? $area['subsections'] : array();
 			}
 			else
-				echo '
-				<a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a>';
+				echo '<a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a>';
 
-			echo '
-			</li>';
+			echo '</li>';
 		}
 
 		echo '
-		</ul>';
+		</ul>
+	</section>';
 
 		$firstSection = false;
 	}

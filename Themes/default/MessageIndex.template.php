@@ -657,25 +657,6 @@ function template_messageindex_childboards()
 	}
 }
 
-function template_messageindex_whoviewing()
-{
-	global $txt, $context, $settings;
-
-	echo '
-		<we:title2>
-			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
-		</we:title2>
-		<p>';
-
-	if ($settings['display_who_viewing'] == 1)
-		echo count($context['view_members']), ' ', count($context['view_members']) === 1 ? $txt['who_member'] : $txt['members'];
-	else
-		echo empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) or $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
-
-	echo $txt['who_and'], $context['view_num_guests'], ' ', $context['view_num_guests'] == 1 ? $txt['guest'] : $txt['guests'], $txt['who_viewing_board'], '
-		</p>';
-}
-
 function template_messageindex_draft()
 {
 	global $context, $txt, $scripturl;
@@ -697,11 +678,33 @@ function template_messageindex_sortlink($sort, $caption)
 		echo '<a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>';
 }
 
+function template_messageindex_whoviewing()
+{
+	global $txt, $context, $settings;
+
+	echo '
+	<section>
+		<we:title2>
+			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
+		</we:title2>
+		<p>';
+
+	if ($settings['display_who_viewing'] == 1)
+		echo count($context['view_members']), ' ', count($context['view_members']) === 1 ? $txt['who_member'] : $txt['members'];
+	else
+		echo empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) or $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
+
+	echo $txt['who_and'], $context['view_num_guests'], ' ', $context['view_num_guests'] == 1 ? $txt['guest'] : $txt['guests'], $txt['who_viewing_board'], '
+		</p>
+	</section>';
+}
+
 function template_messageindex_legend()
 {
 	global $settings, $txt, $context, $modSettings;
 
 	echo '
+	<section>
 		<we:title2>
 			<img src="', $settings['images_url'], '/icons/assist.gif">
 			', $txt['legend'], '
@@ -711,7 +714,8 @@ function template_messageindex_legend()
 			<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ', $txt['sticky_topic'], '<br>', $modSettings['pollMode'] == '1' ? '
 			<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '<br>', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
 			<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] : '', '
-		</p>';
+		</p>
+	</section>';
 }
 
 // Show statistical style information...
@@ -727,13 +731,15 @@ function template_messageindex_statistics()
 	$type = $board_info['type'] == 'board' ? 'board' : 'blog';
 
 	echo '
-				<we:title2>
-					<a href="', $scripturl, '?board=', $context['current_board'], ';action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
-					', $txt[$type . '_stats'], '
-				</we:title2>
-				<p>
-					', $board_info['num_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', number_context('topics', $board_info['total_topics']), '<br>
-				</p>';
+	<section>
+		<we:title2>
+			<a href="', $scripturl, '?board=', $context['current_board'], ';action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
+			', $txt[$type . '_stats'], '
+		</we:title2>
+		<p>
+			', $board_info['num_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', number_context('topics', $board_info['total_topics']), '<br>
+		</p>
+	</section>';
 }
 
 ?>

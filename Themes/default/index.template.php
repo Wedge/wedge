@@ -336,6 +336,7 @@ function template_sidebar_before()
 	global $txt, $context, $modSettings;
 
 	echo '
+	<section>
 		<we:title>
 			<span class="greeting">', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</span>
 		</we:title>
@@ -363,18 +364,22 @@ function template_sidebar_before()
 		echo '
 			</ul>
 			<p class="now">', $context['current_time'], '</p>
-		</div>';
+		</div>
+	</section>';
 
 		// Is the forum in maintenance mode?
 		if ($context['in_maintenance'] && $context['user']['is_admin'])
 			echo '
-		<p class="notice">', $txt['maintain_mode_on'], '</p>';
+	<section>
+		<p class="notice">', $txt['maintain_mode_on'], '</p>
+	</section>';
 
 		// This is where we'll show the Thought postbox.
 		$thought_id = isset($context['user']['data']['id_thought']) ? $context['user']['data']['id_thought'] : 0;
 		$thought_prv = isset($context['user']['data']['thought_privacy']) ? $context['user']['data']['thought_privacy'] : 1;
 
 		echo '
+	<section>
 		<we:title>
 			<div class="thought_icon"></div>
 			', $txt['thought'], ' |
@@ -383,7 +388,8 @@ function template_sidebar_before()
 		</we:title>
 		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
 
-		echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>';
+		echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>
+	</section>';
 
 		add_js('
 	oThought = new Thought({
@@ -414,11 +420,13 @@ function template_sidebar_before()
 		echo '
 				<input type="hidden" name="hash_passwrd" value="">
 			</form>
-		</div>';
+		</div>
+	</section>';
 	}
 	else
 		echo '
-		</div>';
+		</div>
+	</section>';
 }
 
 // This natty little function adds feed links to the sidebar. Mostly autonomous, it's lovely for that.
@@ -428,6 +436,7 @@ function template_sidebar_feed()
 	global $topic, $board, $txt, $context, $board_info;
 
 	echo '
+	<section>
 		<we:title>
 			<div class="feed_icon"></div>
 			', $txt['feed'], '
@@ -454,7 +463,8 @@ function template_sidebar_feed()
 	echo '
 			<dt>', $txt['feed_everywhere'], '</dt>
 			<dd>', sprintf($txt['feed_posts'], $feed), ' / ', sprintf($txt['feed_topics'], $feed . ';sa=news'), '</dd>
-		</dl>';
+		</dl>
+	</section>';
 }
 
 function template_sidebar_wrap_after()

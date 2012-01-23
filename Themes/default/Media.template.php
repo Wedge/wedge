@@ -373,6 +373,11 @@ function template_aeva_item_details()
 	global $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
 
 	$item =& $context['item_data'];
+	$in_sidebar = $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'];
+
+	if ($in_sidebar)
+		echo '
+	<section>';
 
 	echo '
 		<div id="media-details">
@@ -506,6 +511,10 @@ function template_aeva_item_details()
 				</ul>
 			</we:block>
 		</div>';
+
+	if ($in_sidebar)
+		echo '
+	</section>';
 }
 
 function template_aeva_item_wrap_end()

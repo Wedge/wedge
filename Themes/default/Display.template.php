@@ -739,28 +739,6 @@ function template_quick_reply()
 	}
 }
 
-function template_display_whoviewing()
-{
-	global $context, $txt, $settings;
-
-	echo '
-			<we:title2>
-				<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
-			</we:title2>
-			<p>';
-
-	// Show just numbers...?
-	if ($settings['display_who_viewing'] == 1)
-		echo count($context['view_members']), ' ', count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'];
-	// Or show the actual people viewing the topic?
-	else
-		echo empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
-
-	// Now show how many guests are here too.
-	echo $txt['who_and'], $context['view_num_guests'], ' ', $context['view_num_guests'] == 1 ? $txt['guest'] : $txt['guests'], $txt['who_viewing_topic'], '
-			</p>';
-}
-
 function template_report_success()
 {
 	global $context, $txt;
@@ -845,6 +823,30 @@ function template_mod_buttons()
 			<div id="moderationbuttons">', template_button_strip($context['nav_buttons']['mod'], 'left', array('id' => 'moderationbuttons_strip')), '</div>';
 }
 
+function template_display_whoviewing()
+{
+	global $context, $txt, $settings;
+
+	echo '
+	<section>
+		<we:title2>
+			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
+		</we:title2>
+		<p>';
+
+	// Show just numbers...?
+	if ($settings['display_who_viewing'] == 1)
+		echo count($context['view_members']), ' ', count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'];
+	// Or show the actual people viewing the topic?
+	else
+		echo empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) || $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
+
+	// Now show how many guests are here too.
+	echo $txt['who_and'], $context['view_num_guests'], ' ', $context['view_num_guests'] == 1 ? $txt['guest'] : $txt['guests'], $txt['who_viewing_topic'], '
+		</p>
+	</section>';
+}
+
 // Show statistical style information...
 function template_display_statistics()
 {
@@ -854,14 +856,16 @@ function template_display_statistics()
 		return;
 
 	echo '
-				<we:title2>
-					<img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '">
-					', $txt['topic_stats'], '
-				</we:title2>
-				<p>
-					', number_context('views', $context['num_views']), '
-					<br>', number_context('replies', $context['num_replies']), '
-				</p>';
+	<section>
+		<we:title2>
+			<img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '">
+			', $txt['topic_stats'], '
+		</we:title2>
+		<p>
+			', number_context('views', $context['num_views']), '
+			<br>', number_context('replies', $context['num_replies']), '
+		</p>
+	</section>';
 }
 
 ?>

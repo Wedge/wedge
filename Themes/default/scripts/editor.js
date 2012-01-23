@@ -16,7 +16,6 @@ function weEditor(oOptions)
 	this.opt = oOptions;
 
 	// Create some links to the editor object.
-	this.oText = this.oFrame = this.oFrameWindow = this.oFrameHandle = null;
 	this.sCurrentText = this.opt.sText || '';
 
 	// How big?
@@ -152,43 +151,40 @@ function weEditor(oOptions)
 	if (this.bRichTextPossible)
 	{
 		// Make the iframe itself, stick it next to the current text area, and give it an ID.
-		this.oFrameHandle = $('<iframe class="rich_editor_frame" id="html_' + this.opt.sUniqueId + '" src="about:blank" tabindex="' + this.oText[0].tabIndex + '"></iframe>')
-			.css({ width: this.sEditWidth, height: this.sEditHeight, visibility: 'visible' })
+		var fh = this.$FrameHandle = $('<iframe class="rich_editor_frame" id="html_' + this.opt.sUniqueId + '" src="about:blank" tabindex="' + this.oText[0].tabIndex + '"></iframe>')
+			.width(this.sEditWidth).height(this.sEditHeight)
 			.insertAfter(this.oText);
 
 		// Create some handy shortcuts.
-		this.oFrame = this.oFrameHandle[0].contentDocument || this.oFrameHandle[0].document || this.oFrameHandle[0].contentWindow.document;
-		this.oFrameWindow = this.oFrameHandle[0].contentWindow || this.oFrame.parentWindow;
-
-		// Size the iframe dimensions to something sensible.
-		this.oFrameHandle.css({ width: this.sEditWidth, height: this.sEditHeight, visibility: 'visible' });
+		this.oFrameDoc = this.$FrameHandle[0].contentDocument || this.$FrameHandle[0].contentWindow.document;
+		this.oFrameWindow = this.$FrameHandle[0].contentWindow || this.oFrameDoc.parentWindow;
 
 		// Populate the editor with nothing by default. Opera doesn't need that, but won't complain either.
-		this.oFrame.open();
-		this.oFrame.write('');
-		this.oFrame.close();
+		this.oFrameDoc.open();
+		this.oFrameDoc.write('');
+		this.oFrameDoc.close();
 
 		// Inherit direction (LTR/RTL) from our <html> tag.
-		this.oFrame.body.dir = document.getElementsByTagName('html')[0].dir;
+		this.$FrameBody = $(this.oFrameDoc.body);
+		this.$FrameBody[0].dir = $(document).find('html')[0].dir;
 
 		// Mark it as editable...
-		if (this.oFrame.body.contentEditable)
-			this.oFrame.body.contentEditable = true;
+		if (this.$FrameBody[0].contentEditable)
+			this.$FrameBody[0].contentEditable = true;
 		else
 		{
-			this.oFrameHandle.show();
-			this.oFrame.designMode = 'on';
-			this.oFrameHandle.hide();
+			this.$FrameHandle.show();
+			this.oFrameDoc.designMode = 'on';
+			this.$FrameHandle.hide();
 		}
 
-		var thisFrameHead = this.oFrameHandle.contents().find('head');
-		$('link[rel=stylesheet]').each(function() { thisFrameHead.append($('<p>').append($(this).clone()).html()); });
+		$('link[rel=stylesheet]').each(function() { fh.contents().find('head').append($('<p>').append($(this).clone()).html()); });
 
 		// Apply the class and set the frame padding/margin inside the editor.
-		$(this.oFrame.body).addClass('rich_editor').css({ padding: 1, margin: 0 });
+		this.$FrameBody.addClass('rich_editor').css({ padding: 1, margin: 0 });
 
 		// Attach functions to the key and mouse events.
-		$(this.oFrame)
+		$(this.oFrameDoc)
 			.bind('keyup mouseup', this.aEventWrappers.editorKeyUp)
 			.bind('keydown', this.aEventWrappers.shortcutCheck);
 		this.oText
@@ -202,7 +198,7 @@ function weEditor(oOptions)
 
 		// Show the iframe only if wysiwyrg is on - and hide the text area.
 		this.oText.toggle(!this.bRichTextEnabled);
-		this.oFrameHandle.toggle(this.bRichTextEnabled);
+		this.$FrameHandle.toggle(this.bRichTextEnabled);
 	}
 	// If we can't do advanced stuff, then just do the basics.
 	else
@@ -243,7 +239,7 @@ weEditor.prototype.getText = function (bPrepareEntities, bModeOverride, undefine
 {
 	var sText, bCurMode = bModeOverride !== undefined ? bModeOverride : this.bRichTextEnabled;
 
-	if (!bCurMode || this.oFrame === null)
+	if (!bCurMode || !this.oFrameDoc)
 	{
 		sText = this.oText.val();
 		if (bPrepareEntities)
@@ -251,7 +247,7 @@ weEditor.prototype.getText = function (bPrepareEntities, bModeOverride, undefine
 	}
 	else
 	{
-		sText = this.oFrame.body.innerHTML;
+		sText = this.$FrameBody.html();
 		if (bPrepareEntities)
 			sText = sText.replace(/&lt;/g, '#welt#').replace(/&gt;/g, '#wegt#').replace(/&amp;/g, '#weamp#');
 	}
@@ -412,7 +408,7 @@ weEditor.prototype.updateEditorControls = function ()
 weEditor.prototype.doSubmit = function ()
 {
 	if (this.bRichTextEnabled)
-		this.oText.val(this.oFrame.body.innerHTML);
+		this.oText.val(this.$FrameBody.html());
 };
 
 
@@ -453,7 +449,7 @@ weEditor.prototype.replaceText = function (text)
 		oTextHandle.value += text;
 		oTextHandle.focus(oTextHandle.value.length - 1);
 	}
-}
+};
 
 // Surrounds the selected text with text1 and text2.
 weEditor.prototype.surroundText = function (text1, text2)
@@ -510,7 +506,7 @@ weEditor.prototype.surroundText = function (text1, text2)
 		oTextHandle.value += text1 + text2;
 		oTextHandle.focus(oTextHandle.value.length - 1);
 	}
-}
+};
 
 // Populate the box with text.
 weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iMoveCursorBack)
@@ -524,16 +520,16 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 	{
 		if (this.bRichTextEnabled)
 		{
-			$(this.oFrame.body).html(sText);
+			this.$FrameBody.html(sText);
 
 			// Trick the cursor into coming back!
 			if (is_opera || is_ff)
 			{
 				// For some obscure reason, some Opera versions still require this.
 				// Firefox also needs it to focus, although it doesn't actually blink.
-				this.oFrame.body.contentEditable = false;
-				this.oFrame.designMode = 'off';
-				this.oFrame.designMode = 'on';
+				this.$FrameBody[0].contentEditable = false;
+				this.oFrameDoc.designMode = 'off';
+				this.oFrameDoc.designMode = 'on';
 			}
 		}
 		else
@@ -545,8 +541,8 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 		if (this.bRichTextEnabled)
 		{
 			// IE croaks if you have an image selected and try to insert!
-			if ('selection' in this.oFrame && this.oFrame.selection.type != 'Text' && this.oFrame.selection.type != 'None' && this.oFrame.selection.clear)
-				this.oFrame.selection.clear();
+			if (this.oFrameDoc.selection && this.oFrameDoc.selection.type != 'Text' && this.oFrameDoc.selection.type != 'None' && this.oFrameDoc.selection.clear)
+				this.oFrameDoc.selection.clear();
 
 			var oRange = this.getRange();
 
@@ -569,7 +565,7 @@ weEditor.prototype.insertText = function (sText, bClear, bForceEntityReverse, iM
 				if (iMoveCursorBack)
 				{
 					var oSelection = this.getSelect();
-					oSelection.getRangeAt(0).insertNode(this.oFrame.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
+					oSelection.getRangeAt(0).insertNode(this.oFrameDoc.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
 				}
 			}
 		}
@@ -587,7 +583,7 @@ weEditor.prototype.we_execCommand = function (sCommand, bUi, sValue)
 	if (this.opt.oDrafts)
 		this.opt.oDrafts.needsUpdate(true);
 
-	return this.oFrame.execCommand(sCommand, bUi, sValue);
+	return this.oFrameDoc.execCommand(sCommand, bUi, sValue);
 };
 
 weEditor.prototype.insertSmiley = function (oSmileyProperties)
@@ -806,16 +802,16 @@ weEditor.prototype.insertImage = function (sSrc)
 
 weEditor.prototype.getSelect = function (bWantText, bWantHTMLText)
 {
-	if (is_ie && 'selection' in this.oFrame)
+	if (this.oFrameDoc.selection) // IE?
 	{
 		// Just want plain text?
 		if (bWantText && !bWantHTMLText)
-			return this.oFrame.selection.createRange().text;
+			return this.oFrameDoc.selection.createRange().text;
 		// We want the HTML flavoured variety?
 		else if (bWantHTMLText)
-			return this.oFrame.selection.createRange().htmlText;
+			return this.oFrameDoc.selection.createRange().htmlText;
 
-		return this.oFrame.selection;
+		return this.oFrameDoc.selection;
 	}
 
 	// This is mainly Firefox.
@@ -832,7 +828,7 @@ weEditor.prototype.getSelect = function (bWantText, bWantHTMLText)
 
 			if (oSelection.rangeCount > 0)
 			{
-				var oDiv = this.oFrame.createElement('div');
+				var oDiv = this.oFrameDoc.createElement('div');
 				oDiv.appendChild(oSelection.getRangeAt(0).cloneContents());
 				return oDiv.innerHTML;
 			}
@@ -845,7 +841,7 @@ weEditor.prototype.getSelect = function (bWantText, bWantHTMLText)
 	}
 
 	// If we're here it's not good.
-	return this.oFrame.getSelection();
+	return this.oFrameDoc.getSelection();
 };
 
 weEditor.prototype.getRange = function ()
@@ -977,13 +973,13 @@ weEditor.prototype.onToggleDataReceived = function (oXMLDoc)
 
 	if (this.bRichTextEnabled)
 	{
-		this.oFrameHandle.show();
+		this.$FrameHandle.show();
 		this.oText.hide();
 	}
 	else
 	{
 		sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-		this.oFrameHandle.hide();
+		this.$FrameHandle.hide();
 		this.oText.show();
 	}
 
@@ -1005,7 +1001,7 @@ weEditor.prototype.setFocus = function ()
 	if (!this.bRichTextEnabled)
 		this.oText[0].focus();
 	else if (is_ff || is_opera)
-		this.oFrameHandle[0].focus();
+		this.$FrameHandle[0].focus();
 	else
 		this.oFrameWindow.focus();
 };
@@ -1182,7 +1178,7 @@ weEditor.prototype.resizeTextArea = function (newHeight)
 
 	// Do the HTML editor - but only if it's enabled!
 	if (this.bRichTextPossible)
-		this.oFrameHandle.height(newHeight);
+		this.$FrameHandle.height(newHeight);
 
 	// Do the text box regardless!
 	this.oText.height(newHeight);

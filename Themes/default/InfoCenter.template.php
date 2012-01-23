@@ -17,6 +17,7 @@ function template_info_center_before()
 
 	// Here's where the "Info Center" starts...
 	echo '
+	<section>
 		<we:title>
 			<div id="upshrink_ic" title="', $txt['upshrink_description'], '"', empty($options['collapse_header_ic']) ? ' class="fold"' : '', '></div>
 			', $txt['info_center_title'], '
@@ -115,7 +116,8 @@ function template_info_center_personalmsg()
 function template_info_center_after()
 {
 	echo '
-		</div>';
+		</div>
+	</section>';
 }
 
 ?>
