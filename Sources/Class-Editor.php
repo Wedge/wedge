@@ -2532,12 +2532,12 @@ class wedit
 					if (isset($tag['before']))
 						$context['footer_js'] .= '
 				[' .
-					'"button", ' . (empty($this->disabled_tags[$tag['code']]) ? '1, ' : '0, ') . (!is_array($tag['image']) ?
+					'\'button\', ' . (empty($this->disabled_tags[$tag['code']]) ? '1, ' : '0, ') . (!is_array($tag['image']) ?
 					JavaScriptEscape($settings['images_url'] . '/bbc/' . $tag['image'] . '.gif') . ', ' :
 					'[' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . '], ') .
 					JavaScriptEscape($tag['code']) . ', ' .
 					JavaScriptEscape($tag['before']) . ', ' .
-					(isset($tag['after']) ? JavaScriptEscape($tag['after']) : '""') . ', ' .
+					(isset($tag['after']) ? JavaScriptEscape($tag['after']) : '\'\'') . ', ' .
 					JavaScriptEscape($tag['description']) .
 				']' . (empty($tag['isLast']) ? ',' : '');
 

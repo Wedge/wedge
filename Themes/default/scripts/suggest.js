@@ -328,7 +328,8 @@ weAutoSuggest.prototype.deleteAddedItem = function (sItemId)
 weAutoSuggest.prototype.autoSuggestHide = function ()
 {
 	// Delay to allow events to propagate through....
-	this.oHideTimer = setTimeout(this.autoSuggestActualHide, 250);
+	var that = this;
+	this.oHideTimer = setTimeout(function () { that.autoSuggestActualHide.call(that); }, 250);
 };
 
 // Do the actual hiding after a timeout.
