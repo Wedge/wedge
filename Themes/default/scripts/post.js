@@ -97,20 +97,20 @@ String.prototype.easyReplace = function (oReplacements)
 	a thousands words.
 */
 
-function weSmileyBox(oOptions)
+function weSmileyBox(opt)
 {
 	var that = this;
-	that.opt = oOptions;
+	that.opt = opt;
 	that.oSmileyRowsContent = {};
 
 	// Get the HTML content of the smileys visible on the post screen.
 	that.getSmileyRowsContent('postform');
 
 	// Inject the HTML.
-	$('#' + oOptions.sContainer).html(oOptions.sSmileyBoxTemplate.easyReplace({
+	$('#' + opt.sContainer).html(opt.sSmileyBoxTemplate.easyReplace({
 		smileyRows: that.oSmileyRowsContent.postform,
-		moreSmileys: oOptions.oSmileyLocations.popup.length == 0 ? '' : oOptions.sMoreSmileysTemplate.easyReplace({
-			moreSmileysId: oOptions.sContainer + '_addMoreSmileys'
+		moreSmileys: opt.oSmileyLocations.popup.length == 0 ? '' : opt.sMoreSmileysTemplate.easyReplace({
+			moreSmileysId: opt.sContainer + '_addMoreSmileys'
 		})
 	}));
 
@@ -118,13 +118,13 @@ function weSmileyBox(oOptions)
 	that.initSmileys('postform');
 
 	// Initialize the [more] button.
-	if (oOptions.oSmileyLocations.popup.length)
-		$('#' + oOptions.sContainer + '_addMoreSmileys').click(function () {
+	if (opt.oSmileyLocations.popup.length)
+		$('#' + opt.sContainer + '_addMoreSmileys').click(function () {
 			$(this).hide();
 
 			// Get the popup smiley HTML, add the new smileys to the list and activate them.
 			that.getSmileyRowsContent('popup');
-			$('#' + oOptions.sContainer + ' .more').hide().html(that.oSmileyRowsContent.popup).slideDown();
+			$('#' + opt.sContainer + ' .more').hide().html(that.oSmileyRowsContent.popup).slideDown();
 			that.initSmileys('popup');
 
 			return false;
@@ -139,40 +139,46 @@ weSmileyBox.prototype.getSmileyRowsContent = function (sLocation)
 		return;
 
 	this.oSmileyRowsContent[sLocation] = '';
-	var aLocation = this.opt.oSmileyLocations[sLocation], iSmileyRowIndex, iSmileyRowCount = aLocation.length;
+	var that = this, opt = this.opt;
 
-	for (iSmileyRowIndex = 0; iSmileyRowIndex < iSmileyRowCount; iSmileyRowIndex++)
+	$.each(opt.oSmileyLocations[sLocation], function (iSmileyRowIndex)
 	{
-		var sSmileyRowContent = '', iSmileyIndex, aSmileyRow = aLocation[iSmileyRowIndex], iSmileyCount = aSmileyRow.length;
-		for (iSmileyIndex = 0; iSmileyIndex < iSmileyCount; iSmileyIndex++)
-			sSmileyRowContent += this.opt.sSmileyTemplate.easyReplace({
-				smileySource: aSmileyRow[iSmileyIndex][1].php_htmlspecialchars(),
-				smileyDesc: aSmileyRow[iSmileyIndex][2].php_htmlspecialchars(),
-				smileyCode: aSmileyRow[iSmileyIndex][0].php_htmlspecialchars(),
-				smileyId: this.opt.sContainer + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString()
+		var sSmileyRowContent = '';
+		$.each(this, function (iSmileyIndex)
+		{
+			sSmileyRowContent += opt.sSmileyTemplate.easyReplace({
+				smileySource: this[1].php_htmlspecialchars(),
+				smileyDesc: this[2].php_htmlspecialchars(),
+				smileyCode: this[0].php_htmlspecialchars(),
+				smileyId: opt.sContainer + '_' + sLocation + '_' + iSmileyRowIndex + '_' + iSmileyIndex
 			});
+		});
 
-		this.oSmileyRowsContent[sLocation] += this.opt.sSmileyRowTemplate.easyReplace({
+		that.oSmileyRowsContent[sLocation] += opt.sSmileyRowTemplate.easyReplace({
 			smileyRow: sSmileyRowContent
 		});
-	}
+	});
 };
 
 weSmileyBox.prototype.initSmileys = function (sLocation)
 {
-	var that = this, iSmileyRowIndex = 0, iSmileyRowCount = this.opt.oSmileyLocations[sLocation].length;
-	for (; iSmileyRowIndex < iSmileyRowCount; iSmileyRowIndex++)
-		for (var iSmileyIndex = 0, iSmileyCount = this.opt.oSmileyLocations[sLocation][iSmileyRowIndex].length; iSmileyIndex < iSmileyCount; iSmileyIndex++)
-			$('#' + that.opt.sContainer + '_' + sLocation + '_' + iSmileyRowIndex.toString() + '_' + iSmileyIndex.toString())
+	var that = this;
+	$.each(that.opt.oSmileyLocations[sLocation], function (iSmileyRowIndex)
+	{
+		$.each(this, function (iSmileyIndex)
+		{
+			$('#' + that.opt.sContainer + '_' + sLocation + '_' + iSmileyRowIndex + '_' + iSmileyIndex)
 				.css('cursor', 'pointer')
 				.click(function () {
 					// Dissect the id to determine its exact smiley properties.
 					var aMatches = this.id.match(/([^_]+)_(\d+)_(\d+)$/);
-					if (aMatches.length == 4 && 'sClickHandler' in that.opt)
+					if (aMatches.length == 4 && that.opt.sClickHandler)
 						that.opt.sClickHandler(that.opt.oSmileyLocations[aMatches[1]][aMatches[2]][aMatches[3]]);
 
 					return false;
 				});
+		});
+	});
 };
 
 /*
@@ -181,116 +187,118 @@ weSmileyBox.prototype.initSmileys = function (sLocation)
 	and 2 for Red Dwarf.
 */
 
-function weButtonBox(oOptions)
+function weButtonBox(opt)
 {
-	this.opt = oOptions;
+	this.opt = opt;
 
-	var sBbcContent = '', iButtonRowIndex = 0, iRowCount = oOptions.aButtonRows.length;
-	for (; iButtonRowIndex < iRowCount; iButtonRowIndex++)
+	var sBbcContent = '';
+	$.each(opt.aButtonRows, function (iButtonRowIndex)
 	{
-		var sRowContent = '', bPreviousWasDivider = false, iButtonIndex = 0, iButtonCount = oOptions.aButtonRows[iButtonRowIndex].length;
-		for (; iButtonIndex < iButtonCount; iButtonIndex++)
+		var sRowContent = '', bPreviousWasDivider = false;
+
+		$.each(this, function (iButtonIndex)
 		{
-			var oCurButton = oOptions.aButtonRows[iButtonRowIndex][iButtonIndex], is_sprite = $.isArray(oCurButton[2]);
-			switch (oCurButton[0])
+			var is_sprite = $.isArray(this[2]);
+
+			// this[0] = sType, 1 = bEnabled, 2 = sImage or sPos, 3 = sCode, 4 = sBefore, 5 = sAfter, 6 = sDescription
+			if (this[0] == 'button')
 			{
-				case 'button': // 0 = sType, 1 = bEnabled, 2 = sImage or sPos, 3 = sCode, 4 = sBefore, 5 = sAfter, 6 = sDescription
-					if (oCurButton[1])
-					{
-						sRowContent += oOptions.sButtonTemplate.easyReplace({
-							buttonId: oOptions.sContainer.php_htmlspecialchars() + '_button_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString(),
-							buttonSrc: (is_sprite ? oOptions.sSprite : oCurButton[2]).php_htmlspecialchars(),
-							posX: is_sprite ? oCurButton[2][0] : 0,
-							posY: is_sprite ? oCurButton[2][1] + 2 : 2,
-							buttonDescription: oCurButton[6].php_htmlspecialchars()
-						});
-
-						bPreviousWasDivider = false;
-					}
-				break;
-
-				case 'select': // 0 = sType, 1 = sName, 2 = oOptions
-					var sOptions = '', sSelectValue, sProt, optname = '%opt%';
-
-					// Fighting JavaScript's idea of order in a for loop... :P
-					if ('' in oCurButton[2])
-						sOptions = '<option value="">' + oCurButton[2][''].php_htmlspecialchars() + '</option>';
-					for (sSelectValue in oCurButton[2])
-					{
-						// we've been through this before
-						if (oCurButton[1] == 'sel_face')
-							optname = '&lt;span style="font-family: %opt%"&gt;%opt%&lt;/span&gt;';
-						else if (oCurButton[1] == 'sel_size')
-							optname = '&lt;span style="font-size: %opt%"&gt;%opt%&lt;/span&gt;';
-						else if (oCurButton[1] == 'sel_color')
-							optname = '&lt;span style="color: %val%"&gt;&diams;&lt;/span&gt; %opt%';
-						sProt = sSelectValue.php_htmlspecialchars();
-						if (sSelectValue != '')
-							sOptions += '<option value="' + sProt + '">' + optname.replace(/%val%/g, sProt).replace(/%opt%/g, oCurButton[2][sSelectValue].php_htmlspecialchars()) + '</option>';
-					}
-
-					sRowContent += oOptions.sSelectTemplate.easyReplace({
-						selectName: oCurButton[1],
-						selectId: oOptions.sContainer.php_htmlspecialchars() + '_select_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString(),
-						selectOptions: sOptions
+				if (this[1])
+				{
+					sRowContent += opt.sButtonTemplate.easyReplace({
+						buttonId: opt.sContainer.php_htmlspecialchars() + '_button_' + iButtonRowIndex + '_' + iButtonIndex,
+						buttonSrc: (is_sprite ? opt.sSprite : this[2]).php_htmlspecialchars(),
+						posX: is_sprite ? this[2][0] : 0,
+						posY: is_sprite ? this[2][1] + 2 : 2,
+						buttonDescription: this[6].php_htmlspecialchars()
 					});
 
 					bPreviousWasDivider = false;
-				break;
-
-				default:
-					if (!bPreviousWasDivider)
-						sRowContent += oOptions.sDividerTemplate;
-
-					bPreviousWasDivider = true;
-				break;
+				}
 			}
-		}
-		sBbcContent += oOptions.sButtonRowTemplate.easyReplace({
+			// this[0] = sType, 1 = sName, 2 = options
+			else if (this[0] == 'select')
+			{
+				var sOptions = '', sSelectValue, sProt, optname = '%opt%';
+
+				// Fighting JavaScript's idea of order in a for loop... :P
+				if ('' in this[2])
+					sOptions = '<option value="">' + this[2][''].php_htmlspecialchars() + '</option>';
+				for (sSelectValue in this[2])
+				{
+					// we've been through this before
+					if (this[1] == 'sel_face')
+						optname = '&lt;span style="font-family: %opt%"&gt;%opt%&lt;/span&gt;';
+					else if (this[1] == 'sel_size')
+						optname = '&lt;span style="font-size: %opt%"&gt;%opt%&lt;/span&gt;';
+					else if (this[1] == 'sel_color')
+						optname = '&lt;span style="color: %val%"&gt;&diams;&lt;/span&gt; %opt%';
+					sProt = sSelectValue.php_htmlspecialchars();
+					if (sSelectValue != '')
+						sOptions += '<option value="' + sProt + '">' + optname.replace(/%val%/g, sProt).replace(/%opt%/g, this[2][sSelectValue].php_htmlspecialchars()) + '</option>';
+				}
+
+				sRowContent += opt.sSelectTemplate.easyReplace({
+					selectName: this[1],
+					selectId: opt.sContainer.php_htmlspecialchars() + '_select_' + iButtonRowIndex + '_' + iButtonIndex,
+					selectOptions: sOptions
+				});
+
+				bPreviousWasDivider = false;
+			}
+			else
+			{
+				if (!bPreviousWasDivider)
+					sRowContent += opt.sDividerTemplate;
+
+				bPreviousWasDivider = true;
+			}
+		});
+
+		sBbcContent += opt.sButtonRowTemplate.easyReplace({
 			buttonRow: sRowContent
 		});
-	}
+	});
 
-	$('#' + oOptions.sContainer).html(sBbcContent).find('select').sb();
+	$('#' + opt.sContainer).html(sBbcContent).find('select').sb();
 
-	for (iButtonRowIndex = 0, iRowCount = oOptions.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
+	var that = this;
+	$.each(opt.aButtonRows, function (iButtonRowIndex)
 	{
-		for (iButtonIndex = 0, iButtonCount = oOptions.aButtonRows[iButtonRowIndex].length; iButtonIndex < iButtonCount; iButtonIndex++)
+		$.each(this, function (iButtonIndex)
 		{
-			oCurButton = oOptions.aButtonRows[iButtonRowIndex][iButtonIndex];
-			switch (oCurButton[0])
+			if (this[0] == 'button')
 			{
-				case 'button':
-					if (!oCurButton[1])
-						break;
+				if (!this[1])
+					return;
 
-					oCurButton.oImg = document.getElementById(oOptions.sContainer.php_htmlspecialchars() + '_button_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString());
-					oCurButton.oImg.style.cursor = 'pointer';
-					if ('sButtonBackgroundPos' in oOptions)
-					{
-						oCurButton.oImg.style.background = 'url(' + oOptions.sSprite + ') no-repeat';
-						oCurButton.oImg.style.backgroundPosition = '-' + oOptions.sButtonBackgroundPos[0] + 'px -' + oOptions.sButtonBackgroundPos[1] + 'px';
-					}
+				this.oImg = document.getElementById(opt.sContainer.php_htmlspecialchars() + '_button_' + iButtonRowIndex + '_' + iButtonIndex);
+				this.oImg.style.cursor = 'pointer';
+				if (opt.sButtonBackgroundPos)
+				{
+					this.oImg.style.background = 'url(' + opt.sSprite + ') no-repeat';
+					this.oImg.style.backgroundPosition = '-' + opt.sButtonBackgroundPos[0] + 'px -' + opt.sButtonBackgroundPos[1] + 'px';
+				}
 
-					oCurButton.oImg.instanceRef = this;
-					oCurButton.oImg.onmouseover = function () { this.instanceRef.handleButtonMouseOver(this); };
-					oCurButton.oImg.onmouseout = function () { this.instanceRef.handleButtonMouseOut(this); };
-					oCurButton.oImg.onclick = function () { this.instanceRef.handleButtonClick(this); };
-					oCurButton.oImg.bIsActive = false;
-					oCurButton.oImg.bHover = false;
-				break;
-
-				case 'select':
-					oCurButton.oSelect = document.getElementById(oOptions.sContainer.php_htmlspecialchars() + '_select_' + iButtonRowIndex.toString() + '_' + iButtonIndex.toString());
-
-					oCurButton.oSelect.instanceRef = this;
-					oCurButton.oSelect.onchange = oCurButton.onchange = function () {
-						this.instanceRef.handleSelectChange(this);
-					};
-				break;
+				this.oImg.bHover = false;
+				this.oImg.bIsActive = false;
+				this.oImg.instanceRef = that;
+				$(this.oImg)
+					.mouseover(function () { this.instanceRef.handleButtonMouseOver(this); })
+					.mouseout(function () { this.instanceRef.handleButtonMouseOut(this); })
+					.click(function () { this.instanceRef.handleButtonClick(this); });
 			}
-		}
-	}
+			else if (this[0] == 'select')
+			{
+				this.oSelect = document.getElementById(opt.sContainer.php_htmlspecialchars() + '_select_' + iButtonRowIndex + '_' + iButtonIndex);
+
+				this.oSelect.instanceRef = that;
+				this.oSelect.onchange = this.onchange = function () {
+					this.instanceRef.handleSelectChange(this);
+				};
+			}
+		});
+	});
 }
 
 weButtonBox.prototype.handleButtonMouseOver = function (oButtonImg)
@@ -308,13 +316,13 @@ weButtonBox.prototype.handleButtonMouseOut = function (oButtonImg)
 weButtonBox.prototype.updateButtonStatus = function (oButtonImg)
 {
 	var sNewPos = 0;
-	if (oButtonImg.bHover && oButtonImg.bIsActive && 'sActiveButtonBackgroundPosHover' in this.opt)
+	if (oButtonImg.bHover && oButtonImg.bIsActive && this.opt.sActiveButtonBackgroundPosHover)
 		sNewPos = this.opt.sActiveButtonBackgroundPosHover;
-	else if (!oButtonImg.bHover && oButtonImg.bIsActive && 'sActiveButtonBackgroundPos' in this.opt)
+	else if (!oButtonImg.bHover && oButtonImg.bIsActive && this.opt.sActiveButtonBackgroundPos)
 		sNewPos = this.opt.sActiveButtonBackgroundPos;
-	else if (oButtonImg.bHover && 'sButtonBackgroundPosHover' in this.opt)
+	else if (oButtonImg.bHover && this.opt.sButtonBackgroundPosHover)
 		sNewPos = this.opt.sButtonBackgroundPosHover;
-	else if ('sButtonBackgroundPos' in this.opt)
+	else if (this.opt.sButtonBackgroundPos)
 		sNewPos = this.opt.sButtonBackgroundPos;
 
 	if (oButtonImg.style.backgroundPosition != sNewPos && sNewPos)
@@ -332,7 +340,7 @@ weButtonBox.prototype.handleButtonClick = function (oButtonImg)
 	var oProperties = this.opt.aButtonRows[aMatches[1]][aMatches[2]];
 	oProperties.bIsActive = oButtonImg.bIsActive;
 
-	if ('sButtonClickHandler' in this.opt)
+	if (this.opt.sButtonClickHandler)
 		this.opt.sButtonClickHandler(oProperties);
 
 	return false;
@@ -346,64 +354,52 @@ weButtonBox.prototype.handleSelectChange = function (oSelectControl)
 		return false;
 
 	// ...so that we can point to the exact button.
-	var
-		iButtonRowIndex = aMatches[1],
-		iButtonIndex = aMatches[2],
-		oProperties = this.opt.aButtonRows[iButtonRowIndex][iButtonIndex];
-
-	if ('sSelectChangeHandler' in this.opt)
-		this.opt.sSelectChangeHandler(oProperties);
+	if (this.opt.sSelectChangeHandler)
+		this.opt.sSelectChangeHandler(this.opt.aButtonRows[aMatches[1]][aMatches[2]]);
 
 	return true;
 };
 
 weButtonBox.prototype.setActive = function (aButtons)
 {
-	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
-	{
-		for (var iButtonIndex = 0, iButtonCount = this.opt.aButtonRows[iButtonRowIndex].length; iButtonIndex < iButtonCount; iButtonIndex++)
-		{
-			var oCurButton = this.opt.aButtonRows[iButtonRowIndex][iButtonIndex];
-			if (oCurButton[0] == 'button' && oCurButton[1])
+	var that = this;
+	$.each(this.opt.aButtonRows, function () {
+		$.each(this, function () {
+			if (this[0] == 'button' && this[1])
 			{
-				oCurButton.oImg.bIsActive = in_array(oCurButton[3], aButtons);
-				this.updateButtonStatus(oCurButton.oImg);
+				this.oImg.bIsActive = in_array(this[3], aButtons);
+				that.updateButtonStatus(this.oImg);
 			}
-		}
-	}
+		});
+	});
 };
 
 weButtonBox.prototype.emulateClick = function (sCode)
 {
-	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
-	{
-		for (var iButtonIndex = 0, iButtonCount = this.opt.aButtonRows[iButtonRowIndex].length; iButtonIndex < iButtonCount; iButtonIndex++)
-		{
-			var oCurButton = this.opt.aButtonRows[iButtonRowIndex][iButtonIndex];
-			if (oCurButton[0] == 'button' && oCurButton[3] == sCode)
+	var that = this;
+	$.each(this.opt.aButtonRows, function () {
+		$.each(this, function () {
+			if (this[0] == 'button' && this[3] == sCode)
 			{
-				this.opt.sButtonClickHandler(oCurButton);
-				return true;
+				that.opt.sButtonClickHandler(this);
+				return;
 			}
-		}
-	}
+		});
+	});
 	return false;
 };
 
 weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 {
-	if (!('sButtonClickHandler' in this.opt))
+	if (!this.opt.sButtonClickHandler)
 		return;
 
-	for (var iButtonRowIndex = 0, iRowCount = this.opt.aButtonRows.length; iButtonRowIndex < iRowCount; iButtonRowIndex++)
-	{
-		for (var iButtonIndex = 0, iButtonCount = this.opt.aButtonRows[iButtonRowIndex].length; iButtonIndex < iButtonCount; iButtonIndex++)
-		{
-			var oCurButton = this.opt.aButtonRows[iButtonRowIndex][iButtonIndex];
-			if (oCurButton[0] == 'select' && oCurButton[1] == sSelectName)
-				oCurButton.oSelect.value = sValue;
-		}
-	}
+	$.each(this.opt.aButtonRows, function () {
+		$.each(this, function () {
+			if (this[0] == 'select' && this[1] == sSelectName)
+				$(this.oSelect).val(sValue).sb();
+		});
+	});
 };
 
 /*
@@ -412,29 +408,29 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 	This is quite heavily rewritten, though, to suit our purposes.
 */
 
-function wedgeAttachSelect(oOptions)
+function wedgeAttachSelect(opt)
 {
 	this.count = 0;
 	this.attachId = 0;
-	this.max = oOptions.max ? oOptions.max : -1;
+	this.max = opt.max ? opt.max : -1;
 
 	// Yay for scope issues.
 	this.checkExtension = function (filename)
 	{
-		if (!oOptions.attachment_ext)
+		if (!opt.attachment_ext)
 			return true; // We're not checking
 
 		var dot = filename.lastIndexOf('.');
 		if (!filename || filename.length == 0 || dot == -1)
 		{
-			oOptions.message_ext_error_final = oOptions.message_ext_error.replace(' ({ext})', '');
+			opt.message_ext_error_final = opt.message_ext_error.replace(' ({ext})', '');
 			return false; // Pfft, didn't specify anything, or no extension
 		}
 
 		var extension = (filename.substr(dot + 1, filename.length)).toLowerCase();
-		if (!in_array(extension, oOptions.attachment_ext))
+		if (!in_array(extension, opt.attachment_ext))
 		{
-			oOptions.message_ext_error_final = oOptions.message_ext_error.replace('{ext}', extension);
+			opt.message_ext_error_final = opt.message_ext_error.replace('{ext}', extension);
 			return false;
 		}
 
@@ -473,7 +469,7 @@ function wedgeAttachSelect(oOptions)
 			new_row.element = element;
 			new_row.innerHTML = '&nbsp; &nbsp;' + element.value;
 
-			$('<input type="button" class="delete" style="margin-top: 4px" value="' + oOptions.message_txt_delete + '" />').click(function () {
+			$('<input type="button" class="delete" style="margin-top: 4px" value="' + opt.message_txt_delete + '" />').click(function () {
 				// Remove element from form
 				this.parentNode.element.parentNode.removeChild(this.parentNode.element);
 				this.parentNode.parentNode.removeChild(this.parentNode);
@@ -482,7 +478,7 @@ function wedgeAttachSelect(oOptions)
 				return false;
 			}).prependTo(new_row);
 
-			$('#' + oOptions.file_container).append(new_row);
+			$('#' + opt.file_container).append(new_row);
 
 			that.count++;
 			that.current_element = element;
@@ -491,7 +487,7 @@ function wedgeAttachSelect(oOptions)
 		else
 		// Uh oh.
 		{
-			alert(oOptions.message_ext_error_final);
+			alert(opt.message_ext_error_final);
 			that.createFileSelector();
 			$(element).remove();
 		}
@@ -512,27 +508,28 @@ function wedgeAttachSelect(oOptions)
 
 	this.createFileSelector = function ()
 	{
-		var new_element = $('<input type="file">').prependTo('#' + oOptions.file_container);
+		var new_element = $('<input type="file">').prependTo('#' + opt.file_container);
 		this.current_element = new_element[0];
 		this.prepareFileSelector(new_element[0]);
 	};
 
 	// And finally, we begin.
 	var that = this;
-	that.prepareFileSelector($('#' + oOptions.file_item)[0]);
+	that.prepareFileSelector($('#' + opt.file_item)[0]);
 };
 
 /*
 	Handles auto-saving of posts.
 */
 
-function wedge_autoDraft(oOptions)
+function wedge_autoDraft(opt)
 {
-	this.opt = oOptions;
+	this.opt = opt;
 	this.opt.needsUpdate = false;
 
-	if (this.opt.iFreq > 0)
-		setInterval(this.opt.sSelf + '.draftSend();', this.opt.iFreq);
+	var that = this;
+	if (opt.iFreq > 0)
+		setInterval(function () { that.draftSend.call(that); }, opt.iFreq);
 }
 
 wedge_autoDraft.prototype.needsUpdate = function (update)

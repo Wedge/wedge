@@ -63,44 +63,6 @@ function weEditor(oOptions)
 		em: 'i'
 	};
 
-	this.aBreadCrumbNameStyles = [
-		{
-			sStyleType: 'text-decoration',
-			sStyleValue: 'underline',
-			sBbcTag: 'u'
-		},
-		{
-			sStyleType: 'text-decoration',
-			sStyleValue: 'line-through',
-			sBbcTag: 's'
-		},
-		{
-			sStyleType: 'text-align',
-			sStyleValue: 'left',
-			sBbcTag: 'left'
-		},
-		{
-			sStyleType: 'text-align',
-			sStyleValue: 'center',
-			sBbcTag: 'center'
-		},
-		{
-			sStyleType: 'text-align',
-			sStyleValue: 'right',
-			sBbcTag: 'right'
-		},
-		{
-			sStyleType: 'font-weight',
-			sStyleValue: 'bold',
-			sBbcTag: 'b'
-		},
-		{
-			sStyleType: 'font-style',
-			sStyleValue: 'italic',
-			sBbcTag: 'i'
-		}
-	];
-
 	// Font maps (HTML => CSS size)
 	this.aFontSizes = [
 		0, 6, 8, 10, 12, 14, 18, 24
@@ -284,13 +246,13 @@ weEditor.prototype.updateEditorControls = function ()
 	var
 		aCrumb = [], aAllCrumbs = [],
 		iMaxLength = 6, i = 0,
-		iNumCrumbs, sCurFontName = '', sCurFontSize = '', sCurFontColor = '';
+		that = this, sCurFontName = '', sCurFontSize = '', sCurFontColor = '', sCrumbName;
 
 		// What is the current element?
 		oCurTag = this.getCurElement(),
 		array_key = function (variable, theArray)
 		{
-			for (var i in theArray)
+			for (i in theArray)
 				if (theArray[i] == variable)
 					return i;
 
@@ -304,22 +266,22 @@ weEditor.prototype.updateEditorControls = function ()
 	}
 
 	// Now print out the tree.
-	for (i = 0, iNumCrumbs = aCrumb.length; i < iNumCrumbs; i++)
+	$.each(aCrumb, function ()
 	{
-		var sCrumbName = aCrumb[i].nodeName.toLowerCase();
+		sCrumbName = this.nodeName.toLowerCase();
 
 		// Does it have an alternative name?
-		if (sCrumbName in this.breadCrumbNameTags)
-			sCrumbName = this.breadCrumbNameTags[sCrumbName];
+		if (that.breadCrumbNameTags[sCrumbName])
+			sCrumbName = that.breadCrumbNameTags[sCrumbName];
 		// Don't bother with this...
 		else if (sCrumbName == 'p')
-			continue;
+			return;
 		// A link?
 		else if (sCrumbName == 'a')
 		{
-			var sUrlInfo = aCrumb[i].getAttribute('href');
 			sCrumbName = 'url';
-			if (typeof sUrlInfo == 'string')
+			var sUrlInfo = this.getAttribute('href');
+			if (sUrlInfo)
 			{
 				if (sUrlInfo.substr(0, 3) == 'ftp')
 					sCrumbName = 'ftp';
@@ -329,76 +291,78 @@ weEditor.prototype.updateEditorControls = function ()
 		}
 		else if (sCrumbName == 'span' || sCrumbName == 'div')
 		{
-			if (aCrumb[i].style)
+			var style = this.style;
+			if (style)
 			{
-				for (var j = 0, iNumStyles = this.aBreadCrumbNameStyles.length; j < iNumStyles; j++)
+				// Do we have a font?
+				if (style.fontFamily && sCurFontName == '')
 				{
-					// Do we have a font?
-					if (aCrumb[i].style.fontFamily && aCrumb[i].style.fontFamily != '' && sCurFontName == '')
-					{
-						sCurFontName = aCrumb[i].style.fontFamily;
-						sCrumbName = 'face';
-					}
-					// ... or a font size?
-					if (aCrumb[i].style.fontSize && aCrumb[i].style.fontSize != '' && sCurFontSize == '')
-					{
-						sCurFontSize = aCrumb[i].style.fontSize;
-						sCrumbName = 'size';
-					}
-					// ... even color?
-					if (aCrumb[i].style.color && aCrumb[i].style.color != '' && sCurFontColor == '')
-					{
-						sCurFontColor = aCrumb[i].style.color;
-						if (in_array(sCurFontColor, this.oFontColors))
-							sCurFontColor = array_key(sCurFontColor, this.oFontColors);
-						sCrumbName = 'color';
-					}
-
-					if (this.aBreadCrumbNameStyles[j].sStyleType == 'text-align' && aCrumb[i].style.textAlign && aCrumb[i].style.textAlign == this.aBreadCrumbNameStyles[j].sStyleValue)
-						sCrumbName = this.aBreadCrumbNameStyles[j].sBbcTag;
-					else if (this.aBreadCrumbNameStyles[j].sStyleType == 'text-decoration' && aCrumb[i].style.textDecoration && aCrumb[i].style.textDecoration == this.aBreadCrumbNameStyles[j].sStyleValue)
-						sCrumbName = this.aBreadCrumbNameStyles[j].sBbcTag;
-					else if (this.aBreadCrumbNameStyles[j].sStyleType == 'font-weight' && aCrumb[i].style.fontWeight && aCrumb[i].style.fontWeight == this.aBreadCrumbNameStyles[j].sStyleValue)
-						sCrumbName = this.aBreadCrumbNameStyles[j].sBbcTag;
-					else if (this.aBreadCrumbNameStyles[j].sStyleType == 'font-style' && aCrumb[i].style.fontStyle && aCrumb[i].style.fontStyle == this.aBreadCrumbNameStyles[j].sStyleValue)
-						sCrumbName = this.aBreadCrumbNameStyles[j].sBbcTag;
+					sCurFontName = style.fontFamily.replace(/^'/, '').replace(/'$/, '');
+					sCrumbName = 'face';
 				}
+				// ... or a font size?
+				if (style.fontSize && sCurFontSize == '')
+				{
+					sCurFontSize = style.fontSize;
+					sCrumbName = 'size';
+				}
+				// ... even color?
+				if (style.color && sCurFontColor == '')
+				{
+					sCurFontColor = style.color;
+					if (in_array(sCurFontColor, that.oFontColors))
+						sCurFontColor = array_key(sCurFontColor, that.oFontColors);
+					sCrumbName = 'color';
+				}
+
+				$.each([
+					['textDecoration', 'underline', 'u'],
+					['textDecoration', 'line-through', 's'],
+					['textAlign', 'left', 'left'],
+					['textAlign', 'center', 'center'],
+					['textAlign', 'right', 'right'],
+					['fontWeight', 'bold', 'b'],
+					['fontStyle', 'italic', 'i']
+				], function () {
+					if (style[this[0]] == this[1])
+						sCrumbName = this[2];
+				});
 			}
 		}
 		// Do we have a font?
 		else if (sCrumbName == 'font')
 		{
-			if (aCrumb[i].getAttribute('face') && sCurFontName == '')
+			if (this.getAttribute('face') && sCurFontName == '')
 			{
-				sCurFontName = aCrumb[i].getAttribute('face').toLowerCase();
+				sCurFontName = this.getAttribute('face').toLowerCase();
 				sCrumbName = 'face';
 			}
-			if (aCrumb[i].getAttribute('size') && sCurFontSize == '')
+			if (this.getAttribute('size') && sCurFontSize == '')
 			{
-				sCurFontSize = aCrumb[i].getAttribute('size');
+				sCurFontSize = this.getAttribute('size');
 				sCrumbName = 'size';
 			}
-			if (aCrumb[i].getAttribute('color') && sCurFontColor == '')
+			if (this.getAttribute('color') && sCurFontColor == '')
 			{
-				sCurFontColor = aCrumb[i].getAttribute('color');
-				if (in_array(sCurFontColor, this.oFontColors))
-					sCurFontColor = array_key(sCurFontColor, this.oFontColors);
+				sCurFontColor = this.getAttribute('color');
+				if (in_array(sCurFontColor, that.oFontColors))
+					sCurFontColor = array_key(sCurFontColor, that.oFontColors);
 				sCrumbName = 'color';
 			}
 			// Something else - ignore.
 			if (sCrumbName == 'font')
-				continue;
+				return;
 		}
 
 		aAllCrumbs.push(sCrumbName);
-	}
+	});
 
 	// Since we're in WYSIWYG state, show the toggle button as active.
 	aAllCrumbs.push('toggle');
 
 	this.opt.oBBCBox.setActive(aAllCrumbs);
 
-	// Try set the font boxes correct.
+	// Set the correct font box values.
 	this.opt.oBBCBox.setSelect('sel_face', sCurFontName);
 	this.opt.oBBCBox.setSelect('sel_size', sCurFontSize);
 	this.opt.oBBCBox.setSelect('sel_color', sCurFontColor);
@@ -617,7 +581,7 @@ weEditor.prototype.handleButtonClick = function (oButtonProperties)
 	var sCode = oButtonProperties[3], sText, bbcode;
 
 	// A special Wedge function?
-	if (sCode in this.oWedgeExec)
+	if (this.oWedgeExec[sCode])
 		this[this.oWedgeExec[sCode]]();
 
 	else
@@ -659,7 +623,7 @@ weEditor.prototype.handleButtonClick = function (oButtonProperties)
 		else
 		{
 			// Is it easy?
-			if (sCode in this.oSimpleExec)
+			if (this.oSimpleExec[sCode])
 				this.we_execCommand(this.oSimpleExec[sCode], false, null);
 
 			// A link?
@@ -882,18 +846,11 @@ weEditor.prototype.getCurElement = function ()
 
 weEditor.prototype.getParentElement = function (oNode)
 {
-	if (oNode.nodeType == 1)
-		return oNode;
-
-	for (var i = 0; i < 50; i++)
-	{
-		if (!oNode.parentNode)
-			break;
-
-		oNode = oNode.parentNode;
+	do {
 		if (oNode.nodeType == 1)
 			return oNode;
-	}
+	} while (oNode = oNode.parentNode)
+
 	return null;
 };
 
@@ -965,8 +922,7 @@ weEditor.prototype.toggleView = function (bView)
 weEditor.prototype.onToggleDataReceived = function (oXMLDoc)
 {
 	var sText = '';
-	for (var i = 0, j = oXMLDoc.getElementsByTagName('message')[0].childNodes.length; i < j; i++)
-		sText += oXMLDoc.getElementsByTagName('message')[0].childNodes[i].nodeValue;
+	$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
 
 	// What is this new view we have?
 	this.bRichTextEnabled = oXMLDoc.getElementsByTagName('message')[0].getAttribute('view') != '0';
@@ -1026,8 +982,7 @@ weEditor.prototype.spellCheckStart = function ()
 weEditor.prototype.onSpellCheckDataReceived = function (oXMLDoc)
 {
 	var sText = '';
-	for (var i = 0; i < oXMLDoc.getElementsByTagName('message')[0].childNodes.length; i++)
-		sText += oXMLDoc.getElementsByTagName('message')[0].childNodes[i].nodeValue;
+	$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
 
 	sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 
@@ -1049,8 +1004,7 @@ weEditor.prototype.spellCheckEnd = function ()
 weEditor.prototype.onSpellCheckCompleteDataReceived = function (oXMLDoc)
 {
 	var sText = '';
-	for (var i = 0; i < oXMLDoc.getElementsByTagName('message')[0].childNodes.length; i++)
-		sText += oXMLDoc.getElementsByTagName('message')[0].childNodes[i].nodeValue;
+	$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
 
 	this.insertText(sText, true);
 	this.setFocus();
@@ -1082,10 +1036,10 @@ weEditor.prototype.registerShortcut = function (sLetter, sModifiers, sCodeName)
 		ctrl: false
 	};
 
-	var aSplitModifiers = sModifiers.split(',');
-	for(var i = 0, n = aSplitModifiers.length; i < n; i++)
-		if (aSplitModifiers[i] in oNewShortcut)
-			oNewShortcut[aSplitModifiers[i]] = true;
+	$.each(sModifiers.split(','), function () {
+		if (this in oNewShortcut)
+			oNewShortcut[this] = true;
+	});
 
 	this.aKeyboardShortcuts.push(oNewShortcut);
 };
@@ -1100,9 +1054,10 @@ weEditor.prototype.checkShortcut = function (oEvent)
 	var sReturnCode = false;
 
 	// Let's take a look at each of our shortcuts shall we?
-	for (var i = 0, n = this.aKeyboardShortcuts.length; i < n; i++)
-		if (oEvent.altKey == this.aKeyboardShortcuts[i].alt && oEvent.ctrlKey == this.aKeyboardShortcuts[i].ctrl && oEvent.which == this.aKeyboardShortcuts[i].key)
-			sReturnCode = this.aKeyboardShortcuts[i].code; // Found something?
+	$.each(this.aKeyboardShortcuts, function () {
+		if (oEvent.altKey == this.alt && oEvent.ctrlKey == this.ctrl && oEvent.which == this.key)
+			sReturnCode = this.code; // Found something?
+	});
 
 	return sReturnCode;
 };

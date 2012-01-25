@@ -2503,8 +2503,8 @@ class wedit
 			add_js('
 		},
 		sSmileyRowTemplate: ' . JavaScriptEscape('<div>%smileyRow%</div>') . ',
-		sSmileyTemplate: ' . (is_ie ? 
-			JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"><img src="') . ' + we_theme_url + \'/images/blank.gif\' + ' . JavaScriptEscape('" class="%smileySource%" /></div>')
+		sSmileyTemplate: ' . ($context['browser']['is_ie'] ? JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"><img src="')
+			. ' + we_theme_url + \'/images/blank.gif\' + ' . JavaScriptEscape('" class="%smileySource%" /></div>')
 			: JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"></div>')) . ',
 		sSmileyBoxTemplate: ' . JavaScriptEscape('<div class="inline-block">%smileyRows%<div class="more"></div></div> <div class="inline-block">%moreSmileys%</div>') . ',
 		sMoreSmileysTemplate: ' . JavaScriptEscape('<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>') . ',
@@ -2585,10 +2585,10 @@ class wedit
 
 			add_js('
 		],
-		sButtonTemplate: ' . (is_ie ? JavaScriptEscape(
+		sButtonTemplate: ' . ($context['browser']['is_ie'] ? JavaScriptEscape(
 			'<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%">
-				<img id="%buttonId%" src="') . ' + we_theme_url + \'/images/blank.gif\' + ' . JavaScriptEscape('" align="bottom" width="23" height="22" alt="%buttonDescription%" title="%buttonDescription%" />
-			</div></div>') : JavaScriptEscape(
+				<img id="%buttonId%" src="') . ' + we_theme_url + \'/images/blank.gif\' + '
+			. JavaScriptEscape('" align="bottom" width="23" height="22" alt="%buttonDescription%" title="%buttonDescription%" /></div></div>') : JavaScriptEscape(
 			'<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>')
 		) . ',
 		sButtonBackgroundPos: [0, 22],
