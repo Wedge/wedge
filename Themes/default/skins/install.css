@@ -1,4 +1,7 @@
 
+input, select, textarea
+	visibility: visible
+
 #upper_section
 	.user
 		height: 4em

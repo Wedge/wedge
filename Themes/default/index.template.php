@@ -382,10 +382,12 @@ function template_sidebar_before()
 	<section>
 		<we:title>
 			<div class="thought_icon"></div>
-			', $txt['thought'], ' |
+			', $txt['thought'], '
+		</we:title>
+		<div style="padding: 8px 0 0">
 			<a href="#" onclick="oThought.edit(\'\', \'\', true); return false;">', $txt['new'], '</a> |
 			<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['modify'], '</a>
-		</we:title>
+		</div>
 		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
 
 		echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>

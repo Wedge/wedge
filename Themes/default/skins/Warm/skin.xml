@@ -145,9 +145,11 @@
 
 	<!--
 		CSS. This section allows you to define extra style rules that should be
-		added at the top of the page. Really, the ONLY point is to be able to
-		use the "$behavior" keyword, which is mandatory if you want to use
-		behavior files for IE compatibility code. Otherwise, use CSS files!
+		added at the top of the page. You should prefer the use of actual CSS
+		files, unless you need to include an external file like a web font (by
+		using the include parameter), or your inline styles use the "$behavior"
+		keyword, which is mandatory if you want to use behavior files for IE.
+
 		Example:
 			.windowbg { behavior: url($behavior/Themes/default/PIE.htc); }
 	-->

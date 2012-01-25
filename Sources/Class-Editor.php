@@ -169,7 +169,7 @@ class wedit
 		$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
 
 		// Parse smileys into something browsable.
-		$text = preg_replace('~(?:\s|&nbsp;)?<i class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</i>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley $1" onresizestart="return false;" src="' . $settings['images_url'] . '/blank.gif">\'', $text);
+		$text = preg_replace('~(?:\s|&nbsp;)?<i class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</i>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley $1" src="' . $settings['images_url'] . '/blank.gif" onresizestart="return false;">\'', $text);
 
 		return $text;
 	}
@@ -216,7 +216,7 @@ class wedit
 		$text = preg_replace('~\\<\\!\\[CDATA\\[.*?\\]\\]\\>~i', '', $text);
 
 		// Do the smileys ultra fast!
-		$text = preg_replace('~<img[^>]*\salt="([^"]+)"[^>]*\sclass="smiley ([^"]+)".*?>(?:\s)?~e', '\' <div class="smiley $2">\' . un_htmlspecialchars(\'$1\') . \'</div>\'', $text);
+		$text = preg_replace('~<img(?:[^>]*\salt="([^"]+)")?[^>]*\sclass="smiley ([^"]+)"(?:[^>]*\salt="([^"]+)")?[^>]*>(?:\s)?~e', '\' <div class="smiley $2">\' . un_htmlspecialchars(\'$1$3\') . \'</div>\'', $text);
 
 		// Only try to buy more time if the client didn't quit.
 		if (connection_aborted() && $context['server']['is_apache'])
@@ -2503,7 +2503,9 @@ class wedit
 			add_js('
 		},
 		sSmileyRowTemplate: ' . JavaScriptEscape('<div>%smileyRow%</div>') . ',
-		sSmileyTemplate: ' . JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"></div>') . ',
+		sSmileyTemplate: ' . (is_ie ? 
+			JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"><img src="') . ' + we_theme_url + \'/images/blank.gif\' + ' . JavaScriptEscape('" class="%smileySource%" /></div>')
+			: JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"></div>')) . ',
 		sSmileyBoxTemplate: ' . JavaScriptEscape('<div class="inline-block">%smileyRows%<div class="more"></div></div> <div class="inline-block">%moreSmileys%</div>') . ',
 		sMoreSmileysTemplate: ' . JavaScriptEscape('<a href="#" id="%moreSmileysId%">[' . (!empty($this->smileys['postform']) ? $txt['more_smileys'] : $txt['more_smileys_pick']) . ']</a>') . ',
 		sMoreSmileysLinkId: ' . JavaScriptEscape('moreSmileys_' . $this->id) . '
@@ -2555,8 +2557,8 @@ class wedit
 						$context['footer_js'] .= ',
 				["select", "sel_face", {
 					"": ' . JavaScriptEscape($txt['font_face']) . ', "courier new": "Courier New",
-					"arial": "Arial", "arial black": "Arial Black", "impact": "Impact",
-					"verdana": "Verdana", "times new roman": "Times New Roman", "georgia": "Georgia",
+					"arial": "Arial", "impact": "Impact", "verdana": "Verdana",
+					"times new roman": "Times New Roman", "georgia": "Georgia",
 					"trebuchet ms": "Trebuchet MS", "segoe ui": "Segoe UI"
 				}]';
 
@@ -2583,7 +2585,12 @@ class wedit
 
 			add_js('
 		],
-		sButtonTemplate: ' . JavaScriptEscape('<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>') . ',
+		sButtonTemplate: ' . (is_ie ? JavaScriptEscape(
+			'<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%">
+				<img id="%buttonId%" src="') . ' + we_theme_url + \'/images/blank.gif\' + ' . JavaScriptEscape('" align="bottom" width="23" height="22" alt="%buttonDescription%" title="%buttonDescription%" />
+			</div></div>') : JavaScriptEscape(
+			'<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%"></div></div>')
+		) . ',
 		sButtonBackgroundPos: [0, 22],
 		sButtonBackgroundPosHover: [0, 0],
 		sActiveButtonBackgroundPos: [0, 0],
