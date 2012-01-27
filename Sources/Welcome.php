@@ -163,6 +163,9 @@ function Welcome()
 	wesql::free_result($request);
 
 	$context['thoughts'] =& $thoughts;
+
+	if (empty($thoughts))
+		wetem::remove('thoughts');
 }
 
 ?>

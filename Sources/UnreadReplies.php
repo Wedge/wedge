@@ -600,6 +600,31 @@ function UnreadReplies()
 	}
 	wesql::free_result($request);
 
+	// Count number of new posts per topic.
+	if (count($topic_ids) > 0)
+	{
+		$context['nb_new'] = array();
+		$request = wesql::query('
+			SELECT
+				COUNT(DISTINCT m.id_msg) AS co, m.id_topic
+			FROM {db_prefix}messages AS m
+				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:id_member})
+				LEFT JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
+				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:id_member})
+			WHERE
+				m.id_topic IN ({array_int:new_stuff})
+				AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
+			GROUP BY m.id_topic',
+			array(
+				'id_member' => $user_info['id'],
+				'new_stuff' => $topic_ids
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+			$context['nb_new'][$row['id_topic']] = $row['co'];
+		wesql::free_result($request);
+	}
+
 	$context['querystring_board_limits'] = sprintf($context['querystring_board_limits'], $_REQUEST['start']);
 	$context['topics_to_mark'] = implode('-', $topic_ids);
 }
