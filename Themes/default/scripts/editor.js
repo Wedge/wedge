@@ -113,13 +113,17 @@ function weEditor(oOptions)
 	if (this.bRichTextPossible)
 	{
 		// Make the iframe itself, stick it next to the current text area, and give it an ID.
-		var fh = this.$FrameHandle = $('<iframe class="rich_editor_frame" id="html_' + this.opt.sUniqueId + '" src="about:blank" tabindex="' + this.oText[0].tabIndex + '"></iframe>')
+		var fh = this.$Frame = $('<iframe class="rich_editor" id="html_' + this.opt.sUniqueId + '" src="about:blank" tabindex="' + this.oText[0].tabIndex + '"></iframe>')
 			.width(this.sEditWidth).height(this.sEditHeight)
-			.insertAfter(this.oText);
+			.insertAfter(this.oText)
+			.toggle(this.bRichTextEnabled);
+
+		// Hide the textarea if wysiwyg is on - and vice versa.
+		this.oText.toggle(!this.bRichTextEnabled);
 
 		// Create some handy shortcuts.
-		this.oFrameDoc = this.$FrameHandle[0].contentDocument || this.$FrameHandle[0].contentWindow.document;
-		this.oFrameWindow = this.$FrameHandle[0].contentWindow || this.oFrameDoc.parentWindow;
+		this.oFrameDoc = this.$Frame[0].contentDocument || this.$Frame[0].contentWindow.document;
+		this.oFrameWindow = this.$Frame[0].contentWindow || this.oFrameDoc.parentWindow;
 
 		// Populate the editor with nothing by default. Opera doesn't need that, but won't complain either.
 		this.oFrameDoc.open();
@@ -135,15 +139,15 @@ function weEditor(oOptions)
 			this.$FrameBody[0].contentEditable = true;
 		else
 		{
-			this.$FrameHandle.show();
+			this.$Frame.show();
 			this.oFrameDoc.designMode = 'on';
-			this.$FrameHandle.hide();
+			this.$Frame.hide();
 		}
 
 		$('link[rel=stylesheet]').each(function() { fh.contents().find('head').append($('<p>').append($(this).clone()).html()); });
 
 		// Apply the class and set the frame padding/margin inside the editor.
-		this.$FrameBody.addClass('rich_editor').css({ padding: 1, margin: 0 });
+		this.$FrameBody.addClass('rich_editor');
 
 		// Attach functions to the key and mouse events.
 		$(this.oFrameDoc)
@@ -157,10 +161,6 @@ function weEditor(oOptions)
 			this.oText.keyup(function () {
 				oCaller.opt.oDrafts.needsUpdate(true); // This is established earlier in this function.
 			});
-
-		// Show the iframe only if wysiwyrg is on - and hide the text area.
-		this.oText.toggle(!this.bRichTextEnabled);
-		this.$FrameHandle.toggle(this.bRichTextEnabled);
 	}
 	// If we can't do advanced stuff, then just do the basics.
 	else
@@ -289,30 +289,27 @@ weEditor.prototype.updateEditorControls = function ()
 					sCrumbName = 'email';
 			}
 		}
-		else if (sCrumbName == 'span' || sCrumbName == 'div')
+		else if (sCrumbName == 'span' || sCrumbName == 'div' || sCrumbName == 'font')
 		{
 			var style = this.style;
 			if (style)
 			{
 				// Do we have a font?
-				if (style.fontFamily && sCurFontName == '')
-				{
-					sCurFontName = style.fontFamily.replace(/^'/, '').replace(/'$/, '');
-					sCrumbName = 'face';
-				}
+				if (style.fontFamily && !sCurFontName)
+					sCurFontName = style.fontFamily.replace(/^['"]/, '').replace(/['"]$/, '').toLowerCase();
+
 				// ... or a font size?
-				if (style.fontSize && sCurFontSize == '')
+				if (style.fontSize && !sCurFontSize)
 				{
-					sCurFontSize = style.fontSize;
-					sCrumbName = 'size';
+					sCurFontSize = style.fontSize.replace(/pt$/, '');
+					sCurFontSize = array_key(sCurFontSize, that.aFontSizes) || sCurFontSize;
 				}
+
 				// ... even color?
-				if (style.color && sCurFontColor == '')
+				if (style.color && !sCurFontColor)
 				{
 					sCurFontColor = style.color;
-					if (in_array(sCurFontColor, that.oFontColors))
-						sCurFontColor = array_key(sCurFontColor, that.oFontColors);
-					sCrumbName = 'color';
+					sCurFontColor = array_key(sCurFontColor, that.oFontColors) || sCurFontColor;
 				}
 
 				$.each([
@@ -329,28 +326,24 @@ weEditor.prototype.updateEditorControls = function ()
 				});
 			}
 		}
+
 		// Do we have a font?
-		else if (sCrumbName == 'font')
+		if (sCrumbName == 'font')
 		{
-			if (this.getAttribute('face') && sCurFontName == '')
-			{
+			if (this.getAttribute('face') && !sCurFontName)
 				sCurFontName = this.getAttribute('face').toLowerCase();
-				sCrumbName = 'face';
-			}
-			if (this.getAttribute('size') && sCurFontSize == '')
-			{
+
+			if (this.getAttribute('size') && !sCurFontSize)
 				sCurFontSize = this.getAttribute('size');
-				sCrumbName = 'size';
-			}
-			if (this.getAttribute('color') && sCurFontColor == '')
+
+			if (this.getAttribute('color') && !sCurFontColor)
 			{
 				sCurFontColor = this.getAttribute('color');
-				if (in_array(sCurFontColor, that.oFontColors))
-					sCurFontColor = array_key(sCurFontColor, that.oFontColors);
-				sCrumbName = 'color';
+				sCurFontColor = array_key(sCurFontColor, that.oFontColors) || sCurFontColor;
 			}
+
 			// Something else - ignore.
-			if (sCrumbName == 'font')
+			if (!sCurFontName && !sCurFontSize && !sCurFontColor)
 				return;
 		}
 
@@ -667,11 +660,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 			this.surroundText('[font=' + sValue + ']', '[/font]');
 		}
 		else // WYSIWYG
-		{
-			if (is_webkit)
-				this.we_execCommand('styleWithCSS', false, true);
 			this.we_execCommand('fontname', false, sValue);
-		}
 	}
 	// Font size?
 	else if (oSelectProperties[1] == 'sel_size')
@@ -679,7 +668,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 		if (!this.bRichTextEnabled)
 			this.surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]');
 		else // WYSIWYG
-			this.we_execCommand('fontsize', false, sValue);
+			this.insertStyle({ fontSize: this.aFontSizes[sValue] + 'pt' });
 	}
 	// Or color even?
 	else if (oSelectProperties[1] == 'sel_color')
@@ -700,6 +689,13 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 		this.opt.oDrafts.needsUpdate(true);
 
 	return true;
+};
+
+// Insert arbitrary CSS into a Wysiwyg selection
+weEditor.prototype.insertStyle = function (sCss)
+{
+	this.we_execCommand('fontSize', false, '7'); // Thanks to Tim Down for the concept!
+	$(this.oFrameDoc).find('font[size=7]').removeAttr('size').css(sCss);
 };
 
 // Put in some custom HTML.
@@ -766,18 +762,6 @@ weEditor.prototype.insertImage = function (sSrc)
 
 weEditor.prototype.getSelect = function (bWantText, bWantHTMLText)
 {
-	if (this.oFrameDoc.selection) // IE?
-	{
-		// Just want plain text?
-		if (bWantText && !bWantHTMLText)
-			return this.oFrameDoc.selection.createRange().text;
-		// We want the HTML flavoured variety?
-		else if (bWantHTMLText)
-			return this.oFrameDoc.selection.createRange().htmlText;
-
-		return this.oFrameDoc.selection;
-	}
-
 	// This is mainly Firefox.
 	if (this.oFrameWindow.getSelection)
 	{
@@ -802,6 +786,18 @@ weEditor.prototype.getSelect = function (bWantText, bWantHTMLText)
 
 		// Want the whole object then.
 		return this.oFrameWindow.getSelection();
+	}
+
+	if (this.oFrameDoc.selection) // IE?
+	{
+		// Just want plain text?
+		if (bWantText && !bWantHTMLText)
+			return this.oFrameDoc.selection.createRange().text;
+		// We want the HTML flavoured variety?
+		else if (bWantHTMLText)
+			return this.oFrameDoc.selection.createRange().htmlText;
+
+		return this.oFrameDoc.selection;
 	}
 
 	// If we're here it's not good.
@@ -860,7 +856,7 @@ weEditor.prototype.removeFormatting = function ()
 	// Do both at once.
 	if (this.bRichTextEnabled)
 	{
-		this.we_execCommand('removeformat');
+		this.we_execCommand('removeFormat');
 		this.we_execCommand('unlink');
 	}
 	// Otherwise do a crude move indeed.
@@ -929,13 +925,13 @@ weEditor.prototype.onToggleDataReceived = function (oXMLDoc)
 
 	if (this.bRichTextEnabled)
 	{
-		this.$FrameHandle.show();
+		this.$Frame.show();
 		this.oText.hide();
 	}
 	else
 	{
 		sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-		this.$FrameHandle.hide();
+		this.$Frame.hide();
 		this.oText.show();
 	}
 
@@ -957,7 +953,7 @@ weEditor.prototype.setFocus = function ()
 	if (!this.bRichTextEnabled)
 		this.oText[0].focus();
 	else if (is_ff || is_opera)
-		this.$FrameHandle[0].focus();
+		this.$Frame[0].focus();
 	else
 		this.oFrameWindow.focus();
 };
@@ -1133,7 +1129,7 @@ weEditor.prototype.resizeTextArea = function (newHeight)
 
 	// Do the HTML editor - but only if it's enabled!
 	if (this.bRichTextPossible)
-		this.$FrameHandle.height(newHeight);
+		this.$Frame.height(newHeight);
 
 	// Do the text box regardless!
 	this.oText.height(newHeight);

@@ -219,7 +219,7 @@ function weButtonBox(opt)
 			// this[0] = sType, 1 = sName, 2 = options
 			else if (this[0] == 'select')
 			{
-				var sOptions = '', sSelectValue, sProt, optname = '%opt%';
+				var sOptions = '', sSelectValue, optname = '%opt%';
 
 				// Fighting JavaScript's idea of order in a for loop... :P
 				if ('' in this[2])
@@ -228,14 +228,13 @@ function weButtonBox(opt)
 				{
 					// we've been through this before
 					if (this[1] == 'sel_face')
-						optname = '&lt;span style="font-family: %opt%"&gt;%opt%&lt;/span&gt;';
+						optname = '<span style="font-family: %opt%">%opt%</span>';
 					else if (this[1] == 'sel_size')
-						optname = '&lt;span style="font-size: %opt%"&gt;%opt%&lt;/span&gt;';
+						optname = '<span style="font-size: %opt%">%opt%</span>';
 					else if (this[1] == 'sel_color')
-						optname = '&lt;span style="color: %val%"&gt;&diams;&lt;/span&gt; %opt%';
-					sProt = sSelectValue.php_htmlspecialchars();
+						optname = '<span style="color: %val%">&diams;</span> %opt%';
 					if (sSelectValue != '')
-						sOptions += '<option value="' + sProt + '">' + optname.replace(/%val%/g, sProt).replace(/%opt%/g, this[2][sSelectValue].php_htmlspecialchars()) + '</option>';
+						sOptions += '<option value="' + sSelectValue.php_htmlspecialchars() + '">' + optname.replace(/%val%/g, sSelectValue).replace(/%opt%/g, this[2][sSelectValue]).php_htmlspecialchars() + '</option>';
 				}
 
 				sRowContent += opt.sSelectTemplate.easyReplace({
@@ -396,8 +395,12 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 
 	$.each(this.opt.aButtonRows, function () {
 		$.each(this, function () {
-			if (this[0] == 'select' && this[1] == sSelectName)
-				$(this.oSelect).val(sValue).sb();
+			if (this[0] != 'select' || this[1] != sSelectName || $(this.oSelect).val() === sValue)
+				return;
+			$(this.oSelect).val(sValue);
+			if (this.oSelect.selectedIndex < 0)
+				this.oSelect.selectedIndex = 0;
+			$(this.oSelect).sb();
 		});
 	});
 };

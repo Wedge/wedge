@@ -5,19 +5,31 @@
 	mixin: ie-inline-block
 	vertical-align: middle
 
-// This is the editor's playground (textarea for non-wysiwyg, iframe for wysiwyg).
-.editor, .rich_editor_frame
+// This is the editor's playground.
+.editor, .rich_editor
+	display: block
 	border: 1px solid #808080
-	padding: 2px !important
-	margin: 0
-	resize: none
-
-.rich_editor, .rich_editor_frame
-	background: #fff
 	color: #000
+	cursor: text
+	padding: 2px
+	margin: 0
+	box-sizing: border-box
+	/* Remove IE's scrollbar if not needed. */
+	$editor_overflow
+	/* Remove Firefox and Chrome's resize handles. No need to create new satellite files just for that... */
+	$editor_resize
 
-.rich_editor .smiley
-	margin: 0 2px
+// And the WYSIWYG version.
+.rich_editor
+	background: #fff
+	.smiley
+		margin: 0 2px
+
+iframe.rich_editor
+	padding: 2px
+
+body.rich_editor
+	border, padding: 0
 
 // The resize handle.
 .richedit_resize
@@ -155,3 +167,8 @@ ul.post_options
 mixin {ie6,ie7} ie-inline-block
 	margin-right: 6px
 	zoom: 1
+
+$editor_overflow = ""
+$editor_overflow {ie6,ie7,ie8,ie9,ie10} = "overflow: auto"
+$editor_resize = ""
+$editor_resize {webkit,firefox} = "resize: none"
