@@ -208,7 +208,8 @@ function loadUserSettings()
 		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
 		{
 			$request = wesql::query('
-				SELECT mem.*, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type
+				SELECT
+					mem.*, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.id_folder, a.transparency
 				FROM {db_prefix}members AS mem
 					LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = {int:id_member})
 				WHERE mem.id_member = {int:id_member}
@@ -348,6 +349,12 @@ function loadUserSettings()
 		$offset = ($tz_user->getOffset($time_user) - $tz_system->getOffset($time_system)) / 3600; // Convert to hours in the process.
 	}
 
+	if (!empty($user_settings['id_attach']) && !$user_settings['transparency'])
+	{
+		$filename = getAttachmentFilename($user_settings['filename'], $user_settings['id_attach'], $user_settings['id_folder']);
+		$user_settings['transparency'] = we_resetTransparency($user_settings['id_attach']) ? 'transparent' : 'opaque';
+	}
+
 	// Set up the $user_info array.
 	$user_info += array(
 		'id' => $id_member,
@@ -370,7 +377,8 @@ function loadUserSettings()
 			'url' => isset($user_settings['avatar']) ? $user_settings['avatar'] : '',
 			'filename' => empty($user_settings['filename']) ? '' : $user_settings['filename'],
 			'custom_dir' => !empty($user_settings['attachment_type']) && $user_settings['attachment_type'] == 1,
-			'id_attach' => isset($user_settings['id_attach']) ? $user_settings['id_attach'] : 0
+			'id_attach' => isset($user_settings['id_attach']) ? $user_settings['id_attach'] : 0,
+			'transparent' => !empty($user_settings['transparency']) && $user_settings['transparency'] == 'transparent'
 		),
 		'data' => isset($user_settings['data']) ? $user_settings['data'] : array(),
 		'smiley_set' => isset($user_settings['smiley_set']) ? $user_settings['smiley_set'] : '',
@@ -985,7 +993,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	if ($set == 'normal')
 	{
 		$select_columns = '
-			IFNULL(lo.log_time, 0) AS is_online, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
+			IFNULL(lo.log_time, 0) AS is_online,
+			IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.transparency, a.id_folder,
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile,
@@ -1003,7 +1012,8 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	elseif ($set == 'profile')
 	{
 		$select_columns = '
-			IFNULL(lo.log_time, 0) AS is_online, IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type,
+			IFNULL(lo.log_time, 0) AS is_online,
+			IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.transparency, a.id_folder,
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.posts, mem.last_login, mem.media_items, mem.media_comments, mem.member_ip, mem.member_ip2,
@@ -1292,9 +1302,14 @@ function loadMemberContext($user, $display_custom_fields = false)
 		// It's an attachment?
 		elseif (!empty($profile['id_attach']))
 		{
+			if (!$profile['transparency'])
+			{
+				$filename = getAttachmentFilename($profile['filename'], $profile['id_attach'], $profile['id_folder']);
+				$profile['transparency'] = we_resetTransparency($profile['id_attach']) ? 'transparent' : 'opaque';
+			}
 			$memberContext[$user]['avatar'] = array(
 				'name' => $profile['avatar'],
-				'image' => $profile['id_attach'] > 0 ? '<img class="avatar" src="' . (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) . '">' : '',
+				'image' => $profile['id_attach'] > 0 ? '<img class="' . ($profile['transparency'] == 'transparent' ? '' : 'opaque ') . 'avatar" src="' . (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) . '">' : '',
 				'href' => $profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) : '',
 				'url' => '',
 			);
@@ -1302,7 +1317,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		// Default avatar?
 		elseif (false)
 		{
-			// !!! Finish this.
+			// !!! @todo: Finish this.
 		}
 	}
 
@@ -1348,6 +1363,27 @@ function loadMemberContext($user, $display_custom_fields = false)
 	}
 
 	return true;
+}
+
+/**
+ * Sets the transparency flag on attachments if not already set.
+ * This is mainly useful to determine whether you can add a box-shadow
+ * around an attachment thumbnail, or something.
+ */
+function we_resetTransparency($id_attach, $path)
+{
+	loadSource('media/Subs-Media');
+	$is_transparent = aeva_isTransparent($path);
+	wesql::query('
+		UPDATE {db_prefix}attachments
+		SET transparency = {string:transparency}
+		WHERE id_attach = {int:id_attach}',
+		array(
+			'id_attach' => $id_attach,
+			'transparency' => $is_transparent ? 'transparent' : 'opaque',
+		)
+	);
+	return $is_transparent;
 }
 
 /**

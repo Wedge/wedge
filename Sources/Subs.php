@@ -1471,8 +1471,10 @@ function setupThemeContext($forceload = false)
 		elseif ($user_info['avatar']['url'] != '')
 			$context['user']['avatar']['href'] = $modSettings['avatar_url'] . '/' . htmlspecialchars($user_info['avatar']['url']);
 
+		$opaque = !empty($user_info['avatar']['id_attach']) && $user_info['avatar']['transparent'] ? '' : 'opaque ';
+
 		if (!empty($context['user']['avatar']))
-			$context['user']['avatar']['image'] = '<img src="' . $context['user']['avatar']['href'] . '"' . (isset($context['user']['avatar']['width']) ? ' width="' . $context['user']['avatar']['width'] . '"' : '') . (isset($context['user']['avatar']['height']) ? ' height="' . $context['user']['avatar']['height'] . '"' : '') . ' class="avatar">';
+			$context['user']['avatar']['image'] = '<img class="' . $opaque . 'avatar" src="' . $context['user']['avatar']['href'] . '"' . (isset($context['user']['avatar']['width']) ? ' width="' . $context['user']['avatar']['width'] . '"' : '') . (isset($context['user']['avatar']['height']) ? ' height="' . $context['user']['avatar']['height'] . '"' : '') . '>';
 
 		// Figure out how long they've been logged in.
 		$context['user']['total_time_logged_in'] = array(

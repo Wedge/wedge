@@ -961,7 +961,7 @@ function Display()
 		{
 			$request = wesql::query('
 				SELECT
-					a.id_attach, a.id_folder, a.id_msg, a.filename, a.file_hash, IFNULL(a.size, 0) AS filesize, a.downloads, a.approved,
+					a.id_attach, a.id_folder, a.id_msg, a.filename, a.file_hash, IFNULL(a.size, 0) AS filesize, a.downloads, a.transparency, a.approved,
 					a.width, a.height' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ',
 					IFNULL(thumb.id_attach, 0) AS id_thumb, thumb.width AS thumb_width, thumb.height AS thumb_height') . '
 				FROM {db_prefix}attachments AS a' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : '
@@ -1006,9 +1006,9 @@ function Display()
 
 		$messages_request = wesql::query('
 			SELECT
-				id_msg, icon, subject, poster_time, li.member_ip AS poster_ip, id_member, modified_time, modified_name, body,
-				smileys_enabled, poster_name, poster_email, approved,
-				id_msg_modified < {int:new_from} AS is_read
+				id_msg, icon, subject, poster_time, li.member_ip AS poster_ip, id_member,
+				modified_time, modified_name, body, smileys_enabled, poster_name, poster_email,
+				approved, id_msg_modified < {int:new_from} AS is_read
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}log_ips AS li ON (m.poster_ip = li.id_ip)
 			WHERE id_msg IN ({array_int:message_list})
@@ -1523,9 +1523,18 @@ function loadAttachmentContext($id_msg)
 				'byte_size' => $attachment['filesize'],
 				'href' => $scripturl . '?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'],
 				'link' => '<a href="' . $scripturl . '?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'] . '">' . htmlspecialchars($attachment['filename']) . '</a>',
+				'transparent' => $attachment['transparency'] == 'transparent',
 				'is_image' => !empty($attachment['width']) && !empty($attachment['height']) && !empty($modSettings['attachmentShowImages']),
 				'is_approved' => $attachment['approved'],
 			);
+
+			if (empty($attachment['transparency']))
+			{
+				$filename = getAttachmentFilename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
+				$attachmentData[$i]['transparent'] = we_resetTransparency($attachment['id_attach'], $filename);
+			}
+			else
+				$filename = '';
 
 			// If something is unapproved we'll note it so we can sort them.
 			if (!$attachment['approved'])
@@ -1545,7 +1554,8 @@ function loadAttachmentContext($id_msg)
 				// A proper thumb doesn't exist yet? Create one!
 				if (empty($attachment['id_thumb']) || $attachment['thumb_width'] > $modSettings['attachmentThumbWidth'] || $attachment['thumb_height'] > $modSettings['attachmentThumbHeight'] || ($attachment['thumb_width'] < $modSettings['attachmentThumbWidth'] && $attachment['thumb_height'] < $modSettings['attachmentThumbHeight']))
 				{
-					$filename = getAttachmentFilename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
+					if (empty($filename))
+						$filename = getAttachmentFilename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
 
 					loadSource('Subs-Graphics');
 					if (createThumbnail($filename, $modSettings['attachmentThumbWidth'], $modSettings['attachmentThumbHeight']))
