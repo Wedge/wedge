@@ -390,7 +390,7 @@ function ModBlockNotes()
 	}
 
 	// Let's construct a page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=moderate;area=index;notes', $_GET['start'], $moderator_notes_total, 10);
+	$context['page_index'] = template_page_index($scripturl . '?action=moderate;area=index;notes', $_GET['start'], $moderator_notes_total, 10);
 	$context['start'] = $_GET['start'];
 
 	$context['notes'] = array();
@@ -613,7 +613,7 @@ function ReportedPosts()
 	wesql::free_result($request);
 
 	// So, that means we can page index, yes?
-	$context['page_index'] = constructPageIndex($scripturl . '?action=moderate;area=reports' . ($context['view_closed'] ? ';sa=closed' : ''), $_GET['start'], $context['total_reports'], 10);
+	$context['page_index'] = template_page_index($scripturl . '?action=moderate;area=reports' . ($context['view_closed'] ? ';sa=closed' : ''), $_GET['start'], $context['total_reports'], 10);
 	$context['start'] = $_GET['start'];
 
 	// By George, that means we in a position to get the reports, golly good.

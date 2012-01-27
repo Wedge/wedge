@@ -415,7 +415,7 @@ function aeva_unseen()
 		wesql::free_result($request);
 	}
 
-	$context['aeva_page_index'] = constructPageIndex($galurl . 'sa=unseen' . (isset($_REQUEST['album']) ? ';album=' . (int) $_REQUEST['album'] : ''), $start, $total_items, $per_page);
+	$context['aeva_page_index'] = template_page_index($galurl . 'sa=unseen' . (isset($_REQUEST['album']) ? ';album=' . (int) $_REQUEST['album'] : ''), $start, $total_items, $per_page);
 
 	$context['aeva_header']['data']['title'] = $txt['media_viewing_unseen'];
 	$context['page_title'] = $txt['media_viewing_unseen'];
@@ -616,7 +616,7 @@ function aeva_mgSearch()
 			$pageindexURL .= ';sch_mem=' . $filters['member'];
 		$pageindexURL .= ';' . implode(';', $field_query);
 		$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
-		$context['aeva_page_index'] = constructPageIndex($pageindexURL, $start, $total_items, empty($context['current_board']) ? 15 : 30);
+		$context['aeva_page_index'] = template_page_index($pageindexURL, $start, $total_items, empty($context['current_board']) ? 15 : 30);
 		wesql::free_result($request);
 
 		wetem::load('aeva_search_results');
@@ -684,7 +684,7 @@ function aeva_listAlbums()
 		$pageindexURL .= ';name';
 	if (isset($_REQUEST['asc']))
 		$pageindexURL .= ';asc';
-	$context['aeva_page_index'] = constructPageIndex($pageindexURL, $start, $total_items, $per_page);
+	$context['aeva_page_index'] = template_page_index($pageindexURL, $start, $total_items, $per_page);
 
 	// End this
 	wetem::load('aeva_viewUserAlbums');
@@ -2326,7 +2326,7 @@ function aeva_profileItems($memID)
 
 	// The page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=aevaitems', $_REQUEST['start'], $context['member']['media']['total_items'], 20);
+	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=aevaitems', $_REQUEST['start'], $context['member']['media']['total_items'], 20);
 
 	// Load the items
 	$context['aeva_items'] = aeva_getMediaItems((int) $_REQUEST['start'], 20, 'm.id_media DESC', true, array(), 'm.id_member = '.$memID);
@@ -2349,7 +2349,7 @@ function aeva_profileComments($memID)
 
 	// The page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=aevacoms', $_REQUEST['start'], $context['member']['media']['total_comments'], 20);
+	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=aevacoms', $_REQUEST['start'], $context['member']['media']['total_comments'], 20);
 
 	// Load the items
 	$context['aeva_coms'] = aeva_getMediaComments((int) $_REQUEST['start'], 20, false, array(), 'com.id_member = '.$memID);
@@ -2375,7 +2375,7 @@ function aeva_profileVotes($memID)
 	$request = wesql::query('SELECT COUNT(rating) FROM {db_prefix}media_log_ratings WHERE id_member = {int:member}', array('member' => $memID));
 	list ($co) = wesql::fetch_row($request);
 	wesql::free_result($request);
-	$context['page_index'] = constructPageIndex($scripturl . '?action=profile;u=' . $memID . ';area=aevavotes', $_REQUEST['start'], $co, 50);
+	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=aevavotes', $_REQUEST['start'], $co, 50);
 
 	// Any messages in the associated topics?
 	$request = wesql::query('
@@ -2488,7 +2488,7 @@ function aeva_whoRatedWhat()
 
 	// Page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['page_index'] = constructPageIndex($galurl . 'sa=whoratedwhat;in=' . $context['item']['id_media'], $_REQUEST['start'], $context['item']['voters'], 20);
+	$context['page_index'] = template_page_index($galurl . 'sa=whoratedwhat;in=' . $context['item']['id_media'], $_REQUEST['start'], $context['item']['voters'], 20);
 
 	wetem::load('aeva_whoRatedWhat');
 

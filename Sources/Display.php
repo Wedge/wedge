@@ -452,7 +452,7 @@ function Display()
 		$_REQUEST['start'] = -1;
 
 	// Construct the page index, allowing for the .START method...
-	$context['page_index'] = constructPageIndex($scripturl . '?topic=' . $topic . '.%1$d', $_REQUEST['start'], $context['total_visible_posts'], $context['messages_per_page'], true);
+	$context['page_index'] = template_page_index($scripturl . '?topic=' . $topic . '.%1$d', $_REQUEST['start'], $context['total_visible_posts'], $context['messages_per_page'], true);
 	$context['start'] = $_REQUEST['start'];
 
 	// This is information about which page is current, and which page we're on - in case you don't like the constructed page index. (again, wireles..)

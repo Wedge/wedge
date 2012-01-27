@@ -105,7 +105,7 @@ function ViewErrorLog()
 	$context['sort_direction'] = isset($_REQUEST['desc']) ? 'down' : 'up';
 
 	// Set the page listing up.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $modSettings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $modSettings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Find and sort out the errors.

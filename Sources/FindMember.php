@@ -54,7 +54,7 @@ function FindMember()
 		$context['results'] = findMembers(array($_REQUEST['search']), true, $context['buddy_search']);
 		$total_results = count($context['results']);
 
-		$context['page_index'] = constructPageIndex($scripturl . '?action=findmember;search=' . $context['last_search'] . ';' . $context['session_query'] . ';input=' . $context['input_box_name'] . ($context['quote_results'] ? ';quote=1' : '') . ($context['buddy_search'] ? ';buddies' : ''), $_REQUEST['start'], $total_results, 7);
+		$context['page_index'] = template_page_index($scripturl . '?action=findmember;search=' . $context['last_search'] . ';' . $context['session_query'] . ';input=' . $context['input_box_name'] . ($context['quote_results'] ? ';quote=1' : '') . ($context['buddy_search'] ? ';buddies' : ''), $_REQUEST['start'], $total_results, 7);
 
 		// Determine the navigation context (especially useful for the wireless template).
 		$base_url = $scripturl . '?action=findmember;search=' . urlencode($context['last_search']) . (empty($_REQUEST['u']) ? '' : ';u=' . $_REQUEST['u']) . ';' . $context['session_query'];

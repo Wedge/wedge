@@ -116,7 +116,7 @@ function Welcome()
 	if (isset($_GET['s']) && $_GET['s'] === 'thoughts')
 	{
 		$limit = 30;
-		$context['page_index'] = constructPageIndex('<URL>?s=thoughts;page=%1$d', $page, round($total_thoughts / 30), 1, true);
+		$context['page_index'] = template_page_index('<URL>?s=thoughts;page=%1$d', $page, round($total_thoughts / 30), 1, true);
 	}
 
 	$request = wesql::query('

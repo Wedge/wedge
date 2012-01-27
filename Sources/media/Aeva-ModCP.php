@@ -140,7 +140,7 @@ function aeva_modCP_submissions()
 
 	// Page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=media;area=moderate;sa=submissions;filter=' . $filter . ';' . $context['session_query'], $_REQUEST['start'], $total, $per_page);
+	$context['aeva_page_index'] = template_page_index($scripturl . '?action=media;area=moderate;sa=submissions;filter=' . $filter . ';' . $context['session_query'], $_REQUEST['start'], $total, $per_page);
 
 	// We're done!
 	$context['aeva_filter'] = $filter;
@@ -502,7 +502,7 @@ function aeva_modCP_reports()
 
 	// page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=media;area=moderate;sa=reports;' . (isset($_REQUEST['comments']) ? 'comments' : '')
+	$context['aeva_page_index'] = template_page_index($scripturl . '?action=media;area=moderate;sa=reports;' . (isset($_REQUEST['comments']) ? 'comments' : '')
 		. $context['session_query'], $_REQUEST['start'], $amSettings[$type == 'comment' ? 'num_reported_comments' : 'num_reported_items'], 20);
 	$context['aeva_report_type'] = $type;
 
@@ -748,7 +748,7 @@ function aeva_modCP_modLog()
 
 	// Page index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=media;area=moderate;sa=modlog;' . (!empty($id_member) ? 'qsearch=' . $id_member . ';' : '')
+	$context['aeva_page_index'] = template_page_index($scripturl . '?action=media;area=moderate;sa=modlog;' . (!empty($id_member) ? 'qsearch=' . $id_member . ';' : '')
 		. $context['session_query'], $_REQUEST['start'], $total_logs, 30);
 
 	if (!empty($id_member))

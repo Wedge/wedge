@@ -156,7 +156,7 @@ function Who()
 	wesql::free_result($request);
 
 	// Prepare some page index variables.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=who;sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';show=' . $context['show_by'], $_REQUEST['start'], $totalMembers, $modSettings['defaultMaxMembers']);
+	$context['page_index'] = template_page_index($scripturl . '?action=who;sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';show=' . $context['show_by'], $_REQUEST['start'], $totalMembers, $modSettings['defaultMaxMembers']);
 	$context['start'] = $_REQUEST['start'];
 
 	// Look for people online, provided they don't mind if you see they are.

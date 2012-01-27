@@ -1493,7 +1493,7 @@ function Search2()
 	}
 
 	// Now that we know how many results to expect we can start calculating the page numbers.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=search2;params=' . $context['params'], $_REQUEST['start'], $num_results, $modSettings['search_results_per_page'], false);
+	$context['page_index'] = template_page_index($scripturl . '?action=search2;params=' . $context['params'], $_REQUEST['start'], $num_results, $modSettings['search_results_per_page'], false);
 
 	// Consider the search complete!
 	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)

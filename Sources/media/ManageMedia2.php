@@ -1235,7 +1235,7 @@ function aeva_admin_bans()
 
 	// Get the index
 	$_REQUEST['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$context['aeva_page_index'] = constructPageIndex($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query'], $_REQUEST['start'], $total_logs, 20);
+	$context['aeva_page_index'] = template_page_index($scripturl . '?action=admin;area=aeva_bans;' . $context['session_query'], $_REQUEST['start'], $total_logs, 20);
 
 	// Finish it off
 	wetem::load('aeva_admin_bans');

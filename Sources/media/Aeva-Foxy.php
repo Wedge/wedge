@@ -313,7 +313,7 @@ function aeva_foxy_playlists()
 	wesql::free_result($request);
 
 	$start = !empty($_GET['start']) ? (int) $_GET['start'] : 0;
-	$context['aeva_page_index'] = constructPageIndex($galurl . 'sa=playlists', $start, $num_items, 20);
+	$context['aeva_page_index'] = template_page_index($galurl . 'sa=playlists', $start, $num_items, 20);
 
 	// List current page of playlists
 	$request = wesql::query('

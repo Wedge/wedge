@@ -613,7 +613,7 @@ function aeva_sortBox($current_album, $count_items, $start, $per_page, $persort 
 	$pageIndexURL = $current_album ? $galurl . 'sa=album;in=' . $current_album['id'] . ';' : $galurl;
 
 	// Construct the page index
-	$context['aeva_page_index'] = constructPageIndex($pageIndexURL . $context['aeva_urlmore'], $start, $count_items, $per_page);
+	$context['aeva_page_index'] = template_page_index($pageIndexURL . $context['aeva_urlmore'], $start, $count_items, $per_page);
 
 	// For templates (stack change...)
 	$context['aeva_urlmore'] = substr($context['aeva_urlmore'], 0, -3);
@@ -931,7 +931,7 @@ function aeva_viewItem()
 	$pageIndexURL = $galurl.'sa=item;in='.$item_data['id_media'];
 	if (isset($_REQUEST['com_desc']))
 		$pageIndexURL .= ';com_desc';
-	$item_data['com_page_index'] = constructPageIndex($pageIndexURL, $start, $item_data['num_comments'], $per_page);
+	$item_data['com_page_index'] = template_page_index($pageIndexURL, $start, $item_data['num_comments'], $per_page);
 
 	// Comment query!
 	$result = wesql::query('

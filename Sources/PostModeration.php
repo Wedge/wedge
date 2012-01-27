@@ -206,7 +206,7 @@ function UnapprovedPosts()
 	list ($context['total_unapproved_topics']) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	$context['page_index'] = constructPageIndex($scripturl . '?action=moderate;area=postmod;sa=' . $context['current_view'] . (isset($_REQUEST['brd']) ? ';brd=' . (int) $_REQUEST['brd'] : ''), $_GET['start'], $context['current_view'] == 'topics' ? $context['total_unapproved_topics'] : $context['total_unapproved_posts'], 10);
+	$context['page_index'] = template_page_index($scripturl . '?action=moderate;area=postmod;sa=' . $context['current_view'] . (isset($_REQUEST['brd']) ? ';brd=' . (int) $_REQUEST['brd'] : ''), $_GET['start'], $context['current_view'] == 'topics' ? $context['total_unapproved_topics'] : $context['total_unapproved_posts'], 10);
 	$context['start'] = $_GET['start'];
 
 	// We have enough to make some pretty tabs!
@@ -385,7 +385,7 @@ function UnapprovedAttachments()
 	list ($context['total_unapproved_attachments']) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	$context['page_index'] = constructPageIndex($scripturl . '?action=moderate;area=attachmod;sa=attachments', $_GET['start'], $context['total_unapproved_attachments'], 10);
+	$context['page_index'] = template_page_index($scripturl . '?action=moderate;area=attachmod;sa=attachments', $_GET['start'], $context['total_unapproved_attachments'], 10);
 	$context['start'] = $_GET['start'];
 
 	// Get all unapproved attachments.

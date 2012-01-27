@@ -640,7 +640,7 @@ function MessageFolder()
 	}
 
 	// Set up the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=pm;f=' . $context['folder'] . (isset($_REQUEST['l']) ? ';l=' . (int) $_REQUEST['l'] : '') . ';sort=' . $context['sort_by'] . ($descending ? ';desc' : ''), $_GET['start'], $max_messages, $modSettings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index($scripturl . '?action=pm;f=' . $context['folder'] . (isset($_REQUEST['l']) ? ';l=' . (int) $_REQUEST['l'] : '') . ';sort=' . $context['sort_by'] . ($descending ? ';desc' : ''), $_GET['start'], $max_messages, $modSettings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Determine the navigation context (especially useful for the wireless template).
@@ -1481,7 +1481,7 @@ function MessageSearch2()
 		loadMemberData($posters);
 
 	// Sort out the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=pm;sa=search2;params=' . $context['params'], $_GET['start'], $numResults, $modSettings['search_results_per_page'], false);
+	$context['page_index'] = template_page_index($scripturl . '?action=pm;sa=search2;params=' . $context['params'], $_GET['start'], $numResults, $modSettings['search_results_per_page'], false);
 
 	$context['message_labels'] = array();
 	$context['message_replied'] = array();
@@ -3807,7 +3807,7 @@ function MessageDrafts()
 	$maxIndex = (int) $modSettings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=pm;sa=showdrafts', $context['start'], $msgCount, $maxIndex);
+	$context['page_index'] = template_page_index($scripturl . '?action=pm;sa=showdrafts', $context['start'], $msgCount, $maxIndex);
 	$context['current_page'] = $context['start'] / $maxIndex;
 
 	// Reverse the query if we're past 50% of the pages for better performance.

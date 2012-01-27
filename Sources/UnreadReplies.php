@@ -348,7 +348,7 @@ function UnreadReplies()
 	}
 
 	// Make sure the starting place makes sense and construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
+	$context['page_index'] = template_page_index($scripturl . '?action=' . $_REQUEST['action'] . $context['querystring_board_limits'] . $context['querystring_sort_limits'], $_REQUEST['start'], $num_topics, $context['topics_per_page'], true);
 	$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
 	$context['links'] = array(
@@ -501,7 +501,7 @@ function UnreadReplies()
 		}
 
 		// Decide how many pages the topic should have.
-		// @todo Should this use a variation on constructPageIndex?
+		// @todo Should this use a variation on template_page_index?
 		$topic_length = $row['num_replies'] + 1;
 		$messages_per_page = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
 		if ($topic_length > $messages_per_page)

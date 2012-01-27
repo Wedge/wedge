@@ -86,7 +86,7 @@ function MessageIndex()
 
 	// Make sure the starting place makes sense and construct the page index.
 	$context['start'] = (int) $_REQUEST['start'];
-	$context['page_index'] = constructPageIndex($scripturl . '?board=' . $board . '.%1$d' . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . (isset($_REQUEST['desc']) ? ';desc' : ''), $context['start'], $board_info['total_topics'], $maxindex, true);
+	$context['page_index'] = template_page_index($scripturl . '?board=' . $board . '.%1$d' . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . (isset($_REQUEST['desc']) ? ';desc' : ''), $context['start'], $board_info['total_topics'], $maxindex, true);
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . '?board=' . $board . '.' . $context['start'];
@@ -433,7 +433,7 @@ function MessageIndex()
 
 				// We can't pass start by reference.
 				$start = -1;
-				$pages .= constructPageIndex($scripturl . '?topic=' . $row['id_topic'] . '.%1$d', $start, $row['num_replies'] + 1, $context['messages_per_page'], true, false);
+				$pages .= template_page_index($scripturl . '?topic=' . $row['id_topic'] . '.%1$d', $start, $row['num_replies'] + 1, $context['messages_per_page'], true, false);
 
 				// If we can use all, show all.
 				if (!empty($modSettings['enableAllMessages']) && $row['num_replies'] + 1 < $modSettings['enableAllMessages'])

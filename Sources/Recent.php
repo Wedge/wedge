@@ -87,7 +87,7 @@ function Recent()
 			$query_parameters['max_id_msg'] = max(0, $modSettings['maxMsgID'] - 400 - $_REQUEST['start'] * 7);
 		}
 
-		$context['page_index'] = constructPageIndex($scripturl . '?action=recent;c=' . implode(',', $_REQUEST['c']), $_REQUEST['start'], min(100, $total_cat_posts), 10, false);
+		$context['page_index'] = template_page_index($scripturl . '?action=recent;c=' . implode(',', $_REQUEST['c']), $_REQUEST['start'], min(100, $total_cat_posts), 10, false);
 	}
 	elseif (!empty($_REQUEST['boards']))
 	{
@@ -129,7 +129,7 @@ function Recent()
 			$query_parameters['max_id_msg'] = max(0, $modSettings['maxMsgID'] - 500 - $_REQUEST['start'] * 9);
 		}
 
-		$context['page_index'] = constructPageIndex($scripturl . '?action=recent;boards=' . implode(',', $_REQUEST['boards']), $_REQUEST['start'], min(100, $total_posts), 10, false);
+		$context['page_index'] = template_page_index($scripturl . '?action=recent;boards=' . implode(',', $_REQUEST['boards']), $_REQUEST['start'], min(100, $total_posts), 10, false);
 	}
 	elseif (!empty($board))
 	{
@@ -156,7 +156,7 @@ function Recent()
 			$query_parameters['max_id_msg'] = max(0, $modSettings['maxMsgID'] - 600 - $_REQUEST['start'] * 10);
 		}
 
-		$context['page_index'] = constructPageIndex($scripturl . '?action=recent;board=' . $board . '.%1$d', $_REQUEST['start'], min(100, $total_posts), 10, true);
+		$context['page_index'] = template_page_index($scripturl . '?action=recent;board=' . $board . '.%1$d', $_REQUEST['start'], min(100, $total_posts), 10, true);
 	}
 	else
 	{
@@ -167,7 +167,7 @@ function Recent()
 		$query_parameters['recycle_board'] = $modSettings['recycle_board'];
 
 		// !!! This isn't accurate because we ignore the recycle bin.
-		$context['page_index'] = constructPageIndex($scripturl . '?action=recent', $_REQUEST['start'], min(100, $modSettings['totalMessages']), 10, false);
+		$context['page_index'] = template_page_index($scripturl . '?action=recent', $_REQUEST['start'], min(100, $modSettings['totalMessages']), 10, false);
 	}
 
 	$context['linktree'][] = array(

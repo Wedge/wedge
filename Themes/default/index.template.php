@@ -751,7 +751,7 @@ function template_footer()
  * @param bool $show_prevnext Whether the Previous and Next links should be shown (should be on only when navigating the list)
  * @return string The complete HTML of the page index that was requested.
  */
-function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
+function template_page_index($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
 	global $modSettings, $settings, $topicinfo, $txt;
 

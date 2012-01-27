@@ -257,7 +257,7 @@ function MLAll()
 	$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
 
 	// Construct the page index.
-	$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sort=' . $_REQUEST['sort'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_members'], $modSettings['defaultMaxMembers']);
+	$context['page_index'] = template_page_index($scripturl . '?action=mlist;sort=' . $_REQUEST['sort'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_members'], $modSettings['defaultMaxMembers']);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
@@ -471,7 +471,7 @@ function MLSearch()
 		list ($numResults) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
+		$context['page_index'] = template_page_index($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
 
 		// Find the members from the database.
 		// !!! SLOW This query is slow.
