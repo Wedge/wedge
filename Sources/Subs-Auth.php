@@ -228,7 +228,7 @@ function InMaintenance()
 
 function adminLogin()
 {
-	global $context, $scripturl, $txt, $user_info, $user_settings;
+	global $context, $scripturl, $txt, $user_info;
 
 	loadLanguage('Admin');
 	loadTemplate('Login');

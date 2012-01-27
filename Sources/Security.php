@@ -102,7 +102,7 @@ if (!defined('WEDGE'))
 // Check if the user is who he/she says he is
 function validateSession()
 {
-	global $modSettings, $user_info, $sc, $user_settings;
+	global $modSettings, $user_info, $sc;
 
 	// We don't care if the option is off, because Guests should NEVER get past here.
 	is_not_guest();
@@ -210,8 +210,7 @@ function is_not_guest($message = '')
 // Do banning related stuff. (ie. disallow access....)
 function is_not_banned($forceCheck = false)
 {
-	global $txt, $modSettings, $context, $user_info;
-	global $cookiename, $user_settings;
+	global $txt, $modSettings, $context, $user_info, $cookiename, $user_settings;
 
 	// You cannot be banned if you are an admin - doesn't help if you log out.
 	if ($user_info['is_admin'])

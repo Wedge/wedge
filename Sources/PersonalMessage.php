@@ -1594,8 +1594,7 @@ function MessageSearch2()
 // Send a new message?
 function MessagePost()
 {
-	global $txt, $scripturl, $modSettings, $user_profile;
-	global $context, $options, $language, $user_info;
+	global $txt, $scripturl, $modSettings, $user_profile, $context, $options, $language, $user_info;
 
 	isAllowedTo('pm_send');
 
@@ -3110,8 +3109,7 @@ function ManageLabels()
 // Edit Personal Message Settings
 function MessageSettings()
 {
-	global $txt, $user_settings, $user_info, $context;
-	global $scripturl, $profile_vars, $cur_profile, $user_profile;
+	global $txt, $user_info, $context, $scripturl, $profile_vars, $cur_profile, $user_profile;
 
 	// Need this for the display.
 	loadSource(array('Profile', 'Profile-Modify'));

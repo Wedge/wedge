@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
 function ModifyProfile($post_errors = array())
 {
 	global $txt, $scripturl, $user_info, $context, $user_profile, $cur_profile;
-	global $modSettings, $memberContext, $profile_vars, $post_errors, $options, $user_settings;
+	global $modSettings, $memberContext, $profile_vars, $post_errors, $options;
 
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
