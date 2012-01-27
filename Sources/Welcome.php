@@ -90,15 +90,6 @@ function Welcome()
 
 	$context['page_title'] = isset($txt['homepage_title']) ? $txt['homepage_title'] : sprintf($txt['forum_index'], $context['forum_name']);
 
-	add_js('
-	var oInfoCenterToggle = new weToggle({
-		bCurrentlyCollapsed: ', empty($options['collapse_header_ic']) ? 'false' : 'true', ',
-		aSwappableContainers: [\'upshrinkHeaderIC\'],
-		aSwapImages: [{ sId: \'upshrink_ic\', altExpanded: ' . JavaScriptEscape($txt['upshrink_description']) . ' }],
-		oThemeOptions: { bUseThemeSettings: ' . ($context['user']['is_guest'] ? 'false' : 'true') . ', sOptionName: \'collapse_header_ic\' },
-		oCookieOptions: { bUseCookie: ' . ($context['user']['is_guest'] ? 'true' : 'false') . ', sCookieName: \'upshrinkIC\' }
-	});');
-
 	call_hook('info_center');
 
 	// Now onto the thoughts...

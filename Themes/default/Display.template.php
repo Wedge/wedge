@@ -830,9 +830,9 @@ function template_display_whoviewing()
 
 	echo '
 	<section>
-		<we:title2>
+		<we:title>
 			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
-		</we:title2>
+		</we:title>
 		<p>';
 
 	// Show just numbers...?
@@ -858,10 +858,10 @@ function template_display_statistics()
 
 	echo '
 	<section>
-		<we:title2>
+		<we:title>
 			<img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '">
 			', $txt['topic_stats'], '
-		</we:title2>
+		</we:title>
 		<p>
 			', number_context('views', $context['num_views']), '
 			<br>', number_context('replies', $context['num_replies']), '

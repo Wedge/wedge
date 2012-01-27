@@ -27,7 +27,7 @@ function template_generic_menu_sidebar()
 		// Show the section header - and pump up the line spacing for readability.
 		echo '
 	<section>
-		<we:title2>';
+		<we:title>';
 
 		if ($firstSection && !empty($menu_context['can_toggle_drop_down']))
 			echo '
@@ -37,8 +37,8 @@ function template_generic_menu_sidebar()
 			', $section['title'];
 
 		echo '
-		</we:title2>
-		<ul class="smalltext left_menu">';
+		</we:title>
+		<ul class="left_menu">';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
 		foreach ($section['areas'] as $i => $area)

@@ -684,9 +684,9 @@ function template_messageindex_whoviewing()
 
 	echo '
 	<section>
-		<we:title2>
+		<we:title>
 			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
-		</we:title2>
+		</we:title>
 		<p>';
 
 	if ($settings['display_who_viewing'] == 1)
@@ -705,10 +705,10 @@ function template_messageindex_legend()
 
 	echo '
 	<section>
-		<we:title2>
+		<we:title>
 			<img src="', $settings['images_url'], '/icons/assist.gif">
 			', $txt['legend'], '
-		</we:title2>
+		</we:title>
 		<p>
 			<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
 			<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ', $txt['sticky_topic'], '<br>', $modSettings['pollMode'] == '1' ? '
@@ -732,10 +732,10 @@ function template_messageindex_statistics()
 
 	echo '
 	<section>
-		<we:title2>
+		<we:title>
 			<a href="', $scripturl, '?board=', $context['current_board'], ';action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
 			', $txt[$type . '_stats'], '
-		</we:title2>
+		</we:title>
 		<p>
 			', $board_info['num_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', number_context('topics', $board_info['total_topics']), '<br>
 		</p>

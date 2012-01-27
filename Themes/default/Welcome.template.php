@@ -28,7 +28,10 @@ function template_main()
 function template_info_before()
 {
 	echo '
-		<div class="roundframe" style="margin: 16px 0">';
+	<div class="roundframe" style="margin: 16px 0">
+		<we:title>
+			', $txt['info_center_title'], '
+		</we:title>';
 }
 
 // This one is just here to show you that layers can get _before_before,
@@ -43,7 +46,7 @@ function template_info_center_before_after()
 function template_info_after()
 {
 	echo '
-		</div>';
+	</div>';
 }
 
 function template_thoughts_before()

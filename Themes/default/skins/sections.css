@@ -60,24 +60,23 @@ p.moderators
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
-#upshrinkHeaderIC
+section.ic
 	p
 		margin: 0 0 .5em
 		padding: .5em
-		&.last
-			margin: 0
-			padding: .5em
-			border-top: 2px dotted #bbb
-		&.inline
-			border: none
-			margin: 0
-			padding: .2em .5em
-		&.stats
-			font-size: 1.1em
-			padding-top: 8px
-		&.pminfo
-			margin: 0
-			padding: .5em
+	.last
+		margin: 0
+		padding: .5em
+		border-top: 2px dotted #bbb
+	.inline
+		border: none
+		margin: 0
+		padding: .2em .5em
+	.pminfo
+		margin: 0
+		padding: .5em
+	.stats
+		padding-top: 8px
 
 // The small stats
 #index_common_stats
@@ -1307,10 +1306,6 @@ dl.stats
 #upshrink extends .shrinkable
 	float: right
 	margin-left: 1em
-
-#upshrink_ic extends .foldable
-	float: right
-	margin: 2px -2px 0 0
 
 #qr_expand, #postMoreExpand, #newsupshrink
 	base: .foldable
