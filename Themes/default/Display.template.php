@@ -67,7 +67,8 @@ function template_display_posts()
 										<img src="', $message['icon_url'] . '"', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', '>
 									</div>
 									<h5 id="subject_', $message['id'], '">
-										<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>
+										<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>', $message['new'] ? '
+										<div class="new_icon" title="' . $txt['new'] . '"></div>' : '', '
 									</h5>
 									<span>&#171; <strong>', !empty($message['counter']) ? $txt['reply_noun'] . ' #' . $message['counter'] : '', ' </strong> ', $message['time'], ' &#187;</span>
 									<div id="msg_', $message['id'], '_quick_mod"></div>

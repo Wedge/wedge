@@ -753,7 +753,7 @@ function template_footer()
  */
 function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
-	global $modSettings, $txt;
+	global $modSettings, $settings, $topicinfo, $txt;
 
 	// Save whether $start was less than 0 or not.
 	$start = (int) $start;
@@ -831,7 +831,13 @@ function constructPageIndex($base_url, &$start, $max_value, $num_per_page, $flex
 
 	// Finally, the next link.
 	if ($show_prevnext && $start + $num_per_page < $max_value)
+	{
 		$pageindex .= sprintf($base_link, $start + $num_per_page, $txt['previous_next_forward']);
+
+		// If we're in a topic page, and later pages have unread posts, show a New icon next to the following page number!
+		if (!empty($topicinfo['new_from']) && $topicinfo['new_from'] <= $topicinfo['id_last_msg'])
+			$pageindex .= ' <div class="new_icon next_page" title="' . $txt['new'] . '"></div>';
+	}
 
 	return $pageindex;
 }

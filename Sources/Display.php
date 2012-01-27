@@ -1258,7 +1258,7 @@ function prepareDisplayContext($reset = false)
 	global $settings, $txt, $modSettings, $scripturl, $options, $user_info, $board_info;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
-	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null;
+	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $is_new = false;
 
 	// If the query returned false, bail.
 	if ($messages_request == false)
@@ -1377,7 +1377,7 @@ function prepareDisplayContext($reset = false)
 			'name' => $message['modified_name']
 		),
 		'body' => $message['body'],
-		'new' => empty($message['is_read']),
+		'new' => empty($message['is_read']) && !$is_new,
 		'approved' => $message['approved'],
 		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
 		'is_ignored' => !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
@@ -1390,6 +1390,7 @@ function prepareDisplayContext($reset = false)
 		'last_post_id' => $context['last_msg_id'],
 	);
 
+	$is_new |= empty($message['is_read']);
 	$output['can_mergeposts'] &= !empty($output['last_post_id']);
 
 	// Is this a board? If not, we're dealing with this as replies to a post, and we won't allow merging the first reply into the post.
