@@ -55,7 +55,6 @@ ol.search_results
 #version_details
 	overflow-y: auto
 	max-height: 10.5em
-	font-size: 10pt
 	margin: 1em 0
 
 .admin_item
@@ -67,7 +66,6 @@ ol.search_results
 #wedge_news
 	overflow-y: auto
 	max-height: 10.5em
-	font-size: 10pt
 	margin: 1em 0
 	dt
 		padding-bottom: 5px

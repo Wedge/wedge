@@ -848,7 +848,16 @@ function wedge_get_skin_options()
 	if (!empty($set))
 	{
 		if (strpos($set, '</skeleton>') !== false && preg_match('~<skeleton>(.*?)</skeleton>~s', $set, $match))
+		{
 			$context['skeleton'] = $match[1];
+
+			// We need to erase the skeleton from the skin file, in case
+			// one of the layers/blocks has the same name as a skin keyword.
+			$set = str_replace($match[1], '', $set);
+		}
+
+		if (strpos($set, '</sidebar>') !== false && preg_match('~<sidebar>(.*?)</sidebar>~s', $set, $match))
+			$context['sidebar_position'] = $match[1];
 
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)

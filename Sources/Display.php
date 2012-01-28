@@ -421,9 +421,6 @@ function Display()
 	censorText($topicinfo['subject']);
 	$context['page_title'] = $topicinfo['subject'];
 
-	// Set the userbox position to the right. Later on, allow users to determine position of sidebar & userbox.
-	$context['post_position'] = 'right';
-
 	wetem::add('sidebar', 'display_statistics');
 
 	// Default this topic to not marked for notifications... of course...

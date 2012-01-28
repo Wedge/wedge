@@ -1814,6 +1814,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Initializing the Wedge templating magic.
 	$context['macros'] = array();
 	$context['skeleton'] = '';
+	$context['sidebar_position'] = 'right';
 	wetem::getInstance();
 
 	// Wireless mode? Load up the wireless stuff.

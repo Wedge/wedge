@@ -373,7 +373,7 @@ function template_aeva_item_details()
 	global $galurl, $context, $amSettings, $txt, $scripturl, $settings, $boardurl, $user_info, $options;
 
 	$item =& $context['item_data'];
-	$in_sidebar = $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'];
+	$in_sidebar = wetem::parent('aeva_item_details') == 'sidebar';
 
 	if ($in_sidebar)
 		echo '

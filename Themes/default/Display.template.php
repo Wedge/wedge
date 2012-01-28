@@ -48,11 +48,11 @@ function template_display_posts()
 				<a id="msg', $message['id'], '"></a>', $message['first_new'] ? '<a id="new"></a>' : '';
 
 		echo '
-				<div class="postbg', $message['alternate'] == 0 ? ' wrc' : '2 wrc', $message['approved'] ? '' : ' approve', $message['id'] == $context['first_message'] ? ' first-post' : '', $context['post_position'] != 'left' ? ' ' . $context['post_position'] . '-side' : '', '">
+				<div class="postbg', $message['alternate'] == 0 ? ' wrc' : '2 wrc', $message['approved'] ? '' : ' approve', $message['id'] == $context['first_message'] ? ' first-post' : '', $context['sidebar_position'] != 'right' ? ' right-side' : '', '">
 					<div class="post_wrapper">';
 
 		// Show information about the poster of this message.
-		if (empty($context['post_position']) || $context['post_position'] === 'left')
+		if ($context['sidebar_position'] !== 'left')
 			echo '
 						<div class="poster">',
 							template_userbox($message), '
@@ -243,7 +243,7 @@ function template_display_posts()
 						</div>';
 
 		// Show information about the poster of this message.
-		if ($context['post_position'] === 'right')
+		if ($context['sidebar_position'] === 'left')
 			echo '
 						<div class="poster">',
 							template_userbox($message), '

@@ -118,6 +118,19 @@
 	</skeleton>
 
 	<!--
+		Sidebar position. Default is 'right'. Wedge supports 'left' and 'right' by default,
+		but support really depends on the current theme and plugins.
+
+		Your design should conform to the sidebar's position. For instance, if you have
+		a sidebar-like block in your default layer, try to make sure it's shown opposite
+		the sidebar, or at least make sure that having both sidebars on the same side works.
+	-->
+
+	<sidebar>
+		left
+	</sidebar>
+
+	<!--
 		Code. This section allows you to define extra JavaScript that should be
 		added at the end of the page. You can specify a target browser using the
 		"for" keyword. You can also require some JavaScript files to be loaded,
