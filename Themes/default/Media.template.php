@@ -103,11 +103,11 @@ function template_aeva_home()
 <div id="home">', !empty($context['aeva_welcome']) ? '
 	<div id="aeva_welcome">' . $context['aeva_welcome'] . '</div>' : '', '
 	<div id="aeva_toplinks">
-		<we:cat>
+		<we:title>
 			<img src="', $settings['images_aeva'], '/house.png"> ', $txt['media_home'], $context['show_albums_link'] ? ' -
 			<img src="' . $settings['images_aeva'] . '/album.png"> <a href="' . $galurl . 'sa=vua">' . $txt['media_albums'] . '</a>' : '', empty($amSettings['disable_playlists']) ? ' -
 			<img src="' . $settings['images_aeva'] . '/playlist.png"> <a href="' . $galurl . 'sa=playlists">' . $txt['media_playlists'] . '</a>' : '', '
-		</we:cat>
+		</we:title>
 	</div>';
 
 	$context['aeva_windowbg'] = '';
@@ -1260,11 +1260,11 @@ function template_aeva_viewUserAlbums()
 	// The Albums!
 	echo '
 	<div id="aeva_toplinks">
-		<we:cat>
+		<we:title>
 			<img src="', $settings['images_aeva'], '/house.png"> <a href="', $galurl, '">', $txt['media_home'], '</a> -
 			<img src="', $settings['images_aeva'], '/album.png"> ', $txt['media_albums'], empty($amSettings['disable_playlists']) ? ' -
 			<img src="' . $settings['images_aeva'] . '/playlist.png"> <a href="' . $galurl . 'sa=playlists">' . $txt['media_playlists'] . '</a>' : '', '
-		</we:cat>
+		</we:title>
 	</div>';
 
 	$colspan = (isset($amSettings['album_columns']) ? max(1, (int) $amSettings['album_columns']) : 1) * 2;
@@ -1857,9 +1857,9 @@ function template_aeva_profile_viewvotes()
 	if (!empty($context['aeva_ratingLogs']))
 	{
 		echo '
-			<we:cat>
+			<we:title>
 				', $context['aeva_voter_name'], '
-			</we:cat>';
+			</we:title>';
 
 		foreach ($context['aeva_ratingLogs'] as $log)
 		{
@@ -1871,9 +1871,9 @@ function template_aeva_profile_viewvotes()
 			echo '<br>';
 		}
 		echo '<br>
-			<we:cat>
+			<we:title>
 				', $txt['media_voter_list'], '
-			</we:cat>';
+			</we:title>';
 		foreach ($context['aeva_otherVoters'] as $row)
 			echo '<br><a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a> (' . $row['co'] . ' ' . $txt['media_vote' . ($row['co'] > 1 ? 's' : '') . '_noun'] . ')';
 	}

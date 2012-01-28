@@ -739,7 +739,7 @@ class wecss_nesting extends wecss
 
 						foreach ($selectors as &$snippet)
 						{
-							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![a-z0-9_-]|.*[\t ]+final(?:\s|$))~i', $snippet))
+							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![a-z0-9_-]|.*\s+final\b)~i', $snippet))
 							{
 								// And our magic trick happens here. Then we restart the process to handle inherited extends.
 								$selector .= ', ' . str_replace($base[0], $base[2], $snippet);

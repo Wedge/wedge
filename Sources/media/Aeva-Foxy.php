@@ -365,11 +365,11 @@ function aeva_foxy_playlists()
 
 	$o = '
 	<div id="aeva_toplinks">
-		<we:cat>
+		<we:title>
 			<img src="' . $settings['images_aeva'] . '/house.png"> <a href="' . $galurl . '">' . $txt['media_home'] . '</a>' . ($context['show_albums_link'] ? ' -
 			<img src="' . $settings['images_aeva'] . '/album.png"> <a href="' . $galurl . 'sa=vua">' . $txt['media_albums'] . '</a>' : '') . (empty($amSettings['disable_playlists']) ? ' -
 			<img src="' . $settings['images_aeva'] . '/playlist.png"> ' . $txt['media_playlists'] : '') . '
-		</we:cat>
+		</we:title>
 	</div>';
 
 	if (aeva_allowedTo('add_playlists'))

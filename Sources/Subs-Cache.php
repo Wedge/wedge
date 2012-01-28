@@ -473,6 +473,11 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
 
+	// Remove the 'final' keyword.
+	$final = preg_replace('~\s+final\b~', '', $final);
+
+	// Remove extra whitespace. "content" properties will also be cleaned, which is unfortunate, if not to say inappropriate.
+	// Please don't use these, then. This could be fixed with a placeholder hack, but isn't really worth the extra processing time.
 	$final = preg_replace('~\s*([+:;,>{}[\]\s])\s*~', '$1', $final);
 
 	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
@@ -481,10 +486,10 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	// Some CSS3 rules that are prominent enough in Wedge get the honor of a custom function. No need to use a prefix on them, although you may.
 	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
-	// Remove double quote hacks, remaining whitespace, no-base64 tricks, the 'final' keyword in its compact form, and replace browser prefixes.
+	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
 	$final = str_replace(
-		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", 'url-no-base64(', ' final{', ' final,', ' final ', '-prefix-'),
-		array('"', "\n", ';', '}', '}', ' ', 'url(', '{', ',', ' ', $prefix),
+		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", 'url-no-base64(', '-prefix-'),
+		array('"', "\n", ';', '}', '}', ' ', 'url(', $prefix),
 		$final
 	);
 	// Restore comments as requested.
