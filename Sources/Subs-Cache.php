@@ -469,6 +469,8 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final); // Which we save.
 	$final = preg_replace('~\n\t*//[^\n]*~', "\n", $final); // Strip comments at the beginning of lines.
 	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
+	preg_match_all('~(?<=\s)content\s*:\s*(?:\'[^\']+\'|"[^"]+")~', $final, $contags); // Save content tags
+	$final = preg_replace('~(?<=\s)content\s*:\s*(?:\'[^\']+\'|"[^"]+")~', 'content: wedge', $final); // And clean them up
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -476,15 +478,14 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	// Remove the 'final' keyword.
 	$final = preg_replace('~\s+final\b~', '', $final);
 
-	// Remove extra whitespace. "content" properties will also be cleaned, which is unfortunate, if not to say inappropriate.
-	// Please don't use these, then. This could be fixed with a placeholder hack, but isn't really worth the extra processing time.
+	// Remove extra whitespace.
 	$final = preg_replace('~\s*([+:;,>{}[\]\s])\s*~', '$1', $final);
 
 	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
 	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
 
 	// Some CSS3 rules that are prominent enough in Wedge get the honor of a custom function. No need to use a prefix on them, although you may.
-	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
+	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition|text-overflow):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
 	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
 	$final = str_replace(
@@ -492,14 +493,20 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		array('"', "\n", ';', '}', '}', ' ', 'url(', $prefix),
 		$final
 	);
+
 	// Restore comments as requested.
 	if (!empty($comments))
 		foreach ($comments[0] as $comment)
 			$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);
+
+	// And do the same for content tags.
+	if (!empty($contags))
+		foreach ($contags[0] as $contag)
+			$final = preg_replace('~content:wedge~', $contag, $final, 1);
+
 	$final = ltrim($final, "\n");
 
 	// If we find any empty rules, we should be able to remove them.
-	// Obviously, don't use content: "{}" or something in your CSS. (Why would you?)
 	if (strpos($final, '{}') !== false)
 		$final = preg_replace('~[^{}]+{}~', '', $final);
 

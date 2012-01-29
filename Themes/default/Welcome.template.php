@@ -27,6 +27,8 @@ function template_main()
 
 function template_info_before()
 {
+	global $txt;
+
 	echo '
 	<div class="roundframe" style="margin: 16px 0">
 		<we:title>
