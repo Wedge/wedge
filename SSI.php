@@ -384,6 +384,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 
 	echo '
 		<table class="ssi_table">';
+
 	foreach ($posts as $post)
 		echo '
 			<tr>
@@ -399,6 +400,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 					', $post['time'], '
 				</td>
 			</tr>';
+
 	echo '
 		</table>';
 }
@@ -416,16 +418,14 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 
 	// Only some boards?.
 	if (is_array($include_boards) || (int) $include_boards === $include_boards)
-	{
 		$include_boards = is_array($include_boards) ? $include_boards : array($include_boards);
-	}
 	elseif ($include_boards != null)
 	{
 		$output_method = $include_boards;
 		$include_boards = array();
 	}
 
-	$stable_icons = array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'recycled', 'wireless');
+	$stable_icons = array('xx', 'thumbup', 'thumbdown', 'exclamation', 'question', 'lamp', 'smiley', 'angry', 'cheesy', 'grin', 'sad', 'wink', 'moved', 'clip', 'recycled', 'wireless', 'android', 'iphone', 'tablet');
 	$icon_sources = array();
 	foreach ($stable_icons as $icon)
 		$icon_sources[$icon] = 'images_url';
@@ -433,7 +433,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 	// Find all the posts in distinct topics. Newer ones will have higher IDs.
 	$request = wesql::query('
 		SELECT
-			t.id_topic, b.id_board, b.name AS board_name
+			t.id_topic, b.id_board, b.name AS board_name, b.url
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -499,8 +499,9 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'board' => array(
 				'id' => $topics[$row['id_topic']]['id_board'],
 				'name' => $topics[$row['id_topic']]['board_name'],
+				'url' => $topics[$row['id_topic']]['url'],
 				'href' => $scripturl . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0">' . $topics[$row['id_topic']]['board_name'] . '</a>'
+				'link' => '<a href="' . $scripturl . '?board=' . $topics[$row['id_topic']]['id_board'] . '.0">' . $topics[$row['id_topic']]['board_name'] . '</a>',
 			),
 			'topic' => $row['id_topic'],
 			'poster' => array(
@@ -533,6 +534,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 
 	echo '
 		<table class="ssi_table">';
+
 	foreach ($posts as $post)
 		echo '
 			<tr>
@@ -548,6 +550,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 					', $post['time'], '
 				</td>
 			</tr>';
+
 	echo '
 		</table>';
 }
@@ -637,6 +640,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 				<th>', $txt['topics'], '</th>
 				<th>', $txt['posts'], '</th>
 			</tr>';
+
 	foreach ($boards as $board)
 		echo '
 			<tr>
@@ -644,6 +648,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 				<td class="right">', comma_format($board['num_topics']), '</td>
 				<td class="right">', comma_format($board['num_posts']), '</td>
 			</tr>';
+
 	echo '
 		</table>';
 }
@@ -721,6 +726,7 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 				<th>', $txt['views'], '</th>
 				<th>', $txt['replies'], '</th>
 			</tr>';
+
 	foreach ($topics as $topic)
 		echo '
 			<tr>
@@ -730,6 +736,7 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 				<td class="right">', comma_format($topic['num_views']), '</td>
 				<td class="right">', comma_format($topic['num_replies']), '</td>
 			</tr>';
+
 	echo '
 		</table>';
 }
@@ -768,10 +775,7 @@ function ssi_randomMember($random_type = '', $output_method = 'echo')
 
 	// If we're looking for something to stay the same each day then seed the generator.
 	if ($random_type == 'day')
-	{
-		// Set the seed to change only once per day.
-		mt_srand(floor(time() / 86400));
-	}
+		mt_srand(floor(time() / 86400)); // Set the seed to change only once per day.
 
 	// Get the lowest ID we're interested in.
 	$member_id = mt_rand(1, $modSettings['latestMember']);
@@ -1799,6 +1803,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 				<th>', $txt['downloads'], '</th>
 				<th>', $txt['filesize'], '</th>
 			</tr>';
+
 	foreach ($attachments as $attach)
 		echo '
 			<tr>
@@ -1807,6 +1812,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 				<td class="center">', $attach['file']['downloads'], '</td>
 				<td>', $attach['file']['filesize'], '</td>
 			</tr>';
+
 	echo '
 		</table>';
 }

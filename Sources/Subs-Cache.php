@@ -464,13 +464,18 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
-	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except...
-	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments); // ...for /*! Copyrights */...
-	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final); // Which we save.
+	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except for copyrights.
+
+	// And this is where we preserve some of the comments.
+	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments);
+	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final);
+
 	$final = preg_replace('~\n\t*//[^\n]*~', "\n", $final); // Strip comments at the beginning of lines.
 	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
-	preg_match_all('~(?<=\s)content\s*:\s*(?:\'[^\']+\'|"[^"]+")~', $final, $contags); // Save content tags
-	$final = preg_replace('~(?<=\s)content\s*:\s*(?:\'[^\']+\'|"[^"]+")~', 'content: wedge', $final); // And clean them up
+
+	// Just like comments, we're going to preserve content tags.
+	preg_match_all('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~', $final, $contags);
+	$final = preg_replace('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~', 'content: wedge', $final);
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -496,13 +501,11 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 
 	// Restore comments as requested.
 	if (!empty($comments))
-		foreach ($comments[0] as $comment)
-			$final = preg_replace('~\.wedge_comment_placeholder{border:0}~', "\n" . $comment . "\n", $final, 1);
+		wedge_replace_placeholders('.wedge_comment_placeholder{border:0}', $comments[0], $final);
 
 	// And do the same for content tags.
 	if (!empty($contags))
-		foreach ($contags[0] as $contag)
-			$final = preg_replace('~content:wedge~', $contag, $final, 1);
+		wedge_replace_placeholders('content:wedge', $contags[0], $final);
 
 	$final = ltrim($final, "\n");
 
@@ -514,6 +517,14 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		$final = gzencode($final, 9);
 
 	file_put_contents($final_file, $final);
+}
+
+function wedge_replace_placeholders($str, $arr, &$final)
+{
+	$i = 0;
+	$len = strlen($str);
+	while (($pos = strpos($final, $str)) !== false)
+		$final = substr_replace($final, $arr[$i++], $pos, $len);
 }
 
 /**

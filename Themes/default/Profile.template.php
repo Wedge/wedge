@@ -76,13 +76,13 @@ function template_summary()
 	}
 
 	echo '
-			</ul>
-			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle">' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
+				</ul>
+				<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" class="middle">' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
 
 	// Can they add this member as a buddy?
 	if (!empty($context['can_have_buddy']) && !$context['user']['is_owner'])
 		echo '
-				<br><a href="', $scripturl, '?action=buddy;u=', $context['id_member'], ';', $context['session_query'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
+					<br><a href="', $scripturl, '?action=buddy;u=', $context['id_member'], ';', $context['session_query'], '">[', $txt['buddy_' . ($context['member']['is_buddy'] ? 'remove' : 'add')], ']</a>';
 
 	echo '
 				</span>';
@@ -164,7 +164,7 @@ function template_summary()
 			if ($field['placement'] != 0 || empty($field['output_html']))
 				continue;
 
-			if (empty($shown))
+			if (!$shown)
 			{
 				echo '
 			<dl>';
@@ -176,13 +176,13 @@ function template_summary()
 				<dd>', $field['output_html'], '</dd>';
 		}
 
-		if (!empty($shown))
+		if ($shown)
 			echo '
 			</dl>';
 	}
 
 	echo '
-			<dl class="noborder">';
+			<dl>';
 
 	// Can they view/issue a warning?
 	if ($context['can_view_warning'] && $context['member']['warning'])
@@ -267,7 +267,7 @@ function template_summary()
 		{
 			if ($field['placement'] != 2 || empty($field['output_html']))
 				continue;
-			if (empty($shown))
+			if (!$shown)
 			{
 				$shown = true;
 				echo '
@@ -286,7 +286,7 @@ function template_summary()
 	// Show the users signature.
 	if ($context['signature_enabled'] && !empty($context['member']['signature']))
 		echo '
-			<div class="signature">
+			<div class="signature" style="padding: 0; border: 0">
 				<h5>', $txt['signature'], ':</h5>
 				', $context['member']['signature'], '
 			</div>';
@@ -294,7 +294,8 @@ function template_summary()
 	echo '
 		</div>
 	</div>
-	<div class="clear"></div>';
+	<div class="clear"></div>
+</div>';
 }
 
 function template_showThoughts()
