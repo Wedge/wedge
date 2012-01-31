@@ -213,8 +213,17 @@ function template_html_before()
 
 function template_body_before()
 {
+	global $context;
+
+	if (!empty($context['current_action']))
+		$id = $context['current_action'];
+	elseif (!empty($context['current_topic']))
+		$id = 'topic';
+	elseif (!empty($context['current_board']))
+		$id = 'board';
+
 	echo '
-<body>';
+<body', isset($id) ? ' id="' . $id . '"' : '', '>';
 }
 
 // The main content should go here.

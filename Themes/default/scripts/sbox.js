@@ -351,17 +351,20 @@
 		},
 
 		// When the user explicitly clicks an item
-		clickSBItem = function ()
+		clickSBItem = function (e)
 		{
-			selectItem($(this));
-			updateOriginal();
-			closeAndUnbind();
-			focusSB();
-
-			if (has_changed)
+			if (e.which == 1)
 			{
-				$orig.triggerHandler('change');
-				has_changed = false;
+				selectItem($(this));
+				updateOriginal();
+				closeAndUnbind();
+				focusSB();
+
+				if (has_changed)
+				{
+					$orig.triggerHandler('change');
+					has_changed = false;
+				}
 			}
 
 			return false;
@@ -447,7 +450,7 @@
 				e.preventDefault();
 			}
 			// Also, try finding the next element that starts with the pressed letter. if found, select it.
-			else if (selectMatchingItem(String.fromCharCode(e.which)))
+			else if (e.which < 91 && selectMatchingItem(String.fromCharCode(e.which)))
 				e.preventDefault();
 
 			if (has_changed)

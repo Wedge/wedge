@@ -10,8 +10,7 @@
  * @version 0.1
  */
 
-var cur_topic_id, cur_msg_id, cur_subject_div, buff_subject, in_edit_mode = 0;
-hide_prefixes = [];
+var cur_topic_id, cur_msg_id, cur_subject_div, buff_subject, in_edit_mode = 0, hide_prefixes = [];
 
 function is_editing()
 {
