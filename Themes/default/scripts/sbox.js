@@ -97,7 +97,7 @@
 
 			// The 'apply' call below will return the widest width from a list of elements.
 			// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
-			if (fixed)
+			if (fixed && $items.not('.disabled').length)
 				$sb.width(Math.max.apply(0, $dd.find('.text,.optgroup').map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($('.text', $display)));
 
 			// Hide the dropdown now that it's initialized
@@ -155,12 +155,17 @@
 		{
 			$option = $option || $('<option></option>');
 
+			// If you want to hide an option (e.g. placeholder),
+			// you can use the magic word: <option data-hide>
+			var visible = $option.attr('data-hide') !== '';
+
 			return $('<div id="sbo' + ++unique + '" role=option></div>')
 				.data('orig', $option)
 				.data('value', $option.attr('value') || '')
 				.attr('aria-disabled', !!$option.is(':disabled'))
-				.toggleClass('disabled', $option.is(':disabled,.hr'))
+				.toggleClass('disabled', !visible || $option.is(':disabled,.hr'))
 				.toggleClass('selected', $option.is(':selected'))
+				.toggle(visible)
 				.append(
 					$('<div class="item"></div>')
 						.attr('style', $option.attr('style') || '')

@@ -587,10 +587,10 @@ function weToggle(opt)
 function JumpTo(opt)
 {
 	this.opt = opt;
-	var sContainer = opt.sContainerId, aBoardsAndCategories = [];
+	var aBoardsAndCategories = [];
 
-	$('#' + sContainer).find('label')
-		.append('<select id="' + sContainer + '_select" class="fixed"><option>=> ' + opt.sPlaceholder + '</option></select>')
+	$('#' + opt.sContainerId).find('label')
+		.append('<select id="' + opt.sContainerId + '_select"><option data-hide>=> ' + opt.sPlaceholder + '</option></select>')
 		.find('select').sb().focus(function ()
 		{
 			show_ajax();

@@ -401,7 +401,7 @@ function template_folder()
 				{
 					echo '
 					<select name="pm_actions[', $message['id'], ']" onchange="if ($(this).val()) this.form.submit();" class="fixed">
-						<option value="">', $txt['pm_msg_label_title'], '</option>';
+						<option data-hide>', $txt['pm_msg_label_title'], '</option>';
 
 					// Are there any labels which can be added to this?
 					if (!$message['fully_labeled'])
@@ -488,7 +488,7 @@ function template_subject_list()
 				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 			</th>
 			<th class="left">
-				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="window.location=\'', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(\'#selPMView\').val();" class="fixed">';
+				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="window.location=\'', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(\'#selPMView\').val();">';
 
 	foreach ($context['view_select_types'] as $display_mode => $display_desc)
 		echo '
@@ -558,7 +558,7 @@ function template_subject_list()
 		if (!empty($context['currently_using_labels']) && $context['folder'] != 'sent')
 			echo '
 				<select name="pm_action" onchange="if ($(this).val()) this.form.submit();" onfocus="loadLabelChoices();" class="fixed">
-					<option value="">', $txt['pm_sel_label_title'], '</option>
+					<option data-hide>', $txt['pm_sel_label_title'], '</option>
 				</select>';
 
 		echo '
@@ -1290,7 +1290,7 @@ function template_add_rule()
 
 		criteriaNum++;
 
-		$("#criteriaAddHere").append(\'<br><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" class="hide"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value=""><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" class="hide"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
+		$("#criteriaAddHere").append(\'<br><select name="ruletype[\' + criteriaNum + \']" id="ruletype\' + criteriaNum + \'" onchange="updateRuleDef(\' + criteriaNum + \'); rebuildRuleDesc();"><option data-hide>', addslashes($txt['pm_rule_criteria_pick']), ':<\' + \'/option><option value="mid">', addslashes($txt['pm_rule_mid']), '<\' + \'/option><option value="gid">', addslashes($txt['pm_rule_gid']), '<\' + \'/option><option value="sub">', addslashes($txt['pm_rule_sub']), '<\' + \'/option><option value="msg">', addslashes($txt['pm_rule_msg']), '<\' + \'/option><option value="bud">', addslashes($txt['pm_rule_bud']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="defdiv\' + criteriaNum + \'" class="hide"><input type="text" name="ruledef[\' + criteriaNum + \']" id="ruledef\' + criteriaNum + \'" onkeyup="rebuildRuleDesc();" value=""><\' + \'/span><span id="defseldiv\' + criteriaNum + \'" class="hide"><select name="ruledefgroup[\' + criteriaNum + \']" id="ruledefgroup\' + criteriaNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_group']), '<\' + \'/option>');
 
 	foreach ($context['groups'] as $id => $group)
 		add_js('<option value="' . $id . '">' . strtr($group, array("'" => "\'")) . '<\' + \'/option>');
@@ -1307,7 +1307,7 @@ function template_add_rule()
 
 		actionNum++;
 
-		$("#actionAddHere").append(\'<br><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" class="hide"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option value="">', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>');
+		$("#actionAddHere").append(\'<br><select name="acttype[\' + actionNum + \']" id="acttype\' + actionNum + \'" onchange="updateActionDef(\' + actionNum + \'); rebuildRuleDesc();"><option data-hide>', addslashes($txt['pm_rule_sel_action']), ':<\' + \'/option><option value="lab">', addslashes($txt['pm_rule_label']), '<\' + \'/option><option value="del">', addslashes($txt['pm_rule_delete']), '<\' + \'/option><\' + \'/select>&nbsp;<span id="labdiv\' + actionNum + \'" class="hide"><select name="labdef[\' + actionNum + \']" id="labdef\' + actionNum + \'" onchange="rebuildRuleDesc();"><option data-hide>', addslashes($txt['pm_rule_sel_label']), '<\' + \'/option>');
 
 	foreach ($context['labels'] as $label)
 		if ($label['id'] != -1)
@@ -1456,7 +1456,7 @@ function template_add_rule()
 
 		echo '
 				<select name="ruletype[', $k, ']" id="ruletype', $k, '" onchange="updateRuleDef(', $k, '); rebuildRuleDesc();">
-					<option value="">', $txt['pm_rule_criteria_pick'], ':</option>
+					<option data-hide>', $txt['pm_rule_criteria_pick'], ':</option>
 					<option value="mid"', $criteria['t'] == 'mid' ? ' selected' : '', '>', $txt['pm_rule_mid'], '</option>
 					<option value="gid"', $criteria['t'] == 'gid' ? ' selected' : '', '>', $txt['pm_rule_gid'], '</option>
 					<option value="sub"', $criteria['t'] == 'sub' ? ' selected' : '', '>', $txt['pm_rule_sub'], '</option>
@@ -1468,7 +1468,7 @@ function template_add_rule()
 				</span>
 				<span id="defseldiv', $k, '"', $criteria['t'] == 'gid' ? '' : ' class="hide"', '>
 					<select name="ruledefgroup[', $k, ']" id="ruledefgroup', $k, '" onchange="rebuildRuleDesc();">
-						<option value="">', $txt['pm_rule_sel_group'], '</option>';
+						<option data-hide>', $txt['pm_rule_sel_group'], '</option>';
 
 		foreach ($context['groups'] as $id => $group)
 			echo '
@@ -1511,13 +1511,13 @@ function template_add_rule()
 
 		echo '
 				<select name="acttype[', $k, ']" id="acttype', $k, '" onchange="updateActionDef(', $k, '); rebuildRuleDesc();">
-					<option value="">', $txt['pm_rule_sel_action'], ':</option>
+					<option data-hide>', $txt['pm_rule_sel_action'], ':</option>
 					<option value="lab"', $action['t'] == 'lab' ? ' selected' : '', '>', $txt['pm_rule_label'], '</option>
 					<option value="del"', $action['t'] == 'del' ? ' selected' : '', '>', $txt['pm_rule_delete'], '</option>
 				</select>
 				<span id="labdiv', $k, '">
 					<select name="labdef[', $k, ']" id="labdef', $k, '" onchange="rebuildRuleDesc();">
-						<option value="">', $txt['pm_rule_sel_label'], '</option>';
+						<option data-hide>', $txt['pm_rule_sel_label'], '</option>';
 
 		foreach ($context['labels'] as $label)
 			if ($label['id'] != -1)
