@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  * - Flag whether we are editing our own or someone else's message, for mod-log purposes.
  * - Sanitize the incoming title (check not empty, and if so: replace CR, LF or TAB with empty string and custom htmlspecialchars replacement, then truncate to 100 characters)
  * - Sanitize the incoming message (check not empty, check not over-long, custom htmlspecialchars, preparsecode, check that if the tags except img are removed that there is some content)
- * - Handle the message locking and sticky status.
+ * - Handle the message locking and pinned status.
  * - If no errors from the above, prepare the array triplet (msg/topic/poster Options) and pass to {@link modifyPost()} noting that the post is modified on subject/message/icon changing.
  * - If there are no errors and we edited something in the message, prepare the newly edited message for return, i.e. build an array with everything needed to make the post, parsed for BBC, and return via XML.
  * - If there were no errors but we only changed the icon or subject, return only those details.
@@ -152,8 +152,8 @@ function JSModify()
 			$_POST['lock'] = empty($_POST['lock']) ? 0 : 1;
 	}
 
-	if (isset($_POST['sticky']) && !allowedTo('make_sticky'))
-		unset($_POST['sticky']);
+	if (isset($_POST['pin']) && !allowedTo('pin_topic'))
+		unset($_POST['pin']);
 
 	if (empty($post_errors))
 	{
@@ -167,7 +167,7 @@ function JSModify()
 			'id' => $topic,
 			'board' => $board,
 			'lock_mode' => isset($_POST['lock']) ? (int) $_POST['lock'] : null,
-			'sticky_mode' => isset($_POST['sticky']) ? (int) $_POST['sticky'] : null,
+			'pin_mode' => isset($_POST['pin']) ? (int) $_POST['pin'] : null,
 			'mark_as_read' => true,
 		);
 		$posterOptions = array();

@@ -65,11 +65,11 @@ function template_modify_weights()
 					</dd>
 					<dt class="large_caption">
 						<a href="', $scripturl, '?action=help;in=search_weight_frequency" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-						', $txt['search_weight_sticky'], ':
+						', $txt['search_weight_pinned'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_sticky" id="weight6_val" value="', empty($modSettings['search_weight_sticky']) ? '0' : $modSettings['search_weight_sticky'], '" onchange="calculateNewValues()" size="3"></span>
-						<span id="weight6" class="search_weight">', $context['relative_weights']['search_weight_sticky'], '%</span>
+						<span class="search_weight"><input type="text" name="search_weight_pinned" id="weight6_val" value="', empty($modSettings['search_weight_pinned']) ? '0' : $modSettings['search_weight_pinned'], '" onchange="calculateNewValues()" size="3"></span>
+						<span id="weight6" class="search_weight">', $context['relative_weights']['search_weight_pinned'], '%</span>
 					</dd>
 					<dt class="large_caption">
 						<strong>', $txt['search_weights_total'], '</strong>

@@ -130,7 +130,7 @@ function Display()
 	// Get all the important topic info.
 	$request = wesql::query('
 		SELECT
-			t.num_replies, t.num_views, t.locked, ms.subject, t.is_sticky, t.id_poll,
+			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll,
 			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, ms.poster_time,
 			' . ($user_info['is_guest'] ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
 			' . (!empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
@@ -348,7 +348,7 @@ function Display()
 					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
 						AND ' . $sort . ' ' . $sort_methods[$sort_by]['cmp'] . '
-					ORDER BY t.is_sticky' . ($ascending ? ' DESC' : '') . ', ' . $sort . ($ascending ? ' DESC' : '') . '
+					ORDER BY t.is_pinned' . ($ascending ? ' DESC' : '') . ', ' . $sort . ($ascending ? ' DESC' : '') . '
 					LIMIT 1
 				)
 			)
@@ -363,7 +363,7 @@ function Display()
 					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
 						AND ' . $sort . ' ' . str_replace('>', '<', $sort_methods[$sort_by]['cmp']) . '
-					ORDER BY t.is_sticky' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
+					ORDER BY t.is_pinned' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
 					LIMIT 1
 				)
 			)',
@@ -509,7 +509,7 @@ function Display()
 
 	// Information about the current topic...
 	$context['is_locked'] = $topicinfo['locked'];
-	$context['is_sticky'] = $topicinfo['is_sticky'];
+	$context['is_pinned'] = $topicinfo['is_pinned'];
 	$context['is_approved'] = $topicinfo['approved'];
 
 	$context['is_poll'] = $topicinfo['id_poll'] > 0 && $modSettings['pollMode'] == '1' && allowedTo('poll_view');
@@ -839,7 +839,7 @@ function Display()
 			wesql::free_result($request);
 		}
 
-		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time() && empty($sticky);
+		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time();
 	}
 
 	// Guests can't mark topics read or for notifications, just can't sorry.
@@ -1042,7 +1042,7 @@ function Display()
 	$common_permissions = array(
 		'can_approve' => 'approve_posts',
 		'can_ban' => 'manage_bans',
-		'can_sticky' => 'make_sticky',
+		'can_pinned' => 'pin_topic',
 		'can_merge' => 'merge_any',
 		'can_split' => 'split_any',
 		'can_mark_notify' => 'mark_any_notify',
@@ -1096,7 +1096,7 @@ function Display()
 	// Wireless shows a "more" if you can do anything special.
 	if (WIRELESS)
 	{
-		$context['wireless_more'] = $context['can_sticky'] || $context['can_lock'] || allowedTo('modify_any');
+		$context['wireless_more'] = $context['can_pin'] || $context['can_lock'] || allowedTo('modify_any');
 		$context['wireless_moderate'] = isset($_GET['moderate']) ? ';moderate' : '';
 	}
 
@@ -1235,7 +1235,7 @@ function Display()
 			'move' => array('test' => 'can_move', 'text' => 'move_topic', 'url' => $scripturl . '?action=movetopic;topic=' . $context['current_topic'] . '.0'),
 			'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['are_sure_remove_topic']) . ');"', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_query']),
 			'lock' => array('test' => 'can_lock', 'text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'url' => $scripturl . '?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-			'sticky' => array('test' => 'can_sticky', 'text' => empty($context['is_sticky']) ? 'set_sticky' : 'set_nonsticky', 'url' => $scripturl . '?action=sticky;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'pin' => array('test' => 'can_pin', 'text' => empty($context['is_pinned']) ? 'set_pin' : 'set_unpin', 'url' => $scripturl . '?action=pin;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'merge' => array('test' => 'can_merge', 'text' => 'merge', 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']),
 			'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'url' => $scripturl . '?action=poll;sa=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
 		),

@@ -1188,8 +1188,8 @@ tr.titlebg
 	.windowbg2&
 		background-color: #f3bd9f
 
-// Sticky topics get a different background
-.sticky
+// Pinned topics get a different background
+.pinned
 	background: #e8d8cf
 	.windowbg2&
 		background: #f2e3d9

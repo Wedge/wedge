@@ -296,7 +296,7 @@ function template_maintain_topics()
 						<label><input type="radio" name="delete_type" id="delete_type_locked" value="locked"> ', $txt['maintain_old_are_locked'], '</label><br>
 					</p>
 					<p>
-						<label><input type="checkbox" name="delete_old_not_sticky" id="delete_old_not_sticky" checked> ', $txt['maintain_old_are_not_stickied'], '</label><br>
+						<label><input type="checkbox" name="delete_old_not_pinned" id="delete_old_not_pinned" checked> ', $txt['maintain_old_are_not_pinned'], '</label><br>
 					</p>
 					<p>
 						<a href="#rotLink" onclick="swapRot(); return false;"><div class="foldable" title="+" id="rotIcon"></div></a> <a href="#rotLink" onclick="swapRot(); return false;" id="rotText" style="font-weight: bold;">', $txt['maintain_old_all'], '</a>

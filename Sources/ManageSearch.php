@@ -176,7 +176,7 @@ function EditWeights()
 		'search_weight_length',
 		'search_weight_subject',
 		'search_weight_first_message',
-		'search_weight_sticky',
+		'search_weight_pinned',
 	);
 
 	// A form was submitted.

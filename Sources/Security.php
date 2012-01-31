@@ -483,7 +483,7 @@ function banPermissions()
 			'profile_identity_any', 'profile_extra_any', 'profile_title_any',
 			'post_new', 'post_reply_own', 'post_reply_any',
 			'delete_own', 'delete_any', 'delete_replies',
-			'make_sticky',
+			'pin_topic',
 			'merge_any', 'split_any',
 			'modify_own', 'modify_any', 'modify_replies',
 			'move_any',

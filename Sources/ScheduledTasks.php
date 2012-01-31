@@ -693,7 +693,7 @@ function scheduled_daily_digest()
 			'mod_actions' => $txt['digest_mod_actions'],
 			'replies_one' => $txt['digest_new_replies_one'],
 			'replies_many' => $txt['digest_new_replies_many'],
-			'sticky' => $txt['digest_mod_act_sticky'],
+			'pin' => $txt['digest_mod_act_pin'],
 			'lock' => $txt['digest_mod_act_lock'],
 			'unlock' => $txt['digest_mod_act_unlock'],
 			'remove' => $txt['digest_mod_act_remove'],

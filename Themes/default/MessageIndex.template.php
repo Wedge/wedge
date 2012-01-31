@@ -98,9 +98,9 @@ function template_main_board()
 			// Is this topic pending approval, or does it have any posts pending approval?
 			if ($context['can_approve_posts'] && $topic['unapproved_posts'])
 				$color_class .= !$topic['approved'] ? ' approvet' : ' approve';
-			// Sticky topics should get a different color, too.
-			if ($topic['is_sticky'])
-				$color_class .= ' sticky';
+			// Pinned topics should get a different color, too.
+			if ($topic['is_pinned'])
+				$color_class .= ' pinned';
 			// Locked topics get special treatment as well.
 			if ($topic['is_locked'])
 				$color_class .= ' locked';
@@ -116,7 +116,7 @@ function template_main_board()
 					</td>
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" onmouseout="mouse_on_div = 0;" onmouseover="mouse_on_div = 1;" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
-							', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'], (!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '</span>', $topic['is_sticky'] ? '</strong>' : '';
+							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'], (!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '</span>', $topic['is_pinned'] ? '</strong>' : '';
 
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && $context['user']['is_logged'])
@@ -161,8 +161,8 @@ function template_main_board()
 					if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
 						echo '<br>';
 
-					if ($topic['quick_mod']['sticky'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=sticky;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_sticky.gif" width="16" alt="', $txt['set_sticky'], '" title="', $txt['set_sticky'], '"></a>';
+					if ($topic['quick_mod']['pin'])
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
 
 					if ($topic['quick_mod']['move'])
 						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
@@ -183,8 +183,8 @@ function template_main_board()
 							<option value="">--- ', $txt['moderate'], ' ---</option>
 							<option class="hr"></option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
-							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
-							<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
+							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_pin'] ? '
+							<option value="pin">' . $txt['quick_mod_pin'] . '</option>' : '', $context['can_move'] ? '
 							<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
 							<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', $context['can_restore'] ? '
 							<option value="restore">' . $txt['quick_mod_restore'] . '</option>' : '', $context['can_approve'] ? '
@@ -254,7 +254,7 @@ function template_main_board()
 
 	add_js('
 	// Hide certain bits during topic edit.
-	hide_prefixes.push("lockicon", "stickyicon", "pages", "newicon");
+	hide_prefixes.push("pages", "newicon");
 
 	// Detect when we\'ve stopped editing.
 	var mouse_on_div;
@@ -362,9 +362,9 @@ function template_main_blog()
 			// Is this topic pending approval, or does it have any posts pending approval?
 			if ($context['can_approve_posts'] && $topic['unapproved_posts'])
 				$color_class .= !$topic['approved'] ? ' approvet' : ' approve';
-			// Sticky topics should get a different color, too.
-			if ($topic['is_sticky'])
-				$color_class .= ' sticky';
+			// Pinned topics should get a different color, too.
+			if ($topic['is_pinned'])
+				$color_class .= ' pinned';
 			// Locked topics get special treatment as well.
 			elseif ($topic['is_locked'])
 				$color_class .= ' locked';
@@ -380,7 +380,7 @@ function template_main_blog()
 					</td>
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" onmouseout="mouse_on_div = 0;" onmouseover="mouse_on_div = 1;" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
-							', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'], (!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '</span>', $topic['is_sticky'] ? '</strong>' : '';
+							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'], (!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '</span>', $topic['is_pinned'] ? '</strong>' : '';
 
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && $context['user']['is_logged'])
@@ -421,8 +421,8 @@ function template_main_blog()
 					if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
 						echo '<br>';
 
-					if ($topic['quick_mod']['sticky'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=sticky;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_sticky.gif" width="16" alt="', $txt['set_sticky'], '" title="', $txt['set_sticky'], '"></a>';
+					if ($topic['quick_mod']['pin'])
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
 
 					if ($topic['quick_mod']['move'])
 						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
@@ -442,8 +442,8 @@ function template_main_blog()
 						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
 							<option class="hr"></option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
-							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
-							<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
+							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_pin'] ? '
+							<option value="pin">' . $txt['quick_mod_pin'] . '</option>' : '', $context['can_move'] ? '
 							<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
 							<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', $context['can_restore'] ? '
 							<option value="restore">' . $txt['quick_mod_restore'] . '</option>' : '', $context['can_approve'] ? '
@@ -513,7 +513,7 @@ function template_main_blog()
 
 	add_js('
 	// Hide certain bits during topic edit.
-	hide_prefixes.push("lockicon", "stickyicon", "pages", "newicon");
+	hide_prefixes.push("pages", "newicon");
 
 	// Use it to detect when we\'ve stopped editing.
 	document.onclick = modify_topic_click;
@@ -711,7 +711,7 @@ function template_messageindex_legend()
 		</we:title>
 		<p>
 			<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
-			<img src="' . $settings['images_url'] . '/icons/quick_sticky.gif" class="middle"> ', $txt['sticky_topic'], '<br>', $modSettings['pollMode'] == '1' ? '
+			<img src="' . $settings['images_url'] . '/icons/quick_pin.gif" class="middle"> ', $txt['pinned_topic'], '<br>', $modSettings['pollMode'] == '1' ? '
 			<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '<br>', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
 			<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] : '', '
 		</p>

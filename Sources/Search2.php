@@ -58,7 +58,7 @@ function Search2()
 		'length',
 		'subject',
 		'first_message',
-		'sticky',
+		'pinned',
 	);
 
 	$weight = array();
@@ -867,7 +867,7 @@ function Search2()
 								{int:weight_age} * CASE WHEN t.id_first_msg < {int:min_msg} THEN 0 ELSE (t.id_first_msg - {int:min_msg}) / {int:recent_message} END +
 								{int:weight_length} * CASE WHEN t.num_replies < {int:huge_topic_posts} THEN t.num_replies / {int:huge_topic_posts} ELSE 1 END +
 								{int:weight_subject} +
-								{int:weight_sticky} * t.is_sticky
+								{int:weight_pinned} * t.is_pinned
 							) / {int:weight_total} AS relevance,
 							' . (empty($userQuery) ? 't.id_first_msg' : 'm.id_msg') . ',
 							1
@@ -884,7 +884,7 @@ function Search2()
 							'weight_age' => $weight['age'],
 							'weight_frequency' => $weight['frequency'],
 							'weight_length' => $weight['length'],
-							'weight_sticky' => $weight['sticky'],
+							'weight_pinned' => $weight['pinned'],
 							'weight_subject' => $weight['subject'],
 							'weight_total' => $weight_total,
 							'min_msg' => $minMsg,
@@ -948,7 +948,7 @@ function Search2()
 						'length' => 'CASE WHEN MAX(t.num_replies) < {int:huge_topic_posts} THEN MAX(t.num_replies) / {int:huge_topic_posts} ELSE 1 END',
 						'subject' => '0',
 						'first_message' => 'CASE WHEN MIN(m.id_msg) = MAX(t.id_first_msg) THEN 1 ELSE 0 END',
-						'sticky' => 'MAX(t.is_sticky)',
+						'pinned' => 'MAX(t.is_pinned)',
 					);
 
 					$main_query['group_by'][] = 't.id_topic';
@@ -1327,7 +1327,7 @@ function Search2()
 								{int:weight_age} * CASE WHEN t.id_first_msg < {int:min_msg} THEN 0 ELSE (t.id_first_msg - {int:min_msg}) / {int:recent_message} END +
 								{int:weight_length} * CASE WHEN t.num_replies < {int:huge_topic_posts} THEN t.num_replies / {int:huge_topic_posts} ELSE 1 END +
 								{int:weight_subject} +
-								{int:weight_sticky} * t.is_sticky
+								{int:weight_pinned} * t.is_pinned
 							) / {int:weight_total} AS relevance,
 							t.id_first_msg,
 							1
@@ -1341,7 +1341,7 @@ function Search2()
 							'weight_age' => $weight['age'],
 							'weight_frequency' => $weight['frequency'],
 							'weight_length' => $weight['frequency'],
-							'weight_sticky' => $weight['frequency'],
+							'weight_pinned' => $weight['frequency'],
 							'weight_subject' => $weight['frequency'],
 							'weight_total' => $weight_total,
 							'min_msg' => $minMsg,
@@ -1399,7 +1399,7 @@ function Search2()
 		{
 			$boards_can['lock_any'] = boardsAllowedTo('lock_any');
 			$boards_can['lock_own'] = boardsAllowedTo('lock_own');
-			$boards_can['make_sticky'] = boardsAllowedTo('make_sticky');
+			$boards_can['pin_topic'] = boardsAllowedTo('pin_topic');
 			$boards_can['move_any'] = boardsAllowedTo('move_any');
 			$boards_can['move_own'] = boardsAllowedTo('move_own');
 			$boards_can['remove_any'] = boardsAllowedTo('remove_any');
@@ -1407,7 +1407,7 @@ function Search2()
 			$boards_can['merge_any'] = boardsAllowedTo('merge_any');
 
 			$context['can_lock'] = in_array(0, $boards_can['lock_any']);
-			$context['can_sticky'] = in_array(0, $boards_can['make_sticky']);
+			$context['can_pin'] = in_array(0, $boards_can['pin_topic']);
 			$context['can_move'] = in_array(0, $boards_can['move_any']);
 			$context['can_remove'] = in_array(0, $boards_can['remove_any']);
 			$context['can_merge'] = in_array(0, $boards_can['merge_any']);
@@ -1445,7 +1445,7 @@ function Search2()
 				first_mem.id_member AS first_member_id, IFNULL(first_mem.real_name, first_m.poster_name) AS first_member_name,
 				last_m.id_msg AS last_msg, last_m.poster_time AS last_poster_time, last_mem.id_member AS last_member_id,
 				IFNULL(last_mem.real_name, last_m.poster_name) AS last_member_name, last_m.icon AS last_icon, last_m.subject AS last_subject,
-				t.id_topic, t.is_sticky, t.locked, t.id_poll, t.num_replies, t.num_views,
+				t.id_topic, t.is_pinned, t.locked, t.id_poll, t.num_replies, t.num_views,
 				b.id_board, b.name AS board_name, c.id_cat, c.name AS cat_name
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
@@ -1645,7 +1645,7 @@ function prepareSearchContext($reset = false)
 
 	$output = array_merge($context['topics'][$message['id_msg']], array(
 		'id' => $message['id_topic'],
-		'is_sticky' => !empty($message['is_sticky']),
+		'is_pinned' => !empty($message['is_pinned']),
 		'is_locked' => !empty($message['locked']),
 		'is_poll' => $modSettings['pollMode'] == '1' && $message['id_poll'] > 0,
 		'posted_in' => !empty($participants[$message['id_topic']]),
@@ -1709,13 +1709,13 @@ function prepareSearchContext($reset = false)
 
 		$output['quick_mod'] = array(
 			'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
-			'sticky' => (in_array(0, $boards_can['make_sticky']) || in_array($output['board']['id'], $boards_can['make_sticky'])),
+			'pin' => (in_array(0, $boards_can['pin_topic']) || in_array($output['board']['id'], $boards_can['pin_topic'])),
 			'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
 			'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
 		);
 
 		$context['can_lock'] |= $output['quick_mod']['lock'];
-		$context['can_sticky'] |= $output['quick_mod']['sticky'];
+		$context['can_pin'] |= $output['quick_mod']['pin'];
 		$context['can_move'] |= $output['quick_mod']['move'];
 		$context['can_remove'] |= $output['quick_mod']['remove'];
 		$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);

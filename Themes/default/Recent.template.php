@@ -152,9 +152,9 @@ function template_unread()
 		foreach ($context['topics'] as $topic)
 		{
 			$color_class = '';
-			// Is it a sticky, or locked topic? Or both?
-			if ($topic['is_sticky'])
-				$color_class .= ' sticky';
+			// Is it a pinned, or locked topic? Or both?
+			if ($topic['is_pinned'])
+				$color_class .= ' pinned';
 			if ($topic['is_locked'])
 				$color_class .= ' locked';
 
@@ -169,7 +169,7 @@ function template_unread()
 							</td>
 							<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
 								<div>
-									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_link'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
+									', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
 									<a href="', $topic['new_href'], '"><div class="new_icon" title="', $txt['new'], '"></div></a> ', $context['nb_new'][$topic['id']], '
 									<p>
 										', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
@@ -307,9 +307,9 @@ function template_replies()
 		foreach ($context['topics'] as $topic)
 		{
 			$color_class = '';
-			// Is it a sticky, or locked topic? Or both?
-			if ($topic['is_sticky'])
-				$color_class .= ' sticky';
+			// Is it a pinned, or locked topic? Or both?
+			if ($topic['is_pinned'])
+				$color_class .= ' pinned';
 			if ($topic['is_locked'])
 				$color_class .= ' locked';
 
@@ -324,7 +324,7 @@ function template_replies()
 							</td>
 							<td class="subject ', $alternate_class, '">
 								<div>
-									', $topic['is_sticky'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_link'], '</span>', $topic['is_sticky'] ? '</strong>' : '', '
+									', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
 									<a href="', $topic['new_href'], '"><div class="new_icon" title="', $txt['new'], '"></div></a> ', $context['nb_new'][$topic['id']], '
 									<p>
 										', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>

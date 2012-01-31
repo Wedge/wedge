@@ -41,7 +41,7 @@ function QuickModeration()
 	if (!empty($board))
 	{
 		$boards_can = array(
-			'make_sticky' => allowedTo('make_sticky') ? array($board) : array(),
+			'pin_topic' => allowedTo('pin_topic') ? array($board) : array(),
 			'move_any' => allowedTo('move_any') ? array($board) : array(),
 			'move_own' => allowedTo('move_own') ? array($board) : array(),
 			'remove_any' => allowedTo('remove_any') ? array($board) : array(),
@@ -59,7 +59,7 @@ function QuickModeration()
 		// !!! Ugly.  There's no getting around this, is there?
 		// !!! Maybe just do this on the actions people want to use?
 		$boards_can = array(
-			'make_sticky' => boardsAllowedTo('make_sticky'),
+			'pin_topic' => boardsAllowedTo('pin_topic'),
 			'move_any' => boardsAllowedTo('move_any'),
 			'move_own' => boardsAllowedTo('move_own'),
 			'remove_any' => boardsAllowedTo('remove_any'),
@@ -75,8 +75,8 @@ function QuickModeration()
 
 	if (!$user_info['is_guest'])
 		$possibleActions[] = 'markread';
-	if (!empty($boards_can['make_sticky']))
-		$possibleActions[] = 'sticky';
+	if (!empty($boards_can['pin_topic']))
+		$possibleActions[] = 'pin';
 	if (!empty($boards_can['move_any']) || !empty($boards_can['move_own']))
 		$possibleActions[] = 'move';
 	if (!empty($boards_can['remove_any']) || !empty($boards_can['remove_own']))
@@ -150,7 +150,7 @@ function QuickModeration()
 				if ($modSettings['postmod_active'] && !$row['approved'] && !in_array(0, $boards_can['approve_posts']) && !in_array($row['id_board'], $boards_can['approve_posts']))
 					unset($_REQUEST['actions'][$row['id_topic']]);
 				// Goodness, this is fun.  We need to validate the action.
-				elseif ($_REQUEST['actions'][$row['id_topic']] == 'sticky' && !in_array(0, $boards_can['make_sticky']) && !in_array($row['id_board'], $boards_can['make_sticky']))
+				elseif ($_REQUEST['actions'][$row['id_topic']] == 'pin' && !in_array(0, $boards_can['pin_topic']) && !in_array($row['id_board'], $boards_can['pin_topic']))
 					unset($_REQUEST['actions'][$row['id_topic']]);
 				elseif ($_REQUEST['actions'][$row['id_topic']] == 'move' && !in_array(0, $boards_can['move_any']) && !in_array($row['id_board'], $boards_can['move_any']) && ($row['id_member_started'] != $user_info['id'] || (!in_array(0, $boards_can['move_own']) && !in_array($row['id_board'], $boards_can['move_own']))))
 					unset($_REQUEST['actions'][$row['id_topic']]);
@@ -166,7 +166,7 @@ function QuickModeration()
 		wesql::free_result($request);
 	}
 
-	$stickyCache = array();
+	$pinCache = array();
 	$moveCache = array(0 => array(), 1 => array());
 	$removeCache = array();
 	$lockCache = array();
@@ -180,8 +180,8 @@ function QuickModeration()
 
 		if ($action == 'markread')
 			$markCache[] = $topic;
-		elseif ($action == 'sticky')
-			$stickyCache[] = $topic;
+		elseif ($action == 'pin')
+			$pinCache[] = $topic;
 		elseif ($action == 'move')
 		{
 			// $moveCache[0] is the topic, $moveCache[1] is the board to move to.
@@ -205,35 +205,35 @@ function QuickModeration()
 	else
 		$affectedBoards = array($board => array(0, 0));
 
-	// Do all the stickies...
-	if (!empty($stickyCache))
+	// Do all the pinned topics...
+	if (!empty($pinCache))
 	{
 		wesql::query('
 			UPDATE {db_prefix}topics
-			SET is_sticky = CASE WHEN is_sticky = {int:is_sticky} THEN 0 ELSE 1 END
-			WHERE id_topic IN ({array_int:sticky_topic_ids})',
+			SET is_pinned = CASE WHEN is_pinned = {int:is_pinned} THEN 0 ELSE 1 END
+			WHERE id_topic IN ({array_int:pinned_topic_ids})',
 			array(
-				'sticky_topic_ids' => $stickyCache,
-				'is_sticky' => 1,
+				'pinned_topic_ids' => $pinCache,
+				'is_pinned' => 1,
 			)
 		);
 
-		// Get the board IDs and Sticky status
+		// Get the board IDs and pin status
 		$request = wesql::query('
-			SELECT id_topic, id_board, is_sticky
+			SELECT id_topic, id_board, is_pinned
 			FROM {db_prefix}topics
-			WHERE id_topic IN ({array_int:sticky_topic_ids})
-			LIMIT ' . count($stickyCache),
+			WHERE id_topic IN ({array_int:pinned_topic_ids})
+			LIMIT ' . count($pinCache),
 			array(
-				'sticky_topic_ids' => $stickyCache,
+				'pinned_topic_ids' => $pinCache,
 			)
 		);
-		$stickyCacheBoards = array();
-		$stickyCacheStatus = array();
+		$pinCacheBoards = array();
+		$pinCacheStatus = array();
 		while ($row = wesql::fetch_assoc($request))
 		{
-			$stickyCacheBoards[$row['id_topic']] = $row['id_board'];
-			$stickyCacheStatus[$row['id_topic']] = empty($row['is_sticky']);
+			$pinCacheBoards[$row['id_topic']] = $row['id_board'];
+			$pinCacheStatus[$row['id_topic']] = empty($row['is_pinned']);
 		}
 		wesql::free_result($request);
 	}
@@ -523,10 +523,10 @@ function QuickModeration()
 		logAction($lockStatus[$topic] ? 'lock' : 'unlock', array('topic' => $topic, 'board' => $lockCacheBoards[$topic]));
 		sendNotifications($topic, $lockStatus[$topic] ? 'lock' : 'unlock');
 	}
-	foreach ($stickyCache as $topic)
+	foreach ($pinCache as $topic)
 	{
-		logAction($stickyCacheStatus[$topic] ? 'unsticky' : 'sticky', array('topic' => $topic, 'board' => $stickyCacheBoards[$topic]));
-		sendNotifications($topic, 'sticky');
+		logAction($pinCacheStatus[$topic] ? 'unpin' : 'pin', array('topic' => $topic, 'board' => $pinCacheBoards[$topic]));
+		sendNotifications($topic, 'pin');
 	}
 
 	updateStats('topic');

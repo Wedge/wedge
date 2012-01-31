@@ -666,7 +666,7 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 				'num_replies' => 'int',
 				'unapproved_posts' => 'int',
 				'approved' => 'int',
-				'is_sticky' => 'int',
+				'is_pinned' => 'int',
 			),
 			array(
 				(int) $id_board, $split2_first_mem, $split2_last_mem, 0,
@@ -942,7 +942,7 @@ function MergeIndex()
 		array(
 			'id_board' => $_REQUEST['targetboard'],
 			'id_topic' => $_GET['from'],
-			'sort' => 't.is_sticky DESC, t.id_last_msg DESC',
+			'sort' => 't.is_pinned DESC, t.id_last_msg DESC',
 			'offset' => $_REQUEST['start'],
 			'limit' => $modSettings['defaultMaxTopics'],
 			'is_approved' => 1,
@@ -1005,7 +1005,7 @@ function MergeExecute($topics = array())
 	// Get info about the topics and polls that will be merged.
 	$request = wesql::query('
 		SELECT
-			t.id_topic, t.id_board, t.id_poll, t.num_views, t.is_sticky, t.approved, t.num_replies, t.unapproved_posts,
+			t.id_topic, t.id_board, t.id_poll, t.num_views, t.is_pinned, t.approved, t.num_replies, t.unapproved_posts,
 			m1.subject, m1.poster_time AS time_started, IFNULL(mem1.id_member, 0) AS id_member_started, IFNULL(mem1.real_name, m1.poster_name) AS name_started,
 			m2.poster_time AS time_updated, IFNULL(mem2.id_member, 0) AS id_member_updated, IFNULL(mem2.real_name, m2.poster_name) AS name_updated
 		FROM {db_prefix}topics AS t
@@ -1023,7 +1023,7 @@ function MergeExecute($topics = array())
 	if (wesql::num_rows($request) < 2)
 		fatal_lang_error('no_topic_id');
 	$num_views = 0;
-	$is_sticky = 0;
+	$is_pinned = 0;
 	$boardTotals = array();
 	$boards = array();
 	$polls = array();
@@ -1078,7 +1078,7 @@ function MergeExecute($topics = array())
 		if (empty($firstTopic))
 			$firstTopic = $row['id_topic'];
 
-		$is_sticky = max($is_sticky, $row['is_sticky']);
+		$is_pinned = max($is_pinned, $row['is_pinned']);
 	}
 	wesql::free_result($request);
 
@@ -1339,12 +1339,12 @@ function MergeExecute($topics = array())
 			num_replies = {int:num_replies},
 			unapproved_posts = {int:unapproved_posts},
 			num_views = {int:num_views},
-			is_sticky = {int:is_sticky},
+			is_pinned = {int:is_pinned},
 			approved = {int:approved}
 		WHERE id_topic = {int:id_topic}',
 		array(
 			'id_board' => $target_board,
-			'is_sticky' => $is_sticky,
+			'is_pinned' => $is_pinned,
 			'approved' => $topic_approved,
 			'id_topic' => $id_topic,
 			'id_member_started' => $member_started,

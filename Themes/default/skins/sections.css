@@ -777,22 +777,22 @@ tr.windowbg td
 		background-image: none
 		background-repeat: no-repeat
 		background-position: 99% .5em
-		&.sticky
-			background-image: url($images/icons/quick_sticky.gif)
+		&.pinned
+			background-image: url($images/icons/quick_pin.gif)
 		&.locked
 			background-image: url($images/icons/quick_lock.gif)
-		&.sticky.locked
-			background-image: url($images/icons/quick_sticky_lock.gif)
+		&.pinned.locked
+			background-image: url($images/icons/quick_pin_lock.gif)
 		&.my
 			background-image: url($images/icons/quick_my.gif)
 			background-repeat: no-repeat
 			background-position: 99% .5em
-		&.sticky.my
-			background-image: url($images/icons/quick_sticky_my.gif)
+		&.pinned.my
+			background-image: url($images/icons/quick_pin_my.gif)
 		&.locked.my
 			background-image: url($images/icons/quick_lock_my.gif)
-		&.sticky.locked.my
-			background-image: url($images/icons/quick_sticky_lock_my.gif)
+		&.pinned.locked.my
+			background-image: url($images/icons/quick_pin_lock_my.gif)
 	.subject p,
 	.stats
 		font-size: .85em

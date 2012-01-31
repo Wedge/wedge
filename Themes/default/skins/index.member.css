@@ -17,14 +17,14 @@ ul.quickbuttons
 
 // These may be seen by guests, but it's unlikely, and they won't bother if the icons don't show up anyway.
 ul.buttonlist
-	a.lock, a.sticky, a.add_poll
+	a.lock, a.pin, a.add_poll
 		padding-left: 22px
 		background-image: url($images/small_lock.gif)
 		background-position: 6px 5px
 		background-repeat: no-repeat
-	a.sticky
+	a.pin
 		padding-left: 23px
-		background-image: url($images/small_stick.gif)
+		background-image: url($images/small_pin.gif)
 	a.add_poll
 		background-image: url($images/small_poll.gif)
 

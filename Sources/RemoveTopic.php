@@ -184,12 +184,12 @@ function RemoveOldTopics2()
 		$condition_params['locked'] = 1;
 	}
 
-	// Exclude stickies?
-	if (isset($_POST['delete_old_not_sticky']))
+	// Exclude pinned?
+	if (isset($_POST['delete_old_not_pinned']))
 	{
 		$condition .= '
-			AND t.is_sticky = {int:is_sticky}';
-		$condition_params['is_sticky'] = 0;
+			AND t.is_pinned = {int:is_pinned}';
+		$condition_params['is_pinned'] = 0;
 	}
 
 	// All we're gonna do here is grab the id_topic's and send them to removeTopics().
@@ -280,15 +280,15 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 
 				$recycleTopics[] = $row['id_topic'];
 
-				// Set the id_previous_board for this topic - and make it not sticky.
+				// Set the id_previous_board for this topic - and unpin it.
 				wesql::query('
 					UPDATE {db_prefix}topics
-					SET id_previous_board = {int:id_previous_board}, is_sticky = {int:not_sticky}
+					SET id_previous_board = {int:id_previous_board}, is_pinned = {int:not_pinned}
 					WHERE id_topic = {int:id_topic}',
 					array(
 						'id_previous_board' => $row['id_board'],
 						'id_topic' => $row['id_topic'],
-						'not_sticky' => 0,
+						'not_pinned' => 0,
 					)
 				);
 			}

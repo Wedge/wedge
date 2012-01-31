@@ -25,10 +25,10 @@ if (!defined('WEDGE'))
  * - Validate that we're posting in a board (or, that some external integration is happy for us to post outside of a board)
  * - We may be handling inline previews via XML, so prepare for that.
  * - If we don't have a topic id but just a message id, find the topic id if available (if not, assume it's a new message)
- * - Check things we can check if we have an existing topic (and grab them): whether it's locked, stickied, notifications on it, whether there's a poll, some message ids and the subject.
+ * - Check things we can check if we have an existing topic (and grab them): whether it's locked, pinned, has notifications on it, has a poll, some message ids and the subject.
  * - If there's already a poll, disallow adding another.
  * - If this is a guest trying to post, check whether they can, and if not throw them at a log-in screen.
- * - If this is a reply, check whether the permissions allow such (own/any/replies, whether it will require approval), and details like whether it is/can be locked/sticky.
+ * - If this is a reply, check whether the permissions allow such (own/any/replies, whether it will require approval), and details like whether it is/can be locked/pinned.
  * - Perform other checks, such as whether we can receive notifications, whether it can be announced.
  * - If the topic is locked and you do not have moderate_board, you cannot post. (Need to unlock first otherwise.)
  * - Are polls enabled and user trying to post a poll? Check permissions in that case (e.g. coming from add poll button) and if all allowed, set up the default empty choices, plus grab anything that's in $_POST (e.g. coming from Post2()) or use blank defaults.
@@ -128,7 +128,7 @@ function Post($post_errors = array())
 	{
 		$request = wesql::query('
 			SELECT
-				t.locked, IFNULL(ln.id_topic, 0) AS notify, t.is_sticky, t.id_poll, t.id_last_msg, mf.id_member,
+				t.locked, IFNULL(ln.id_topic, 0) AS notify, t.is_pinned, t.id_poll, t.id_last_msg, mf.id_member,
 				t.id_first_msg, mf.subject,
 				CASE WHEN ml.poster_time > ml.modified_time THEN ml.poster_time ELSE ml.modified_time END AS last_post_time
 			FROM {db_prefix}topics AS t
@@ -142,7 +142,7 @@ function Post($post_errors = array())
 				'current_topic' => $topic,
 			)
 		);
-		list ($locked, $context['notify'], $sticky, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $lastPostTime) = wesql::fetch_row($request);
+		list ($locked, $context['notify'], $pinned, $pollID, $context['topic_last_message'], $id_member_poster, $id_first_msg, $first_subject, $lastPostTime) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
 		// If this topic already has a poll, they sure can't add another.
@@ -175,10 +175,10 @@ function Post($post_errors = array())
 			$context['becomes_approved'] = true;
 
 		$context['can_lock'] = allowedTo('lock_any') || ($user_info['id'] == $id_member_poster && allowedTo('lock_own'));
-		$context['can_sticky'] = allowedTo('make_sticky');
+		$context['can_pin'] = allowedTo('pin_topic');
 
 		$context['notify'] = !empty($context['notify']);
-		$context['sticky'] = isset($_REQUEST['sticky']) ? !empty($_REQUEST['sticky']) : $sticky;
+		$context['pinned'] = isset($_REQUEST['pin']) ? !empty($_REQUEST['pin']) : $pinned;
 	}
 	else
 	{
@@ -194,10 +194,10 @@ function Post($post_errors = array())
 		$locked = 0;
 		// !!! These won't work if you're making an event.
 		$context['can_lock'] = allowedTo(array('lock_any', 'lock_own'));
-		$context['can_sticky'] = allowedTo('make_sticky');
+		$context['can_pin'] = allowedTo('pin_topic');
 
 		$context['notify'] = !empty($context['notify']);
-		$context['sticky'] = !empty($_REQUEST['sticky']);
+		$context['pinned'] = !empty($_REQUEST['pin']);
 	}
 
 	// !!! These won't work if you're posting an event!
@@ -295,7 +295,7 @@ function Post($post_errors = array())
 			}
 		}
 		// Check whether this is a really old post being bumped...
-		if (!empty($modSettings['oldTopicDays']) && $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time() && empty($sticky) && !isset($_REQUEST['subject']))
+		if (!empty($modSettings['oldTopicDays']) && $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time() && empty($pinned) && !isset($_REQUEST['subject']))
 			$oldTopicError = true;
 	}
 
@@ -1036,7 +1036,7 @@ function Post($post_errors = array())
 			$context['use_smileys'] = !empty($row['extra']['smileys_enabled']);
 			$context['icon'] = empty($row['extra']['post_icon']) ? 'xx' : $row['extra']['post_icon'];
 
-			// !!! Deal with locked and sticky?
+			// !!! Deal with locked and pinned?
 		}
 
 		wesql::free_result($query);

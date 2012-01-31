@@ -164,9 +164,9 @@ function template_wap2_display()
 		<p class="win"><a href="', $scripturl, '?topic=', $context['current_topic'], '.', $context['start'], ';moderate;wap2">', $txt['wireless_display_moderate'], '</a></p>';
 	elseif (!empty($context['wireless_moderate']))
 	{
-		if ($context['can_sticky'])
+		if ($context['can_pin'])
 			echo '
-				<p class="win"><a href="', $scripturl, '?action=sticky;topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_query'], ';wap2">', $txt['wireless_display_' . ($context['is_sticky'] ? 'unsticky' : 'sticky')], '</a></p>';
+				<p class="win"><a href="', $scripturl, '?action=pin;topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_query'], ';wap2">', $txt['wireless_display_' . ($context['is_pinned'] ? 'unpin' : 'pin')], '</a></p>';
 		if ($context['can_lock'])
 			echo '
 				<p class="win"><a href="', $scripturl, '?action=lock;topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_query'], ';wap2">', $txt['wireless_display_' . ($context['is_locked'] ? 'unlock' : 'lock')], '</a></p>';

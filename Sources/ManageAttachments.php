@@ -691,7 +691,7 @@ function RemoveAttachmentByAge()
 
 	checkSession('post', 'admin');
 
-	// !!! Ignore messages in topics that are stickied?
+	// !!! Ignore messages in topics that are pinned?
 
 	// Deleting an attachment?
 	if ($_REQUEST['type'] != 'avatars')

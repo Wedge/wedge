@@ -409,7 +409,7 @@ tr.titlebg td
 ------------------------------------------------------- */
 .topic_table
 
-	.sticky,
+	.pinned,
 	.locked
 		background-position: 2% 4px
 

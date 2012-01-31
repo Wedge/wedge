@@ -29,9 +29,9 @@ if (!defined('WEDGE'))
  * - Check whether a CAPTCHA was requested, and add to the error list if necessary.
  * - Load Subs-Post for the post subfunctions, and the Post language file.
  * - Is this a new topic? If not, grab all the topic's details. Die if we can't obtain them (not a permissions check, simply an existence one)
- * - Are we replying to a topic? Check it's not locked (if it is, require moderate_board to post without unlock), check there aren't multiple polls, then check permissions including approvals, and check whether the lock and/or sticky status is changing.
- * - Otherwise, we're doing a new topic, so... override any listed message id, check permissions including approvals, sort out sticky/lock status.
- * - Or, actually, are we doing a message edit? If so, get all the details of the message that will enable us to do things like permission checks (is it our own, etc), deal with locked/sticky. Also is it that we can approve it through editing?
+ * - Are we replying to a topic? Check it's not locked (if it is, require moderate_board to post without unlock), check there aren't multiple polls, then check permissions including approvals, and check whether the lock and/or pin status is changing.
+ * - Otherwise, we're doing a new topic, so... override any listed message id, check permissions including approvals, sort out pin/lock status.
+ * - Or, actually, are we doing a message edit? If so, get all the details of the message that will enable us to do things like permission checks (is it our own, etc), deal with locked/pinned. Also is it that we can approve it through editing?
  * - Is it a guest doing this? If so, check whether the name and email we've requested could be valid (e.g. not over-long, valid email address, not a banned email address)
  * - Check the message and subject exist and aren't empty (and the message isn't too long)
  * - Assuming we have a message, use our custom htmlspecialchars on it, preparse it for BBC compliance and safety, and see if there's still a message after we strip all the tags (except images) from it.
@@ -54,7 +54,7 @@ if (!defined('WEDGE'))
  * - If this isn't a new topic, remove them from the notification log because we don't need to tell them about this post they just dealt with.
  * - If the action carried out here was a modify not done by the post's owner, log it in the moderation log.
  * - If we've locked this post through reply or edit, and it's not a user lock, log that.
- * - If we've stickied it through reply or edit, log that.
+ * - If we've pinned it through reply or edit, log that.
  * - If the new post would be approved (either automatically or as a result of this action): on new topic, send notification to everyone who wants notifications on this board. Otherwise, send it to everyone if the topic is approved, or just the topic starter if they want it.
  * - Now, where next? If they're going back to the topic, mark the board as read.
  * - If there's no topics in the board, empty the cache.
@@ -132,7 +132,7 @@ function Post2()
 	if (!empty($topic))
 	{
 		$request = wesql::query('
-			SELECT locked, is_sticky, id_poll, approved, id_first_msg, id_last_msg, id_member_started, id_board
+			SELECT locked, is_pinned, id_poll, approved, id_first_msg, id_last_msg, id_member_started, id_board
 			FROM {db_prefix}topics
 			WHERE id_topic = {int:current_topic}
 			LIMIT 1',
@@ -225,9 +225,9 @@ function Post2()
 				$_POST['lock'] = empty($_POST['lock']) ? 0 : 1;
 		}
 
-		// So you wanna (un)sticky this... Let's see.
-		if (isset($_POST['sticky']) && ($_POST['sticky'] == $topic_info['is_sticky'] || !allowedTo('make_sticky')))
-			unset($_POST['sticky']);
+		// So you wanna (un)pin this... Let's see.
+		if (isset($_POST['pin']) && ($_POST['pin'] == $topic_info['is_pinned'] || !allowedTo('pin_topic')))
+			unset($_POST['pin']);
 
 		if (isset($_REQUEST['draft']))
 		{
@@ -275,8 +275,8 @@ function Post2()
 				$_POST['lock'] = allowedTo('lock_any') ? 1 : 2;
 		}
 
-		if (isset($_POST['sticky']) && (empty($_POST['sticky']) || !allowedTo('make_sticky')))
-			unset($_POST['sticky']);
+		if (isset($_POST['pin']) && (empty($_POST['pin']) || !allowedTo('pin_topic')))
+			unset($_POST['pin']);
 
 		$posterIsGuest = $user_info['is_guest'];
 
@@ -336,9 +336,9 @@ function Post2()
 				$_POST['lock'] = empty($_POST['lock']) ? 0 : 1;
 		}
 
-		// Change the sticky status of this topic?
-		if (isset($_POST['sticky']) && (!allowedTo('make_sticky') || $_POST['sticky'] == $topic_info['is_sticky']))
-			unset($_POST['sticky']);
+		// Change the pinned status of this topic?
+		if (isset($_POST['pin']) && (!allowedTo('pin_topic') || $_POST['pin'] == $topic_info['is_pinned']))
+			unset($_POST['pin']);
 
 		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 		{
@@ -779,7 +779,7 @@ function Post2()
 		'board' => $board,
 		'poll' => isset($_REQUEST['poll']) ? $id_poll : null,
 		'lock_mode' => isset($_POST['lock']) ? (int) $_POST['lock'] : null,
-		'sticky_mode' => isset($_POST['sticky']) ? (int) $_POST['sticky'] : null,
+		'pin_mode' => isset($_POST['pin']) ? (int) $_POST['pin'] : null,
 		'mark_as_read' => true,
 		'is_approved' => !$modSettings['postmod_active'] || empty($topic) || !empty($board_info['cur_topic_approved']),
 	);
@@ -860,8 +860,8 @@ function Post2()
 	if (isset($_POST['lock']) && $_POST['lock'] != 2)
 		logAction('lock', array('topic' => $topicOptions['id'], 'board' => $topicOptions['board']));
 
-	if (isset($_POST['sticky']))
-		logAction('sticky', array('topic' => $topicOptions['id'], 'board' => $topicOptions['board']));
+	if (isset($_POST['pin']))
+		logAction('pin', array('topic' => $topicOptions['id'], 'board' => $topicOptions['board']));
 
 	// Notify any members who have notification turned on for this topic - only do this if it's going to be approved(!)
 	if ($becomesApproved)

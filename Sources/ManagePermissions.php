@@ -1163,7 +1163,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'issue_warning',
 	));
 	$groupLevels['board']['moderator'] = array_merge($groupLevels['board']['standard'], array(
-		'make_sticky',
+		'pin_topic',
 		'poll_edit_any',
 		'delete_any',
 		'modify_any',
@@ -1238,7 +1238,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'poll_edit_any',
 		'poll_add_any',
 		'poll_remove_any',
-		'make_sticky',
+		'pin_topic',
 		'lock_any',
 		'remove_any',
 		'delete_any',
@@ -1524,7 +1524,7 @@ function loadAllPermissions($loadType = 'classic')
 			'merge_any' => array(false, 'topic', 'moderate'),
 			'split_any' => array(false, 'topic', 'moderate'),
 			'send_topic' => array(false, 'topic', 'moderate'),
-			'make_sticky' => array(false, 'topic', 'moderate'),
+			'pin_topic' => array(false, 'topic', 'moderate'),
 			'move' => array(true, 'topic', 'moderate', 'moderate'),
 			'lock' => array(true, 'topic', 'moderate', 'moderate'),
 			'remove' => array(true, 'topic', 'modify', 'moderate'),

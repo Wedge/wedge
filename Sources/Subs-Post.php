@@ -81,7 +81,7 @@ if (!defined('WEDGE'))
 		  when things happen to a topic, such as replies are posted.
 		- uses the Post langauge file.
 		- topics represents the topics the action is happening to.
-		- the type can be any of reply, sticky, lock, unlock, remove, move,
+		- the type can be any of reply, pin, lock, unlock, remove, move,
 		  merge, and split.  An appropriate message will be sent for each.
 		- automatically finds the subject and its board, and checks permissions
 		  for each member who is "signed up" for notifications.
@@ -1148,7 +1148,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['id'] = empty($topicOptions['id']) ? 0 : (int) $topicOptions['id'];
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
-	$topicOptions['sticky_mode'] = isset($topicOptions['sticky_mode']) ? $topicOptions['sticky_mode'] : null;
+	$topicOptions['pin_mode'] = isset($topicOptions['pin_mode']) ? $topicOptions['pin_mode'] : null;
 	$posterOptions['id'] = empty($posterOptions['id']) ? 0 : (int) $posterOptions['id'];
 	$posterOptions['ip'] = empty($posterOptions['ip']) ? $user_info['ip'] : $posterOptions['ip'];
 
@@ -1260,12 +1260,12 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			'{db_prefix}topics',
 			array(
 				'id_board' => 'int', 'id_member_started' => 'int', 'id_member_updated' => 'int', 'id_first_msg' => 'int',
-				'id_last_msg' => 'int', 'locked' => 'int', 'is_sticky' => 'int', 'num_views' => 'int',
+				'id_last_msg' => 'int', 'locked' => 'int', 'is_pinned' => 'int', 'num_views' => 'int',
 				'id_poll' => 'int', 'unapproved_posts' => 'int', 'approved' => 'int',
 			),
 			array(
 				$topicOptions['board'], $posterOptions['id'], $posterOptions['id'], $msgOptions['id'],
-				$msgOptions['id'], $topicOptions['lock_mode'] === null ? 0 : $topicOptions['lock_mode'], $topicOptions['sticky_mode'] === null ? 0 : $topicOptions['sticky_mode'], 0,
+				$msgOptions['id'], $topicOptions['lock_mode'] === null ? 0 : $topicOptions['lock_mode'], $topicOptions['pin_mode'] === null ? 0 : $topicOptions['pin_mode'], 0,
 				$topicOptions['poll'] === null ? 0 : $topicOptions['poll'], $msgOptions['approved'] ? 0 : 1, $msgOptions['approved'],
 			),
 			array('id_topic')
@@ -1309,20 +1309,20 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		$countChange = $msgOptions['approved'] ? 'num_replies = num_replies + 1' : 'unapproved_posts = unapproved_posts + 1';
 
-		// Update the number of replies and the lock/sticky status.
+		// Update the number of replies and the lock/pin status.
 		wesql::query('
 			UPDATE {db_prefix}topics
 			SET
 				' . ($msgOptions['approved'] ? 'id_member_updated = {int:poster_id}, id_last_msg = {int:id_msg},' : '') . '
 				' . $countChange . ($topicOptions['lock_mode'] === null ? '' : ',
-				locked = {int:locked}') . ($topicOptions['sticky_mode'] === null ? '' : ',
-				is_sticky = {int:is_sticky}') . '
+				locked = {int:locked}') . ($topicOptions['pin_mode'] === null ? '' : ',
+				is_pinned = {int:is_pinned}') . '
 			WHERE id_topic = {int:id_topic}',
 			array(
 				'poster_id' => $posterOptions['id'],
 				'id_msg' => $msgOptions['id'],
 				'locked' => $topicOptions['lock_mode'],
-				'is_sticky' => $topicOptions['sticky_mode'],
+				'is_pinned' => $topicOptions['pin_mode'],
 				'id_topic' => $topicOptions['id'],
 			)
 		);
@@ -1815,7 +1815,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
-	$topicOptions['sticky_mode'] = isset($topicOptions['sticky_mode']) ? $topicOptions['sticky_mode'] : null;
+	$topicOptions['pin_mode'] = isset($topicOptions['pin_mode']) ? $topicOptions['pin_mode'] : null;
 
 	// Does a plugin want to manipulate posts/topics before they're modified?
 	call_hook('modify_post_before', array(&$msgOptions, &$topicOptions, &$posterOptions));
@@ -1869,18 +1869,18 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		$update_parameters['var_' . $var] = $val;
 	}
 
-	// Lock and or sticky the post.
-	if ($topicOptions['sticky_mode'] !== null || $topicOptions['lock_mode'] !== null || $topicOptions['poll'] !== null)
+	// Lock and/or pin the post.
+	if ($topicOptions['pin_mode'] !== null || $topicOptions['lock_mode'] !== null || $topicOptions['poll'] !== null)
 	{
 		wesql::query('
 			UPDATE {db_prefix}topics
 			SET
-				is_sticky = {raw:is_sticky},
+				is_pinned = {raw:is_pinned},
 				locked = {raw:locked},
 				id_poll = {raw:id_poll}
 			WHERE id_topic = {int:id_topic}',
 			array(
-				'is_sticky' => $topicOptions['sticky_mode'] === null ? 'is_sticky' : (int) $topicOptions['sticky_mode'],
+				'is_pinned' => $topicOptions['pin_mode'] === null ? 'is_pinned' : (int) $topicOptions['pin_mode'],
 				'locked' => $topicOptions['lock_mode'] === null ? 'locked' : (int) $topicOptions['lock_mode'],
 				'id_poll' => $topicOptions['poll'] === null ? 'id_poll' : (int) $topicOptions['poll'],
 				'id_topic' => $topicOptions['id'],
@@ -2739,7 +2739,7 @@ function saveDraft($is_pm, $id_context = 0)
 		$extra['post_icon'] = $icon;
 		$extra['smileys_enabled'] = !isset($_POST['ns']) ? 1 : 0;
 
-		// !!! Locking, sticky?
+		// !!! Locking, pinning?
 
 		call_hook('save_post_draft', array(&$subject, &$message, &$extra, &$is_pm, &$id_context));
 	}

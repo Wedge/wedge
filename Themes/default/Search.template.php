@@ -270,8 +270,8 @@ function template_results()
 		while ($topic = $context['get_topics']())
 		{
 			$color_class = '';
-			if ($topic['is_sticky'])
-				$color_class .= ' sticky';
+			if ($topic['is_pinned'])
+				$color_class .= ' pinned';
 			if ($topic['is_locked'])
 				$color_class .= ' locked';
 
@@ -311,9 +311,9 @@ function template_results()
 							echo '
 						<br>';
 
-						if ($topic['quick_mod']['sticky'])
+						if ($topic['quick_mod']['pin'])
 							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=sticky;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_sticky.gif" width="16" alt="', $txt['set_sticky'], '" title="', $txt['set_sticky'], '"></a>';
+						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
 
 						if ($topic['quick_mod']['move'])
 							echo '
@@ -350,8 +350,8 @@ function template_results()
 				<select class="fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
 					<option value="">--- ', $txt['moderate'], ' ---</option>', $context['can_remove'] ? '
 					<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
-					<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_sticky'] ? '
-					<option value="sticky">' . $txt['quick_mod_sticky'] . '</option>' : '', $context['can_move'] ? '
+					<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_pin'] ? '
+					<option value="pin">' . $txt['quick_mod_pin'] . '</option>' : '', $context['can_move'] ? '
 					<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
 					<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', '
 					<option value="markread">', $txt['quick_mod_markread'], '</option>

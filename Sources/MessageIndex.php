@@ -298,7 +298,7 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)' : '') . '
 			WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || $context['can_approve_posts'] ? '' : '
 				AND (t.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR t.id_member_started = {int:current_member}') . ')') . '
-			ORDER BY is_sticky' . ($fake_ascending ? '' : ' DESC') . ', ' . $_REQUEST['sort'] . ($ascending ? '' : ' DESC') . '
+			ORDER BY is_pinned' . ($fake_ascending ? '' : ' DESC') . ', ' . $_REQUEST['sort'] . ($ascending ? '' : ' DESC') . '
 			LIMIT {int:start}, {int:maxindex}',
 			array(
 				'current_board' => $board,
@@ -322,7 +322,7 @@ function MessageIndex()
 
 		$result = wesql::query('
 			SELECT
-				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_sticky, t.id_poll, t.id_previous_board,
+				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_pinned, t.id_poll, t.id_previous_board,
 				' . ($user_info['is_guest'] ? '0' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from,
 				t.id_last_msg, t.approved, t.unapproved_posts, ml.poster_time AS last_poster_time,
 				ml.id_msg_modified, ml.subject AS last_subject, ml.icon AS last_icon,
@@ -341,7 +341,7 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})'). '
 			WHERE ' . ($pre_query ? 't.id_topic IN ({array_int:topic_list})' : 't.id_board = {int:current_board}') . (!$modSettings['postmod_active'] || $context['can_approve_posts'] ? '' : '
 				AND (t.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR t.id_member_started = {int:current_member}') . ')') . '
-			ORDER BY ' . ($pre_query ? 'FIND_IN_SET(t.id_topic, {string:find_set_topics})' : ('is_sticky' . ($fake_ascending ? '' : ' DESC') . ', ') . $_REQUEST['sort'] . ($ascending ? '' : ' DESC')) . '
+			ORDER BY ' . ($pre_query ? 'FIND_IN_SET(t.id_topic, {string:find_set_topics})' : ('is_pinned' . ($fake_ascending ? '' : ' DESC') . ', ') . $_REQUEST['sort'] . ($ascending ? '' : ' DESC')) . '
 			LIMIT ' . ($pre_query ? '' : '{int:start}, ') . '{int:maxindex}',
 			array(
 				'first_body' => $board_info['type'] == 'blog' ? 'mf.body AS first_body' : 'SUBSTRING(mf.body, 1, 385) AS first_body',
@@ -498,7 +498,7 @@ function MessageIndex()
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
 				),
-				'is_sticky' => !empty($row['is_sticky']),
+				'is_pinned' => !empty($row['is_pinned']),
 				'is_locked' => !empty($row['locked']),
 				'is_poll' => $modSettings['pollMode'] == '1' && $row['id_poll'] > 0,
 				'is_posted_in' => false,
@@ -547,7 +547,7 @@ function MessageIndex()
 	if (!empty($options['display_quick_mod']) && !empty($context['topics']))
 	{
 		$context['can_lock'] = allowedTo('lock_any');
-		$context['can_sticky'] = allowedTo('make_sticky');
+		$context['can_pin'] = allowedTo('pin_topic');
 		$context['can_move'] = allowedTo('move_any');
 		$context['can_remove'] = allowedTo('remove_any');
 		$context['can_merge'] = allowedTo('merge_any');
@@ -562,7 +562,7 @@ function MessageIndex()
 			$started = $topic['first_post']['member']['id'] == $user_info['id'];
 			$context['topics'][$t]['quick_mod'] = array(
 				'lock' => allowedTo('lock_any') || ($started && allowedTo('lock_own')),
-				'sticky' => allowedTo('make_sticky'),
+				'pin' => allowedTo('pin_topic'),
 				'move' => allowedTo('move_any') || ($started && allowedTo('move_own')),
 				'modify' => allowedTo('modify_any') || ($started && allowedTo('modify_own')),
 				'remove' => allowedTo('remove_any') || ($started && allowedTo('remove_own')),
@@ -599,10 +599,10 @@ function MessageIndex()
 		}
 		// Can we use quick moderation checkboxes?
 		if ($options['display_quick_mod'] == 1)
-			$context['can_quick_mod'] = $context['user']['is_logged'] || $context['can_approve'] || $context['can_remove'] || $context['can_lock'] || $context['can_sticky'] || $context['can_move'] || $context['can_merge'] || $context['can_restore'];
+			$context['can_quick_mod'] = $context['user']['is_logged'] || $context['can_approve'] || $context['can_remove'] || $context['can_lock'] || $context['can_pin'] || $context['can_move'] || $context['can_merge'] || $context['can_restore'];
 		// Or the icons?
 		else
-			$context['can_quick_mod'] = $context['can_remove'] || $context['can_lock'] || $context['can_sticky'] || $context['can_move'];
+			$context['can_quick_mod'] = $context['can_remove'] || $context['can_lock'] || $context['can_pin'] || $context['can_move'];
 	}
 
 	// If there are children, but no topics and no ability to post topics...
