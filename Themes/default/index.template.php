@@ -505,7 +505,7 @@ function template_content_wrap_before()
 function template_main_wrap_before()
 {
 	echo '
-	<div id="main_content">';
+	<div id="main">';
 }
 
 function template_main_wrap_after()
@@ -538,7 +538,7 @@ function template_body_after()
 <script><!-- // --><![CDATA[
 	function noi_resize()
 	{
-		var d = document, g = "getElementById", e1 = d[g]("edge"), e2 = d[g]("edgehide"), m = d[g]("main_content"), w = m ? m.clientWidth : 0;
+		var d = document, g = "getElementById", e1 = d[g]("edge"), e2 = d[g]("edgehide"), m = d[g]("main"), w = m ? m.clientWidth : 0;
 		if (w && w < 728 && !we_side && e1) { we_side = 1; e1.id = "edgehide"; } else if (w >= 952 && we_side && e2) { we_side = 0; e2.id = "edge"; }
 	}
 	we_side = 0; noi_resize();

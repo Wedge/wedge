@@ -82,10 +82,9 @@ em
 		padding: 7px 20px
 		margin: 0
 
-#main_content
+#main
 	display: block
 	padding: 16px 8px 0
-	overflow: hidden
 
 #footer
 	border-top: 5px solid average($footer_bg, $body_bg)

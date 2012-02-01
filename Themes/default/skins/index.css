@@ -121,11 +121,11 @@ ul#noava
 		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
 		:hover
 			left: -40px
-	#main_content
+	#main
 		display: block
 		padding: 4px 0 12px 6px
 
-#main_content
+#main
 	display: table-cell
 	vertical-align: top
 	min-height: 200px
@@ -825,7 +825,7 @@ li.separator
 		visibility: visible
 		opacity: 1
 
-#main_content .menu
+#main .menu
 	margin-bottom: 4px
 
 .menu strong
