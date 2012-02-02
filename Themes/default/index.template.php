@@ -326,12 +326,12 @@ function template_logo_toggler()
 			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
 
 	add_js('
-	var oMainHeaderToggle = new weToggle({
-		bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
+	var oMainHeaderToggle = new weToggle({', empty($options['collapse_header']) ? '' : '
+		bCurrentlyCollapsed: true,', '
 		aSwappableContainers: [\'upper_section\'],
-		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],
-		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_header\' },
-		oCookieOptions: { bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ', sCookieName: \'upshrink\' }
+		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],', $context['user']['is_guest'] ? '
+		sCookie: \'upshrink\'' : '
+		sOptionName: \'collapse_header\'', '
 	});');
 }
 
@@ -480,20 +480,17 @@ function template_sidebar_feed()
 
 function template_sidebar_wrap_after()
 {
-	echo '
-		</we:sidebar>';
+	echo '</we:sidebar>';
 }
 
 function template_offside_wrap_before()
 {
-	echo '
-		<we:offside>';
+	echo '<we:offside>';
 }
 
 function template_offside_wrap_after()
 {
-	echo '
-		</we:offside>';
+	echo '</we:offside>';
 }
 
 function template_content_wrap_before()

@@ -274,7 +274,7 @@ function template_postform_after()
 	// The stuff we need for later: the topic number if we have one, the last message if we have one, then the general form items.
 	if (isset($context['current_topic']))
 		echo '
-				<input type="hidden" name="topic" value="', $context['current_topic'], '">';
+			<input type="hidden" name="topic" value="', $context['current_topic'], '">';
 
 	if (isset($context['topic_last_message']))
 		echo '
@@ -454,16 +454,15 @@ function template_postform_after()
 	if (!empty($settings['additional_options_collapsable']))
 	{
 		// If we're collapsed, hide everything now and don't trigger the animation.
-		$fold = empty($context['show_additional_options']);
-		if ($fold)
+		if (empty($context['show_additional_options']))
 			add_js('
 	$("#postMoreOptions").hide();
 	$("#postAttachment").hide();
 	$("#postAttachment2").hide();');
 
 		add_js('
-	var oSwapAdditionalOptions = new weToggle({
-		bCurrentlyCollapsed: ', $fold ? 'true' : 'false', ',
+	var oSwapAdditionalOptions = new weToggle({', empty($context['show_additional_options']) ? '
+		bCurrentlyCollapsed: true,' : '', '
 		funcOnBeforeCollapse: function () { $("#additional_options").val("0"); },
 		funcOnBeforeExpand: function () { $("#additional_options").val("1"); },
 		aSwappableContainers: [

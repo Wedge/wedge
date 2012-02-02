@@ -154,7 +154,7 @@ function submitonce()
 	_formSubmitted = true;
 
 	// If there are any editors warn them submit is coming!
-	$.each(weEditors, function (key, val) { val.doSubmit(); });
+	$.each(weEditors, function () { this.doSubmit(); });
 }
 
 function submitThisOnce(oControl)
@@ -172,10 +172,10 @@ function in_array(variable, theArray)
 // Invert all checkboxes at once by clicking a single checkbox.
 function invertAll(oInvertCheckbox, oForm, sMask)
 {
-	$.each(oForm, function (key, val)
+	$.each(oForm, function ()
 	{
-		if (val.name && !val.disabled && (!sMask || val.name.substr(0, sMask.length) == sMask || val.id.substr(0, sMask.length) == sMask))
-			val.checked = oInvertCheckbox.checked;
+		if (this.name && !this.disabled && (!sMask || this.name.substr(0, sMask.length) == sMask || this.id.substr(0, sMask.length) == sMask))
+			this.checked = oInvertCheckbox.checked;
 	});
 }
 
@@ -332,9 +332,9 @@ function weSaveEntities(sFormName, aElementNames, sMask, nm)
 {
 	nm = document.forms[sFormName];
 	if (sMask)
-		$.each(nm.elements, function (key, val) {
-			if (val.id.substr(0, sMask.length) == sMask)
-				aElementNames.push(val.name);
+		$.each(nm.elements, function () {
+			if (this.id.substr(0, sMask.length) == sMask)
+				aElementNames.push(this.name);
 		});
 
 	$.each(aElementNames, function (key, val) {
@@ -342,6 +342,22 @@ function weSaveEntities(sFormName, aElementNames, sMask, nm)
 			nm[val].value = nm[val].value.replace(/&#/g, '&#38;#');
 	});
 }
+
+function weCookie(sKey)
+{
+	var aNameValuePair, ret = null;
+	$.each((document.cookie || '').split(';'), function ()
+	{
+		aNameValuePair = this.split('=');
+		if (aNameValuePair[0].replace(/^\s+|\s+$/g, '') === sKey)
+		{
+			ret = decodeURIComponent(aNameValuePair[1]);
+			return false;
+		}
+	});
+	return ret;
+}
+
 
 (function ()
 {
@@ -476,33 +492,13 @@ function weSaveEntities(sFormName, aElementNames, sMask, nm)
 })();
 
 
-// *** weCookie class.
-function weCookie()
-{
-	var aNameValuePair, cookies = {};
-
-	this.get = function (sKey) { return sKey in cookies ? cookies[sKey] : null; };
-	this.set = function (sKey, sValue) { document.cookie = sKey + '=' + encodeURIComponent(sValue); };
-
-	if (document.cookie)
-	{
-		$.each(document.cookie.split(';'), function (key, val)
-		{
-			aNameValuePair = val.split('=');
-			cookies[aNameValuePair[0].replace(/^\s+|\s+$/g, '')] = decodeURIComponent(aNameValuePair[1]);
-		});
-	}
-};
-
-
 // *** weToggle class.
 function weToggle(opt)
 {
 	var
+		cookieValue,
 		that = this,
 		collapsed = false,
-		cookie = null,
-		cookieValue,
 		toggle_me = function () {
 			$(this).data('that').toggle();
 			this.blur();
@@ -521,31 +517,31 @@ function weToggle(opt)
 			opt.funcOnBeforeExpand.call(this);
 
 		// Loop through all the images that need to be toggled.
-		$.each(opt.aSwapImages || [], function (key, val) {
-			$('#' + val.sId).toggleClass('fold', !bCollapse).attr('title', bCollapse && val.altCollapsed ? val.altCollapsed : val.altExpanded);
+		$.each(opt.aSwapImages || [], function () {
+			$('#' + this.sId).toggleClass('fold', !bCollapse).attr('title', bCollapse && this.altCollapsed ? this.altCollapsed : this.altExpanded);
 		});
 
 		// Loop through all the links that need to be toggled.
-		$.each(opt.aSwapLinks || [], function (key, val) {
-			$('#' + val.sId).html(bCollapse && val.msgCollapsed ? val.msgCollapsed : val.msgExpanded);
+		$.each(opt.aSwapLinks || [], function () {
+			$('#' + this.sId).html(bCollapse && this.msgCollapsed ? this.msgCollapsed : this.msgExpanded);
 		});
 
 		// Now go through all the sections to be collapsed.
-		$.each(opt.aSwappableContainers, function (key, val) {
-			bCollapse ? $('#' + val).slideUp(bInit ? 0 : 300) : $('#' + val).slideDown(bInit ? 0 : 300);
+		$.each(opt.aSwappableContainers, function () {
+			bCollapse ? $('#' + this).slideUp(bInit ? 0 : 300) : $('#' + this).slideDown(bInit ? 0 : 300);
 		});
 
 		// Update the new state.
 		collapsed = +bCollapse;
 
 		// Update the cookie, if desired.
-		if (opt.oCookieOptions && opt.oCookieOptions.bUseCookie)
-			cookie.set(op.sCookieName, collapsed);
+		if (opt.sCookie)
+			document.cookie = opt.sCookie + '=' + collapsed;
 
-		if (!bInit && opt.oThemeOptions && opt.oThemeOptions.bUseThemeSettings)
+		if (!bInit && opt.sOptionName)
 			// Set a theme option through javascript.
-			new Image().src = we_prepareScriptUrl() + 'action=jsoption;var=' + op.sOptionName + ';val=' + collapsed + ';' + we_sessvar + '=' + we_sessid
-								+ (op.sAdditionalVars || '') + (op.sThemeId ? '&th=' + op.sThemeId : '') + ';time=' + +new Date();
+			new Image().src = we_prepareScriptUrl() + 'action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';'
+								+ we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + +new Date();
 	};
 
 	// Reverse the current state.
@@ -555,16 +551,9 @@ function weToggle(opt)
 	};
 
 	// If cookies are enabled and they were set, override the initial state.
-	if (opt.oCookieOptions && opt.oCookieOptions.bUseCookie)
-	{
-		// Initialize the cookie handler.
-		cookie = new weCookie();
-
-		// Check if the cookie is set.
-		cookieValue = cookie.get(opt.oCookieOptions.sCookieName);
-		if (cookieValue != null)
+	if (opt.sCookie)
+		if ((cookieValue = weCookie(opt.sCookie)) != null)
 			opt.bCurrentlyCollapsed = cookieValue == '1';
-	}
 
 	// If the init state is set to be collapsed, collapse it.
 	if (opt.bCurrentlyCollapsed)
@@ -572,13 +561,13 @@ function weToggle(opt)
 
 	// Initialize the images to be clickable.
 
-	$.each(opt.aSwapImages || [], function (key, val) {
-		$('#' + val.sId).show().css('visibility', 'visible').data('that', that).click(toggle_me).css('cursor', 'pointer').mousedown(false);
+	$.each(opt.aSwapImages || [], function () {
+		$('#' + this.sId).show().css('visibility', 'visible').data('that', that).click(toggle_me).css('cursor', 'pointer').mousedown(false);
 	});
 
 	// Initialize links.
-	$.each(opt.aSwapLinks || [], function (key, val) {
-		$('#' + val.sId).show().data('that', that).click(toggle_me);
+	$.each(opt.aSwapLinks || [], function () {
+		$('#' + this.sId).show().data('that', that).click(toggle_me);
 	});
 };
 
@@ -627,10 +616,10 @@ function JumpTo(opt)
 				});
 
 				// Add the remaining items after the currently selected item.
-				$dropdownList.append(sList).change(function () {
+				$dropdownList.append(sList).sb().change(function () {
 					if (this.selectedIndex > 0 && ($val = $(this).val()))
 						window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
-				}).sb();
+				});
 			});
 		});
 };

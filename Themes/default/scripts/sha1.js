@@ -1,4 +1,4 @@
-/*!
+/**
  * Wedge
  *
  * Code for handling encryption in JavaScript, and a few related helper functions.

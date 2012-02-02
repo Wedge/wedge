@@ -229,12 +229,12 @@ function template_boards_newsfader()
 		iFadeDelay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
 	});
 
-	var weNewsFadeToggle = new weToggle({
-		bCurrentlyCollapsed: ', empty($options['collapse_news_fader']) ? 'false' : 'true', ',
+	var weNewsFadeToggle = new weToggle({', empty($options['collapse_news_fader']) ? '' : '
+		bCurrentlyCollapsed: true,', '
 		aSwappableContainers: [\'fadeScroller\'],
 		aSwapImages: [{ sId: \'newsupshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],
-		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_news_fader\' },
-		oCookieOptions: { bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ', sCookieName: \'newsupshrink\' }
+		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_news_fader\' }', $context['user']['is_guest'] ? ',
+		sCookieName: \'newsupshrink\'' : '', '
 	});');
 	}
 }
@@ -266,7 +266,6 @@ function template_boards_below()
 			echo '<div class="mark_read">', template_button_strip($mark_read_button), '</div>';
 	}
 	else
-	{
 		echo '
 	<div id="posting_icons" class="flow_hidden">
 		<ul class="reset">
@@ -274,7 +273,6 @@ function template_boards_below()
 			<li class="floatleft"><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
 		</ul>
 	</div>';
-	}
 }
 
 ?>
