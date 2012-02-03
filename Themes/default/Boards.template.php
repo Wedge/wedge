@@ -229,7 +229,7 @@ function template_boards_newsfader()
 		iFadeDelay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
 	});
 
-	var weNewsFadeToggle = new weToggle({', empty($options['collapse_news_fader']) ? '' : '
+	new weToggle({', empty($options['collapse_news_fader']) ? '' : '
 		bCurrentlyCollapsed: true,', '
 		aSwappableContainers: [\'fadeScroller\'],
 		aSwapImages: [{ sId: \'newsupshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],

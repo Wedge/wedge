@@ -385,8 +385,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 // Send off a personal message.
 function sendpm($recipients, $subject, $message, $store_outbox = false, $from = null, $pm_head = 0)
 {
-	global $scripturl, $txt, $user_info, $language;
-	global $modSettings;
+	global $context, $scripturl, $txt, $user_info, $language, $modSettings;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');

@@ -1442,6 +1442,8 @@ img.middle, td.middle, th.middle, tr.middle td, tr.middle th
 	vertical-align: middle
 img.bottom, td.bottom, th.bottom, tr.bottom td, tr.bottom th
 	vertical-align: bottom
+img.center
+	margin: auto
 img.left
 	float: left
 img.right

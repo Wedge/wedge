@@ -326,7 +326,7 @@ function template_logo_toggler()
 			<div id="upshrink"', empty($options['collapse_header']) ? ' class="fold"' : '', ' title="', $txt['upshrink_description'], '"></div>';
 
 	add_js('
-	var oMainHeaderToggle = new weToggle({', empty($options['collapse_header']) ? '' : '
+	new weToggle({', empty($options['collapse_header']) ? '' : '
 		bCurrentlyCollapsed: true,', '
 		aSwappableContainers: [\'upper_section\'],
 		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],', $context['user']['is_guest'] ? '
@@ -533,12 +533,12 @@ function template_body_after()
 	echo '
 ', $no_resize ? '' : '
 <script><!-- // --><![CDATA[
-	function noi_resize()
+	function weres()
 	{
 		var d = document, g = "getElementById", e1 = d[g]("edge"), e2 = d[g]("edgehide"), m = d[g]("main"), w = m ? m.clientWidth : 0;
 		if (w && w < 728 && !we_side && e1) { we_side = 1; e1.id = "edgehide"; } else if (w >= 952 && we_side && e2) { we_side = 0; e2.id = "edge"; }
 	}
-	we_side = 0; noi_resize();
+	we_side = 0; weres();
 // ]]></script>';
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
@@ -584,7 +584,7 @@ function template_body_after()
 		we_loading = "', $txt['ajax_in_progress'], '",
 		we_cancel = "', $txt['form_cancel'], '";
 
-	', $no_resize ? '' : '$(window).resize(noi_resize).resize();
+	', $no_resize ? '' : '$(window).resize(weres).resize();
 	', '$("#main_menu").menu();', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))

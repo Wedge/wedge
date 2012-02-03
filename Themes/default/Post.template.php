@@ -424,30 +424,25 @@ function template_postform_after()
 
 			newPostsHTML += \'<div class="list_posts smalltext" id="msg_\' + id + \'_body">\' + $("message", this).text() + \'<\' + \'/div></div></div>\';
 		});
-		if (newPostsHTML != "")
-			$("#new_replies").append(newPostsHTML);
 
-		var numIgnoredReplies = ignored_replies.length;
-		if (numIgnoredReplies != 0)
-		{
-			for (var i = 0; i < numIgnoredReplies; i++)
-			{
-				aIgnoreToggles[ignored_replies[i]] = new weToggle({
-					bCurrentlyCollapsed: true,
-					aSwappableContainers: [
-						"msg_" + ignored_replies[i] + "_body",
-						"msg_" + ignored_replies[i] + "_quote",
-					],
-					aSwapLinks: [
-						{
-							sId: "msg_" + ignored_replies[i] + "_ignored_link",
-							msgExpanded: "",
-							msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
-						}
-					]
-				});
-			}
-		}
+		$("#new_replies").append(newPostsHTML);
+
+		$.each(ignored_replies, function () {
+			new weToggle({
+				bCurrentlyCollapsed: true,
+				aSwappableContainers: [
+					"msg_" + this + "_body",
+					"msg_" + this + "_quote",
+				],
+				aSwapLinks: [
+					{
+						sId: "msg_" + this + "_ignored_link",
+						msgExpanded: "",
+						msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
+					}
+				]
+			});
+		});
 	}');
 
 	// Code for showing and hiding additional options.
