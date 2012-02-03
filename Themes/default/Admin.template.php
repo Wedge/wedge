@@ -1554,7 +1554,7 @@ function template_download_language()
 		$count = 0;
 
 		add_js('
-	var oTogglePanel_', $theme, ' = new weToggle({
+	new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [');
 

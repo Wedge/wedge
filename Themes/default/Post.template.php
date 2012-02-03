@@ -456,7 +456,7 @@ function template_postform_after()
 	$("#postAttachment2").hide();');
 
 		add_js('
-	var oSwapAdditionalOptions = new weToggle({', empty($context['show_additional_options']) ? '
+	new weToggle({', empty($context['show_additional_options']) ? '
 		bCurrentlyCollapsed: true,' : '', '
 		funcOnBeforeCollapse: function () { $("#additional_options").val("0"); },
 		funcOnBeforeExpand: function () { $("#additional_options").val("1"); },
@@ -682,12 +682,9 @@ function template_show_previous_posts()
 	echo '
 		</div>';
 
-	add_js('
-	var aIgnoreToggles = [];');
-
 	foreach ($ignored_posts as $post_id)
 		add_js('
-	aIgnoreToggles[' . $post_id . '] = new weToggle({
+	new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
 			"msg_' . $post_id . '_body",

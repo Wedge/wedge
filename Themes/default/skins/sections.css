@@ -105,12 +105,6 @@ img.new_posts
 	float: right
 	padding: 4px
 
-#message_index_jump_to
-	margin-top: 0
-	float: right
-	.sbox
-		margin-top: 0
-
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
 .prevnext_prev extends .cell
@@ -125,16 +119,6 @@ img.new_posts
 
 #top_subject extends .cell
 	padding: 4px 8px
-
-// The jump to box
-#display_jump_to extends .cell
-	.sbox
-		font-size: 10pt
-		letter-spacing: 0
-		padding: 2px 2px 0
-		margin-left: 8px
-
-#top_subject, #display_jump_to
 	font-family: "PT Sans", $main_font
 	letter-spacing: -1px
 

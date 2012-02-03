@@ -233,21 +233,12 @@ function template_main_board()
 		echo '
 	<div class="pagesection">', empty($context['button_list']) ? '' :
 		template_button_strip($context['button_list']), '
-		<p id="message_index_jump_to"><label>', $txt['jump_to'], ': </label></p>
 		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 	</div>';
 	}
 
 	// Show breadcrumbs at the bottom too.
 	$context['bottom_linktree'] = true;
-
-	add_js('
-	if (can_ajax)
-		aJumpTo.push(new JumpTo({
-			iBoardId: ' . $context['current_board'] . ',
-			sContainerId: \'message_index_jump_to\',
-			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
-		}));');
 
 	// JavaScript for inline editing.
 	add_js_file('scripts/topic.js');
@@ -499,14 +490,6 @@ function template_main_blog()
 
 	// Show breadcrumbs at the bottom too.
 	$context['bottom_linktree'] = true;
-
-	add_js('
-	if (can_ajax)
-		aJumpTo.push(new JumpTo({
-			iBoardId: ' . $context['current_board'] . ',
-			sContainerId: "message_index_jump_to",
-			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
-		}));');
 
 	// JavaScript for inline editing.
 	add_js_file('scripts/topic.js');

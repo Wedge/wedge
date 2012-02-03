@@ -30,7 +30,7 @@
 .prevnext_next extends .prevnext_prev
 	float: right
 
-#top_subject, #display_jump_to
+#top_subject
 	float: left
 	width: 55%
 

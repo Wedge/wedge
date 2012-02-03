@@ -85,7 +85,7 @@ function Display()
 				'postlist' => array(
 					'display_posts',
 				),
-				'quick_access',
+				'title_lower',
 				'mod_buttons',
 				'quick_reply'
 			)

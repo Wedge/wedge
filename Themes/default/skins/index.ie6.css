@@ -98,7 +98,7 @@ li.separator
 .prevnext_next extends .prevnext_prev
 	float: right
 
-#top_subject, #display_jump_to
+#top_subject
 	line-height: 1.2em
 	float: left
 	width: 59%

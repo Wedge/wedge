@@ -191,8 +191,8 @@ function template_permission_index()
 
 		// JavaScript for the advanced stuff.
 		add_js('
-	var oPermissionsPanelToggle = new weToggle({
-		bCurrentlyCollapsed: ', empty($context['show_advanced_options']) ? 'true' : 'false', ',
+	new weToggle({', empty($context['show_advanced_options']) ? '
+		bCurrentlyCollapsed: true,' : '', '
 		aSwappableContainers: [\'permissions_panel_advanced\'],
 		aSwapImages: [{ sId: \'permissions_panel_toggle\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }]', $context['user']['is_guest'] ? '' : ',
 		sOptionName: \'admin_preferences\',

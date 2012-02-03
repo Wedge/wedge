@@ -303,15 +303,11 @@ function template_view_package()
 	</div>
 	<br class="clear">';
 
-	// Toggle options.
-	add_js('
-	var aOperationElements = [];');
-
 	// Operations.
 	if (!empty($js_operations))
 		foreach ($js_operations as $key => $operation)
 			add_js('
-	aOperationElements[', $key, '] = new weToggle({
+	new weToggle({
 		bCurrentlyCollapsed: ', $operation ? 'false' : 'true', ',
 		aSwappableContainers: [\'operation_', $key, '\'],
 		aSwapImages: [{ sId: \'operation_img_', $key, '\' }]
@@ -906,7 +902,7 @@ function template_package_list()
 		foreach ($context['package_list'] as $section => $ps)
 		{
 			add_js('
-	var oPackageServerToggle_', $section, ' = new weToggle({
+	new weToggle({
 		bCurrentlyCollapsed: ', count($ps['items']) == 1 || $section_count == 1 ? 'false' : 'true', ',
 		aSwappableContainers: [\'package_section_', $section, '\'],
 		aSwapImages: [{ sId: \'ps_img_', $section, '\' }]
@@ -915,7 +911,7 @@ function template_package_list()
 			foreach ($ps['items'] as $id => $package)
 				if (!$package['is_text'] && !$package['is_line'] && !$package['is_remote'])
 					add_js('
-	var oPackageToggle_', $section, '_pkg_', $id, ' = new weToggle({
+	new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [\'package_section_', $section, '_pkg_', $id, '\'],
 		aSwapImages: [{ sId: \'ps_img_', $section, '_pkg_', $id, '\' }]

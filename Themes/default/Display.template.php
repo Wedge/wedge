@@ -323,14 +323,9 @@ function template_display_posts()
 	}');
 
 	if (!empty($ignoredMsgs))
-	{
-		add_js('
-	var aIgnoreToggles = [];');
-
 		foreach ($ignoredMsgs as $msgid)
-		{
 			add_js('
-	aIgnoreToggles[' . $msgid . '] = new weToggle({
+	new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
 			\'msg_' . $msgid . '_extra_info\',
@@ -348,13 +343,11 @@ function template_display_posts()
 			}
 		]
 	});');
-		}
-	}
 
 	if (!empty($context['user_menu']))
 	{
 		$context['footer_js'] .= '
-	var oUsMe = new MiniMenu({';
+	new MiniMenu({';
 
 		foreach ($context['user_menu'] as $user => $linklist)
 			$context['footer_js'] .= '
@@ -382,7 +375,7 @@ function template_display_posts()
 	if (!empty($context['action_menu']))
 	{
 		$context['footer_js'] .= '
-	var oAcMe = new MiniMenu({';
+	new MiniMenu({';
 
 		foreach ($context['action_menu'] as $post => $linklist)
 			$context['footer_js'] .= '
@@ -797,23 +790,16 @@ function template_postlist_after()
 			</div>';
 }
 
-function template_quick_access()
+function template_title_lower()
 {
-	global $context, $txt;
+	global $context;
 
-	// Show the quick access box, or... Actually let JavaScript do it.
+	// Show the prev/next navigation again.
 	echo '
-			<div class="posthead">', $context['prevnext_prev'], '
-				<div id="display_jump_to"><label>', $txt['jump_to'], ': </label></div>', $context['prevnext_next'], '
+			<div class="posthead">',
+				$context['prevnext_prev'],
+				$context['prevnext_next'], '
 			</div>';
-
-	add_js('
-	if (can_ajax)
-		aJumpTo.push(new JumpTo({
-			iBoardId: ' . $context['current_board'] . ',
-			sContainerId: \'display_jump_to\',
-			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
-		}));');
 }
 
 function template_mod_buttons()

@@ -577,8 +577,9 @@ function JumpTo(opt)
 {
 	this.opt = opt;
 	var aBoardsAndCategories = [];
+	aJumpTo.push(this);
 
-	$('#' + opt.sContainerId).find('label')
+	$('#' + opt.sContainerId)
 		.append('<select id="' + opt.sContainerId + '_select"><option data-hide>=> ' + opt.sPlaceholder + '</option></select>')
 		.find('select').sb().focus(function ()
 		{

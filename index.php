@@ -215,6 +215,8 @@ if (empty($_REQUEST['action']) || !defined('WEDGE_NO_LOG'))
 // After all this time... After everything we saw, after everything we lost... I have only one thing to say to you... Bye!
 $function();
 
+wetem::add('sidebar', 'sidebar_quick_access');
+
 // Just quickly sneak the feed stuff in...
 if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_feed'))
 	wetem::add('sidebar', 'sidebar_feed');

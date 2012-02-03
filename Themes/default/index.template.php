@@ -440,11 +440,33 @@ function template_sidebar_before()
 	</section>';
 }
 
+// Show the Quick Access (JumpTo) select box.
+function template_sidebar_quick_access()
+{
+	global $context, $txt;
+
+	add_js('
+	if (can_ajax)
+		new JumpTo({'. (!empty($context['current_board']) ? '
+			iBoardId: ' . $context['current_board'] . ',' : '') . '
+			sContainerId: \'display_jump_to\',
+			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
+		});');
+
+	echo '
+	<section>
+		<we:title>
+			', $txt['jump_to'], '
+		</we:title>
+		<p id="display_jump_to"></p>
+	</section>';
+}
+
 // This natty little function adds feed links to the sidebar. Mostly autonomous, it's lovely for that.
 // This function is only added to the list if the feeds are available, so we don't even need to check anything.
 function template_sidebar_feed()
 {
-	global $topic, $board, $txt, $context, $board_info;
+	global $context, $txt, $topic, $board, $board_info;
 
 	echo '
 	<section>
