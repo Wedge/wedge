@@ -128,8 +128,7 @@ function template_generic_menu_dropdown()
 				$context['tabs'] = isset($area['subsections']) ? $area['subsections'] : array();
 
 			echo '
-			<li', $class, '>
-				<a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '">',
+			<li', $class, '><a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '">',
 				!empty($area['notice']) ? '<strong>' . $area['notice'] . '</strong>' : '', $area['icon'], $area['label'], $end_a;
 
 			// Is there any subsections?
@@ -155,11 +154,10 @@ function template_generic_menu_dropdown()
 				}
 
 				echo '
-				</ul>';
+				</ul>
+			';
 			}
-
-			echo '
-			</li>';
+			echo '</li>';
 		}
 		echo !empty($section['areas']) ? '
 		</ul>' : '', '

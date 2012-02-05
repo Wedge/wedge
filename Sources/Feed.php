@@ -254,6 +254,8 @@ function Feed()
 			if (empty($modSettings['feed_root']))
 				updateSettings(array('feed_root' => strtolower($scripturl)));
 			preg_match('~[^/]+//([^/]+)/(.*?)(?:/index.php)?~', $modSettings['feed_root'], $domain);
+			if (empty($modSettings['feed_date']))
+				updateSettings(array('feed_date' => date('Y-m-d')));
 		}
 		$xml = $subActions[$_GET['sa']][0]($xml_format);
 
@@ -293,7 +295,7 @@ function Feed()
 	// Are we outputting an RSS feed or one with more information?
 	if ($xml_format == 'rss' || $xml_format == 'rss2')
 	{
-		// Start with an RSS 2.0 header.
+		// Start with an RSS header.
 		echo '
 <rss version=', $xml_format == 'rss2' ? '"2.0"' : '"0.92"', '>
 	<channel>
@@ -315,6 +317,7 @@ function Feed()
 	{
 		echo '
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="', strtr($txt['lang_locale'], '_', '-'), '">
+	<id>tag:', $domain[1], ',', $modSettings['feed_date'], ':', empty($domain[2]) ? '' : $domain[2] . ':', $_GET['sa'], '</id>
 	<title>', $feed_title, '</title>
 	<link rel="alternate" type="text/html" href="', $scripturl, '" />
 	<updated>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</updated>
@@ -337,7 +340,7 @@ function Feed()
 
 function cdata_parse($data)
 {
-	return strpos($data, '</') === false && strpos($data, '&') === false ? $data : '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
+	return strpos($data, '<') === false && strpos($data, '&') === false ? $data : '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 }
 
 function tag_gen($key, $date)
@@ -545,7 +548,6 @@ function getXmlNews($xml_format)
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
 				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
 				'id' => tag_gen('topic-' . $row['id_topic'], $row['poster_time']),
-				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
 			);
 	}
 	wesql::free_result($request);
@@ -662,7 +664,6 @@ function getXmlRecent($xml_format)
 				'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $row['poster_time']),
 				'updated' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', empty($row['modified_time']) ? $row['poster_time'] : $row['modified_time']),
 				'id' => tag_gen('msg-' . $row['id_msg'], $row['poster_time']),
-				'icon' => $settings['images_url'] . '/icons/' . $row['icon'] . '.gif',
 			);
 	}
 	wesql::free_result($request);
@@ -670,6 +671,8 @@ function getXmlRecent($xml_format)
 	return $data;
 }
 
+// !! @todo: ideally, a profile feed should return an activity stream.
+// This is obviously not the case right now... And is pretty much useless. :-/
 function getXmlProfile($xml_format)
 {
 	global $scripturl, $memberContext, $user_profile, $modSettings, $user_info;
@@ -680,14 +683,17 @@ function getXmlProfile($xml_format)
 
 	// Make sure the id is a number and not "I like trying to hack the database".
 	$_GET['u'] = (int) $_GET['u'];
+
 	// Load the member's contextual information!
 	if (!loadMemberContext($_GET['u']) || !allowedTo('profile_view_any'))
 		return array();
 
-	// Okay, I admit it, I'm lazy. Stupid $_GET['u'] is long and hard to type.
 	$profile =& $memberContext[$_GET['u']];
 	$data = array();
 
+	// !! @todo: this shouldn't be an <entry>, rather the top-level flags, if only
+	// because <logo> is only allowed inside <feed> tags, not <entry> tags.
+	// We won't bother for now, because it's not been put to good use yet.
 	if ($xml_format == 'rss' || $xml_format == 'rss2')
 		$data[] = array(
 			'title' => cdata_parse($profile['name']),
