@@ -34,14 +34,12 @@ function template_generic_menu_sidebar()
 			<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '' : '2', '.png" id="sidebar_toggle"></a>';
 
 		echo '
-			', $section['title'];
-
-		echo '
+			', $section['title'], '
 		</we:title>
 		<ul class="left_menu">';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
-		foreach ($section['areas'] as $i => $area)
+		foreach ($section['areas'] as $id => $area)
 		{
 			// Not supposed to be printed?
 			if (empty($area['label']))
@@ -56,15 +54,10 @@ function template_generic_menu_sidebar()
 			<li>';
 
 			// Is this the current area, or just some area?
-			if ($i == $menu_context['current_area'])
-			{
-				echo '<strong><a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a></strong>';
-
-				if (empty($context['tabs']))
-					$context['tabs'] = isset($area['subsections']) ? $area['subsections'] : array();
-			}
+			if ($id == $menu_context['current_area'])
+				echo '<strong><a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id, $menu_context['extra_parameters'], '">', $area['label'], '</a></strong>';
 			else
-				echo '<a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i, $menu_context['extra_parameters'], '">', $area['label'], '</a>';
+				echo '<a href="', isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id, $menu_context['extra_parameters'], '">', $area['label'], '</a>';
 
 			echo '</li>';
 		}
@@ -109,7 +102,7 @@ function template_generic_menu_dropdown()
 		<ul>' : '';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
-		foreach ($section['areas'] as $i => $area)
+		foreach ($section['areas'] as $id => $area)
 		{
 			// Not supposed to be printed?
 			if (empty($area['label']))
@@ -120,15 +113,11 @@ function template_generic_menu_dropdown()
 				continue;
 			}
 
-			$class = ($i == $menu_context['current_area'] ? ' active' : '') . (!empty($area['subsections']) ? ' subsection' : '');
+			$class = ($id == $menu_context['current_area'] ? ' active' : '') . (!empty($area['subsections']) ? ' subsection' : '');
 			$class = empty($class) ? '' : ' class="' . ltrim($class) . '"';
 
-			// Is this the current area, or just some area?
-			if ($i == $menu_context['current_area'] && empty($context['tabs']))
-				$context['tabs'] = isset($area['subsections']) ? $area['subsections'] : array();
-
 			echo '
-			<li', $class, '><a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i), $menu_context['extra_parameters'], '">',
+			<li', $class, '><a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id), $menu_context['extra_parameters'], '">',
 				!empty($area['notice']) ? '<strong>' . $area['notice'] . '</strong>' : '', $area['icon'], $area['label'], $end_a;
 
 			// Is there any subsections?
@@ -147,7 +136,7 @@ function template_generic_menu_dropdown()
 						continue;
 					}
 
-					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $i) . ';sa=' . $sa;
+					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id) . ';sa=' . $sa;
 
 					echo '
 					<li', !empty($sub['selected']) ? ' class="active"' : '', '><a href="', $url, $menu_context['extra_parameters'], '">', $sub['label'], '</a></li>';
@@ -176,8 +165,18 @@ function template_generic_tabs()
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
+	// Search for the current area. Make sure we're playing with the correct menu!
+	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 1)];
+	foreach ($menu_context['sections'] as $section)
+		foreach ($section['areas'] as $id => $area)
+			if ($id === $menu_context['current_area'])
+			{
+				$tabs = isset($area['subsections']) ? $area['subsections'] : array();
+				break;
+			}
+
 	// If there are no "tabs" set up or we don't want to show them, don't waste time here.
-	if (empty($context['tabs']) || !empty($context['force_disable_tabs']))
+	if (empty($tabs) || !empty($context['force_disable_tabs']))
 		return;
 
 	// Which menu are we rendering?
@@ -190,7 +189,7 @@ function template_generic_tabs()
 	<we:cat>';
 
 	// Exactly how many tabs do we have?
-	foreach ($context['tabs'] as $id => $tab)
+	foreach ($tabs as $id => $tab)
 	{
 		// Is this menu item a separator, or disabled?
 		if (empty($tab) || !empty($tab['disabled']))

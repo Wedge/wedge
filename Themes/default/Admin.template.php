@@ -1517,21 +1517,21 @@ function template_download_language()
 						<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="50" name="ftp_username" id="ftp_username" value="', isset($context['package_ftp']['username']) ? $context['package_ftp']['username'] : (isset($modSettings['package_username']) ? $modSettings['package_username'] : ''), '" style="width: 99%">
+						<input type="text" size="42" name="ftp_username" id="ftp_username" value="', isset($context['package_ftp']['username']) ? $context['package_ftp']['username'] : (isset($modSettings['package_username']) ? $modSettings['package_username'] : ''), '" style="width: 99%">
 					</dd>
 
 					<dt>
 						<label for="ftp_password">', $txt['package_ftp_password'], ':</label>
 					</dt>
 					<dd>
-						<input type="password" size="50" name="ftp_password" id="ftp_password" style="width: 99%">
+						<input type="password" size="42" name="ftp_password" id="ftp_password" style="width: 99%">
 					</dd>
 
 					<dt>
 						<label for="ftp_path">', $txt['package_ftp_path'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%">
+						<input type="text" size="42" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%">
 					</dd>
 				</dl>
 			</div>';
@@ -1748,20 +1748,20 @@ function template_callback_question_answer_list()
 		echo '
 
 			<dt>
-				<input type="text" name="question[', $data['id'], ']" value="', $data['question'], '" size="50" class="verification_question">
+				<input type="text" name="question[', $data['id'], ']" value="', $data['question'], '" size="42" class="verification_question">
 			</dt>
 			<dd>
-				<input type="text" name="answer[', $data['id'], ']" value="', $data['answer'], '" size="50" class="verification_answer">
+				<input type="text" name="answer[', $data['id'], ']" value="', $data['answer'], '" size="42" class="verification_answer">
 			</dd>';
 
 	// Some blank ones.
 	for ($count = 0; $count < 3; $count++)
 		echo '
 			<dt>
-				<input type="text" name="question[]" size="50" class="verification_question">
+				<input type="text" name="question[]" size="42" class="verification_question">
 			</dt>
 			<dd>
-				<input type="text" name="answer[]" size="50" class="verification_answer">
+				<input type="text" name="answer[]" size="42" class="verification_answer">
 			</dd>';
 
 	echo '
@@ -1806,7 +1806,7 @@ function template_callback_question_answer_list()
 
 		var newInput = createNamedElement("input", "question[]");
 		newInput.type = "text";
-		newInput.size = "50";
+		newInput.size = "42";
 		newInput.setAttribute("class", "verification_question");
 		newDT.appendChild(newInput);
 
@@ -1814,7 +1814,7 @@ function template_callback_question_answer_list()
 
 		newInput = createNamedElement("input", "answer[]");
 		newInput.type = "text";
-		newInput.size = "50";
+		newInput.size = "42";
 		newInput.setAttribute("class", "verification_answer");
 		newDD.appendChild(newInput);
 

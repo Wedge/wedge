@@ -709,7 +709,7 @@ function getXmlProfile($xml_format)
 			'link' => $scripturl . '?action=profile;u=' . $profile['id'],
 			'content' => cdata_parse(isset($profile['group']) ? $profile['group'] : $profile['post_group']),
 			'author' => array(
-				'name' => $profile['real_name'],
+				'name' => $profile['name'],
 				'email' => showEmailAddress(!empty($profile['hide_email']), $profile['id']) === 'yes_permission_override' ? $profile['email'] : null,
 				'uri' => !empty($profile['website']) ? $profile['website']['url'] : ''
 			),

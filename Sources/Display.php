@@ -1042,7 +1042,7 @@ function Display()
 	$common_permissions = array(
 		'can_approve' => 'approve_posts',
 		'can_ban' => 'manage_bans',
-		'can_pinned' => 'pin_topic',
+		'can_pin' => 'pin_topic',
 		'can_merge' => 'merge_any',
 		'can_split' => 'split_any',
 		'can_mark_notify' => 'mark_any_notify',
