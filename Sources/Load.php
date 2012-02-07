@@ -1965,8 +1965,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			add_js('
 	function weAutoTask()
 	{
-		var tempImage = new Image();
-		tempImage.src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
+		new Image().src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
 	}
 	setTimeout(weAutoTask, 1);');
 		}
@@ -1983,8 +1982,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		add_js('
 	function weImperativeTask()
 	{
-		var tempImage = new Image();
-		tempImage.src = "' . $scripturl . '?imperative;ts=' . time() . '";
+		new Image().src = "' . $scripturl . '?imperative;ts=' . time() . '";
 	}
 	setTimeout(weImperativeTask, 1);');
 

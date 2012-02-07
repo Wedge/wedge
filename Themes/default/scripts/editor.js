@@ -22,7 +22,7 @@ function weEditor(oOptions)
 	this.sEditWidth = this.opt.sEditWidth || '70%';
 	this.sEditHeight = this.opt.sEditHeight || 150;
 
-	this.bRichTextEnabled = this.opt.bWysiwyg;
+	this.bRichTextEnabled = !!this.opt.bWysiwyg;
 	this.bRichTextPossible = !this.opt.bRichEditOff && (is_ie || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
 
 	// Kinda holds all the useful stuff.
