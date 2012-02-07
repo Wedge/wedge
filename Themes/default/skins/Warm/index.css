@@ -15,6 +15,14 @@ em
 #offside
 	display: table-cell
 
+#responsive
+	#sidebar
+		left: -220px
+		:hover
+			left: 0
+	#offside
+		display: block
+
 #content div.frame
 	margin: 0
 	padding: 0 20px 4px
@@ -34,7 +42,7 @@ em
 		color: #744
 	.column
 		padding: 5px 25px 10px 15px
-	#edgehide &
+	#responsive &
 		background-color: #f6f8ef
 	input.search
 		width: 90px
@@ -44,7 +52,6 @@ em
 	display: none
 
 .wehead
-	color: #224
 	a
 		color: #444
 

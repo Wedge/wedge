@@ -84,6 +84,23 @@ body extends .grad700
 	.column
 		padding: 8px 12px 12px
 
+#responsive
+	#edge
+		display: block
+		position: relative
+	#sidebar
+		display: block
+		position: absolute
+		z-index: 8
+		left: -260px
+		transition: left .3s ease
+		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
+		:hover
+			left: -40px
+	#main
+		display: block
+		padding: 4px 0 12px 6px
+
 #userbox
 	overflow: hidden
 	margin: 1em 0
@@ -108,22 +125,6 @@ body extends .grad700
 
 ul#noava
 	margin: 0
-
-#edgehide extends #edge
-	display: block
-	position: relative
-	#sidebar
-		display: block
-		position: absolute
-		z-index: 8
-		left: -260px
-		transition: left .3s ease
-		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
-		:hover
-			left: -40px
-	#main
-		display: block
-		padding: 4px 0 12px 6px
 
 #main
 	display: table-cell
@@ -1435,6 +1436,11 @@ dl#feed
 	width: 50%
 .w25
 	width: 25%
+
+.two-columns
+	width: 49%
+	float: left
+	margin: 0 .5%
 
 img.top, td.top, th.top, tr.top td, tr.top th
 	vertical-align: top

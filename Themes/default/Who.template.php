@@ -18,7 +18,6 @@ function template_main()
 
 	// Display the table header and linktree.
 	echo '
-	<div class="main_section" id="whos_online">
 		<form action="<URL>?action=who" method="post" id="whoFilter" accept-charset="UTF-8">
 			<we:title2>
 				', $txt['who_title'], '
@@ -118,8 +117,7 @@ function template_main()
 					</noscript>
 				</div>
 			</div>
-		</form>
-	</div>';
+		</form>';
 }
 
 function template_credits()
@@ -127,9 +125,6 @@ function template_credits()
 	global $context, $txt;
 
 	// The most important part - the credits :P
-	echo '
-	<div class="main_section" id="credits">';
-
  	if (!empty($context['site_credits']))
  	{
 		echo '
@@ -140,7 +135,7 @@ function template_credits()
 		if (!empty($context['site_credits']['admins']))
 		{
 			echo '
-		<div', empty($context['site_credits']['mods']) ? '' : ' style="width: 49%; float: left; margin: 0 .5%"', '>
+		<div', empty($context['site_credits']['mods']) ? '' : ' class="two-columns"', '>
 			<div class="windowbg2 wrc">
 				<h6 class="top">', number_context('credits_admins', count($context['site_credits']['admins'])), '</h6>
 				<ul class="last">';
@@ -158,7 +153,7 @@ function template_credits()
 		if (!empty($context['site_credits']['mods']))
 		{
 			echo '
-		<div', empty($context['site_credits']['admins']) ? '' : ' style="width: 49%; float: left; margin: 0 .5%"', '>
+		<div', empty($context['site_credits']['admins']) ? '' : ' class="two-columns"', '>
 			<div class="windowbg2 wrc">
 				<h6 class="top">', number_context('credits_moderators', count($context['site_credits']['mods'])), '</h6>
 				<ul class="last">';
@@ -179,7 +174,7 @@ function template_credits()
 			', $txt['credits_software'], '
 		</we:cat>
 
-		<div style="width: 49%; float: left; margin: 0 .5%">';
+		<div class="two-columns">';
 
 	foreach ($context['credits'] as $section)
 	{
@@ -206,7 +201,7 @@ function template_credits()
 
 	echo '
 		</div>
-		<div style="width: 49%; float: left; margin: 0 .5%">
+		<div class="two-columns">
 			<we:block class="windowbg wrc" header="', westr::safe($txt['credits_copyright']), '">
 				<h6 class="top">', $txt['credits_forum'], '</h6>
 				<ul>
@@ -240,8 +235,7 @@ function template_credits()
 
 	echo '
 			</we:block>
-		</div>
-		<div class="clear"></div>
-	</div>';
+		</div>';
 }
+
 ?>

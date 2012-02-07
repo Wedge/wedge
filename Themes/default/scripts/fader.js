@@ -1,7 +1,7 @@
 /*!
  * Wedge
  *
- * All code related to showing rotating news on the front page.
+ * All code related to showing rotating elements on a page, e.g. news fader.
  *
  * @package wedge
  * @copyright 2010-2012 Wedgeward, wedge.org
@@ -10,63 +10,42 @@
  * @version 0.1
  */
 
-function wedge_NewsFader(oOptions)
+function weFader(opt)
 {
-	this.opt = oOptions;
-	this.sControlId = '#' + oOptions.sFaderControlId;
+	var
+		aFaderItems = [],
+		fadeIndex = 0,
+		fadeDelay = opt.delay || 5000,		// How long until the next item transition?
+		fadeSpeed = opt.speed || 650,		// How long should the transition effect last?
+		sTemplate = opt.template || '%1$s',	// Put some nice HTML around the items?
+		sControlId = '#' + opt.control,
 
-	// Put some nice HTML around the items?
-	this.sTemplate = 'sItemTemplate' in oOptions ? oOptions.sItemTemplate : '%1$s';
+		fadeIn = function ()
+		{
+			fadeIndex++;
+			if (fadeIndex >= aFaderItems.length)
+				fadeIndex = 0;
 
-	// Fade speeds, in ms. FadeDelay is how long to leave an item on screen before fading. FadeSpeed is how long a fade in/out takes.
-	this.fadeDelay = 'iFadeDelay' in oOptions ? oOptions.iFadeDelay : 5000;
-	this.fadeSpeed = 'iFadeSpeed' in oOptions ? oOptions.iFadeSpeed : 650;
+			$(sControlId + ' li').html(sTemplate.replace('%1$s', aFaderItems[fadeIndex])).fadeTo(fadeSpeed, 0.99, function () {
+				// Remove alpha filter for IE, to restore ClearType.
+				this.style.filter = '';
+				fadeOut();
+			});
+		},
+		fadeOut = function ()
+		{
+			setTimeout(function () { $(sControlId + ' li').fadeTo(fadeSpeed, 0, fadeIn); }, fadeDelay);
+		};
 
 	// Load the items from the DOM.
-	var aFaderItems = [];
-	$(this.sControlId + ' li').each(function (i) {
+	$(sControlId + ' li').each(function () {
 		aFaderItems.push($(this).html());
 	});
 
-	if (aFaderItems.length < 1)
-		return;
-
-	this.fadeIndex = 0;
-
-	// Well, we are replacing the contents of a list, it *really* should be a list item we add in to it...
-	$(this.sControlId).html('<li>' + this.sTemplate.replace('%1$s', aFaderItems[0]) + '</li>').show();
-	this.aFaderItems = aFaderItems;
-	this.fadeOut(this);
+	if (aFaderItems.length)
+	{
+		// Well, we are replacing the contents of a list, it *really* should be a list item we add in to it...
+		$(sControlId).html('<li>' + sTemplate.replace('%1$s', aFaderItems[0]) + '</li>').show();
+		fadeOut();
+	}
 }
-
-wedge_NewsFader.prototype.fadeIn = function (obj)
-{
-	obj.fadeIndex++;
-	if (obj.fadeIndex >= obj.aFaderItems.length)
-		obj.fadeIndex = 0;
-
-	$(obj.sControlId + ' li').html(obj.sTemplate.replace('%1$s', obj.aFaderItems[obj.fadeIndex])).fadeTo(obj.fadeSpeed, 0.99, function() {
-		// Remove alpha filter for IE, to restore ClearType.
-		this.style.filter = '';
-		obj.fadeOut(obj);
-	});
-};
-
-wedge_NewsFader.prototype.fadeOut = function (obj)
-{
-	setTimeout(function() {
-		$(obj.sControlId + ' li').fadeTo(obj.fadeSpeed, 0, function() {
-			obj.fadeIn(obj);
-		});
-	}, obj.fadeDelay);
-};
-
-/* Optimize:
-.opt = .o
-.sTemplate = .st
-.sControlId = .ci
-.fadeDelay = .fd
-.fadeSpeed = .fs
-.fadeIndex = .fx
-.aFaderItems = .fi
-*/

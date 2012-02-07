@@ -16,12 +16,6 @@
 .postarea
 	margin-left: 8em
 
-// Sidebar should be at the bottom, in full width.
-#sidebar
-	display: block
-	clear: both
-	width: 100%
-
 #content div.frame
 	padding: 0 10px 20px
 
@@ -39,3 +33,13 @@
 
 .smiley
 	vertical-align: middle
+
+#responsive
+	#edge
+		position: static
+	#sidebar
+		display: block
+		clear: both
+		width: 100%
+		position: static
+		box-shadow: none

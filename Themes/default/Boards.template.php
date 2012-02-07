@@ -222,11 +222,10 @@ function template_boards_newsfader()
 
 		// Create a news fader object and toggle.
 		add_js('
-	var oNewsFader = new wedge_NewsFader({
-		sSelf: \'oNewsFader\',
-		sFaderControlId: \'fadeScroller\',
-		sItemTemplate: ', JavaScriptEscape('<strong>%1$s</strong>'), ',
-		iFadeDelay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
+	var oNewsFader = new weFader({
+		control: \'fadeScroller\',
+		template: ', JavaScriptEscape('<strong>%1$s</strong>'), ',
+		delay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
 	});
 
 	new weToggle({', empty($options['collapse_news_fader']) ? '' : '

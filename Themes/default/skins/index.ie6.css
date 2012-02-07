@@ -145,7 +145,7 @@ li.separator
 
 /* Overrides for the personal messages template
 ------------------------------------------------------- */
-#personal_messages .postarea
+#pm .postarea
 	margin-left, margin-right: 0
 	float: right
 
@@ -377,3 +377,6 @@ ul.usermenuitem, ul.acmenuitem
 // Remove hasLayout from optgroup styling because it breaks item widths.
 .sbox .items .optgroup .label
 	zoom: normal
+
+.two-columns
+	width: 48.5%

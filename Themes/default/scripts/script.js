@@ -179,6 +179,19 @@ function invertAll(oInvertCheckbox, oForm, sMask)
 	});
 }
 
+// Bind all delayed inline events to their respective DOM elements.
+function bindEvents()
+{
+	$('*[data-eve]').each(function ()
+	{
+		var that = $(this);
+		$.each(that.attr('data-eve').split(' '), function ()
+		{
+			that.bind(eves[this][0], eves[this][1]);
+		});
+	});
+}
+
 // Keep the session alive - always!
 (function () {
 	var lastKeepAliveCheck = +new Date();
@@ -562,7 +575,7 @@ function weToggle(opt)
 	// Initialize the images to be clickable.
 
 	$.each(opt.aSwapImages || [], function () {
-		$('#' + this.sId).show().css('visibility', 'visible').data('that', that).click(toggle_me).css('cursor', 'pointer').mousedown(false);
+		$('#' + this.sId).show().css({ visibility: 'visible' }).data('that', that).click(toggle_me).css('cursor', 'pointer').mousedown(false);
 	});
 
 	// Initialize links.
@@ -573,56 +586,44 @@ function weToggle(opt)
 
 
 // *** JumpTo class.
-function JumpTo(opt)
+function JumpTo(control, id)
 {
-	this.opt = opt;
-	var aBoardsAndCategories = [];
-	aJumpTo.push(this);
-
-	$('#' + opt.sContainerId)
-		.append('<select id="' + opt.sContainerId + '_select"><option data-hide>=> ' + opt.sPlaceholder + '</option></select>')
-		.find('select').sb().focus(function ()
-		{
-			show_ajax();
-
-			$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function () {
-				aBoardsAndCategories.push([
-					parseInt(this.getAttribute('id'), 10),		// 0 = id
-					this.getAttribute('type') == 'cat',			// 1 = category
-					// This removes entities from the name...
-					$(this).text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(parseInt(sNum, 10)); }),
-					this.getAttribute('url'),					// 3 = url
-					parseInt(this.getAttribute('level'), 10)	// 4 = level
-				]);
-			});
-
-			hide_ajax();
-
-			// Fill the jump to box with entries. Method of the JumpTo class.
-			$.each(aJumpTo, function (dummy, item)
+	if (can_ajax)
+		$('#' + control)
+			.html('<select><option data-hide>=> ' + $('#' + control).text() + '</option></select>')
+			.css({ visibility: 'visible' })
+			.find('select').sb().focus(function ()
 			{
-				var sList = '', $val, $dropdownList = $('#' + item.opt.sContainerId + '_select').unbind('focus');
+				show_ajax();
 
-				// Loop through all items to be added.
-				$.each(aBoardsAndCategories, function (key, val)
+				// Fill the select box with entries loaded through Ajax.
+				$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function ()
 				{
+					var
+						sList = '', $val, that = $(this),
+						// This removes entities from the name...
+						name = that.text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
+
 					// Just for the record, we don't NEED to close the optgroup at the end
 					// of the list, even if it doesn't feel right. Saves us a few bytes...
-					if (val[1])
-						sList += '<optgroup label="' + val[2] + '">';
+					if (that.attr('type') == 'cat')
+						sList += '<optgroup label="' + name + '">';
 					else
 						// Show the board option, with special treatment for the current one.
-						sList += '<option value="' + val[3] + '"' + (val[0] == item.opt.iBoardId ? ' disabled>=> ' + val[2] + ' &lt;='
-								: '>' + new Array(val[4] + 1).join('==') + '=> ' + val[2]) + '</option>';
+						sList += '<option value="' + that.attr('url') + '"'
+								+ (that.attr('id') == id ? ' disabled>=> ' + name + ' &lt;=' :
+									'>' + new Array(+that.attr('level') + 1).join('==') + '=> ' + name)
+								+ '</option>';
+
+					// Add the remaining items after the currently selected item.
+					$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
+						if (this.selectedIndex > 0 && ($val = $(this).val()))
+							window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
+					});
 				});
 
-				// Add the remaining items after the currently selected item.
-				$dropdownList.append(sList).sb().change(function () {
-					if (this.selectedIndex > 0 && ($val = $(this).val()))
-						window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
-				});
+				hide_ajax();
 			});
-		});
 };
 
 

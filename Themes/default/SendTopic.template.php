@@ -42,7 +42,6 @@ function template_main()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-	<div id="send_topic">
 		<form action="', $scripturl, '?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				<img src="', $settings['images_url'], '/email_sm.gif">', $context['page_title'], '
@@ -92,9 +91,7 @@ function template_main()
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Send an email to a user!
@@ -103,7 +100,6 @@ function template_custom_email()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-	<div id="send_topic">
 		<form action="', $scripturl, '?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
 			<we:cat>
 				<img src="', $settings['images_url'], '/email_sm.gif">', $context['page_title'], '
@@ -182,9 +178,7 @@ function template_custom_email()
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_report()
@@ -192,7 +186,6 @@ function template_report()
 	global $context, $settings, $options, $txt, $scripturl;
 
 	echo '
-	<div id="report_topic">
 		<form action="', $scripturl, '?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="msg" value="' . $context['message_id'] . '">
 			<we:cat>
@@ -253,9 +246,7 @@ function template_report()
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 ?>

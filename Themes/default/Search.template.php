@@ -120,9 +120,8 @@ function template_main()
 			echo '
 			<br>
 			<fieldset class="flow_hidden">
-				<we:title2>
-					<a href="#" onclick="expandCollapseBoards(); return false;"><div class="foldable" id="expandBoardsIcon" style="margin: 2px 2px -2px 0"></div></a> <a href="#" onclick="expandCollapseBoards(); return false;"><strong>', $txt['choose_board'], '</strong></a>
-				</we:title2>
+				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').slideUp();"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
+				<br><label><input type="radio" name="all_boards" value="0" onclick="$(\'#searchBoardsExpand\').slideDown();"', $context['boards_check_all'] ? '' : ' checked', '> ', $txt['choose_board'], '</label>
 				<div id="searchBoardsExpand" class="flow_auto', $context['boards_check_all'] ? ' hide' : '', '">
 					<ul class="ignoreboards floatleft">';
 
@@ -168,11 +167,14 @@ function template_main()
 
 			echo '
 					</ul>
+					<br class="clear"><br>
+					<label class="padding">
+						<input type="checkbox" name="all" id="check_all" value=""', $context['boards_check_all'] ? ' checked' : '', ' onclick="invertAll(this, this.form, \'brd\');" class="marginleft">
+						<em>', $txt['check_all'], '</em>
+					</label>
 				</div>
 				<br class="clear">
 				<div class="padding">
-					<input type="checkbox" name="all" id="check_all" value=""', $context['boards_check_all'] ? ' checked' : '', ' onclick="invertAll(this, this.form, \'brd\');" class="floatleft">
-					<label for="check_all" class="floatleft">', $txt['check_all'], '</label>
 					<input type="submit" name="submit" value="', $txt['search'], '" class="submit floatright">
 				</div>
 				<br class="clear">
@@ -194,14 +196,6 @@ function template_main()
 
 		for (i = 0; i < ids.length; i++)
 			document.forms.searchform["brd" + ids[i]].checked = !toggle;
-	}
-
-	function expandCollapseBoards()
-	{
-		var current = $("#searchBoardsExpand").is(":visible");
-
-		$("#searchBoardsExpand").slideToggle(!current);
-		$("#expandBoardsIcon").toggleClass("fold", !current);
 	}');
 }
 

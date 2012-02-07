@@ -43,7 +43,6 @@ function template_summary()
 
 	// Display the basic information about the user
 	echo '
-<div id="profileview" class="flow_auto">
 	<we:cat>
 		<img src="', $settings['images_url'], '/icons/profile_sm.gif">
 		', $txt['summary'], '
@@ -294,8 +293,7 @@ function template_summary()
 	echo '
 		</div>
 	</div>
-	<div class="clear"></div>
-</div>';
+	<div class="clear"></div>';
 }
 
 function template_showThoughts()
@@ -1030,7 +1028,6 @@ function template_statPanel()
 
 	// First, show a few text statistics such as post/topic count.
 	echo '
-	<div id="profileview">
 		<div id="generalstats">
 			<we:cat>
 				<img src="', $settings['images_url'], '/stats_info.gif">
@@ -1169,11 +1166,8 @@ function template_statPanel()
 	echo '
 				</div>
 			</div>
-		</div>';
-
-	echo '
-	</div>
-	<br class="clear">';
+		</div>
+		<div class="clear"></div>';
 }
 
 // Template for editing profile options.

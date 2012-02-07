@@ -257,7 +257,7 @@
 			doFocus ? $orig.triggerHandler('focus') : focusSB();
 
 			// Modify dropdown css for getting values
-			$dd.stop(true, true).show().css('visibility', 'hidden')
+			$dd.stop(true, true).show().css({ visibility: 'hidden' })
 				.width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
 
 			var
@@ -292,7 +292,7 @@
 
 			$selected.addClass('selected');
 
-			$dd.hide().css('visibility', 'visible')
+			$dd.hide().css({ visibility: 'visible' })
 				.attr('aria-hidden', false);
 
 			// If opening via a key stroke, simulate a click.

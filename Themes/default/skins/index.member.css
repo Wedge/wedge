@@ -31,7 +31,7 @@ ul.buttonlist
 /* Styles for the personal messages section.
 ------------------------------------------------- */
 
-#personal_messages
+#pm
 	.pm extends #forumposts .wrc
 		overflow: auto
 		clear: both

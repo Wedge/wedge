@@ -1,6 +1,6 @@
 
 // Firefox 3.6 doesn't correctly position the sidebar.
-#edgehide #sidebar
+#responsive #sidebar
 	left: -220px
 	:hover
 		left: 0

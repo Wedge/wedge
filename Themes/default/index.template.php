@@ -146,11 +146,18 @@ function template_html_before()
 {
 	global $context, $settings, $options, $txt, $modSettings, $boardurl, $topic;
 
+	if (!empty($context['current_action']))
+		$id = $context['current_action'];
+	elseif (!empty($context['current_topic']))
+		$id = 'topic';
+	elseif (!empty($context['current_board']))
+		$id = 'board';
+
 	// Declare our HTML5 doctype, and whether to show right to left.
 	// The charset is already specified in the headers so it may be omitted,
 	// but the specs recommend leaving them in, if the document is viewed offline.
 	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_dictionary']) ? ' lang="' . $txt['lang_dictionary'] . '"' : '', '>
+<html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_dictionary']) ? ' lang="' . $txt['lang_dictionary'] . '"' : '', isset($id) ? ' id="' . $id . '"' : '', '>
 <head>', empty($topic) ? '' : '
 	<meta charset="utf-8">';
 
@@ -213,17 +220,8 @@ function template_html_before()
 
 function template_body_before()
 {
-	global $context;
-
-	if (!empty($context['current_action']))
-		$id = $context['current_action'];
-	elseif (!empty($context['current_topic']))
-		$id = 'topic';
-	elseif (!empty($context['current_board']))
-		$id = 'board';
-
 	echo '
-<body', isset($id) ? ' id="' . $id . '"' : '', '>';
+<body>';
 }
 
 // The main content should go here.
@@ -426,7 +424,7 @@ function template_sidebar_before()
 					<option value="-1" selected>', $txt['forever'], '</option>
 				</select>
 				<input type="submit" value="', $txt['login'], '" class="submit"><br>
-				<div class="info">', $txt['quick_login_dec'], '</div>';
+				<div class="info">', $txt['quick_login_desc'], '</div>';
 
 		echo '
 				<input type="hidden" name="hash_passwrd" value="">
@@ -446,19 +444,14 @@ function template_sidebar_quick_access()
 	global $context, $txt;
 
 	add_js('
-	if (can_ajax)
-		new JumpTo({'. (!empty($context['current_board']) ? '
-			iBoardId: ' . $context['current_board'] . ',' : '') . '
-			sContainerId: \'display_jump_to\',
-			sPlaceholder: ' . JavaScriptEscape($txt['select_destination']) . '
-		});');
+	new JumpTo(\'jump_to\'', !empty($context['current_board']) && empty($context['current_topic']) ? ', ' . $context['current_board'] : '', ');');
 
 	echo '
 	<section>
 		<we:title>
 			', $txt['jump_to'], '
 		</we:title>
-		<p id="display_jump_to"></p>
+		<p id="jump_to">', $txt['select_destination'], '</p>
 	</section>';
 }
 
@@ -551,16 +544,16 @@ function template_body_after()
 {
 	global $context, $settings, $options, $txt, $modSettings, $user_info, $footer_coding;
 
-	$no_resize = $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'];
+	$no_resize = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 	echo '
 ', $no_resize ? '' : '
 <script><!-- // --><![CDATA[
 	function weres()
 	{
-		var d = document, g = "getElementById", e1 = d[g]("edge"), e2 = d[g]("edgehide"), m = d[g]("main"), w = m ? m.clientWidth : 0;
-		if (w && w < 728 && !we_side && e1) { we_side = 1; e1.id = "edgehide"; } else if (w >= 952 && we_side && e2) { we_side = 0; e2.id = "edge"; }
+		var d=document,b=d.body,m=d.getElementById("main"),w=m?m.clientWidth:0;
+		b.id=w&&w<728?"responsive":w>=969?"":b.id;
 	}
-	we_side = 0; weres();
+	weres();
 // ]]></script>';
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
@@ -617,10 +610,7 @@ function template_body_after()
 	// $context['footer_js'] assumes the <script> tag is already output.
 	echo $context['footer_js'], empty($footer_coding) ? '
 <script><!-- // --><![CDATA[' : '', '
-	$("*[data-eve]").each(function() {
-		for (var eve = 0, elis = $(this).attr("data-eve").split(" "), eil = elis.length; eve < eil; eve++)
-			$(this).bind(eves[elis[eve]][0], eves[elis[eve]][1]);
-	});
+	bindEvents();
 // ]]></script>
 </body>';
 }
@@ -720,7 +710,8 @@ function template_menu()
 					foreach ($sub_item['sub_items'] as $subsub_item)
 						echo '<li><a href="', $subsub_item['href'], '"', isset($subsub_item['target']) ? ' target="' . $subsub_item['target'] . '"' : '', '>', $subsub_item['title'], '</a></li>';
 
-					echo '</ul>';
+					echo '</ul>
+				';
 				}
 				echo '</li>';
 			}
@@ -737,7 +728,7 @@ function template_menu()
 // The same footer area...
 function template_footer()
 {
-	global $context, $txt;
+	global $context, $txt, $user_info;
 
 	if (!empty($context['bottom_linktree']))
 		template_linktree(false, true);
@@ -751,12 +742,14 @@ function template_footer()
 		echo '
 			<li class="stats"><!-- insert stats here --></li>';
 
-	// Show the short copyright. Please don't remove it, free software deserves credit.
+	// Show the credit page (forum admin/mod team and credits), link to the WAP2 version, and valid HTML5
+	// check. Note: the W3 validator, at as January 2012, no longer validates HTML5+Microdata files, so
+	// the breadcrumb code will make it fail on both validator.w3.org and Unicorn. Switched to validator.nu.
 	echo '
 			<li class="copyright">', $txt['copyright'], '</li>
 			<li class="links">
 				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
+				<a id="button_html5" href="http://validator.nu/?doc=', $user_info['url'], '" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
 				<a id="button_wap2" href="<URL>?wap2" class="new_win">', $txt['wap2'], '</a>
 			</li>
 		</ul>

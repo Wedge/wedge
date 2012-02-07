@@ -569,9 +569,6 @@ dl.poll_options
 
 /* Styles for the move topic section.
 ---------------------------------------------------- */
-#move_topic dl
-	margin-bottom: 0
-
 .move_topic
 	width: 710px
 	margin: auto
@@ -597,7 +594,7 @@ dl.send_mail
 
 /* Styles for the report topic section.
 ---------------------------------------------------- */
-#report_topic dl
+#report dl
 	margin-bottom: 0
 	&.settings dt
 		width: 20%

@@ -19,9 +19,6 @@ function template_pm_before()
 	if ($context['page_title'] === $txt['showDrafts'])
 		echo '
 	<div id="personal_drafts">';
-	else
-		echo '
-	<div id="personal_messages">';
 
 	// Show the capacity bar, if available.
 	if (!empty($context['limit_bar']))
@@ -50,9 +47,10 @@ function template_pm_before()
 // Just the end of the index bar, nothing special.
 function template_pm_after()
 {
-	global $context, $settings, $options;
+	global $context, $txt;
 
-	echo '
+	if ($context['page_title'] === $txt['showDrafts'])
+		echo '
 	</div>';
 }
 
