@@ -1,0 +1,12 @@
+
+.latestp1
+	width: 100px
+	font-size: .8em
+	line-height: 1.2em
+	div
+		width: 100px
+		overflow: hidden
+		white-space: nowrap
+
+.latestp2
+	padding-left: 8px

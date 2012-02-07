@@ -130,7 +130,7 @@ function Search()
 	$context['categories'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		// This category hasn't been set up yet..
+		// This category hasn't been set up yet...
 		if (!isset($context['categories'][$row['id_cat']]))
 			$context['categories'][$row['id_cat']] = array(
 				'id' => $row['id_cat'],
@@ -138,7 +138,7 @@ function Search()
 				'boards' => array()
 			);
 
-		// Set this board up, and let the template know when it's a child.  (indent them..)
+		// Set this board up, and let the template know when it's a child, so it can indent them.
 		$context['categories'][$row['id_cat']]['boards'][$row['id_board']] = array(
 			'id' => $row['id_board'],
 			'name' => $row['name'],
@@ -146,7 +146,7 @@ function Search()
 			'selected' => (empty($context['search_params']['brd']) && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']) && !in_array($row['id_board'], $user_info['ignoreboards'])) || (!empty($context['search_params']['brd']) && in_array($row['id_board'], $context['search_params']['brd']))
 		);
 
-		// If a board wasn't checked that probably should have been ensure the board selection is selected, yo!
+		// If a board wasn't checked that probably should have been, ensure the board selection is selected!
 		if (!$context['categories'][$row['id_cat']]['boards'][$row['id_board']]['selected'] && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']))
 			$context['boards_check_all'] = false;
 	}

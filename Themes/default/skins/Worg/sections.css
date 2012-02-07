@@ -1,0 +1,1374 @@
+
+/*
+	This is where all styling related to a specific page or area is put.
+/*
+
+/* Styles for the board index.
+------------------------------------------------- */
+
+// The board title!
+#board_list
+	box-sizing: border-box
+	td.info a.subject
+		font: 700 120% "PT Sans", $head_font
+		color: $board_col
+	td.children
+		color: #555
+		font-size: 85%
+	td.stats
+		font-size: 90%
+		width: 15%
+		text-align: center
+	td.lastpost
+		line-height: 1.3em
+		font-size: 85%
+		width: 24%
+	td.icon
+		text-align: center
+		width: 6%
+
+ul.stats
+	padding-left: 24px
+
+p.moderators
+	font-size: 80%
+
+// The posting icons
+#posting_icons
+	padding: 0 1em .5em
+	margin: 0 0 1em
+	line-height: 1em
+	ul
+		font-size: .8em
+	img
+		vertical-align: -5px
+		padding: 0 2px 0 10px
+
+.mark_read
+	padding: 0 .5em
+	.buttonlist
+		padding-top: 0
+
+// The newsfader
+#fadeScroller
+	text-align: center
+	padding: 0 2em
+	overflow: auto
+	margin: 1em 0
+	display: none
+	color: #575757 // Shouldn't be shorthand style due to a JS bug in IE!
+
+/* Styles for the info center on the board index.
+---------------------------------------------------- */
+section.ic
+	p
+		margin: 0 0 .5em
+		padding: .5em
+	.last
+		margin: 0
+		border-top: 1px dotted #bbb
+	.inline
+		border: none
+		margin: 0
+	.pminfo
+		margin: 0
+	.stats
+		margin-top: 8px
+		padding-top: 0
+
+// The small stats
+#index_common_stats
+	display: block
+	margin: 0 0 .5em
+	text-align: right
+	font-size: .9em
+	position: relative
+	top: -20px
+	line-height: 1px
+
+img.new_posts
+	padding: 0 .1em
+
+/* Styles for the message (topic) index.
+   You can target the page with #messageindex
+---------------------------------------------------- */
+
+// The page navigation area
+#childboards .table_list
+	margin-bottom: 1em
+	thead
+		display: none
+
+.lastpost img
+	float: right
+	padding: 4px
+
+/* Styles for the Display template (topic view).
+---------------------------------------------------- */
+// Topic title and Quick access
+.posthead
+	width: 100%
+	display: table
+	box-sizing: border-box
+	padding: 8px
+	margin: 4px
+	border-radius: 12px
+	background: rgba(0,0,0, .015)
+
+#top_subject extends .cell
+	padding: 4px 8px
+	font: 100 1.6em/1.2em $head_font
+	color: gray
+	letter-spacing: -1px
+
+// Previous/next topic links inside .posthead
+.prevnext_prev extends .cell
+	font: normal 1em/1.3em Arial
+	text-align: left
+	width: 20%
+	a
+		color: $reddish
+
+.prevnext_next extends .prevnext_prev
+	text-align: right
+
+#moderationbuttons
+	overflow: hidden
+	margin-bottom: 6px
+
+#moderationbuttons_strip
+	margin: 4px 0 0
+
+// Poll question
+#poll
+	overflow: hidden
+
+#poll_question
+	padding: 0 0 .5em 2em
+
+// Poll vote options
+#poll_options
+	ul.options
+		border-top: 1px solid #9999aa
+		padding: 1em 2.5em 0 2em
+		margin: 0 0 1em
+	div.submitbutton
+		clear: both
+		padding: 0 0 1em 2em
+		margin: 0
+
+	// Poll results
+	dl.options
+		border: solid #9999aa
+		border-width: 1px 0 0 0
+		padding: 1em 2.5em 0 2em
+		margin: 0 1em 1em 0
+		line-height: 1.1em !important
+		dt
+			padding: .3em 0
+			width: 30%
+			float, clear: left
+			margin: 0
+		dd
+			margin: 0 0 0 2em
+			padding: .1em 0 0
+			width: 60%
+			max-width: 450px
+			float: left
+		.voted
+			font-weight: bold
+		.percentage
+			display: block
+			float: right
+			padding: .2em 0 .3em
+
+	// Poll notices
+	p
+		margin: 0 1.5em .2em
+		padding: 0 .5em .5em
+
+#poll_moderation
+	margin: .5em 0 0
+	padding: 0 .2em .2em 0
+	overflow: hidden
+
+#whoisviewing
+	margin: 0
+	padding: .5em
+
+/* Post styling (still in the Display template)
+---------------------------------------------------- */
+
+// Alternating backgrounds for posts, and several other sections of the forum.
+.postbg extends .windowbg
+.postbg2 extends .windowbg2
+	background: #fbf9f6
+
+#forumposts
+	.wrc
+		display: table
+		// Without this, wide code blocks will break layout.
+		table-layout: fixed
+		width: 100%
+		padding: 0
+
+	// Author and topic information
+	#author
+		margin: 0 7.7em 0 10px
+
+	// A post separator, useful when printing.
+	.post_separator
+		display: none
+
+// Poster and postarea + moderation area underneath
+.post_wrapper
+	display: table-row
+	overflow: auto
+	width: 100%
+
+// Post title, date and action list
+.postheader extends .flow_hidden
+	width: 100%
+	display: table
+	padding: 10px 0 6px
+	h5
+		overflow: hidden
+		text-overflow: ellipsis
+		white-space: nowrap
+		line-height: 1.2em
+
+.keyinfo
+	display: table-cell
+	vertical-align: middle
+	span
+		font-size: .85em
+
+.moderatorbar
+	margin: 14px 0 0
+	font-size: .85em
+	float: left
+	width: 50%
+	.modified
+		color: #a0aaa0
+		font-style: italic
+	.report
+		margin-right: 1.5em
+		img
+			vertical-align: -3px
+
+// Poster details and list of items
+.poster
+	display: table-cell
+	background: rgba(0,0,0,.042)
+	width: 14em
+//	border-radius: 12px 0 0 12px
+	padding: 10px 12px 12px 0
+	vertical-align: top
+
+	ul
+		padding: 0
+		margin: 0 1em 0 1.5em
+		line-height: 1.2em
+		font-size: 90%
+
+	h4
+		margin: .2em 0 .2em 1.1em
+		font: 700 120%/120% "PT Sans", $head_font
+		overflow: hidden
+		text-overflow: ellipsis
+		:hover, &.show
+			overflow: visible
+
+	ul ul
+		margin: .3em 1em 0 0
+		padding: 0
+		li
+			display: inline
+
+	li.stars, li.avatar, li.blurb, li.postcount, li.im_icons ul
+		margin-top: .5em
+
+	li.blurb
+		color: #888
+
+	li.avatar
+		overflow: hidden
+
+	li.warning
+		line-height: 1.2em
+		padding-top: 1em
+		a img
+			vertical-align: bottom
+			padding: 0 .2em
+
+/*
+.right-side .poster
+	border-radius: 0 12px 12px 0
+	text-align: right
+	ul
+		margin-right: 0
+	> ul
+		margin: 0 1.3em 0 1em
+	h4
+		margin: .2em 1.1em .2em 0
+*/
+
+.postarea
+	display: table-cell
+	padding-left: 14px
+
+// Posts and personal messages displayed throughout the forum.
+.post, .personalmessage
+	font: $post_font
+	padding: .1em 0
+	clear: right
+
+// The user menu in the post display.
+.usermenu, .acmenu
+	position: absolute
+	background: rgba(255,255,255,.5)
+	padding: 24px 4px 4px
+	width: auto
+	white-space: nowrap
+	z-index: 0
+	border: 1px solid rgba(0,0,0, .2)
+	border-radius: 5px
+	box-shadow: 0 0 6px rgba(0,0,0, .15)
+	overflow: hidden
+
+.umme, .acme
+	position: relative
+	z-index: 1
+
+// All the signatures used in the forum. You might want to add max-height here ;)
+.signature, .attachments
+	width: 98%
+	overflow: auto
+	clear: right
+	padding: 1em 0 3px
+	border-top: 1px solid #aaa
+	line-height: 1.4em
+	font-size: .85em
+
+.custom_fields_above_signature
+	width: 98%
+	clear: right
+	padding: 1em 0 3px
+	border-top: 1px solid #aaa
+	line-height: 1.4em
+	font-size: .85em
+
+.messageicon
+	float: left
+	margin: 0 .5em 0 0
+	img
+		padding: 6px 3px
+
+// The quick edit button
+.modifybutton
+	background: url($images/icons/modify_inline.gif) no-repeat 0 0
+	display: inline
+	width: 20px
+	height: 20px
+	clear: right
+	float: right
+	margin: 8px 20px 10px 0
+	cursor: pointer
+
+// The quick buttons
+.quickbuttons_wrap
+	padding: .2em 0
+	width: 100%
+	float: left
+
+ul.quickbuttons extends ul.reset
+	padding: 0 3% 0 0
+	clear, text-align: right
+	vertical-align: bottom
+	#forumposts &
+		display: table-cell
+	li extends .inline-block
+		margin: 0 0 0 5px
+	a
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
+		padding: 0 4px 0 22px
+		display: block
+		height: 20px
+		:hover
+			color: #a70
+
+	/**
+	 * This is where you can change the reply/edit/delete etc. icons for your posts.
+	 * You can either modify the quickbuttons.png sprite file (in which case you just
+	 * need to set background-position to the correction position as seen below),
+	 * or simply use another file like this: background: url($here/file) no-repeat 0 0
+	 */
+
+	.quote_button
+		background-position: 3px 0
+	.modify_button
+		background-position: 0 -60px
+	.more_button extends .upshrinks
+		background-position: -18px 2px !important
+	.remove_button
+		background-position: 0 -30px
+	.approve_button
+		background-position: 3px -90px
+	.restore_button
+		background-position: 0 -120px
+	.reply_button
+		background-position: 0 -180px
+	.reply_all_button
+		background-position: 0 -180px
+	.notify_button
+		background-position: 0 -210px
+	.split_button
+		background-position: 4px -150px
+	.mergepost_button
+		background-position: 4px -242px
+	.report_button
+		background-image: url($images/report.png)
+		background-position: 0 0
+		padding-left: 20px
+
+	.profile_button
+		background-image: url($images/icons/profile_sm.gif)
+		background-position: 0 0
+	.email_button
+		background-image: url($images/email_sm.gif)
+		background-position: 0 0
+	.ip_button
+		background-image: url($images/ip.gif)
+		background-position: 0 0
+	.www_button
+		background-image: url($images/www_sm.gif)
+		background-position: 0 0
+	// !!! While waiting for better icons... Here's a temp.
+	.post_button
+		background-image: url($images/new_some.png)
+		background-position: 0 0
+		padding-left: 25px
+
+
+ul.usermenuitem, ul.acmenuitem
+	padding: 2px
+	text-align: left
+	li
+		overflow: hidden
+		display: block
+		a
+			float: right
+
+ul.usermenuitem li a
+	float: left
+	.right-side &
+		float: right
+
+.inner
+	padding: 1em .7em 0 .7em
+	margin: 0 1em 0 0
+	border-top: 1px solid #bbb
+
+.smiley extends .inline-block
+	vertical-align: bottom
+	text-indent: -999em
+	font: 0/0 Arial
+	overflow: hidden
+
+.signature
+	#forumposts &, .post &
+		margin: 1em 0 .7em
+	#forumposts &
+		color: #888
+
+.attachments
+	padding: 1em 0 2em
+	hr
+		clear: both
+		margin: 1em 0
+	div
+		padding: 0 .5em
+
+ul.buttonlist extends ul.reset
+	margin: 5px -8px 5px 0
+	padding: 0 1% 0 0
+	overflow: hidden
+	li
+		margin, padding: 0
+		float: left
+		border-right: 1px solid #ddd
+		&.last
+			border-right: 0
+	a
+		padding: 5px 5px 6px
+		color: #679
+//		background: #f3f3f3
+		line-height: 15px
+//		text-decoration: none
+//		text-transform: uppercase
+//		border: 1px solid rgba(0,0,0, .07)
+//		border-radius: 6px
+		&.active
+//			background: #8a8ca5
+//			color: #fff
+			font-weight: bold
+		:hover
+			background: #fd9604
+			color: #fff
+
+/* Styles for the quick reply area.
+---------------------------------------------------- */
+
+// Horizontal alignments go a bit wonky in IE6 and IE7, but is it really worth worrying about?
+#postmodify
+	margin: 0
+	.roundframe
+		padding-left: 8%
+		padding-right: 8%
+
+.qr_content
+	padding-left: 10px
+
+#qr_options
+	form textarea
+		height: 100px
+		margin: .25em 0 0
+	.roundframe extends #postmodify .roundframe
+
+/* Styles for edit poll section.
+---------------------------------------------------- */
+#edit_poll
+	overflow: hidden
+	fieldset
+		padding: .5em
+		clear: both
+		overflow: hidden
+		> input
+			margin: .8em 0 .3em 3em
+
+ul.poll_main, dl.poll_options
+	overflow: hidden
+	padding: 0 0 .7em .7em
+	margin: 12px 0 4px
+	list-style: none
+
+ul.poll_main
+	li
+		padding-left: 1em
+		margin: .2em 0
+	input
+		margin: .2em 0 .2em 1em
+
+dl.poll_options
+	dt
+		width: 35%
+		padding: 0 0 0 1em
+	dd
+		width: 60%
+		input
+			margin-left: 0
+
+/* Styles for the recent messages section.
+---------------------------------------------------- */
+#readbuttons nav
+	padding-top: 1em
+	width: 60%
+
+#recent
+	clear: both
+
+/* Styles for the move topic section.
+---------------------------------------------------- */
+.move_topic
+	width: 710px
+	margin: auto
+	text-align: left
+
+div.move_topic fieldset
+	padding: .5em
+
+/* Styles for the send topic section.
+---------------------------------------------------- */
+fieldset.send_topic
+	border: none
+	padding: .5em
+
+dl.send_topic
+	margin-bottom: 0
+
+dl.send_mail
+	dt
+		width: 35%
+	dd
+		width: 64%
+
+/* Styles for the report topic section.
+---------------------------------------------------- */
+#report dl
+	margin-bottom: 0
+	&.settings dt
+		width: 20%
+	&.settings dd
+		width: 79%
+
+/* Styles for the split topic section.
+---------------------------------------------------- */
+#selected, #not_selected
+	width: 49%
+
+ul.split_messages
+	li.postbg
+		margin: 1px
+	li a.split_icon
+		padding: 0 .5em
+	div.post
+		padding: 1em 0 0
+		border-top: 1px solid #fff
+
+/* Styles for the merge topic section.
+---------------------------------------------------- */
+ul.merge_topics li
+	list-style-type: none
+
+dl.merge_topic
+	dt
+		width: 25%
+	dd
+		width: 74%
+
+fieldset.merge_options
+	clear: both
+
+.custom_subject
+	margin: .5em 0
+
+/* Styles for the login areas.
+------------------------------------------------------- */
+.login
+	width: 540px
+	margin: 0 auto
+	dl
+		overflow: auto
+		clear: right
+	dt, dd
+		margin: 0 0 .4em
+		width: 44%
+		padding: .1em
+	dt
+		float: left
+		clear: both
+		text-align: right
+		font-weight: bold
+	dd
+		width: 54%
+		float: right
+		text-align: left
+	p
+		text-align: center
+
+/* Styles for the registration section.
+------------------------------------------------------- */
+.register_error
+	border: 1px dashed red
+	padding: 5px
+	margin: 0 1ex 1ex 1ex
+	span
+		text-decoration: underline
+
+// Additional profile fields
+dl.register_form
+	margin: 0
+	clear: right
+	dt
+		font-weight: normal
+		float: left
+		clear: both
+		width: 50%
+		margin: .5em 0 0
+	dd
+		float: left
+		width: 49%
+		margin: .5em 0 0
+
+#confirm_buttons
+	text-align: center
+	padding: 1em 0
+
+.coppa_contact
+	padding: 4px
+	width: 32ex
+	background-color: #fff
+	color: #000
+	margin-left: 5ex
+	border: 1px solid #000
+
+.valid_input
+	background-color: #f5fff0
+
+.invalid_input
+	background-color: #fff0f0
+
+.vv_special
+	display: none
+
+/* Styles for maintenance mode.
+------------------------------------------------------- */
+#maintenance_mode
+	width: 75%
+	min-width: 520px
+	text-align: left
+	img.floatleft
+		margin-right: 1em
+
+tr.titlebg td
+	padding-left: .7em
+
+#admin_login .centertext
+	padding: 1em
+	.error
+		padding: 0 0 1em 0
+
+/* Styles for sidebar menus.
+------------------------------------------------------- */
+.left_menu
+	margin: .1em 2em .5em
+	padding: 0
+	li
+		padding: 0
+	li.separator
+		display: none // alternatively, line-height: 3px
+
+.side_section .title
+	margin-bottom: 5px
+
+tr.windowbg td
+	padding: .3em .7em
+
+#credits
+	.intro
+		font-style: italic
+	ul.last
+		margin-bottom: 0
+
+/* Styles for the board index's topic table.
+------------------------------------------------------- */
+.topic_table
+	.icon, .stats
+		text-align: center
+	table
+		width: 100%
+		thead
+			border-bottom: 1px solid #fff
+		td
+			font-size: 1em
+
+	// The subject column
+	.subject
+		padding: 5px 8px
+		background-image: none
+		background-repeat: no-repeat
+		background-position: 99% .5em
+		&.pinned
+			background-image: url($images/icons/quick_pin.gif)
+		&.locked
+			background-image: url($images/icons/quick_lock.gif)
+		&.pinned.locked
+			background-image: url($images/icons/quick_pin_lock.gif)
+		&.my
+			background-image: url($images/icons/quick_my.gif)
+			background-repeat: no-repeat
+			background-position: 99% .5em
+		&.pinned.my
+			background-image: url($images/icons/quick_pin_my.gif)
+		&.locked.my
+			background-image: url($images/icons/quick_lock_my.gif)
+		&.pinned.locked.my
+			background-image: url($images/icons/quick_pin_lock_my.gif)
+	.subject p,
+	.stats
+		font-size: .85em
+		padding, margin: 0
+	.lastpost
+		background-image: none
+		font-size: .85em
+		line-height: 1.3em
+		padding: 4px
+
+/* Styles for (fatal) errors.
+------------------------------------------------- */
+#fatal_error
+	width: 80%
+	margin: 0 auto
+	padding: 25px 0 10px
+
+.errorbox
+	padding: 1em
+	border: 1px solid #c34
+	color: #000
+	background-color: #ffe4e9
+	margin-bottom: 1em
+	h3
+		font-size: 1.1em
+	ul
+		margin-bottom: 0
+		padding-left: 20px
+	p
+		margin: 1em 0 0
+	p.alert
+		padding, margin: 0
+		float: left
+		width: 1em
+		font-size: 1.5em
+	.bread
+		padding: 4px 8px
+		font-family: monospace
+		color: #000
+		strong
+			color: red
+
+/* Styles for the profile section.
+------------------------------------------------- */
+
+// The basic user info on the left
+#basicinfo
+	margin-top: 10px
+	width: 20%
+	float: left
+	h4
+		font: 700 120%/105% "PT Sans", $head_font
+		white-space: pre-wrap
+		overflow: hidden
+		span.position
+			font-size: 80%
+			font-weight: 100
+			display: block
+	img.avatar
+		display: block
+		margin: 10px 0 0
+	ul
+		list-style-type: none
+		margin: 10px 0 0
+		li
+			display: block
+			float: left
+			margin-right: 5px
+			height: 20px
+
+#userstatus
+	display: block
+	clear: both
+	img
+		vertical-align: middle
+
+#profile_box
+	dl
+		clear: right
+		overflow: auto
+		margin: 0 0 18px
+		padding: 0 0 15px
+		border-bottom: 1px #ccc solid
+	dt
+		width: 35%
+		float: left
+		margin: 0 0 3px
+		padding: 0
+		font-weight: 700
+		clear: both
+	dd
+		width: 65%
+		float: left
+		margin: 0 0 3px
+		padding: 0
+
+#tracking extends #profile_box
+	dl
+		margin, padding, border-bottom: 0
+
+#detailedinfo extends #profile_box
+	margin-top: 10px
+	width: 79.5%
+	float: right
+	dl.noborder
+		border-bottom: 0
+	dt.clear
+		width: 100%
+
+.signature, .custom_fields_above_signature
+	border-top: 1px #ccc solid
+
+.signature h5
+	font-size: 1.2em
+	margin-bottom: 10px
+
+#personal_picture
+	display: block
+	margin-bottom: .3em
+
+#avatar_server_stored div
+	float: left
+	padding: 0 3px
+
+// If the screen is too small, show the avatar on top
+@media all and (max-width: 1000px)
+	.prevnext_prev
+		display: none
+	#basicinfo, #detailedinfo
+		width: 100%
+	#basicinfo
+		h4
+			float: left
+			width: 35%
+		img.avatar
+			float: right
+			vertical-align: top
+		ul
+			clear: left
+	#userstatus
+		clear: left
+	#infolinks
+		display: none
+		clear: both
+
+// Simple feedback messages
+#profile_error, #profile_success
+	margin: 0 0 1em
+	padding: 1em 2em
+	border: 1px solid
+
+#profile_error
+	border-color: red
+	color: red
+	background: #fee
+	span
+		text-decoration: underline
+
+#profile_success
+	border-color: green
+	color: green
+	background: #efe
+
+// Profile statistics
+#generalstats
+	dt
+		width: 50%
+		float: left
+		margin: 0 0 3px
+		padding: 0
+		font-weight: bold
+		clear: both
+	dd
+		width: 50%
+		float: left
+		margin: 0 0 3px
+		padding: 0
+
+// Activity by time
+#activitytime
+	margin: 6px 0
+
+.activity_stats
+	margin: 0
+	padding: 0
+	list-style: none
+	li
+		margin: 0
+		padding: 0
+		width: 4.16%
+		float: left
+		span
+			display: block
+			border: solid #000
+			border-width: 1px 1px 0 0
+			text-align: center
+		&.last span
+			border-right: none
+		div.bar
+			margin: 0 auto
+			width: 15px
+			div
+				background: #6294ce
+			span
+				position: absolute
+				top: -1000em
+				left: -1000em
+
+// Most popular boards by posts and activity
+#popularposts
+	width: 49.5%
+	float: left
+	dt
+		width: 65%
+		float: left
+		margin: 0 0 3px
+		padding: 0
+		font-weight: bold
+		clear: both
+	dd
+		width: 35%
+		float: left
+		margin: 0 0 3px
+		padding: 0
+
+#popularactivity extends #popularposts
+	float: right
+
+.profile_pie
+	background-image: url($images/stats_pie.png)
+	float: left
+	height: 20px
+	width: 20px
+	margin: 0 1em 0 0
+	padding: 0
+	text-indent: -1000em
+
+// View posts
+.topic .time
+	float: right
+
+.counter
+	margin: 0
+	padding: .2em .5em .1em .2em
+	font-size: 2.2em
+	font-weight: bold
+	color: #3f3f3f
+	float: left
+
+.list_posts
+	border-top: 1px solid #b3b3bf
+	padding-top: 12px
+	margin-top: 6px
+	overflow: auto
+
+.core_posts
+	margin-bottom: 3px
+
+.topic
+	h4
+		margin: 3px 0
+	.post
+		margin: 0 1em
+		min-height: 80px
+		height: auto !important
+		height: 80px
+	.mod_icons
+		text-align: right
+		margin-right: 1em
+
+#creator
+	dl
+		margin: 0
+	dt
+		width: 40%
+		float: left
+		clear: both
+		margin: 0 0 10px
+	dd
+		float: left
+		width: 55%
+		margin: 0 0 10px 2px
+	hr
+		margin-top: 0
+
+.ignoreboards
+	margin: 0 2%
+	padding: 0
+	width: 45%
+	a
+		font-weight: bold
+		border-bottom: 1px solid #c4c4c4
+		padding: .1em 0
+	a:hover
+		text-decoration: none
+		border-bottom: 1px solid #346
+	ul
+		margin: 0
+		padding: 0
+	li
+		list-style: none
+		float: left
+		clear: both
+	li.category
+		margin: .7em 0 0
+		width: 100%
+		ul li.board
+			width: 93%
+	li ul
+		margin: .2em 0 0
+
+#theme_settings
+	overflow: auto
+	margin: 0
+	padding: 0
+	> li
+		list-style: none
+		margin: 10px 0
+		padding: 0
+
+// Paid Subscriptions
+#paid_subscription
+	width: 100%
+	dl.settings
+		margin-bottom: 0
+		dd, dt
+			margin-bottom: 4px
+
+// Pick theme
+#pick_theme
+	width: 100%
+	float: left
+
+// Issue a warning
+#warn_body
+	width: 80%
+	font-size: .9em
+
+/* Styles for the statistics center.
+------------------------------------------------- */
+#statistics
+	padding: .5em 0
+	.title
+		margin: 4px 0
+	.cat
+		text-align: center
+	dl
+		min-height: 210px
+	div.top_row dl
+		min-height: 150px
+
+#stats_left, #top_posters, #top_topics_replies, #top_topics_starter
+	float: left
+	width: 49.5%
+
+#stats_right, #top_boards, #top_topics_views, #most_online
+	float: right
+	width: 50%
+
+#stats
+	margin-top: 5px
+	td
+		text-align: center
+		&.stats_day
+			padding: 0 0 0 3em
+			text-align: left
+	th
+		width: 15%
+
+dl.stats
+	clear: both
+	overflow: hidden
+	margin: 0
+	padding: 0
+	dt
+		max-width: 90%
+		float: left
+		margin: 0 0 4px
+		line-height: 16px
+		padding: 0
+		clear: both
+		font-size: 1em
+	dd
+		max-width: 90%
+		float, text-align: right
+		font-size: 1em
+		margin: 0 0 4px
+		line-height: 16px
+		padding: 0
+
+.statsbar
+	width: 45%
+	div.bar
+		float: left
+		background: url($images/bar_stats.png) no-repeat
+		display: block
+		margin: 0 4px
+		height: 16px
+		div
+			position: relative
+			right: -4px
+			padding: 0 4px 0 0
+			background: url($images/bar_stats.png) no-repeat 100%
+			height: 16px
+
+#stats th
+	&.stats_year, &.stats_month
+		width: 25%
+		padding: .3em 0 .3em .75em
+		text-align: left
+	&.stats_month
+		padding: .3em 0 .3em 1.5em
+
+/* Styles for the memberlist section.
+------------------------------------------------- */
+#mlist_search
+	margin: auto
+	width: 520px
+
+/* Styles for the basic search section.
+------------------------------------------------- */
+#searchform, #simple_search p
+	padding: .5em
+	margin: 0
+
+#simple_search, #simple_search p, #advanced_search
+	text-align: center !important
+	margin: 0
+
+#search_error
+	font-style: italic
+	padding: .3em 1em
+
+#search_term_input
+	font-size: 115%
+	margin: 0 0 1em
+	.search
+		background-position: 5px 4px
+	.submit
+		background-position: 4px 3px, 0 0, 0 0
+
+/* Styles for the advanced search section.
+------------------------------------------------- */
+#searchform
+	fieldset
+		text-align: left
+		padding: 0
+		border: none
+	p.clear
+		clear: both
+
+#search_options
+	margin: 0 auto
+	width: 600px
+	padding-top: 1em
+	overflow: hidden
+
+#advanced_search
+	dt
+		clear: both
+		float: left
+		padding: .2em
+		text-align: right
+		width: 20%
+	dd
+		width: 75%
+		float: left
+		padding: .2em
+		margin: 0 0 0 .5em
+		text-align: left
+
+/* Styles for the search results page.
+------------------------------------------------- */
+.topic_table .bbc_quote
+	&, header
+		margin: .5em
+
+.search_results_posts
+	overflow: hidden
+	.buttons
+		padding: 5px 1em 0 0
+
+/* Foldable icons.
+------------------------------------------------- */
+.upshrinks extends .inline-block
+	background: url($images/upshrinks.png) no-repeat
+	text-decoration: none
+
+.foldable extends .upshrinks
+	width, height: 14px
+	background-position: -20px 0
+	.fold&
+		background-position: -20px -25px
+
+.shrinkable extends .upshrinks
+	width, height: 20px
+	background-position: 0 0
+	.fold&
+		background-position: 0 -20px
+
+// Only seen in the admin area, so don't bother preloading its graphics...
+.sortselect extends .upshrinks
+	width, height: 12px
+	background: url-no-base64($images/sortselect.gif)
+	.fold&
+		background-position: 0 -12px
+
+.catfold extends .foldable
+
+// The upshrink image needs some tweaking
+#upshrink extends .shrinkable
+	float: right
+	margin-left: 1em
+
+#qr_expand, #postMoreExpand, #newsupshrink
+	base: .foldable
+
+/* Board status icons.
+------------------------------------------------- */
+.boardstatus extends .inline-block
+	background: url($images/boardstatus.png) 0 0 no-repeat
+	width: 38px
+	height: 42px
+
+.boardstate_on extends .boardstatus
+
+.boardstate_new extends .boardstatus
+	background-position: -53px 0
+
+.boardstate_off extends .boardstatus
+	background-position: -110px 0
+
+.boardstate_redirect extends .boardstatus
+	background-position: -163px 0
+
+.mini_boardstate_off extends .boardstatus
+	background-position: -208px -3px
+	width: 19px
+	height: 21px
+	margin: -1px 4px 1px 12px
+
+.mini_boardstate_on extends .mini_boardstate_off
+	background-position: -239px -3px
+
+.mini_boardstate_redirect extends .mini_boardstate_off
+	background-position: -273px -3px
+
+/* More icons.
+------------------------------------------------- */
+.new_icon extends .inline-block
+	background: url($language/new.gif) no-repeat
+	width: width($language_dir/new.gif)px
+	height: height($language_dir/new.gif)px
+	text-decoration: none
+
+.feed_icon extends .inline-block
+	background: url($images/icons/feed.gif) no-repeat
+	width: width($images_dir/icons/feed.gif)px
+	height: height($images_dir/icons/feed.gif)px
+	text-decoration: none
+	.catfeed &
+		margin-left: -4px
+
+.arrow_left extends .inline-block
+	base: .arrows
+	background-position: 0 -28px
+	width, height: 9px
+
+// Those [?] icons. This makes your cursor a help icon.
+.helpc
+	cursor: help
+
+.help extends ".helpc, .inline-block"
+	background: url($images/helptopics.gif) no-repeat
+	width, height: 16px
+	vertical-align: -2px
+	.cat & final
+		vertical-align: 0
+
+/* More hacks.
+------------------------------------------------- */
+// table_grid styles for Profile > Show Permissions.
+#permissions table.table_grid td
+	padding: .4em .8em
+	cursor: default
+
+#mlist table tbody td.windowbg2
+	text-align: center

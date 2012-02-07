@@ -1,0 +1,142 @@
+
+#header
+	li.greeting
+		font-size: 1.3em
+		font-weight: bold
+		line-height: 1.5em
+
+// These user menu options definitely aren't available to guests.
+ul.quickbuttons
+	.contact_button
+		background-image: url($images/icons/online.gif)
+		background-position: 0 0
+		padding-left: 26px
+	.pm_button
+		background-image: url($images/im_on.gif)
+		background-position: 0 0
+
+// These may be seen by guests, but it's unlikely, and they won't bother if the icons don't show up anyway.
+ul.buttonlist
+	a.lock, a.pin, a.add_poll
+		padding-left: 22px
+		background-image: url($images/small_lock.gif)
+		background-position: 6px 5px
+		background-repeat: no-repeat
+	a.pin
+		padding-left: 23px
+		background-image: url($images/small_pin.gif)
+	a.add_poll
+		background-image: url($images/small_poll.gif)
+
+.table_list a.unreadlink
+	font-size: .9em
+	float: right
+
+/* Styles for the personal messages section.
+------------------------------------------------- */
+
+#pm
+	.pm extends #forumposts .wrc
+		overflow: auto
+		clear: both
+	#author, #topic_title
+		float: left
+	#author
+		margin: 0 0 0 .5em
+	#topic_title
+		margin: 0 0 0 9em
+	div.labels
+		padding: 0 1em 0 0
+	.capacity_bar
+		background: #f0f4f7
+		display: block
+		margin: .2em 0 0 1em
+		height: 1em
+		border: 1px solid #adadad
+		width: 10em
+		span
+			border-right: 1px solid #adadad
+			display: block
+			height: 1em
+		span.empty
+			background: #a6d69d
+		span.filled
+			background: #eea800
+		span.full
+			background: #f10909
+	.reportlinks
+		padding: .5em 1.3em
+
+	// Custom styling for the small PM View select box...
+	th .sbox
+		height: 16px
+		margin-top: -3px
+	th .sbox .display
+		line-height, height: 13px
+		font-size: .9em
+		.btn div
+			margin-top: -5px
+
+#personal_drafts ul.quickbuttons
+	padding-right: 0
+
+#searchLabelsExpand li
+	padding: .3em .5em
+
+#manrules div.righttext
+	padding: .3em .1em
+
+#addrule fieldset
+	clear: both
+	margin-top: 10px
+
+/* Styles for entering thoughts.
+------------------------------------------------- */
+
+#thought_form
+	display: inline-block
+	input
+		margin: 0 1px 0 2px
+		padding: 2px 4px
+		background-position: 0 100px, 0 0, 0 0
+	.sbox
+		margin-top: -3px
+		font-size: 13px
+		max-width: 85px
+
+#thought_update input
+	margin: 0 0 8px
+
+#thought_form input[type="text"], #thought_update
+	font-size: 9.5pt
+	padding: 3px
+	border: 1px solid transparent
+	width: 208px
+	margin: 8px 0
+
+#thought_form input[type="text"], #thought_update:hover
+	border: 1px solid #999
+	background: #fff
+	color: #000
+
+#thought_update
+	cursor: pointer
+
+.thought
+	ul
+		margin, padding: 0 0 0 8px
+		padding: 0 0 0 8px
+	li
+		margin, padding: 0
+
+.my.thought
+	font: italic 12px Georgia, "Trebuchet MS", Arial, sans-serif
+
+.thought_icon extends .inline-block
+	text-decoration: none
+	background: url($images/icons/thought.png) no-repeat
+	width: width($images_dir/icons/thought.png)px
+	height: height($images_dir/icons/thought.png)px
+
+#new_thought
+	display: none

@@ -1,0 +1,10 @@
+
+input[type=button], input[type=submit]
+	padding: 4px 4px 2px
+
+input.submit
+	padding-left: 23px
+
+.menu h4 strong
+	filter: none
+	background: #c74c55

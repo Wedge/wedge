@@ -637,4 +637,9 @@ function template_wap2_after()
 </html>';
 }
 
+function template_page_index()
+{
+	return '';
+}
+
 ?>
