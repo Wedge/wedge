@@ -833,7 +833,7 @@ function writeLog($force = false)
 	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board;
 
 	// If we are showing who is viewing a topic, let's see if we are, and force an update if so - to make it accurate.
-	if (!empty($settings['display_who_viewing']) && ($topic || $board))
+	if (!empty($modSettings['display_who_viewing']) && ($topic || $board))
 	{
 		// Take the opposite approach!
 		$force = true;

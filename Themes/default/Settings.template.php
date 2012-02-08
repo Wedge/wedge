@@ -209,16 +209,6 @@ function template_settings()
 			'id' => 'show_group_key',
 			'label' => $txt['show_group_key'],
 		),
-		array(
-			'id' => 'display_who_viewing',
-			'label' => $txt['who_display_viewing'],
-			'options' => array(
-				0 => $txt['who_display_viewing_off'],
-				1 => $txt['who_display_viewing_numbers'],
-				2 => $txt['who_display_viewing_names'],
-			),
-			'type' => 'number',
-		),
 	'',
 		array(
 			'id' => 'show_modify',

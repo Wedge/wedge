@@ -812,7 +812,7 @@ function template_mod_buttons()
 
 function template_display_whoviewing()
 {
-	global $context, $txt, $settings;
+	global $context, $txt, $settings, $modSettings;
 
 	echo '
 	<section>
@@ -822,7 +822,7 @@ function template_display_whoviewing()
 		<p>';
 
 	// Show just numbers...?
-	if ($settings['display_who_viewing'] == 1)
+	if ($modSettings['display_who_viewing'] == 1)
 		echo count($context['view_members']), ' ', count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'];
 	// Or show the actual people viewing the topic?
 	else

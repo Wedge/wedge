@@ -295,6 +295,7 @@ function ModifyBasicSettings($return_config = false)
 			// Who's online?
 			array('check', 'who_enabled'),
 			array('int', 'lastActive'),
+			array('select', 'display_who_viewing', array($txt['who_display_viewing_off'], $txt['who_display_viewing_numbers'], $txt['who_display_viewing_names'])),
 		'',
 			// Statistics.
 			array('check', 'trackStats'),

@@ -663,7 +663,7 @@ function template_messageindex_sortlink($sort, $caption)
 
 function template_messageindex_whoviewing()
 {
-	global $txt, $context, $settings;
+	global $txt, $context, $settings, $modSettings;
 
 	echo '
 	<section>
@@ -672,7 +672,7 @@ function template_messageindex_whoviewing()
 		</we:title>
 		<p>';
 
-	if ($settings['display_who_viewing'] == 1)
+	if ($modSettings['display_who_viewing'] == 1)
 		echo count($context['view_members']), ' ', count($context['view_members']) === 1 ? $txt['who_member'] : $txt['members'];
 	else
 		echo empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) or $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');

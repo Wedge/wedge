@@ -219,7 +219,7 @@ function MessageIndex()
 	$context['boards'] = getBoardIndex($boardIndexOptions);
 
 	// Nosey, nosey - who's viewing this topic?
-	if (!empty($settings['display_who_viewing']) && !WIRELESS)
+	if (!empty($modSettings['display_who_viewing']) && !WIRELESS)
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('board');
