@@ -104,7 +104,7 @@ function Boards()
 	$context['show_member_list'] = allowedTo('view_mlist');
 	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
 
-	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
+	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['board_index'];
 
 	if (empty($modSettings['display_flags']))
 		$modSettings['display_flags'] = 'none';

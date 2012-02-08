@@ -500,11 +500,13 @@ ul.buttonlist extends ul.reset
 		&.last
 			border-right: 0
 	a
-		padding: 5px 5px 6px
+		padding: 3px 5px 4px
 		color: #679
+		display: block
+//		transition: all .1s ease
 //		background: #f3f3f3
 		line-height: 15px
-//		text-decoration: none
+		text-decoration: none
 //		text-transform: uppercase
 //		border: 1px solid rgba(0,0,0, .07)
 //		border-radius: 6px

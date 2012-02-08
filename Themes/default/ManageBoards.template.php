@@ -576,8 +576,7 @@ function template_modify_board()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oModeratorSuggest = new weAutoSuggest({
-		sSelf: \'oModeratorSuggest\',
+	new weAutoSuggest({
 		sControlId: \'moderators\',
 		bItemList: true,
 		sPostName: \'moderator_list\',

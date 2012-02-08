@@ -662,8 +662,7 @@ function template_editBuddies()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAddBuddySuggest = new weAutoSuggest({
-		sSelf: \'oAddBuddySuggest\',
+	new weAutoSuggest({
 		sControlId: \'new_buddy\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
@@ -732,8 +731,7 @@ function template_editIgnoreList()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAddIgnoreSuggest = new weAutoSuggest({
-		sSelf: \'oAddIgnoreSuggest\',
+	new weAutoSuggest({
 		sControlId: \'new_ignore\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');

@@ -1268,8 +1268,7 @@ function aeva_admin_bans_add()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAttributeMemberSuggest = new weAutoSuggest({
-		sSelf: \'oAttributeMemberSuggest\',
+	new weAutoSuggest({
 		sControlId: \'banning\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');

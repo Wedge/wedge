@@ -338,8 +338,7 @@ function template_edit_group()
 		add_js_file('scripts/suggest.js');
 
 		add_js('
-	var oModeratorSuggest = new weAutoSuggest({
-		sSelf: "oModeratorSuggest",
+	new weAutoSuggest({
 		sControlId: "group_moderators",
 		bItemList: true,
 		sPostName: "moderator_list",
@@ -541,8 +540,7 @@ function template_group_members()
 		add_js_file('scripts/suggest.js');
 
 		add_js('
-	var oAddMemberSuggest = new weAutoSuggest({
-		sSelf: "oAddMemberSuggest",
+	new weAutoSuggest({
 		sControlId: "toAdd",
 		bItemList: true,
 		sPostName: "member_add",

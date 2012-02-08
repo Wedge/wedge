@@ -1138,7 +1138,7 @@ td.footnum a:target, a.fnotel:target
 section.block extends .wrc
 	overflow: hidden
 	header extends .wehead
-		background-color: #b3afa9
+		background-color: #a39f99
 		padding: 3px 12px
 		border-radius: 8px 8px 0 0
 		margin: -0.9em -1.2em 1em
@@ -1555,7 +1555,7 @@ h6
 	margin: 12px 0 8px
 	border-bottom: 1px solid #ccc
 	text-transform: uppercase
-	font: 700 9pt $head_font
+	font: 700 9pt Tahoma
 	img
 		vertical-align: -3px
 h6.top

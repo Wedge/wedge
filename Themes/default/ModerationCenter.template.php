@@ -73,9 +73,7 @@ function template_latest_news()
 	add_js_file('scripts/admin.js');
 
 	add_js('
-	var oAdminIndex = new we_AdminIndex({
-		sSelf: \'oAdminCenter\',
-
+	new we_AdminIndex({
 		bLoadAnnouncements: true,
 		sAnnouncementTemplate: ', JavaScriptEscape('
 			<dl>

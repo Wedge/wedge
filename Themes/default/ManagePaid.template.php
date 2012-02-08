@@ -386,8 +386,7 @@ function template_modify_user_subscription()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAddMemberSuggest = new weAutoSuggest({
-		sSelf: \'oAddMemberSuggest\',
+	new weAutoSuggest({
 		sControlId: \'name_control\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');

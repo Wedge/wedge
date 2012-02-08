@@ -752,9 +752,7 @@ function setupAdminSidebar()
 
 	// This sets the announcements and current versions themselves ;)
 	add_js('
-	var oAdminIndex = new we_AdminIndex({
-		sSelf: \'oAdminCenter\',
-
+	new we_AdminIndex({
 		bLoadAnnouncements: true,
 		sAnnouncementTemplate: ', JavaScriptEscape('
 			<dl>

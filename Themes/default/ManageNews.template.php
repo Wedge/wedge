@@ -193,8 +193,7 @@ function template_email_members()
 
 	add_js('
 	$("#advanced_select_div").show();
-	var oMemberSuggest = new weAutoSuggest({
-		sSelf: \'oMemberSuggest\',
+	new weAutoSuggest({
 		sControlId: \'members\',
 		bItemList: true,
 		sPostName: \'member_list\',
@@ -203,8 +202,7 @@ function template_email_members()
 		sItemListContainerId: \'members_container\',
 		aListItems: []
 	});
-	var oExcludeMemberSuggest = new weAutoSuggest({
-		sSelf: \'oExcludeMemberSuggest\',
+	new weAutoSuggest({
 		sControlId: \'exclude_members\',
 		bItemList: true,
 		sPostName: \'exclude_member_list\',

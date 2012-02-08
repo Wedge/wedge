@@ -2606,7 +2606,6 @@ class wedit
 		if ($auto_drafts)
 			add_js('
 	var oAutoSave = new wedge_autoDraft({
-		sSelf: \'oAutoSave\',
 		sForm: \'postmodify\',
 		sEditor: ' . JavaScriptEscape($this->id) . ',
 		sType: ' . JavaScriptEscape($this->editorOptions['drafts']) . ',

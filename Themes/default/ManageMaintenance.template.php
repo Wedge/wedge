@@ -244,8 +244,7 @@ function template_maintain_members()
 	add_js_file('scripts/suggest.js');
 
 	add_js('
-	var oAttributeMemberSuggest = new weAutoSuggest({
-		sSelf: \'oAttributeMemberSuggest\',
+	new weAutoSuggest({
 		sControlId: \'to\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
