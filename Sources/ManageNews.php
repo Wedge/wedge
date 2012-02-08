@@ -772,8 +772,8 @@ function ModifyNewsSettings($return_config = false)
 	$config_vars = array(
 		array('title', 'settings'),
 			// Inline permissions.
-			array('permissions', 'edit_news', 'help' => ''),
-			array('permissions', 'send_mail'),
+			array('permissions', 'edit_news', 'help' => '', 'exclude' => array(-1)),
+			array('permissions', 'send_mail', 'exclude' => array(-1)),
 		'',
 			// Just the remaining settings.
 			array('check', 'xmlnews_enable', 'onclick' => '$(\'#xmlnews_maxlen\').attr(\'disabled\', !this.checked);'),
