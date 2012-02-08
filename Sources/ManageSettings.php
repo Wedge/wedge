@@ -198,20 +198,6 @@ function ModifyCoreFeatures($return_config = false)
 				return array(\'warning_moderate\' => 0);
 			'),
 		),
-		// Search engines
-		'sp' => array(
-			'url' => 'action=admin;area=sengines',
-			'setting' => 'spider_mode',
-			'setting_callback' => create_function('$value', '
-				// Turn off the spider group if disabling.
-				if (!$value)
-					return array(\'spider_group\' => 0, \'show_spider_online\' => 0);
-			'),
-			'on_save' => create_function('', '
-				loadSource(\'ManageSearchEngines\');
-				recacheSpiderNames();
-			'),
-		),
 	);
 
 	// Anyone who would like to add a core feature?

@@ -24,16 +24,21 @@ function SearchEngines()
 	loadLanguage('Search');
 	loadTemplate('ManageSearch');
 
-	$subActions = array(
-		'editspiders' => 'EditSpider',
-		'logs' => 'SpiderLog',
-		'settings' => 'ManageSearchEngineSettings',
-		'spiders' => 'ViewSpiders',
-		'stats' => 'SpiderStats',
-	);
+	if (!empty($modSettings['spider_mode']))
+		$subActions = array(
+			'editspiders' => 'EditSpider',
+			'logs' => 'SpiderLog',
+			'settings' => 'ManageSearchEngineSettings',
+			'spiders' => 'ViewSpiders',
+			'stats' => 'SpiderStats',
+		);
+	else
+		$subActions = array(
+			'settings' => 'ManageSearchEngineSettings',
+		);
 
 	// Ensure we have a valid subaction.
-	$context['sub_action'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'stats';
+	$context['sub_action'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (empty($modSettings['spider_mode']) ? 'settings' : 'stats');
 
 	$context['page_title'] = $txt['search_engines'];
 

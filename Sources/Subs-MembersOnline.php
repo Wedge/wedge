@@ -60,7 +60,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 	// Get any spiders if enabled.
 	$spiders = array();
 	$spider_finds = array();
-	if (!empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] < 3 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
+	if (!empty($modSettings['spider_mode']) && !empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] < 3 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
 		$spiders = unserialize($modSettings['spider_name_cache']);
 
 	// Load the users online right now.

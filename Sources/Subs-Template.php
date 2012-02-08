@@ -745,7 +745,8 @@ function db_debug_junk()
 	' . $txt['debug_blocks'] . count($context['debug']['blocks']) . ': <em>' . implode(', ', $context['debug']['blocks']) . '</em>.<br>
 	' . $txt['debug_language_files'] . count($context['debug']['language_files']) . ': <em>' . implode(', ', $context['debug']['language_files']) . '</em>.<br>
 	' . $txt['debug_stylesheets'] . count($context['debug']['sheets']) . ': <em>' . implode(', ', $context['debug']['sheets']) . '</em>.<br>
-	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').show(); $(this).hide();">' . $txt['debug_show'] . '</a><span id="debug_include_info" class="hide"><em>' . implode(', ', $files) . '</em></span>)<br>';
+	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').show(); $(this).hide();">' . $txt['debug_show'] . '</a><span id="debug_include_info" class="hide"><em>' . implode(', ', $files) . '</em></span>)<br>
+	' . $txt['debug_peak_memory_use'] . ceil(memory_get_peak_usage() / 1024) . $txt['debug_kb'] . '<br>';
 
 	if (!empty($modSettings['cache_enable']) && !empty($cache_hits))
 	{

@@ -37,6 +37,10 @@ function cleanRequest()
 {
 	global $board, $topic, $boardurl, $scripturl, $modSettings, $context, $full_request, $full_board, $action_list;
 
+	// While we're here cleaning the request, try and clean the headers that we'll send back.
+	header('X-Powered-By: ');
+	header('Server: ');
+
 	define('INVALID_IP', '00000000000000000000000000000000');
 
 	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
