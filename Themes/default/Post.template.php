@@ -129,9 +129,9 @@ function template_postbox()
 function template_post_additional_options()
 {
 	// !!! This needs to be rewritten to be extensible, declared in Post.php and available as a simple list to be iterated over.
-	global $settings, $txt, $options, $context;
+	global $settings, $txt, $options, $context, $modSettings;
 	// If the admin has enabled the hiding of the additional options - show a link and image for it.
-	if (!empty($settings['additional_options_collapsable']))
+	if (!empty($modSettings['additional_options_collapsable']))
 		echo '
 				<div id="postAdditionalOptionsHeader">
 					<div id="postMoreExpand"></div> <strong><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
@@ -264,7 +264,7 @@ function template_post_buttons()
 
 function template_postform_after()
 {
-	global $context, $settings, $counter, $txt;
+	global $context, $settings, $counter, $txt, $modSettings;
 
 	// We've finished with the main form elements, so finish the UI for it.
 	echo '
@@ -446,7 +446,7 @@ function template_postform_after()
 	}');
 
 	// Code for showing and hiding additional options.
-	if (!empty($settings['additional_options_collapsable']))
+	if (!empty($modSettings['additional_options_collapsable']))
 	{
 		// If we're collapsed, hide everything now and don't trigger the animation.
 		if (empty($context['show_additional_options']))
