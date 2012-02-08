@@ -594,32 +594,33 @@ function JumpTo(control, id)
 			.css({ visibility: 'visible' })
 			.find('select').sb().focus(function ()
 			{
+				var sList = '', $val, that, name;
+
 				show_ajax();
 
 				// Fill the select box with entries loaded through Ajax.
 				$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function ()
 				{
-					var
-						sList = '', $val, that = $(this),
-						// This removes entities from the name...
-						name = that.text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
+					that = $(this);
+					// This removes entities from the name...
+					name = that.text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
 
 					// Just for the record, we don't NEED to close the optgroup at the end
 					// of the list, even if it doesn't feel right. Saves us a few bytes...
-					if (that.attr('type') == 'cat')
+					if (that.attr('type') == 'c') // Category?
 						sList += '<optgroup label="' + name + '">';
 					else
 						// Show the board option, with special treatment for the current one.
-						sList += '<option value="' + that.attr('url') + '"'
+						sList += '<option value="' + (that.attr('url') || that.attr('id')) + '"'
 								+ (that.attr('id') == id ? ' disabled>=> ' + name + ' &lt;=' :
 									'>' + new Array(+that.attr('level') + 1).join('==') + '=> ' + name)
 								+ '</option>';
+				});
 
-					// Add the remaining items after the currently selected item.
-					$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
-						if (this.selectedIndex > 0 && ($val = $(this).val()))
-							window.location.href = $val.indexOf('://') > -1 ? $val : we_script.replace(/\?.*/g, '') + $val;
-					});
+				// Add the remaining items after the currently selected item.
+				$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
+					$val = $(this).val();
+					window.location.href = $val % 1 ? we_script.replace(/\?.*/g, '') + '?board=' + $val + '.0' : $val;
 				});
 
 				hide_ajax();

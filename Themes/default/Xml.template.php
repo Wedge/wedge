@@ -262,14 +262,14 @@ function template_jump_to()
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>';
-	$beginning = !empty($modSettings['pretty_enable_filters']) ? $scripturl . '?' : '';
+	$url = !empty($modSettings['pretty_enable_filters']) ? $scripturl . '?board=' : '';
 	foreach ($context['jump_to'] as $category)
 	{
 		echo '
-	<item type="cat"><![CDATA[', cleanXml($category['name']), ']]></item>';
+	<item type="c"><![CDATA[', cleanXml($category['name']), ']]></item>';
 		foreach ($category['boards'] as $board)
 			echo '
-	<item type="board" level="', $board['child_level'], '" id="', $board['id'], '" url="', $beginning, 'board=', $board['id'], '.0"><![CDATA[', cleanXml($board['name']), ']]></item>';
+	<item level="', $board['child_level'], '" id="', $board['id'], '"', $url ? ' url="' . $url . $board['id'] . '.0"' : '', '><![CDATA[', cleanXml($board['name']), ']]></item>';
 	}
 	echo '
 </we>';
