@@ -167,10 +167,10 @@ function template_display_posts()
 										<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" onclick="', $attachment['thumbnail']['javascript'], '"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
 					else
 						echo '
-										<img src="' . $attachment['href'] . ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"><br>';
+										<img src="', $attachment['href'], ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"><br>';
 				}
 				echo '
-										<a href="' . $attachment['href'] . '"><img src="' . $settings['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a> ';
+										<a href="', $attachment['href'], '"><img src="' . $settings['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a> ';
 
 				if (!$attachment['is_approved'] && $context['can_approve'])
 					echo '
@@ -506,7 +506,7 @@ function template_userbox(&$message)
 	// Otherwise, show the guest's email.
 	elseif (!empty($message['member']['email']) && in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-								<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
+								<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
 
 	echo '
 							</ul>';
@@ -522,17 +522,17 @@ function template_profile_icons(&$message)
 	// Don't show the profile button if you're not allowed to view the profile.
 	if ($message['member']['can_view_profile'])
 		echo '
-										<li><a href="', $message['member']['href'], '">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/icons/profile_sm.gif" alt="' . $txt['view_profile'] . '" title="' . $txt['view_profile'] . '">' : $txt['view_profile']), '</a></li>';
+										<li><a href="', $message['member']['href'], '">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/icons/profile_sm.gif" alt="' . $txt['view_profile'] . '" title="' . $txt['view_profile'] . '">' : $txt['view_profile'], '</a></li>';
 
 	// Don't show an icon if they haven't specified a website.
 	if ($message['member']['website']['url'] != '' && !isset($context['disabled_fields']['website']))
 		echo '
-										<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['website']), '</a></li>';
+										<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['website'], '</a></li>';
 
 	// Don't show the email address if they want it hidden.
 	if (in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-										<li><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
+										<li><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
 
 	// Since we know this person isn't a guest, you *can* message them.
 	if ($context['can_send_pm'])
@@ -651,7 +651,7 @@ function template_topic_poll()
 
 function template_quick_reply()
 {
-	global $settings, $options, $txt, $context, $modSettings;
+	global $options, $txt, $context, $modSettings;
 
 	if (!$context['can_reply'] || empty($options['display_quick_reply']))
 	{

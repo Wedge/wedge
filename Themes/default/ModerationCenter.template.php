@@ -13,7 +13,7 @@
 
 function template_moderation_center()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	// Show a welcome message to the user.
 	echo '
@@ -52,7 +52,7 @@ function template_moderation_center()
 
 function template_latest_news()
 {
-	global $settings, $options, $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $modSettings;
 
 	echo '
 		<we:cat>
@@ -95,7 +95,7 @@ function template_latest_news()
 // Show all the group requests the user can see.
 function template_group_requests_block()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	echo '
 		<we:cat>
@@ -127,7 +127,7 @@ function template_group_requests_block()
 // A block to show the current top reported posts.
 function template_reported_posts_block()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	echo '
 		<we:cat>
@@ -158,7 +158,7 @@ function template_reported_posts_block()
 
 function template_watched_users()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	echo '
 		<we:cat>
@@ -190,7 +190,7 @@ function template_watched_users()
 // Little section for making... notes.
 function template_notes()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $settings, $context, $txt, $scripturl;
 
 	echo '
 		<form action="', $scripturl, '?action=moderate;area=index" method="post">
@@ -233,7 +233,7 @@ function template_notes()
 
 function template_reported_posts()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	echo '
 	<div id="modcenter">
@@ -304,7 +304,7 @@ function template_reported_posts()
 // Show a list of all the unapproved posts
 function template_unapproved_posts()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	// Just a big table of it all really...
 	echo '
@@ -384,7 +384,7 @@ function template_unapproved_posts()
 // List all attachments awaiting approval.
 function template_unapproved_attachments()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	// Show all the attachments still oustanding.
 	echo '
@@ -622,7 +622,7 @@ function template_user_watch_post_callback($post)
 // Moderation settings
 function template_moderation_settings()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	echo '
 	<div id="modcenter">
@@ -695,7 +695,7 @@ function template_moderation_settings()
 // Show a notice sent to a user.
 function template_show_notice()
 {
-	global $txt, $settings, $options, $context;
+	global $txt, $context;
 
 	// We do all the HTML for this one!
 	echo '<!DOCTYPE html>
@@ -729,7 +729,7 @@ function template_show_notice()
 // Add or edit a warning template.
 function template_warn_template()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	echo '
 	<div id="modcenter">

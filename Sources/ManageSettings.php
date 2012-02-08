@@ -72,7 +72,7 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 // This function passes control through to the relevant tab.
 function ModifyFeatureSettings()
 {
-	global $context, $txt, $scripturl, $modSettings, $settings;
+	global $context, $txt, $scripturl, $settings;
 
 	$context['page_title'] = $txt['modSettings_title'];
 
@@ -104,7 +104,7 @@ function ModifyFeatureSettings()
 // This function passes control through to the relevant security tab.
 function ModifySecuritySettings()
 {
-	global $context, $txt, $scripturl, $modSettings, $settings;
+	global $context, $txt;
 
 	$context['page_title'] = $txt['admin_security_moderation'];
 
@@ -136,7 +136,7 @@ function ModifySecuritySettings()
 // This my friend, is for all the mod authors out there. They're like builders without the ass crack - with the possible exception of... /cut short
 function ModifyModSettings()
 {
-	global $context, $txt, $scripturl, $modSettings, $settings;
+	global $context, $txt;
 
 	$context['page_title'] = $txt['admin_modifications'];
 
@@ -161,7 +161,6 @@ function ModifyModSettings()
 		),
 	);
 
-
 	// Call the right function for this sub-acton.
 	$subActions[$_REQUEST['sa']]();
 }
@@ -169,7 +168,7 @@ function ModifyModSettings()
 // This is an overall control panel enabling/disabling lots of Wedge's key feature components.
 function ModifyCoreFeatures($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context, $modSettings;
 
 	/* This is an array of all the features that can be enabled/disabled - each option can have the following:
 		title		- Text title of this item (If standard string does not exist).
@@ -278,7 +277,7 @@ function ModifyCoreFeatures($return_config = false)
 
 function ModifyBasicSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context;
 
 	$config_vars = array(
 			// Big Options... polls, pinned, bbc....
@@ -347,7 +346,7 @@ function ModifyBasicSettings($return_config = false)
 // Moderation type settings - although there are fewer than we have you believe ;)
 function ModifyModerationSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context, $modSettings;
 
 	$config_vars = array(
 			// Warning system?
@@ -398,7 +397,7 @@ function ModifyModerationSettings($return_config = false)
 // Let's try keep the spam to a minimum ah Thantos?
 function ModifySpamSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context, $modSettings;
 
 	// Generate a sample registration image.
 	$context['verification_image_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand());
@@ -572,7 +571,7 @@ function ModifySpamSettings($return_config = false)
 
 function ModifyLogSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context, $modSettings;
 
 	// Make sure we understand what's going on.
 	loadLanguage('ManageSettings');
@@ -665,7 +664,7 @@ function ModifyLogSettings($return_config = false)
  */
 function ModifyGeneralModSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context;
 
 	$config_vars = array();
 
@@ -718,7 +717,7 @@ function ModifyGeneralModSettings($return_config = false)
 // Shell for all the Pretty URL interfaces
 function ModifyPrettyURLs($return_config = false)
 {
-	global $context, $modSettings, $settings, $txt;
+	global $context, $modSettings, $txt;
 
 	// For the administrative search function not to get upset.
 	if ($return_config)

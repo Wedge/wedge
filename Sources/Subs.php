@@ -830,7 +830,7 @@ function shorten_subject($subject, $len)
  */
 function writeLog($force = false)
 {
-	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board;
+	global $user_info, $user_settings, $context, $modSettings, $topic, $board;
 
 	// If we are showing who is viewing a topic, let's see if we are, and force an update if so - to make it accurate.
 	if (!empty($modSettings['display_who_viewing']) && ($topic || $board))
@@ -1396,8 +1396,8 @@ function url_image_size($url)
  */
 function setupThemeContext($forceload = false)
 {
-	global $modSettings, $user_info, $scripturl, $context, $settings, $options, $txt, $maintenance;
-	global $user_settings;
+	global $modSettings, $user_info, $scripturl, $context;
+	global $options, $txt, $maintenance, $user_settings;
 	static $loaded = false;
 
 	// Under SSI this function can be called more then once. That can cause some problems.

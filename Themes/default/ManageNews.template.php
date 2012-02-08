@@ -14,7 +14,7 @@
 // Form for editing current news on the site.
 function template_edit_news()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $scripturl, $txt;
 
 	echo '
 	<div id="admincenter">
@@ -80,7 +80,7 @@ function template_edit_news()
 
 function template_email_members()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $settings, $txt, $scripturl;
 
 	// This is some javascript for the simple/advanced toggling stuff.
 	add_js('
@@ -215,7 +215,7 @@ function template_email_members()
 
 function template_email_members_compose()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -260,7 +260,7 @@ function template_email_members_compose()
 
 function template_email_members_send()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
