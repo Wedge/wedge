@@ -550,9 +550,9 @@
 		if ($dd.find('.viewport').length)
 			return;
 
-		newwi = $dd.css('width', 'auto').contents()
-			.wrapAll('<div class="viewport"><div class="overview"></div></div>')
-			.width();
+		$dd.css('width', 'auto').contents().wrapAll('<div class="viewport"><div class="overview"></div></div>');
+
+		newwi = $dd.width();
 
 		$dd.append('<div class="scrollbar"><div></div></div>');
 

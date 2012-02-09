@@ -655,14 +655,10 @@ function Thought(opt)
 			pr += '<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
 
 		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
-		thought.toggle(is_new && tid).after('\
-			<form id="thought_form">\
-				<input type="text" maxlength="255" id="ntho">\
-				<select id="npriv">' + pr + '</select>\
-				<input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '">\
-				<input type="submit" value="' + opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save">\
-				<input type="button" value="' + opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel">\
-			</form>').siblings('.thought_actions').hide();
+		thought.toggle(is_new && tid).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
+			+ pr + '</select><input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '"><input type="submit" value="'
+			+ opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save"><input type="button" value="'
+			+ opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel"></form>').siblings('.thought_actions').hide();
 		$('#ntho').focus().val(cur_text);
 		$('#npriv').sb();
 	};
@@ -670,14 +666,14 @@ function Thought(opt)
 	// Event handler for removal requests.
 	this.remove = function (tid)
 	{
-		var to_del = $('#thought_update' + tid);
+		var toDelete = $('#thought_update' + tid);
 
 		show_ajax();
 
-		sendXMLDocument(ajaxUrl + 'remove', 'oid=' + to_del.data('oid'));
+		sendXMLDocument(ajaxUrl + 'remove', 'oid=' + toDelete.data('oid'));
 
 		// We'll be assuming Wedge uses table tags to show thought lists.
-		to_del.parents('tr').first().remove();
+		toDelete.parents('tr').first().remove();
 
 		hide_ajax();
 	};
@@ -689,7 +685,7 @@ function Thought(opt)
 
 		sendXMLDocument(
 			ajaxUrl,
-			'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
+			'parent=' + tid + ';master=' + mid + ';oid=' + $('#noid').val().php_urlencode() + ';privacy=' + $('#npriv').val().php_urlencode() + ';text=' + $('#ntho').val().php_urlencode(),
 			function (XMLDoc) {
 				var thought = $('thought', XMLDoc), nid = tid ? thought.attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid, user = $('user', XMLDoc);
 				if (!$(new_id).length)
@@ -711,14 +707,12 @@ function Thought(opt)
 		$('.thought').each(function () {
 			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
 			if (tid)
-			{
 				thought.after('\
-		<div class="thought_actions">\
+		<div class="thought_actions">' + (thought.data('self') !== '' ? '' : '\
 			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ');">\
+			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">') + '\
 			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ', true);">\
-			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">\
 		</div>');
-			}
 		});
 	}
 };

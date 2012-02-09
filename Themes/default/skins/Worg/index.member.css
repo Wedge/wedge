@@ -98,7 +98,8 @@ ul.buttonlist
 	input
 		margin: 0 1px 0 2px
 		padding: 2px 4px
-		background-position: 0 100px, 0 0, 0 0
+		&[type=submit]
+			background-position: 0 100px, 0 0, 0 0
 	.sbox
 		margin-top: -3px
 		font-size: 13px

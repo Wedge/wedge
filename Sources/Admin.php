@@ -197,6 +197,17 @@ function Admin()
 						'maintenance' => array($txt['attachment_manager_maintenance']),
 					),
 				),
+				'aeva_embed' => array(
+					'label' => $txt['media_admin_labels_embed'],
+					'icon' => 'aeva.png',
+					'bigicon' => !empty($settings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
+					'file' => 'media/ManageMedia',
+					'function' => 'aeva_admin_init',
+					'subsections' => array(
+						'config' => array($txt['media_admin_settings_config']),
+						'sites' => array($txt['media_admin_settings_sites']),
+					),
+				),
 				'',
 				'managesearch' => array(
 					'label' => $txt['manage_search'],
@@ -225,18 +236,6 @@ function Admin()
 						'mailingmembers' => array($txt['admin_newsletters'], 'send_mail'),
 						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
-					),
-				),
-				'',
-				'aeva_embed' => array(
-					'label' => $txt['media_admin_labels_embed'],
-					'icon' => 'aeva.png',
-					'bigicon' => !empty($settings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
-					'file' => 'media/ManageMedia',
-					'function' => 'aeva_admin_init',
-					'subsections' => array(
-						'config' => array($txt['media_admin_settings_config']),
-						'sites' => array($txt['media_admin_settings_sites']),
 					),
 				),
 				'',

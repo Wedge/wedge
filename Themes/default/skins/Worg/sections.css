@@ -261,7 +261,6 @@ img.new_posts
 	display: table-cell
 	background: rgba(0,0,0,.042)
 	width: 14em
-//	border-radius: 12px 0 0 12px
 	padding: 10px 12px 12px 0
 	vertical-align: top
 
@@ -348,7 +347,7 @@ img.new_posts
 	padding: 1em 0 3px
 	border-top: 1px solid #aaa
 	line-height: 1.4em
-	font-size: .85em
+	font-size: .9em
 
 .custom_fields_above_signature
 	width: 98%
