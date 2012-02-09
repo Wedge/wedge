@@ -1151,7 +1151,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		),
 		'desc' => array(
 			'label' => $txt['media_add_desc'],
-			'subtext' => $txt['media_add_desc_subtxt'],
+			'subtext' => $txt['media_add_desc_desc'],
 			'type' => 'textbox',
 			'fieldname' => 'desc',
 			'value' => empty($description) ? '' : $description,
@@ -1160,7 +1160,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'label' => $txt['media_icon'],
 			'type' => 'file',
 			'fieldname' => 'icon',
-			'subtext' => $is_edit ? $txt['media_admin_icon_edit_subtext'] : '',
+			'subtext' => $is_edit ? $txt['media_admin_icon_edit_desc'] : '',
 			'add_text' => $is_edit ? '<p><img src="' . $galurl . 'sa=media;in=' . $id_album . ';icon" style="padding-left: 4px"></p>' : '',
 		),
 		'profile' => array(
@@ -1225,7 +1225,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		),
 		'groups' => array(
 			'label' => $txt['media_admin_membergroups'],
-			'subtext' => $simple_groups ? preg_replace('~<li>.*?</li>~', '', $txt['media_admin_membergroups_subtxt'], 1) : $txt['media_admin_membergroups_subtxt'],
+			'subtext' => $simple_groups ? preg_replace('~<li>.*?</li>~', '', $txt['media_admin_membergroups_desc'], 1) : $txt['media_admin_membergroups_desc'],
 			'fieldname' => array('groups', 'groups_write'),
 			'type' => 'checkbox_dual',
 			'multi' => true,
@@ -1233,7 +1233,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		),
 		'allowed_members' => array(
 			'label' => $txt['media_allowed_members'],
-			'subtext' => $txt['media_allowed_members_subtxt'],
+			'subtext' => $txt['media_allowed_members_desc'],
 			'type' => 'text',
 			'fieldname' => 'allowed_members',
 			'value' => empty($members_allowed) ? '' : implode(', ', $members_allowed),
@@ -1242,7 +1242,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		),
 		'allowed_write' => array(
 			'label' => $txt['media_allowed_write'],
-			'subtext' => $txt['media_allowed_write_subtxt'],
+			'subtext' => $txt['media_allowed_write_desc'],
 			'type' => 'text',
 			'fieldname' => 'allowed_write',
 			'value' => empty($members_allowed_write) ? '' : implode(', ', $members_allowed_write),
@@ -1251,7 +1251,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		),
 		'denied_members' => array(
 			'label' => $txt['media_denied_members'],
-			'subtext' => $txt['media_denied_members_subtxt'],
+			'subtext' => $txt['media_denied_members_desc'],
 			'type' => 'text',
 			'fieldname' => 'denied_members',
 			'value' => empty($members_denied) ? '' : implode(', ', $members_denied),
@@ -1260,7 +1260,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		),
 		'denied_write' => array(
 			'label' => $txt['media_denied_write'],
-			'subtext' => $txt['media_denied_write_subtxt'],
+			'subtext' => $txt['media_denied_write_desc'],
 			'type' => 'text',
 			'fieldname' => 'denied_write',
 			'value' => empty($members_denied_write) ? '' : implode(', ', $members_denied_write),
@@ -1269,14 +1269,14 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		),
 		'hidden' => array(
 			'label' => $txt['media_album_hidden'],
-			'subtext' => $txt['media_album_hidden_subtxt'],
+			'subtext' => $txt['media_album_hidden_desc'],
 			'fieldname' => 'hidden',
 			'type' => 'yesno',
 			'value' => $hidden,
 		),
 		'passwd' => array(
 			'label' => $txt['media_admin_passwd'],
-			'subtext' => $txt['media_admin_passwd_subtxt'],
+			'subtext' => $txt['media_admin_passwd_desc'],
 			'fieldname' => 'passwd',
 			'type' => 'text',
 			'value' => preg_match('/^[a-f0-9]{40}$/', $passwd) ? '' : $passwd,

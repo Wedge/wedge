@@ -222,7 +222,7 @@ function aeva_foxy_playlist()
 		),
 		'desc' => array(
 			'label' => $txt['media_add_desc'],
-			'subtext' => $txt['media_add_desc_subtxt'],
+			'subtext' => $txt['media_add_desc_desc'],
 			'fieldname' => 'desc',
 			'type' => 'textbox',
 			'custom' => 'cols="50" rows="6"',

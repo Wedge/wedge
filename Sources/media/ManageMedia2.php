@@ -90,20 +90,20 @@ function aeva_admin_maintenance()
 			$context['aeva_dos']['tasks'][] = array(
 				'title' => $txt['media_admin_maintenance_' . $sa],
 				'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=' . $sa . $end_url,
-				'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_subtext']) ? $txt['media_admin_maintenance_' . $sa . '_subtext'] : '',
+				'subtext' => isset($txt['media_admin_maintenance_' . $sa . '_desc']) ? $txt['media_admin_maintenance_' . $sa . '_desc'] : '',
 			);
 
 	foreach (array('thumb', 'embed', 'preview', 'all') as $st)
 		$context['aeva_dos']['regen'][] = array(
 			'title' => $txt['media_admin_maintenance_regen_' . $st],
 			'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=regen;st=' . $st . $end_url,
-			'subtext' => isset($txt['media_admin_maintenance_regen_' . $st . '_subtext']) ? $txt['media_admin_maintenance_regen_' . $st . '_subtext'] : '',
+			'subtext' => isset($txt['media_admin_maintenance_regen_' . $st . '_desc']) ? $txt['media_admin_maintenance_regen_' . $st . '_desc'] : '',
 		);
 
 	$context['aeva_dos']['utils'][] = array(
 		'title' => $txt['media_admin_maintenance_prune'],
 		'href' => $scripturl . '?action=admin;area=aeva_maintenance;sa=prune' . $end_url,
-		'subtext' => $txt['media_admin_maintenance_prune_subtext'],
+		'subtext' => $txt['media_admin_maintenance_prune_desc'],
 	);
 
 	wetem::load('aeva_admin_maintenance');

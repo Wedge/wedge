@@ -67,25 +67,24 @@ function aeva_admin_embed()
 	$test = $txt['embed_lookups_desc'] . '<br><span style="font-weight: bold; color: ' . (empty($settings['embed_lookup_result']) ? 'red' : 'green') . '">' . $test . '</span>';
 
 	$theme = array(
-		'media_admin_labels_embed'	=> array('title', 'config'),
 		'embed_enabled'				=> array('yesno', 'config'),
-		'hr1'						=> array('hr', 'config'),
+		'media_admin_labels_embed'	=> array('title', 'config'),
 		'embed_lookups'				=> array('yesno', 'config', 'subtext' => $test, 'disabled' => !empty($settings['embed_lookup_result']) ? 0 : 1),
 		'embed_yq'					=> array('select', 'config', array(&$txt['embed_yq_default'], &$txt['embed_yq_hd'])),
-		'hr2'						=> array('hr', 'config'),
+		'hr1'						=> array('hr', 'config'),
 		'embed_titles'				=> array('select', 'config', array(&$txt['embed_titles_yes'], &$txt['embed_titles_yes2'], &$txt['embed_titles_no'], &$txt['embed_titles_no2'])),
 		'embed_lookup_titles'		=> array('yesno', 'config'),
 		'embed_inlinetitles'		=> array('select', 'config', array(&$txt['embed_inlinetitles_yes'], &$txt['embed_inlinetitles_maybe'], &$txt['embed_inlinetitles_no'])),
-		'hr3'						=> array('hr', 'config'),
+		'hr2'						=> array('hr', 'config'),
 		'embed_center'				=> array('yesno', 'config'),
 		'embed_incontext'			=> array('yesno', 'config'),
 		'embed_quotes'				=> array('yesno', 'config'),
 		'embed_fix_html'			=> array('yesno', 'config'),
 		'embed_includeurl'			=> array('yesno', 'config'),
-		'hr4'						=> array('hr', 'config'),
+		'hr3'						=> array('hr', 'config'),
 		'embed_noscript'			=> array('yesno', 'config'),
 		'embed_expins'				=> array('yesno', 'config'),
-		'hr5'						=> array('hr', 'config'),
+		'hr4'						=> array('hr', 'config'),
 		'embed_max_width'			=> array('small_text', 'config', null, null, $txt['media_pixels']),
 		'embed_max_per_post'		=> array('small_text', 'config', null, null, $txt['media_lower_items']),
 		'embed_max_per_page'		=> array('small_text', 'config', null, null, $txt['media_lower_items']),
@@ -274,7 +273,7 @@ function aeva_admin_embed()
 			'options' => !empty($options[2]) ? $options[2] : array(),
 			'multi' => !empty($options[3]) && $options[3] == true,
 			'next' => !empty($options[4]) ? ' ' . $options[4] : null,
-			'subtext' => isset($options['subtext']) ? $options['subtext'] : (isset($txt[$setting.'_desc']) ? $txt[$setting.'_desc'] : ''),
+			'subtext' => isset($options['subtext']) ? $options['subtext'] : (isset($txt[$setting . '_desc']) ? $txt[$setting . '_desc'] : ''),
 			'disabled' => !empty($options['disabled']),
 			'skip_left' => !empty($options['skip_left']),
 		);
@@ -454,7 +453,7 @@ function aeva_settings(&$dest, &$array, $type, $checkall)
 {
 	global $txt, $settings, $theme;
 
-	$dest['embed_' . $type] = array('title', 'sites', null, null, null, 'force_title' => '<strong>' . $txt['embed_' . $type . '_sites'] . ' (' . count($array) . ')</strong> - <label><input type="checkbox" id="checkall_' . $type . '" onclick="invertAll(this, this.form, \'embed_' . $type . '\');" ' . (!empty($checkall[$type]) ? ' checked' : '') . '>&nbsp; <em>' . $txt['media_select'] . '</em></label>');
+	$dest['embed_' . $type] = array('title', 'sites', null, null, null, 'force_title' => $txt['embed_' . $type . '_sites'] . ' (' . count($array) . ') - <label><input type="checkbox" id="checkall_' . $type . '" onclick="invertAll(this, this.form, \'embed_' . $type . '\');" ' . (!empty($checkall[$type]) ? ' checked' : '') . '>&nbsp; <em>' . $txt['media_select'] . '</em></label>');
 	$dest['embed_' . $type . '_items'] = array('checkbox_line', 'sites', array(), true, null, 'skip_left' => true);
 
 	// Now for the magic block builder

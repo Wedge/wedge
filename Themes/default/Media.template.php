@@ -343,7 +343,7 @@ function template_aeva_item_main()
 	echo '
 		<div id="media-item">',
 			$item['embed_object'], $item['is_resized'] ? '
-			<div class="mg_subtext" style="padding-top: 6px">' . $txt['media_resized'] . '</div>' : '', '<br>';
+			<dfn style="padding-top: 6px">' . $txt['media_resized'] . '</dfn>' : '', '<br>';
 
 	if (!empty($item['description']))
 	{
@@ -881,7 +881,7 @@ function template_aeva_form()
 			echo '
 			<tr>', !empty($e['skip_left']) || --$colspan > 0 ? '' : '
 				<td style="width: ' . (isset($context['postbox']) ? ($context['postbox']->id == 'desc' ? '35' : '10') : '50') . '%" class="windowbg' . $alt .
-				($valign ? ' top' : '') . '"' . (!empty($e['colspan']) && ($colspan = $e['colspan']) ? ' rowspan="2"' : '') . '>' . $e['label'] . (!empty($e['subtext']) ? '<div class="mg_subtext">' . $e['subtext'] . '</div>' : '') . '</td>', '
+				($valign ? ' top' : '') . '"' . (!empty($e['colspan']) && ($colspan = $e['colspan']) ? ' rowspan="2"' : '') . '>' . $e['label'] . (!empty($e['subtext']) ? '<dfn>' . $e['subtext'] . '</dfn>' : '') . '</td>', '
 				<td class="windowbg' . $alt . '"' . (!empty($e['skip_left']) ? ' colspan="2"' : '') . '>';
 
 			if ($e['type'] != 'title')
@@ -983,7 +983,7 @@ function template_aeva_form()
 	// End the form.
 	echo '
 			<tr>
-				<td class="windowbg right', empty($alt) ? '2' : '', '" colspan="2">', $show_at_end, !empty($context['aeva_form']['silent']) ? '
+				<td class="windowbg', empty($alt) ? '2' : '', ' right" colspan="2">', $show_at_end, !empty($context['aeva_form']['silent']) ? '
 					<input type="submit" value="' . $txt['media_silent_update'] .  '" name="silent_update" tabindex="' . $context['tabindex']++ . '">' : '', '
 					<input type="submit" value="', $txt['media_submit'], '" name="submit_aeva" tabindex="', $context['tabindex']++, '" class="submit">
 				</td>
@@ -1221,7 +1221,7 @@ function template_aeva_search_searching()
 			</tr>
 			<tr>
 				<td class="w50 right">
-					', $txt['media_search_by_mem'], '<div class="mg_subtext">', $txt['media_search_by_mem_sub'], '</div>
+					', $txt['media_search_by_mem'], '<dfn>', $txt['media_search_by_mem_desc'], '</dfn>
 				</td>
 				<td class="w50 left">
 					<input name="sch_mem" id="sch_mem" type="text" size="25">

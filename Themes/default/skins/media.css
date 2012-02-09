@@ -203,10 +203,10 @@ iframe.aext
 	a
 		margin: 0 2px
 
-.mg_subtext, .mg_desc, .mg_hidden
+.mg_desc, .mg_hidden
 	color: #777
 	font-size: 0.85em
-	line-height: 1.2em
+	line-height: 1.25em
 	padding-top: 4px
 
 .mg_hidden

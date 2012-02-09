@@ -147,7 +147,7 @@ function template_aeva_admin_maintenance()
 		{
 			echo '
 						<li>
-							<a href="', $task['href'], '">', $task['title'], '</a>', !empty($task['subtext']) ? '<div class="mg_subtext">' . $task['subtext'] . '</div>' : '';
+							<a href="', $task['href'], '">', $task['title'], '</a>', !empty($task['subtext']) ? '<dfn>' . $task['subtext'] . '</dfn>' : '';
 			if ($count > $counter + 1)
 				echo '
 							<hr>';
@@ -196,7 +196,7 @@ function template_aeva_admin_maintenance_prune()
 								<td height="25">', $txt['media_items'], '</td>
 							</tr>
 							<tr class="windowbg2">
-								<td><div class="mg_subtext">', $txt['media_admin_maintenance_prune_item_help'], '</div></td>
+								<td><dfn>', $txt['media_admin_maintenance_prune_item_help'], '</dfn></td>
 							</tr>
 							<tr class="windowbg2">
 								<td><input type="text" size="4" name="days" value="60"> ', $txt['media_admin_maintenance_prune_days'], '</td>
@@ -223,7 +223,7 @@ function template_aeva_admin_maintenance_prune()
 								<td height="25">', $txt['media_comments'], '</td>
 							</tr>
 							<tr class="windowbg2">
-								<td><div class="mg_subtext">', $txt['media_admin_maintenance_prune_com_help'], '</div></td>
+								<td><dfn>', $txt['media_admin_maintenance_prune_com_help'], '</dfn></td>
 							</tr>
 							<tr class="windowbg2">
 								<td><input type="text" size="4" name="days_com" value="60"> ', $txt['media_admin_maintenance_prune_days'], '</td>

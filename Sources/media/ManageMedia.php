@@ -403,7 +403,7 @@ function aeva_admin_settings()
 	$my_docs = array_map('trim', explode(',', $amSettings['my_docs']));
 	$amSettings['my_docs'] = trim(implode(', ', $my_docs), ', ');
 
-	$txt['media_admin_settings_my_docs_subtext'] = sprintf($txt['media_admin_settings_my_docs_subtext'], implode(', ', explode(',', $default_docs)));
+	$txt['media_admin_settings_my_docs_desc'] = sprintf($txt['media_admin_settings_my_docs_desc'], implode(', ', explode(',', $default_docs)));
 
 	// We need to hide all options except the master setting if:
 	// - visiting the page while the master setting is off,
@@ -492,7 +492,7 @@ function aeva_admin_settings()
 			'options' => !empty($options[2]) ? $options[2] : array(),
 			'multi' => !empty($options[3]) && $options[3] == true,
 			'next' => !empty($options[4]) ? ' ' . $options[4] : null,
-			'subtext' => isset($txt['media_admin_settings_'.$setting.'_subtext']) ? $txt['media_admin_settings_'.$setting.'_subtext'] : '',
+			'subtext' => isset($txt['media_admin_settings_' . $setting . '_desc']) ? $txt['media_admin_settings_' . $setting . '_desc'] : '',
 		);
 		if ($options[0] == 'textbox')
 			$context['aeva_form'][$setting]['custom'] = 'rows="6" cols="60"';
@@ -501,14 +501,14 @@ function aeva_admin_settings()
 			$context['aeva_form']['php_ini'] = array(
 				'type' => 'link',
 				'label' => 'upload_max_filesize',
-				'subtext' => $txt['media_admin_settings_phpini_subtext'],
+				'subtext' => $txt['media_admin_settings_phpini_desc'],
 				'text' => round(aeva_getPHPSize('upload_max_filesize')/1048576, 1) . ' ' . $txt['media_mb'],
 				'link' => 'http://php.net/manual/en/ini.core.php#ini.upload-max-filesize',
 			);
 			$context['aeva_form']['php_ini2'] = array(
 				'type' => 'link',
 				'label' => 'post_max_size',
-				'subtext' => $txt['media_admin_settings_phpini_subtext'],
+				'subtext' => $txt['media_admin_settings_phpini_desc'],
 				'text' => round(aeva_getPHPSize('post_max_size')/1048576, 1) . ' ' . $txt['media_mb'],
 				'link' => 'http://php.net/manual/en/ini.core.php#ini.post-max-size',
 			);
@@ -1717,7 +1717,7 @@ function aeva_admin_fields_edit()
 			'fieldname' => 'options',
 			'type' => 'text',
 			'value' => implode(',', $field['options']),
-			'subtext' => $txt['media_cf_options_stext'],
+			'subtext' => $txt['media_cf_options_desc'],
 			'label' => $txt['media_cf_options'],
 		),
 		'bbc' => array(
