@@ -13,7 +13,7 @@
 
 function template_boards()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings, $language;
+	global $context, $theme, $options, $txt, $scripturl, $settings, $language;
 
 	echo '
 	<table class="table_list" id="board_list">';
@@ -93,7 +93,7 @@ function template_boards()
 					</a>
 				</td>
 				<td class="info">
-					', $modSettings['display_flags'] == 'all' || ($modSettings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
+					', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $theme['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" id="b', $board['id'], '">', $board['name'], '</a>';
 
 				// Has it outstanding posts for approval?
 				if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
@@ -184,23 +184,23 @@ function template_boards()
 
 function template_boards_ministats()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	// Show some statistics if stat info is off.
-	if (!$settings['show_stats_index'])
+	if (!$theme['show_stats_index'])
 		echo '
 	<div id="index_common_stats">
 		', $txt['members'], ': ', $context['common_stats']['total_members'], ' &nbsp;&#8226;&nbsp; ', $txt['posts_made'], ': ', $context['common_stats']['total_posts'], ' &nbsp;&#8226;&nbsp; ', $txt['topics'], ': ', $context['common_stats']['total_topics'], '
-		', $settings['show_latest_member'] ? ' ' . $txt['welcome_member'] . ' <strong>' . $context['common_stats']['latest_member']['link'] . '</strong>' . $txt['newest_member'] : '', '
+		', $theme['show_latest_member'] ? ' ' . $txt['welcome_member'] . ' <strong>' . $context['common_stats']['latest_member']['link'] . '</strong>' . $txt['newest_member'] : '', '
 	</div>';
 }
 
 function template_boards_newsfader()
 {
 	// Show the news fader?  (assuming there are things to show...)
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
-	if ($settings['show_newsfader'] && !empty($context['fader_news_lines']))
+	if ($theme['show_newsfader'] && !empty($context['fader_news_lines']))
 	{
 		echo '
 	<div id="newsfader">
@@ -222,10 +222,10 @@ function template_boards_newsfader()
 
 		// Create a news fader object and toggle.
 		add_js('
-	var oNewsFader = new weFader({
+	new weFader({
 		control: \'fadeScroller\',
 		template: ', JavaScriptEscape('<strong>%1$s</strong>'), ',
-		delay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
+		delay: ', empty($theme['newsfader_time']) ? 5000 : $theme['newsfader_time'], '
 	});
 
 	new weToggle({', empty($options['collapse_news_fader']) ? '' : '
@@ -240,7 +240,7 @@ function template_boards_newsfader()
 
 function template_boards_below()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	if ($context['user']['is_logged'])
 	{

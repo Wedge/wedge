@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
 // Handles the admin pages
 function aeva_admin_embed()
 {
-	global $context, $scripturl, $txt, $modSettings, $sourcedir;
+	global $context, $scripturl, $txt, $settings, $sourcedir;
 
 	wetem::load('aeva_form');
 	wetem::outer('aeva_admin_enclose_table');
@@ -32,7 +32,7 @@ function aeva_admin_embed()
 	@set_time_limit(600);
 
 	// Test whether lookups work - don't let it run more than once every day, except if we add ;flt (force lookup test) in the URL
-	if (!isset($modSettings['embed_lookup_result']) || ((time() - 24*3600) >= @$modSettings['embed_lookup_test']) || isset($_GET['flt']))
+	if (!isset($settings['embed_lookup_result']) || ((time() - 24*3600) >= @$settings['embed_lookup_test']) || isset($_GET['flt']))
 	{
 		// We need to access Aeva's aeva_fetch function to grab url files
 		loadSource('media/Aeva-Embed');
@@ -51,26 +51,26 @@ function aeva_admin_embed()
 			$data = @aeva_fetch('http://noisen.com/external.gif');
 
 		// Result? If it's empty or too short, then lookups won't work :(
-		$modSettings['embed_lookup_result'] = $test = empty($data) || strlen($data) < 50 ? 0 : 1;
+		$settings['embed_lookup_result'] = $test = empty($data) || strlen($data) < 50 ? 0 : 1;
 
 		// Save the result so we don't need to run this again.
 		$results = array('embed_lookup_test' => time(), 'embed_lookup_result' => $test);
-		if (!isset($modSettings['embed_lookups']))
-			$results['embed_lookups'] = (int) $modSettings['embed_lookup_result'];
+		if (!isset($settings['embed_lookups']))
+			$results['embed_lookups'] = (int) $settings['embed_lookup_result'];
 		updateSettings($results);
 
 		$test = $txt['embed_lookup_' . (empty($test) ? 'fail' : 'success')];
 	}
 	else
-		$test = $txt['embed_lookup_' . (empty($modSettings['embed_lookup_result']) ? 'fail' : 'success')];
+		$test = $txt['embed_lookup_' . (empty($settings['embed_lookup_result']) ? 'fail' : 'success')];
 
-	$test = $txt['embed_lookups_desc'] . '<br><span style="font-weight: bold; color: ' . (empty($modSettings['embed_lookup_result']) ? 'red' : 'green') . '">' . $test . '</span>';
+	$test = $txt['embed_lookups_desc'] . '<br><span style="font-weight: bold; color: ' . (empty($settings['embed_lookup_result']) ? 'red' : 'green') . '">' . $test . '</span>';
 
-	$settings = array(
+	$theme = array(
 		'media_admin_labels_embed'	=> array('title', 'config'),
 		'embed_enabled'				=> array('yesno', 'config'),
 		'hr1'						=> array('hr', 'config'),
-		'embed_lookups'				=> array('yesno', 'config', 'subtext' => $test, 'disabled' => !empty($modSettings['embed_lookup_result']) ? 0 : 1),
+		'embed_lookups'				=> array('yesno', 'config', 'subtext' => $test, 'disabled' => !empty($settings['embed_lookup_result']) ? 0 : 1),
 		'embed_yq'					=> array('select', 'config', array(&$txt['embed_yq_default'], &$txt['embed_yq_hd'])),
 		'hr2'						=> array('hr', 'config'),
 		'embed_titles'				=> array('select', 'config', array(&$txt['embed_titles_yes'], &$txt['embed_titles_yes2'], &$txt['embed_titles_no'], &$txt['embed_titles_no2'])),
@@ -95,7 +95,7 @@ function aeva_admin_embed()
 	);
 
 	foreach (array('mp3','mp4','flv','avi','divx','mov','wmp','real','swf') as $ext)
-		$settings['embed_ext'][2]['embed_' . $ext] = array($txt['embed_' . $ext], !empty($modSettings['embed_' . $ext]), 'force_name' => 'embed_' . $ext);
+		$theme['embed_ext'][2]['embed_' . $ext] = array($txt['embed_' . $ext], !empty($settings['embed_' . $ext]), 'force_name' => 'embed_' . $ext);
 
 	// Clear sites that may have already been loaded (possibly for news and such)
 	$sites = array();
@@ -208,7 +208,7 @@ function aeva_admin_embed()
 				$_POST['embed_max_per_post'] = min(min(1000, max(1, (int) $_POST['embed_max_per_post'])), $_POST['embed_max_per_page']);
 			}
 
-			foreach ($settings as $setting => $options)
+			foreach ($theme as $setting => $options)
 			{
 				// Skip if we're not in the right page...
 				if ($options[1] != $context['current_area'])
@@ -225,7 +225,7 @@ function aeva_admin_embed()
 					foreach ($options[2] as $sub_setting => $dummy)
 					{
 						updateSettings(array($sub_setting => isset($_POST[$sub_setting]) ? 1 : 0));
-						$settings[$setting][2][$sub_setting][1] = !empty($modSettings[$sub_setting]);
+						$theme[$setting][2][$sub_setting][1] = !empty($settings[$sub_setting]);
 					}
 				}
 				else
@@ -236,16 +236,16 @@ function aeva_admin_embed()
 
 	if ($is_sites)
 		$warning_message =
-			'<span style="font-weight: normal; color: ' . (empty($modSettings['embed_lookup_result']) ? 'red' : 'green') .
-			'" class="smalltext">' . $txt['embed_' . (empty($modSettings['embed_lookup_result']) ? 'fish' : 'denotes')] . '</span>';
+			'<span style="font-weight: normal; color: ' . (empty($settings['embed_lookup_result']) ? 'red' : 'green') .
+			'" class="smalltext">' . $txt['embed_' . (empty($settings['embed_lookup_result']) ? 'fish' : 'denotes')] . '</span>';
 
 	foreach ($stypes as $stype)
 		if ($is_sites && !empty($sitelist[$stype]))
-			aeva_settings($settings, $sitelist[$stype], $stype, $checkall);
+			aeva_settings($theme, $sitelist[$stype], $stype, $checkall);
 
 	// Only show the MASTER setting, if it's disabled
-	if (empty($modSettings['embed_enabled']))
-		$settings = array(
+	if (empty($settings['embed_enabled']))
+		$theme = array(
 			'media_title' => array('title', $context['current_area']),
 			'embed_enabled' => array('yesno', $context['current_area']),
 		);
@@ -255,7 +255,7 @@ function aeva_admin_embed()
 	if (!empty($warning_message))
 		$context['aeva_form']['warning'] = array('type' => 'info', 'label' => '', 'fieldname' => 'info', 'value' => $warning_message, 'options' => array(), 'multi' => false, 'next' => null, 'subtext' => '', 'skip_left' => true);
 
-	foreach ($settings as $setting => $options)
+	foreach ($theme as $setting => $options)
 	{
 		if ($options[1] != $context['current_area'])
 			continue;
@@ -263,14 +263,14 @@ function aeva_admin_embed()
 		// Options
 		if (!empty($options[2]))
 			foreach ($options[2] as $k => $v)
-				if (isset($modSettings[$setting]) && $modSettings[$setting] == $k)
+				if (isset($settings[$setting]) && $settings[$setting] == $k)
 					$options[2][$k] = array($v, true);
 
 		$context['aeva_form'][$setting] = array(
 			'type' => $options[0],
 			'label' => !isset($options['force_title']) ? (isset($txt[$setting]) ? $txt[$setting] : $setting) : $options['force_title'],
 			'fieldname' => $setting,
-			'value' => isset($modSettings[$setting]) ? $modSettings[$setting] : '',
+			'value' => isset($settings[$setting]) ? $settings[$setting] : '',
 			'options' => !empty($options[2]) ? $options[2] : array(),
 			'multi' => !empty($options[3]) && $options[3] == true,
 			'next' => !empty($options[4]) ? ' ' . $options[4] : null,
@@ -284,7 +284,7 @@ function aeva_admin_embed()
 // Removes disabled sites, and removes information we won't need.
 function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 {
-	global $modSettings;
+	global $settings;
 
 	if ($is_sites && $type != 'local' && (empty($_POST['embed_' . $type]) || !is_array($_POST['embed_' . $type])))
 	{
@@ -298,14 +298,14 @@ function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 	$fields = array('title', 'website', 'type', 'disabled');
 
 	// Lookups are disabled, so get rid of all unnecessary information
-	if ($type != 'local' && ($is_sites ? empty($modSettings['embed_lookups']) : empty($_POST['embed_lookups'])))
+	if ($type != 'local' && ($is_sites ? empty($settings['embed_lookups']) : empty($_POST['embed_lookups'])))
 		$fields = array_merge($fields, array(
 			'lookup-url', 'lookup-title', 'lookup-title-skip', 'lookup-pattern', 'lookup-actual-url',
 			'lookup-final-url', 'lookup-unencode', 'lookup-urldecode', 'lookup-skip-empty')
 		);
 
 	// If fixing embed html is disabled, add that to the fields to drop (is likely to be bandwidth saving with this one)
-	if ($type != 'local' && ($is_sites ? empty($modSettings['embed_fix_html']) : empty($_POST['embed_fix_html'])))
+	if ($type != 'local' && ($is_sites ? empty($settings['embed_fix_html']) : empty($_POST['embed_fix_html'])))
 		$fields = array_merge($fields, array('fix-html-pattern', 'fix-html-url'));
 
 	// Unset video sites from arrays which are disabled
@@ -318,7 +318,7 @@ function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 			if (empty($b['plugin']))
 				unset($array[$a], $b);
 			// Don't save data if box was unchecked or option was disabled
-			elseif ($is_sites ? empty($modSettings['embed_' . substr($b['id'], 6)]) : !isset($_POST['embed_' . substr($b['id'], 6)]))
+			elseif ($is_sites ? empty($settings['embed_' . substr($b['id'], 6)]) : !isset($_POST['embed_' . substr($b['id'], 6)]))
 				unset($array[$a], $b);
 		}
 		// Site disabled? Skip it
@@ -332,8 +332,8 @@ function aeva_prepare_sites(&$original_array, $type, $is_sites, &$checkall)
 			foreach ($fields as $c)
 				unset($array[$a][$c]);
 
-		if (isset($array[$a]['lookup-title']) && ($is_sites ? !empty($modSettings['embed_titles']) : !empty($_POST['embed_titles']))
-		&& (empty($array[$a]['lookup-title-skip']) || (!empty($modSettings['embed_titles']) && ($modSettings['embed_titles'] % 2 == 1))))
+		if (isset($array[$a]['lookup-title']) && ($is_sites ? !empty($settings['embed_titles']) : !empty($_POST['embed_titles']))
+		&& (empty($array[$a]['lookup-title-skip']) || (!empty($settings['embed_titles']) && ($settings['embed_titles'] % 2 == 1))))
 			unset($array[$a]['lookup-title']);
 
 		$checkall &= !($original_array[$a]['disabled'] = empty($array[$a]));
@@ -452,7 +452,7 @@ function aeva_generate_sites(&$array)
 // Fills the admin settings for each type of site
 function aeva_settings(&$dest, &$array, $type, $checkall)
 {
-	global $txt, $modSettings, $settings;
+	global $txt, $settings, $theme;
 
 	$dest['embed_' . $type] = array('title', 'sites', null, null, null, 'force_title' => '<strong>' . $txt['embed_' . $type . '_sites'] . ' (' . count($array) . ')</strong> - <label><input type="checkbox" id="checkall_' . $type . '" onclick="invertAll(this, this.form, \'embed_' . $type . '\');" ' . (!empty($checkall[$type]) ? ' checked' : '') . '>&nbsp; <em>' . $txt['media_select'] . '</em></label>');
 	$dest['embed_' . $type . '_items'] = array('checkbox_line', 'sites', array(), true, null, 'skip_left' => true);
@@ -461,7 +461,7 @@ function aeva_settings(&$dest, &$array, $type, $checkall)
 	foreach ($array as $arr)
 	{
 		$link = (!empty($arr['website']) ? '<a href="' . $arr['website'] . '" style="text-decoration: none" title="-" target="_blank">&oplus;</a> ' : '') . $arr['title']
-				. (!empty($arr['lookup-url']) ? '<span style="color: ' . (empty($modSettings['embed_lookup_result']) ? 'red' : 'green') . '">*</span>' : '');
+				. (!empty($arr['lookup-url']) ? '<span style="color: ' . (empty($settings['embed_lookup_result']) ? 'red' : 'green') . '">*</span>' : '');
 		$dest['embed_' . $type . '_items'][2]['embed_' . $arr['id']] = array($link, !$arr['disabled'], 'force_name' => 'embed_' . $type . '[' . $arr['id'] . ']');
 	}
 }

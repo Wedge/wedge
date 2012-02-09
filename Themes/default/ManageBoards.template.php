@@ -14,7 +14,7 @@
 // Template for listing all the current categories and boards.
 function template_main()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings, $language;
+	global $context, $theme, $options, $scripturl, $txt, $settings, $language;
 
 	// Table header.
 	echo '
@@ -55,7 +55,7 @@ function template_main()
 
 		if (!empty($category['move_link']))
 			echo '
-					<li><a href="', $category['move_link']['href'], '" title="', $category['move_link']['label'], '"><img src="', $settings['images_url'], '/smiley_select_spot.gif" alt="', $category['move_link']['label'], '"></a></li>';
+					<li><a href="', $category['move_link']['href'], '" title="', $category['move_link']['label'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $category['move_link']['label'], '"></a></li>';
 
 		$alternate = false;
 
@@ -65,7 +65,7 @@ function template_main()
 			$alternate = !$alternate;
 
 			echo '
-					<li', !empty($modSettings['recycle_board']) && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-' . ($context['right_to_left'] ? 'right' : 'left') . ': ', 5 + 30 * $board['child_level'], 'px;', $board['move'] ? 'color: red;' : '', '"><span class="floatleft"><img src="', $settings['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $language : $board['language'], '.png"> <a href="', $scripturl, '?board=', $board['id'], '">', $board['name'], '</a>', !empty($modSettings['recycle_board']) && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board['id'] ? '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=settings"> <img src="' . $settings['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
+					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-' . ($context['right_to_left'] ? 'right' : 'left') . ': ', 5 + 30 * $board['child_level'], 'px;', $board['move'] ? 'color: red;' : '', '"><span class="floatleft"><img src="', $theme['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $language : $board['language'], '.png"> <a href="', $scripturl, '?board=', $board['id'], '">', $board['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=settings"> <img src="' . $theme['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
 						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="' . $scripturl . '?action=admin;area=permissions;sa=index;pid=' . $board['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
 						<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;move=', $board['id'], '">', $txt['mboards_move'], '</a></span>
 						<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
@@ -80,7 +80,7 @@ function template_main()
 
 				foreach ($board['move_links'] as $link)
 					echo '
-						<a href="', $link['href'], '" class="move_links" title="', $link['label'], '"><img src="', $settings['images_url'], '/board_select_spot', $link['child_level'] > 0 ? '_child' : '', '.gif" alt="', $link['label'], '" style="padding: 0px; margin: 0px"></a>';
+						<a href="', $link['href'], '" class="move_links" title="', $link['label'], '"><img src="', $theme['images_url'], '/board_select_spot', $link['child_level'] > 0 ? '_child' : '', '.gif" alt="', $link['label'], '" style="padding: 0px; margin: 0px"></a>';
 
 				echo '
 					</li>';
@@ -105,7 +105,7 @@ function template_main()
 // Template for editing/adding a category on the forum.
 function template_modify_category()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	// Print table header.
 	echo '
@@ -182,7 +182,7 @@ function template_modify_category()
 // A template to confirm if a user wishes to delete a category - and whether they want to save the boards.
 function template_confirm_category_delete()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	// Print table header.
 	echo '
@@ -236,7 +236,7 @@ function template_confirm_category_delete()
 // Below is the template for adding/editing an board on the forum.
 function template_modify_board()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings, $user_info, $language;
+	global $context, $theme, $options, $scripturl, $txt, $settings, $user_info, $language;
 
 	// The main table header.
 	echo '
@@ -309,7 +309,7 @@ function template_modify_board()
 						<input type="text" name="board_name" value="', $context['board']['name'], '" size="30">
 					</dd>';
 
-	if (!empty($modSettings['pretty_filters']['boards']))
+	if (!empty($settings['pretty_filters']['boards']))
 	{
 		$m = array(1 => '', 2 => $_SERVER['HTTP_HOST'], 3 => '');
 		if (isset($context['board']['url']))
@@ -480,11 +480,11 @@ function template_modify_board()
 							<select name="boardtheme" id="boardtheme" onchange="refreshOptions();">
 								<option value="0"', $context['board']['theme'] == 0 ? ' selected' : '', '>', $txt['mboards_theme_default'], '</option>';
 
-	foreach ($context['themes'] as $theme)
+	foreach ($context['themes'] as $th)
 	{
-		echo '<option value="', $theme['id'], '"', $context['board']['theme'] == $theme['id'] && (empty($context['board']['skin']) || $context['board']['skin'] == 'skins') ? ' selected' : '', '>', $theme['name'], '</option>';
-		if (!empty($theme['skins']))
-			wedge_show_skins($theme, $theme['skins'], 1, $context['board']['theme'], $context['board']['skin']);
+		echo '<option value="', $th['id'], '"', $context['board']['theme'] == $th['id'] && (empty($context['board']['skin']) || $context['board']['skin'] == 'skins') ? ' selected' : '', '>', $th['name'], '</option>';
+		if (!empty($th['skins']))
+			wedge_show_skins($th, $th['skins'], 1, $context['board']['theme'], $context['board']['skin']);
 	}
 
 	echo '
@@ -627,7 +627,7 @@ function template_modify_board()
 // A template used when a user is deleting a board with child boards in it - to see what they want to do with them.
 function template_confirm_board_delete()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	// Print table header.
 	echo '

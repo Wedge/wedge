@@ -39,7 +39,7 @@ function template_aeva_admin_enclose_table_after()
 
 function template_aeva_admin_submissions()
 {
-	global $context, $txt, $scripturl, $galurl, $settings, $amSettings;
+	global $context, $txt, $scripturl, $galurl, $theme, $amSettings;
 
 	$filter = $context['aeva_filter'];
 
@@ -79,10 +79,10 @@ function template_aeva_admin_submissions()
 					<td><a href="', $item['item_link'], '">', $item['title'], '</a></td>
 					<td>', $item['poster'], '</td>
 					<td>
-						<img src="', $settings['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], ';xml\');">', $txt['media_admin_approve'], '</a>
-						<img src="', $settings['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
-						<img src="', $settings['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ') && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
-						<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $settings['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
+						<img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], ';xml\');">', $txt['media_admin_approve'], '</a>
+						<img src="', $theme['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
+						<img src="', $theme['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ') && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
+						<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $theme['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
 					</td>', $filter != 'albums' ? '
 					<td>' . $item['posted_on'] . '</td>' : '', '
 					<td><input type="checkbox" name="items[]" value="', $item['id'], '" id="items[]"></td>
@@ -321,7 +321,7 @@ function template_aeva_admin_modlog()
 function template_aeva_admin_reports()
 {
 	// Shows the reports page
-	global $galurl, $scripturl, $context, $txt, $settings, $amSettings;
+	global $galurl, $scripturl, $context, $txt, $theme, $amSettings;
 
 	echo '
 
@@ -486,7 +486,7 @@ function template_aeva_admin_about()
 
 function template_aeva_admin_perms()
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $scripturl, $theme;
 
 	echo '
 	<we:title>
@@ -764,7 +764,7 @@ function template_aeva_admin_fields()
 // FTP Import template
 function template_aeva_admin_ftpimport()
 {
-	global $context, $scripturl, $txt, $settings;
+	global $context, $scripturl, $txt, $theme;
 
 	$albumOpts_str = '
 	<option class="hr"></option>';
@@ -801,7 +801,7 @@ function template_aeva_admin_ftpimport()
 		echo '
 			<tr>
 				<td class="windowbg2 smalltext" style="padding-left: ', (30 * $context['ftp_map'][$folder]['child_level']), 'px">
-					&nbsp;<img src="', $settings['images_aeva'], '/album.png"> ', $context['ftp_map'][$folder]['fname'], ' (', count($context['ftp_map'][$folder]['files']), ' ', $txt['media_files'], ')
+					&nbsp;<img src="', $theme['images_aeva'], '/album.png"> ', $context['ftp_map'][$folder]['fname'], ' (', count($context['ftp_map'][$folder]['files']), ' ', $txt['media_files'], ')
 					&nbsp;<select name="aeva_folder_', $folder, '">', $albumOpts_str, '</select>
 				</td>
 			</tr>';

@@ -13,12 +13,12 @@
 
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	echo '
 	<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<we:cat>
-			', !empty($settings['use_buttons']) ? '<img src="' . $settings['images_url'] . '/buttons/search.gif">' : '', $txt['set_parameters'], '
+			', !empty($theme['use_buttons']) ? '<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', $txt['set_parameters'], '
 		</we:cat>';
 
 	if (!empty($context['search_errors']))
@@ -37,7 +37,7 @@ function template_main()
 					', $context['require_verification'] ? '' : '&nbsp;<input type="submit" name="submit" value="' . $txt['search'] . '" class="submit">
 				</div>';
 
-		if (empty($modSettings['search_simple_fulltext']))
+		if (empty($settings['search_simple_fulltext']))
 			echo '
 				<p class="smalltext">', $txt['search_example'], '</p>';
 
@@ -74,7 +74,7 @@ function template_main()
 						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['all_words'], '</option>
 						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['any_words'], '</option>
 					</select>
-				</span>', empty($modSettings['search_simple_fulltext']) ? '
+				</span>', empty($settings['search_simple_fulltext']) ? '
 				<em class="smalltext">' . $txt['search_example'] . '</em>' : '', '
 				<dl id="search_options">
 					<dt>', $txt['by_user'], ':</dt>
@@ -201,7 +201,7 @@ function template_main()
 
 function template_results()
 {
-	global $context, $settings, $options, $txt, $scripturl, $message;
+	global $context, $theme, $options, $txt, $scripturl, $message;
 
 	if (isset($context['did_you_mean']) || empty($context['topics']))
 	{
@@ -253,7 +253,7 @@ function template_results()
 
 		echo '
 		<we:cat>
-			<img src="', $settings['images_url'], '/buttons/search.gif">', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
+			<img src="', $theme['images_url'], '/buttons/search.gif">', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 		</we:cat>
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
@@ -295,11 +295,11 @@ function template_results()
 					{
 						if ($topic['quick_mod']['remove'])
 							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
+						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $theme['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
 
 						if ($topic['quick_mod']['lock'])
 							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
+						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $theme['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
 
 						if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
 							echo '
@@ -307,11 +307,11 @@ function template_results()
 
 						if ($topic['quick_mod']['pin'])
 							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $settings['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
+						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $theme['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
 
 						if ($topic['quick_mod']['move'])
 							echo '
-						<a href="', $scripturl, '?action=movetopic;topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
+						<a href="', $scripturl, '?action=movetopic;topic=', $topic['id'], '.0"><img src="', $theme['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
 					}
 
 					echo '
@@ -386,7 +386,7 @@ function template_results()
 	{
 		echo '
 		<we:cat>
-			<img src="' . $settings['images_url'] . '/buttons/search.gif">&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
+			<img src="' . $theme['images_url'] . '/buttons/search.gif">&nbsp;', $txt['mlist_search_results'], ':&nbsp;', $context['search_params']['search'], '
 		</we:cat>
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>

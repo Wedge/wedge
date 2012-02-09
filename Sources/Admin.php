@@ -44,8 +44,8 @@ if (!defined('WEDGE'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $modSettings, $user_info;
-	global $settings, $options, $boardurl, $admin_areas;
+	global $txt, $context, $scripturl, $settings, $user_info;
+	global $theme, $options, $boardurl, $admin_areas;
 
 	// Load the language strings for use in the menu...
 	loadLanguage('Admin');
@@ -111,7 +111,7 @@ function Admin()
 					'label' => $txt['theme_current_settings'],
 					'file' => 'Themes',
 					'function' => 'ThemesMain',
-					'custom_url' => $scripturl . '?action=admin;area=theme;sa=settings;th=' . $settings['theme_id'],
+					'custom_url' => $scripturl . '?action=admin;area=theme;sa=settings;th=' . $theme['theme_id'],
 					'icon' => 'current_theme.gif',
 					'bigicon' => 'current_theme.png',
 				),
@@ -173,10 +173,10 @@ function Admin()
 					'permission' => array('manage_smileys'),
 					'subsections' => array(
 						'editsets' => array($txt['smiley_sets']),
-						'addsmiley' => array($txt['smileys_add'], 'enabled' => !empty($modSettings['smiley_enable'])),
-						'editsmileys' => array($txt['smileys_edit'], 'enabled' => !empty($modSettings['smiley_enable'])),
-						'setorder' => array($txt['smileys_set_order'], 'enabled' => !empty($modSettings['smiley_enable'])),
-						'editicons' => array($txt['icons_edit_message_icons'], 'enabled' => !empty($modSettings['messageIcons_enable'])),
+						'addsmiley' => array($txt['smileys_add'], 'enabled' => !empty($settings['smiley_enable'])),
+						'editsmileys' => array($txt['smileys_edit'], 'enabled' => !empty($settings['smiley_enable'])),
+						'setorder' => array($txt['smileys_set_order'], 'enabled' => !empty($settings['smiley_enable'])),
+						'editicons' => array($txt['icons_edit_message_icons'], 'enabled' => !empty($settings['messageIcons_enable'])),
 						'',
 						'settings' => array($txt['settings']),
 					),
@@ -231,7 +231,7 @@ function Admin()
 				'aeva_embed' => array(
 					'label' => $txt['media_admin_labels_embed'],
 					'icon' => 'aeva.png',
-					'bigicon' => !empty($modSettings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
+					'bigicon' => !empty($settings['embed_enabled']) ? 'autoembed_on.png' : 'autoembed_off.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -244,13 +244,13 @@ function Admin()
 					'label' => $txt['search_engines'],
 					'file' => 'ManageSearchEngines',
 					'icon' => 'engines.gif',
-					'bigicon' => !empty($modSettings['spider_mode']) ? 'search_engines_on.png' : 'search_engines_off.png',
+					'bigicon' => !empty($settings['spider_mode']) ? 'search_engines_on.png' : 'search_engines_off.png',
 					'function' => 'SearchEngines',
 					'permission' => 'admin_forum',
 					'subsections' => array(
-						'stats' => array($txt['spider_stats'], 'enabled' => !empty($modSettings['spider_mode'])),
-						'logs' => array($txt['spider_log'], 'enabled' => !empty($modSettings['spider_mode'])),
-						'spiders' => array($txt['spiders'], 'enabled' => !empty($modSettings['spider_mode'])),
+						'stats' => array($txt['spider_stats'], 'enabled' => !empty($settings['spider_mode'])),
+						'logs' => array($txt['spider_log'], 'enabled' => !empty($settings['spider_mode'])),
+						'spiders' => array($txt['spiders'], 'enabled' => !empty($settings['spider_mode'])),
 						'',
 						'settings' => array($txt['settings']),
 					),
@@ -265,7 +265,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_about'],
 					'icon' => 'administration.gif',
 					'bigicon' => 'about.png',
-					'enabled' => !empty($modSettings['media_enabled']),
+					'enabled' => !empty($settings['media_enabled']),
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -282,13 +282,13 @@ function Admin()
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
 						'config' => array($txt['media_admin_settings_config'], ),
-						'meta' => array($txt['media_admin_settings_meta'], 'enabled' => !empty($modSettings['media_enabled'])),
-						'layout' => array($txt['media_admin_settings_layout'], 'enabled' => !empty($modSettings['media_enabled'])),
+						'meta' => array($txt['media_admin_settings_meta'], 'enabled' => !empty($settings['media_enabled'])),
+						'layout' => array($txt['media_admin_settings_layout'], 'enabled' => !empty($settings['media_enabled'])),
 					),
 				),
 				'aeva_albums' => array(
 					'label' => $txt['media_admin_labels_albums'],
-					'enabled' => !empty($modSettings['media_enabled']),
+					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'mgallery.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
@@ -303,7 +303,7 @@ function Admin()
 				'',
 				'aeva_fields' => array(
 					'label' => $txt['media_cf'],
-					'enabled' => !empty($modSettings['media_enabled']),
+					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'packages.gif',
 					'bigicon' => 'custom_fields.png',
 					'file' => 'media/ManageMedia',
@@ -316,7 +316,7 @@ function Admin()
 				'',
 				'aeva_perms' => array(
 					'label' => $txt['media_admin_labels_perms'],
-					'enabled' => !empty($modSettings['media_enabled']),
+					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'permissions.gif',
 					'bigicon' => 'permissions.png',
 					'file' => 'media/ManageMedia',
@@ -324,14 +324,14 @@ function Admin()
 				),
 				'aeva_quotas' => array(
 					'label' => $txt['media_admin_labels_quotas'],
-					'enabled' => !empty($modSettings['media_enabled']),
+					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'attachment.gif',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 				),
 				'aeva_bans' => array(
 					'label' => $txt['media_admin_labels_bans'],
-					'enabled' => !empty($modSettings['media_enabled']),
+					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'ban.gif',
 					'bigicon' => 'ban_list.png',
 					'file' => 'media/ManageMedia',
@@ -344,7 +344,7 @@ function Admin()
 				'',
 				'aeva_ftp' => array(
 					'label' => $txt['media_admin_labels_ftp'],
-					'enabled' => !empty($modSettings['media_enabled']),
+					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'boards.gif',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
@@ -408,7 +408,7 @@ function Admin()
 						'index' => array($txt['permissions_groups'], 'manage_permissions'),
 						'board' => array($txt['permissions_boards'], 'manage_permissions'),
 						'profiles' => array($txt['permissions_profiles'], 'manage_permissions'),
-						'postmod' => array($txt['permissions_post_moderation'], 'manage_permissions', 'enabled' => $modSettings['postmod_active']),
+						'postmod' => array($txt['permissions_post_moderation'], 'manage_permissions', 'enabled' => $settings['postmod_active']),
 						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
@@ -443,11 +443,11 @@ function Admin()
 					'label' => $txt['paid_subscriptions'],
 					'file' => 'ManagePaid',
 					'icon' => 'paid.gif',
-					'bigicon' => !empty($modSettings['paid_enabled']) ? 'paid_subs_on.png' : 'paid_subs_off.png',
+					'bigicon' => !empty($settings['paid_enabled']) ? 'paid_subs_on.png' : 'paid_subs_off.png',
 					'function' => 'ManagePaidSubscriptions',
 					'permission' => 'admin_forum',
 					'subsections' => array(
-						'view' => array($txt['paid_subs_view'], 'enabled' => !empty($modSettings['paid_enabled'])),
+						'view' => array($txt['paid_subs_view'], 'enabled' => !empty($settings['paid_enabled'])),
 						'',
 						'settings' => array($txt['settings']),
 					),
@@ -482,9 +482,9 @@ function Admin()
 					'icon' => 'mail.gif',
 					'bigicon' => 'mail_settings.png',
 					'subsections' => array(
-						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($modSettings['mail_queue'])),
+						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($settings['mail_queue'])),
 						'',
-						'settings' => array($txt['mailqueue_settings'], 'admin_forum', 'enabled' => !empty($modSettings['mail_queue'])),
+						'settings' => array($txt['mailqueue_settings'], 'admin_forum', 'enabled' => !empty($settings['mail_queue'])),
 					),
 				),
 				'',
@@ -503,7 +503,7 @@ function Admin()
 				),
 				'aeva_maintenance' => array(
 					'label' => $txt['media_admin_labels_maintenance'],
-					'enabled' => !empty($modSettings['media_enabled']),
+					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'maintain.gif',
 					'bigicon' => 'media_maintenance.png',
 					'file' => 'media/ManageMedia',
@@ -543,11 +543,11 @@ function Admin()
 					'icon' => 'logs.gif',
 					'bigicon' => 'logs.png',
 					'subsections' => array(
-						'errorlog' => array($txt['log_error'], 'admin_forum', 'enabled' => !empty($modSettings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'),
+						'errorlog' => array($txt['log_error'], 'admin_forum', 'enabled' => !empty($settings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'),
 						'',
-						'adminlog' => array($txt['log_admin'], 'admin_forum', 'enabled' => !empty($modSettings['log_enabled_admin'])),
-						'modlog' => array($txt['log_moderation'], 'admin_forum', 'enabled' => !empty($modSettings['log_enabled_moderate'])),
-						'spiderlog' => array($txt['log_spider'], 'admin_forum', 'enabled' => !empty($modSettings['spider_mode'])),
+						'adminlog' => array($txt['log_admin'], 'admin_forum', 'enabled' => !empty($settings['log_enabled_admin'])),
+						'modlog' => array($txt['log_moderation'], 'admin_forum', 'enabled' => !empty($settings['log_enabled_moderate'])),
+						'spiderlog' => array($txt['log_spider'], 'admin_forum', 'enabled' => !empty($settings['spider_mode'])),
 						'tasklog' => array($txt['log_scheduled'], 'admin_forum'),
 						'',
 						'settings' => array($txt['log_settings'], 'admin_forum'),
@@ -619,12 +619,12 @@ function Admin()
 		$menuOptions['toggle_redirect_url'] = 'action=admin;' . $context['session_query'];
 
 	// Any files to include for administration?
-	if (!empty($modSettings['integrate_admin_include']))
+	if (!empty($settings['integrate_admin_include']))
 	{
-		$admin_includes = explode(',', $modSettings['integrate_admin_include']);
+		$admin_includes = explode(',', $settings['integrate_admin_include']);
 		foreach ($admin_includes as $include)
 		{
-			$include = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']));
+			$include = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $theme['theme_dir']));
 			if (file_exists($include))
 				require_once($include);
 		}
@@ -716,7 +716,7 @@ function Admin()
 // The main administration section.
 function AdminHome()
 {
-	global $txt, $scripturl, $context, $user_info, $boardurl, $modSettings;
+	global $txt, $scripturl, $context, $user_info, $boardurl, $settings;
 
 	wetem::load('admin');
 	$context['page_title'] = $txt['admin_center'];
@@ -728,7 +728,7 @@ function AdminHome()
 // We have to do some stuff for the admin sidebar.
 function setupAdminSidebar()
 {
-	global $modSettings, $txt, $context, $scripturl;
+	global $settings, $txt, $context, $scripturl;
 
 	// Find all of this forum's administrators...
 	loadSource('Subs-Membergroups');
@@ -741,7 +741,7 @@ function setupAdminSidebar()
 	wetem::add('sidebar', array('admin_live_news', 'admin_support_info'));
 
 	// The below functions include all the scripts needed from the wedge.org site. The language and format are passed for internationalization.
-	if (empty($modSettings['disable_wedge_js']))
+	if (empty($settings['disable_wedge_js']))
 		add_js_file(array(
 			$scripturl . '?action=viewremote;filename=current-version.js',
 			$scripturl . '?action=viewremote;filename=latest-news.js'

@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	// Some javascript for adding more options.
 	add_js('

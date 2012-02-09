@@ -36,8 +36,8 @@ class captcha_recomposeanim
 
 	public function __construct()
 	{
-		global $modSettings;
-		$this->is_available = !empty($modSettings['use_animated_captcha']);
+		global $settings;
+		$this->is_available = !empty($settings['use_animated_captcha']);
 	}
 
 	protected function init()
@@ -116,7 +116,7 @@ class captcha_recomposeanim
 
 	protected function generate_pixelmap()
 	{
-		global $settings;
+		global $theme;
 
 		$image = imagecreate($this->width, $this->height);
 		$black = imagecolorallocate($image, 0, 0, 0);
@@ -127,7 +127,7 @@ class captcha_recomposeanim
 
 		$this->pixelmap = array();
 		for ($i = 0, $n = strlen($this->code); $i < $n; $i++)
-			imagettftext($image, $this->size, 0, $i * 36 + mt_rand(7, 12), $this->height - mt_rand(3, 5), -$white, $settings['default_theme_dir'] . '/fonts/Screenge.ttf', substr($this->code, $i, 1));
+			imagettftext($image, $this->size, 0, $i * 36 + mt_rand(7, 12), $this->height - mt_rand(3, 5), -$white, $theme['default_theme_dir'] . '/fonts/Screenge.ttf', substr($this->code, $i, 1));
 			// ^^ Note the slightly odd - syntax above. This is because for some reason you have to do this to turn off antialiasing.
 
 		// OK, now we have our control image. Let's get the pixelmap. Sorry, server, this IS going to hurt.

@@ -365,7 +365,7 @@ function EditCategory2()
 //		- Silently make a default pretty board URL if the feature is disabled (we might need it later)
 function EditBoard()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $modSettings, $user_info;
+	global $txt, $context, $cat_tree, $boards, $boardList, $settings, $user_info;
 
 	loadTemplate('ManageBoards');
 	loadSource('Subs-Boards');
@@ -439,7 +439,7 @@ function EditBoard()
 		$context['board']['name'] = westr::safe($context['board']['name'], ENT_COMPAT, false);
 		$context['board']['description'] = westr::safe($context['board']['description'], ENT_COMPAT, false);
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
-		$context['board']['is_recycle'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $context['board']['id'];
+		$context['board']['is_recycle'] = !empty($settings['recycle_enable']) && !empty($settings['recycle_board']) && $settings['recycle_board'] == $context['board']['id'];
 	}
 	$context['board']['subdomains'] = $subdomains;
 
@@ -490,7 +490,7 @@ function EditBoard()
 	}
 	wesql::free_result($request);
 
-	if (empty($modSettings['allow_guestAccess']))
+	if (empty($settings['allow_guestAccess']))
 		unset($context['groups'][-1]);
 
 	// Category doesn't exist, man... sorry.
@@ -606,7 +606,7 @@ function EditBoard()
 // Make changes to/delete a board.
 function EditBoard2()
 {
-	global $txt, $modSettings, $context;
+	global $txt, $settings, $context;
 
 	checkSession();
 
@@ -648,13 +648,13 @@ function EditBoard2()
 			foreach ($_POST['groups'] as $group)
 				$boardOptions['access_groups'][] = (int) $group;
 
-		if (empty($modSettings['allow_guestAccess']))
+		if (empty($settings['allow_guestAccess']))
 			$boardOptions['access_groups'] = array_diff($boardOptions['access_groups'], array(-1));
 
 		// Change '1 & 2' to '1 &amp; 2', but not '&amp;' to '&amp;amp;'...
 		$boardOptions['board_name'] = preg_replace('~&(?!amp;)~', '&amp;', $_POST['board_name']);
 		$boardOptions['board_description'] = preg_replace('~&(?!amp;)~', '&amp;', $_POST['desc']);
-		if (!empty($modSettings['pretty_filters']['boards']))
+		if (!empty($settings['pretty_filters']['boards']))
 		{
 			$boardOptions['pretty_url'] = $_POST['pretty_url'];
 			$boardOptions['pretty_url_dom'] = $_POST['pretty_url_dom'];
@@ -751,7 +751,7 @@ function EditBoard2()
 
 function EditBoardSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	// Load the boards list - for the recycle bin!
 	$recycle_boards = array('');

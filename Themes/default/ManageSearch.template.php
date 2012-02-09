@@ -13,7 +13,7 @@
 
 function template_modify_weights()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">
@@ -28,7 +28,7 @@ function template_modify_weights()
 						', $txt['search_weight_frequency'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_frequency" id="weight1_val" value="', empty($modSettings['search_weight_frequency']) ? '0' : $modSettings['search_weight_frequency'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input type="text" name="search_weight_frequency" id="weight1_val" value="', empty($settings['search_weight_frequency']) ? '0' : $settings['search_weight_frequency'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight1" class="search_weight">', $context['relative_weights']['search_weight_frequency'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -36,7 +36,7 @@ function template_modify_weights()
 						', $txt['search_weight_age'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_age" id="weight2_val" value="', empty($modSettings['search_weight_age']) ? '0' : $modSettings['search_weight_age'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input type="text" name="search_weight_age" id="weight2_val" value="', empty($settings['search_weight_age']) ? '0' : $settings['search_weight_age'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight2" class="search_weight">', $context['relative_weights']['search_weight_age'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -44,7 +44,7 @@ function template_modify_weights()
 						', $txt['search_weight_length'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_length" id="weight3_val" value="', empty($modSettings['search_weight_length']) ? '0' : $modSettings['search_weight_length'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input type="text" name="search_weight_length" id="weight3_val" value="', empty($settings['search_weight_length']) ? '0' : $settings['search_weight_length'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight3" class="search_weight">', $context['relative_weights']['search_weight_length'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -52,7 +52,7 @@ function template_modify_weights()
 						', $txt['search_weight_subject'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_subject" id="weight4_val" value="', empty($modSettings['search_weight_subject']) ? '0' : $modSettings['search_weight_subject'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input type="text" name="search_weight_subject" id="weight4_val" value="', empty($settings['search_weight_subject']) ? '0' : $settings['search_weight_subject'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight4" class="search_weight">', $context['relative_weights']['search_weight_subject'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -60,7 +60,7 @@ function template_modify_weights()
 						', $txt['search_weight_first_message'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_first_message" id="weight5_val" value="', empty($modSettings['search_weight_first_message']) ? '0' : $modSettings['search_weight_first_message'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input type="text" name="search_weight_first_message" id="weight5_val" value="', empty($settings['search_weight_first_message']) ? '0' : $settings['search_weight_first_message'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight5" class="search_weight">', $context['relative_weights']['search_weight_first_message'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -68,7 +68,7 @@ function template_modify_weights()
 						', $txt['search_weight_pinned'], ':
 					</dt>
 					<dd class="large_caption">
-						<span class="search_weight"><input type="text" name="search_weight_pinned" id="weight6_val" value="', empty($modSettings['search_weight_pinned']) ? '0' : $modSettings['search_weight_pinned'], '" onchange="calculateNewValues()" size="3"></span>
+						<span class="search_weight"><input type="text" name="search_weight_pinned" id="weight6_val" value="', empty($settings['search_weight_pinned']) ? '0' : $settings['search_weight_pinned'], '" onchange="calculateNewValues()" size="3"></span>
 						<span id="weight6" class="search_weight">', $context['relative_weights']['search_weight_pinned'], '%</span>
 					</dd>
 					<dt class="large_caption">
@@ -100,7 +100,7 @@ function template_modify_weights()
 
 function template_select_search_method()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">
@@ -138,7 +138,7 @@ function template_select_search_method()
 					<dl>
 						<dt>
 							<label>
-								<input type="radio" name="search_index" value=""', empty($modSettings['search_index']) ? ' checked' : '', '>
+								<input type="radio" name="search_index" value=""', empty($settings['search_index']) ? ' checked' : '', '>
 								', $txt['search_index_none'], '
 							</label>
 						</dt>';
@@ -148,7 +148,7 @@ function template_select_search_method()
 		echo '
 						<dt>
 							<label>
-								<input type="radio" name="search_index" value="fulltext"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext' ? ' checked' : '', empty($context['fulltext_index']) ? ' onclick="alert(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . '); return true;"': '', '>
+								<input type="radio" name="search_index" value="fulltext"', !empty($settings['search_index']) && $settings['search_index'] == 'fulltext' ? ' checked' : '', empty($context['fulltext_index']) ? ' onclick="alert(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . '); return true;"': '', '>
 								', $txt['search_method_fulltext_index'], '
 							</label>
 						</dt>
@@ -174,7 +174,7 @@ function template_select_search_method()
 	echo '
 						<dt>
 							<label>
-								<input type="radio" name="search_index" value="custom"', !empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="alert(' . JavaScriptEscape($txt['search_index_custom_warning']) . '); return true;"', '>
+								<input type="radio" name="search_index" value="custom"', !empty($settings['search_index']) && $settings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="alert(' . JavaScriptEscape($txt['search_index_custom_warning']) . '); return true;"', '>
 								', $txt['search_index_custom'], '
 							</label>
 						</dt>
@@ -204,7 +204,7 @@ function template_select_search_method()
 
 		echo '
 						<dt>
-							<input type="radio" name="search_index" value="', $api['setting_index'], '"', !empty($modSettings['search_index']) && $modSettings['search_index'] == $api['setting_index'] ? ' checked' : '', '>
+							<input type="radio" name="search_index" value="', $api['setting_index'], '"', !empty($settings['search_index']) && $settings['search_index'] == $api['setting_index'] ? ' checked' : '', '>
 							', $api['label'], '
 						</dt>';
 
@@ -220,8 +220,8 @@ function template_select_search_method()
 				</fieldset>
 				<fieldset class="search_settings floatright">
 				<legend>', $txt['search_method'], '</legend>
-					<label><input type="checkbox" name="search_force_index" id="search_force_index_check" value="1"', empty($modSettings['search_force_index']) ? '' : ' checked', '> ', $txt['search_force_index'], '</label><br>
-					<label><input type="checkbox" name="search_match_words" id="search_match_words_check" value="1"', empty($modSettings['search_match_words']) ? '' : ' checked', '> ', $txt['search_match_words'], '</label>
+					<label><input type="checkbox" name="search_force_index" id="search_force_index_check" value="1"', empty($settings['search_force_index']) ? '' : ' checked', '> ', $txt['search_force_index'], '</label><br>
+					<label><input type="checkbox" name="search_match_words" id="search_match_words_check" value="1"', empty($settings['search_match_words']) ? '' : ' checked', '> ', $txt['search_match_words'], '</label>
 				</fieldset>
 				<div class="clear">
 					<input type="submit" name="save" value="', $txt['search_method_save'], '" class="save floatright">
@@ -236,7 +236,7 @@ function template_select_search_method()
 
 function template_create_index()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 	<div id="admincenter">
@@ -267,7 +267,7 @@ function template_create_index()
 
 function template_create_index_progress()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 	<div id="admincenter">
@@ -312,7 +312,7 @@ function template_create_index_progress()
 
 function template_create_index_done()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 	echo '
 	<div id="admincenter">
 		<we:cat>
@@ -331,7 +331,7 @@ function template_create_index_done()
 // Add or edit a search engine spider.
 function template_spider_edit()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 	echo '
 	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="UTF-8">
@@ -376,7 +376,7 @@ function template_spider_edit()
 // Show... spider... logs...
 function template_show_spider_log()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $theme, $scripturl;
 
 	echo '
 	<div id="admincenter">';

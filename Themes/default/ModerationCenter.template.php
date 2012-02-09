@@ -52,7 +52,7 @@ function template_moderation_center()
 
 function template_latest_news()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $settings;
 
 	echo '
 		<we:cat>
@@ -65,7 +65,7 @@ function template_latest_news()
 
 	// This requires a lot of javascript...
 	//!!! Put this in its own file!!
-	if (empty($modSettings['disable_wedge_js']))
+	if (empty($settings['disable_wedge_js']))
 		add_js_file(array(
 			$scripturl . '?action=viewremote;filename=current-version.js',
 			$scripturl . '?action=viewremote;filename=latest-news.js'
@@ -190,7 +190,7 @@ function template_watched_users()
 // Little section for making... notes.
 function template_notes()
 {
-	global $settings, $context, $txt, $scripturl;
+	global $theme, $context, $txt, $scripturl;
 
 	echo '
 		<form action="', $scripturl, '?action=moderate;area=index" method="post">
@@ -208,7 +208,7 @@ function template_notes()
 			// Cycle through the notes.
 			foreach ($context['notes'] as $note)
 				echo '
-						<li class="smalltext"><a href="', $note['delete_href'], '"><img src="', $settings['images_url'], '/pm_recipient_delete.gif"></a> <strong>', $note['author']['link'], ':</strong> ', $note['text'], '</li>';
+						<li class="smalltext"><a href="', $note['delete_href'], '"><img src="', $theme['images_url'], '/pm_recipient_delete.gif"></a> <strong>', $note['author']['link'], ':</strong> ', $note['text'], '</li>';
 
 			echo '
 					</ul>

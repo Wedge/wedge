@@ -227,7 +227,7 @@ function aeva_get_dir_list_subfolders($dirs, $data, &$_list)
 // Get the HTML code for a media item
 function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc = '', $type = null)
 {
-	global $galurl, $context, $settings, $amSettings, $modSettings, $cookiename;
+	global $galurl, $context, $theme, $amSettings, $settings, $cookiename;
 	static $swfobjects = 0;
 
 	if (empty($type))
@@ -399,7 +399,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 
 function aeva_initZoom($autosize, $peralbum = array())
 {
-	global $txt, $settings;
+	global $txt, $theme;
 
 	add_js_file('scripts/zoomedia.js');
 	add_js('
@@ -554,9 +554,9 @@ function aeva_splitTags($string, $separator = ',')
 
 function aeva_string($str, $is_filename = true, $limit = 255, $ellipsis = true, $check_multibyte = false, $cut_long_words = false, $hard_limit = 0)
 {
-	global $modSettings;
+	global $settings;
 
-	if (!empty($modSettings['embed_enabled']) && function_exists('aeva_onposting'))
+	if (!empty($settings['embed_enabled']) && function_exists('aeva_onposting'))
 		$str = aeva_onposting($str);
 
 	if ($limit === 0 || westr::strlen($str) <= $limit)

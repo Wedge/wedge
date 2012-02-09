@@ -53,7 +53,7 @@ if (!defined('WEDGE'))
 // The central part of the board - topic display.
 function Display()
 {
-	global $scripturl, $txt, $modSettings, $context, $settings;
+	global $scripturl, $txt, $settings, $context, $theme;
 	global $options, $user_info, $board_info, $topic, $board, $boardurl;
 	global $attachments, $messages_request, $topicinfo, $language;
 
@@ -63,7 +63,7 @@ function Display()
 
 	// 301 redirects on old-school queries like "?topic=242.0"
 	// !!! Should we just be taking the original HTTP var and redirect to it?
-	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($modSettings['pretty_filters']['topics']))
+	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($settings['pretty_filters']['topics']))
 	{
 		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['topicseen']) ? ';topicseen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
 		header('HTTP/1.1 301 Moved Permanently');
@@ -101,7 +101,7 @@ function Display()
 	}
 
 	// How much are we sticking on each page?
-	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
+	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 
 	// Let's do some work on what to search index.
 	if (count($_GET) > 2)
@@ -133,7 +133,7 @@ function Display()
 			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll,
 			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, ms.poster_time,
 			' . ($user_info['is_guest'] ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
-			' . (!empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
+			' . (!empty($settings['recycle_board']) && $settings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)' . ($user_info['is_guest'] ? '' : '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = {int:current_topic} AND lt.id_member = {int:current_member})
@@ -156,13 +156,13 @@ function Display()
 	$context['topic_last_message'] = $topicinfo['id_last_msg'];
 
 	// Add up unapproved replies to get real number of replies...
-	if ($modSettings['postmod_active'] && allowedTo('approve_posts'))
+	if ($settings['postmod_active'] && allowedTo('approve_posts'))
 		$context['real_num_replies'] += $topicinfo['unapproved_posts'] - ($topicinfo['approved'] ? 0 : 1);
 
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
 	// We also need to discount the first post if this is a blog board.
 	$including_first = $topicinfo['approved'] && $board_info['type'] == 'board';
-	if ($modSettings['postmod_active'] && $topicinfo['unapproved_posts'] && !$user_info['is_guest'] && !allowedTo('approve_posts'))
+	if ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !$user_info['is_guest'] && !allowedTo('approve_posts'))
 	{
 		$request = wesql::query('
 			SELECT COUNT(id_member) AS my_unapproved_posts
@@ -232,7 +232,7 @@ function Display()
 					SELECT COUNT(*)
 					FROM {db_prefix}messages
 					WHERE poster_time < {int:timestamp}
-						AND id_topic = {int:current_topic}' . ($modSettings['postmod_active'] && $topicinfo['unapproved_posts'] && !allowedTo('approve_posts') ? '
+						AND id_topic = {int:current_topic}' . ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !allowedTo('approve_posts') ? '
 						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
 					array(
 						'current_topic' => $topic,
@@ -264,7 +264,7 @@ function Display()
 					SELECT COUNT(*)
 					FROM {db_prefix}messages
 					WHERE id_msg < {int:virtual_msg}
-						AND id_topic = {int:current_topic}' . ($modSettings['postmod_active'] && $topicinfo['unapproved_posts'] && !allowedTo('approve_posts') ? '
+						AND id_topic = {int:current_topic}' . ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !allowedTo('approve_posts') ? '
 						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
 					array(
 						'current_member' => $user_info['id'],
@@ -284,7 +284,7 @@ function Display()
 	}
 
 	// No use in calculating the next topic if there's only one.
-	if (!empty($modSettings['enablePreviousNext']) && $board_info['num_topics'] > 1)
+	if (!empty($settings['enablePreviousNext']) && $board_info['num_topics'] > 1)
 	{
 		$sort_methods = array(
 			'subject' => array(
@@ -345,7 +345,7 @@ function Display()
 				WHERE t.id_topic = (
 					SELECT t.id_topic' . (isset($sort_methods[$sort_by]['select']) ? $sort_methods[$sort_by]['select'] : '') . '
 					FROM {db_prefix}topics AS t' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
-					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					WHERE t.id_board = {int:current_board}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
 						AND ' . $sort . ' ' . $sort_methods[$sort_by]['cmp'] . '
 					ORDER BY t.is_pinned' . ($ascending ? ' DESC' : '') . ', ' . $sort . ($ascending ? ' DESC' : '') . '
@@ -360,7 +360,7 @@ function Display()
 				WHERE t.id_topic = (
 					SELECT t.id_topic' . (isset($sort_methods[$sort_by]['select']) ? $sort_methods[$sort_by]['select'] : '') . '
 					FROM {db_prefix}topics AS t' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
-					WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					WHERE t.id_board = {int:current_board}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
 						AND ' . $sort . ' ' . str_replace('>', '<', $sort_methods[$sort_by]['cmp']) . '
 					ORDER BY t.is_pinned' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
@@ -399,10 +399,10 @@ function Display()
 				<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="' . $scripturl . '?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
 
 	// Check if spellchecking is both enabled and actually working. (for quick reply.)
-	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
+	$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
+	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || ($user_info['is_guest'] && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');
@@ -414,8 +414,8 @@ function Display()
 	}
 
 	// Are we showing signatures - or disabled fields?
-	$context['signature_enabled'] = $modSettings['signature_settings'][0] == 1;
-	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['signature_enabled'] = $settings['signature_settings'][0] == 1;
+	$context['disabled_fields'] = isset($settings['disabled_profile_fields']) ? array_flip(explode(',', $settings['disabled_profile_fields'])) : array();
 
 	// Censor the title...
 	censorText($topicinfo['subject']);
@@ -433,7 +433,7 @@ function Display()
 	$context['draft_saved'] = isset($_GET['draftsaved']);
 
 	// Let's get nosey, who is viewing this topic?
-	if (!empty($modSettings['display_who_viewing']) && !WIRELESS)
+	if (!empty($settings['display_who_viewing']) && !WIRELESS)
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('topic');
@@ -441,7 +441,7 @@ function Display()
 	}
 
 	// If all is set, but not allowed... just unset it.
-	$can_show_all = !empty($modSettings['enableAllMessages']) && $context['total_visible_posts'] > $context['messages_per_page'] && $context['total_visible_posts'] < $modSettings['enableAllMessages'];
+	$can_show_all = !empty($settings['enableAllMessages']) && $context['total_visible_posts'] > $context['messages_per_page'] && $context['total_visible_posts'] < $settings['enableAllMessages'];
 	if (isset($_REQUEST['all']) && !$can_show_all)
 		unset($_REQUEST['all']);
 	// Otherwise, it must be allowed... so pretend start was -1.
@@ -488,7 +488,7 @@ function Display()
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?topic=' . $topic . '.0',
 		'name' => $topicinfo['subject'],
-		'extra_before' => $settings['linktree_inline'] ? $txt['topic'] . ': ' : ''
+		'extra_before' => $theme['linktree_inline'] ? $txt['topic'] . ': ' : ''
 	);
 
 	// Build a list of this board's moderators.
@@ -512,7 +512,7 @@ function Display()
 	$context['is_pinned'] = $topicinfo['is_pinned'];
 	$context['is_approved'] = $topicinfo['approved'];
 
-	$context['is_poll'] = $topicinfo['id_poll'] > 0 && $modSettings['pollMode'] == '1' && allowedTo('poll_view');
+	$context['is_poll'] = $topicinfo['id_poll'] > 0 && $settings['pollMode'] == '1' && allowedTo('poll_view');
 
 	// Did this user start the topic or not?
 	$context['user']['started'] = $user_info['id'] == $topicinfo['id_member_started'] && !$user_info['is_guest'];
@@ -715,7 +715,7 @@ function Display()
 				'percent' => $bar,
 				'votes' => $option['votes'],
 				'voted_this' => $option['voted_this'] != -1,
-				'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif"><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif"></span>',
+				'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif"><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif"></span>',
 				// Note: IE < 8 requires us to set a width on the container, too.
 				'bar_ndt' => $bar > 0 ? '<div class="bar" style="width: ' . ($bar * 3.5 + 4) . 'px"><div style="width: ' . $bar * 3.5 . 'px"></div></div>' : '',
 				'bar_width' => $barWide,
@@ -777,7 +777,7 @@ function Display()
 	$request = wesql::query('
 		SELECT id_msg, id_member, approved, poster_time
 		FROM {db_prefix}messages
-		WHERE id_topic = {int:current_topic}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : (!empty($modSettings['db_mysql_group_by_fix']) ? '' : '
+		WHERE id_topic = {int:current_topic}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : (!empty($settings['db_mysql_group_by_fix']) ? '' : '
 		GROUP BY id_msg') . '
 		HAVING (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')') . '
 		ORDER BY id_msg ' . ($ascending ? '' : 'DESC') . ($context['messages_per_page'] == -1 ? '' : '
@@ -818,7 +818,7 @@ function Display()
 	$posters = array_unique($all_posters);
 
 	// When was the last time this topic was replied to? Should we warn them about it?
-	if (!empty($modSettings['oldTopicDays']))
+	if (!empty($settings['oldTopicDays']))
 	{
 		// Did we already get the last message? If so, we already have the last poster message.
 		if (isset($times[$topicinfo['id_last_msg']]))
@@ -839,7 +839,7 @@ function Display()
 			wesql::free_result($request);
 		}
 
-		$context['oldTopicError'] = $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time();
+		$context['oldTopicError'] = $lastPostTime + $settings['oldTopicDays'] * 86400 < time();
 	}
 
 	// Guests can't mark topics read or for notifications, just can't sorry.
@@ -847,7 +847,7 @@ function Display()
 	{
 		$mark_at_msg = max($messages);
 		if ($mark_at_msg >= $topicinfo['id_last_msg'])
-			$mark_at_msg = $modSettings['maxMsgID'];
+			$mark_at_msg = $settings['maxMsgID'];
 		if ($mark_at_msg >= $topicinfo['new_from'])
 		{
 			wesql::insert($topicinfo['new_from'] == 0 ? 'ignore' : 'replace',
@@ -942,7 +942,7 @@ function Display()
 			wesql::insert('replace',
 				'{db_prefix}log_boards',
 				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-				array($modSettings['maxMsgID'], $user_info['id'], $board),
+				array($settings['maxMsgID'], $user_info['id'], $board),
 				array('id_member', 'id_board')
 			);
 		}
@@ -954,14 +954,14 @@ function Display()
 	if (!empty($messages))
 	{
 		// Fetch attachments.
-		if (!empty($modSettings['attachmentEnable']) && allowedTo('view_attachments'))
+		if (!empty($settings['attachmentEnable']) && allowedTo('view_attachments'))
 		{
 			$request = wesql::query('
 				SELECT
 					a.id_attach, a.id_folder, a.id_msg, a.filename, a.file_hash, IFNULL(a.size, 0) AS filesize, a.downloads, a.transparency, a.approved,
-					a.width, a.height' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ',
+					a.width, a.height' . (empty($settings['attachmentShowImages']) || empty($settings['attachmentThumbnails']) ? '' : ',
 					IFNULL(thumb.id_attach, 0) AS id_thumb, thumb.width AS thumb_width, thumb.height AS thumb_height') . '
-				FROM {db_prefix}attachments AS a' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : '
+				FROM {db_prefix}attachments AS a' . (empty($settings['attachmentShowImages']) || empty($settings['attachmentThumbnails']) ? '' : '
 					LEFT JOIN {db_prefix}attachments AS thumb ON (thumb.id_attach = a.id_thumb)') . '
 				WHERE a.id_msg IN ({array_int:message_list})
 					AND a.attachment_type = {int:attachment_type}',
@@ -974,7 +974,7 @@ function Display()
 			$temp = array();
 			while ($row = wesql::fetch_assoc($request))
 			{
-				if (!$row['approved'] && $modSettings['postmod_active'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
+				if (!$row['approved'] && $settings['postmod_active'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
 					continue;
 
 				$temp[$row['id_attach']] = $row;
@@ -1072,26 +1072,26 @@ function Display()
 
 	// Cleanup all the permissions with extra stuff...
 	$context['can_mark_notify'] &= !$context['user']['is_guest'];
-	$context['can_add_poll'] &= $modSettings['pollMode'] == '1' && $topicinfo['id_poll'] <= 0;
-	$context['can_remove_poll'] &= $modSettings['pollMode'] == '1' && $topicinfo['id_poll'] > 0;
+	$context['can_add_poll'] &= $settings['pollMode'] == '1' && $topicinfo['id_poll'] <= 0;
+	$context['can_remove_poll'] &= $settings['pollMode'] == '1' && $topicinfo['id_poll'] > 0;
 	$context['can_reply'] &= empty($topicinfo['locked']) || allowedTo('moderate_board');
-	$context['can_reply_unapproved'] &= $modSettings['postmod_active'] && (empty($topicinfo['locked']) || allowedTo('moderate_board'));
+	$context['can_reply_unapproved'] &= $settings['postmod_active'] && (empty($topicinfo['locked']) || allowedTo('moderate_board'));
 	// Handle approval flags...
 	$context['can_reply_approved'] = $context['can_reply'];
 	$context['can_reply'] |= $context['can_reply_unapproved'];
-	$context['can_quote'] = $context['can_reply'] && (empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC'])));
+	$context['can_quote'] = $context['can_reply'] && (empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC'])));
 	$context['can_mark_unread'] = !$user_info['is_guest'];
 	// Prevent robots from accessing the Post template
 	$context['can_reply'] &= empty($context['possibly_robot']);
 
-	$context['can_send_topic'] = (!$modSettings['postmod_active'] || $topicinfo['approved']) && allowedTo('send_topic');
+	$context['can_send_topic'] = (!$settings['postmod_active'] || $topicinfo['approved']) && allowedTo('send_topic');
 
 	// Start this off for quick moderation - it will be or'd for each post.
 	$context['can_remove_post'] = allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']);
 
 	// Can restore topic? That's if the topic is in the recycle board and has a previous restore state.
-	$context['can_restore_topic'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_board']);
-	$context['can_restore_msg'] &= !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board && !empty($topicinfo['id_previous_topic']);
+	$context['can_restore_topic'] &= !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board && !empty($topicinfo['id_previous_board']);
+	$context['can_restore_msg'] &= !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board && !empty($topicinfo['id_previous_topic']);
 
 	// Wireless shows a "more" if you can do anything special.
 	if (WIRELESS)
@@ -1129,7 +1129,7 @@ function Display()
 				// Add height and width for the editor. The textarea can be bigger if it's collapsed by default.
 				'height' => $options['display_quick_reply'] == 2 ? '100px' : '150px',
 				'width' => '100%',
-				'drafts' => !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
+				'drafts' => !allowedTo('save_post_draft') || empty($settings['masterSavePostDrafts']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($settings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
 				// Now, since we're custom styling these, we need our own divs. For shame!
 				'custom_bbc_div' => 'bbcBox_message',
 				'custom_smiley_div' => 'smileyBox_message',
@@ -1138,7 +1138,7 @@ function Display()
 	}
 
 	// "Mini-menu's small in size, but it's very wise."
-	$short_profiles = !empty($modSettings['pretty_filters']['profiles']);
+	$short_profiles = !empty($settings['pretty_filters']['profiles']);
 	$context['user_menu'] = array();
 	$context['user_menu_items_show'] = array();
 	$context['user_menu_items'] = array(
@@ -1213,9 +1213,9 @@ function Display()
 	$su = '~' . preg_quote($scripturl, '~');
 
 	// A total hack for pretty URLs... Wanna spend more processing time on this detail? I don't think so!
-	if (!empty($modSettings['pretty_filters']['actions']))
+	if (!empty($settings['pretty_filters']['actions']))
 	{
-		$action_prefix = isset($modSettings['pretty_prefix_action']) ? $modSettings['pretty_prefix_action'] : 'do/';
+		$action_prefix = isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/';
 		foreach ($context['user_menu_items'] as &$user)
 			$user['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/' . $action_prefix . '$1/?', $user['action']);
 		foreach ($context['action_menu_items'] as &$action)
@@ -1252,7 +1252,7 @@ function Display()
 // Callback for the message display.
 function prepareDisplayContext($reset = false)
 {
-	global $settings, $txt, $modSettings, $scripturl, $options, $user_info, $board_info;
+	global $theme, $txt, $settings, $scripturl, $options, $user_info, $board_info;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
 	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $is_new = false;
@@ -1289,11 +1289,11 @@ function prepareDisplayContext($reset = false)
 	}
 
 	// Message Icon Management... check the images exist.
-	if (!empty($modSettings['messageIconChecks_enable']))
+	if (!empty($settings['messageIconChecks_enable']))
 	{
 		// If the current icon isn't known, then we need to do something...
 		if (!isset($context['icon_sources'][$message['icon']]))
-			$context['icon_sources'][$message['icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $message['icon'] . '.gif') ? 'images_url' : 'default_images_url';
+			$context['icon_sources'][$message['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $message['icon'] . '.gif') ? 'images_url' : 'default_images_url';
 	}
 	elseif (!isset($context['icon_sources'][$message['icon']]))
 		$context['icon_sources'][$message['icon']] = 'images_url';
@@ -1302,7 +1302,7 @@ function prepareDisplayContext($reset = false)
 	$message['subject'] = $message['subject'] != '' ? $message['subject'] : $txt['no_subject'];
 
 	// Are you allowed to remove at least a single reply?
-	$context['can_remove_post'] |= allowedTo('delete_own') && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()) && $message['id_member'] == $user_info['id'];
+	$context['can_remove_post'] |= allowedTo('delete_own') && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 >= time()) && $message['id_member'] == $user_info['id'];
 
 	// If it couldn't load, or the user was a guest.... someday may be done with a guest table.
 	if (!loadMemberContext($message['id_member'], true))
@@ -1322,7 +1322,7 @@ function prepareDisplayContext($reset = false)
 	{
 		$memberContext[$message['id_member']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member'] == $user_info['id'] && allowedTo('profile_view_own'));
 		$memberContext[$message['id_member']]['is_topic_starter'] = $message['id_member'] == $context['topic_starter_id'];
-		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && ($context['user']['can_mod'] || (!$user_info['is_guest'] && !empty($modSettings['warning_show']) && ($modSettings['warning_show'] > 1 || $message['id_member'] == $user_info['id'])));
+		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && ($context['user']['can_mod'] || (!$user_info['is_guest'] && !empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member'] == $user_info['id'])));
 	}
 
 	$memberContext[$message['id_member']]['ip'] = format_ip($message['poster_ip']);
@@ -1335,18 +1335,18 @@ function prepareDisplayContext($reset = false)
 	$merge_safe = false;
 
 	// Avoid having too large a post if we do any merger.
-	if (empty($modSettings['merge_post_ignore_length']) && $modSettings['max_messageLength'] > 0)
+	if (empty($settings['merge_post_ignore_length']) && $settings['max_messageLength'] > 0)
 	{
 		// Calculating the length...
 		if (!isset($context['correct_post_length']))
-			$context['correct_post_length'] = westr::strlen(empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_no_time']) ?
+			$context['correct_post_length'] = westr::strlen(empty($settings['merge_post_no_sep']) ? (empty($settings['merge_post_no_time']) ?
 				'<br>[size=1][mergedate]' . $message['modified_time'] . '[/mergedate][/size]' : '') . '[hr]<br>' : '<br>');
 
 		$context['current_post_length'] = westr::strlen(un_htmlspecialchars($message['body']));
 		if (!isset($context['last_post_length']))
 			$context['last_post_length'] = 0;
 		else
-			$merge_safe = ($context['current_post_length'] + $context['last_post_length'] + $context['correct_post_length']) < $modSettings['max_messageLength'];
+			$merge_safe = ($context['current_post_length'] + $context['last_post_length'] + $context['correct_post_length']) < $settings['max_messageLength'];
 	}
 	else
 		$context['current_post_length'] = 0;
@@ -1363,7 +1363,7 @@ function prepareDisplayContext($reset = false)
 		'link' => '<a href="' . $scripturl . '?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
 		'member' => &$memberContext[$message['id_member']],
 		'icon' => $message['icon'],
-		'icon_url' => $settings[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
+		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'time' => on_timeformat($message['poster_time']),
 		'timestamp' => forum_time(true, $message['poster_time']),
@@ -1377,11 +1377,11 @@ function prepareDisplayContext($reset = false)
 		'new' => empty($message['is_read']) && !$is_new,
 		'approved' => $message['approved'],
 		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
-		'is_ignored' => !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
+		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
-		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time()))),
-		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time())),
+		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))),
+		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
 		'can_see_ip' => allowedTo('view_ip_address_any') || (!empty($user_info['id']) && $message['id_member'] == $user_info['id'] && allowedTo('view_ip_address_own')),
 		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'])),
 		'last_post_id' => $context['last_msg_id'],
@@ -1414,7 +1414,7 @@ function prepareDisplayContext($reset = false)
 			$can_pm = allowedTo('pm_send');
 			$profile_own = allowedTo('profile_view_own');
 			$profile_any = allowedTo('profile_view_any');
-			$buddy = allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']);
+			$buddy = allowedTo('profile_identity_own') && !empty($settings['enable_buddylist']);
 		}
 
 		// 2. Figure out that user's menu to the stack. It may be different if it's our menu.
@@ -1504,12 +1504,12 @@ function prepareDisplayContext($reset = false)
 
 function loadAttachmentContext($id_msg)
 {
-	global $attachments, $modSettings, $txt, $scripturl, $topic;
+	global $attachments, $settings, $txt, $scripturl, $topic;
 
 	// Set up the attachment info - based on code by Meriadoc.
 	$attachmentData = array();
 	$have_unapproved = false;
-	if (isset($attachments[$id_msg]) && !empty($modSettings['attachmentEnable']))
+	if (isset($attachments[$id_msg]) && !empty($settings['attachmentEnable']))
 	{
 		foreach ($attachments[$id_msg] as $i => $attachment)
 		{
@@ -1522,7 +1522,7 @@ function loadAttachmentContext($id_msg)
 				'href' => $scripturl . '?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'],
 				'link' => '<a href="' . $scripturl . '?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'] . '">' . htmlspecialchars($attachment['filename']) . '</a>',
 				'transparent' => $attachment['transparency'] == 'transparent',
-				'is_image' => !empty($attachment['width']) && !empty($attachment['height']) && !empty($modSettings['attachmentShowImages']),
+				'is_image' => !empty($attachment['width']) && !empty($attachment['height']) && !empty($settings['attachmentShowImages']),
 				'is_approved' => $attachment['approved'],
 			);
 
@@ -1547,28 +1547,28 @@ function loadAttachmentContext($id_msg)
 			$attachmentData[$i]['height'] = $attachment['height'];
 
 			// Let's see, do we want thumbs?
-			if (!empty($modSettings['attachmentThumbnails']) && !empty($modSettings['attachmentThumbWidth']) && !empty($modSettings['attachmentThumbHeight']) && ($attachment['width'] > $modSettings['attachmentThumbWidth'] || $attachment['height'] > $modSettings['attachmentThumbHeight']) && strlen($attachment['filename']) < 249)
+			if (!empty($settings['attachmentThumbnails']) && !empty($settings['attachmentThumbWidth']) && !empty($settings['attachmentThumbHeight']) && ($attachment['width'] > $settings['attachmentThumbWidth'] || $attachment['height'] > $settings['attachmentThumbHeight']) && strlen($attachment['filename']) < 249)
 			{
 				// A proper thumb doesn't exist yet? Create one!
-				if (empty($attachment['id_thumb']) || $attachment['thumb_width'] > $modSettings['attachmentThumbWidth'] || $attachment['thumb_height'] > $modSettings['attachmentThumbHeight'] || ($attachment['thumb_width'] < $modSettings['attachmentThumbWidth'] && $attachment['thumb_height'] < $modSettings['attachmentThumbHeight']))
+				if (empty($attachment['id_thumb']) || $attachment['thumb_width'] > $settings['attachmentThumbWidth'] || $attachment['thumb_height'] > $settings['attachmentThumbHeight'] || ($attachment['thumb_width'] < $settings['attachmentThumbWidth'] && $attachment['thumb_height'] < $settings['attachmentThumbHeight']))
 				{
 					if (empty($filename))
 						$filename = getAttachmentFilename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
 
 					loadSource('Subs-Graphics');
-					if (createThumbnail($filename, $modSettings['attachmentThumbWidth'], $modSettings['attachmentThumbHeight']))
+					if (createThumbnail($filename, $settings['attachmentThumbWidth'], $settings['attachmentThumbHeight']))
 					{
 						// So what folder are we putting this image in?
-						if (!empty($modSettings['currentAttachmentUploadDir']))
+						if (!empty($settings['currentAttachmentUploadDir']))
 						{
-							if (!is_array($modSettings['attachmentUploadDir']))
-								$modSettings['attachmentUploadDir'] = @unserialize($modSettings['attachmentUploadDir']);
-							$path = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
-							$id_folder_thumb = $modSettings['currentAttachmentUploadDir'];
+							if (!is_array($settings['attachmentUploadDir']))
+								$settings['attachmentUploadDir'] = @unserialize($settings['attachmentUploadDir']);
+							$path = $settings['attachmentUploadDir'][$settings['currentAttachmentUploadDir']];
+							$id_folder_thumb = $settings['currentAttachmentUploadDir'];
 						}
 						else
 						{
-							$path = $modSettings['attachmentUploadDir'];
+							$path = $settings['attachmentUploadDir'];
 							$id_folder_thumb = 1;
 						}
 
@@ -1642,23 +1642,23 @@ function loadAttachmentContext($id_msg)
 			$attachmentData[$i]['thumbnail']['has_thumb'] = !empty($attachment['id_thumb']);
 
 			// If thumbnails are disabled, check the maximum size of the image.
-			if (!$attachmentData[$i]['thumbnail']['has_thumb'] && ((!empty($modSettings['max_image_width']) && $attachment['width'] > $modSettings['max_image_width']) || (!empty($modSettings['max_image_height']) && $attachment['height'] > $modSettings['max_image_height'])))
+			if (!$attachmentData[$i]['thumbnail']['has_thumb'] && ((!empty($settings['max_image_width']) && $attachment['width'] > $settings['max_image_width']) || (!empty($settings['max_image_height']) && $attachment['height'] > $settings['max_image_height'])))
 			{
-				if (!empty($modSettings['max_image_width']) && (empty($modSettings['max_image_height']) || $attachment['height'] * $modSettings['max_image_width'] / $attachment['width'] <= $modSettings['max_image_height']))
+				if (!empty($settings['max_image_width']) && (empty($settings['max_image_height']) || $attachment['height'] * $settings['max_image_width'] / $attachment['width'] <= $settings['max_image_height']))
 				{
-					$attachmentData[$i]['width'] = $modSettings['max_image_width'];
-					$attachmentData[$i]['height'] = floor($attachment['height'] * $modSettings['max_image_width'] / $attachment['width']);
+					$attachmentData[$i]['width'] = $settings['max_image_width'];
+					$attachmentData[$i]['height'] = floor($attachment['height'] * $settings['max_image_width'] / $attachment['width']);
 				}
-				elseif (!empty($modSettings['max_image_width']))
+				elseif (!empty($settings['max_image_width']))
 				{
-					$attachmentData[$i]['width'] = floor($attachment['width'] * $modSettings['max_image_height'] / $attachment['height']);
-					$attachmentData[$i]['height'] = $modSettings['max_image_height'];
+					$attachmentData[$i]['width'] = floor($attachment['width'] * $settings['max_image_height'] / $attachment['height']);
+					$attachmentData[$i]['height'] = $settings['max_image_height'];
 				}
 			}
 			elseif ($attachmentData[$i]['thumbnail']['has_thumb'])
 			{
 				// If the image is too large to show inline, make it a popup.
-				if (((!empty($modSettings['max_image_width']) && $attachmentData[$i]['real_width'] > $modSettings['max_image_width']) || (!empty($modSettings['max_image_height']) && $attachmentData[$i]['real_height'] > $modSettings['max_image_height'])))
+				if (((!empty($settings['max_image_width']) && $attachmentData[$i]['real_width'] > $settings['max_image_width']) || (!empty($settings['max_image_height']) && $attachmentData[$i]['real_height'] > $settings['max_image_height'])))
 					$attachmentData[$i]['thumbnail']['javascript'] = 'return reqWin(\'' . $attachmentData[$i]['href'] . ';image\', ' . ($attachment['width'] + 20) . ', ' . ($attachment['height'] + 20) . ', true);';
 				else
 					$attachmentData[$i]['thumbnail']['javascript'] = 'return expandThumb(' . $attachment['id_attach'] . ');';
@@ -1688,7 +1688,7 @@ function approved_attach_sort($a, $b)
 // In-topic quick moderation.
 function QuickInTopicModeration()
 {
-	global $topic, $board, $user_info, $modSettings, $context;
+	global $topic, $board, $user_info, $settings, $context;
 
 	// Check the session = get or post.
 	checkSession('request');
@@ -1750,7 +1750,7 @@ function QuickInTopicModeration()
 	$messages = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		if (!$allowed_all && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + $modSettings['edit_disable_time'] * 60 < time())
+		if (!$allowed_all && !empty($settings['edit_disable_time']) && $row['poster_time'] + $settings['edit_disable_time'] * 60 < time())
 			continue;
 
 		$messages[$row['id_msg']] = array($row['subject'], $row['id_member']);

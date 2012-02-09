@@ -22,8 +22,8 @@ class captcha_ledicons_anim extends captcha_ledicons
 
 	public function __construct()
 	{
-		global $modSettings;
-		$this->is_available = !empty($modSettings['use_animated_captcha']);
+		global $settings;
+		$this->is_available = !empty($settings['use_animated_captcha']);
 	}
 
 	public function render($code)

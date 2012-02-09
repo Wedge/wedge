@@ -110,7 +110,7 @@ function ManagePostSettings()
 // Set the censored words.
 function SetCensor()
 {
-	global $txt, $modSettings, $context;
+	global $txt, $settings, $context;
 
 	if (!empty($_POST['save_censor']))
 	{
@@ -165,8 +165,8 @@ function SetCensor()
 	}
 
 	// Set everything up for the template to do its thang.
-	$censor_vulgar = explode("\n", $modSettings['censor_vulgar']);
-	$censor_proper = explode("\n", $modSettings['censor_proper']);
+	$censor_vulgar = explode("\n", $settings['censor_vulgar']);
+	$censor_proper = explode("\n", $settings['censor_proper']);
 
 	$context['censored_words'] = array();
 	for ($i = 0, $n = count($censor_vulgar); $i < $n; $i++)
@@ -188,7 +188,7 @@ function SetCensor()
 // Modify all settings related to posts and posting.
 function ModifyPostSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl, $db_prefix;
+	global $context, $txt, $settings, $scripturl, $db_prefix;
 
 	// All the settings...
 	$config_vars = array(
@@ -233,7 +233,7 @@ function ModifyPostSettings($return_config = false)
 
 		// If we're changing the message length let's check the column is big enough.
 		// !!! @todo: Delete? Is it not already done in Wedge...?
-		if (!empty($_POST['max_messageLength']) && $_POST['max_messageLength'] != $modSettings['max_messageLength'])
+		if (!empty($_POST['max_messageLength']) && $_POST['max_messageLength'] != $settings['max_messageLength'])
 		{
 			wesql::extend('packages');
 
@@ -282,7 +282,7 @@ function ModifyPostSettings($return_config = false)
 // Bulletin Board Code...a lot of Bulletin Board Code.
 function ModifyBBCSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	$config_vars = array(
 			// Main tweaks
@@ -302,7 +302,7 @@ function ModifyBBCSettings($return_config = false)
 	$context['page_title'] = $txt['manageposts_bbc_settings_title'];
 
 	// Make sure we check the right tags!
-	$modSettings['bbc_disabled_disabledBBC'] = empty($modSettings['disabledBBC']) ? array() : explode(',', $modSettings['disabledBBC']);
+	$settings['bbc_disabled_disabledBBC'] = empty($settings['disabledBBC']) ? array() : explode(',', $settings['disabledBBC']);
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -334,7 +334,7 @@ function ModifyBBCSettings($return_config = false)
 // Function for modifying topic settings. Not very exciting.
 function ModifyTopicSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	// Here are all the topic settings.
 	$config_vars = array(
@@ -385,7 +385,7 @@ function ModifyTopicSettings($return_config = false)
 // Function for modifying drafts settings. Not very exciting.
 function ModifyDraftSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	// Here are all the topic settings.
 	$config_vars = array(
@@ -426,7 +426,7 @@ function ModifyDraftSettings($return_config = false)
 
 function ModifyMergeSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $scripturl, $context, $theme;
 
 	$config_vars = array(
 			// Automatic merge options

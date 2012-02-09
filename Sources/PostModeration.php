@@ -567,7 +567,7 @@ function approveAllData()
 // remove a batch of messages (or topics)
 function removeMessages($messages, $messageDetails, $current_view = 'replies')
 {
-	global $modSettings;
+	global $settings;
 	loadSource('RemoveTopic');
 	if ($current_view == 'topics')
 	{
@@ -576,7 +576,7 @@ function removeMessages($messages, $messageDetails, $current_view = 'replies')
 		foreach ($messages as $topic)
 			// Note, only log topic ID in native form if it's not gone forever.
 			logAction('remove', array(
-				(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $messageDetails[$topic]['board'] ? 'topic' : 'old_topic_id') => $topic, 'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']));
+				(empty($settings['recycle_enable']) || $settings['recycle_board'] != $messageDetails[$topic]['board'] ? 'topic' : 'old_topic_id') => $topic, 'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']));
 	}
 	else
 	{
@@ -584,7 +584,7 @@ function removeMessages($messages, $messageDetails, $current_view = 'replies')
 		{
 			removeMessage($post);
 			logAction('delete', array(
-				(empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $messageDetails[$post]['board'] ? 'topic' : 'old_topic_id') => $messageDetails[$post]['topic'], 'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']));
+				(empty($settings['recycle_enable']) || $settings['recycle_board'] != $messageDetails[$post]['board'] ? 'topic' : 'old_topic_id') => $messageDetails[$post]['topic'], 'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']));
 		}
 	}
 }

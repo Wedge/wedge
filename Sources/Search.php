@@ -30,10 +30,10 @@ if (!defined('WEDGE'))
 // Ask the user what they want to search for.
 function Search()
 {
-	global $txt, $scripturl, $modSettings, $user_info, $context;
+	global $txt, $scripturl, $settings, $user_info, $context;
 
 	// Is the load average too high to allow searching just now?
-	if (!empty($context['load_average']) && !empty($modSettings['loadavg_search']) && $context['load_average'] >= $modSettings['loadavg_search'])
+	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	loadLanguage('Search');
@@ -53,7 +53,7 @@ function Search()
 	// This is hard coded maximum string length.
 	$context['search_string_limit'] = 100;
 
-	$context['require_verification'] = $user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']);
+	$context['require_verification'] = $user_info['is_guest'] && !empty($settings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']);
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');
@@ -143,11 +143,11 @@ function Search()
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'child_level' => $row['child_level'],
-			'selected' => (empty($context['search_params']['brd']) && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']) && !in_array($row['id_board'], $user_info['ignoreboards'])) || (!empty($context['search_params']['brd']) && in_array($row['id_board'], $context['search_params']['brd']))
+			'selected' => (empty($context['search_params']['brd']) && (empty($settings['recycle_enable']) || $row['id_board'] != $settings['recycle_board']) && !in_array($row['id_board'], $user_info['ignoreboards'])) || (!empty($context['search_params']['brd']) && in_array($row['id_board'], $context['search_params']['brd']))
 		);
 
 		// If a board wasn't checked that probably should have been, ensure the board selection is selected!
-		if (!$context['categories'][$row['id_cat']]['boards'][$row['id_board']]['selected'] && (empty($modSettings['recycle_enable']) || $row['id_board'] != $modSettings['recycle_board']))
+		if (!$context['categories'][$row['id_cat']]['boards'][$row['id_board']]['selected'] && (empty($settings['recycle_enable']) || $row['id_board'] != $settings['recycle_board']))
 			$context['boards_check_all'] = false;
 	}
 	wesql::free_result($request);
@@ -201,7 +201,7 @@ function Search()
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 			WHERE t.id_topic = {int:search_topic_id}
-				AND {query_see_board}' . ($modSettings['postmod_active'] ? '
+				AND {query_see_board}' . ($settings['postmod_active'] ? '
 				AND t.approved = {int:is_approved_true}' : '') . '
 			LIMIT 1',
 			array(
@@ -220,7 +220,7 @@ function Search()
 	}
 
 	// Simple or not?
-	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($modSettings['simpleSearch']) && !isset($_REQUEST['advanced']);
+	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($settings['simpleSearch']) && !isset($_REQUEST['advanced']);
 	$context['page_title'] = $txt['set_parameters'];
 }
 

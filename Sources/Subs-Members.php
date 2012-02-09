@@ -75,7 +75,7 @@ if (!defined('WEDGE'))
 // Delete a group of/single member.
 function deleteMembers($users, $check_not_admin = false)
 {
-	global $modSettings, $user_info;
+	global $settings, $user_info;
 
 	// Try give us a while to sort this out...
 	@set_time_limit(600);
@@ -166,12 +166,12 @@ function deleteMembers($users, $check_not_admin = false)
 		);
 
 		// Remove any cached data if enabled.
-		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
+		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
 			cache_put_data('user_settings-' . $user[0], null, 60);
 	}
 
 	// Do the actual logging...
-	if (!empty($log_inserts) && !empty($modSettings['log_enabled_admin']))
+	if (!empty($log_inserts) && !empty($settings['log_enabled_admin']))
 		wesql::insert('',
 			'{db_prefix}log_actions',
 			array(
@@ -449,8 +449,8 @@ function deleteMembers($users, $check_not_admin = false)
 
 function registerMember(&$regOptions, $return_errors = false)
 {
-	global $scripturl, $txt, $modSettings, $context;
-	global $user_info, $options, $settings;
+	global $scripturl, $txt, $settings, $context;
+	global $user_info, $options, $theme;
 
 	loadLanguage('Login');
 
@@ -474,7 +474,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			redirectexit();
 
 		// Make sure they didn't just register with this session.
-		if (!empty($_SESSION['just_registered']) && empty($modSettings['disableRegisterCheck']))
+		if (!empty($_SESSION['just_registered']) && empty($settings['disableRegisterCheck']))
 			fatal_lang_error('register_only_once', false);
 	}
 
@@ -532,7 +532,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		if ($passwordError != null)
 		{
 			if ($passwordError == 'short')
-				$txt['profile_error_password_short'] = sprintf($txt['profile_error_password_short'], empty($modSettings['password_strength']) ? 4 : 8);
+				$txt['profile_error_password_short'] = sprintf($txt['profile_error_password_short'], empty($settings['password_strength']) ? 4 : 8);
 
 			$reg_errors[] = array('lang', 'profile_error_password_' . $passwordError);
 		}
@@ -856,7 +856,7 @@ function registerMember(&$regOptions, $return_errors = false)
 // Check if a name is in the reserved words list. (name, current member id, name/username?.)
 function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal = true)
 {
-	global $user_info, $modSettings, $context;
+	global $user_info, $settings, $context;
 
 	// No cheating with entities please.
 	// Although it's unlikely there are entities in UTF8 mode, never say never.
@@ -870,11 +870,11 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 	$checkName = westr::strtolower($name);
 
 	// Administrators are never restricted ;).
-	if (!allowedTo('moderate_forum') && ((!empty($modSettings['reserveName']) && $is_name) || !empty($modSettings['reserveUser']) && !$is_name))
+	if (!allowedTo('moderate_forum') && ((!empty($settings['reserveName']) && $is_name) || !empty($settings['reserveUser']) && !$is_name))
 	{
-		$reservedNames = explode("\n", $modSettings['reserveNames']);
+		$reservedNames = explode("\n", $settings['reserveNames']);
 		// Case sensitive check?
-		$checkMe = empty($modSettings['reserveCase']) ? $checkName : $name;
+		$checkMe = empty($settings['reserveCase']) ? $checkName : $name;
 
 		// Check each name in the list...
 		foreach ($reservedNames as $reserved)
@@ -886,11 +886,11 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 			$reservedCheck = preg_replace('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$replaceEntities(\'\\2\')', $reserved);
 
 			// Case sensitive name?
-			if (empty($modSettings['reserveCase']))
+			if (empty($settings['reserveCase']))
 				$reservedCheck = westr::strtolower($reservedCheck);
 
 			// If it's not just entire word, check for it in there somewhere...
-			if ($checkMe == $reservedCheck || (westr::strpos($checkMe, $reservedCheck) !== false && empty($modSettings['reserveWord'])))
+			if ($checkMe == $reservedCheck || (westr::strpos($checkMe, $reservedCheck) !== false && empty($settings['reserveWord'])))
 				if ($fatal)
 					fatal_lang_error('username_reserved', 'password', array($reserved));
 				else
@@ -958,7 +958,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 // Get a list of groups that have a given permission (on a given board).
 function groupsAllowedTo($permission, $board_id = null)
 {
-	global $modSettings, $board_info;
+	global $settings, $board_info;
 
 	// Admins are allowed to do anything.
 	$member_groups = array(
@@ -1165,11 +1165,11 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 
 function list_getNumMembers($where, $where_params = array())
 {
-	global $modSettings;
+	global $settings;
 
 	// We know how many members there are in total.
 	if (empty($where) || $where == '1')
-		$num_members = $modSettings['totalMembers'];
+		$num_members = $settings['totalMembers'];
 
 	// The database knows the amount when there are extra conditions.
 	else
@@ -1303,7 +1303,7 @@ function populateDuplicateMembers(&$members)
 // Generate a random validation code.
 function generateValidationCode()
 {
-	global $modSettings;
+	global $settings;
 
 	$request = wesql::query('
 		SELECT RAND()',
@@ -1314,7 +1314,7 @@ function generateValidationCode()
 	list ($dbRand) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $modSettings['rand_seed'])), 0, 10);
+	return substr(preg_replace('/\W/', '', sha1(microtime() . mt_rand() . $dbRand . $settings['rand_seed'])), 0, 10);
 }
 
 ?>

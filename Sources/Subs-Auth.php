@@ -93,13 +93,13 @@ if (!defined('WEDGE'))
 // Actually set the login cookie...
 function setLoginCookie($cookie_length, $id, $password = '')
 {
-	global $cookiename, $boardurl, $modSettings;
+	global $cookiename, $boardurl, $settings;
 
 	// If changing state force them to re-address some permission caching.
 	$_SESSION['mc']['time'] = 0;
 
 	// The cookie may already exist, and have been set with different options.
-	$cookie_state = (empty($modSettings['localCookies']) ? 0 : 1) | (empty($modSettings['globalCookies']) ? 0 : 2);
+	$cookie_state = (empty($settings['localCookies']) ? 0 : 1) | (empty($settings['globalCookies']) ? 0 : 2);
 	if (isset($_COOKIE[$cookiename]) && preg_match('~^a:[34]:\{i:0;(i:\d{1,6}|s:[1-8]:"\d{1,8}");i:1;s:(0|40):"([a-fA-F0-9]{40})?";i:2;[id]:\d{1,14};(i:3;i:\d;)?\}$~', $_COOKIE[$cookiename]) === 1)
 	{
 		$array = @unserialize($_COOKIE[$cookiename]);
@@ -108,25 +108,25 @@ function setLoginCookie($cookie_length, $id, $password = '')
 		if (isset($array[3]) && $array[3] != $cookie_state)
 		{
 			$cookie_url = url_parts($array[3] & 1 > 0, $array[3] & 2 > 0);
-			setcookie($cookiename, serialize(array(0, '', 0)), time() - 3600, $cookie_url[1], $cookie_url[0], !empty($modSettings['secureCookies']), true);
+			setcookie($cookiename, serialize(array(0, '', 0)), time() - 3600, $cookie_url[1], $cookie_url[0], !empty($settings['secureCookies']), true);
 		}
 	}
 
 	// Get the data and path to set it on.
 	$data = serialize(empty($id) ? array(0, '', 0) : array($id, $password, time() + $cookie_length, $cookie_state));
-	$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+	$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
 
 	// Set the cookie, $_COOKIE, and session variable.
-	setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0], !empty($modSettings['secureCookies']), true);
+	setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0], !empty($settings['secureCookies']), true);
 
 	// If subdomain-independent cookies are on, unset the subdomain-dependent cookie too.
-	if (empty($id) && !empty($modSettings['globalCookies']))
-		setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], '', !empty($modSettings['secureCookies']), true);
+	if (empty($id) && !empty($settings['globalCookies']))
+		setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], '', !empty($settings['secureCookies']), true);
 
 	// Any alias URLs?  This is mainly for use with frames, etc.
-	if (!empty($modSettings['forum_alias_urls']))
+	if (!empty($settings['forum_alias_urls']))
 	{
-		$aliases = explode(',', $modSettings['forum_alias_urls']);
+		$aliases = explode(',', $settings['forum_alias_urls']);
 
 		$temp = $boardurl;
 		foreach ($aliases as $alias)
@@ -135,12 +135,12 @@ function setLoginCookie($cookie_length, $id, $password = '')
 			$alias = strtr(trim($alias), array('http://' => '', 'https://' => ''));
 			$boardurl = 'http://' . $alias;
 
-			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+			$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
 
 			if ($cookie_url[0] == '')
 				$cookie_url[0] = strtok($alias, '/');
 
-			setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0], !empty($modSettings['secureCookies']), true);
+			setcookie($cookiename, $data, time() + $cookie_length, $cookie_url[1], $cookie_url[0], !empty($settings['secureCookies']), true);
 		}
 
 		$boardurl = $temp;
@@ -321,7 +321,7 @@ function construct_query_string($get)
 // Find members by email address, username, or real name.
 function findMembers($names, $use_wildcards = false, $buddies_only = false, $max = 500)
 {
-	global $scripturl, $user_info, $modSettings;
+	global $scripturl, $user_info, $settings;
 
 	// If it's not already an array, make it one.
 	if (!is_array($names))
@@ -398,7 +398,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 // This function generates a random password for a user and emails it to them.
 function resetPassword($memID, $username = null)
 {
-	global $scripturl, $context, $txt, $modSettings, $language;
+	global $scripturl, $context, $txt, $settings, $language;
 
 	// Language... and a required file.
 	loadLanguage('Login');
@@ -444,7 +444,7 @@ function resetPassword($memID, $username = null)
 		'PASSWORD' => $newPassword,
 	);
 
-	$emaildata = loadEmailTemplate('change_password', $replacements, empty($lngfile) || empty($modSettings['userLanguage']) ? $language : $lngfile);
+	$emaildata = loadEmailTemplate('change_password', $replacements, empty($lngfile) || empty($settings['userLanguage']) ? $language : $lngfile);
 
 	// Send them the email informing them of the change - then we're done!
 	sendmail($email, $emaildata['subject'], $emaildata['body'], null, null, false, 0);
@@ -476,14 +476,14 @@ function validateUsername($memID, $username)
 // This function simply checks whether a password meets the current forum rules.
 function validatePassword($password, $username, $restrict_in = array())
 {
-	global $modSettings;
+	global $settings;
 
 	// Perform basic requirements first.
-	if (westr::strlen($password) < (empty($modSettings['password_strength']) ? 4 : 8))
+	if (westr::strlen($password) < (empty($settings['password_strength']) ? 4 : 8))
 		return 'short';
 
 	// Is this enough?
-	if (empty($modSettings['password_strength']))
+	if (empty($settings['password_strength']))
 		return null;
 
 	// Otherwise, perform the medium strength test - checking if password appears in the restricted string.
@@ -495,7 +495,7 @@ function validatePassword($password, $username, $restrict_in = array())
 	// !!! If pspell is available, use it on the word, and return restricted_words if it doesn't give "bad spelling"?
 
 	// If just medium, we're done.
-	if ($modSettings['password_strength'] == 1)
+	if ($settings['password_strength'] == 1)
 		return null;
 
 	// Otherwise, hard test next, check for numbers and letters, uppercase too.

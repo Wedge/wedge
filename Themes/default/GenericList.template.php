@@ -13,7 +13,7 @@
 
 function template_show_list($list_id = null)
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// Get a shortcut to the current list.
 	$list_id = $list_id === null ? $context['default_list'] : $list_id;
@@ -91,7 +91,7 @@ function template_show_list($list_id = null)
 				$col_header['class'] = 'last_th';
 
 			echo '
-					<th scope="col"', empty($col_header['class']) ? '' : ' class="' . $col_header['class'] . '"', empty($col_header['style']) ? '' : ' style="' . $col_header['style'] . '"', empty($col_header['colspan']) ? '' : ' colspan="' . $col_header['colspan'] . '"', '>', empty($col_header['href']) ? '' : '<a href="' . $col_header['href'] . '" rel="nofollow">', empty($col_header['label']) ? '&nbsp;' : $col_header['label'], empty($col_header['href']) ? '' : '</a>', empty($col_header['sort_image']) ? '' : ' <img src="' . $settings['images_url'] . '/sort_' . $col_header['sort_image'] . '.gif">', '</th>';
+					<th scope="col"', empty($col_header['class']) ? '' : ' class="' . $col_header['class'] . '"', empty($col_header['style']) ? '' : ' style="' . $col_header['style'] . '"', empty($col_header['colspan']) ? '' : ' colspan="' . $col_header['colspan'] . '"', '>', empty($col_header['href']) ? '' : '<a href="' . $col_header['href'] . '" rel="nofollow">', empty($col_header['label']) ? '&nbsp;' : $col_header['label'], empty($col_header['href']) ? '' : '</a>', empty($col_header['sort_image']) ? '' : ' <img src="' . $theme['images_url'] . '/sort_' . $col_header['sort_image'] . '.gif">', '</th>';
 		}
 
 		echo '
@@ -174,7 +174,7 @@ function template_show_list($list_id = null)
 
 function template_additional_rows($row_position, $cur_list)
 {
-	global $context, $settings, $options;
+	global $context, $theme, $options;
 
 	foreach ($cur_list['additional_rows'][$row_position] as $row)
 		echo '

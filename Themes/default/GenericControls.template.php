@@ -14,7 +14,7 @@
 // What's this, verification?!
 function template_control_verification($verify_id, $display_type = 'all', $reset = false)
 {
-	global $context, $settings, $options, $txt, $modSettings;
+	global $context, $theme, $options, $txt, $settings;
 
 	$verify_context =& $context['controls']['verification'][$verify_id];
 

@@ -14,7 +14,7 @@
 // Before showing users a registration form, show them the registration agreement.
 function template_registration_agreement()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 		<form action="', $scripturl, '?action=register" method="post" accept-charset="UTF-8" id="registration">
@@ -45,7 +45,7 @@ function template_registration_agreement()
 // Before registering - get their information.
 function template_registration_form()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	add_js_file('scripts/register.js');
 
@@ -84,7 +84,7 @@ function template_registration_form()
 		"password_valid": ' . JavaScriptEscape($txt['registration_password_valid']) . '
 	};
 
-	var verificationHandle = new weRegister("registration", ' . (empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength']) . ', regTextStrings);
+	var verificationHandle = new weRegister("registration", ' . (empty($settings['password_strength']) ? 0 : $settings['password_strength']) . ', regTextStrings);
 
 	$(\'#time_offset\').val(autoDetectTimeOffset(' . $context['current_forum_time_js'] . '000));');
 
@@ -122,7 +122,7 @@ function template_registration_form()
 							<input type="text" name="user" id="we_autov_username" size="30" tabindex="', $context['tabindex']++, '" maxlength="25" value="', isset($context['username']) ? $context['username'] : '', '" required>
 							<span id="we_autov_username_div" class="hide">
 								<a id="we_autov_username_link" href="#">
-									<img id="we_autov_username_img" src="', $settings['images_url'], '/icons/field_check.gif">
+									<img id="we_autov_username_img" src="', $theme['images_url'], '/icons/field_check.gif">
 								</a>
 							</span>
 						</dd>
@@ -140,7 +140,7 @@ function template_registration_form()
 						<dd>
 							<input type="password" name="passwrd1" id="we_autov_pwmain" size="30" tabindex="', $context['tabindex']++, '">
 							<span id="we_autov_pwmain_div" class="hide">
-								<img id="we_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif">
+								<img id="we_autov_pwmain_img" src="', $theme['images_url'], '/icons/field_invalid.gif">
 							</span>
 						</dd>
 					</dl>
@@ -149,7 +149,7 @@ function template_registration_form()
 						<dd>
 							<input type="password" name="passwrd2" id="we_autov_pwverify" size="30" tabindex="', $context['tabindex']++, '">
 							<span id="we_autov_pwverify_div" class="hide">
-								<img id="we_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif">
+								<img id="we_autov_pwverify_img" src="', $theme['images_url'], '/icons/field_valid.gif">
 							</span>
 						</dd>
 					</dl>
@@ -295,7 +295,7 @@ function template_registration_form()
 // After registration... all done ;).
 function template_after()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	// Not much to see here, just a quick... "you're now registered!" or what have you.
 	echo '
@@ -312,7 +312,7 @@ function template_after()
 // Template for giving instructions about COPPA activation.
 function template_coppa()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	// Formulate a nice complicated message!
 	echo '
@@ -354,7 +354,7 @@ function template_coppa()
 // An easily printable form for giving permission to access the forum for a minor.
 function template_coppa_form()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	// Show the form (As best we can)
 	echo '
@@ -388,7 +388,7 @@ function template_coppa_form()
 // Show a window containing the spoken verification code.
 function template_verification_sound()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
@@ -431,7 +431,7 @@ function template_verification_sound()
 
 function template_admin_register()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	add_js('
 	function onCheckChange()
@@ -513,7 +513,7 @@ function template_admin_register()
 							<strong><label for="emailActivate_check">', $txt['admin_register_email_activate'], ':</label></strong>
 						</dt>
 						<dd>
-							<input type="checkbox" name="emailActivate" id="emailActivate_check" tabindex="', $context['tabindex']++, '"', !empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? ' checked' : '', ' onclick="onCheckChange();">
+							<input type="checkbox" name="emailActivate" id="emailActivate_check" tabindex="', $context['tabindex']++, '"', !empty($settings['registration_method']) && $settings['registration_method'] == 1 ? ' checked' : '', ' onclick="onCheckChange();">
 						</dd>
 					</dl>
 					<div class="righttext">
@@ -531,7 +531,7 @@ function template_admin_register()
 // Form for editing the agreement shown for people registering to the forum.
 function template_edit_agreement()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	// Just a big box to edit the text file ;).
 	echo '
@@ -595,7 +595,7 @@ function template_edit_agreement()
 
 function template_edit_reserved_words()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 		<we:cat>

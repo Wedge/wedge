@@ -45,7 +45,7 @@ if (!defined('WEDGE'))
 
 function ManageSmileys()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $settings;
 
 	isAllowedTo('manage_smileys');
 
@@ -101,9 +101,9 @@ function ManageSmileys()
 	);
 
 	// Some settings may not be enabled, disallow these from the tabs as appropriate.
-	if (empty($modSettings['messageIcons_enable']))
+	if (empty($settings['messageIcons_enable']))
 		$context[$context['admin_menu_name']]['tab_data']['tabs']['editicons']['disabled'] = true;
-	if (empty($modSettings['smiley_enable']))
+	if (empty($settings['smiley_enable']))
 	{
 		$context[$context['admin_menu_name']]['tab_data']['tabs']['addsmiley']['disabled'] = true;
 		$context[$context['admin_menu_name']]['tab_data']['tabs']['editsmileys']['disabled'] = true;
@@ -116,15 +116,15 @@ function ManageSmileys()
 
 function EditSmileySettings($return_config = false)
 {
-	global $modSettings, $context, $settings, $txt, $boarddir, $scripturl;
+	global $settings, $context, $theme, $txt, $boarddir, $scripturl;
 
 	// The directories...
-	$context['smileys_dir'] = $modSettings['smileys_dir'];
+	$context['smileys_dir'] = $settings['smileys_dir'];
 	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
 
 	// Get the names of the smiley sets.
-	$smiley_sets = explode(',', $modSettings['smiley_sets_known']);
-	$set_names = explode("\n", $modSettings['smiley_sets_names']);
+	$smiley_sets = explode(',', $settings['smiley_sets_known']);
+	$set_names = explode("\n", $settings['smiley_sets_names']);
 
 	$smiley_context = array();
 	foreach ($smiley_sets as $i => $set)
@@ -180,7 +180,7 @@ function EditSmileySettings($return_config = false)
 
 function EditSmileySets()
 {
-	global $modSettings, $context, $settings, $txt, $boarddir;
+	global $settings, $context, $theme, $txt, $boarddir;
 	global $scripturl;
 
 	// Set the right tab to be selected.
@@ -194,8 +194,8 @@ function EditSmileySets()
 		// Delete selected smiley sets.
 		if (!empty($_POST['delete']) && !empty($_POST['smiley_set']))
 		{
-			$set_paths = explode(',', $modSettings['smiley_sets_known']);
-			$set_names = explode("\n", $modSettings['smiley_sets_names']);
+			$set_paths = explode(',', $settings['smiley_sets_known']);
+			$set_names = explode("\n", $settings['smiley_sets_names']);
 			foreach ($_POST['smiley_set'] as $id => $val)
 				if (isset($set_paths[$id], $set_names[$id]) && !empty($id))
 					unset($set_paths[$id], $set_names[$id]);
@@ -203,7 +203,7 @@ function EditSmileySets()
 			updateSettings(array(
 				'smiley_sets_known' => implode(',', $set_paths),
 				'smiley_sets_names' => implode("\n", $set_names),
-				'smiley_sets_default' => in_array($modSettings['smiley_sets_default'], $set_paths) ? $modSettings['smiley_sets_default'] : $set_paths[0],
+				'smiley_sets_default' => in_array($settings['smiley_sets_default'], $set_paths) ? $settings['smiley_sets_default'] : $set_paths[0],
 			));
 
 			cleanSmileyCache();
@@ -214,8 +214,8 @@ function EditSmileySets()
 		// Create or modify a smiley set.
 		elseif (isset($_POST['set']))
 		{
-			$set_paths = explode(',', $modSettings['smiley_sets_known']);
-			$set_names = explode("\n", $modSettings['smiley_sets_names']);
+			$set_paths = explode(',', $settings['smiley_sets_known']);
+			$set_names = explode("\n", $settings['smiley_sets_names']);
 
 			// Create a new smiley set.
 			if ($_POST['set'] == -1 && isset($_POST['smiley_sets_path']))
@@ -224,9 +224,9 @@ function EditSmileySets()
 					fatal_lang_error('smiley_set_already_exists');
 
 				updateSettings(array(
-					'smiley_sets_known' => $modSettings['smiley_sets_known'] . ',' . $_POST['smiley_sets_path'],
-					'smiley_sets_names' => $modSettings['smiley_sets_names'] . "\n" . $_POST['smiley_sets_name'],
-					'smiley_sets_default' => empty($_POST['smiley_sets_default']) ? $modSettings['smiley_sets_default'] : $_POST['smiley_sets_path'],
+					'smiley_sets_known' => $settings['smiley_sets_known'] . ',' . $_POST['smiley_sets_path'],
+					'smiley_sets_names' => $settings['smiley_sets_names'] . "\n" . $_POST['smiley_sets_name'],
+					'smiley_sets_default' => empty($_POST['smiley_sets_default']) ? $settings['smiley_sets_default'] : $_POST['smiley_sets_path'],
 				));
 			}
 			// Modify an existing smiley set.
@@ -245,7 +245,7 @@ function EditSmileySets()
 				updateSettings(array(
 					'smiley_sets_known' => implode(',', $set_paths),
 					'smiley_sets_names' => implode("\n", $set_names),
-					'smiley_sets_default' => empty($_POST['smiley_sets_default']) ? $modSettings['smiley_sets_default'] : $_POST['smiley_sets_path']
+					'smiley_sets_default' => empty($_POST['smiley_sets_default']) ? $settings['smiley_sets_default'] : $_POST['smiley_sets_path']
 				));
 			}
 
@@ -258,14 +258,14 @@ function EditSmileySets()
 	}
 
 	// Load all available smileysets...
-	$context['smiley_sets'] = explode(',', $modSettings['smiley_sets_known']);
-	$set_names = explode("\n", $modSettings['smiley_sets_names']);
+	$context['smiley_sets'] = explode(',', $settings['smiley_sets_known']);
+	$set_names = explode("\n", $settings['smiley_sets_names']);
 	foreach ($context['smiley_sets'] as $i => $set)
 		$context['smiley_sets'][$i] = array(
 			'id' => $i,
 			'path' => htmlspecialchars($set),
 			'name' => htmlspecialchars($set_names[$i]),
-			'selected' => $set == $modSettings['smiley_sets_default']
+			'selected' => $set == $settings['smiley_sets_default']
 		);
 
 	// Importing any smileys from an existing set?
@@ -300,10 +300,10 @@ function EditSmileySets()
 			$context['current_set']['is_new'] = false;
 
 			// Calculate whether there are any smileys in the directory that can be imported.
-			if (!empty($modSettings['smiley_enable']) && is_dir($modSettings['smileys_dir'] . '/' . $context['current_set']['path']))
+			if (!empty($settings['smiley_enable']) && is_dir($settings['smileys_dir'] . '/' . $context['current_set']['path']))
 			{
 				$smileys = array();
-				$dir = dir($modSettings['smileys_dir'] . '/' . $context['current_set']['path']);
+				$dir = dir($settings['smileys_dir'] . '/' . $context['current_set']['path']);
 				while ($entry = $dir->read())
 				{
 					if (in_array(strrchr($entry, '.'), array('.jpg', '.gif', '.jpeg', '.png')))
@@ -333,16 +333,16 @@ function EditSmileySets()
 
 		// Retrieve all potential smiley set directories.
 		$context['smiley_set_dirs'] = array();
-		if (is_dir($modSettings['smileys_dir']))
+		if (is_dir($settings['smileys_dir']))
 		{
-			$dir = dir($modSettings['smileys_dir']);
+			$dir = dir($settings['smileys_dir']);
 			while ($entry = $dir->read())
 			{
-				if (!in_array($entry, array('.', '..')) && is_dir($modSettings['smileys_dir'] . '/' . $entry))
+				if (!in_array($entry, array('.', '..')) && is_dir($settings['smileys_dir'] . '/' . $entry))
 					$context['smiley_set_dirs'][] = array(
 						'id' => $entry,
-						'path' => $modSettings['smileys_dir'] . '/' . $entry,
-						'selectable' => $entry == $context['current_set']['path'] || !in_array($entry, explode(',', $modSettings['smiley_sets_known'])),
+						'path' => $settings['smileys_dir'] . '/' . $entry,
+						'selectable' => $entry == $context['current_set']['path'] || !in_array($entry, explode(',', $settings['smiley_sets_known'])),
 						'current' => $entry == $context['current_set']['path'],
 					);
 			}
@@ -394,7 +394,7 @@ function EditSmileySets()
 				),
 				'data' => array(
 					'sprintf' => array(
-						'format' => $modSettings['smileys_url'] . '/<strong>%1$s</strong>/...',
+						'format' => $settings['smileys_url'] . '/<strong>%1$s</strong>/...',
 						'params' => array(
 							'path' => true,
 						),
@@ -450,10 +450,10 @@ function EditSmileySets()
 // !!! to be moved to Subs-Smileys.
 function list_getSmileySets($start, $items_per_page, $sort)
 {
-	global $modSettings;
+	global $settings;
 
-	$known_sets = explode(',', $modSettings['smiley_sets_known']);
-	$set_names = explode("\n", $modSettings['smiley_sets_names']);
+	$known_sets = explode(',', $settings['smiley_sets_known']);
+	$set_names = explode("\n", $settings['smiley_sets_names']);
 	$cols = array(
 		'id' => array(),
 		'selected' => array(),
@@ -481,7 +481,7 @@ function list_getSmileySets($start, $items_per_page, $sort)
 			'id' => $id,
 			'path' => $cols['path'][$i],
 			'name' => $cols['name'][$i],
-			'selected' => $cols['path'][$i] == $modSettings['smiley_sets_default']
+			'selected' => $cols['path'][$i] == $settings['smiley_sets_default']
 		);
 
 	return $smiley_sets;
@@ -490,26 +490,26 @@ function list_getSmileySets($start, $items_per_page, $sort)
 // !!! to be moved to Subs-Smileys.
 function list_getNumSmileySets()
 {
-	global $modSettings;
+	global $settings;
 
-	return count(explode(',', $modSettings['smiley_sets_known']));
+	return count(explode(',', $settings['smiley_sets_known']));
 }
 
 function AddSmiley()
 {
-	global $modSettings, $context, $settings, $txt, $boarddir;
+	global $settings, $context, $theme, $txt, $boarddir;
 
 	// Get a list of all known smiley sets.
-	$context['smileys_dir'] = $modSettings['smileys_dir'];
+	$context['smileys_dir'] = $settings['smileys_dir'];
 	$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
-	$context['smiley_sets'] = explode(',', $modSettings['smiley_sets_known']);
-	$set_names = explode("\n", $modSettings['smiley_sets_names']);
+	$context['smiley_sets'] = explode(',', $settings['smiley_sets_known']);
+	$set_names = explode("\n", $settings['smiley_sets_names']);
 	foreach ($context['smiley_sets'] as $i => $set)
 		$context['smiley_sets'][$i] = array(
 			'id' => $i,
 			'path' => htmlspecialchars($set),
 			'name' => htmlspecialchars($set_names[$i]),
-			'selected' => $set == $modSettings['smiley_sets_default']
+			'selected' => $set == $settings['smiley_sets_default']
 		);
 
 	// Submitting a form?
@@ -701,7 +701,7 @@ function AddSmiley()
 		redirectexit('action=admin;area=smileys;sa=editsmileys');
 	}
 
-	$context['selected_set'] = $modSettings['smiley_sets_default'];
+	$context['selected_set'] = $settings['smiley_sets_default'];
 
 	// Get all possible filenames for the smileys.
 	$context['filenames'] = array();
@@ -740,7 +740,7 @@ function AddSmiley()
 
 function EditSmileys()
 {
-	global $modSettings, $context, $settings, $txt, $boarddir;
+	global $settings, $context, $theme, $txt, $boarddir;
 	global $scripturl;
 
 	// Force the correct tab to be displayed.
@@ -857,14 +857,14 @@ function EditSmileys()
 	}
 
 	// Load all known smiley sets.
-	$context['smiley_sets'] = explode(',', $modSettings['smiley_sets_known']);
-	$set_names = explode("\n", $modSettings['smiley_sets_names']);
+	$context['smiley_sets'] = explode(',', $settings['smiley_sets_known']);
+	$set_names = explode("\n", $settings['smiley_sets_names']);
 	foreach ($context['smiley_sets'] as $i => $set)
 		$context['smiley_sets'][$i] = array(
 			'id' => $i,
 			'path' => htmlspecialchars($set),
 			'name' => htmlspecialchars($set_names[$i]),
-			'selected' => $set == $modSettings['smiley_sets_default']
+			'selected' => $set == $settings['smiley_sets_default']
 		);
 
 	// Prepare overview of all (custom) smileys.
@@ -883,7 +883,7 @@ function EditSmileys()
 			<select name="set" onchange="changeSet(this.options[this.selectedIndex].value);">';
 		foreach ($context['smiley_sets'] as $smiley_set)
 			$smileyset_option_list .= '
-				<option value="' . $smiley_set['path'] . '"' . ($modSettings['smiley_sets_default'] == $smiley_set['path'] ? ' selected' : '') . '>' . $smiley_set['name'] . '</option>';
+				<option value="' . $smiley_set['path'] . '"' . ($settings['smiley_sets_default'] == $smiley_set['path'] ? ' selected' : '') . '>' . $smiley_set['name'] . '</option>';
 		$smileyset_option_list .= '
 			</select>';
 
@@ -903,7 +903,7 @@ function EditSmileys()
 				'picture' => array(
 					'data' => array(
 						'sprintf' => array(
-							'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d"><img src="' . $modSettings['smileys_url'] . '/' . $modSettings['smiley_sets_default'] . '/%2$s" alt="%3$s" style="padding: 2px;" id="smiley%1$d"><input type="hidden" name="smileys[%1$d][filename]" value="%2$s"></a>',
+							'format' => '<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifysmiley;smiley=%1$d"><img src="' . $settings['smileys_url'] . '/' . $settings['smiley_sets_default'] . '/%2$s" alt="%3$s" style="padding: 2px;" id="smiley%1$d"><input type="hidden" name="smileys[%1$d][filename]" value="%2$s"></a>',
 							'params' => array(
 								'id_smiley' => false,
 								'filename' => true,
@@ -965,15 +965,15 @@ function EditSmileys()
 						'value' => $txt['smileys_description'],
 					),
 					'data' => array(
-						'function' => create_function('$rowData', !is_dir($modSettings['smileys_dir']) ? '
+						'function' => create_function('$rowData', !is_dir($settings['smileys_dir']) ? '
 							return htmlspecialchars($rowData[\'description\']);
 						' : '
-							global $context, $txt, $modSettings;
+							global $context, $txt, $settings;
 
 							// Check if there are smileys missing in some sets.
 							$missing_sets = array();
 							foreach ($context[\'smiley_sets\'] as $smiley_set)
-								if (!file_exists(sprintf(\'%1$s/%2$s/%3$s\', $modSettings[\'smileys_dir\'], $smiley_set[\'path\'], $rowData[\'filename\'])))
+								if (!file_exists(sprintf(\'%1$s/%2$s/%3$s\', $settings[\'smileys_dir\'], $smiley_set[\'path\'], $rowData[\'filename\'])))
 									$missing_sets[] = $smiley_set[\'path\'];
 
 							$description = htmlspecialchars($rowData[\'description\']);
@@ -1068,7 +1068,7 @@ function EditSmileys()
 					knownSmileys.push(document.images[i].id.substr(6));
 
 		for (i = 0; i < knownSmileys.length; i++)
-			$("#smiley" + knownSmileys[i]).attr("src", "' . $modSettings['smileys_url'] . '/" + newSet + "/" + document.forms.smileyForm["smileys[" + knownSmileys[i] + "][filename]"].value);
+			$("#smiley" + knownSmileys[i]).attr("src", "' . $settings['smileys_url'] . '/" + newSet + "/" + document.forms.smileyForm["smileys[" + knownSmileys[i] + "][filename]"].value);
 	}',
 		);
 
@@ -1083,19 +1083,19 @@ function EditSmileys()
 	elseif ($context['sub_action'] == 'modifysmiley')
 	{
 		// Get a list of all known smiley sets.
-		$context['smileys_dir'] = $modSettings['smileys_dir'];
+		$context['smileys_dir'] = $settings['smileys_dir'];
 		$context['smileys_dir_found'] = is_dir($context['smileys_dir']);
-		$context['smiley_sets'] = explode(',', $modSettings['smiley_sets_known']);
-		$set_names = explode("\n", $modSettings['smiley_sets_names']);
+		$context['smiley_sets'] = explode(',', $settings['smiley_sets_known']);
+		$set_names = explode("\n", $settings['smiley_sets_names']);
 		foreach ($context['smiley_sets'] as $i => $set)
 			$context['smiley_sets'][$i] = array(
 				'id' => $i,
 				'path' => htmlspecialchars($set),
 				'name' => htmlspecialchars($set_names[$i]),
-				'selected' => $set == $modSettings['smiley_sets_default']
+				'selected' => $set == $settings['smiley_sets_default']
 			);
 
-		$context['selected_set'] = $modSettings['smiley_sets_default'];
+		$context['selected_set'] = $settings['smiley_sets_default'];
 
 		// Get all possible filenames for the smileys.
 		$context['filenames'] = array();
@@ -1175,7 +1175,7 @@ function list_getNumSmileys()
 
 function EditSmileyOrder()
 {
-	global $modSettings, $context, $settings, $txt, $boarddir;
+	global $settings, $context, $theme, $txt, $boarddir;
 
 	// Move smileys to another position.
 	if (isset($_REQUEST['reorder']))
@@ -1329,7 +1329,7 @@ function EditSmileyOrder()
 
 function InstallSmileySet()
 {
-	global $boarddir, $modSettings;
+	global $boarddir, $settings;
 
 	isAllowedTo('manage_smileys');
 	checkSession('request');
@@ -1354,8 +1354,8 @@ function InstallSmileySet()
 		redirectexit('action=admin;area=smileys');
 
 	updateSettings(array(
-		'smiley_sets_known' => $modSettings['smiley_sets_known'] . ',' . $name,
-		'smiley_sets_names' => $modSettings['smiley_sets_names'] . "\n" . strtok(basename(isset($_FILES['set_gz']) ? $_FILES['set_gz']['name'] : $_REQUEST['set_gz']), '.'),
+		'smiley_sets_known' => $settings['smiley_sets_known'] . ',' . $name,
+		'smiley_sets_names' => $settings['smiley_sets_names'] . "\n" . strtok(basename(isset($_FILES['set_gz']) ? $_FILES['set_gz']['name'] : $_REQUEST['set_gz']), '.'),
 	));
 
 	cleanSmileyCache();
@@ -1367,13 +1367,13 @@ function InstallSmileySet()
 // A function to import new smileys from an existing directory into the database.
 function ImportSmileys($smileyPath)
 {
-	global $modSettings;
+	global $settings;
 
-	if (!is_dir($modSettings['smileys_dir'] . '/' . $smileyPath))
+	if (!is_dir($settings['smileys_dir'] . '/' . $smileyPath))
 		fatal_lang_error('smiley_set_unable_to_import');
 
 	$smileys = array();
-	$dir = dir($modSettings['smileys_dir'] . '/' . $smileyPath);
+	$dir = dir($settings['smileys_dir'] . '/' . $smileyPath);
 	while ($entry = $dir->read())
 	{
 		if (in_array(strrchr($entry, '.'), array('.jpg', '.gif', '.jpeg', '.png')))
@@ -1433,7 +1433,7 @@ function ImportSmileys($smileyPath)
 
 function EditMessageIcons()
 {
-	global $user_info, $modSettings, $context, $settings, $txt;
+	global $user_info, $settings, $context, $theme, $txt;
 	global $boarddir, $scripturl;
 
 	// Get a list of icons.
@@ -1454,7 +1454,7 @@ function EditMessageIcons()
 			'id' => $row['id_icon'],
 			'title' => $row['title'],
 			'filename' => $row['filename'],
-			'image_url' => $settings[file_exists($settings['theme_dir'] . '/images/post/' . $row['filename'] . '.gif') ? 'actual_images_url' : 'default_images_url'] . '/post/' . $row['filename'] . '.gif',
+			'image_url' => $theme[file_exists($theme['theme_dir'] . '/images/post/' . $row['filename'] . '.gif') ? 'actual_images_url' : 'default_images_url'] . '/post/' . $row['filename'] . '.gif',
 			'board_id' => $row['id_board'],
 			'board' => empty($row['board_name']) ? $txt['icons_edit_icons_all_boards'] : $row['board_name'],
 			'order' => $row['icon_order'],
@@ -1494,7 +1494,7 @@ function EditMessageIcons()
 			// Do some preperation with the data... like check the icon exists *somewhere*
 			if (strpos($_POST['icon_filename'], '.gif') !== false)
 				$_POST['icon_filename'] = substr($_POST['icon_filename'], 0, -4);
-			if (!file_exists($settings['default_theme_dir'] . '/images/post/' . $_POST['icon_filename'] . '.gif'))
+			if (!file_exists($theme['default_theme_dir'] . '/images/post/' . $_POST['icon_filename'] . '.gif'))
 				fatal_lang_error('icon_not_found');
 			// There is a 16 character limit on message icons...
 			elseif (strlen($_POST['icon_filename']) > 16)
@@ -1570,9 +1570,9 @@ function EditMessageIcons()
 			'icon' => array(
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $settings;
+						global $theme;
 
-						$images_url = $settings[file_exists(sprintf(\'%1$s/images/post/%2$s.gif\', $settings[\'theme_dir\'], $rowData[\'filename\'])) ? \'actual_images_url\' : \'default_images_url\'];
+						$images_url = $theme[file_exists(sprintf(\'%1$s/images/post/%2$s.gif\', $theme[\'theme_dir\'], $rowData[\'filename\'])) ? \'actual_images_url\' : \'default_images_url\'];
 						return sprintf(\'<img src="%1$s/post/%2$s.gif" alt="%3$s">\', $images_url, $rowData[\'filename\'], htmlspecialchars($rowData[\'title\']));
 					'),
 				),

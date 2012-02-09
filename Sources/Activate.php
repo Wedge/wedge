@@ -28,20 +28,20 @@ if (!defined('WEDGE'))
 
 function Activate()
 {
-	global $context, $txt, $modSettings, $scripturl, $language;
+	global $context, $txt, $settings, $scripturl, $language;
 
 	loadLanguage('Login');
 	loadTemplate('Login');
 
 	if (empty($_REQUEST['u']) && empty($_POST['user']))
 	{
-		if (empty($modSettings['registration_method']) || $modSettings['registration_method'] == 3)
+		if (empty($settings['registration_method']) || $settings['registration_method'] == 3)
 			fatal_lang_error('no_access', false);
 
 		$context['member_id'] = 0;
 		wetem::load('resend');
 		$context['page_title'] = $txt['invalid_activation_resend'];
-		$context['can_activate'] = empty($modSettings['registration_method']) || $modSettings['registration_method'] == 1;
+		$context['can_activate'] = empty($settings['registration_method']) || $settings['registration_method'] == 1;
 		$context['default_username'] = isset($_GET['user']) ? $_GET['user'] : '';
 
 		return;
@@ -76,7 +76,7 @@ function Activate()
 	// Change their email address? (they probably tried a fake one first :P.)
 	if (isset($_POST['new_email'], $_REQUEST['passwd']) && sha1(strtolower($row['member_name']) . $_REQUEST['passwd']) == $row['passwd'])
 	{
-		if (empty($modSettings['registration_method']) || $modSettings['registration_method'] == 3)
+		if (empty($settings['registration_method']) || $settings['registration_method'] == 3)
 			fatal_lang_error('no_access', false);
 
 		// !!! Separate the sprintf?
@@ -121,7 +121,7 @@ function Activate()
 			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
 		);
 
-		$emaildata = loadEmailTemplate('resend_activate_message', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate('resend_activate_message', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
 
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 

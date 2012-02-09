@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	template_show_list('regular_membergroups_list');
 	echo '<br><br>';
@@ -22,7 +22,7 @@ function template_main()
 
 function template_new_group()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">
@@ -71,7 +71,7 @@ function template_new_group()
 						<input type="text" name="min_posts" id="min_posts_input" size="5">
 					</dd>';
 
-	if (!$context['post_group'] || !empty($modSettings['permission_enable_postgroups']))
+	if (!$context['post_group'] || !empty($settings['permission_enable_postgroups']))
 	{
 		echo '
 					<dt>
@@ -159,7 +159,7 @@ function template_new_group()
 
 function template_edit_group()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 	<div id="admincenter">
@@ -284,7 +284,7 @@ function template_edit_group()
 					<dd>
 						', $txt['membergroups_images_url'], '
 						<input type="text" name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', we_theme_url + \'/images/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', $context['user']['language'], '\') : \'blank.gif\'));" size="20">
-						<img id="star_preview" src="', $settings['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
+						<img id="star_preview" src="', $theme['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
 					</dd>
 					<dt>
 						<label for="max_messages_input"><strong>', $txt['membergroups_max_messages'], ':</strong></label>
@@ -385,7 +385,7 @@ function template_edit_group()
 // Templating for viewing the members of a group.
 function template_group_members()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 	<div id="admincenter">
@@ -451,11 +451,11 @@ function template_group_members()
 			<table class="table_grid w100 cs0">
 				<thead>
 					<tr class="catbg">
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=email', $context['sort_by'] == 'email' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['email'], $context['sort_by'] == 'email' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=active', $context['sort_by'] == 'active' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['membergroups_members_last_active'], $context['sort_by'] == 'active' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
-						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=registered', $context['sort_by'] == 'registered' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['date_registered'], $context['sort_by'] == 'registered' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
-						<th', empty($context['group']['assignable']) ? ' colspan="2"' : '', '><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=posts', $context['sort_by'] == 'posts' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['posts'], $context['sort_by'] == 'posts' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>';
+						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=name', $context['sort_by'] == 'name' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['name'], $context['sort_by'] == 'name' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=email', $context['sort_by'] == 'email' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['email'], $context['sort_by'] == 'email' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=active', $context['sort_by'] == 'active' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['membergroups_members_last_active'], $context['sort_by'] == 'active' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=registered', $context['sort_by'] == 'registered' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['date_registered'], $context['sort_by'] == 'registered' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>
+						<th', empty($context['group']['assignable']) ? ' colspan="2"' : '', '><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=posts', $context['sort_by'] == 'posts' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['posts'], $context['sort_by'] == 'posts' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>';
 	if (!empty($context['group']['assignable']))
 		echo '
 						<td style="width: 4%" class="center"><input type="checkbox" onclick="invertAll(this, this.form);"></td>';
@@ -475,7 +475,7 @@ function template_group_members()
 		echo '
 					<tr class="windowbg2">
 						<td>', $member['name'], '</td>
-						<td', $member['show_email'] == 'no_through_forum' && $settings['use_image_buttons'] ? ' class="center"' : '', '>';
+						<td', $member['show_email'] == 'no_through_forum' && $theme['use_image_buttons'] ? ' class="center"' : '', '>';
 
 		// Is it totally hidden?
 		if ($member['show_email'] == 'no')
@@ -488,7 +488,7 @@ function template_group_members()
 		// ... otherwise it's visible - but only via an image?
 		elseif ($member['show_email'] == 'no_through_forum')
 			echo '
-							<a href="', $scripturl, '?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow">', ($settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a>';
+							<a href="', $scripturl, '?action=emailuser;sa=email;uid=', $member['id'], '" rel="nofollow">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a>';
 
 		echo '
 						</td>
@@ -554,7 +554,7 @@ function template_group_members()
 // Allow the moderator to enter a reason to each user being rejected.
 function template_group_request_reason()
 {
-	global $settings, $options, $context, $txt, $scripturl;
+	global $theme, $options, $context, $txt, $scripturl;
 
 	// Show a welcome message to the user.
 	echo '

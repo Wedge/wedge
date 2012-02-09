@@ -85,7 +85,7 @@ function template_post_locked()
 
 function template_post_name_email()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	// Guests have to put in their name and email...
 	if (isset($context['name'], $context['email']))
@@ -98,7 +98,7 @@ function template_post_name_email()
 						<input type="text" name="guestname" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
 					</dd>';
 
-		if (empty($modSettings['guest_post_no_email']))
+		if (empty($settings['guest_post_no_email']))
 			echo '
 					<dt>
 						<span', isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' class="error"' : '', ' id="caption_email">', $txt['email'], ':</span>
@@ -129,9 +129,9 @@ function template_postbox()
 function template_post_additional_options()
 {
 	// !!! This needs to be rewritten to be extensible, declared in Post.php and available as a simple list to be iterated over.
-	global $settings, $txt, $options, $context, $modSettings;
+	global $theme, $txt, $options, $context, $settings;
 	// If the admin has enabled the hiding of the additional options - show a link and image for it.
-	if (!empty($modSettings['additional_options_collapsable']))
+	if (!empty($settings['additional_options_collapsable']))
 		echo '
 				<div id="postAdditionalOptionsHeader">
 					<div id="postMoreExpand"></div> <strong><a href="#" id="postMoreExpandLink">', $txt['post_additionalopt'], '</a></strong>
@@ -155,7 +155,7 @@ function template_post_additional_options()
 
 function template_post_attachments()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 	// If this post already has attachments on it - give information about them.
 	if (!empty($context['current_attachments']))
 	{
@@ -193,7 +193,7 @@ function template_post_attachments()
 					<dd class="smalltext">';
 
 		// Show some useful information such as allowed extensions, maximum size and amount of attachments allowed.
-		if (!empty($modSettings['attachmentCheckExtensions']))
+		if (!empty($settings['attachmentCheckExtensions']))
 			echo '
 						', $txt['allowed_types'], ': ', $context['allowed_extensions'], '<br>';
 
@@ -218,9 +218,9 @@ function template_post_attachments()
 
 		// This is purely setting it up to be displayed in a JSON friendly fashion without having a JSON function handy.
 		// Included here since it seemed almost more related to display than logic.
-		if (!empty($modSettings['attachmentExtensions']) && !empty($modSettings['attachmentCheckExtensions']))
+		if (!empty($settings['attachmentExtensions']) && !empty($settings['attachmentCheckExtensions']))
 		{
-			$ext = explode(',', $modSettings['attachmentExtensions']);
+			$ext = explode(',', $settings['attachmentExtensions']);
 			foreach ($ext as $k => $v)
 				$ext[$k] = JavaScriptEscape($v);
 
@@ -264,7 +264,7 @@ function template_post_buttons()
 
 function template_postform_after()
 {
-	global $context, $settings, $counter, $txt, $modSettings;
+	global $context, $theme, $counter, $txt, $settings;
 
 	// We've finished with the main form elements, so finish the UI for it.
 	echo '
@@ -446,7 +446,7 @@ function template_postform_after()
 	}');
 
 	// Code for showing and hiding additional options.
-	if (!empty($modSettings['additional_options_collapsable']))
+	if (!empty($settings['additional_options_collapsable']))
 	{
 		// If we're collapsed, hide everything now and don't trigger the animation.
 		if (empty($context['show_additional_options']))
@@ -633,7 +633,7 @@ function template_make_poll()
 // Previous post handling
 function template_show_previous_posts()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	echo '
 		<div id="recent" class="flow_hidden main_section">

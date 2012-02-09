@@ -38,7 +38,7 @@ if (!defined('WEDGE'))
 // Browse the list of package servers, add servers...
 function PackageGet()
 {
-	global $txt, $scripturl, $context, $boarddir, $modSettings;
+	global $txt, $scripturl, $context, $boarddir, $settings;
 
 	isAllowedTo('admin_forum');
 	loadSource('Subs-Package');
@@ -96,7 +96,7 @@ function PackageGet()
 
 function PackageServers()
 {
-	global $txt, $scripturl, $context, $boarddir, $modSettings;
+	global $txt, $scripturl, $context, $boarddir, $settings;
 
 	// Ensure we use the correct template, and page title.
 	wetem::load('servers');
@@ -167,9 +167,9 @@ function PackageServers()
 				$_POST['ftp_username'] = $username;
 
 			$context['package_ftp'] = array(
-				'server' => isset($_POST['ftp_server']) ? $_POST['ftp_server'] : (isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost'),
-				'port' => isset($_POST['ftp_port']) ? $_POST['ftp_port'] : (isset($modSettings['package_port']) ? $modSettings['package_port'] : '21'),
-				'username' => isset($_POST['ftp_username']) ? $_POST['ftp_username'] : (isset($modSettings['package_username']) ? $modSettings['package_username'] : ''),
+				'server' => isset($_POST['ftp_server']) ? $_POST['ftp_server'] : (isset($settings['package_server']) ? $settings['package_server'] : 'localhost'),
+				'port' => isset($_POST['ftp_port']) ? $_POST['ftp_port'] : (isset($settings['package_port']) ? $settings['package_port'] : '21'),
+				'username' => isset($_POST['ftp_username']) ? $_POST['ftp_username'] : (isset($settings['package_username']) ? $settings['package_username'] : ''),
 				'path' => $_POST['ftp_path'],
 				'error' => empty($ftp_error) ? null : $ftp_error,
 			);

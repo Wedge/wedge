@@ -105,7 +105,7 @@ if (!defined('WEDGE'))
 // The maintenance access point.
 function ManageMaintenance()
 {
-	global $txt, $modSettings, $scripturl, $context, $options;
+	global $txt, $settings, $scripturl, $context, $options;
 
 	// You absolutely must be an admin by here!
 	isAllowedTo('admin_forum');
@@ -200,7 +200,7 @@ function ManageMaintenance()
 //     setting up for the conversions (non-UTF-8 to UTF-8 and entities to UTF-8 chars) which are no longer relevant. Leaving this here for now though!
 function MaintainDatabase()
 {
-	global $context, $modSettings, $txt;
+	global $context, $settings, $txt;
 }
 
 // Supporting function for the routine maintenance area.
@@ -337,7 +337,7 @@ function MaintainEmptyUnimportantLogs()
 function ConvertUtf8()
 {
 	global $scripturl, $context, $txt, $language;
-	global $modSettings, $user_info, $db_prefix;
+	global $settings, $user_info, $db_prefix;
 
 	// Show me your badge!
 	isAllowedTo('admin_forum');
@@ -405,11 +405,11 @@ function ConvertUtf8()
 		$context['database_charset'] = in_array($context['database_charset'], $charsets) ? array_search($context['database_charset'], $charsets) : $context['database_charset'];
 
 		// No need to convert to UTF-8 if it already is.
-		if ($db_character_set === 'utf8' && !empty($modSettings['global_character_set']) && $modSettings['global_character_set'] === 'UTF-8')
+		if ($db_character_set === 'utf8' && !empty($settings['global_character_set']) && $settings['global_character_set'] === 'UTF-8')
 			fatal_lang_error('utf8_already_utf8');
 
 		// Cannot do conversion if using a fulltext index
-		if (!empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext')
+		if (!empty($settings['search_index']) && $settings['search_index'] == 'fulltext')
 			fatal_lang_error('utf8_cannot_convert_fulltext');
 
 		// Grab the character set from the default language file.
@@ -686,12 +686,12 @@ function ConvertUtf8()
 // Convert HTML-entities to their UTF-8 character equivalents.
 function ConvertEntities()
 {
-	global $db_character_set, $modSettings, $context;
+	global $db_character_set, $settings, $context;
 
 	isAllowedTo('admin_forum');
 
 	// Check to see if UTF-8 is currently the default character set.
-	if ($modSettings['global_character_set'] !== 'UTF-8' || !isset($db_character_set) || $db_character_set !== 'utf8')
+	if ($settings['global_character_set'] !== 'UTF-8' || !isset($db_character_set) || $db_character_set !== 'utf8')
 		fatal_lang_error('entity_convert_only_utf8');
 
 	// Some starting values.
@@ -933,7 +933,7 @@ function OptimizeTables()
 // Recount all the important board totals.
 function AdminBoardRecount()
 {
-	global $txt, $context, $scripturl, $modSettings;
+	global $txt, $context, $scripturl, $settings;
 	global $time_start;
 
 	isAllowedTo('admin_forum');
@@ -1301,7 +1301,7 @@ function AdminBoardRecount()
 	// Any messages pointing to the wrong board?
 	if ($_REQUEST['step'] <= 6)
 	{
-		while ($_REQUEST['start'] < $modSettings['maxMsgID'])
+		while ($_REQUEST['start'] < $settings['maxMsgID'])
 		{
 			$request = wesql::query('
 				SELECT /*!40001 SQL_NO_CACHE */ t.id_board, m.id_msg
@@ -1335,7 +1335,7 @@ function AdminBoardRecount()
 			if (microtime(true) - $time_start > 3)
 			{
 				$context['continue_get_data'] = '?action=admin;area=maintain;sa=routine;activity=recount;step=6;start=' . $_REQUEST['start'] . ';' . $context['session_query'];
-				$context['continue_percent'] = round((700 + 100 * $_REQUEST['start'] / $modSettings['maxMsgID']) / $total_steps);
+				$context['continue_percent'] = round((700 + 100 * $_REQUEST['start'] / $settings['maxMsgID']) / $total_steps);
 
 				return;
 			}
@@ -1577,7 +1577,7 @@ function MaintainPurgeInactiveMembers()
 
 function MaintainRecountPosts()
 {
-	global $txt, $context, $scripturl, $modSettings, $time_start;
+	global $txt, $context, $scripturl, $settings, $time_start;
 
 	isAllowedTo('admin_forum');
 	checkSession('request');
@@ -1638,7 +1638,7 @@ function MaintainRecountPosts()
 			redirectexit('action=admin;area=maintain;sa=members;done=recountposts');
 		}
 
-		if (!empty($modSettings['cache_enable']))
+		if (!empty($settings['cache_enable']))
 			cache_put_data('recount_boards_info', array($boards, $member_count), 600);
 	}
 

@@ -56,7 +56,7 @@ function EmailUser()
 // Send a topic to a friend.
 function SendTopic()
 {
-	global $topic, $txt, $context, $scripturl, $modSettings;
+	global $topic, $txt, $context, $scripturl, $settings;
 
 	// Check permissions...
 	isAllowedTo('send_topic');
@@ -82,7 +82,7 @@ function SendTopic()
 	wesql::free_result($request);
 
 	// Can't send topic if it's unapproved and using post moderation.
-	if ($modSettings['postmod_active'] && !$row['approved'])
+	if ($settings['postmod_active'] && !$row['approved'])
 		fatal_lang_error('not_approved_topic', false);
 
 	// Censor the subject....
@@ -153,7 +153,7 @@ function SendTopic()
 // Allow a user to send an email.
 function CustomEmail()
 {
-	global $context, $modSettings, $user_info, $txt, $scripturl;
+	global $context, $settings, $user_info, $txt, $scripturl;
 
 	// Can the user even see this information?
 	if ($user_info['is_guest'])

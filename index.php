@@ -144,7 +144,7 @@ if (!empty($context['extra_actions']))
 cleanRequest();
 
 // Seed the random generator.
-if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 42)
+if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
 	we_seed_generator();
 
 // Before we get carried away, are we doing a scheduled task? If so save CPU cycles by jumping out!
@@ -160,11 +160,11 @@ elseif (isset($_GET['imperative']))
 }
 
 // Check if compressed output is enabled, supported, and not already being done.
-if (!empty($modSettings['enableCompressedOutput']) && !headers_sent())
+if (!empty($settings['enableCompressedOutput']) && !headers_sent())
 {
 	// If zlib is being used, turn off output compression.
 	if (@ini_get('zlib.output_compression') == '1' || @ini_get('output_handler') == 'ob_gzhandler')
-		$modSettings['enableCompressedOutput'] = '0';
+		$settings['enableCompressedOutput'] = '0';
 	else
 	{
 		ob_end_clean();
@@ -192,10 +192,10 @@ if (!defined('WIRELESS'))
 if (WIRELESS)
 {
 	// Some cellphones can't handle output compression...
-	$modSettings['enableCompressedOutput'] = '0';
+	$settings['enableCompressedOutput'] = '0';
 	// !!! Do we want these hard coded?
-	$modSettings['defaultMaxMessages'] = 5;
-	$modSettings['defaultMaxTopics'] = 9;
+	$settings['defaultMaxMessages'] = 5;
+	$settings['defaultMaxTopics'] = 9;
 }
 
 // What function shall we execute? (done like this for memory's sake.)
@@ -208,7 +208,7 @@ if (empty($_REQUEST['action']) || !defined('WEDGE_NO_LOG'))
 	writeLog();
 
 	// Track forum statistics and hits...?
-	if (!empty($modSettings['hitStats']))
+	if (!empty($settings['hitStats']))
 		trackStats(array('hits' => '+'));
 }
 
@@ -218,25 +218,25 @@ $function();
 wetem::add('sidebar', 'sidebar_quick_access');
 
 // Just quickly sneak the feed stuff in...
-if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_feed'))
+if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_feed'))
 	wetem::add('sidebar', 'sidebar_feed');
 
 obExit(null, null, true);
 
 // Since we're not leaving obExit the special route, we need to make sure we update the error count.
-if (!isset($modSettings['app_error_count']))
-	$modSettings['app_error_count'] = 0;
+if (!isset($settings['app_error_count']))
+	$settings['app_error_count'] = 0;
 if (!empty($context['app_error_count']))
 	updateSettings(
 		array(
-			'app_error_count' => $modSettings['app_error_count'] + $context['app_error_count'],
+			'app_error_count' => $settings['app_error_count'] + $context['app_error_count'],
 		)
 	);
 
 // The main controlling function.
 function wedge_main()
 {
-	global $modSettings, $settings, $user_info, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
+	global $settings, $theme, $user_info, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
 
 	$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
@@ -274,9 +274,9 @@ function wedge_main()
 	{
 		if (isset($_GET['category']) && is_numeric($_GET['category']))
 			$action = 'boards';
-		elseif (isset($modSettings['default_index']))
-			if (strpos($modSettings['default_index'], 'board') === 0)
-				$board = (int) substr($modSettings['default_index'], 5);
+		elseif (isset($settings['default_index']))
+			if (strpos($settings['default_index'], 'board') === 0)
+				$board = (int) substr($settings['default_index'], 5);
 	}
 
 	// Load the current board's information.
@@ -286,7 +286,7 @@ function wedge_main()
 	loadPermissions();
 
 	// Attachments don't require the entire theme to be loaded.
-	if ($action === 'dlattach' && (!empty($modSettings['allow_guestAccess']) && $user_info['is_guest']))
+	if ($action === 'dlattach' && (!empty($settings['allow_guestAccess']) && $user_info['is_guest']))
 		detectBrowser();
 	// Load the current theme.  (note that ?theme=1 will also work, may be used for guest theming.)
 	else
@@ -318,7 +318,7 @@ function wedge_main()
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'mailq', 'verificationcode'))))
+	elseif (empty($settings['allow_guestAccess']) && $user_info['is_guest'] && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'mailq', 'verificationcode'))))
 	{
 		loadSource('Subs-Auth');
 		return 'KickGuest';
@@ -365,7 +365,7 @@ function wedge_main()
 
 function index_action($hook_action = 'default_action')
 {
-	global $modSettings, $sourcedir;
+	global $settings, $sourcedir;
 
 	// Some plugins may want to specify default "front page" behavior through the 'default_action' hook, and/or a
 	// last-minute fallback ('fallback_action'). If they do, they shall return the name of the function they want to call.
@@ -374,10 +374,10 @@ function index_action($hook_action = 'default_action')
 			return $func;
 
 	// Otherwise, if the admin specified a custom homepage, fall back to it, unless we're in Wireless mode.
-	if (!WIRELESS && isset($modSettings['default_index']) && file_exists($sourcedir . '/' . $modSettings['default_index'] . '.php'))
+	if (!WIRELESS && isset($settings['default_index']) && file_exists($sourcedir . '/' . $settings['default_index'] . '.php'))
 	{
-		loadSource($modSettings['default_index']);
-		return $modSettings['default_index'];
+		loadSource($settings['default_index']);
+		return $settings['default_index'];
 	}
 
 	loadSource('Boards');

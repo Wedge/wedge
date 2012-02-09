@@ -21,7 +21,7 @@ if (!defined('WEDGE'))
 // Entry point for the moderation center.
 function ModerationMain($dont_call = false)
 {
-	global $txt, $context, $scripturl, $modSettings, $user_info, $settings, $options;
+	global $txt, $context, $scripturl, $settings, $user_info, $theme, $options;
 
 	// Don't run this twice... and don't conflict with the admin bar.
 	if (isset($context['admin_area']))
@@ -29,7 +29,7 @@ function ModerationMain($dont_call = false)
 
 	$context['can_moderate_boards'] = $user_info['mod_cache']['bq'] != '0=1';
 	$context['can_moderate_groups'] = $user_info['mod_cache']['gq'] != '0=1';
-	$context['can_moderate_approvals'] = $modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap']);
+	$context['can_moderate_approvals'] = $settings['postmod_active'] && !empty($user_info['mod_cache']['ap']);
 
 	// Everyone using this area must be allowed here!
 	if (!$context['can_moderate_boards'] && !$context['can_moderate_groups'] && !$context['can_moderate_approvals'])
@@ -56,7 +56,7 @@ function ModerationMain($dont_call = false)
 				),
 				'modlog' => array(
 					'label' => $txt['modlog_view'],
-					'enabled' => !empty($modSettings['log_enabled_moderate']) && $context['can_moderate_boards'],
+					'enabled' => !empty($settings['log_enabled_moderate']) && $context['can_moderate_boards'],
 					'file' => 'Modlog',
 					'function' => 'ViewModlog',
 				),
@@ -195,7 +195,7 @@ function ModerationMain($dont_call = false)
 // This function basically is the home page of the moderation center.
 function ModerationHome()
 {
-	global $txt, $context, $scripturl, $modSettings, $user_info, $user_settings;
+	global $txt, $context, $scripturl, $settings, $user_info, $user_settings;
 
 	loadTemplate('ModerationCenter');
 
@@ -248,11 +248,11 @@ function ModBlockLatestNews()
 // Show a list of the most active watched users.
 function ModBlockWatchedUsers()
 {
-	global $context, $scripturl, $modSettings;
+	global $context, $scripturl, $settings;
 
 	if (($watched_users = cache_get_data('recent_user_watches', 240)) === null)
 	{
-		$modSettings['warning_watch'] = empty($modSettings['warning_watch']) ? 1 : $modSettings['warning_watch'];
+		$settings['warning_watch'] = empty($settings['warning_watch']) ? 1 : $settings['warning_watch'];
 		$request = wesql::query('
 			SELECT id_member, real_name, last_login
 			FROM {db_prefix}members
@@ -260,7 +260,7 @@ function ModBlockWatchedUsers()
 			ORDER BY last_login DESC
 			LIMIT 10',
 			array(
-				'warning_watch' => $modSettings['warning_watch'],
+				'warning_watch' => $settings['warning_watch'],
 			)
 		);
 		$watched_users = array();
@@ -522,7 +522,7 @@ function ModBlockGroupRequests()
 // Browse all the reported posts...
 function ReportedPosts()
 {
-	global $txt, $context, $scripturl, $modSettings, $user_info;
+	global $txt, $context, $scripturl, $settings, $user_info;
 
 	loadTemplate('ModerationCenter');
 
@@ -694,7 +694,7 @@ function ReportedPosts()
 //!!! As for most things in this file, this needs to be moved somewhere appropriate.
 function ModerateGroups()
 {
-	global $txt, $context, $scripturl, $modSettings, $user_info;
+	global $txt, $context, $scripturl, $settings, $user_info;
 
 	// You need to be allowed to moderate groups...
 	if ($user_info['mod_cache']['gq'] == '0=1')
@@ -1039,7 +1039,7 @@ function ShowNotice()
 // View watched users.
 function ViewWatchedUsers()
 {
-	global $modSettings, $context, $txt, $scripturl, $user_info;
+	global $settings, $context, $txt, $scripturl, $user_info;
 
 	// Some important context!
 	$context['page_title'] = $txt['mc_watched_users_title'];
@@ -1049,7 +1049,7 @@ function ViewWatchedUsers()
 	loadTemplate('ModerationCenter');
 
 	// Get some key settings!
-	$modSettings['warning_watch'] = empty($modSettings['warning_watch']) ? 1 : $modSettings['warning_watch'];
+	$settings['warning_watch'] = empty($settings['warning_watch']) ? 1 : $settings['warning_watch'];
 
 	// Put some pretty tabs on cause we're gonna be doing hot stuff here...
 	$context[$context['moderation_menu_name']]['tab_data'] = array(
@@ -1107,7 +1107,7 @@ function ViewWatchedUsers()
 		'id' => 'watch_user_list',
 		'title' => $txt['mc_watched_users_title'] . ' - ' . ($context['view_posts'] ? $txt['mc_watched_users_post'] : $txt['mc_watched_users_member']),
 		'width' => '100%',
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $context['view_posts'] ? $txt['mc_watched_users_no_posts'] : $txt['mc_watched_users_none'],
 		'base_href' => $scripturl . '?action=moderate;area=userwatch;sa=' . ($context['view_posts'] ? 'post' : 'member'),
 		'default_sort_col' => $context['view_posts'] ? '' : 'member',
@@ -1248,14 +1248,14 @@ function ViewWatchedUsers()
 
 function list_getWatchedUserCount($approve_query)
 {
-	global $modSettings;
+	global $settings;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}members
 		WHERE warning >= {int:warning_watch}',
 		array(
-			'warning_watch' => $modSettings['warning_watch'],
+			'warning_watch' => $settings['warning_watch'],
 		)
 	);
 	list ($totalMembers) = wesql::fetch_row($request);
@@ -1266,7 +1266,7 @@ function list_getWatchedUserCount($approve_query)
 
 function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $dummy)
 {
-	global $txt, $scripturl, $modSettings, $user_info, $context;
+	global $txt, $scripturl, $settings, $user_info, $context;
 
 	$request = wesql::query('
 		SELECT id_member, real_name, last_login, posts, warning
@@ -1275,7 +1275,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 		ORDER BY {raw:sort}
 		LIMIT ' . $start . ', ' . $items_per_page,
 		array(
-			'warning_watch' => $modSettings['warning_watch'],
+			'warning_watch' => $settings['warning_watch'],
 			'sort' => $sort,
 		)
 	);
@@ -1303,7 +1303,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 			SELECT m.id_member, MAX(m.id_msg) AS last_post_id
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
-			WHERE m.id_member IN ({array_int:member_list})' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+			WHERE m.id_member IN ({array_int:member_list})' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 				AND m.approved = {int:is_approved}') . '
 			GROUP BY m.id_member',
 			array(
@@ -1339,7 +1339,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 			SELECT MAX(m.poster_time) AS last_post, MAX(m.id_msg) AS last_post_id, m.id_member
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
-			WHERE m.id_member IN ({array_int:member_list})' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+			WHERE m.id_member IN ({array_int:member_list})' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 				AND m.approved = {int:is_approved}') . '
 			GROUP BY m.id_member',
 			array(
@@ -1360,7 +1360,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 
 function list_getWatchedUserPostsCount($approve_query)
 {
-	global $modSettings, $user_info;
+	global $settings, $user_info;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
@@ -1371,7 +1371,7 @@ function list_getWatchedUserPostsCount($approve_query)
 				AND {query_see_board}
 				' . $approve_query,
 		array(
-			'warning_watch' => $modSettings['warning_watch'],
+			'warning_watch' => $settings['warning_watch'],
 		)
 	);
 	list ($totalMemberPosts) = wesql::fetch_row($request);
@@ -1382,7 +1382,7 @@ function list_getWatchedUserPostsCount($approve_query)
 
 function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query, $delete_boards)
 {
-	global $txt, $scripturl, $modSettings, $user_info;
+	global $txt, $scripturl, $settings, $user_info;
 
 	$request = wesql::query('
 		SELECT m.id_msg, m.id_topic, m.id_board, m.id_member, m.subject, m.body, m.poster_time,
@@ -1396,7 +1396,7 @@ function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query
 		ORDER BY m.id_msg DESC
 		LIMIT ' . $start . ', ' . $items_per_page,
 		array(
-			'warning_watch' => $modSettings['warning_watch'],
+			'warning_watch' => $settings['warning_watch'],
 		)
 	);
 	$member_posts = array();
@@ -1451,7 +1451,7 @@ function ViewWarnings()
 // Simply put, look at the warning log!
 function ViewWarningLog()
 {
-	global $modSettings, $context, $txt, $scripturl;
+	global $settings, $context, $txt, $scripturl;
 
 	// Setup context as always.
 	$context['page_title'] = $txt['mc_warning_log_title'];
@@ -1462,7 +1462,7 @@ function ViewWarningLog()
 	$listOptions = array(
 		'id' => 'warning_list',
 		'title' => $txt['mc_warning_log_title'],
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['mc_warnings_none'],
 		'base_href' => $scripturl . '?action=moderate;area=warnings;sa=log;' . $context['session_query'],
 		'default_sort_col' => 'time',
@@ -1516,7 +1516,7 @@ function ViewWarningLog()
 				),
 				'data' => array(
 					'function' => create_function('$warning', '
-						global $scripturl, $settings, $txt;
+						global $scripturl, $theme, $txt;
 
 						$output = \'
 							<div class="floatleft">
@@ -1526,7 +1526,7 @@ function ViewWarningLog()
 						if (!empty($warning[\'id_notice\']))
 							$output .= \'
 							<div class="floatright">
-								<a href="\' . $scripturl . \'?action=moderate;area=notice;nid=\' . $warning[\'id_notice\'] . \'" onclick="window.open(this.href, \\\'\\\', \\\'scrollbars=yes,resizable=yes,width=400,height=250\\\'); return false;" target="_blank" class="new_win" title="\' . $txt[\'profile_warning_previous_notice\'] . \'"><img src="\' . $settings[\'default_images_url\'] . \'/filter.gif" alt="\' . $txt[\'profile_warning_previous_notice\'] . \'"></a>
+								<a href="\' . $scripturl . \'?action=moderate;area=notice;nid=\' . $warning[\'id_notice\'] . \'" onclick="window.open(this.href, \\\'\\\', \\\'scrollbars=yes,resizable=yes,width=400,height=250\\\'); return false;" target="_blank" class="new_win" title="\' . $txt[\'profile_warning_previous_notice\'] . \'"><img src="\' . $theme[\'default_images_url\'] . \'/filter.gif" alt="\' . $txt[\'profile_warning_previous_notice\'] . \'"></a>
 							</div>\';
 
 						return $output;
@@ -1553,7 +1553,7 @@ function ViewWarningLog()
 
 function list_getWarningCount()
 {
-	global $modSettings;
+	global $settings;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
@@ -1571,7 +1571,7 @@ function list_getWarningCount()
 
 function list_getWarnings($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $modSettings, $user_info;
+	global $txt, $scripturl, $settings, $user_info;
 
 	$request = wesql::query('
 		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name_col,
@@ -1607,7 +1607,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 // Load all the warning templates.
 function ViewWarningTemplates()
 {
-	global $modSettings, $context, $txt, $scripturl, $user_info;
+	global $settings, $context, $txt, $scripturl, $user_info;
 
 	// Submitting a new one?
 	if (isset($_POST['add']))
@@ -1658,7 +1658,7 @@ function ViewWarningTemplates()
 	$listOptions = array(
 		'id' => 'warning_template_list',
 		'title' => $txt['mc_warning_templates_title'],
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['mc_warning_templates_none'],
 		'base_href' => $scripturl . '?action=moderate;area=warnings;sa=templates;' . $context['session_query'],
 		'default_sort_col' => 'title',
@@ -1750,7 +1750,7 @@ function ViewWarningTemplates()
 
 function list_getWarningTemplateCount()
 {
-	global $modSettings, $user_info;
+	global $settings, $user_info;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
@@ -1771,7 +1771,7 @@ function list_getWarningTemplateCount()
 
 function list_getWarningTemplates($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $modSettings, $user_info;
+	global $txt, $scripturl, $settings, $user_info;
 
 	$request = wesql::query('
 		SELECT lc.id_comment, IFNULL(mem.id_member, 0) AS id_member,

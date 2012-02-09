@@ -80,7 +80,7 @@ function template_edit_news()
 
 function template_email_members()
 {
-	global $context, $settings, $txt, $scripturl;
+	global $context, $theme, $txt, $scripturl;
 
 	// This is some javascript for the simple/advanced toggling stuff.
 	add_js('
@@ -121,8 +121,8 @@ function template_email_members()
 
 			<div class="hide" id="advanced_select_div">
 				<we:cat>
-					<a href="#" onclick="return toggleAdvanced();" id="goadvanced"><img src="', $settings['images_url'], '/selected.gif" alt="', $txt['advanced'], '" style="vertical-align: 0">&nbsp;', $txt['advanced'], '</a>
-					<a href="#" onclick="return toggleAdvanced();" id="gosimple" class="hide"><img src="', $settings['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" style="vertical-align: 0">&nbsp;<strong>', $txt['simple'], '</strong></a>
+					<a href="#" onclick="return toggleAdvanced();" id="goadvanced"><img src="', $theme['images_url'], '/selected.gif" alt="', $txt['advanced'], '" style="vertical-align: 0">&nbsp;', $txt['advanced'], '</a>
+					<a href="#" onclick="return toggleAdvanced();" id="gosimple" class="hide"><img src="', $theme['images_url'], '/sort_down.gif" alt="', $txt['simple'], '" style="vertical-align: 0">&nbsp;<strong>', $txt['simple'], '</strong></a>
 				</we:cat>
 			</div>
 

@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 /**
  * Log an error in the error log (in the database), assuming error logging is on.
  *
- * Logging is disabled if $modSettings['enableErrorLogging'] is unset or 0.
+ * Logging is disabled if $settings['enableErrorLogging'] is unset or 0.
  *
  * @param string $error_message The final error message (not, for example, a key in $txt) to be logged, prior to any entity encoding.
  * @param mixed $error_type A string denoting the type of error being logged for the purposes of filtering: 'general', 'critical', 'database', 'undefined_vars', 'user', 'template', 'debug'. Alternatively can be specified as boolean false to override the error message being logged.
@@ -26,11 +26,11 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null)
 {
-	global $txt, $modSettings, $user_info, $scripturl, $last_error, $context, $full_request, $pluginsdir;
+	global $txt, $settings, $user_info, $scripturl, $last_error, $context, $full_request, $pluginsdir;
 	static $plugin_dir = null;
 
 	// Check if error logging is actually on.
-	if (empty($modSettings['enableErrorLogging']))
+	if (empty($settings['enableErrorLogging']))
 		return $error_message;
 
 	// Windows does funny things. Fix the pathing to make sense on Windows.
@@ -168,7 +168,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
  */
 function fatal_error($error, $log = 'general', $header = 403)
 {
-	global $txt, $context, $modSettings;
+	global $txt, $context, $settings;
 
 	issue_http_header($header);
 
@@ -177,7 +177,7 @@ function fatal_error($error, $log = 'general', $header = 403)
 		die($error);
 
 	updateOnlineWithError($error, false);
-	setup_fatal_error_context($log || (!empty($modSettings['enableErrorLogging']) && $modSettings['enableErrorLogging'] == 2) ? log_error($error, $log) : $error);
+	setup_fatal_error_context($log || (!empty($settings['enableErrorLogging']) && $settings['enableErrorLogging'] == 2) ? log_error($error, $log) : $error);
 }
 
 /**
@@ -199,7 +199,7 @@ function fatal_error($error, $log = 'general', $header = 403)
  */
 function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header = 403)
 {
-	global $txt, $language, $modSettings, $user_info, $context;
+	global $txt, $language, $settings, $user_info, $context;
 	static $fatal_error_called = false;
 
 	issue_http_header($header);
@@ -217,7 +217,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 
 	$reload_lang_file = true;
 	// Log the error in the forum's language, but don't waste the time if we aren't logging
-	if ($log || (!empty($modSettings['enableErrorLogging']) && $modSettings['enableErrorLogging'] == 2))
+	if ($log || (!empty($settings['enableErrorLogging']) && $settings['enableErrorLogging'] == 2))
 	{
 		loadLanguage('Errors', $language);
 		$reload_lang_file = !empty($user_info['language']) && $language != $user_info['language'];
@@ -249,13 +249,13 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
  */
 function error_handler($error_level, $error_string, $file, $line)
 {
-	global $settings, $modSettings, $db_show_debug;
+	global $theme, $settings, $db_show_debug;
 
 	// Ignore errors if we're ignoring them or they are strict notices from PHP 5 (which cannot be solved without breaking PHP 4.)
-	if (error_reporting() == 0 || (defined('E_STRICT') && $error_level == E_STRICT && (empty($modSettings['enableErrorLogging']) || $modSettings['enableErrorLogging'] != 2)))
+	if (error_reporting() == 0 || (defined('E_STRICT') && $error_level == E_STRICT && (empty($settings['enableErrorLogging']) || $settings['enableErrorLogging'] != 2)))
 		return;
 
-	if (strpos($file, 'eval()') !== false && !empty($settings['current_include_filename']))
+	if (strpos($file, 'eval()') !== false && !empty($theme['current_include_filename']))
 	{
 		$array = debug_backtrace();
 		for ($i = 0; $i < count($array); $i++)
@@ -270,9 +270,9 @@ function error_handler($error_level, $error_string, $file, $line)
 		}
 
 		if (isset($array[$i]) && !empty($array[$i]['args']))
-			$file = realpath($settings['current_include_filename']) . ' (' . $array[$i]['args'][0] . ' block - eval?)';
+			$file = realpath($theme['current_include_filename']) . ' (' . $array[$i]['args'][0] . ' block - eval?)';
 		else
-			$file = realpath($settings['current_include_filename']) . ' (eval?)';
+			$file = realpath($theme['current_include_filename']) . ' (eval?)';
 	}
 
 	if (isset($db_show_debug) && $db_show_debug === true)
@@ -395,7 +395,7 @@ function setup_fatal_error_context($error_message)
  */
 function show_db_error($loadavg = false)
 {
-	global $mbname, $maintenance, $mtitle, $mmessage, $modSettings;
+	global $mbname, $maintenance, $mtitle, $mmessage, $settings;
 	global $db_connection, $webmaster_email, $db_last_error, $db_error_send;
 
 	// Don't cache this page!
@@ -411,7 +411,7 @@ function show_db_error($loadavg = false)
 	if ($loadavg == false)
 	{
 		// For our purposes, we're gonna want this on if at all possible.
-		$modSettings['cache_enable'] = '1';
+		$settings['cache_enable'] = '1';
 		if (($temp = cache_get_data('db_last_error', 600)) !== null)
 			$db_last_error = max($db_last_error, $temp);
 
@@ -484,10 +484,10 @@ function show_db_error($loadavg = false)
  */
 function updateOnlineWithError($error, $is_lang, $sprintf = array())
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	// Don't bother if Who's Online is disabled.
-	if (empty($modSettings['who_enabled']))
+	if (empty($settings['who_enabled']))
 		return;
 
 	$session_id = !isset($user_info['is_guest']) || $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();

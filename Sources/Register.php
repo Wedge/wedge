@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 // Begin the registration process.
 function Register($reg_errors = array())
 {
-	global $txt, $boarddir, $context, $settings, $modSettings, $user_info;
+	global $txt, $boarddir, $context, $theme, $settings, $user_info;
 	global $language, $scripturl, $cur_profile;
 
 	// Is this an incoming AJAX check?
@@ -35,7 +35,7 @@ function Register($reg_errors = array())
 		return RegisterCheckUsername();
 
 	// Check if the administrator has it disabled.
-	if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 3)
+	if (!empty($settings['registration_method']) && $settings['registration_method'] == 3)
 		fatal_lang_error('registration_disabled', false);
 
 	// If this user is an admin - redirect them to the admin registration page.
@@ -49,16 +49,16 @@ function Register($reg_errors = array())
 	loadTemplate('Register');
 
 	// Do we need them to agree to the registration agreement, first?
-	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
+	$context['require_agreement'] = !empty($settings['requireAgreement']);
 	$context['registration_passed_agreement'] = !empty($_SESSION['registration_agreed']);
-	$context['show_coppa'] = !empty($modSettings['coppaAge']);
+	$context['show_coppa'] = !empty($settings['coppaAge']);
 
 	// Under age restrictions?
 	if ($context['show_coppa'])
 	{
 		$context['skip_coppa'] = false;
-		$context['coppa_agree_above'] = sprintf($txt['agreement_agree_coppa_above'], $modSettings['coppaAge']);
-		$context['coppa_agree_below'] = sprintf($txt['agreement_agree_coppa_below'], $modSettings['coppaAge']);
+		$context['coppa_agree_above'] = sprintf($txt['agreement_agree_coppa_above'], $settings['coppaAge']);
+		$context['coppa_agree_below'] = sprintf($txt['agreement_agree_coppa_below'], $settings['coppaAge']);
 	}
 
 	// What step are we at?
@@ -76,10 +76,10 @@ function Register($reg_errors = array())
 			$_SESSION['skip_coppa'] = !empty($_POST['accept_agreement']);
 
 			// Are they saying they're under age, while under age registration is disabled?
-			if (empty($modSettings['coppaType']) && empty($_SESSION['skip_coppa']))
+			if (empty($settings['coppaType']) && empty($_SESSION['skip_coppa']))
 			{
 				loadLanguage('Login');
-				fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['coppaAge']));
+				fatal_lang_error('under_age_registration_prohibited', false, array($settings['coppaAge']));
 			}
 		}
 	}
@@ -91,7 +91,7 @@ function Register($reg_errors = array())
 	wetem::load($current_step == 1 ? 'registration_agreement' : 'registration_form');
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
-	$context['current_forum_time_js'] = time() + $modSettings['time_offset'] * 3600;
+	$context['current_forum_time_js'] = time() + $settings['time_offset'] * 3600;
 
 	// Add the register chain to the link tree.
 	$context['linktree'][] = array(
@@ -120,7 +120,7 @@ function Register($reg_errors = array())
 	else
 		$_SESSION['register']['timenow'] = time();
 
-	if (!empty($modSettings['userLanguage']))
+	if (!empty($settings['userLanguage']))
 	{
 		$selectedLanguage = empty($_SESSION['language']) ? $language : $_SESSION['language'];
 		getLanguages();
@@ -141,7 +141,7 @@ function Register($reg_errors = array())
 	loadCustomFields(0, 'register');
 
 	// Or any standard ones?
-	if (!empty($modSettings['registration_fields']))
+	if (!empty($settings['registration_fields']))
 	{
 		loadSource('Profile-Modify');
 
@@ -153,7 +153,7 @@ function Register($reg_errors = array())
 
 		// Here, and here only, emulate the permissions the user would have to do this.
 		$user_info['permissions'] = array_merge($user_info['permissions'], array('profile_account_own', 'profile_extra_own'));
-		$reg_fields = explode(',', $modSettings['registration_fields']);
+		$reg_fields = explode(',', $settings['registration_fields']);
 
 		// We might have had some submissions on this front - go check.
 		foreach ($reg_fields as $field)
@@ -165,7 +165,7 @@ function Register($reg_errors = array())
 	}
 
 	// Generate a visual verification code to make sure the user is no bot.
-	if (!empty($modSettings['reg_verification']))
+	if (!empty($settings['reg_verification']))
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -194,18 +194,18 @@ function Register($reg_errors = array())
 // Actually register the member.
 function Register2()
 {
-	global $scripturl, $txt, $modSettings, $context;
-	global $user_info, $options, $settings;
+	global $scripturl, $txt, $settings, $context;
+	global $user_info, $options, $theme;
 
 	// Start collecting together any errors.
 	$reg_errors = array();
 
 	// You can't register if it's disabled.
-	if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 3)
+	if (!empty($settings['registration_method']) && $settings['registration_method'] == 3)
 		fatal_lang_error('registration_disabled', false);
 
 	// Well, if you don't agree, you can't register.
-	if (!empty($modSettings['requireAgreement']) && empty($_SESSION['registration_agreed']))
+	if (!empty($settings['requireAgreement']) && empty($_SESSION['registration_agreed']))
 		redirectexit();
 
 	// Make sure they came from *somewhere*, have a session.
@@ -213,15 +213,15 @@ function Register2()
 		redirectexit('action=register');
 
 	// Are they under age, and under age users are banned?
-	if (!empty($modSettings['coppaAge']) && empty($modSettings['coppaType']) && empty($_SESSION['skip_coppa']))
+	if (!empty($settings['coppaAge']) && empty($settings['coppaType']) && empty($_SESSION['skip_coppa']))
 	{
 		// !!! This should be put in Errors, imho.
 		loadLanguage('Login');
-		fatal_lang_error('under_age_registration_prohibited', false, array($modSettings['coppaAge']));
+		fatal_lang_error('under_age_registration_prohibited', false, array($settings['coppaAge']));
 	}
 
 	// Check whether the visual verification code was entered correctly.
-	if (!empty($modSettings['reg_verification']))
+	if (!empty($settings['reg_verification']))
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -286,7 +286,7 @@ function Register2()
 	loadSource('Subs-Members');
 
 	// Validation... even if we're not a mall.
-	if (isset($_POST['real_name']) && (!empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum')))
+	if (isset($_POST['real_name']) && (!empty($settings['allow_editDisplayName']) || allowedTo('moderate_forum')))
 	{
 		$_POST['real_name'] = trim(preg_replace('~[\s]~u', ' ', $_POST['real_name']));
 		if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && westr::strlen($_POST['real_name']) < 60)
@@ -304,7 +304,7 @@ function Register2()
 	$_POST['hide_email'] = !empty($_POST['allow_email']) ? 0 : 1;
 
 	// Validate the passed language file.
-	if (isset($_POST['lngfile']) && !empty($modSettings['userLanguage']))
+	if (isset($_POST['lngfile']) && !empty($settings['userLanguage']))
 	{
 		getLanguages();
 
@@ -327,8 +327,8 @@ function Register2()
 		'check_reserved_name' => true,
 		'check_password_strength' => true,
 		'check_email_ban' => true,
-		'send_welcome_email' => !empty($modSettings['send_welcomeEmail']),
-		'require' => !empty($modSettings['coppaAge']) && empty($_SESSION['skip_coppa']) ? 'coppa' : (empty($modSettings['registration_method']) ? 'nothing' : ($modSettings['registration_method'] == 1 ? 'activation' : 'approval')),
+		'send_welcome_email' => !empty($settings['send_welcomeEmail']),
+		'require' => !empty($settings['coppaAge']) && empty($_SESSION['skip_coppa']) ? 'coppa' : (empty($settings['registration_method']) ? 'nothing' : ($settings['registration_method'] == 1 ? 'activation' : 'approval')),
 		'extra_register_vars' => array(),
 		'theme_vars' => array(),
 	);
@@ -446,10 +446,10 @@ function Register2()
 	}
 
 	// If COPPA has been selected then things get complicated, setup the template.
-	if (!empty($modSettings['coppaAge']) && empty($_SESSION['skip_coppa']))
+	if (!empty($settings['coppaAge']) && empty($_SESSION['skip_coppa']))
 		redirectexit('action=coppa;member=' . $memberID);
 	// Basic template variable setup.
-	elseif (!empty($modSettings['registration_method']))
+	elseif (!empty($settings['registration_method']))
 	{
 		unset($_SESSION['register']); // Don't need the time gate now.
 		loadTemplate('Register');
@@ -457,14 +457,14 @@ function Register2()
 		$context += array(
 			'page_title' => $txt['register'],
 			'title' => $txt['registration_successful'],
-			'description' => $modSettings['registration_method'] == 2 ? $txt['approval_after_registration'] : $txt['activate_after_registration']
+			'description' => $settings['registration_method'] == 2 ? $txt['approval_after_registration'] : $txt['activate_after_registration']
 		);
 	}
 	else
 	{
 		call_hook('activate', array($regOptions['username']));
 
-		setLoginCookie(60 * $modSettings['cookieTime'], $memberID, sha1(sha1(strtolower($regOptions['username']) . $regOptions['password']) . $regOptions['register_vars']['password_salt']));
+		setLoginCookie(60 * $settings['cookieTime'], $memberID, sha1(sha1(strtolower($regOptions['username']) . $regOptions['password']) . $regOptions['register_vars']['password_salt']));
 
 		redirectexit('action=login2;sa=check;member=' . $memberID, $context['server']['needs_login_fix']);
 	}

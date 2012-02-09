@@ -35,7 +35,7 @@ if (!defined('WEDGE'))
 // Activate an account.
 function activateAccount($memID)
 {
-	global $context, $user_profile, $modSettings;
+	global $context, $user_profile, $settings;
 
 	isAllowedTo('moderate_forum');
 
@@ -57,7 +57,7 @@ function activateAccount($memID)
 
 		// If we are doing approval, update the stats for the member just in case.
 		if (in_array($user_profile[$memID]['is_activated'], array(3, 4, 13, 14)))
-			updateSettings(array('unapprovedMembers' => ($modSettings['unapprovedMembers'] > 1 ? $modSettings['unapprovedMembers'] - 1 : 0)));
+			updateSettings(array('unapprovedMembers' => ($settings['unapprovedMembers'] > 1 ? $settings['unapprovedMembers'] - 1 : 0)));
 
 		// Make sure we update the stats too.
 		updateStats('member', false);
@@ -70,11 +70,11 @@ function activateAccount($memID)
 // Issue/manage a user's warning status.
 function issueWarning($memID)
 {
-	global $txt, $scripturl, $modSettings, $user_info, $mbname;
+	global $txt, $scripturl, $settings, $user_info, $mbname;
 	global $context, $cur_profile, $memberContext;
 
 	// Get all the actual settings.
-	list ($modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
+	list ($settings['user_limit']) = explode(',', $settings['warning_settings']);
 
 	// This stores any legitimate errors.
 	$issueErrors = array();
@@ -84,11 +84,11 @@ function issueWarning($memID)
 		fatal_lang_error('no_access', false);
 
 	// Make sure things which are disabled stay disabled.
-	$modSettings['warning_watch'] = !empty($modSettings['warning_watch']) ? $modSettings['warning_watch'] : 110;
-	$modSettings['warning_moderate'] = !empty($modSettings['warning_moderate']) && !empty($modSettings['postmod_active']) ? $modSettings['warning_moderate'] : 110;
-	$modSettings['warning_mute'] = !empty($modSettings['warning_mute']) ? $modSettings['warning_mute'] : 110;
+	$settings['warning_watch'] = !empty($settings['warning_watch']) ? $settings['warning_watch'] : 110;
+	$settings['warning_moderate'] = !empty($settings['warning_moderate']) && !empty($settings['postmod_active']) ? $settings['warning_moderate'] : 110;
+	$settings['warning_mute'] = !empty($settings['warning_mute']) ? $settings['warning_mute'] : 110;
 
-	$context['warning_limit'] = allowedTo('admin_forum') ? 0 : $modSettings['user_limit'];
+	$context['warning_limit'] = allowedTo('admin_forum') ? 0 : $settings['user_limit'];
 	$context['member']['warning'] = $cur_profile['warning'];
 	$context['member']['name'] = $cur_profile['real_name'];
 
@@ -243,9 +243,9 @@ function issueWarning($memID)
 	// Work our the various levels.
 	$context['level_effects'] = array(
 		0 => $txt['profile_warning_effect_none'],
-		$modSettings['warning_watch'] => $txt['profile_warning_effect_watch'],
-		$modSettings['warning_moderate'] => $txt['profile_warning_effect_moderation'],
-		$modSettings['warning_mute'] => $txt['profile_warning_effect_mute'],
+		$settings['warning_watch'] => $txt['profile_warning_effect_watch'],
+		$settings['warning_moderate'] => $txt['profile_warning_effect_moderation'],
+		$settings['warning_mute'] => $txt['profile_warning_effect_mute'],
 	);
 	$context['current_level'] = 0;
 	foreach ($context['level_effects'] as $limit => $dummy)
@@ -257,7 +257,7 @@ function issueWarning($memID)
 
 	// Make the page index.
 	$context['start'] = (int) $_REQUEST['start'];
-	$perPage = (int) $modSettings['defaultMaxMessages'];
+	$perPage = (int) $settings['defaultMaxMessages'];
 	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=issuewarning', $context['start'], $context['total_warnings'], $perPage);
 
 	// Now do the data itself.
@@ -392,7 +392,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 // Present a screen to make sure the user wants to be deleted
 function deleteAccount($memID)
 {
-	global $txt, $context, $user_info, $modSettings, $cur_profile;
+	global $txt, $context, $user_info, $settings, $cur_profile;
 
 	if (!$context['user']['is_owner'])
 		isAllowedTo('profile_remove_any');
@@ -403,13 +403,13 @@ function deleteAccount($memID)
 	$context['can_delete_posts'] = !$context['user']['is_owner'] && allowedTo('moderate_forum');
 
 	// Can they do this, or will they need approval?
-	$context['needs_approval'] = $context['user']['is_owner'] && !empty($modSettings['approveAccountDeletion']) && !allowedTo('moderate_forum');
+	$context['needs_approval'] = $context['user']['is_owner'] && !empty($settings['approveAccountDeletion']) && !allowedTo('moderate_forum');
 	$context['page_title'] = $txt['deleteAccount'] . ': ' . $cur_profile['real_name'];
 }
 
 function deleteAccount2($profile_vars, $post_errors, $memID)
 {
-	global $user_info, $context, $cur_profile, $modSettings;
+	global $user_info, $context, $cur_profile, $settings;
 
 	// Try to get more time...
 	@set_time_limit(600);
@@ -514,7 +514,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 			deleteMembers($memID);
 	}
 	// Do they need approval to delete?
-	elseif (empty($post_errors) && !empty($modSettings['approveAccountDeletion']) && !allowedTo('moderate_forum'))
+	elseif (empty($post_errors) && !empty($settings['approveAccountDeletion']) && !allowedTo('moderate_forum'))
 	{
 		// Setup their account for deletion ;)
 		updateMemberData($memID, array('is_activated' => 4));
@@ -536,7 +536,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 // Function for doing all the paid subscription stuff - kinda.
 function subscriptions($memID)
 {
-	global $context, $txt, $modSettings, $scripturl, $user_profile, $user_info;
+	global $context, $txt, $settings, $scripturl, $user_profile, $user_info;
 
 	// Load the paid template anyway.
 	loadTemplate('ManagePaid');
@@ -721,14 +721,14 @@ function subscriptions($memID)
 			fatal_lang_error('paid_sub_not_active');
 
 		// Sort out the cost/currency.
-		$context['currency'] = $modSettings['paid_currency_code'];
+		$context['currency'] = $settings['paid_currency_code'];
 		$context['recur'] = $context['sub']['repeatable'];
 
 		if ($context['sub']['flexible'])
 		{
 			// Real cost...
 			$context['value'] = $context['sub']['costs'][$_POST['cur'][$id_sub]];
-			$context['cost'] = sprintf($modSettings['paid_currency_symbol'], $context['value']) . '/' . $txt[$_POST['cur'][$id_sub]];
+			$context['cost'] = sprintf($settings['paid_currency_symbol'], $context['value']) . '/' . $txt[$_POST['cur'][$id_sub]];
 			// The period value for paypal.
 			$context['paypal_period'] = strtoupper(substr($_POST['cur'][$id_sub], 0, 1));
 		}
@@ -736,7 +736,7 @@ function subscriptions($memID)
 		{
 			// Real cost...
 			$context['value'] = $context['sub']['costs']['fixed'];
-			$context['cost'] = sprintf($modSettings['paid_currency_symbol'], $context['value']);
+			$context['cost'] = sprintf($settings['paid_currency_symbol'], $context['value']);
 
 			// Recur?
 			preg_match('~(\d*)(\w)~', $context['sub']['real_length'], $match);

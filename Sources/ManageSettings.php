@@ -72,7 +72,7 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 // This function passes control through to the relevant tab.
 function ModifyFeatureSettings()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $scripturl, $theme;
 
 	$context['page_title'] = $txt['modSettings_title'];
 
@@ -87,7 +87,7 @@ function ModifyFeatureSettings()
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['modSettings_title'],
 		'help' => 'featuresettings',
-		'description' => sprintf($txt['modSettings_desc'], $settings['theme_id'], $context['session_query'], $scripturl),
+		'description' => sprintf($txt['modSettings_desc'], $theme['theme_id'], $context['session_query'], $scripturl),
 		'tabs' => array(
 			'basic' => array(
 			),
@@ -168,7 +168,7 @@ function ModifyModSettings()
 // This is an overall control panel enabling/disabling lots of Wedge's key feature components.
 function ModifyCoreFeatures($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context, $settings;
 
 	/* This is an array of all the features that can be enabled/disabled - each option can have the following:
 		title		- Text title of this item (If standard string does not exist).
@@ -255,7 +255,7 @@ function ModifyCoreFeatures($return_config = false)
 		$context['features'][$id] = array(
 			'title' => isset($feature['title']) ? $feature['title'] : $txt['core_settings_item_' . $id],
 			'desc' => isset($feature['desc']) ? $feature['desc'] : $txt['core_settings_item_' . $id . '_desc'],
-			'enabled' => isset($feature['setting']) && !empty($modSettings[$feature['setting']]),
+			'enabled' => isset($feature['setting']) && !empty($settings[$feature['setting']]),
 			'url' => !empty($feature['url']) ? $scripturl . '?' . $feature['url'] . ';' . $context['session_query'] : '',
 		);
 
@@ -334,7 +334,7 @@ function ModifyBasicSettings($return_config = false)
 // Moderation type settings - although there are fewer than we have you believe ;)
 function ModifyModerationSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context, $settings;
 
 	$config_vars = array(
 			// Warning system?
@@ -351,7 +351,7 @@ function ModifyModerationSettings($return_config = false)
 		return $config_vars;
 
 	// Cannot use moderation if post moderation is not enabled.
-	if (!$modSettings['postmod_active'])
+	if (!$settings['postmod_active'])
 		unset($config_vars['moderate']);
 
 	// Saving?
@@ -360,7 +360,7 @@ function ModifyModerationSettings($return_config = false)
 		checkSession();
 
 		$_POST['warning_watch'] = min($_POST['warning_watch'], 100);
-		$_POST['warning_moderate'] = $modSettings['postmod_active'] ? min($_POST['warning_moderate'], 100) : 0;
+		$_POST['warning_moderate'] = $settings['postmod_active'] ? min($_POST['warning_moderate'], 100) : 0;
 		$_POST['warning_mute'] = min($_POST['warning_mute'], 100);
 
 		// Fix the warning setting array!
@@ -374,7 +374,7 @@ function ModifyModerationSettings($return_config = false)
 	}
 
 	// We actually store lots of these together - for efficiency.
-	list ($modSettings['user_limit'], $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
+	list ($settings['user_limit'], $settings['warning_decrement']) = explode(',', $settings['warning_settings']);
 
 	$context['post_url'] = $scripturl . '?action=admin;area=securitysettings;save;sa=moderation';
 	$context['settings_title'] = $txt['moderation_settings'];
@@ -385,7 +385,7 @@ function ModifyModerationSettings($return_config = false)
 // Let's try keep the spam to a minimum ah Thantos?
 function ModifySpamSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context, $settings;
 
 	// Generate a sample registration image.
 	$context['verification_image_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand());
@@ -540,14 +540,14 @@ function ModifySpamSettings($return_config = false)
 		$_SESSION['visual_verification_code'] .= $character_range[array_rand($character_range)];
 
 	// Hack for PM spam settings.
-	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
+	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
 
 	// Hack for guests requiring verification.
-	$modSettings['guests_require_captcha'] = !empty($modSettings['posts_require_captcha']);
-	$modSettings['posts_require_captcha'] = !isset($modSettings['posts_require_captcha']) || $modSettings['posts_require_captcha'] == -1 ? 0 : $modSettings['posts_require_captcha'];
+	$settings['guests_require_captcha'] = !empty($settings['posts_require_captcha']);
+	$settings['posts_require_captcha'] = !isset($settings['posts_require_captcha']) || $settings['posts_require_captcha'] == -1 ? 0 : $settings['posts_require_captcha'];
 
 	// Some minor javascript for the guest post setting.
-	if ($modSettings['posts_require_captcha'])
+	if ($settings['posts_require_captcha'])
 		add_js('
 	$(\'#guests_require_captcha\').attr(\'disabled\', true);');
 
@@ -559,7 +559,7 @@ function ModifySpamSettings($return_config = false)
 
 function ModifyLogSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context, $settings;
 
 	// Make sure we understand what's going on.
 	loadLanguage('ManageSettings');
@@ -632,10 +632,10 @@ function ModifyLogSettings($return_config = false)
 	wetem::load('show_settings');
 
 	// Get the actual values
-	if (!empty($modSettings['pruningOptions']))
-		@list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
+	if (!empty($settings['pruningOptions']))
+		@list ($settings['pruneErrorLog'], $settings['pruneModLog'], $settings['pruneReportLog'], $settings['pruneScheduledTaskLog'], $settings['pruneSpiderHitLog']) = explode(',', $settings['pruningOptions']);
 	else
-		$modSettings['pruneErrorLog'] = $modSettings['pruneModLog'] = $modSettings['pruneReportLog'] = $modSettings['pruneScheduledTaskLog'] = $modSettings['pruneSpiderHitLog'] = 0;
+		$settings['pruneErrorLog'] = $settings['pruneModLog'] = $settings['pruneReportLog'] = $settings['pruneScheduledTaskLog'] = $settings['pruneSpiderHitLog'] = 0;
 
 	prepareDBSettingContext($config_vars);
 }
@@ -705,7 +705,7 @@ function ModifyGeneralModSettings($return_config = false)
 // Shell for all the Pretty URL interfaces
 function ModifyPrettyURLs($return_config = false)
 {
-	global $context, $modSettings, $txt;
+	global $context, $settings, $txt;
 
 	// For the administrative search function not to get upset.
 	if ($return_config)
@@ -715,13 +715,13 @@ function ModifyPrettyURLs($return_config = false)
 	$context['page_title'] = $txt['admin_pretty_urls'];
 
 	// The action filter should always be last, because it's generic.
-	if (isset($modSettings['pretty_filters']['actions']))
+	if (isset($settings['pretty_filters']['actions']))
 	{
-		$action = $modSettings['pretty_filters']['actions'];
-		unset($modSettings['pretty_filters']['actions']);
-		$modSettings['pretty_filters']['actions'] = $action;
+		$action = $settings['pretty_filters']['actions'];
+		unset($settings['pretty_filters']['actions']);
+		$settings['pretty_filters']['actions'] = $action;
 	}
-	$context['pretty']['filters'] = $modSettings['pretty_filters'];
+	$context['pretty']['filters'] = $settings['pretty_filters'];
 
 	// Are we repopulating now?
 	if (isset($_REQUEST['refill']))
@@ -734,7 +734,7 @@ function ModifyPrettyURLs($return_config = false)
 	elseif (isset($_REQUEST['save']))
 	{
 		$is_enabled = false;
-		foreach ($modSettings['pretty_filters'] as $id => &$filter)
+		foreach ($settings['pretty_filters'] as $id => &$filter)
 			$is_enabled |= ($filter = isset($_POST['pretty_filter_' . $id]) ? 1 : 0);
 
 		$action = isset($_POST['pretty_prefix_action']) ? $_POST['pretty_prefix_action'] : 'do/';
@@ -749,12 +749,12 @@ function ModifyPrettyURLs($return_config = false)
 				'pretty_enable_filters' => $is_enabled,
 				'pretty_enable_cache' => isset($_POST['pretty_cache']) ? ($_POST['pretty_cache'] == 'on' ? 'on' : '') : '',
 				'pretty_remove_index' => isset($_POST['pretty_remove_index']) ? ($_POST['pretty_remove_index'] == 'on' ? 'on' : '') : '',
-				'pretty_filters' => serialize($modSettings['pretty_filters']),
+				'pretty_filters' => serialize($settings['pretty_filters']),
 				'pretty_prefix_action' => $action,
 				'pretty_prefix_profile' => $profile,
 			)
 		);
-		$modSettings['pretty_filters'] = unserialize($modSettings['pretty_filters']);
+		$settings['pretty_filters'] = unserialize($settings['pretty_filters']);
 
 		if (isset($_REQUEST['pretty_cache']))
 			wesql::query('
@@ -770,8 +770,8 @@ function ModifyPrettyURLs($return_config = false)
 	}
 
 	$context['pretty']['settings'] = array(
-		'cache' => !empty($modSettings['pretty_enable_cache']) ? $modSettings['pretty_enable_cache'] : 0,
-		'index' => !empty($modSettings['pretty_remove_index']) ? $modSettings['pretty_remove_index'] : 0,
+		'cache' => !empty($settings['pretty_enable_cache']) ? $settings['pretty_enable_cache'] : 0,
+		'index' => !empty($settings['pretty_remove_index']) ? $settings['pretty_remove_index'] : 0,
 	);
 }
 

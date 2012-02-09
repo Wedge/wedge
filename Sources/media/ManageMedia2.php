@@ -1244,7 +1244,7 @@ function aeva_admin_bans()
 // Adds a ban
 function aeva_admin_bans_add()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $scripturl, $theme;
 
 	// Any "u"s we are getting?
 	$context['aeva_curr_members'] = array();
@@ -1443,7 +1443,7 @@ function aeva_admin_bans_delete()
 // Edits a ban entry
 function aeva_admin_bans_edit()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $scripturl, $theme;
 
 	// Get this item's data
 	$request = wesql::query('

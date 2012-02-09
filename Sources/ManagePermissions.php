@@ -138,7 +138,7 @@ function ModifyPermissions()
 
 function PermissionIndex()
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context, $theme, $settings;
 
 	$context['page_title'] = $txt['permissions_title'];
 
@@ -211,7 +211,7 @@ function PermissionIndex()
 	// Query the database defined membergroups.
 	$query = wesql::query('
 		SELECT id_group, id_parent, group_name, min_posts, online_color, stars
-		FROM {db_prefix}membergroups' . (empty($modSettings['permission_enable_postgroups']) ? '
+		FROM {db_prefix}membergroups' . (empty($settings['permission_enable_postgroups']) ? '
 		WHERE min_posts = {int:min_posts}' : '') . '
 		ORDER BY id_parent = {int:not_inherited} DESC, min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
@@ -241,7 +241,7 @@ function PermissionIndex()
 			'href' => $scripturl . '?action=moderate;area=viewgroups;sa=members;group=' . $row['id_group'],
 			'is_post_group' => $row['min_posts'] != -1,
 			'color' => empty($row['online_color']) ? '' : $row['online_color'],
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 			'children' => array(),
 			'num_permissions' => array(
 				'allowed' => $row['id_group'] == 1 ? '(' . $txt['permissions_all'] . ')' : 0,
@@ -381,7 +381,7 @@ function PermissionIndex()
 	}
 
 	// If guests can't browse the forum, no point giving them a UI for it.
-	if (empty($modSettings['allow_guestAccess']))
+	if (empty($settings['allow_guestAccess']))
 		unset($context['groups'][-1]);
 
 	// We can modify any permission set apart from the read only, reply only and no polls ones as they are redefined.
@@ -393,7 +393,7 @@ function PermissionIndex()
 
 function PermissionByBoard()
 {
-	global $context, $modSettings, $txt, $cat_tree, $boardList, $boards;
+	global $context, $settings, $txt, $cat_tree, $boardList, $boards;
 
 	$context['page_title'] = $txt['permissions_boards'];
 	$context['edit_all'] = isset($_GET['edit']);
@@ -464,7 +464,7 @@ function PermissionByBoard()
 
 function SetQuickGroups()
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	checkSession();
 
@@ -484,7 +484,7 @@ function SetQuickGroups()
 	$_POST['group'] = array_unique($_POST['group']);
 
 	// And if by any chance, guests can't browse the forum, make sure that wasn't selected.
-	if (empty($modSettings['allow_guestAccess']))
+	if (empty($settings['allow_guestAccess']))
 		$_POST['group'] = array_diff($_POST['group'], array(-1));
 
 	if (empty($_REQUEST['pid']))
@@ -725,9 +725,9 @@ function SetQuickGroups()
 
 function ModifyMembergroup()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
-	if (!isset($_GET['group']) || (empty($modSettings['allow_guestAccess']) && $_GET['group'] == -1))
+	if (!isset($_GET['group']) || (empty($settings['allow_guestAccess']) && $_GET['group'] == -1))
 		fatal_lang_error('no_access', false);
 
 	$context['group']['id'] = (int) $_GET['group'];
@@ -873,7 +873,7 @@ function ModifyMembergroup()
 
 function ModifyMembergroup2()
 {
-	global $modSettings, $context;
+	global $settings, $context;
 
 	checkSession();
 
@@ -883,7 +883,7 @@ function ModifyMembergroup2()
 	$_GET['pid'] = (int) $_GET['pid'];
 
 	// Disallow saving guest permissions if they're not even allowed in the forum.
-	if (empty($modSettings['allow_guestAccess']) && $_GET['group'] == -1)
+	if (empty($settings['allow_guestAccess']) && $_GET['group'] == -1)
 		fatal_lang_error('no_access', false);
 
 	// Cannot modify predefined profiles.
@@ -999,7 +999,7 @@ function ModifyMembergroup2()
 // Screen for modifying general permission settings.
 function GeneralPermissionSettings($return_config = false)
 {
-	global $context, $modSettings, $txt, $scripturl;
+	global $context, $settings, $txt, $scripturl;
 
 	// All the setting variables
 	$config_vars = array(
@@ -1032,7 +1032,7 @@ function GeneralPermissionSettings($return_config = false)
 		saveDBSettings($config_vars);
 
 		// Clear all deny permissions...if we want that.
-		if (empty($modSettings['permission_enable_deny']))
+		if (empty($settings['permission_enable_deny']))
 			wesql::query('
 				DELETE FROM {db_prefix}permissions, {db_prefix}board_permissions
 				WHERE add_deny = {int:denied}',
@@ -1042,7 +1042,7 @@ function GeneralPermissionSettings($return_config = false)
 			);
 
 		// Make sure there are no postgroup based permissions left.
-		if (empty($modSettings['permission_enable_postgroups']))
+		if (empty($settings['permission_enable_postgroups']))
 		{
 			// Get a list of postgroups.
 			$post_groups = array();
@@ -1410,7 +1410,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 
 function loadAllPermissions($loadType = 'classic')
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	// List of all the groups dependant on the currently selected view - for the order so it looks pretty, yea?
 	$permissionGroups = array(
@@ -1569,7 +1569,7 @@ function loadAllPermissions($loadType = 'classic')
 	$relabelGroups = array(); // As above but for groups.
 
 	// Post moderation?
-	if (!$modSettings['postmod_active'])
+	if (!$settings['postmod_active'])
 	{
 		$hiddenPermissions[] = 'approve_posts';
 		$hiddenPermissions[] = 'post_unapproved_topics';
@@ -1714,7 +1714,7 @@ function loadAllPermissions($loadType = 'classic')
 // Initialize a form with inline permissions.
 function init_inline_permissions($permission_details)
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	loadLanguage('ManagePermissions');
 	loadTemplate('ManagePermissions');
@@ -1765,7 +1765,7 @@ function init_inline_permissions($permission_details)
 		FROM {db_prefix}membergroups AS mg
 			LEFT JOIN {db_prefix}permissions AS p ON (p.id_group = mg.id_group AND p.permission IN ({array_string:permissions}))
 		WHERE mg.id_group NOT IN (1, 3)
-			AND mg.id_parent = {int:not_inherited}' . (empty($modSettings['permission_enable_postgroups']) ? '
+			AND mg.id_parent = {int:not_inherited}' . (empty($settings['permission_enable_postgroups']) ? '
 			AND mg.min_posts = {int:min_posts}' : '') . '
 		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
 		array(
@@ -1792,7 +1792,7 @@ function init_inline_permissions($permission_details)
 	wesql::free_result($request);
 
 	// Firstly, deal with the case that guests do not have access.
-	if (empty($modSettings['allow_guestAccess']))
+	if (empty($settings['allow_guestAccess']))
 	{
 		foreach ($permissions as $permission)
 			unset($context[$permission][-1]);
@@ -2247,7 +2247,7 @@ function loadIllegalGuestPermissions()
 // Present a nice way of applying post moderation.
 function ModifyPostModeration()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	// Just in case.
 	checkSession('get');
@@ -2296,7 +2296,7 @@ function ModifyPostModeration()
 		SELECT id_group, group_name, online_color, id_parent
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:admin_group}
-			' . (empty($modSettings['permission_enable_postgroups']) ? ' AND min_posts = {int:min_posts}' : '') . '
+			' . (empty($settings['permission_enable_postgroups']) ? ' AND min_posts = {int:min_posts}' : '') . '
 		ORDER BY id_parent ASC',
 		array(
 			'admin_group' => 1,

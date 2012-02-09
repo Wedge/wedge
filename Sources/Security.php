@@ -102,7 +102,7 @@ if (!defined('WEDGE'))
 // Check if the user is who he/she says he is
 function validateSession()
 {
-	global $modSettings, $user_info, $sc;
+	global $settings, $user_info, $sc;
 
 	// We don't care if the option is off, because Guests should NEVER get past here.
 	is_not_guest();
@@ -111,7 +111,7 @@ function validateSession()
 	$refreshTime = isset($_GET['xml']) ? 4200 : 3600;
 
 	// Is the security option off? Or are they already logged in?
-	if (!empty($modSettings['securityDisable']) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time()))
+	if (!empty($settings['securityDisable']) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time()))
 		return;
 
 	loadSource('Subs-Auth');
@@ -151,7 +151,7 @@ function validateSession()
 // Require a user who is logged in. (not a guest.)
 function is_not_guest($message = '')
 {
-	global $user_info, $txt, $context, $scripturl, $modSettings;
+	global $user_info, $txt, $context, $scripturl, $settings;
 
 	// Luckily, this person isn't a guest.
 	if (!$user_info['is_guest'])
@@ -159,7 +159,7 @@ function is_not_guest($message = '')
 
 	// No need to clear the action they were doing (as it used to be; not only are the odds strong that it wouldn't have been updated, this way you can see what they were trying to do and that it didn't work)
 	// But we do need to update the online log.
-	if (!empty($modSettings['who_enabled']))
+	if (!empty($settings['who_enabled']))
 		$_GET['who_warn'] = 1;
 	writeLog(true);
 
@@ -210,14 +210,14 @@ function is_not_guest($message = '')
 // Do banning related stuff. (ie. disallow access....)
 function is_not_banned($forceCheck = false)
 {
-	global $txt, $modSettings, $context, $user_info, $cookiename, $user_settings;
+	global $txt, $settings, $context, $user_info, $cookiename, $user_settings;
 
 	// You cannot be banned if you are an admin - doesn't help if you log out.
 	if ($user_info['is_admin'])
 		return;
 
 	// Only check the ban every so often. (to reduce load.)
-	if ($forceCheck || !isset($_SESSION['ban']) || empty($modSettings['banLastUpdated']) || ($_SESSION['ban']['last_checked'] < $modSettings['banLastUpdated']) || $_SESSION['ban']['id_member'] != $user_info['id'] || $_SESSION['ban']['ip'] != $user_info['ip'] || $_SESSION['ban']['ip2'] != $user_info['ip2'] || (isset($user_info['email'], $_SESSION['ban']['email']) && $_SESSION['ban']['email'] != $user_info['email']))
+	if ($forceCheck || !isset($_SESSION['ban']) || empty($settings['banLastUpdated']) || ($_SESSION['ban']['last_checked'] < $settings['banLastUpdated']) || $_SESSION['ban']['id_member'] != $user_info['id'] || $_SESSION['ban']['ip'] != $user_info['ip'] || $_SESSION['ban']['ip2'] != $user_info['ip2'] || (isset($user_info['email'], $_SESSION['ban']['email']) && $_SESSION['ban']['email'] != $user_info['email']))
 	{
 		// Innocent until proven guilty. (But we know you are! :P)
 		$_SESSION['ban'] = array(
@@ -244,7 +244,7 @@ function is_not_banned($forceCheck = false)
 							AND (' . $ip_parts[4] . ' BETWEEN bi.ip_low4 AND bi.ip_high4))';
 
 				// IP was valid, maybe there's also a hostname...
-				if (empty($modSettings['disableHostnameLookup']))
+				if (empty($settings['disableHostnameLookup']))
 				{
 					$hostname = host_from_ip($user_info[$ip_number]);
 					if (strlen($hostname) > 0)
@@ -356,7 +356,7 @@ function is_not_banned($forceCheck = false)
 		if (!isset($_SESSION['ban']['cannot_access']))
 		{
 			loadSource('Subs-Auth');
-			$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+			$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
 			setcookie($cookiename . '_', '', time() - 3600, $cookie_url[1], $cookie_url[0], 0, true);
 		}
 	}
@@ -396,7 +396,7 @@ function is_not_banned($forceCheck = false)
 
 		// A goodbye present.
 		loadSource('Subs-Auth');
-		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+		$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
 		setcookie($cookiename . '_', implode(',', $_SESSION['ban']['cannot_access']['ids']), time() + 3153600, $cookie_url[1], $cookie_url[0], 0, true);
 
 		// Don't scare anyone, now.
@@ -463,13 +463,13 @@ function is_not_banned($forceCheck = false)
 // Fix permissions according to ban status.
 function banPermissions()
 {
-	global $user_info, $modSettings, $context;
+	global $user_info, $settings, $context;
 
 	// Somehow they got here, at least take away all permissions...
 	if (isset($_SESSION['ban']['cannot_access']))
 		$user_info['permissions'] = array();
 	// Okay, well, you can watch, but don't touch a thing.
-	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $user_info['warning']))
+	elseif (isset($_SESSION['ban']['cannot_post']) || (!empty($settings['warning_mute']) && $settings['warning_mute'] <= $user_info['warning']))
 	{
 		$denied_permissions = array(
 			'pm_send',
@@ -496,7 +496,7 @@ function banPermissions()
 		$user_info['permissions'] = array_diff($user_info['permissions'], $denied_permissions);
 	}
 	// Are they absolutely under moderation?
-	elseif (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $user_info['warning'])
+	elseif (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $user_info['warning'])
 	{
 		// Work out what permissions should change...
 		$permission_change = array(
@@ -517,7 +517,7 @@ function banPermissions()
 
 	//!!! Find a better place to call this? Needs to be after permissions loaded!
 	// Finally, some bits we cache in the session because it saves queries.
-	if (isset($_SESSION['mc']) && $_SESSION['mc']['time'] > $modSettings['settings_updated'] && $_SESSION['mc']['id'] == $user_info['id'])
+	if (isset($_SESSION['mc']) && $_SESSION['mc']['time'] > $settings['settings_updated'] && $_SESSION['mc']['id'] == $user_info['id'])
 		$user_info['mod_cache'] = $_SESSION['mc'];
 	else
 	{
@@ -526,7 +526,7 @@ function banPermissions()
 	}
 
 	// Now that we have the mod cache taken care of, let's setup a cache for the number of mod reports still open
-	if (isset($_SESSION['rc']) && $_SESSION['rc']['time'] > $modSettings['last_mod_report_action'] && $_SESSION['rc']['id'] == $user_info['id'])
+	if (isset($_SESSION['rc']) && $_SESSION['rc']['time'] > $settings['last_mod_report_action'] && $_SESSION['rc']['id'] == $user_info['id'])
 		$context['open_mod_reports'] = $_SESSION['rc']['reports'];
 	elseif ($_SESSION['mc']['bq'] != '0=1')
 	{
@@ -620,12 +620,12 @@ function isBannedEmail($email, $restriction, $error)
 // Make sure the user's correct session was passed, and they came from here. (type can be post, get, or request.)
 function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 {
-	global $sc, $modSettings, $boardurl;
+	global $sc, $settings, $boardurl;
 
 	// Is it in as $_POST['sc']?
 	if ($type == 'post')
 	{
-		$check = isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null);
+		$check = isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($settings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null);
 		if ($check !== $sc)
 			$error = 'session_timeout';
 	}
@@ -633,7 +633,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	// How about $_GET['sesc']?
 	elseif ($type == 'get')
 	{
-		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : null);
+		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($settings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : null);
 		if ($check !== $sc)
 			$error = 'session_verify_fail';
 	}
@@ -641,14 +641,14 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	// Or can it be in either?
 	elseif ($type == 'request')
 	{
-		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : (isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($modSettings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null)));
+		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($settings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : (isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($settings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null)));
 
 		if ($check !== $sc)
 			$error = 'session_verify_fail';
 	}
 
 	// Verify that they aren't changing user agents on us - that could be bad.
-	if ((!isset($_SESSION['USER_AGENT']) || $_SESSION['USER_AGENT'] != $_SERVER['HTTP_USER_AGENT']) && empty($modSettings['disableCheckUA']))
+	if ((!isset($_SESSION['USER_AGENT']) || $_SESSION['USER_AGENT'] != $_SERVER['HTTP_USER_AGENT']) && empty($settings['disableCheckUA']))
 		$error = 'session_verify_fail';
 
 	// Make sure a page with session check requirement is not being prefetched.
@@ -671,7 +671,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 		$parsed_url = parse_url($boardurl);
 
 		// Are global cookies on? If so, let's check them ;)
-		if (!empty($modSettings['globalCookies']))
+		if (!empty($settings['globalCookies']))
 		{
 			if (preg_match('~(?:[^.]+\.)?([^.]{3,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
 				$parsed_url['host'] = $parts[1];
@@ -727,14 +727,14 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 // Check if a specific confirm parameter was given.
 function checkConfirm($action)
 {
-	global $modSettings;
+	global $settings;
 
 	if (isset($_GET['confirm'], $_SESSION['confirm_' . $action]) && md5($_GET['confirm'] . $_SERVER['HTTP_USER_AGENT']) == $_SESSION['confirm_' . $action])
 		return true;
 
 	else
 	{
-		$token = md5(mt_rand() . session_id() . (string) microtime() . $modSettings['rand_seed']);
+		$token = md5(mt_rand() . session_id() . (string) microtime() . $settings['rand_seed']);
 		$_SESSION['confirm_' . $action] = md5($token . $_SERVER['HTTP_USER_AGENT']);
 
 		return $token;
@@ -781,7 +781,7 @@ function checkSubmitOnce($action, $is_fatal = true)
 // Check the user's permissions.
 function allowedTo($permission, $boards = null)
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	// You're always allowed to do nothing. (unless you're a working man, MR. LAZY :P!)
 	if (empty($permission))
@@ -894,7 +894,7 @@ function isAllowedTo($permission, $boards = null)
 // Return the boards a user has a certain (board) permission on. (array(0) if all.)
 function boardsAllowedTo($permissions, $check_access = true)
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	// Administrators are all powerful, sorry.
 	if ($user_info['is_admin'])
@@ -908,7 +908,7 @@ function boardsAllowedTo($permissions, $check_access = true)
 	$groups = array_diff($user_info['groups'], array(3));
 
 	// Guest and guest access disabled?
-	if ($user_info['is_guest'] && empty($modSettings['allow_guestAccess']))
+	if ($user_info['is_guest'] && empty($settings['allow_guestAccess']))
 		return array();
 
 	$request = wesql::query('
@@ -957,7 +957,7 @@ function boardsAllowedTo($permissions, $check_access = true)
  */
 function showEmailAddress($userProfile_hideEmail, $userProfile_id)
 {
-	global $modSettings, $user_info;
+	global $settings, $user_info;
 
 	return $user_info['is_guest'] || isset($_SESSION['ban']['cannot_post']) ? 'no' : ((!$user_info['is_guest'] && $user_info['id'] == $userProfile_id && !$userProfile_hideEmail) || allowedTo('moderate_forum') ? 'yes_permission_override' : ($userProfile_hideEmail ? 'no' : 'no_through_forum'));
 }
@@ -974,7 +974,7 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
  */
 function checkUserBehavior()
 {
-	global $context, $modSettings, $user_info, $txt, $webmaster_email;
+	global $context, $settings, $user_info, $txt, $webmaster_email;
 
 	$context['http_headers'] = get_http_headers();
 	// Did we get any additional headers that wouldn't normally be picked up for any reason?
@@ -1224,10 +1224,10 @@ function checkUserRequest_blacklist()
  */
 function checkUserRequest_request()
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	// Is this from CloudFlare? (requires hostname lookups enabled)
-	if (isset($context['http_headers']['Cf-Connecting-Ip'], $context['http_headers']['X-Detected-Remote-Address']) && empty($modSettings['disableHostnameLookup']))
+	if (isset($context['http_headers']['Cf-Connecting-Ip'], $context['http_headers']['X-Detected-Remote-Address']) && empty($settings['disableHostnameLookup']))
 	{
 		// Remember, we did some work on this back in QueryString.php, so we should have the value for CloudFlare. Let's see if it is.
 		if (!test_ip_host($context['http_headers']['X-Detected-Remote-Address'], 'cloudflare.com'))
@@ -1291,7 +1291,7 @@ function checkUserRequest_request()
 		return $context['behavior_error'] = 'behav_bot_rfc2965';
 
 	// OK, are we doing the big scary strict tests? If not, bail. Some of these tests will fail on weird things like some corporate proxy servers so we don't do them by default.
-	if (empty($modSettings['performStrictBehavior']))
+	if (empty($settings['performStrictBehavior']))
 		return false;
 
 	// Proxy-Connection isn't a real header.
@@ -1324,7 +1324,7 @@ function checkUserRequest_request()
  */
 function checkUserRequest_useragent()
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	// For most browsers, there's only one test to do, to make sure they send an Accept header. Naughty bots pretending to be these folks don't normally.
 	if (preg_match('~Opera|Lynx|Safari~', $context['http_headers']['User-Agent']))
@@ -1351,19 +1351,19 @@ function checkUserRequest_useragent()
 	// Is it claiming to be Yahoo's bot?
 	elseif (stripos($context['http_headers']['User-Agent'], 'Yahoo! Slurp') !== false || stripos($context['http_headers']['User-Agent'], 'Yahoo! SearchMonkey') !== false)
 	{
-		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14'))) || (empty($modSettings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'crawl.yahoo.net')))
+		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('202.160.176.0/20', '67.195.0.0/16', '203.209.252.0/24', '72.30.0.0/16', '98.136.0.0/14'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'crawl.yahoo.net')))
 			return $context['behavior_error'] = 'behav_not_yahoobot';
 	}
 	// Is it claiming to be MSN's bot?
 	elseif (stripos($context['http_headers']['User-Agent'], 'bingbot') !== false || stripos($context['http_headers']['User-Agent'], 'msnbot') !== false || stripos($context['http_headers']['User-Agent'], 'MS Search') !== false)
 	{
-		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('207.46.0.0/16', '65.52.0.0/14', '207.68.128.0/18', '207.68.192.0/20', '64.4.0.0/18', '157.54.0.0/15', '157.60.0.0/16', '157.56.0.0/14'))) || (empty($modSettings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com')))
+		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('207.46.0.0/16', '65.52.0.0/14', '207.68.128.0/18', '207.68.192.0/20', '64.4.0.0/18', '157.54.0.0/15', '157.60.0.0/16', '157.56.0.0/14'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com')))
 			return $context['behavior_error'] = 'behav_not_msnbot';
 	}
 	// Is it claiming to be Googlebot, even?
 	elseif (stripos($context['http_headers']['User-Agent'], 'Googlebot') !== FALSE || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false || stripos($context['http_headers']['User-Agent'], 'Google Web Preview') !== false)
 	{
-		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19'))) || (empty($modSettings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
+		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
 			return $context['behavior_error'] = 'behav_not_googlebot';
 	}
 	// OK, so presumably this is some kind of Mozilla derivative? (No guarantee it's actually Firefox, mind. All main browsers cite Mozilla. :/)
@@ -1386,7 +1386,7 @@ function checkUserRequest_useragent()
  */
 function checkUserRequest_post()
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	if ($_SERVER['REQUEST_METHOD'] != 'POST')
 		return false;
@@ -1399,7 +1399,7 @@ function checkUserRequest_post()
 
 	// What about forms? Any form posting into our forum should really be inside our forum. Providing an option to disable (hidden for now)
 	// !!! Check whether this is relevant in subdomain boards or not.
-	if (empty($modSettings['allow_external_forms']) && isset($context['http_headers']['Referer']) && stripos($context['http_headers']['Referer'], $context['http_headers']['Host']) === false)
+	if (empty($settings['allow_external_forms']) && isset($context['http_headers']['Referer']) && stripos($context['http_headers']['Referer'], $context['http_headers']['Host']) === false)
 		return $context['behavior_error'] = 'behav_offsite_form';
 
 	return false;

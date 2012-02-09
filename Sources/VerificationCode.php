@@ -19,7 +19,7 @@ define('WEDGE_NO_LOG', 1);
 // Show the verification code or let it hear.
 function VerificationCode()
 {
-	global $modSettings, $context, $scripturl;
+	global $settings, $context, $scripturl;
 
 	$verification_id = isset($_GET['vid']) ? $_GET['vid'] : '';
 	$code = $verification_id && isset($_SESSION[$verification_id . '_vv'], $_SESSION[$verification_id . '_vv']['code']) ? $_SESSION[$verification_id . '_vv']['code'] : (isset($_SESSION['visual_verification_code']) ? $_SESSION['visual_verification_code'] : '');

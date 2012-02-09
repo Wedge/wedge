@@ -34,7 +34,7 @@ if (!defined('WEDGE'))
  */
 function JSModify()
 {
-	global $modSettings, $board, $topic, $txt;
+	global $settings, $board, $topic, $txt;
 	global $user_info, $context, $language;
 
 	// We have to have a topic!
@@ -53,7 +53,7 @@ function JSModify()
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 			WHERE m.id_msg = {raw:id_msg}
-				AND m.id_topic = {int:current_topic}' . (allowedTo('approve_posts') ? '' : (!$modSettings['postmod_active'] ? '
+				AND m.id_topic = {int:current_topic}' . (allowedTo('approve_posts') ? '' : (!$settings['postmod_active'] ? '
 				AND (m.id_member != {int:guest_id} AND m.id_member = {int:current_member})' : '
 				AND (m.approved = {int:is_approved} OR (m.id_member != {int:guest_id} AND m.id_member = {int:current_member}))')),
 			array(
@@ -77,7 +77,7 @@ function JSModify()
 
 		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 		{
-			if ((!$modSettings['postmod_active'] || $row['approved']) && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + ($modSettings['edit_disable_time'] + 5) * 60 < time())
+			if ((!$settings['postmod_active'] || $row['approved']) && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
 			elseif ($row['id_member_started'] == $user_info['id'] && !allowedTo('modify_own'))
 				isAllowedTo('modify_replies');
@@ -116,9 +116,9 @@ function JSModify()
 			$post_errors[] = 'no_message';
 			unset($_POST['message']);
 		}
-		elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_POST['message']) > $modSettings['max_messageLength'])
+		elseif (!empty($settings['max_messageLength']) && westr::strlen($_POST['message']) > $settings['max_messageLength'])
 		{
-			$post_errors[] = array('long_message', $modSettings['max_messageLength']);
+			$post_errors[] = array('long_message', $settings['max_messageLength']);
 			unset($_POST['message']);
 		}
 		else
@@ -176,7 +176,7 @@ function JSModify()
 		if ((isset($_POST['subject']) && $_POST['subject'] != $row['subject']) || (isset($_POST['message']) && $_POST['message'] != $row['body']) || (isset($_REQUEST['icon']) && $_REQUEST['icon'] != $row['icon']))
 		{
 			// And even then only if the time has passed...
-			if (time() - $row['poster_time'] > $modSettings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
+			if (time() - $row['poster_time'] > $settings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
 			{
 				$msgOptions['modify_time'] = time();
 				$msgOptions['modify_name'] = $user_info['name'];
@@ -273,7 +273,7 @@ function JSModify()
 				'id' => $row['id_msg'],
 				'errors' => array(),
 				'error_in_subject' => in_array('no_subject', $post_errors),
-				'error_in_body' => in_array('no_message', $post_errors) || in_array(array('long_message', $modSettings['max_messageLength']), $post_errors),
+				'error_in_body' => in_array('no_message', $post_errors) || in_array(array('long_message', $settings['max_messageLength']), $post_errors),
 			);
 
 			loadLanguage('Errors');

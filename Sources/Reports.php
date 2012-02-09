@@ -108,7 +108,7 @@ if (!defined('WEDGE'))
 // Handling function for generating reports.
 function ReportsMain()
 {
-	global $txt, $modSettings, $context, $scripturl;
+	global $txt, $settings, $context, $scripturl;
 
 	// Only admins, only EVER admins!
 	isAllowedTo('admin_forum');
@@ -169,7 +169,7 @@ function ReportsMain()
 // Standard report about what settings the boards have.
 function BoardReport()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	// Load the permission profiles.
 	loadSource('ManagePermissions');
@@ -197,7 +197,7 @@ function BoardReport()
 		)
 	);
 	$groups = array(-1 => $txt['guest_title'], 0 => $txt['full_member']);
-	if (empty($modSettings['allow_guestAccess']))
+	if (empty($settings['allow_guestAccess']))
 		unset($groups[-1]);
 	while ($row = wesql::fetch_assoc($request))
 		$groups[$row['id_group']] = empty($row['online_color']) ? $row['group_name'] : '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>';
@@ -278,7 +278,7 @@ function BoardReport()
 // Generate a report on the current permissions by board and membergroup.
 function BoardPermissionsReport()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	// Get as much memory as possible as this can be big.
 	@ini_set('memory_limit', '256M');
@@ -333,7 +333,7 @@ function BoardPermissionsReport()
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $group_clause . '
-			AND id_group != {int:admin_group}' . (empty($modSettings['permission_enable_postgroups']) ? '
+			AND id_group != {int:admin_group}' . (empty($settings['permission_enable_postgroups']) ? '
 			AND min_posts = {int:min_posts}' : '') . '
 		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
@@ -351,7 +351,7 @@ function BoardPermissionsReport()
 		$member_groups[$row['id_group']] = $row['group_name'];
 	wesql::free_result($request);
 
-	if (empty($modSettings['allow_guestAccess']))
+	if (empty($settings['allow_guestAccess']))
 		unset($member_groups[-1]);
 
 	// Make sure that every group is represented - plus in rows!
@@ -364,7 +364,7 @@ function BoardPermissionsReport()
 		SELECT id_profile, id_group, add_deny, permission
 		FROM {db_prefix}board_permissions
 		WHERE id_profile IN ({array_int:profile_list})
-			AND ' . $group_clause . (empty($modSettings['permission_enable_deny']) ? '
+			AND ' . $group_clause . (empty($settings['permission_enable_deny']) ? '
 			AND add_deny = {int:not_deny}' : '') . '
 		ORDER BY id_profile, permission',
 		array(
@@ -450,7 +450,7 @@ function BoardPermissionsReport()
 // Show what the membergroups are made of.
 function MemberGroupsReport()
 {
-	global $context, $txt, $settings, $modSettings;
+	global $context, $txt, $theme, $settings;
 
 	// Fetch all the board names.
 	$request = wesql::query('
@@ -537,7 +537,7 @@ function MemberGroupsReport()
 		$rows[] = $row;
 	wesql::free_result($request);
 
-	if (empty($modSettings['allow_guestAccess']))
+	if (empty($settings['allow_guestAccess']))
 		unset ($rows[0]);
 
 	foreach ($rows as $row)
@@ -549,7 +549,7 @@ function MemberGroupsReport()
 			'color' => empty($row['online_color']) ? '-' : '<span style="color: ' . $row['online_color'] . '">' . $row['online_color'] . '</span>',
 			'min_posts' => $row['min_posts'] == -1 ? 'N/A' : $row['min_posts'],
 			'max_messages' => $row['max_messages'],
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 		);
 
 		// Board permissions.
@@ -563,7 +563,7 @@ function MemberGroupsReport()
 // Show the large variety of group permissions assigned to each membergroup.
 function GroupPermissionsReport()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	// We might need some of the other permissions strings
 	loadLanguage('ManagePermissions');
@@ -586,7 +586,7 @@ function GroupPermissionsReport()
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE ' . $clause . '
-			AND id_group != {int:admin_group}' . (empty($modSettings['permission_enable_postgroups']) ? '
+			AND id_group != {int:admin_group}' . (empty($settings['permission_enable_postgroups']) ? '
 			AND min_posts = {int:min_posts}' : '') . '
 		ORDER BY min_posts, CASE WHEN id_group < {int:newbie_group} THEN id_group ELSE 4 END, group_name',
 		array(
@@ -605,7 +605,7 @@ function GroupPermissionsReport()
 		$groups[$row['id_group']] = $row['group_name'];
 	wesql::free_result($request);
 
-	if (empty($modSettings['allow_guestAccess']))
+	if (empty($settings['allow_guestAccess']))
 		unset($groups[-1]);
 
 	// Make sure that every group is represented!
@@ -624,7 +624,7 @@ function GroupPermissionsReport()
 	$request = wesql::query('
 		SELECT id_group, add_deny, permission
 		FROM {db_prefix}permissions
-		WHERE ' . $clause . (empty($modSettings['permission_enable_deny']) ? '
+		WHERE ' . $clause . (empty($settings['permission_enable_deny']) ? '
 			AND add_deny = {int:not_denied}' : '') . '
 		ORDER BY permission',
 		array(

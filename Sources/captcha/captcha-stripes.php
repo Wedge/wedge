@@ -20,7 +20,7 @@ class captcha_stripes
 
 	public function render($code)
 	{
-		global $settings;
+		global $theme;
 
 		// Create a background
 		$width = 300;
@@ -68,7 +68,7 @@ class captcha_stripes
 		for ($i = -$eff_width; $i < $width; $i += $distance)
 			imageline($this->image, $i, 0, $i + $eff_width, $height, $fg);
 
-		imagettftext($this->image, 50, 0, 20 + mt_rand(-10, 25), 70 + mt_rand(-10, 10), -$bg, $settings['default_theme_dir'] . '/fonts/Screenge.ttf', $code);
+		imagettftext($this->image, 50, 0, 20 + mt_rand(-10, 25), 70 + mt_rand(-10, 10), -$bg, $theme['default_theme_dir'] . '/fonts/Screenge.ttf', $code);
 
 		// Draw the second angle slope
 		$eff_width = abs(round($height * tan($second_angle)));

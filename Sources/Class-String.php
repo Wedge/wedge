@@ -14,7 +14,7 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-global $modSettings;
+global $settings;
 
 class westr_foundation
 {
@@ -33,7 +33,7 @@ class westr_foundation
 
 	static function getInstance()
 	{
-		global $modSettings;
+		global $settings;
 
 		// Quero ergo sum
 		if (self::$instance == null)
@@ -78,7 +78,7 @@ class westr_foundation
 	}
 }
 
-if (!empty($modSettings['disableEntityCheck']))
+if (!empty($settings['disableEntityCheck']))
 {
 	// No entity checking version
 	// westr_ENT_ANY = Any character or entity

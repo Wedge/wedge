@@ -55,7 +55,7 @@ if (!defined('WEDGE'))
 
 function getServerVersions($checkFor)
 {
-	global $txt, $db_connection, $_PHPA, $memcached, $modSettings;
+	global $txt, $db_connection, $_PHPA, $memcached, $settings;
 
 	loadLanguage('Admin');
 
@@ -79,7 +79,7 @@ function getServerVersions($checkFor)
 	}
 
 	// If we're using memcache we need the server info.
-	if (empty($memcached) && function_exists('memcache_get') && isset($modSettings['cache_memcached']) && trim($modSettings['cache_memcached']) != '')
+	if (empty($memcached) && function_exists('memcache_get') && isset($settings['cache_memcached']) && trim($settings['cache_memcached']) != '')
 		get_memcached_server();
 
 	// Check to see if we have any accelerators installed...
@@ -105,10 +105,10 @@ function getServerVersions($checkFor)
 // Search through source, theme and language files to determine their version.
 function getFileVersions(&$versionOptions)
 {
-	global $boarddir, $sourcedir, $settings;
+	global $boarddir, $sourcedir, $theme;
 
 	// Default place to find the languages would be the default theme dir.
-	$lang_dir = $settings['default_theme_dir'] . '/languages';
+	$lang_dir = $theme['default_theme_dir'] . '/languages';
 
 	$version_info = array(
 		'file_versions' => array(),
@@ -169,9 +169,9 @@ function getFileVersions(&$versionOptions)
 	$sources_dir->close();
 
 	// Load all the files in the default template directory - and the current theme if applicable.
-	$directories = array('default_template_versions' => $settings['default_theme_dir']);
-	if ($settings['theme_id'] != 1)
-		$directories += array('template_versions' => $settings['theme_dir']);
+	$directories = array('default_template_versions' => $theme['default_theme_dir']);
+	if ($theme['theme_id'] != 1)
+		$directories += array('template_versions' => $theme['theme_dir']);
 
 	foreach ($directories as $type => $dirname)
 	{
@@ -366,7 +366,7 @@ function updateSettingsFile($config_vars)
 
 function updateAdminPreferences()
 {
-	global $options, $context, $settings, $user_info;
+	global $options, $context, $theme, $user_info;
 
 	// This must exist!
 	if (!isset($context['admin_preferences']))
@@ -395,13 +395,13 @@ function updateAdminPreferences()
 	);
 
 	// Make sure we invalidate any cache.
-	cache_put_data('theme_settings-' . $settings['theme_id'] . ':' . $user_info['id'], null, 0);
+	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . $user_info['id'], null, 0);
 }
 
 // Send all the administrators a lovely email.
 function emailAdmins($template, $replacements = array(), $additional_recipients = array())
 {
-	global $language, $modSettings;
+	global $language, $settings;
 
 	// We certainly want this.
 	loadSource('Subs-Post');
@@ -445,7 +445,7 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 		$replacements['USERNAME'] = $row['real_name'];
 
 		// Load the data from the template.
-		$emaildata = loadEmailTemplate($template, $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate($template, $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
 
 		// Then send the actual email.
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 1);
@@ -467,7 +467,7 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 			$replacements['USERNAME'] = $recipient['name'];
 
 			// Load the template again.
-			$emaildata = loadEmailTemplate($template, $replacements, empty($recipient['lang']) || empty($modSettings['userLanguage']) ? $language : $recipient['lang']);
+			$emaildata = loadEmailTemplate($template, $replacements, empty($recipient['lang']) || empty($settings['userLanguage']) ? $language : $recipient['lang']);
 
 			// Send off the email.
 			sendmail($recipient['email'], $emaildata['subject'], $emaildata['body'], null, null, false, 1);

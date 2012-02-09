@@ -89,7 +89,7 @@ function Groups()
 // This very simply lists the groups, nothing snazy.
 function GroupList()
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $settings, $modSettings;
+	global $txt, $scripturl, $user_profile, $user_info, $context, $theme, $settings;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -127,7 +127,7 @@ function GroupList()
 			'color' => $row['online_color'],
 			'type' => $row['group_type'],
 			'num_members' => 0,
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 		);
 
 		$context['can_moderate'] |= $row['can_moderate'];
@@ -245,7 +245,7 @@ function GroupList()
 // Get the group information for the list.
 function list_getGroups($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $user_info, $settings;
+	global $txt, $scripturl, $user_info, $theme;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -284,7 +284,7 @@ function list_getGroups($start, $items_per_page, $sort)
 			'type' => $row['group_type'],
 			'num_members' => 0,
 			'moderators' => array(),
-			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
+			'stars' => !empty($row['stars'][0]) && !empty($row['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $row['stars'][1] . '">', $row['stars'][0]) : '',
 		);
 
 		$context['can_moderate'] |= $row['can_moderate'];
@@ -375,7 +375,7 @@ function list_getGroupCount()
 // Display members of a group, and allow adding of members to a group. Silly function name though ;)
 function MembergroupMembers()
 {
-	global $txt, $scripturl, $context, $modSettings, $user_info, $settings;
+	global $txt, $scripturl, $context, $settings, $user_info, $theme;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) ? (int) $_REQUEST['group'] : 0;
 
@@ -404,7 +404,7 @@ function MembergroupMembers()
 
 	// Fix the stars.
 	$context['group']['stars'] = explode('#', $context['group']['stars']);
-	$context['group']['stars'] = !empty($context['group']['stars'][0]) && !empty($context['group']['stars'][1]) ? str_repeat('<img src="' . $settings['images_url'] . '/' . $context['group']['stars'][1] . '">', $context['group']['stars'][0]) : '';
+	$context['group']['stars'] = !empty($context['group']['stars'][0]) && !empty($context['group']['stars'][1]) ? str_repeat('<img src="' . $theme['images_url'] . '/' . $context['group']['stars'][1] . '">', $context['group']['stars'][0]) : '';
 	$context['group']['can_moderate'] = allowedTo('manage_membergroups') && (allowedTo('admin_forum') || $context['group']['group_type'] != 1);
 
 	$context['linktree'][] = array(
@@ -571,7 +571,7 @@ function MembergroupMembers()
 	$context['total_members'] = comma_format($context['total_members']);
 
 	// Create the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=' . ($context['group']['can_moderate'] ? 'moderate;area=viewgroups' : 'groups') . ';sa=members;group=' . $_REQUEST['group'] . ';sort=' . $context['sort_by'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['total_members'], $modSettings['defaultMaxMembers']);
+	$context['page_index'] = template_page_index($scripturl . '?action=' . ($context['group']['can_moderate'] ? 'moderate;area=viewgroups' : 'groups') . ';sa=members;group=' . $_REQUEST['group'] . ';sort=' . $context['sort_by'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['total_members'], $settings['defaultMaxMembers']);
 	$context['start'] = $_REQUEST['start'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 
@@ -582,7 +582,7 @@ function MembergroupMembers()
 		FROM {db_prefix}members
 		WHERE ' . $where . '
 		ORDER BY ' . $querySort . ' ' . ($context['sort_direction'] == 'down' ? 'DESC' : 'ASC') . '
-		LIMIT ' . $context['start'] . ', ' . $modSettings['defaultMaxMembers'],
+		LIMIT ' . $context['start'] . ', ' . $settings['defaultMaxMembers'],
 		array(
 			'group' => $_REQUEST['group'],
 		)
@@ -618,7 +618,7 @@ function MembergroupMembers()
 // Show and manage all group requests.
 function GroupRequests()
 {
-	global $txt, $context, $scripturl, $user_info, $modSettings, $language;
+	global $txt, $context, $scripturl, $user_info, $settings, $language;
 
 	// Set up the template stuff...
 	$context['page_title'] = $txt['mc_group_requests'];
@@ -650,7 +650,7 @@ function GroupRequests()
 			$where .= ' AND lgr.id_request IN ({array_int:request_ids})';
 			$where_parameters['request_ids'] = $_POST['groupr'];
 
-			$context['group_requests'] = list_getGroupRequests(0, $modSettings['defaultMaxMessages'], 'lgr.id_request', $where, $where_parameters);
+			$context['group_requests'] = list_getGroupRequests(0, $settings['defaultMaxMessages'], 'lgr.id_request', $where, $where_parameters);
 
 			// Let obExit etc sort things out.
 			obExit();
@@ -677,7 +677,7 @@ function GroupRequests()
 			$group_changes = array();
 			while ($row = wesql::fetch_assoc($request))
 			{
-				$row['lngfile'] = empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'];
+				$row['lngfile'] = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
 
 				// If we are approving work out what their new group is.
 				if ($_POST['req_action'] == 'approve')
@@ -813,7 +813,7 @@ function GroupRequests()
 		'id' => 'group_request_list',
 		'title' => $txt['mc_group_requests'],
 		'width' => '100%',
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['mc_groupr_none_found'],
 		'base_href' => $scripturl . '?action=groups;sa=requests',
 		'default_sort_col' => 'member',

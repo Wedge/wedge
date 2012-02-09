@@ -112,7 +112,7 @@ function ManageSearch()
 
 function EditSearchSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $sourcedir, $modSettings;
+	global $txt, $context, $scripturl, $sourcedir, $settings;
 
 	// What are we editing anyway?
 	$config_vars = array(
@@ -128,12 +128,12 @@ function EditSearchSettings($return_config = false)
 	);
 
 	// Perhaps the search method wants to add some settings?
-	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
-	if (file_exists($sourcedir . '/SearchAPI-' . ucwords($modSettings['search_index']) . '.php'))
+	$settings['search_index'] = empty($settings['search_index']) ? 'standard' : $settings['search_index'];
+	if (file_exists($sourcedir . '/SearchAPI-' . ucwords($settings['search_index']) . '.php'))
 	{
-		loadSource('SearchAPI-' . ucwords($modSettings['search_index']));
+		loadSource('SearchAPI-' . ucwords($settings['search_index']));
 
-		$method_call = array($modSettings['search_index'] . '_search', 'searchSettings');
+		$method_call = array($settings['search_index'] . '_search', 'searchSettings');
 		if (is_callable($method_call))
 			call_user_func_array($method_call, array(&$config_vars));
 	}
@@ -165,7 +165,7 @@ function EditSearchSettings($return_config = false)
 
 function EditWeights()
 {
-	global $txt, $context, $modSettings;
+	global $txt, $context, $settings;
 
 	$context['page_title'] = $txt['search_weights_title'];
 	wetem::load('modify_weights');
@@ -192,15 +192,15 @@ function EditWeights()
 
 	$context['relative_weights'] = array('total' => 0);
 	foreach ($factors as $factor)
-		$context['relative_weights']['total'] += isset($modSettings[$factor]) ? $modSettings[$factor] : 0;
+		$context['relative_weights']['total'] += isset($settings[$factor]) ? $settings[$factor] : 0;
 
 	foreach ($factors as $factor)
-		$context['relative_weights'][$factor] = round(100 * (isset($modSettings[$factor]) ? $modSettings[$factor] : 0) / $context['relative_weights']['total'], 1);
+		$context['relative_weights'][$factor] = round(100 * (isset($settings[$factor]) ? $settings[$factor] : 0) / $context['relative_weights']['total'], 1);
 }
 
 function EditSearchMethod()
 {
-	global $txt, $context, $modSettings, $db_prefix;
+	global $txt, $context, $settings, $db_prefix;
 
 	$context[$context['admin_menu_name']]['current_subsection'] = 'method';
 	$context['page_title'] = $txt['search_method_title'];
@@ -311,7 +311,7 @@ function EditSearchMethod()
 		$context['fulltext_index'] = '';
 
 		// Go back to the default search method.
-		if (!empty($modSettings['search_index']) && $modSettings['search_index'] == 'fulltext')
+		if (!empty($settings['search_index']) && $settings['search_index'] == 'fulltext')
 			updateSettings(array(
 				'search_index' => '',
 			));
@@ -337,7 +337,7 @@ function EditSearchMethod()
 		));
 
 		// Go back to the default search method.
-		if (!empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom')
+		if (!empty($settings['search_index']) && $settings['search_index'] == 'custom')
 			updateSettings(array(
 				'search_index' => '',
 			));
@@ -426,14 +426,14 @@ function EditSearchMethod()
 		$context['table_info'][$type] = comma_format($context['table_info'][$type] / 1024) . ' ' . $txt['search_method_kilobytes'];
 	}
 
-	$context['custom_index'] = !empty($modSettings['search_custom_index_config']);
-	$context['partial_custom_index'] = !empty($modSettings['search_custom_index_resume']) && empty($modSettings['search_custom_index_config']);
+	$context['custom_index'] = !empty($settings['search_custom_index_config']);
+	$context['partial_custom_index'] = !empty($settings['search_custom_index_resume']) && empty($settings['search_custom_index_config']);
 	$context['double_index'] = !empty($context['fulltext_index']) && $context['custom_index'];
 }
 
 function CreateMessageIndex()
 {
-	global $modSettings, $context, $db_prefix, $txt;
+	global $settings, $context, $db_prefix, $txt;
 
 	// Scotty, we need more time...
 	@set_time_limit(600);
@@ -462,9 +462,9 @@ function CreateMessageIndex()
 		),
 	);
 
-	if (isset($_REQUEST['resume']) && !empty($modSettings['search_custom_index_resume']))
+	if (isset($_REQUEST['resume']) && !empty($settings['search_custom_index_resume']))
 	{
-		$context['index_settings'] = unserialize($modSettings['search_custom_index_resume']);
+		$context['index_settings'] = unserialize($settings['search_custom_index_resume']);
 		$context['start'] = (int) $context['index_settings']['resume_at'];
 		unset($context['index_settings']['resume_at']);
 		$context['step'] = 1;
@@ -508,11 +508,11 @@ function CreateMessageIndex()
 			wedbSearch::create_word_search($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
 
 			// Temporarily switch back to not using a search index.
-			if (!empty($modSettings['search_index']) && $modSettings['search_index'] == 'custom')
+			if (!empty($settings['search_index']) && $settings['search_index'] == 'custom')
 				updateSettings(array('search_index' => ''));
 
 			// Don't let simultanious processes be updating the search index.
-			if (!empty($modSettings['search_custom_index_config']))
+			if (!empty($settings['search_custom_index_config']))
 				updateSettings(array('search_custom_index_config' => ''));
 		}
 
@@ -608,10 +608,10 @@ function CreateMessageIndex()
 			$context['step'] = 3;
 		else
 		{
-			$stop_words = $context['start'] === 0 || empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
+			$stop_words = $context['start'] === 0 || empty($settings['search_stopwords']) ? array() : explode(',', $settings['search_stopwords']);
 			$stop = time() + 3;
 			wetem::load('create_index_progress');
-			$max_messages = ceil(60 * $modSettings['totalMessages'] / 100);
+			$max_messages = ceil(60 * $settings['totalMessages'] / 100);
 
 			while (time() < $stop)
 			{

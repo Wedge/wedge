@@ -47,7 +47,7 @@ if (!defined('WEDGE'))
 // Show a listing of the registered members.
 function Memberlist()
 {
-	global $scripturl, $txt, $modSettings, $context, $settings, $modSettings;
+	global $scripturl, $txt, $settings, $context, $theme, $settings;
 
 	// Make sure they can view the memberlist.
 	isAllowedTo('view_mlist');
@@ -72,7 +72,7 @@ function Memberlist()
 			'selected' => $text[2],
 		);
 
-	$context['num_members'] = $modSettings['totalMembers'];
+	$context['num_members'] = $settings['totalMembers'];
 
 	// Set up the columns...
 	$context['columns'] = array(
@@ -108,7 +108,7 @@ function Memberlist()
 	);
 
 	$context['colspan'] = 0;
-	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['disabled_fields'] = isset($settings['disabled_profile_fields']) ? array_flip(explode(',', $settings['disabled_profile_fields'])) : array();
 	foreach ($context['columns'] as $key => $column)
 	{
 		if (isset($context['disabled_fields'][$key]) || isset($column['link_with'], $context['disabled_fields'][$column['link_with']]))
@@ -142,7 +142,7 @@ function Memberlist()
 function MLAll()
 {
 	global $txt, $scripturl, $user_info;
-	global $modSettings, $context;
+	global $settings, $context;
 
 	// The chunk size for the cached index.
 	$cache_step_size = 500;
@@ -151,19 +151,19 @@ function MLAll()
 	// 1. there are at least 2k members,
 	// 2. the default sorting method (real_name) is being used,
 	// 3. the page shown is high enough to make a DB filesort unprofitable.
-	$use_cache = $modSettings['totalMembers'] > 2000 && (!isset($_REQUEST['sort']) || $_REQUEST['sort'] === 'real_name') && isset($_REQUEST['start']) && $_REQUEST['start'] > $cache_step_size;
+	$use_cache = $settings['totalMembers'] > 2000 && (!isset($_REQUEST['sort']) || $_REQUEST['sort'] === 'real_name') && isset($_REQUEST['start']) && $_REQUEST['start'] > $cache_step_size;
 
 	if ($use_cache)
 	{
 		// Maybe there's something cached already.
-		if (!empty($modSettings['memberlist_cache']))
-			$memberlist_cache = @unserialize($modSettings['memberlist_cache']);
+		if (!empty($settings['memberlist_cache']))
+			$memberlist_cache = @unserialize($settings['memberlist_cache']);
 
 		// The chunk size for the cached index.
 		$cache_step_size = 500;
 
 		// Only update the cache if something changed or no cache existed yet.
-		if (empty($memberlist_cache) || empty($modSettings['memberlist_updated']) || $memberlist_cache['last_update'] < $modSettings['memberlist_updated'])
+		if (empty($memberlist_cache) || empty($settings['memberlist_updated']) || $memberlist_cache['last_update'] < $settings['memberlist_updated'])
 		{
 			$request = wesql::query('
 				SELECT real_name
@@ -257,11 +257,11 @@ function MLAll()
 	$context['sort_direction'] = !isset($_REQUEST['desc']) ? 'up' : 'down';
 
 	// Construct the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=mlist;sort=' . $_REQUEST['sort'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_members'], $modSettings['defaultMaxMembers']);
+	$context['page_index'] = template_page_index($scripturl . '?action=mlist;sort=' . $_REQUEST['sort'] . (isset($_REQUEST['desc']) ? ';desc' : ''), $_REQUEST['start'], $context['num_members'], $settings['defaultMaxMembers']);
 
 	// Send the data to the template.
 	$context['start'] = $_REQUEST['start'] + 1;
-	$context['end'] = min($_REQUEST['start'] + $modSettings['defaultMaxMembers'], $context['num_members']);
+	$context['end'] = min($_REQUEST['start'] + $settings['defaultMaxMembers'], $context['num_members']);
 
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['page_title'] = sprintf($txt['viewing_members'], $context['start'], $context['end']);
@@ -314,7 +314,7 @@ function MLAll()
 	if ($use_cache && $_REQUEST['sort'] === 'real_name' && !isset($_REQUEST['desc']))
 	{
 		$first_offset = $_REQUEST['start'] - ($_REQUEST['start'] % $cache_step_size);
-		$second_offset = ceil(($_REQUEST['start'] + $modSettings['defaultMaxMembers']) / $cache_step_size) * $cache_step_size;
+		$second_offset = ceil(($_REQUEST['start'] + $settings['defaultMaxMembers']) / $cache_step_size) * $cache_step_size;
 
 		$where = 'mem.real_name BETWEEN {string:real_name_low} AND {string:real_name_high}';
 		$query_parameters['real_name_low'] = $memberlist_cache['index'][$first_offset];
@@ -325,7 +325,7 @@ function MLAll()
 	// Reverse sorting is a bit more complicated...
 	elseif ($use_cache && $_REQUEST['sort'] === 'real_name')
 	{
-		$first_offset = floor(($memberlist_cache['num_members'] - $modSettings['defaultMaxMembers'] - $_REQUEST['start']) / $cache_step_size) * $cache_step_size;
+		$first_offset = floor(($memberlist_cache['num_members'] - $settings['defaultMaxMembers'] - $_REQUEST['start']) / $cache_step_size) * $cache_step_size;
 		if ($first_offset < 0)
 			$first_offset = 0;
 		$second_offset = ceil(($memberlist_cache['num_members'] - $_REQUEST['start']) / $cache_step_size) * $cache_step_size;
@@ -345,7 +345,7 @@ function MLAll()
 		WHERE mem.is_activated = {int:is_activated}' . (empty($where) ? '' : '
 			AND ' . $where) . '
 		ORDER BY {raw:sort}
-		LIMIT ' . $limit . ', ' . $modSettings['defaultMaxMembers'],
+		LIMIT ' . $limit . ', ' . $settings['defaultMaxMembers'],
 		$query_parameters
 	);
 	printMemberListRows($request);
@@ -371,7 +371,7 @@ function MLAll()
 // Search for members...
 function MLSearch()
 {
-	global $txt, $scripturl, $context, $user_info, $modSettings;
+	global $txt, $scripturl, $context, $user_info, $settings;
 
 	$context['page_title'] = $txt['mlist_search'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
@@ -471,7 +471,7 @@ function MLSearch()
 		list ($numResults) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['page_index'] = template_page_index($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
+		$context['page_index'] = template_page_index($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $settings['defaultMaxMembers']);
 
 		// Find the members from the database.
 		// !!! SLOW This query is slow.
@@ -484,7 +484,7 @@ function MLSearch()
 				', $customJoin)) . '
 			WHERE (' . implode( ' ' . $query . ' OR ', $fields) . ' ' . $query . $condition . ')
 				AND mem.is_activated = {int:is_activated}
-			LIMIT ' . $_REQUEST['start'] . ', ' . $modSettings['defaultMaxMembers'],
+			LIMIT ' . $_REQUEST['start'] . ', ' . $settings['defaultMaxMembers'],
 			$query_parameters
 		);
 		printMemberListRows($request);
@@ -518,8 +518,8 @@ function MLSearch()
 
 function printMemberListRows($request)
 {
-	global $scripturl, $txt, $user_info, $modSettings;
-	global $context, $settings, $memberContext;
+	global $scripturl, $txt, $user_info, $settings;
+	global $context, $theme, $memberContext;
 
 	// Get the most posts.
 	$result = wesql::query('

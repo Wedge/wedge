@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
  */
 function QuoteFast()
 {
-	global $modSettings, $user_info, $txt, $settings, $context;
+	global $settings, $user_info, $txt, $theme, $context;
 
 	loadLanguage('Post');
 	loadSource('Class-Editor');
@@ -85,7 +85,7 @@ function QuoteFast()
 		}
 
 		// Remove any nested quotes.
-		if (!empty($modSettings['removeNestedQuotes']))
+		if (!empty($settings['removeNestedQuotes']))
 			$row['body'] = preg_replace(array('~\n?\[quote.*?\].+?\[/quote\]\n?~is', '~^\n~', '~\[/quote\]~'), '', $row['body']);
 
 		// Make the body HTML if need be.

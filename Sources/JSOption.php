@@ -33,7 +33,7 @@ define('WEDGE_NO_LOG', 1);
 // Set an option via javascript.
 function JSOption()
 {
-	global $settings, $user_info, $options;
+	global $theme, $user_info, $options;
 
 	// Check the session id.
 	checkSession('get');
@@ -72,9 +72,9 @@ function JSOption()
 	if (isset($_GET['th']) || isset($_GET['id']))
 	{
 		// Invalidate the current themes cache too.
-		cache_put_data('theme_settings-' . $settings['theme_id'] . ':' . $user_info['id'], null, 60);
+		cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . $user_info['id'], null, 60);
 
-		$settings['theme_id'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
+		$theme['theme_id'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
 	}
 
 	// If this is the admin preferences the passed value will just be an element of it.
@@ -93,11 +93,11 @@ function JSOption()
 	wesql::insert('replace',
 		'{db_prefix}themes',
 		array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-		array($settings['theme_id'], $user_info['id'], $_GET['var'], is_array($_GET['val']) ? implode(',', $_GET['val']) : $_GET['val']),
+		array($theme['theme_id'], $user_info['id'], $_GET['var'], is_array($_GET['val']) ? implode(',', $_GET['val']) : $_GET['val']),
 		array('id_theme', 'id_member', 'variable')
 	);
 
-	cache_put_data('theme_settings-' . $settings['theme_id'] . ':' . $user_info['id'], null, 60);
+	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . $user_info['id'], null, 60);
 
 	// Don't output anything...
 	blankGif();

@@ -13,7 +13,7 @@
 
 function template_ask()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="split_topics">
@@ -49,7 +49,7 @@ function template_ask()
 
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="split_topics">
@@ -75,7 +75,7 @@ function template_main()
 
 function template_select()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="split_topics">
@@ -96,7 +96,7 @@ function template_select()
 		echo '
 					<li id="not_selected_', $message['id'], '"><div class="windowbg', $message['alternate'] ? '2' : '', ' wrc">
 						<div class="message_header">
-							<a class="split_icon floatright" href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=down;msg=', $message['id'], '" onclick="return select(\'down\', ', $message['id'], ');"><img src="', $settings['images_url'], '/split_select.gif" alt="-&gt;"></a>
+							<a class="split_icon floatright" href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=down;msg=', $message['id'], '" onclick="return select(\'down\', ', $message['id'], ');"><img src="', $theme['images_url'], '/split_select.gif" alt="-&gt;"></a>
 							<strong>', $message['subject'], '</strong> ', $txt['by'], ' <strong>', $message['poster'], '</strong><br>
 							<em>', $message['time'], '</em>
 						</div>
@@ -124,7 +124,7 @@ function template_select()
 			echo '
 					<li id="selected_', $message['id'], '"><div class="windowbg', $message['alternate'] ? '2' : '', ' wrc">
 						<div class="message_header">
-							<a class="split_icon floatleft" href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=up;msg=', $message['id'], '" onclick="return select(\'up\', ', $message['id'], ');"><img src="', $settings['images_url'], '/split_deselect.gif" alt="&lt;-"></a>
+							<a class="split_icon floatleft" href="', $scripturl, '?action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=up;msg=', $message['id'], '" onclick="return select(\'up\', ', $message['id'], ');"><img src="', $theme['images_url'], '/split_deselect.gif" alt="&lt;-"></a>
 							<strong>', $message['subject'], '</strong> ', $txt['by'], ' <strong>', $message['poster'], '</strong><br>
 							<em>', $message['time'], '</em>
 						</div>
@@ -193,7 +193,7 @@ function template_select()
 				var newItem = $("<div></div>").html("\
 	<div class=\\"message_header\\">\
 		<a class=\\"split_icon float" + (is_selected ? "left" : "right") + "\\" href=\\"" + we_prepareScriptUrl() + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (is_selected ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (is_selected ? "up" : "down") + "\', " + curId + ");\\">\
-			<img src=\\"', $settings['images_url'], '/split_" + (is_selected ? "de" : "") + "select.gif\\" alt=\\"" + (is_selected ? "&lt;-" : "-&gt;") + "\\">\
+			<img src=\\"', $theme['images_url'], '/split_" + (is_selected ? "de" : "") + "select.gif\\" alt=\\"" + (is_selected ? "&lt;-" : "-&gt;") + "\\">\
 		</a>\
 		<strong>" + $("subject", this).text() + "</strong> ', $txt['by'], ' <strong>" + $("poster", this).text() + "</strong>\
 		<br><em>" + $("time", this).text() + "</em>\
@@ -222,7 +222,7 @@ function template_select()
 
 function template_merge_done()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<div id="merge_topics">
@@ -247,7 +247,7 @@ function template_merge_done()
 
 function template_merge()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<div id="merge_topics">
@@ -336,7 +336,7 @@ function template_merge()
 
 function template_merge_extra_options()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="merge_topics">

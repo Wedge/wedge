@@ -31,7 +31,7 @@ function template_avatar_settings_after()
 
 function template_browse()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 	<div id="manage_attachments">
@@ -39,9 +39,9 @@ function template_browse()
 			', $txt['attachment_manager_browse_files'], '
 		</we:cat>
 		<div class="windowbg2 wrc">
-			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse">', $context['browse_type'] === 'attachments' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_attachments'], '</a> |
-			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse;avatars">', $context['browse_type'] === 'avatars' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_avatars'], '</a> |
-			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse;thumbs">', $context['browse_type'] === 'thumbs' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_thumbs'], '</a>
+			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse">', $context['browse_type'] === 'attachments' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_attachments'], '</a> |
+			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse;avatars">', $context['browse_type'] === 'avatars' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_avatars'], '</a> |
+			<a href="', $scripturl, '?action=admin;area=manageattachments;sa=browse;thumbs">', $context['browse_type'] === 'thumbs' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '', $txt['attachment_manager_thumbs'], '</a>
 		</div>
 	</div>';
 
@@ -53,7 +53,7 @@ function template_browse()
 
 function template_maintenance()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	$warning = JavaScriptEscape($txt['attachment_pruning_warning']);
 
@@ -115,7 +115,7 @@ function template_maintenance()
 
 function template_attachment_repair()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $scripturl, $theme;
 
 	// If we've completed just let them know!
 	if ($context['completed'])

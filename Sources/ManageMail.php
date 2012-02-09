@@ -34,7 +34,7 @@ if (!defined('WEDGE'))
 // This function passes control through to the relevant section
 function ManageMail()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $settings;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -56,7 +56,7 @@ function ManageMail()
 
 	// By default we want to browse
 	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'browse';
-	if (empty($modSettings['mail_queue']))
+	if (empty($settings['mail_queue']))
 		$_REQUEST['sa'] = 'settings';
 
 	$context['sub_action'] = $_REQUEST['sa'];
@@ -75,7 +75,7 @@ function ManageMail()
 // Display the mail queue...
 function BrowseMailQueue()
 {
-	global $scripturl, $context, $modSettings, $txt;
+	global $scripturl, $context, $settings, $txt;
 
 	// First, are we deleting something from the queue?
 	if (isset($_REQUEST['delete']))
@@ -266,7 +266,7 @@ function list_getMailQueueSize()
 
 function ModifyMailSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context, $settings;
 
 	$config_vars = array(
 			// Mail queue stuff, this rocks ;)

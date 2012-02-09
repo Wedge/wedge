@@ -47,9 +47,9 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
  *
  * Notes:
  * - This function handles all bbcode parsing, as well as containing the list of all bbcodes known to the system, and where new bbcodes should be added.
- * - The state of bbcode disabled in the admin panel is stored in $modSettings['disabledBBC'] as a comma-separated list and parsed here.
- * - The master toggle switch of $modSettings['enableBBC'] is applied here, as is $modSettings['enablePostHTML'] being able to handle basic HTML (including b, u, i, s, em, ins, del, pre, blockquote; a and img are converted to bbcode equivalents)
- * - Long words are also fixed here as directed by $modSettings['fixLongWords'].
+ * - The state of bbcode disabled in the admin panel is stored in $settings['disabledBBC'] as a comma-separated list and parsed here.
+ * - The master toggle switch of $settings['enableBBC'] is applied here, as is $settings['enablePostHTML'] being able to handle basic HTML (including b, u, i, s, em, ins, del, pre, blockquote; a and img are converted to bbcode equivalents)
+ * - Long words are also fixed here as directed by $settings['fixLongWords'].
  *
  * @param mixed $message The original text, including bbcode, to be parsed. This is expected to have been parsed with {@link preparsecode()} previously (for handling of quotes and apostrophes). Alternatively, if boolean false is passed here, the return value is the array listing the acceptable bbcode types.
  * @param mixed $smileys Whether smileys should be parsed too, prior to (and in addition to) any bbcode, defaults to true. Nominally this is a boolean value, true for 'parse smileys', false for not, however the function also accepts the string 'print', for parsing in the print-page environment, which disables non printable tags and smileys. This is also overridden in wireless mode.
@@ -59,7 +59,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
  */
 function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
 {
-	global $txt, $context, $modSettings, $user_info;
+	global $txt, $context, $settings, $user_info;
 	static $master_codes = null, $bbc_codes = array(), $bbc_types = array(), $itemcodes = array(), $no_autolink_tags = array();
 	static $disabled, $feet = 0;
 
@@ -73,7 +73,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	elseif ($smileys !== null && ($smileys == '1' || $smileys == '0'))
 		$smileys = (bool) $smileys;
 
-	if (empty($modSettings['enableBBC']) && $message !== false)
+	if (empty($settings['enableBBC']) && $message !== false)
 	{
 		if ($smileys === true)
 			parsesmileys($message);
@@ -153,7 +153,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		}
 
 		// Protect noembed & autolink items from embedding *before* BBC parsing - wrap quotes, but don't protect
-		if (!empty($modSettings['embed_enabled']) && strlen($message) > 15)
+		if (!empty($settings['embed_enabled']) && strlen($message) > 15)
 		{
 			if (!function_exists('aeva_preprotect'))
 				loadSource('media/Aeva-Embed');
@@ -164,11 +164,11 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// Sift out the bbc for a performance improvement.
 	if (empty($bbc_codes) || $message === false || !empty($parse_tags))
 	{
-		if (!empty($modSettings['disabledBBC']))
-			foreach (explode(',', strtolower($modSettings['disabledBBC'])) as $tag)
+		if (!empty($settings['disabledBBC']))
+			foreach (explode(',', strtolower($settings['disabledBBC'])) as $tag)
 				$disabled[trim($tag)] = true;
 
-		if (empty($modSettings['enableEmbeddedFlash']))
+		if (empty($settings['enableEmbeddedFlash']))
 			$disabled['flash'] = true;
 
 		// This is mainly for the bbc manager, so it's easy to add tags above. Custom BBC should be added above this line.
@@ -208,7 +208,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	}
 
 	// Shall we take the time to cache this?
-	if ($cache_id != '' && !empty($modSettings['cache_enable']) && (($modSettings['cache_enable'] >= 2 && strlen($message) > 1000) || strlen($message) > 2400) && empty($parse_tags))
+	if ($cache_id != '' && !empty($settings['cache_enable']) && (($settings['cache_enable'] >= 2 && strlen($message) > 1000) || strlen($message) > 2400) && empty($parse_tags))
 	{
 		// It's likely this will change if the message is modified.
 		$cache_key = 'parse:' . $cache_id . '-' . md5(md5($message) . '-' . $smileys . (empty($disabled) ? '' : implode(',', array_keys($disabled))) . serialize($context['browser']) . $txt['lang_locale'] . $user_info['time_offset'] . $user_info['time_format']);
@@ -237,9 +237,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	$message = strtr($message, array("\n" => '<br>'));
 
 	// This saves time by doing our break long words checks here.
-	if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
+	if (!empty($settings['fixLongWords']) && $settings['fixLongWords'] > 5)
 		// PCRE will not be happy if we don't give it a short.
-		$modSettings['fixLongWords'] = (int) min(65535, $modSettings['fixLongWords']);
+		$settings['fixLongWords'] = (int) min(65535, $settings['fixLongWords']);
 
 	$pos = -1;
 
@@ -262,7 +262,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$data = $orig_data = substr($message, $last_pos, $pos - $last_pos);
 
 			// Take care of some HTML!
-			if (!empty($modSettings['enablePostHTML']) && strpos($data, '&lt;') !== false)
+			if (!empty($settings['enablePostHTML']) && strpos($data, '&lt;') !== false)
 			{
 				$data = preg_replace('~&lt;a\s+href=((?:&quot;)?)((?:https?://|ftps?://|mailto:)\S+?)\\1&gt;~i', '[url=$2]', $data);
 				$data = preg_replace('~&lt;/a&gt;~i', '[/url]', $data);
@@ -295,20 +295,20 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 							$imgtag = preg_replace('~action(?:=|%3d)(?!dlattach|media)~i', 'action-', $imgtag);
 
 						// Check if the image is larger than allowed.
-						if (!empty($modSettings['max_image_width']) && !empty($modSettings['max_image_height']))
+						if (!empty($settings['max_image_width']) && !empty($settings['max_image_height']))
 						{
 							list ($width, $height) = url_image_size($imgtag);
 
-							if (!empty($modSettings['max_image_width']) && $width > $modSettings['max_image_width'])
+							if (!empty($settings['max_image_width']) && $width > $settings['max_image_width'])
 							{
-								$height = (int) (($modSettings['max_image_width'] * $height) / $width);
-								$width = $modSettings['max_image_width'];
+								$height = (int) (($settings['max_image_width'] * $height) / $width);
+								$width = $settings['max_image_width'];
 							}
 
-							if (!empty($modSettings['max_image_height']) && $height > $modSettings['max_image_height'])
+							if (!empty($settings['max_image_height']) && $height > $settings['max_image_height'])
 							{
-								$width = (int) (($modSettings['max_image_height'] * $width) / $height);
-								$height = $modSettings['max_image_height'];
+								$width = (int) (($settings['max_image_height'] * $width) / $height);
+								$height = $settings['max_image_height'];
 							}
 
 							// Set the new image tag.
@@ -322,7 +322,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				}
 			}
 
-			if (!empty($modSettings['autoLinkUrls']))
+			if (!empty($settings['autoLinkUrls']))
 			{
 				// Are we inside tags that should be auto linked?
 				$no_autolink_area = false;
@@ -372,16 +372,16 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 			$data = strtr($data, array("\t" => '&nbsp;&nbsp;&nbsp;'));
 
-			if (!empty($modSettings['fixLongWords']) && $modSettings['fixLongWords'] > 5)
+			if (!empty($settings['fixLongWords']) && $settings['fixLongWords'] > 5)
 			{
 				// The idea is, find words xx long, and then replace them with xx + space + more.
-				if (westr::strlen($data) > $modSettings['fixLongWords'])
+				if (westr::strlen($data) > $settings['fixLongWords'])
 				{
 					// This is done in a roundabout way because $breaker has "long words" :P.
 					$data = strtr($data, array('&shy;' => '< >', '&nbsp;' => "\xC2\xA0"));
 					$data = preg_replace(
-						'~(?<=[>;:!? \x{A0}\]()]|^)([\w\pL.]{' . $modSettings['fixLongWords'] . ',})~eu',
-						'preg_replace(\'/(.{' . ($modSettings['fixLongWords'] - 1) . '})/u\', \'\\$1< >\', \'$1\')',
+						'~(?<=[>;:!? \x{A0}\]()]|^)([\w\pL.]{' . $settings['fixLongWords'] . ',})~eu',
+						'preg_replace(\'/(.{' . ($settings['fixLongWords'] - 1) . '})/u\', \'\\$1< >\', \'$1\')',
 						$data);
 					$data = strtr($data, array('< >' => '&shy;', "\xC2\xA0" => '&nbsp;'));
 				}
@@ -1105,10 +1105,10 @@ function parsesmileys(&$message)
 	// If the smiley array hasn't been set, do it now.
 	if (empty($smileyPregSearch))
 	{
-		global $modSettings, $txt, $context, $cachedir;
+		global $settings, $txt, $context, $cachedir;
 
 		// Use the default smileys if it is disabled. (Better for "portability" of smileys.)
-		if (empty($modSettings['smiley_enable']))
+		if (empty($settings['smiley_enable']))
 		{
 			$smileysfrom = array('>:D', ':D', '::)', '>:(', ':))', ':)', ';)', ';D', ':(', ':o', '8)', ':P', '???', ':-[', ':-X', ':-*', ':\'(', ':-\\', '^-^', 'O0', 'C:-)', '0:)', ':edit:');
 			$smileysto = array('evil.gif', 'cheesy.gif', 'rolleyes.gif', 'angry.gif', 'laugh.gif', 'smiley.gif', 'wink.gif', 'grin.gif', 'sad.gif', 'shocked.gif', 'cool.gif', 'tongue.gif', 'huh.gif', 'embarrassed.gif', 'lipsrsealed.gif', 'kiss.gif', 'cry.gif', 'undecided.gif', 'azn.gif', 'afro.gif', 'police.gif', 'angel.gif', 'edit.gif');
@@ -1165,11 +1165,11 @@ function parsesmileys(&$message)
 			}
 		}
 
-		$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+		$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 		$context['smiley_gzip'] = $can_gzip;
 		$context['smiley_ext'] = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
 		$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'];
-		$context['smiley_now'] = empty($modSettings[$var_name]) ? time() : $modSettings[$var_name];
+		$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
 
 		if (!file_exists($cachedir . '/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
 		{
@@ -1201,7 +1201,7 @@ function replace_smileys($match)
 	{
 		if (empty($smiley_css_done))
 		{
-			global $boardurl, $modSettings, $context, $user_info;
+			global $boardurl, $settings, $context, $user_info;
 
 			$smiley_css_done = true;
 			$context['header'] .= '
@@ -1242,24 +1242,24 @@ function highlight_php_code($code)
  *
  * This feature was shamelessly inspired by a mod by JayBachatero, which should have been made a core feature long ago. Thanks, man!
  *
- * @param string $url URL that should be shortened, in case it's longer than $modSettings['max_urlLength']
+ * @param string $url URL that should be shortened, in case it's longer than $settings['max_urlLength']
  * @return string The resulting string
  */
 function trim_url($url)
 {
-	global $modSettings;
+	global $settings;
 
-	$modSettings['max_urlLength'] = isset($modSettings['max_urlLength']) ? $modSettings['max_urlLength'] : 50;
-	if (empty($modSettings['max_urlLength']))
+	$settings['max_urlLength'] = isset($settings['max_urlLength']) ? $settings['max_urlLength'] : 50;
+	if (empty($settings['max_urlLength']))
 		return $url;
 
 	$u = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
 
 	// Check the length of the url
-	if (westr::strlen($u) <= $modSettings['max_urlLength'])
+	if (westr::strlen($u) <= $settings['max_urlLength'])
 		return $url;
 
-	$break = $modSettings['max_urlLength'] / 2;
+	$break = $settings['max_urlLength'] / 2;
 	return str_replace('&amp;hellip;', '&hellip;', htmlentities(preg_replace('/&[^&;]*$/', '', westr::substr($u, 0, floor($break))) . '&hellip;' . preg_replace('/^\d+;/', '', westr::substr($u, -ceil($break)))));
 }
 
@@ -1302,7 +1302,7 @@ function bbc_permute($array)
 /**
  * Handles censoring of provided text, subject to whether the current board can be disabled and it is disabled by the current user.
  *
- * Like a number of functions, this works by modifying the text in place through accepting the text by reference. The word censoring is based on two lists, held in $modSettings['censor_vulgar'] and $modSettings['censor_proper'], which are new-line delineated lists of search/replace pairs.
+ * Like a number of functions, this works by modifying the text in place through accepting the text by reference. The word censoring is based on two lists, held in $settings['censor_vulgar'] and $settings['censor_proper'], which are new-line delineated lists of search/replace pairs.
  *
  * @param string &$text The string to be censored, by reference (so updating this string, the master string will be updated too)
  * @param bool $force Whether to force it to be censored, even if user and theme settings might indicate otherwise.
@@ -1310,23 +1310,23 @@ function bbc_permute($array)
  */
 function &censorText(&$text, $force = false)
 {
-	global $modSettings, $options, $settings, $txt;
+	global $settings, $options, $theme, $txt;
 	static $censor_vulgar = null, $censor_proper;
 
-	if ((!empty($options['show_no_censored']) && $modSettings['allow_no_censored'] && !$force) || empty($modSettings['censor_vulgar']))
+	if ((!empty($options['show_no_censored']) && $settings['allow_no_censored'] && !$force) || empty($settings['censor_vulgar']))
 		return $text;
 
 	// If they haven't yet been loaded, load them.
 	if ($censor_vulgar == null)
 	{
-		$censor_vulgar = explode("\n", $modSettings['censor_vulgar']);
-		$censor_proper = explode("\n", $modSettings['censor_proper']);
+		$censor_vulgar = explode("\n", $settings['censor_vulgar']);
+		$censor_proper = explode("\n", $settings['censor_proper']);
 
 		// Quote them for use in regular expressions.
 		for ($i = 0, $n = count($censor_vulgar); $i < $n; $i++)
 		{
 			$censor_vulgar[$i] = strtr(preg_quote($censor_vulgar[$i], '/'), array('\\\\\\*' => '[*]', '\\*' => '[^\s]*?', '&' => '&amp;'));
-			$censor_vulgar[$i] = (empty($modSettings['censorWholeWord']) ? '/' . $censor_vulgar[$i] . '/' : '/(?<=^|\W)' . $censor_vulgar[$i] . '(?=$|\W)/') . (empty($modSettings['censorIgnoreCase']) ? '' : 'i') . 'u';
+			$censor_vulgar[$i] = (empty($settings['censorWholeWord']) ? '/' . $censor_vulgar[$i] . '/' : '/(?<=^|\W)' . $censor_vulgar[$i] . '(?=$|\W)/') . (empty($settings['censorIgnoreCase']) ? '' : 'i') . 'u';
 
 			if (strpos($censor_vulgar[$i], '\'') !== false)
 			{

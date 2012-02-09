@@ -779,7 +779,7 @@ function aeva_mgStats()
 // Manages your albums' control panel
 function aeva_albumCP($is_admin = false)
 {
-	global $user_info, $context, $txt, $galurl, $alburl, $scripturl, $settings;
+	global $user_info, $context, $txt, $galurl, $alburl, $scripturl, $theme;
 
 	$alburl = $is_admin ? $scripturl . '?action=admin;area=aeva_albums;' . $context['session_query'] . ';' : $galurl . 'area=mya;';
 	if (!$is_admin)
@@ -831,7 +831,7 @@ function aeva_albumCP($is_admin = false)
 
 		if ($moving !== false && $moving != $list)
 		{
-			$move_url = '<a href="' . $alburl . ';sa=move;target='.$context['aeva_albums'][$list]['id'].';src='.$moving.';pos=%s"><img src="'.$settings['images_aeva'].'/arrow_%s.png" title="%s" style="vertical-align: bottom"></a>';
+			$move_url = '<a href="' . $alburl . ';sa=move;target='.$context['aeva_albums'][$list]['id'].';src='.$moving.';pos=%s"><img src="'.$theme['images_aeva'].'/arrow_%s.png" title="%s" style="vertical-align: bottom"></a>';
 			$context['aeva_my_albums'][$list]['move_links'] = array(
 				'before' => sprintf($move_url, 'before', 'up', $txt['media_admin_before']),
 				'after' => sprintf($move_url, 'after', 'down', $txt['media_admin_after']),
@@ -877,7 +877,7 @@ function aeva_getFromMemberlist($lis, $owner = 1)
 
 function aeva_addAlbum($is_admin = false, $is_add = true)
 {
-	global $context, $scripturl, $galurl, $amSettings, $txt, $user_info, $settings;
+	global $context, $scripturl, $galurl, $amSettings, $txt, $user_info, $theme;
 
 	$is_edit = !$is_add;
 
@@ -1139,7 +1139,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'change_owner',
 			'value' => $is_add ? $user_info['username'] : $owner_name,
 			'custom' => 'maxlength="30" id="change_owner"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=change_owner;delim=null;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=change_owner;delim=null;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'featured' => array(
 			'label' => $txt['media_featured_album'],
@@ -1238,7 +1238,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'allowed_members',
 			'value' => empty($members_allowed) ? '' : implode(', ', $members_allowed),
 			'custom' => 'maxlength="52" id="allowed_members"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_members;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_members;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'allowed_write' => array(
 			'label' => $txt['media_allowed_write'],
@@ -1247,7 +1247,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'allowed_write',
 			'value' => empty($members_allowed_write) ? '' : implode(', ', $members_allowed_write),
 			'custom' => 'maxlength="52" id="allowed_write"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_write;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_write;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'denied_members' => array(
 			'label' => $txt['media_denied_members'],
@@ -1256,7 +1256,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'denied_members',
 			'value' => empty($members_denied) ? '' : implode(', ', $members_denied),
 			'custom' => 'maxlength="52" id="denied_members"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_members;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_members;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'denied_write' => array(
 			'label' => $txt['media_denied_write'],
@@ -1265,7 +1265,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'denied_write',
 			'value' => empty($members_denied_write) ? '' : implode(', ', $members_denied_write),
 			'custom' => 'maxlength="52" id="denied_write"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_write;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $settings['images_url'] . '/icons/assist.gif"></a>',
+			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_write;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'hidden' => array(
 			'label' => $txt['media_album_hidden'],
@@ -1957,7 +1957,7 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 // Handles the Mass Upload page
 function aeva_massUpload()
 {
-	global $amSettings, $txt, $context, $user_info, $settings, $galurl, $modSettings, $cookiename;
+	global $amSettings, $txt, $context, $user_info, $theme, $galurl, $settings, $cookiename;
 
 	// Modifying item's title?
 	if (isset($_POST['submit_title_update']))
@@ -2241,7 +2241,7 @@ function aeva_massUploadFinish()
 // Profile area for our gallery
 function aeva_profileSummary($memID)
 {
-	global $amSettings, $context, $txt, $settings, $scripturl;
+	global $amSettings, $context, $txt, $theme, $scripturl;
 
 	loadSource('media/Subs-Media');
 
@@ -2314,7 +2314,7 @@ function aeva_profileSummary($memID)
 // Viewing all items
 function aeva_profileItems($memID)
 {
-	global $amSettings, $context, $txt, $settings, $scripturl;
+	global $amSettings, $context, $txt, $theme, $scripturl;
 
 	loadSource('media/Subs-Media');
 
@@ -2338,7 +2338,7 @@ function aeva_profileItems($memID)
 // Viewing all comments
 function aeva_profileComments($memID)
 {
-	global $amSettings, $context, $txt, $settings, $scripturl;
+	global $amSettings, $context, $txt, $theme, $scripturl;
 
 	loadSource('media/Subs-Media');
 
@@ -2361,7 +2361,7 @@ function aeva_profileComments($memID)
 // Viewing all comments
 function aeva_profileVotes($memID)
 {
-	global $amSettings, $context, $txt, $settings, $scripturl;
+	global $amSettings, $context, $txt, $theme, $scripturl;
 
 	loadSource('media/Subs-Media');
 

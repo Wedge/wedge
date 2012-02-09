@@ -112,7 +112,7 @@ function ManageNews()
 // Let the administrator(s) edit the news.
 function EditNews()
 {
-	global $txt, $modSettings, $context, $user_info;
+	global $txt, $settings, $context, $user_info;
 
 	loadSource('Class-Editor');
 
@@ -122,7 +122,7 @@ function EditNews()
 		checkSession();
 
 		// Store the news temporarily in this array.
-		$temp_news = explode("\n", $modSettings['news']);
+		$temp_news = explode("\n", $settings['news']);
 
 		// Remove the items that were selected.
 		foreach ($temp_news as $i => $news)
@@ -161,7 +161,7 @@ function EditNews()
 	}
 
 	// Ready the current news.
-	foreach (explode("\n", $modSettings['news']) as $id => $line)
+	foreach (explode("\n", $settings['news']) as $id => $line)
 		$context['admin_current_news'][$id] = array(
 			'id' => $id,
 			'unparsed' => wedit::un_preparsecode($line),
@@ -174,7 +174,7 @@ function EditNews()
 
 function SelectMailingMembers()
 {
-	global $txt, $context, $modSettings;
+	global $txt, $context, $settings;
 
 	$context['page_title'] = $txt['admin_newsletters'];
 
@@ -185,7 +185,7 @@ function SelectMailingMembers()
 	$normalGroups = array();
 
 	// If we have post groups disabled then we need to give a "ungrouped members" option.
-	if (empty($modSettings['permission_enable_postgroups']))
+	if (empty($settings['permission_enable_postgroups']))
 	{
 		$context['groups'][0] = array(
 			'id' => 0,
@@ -198,7 +198,7 @@ function SelectMailingMembers()
 	// Get all the extra groups as well as Administrator and Global Moderator.
 	$request = wesql::query('
 		SELECT mg.id_group, mg.group_name, mg.min_posts
-		FROM {db_prefix}membergroups AS mg' . (empty($modSettings['permission_enable_postgroups']) ? '
+		FROM {db_prefix}membergroups AS mg' . (empty($settings['permission_enable_postgroups']) ? '
 		WHERE mg.min_posts = {int:min_posts}' : '') . '
 		GROUP BY mg.id_group, mg.min_posts, mg.group_name
 		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
@@ -445,10 +445,10 @@ function ComposeMailing()
 function SendMailing($clean_only = false)
 {
 	global $txt, $context;
-	global $scripturl, $modSettings, $user_info;
+	global $scripturl, $settings, $user_info;
 
 	// How many to send at once? Quantity depends on whether we are queueing or not.
-	$num_at_once = empty($modSettings['mail_queue']) ? 60 : 1000;
+	$num_at_once = empty($settings['mail_queue']) ? 60 : 1000;
 
 	// If by PM's I suggest we half the above number.
 	if (!empty($_POST['send_pm']))
@@ -569,24 +569,24 @@ function SendMailing($clean_only = false)
 	);
 
 	// We might need this in a bit
-	$cleanLatestMember = empty($_POST['send_html']) || $context['send_pm'] ? un_htmlspecialchars($modSettings['latestRealName']) : $modSettings['latestRealName'];
+	$cleanLatestMember = empty($_POST['send_html']) || $context['send_pm'] ? un_htmlspecialchars($settings['latestRealName']) : $settings['latestRealName'];
 
 	// Replace in all the standard things.
 	$_POST['message'] = str_replace($variables,
 		array(
 			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '">' . $scripturl . '</a>' : $scripturl,
 			timeformat(forum_time(), false),
-			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $cleanLatestMember),
-			$modSettings['latestMember'],
+			!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $settings['latestMember'] . '">' . $cleanLatestMember . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $settings['latestMember'] . ']' . $cleanLatestMember . '[/url]' : $cleanLatestMember),
+			$settings['latestMember'],
 			$cleanLatestMember
 		), $_POST['message']);
 	$_POST['subject'] = str_replace($variables,
 		array(
 			$scripturl,
 			timeformat(forum_time(), false),
-			$modSettings['latestRealName'],
-			$modSettings['latestMember'],
-			$modSettings['latestRealName']
+			$settings['latestRealName'],
+			$settings['latestMember'],
+			$settings['latestRealName']
 		), $_POST['subject']);
 
 	$from_member = array(
@@ -767,7 +767,7 @@ function SendMailing($clean_only = false)
 
 function ModifyNewsSettings($return_config = false)
 {
-	global $context, $modSettings, $txt, $scripturl;
+	global $context, $settings, $txt, $scripturl;
 
 	$config_vars = array(
 		array('title', 'settings'),
@@ -811,9 +811,9 @@ function ModifyNewsSettings($return_config = false)
 
 function cache_getNews()
 {
-	global $modSettings;
+	global $settings;
 
-	$news = explode("\n", str_replace("\r", '', trim(addslashes($modSettings['news']))));
+	$news = explode("\n", str_replace("\r", '', trim(addslashes($settings['news']))));
 	$result = array();
 	foreach ($news as $key => $value)
 	{

@@ -13,7 +13,7 @@
 
 function template_main_board()
 {
-	global $context, $settings, $options, $scripturl, $modSettings, $txt, $language;
+	global $context, $theme, $options, $scripturl, $settings, $txt, $language;
 
 	echo '
 	<a id="top"></a>';
@@ -134,7 +134,7 @@ function template_main_board()
 						<br>', number_context('views', $topic['views']), '
 					</td>
 					<td class="lastpost ', $alternate_class, '">
-						<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
+						<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
 						', $topic['last_post']['time'], '
 						<br>', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 					</td>';
@@ -153,19 +153,19 @@ function template_main_board()
 					$confirm = JavaScriptEscape($txt['quickmod_confirm']);
 
 					if ($topic['quick_mod']['remove'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
 
 					if ($topic['quick_mod']['lock'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
 
 					if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
 						echo '<br>';
 
 					if ($topic['quick_mod']['pin'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
 
 					if ($topic['quick_mod']['move'])
-						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
+						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $theme['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
 				}
 				echo '
 					</td>';
@@ -266,7 +266,7 @@ function template_main_board()
 
 function template_main_blog()
 {
-	global $context, $settings, $options, $scripturl, $modSettings, $txt, $language, $board_info;
+	global $context, $theme, $options, $scripturl, $settings, $txt, $language, $board_info;
 
 	echo '
 	<a id="top"></a>';
@@ -404,19 +404,19 @@ function template_main_blog()
 					$confirm = JavaScriptEscape($txt['quickmod_confirm']);
 
 					if ($topic['quick_mod']['remove'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
 
 					if ($topic['quick_mod']['lock'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
 
 					if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
 						echo '<br>';
 
 					if ($topic['quick_mod']['pin'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $settings['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
+						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
 
 					if ($topic['quick_mod']['move'])
-						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $settings['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
+						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $theme['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
 				}
 				echo '
 					</td>';
@@ -520,7 +520,7 @@ function template_main_blog()
 
 function template_messageindex_childboards()
 {
-	global $context, $settings, $options, $scripturl, $modSettings, $txt, $language;
+	global $context, $theme, $options, $scripturl, $settings, $txt, $language;
 
 	if (!empty($context['boards']) && (!empty($options['show_children']) || $context['start'] == 0))
 	{
@@ -561,7 +561,7 @@ function template_messageindex_childboards()
 						</a>
 					</td>
 					<td class="info">
-						', $modSettings['display_flags'] == 'all' || ($modSettings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" name="b', $board['id'], '">', $board['name'], '</a>';
+						', $settings['display_flags'] == 'all' || ($settings['display_flags'] == 'specified' && !empty($board['language'])) ? '<img src="' . $theme['default_theme_url'] . '/languages/Flag.' . (empty($board['language']) ? $language : $board['language']) . '.png"> ': '', '<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' class="subject" href="', $board['href'], '" name="b', $board['id'], '">', $board['name'], '</a>';
 
 			// Has it outstanding posts for approval?
 			if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
@@ -653,26 +653,26 @@ function template_messageindex_draft()
 
 function template_messageindex_sortlink($sort, $caption)
 {
-	global $context, $settings, $scripturl;
+	global $context, $theme, $scripturl;
 
 	if (empty($context['can_reorder']))
-		echo $caption; // !!! If we want the direction indicator: , $context['sort_by'] == $sort ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '';
+		echo $caption; // !!! If we want the direction indicator: , $context['sort_by'] == $sort ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '';
 	else
-		echo '<a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>';
+		echo '<a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>';
 }
 
 function template_messageindex_whoviewing()
 {
-	global $txt, $context, $settings, $modSettings;
+	global $txt, $context, $theme, $settings;
 
 	echo '
 	<section>
 		<we:title>
-			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
+			<img src="', $theme['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
 		</we:title>
 		<p>';
 
-	if ($modSettings['display_who_viewing'] == 1)
+	if ($settings['display_who_viewing'] == 1)
 		echo count($context['view_members']), ' ', count($context['view_members']) === 1 ? $txt['who_member'] : $txt['members'];
 	else
 		echo empty($context['view_members_list']) ? '0 ' . $txt['members'] : implode(', ', $context['view_members_list']) . ((empty($context['view_num_hidden']) or $context['can_moderate_forum']) ? '' : ' (+ ' . $context['view_num_hidden'] . ' ' . $txt['hidden'] . ')');
@@ -684,19 +684,19 @@ function template_messageindex_whoviewing()
 
 function template_messageindex_legend()
 {
-	global $settings, $txt, $context, $modSettings;
+	global $theme, $txt, $context, $settings;
 
 	echo '
 	<section>
 		<we:title>
-			<img src="', $settings['images_url'], '/icons/assist.gif">
+			<img src="', $theme['images_url'], '/icons/assist.gif">
 			', $txt['legend'], '
 		</we:title>
 		<p>
-			<img src="' . $settings['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
-			<img src="' . $settings['images_url'] . '/icons/quick_pin.gif" class="middle"> ', $txt['pinned_topic'], '<br>', $modSettings['pollMode'] == '1' ? '
-			<img src="' . $settings['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '<br>', !empty($modSettings['enableParticipation']) && $context['user']['is_logged'] ? '
-			<img src="' . $settings['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] : '', '
+			<img src="' . $theme['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
+			<img src="' . $theme['images_url'] . '/icons/quick_pin.gif" class="middle"> ', $txt['pinned_topic'], '<br>', $settings['pollMode'] == '1' ? '
+			<img src="' . $theme['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '<br>', !empty($settings['enableParticipation']) && $context['user']['is_logged'] ? '
+			<img src="' . $theme['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] : '', '
 		</p>
 	</section>';
 }
@@ -706,9 +706,9 @@ function template_messageindex_legend()
 // !!! it based on !empty($context['current_board']) or something?
 function template_messageindex_statistics()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings, $board_info;
+	global $context, $theme, $options, $txt, $scripturl, $settings, $board_info;
 
-	if (!$settings['show_stats_index'])
+	if (!$theme['show_stats_index'])
 		return;
 
 	$type = $board_info['type'] == 'board' ? 'board' : 'blog';
@@ -716,7 +716,7 @@ function template_messageindex_statistics()
 	echo '
 	<section>
 		<we:title>
-			<a href="', $scripturl, '?board=', $context['current_board'], ';action=stats"><img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
+			<a href="', $scripturl, '?board=', $context['current_board'], ';action=stats"><img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
 			', $txt[$type . '_stats'], '
 		</we:title>
 		<p>

@@ -118,7 +118,7 @@ if (!defined('WEDGE'))
 // This defines every profile field known to man.
 function loadProfileFields($force_reload = false)
 {
-	global $context, $profile_fields, $txt, $scripturl, $modSettings, $user_info, $old_profile, $cur_profile, $language;
+	global $context, $profile_fields, $txt, $scripturl, $settings, $user_info, $old_profile, $cur_profile, $language;
 
 	// Don't load this twice!
 	if (!empty($profile_fields) && !$force_reload)
@@ -231,12 +231,12 @@ function loadProfileFields($force_reload = false)
 		),
 		'date_registered' => array(
 			'type' => 'text',
-			'value' => empty($cur_profile['date_registered']) ? $txt['not_applicable'] : strftime('%Y-%m-%d', $cur_profile['date_registered'] + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
+			'value' => empty($cur_profile['date_registered']) ? $txt['not_applicable'] : strftime('%Y-%m-%d', $cur_profile['date_registered'] + ($user_info['time_offset'] + $settings['time_offset']) * 3600),
 			'label' => $txt['date_registered'],
 			'log_change' => true,
 			'permission' => 'moderate_forum',
 			'input_validate' => create_function('&$value', '
-				global $txt, $user_info, $modSettings, $cur_profile, $context;
+				global $txt, $user_info, $settings, $cur_profile, $context;
 
 				// Bad date! Go try again - please?
 				if (($value = strtotime($value)) === -1)
@@ -245,8 +245,8 @@ function loadProfileFields($force_reload = false)
 					return $txt[\'invalid_registration\'] . \' \' . strftime(\'%d %b %Y \' . (strpos($user_info[\'time_format\'], \'%H\') !== false ? \'%I:%M:%S %p\' : \'%H:%M:%S\'), forum_time(false));
 				}
 				// As long as it doesn\'t equal "N/A"...
-				elseif ($value != $txt[\'not_applicable\'] && $value != strtotime(strftime(\'%Y-%m-%d\', $cur_profile[\'date_registered\'] + ($user_info[\'time_offset\'] + $modSettings[\'time_offset\']) * 3600)))
-					$value = $value - ($user_info[\'time_offset\'] + $modSettings[\'time_offset\']) * 3600;
+				elseif ($value != $txt[\'not_applicable\'] && $value != strtotime(strftime(\'%Y-%m-%d\', $cur_profile[\'date_registered\'] + ($user_info[\'time_offset\'] + $settings[\'time_offset\']) * 3600)))
+					$value = $value - ($user_info[\'time_offset\'] + $settings[\'time_offset\']) * 3600;
 				else
 					$value = $cur_profile[\'date_registered\'];
 
@@ -260,7 +260,7 @@ function loadProfileFields($force_reload = false)
 			'log_change' => true,
 			'permission' => 'profile_identity',
 			'input_validate' => create_function('&$value', '
-				global $context, $old_profile, $context, $profile_vars, $modSettings;
+				global $context, $old_profile, $context, $profile_vars, $settings;
 
 				if (strtolower($value) == strtolower($old_profile[\'email_address\']))
 					return false;
@@ -268,7 +268,7 @@ function loadProfileFields($force_reload = false)
 				$isValid = profileValidateEmail($value, $context[\'id_member\']);
 
 				// Do they need to revalidate? If so schedule the function!
-				if ($isValid === true && !empty($modSettings[\'send_validation_onChange\']) && !allowedTo(\'moderate_forum\'))
+				if ($isValid === true && !empty($settings[\'send_validation_onChange\']) && !allowedTo(\'moderate_forum\'))
 				{
 					loadSource(\'Subs-Members\');
 					$profile_vars[\'validation_code\'] = generateValidationCode();
@@ -313,7 +313,7 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['preferred_language'],
 			'permission' => 'profile_identity',
 			'preload' => 'profileLoadLanguages',
-			'enabled' => !empty($modSettings['userLanguage']),
+			'enabled' => !empty($settings['userLanguage']),
 			'value' => empty($cur_profile['lngfile']) ? $language : $cur_profile['lngfile'],
 			'input_validate' => create_function('&$value', '
 				global $context, $cur_profile;
@@ -455,13 +455,13 @@ function loadProfileFields($force_reload = false)
 			'),
 		),
 		'real_name' => array(
-			'type' => !empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum') ? 'text' : 'label',
+			'type' => !empty($settings['allow_editDisplayName']) || allowedTo('moderate_forum') ? 'text' : 'label',
 			'label' => $txt['name'],
 			'subtext' => $txt['display_name_desc'],
 			'log_change' => true,
 			'input_attr' => array(' maxlength="60"'),
 			'permission' => 'profile_identity',
-			'enabled' => !empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum'),
+			'enabled' => !empty($settings['allow_editDisplayName']) || allowedTo('moderate_forum'),
 			'input_validate' => create_function('&$value', '
 				global $context, $cur_profile;
 
@@ -504,7 +504,7 @@ function loadProfileFields($force_reload = false)
 			'type' => 'callback',
 			'callback_func' => 'signature_modify',
 			'permission' => 'profile_signature',
-			'enabled' => $modSettings['signature_settings'][0] == 1,
+			'enabled' => $settings['signature_settings'][0] == 1,
 			'preload' => 'profileLoadSignatureData',
 			'input_validate' => 'profileValidateSignature',
 		),
@@ -512,19 +512,19 @@ function loadProfileFields($force_reload = false)
 			'type' => 'check',
 			'label' => $txt['show_online'],
 			'permission' => 'profile_identity',
-			'enabled' => !empty($modSettings['allow_hideOnline']) || allowedTo('moderate_forum'),
+			'enabled' => !empty($settings['allow_hideOnline']) || allowedTo('moderate_forum'),
 		),
 		'smiley_set' => array(
 			'type' => 'callback',
 			'callback_func' => 'smiley_pick',
-			'enabled' => !empty($modSettings['smiley_sets_enable']),
+			'enabled' => !empty($settings['smiley_sets_enable']),
 			'permission' => 'profile_extra',
 			'preload' => create_function('', '
-				global $modSettings, $context, $txt, $cur_profile;
+				global $settings, $context, $txt, $cur_profile;
 
 				$context[\'member\'][\'smiley_set\'][\'id\'] = empty($cur_profile[\'smiley_set\']) ? \'\' : $cur_profile[\'smiley_set\'];
-				$context[\'smiley_sets\'] = explode(\',\', \'none,,\' . $modSettings[\'smiley_sets_known\']);
-				$set_names = explode("\n", $txt[\'smileys_none\'] . "\n" . $txt[\'smileys_forum_board_default\'] . "\n" . $modSettings[\'smiley_sets_names\']);
+				$context[\'smiley_sets\'] = explode(\',\', \'none,,\' . $settings[\'smiley_sets_known\']);
+				$set_names = explode("\n", $txt[\'smileys_none\'] . "\n" . $txt[\'smileys_forum_board_default\'] . "\n" . $settings[\'smiley_sets_names\']);
 				foreach ($context[\'smiley_sets\'] as $i => $set)
 				{
 					$context[\'smiley_sets\'][$i] = array(
@@ -539,9 +539,9 @@ function loadProfileFields($force_reload = false)
 				return true;
 			'),
 			'input_validate' => create_function('&$value', '
-				global $modSettings;
+				global $settings;
 
-				$smiley_sets = explode(\',\', $modSettings[\'smiley_sets_known\']);
+				$smiley_sets = explode(\',\', $settings[\'smiley_sets_known\']);
 				if (!in_array($value, $smiley_sets) && $value != \'none\')
 					$value = \'\';
 				return true;
@@ -563,7 +563,7 @@ function loadProfileFields($force_reload = false)
 			'callback_func' => 'timeformat_modify',
 			'permission' => 'profile_extra',
 			'preload' => create_function('', '
-				global $context, $user_info, $txt, $cur_profile, $modSettings;
+				global $context, $user_info, $txt, $cur_profile, $settings;
 
 				$context[\'easy_timeformats\'] = array(
 					array(\'format\' => \'\', \'title\' => $txt[\'timeformat_default\']),
@@ -576,7 +576,7 @@ function loadProfileFields($force_reload = false)
 
 				$context[\'member\'][\'time_format\'] = $cur_profile[\'time_format\'];
 				$context[\'current_forum_time\'] = timeformat(time() - $user_info[\'time_offset\'] * 3600, false);
-				$context[\'current_forum_time_js\'] = time() + $modSettings[\'time_offset\'] * 3600;
+				$context[\'current_forum_time_js\'] = time() + $settings[\'time_offset\'] * 3600;
 				$context[\'current_forum_time_hour\'] = (int) strftime(\'%H\', forum_time(false));
 				return true;
 			'),
@@ -606,7 +606,7 @@ function loadProfileFields($force_reload = false)
 			'log_change' => true,
 			'size' => 50,
 			'permission' => 'profile_title',
-			'enabled' => !empty($modSettings['titlesEnable']),
+			'enabled' => !empty($settings['titlesEnable']),
 		),
 		'website_title' => array(
 			'type' => 'text',
@@ -634,7 +634,7 @@ function loadProfileFields($force_reload = false)
 		),
 	);
 
-	$disabled_fields = !empty($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
+	$disabled_fields = !empty($settings['disabled_profile_fields']) ? explode(',', $settings['disabled_profile_fields']) : array();
 	// For each of the above let's take out the bits which don't apply - to save memory and security!
 	foreach ($profile_fields as $key => $field)
 	{
@@ -730,7 +730,7 @@ function setupProfileContext($fields)
 // Save the profile changes.
 function saveProfileFields()
 {
-	global $profile_fields, $profile_vars, $context, $old_profile, $post_errors, $modSettings, $cur_profile;
+	global $profile_fields, $profile_vars, $context, $old_profile, $post_errors, $settings, $cur_profile;
 
 	// Load them up.
 	loadProfileFields();
@@ -863,7 +863,7 @@ function saveProfileFields()
 // Save the profile changes....
 function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 {
-	global $user_info, $txt, $modSettings, $user_profile, $context, $settings;
+	global $user_info, $txt, $settings, $user_profile, $context, $theme;
 
 	// These make life easier....
 	$old_profile =& $user_profile[$memID];
@@ -943,7 +943,7 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 // Make any theme changes that are sent with the profile...
 function makeThemeChanges($memID, $id_theme)
 {
-	global $modSettings, $context;
+	global $settings, $context;
 
 	$reservedVars = array(
 		'actual_theme_url',
@@ -1040,7 +1040,7 @@ function makeThemeChanges($memID, $id_theme)
 			);
 		}
 
-		$themes = explode(',', $modSettings['knownThemes']);
+		$themes = explode(',', $settings['knownThemes']);
 		foreach ($themes as $t)
 			cache_put_data('theme_settings-' . $t . ':' . $memID, null, 60);
 	}
@@ -1094,7 +1094,7 @@ function makeNotificationChanges($memID)
 // Save any changes to the custom profile fields...
 function makeCustomFieldChanges($memID, $area, $sanitize = true)
 {
-	global $context, $user_profile, $user_info, $modSettings;
+	global $context, $user_profile, $user_info, $settings;
 
 	if ($sanitize && isset($_POST['customfield']))
 		$_POST['customfield'] = htmlspecialchars__recursive($_POST['customfield']);
@@ -1183,7 +1183,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			$changes,
 			array('id_theme', 'variable', 'id_member')
 		);
-		if (!empty($log_changes) && !empty($modSettings['log_enabled_profile']))
+		if (!empty($log_changes) && !empty($settings['log_enabled_profile']))
 			wesql::insert('insert',
 				'{db_prefix}log_actions',
 				array(
@@ -1199,10 +1199,10 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 // Show all the users buddies, as well as a add/delete interface.
 function editBuddyIgnoreLists($memID)
 {
-	global $context, $txt, $scripturl, $modSettings, $user_profile;
+	global $context, $txt, $scripturl, $settings, $user_profile;
 
 	// Do a quick check to ensure people aren't getting here illegally!
-	if (!$context['user']['is_owner'] || empty($modSettings['enable_buddylist']))
+	if (!$context['user']['is_owner'] || empty($settings['enable_buddylist']))
 		fatal_lang_error('no_access', false);
 
 	// Can we email the user direct?
@@ -1234,7 +1234,7 @@ function editBuddyIgnoreLists($memID)
 // Show all the users buddies, as well as a add/delete interface.
 function editBuddies($memID)
 {
-	global $txt, $scripturl, $modSettings, $context, $user_profile, $memberContext;
+	global $txt, $scripturl, $settings, $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$buddiesArray = explode(',', $user_profile[$memID]['buddy_list']);
@@ -1340,7 +1340,7 @@ function editBuddies($memID)
 // Allows the user to view their ignore list, as well as the option to manage members on it.
 function editIgnoreList($memID)
 {
-	global $txt, $scripturl, $modSettings, $context, $user_profile, $memberContext;
+	global $txt, $scripturl, $settings, $context, $user_profile, $memberContext;
 
 	// For making changes!
 	$ignoreArray = explode(',', $user_profile[$memID]['pm_ignore_list']);
@@ -1467,7 +1467,7 @@ function account($memID)
 
 function forumProfile($memID)
 {
-	global $context, $user_profile, $user_info, $txt, $modSettings;
+	global $context, $user_profile, $user_info, $txt, $settings;
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
@@ -1507,12 +1507,12 @@ function pmprefs($memID)
 // Recursive function to retrieve avatar files
 function getAvatars($directory, $level)
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	$result = array();
 
 	// Open the directory..
-	$dir = dir($modSettings['avatar_directory'] . (!empty($directory) ? '/' : '') . $directory);
+	$dir = dir($settings['avatar_directory'] . (!empty($directory) ? '/' : '') . $directory);
 	$dirs = array();
 	$files = array();
 
@@ -1524,7 +1524,7 @@ function getAvatars($directory, $level)
 		if (in_array($line, array('.', '..', 'blank.gif', 'index.php')))
 			continue;
 
-		if (is_dir($modSettings['avatar_directory'] . '/' . $directory . (!empty($directory) ? '/' : '') . $line))
+		if (is_dir($settings['avatar_directory'] . '/' . $directory . (!empty($directory) ? '/' : '') . $line))
 			$dirs[] = $line;
 		else
 			$files[] = $line;
@@ -1604,7 +1604,7 @@ function options($memID)
 // Display the notifications and settings for changes.
 function notification($memID)
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $modSettings, $settings;
+	global $txt, $scripturl, $user_profile, $user_info, $context, $settings, $theme;
 
 	// Gonna want this for the list.
 	loadSource('Subs-List');
@@ -1688,7 +1688,7 @@ function notification($memID)
 	$listOptions = array(
 		'id' => 'topic_notification_list',
 		'width' => '100%',
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['notifications_topics_none'] . '<br><br>' . $txt['notifications_topics_howto'],
 		'no_items_align' => 'left',
 		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=notification',
@@ -1813,15 +1813,15 @@ function notification($memID)
 
 function list_getTopicNotificationCount($memID)
 {
-	global $user_info, $context, $modSettings;
+	global $user_info, $context, $settings;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
-		FROM {db_prefix}log_notify AS ln' . (!$modSettings['postmod_active'] && $user_info['query_see_board'] === '1=1' ? '' : '
+		FROM {db_prefix}log_notify AS ln' . (!$settings['postmod_active'] && $user_info['query_see_board'] === '1=1' ? '' : '
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic)') . ($user_info['query_see_board'] === '1=1' ? '' : '
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)') . '
 		WHERE ln.id_member = {int:selected_member}' . ($user_info['query_see_board'] === '1=1' ? '' : '
-			AND {query_see_board}') . ($modSettings['postmod_active'] ? '
+			AND {query_see_board}') . ($settings['postmod_active'] ? '
 			AND t.approved = {int:is_approved}' : ''),
 		array(
 			'selected_member' => $memID,
@@ -1836,7 +1836,7 @@ function list_getTopicNotificationCount($memID)
 
 function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $txt, $scripturl, $user_info, $context, $modSettings;
+	global $txt, $scripturl, $user_info, $context, $settings;
 
 	// All the topics with notification on...
 	$request = wesql::query('
@@ -1846,7 +1846,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 			ml.id_msg_modified, ml.poster_time, ml.id_member AS id_member_updated,
 			IFNULL(mem2.real_name, ml.poster_name) AS last_real_name
 		FROM {db_prefix}log_notify AS ln
-			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic' . ($modSettings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
+			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic' . ($settings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
@@ -1974,10 +1974,10 @@ function loadThemeOptions($memID)
 
 function ignoreboards($memID)
 {
-	global $txt, $user_info, $context, $modSettings, $cur_profile;
+	global $txt, $user_info, $context, $settings, $cur_profile;
 
 	// Have the admins enabled this option?
-	if (empty($modSettings['allow_ignore_boards']))
+	if (empty($settings['allow_ignore_boards']))
 		fatal_lang_error('ignoreboards_disallowed', 'user');
 
 	// Find all the boards this user is allowed to see.
@@ -2050,7 +2050,7 @@ function ignoreboards($memID)
 // Load all the languages for the profile.
 function profileLoadLanguages()
 {
-	global $context, $modSettings, $settings, $cur_profile, $language;
+	global $context, $settings, $theme, $cur_profile, $language;
 
 	$context['profile_languages'] = array();
 
@@ -2123,10 +2123,10 @@ function profileLoadGroups()
 // Load key signature context data.
 function profileLoadSignatureData()
 {
-	global $modSettings, $context, $txt, $cur_profile;
+	global $settings, $context, $txt, $cur_profile;
 
 	// Signature limits.
-	list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);
+	list ($sig_limits, $sig_bbc) = explode(':', $settings['signature_settings']);
 	$sig_limits = explode(',', $sig_limits);
 
 	$context['signature_enabled'] = isset($sig_limits[0]) ? $sig_limits[0] : 0;
@@ -2149,7 +2149,7 @@ function profileLoadSignatureData()
 	elseif ($context['signature_limits']['max_image_width'] || $context['signature_limits']['max_image_height'])
 		$context['signature_warning'] = sprintf($txt['profile_error_signature_max_image_' . ($context['signature_limits']['max_image_width'] ? 'width' : 'height')], $context['signature_limits'][$context['signature_limits']['max_image_width'] ? 'max_image_width' : 'max_image_height']);
 
-	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
+	$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
 
 	$context['member']['signature'] = empty($cur_profile['signature']) ? '' : str_replace(array('<br>', '<', '>', '"', '\''), array("\n", '&lt;', '&gt;', '&quot;', '&#039;'), $cur_profile['signature']);
 
@@ -2159,9 +2159,9 @@ function profileLoadSignatureData()
 // Load avatar context data.
 function profileLoadAvatarData()
 {
-	global $context, $cur_profile, $modSettings, $scripturl;
+	global $context, $cur_profile, $settings, $scripturl;
 
-	$context['avatar_url'] = $modSettings['avatar_url'];
+	$context['avatar_url'] = $settings['avatar_url'];
 
 	// Default context.
 	$context['member']['avatar'] += array(
@@ -2169,10 +2169,10 @@ function profileLoadAvatarData()
 		'selection' => $cur_profile['avatar'] == '' || stristr($cur_profile['avatar'], 'http://') ? '' : $cur_profile['avatar'],
 		'id_attach' => $cur_profile['id_attach'],
 		'filename' => $cur_profile['filename'],
-		'allow_server_stored' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_server_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_upload' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_external' => (empty($modSettings['gravatarEnabled']) || empty($modSettings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_gravatar' => !empty($modSettings['gravatarEnabled']),
+		'allow_server_stored' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_server_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
+		'allow_upload' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
+		'allow_external' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
+		'allow_gravatar' => !empty($settings['gravatarEnabled']),
 	);
 
 	if ($cur_profile['avatar'] == '' && $cur_profile['id_attach'] > 0 && $context['member']['avatar']['allow_upload'])
@@ -2182,7 +2182,7 @@ function profileLoadAvatarData()
 			'server_pic' => 'blank.gif',
 			'external' => 'http://'
 		);
-		$context['member']['avatar']['href'] = empty($cur_profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $cur_profile['filename'];
+		$context['member']['avatar']['href'] = empty($cur_profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $cur_profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $cur_profile['filename'];
 	}
 	elseif (stristr($cur_profile['avatar'], 'http://') && $context['member']['avatar']['allow_external'])
 		$context['member']['avatar'] += array(
@@ -2194,9 +2194,9 @@ function profileLoadAvatarData()
 		$context['member']['avatar'] += array(
 			'choice' => 'gravatar',
 			'server_pic' => 'blank.gif',
-			'external' => $cur_profile['avatar'] === 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']) ? $cur_profile['email_address'] : substr($cur_profile['avatar'], 11),
+			'external' => $cur_profile['avatar'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']) ? $cur_profile['email_address'] : substr($cur_profile['avatar'], 11),
 		);
-	elseif ($cur_profile['avatar'] != '' && file_exists($modSettings['avatar_directory'] . '/' . $cur_profile['avatar']) && $context['member']['avatar']['allow_server_stored'])
+	elseif ($cur_profile['avatar'] != '' && file_exists($settings['avatar_directory'] . '/' . $cur_profile['avatar']) && $context['member']['avatar']['allow_server_stored'])
 		$context['member']['avatar'] += array(
 			'choice' => 'server_stored',
 			'server_pic' => $cur_profile['avatar'] == '' ? 'blank.gif' : $cur_profile['avatar'],
@@ -2213,7 +2213,7 @@ function profileLoadAvatarData()
 	if ($context['member']['avatar']['allow_server_stored'])
 	{
 		$context['avatar_list'] = array();
-		$context['avatars'] = is_dir($modSettings['avatar_directory']) ? getAvatars('', 0) : array();
+		$context['avatars'] = is_dir($settings['avatar_directory']) ? getAvatars('', 0) : array();
 	}
 	else
 		$context['avatars'] = array();
@@ -2322,7 +2322,7 @@ function profileSaveGroups(&$value)
 // The avatar is incredibly complicated, what with the options... and what not.
 function profileSaveAvatarData(&$value)
 {
-	global $modSettings, $profile_vars, $cur_profile, $context;
+	global $settings, $profile_vars, $cur_profile, $context;
 
 	$memID = $context['id_member'];
 	if (empty($memID) && !empty($context['password_auth_failed']))
@@ -2331,28 +2331,28 @@ function profileSaveAvatarData(&$value)
 	loadSource('ManageAttachments');
 
 	// We need to know where we're going to be putting it..
-	if (!empty($modSettings['custom_avatar_enabled']))
+	if (!empty($settings['custom_avatar_enabled']))
 	{
-		$uploadDir = $modSettings['custom_avatar_dir'];
+		$uploadDir = $settings['custom_avatar_dir'];
 		$id_folder = 1;
 	}
-	elseif (!empty($modSettings['currentAttachmentUploadDir']))
+	elseif (!empty($settings['currentAttachmentUploadDir']))
 	{
-		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+		if (!is_array($settings['attachmentUploadDir']))
+			$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
 
 		// Just use the current path for temp files.
-		$uploadDir = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
-		$id_folder = $modSettings['currentAttachmentUploadDir'];
+		$uploadDir = $settings['attachmentUploadDir'][$settings['currentAttachmentUploadDir']];
+		$id_folder = $settings['currentAttachmentUploadDir'];
 	}
 	else
 	{
-		$uploadDir = $modSettings['attachmentUploadDir'];
+		$uploadDir = $settings['attachmentUploadDir'];
 		$id_folder = 1;
 	}
 
 	$downloadedExternalAvatar = false;
-	if ($value == 'external' && allowedTo('profile_remote_avatar') && strtolower(substr($_POST['userpicpersonal'], 0, 7)) == 'http://' && strlen($_POST['userpicpersonal']) > 7 && !empty($modSettings['avatar_download_external']))
+	if ($value == 'external' && allowedTo('profile_remote_avatar') && strtolower(substr($_POST['userpicpersonal'], 0, 7)) == 'http://' && strlen($_POST['userpicpersonal']) > 7 && !empty($settings['avatar_download_external']))
 	{
 		if (!is_writable($uploadDir))
 			fatal_lang_error('attachments_no_write', 'critical');
@@ -2384,10 +2384,10 @@ function profileSaveAvatarData(&$value)
 
 		removeAttachments(array('id_member' => $memID));
 	}
-	elseif ($value == 'gravatar' && !empty($modSettings['gravatarEnabled']))
+	elseif ($value == 'gravatar' && !empty($settings['gravatarEnabled']))
 	{
 		// One wasn't specified, or it's not allowed to use extra email addresses, or it's not a valid one, reset to default Gravatar.
-		if (empty($_POST['gravatarEmail']) || empty($modSettings['gravatarAllowExtraEmail']) || !is_valid_email($_POST['gravatarEmail']))
+		if (empty($_POST['gravatarEmail']) || empty($settings['gravatarAllowExtraEmail']) || !is_valid_email($_POST['gravatarEmail']))
 			$profile_vars['avatar'] = 'gravatar://';
 		else
 			$profile_vars['avatar'] = 'gravatar://' . ($_POST['gravatarEmail'] != $cur_profile['email_address'] ? $_POST['gravatarEmail'] : '');
@@ -2403,7 +2403,7 @@ function profileSaveAvatarData(&$value)
 	elseif ($value == 'server_stored' && allowedTo('profile_server_avatar'))
 	{
 		$profile_vars['avatar'] = strtr(empty($_POST['file']) ? (empty($_POST['cat']) ? '' : $_POST['cat']) : $_POST['file'], array('&amp;' => '&'));
-		$profile_vars['avatar'] = preg_match('~^([\w !@%*=#()[\]&.,-]+/)?[\w !@%*=#()[\]&.,-]+$~', $profile_vars['avatar']) != 0 && preg_match('/\.\./', $profile_vars['avatar']) == 0 && file_exists($modSettings['avatar_directory'] . '/' . $profile_vars['avatar']) ? ($profile_vars['avatar'] == 'blank.gif' ? '' : $profile_vars['avatar']) : '';
+		$profile_vars['avatar'] = preg_match('~^([\w !@%*=#()[\]&.,-]+/)?[\w !@%*=#()[\]&.,-]+$~', $profile_vars['avatar']) != 0 && preg_match('/\.\./', $profile_vars['avatar']) == 0 && file_exists($settings['avatar_directory'] . '/' . $profile_vars['avatar']) ? ($profile_vars['avatar'] == 'blank.gif' ? '' : $profile_vars['avatar']) : '';
 
 		// Clear current profile...
 		$cur_profile['id_attach'] = 0;
@@ -2413,7 +2413,7 @@ function profileSaveAvatarData(&$value)
 		// Get rid of their old avatar. (if uploaded.)
 		removeAttachments(array('id_member' => $memID));
 	}
-	elseif ($value == 'external' && allowedTo('profile_remote_avatar') && strtolower(substr($_POST['userpicpersonal'], 0, 7)) == 'http://' && empty($modSettings['avatar_download_external']))
+	elseif ($value == 'external' && allowedTo('profile_remote_avatar') && strtolower(substr($_POST['userpicpersonal'], 0, 7)) == 'http://' && empty($settings['avatar_download_external']))
 	{
 		// We need these clean...
 		$cur_profile['id_attach'] = 0;
@@ -2431,25 +2431,25 @@ function profileSaveAvatarData(&$value)
 		elseif (substr($profile_vars['avatar'], 0, 7) != 'http://')
 			return 'bad_avatar';
 		// Should we check dimensions?
-		elseif (!empty($modSettings['avatar_max_height_external']) || !empty($modSettings['avatar_max_width_external']))
+		elseif (!empty($settings['avatar_max_height_external']) || !empty($settings['avatar_max_width_external']))
 		{
 			// Now let's validate the avatar.
 			$sizes = url_image_size($profile_vars['avatar']);
 
-			if (is_array($sizes) && (($sizes[0] > $modSettings['avatar_max_width_external'] && !empty($modSettings['avatar_max_width_external'])) || ($sizes[1] > $modSettings['avatar_max_height_external'] && !empty($modSettings['avatar_max_height_external']))))
+			if (is_array($sizes) && (($sizes[0] > $settings['avatar_max_width_external'] && !empty($settings['avatar_max_width_external'])) || ($sizes[1] > $settings['avatar_max_height_external'] && !empty($settings['avatar_max_height_external']))))
 			{
 				// Houston, we have a problem. The avatar is too large!!
-				if ($modSettings['avatar_action_too_large'] == 'option_refuse')
+				if ($settings['avatar_action_too_large'] == 'option_refuse')
 					return 'bad_avatar';
-				elseif ($modSettings['avatar_action_too_large'] == 'option_download_and_resize')
+				elseif ($settings['avatar_action_too_large'] == 'option_download_and_resize')
 				{
 					loadSource('Subs-Graphics');
-					if (downloadAvatar($profile_vars['avatar'], $memID, $modSettings['avatar_max_width_external'], $modSettings['avatar_max_height_external']))
+					if (downloadAvatar($profile_vars['avatar'], $memID, $settings['avatar_max_width_external'], $settings['avatar_max_height_external']))
 					{
 						$profile_vars['avatar'] = '';
-						$cur_profile['id_attach'] = $modSettings['new_avatar_data']['id'];
-						$cur_profile['filename'] = $modSettings['new_avatar_data']['filename'];
-						$cur_profile['attachment_type'] = $modSettings['new_avatar_data']['type'];
+						$cur_profile['id_attach'] = $settings['new_avatar_data']['id'];
+						$cur_profile['filename'] = $settings['new_avatar_data']['filename'];
+						$cur_profile['attachment_type'] = $settings['new_avatar_data']['type'];
 					}
 					else
 						return 'bad_avatar';
@@ -2479,21 +2479,21 @@ function profileSaveAvatarData(&$value)
 			if ($sizes === false)
 				return 'bad_avatar';
 			// Check whether the image is too large.
-			elseif ((!empty($modSettings['avatar_max_width_upload']) && $sizes[0] > $modSettings['avatar_max_width_upload']) || (!empty($modSettings['avatar_max_height_upload']) && $sizes[1] > $modSettings['avatar_max_height_upload']))
+			elseif ((!empty($settings['avatar_max_width_upload']) && $sizes[0] > $settings['avatar_max_width_upload']) || (!empty($settings['avatar_max_height_upload']) && $sizes[1] > $settings['avatar_max_height_upload']))
 			{
-				if (!empty($modSettings['avatar_resize_upload']))
+				if (!empty($settings['avatar_resize_upload']))
 				{
 					// Attempt to chmod it.
 					@chmod($uploadDir . '/avatar_tmp_' . $memID, 0644);
 
 					loadSource('Subs-Graphics');
-					if (!downloadAvatar($uploadDir . '/avatar_tmp_' . $memID, $memID, $modSettings['avatar_max_width_upload'], $modSettings['avatar_max_height_upload']))
+					if (!downloadAvatar($uploadDir . '/avatar_tmp_' . $memID, $memID, $settings['avatar_max_width_upload'], $settings['avatar_max_height_upload']))
 						return 'bad_avatar';
 
 					// Clear current profile...
-					$cur_profile['id_attach'] = $modSettings['new_avatar_data']['id'];
-					$cur_profile['attachment_type'] = $modSettings['new_avatar_data']['filename'];
-					$cur_profile['filename'] = $modSettings['new_avatar_data']['type'];
+					$cur_profile['id_attach'] = $settings['new_avatar_data']['id'];
+					$cur_profile['attachment_type'] = $settings['new_avatar_data']['filename'];
+					$cur_profile['filename'] = $settings['new_avatar_data']['type'];
 				}
 				else
 					return 'bad_avatar';
@@ -2502,10 +2502,10 @@ function profileSaveAvatarData(&$value)
 			{
 				// Now try to find an infection.
 				loadSource('Subs-Graphics');
-				if (!checkImageContents($_FILES['attachment']['tmp_name'], !empty($modSettings['avatar_paranoid'])))
+				if (!checkImageContents($_FILES['attachment']['tmp_name'], !empty($settings['avatar_paranoid'])))
 				{
 					// It's bad. Try to re-encode the contents?
-					if (empty($modSettings['avatar_reencode']) || (!reencodeImage($_FILES['attachment']['tmp_name'], $sizes[2])))
+					if (empty($settings['avatar_reencode']) || (!reencodeImage($_FILES['attachment']['tmp_name'], $sizes[2])))
 						return 'bad_avatar';
 					// We were successful. However, at what price?
 					$sizes = @getimagesize($_FILES['attachment']['tmp_name']);
@@ -2525,7 +2525,7 @@ function profileSaveAvatarData(&$value)
 				$mime_type = 'image/' . ($extension === 'jpg' ? 'jpeg' : ($extension === 'bmp' ? 'x-ms-bmp' : $extension));
 				$destName = 'avatar_' . $memID . '_' . time() . '.' . $extension;
 				list ($width, $height) = getimagesize($_FILES['attachment']['tmp_name']);
-				$file_hash = empty($modSettings['custom_avatar_enabled']) ? getAttachmentFilename($destName, false, null, true) : '';
+				$file_hash = empty($settings['custom_avatar_enabled']) ? getAttachmentFilename($destName, false, null, true) : '';
 
 				// Remove previous attachments this member might have had.
 				removeAttachments(array('id_member' => $memID));
@@ -2537,7 +2537,7 @@ function profileSaveAvatarData(&$value)
 						'width' => 'int', 'height' => 'int', 'mime_type' => 'string', 'id_folder' => 'int',
 					),
 					array(
-						$memID, (empty($modSettings['custom_avatar_enabled']) ? 0 : 1), $destName, $file_hash, $extension, filesize($_FILES['attachment']['tmp_name']),
+						$memID, (empty($settings['custom_avatar_enabled']) ? 0 : 1), $destName, $file_hash, $extension, filesize($_FILES['attachment']['tmp_name']),
 						(int) $width, (int) $height, $mime_type, $id_folder,
 					),
 					array('id_attach')
@@ -2545,7 +2545,7 @@ function profileSaveAvatarData(&$value)
 
 				$cur_profile['id_attach'] = wesql::insert_id();
 				$cur_profile['filename'] = $destName;
-				$cur_profile['attachment_type'] = empty($modSettings['custom_avatar_enabled']) ? 0 : 1;
+				$cur_profile['attachment_type'] = empty($settings['custom_avatar_enabled']) ? 0 : 1;
 
 				$destinationPath = $uploadDir . '/' . (empty($file_hash) ? $destName : $cur_profile['id_attach'] . '_' . $file_hash . '.ext');
 				if (!rename($_FILES['attachment']['tmp_name'], $destinationPath))
@@ -2580,7 +2580,7 @@ function profileSaveAvatarData(&$value)
 // Validate the signature!
 function profileValidateSignature(&$value)
 {
-	global $modSettings, $txt;
+	global $settings, $txt;
 
 	loadSource('Class-Editor');
 
@@ -2588,7 +2588,7 @@ function profileValidateSignature(&$value)
 	if (!allowedTo('admin_forum'))
 	{
 		// Load all the signature limits.
-		list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);
+		list ($sig_limits, $sig_bbc) = explode(':', $settings['signature_settings']);
 		$sig_limits = explode(',', $sig_limits);
 		$disabledTags = !empty($sig_bbc) ? explode(',', $sig_bbc) : array();
 
@@ -2782,13 +2782,13 @@ function profileValidateEmail($email, $memID = 0)
 // Reload a users settings.
 function profileReloadUser()
 {
-	global $modSettings, $context, $cur_profile, $profile_vars;
+	global $settings, $context, $cur_profile, $profile_vars;
 
 	// Log them back in - using the verify password as they must have matched and this one doesn't get changed by anyone!
 	if (isset($_POST['passwrd2']) && $_POST['passwrd2'] != '')
 	{
 		loadSource('Subs-Auth');
-		setLoginCookie(60 * $modSettings['cookieTime'], $context['id_member'], sha1(sha1(strtolower($cur_profile['member_name']) . un_htmlspecialchars($_POST['passwrd2'])) . $cur_profile['password_salt']));
+		setLoginCookie(60 * $settings['cookieTime'], $context['id_member'], sha1(sha1(strtolower($cur_profile['member_name']) . un_htmlspecialchars($_POST['passwrd2'])) . $cur_profile['password_salt']));
 	}
 
 	loadUserSettings();
@@ -2798,7 +2798,7 @@ function profileReloadUser()
 // Send the user a new activation email if they need to reactivate!
 function profileSendActivation()
 {
-	global $profile_vars, $txt, $context, $scripturl, $cookiename, $cur_profile, $language, $modSettings;
+	global $profile_vars, $txt, $context, $scripturl, $cookiename, $cur_profile, $language, $settings;
 
 	loadSource('Subs-Post');
 
@@ -2813,7 +2813,7 @@ function profileSendActivation()
 	);
 
 	// Send off the email.
-	$emaildata = loadEmailTemplate('activate_reactivate', $replacements, empty($cur_profile['lngfile']) || empty($modSettings['userLanguage']) ? $language : $cur_profile['lngfile']);
+	$emaildata = loadEmailTemplate('activate_reactivate', $replacements, empty($cur_profile['lngfile']) || empty($settings['userLanguage']) ? $language : $cur_profile['lngfile']);
 	sendmail($profile_vars['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 
 	// Log the user out.
@@ -2850,7 +2850,7 @@ function profileSendActivation()
 // Function to allow the user to choose group membership etc...
 function groupMembership($memID)
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $modSettings;
+	global $txt, $scripturl, $user_profile, $user_info, $context, $settings;
 
 	$curMember = $user_profile[$memID];
 	$context['primary_group'] = $curMember['id_group'];
@@ -2944,10 +2944,10 @@ function groupMembership($memID)
 // This function actually makes all the group changes...
 function groupMembership2($profile_vars, $post_errors, $memID)
 {
-	global $user_info, $context, $user_profile, $modSettings, $txt, $scripturl, $language;
+	global $user_info, $context, $user_profile, $settings, $txt, $scripturl, $language;
 
 	// Let's be extra cautious...
-	if (!$context['user']['is_owner'] || empty($modSettings['show_group_membership']))
+	if (!$context['user']['is_owner'] || empty($settings['show_group_membership']))
 		isAllowedTo('manage_membergroups');
 	if (!isset($_REQUEST['gid']) && !isset($_POST['primary']))
 		fatal_lang_error('no_access', false);
@@ -3147,7 +3147,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 					'MODLINK' => $scripturl . '?action=moderate;area=groups;sa=requests',
 				);
 
-				$emaildata = loadEmailTemplate('request_membership', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
+				$emaildata = loadEmailTemplate('request_membership', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
 				sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 2);
 			}
 			wesql::free_result($request);

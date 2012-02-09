@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 // Completely remove an entire topic.
 function RemoveTopic2()
 {
-	global $user_info, $topic, $board, $context, $modSettings;
+	global $user_info, $topic, $board, $context, $settings;
 
 	// Make sure they aren't being lead around by someone. (:@)
 	checkSession('get');
@@ -65,7 +65,7 @@ function RemoveTopic2()
 		isAllowedTo('remove_any');
 
 	// Can they see the topic?
-	if ($modSettings['postmod_active'] && !$approved && $starter != $user_info['id'])
+	if ($settings['postmod_active'] && !$approved && $starter != $user_info['id'])
 		isAllowedTo('approve_posts');
 
 	// Notify people that this topic has been removed.
@@ -75,7 +75,7 @@ function RemoveTopic2()
 
 	// Note, only log topic ID in native form if it's not gone forever.
 	if (allowedTo('remove_any') || (allowedTo('remove_own') && $starter == $user_info['id']))
-		logAction('remove', array((empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $board ? 'topic' : 'old_topic_id') => $topic, 'subject' => $subject, 'member' => $starter, 'board' => $board));
+		logAction('remove', array((empty($settings['recycle_enable']) || $settings['recycle_board'] != $board ? 'topic' : 'old_topic_id') => $topic, 'subject' => $subject, 'member' => $starter, 'board' => $board));
 
 	redirectexit('board=' . $board . '.0');
 }
@@ -83,7 +83,7 @@ function RemoveTopic2()
 // Remove just a single post.
 function DeleteMessage()
 {
-	global $user_info, $topic, $board, $modSettings;
+	global $user_info, $topic, $board, $settings;
 
 	checkSession('get');
 
@@ -108,7 +108,7 @@ function DeleteMessage()
 	wesql::free_result($request);
 
 	// Verify they can see this!
-	if ($modSettings['postmod_active'] && !$approved && !empty($poster) && $poster != $user_info['id'])
+	if ($settings['postmod_active'] && !$approved && !empty($poster) && $poster != $user_info['id'])
 		isAllowedTo('approve_posts');
 
 	if ($poster == $user_info['id'])
@@ -120,7 +120,7 @@ function DeleteMessage()
 			elseif (!allowedTo('delete_any'))
 				isAllowedTo('delete_own');
 		}
-		elseif (!allowedTo('delete_any') && ($starter != $user_info['id'] || !allowedTo('delete_replies')) && !empty($modSettings['edit_disable_time']) && $post_time + $modSettings['edit_disable_time'] * 60 < time())
+		elseif (!allowedTo('delete_any') && ($starter != $user_info['id'] || !allowedTo('delete_replies')) && !empty($settings['edit_disable_time']) && $post_time + $settings['edit_disable_time'] * 60 < time())
 			fatal_lang_error('modify_post_time_passed', false);
 	}
 	elseif ($starter == $user_info['id'] && !allowedTo('delete_any'))
@@ -148,7 +148,7 @@ function DeleteMessage()
 // So long as you are sure... all old posts will be gone.
 function RemoveOldTopics2()
 {
-	global $modSettings;
+	global $settings;
 
 	isAllowedTo('admin_forum');
 	checkSession('post', 'admin');
@@ -218,7 +218,7 @@ function RemoveOldTopics2()
 // Removes the passed id_topic's. (permissions are NOT checked here!)
 function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = false)
 {
-	global $modSettings;
+	global $settings;
 
 	// Nothing to do?
 	if (empty($topics))
@@ -255,7 +255,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	}
 
 	// Recycle topics that aren't in the recycle board...
-	if (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 && !$ignoreRecycling)
+	if (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 && !$ignoreRecycling)
 	{
 		$request = wesql::query('
 			SELECT id_topic, id_board, unapproved_posts, approved
@@ -264,7 +264,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 				AND id_board != {int:recycle_board}
 			LIMIT ' . count($topics),
 			array(
-				'recycle_board' => $modSettings['recycle_board'],
+				'recycle_board' => $settings['recycle_board'],
 				'topics' => $topics,
 			)
 		);
@@ -307,7 +307,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 
 			// Move the topics to the recycle board.
 			loadSource('MoveTopic');
-			moveTopics($recycleTopics, $modSettings['recycle_board']);
+			moveTopics($recycleTopics, $settings['recycle_board']);
 
 			// Close reports that are being recycled.
 			loadSource('ModerationCenter');
@@ -448,9 +448,9 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	removeAttachments($attachmentQuery, 'messages');
 
 	// Delete possible search index entries.
-	if (!empty($modSettings['search_custom_index_config']))
+	if (!empty($settings['search_custom_index_config']))
 	{
-		$customIndexSettings = unserialize($modSettings['search_custom_index_config']);
+		$customIndexSettings = unserialize($settings['search_custom_index_config']);
 
 		$words = array();
 		$messages = array();
@@ -528,7 +528,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			'topics' => $topics,
 		)
 	);
-	if (!empty($modSettings['pretty_enable_cache']))
+	if (!empty($settings['pretty_enable_cache']))
 		wesql::query('
 			DELETE FROM {db_prefix}pretty_urls_cache
 			WHERE (url_id LIKE "%topic=' . implode('%") OR (url_id LIKE "%topic=', $topics) . '%")',
@@ -551,14 +551,14 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 // Remove a specific message, including permission checks.
 function removeMessage($message, $decreasePostCount = true)
 {
-	global $board, $modSettings, $user_info, $context;
+	global $board, $settings, $user_info, $context;
 
 	if (empty($message) || !is_numeric($message))
 		return false;
 
 	$request = wesql::query('
 		SELECT
-			m.id_member, m.icon, m.poster_time, m.subject,' . (empty($modSettings['search_custom_index_config']) ? '' : ' m.body,') . '
+			m.id_member, m.icon, m.poster_time, m.subject,' . (empty($settings['search_custom_index_config']) ? '' : ' m.body,') . '
 			m.approved, t.id_topic, t.id_first_msg, t.id_last_msg, t.num_replies, t.id_board,
 			t.id_member_started AS id_member_poster,
 			b.count_posts
@@ -599,7 +599,7 @@ function removeMessage($message, $decreasePostCount = true)
 					else
 						fatal_lang_error('cannot_delete_own', 'permission');
 				}
-				elseif (($row['id_member_poster'] != $user_info['id'] || !$delete_replies) && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + $modSettings['edit_disable_time'] * 60 < time())
+				elseif (($row['id_member_poster'] != $user_info['id'] || !$delete_replies) && !empty($settings['edit_disable_time']) && $row['poster_time'] + $settings['edit_disable_time'] * 60 < time())
 					fatal_lang_error('modify_post_time_passed', false);
 			}
 			elseif ($row['id_member_poster'] == $user_info['id'])
@@ -612,7 +612,7 @@ function removeMessage($message, $decreasePostCount = true)
 		}
 
 		// Can't delete an unapproved message, if you can't see it!
-		if ($modSettings['postmod_active'] && !$row['approved'] && $row['id_member'] != $user_info['id'] && !(in_array(0, $delete_any) || in_array($row['id_board'], $delete_any)))
+		if ($settings['postmod_active'] && !$row['approved'] && $row['id_member'] != $user_info['id'] && !(in_array(0, $delete_any) || in_array($row['id_board'], $delete_any)))
 		{
 			$approve_posts = boardsAllowedTo('approve_posts');
 			if (!in_array(0, $approve_posts) && !in_array($row['id_board'], $approve_posts))
@@ -631,7 +631,7 @@ function removeMessage($message, $decreasePostCount = true)
 				elseif (!allowedTo('delete_any'))
 					isAllowedTo('delete_own');
 			}
-			elseif (!allowedTo('delete_any') && ($row['id_member_poster'] != $user_info['id'] || !allowedTo('delete_replies')) && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + $modSettings['edit_disable_time'] * 60 < time())
+			elseif (!allowedTo('delete_any') && ($row['id_member_poster'] != $user_info['id'] || !allowedTo('delete_replies')) && !empty($settings['edit_disable_time']) && $row['poster_time'] + $settings['edit_disable_time'] * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
 		}
 		elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('delete_any'))
@@ -639,7 +639,7 @@ function removeMessage($message, $decreasePostCount = true)
 		else
 			isAllowedTo('delete_any');
 
-		if ($modSettings['postmod_active'] && !$row['approved'] && $row['id_member'] != $user_info['id'] && !allowedTo('delete_own'))
+		if ($settings['postmod_active'] && !$row['approved'] && $row['id_member'] != $user_info['id'] && !allowedTo('delete_own'))
 			isAllowedTo('approve_posts');
 	}
 
@@ -708,7 +708,7 @@ function removeMessage($message, $decreasePostCount = true)
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:id_topic}
 				AND id_msg != {int:id_msg}
-			ORDER BY ' . ($modSettings['postmod_active'] ? 'approved DESC, ' : '') . 'id_msg DESC
+			ORDER BY ' . ($settings['postmod_active'] ? 'approved DESC, ' : '') . 'id_msg DESC
 			LIMIT 1',
 			array(
 				'id_topic' => $row['id_topic'],
@@ -722,7 +722,7 @@ function removeMessage($message, $decreasePostCount = true)
 			UPDATE {db_prefix}topics
 			SET
 				id_last_msg = {int:id_last_msg},
-				id_member_updated = {int:id_member_updated}' . (!$modSettings['postmod_active'] || $row['approved'] ? ',
+				id_member_updated = {int:id_member_updated}' . (!$settings['postmod_active'] || $row['approved'] ? ',
 				num_replies = CASE WHEN num_replies = {int:no_replies} THEN 0 ELSE num_replies - 1 END' : ',
 				unapproved_posts = CASE WHEN unapproved_posts = {int:no_unapproved} THEN 0 ELSE unapproved_posts - 1 END') . '
 			WHERE id_topic = {int:id_topic}',
@@ -755,7 +755,7 @@ function removeMessage($message, $decreasePostCount = true)
 
 	// If recycle topics has been set, make a copy of this message in the recycle board.
 	// Make sure we're not recycling messages that are already on the recycle board.
-	if (!empty($modSettings['recycle_enable']) && $row['id_board'] != $modSettings['recycle_board'] && $row['icon'] != 'recycled')
+	if (!empty($settings['recycle_enable']) && $row['id_board'] != $settings['recycle_board'] && $row['icon'] != 'recycled')
 	{
 		// Check if the recycle board exists and if so get the read status.
 		$request = wesql::query('
@@ -765,7 +765,7 @@ function removeMessage($message, $decreasePostCount = true)
 			WHERE b.id_board = {int:recycle_board}',
 			array(
 				'current_member' => $user_info['id'],
-				'recycle_board' => $modSettings['recycle_board'],
+				'recycle_board' => $settings['recycle_board'],
 			)
 		);
 		if (wesql::num_rows($request) == 0)
@@ -781,7 +781,7 @@ function removeMessage($message, $decreasePostCount = true)
 				AND id_board = {int:recycle_board}',
 			array(
 				'id_previous_topic' => $row['id_topic'],
-				'recycle_board' => $modSettings['recycle_board'],
+				'recycle_board' => $settings['recycle_board'],
 			)
 		);
 		list ($id_recycle_topic, $first_topic_msg, $last_topic_msg) = wesql::fetch_row($request);
@@ -796,7 +796,7 @@ function removeMessage($message, $decreasePostCount = true)
 					'id_last_msg' => 'int', 'unapproved_posts' => 'int', 'approved' => 'int', 'id_previous_topic' => 'int',
 				),
 				array(
-					$modSettings['recycle_board'], $row['id_member'], $row['id_member'], $message,
+					$settings['recycle_board'], $row['id_member'], $row['id_member'], $message,
 					$message, 0, 1, $row['id_topic'],
 				),
 				array('id_topic')
@@ -818,7 +818,7 @@ function removeMessage($message, $decreasePostCount = true)
 				WHERE id_msg = {int:id_msg}',
 				array(
 					'id_topic' => $topicID,
-					'recycle_board' => $modSettings['recycle_board'],
+					'recycle_board' => $settings['recycle_board'],
 					'id_msg' => $message,
 					'recycled' => 'recycled',
 					'is_approved' => 1,
@@ -834,7 +834,7 @@ function removeMessage($message, $decreasePostCount = true)
 				WHERE id_msg = {int:id_msg}',
 				array(
 					'id_topic' => $topicID,
-					'recycle_board' => $modSettings['recycle_board'],
+					'recycle_board' => $settings['recycle_board'],
 					'id_msg' => $message,
 				)
 			);
@@ -844,7 +844,7 @@ function removeMessage($message, $decreasePostCount = true)
 				wesql::insert('replace',
 					'{db_prefix}log_topics',
 					array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($topicID, $user_info['id'], $modSettings['maxMsgID']),
+					array($topicID, $user_info['id'], $settings['maxMsgID']),
 					array('id_topic', 'id_member')
 				);
 
@@ -853,7 +853,7 @@ function removeMessage($message, $decreasePostCount = true)
 				wesql::insert('replace',
 					'{db_prefix}log_boards',
 					array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($modSettings['recycle_board'], $user_info['id'], $modSettings['maxMsgID']),
+					array($settings['recycle_board'], $user_info['id'], $settings['maxMsgID']),
 					array('id_board', 'id_member')
 				);
 
@@ -867,7 +867,7 @@ function removeMessage($message, $decreasePostCount = true)
 				WHERE id_board = {int:recycle_board}',
 				array(
 					'num_topics_inc' => empty($id_recycle_topic) ? 1 : 0,
-					'recycle_board' => $modSettings['recycle_board'],
+					'recycle_board' => $settings['recycle_board'],
 					'id_merged_msg' => $message,
 				)
 			);
@@ -948,9 +948,9 @@ function removeMessage($message, $decreasePostCount = true)
 			)
 		);
 
-		if (!empty($modSettings['search_custom_index_config']))
+		if (!empty($settings['search_custom_index_config']))
 		{
-			$customIndexSettings = unserialize($modSettings['search_custom_index_config']);
+			$customIndexSettings = unserialize($settings['search_custom_index_config']);
 			$words = text2words($row['body'], $customIndexSettings['bytes_per_word'], true);
 			if (!empty($words))
 				wesql::query('
@@ -980,7 +980,7 @@ function removeMessage($message, $decreasePostCount = true)
 	// And now to update the last message of each board we messed with.
 	loadSource('Subs-Post');
 	if ($recycle)
-		updateLastMessages(array($row['id_board'], $modSettings['recycle_board']));
+		updateLastMessages(array($row['id_board'], $settings['recycle_board']));
 	else
 		updateLastMessages($row['id_board']);
 
@@ -989,17 +989,17 @@ function removeMessage($message, $decreasePostCount = true)
 
 function RestoreTopic()
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	// Check session.
 	checkSession('get');
 
 	// Is recycled board enabled?
-	if (empty($modSettings['recycle_enable']))
+	if (empty($settings['recycle_enable']))
 		fatal_lang_error('restored_disabled', 'critical');
 
 	// Can we be in here?
-	isAllowedTo('move_any', $modSettings['recycle_board']);
+	isAllowedTo('move_any', $settings['recycle_board']);
 
 	// We need this file.
 	loadSource('MoveTopic');
@@ -1221,7 +1221,7 @@ function RestoreTopic()
 // Take a load of messages from one place and stick them in a topic.
 function mergePosts($msgs = array(), $from_topic, $target_topic)
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	//!!! This really needs to be rewritten to take a load of messages from ANY topic, it's also inefficient.
 
@@ -1289,7 +1289,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 		array(
 			'target_topic' => $target_topic,
 			'target_board' => $target_board,
-			'icon' => $target_board == $modSettings['recycle_board'] ? 'recycled' : 'xx',
+			'icon' => $target_board == $settings['recycle_board'] ? 'recycled' : 'xx',
 			'msgs' => $msgs,
 		)
 	);

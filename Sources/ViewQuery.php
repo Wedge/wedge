@@ -27,7 +27,7 @@ define('WEDGE_NO_LOG', 1);
  */
 function ViewQuery()
 {
-	global $scripturl, $user_info, $settings, $context, $db_connection, $modSettings, $boarddir, $txt, $db_show_debug;
+	global $scripturl, $user_info, $theme, $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
 
 	$show_debug = isset($db_show_debug) && $db_show_debug === true;
 	// We should have debug mode enabled, as well as something to display!
@@ -35,25 +35,25 @@ function ViewQuery()
 		fatal_lang_error('no_access', false);
 
 	// Check groups
-	if (empty($modSettings['db_show_debug_who']) || $modSettings['db_show_debug_who'] == 'admin')
+	if (empty($settings['db_show_debug_who']) || $settings['db_show_debug_who'] == 'admin')
 		$show_debug &= $context['user']['is_admin'];
-	elseif ($modSettings['db_show_debug_who'] == 'mod')
+	elseif ($settings['db_show_debug_who'] == 'mod')
 		$show_debug &= allowedTo('moderate_forum');
-	elseif ($modSettings['db_show_debug_who'] == 'regular')
+	elseif ($settings['db_show_debug_who'] == 'regular')
 		$show_debug &= $context['user']['is_logged'];
 	else
-		$show_debug &= ($modSettings['db_show_debug_who'] == 'any');
+		$show_debug &= ($settings['db_show_debug_who'] == 'any');
 
 	// Now, who can see the query log? Need to have the ability to see any of this anyway.
 	$show_debug_query = $show_debug;
-	if (empty($modSettings['db_show_debug_who_log']) || $modSettings['db_show_debug_who_log'] == 'admin')
+	if (empty($settings['db_show_debug_who_log']) || $settings['db_show_debug_who_log'] == 'admin')
 		$show_debug_query &= $context['user']['is_admin'];
-	elseif ($modSettings['db_show_debug_who_log'] == 'mod')
+	elseif ($settings['db_show_debug_who_log'] == 'mod')
 		$show_debug_query &= allowedTo('moderate_forum');
-	elseif ($modSettings['db_show_debug_who_log'] == 'regular')
+	elseif ($settings['db_show_debug_who_log'] == 'regular')
 		$show_debug_query &= $context['user']['is_logged'];
 	else
-		$show_debug_query &= ($modSettings['db_show_debug_who_log'] == 'any');
+		$show_debug_query &= ($settings['db_show_debug_who_log'] == 'any');
 
 	// If it's turned off for this group, simply just force them to a generic log-in-or-be-administrator situation.
 	if (!$show_debug_query)

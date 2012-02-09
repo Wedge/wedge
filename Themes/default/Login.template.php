@@ -13,7 +13,7 @@
 
 function template_login()
 {
-	global $context, $settings, $options, $scripturl, $modSettings, $txt;
+	global $context, $theme, $options, $scripturl, $settings, $txt;
 
 	if (empty($context['disable_login_hashing']))
 		$context['javascript_files'][] = 'scripts/sha1.js';
@@ -22,7 +22,7 @@ function template_login()
 		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="login">
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/login_sm.gif">
+				<img src="', $theme['images_url'], '/icons/login_sm.gif">
 				', $txt['login'], '
 			</we:cat>
 			<div class="roundframe"><br class="clear">';
@@ -48,7 +48,7 @@ function template_login()
 				</dl>
 				<dl>
 					<dt>', $txt['mins_logged_in'], ':</dt>
-					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $modSettings['cookieTime'], '"', $context['never_expire'] ? ' disabled' : '', '></dd>
+					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $settings['cookieTime'], '"', $context['never_expire'] ? ' disabled' : '', '></dd>
 					<dt>', $txt['always_logged_in'], ':</dt>
 					<dd><input type="checkbox" name="cookieneverexp"', $context['never_expire'] ? ' checked' : '', ' onclick="this.form.cookielength.disabled = this.checked;"></dd>';
 
@@ -73,7 +73,7 @@ function template_login()
 // Tell a guest to get lost or login!
 function template_kick_guest()
 {
-	global $context, $settings, $options, $scripturl, $modSettings, $txt;
+	global $context, $theme, $options, $scripturl, $settings, $txt;
 
 	// This isn't that much... just like normal login but with a message at the top.
 	if (empty($context['disable_login_hashing']))
@@ -96,7 +96,7 @@ function template_kick_guest()
 	// And now the login information.
 	echo '
 			<we:cat>
-				<img src="', $settings['images_url'], '/icons/login_sm.gif">
+				<img src="', $theme['images_url'], '/icons/login_sm.gif">
 				', $txt['login'], '
 			</we:cat>
 			<div class="roundframe">
@@ -106,7 +106,7 @@ function template_kick_guest()
 					<dt>', $txt['password'], ':</dt>
 					<dd><input type="password" name="passwrd" size="20"></dd>
 					<dt>', $txt['mins_logged_in'], ':</dt>
-					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $modSettings['cookieTime'], '"></dd>
+					<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $settings['cookieTime'], '"></dd>
 					<dt>', $txt['always_logged_in'], ':</dt>
 					<dd><input type="checkbox" name="cookieneverexp" onclick="this.form.cookielength.disabled = this.checked;"></dd>
 				</dl>
@@ -125,7 +125,7 @@ function template_kick_guest()
 // This is for maintenance mode.
 function template_maintenance()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// Display the administrator's message at the top.
 	if (empty($context['disable_login_hashing']))
@@ -138,7 +138,7 @@ function template_maintenance()
 			', $context['title'], '
 		</we:cat>
 		<p class="description">
-			<img class="floatleft" src="', $settings['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '">
+			<img class="floatleft" src="', $theme['images_url'], '/construction.png" width="40" height="40" alt="', $txt['in_maintain_mode'], '">
 			', $context['description'], '<br class="clear">
 		</p>
 		<we:title2>
@@ -151,7 +151,7 @@ function template_maintenance()
 				<dt>', $txt['password'], ':</dt>
 				<dd><input type="password" name="passwrd" size="20"></dd>
 				<dt>', $txt['mins_logged_in'], ':</dt>
-				<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $modSettings['cookieTime'], '"></dd>
+				<dd><input type="text" name="cookielength" size="4" maxlength="4" value="', $settings['cookieTime'], '"></dd>
 				<dt>', $txt['always_logged_in'], ':</dt>
 				<dd><input type="checkbox" name="cookieneverexp"></dd>
 			</dl>
@@ -165,7 +165,7 @@ function template_maintenance()
 // This is for the security stuff - makes administrators login every so often.
 function template_admin_login()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	// Since this should redirect to whatever they were doing, send all the get data.
 	$context['javascript_files'][] = 'scripts/sha1.js';
@@ -174,7 +174,7 @@ function template_admin_login()
 <form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">
 	<div class="login" id="admin_login">
 		<we:cat>
-			<img src="', $settings['images_url'], '/icons/login_sm.gif">
+			<img src="', $theme['images_url'], '/icons/login_sm.gif">
 			', $txt['login'], '
 		</we:cat>
 		<div class="roundframe centertext">';
@@ -205,7 +205,7 @@ function template_admin_login()
 // Activate your account manually?
 function template_retry_activate()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	// Just ask them for their code so they can try it again...
 	echo '
@@ -234,7 +234,7 @@ function template_retry_activate()
 // Activate your account manually?
 function template_resend()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	// Just ask them for their code so they can try it again...
 	echo '

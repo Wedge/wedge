@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
 function Login2()
 {
 	global $txt, $scripturl, $user_info, $user_settings;
-	global $cookiename, $maintenance, $modSettings, $context, $sc;
+	global $cookiename, $maintenance, $settings, $context, $sc;
 
 	// Load cookie authentication stuff and subsidiary login stuff.
 	loadSource(array('Subs-Auth', 'Subs-Login'));
@@ -82,14 +82,14 @@ function Login2()
 		$_SESSION['login_url'] = $_SESSION['old_url'];
 
 	// Been guessing a lot, haven't we?
-	if (isset($_SESSION['failed_login']) && $_SESSION['failed_login'] >= $modSettings['failed_login_threshold'] * 3)
+	if (isset($_SESSION['failed_login']) && $_SESSION['failed_login'] >= $settings['failed_login_threshold'] * 3)
 		fatal_lang_error('login_threshold_fail', 'critical');
 
 	// Set up the cookie length.  (if it's invalid, just fall through and use the default.)
 	if (isset($_POST['cookieneverexp']) || (!empty($_POST['cookielength']) && $_POST['cookielength'] == -1))
-		$modSettings['cookieTime'] = 3153600;
+		$settings['cookieTime'] = 3153600;
 	elseif (!empty($_POST['cookielength']) && ($_POST['cookielength'] >= 1 || $_POST['cookielength'] <= 525600))
-		$modSettings['cookieTime'] = (int) $_POST['cookielength'];
+		$settings['cookieTime'] = (int) $_POST['cookielength'];
 
 	loadLanguage('Login');
 	// Load the template stuff - wireless or normal.
@@ -104,7 +104,7 @@ function Login2()
 	// Set up the default/fallback stuff.
 	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', htmlspecialchars($_POST['user'])) : '';
 	$context['default_password'] = '';
-	$context['never_expire'] = $modSettings['cookieTime'] == 525600 || $modSettings['cookieTime'] == 3153600;
+	$context['never_expire'] = $settings['cookieTime'] == 525600 || $settings['cookieTime'] == 3153600;
 	$context['login_errors'] = array($txt['error_occured']);
 	$context['page_title'] = $txt['login'];
 
@@ -136,7 +136,7 @@ function Login2()
 	}
 
 	// Are we using any sort of hook to validate the login?
-	if (in_array('retry', call_hook('validate_login', array($_POST['user'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $modSettings['cookieTime'])), true))
+	if (in_array('retry', call_hook('validate_login', array($_POST['user'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $settings['cookieTime'])), true))
 	{
 		$context['login_errors'] = array($txt['login_hash_error']);
 		$context['disable_login_hashing'] = true;
@@ -202,7 +202,7 @@ function Login2()
 
 			$_SESSION['failed_login'] = isset($_SESSION['failed_login']) ? $_SESSION['failed_login'] + 1 : 1;
 
-			if ($_SESSION['failed_login'] >= $modSettings['failed_login_threshold'])
+			if ($_SESSION['failed_login'] >= $settings['failed_login_threshold'])
 				redirectexit('action=reminder');
 			else
 			{
@@ -278,15 +278,15 @@ function Login2()
 			$other_passwords[] = sha1($user_settings['password_salt'] . sha1($user_settings['password_salt'] . sha1($_POST['passwrd'])));
 
 			// Perhaps we converted to UTF-8 and have a valid password being hashed differently.
-			if (!empty($modSettings['previousCharacterSet']) && $modSettings['previousCharacterSet'] != 'utf8')
+			if (!empty($settings['previousCharacterSet']) && $settings['previousCharacterSet'] != 'utf8')
 			{
 				// Try iconv first, for no particular reason.
 				if (function_exists('iconv'))
-					$other_passwords['iconv'] = sha1(strtolower(iconv('UTF-8', $modSettings['previousCharacterSet'], $user_settings['member_name'])) . un_htmlspecialchars(iconv('UTF-8', $modSettings['previousCharacterSet'], $_POST['passwrd'])));
+					$other_passwords['iconv'] = sha1(strtolower(iconv('UTF-8', $settings['previousCharacterSet'], $user_settings['member_name'])) . un_htmlspecialchars(iconv('UTF-8', $settings['previousCharacterSet'], $_POST['passwrd'])));
 
 				// Say it aint so, iconv failed!
 				if (empty($other_passwords['iconv']) && function_exists('mb_convert_encoding'))
-					$other_passwords[] = sha1(strtolower(mb_convert_encoding($user_settings['member_name'], 'UTF-8', $modSettings['previousCharacterSet'])) . un_htmlspecialchars(mb_convert_encoding($_POST['passwrd'], 'UTF-8', $modSettings['previousCharacterSet'])));
+					$other_passwords[] = sha1(strtolower(mb_convert_encoding($user_settings['member_name'], 'UTF-8', $settings['previousCharacterSet'])) . un_htmlspecialchars(mb_convert_encoding($_POST['passwrd'], 'UTF-8', $settings['previousCharacterSet'])));
 			}
 		}
 
@@ -311,7 +311,7 @@ function Login2()
 			$_SESSION['failed_login'] = isset($_SESSION['failed_login']) ? $_SESSION['failed_login'] + 1 : 1;
 
 			// Hmm... don't remember it, do you?  Here, try the password reminder ;).
-			if ($_SESSION['failed_login'] >= $modSettings['failed_login_threshold'])
+			if ($_SESSION['failed_login'] >= $settings['failed_login_threshold'])
 				redirectexit('action=reminder');
 			// We'll give you another chance...
 			else

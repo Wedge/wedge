@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Create a menu...
 function createMenu($menuData, $menuOptions = array())
 {
-	global $context, $settings, $options, $txt, $modSettings, $scripturl, $user_info, $options;
+	global $context, $theme, $options, $txt, $settings, $scripturl, $user_info, $options;
 
 	// First are we toggling use of the side bar generally?
 	if (isset($_GET['togglebar']) && !$user_info['is_guest'])
@@ -29,7 +29,7 @@ function createMenu($menuData, $menuOptions = array())
 			array(
 				array(
 					$user_info['id'],
-					$settings['theme_id'],
+					$theme['theme_id'],
 					'use_sidebar_menu',
 					empty($options['use_sidebar_menu']) ? '1' : '0',
 				),
@@ -38,9 +38,9 @@ function createMenu($menuData, $menuOptions = array())
 		);
 
 		// Clear the theme settings cache for this user.
-		$themes = explode(',', $modSettings['knownThemes']);
-		foreach ($themes as $theme)
-			cache_put_data('theme_settings-' . $theme . ':' . $user_info['id'], null, 60);
+		$themes = explode(',', $settings['knownThemes']);
+		foreach ($themes as $th)
+			cache_put_data('theme_settings-' . $th . ':' . $user_info['id'], null, 60);
 
 		// Redirect as this seems to work best.
 		redirectexit(
@@ -53,7 +53,7 @@ function createMenu($menuData, $menuOptions = array())
 	}
 
 	// Work out where we should get our images from.
-	$context['menu_image_path'] = isset($context['menu_image_path']) ? $context['menu_image_path'] : (file_exists($settings['theme_dir'] . '/images/admin/change_menu.png') ? $settings['images_url'] . '/admin' : $settings['default_images_url'] . '/admin');
+	$context['menu_image_path'] = isset($context['menu_image_path']) ? $context['menu_image_path'] : (file_exists($theme['theme_dir'] . '/images/admin/change_menu.png') ? $theme['images_url'] . '/admin' : $theme['default_images_url'] . '/admin');
 
 	/* Note menuData is an array of form:
 

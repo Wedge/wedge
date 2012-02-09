@@ -20,7 +20,7 @@ class captcha_silhouette
 
 	public function render($code)
 	{
-		global $settings;
+		global $theme;
 
 		// Create a background
 		$width = 300;
@@ -43,7 +43,7 @@ class captcha_silhouette
 		}
 
 		for ($i = 0, $n = strlen($code); $i < $n; $i++)
-			imagettftext($this->image, 50, 0, $i * 45 + mt_rand(18, 22), mt_rand(60, 80), $black, $settings['default_theme_dir'] . '/fonts/Screenge.ttf', substr($code, $i, 1));
+			imagettftext($this->image, 50, 0, $i * 45 + mt_rand(18, 22), mt_rand(60, 80), $black, $theme['default_theme_dir'] . '/fonts/Screenge.ttf', substr($code, $i, 1));
 
 		return $this->image;
 	}

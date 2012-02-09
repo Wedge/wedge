@@ -14,7 +14,7 @@
 // This is the administration center home.
 function template_admin()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// Welcome the admin, and mention any outstanding updates.
 	echo '
@@ -135,7 +135,7 @@ function template_admin_support_info()
 // Show some support information and credits to those who helped make this.
 function template_credits()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	// Show the user version information from their server.
 	echo '
@@ -200,7 +200,7 @@ function template_credits()
 // Displays information about file versions installed, and compares them to current version.
 function template_view_versions()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 	<div id="admincenter">
@@ -471,7 +471,7 @@ function template_view_versions()
 // Form for stopping people using naughty words, etc.
 function template_edit_censored()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// First section is for adding/removing words from the censored list.
 	echo '
@@ -510,19 +510,19 @@ function template_edit_censored()
 						<strong><label for="censorWholeWord_check">', $txt['censor_whole_words'], ':</label></strong>
 					</dt>
 					<dd>
-						<input type="checkbox" name="censorWholeWord" value="1" id="censorWholeWord_check"', empty($modSettings['censorWholeWord']) ? '' : ' checked', '>
+						<input type="checkbox" name="censorWholeWord" value="1" id="censorWholeWord_check"', empty($settings['censorWholeWord']) ? '' : ' checked', '>
 					</dd>
 					<dt>
 						<strong><label for="censorIgnoreCase_check">', $txt['censor_case'], ':</label></strong>
 					</dt>
 					<dd>
-						<input type="checkbox" name="censorIgnoreCase" value="1" id="censorIgnoreCase_check"', empty($modSettings['censorIgnoreCase']) ? '' : ' checked', '>
+						<input type="checkbox" name="censorIgnoreCase" value="1" id="censorIgnoreCase_check"', empty($settings['censorIgnoreCase']) ? '' : ' checked', '>
 					</dd>
 					<dt>
 						<label for="censorAllowDisable_check">', $txt['allow_no_censored'], ':</label>
 					</dt>
 					<dd>
-						<input type="checkbox" name="allow_no_censored" value="1" id="censorAllowDisable_check"', empty($modSettings['allow_no_censored']) ? '' : ' checked', '>
+						<input type="checkbox" name="allow_no_censored" value="1" id="censorAllowDisable_check"', empty($settings['allow_no_censored']) ? '' : ' checked', '>
 					</dd>
 				</dl>
 				<input type="submit" name="save_censor" value="', $txt['save'], '" class="save">
@@ -549,7 +549,7 @@ function template_edit_censored()
 // Maintenance is a lovely thing, isn't it?
 function template_not_done()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -608,7 +608,7 @@ function template_not_done()
 // Template for showing settings (of any kind, really!)
 function template_show_settings()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $theme, $scripturl;
 
 	if ($context['was_saved'])
 		echo '
@@ -828,7 +828,7 @@ function template_show_settings()
 // Template for showing custom profile fields.
 function template_show_custom_profile()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $theme, $scripturl;
 
 	// Standard fields.
 	template_show_list('standard_profile_fields');
@@ -846,7 +846,7 @@ function template_show_custom_profile()
 // Edit a profile field?
 function template_edit_profile_field()
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $theme, $scripturl;
 
 	// All the javascript for this page - quite a bit!
 	add_js('
@@ -1157,7 +1157,7 @@ function template_edit_profile_field()
 // Results page for an admin search.
 function template_admin_search_results()
 {
-	global $context, $txt, $settings, $options, $scripturl;
+	global $context, $txt, $theme, $options, $scripturl;
 
 	echo '
 	<we:cat>
@@ -1226,7 +1226,7 @@ function template_admin_search_results()
 // Turn on and off certain key features.
 function template_core_features()
 {
-	global $context, $txt, $settings, $options, $scripturl;
+	global $context, $txt, $theme, $options, $scripturl;
 
 	$switch_off = JavaScriptEscape($txt['core_settings_switch_off']);
 	$switch_on = JavaScriptEscape($txt['core_settings_switch_on']);
@@ -1240,7 +1240,7 @@ function template_core_features()
 
 		// Change the image, alternative text and the title.
 		$("#switch_" + itemID).attr({
-			src: \'', $settings['images_url'], '/admin/switch_\' + (itemValueHandle.val() == 1 ? \'on\' : \'off\') + \'.png\',
+			src: \'', $theme['images_url'], '/admin/switch_\' + (itemValueHandle.val() == 1 ? \'on\' : \'off\') + \'.png\',
 			alt: itemValueHandle.val() == 1 ? ', $switch_off, ' : ', $switch_on, ',
 			title: itemValueHandle.val() == 1 ? ', $switch_off, ' : ', $switch_on, '
 		});
@@ -1261,10 +1261,10 @@ function template_core_features()
 		echo '
 				<div class="features">
 					<div class="windowbg', $alternate < 2 ? '2' : '', ' wrc">
-						<img class="features_image ping" src="', $settings['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '">
+						<img class="features_image ping" src="', $theme['default_images_url'], '/admin/feature_', $id, '.png" alt="', $feature['title'], '">
 						<div id="js_feature_', $id, '" class="features_switch hide">
 							<a href="', $scripturl, '?action=admin;area=featuresettings;sa=core;', $context['session_query'], ';toggle=', $id, ';state=', $feature['enabled'] ? 0 : 1, '" onclick="return toggleItem(\'', $id, '\');">
-								<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '"><img src="', $settings['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" class="ping" id="switch_', $id, '" style="margin-top: 1.3em" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '">
+								<input type="hidden" name="feature_', $id, '" id="feature_', $id, '" value="', $feature['enabled'] ? 1 : 0, '"><img src="', $theme['images_url'], '/admin/switch_', $feature['enabled'] ? 'on' : 'off', '.png" class="ping" id="switch_', $id, '" style="margin-top: 1.3em" alt="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '" title="', $txt['core_settings_switch_' . ($feature['enabled'] ? 'off' : 'on')], '">
 							</a>
 						</div>
 						<h4>', $feature['enabled'] && $feature['url'] ? '<a href="' . $feature['url'] . '">' . $feature['title'] . '</a>' : $feature['title'], '</h4>
@@ -1301,7 +1301,7 @@ function template_core_features()
 // Add a new language
 function template_add_language()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -1367,7 +1367,7 @@ function template_add_language()
 // Download a new language file?
 function template_download_language()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	// Actually finished?
 	if (!empty($context['install_complete']))
@@ -1436,13 +1436,13 @@ function template_download_language()
 				</thead>
 				<tbody>';
 
-	foreach ($context['files']['images'] as $theme => $group)
+	foreach ($context['files']['images'] as $th => $group)
 	{
 		$count = 0;
 		echo '
 				<tr class="titlebg">
 					<td colspan="4">
-						<div class="sortselect" id="toggle_image_', $theme, '"></div>&nbsp;', isset($context['theme_names'][$theme]) ? $context['theme_names'][$theme] : $theme, '
+						<div class="sortselect" id="toggle_image_', $th, '"></div>&nbsp;', isset($context['theme_names'][$th]) ? $context['theme_names'][$th] : $th, '
 					</td>
 				</tr>';
 
@@ -1450,7 +1450,7 @@ function template_download_language()
 		foreach ($group as $file)
 		{
 			echo '
-				<tr class="windowbg', $alternate ? '2' : '', '" id="', $theme, '-', $count++, '">
+				<tr class="windowbg', $alternate ? '2' : '', '" id="', $th, '-', $count++, '">
 					<td>
 						<strong>', $file['name'], '</strong>
 						<div class="smalltext">', $txt['languages_download_dest'], ': ', $file['destination'], '</div>
@@ -1493,15 +1493,15 @@ function template_download_language()
 						<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
 					</dt>
 					<dd>
-						<div class="floatright" style="margin-right: 1px"><label style="padding-top: 2px; padding-right: 2ex">', $txt['package_ftp_port'], ':&nbsp;<input type="text" size="3" name="ftp_port" value="', isset($context['package_ftp']['port']) ? $context['package_ftp']['port'] : (isset($modSettings['package_port']) ? $modSettings['package_port'] : '21'), '"></label></div>
-						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', isset($context['package_ftp']['server']) ? $context['package_ftp']['server'] : (isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost'), '" style="width: 70%">
+						<div class="floatright" style="margin-right: 1px"><label style="padding-top: 2px; padding-right: 2ex">', $txt['package_ftp_port'], ':&nbsp;<input type="text" size="3" name="ftp_port" value="', isset($context['package_ftp']['port']) ? $context['package_ftp']['port'] : (isset($settings['package_port']) ? $settings['package_port'] : '21'), '"></label></div>
+						<input type="text" size="30" name="ftp_server" id="ftp_server" value="', isset($context['package_ftp']['server']) ? $context['package_ftp']['server'] : (isset($settings['package_server']) ? $settings['package_server'] : 'localhost'), '" style="width: 70%">
 					</dd>
 
 					<dt>
 						<label for="ftp_username">', $txt['package_ftp_username'], ':</label>
 					</dt>
 					<dd>
-						<input type="text" size="42" name="ftp_username" id="ftp_username" value="', isset($context['package_ftp']['username']) ? $context['package_ftp']['username'] : (isset($modSettings['package_username']) ? $modSettings['package_username'] : ''), '" style="width: 99%">
+						<input type="text" size="42" name="ftp_username" id="ftp_username" value="', isset($context['package_ftp']['username']) ? $context['package_ftp']['username'] : (isset($settings['package_username']) ? $settings['package_username'] : ''), '" style="width: 99%">
 					</dd>
 
 					<dt>
@@ -1533,7 +1533,7 @@ function template_download_language()
 
 	// The javascript for expanding and collapsing sections.
 	// Each theme gets its own handler.
-	foreach ($context['files']['images'] as $theme => $group)
+	foreach ($context['files']['images'] as $th => $group)
 	{
 		$count = 0;
 
@@ -1544,12 +1544,12 @@ function template_download_language()
 
 		foreach ($group as $file)
 			add_js('
-			', JavaScriptEscape($theme . '-' . $count++), ',');
+			', JavaScriptEscape($th . '-' . $count++), ',');
 
 		add_js('
 			null
 		],
-		aSwapImages: [{ sId: \'toggle_image_', $theme, '\' }]
+		aSwapImages: [{ sId: \'toggle_image_', $th, '\' }]
 	});');
 	}
 }
@@ -1557,7 +1557,7 @@ function template_download_language()
 // Edit some language entries?
 function template_modify_language_entries()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -1629,12 +1629,12 @@ function template_modify_language_entries()
 				', $txt['edit_language_entries_file'], ':
 				<select name="tfid" onchange="if (this.value != -1) document.forms.entry_form.submit();">';
 
-	foreach ($context['possible_files'] as $id_theme => $theme)
+	foreach ($context['possible_files'] as $id_theme => $th)
 	{
 		echo '
-					<option value="-1">', $theme['name'], '</option>';
+					<option value="-1">', $th['name'], '</option>';
 
-		foreach ($theme['files'] as $file)
+		foreach ($th['files'] as $file)
 			echo '
 					<option value="', $id_theme, '|', $file['id'], '"', $file['selected'] ? ' selected' : '', '> =&gt; ', $file['name'], '</option>';
 	}
@@ -1902,7 +1902,7 @@ function template_repair_boards()
 // Pretty URLs
 function template_pretty_urls()
 {
-	global $context, $scripturl, $txt, $modSettings, $boardurl;
+	global $context, $scripturl, $txt, $settings, $boardurl;
 
 	if (!empty($context['pretty']['chrome']['menu']))
 	{
@@ -1951,7 +1951,7 @@ function template_pretty_urls()
 
 			if ($id === 'actions')
 			{
-				$prefix = empty($modSettings['pretty_prefix_action']) ? '' : $modSettings['pretty_prefix_action'];
+				$prefix = empty($settings['pretty_prefix_action']) ? '' : $settings['pretty_prefix_action'];
 				echo '
 				<select name="pretty_prefix_action" class="pretty_prefix', $enabled ? '' : ' hide', '">
 					<option value=""', $prefix == '' ? ' selected' : '', '>', $boardurl, '/action</option>
@@ -1961,7 +1961,7 @@ function template_pretty_urls()
 
 			if ($id === 'profiles')
 			{
-				$prefix = empty($modSettings['pretty_prefix_profile']) ? '' : $modSettings['pretty_prefix_profile'];
+				$prefix = empty($settings['pretty_prefix_profile']) ? '' : $settings['pretty_prefix_profile'];
 				echo '
 				<select name="pretty_prefix_profile" class="pretty_prefix', $enabled ? '' : ' hide', '">
 					<option value="~"', $prefix == '~' ? ' selected' : '', '>', $boardurl, '/~UserName/</option>

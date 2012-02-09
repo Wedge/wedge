@@ -56,13 +56,13 @@ if (!defined('WEDGE'))
 // Who's online, and what are they doing?
 function Who()
 {
-	global $context, $scripturl, $user_info, $txt, $modSettings, $memberContext;
+	global $context, $scripturl, $user_info, $txt, $settings, $memberContext;
 
 	// Permissions, permissions, permissions.
 	isAllowedTo('who_view');
 
 	// You can't do anything if this is off.
-	if (empty($modSettings['who_enabled']))
+	if (empty($settings['who_enabled']))
 		fatal_lang_error('who_off', false);
 
 	// Load the 'Who' template.
@@ -93,7 +93,7 @@ function Who()
 	);
 
 	// Can they see spiders too?
-	if (!empty($modSettings['spider_mode']) && !empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] == 2 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
+	if (!empty($settings['spider_mode']) && !empty($settings['show_spider_online']) && ($settings['show_spider_online'] == 2 || allowedTo('admin_forum')) && !empty($settings['spider_name_cache']))
 	{
 		$show_methods['spiders'] = '(lo.id_member = 0 AND lo.id_spider > 0)';
 		$show_methods['guests'] = '(lo.id_member = 0 AND lo.id_spider = 0)';
@@ -156,7 +156,7 @@ function Who()
 	wesql::free_result($request);
 
 	// Prepare some page index variables.
-	$context['page_index'] = template_page_index($scripturl . '?action=who;sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';show=' . $context['show_by'], $_REQUEST['start'], $totalMembers, $modSettings['defaultMaxMembers']);
+	$context['page_index'] = template_page_index($scripturl . '?action=who;sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';show=' . $context['show_by'], $_REQUEST['start'], $totalMembers, $settings['defaultMaxMembers']);
 	$context['start'] = $_REQUEST['start'];
 
 	// Look for people online, provided they don't mind if you see they are.
@@ -177,7 +177,7 @@ function Who()
 			'sort_method' => $sort_method,
 			'sort_direction' => $context['sort_direction'] == 'up' ? 'ASC' : 'DESC',
 			'offset' => $context['start'],
-			'limit' => $modSettings['defaultMaxMembers'],
+			'limit' => $settings['defaultMaxMembers'],
 		)
 	);
 	$context['members'] = array();
@@ -222,9 +222,9 @@ function Who()
 
 	// Are we showing spiders?
 	$spiderContext = array();
-	if (!empty($modSettings['spider_mode']) && !empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] == 2 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
+	if (!empty($settings['spider_mode']) && !empty($settings['show_spider_online']) && ($settings['show_spider_online'] == 2 || allowedTo('admin_forum')) && !empty($settings['spider_name_cache']))
 	{
-		foreach (unserialize($modSettings['spider_name_cache']) as $id => $name)
+		foreach (unserialize($settings['spider_name_cache']) as $id => $name)
 			$spiderContext[$id] = array(
 				'id' => 0,
 				// Spiders get their own Noisen style.
@@ -265,13 +265,13 @@ function Who()
 	$context['can_send_pm'] = allowedTo('pm_send');
 
 	// Any profile fields disabled?
-	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['disabled_fields'] = isset($settings['disabled_profile_fields']) ? array_flip(explode(',', $settings['disabled_profile_fields'])) : array();
 
 }
 
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $context, $txt, $user_info, $modSettings, $settings, $scripturl;
+	global $context, $txt, $user_info, $settings, $theme, $scripturl;
 
 	if (!allowedTo('who_view'))
 		return array();
@@ -405,9 +405,9 @@ function determineActions($urls, $preferred_prefix = false)
 					SELECT m.id_topic, m.subject
 					FROM {db_prefix}messages AS m
 						INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic' . ($modSettings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
+						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic' . ($settings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
 					WHERE m.id_msg = {int:id_msg}
-						AND {query_see_board}' . ($modSettings['postmod_active'] ? '
+						AND {query_see_board}' . ($settings['postmod_active'] ? '
 						AND m.approved = {int:is_approved}' : '') . '
 					LIMIT 1',
 					array(
@@ -488,7 +488,7 @@ function determineActions($urls, $preferred_prefix = false)
 				$error_message = str_replace('"', '&quot;', $txt['who_guest_login']);
 
 			if (!empty($error_message))
-				$data[$k] = '<img src="' . $settings['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
+				$data[$k] = '<img src="' . $theme['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
 		}
 	}
 
@@ -508,7 +508,7 @@ function determineActions($urls, $preferred_prefix = false)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 			WHERE {query_see_board}
-				AND t.id_topic IN ({array_int:topic_list})' . ($modSettings['postmod_active'] ? '
+				AND t.id_topic IN ({array_int:topic_list})' . ($settings['postmod_active'] ? '
 				AND t.approved = {int:is_approved}' : '') . '
 			LIMIT {int:limit}',
 			array(

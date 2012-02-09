@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  */
 function PrintPage()
 {
-	global $topic, $txt, $scripturl, $context, $user_info, $board_info, $modSettings;
+	global $topic, $txt, $scripturl, $context, $user_info, $board_info, $settings;
 
 	// Redirect to the board list if no valid topic id is provided.
 	if (empty($topic))
@@ -71,7 +71,7 @@ function PrintPage()
 		SELECT subject, poster_time, body, IFNULL(mem.real_name, poster_name) AS poster_name
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
-		WHERE m.id_topic = {int:current_topic}' . ($modSettings['postmod_active'] && !allowedTo('approve_posts') ? '
+		WHERE m.id_topic = {int:current_topic}' . ($settings['postmod_active'] && !allowedTo('approve_posts') ? '
 			AND (m.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR m.id_member = {int:current_member}') . ')' : '') . '
 		ORDER BY m.id_msg',
 		array(

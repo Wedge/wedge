@@ -74,9 +74,9 @@ if (!defined('WEDGE'))
 
 function downloadAvatar($url, $memID, $max_width, $max_height)
 {
-	global $modSettings;
+	global $settings;
 
-	$ext = !empty($modSettings['avatar_download_png']) ? 'png' : 'jpeg';
+	$ext = !empty($settings['avatar_download_png']) ? 'png' : 'jpeg';
 	$destName = 'avatar_' . $memID . '_' . time() . '.' . $ext;
 
 	// Just making sure there is a non-zero member.
@@ -86,8 +86,8 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 	loadSource('ManageAttachments');
 	removeAttachments(array('id_member' => $memID));
 
-	$id_folder = !empty($modSettings['currentAttachmentUploadDir']) ? $modSettings['currentAttachmentUploadDir'] : 1;
-	$avatar_hash = empty($modSettings['custom_avatar_enabled']) ? getAttachmentFilename($destName, false, null, true) : '';
+	$id_folder = !empty($settings['currentAttachmentUploadDir']) ? $settings['currentAttachmentUploadDir'] : 1;
+	$avatar_hash = empty($settings['custom_avatar_enabled']) ? getAttachmentFilename($destName, false, null, true) : '';
 	wesql::insert('',
 		'{db_prefix}attachments',
 		array(
@@ -95,23 +95,23 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 			'id_folder' => 'int',
 		),
 		array(
-			$memID, empty($modSettings['custom_avatar_enabled']) ? 0 : 1, $destName, $avatar_hash, $ext, 1,
+			$memID, empty($settings['custom_avatar_enabled']) ? 0 : 1, $destName, $avatar_hash, $ext, 1,
 			$id_folder,
 		),
 		array('id_attach')
 	);
 	$attachID = wesql::insert_id();
 	// Retain this globally in case the script wants it.
-	$modSettings['new_avatar_data'] = array(
+	$settings['new_avatar_data'] = array(
 		'id' => $attachID,
 		'filename' => $destName,
-		'type' => empty($modSettings['custom_avatar_enabled']) ? 0 : 1,
+		'type' => empty($settings['custom_avatar_enabled']) ? 0 : 1,
 	);
 
-	$destName = (empty($modSettings['custom_avatar_enabled']) ? (is_array($modSettings['attachmentUploadDir']) ? $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']] : $modSettings['attachmentUploadDir']) : $modSettings['custom_avatar_dir']) . '/' . $destName . '.tmp';
+	$destName = (empty($settings['custom_avatar_enabled']) ? (is_array($settings['attachmentUploadDir']) ? $settings['attachmentUploadDir'][$settings['currentAttachmentUploadDir']] : $settings['attachmentUploadDir']) : $settings['custom_avatar_dir']) . '/' . $destName . '.tmp';
 
 	// Resize it.
-	if (!empty($modSettings['avatar_download_png']))
+	if (!empty($settings['avatar_download_png']))
 		$success = resizeImageFile($url, $destName, $max_width, $max_height, 3);
 	else
 		$success = resizeImageFile($url, $destName, $max_width, $max_height);
@@ -122,14 +122,14 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 	if ($success)
 	{
 		// Walk the right path.
-		if (!empty($modSettings['currentAttachmentUploadDir']))
+		if (!empty($settings['currentAttachmentUploadDir']))
 		{
-			if (!is_array($modSettings['attachmentUploadDir']))
-				$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
-			$path = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
+			if (!is_array($settings['attachmentUploadDir']))
+				$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
+			$path = $settings['attachmentUploadDir'][$settings['currentAttachmentUploadDir']];
 		}
 		else
-			$path = $modSettings['attachmentUploadDir'];
+			$path = $settings['attachmentUploadDir'];
 
 		// Remove the .tmp extension from the attachment.
 		if (rename($destName . '.tmp', empty($avatar_hash) ? $destName : $path . '/' . $attachID . '_' . $avatar_hash . '.ext'))
@@ -174,12 +174,12 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 
 function createThumbnail($source, $max_width, $max_height)
 {
-	global $modSettings;
+	global $settings;
 
 	$destName = $source . '_thumb.tmp';
 
 	// Do the actual resize.
-	if (!empty($modSettings['attachment_thumb_png']))
+	if (!empty($settings['attachment_thumb_png']))
 		$success = resizeImageFile($source, $destName, $max_width, $max_height, 3);
 	else
 		$success = resizeImageFile($source, $destName, $max_width, $max_height);
@@ -319,7 +319,7 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 
 function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $max_height, $force_resize = false, $preferred_format = 0)
 {
-	global $modSettings;
+	global $settings;
 
 	$success = false;
 

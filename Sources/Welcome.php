@@ -19,15 +19,15 @@ if (!defined('WEDGE'))
 	void Welcome()
 		- prepares the homepage data.
 		- uses the Welcome template (main block) and language file.
-		- is accessed via index.php, if $modSettings['default_index'] == 'Welcome'.
-		- to create your own custom entry point, just set $modSettings['default_index'] to 'Homepage'
+		- is accessed via index.php, if $settings['default_index'] == 'Welcome'.
+		- to create your own custom entry point, just set $settings['default_index'] to 'Homepage'
 		  and create your own Homepage.php file so it won't be overwritten by Wedge updates!
 */
 
 // Welcome to the show.
 function Welcome()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings, $language, $user_info;
+	global $context, $theme, $options, $txt, $scripturl, $settings, $language, $user_info;
 
 	// Load the 'Welcome' template.
 	loadTemplate('Welcome');
@@ -76,17 +76,17 @@ function Welcome()
 	$context['show_buddies'] = !empty($user_info['buddies']);
 
 	// Are we showing all membergroups on the board index?
-	if (!empty($settings['show_group_key']))
+	if (!empty($theme['show_group_key']))
 		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups', 'cache_getMembergroupList', array());
 
 	// Track most online statistics? (Subs-MembersOnline.php)
-	if (!empty($modSettings['trackStats']))
+	if (!empty($settings['trackStats']))
 		trackStatsUsersOnline($context['num_guests'] + $context['num_spiders'] + $context['num_users_online']);
 
-	$settings['show_member_bar'] &= allowedTo('view_mlist');
-	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
+	$theme['show_member_bar'] &= allowedTo('view_mlist');
+	$context['show_stats'] = allowedTo('view_stats') && !empty($settings['trackStats']);
 	$context['show_member_list'] = allowedTo('view_mlist');
-	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
+	$context['show_who'] = allowedTo('who_view') && !empty($settings['who_enabled']);
 
 	$context['page_title'] = isset($txt['homepage_title']) ? $txt['homepage_title'] : sprintf($txt['forum_index'], $context['forum_name']);
 

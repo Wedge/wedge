@@ -13,12 +13,12 @@
 
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="recent" class="main_section">
 		<we:cat>
-			<img src="', $settings['images_url'], '/post/xx.gif">
+			<img src="', $theme['images_url'], '/post/xx.gif">
 			', $txt['recent_posts'], '
 		</we:cat>
 		<div class="pagesection">
@@ -83,7 +83,7 @@ function template_main()
 
 function template_unread()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="recent">';
@@ -124,17 +124,17 @@ function template_unread()
 						<tr class="catbg">
 							<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
 							<th scope="col">
-								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
+								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] == 'subject' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] == 'subject' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>
 							<th scope="col" style="width: 14%" class="center">
-								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] == 'replies' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] == 'replies' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
+								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] == 'replies' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] == 'replies' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>';
 
 		// Show a "select all" box for quick moderation?
 		if ($show_checkboxes)
 			echo '
 							<th scope="col" style="width: 22%">
-								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
+								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>
 							<th class="last_th">
 								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
@@ -142,7 +142,7 @@ function template_unread()
 		else
 			echo '
 							<th scope="col" class="smalltext last_th" style="width: 22%">
-								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
+								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>';
 		echo '
 						</tr>
@@ -184,7 +184,7 @@ function template_unread()
 								', $topic['views'], ' ', $txt['views'], '
 							</td>
 							<td class="', $alternate_class, ' lastpost">
-								<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
+								<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
 								', $topic['last_post']['time'], '<br>
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 							</td>';
@@ -235,7 +235,7 @@ function template_unread()
 
 function template_replies()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="recent">';
@@ -279,17 +279,17 @@ function template_replies()
 						<tr class="catbg">
 							<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
 							<th scope="col">
-								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] === 'subject' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] === 'subject' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
+								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=subject', $context['sort_by'] === 'subject' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['subject'], $context['sort_by'] === 'subject' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>
 							<th scope="col" style="width: 14%" class="center">
-								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] === 'replies' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] === 'replies' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
+								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=replies', $context['sort_by'] === 'replies' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['replies'], $context['sort_by'] === 'replies' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>';
 
 		// Show a "select all" box for quick moderation?
 		if ($show_checkboxes)
 				echo '
 							<th scope="col" style="width: 22%">
-								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
+								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>
 							<th class="last_th">
 								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
@@ -297,7 +297,7 @@ function template_replies()
 		else
 			echo '
 							<th scope="col" class="last_th" style="width: 22%">
-								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
+								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>';
 		echo '
 						</tr>
@@ -339,7 +339,7 @@ function template_replies()
 								', $topic['views'], ' ', $txt['views'], '
 							</td>
 							<td class="', $alternate_class, ' lastpost">
-								<a href="', $topic['last_post']['href'], '"><img src="', $settings['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
+								<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
 								', $topic['last_post']['time'], '<br>
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 							</td>';

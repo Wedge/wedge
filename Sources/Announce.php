@@ -148,13 +148,13 @@ function AnnouncementSelectMembergroup()
  */
 function AnnouncementSend()
 {
-	global $topic, $board, $board_info, $context, $modSettings;
+	global $topic, $board, $board_info, $context, $settings;
 	global $language, $scripturl, $txt, $user_info;
 
 	checkSession();
 
 	// !!! Might need an interface?
-	$chunkSize = empty($modSettings['mail_queue']) ? 50 : 500;
+	$chunkSize = empty($settings['mail_queue']) ? 50 : 500;
 
 	$context['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
 	$groups = array_merge($board_info['groups'], array(1));
@@ -195,7 +195,7 @@ function AnnouncementSend()
 	$request = wesql::query('
 		SELECT mem.id_member, mem.email_address, mem.lngfile
 		FROM {db_prefix}members AS mem
-		WHERE mem.id_member != {int:current_member}' . (!empty($modSettings['allow_disableAnnounce']) ? '
+		WHERE mem.id_member != {int:current_member}' . (!empty($settings['allow_disableAnnounce']) ? '
 			AND mem.notify_announcements = {int:notify_announcements}' : '') . '
 			AND mem.is_activated = {int:is_activated}
 			AND (mem.id_group IN ({array_int:group_list}) OR mem.id_post_group IN ({array_int:group_list}) OR FIND_IN_SET({raw:additional_group_list}, mem.additional_groups) != 0)
@@ -226,7 +226,7 @@ function AnnouncementSend()
 	// Loop through all members that'll receive an announcement in this batch.
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$cur_language = empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'];
+		$cur_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
 
 		// If the language wasn't defined yet, load it and compose a notification message.
 		if (!isset($announcements[$cur_language]))
@@ -255,7 +255,7 @@ function AnnouncementSend()
 	foreach ($announcements as $lang => $mail)
 		sendmail($mail['recipients'], $mail['subject'], $mail['body'], null, null, false, 5);
 
-	$context['percentage_done'] = round(100 * $context['start'] / $modSettings['latestMember'], 1);
+	$context['percentage_done'] = round(100 * $context['start'] / $settings['latestMember'], 1);
 
 	$context['move'] = empty($_REQUEST['move']) ? 0 : 1;
 	$context['go_back'] = empty($_REQUEST['goback']) ? 0 : 1;
@@ -263,7 +263,7 @@ function AnnouncementSend()
 	wetem::load('announcement_send');
 
 	// Go back to the correct language for the user ;).
-	if (!empty($modSettings['userLanguage']))
+	if (!empty($settings['userLanguage']))
 		loadLanguage('Post');
 }
 

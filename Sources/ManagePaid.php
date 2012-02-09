@@ -71,7 +71,7 @@ if (!defined('WEDGE'))
 
 function ManagePaidSubscriptions()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $settings;
 
 	// Load the required language and template.
 	loadLanguage('ManagePaid');
@@ -86,7 +86,7 @@ function ManagePaidSubscriptions()
 	);
 
 	// Default the sub-action to 'view subscriptions', but only if they have already set things up..
-	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($modSettings['paid_enabled']) && !empty($modSettings['paid_currency_symbol']) ? 'view' : 'settings');
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($settings['paid_enabled']) && !empty($settings['paid_currency_symbol']) ? 'view' : 'settings');
 
 	// Make sure you can do this.
 	isAllowedTo($subActions[$_REQUEST['sa']][1]);
@@ -115,19 +115,19 @@ function ManagePaidSubscriptions()
 // Modify which payment methods are to be used.
 function ModifySubscriptionSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl, $boardurl;
+	global $context, $txt, $settings, $scripturl, $boardurl;
 
 	// If the currency is set to something different then we need to set it to other for this to work and set it back shortly.
-	$modSettings['paid_currency'] = !empty($modSettings['paid_currency_code']) ? $modSettings['paid_currency_code'] : '';
-	if (!empty($modSettings['paid_currency_code']) && !in_array($modSettings['paid_currency_code'], array('usd', 'eur', 'gbp')))
-		$modSettings['paid_currency'] = 'other';
+	$settings['paid_currency'] = !empty($settings['paid_currency_code']) ? $settings['paid_currency_code'] : '';
+	if (!empty($settings['paid_currency_code']) && !in_array($settings['paid_currency_code'], array('usd', 'eur', 'gbp')))
+		$settings['paid_currency'] = 'other';
 
 	// These are all the default settings.
 	$config_vars = array(
 			array('check', 'paid_enabled', 'subtext' => $txt['paid_enabled_desc']),
 	);
 
-	if (!empty($modSettings['paid_enabled']))
+	if (!empty($settings['paid_enabled']))
 	{
 		$config_vars = array_merge($config_vars, array(
 			array('select', 'paid_email', array(0 => $txt['paid_email_no'], 1 => $txt['paid_email_error'], 2 => $txt['paid_email_all']), 'subtext' => $txt['paid_email_desc']),
@@ -190,7 +190,7 @@ function ModifySubscriptionSettings($return_config = false)
 
 		// If we've gone from enabled to disabled or back, fix the scheduled task.
 		$new_value = !empty($_POST['paid_enabled']) ? 1 : 0;
-		$old_value = !empty($modSettings['paid_enabled']) ? 1 : 0;
+		$old_value = !empty($settings['paid_enabled']) ? 1 : 0;
 		if ($new_value != $old_value)
 		{
 			wesql::query('
@@ -234,10 +234,10 @@ function ModifySubscriptionSettings($return_config = false)
 // Are we looking at viewing the subscriptions?
 function ViewSubscriptions()
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	// Not made the settings yet?
-	if (empty($modSettings['paid_currency_symbol']))
+	if (empty($settings['paid_currency_symbol']))
 		fatal_lang_error('paid_not_set_currency', false, $scripturl . '?action=admin;area=paidsubscribe;sa=settings');
 
 	// Some basic stuff.
@@ -374,7 +374,7 @@ function ViewSubscriptions()
 // Adding, editing and deleting subscriptions.
 function ModifySubscription()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	$context['sub_id'] = isset($_REQUEST['sid']) ? (int) $_REQUEST['sid'] : 0;
 	$context['action_type'] = $context['sub_id'] ? (isset($_REQUEST['delete']) ? 'delete' : 'edit') : 'add';
@@ -672,7 +672,7 @@ function ModifySubscription()
 // View all the users subscribed to a particular subscription!
 function ViewSubscribedUsers()
 {
-	global $context, $txt, $modSettings, $scripturl, $options;
+	global $context, $txt, $settings, $scripturl, $options;
 
 	// Setup the template.
 	$context['page_title'] = $txt['viewing_users_subscribed'];
@@ -927,7 +927,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 // Edit or add a user subscription.
 function ModifyUserSubscription()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	loadSubscriptions();
 
@@ -1181,14 +1181,14 @@ function ModifyUserSubscription()
 						{
 							if ($cost != 0 && $cost == $pending[1] && $duration == $pending[2])
 								$context['pending_payments'][$id] = array(
-									'desc' => sprintf($modSettings['paid_currency_symbol'], $cost . '/' . $txt[$duration]),
+									'desc' => sprintf($settings['paid_currency_symbol'], $cost . '/' . $txt[$duration]),
 								);
 						}
 					}
 					elseif ($costs['fixed'] == $pending[1])
 					{
 						$context['pending_payments'][$id] = array(
-							'desc' => sprintf($modSettings['paid_currency_symbol'], $costs['fixed']),
+							'desc' => sprintf($settings['paid_currency_symbol'], $costs['fixed']),
 						);
 					}
 				}
@@ -1688,7 +1688,7 @@ function removeSubscription($id_subscribe, $id_member, $delete = false)
 // This just kind of caches all the subscription data.
 function loadSubscriptions()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	if (!empty($context['subscriptions']))
 		return;
@@ -1708,8 +1708,8 @@ function loadSubscriptions()
 		// Pick a cost.
 		$costs = @unserialize($row['cost']);
 
-		if ($row['length'] != 'F' && !empty($modSettings['paid_currency_symbol']) && !empty($costs['fixed']))
-			$cost = sprintf($modSettings['paid_currency_symbol'], $costs['fixed']);
+		if ($row['length'] != 'F' && !empty($settings['paid_currency_symbol']) && !empty($costs['fixed']))
+			$cost = sprintf($settings['paid_currency_symbol'], $costs['fixed']);
 		else
 			$cost = '???';
 

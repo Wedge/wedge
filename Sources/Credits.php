@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 
 function Credits($in_admin = false)
 {
-	global $context, $modSettings, $forum_copyright, $boardurl, $txt, $user_info;
+	global $context, $settings, $forum_copyright, $boardurl, $txt, $user_info;
 
 	// Don't blink. Don't even blink. Blink and you're dead.
 	loadLanguage('Who');

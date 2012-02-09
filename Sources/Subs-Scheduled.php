@@ -112,7 +112,7 @@ function recalculateNextImperative()
  */
 function addNextImperative($time, $task)
 {
-	global $modSettings;
+	global $settings;
 
 	if (empty($task['function']) || empty($time) || $time < time())
 		return false;
@@ -128,7 +128,7 @@ function addNextImperative($time, $task)
 	);
 
 	// We could call recalculateNextImperative but there's no sense doing that when we can save 1+ DB queries. (Only update if it's nearer, and we already have the time so just do the update itself.)
-	if ($time < $modSettings['next_imperative'])
+	if ($time < $settings['next_imperative'])
 		updateSettings(
 			array(
 				'next_imperative' => $time,

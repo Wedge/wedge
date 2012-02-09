@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function RegCenter()
 {
-	global $modSettings, $context, $txt, $scripturl;
+	global $settings, $context, $txt, $scripturl;
 
 	// Old templates might still request this.
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'browse')
@@ -167,7 +167,7 @@ function AdminRegister()
  */
 function EditAgreement()
 {
-	global $txt, $boarddir, $context, $modSettings, $settings;
+	global $txt, $boarddir, $context, $settings, $theme;
 
 	// By default we look at agreement.txt.
 	$context['current_agreement'] = '';
@@ -206,7 +206,7 @@ function EditAgreement()
 
 	$context['agreement'] = file_exists($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? htmlspecialchars(file_get_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt')) : '';
 	$context['warning'] = is_writable($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? '' : $txt['agreement_not_writable'];
-	$context['require_agreement'] = !empty($modSettings['requireAgreement']);
+	$context['require_agreement'] = !empty($settings['requireAgreement']);
 
 	wetem::load('edit_agreement');
 	$context['page_title'] = $txt['registration_agreement'];
@@ -223,7 +223,7 @@ function EditAgreement()
  */
 function SetReserve()
 {
-	global $txt, $context, $modSettings;
+	global $txt, $context, $settings;
 
 	// Submitting new reserved words.
 	if (!empty($_POST['save_reserved_names']))
@@ -241,13 +241,13 @@ function SetReserve()
 	}
 
 	// Get the reserved word options and words.
-	$modSettings['reserveNames'] = str_replace('\n', "\n", $modSettings['reserveNames']);
-	$context['reserved_words'] = explode("\n", $modSettings['reserveNames']);
+	$settings['reserveNames'] = str_replace('\n', "\n", $settings['reserveNames']);
+	$context['reserved_words'] = explode("\n", $settings['reserveNames']);
 	$context['reserved_word_options'] = array();
-	$context['reserved_word_options']['match_word'] = $modSettings['reserveWord'] == '1';
-	$context['reserved_word_options']['match_case'] = $modSettings['reserveCase'] == '1';
-	$context['reserved_word_options']['match_user'] = $modSettings['reserveUser'] == '1';
-	$context['reserved_word_options']['match_name'] = $modSettings['reserveName'] == '1';
+	$context['reserved_word_options']['match_word'] = $settings['reserveWord'] == '1';
+	$context['reserved_word_options']['match_case'] = $settings['reserveCase'] == '1';
+	$context['reserved_word_options']['match_user'] = $settings['reserveUser'] == '1';
+	$context['reserved_word_options']['match_name'] = $settings['reserveName'] == '1';
 
 	// Ready the template......
 	wetem::load('edit_reserved_words');
@@ -265,7 +265,7 @@ function SetReserve()
  */
 function ModifyRegistrationSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $modSettings;
+	global $txt, $context, $scripturl, $settings;
 
 	// This is really quite wanting.
 	loadSource('ManageServer');
@@ -323,7 +323,7 @@ function ModifyRegistrationSettings($return_config = false)
 	checkCoppa();');
 
 	// Turn the postal address into something suitable for a textbox.
-	$modSettings['coppaPost'] = !empty($modSettings['coppaPost']) ? preg_replace('~<br\s*/?\>~', "\n", $modSettings['coppaPost']) : '';
+	$settings['coppaPost'] = !empty($settings['coppaPost']) ? preg_replace('~<br\s*/?\>~', "\n", $settings['coppaPost']) : '';
 
 	prepareDBSettingContext($config_vars);
 }

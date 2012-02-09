@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Generate a pretty URL from a given text
 function pretty_generate_url($text, $is_board = false, $slash = false)
 {
-	global $modSettings, $txt;
+	global $settings, $txt;
 
 	if (strpos(strtolower($text), '[en]') !== false)
 	{
@@ -172,18 +172,18 @@ function is_already_taken($url, $id, $id_owner)
 // Update the database based on the installed filters
 function pretty_update_filters()
 {
-	global $modSettings;
+	global $settings;
 
 	// Update the settings table with our enabled filters
-	updateSettings(array('pretty_filters' => serialize($modSettings['pretty_filters'])));
+	updateSettings(array('pretty_filters' => serialize($settings['pretty_filters'])));
 
 	// Clear the URLs cache
 	wesql::query('
 		TRUNCATE TABLE {db_prefix}pretty_urls_cache');
 
 	// Don't rewrite anything for this page
-	$modSettings['pretty_filters'] = array();
-	$modSettings['pretty_enable_filters'] = false;
+	$settings['pretty_filters'] = array();
+	$settings['pretty_enable_filters'] = false;
 }
 
 function pretty_update_topic($subject, $topic_id)

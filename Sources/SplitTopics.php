@@ -141,7 +141,7 @@ function SplitTopics()
 // Part 1: General stuff.
 function SplitIndex()
 {
-	global $txt, $topic, $context, $modSettings;
+	global $txt, $topic, $context, $settings;
 
 	// Validate "at".
 	if (empty($_GET['at']))
@@ -153,7 +153,7 @@ function SplitIndex()
 		SELECT m.subject, t.num_replies, t.unapproved_posts, t.id_first_msg, t.approved
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
-		WHERE m.id_msg = {int:split_at}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+		WHERE m.id_msg = {int:split_at}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 			AND m.approved = 1') . '
 			AND m.id_topic = {int:current_topic}
 		LIMIT 1',
@@ -168,11 +168,11 @@ function SplitIndex()
 	wesql::free_result($request);
 
 	// If not approved validate they can see it.
-	if ($modSettings['postmod_active'] && !$approved)
+	if ($settings['postmod_active'] && !$approved)
 		isAllowedTo('approve_posts');
 
 	// If this topic has unapproved posts, we need to count them too...
-	if ($modSettings['postmod_active'] && allowedTo('approve_posts'))
+	if ($settings['postmod_active'] && allowedTo('approve_posts'))
 		$num_replies += $unapproved_posts - ($approved ? 0 : 1);
 
 	// Check if there is more than one message in the topic.  (there should be.)
@@ -195,7 +195,7 @@ function SplitIndex()
 // Alright, you've decided what you want to do with it.... now to do it.
 function SplitExecute()
 {
-	global $txt, $board, $topic, $context, $user_info, $modSettings;
+	global $txt, $board, $topic, $context, $user_info, $settings;
 
 	// Check the session to make sure they meant to do this.
 	checkSession();
@@ -246,7 +246,7 @@ function SplitExecute()
 // Get a selective list of topics...
 function SplitSelectTopics()
 {
-	global $txt, $scripturl, $topic, $context, $modSettings, $original_msgs, $options;
+	global $txt, $scripturl, $topic, $context, $settings, $original_msgs, $options;
 
 	$context['page_title'] = $txt['split'] . ' - ' . $txt['select_split_posts'];
 
@@ -277,7 +277,7 @@ function SplitSelectTopics()
 	wetem::load(isset($_REQUEST['xml']) ? 'split' : 'select');
 
 	// Are we using a custom messages per page?
-	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
+	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 
 	// Get the message ID's from before the move.
 	if (isset($_REQUEST['xml']))
@@ -290,7 +290,7 @@ function SplitSelectTopics()
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}' . (empty($_SESSION['split_selection'][$topic]) ? '' : '
-				AND id_msg NOT IN ({array_int:no_split_msgs})') . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+				AND id_msg NOT IN ({array_int:no_split_msgs})') . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 				AND approved = {int:is_approved}') . '
 			ORDER BY id_msg DESC
 			LIMIT {int:start}, {int:messages_per_page}',
@@ -314,7 +314,7 @@ function SplitSelectTopics()
 				SELECT id_msg
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
-					AND id_msg IN ({array_int:split_msgs})' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					AND id_msg IN ({array_int:split_msgs})' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 					AND approved = {int:is_approved}') . '
 				ORDER BY id_msg DESC
 				LIMIT {int:start}, {int:messages_per_page}',
@@ -352,7 +352,7 @@ function SplitSelectTopics()
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:current_topic}
-				AND id_msg IN ({array_int:split_msgs})' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+				AND id_msg IN ({array_int:split_msgs})' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 				AND approved = {int:is_approved}'),
 			array(
 				'current_topic' => $topic,
@@ -370,7 +370,7 @@ function SplitSelectTopics()
 	$request = wesql::query('
 		SELECT ' . (empty($_SESSION['split_selection'][$topic]) ? '0' : 'm.id_msg IN ({array_int:split_msgs})') . ' AS is_selected, COUNT(*) AS num_messages
 		FROM {db_prefix}messages AS m
-		WHERE m.id_topic = {int:current_topic}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+		WHERE m.id_topic = {int:current_topic}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 			AND approved = {int:is_approved}') . (empty($_SESSION['split_selection'][$topic]) ? '' : '
 		GROUP BY is_selected'),
 		array(
@@ -398,7 +398,7 @@ function SplitSelectTopics()
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . (empty($_SESSION['split_selection'][$topic]) ? '' : '
-			AND id_msg NOT IN ({array_int:no_split_msgs})') . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+			AND id_msg NOT IN ({array_int:no_split_msgs})') . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 			AND approved = {int:is_approved}') . '
 		ORDER BY m.id_msg DESC
 		LIMIT {int:start}, {int:messages_per_page}',
@@ -439,7 +439,7 @@ function SplitSelectTopics()
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			WHERE m.id_topic = {int:current_topic}
-				AND m.id_msg IN ({array_int:split_msgs})' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+				AND m.id_msg IN ({array_int:split_msgs})' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 				AND approved = {int:is_approved}') . '
 			ORDER BY m.id_msg DESC
 			LIMIT {int:start}, {int:messages_per_page}',
@@ -531,7 +531,7 @@ function SplitSelectionExecute()
 // Split a topic in two topics.
 function splitTopic($split1_id_topic, $split_messages, $new_subject)
 {
-	global $user_info, $topic, $board, $modSettings, $txt;
+	global $user_info, $topic, $board, $settings, $txt;
 
 	// Nothing to split?
 	if (empty($split_messages))
@@ -841,7 +841,7 @@ function MergeTopics()
 function MergeIndex()
 {
 	global $txt, $board, $context;
-	global $scripturl, $topic, $user_info, $modSettings;
+	global $scripturl, $topic, $user_info, $settings;
 
 	if (!isset($_GET['from']))
 		fatal_lang_error('no_access', false);
@@ -851,7 +851,7 @@ function MergeIndex()
 	$context['target_board'] = $_REQUEST['targetboard'];
 
 	// Prepare a handy query bit for approval...
-	if ($modSettings['postmod_active'])
+	if ($settings['postmod_active'])
 	{
 		$can_approve_boards = boardsAllowedTo('approve_posts');
 		$onlyApproved = $can_approve_boards !== array(0) && !in_array($_REQUEST['targetboard'], $can_approve_boards);
@@ -874,7 +874,7 @@ function MergeIndex()
 	wesql::free_result($request);
 
 	// Make the page list.
-	$context['page_index'] = template_page_index($scripturl . '?action=mergetopics;from=' . $_GET['from'] . ';targetboard=' . $_REQUEST['targetboard'] . ';board=' . $board . '.%1$d', $_REQUEST['start'], $topiccount, $modSettings['defaultMaxTopics'], true);
+	$context['page_index'] = template_page_index($scripturl . '?action=mergetopics;from=' . $_GET['from'] . ';targetboard=' . $_REQUEST['targetboard'] . ';board=' . $board . '.%1$d', $_REQUEST['start'], $topiccount, $settings['defaultMaxTopics'], true);
 
 	// Get the topic's subject.
 	$request = wesql::query('
@@ -944,7 +944,7 @@ function MergeIndex()
 			'id_topic' => $_GET['from'],
 			'sort' => 't.is_pinned DESC, t.id_last_msg DESC',
 			'offset' => $_REQUEST['start'],
-			'limit' => $modSettings['defaultMaxTopics'],
+			'limit' => $settings['defaultMaxTopics'],
 			'is_approved' => 1,
 		)
 	);
@@ -977,7 +977,7 @@ function MergeIndex()
 function MergeExecute($topics = array())
 {
 	global $user_info, $txt, $context, $scripturl;
-	global $language, $modSettings;
+	global $language, $settings;
 
 	// Check the session.
 	checkSession('request');
@@ -999,7 +999,7 @@ function MergeExecute($topics = array())
 		$topics[$id] = (int) $topic;
 
 	// Joy of all joys, make sure they're not pi**ing about with unapproved topics they can't see :P
-	if ($modSettings['postmod_active'])
+	if ($settings['postmod_active'])
 		$can_approve_boards = boardsAllowedTo('approve_posts');
 
 	// Get info about the topics and polls that will be merged.
@@ -1039,7 +1039,7 @@ function MergeExecute($topics = array())
 			);
 
 		// We can't see unapproved topics here?
-		if ($modSettings['postmod_active'] && !$row['approved'] && $can_approve_boards != array(0) && in_array($row['id_board'], $can_approve_boards))
+		if ($settings['postmod_active'] && !$row['approved'] && $can_approve_boards != array(0) && in_array($row['id_board'], $can_approve_boards))
 			continue;
 		elseif (!$row['approved'])
 			$boardTotals[$row['id_board']]['unapproved_topics']++;
@@ -1290,7 +1290,7 @@ function MergeExecute($topics = array())
 
 	wesql::free_result($request);
 
-	if (!empty($modSettings['pretty_enable_cache']))
+	if (!empty($settings['pretty_enable_cache']))
 	{
 		wesql::query('
 			DELETE FROM {db_prefix}pretty_topic_urls
@@ -1580,7 +1580,7 @@ function MergeDone()
 
 function MergePosts($error_report = true)
 {
-	global $modSettings, $user_info, $txt, $settings, $user_info;
+	global $settings, $user_info, $txt, $theme, $user_info;
 
 	loadLanguage('Errors');
 	if (!is_bool($error_report))
@@ -1639,7 +1639,7 @@ function MergePosts($error_report = true)
 		);
 
 		// Automatic merge time
-		if (!empty($modSettings['merge_post_auto_time']) && $modSettings['merge_post_auto_time'] > 0 && ($msn['1']['timestamp'] - $msn['0']['timestamp']) > $modSettings['merge_post_auto_time'])
+		if (!empty($settings['merge_post_auto_time']) && $settings['merge_post_auto_time'] > 0 && ($msn['1']['timestamp'] - $msn['0']['timestamp']) > $settings['merge_post_auto_time'])
 			return;
 	}
 
@@ -1648,20 +1648,20 @@ function MergePosts($error_report = true)
 		if ($msn['0']['common_id'] == $msn['1']['common_id'] && (allowedTo('modify_any') || (allowedTo('modify_own') && $msn['0']['id_member'] == $user_info['id'])))
 		{
 			// Let's merge it and use a separator
-			if (!empty($modSettings['merge_post_custom_separator']))
+			if (!empty($settings['merge_post_custom_separator']))
 			{
-				if (empty($modSettings['merge_post_separator']))
-					$modSettings['merge_post_separator'] = '[br]';
+				if (empty($settings['merge_post_separator']))
+					$settings['merge_post_separator'] = '[br]';
 				else
 				{
-					$modSettings['merge_post_separator'] = westr::htmlspecialchars($modSettings['merge_post_separator'], ENT_QUOTES);
+					$settings['merge_post_separator'] = westr::htmlspecialchars($settings['merge_post_separator'], ENT_QUOTES);
 					$date = '[mergedate]' . $msn['0']['timestamp'] . '[/mergedate]';
-					$modSettings['merge_post_separator'] = str_replace('$date', $date, $modSettings['merge_post_separator']);
+					$settings['merge_post_separator'] = str_replace('$date', $date, $settings['merge_post_separator']);
 				}
-				$newbody = $msn['0']['body'] . $modSettings['merge_post_separator'] . $msn['1']['body'];
+				$newbody = $msn['0']['body'] . $settings['merge_post_separator'] . $msn['1']['body'];
 			}
 			else
-				$newbody = $msn['0']['body'] . (empty($modSettings['merge_post_no_sep']) ? (empty($modSettings['merge_post_old_time_add']) ?
+				$newbody = $msn['0']['body'] . (empty($settings['merge_post_no_sep']) ? (empty($settings['merge_post_old_time_add']) ?
 							'<br>[mergedate]' . $msn['0']['timestamp'] . '[/mergedate]' : '') . '<br>' : '<br>') . $msn['1']['body'];
 
 			$memberid = $msn['0']['id_member'];
@@ -1669,12 +1669,12 @@ function MergePosts($error_report = true)
 			$oldpostid = $msn['0']['id_msg'];
 			$newpostid = $msn['1']['id_msg'];
 			$idboard = $msn['0']['id_board'];
-			$newpostlength = (empty($modSettings['merge_post_ignore_length']) && $modSettings['max_messageLength'] > 0) ? strlen(un_htmlspecialchars($newbody)) : 0;
+			$newpostlength = (empty($settings['merge_post_ignore_length']) && $settings['max_messageLength'] > 0) ? strlen(un_htmlspecialchars($newbody)) : 0;
 			$oldsubject = '';
 			$replacefirstid = '';
 
 			// First check the length of the post, if the limit is reached don't merge it! Also, the Automatic Merge will not work!
-			if (empty($modSetting['merge_post_ignore_length']) && $modSettings['max_messageLength'] < $newpostlength)
+			if (empty($modSetting['merge_post_ignore_length']) && $settings['max_messageLength'] < $newpostlength)
 				if ($error_report)
 					fatal_lang_error('merge_error_length', false);
 				else

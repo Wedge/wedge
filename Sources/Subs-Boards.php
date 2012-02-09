@@ -80,7 +80,7 @@ if (!defined('WEDGE'))
 // Mark a board or multiple boards read.
 function markBoardsRead($boards, $unread = false)
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	// Force $boards to be an array.
 	if (!is_array($boards))
@@ -121,7 +121,7 @@ function markBoardsRead($boards, $unread = false)
 	{
 		$markRead = array();
 		foreach ($boards as $board)
-			$markRead[] = array($modSettings['maxMsgID'], $user_info['id'], $board);
+			$markRead[] = array($settings['maxMsgID'], $user_info['id'], $board);
 
 		// Update log_mark_read and log_boards.
 		wesql::insert('replace',
@@ -188,7 +188,7 @@ function markBoardsRead($boards, $unread = false)
 // Mark one or more boards as read.
 function MarkRead()
 {
-	global $board, $topic, $user_info, $board_info, $modSettings;
+	global $board, $topic, $user_info, $board_info, $settings;
 
 	// No Guests allowed!
 	is_not_guest();
@@ -213,7 +213,7 @@ function MarkRead()
 		if (!empty($boards))
 			markBoardsRead($boards, isset($_REQUEST['unread']));
 
-		$_SESSION['id_msg_last_visit'] = $modSettings['maxMsgID'];
+		$_SESSION['id_msg_last_visit'] = $settings['maxMsgID'];
 		if (!empty($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'action=unread') !== false)
 			redirectexit('action=unread');
 
@@ -229,7 +229,7 @@ function MarkRead()
 
 		$markRead = array();
 		foreach ($topics as $id_topic)
-			$markRead[] = array($modSettings['maxMsgID'], $user_info['id'], (int) $id_topic);
+			$markRead[] = array($settings['maxMsgID'], $user_info['id'], (int) $id_topic);
 
 		wesql::insert('replace',
 			'{db_prefix}log_topics',
@@ -416,7 +416,7 @@ function MarkRead()
 		{
 			$logBoardInserts = '';
 			while ($row = wesql::fetch_assoc($result))
-				$logBoardInserts[] = array($modSettings['maxMsgID'], $user_info['id'], $row['id_board']);
+				$logBoardInserts[] = array($settings['maxMsgID'], $user_info['id'], $row['id_board']);
 
 			wesql::insert('replace',
 				'{db_prefix}log_boards',
@@ -458,7 +458,7 @@ function getMsgMemberID($messageID)
 // Modify the settings and position of a board.
 function modifyBoard($board_id, &$boardOptions)
 {
-	global $cat_tree, $boards, $boardList, $modSettings, $context;
+	global $cat_tree, $boards, $boardList, $settings, $context;
 
 	// Get some basic information about all boards and categories.
 	getBoardTree();
@@ -807,7 +807,7 @@ function modifyBoard($board_id, &$boardOptions)
 // Create a new board and set its properties and position.
 function createBoard($boardOptions)
 {
-	global $boards, $modSettings;
+	global $boards, $settings;
 
 	// Trigger an error if one of the required values is not set.
 	if (!isset($boardOptions['board_name']) || trim($boardOptions['board_name']) == '' || !isset($boardOptions['move_to']) || !isset($boardOptions['target_category']))
@@ -1087,7 +1087,7 @@ function fixChildren($parent, $newLevel, $newParent)
 // Restrict to their own boards anyone who's not an admin
 function getBoardTree($restrict = false)
 {
-	global $cat_tree, $boards, $boardList, $txt, $modSettings, $user_info;
+	global $cat_tree, $boards, $boardList, $txt, $settings, $user_info;
 
 	$restriction = $user_info['is_admin'] || !$restrict ? '' : '
 				AND b.id_owner = ' . (int) $user_info['id'];

@@ -37,11 +37,11 @@ if (!defined('WEDGE'))
 // Gather the results and show them.
 function Search2()
 {
-	global $scripturl, $modSettings, $sourcedir, $txt, $db_connection;
+	global $scripturl, $settings, $sourcedir, $txt, $db_connection;
 	global $user_info, $context, $options, $messages_request, $boards_can;
 	global $excludedWords, $participants, $searchAPI;
 
-	if (!empty($context['load_average']) && !empty($modSettings['loadavg_search']) && $context['load_average'] >= $modSettings['loadavg_search'])
+	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	// No, no, no... this is a bit hard on the server, so don't you go prefetching it!
@@ -65,7 +65,7 @@ function Search2()
 	$weight_total = 0;
 	foreach ($weight_factors as $weight_factor)
 	{
-		$weight[$weight_factor] = empty($modSettings['search_weight_' . $weight_factor]) ? 0 : (int) $modSettings['search_weight_' . $weight_factor];
+		$weight[$weight_factor] = empty($settings['search_weight_' . $weight_factor]) ? 0 : (int) $settings['search_weight_' . $weight_factor];
 		$weight_total += $weight[$weight_factor];
 	}
 
@@ -77,13 +77,13 @@ function Search2()
 	$recentPercentage = 0.30;
 	$humungousTopicPosts = 200;
 	$maxMembersToSearch = 500;
-	$maxMessageResults = empty($modSettings['search_max_results']) ? 0 : $modSettings['search_max_results'] * 5;
+	$maxMessageResults = empty($settings['search_max_results']) ? 0 : $settings['search_max_results'] * 5;
 
 	// Start with no errors.
 	$context['search_errors'] = array();
 
 	// Number of pages hard maximum - normally not set at all.
-	$modSettings['search_max_results'] = empty($modSettings['search_max_results']) ? 200 * $modSettings['search_results_per_page'] : (int) $modSettings['search_max_results'];
+	$settings['search_max_results'] = empty($settings['search_max_results']) ? 200 * $settings['search_results_per_page'] : (int) $settings['search_max_results'];
 	// Maximum length of the string.
 	$context['search_string_limit'] = 100;
 
@@ -103,20 +103,20 @@ function Search2()
 	wesql::extend('search');
 
 	// Load up the search API we are going to use.
-	$modSettings['search_index'] = empty($modSettings['search_index']) ? 'standard' : $modSettings['search_index'];
-	if (!file_exists($sourcedir . '/SearchAPI-' . ucwords($modSettings['search_index']) . '.php'))
+	$settings['search_index'] = empty($settings['search_index']) ? 'standard' : $settings['search_index'];
+	if (!file_exists($sourcedir . '/SearchAPI-' . ucwords($settings['search_index']) . '.php'))
 		fatal_lang_error('search_api_missing');
 
-	loadSource('SearchAPI-' . ucwords($modSettings['search_index']));
+	loadSource('SearchAPI-' . ucwords($settings['search_index']));
 
 	// Create an instance of the search API.
-	$search_class_name = $modSettings['search_index'] . '_search';
+	$search_class_name = $settings['search_index'] . '_search';
 	$searchAPI = new $search_class_name();
 	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()))
 	{
 		// Log the error.
 		loadLanguage('Errors');
-		log_error(sprintf($txt['search_api_not_compatible'], 'SearchAPI-' . ucwords($modSettings['search_index']) . '.php'), 'critical');
+		log_error(sprintf($txt['search_api_not_compatible'], 'SearchAPI-' . ucwords($settings['search_index']) . '.php'), 'critical');
 
 		loadSource('SearchAPI-Standard');
 		$searchAPI = new standard_search();
@@ -173,7 +173,7 @@ function Search2()
 		$request = wesql::query('
 			SELECT ' . (empty($search_params['maxage']) ? '0, ' : 'IFNULL(MIN(id_msg), -1), ') . (empty($search_params['minage']) ? '0' : 'IFNULL(MAX(id_msg), -1)') . '
 			FROM {db_prefix}messages
-			WHERE 1=1' . ($modSettings['postmod_active'] ? '
+			WHERE 1=1' . ($settings['postmod_active'] ? '
 				AND approved = {int:is_approved_true}' : '') . (empty($search_params['minage']) ? '' : '
 				AND poster_time <= {int:timestamp_minimum_age}') . (empty($search_params['maxage']) ? '' : '
 				AND poster_time >= {int:timestamp_maximum_age}'),
@@ -282,7 +282,7 @@ function Search2()
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			WHERE t.id_topic = {int:search_topic_id}
-				AND {query_see_board}' . ($modSettings['postmod_active'] ? '
+				AND {query_see_board}' . ($settings['postmod_active'] ? '
 				AND t.approved = {int:is_approved_true}' : '') . '
 			LIMIT 1',
 			array(
@@ -308,14 +308,14 @@ function Search2()
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
 			WHERE {raw:boards_allowed_to_see}
-				AND redirect = {string:empty_string}' . (empty($_REQUEST['brd']) ? (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+				AND redirect = {string:empty_string}' . (empty($_REQUEST['brd']) ? (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 				AND b.id_board != {int:recycle_board_id}' : '') : '
 				AND b.id_board IN ({array_int:selected_search_boards})'),
 			array(
 				'boards_allowed_to_see' => $user_info[$see_board],
 				'empty_string' => '',
 				'selected_search_boards' => empty($_REQUEST['brd']) ? array() : $_REQUEST['brd'],
-				'recycle_board_id' => $modSettings['recycle_board'],
+				'recycle_board_id' => $settings['recycle_board'],
 			)
 		);
 		$search_params['brd'] = array();
@@ -347,8 +347,8 @@ function Search2()
 
 		if (count($search_params['brd']) == $num_boards)
 			$boardQuery = '';
-		elseif (count($search_params['brd']) == $num_boards - 1 && !empty($modSettings['recycle_board']) && !in_array($modSettings['recycle_board'], $search_params['brd']))
-			$boardQuery = '!= ' . $modSettings['recycle_board'];
+		elseif (count($search_params['brd']) == $num_boards - 1 && !empty($settings['recycle_board']) && !in_array($settings['recycle_board'], $search_params['brd']))
+			$boardQuery = '!= ' . $settings['recycle_board'];
 		else
 			$boardQuery = 'IN (' . implode(', ', $search_params['brd']) . ')';
 	}
@@ -376,8 +376,8 @@ function Search2()
 	$search_params['sort_dir'] = !empty($search_params['sort_dir']) && $search_params['sort_dir'] == 'asc' ? 'asc' : 'desc';
 
 	// Determine some values needed to calculate the relevance.
-	$minMsg = (int) ((1 - $recentPercentage) * $modSettings['maxMsgID']);
-	$recentMsg = $modSettings['maxMsgID'] - $minMsg;
+	$minMsg = (int) ((1 - $recentPercentage) * $settings['maxMsgID']);
+	$recentMsg = $settings['maxMsgID'] - $minMsg;
 
 	// *** Parse the search query
 
@@ -414,7 +414,7 @@ function Search2()
 	$stripped_query = un_htmlspecialchars(westr::strtolower($stripped_query));
 
 	// This (hidden) setting will do fulltext searching in the most basic way.
-	if (!empty($modSettings['search_simple_fulltext']))
+	if (!empty($settings['search_simple_fulltext']))
 		$stripped_query = strtr($stripped_query, array('"' => ''));
 
 	$no_regexp = preg_match('~&#(?:\d{1,7}|x[0-9a-fA-F]{1,6});~', $stripped_query) === 1;
@@ -540,7 +540,7 @@ function Search2()
 		}
 
 		// Search_force_index requires all AND parts to have at least one fulltext word.
-		if (!empty($modSettings['search_force_index']) && empty($searchWords[$orIndex]['indexed_words']))
+		if (!empty($settings['search_force_index']) && empty($searchWords[$orIndex]['indexed_words']))
 		{
 			$context['search_errors']['query_not_specific_enough'] = true;
 			break;
@@ -559,7 +559,7 @@ function Search2()
 	}
 
 	// *** Spell checking
-	$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
+	$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
 	if ($context['show_spellchecking'])
 	{
 		// Windows fix.
@@ -673,7 +673,7 @@ function Search2()
 		$context['search_params']['userspec'] = westr::htmlspecialchars($context['search_params']['userspec']);
 
 	// Do we have captcha enabled?
-	if ($user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
+	if ($user_info['is_guest'] && !empty($settings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
 	{
 		// If we come from another search box tone down the error...
 		if (!isset($_REQUEST['search_vv']))
@@ -767,12 +767,12 @@ function Search2()
 		if ($update_cache)
 		{
 			// Increase the pointer...
-			$modSettings['search_pointer'] = empty($modSettings['search_pointer']) ? 0 : (int) $modSettings['search_pointer'];
+			$settings['search_pointer'] = empty($settings['search_pointer']) ? 0 : (int) $settings['search_pointer'];
 			// ...and store it right off.
-			updateSettings(array('search_pointer' => $modSettings['search_pointer'] >= 255 ? 0 : $modSettings['search_pointer'] + 1));
+			updateSettings(array('search_pointer' => $settings['search_pointer'] >= 255 ? 0 : $settings['search_pointer'] + 1));
 			// As long as you don't change the parameters, the cache result is yours.
 			$_SESSION['search_cache'] = array(
-				'id_search' => $modSettings['search_pointer'],
+				'id_search' => $settings['search_pointer'],
 				'num_results' => -1,
 				'params' => $context['params'],
 			);
@@ -800,7 +800,7 @@ function Search2()
 						'where' => array(),
 					);
 
-					if ($modSettings['postmod_active'])
+					if ($settings['postmod_active'])
 						$subject_query['where'][] = 't.approved = {int:is_approved}';
 
 					$numTables = 0;
@@ -811,13 +811,13 @@ function Search2()
 						$numTables++;
 						if (in_array($subjectWord, $excludedSubjectWords))
 						{
-							$subject_query['left_join'][] = '{db_prefix}log_search_subjects AS subj' . $numTables . ' ON (subj' . $numTables . '.word ' . (empty($modSettings['search_match_words']) ? 'LIKE {string:subject_words_' . $numTables . '_wild}' : '= {string:subject_words_' . $numTables . '}') . ' AND subj' . $numTables . '.id_topic = t.id_topic)';
+							$subject_query['left_join'][] = '{db_prefix}log_search_subjects AS subj' . $numTables . ' ON (subj' . $numTables . '.word ' . (empty($settings['search_match_words']) ? 'LIKE {string:subject_words_' . $numTables . '_wild}' : '= {string:subject_words_' . $numTables . '}') . ' AND subj' . $numTables . '.id_topic = t.id_topic)';
 							$subject_query['where'][] = '(subj' . $numTables . '.word IS NULL)';
 						}
 						else
 						{
 							$subject_query['inner_join'][] = '{db_prefix}log_search_subjects AS subj' . $numTables . ' ON (subj' . $numTables . '.id_topic = ' . ($prev_join === 0 ? 't' : 'subj' . $prev_join) . '.id_topic)';
-							$subject_query['where'][] = 'subj' . $numTables . '.word ' . (empty($modSettings['search_match_words']) ? 'LIKE {string:subject_words_' . $numTables . '_wild}' : '= {string:subject_words_' . $numTables . '}');
+							$subject_query['where'][] = 'subj' . $numTables . '.word ' . (empty($settings['search_match_words']) ? 'LIKE {string:subject_words_' . $numTables . '_wild}' : '= {string:subject_words_' . $numTables . '}');
 							$prev_join = $numTables;
 						}
 						$subject_query_params['subject_words_' . $numTables] = $subjectWord;
@@ -847,8 +847,8 @@ function Search2()
 						$count = 0;
 						foreach ($excludedPhrases as $phrase)
 						{
-							$subject_query['where'][] = 'm.subject NOT ' . (empty($modSettings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:excluded_phrases_' . $count . '}';
-							$subject_query_params['excluded_phrases_' . $count++] = empty($modSettings['search_match_words']) || $no_regexp ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
+							$subject_query['where'][] = 'm.subject NOT ' . (empty($settings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:excluded_phrases_' . $count . '}';
+							$subject_query_params['excluded_phrases_' . $count++] = empty($settings['search_match_words']) || $no_regexp ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
 						}
 					}
 
@@ -877,8 +877,8 @@ function Search2()
 							LEFT JOIN ' . implode('
 							LEFT JOIN ', $subject_query['left_join'])) . '
 						WHERE ' . implode('
-							AND ', $subject_query['where']) . (empty($modSettings['search_max_results']) ? '' : '
-						LIMIT ' . ($modSettings['search_max_results'] - $numSubjectResults)),
+							AND ', $subject_query['where']) . (empty($settings['search_max_results']) ? '' : '
+						LIMIT ' . ($settings['search_max_results'] - $numSubjectResults)),
 						array_merge($subject_query_params, array(
 							'id_search' => $_SESSION['search_cache']['id_search'],
 							'weight_age' => $weight['age'],
@@ -896,7 +896,7 @@ function Search2()
 
 					$numSubjectResults += wesql::affected_rows();
 
-					if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
+					if (!empty($settings['search_max_results']) && $numSubjectResults >= $settings['search_max_results'])
 						break;
 				}
 
@@ -1028,18 +1028,18 @@ function Search2()
 								if ($subject_query['from'] != '{db_prefix}messages AS m')
 									$subject_query['inner_join'][] = '{db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)';
 
-								$subject_query['left_join'][] = '{db_prefix}log_search_subjects AS subj' . $numTables . ' ON (subj' . $numTables . '.word ' . (empty($modSettings['search_match_words']) ? 'LIKE {string:subject_not_' . $count . '}' : '= {string:subject_not_' . $count . '}') . ' AND subj' . $numTables . '.id_topic = t.id_topic)';
-								$subject_query['params']['subject_not_' . $count] = empty($modSettings['search_match_words']) ? '%' . $subjectWord . '%' : $subjectWord;
+								$subject_query['left_join'][] = '{db_prefix}log_search_subjects AS subj' . $numTables . ' ON (subj' . $numTables . '.word ' . (empty($settings['search_match_words']) ? 'LIKE {string:subject_not_' . $count . '}' : '= {string:subject_not_' . $count . '}') . ' AND subj' . $numTables . '.id_topic = t.id_topic)';
+								$subject_query['params']['subject_not_' . $count] = empty($settings['search_match_words']) ? '%' . $subjectWord . '%' : $subjectWord;
 
 								$subject_query['where'][] = '(subj' . $numTables . '.word IS NULL)';
-								$subject_query['where'][] = 'm.body NOT ' . (empty($modSettings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:body_not_' . $count . '}';
-								$subject_query['params']['body_not_' . $count++] = empty($modSettings['search_match_words']) || $no_regexp ? '%' . strtr($subjectWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $subjectWord), '\\\'') . '[[:>:]]';
+								$subject_query['where'][] = 'm.body NOT ' . (empty($settings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:body_not_' . $count . '}';
+								$subject_query['params']['body_not_' . $count++] = empty($settings['search_match_words']) || $no_regexp ? '%' . strtr($subjectWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $subjectWord), '\\\'') . '[[:>:]]';
 							}
 							else
 							{
 								$subject_query['inner_join'][] = '{db_prefix}log_search_subjects AS subj' . $numTables . ' ON (subj' . $numTables . '.id_topic = ' . ($prev_join === 0 ? 't' : 'subj' . $prev_join) . '.id_topic)';
 								$subject_query['where'][] = 'subj' . $numTables . '.word LIKE {string:subject_like_' . $count . '}';
-								$subject_query['params']['subject_like_' . $count++] = empty($modSettings['search_match_words']) ? '%' . $subjectWord . '%' : $subjectWord;
+								$subject_query['params']['subject_like_' . $count++] = empty($settings['search_match_words']) ? '%' . $subjectWord . '%' : $subjectWord;
 								$prev_join = $numTables;
 							}
 						}
@@ -1080,9 +1080,9 @@ function Search2()
 							$count = 0;
 							foreach ($excludedPhrases as $phrase)
 							{
-								$subject_query['where'][] = 'm.subject NOT ' . (empty($modSettings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:exclude_phrase_' . $count . '}';
-								$subject_query['where'][] = 'm.body NOT ' . (empty($modSettings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:exclude_phrase_' . $count . '}';
-								$subject_query['params']['exclude_phrase_' . $count++] = empty($modSettings['search_match_words']) || $no_regexp ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
+								$subject_query['where'][] = 'm.subject NOT ' . (empty($settings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:exclude_phrase_' . $count . '}';
+								$subject_query['where'][] = 'm.body NOT ' . (empty($settings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:exclude_phrase_' . $count . '}';
+								$subject_query['params']['exclude_phrase_' . $count++] = empty($settings['search_match_words']) || $no_regexp ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
 							}
 						}
 
@@ -1104,14 +1104,14 @@ function Search2()
 								LEFT JOIN ' . implode('
 								LEFT JOIN ', $subject_query['left_join'])) . '
 							WHERE ' . implode('
-								AND ', $subject_query['where']) . (empty($modSettings['search_max_results']) ? '' : '
-							LIMIT ' . ($modSettings['search_max_results'] - $numSubjectResults)),
+								AND ', $subject_query['where']) . (empty($settings['search_max_results']) ? '' : '
+							LIMIT ' . ($settings['search_max_results'] - $numSubjectResults)),
 							$subject_query['params']
 						);
 
 						$numSubjectResults += wesql::affected_rows();
 
-						if (!empty($modSettings['search_max_results']) && $numSubjectResults >= $modSettings['search_max_results'])
+						if (!empty($settings['search_max_results']) && $numSubjectResults >= $settings['search_max_results'])
 							break;
 					}
 
@@ -1213,7 +1213,7 @@ function Search2()
 						);
 					}
 
-					if (empty($indexedResults) && empty($numSubjectResults) && !empty($modSettings['search_force_index']))
+					if (empty($indexedResults) && empty($numSubjectResults) && !empty($settings['search_force_index']))
 					{
 						$context['search_errors']['query_not_specific_enough'] = true;
 						$_REQUEST['params'] = $context['params'];
@@ -1241,10 +1241,10 @@ function Search2()
 						$where = array();
 						foreach ($words['all_words'] as $regularWord)
 						{
-							$where[] = 'm.body' . (in_array($regularWord, $excludedWords) ? ' NOT' : '') . (empty($modSettings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:all_word_body_' . $count . '}';
+							$where[] = 'm.body' . (in_array($regularWord, $excludedWords) ? ' NOT' : '') . (empty($settings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:all_word_body_' . $count . '}';
 							if (in_array($regularWord, $excludedWords))
-								$where[] = 'm.subject NOT' . (empty($modSettings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:all_word_body_' . $count . '}';
-							$main_query['parameters']['all_word_body_' . $count++] = empty($modSettings['search_match_words']) || $no_regexp ? '%' . strtr($regularWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $regularWord), '\\\'') . '[[:>:]]';
+								$where[] = 'm.subject NOT' . (empty($settings['search_match_words']) || $no_regexp ? ' LIKE ' : ' RLIKE ') . '{string:all_word_body_' . $count . '}';
+							$main_query['parameters']['all_word_body_' . $count++] = empty($settings['search_match_words']) || $no_regexp ? '%' . strtr($regularWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $regularWord), '\\\'') . '[[:>:]]';
 						}
 						if (!empty($where))
 							$orWhere[] = count($where) > 1 ? '(' . implode(' AND ', $where) . ')' : $where[0];
@@ -1304,8 +1304,8 @@ function Search2()
 							LEFT JOIN ', $main_query['left_join'])) . (!empty($main_query['where']) ? '
 						WHERE ' : '') . implode('
 							AND ', $main_query['where']) . (empty($main_query['group_by']) ? '' : '
-						GROUP BY ' . implode(', ', $main_query['group_by'])) . (empty($modSettings['search_max_results']) ? '' : '
-						LIMIT ' . $modSettings['search_max_results']),
+						GROUP BY ' . implode(', ', $main_query['group_by'])) . (empty($settings['search_max_results']) ? '' : '
+						LIMIT ' . $settings['search_max_results']),
 						$main_query['parameters']
 					);
 
@@ -1313,7 +1313,7 @@ function Search2()
 				}
 
 				// Insert subject-only matches.
-				if ($_SESSION['search_cache']['num_results'] < $modSettings['search_max_results'] && $numSubjectResults !== 0)
+				if ($_SESSION['search_cache']['num_results'] < $settings['search_max_results'] && $numSubjectResults !== 0)
 				{
 					$usedIDs = array_flip(empty($inserts) ? array() : array_keys($inserts));
 					$ignoreRequest = wesql::query('
@@ -1334,8 +1334,8 @@ function Search2()
 						FROM {db_prefix}topics AS t
 							INNER JOIN {db_prefix}' . ($createTemporary ? 'tmp_' : '') . 'log_search_topics AS lst ON (lst.id_topic = t.id_topic)'
 						. ($createTemporary ? '' : 'WHERE lst.id_search = {int:id_search}')
-						. (empty($modSettings['search_max_results']) ? '' : '
-						LIMIT ' . ($modSettings['search_max_results'] - $_SESSION['search_cache']['num_results'])),
+						. (empty($settings['search_max_results']) ? '' : '
+						LIMIT ' . ($settings['search_max_results'] - $_SESSION['search_cache']['num_results'])),
 						array(
 							'id_search' => $_SESSION['search_cache']['id_search'],
 							'weight_age' => $weight['age'],
@@ -1365,7 +1365,7 @@ function Search2()
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = lsr.id_topic)' : '') . '
 			WHERE lsr.id_search = {int:id_search}
 			ORDER BY ' . $search_params['sort'] . ' ' . $search_params['sort_dir'] . '
-			LIMIT ' . (int) $_REQUEST['start'] . ', ' . $modSettings['search_results_per_page'],
+			LIMIT ' . (int) $_REQUEST['start'] . ', ' . $settings['search_results_per_page'],
 			array(
 				'id_search' => $_SESSION['search_cache']['id_search'],
 			)
@@ -1455,7 +1455,7 @@ function Search2()
 				INNER JOIN {db_prefix}messages AS last_m ON (last_m.id_msg = t.id_last_msg)
 				LEFT JOIN {db_prefix}members AS first_mem ON (first_mem.id_member = first_m.id_member)
 				LEFT JOIN {db_prefix}members AS last_mem ON (last_mem.id_member = first_m.id_member)
-			WHERE m.id_msg IN ({array_int:message_list})' . ($modSettings['postmod_active'] ? '
+			WHERE m.id_msg IN ({array_int:message_list})' . ($settings['postmod_active'] ? '
 				AND m.approved = {int:is_approved}' : '') . '
 			ORDER BY FIND_IN_SET(m.id_msg, {string:message_list_in_set})
 			LIMIT {int:limit}',
@@ -1472,7 +1472,7 @@ function Search2()
 			$context['topics'] = array();
 
 		// If we want to know who participated in what then load this now.
-		if (!empty($modSettings['enableParticipation']) && !$user_info['is_guest'])
+		if (!empty($settings['enableParticipation']) && !$user_info['is_guest'])
 		{
 			$result = wesql::query('
 				SELECT id_topic
@@ -1493,10 +1493,10 @@ function Search2()
 	}
 
 	// Now that we know how many results to expect we can start calculating the page numbers.
-	$context['page_index'] = template_page_index($scripturl . '?action=search2;params=' . $context['params'], $_REQUEST['start'], $num_results, $modSettings['search_results_per_page'], false);
+	$context['page_index'] = template_page_index($scripturl . '?action=search2;params=' . $context['params'], $_REQUEST['start'], $num_results, $settings['search_results_per_page'], false);
 
 	// Consider the search complete!
-	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
+	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
 		cache_put_data('search_start:' . ($user_info['is_guest'] ? $user_info['ip'] : $user_info['id']), null, 90);
 
 	$context['key_words'] =& $searchArray;
@@ -1517,8 +1517,8 @@ function Search2()
 // !!! Fix this, update it, whatever... from Display.php mainly.
 function prepareSearchContext($reset = false)
 {
-	global $txt, $modSettings, $scripturl, $user_info;
-	global $memberContext, $context, $settings, $options, $messages_request;
+	global $txt, $settings, $scripturl, $user_info;
+	global $memberContext, $context, $theme, $options, $messages_request;
 	global $boards_can, $participants;
 
 	// Remember which message this is.  (ie. reply #83)
@@ -1594,7 +1594,7 @@ function prepareSearchContext($reset = false)
 
 				$message['body'] = un_htmlspecialchars(strtr($message['body'], array('&nbsp;' => ' ', '<br>' => "\n", '&#91;' => '[', '&#93;' => ']', '&#58;' => ':', '&#64;' => '@')));
 
-				if (empty($modSettings['search_method']) || $force_partial_word)
+				if (empty($settings['search_method']) || $force_partial_word)
 					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?|^)(' . $matchString . ')(.{0,' . $charLimit . '}[\s\W]|[^\s\W]{' . $charLimit . '})/isu', $message['body'], $matches);
 				else
 					preg_match_all('/([^\s\W]{' . $charLimit . '}[\s\W]|[\s\W].{0,' . $charLimit . '}?[\s\W]|^)(' . $matchString . ')([\s\W].{0,' . $charLimit . '}[\s\W]|[\s\W][^\s\W]{' . $charLimit . '})/isu', $message['body'], $matches);
@@ -1621,14 +1621,14 @@ function prepareSearchContext($reset = false)
 	$message['body'] = preg_replace('~^(?:&nbsp;)+$~', '', $message['body']);
 
 	// Sadly, we need to check the icon ain't broke.
-	if (!empty($modSettings['messageIconChecks_enable']))
+	if (!empty($settings['messageIconChecks_enable']))
 	{
 		if (!isset($context['icon_sources'][$message['first_icon']]))
-			$context['icon_sources'][$message['first_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $message['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
+			$context['icon_sources'][$message['first_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $message['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
 		if (!isset($context['icon_sources'][$message['last_icon']]))
-			$context['icon_sources'][$message['last_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $message['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
+			$context['icon_sources'][$message['last_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $message['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
 		if (!isset($context['icon_sources'][$message['icon']]))
-			$context['icon_sources'][$message['icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $message['icon'] . '.gif') ? 'images_url' : 'default_images_url';
+			$context['icon_sources'][$message['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $message['icon'] . '.gif') ? 'images_url' : 'default_images_url';
 	}
 	else
 	{
@@ -1641,13 +1641,13 @@ function prepareSearchContext($reset = false)
 	}
 
 	// Do we have quote tag enabled?
-	$quote_enabled = empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC']));
+	$quote_enabled = empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC']));
 
 	$output = array_merge($context['topics'][$message['id_msg']], array(
 		'id' => $message['id_topic'],
 		'is_pinned' => !empty($message['is_pinned']),
 		'is_locked' => !empty($message['locked']),
-		'is_poll' => $modSettings['pollMode'] == '1' && $message['id_poll'] > 0,
+		'is_poll' => $settings['pollMode'] == '1' && $message['id_poll'] > 0,
 		'posted_in' => !empty($participants[$message['id_topic']]),
 		'views' => $message['num_views'],
 		'replies' => $message['num_replies'],
@@ -1662,7 +1662,7 @@ function prepareSearchContext($reset = false)
 			'href' => $scripturl . '?topic=' . $message['id_topic'] . '.0',
 			'link' => '<a href="' . $scripturl . '?topic=' . $message['id_topic'] . '.0">' . $message['first_subject'] . '</a>',
 			'icon' => $message['first_icon'],
-			'icon_url' => $settings[$context['icon_sources'][$message['first_icon']]] . '/post/' . $message['first_icon'] . '.gif',
+			'icon_url' => $theme[$context['icon_sources'][$message['first_icon']]] . '/post/' . $message['first_icon'] . '.gif',
 			'member' => array(
 				'id' => $message['first_member_id'],
 				'name' => $message['first_member_name'],
@@ -1678,7 +1678,7 @@ function prepareSearchContext($reset = false)
 			'href' => $scripturl . '?topic=' . $message['id_topic'] . ($message['num_replies'] == 0 ? '.0' : '.msg' . $message['last_msg']) . '#msg' . $message['last_msg'],
 			'link' => '<a href="' . $scripturl . '?topic=' . $message['id_topic'] . ($message['num_replies'] == 0 ? '.0' : '.msg' . $message['last_msg']) . '#msg' . $message['last_msg'] . '">' . $message['last_subject'] . '</a>',
 			'icon' => $message['last_icon'],
-			'icon_url' => $settings[$context['icon_sources'][$message['last_icon']]] . '/post/' . $message['last_icon'] . '.gif',
+			'icon_url' => $theme[$context['icon_sources'][$message['last_icon']]] . '/post/' . $message['last_icon'] . '.gif',
 			'member' => array(
 				'id' => $message['last_member_id'],
 				'name' => $message['last_member_name'],
@@ -1748,7 +1748,7 @@ function prepareSearchContext($reset = false)
 		'alternate' => $counter % 2,
 		'member' => &$memberContext[$message['id_member']],
 		'icon' => $message['icon'],
-		'icon_url' => $settings[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
+		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'subject_highlighted' => $subject_highlighted,
 		'time' => on_timeformat($message['poster_time']),

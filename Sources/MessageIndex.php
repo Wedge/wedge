@@ -16,8 +16,8 @@ if (!defined('WEDGE'))
 
 function MessageIndex()
 {
-	global $txt, $scripturl, $board, $modSettings, $context;
-	global $options, $settings, $board_info, $user_info;
+	global $txt, $scripturl, $board, $settings, $context;
+	global $options, $theme, $board_info, $user_info;
 
 	// If this is a redirection board head off.
 	if ($board_info['redirect'])
@@ -61,9 +61,9 @@ function MessageIndex()
 	if ($board_info['type'] == 'blog')
 		$context['topics_per_page'] = 8;
 	else
-		$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
-	$context['messages_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
-	$maxindex = isset($_REQUEST['all']) && !empty($modSettings['enableAllMessages']) ? $board_info['total_topics'] : $context['topics_per_page'];
+		$context['topics_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $settings['defaultMaxTopics'];
+	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
+	$maxindex = isset($_REQUEST['all']) && !empty($settings['enableAllMessages']) ? $board_info['total_topics'] : $context['topics_per_page'];
 
 	// Right, let's only index normal stuff!
 	if (count($_GET) > 1)
@@ -104,9 +104,9 @@ function MessageIndex()
 		'num_pages' => floor(($board_info['total_topics'] - 1) / $context['topics_per_page']) + 1
 	);
 
-	if (isset($_REQUEST['all']) && !empty($modSettings['enableAllMessages']) && $maxindex > $modSettings['enableAllMessages'])
+	if (isset($_REQUEST['all']) && !empty($settings['enableAllMessages']) && $maxindex > $settings['enableAllMessages'])
 	{
-		$maxindex = $modSettings['enableAllMessages'];
+		$maxindex = $settings['enableAllMessages'];
 		$context['start'] = $_REQUEST['start'] = 0;
 	}
 
@@ -135,7 +135,7 @@ function MessageIndex()
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			array($modSettings['maxMsgID'], $user_info['id'], $board),
+			array($settings['maxMsgID'], $user_info['id'], $board),
 			array('id_member', 'id_board')
 		);
 
@@ -149,7 +149,7 @@ function MessageIndex()
 				array(
 					'current_member' => $user_info['id'],
 					'board_list' => array_keys($board_info['parent_boards']),
-					'id_msg' => $modSettings['maxMsgID'],
+					'id_msg' => $settings['maxMsgID'],
 				)
 			);
 
@@ -202,8 +202,8 @@ function MessageIndex()
 
 	// Set the variables up for the template.
 	$context['can_mark_notify'] = allowedTo('mark_notify') && !$user_info['is_guest'];
-	$context['can_post_new'] = allowedTo('post_new') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_topics'));
-	$context['can_post_poll'] = $modSettings['pollMode'] == '1' && allowedTo('poll_post') && $context['can_post_new'];
+	$context['can_post_new'] = allowedTo('post_new') || ($settings['postmod_active'] && allowedTo('post_unapproved_topics'));
+	$context['can_post_poll'] = $settings['pollMode'] == '1' && allowedTo('poll_post') && $context['can_post_new'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_approve_posts'] = allowedTo('approve_posts');
 
@@ -214,12 +214,12 @@ function MessageIndex()
 		'parent_id' => $board_info['id'],
 		'category' => 0,
 		'set_latest_post' => false,
-		'countChildPosts' => !empty($modSettings['countChildPosts']),
+		'countChildPosts' => !empty($settings['countChildPosts']),
 	);
 	$context['boards'] = getBoardIndex($boardIndexOptions);
 
 	// Nosey, nosey - who's viewing this topic?
-	if (!empty($modSettings['display_who_viewing']) && !WIRELESS)
+	if (!empty($settings['display_who_viewing']) && !WIRELESS)
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('board');
@@ -296,7 +296,7 @@ function MessageIndex()
 				INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)' : '')) . ($context['sort_by'] === 'starter' ? '
 				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)' : '') . ($context['sort_by'] === 'last_poster' ? '
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)' : '') . '
-			WHERE t.id_board = {int:current_board}' . (!$modSettings['postmod_active'] || $context['can_approve_posts'] ? '' : '
+			WHERE t.id_board = {int:current_board}' . (!$settings['postmod_active'] || $context['can_approve_posts'] ? '' : '
 				AND (t.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR t.id_member_started = {int:current_member}') . ')') . '
 			ORDER BY is_pinned' . ($fake_ascending ? '' : ' DESC') . ', ' . $_REQUEST['sort'] . ($ascending ? '' : ' DESC') . '
 			LIMIT {int:start}, {int:maxindex}',
@@ -318,7 +318,7 @@ function MessageIndex()
 	if (!$pre_query || !empty($topic_ids))
 	{
 		// For search engine effectiveness we'll link guests differently.
-		$context['pageindex_multiplier'] = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
+		$context['pageindex_multiplier'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 
 		$result = wesql::query('
 			SELECT
@@ -339,7 +339,7 @@ function MessageIndex()
 				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)' . ($user_info['is_guest'] ? '' : '
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})'). '
-			WHERE ' . ($pre_query ? 't.id_topic IN ({array_int:topic_list})' : 't.id_board = {int:current_board}') . (!$modSettings['postmod_active'] || $context['can_approve_posts'] ? '' : '
+			WHERE ' . ($pre_query ? 't.id_topic IN ({array_int:topic_list})' : 't.id_board = {int:current_board}') . (!$settings['postmod_active'] || $context['can_approve_posts'] ? '' : '
 				AND (t.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR t.id_member_started = {int:current_member}') . ')') . '
 			ORDER BY ' . ($pre_query ? 'FIND_IN_SET(t.id_topic, {string:find_set_topics})' : ('is_pinned' . ($fake_ascending ? '' : ' DESC') . ', ') . $_REQUEST['sort'] . ($ascending ? '' : ' DESC')) . '
 			LIMIT ' . ($pre_query ? '' : '{int:start}, ') . '{int:maxindex}',
@@ -358,7 +358,7 @@ function MessageIndex()
 		// Begin 'printing' the message index for current board.
 		while ($row = wesql::fetch_assoc($result))
 		{
-			if ($row['id_poll'] > 0 && $modSettings['pollMode'] == '0')
+			if ($row['id_poll'] > 0 && $settings['pollMode'] == '0')
 				continue;
 
 			if (!$pre_query)
@@ -373,7 +373,7 @@ function MessageIndex()
 				$row['first_body'] = parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']);
 
 				// Is the theme requesting previews? Better set up the last post for them too. Not likely, but hey.
-				if (!empty($settings['message_index_preview']))
+				if (!empty($theme['message_index_preview']))
 				{
 					censorText($row['last_subject']);
 					censorText($row['last_body']);
@@ -386,7 +386,7 @@ function MessageIndex()
 					$row['last_body'] = '';
 			}
 			// So it's a forum board, do they still want previews?
-			elseif (!empty($settings['message_index_preview']))
+			elseif (!empty($theme['message_index_preview']))
 			{
 				// Censor the subject and message preview.
 				censorText($row['first_subject']);
@@ -436,7 +436,7 @@ function MessageIndex()
 				$pages .= template_page_index($scripturl . '?topic=' . $row['id_topic'] . '.%1$d', $start, $row['num_replies'] + 1, $context['messages_per_page'], true, false);
 
 				// If we can use all, show all.
-				if (!empty($modSettings['enableAllMessages']) && $row['num_replies'] + 1 < $modSettings['enableAllMessages'])
+				if (!empty($settings['enableAllMessages']) && $row['num_replies'] + 1 < $settings['enableAllMessages'])
 					$pages .= ' &nbsp;<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
 				$pages .= ' &#187;';
 			}
@@ -444,12 +444,12 @@ function MessageIndex()
 				$pages = '';
 
 			// We need to check the topic icons exist...
-			if (!empty($modSettings['messageIconChecks_enable']))
+			if (!empty($settings['messageIconChecks_enable']))
 			{
 				if (!isset($context['icon_sources'][$row['first_icon']]))
-					$context['icon_sources'][$row['first_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
+					$context['icon_sources'][$row['first_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
 				if (!isset($context['icon_sources'][$row['last_icon']]))
-					$context['icon_sources'][$row['last_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
+					$context['icon_sources'][$row['last_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
 			}
 			else
 			{
@@ -476,7 +476,7 @@ function MessageIndex()
 					'subject' => $row['first_subject'],
 					'preview' => $row['first_body'],
 					'icon' => $row['first_icon'],
-					'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
+					'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0',
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['first_subject'] . '</a>'
 				),
@@ -494,16 +494,16 @@ function MessageIndex()
 					'subject' => $row['last_subject'],
 					'preview' => $row['last_body'],
 					'icon' => $row['last_icon'],
-					'icon_url' => $settings[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
+					'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
 					'href' => $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
 					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
 				),
 				'is_pinned' => !empty($row['is_pinned']),
 				'is_locked' => !empty($row['locked']),
-				'is_poll' => $modSettings['pollMode'] == '1' && $row['id_poll'] > 0,
+				'is_poll' => $settings['pollMode'] == '1' && $row['id_poll'] > 0,
 				'is_posted_in' => false,
 				'icon' => $row['first_icon'],
-				'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
+				'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
 				'subject' => $row['first_subject'],
 				'new' => $row['new_from'] <= $row['id_msg_modified'],
 				'new_from' => $row['new_from'],
@@ -523,7 +523,7 @@ function MessageIndex()
 		if ($fake_ascending)
 			$context['topics'] = array_reverse($context['topics'], true);
 
-		if (!empty($modSettings['enableParticipation']) && !$user_info['is_guest'] && !empty($topic_ids))
+		if (!empty($settings['enableParticipation']) && !$user_info['is_guest'] && !empty($topic_ids))
 		{
 			$result = wesql::query('
 				SELECT id_topic
@@ -552,9 +552,9 @@ function MessageIndex()
 		$context['can_remove'] = allowedTo('remove_any');
 		$context['can_merge'] = allowedTo('merge_any');
 		// Ignore approving own topics as it's unlikely to come up...
-		$context['can_approve'] = $modSettings['postmod_active'] && allowedTo('approve_posts') && !empty($board_info['unapproved_topics']);
+		$context['can_approve'] = $settings['postmod_active'] && allowedTo('approve_posts') && !empty($board_info['unapproved_topics']);
 		// Can we restore topics?
-		$context['can_restore'] = allowedTo('move_any') && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board;
+		$context['can_restore'] = allowedTo('move_any') && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board;
 
 		// Set permissions for all the topics.
 		foreach ($context['topics'] as $t => $topic)
@@ -625,8 +625,8 @@ function MessageIndex()
 	// Allow adding new buttons easily.
 	call_hook('messageindex_buttons');
 
-	if (empty($modSettings['display_flags']))
-		$modSettings['display_flags'] = 'none';
+	if (empty($settings['display_flags']))
+		$settings['display_flags'] = 'none';
 }
 
 ?>

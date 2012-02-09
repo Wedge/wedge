@@ -66,7 +66,7 @@ if (!defined('WEDGE'))
  */
 function Post2()
 {
-	global $board, $topic, $txt, $modSettings, $context;
+	global $board, $topic, $txt, $settings, $context;
 	global $user_info, $board_info, $options;
 
 	// Sneaking off, are we?
@@ -114,7 +114,7 @@ function Post2()
 	call_hook('post_pre_validate', array(&$post_errors));
 
 	// Wrong verification code?
-	if (!$user_info['is_admin'] && !$user_info['is_mod'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1)))
+	if (!$user_info['is_admin'] && !$user_info['is_mod'] && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || ($user_info['is_guest'] && $settings['posts_require_captcha'] == -1)))
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -167,14 +167,14 @@ function Post2()
 		$becomesApproved = true;
 		if ($topic_info['id_member_started'] != $user_info['id'])
 		{
-			if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
+			if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
 				$becomesApproved = false;
 			else
 				isAllowedTo('post_reply_any');
 		}
 		elseif (!allowedTo('post_reply_any'))
 		{
-			if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own'))
+			if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own'))
 				$becomesApproved = false;
 			else
 				isAllowedTo('post_reply_own');
@@ -257,7 +257,7 @@ function Post2()
 
 		// Do like, the permissions, for safety and stuff...
 		$becomesApproved = true;
-		if ($modSettings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
+		if ($settings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
 			$becomesApproved = false;
 		else
 			isAllowedTo('post_new');
@@ -342,7 +342,7 @@ function Post2()
 
 		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 		{
-			if ((!$modSettings['postmod_active'] || $row['approved']) && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + ($modSettings['edit_disable_time'] + 5) * 60 < time())
+			if ((!$settings['postmod_active'] || $row['approved']) && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
 			elseif ($topic_info['id_member_started'] == $user_info['id'] && !allowedTo('modify_own'))
 				isAllowedTo('modify_replies');
@@ -369,7 +369,7 @@ function Post2()
 
 		// Can they approve it?
 		$can_approve = allowedTo('approve_posts');
-		$becomesApproved = $modSettings['postmod_active'] ? ($can_approve && !$row['approved'] ? (!empty($_REQUEST['approve']) ? 1 : 0) : $row['approved']) : 1;
+		$becomesApproved = $settings['postmod_active'] ? ($can_approve && !$row['approved'] ? (!empty($_REQUEST['approve']) ? 1 : 0) : $row['approved']) : 1;
 		$approve_has_changed = $row['approved'] != $becomesApproved;
 
 		if (!allowedTo('moderate_forum') || !$posterIsGuest)
@@ -390,7 +390,7 @@ function Post2()
 		if (westr::strlen($_POST['guestname']) > 25)
 			$post_errors[] = 'long_name';
 
-		if (empty($modSettings['guest_post_no_email']))
+		if (empty($settings['guest_post_no_email']))
 		{
 			// Only check if they changed it!
 			if ((!isset($row) || $row['poster_email'] != $_POST['email']) && !allowedTo('moderate_forum'))
@@ -420,8 +420,8 @@ function Post2()
 		$post_errors[] = 'no_subject';
 	if (empty($_POST['message']) || westr::htmltrim($_POST['message']) === '')
 		$post_errors[] = 'no_message';
-	elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_POST['message']) > $modSettings['max_messageLength'])
-		$post_errors[] = array('long_message', $modSettings['max_messageLength']);
+	elseif (!empty($settings['max_messageLength']) && westr::strlen($_POST['message']) > $settings['max_messageLength'])
+		$post_errors[] = array('long_message', $settings['max_messageLength']);
 	else
 	{
 		if ($user_info['is_guest'])
@@ -437,7 +437,7 @@ function Post2()
 	}
 
 	// Validate the poll...
-	if (isset($_REQUEST['poll']) && $modSettings['pollMode'] == '1')
+	if (isset($_REQUEST['poll']) && $settings['pollMode'] == '1')
 	{
 		if (!empty($topic) && !isset($_REQUEST['msg']))
 			fatal_lang_error('no_access', false);
@@ -557,7 +557,7 @@ function Post2()
 	}
 
 	// Check if they are trying to delete any current attachments....
-	if (isset($_REQUEST['msg'], $_POST['attach_del']) && (allowedTo('post_attachment') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments'))))
+	if (isset($_REQUEST['msg'], $_POST['attach_del']) && (allowedTo('post_attachment') || ($settings['postmod_active'] && allowedTo('post_unapproved_attachments'))))
 	{
 		$del_temp = array();
 		foreach ($_POST['attach_del'] as $i => $dummy)
@@ -576,20 +576,20 @@ function Post2()
 	if (isset($_FILES['attachment']['name']) || (!empty($_SESSION['temp_attachments']) && empty($_POST['from_qr'])))
 	{
 		// Verify they can post them!
-		if (!$modSettings['postmod_active'] || !allowedTo('post_unapproved_attachments'))
+		if (!$settings['postmod_active'] || !allowedTo('post_unapproved_attachments'))
 			isAllowedTo('post_attachment');
 
 		// Make sure we're uploading to the right place.
-		if (!empty($modSettings['currentAttachmentUploadDir']))
+		if (!empty($settings['currentAttachmentUploadDir']))
 		{
-			if (!is_array($modSettings['attachmentUploadDir']))
-				$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+			if (!is_array($settings['attachmentUploadDir']))
+				$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
 
 			// The current directory, of course!
-			$current_attach_dir = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
+			$current_attach_dir = $settings['attachmentUploadDir'][$settings['currentAttachmentUploadDir']];
 		}
 		else
-			$current_attach_dir = $modSettings['attachmentUploadDir'];
+			$current_attach_dir = $settings['attachmentUploadDir'];
 
 		// If this isn't a new post, check the current attachments.
 		if (isset($_REQUEST['msg']))
@@ -645,18 +645,18 @@ function Post2()
 
 			// Have we reached the maximum number of files we are allowed?
 			$quantity++;
-			if (!empty($modSettings['attachmentNumPerPostLimit']) && $quantity > $modSettings['attachmentNumPerPostLimit'])
+			if (!empty($settings['attachmentNumPerPostLimit']) && $quantity > $settings['attachmentNumPerPostLimit'])
 			{
 				checkSubmitOnce('free');
-				fatal_lang_error('attachments_limit_per_post', false, array($modSettings['attachmentNumPerPostLimit']));
+				fatal_lang_error('attachments_limit_per_post', false, array($settings['attachmentNumPerPostLimit']));
 			}
 
 			// Check the total upload size for this post...
 			$total_size += $_FILES['attachment']['size'][$n];
-			if (!empty($modSettings['attachmentPostLimit']) && $total_size > $modSettings['attachmentPostLimit'] * 1024)
+			if (!empty($settings['attachmentPostLimit']) && $total_size > $settings['attachmentPostLimit'] * 1024)
 			{
 				checkSubmitOnce('free');
-				fatal_lang_error('file_too_big', false, array($modSettings['attachmentPostLimit']));
+				fatal_lang_error('file_too_big', false, array($settings['attachmentPostLimit']));
 			}
 
 			$attachmentOptions = array(
@@ -665,7 +665,7 @@ function Post2()
 				'name' => $_FILES['attachment']['name'][$n],
 				'tmp_name' => $_FILES['attachment']['tmp_name'][$n],
 				'size' => $_FILES['attachment']['size'][$n],
-				'approved' => !$modSettings['postmod_active'] || allowedTo('post_attachment'),
+				'approved' => !$settings['postmod_active'] || allowedTo('post_attachment'),
 			);
 
 			if (createAttachment($attachmentOptions))
@@ -684,12 +684,12 @@ function Post2()
 				if (in_array('too_large', $attachmentOptions['errors']))
 				{
 					checkSubmitOnce('free');
-					fatal_lang_error('file_too_big', false, array($modSettings['attachmentSizeLimit']));
+					fatal_lang_error('file_too_big', false, array($settings['attachmentSizeLimit']));
 				}
 				if (in_array('bad_extension', $attachmentOptions['errors']))
 				{
 					checkSubmitOnce('free');
-					fatal_error($attachmentOptions['name'] . '.<br>' . $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.', false);
+					fatal_error($attachmentOptions['name'] . '.<br>' . $txt['cant_upload_type'] . ' ' . $settings['attachmentExtensions'] . '.', false);
 				}
 				if (in_array('directory_full', $attachmentOptions['errors']))
 				{
@@ -781,7 +781,7 @@ function Post2()
 		'lock_mode' => isset($_POST['lock']) ? (int) $_POST['lock'] : null,
 		'pin_mode' => isset($_POST['pin']) ? (int) $_POST['pin'] : null,
 		'mark_as_read' => true,
-		'is_approved' => !$modSettings['postmod_active'] || empty($topic) || !empty($board_info['cur_topic_approved']),
+		'is_approved' => !$settings['postmod_active'] || empty($topic) || !empty($board_info['cur_topic_approved']),
 	);
 	$posterOptions = array(
 		'id' => $user_info['id'],
@@ -794,7 +794,7 @@ function Post2()
 	if (!empty($_REQUEST['msg']))
 	{
 		// Have admins allowed people to hide their screwups?
-		if (time() - $row['poster_time'] > $modSettings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
+		if (time() - $row['poster_time'] > $settings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
 		{
 			$msgOptions['modify_time'] = time();
 			$msgOptions['modify_name'] = $user_info['name'];
@@ -827,7 +827,7 @@ function Post2()
 			array(
 				'current_member' => $user_info['id'],
 				'board_list' => empty($_REQUEST['goback']) ? array_keys($board_info['parent_boards']) : array_merge(array_keys($board_info['parent_boards']), array($board)),
-				'id_msg' => $modSettings['maxMsgID'],
+				'id_msg' => $settings['maxMsgID'],
 			)
 		);
 	}
@@ -938,7 +938,7 @@ function Post2()
 function notifyMembersBoard(&$topicData)
 {
 	global $txt, $scripturl, $language, $user_info;
-	global $modSettings, $board, $context;
+	global $settings, $board, $context;
 
 	loadSource('Subs-Post');
 
@@ -1021,7 +1021,7 @@ function notifyMembersBoard(&$topicData)
 				continue;
 		}
 
-		$langloaded = loadLanguage('EmailTemplates', empty($rowmember['lngfile']) || empty($modSettings['userLanguage']) ? $language : $rowmember['lngfile'], false);
+		$langloaded = loadLanguage('EmailTemplates', empty($rowmember['lngfile']) || empty($settings['userLanguage']) ? $language : $rowmember['lngfile'], false);
 
 		// Now loop through all the notifications to send for this board.
 		if (empty($boards[$rowmember['id_board']]))
@@ -1036,7 +1036,7 @@ function notifyMembersBoard(&$topicData)
 				continue;
 
 			// Setup the string for adding the body to the message, if a user wants it.
-			$send_body = empty($modSettings['disallow_sendBody']) && !empty($rowmember['notify_send_body']);
+			$send_body = empty($settings['disallow_sendBody']) && !empty($rowmember['notify_send_body']);
 
 			$replacements = array(
 				'TOPICSUBJECT' => $topicData[$key]['subject'],

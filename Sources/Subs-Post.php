@@ -127,10 +127,10 @@ if (!defined('WEDGE'))
 // Send off an email.
 function sendmail($to, $subject, $message, $from = null, $message_id = null, $send_html = false, $priority = 3, $hotmail_fix = null, $is_private = false)
 {
-	global $webmaster_email, $context, $modSettings, $txt, $scripturl;
+	global $webmaster_email, $context, $settings, $txt, $scripturl;
 
 	// Use sendmail if it's set or if no SMTP server is set.
-	$use_sendmail = empty($modSettings['mail_type']) || $modSettings['smtp_host'] == '';
+	$use_sendmail = empty($settings['mail_type']) || $settings['smtp_host'] == '';
 
 	// Line breaks need to be \r\n only in windows or for SMTP.
 	// ($context['server']['is_windows'] isn't always loaded at this point.)
@@ -185,13 +185,13 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	list (, $subject) = mimespecialchars($subject, true, $hotmail_fix, $line_break);
 
 	// Construct the mail headers...
-	$headers = 'From: "' . $from_name . '" <' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . '>' . $line_break;
+	$headers = 'From: "' . $from_name . '" <' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . '>' . $line_break;
 	$headers .= $from !== null ? 'Reply-To: "' . $from_name . '" <' . $from . '>' . $line_break : '';
-	$headers .= 'Return-Path: ' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . $line_break;
+	$headers .= 'Return-Path: ' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . $line_break;
 	$headers .= 'Date: ' . gmdate('D, d M Y H:i:s') . ' -0000' . $line_break;
 
-	if ($message_id !== null && empty($modSettings['mail_no_message_id']))
-		$headers .= 'Message-ID: <' . md5($scripturl . microtime()) . '-' . $message_id . strstr(empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from'], '@') . '>' . $line_break;
+	if ($message_id !== null && empty($settings['mail_no_message_id']))
+		$headers .= 'Message-ID: <' . md5($scripturl . microtime()) . '-' . $message_id . strstr(empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from'], '@') . '>' . $line_break;
 	$headers .= 'X-Mailer: Wedge' . $line_break;
 
 	// Pass this to the hook before we start modifying the output -- it'll make it easier later.
@@ -245,13 +245,13 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	}
 
 	// Are we using the mail queue, if so this is where we butt in...
-	if (!empty($modSettings['mail_queue']) && $priority != 0)
+	if (!empty($settings['mail_queue']) && $priority != 0)
 		return AddMailQueue(false, $to_array, $subject, $message, $headers, $send_html, $priority, $is_private);
 
 	// If it's a priority mail, send it now - note though that this should NOT be used for sending many at once.
-	elseif (!empty($modSettings['mail_queue']) && !empty($modSettings['mail_limit']))
+	elseif (!empty($settings['mail_queue']) && !empty($settings['mail_limit']))
 	{
-		list ($last_mail_time, $mails_this_minute) = @explode('|', $modSettings['mail_recent']);
+		list ($last_mail_time, $mails_this_minute) = @explode('|', $settings['mail_recent']);
 		if (empty($mails_this_minute) || time() > $last_mail_time + 60)
 			$new_queue_stat = time() . '|' . 1;
 		else
@@ -264,7 +264,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	if ($use_sendmail)
 	{
 		$subject = strtr($subject, array("\r" => '', "\n" => ''));
-		if (!empty($modSettings['mail_strip_carriage']))
+		if (!empty($settings['mail_strip_carriage']))
 		{
 			$message = strtr($message, array("\r" => ''));
 			$headers = strtr($headers, array("\r" => ''));
@@ -294,7 +294,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 // Add an email to the mail queue.
 function AddMailQueue($flush = false, $to_array = array(), $subject = '', $message = '', $headers = '', $send_html = false, $priority = 3, $is_private = false)
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	static $cur_insert = array();
 	static $cur_insert_len = 0;
@@ -385,7 +385,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 // Send off a personal message.
 function sendpm($recipients, $subject, $message, $store_outbox = false, $from = null, $pm_head = 0)
 {
-	global $context, $scripturl, $txt, $user_info, $language, $modSettings;
+	global $context, $scripturl, $txt, $user_info, $language, $settings;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
@@ -545,14 +545,14 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 	wesql::free_result($request);
 
-	if (empty($modSettings['permission_enable_deny']))
+	if (empty($settings['permission_enable_deny']))
 		$disallowed_groups = array();
 
 	$request = wesql::query('
 		SELECT
 			member_name, real_name, id_member, email_address, lngfile,
 			pm_email_notify, instant_messages,' . (allowedTo('moderate_forum') ? ' 0' : '
-			(pm_receive_from = {int:admins_only}' . (empty($modSettings['enable_buddylist']) ? '' : ' OR
+			(pm_receive_from = {int:admins_only}' . (empty($settings['enable_buddylist']) ? '' : ' OR
 			(pm_receive_from = {int:buddies_only} AND FIND_IN_SET({string:from_id}, buddy_list) = 0) OR
 			(pm_receive_from = {int:not_on_ignore_list} AND FIND_IN_SET({string:from_id}, pm_ignore_list) != 0)') . ')') . ' AS ignored,
 			FIND_IN_SET({string:from_id}, buddy_list) != 0 AS is_buddy, is_activated,
@@ -617,8 +617,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		}
 
 		// Send a notification, if enabled - taking the buddy list into account.
-		if (!empty($row['email_address']) && ($row['pm_email_notify'] == 1 || ($row['pm_email_notify'] > 1 && (!empty($modSettings['enable_buddylist']) && $row['is_buddy']))) && $row['is_activated'] == 1)
-			$notifications[empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']][] = $row['email_address'];
+		if (!empty($row['email_address']) && ($row['pm_email_notify'] == 1 || ($row['pm_email_notify'] > 1 && (!empty($settings['enable_buddylist']) && $row['is_buddy']))) && $row['is_activated'] == 1)
+			$notifications[empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']][] = $row['email_address'];
 
 		$log['sent'][$row['id_member']] = sprintf(isset($txt['pm_successfully_sent']) ? $txt['pm_successfully_sent'] : '', $row['real_name']);
 	}
@@ -792,24 +792,24 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 // Send an email via SMTP.
 function smtp_mail($mail_to_array, $subject, $message, $headers)
 {
-	global $modSettings, $webmaster_email, $txt;
+	global $settings, $webmaster_email, $txt;
 
-	$modSettings['smtp_host'] = trim($modSettings['smtp_host']);
+	$settings['smtp_host'] = trim($settings['smtp_host']);
 
 	// Try POP3 before SMTP?
 	// !!! There's no interface for this yet.
-	if ($modSettings['mail_type'] == 2 && $modSettings['smtp_username'] != '' && $modSettings['smtp_password'] != '')
+	if ($settings['mail_type'] == 2 && $settings['smtp_username'] != '' && $settings['smtp_password'] != '')
 	{
-		$socket = fsockopen($modSettings['smtp_host'], 110, $errno, $errstr, 2);
-		if (!$socket && (substr($modSettings['smtp_host'], 0, 5) == 'smtp.' || substr($modSettings['smtp_host'], 0, 11) == 'ssl://smtp.'))
-			$socket = fsockopen(strtr($modSettings['smtp_host'], array('smtp.' => 'pop.')), 110, $errno, $errstr, 2);
+		$socket = fsockopen($settings['smtp_host'], 110, $errno, $errstr, 2);
+		if (!$socket && (substr($settings['smtp_host'], 0, 5) == 'smtp.' || substr($settings['smtp_host'], 0, 11) == 'ssl://smtp.'))
+			$socket = fsockopen(strtr($settings['smtp_host'], array('smtp.' => 'pop.')), 110, $errno, $errstr, 2);
 
 		if ($socket)
 		{
 			fgets($socket, 256);
-			fputs($socket, 'USER ' . $modSettings['smtp_username'] . "\r\n");
+			fputs($socket, 'USER ' . $settings['smtp_username'] . "\r\n");
 			fgets($socket, 256);
-			fputs($socket, 'PASS ' . base64_decode($modSettings['smtp_password']) . "\r\n");
+			fputs($socket, 'PASS ' . base64_decode($settings['smtp_password']) . "\r\n");
 			fgets($socket, 256);
 			fputs($socket, 'QUIT' . "\r\n");
 
@@ -818,12 +818,12 @@ function smtp_mail($mail_to_array, $subject, $message, $headers)
 	}
 
 	// Try to connect to the SMTP server... if it doesn't exist, only wait three seconds.
-	if (!$socket = fsockopen($modSettings['smtp_host'], empty($modSettings['smtp_port']) ? 25 : $modSettings['smtp_port'], $errno, $errstr, 3))
+	if (!$socket = fsockopen($settings['smtp_host'], empty($settings['smtp_port']) ? 25 : $settings['smtp_port'], $errno, $errstr, 3))
 	{
 		// Maybe we can still save this?  The port might be wrong.
-		if (substr($modSettings['smtp_host'], 0, 4) == 'ssl:' && (empty($modSettings['smtp_port']) || $modSettings['smtp_port'] == 25))
+		if (substr($settings['smtp_host'], 0, 4) == 'ssl:' && (empty($settings['smtp_port']) || $settings['smtp_port'] == 25))
 		{
-			if ($socket = fsockopen($modSettings['smtp_host'], 465, $errno, $errstr, 3))
+			if ($socket = fsockopen($settings['smtp_host'], 465, $errno, $errstr, 3))
 				log_error($txt['smtp_port_ssl']);
 		}
 
@@ -839,29 +839,29 @@ function smtp_mail($mail_to_array, $subject, $message, $headers)
 	if (!server_parse(null, $socket, '220'))
 		return false;
 
-	if ($modSettings['mail_type'] == 1 && $modSettings['smtp_username'] != '' && $modSettings['smtp_password'] != '')
+	if ($settings['mail_type'] == 1 && $settings['smtp_username'] != '' && $settings['smtp_password'] != '')
 	{
 		// !!! These should send the CURRENT server's name, not the mail server's!
 
 		// EHLO could be understood to mean encrypted hello...
-		if (server_parse('EHLO ' . $modSettings['smtp_host'], $socket, null) == '250')
+		if (server_parse('EHLO ' . $settings['smtp_host'], $socket, null) == '250')
 		{
 			if (!server_parse('AUTH LOGIN', $socket, '334'))
 				return false;
 			// Send the username and password, encoded.
-			if (!server_parse(base64_encode($modSettings['smtp_username']), $socket, '334'))
+			if (!server_parse(base64_encode($settings['smtp_username']), $socket, '334'))
 				return false;
 			// The password is already encoded ;)
-			if (!server_parse($modSettings['smtp_password'], $socket, '235'))
+			if (!server_parse($settings['smtp_password'], $socket, '235'))
 				return false;
 		}
-		elseif (!server_parse('HELO ' . $modSettings['smtp_host'], $socket, '250'))
+		elseif (!server_parse('HELO ' . $settings['smtp_host'], $socket, '250'))
 			return false;
 	}
 	else
 	{
 		// Just say "helo".
-		if (!server_parse('HELO ' . $modSettings['smtp_host'], $socket, '250'))
+		if (!server_parse('HELO ' . $settings['smtp_host'], $socket, '250'))
 			return false;
 	}
 
@@ -880,7 +880,7 @@ function smtp_mail($mail_to_array, $subject, $message, $headers)
 		}
 
 		// From, to, and then start the data...
-		if (!server_parse('MAIL FROM: <' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . '>', $socket, '250'))
+		if (!server_parse('MAIL FROM: <' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . '>', $socket, '250'))
 			return false;
 		if (!server_parse('RCPT TO: <' . $mail_to . '>', $socket, '250'))
 			return false;
@@ -942,7 +942,7 @@ function server_parse($message, $socket, $response)
 function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
 {
 	global $txt, $scripturl, $language, $user_info;
-	global $modSettings, $context;
+	global $settings, $context;
 
 	// Can't do it if there's no topics.
 	if (empty($topics))
@@ -1060,7 +1060,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 				continue;
 		}
 
-		$needed_language = empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'];
+		$needed_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
 		if (empty($current_language) || $current_language != $needed_language)
 			$current_language = loadLanguage('Post', $needed_language, false);
 
@@ -1075,7 +1075,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		if ($type == 'remove')
 			unset($replacements['TOPICLINK'], $replacements['UNSUBSCRIBELINK']);
 		// Do they want the body of the message sent too?
-		if (!empty($row['notify_send_body']) && $type == 'reply' && empty($modSettings['disallow_sendBody']))
+		if (!empty($row['notify_send_body']) && $type == 'reply' && empty($settings['disallow_sendBody']))
 		{
 			$message_type .= '_body';
 			$replacements['MESSAGE'] = $topicData[$row['id_topic']]['body'];
@@ -1136,7 +1136,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 // - Mandatory parameters are set.
 function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $txt, $modSettings, $context;
+	global $user_info, $txt, $settings, $context;
 
 	// Set optional parameters to the default value.
 	$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
@@ -1152,7 +1152,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$posterOptions['ip'] = empty($posterOptions['ip']) ? $user_info['ip'] : $posterOptions['ip'];
 
 	// We need to know if the topic is approved. If we're told that's great - if not find out.
-	if (!$modSettings['postmod_active'])
+	if (!$settings['postmod_active'])
 		$topicOptions['is_approved'] = true;
 	elseif (!empty($topicOptions['id']) && !isset($topicOptions['is_approved']))
 	{
@@ -1222,7 +1222,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		'{db_prefix}messages',
 		array(
 			'id_board' => 'int', 'id_topic' => 'int', 'id_member' => 'int', 'subject' => 'string-255', 'id_parent' => 'int',
-			'body' => (!empty($modSettings['max_messageLength']) && $modSettings['max_messageLength'] > 65534 ? 'string-' . $modSettings['max_messageLength'] : 'string-65534'),
+			'body' => (!empty($settings['max_messageLength']) && $settings['max_messageLength'] > 65534 ? 'string-' . $settings['max_messageLength'] : 'string-65534'),
 			'poster_name' => 'string-255', 'poster_email' => 'string-255', 'poster_time' => 'int', 'poster_ip' => 'int',
 			'smileys_enabled' => 'int', 'modified_name' => 'string', 'icon' => 'string-16', 'approved' => 'int',
 		),
@@ -1330,7 +1330,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		trackStats(array('posts' => '+'));
 
 		// Merging a double post...
-		if (!empty($modSettings['merge_post_auto']) && !($user_info['is_admin'] && empty($modSettings['merge_post_admin_double_post'])))
+		if (!empty($settings['merge_post_auto']) && !($user_info['is_admin'] && empty($settings['merge_post_admin_double_post'])))
 		{
 			$_REQUEST['msgid'] = $msgOptions['id'];
 			$_REQUEST['pid'] = $msgOptions['id'];
@@ -1418,9 +1418,9 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	}
 
 	// If there's a custom search index, it needs updating...
-	if (!empty($modSettings['search_custom_index_config']))
+	if (!empty($settings['search_custom_index_config']))
 	{
-		$customIndexSettings = unserialize($modSettings['search_custom_index_config']);
+		$customIndexSettings = unserialize($settings['search_custom_index_config']);
 
 		$inserts = array();
 		foreach (text2words($msgOptions['body'], $customIndexSettings['bytes_per_word'], true) as $word)
@@ -1471,23 +1471,23 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 // !!! @todo: replace with Media Gallery
 function createAttachment(&$attachmentOptions)
 {
-	global $modSettings, $context;
+	global $settings, $context;
 
 	loadSource('Subs-Graphics');
 
 	// We need to know where this thing is going.
-	if (!empty($modSettings['currentAttachmentUploadDir']))
+	if (!empty($settings['currentAttachmentUploadDir']))
 	{
-		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+		if (!is_array($settings['attachmentUploadDir']))
+			$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
 
 		// Just use the current path for temp files.
-		$attach_dir = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
-		$id_folder = $modSettings['currentAttachmentUploadDir'];
+		$attach_dir = $settings['attachmentUploadDir'][$settings['currentAttachmentUploadDir']];
+		$id_folder = $settings['currentAttachmentUploadDir'];
 	}
 	else
 	{
-		$attach_dir = $modSettings['attachmentUploadDir'];
+		$attach_dir = $settings['attachmentUploadDir'];
 		$id_folder = 1;
 	}
 
@@ -1545,12 +1545,12 @@ function createAttachment(&$attachmentOptions)
 		$attachmentOptions['file_hash'] = getAttachmentFilename($attachmentOptions['name'], false, null, true);
 
 	// Is the file too big?
-	if (!empty($modSettings['attachmentSizeLimit']) && $attachmentOptions['size'] > $modSettings['attachmentSizeLimit'] * 1024)
+	if (!empty($settings['attachmentSizeLimit']) && $attachmentOptions['size'] > $settings['attachmentSizeLimit'] * 1024)
 		$attachmentOptions['errors'][] = 'too_large';
 
-	if (!empty($modSettings['attachmentCheckExtensions']))
+	if (!empty($settings['attachmentCheckExtensions']))
 	{
-		$allowed = explode(',', strtolower($modSettings['attachmentExtensions']));
+		$allowed = explode(',', strtolower($settings['attachmentExtensions']));
 		foreach ($allowed as $k => $dummy)
 			$allowed[$k] = trim($dummy);
 
@@ -1558,7 +1558,7 @@ function createAttachment(&$attachmentOptions)
 			$attachmentOptions['errors'][] = 'bad_extension';
 	}
 
-	if (!empty($modSettings['attachmentDirSizeLimit']))
+	if (!empty($settings['attachmentDirSizeLimit']))
 	{
 		// Make sure the directory isn't full.
 		$dirSize = 0;
@@ -1580,10 +1580,10 @@ function createAttachment(&$attachmentOptions)
 		}
 
 		// Too big!  Maybe you could zip it or something...
-		if ($attachmentOptions['size'] + $dirSize > $modSettings['attachmentDirSizeLimit'] * 1024)
+		if ($attachmentOptions['size'] + $dirSize > $settings['attachmentDirSizeLimit'] * 1024)
 			$attachmentOptions['errors'][] = 'directory_full';
 		// Soon to be too big - warn the admins...
-		elseif (!isset($modSettings['attachment_full_notified']) && $modSettings['attachmentDirSizeLimit'] > 4000 && $attachmentOptions['size'] + $dirSize > ($modSettings['attachmentDirSizeLimit'] - 2000) * 1024)
+		elseif (!isset($settings['attachment_full_notified']) && $settings['attachmentDirSizeLimit'] > 4000 && $attachmentOptions['size'] + $dirSize > ($settings['attachmentDirSizeLimit'] - 2000) * 1024)
 		{
 			loadSource('Subs-Admin');
 			emailAdmins('admin_attachments_full');
@@ -1592,7 +1592,7 @@ function createAttachment(&$attachmentOptions)
 	}
 
 	// Check if the file already exists.... (for those who do not encrypt their filenames...)
-	if (empty($modSettings['attachmentEncryptFilenames']))
+	if (empty($settings['attachmentEncryptFilenames']))
 	{
 		// Make sure they aren't trying to upload a nasty file.
 		$disabledFiles = array('con', 'com1', 'com2', 'com3', 'com4', 'prn', 'aux', 'lpt1', '.htaccess', 'index.php');
@@ -1706,10 +1706,10 @@ function createAttachment(&$attachmentOptions)
 	// Do we have an image? If yes, we need to check it out!
 	if (isset($validImageTypes[$size[2]]))
 	{
-		if (!checkImageContents($attachmentOptions['destination'], !empty($modSettings['attachment_image_paranoid'])))
+		if (!checkImageContents($attachmentOptions['destination'], !empty($settings['attachment_image_paranoid'])))
 		{
 			// It's bad. Last chance, maybe we can re-encode it?
-			if (empty($modSettings['attachment_image_reencode']) || (!reencodeImage($attachmentOptions['destination'], $size[2])))
+			if (empty($settings['attachment_image_reencode']) || (!reencodeImage($attachmentOptions['destination'], $size[2])))
 			{
 				// Nothing to do: not allowed or not successful re-encoding it.
 				loadSource('ManageAttachments');
@@ -1752,9 +1752,9 @@ function createAttachment(&$attachmentOptions)
 		return true;
 
 	// Like thumbnails, do we?
-	if (!empty($modSettings['attachmentThumbnails']) && !empty($modSettings['attachmentThumbWidth']) && !empty($modSettings['attachmentThumbHeight']) && ($attachmentOptions['width'] > $modSettings['attachmentThumbWidth'] || $attachmentOptions['height'] > $modSettings['attachmentThumbHeight']))
+	if (!empty($settings['attachmentThumbnails']) && !empty($settings['attachmentThumbWidth']) && !empty($settings['attachmentThumbHeight']) && ($attachmentOptions['width'] > $settings['attachmentThumbWidth'] || $attachmentOptions['height'] > $settings['attachmentThumbHeight']))
 	{
-		if (createThumbnail($attachmentOptions['destination'], $modSettings['attachmentThumbWidth'], $modSettings['attachmentThumbHeight']))
+		if (createThumbnail($attachmentOptions['destination'], $settings['attachmentThumbWidth'], $settings['attachmentThumbHeight']))
 		{
 			// Figure out how big we actually made it.
 			$size = @getimagesize($attachmentOptions['destination'] . '_thumb');
@@ -1810,7 +1810,7 @@ function createAttachment(&$attachmentOptions)
 // !!!
 function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $modSettings, $context;
+	global $user_info, $settings, $context;
 
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
@@ -1833,7 +1833,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		$messages_columns['body'] = $msgOptions['body'];
 
-		if (!empty($modSettings['search_custom_index_config']))
+		if (!empty($settings['search_custom_index_config']))
 		{
 			$request = wesql::query('
 				SELECT body
@@ -1851,7 +1851,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		$messages_columns['modified_time'] = $msgOptions['modify_time'];
 		$messages_columns['modified_name'] = $msgOptions['modify_name'];
-		$messages_columns['id_msg_modified'] = $modSettings['maxMsgID'];
+		$messages_columns['id_msg_modified'] = $settings['maxMsgID'];
 	}
 	if (isset($msgOptions['smileys_enabled']))
 		$messages_columns['smileys_enabled'] = empty($msgOptions['smileys_enabled']) ? 0 : 1;
@@ -1910,7 +1910,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				AND id_topic = {int:id_topic}',
 			array(
 				'current_member' => $user_info['id'],
-				'id_msg' => $modSettings['maxMsgID'],
+				'id_msg' => $settings['maxMsgID'],
 				'id_topic' => $topicOptions['id'],
 			)
 		);
@@ -1922,18 +1922,18 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			wesql::insert('ignore',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-				array($topicOptions['id'], $user_info['id'], $modSettings['maxMsgID']),
+				array($topicOptions['id'], $user_info['id'], $settings['maxMsgID']),
 				array('id_topic', 'id_member')
 			);
 		}
 	}
 
 	// If there's a custom search index, it needs to be modified...
-	if (isset($msgOptions['body']) && !empty($modSettings['search_custom_index_config']))
+	if (isset($msgOptions['body']) && !empty($settings['search_custom_index_config']))
 	{
-		$customIndexSettings = unserialize($modSettings['search_custom_index_config']);
+		$customIndexSettings = unserialize($settings['search_custom_index_config']);
 
-		$stopwords = empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
+		$stopwords = empty($settings['search_stopwords']) ? array() : explode(',', $settings['search_stopwords']);
 		$old_index = text2words($old_body, $customIndexSettings['bytes_per_word'], true);
 		$new_index = text2words($msgOptions['body'], $customIndexSettings['bytes_per_word'], true);
 
@@ -1988,7 +1988,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	}
 
 	// Finally, if we are setting the approved state we need to do much more work :(
-	if ($modSettings['postmod_active'] && isset($msgOptions['approved']))
+	if ($settings['postmod_active'] && isset($msgOptions['approved']))
 		approvePosts($msgOptions['id'], $msgOptions['approved']);
 
 	// Have fun with this one.
@@ -2249,7 +2249,7 @@ function approveTopics($topics, $approve = true)
 function sendApprovalNotifications(&$topicData)
 {
 	global $txt, $scripturl, $language, $user_info;
-	global $modSettings, $context;
+	global $settings, $context;
 
 	// Clean up the data...
 	if (!is_array($topicData) || empty($topicData))
@@ -2316,7 +2316,7 @@ function sendApprovalNotifications(&$topicData)
 				continue;
 		}
 
-		$needed_language = empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'];
+		$needed_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
 		if (empty($current_language) || $current_language != $needed_language)
 			$current_language = loadLanguage('Post', $needed_language, false);
 
@@ -2333,7 +2333,7 @@ function sendApprovalNotifications(&$topicData)
 
 			$message_type = 'notification_reply';
 			// Do they want the body of the message sent too?
-			if (!empty($row['notify_send_body']) && empty($modSettings['disallow_sendBody']))
+			if (!empty($row['notify_send_body']) && empty($settings['disallow_sendBody']))
 			{
 				$message_type .= '_body';
 				$replacements['BODY'] = $topicData[$row['id_topic']]['body'];
@@ -2375,7 +2375,7 @@ function sendApprovalNotifications(&$topicData)
 // Update the last message in a board, and its parents.
 function updateLastMessages($setboards, $id_msg = 0)
 {
-	global $board_info, $board, $modSettings;
+	global $board_info, $board, $settings;
 
 	// Please - let's be sane.
 	if (empty($setboards))
@@ -2502,10 +2502,10 @@ function updateLastMessages($setboards, $id_msg = 0)
 // This simple function gets a list of all administrators and sends them an email to let them know a new member has joined.
 function adminNotify($type, $memberID, $member_name = null)
 {
-	global $txt, $modSettings, $language, $scripturl, $user_info, $context;
+	global $txt, $settings, $language, $scripturl, $user_info, $context;
 
 	// If the setting isn't enabled then just exit.
-	if (empty($modSettings['notify_new_registration']))
+	if (empty($settings['notify_new_registration']))
 		return;
 
 	if ($member_name == null)
@@ -2576,7 +2576,7 @@ function adminNotify($type, $memberID, $member_name = null)
 			$emailtype .= '_approval';
 		}
 
-		$emaildata = loadEmailTemplate($emailtype, $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate($emailtype, $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
 
 		// And do the actual sending...
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
@@ -2589,7 +2589,7 @@ function adminNotify($type, $memberID, $member_name = null)
 
 function loadEmailTemplate($template, $replacements = array(), $lang = '', $loadLang = true)
 {
-	global $txt, $mbname, $scripturl, $settings, $user_info, $context;
+	global $txt, $mbname, $scripturl, $theme, $user_info, $context;
 
 	// First things first, load up the email templates language file, if we need to.
 	if ($loadLang)
@@ -2607,9 +2607,9 @@ function loadEmailTemplate($template, $replacements = array(), $lang = '', $load
 	$replacements += array(
 		'FORUMNAME' => $mbname,
 		'SCRIPTURL' => $scripturl,
-		'THEMEURL' => $settings['theme_url'],
-		'IMAGESURL' => $settings['images_url'],
-		'DEFAULT_THEMEURL' => $settings['default_theme_url'],
+		'THEMEURL' => $theme['theme_url'],
+		'IMAGESURL' => $theme['images_url'],
+		'DEFAULT_THEMEURL' => $theme['default_theme_url'],
 		'REGARDS' => str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
 	);
 
@@ -2673,9 +2673,9 @@ function user_info_callback($matches)
  */
 function saveDraft($is_pm, $id_context = 0)
 {
-	global $context, $txt, $board, $user_info, $modSettings;
+	global $context, $txt, $board, $user_info, $settings;
 
-	if ($user_info['is_guest'] || !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']) || !empty($_REQUEST['msg']))
+	if ($user_info['is_guest'] || !allowedTo('save_post_draft') || empty($settings['masterSavePostDrafts']) || !empty($_REQUEST['msg']))
 		return false;
 
 	// Clean up what we may or may not have

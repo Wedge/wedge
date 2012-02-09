@@ -62,10 +62,10 @@ define('WEDGE_NO_LOG', 1);
 function Feed()
 {
 	global $topic, $board, $board_info, $context, $scripturl, $txt;
-	global $modSettings, $query_this, $user_info, $domain;
+	global $settings, $query_this, $user_info, $domain;
 
 	// If it's not enabled, die.
-	if (empty($modSettings['xmlnews_enable']))
+	if (empty($settings['xmlnews_enable']))
 		obExit(false);
 
 	loadLanguage('Stats');
@@ -123,8 +123,8 @@ function Feed()
 			$query_this = 'b.id_board IN (' . implode(', ', $boards) . ')';
 
 		// Try to limit the number of messages we look through.
-		if ($total_cat_posts > 100 && $total_cat_posts > $modSettings['totalMessages'] / 15)
-			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 400 - $_GET['limit'] * 5);
+		if ($total_cat_posts > 100 && $total_cat_posts > $settings['totalMessages'] / 15)
+			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $settings['maxMsgID'] - 400 - $_GET['limit'] * 5);
 	}
 	elseif (!empty($_REQUEST['boards']))
 	{
@@ -164,8 +164,8 @@ function Feed()
 			$query_this = 'b.id_board IN (' . implode(', ', $boards) . ')';
 
 		// The more boards, the more we're going to look through...
-		if ($total_posts > 100 && $total_posts > $modSettings['totalMessages'] / 12)
-			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 500 - $_GET['limit'] * 5);
+		if ($total_posts > 100 && $total_posts > $settings['totalMessages'] / 12)
+			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $settings['maxMsgID'] - 500 - $_GET['limit'] * 5);
 	}
 	elseif (!empty($board))
 	{
@@ -187,8 +187,8 @@ function Feed()
 		$query_this = 'b.id_board = ' . (int) $board;
 
 		// Try to look through just a few messages, if at all possible.
-		if ($total_posts > 80 && $total_posts > $modSettings['totalMessages'] / 10)
-			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 600 - $_GET['limit'] * 5);
+		if ($total_posts > 80 && $total_posts > $settings['totalMessages'] / 10)
+			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $settings['maxMsgID'] - 600 - $_GET['limit'] * 5);
 	}
 	elseif (!empty($topic))
 	{
@@ -208,18 +208,18 @@ function Feed()
 		$feed_title = ' - ' . strip_tags($subject);
 
 		// !!! Needs to be changed to {query_see_topic} once per-topic permissions are implemented.
-		$query_this = '{query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-			AND b.id_board != ' . $modSettings['recycle_board'] : '') . ' AND t.id_topic = ' . (int) $id_topic;
+		$query_this = '{query_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
+			AND b.id_board != ' . $settings['recycle_board'] : '') . ' AND t.id_topic = ' . (int) $id_topic;
 
 		// Try to look through just a few messages, if at all possible.
-		if (++$total_posts > 80 && $total_posts > $modSettings['totalMessages'] / 10)
-			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 600 - $_GET['limit'] * 5);
+		if (++$total_posts > 80 && $total_posts > $settings['totalMessages'] / 10)
+			$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $settings['maxMsgID'] - 600 - $_GET['limit'] * 5);
 	}
 	else
 	{
-		$query_this = '{query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
-			AND b.id_board != ' . $modSettings['recycle_board'] : '');
-		$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $modSettings['maxMsgID'] - 100 - $_GET['limit'] * 5);
+		$query_this = '{query_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
+			AND b.id_board != ' . $settings['recycle_board'] : '');
+		$context['optimize_msg']['lowest'] = 'm.id_msg >= ' . max(0, $settings['maxMsgID'] - 100 - $_GET['limit'] * 5);
 	}
 
 	// Show in Atom, or RSS?
@@ -244,22 +244,22 @@ function Feed()
 	$cache_t = microtime(true);
 
 	// Get the associative array representing the xml.
-	if (!empty($modSettings['cache_enable']) && (!$user_info['is_guest'] || $modSettings['cache_enable'] >= 3))
+	if (!empty($settings['cache_enable']) && (!$user_info['is_guest'] || $settings['cache_enable'] >= 3))
 		$xml = cache_get_data('xmlfeed-' . $xml_format . ':' . ($user_info['is_guest'] ? '' : $user_info['id'] . '-') . $cachekey, 240);
 	if (empty($xml))
 	{
 		if ($xml_format == 'atom')
 		{
 			// Get the original $scripturl from the first time you activated this Atom feed.
-			if (empty($modSettings['feed_root']))
+			if (empty($settings['feed_root']))
 				updateSettings(array('feed_root' => strtolower($scripturl)));
-			preg_match('~[^/]+//([^/]+)/(.*?)(?:/index.php)?~', $modSettings['feed_root'], $domain);
-			if (empty($modSettings['feed_date']))
+			preg_match('~[^/]+//([^/]+)/(.*?)(?:/index.php)?~', $settings['feed_root'], $domain);
+			if (empty($settings['feed_date']))
 				updateSettings(array('feed_date' => date('Y-m-d')));
 		}
 		$xml = $subActions[$_GET['sa']][0]($xml_format);
 
-		if (!empty($modSettings['cache_enable']) && (($user_info['is_guest'] && $modSettings['cache_enable'] >= 3)
+		if (!empty($settings['cache_enable']) && (($user_info['is_guest'] && $settings['cache_enable'] >= 3)
 		|| (!$user_info['is_guest'] && microtime(true) - $cache_t > 0.2)))
 			cache_put_data('xmlfeed-' . $xml_format . ':' . ($user_info['is_guest'] ? '' : $user_info['id'] . '-') . $cachekey, $xml, 240);
 	}
@@ -268,11 +268,11 @@ function Feed()
 
 	// This is an xml file....
 	ob_end_clean();
-	if (!empty($modSettings['enableCompressedOutput']))
+	if (!empty($settings['enableCompressedOutput']))
 		@ob_start('ob_gzhandler');
 
 	// Pretty URLs need to be rewritten
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (!empty($settings['pretty_enable_filters']))
 	{
 		ob_start('ob_sessrewrite');
 		$insideurl = preg_quote($scripturl, '~');
@@ -317,7 +317,7 @@ function Feed()
 	{
 		echo '
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="', strtr($txt['lang_locale'], '_', '-'), '">
-	<id>tag:', $domain[1], ',', $modSettings['feed_date'], ':', empty($domain[2]) ? '' : $domain[2] . ':', $_GET['sa'], '</id>
+	<id>tag:', $domain[1], ',', $settings['feed_date'], ':', empty($domain[2]) ? '' : $domain[2] . ':', $_GET['sa'], '</id>
 	<title>', $feed_title, '</title>
 	<link rel="alternate" type="text/html" href="', $scripturl, '" />
 	<updated>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</updated>
@@ -448,8 +448,8 @@ function getXmlMembers($xml_format)
 
 function getXmlNews($xml_format)
 {
-	global $user_info, $scripturl, $modSettings;
-	global $board, $query_this, $settings, $context;
+	global $user_info, $scripturl, $settings;
+	global $board, $query_this, $theme, $context;
 
 	/* Find the latest posts that:
 		- are the first post in their topic.
@@ -474,7 +474,7 @@ function getXmlNews($xml_format)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			WHERE ' . $query_this . (empty($optimize_msg) ? '' : '
-				AND {raw:optimize_msg}') . ($modSettings['postmod_active'] ? '
+				AND {raw:optimize_msg}') . ($settings['postmod_active'] ? '
 				AND t.approved = {int:is_approved}' : '') . '
 			ORDER BY t.id_first_msg DESC
 			LIMIT {int:limit}',
@@ -502,14 +502,14 @@ function getXmlNews($xml_format)
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && westr::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
+		if (!empty($settings['xmlnews_maxlen']) && westr::strlen(str_replace('<br />', "\n", $row['body'])) > $settings['xmlnews_maxlen'])
 		{
 			// Is there a [more]? If there is, check to see how long the truncated part is. If it's too long, we'll use the admin settings anyway.
 			// !!! Is 20% variance too much?
 			$body = str_replace('<br />', "\n", $row['body']);
 			$more_pos = stripos($body, '[more');
-			if ($more_pos === false || $more_pos > $modSettings['xmlnews_maxlen'] * 1.2)
-				$row['body'] = strtr(westr::substr($body, 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
+			if ($more_pos === false || $more_pos > $settings['xmlnews_maxlen'] * 1.2)
+				$row['body'] = strtr(westr::substr($body, 0, $settings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
 		}
 
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
@@ -557,8 +557,8 @@ function getXmlNews($xml_format)
 
 function getXmlRecent($xml_format)
 {
-	global $user_info, $scripturl, $modSettings;
-	global $board, $query_this, $settings, $context;
+	global $user_info, $scripturl, $settings;
+	global $board, $query_this, $theme, $context;
 
 	$done = false;
 	$loops = 0;
@@ -571,7 +571,7 @@ function getXmlRecent($xml_format)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			WHERE ' . $query_this . (empty($optimize_msg) ? '' : '
-				AND {raw:optimize_msg}') . ($modSettings['postmod_active'] ? '
+				AND {raw:optimize_msg}') . ($settings['postmod_active'] ? '
 				AND m.approved = {int:is_approved}' : '') . '
 			ORDER BY m.id_msg DESC
 			LIMIT {int:limit}',
@@ -627,8 +627,8 @@ function getXmlRecent($xml_format)
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// Limit the length of the message, if the option is set.
-		if (!empty($modSettings['xmlnews_maxlen']) && westr::strlen(str_replace('<br />', "\n", $row['body'])) > $modSettings['xmlnews_maxlen'])
-			$row['body'] = strtr(westr::substr(str_replace('<br />', "\n", $row['body']), 0, $modSettings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
+		if (!empty($settings['xmlnews_maxlen']) && westr::strlen(str_replace('<br />', "\n", $row['body'])) > $settings['xmlnews_maxlen'])
+			$row['body'] = strtr(westr::substr(str_replace('<br />', "\n", $row['body']), 0, $settings['xmlnews_maxlen'] - 3), array("\n" => '<br />')) . '...';
 
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
@@ -675,7 +675,7 @@ function getXmlRecent($xml_format)
 // This is obviously not the case right now... And is pretty much useless. :-/
 function getXmlProfile($xml_format)
 {
-	global $scripturl, $memberContext, $user_profile, $modSettings, $user_info;
+	global $scripturl, $memberContext, $user_profile, $settings, $user_info;
 
 	// You must input a valid user....
 	if (empty($_GET['u']) || loadMemberData((int) $_GET['u']) === false)

@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  */
 function createWaveFile($word)
 {
-	global $settings, $user_info, $context;
+	global $theme, $user_info, $context;
 
 	// Allow max 2 requests per 20 seconds.
 	if (($ip = cache_get_data('wave_file/' . $user_info['ip'], 20)) > 2 || ($ip2 = cache_get_data('wave_file/' . $user_info['ip2'], 20)) > 2)
@@ -36,11 +36,11 @@ function createWaveFile($word)
 	mt_srand(end(unpack('n', md5($word . session_id()))));
 
 	// Try to see if there's a sound font in the user's language.
-	if (file_exists($settings['default_theme_dir'] . '/fonts/sound/a.' . $user_info['language'] . '.wav'))
+	if (file_exists($theme['default_theme_dir'] . '/fonts/sound/a.' . $user_info['language'] . '.wav'))
 		$sound_language = $user_info['language'];
 
 	// English should be there.
-	elseif (file_exists($settings['default_theme_dir'] . '/fonts/sound/a.english.wav'))
+	elseif (file_exists($theme['default_theme_dir'] . '/fonts/sound/a.english.wav'))
 		$sound_language = 'english';
 
 	// Guess not...
@@ -54,7 +54,7 @@ function createWaveFile($word)
 	$sound_word = '';
 	for ($i = 0; $i < strlen($word); $i++)
 	{
-		$sound_letter = implode('', file($settings['default_theme_dir'] . '/fonts/sound/' . $word{$i} . '.' . $sound_language . '.wav'));
+		$sound_letter = implode('', file($theme['default_theme_dir'] . '/fonts/sound/' . $word{$i} . '.' . $sound_language . '.wav'));
 		if (strpos($sound_letter, 'data') === false)
 			return false;
 

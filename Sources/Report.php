@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  */
 function Report()
 {
-	global $txt, $topic, $modSettings, $user_info, $context;
+	global $txt, $topic, $settings, $user_info, $context;
 
 	$context['robot_no_index'] = true;
 
@@ -61,7 +61,7 @@ function Report()
 	wesql::free_result($result);
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = $user_info['is_guest'] && !empty($modSettings['guests_report_require_captcha']);
+	$context['require_verification'] = $user_info['is_guest'] && !empty($settings['guests_report_require_captcha']);
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');
@@ -96,7 +96,7 @@ function Report()
  */
 function ReportToModerator2()
 {
-	global $txt, $scripturl, $topic, $board, $user_info, $modSettings, $language, $context;
+	global $txt, $scripturl, $topic, $board, $user_info, $settings, $language, $context;
 
 	// Make sure they aren't spamming.
 	spamProtection('report');
@@ -130,7 +130,7 @@ function ReportToModerator2()
 	}
 
 	// Could they get the right verification code?
-	if ($user_info['is_guest'] && !empty($modSettings['guests_report_require_captcha']))
+	if ($user_info['is_guest'] && !empty($settings['guests_report_require_captcha']))
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -198,7 +198,7 @@ function ReportToModerator2()
 		fatal_lang_error('no_mods', false);
 
 	// If we get here, I believe we should make a record of this, for historical significance, yabber.
-	if (empty($modSettings['disable_log_report']))
+	if (empty($settings['disable_log_report']))
 	{
 		$request2 = wesql::query('
 			SELECT id_report, ignore_all
@@ -305,7 +305,7 @@ function ReportToModerator2()
 			'COMMENT' => $_POST['comment'],
 		);
 
-		$emaildata = loadEmailTemplate('report_to_moderator', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate('report_to_moderator', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
 
 		// Send it to the moderator.
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], $user_info['email'], null, false, 2);

@@ -54,7 +54,7 @@ if (!defined('WEDGE'))
 // Delete one or more membergroups.
 function deleteMembergroups($groups)
 {
-	global $modSettings;
+	global $settings;
 
 	// Make sure it's an array.
 	if (!is_array($groups))
@@ -216,7 +216,7 @@ function deleteMembergroups($groups)
 	// Make a note of the fact that the cache may be wrong.
 	$settings_update = array('settings_updated' => time());
 	// Have we deleted the spider group?
-	if (isset($modSettings['spider_group']) && in_array($modSettings['spider_group'], $groups))
+	if (isset($settings['spider_group']) && in_array($settings['spider_group'], $groups))
 		$settings_update['spider_group'] = 0;
 
 	updateSettings($settings_update);
@@ -228,7 +228,7 @@ function deleteMembergroups($groups)
 // Remove one or more members from one or more membergroups.
 function removeMembersFromGroups($members, $groups = null, $permissionCheckDone = false)
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	// You're getting nowhere without this permission, unless of course you are the group's moderator.
 	if (!$permissionCheckDone)
@@ -423,7 +423,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	updateStats('postgroups', $members);
 
 	// Do the log.
-	if (!empty($log_inserts) && !empty($modSettings['log_enabled_admin']))
+	if (!empty($log_inserts) && !empty($settings['log_enabled_admin']))
 		wesql::insert('',
 			'{db_prefix}log_actions',
 			array(
@@ -451,7 +451,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 						  available. If not, assign it to the additional group. */
 function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDone = false)
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	// Show your licence, but only if it hasn't been done yet.
 	if (!$permissionCheckDone)
@@ -584,7 +584,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 			0, 0, 0, serialize(array('group' => $group_names[$group], 'member' => $member)),
 		);
 
-	if (!empty($log_inserts) && !empty($modSettings['log_enabled_admin']))
+	if (!empty($log_inserts) && !empty($settings['log_enabled_admin']))
 		wesql::insert('',
 			'{db_prefix}log_actions',
 			array(
@@ -658,7 +658,7 @@ function cache_getMembergroupList()
 
 function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $scripturl, $context, $theme;
 
 	$groups = array();
 

@@ -65,7 +65,7 @@ if (!defined('WEDGE'))
 
 function ViewMembers()
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context, $settings;
 
 	$subActions = array(
 		'all' => array('ViewMemberlist', 'moderate_forum'),
@@ -111,10 +111,10 @@ function ViewMembers()
 	}
 
 	// For the page header... do we show activation?
-	$context['show_activate'] = (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1) || !empty($context['awaiting_activation']);
+	$context['show_activate'] = (!empty($settings['registration_method']) && $settings['registration_method'] == 1) || !empty($context['awaiting_activation']);
 
 	// What about approval?
-	$context['show_approve'] = (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 2) || !empty($context['awaiting_approval']) || !empty($modSettings['approveAccountDeletion']);
+	$context['show_approve'] = (!empty($settings['registration_method']) && $settings['registration_method'] == 2) || !empty($context['awaiting_approval']) || !empty($settings['approveAccountDeletion']);
 
 	// Setup the admin tabs.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -164,7 +164,7 @@ function ViewMembers()
 // View all members.
 function ViewMemberlist()
 {
-	global $txt, $scripturl, $context, $modSettings, $user_info;
+	global $txt, $scripturl, $context, $settings, $user_info;
 
 	// Set the current sub action.
 	$context['sub_action'] = $_REQUEST['sa'];
@@ -431,7 +431,7 @@ function ViewMemberlist()
 
 	$listOptions = array(
 		'id' => 'member_list',
-		'items_per_page' => $modSettings['defaultMaxMembers'],
+		'items_per_page' => $settings['defaultMaxMembers'],
 		'base_href' => $scripturl . '?action=admin;area=viewmembers' . $context['params_url'],
 		'default_sort_col' => 'user_name',
 		'get_items' => array(
@@ -676,12 +676,12 @@ function SearchMembers()
 // List all members who are awaiting approval / activation
 function MembersAwaitingActivation()
 {
-	global $txt, $context, $scripturl, $modSettings;
+	global $txt, $context, $scripturl, $settings;
 
 	// Not a lot here!
 	$context['page_title'] = $txt['admin_members'];
 	wetem::load('admin_browse');
-	$context['browse_type'] = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? 'activate' : 'approve');
+	$context['browse_type'] = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($settings['registration_method']) && $settings['registration_method'] == 1 ? 'activate' : 'approve');
 	if (isset($context['tabs'][$context['browse_type']]))
 		$context['tabs'][$context['browse_type']]['is_selected'] = true;
 
@@ -795,7 +795,7 @@ function MembersAwaitingActivation()
 
 	$listOptions = array(
 		'id' => 'approve_list',
-		'items_per_page' => $modSettings['defaultMaxMembers'],
+		'items_per_page' => $settings['defaultMaxMembers'],
 		'base_href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : ''),
 		'default_sort_col' => 'date_registered',
 		'get_items' => array(
@@ -887,7 +887,7 @@ function MembersAwaitingActivation()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $modSettings;
+						global $settings;
 
 						return host_from_ip($rowData[\'member_ip\']);
 					'),
@@ -980,7 +980,7 @@ function MembersAwaitingActivation()
 		unset($listOptions['columns']['duplicates']);
 
 	// Only show hostname on duplicates as it takes a lot of time.
-	if (!$context['show_duplicates'] || !empty($modSettings['disableHostnameLookup']))
+	if (!$context['show_duplicates'] || !empty($settings['disableHostnameLookup']))
 		unset($listOptions['columns']['hostname']);
 
 	// Is there any need to show filters?
@@ -1021,7 +1021,7 @@ function MembersAwaitingActivation()
 // Do the approve/activate/delete stuff
 function AdminApprove()
 {
-	global $txt, $context, $scripturl, $modSettings, $language, $user_info;
+	global $txt, $context, $scripturl, $settings, $language, $user_info;
 
 	// First, check our session.
 	checkSession();
@@ -1032,7 +1032,7 @@ function AdminApprove()
 	loadLanguage('Login');
 
 	// Sort out where we are going...
-	$browse_type = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1 ? 'activate' : 'approve');
+	$browse_type = isset($_REQUEST['type']) ? $_REQUEST['type'] : (!empty($settings['registration_method']) && $settings['registration_method'] == 1 ? 'activate' : 'approve');
 	$current_filter = (int) $_REQUEST['orig_filter'];
 
 	// If we are applying a filter do just that - then redirect.
@@ -1090,7 +1090,7 @@ function AdminApprove()
 			'username' => $row['member_name'],
 			'name' => $row['real_name'],
 			'email' => $row['email_address'],
-			'language' => empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'],
+			'language' => empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'],
 			'code' => $row['validation_code']
 		);
 	}
@@ -1114,7 +1114,7 @@ function AdminApprove()
 		);
 
 		// Do we have to let any hooks know about the activations?
-		if (!empty($modSettings['hooks']['activate']))
+		if (!empty($settings['hooks']['activate']))
 			foreach ($member_info as $member)
 				call_hook('activate', array($member['username']));
 
@@ -1239,7 +1239,7 @@ function AdminApprove()
 	}
 
 	// Log what we did?
-	if (!empty($modSettings['log_enabled_admin']) && in_array($_POST['todo'], array('ok', 'okemail', 'require_activation', 'remind')))
+	if (!empty($settings['log_enabled_admin']) && in_array($_POST['todo'], array('ok', 'okemail', 'require_activation', 'remind')))
 	{
 		$log_action = $_POST['todo'] == 'remind' ? 'remind_member' : 'approve_member';
 		$log_inserts = array();
@@ -1263,7 +1263,7 @@ function AdminApprove()
 
 	// Although updateStats *may* catch this, best to do it manually just in case (Doesn't always sort out unapprovedMembers).
 	if (in_array($current_filter, array(3, 4)))
-		updateSettings(array('unapprovedMembers' => max(0, $modSettings['unapprovedMembers'] > $member_count)));
+		updateSettings(array('unapprovedMembers' => max(0, $settings['unapprovedMembers'] > $member_count)));
 
 	// Update the member's stats. (but, we know the member didn't change their name.)
 	updateStats('member', false);

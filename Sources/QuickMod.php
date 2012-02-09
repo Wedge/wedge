@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 
 function QuickModeration()
 {
-	global $board, $user_info, $modSettings, $context;
+	global $board, $user_info, $settings, $context;
 
 	// Check the session = get or post.
 	checkSession('request');
@@ -141,13 +141,13 @@ function QuickModeration()
 		{
 			if (!empty($board))
 			{
-				if ($row['id_board'] != $board || ($modSettings['postmod_active'] && !$row['approved'] && !allowedTo('approve_posts')))
+				if ($row['id_board'] != $board || ($settings['postmod_active'] && !$row['approved'] && !allowedTo('approve_posts')))
 					unset($_REQUEST['actions'][$row['id_topic']]);
 			}
 			else
 			{
 				// Don't allow them to act on unapproved posts they can't see...
-				if ($modSettings['postmod_active'] && !$row['approved'] && !in_array(0, $boards_can['approve_posts']) && !in_array($row['id_board'], $boards_can['approve_posts']))
+				if ($settings['postmod_active'] && !$row['approved'] && !in_array(0, $boards_can['approve_posts']) && !in_array($row['id_board'], $boards_can['approve_posts']))
 					unset($_REQUEST['actions'][$row['id_topic']]);
 				// Goodness, this is fun.  We need to validate the action.
 				elseif ($_REQUEST['actions'][$row['id_topic']] == 'pin' && !in_array(0, $boards_can['pin_topic']) && !in_array($row['id_board'], $boards_can['pin_topic']))
@@ -383,7 +383,7 @@ function QuickModeration()
 			foreach ($removeCache as $topic)
 			{
 				// Only log the topic ID if it's not in the recycle board.
-				logAction('remove', array((empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $removeCacheBoards[$topic] ? 'topic' : 'old_topic_id') => $topic, 'board' => $removeCacheBoards[$topic]));
+				logAction('remove', array((empty($settings['recycle_enable']) || $settings['recycle_board'] != $removeCacheBoards[$topic] ? 'topic' : 'old_topic_id') => $topic, 'board' => $removeCacheBoards[$topic]));
 				sendNotifications($topic, 'remove');
 			}
 
@@ -499,7 +499,7 @@ function QuickModeration()
 	{
 		$markArray = array();
 		foreach ($markCache as $topic)
-			$markArray[] = array($modSettings['maxMsgID'], $user_info['id'], $topic);
+			$markArray[] = array($settings['maxMsgID'], $user_info['id'], $topic);
 
 		wesql::insert('replace',
 			'{db_prefix}log_topics',

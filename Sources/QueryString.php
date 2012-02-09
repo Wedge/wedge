@@ -35,7 +35,7 @@ if (!defined('WEDGE'))
  */
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $modSettings, $context, $full_request, $full_board, $action_list;
+	global $board, $topic, $boardurl, $scripturl, $settings, $context, $full_request, $full_board, $action_list;
 
 	// While we're here cleaning the request, try and clean the headers that we'll send back.
 	header('X-Powered-By: ');
@@ -45,7 +45,7 @@ function cleanRequest()
 
 	// $scripturl is your board URL if you asked to remove index.php or the user visits for the first time
 	// (in which case they'll get the annoying PHPSESSID stuff in their URL and we need index.php in them.)
-	$scripturl = $boardurl . (!empty($modSettings['pretty_remove_index']) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
+	$scripturl = $boardurl . (!empty($settings['pretty_remove_index']) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
 
 	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
 	$removeMagicQuoteFunction = @ini_get('magic_quotes_sybase') || strtolower(@ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
@@ -91,12 +91,12 @@ function cleanRequest()
 		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
 
 		// Magic quotes still applies with parse_str - so clean it up.
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
+		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$_GET = $removeMagicQuoteFunction($_GET);
 	}
 	elseif (strpos(@ini_get('arg_separator.input'), ';') !== false)
 	{
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
+		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$_GET = $removeMagicQuoteFunction($_GET);
 
 		// Search engines will send action=profile%3Bu=1, which confuses PHP.
@@ -128,14 +128,14 @@ function cleanRequest()
 	if (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], basename($scripturl) . '/') !== false)
 	{
 		parse_str(substr(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
+		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$temp = $removeMagicQuoteFunction($temp);
 		$_GET += $temp;
 	}
 
 	if (isset($_GET['board']) && is_numeric($_GET['board']))
 		$board = (int) $_GET['board'];
-	elseif (!empty($modSettings['pretty_enable_filters']))
+	elseif (!empty($settings['pretty_enable_filters']))
 	{
 		// !!! Authorize URLs with a port number
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
@@ -161,7 +161,7 @@ function cleanRequest()
 			unset($_GET['board']);
 
 			// URL has the form domain.com/profile/User?
-			if (preg_match('`/' . (isset($modSettings['pretty_prefix_profile']) ? $modSettings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $query_string, $m))
+			if (preg_match('`/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $query_string, $m))
 			{
 				if (empty($m[1]))
 					$_GET['u'] = 0;
@@ -170,7 +170,7 @@ function cleanRequest()
 				$_GET['action'] = 'profile';
 			}
 			// If URL has the form domain.com/do/action, it's an action. Really.
-			elseif (preg_match('`/' . (isset($modSettings['pretty_prefix_action']) ? $modSettings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)`', $query_string, $m) && isset($action_list[$m[1]]))
+			elseif (preg_match('`/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)`', $query_string, $m) && isset($action_list[$m[1]]))
 				$_GET['action'] = $m[1];
 			// URL: /category/42/ (shows the board list, hiding all categories but number 42)
 			elseif (preg_match('`/category/(\d+)`', $full_request, $m) && (int) $m[1] > 0)
@@ -236,7 +236,7 @@ function cleanRequest()
 
 		// Webmasters might want to log the error, so they can fix any broken image links.
 		updateOnlineWithError('404 Not Found', false);
-		if (!empty($modSettings['enableErrorLogging']))
+		if (!empty($settings['enableErrorLogging']))
 		{
 			log_error('File not found: ' . $full_request, 'filenotfound');
 			loadSource('ManageErrors');
@@ -380,18 +380,18 @@ function cleanRequest()
 	}
 
 	// Are they using a reverse proxy that's hiding the IP address (e.g. CloudFlare)?
-	if (!empty($modSettings['reverse_proxy']))
+	if (!empty($settings['reverse_proxy']))
 	{
 		// We already check for X-Forwarded-For anyway in Wedge. But if we happen to have something else, let's use that.
-		if (!empty($modSettings['reverse_proxy_header']) && $modSettings['reverse_proxy_header'] != 'X-Forwarded-For')
+		if (!empty($settings['reverse_proxy_header']) && $settings['reverse_proxy_header'] != 'X-Forwarded-For')
 		{
-			$header = 'HTTP_' . strtoupper($modSettings['reverse_proxy_header']);
+			$header = 'HTTP_' . strtoupper($settings['reverse_proxy_header']);
 			if (!empty($_SERVER[$header]))
 				$_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER[$header];
 		}
 		$context['additional_headers']['X-Detected-Remote-Address'] = $_SERVER['REMOTE_ADDR'];
-		if (!empty($modSettings['reverse_proxy_ips']))
-			$reverse_proxies = explode(',', $modSettings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
+		if (!empty($settings['reverse_proxy_ips']))
+			$reverse_proxies = explode(',', $settings['reverse_proxy_ips']); // We don't want this set if we're not knowingly using them.
 	}
 
 	// OK, whatever we have in our default place, let's turn it into our default format.

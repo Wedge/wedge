@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 // This function passes control through to the relevant tab.
 function ManageMemberOptions()
 {
-	global $context, $txt, $scripturl, $modSettings, $settings;
+	global $context, $txt, $scripturl, $settings, $theme;
 
 	// You need to be an admin to edit settings!
 	isAllowedTo('admin_forum');
@@ -81,7 +81,7 @@ function ManageMemberOptions()
 
 function ModifyMemberSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context, $theme, $settings;
 
 	$config_vars = array(
 			// Basic stuff, titles, flash, permissions...
@@ -115,7 +115,7 @@ function ModifyMemberSettings($return_config = false)
 // You'll never guess what this function does...
 function ModifySignatureSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $sig_start, $helptxt, $scripturl;
+	global $context, $txt, $settings, $sig_start, $helptxt, $scripturl;
 
 	$config_vars = array(
 			// Are signatures even enabled?
@@ -148,7 +148,7 @@ function ModifySignatureSettings($return_config = false)
 	$(\'#signature_max_smileys\').attr(\'disabled\', !($(\'#signature_allow_smileys\').attr(\'checked\')));');
 
 	// Load all the signature settings.
-	list ($sig_limits, $sig_bbc) = explode(':', $modSettings['signature_settings']);
+	list ($sig_limits, $sig_bbc) = explode(':', $settings['signature_settings']);
 	$sig_limits = explode(',', $sig_limits);
 	$disabledTags = !empty($sig_bbc) ? explode(',', $sig_bbc) : array();
 
@@ -396,10 +396,10 @@ function ModifySignatureSettings($return_config = false)
 
 	// Temporarily make each setting a modSetting!
 	foreach ($context['signature_settings'] as $key => $value)
-		$modSettings['signature_' . $key] = $value;
+		$settings['signature_' . $key] = $value;
 
 	// Make sure we check the right tags!
-	$modSettings['bbc_disabled_signature_bbc'] = $disabledTags;
+	$settings['bbc_disabled_signature_bbc'] = $disabledTags;
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -480,7 +480,7 @@ function pauseSignatureApplySettings()
 // Show all the custom profile fields available to the user.
 function ShowCustomProfiles()
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context, $theme, $settings;
 
 	$context['page_title'] = $txt['custom_profile_title'];
 	wetem::load('show_custom_profile');
@@ -705,7 +705,7 @@ function ShowCustomProfiles()
 
 function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 {
-	global $txt, $modSettings;
+	global $txt, $settings;
 
 	$list = array();
 
@@ -713,8 +713,8 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 	{
 		$standard_fields = array('location', 'gender', 'website', 'posts', 'warning_status');
 		$fields_no_registration = array('posts', 'warning_status');
-		$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
-		$registration_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : array();
+		$disabled_fields = isset($settings['disabled_profile_fields']) ? explode(',', $settings['disabled_profile_fields']) : array();
+		$registration_fields = isset($settings['registration_fields']) ? explode(',', $settings['registration_fields']) : array();
 
 		foreach ($standard_fields as $field)
 			$list[] = array(
@@ -765,7 +765,7 @@ function list_getProfileFieldSize()
 // Edit some profile fields?
 function EditCustomProfiles()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $scripturl, $context, $theme;
 
 	// Sort out the context!
 	$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;

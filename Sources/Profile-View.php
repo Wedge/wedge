@@ -71,7 +71,7 @@ if (!defined('WEDGE'))
 // View a summary.
 function summary($memID)
 {
-	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_info, $user_profile, $scripturl;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -81,25 +81,25 @@ function summary($memID)
 	$context += array(
 		'page_title' => sprintf($txt['profile_of_username'], $memberContext[$memID]['name']),
 		'can_send_pm' => allowedTo('pm_send'),
-		'can_have_buddy' => allowedTo('profile_identity_own') && !empty($modSettings['enable_buddylist']),
+		'can_have_buddy' => allowedTo('profile_identity_own') && !empty($settings['enable_buddylist']),
 		'can_issue_warning' => allowedTo('issue_warning'),
 	);
 	$context['member'] =& $memberContext[$memID];
-	$context['can_view_warning'] = (allowedTo('issue_warning') && !$context['user']['is_owner']) || (!empty($modSettings['warning_show']) && ($modSettings['warning_show'] > 1 || $context['user']['is_owner']));
+	$context['can_view_warning'] = (allowedTo('issue_warning') && !$context['user']['is_owner']) || (!empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $context['user']['is_owner']));
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . '?action=profile;u=' . $memID;
 
 	// Are there things we don't show?
-	$context['disabled_fields'] = isset($modSettings['disabled_profile_fields']) ? array_flip(explode(',', $modSettings['disabled_profile_fields'])) : array();
+	$context['disabled_fields'] = isset($settings['disabled_profile_fields']) ? array_flip(explode(',', $settings['disabled_profile_fields'])) : array();
 
 	// See if they have broken any warning levels...
-	list ($modSettings['user_limit']) = explode(',', $modSettings['warning_settings']);
-	if (!empty($modSettings['warning_mute']) && $modSettings['warning_mute'] <= $context['member']['warning'])
+	list ($settings['user_limit']) = explode(',', $settings['warning_settings']);
+	if (!empty($settings['warning_mute']) && $settings['warning_mute'] <= $context['member']['warning'])
 		$context['warning_status'] = $txt['profile_warning_is_muted'];
-	elseif (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $context['member']['warning'])
+	elseif (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $context['member']['warning'])
 		$context['warning_status'] = $txt['profile_warning_is_moderation'];
-	elseif (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $context['member']['warning'])
+	elseif (!empty($settings['warning_watch']) && $settings['warning_watch'] <= $context['member']['warning'])
 		$context['warning_status'] = $txt['profile_warning_is_watch'];
 
 	// They haven't even been registered for a full day!?
@@ -130,7 +130,7 @@ function summary($memID)
 	if (allowedTo('view_ip_address_any') || (allowedTo('view_ip_address_own') && $context['user']['is_owner']))
 	{
 		// Make sure it's a valid ip address; otherwise, don't bother...
-		if (preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $memberContext[$memID]['ip']) == 1 && empty($modSettings['disableHostnameLookup']))
+		if (preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $memberContext[$memID]['ip']) == 1 && empty($settings['disableHostnameLookup']))
 			$context['member']['hostname'] = host_from_ip($memberContext[$memID]['ip']);
 		else
 			$context['member']['hostname'] = '';
@@ -141,7 +141,7 @@ function summary($memID)
 		$context['can_see_ip'] = false;
 
 	// Can we see what the user is doing?
-	if (!empty($modSettings['who_enabled']) && allowedTo('who_view'))
+	if (!empty($settings['who_enabled']) && allowedTo('who_view'))
 	{
 		loadSource('Who');
 		$action = determineActions($user_profile[$memID]['url']);
@@ -162,7 +162,7 @@ function summary($memID)
 	}
 
 	// Is the signature even enabled on this forum?
-	$context['signature_enabled'] = $modSettings['signature_settings'][0] == 1;
+	$context['signature_enabled'] = $settings['signature_settings'][0] == 1;
 
 	// How about, are they banned?
 	$context['member']['bans'] = array();
@@ -374,7 +374,7 @@ function populate_sub_thoughts(&$here, &$thought)
 // View the drafts of the user.
 function viewDrafts($memID)
 {
-	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_info, $user_profile, $scripturl;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -442,7 +442,7 @@ function viewDrafts($memID)
 	wesql::free_result($request);
 
 	$reverse = false;
-	$maxIndex = (int) $modSettings['defaultMaxMessages'];
+	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
 	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=showdrafts', $context['start'], $msgCount, $maxIndex);
@@ -453,8 +453,8 @@ function viewDrafts($memID)
 	$reverse = $_REQUEST['start'] > $msgCount / 2;
 	if ($reverse)
 	{
-		$maxIndex = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 && $msgCount > $context['start'] ? $msgCount - $context['start'] : (int) $modSettings['defaultMaxMessages'];
-		$start = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 || $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] ? 0 : $msgCount - $context['start'] - $modSettings['defaultMaxMessages'];
+		$maxIndex = $msgCount < $context['start'] + $settings['defaultMaxMessages'] + 1 && $msgCount > $context['start'] ? $msgCount - $context['start'] : (int) $settings['defaultMaxMessages'];
+		$start = $msgCount < $context['start'] + $settings['defaultMaxMessages'] + 1 || $msgCount < $context['start'] + $settings['defaultMaxMessages'] ? 0 : $msgCount - $context['start'] - $settings['defaultMaxMessages'];
 	}
 
 	// Find this user's drafts.
@@ -550,7 +550,7 @@ function viewDrafts($memID)
 // Show all posts by the current user
 function showPosts($memID)
 {
-	global $txt, $user_info, $scripturl, $modSettings;
+	global $txt, $user_info, $scripturl, $settings;
 	global $context, $user_profile, $board;
 
 	// Some initial context.
@@ -576,7 +576,7 @@ function showPosts($memID)
 	$context['page_title'] = $txt['showPosts'] . ' - ' . $user_profile[$memID]['real_name'];
 
 	// Is the load average too high to allow searching just now?
-	if (!empty($context['load_average']) && !empty($modSettings['loadavg_show_posts']) && $context['load_average'] >= $modSettings['loadavg_show_posts'])
+	if (!empty($context['load_average']) && !empty($settings['loadavg_show_posts']) && $context['load_average'] >= $settings['loadavg_show_posts'])
 		fatal_lang_error('loadavg_show_posts_disabled', false);
 
 	// If we're specifically dealing with attachments use that function!
@@ -629,7 +629,7 @@ function showPosts($memID)
 			FROM {db_prefix}topics AS t' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
 			WHERE t.id_member_started = {int:current_member}' . (!empty($board) ? '
-				AND t.id_board = {int:board}' : '') . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+				AND t.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 				AND t.approved = {int:is_approved}'),
 			array(
 				'current_member' => $memID,
@@ -643,7 +643,7 @@ function showPosts($memID)
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
 			WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
-				AND m.id_board = {int:board}' : '') . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+				AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 				AND m.approved = {int:is_approved}'),
 			array(
 				'current_member' => $memID,
@@ -658,7 +658,7 @@ function showPosts($memID)
 		SELECT MIN(id_msg), MAX(id_msg)
 		FROM {db_prefix}messages AS m
 		WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
-			AND m.id_board = {int:board}' : '') . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
 		array(
 			'current_member' => $memID,
@@ -671,7 +671,7 @@ function showPosts($memID)
 
 	$reverse = false;
 	$range_limit = '';
-	$maxIndex = (int) $modSettings['defaultMaxMessages'];
+	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
 	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=showposts' . ($context['is_topics'] ? ';sa=topics' : '') . (!empty($board) ? ';board=' . $board : ''), $context['start'], $msgCount, $maxIndex);
@@ -682,14 +682,14 @@ function showPosts($memID)
 	$reverse = $_REQUEST['start'] > $msgCount / 2;
 	if ($reverse)
 	{
-		$maxIndex = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 && $msgCount > $context['start'] ? $msgCount - $context['start'] : (int) $modSettings['defaultMaxMessages'];
-		$start = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 || $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] ? 0 : $msgCount - $context['start'] - $modSettings['defaultMaxMessages'];
+		$maxIndex = $msgCount < $context['start'] + $settings['defaultMaxMessages'] + 1 && $msgCount > $context['start'] ? $msgCount - $context['start'] : (int) $settings['defaultMaxMessages'];
+		$start = $msgCount < $context['start'] + $settings['defaultMaxMessages'] + 1 || $msgCount < $context['start'] + $settings['defaultMaxMessages'] ? 0 : $msgCount - $context['start'] - $settings['defaultMaxMessages'];
 	}
 
 	// Guess the range of messages to be shown.
 	if ($msgCount > 1000)
 	{
-		$margin = floor(($max_msg_member - $min_msg_member) * (($start + $modSettings['defaultMaxMessages']) / $msgCount) + .1 * ($max_msg_member - $min_msg_member));
+		$margin = floor(($max_msg_member - $min_msg_member) * (($start + $settings['defaultMaxMessages']) / $msgCount) + .1 * ($max_msg_member - $min_msg_member));
 		// Make a bigger margin for topics only.
 		if ($context['is_topics'])
 		{
@@ -717,7 +717,7 @@ function showPosts($memID)
 				WHERE t.id_member_started = {int:current_member}' . (!empty($board) ? '
 					AND t.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
-					AND {query_see_board}' . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+					AND {query_see_board}' . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
 				ORDER BY t.id_first_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
@@ -742,7 +742,7 @@ function showPosts($memID)
 				WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
 					AND b.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
-					AND {query_see_board}' . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+					AND {query_see_board}' . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
 				ORDER BY m.id_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
@@ -796,7 +796,7 @@ function showPosts($memID)
 			'can_reply' => false,
 			'can_mark_notify' => false,
 			'can_delete' => false,
-			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($modSettings['edit_disable_time']) || $row['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()),
+			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($settings['edit_disable_time']) || $row['poster_time'] + $settings['edit_disable_time'] * 60 >= time()),
 			'approved' => $row['approved'],
 		);
 
@@ -861,7 +861,7 @@ function showPosts($memID)
 	}
 
 	// Clean up after posts that cannot be deleted and quoted.
-	$quote_enabled = empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC']));
+	$quote_enabled = empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC']));
 	foreach ($context['posts'] as $counter => $dummy)
 	{
 		$context['posts'][$counter]['can_delete'] &= $context['posts'][$counter]['delete_possible'];
@@ -872,7 +872,7 @@ function showPosts($memID)
 // Show all the attachments of a user.
 function showAttachments($memID)
 {
-	global $txt, $user_info, $scripturl, $modSettings, $board;
+	global $txt, $user_info, $scripturl, $settings, $board;
 	global $context, $user_profile;
 
 	// OBEY permissions!
@@ -891,7 +891,7 @@ function showAttachments($memID)
 			AND a.id_msg != {int:no_message}
 			AND m.id_member = {int:current_member}' . (!empty($board) ? '
 			AND b.id_board = {int:board}' : '') . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_list})' : '') . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND b.id_board IN ({array_int:boards_list})' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
 		array(
 			'boards_list' => $boardsAllowed,
@@ -905,7 +905,7 @@ function showAttachments($memID)
 	list ($attachCount) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	$maxIndex = (int) $modSettings['defaultMaxMessages'];
+	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// What about ordering?
 	$sortTypes = array(
@@ -933,7 +933,7 @@ function showAttachments($memID)
 			AND a.id_msg != {int:no_message}
 			AND m.id_member = {int:current_member}' . (!empty($board) ? '
 			AND b.id_board = {int:board}' : '') . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_list})' : '') . (!$modSettings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND b.id_board IN ({array_int:boards_list})' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}') . '
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:limit}',
@@ -972,7 +972,7 @@ function showAttachments($memID)
 
 function statPanel($memID)
 {
-	global $txt, $scripturl, $context, $user_profile, $user_info, $modSettings;
+	global $txt, $scripturl, $context, $user_profile, $user_info, $settings;
 
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $user_profile[$memID]['real_name'];
 
@@ -986,11 +986,11 @@ function statPanel($memID)
 	$result = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}topics
-		WHERE id_member_started = {int:current_member}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+		WHERE id_member_started = {int:current_member}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND id_board != {int:recycle_board}' : ''),
 		array(
 			'current_member' => $memID,
-			'recycle_board' => $modSettings['recycle_board'],
+			'recycle_board' => $settings['recycle_board'],
 		)
 	);
 	list ($context['num_topics']) = wesql::fetch_row($result);
@@ -1000,12 +1000,12 @@ function statPanel($memID)
 	$result = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}topics
-		WHERE id_member_started = {int:current_member}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+		WHERE id_member_started = {int:current_member}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND id_board != {int:recycle_board}' : '') . '
 			AND id_poll != {int:no_poll}',
 		array(
 			'current_member' => $memID,
-			'recycle_board' => $modSettings['recycle_board'],
+			'recycle_board' => $settings['recycle_board'],
 			'no_poll' => 0,
 		)
 	);
@@ -1098,13 +1098,13 @@ function statPanel($memID)
 			HOUR(FROM_UNIXTIME(poster_time + {int:time_offset})) AS hour,
 			COUNT(*) AS post_count
 		FROM {db_prefix}messages
-		WHERE id_member = {int:current_member}' . ($modSettings['totalMessages'] > 100000 ? '
+		WHERE id_member = {int:current_member}' . ($settings['totalMessages'] > 100000 ? '
 			AND id_topic > {int:top_ten_thousand_topics}' : '') . '
 		GROUP BY hour',
 		array(
 			'current_member' => $memID,
-			'top_ten_thousand_topics' => $modSettings['totalTopics'] - 10000,
-			'time_offset' => (($user_info['time_offset'] + $modSettings['time_offset']) * 3600),
+			'top_ten_thousand_topics' => $settings['totalTopics'] - 10000,
+			'time_offset' => (($user_info['time_offset'] + $settings['time_offset']) * 3600),
 		)
 	);
 	$maxPosts = $realPosts = 0;
@@ -1152,7 +1152,7 @@ function statPanel($memID)
 
 function tracking($memID)
 {
-	global $context, $txt, $scripturl, $modSettings, $user_profile;
+	global $context, $txt, $scripturl, $settings, $user_profile;
 
 	$subActions = array(
 		'activity' => array('trackActivity', $txt['trackActivity']),
@@ -1175,7 +1175,7 @@ function tracking($memID)
 	);
 
 	// Moderation must be on to track edits.
-	if (empty($modSettings['log_enabled_moderate']))
+	if (empty($settings['log_enabled_moderate']))
 		unset($context[$context['profile_menu_name']]['tab_data']['edits']);
 
 	// Set a page title.
@@ -1189,7 +1189,7 @@ function tracking($memID)
 function trackActivity($memID)
 {
 	// !!! THIS IS VERY BROKEN RIGHT NOW! Stopped after trying to get my head round the complexity of changes for this.
-	global $scripturl, $txt, $modSettings;
+	global $scripturl, $txt, $settings;
 	global $user_profile, $context;
 
 	// Verify if the user has sufficient permissions.
@@ -1204,7 +1204,7 @@ function trackActivity($memID)
 	$listOptions = array(
 		'id' => 'track_user_list',
 		'title' => $txt['errors_by'] . ' ' . $context['member']['name'],
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['no_errors_from_user'],
 		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=user',
 		'default_sort_col' => 'date',
@@ -1282,7 +1282,7 @@ function trackActivity($memID)
 	createList($listOptions);
 
 	// If this is a big forum, or a large posting user, let's limit the search.
-	if ($modSettings['totalMessages'] > 50000 && $user_profile[$memID]['posts'] > 500)
+	if ($settings['totalMessages'] > 50000 && $user_profile[$memID]['posts'] > 500)
 	{
 		$request = wesql::query('
 			SELECT MAX(id_msg)
@@ -1509,7 +1509,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 
 function TrackIP($memID = 0)
 {
-	global $user_profile, $scripturl, $txt, $user_info, $modSettings;
+	global $user_profile, $scripturl, $txt, $user_info, $settings;
 	global $context;
 
 	// Can the user do this?
@@ -1566,7 +1566,7 @@ function TrackIP($memID = 0)
 		'id' => 'track_message_list',
 		'title' => $txt['messages_from_ip'] . ' ' . $context['ip'],
 		'start_var_name' => 'messageStart',
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['no_messages_from_ip'],
 		'base_href' => $context['base_url'] . ';searchip=' . $context['ip'],
 		'default_sort_col' => 'date',
@@ -1656,7 +1656,7 @@ function TrackIP($memID = 0)
 		'id' => 'track_user_list',
 		'title' => $txt['errors_from_ip'] . ' ' . $context['ip'],
 		'start_var_name' => 'errorStart',
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['no_errors_from_ip'],
 		'base_href' => $context['base_url'] . ';searchip=' . $context['ip'],
 		'default_sort_col' => 'date2',
@@ -1789,7 +1789,7 @@ function TrackIP($memID = 0)
 
 function trackEdits($memID)
 {
-	global $scripturl, $txt, $modSettings, $context;
+	global $scripturl, $txt, $settings, $context;
 
 	loadSource('Subs-List');
 
@@ -1812,7 +1812,7 @@ function trackEdits($memID)
 	$listOptions = array(
 		'id' => 'edit_list',
 		'title' => $txt['trackEdits'],
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['trackEdit_no_edits'],
 		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=edits',
 		'default_sort_col' => 'time',
@@ -1983,7 +1983,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 
 function showPermissions($memID)
 {
-	global $scripturl, $txt, $board, $modSettings;
+	global $scripturl, $txt, $board, $settings;
 	global $user_profile, $context, $user_info;
 
 	// Verify if the user has sufficient permissions.
@@ -2161,16 +2161,16 @@ function showPermissions($memID)
 // View a members warnings?
 function viewWarning($memID)
 {
-	global $modSettings, $context, $txt, $scripturl;
+	global $settings, $context, $txt, $scripturl;
 
 	// Firstly, can we actually even be here?
-	if (!allowedTo('issue_warning') && (empty($modSettings['warning_show']) || ($modSettings['warning_show'] == 1 && !$context['user']['is_owner'])))
+	if (!allowedTo('issue_warning') && (empty($settings['warning_show']) || ($settings['warning_show'] == 1 && !$context['user']['is_owner'])))
 		fatal_lang_error('no_access', false);
 
 	// Make sure things which are disabled stay disabled.
-	$modSettings['warning_watch'] = !empty($modSettings['warning_watch']) ? $modSettings['warning_watch'] : 110;
-	$modSettings['warning_moderate'] = !empty($modSettings['warning_moderate']) && !empty($modSettings['postmod_active']) ? $modSettings['warning_moderate'] : 110;
-	$modSettings['warning_mute'] = !empty($modSettings['warning_mute']) ? $modSettings['warning_mute'] : 110;
+	$settings['warning_watch'] = !empty($settings['warning_watch']) ? $settings['warning_watch'] : 110;
+	$settings['warning_moderate'] = !empty($settings['warning_moderate']) && !empty($settings['postmod_active']) ? $settings['warning_moderate'] : 110;
+	$settings['warning_mute'] = !empty($settings['warning_mute']) ? $settings['warning_mute'] : 110;
 
 	// Let's use a generic list to get all the current warnings, and use the issue warnings grab-a-granny thing.
 	loadSource(array('Subs-List', 'Profile-Actions'));
@@ -2178,7 +2178,7 @@ function viewWarning($memID)
 	$listOptions = array(
 		'id' => 'view_warnings',
 		'title' => $txt['profile_viewwarning_previous_warnings'],
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['profile_viewwarning_no_warnings'],
 		'base_href' => $scripturl . '?action=profile;u=' . $memID . ';area=viewwarning;sa=user',
 		'default_sort_col' => 'log_time',
@@ -2246,9 +2246,9 @@ function viewWarning($memID)
 	// Create some common text bits for the template.
 	$context['level_effects'] = array(
 		0 => '',
-		$modSettings['warning_watch'] => $txt['profile_warning_effect_own_watched'],
-		$modSettings['warning_moderate'] => $txt['profile_warning_effect_own_moderated'],
-		$modSettings['warning_mute'] => $txt['profile_warning_effect_own_muted'],
+		$settings['warning_watch'] => $txt['profile_warning_effect_own_watched'],
+		$settings['warning_moderate'] => $txt['profile_warning_effect_own_moderated'],
+		$settings['warning_mute'] => $txt['profile_warning_effect_own_muted'],
 	);
 	$context['current_level'] = 0;
 	foreach ($context['level_effects'] as $limit => $dummy)

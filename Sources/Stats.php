@@ -32,7 +32,7 @@ if (!defined('WEDGE'))
 // Display some useful/interesting board statistics.
 function Stats()
 {
-	global $txt, $scripturl, $modSettings, $user_info, $context;
+	global $txt, $scripturl, $settings, $user_info, $context;
 
 	isAllowedTo('view_stats');
 
@@ -142,12 +142,12 @@ function Stats()
 	$context['num_boards'] = comma_format($context['num_boards']);
 	$context['num_categories'] = comma_format($context['num_categories']);
 
-	$context['num_members'] = comma_format($modSettings['totalMembers']);
-	$context['num_posts'] = comma_format($modSettings['totalMessages']);
-	$context['num_topics'] = comma_format($modSettings['totalTopics']);
+	$context['num_members'] = comma_format($settings['totalMembers']);
+	$context['num_posts'] = comma_format($settings['totalMessages']);
+	$context['num_topics'] = comma_format($settings['totalTopics']);
 	$context['most_members_online'] = array(
-		'number' => comma_format($modSettings['mostOnline']),
-		'date' => timeformat($modSettings['mostDate'])
+		'number' => comma_format($settings['mostOnline']),
+		'date' => timeformat($settings['mostDate'])
 	);
 	$context['latest_member'] =& $context['common_stats']['latest_member'];
 
@@ -246,13 +246,13 @@ function Stats()
 	$boards_result = wesql::query('
 		SELECT id_board, name, num_posts
 		FROM {db_prefix}boards AS b
-		WHERE {query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+		WHERE {query_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . '
 			AND b.redirect = {string:blank_redirect}
 		ORDER BY num_posts DESC
 		LIMIT 10',
 		array(
-			'recycle_board' => $modSettings['recycle_board'],
+			'recycle_board' => $settings['recycle_board'],
 			'blank_redirect' => '',
 		)
 	);
@@ -280,12 +280,12 @@ function Stats()
 	}
 
 	// Are you on a larger forum?  If so, let's try to limit the number of topics we search through.
-	if ($modSettings['totalMessages'] > 100000)
+	if ($settings['totalMessages'] > 100000)
 	{
 		$request = wesql::query('
 			SELECT id_topic
 			FROM {db_prefix}topics
-			WHERE num_replies != {int:no_replies}' . ($modSettings['postmod_active'] ? '
+			WHERE num_replies != {int:no_replies}' . ($settings['postmod_active'] ? '
 				AND approved = {int:is_approved}' : '') . '
 			ORDER BY num_replies DESC
 			LIMIT 100',
@@ -307,16 +307,16 @@ function Stats()
 		SELECT m.subject, t.num_replies, t.id_board, t.id_topic, b.name
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
-			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . ')
 		WHERE {query_see_board}' . (!empty($topic_ids) ? '
-			AND t.id_topic IN ({array_int:topic_list})' : ($modSettings['postmod_active'] ? '
+			AND t.id_topic IN ({array_int:topic_list})' : ($settings['postmod_active'] ? '
 			AND t.approved = {int:is_approved}' : '')) . '
 		ORDER BY t.num_replies DESC
 		LIMIT 10',
 		array(
 			'topic_list' => $topic_ids,
-			'recycle_board' => $modSettings['recycle_board'],
+			'recycle_board' => $settings['recycle_board'],
 			'is_approved' => 1,
 		)
 	);
@@ -352,7 +352,7 @@ function Stats()
 	}
 
 	// Large forums may need a bit more prodding...
-	if ($modSettings['totalMessages'] > 100000)
+	if ($settings['totalMessages'] > 100000)
 	{
 		$request = wesql::query('
 			SELECT id_topic
@@ -377,16 +377,16 @@ function Stats()
 		SELECT m.subject, t.num_views, t.id_board, t.id_topic, b.name
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
-			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . ')
 		WHERE {query_see_board}' . (!empty($topic_ids) ? '
-			AND t.id_topic IN ({array_int:topic_list})' : ($modSettings['postmod_active'] ? '
+			AND t.id_topic IN ({array_int:topic_list})' : ($settings['postmod_active'] ? '
 			AND t.approved = {int:is_approved}' : '')) . '
 		ORDER BY t.num_views DESC
 		LIMIT 10',
 		array(
 			'topic_list' => $topic_ids,
-			'recycle_board' => $modSettings['recycle_board'],
+			'recycle_board' => $settings['recycle_board'],
 			'is_approved' => 1,
 		)
 	);
@@ -426,13 +426,13 @@ function Stats()
 	{
 		$request = wesql::query('
 			SELECT id_member_started, COUNT(*) AS hits
-			FROM {db_prefix}topics' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+			FROM {db_prefix}topics' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			WHERE id_board != {int:recycle_board}' : '') . '
 			GROUP BY id_member_started
 			ORDER BY hits DESC
 			LIMIT 20',
 			array(
-				'recycle_board' => $modSettings['recycle_board'],
+				'recycle_board' => $settings['recycle_board'],
 			)
 		);
 		$members = array();

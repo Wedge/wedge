@@ -25,8 +25,8 @@ if (!defined('WEDGE'))
 
 function getBoardIndex($boardIndexOptions)
 {
-	global $scripturl, $user_info, $modSettings, $txt;
-	global $settings, $context, $language;
+	global $scripturl, $user_info, $settings, $txt;
+	global $theme, $context, $language;
 
 	// For performance, track the latest post while going through the boards.
 	if (!empty($boardIndexOptions['set_latest_post']))
@@ -101,7 +101,7 @@ function getBoardIndex($boardIndexOptions)
 			}
 
 			// If this board has new posts in it (and isn't the recycle bin!) then the category is new.
-			if (empty($modSettings['recycle_enable']) || $modSettings['recycle_board'] != $row_board['id_board'])
+			if (empty($settings['recycle_enable']) || $settings['recycle_board'] != $row_board['id_board'])
 				$categories[$row_board['id_cat']]['new'] |= empty($row_board['is_read']) && $row_board['poster_name'] != '';
 
 			// Avoid showing category unread link where it only has redirection boards.

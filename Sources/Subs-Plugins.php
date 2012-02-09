@@ -13,7 +13,7 @@
 
 function getWritableObject()
 {
-	global $pluginsdir, $context, $modSettings, $boarddir;
+	global $pluginsdir, $context, $settings, $boarddir;
 
 	// Normally it'll be on the plugins folder, but there's no reason it absolutely to be.
 	if (empty($path))
@@ -35,8 +35,8 @@ function getWritableObject()
 	elseif (!empty($_POST['connect_pwd']))
 	{
 		// OK, let's start with looking for a stored connection.
-		if (!empty($modSettings['default_con']))
-			$context['connect_details'] = unserialize(base64_decode($modSettings['default_con']));
+		if (!empty($settings['default_con']))
+			$context['connect_details'] = unserialize(base64_decode($settings['default_con']));
 		else
 			$context['connect_details'] = array();
 

@@ -117,7 +117,7 @@ function Packages()
 // Test install a package.
 function PackageInstallTest()
 {
-	global $boarddir, $txt, $context, $scripturl, $modSettings, $settings;
+	global $boarddir, $txt, $context, $scripturl, $settings, $theme;
 
 	// You have to specify a file!!
 	if (!isset($_REQUEST['package']) || $_REQUEST['package'] == '')
@@ -199,7 +199,7 @@ function PackageInstallTest()
 		WHERE (id_theme = {int:default_theme} OR id_theme IN ({array_int:known_theme_list}))
 			AND variable IN ({string:name}, {string:theme_dir})',
 		array(
-			'known_theme_list' => explode(',', $modSettings['knownThemes']),
+			'known_theme_list' => explode(',', $settings['knownThemes']),
 			'default_theme' => 1,
 			'name' => 'name',
 			'theme_dir' => 'theme_dir',
@@ -612,7 +612,7 @@ function PackageInstallTest()
 			preg_match('~^\$(languagedir|languages_dir|imagesdir|themedir)(\\|/)*(.+)*~i', $action_data['unparsed_destination'], $matches);
 
 			if ($matches[1] == 'imagesdir')
-				$path = '/' . basename($settings['default_images_url']);
+				$path = '/' . basename($theme['default_images_url']);
 			elseif ($matches[1] == 'languagedir' || $matches[1] == 'languages_dir')
 				$path = '/languages';
 			else
@@ -690,7 +690,7 @@ function PackageInstallTest()
 // Apply another type of (avatar, language, etc.) package.
 function PackageInstall()
 {
-	global $boarddir, $txt, $context, $boardurl, $scripturl, $modSettings;
+	global $boarddir, $txt, $context, $boardurl, $scripturl, $settings;
 	global $user_info, $sourcedir;
 
 	// Make sure we don't install this mod twice.
@@ -759,7 +759,7 @@ function PackageInstall()
 
 	// Are we installing this into any custom themes?
 	$custom_themes = array(1);
-	$known_themes = explode(',', $modSettings['knownThemes']);
+	$known_themes = explode(',', $settings['knownThemes']);
 	if (!empty($_POST['custom_theme']))
 	{
 		foreach ($_POST['custom_theme'] as $tid)
@@ -816,7 +816,7 @@ function PackageInstall()
 	$context['extract_type'] = isset($packageInfo['type']) ? $packageInfo['type'] : 'modification';
 
 	// Create a backup file to roll back to! (but if they do this more than once, don't run it a zillion times.)
-	if (!empty($modSettings['package_make_backups']) && (!isset($_SESSION['last_backup_for']) || $_SESSION['last_backup_for'] != $context['filename'] . ($context['uninstalling'] ? '$$' : '$')))
+	if (!empty($settings['package_make_backups']) && (!isset($_SESSION['last_backup_for']) || $_SESSION['last_backup_for'] != $context['filename'] . ($context['uninstalling'] ? '$$' : '$')))
 	{
 		$_SESSION['last_backup_for'] = $context['filename'] . ($context['uninstalling'] ? '$$' : '$');
 		// !!! Internationalize this?
@@ -925,7 +925,7 @@ function PackageInstall()
 			elseif ($action['type'] == 'code' && !empty($action['filename']))
 			{
 				// This is just here as reference for what is available.
-				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings;
+				global $txt, $boarddir, $sourcedir, $settings, $context, $theme;
 
 				// Now include the file and be done with it ;).
 				require($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']);
@@ -934,7 +934,7 @@ function PackageInstall()
 			elseif ($action['type'] == 'database' && !empty($action['filename']) && (!$context['uninstalling'] || !empty($_POST['do_db_changes'])))
 			{
 				// These can also be there for database changes.
-				global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings;
+				global $txt, $boarddir, $sourcedir, $settings, $context, $theme;
 				global $db_package_log;
 
 				// We'll likely want the package specific database functionality!
@@ -1403,7 +1403,7 @@ function PackageBrowse()
 
 function PackageOptions()
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context, $settings;
 
 	if (isset($_POST['submit']))
 	{
@@ -1427,15 +1427,15 @@ function PackageOptions()
 	$context['page_title'] = $txt['package_settings'];
 	wetem::load('install_options');
 
-	$context['package_ftp_server'] = isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost';
-	$context['package_ftp_port'] = isset($modSettings['package_port']) ? $modSettings['package_port'] : '21';
-	$context['package_ftp_username'] = isset($modSettings['package_username']) ? $modSettings['package_username'] : $default_username;
-	$context['package_make_backups'] = !empty($modSettings['package_make_backups']);
+	$context['package_ftp_server'] = isset($settings['package_server']) ? $settings['package_server'] : 'localhost';
+	$context['package_ftp_port'] = isset($settings['package_port']) ? $settings['package_port'] : '21';
+	$context['package_ftp_username'] = isset($settings['package_username']) ? $settings['package_username'] : $default_username;
+	$context['package_make_backups'] = !empty($settings['package_make_backups']);
 }
 
 function ViewOperations()
 {
-	global $context, $txt, $boarddir, $modSettings;
+	global $context, $txt, $boarddir, $settings;
 
 	// Can't be in here buddy.
 	isAllowedTo('admin_forum');
@@ -1483,7 +1483,7 @@ function ViewOperations()
 		WHERE (id_theme = {int:default_theme} OR id_theme IN ({array_int:known_theme_list}))
 			AND variable IN ({string:name}, {string:theme_dir})',
 		array(
-			'known_theme_list' => explode(',', $modSettings['knownThemes']),
+			'known_theme_list' => explode(',', $settings['knownThemes']),
 			'default_theme' => 1,
 			'name' => 'name',
 			'theme_dir' => 'theme_dir',
@@ -1515,7 +1515,7 @@ function ViewOperations()
 // Allow the admin to reset permissions on files.
 function PackagePermissions()
 {
-	global $context, $txt, $modSettings, $boarddir, $sourcedir, $cachedir, $package_ftp;
+	global $context, $txt, $settings, $boarddir, $sourcedir, $cachedir, $package_ftp;
 
 	// Let's try and be good, yes?
 	checkSession('get');
@@ -1541,9 +1541,9 @@ function PackagePermissions()
 		list ($username, $detect_path, $found_path) = $ftp->detect_path($boarddir);
 
 		$context['package_ftp'] = array(
-			'server' => isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost',
-			'port' => isset($modSettings['package_port']) ? $modSettings['package_port'] : '21',
-			'username' => empty($username) ? (isset($modSettings['package_username']) ? $modSettings['package_username'] : '') : $username,
+			'server' => isset($settings['package_server']) ? $settings['package_server'] : 'localhost',
+			'port' => isset($settings['package_port']) ? $settings['package_port'] : '21',
+			'username' => empty($username) ? (isset($settings['package_username']) ? $settings['package_username'] : '') : $username,
 			'path' => $detect_path,
 			'form_elements_only' => true,
 		);
@@ -1656,50 +1656,50 @@ function PackagePermissions()
 	}
 
 	// Are we using multiple attachment directories?
-	if (!empty($modSettings['currentAttachmentUploadDir']))
+	if (!empty($settings['currentAttachmentUploadDir']))
 	{
 		unset($context['file_tree'][strtr($boarddir, array('\\' => '/'))]['contents']['attachments']);
 
-		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+		if (!is_array($settings['attachmentUploadDir']))
+			$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
 
 		// !!! Should we suggest non-current directories be read only?
-		foreach ($modSettings['attachmentUploadDir'] as $dir)
+		foreach ($settings['attachmentUploadDir'] as $dir)
 			$context['file_tree'][strtr($dir, array('\\' => '/'))] = array(
 			'type' => 'dir',
 			'writable_on' => 'restrictive',
 		);
 
 	}
-	elseif (substr($modSettings['attachmentUploadDir'], 0, strlen($boarddir)) != $boarddir)
+	elseif (substr($settings['attachmentUploadDir'], 0, strlen($boarddir)) != $boarddir)
 	{
 		unset($context['file_tree'][strtr($boarddir, array('\\' => '/'))]['contents']['attachments']);
-		$context['file_tree'][strtr($modSettings['attachmentUploadDir'], array('\\' => '/'))] = array(
+		$context['file_tree'][strtr($settings['attachmentUploadDir'], array('\\' => '/'))] = array(
 			'type' => 'dir',
 			'writable_on' => 'restrictive',
 		);
 	}
 
-	if (substr($modSettings['smileys_dir'], 0, strlen($boarddir)) != $boarddir)
+	if (substr($settings['smileys_dir'], 0, strlen($boarddir)) != $boarddir)
 	{
 		unset($context['file_tree'][strtr($boarddir, array('\\' => '/'))]['contents']['Smileys']);
-		$context['file_tree'][strtr($modSettings['smileys_dir'], array('\\' => '/'))] = array(
+		$context['file_tree'][strtr($settings['smileys_dir'], array('\\' => '/'))] = array(
 			'type' => 'dir_recursive',
 			'writable_on' => 'standard',
 		);
 	}
-	if (substr($modSettings['avatar_directory'], 0, strlen($boarddir)) != $boarddir)
+	if (substr($settings['avatar_directory'], 0, strlen($boarddir)) != $boarddir)
 	{
 		unset($context['file_tree'][strtr($boarddir, array('\\' => '/'))]['contents']['avatars']);
-		$context['file_tree'][strtr($modSettings['avatar_directory'], array('\\' => '/'))] = array(
+		$context['file_tree'][strtr($settings['avatar_directory'], array('\\' => '/'))] = array(
 			'type' => 'dir',
 			'writable_on' => 'standard',
 		);
 	}
-	if (isset($modSettings['custom_avatar_dir']) && substr($modSettings['custom_avatar_dir'], 0, strlen($boarddir)) != $boarddir)
+	if (isset($settings['custom_avatar_dir']) && substr($settings['custom_avatar_dir'], 0, strlen($boarddir)) != $boarddir)
 	{
 		unset($context['file_tree'][strtr($boarddir, array('\\' => '/'))]['contents']['custom_avatar_dir']);
-		$context['file_tree'][strtr($modSettings['custom_avatar_dir'], array('\\' => '/'))] = array(
+		$context['file_tree'][strtr($settings['custom_avatar_dir'], array('\\' => '/'))] = array(
 			'type' => 'dir',
 			'writable_on' => 'restrictive',
 		);

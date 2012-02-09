@@ -63,14 +63,14 @@ if (!defined('WEDGE'))
  * - Set up CAPTCHA if appropriate (and also add error if they came from quick reply without said CAPTCHA)
  * - Last bits: set up whether WYSIWYG is available, set the nonce so we can't submit twice normally, and load the normal or wireless template as appropriate.
  *
- * @todo Why is the response prefix cached? Is it really that much effort to determine... what... 4 friggin' bytes? Would be better in $modSettings in that case.
+ * @todo Why is the response prefix cached? Is it really that much effort to determine... what... 4 friggin' bytes? Would be better in $settings in that case.
  * @todo Is it possible to force something through approval if you edit the form manually?
  * @todo Censoring appears to be done out of sequence if previewing compared to parsing. Issue? Non-issue?
  */
 function Post($post_errors = array())
 {
-	global $txt, $scripturl, $topic, $topic_info, $modSettings, $board, $user_info;
-	global $board_info, $context, $settings, $options, $language;
+	global $txt, $scripturl, $topic, $topic_info, $settings, $board, $user_info;
+	global $board_info, $context, $theme, $options, $language;
 
 	$context['form_fields'] = array(
 		'text' => array('subject', 'icon', 'guestname', 'email', 'evtitle', 'question', 'topic'),
@@ -151,21 +151,21 @@ function Post($post_errors = array())
 
 		if (empty($_REQUEST['msg']))
 		{
-			if ($user_info['is_guest'] && !allowedTo('post_reply_any') && (!$modSettings['postmod_active'] || !allowedTo('post_unapproved_replies_any')))
+			if ($user_info['is_guest'] && !allowedTo('post_reply_any') && (!$settings['postmod_active'] || !allowedTo('post_unapproved_replies_any')))
 				is_not_guest();
 
 			// By default the reply will be approved...
 			$context['becomes_approved'] = true;
 			if ($id_member_poster != $user_info['id'])
 			{
-				if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
+				if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
 					$context['becomes_approved'] = false;
 				else
 					isAllowedTo('post_reply_any');
 			}
 			elseif (!allowedTo('post_reply_any'))
 			{
-				if ($modSettings['postmod_active'] && allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own'))
+				if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own'))
 					$context['becomes_approved'] = false;
 				else
 					isAllowedTo('post_reply_own');
@@ -185,7 +185,7 @@ function Post($post_errors = array())
 		$context['becomes_approved'] = true;
 		if (!empty($board))
 		{
-			if ($modSettings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
+			if ($settings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
 				$context['becomes_approved'] = false;
 			else
 				isAllowedTo('post_new');
@@ -208,7 +208,7 @@ function Post($post_errors = array())
 	// You can only announce topics that will get approved...
 	$context['can_announce'] = allowedTo('announce_topic') && $context['becomes_approved'];
 	$context['locked'] = !empty($locked) || !empty($_REQUEST['lock']);
-	$context['can_quote'] = empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC']));
+	$context['can_quote'] = empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC']));
 
 	// Generally don't show the approval box... (Assume we want things approved)
 	$context['show_approval'] = false;
@@ -220,7 +220,7 @@ function Post($post_errors = array())
 	if ($locked && !allowedTo('moderate_board'))
 		fatal_lang_error('topic_locked', false);
 	// Check the users permissions - is the user allowed to add or post a poll?
-	if (isset($_REQUEST['poll']) && $modSettings['pollMode'] == '1')
+	if (isset($_REQUEST['poll']) && $settings['pollMode'] == '1')
 	{
 		// New topic, new poll.
 		if (empty($topic))
@@ -266,7 +266,7 @@ function Post($post_errors = array())
 				SELECT COUNT(*)
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
-					AND id_msg > {int:last}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+					AND id_msg > {int:last}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 					AND approved = {int:approved}') . '
 				LIMIT 1',
 				array(
@@ -291,11 +291,11 @@ function Post($post_errors = array())
 				else
 					$post_errors[] = $context['new_replies'] == 1 ? 'new_reply' : 'new_replies';
 
-				$modSettings['topicSummaryPosts'] = $context['new_replies'] > $modSettings['topicSummaryPosts'] ? max($modSettings['topicSummaryPosts'], 5) : $modSettings['topicSummaryPosts'];
+				$settings['topicSummaryPosts'] = $context['new_replies'] > $settings['topicSummaryPosts'] ? max($settings['topicSummaryPosts'], 5) : $settings['topicSummaryPosts'];
 			}
 		}
 		// Check whether this is a really old post being bumped...
-		if (!empty($modSettings['oldTopicDays']) && $lastPostTime + $modSettings['oldTopicDays'] * 86400 < time() && empty($pinned) && !isset($_REQUEST['subject']))
+		if (!empty($settings['oldTopicDays']) && $lastPostTime + $settings['oldTopicDays'] * 86400 < time() && empty($pinned) && !isset($_REQUEST['subject']))
 			$oldTopicError = true;
 	}
 
@@ -323,8 +323,8 @@ function Post($post_errors = array())
 				$post_errors[] = 'no_subject';
 			if (empty($_REQUEST['message']) || westr::htmltrim($_REQUEST['message']) === '')
 				$post_errors[] = 'no_message';
-			elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
-				$post_errors[] = array('long_message', $modSettings['max_messageLength']);
+			elseif (!empty($settings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $settings['max_messageLength'])
+				$post_errors[] = array('long_message', $settings['max_messageLength']);
 
 			// Are you... a guest?
 			if ($user_info['is_guest'])
@@ -344,7 +344,7 @@ function Post($post_errors = array())
 						$post_errors[] = 'bad_name';
 				}
 
-				if (empty($modSettings['guest_post_no_email']))
+				if (empty($settings['guest_post_no_email']))
 				{
 					if ($_REQUEST['email'] === '')
 						$post_errors[] = 'no_email';
@@ -544,7 +544,7 @@ function Post($post_errors = array())
 			if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 			{
 				// Give an extra five minutes over the disable time threshold, so they can type - assuming the post is public.
-				if ($row['approved'] && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + ($modSettings['edit_disable_time'] + 5) * 60 < time())
+				if ($row['approved'] && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 					fatal_lang_error('modify_post_time_passed', false);
 				elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_own'))
 					isAllowedTo('modify_replies');
@@ -556,7 +556,7 @@ function Post($post_errors = array())
 			else
 				isAllowedTo('modify_any');
 
-			if (!empty($modSettings['attachmentEnable']))
+			if (!empty($settings['attachmentEnable']))
 			{
 				$request = wesql::query('
 					SELECT IFNULL(size, -1) AS filesize, filename, id_attach, approved
@@ -648,7 +648,7 @@ function Post($post_errors = array())
 		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
 		{
 			// Give an extra five minutes over the disable time threshold, so they can type - assuming the post is public.
-			if ($row['approved'] && !empty($modSettings['edit_disable_time']) && $row['poster_time'] + ($modSettings['edit_disable_time'] + 5) * 60 < time())
+			if ($row['approved'] && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
 			elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_own'))
 				isAllowedTo('modify_replies');
@@ -681,7 +681,7 @@ function Post($post_errors = array())
 		// Load up 'em attachments!
 		foreach ($attachment_stuff as $attachment)
 		{
-			if ($attachment['filesize'] >= 0 && !empty($modSettings['attachmentEnable']))
+			if ($attachment['filesize'] >= 0 && !empty($settings['attachmentEnable']))
 				$context['current_attachments'][] = array(
 					'name' => htmlspecialchars($attachment['filename']),
 					'id' => $attachment['id_attach'],
@@ -726,7 +726,7 @@ function Post($post_errors = array())
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})
 					LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
-				WHERE m.id_msg = {int:id_msg}' . (!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+				WHERE m.id_msg = {int:id_msg}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 					AND m.approved = {int:is_approved}') . '
 				LIMIT 1',
 				array(
@@ -763,7 +763,7 @@ function Post($post_errors = array())
 			$form_message = preg_replace('~<br\s*/?\>~i', "\n", $form_message);
 
 			// Remove any nested quotes, if necessary.
-			if (!empty($modSettings['removeNestedQuotes']))
+			if (!empty($settings['removeNestedQuotes']))
 				$form_message = preg_replace(array('~\n?\[quote.*?].+?\[/quote]\n?~is', '~^\n~', '~\[/quote]~'), '', $form_message);
 
 			// Add a quote string on the front and end.
@@ -800,16 +800,16 @@ function Post($post_errors = array())
 		if (empty($_SESSION['temp_attachments']))
 			$_SESSION['temp_attachments'] = array();
 
-		if (!empty($modSettings['currentAttachmentUploadDir']))
+		if (!empty($settings['currentAttachmentUploadDir']))
 		{
-			if (!is_array($modSettings['attachmentUploadDir']))
-				$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+			if (!is_array($settings['attachmentUploadDir']))
+				$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
 
 			// Just use the current path for temp files.
-			$current_attach_dir = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
+			$current_attach_dir = $settings['attachmentUploadDir'][$settings['currentAttachmentUploadDir']];
 		}
 		else
-			$current_attach_dir = $modSettings['attachmentUploadDir'];
+			$current_attach_dir = $settings['attachmentUploadDir'];
 
 		// If this isn't a new post, check the current attachments.
 		if (isset($_REQUEST['msg']))
@@ -896,24 +896,24 @@ function Post($post_errors = array())
 				if (!is_uploaded_file($_FILES['attachment']['tmp_name'][$n]) || (@ini_get('open_basedir') == '' && !file_exists($_FILES['attachment']['tmp_name'][$n])))
 					fatal_lang_error('attach_timeout', 'critical');
 
-				if (!empty($modSettings['attachmentSizeLimit']) && $_FILES['attachment']['size'][$n] > $modSettings['attachmentSizeLimit'] * 1024)
-					fatal_lang_error('file_too_big', false, array($modSettings['attachmentSizeLimit']));
+				if (!empty($settings['attachmentSizeLimit']) && $_FILES['attachment']['size'][$n] > $settings['attachmentSizeLimit'] * 1024)
+					fatal_lang_error('file_too_big', false, array($settings['attachmentSizeLimit']));
 
 				$quantity++;
-				if (!empty($modSettings['attachmentNumPerPostLimit']) && $quantity > $modSettings['attachmentNumPerPostLimit'])
-					fatal_lang_error('attachments_limit_per_post', false, array($modSettings['attachmentNumPerPostLimit']));
+				if (!empty($settings['attachmentNumPerPostLimit']) && $quantity > $settings['attachmentNumPerPostLimit'])
+					fatal_lang_error('attachments_limit_per_post', false, array($settings['attachmentNumPerPostLimit']));
 
 				$total_size += $_FILES['attachment']['size'][$n];
-				if (!empty($modSettings['attachmentPostLimit']) && $total_size > $modSettings['attachmentPostLimit'] * 1024)
-					fatal_lang_error('file_too_big', false, array($modSettings['attachmentPostLimit']));
+				if (!empty($settings['attachmentPostLimit']) && $total_size > $settings['attachmentPostLimit'] * 1024)
+					fatal_lang_error('file_too_big', false, array($settings['attachmentPostLimit']));
 
-				if (!empty($modSettings['attachmentCheckExtensions']))
+				if (!empty($settings['attachmentCheckExtensions']))
 				{
-					if (!in_array(strtolower(substr(strrchr($_FILES['attachment']['name'][$n], '.'), 1)), explode(',', strtolower($modSettings['attachmentExtensions']))))
-						fatal_error($_FILES['attachment']['name'][$n] . '.<br>' . $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.', false);
+					if (!in_array(strtolower(substr(strrchr($_FILES['attachment']['name'][$n], '.'), 1)), explode(',', strtolower($settings['attachmentExtensions']))))
+						fatal_error($_FILES['attachment']['name'][$n] . '.<br>' . $txt['cant_upload_type'] . ' ' . $settings['attachmentExtensions'] . '.', false);
 				}
 
-				if (!empty($modSettings['attachmentDirSizeLimit']))
+				if (!empty($settings['attachmentDirSizeLimit']))
 				{
 					// Make sure the directory isn't full.
 					$dirSize = 0;
@@ -935,7 +935,7 @@ function Post($post_errors = array())
 					}
 
 					// Too big! Maybe you could zip it or something...
-					if ($_FILES['attachment']['size'][$n] + $dirSize > $modSettings['attachmentDirSizeLimit'] * 1024)
+					if ($_FILES['attachment']['size'][$n] + $dirSize > $settings['attachmentDirSizeLimit'] * 1024)
 						fatal_lang_error('ran_out_of_space');
 				}
 
@@ -967,7 +967,7 @@ function Post($post_errors = array())
 
 	if (isset($oldTopicError))
 	{
-		$context['post_error']['messages'][] = sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']);
+		$context['post_error']['messages'][] = sprintf($txt['error_old_topic'], $settings['oldTopicDays']);
 		$context['error_type'] = 'minor';
 	}
 
@@ -992,8 +992,8 @@ function Post($post_errors = array())
 		$context['linktree'][] = array(
 			'url' => $scripturl . '?topic=' . $topic . '.' . $_REQUEST['start'],
 			'name' => $form_subject,
-			'extra_before' => '<span' . ($settings['linktree_inline'] ? ' class="smalltext"' : '') . '><strong class="nav">' . $context['page_title'] . ' [</strong></span>',
-			'extra_after' => '<span' . ($settings['linktree_inline'] ? ' class="smalltext"' : '') . '><strong class="nav">]</strong></span>'
+			'extra_before' => '<span' . ($theme['linktree_inline'] ? ' class="smalltext"' : '') . '><strong class="nav">' . $context['page_title'] . ' [</strong></span>',
+			'extra_after' => '<span' . ($theme['linktree_inline'] ? ' class="smalltext"' : '') . '><strong class="nav">]</strong></span>'
 		);
 
 	// Give wireless a linktree url to the post screen, so that they can switch to full version.
@@ -1002,8 +1002,8 @@ function Post($post_errors = array())
 
 	// We need to check permissions, and also send the maximum allowed attachments through to the front end - it's dealt with there.
 	// !!! This won't work if you're posting an event.
-	$context['max_allowed_attachments'] = empty($modSettings['attachmentNumPerPostLimit']) ? 50 : $modSettings['attachmentNumPerPostLimit'];
-	$context['can_post_attachment'] = !empty($modSettings['attachmentEnable']) && $modSettings['attachmentEnable'] == 1 && (allowedTo('post_attachment') || ($modSettings['postmod_active'] && allowedTo('post_unapproved_attachments'))) && $context['max_allowed_attachments'] > 0;
+	$context['max_allowed_attachments'] = empty($settings['attachmentNumPerPostLimit']) ? 50 : $settings['attachmentNumPerPostLimit'];
+	$context['can_post_attachment'] = !empty($settings['attachmentEnable']) && $settings['attachmentEnable'] == 1 && (allowedTo('post_attachment') || ($settings['postmod_active'] && allowedTo('post_unapproved_attachments'))) && $context['max_allowed_attachments'] > 0;
 	$context['can_post_attachment_unapproved'] = allowedTo('post_attachment');
 
 	$context['subject'] = addcslashes($form_subject, '"');
@@ -1069,7 +1069,7 @@ function Post($post_errors = array())
 			// add height and width for the editor
 			'height' => '175px',
 			'width' => '100%',
-			'drafts' => !allowedTo('save_post_draft') || empty($modSettings['masterSavePostDrafts']) || !empty($_REQUEST['msg']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($modSettings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
+			'drafts' => !allowedTo('save_post_draft') || empty($settings['masterSavePostDrafts']) || !empty($_REQUEST['msg']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($settings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
 		)
 	);
 
@@ -1094,7 +1094,7 @@ function Post($post_errors = array())
 	}
 	if (empty($context['icon_url']))
 	{
-		$context['icon_url'] = $settings[file_exists($settings['theme_dir'] . '/images/post/' . $context['icon'] . '.gif') ? 'images_url' : 'default_images_url'] . '/post/' . $context['icon'] . '.gif';
+		$context['icon_url'] = $theme[file_exists($theme['theme_dir'] . '/images/post/' . $context['icon'] . '.gif') ? 'images_url' : 'default_images_url'] . '/post/' . $context['icon'] . '.gif';
 		array_unshift($context['icons'], array(
 			'value' => $context['icon'],
 			'name' => $txt['current_icon'],
@@ -1104,18 +1104,18 @@ function Post($post_errors = array())
 		));
 	}
 
-	if (!empty($topic) && !empty($modSettings['topicSummaryPosts']))
+	if (!empty($topic) && !empty($settings['topicSummaryPosts']))
 		getTopic();
 
 	// If the user can post attachments prepare the warning labels.
 	if ($context['can_post_attachment'])
 	{
-		$context['allowed_extensions'] = strtr($modSettings['attachmentExtensions'], array(',' => ', '));
+		$context['allowed_extensions'] = strtr($settings['attachmentExtensions'], array(',' => ', '));
 		$context['attachment_restrictions'] = array();
 		$attachmentRestrictionTypes = array('attachmentNumPerPostLimit', 'attachmentPostLimit', 'attachmentSizeLimit');
 		foreach ($attachmentRestrictionTypes as $type)
-			if (!empty($modSettings[$type]))
-				$context['attachment_restrictions'][] = sprintf($txt['attach_restrict_' . $type], $modSettings[$type]);
+			if (!empty($settings[$type]))
+				$context['attachment_restrictions'][] = sprintf($txt['attach_restrict_' . $type], $settings[$type]);
 	}
 
 	$context['back_to_topic'] = isset($_REQUEST['goback']) || (isset($_REQUEST['msg']) && !isset($_REQUEST['subject']));
@@ -1126,7 +1126,7 @@ function Post($post_errors = array())
 	$context['is_first_post'] = $context['is_new_topic'] || (isset($_REQUEST['msg']) && $_REQUEST['msg'] == $id_first_msg);
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($modSettings['posts_require_captcha']) && ($user_info['posts'] < $modSettings['posts_require_captcha'] || ($user_info['is_guest'] && $modSettings['posts_require_captcha'] == -1));
+	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || ($user_info['is_guest'] && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');
@@ -1145,7 +1145,7 @@ function Post($post_errors = array())
 	}
 
 	// WYSIWYG only works if BBC is enabled
-	$modSettings['disable_wysiwyg'] = !empty($modSettings['disable_wysiwyg']) || empty($modSettings['enableBBC']);
+	$settings['disable_wysiwyg'] = !empty($settings['disable_wysiwyg']) || empty($settings['enableBBC']);
 
 	// Register this form in the session variables.
 	checkSubmitOnce('register');
@@ -1188,21 +1188,21 @@ function Post($post_errors = array())
 /**
  * This function gets the most recent posts, including new replies, for the post view.
  *
- * - If calling from an XML view, the number of replies is simply the new ones, otherwise it attempts to get the number specified as the amount of posts to return in $modSettings['topicSummaryPosts'].
+ * - If calling from an XML view, the number of replies is simply the new ones, otherwise it attempts to get the number specified as the amount of posts to return in $settings['topicSummaryPosts'].
  * - Note that if getting posts for an edit request, only the posts prior to the one being edited are considered.
  * - The posts are censored, BBC processed, and stored in an array within $context.
  * - The number of new replies is known from processing elsewhere in Post(), so it simply has to count the number of posts back to know which ones are new (e.g. 4 new replies, the 4 newest get 'new' flags set)
  */
 function getTopic()
 {
-	global $topic, $modSettings, $context, $counter, $options;
+	global $topic, $settings, $context, $counter, $options;
 
 	if (isset($_REQUEST['xml']))
 		$limit = '
 		LIMIT ' . (empty($context['new_replies']) ? '0' : $context['new_replies']);
 	else
-		$limit = empty($modSettings['topicSummaryPosts']) ? '' : '
-		LIMIT ' . (int) $modSettings['topicSummaryPosts'];
+		$limit = empty($settings['topicSummaryPosts']) ? '' : '
+		LIMIT ' . (int) $settings['topicSummaryPosts'];
 
 	// If you're modifying, get only those posts before the current one. (otherwise get all.)
 	$request = wesql::query('
@@ -1212,7 +1212,7 @@ function getTopic()
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . (isset($_REQUEST['msg']) ? '
-			AND m.id_msg < {int:id_msg}' : '') .(!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+			AND m.id_msg < {int:id_msg}' : '') .(!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 			AND m.approved = {int:approved}') . '
 		ORDER BY m.id_msg DESC' . $limit,
 		array(
@@ -1238,7 +1238,7 @@ function getTopic()
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'id' => $row['id_msg'],
 			'is_new' => !empty($context['new_replies']),
-			'is_ignored' => !empty($modSettings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($row['id_member'], $context['user']['ignoreusers']),
+			'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($row['id_member'], $context['user']['ignoreusers']),
 		);
 
 		if (!empty($context['new_replies']))

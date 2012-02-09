@@ -15,7 +15,7 @@ if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
 /**
- * Loads the forum-wide settings into $modSettings as an array.
+ * Loads the forum-wide settings into $settings as an array.
  *
  * - Ensure the database is using the same character set as the application thinks it is.
  * - Attempt to load the settings from cache, failing that from the database, with some fallback/sanity values for a few common settings.
@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  */
 function reloadSettings()
 {
-	global $modSettings, $boarddir, $txt, $context, $sourcedir, $pluginsdir, $pluginsurl;
+	global $settings, $boarddir, $txt, $context, $sourcedir, $pluginsdir, $pluginsurl;
 
 	// Most database systems have not set UTF-8 as their default input charset.
 	wesql::query('
@@ -37,7 +37,7 @@ function reloadSettings()
 	);
 
 	// Try to load it from the cache first; it'll never get cached if the setting is off.
-	if (($modSettings = cache_get_data('modSettings', 90)) == null)
+	if (($settings = cache_get_data('modSettings', 90)) == null)
 	{
 		$request = wesql::query('
 			SELECT variable, value
@@ -45,42 +45,42 @@ function reloadSettings()
 			array(
 			)
 		);
-		$modSettings = array();
+		$settings = array();
 		if (!$request)
 			show_db_error();
 		while ($row = wesql::fetch_row($request))
-			$modSettings[$row[0]] = $row[1];
+			$settings[$row[0]] = $row[1];
 		wesql::free_result($request);
 
 		// Do a few things to protect against missing settings or settings with invalid values...
-		if (empty($modSettings['defaultMaxTopics']) || $modSettings['defaultMaxTopics'] <= 0 || $modSettings['defaultMaxTopics'] > 999)
-			$modSettings['defaultMaxTopics'] = 20;
-		if (empty($modSettings['defaultMaxMessages']) || $modSettings['defaultMaxMessages'] <= 0 || $modSettings['defaultMaxMessages'] > 999)
-			$modSettings['defaultMaxMessages'] = 15;
-		if (empty($modSettings['defaultMaxMembers']) || $modSettings['defaultMaxMembers'] <= 0 || $modSettings['defaultMaxMembers'] > 999)
-			$modSettings['defaultMaxMembers'] = 30;
-		$modSettings['registered_hooks'] = empty($modSettings['registered_hooks']) ? array() : unserialize($modSettings['registered_hooks']);
-		$modSettings['hooks'] = $modSettings['registered_hooks'];
-		$modSettings['pretty_filters'] = unserialize($modSettings['pretty_filters']);
+		if (empty($settings['defaultMaxTopics']) || $settings['defaultMaxTopics'] <= 0 || $settings['defaultMaxTopics'] > 999)
+			$settings['defaultMaxTopics'] = 20;
+		if (empty($settings['defaultMaxMessages']) || $settings['defaultMaxMessages'] <= 0 || $settings['defaultMaxMessages'] > 999)
+			$settings['defaultMaxMessages'] = 15;
+		if (empty($settings['defaultMaxMembers']) || $settings['defaultMaxMembers'] <= 0 || $settings['defaultMaxMembers'] > 999)
+			$settings['defaultMaxMembers'] = 30;
+		$settings['registered_hooks'] = empty($settings['registered_hooks']) ? array() : unserialize($settings['registered_hooks']);
+		$settings['hooks'] = $settings['registered_hooks'];
+		$settings['pretty_filters'] = unserialize($settings['pretty_filters']);
 
-		if (!empty($modSettings['cache_enable']))
-			cache_put_data('modSettings', $modSettings, 90);
+		if (!empty($settings['cache_enable']))
+			cache_put_data('modSettings', $settings, 90);
 	}
 
 	// Deal with loading plugins.
 	$context['enabled_plugins'] = array();
 	$context['extra_actions'] = array();
-	if (!empty($modSettings['enabled_plugins']))
+	if (!empty($settings['enabled_plugins']))
 	{
 		// Step through the list we think we have enabled.
-		$plugins = explode(',', $modSettings['enabled_plugins']);
+		$plugins = explode(',', $settings['enabled_plugins']);
 		$sane_path = str_replace('\\', '/', $pluginsdir);
 		$hook_stack = array();
 		foreach ($plugins as $plugin)
 		{
-			if (!empty($modSettings['plugin_' . $plugin]) && file_exists($sane_path . '/' . $plugin . '/plugin-info.xml'))
+			if (!empty($settings['plugin_' . $plugin]) && file_exists($sane_path . '/' . $plugin . '/plugin-info.xml'))
 			{
-				$plugin_details = @unserialize($modSettings['plugin_' . $plugin]);
+				$plugin_details = @unserialize($settings['plugin_' . $plugin]);
 				$context['enabled_plugins'][$plugin_details['id']] = $plugin;
 				$this_plugindir = $context['plugins_dir'][$plugin_details['id']] = $sane_path . '/' . $plugin;
 				$context['plugins_url'][$plugin_details['id']] = $pluginsurl . '/' . $plugin;
@@ -107,10 +107,10 @@ function reloadSettings()
 		foreach ($hook_stack as $hook => $hooks_by_priority)
 		{
 			krsort($hooks_by_priority);
-			if (!isset($modSettings['hooks'][$hook]))
-				$modSettings['hooks'][$hook] = array();
+			if (!isset($settings['hooks'][$hook]))
+				$settings['hooks'][$hook] = array();
 			foreach ($hooks_by_priority as $priority => $hooks)
-				$modSettings['hooks'][$hook] = array_merge($modSettings['hooks'][$hook], $hooks);
+				$settings['hooks'][$hook] = array_merge($settings['hooks'][$hook], $hooks);
 		}
 	}
 
@@ -118,34 +118,34 @@ function reloadSettings()
 	westr::getInstance();
 
 	// Setting the timezone is a requirement.
-	if (isset($modSettings['default_timezone']))
-		date_default_timezone_set($modSettings['default_timezone']);
+	if (isset($settings['default_timezone']))
+		date_default_timezone_set($settings['default_timezone']);
 	else
 		date_default_timezone_set(@date_default_timezone_get()); // At least attempt to use what the host has to try to prevent lots and lots of errors spewing everywhere.
 
 	// Check the load averages?
-	if (!empty($modSettings['loadavg_enable']))
+	if (!empty($settings['loadavg_enable']))
 	{
-		if (($modSettings['load_average'] = cache_get_data('loadavg', 90)) == null)
+		if (($settings['load_average'] = cache_get_data('loadavg', 90)) == null)
 		{
-			$modSettings['load_average'] = @file_get_contents('/proc/loadavg');
-			if (!empty($modSettings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $modSettings['load_average'], $matches) != 0)
-				$modSettings['load_average'] = (float) $matches[1];
-			elseif (($modSettings['load_average'] = @`uptime`) != null && preg_match('~load average[s]?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $modSettings['load_average'], $matches) != 0)
-				$modSettings['load_average'] = (float) $matches[1];
+			$settings['load_average'] = @file_get_contents('/proc/loadavg');
+			if (!empty($settings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $settings['load_average'], $matches) != 0)
+				$settings['load_average'] = (float) $matches[1];
+			elseif (($settings['load_average'] = @`uptime`) != null && preg_match('~load average[s]?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $settings['load_average'], $matches) != 0)
+				$settings['load_average'] = (float) $matches[1];
 			else
-				unset($modSettings['load_average']);
+				unset($settings['load_average']);
 
-			if (!empty($modSettings['load_average']))
-				cache_put_data('loadavg', $modSettings['load_average'], 90);
+			if (!empty($settings['load_average']))
+				cache_put_data('loadavg', $settings['load_average'], 90);
 		}
 
-		if (!empty($modSettings['loadavg_forum']) && !empty($modSettings['load_average']) && $modSettings['load_average'] >= $modSettings['loadavg_forum'])
+		if (!empty($settings['loadavg_forum']) && !empty($settings['load_average']) && $settings['load_average'] >= $settings['loadavg_forum'])
 			show_db_error(true);
 	}
 
 	// Is post moderation alive and well?
-	$modSettings['postmod_active'] = !empty($modSettings['postmod_enabled']);
+	$settings['postmod_active'] = !empty($settings['postmod_enabled']);
 
 	// Call pre-load hook functions.
 	call_hook('pre_load');
@@ -167,7 +167,7 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $modSettings, $user_settings, $cookiename, $user_info, $language;
+	global $settings, $user_settings, $cookiename, $user_info, $language;
 
 	$id_member = 0;
 
@@ -194,7 +194,7 @@ function loadUserSettings()
 		list ($id_member, $password) = @unserialize($_COOKIE[$cookiename]);
 		$id_member = !empty($id_member) && strlen($password) > 0 ? (int) $id_member : 0;
 	}
-	elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($modSettings['disableCheckUA'])))
+	elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($settings['disableCheckUA'])))
 	{
 		// !!! Perhaps we can do some more checking on this, such as on the first octet of the IP?
 		list ($id_member, $password, $login_span) = @unserialize($_SESSION['login_' . $cookiename]);
@@ -205,7 +205,7 @@ function loadUserSettings()
 	if ($id_member != 0)
 	{
 		// Is the member data cached?
-		if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
+		if (empty($settings['cache_enable']) || $settings['cache_enable'] < 2 || ($user_settings = cache_get_data('user_settings-' . $id_member, 60)) == null)
 		{
 			$request = wesql::query('
 				SELECT
@@ -222,7 +222,7 @@ function loadUserSettings()
 			$user_settings['data'] = unserialize($user_settings['data']);
 			wesql::free_result($request);
 
-			if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
+			if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
 				cache_put_data('user_settings-' . $id_member, $user_settings, 60);
 		}
 
@@ -260,7 +260,7 @@ function loadUserSettings()
 		// 2. XML feeds and Ajax requests don't count either.
 		// 3. If it was set within this session, no need to set it again.
 		// 4. New session, yet updated < five hours ago? Maybe cache can help.
-		if (WEDGE != 'SSI' && !isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($modSettings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+		if (WEDGE != 'SSI' && !isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($settings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 		{
 			// Do a quick query to make sure this isn't a mistake.
 			$result = wesql::query('
@@ -280,13 +280,13 @@ function loadUserSettings()
 			// If it was *at least* five hours ago...
 			if ($visitTime < time() - 5 * 3600)
 			{
-				updateMemberData($id_member, array('id_msg_last_visit' => (int) $modSettings['maxMsgID'], 'last_login' => time(), 'member_ip' => $_SERVER['REMOTE_ADDR'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']));
+				updateMemberData($id_member, array('id_msg_last_visit' => (int) $settings['maxMsgID'], 'last_login' => time(), 'member_ip' => $_SERVER['REMOTE_ADDR'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']));
 				$user_settings['last_login'] = time();
 
-				if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
+				if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
 					cache_put_data('user_settings-' . $id_member, $user_settings, 60);
 
-				if (!empty($modSettings['cache_enable']))
+				if (!empty($settings['cache_enable']))
 					cache_put_data('user_last_visit-' . $id_member, $_SESSION['id_msg_last_visit'], 5 * 3600);
 			}
 		}
@@ -326,12 +326,12 @@ function loadUserSettings()
 			$_COOKIE[$cookiename] = '';
 
 		// Do we perhaps think this is a search robot? Check every five minutes just in case...
-		if ((!empty($modSettings['spider_mode']) || !empty($modSettings['spider_group'])) && (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300))
+		if ((!empty($settings['spider_mode']) || !empty($settings['spider_group'])) && (!isset($_SESSION['robot_check']) || $_SESSION['robot_check'] < time() - 300))
 		{
 			loadSource('ManageSearchEngines');
 			$user_info['possibly_robot'] = SpiderCheck();
 		}
-		elseif (!empty($modSettings['spider_mode']))
+		elseif (!empty($settings['spider_mode']))
 			$user_info['possibly_robot'] = isset($_SESSION['id_robot']) ? $_SESSION['id_robot'] : 0;
 		// If we haven't turned on proper spider hunts then have a guess!
 		else
@@ -362,7 +362,7 @@ function loadUserSettings()
 		'name' => isset($user_settings['real_name']) ? $user_settings['real_name'] : '',
 		'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
 		'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
-		'language' => empty($user_settings['lngfile']) || empty($modSettings['userLanguage']) ? $language : $user_settings['lngfile'],
+		'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $language : $user_settings['lngfile'],
 		'is_guest' => $id_member == 0,
 		'is_admin' => in_array(1, $user_info['groups']),
 		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
@@ -386,8 +386,8 @@ function loadUserSettings()
 		'unread_messages' => empty($user_settings['unread_messages']) ? 0 : $user_settings['unread_messages'],
 		'media_unseen' => empty($user_settings['media_unseen']) ? 0 : $user_settings['media_unseen'],
 		'total_time_logged_in' => empty($user_settings['total_time_logged_in']) ? 0 : $user_settings['total_time_logged_in'],
-		'buddies' => !empty($modSettings['enable_buddylist']) && !empty($user_settings['buddy_list']) ? explode(',', $user_settings['buddy_list']) : array(),
-		'ignoreboards' => !empty($user_settings['ignore_boards']) && !empty($modSettings['allow_ignore_boards']) ? explode(',', $user_settings['ignore_boards']) : array(),
+		'buddies' => !empty($settings['enable_buddylist']) && !empty($user_settings['buddy_list']) ? explode(',', $user_settings['buddy_list']) : array(),
+		'ignoreboards' => !empty($user_settings['ignore_boards']) && !empty($settings['allow_ignore_boards']) ? explode(',', $user_settings['ignore_boards']) : array(),
 		'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : array(),
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => array(),
@@ -410,12 +410,12 @@ function loadUserSettings()
 	$languages = getLanguages();
 
 	// Allow the user to change their language if it's valid.
-	if (!empty($modSettings['userLanguage']) && !empty($_GET['language']) && isset($languages[strtr($_GET['language'], './\\:', '____')]))
+	if (!empty($settings['userLanguage']) && !empty($_GET['language']) && isset($languages[strtr($_GET['language'], './\\:', '____')]))
 	{
 		$user_info['language'] = strtr($_GET['language'], './\\:', '____');
 		$_SESSION['language'] = $user_info['language'];
 	}
-	elseif (!empty($modSettings['userLanguage']) && !empty($_SESSION['language']) && isset($languages[strtr($_SESSION['language'], './\\:', '____')]))
+	elseif (!empty($settings['userLanguage']) && !empty($_SESSION['language']) && isset($languages[strtr($_SESSION['language'], './\\:', '____')]))
 		$user_info['language'] = strtr($_SESSION['language'], './\\:', '____');
 
 	// Just build this here, it makes it easier to change/use - administrators can see all boards.
@@ -432,7 +432,7 @@ function loadUserSettings()
 		$cache_groups = implode(',', $cache_groups);
 
 		$temp = cache_get_data('board_access_' . $cache_groups, 300);
-		if ($temp === null || time() - 240 > $modSettings['settings_updated'])
+		if ($temp === null || time() - 240 > $settings['settings_updated'])
 		{
 			$request = wesql::query('
 				SELECT id_board, view_perm, enter_perm
@@ -514,7 +514,7 @@ function loadUserSettings()
  */
 function loadBoard()
 {
-	global $txt, $scripturl, $context, $modSettings;
+	global $txt, $scripturl, $context, $settings;
 	global $board_info, $board, $topic, $user_info, $user_settings;
 
 	// Assume they are not a moderator.
@@ -577,7 +577,7 @@ function loadBoard()
 	elseif (empty($board) && !empty($topic) && isset($_REQUEST['action']) && $_REQUEST['action'] === 'feed')
 		return;
 
-	if (!empty($modSettings['cache_enable']) && (empty($topic) || $modSettings['cache_enable'] >= 3))
+	if (!empty($settings['cache_enable']) && (empty($topic) || $settings['cache_enable'] >= 3))
 	{
 		// !!! SLOW?
 		if (!empty($topic))
@@ -705,7 +705,7 @@ function loadBoard()
 
 			// If the board only contains unapproved posts and the user isn't an approver then they can't see any topics.
 			// If that is the case do an additional check to see if they have any topics waiting to be approved.
-			if ($board_info['num_topics'] == 0 && $modSettings['postmod_active'] && !allowedTo('approve_posts'))
+			if ($board_info['num_topics'] == 0 && $settings['postmod_active'] && !allowedTo('approve_posts'))
 			{
 				wesql::free_result($request); // Free the previous result
 
@@ -725,7 +725,7 @@ function loadBoard()
 				list ($board_info['unapproved_user_topics']) = wesql::fetch_row($request);
 			}
 
-			if (!empty($modSettings['cache_enable']) && (empty($topic) || $modSettings['cache_enable'] >= 3))
+			if (!empty($settings['cache_enable']) && (empty($topic) || $settings['cache_enable'] >= 3))
 			{
 				// !!! SLOW?
 				if (!empty($topic))
@@ -843,7 +843,7 @@ function loadBoard()
  */
 function loadPermissions()
 {
-	global $user_info, $board, $board_info, $modSettings;
+	global $user_info, $board, $board_info, $settings;
 
 	if ($user_info['is_admin'])
 	{
@@ -851,7 +851,7 @@ function loadPermissions()
 		return;
 	}
 
-	if (!empty($modSettings['cache_enable']))
+	if (!empty($settings['cache_enable']))
 	{
 		$cache_groups = $user_info['groups'];
 		asort($cache_groups);
@@ -860,19 +860,19 @@ function loadPermissions()
 		if ($user_info['possibly_robot'])
 			$cache_groups .= '-spider';
 
-		if ($modSettings['cache_enable'] >= 2 && !empty($board) && ($temp = cache_get_data('permissions:' . $cache_groups . ':' . $board, 240)) != null && time() - 240 > $modSettings['settings_updated'])
+		if ($settings['cache_enable'] >= 2 && !empty($board) && ($temp = cache_get_data('permissions:' . $cache_groups . ':' . $board, 240)) != null && time() - 240 > $settings['settings_updated'])
 		{
 			list ($user_info['permissions']) = $temp;
 			banPermissions();
 
 			return;
 		}
-		elseif (($temp = cache_get_data('permissions:' . $cache_groups, 240)) != null && time() - 240 > $modSettings['settings_updated'])
+		elseif (($temp = cache_get_data('permissions:' . $cache_groups, 240)) != null && time() - 240 > $settings['settings_updated'])
 			list ($user_info['permissions'], $removals) = $temp;
 	}
 
 	// If it is detected as a robot, and we are restricting permissions as a special group - then implement this.
-	$spider_restrict = $user_info['possibly_robot'] && !empty($modSettings['spider_mode']) && !empty($modSettings['spider_group']) ? ' OR (id_group = {int:spider_group} AND add_deny = 0)' : '';
+	$spider_restrict = $user_info['possibly_robot'] && !empty($settings['spider_mode']) && !empty($settings['spider_group']) ? ' OR (id_group = {int:spider_group} AND add_deny = 0)' : '';
 
 	if (empty($user_info['permissions']))
 	{
@@ -884,7 +884,7 @@ function loadPermissions()
 				' . $spider_restrict,
 			array(
 				'member_groups' => $user_info['groups'],
-				'spider_group' => !empty($modSettings['spider_group']) ? $modSettings['spider_group'] : 0,
+				'spider_group' => !empty($settings['spider_group']) ? $settings['spider_group'] : 0,
 			)
 		);
 		$removals = array();
@@ -917,7 +917,7 @@ function loadPermissions()
 			array(
 				'member_groups' => $user_info['groups'],
 				'id_profile' => $board_info['profile'],
-				'spider_group' => !empty($modSettings['spider_mode']) && !empty($modSettings['spider_group']) ? $modSettings['spider_group'] : 0,
+				'spider_group' => !empty($settings['spider_mode']) && !empty($settings['spider_group']) ? $settings['spider_group'] : 0,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -931,10 +931,10 @@ function loadPermissions()
 	}
 
 	// Remove all the permissions they shouldn't have ;).
-	if (!empty($modSettings['permission_enable_deny']))
+	if (!empty($settings['permission_enable_deny']))
 		$user_info['permissions'] = array_diff($user_info['permissions'], $removals);
 
-	if (isset($cache_groups) && !empty($board) && $modSettings['cache_enable'] >= 2)
+	if (isset($cache_groups) && !empty($board) && $settings['cache_enable'] >= 2)
 		cache_put_data('permissions:' . $cache_groups . ':' . $board, array($user_info['permissions'], null), 240);
 
 	// Banned? Watch, don't touch..
@@ -943,7 +943,7 @@ function loadPermissions()
 	// Load the mod cache so we can know what additional boards they should see, but no sense in doing it for guests
 	if (!$user_info['is_guest'])
 	{
-		if (!isset($_SESSION['mc']) || $_SESSION['mc']['time'] <= $modSettings['settings_updated'])
+		if (!isset($_SESSION['mc']) || $_SESSION['mc']['time'] <= $settings['settings_updated'])
 		{
 			loadSource('Subs-Auth');
 			rebuildModCache();
@@ -965,7 +965,7 @@ function loadPermissions()
  */
 function loadMemberData($users, $is_name = false, $set = 'normal')
 {
-	global $user_profile, $modSettings, $board_info;
+	global $user_profile, $settings, $board_info;
 
 	// Can't just look for no users :P.
 	if (empty($users))
@@ -975,7 +975,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	$users = !is_array($users) ? array($users) : array_unique($users);
 	$loaded_ids = array();
 
-	if (!$is_name && !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 3)
+	if (!$is_name && !empty($settings['cache_enable']) && $settings['cache_enable'] >= 3)
 	{
 		$users = array_values($users);
 		for ($i = 0, $n = count($users); $i < $n; $i++)
@@ -1002,7 +1002,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank}) AS member_group,
 			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank}) AS post_group, mem.is_activated,
 			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank} THEN pg.stars ELSE mg.stars END AS stars'
-			. (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '');
+			. (!empty($settings['titlesEnable']) ? ', mem.usertitle' : '');
 		$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
@@ -1023,7 +1023,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.notify_types, lo.url, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank}) AS member_group,
 			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank}) AS post_group, mem.ignore_boards,
 			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank} THEN pg.stars ELSE mg.stars END AS stars, mem.password_salt, mem.pm_prefs'
-			. (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '');
+			. (!empty($settings['titlesEnable']) ? ', mem.usertitle' : '');
 		$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
@@ -1080,7 +1080,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		wesql::free_result($request);
 	}
 
-	if (!empty($new_loaded_ids) && !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 3)
+	if (!empty($new_loaded_ids) && !empty($settings['cache_enable']) && $settings['cache_enable'] >= 3)
 	{
 		for ($i = 0, $n = count($new_loaded_ids); $i < $n; $i++)
 			cache_put_data('member_data-' . $set . '-' . $new_loaded_ids[$i], $user_profile[$new_loaded_ids[$i]], 240);
@@ -1155,7 +1155,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 function loadMemberContext($user, $display_custom_fields = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
-	global $context, $modSettings, $board_info, $settings;
+	global $context, $settings, $board_info, $theme;
 	static $dataLoaded = array();
 
 	// If this person's data is already loaded, skip it.
@@ -1192,10 +1192,10 @@ function loadMemberContext($user, $display_custom_fields = false)
 	$buddy_list = !empty($profile['buddy_list']) ? explode(',', $profile['buddy_list']) : array();
 
 	// If we're always html resizing, assume it's too large.
-	if ($modSettings['avatar_action_too_large'] == 'option_html_resize' || $modSettings['avatar_action_too_large'] == 'option_js_resize')
+	if ($settings['avatar_action_too_large'] == 'option_html_resize' || $settings['avatar_action_too_large'] == 'option_js_resize')
 	{
-		$avatar_width = !empty($modSettings['avatar_max_width_external']) ? ' width="' . $modSettings['avatar_max_width_external'] . '"' : '';
-		$avatar_height = !empty($modSettings['avatar_max_height_external']) ? ' height="' . $modSettings['avatar_max_height_external'] . '"' : '';
+		$avatar_width = !empty($settings['avatar_max_width_external']) ? ' width="' . $settings['avatar_max_width_external'] . '"' : '';
+		$avatar_height = !empty($settings['avatar_max_height_external']) ? ' height="' . $settings['avatar_max_height_external'] . '"' : '';
 	}
 	else
 	{
@@ -1211,7 +1211,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'is_buddy' => $profile['buddy'],
 		'is_reverse_buddy' => in_array($user_info['id'], $buddy_list),
 		'buddies' => $buddy_list,
-		'title' => !empty($modSettings['titlesEnable']) ? $profile['usertitle'] : '',
+		'title' => !empty($settings['titlesEnable']) ? $profile['usertitle'] : '',
 		'href' => $scripturl . '?action=profile;u=' . $profile['id_member'],
 		'link' => '<a href="' . $scripturl . '?action=profile;u=' . $profile['id_member'] . '" title="' . $txt['view_profile'] . '"' . (!empty($profile['member_group_color']) ? ' style="color: ' . $profile['member_group_color'] . '"' : '') . '>' . $profile['real_name'] . '</a>',
 		'email' => $profile['email_address'],
@@ -1221,7 +1221,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'blurb' => $profile['personal_text'],
 		'gender' => array(
 			'name' => $gendertxt,
-			'image' => !empty($profile['gender']) ? '<img class="gender" src="' . $settings['images_url'] . '/' . ($profile['gender'] == 1 ? 'Male' : 'Female') . '.gif" alt="' . $gendertxt . '">' : ''
+			'image' => !empty($profile['gender']) ? '<img class="gender" src="' . $theme['images_url'] . '/' . ($profile['gender'] == 1 ? 'Male' : 'Female') . '.gif" alt="' . $gendertxt . '">' : ''
 		),
 		'website' => array(
 			'title' => $profile['website_title'],
@@ -1241,7 +1241,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'text' => $txt[$profile['is_online'] ? 'online' : 'offline'],
 			'href' => $scripturl . '?action=pm;sa=send;u=' . $profile['id_member'],
 			'link' => '<a href="' . $scripturl . '?action=pm;sa=send;u=' . $profile['id_member'] . '">' . $txt[$profile['is_online'] ? 'online' : 'offline'] . '</a>',
-			'image_href' => $settings['images_url'] . '/' . ($profile['buddy'] ? 'buddy_' : '') . ($profile['is_online'] ? 'useron' : 'useroff') . '.gif',
+			'image_href' => $theme['images_url'] . '/' . ($profile['buddy'] ? 'buddy_' : '') . ($profile['is_online'] ? 'useron' : 'useroff') . '.gif',
 			'label' => $txt[$profile['is_online'] ? 'online' : 'offline']
 		),
 		'language' => westr::ucwords(strtr($profile['lngfile'], array('_' => ' ', '-utf8' => ''))),
@@ -1254,9 +1254,9 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'group_id' => $profile['id_group'],
 		'post_group' => $profile['post_group'],
 		'post_group_color' => $profile['post_group_color'],
-		'group_stars' => str_repeat('<img src="' . str_replace('$language', $context['user']['language'], isset($profile['stars'][1]) ? $settings['images_url'] . '/' . $profile['stars'][1] : '') . '">', empty($profile['stars'][0]) || empty($profile['stars'][1]) ? 0 : $profile['stars'][0]),
+		'group_stars' => str_repeat('<img src="' . str_replace('$language', $context['user']['language'], isset($profile['stars'][1]) ? $theme['images_url'] . '/' . $profile['stars'][1] : '') . '">', empty($profile['stars'][0]) || empty($profile['stars'][1]) ? 0 : $profile['stars'][0]),
 		'warning' => $profile['warning'],
-		'warning_status' => empty($modSettings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= 10 ? 'ban' : ($modSettings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($modSettings['warning_moderate']) && $modSettings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($modSettings['warning_watch']) && $modSettings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
+		'warning_status' => empty($settings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= 10 ? 'ban' : ($settings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($settings['warning_watch']) && $settings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
 		'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
 		'media' => array(
 			'total_items' => $profile['media_items'],
@@ -1272,14 +1272,14 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// Avatars are tricky, so let's do them next.
 	// So, they're not banned, or if they are, we're not hiding their avatar.
-	if (!$memberContext[$user]['is_banned'] || empty($modSettings['avatar_banned_hide']))
+	if (!$memberContext[$user]['is_banned'] || empty($settings['avatar_banned_hide']))
 	{
 		// So it's stored in members/avatar?
 		if (!empty($profile['avatar']))
 		{
 			if (stristr($profile['avatar'], 'gravatar://'))
 			{
-				if ($profile['avatar'] === 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']))
+				if ($profile['avatar'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
 					$image = get_gravatar_url($profile['email_address']);
 				else
 					$image = get_gravatar_url(substr($profile['avatar'], 11));
@@ -1294,9 +1294,9 @@ function loadMemberContext($user, $display_custom_fields = false)
 			else
 				$memberContext[$user]['avatar'] = array(
 					'name' => $profile['avatar'],
-					'image' => stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . $modSettings['avatar_url'] . '/' . htmlspecialchars($profile['avatar']) . '">',
-					'href' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar'],
-					'url' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $modSettings['avatar_url'] . '/' . $profile['avatar'],
+					'image' => stristr($profile['avatar'], 'http://') ? '<img class="avatar" src="' . $profile['avatar'] . '"' . $avatar_width . $avatar_height . '>' : '<img class="avatar" src="' . $settings['avatar_url'] . '/' . htmlspecialchars($profile['avatar']) . '">',
+					'href' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $settings['avatar_url'] . '/' . $profile['avatar'],
+					'url' => stristr($profile['avatar'], 'http://') ? $profile['avatar'] : $settings['avatar_url'] . '/' . $profile['avatar'],
 				);
 		}
 		// It's an attachment?
@@ -1309,8 +1309,8 @@ function loadMemberContext($user, $display_custom_fields = false)
 			}
 			$memberContext[$user]['avatar'] = array(
 				'name' => $profile['avatar'],
-				'image' => $profile['id_attach'] > 0 ? '<img class="' . ($profile['transparency'] == 'transparent' ? '' : 'opaque ') . 'avatar" src="' . (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) . '">' : '',
-				'href' => $profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $modSettings['custom_avatar_url'] . '/' . $profile['filename']) : '',
+				'image' => $profile['id_attach'] > 0 ? '<img class="' . ($profile['transparency'] == 'transparent' ? '' : 'opaque ') . 'avatar" src="' . (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) . '">' : '',
+				'href' => $profile['id_attach'] > 0 ? (empty($profile['attachment_type']) ? $scripturl . '?action=dlattach;attach=' . $profile['id_attach'] . ';type=avatar' : $settings['custom_avatar_url'] . '/' . $profile['filename']) : '',
 				'url' => '',
 			);
 		}
@@ -1322,11 +1322,11 @@ function loadMemberContext($user, $display_custom_fields = false)
 	}
 
 	// Are we also loading the members custom fields into context?
-	if ($display_custom_fields && !empty($modSettings['displayFields']))
+	if ($display_custom_fields && !empty($settings['displayFields']))
 	{
 		$memberContext[$user]['custom_fields'] = array();
 		if (!isset($context['display_fields']))
-			$context['display_fields'] = unserialize($modSettings['displayFields']);
+			$context['display_fields'] = unserialize($settings['displayFields']);
 
 		foreach ($context['display_fields'] as $custom)
 		{
@@ -1348,8 +1348,8 @@ function loadMemberContext($user, $display_custom_fields = false)
 			if (!empty($custom['enclose']))
 				$value = strtr($custom['enclose'], array(
 					'{SCRIPTURL}' => $scripturl,
-					'{IMAGES_URL}' => $settings['images_url'],
-					'{DEFAULT_IMAGES_URL}' => $settings['default_images_url'],
+					'{IMAGES_URL}' => $theme['images_url'],
+					'{DEFAULT_IMAGES_URL}' => $theme['default_images_url'],
 					'{INPUT}' => $value,
 				));
 
@@ -1472,13 +1472,13 @@ function detectBrowser()
  *
  * - Identify the theme to be loaded, from parameter or an external source: theme parameter in the URL, previously theme parameter in the URL and now in session, the user's preference, a board specific theme, and lastly the forum's default theme.
  * - Validate that the supplied theme is a valid id and that permission to use such theme (e.g. admin allows users to choose own theme, etc) is available.
- * - Load data from the themes table for this theme, both the user's preferences for this theme, plus the global settings for it, and load into $settings and $options respectively ($settings for theme settings/global settings, $options for user's specific settings within this theme)
+ * - Load data from the themes table for this theme, both the user's preferences for this theme, plus the global settings for it, and load into $theme and $options respectively ($theme for theme settings/global settings, $options for user's specific settings within this theme)
  * - Save details to cache as appropriate.
  * - Prepare the list of folders to examine in priority for template loading (i.e. this theme's folder first, then default, but can include others)
  * - Identify if the user has come to the board from the wrong place (e.g. a www in the URL that shouldn't be there) so it can be fixed.
  * - Push common details into $context['user'] for the current user.
  * - Identify what smiley set should be used.
- * - Initialize $context['header'] and $context['footer'] for later use, as well as some $settings paths, some global $context values, $txt initially.
+ * - Initialize $context['header'] and $context['footer'] for later use, as well as some $theme paths, some global $context values, $txt initially.
  * - Set up common server-side settings for later reference (in case of server configuration specific tweaks)
  * - Ensure the forum name is the first item in the link tree.
  * - Load the wireless template or the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
@@ -1490,14 +1490,14 @@ function detectBrowser()
 function loadTheme($id_theme = 0, $initialize = true)
 {
 	global $user_info, $user_settings, $board_info, $boarddir, $footer_coding;
-	global $txt, $boardurl, $scripturl, $mbname, $modSettings, $language;
-	global $context, $settings, $options, $ssi_theme;
+	global $txt, $boardurl, $scripturl, $mbname, $settings, $language;
+	global $context, $theme, $options, $ssi_theme;
 
 	// The theme was specified by parameter.
 	if (!empty($id_theme))
 		$id_theme = (int) $id_theme;
 	// The theme was specified by REQUEST.
-	elseif (!empty($_REQUEST['theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
+	elseif (!empty($_REQUEST['theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
 	{
 		$th = explode('_', $_REQUEST['theme']);
 		$id_theme = (int) $th[0];
@@ -1506,13 +1506,13 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$_SESSION['skin'] = $skin;
 	}
 	// The theme was specified by REQUEST... previously.
-	elseif (!empty($_SESSION['id_theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
+	elseif (!empty($_SESSION['id_theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
 	{
 		$id_theme = (int) $_SESSION['id_theme'];
 		$skin = !empty($_SESSION['skin']) ? $_SESSION['skin'] : '';
 	}
 	// The theme is just the user's choice. (Might use ?board=1;theme=0 to force board theme.)
-	elseif (!empty($user_info['theme']) && !isset($_REQUEST['theme']) && (!empty($modSettings['theme_allow']) || allowedTo('admin_forum')))
+	elseif (!empty($user_info['theme']) && !isset($_REQUEST['theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
 	{
 		$id_theme = $user_info['theme'];
 		$skin = $user_info['skin'];
@@ -1526,8 +1526,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// The theme is the forum's default.
 	else
 	{
-		$id_theme = $modSettings['theme_guests'];
-		$skin = $modSettings['theme_skin_guests'];
+		$id_theme = $settings['theme_guests'];
+		$skin = $settings['theme_skin_guests'];
 	}
 
 	// Verify the id_theme... no foul play.
@@ -1540,10 +1540,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// If they have specified a particular theme to use with SSI allow it to be used.
 	elseif (!empty($ssi_theme) && $id_theme == $ssi_theme)
 		$id_theme = (int) $id_theme;
-	elseif (!empty($modSettings['knownThemes']) && !allowedTo('admin_forum'))
+	elseif (!empty($settings['knownThemes']) && !allowedTo('admin_forum'))
 	{
-		$themes = explode(',', $modSettings['knownThemes']);
-		$id_theme = in_array($id_theme, $themes) ? (int) $id_theme : $modSettings['theme_guests'];
+		$themes = explode(',', $settings['knownThemes']);
+		$id_theme = in_array($id_theme, $themes) ? (int) $id_theme : $settings['theme_guests'];
 	}
 	else
 		$id_theme = (int) $id_theme;
@@ -1551,7 +1551,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Time to determine our CSS list...
 	// First, load our requested skin folder.
 	$context['skin'] = empty($skin) ?
-		(empty($id_theme) ? $modSettings['theme_skin_guests'] : 'skins') :
+		(empty($id_theme) ? $settings['theme_skin_guests'] : 'skins') :
 		($skin === 'skins' || strpos($skin, 'skins/') === 0 ? '' : 'skins/') . $skin;
 	$folders = explode('/', $context['skin']);
 	$context['css_folders'] = array();
@@ -1568,12 +1568,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
 
-	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme . ':' . $member, 60)) != null && time() - 60 > $modSettings['settings_updated'])
+	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2 && ($temp = cache_get_data('theme_settings-' . $id_theme . ':' . $member, 60)) != null && time() - 60 > $settings['settings_updated'])
 	{
 		$themeData = $temp;
 		$flag = true;
 	}
-	elseif (($temp = cache_get_data('theme_settings-' . $id_theme, 90)) != null && time() - 60 > $modSettings['settings_updated'])
+	elseif (($temp = cache_get_data('theme_settings-' . $id_theme, 90)) != null && time() - 60 > $settings['settings_updated'])
 		$themeData = $temp + array($member => array());
 	else
 		$themeData = array(-1 => array(), 0 => array(), $member => array());
@@ -1591,7 +1591,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 				'id_member' => $member,
 			)
 		);
-		// Pick between $settings and $options depending on whose data it is.
+		// Pick between $theme and $options depending on whose data it is.
 		while ($row = wesql::fetch_assoc($result))
 		{
 			// There are just things we shouldn't be able to change as members.
@@ -1613,33 +1613,33 @@ function loadTheme($id_theme = 0, $initialize = true)
 				if (!isset($themeData[$member][$k]))
 					$themeData[$member][$k] = $v;
 
-		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
+		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
 			cache_put_data('theme_settings-' . $id_theme . ':' . $member, $themeData, 60);
 		// Only if we didn't already load that part of the cache...
 		elseif (!isset($temp))
 			cache_put_data('theme_settings-' . $id_theme, array(-1 => $themeData[-1], 0 => $themeData[0]), 90);
 	}
 
-	$settings = $themeData[0];
+	$theme = $themeData[0];
 	$options = $themeData[$member];
 
-	$settings['theme_id'] = $id_theme;
+	$theme['theme_id'] = $id_theme;
 
-	$settings['actual_theme_url'] = $settings['theme_url'];
-	$settings['actual_images_url'] = $settings['images_url'];
-	$settings['actual_theme_dir'] = $settings['theme_dir'];
+	$theme['actual_theme_url'] = $theme['theme_url'];
+	$theme['actual_images_url'] = $theme['images_url'];
+	$theme['actual_theme_dir'] = $theme['theme_dir'];
 
-	$settings['template_dirs'] = array();
+	$theme['template_dirs'] = array();
 	// This theme first.
-	$settings['template_dirs'][] = $settings['theme_dir'];
+	$theme['template_dirs'][] = $theme['theme_dir'];
 
 	// Based on theme (if there is one.)
-	if (!empty($settings['base_theme_dir']))
-		$settings['template_dirs'][] = $settings['base_theme_dir'];
+	if (!empty($theme['base_theme_dir']))
+		$theme['template_dirs'][] = $theme['base_theme_dir'];
 
 	// Lastly the default theme.
-	if ($settings['theme_dir'] != $settings['default_theme_dir'])
-		$settings['template_dirs'][] = $settings['default_theme_dir'];
+	if ($theme['theme_dir'] != $theme['default_theme_dir'])
+		$theme['template_dirs'][] = $theme['default_theme_dir'];
 
 	if (!$initialize)
 		return;
@@ -1656,9 +1656,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (isset($detected_url) && $detected_url != $boardurl)
 	{
 		// Try #1 - check if it's in a list of alias addresses
-		if (!empty($modSettings['forum_alias_urls']))
+		if (!empty($settings['forum_alias_urls']))
 		{
-			$aliases = explode(',', $modSettings['forum_alias_urls']);
+			$aliases = explode(',', $settings['forum_alias_urls']);
 
 			foreach ($aliases as $alias)
 			{
@@ -1699,16 +1699,16 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$_SERVER['REQUEST_URL'] = strtr($_SERVER['REQUEST_URL'], array($oldurl => $boardurl));
 
 			// Fix the theme urls...
-			$settings['theme_url'] = strtr($settings['theme_url'], array($oldurl => $boardurl));
-			$settings['default_theme_url'] = strtr($settings['default_theme_url'], array($oldurl => $boardurl));
-			$settings['actual_theme_url'] = strtr($settings['actual_theme_url'], array($oldurl => $boardurl));
-			$settings['images_url'] = strtr($settings['images_url'], array($oldurl => $boardurl));
-			$settings['default_images_url'] = strtr($settings['default_images_url'], array($oldurl => $boardurl));
-			$settings['actual_images_url'] = strtr($settings['actual_images_url'], array($oldurl => $boardurl));
+			$theme['theme_url'] = strtr($theme['theme_url'], array($oldurl => $boardurl));
+			$theme['default_theme_url'] = strtr($theme['default_theme_url'], array($oldurl => $boardurl));
+			$theme['actual_theme_url'] = strtr($theme['actual_theme_url'], array($oldurl => $boardurl));
+			$theme['images_url'] = strtr($theme['images_url'], array($oldurl => $boardurl));
+			$theme['default_images_url'] = strtr($theme['default_images_url'], array($oldurl => $boardurl));
+			$theme['actual_images_url'] = strtr($theme['actual_images_url'], array($oldurl => $boardurl));
 
 			// And just a few mod settings :)
-			$modSettings['smileys_url'] = strtr($modSettings['smileys_url'], array($oldurl => $boardurl));
-			$modSettings['avatar_url'] = strtr($modSettings['avatar_url'], array($oldurl => $boardurl));
+			$settings['smileys_url'] = strtr($settings['smileys_url'], array($oldurl => $boardurl));
+			$settings['avatar_url'] = strtr($settings['avatar_url'], array($oldurl => $boardurl));
 
 			// Clean up after loadBoard()
 			if (isset($board_info['moderators']))
@@ -1731,7 +1731,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'is_admin' => &$user_info['is_admin'],
 		'is_mod' => &$user_info['is_mod'],
 		// A user can mod if they have permission to see the mod center, or they are a board/group/approval moderator.
-		'can_mod' => allowedTo('access_mod_center') || (!$user_info['is_guest'] && ($user_info['mod_cache']['gq'] != '0=1' || $user_info['mod_cache']['bq'] != '0=1' || ($modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap'])))),
+		'can_mod' => allowedTo('access_mod_center') || (!$user_info['is_guest'] && ($user_info['mod_cache']['gq'] != '0=1' || $user_info['mod_cache']['bq'] != '0=1' || ($settings['postmod_active'] && !empty($user_info['mod_cache']['ap'])))),
 		'username' => &$user_info['username'],
 		'language' => &$user_info['language'],
 		'email' => &$user_info['email'],
@@ -1744,7 +1744,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['user']['name'] = $txt['guest_title'];
 
 	// Determine the current smiley set
-	$user_info['smiley_set'] = (!in_array($user_info['smiley_set'], explode(',', $modSettings['smiley_sets_known'])) && $user_info['smiley_set'] != 'none') || empty($modSettings['smiley_sets_enable']) ? (!empty($settings['smiley_sets_default']) ? $settings['smiley_sets_default'] : $modSettings['smiley_sets_default']) : $user_info['smiley_set'];
+	$user_info['smiley_set'] = (!in_array($user_info['smiley_set'], explode(',', $settings['smiley_sets_known'])) && $user_info['smiley_set'] != 'none') || empty($settings['smiley_sets_enable']) ? (!empty($theme['smiley_sets_default']) ? $theme['smiley_sets_default'] : $settings['smiley_sets_default']) : $user_info['smiley_set'];
 	$context['user']['smiley_set'] = $user_info['smiley_set'];
 
 	// Some basic information...
@@ -1761,22 +1761,22 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// open for sending JS code without <script> tags.
 	$footer_coding = true;
 
-	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
+	$context['menu_separator'] = !empty($theme['use_image_buttons']) ? ' ' : ' | ';
 	$context['session_var'] = $_SESSION['session_var'];
 	$context['session_id'] = $_SESSION['session_value'];
 	$context['session_query'] = $context['session_var'] . '=' . $context['session_id'];
 	$context['forum_name'] = $mbname;
 	$context['forum_name_html_safe'] = westr::htmlspecialchars($context['forum_name']);
-	$context['header_logo_url_html_safe'] = empty($settings['header_logo_url']) ? $context['forum_name_html_safe']
-		: '<img src="' . westr::htmlspecialchars($settings['header_logo_url']) . '" alt="' . $context['forum_name'] . '">';
-	$context['site_slogan'] = empty($settings['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan">' . $settings['site_slogan'] . '</div>';
+	$context['header_logo_url_html_safe'] = empty($theme['header_logo_url']) ? $context['forum_name_html_safe']
+		: '<img src="' . westr::htmlspecialchars($theme['header_logo_url']) . '" alt="' . $context['forum_name'] . '">';
+	$context['site_slogan'] = empty($theme['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan">' . $theme['site_slogan'] . '</div>';
 	$context['current_action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 	$context['current_subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;
-	if (isset($modSettings['load_average']))
-		$context['load_average'] = $modSettings['load_average'];
+	if (isset($settings['load_average']))
+		$context['load_average'] = $settings['load_average'];
 
 	// Set some permission related settings
-	$context['show_login_bar'] = $user_info['is_guest'] && !empty($settings['quick_login']);
+	$context['show_login_bar'] = $user_info['is_guest'] && !empty($theme['quick_login']);
 
 	// This determines the server... not used in many places, except for login fixing.
 	$context['server'] = array(
@@ -1835,8 +1835,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	else
 	{
 		// Custom templates to load, or just default?
-		if (isset($settings['theme_templates']))
-			$templates = explode(',', $settings['theme_templates']);
+		if (isset($theme['theme_templates']))
+			$templates = explode(',', $theme['theme_templates']);
 		else
 			$templates = array('index');
 
@@ -1854,7 +1854,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		loadLanguage($required_files, '', false);
 
 		// Initialize our JS files to cache right before we run template_init().
-		if (empty($modSettings['jquery_origin']) || $modSettings['jquery_origin'] === 'local')
+		if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
 			$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js', 'scripts/sbox.js');
 		else
 		{
@@ -1863,7 +1863,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 				'jquery' =>		'http://code.jquery.com/jquery-1.5.2.min.js',
 				'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
 			);
-			$context['remote_javascript_files'] = array($remote[$modSettings['jquery_origin']]);
+			$context['remote_javascript_files'] = array($remote[$settings['jquery_origin']]);
 			$context['javascript_files'] = array('scripts/script.js', 'scripts/sbox.js');
 		}
 
@@ -1872,9 +1872,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 		// Now we initialize the search/replace pairs for macros.
 		// They can be overloaded in a skin's skin.xml file.
-		if (!empty($settings['macros']))
+		if (!empty($theme['macros']))
 		{
-			foreach ($settings['macros'] as $name => $contents)
+			foreach ($theme['macros'] as $name => $contents)
 			{
 				if (is_array($contents))
 					$contents = isset($contents[$context['browser']['agent']]) ? $contents[$context['browser']['agent']] :
@@ -1906,22 +1906,22 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['user']['name'] = $txt['guest_title'];
 
 	// Any theme-related strings that need to be loaded?
-	if (!empty($settings['require_theme_strings']))
+	if (!empty($theme['require_theme_strings']))
 		loadLanguage('ThemeStrings', '', false);
 
 	// Allow overriding the board wide time/number formats.
 	if (empty($user_settings['time_format']) && !empty($txt['time_format']))
 		$user_info['time_format'] = $txt['time_format'];
 
-	if (isset($settings['use_default_images']) && $settings['use_default_images'] == 'always')
+	if (isset($theme['use_default_images']) && $theme['use_default_images'] == 'always')
 	{
-		$settings['theme_url'] = $settings['default_theme_url'];
-		$settings['images_url'] = $settings['default_images_url'];
-		$settings['theme_dir'] = $settings['default_theme_dir'];
+		$theme['theme_url'] = $theme['default_theme_url'];
+		$theme['images_url'] = $theme['default_images_url'];
+		$theme['theme_dir'] = $theme['default_theme_dir'];
 	}
 	// Make a special URL for the language.
 	// !!! $txt['image_lang'] isn't defined anywhere...
-	$settings['lang_images_url'] = $settings['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
+	$theme['lang_images_url'] = $theme['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
 
 	// Set the character set from the template.
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
@@ -1944,7 +1944,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['tabindex'] = 1;
 
 	// If we think we have mail to send, let's offer up some possibilities... robots get pain (Now with scheduled task support!)
-	if ((!empty($modSettings['mail_next_send']) && $modSettings['mail_next_send'] < time() && empty($modSettings['mail_queue_use_cron'])) || empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time())
+	if ((!empty($settings['mail_next_send']) && $settings['mail_next_send'] < time() && empty($settings['mail_queue_use_cron'])) || empty($settings['next_task_time']) || $settings['next_task_time'] < time())
 	{
 		if ($context['browser']['possibly_robot'])
 		{
@@ -1952,15 +1952,15 @@ function loadTheme($id_theme = 0, $initialize = true)
 			loadSource('ScheduledTasks');
 
 			// What to do, what to do?!
-			if (empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time())
+			if (empty($settings['next_task_time']) || $settings['next_task_time'] < time())
 				AutoTask();
 			else
 				ReduceMailQueue();
 		}
 		else
 		{
-			$type = empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time() ? 'task' : 'mailq';
-			$ts = $type == 'mailq' ? $modSettings['mail_next_send'] : $modSettings['next_task_time'];
+			$type = empty($settings['next_task_time']) || $settings['next_task_time'] < time() ? 'task' : 'mailq';
+			$ts = $type == 'mailq' ? $settings['mail_next_send'] : $settings['next_task_time'];
 
 			add_js('
 	function weAutoTask()
@@ -1972,13 +1972,13 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// What about any straggling imperative tasks?
-	if (empty($modSettings['next_imperative']))
+	if (empty($settings['next_imperative']))
 	{
 		loadSource('Subs-Scheduled');
 		recalculateNextImperative();
 	}
 
-	if ($modSettings['next_imperative'] < time())
+	if ($settings['next_imperative'] < time())
 		add_js('
 	function weImperativeTask()
 	{
@@ -1987,12 +1987,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 	setTimeout(weImperativeTask, 1);');
 
 	// Any files to include at this point?
-	if (!empty($modSettings['integrate_theme_include']))
+	if (!empty($settings['integrate_theme_include']))
 	{
-		$theme_includes = explode(',', $modSettings['integrate_theme_include']);
+		$theme_includes = explode(',', $settings['integrate_theme_include']);
 		foreach ($theme_includes as $include)
 		{
-			$include = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $settings['theme_dir']));
+			$include = strtr(trim($include), array('$boarddir' => $boarddir, '$sourcedir' => $sourcedir, '$themedir' => $theme['theme_dir']));
 			if (file_exists($include))
 				require_once($include);
 		}
@@ -2017,20 +2017,20 @@ function loadPluginSource($plugin_name, $source_name)
 
 function loadPluginTemplate($plugin_name, $template_name, $fatal = true)
 {
-	global $context, $settings;
+	global $context, $theme;
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
 	// We may as well reuse the normal template loader. Might rewrite this later, however.
-	$old_templates = $settings['template_dirs'];
-	$settings['template_dirs'] = array($context['plugins_dir'][$plugin_name]);
+	$old_templates = $theme['template_dirs'];
+	$theme['template_dirs'] = array($context['plugins_dir'][$plugin_name]);
 	loadTemplate($template_name, $fatal);
-	$settings['template_dirs'] = $old_templates;
+	$theme['template_dirs'] = $old_templates;
 }
 
 function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $context, $modSettings, $user_info, $language, $txt, $db_show_debug;
+	global $context, $settings, $user_info, $language, $txt, $db_show_debug;
 	static $already_loaded = array();
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
@@ -2044,7 +2044,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 
 	$attempts = array();
 	// If true, pass through to the next language attempt even if it's a match. But if it's not English, see about loading that *first*.
-	if (empty($modSettings['disable_language_fallback']) && $lang !== 'english')
+	if (empty($settings['disable_language_fallback']) && $lang !== 'english')
 		$attempts['english'] = true;
 
 	// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
@@ -2108,7 +2108,7 @@ function loadSource($source_name)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $user_info, $language, $settings, $context, $modSettings;
+	global $user_info, $language, $theme, $context, $settings;
 	global $cachedir, $db_show_debug, $txt;
 	static $already_loaded = array();
 
@@ -2117,21 +2117,21 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
 
 	// Do we want the English version of language file as fallback?
-	if (empty($modSettings['disable_language_fallback']) && $lang !== 'english')
+	if (empty($settings['disable_language_fallback']) && $lang !== 'english')
 		loadLanguage($template_name, 'english', false);
 
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
 
-	// Make sure we have $settings - if not we're in trouble and need to find it!
-	if (empty($settings['default_theme_dir']))
+	// Make sure we have $theme - if not we're in trouble and need to find it!
+	if (empty($theme['default_theme_dir']))
 	{
 		loadSource('ScheduledTasks');
 		loadEssentialThemeData();
 	}
 
 	// What theme are we in?
-	$theme_name = basename($settings['theme_url']);
+	$theme_name = basename($theme['theme_url']);
 	if (empty($theme_name))
 		$theme_name = 'unknown';
 
@@ -2140,26 +2140,26 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	{
 		// Obviously, the current theme is most important to check.
 		$attempts = array(
-			array($settings['theme_dir'], $template, $lang, $settings['theme_url']),
-			array($settings['theme_dir'], $template, $language, $settings['theme_url']),
+			array($theme['theme_dir'], $template, $lang, $theme['theme_url']),
+			array($theme['theme_dir'], $template, $language, $theme['theme_url']),
 		);
 
 		// Do we have a base theme to worry about?
-		if (isset($settings['base_theme_dir']))
+		if (isset($theme['base_theme_dir']))
 		{
-			$attempts[] = array($settings['base_theme_dir'], $template, $lang, $settings['base_theme_url']);
-			$attempts[] = array($settings['base_theme_dir'], $template, $language, $settings['base_theme_url']);
+			$attempts[] = array($theme['base_theme_dir'], $template, $lang, $theme['base_theme_url']);
+			$attempts[] = array($theme['base_theme_dir'], $template, $language, $theme['base_theme_url']);
 		}
 
 		// Fall back on the default theme if necessary.
-		$attempts[] = array($settings['default_theme_dir'], $template, $lang, $settings['default_theme_url']);
-		$attempts[] = array($settings['default_theme_dir'], $template, $language, $settings['default_theme_url']);
+		$attempts[] = array($theme['default_theme_dir'], $template, $lang, $theme['default_theme_url']);
+		$attempts[] = array($theme['default_theme_dir'], $template, $language, $theme['default_theme_url']);
 
 		// Fall back on the English language if none of the preferred languages can be found.
 		if (!in_array('english', array($lang, $language)))
 		{
-			$attempts[] = array($settings['theme_dir'], $template, 'english', $settings['theme_url']);
-			$attempts[] = array($settings['default_theme_dir'], $template, 'english', $settings['default_theme_url']);
+			$attempts[] = array($theme['theme_dir'], $template, 'english', $theme['theme_url']);
+			$attempts[] = array($theme['default_theme_dir'], $template, 'english', $theme['default_theme_url']);
 		}
 
 		// Try to find the language file.
@@ -2285,25 +2285,25 @@ function getBoardParents($id_parent)
  */
 function getLanguages($use_cache = true)
 {
-	global $context, $settings, $modSettings;
+	global $context, $theme, $settings;
 
 	// If the language array is already filled, or we wanna use the cache and it's not expired...
-	if ($use_cache && (isset($context['languages']) || ($context['languages'] = cache_get_data('known_languages', !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600)) !== null))
+	if ($use_cache && (isset($context['languages']) || ($context['languages'] = cache_get_data('known_languages', !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600)) !== null))
 		return $context['languages'];
 
 	// If we don't have our theme information yet, let's get it.
-	if (empty($settings['default_theme_dir']))
+	if (empty($theme['default_theme_dir']))
 		loadTheme(0, false);
 
 	// Default language directories to try.
 	$language_directories = array(
-		$settings['default_theme_dir'] . '/languages',
-		$settings['actual_theme_dir'] . '/languages',
+		$theme['default_theme_dir'] . '/languages',
+		$theme['actual_theme_dir'] . '/languages',
 	);
 
 	// We possibly have a base theme directory.
-	if (!empty($settings['base_theme_dir']))
-		$language_directories[] = $settings['base_theme_dir'] . '/languages';
+	if (!empty($theme['base_theme_dir']))
+		$language_directories[] = $theme['base_theme_dir'] . '/languages';
 
 	// Initialize the array, otherwise if it's empty, Wedge won't cache it.
 	$context['languages'] = array();
@@ -2329,8 +2329,8 @@ function getLanguages($use_cache = true)
 	}
 
 	// Let's cash in on this deal.
-	if (!empty($modSettings['cache_enable']))
-		cache_put_data('known_languages', $context['languages'], !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
+	if (!empty($settings['cache_enable']))
+		cache_put_data('known_languages', $context['languages'], !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600);
 
 	return $context['languages'];
 }
@@ -2348,7 +2348,7 @@ function getLanguages($use_cache = true)
  */
 function loadSession()
 {
-	global $HTTP_SESSION_VARS, $modSettings, $boardurl, $sc;
+	global $HTTP_SESSION_VARS, $settings, $boardurl, $sc;
 
 	// Attempt to change a few PHP settings.
 	@ini_set('session.use_cookies', true);
@@ -2357,7 +2357,7 @@ function loadSession()
 	@ini_set('session.use_trans_sid', false);
 	@ini_set('arg_separator.output', '&amp;');
 
-	if (!empty($modSettings['globalCookies']))
+	if (!empty($settings['globalCookies']))
 	{
 		$parsed_url = parse_url($boardurl);
 
@@ -2367,7 +2367,7 @@ function loadSession()
 	// !!! Set the session cookie path?
 
 	// If it's already been started... probably best to skip this.
-	if ((@ini_get('session.auto_start') == 1 && !empty($modSettings['databaseSession_enable'])) || session_id() == '')
+	if ((@ini_get('session.auto_start') == 1 && !empty($settings['databaseSession_enable'])) || session_id() == '')
 	{
 		// Attempt to end the already-started session.
 		if (@ini_get('session.auto_start') == 1)
@@ -2383,16 +2383,16 @@ function loadSession()
 		}
 
 		// Use database sessions?
-		if (!empty($modSettings['databaseSession_enable']))
+		if (!empty($settings['databaseSession_enable']))
 		{
 			session_set_save_handler('sessionOpen', 'sessionClose', 'sessionRead', 'sessionWrite', 'sessionDestroy', 'sessionGC');
 			@ini_set('session.gc_probability', '1');
 		}
-		elseif (@ini_get('session.gc_maxlifetime') <= 1440 && !empty($modSettings['databaseSession_lifetime']))
-			@ini_set('session.gc_maxlifetime', max($modSettings['databaseSession_lifetime'], 60));
+		elseif (@ini_get('session.gc_maxlifetime') <= 1440 && !empty($settings['databaseSession_lifetime']))
+			@ini_set('session.gc_maxlifetime', max($settings['databaseSession_lifetime'], 60));
 
 		// Use cache setting sessions?
-		if (empty($modSettings['databaseSession_enable']) && !empty($modSettings['cache_enable']) && php_sapi_name() != 'cli')
+		if (empty($settings['databaseSession_enable']) && !empty($settings['cache_enable']) && php_sapi_name() != 'cli')
 		{
 			if (function_exists('eaccelerator_set_session_handlers'))
 				eaccelerator_set_session_handlers();
@@ -2401,7 +2401,7 @@ function loadSession()
 		session_start();
 
 		// Change it so the cache settings are a little looser than default.
-		if (!empty($modSettings['databaseSession_loose']))
+		if (!empty($settings['databaseSession_loose']))
 			header('Cache-Control: private');
 	}
 
@@ -2523,15 +2523,15 @@ function sessionDestroy($session_id)
 /**
  * Part of the PHP Session API, this function manages 'garbage collection', i.e. pruning session data older than the current needs.
  *
- * @param int $max_lifetime The maximum time in seconds that a session should persist for without actively being updated. It is compared to the default value specified by the administrator (stored in $modSettings['databaseSession_lifetime'])
+ * @param int $max_lifetime The maximum time in seconds that a session should persist for without actively being updated. It is compared to the default value specified by the administrator (stored in $settings['databaseSession_lifetime'])
  */
 function sessionGC($max_lifetime)
 {
-	global $modSettings;
+	global $settings;
 
 	// Just set to the default or lower? Ignore it for a higher value. (hopefully)
-	if (!empty($modSettings['databaseSession_lifetime']) && ($max_lifetime <= 1440 || $modSettings['databaseSession_lifetime'] > $max_lifetime))
-		$max_lifetime = max($modSettings['databaseSession_lifetime'], 60);
+	if (!empty($settings['databaseSession_lifetime']) && ($max_lifetime <= 1440 || $settings['databaseSession_lifetime'] > $max_lifetime))
+		$max_lifetime = max($settings['databaseSession_lifetime'], 60);
 
 	// Clean up ;).
 	return wesql::query('

@@ -74,7 +74,7 @@ if (!defined('WEDGE'))
 
 function aeva_initGallery($gal_url = null)
 {
-	global $amSettings, $modSettings, $user_info, $galurl, $scripturl, $galurl2, $txt, $context, $settings;
+	global $amSettings, $settings, $user_info, $galurl, $scripturl, $galurl2, $txt, $context, $theme;
 
 	// Call the all-important file
 	loadSource('media/Subs-Media');
@@ -89,7 +89,7 @@ function aeva_initGallery($gal_url = null)
 	// If you are not allowed to enter......What are you doing here?
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] != 'media')
 	{
-		if (empty($modSettings['media_enabled']))
+		if (empty($settings['media_enabled']))
 			redirectexit($scripturl);
 		elseif (!aeva_allowedTo('access'))
 			fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
@@ -396,7 +396,7 @@ function aeva_initGallery($gal_url = null)
 	// Let modders modify the media menu easily.
 	call_hook('media_areas', array(&$media_areas));
 
-	$context['menu_image_path'] = $settings['images_aeva'];
+	$context['menu_image_path'] = $theme['images_aeva'];
 
 	// Set a few options for the menu.
 	$menuOptions = array(
@@ -751,7 +751,7 @@ function aeva_PrevNextThumb($myurl, &$prev)
 function aeva_viewItem()
 {
 	// Comes into play when you're viewing a single item
-	global $scripturl, $galurl, $txt, $amSettings, $user_info, $context, $db_prefix, $memberContext, $settings, $boarddir;
+	global $scripturl, $galurl, $txt, $amSettings, $user_info, $context, $db_prefix, $memberContext, $theme, $boarddir;
 
 	// Set the item ID
 	$item = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
@@ -1451,7 +1451,7 @@ function aeva_mgReport()
 // Handles adding/editing of items
 function aeva_mgPost()
 {
-	global $amSettings, $txt, $galurl, $context, $user_info, $options, $modSettings;
+	global $amSettings, $txt, $galurl, $context, $user_info, $options, $settings;
 
 	$editing = false;
 	$context['page_title'] = $txt['media_add_item'];
@@ -2062,7 +2062,7 @@ function aeva_mgPost()
 
 		if ($editing)
 		{
-			if ($silent || (isset($modSettings['edit_wait_time']) && (time() - $data['time_added'] <= $modSettings['edit_wait_time'])))
+			if ($silent || (isset($settings['edit_wait_time']) && (time() - $data['time_added'] <= $settings['edit_wait_time'])))
 				$options['skip_log'] = true;
 
 			aeva_modifyItem($options);
@@ -2117,7 +2117,7 @@ function aeva_mgEdit()
 
 function aeva_mgEditCom()
 {
-	global $scripturl, $txt, $context, $galurl, $user_info, $modSettings;
+	global $scripturl, $txt, $context, $galurl, $user_info, $settings;
 
 	// Load comment data
 	$request = wesql::query('
@@ -2176,7 +2176,7 @@ function aeva_mgEditCom()
 		if (empty($new_message))
 			fatal_lang_error('media_comment_left_empty');
 
-		$skip_log = isset($modSettings['edit_wait_time']) && (time() - $com_data['posted_on'] <= $modSettings['edit_wait_time']);
+		$skip_log = isset($settings['edit_wait_time']) && (time() - $com_data['posted_on'] <= $settings['edit_wait_time']);
 
 		// Seems fine, update it then!
 		wesql::query('
@@ -2373,7 +2373,7 @@ function aeva_addView()
 
 function aeva_getMedia()
 {
-	global $settings, $amSettings, $context;
+	global $theme, $amSettings, $context;
 
 	if (isset($_REQUEST['dl']) && !aeva_allowedTo('download_item'))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
@@ -2390,7 +2390,7 @@ function aeva_getMedia()
 	// If you can't access... Forget it.
 	if (!aeva_allowedTo('access'))
 	{
-		$path = $settings['theme_dir'] . '/images/aeva/denied.png';
+		$path = $theme['theme_dir'] . '/images/aeva/denied.png';
 		$filename = 'denied.png';
 		$is_new = false;
 	}

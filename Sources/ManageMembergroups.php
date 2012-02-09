@@ -108,7 +108,7 @@ function ModifyMembergroups()
 // An overview of the current membergroups.
 function MembergroupIndex()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $scripturl, $context, $theme;
 
 	$context['page_title'] = $txt['membergroups_title'];
 
@@ -163,7 +163,7 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $settings;
+						global $theme;
 
 						$stars = explode(\'#\', $rowData[\'stars\']);
 
@@ -174,7 +174,7 @@ function MembergroupIndex()
 						// Otherwise repeat the image a given number of times.
 						else
 						{
-							$image = sprintf(\'<img src="%1$s/%2$s">\', $settings[\'images_url\'], $stars[1]);
+							$image = sprintf(\'<img src="%1$s/%2$s">\', $theme[\'images_url\'], $stars[1]);
 							return str_repeat($image, $stars[0]);
 						}
 					'),
@@ -270,7 +270,7 @@ function MembergroupIndex()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $settings;
+						global $theme;
 
 						$stars = explode(\'#\', $rowData[\'stars\']);
 
@@ -278,7 +278,7 @@ function MembergroupIndex()
 							return \'\';
 						else
 						{
-							$star_image = sprintf(\'<img src="%1$s/%2$s">\', $settings[\'images_url\'], $stars[1]);
+							$star_image = sprintf(\'<img src="%1$s/%2$s">\', $theme[\'images_url\'], $stars[1]);
 							return str_repeat($star_image, $stars[0]);
 						}
 					'),
@@ -343,7 +343,7 @@ function MembergroupIndex()
 // Add a membergroup.
 function AddMembergroup()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	// A form was submitted, we can start adding.
 	if (!empty($_POST['group_name']))
@@ -383,7 +383,7 @@ function AddMembergroup()
 			updateStats('postgroups');
 
 		// You cannot set permissions for post groups if they are disabled.
-		if ($postCountBasedGroup && empty($modSettings['permission_enable_postgroups']))
+		if ($postCountBasedGroup && empty($settings['permission_enable_postgroups']))
 			$_POST['perm_type'] = '';
 
 		if ($_POST['perm_type'] == 'predefined')
@@ -533,7 +533,7 @@ function AddMembergroup()
 			);
 
 		// If this is joinable then set it to show group membership in people's profiles.
-		if (empty($modSettings['show_group_membership']) && $_POST['group_type'] > 1)
+		if (empty($settings['show_group_membership']) && $_POST['group_type'] > 1)
 			updateSettings(array('show_group_membership' => 1));
 
 		// Rebuild the group cache.
@@ -558,7 +558,7 @@ function AddMembergroup()
 	$result = wesql::query('
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
-		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})' . (empty($modSettings['permission_enable_postgroups']) ? '
+		WHERE (id_group > {int:moderator_group} OR id_group = {int:global_mod_group})' . (empty($settings['permission_enable_postgroups']) ? '
 			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 		ORDER BY min_posts, id_group != {int:global_mod_group}, group_name',
@@ -610,7 +610,7 @@ function DeleteMembergroup()
 // Editing a membergroup.
 function EditMembergroup()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) && $_REQUEST['group'] > 0 ? (int) $_REQUEST['group'] : 0;
 
@@ -825,7 +825,7 @@ function EditMembergroup()
 			wesql::free_result($request);
 
 			// Do we need to update the setting?
-			if ((empty($modSettings['show_group_membership']) && $have_joinable) || (!empty($modSettings['show_group_membership']) && !$have_joinable))
+			if ((empty($settings['show_group_membership']) && $have_joinable) || (!empty($settings['show_group_membership']) && !$have_joinable))
 				updateSettings(array('show_group_membership' => $have_joinable ? 1 : 0));
 		}
 
@@ -1016,7 +1016,7 @@ function EditMembergroup()
 		SELECT id_group, group_name
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:current_group}' .
-			(empty($modSettings['permission_enable_postgroups']) ? '
+			(empty($settings['permission_enable_postgroups']) ? '
 			AND min_posts = {int:min_posts}' : '') . (allowedTo('admin_forum') ? '' : '
 			AND group_type != {int:is_protected}') . '
 			AND id_group NOT IN (1, 3)
@@ -1040,7 +1040,7 @@ function EditMembergroup()
 // Set general membergroup settings.
 function ModifyMembergroupsettings()
 {
-	global $context, $scripturl, $modSettings, $txt;
+	global $context, $scripturl, $settings, $txt;
 
 	wetem::load('show_settings');
 	$context['page_title'] = $txt['membergroups_settings'];

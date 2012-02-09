@@ -35,18 +35,18 @@ class paypal_display
 	// Is this enabled for new payments?
 	public function gatewayEnabled()
 	{
-		global $modSettings;
+		global $settings;
 
-		return !empty($modSettings['paypal_email']);
+		return !empty($settings['paypal_email']);
 	}
 
 	// What do we want?
 	public function fetchGatewayFields($unique_id, $sub_data, $value, $period, $return_url)
 	{
-		global $modSettings, $txt, $boardurl, $user_info;
+		global $settings, $txt, $boardurl, $user_info;
 
 		$return_data = array(
-			'form' => 'https://www.' . (!empty($modSettings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com/cgi-bin/webscr',
+			'form' => 'https://www.' . (!empty($settings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com/cgi-bin/webscr',
 			'id' => 'paypal',
 			'hidden' => array(),
 			'title' => $txt['paypal'],
@@ -56,10 +56,10 @@ class paypal_display
 		);
 
 		// All the standard bits.
-		$return_data['hidden']['business'] = $modSettings['paypal_email'];
+		$return_data['hidden']['business'] = $settings['paypal_email'];
 		$return_data['hidden']['item_name'] = $sub_data['name'] . ' ' . $txt['subscription'];
 		$return_data['hidden']['item_number'] = $unique_id;
-		$return_data['hidden']['currency_code'] = strtoupper($modSettings['paid_currency_code']);
+		$return_data['hidden']['currency_code'] = strtoupper($settings['paid_currency_code']);
 		$return_data['hidden']['no_shipping'] = 1;
 		$return_data['hidden']['no_note'] = 1;
 		$return_data['hidden']['amount'] = $value;
@@ -158,10 +158,10 @@ class paypal_payment
 	// This function returns true/false for whether this gateway thinks the data is intended for it.
 	public function isValid()
 	{
-		global $modSettings;
+		global $settings;
 
 		// Has the user set up an email address?
-		if (empty($modSettings['paypal_email']))
+		if (empty($settings['paypal_email']))
 			return false;
 		// Check the correct transaction types are even here.
 		if ((!isset($_POST['txn_type']) && !isset($_POST['payment_status'])) || (!isset($_POST['business']) && !isset($_POST['receiver_email'])))
@@ -169,7 +169,7 @@ class paypal_payment
 		// Correct email address?
 		if (!isset($_POST['business']))
 			$_POST['business'] = $_POST['receiver_email'];
-		if ($modSettings['paypal_email'] != $_POST['business'] && (empty($modSettings['paypal_additional_emails']) || !in_array($_POST['business'], explode(',', $modSettings['paypal_additional_emails']))))
+		if ($settings['paypal_email'] != $_POST['business'] && (empty($settings['paypal_additional_emails']) || !in_array($_POST['business'], explode(',', $settings['paypal_additional_emails']))))
 			return false;
 		return true;
 	}
@@ -177,7 +177,7 @@ class paypal_payment
 	// Validate all the data was valid.
 	public function precheck()
 	{
-		global $modSettings, $txt;
+		global $settings, $txt;
 
 		// Put this to some default value.
 		if (!isset($_POST['txn_type']))
@@ -191,7 +191,7 @@ class paypal_payment
 			$requestString .= '&' . $k . '=' . urlencode($v);
 
 		// Can we use curl?
-		if (function_exists('curl_init') && $curl = curl_init('http://www.', !empty($modSettings['paidsubs_test']) ? 'sandbox.' : '', 'paypal.com/cgi-bin/webscr'))
+		if (function_exists('curl_init') && $curl = curl_init('http://www.', !empty($settings['paidsubs_test']) ? 'sandbox.' : '', 'paypal.com/cgi-bin/webscr'))
 		{
 			// Set the post data.
 			curl_setopt($curl, CURLOPT_POST, true);
@@ -216,7 +216,7 @@ class paypal_payment
 			$header .= 'Content-Length: ' . strlen ($requestString) . "\r\n\r\n";
 
 			// Open the connection.
-			$fp = fsockopen('www.' . (!empty($modSettings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com', 80, $errno, $errstr, 30);
+			$fp = fsockopen('www.' . (!empty($settings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com', 80, $errno, $errstr, 30);
 
 			// Did it work?
 			if (!$fp)
@@ -243,7 +243,7 @@ class paypal_payment
 			exit;
 
 		// Check that this is intended for us.
-		if ($modSettings['paypal_email'] != $_POST['business'] && (empty($modSettings['paypal_additional_emails']) || !in_array($_POST['business'], explode(',', $modSettings['paypal_additional_emails']))))
+		if ($settings['paypal_email'] != $_POST['business'] && (empty($settings['paypal_additional_emails']) || !in_array($_POST['business'], explode(',', $settings['paypal_additional_emails']))))
 			exit;
 
 		// Is this a subscription - and if so it's it a secondary payment that we need to process?
@@ -252,7 +252,7 @@ class paypal_payment
 			$this->_findSubscription();
 
 		// Verify the currency!
-		if (strtolower($_POST['mc_currency']) != $modSettings['paid_currency_code'])
+		if (strtolower($_POST['mc_currency']) != $settings['paid_currency_code'])
 			exit;
 
 		// Can't exist if it doesn't contain anything.

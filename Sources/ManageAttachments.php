@@ -104,7 +104,7 @@ if (!defined('WEDGE'))
 // The main attachment management function.
 function ManageAttachments()
 {
-	global $txt, $modSettings, $scripturl, $context, $options;
+	global $txt, $settings, $scripturl, $context, $options;
 
 	// You have to be able to moderate the forum to do this.
 	isAllowedTo('manage_attachments');
@@ -149,9 +149,9 @@ function ManageAttachments()
 
 function ManageAttachmentSettings($return_config = false)
 {
-	global $txt, $modSettings, $scripturl, $context, $options;
+	global $txt, $settings, $scripturl, $context, $options;
 
-	$context['valid_upload_dir'] = is_dir($modSettings['attachmentUploadDir']) && is_writable($modSettings['attachmentUploadDir']);
+	$context['valid_upload_dir'] = is_dir($settings['attachmentUploadDir']) && is_writable($settings['attachmentUploadDir']);
 
 	$config_vars = array(
 		array('title', 'attachment_manager_settings'),
@@ -164,7 +164,7 @@ function ManageAttachmentSettings($return_config = false)
 			array('check', 'attachmentRecodeLineEndings'),
 		'',
 			// Directory and size limits.
-			empty($modSettings['currentAttachmentUploadDir']) ? array('text', 'attachmentUploadDir', 40, 'invalid' => !$context['valid_upload_dir']) : array('var_message', 'attachmentUploadDir_multiple', 'message' => 'attachmentUploadDir_multiple_configure'),
+			empty($settings['currentAttachmentUploadDir']) ? array('text', 'attachmentUploadDir', 40, 'invalid' => !$context['valid_upload_dir']) : array('var_message', 'attachmentUploadDir_multiple', 'message' => 'attachmentUploadDir_multiple_configure'),
 			array('text', 'attachmentDirSizeLimit', 6, 'postinput' => $txt['kilobyte']),
 			array('text', 'attachmentPostLimit', 6, 'postinput' => $txt['kilobyte']),
 			array('text', 'attachmentSizeLimit', 6, 'postinput' => $txt['kilobyte']),
@@ -208,10 +208,10 @@ function ManageAttachmentSettings($return_config = false)
 
 function ManageAvatarSettings($return_config = false)
 {
-	global $txt, $context, $modSettings, $scripturl;
+	global $txt, $context, $settings, $scripturl;
 
-	$context['valid_avatar_dir'] = is_dir($modSettings['avatar_directory']);
-	$context['valid_custom_avatar_dir'] = empty($modSettings['custom_avatar_enabled']) || (!empty($modSettings['custom_avatar_dir']) && is_dir($modSettings['custom_avatar_dir']) && is_writable($modSettings['custom_avatar_dir']));
+	$context['valid_avatar_dir'] = is_dir($settings['avatar_directory']);
+	$context['valid_custom_avatar_dir'] = empty($settings['custom_avatar_enabled']) || (!empty($settings['custom_avatar_dir']) && is_dir($settings['custom_avatar_dir']) && is_writable($settings['custom_avatar_dir']));
 
 	$config_vars = array(
 		// Server stored avatars!
@@ -291,7 +291,7 @@ function ManageAvatarSettings($return_config = false)
 
 function BrowseFiles()
 {
-	global $context, $txt, $scripturl, $options, $modSettings;
+	global $context, $txt, $scripturl, $options, $settings;
 
 	wetem::load('browse');
 
@@ -302,7 +302,7 @@ function BrowseFiles()
 	$listOptions = array(
 		'id' => 'file_list',
 		'title' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ( $context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments'))],
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'base_href' => $scripturl . '?action=admin;area=manageattachments;sa=browse' . ($context['browse_type'] === 'avatars' ? ';avatars' : ($context['browse_type'] === 'thumbs' ? ';thumbs' : '')),
 		'default_sort_col' => 'name',
 		'no_items_label' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ( $context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments')) . '_no_entries'],
@@ -325,13 +325,13 @@ function BrowseFiles()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $modSettings, $context, $scripturl;
+						global $settings, $context, $scripturl;
 
 						$link = \'<a href="\';
 
 						// In case of a custom avatar URL attachments have a fixed directory.
 						if ($rowData[\'attachment_type\'] == 1)
-							$link .= sprintf(\'%1$s/%2$s\', $modSettings[\'custom_avatar_url\'], $rowData[\'filename\']);
+							$link .= sprintf(\'%1$s/%2$s\', $settings[\'custom_avatar_url\'], $rowData[\'filename\']);
 
 						// By default avatars are downloaded almost as attachments.
 						elseif ($context[\'browse_type\'] == \'avatars\')
@@ -566,14 +566,14 @@ function list_getNumFiles($browse_type)
 
 function MaintainFiles()
 {
-	global $context, $modSettings, $txt;
+	global $context, $settings, $txt;
 
 	wetem::load('maintenance');
 
-	if (!empty($modSettings['currentAttachmentUploadDir']))
-		$attach_dirs = unserialize($modSettings['attachmentUploadDir']);
+	if (!empty($settings['currentAttachmentUploadDir']))
+		$attach_dirs = unserialize($settings['attachmentUploadDir']);
 	else
-		$attach_dirs = array($modSettings['attachmentUploadDir']);
+		$attach_dirs = array($settings['attachmentUploadDir']);
 
 	// Get the number of attachments....
 	$request = wesql::query('
@@ -620,7 +620,7 @@ function MaintainFiles()
 			}
 
 			// We're only counting the size of the current attachment directory.
-			if (empty($modSettings['currentAttachmentUploadDir']) || $modSettings['currentAttachmentUploadDir'] == $id)
+			if (empty($settings['currentAttachmentUploadDir']) || $settings['currentAttachmentUploadDir'] == $id)
 				$attachmentDirSize += filesize($attach_dir . '/' . $file);
 		}
 	}
@@ -628,26 +628,26 @@ function MaintainFiles()
 	$attachmentDirSize /= 1024;
 
 	// If they specified a limit only....
-	if (!empty($modSettings['attachmentDirSizeLimit']))
-		$context['attachment_space'] = max(round($modSettings['attachmentDirSizeLimit'] - $attachmentDirSize, 2), 0);
+	if (!empty($settings['attachmentDirSizeLimit']))
+		$context['attachment_space'] = max(round($settings['attachmentDirSizeLimit'] - $attachmentDirSize, 2), 0);
 	$context['attachment_total_size'] = round($attachmentDirSize, 2);
 
-	$context['attach_multiple_dirs'] = !empty($modSettings['currentAttachmentUploadDir']);
+	$context['attach_multiple_dirs'] = !empty($settings['currentAttachmentUploadDir']);
 }
 
 // !!! Not implemented yet.
 function MoveAvatars()
 {
-	global $modSettings;
+	global $settings;
 
 	// First make sure the custom avatar dir is writable.
-	if (!is_writable($modSettings['custom_avatar_dir']))
+	if (!is_writable($settings['custom_avatar_dir']))
 	{
 		// Try to fix it.
-		@chmod($modSettings['custom_avatar_dir'], 0777);
+		@chmod($settings['custom_avatar_dir'], 0777);
 
 		// Guess that didn't work?
-		if (!is_writable($modSettings['custom_avatar_dir']))
+		if (!is_writable($settings['custom_avatar_dir']))
 			fatal_lang_error('attachments_no_write', 'critical');
 	}
 
@@ -666,7 +666,7 @@ function MoveAvatars()
 	{
 		$filename = getAttachmentFilename($row['filename'], $row['id_attach'], $row['id_folder'], false, $row['file_hash']);
 
-		if (rename($filename, $modSettings['custom_avatar_dir'] . '/' . $row['filename']))
+		if (rename($filename, $settings['custom_avatar_dir'] . '/' . $row['filename']))
 			$updatedAvatars[] = $row['id_attach'];
 	}
 	wesql::free_result($request);
@@ -687,7 +687,7 @@ function MoveAvatars()
 
 function RemoveAttachmentByAge()
 {
-	global $modSettings;
+	global $settings;
 
 	checkSession('post', 'admin');
 
@@ -721,7 +721,7 @@ function RemoveAttachmentByAge()
 
 function RemoveAttachmentBySize()
 {
-	global $modSettings;
+	global $settings;
 
 	checkSession('post', 'admin');
 
@@ -745,7 +745,7 @@ function RemoveAttachmentBySize()
 
 function RemoveAttachment()
 {
-	global $modSettings, $txt;
+	global $settings, $txt;
 
 	checkSession('post');
 
@@ -810,7 +810,7 @@ function RemoveAllAttachments()
 // Removes attachments - allowed query_types: '', 'messages', 'members'
 function removeAttachments($condition, $query_type = '', $return_affected_messages = false, $autoThumbRemoval = true)
 {
-	global $modSettings;
+	global $settings;
 
 	//!!! This might need more work!
 	$new_condition = array();
@@ -867,7 +867,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 	{
 		// Figure out the "encrypted" filename and unlink it ;).
 		if ($row['attachment_type'] == 1)
-			@unlink($modSettings['custom_avatar_dir'] . '/' . $row['filename']);
+			@unlink($settings['custom_avatar_dir'] . '/' . $row['filename']);
 		else
 		{
 			$filename = getAttachmentFilename($row['filename'], $row['id_attach'], $row['id_folder'], false, $row['file_hash']);
@@ -922,7 +922,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 // This function should find attachments in the database that no longer exist and clear them, and fix filesize issues.
 function RepairAttachments()
 {
-	global $modSettings, $context, $txt;
+	global $settings, $context, $txt;
 
 	checkSession('get');
 
@@ -1129,7 +1129,7 @@ function RepairAttachments()
 			{
 				// Get the filename.
 				if ($row['attachment_type'] == 1)
-					$filename = $modSettings['custom_avatar_dir'] . '/' . $row['filename'];
+					$filename = $settings['custom_avatar_dir'] . '/' . $row['filename'];
 				else
 					$filename = getAttachmentFilename($row['filename'], $row['id_attach'], $row['id_folder'], false, $row['file_hash']);
 
@@ -1137,16 +1137,16 @@ function RepairAttachments()
 				if (!file_exists($filename))
 				{
 					// If we're lucky it might just be in a different folder.
-					if (!empty($modSettings['currentAttachmentUploadDir']))
+					if (!empty($settings['currentAttachmentUploadDir']))
 					{
 						// Get the attachment name with out the folder.
 						$attachment_name = !empty($row['file_hash']) ? $row['id_attach'] . '_' . $row['file_hash'] : getLegacyAttachmentFilename($row['filename'], $row['id_attach'], null, true);
 
-						if (!is_array($modSettings['attachmentUploadDir']))
-							$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+						if (!is_array($settings['attachmentUploadDir']))
+							$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
 
 						// Loop through the other folders.
-						foreach ($modSettings['attachmentUploadDir'] as $id => $dir)
+						foreach ($settings['attachmentUploadDir'] as $id => $dir)
 							if (file_exists($dir . '/' . $attachment_name))
 							{
 								$context['repair_errors']['wrong_folder']++;
@@ -1283,7 +1283,7 @@ function RepairAttachments()
 				if ($fix_errors && in_array('avatar_no_member', $to_fix))
 				{
 					if ($row['attachment_type'] == 1)
-						$filename = $modSettings['custom_avatar_dir'] . '/' . $row['filename'];
+						$filename = $settings['custom_avatar_dir'] . '/' . $row['filename'];
 					else
 						$filename = getAttachmentFilename($row['filename'], $row['id_attach'], $row['id_folder'], false, $row['file_hash']);
 					@unlink($filename);
@@ -1565,7 +1565,7 @@ function ApproveAttachments($attachments)
 
 function ManageAttachmentPaths()
 {
-	global $modSettings, $scripturl, $context, $txt;
+	global $settings, $scripturl, $context, $txt;
 
 	// Saving?
 	if (isset($_REQUEST['save']))
@@ -1639,16 +1639,16 @@ function ManageAttachmentPaths()
 	}
 
 	// Are they here for the first time?
-	if (empty($modSettings['currentAttachmentUploadDir']))
+	if (empty($settings['currentAttachmentUploadDir']))
 	{
-		$modSettings['attachmentUploadDir'] = array(
-			1 => $modSettings['attachmentUploadDir']
+		$settings['attachmentUploadDir'] = array(
+			1 => $settings['attachmentUploadDir']
 		);
-		$modSettings['currentAttachmentUploadDir'] = 1;
+		$settings['currentAttachmentUploadDir'] = 1;
 	}
 	// Otherwise just load up their attachment paths.
 	else
-		$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+		$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
 
 	$listOptions = array(
 		'id' => 'attach_paths',
@@ -1732,15 +1732,15 @@ function ManageAttachmentPaths()
 // Prepare the actual attachment directories to be displayed in the list.
 function list_getAttachDirs()
 {
-	global $modSettings, $context, $txt, $scripturl;
+	global $settings, $context, $txt, $scripturl;
 
 	// The dirs should already have been unserialized but just in case...
-	if (!is_array($modSettings['attachmentUploadDir']))
-		$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+	if (!is_array($settings['attachmentUploadDir']))
+		$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
 
 	$request = wesql::query('
 		SELECT id_folder, COUNT(id_attach) AS num_attach
-		FROM {db_prefix}attachments' . (empty($modSettings['custom_avatar_enabled']) ? '' : '
+		FROM {db_prefix}attachments' . (empty($settings['custom_avatar_enabled']) ? '' : '
 		WHERE attachment_type != {int:type_avatar}') . '
 		GROUP BY id_folder',
 		array(
@@ -1754,7 +1754,7 @@ function list_getAttachDirs()
 	wesql::free_result($request);
 
 	$attachdirs = array();
-	foreach ($modSettings['attachmentUploadDir'] as $id => $dir)
+	foreach ($settings['attachmentUploadDir'] as $id => $dir)
 	{
 		// If there aren't any attachments in this directory this won't exist.
 		if (!isset($expected_files[$id]))
@@ -1765,7 +1765,7 @@ function list_getAttachDirs()
 
 		$attachdirs[] = array(
 			'id' => $id,
-			'current' => $id == $modSettings['currentAttachmentUploadDir'],
+			'current' => $id == $settings['currentAttachmentUploadDir'],
 			'path' => $dir,
 			'current_size' => $size,
 			'num_files' => $expected_files[$id],
@@ -1776,7 +1776,7 @@ function list_getAttachDirs()
 	// Just stick a new directory on at the bottom.
 	if (isset($_REQUEST['new_path']))
 		$attachdirs[] = array(
-			'id' => max(array_merge(array_keys($expected_files), array_keys($modSettings['attachmentUploadDir']))) + 1,
+			'id' => max(array_merge(array_keys($expected_files), array_keys($settings['attachmentUploadDir']))) + 1,
 			'current' => false,
 			'path' => '',
 			'current_size' => '',

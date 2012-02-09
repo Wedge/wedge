@@ -42,7 +42,7 @@ if (!defined('WEDGE'))
 // Move a topic.  Give the moderator a chance to post a reason.
 function MoveTopic()
 {
-	global $txt, $board, $topic, $user_info, $context, $language, $scripturl, $settings, $modSettings;
+	global $txt, $board, $topic, $user_info, $context, $language, $scripturl, $theme, $settings;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -61,7 +61,7 @@ function MoveTopic()
 	wesql::free_result($request);
 
 	// Can they see it - if not approved?
-	if ($modSettings['postmod_active'] && !$context['is_approved'])
+	if ($settings['postmod_active'] && !$context['is_approved'])
 		isAllowedTo('approve_posts');
 
 	// Permission check!
@@ -69,7 +69,7 @@ function MoveTopic()
 		isAllowedTo($id_member_started == $user_info['id'] ? 'move_own' : 'move_any');
 
 	// Where can they move it to?
-	$boards = empty($modSettings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
+	$boards = empty($settings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
 	if (empty($boards))
 		$boards = array(-1); // Just so it doesn't foul the query up.
 
@@ -117,7 +117,7 @@ function MoveTopic()
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?topic=' . $topic . '.0',
 		'name' => $context['subject'],
-		'extra_before' => $settings['linktree_inline'] ? $txt['topic'] . ': ' : '',
+		'extra_before' => $theme['linktree_inline'] ? $txt['topic'] . ': ' : '',
 	);
 
 	$context['linktree'][] = array(
@@ -142,7 +142,7 @@ function MoveTopic()
 // Execute the move.
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $modSettings, $context;
+	global $txt, $board, $topic, $scripturl, $settings, $context;
 	global $board, $language, $user_info;
 
 	if (empty($topic))
@@ -176,12 +176,12 @@ function MoveTopic2()
 		isAllowedTo($id_member_started == $user_info['id'] ? 'move_own' : 'move_any');
 
 	// Where can they move it to?
-	$boards = empty($modSettings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
+	$boards = empty($settings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
 	if (empty($boards))
 		$boards = array(-1); // Just so it doesn't foul the query up.
 
 	// If this topic isn't approved don't let them move it if they can't approve it!
-	if ($modSettings['postmod_active'] && !$context['is_approved'] && !allowedTo('approve_posts'))
+	if ($settings['postmod_active'] && !$context['is_approved'] && !allowedTo('approve_posts'))
 	{
 		// Only allow them to move it to other boards they can't approve it in.
 		$can_approve = boardsAllowedTo('approve_posts');
@@ -392,7 +392,7 @@ function MoveTopic2()
 // Moves one or more topics to a specific board. (doesn't check permissions.)
 function moveTopics($topics, $toBoard)
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	// Empty array?
 	if (empty($topics))
@@ -408,7 +408,7 @@ function moveTopics($topics, $toBoard)
 		return;
 
 	// Are we moving to the recycle board?
-	$isRecycleDest = !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $toBoard;
+	$isRecycleDest = !empty($settings['recycle_enable']) && $settings['recycle_board'] == $toBoard;
 
 	// Make sure anything that's hooked to topics is also updated
 	call_hook('move_topics', array(&$topics, &$toBoard, &$isRecycleDest));
@@ -452,7 +452,7 @@ function moveTopics($topics, $toBoard)
 	wesql::free_result($request);
 
 	// Move over the mark_read data. (because it may be read and now not by some!)
-	$SaveAServer = max(0, $modSettings['maxMsgID'] - 50000);
+	$SaveAServer = max(0, $settings['maxMsgID'] - 50000);
 	$request = wesql::query('
 		SELECT lmr.id_member, lmr.id_msg, t.id_topic
 		FROM {db_prefix}topics AS t
@@ -559,7 +559,7 @@ function moveTopics($topics, $toBoard)
 		)
 	);
 
-	if (!empty($modSettings['pretty_enable_cache']))
+	if (!empty($settings['pretty_enable_cache']))
 		wesql::query('
 			DELETE FROM {db_prefix}pretty_urls_cache
 			WHERE (url_id LIKE "%topic=' . implode('%") OR (url_id LIKE "%topic=', $topics) . '%")',
@@ -682,13 +682,13 @@ function moveTopics($topics, $toBoard)
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-			array($toBoard, $user_info['id'], $modSettings['maxMsgID']),
+			array($toBoard, $user_info['id'], $settings['maxMsgID']),
 			array('id_board', 'id_member')
 		);
 	}
 
 	// Update the cache?
-	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 3)
+	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 3)
 		foreach ($topics as $topic_id)
 			cache_put_data('topic_board-' . $topic_id, null, 120);
 

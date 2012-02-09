@@ -20,7 +20,7 @@ class captcha_grid
 
 	public function render($code)
 	{
-		global $settings;
+		global $theme;
 
 		$width = 230;
 		$height = 36;
@@ -41,7 +41,7 @@ class captcha_grid
 		$size = 26;
 
 		for ($i = 0, $n = strlen($code); $i < $n; $i++)
-			imagettftext($this->image, $size, 0, $i * 36 + mt_rand(12, 15), $height - mt_rand(3, 5), $fg, $settings['default_theme_dir'] . '/fonts/Screenge.ttf', substr($code, $i, 1));
+			imagettftext($this->image, $size, 0, $i * 36 + mt_rand(12, 15), $height - mt_rand(3, 5), $fg, $theme['default_theme_dir'] . '/fonts/Screenge.ttf', substr($code, $i, 1));
 
 		return $this->image;
 	}

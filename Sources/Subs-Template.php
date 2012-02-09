@@ -36,7 +36,7 @@ if (!defined('WEDGE'))
  */
 function obExit($start = null, $do_finish = null, $from_index = false, $from_fatal_error = false)
 {
-	global $context, $settings, $modSettings, $txt;
+	global $context, $theme, $settings, $txt;
 	static $start_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
@@ -67,15 +67,15 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 		ob_start('ob_sessrewrite');
 
 		// Run any possible extra output buffers as provided by mods.
-		if (!empty($settings['output_buffers']) && is_string($settings['output_buffers']))
-			$buffers = explode(',', $settings['output_buffers']);
-		elseif (!empty($settings['output_buffers']))
-			$buffers = $settings['output_buffers'];
+		if (!empty($theme['output_buffers']) && is_string($theme['output_buffers']))
+			$buffers = explode(',', $theme['output_buffers']);
+		elseif (!empty($theme['output_buffers']))
+			$buffers = $theme['output_buffers'];
 		else
 			$buffers = array();
 
-		if (isset($modSettings['hooks']['buffer']))
-			$buffers = array_merge($modSettings['hooks']['buffer'], $buffers);
+		if (isset($settings['hooks']['buffer']))
+			$buffers = array_merge($settings['hooks']['buffer'], $buffers);
 
 		if (!empty($buffers))
 		{
@@ -116,12 +116,12 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 	// Don't exit if we're coming from index.php; that will pass through normally.
 	if (!$from_index || WIRELESS)
 	{
-		if (!isset($modSettings['app_error_count']))
-			$modSettings['app_error_count'] = 0;
+		if (!isset($settings['app_error_count']))
+			$settings['app_error_count'] = 0;
 		if (!empty($context['app_error_count']))
 			updateSettings(
 				array(
-					'app_error_count' => $modSettings['app_error_count'] + $context['app_error_count'],
+					'app_error_count' => $settings['app_error_count'] + $context['app_error_count'],
 				)
 			);
 		exit;
@@ -140,7 +140,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
  */
 function ob_sessrewrite($buffer)
 {
-	global $scripturl, $modSettings, $user_info, $context, $db_prefix, $session_var;
+	global $scripturl, $settings, $user_info, $context, $db_prefix, $session_var;
 	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache, $member_colors;
 
 	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
@@ -173,7 +173,7 @@ function ob_sessrewrite($buffer)
 	// Hidden variable 'minify_html' will minify inline JavaScript and remove tabs for maximum gains.
 	// !! Please note that minifying JS is horribly slow (about as slow as generating the page itself),
 	// !! hence the hidden aspect. @todo: cache every single match against its MD5 or something.
-	if (!empty($modSettings['minify_html']))
+	if (!empty($settings['minify_html']))
 	{
 		// Only use JSMin, whatever your preference is. It's 3 times faster than Packer.
 		loadSource('Class-JSMin');
@@ -200,13 +200,13 @@ function ob_sessrewrite($buffer)
 		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
 		$thing = substr($thing, 0, -1) . '
 	};';
-		if (empty($modSettings['minify_html']))
+		if (empty($settings['minify_html']))
 			$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
 		else
 			$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!--insert inline events here-->'), 32);
 	}
 	else
-		$buffer = str_replace(empty($modSettings['minify_html']) ? "\n\t<!-- insert inline events here -->" : "\n\t<!--insert inline events here-->", '', $buffer);
+		$buffer = str_replace(empty($settings['minify_html']) ? "\n\t<!-- insert inline events here -->" : "\n\t<!--insert inline events here-->", '', $buffer);
 
 	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))
@@ -303,14 +303,14 @@ function ob_sessrewrite($buffer)
 		);
 
 	// Fast on-the-fly replacement of whitespace...
-	if (!empty($modSettings['minify_html']))
+	if (!empty($settings['minify_html']))
 		$buffer = preg_replace("~\n\t+~", "\n", $buffer);
 
 	// Rewrite the buffer with pretty URLs!
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (!empty($settings['pretty_enable_filters']))
 	{
 		$insideurl = preg_quote($scripturl, '~');
-		$use_cache = !empty($modSettings['pretty_enable_cache']);
+		$use_cache = !empty($settings['pretty_enable_cache']);
 		$session_var = $context['session_var'];
 
 		// Remove the script tags
@@ -382,7 +382,7 @@ function ob_sessrewrite($buffer)
 				// Run each filter callback function on each URL
 				if (!function_exists('pretty_filter_topics'))
 					loadSource('PrettyUrls-Filters');
-				foreach ($modSettings['pretty_filters'] as $id => $enabled)
+				foreach ($settings['pretty_filters'] as $id => $enabled)
 					if ($enabled)
 						$uncached_urls = call_user_func('pretty_filter_' . $id, $uncached_urls);
 
@@ -546,7 +546,7 @@ function pretty_scripts_restore($match)
  */
 function start_output()
 {
-	global $modSettings, $context, $settings;
+	global $settings, $context, $theme;
 
 	if (!isset($_REQUEST['xml']))
 		setupThemeContext();
@@ -563,13 +563,13 @@ function start_output()
 
 	header('Content-Type: text/' . (isset($_REQUEST['xml']) ? 'xml' : 'html') . '; charset=UTF-8');
 
-	$context['show_load_time'] = !empty($modSettings['timeLoadPageEnable']);
+	$context['show_load_time'] = !empty($settings['timeLoadPageEnable']);
 
-	if (isset($settings['use_default_images'], $settings['default_template']) && $settings['use_default_images'] == 'defaults')
+	if (isset($theme['use_default_images'], $theme['default_template']) && $theme['use_default_images'] == 'defaults')
 	{
-		$settings['theme_url'] = $settings['default_theme_url'];
-		$settings['images_url'] = $settings['default_images_url'];
-		$settings['theme_dir'] = $settings['default_theme_dir'];
+		$theme['theme_url'] = $theme['default_theme_url'];
+		$theme['images_url'] = $theme['default_images_url'];
+		$theme['theme_dir'] = $theme['default_theme_dir'];
 	}
 }
 
@@ -581,7 +581,7 @@ function start_output()
  */
 function while_we_re_here()
 {
-	global $txt, $modSettings, $context, $user_info, $boarddir, $cachedir;
+	global $txt, $settings, $context, $user_info, $boarddir, $cachedir;
 	static $checked_security_files = false, $showed_banned = false, $showed_behav_error = false;
 
 	// If this page was loaded through jQuery, it's likely we've already had the warning shown in its container...
@@ -611,7 +611,7 @@ function while_we_re_here()
 			if (!file_exists($boarddir . '/' . $security_file))
 				unset($security_files[$i]);
 
-		if (!empty($security_files) || (!empty($modSettings['cache_enable']) && !is_writable($cachedir)))
+		if (!empty($security_files) || (!empty($settings['cache_enable']) && !is_writable($cachedir)))
 		{
 			echo '
 			<div class="errorbox">
@@ -629,7 +629,7 @@ function while_we_re_here()
 					', sprintf($txt['not_removed_extra'], $security_file, substr($security_file, 0, -1)), '<br>';
 			}
 
-			if (!empty($modSettings['cache_enable']) && !is_writable($cachedir))
+			if (!empty($settings['cache_enable']) && !is_writable($cachedir))
 				echo '
 					<strong>', $txt['cache_writable'], '</strong><br>';
 
@@ -678,31 +678,31 @@ function while_we_re_here()
  */
 function db_debug_junk()
 {
-	global $context, $scripturl, $boarddir, $modSettings, $txt;
+	global $context, $scripturl, $boarddir, $settings, $txt;
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
 
 	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
 	$show_debug = (isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || ($_GET['action'] != 'viewquery' && $_GET['action'] != 'help')) && !WIRELESS);
 	// Check groups
-	if (empty($modSettings['db_show_debug_who']) || $modSettings['db_show_debug_who'] == 'admin')
+	if (empty($settings['db_show_debug_who']) || $settings['db_show_debug_who'] == 'admin')
 		$show_debug &= $context['user']['is_admin'];
-	elseif ($modSettings['db_show_debug_who'] == 'mod')
+	elseif ($settings['db_show_debug_who'] == 'mod')
 		$show_debug &= allowedTo('moderate_forum');
-	elseif ($modSettings['db_show_debug_who'] == 'regular')
+	elseif ($settings['db_show_debug_who'] == 'regular')
 		$show_debug &= $context['user']['is_logged'];
 	else
-		$show_debug &= ($modSettings['db_show_debug_who'] == 'any');
+		$show_debug &= ($settings['db_show_debug_who'] == 'any');
 
 	// Now, who can see the query log? Need to have the ability to see any of this anyway.
 	$show_debug_query = $show_debug;
-	if (empty($modSettings['db_show_debug_who_log']) || $modSettings['db_show_debug_who_log'] == 'admin')
+	if (empty($settings['db_show_debug_who_log']) || $settings['db_show_debug_who_log'] == 'admin')
 		$show_debug_query &= $context['user']['is_admin'];
-	elseif ($modSettings['db_show_debug_who_log'] == 'mod')
+	elseif ($settings['db_show_debug_who_log'] == 'mod')
 		$show_debug_query &= allowedTo('moderate_forum');
-	elseif ($modSettings['db_show_debug_who_log'] == 'regular')
+	elseif ($settings['db_show_debug_who_log'] == 'regular')
 		$show_debug_query &= $context['user']['is_logged'];
 	else
-		$show_debug_query &= ($modSettings['db_show_debug_who_log'] == 'any');
+		$show_debug_query &= ($settings['db_show_debug_who_log'] == 'any');
 
 	// Now, let's tidy this up. If we're not showing queries, make sure anything that was logged is gone.
 	if (!$show_debug_query)
@@ -748,7 +748,7 @@ function db_debug_junk()
 	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').show(); $(this).hide();">' . $txt['debug_show'] . '</a><span id="debug_include_info" class="hide"><em>' . implode(', ', $files) . '</em></span>)<br>
 	' . $txt['debug_peak_memory_use'] . ceil(memory_get_peak_usage() / 1024) . $txt['debug_kb'] . '<br>';
 
-	if (!empty($modSettings['cache_enable']) && !empty($cache_hits))
+	if (!empty($settings['cache_enable']) && !empty($cache_hits))
 	{
 		$entries = array();
 		$total_t = 0;
@@ -820,14 +820,14 @@ function db_debug_junk()
 /**
  * Manage the process of loading a template file. This should not normally be called directly (instead, use {@link loadTemplate()} which invokes this function)
  *
- * This function ultimately handles the physical loading of a template or language file, and if $modSettings['disableTemplateEval'] is off, it also loads it in such a way as to parse it first - to be able to produce a different output to highlight where the error is (which is also not cached)
+ * This function ultimately handles the physical loading of a template or language file, and if $settings['disableTemplateEval'] is off, it also loads it in such a way as to parse it first - to be able to produce a different output to highlight where the error is (which is also not cached)
  *
  * @param string $filename The full path of the template to be loaded.
  * @param bool $once Whether to check that this template is uniquely loaded (for some templates, workflow dictates that it can be loaded only once, so passing it to require_once is an unnecessary performance hurt)
  */
 function template_include($filename, $once = false)
 {
-	global $context, $settings, $options, $txt, $helptxt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $helptxt, $scripturl, $settings;
 	global $user_info, $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
@@ -842,10 +842,10 @@ function template_include($filename, $once = false)
 		$templates[] = $filename;
 
 	// Are we going to use eval?
-	if (empty($modSettings['disableTemplateEval']))
+	if (empty($settings['disableTemplateEval']))
 	{
 		$file_found = file_exists($filename) && eval('?' . '>' . rtrim(file_get_contents($filename))) !== false;
-		$settings['current_include_filename'] = $filename;
+		$theme['current_include_filename'] = $filename;
 	}
 	else
 	{
@@ -860,7 +860,7 @@ function template_include($filename, $once = false)
 	if ($file_found !== true)
 	{
 		ob_end_clean();
-		if (!empty($modSettings['enableCompressedOutput']))
+		if (!empty($settings['enableCompressedOutput']))
 			@ob_start('ob_gzhandler');
 		else
 			ob_start();
@@ -1019,14 +1019,14 @@ function template_include($filename, $once = false)
  */
 function loadTemplate($template_name, $fatal = true)
 {
-	global $context, $settings, $txt, $scripturl, $boarddir, $db_show_debug;
+	global $context, $theme, $txt, $scripturl, $boarddir, $db_show_debug;
 
 	// No template to load?
 	if ($template_name === false)
 		return true;
 
 	$loaded = false;
-	foreach ($settings['template_dirs'] as $template_dir)
+	foreach ($theme['template_dirs'] as $template_dir)
 	{
 		if (file_exists($template_dir . '/' . $template_name . '.template.php'))
 		{
@@ -1046,10 +1046,10 @@ function loadTemplate($template_name, $fatal = true)
 			call_user_func('template_' . $template_name . '_init');
 	}
 	// Hmmm... doesn't exist?! I don't suppose the directory is wrong, is it?
-	elseif (!file_exists($settings['default_theme_dir']) && file_exists($boarddir . '/Themes/default'))
+	elseif (!file_exists($theme['default_theme_dir']) && file_exists($boarddir . '/Themes/default'))
 	{
-		$settings['default_theme_dir'] = $boarddir . '/Themes/default';
-		$settings['template_dirs'][] = $settings['default_theme_dir'];
+		$theme['default_theme_dir'] = $boarddir . '/Themes/default';
+		$theme['template_dirs'][] = $theme['default_theme_dir'];
 
 		if (!empty($context['user']['is_admin']) && !isset($_GET['th']))
 		{
@@ -1086,7 +1086,7 @@ function loadTemplate($template_name, $fatal = true)
  */
 function execBlock($block_name, $fatal = false)
 {
-	global $context, $settings, $options, $txt, $db_show_debug;
+	global $context, $theme, $options, $txt, $db_show_debug;
 
 	if (empty($block_name))
 		return;

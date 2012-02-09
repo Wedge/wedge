@@ -42,7 +42,7 @@ if (!defined('WEDGE'))
 // View the forum's error log.
 function ViewErrorLog()
 {
-	global $scripturl, $txt, $context, $modSettings, $user_profile, $filter, $boarddir, $themedir;
+	global $scripturl, $txt, $context, $settings, $user_profile, $filter, $boarddir, $themedir;
 
 	// Viewing contents of a file?
 	if (isset($_GET['file']))
@@ -105,7 +105,7 @@ function ViewErrorLog()
 	$context['sort_direction'] = isset($_REQUEST['desc']) ? 'down' : 'up';
 
 	// Set the page listing up.
-	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $modSettings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Find and sort out the errors.
@@ -115,7 +115,7 @@ function ViewErrorLog()
 			LEFT JOIN {db_prefix}log_ips AS li ON (le.ip = li.id_ip)' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : '') . '
 		ORDER BY id_error ' . ($context['sort_direction'] == 'down' ? 'DESC' : '') . '
-		LIMIT ' . $_GET['start'] . ', ' . $modSettings['defaultMaxMessages'],
+		LIMIT ' . $_GET['start'] . ', ' . $settings['defaultMaxMessages'],
 		array(
 			'filter' => isset($filter) ? $filter['value']['sql'] : '',
 		)
@@ -288,8 +288,8 @@ function ViewErrorLog()
 	wetem::load('error_log');
 
 	// Don't rewrite any URLs, we need them to remain exact!
-	$modSettings['pretty_filters'] = array();
-	$modSettings['pretty_enable_filters'] = false;
+	$settings['pretty_filters'] = array();
+	$settings['pretty_enable_filters'] = false;
 }
 
 // Delete errors from the database.
@@ -339,7 +339,7 @@ function deleteErrors()
 
 function updateErrorCount()
 {
-	global $modSettings;
+	global $settings;
 
 	$request = wesql::query('
 		SELECT COUNT(id_error) AS errors

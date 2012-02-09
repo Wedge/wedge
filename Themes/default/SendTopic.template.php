@@ -39,12 +39,12 @@
 // This is where we get information about who they want to send the topic to, etc.
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<form action="', $scripturl, '?action=emailuser;sa=sendtopic;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
-				<img src="', $settings['images_url'], '/email_sm.gif">', $context['page_title'], '
+				<img src="', $theme['images_url'], '/email_sm.gif">', $context['page_title'], '
 			</we:cat>
 			<div class="windowbg2 wrc">
 				<fieldset id="sender" class="send_topic">
@@ -97,12 +97,12 @@ function template_main()
 // Send an email to a user!
 function template_custom_email()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<form action="', $scripturl, '?action=emailuser;sa=email" method="post" accept-charset="UTF-8">
 			<we:cat>
-				<img src="', $settings['images_url'], '/email_sm.gif">', $context['page_title'], '
+				<img src="', $theme['images_url'], '/email_sm.gif">', $context['page_title'], '
 			</we:cat>
 			<div class="windowbg wrc">
 				<dl class="settings send_mail">
@@ -183,7 +183,7 @@ function template_custom_email()
 
 function template_report()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<form action="', $scripturl, '?action=report;topic=', $context['current_topic'], '.0" method="post" accept-charset="UTF-8">

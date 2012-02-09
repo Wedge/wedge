@@ -53,7 +53,7 @@ function Ajax()
  */
 function GetJumpTo()
 {
-	global $user_info, $context, $modSettings, $scripturl;
+	global $user_info, $context, $settings, $scripturl;
 
 	// Find the boards/cateogories they can see.
 	// Note: you can set $context['current_category'] if you have too many boards and it kills performance.
@@ -74,7 +74,7 @@ function GetJumpTo()
 	}
 
 	// Pretty URLs need to be rewritten.
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (!empty($settings['pretty_enable_filters']))
 	{
 		ob_start('ob_sessrewrite');
 		$insideurl = preg_quote($scripturl, '~');

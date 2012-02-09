@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 // Log the user out.
 function Logout($internal = false, $redirect = true)
 {
-	global $user_info, $user_settings, $context, $modSettings;
+	global $user_info, $user_settings, $context, $settings;
 
 	// Make sure they aren't being auto-logged out.
 	if (!$internal)

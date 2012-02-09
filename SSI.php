@@ -21,7 +21,7 @@ define('WEDGE', 'SSI');
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
-global $db_connection, $modSettings, $context, $sc, $user_info, $topic, $board, $txt;
+global $db_connection, $settings, $context, $sc, $user_info, $topic, $board, $txt;
 global $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
 
 // Remember the current configuration so it can be set back.
@@ -80,7 +80,7 @@ reloadSettings();
 cleanRequest();
 
 // Seed the random generator?
-if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 42)
+if (empty($settings['rand_seed']) || mt_rand(1, 250) == 42)
 	we_seed_generator();
 
 // Check on any hacking attempts.
@@ -102,7 +102,7 @@ define('WIRELESS', false);
 if (isset($ssi_gzip) && $ssi_gzip === true && @ini_get('zlib.output_compression') != '1' && @ini_get('output_handler') != 'ob_gzhandler')
 	ob_start('ob_gzhandler');
 else
-	$modSettings['enableCompressedOutput'] = '0';
+	$settings['enableCompressedOutput'] = '0';
 
 // Primarily, this is to fix the URLs...
 ob_start('ob_sessrewrite');
@@ -142,7 +142,7 @@ loadPermissions();
 
 // Enforce 'guests cannot browse the forum' if that's what the admin wants.
 // We need to remove all permissions, plus remove board access, to make sure everything in SSI behaves.
-if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+if (empty($settings['allow_guestAccess']) && $user_info['is_guest'])
 {
 	$user_info['permissions'] = array();
 	$user_info['query_see_board'] = '0=1';
@@ -254,11 +254,11 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 // Recent post list: Board | Subject by | Poster | Date
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
-	global $context, $settings, $txt, $db_prefix, $user_info, $modSettings;
+	global $context, $theme, $txt, $db_prefix, $user_info, $settings;
 
 	// Excluding certain boards...
-	if ($exclude_boards === null && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0)
-		$exclude_boards = array($modSettings['recycle_board']);
+	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
+		$exclude_boards = array($settings['recycle_board']);
 	else
 		$exclude_boards = empty($exclude_boards) ? array() : (is_array($exclude_boards) ? $exclude_boards : array($exclude_boards));
 
@@ -275,14 +275,14 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 		AND b.id_board NOT IN ({array_int:exclude_boards})') . '
 		' . ($include_boards === null ? '' : '
 		AND b.id_board IN ({array_int:include_boards})') . '
-		AND {query_wanna_see_board}' . ($modSettings['postmod_active'] ? '
+		AND {query_wanna_see_board}' . ($settings['postmod_active'] ? '
 		AND m.approved = {int:is_approved}' : '');
 
 	$query_where_params = array(
 		'is_approved' => 1,
 		'include_boards' => $include_boards === null ? '' : $include_boards,
 		'exclude_boards' => empty($exclude_boards) ? '' : $exclude_boards,
-		'min_message_id' => $modSettings['maxMsgID'] - 25 * min($num_recent, 5),
+		'min_message_id' => $settings['maxMsgID'] - 25 * min($num_recent, 5),
 	);
 
 	// Past to this simpleton of a function...
@@ -292,7 +292,7 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 // Fetch a post with a particular ID. By default will only show if you have permission to the see the board in question - this can be overriden.
 function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method = 'echo')
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	// Allow the user to request more than one - why not?
 	$post_ids = is_array($post_ids) ? $post_ids : array($post_ids);
@@ -300,7 +300,7 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 	// Restrict the posts required...
 	$query_where = '
 		m.id_msg IN ({array_int:message_list})' . ($override_permissions ? '' : '
-			AND {query_wanna_see_board}') . ($modSettings['postmod_active'] ? '
+			AND {query_wanna_see_board}') . ($settings['postmod_active'] ? '
 			AND m.approved = {int:is_approved}' : '');
 	$query_where_params = array(
 		'message_list' => $post_ids,
@@ -314,8 +314,8 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 // This removes code duplication in other queries - don't call it direct unless you really know what you're up to.
 function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
 {
-	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
-	global $modSettings;
+	global $context, $theme, $scripturl, $txt, $db_prefix, $user_info;
+	global $settings;
 
 	// Find all the posts. Newer ones will have higher IDs.
 	$request = wesql::query('
@@ -408,11 +408,11 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 // Recent topic list: [Board] | Subject by | Poster | Date
 function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo')
 {
-	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
-	global $modSettings;
+	global $context, $theme, $scripturl, $txt, $db_prefix, $user_info;
+	global $settings;
 
-	if ($exclude_boards === null && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0)
-		$exclude_boards = array($modSettings['recycle_board']);
+	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
+		$exclude_boards = array($settings['recycle_board']);
 	else
 		$exclude_boards = empty($exclude_boards) ? array() : (is_array($exclude_boards) ? $exclude_boards : array($exclude_boards));
 
@@ -440,7 +440,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		WHERE t.id_last_msg >= {int:min_message_id}' . (empty($exclude_boards) ? '' : '
 			AND b.id_board NOT IN ({array_int:exclude_boards})') . '' . (empty($include_boards) ? '' : '
 			AND b.id_board IN ({array_int:include_boards})') . '
-			AND {query_wanna_see_board}' . ($modSettings['postmod_active'] ? '
+			AND {query_wanna_see_board}' . ($settings['postmod_active'] ? '
 			AND t.approved = {int:is_approved}
 			AND ml.approved = {int:is_approved}' : '') . '
 		ORDER BY t.id_last_msg DESC
@@ -448,7 +448,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		array(
 			'include_boards' => empty($include_boards) ? '' : $include_boards,
 			'exclude_boards' => empty($exclude_boards) ? '' : $exclude_boards,
-			'min_message_id' => $modSettings['maxMsgID'] - 35 * min($num_recent, 5),
+			'min_message_id' => $settings['maxMsgID'] - 35 * min($num_recent, 5),
 			'is_approved' => 1,
 		)
 	);
@@ -491,8 +491,8 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		censorText($row['subject']);
 		censorText($row['body']);
 
-		if (!empty($modSettings['messageIconChecks_enable']) && !isset($icon_sources[$row['icon']]))
-			$icon_sources[$row['icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['icon'] . '.gif') ? 'images_url' : 'default_images_url';
+		if (!empty($settings['messageIconChecks_enable']) && !isset($icon_sources[$row['icon']]))
+			$icon_sources[$row['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['icon'] . '.gif') ? 'images_url' : 'default_images_url';
 
 		// Build the array.
 		$posts[] = array(
@@ -523,7 +523,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'new' => !empty($row['is_read']),
 			'is_new' => empty($row['is_read']),
 			'new_from' => $row['new_from'],
-			'icon' => '<img src="' . $settings[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" class="middle" alt="' . $row['icon'] . '" />',
+			'icon' => '<img src="' . $theme[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" class="middle" alt="' . $row['icon'] . '" />',
 		);
 	}
 	wesql::free_result($request);
@@ -560,7 +560,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 {
 	global $db_prefix, $scripturl, $context;
 
-	if (empty($modSettings['allow_guestAccess']) && $context['user']['is_guest'])
+	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
 		return array();
 
 	// Find the latest poster.
@@ -598,7 +598,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 // Show boards by activity.
 function ssi_topBoards($num_top = 10, $output_method = 'echo')
 {
-	global $context, $settings, $db_prefix, $txt, $scripturl, $user_info, $modSettings;
+	global $context, $theme, $db_prefix, $txt, $scripturl, $user_info, $settings;
 
 	// Find boards with lots of posts.
 	$request = wesql::query('
@@ -607,13 +607,13 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 			(IFNULL(lb.id_msg, 0) >= b.id_last_msg) AS is_read') . '
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
-		WHERE {query_wanna_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+		WHERE {query_wanna_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . '
 		ORDER BY b.num_posts DESC
 		LIMIT ' . $num_top,
 		array(
 			'current_member' => $user_info['id'],
-			'recycle_board' => (int) $modSettings['recycle_board'],
+			'recycle_board' => (int) $settings['recycle_board'],
 		)
 	);
 	$boards = array();
@@ -656,16 +656,16 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 // Shows the top topics.
 function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $user_info, $modSettings, $context;
+	global $db_prefix, $txt, $scripturl, $user_info, $settings, $context;
 
-	if ($modSettings['totalMessages'] > 100000)
+	if ($settings['totalMessages'] > 100000)
 	{
 		// !!! Added {query_wanna_see_board} here, for security reasons. May be bad for performance.
 		$request = wesql::query('
 			SELECT id_topic
 			FROM {db_prefix}topics
 			WHERE {query_wanna_see_board}
-				AND num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . ($modSettings['postmod_active'] ? '
+				AND num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . ($settings['postmod_active'] ? '
 				AND approved = {int:is_approved}' : '') . '
 			ORDER BY num_' . ($type != 'replies' ? 'views' : 'replies') . ' DESC
 			LIMIT {int:limit}',
@@ -687,16 +687,16 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-		WHERE {query_wanna_see_board}' . ($modSettings['postmod_active'] ? '
+		WHERE {query_wanna_see_board}' . ($settings['postmod_active'] ? '
 			AND t.approved = {int:is_approved}' : '') . (!empty($topic_ids) ? '
-			AND t.id_topic IN ({array_int:topic_list})' : '') . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+			AND t.id_topic IN ({array_int:topic_list})' : '') . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_enable}' : '') . '
 		ORDER BY t.num_' . ($type != 'replies' ? 'views' : 'replies') . ' DESC
 		LIMIT {int:limit}',
 		array(
 			'topic_list' => $topic_ids,
 			'is_approved' => 1,
-			'recycle_enable' => $modSettings['recycle_board'],
+			'recycle_enable' => $settings['recycle_board'],
 			'limit' => $num_topics,
 		)
 	);
@@ -756,9 +756,9 @@ function ssi_topTopicsViews($num_topics = 10, $output_method = 'echo')
 // Show a link to the latest member:  Please welcome, Someone, our latest member.
 function ssi_latestMember($output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $context, $modSettings;
+	global $db_prefix, $txt, $scripturl, $context, $settings;
 
-	if ($context['user']['is_guest'] && empty($modSettings['allow_guestAccess']))
+	if ($context['user']['is_guest'] && empty($settings['allow_guestAccess']))
 		return '';
 
 	if ($output_method == 'echo')
@@ -771,14 +771,14 @@ function ssi_latestMember($output_method = 'echo')
 // Fetch a random member - if type set to 'day' will only change once a day!
 function ssi_randomMember($random_type = '', $output_method = 'echo')
 {
-	global $modSettings;
+	global $settings;
 
 	// If we're looking for something to stay the same each day then seed the generator.
 	if ($random_type == 'day')
 		mt_srand(floor(time() / 86400)); // Set the seed to change only once per day.
 
 	// Get the lowest ID we're interested in.
-	$member_id = mt_rand(1, $modSettings['latestMember']);
+	$member_id = mt_rand(1, $settings['latestMember']);
 
 	$where_query = '
 		id_member >= {int:selected_member}
@@ -849,10 +849,10 @@ function ssi_fetchGroupMembers($group_id, $output_method = 'echo')
 // Fetch some member data!
 function ssi_queryMembers($query_where, $query_where_params = array(), $query_limit = '', $query_order = 'id_member DESC', $output_method = 'echo')
 {
-	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
-	global $modSettings, $memberContext;
+	global $context, $theme, $scripturl, $txt, $db_prefix, $user_info;
+	global $settings, $memberContext;
 
-	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+	if (empty($settings['allow_guestAccess']) && $user_info['is_guest'])
 		return array();
 
 	// Fetch the members in question.
@@ -915,15 +915,15 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 // Show some basic stats:  Total This: XXXX, etc.
 function ssi_boardStats($output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $modSettings, $context;
+	global $db_prefix, $txt, $scripturl, $settings, $context;
 
-	if (empty($modSettings['allow_guestAccess']) && $context['user']['is_guest'])
+	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
 		return array();
 
 	$totals = array(
-		'members' => $modSettings['totalMembers'],
-		'posts' => $modSettings['totalMessages'],
-		'topics' => $modSettings['totalTopics']
+		'members' => $settings['totalMembers'],
+		'posts' => $settings['totalMessages'],
+		'topics' => $settings['totalTopics']
 	);
 
 	$result = wesql::query('
@@ -958,9 +958,9 @@ function ssi_boardStats($output_method = 'echo')
 // Shows a list of online users:  YY Guests, ZZ Users and then a list...
 function ssi_whosOnline($output_method = 'echo')
 {
-	global $user_info, $txt, $settings, $modSettings;
+	global $user_info, $txt, $theme, $settings;
 
-	if (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'])
+	if (empty($settings['allow_guestAccess']) && $user_info['is_guest'])
 		return array();
 
 	loadSource('Subs-MembersOnline');
@@ -1000,7 +1000,7 @@ function ssi_whosOnline($output_method = 'echo')
 			', implode(', ', $return['list_users_online']);
 
 	// Showing membergroups?
-	if (!empty($settings['show_group_key']) && !empty($return['membergroups']))
+	if (!empty($theme['show_group_key']) && !empty($return['membergroups']))
 		echo '<br />
 			[' . implode(']&nbsp;&nbsp;[', $return['membergroups']) . ']';
 }
@@ -1019,7 +1019,7 @@ function ssi_logOnline($output_method = 'echo')
 // Shows a login box.
 function ssi_login($redirect_to = '', $output_method = 'echo')
 {
-	global $scripturl, $txt, $user_info, $context, $modSettings;
+	global $scripturl, $txt, $user_info, $context, $settings;
 
 	if ($redirect_to != '')
 		$_SESSION['login_url'] = $redirect_to;
@@ -1056,7 +1056,7 @@ function ssi_topPoll($output_method = 'echo')
 // Show the most recently posted poll.
 function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $settings, $boardurl, $user_info, $context, $modSettings;
+	global $db_prefix, $txt, $theme, $boardurl, $user_info, $context, $settings;
 
 	$boardsAllowed = array_intersect(boardsAllowedTo('poll_view'), boardsAllowedTo('poll_vote'));
 
@@ -1066,7 +1066,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	$request = wesql::query('
 		SELECT p.id_poll, p.question, t.id_topic, p.max_votes, p.guest_vote, p.hide_results, p.expire_time
 		FROM {db_prefix}polls AS p
-			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll' . ($modSettings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
+			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll' . ($settings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)' . ($topPollInstead ? '
 			INNER JOIN {db_prefix}poll_choices AS pc ON (pc.id_poll = p.id_poll)' : '') . '
 			LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_poll = p.id_poll AND lp.id_member > {int:no_member} AND lp.id_member = {int:current_member})
@@ -1074,7 +1074,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			AND (p.expire_time = {int:no_expiration} OR {int:current_time} < p.expire_time)
 			AND ' . ($user_info['is_guest'] ? 'p.guest_vote = {int:guest_vote_allowed}' : 'lp.id_choice IS NULL') . '
 			AND {query_wanna_see_board}' . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_allowed_list})' : '') . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+			AND b.id_board IN ({array_int:boards_allowed_list})' : '') . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_enable}' : '') . '
 		ORDER BY ' . ($topPollInstead ? 'pc.votes' : 'p.id_poll') . ' DESC
 		LIMIT 1',
@@ -1087,7 +1087,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			'voting_opened' => 0,
 			'no_expiration' => 0,
 			'current_time' => time(),
-			'recycle_enable' => $modSettings['recycle_board'],
+			'recycle_enable' => $settings['recycle_board'],
 		)
 	);
 	$row = wesql::fetch_assoc($request);
@@ -1153,7 +1153,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 		$return['options'][$i] = array(
 			'percent' => $bar,
 			'votes' => $option[1],
-			'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
+			'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" /><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" /></span>',
 			'option' => parse_bbc($option[0]),
 			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 		);
@@ -1187,7 +1187,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 
 function ssi_showPoll($topic = null, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $settings, $boardurl, $user_info, $context, $modSettings;
+	global $db_prefix, $txt, $theme, $boardurl, $user_info, $context, $settings;
 
 	$boardsAllowed = boardsAllowedTo('poll_view');
 
@@ -1207,7 +1207,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 		WHERE t.id_topic = {int:current_topic}
 			AND {query_see_board}' . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_allowed_see})' : '') . ($modSettings['postmod_active'] ? '
+			AND b.id_board IN ({array_int:boards_allowed_see})' : '') . ($settings['postmod_active'] ? '
 			AND t.approved = {int:is_approved}' : '') . '
 		LIMIT 1',
 		array(
@@ -1304,7 +1304,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 		$return['options'][$i] = array(
 			'percent' => $bar,
 			'votes' => $option[1],
-			'bar' => '<span class="nowrap"><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" alt="" /><img src="' . $settings['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $settings['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" alt="" /></span>',
+			'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif" alt="" /><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12" alt="-" /><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif" alt="" /></span>',
 			'option' => parse_bbc($option[0]),
 			'vote_button' => '<input type="' . ($row['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'
 		);
@@ -1362,7 +1362,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 // Takes care of voting - don't worry, this is done automatically.
 function ssi_pollVote()
 {
-	global $context, $db_prefix, $user_info, $sc, $modSettings;
+	global $context, $db_prefix, $user_info, $sc, $settings;
 
 	if (!isset($_POST[$context['session_var']]) || $_POST[$context['session_var']] != $sc || empty($_POST['options']) || !isset($_POST['poll']))
 	{
@@ -1393,7 +1393,7 @@ function ssi_pollVote()
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_poll = p.id_poll AND lp.id_member = {int:current_member})
 		WHERE p.id_poll = {int:current_poll}
-			AND {query_see_board}' . ($modSettings['postmod_active'] ? '
+			AND {query_see_board}' . ($settings['postmod_active'] ? '
 			AND t.approved = {int:is_approved}' : '') . '
 		LIMIT 1',
 		array(
@@ -1459,7 +1459,7 @@ function ssi_pollVote()
 		$_COOKIE['guest_poll_vote'] = !empty($_COOKIE['guest_poll_vote']) ? ($_COOKIE['guest_poll_vote'] . ',' . $row['id_poll']) : $row['id_poll'];
 
 		loadSource('Subs-Auth');
-		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+		$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
 		setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], 0, true);
 	}
 
@@ -1486,9 +1486,9 @@ function ssi_quickSearch($output_method = 'echo')
 // Show what would be the forum news.
 function ssi_news($output_method = 'echo')
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
-	if (empty($modSettings['allow_guestAccess']) && $context['user']['is_guest'])
+	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
 		return array();
 
 	if ($output_method != 'echo')
@@ -1500,9 +1500,9 @@ function ssi_news($output_method = 'echo')
 // Show the latest news, with a template... by board.
 function ssi_boardNews($board = null, $limit = null, $start = null, $length = null, $output_method = 'echo')
 {
-	global $scripturl, $db_prefix, $txt, $settings, $modSettings, $context;
+	global $scripturl, $db_prefix, $txt, $theme, $settings, $context;
 
-	if (empty($modSettings['allow_guestAccess']) && $context['user']['is_guest'])
+	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
 		return array();
 
 	loadLanguage('Stats');
@@ -1565,7 +1565,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	$request = wesql::query('
 		SELECT id_first_msg
 		FROM {db_prefix}topics
-		WHERE id_board = {int:current_board}' . ($modSettings['postmod_active'] ? '
+		WHERE id_board = {int:current_board}' . ($settings['postmod_active'] ? '
 			AND approved = {int:is_approved}' : '') . '
 		ORDER BY id_first_msg DESC
 		LIMIT ' . $start . ', ' . $limit,
@@ -1616,8 +1616,8 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
 
 		// Check that this message icon is there...
-		if (!empty($modSettings['messageIconChecks_enable']) && !isset($icon_sources[$row['icon']]))
-			$icon_sources[$row['icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['icon'] . '.gif') ? 'images_url' : 'default_images_url';
+		if (!empty($settings['messageIconChecks_enable']) && !isset($icon_sources[$row['icon']]))
+			$icon_sources[$row['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['icon'] . '.gif') ? 'images_url' : 'default_images_url';
 
 		censorText($row['subject']);
 		censorText($row['body']);
@@ -1625,7 +1625,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 		$return[] = array(
 			'id' => $row['id_topic'],
 			'message_id' => $row['id_msg'],
-			'icon' => '<img src="' . $settings[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" alt="' . $row['icon'] . '" />',
+			'icon' => '<img src="' . $theme[$icon_sources[$row['icon']]] . '/post/' . $row['icon'] . '.gif" alt="' . $row['icon'] . '" />',
 			'subject' => $row['subject'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
@@ -1702,7 +1702,7 @@ function ssi_checkPassword($id = null, $password = null, $is_username = false)
 // We want to show the recent attachments outside of the forum.
 function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(), $output_method = 'echo')
 {
-	global $context, $modSettings, $scripturl, $txt, $settings;
+	global $context, $settings, $scripturl, $txt, $theme;
 
 	// We want to make sure that we only get attachments for boards that we can see *if* any.
 	$attachments_boards = boardsAllowedTo('view_attachments');
@@ -1720,16 +1720,16 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 		SELECT
 			att.id_attach, att.id_msg, att.filename, IFNULL(att.size, 0) AS filesize, att.downloads, mem.id_member,
 			IFNULL(mem.real_name, m.poster_name) AS poster_name, m.id_topic, m.subject, t.id_board, m.poster_time,
-			att.width, att.height' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : ', IFNULL(thumb.id_attach, 0) AS id_thumb, thumb.width AS thumb_width, thumb.height AS thumb_height') . '
+			att.width, att.height' . (empty($settings['attachmentShowImages']) || empty($settings['attachmentThumbnails']) ? '' : ', IFNULL(thumb.id_attach, 0) AS id_thumb, thumb.width AS thumb_width, thumb.height AS thumb_height') . '
 		FROM {db_prefix}attachments AS att
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = att.id_msg)
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (empty($modSettings['attachmentShowImages']) || empty($modSettings['attachmentThumbnails']) ? '' : '
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (empty($settings['attachmentShowImages']) || empty($settings['attachmentThumbnails']) ? '' : '
 			LEFT JOIN {db_prefix}attachments AS thumb ON (thumb.id_attach = att.id_thumb)') . '
 		WHERE att.attachment_type = 0' . ($attachments_boards === array(0) ? '' : '
 			AND m.id_board IN ({array_int:boards_can_see})') . (!empty($attachment_ext) ? '
 			AND att.fileext IN ({array_string:attachment_ext})' : '') .
-			(!$modSettings['postmod_active'] || allowedTo('approve_posts') ? '' : '
+			(!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 			AND t.approved = {int:is_approved}
 			AND m.approved = {int:is_approved}
 			AND att.approved = {int:is_approved}') . '
@@ -1761,8 +1761,8 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 				'filesize' => round($row['filesize'] /1024, 2) . $txt['kilobyte'],
 				'downloads' => $row['downloads'],
 				'href' => $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'],
-				'link' => '<img src="' . $settings['images_url'] . '/icons/clip.gif" alt="" /> <a href="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . '">' . $filename . '</a>',
-				'is_image' => !empty($row['width']) && !empty($row['height']) && !empty($modSettings['attachmentShowImages']),
+				'link' => '<img src="' . $theme['images_url'] . '/icons/clip.gif" alt="" /> <a href="' . $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . '">' . $filename . '</a>',
+				'is_image' => !empty($row['width']) && !empty($row['height']) && !empty($settings['attachmentShowImages']),
 			),
 			'topic' => array(
 				'id' => $row['id_topic'],

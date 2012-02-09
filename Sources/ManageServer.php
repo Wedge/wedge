@@ -208,7 +208,7 @@ function ModifySettings()
 // General forum settings - forum name, maintenance mode, etc.
 function ModifyGeneralSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $modSettings, $cachedir;
+	global $scripturl, $context, $txt, $settings, $cachedir;
 
 	/* If you're writing a mod, it's a BAD idea to add anything here....
 	For each option:
@@ -257,7 +257,7 @@ function ModifyGeneralSettings($return_config = false)
 		// Cached JS files are also cleaned up on the fly so this is just a small time saver.
 		foreach (array('enableCompressedData', 'obfuscate_filenames', 'minify') as $cache)
 		{
-			if (isset($_REQUEST[$cache]) && (!isset($modSettings[$cache]) || $_REQUEST[$cache] != $modSettings[$cache]) && is_callable('glob'))
+			if (isset($_REQUEST[$cache]) && (!isset($settings[$cache]) || $_REQUEST[$cache] != $settings[$cache]) && is_callable('glob'))
 			{
 				@array_map('unlink', glob($cachedir . '/*.j*'));
 				// Note: enableCompressedData should always be tested first in the array,
@@ -279,7 +279,7 @@ function ModifyGeneralSettings($return_config = false)
 // Basic database and paths settings - database name, host, etc.
 function ModifyDatabaseSettings($return_config = false)
 {
-	global $scripturl, $context, $settings, $txt, $boarddir;
+	global $scripturl, $context, $theme, $txt, $boarddir;
 
 	/* If you're writing a mod, it's a bad idea to add things here....
 	For each option:
@@ -330,7 +330,7 @@ function ModifyDatabaseSettings($return_config = false)
 // This function basically edits anything which is configuration and stored in the database, except for caching.
 function ModifyCookieSettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $modSettings, $cookiename, $user_settings;
+	global $context, $scripturl, $txt, $settings, $cookiename, $user_settings;
 
 	// Define the variables we want to edit.
 	$config_vars = array(
@@ -369,7 +369,7 @@ function ModifyCookieSettings($return_config = false)
 
 			// Set the new one.
 			$cookiename = $_POST['cookiename'];
-			setLoginCookie(60 * $modSettings['cookieTime'], $user_settings['id_member'], sha1($user_settings['passwd'] . $user_settings['password_salt']));
+			setLoginCookie(60 * $settings['cookieTime'], $user_settings['id_member'], sha1($user_settings['passwd'] . $user_settings['password_salt']));
 
 			redirectexit('action=admin;area=serversettings;sa=cookie;' . $context['session_var'] . '=' . $original_session_id, $context['server']['needs_login_fix']);
 		}
@@ -384,7 +384,7 @@ function ModifyCookieSettings($return_config = false)
 // Simply modifying cache functions
 function ModifyCacheSettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $helptxt, $modSettings;
+	global $context, $scripturl, $txt, $helptxt, $settings;
 
 	// Define the variables we want to edit.
 	$config_vars = array(
@@ -402,7 +402,7 @@ function ModifyCacheSettings($return_config = false)
 		saveDBSettings($config_vars);
 
 		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
-		$modSettings['cache_enable'] = 1;
+		$settings['cache_enable'] = 1;
 		cache_put_data('modSettings', null, 90);
 
 		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_query']);
@@ -434,23 +434,23 @@ function ModifyCacheSettings($return_config = false)
 
 function ModifyLoadBalancingSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings, $modSettings;
+	global $txt, $scripturl, $context, $theme, $settings;
 
 	// Setup a warning message, but disabled by default.
 	$disabled = true;
 	$context['settings_message'] = $txt['loadavg_disabled_conf'];
 
-	$modSettings['load_average'] = @file_get_contents('/proc/loadavg');
-	if (!empty($modSettings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $modSettings['load_average'], $matches) !== 0)
-		$modSettings['load_average'] = (float) $matches[1];
-	elseif (($modSettings['load_average'] = @`uptime`) !== null && preg_match('~load averages?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $modSettings['load_average'], $matches) !== 0)
-		$modSettings['load_average'] = (float) $matches[1];
+	$settings['load_average'] = @file_get_contents('/proc/loadavg');
+	if (!empty($settings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $settings['load_average'], $matches) !== 0)
+		$settings['load_average'] = (float) $matches[1];
+	elseif (($settings['load_average'] = @`uptime`) !== null && preg_match('~load averages?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $settings['load_average'], $matches) !== 0)
+		$settings['load_average'] = (float) $matches[1];
 	else
-		unset($modSettings['load_average']);
+		unset($settings['load_average']);
 
-	if (!empty($modSettings['load_average']))
+	if (!empty($settings['load_average']))
 	{
-		$context['settings_message'] = sprintf($txt['loadavg_warning'], $modSettings['load_average']);
+		$context['settings_message'] = sprintf($txt['loadavg_warning'], $settings['load_average']);
 		$disabled = false;
 	}
 
@@ -473,7 +473,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 	foreach ($default_values as $name => $value)
 	{
 		// Use the default value if the setting isn't set yet.
-		$value = !isset($modSettings[$name]) ? $value : $modSettings[$name];
+		$value = !isset($settings[$name]) ? $value : $settings[$name];
 		$config_vars[] = array('text', $name, 'value' => $value, 'disabled' => $disabled);
 	}
 
@@ -508,7 +508,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 
 function ModifyProxySettings($return_config = false)
 {
-	global $context, $scripturl, $txt, $helptxt, $modSettings;
+	global $context, $scripturl, $txt, $helptxt, $settings;
 
 	// Define the variables we want to edit.
 	$config_vars = array(
@@ -533,7 +533,7 @@ function ModifyProxySettings($return_config = false)
 		saveDBSettings($config_vars);
 
 		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
-		$modSettings['cache_enable'] = 1;
+		$settings['cache_enable'] = 1;
 		cache_put_data('modSettings', null, 90);
 
 		redirectexit('action=admin;area=serversettings;sa=proxy;' . $context['session_query']);
@@ -548,7 +548,7 @@ function ModifyProxySettings($return_config = false)
 
 function ModifyDebugSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $modSettings, $cachedir;
+	global $scripturl, $context, $txt, $settings, $cachedir;
 
 	$config_vars = array(
 		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
@@ -591,7 +591,7 @@ function ModifyDebugSettings($return_config = false)
 // This is the main function for the language area.
 function ManageLanguages()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $settings;
 
 	loadLanguage('ManageSettings');
 
@@ -673,7 +673,7 @@ function AddLanguage()
 // Download a language file from the Wedge website.
 function DownloadLanguage()
 {
-	global $context, $boarddir, $txt, $scripturl, $modSettings;
+	global $context, $boarddir, $txt, $scripturl, $settings;
 
 	loadLanguage('ManageSettings');
 	loadSource('Subs-Package');
@@ -935,10 +935,10 @@ function DownloadLanguage()
 			}
 			else
 			{
-				foreach ($data as $theme => $files)
+				foreach ($data as $th => $files)
 					foreach ($files as $k => $file)
 						if (!$file['writable'] && !in_array($file['destination'], $context['still_not_writable']))
-							$context['files'][$type][$theme][$k]['writable'] = true;
+							$context['files'][$type][$th][$k]['writable'] = true;
 			}
 		}
 
@@ -1022,9 +1022,9 @@ function DownloadLanguage()
 	);
 
 	// Kill the cache, as it is now invalid..
-	if (!empty($modSettings['cache_enable']))
+	if (!empty($settings['cache_enable']))
 	{
-		cache_put_data('known_languages', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
+		cache_put_data('known_languages', null, !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600);
 		// Delete all cached CSS files.
 		clean_cache('css');
 	}
@@ -1151,37 +1151,37 @@ function list_getNumLanguages()
 // Fetch the actual language information.
 function list_getLanguages()
 {
-	global $settings, $language, $context, $txt;
+	global $theme, $language, $context, $txt;
 
 	$languages = array();
 	// Keep our old entries.
 	$old_txt = $txt;
-	$backup_actual_theme_dir = $settings['actual_theme_dir'];
-	$backup_base_theme_dir = !empty($settings['base_theme_dir']) ? $settings['base_theme_dir'] : '';
+	$backup_actual_theme_dir = $theme['actual_theme_dir'];
+	$backup_base_theme_dir = !empty($theme['base_theme_dir']) ? $theme['base_theme_dir'] : '';
 
 	// Override these for now.
-	$settings['actual_theme_dir'] = $settings['base_theme_dir'] = $settings['default_theme_dir'];
+	$theme['actual_theme_dir'] = $theme['base_theme_dir'] = $theme['default_theme_dir'];
 	getLanguages();
 
 	// Put them back.
-	$settings['actual_theme_dir'] = $backup_actual_theme_dir;
+	$theme['actual_theme_dir'] = $backup_actual_theme_dir;
 	if (!empty($backup_base_theme_dir))
-		$settings['base_theme_dir'] = $backup_base_theme_dir;
+		$theme['base_theme_dir'] = $backup_base_theme_dir;
 	else
-		unset($settings['base_theme_dir']);
+		unset($theme['base_theme_dir']);
 
 	// Get the language files and data...
 	foreach ($context['languages'] as $lang)
 	{
 		// Load the file to get the character set.
-		require($settings['default_theme_dir'] . '/languages/index.' . $lang['filename'] . '.php');
+		require($theme['default_theme_dir'] . '/languages/index.' . $lang['filename'] . '.php');
 
 		$languages[$lang['filename']] = array(
 			'id' => $lang['filename'],
 			'count' => 0,
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
-			'name' => '<img src="' . $settings['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png"> ' . westr::ucwords(strtr($lang['filename'], array('_' => ' '))),
+			'name' => '<img src="' . $theme['default_theme_url'] . '/languages/Flag.' . $lang['filename'] . '.png"> ' . westr::ucwords(strtr($lang['filename'], array('_' => ' '))),
 		);
 	}
 
@@ -1216,7 +1216,7 @@ function list_getLanguages()
 // Edit language related settings.
 function ModifyLanguageSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $boarddir, $settings;
+	global $scripturl, $context, $txt, $boarddir, $theme;
 
 	// Warn the user if the backup of Settings.php failed.
 	$settings_not_writable = !is_writable($boarddir . '/Settings.php');
@@ -1265,7 +1265,7 @@ function ModifyLanguageSettings($return_config = false)
 // Edit a particular set of language entries.
 function ModifyLanguage()
 {
-	global $settings, $context, $txt, $modSettings, $boarddir, $language;
+	global $theme, $context, $txt, $settings, $boarddir, $language;
 
 	loadLanguage('ManageSettings');
 
@@ -1315,7 +1315,7 @@ function ModifyLanguage()
 	$themes = array(
 		1 => array(
 			'name' => $txt['dvc_default'],
-			'theme_dir' => $settings['default_theme_dir'],
+			'theme_dir' => $theme['default_theme_dir'],
 		),
 	);
 	while ($row = wesql::fetch_assoc($request))
@@ -1369,7 +1369,7 @@ function ModifyLanguage()
 
 	// Now for every theme get all the files and stick them in context!
 	$context['possible_files'] = array();
-	foreach ($lang_dirs as $theme => $theme_dirs)
+	foreach ($lang_dirs as $th => $theme_dirs)
 	{
 		// Depending on where we came from, we might be looking at a single folder or a plugin's potentially many subfolders.
 		// If we're looking at a plugin, the array will be the possible folders for the prefixing as array keys, with the values as full paths
@@ -1391,17 +1391,17 @@ function ModifyLanguage()
 				if ($matches[1] == 'EmailTemplates')
 					continue;
 
-				if (!isset($context['possible_files'][$theme]))
-					$context['possible_files'][$theme] = array(
-						'id' => $theme,
-						'name' => $themes[$theme]['name'],
+				if (!isset($context['possible_files'][$th]))
+					$context['possible_files'][$th] = array(
+						'id' => $th,
+						'name' => $themes[$th]['name'],
 						'files' => array(),
 					);
 
-				$context['possible_files'][$theme]['files'][] = array(
+				$context['possible_files'][$th]['files'][] = array(
 					'id' => $path_prefix . $matches[1],
 					'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
-					'selected' => $theme_id == $theme && $file_id == $matches[1],
+					'selected' => $theme_id == $th && $file_id == $matches[1],
 				);
 			}
 			$dir->close();
@@ -1417,7 +1417,7 @@ function ModifyLanguage()
 		loadSource('Subs-Package');
 
 		// First, make a backup?
-		if (!empty($modSettings['package_make_backups']) && (!isset($_SESSION['last_backup_for']) || $_SESSION['last_backup_for'] != $context['lang_id'] . '$$$'))
+		if (!empty($settings['package_make_backups']) && (!isset($_SESSION['last_backup_for']) || $_SESSION['last_backup_for'] != $context['lang_id'] . '$$$'))
 		{
 			$_SESSION['last_backup_for'] = $context['lang_id'] . '$$$';
 			package_create_backup('backup_lang_' . $context['lang_id']);
@@ -1456,9 +1456,9 @@ function ModifyLanguage()
 		);
 
 		// Sixth, update getLanguages() cache.
-		if (!empty($modSettings['cache_enable']))
+		if (!empty($settings['cache_enable']))
 		{
-			cache_put_data('known_languages', null, !empty($modSettings['cache_enable']) && $modSettings['cache_enable'] < 1 ? 86400 : 3600);
+			cache_put_data('known_languages', null, !empty($settings['cache_enable']) && $settings['cache_enable'] < 1 ? 86400 : 3600);
 			// Delete all cached CSS files.
 			clean_cache('css');
 		}
@@ -1482,7 +1482,7 @@ function ModifyLanguage()
 		checkSession();
 
 		// Read in the current file.
-		$current_data = implode('', file($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php'));
+		$current_data = implode('', file($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php'));
 		// These are the replacements. old => new
 		$replace_array = array(
 			'~\$txt\[\'lang_locale\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_locale\'] = \'' . addslashes($_POST['locale']) . '\';',
@@ -1491,7 +1491,7 @@ function ModifyLanguage()
 			'~\$txt\[\'lang_rtl\'\]\s=\s[A-Za-z0-9]+;~' => '$txt[\'lang_rtl\'] = ' . (!empty($_POST['rtl']) ? 'true' : 'false') . ';',
 		);
 		$current_data = preg_replace(array_keys($replace_array), array_values($replace_array), $current_data);
-		$fp = fopen($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php', 'w+');
+		$fp = fopen($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php', 'w+');
 		fwrite($fp, $current_data);
 		fclose($fp);
 
@@ -1500,8 +1500,8 @@ function ModifyLanguage()
 
 	// Quickly load index language entries.
 	$old_txt = $txt;
-	require($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
-	$context['lang_file_not_writable_message'] = is_writable($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php') ? '' : sprintf($txt['lang_file_not_writable'], $settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
+	require($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
+	$context['lang_file_not_writable_message'] = is_writable($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php') ? '' : sprintf($txt['lang_file_not_writable'], $theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
 	// Setup the primary settings context.
 	$context['primary_settings'] = array(
 		'name' => westr::ucwords(strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
@@ -1920,7 +1920,7 @@ function cleanLangString($string, $to_display = true)
 // Helper function, it sets up the context for the manage server settings.
 function prepareServerSettingsContext(&$config_vars)
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	$context['config_vars'] = array();
 	foreach ($config_vars as $identifier => $config_var)
@@ -1939,7 +1939,7 @@ function prepareServerSettingsContext(&$config_vars)
 				'size' => empty($config_var[4]) ? 0 : $config_var[4],
 				'data' => isset($config_var[4]) && is_array($config_var[4]) ? $config_var[4] : array(),
 				'name' => $config_var[0],
-				'value' => $config_var[2] == 'file' ? htmlspecialchars($$varname) : (isset($modSettings[$config_var[0]]) ? htmlspecialchars($modSettings[$config_var[0]]) : (in_array($config_var[3], array('int', 'float')) ? 0 : '')),
+				'value' => $config_var[2] == 'file' ? htmlspecialchars($$varname) : (isset($settings[$config_var[0]]) ? htmlspecialchars($settings[$config_var[0]]) : (in_array($config_var[3], array('int', 'float')) ? 0 : '')),
 				'disabled' => !empty($context['settings_not_writable']) || !empty($config_var['disabled']),
 				'invalid' => false,
 				'javascript' => '',
@@ -1957,7 +1957,7 @@ function prepareServerSettingsContext(&$config_vars)
 // Helper function, it sets up the context for database settings.
 function prepareDBSettingContext(&$config_vars)
 {
-	global $txt, $helptxt, $context, $modSettings;
+	global $txt, $helptxt, $context, $settings;
 
 	loadLanguage('Help');
 
@@ -1992,7 +1992,7 @@ function prepareDBSettingContext(&$config_vars)
 				'size' => !empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : (in_array($config_var[0], array('int', 'float')) ? 6 : 0),
 				'data' => array(),
 				'name' => $config_var[1],
-				'value' => isset($modSettings[$config_var[1]]) ? ($config_var[0] == 'select' ? $modSettings[$config_var[1]] : htmlspecialchars($modSettings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float')) ? 0 : ''),
+				'value' => isset($settings[$config_var[1]]) ? ($config_var[0] == 'select' ? $settings[$config_var[1]] : htmlspecialchars($settings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float')) ? 0 : ''),
 				'disabled' => false,
 				'invalid' => !empty($config_var['invalid']),
 				'javascript' => '',
@@ -2097,8 +2097,8 @@ function prepareDBSettingContext(&$config_vars)
 		{
 			$context['bbc_sections'][$bbc] = array(
 				'title' => isset($txt['bbc_title_' . $bbc]) ? $txt['bbc_title_' . $bbc] : $txt['bbcTagsToUse_select'],
-				'disabled' => empty($modSettings['bbc_disabled_' . $bbc]) ? array() : $modSettings['bbc_disabled_' . $bbc],
-				'all_selected' => empty($modSettings['bbc_disabled_' . $bbc]),
+				'disabled' => empty($settings['bbc_disabled_' . $bbc]) ? array() : $settings['bbc_disabled_' . $bbc],
+				'all_selected' => empty($settings['bbc_disabled_' . $bbc]),
 			);
 		}
 	}
@@ -2111,7 +2111,7 @@ function prepareDBSettingContext(&$config_vars)
 // Helper function. Saves settings by putting them in Settings.php or saving them in the settings table.
 function saveSettings(&$config_vars)
 {
-	global $boarddir, $cookiename, $modSettings, $context, $cachedir;
+	global $boarddir, $cookiename, $settings, $context, $cachedir;
 
 	// Fix the darn stupid cookiename! (more may not be allowed, but these for sure!)
 	if (isset($_POST['cookiename']))

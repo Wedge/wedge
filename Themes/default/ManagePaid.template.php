@@ -14,7 +14,7 @@
 // The template for adding or editing a subscription.
 function template_modify_subscription()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// JavaScript for the duration stuff.
 	add_js('
@@ -141,7 +141,7 @@ function template_modify_subscription()
 					<fieldset>
 						<dl class="settings">
 							<dt>
-								', $txt['paid_cost'], ' (', str_replace('%1.2f', '', $modSettings['paid_currency_symbol']), '):
+								', $txt['paid_cost'], ' (', str_replace('%1.2f', '', $settings['paid_currency_symbol']), '):
 							</dt>
 							<dd>
 								<input type="text" name="cost" value="', empty($context['sub']['cost']['fixed']) ? '0' : $context['sub']['cost']['fixed'], '" size="4">
@@ -190,7 +190,7 @@ function template_modify_subscription()
 								<strong>', $txt['paid_duration'], '</strong>
 							</dt>
 							<dd>
-								<strong>', $txt['paid_cost'], ' (', preg_replace('~%[df.\d]+~', '', $modSettings['paid_currency_symbol']), ')</strong>
+								<strong>', $txt['paid_cost'], ' (', preg_replace('~%[df.\d]+~', '', $settings['paid_currency_symbol']), ')</strong>
 							</dd>
 							<dt>
 								', $txt['paid_per_day'], ':
@@ -231,7 +231,7 @@ function template_modify_subscription()
 
 function template_delete_subscription()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">
@@ -252,7 +252,7 @@ function template_delete_subscription()
 // Add or edit an existing subscriber.
 function template_modify_user_subscription()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
 	add_js('
@@ -429,7 +429,7 @@ function template_modify_user_subscription()
 // Template for a user to edit/pick their subscriptions.
 function template_user_subscription()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $settings;
 
 	echo '
 	<div id="paid_subscription">
@@ -487,14 +487,14 @@ function template_user_subscription()
 					// Print out the costs for this one.
 					foreach ($subscription['costs'] as $duration => $value)
 						echo '
-					<option value="', $duration, '">', sprintf($modSettings['paid_currency_symbol'], $value), '/', $txt[$duration], '</option>';
+					<option value="', $duration, '">', sprintf($settings['paid_currency_symbol'], $value), '/', $txt[$duration], '</option>';
 
 					echo '
 				</select>';
 				}
 				else
 					echo '
-				', sprintf($modSettings['paid_currency_symbol'], $subscription['costs']['fixed']);
+				', sprintf($settings['paid_currency_symbol'], $subscription['costs']['fixed']);
 
 				echo '
 				<br>
@@ -568,7 +568,7 @@ function template_user_subscription()
 // The "choose payment" dialog.
 function template_choose_payment()
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	echo '
 	<div id="paid_subscription">
@@ -627,7 +627,7 @@ function template_choose_payment()
 // The "thank you" bit...
 function template_paid_done()
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	echo '
 	<div id="paid_subscription">

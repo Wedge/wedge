@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Find the ten most recent posts.
 function Recent()
 {
-	global $txt, $scripturl, $user_info, $context, $modSettings, $board;
+	global $txt, $scripturl, $user_info, $context, $settings, $board;
 
 	loadTemplate('Recent');
 	$context['page_title'] = $txt['recent_posts'];
@@ -80,11 +80,11 @@ function Recent()
 		$query_parameters['boards'] = $boards;
 
 		// If this category has a significant number of posts in it...
-		if ($total_cat_posts > 100 && $total_cat_posts > $modSettings['totalMessages'] / 15)
+		if ($total_cat_posts > 100 && $total_cat_posts > $settings['totalMessages'] / 15)
 		{
 			$query_this_board .= '
 					AND m.id_msg >= {int:max_id_msg}';
-			$query_parameters['max_id_msg'] = max(0, $modSettings['maxMsgID'] - 400 - $_REQUEST['start'] * 7);
+			$query_parameters['max_id_msg'] = max(0, $settings['maxMsgID'] - 400 - $_REQUEST['start'] * 7);
 		}
 
 		$context['page_index'] = template_page_index($scripturl . '?action=recent;c=' . implode(',', $_REQUEST['c']), $_REQUEST['start'], min(100, $total_cat_posts), 10, false);
@@ -122,11 +122,11 @@ function Recent()
 		$query_parameters['boards'] = $boards;
 
 		// If these boards have a significant number of posts in them...
-		if ($total_posts > 100 && $total_posts > $modSettings['totalMessages'] / 12)
+		if ($total_posts > 100 && $total_posts > $settings['totalMessages'] / 12)
 		{
 			$query_this_board .= '
 					AND m.id_msg >= {int:max_id_msg}';
-			$query_parameters['max_id_msg'] = max(0, $modSettings['maxMsgID'] - 500 - $_REQUEST['start'] * 9);
+			$query_parameters['max_id_msg'] = max(0, $settings['maxMsgID'] - 500 - $_REQUEST['start'] * 9);
 		}
 
 		$context['page_index'] = template_page_index($scripturl . '?action=recent;boards=' . implode(',', $_REQUEST['boards']), $_REQUEST['start'], min(100, $total_posts), 10, false);
@@ -149,25 +149,25 @@ function Recent()
 		$query_parameters['board'] = $board;
 
 		// If this board has a significant number of posts in it...
-		if ($total_posts > 80 && $total_posts > $modSettings['totalMessages'] / 10)
+		if ($total_posts > 80 && $total_posts > $settings['totalMessages'] / 10)
 		{
 			$query_this_board .= '
 					AND m.id_msg >= {int:max_id_msg}';
-			$query_parameters['max_id_msg'] = max(0, $modSettings['maxMsgID'] - 600 - $_REQUEST['start'] * 10);
+			$query_parameters['max_id_msg'] = max(0, $settings['maxMsgID'] - 600 - $_REQUEST['start'] * 10);
 		}
 
 		$context['page_index'] = template_page_index($scripturl . '?action=recent;board=' . $board . '.%1$d', $_REQUEST['start'], min(100, $total_posts), 10, true);
 	}
 	else
 	{
-		$query_this_board = '{query_wanna_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+		$query_this_board = '{query_wanna_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 					AND b.id_board != {int:recycle_board}' : ''). '
 					AND m.id_msg >= {int:max_id_msg}';
-		$query_parameters['max_id_msg'] = max(0, $modSettings['maxMsgID'] - 100 - $_REQUEST['start'] * 6);
-		$query_parameters['recycle_board'] = $modSettings['recycle_board'];
+		$query_parameters['max_id_msg'] = max(0, $settings['maxMsgID'] - 100 - $_REQUEST['start'] * 6);
+		$query_parameters['recycle_board'] = $settings['recycle_board'];
 
 		// !!! This isn't accurate because we ignore the recycle bin.
-		$context['page_index'] = template_page_index($scripturl . '?action=recent', $_REQUEST['start'], min(100, $modSettings['totalMessages']), 10, false);
+		$context['page_index'] = template_page_index($scripturl . '?action=recent', $_REQUEST['start'], min(100, $settings['totalMessages']), 10, false);
 	}
 
 	$context['linktree'][] = array(
@@ -176,7 +176,7 @@ function Recent()
 	);
 
 	$key = 'recent-' . $user_info['id'] . '-' . md5(serialize(array_diff_key($query_parameters, array('max_id_msg' => 0)))) . '-' . (int) $_REQUEST['start'];
-	if (empty($modSettings['cache_enable']) || ($messages = cache_get_data($key, 120)) == null)
+	if (empty($settings['cache_enable']) || ($messages = cache_get_data($key, 120)) == null)
 	{
 		$done = false;
 		while (!$done)
@@ -296,7 +296,7 @@ function Recent()
 			'can_reply' => false,
 			'can_mark_notify' => false,
 			'can_delete' => false,
-			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($modSettings['edit_disable_time']) || $row['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()),
+			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($settings['edit_disable_time']) || $row['poster_time'] + $settings['edit_disable_time'] * 60 >= time()),
 		);
 
 		if ($user_info['id'] == $row['id_first_member'])
@@ -345,7 +345,7 @@ function Recent()
 		}
 	}
 
-	$quote_enabled = empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC']));
+	$quote_enabled = empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC']));
 	foreach ($context['posts'] as $counter => $dummy)
 	{
 		// Some posts - the first posts - can't just be deleted.

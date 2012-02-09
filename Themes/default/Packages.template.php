@@ -13,12 +13,12 @@
 
 function template_main()
 {
-	global $context, $settings, $options;
+	global $context, $theme, $options;
 }
 
 function template_view_package()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -155,7 +155,7 @@ function template_view_package()
 					echo '
 							<tr class="windowbg', $alternate2 ? '' : '2', '">
 								<td style="width: 0"></td>
-								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif"></a></td>
+								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $theme['default_images_url'], '/admin/package_ops.gif"></a></td>
 								<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 								<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
 								<td class="w50 smalltext">', $operation['action'], '</td>
@@ -197,10 +197,10 @@ function template_view_package()
 			$failure = JavaScriptEscape($txt['package_theme_failure_warning']);
 
 			// Loop through each theme and display it's name, and then it's details.
-			foreach ($context['theme_actions'] as $id => $theme)
+			foreach ($context['theme_actions'] as $id => $th)
 			{
 				// Pass?
-				$js_operations[$action_num] = !empty($theme['has_failure']);
+				$js_operations[$action_num] = !empty($th['has_failure']);
 
 				echo '
 					<tr class="catbg">
@@ -210,18 +210,18 @@ function template_view_package()
 					echo '
 							<input type="hidden" name="custom_theme[]" value="', $id, '">';
 				echo '
-							<input type="checkbox" name="custom_theme[]" id="custom_theme_', $id, '" value="', $id, '" onclick="', (!empty($theme['has_failure']) ? 'if (this.form.custom_theme_' . $id . '.checked && !confirm(' . $failure . ')) return false;' : ''), 'invertAll(this, this.form, \'dummy_theme_', $id, '\', true);"', !empty($context['themes_locked']) ? ' disabled checked' : '', '>
+							<input type="checkbox" name="custom_theme[]" id="custom_theme_', $id, '" value="', $id, '" onclick="', (!empty($th['has_failure']) ? 'if (this.form.custom_theme_' . $id . '.checked && !confirm(' . $failure . ')) return false;' : ''), 'invertAll(this, this.form, \'dummy_theme_', $id, '\', true);"', !empty($context['themes_locked']) ? ' disabled checked' : '', '>
 						</td>
 						<td colspan="3">
-							', $theme['name'], '
+							', $th['name'], '
 						</td>
 					</tr>';
 
-				foreach ($theme['actions'] as $action)
+				foreach ($th['actions'] as $action)
 				{
 					echo '
 					<tr class="windowbg', $alternate ? '' : '2', '">
-						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $settings['images_url'] . '/sort_down.gif" class="hide">' : '', '</td>
+						<td>', isset($packageaction['operations']) ? '<img id="operation_img_' . $action_num . '" src="' . $theme['images_url'] . '/sort_down.gif" class="hide">' : '', '</td>
 						<td style="width: 30px" class="center">
 							<input type="checkbox" name="theme_changes[]" value="', !empty($action['value']) ? $action['value'] : '', '" id="dummy_theme_', $id, '"', (!empty($action['not_mod']) ? '' : ' disabled'), !empty($context['themes_locked']) ? ' checked' : '', '>
 						</td>
@@ -248,7 +248,7 @@ function template_view_package()
 							echo '
 								<tr class="windowbg', $alternate2 ? '' : '2', '">
 									<td style="width: 0"></td>
-									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $settings['default_images_url'], '/admin/package_ops.gif"></a></td>
+									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $theme['default_images_url'], '/admin/package_ops.gif"></a></td>
 									<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 									<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
 									<td class="w50 smalltext">', $operation['action'], '</td>
@@ -327,7 +327,7 @@ function template_view_package()
 
 function template_extract_package()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	if (!empty($context['redirect_url']))
 		add_js_inline('
@@ -399,7 +399,7 @@ function template_extract_package()
 
 function template_list()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -427,7 +427,7 @@ function template_list()
 
 function template_examine()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -447,7 +447,7 @@ function template_examine()
 
 function template_browse()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	echo '
 	<div id="admincenter">
@@ -466,7 +466,7 @@ function template_browse()
 	window.weSessionQuery = "', $context['session_query'], '";
 	window.weVersion = "', $context['forum_version'], '";');
 
-	if (empty($modSettings['disable_wedge_js']))
+	if (empty($settings['disable_wedge_js']))
 		add_js_file($scripturl . '?action=viewremote;filename=latest-packages.js', true);
 
 	add_js('
@@ -499,8 +499,8 @@ function template_browse()
 		<div class="flow_auto">
 			<div class="padding smalltext floatleft">
 				', $txt['package_installed_key'], '
-				<img src="', $settings['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex"> ', $txt['package_installed_current'], '
-				<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex"> ', $txt['package_installed_old'], '
+				<img src="', $theme['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex"> ', $txt['package_installed_current'], '
+				<img src="', $theme['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex"> ', $txt['package_installed_old'], '
 			</div>
 			<div class="padding smalltext floatright">
 				<a href="#" onclick="$(\'#advanced_box\').toggle(); return false;">', $txt['package_advanced_button'], '</a>
@@ -539,7 +539,7 @@ function template_browse()
 
 function template_sublist(&$mod_list, $mod_heading)
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $scripturl, $theme;
 	static $bad = null;
 
 	if ($bad === null)
@@ -576,7 +576,7 @@ function template_sublist(&$mod_list, $mod_heading)
 
 		if ($package['is_installed'] && !$package['is_newer'])
 			echo '
-					<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" class="middle" style="margin-left: 2ex">';
+					<img src="', $theme['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" class="middle" style="margin-left: 2ex">';
 
 		echo '
 				</td>
@@ -607,7 +607,7 @@ function template_sublist(&$mod_list, $mod_heading)
 
 function template_servers()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	if (!empty($context['package_ftp']['error']))
 			echo '
@@ -756,7 +756,7 @@ function template_servers()
 
 function template_package_confirm()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -773,7 +773,7 @@ function template_package_confirm()
 
 function template_package_list()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -844,7 +844,7 @@ function template_package_list()
 
 					// Mark as installed and current?
 					if ($package['is_installed'] && !$package['is_newer'])
-						echo '<img src="', $settings['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" width="12" height="11" class="middle" style="margin-left: 2ex" alt="', $package['is_current'] ? $txt['package_installed_current'] : $txt['package_installed_old'], '">';
+						echo '<img src="', $theme['images_url'], '/icons/package_', $package['is_current'] ? 'installed' : 'old', '.gif" width="12" height="11" class="middle" style="margin-left: 2ex" alt="', $package['is_current'] ? $txt['package_installed_current'] : $txt['package_installed_old'], '">';
 
 					echo '</strong>
 							<ul id="package_section_', $i, '_pkg_', $id, '" class="package_section">';
@@ -888,8 +888,8 @@ function template_package_list()
 		</div>
 		<div class="padding smalltext floatleft">
 			', $txt['package_installed_key'], '
-			<img src="', $settings['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex"> ', $txt['package_installed_current'], '
-			<img src="', $settings['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex"> ', $txt['package_installed_old'], '
+			<img src="', $theme['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex"> ', $txt['package_installed_current'], '
+			<img src="', $theme['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex"> ', $txt['package_installed_old'], '
 		</div>
 	</div>
 	<br class="clear">';
@@ -922,7 +922,7 @@ function template_package_list()
 
 function template_downloaded()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -947,7 +947,7 @@ function template_downloaded()
 
 function template_install_options()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<div id="admincenter">
@@ -994,7 +994,7 @@ function template_install_options()
 
 function template_control_chmod()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	// Nothing to do? Brilliant!
 	if (empty($context['package_ftp']))
@@ -1142,7 +1142,7 @@ function template_control_chmod()
 
 function template_ftp_required()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<fieldset>
@@ -1157,7 +1157,7 @@ function template_ftp_required()
 
 function template_view_operations()
 {
-	global $context, $txt, $settings;
+	global $context, $txt, $theme;
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
@@ -1183,7 +1183,7 @@ function template_view_operations()
 
 function template_file_permissions()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $scripturl, $context, $theme;
 
 	// This will handle expanding the selection.
 	add_js('
@@ -1339,7 +1339,7 @@ function template_file_permissions()
 
 					var folderImage = document.createElement("img");
 					folderImage.style.verticalAlign = "bottom";
-					folderImage.src = \'', addcslashes($settings['default_images_url'], "\\"), '/board.gif\';
+					folderImage.src = \'', addcslashes($theme['default_images_url'], "\\"), '/board.gif\';
 					linkData.appendChild(folderImage);
 
 					linkData.appendChild(fileName);
@@ -1481,7 +1481,7 @@ function template_file_permissions()
 
 		if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 			echo '
-					<img src="', $settings['default_images_url'], '/board.gif" class="bottom">';
+					<img src="', $theme['default_images_url'], '/board.gif" class="bottom">';
 
 		echo '
 					', $name, '
@@ -1562,7 +1562,7 @@ function template_file_permissions()
 
 function template_permission_show_contents($ident, $contents, $level, $has_more = false)
 {
-	global $settings, $txt, $scripturl, $context;
+	global $theme, $txt, $scripturl, $context;
 
 	$js_ident = preg_replace('~[^A-Za-z0-9_\-=:]~', ':-:', $ident);
 	// Have we actually done something?
@@ -1588,7 +1588,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 
 			if (!empty($dir['type']) && ($dir['type'] == 'dir' || $dir['type'] == 'dir_recursive'))
 				echo '
-					<img src="', $settings['default_images_url'], '/board.gif" class="bottom">';
+					<img src="', $theme['default_images_url'], '/board.gif" class="bottom">';
 
 			echo '
 					', $name, '
@@ -1645,7 +1645,7 @@ function template_permission_show_contents($ident, $contents, $level, $has_more 
 
 function template_action_permissions()
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $scripturl, $context, $theme;
 
 	$countDown = 3;
 

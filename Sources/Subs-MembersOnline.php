@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
 // Retrieve a list and several other statistics of the users currently online.
 function getMembersOnlineStats($membersOnlineOptions)
 {
-	global $context, $scripturl, $user_info, $modSettings, $txt;
+	global $context, $scripturl, $user_info, $settings, $txt;
 
 	// The list can be sorted in several ways.
 	$allowed_sort_options = array(
@@ -60,8 +60,8 @@ function getMembersOnlineStats($membersOnlineOptions)
 	// Get any spiders if enabled.
 	$spiders = array();
 	$spider_finds = array();
-	if (!empty($modSettings['spider_mode']) && !empty($modSettings['show_spider_online']) && ($modSettings['show_spider_online'] < 3 || allowedTo('admin_forum')) && !empty($modSettings['spider_name_cache']))
-		$spiders = unserialize($modSettings['spider_name_cache']);
+	if (!empty($settings['spider_mode']) && !empty($settings['show_spider_online']) && ($settings['show_spider_online'] < 3 || allowedTo('admin_forum')) && !empty($settings['spider_name_cache']))
+		$spiders = unserialize($settings['spider_name_cache']);
 
 	// Load the users online right now.
 	$request = wesql::query('
@@ -134,7 +134,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 	wesql::free_result($request);
 
 	// If there are spiders only and we're showing the detail, add them to the online list - at the bottom.
-	if (!empty($spider_finds) && $modSettings['show_spider_online'] > 1)
+	if (!empty($spider_finds) && $settings['show_spider_online'] > 1)
 		foreach ($spider_finds as $id => $count)
 		{
 			$link = $spiders[$id] . ($count > 1 ? ' (' . $count . ')' : '');
@@ -172,7 +172,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 	ksort($membersOnlineStats['online_groups']);
 
 	// Hidden and non-hidden members make up all online members.
-	$membersOnlineStats['num_users_online'] = count($membersOnlineStats['users_online']) + $membersOnlineStats['num_users_hidden'] - (isset($modSettings['show_spider_online']) && $modSettings['show_spider_online'] > 1 ? count($spider_finds) : 0);
+	$membersOnlineStats['num_users_online'] = count($membersOnlineStats['users_online']) + $membersOnlineStats['num_users_hidden'] - (isset($settings['show_spider_online']) && $settings['show_spider_online'] > 1 ? count($spider_finds) : 0);
 
 	return $membersOnlineStats;
 }
@@ -180,12 +180,12 @@ function getMembersOnlineStats($membersOnlineOptions)
 // Check if the number of users online is a record and store it.
 function trackStatsUsersOnline($total_users_online)
 {
-	global $modSettings;
+	global $settings;
 
 	$settingsToUpdate = array();
 
 	// More members on now than ever were?  Update it!
-	if (!isset($modSettings['mostOnline']) || $total_users_online >= $modSettings['mostOnline'])
+	if (!isset($settings['mostOnline']) || $total_users_online >= $settings['mostOnline'])
 		$settingsToUpdate = array(
 			'mostOnline' => $total_users_online,
 			'mostDate' => time()
@@ -194,7 +194,7 @@ function trackStatsUsersOnline($total_users_online)
 	$date = strftime('%Y-%m-%d', forum_time(false));
 
 	// No entry exists for today yet?
-	if (!isset($modSettings['mostOnlineUpdated']) || $modSettings['mostOnlineUpdated'] != $date)
+	if (!isset($settings['mostOnlineUpdated']) || $settings['mostOnlineUpdated'] != $date)
 	{
 		$request = wesql::query('
 			SELECT most_on
@@ -219,12 +219,12 @@ function trackStatsUsersOnline($total_users_online)
 		// There's an entry in log_activity on today...
 		else
 		{
-			list ($modSettings['mostOnlineToday']) = wesql::fetch_row($request);
+			list ($settings['mostOnlineToday']) = wesql::fetch_row($request);
 
-			if ($total_users_online > $modSettings['mostOnlineToday'])
+			if ($total_users_online > $settings['mostOnlineToday'])
 				trackStats(array('most_on' => $total_users_online));
 
-			$total_users_online = max($total_users_online, $modSettings['mostOnlineToday']);
+			$total_users_online = max($total_users_online, $settings['mostOnlineToday']);
 		}
 		wesql::free_result($request);
 
@@ -233,7 +233,7 @@ function trackStatsUsersOnline($total_users_online)
 	}
 
 	// Highest number of users online today?
-	elseif ($total_users_online > $modSettings['mostOnlineToday'])
+	elseif ($total_users_online > $settings['mostOnlineToday'])
 	{
 		trackStats(array('most_on' => $total_users_online));
 		$settingsToUpdate['mostOnlineToday'] = $total_users_online;

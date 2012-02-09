@@ -14,7 +14,7 @@
 // Editing the smiley sets.
 function template_editsets()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">';
@@ -32,7 +32,7 @@ function template_editsets()
 	</div>
 	<br class="clear">';
 
-	if (empty($modSettings['disable_wedge_js']))
+	if (empty($settings['disable_wedge_js']))
 		add_js_file($scripturl . '?action=viewremote;filename=latest-smileys.js', true);
 
 	add_js('
@@ -44,7 +44,7 @@ function template_editsets()
 // Modifying a smiley set.
 function template_modifyset()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">
@@ -75,7 +75,7 @@ function template_modifyset()
 						<strong><label for="smiley_sets_path">', $txt['smiley_sets_url'], '</label>: </strong>
 					</dt>
 					<dd>
-						', $modSettings['smileys_url'], '/';
+						', $settings['smileys_url'], '/';
 
 		if ($context['current_set']['id'] == 'default')
 			echo '<strong>default</strong><input type="hidden" name="smiley_sets_path" id="smiley_sets_path" value="default">';
@@ -108,7 +108,7 @@ function template_modifyset()
 					</dd>';
 
 		// If this is a new smiley set they have the option to import smileys already in the directory.
-		if ($context['current_set']['is_new'] && !empty($modSettings['smiley_enable']))
+		if ($context['current_set']['is_new'] && !empty($settings['smiley_enable']))
 			echo '
 					<dt>
 						<strong><label for="smiley_sets_import">', $txt['smiley_set_import_directory'], '</label>: </strong>
@@ -131,7 +131,7 @@ function template_modifyset()
 // Editing an individual smiley
 function template_modifysmiley()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">
@@ -145,7 +145,7 @@ function template_modifysmiley()
 						<strong>', $txt['smiley_preview'], ': </strong>
 					</dt>
 					<dd>
-						<img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $context['current_smiley']['filename'], '" id="preview"> (', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview();">';
+						<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $context['current_smiley']['filename'], '" id="preview"> (', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview();">';
 
 	foreach ($context['smiley_sets'] as $smiley_set)
 		echo '
@@ -216,14 +216,14 @@ function template_modifysmiley()
 	add_js('
 	function updatePreview()
 	{
-		$("#preview").attr("src", "', $modSettings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
+		$("#preview").attr("src", "', $settings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
 	}');
 }
 
 // Adding a new smiley.
 function template_addsmiley()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	add_js('
 	function switchType()
@@ -264,7 +264,7 @@ function template_addsmiley()
 				<fieldset id="ex_settings">
 					<dl class="settings">
 						<dt>
-							<img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $context['filenames'][0]['id'], '" id="preview">
+							<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $context['filenames'][0]['id'], '" id="preview">
 						</dt>
 						<dd>
 							', $txt['smiley_preview_using'], ': <select name="set" onchange="updatePreview(); selectMethod(\'existing\');">';
@@ -377,14 +377,14 @@ function template_addsmiley()
 	add_js('
 	function updatePreview()
 	{
-		$("#preview").attr("src", "', $modSettings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
+		$("#preview").attr("src", "', $settings['smileys_url'], '/" + document.forms.smileyForm.set.value + "/" + document.forms.smileyForm.smiley_filename.value);
 	}');
 }
 
 // Ordering smileys.
 function template_setorder()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">';
@@ -406,14 +406,14 @@ function template_setorder()
 		{
 			if (!empty($context['move_smiley']))
 				echo '
-				<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';row=', $row[0]['row'], ';reorder=1;', $context['session_query'], '"><img src="', $settings['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
+				<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';row=', $row[0]['row'], ';reorder=1;', $context['session_query'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
 
 			foreach ($row as $smiley)
 			{
 				if (empty($context['move_smiley']))
-					echo '<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;move=', $smiley['id'], '"><img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: 0px solid black;" alt="', $smiley['description'], '"></a>';
+					echo '<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;move=', $smiley['id'], '"><img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: 0px solid black;" alt="', $smiley['description'], '"></a>';
 				else
-					echo '<img src="', $modSettings['smileys_url'], '/', $modSettings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: ', $smiley['selected'] ? '2px solid red' : '0px solid black', ';" alt="', $smiley['description'], '"><a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';after=', $smiley['id'], ';reorder=1;', $context['session_query'], '" title="', $txt['smileys_move_here'], '"><img src="', $settings['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
+					echo '<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: ', $smiley['selected'] ? '2px solid red' : '0px solid black', ';" alt="', $smiley['description'], '"><a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';after=', $smiley['id'], ';reorder=1;', $context['session_query'], '" title="', $txt['smileys_move_here'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
 			}
 
 			echo '
@@ -421,7 +421,7 @@ function template_setorder()
 		}
 		if (!empty($context['move_smiley']))
 			echo '
-				<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';row=', $location['last_row'], ';reorder=1;', $context['session_query'], '"><img src="', $settings['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
+				<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';row=', $location['last_row'], ';reorder=1;', $context['session_query'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
 		echo '
 			</div>
 			<input type="hidden" name="reorder" value="1">
@@ -436,7 +436,7 @@ function template_setorder()
 // Editing Message Icons
 function template_editicons()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	template_show_list('message_icon_list');
 }
@@ -444,7 +444,7 @@ function template_editicons()
 // Editing an individual message icon
 function template_editicon()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">

@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<br>
@@ -37,7 +37,7 @@ function template_main()
 
 function template_reminder_pick()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 	<br>
@@ -66,7 +66,7 @@ function template_reminder_pick()
 
 function template_sent()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<br>
@@ -80,7 +80,7 @@ function template_sent()
 
 function template_set_password()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	echo '
 	<br>
@@ -95,14 +95,14 @@ function template_set_password()
 					<dd>
 						<input type="password" name="passwrd1" id="we_autov_pwmain" size="22">
 						<span id="we_autov_pwmain_div" class="hide">
-							<img id="we_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif">
+							<img id="we_autov_pwmain_img" src="', $theme['images_url'], '/icons/field_invalid.gif">
 						</span>
 					</dd>
 					<dt>', $txt['verify_pass'], ': </dt>
 					<dd>
 						<input type="password" name="passwrd2" id="we_autov_pwverify" size="22">
 						<span id="we_autov_pwverify_div" class="hide">
-							<img id="we_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_invalid.gif">
+							<img id="we_autov_pwverify_img" src="', $theme['images_url'], '/icons/field_invalid.gif">
 						</span>
 					</dd>
 				</dl>
@@ -124,12 +124,12 @@ function template_set_password()
 		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
 		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
 	};
-	var verificationHandle = new weRegister("reminder_form", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);');
+	var verificationHandle = new weRegister("reminder_form", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ', regTextStrings);');
 }
 
 function template_ask()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	echo '
 	<br>
@@ -149,14 +149,14 @@ function template_ask()
 					<dd>
 						<input type="password" name="passwrd1" id="we_autov_pwmain" size="22">
 						<span id="we_autov_pwmain_div" class="hide">
-							<img id="we_autov_pwmain_img" src="', $settings['images_url'], '/icons/field_invalid.gif">
+							<img id="we_autov_pwmain_img" src="', $theme['images_url'], '/icons/field_invalid.gif">
 						</span>
 					</dd>
 					<dt>', $txt['verify_pass'], ': </dt>
 					<dd>
 						<input type="password" name="passwrd2" id="we_autov_pwverify" size="22">
 						<span id="we_autov_pwverify_div" class="hide">
-							<img id="we_autov_pwverify_img" src="', $settings['images_url'], '/icons/field_valid.gif">
+							<img id="we_autov_pwverify_img" src="', $theme['images_url'], '/icons/field_valid.gif">
 						</span>
 					</dd>
 				</dl>
@@ -177,7 +177,7 @@ function template_ask()
 		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
 		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
 	};
-	var verificationHandle = new weRegister("creator", ', empty($modSettings['password_strength']) ? 0 : $modSettings['password_strength'], ', regTextStrings);');
+	var verificationHandle = new weRegister("creator", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ', regTextStrings);');
 }
 
 ?>

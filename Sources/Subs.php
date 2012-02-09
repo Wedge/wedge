@@ -27,7 +27,7 @@ if (isset($sourcedir))
  * Although there are three parameters listed, the second and third parameters may be ignored depending on the first.
  *
  * This function handles four distinct branches of statistic/data management, reflected by the type: member, message, subject, topic.
- * - If type is member, two operations can be carried out. If neither parameter 1 or parameter 2 is set, recalculate the total number of members, and obtain the user id and name of the latest member (and update the $modSettings with this for the board index), and also ensure the count of unapproved users is correct (excluding COPPA users). Alternatively, when coming directly from registration etc, supply parameter 1 as the numeric user id and parameter 2 as the user name.
+ * - If type is member, two operations can be carried out. If neither parameter 1 or parameter 2 is set, recalculate the total number of members, and obtain the user id and name of the latest member (and update the $settings with this for the board index), and also ensure the count of unapproved users is correct (excluding COPPA users). Alternatively, when coming directly from registration etc, supply parameter 1 as the numeric user id and parameter 2 as the user name.
  * - If type is message, two operations can be carried out. If parameter 1 is boolean true, and parameter 2 is not null, have {@link updateSettings()} recalculate the total messages, and supply to it the contents of parameter 2 to be used as the id of the 'highest known message at this time', which is used for tracking read/unread status. Alternatively, recalculate the forum-wide total number of messages and the highest message id using the general board data.
  * - If type is subject, this function should be being called to update search data when a subject changes in a message. Parameter 1 should be the topic id, parameter 2 the new subject of the topic.
  * - If type is topic, two operations can be carried out. If parameter 1 is boolean true, increment the total number of topics (parameter 2 is ignored). Otherwise manually recalculate the forum-wide number of topics from the board data.
@@ -39,7 +39,7 @@ if (isset($sourcedir))
  */
 function updateStats($type, $parameter1 = null, $parameter2 = null)
 {
-	global $modSettings;
+	global $settings;
 
 	if ($type === 'member')
 	{
@@ -85,7 +85,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			wesql::free_result($result);
 
 			// Are we using registration approval?
-			if ((!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 2) || !empty($modSettings['approveAccountDeletion']))
+			if ((!empty($settings['registration_method']) && $settings['registration_method'] == 2) || !empty($settings['approveAccountDeletion']))
 			{
 				// Update the amount of members awaiting approval - ignoring COPPA accounts, as you can't approve them until you get permission.
 				$result = wesql::query('
@@ -113,10 +113,10 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			$result = wesql::query('
 				SELECT SUM(num_posts + unapproved_posts) AS total_messages, MAX(id_last_msg) AS max_msg_id
 				FROM {db_prefix}boards
-				WHERE redirect = {string:blank_redirect}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+				WHERE redirect = {string:blank_redirect}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 					AND id_board != {int:recycle_board}' : ''),
 				array(
-					'recycle_board' => isset($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
+					'recycle_board' => isset($settings['recycle_board']) ? $settings['recycle_board'] : 0,
 					'blank_redirect' => '',
 				)
 			);
@@ -146,7 +146,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 				'id_topic' => $parameter1,
 			)
 		);
-		if (!empty($modSettings['pretty_enable_cache']) && is_numeric($parameter1) && $parameter1 > 0)
+		if (!empty($settings['pretty_enable_cache']) && is_numeric($parameter1) && $parameter1 > 0)
 			wesql::query('
 				DELETE FROM {db_prefix}pretty_urls_cache
 				WHERE url_id LIKE {string:topic_search}',
@@ -188,10 +188,10 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 			// We also ignore the recycle bin here because there will probably be a bunch of one-post topics there.
 			$result = wesql::query('
 				SELECT SUM(num_topics + unapproved_topics) AS total_topics
-				FROM {db_prefix}boards' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+				FROM {db_prefix}boards' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 				WHERE id_board != {int:recycle_board}' : ''),
 				array(
-					'recycle_board' => !empty($modSettings['recycle_board']) ? $modSettings['recycle_board'] : 0,
+					'recycle_board' => !empty($settings['recycle_board']) ? $settings['recycle_board'] : 0,
 				)
 			);
 			$row = wesql::fetch_assoc($result);
@@ -303,7 +303,7 @@ function updateMyData($data)
  */
 function updateMemberData($members, $data)
 {
-	global $modSettings, $user_info;
+	global $settings, $user_info;
 
 	$parameters = array();
 	if (is_array($members))
@@ -319,7 +319,7 @@ function updateMemberData($members, $data)
 		$parameters['member'] = $members;
 	}
 
-	if (!empty($modSettings['hooks']['change_member_data']))
+	if (!empty($settings['hooks']['change_member_data']))
 	{
 		// Only a few member variables are really interesting for hooks.
 		$hook_vars = array(
@@ -417,14 +417,14 @@ function updateMemberData($members, $data)
 	updateStats('postgroups', $members, array_keys($data));
 
 	// Clear any caching?
-	if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2 && !empty($members))
+	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2 && !empty($members))
 	{
 		if (!is_array($members))
 			$members = array($members);
 
 		foreach ($members as $member)
 		{
-			if ($modSettings['cache_enable'] >= 3)
+			if ($settings['cache_enable'] >= 3)
 			{
 				cache_put_data('member_data-profile-' . $member, null, 120);
 				cache_put_data('member_data-normal-' . $member, null, 120);
@@ -436,16 +436,16 @@ function updateMemberData($members, $data)
 }
 
 /**
- * Updates settings in the primary forum-wide settings table, and its local $modSettings equivalent.
+ * Updates settings in the primary forum-wide settings table, and its local $settings equivalent.
  *
- * If a value to be updated would not be changed (is the same), that change will not be issued as a query. Also note that $modSettings will be updated too, and that the cache entry for $modSettings will be purged so that next page load is using the current (recached) settings.
+ * If a value to be updated would not be changed (is the same), that change will not be issued as a query. Also note that $settings will be updated too, and that the cache entry for $settings will be purged so that next page load is using the current (recached) settings.
  *
- * @param array $changeArray A key/value pair where the array key specifies the entry in the settings table and $modSettings array to be updated, and the value specifies the new value. Additionally, when $update is true, the value can be specified as true or false to increment or decrement (respectively) the current value.
+ * @param array $changeArray A key/value pair where the array key specifies the entry in the settings table and $settings array to be updated, and the value specifies the new value. Additionally, when $update is true, the value can be specified as true or false to increment or decrement (respectively) the current value.
  * @param bool $update If the value is known to already exist, this can be specified as true to have the data in the table be managed through an UPDATE query, rather than a REPLACE query. Note that UPDATE queries are run individually, while a REPLACE applies all changes simultaneously to the table.
  */
 function updateSettings($changeArray, $update = false)
 {
-	global $modSettings;
+	global $settings;
 
 	if (empty($changeArray) || !is_array($changeArray))
 		return;
@@ -464,7 +464,7 @@ function updateSettings($changeArray, $update = false)
 					'variable' => $variable,
 				)
 			);
-			$modSettings[$variable] = $value === true ? $modSettings[$variable] + 1 : ($value === false ? $modSettings[$variable] - 1 : $value);
+			$settings[$variable] = $value === true ? $settings[$variable] + 1 : ($value === false ? $settings[$variable] - 1 : $value);
 		}
 
 		// Clean out the cache and make sure the cobwebs are gone too.
@@ -477,16 +477,16 @@ function updateSettings($changeArray, $update = false)
 	foreach ($changeArray as $variable => $value)
 	{
 		// Don't bother if it's already like that ;)
-		if (isset($modSettings[$variable]) && $modSettings[$variable] == $value)
+		if (isset($settings[$variable]) && $settings[$variable] == $value)
 			continue;
 
 		// If the variable isn't set, but would only be set to nothingness, then don't bother setting it.
-		elseif (!isset($modSettings[$variable]) && empty($value))
+		elseif (!isset($settings[$variable]) && empty($value))
 			continue;
 
 		$replaceArray[] = array($variable, $value);
 
-		$modSettings[$variable] = $value;
+		$settings[$variable] = $value;
 	}
 
 	if (empty($replaceArray))
@@ -625,15 +625,15 @@ function number_context($string, $number, $format_comma = true)
  */
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
-	global $context, $user_info, $txt, $modSettings;
+	global $context, $user_info, $txt, $settings;
 	static $non_twelve_hour, $year_shortcut;
 
 	// Offset the time.
 	if (!$offset_type)
-		$time = $log_time + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600;
+		$time = $log_time + ($user_info['time_offset'] + $settings['time_offset']) * 3600;
 	// Just the forum offset?
 	else
-		$time = $log_time + ($offset_type == 'forum' ? $modSettings['time_offset'] * 3600 : 0);
+		$time = $log_time + ($offset_type == 'forum' ? $settings['time_offset'] * 3600 : 0);
 
 	// We can't have a negative date (on Windows, at least.)
 	if ($log_time < 0)
@@ -642,7 +642,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	$format =& $user_info['time_format'];
 
 	// Today and Yesterday?
-	if ($show_today === true && $modSettings['todayMod'] >= 1)
+	if ($show_today === true && $settings['todayMod'] >= 1)
 	{
 		// Get the current time.
 		$nowtime = forum_time();
@@ -665,7 +665,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 			return $txt['today'] . timeformat($log_time, $today_fmt, $offset_type);
 
 		// Day-of-year is one less and same year, or it's the first of the year and that's the last of the year...
-		if ($modSettings['todayMod'] == '2' && (($then['yday'] == $now['yday'] - 1 && $then['year'] == $now['year']) || ($now['yday'] == 0 && $then['year'] == $now['year'] - 1) && $then['mon'] == 12 && $then['mday'] == 31))
+		if ($settings['todayMod'] == '2' && (($then['yday'] == $now['yday'] - 1 && $then['year'] == $now['year']) || ($now['yday'] == 0 && $then['year'] == $now['year'] - 1) && $then['mon'] == 12 && $then['mday'] == 31))
 			return $txt['yesterday'] . timeformat($log_time, $today_fmt, $offset_type);
 
 		// Is this the current year? Then why bother printing out the year?
@@ -768,14 +768,14 @@ function on_date($time, $upper = false)
  */
 function forum_time($use_user_offset = true, $timestamp = null)
 {
-	global $user_info, $modSettings;
+	global $user_info, $settings;
 
 	if ($timestamp === null)
 		$timestamp = time();
 	elseif ($timestamp == 0)
 		return 0;
 
-	return $timestamp + ($modSettings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
+	return $timestamp + ($settings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
 }
 
 /**
@@ -830,10 +830,10 @@ function shorten_subject($subject, $len)
  */
 function writeLog($force = false)
 {
-	global $user_info, $user_settings, $context, $modSettings, $topic, $board;
+	global $user_info, $user_settings, $context, $settings, $topic, $board;
 
 	// If we are showing who is viewing a topic, let's see if we are, and force an update if so - to make it accurate.
-	if (!empty($modSettings['display_who_viewing']) && ($topic || $board))
+	if (!empty($settings['display_who_viewing']) && ($topic || $board))
 	{
 		// Take the opposite approach!
 		$force = true;
@@ -847,7 +847,7 @@ function writeLog($force = false)
 	}
 
 	// Are they a spider we should be tracking? Mode = 1 gets tracked on its spider check...
-	if (!empty($user_info['possibly_robot']) && !empty($modSettings['spider_mode']) && $modSettings['spider_mode'] > 1)
+	if (!empty($user_info['possibly_robot']) && !empty($settings['spider_mode']) && $settings['spider_mode'] > 1)
 	{
 		loadSource('ManageSearchEngines');
 		logSpider();
@@ -857,7 +857,7 @@ function writeLog($force = false)
 	if (!empty($_SESSION['log_time']) && $_SESSION['log_time'] >= (time() - 8) && !$force)
 		return;
 
-	if (!empty($modSettings['who_enabled']))
+	if (!empty($settings['who_enabled']))
 	{
 		$serialized = $_GET + array('USER_AGENT' => $_SERVER['HTTP_USER_AGENT']);
 
@@ -881,7 +881,7 @@ function writeLog($force = false)
 	$do_delete = cache_get_data('log_online-update', 30) < time() - 30;
 
 	// If the last click wasn't a long time ago, and there was a last click...
-	if (!empty($_SESSION['log_time']) && $_SESSION['log_time'] >= time() - $modSettings['lastActive'] * 20)
+	if (!empty($_SESSION['log_time']) && $_SESSION['log_time'] >= time() - $settings['lastActive'] * 20)
 	{
 		if ($do_delete)
 		{
@@ -890,7 +890,7 @@ function writeLog($force = false)
 				WHERE log_time < {int:log_time}
 					AND session != {string:session}',
 				array(
-					'log_time' => time() - $modSettings['lastActive'] * 60,
+					'log_time' => time() - $settings['lastActive'] * 60,
 					'session' => $session_id,
 				)
 			);
@@ -927,7 +927,7 @@ function writeLog($force = false)
 				WHERE ' . ($do_delete ? 'log_time < {int:log_time}' : '') . ($do_delete && !empty($user_info['id']) ? ' OR ' : '') . (empty($user_info['id']) ? '' : 'id_member = {int:current_member}'),
 				array(
 					'current_member' => $user_info['id'],
-					'log_time' => time() - $modSettings['lastActive'] * 60,
+					'log_time' => time() - $settings['lastActive'] * 60,
 				)
 			);
 
@@ -956,7 +956,7 @@ function writeLog($force = false)
 		$user_settings['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
 		updateMemberData($user_info['id'], array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP'], 'total_time_logged_in' => $user_settings['total_time_logged_in']));
 
-		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
+		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
 			cache_put_data('user_settings-' . $user_info['id'], $user_settings, 60);
 
 		$user_info['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
@@ -978,7 +978,7 @@ function writeLog($force = false)
  */
 function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 {
-	global $scripturl, $context, $modSettings, $db_show_debug, $db_cache;
+	global $scripturl, $context, $settings, $db_show_debug, $db_cache;
 
 	// In case we have mail to send, better do that - as obExit doesn't always quite make it...
 	if (!empty($context['flush_mail']))
@@ -1010,11 +1010,11 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\\??/', $scripturl . '?debug;', $setLocation);
 
 	// Redirections should be prettified too
-	if (!empty($modSettings['pretty_enable_filters']))
+	if (!empty($settings['pretty_enable_filters']))
 	{
 		loadSource('PrettyUrls-Filters');
 		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation)));
-		foreach ($modSettings['pretty_filters'] as $id => $enabled)
+		foreach ($settings['pretty_filters'] as $id => $enabled)
 		{
 			if ($enabled)
 				$pretty_url = call_user_func('pretty_filter_' . $id, $url);
@@ -1055,7 +1055,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  */
 function logAction($action, $extra = array(), $log_type = 'moderate')
 {
-	global $modSettings, $user_info;
+	global $settings, $user_info;
 
 	$log_types = array(
 		'moderate' => 1,
@@ -1064,7 +1064,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 	);
 
 	// No point in doing anything else, if the relevant log isn't even enabled.
-	if (!isset($log_types[$log_type]) || empty($modSettings['log_enabled_' . $log_type]))
+	if (!isset($log_types[$log_type]) || empty($settings['log_enabled_' . $log_type]))
 		return false;
 
 	if (!is_array($extra))
@@ -1164,10 +1164,10 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
  */
 function trackStats($stats = array())
 {
-	global $modSettings;
+	global $settings;
 	static $cache_stats = array();
 
-	if (empty($modSettings['trackStats']))
+	if (empty($settings['trackStats']))
 		return false;
 	if (!empty($stats))
 		return $cache_stats = array_merge($cache_stats, $stats);
@@ -1223,21 +1223,21 @@ function trackStats($stats = array())
  */
 function spamProtection($error_type)
 {
-	global $modSettings, $txt, $user_info;
+	global $settings, $txt, $user_info;
 
 	// Certain types take less/more time.
 	$timeOverrides = array(
 		'login' => 2,
 		'register' => 2,
-		'sendtopc' => $modSettings['spamWaitTime'] * 4,
-		'sendmail' => $modSettings['spamWaitTime'] * 5,
-		'report' => $modSettings['spamWaitTime'] * 4,
-		'search' => !empty($modSettings['search_floodcontrol_time']) ? $modSettings['search_floodcontrol_time'] : 1,
+		'sendtopc' => $settings['spamWaitTime'] * 4,
+		'sendmail' => $settings['spamWaitTime'] * 5,
+		'report' => $settings['spamWaitTime'] * 4,
+		'search' => !empty($settings['search_floodcontrol_time']) ? $settings['search_floodcontrol_time'] : 1,
 	);
 
 	// Moderators are free...
 	if (!allowedTo('moderate_board'))
-		$timeLimit = isset($timeOverrides[$error_type]) ? $timeOverrides[$error_type] : $modSettings['spamWaitTime'];
+		$timeLimit = isset($timeOverrides[$error_type]) ? $timeOverrides[$error_type] : $settings['spamWaitTime'];
 	else
 		$timeLimit = 2;
 
@@ -1396,7 +1396,7 @@ function url_image_size($url)
  */
 function setupThemeContext($forceload = false)
 {
-	global $modSettings, $user_info, $scripturl, $context;
+	global $settings, $user_info, $scripturl, $context;
 	global $options, $txt, $maintenance, $user_settings;
 	static $loaded = false;
 
@@ -1433,43 +1433,43 @@ function setupThemeContext($forceload = false)
 		$_SESSION['unread_messages'] = $user_info['unread_messages'];
 
 		if (allowedTo('moderate_forum'))
-			$context['unapproved_members'] = (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 2) || !empty($modSettings['approveAccountDeletion']) ? $modSettings['unapprovedMembers'] : 0;
+			$context['unapproved_members'] = (!empty($settings['registration_method']) && $settings['registration_method'] == 2) || !empty($settings['approveAccountDeletion']) ? $settings['unapprovedMembers'] : 0;
 		$context['show_open_reports'] = empty($user_settings['mod_prefs']) || $user_settings['mod_prefs'][0] == 1;
 
 		$context['user']['avatar'] = array();
 
 		// Figure out the avatar... uploaded?
 		if ($user_info['avatar']['url'] == '' && !empty($user_info['avatar']['id_attach']))
-			$context['user']['avatar']['href'] = $user_info['avatar']['custom_dir'] ? $modSettings['custom_avatar_url'] . '/' . $user_info['avatar']['filename'] : $scripturl . '?action=dlattach;attach=' . $user_info['avatar']['id_attach'] . ';type=avatar';
+			$context['user']['avatar']['href'] = $user_info['avatar']['custom_dir'] ? $settings['custom_avatar_url'] . '/' . $user_info['avatar']['filename'] : $scripturl . '?action=dlattach;attach=' . $user_info['avatar']['id_attach'] . ';type=avatar';
 		// Full URL?
 		elseif (strpos($user_info['avatar']['url'], 'http://') === 0)
 		{
 			$context['user']['avatar']['href'] = $user_info['avatar']['url'];
 
-			if ($modSettings['avatar_action_too_large'] == 'option_html_resize' || $modSettings['avatar_action_too_large'] == 'option_js_resize')
+			if ($settings['avatar_action_too_large'] == 'option_html_resize' || $settings['avatar_action_too_large'] == 'option_js_resize')
 			{
-				if (!empty($modSettings['avatar_max_width_external']))
-					$context['user']['avatar']['width'] = $modSettings['avatar_max_width_external'];
-				if (!empty($modSettings['avatar_max_height_external']))
-					$context['user']['avatar']['height'] = $modSettings['avatar_max_height_external'];
+				if (!empty($settings['avatar_max_width_external']))
+					$context['user']['avatar']['width'] = $settings['avatar_max_width_external'];
+				if (!empty($settings['avatar_max_height_external']))
+					$context['user']['avatar']['height'] = $settings['avatar_max_height_external'];
 			}
 		}
 		// Gravatar?
 		elseif (strpos($user_info['avatar']['url'], 'gravatar://') === 0)
 		{
-			if ($user_info['avatar']['url'] === 'gravatar://' || empty($modSettings['gravatarAllowExtraEmail']))
+			if ($user_info['avatar']['url'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
 				$context['user']['avatar']['href'] = get_gravatar_url($user_info['email']);
 			else
 				$context['user']['avatar']['href'] = get_gravatar_url(substr($user_info['avatar']['url'], 11));
 
-			if (!empty($modSettings['avatar_max_width_external']))
-				$context['user']['avatar']['width'] = $modSettings['avatar_max_width_external'];
-			if (!empty($modSettings['avatar_max_height_external']))
-				$context['user']['avatar']['height'] = $modSettings['avatar_max_height_external'];
+			if (!empty($settings['avatar_max_width_external']))
+				$context['user']['avatar']['width'] = $settings['avatar_max_width_external'];
+			if (!empty($settings['avatar_max_height_external']))
+				$context['user']['avatar']['height'] = $settings['avatar_max_height_external'];
 		}
 		// Otherwise we assume it's server stored?
 		elseif ($user_info['avatar']['url'] != '')
-			$context['user']['avatar']['href'] = $modSettings['avatar_url'] . '/' . htmlspecialchars($user_info['avatar']['url']);
+			$context['user']['avatar']['href'] = $settings['avatar_url'] . '/' . htmlspecialchars($user_info['avatar']['url']);
 
 		$opaque = !empty($user_info['avatar']['id_attach']) && $user_info['avatar']['transparent'] ? '' : 'opaque ';
 
@@ -1491,11 +1491,11 @@ function setupThemeContext($forceload = false)
 		$context['user']['total_time_logged_in'] = array('days' => 0, 'hours' => 0, 'minutes' => 0);
 		$context['user']['popup_messages'] = false;
 
-		if (!empty($modSettings['registration_method']) && $modSettings['registration_method'] == 1)
+		if (!empty($settings['registration_method']) && $settings['registration_method'] == 1)
 			$txt['welcome_guest'] .= $txt['welcome_guest_activate'];
 
 		// If we've upgraded recently, go easy on the passwords.
-		if (!empty($modSettings['disableHashTime']) && ($modSettings['disableHashTime'] == 1 || time() < $modSettings['disableHashTime']))
+		if (!empty($settings['disableHashTime']) && ($settings['disableHashTime'] == 1 || time() < $settings['disableHashTime']))
 			$context['disable_login_hashing'] = true;
 	}
 
@@ -1506,22 +1506,22 @@ function setupThemeContext($forceload = false)
 	$context['show_pm_popup'] = $context['user']['popup_messages'] && !empty($options['popup_messages']) && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'pm');
 
 	// Resize avatars the fancy, but non-GD requiring way.
-	if ($modSettings['avatar_action_too_large'] == 'option_js_resize' && (!empty($modSettings['avatar_max_width_external']) || !empty($modSettings['avatar_max_height_external'])))
+	if ($settings['avatar_action_too_large'] == 'option_js_resize' && (!empty($settings['avatar_max_width_external']) || !empty($settings['avatar_max_height_external'])))
 		add_js('
-	var we_avatarMaxSize = [' . (int) $modSettings['avatar_max_width_external'] . ', ' . (int) $modSettings['avatar_max_height_external'] . '];
+	var we_avatarMaxSize = [' . (int) $settings['avatar_max_width_external'] . ', ' . (int) $settings['avatar_max_height_external'] . '];
 	$(window).load(we_avatarResize);');
 
 	// This looks weird, but it's because Boards.php references the variable.
 	$context['common_stats']['latest_member'] = array(
-		'id' => $modSettings['latestMember'],
-		'name' => $modSettings['latestRealName'],
-		'href' => $scripturl . '?action=profile;u=' . $modSettings['latestMember'],
-		'link' => '<a href="' . $scripturl . '?action=profile;u=' . $modSettings['latestMember'] . '">' . $modSettings['latestRealName'] . '</a>',
+		'id' => $settings['latestMember'],
+		'name' => $settings['latestRealName'],
+		'href' => $scripturl . '?action=profile;u=' . $settings['latestMember'],
+		'link' => '<a href="' . $scripturl . '?action=profile;u=' . $settings['latestMember'] . '">' . $settings['latestRealName'] . '</a>',
 	);
 	$context['common_stats'] = array(
-		'total_posts' => comma_format($modSettings['totalMessages']),
-		'total_topics' => comma_format($modSettings['totalTopics']),
-		'total_members' => comma_format($modSettings['totalMembers']),
+		'total_posts' => comma_format($settings['totalMessages']),
+		'total_topics' => comma_format($settings['totalTopics']),
+		'total_members' => comma_format($settings['totalMembers']),
 		'latest_member' => $context['common_stats']['latest_member'],
 	);
 
@@ -1544,7 +1544,7 @@ function setupThemeContext($forceload = false)
  */
 function getAttachmentFilename($filename, $attachment_id, $dir = null, $new = false, $file_hash = '')
 {
-	global $modSettings;
+	global $settings;
 
 	// Just make up a nice hash...
 	if ($new)
@@ -1573,14 +1573,14 @@ function getAttachmentFilename($filename, $attachment_id, $dir = null, $new = fa
 		return getLegacyAttachmentFilename($filename, $attachment_id, $dir, $new);
 
 	// Are we using multiple directories?
-	if (!empty($modSettings['currentAttachmentUploadDir']))
+	if (!empty($settings['currentAttachmentUploadDir']))
 	{
-		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
-		$path = $modSettings['attachmentUploadDir'][$dir];
+		if (!is_array($settings['attachmentUploadDir']))
+			$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
+		$path = $settings['attachmentUploadDir'][$dir];
 	}
 	else
-		$path = $modSettings['attachmentUploadDir'];
+		$path = $settings['attachmentUploadDir'];
 
 	return $path . '/' . $attachment_id . '_' . $file_hash . '.ext';
 }
@@ -1601,7 +1601,7 @@ function getAttachmentFilename($filename, $attachment_id, $dir = null, $new = fa
  */
 function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $new = false)
 {
-	global $modSettings, $db_character_set;
+	global $settings, $db_character_set;
 
 	// Remove international characters (windows-1252)
 	// !!! These lines should never be needed again. Still, behave.
@@ -1621,20 +1621,20 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 	$enc_name = $attachment_id . '_' . strtr($clean_name, '.', '_') . md5($clean_name);
 	$clean_name = preg_replace('~\.{2,}~', '.', $clean_name);
 
-	if ($attachment_id == false || ($new && empty($modSettings['attachmentEncryptFilenames'])))
+	if ($attachment_id == false || ($new && empty($settings['attachmentEncryptFilenames'])))
 		return $clean_name;
 	elseif ($new)
 		return $enc_name;
 
 	// Are we using multiple directories?
-	if (!empty($modSettings['currentAttachmentUploadDir']))
+	if (!empty($settings['currentAttachmentUploadDir']))
 	{
-		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
-		$path = $modSettings['attachmentUploadDir'][$dir];
+		if (!is_array($settings['attachmentUploadDir']))
+			$settings['attachmentUploadDir'] = unserialize($settings['attachmentUploadDir']);
+		$path = $settings['attachmentUploadDir'][$dir];
 	}
 	else
-		$path = $modSettings['attachmentUploadDir'];
+		$path = $settings['attachmentUploadDir'];
 
 	return $path . '/' . (file_exists($path . '/' . $enc_name) ? $enc_name : $clean_name);
 }
@@ -1714,7 +1714,7 @@ function match_cidr($ip, $cidr_block)
  */
 function host_from_ip($ip)
 {
-	global $modSettings;
+	global $settings;
 
 	if (($host = cache_get_data('hostlookup-' . $ip, 600)) !== null)
 		return $host;
@@ -1731,7 +1731,7 @@ function host_from_ip($ip)
 	// Try the Linux host command, perhaps?
 	if (!isset($host) && (strpos(strtolower(PHP_OS), 'win') === false || strpos(strtolower(PHP_OS), 'darwin') !== false) && mt_rand(0, 1) == 1)
 	{
-		if (!isset($modSettings['host_to_dis']))
+		if (!isset($settings['host_to_dis']))
 			$test = @shell_exec('host -W 1 ' . @escapeshellarg($ip));
 		else
 			$test = @shell_exec('host ' . @escapeshellarg($ip));
@@ -1740,7 +1740,7 @@ function host_from_ip($ip)
 		if (strpos($test, 'not found') !== false)
 			$host = '';
 		// Invalid server option?
-		elseif ((strpos($test, 'invalid option') || strpos($test, 'Invalid query name 1')) && !isset($modSettings['host_to_dis']))
+		elseif ((strpos($test, 'invalid option') || strpos($test, 'Invalid query name 1')) && !isset($settings['host_to_dis']))
 			updateSettings(array('host_to_dis' => 1));
 		// Maybe it found something, after all?
 		elseif (preg_match('~\s([^\s]+?)\.\s~', $test, $match) == 1)
@@ -1860,18 +1860,18 @@ function text2words($text, $max_chars = 20, $encrypt = false)
  */
 function create_button($name, $alt, $label = '', $custom = '', $force_use = false)
 {
-	global $settings, $txt, $context;
+	global $theme, $txt, $context;
 
 	// Does the current loaded theme have this and we are not forcing the usage of this function?
 	if (function_exists('template_create_button') && !$force_use)
 		return template_create_button($name, $alt, $label = '', $custom = '');
 
-	if (!$settings['use_image_buttons'])
+	if (!$theme['use_image_buttons'])
 		return $txt[$alt];
-	elseif (!empty($settings['use_buttons']))
-		return '<img src="' . $settings['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>&nbsp;' . ($label != '' ? '<strong>' . $txt[$label] . '</strong>' : '');
+	elseif (!empty($theme['use_buttons']))
+		return '<img src="' . $theme['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>&nbsp;' . ($label != '' ? '<strong>' . $txt[$label] . '</strong>' : '');
 	else
-		return '<img src="' . $settings['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
+		return '<img src="' . $theme['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
 }
 
 /**
@@ -1885,7 +1885,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
  */
 function setupMenuContext()
 {
-	global $context, $modSettings, $user_info, $board_info, $txt, $scripturl;
+	global $context, $settings, $user_info, $board_info, $txt, $scripturl;
 
 	// Set up the menu privileges.
 	$context['allow_search'] = allowedTo('search_posts');
@@ -1895,10 +1895,10 @@ function setupMenuContext()
 	$context['allow_moderation_center'] = $context['user']['can_mod'];
 	$context['allow_pm'] = allowedTo('pm_read');
 
-	$cacheTime = $modSettings['lastActive'] * 60;
+	$cacheTime = $settings['lastActive'] * 60;
 
 	// All the items we can possible want and then some, try pulling the final list of items from cache first.
-	if (($menu_items = cache_get_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $modSettings['settings_updated'])
+	if (($menu_items = cache_get_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $settings['settings_updated'])
 	{
 		// Recalculate the number of unseen media items
 		if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
@@ -1907,7 +1907,7 @@ function setupMenuContext()
 			loadMediaSettings();
 		}
 
-		$error_count = allowedTo('admin_forum') ? (!empty($modSettings['app_error_count']) ? $modSettings['app_error_count'] : '') : '';
+		$error_count = allowedTo('admin_forum') ? (!empty($settings['app_error_count']) ? $settings['app_error_count'] : '') : '';
 		$can_view_unseen = allowedTo('media_access_unseen') && isset($user_info['media_unseen']) && $user_info['media_unseen'] > 0;
 		$has_new_pm = !$user_info['is_guest'] && !empty($context['user']['unread_messages']);
 		$is_b = !empty($board_info['id']);
@@ -1938,12 +1938,12 @@ function setupMenuContext()
 					'search' => array(
 						'title' => $txt['search_simple'],
 						'href' => $scripturl . '?action=search',
-						'show' => $context['allow_search'] && !empty($modSettings['simpleSearch']),
+						'show' => $context['allow_search'] && !empty($settings['simpleSearch']),
 					),
 					'advanced_search' => array(
 						'title' => $txt['search_advanced'],
 						'href' => $scripturl . '?action=search;advanced',
-						'show' => $context['allow_search'] && !empty($modSettings['simpleSearch']),
+						'show' => $context['allow_search'] && !empty($settings['simpleSearch']),
 					),
 				),
 			),
@@ -1962,7 +1962,7 @@ function setupMenuContext()
 						'title' => $txt['errlog'],
 						'notice' => $error_count,
 						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
-						'show' => allowedTo('admin_forum') && !empty($modSettings['enableErrorLogging']),
+						'show' => allowedTo('admin_forum') && !empty($settings['enableErrorLogging']),
 					),
 					'permissions' => array(
 						'title' => $txt['edit_permissions'],
@@ -1983,7 +1983,7 @@ function setupMenuContext()
 					'modlog' => array(
 						'title' => $txt['modlog_view'],
 						'href' => $scripturl . '?action=moderate;area=modlog',
-						'show' => !empty($modSettings['log_enabled_moderate']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'show' => !empty($settings['log_enabled_moderate']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
 					),
 					'reports' => array(
 						'title' => $txt['mc_reported_posts'],
@@ -1993,12 +1993,12 @@ function setupMenuContext()
 					'poststopics' => array(
 						'title' => $txt['mc_unapproved_poststopics'],
 						'href' => $scripturl . '?action=moderate;area=postmod;sa=posts',
-						'show' => $modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
+						'show' => $settings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
 					),
 					'attachments' => array(
 						'title' => $txt['mc_unapproved_attachments'],
 						'href' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
-						'show' => $modSettings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
+						'show' => $settings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
 					),
 				),
 			),
@@ -2015,7 +2015,7 @@ function setupMenuContext()
 					'showdrafts' => array(
 						'title' => $txt['draft_posts'],
 						'href' => $scripturl . '?action=profile;area=showdrafts',
-						'show' => allowedTo('save_post_draft') && !empty($modSettings['masterSavePostDrafts']),
+						'show' => allowedTo('save_post_draft') && !empty($settings['masterSavePostDrafts']),
 					),
 					'account' => array(
 						'title' => $txt['account'],
@@ -2056,7 +2056,7 @@ function setupMenuContext()
 					'pm_draft' => array(
 						'title' => $txt['pm_menu_drafts'],
 						'href' => $scripturl . '?action=pm;sa=showdrafts',
-						'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($modSettings['masterSavePmDrafts']),
+						'show' => allowedTo('pm_send') && allowedTo('save_pm_draft') && !empty($settings['masterSavePmDrafts']),
 					),
 				),
 			),
@@ -2064,7 +2064,7 @@ function setupMenuContext()
 				'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
 				'notice' => $can_view_unseen ? $txt['menu_new'] : '',
 				'href' => $scripturl . '?action=media',
-				'show' => !empty($modSettings['media_enabled']) && allowedTo('media_access'),
+				'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
 				'sub_items' => array(
 					'home' => array(
 						'title' => $txt['media_home'],
@@ -2145,7 +2145,7 @@ function setupMenuContext()
 			}
 		}
 
-		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= 2)
+		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
 			cache_put_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $menu_items, $cacheTime);
 	}
 
@@ -2174,11 +2174,11 @@ function setupMenuContext()
 /**
  * Generates a random seed to be used application-wide.
  *
- * This function updates $modSettings['rand_sand'] which is used in generating tokens for major Wedge actions. It is updated if not found or on a 1/250 chance of regeneration per page load (both regular index.php and SSI.php use)
+ * This function updates $settings['rand_sand'] which is used in generating tokens for major Wedge actions. It is updated if not found or on a 1/250 chance of regeneration per page load (both regular index.php and SSI.php use)
  */
 function we_seed_generator()
 {
-	global $modSettings;
+	global $settings;
 
 	updateSettings(array('rand_seed' => mt_rand()));
 }
@@ -2186,25 +2186,25 @@ function we_seed_generator()
 /**
  * Calls a given hook at the related point in the code.
  *
- * Each of the hooks is an array of functions within $modSettings['hooks'], to be called at relevant points in the code, such as $modSettings['hooks']['login'] which is run during login (to facilitate login into an integrated application.)
+ * Each of the hooks is an array of functions within $settings['hooks'], to be called at relevant points in the code, such as $settings['hooks']['login'] which is run during login (to facilitate login into an integrated application.)
  *
- * The contents of the $modSettings['hooks'] value is a comma separated list of function names to be called at the relevant point. These are either procedural functions or static class methods (classname::method).
+ * The contents of the $settings['hooks'] value is a comma separated list of function names to be called at the relevant point. These are either procedural functions or static class methods (classname::method).
  *
- * @param string $hook The name of the hook as given in $modSettings, e.g. login, buffer, reset_pass
+ * @param string $hook The name of the hook as given in $settings, e.g. login, buffer, reset_pass
  * @param array $parameters Parameters to be passed to the hooked functions. The list of parameters each method is exposed to is dependent on the calling code (e.g. the hook for 'new topic is posted' passes different parameters to the 'final buffer' hook), and parameters passed by reference will be passed to hook functions as such.
  * @return array An array of results, one element per hooked function. This will be solely dependent on the hooked function.
  */
 function call_hook($hook, $parameters = array())
 {
-	global $modSettings;
+	global $settings;
 
-	if (empty($modSettings['hooks'][$hook]))
+	if (empty($settings['hooks'][$hook]))
 		return array();
 
 	$results = array();
 
 	// Loop through each function.
-	foreach ($modSettings['hooks'][$hook] as $function)
+	foreach ($settings['hooks'][$hook] as $function)
 	{
 		$fun = explode('|', trim($function));
 		$call = strpos($fun[0], '::') !== false ? explode('::', $fun[0]) : $fun[0];
@@ -2231,16 +2231,16 @@ function call_hook($hook, $parameters = array())
 
 function call_lang_hook($hook)
 {
-	global $modSettings, $user_info, $language, $txt, $helptxt;
+	global $settings, $user_info, $language, $txt, $helptxt;
 
-	if (empty($modSettings['hooks'][$hook]))
+	if (empty($settings['hooks'][$hook]))
 		return false;
 
 	static $lang = null;
 	if ($lang === null)
 		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
 
-	foreach ($modSettings['hooks'][$hook] as $function)
+	foreach ($settings['hooks'][$hook] as $function)
 	{
 		$found = false;
 
@@ -2253,7 +2253,7 @@ function call_lang_hook($hook)
 			$attempts = array();
 
 			// If true, pass through to the next language attempt even if it's a match. But if it's not English, see about loading that *first*.
-			if (empty($modSettings['disable_language_fallback']) && $lang !== 'english')
+			if (empty($settings['disable_language_fallback']) && $lang !== 'english')
 				$attempts['english'] = true;
 
 			// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
@@ -2292,7 +2292,7 @@ function call_lang_hook($hook)
  */
 function add_hook($hook, $function, $file = '', $register = true)
 {
-	global $modSettings, $sourcedir;
+	global $settings, $sourcedir;
 
 	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file)) . '.php'))
 		$file = '';
@@ -2301,26 +2301,26 @@ function add_hook($hook, $function, $file = '', $register = true)
 
 	$function .= '|' . $file;
 
-	if ($register && !isset($modSettings['registered_hooks'][$hook]))
-		$modSettings['registered_hooks'][$hook] = array();
-	elseif (!$register && !isset($modSettings['hooks'][$hook]))
-		$modSettings['hooks'][$hook] = array();
+	if ($register && !isset($settings['registered_hooks'][$hook]))
+		$settings['registered_hooks'][$hook] = array();
+	elseif (!$register && !isset($settings['hooks'][$hook]))
+		$settings['hooks'][$hook] = array();
 
 	// Do nothing if it's already there, except if we're asking for registration and it isn't registered yet.
-	if ((!$register || in_array($function, $modSettings['registered_hooks'][$hook])) && ($in_hook = in_array($function, $modSettings['hooks'][$hook])))
+	if ((!$register || in_array($function, $settings['registered_hooks'][$hook])) && ($in_hook = in_array($function, $settings['hooks'][$hook])))
 		return;
 
 	// Add it!
 	if (empty($in_hook))
-		$modSettings['hooks'][$hook][] = $function;
+		$settings['hooks'][$hook][] = $function;
 	if (!$register)
 		return;
 
 	// Add to the permanent registered list.
-	$hooks = $modSettings['registered_hooks'];
+	$hooks = $settings['registered_hooks'];
 	$hooks[$hook][] = $function;
 	updateSettings(array('registered_hooks' => serialize($hooks)));
-	$modSettings['registered_hooks'] = $hooks;
+	$settings['registered_hooks'] = $hooks;
 }
 
 /**
@@ -2335,7 +2335,7 @@ function add_hook($hook, $function, $file = '', $register = true)
  */
 function remove_hook($hook, $function, $file = '')
 {
-	global $modSettings, $sourcedir;
+	global $settings, $sourcedir;
 
 	if (!empty($file) && !file_exists($sourcedir . '/' . ($file = trim($file)) . '.php'))
 		$file = '';
@@ -2343,21 +2343,21 @@ function remove_hook($hook, $function, $file = '')
 	$function .= '|' . $file;
 
 	// You can only remove it if it's available.
-	if (empty($modSettings['hooks'][$hook]) || !in_array($function, $modSettings['hooks'][$hook]))
+	if (empty($settings['hooks'][$hook]) || !in_array($function, $settings['hooks'][$hook]))
 		return;
 
-	$modSettings['hooks'][$hook] = array_diff($modSettings['hooks'][$hook], (array) $function);
+	$settings['hooks'][$hook] = array_diff($settings['hooks'][$hook], (array) $function);
 
-	if (empty($modSettings['registered_hooks'][$hook]) || !in_array($function, $modSettings['registered_hooks'][$hook]))
+	if (empty($settings['registered_hooks'][$hook]) || !in_array($function, $settings['registered_hooks'][$hook]))
 		return;
 
 	// Also remove it from the registered hooks.
-	$hooks = $modSettings['registered_hooks'];
+	$hooks = $settings['registered_hooks'];
 	$hooks[$hook] = array_diff($hooks[$hook], (array) $function);
 	if (empty($hooks[$hook]))
 		unset($hooks[$hook]);
 	updateSettings(array('registered_hooks' => serialize($hooks)));
-	$modSettings['registered_hooks'] = $hooks;
+	$settings['registered_hooks'] = $hooks;
 }
 
 /**
@@ -2386,16 +2386,16 @@ function add_linktree($url, $name)
  */
 function get_gravatar_url($email_address)
 {
-	global $modSettings;
+	global $settings;
 	static $size_string = null;
 
 	if ($size_string === null)
 	{
-		if (!empty($modSettings['avatar_max_width_external']))
-			$size_string = (int) $modSettings['avatar_max_width_external'];
-		if (!empty($modSettings['avatar_max_height_external']) && !empty($size_string))
-			if ((int) $modSettings['avatar_max_height_external'] < $size_string)
-				$size_string = $modSettings['avatar_max_height_external'];
+		if (!empty($settings['avatar_max_width_external']))
+			$size_string = (int) $settings['avatar_max_width_external'];
+		if (!empty($settings['avatar_max_height_external']) && !empty($size_string))
+			if ((int) $settings['avatar_max_height_external'] < $size_string)
+				$size_string = $settings['avatar_max_height_external'];
 
 		if (!empty($size_string))
 			$size_string = '&amp;s=' . $size_string;
@@ -2403,7 +2403,7 @@ function get_gravatar_url($email_address)
 			$size_string = '';
 	}
 
-	return 'http://www.gravatar.com/avatar.php?gravatar_id=' . md5(strtolower($email_address)) . (!empty($modSettings['gravatarMaxRating']) ? '&amp;rating=' . $modSettings['gravatarMaxRating']: '') . $size_string;
+	return 'http://www.gravatar.com/avatar.php?gravatar_id=' . md5(strtolower($email_address)) . (!empty($settings['gravatarMaxRating']) ? '&amp;rating=' . $settings['gravatarMaxRating']: '') . $size_string;
 }
 
 /**

@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
  */
 function Pin()
 {
-	global $modSettings, $topic, $board;
+	global $settings, $topic, $board;
 
 	// Make sure the user can pin it, and they are pinning *something*.
 	isAllowedTo('pin_topic');

@@ -13,7 +13,7 @@
 
 function template_wap2_before()
 {
-	global $context, $settings, $options, $user_info;
+	global $context, $theme, $options, $user_info;
 
 	echo '<?xml version="1.0" encoding="UTF-8"?', '>
 <!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
@@ -34,7 +34,7 @@ function template_wap2_before()
 
 function template_wap2_boards()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 		<p class="cat">', $context['forum_name_html_safe'], '</p>';
@@ -74,7 +74,7 @@ function template_wap2_boards()
 
 function template_wap2_messageindex()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 		<p class="cat">', $context['name'], '</p>';
@@ -112,7 +112,7 @@ function template_wap2_messageindex()
 
 function template_wap2_display()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 		<p class="title">' . $context['linktree'][1]['name'] . ' > ' . $context['linktree'][count($context['linktree']) - 2]['name'] . '</p>
@@ -175,7 +175,7 @@ function template_wap2_display()
 
 function template_wap2_login()
 {
-	global $context, $modSettings, $scripturl, $txt;
+	global $context, $settings, $scripturl, $txt;
 
 	echo '
 		<form action="', $scripturl, '?action=login2;wap2" method="post">
@@ -201,7 +201,7 @@ function template_wap2_login()
 
 function template_wap2_post()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 		<form action="', $scripturl, '?action=', $context['destination'], ';board=', $context['current_board'], '.0;wap2" method="post">
@@ -227,7 +227,7 @@ function template_wap2_post()
 				', $txt['username'], ': <input type="text" name="guestname" value="', $context['name'], '" />
 			</p>';
 
-		if (empty($modSettings['guest_post_no_email']))
+		if (empty($settings['guest_post_no_email']))
 			echo '
 			<p class="win"', isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' style="color: #ff0000"' : '', '>
 				', $txt['email'], ': <input type="text" name="email" value="', $context['email'], '" />
@@ -263,7 +263,7 @@ function template_wap2_post()
 
 function template_wap2_pm()
 {
-	global $context, $settings, $options, $scripturl, $txt, $user_info;
+	global $context, $theme, $options, $scripturl, $txt, $user_info;
 
 	if ($_REQUEST['action'] == 'findmember')
 	{
@@ -470,7 +470,7 @@ function template_wap2_pm()
 
 function template_wap2_recent()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 		<p class="cat">', $_REQUEST['action'] == 'unread' ? $txt['wireless_recent_unread_posts'] : $txt['wireless_recent_unread_replies'], '</p>';
@@ -499,7 +499,7 @@ function template_wap2_recent()
 
 function template_wap2_error()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<p class="cat">', $context['error_title'], '</p>
@@ -509,7 +509,7 @@ function template_wap2_error()
 
 function template_wap2_profile()
 {
-	global $context, $settings, $options, $scripturl, $board, $txt;
+	global $context, $theme, $options, $scripturl, $board, $txt;
 
 	echo '
 		<p class="cat">', $txt['summary'], ' - ', $context['member']['name'], '</p>
@@ -547,7 +547,7 @@ function template_wap2_profile()
 
 function template_wap2_ban_edit()
 {
-	global $context, $settings, $options, $scripturl, $board, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $board, $txt, $settings;
 
 	echo '
 	<form action="', $scripturl, '?action=admin;area=ban;sa=add;wap2" method="post">
@@ -587,7 +587,7 @@ function template_wap2_ban_edit()
 			&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="main_ip" value="', $context['ban_suggestions']['main_ip'], '" size="20" />
 		</p>';
 
-		if (empty($modSettings['disableHostnameLookup']))
+		if (empty($settings['disableHostnameLookup']))
 			echo '
 		<p class="win">
 			<input type="checkbox" name="ban_suggestion[]" value="hostname" /> <strong>', $txt['wireless_ban_hostname'], ':</strong><br />
@@ -629,7 +629,7 @@ function template_wap2_ban_edit()
 
 function template_wap2_after()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<p><a href="', $context['linktree'][count($context['linktree']) - 1]['url'], count($context['linktree']) > 1 ? ';' : '?', 'nowap" rel="nofollow">', $txt['wireless_go_to_full_version'], '</a></p>

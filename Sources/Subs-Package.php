@@ -569,7 +569,7 @@ function getPackageInfo($gzfilename)
 // Create a chmod control for chmoding files.
 function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $restore_write_status = false)
 {
-	global $context, $modSettings, $package_ftp, $boarddir, $txt, $scripturl;
+	global $context, $settings, $package_ftp, $boarddir, $txt, $scripturl;
 
 	// If we're restoring the status of existing files prepare the data.
 	if ($restore_write_status && isset($_SESSION['pack_ftp']) && !empty($_SESSION['pack_ftp']['original_perms']))
@@ -793,7 +793,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 				'connected' => true,
 			);
 
-			if (!isset($modSettings['package_path']) || $modSettings['package_path'] != $_POST['ftp_path'])
+			if (!isset($settings['package_path']) || $settings['package_path'] != $_POST['ftp_path'])
 				updateSettings(array('package_path' => $_POST['ftp_path']));
 
 			// This is now the primary connection.
@@ -838,16 +838,16 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 			if ($found_path)
 				$_POST['ftp_path'] = $detect_path;
 			elseif (!isset($_POST['ftp_path']))
-				$_POST['ftp_path'] = isset($modSettings['package_path']) ? $modSettings['package_path'] : $detect_path;
+				$_POST['ftp_path'] = isset($settings['package_path']) ? $settings['package_path'] : $detect_path;
 
 			if (!isset($_POST['ftp_username']))
 				$_POST['ftp_username'] = $username;
 		}
 
 		$context['package_ftp'] = array(
-			'server' => isset($_POST['ftp_server']) ? $_POST['ftp_server'] : (isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost'),
-			'port' => isset($_POST['ftp_port']) ? $_POST['ftp_port'] : (isset($modSettings['package_port']) ? $modSettings['package_port'] : '21'),
-			'username' => isset($_POST['ftp_username']) ? $_POST['ftp_username'] : (isset($modSettings['package_username']) ? $modSettings['package_username'] : ''),
+			'server' => isset($_POST['ftp_server']) ? $_POST['ftp_server'] : (isset($settings['package_server']) ? $settings['package_server'] : 'localhost'),
+			'port' => isset($_POST['ftp_port']) ? $_POST['ftp_port'] : (isset($settings['package_port']) ? $settings['package_port'] : '21'),
+			'username' => isset($_POST['ftp_username']) ? $_POST['ftp_username'] : (isset($settings['package_username']) ? $settings['package_username'] : ''),
 			'path' => $_POST['ftp_path'],
 			'error' => empty($ftp_error) ? null : $ftp_error,
 			'destination' => !empty($chmodOptions['destination_url']) ? $chmodOptions['destination_url'] : '',
@@ -872,7 +872,7 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 
 function packageRequireFTP($destination_url, $files = null, $return = false)
 {
-	global $context, $modSettings, $package_ftp, $boarddir, $txt;
+	global $context, $settings, $package_ftp, $boarddir, $txt;
 
 	// Try to make them writable the manual way.
 	if ($files !== null)
@@ -1008,15 +1008,15 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 		if ($found_path)
 			$_POST['ftp_path'] = $detect_path;
 		elseif (!isset($_POST['ftp_path']))
-			$_POST['ftp_path'] = isset($modSettings['package_path']) ? $modSettings['package_path'] : $detect_path;
+			$_POST['ftp_path'] = isset($settings['package_path']) ? $settings['package_path'] : $detect_path;
 
 		if (!isset($_POST['ftp_username']))
 			$_POST['ftp_username'] = $username;
 
 		$context['package_ftp'] = array(
-			'server' => isset($_POST['ftp_server']) ? $_POST['ftp_server'] : (isset($modSettings['package_server']) ? $modSettings['package_server'] : 'localhost'),
-			'port' => isset($_POST['ftp_port']) ? $_POST['ftp_port'] : (isset($modSettings['package_port']) ? $modSettings['package_port'] : '21'),
-			'username' => isset($_POST['ftp_username']) ? $_POST['ftp_username'] : (isset($modSettings['package_username']) ? $modSettings['package_username'] : ''),
+			'server' => isset($_POST['ftp_server']) ? $_POST['ftp_server'] : (isset($settings['package_server']) ? $settings['package_server'] : 'localhost'),
+			'port' => isset($_POST['ftp_port']) ? $_POST['ftp_port'] : (isset($settings['package_port']) ? $settings['package_port'] : '21'),
+			'username' => isset($_POST['ftp_username']) ? $_POST['ftp_username'] : (isset($settings['package_username']) ? $settings['package_username'] : ''),
 			'path' => $_POST['ftp_path'],
 			'error' => empty($ftp_error) ? null : $ftp_error,
 			'destination' => $destination_url,
@@ -1050,7 +1050,7 @@ function packageRequireFTP($destination_url, $files = null, $return = false)
 			'root' => $ftp_root,
 		);
 
-		if (!isset($modSettings['package_path']) || $modSettings['package_path'] != $_POST['ftp_path'])
+		if (!isset($settings['package_path']) || $settings['package_path'] != $_POST['ftp_path'])
 			updateSettings(array('package_path' => $_POST['ftp_path']));
 
 		$files = packageRequireFTP($destination_url, $files, $return);
@@ -1532,21 +1532,21 @@ function compareVersions($version1, $version2)
 
 function parse_path($path)
 {
-	global $modSettings, $boarddir, $sourcedir, $settings, $temp_path;
+	global $settings, $boarddir, $sourcedir, $theme, $temp_path;
 
 	$dirs = array(
 		'\\' => '/',
 		'$boarddir' => $boarddir,
 		'$sourcedir' => $sourcedir,
-		'$avatardir' => $modSettings['avatar_directory'],
-		'$avatars_dir' => $modSettings['avatar_directory'],
-		'$themedir' => $settings['default_theme_dir'],
-		'$imagesdir' => $settings['default_theme_dir'] . '/' . basename($settings['default_images_url']),
+		'$avatardir' => $settings['avatar_directory'],
+		'$avatars_dir' => $settings['avatar_directory'],
+		'$themedir' => $theme['default_theme_dir'],
+		'$imagesdir' => $theme['default_theme_dir'] . '/' . basename($theme['default_images_url']),
 		'$themes_dir' => $boarddir . '/Themes',
-		'$languagedir' => $settings['default_theme_dir'] . '/languages',
-		'$languages_dir' => $settings['default_theme_dir'] . '/languages',
-		'$smileysdir' => $modSettings['smileys_dir'],
-		'$smileys_dir' => $modSettings['smileys_dir'],
+		'$languagedir' => $theme['default_theme_dir'] . '/languages',
+		'$languages_dir' => $theme['default_theme_dir'] . '/languages',
+		'$smileysdir' => $settings['smileys_dir'],
+		'$smileys_dir' => $settings['smileys_dir'],
 	);
 
 	// Do we parse in a package directory?
@@ -1758,7 +1758,7 @@ function listtree($path, $sub_path = '')
 // Parse an xml based modification file.
 function parseModification($file, $testing = true, $undo = false, $theme_paths = array())
 {
-	global $boarddir, $settings, $txt, $modSettings, $package_ftp;
+	global $boarddir, $theme, $txt, $settings, $package_ftp;
 
 	@set_time_limit(600);
 	loadSource('Class-Package');
@@ -1791,16 +1791,16 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 		$filename = parse_path(trim($file->fetch('@name')));
 
 		// Now, we need to work out whether this is even a template file...
-		foreach ($theme_paths as $id => $theme)
+		foreach ($theme_paths as $id => $th)
 		{
 			// If this filename is relative, if so take a guess at what it should be.
 			$real_filename = $filename;
 			if (strpos($filename, 'Themes') === 0)
 				$real_filename = $boarddir . '/' . $filename;
 
-			if (strpos($real_filename, $theme['theme_dir']) === 0)
+			if (strpos($real_filename, $th['theme_dir']) === 0)
 			{
-				$template_changes[$id][] = substr($real_filename, strlen($theme['theme_dir']) + 1);
+				$template_changes[$id][] = substr($real_filename, strlen($th['theme_dir']) + 1);
 				$long_changes[$id][] = $filename;
 			}
 		}
@@ -1812,7 +1812,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 	// If we have some template changes, we need to build a master link of what new ones are required for the custom themes.
 	if (!empty($template_changes[1]))
 	{
-		foreach ($theme_paths as $id => $theme)
+		foreach ($theme_paths as $id => $th)
 		{
 			// Default is getting done anyway, so no need for involvement here.
 			if ($id == 1)
@@ -1822,10 +1822,10 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 			foreach ($template_changes[1] as $index => $template_file)
 			{
 				// What, it exists and we haven't already got it?! Lordy, get it in!
-				if (file_exists($theme['theme_dir'] . '/' . $template_file) && (!isset($template_changes[$id]) || !in_array($template_file, $template_changes[$id])))
+				if (file_exists($th['theme_dir'] . '/' . $template_file) && (!isset($template_changes[$id]) || !in_array($template_file, $template_changes[$id])))
 				{
 					// Now let's add it to the "todo" list.
-					$custom_themes_add[$long_changes[1][$index]][$id] = $theme['theme_dir'] . '/' . $template_file;
+					$custom_themes_add[$long_changes[1][$index]][$id] = $th['theme_dir'] . '/' . $template_file;
 				}
 			}
 		}
@@ -1843,7 +1843,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 			$files_to_change += $custom_themes_add[$files_to_change[1]];
 
 		// Now, loop through all the files we're changing, and, well, change them ;)
-		foreach ($files_to_change as $theme => $working_file)
+		foreach ($files_to_change as $th => $working_file)
 		{
 			if ($working_file[0] != '/' && $working_file[1] != ':')
 			{
@@ -1917,7 +1917,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 						'type' => 'failure',
 						'filename' => $working_file,
 						'search' => $search['search'],
-						'is_custom' => $theme > 1 ? $theme : 0,
+						'is_custom' => $th > 1 ? $th : 0,
 					);
 
 					// Skip to the next operation.
@@ -1938,7 +1938,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 									'type' => 'failure',
 									'filename' => $working_file,
 									'search' => $search['search'],
-									'is_custom' => $theme > 1 ? $theme : 0,
+									'is_custom' => $th > 1 ? $th : 0,
 								);
 
 							// Continue to the next operation.
@@ -2040,7 +2040,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 							'search_original' => $actual_operation['searches'][$i]['search'],
 							'replace_original' => $actual_operation['searches'][$i]['add'],
 							'position' => $search['position'],
-							'is_custom' => $theme > 1 ? $theme : 0,
+							'is_custom' => $th > 1 ? $th : 0,
 							'failed' => $failed,
 						);
 
@@ -2058,7 +2058,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 							'search_original' => $actual_operation['searches'][$i]['search'],
 							'replace_original' => $actual_operation['searches'][$i]['add'],
 							'position' => $search['position'],
-							'is_custom' => $theme > 1 ? $theme : 0,
+							'is_custom' => $th > 1 ? $th : 0,
 							'failed' => $failed,
 						);
 
@@ -2083,7 +2083,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 						'position' => $search['position'],
 						'failed' => $failed,
 						'ignore_failure' => $failed && $actual_operation['error'] === 'ignore',
-						'is_custom' => $theme > 1 ? $theme : 0,
+						'is_custom' => $th > 1 ? $th : 0,
 					);
 				}
 			}
@@ -2102,7 +2102,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 			if (basename($working_file) == 'Settings_bak.php')
 				continue;
 
-			if (!$testing && !empty($modSettings['package_make_backups']) && file_exists($working_file))
+			if (!$testing && !empty($settings['package_make_backups']) && file_exists($working_file))
 			{
 				// No, no, not Settings.php!
 				if (basename($working_file) == 'Settings.php')
@@ -2117,7 +2117,7 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 			$actions[] = array(
 				'type' => 'saved',
 				'filename' => $working_file,
-				'is_custom' => $theme > 1 ? $theme : 0,
+				'is_custom' => $th > 1 ? $th : 0,
 			);
 		}
 	}
@@ -2132,12 +2132,12 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 
 function package_get_contents($filename)
 {
-	global $package_cache, $modSettings;
+	global $package_cache, $settings;
 
 	if (!isset($package_cache))
 	{
 		// Windows doesn't seem to care about the memory_limit.
-		if (!empty($modSettings['package_disable_cache']) || ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
+		if (!empty($settings['package_disable_cache']) || ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
 			$package_cache = array();
 		else
 			$package_cache = false;
@@ -2151,13 +2151,13 @@ function package_get_contents($filename)
 
 function package_put_contents($filename, $data, $testing = false)
 {
-	global $package_ftp, $package_cache, $modSettings;
+	global $package_ftp, $package_cache, $settings;
 	static $text_filetypes = array('php', 'txt', '.js', 'css', 'vbs', 'tml', 'htm');
 
 	if (!isset($package_cache))
 	{
 		// Try to increase the memory limit - we don't want to run out of ram!
-		if (!empty($modSettings['package_disable_cache']) || ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
+		if (!empty($settings['package_disable_cache']) || ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
 			$package_cache = array();
 		else
 			$package_cache = false;

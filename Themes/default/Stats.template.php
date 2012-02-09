@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	echo '
 	<div id="statistics" class="main_section">
@@ -21,7 +21,7 @@ function template_main()
 			', $context['page_title'], '
 		</we:cat>
 		<we:title2>
-			<img src="', $settings['images_url'], '/stats_info.gif">
+			<img src="', $theme['images_url'], '/stats_info.gif">
 			', $txt['general_stats'], '
 		</we:title2>
 		<div class="flow_hidden">
@@ -44,7 +44,7 @@ function template_main()
 							<dt>', $txt['gender_ratio'], ':</dt>
 							<dd>', $context['gender']['ratio'], '</dd>';
 
-	if (!empty($modSettings['hitStats']))
+	if (!empty($settings['hitStats']))
 		echo '
 							<dt>', $txt['num_hits'], ':</dt>
 							<dd>', $context['num_hits'], '</dd>';
@@ -74,7 +74,7 @@ function template_main()
 							<dt>', $txt['most_online_ever'], ':</dt>
 							<dd>', $context['most_members_online']['number'], ' - ', $context['most_members_online']['date'], '</dd>';
 
-	if (!empty($modSettings['hitStats']))
+	if (!empty($settings['hitStats']))
 		echo '
 							<dt>', $txt['average_hits'], ':</dt>
 							<dd>', $context['average_hits'], '</dd>';
@@ -90,7 +90,7 @@ function template_main()
 			<div id="top_posters">
 				<div class="windowbg2 wrc">
 					<h6 class="top">
-						<img src="', $settings['images_url'], '/stats_posters.gif">
+						<img src="', $theme['images_url'], '/stats_posters.gif">
 						', $txt['top_posters'], '
 					</h6>
 					<dl class="stats">';
@@ -122,7 +122,7 @@ function template_main()
 			<div id="top_boards">
 				<div class="windowbg wrc">
 					<h6 class="top">
-						<img src="', $settings['images_url'], '/stats_board.gif">
+						<img src="', $theme['images_url'], '/stats_board.gif">
 						', $txt['top_boards'], '
 					</h6>
 					<dl class="stats">';
@@ -155,7 +155,7 @@ function template_main()
 			<div id="top_topics_replies">
 				<div class="windowbg wrc">
 					<h6 class="top">
-						<img src="', $settings['images_url'], '/stats_replies.gif">
+						<img src="', $theme['images_url'], '/stats_replies.gif">
 						', $txt['top_topics_replies'], '
 					</h6>
 					<dl class="stats">';
@@ -187,7 +187,7 @@ function template_main()
 			<div id="top_topics_views">
 				<div class="windowbg2 wrc">
 					<h6 class="top">
-						<img src="', $settings['images_url'], '/stats_views.gif">
+						<img src="', $theme['images_url'], '/stats_views.gif">
 						', $txt['top_topics_views'], '
 					</h6>
 					<dl class="stats">';
@@ -219,7 +219,7 @@ function template_main()
 			<div id="top_topics_starter">
 				<div class="windowbg2 wrc">
 					<h6 class="top">
-						<img src="', $settings['images_url'], '/stats_replies.gif">
+						<img src="', $theme['images_url'], '/stats_replies.gif">
 						', $txt['top_starters'], '
 					</h6>
 					<dl class="stats">';
@@ -251,7 +251,7 @@ function template_main()
 			<div id="most_online">
 				<div class="windowbg wrc">
 					<h6 class="top">
-						<img src="', $settings['images_url'], '/stats_views.gif">
+						<img src="', $theme['images_url'], '/stats_views.gif">
 						', $txt['most_time_online'], '
 					</h6>
 					<dl class="stats">';
@@ -284,7 +284,7 @@ function template_main()
 		<br class="clear">
 		<div class="flow_hidden">
 			<we:title2>
-				<img src="', $settings['images_url'], '/stats_history.gif">
+				<img src="', $theme['images_url'], '/stats_history.gif">
 				', $txt['forum_history'], '
 			</we:title2>';
 
@@ -298,9 +298,9 @@ function template_main()
 						<th>', $txt['stats_new_topics'], '</th>
 						<th>', $txt['stats_new_posts'], '</th>
 						<th>', $txt['stats_new_members'], '</th>
-						<th', empty($modSettings['hitStats']) ? ' class="last_th"' : '', '>', $txt['most_online'], '</th>';
+						<th', empty($settings['hitStats']) ? ' class="last_th"' : '', '>', $txt['most_online'], '</th>';
 
-		if (!empty($modSettings['hitStats']))
+		if (!empty($settings['hitStats']))
 			echo '
 						<th class="last_th">', $txt['page_views'], '</th>';
 
@@ -322,7 +322,7 @@ function template_main()
 						<th>', $year['new_members'], '</th>
 						<th>', $year['most_members_online'], '</th>';
 
-			if (!empty($modSettings['hitStats']))
+			if (!empty($settings['hitStats']))
 				echo '
 						<th>', $year['hits'], '</th>';
 
@@ -342,7 +342,7 @@ function template_main()
 						<th>', $month['new_members'], '</th>
 						<th>', $month['most_members_online'], '</th>';
 
-				if (!empty($modSettings['hitStats']))
+				if (!empty($settings['hitStats']))
 					echo '
 						<th>', $month['hits'], '</th>';
 
@@ -361,7 +361,7 @@ function template_main()
 						<td>', $day['new_members'], '</td>
 						<td>', $day['most_members_online'], '</td>';
 
-						if (!empty($modSettings['hitStats']))
+						if (!empty($settings['hitStats']))
 							echo '
 						<td>', $day['hits'], '</td>';
 
@@ -410,7 +410,7 @@ function template_main()
 			\'new_topics\',
 			\'new_posts\',
 			\'new_members\',
-			\'most_members_online\'' . (empty($modSettings['hitStats']) ? '' : ',
+			\'most_members_online\'' . (empty($settings['hitStats']) ? '' : ',
 			\'hits\'') . '
 		]
 	});');

@@ -31,13 +31,13 @@ if (empty($_POST))
 	die($txt['paid_no_data']);
 
 // I assume we're even active?
-if (empty($modSettings['paid_enabled']))
+if (empty($settings['paid_enabled']))
 	exit;
 
 // If we have some custom people who find out about problems load them here.
 $notify_users = array();
-if (!empty($modSettings['paid_email_to']))
-	foreach (explode(',', $modSettings['paid_email_to']) as $email)
+if (!empty($settings['paid_email_to']))
+	foreach (explode(',', $settings['paid_email_to']) as $email)
 		$notify_users[] = array(
 			'email' => $email,
 			'name' => $txt['who_member'],
@@ -157,7 +157,7 @@ if ($gatewayClass->isRefund())
 	);
 
 	// Receipt?
-	if (!empty($modSettings['paid_email']) && $modSettings['paid_email'] == 2)
+	if (!empty($settings['paid_email']) && $settings['paid_email'] == 2)
 	{
 		$replacements = array(
 			'NAME' => $subscription_info['name'],
@@ -240,14 +240,14 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 	}
 
 	// Send a receipt?
-	if (!empty($modSettings['paid_email']) && $modSettings['paid_email'] == 2 && $notify)
+	if (!empty($settings['paid_email']) && $settings['paid_email'] == 2 && $notify)
 	{
 		$replacements = array(
 			'NAME' => $subscription_info['name'],
 			'SUBNAME' => $member_info['member_name'],
 			'SUBUSER' => $member_info['real_name'],
 			'SUBEMAIL' => $member_info['email_address'],
-			'PRICE' => sprintf($modSettings['paid_currency_symbol'], $total_cost),
+			'PRICE' => sprintf($settings['paid_currency_symbol'], $total_cost),
 			'PROFILELINK' => $scripturl . '?action=profile;u=' . $member_id,
 			'DATE' => timeformat(time(), false),
 		);
@@ -262,10 +262,10 @@ $gatewayClass->close();
 // Log an error then die.
 function generateSubscriptionError($text)
 {
-	global $modSettings, $notify_users;
+	global $settings, $notify_users;
 
 	// Send an email?
-	if (!empty($modSettings['paid_email']))
+	if (!empty($settings['paid_email']))
 	{
 		$replacements = array(
 			'ERROR' => $text,

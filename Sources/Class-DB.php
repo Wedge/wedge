@@ -123,7 +123,7 @@ class wesql
 	public static function query($db_string, $db_values = array(), $connection = null)
 	{
 		global $db_cache, $db_count, $db_show_debug, $time_start;
-		global $db_unbuffered, $db_callback, $modSettings;
+		global $db_unbuffered, $db_callback, $settings;
 
 		// Comments that are allowed in a query are preg_removed.
 		static $allowed_comments_from = array(
@@ -145,7 +145,7 @@ class wesql
 		// One more query....
 		$db_count = !isset($db_count) ? 1 : $db_count + 1;
 
-		if (empty($modSettings['disableQueryCheck']) && strpos($db_string, '\'') !== false && empty($db_values['security_override']))
+		if (empty($settings['disableQueryCheck']) && strpos($db_string, '\'') !== false && empty($db_values['security_override']))
 			wesql::error_backtrace('Hacking attempt...', 'Illegal character (\') used in query...', true, __FILE__, __LINE__);
 
 		// Use "ORDER BY null" to prevent Mysql doing filesorts for Group By clauses without an Order By
@@ -197,7 +197,7 @@ class wesql
 		}
 
 		// First, we clean strings out of the query, reduce whitespace, lowercase, and trim - so we can check it over.
-		if (empty($modSettings['disableQueryCheck']))
+		if (empty($settings['disableQueryCheck']))
 		{
 			$clean = '';
 			$old_pos = 0;
@@ -291,7 +291,7 @@ class wesql
 
 	public static function serious_error($db_string, $connection = null)
 	{
-		global $txt, $context, $webmaster_email, $modSettings, $db_last_error, $db_persist;
+		global $txt, $context, $webmaster_email, $settings, $db_last_error, $db_persist;
 		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
 
 		// Get the file and line numbers.
@@ -316,14 +316,14 @@ class wesql
 
 		// Log the error.
 		if ($query_errno != 1213 && $query_errno != 1205 && function_exists('log_error'))
-			log_error($txt['database_error'] . ': ' . $query_error . (!empty($modSettings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
+			log_error($txt['database_error'] . ': ' . $query_error . (!empty($settings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
 
 		// Database error auto fixing ;)
-		if (function_exists('cache_get_data') && (!isset($modSettings['autoFixDatabase']) || $modSettings['autoFixDatabase'] == '1'))
+		if (function_exists('cache_get_data') && (!isset($settings['autoFixDatabase']) || $settings['autoFixDatabase'] == '1'))
 		{
 			// Force caching on, just for the error checking.
-			$old_cache = @$modSettings['cache_enable'];
-			$modSettings['cache_enable'] = '1';
+			$old_cache = @$settings['cache_enable'];
+			$settings['cache_enable'] = '1';
 
 			if (($temp = cache_get_data('db_last_error', 600)) !== null)
 				$db_last_error = max(@$db_last_error, $temp);
@@ -380,7 +380,7 @@ class wesql
 				// And send off an email!
 				sendmail($webmaster_email, $txt['database_error'], $txt['tried_to_repair']);
 
-				$modSettings['cache_enable'] = $old_cache;
+				$settings['cache_enable'] = $old_cache;
 
 				// Try the query again...?
 				$ret = self::query($db_string, false, false);
@@ -388,7 +388,7 @@ class wesql
 					return $ret;
 			}
 			else
-				$modSettings['cache_enable'] = $old_cache;
+				$settings['cache_enable'] = $old_cache;
 
 			// Check for the "lost connection" or "deadlock found" errors - and try it just one more time.
 			if (in_array($query_errno, array(1205, 1213, 2006, 2013)))
@@ -460,8 +460,8 @@ class wesql
 			$context['error_message'] = $txt['try_again'];
 
 		// A database error is often the sign of a database in need of upgrade. Check forum versions, and if not identical suggest an upgrade... (not for SVN versions!)
-		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$modSettings['weVersion'] && strpos(WEDGE_VERSION, 'SVN') === false)
-			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, @$modSettings['weVersion']);
+		if (allowedTo('admin_forum') && defined('WEDGE_VERSION') && WEDGE_VERSION != @$settings['weVersion'] && strpos(WEDGE_VERSION, 'SVN') === false)
+			$context['error_message'] .= '<br><br>' . sprintf($txt['database_error_versions'], WEDGE_VERSION, @$settings['weVersion']);
 
 		if (allowedTo('admin_forum') && isset($db_show_debug) && $db_show_debug === true)
 			$context['error_message'] .= '<br><br>' . preg_replace('~(\r\n|\r|\n)~', '<br>$1', $db_string);

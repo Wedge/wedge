@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
 
 function checkActivation()
 {
-	global $context, $txt, $scripturl, $user_settings, $modSettings;
+	global $context, $txt, $scripturl, $user_settings, $settings;
 
 	if (!isset($context['login_errors']))
 		$context['login_errors'] = array();
@@ -53,7 +53,7 @@ function checkActivation()
 		if (isset($_REQUEST['undelete']))
 		{
 			updateMemberData($user_settings['id_member'], array('is_activated' => 1));
-			updateSettings(array('unapprovedMembers' => ($modSettings['unapprovedMembers'] > 0 ? $modSettings['unapprovedMembers'] - 1 : 0)));
+			updateSettings(array('unapprovedMembers' => ($settings['unapprovedMembers'] > 0 ? $settings['unapprovedMembers'] - 1 : 0)));
 		}
 		else
 		{
@@ -77,20 +77,20 @@ function checkActivation()
 function DoLogin()
 {
 	global $txt, $scripturl, $user_info, $user_settings;
-	global $cookiename, $maintenance, $modSettings, $context;
+	global $cookiename, $maintenance, $settings, $context;
 
 	// Load cookie authentication stuff.
 	loadSource('Subs-Auth');
 
 	// Call login hook functions.
-	call_hook('login', array($user_settings['member_name'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $modSettings['cookieTime']));
+	call_hook('login', array($user_settings['member_name'], isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40 ? $_POST['hash_passwrd'] : null, $settings['cookieTime']));
 
 	// Get ready to set the cookie...
 	$username = $user_settings['member_name'];
 	$user_info['id'] = $user_settings['id_member'];
 
 	// Bam! Cookie set. A session too, just in case.
-	setLoginCookie(60 * $modSettings['cookieTime'], $user_settings['id_member'], sha1($user_settings['passwd'] . $user_settings['password_salt']));
+	setLoginCookie(60 * $settings['cookieTime'], $user_settings['id_member'], sha1($user_settings['passwd'] . $user_settings['password_salt']));
 
 	// Reset the login threshold.
 	if (isset($_SESSION['failed_login']))

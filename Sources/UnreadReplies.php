@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 function UnreadReplies()
 {
 	global $board, $txt, $scripturl;
-	global $user_info, $context, $settings, $modSettings, $options;
+	global $user_info, $context, $theme, $settings, $options;
 
 	// Guests can't have unread things, we don't know anything about them.
 	is_not_guest();
@@ -31,10 +31,10 @@ function UnreadReplies()
 	}
 
 	$context['start'] = (int) $_REQUEST['start'];
-	$context['topics_per_page'] = empty($modSettings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $modSettings['defaultMaxTopics'];
+	$context['topics_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $settings['defaultMaxTopics'];
 	$context['page_title'] = $txt['unread_replies'];
 
-	if (!empty($context['load_average']) && !empty($modSettings['loadavg_unreadreplies']) && $context['load_average'] >= $modSettings['loadavg_unreadreplies'])
+	if (!empty($context['load_average']) && !empty($settings['loadavg_unreadreplies']) && $context['load_average'] >= $settings['loadavg_unreadreplies'])
 		fatal_lang_error('loadavg_unreadreplies_disabled', false);
 
 	// Parameters for the main query.
@@ -149,10 +149,10 @@ function UnreadReplies()
 		$request = wesql::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
-			WHERE {query_see_board}' . (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 ? '
+			WHERE {query_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 				AND b.id_board != {int:recycle_board}' : ''),
 			array(
-				'recycle_board' => (int) $modSettings['recycle_board'],
+				'recycle_board' => (int) $settings['recycle_board'],
 			)
 		);
 		$boards = array();
@@ -247,7 +247,7 @@ function UnreadReplies()
 				IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from, SUBSTRING(ml.body, 1, 385) AS last_body,
 				SUBSTRING(ms.body, 1, 385) AS first_body, ml.smileys_enabled AS last_smileys, ms.smileys_enabled AS first_smileys, t.id_first_msg, t.id_last_msg';
 
-	if ($modSettings['totalMessages'] > 100000)
+	if ($settings['totalMessages'] > 100000)
 	{
 		wesql::query('
 			DROP TABLE IF EXISTS {db_prefix}topics_posted_in',
@@ -283,7 +283,7 @@ function UnreadReplies()
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})' . (isset($sortKey_joins[$_REQUEST['sort']]) ? $sortKey_joins[$_REQUEST['sort']] : '') . '
 			WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
-				AND t.id_board = {int:current_board}' : '') . ($modSettings['postmod_active'] ? '
+				AND t.id_board = {int:current_board}' : '') . ($settings['postmod_active'] ? '
 				AND t.approved = {int:is_approved}' : '') . '
 			GROUP BY m.id_topic',
 			array(
@@ -336,7 +336,7 @@ function UnreadReplies()
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
 			WHERE t.' . $query_this_board . '
 				AND m.id_member = {int:current_member}
-				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg' . ($modSettings['postmod_active'] ? '
+				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg' . ($settings['postmod_active'] ? '
 				AND t.approved = {int:is_approved}' : ''),
 			array_merge($query_parameters, array(
 				'current_member' => $user_info['id'],
@@ -457,12 +457,12 @@ function UnreadReplies()
 
 	while ($row = wesql::fetch_assoc($request))
 	{
-		if ($row['id_poll'] > 0 && $modSettings['pollMode'] == '0')
+		if ($row['id_poll'] > 0 && $settings['pollMode'] == '0')
 			continue;
 
 		$topic_ids[] = $row['id_topic'];
 
-		if (!empty($settings['message_index_preview']))
+		if (!empty($theme['message_index_preview']))
 		{
 			// Limit them to 128 characters - do this FIRST because it's a lot of wasted censoring otherwise.
 			$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), array('<br>' => '&#10;')));
@@ -503,7 +503,7 @@ function UnreadReplies()
 		// Decide how many pages the topic should have.
 		// @todo Should this use a variation on template_page_index?
 		$topic_length = $row['num_replies'] + 1;
-		$messages_per_page = empty($modSettings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $modSettings['defaultMaxMessages'];
+		$messages_per_page = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 		if ($topic_length > $messages_per_page)
 		{
 			$tmppages = array();
@@ -520,7 +520,7 @@ function UnreadReplies()
 			else
 				$pages = '&#171; ' . $tmppages[0] . ' ' . $tmppages[1] . ' ... ' . $tmppages[count($tmppages) - 2] . ' ' . $tmppages[count($tmppages) - 1];
 
-			if (!empty($modSettings['enableAllMessages']) && $topic_length < $modSettings['enableAllMessages'])
+			if (!empty($settings['enableAllMessages']) && $topic_length < $settings['enableAllMessages'])
 				$pages .= ' &nbsp;<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;all">' . $txt['all_pages'] . '</a>';
 			$pages .= ' &#187;';
 		}
@@ -528,14 +528,14 @@ function UnreadReplies()
 			$pages = '';
 
 		// We need to check the topic icons exist... you can never be too sure!
-		if (!empty($modSettings['messageIconChecks_enable']))
+		if (!empty($settings['messageIconChecks_enable']))
 		{
 			// First icon first... as you'd expect.
 			if (!isset($context['icon_sources'][$row['first_icon']]))
-				$context['icon_sources'][$row['first_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
+				$context['icon_sources'][$row['first_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['first_icon'] . '.gif') ? 'images_url' : 'default_images_url';
 			// Last icon... last... duh.
 			if (!isset($context['icon_sources'][$row['last_icon']]))
-				$context['icon_sources'][$row['last_icon']] = file_exists($settings['theme_dir'] . '/images/post/' . $row['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
+				$context['icon_sources'][$row['last_icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['last_icon'] . '.gif') ? 'images_url' : 'default_images_url';
 		}
 
 		// And build the array.
@@ -554,7 +554,7 @@ function UnreadReplies()
 				'subject' => $row['first_subject'],
 				'preview' => $row['first_body'],
 				'icon' => $row['first_icon'],
-				'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
+				'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . '.0;topicseen',
 				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0;topicseen">' . $row['first_subject'] . '</a>'
 			),
@@ -571,7 +571,7 @@ function UnreadReplies()
 				'subject' => $row['last_subject'],
 				'preview' => $row['last_body'],
 				'icon' => $row['last_icon'],
-				'icon_url' => $settings[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
+				'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
 				'href' => $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';topicseen#msg' . $row['id_last_msg'],
 				'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . ';topicseen#msg' . $row['id_last_msg'] . '" rel="nofollow">' . $row['last_subject'] . '</a>'
 			),
@@ -582,10 +582,10 @@ function UnreadReplies()
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';topicseen#msg' . $row['new_from'] . '" rel="nofollow">' . $row['first_subject'] . '</a>',
 			'is_pinned' => !empty($row['is_pinned']),
 			'is_locked' => !empty($row['locked']),
-			'is_poll' => $modSettings['pollMode'] == '1' && $row['id_poll'] > 0,
+			'is_poll' => $settings['pollMode'] == '1' && $row['id_poll'] > 0,
 			'is_posted_in' => false,
 			'icon' => $row['first_icon'],
-			'icon_url' => $settings[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
+			'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',
 			'subject' => $row['first_subject'],
 			'pages' => $pages,
 			'replies' => comma_format($row['num_replies']),

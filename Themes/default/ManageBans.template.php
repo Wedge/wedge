@@ -13,7 +13,7 @@
 
 function template_ban_edit()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="manage_bans">
@@ -87,7 +87,7 @@ function template_ban_edit()
 							<input type="text" name="main_ip" value="', $context['ban_suggestions']['main_ip'], '" size="50" onfocus="$(\'#main_ip_check\').attr(\'checked\', true);">
 						</dd>';
 
-		if (empty($modSettings['disableHostnameLookup']))
+		if (empty($settings['disableHostnameLookup']))
 			echo '
 						<dt>
 							<label><input type="checkbox" name="ban_suggestion[]" id="hostname_check" value="hostname"> ', $txt['ban_on_hostname'], '</label>
@@ -260,7 +260,7 @@ function template_ban_edit()
 
 function template_ban_edit_trigger()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="manage_bans">
@@ -282,7 +282,7 @@ function template_ban_edit_trigger()
 							<input type="text" name="ip" value="', $context['ban_trigger']['ip']['value'], '" size="50" onfocus="$(\':radio[value=ip_ban]\').attr(\'checked\', true);">
 						</dd>';
 
-	if (empty($modSettings['disableHostnameLookup']))
+	if (empty($settings['disableHostnameLookup']))
 		echo '
 						<dt>
 							<input type="radio" name="bantype" value="hostname_ban"', $context['ban_trigger']['hostname']['selected'] ? ' checked' : '', '>

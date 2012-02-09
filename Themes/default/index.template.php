@@ -22,7 +22,7 @@
 // Initialize the template... mainly little settings.
 function template_init()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Add the theme-specific JavaScript files to our priority cache list.
 	if (!empty($context['javascript_files']))
@@ -36,22 +36,22 @@ function template_init()
 		- 'always': images from the default theme will be used.
 		- 'defaults': images from the default theme will only be used with default templates.
 		- 'never' or nothing: images from the default theme will not be used. */
-	$settings['use_default_images'] = 'never';
+	$theme['use_default_images'] = 'never';
 
 	/* Use plain buttons - as opposed to text buttons? */
-	$settings['use_buttons'] = true;
+	$theme['use_buttons'] = true;
 
 	/* Does this theme use post previews on the message index? */
-	$settings['message_index_preview'] = false;
+	$theme['message_index_preview'] = false;
 
 	/* Set the following variable to true if this theme requires the optional theme strings file to be loaded. */
-	$settings['require_theme_strings'] = false;
+	$theme['require_theme_strings'] = false;
 
 	/* You can define macros for your theme, with default contents. Then, skins can override them through
 		the skin.xml file (see the skins/Warm/skin.xml file for a sample implementation.)
 		Macro names are case-sensitive, for performance reasons. */
 
-	$settings['macros'] = array(
+	$theme['macros'] = array(
 
 		// We start with the header bars. Nothing special about them...
 		'title'		=> '<header class="title">{body}</header>',
@@ -144,7 +144,7 @@ function template_skeleton()
 // The main block above the content.
 function template_html_before()
 {
-	global $context, $settings, $options, $txt, $modSettings, $boardurl, $topic;
+	global $context, $theme, $options, $txt, $settings, $boardurl, $topic;
 
 	if (!empty($context['current_action']))
 		$id = $context['current_action'];
@@ -185,7 +185,7 @@ function template_html_before()
 	<link rel="search" href="<URL>?action=search">';
 
 	// If feeds are enabled, advertise the presence of one.
-	if (!empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']))
+	if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || $context['user']['is_logged']))
 		echo '
 	<link rel="alternate" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '" href="<URL>?action=feed">';
 
@@ -227,10 +227,10 @@ function template_body_before()
 // The main content should go here.
 function template_wrapper_before()
 {
-	global $settings;
+	global $theme;
 
 	echo '
-<div id="wedge">', !empty($settings['forum_width']) ? '<div id="wrapper" style="width: ' . $settings['forum_width'] . '">' : '';
+<div id="wedge">', !empty($theme['forum_width']) ? '<div id="wrapper" style="width: ' . $theme['forum_width'] . '">' : '';
 }
 
 // Start the header layer.
@@ -282,7 +282,7 @@ function template_search_box()
 
 function template_language_selector()
 {
-	global $context, $user_info, $settings;
+	global $context, $user_info, $theme;
 
 	if (empty($context['languages']) || count($context['languages']) < 2)
 		return;
@@ -305,10 +305,10 @@ function template_language_selector()
 
 function template_random_news()
 {
-	global $txt, $context, $settings;
+	global $txt, $context, $theme;
 
 	// Show a random news item? (or you could pick one from news_lines...)
-	if (empty($settings['enable_news']) || empty($context['random_news_line']))
+	if (empty($theme['enable_news']) || empty($context['random_news_line']))
 		return;
 
 	echo '
@@ -340,7 +340,7 @@ function template_sidebar_wrap_before()
 
 function template_sidebar_before()
 {
-	global $txt, $context, $modSettings;
+	global $txt, $context, $settings;
 
 	echo '
 	<section>
@@ -534,15 +534,15 @@ function template_content_wrap_after()
 
 function template_wrapper_after()
 {
-	global $settings;
+	global $theme;
 
-	echo !empty($settings['forum_width']) ? '</div>' : '', '
+	echo !empty($theme['forum_width']) ? '</div>' : '', '
 </div>';
 }
 
 function template_body_after()
 {
-	global $context, $settings, $options, $txt, $modSettings, $user_info, $footer_coding;
+	global $context, $theme, $options, $txt, $settings, $user_info, $footer_coding;
 
 	$no_resize = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 	echo '
@@ -591,8 +591,8 @@ function template_body_after()
 	echo '
 	var
 		we_script = "<URL>",
-		we_default_theme_url = ', $settings['theme_url'] === $settings['theme_url'] ? 'we_theme_url = ' : '', '"', $settings['default_theme_url'], '", ', $settings['theme_url'] === $settings['theme_url'] ? '' : '
-		we_theme_url = "' . $settings['theme_url'] . '",', '
+		we_default_theme_url = ', $theme['theme_url'] === $theme['theme_url'] ? 'we_theme_url = ' : '', '"', $theme['default_theme_url'], '", ', $theme['theme_url'] === $theme['theme_url'] ? '' : '
+		we_theme_url = "' . $theme['theme_url'] . '",', '
 		we_sessid = "', $context['session_id'], '",
 		we_sessvar = "', $context['session_var'], '",', $context['server']['iso_case_folding'] && in_array('scripts/sha1.js', $context['javascript_files']) ? '
 		we_iso_case_folding = true' : '', '
@@ -623,7 +623,7 @@ function template_html_after()
 // Show a linktree - the thing that says "My Community > General Category > General Discussion"...
 function template_linktree($force_show = false, $on_bottom = false)
 {
-	global $context, $settings, $options, $shown_linktree;
+	global $context, $theme, $options, $shown_linktree;
 
 	// itemtype is provided for validation purposes.
  	echo '
@@ -668,7 +668,7 @@ function template_linktree($force_show = false, $on_bottom = false)
 // Show the menu up top. Something like [home] [profile] [logout]...
 function template_menu()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<div id="navi"><ul id="main_menu" class="css menu">';
@@ -774,7 +774,7 @@ function template_footer()
  */
 function template_page_index($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
-	global $modSettings, $settings, $topicinfo, $txt;
+	global $settings, $theme, $topicinfo, $txt;
 
 	// Save whether $start was less than 0 or not.
 	$start = (int) $start;
@@ -798,7 +798,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 	$pageindex = '';
 
 	// The number of items to show on each side of the current page, e.g. "6 7 [8] 9 10" if $contiguous = 2. If you want to change it, here's the place.
-	$contiguous = isset($modSettings['compactTopicPagesContiguous']) ? $modSettings['compactTopicPagesContiguous'] >> 1 : 2;
+	$contiguous = isset($settings['compactTopicPagesContiguous']) ? $settings['compactTopicPagesContiguous'] >> 1 : 2;
 
 	// First of all, do we want a 'next' button to take us closer to the first (most interesting) page?
 	if ($show_prevnext && $start >= $num_per_page)
@@ -866,7 +866,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 // Generate a strip of buttons.
 function template_button_strip($button_strip, $direction = 'right', $strip_options = array())
 {
-	global $settings, $context, $txt;
+	global $theme, $context, $txt;
 
 	if (!is_array($strip_options))
 		$strip_options = array();

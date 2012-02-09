@@ -87,7 +87,7 @@ if (!defined('WEDGE'))
 // Gallery admin initializer
 function aeva_admin_init()
 {
-	global $context, $txt, $scripturl, $settings, $amSettings, $modSettings;
+	global $context, $txt, $scripturl, $theme, $amSettings, $settings;
 
 	// Let's call our friends
 	// Admin2 = maintenance & ban, Admin3 = embedder
@@ -147,7 +147,7 @@ function aeva_admin_init()
 // The good old "about" page :)
 function aeva_admin_about()
 {
-	global $context, $txt, $scripturl, $amSettings, $memberContext, $boarddir, $settings;
+	global $context, $txt, $scripturl, $amSettings, $memberContext, $boarddir, $theme;
 
 	$sa = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('index', 'readme', 'changelog')) ? $_REQUEST['sa'] : 'index';
 
@@ -251,9 +251,9 @@ function aeva_admin_about()
 	foreach ($context['aeva_data'] as $k => $dat)
 	{
 		if (strpos($dat, $txt['media_yes']) !== false)
-			$context['aeva_data'][$k] = str_replace($txt['media_yes'], '<img src="' . $settings['images_aeva'] . '/tick.png" title="' . $txt['media_yes'] . '" class="middle">', $dat);
+			$context['aeva_data'][$k] = str_replace($txt['media_yes'], '<img src="' . $theme['images_aeva'] . '/tick.png" title="' . $txt['media_yes'] . '" class="middle">', $dat);
 		if ($dat == $txt['media_no'])
-			$context['aeva_data'][$k] = '<img src="' . $settings['images_aeva'] . '/untick2.png" title="' . $txt['media_no'] . '" class="middle">';
+			$context['aeva_data'][$k] = '<img src="' . $theme['images_aeva'] . '/untick2.png" title="' . $txt['media_no'] . '" class="middle">';
 	}
 
 	// Get gallery managers and moderators
@@ -282,14 +282,14 @@ function aeva_admin_about()
 // Handles the settings page
 function aeva_admin_settings()
 {
-	global $context, $scripturl, $amSettings, $modSettings, $txt;
+	global $context, $scripturl, $amSettings, $settings, $txt;
 
 	wetem::load('aeva_form');
 	wetem::outer('aeva_admin_enclose_table');
 
 	$context['current_area'] = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('meta', 'layout')) ? $_REQUEST['sa'] : 'config';
 
-	$settings = array(
+	$theme = array(
 		'media_enabled' => array('yesno', 'config'),
 
 		'title_main' => array('title', 'config'),
@@ -362,39 +362,39 @@ function aeva_admin_settings()
 	}
 
 	$info = array('datetime', 'copyright', 'xposuretime', 'flash', 'duration', 'make', 'model', 'xres', 'yres', 'resunit', 'focal_length', 'orientation', 'iso', 'meteringMode', 'digitalZoom', 'exifVersion', 'contrast', 'sharpness', 'focusType', 'fnumber','frame_count', 'bit_rate', 'audio_codec', 'video_codec');
-	$settings['show_info'] = array('checkbox', 'meta', array());
+	$theme['show_info'] = array('checkbox', 'meta', array());
 	foreach ($info as $in)
-		$settings['show_info'][2]['show_info_'.$in] = array($txt['media_meta_'.$in], !empty($amSettings['show_info_'.$in]), 'force_name' => 'show_info_'.$in);
+		$theme['show_info'][2]['show_info_'.$in] = array($txt['media_meta_'.$in], !empty($amSettings['show_info_'.$in]), 'force_name' => 'show_info_'.$in);
 
 	$sho = isset($_POST['prev_next']) ? $_POST['prev_next'] : (empty($amSettings['prev_next']) ? 0 : $amSettings['prev_next']);
-	$settings['prev_next'][2][0] = array($txt['media_prevnext_small'], $sho == 0);
-	$settings['prev_next'][2][1] = array($txt['media_prevnext_big'], $sho == 1);
-	$settings['prev_next'][2][2] = array($txt['media_prevnext_text'], $sho == 2);
-	$settings['prev_next'][2][3] = array($txt['media_prevnext_none'], $sho == 3);
+	$theme['prev_next'][2][0] = array($txt['media_prevnext_small'], $sho == 0);
+	$theme['prev_next'][2][1] = array($txt['media_prevnext_big'], $sho == 1);
+	$theme['prev_next'][2][2] = array($txt['media_prevnext_text'], $sho == 2);
+	$theme['prev_next'][2][3] = array($txt['media_prevnext_none'], $sho == 3);
 
 	$sho = isset($_POST['default_tag_type']) ? $_POST['default_tag_type'] : (empty($amSettings['default_tag_type']) ? 'normal' : $amSettings['default_tag_type']);
-	$settings['default_tag_type'][2]['normal'] = array($txt['media_default_tag_normal'], $sho == 'normal');
-	$settings['default_tag_type'][2]['preview'] = array($txt['media_default_tag_preview'], $sho == 'preview');
-	$settings['default_tag_type'][2]['full'] = array($txt['media_default_tag_full'], $sho == 'full');
+	$theme['default_tag_type'][2]['normal'] = array($txt['media_default_tag_normal'], $sho == 'normal');
+	$theme['default_tag_type'][2]['preview'] = array($txt['media_default_tag_preview'], $sho == 'preview');
+	$theme['default_tag_type'][2]['full'] = array($txt['media_default_tag_full'], $sho == 'full');
 
 	if (!ini_get('safe_mode'))
-		unset($settings['ftp_file']);
+		unset($theme['ftp_file']);
 	elseif (empty($amSettings['ftp_file']))
 		$amSettings['ftp_file'] = dirname(dirname(__FILE__)) . '/MGallerySafeMode.php';
 
 	if (media_handler::testGD2() === true)
-		$settings['image_handler'][2][1] = $txt['media_gd2'];
+		$theme['image_handler'][2][1] = $txt['media_gd2'];
 	if (media_handler::testIMagick() === true)
-		$settings['image_handler'][2][2] = $txt['media_imagick'];
+		$theme['image_handler'][2][2] = $txt['media_imagick'];
 	if (media_handler::testMW() === true)
-		$settings['image_handler'][2][3] = $txt['media_MW'];
+		$theme['image_handler'][2][3] = $txt['media_MW'];
 	if (media_handler::testImageMagick() !== false)
-		$settings['image_handler'][2][4] = $txt['media_imagemagick'];
+		$theme['image_handler'][2][4] = $txt['media_imagemagick'];
 	if (media_handler::testFFmpeg() === true)
 		$context['aeva_extra_data'] = '<div style="padding: 8px 8px 0 8px">' . $txt['media_admin_settings_ffmpeg_installed'] . '</div>';
 
-	if (count($settings['image_handler'][2]) < 2)
-		unset($settings['image_handler']);
+	if (count($theme['image_handler'][2]) < 2)
+		unset($theme['image_handler']);
 
 	// Doc types...
 	$default_docs = 'txt,rtf,pdf,xls,doc,ppt,docx,xlsx,pptx,xml,html,htm,php,css,js,zip,rar,ace,arj,7z,gz,tar,tgz,bz,bzip2,sit';
@@ -411,8 +411,8 @@ function aeva_admin_settings()
 	// Please note that the area's other tabs (Metadata and Layout) won't be shown or hidden in the process,
 	// because this would need to be set at the admin menu level, which was earlier. We can all live with that.
 
-	if ($context['current_area'] === 'config' && empty($_POST['media_enabled']) && (isset($_POST['submit_aeva']) || empty($modSettings['media_enabled'])))
-		$settings = array('media_enabled' => array('yesno', 'config'));
+	if ($context['current_area'] === 'config' && empty($_POST['media_enabled']) && (isset($_POST['submit_aeva']) || empty($settings['media_enabled'])))
+		$theme = array('media_enabled' => array('yesno', 'config'));
 
 	// Submitting?
 	if (isset($_POST['submit_aeva']))
@@ -430,7 +430,7 @@ function aeva_admin_settings()
 			$_POST['my_docs'] = trim(implode(', ', $new_docs), ', ');
 		}
 
-		foreach ($settings as $setting => $options)
+		foreach ($theme as $setting => $options)
 		{
 			if ($options[1] !== $context['current_area'])
 				continue;
@@ -450,7 +450,7 @@ function aeva_admin_settings()
 				{
 					aeva_updateSettings($sub_setting, isset($_POST[$sub_setting]) ? 1 : 0, true);
 					if ($setting === 'show_info')
-						$settings['show_info'][2][$sub_setting][1] = !empty($amSettings[$sub_setting]);
+						$theme['show_info'][2][$sub_setting][1] = !empty($amSettings[$sub_setting]);
 				}
 			}
 			else
@@ -471,7 +471,7 @@ function aeva_admin_settings()
 	// Render the form
 	$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_settings;sa='.$context['current_area'].';'.$context['session_query'];
 
-	foreach ($settings as $setting => $options)
+	foreach ($theme as $setting => $options)
 	{
 		if ($options[1] != $context['current_area'])
 			continue;
@@ -985,7 +985,7 @@ function aeva_admin_perms_add()
 // Used for viewing membergroups in the permission area..
 function aeva_admin_perms_view()
 {
-	global $context, $txt, $scripturl, $user_info, $modSettings;
+	global $context, $txt, $scripturl, $user_info, $settings;
 
 	// Load the profile
 	if (!isset($_REQUEST['in']))
@@ -1842,7 +1842,7 @@ function aeva_getMembergroups($perms = false)
 	$groups = array();
 	if ($perms)
 		$groups[-1] = array('name' => $txt['media_membergroups_guests'], 'num_members' => '');
-	$groups[0] = array('name' => $txt['media_membergroups_members'], 'num_members' => $regular_members); // $modSettings['totalMembers']
+	$groups[0] = array('name' => $txt['media_membergroups_members'], 'num_members' => $regular_members); // $settings['totalMembers']
 	$request = wesql::query('
 		SELECT g.id_group AS id, g.group_name AS name, g.min_posts, g.min_posts != -1 AS is_post_group
 		FROM {db_prefix}membergroups AS g

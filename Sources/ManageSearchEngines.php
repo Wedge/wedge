@@ -24,7 +24,7 @@ function SearchEngines()
 	loadLanguage('Search');
 	loadTemplate('ManageSearch');
 
-	if (!empty($modSettings['spider_mode']))
+	if (!empty($settings['spider_mode']))
 		$subActions = array(
 			'editspiders' => 'EditSpider',
 			'logs' => 'SpiderLog',
@@ -38,7 +38,7 @@ function SearchEngines()
 		);
 
 	// Ensure we have a valid subaction.
-	$context['sub_action'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (empty($modSettings['spider_mode']) ? 'settings' : 'stats');
+	$context['sub_action'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (empty($settings['spider_mode']) ? 'settings' : 'stats');
 
 	$context['page_title'] = $txt['search_engines'];
 
@@ -55,7 +55,7 @@ function SearchEngines()
 // This is really just the settings page.
 function ManageSearchEngineSettings($return_config = false)
 {
-	global $context, $txt, $modSettings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	$config_vars = array(
 		// How much detail?
@@ -425,14 +425,14 @@ function EditSpider()
 // Do we think the current user is a spider?
 function SpiderCheck()
 {
-	global $modSettings;
+	global $settings;
 
 	if (isset($_SESSION['id_robot']))
 		unset($_SESSION['id_robot']);
 	$_SESSION['robot_check'] = time();
 
 	// We cache the spider data for five minutes if we can.
-	if (!empty($modSettings['cache_enable']))
+	if (!empty($settings['cache_enable']))
 		$spider_data = cache_get_data('spider_search', 300);
 
 	if (!isset($spider_data) || $spider_data === null)
@@ -448,7 +448,7 @@ function SpiderCheck()
 			$spider_data[] = $row;
 		wesql::free_result($request);
 
-		if (!empty($modSettings['cache_enable']))
+		if (!empty($settings['cache_enable']))
 			cache_put_data('spider_search', $spider_data, 300);
 	}
 
@@ -489,7 +489,7 @@ function SpiderCheck()
 	}
 
 	// If this is low server tracking then log the spider here as oppossed to the main logging function.
-	if (!empty($modSettings['spider_mode']) && $modSettings['spider_mode'] == 1 && !empty($_SESSION['id_robot']))
+	if (!empty($settings['spider_mode']) && $settings['spider_mode'] == 1 && !empty($_SESSION['id_robot']))
 		logSpider();
 
 	return !empty($_SESSION['id_robot']) ? $_SESSION['id_robot'] : 0;
@@ -499,13 +499,13 @@ function SpiderCheck()
 //!!! Different file?
 function logSpider()
 {
-	global $modSettings, $context;
+	global $settings, $context;
 
-	if (empty($modSettings['spider_mode']) || empty($_SESSION['id_robot']))
+	if (empty($settings['spider_mode']) || empty($_SESSION['id_robot']))
 		return;
 
 	// Attempt to update today's entry.
-	if ($modSettings['spider_mode'] == 1)
+	if ($settings['spider_mode'] == 1)
 	{
 		$date = strftime('%Y-%m-%d', forum_time(false));
 		wesql::query('
@@ -538,7 +538,7 @@ function logSpider()
 	// If we're tracking better stats than track, better stats - we sort out the today thing later.
 	else
 	{
-		if ($modSettings['spider_mode'] > 2)
+		if ($settings['spider_mode'] > 2)
 		{
 			$url = $_GET + array('USER_AGENT' => $_SERVER['HTTP_USER_AGENT']);
 			unset($url['sesc'], $url[$context['session_var']]);
@@ -622,7 +622,7 @@ function consolidateSpiderStats()
 // See what spiders have been up to.
 function SpiderLog()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $settings;
 
 	// Load the template and language just incase.
 	loadLanguage('Search');
@@ -714,7 +714,7 @@ function SpiderLog()
 		foreach ($context['spider_log']['rows'] as $k => $row)
 		{
 			// Feature disabled?
-			if (empty($row['viewing']['value']) && isset($modSettings['spider_mode']) && $modSettings['spider_mode'] < 3)
+			if (empty($row['viewing']['value']) && isset($settings['spider_mode']) && $settings['spider_mode'] < 3)
 				$context['spider_log']['rows'][$k]['viewing']['value'] = '<em>' . $txt['spider_disabled'] . '</em>';
 			else
 				$urls[$k] = array($row['viewing']['value'], -1);

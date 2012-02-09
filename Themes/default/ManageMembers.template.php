@@ -13,7 +13,7 @@
 
 function template_search_members()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
 	<div id="admincenter">
@@ -235,7 +235,7 @@ function template_search_members()
 
 function template_admin_browse()
 {
-	global $context, $settings, $options, $scripturl, $txt, $modSettings;
+	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
 	<div id="admincenter">';

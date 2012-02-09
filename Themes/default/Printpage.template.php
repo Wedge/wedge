@@ -13,7 +13,7 @@
 
 function template_print_before()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '<!DOCTYPE html>
 <html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
@@ -141,7 +141,7 @@ function template_print_before()
 
 function template_main()
 {
-	global $context, $settings, $options, $txt;
+	global $context, $theme, $options, $txt;
 
 	foreach ($context['posts'] as $post)
 		echo '

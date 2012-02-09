@@ -34,14 +34,14 @@ class custom_search
 
 	public function __construct()
 	{
-		global $modSettings;
+		global $settings;
 
-		if (empty($modSettings['search_custom_index_config']))
+		if (empty($settings['search_custom_index_config']))
 			return;
 
-		$this->indexSettings = unserialize($modSettings['search_custom_index_config']);
+		$this->indexSettings = unserialize($settings['search_custom_index_config']);
 
-		$this->bannedWords = empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
+		$this->bannedWords = empty($settings['search_stopwords']) ? array() : explode(',', $settings['search_stopwords']);
 		$this->min_word_length = $this->indexSettings['bytes_per_word'];
 	}
 
@@ -68,15 +68,15 @@ class custom_search
 	// If the settings don't exist we can't continue.
 	public function isValid()
 	{
-		global $modSettings;
+		global $settings;
 
-		return !empty($modSettings['search_custom_index_config']);
+		return !empty($settings['search_custom_index_config']);
 	}
 
 	// This function compares the length of two strings plus a little.
 	public function searchSort($a, $b)
 	{
-		global $modSettings, $excludedWords;
+		global $settings, $excludedWords;
 
 		$x = strlen($a) - (in_array($a, $excludedWords) ? 1000 : 0);
 		$y = strlen($b) - (in_array($b, $excludedWords) ? 1000 : 0);
@@ -87,11 +87,11 @@ class custom_search
 	// Do we have to do some work with the words we are searching for to prepare them?
 	public function prepareIndexes($word, &$wordsSearch, &$wordsExclude, $isExcluded)
 	{
-		global $modSettings;
+		global $settings;
 
 		$subwords = text2words($word, $this->min_word_length, true);
 
-		if (empty($modSettings['search_force_index']))
+		if (empty($settings['search_force_index']))
 			$wordsSearch['words'][] = $word;
 
 		// Excluded phrases don't benefit from being split into subwords.
@@ -114,7 +114,7 @@ class custom_search
 	// Search for indexed words.
 	public function indexedWordQuery($words, $search_data)
 	{
-		global $modSettings;
+		global $settings;
 
 		$query_select = array(
 			'id_msg' => 'm.id_msg',
@@ -130,8 +130,8 @@ class custom_search
 		$count = 0;
 		foreach ($words['words'] as $regularWord)
 		{
-			$query_where[] = 'm.body' . (in_array($regularWord, $query_params['excluded_words']) ? ' NOT' : '') . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:complex_body_' . $count . '}';
-			$query_params['complex_body_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($regularWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $regularWord), '\\\'') . '[[:>:]]';
+			$query_where[] = 'm.body' . (in_array($regularWord, $query_params['excluded_words']) ? ' NOT' : '') . (empty($settings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:complex_body_' . $count . '}';
+			$query_params['complex_body_' . $count++] = empty($settings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($regularWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $regularWord), '\\\'') . '[[:>:]]';
 		}
 
 		if ($query_params['user_query'])
@@ -147,18 +147,18 @@ class custom_search
 			$query_where[] = 'm.id_msg <= {int:max_msg_id}';
 
 		$count = 0;
-		if (!empty($query_params['excluded_phrases']) && empty($modSettings['search_force_index']))
+		if (!empty($query_params['excluded_phrases']) && empty($settings['search_force_index']))
 			foreach ($query_params['excluded_phrases'] as $phrase)
 			{
-				$query_where[] = 'subject NOT ' . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:exclude_subject_phrase_' . $count . '}';
-				$query_params['exclude_subject_phrase_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
+				$query_where[] = 'subject NOT ' . (empty($settings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:exclude_subject_phrase_' . $count . '}';
+				$query_params['exclude_subject_phrase_' . $count++] = empty($settings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($phrase, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $phrase), '\\\'') . '[[:>:]]';
 			}
 		$count = 0;
-		if (!empty($query_params['excluded_subject_words']) && empty($modSettings['search_force_index']))
+		if (!empty($query_params['excluded_subject_words']) && empty($settings['search_force_index']))
 			foreach ($query_params['excluded_subject_words'] as $excludedWord)
 			{
-				$query_where[] = 'subject NOT ' . (empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:exclude_subject_words_' . $count . '}';
-				$query_params['exclude_subject_words_' . $count++] = empty($modSettings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($excludedWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $excludedWord), '\\\'') . '[[:>:]]';
+				$query_where[] = 'subject NOT ' . (empty($settings['search_match_words']) || $search_data['no_regexp'] ? ' LIKE ' : ' RLIKE ') . '{string:exclude_subject_words_' . $count . '}';
+				$query_params['exclude_subject_words_' . $count++] = empty($settings['search_match_words']) || $search_data['no_regexp'] ? '%' . strtr($excludedWord, array('_' => '\\_', '%' => '\\%')) . '%' : '[[:<:]]' . addcslashes(preg_replace(array('/([\[\]$.+*?|{}()])/'), array('[$1]'), $excludedWord), '\\\'') . '[[:>:]]';
 			}
 
 		$numTables = 0;

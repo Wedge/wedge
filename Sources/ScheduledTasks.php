@@ -57,7 +57,7 @@ if (!defined('WEDGE'))
 // This function works out what to do!
 function AutoTask()
 {
-	global $time_start, $modSettings;
+	global $time_start, $settings;
 
 	// Special case for doing the mail queue.
 	if (isset($_GET['scheduled']) && $_GET['scheduled'] == 'mailq')
@@ -184,7 +184,7 @@ function AutoTask()
 // Function to sending out approval notices to moderators etc.
 function scheduled_approval_notification()
 {
-	global $scripturl, $modSettings, $mbname, $txt;
+	global $scripturl, $settings, $mbname, $txt;
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = wesql::query('
@@ -396,14 +396,14 @@ function scheduled_approval_notification()
 // Do some daily cleaning up.
 function scheduled_daily_maintenance()
 {
-	global $modSettings;
+	global $settings;
 
 	// First clean out the data cache.
 	clean_cache();
 
 	// If warning decrement is enabled and we have people who have not had a new warning in 24 hours, lower their warning level.
-	list (, $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
-	if ($modSettings['warning_decrement'])
+	list (, $settings['warning_decrement']) = explode(',', $settings['warning_settings']);
+	if ($settings['warning_decrement'])
 	{
 		// Find every member who has a warning level...
 		$request = wesql::query('
@@ -441,7 +441,7 @@ function scheduled_daily_maintenance()
 				if ($row['last_warning'] <= time() - 86400)
 					$member_changes[] = array(
 						'id' => $row['id_recipient'],
-						'warning' => $members[$row['id_recipient']] >= $modSettings['warning_decrement'] ? $members[$row['id_recipient']] - $modSettings['warning_decrement'] : 0,
+						'warning' => $members[$row['id_recipient']] >= $settings['warning_decrement'] ? $members[$row['id_recipient']] - $settings['warning_decrement'] : 0,
 					);
 			}
 			wesql::free_result($request);
@@ -462,7 +462,7 @@ function scheduled_daily_maintenance()
 	}
 
 	// Do any spider stuff.
-	if (!empty($modSettings['spider_mode']) && $modSettings['spider_mode'] > 1)
+	if (!empty($settings['spider_mode']) && $settings['spider_mode'] > 1)
 	{
 		loadSource('ManageSearchEngines');
 		consolidateSpiderStats();
@@ -472,7 +472,7 @@ function scheduled_daily_maintenance()
 	$server_version = wesql::server_info();
 	if (in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51')))
 		updateSettings(array('db_mysql_group_by_fix' => '1'));
-	elseif (!empty($modSettings['db_mysql_group_by_fix']))
+	elseif (!empty($settings['db_mysql_group_by_fix']))
 		wesql::query('
 			DELETE FROM {db_prefix}settings
 			WHERE variable = {string:mysql_fix}',
@@ -482,12 +482,12 @@ function scheduled_daily_maintenance()
 		);
 
 	// Clear out any old drafts if appropriate.
-	if (!empty($modSettings['pruneSaveDrafts']))
+	if (!empty($settings['pruneSaveDrafts']))
 		wesql::query('
 			DELETE FROM {db_prefix}drafts
 			WHERE post_time < {int:old_time}',
 			array(
-				'old_time' => time() - ($modSettings['pruneSaveDrafts'] * 86400),
+				'old_time' => time() - ($settings['pruneSaveDrafts'] * 86400),
 			)
 		);
 
@@ -498,17 +498,17 @@ function scheduled_daily_maintenance()
 // Auto optimize the database?
 function scheduled_auto_optimize()
 {
-	global $modSettings, $db_prefix;
+	global $settings, $db_prefix;
 
 	// By default do it now!
 	$delay = false;
 
 	// As a kind of hack, if the server load is too great delay, but only by a bit!
-	if (!empty($modSettings['load_average']) && !empty($modSettings['loadavg_auto_opt']) && $modSettings['load_average'] >= $modSettings['loadavg_auto_opt'])
+	if (!empty($settings['load_average']) && !empty($settings['loadavg_auto_opt']) && $settings['load_average'] >= $settings['loadavg_auto_opt'])
 		$delay = true;
 
 	// Otherwise are we restricting the number of people online for this?
-	if (!empty($modSettings['autoOptMaxOnline']))
+	if (!empty($settings['autoOptMaxOnline']))
 	{
 		$request = wesql::query('
 			SELECT COUNT(*)
@@ -519,7 +519,7 @@ function scheduled_auto_optimize()
 		list ($dont_do_it) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		if ($dont_do_it > $modSettings['autoOptMaxOnline'])
+		if ($dont_do_it > $settings['autoOptMaxOnline'])
 			$delay = true;
 	}
 
@@ -543,7 +543,7 @@ function scheduled_auto_optimize()
 // Send out a daily email of all subscribed topics.
 function scheduled_daily_digest()
 {
-	global $is_weekly, $txt, $mbname, $scripturl, $context, $modSettings;
+	global $is_weekly, $txt, $mbname, $scripturl, $context, $settings;
 
 	// We'll want this...
 	loadEssentialThemeData();
@@ -854,24 +854,24 @@ function scheduled_weekly_digest()
 // Send a bunch of emails from the mail queue.
 function ReduceMailQueue($number = false, $override_limit = false, $force_send = false)
 {
-	global $modSettings;
+	global $settings;
 
 	// Are we intending another script to be sending out the queue?
-	if (!empty($modSettings['mail_queue_use_cron']) && empty($force_send))
+	if (!empty($settings['mail_queue_use_cron']) && empty($force_send))
 		return false;
 
 	// By default send 5 at once.
 	if (!$number)
-		$number = empty($modSettings['mail_quantity']) ? 5 : $modSettings['mail_quantity'];
+		$number = empty($settings['mail_quantity']) ? 5 : $settings['mail_quantity'];
 
 	// If we came with a timestamp, and that doesn't match the next event, then someone else has beaten us.
-	if (isset($_GET['ts']) && $_GET['ts'] != $modSettings['mail_next_send'] && empty($force_send))
+	if (isset($_GET['ts']) && $_GET['ts'] != $settings['mail_next_send'] && empty($force_send))
 		return false;
 
 	// By default move the next sending on by 10 seconds, and require an affected row.
 	if (!$override_limit)
 	{
-		$delay = !empty($modSettings['mail_queue_delay']) ? $modSettings['mail_queue_delay'] : (!empty($modSettings['mail_limit']) && $modSettings['mail_limit'] < 5 ? 10 : 5);
+		$delay = !empty($settings['mail_queue_delay']) ? $settings['mail_queue_delay'] : (!empty($settings['mail_limit']) && $settings['mail_limit'] < 5 ? 10 : 5);
 
 		wesql::query('
 			UPDATE {db_prefix}settings
@@ -881,18 +881,18 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			array(
 				'next_mail_send' => time() + $delay,
 				'mail_next_send' => 'mail_next_send',
-				'last_send' => $modSettings['mail_next_send'],
+				'last_send' => $settings['mail_next_send'],
 			)
 		);
 		if (wesql::affected_rows() == 0)
 			return false;
-		$modSettings['mail_next_send'] = time() + $delay;
+		$settings['mail_next_send'] = time() + $delay;
 	}
 
 	// If we're not overriding how many are we allow to send?
-	if (!$override_limit && !empty($modSettings['mail_limit']))
+	if (!$override_limit && !empty($settings['mail_limit']))
 	{
-		list ($mt, $mn) = @explode('|', $modSettings['mail_recent']);
+		list ($mt, $mn) = @explode('|', $settings['mail_recent']);
 
 		// Nothing worth noting...
 		if (empty($mn) || $mt < time() - 60)
@@ -901,7 +901,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			$mn = $number;
 		}
 		// Otherwise we have a few more we can spend?
-		elseif ($mn < $modSettings['mail_limit'])
+		elseif ($mn < $settings['mail_limit'])
 		{
 			$mn += $number;
 		}
@@ -960,7 +960,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			array(
 				'no_send' => '0',
 				'mail_next_send' => 'mail_next_send',
-				'last_mail_send' => $modSettings['mail_next_send'],
+				'last_mail_send' => $settings['mail_next_send'],
 			)
 		);
 	}
@@ -968,17 +968,17 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 	if (empty($ids))
 		return false;
 
-	if (!empty($modSettings['mail_type']) && $modSettings['smtp_host'] != '')
+	if (!empty($settings['mail_type']) && $settings['smtp_host'] != '')
 		loadSource('Subs-Post');
 
 	// Send each email, yea!
 	$failed_emails = array();
 	foreach ($emails as $key => $email)
 	{
-		if (empty($modSettings['mail_type']) || $modSettings['smtp_host'] == '')
+		if (empty($settings['mail_type']) || $settings['smtp_host'] == '')
 		{
 			$email['subject'] = strtr($email['subject'], array("\r" => '', "\n" => ''));
-			if (!empty($modSettings['mail_strip_carriage']))
+			if (!empty($settings['mail_strip_carriage']))
 			{
 				$email['body'] = strtr($email['body'], array("\r" => ''));
 				$email['headers'] = strtr($email['headers'], array("\r" => ''));
@@ -1007,12 +1007,12 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		wesql::insert('replace',
 			'{db_prefix}settings',
 			array('variable' => 'string', 'value' => 'string'),
-			array('mail_failed_attempts', empty($modSettings['mail_failed_attempts']) ? 1 : ++$modSettings['mail_failed_attempts']),
+			array('mail_failed_attempts', empty($settings['mail_failed_attempts']) ? 1 : ++$settings['mail_failed_attempts']),
 			array('variable')
 		);
 
 		// If we have failed to many times, tell mail to wait a bit and try again.
-		if ($modSettings['mail_failed_attempts'] > 5)
+		if ($settings['mail_failed_attempts'] > 5)
 			wesql::query('
 				UPDATE {db_prefix}settings
 				SET value = {string:mail_next_send}
@@ -1021,7 +1021,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 				array(
 					'next_mail_send' => time() + 60,
 					'mail_next_send' => 'mail_next_send',
-					'last_send' => $modSettings['mail_next_send'],
+					'last_send' => $settings['mail_next_send'],
 			));
 
 		// Add our email back to the queue, manually.
@@ -1035,7 +1035,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		return false;
 	}
 	// We where unable to send the email, clear our failed attempts.
-	elseif (!empty($modSettings['mail_failed_attempts']))
+	elseif (!empty($settings['mail_failed_attempts']))
 		wesql::query('
 			UPDATE {db_prefix}settings
 			SET value = {string:zero}
@@ -1052,7 +1052,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 // Calculate the next time the passed tasks should be triggered.
 function CalculateNextTrigger($tasks = array(), $forceUpdate = false)
 {
-	global $modSettings;
+	global $settings;
 
 	$task_query = '';
 	if (!is_array($tasks))
@@ -1066,7 +1066,7 @@ function CalculateNextTrigger($tasks = array(), $forceUpdate = false)
 		else
 			$task_query = ' AND task IN ({array_string:tasks})';
 	}
-	$nextTaskTime = empty($tasks) ? time() + 86400 : $modSettings['next_task_time'];
+	$nextTaskTime = empty($tasks) ? time() + 86400 : $settings['next_task_time'];
 
 	// Get the critical info for the tasks.
 	$request = wesql::query('
@@ -1109,7 +1109,7 @@ function CalculateNextTrigger($tasks = array(), $forceUpdate = false)
 		);
 
 	// If the next task is now different update.
-	if ($modSettings['next_task_time'] != $nextTaskTime)
+	if ($settings['next_task_time'] != $nextTaskTime)
 		updateSettings(array('next_task_time' => $nextTaskTime));
 }
 
@@ -1179,7 +1179,7 @@ function next_time($regularity, $unit, $offset)
 // This loads the bare minimum data to allow us to load language files!
 function loadEssentialThemeData()
 {
-	global $settings, $modSettings, $mbname, $context;
+	global $theme, $settings, $mbname, $context;
 
 	// Get all the default theme variables.
 	$result = wesql::query('
@@ -1189,31 +1189,31 @@ function loadEssentialThemeData()
 			AND id_theme IN (1, {int:theme_guests})',
 		array(
 			'no_member' => 0,
-			'theme_guests' => $modSettings['theme_guests'],
+			'theme_guests' => $settings['theme_guests'],
 		)
 	);
 	while ($row = wesql::fetch_assoc($result))
 	{
-		$settings[$row['variable']] = $row['value'];
+		$theme[$row['variable']] = $row['value'];
 
 		// Is this the default theme?
 		if (in_array($row['variable'], array('theme_dir', 'theme_url', 'images_url')) && $row['id_theme'] == '1')
-			$settings['default_' . $row['variable']] = $row['value'];
+			$theme['default_' . $row['variable']] = $row['value'];
 	}
 	wesql::free_result($result);
 
 	// Check we have some directories setup.
-	if (empty($settings['template_dirs']))
+	if (empty($theme['template_dirs']))
 	{
-		$settings['template_dirs'] = array($settings['theme_dir']);
+		$theme['template_dirs'] = array($theme['theme_dir']);
 
 		// Based on theme (if there is one).
-		if (!empty($settings['base_theme_dir']))
-			$settings['template_dirs'][] = $settings['base_theme_dir'];
+		if (!empty($theme['base_theme_dir']))
+			$theme['template_dirs'][] = $theme['base_theme_dir'];
 
 		// Lastly the default theme.
-		if ($settings['theme_dir'] != $settings['default_theme_dir'])
-			$settings['template_dirs'][] = $settings['default_theme_dir'];
+		if ($theme['theme_dir'] != $theme['default_theme_dir'])
+			$theme['template_dirs'][] = $theme['default_theme_dir'];
 	}
 
 	// Assume we want this.
@@ -1231,7 +1231,7 @@ function loadEssentialThemeData()
 
 function scheduled_fetchRemoteFiles()
 {
-	global $txt, $language, $settings, $modSettings;
+	global $txt, $language, $theme, $settings;
 
 	// What files do we want to get
 	$request = wesql::query('
@@ -1293,7 +1293,7 @@ function scheduled_fetchRemoteFiles()
 
 function scheduled_weekly_maintenance()
 {
-	global $modSettings;
+	global $settings;
 
 	// Delete some settings that needn't be set if they are otherwise empty.
 	$emptySettings = array(
@@ -1327,15 +1327,15 @@ function scheduled_weekly_maintenance()
 	);
 
 	// Ok should we prune the logs?
-	if (!empty($modSettings['pruningOptions']))
+	if (!empty($settings['pruningOptions']))
 	{
-		if (!empty($modSettings['pruningOptions']) && strpos($modSettings['pruningOptions'], ',') !== false)
-			list ($modSettings['pruneErrorLog'], $modSettings['pruneModLog'], $modSettings['pruneReportLog'], $modSettings['pruneScheduledTaskLog'], $modSettings['pruneSpiderHitLog']) = explode(',', $modSettings['pruningOptions']);
+		if (!empty($settings['pruningOptions']) && strpos($settings['pruningOptions'], ',') !== false)
+			list ($settings['pruneErrorLog'], $settings['pruneModLog'], $settings['pruneReportLog'], $settings['pruneScheduledTaskLog'], $settings['pruneSpiderHitLog']) = explode(',', $settings['pruningOptions']);
 
-		if (!empty($modSettings['pruneErrorLog']))
+		if (!empty($settings['pruneErrorLog']))
 		{
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneErrorLog'] * 86400;
+			$t = time() - $settings['pruneErrorLog'] * 86400;
 
 			wesql::query('
 				DELETE FROM {db_prefix}log_errors
@@ -1346,10 +1346,10 @@ function scheduled_weekly_maintenance()
 			);
 		}
 
-		if (!empty($modSettings['pruneModLog']))
+		if (!empty($settings['pruneModLog']))
 		{
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneModLog'] * 86400;
+			$t = time() - $settings['pruneModLog'] * 86400;
 
 			wesql::query('
 				DELETE FROM {db_prefix}log_actions
@@ -1362,10 +1362,10 @@ function scheduled_weekly_maintenance()
 			);
 		}
 
-		if (!empty($modSettings['pruneReportLog']))
+		if (!empty($settings['pruneReportLog']))
 		{
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneReportLog'] * 86400;
+			$t = time() - $settings['pruneReportLog'] * 86400;
 
 			// This one is more complex then the other logs.  First we need to figure out which reports are too old.
 			$reports = array();
@@ -1404,10 +1404,10 @@ function scheduled_weekly_maintenance()
 			}
 		}
 
-		if (!empty($modSettings['pruneScheduledTaskLog']))
+		if (!empty($settings['pruneScheduledTaskLog']))
 		{
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneScheduledTaskLog'] * 86400;
+			$t = time() - $settings['pruneScheduledTaskLog'] * 86400;
 
 			wesql::query('
 				DELETE FROM {db_prefix}log_scheduled_tasks
@@ -1418,10 +1418,10 @@ function scheduled_weekly_maintenance()
 			);
 		}
 
-		if (!empty($modSettings['pruneSpiderHitLog']))
+		if (!empty($settings['pruneSpiderHitLog']))
 		{
 			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $modSettings['pruneSpiderHitLog'] * 86400;
+			$t = time() - $settings['pruneSpiderHitLog'] * 86400;
 
 			wesql::query('
 				DELETE FROM {db_prefix}log_spider_hits
@@ -1463,7 +1463,7 @@ function scheduled_weekly_maintenance()
 // Perform the standard checks on expiring/near expiring subscriptions.
 function scheduled_paid_subscriptions()
 {
-	global $txt, $scripturl, $modSettings, $language;
+	global $txt, $scripturl, $settings, $language;
 
 	// Start off by checking for removed subscriptions.
 	$request = wesql::query('
@@ -1520,7 +1520,7 @@ function scheduled_paid_subscriptions()
 			'END_DATE' => strip_tags(timeformat($row['end_time'])),
 		);
 
-		$emaildata = loadEmailTemplate('paid_subscription_reminder', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate('paid_subscription_reminder', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
 
 		// Send the actual email.
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 2);

@@ -99,7 +99,7 @@ if (!defined('WEDGE'))
 // This helps organize things...
 function MessageMain()
 {
-	global $txt, $scripturl, $context, $user_info, $user_settings, $modSettings;
+	global $txt, $scripturl, $context, $user_info, $user_settings, $settings;
 
 	// No guests!
 	is_not_guest();
@@ -303,7 +303,7 @@ function MessageMain()
 // A sidebar to easily access different areas of the section
 function messageIndexBar($area)
 {
-	global $txt, $context, $scripturl, $modSettings, $settings, $user_info, $options;
+	global $txt, $context, $scripturl, $settings, $theme, $user_info, $options;
 
 	$pm_areas = array(
 		'folders' => array(
@@ -452,7 +452,7 @@ function messageIndexBar($area)
 // A folder, ie. inbox/sent etc.
 function MessageFolder()
 {
-	global $txt, $scripturl, $modSettings, $context, $subjects_request;
+	global $txt, $scripturl, $settings, $context, $subjects_request;
 	global $messages_request, $user_info, $recipients, $options, $memberContext, $user_settings;
 
 	// Changing view? 0 = all at once, 1 = one at a time, 2 = conversation mode
@@ -485,7 +485,7 @@ function MessageFolder()
 	// Set up some basic theme stuff.
 	$context['from_or_to'] = $context['folder'] != 'sent' ? 'from' : 'to';
 	$context['get_pmessage'] = 'prepareMessageContext';
-	$context['signature_enabled'] = $modSettings['signature_settings'][0] == 1;
+	$context['signature_enabled'] = $settings['signature_settings'][0] == 1;
 
 	$labelQuery = $context['folder'] != 'sent' ? '
 			AND FIND_IN_SET(' . $context['current_label_id'] . ', pmr.labels) != 0' : '';
@@ -572,7 +572,7 @@ function MessageFolder()
 
 	// Start on the last page.
 	if (!is_numeric($_GET['start']) || $_GET['start'] >= $max_messages)
-		$_GET['start'] = ($max_messages - 1) - (($max_messages - 1) % $modSettings['defaultMaxMessages']);
+		$_GET['start'] = ($max_messages - 1) - (($max_messages - 1) % $settings['defaultMaxMessages']);
 	elseif ($_GET['start'] < 0)
 		$_GET['start'] = 0;
 
@@ -588,7 +588,7 @@ function MessageFolder()
 		$context['current_pm'] = $pmID;
 
 		// With only one page of PM's we're gonna want page 1.
-		if ($max_messages <= $modSettings['defaultMaxMessages'])
+		if ($max_messages <= $settings['defaultMaxMessages'])
 			$_GET['start'] = 0;
 
 		// If we pass kstart we assume we're in the right place.
@@ -626,7 +626,7 @@ function MessageFolder()
 			wesql::free_result($request);
 
 			// To stop the page index's being abnormal, start the page on the page the message would normally be located on...
-			$_GET['start'] = $modSettings['defaultMaxMessages'] * (int) ($_GET['start'] / $modSettings['defaultMaxMessages']);
+			$_GET['start'] = $settings['defaultMaxMessages'] * (int) ($_GET['start'] / $settings['defaultMaxMessages']);
 		}
 	}
 
@@ -640,20 +640,20 @@ function MessageFolder()
 	}
 
 	// Set up the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=pm;f=' . $context['folder'] . (isset($_REQUEST['l']) ? ';l=' . (int) $_REQUEST['l'] : '') . ';sort=' . $context['sort_by'] . ($descending ? ';desc' : ''), $_GET['start'], $max_messages, $modSettings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index($scripturl . '?action=pm;f=' . $context['folder'] . (isset($_REQUEST['l']) ? ';l=' . (int) $_REQUEST['l'] : '') . ';sort=' . $context['sort_by'] . ($descending ? ';desc' : ''), $_GET['start'], $max_messages, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Determine the navigation context (especially useful for the wireless template).
 	$context['links'] = array(
-		'first' => $_GET['start'] >= $modSettings['defaultMaxMessages'] ? $scripturl . '?action=pm;start=0' : '',
-		'prev' => $_GET['start'] >= $modSettings['defaultMaxMessages'] ? $scripturl . '?action=pm;start=' . ($_GET['start'] - $modSettings['defaultMaxMessages']) : '',
-		'next' => $_GET['start'] + $modSettings['defaultMaxMessages'] < $max_messages ? $scripturl . '?action=pm;start=' . ($_GET['start'] + $modSettings['defaultMaxMessages']) : '',
-		'last' => $_GET['start'] + $modSettings['defaultMaxMessages'] < $max_messages ? $scripturl . '?action=pm;start=' . (floor(($max_messages - 1) / $modSettings['defaultMaxMessages']) * $modSettings['defaultMaxMessages']) : '',
+		'first' => $_GET['start'] >= $settings['defaultMaxMessages'] ? $scripturl . '?action=pm;start=0' : '',
+		'prev' => $_GET['start'] >= $settings['defaultMaxMessages'] ? $scripturl . '?action=pm;start=' . ($_GET['start'] - $settings['defaultMaxMessages']) : '',
+		'next' => $_GET['start'] + $settings['defaultMaxMessages'] < $max_messages ? $scripturl . '?action=pm;start=' . ($_GET['start'] + $settings['defaultMaxMessages']) : '',
+		'last' => $_GET['start'] + $settings['defaultMaxMessages'] < $max_messages ? $scripturl . '?action=pm;start=' . (floor(($max_messages - 1) / $settings['defaultMaxMessages']) * $settings['defaultMaxMessages']) : '',
 		'up' => $scripturl,
 	);
 	$context['page_info'] = array(
-		'current_page' => $_GET['start'] / $modSettings['defaultMaxMessages'] + 1,
-		'num_pages' => floor(($max_messages - 1) / $modSettings['defaultMaxMessages']) + 1
+		'current_page' => $_GET['start'] / $settings['defaultMaxMessages'] + 1,
+		'num_pages' => floor(($max_messages - 1) / $settings['defaultMaxMessages']) + 1
 	);
 
 	// First work out what messages we need to see - if grouped is a little trickier...
@@ -673,7 +673,7 @@ function MessageFolder()
 				AND pm.id_pm = {int:pmsg}') . '
 			GROUP BY pm.id_pm_head
 			ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' && $context['folder'] != 'sent' ? 'id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($_GET['pmsg']) ? '
-			LIMIT ' . $_GET['start'] . ', ' . $modSettings['defaultMaxMessages'] : ''),
+			LIMIT ' . $_GET['start'] . ', ' . $settings['defaultMaxMessages'] : ''),
 			array(
 				'current_member' => $user_info['id'],
 				'deleted_by' => 0,
@@ -700,7 +700,7 @@ function MessageFolder()
 				AND pm.deleted_by_sender = {int:is_deleted}' : '1=1') . (empty($pmsg) ? '' : '
 				AND pm.id_pm = {int:pmsg}') . '
 			ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' && $context['folder'] != 'sent' ? 'pmr.id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($pmsg) ? '
-			LIMIT ' . $_GET['start'] . ', ' . $modSettings['defaultMaxMessages'] : ''),
+			LIMIT ' . $_GET['start'] . ', ' . $settings['defaultMaxMessages'] : ''),
 			array(
 				'current_member' => $user_info['id'],
 				'is_deleted' => 0,
@@ -907,7 +907,7 @@ function MessageFolder()
 // Get a personal message for the theme. (Used to save memory.)
 function prepareMessageContext($type = 'subject', $reset = false)
 {
-	global $txt, $scripturl, $modSettings, $context, $messages_request, $memberContext, $recipients;
+	global $txt, $scripturl, $settings, $context, $messages_request, $memberContext, $recipients;
 	global $user_info, $subjects_request;
 
 	// Count the current message number....
@@ -995,7 +995,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	else
 	{
 		$memberContext[$message['id_member_from']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member_from'] == $user_info['id'] && allowedTo('profile_view_own'));
-		$memberContext[$message['id_member_from']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member_from']]['warning_status'] && ($context['user']['can_mod'] || (!empty($modSettings['warning_show']) && ($modSettings['warning_show'] > 1 || $message['id_member_from'] == $user_info['id'])));
+		$memberContext[$message['id_member_from']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member_from']]['warning_status'] && ($context['user']['can_mod'] || (!empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member_from'] == $user_info['id'])));
 	}
 
 	// Censor all the important text...
@@ -1064,7 +1064,7 @@ function MarkUnread()
 
 function MessageSearch()
 {
-	global $context, $txt, $scripturl, $modSettings;
+	global $context, $txt, $scripturl, $settings;
 
 	if (isset($_REQUEST['params']))
 	{
@@ -1125,7 +1125,7 @@ function MessageSearch()
 		}
 	}
 
-	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($modSettings['simpleSearch']) && !isset($_REQUEST['advanced']);
+	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($settings['simpleSearch']) && !isset($_REQUEST['advanced']);
 	$context['page_title'] = $txt['pm_search_title'];
 	wetem::load('search');
 	$context['linktree'][] = array(
@@ -1136,10 +1136,10 @@ function MessageSearch()
 
 function MessageSearch2()
 {
-	global $scripturl, $modSettings, $user_info, $context, $txt;
+	global $scripturl, $settings, $user_info, $context, $txt;
 	global $memberContext;
 
-	if (!empty($context['load_average']) && !empty($modSettings['loadavg_search']) && $context['load_average'] >= $modSettings['loadavg_search'])
+	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	// !!! For the moment force the folder to the inbox.
@@ -1433,7 +1433,7 @@ function MessageSearch2()
 			' . $userQuery . $labelQuery . $timeQuery . '
 			AND (' . $searchQuery . ')
 		ORDER BY ' . $search_params['sort'] . ' ' . $search_params['sort_dir'] . '
-		LIMIT ' . $context['start'] . ', ' . $modSettings['search_results_per_page'],
+		LIMIT ' . $context['start'] . ', ' . $settings['search_results_per_page'],
 		array_merge($searchq_parameters, array(
 			'current_member' => $user_info['id'],
 			'not_deleted' => 0,
@@ -1481,7 +1481,7 @@ function MessageSearch2()
 		loadMemberData($posters);
 
 	// Sort out the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=pm;sa=search2;params=' . $context['params'], $_GET['start'], $numResults, $modSettings['search_results_per_page'], false);
+	$context['page_index'] = template_page_index($scripturl . '?action=pm;sa=search2;params=' . $context['params'], $_GET['start'], $numResults, $settings['search_results_per_page'], false);
 
 	$context['message_labels'] = array();
 	$context['message_replied'] = array();
@@ -1594,7 +1594,7 @@ function MessageSearch2()
 // Send a new message?
 function MessagePost()
 {
-	global $txt, $scripturl, $modSettings, $user_profile, $context, $options, $language, $user_info;
+	global $txt, $scripturl, $settings, $user_profile, $context, $options, $language, $user_info;
 
 	isAllowedTo('pm_send');
 
@@ -1611,7 +1611,7 @@ function MessagePost()
 	loadSource(array('Subs-Editor', 'Class-Editor'));
 
 	// Extract out the spam settings - cause it's neat.
-	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
+	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
 
 	// Set the title...
 	$context['page_title'] = $txt['new_message'];
@@ -1620,7 +1620,7 @@ function MessagePost()
 	$_REQUEST['draft_id'] = isset($_REQUEST['draft_id']) ? (int) $_REQUEST['draft_id'] : 0;
 
 	// Check whether we've gone over the limit of messages we can send per hour.
-	if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
+	if (!empty($settings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
 	{
 		// How many messages have they sent this last hour?
 		$request = wesql::query('
@@ -1637,8 +1637,8 @@ function MessagePost()
 		list ($postCount) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		if (!empty($postCount) && $postCount >= $modSettings['pm_posts_per_hour'])
-			fatal_lang_error('pm_too_many_per_hour', true, array($modSettings['pm_posts_per_hour']));
+		if (!empty($postCount) && $postCount >= $settings['pm_posts_per_hour'])
+			fatal_lang_error('pm_too_many_per_hour', true, array($settings['pm_posts_per_hour']));
 	}
 
 	// Quoting/Replying to a message?
@@ -1715,7 +1715,7 @@ function MessagePost()
 		{
 			// Remove any nested quotes and <br>...
 			$form_message = preg_replace('~<br\s*/?\>~i', "\n", $row_quoted['body']);
-			if (!empty($modSettings['removeNestedQuotes']))
+			if (!empty($settings['removeNestedQuotes']))
 				$form_message = preg_replace(array('~\n?\[quote.*?\].+?\[/quote\]\n?~is', '~^\n~', '~\[/quote\]~'), '', $form_message);
 			if (empty($row_quoted['id_member']))
 				$form_message = '[quote author=&quot;' . $row_quoted['real_name'] . '&quot;]' . "\n" . $form_message . "\n" . '[/quote]';
@@ -1895,7 +1895,7 @@ function MessagePost()
 		'name' => $txt['new_message']
 	);
 
-	$modSettings['disable_wysiwyg'] = !empty($modSettings['disable_wysiwyg']) || empty($modSettings['enableBBC']);
+	$settings['disable_wysiwyg'] = !empty($settings['disable_wysiwyg']) || empty($settings['enableBBC']);
 
 	// Now create the editor.
 	$context['postbox'] = new wedit(
@@ -1918,13 +1918,13 @@ function MessagePost()
 					'accesskey' => 'p',
 				),
 			),
-			'drafts' => !allowedTo('save_pm_draft') || empty($modSettings['masterSavePmDrafts']) ? 'none' : (!allowedTo('auto_save_pm_draft') || empty($modSettings['masterAutoSavePmDrafts']) || !empty($options['disable_auto_save']) ? 'basic_pm' : 'auto_pm'),
+			'drafts' => !allowedTo('save_pm_draft') || empty($settings['masterSavePmDrafts']) ? 'none' : (!allowedTo('auto_save_pm_draft') || empty($settings['masterAutoSavePmDrafts']) || !empty($options['disable_auto_save']) ? 'basic_pm' : 'auto_pm'),
 		)
 	);
 
 	$context['bcc_value'] = '';
 
-	$context['require_verification'] = !$user_info['is_admin'] && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'];
+	$context['require_verification'] = !$user_info['is_admin'] && !empty($settings['pm_posts_verification']) && $user_info['posts'] < $settings['pm_posts_verification'];
 	if ($context['require_verification'])
 	{
 		$verificationOptions = array(
@@ -1941,7 +1941,7 @@ function MessagePost()
 // An error in the message...
 function messagePostError($error_types, $named_recipients, $recipient_ids = array())
 {
-	global $txt, $context, $scripturl, $modSettings;
+	global $txt, $context, $scripturl, $settings;
 	global $user_info;
 
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
@@ -2082,12 +2082,12 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 					'accesskey' => 'p',
 				),
 			),
-			'drafts' => !allowedTo('save_pm_draft') || empty($modSettings['masterSavePmDrafts']) ? 'none' : (!allowedTo('auto_save_pm_draft') || empty($modSettings['masterAutoSavePmDrafts']) || !empty($options['disable_auto_save']) ? 'basic_pm' : 'auto_pm'),
+			'drafts' => !allowedTo('save_pm_draft') || empty($settings['masterSavePmDrafts']) ? 'none' : (!allowedTo('auto_save_pm_draft') || empty($settings['masterAutoSavePmDrafts']) || !empty($options['disable_auto_save']) ? 'basic_pm' : 'auto_pm'),
 		)
 	);
 
 	// Check whether we need to show the code again.
-	$context['require_verification'] = !$user_info['is_admin'] && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'];
+	$context['require_verification'] = !$user_info['is_admin'] && !empty($settings['pm_posts_verification']) && $user_info['posts'] < $settings['pm_posts_verification'];
 	if ($context['require_verification'])
 	{
 		$verificationOptions = array(
@@ -2111,7 +2111,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 function MessagePost2()
 {
 	global $txt, $context;
-	global $user_info, $modSettings, $scripturl;
+	global $user_info, $settings, $scripturl;
 
 	isAllowedTo('pm_send');
 	loadSource(array('Subs-Auth', 'Class-Editor'));
@@ -2121,10 +2121,10 @@ function MessagePost2()
 	$session_timeout = checkSession('post', '', false) != '';
 
 	// Extract out the spam settings - it saves database space!
-	list ($modSettings['max_pm_recipients'], $modSettings['pm_posts_verification'], $modSettings['pm_posts_per_hour']) = explode(',', $modSettings['pm_spam_settings']);
+	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
 
 	// Check whether we've gone over the limit of messages we can send per hour - fatal error if fails!
-	if (!empty($modSettings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
+	if (!empty($settings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
 	{
 		// How many have they sent this last hour?
 		$request = wesql::query('
@@ -2141,8 +2141,8 @@ function MessagePost2()
 		list ($postCount) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		if (!empty($postCount) && $postCount >= $modSettings['pm_posts_per_hour'])
-			fatal_lang_error('pm_too_many_per_hour', true, array($modSettings['pm_posts_per_hour']));
+		if (!empty($postCount) && $postCount >= $settings['pm_posts_per_hour'])
+			fatal_lang_error('pm_too_many_per_hour', true, array($settings['pm_posts_per_hour']));
 	}
 
 	// If we came from WYSIWYG then turn it back into BBC regardless. Make sure we tell it what item we're expecting to use.
@@ -2199,8 +2199,8 @@ function MessagePost2()
 		$post_errors[] = 'no_subject';
 	if (!isset($_REQUEST['message']) || $_REQUEST['message'] == '')
 		$post_errors[] = 'no_message';
-	elseif (!empty($modSettings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $modSettings['max_messageLength'])
-		$post_errors[] = array('long_message', $modSettings['max_messageLength']);
+	elseif (!empty($settings['max_messageLength']) && westr::strlen($_REQUEST['message']) > $settings['max_messageLength'])
+		$post_errors[] = array('long_message', $settings['max_messageLength']);
 	else
 	{
 		// Preparse the message.
@@ -2213,7 +2213,7 @@ function MessagePost2()
 	}
 
 	// Wrong verification code?
-	if (!$user_info['is_admin'] && !empty($modSettings['pm_posts_verification']) && $user_info['posts'] < $modSettings['pm_posts_verification'])
+	if (!$user_info['is_admin'] && !empty($settings['pm_posts_verification']) && $user_info['posts'] < $settings['pm_posts_verification'])
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -2266,11 +2266,11 @@ function MessagePost2()
 	}
 
 	// Before we send the PM, let's make sure we don't have an abuse of numbers.
-	elseif (!empty($modSettings['max_pm_recipients']) && count($recipientList['to']) + count($recipientList['bcc']) > $modSettings['max_pm_recipients'] && !allowedTo(array('moderate_forum', 'send_mail', 'admin_forum')))
+	elseif (!empty($settings['max_pm_recipients']) && count($recipientList['to']) + count($recipientList['bcc']) > $settings['max_pm_recipients'] && !allowedTo(array('moderate_forum', 'send_mail', 'admin_forum')))
 	{
 		$context['send_log'] = array(
 			'sent' => array(),
-			'failed' => array(sprintf($txt['pm_too_many_recipients'], $modSettings['max_pm_recipients'])),
+			'failed' => array(sprintf($txt['pm_too_many_recipients'], $settings['max_pm_recipients'])),
 		);
 		return messagePostError($post_errors, $namedRecipientList, $recipientList);
 	}
@@ -3161,7 +3161,7 @@ function MessageSettings()
 function ReportMessage()
 {
 	global $txt, $context, $scripturl;
-	global $user_info, $language, $modSettings;
+	global $user_info, $language, $settings;
 
 	// Check that this feature is even enabled!
 	if (empty($_REQUEST['pmsg']))
@@ -3282,7 +3282,7 @@ function ReportMessage()
 		while ($row = wesql::fetch_assoc($request))
 		{
 			// Need to send in the correct language!
-			$cur_language = empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile'];
+			$cur_language = empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile'];
 
 			if (!isset($messagesToSend[$cur_language]))
 			{
@@ -3316,7 +3316,7 @@ function ReportMessage()
 			sendpm($message['recipients'], $message['subject'], $message['body']);
 
 		// Give the user their own language back!
-		if (!empty($modSettings['userLanguage']))
+		if (!empty($settings['userLanguage']))
 			loadLanguage('PersonalMessage', '', false);
 
 		// Leave them with a template.
@@ -3739,7 +3739,7 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 
 function MessageDrafts()
 {
-	global $context, $memberContext, $txt, $modSettings, $user_info, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_info, $user_profile, $scripturl;
 
 	loadLanguage('PersonalMessage');
 
@@ -3804,7 +3804,7 @@ function MessageDrafts()
 	wesql::free_result($request);
 
 	$reverse = false;
-	$maxIndex = (int) $modSettings['defaultMaxMessages'];
+	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
 	$context['page_index'] = template_page_index($scripturl . '?action=pm;sa=showdrafts', $context['start'], $msgCount, $maxIndex);
@@ -3815,8 +3815,8 @@ function MessageDrafts()
 	$reverse = $_REQUEST['start'] > $msgCount / 2;
 	if ($reverse)
 	{
-		$maxIndex = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 && $msgCount > $context['start'] ? $msgCount - $context['start'] : (int) $modSettings['defaultMaxMessages'];
-		$start = $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] + 1 || $msgCount < $context['start'] + $modSettings['defaultMaxMessages'] ? 0 : $msgCount - $context['start'] - $modSettings['defaultMaxMessages'];
+		$maxIndex = $msgCount < $context['start'] + $settings['defaultMaxMessages'] + 1 && $msgCount > $context['start'] ? $msgCount - $context['start'] : (int) $settings['defaultMaxMessages'];
+		$start = $msgCount < $context['start'] + $settings['defaultMaxMessages'] + 1 || $msgCount < $context['start'] + $settings['defaultMaxMessages'] ? 0 : $msgCount - $context['start'] - $settings['defaultMaxMessages'];
 	}
 
 	// Find this user's drafts.

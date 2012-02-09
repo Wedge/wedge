@@ -13,7 +13,7 @@
 
 function template_display_posts()
 {
-	global $context, $settings, $options, $txt, $scripturl, $modSettings;
+	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	// OK, we're going to need this!
 	add_js_file('scripts/topic.js');
@@ -170,7 +170,7 @@ function template_display_posts()
 										<img src="', $attachment['href'], ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"><br>';
 				}
 				echo '
-										<a href="', $attachment['href'], '"><img src="' . $settings['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a> ';
+										<a href="', $attachment['href'], '"><img src="' . $theme['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a> ';
 
 				if (!$attachment['is_approved'] && $context['can_approve'])
 					echo '
@@ -194,7 +194,7 @@ function template_display_posts()
 								<div class="modified" id="modified_', $message['id'], '">';
 
 		// Show "Last Edit on Date by Person" if this post was edited.
-		if ($settings['show_modify'] && !empty($message['modified']['name']))
+		if ($theme['show_modify'] && !empty($message['modified']['name']))
 			echo '
 									', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '';
 
@@ -205,7 +205,7 @@ function template_display_posts()
 		if ($context['can_issue_warning'] && !$message['is_message_author'] && !$message['member']['is_guest'])
 			echo '
 								<div class="report">
-									<a href="<URL>?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $settings['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>
+									<a href="<URL>?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $theme['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>
 								</div>';
 
 		echo '
@@ -283,7 +283,7 @@ function template_display_posts()
 	if (can_ajax)
 	{
 		var oQuickModify = new QuickModify({
-			bShowModify: ', $settings['show_modify'] ? 'true' : 'false', ',
+			bShowModify: ', $theme['show_modify'] ? 'true' : 'false', ',
 			iTopicId: ' . $context['current_topic'] . ',
 			sTemplateBodyEdit: ' . JavaScriptEscape('
 				<div id="quick_edit_body_container" style="width: 90%">
@@ -305,7 +305,7 @@ function template_display_posts()
 		aIconLists.push(new IconList({
 			sBackReference: "aIconLists[" + aIconLists.length + "]",
 			sIconIdPrefix: "msg_icon_",
-			bShowModify: ', $settings['show_modify'] ? 'true' : 'false', ',
+			bShowModify: ', $theme['show_modify'] ? 'true' : 'false', ',
 			iBoardId: ' . $context['current_board'] . ',
 			iTopicId: ' . $context['current_topic'] . ',
 			sLabelIconList: "' . $txt['message_icon'] . '",
@@ -403,7 +403,7 @@ function template_display_posts()
 
 function template_userbox(&$message)
 {
-	global $context, $modSettings, $txt, $settings;
+	global $context, $settings, $txt, $theme;
 
 	echo '
 							<h4>';
@@ -433,14 +433,14 @@ function template_userbox(&$message)
 	if (!$message['member']['is_guest'])
 	{
 		// Show the post group if and only if they have no other group or the option is on, and they are in a post group.
-		if ((empty($settings['hide_post_group']) || $message['member']['group'] == '') && $message['member']['post_group'] != '')
+		if ((empty($theme['hide_post_group']) || $message['member']['group'] == '') && $message['member']['post_group'] != '')
 			echo '
 								<li class="postgroup">', $message['member']['post_group'], '</li>';
 		echo '
 								<li class="stars">', $message['member']['group_stars'], '</li>';
 
 		// Show avatars, images, etc.?
-		if (!empty($settings['show_user_images']) && empty($options['show_no_avatars']) && !empty($message['member']['avatar']['image']))
+		if (!empty($theme['show_user_images']) && empty($options['show_no_avatars']) && !empty($message['member']['avatar']['image']))
 			echo '
 								<li class="avatar">
 									<a href="<URL>?action=profile;u=', $message['member']['id'], '">
@@ -454,12 +454,12 @@ function template_userbox(&$message)
 								<li class="postcount">', $txt['member_postcount'], ': ', $message['member']['posts'], '</li>';
 
 		// Show the member's gender icon?
-		if (!empty($settings['show_gender']) && $message['member']['gender']['image'] != '' && !isset($context['disabled_fields']['gender']))
+		if (!empty($theme['show_gender']) && $message['member']['gender']['image'] != '' && !isset($context['disabled_fields']['gender']))
 			echo '
 								<li class="gender">', $txt['gender'], ': ', $message['member']['gender']['image'], '</li>';
 
 		// Show their personal text?
-		if (!empty($settings['show_blurb']) && $message['member']['blurb'] !== '')
+		if (!empty($theme['show_blurb']) && $message['member']['blurb'] !== '')
 			echo '
 								<li class="blurb">', $message['member']['blurb'], '</li>';
 
@@ -488,7 +488,7 @@ function template_userbox(&$message)
 		}
 
 		// Show the profile, website, email address, and personal message buttons.
-		if ($settings['show_profile_buttons'])
+		if ($theme['show_profile_buttons'])
 			template_profile_icons($message);
 
 		// Any custom fields for standard placement?
@@ -501,12 +501,12 @@ function template_userbox(&$message)
 		// Are we showing the warning status?
 		if ($message['member']['can_see_warning'])
 			echo '
-								<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $settings['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
+								<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
 	}
 	// Otherwise, show the guest's email.
 	elseif (!empty($message['member']['email']) && in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-								<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
+								<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
 
 	echo '
 							</ul>';
@@ -514,7 +514,7 @@ function template_userbox(&$message)
 
 function template_profile_icons(&$message)
 {
-	global $context, $settings, $txt;
+	global $context, $theme, $txt;
 
 	echo '
 								<li class="profile">
@@ -522,22 +522,22 @@ function template_profile_icons(&$message)
 	// Don't show the profile button if you're not allowed to view the profile.
 	if ($message['member']['can_view_profile'])
 		echo '
-										<li><a href="', $message['member']['href'], '">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/icons/profile_sm.gif" alt="' . $txt['view_profile'] . '" title="' . $txt['view_profile'] . '">' : $txt['view_profile'], '</a></li>';
+										<li><a href="', $message['member']['href'], '">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/icons/profile_sm.gif" alt="' . $txt['view_profile'] . '" title="' . $txt['view_profile'] . '">' : $txt['view_profile'], '</a></li>';
 
 	// Don't show an icon if they haven't specified a website.
 	if ($message['member']['website']['url'] != '' && !isset($context['disabled_fields']['website']))
 		echo '
-										<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['website'], '</a></li>';
+										<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['website'], '</a></li>';
 
 	// Don't show the email address if they want it hidden.
 	if (in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-										<li><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
+										<li><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
 
 	// Since we know this person isn't a guest, you *can* message them.
 	if ($context['can_send_pm'])
 		echo '
-										<li><a href="<URL>?action=pm;sa=send;u=', $message['member']['id'], '" title="', $message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline'], '">', $settings['use_image_buttons'] ? '<img src="' . $settings['images_url'] . '/im_' . ($message['member']['online']['is_online'] ? 'on' : 'off') . '.gif" alt="' . ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']) . '">' : ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']), '</a></li>';
+										<li><a href="<URL>?action=pm;sa=send;u=', $message['member']['id'], '" title="', $message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline'], '">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/im_' . ($message['member']['online']['is_online'] ? 'on' : 'off') . '.gif" alt="' . ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']) . '">' : ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']), '</a></li>';
 
 	// Show the IP address if you're suitably privileged.
 	if ($message['can_see_ip'] && !empty($message['member']['ip']))
@@ -545,16 +545,16 @@ function template_profile_icons(&$message)
 		// Because this seems just a touch convoluted if a single line.
 		if (!$context['can_moderate_forum'])
 			echo '
-										<li><a href="<URL>?action=help;in=see_member_ip" onclick="return reqWin(this);" class="helpc"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
+										<li><a href="<URL>?action=help;in=see_member_ip" onclick="return reqWin(this);" class="helpc"><img src="', $theme['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
 		else
 			echo '
-										<li><a href="<URL>?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $settings['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
+										<li><a href="<URL>?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $theme['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
 	}
 
 	// Maybe they want to report this post to the moderator(s)?
 	if ($context['can_report_moderator'] && !$message['is_message_author'])
 		echo '
-										<li><a href="<URL>?topic=', $context['current_topic'], '.0;action=report;msg=', $message['id'], '"><img src="', $settings['images_url'], '/report.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
+										<li><a href="<URL>?topic=', $context['current_topic'], '.0;action=report;msg=', $message['id'], '"><img src="', $theme['images_url'], '/report.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
 
 	echo '
 									</ul>
@@ -563,7 +563,7 @@ function template_profile_icons(&$message)
 
 function template_topic_poll()
 {
-	global $settings, $options, $context, $txt, $modSettings;
+	global $theme, $options, $context, $txt, $settings;
 
 	if (empty($context['is_poll']))
 		return;
@@ -587,7 +587,7 @@ function template_topic_poll()
 				$show_voters ? $txt['poll_total_voters'] . ': ' . $context['poll']['total_votes'] : '', '">
 				<div id="poll_options">
 					<h4 id="poll_question">
-						<img src="', $settings['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif" style="vertical-align: -4px">
+						<img src="', $theme['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif" style="vertical-align: -4px">
 						', $context['poll']['question'], '
 					</h4>';
 
@@ -651,7 +651,7 @@ function template_topic_poll()
 
 function template_quick_reply()
 {
-	global $options, $txt, $context, $modSettings;
+	global $options, $txt, $context, $settings;
 
 	if (!$context['can_reply'] || empty($options['display_quick_reply']))
 	{
@@ -669,7 +669,7 @@ function template_quick_reply()
 				<div id="qr_options" class="roundframe', $options['display_quick_reply'] == 2 ? '' : ' hide', '">
 					<p class="smalltext lefttext">', $txt['quick_reply_desc'], '</p>', $context['is_locked'] ? '
 					<p class="alert smalltext">' . $txt['quick_reply_warning'] . '</p>' : '', !empty($context['oldTopicError']) ? '
-					<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $modSettings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
+					<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $settings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
 					<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
 					<br>' : '', '
 					<form action="<URL>?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
@@ -812,17 +812,17 @@ function template_mod_buttons()
 
 function template_display_whoviewing()
 {
-	global $context, $txt, $settings, $modSettings;
+	global $context, $txt, $theme, $settings;
 
 	echo '
 	<section>
 		<we:title>
-			<img src="', $settings['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
+			<img src="', $theme['images_url'], '/icons/online.gif" alt="', $txt['online_users'], '">', $txt['who_title'], '
 		</we:title>
 		<p>';
 
 	// Show just numbers...?
-	if ($modSettings['display_who_viewing'] == 1)
+	if ($settings['display_who_viewing'] == 1)
 		echo count($context['view_members']), ' ', count($context['view_members']) == 1 ? $txt['who_member'] : $txt['members'];
 	// Or show the actual people viewing the topic?
 	else
@@ -837,15 +837,15 @@ function template_display_whoviewing()
 // Show statistical style information...
 function template_display_statistics()
 {
-	global $context, $txt, $settings;
+	global $context, $txt, $theme;
 
-	if (!$settings['show_stats_index'])
+	if (!$theme['show_stats_index'])
 		return;
 
 	echo '
 	<section>
 		<we:title>
-			<img src="', $settings['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '">
+			<img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '">
 			', $txt['topic_stats'], '
 		</we:title>
 		<p>

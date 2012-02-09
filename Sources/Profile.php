@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
 function ModifyProfile($post_errors = array())
 {
 	global $txt, $scripturl, $user_info, $context, $user_profile, $cur_profile;
-	global $modSettings, $memberContext, $profile_vars, $post_errors, $options;
+	global $settings, $memberContext, $profile_vars, $post_errors, $options;
 
 	// Don't reload this as we may have processed error strings.
 	if (empty($post_errors))
@@ -105,7 +105,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['showDrafts'],
 					'file' => 'Profile-View',
 					'function' => 'viewDrafts',
-					'enabled' => !empty($modSettings['masterSavePostDrafts']) && !empty($temp), // so there is at least one board this user has this permission on
+					'enabled' => !empty($settings['masterSavePostDrafts']) && !empty($temp), // so there is at least one board this user has this permission on
 					'permission' => array(
 						'own' => 'profile_view_own',
 						'any' => array(),
@@ -170,7 +170,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'viewwarning' => array(
 					'label' => $txt['profile_view_warnings'],
-					'enabled' => $cur_profile['warning'] && $context['user']['is_owner'] && !empty($modSettings['warning_show']),
+					'enabled' => $cur_profile['warning'] && $context['user']['is_owner'] && !empty($settings['warning_show']),
 					'file' => 'Profile-View',
 					'function' => 'viewWarning',
 					'permission' => array(
@@ -218,7 +218,7 @@ function ModifyProfile($post_errors = array())
 				'',
 				'skin' => array(
 					'label' => $txt['change_skin'],
-					'enabled' => !empty($modSettings['theme_allow']) || allowedTo('admin_forum'),
+					'enabled' => !empty($settings['theme_allow']) || allowedTo('admin_forum'),
 					'custom_url' => $scripturl . '?action=skin;u=' . $context['id_member'],
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
@@ -252,7 +252,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['ignoreboards'],
 					'file' => 'Profile-Modify',
 					'function' => 'ignoreboards',
-					'enabled' => !empty($modSettings['allow_ignore_boards']),
+					'enabled' => !empty($settings['allow_ignore_boards']),
 					'sc' => 'post',
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
@@ -263,7 +263,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['editBuddyIgnoreLists'],
 					'file' => 'Profile-Modify',
 					'function' => 'editBuddyIgnoreLists',
-					'enabled' => !empty($modSettings['enable_buddylist']) && $context['user']['is_owner'],
+					'enabled' => !empty($settings['enable_buddylist']) && $context['user']['is_owner'],
 					'sc' => 'post',
 					'subsections' => array(
 						'buddies' => array($txt['editBuddies']),
@@ -278,7 +278,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['groupmembership'],
 					'file' => 'Profile-Modify',
 					'function' => 'groupMembership',
-					'enabled' => !empty($modSettings['show_group_membership']) && $context['user']['is_owner'],
+					'enabled' => !empty($settings['show_group_membership']) && $context['user']['is_owner'],
 					'sc' => 'request',
 					'permission' => array(
 						'own' => array('profile_view_own'),
@@ -347,7 +347,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['subscriptions'],
 					'file' => 'Profile-Actions',
 					'function' => 'subscriptions',
-					'enabled' => !empty($modSettings['paid_enabled']),
+					'enabled' => !empty($settings['paid_enabled']),
 					'permission' => array(
 						'own' => array('profile_view_own'),
 						'any' => array('moderate_forum'),
@@ -636,13 +636,13 @@ function ModifyProfile($post_errors = array())
 			updateMemberData($memID, $profile_vars);
 
 			// What if this is the newest member?
-			if ($modSettings['latestMember'] == $memID)
+			if ($settings['latestMember'] == $memID)
 				updateStats('member');
 			elseif (isset($profile_vars['real_name']))
 				updateSettings(array('memberlist_updated' => time()));
 
 			// Anything worth logging?
-			if (!empty($context['log_changes']) && !empty($modSettings['log_enabled_profile']))
+			if (!empty($context['log_changes']) && !empty($settings['log_enabled_profile']))
 			{
 				$log_changes = array();
 				foreach ($context['log_changes'] as $k => $v)
@@ -703,7 +703,7 @@ function ModifyProfile($post_errors = array())
 // Load any custom fields for this area... no area means load all, 'summary' loads all public ones.
 function loadCustomFields($memID, $area = 'summary')
 {
-	global $context, $txt, $user_profile, $user_info, $settings, $scripturl;
+	global $context, $txt, $user_profile, $user_info, $theme, $scripturl;
 
 	// Get the right restrictions in place...
 	$where = 'active = 1';
@@ -806,8 +806,8 @@ function loadCustomFields($memID, $area = 'summary')
 		if (!empty($row['enclose']) && !empty($output_html))
 			$output_html = strtr($row['enclose'], array(
 				'{SCRIPTURL}' => $scripturl,
-				'{IMAGES_URL}' => $settings['images_url'],
-				'{DEFAULT_IMAGES_URL}' => $settings['default_images_url'],
+				'{IMAGES_URL}' => $theme['images_url'],
+				'{DEFAULT_IMAGES_URL}' => $theme['default_images_url'],
 				'{INPUT}' => $output_html,
 			));
 

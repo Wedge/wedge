@@ -346,7 +346,7 @@ function aeva_getAlbumChildren($current)
 // This function returns file path to a media, also checks security unless security_override is true
 function getMediaPath($mid, $type = 'main', $security_override = false)
 {
-	global $amSettings, $settings, $user_info;
+	global $amSettings, $theme, $user_info;
 
 	// Get the item's filename
 	$galdir = $amSettings['data_dir_path'];
@@ -412,7 +412,7 @@ function getMediaPath($mid, $type = 'main', $security_override = false)
 	}
 	else
 	{
-		$path = $type == 'icon' ? $settings['default_theme_dir'] . '/images/blank.gif' : $settings['theme_dir'] . '/images/aeva/denied.png';
+		$path = $type == 'icon' ? $theme['default_theme_dir'] . '/images/blank.gif' : $theme['theme_dir'] . '/images/aeva/denied.png';
 		$filename = 'denied.png';
 		$is_new = false;
 	}
@@ -679,8 +679,8 @@ function allowedToAccessItem($id, $is_file_id = false)
 function loadMediaSettings($gal_url = null, $load_template = false, $load_language = false)
 {
 	global
-		$user_info, $amSettings, $modSettings, $context, $txt,
-		$scripturl, $galurl, $galurl2, $settings, $amOverride;
+		$user_info, $amSettings, $settings, $context, $txt,
+		$scripturl, $galurl, $galurl2, $theme, $amOverride;
 	static $am_loaded = false;
 
 	if ($load_template)
@@ -770,7 +770,7 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 		if ($context['media_ftp']['media'] != '/' && substr($context['media_ftp']['media'], -1) == '/')
 			$context['media_ftp']['media'] = substr($context['media_ftp']['media'], 0, -1);
 	}
-	$settings['images_aeva'] = file_exists($settings['theme_dir'] . '/images/aeva') ? $settings['images_url'] . '/aeva' : $settings['default_images_url'] . '/aeva';
+	$theme['images_aeva'] = file_exists($theme['theme_dir'] . '/images/aeva') ? $theme['images_url'] . '/aeva' : $theme['default_images_url'] . '/aeva';
 
 	// $galurl got the URL to gallery for subactions, and $galurl2 got URL for gallery for main page
 	if ($gal_url == null || empty($gal_url) || $gal_url == false)
@@ -908,7 +908,7 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 // Loads the current album... Handles a great deal of security
 function aeva_loadAlbum($album_id = 0)
 {
-	global $context, $user_info, $settings, $galurl, $txt, $amSettings, $scripturl;
+	global $context, $user_info, $theme, $galurl, $txt, $amSettings, $scripturl;
 
 	// Let's see if we got anything we can get an ID from?
 	// This is gonna be complex
@@ -1624,9 +1624,9 @@ function aeva_logModAction(&$options, $return_boolean = false)
 
 function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC = false, $value = '')
 {
-	global $context, $modSettings, $txt;
+	global $context, $settings, $txt;
 
-	$modSettings['enableSpellChecking'] = false;
+	$settings['enableSpellChecking'] = false;
 
 	loadSource('Class-Editor');
 	$context['postbox'] = new wedit(
@@ -2424,17 +2424,17 @@ function aeva_emptyTmpFolder()
 
 function aeva_timeformat($log_time)
 {
-	global $user_info, $txt, $modSettings;
+	global $user_info, $txt, $settings;
 
 	aeva_loadLanguage('media_short_date_format');
 	$str = $txt['media_short_date_format'];
 
-	$time = $log_time + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600;
+	$time = $log_time + ($user_info['time_offset'] + $settings['time_offset']) * 3600;
 
 	if ($log_time < 0)
 		$log_time = 0;
 
-	if ($modSettings['todayMod'] >= 1)
+	if ($settings['todayMod'] >= 1)
 	{
 		$nowtime = forum_time();
 
@@ -2444,7 +2444,7 @@ function aeva_timeformat($log_time)
 		if ($then['yday'] == $now['yday'] && $then['year'] == $now['year'])
 			return $txt['media_today'];
 
-		if ($modSettings['todayMod'] == '2' && (($then['yday'] == $now['yday'] - 1 && $then['year'] == $now['year']) || ($now['yday'] == 0 && $then['year'] == $now['year'] - 1) && $then['mon'] == 12 && $then['mday'] == 31))
+		if ($settings['todayMod'] == '2' && (($then['yday'] == $now['yday'] - 1 && $then['year'] == $now['year']) || ($now['yday'] == 0 && $then['year'] == $now['year'] - 1) && $then['mon'] == 12 && $then['mday'] == 31))
 			return $txt['media_yesterday'];
 	}
 
@@ -2473,8 +2473,8 @@ Those functions return an array with the requested information. They are also us
 
 function aeva_protect_bbc(&$message)
 {
-	global $modSettings;
-	if (empty($modSettings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
+	global $settings;
+	if (empty($settings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
 		return;
 
 	$protect_tags = array('code', 'html', 'php', 'noembed', 'nobbc');
@@ -2486,10 +2486,10 @@ function aeva_protect_bbc(&$message)
 
 function aeva_parse_bbc(&$message, $id_msg = -1)
 {
-	global $modSettings, $context;
+	global $settings, $context;
 	if ($id_msg >= 0)
 		$context['aeva_id_msg'] = $id_msg;
-	if (isset($context['disable_media_tag']) || empty($modSettings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
+	if (isset($context['disable_media_tag']) || empty($settings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
 	{
 		unset($context['disable_media_tag']);
 		return;
@@ -2699,16 +2699,16 @@ function aeva_loadCustomFields($id_media = null, $albums = array(), $custom = ''
 
 function aeva_lockedAlbum(&$pass, &$id, &$owner)
 {
-	global $settings, $user_info, $txt;
+	global $theme, $user_info, $txt;
 
 	$name = array('', 'locked', 'unlocked');
 	$locked = empty($pass) ? 0 : ((empty($_SESSION['aeva_access']) || !in_array($id, $_SESSION['aeva_access'])) && ($owner != $user_info['id'] || $user_info['is_guest']) ? 1 : 2);
-	return ' <img src="' . $settings['images_aeva'] . '/' . $name[$locked] . '.png" title="' . ($locked ? $txt['media_passwd_' . ($locked == 2 ? 'un' : '') . 'locked'] : '') . '" class="aevera"> ';
+	return ' <img src="' . $theme['images_aeva'] . '/' . $name[$locked] . '.png" title="' . ($locked ? $txt['media_passwd_' . ($locked == 2 ? 'un' : '') . 'locked'] : '') . '" class="aevera"> ';
 }
 
 function aeva_showSubAlbums(&$alb)
 {
-	global $context, $galurl, $settings, $txt, $amSettings;
+	global $context, $galurl, $theme, $txt, $amSettings;
 
 	$ret = '';
 	$co = 0;
@@ -2738,7 +2738,7 @@ function aeva_showSubAlbums(&$alb)
 // List a specific member's album -- intended for showing in a reduced space, like a profile sidebar
 function aeva_listMemberAlbums($id_member)
 {
-	global $amSettings, $galurl, $settings, $txt, $user_info, $context;
+	global $amSettings, $galurl, $theme, $txt, $user_info, $context;
 
 	aeva_getAlbums('a.album_of = ' . $id_member, 1, true, true, '', true, true, true);
 
@@ -2767,7 +2767,7 @@ function aeva_listMemberAlbums($id_member)
 // Block for showing children albums
 function aeva_listChildren(&$albums, $skip_table = false)
 {
-	global $amSettings, $galurl, $settings, $txt, $user_info, $context;
+	global $amSettings, $galurl, $theme, $txt, $user_info, $context;
 
 	if (empty($albums))
 		return;
@@ -2798,10 +2798,10 @@ function aeva_listChildren(&$albums, $skip_table = false)
 		<td style="width: 5%" class="top right">', $album['icon']['src'], '</td>
 		<td', $i <= $cols ? ' style="width: ' . $w45 . '%"' : '', ' class="top">
 			<div class="mg_large">', $can_moderate_here ? '
-				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $settings['images_aeva'] . '/folder_edit.png" title="' . $txt['media_edit_this_item'] . '"></a>' : '',
+				<a href="' . $galurl . 'area=mya;sa=edit;in=' . $album['id'] . '"><img src="' . $theme['images_aeva'] . '/folder_edit.png" title="' . $txt['media_edit_this_item'] . '"></a>' : '',
 				!empty($album['passwd']) ? aeva_lockedAlbum($album['passwd'], $album['id'], $album['owner']['id']) : '',
 				!empty($album['featured']) ? '
-				<img src="' . $settings['images_aeva'] . '/star.gif" title="' . $txt['media_featured_album'] . '">' : '', '
+				<img src="' . $theme['images_aeva'] . '/star.gif" title="' . $txt['media_featured_album'] . '">' : '', '
 				<a href="', $galurl, 'sa=album;in=', $album['id'], '">', $album['name'], '</a>
 			</div>
 			<div>', $totals, $album['hidden'] ? ' (<span class="unbrowsable">' . $txt['media_unbrowsable'] . '</span>)' : '', '</div>', empty($album['description']) || $album['description'] === '&hellip;' ? '' : '
@@ -2838,7 +2838,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 // Block for showing item lists
 function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = false)
 {
-	global $scripturl, $txt, $galurl, $settings, $context, $amSettings, $modSettings, $user_info;
+	global $scripturl, $txt, $galurl, $theme, $context, $amSettings, $settings, $user_info;
 	static $in_page = 0;
 
 	if (empty($items))
@@ -2850,7 +2850,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 	$main_user = $in_album && !empty($context['aeva_album']['owner']['id']) ? (int) $context['aeva_album']['owner']['id'] : 0;
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
 	$icourl = '
-			<img style="width: 10px; height: 10px" src="' . $settings['images_aeva'] . '/';
+			<img style="width: 10px; height: 10px" src="' . $theme['images_aeva'] . '/';
 	$new_icon = '<div class="new_icon"></div>';
 	// If we're in an external embed, we might not have all the space we would like...
 	$ico = !empty($amSettings['icons_only']);
@@ -2865,7 +2865,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 	{
 		// If you don't want to allow item previewing via Zoomedia on album pages, replace the following line with: $is_image = false;
 		$is_image = $i['type'] == 'image' || ($i['type'] == 'embed' && preg_match('/\.(?:jpe?g?|gif|png|bmp)/i', $i['embed_url']));
-		$is_embed = !$is_image && $i['type'] == 'embed' && !empty($modSettings['embed_enabled']);
+		$is_embed = !$is_image && $i['type'] == 'embed' && !empty($settings['embed_enabled']);
 		if ($is_embed)
 		{
 			if (!function_exists('aeva_main'))
@@ -2887,7 +2887,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 				<div class="aelink">' . ($i['has_preview'] ? '
 					<a class="fullsize" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em;">&oplus;</span>' : '') . '
 					<a href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '">' . $txt['media_gotolink'] . '</a>' . (!empty($i['comments']) ? '
-					<img src="' . $settings['images_aeva'] . '/comment.gif"> ' . $i['comments'] : '') . '
+					<img src="' . $theme['images_aeva'] . '/comment.gif"> ' . $i['comments'] : '') . '
 				</div>
 				' . $i['title'] . (empty($i['desc']) ? '' : '
 				<div class="smalltext mg_desc">
@@ -3428,10 +3428,10 @@ function aeva_increaseSettings($setting, $add = 1)
 
 function aeva_theme_url($file)
 {
-	global $settings;
+	global $theme;
 
-	return file_exists($settings['default_theme_dir'] . '/aeva/' . $file) ?
-		$settings['default_theme_url'] . '/aeva/' . $file : $settings['theme_url'] . '/aeva/' . $file;
+	return file_exists($theme['default_theme_dir'] . '/aeva/' . $file) ?
+		$theme['default_theme_url'] . '/aeva/' . $file : $theme['theme_url'] . '/aeva/' . $file;
 }
 
 function aeva_profile($id, $name, $func = 'aeva')
@@ -3547,7 +3547,7 @@ function aeva_markAllSeen()
 
 function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 {
-	global $context, $txt, $modSettings, $amSettings, $scripturl;
+	global $context, $txt, $settings, $amSettings, $scripturl;
 
 	if (isset($context['mg_headers_sent']))
 		return;

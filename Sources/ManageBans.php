@@ -358,7 +358,7 @@ function list_getNumBans()
 
 function BanEdit()
 {
-	global $txt, $modSettings, $context, $ban_request, $scripturl;
+	global $txt, $settings, $context, $ban_request, $scripturl;
 
 	$_REQUEST['bg'] = empty($_REQUEST['bg']) ? 0 : (int) $_REQUEST['bg'];
 
@@ -932,7 +932,7 @@ function BanEdit()
 				$context['ban']['name'] = $context['ban_suggestions']['member']['name'];
 
 				// Would be nice if we could also ban the hostname. Make sure we pass the normal IP address to the lookup function, rather than our magic format.
-				if ($context['ban_suggestions']['main_ip'] != INVALID_IP && empty($modSettings['disableHostnameLookup']))
+				if ($context['ban_suggestions']['main_ip'] != INVALID_IP && empty($settings['disableHostnameLookup']))
 					$context['ban_suggestions']['hostname'] = host_from_ip(format_ip($context['ban_suggestions']['main_ip']));
 
 				// Find some additional IP's used by this member.
@@ -1098,7 +1098,7 @@ function BanEditTrigger()
 
 function BanBrowseTriggers()
 {
-	global $modSettings, $context, $scripturl, $txt, $settings;
+	global $settings, $context, $scripturl, $txt, $theme;
 
 	if (!empty($_POST['remove_triggers']) && !empty($_POST['remove']) && is_array($_POST['remove']))
 	{
@@ -1129,7 +1129,7 @@ function BanBrowseTriggers()
 	$listOptions = array(
 		'id' => 'ban_trigger_list',
 		'title' => $txt['ban_trigger_browse'],
-		'items_per_page' => $modSettings['defaultMaxMessages'],
+		'items_per_page' => $settings['defaultMaxMessages'],
 		'base_href' => $scripturl . '?action=admin;area=ban;sa=browse;entity=' . $context['selected_entity'],
 		'default_sort_col' => 'banned_entity',
 		'no_items_label' => $txt['ban_no_triggers'],
@@ -1205,7 +1205,7 @@ function BanBrowseTriggers()
 		'additional_rows' => array(
 			array(
 				'position' => 'above_column_headers',
-				'value' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=ip">' . ($context['selected_entity'] == 'ip' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['ip'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=hostname">' . ($context['selected_entity'] == 'hostname' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['hostname'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=email">' . ($context['selected_entity'] == 'email' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['email'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=member">' . ($context['selected_entity'] == 'member' ? '<img src="' . $settings['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['username'] . '</a>',
+				'value' => '<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=ip">' . ($context['selected_entity'] == 'ip' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['ip'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=hostname">' . ($context['selected_entity'] == 'hostname' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['hostname'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=email">' . ($context['selected_entity'] == 'email' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['email'] . '</a>&nbsp;|&nbsp;<a href="' . $scripturl . '?action=admin;area=ban;sa=browse;entity=member">' . ($context['selected_entity'] == 'member' ? '<img src="' . $theme['images_url'] . '/selected.gif" alt="&gt;"> ' : '') . $txt['username'] . '</a>',
 			),
 			array(
 				'position' => 'below_table_data',

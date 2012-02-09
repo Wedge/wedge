@@ -32,7 +32,7 @@ if (!defined('WEDGE'))
  */
 function pretty_synchronize_topic_urls()
 {
-	global $modSettings;
+	global $settings;
 
 	// Clear the URL cache
 	wesql::query('
@@ -66,7 +66,7 @@ function pretty_synchronize_topic_urls()
 	foreach ($topicData as $row)
 	{
 		// A topic in the recycle board deserves only a blank URL
-		$pretty_text = $modSettings['recycle_enable'] && $row['id_board'] == $modSettings['recycle_board'] ? '' : trimpercent(substr(pretty_generate_url($row['subject']), 0, 80));
+		$pretty_text = $settings['recycle_enable'] && $row['id_board'] == $settings['recycle_board'] ? '' : trimpercent(substr(pretty_generate_url($row['subject']), 0, 80));
 		// Can't be empty, can't be a number and can't be the same as another
 		if ($pretty_text == '' || is_numeric($pretty_text))
 		{
@@ -99,10 +99,10 @@ function pretty_synchronize_topic_urls()
  */
 function pretty_filter_actions($urls)
 {
-	global $boardurl, $modSettings;
+	global $boardurl, $settings;
 
 	$action_pattern = '~(.*)\baction=([^;]+)~S';
-	$action_replacement = $boardurl . '/' . (isset($modSettings['pretty_prefix_action']) ? $modSettings['pretty_prefix_action'] : 'do/') . '$2/$1';
+	$action_replacement = $boardurl . '/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '$2/$1';
 	$cat_pattern = '~(.*)\bcategory=([^;]+)~S';
 	$cat_replacement = $boardurl . '/category/$2/$1';
 
@@ -124,7 +124,7 @@ function pretty_filter_actions($urls)
  */
 function pretty_filter_topics($urls)
 {
-	global $boardurl, $modSettings, $context;
+	global $boardurl, $settings, $context;
 
 	$pattern = '~(.*[?;&])\btopic=([.a-zA-Z0-9$%d]+)(.*)~S';
 	$query_data = array();
@@ -208,7 +208,7 @@ function pretty_filter_topics($urls)
 			{
 				$pretty_text = trimpercent(substr(pretty_generate_url($row['subject']), 0, 80));
 				// A topic in the recycle board doesn't deserve a proper URL
-				if (($modSettings['recycle_enable'] && $row['id_board'] == $modSettings['recycle_board']) || $pretty_text == '')
+				if (($settings['recycle_enable'] && $row['id_board'] == $settings['recycle_board']) || $pretty_text == '')
 					// Use 'tID_TOPIC' as a pretty url
 					$pretty_text = 't' . $row['id_topic'];
 				// No duplicates and no numerical URLs - that would just confuse everyone!
@@ -318,11 +318,11 @@ function pretty_filter_boards($urls)
  */
 function pretty_filter_profiles($urls)
 {
-	global $boardurl, $modSettings;
+	global $boardurl, $settings;
 
 	$pattern = '~(.*)\baction=profile(;u=([0-9]+))?(.*)~S';
 	$query_data = array();
-	$prefix = '/' . (isset($modSettings['pretty_prefix_profile']) ? $modSettings['pretty_prefix_profile'] : 'profile/');
+	$prefix = '/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/');
 	$me_postfix = substr($prefix, -1) === '/' ? '' : '/';
 	foreach ($urls as &$url)
 	{

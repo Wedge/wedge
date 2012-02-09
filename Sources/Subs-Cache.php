@@ -55,7 +55,7 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $modSettings, $footer_coding, $settings, $cachedir, $boardurl;
+	global $context, $settings, $footer_coding, $theme, $cachedir, $boardurl;
 	static $done_files = array();
 
 	if (!is_array($files))
@@ -84,25 +84,25 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$id = '';
 	$latest_date = 0;
 	$is_default_theme = true;
-	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
 
 	foreach ($files as &$file)
 	{
-		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($settings['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
+		$target = $not_default && file_exists($theme['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($theme['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
 		if (!$target)
 			continue;
 
 		$is_default_theme &= $target === 'default_theme_';
-		$add = $settings[$target . 'dir'] . '/' . $file;
+		$add = $theme[$target . 'dir'] . '/' . $file;
 		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
 		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
 		$latest_date = max($latest_date, filemtime($add));
 	}
 
-	$id = $is_default_theme ? $id : substr(strrchr($settings['theme_dir'], '/'), 1) . '-' . $id;
-	$id = !empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
+	$id = $is_default_theme ? $id : substr(strrchr($theme['theme_dir'], '/'), 1) . '-' . $id;
+	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
-	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
 	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
@@ -180,9 +180,9 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 		return;
 
 	$id = substr(strrchr($context['plugins_dir'][$plugin_name], '/'), 1) . '-' . $id;
-	$id = !empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
+	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
-	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
 	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
@@ -230,7 +230,7 @@ function add_css()
  */
 function add_css_file($original_files = array(), $add_link = false, $is_main = false)
 {
-	global $settings, $modSettings, $context, $db_show_debug, $cachedir, $boardurl;
+	global $theme, $settings, $context, $db_show_debug, $cachedir, $boardurl;
 
 	// Delete all duplicates and ensure $original_files is an array.
 	$files = $original_files = array_keys(array_flip((array) $original_files));
@@ -245,7 +245,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		foreach ($context['css_suffixes'] as $gen)
 			$files[] = $file . '.' . $gen;
 
-	$fallback_folder = $settings[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/' . reset($context['css_folders']) . '/';
+	$fallback_folder = $theme[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/' . reset($context['css_folders']) . '/';
 	$found_files = array();
 
 	foreach ($context['skin_folders'] as $folder)
@@ -262,7 +262,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 				$css[] = $add;
 				$found_files[] = $file;
 				if ($db_show_debug === true)
-					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$target . 'url']) . ')';
+					$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
 				$latest_date = max($latest_date, filemtime($add));
 			}
 		}
@@ -282,17 +282,17 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			{
 				$css[] = $add;
 				if ($db_show_debug === true)
-					$context['debug']['sheets'][] = $file . ' (' . basename($settings[$context['skin_uses_default_theme'] ? 'default_theme_url' : 'theme_url']) . ')';
+					$context['debug']['sheets'][] = $file . ' (' . basename($theme[$context['skin_uses_default_theme'] ? 'default_theme_url' : 'theme_url']) . ')';
 				$latest_date = max($latest_date, filemtime($add));
 			}
 		}
 	}
 
 	$folder = end($context['css_folders']);
-	$id = $context['skin_uses_default_theme'] || (!$is_main && $settings['theme_dir'] === 'default') ? '' : substr(strrchr($settings['theme_dir'], '/'), 1) . '-';
+	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? '' : substr(strrchr($theme['theme_dir'], '/'), 1) . '-';
 	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
 
-	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
 
 	$id .= '-' . implode('-', array_diff($original_files, array('index', 'sections', 'custom')));
@@ -312,7 +312,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	while ($has_dupes) // Probably faster than a preg_replace!
 		$id = str_replace('--', '-', $id, $has_dupes);
 
-	if (!empty($modSettings['obfuscate_filenames']))
+	if (!empty($settings['obfuscate_filenames']))
 		$id = md5(substr($id, 0, -1));
 
 	$full_name = $id . '-' . $latest_date . $ext;
@@ -336,7 +336,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false)
 {
-	global $context, $modSettings, $settings, $cachedir, $boardurl, $pluginsdir;
+	global $context, $settings, $theme, $cachedir, $boardurl, $pluginsdir;
 
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
@@ -385,8 +385,8 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	if (isset($context['user']) && $context['user']['language'] !== 'english')
 		$id .= '-' . $context['user']['language'];
 
-	$id = (!empty($modSettings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) : $id) . '-';
-	$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$id = (!empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) : $id) . '-';
+	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
 
 	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
@@ -408,7 +408,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
  */
 function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext, $plugin_path = '')
 {
-	global $settings, $modSettings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
+	global $theme, $settings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	foreach (glob($cachedir . '/' . $id . '*' . $ext) as $del)
@@ -442,15 +442,15 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
-	$images_url = '..' . str_replace($boardurl, '', $settings['images_url']);
-	$language_folder = isset($context['user']) && file_exists($settings['theme_dir'] . '/images/' . $context['user']['language']) ? $context['user']['language'] : 'english';
+	$images_url = '..' . str_replace($boardurl, '', $theme['images_url']);
+	$language_folder = isset($context['user']) && file_exists($theme['theme_dir'] . '/images/' . $context['user']['language']) ? $context['user']['language'] : 'english';
 	$css_vars = array(
-		'$language_dir' => $settings['theme_dir'] . '/images/' . $language_folder,
+		'$language_dir' => $theme['theme_dir'] . '/images/' . $language_folder,
 		'$language' => $images_url . '/' . $language_folder,
-		'$images_dir' => $settings['theme_dir'] . '/images',
+		'$images_dir' => $theme['theme_dir'] . '/images',
 		'$images' => $images_url,
-		'$theme_dir' => $settings['theme_dir'],
-		'$theme' => '..' . str_replace($boardurl, '', $settings['theme_url']),
+		'$theme_dir' => $theme['theme_dir'],
+		'$theme' => '..' . str_replace($boardurl, '', $theme['theme_url']),
 		'$root' => '../',
 	);
 	if (!empty($plugin_path))
@@ -550,7 +550,7 @@ function wedge_fix_browser_css($matches)
 // Dynamic function to cache language flags into index.css
 function dynamic_language_flags($match)
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	if (empty($context['languages']) || count($context['languages']) < 2)
 		return;
@@ -571,7 +571,7 @@ function dynamic_language_flags($match)
 // Dynamic function to cache admin menu icons into admenu.css
 function dynamic_admin_menu_icons($match)
 {
-	global $context, $modSettings, $admin_areas, $ina;
+	global $context, $settings, $admin_areas, $ina;
 
 	function array_search_key($needle, &$arr)
 	{
@@ -620,17 +620,17 @@ function dynamic_admin_menu_icons($match)
  */
 function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext, $full_path = false)
 {
-	global $settings, $modSettings, $comments, $cachedir;
+	global $theme, $settings, $comments, $cachedir;
 
 	$final = '';
-	$dir = $full_path ? '' : $settings['theme_dir'] . '/';
+	$dir = $full_path ? '' : $theme['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	foreach (glob($cachedir . '/' . $id. '*' . $ext) as $del)
 		if (!strpos($del, $latest_date))
 			@unlink($del);
 
-	$minify = empty($modSettings['minify']) ? 'none' : $modSettings['minify'];
+	$minify = empty($settings['minify']) ? 'none' : $settings['minify'];
 
 	foreach ($js as $file)
 	{
@@ -748,11 +748,11 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
  */
 function wedge_cache_smileys($set, $smileys)
 {
-	global $cachedir, $context, $modSettings, $browser, $boardurl;
+	global $cachedir, $context, $settings, $browser, $boardurl;
 
 	$final = '';
-	$path = $modSettings['smileys_dir'] . '/' . $set . '/';
-	$url  = '..' . str_replace($boardurl, '', $modSettings['smileys_url']) . '/' . $set . '/';
+	$path = $settings['smileys_dir'] . '/' . $set . '/';
+	$url  = '..' . str_replace($boardurl, '', $settings['smileys_url']) . '/' . $set . '/';
 	$agent = $browser['agent'];
 	updateSettings(array('smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $agent . '-' . $set => $context['smiley_now']));
 
@@ -840,19 +840,19 @@ function wedge_get_extension($file)
  */
 function wedge_get_skin_options()
 {
-	global $settings, $context, $scripturl;
+	global $theme, $context, $scripturl;
 
 	$is_default_theme = true;
-	$not_default = $settings['theme_dir'] !== $settings['default_theme_dir'];
+	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
 
 	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
 	$context['skin_folders'] = array();
 
 	foreach ($context['css_folders'] as &$folder)
 	{
-		$target = $not_default && file_exists($settings['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
+		$target = $not_default && file_exists($theme['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
 		$is_default_theme &= $target === 'default_theme_';
-		$fold = $settings[$target . 'dir'] . '/' . $folder . '/';
+		$fold = $theme[$target . 'dir'] . '/' . $folder . '/';
 
 		if (file_exists($fold . 'skin.xml'))
 		{
@@ -912,7 +912,7 @@ function wedge_get_skin_options()
 					// it'll find data in the current theme, or the default theme), or '$here/something.js', where it'll look in the skin folder.
 					if (strpos($match[2], '$here') !== false)
 						foreach ($includes as &$scr)
-							$scr = str_replace('$here', str_replace($settings['theme_dir'] . '/', '', $folder), $scr);
+							$scr = str_replace('$here', str_replace($theme['theme_dir'] . '/', '', $folder), $scr);
 					add_js_file($includes);
 				}
 				add_js(rtrim($match[3], "\t"));
@@ -987,9 +987,9 @@ function clean_cache($extensions = 'php', $filter = '')
  */
 function cache_quick_get($key, $file, $function, $params, $level = 1)
 {
-	global $modSettings;
+	global $settings;
 
-	if (empty($modSettings['cache_enable']) || $modSettings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time()))
+	if (empty($settings['cache_enable']) || $settings['cache_enable'] < $level || !is_array($cache_block = cache_get_data($key, 3600)) || (!empty($cache_block['refresh_eval']) && eval($cache_block['refresh_eval'])) || (!empty($cache_block['expires']) && $cache_block['expires'] < time()))
 	{
 		if (is_array($file))
 			loadPluginSource($file[0], $file[1]);
@@ -998,7 +998,7 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
 
 		$cache_block = call_user_func_array($function, $params);
 
-		if (!empty($modSettings['cache_enable']) && $modSettings['cache_enable'] >= $level)
+		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= $level)
 			cache_put_data($key, $cache_block, $cache_block['expires'] - time());
 	}
 
@@ -1028,10 +1028,10 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  */
 function cache_put_data($key, $val, $ttl = 120)
 {
-	global $boardurl, $sourcedir, $modSettings, $memcached, $cache_type;
+	global $boardurl, $sourcedir, $settings, $memcached, $cache_type;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
-	if (empty($modSettings['cache_enable']) && !empty($modSettings))
+	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
 
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
@@ -1126,10 +1126,10 @@ function cache_put_data($key, $val, $ttl = 120)
  */
 function cache_get_data($key, $ttl = 120)
 {
-	global $boardurl, $sourcedir, $modSettings, $memcached, $cache_type;
+	global $boardurl, $sourcedir, $settings, $memcached, $cache_type;
 	global $cache_hits, $cache_count, $db_show_debug, $cachedir;
 
-	if (empty($modSettings['cache_enable']) && !empty($modSettings))
+	if (empty($settings['cache_enable']) && !empty($settings))
 		return;
 
 	$cache_count = isset($cache_count) ? $cache_count + 1 : 1;
@@ -1184,12 +1184,12 @@ function cache_get_data($key, $ttl = 120)
 
 function get_cache_type()
 {
-	global $cache_type, $modSettings;
+	global $cache_type, $settings;
 
 	$cache_type = 'file';
 
 	// Okay, let's go for it memcached!
-	if (isset($modSettings['cache_memcached']) && function_exists('memcache_get') && function_exists('memcache_set') && trim($modSettings['cache_memcached']) !== '')
+	if (isset($settings['cache_memcached']) && function_exists('memcache_get') && function_exists('memcache_set') && trim($settings['cache_memcached']) !== '')
 		$cache_type = 'memcached';
 	// eAccelerator.
 	elseif (function_exists('eaccelerator_get') && function_exists('eaccelerator_put'))
@@ -1208,7 +1208,7 @@ function get_cache_type()
 /**
  * Attempt to connect to Memcache server for retrieving cached items.
  *
- * This function acts to attempt to connect (or persistently connect, if persistent connections are enabled) to a memcached instance, looking up the server details from $modSettings['cache_memcached'].
+ * This function acts to attempt to connect (or persistently connect, if persistent connections are enabled) to a memcached instance, looking up the server details from $settings['cache_memcached'].
  *
  * If connection is successful, the global $memcached will be a resource holding the connection or will be false if not successful. The function will attempt to call itself in a recursive fashion if there are more attempts remaining.
  *
@@ -1216,9 +1216,9 @@ function get_cache_type()
  */
 function get_memcached_server($level = 3)
 {
-	global $modSettings, $memcached, $db_persist;
+	global $settings, $memcached, $db_persist;
 
-	$servers = explode(',', $modSettings['cache_memcached']);
+	$servers = explode(',', $settings['cache_memcached']);
 	$server = explode(':', trim($servers[array_rand($servers)]));
 
 	// Don't try more times than we have servers!

@@ -61,7 +61,7 @@ function RemindMe()
 // Pick a reminder type.
 function RemindPick()
 {
-	global $context, $txt, $scripturl, $user_info, $webmaster_email, $language, $modSettings;
+	global $context, $txt, $scripturl, $user_info, $webmaster_email, $language, $settings;
 
 	checkSession();
 
@@ -141,7 +141,7 @@ function RemindPick()
 			'MEMBERNAME' => $row['member_name'],
 		);
 
-		$emaildata = loadEmailTemplate('forgot_password', $replacements, empty($row['lngfile']) || empty($modSettings['userLanguage']) ? $language : $row['lngfile']);
+		$emaildata = loadEmailTemplate('forgot_password', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
 		$context['description'] = $txt['reminder_sent'];
 
 		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
@@ -191,7 +191,7 @@ function setPassword()
 
 function setPassword2()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt, $settings;
 
 	checkSession();
 
@@ -238,7 +238,7 @@ function setPassword2()
 	if ($passwordError != null)
 	{
 		if ($passwordError == 'short')
-			$txt['profile_error_password_short'] = sprintf($txt['profile_error_password_short'], empty($modSettings['password_strength']) ? 4 : 8);
+			$txt['profile_error_password_short'] = sprintf($txt['profile_error_password_short'], empty($settings['password_strength']) ? 4 : 8);
 
 		fatal_lang_error('profile_error_password_' . $passwordError, false);
 	}
@@ -315,7 +315,7 @@ function SecretAnswerInput()
 
 function SecretAnswer2()
 {
-	global $txt, $context, $modSettings;
+	global $txt, $context, $settings;
 
 	checkSession();
 

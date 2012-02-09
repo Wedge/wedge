@@ -95,7 +95,7 @@ function Poll()
 // Allow the user to vote.
 function Vote()
 {
-	global $topic, $txt, $user_info, $modSettings;
+	global $topic, $txt, $user_info, $settings;
 
 	// Make sure you can vote.
 	isAllowedTo('poll_vote');
@@ -276,7 +276,7 @@ function Vote()
 		);
 
 		loadSource('Subs-Auth');
-		$cookie_url = url_parts(!empty($modSettings['localCookies']), !empty($modSettings['globalCookies']));
+		$cookie_url = url_parts(!empty($settings['localCookies']), !empty($settings['globalCookies']));
 		setcookie('guest_poll_vote', $_COOKIE['guest_poll_vote'], time() + 2500000, $cookie_url[1], $cookie_url[0], 0, true);
 	}
 
@@ -616,7 +616,7 @@ function EditPoll()
 function EditPoll2()
 {
 	global $txt, $topic, $board, $context;
-	global $modSettings, $user_info;
+	global $settings, $user_info;
 
 	// Sneaking off, are we?
 	if (empty($_POST))

@@ -29,9 +29,9 @@ if (!defined('WEDGE'))
 
 function getMessageIcons($board_id)
 {
-	global $modSettings, $context, $txt, $settings;
+	global $settings, $context, $txt, $theme;
 
-	if (empty($modSettings['messageIcons_enable']))
+	if (empty($settings['messageIcons_enable']))
 	{
 		loadLanguage('Post');
 
@@ -52,7 +52,7 @@ function getMessageIcons($board_id)
 
 		foreach ($icons as $k => $dummy)
 		{
-			$icons[$k]['url'] = $settings['images_url'] . '/post/' . $dummy['value'] . '.gif';
+			$icons[$k]['url'] = $theme['images_url'] . '/post/' . $dummy['value'] . '.gif';
 			$icons[$k]['is_last'] = false;
 		}
 	}
@@ -85,7 +85,7 @@ function getMessageIcons($board_id)
 			$icons[$icon['filename']] = array(
 				'value' => $icon['filename'],
 				'name' => $icon['title'],
-				'url' => $settings[file_exists($settings['theme_dir'] . '/images/post/' . $icon['filename'] . '.gif') ? 'images_url' : 'default_images_url'] . '/post/' . $icon['filename'] . '.gif',
+				'url' => $theme[file_exists($theme['theme_dir'] . '/images/post/' . $icon['filename'] . '.gif') ? 'images_url' : 'default_images_url'] . '/post/' . $icon['filename'] . '.gif',
 				'is_last' => false,
 			);
 		}
@@ -97,7 +97,7 @@ function getMessageIcons($board_id)
 // Create a anti-bot verification control?
 function create_control_verification(&$verificationOptions, $do_test = false)
 {
-	global $txt, $modSettings, $options, $context, $user_info, $scripturl;
+	global $txt, $settings, $options, $context, $user_info, $scripturl;
 
 	// First verification means we need to set up some bits...
 	if (empty($context['controls']['verification']))
@@ -106,7 +106,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		loadTemplate('GenericControls');
 
 		// Some javascript ma'am?
-		if (!empty($verificationOptions['override_visual']) || (!empty($modSettings['use_captcha_images']) && !isset($verificationOptions['override_visual'])))
+		if (!empty($verificationOptions['override_visual']) || (!empty($settings['use_captcha_images']) && !isset($verificationOptions['override_visual'])))
 			add_js_file('scripts/captcha.js');
 
 		// Skip I, J, L, O, Q, S and Z.
@@ -121,8 +121,8 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	if ($isNew)
 		$context['controls']['verification'][$verificationOptions['id']] = array(
 			'id' => $verificationOptions['id'],
-			'show_visual' => !empty($verificationOptions['override_visual']) || (!empty($modSettings['use_captcha_images']) && !isset($verificationOptions['override_visual'])),
-			'number_questions' => isset($verificationOptions['override_qs']) ? $verificationOptions['override_qs'] : (!empty($modSettings['qa_verification_number']) ? $modSettings['qa_verification_number'] : 0),
+			'show_visual' => !empty($verificationOptions['override_visual']) || (!empty($settings['use_captcha_images']) && !isset($verificationOptions['override_visual'])),
+			'number_questions' => isset($verificationOptions['override_qs']) ? $verificationOptions['override_qs'] : (!empty($settings['qa_verification_number']) ? $settings['qa_verification_number'] : 0),
 			'max_errors' => isset($verificationOptions['max_errors']) ? $verificationOptions['max_errors'] : 3,
 			'image_href' => $scripturl . '?action=verificationcode;vid=' . $verificationOptions['id'] . ';rand=' . md5(mt_rand()),
 			'text_value' => '',
@@ -155,9 +155,9 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		return true;
 
 	// If we want questions do we have a cache of all the IDs?
-	if (!empty($thisVerification['number_questions']) && empty($modSettings['question_id_cache']))
+	if (!empty($thisVerification['number_questions']) && empty($settings['question_id_cache']))
 	{
-		if (($modSettings['question_id_cache'] = cache_get_data('verificationQuestionIds', 300)) == null)
+		if (($settings['question_id_cache'] = cache_get_data('verificationQuestionIds', 300)) == null)
 		{
 			$request = wesql::query('
 				SELECT id_comment
@@ -167,13 +167,13 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 					'ver_test' => 'ver_test',
 				)
 			);
-			$modSettings['question_id_cache'] = array();
+			$settings['question_id_cache'] = array();
 			while ($row = wesql::fetch_assoc($request))
-				$modSettings['question_id_cache'][] = $row['id_comment'];
+				$settings['question_id_cache'][] = $row['id_comment'];
 			wesql::free_result($request);
 
-			if (!empty($modSettings['cache_enable']))
-				cache_put_data('verificationQuestionIds', $modSettings['question_id_cache'], 300);
+			if (!empty($settings['cache_enable']))
+				cache_put_data('verificationQuestionIds', $settings['question_id_cache'], 300);
 		}
 	}
 
@@ -296,10 +296,10 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			// Pick some random IDs
 			$questionIDs = array();
 			if ($thisVerification['number_questions'] == 1)
-				$questionIDs[] = $modSettings['question_id_cache'][array_rand($modSettings['question_id_cache'], $thisVerification['number_questions'])];
+				$questionIDs[] = $settings['question_id_cache'][array_rand($settings['question_id_cache'], $thisVerification['number_questions'])];
 			else
-				foreach (array_rand($modSettings['question_id_cache'], $thisVerification['number_questions']) as $index)
-					$questionIDs[] = $modSettings['question_id_cache'][$index];
+				foreach (array_rand($settings['question_id_cache'], $thisVerification['number_questions']) as $index)
+					$questionIDs[] = $settings['question_id_cache'][$index];
 		}
 
 		if (!empty($thisVerification['other_vv']))

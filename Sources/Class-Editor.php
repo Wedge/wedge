@@ -25,7 +25,7 @@ class wedit
 
 	public function __construct($editorOptions)
 	{
-		global $txt, $modSettings, $options, $context, $settings, $user_info, $scripturl;
+		global $txt, $settings, $options, $context, $theme, $user_info, $scripturl;
 
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
@@ -39,7 +39,7 @@ class wedit
 			'id' => $editorOptions['id'],
 			'value' => $editorOptions['value'],
 			'rich_value' => wedit::bbc_to_html($editorOptions['value']),
-			'rich_active' => empty($modSettings['disable_wysiwyg']) && (!empty($options['wysiwyg_default']) || !empty($editorOptions['force_rich']) || !empty($_REQUEST[$editorOptions['id'] . '_mode'])),
+			'rich_active' => empty($settings['disable_wysiwyg']) && (!empty($options['wysiwyg_default']) || !empty($editorOptions['force_rich']) || !empty($_REQUEST[$editorOptions['id'] . '_mode'])),
 			'disable_smiley_box' => !empty($editorOptions['disable_smiley_box']),
 			'columns' => isset($editorOptions['columns']) ? $editorOptions['columns'] : 60,
 			'rows' => isset($editorOptions['rows']) ? $editorOptions['rows'] : 15,
@@ -62,7 +62,7 @@ class wedit
 			loadLanguage('Post');
 			add_css_file('editor', true);
 
-			$settings['smileys_url'] = $modSettings['smileys_url'] . '/' . $user_info['smiley_set'];
+			$theme['smileys_url'] = $settings['smileys_url'] . '/' . $user_info['smiley_set'];
 			add_js('
 	var oEditorStrings = {
 		wont_work: ' . JavaScriptEscape($txt['rich_edit_wont_work']) . ',
@@ -78,7 +78,7 @@ class wedit
 				'scripts/post.js'
 			));
 
-			$context['show_spellchecking'] = !empty($modSettings['enableSpellChecking']) && function_exists('pspell_new');
+			$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])
 			{
 				add_js_file('scripts/spellcheck.js');
@@ -125,7 +125,7 @@ class wedit
 
 	public static function bbc_to_html($text)
 	{
-		global $modSettings, $settings;
+		global $settings, $theme;
 
 		// Turn line breaks back into br's.
 		$text = strtr($text, array("\r" => '', "\n" => '<br>'));
@@ -169,14 +169,14 @@ class wedit
 		$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
 
 		// Parse smileys into something browsable.
-		$text = preg_replace('~(?:\s|&nbsp;)?<i class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</i>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley $1" src="' . $settings['images_url'] . '/blank.gif" onresizestart="return false;">\'', $text);
+		$text = preg_replace('~(?:\s|&nbsp;)?<i class="smiley ([^<>]+?)"[^<>]*?>([^<]*)</i>~e', '\'<img alt="\' . htmlspecialchars(\'$2\') . \'" class="smiley $1" src="' . $theme['images_url'] . '/blank.gif" onresizestart="return false;">\'', $text);
 
 		return $text;
 	}
 
 	public static function html_to_bbc($text)
 	{
-		global $modSettings, $scripturl, $context;
+		global $settings, $scripturl, $context;
 
 		// Replace newlines with spaces, as that's how browsers usually interpret them.
 		$text = preg_replace("~\s*[\r\n]+\s*~", ' ', $text);
@@ -929,7 +929,7 @@ class wedit
 	// This is an important yet frustrating function - it attempts to clean up illegal BBC caused by browsers like Opera which don't obey the rules!!!
 	public static function legalise_bbc($text)
 	{
-		global $modSettings;
+		global $settings;
 
 		// Don't care about the texts that are too short.
 		if (strlen($text) < 3)
@@ -943,10 +943,10 @@ class wedit
 		$active_tags = array();
 
 		// A list of tags that's disabled by the admin.
-		$disabled = empty($modSettings['disabledBBC']) ? array() : array_flip(explode(',', strtolower($modSettings['disabledBBC'])));
+		$disabled = empty($settings['disabledBBC']) ? array() : array_flip(explode(',', strtolower($settings['disabledBBC'])));
 
 		// Add flash if it's disabled as embedded tag.
-		if (empty($modSettings['enableEmbeddedFlash']))
+		if (empty($settings['enableEmbeddedFlash']))
 			$disabled['flash'] = true;
 
 		// Get a list of all the tags that are not disabled.
@@ -1318,7 +1318,7 @@ class wedit
 
 	public function LoadBBC()
 	{
-		global $modSettings, $txt, $settings;
+		global $settings, $txt, $theme;
 
 		if ($this->bbc !== null)
 			return;
@@ -1522,7 +1522,7 @@ class wedit
 		call_hook('bbc_buttons', array(&$context['bbc_tags']));
 
 		// Show the toggle?
-		if (empty($modSettings['disable_wysiwyg']))
+		if (empty($settings['disable_wysiwyg']))
 			array_push(
 				$this->bbc[count($this->bbc) - 1],
 				array(),
@@ -1545,13 +1545,13 @@ class wedit
 			$this->bbc[$row][count($tagRow) - 1]['isLast'] = true;
 
 		// Set a flag for later in the template
-		$this->show_bbc = !empty($modSettings['enableBBC']);
+		$this->show_bbc = !empty($settings['enableBBC']);
 
 		// Deal with disabled tags
 		$disabled_tags = array();
-		if (!empty($modSettings['disabledBBC']))
-			$disabled_tags = explode(',', $modSettings['disabledBBC']);
-		if (empty($modSettings['enableEmbeddedFlash']))
+		if (!empty($settings['disabledBBC']))
+			$disabled_tags = explode(',', $settings['disabledBBC']);
+		if (empty($settings['enableEmbeddedFlash']))
 			$disabled_tags[] = 'flash';
 
 		$this->disabled_tags = array();
@@ -1566,7 +1566,7 @@ class wedit
 
 	public function LoadSmileys()
 	{
-		global $modSettings, $user_info, $txt;
+		global $settings, $user_info, $txt;
 
 		if ($this->smileys !== null)
 			return;
@@ -1577,7 +1577,7 @@ class wedit
 		);
 
 		// Load smileys - don't bother to run a query if we're not using the database's ones anyhow.
-		if (empty($modSettings['smiley_enable']) && $user_info['smiley_set'] != 'none')
+		if (empty($settings['smiley_enable']) && $user_info['smiley_set'] != 'none')
 		{
 			$this->smileys['postform'][] = array(
 				'smileys' => array(
@@ -1752,7 +1752,7 @@ class wedit
 	// Parses some bbc before sending into the database...
 	public static function preparsecode(&$message, $previewing = false, &$post_errors = null)
 	{
-		global $user_info, $modSettings, $context;
+		global $user_info, $settings, $context;
 
 		// This line makes all languages *theoretically* work even with the wrong charset ;)
 		$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
@@ -1832,7 +1832,7 @@ class wedit
 				}
 
 				// Let's look at the time tags...
-				$parts[$i] = preg_replace('~\[time(?:=(absolute))*\](.+?)\[/time\]~ie', '\'[time]\' . (is_numeric(\'$2\') || @strtotime(\'$2\') == 0 ? \'$2\' : strtotime(\'$2\') - (\'$1\' == \'absolute\' ? 0 : (($modSettings[\'time_offset\'] + $user_info[\'time_offset\']) * 3600))) . \'[/time]\'', $parts[$i]);
+				$parts[$i] = preg_replace('~\[time(?:=(absolute))*\](.+?)\[/time\]~ie', '\'[time]\' . (is_numeric(\'$2\') || @strtotime(\'$2\') == 0 ? \'$2\' : strtotime(\'$2\') - (\'$1\' == \'absolute\' ? 0 : (($settings[\'time_offset\'] + $user_info[\'time_offset\']) * 3600))) . \'[/time]\'', $parts[$i]);
 
 				// Change the color specific tags to [color=the color].
 				$parts[$i] = preg_replace('~\[(black|blue|green|red|white)\]~', '[color=$1]', $parts[$i]);		// First do the opening tags.
@@ -1989,7 +1989,7 @@ class wedit
 	// Fix any URLs posted - ie. remove 'javascript:'.
 	public static function fixTags(&$message)
 	{
-		global $modSettings;
+		global $settings;
 
 		// WARNING: Editing what follows can cause large security holes in your forum.
 		// Edit only if you are sure you know what you are doing.
@@ -2063,7 +2063,7 @@ class wedit
 		$message = preg_replace('~(\[img.*?\])(.+?)\[/img\]~eis', '\'$1\' . preg_replace(\'~action(=|%3d)(?!dlattach)~i\', \'action-\', \'$2\') . \'[/img]\'', $message);
 
 		// Limit the size of images posted?
-		if (!empty($modSettings['max_image_width']) || !empty($modSettings['max_image_height']))
+		if (!empty($settings['max_image_width']) || !empty($settings['max_image_height']))
 		{
 			// Find all the img tags - with or without width and height.
 			preg_match_all('~\[img(\s+width=\d+)?(\s+height=\d+)?(\s+width=\d+)?\](.+?)\[/img\]~is', $message, $matches, PREG_PATTERN_ORDER);
@@ -2098,21 +2098,21 @@ class wedit
 				}
 
 				// If the width and height are fine, just continue along...
-				if ($desired_width <= $modSettings['max_image_width'] && $desired_height <= $modSettings['max_image_height'])
+				if ($desired_width <= $settings['max_image_width'] && $desired_height <= $settings['max_image_height'])
 					continue;
 
 				// Too bad, it's too wide.  Make it as wide as the maximum.
-				if ($desired_width > $modSettings['max_image_width'] && !empty($modSettings['max_image_width']))
+				if ($desired_width > $settings['max_image_width'] && !empty($settings['max_image_width']))
 				{
-					$desired_height = (int) (($modSettings['max_image_width'] * $desired_height) / $desired_width);
-					$desired_width = $modSettings['max_image_width'];
+					$desired_height = (int) (($settings['max_image_width'] * $desired_height) / $desired_width);
+					$desired_width = $settings['max_image_width'];
 				}
 
 				// Now check the height, as well.  Might have to scale twice, even...
-				if ($desired_height > $modSettings['max_image_height'] && !empty($modSettings['max_image_height']))
+				if ($desired_height > $settings['max_image_height'] && !empty($settings['max_image_height']))
 				{
-					$desired_width = (int) (($modSettings['max_image_height'] * $desired_width) / $desired_height);
-					$desired_height = $modSettings['max_image_height'];
+					$desired_width = (int) (($settings['max_image_height'] * $desired_width) / $desired_height);
+					$desired_height = $settings['max_image_height'];
 				}
 
 				$replaces[$matches[0][$match]] = '[img' . (!empty($desired_width) ? ' width=' . $desired_width : '') . (!empty($desired_height) ? ' height=' . $desired_height : '') . ']' . $matches[4][$match] . '[/img]';
@@ -2421,7 +2421,7 @@ class wedit
 
 	public function outputEditor()
 	{
-		global $context, $settings, $options, $txt, $modSettings, $scripturl, $user_info, $boarddir, $boardurl, $smiley_css_done;
+		global $context, $theme, $options, $txt, $settings, $scripturl, $user_info, $boarddir, $boardurl, $smiley_css_done;
 
 		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? 'smileyBox_' . $this->id : $this->editorOptions['custom_smiley_div'];
 		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? 'bbcBox_' . $this->id : $this->editorOptions['custom_bbc_div'];
@@ -2440,7 +2440,7 @@ class wedit
 			add_js('
 	$("#', $this->id, '").bind("select click keyup change", function () { this.caretPos = document.selection.createRange().duplicate(); });');
 
-		$has_error = isset($context['post_error']) && (isset($context['post_error']['no_message']) || in_array(array('long_message', $modSettings['max_messageLength']), $context['post_error']));
+		$has_error = isset($context['post_error']) && (isset($context['post_error']['no_message']) || in_array(array('long_message', $settings['max_messageLength']), $context['post_error']));
 		echo '
 		<div class="writer">
 			<div>
@@ -2454,7 +2454,7 @@ class wedit
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
 		{
-			$can_gzip = !empty($modSettings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+			$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 			$context['smiley_gzip'] = $can_gzip;
 			$context['smiley_ext'] = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
 			$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'];
@@ -2464,7 +2464,7 @@ class wedit
 			// Retrieve the current smiley cache's URL. If not available, attempt to regenerate it.
 			while (empty($exists) && $max++ < 3)
 			{
-				$context['smiley_now'] = empty($modSettings[$var_name]) ? time() : $modSettings[$var_name];
+				$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
 				$filename = '/cache/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
 				$exists = file_exists($boarddir . $filename);
 				if (!$exists)
@@ -2535,7 +2535,7 @@ class wedit
 						$context['footer_js'] .= '
 				[' .
 					'\'button\', ' . (empty($this->disabled_tags[$tag['code']]) ? '1, ' : '0, ') . (!is_array($tag['image']) ?
-					JavaScriptEscape($settings['images_url'] . '/bbc/' . $tag['image'] . '.gif') . ', ' :
+					JavaScriptEscape($theme['images_url'] . '/bbc/' . $tag['image'] . '.gif') . ', ' :
 					'[' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . '], ') .
 					JavaScriptEscape($tag['code']) . ', ' .
 					JavaScriptEscape($tag['before']) . ', ' .
@@ -2610,7 +2610,7 @@ class wedit
 		sEditor: ' . JavaScriptEscape($this->id) . ',
 		sType: ' . JavaScriptEscape($this->editorOptions['drafts']) . ',
 		sLastNote: \'draft_lastautosave\',
-		iFreq: ', (empty($modSettings['masterAutoSaveDraftsDelay']) ? 30000 : $modSettings['masterAutoSaveDraftsDelay'] * 1000), ',
+		iFreq: ', (empty($settings['masterAutoSaveDraftsDelay']) ? 30000 : $settings['masterAutoSaveDraftsDelay'] * 1000), ',
 		sRemove: ', JavaScriptEscape($txt['remove_draft']), '
 	});');
 
@@ -2634,7 +2634,7 @@ class wedit
 		bWysiwyg: true' : '') . ',
 		sText: ' . JavaScriptEscape($this->rich_active ? $this->rich_value : '') . ',
 		sEditWidth: ' . JavaScriptEscape($this->width) . ',
-		sEditHeight: ' . JavaScriptEscape($this->height) . (empty($modSettings['disable_wysiwyg']) ? '' : ',
+		sEditHeight: ' . JavaScriptEscape($this->height) . (empty($settings['disable_wysiwyg']) ? '' : ',
 		bRichEditOff: true') . ',
 		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
 		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . ',

@@ -13,11 +13,11 @@
 
 function template_main()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<we:cat>
-			<img src="', $settings['images_url'], '/email_sm.gif">
+			<img src="', $theme['images_url'], '/email_sm.gif">
 			', $txt['notify'], '
 		</we:cat>
 		<div class="roundframe centertext">
@@ -30,11 +30,11 @@ function template_main()
 
 function template_notify_board()
 {
-	global $context, $settings, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
 		<we:cat>
-			<img src="', $settings['images_url'], '/email_sm.gif">
+			<img src="', $theme['images_url'], '/email_sm.gif">
 			', $txt['notify'], '
 		</we:cat>
 		<div class="roundframe centertext">

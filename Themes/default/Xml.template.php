@@ -134,7 +134,7 @@ function template_post()
 
 function template_stats()
 {
-	global $context, $modSettings;
+	global $context, $settings;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>';
@@ -145,7 +145,7 @@ function template_stats()
 	<month id="', $month['date']['year'], $month['date']['month'], '">';
 			foreach ($month['days'] as $day)
 				echo '
-		<day date="', $day['year'], '-', $day['month'], '-', $day['day'], '" new_topics="', $day['new_topics'], '" new_posts="', $day['new_posts'], '" new_members="', $day['new_members'], '" most_members_online="', $day['most_members_online'], '"', empty($modSettings['hitStats']) ? '' : ' hits="' . $day['hits'] . '"', ' />';
+		<day date="', $day['year'], '-', $day['month'], '-', $day['day'], '" new_topics="', $day['new_topics'], '" new_posts="', $day['new_posts'], '" new_members="', $day['new_members'], '" most_members_online="', $day['most_members_online'], '"', empty($settings['hitStats']) ? '' : ' hits="' . $day['hits'] . '"', ' />';
 			echo '
 	</month>';
 		}
@@ -258,11 +258,11 @@ function template_results()
 
 function template_jump_to()
 {
-	global $context, $scripturl, $modSettings;
+	global $context, $scripturl, $settings;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>';
-	$url = !empty($modSettings['pretty_enable_filters']) ? $scripturl . '?board=' : '';
+	$url = !empty($settings['pretty_enable_filters']) ? $scripturl . '?board=' : '';
 	foreach ($context['jump_to'] as $category)
 	{
 		echo '

@@ -14,7 +14,7 @@
 // Displays a sortable listing of all members registered on the forum.
 function template_main()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
@@ -53,7 +53,7 @@ function template_main()
 		elseif ($column['selected'])
 			echo '
 					<th scope="col" class="nowrap', isset($column['class']) ? ' ' . $column['class'] : '', '" style="width: auto"' . (isset($column['colspan']) ? ' colspan="' . $column['colspan'] . '"' : '') . '>
-						<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $settings['images_url'] . '/sort_' . $context['sort_direction'] . '.gif"></a></th>';
+						<a href="' . $column['href'] . '" rel="nofollow">' . $column['label'] . ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif"></a></th>';
 		// This is just some column... show the link and be done with it.
 		else
 			echo '
@@ -73,14 +73,14 @@ function template_main()
 			echo '
 				<tr class="windowbg center"', empty($member['sort_letter']) ? '' : ' id="letter' . $member['sort_letter'] . '"', '>
 					<td class="windowbg2">
-						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', $settings['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '">' : $member['online']['label'], $context['can_send_pm'] ? '</a>' : '', '
+						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', $theme['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '">' : $member['online']['label'], $context['can_send_pm'] ? '</a>' : '', '
 					</td>
 					<td class="left">', $member['link'], '</td>
-					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
+					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
 
 		if (!isset($context['disabled_fields']['website']))
 			echo '
-					<td>', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . $settings['images_url'] . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '"></a>' : '', '</td>';
+					<td>', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . $theme['images_url'] . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '"></a>' : '', '</td>';
 
 		// Group and date.
 		echo '
@@ -139,7 +139,7 @@ function template_main()
 // A page allowing people to search the member list.
 function template_search()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $theme, $options, $scripturl, $txt;
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
@@ -151,8 +151,8 @@ function template_search()
 	echo '
 	<form action="', $scripturl, '?action=mlist;sa=search" method="post" accept-charset="UTF-8">
 		<div id="memberlist">
-			<we:cat>', !empty($settings['use_buttons']) ? '
-				<img src="' . $settings['images_url'] . '/buttons/search.gif">' : '', '
+			<we:cat>', !empty($theme['use_buttons']) ? '
+				<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', '
 				', $txt['mlist_search'], '
 			</we:cat>
 			<div class="pagesection">',

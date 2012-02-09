@@ -39,7 +39,7 @@ define('WEDGE_NO_LOG', 1);
  */
 function Dlattach()
 {
-	global $txt, $modSettings, $user_info, $scripturl, $context, $topic;
+	global $txt, $settings, $user_info, $scripturl, $context, $topic;
 
 	// Some defaults that we need.
 	$context['no_last_modified'] = true;
@@ -110,7 +110,7 @@ function Dlattach()
 
 	// This is done to clear any output that was made before now. Remember, at this point, we are normally using compressed output so unless the result is textual and under 4MB, make sure gzhandler is OFF.
 	ob_end_clean();
-	if (!empty($modSettings['enableCompressedOutput']) && @filesize($filename) <= 4194304 && in_array($file_ext, array('txt', 'html', 'htm', 'js', 'doc', 'pdf', 'docx', 'rtf', 'css', 'php', 'log', 'xml', 'sql', 'c', 'java')))
+	if (!empty($settings['enableCompressedOutput']) && @filesize($filename) <= 4194304 && in_array($file_ext, array('txt', 'html', 'htm', 'js', 'doc', 'pdf', 'docx', 'rtf', 'css', 'php', 'log', 'xml', 'sql', 'c', 'java')))
 		@ob_start('ob_gzhandler');
 	else
 	{
@@ -212,14 +212,14 @@ function Dlattach()
 	else
 		header('Cache-Control: max-age=' . (525600 * 60) . ', private');
 
-	if (empty($modSettings['enableCompressedOutput']) || filesize($filename) > 4194304)
+	if (empty($settings['enableCompressedOutput']) || filesize($filename) > 4194304)
 		header('Content-Length: ' . filesize($filename));
 
 	// Try to buy some time...
 	@set_time_limit(600);
 
 	// Recode line endings for text files, if enabled.
-	if (!empty($modSettings['attachmentRecodeLineEndings']) && !isset($_REQUEST['image']) && in_array($file_ext, array('txt', 'css', 'htm', 'html', 'php', 'xml')))
+	if (!empty($settings['attachmentRecodeLineEndings']) && !isset($_REQUEST['image']) && in_array($file_ext, array('txt', 'css', 'htm', 'html', 'php', 'xml')))
 	{
 		if (strpos($_SERVER['HTTP_USER_AGENT'], 'Windows') !== false)
 			$callback = create_function('$buffer', 'return preg_replace(\'~[\r]?\n~\', "\r\n", $buffer);');

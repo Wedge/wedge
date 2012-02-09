@@ -385,7 +385,7 @@ function PluginReadme()
 
 function EnablePlugin()
 {
-	global $context, $pluginsdir, $modSettings;
+	global $context, $pluginsdir, $settings;
 
 	checkSession('request');
 
@@ -490,7 +490,7 @@ function EnablePlugin()
 	// Add all the other hooks available
 	foreach ($context['enabled_plugins'] as $plugin)
 	{
-		$plugin = unserialize($modSettings['plugin_' . $plugin]);
+		$plugin = unserialize($settings['plugin_' . $plugin]);
 		foreach ($plugin['provides'] as $hook_type => $hooks)
 			foreach ($hooks as $hook)
 				$hooks_available[$hook_type][] = $hook;
@@ -705,7 +705,7 @@ function EnablePlugin()
 			$setting_name = (string) $setting['name'];
 			$setting_default = (string) $setting['default'];
 			// Add it to the list to be updated if we haven't already got this one, and it's not empty, as updateSettings won't set actually-empty ones.
-			if (!empty($setting_name) && $setting_default != '' && !isset($modSettings[$setting_name]))
+			if (!empty($setting_name) && $setting_default != '' && !isset($settings[$setting_name]))
 				$new_settings[$setting_name] = $setting_default;
 		}
 
@@ -1030,7 +1030,7 @@ function EnablePlugin()
 		foreach ($details as $hooked_details)
 			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|plugin' . $hooked_details['priority'];
 
-	$enabled_plugins = !empty($modSettings['enabled_plugins']) ? explode(',', $modSettings['enabled_plugins']) : array();
+	$enabled_plugins = !empty($settings['enabled_plugins']) ? explode(',', $settings['enabled_plugins']) : array();
 	$enabled_plugins[] = $_GET['plugin'];
 	updateSettings(
 		array(
@@ -1045,7 +1045,7 @@ function EnablePlugin()
 
 function DisablePlugin()
 {
-	global $context, $pluginsdir, $modSettings;
+	global $context, $pluginsdir, $settings;
 
 	checkSession('request');
 
@@ -1302,7 +1302,7 @@ function executePluginScript($type, $file)
 			fatal_lang_error('fatal_install_' . $type . '_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
 
 		// This is just here as reference for what is available.
-		global $txt, $boarddir, $sourcedir, $modSettings, $context, $settings, $pluginsdir;
+		global $txt, $boarddir, $sourcedir, $settings, $context, $theme, $pluginsdir;
 		require($full_path);
 	}
 }

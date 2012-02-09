@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
  */
 function Boards()
 {
-	global $txt, $user_info, $modSettings, $context, $settings, $scripturl, $options;
+	global $txt, $user_info, $settings, $context, $theme, $scripturl, $options;
 
 	// For wireless, we use the Wireless template...
 	if (WIRELESS)
@@ -76,7 +76,7 @@ function Boards()
 		'parent_id' => 0,
 		'category' => isset($_GET['category']) ? (int) $_GET['category'] : 0,
 		'set_latest_post' => true,
-		'countChildPosts' => !empty($modSettings['countChildPosts']),
+		'countChildPosts' => !empty($settings['countChildPosts']),
 	);
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
@@ -92,22 +92,22 @@ function Boards()
 	$context['show_buddies'] = !empty($user_info['buddies']);
 
 	// Are we showing all membergroups on the board index?
-	if (!empty($settings['show_group_key']))
+	if (!empty($theme['show_group_key']))
 		$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups', 'cache_getMembergroupList', array());
 
 	// Track most online statistics? (Subs-MembersOnline.php)
-	if (!empty($modSettings['trackStats']))
+	if (!empty($settings['trackStats']))
 		trackStatsUsersOnline($context['num_guests'] + $context['num_spiders'] + $context['num_users_online']);
 
-	$settings['show_member_bar'] &= allowedTo('view_mlist');
-	$context['show_stats'] = allowedTo('view_stats') && !empty($modSettings['trackStats']);
+	$theme['show_member_bar'] &= allowedTo('view_mlist');
+	$context['show_stats'] = allowedTo('view_stats') && !empty($settings['trackStats']);
 	$context['show_member_list'] = allowedTo('view_mlist');
-	$context['show_who'] = allowedTo('who_view') && !empty($modSettings['who_enabled']);
+	$context['show_who'] = allowedTo('who_view') && !empty($settings['who_enabled']);
 
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['board_index'];
 
-	if (empty($modSettings['display_flags']))
-		$modSettings['display_flags'] = 'none';
+	if (empty($settings['display_flags']))
+		$settings['display_flags'] = 'none';
 
 	call_hook('info_center');
 }
