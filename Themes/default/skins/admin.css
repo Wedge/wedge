@@ -122,10 +122,8 @@ ol.search_results
 #admincenter hr
 	margin: 10px 0
 
-.title
-	margin-bottom: 3px
-	form
-		font-size: 80%
+.title form
+	font-size: 80%
 
 .windowbg ol
 	margin-top, margin-bottom: 0

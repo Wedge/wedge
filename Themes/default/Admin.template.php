@@ -1249,20 +1249,6 @@ function template_core_features()
 	}');
 
 	echo '
-	<div id="admincenter">';
-
-	if ($context['is_new_install'])
-	{
-		echo '
-		<we:cat>
-			', $txt['core_settings_welcome_msg'], '
-		</we:cat>
-		<div class="information">
-			', $txt['core_settings_welcome_msg_desc'], '
-		</div>';
-	}
-
-	echo '
 		<form action="', $scripturl, '?action=admin;area=corefeatures" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['core_settings_title'], '
@@ -1300,9 +1286,7 @@ function template_core_features()
 				<input type="hidden" value="0" name="js_worked" id="js_worked">
 				<input type="submit" value="', $txt['save'], '" name="save" class="submit">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	// Turn on the pretty javascript if we can!
 	add_js_inline('

@@ -175,8 +175,8 @@ function template_generic_tabs()
 				break;
 			}
 
-	// If there are no "tabs" set up or we don't want to show them, don't waste time here.
-	if (empty($tabs) || !empty($context['force_disable_tabs']))
+	// If there are no "tabs" set up, don't waste time here.
+	if (empty($tabs))
 		return;
 
 	// Which menu are we rendering?

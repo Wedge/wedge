@@ -247,8 +247,10 @@ function createMenu($menuData, $menuOptions = array())
 	foreach ($menu_context['sections'] as &$section)
 	{
 		$areas =& $section['areas'];
+
 		while (reset($areas) == '' && array_shift($areas) !== null);
 		while (end($areas) == '' && array_pop($areas) !== null);
+
 		$ex = false;
 		foreach ($areas as $id => &$area)
 		{
@@ -269,6 +271,9 @@ function createMenu($menuData, $menuOptions = array())
 				unset($areas[$id]);
 			$ex = is_numeric($id);
 		}
+
+		while (reset($areas) == '' && array_shift($areas) !== null);
+		while (end($areas) == '' && array_pop($areas) !== null);
 	}
 
 	// What type of menu is this?

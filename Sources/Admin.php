@@ -276,15 +276,14 @@ function Admin()
 				),
 				'aeva_settings' => array(
 					'label' => $txt['media_admin_labels_settings'],
-					'enabled' => !empty($modSettings['media_enabled']),
 					'icon' => 'corefeatures.gif',
 					'bigicon' => 'media_settings.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
-						'config' => array($txt['media_admin_settings_config']),
-						'meta' => array($txt['media_admin_settings_meta']),
-						'layout' => array($txt['media_admin_settings_layout']),
+						'config' => array($txt['media_admin_settings_config'], ),
+						'meta' => array($txt['media_admin_settings_meta'], 'enabled' => !empty($modSettings['media_enabled'])),
+						'layout' => array($txt['media_admin_settings_layout'], 'enabled' => !empty($modSettings['media_enabled'])),
 					),
 				),
 				'aeva_albums' => array(

@@ -290,6 +290,8 @@ function aeva_admin_settings()
 	$context['current_area'] = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('meta', 'layout')) ? $_REQUEST['sa'] : 'config';
 
 	$settings = array(
+		'media_enabled' => array('yesno', 'config'),
+
 		'title_main' => array('title', 'config'),
 		'welcome' => array('textbox', 'config'),
 		'data_dir_path' => array('text', 'config'),
@@ -403,6 +405,15 @@ function aeva_admin_settings()
 
 	$txt['media_admin_settings_my_docs_subtext'] = sprintf($txt['media_admin_settings_my_docs_subtext'], implode(', ', explode(',', $default_docs)));
 
+	// We need to hide all options except the master setting if:
+	// - visiting the page while the master setting is off,
+	// - loading the page while the master setting is on but we just requested it to be disabled.
+	// Please note that the area's other tabs (Metadata and Layout) won't be shown or hidden in the process,
+	// because this would need to be set at the admin menu level, which was earlier. We can all live with that.
+
+	if ($context['current_area'] === 'config' && empty($_POST['media_enabled']) && (isset($_POST['submit_aeva']) || empty($modSettings['media_enabled'])))
+		$settings = array('media_enabled' => array('yesno', 'config'));
+
 	// Submitting?
 	if (isset($_POST['submit_aeva']))
 	{
@@ -443,7 +454,11 @@ function aeva_admin_settings()
 				}
 			}
 			else
+			{
 				aeva_updateSettings($setting, $new_value, true);
+				if ($setting === 'media_enabled')
+					updateSettings(array($setting => $new_value));
+			}
 		}
 		if ($amSettings['enable_cache'])
 			cache_put_data('aeva_settings', $amSettings, 60);

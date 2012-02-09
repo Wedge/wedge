@@ -179,11 +179,6 @@ function ModifyCoreFeatures($return_config = false)
 		save_callback	- Function called on save, takes state as parameter.
 	*/
 	$core_features = array(
-		// Media area
-		'm' => array(
-			'url' => 'action=admin;area=media',
-			'setting' => 'media_enabled',
-		),
 		// Post Moderation
 		'pm' => array(
 			'url' => 'action=admin;area=permissions;sa=postmod',
@@ -263,13 +258,6 @@ function ModifyCoreFeatures($return_config = false)
 			'enabled' => isset($feature['setting']) && !empty($modSettings[$feature['setting']]),
 			'url' => !empty($feature['url']) ? $scripturl . '?' . $feature['url'] . ';' . $context['session_query'] : '',
 		);
-
-	// Are they a new user?
-	$context['is_new_install'] = !isset($modSettings['media_enabled']);
-	$context['force_disable_tabs'] = $context['is_new_install'];
-	// Don't show them this twice!
-	if ($context['is_new_install'])
-		updateSettings(array('media_enabled' => 1));
 
 	wetem::load('core_features');
 	$context['page_title'] = $txt['core_settings_title'];
