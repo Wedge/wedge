@@ -183,6 +183,7 @@ function ManageModHome()
 		wesql::free_result($query);
 	}
 }
+
 /*
 <rules>
 	<rule for="posts">
@@ -201,6 +202,7 @@ function ManageModHome()
 function ManageModApprove()
 {
 	global $context;
+
 	checkSession();
 	approveAllData();
 	$context['approved_all'] = true;

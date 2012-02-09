@@ -1574,7 +1574,6 @@ function editPluginRepo()
 
 function uploadPlugin()
 {
-
 }
 
 function knownHooks()
@@ -1604,7 +1603,7 @@ function knownHooks()
 			'admin_areas',
 			'admin_search',
 			'modify_modifications',
-			'core_features',
+			'moderation_rules',
 			'plugin_settings',
 			'output_error',
 			'spam_settings',
@@ -1642,6 +1641,7 @@ function knownHooks()
 			'move_topics',
 			'remove_topics',
 			'merge_topics',
+			'post_mod_actions',
 			'post_form_pre',
 			'post_form',
 			'post_form_load_draft',

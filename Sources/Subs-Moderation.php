@@ -23,7 +23,9 @@ if (!defined('WEDGE'))
 function getBaseRuleVars($admin = false)
 {
 	global $user_info, $board;
+
 	/* Valid types are:
+
 		id - a single value from the system that will be compared to an inclusive or exclusive list, e.g. this board id might be matched to an arbitrary list of boards where a rule applies
 		multi-id - multiple values, rule will match if any of the ids matches
 		range - a numeric value from the system that can be compared to numerically, e.g. user's post count
@@ -206,11 +208,9 @@ function checkPostModeration($subject, $body)
 					}
 				}
 			}
+			// Don't apply an action if there are no rules to back it up.
 			else
-			{
-				// Don't apply an action if there are no rules to back it up.
 				$applyAction = false;
-			}
 
 			// Did we match on any of that?
 			if ($applyAction)

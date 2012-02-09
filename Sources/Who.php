@@ -573,7 +573,7 @@ function determineActions($urls, $preferred_prefix = false)
 		wesql::free_result($result);
 	}
 
-	// While the above whos_online hook is good for more complex cases than action=x;sa=y, it's not particularly efficient if you're dealing with multiple lookups and so on. Thus the bulk hook too.	
+	// While the above whos_online hook is good for more complex cases than action=x;sa=y, it's not particularly efficient if you're dealing with multiple lookups and so on. Thus the bulk hook too.
 	call_hook('whos_online_complete', array(&$urls, &$data));
 
 	if (!is_array($urls))
