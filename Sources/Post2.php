@@ -466,7 +466,8 @@ function Post2()
 	// OK, we've made all the checks we're going to make here. Time to engage any hooks. Most of this stuff is in $_POST, so very little to pass.
 	call_hook('post_post_validate', array(&$post_errors, &$posterIsGuest));
 
-	if (!empty($modSettings['postmod_rules']))
+	$doModeration = array();
+	if (!empty($settings['postmod_rules']))
 	{
 		loadSource('Subs-Moderation');
 		$doModeration = checkPostModeration($_POST['subject'], $_POST['message']);

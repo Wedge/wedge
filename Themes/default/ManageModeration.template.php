@@ -91,7 +91,10 @@ function template_modfilter_home()
 						break;
 					case 'subject':
 					case 'body':
-						$print_criteria[] = $txt['modfilter_cond_' . $criteria['name'] . '_regex'] . ' ' . htmlspecialchars($criteria['value']);
+						if (empty($criteria['apply']))
+							$print_criteria[] = $txt['modfilter_cond_' . $criteria['name'] . '_regex'] . ' ' . htmlspecialchars($criteria['value']);
+						else
+							$print_criteria[] = $txt['modfilter_cond_' . $criteria['name'] . '_' . $criteria['apply']] . ' ' . htmlspecialchars($criteria['value']) . ' ' . $txt['modfilter_case_' . ($criteria['case-ins'] ? 'insensitive' : 'sensitive')];
 						break;
 					case 'groups':
 						$str = isset($criteria['id']) ? $txt['modfilter_cond_groups_in'] : $txt['modfilter_cond_groups_ex'];

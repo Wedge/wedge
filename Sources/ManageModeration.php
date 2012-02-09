@@ -92,7 +92,18 @@ function ManageModHome()
 						case 'regex':
 							$regex = (string) $rule;
 							if (strlen($regex) > 0)
+							{
 								$this_rule['value'] = $regex;
+								if (!empty($rule['apply']))
+								{
+									$apply = (string) $rule['apply'];
+									if (in_array($apply, array('begins', 'ends', 'contains', 'matches')))
+									{
+										$this_rule['apply'] = $apply;
+										$this_rule['case-ins'] = !empty($rule['case-ins']) && (string) $rule['case-ins'] == 'yes';
+									}
+								}
+							}
 							break;
 					}
 

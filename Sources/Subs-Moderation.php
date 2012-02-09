@@ -152,7 +152,6 @@ function checkPostModeration($subject, $body)
 									foreach ($ids as $k => $v)
 										$ids[$k] = (int) $v;
 								$this_rule = count(array_intersect($ids, $known_variables[$rule_name]['current'])) > 0 || !empty($known_variables[$rule_name]['admin_override']);
-								trigger_error('Matching id for ' . $rule_name . ', matching ' . print_r($ids, true) . ' against ' . print_r($known_variables[$rule_name]['current'], true) . ', matched: ' . count(array_intersect($ids, $known_variables[$rule_name]['current'])) . ', admin override ' . (!empty($known_variables[$rule_name]['admin_override']) ? 'yes' : 'no'));
 							}
 							elseif (isset($rule['except-id']))
 							{
@@ -182,7 +181,27 @@ function checkPostModeration($subject, $body)
 							break;
 
 						case 'regex':
-							$applyAction &= preg_match((string) $rule, $known_variables[$rule_name]['current']);
+							$regexp = (string) $rule;
+							if (!empty($rule['apply']))
+							{
+								$modifiers = !empty($rule['case-ins']) && (string) $rule['case-ins'] == 'yes' ? 'i' : '';
+								switch ((string) $rule['apply'])
+								{
+									case 'begins':
+										$regexp = '~^' . preg_quote($regexp, '~') . '~' . $modifiers;
+										break;
+									case 'ends':
+										$regexp = '~' . preg_quote($regexp, '~') . '$~' . $modifiers;
+										break;
+									case 'contains':
+										$regexp = '~' . preg_quote($regexp, '~') . '~' . $modifiers;
+										break;
+									case 'matches':
+										$regexp = '~^' . preg_quote($regexp, '~') . '~' . $modifiers;
+										break;
+								}
+							}
+							$applyAction &= preg_match($regexp, $known_variables[$rule_name]['current']);
 							break;
 					}
 				}
