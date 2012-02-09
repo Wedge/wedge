@@ -101,7 +101,6 @@ function ModifyPermissions()
 		'modify2' => array('ModifyMembergroup2', 'manage_permissions'),
 		'quick' => array('SetQuickGroups', 'manage_permissions'),
 		'quickboard' => array('SetQuickBoards', 'manage_permissions'),
-		'postmod' => array('ModifyPostModeration', 'manage_permissions'),
 		'profiles' => array('EditPermissionProfiles', 'manage_permissions'),
 		'settings' => array('GeneralPermissionSettings', 'admin_forum'),
 	);
@@ -123,9 +122,6 @@ function ModifyPermissions()
 			),
 			'profiles' => array(
 				'description' => $txt['permissions_profiles_desc'],
-			),
-			'postmod' => array(
-				'description' => $txt['permissions_post_moderation_desc'],
 			),
 			'settings' => array(
 				'description' => $txt['permission_settings_desc'],
@@ -2242,174 +2238,6 @@ function loadIllegalGuestPermissions()
 	);
 
 	call_hook('illegal_guest_perms');
-}
-
-// Present a nice way of applying post moderation.
-function ModifyPostModeration()
-{
-	global $context, $txt, $settings;
-
-	// Just in case.
-	checkSession('get');
-
-	$context['page_title'] = $txt['permissions_post_moderation'];
-	wetem::load('postmod_permissions');
-	$context['current_profile'] = isset($_REQUEST['pid']) ? (int) $_REQUEST['pid'] : 1;
-
-	// Load all the permission profiles.
-	loadPermissionProfiles();
-
-	// Mappings, our key => array(can_do_moderated, can_do_all)
-	$mappings = array(
-		'new_topic' => array('post_new', 'post_unapproved_topics'),
-		'replies_own' => array('post_reply_own', 'post_unapproved_replies_own'),
-		'replies_any' => array('post_reply_any', 'post_unapproved_replies_any'),
-		'attachment' => array('post_attachment', 'post_unapproved_attachments'),
-	);
-
-	// Start this with the guests/members.
-	$context['profile_groups'] = array(
-		-1 => array(
-			'id' => -1,
-			'name' => $txt['membergroups_guests'],
-			'color' => '',
-			'new_topic' => 'disallow',
-			'replies_own' => 'disallow',
-			'replies_any' => 'disallow',
-			'attachment' => 'disallow',
-			'children' => array(),
-		),
-		0 => array(
-			'id' => 0,
-			'name' => $txt['membergroups_members'],
-			'color' => '',
-			'new_topic' => 'disallow',
-			'replies_own' => 'disallow',
-			'replies_any' => 'disallow',
-			'attachment' => 'disallow',
-			'children' => array(),
-		),
-	);
-
-	// Load the groups.
-	$request = wesql::query('
-		SELECT id_group, group_name, online_color, id_parent
-		FROM {db_prefix}membergroups
-		WHERE id_group != {int:admin_group}
-			' . (empty($settings['permission_enable_postgroups']) ? ' AND min_posts = {int:min_posts}' : '') . '
-		ORDER BY id_parent ASC',
-		array(
-			'admin_group' => 1,
-			'min_posts' => -1,
-		)
-	);
-	while ($row = wesql::fetch_assoc($request))
-	{
-		if ($row['id_parent'] == -2)
-		{
-			$context['profile_groups'][$row['id_group']] = array(
-				'id' => $row['id_group'],
-				'name' => $row['group_name'],
-				'color' => $row['online_color'],
-				'new_topic' => 'disallow',
-				'replies_own' => 'disallow',
-				'replies_any' => 'disallow',
-				'attachment' => 'disallow',
-				'children' => array(),
-			);
-		}
-		elseif (isset($context['profile_groups'][$row['id_parent']]))
-			$context['profile_groups'][$row['id_parent']]['children'][] = $row['group_name'];
-	}
-	wesql::free_result($request);
-
-	// What are the permissions we are querying?
-	$all_permissions = array();
-	foreach ($mappings as $perm_set)
-		$all_permissions = array_merge($all_permissions, $perm_set);
-
-	// If we're saving the changes then do just that - save them.
-	if (!empty($_POST['save_changes']) && ($context['current_profile'] == 1 || $context['current_profile'] > 4))
-	{
-		// Start by deleting all the permissions relevant.
-		wesql::query('
-			DELETE FROM {db_prefix}board_permissions
-			WHERE id_profile = {int:current_profile}
-				AND permission IN ({array_string:permissions})
-				AND id_group IN ({array_int:profile_group_list})',
-			array(
-				'profile_group_list' => array_keys($context['profile_groups']),
-				'current_profile' => $context['current_profile'],
-				'permissions' => $all_permissions,
-			)
-		);
-
-		// Do it group by group.
-		$new_permissions = array();
-		foreach ($context['profile_groups'] as $id => $group)
-		{
-			foreach ($mappings as $index => $data)
-			{
-				if (isset($_POST[$index][$group['id']]))
-				{
-					if ($_POST[$index][$group['id']] == 'allow')
-					{
-						// Give them both sets for fun.
-						$new_permissions[] = array($context['current_profile'], $group['id'], $data[0], 1);
-						$new_permissions[] = array($context['current_profile'], $group['id'], $data[1], 1);
-					}
-					elseif ($_POST[$index][$group['id']] == 'moderate')
-						$new_permissions[] = array($context['current_profile'], $group['id'], $data[1], 1);
-				}
-			}
-		}
-
-		// Insert new permissions.
-		if (!empty($new_permissions))
-			wesql::insert('',
-				'{db_prefix}board_permissions',
-				array('id_profile' => 'int', 'id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
-				$new_permissions,
-				array('id_profile', 'id_group', 'permission')
-			);
-	}
-
-	// Now get all the permissions!
-	$request = wesql::query('
-		SELECT id_group, permission, add_deny
-		FROM {db_prefix}board_permissions
-		WHERE id_profile = {int:current_profile}
-			AND permission IN ({array_string:permissions})
-			AND id_group IN ({array_int:profile_group_list})',
-		array(
-			'profile_group_list' => array_keys($context['profile_groups']),
-			'current_profile' => $context['current_profile'],
-			'permissions' => $all_permissions,
-		)
-	);
-	while ($row = wesql::fetch_assoc($request))
-	{
-		foreach ($mappings as $key => $data)
-		{
-			foreach ($data as $index => $perm)
-			{
-				if ($perm == $row['permission'])
-				{
-					// Only bother if it's not denied.
-					if ($row['add_deny'])
-					{
-						// Full allowance?
-						if ($index == 0)
-							$context['profile_groups'][$row['id_group']][$key] = 'allow';
-						// Otherwise only bother with moderate if not on allow.
-						elseif ($context['profile_groups'][$row['id_group']][$key] != 'allow')
-							$context['profile_groups'][$row['id_group']][$key] = 'moderate';
-					}
-				}
-			}
-		}
-	}
-	wesql::free_result($request);
 }
 
 ?>

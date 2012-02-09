@@ -165,104 +165,6 @@ function ModifyModSettings()
 	$subActions[$_REQUEST['sa']]();
 }
 
-// This is an overall control panel enabling/disabling lots of Wedge's key feature components.
-function ModifyCoreFeatures($return_config = false)
-{
-	global $txt, $scripturl, $context, $settings;
-
-	/* This is an array of all the features that can be enabled/disabled - each option can have the following:
-		title		- Text title of this item (If standard string does not exist).
-		desc		- Description of this feature (If standard string does not exist).
-		image		- Custom image to show next to feature.
-		settings	- Array of settings to change (For each name => value) on enable - reverse is done for disable. If > 1 will not change value if set.
-		setting_callback- Function that returns an array of settings to save - takes one parameter which is value for this feature.
-		save_callback	- Function called on save, takes state as parameter.
-	*/
-	$core_features = array(
-		// Post Moderation
-		'pm' => array(
-			'url' => 'action=admin;area=permissions;sa=postmod',
-			'setting' => 'postmod_enabled',
-			// Can't use warning post moderation if disabled!
-			'setting_callback' => create_function('$value', '
-				if ($value)
-					return array();
-				loadSource(\'PostModeration\');
-				approveAllData();
-				return array(\'warning_moderate\' => 0);
-			'),
-		),
-	);
-
-	// Anyone who would like to add a core feature?
-	call_hook('core_features', array(&$core_features));
-
-	// Are we getting info for the help section.
-	if ($return_config)
-	{
-		$return_data = array();
-		foreach ($core_features as $id => $data)
-			$return_data[] = array('switch', isset($data['title']) ? $data['title'] : $txt['core_settings_item_' . $id]);
-		return $return_data;
-	}
-
-	loadGeneralSettingParameters();
-
-	// Are we saving?
-	if (isset($_POST['save']))
-	{
-		checkSession();
-
-		$setting_changes = array();
-
-		// Are we using the javascript stuff or radios to submit?
-		$post_var_prefix = empty($_POST['js_worked']) ? 'feature_plain_' : 'feature_';
-
-		// Cycle each feature and change things as required!
-		foreach ($core_features as $id => $feature)
-		{
-			// Setting values to change?
-			if (isset($feature['setting']))
-				$setting_changes[$feature['setting']] = !empty($_POST[$post_var_prefix . $id]) ? 1 : 0;
-
-			// Is there a call back for settings?
-			if (isset($feature['setting_callback']))
-			{
-				$returned_settings = $feature['setting_callback'](!empty($_POST[$post_var_prefix . $id]));
-				if (!empty($returned_settings))
-					$setting_changes = array_merge($setting_changes, $returned_settings);
-			}
-
-			// Standard save callback?
-			if (isset($feature['on_save']))
-				$feature['on_save']();
-		}
-
-		// Make any setting changes!
-		updateSettings($setting_changes);
-
-		// Any post save things?
-		foreach ($core_features as $id => $feature)
-			if (isset($feature['save_callback'])) // Standard save callback?
-				$feature['save_callback'](!empty($_POST[$post_var_prefix . $id]));
-
-		redirectexit('action=admin;area=corefeatures;' . $context['session_query']);
-	}
-
-	// Put them in context.
-	$context['features'] = array();
-	foreach ($core_features as $id => $feature)
-		$context['features'][$id] = array(
-			'title' => isset($feature['title']) ? $feature['title'] : $txt['core_settings_item_' . $id],
-			'desc' => isset($feature['desc']) ? $feature['desc'] : $txt['core_settings_item_' . $id . '_desc'],
-			'enabled' => isset($feature['setting']) && !empty($settings[$feature['setting']]),
-			'url' => !empty($feature['url']) ? $scripturl . '?' . $feature['url'] . ';' . $context['session_query'] : '',
-		);
-
-	wetem::load('core_features');
-	$context['page_title'] = $txt['core_settings_title'];
-}
-
 function ModifyBasicSettings($return_config = false)
 {
 	global $txt, $scripturl, $context;
@@ -345,6 +247,8 @@ function ModifyModerationSettings($return_config = false)
 			'rem1' => array('int', 'user_limit'),
 			'rem2' => array('int', 'warning_decrement'),
 			array('select', 'warning_show', array($txt['setting_warning_show_mods'], $txt['setting_warning_show_user'], $txt['setting_warning_show_all'])),
+		'',
+			array('large_text', 'postmod_rules', 'size' => 20),
 	);
 
 	if ($return_config)

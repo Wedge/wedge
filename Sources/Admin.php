@@ -64,13 +64,6 @@ function Admin()
 			'title' => $txt['admin_config'],
 			'permission' => array('admin_forum'),
 			'areas' => array(
-				'corefeatures' => array(
-					'label' => $txt['core_settings_title'],
-					'file' => 'ManageSettings',
-					'function' => 'ModifyCoreFeatures',
-					'icon' => 'corefeatures.gif',
-				),
-				'',
 				'featuresettings' => array(
 					'label' => $txt['modSettings_title'],
 					'file' => 'ManageSettings',
@@ -91,6 +84,12 @@ function Admin()
 						'spam' => array($txt['antispam_title']),
 						'moderation' => array($txt['moderation_settings_short']),
 					),
+				),
+				'modfilters' => array(
+					'label' => $txt['admin_mod_filters'],
+					'file' => 'ManageModeration',
+					'function' => 'ManageModeration',
+					'icon' => 'permissions.gif',
 				),
 				'',
 				'languages' => array(
@@ -407,7 +406,6 @@ function Admin()
 						'index' => array($txt['permissions_groups'], 'manage_permissions'),
 						'board' => array($txt['permissions_boards'], 'manage_permissions'),
 						'profiles' => array($txt['permissions_profiles'], 'manage_permissions'),
-						'postmod' => array($txt['permissions_post_moderation'], 'manage_permissions', 'enabled' => $settings['postmod_active']),
 						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),

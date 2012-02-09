@@ -520,50 +520,6 @@ function approveMessages($messages, $messageDetails, $current_view = 'replies')
 	}
 }
 
-// This is a helper function - basically approve everything!
-function approveAllData()
-{
-	// Start with messages and topics.
-	$request = wesql::query('
-		SELECT id_msg
-		FROM {db_prefix}messages
-		WHERE approved = {int:not_approved}',
-		array(
-			'not_approved' => 0,
-		)
-	);
-	$msgs = array();
-	while ($row = wesql::fetch_row($request))
-		$msgs[] = $row[0];
-	wesql::free_result($request);
-
-	if (!empty($msgs))
-	{
-		loadSource('Subs-Post');
-		approvePosts($msgs);
-	}
-
-	// Now do attachments
-	$request = wesql::query('
-		SELECT id_attach
-		FROM {db_prefix}attachments
-		WHERE approved = {int:not_approved}',
-		array(
-			'not_approved' => 0,
-		)
-	);
-	$attaches = array();
-	while ($row = wesql::fetch_row($request))
-		$attaches[] = $row[0];
-	wesql::free_result($request);
-
-	if (!empty($attaches))
-	{
-		loadSource('ManageAttachments');
-		ApproveAttachments($attaches);
-	}
-}
-
 // remove a batch of messages (or topics)
 function removeMessages($messages, $messageDetails, $current_view = 'replies')
 {

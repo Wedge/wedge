@@ -163,22 +163,8 @@ function Post2()
 		if (isset($_REQUEST['poll']) && $topic_info['id_poll'] > 0)
 			unset($_REQUEST['poll']);
 
-		// Do the permissions and approval stuff...
-		$becomesApproved = true;
-		if ($topic_info['id_member_started'] != $user_info['id'])
-		{
-			if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
-				$becomesApproved = false;
-			else
-				isAllowedTo('post_reply_any');
-		}
-		elseif (!allowedTo('post_reply_any'))
-		{
-			if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_own') && !allowedTo('post_reply_own'))
-				$becomesApproved = false;
-			else
-				isAllowedTo('post_reply_own');
-		}
+		// Do the permissions stuff...
+		isAllowedTo($topic_info['id_member_started'] != $user_info['id'] ? 'post_reply_any' : array('post_reply_own', 'post_reply_any'));
 
 		// If the script provided a parent ID, make sure it's in the current topic...
 		if (!empty($_REQUEST['parent']))
@@ -256,11 +242,7 @@ function Post2()
 		unset($_REQUEST['msg'], $_POST['msg'], $_GET['msg']);
 
 		// Do like, the permissions, for safety and stuff...
-		$becomesApproved = true;
-		if ($settings['postmod_active'] && !allowedTo('post_new') && allowedTo('post_unapproved_topics'))
-			$becomesApproved = false;
-		else
-			isAllowedTo('post_new');
+		isAllowedTo('post_new');
 
 		if (isset($_POST['lock']))
 		{
@@ -484,6 +466,33 @@ function Post2()
 	// OK, we've made all the checks we're going to make here. Time to engage any hooks. Most of this stuff is in $_POST, so very little to pass.
 	call_hook('post_post_validate', array(&$post_errors, &$posterIsGuest));
 
+	if (!empty($modSettings['postmod_rules']))
+	{
+		loadSource('Subs-Moderation');
+		$doModeration = checkPostModeration($_POST['subject'], $_POST['message']);
+	}
+
+	// Mostly we don't know at this point, but if it's an existing post that's been edited, it may become approved in which case we already know about it.
+	if (!isset($becomesApproved))
+		$becomesApproved = true;
+
+	if (isset($doModeration['prevent']))
+		$post_errors[] = 'not_permitted_content';
+	elseif (isset($doModeration['moderate']))
+		$becomesApproved = !empty($approve_has_changed) ? $becomesApproved : false;
+	else
+	{
+		if (isset($doModeration['lock']))
+			$_POST['lock'] = 1;
+		elseif (isset($doModeration['unlock']))
+			$_POST['lock'] = 0;
+
+		if (isset($doModeration['pin']))
+			$_POST['pin'] = 1;
+		elseif (isset($doModeration['unpin']))
+			$_POST['pin'] = 0;
+	}
+
 	// Any mistakes?
 	if (!empty($post_errors))
 	{
@@ -501,6 +510,8 @@ function Post2()
 	// At about this point, we're posting and that's that.
 	ignore_user_abort(true);
 	@set_time_limit(300);
+
+	call_hook('post_mod_actions', array($doModeration));
 
 	// Add special html entities to the subject, name, and email.
 	$_POST['subject'] = strtr($_POST['subject'], array("\r" => '', "\n" => '', "\t" => ''));
