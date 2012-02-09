@@ -500,23 +500,13 @@ ul.buttonlist extends ul.reset
 		&.last
 			border-right: 0
 	a
-		padding: 3px 5px 4px
+		padding: 0 8px
 		color: #679
-		display: block
-//		transition: all .1s ease
-//		background: #f3f3f3
 		line-height: 15px
-		text-decoration: none
-//		text-transform: uppercase
-//		border: 1px solid rgba(0,0,0, .07)
-//		border-radius: 6px
 		&.active
-//			background: #8a8ca5
-//			color: #fff
 			font-weight: bold
 		:hover
-			background: #fd9604
-			color: #fff
+			color: #a54
 
 /* Styles for the quick reply area.
 ---------------------------------------------------- */

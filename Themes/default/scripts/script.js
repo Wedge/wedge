@@ -619,8 +619,7 @@ function JumpTo(control, id)
 
 				// Add the remaining items after the currently selected item.
 				$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
-					$val = $(this).val();
-					window.location.href = $val % 1 ? we_script.replace(/\?.*/g, '') + '?board=' + $val + '.0' : $val;
+					window.location.href = parseInt($val = $(this).val()) ? we_script.replace(/\?.*/g, '') + '?board=' + $val + '.0' : $val;
 				});
 
 				hide_ajax();

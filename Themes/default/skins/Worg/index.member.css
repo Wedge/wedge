@@ -20,7 +20,7 @@ ul.buttonlist
 	a.lock, a.pin, a.add_poll
 		padding-left: 22px
 		background-image: url($images/small_lock.gif)
-		background-position: 6px 5px
+		background-position: 6px 2px
 		background-repeat: no-repeat
 	a.pin
 		padding-left: 23px

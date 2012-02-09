@@ -490,7 +490,7 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
 
 	// Some CSS3 rules that are prominent enough in Wedge get the honor of a custom function. No need to use a prefix on them, although you may.
-	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition|text-overflow):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
+	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
 	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
 	$final = str_replace(
@@ -1163,7 +1163,7 @@ function cache_get_data($key, $ttl = 120)
 	elseif ($cache_type === 'xcache')
 		$val = xcache_get($key);
 	// Otherwise it's the file cache!
-	elseif (file_exists($cachedir . '/data/' . $key . '.php') && filesize($cachedir . '/data/' . $key . '.php') > 10)
+	elseif (file_exists($cachedir . '/data/' . $key . '.php') && @filesize($cachedir . '/data/' . $key . '.php') > 10)
 	{
 		@include($cachedir . '/data/' . $key . '.php');
 		if (empty($valid))
