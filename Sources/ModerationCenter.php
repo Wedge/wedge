@@ -100,13 +100,6 @@ function ModerationMain($dont_call = false)
 						'topics' => array($txt['mc_unapproved_topics']),
 					),
 				),
-				'attachmod' => array(
-					'label' => $txt['mc_unapproved_attachments'],
-					'enabled' => $context['can_moderate_approvals'],
-					'file' => 'PostModeration',
-					'function' => 'PostModerationMain',
-					'custom_url' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
-				),
 				'reports' => array(
 					'label' => $txt['mc_reported_posts'],
 					'enabled' => $context['can_moderate_boards'],

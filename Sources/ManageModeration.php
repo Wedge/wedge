@@ -184,37 +184,12 @@ function ManageModHome()
 	}
 }
 
-/*
-<rules>
-	<rule for="posts">
-		<criteria for="lock">
-			<body>~^/lock~</body>
-			<permission id="lock_any" />
-		</criteria>
-		<criteria for="moderate">
-			<body>~fuck~i</body>
-			<groups except-id="1" />
-		</criteria>
-	</rule>
-</rules>
-*/
-
 function ManageModApprove()
 {
 	global $context;
 
 	checkSession();
-	approveAllData();
-	$context['approved_all'] = true;
-	ManageModHome();
-}
 
-// This is a helper function - basically approve everything!
-function approveAllData()
-{
-	loadSource('PostModeration');
-
-	// Start with messages and topics.
 	$request = wesql::query('
 		SELECT id_msg
 		FROM {db_prefix}messages
@@ -230,29 +205,12 @@ function approveAllData()
 
 	if (!empty($msgs))
 	{
-		loadSource('Subs-Post');
+		loadSource(array('PostModeration', 'Subs-Post'));
 		approvePosts($msgs);
 	}
 
-	// Now do attachments
-	$request = wesql::query('
-		SELECT id_attach
-		FROM {db_prefix}attachments
-		WHERE approved = {int:not_approved}',
-		array(
-			'not_approved' => 0,
-		)
-	);
-	$attaches = array();
-	while ($row = wesql::fetch_row($request))
-		$attaches[] = $row[0];
-	wesql::free_result($request);
-
-	if (!empty($attaches))
-	{
-		loadSource('ManageAttachments');
-		ApproveAttachments($attaches);
-	}
+	$context['approved_all'] = true;
+	ManageModHome();
 }
 
 ?>

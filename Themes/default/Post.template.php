@@ -201,10 +201,6 @@ function template_post_attachments()
 			echo '
 						', $txt['attach_restrictions'], ' ', implode(', ', $context['attachment_restrictions']), '<br>';
 
-		if (!$context['can_post_attachment_unapproved'])
-			echo '
-						<span class="alert">', $txt['attachment_requires_approval'], '</span>', '<br>';
-
 		echo '
 					</dd>
 				</dl>';

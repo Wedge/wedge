@@ -44,8 +44,8 @@ if (!defined('WEDGE'))
  * - Sanitize the guest posting name and email with htmlspecialchars.
  * - Shorten the subject if necessary.
  * - If this is a poll, sanitize: the number of options, the expiry time if set, plus other options such as whether users can change vote or whether guests can vote. Lastly sanitize all the question and answers through recursively stepping through the array from $_POST.
- * - If this is an edit, see if the user is attempting to remove attachments. (If so, they need the ability to post them to be able to remove them, or at least be able to post unapproved attachments) Assuming permission is granted, check the ones they did not tick, and pass that to {@link removeAttachments()} to deal with.
- * - Are there new attachments? Check what's been submitted there, validate about coming from the session or quick reply, and also check the session - in the case of there being an error and bounced back to the main post code, the details of attachments are preserved in the session. Check permissions to post new (unapproved or otherwise) attachments, and also grab details of any current attachments to this post if it's an edit - we need to be able to see if we step over any limits. Proceed to check the limits: number per post, max size total per post. Then proceed to call the attachment handler, which can return any one of several errors (file too big, file fails extension check, attach directory full etc) - if an error is hit, ensure the nonce is unset for the form so we could go back and edit.
+ * - If this is an edit, see if the user is attempting to remove attachments. (If so, they need the ability to post them to be able to remove them) Assuming permission is granted, check the ones they did not tick, and pass that to {@link removeAttachments()} to deal with.
+ * - Are there new attachments? Check what's been submitted there, validate about coming from the session or quick reply, and also check the session - in the case of there being an error and bounced back to the main post code, the details of attachments are preserved in the session. Check permissions to post new attachments, and also grab details of any current attachments to this post if it's an edit - we need to be able to see if we step over any limits. Proceed to check the limits: number per post, max size total per post. Then proceed to call the attachment handler, which can return any one of several errors (file too big, file fails extension check, attach directory full etc) - if an error is hit, ensure the nonce is unset for the form so we could go back and edit.
  * - Is this a poll? If so, insert the question details, followed by all the possible answers into the DB.
  * - Collate the main arrays of details, $msgOptions, $topicOptions and $posterOptions.
  * - If this is an edit, divert to {@link modifyPost()} otherwise head to {@link createPost()} to create the new post (and topic if appropriate).
@@ -569,7 +569,7 @@ function Post2()
 	}
 
 	// Check if they are trying to delete any current attachments....
-	if (isset($_REQUEST['msg'], $_POST['attach_del']) && (allowedTo('post_attachment') || ($settings['postmod_active'] && allowedTo('post_unapproved_attachments'))))
+	if (isset($_REQUEST['msg'], $_POST['attach_del']) && allowedTo('post_attachment'))
 	{
 		$del_temp = array();
 		foreach ($_POST['attach_del'] as $i => $dummy)
@@ -588,8 +588,7 @@ function Post2()
 	if (isset($_FILES['attachment']['name']) || (!empty($_SESSION['temp_attachments']) && empty($_POST['from_qr'])))
 	{
 		// Verify they can post them!
-		if (!$settings['postmod_active'] || !allowedTo('post_unapproved_attachments'))
-			isAllowedTo('post_attachment');
+		isAllowedTo('post_attachment');
 
 		// Make sure we're uploading to the right place.
 		if (!empty($settings['currentAttachmentUploadDir']))
@@ -677,7 +676,6 @@ function Post2()
 				'name' => $_FILES['attachment']['name'][$n],
 				'tmp_name' => $_FILES['attachment']['tmp_name'][$n],
 				'size' => $_FILES['attachment']['size'][$n],
-				'approved' => !$settings['postmod_active'] || allowedTo('post_attachment'),
 			);
 
 			if (createAttachment($attachmentOptions))

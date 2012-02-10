@@ -897,11 +897,9 @@ function removeMessage($message, $decreasePostCount = true)
 		if (!$row['approved'])
 			wesql::query('
 				DELETE FROM {db_prefix}approval_queue
-				WHERE id_msg = {int:id_msg}
-					AND id_attach = {int:id_attach}',
+				WHERE id_msg = {int:id_msg}',
 				array(
 					'id_msg' => $message,
-					'id_attach' => 0,
 				)
 			);
 	}

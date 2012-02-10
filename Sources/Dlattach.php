@@ -25,7 +25,7 @@ define('WEDGE_NO_LOG', 1);
  * - If requesting an avatar, check that the attachment/avatar exists and that there is a user id attached (normal attachments have no user id) - and note that the file is an image.
  * - Check the view_attachments permission (for the current $board/$topic, as $topic is in the URL) and abort if not granted.
  * - Validate the topic of the attachment is the one given in the URL.
- * - If the attachment is not yet approved (attachments only), verify whether the user has permission to approve posts.
+ * - If the post to which the attachment is attached is not yet approved, verify whether the user has permission to approve posts.
  * - If it's not a thumbnail, update the view counter.
  * - Get the physical filename/path of the attachment file (from {@see getAttachmentFile()})
  * - Clear any pre-existing output, then start a new buffer. If file size is 4MB or under, output compression is on, and the file type is known to be text normally, this new buffer will be gzipped.
@@ -53,7 +53,7 @@ function Dlattach()
 	if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'avatar')
 	{
 		$request = wesql::query('
-			SELECT id_folder, filename, file_hash, fileext, id_attach, attachment_type, mime_type, approved, id_member
+			SELECT id_folder, filename, file_hash, fileext, id_attach, attachment_type, mime_type, 1 AS approved, id_member
 			FROM {db_prefix}attachments
 			WHERE id_attach = {int:id_attach}
 				AND id_member > {int:blank_id_member}
@@ -74,7 +74,7 @@ function Dlattach()
 		// Make sure this attachment is on this board.
 		// NOTE: We must verify that $topic is the attachment's topic, or else the permission check above is broken.
 		$request = wesql::query('
-			SELECT a.id_folder, a.filename, a.file_hash, a.fileext, a.id_attach, a.attachment_type, a.mime_type, a.approved, m.id_member
+			SELECT a.id_folder, a.filename, a.file_hash, a.fileext, a.id_attach, a.attachment_type, a.mime_type, m.approved, m.id_member
 			FROM {db_prefix}attachments AS a
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg AND m.id_topic = {int:current_topic})
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})
@@ -91,7 +91,7 @@ function Dlattach()
 	list ($id_folder, $real_filename, $file_hash, $file_ext, $id_attach, $attachment_type, $mime_type, $is_approved, $id_member) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	// If it isn't yet approved, do they have permission to view it?
+	// If the post isn't yet approved, do they have permission to view it?
 	if (!$is_approved && ($id_member == 0 || $user_info['id'] != $id_member) && ($attachment_type == 0 || $attachment_type == 3))
 		isAllowedTo('approve_posts');
 

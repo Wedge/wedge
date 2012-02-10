@@ -1995,11 +1995,6 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=moderate;area=postmod;sa=posts',
 						'show' => $settings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
 					),
-					'attachments' => array(
-						'title' => $txt['mc_unapproved_attachments'],
-						'href' => $scripturl . '?action=moderate;area=attachmod;sa=attachments',
-						'show' => $settings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
-					),
 				),
 			),
 			'profile' => array(

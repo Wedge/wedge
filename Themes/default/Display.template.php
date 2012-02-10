@@ -143,23 +143,8 @@ function template_display_posts()
 							<div id="msg_', $message['id'], '_footer" class="attachments smalltext">
 								<div style="overflow: ', $context['browser']['is_firefox'] ? 'visible' : 'auto', '">';
 
-			$last_approved_state = 1;
 			foreach ($message['attachment'] as $attachment)
 			{
-				// Show a special box for unapproved attachments...
-				if ($attachment['is_approved'] != $last_approved_state)
-				{
-					$last_approved_state = 0;
-					echo '
-									<fieldset>
-										<legend>', $txt['attach_awaiting_approve'];
-
-					if ($context['can_approve'])
-						echo '&nbsp;[<a href="<URL>?action=attachapprove;sa=all;mid=', $message['id'], ';', $context['session_query'], '">', $txt['approve_all'], '</a>]';
-
-					echo '</legend>';
-				}
-
 				if ($attachment['is_image'])
 				{
 					if ($attachment['thumbnail']['has_thumb'])
@@ -172,17 +157,9 @@ function template_display_posts()
 				echo '
 										<a href="', $attachment['href'], '"><img src="' . $theme['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a> ';
 
-				if (!$attachment['is_approved'] && $context['can_approve'])
-					echo '
-										[<a href="<URL>?action=attachapprove;sa=approve;aid=', $attachment['id'], ';', $context['session_query'], '">', $txt['approve'], '</a>]&nbsp;|&nbsp;[<a href="<URL>?action=attachapprove;sa=reject;aid=', $attachment['id'], ';', $context['session_query'], '">', $txt['delete'], '</a>] ';
 				echo '
 										(', $attachment['size'], ($attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] . ' - ' . $txt['attach_viewed'] : ' - ' . $txt['attach_downloaded']) . ' ' . $attachment['downloads'] . ' ' . $txt['attach_times'] . '.)<br>';
 			}
-
-			// If we had unapproved attachments clean up.
-			if ($last_approved_state == 0)
-				echo '
-									</fieldset>';
 
 			echo '
 								</div>

@@ -503,7 +503,6 @@ function banPermissions()
 			'post_new' => 'post_unapproved_topics',
 			'post_reply_own' => 'post_unapproved_replies_own',
 			'post_reply_any' => 'post_unapproved_replies_any',
-			'post_attachment' => 'post_unapproved_attachments',
 		);
 		foreach ($permission_change as $old => $new)
 		{

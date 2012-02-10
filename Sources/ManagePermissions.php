@@ -1542,7 +1542,6 @@ function loadAllPermissions($loadType = 'classic')
 			'mark_any_notify' => array(false, 'notification', 'notification'),
 			'mark_notify' => array(false, 'notification', 'notification'),
 			'view_attachments' => array(false, 'attachment', 'participate'),
-			'post_unapproved_attachments' => array(false, 'attachment', 'make_unapproved_posts'),
 			'post_attachment' => array(false, 'attachment', 'attach'),
 		),
 	);
@@ -1570,7 +1569,6 @@ function loadAllPermissions($loadType = 'classic')
 		$hiddenPermissions[] = 'approve_posts';
 		$hiddenPermissions[] = 'post_unapproved_topics';
 		$hiddenPermissions[] = 'post_unapproved_replies';
-		$hiddenPermissions[] = 'post_unapproved_attachments';
 	}
 	// If we show them on classic view we change the name.
 	else
@@ -1580,9 +1578,6 @@ function loadAllPermissions($loadType = 'classic')
 
 		// Relabel the reply permissions
 		$relabelPermissions['post_reply'] = 'auto_approve_replies';
-
-		// Relabel the attachment permissions
-		$relabelPermissions['post_attachment'] = 'auto_approve_attachments';
 	}
 
 	// Provide a practical way to modify permissions.

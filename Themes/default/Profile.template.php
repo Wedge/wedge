@@ -568,8 +568,8 @@ function template_showPosts()
 		foreach ($context['attachments'] as $attachment)
 		{
 			echo '
-				<tr class="postbg', $alternate ? '' : '2', $attachment['approved'] ? '' : ' approve', '">
-					<td><a href="', $scripturl, '?action=dlattach;topic=', $attachment['topic'], '.0;attach=', $attachment['id'], '">', $attachment['filename'], '</a>', !$attachment['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '', '</td>
+				<tr class="postbg', $alternate ? '' : '2', '">
+					<td><a href="', $scripturl, '?action=dlattach;topic=', $attachment['topic'], '.0;attach=', $attachment['id'], '">', $attachment['filename'], '</a>', '</td>
 					<td class="center">', $attachment['downloads'], '</td>
 					<td><a href="', $scripturl, '?topic=', $attachment['topic'], '.msg', $attachment['msg'], '#msg', $attachment['msg'], '" rel="nofollow">', $attachment['subject'], '</a></td>
 					<td>', $attachment['posted'], '</td>

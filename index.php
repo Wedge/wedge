@@ -70,7 +70,6 @@ $action_list = array(
 	'admin' => array('Admin.php', 'Admin'),
 	'ajax' => array('Ajax.php', 'Ajax'),
 	'announce' => array('Announce.php', 'Announce'),
-	'attachapprove' => array('ManageAttachments.php', 'ApproveAttach'),
 	'boards' => array('Boards.php', 'Boards'),
 	'buddy' => array('Buddy.php', 'Buddy'),
 	'collapse' => array('Collapse.php', 'Collapse'),

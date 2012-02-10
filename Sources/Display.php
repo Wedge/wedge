@@ -42,9 +42,6 @@ if (!defined('WEDGE'))
 		  even if it has to be resized by the max_image_width and
 		  max_image_height settings.
 
-	int approved_attach_sort(array a, array b)
-		- a sort function for putting unapproved attachments first.
-
 	void QuickInTopicModeration()
 		- in-topic quick moderation.
 
@@ -958,7 +955,7 @@ function Display()
 		{
 			$request = wesql::query('
 				SELECT
-					a.id_attach, a.id_folder, a.id_msg, a.filename, a.file_hash, IFNULL(a.size, 0) AS filesize, a.downloads, a.transparency, a.approved,
+					a.id_attach, a.id_folder, a.id_msg, a.filename, a.file_hash, IFNULL(a.size, 0) AS filesize, a.downloads, a.transparency,
 					a.width, a.height' . (empty($settings['attachmentShowImages']) || empty($settings['attachmentThumbnails']) ? '' : ',
 					IFNULL(thumb.id_attach, 0) AS id_thumb, thumb.width AS thumb_width, thumb.height AS thumb_height') . '
 				FROM {db_prefix}attachments AS a' . (empty($settings['attachmentShowImages']) || empty($settings['attachmentThumbnails']) ? '' : '
@@ -968,15 +965,11 @@ function Display()
 				array(
 					'message_list' => $messages,
 					'attachment_type' => 0,
-					'is_approved' => 1,
 				)
 			);
 			$temp = array();
 			while ($row = wesql::fetch_assoc($request))
 			{
-				if (!$row['approved'] && $settings['postmod_active'] && !allowedTo('approve_posts') && (!isset($all_posters[$row['id_msg']]) || $all_posters[$row['id_msg']] != $user_info['id']))
-					continue;
-
 				$temp[$row['id_attach']] = $row;
 
 				if (!isset($attachments[$row['id_msg']]))
@@ -1508,7 +1501,6 @@ function loadAttachmentContext($id_msg)
 
 	// Set up the attachment info - based on code by Meriadoc.
 	$attachmentData = array();
-	$have_unapproved = false;
 	if (isset($attachments[$id_msg]) && !empty($settings['attachmentEnable']))
 	{
 		foreach ($attachments[$id_msg] as $i => $attachment)
@@ -1523,7 +1515,6 @@ function loadAttachmentContext($id_msg)
 				'link' => '<a href="' . $scripturl . '?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'] . '">' . htmlspecialchars($attachment['filename']) . '</a>',
 				'transparent' => $attachment['transparency'] == 'transparent',
 				'is_image' => !empty($attachment['width']) && !empty($attachment['height']) && !empty($settings['attachmentShowImages']),
-				'is_approved' => $attachment['approved'],
 			);
 
 			if (empty($attachment['transparency']))
@@ -1533,10 +1524,6 @@ function loadAttachmentContext($id_msg)
 			}
 			else
 				$filename = '';
-
-			// If something is unapproved we'll note it so we can sort them.
-			if (!$attachment['approved'])
-				$have_unapproved = true;
 
 			if (!$attachmentData[$i]['is_image'])
 				continue;
@@ -1669,20 +1656,7 @@ function loadAttachmentContext($id_msg)
 		}
 	}
 
-	// Do we need to instigate a sort?
-	if ($have_unapproved)
-		usort($attachmentData, 'approved_attach_sort');
-
 	return $attachmentData;
-}
-
-// A sort function for putting unapproved attachments first.
-function approved_attach_sort($a, $b)
-{
-	if ($a['is_approved'] == $b['is_approved'])
-		return 0;
-
-	return $a['is_approved'] > $b['is_approved'] ? -1 : 1;
 }
 
 // In-topic quick moderation.

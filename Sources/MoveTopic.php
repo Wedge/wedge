@@ -588,11 +588,9 @@ function moveTopics($topics, $toBoard)
 		if (!empty($approval_msgs))
 			wesql::query('
 				DELETE FROM {db_prefix}approval_queue
-				WHERE id_msg IN ({array_int:message_list})
-					AND id_attach = {int:id_attach}',
+				WHERE id_msg IN ({array_int:message_list})',
 				array(
 					'message_list' => $approval_msgs,
-					'id_attach' => 0,
 				)
 			);
 

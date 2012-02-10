@@ -1731,8 +1731,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 			AND att.fileext IN ({array_string:attachment_ext})' : '') .
 			(!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 			AND t.approved = {int:is_approved}
-			AND m.approved = {int:is_approved}
-			AND att.approved = {int:is_approved}') . '
+			AND m.approved = {int:is_approved}') . '
 		ORDER BY att.id_attach DESC
 		LIMIT {int:num_attachments}',
 		array(

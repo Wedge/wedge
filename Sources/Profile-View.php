@@ -924,7 +924,7 @@ function showAttachments($memID)
 
 	// Retrieve some attachments.
 	$request = wesql::query('
-		SELECT a.id_attach, a.id_msg, a.filename, a.downloads, a.approved, m.id_msg, m.id_topic,
+		SELECT a.id_attach, a.id_msg, a.filename, a.downloads, m.id_msg, m.id_topic,
 			m.id_board, m.poster_time, m.subject, b.name
 		FROM {db_prefix}attachments AS a
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
@@ -964,7 +964,6 @@ function showAttachments($memID)
 			'topic' => $row['id_topic'],
 			'board' => $row['id_board'],
 			'board_name' => $row['name'],
-			'approved' => $row['approved'],
 		);
 	}
 	wesql::free_result($request);

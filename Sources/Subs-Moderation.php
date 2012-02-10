@@ -199,7 +199,7 @@ function checkPostModeration($subject, $body)
 										$regexp = '~' . preg_quote($regexp, '~') . '~' . $modifiers;
 										break;
 									case 'matches':
-										$regexp = '~^' . preg_quote($regexp, '~') . '~' . $modifiers;
+										$regexp = '~^' . preg_quote($regexp, '~') . '$~' . $modifiers;
 										break;
 								}
 							}

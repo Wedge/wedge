@@ -1494,8 +1494,6 @@ function createAttachment(&$attachmentOptions)
 	$attachmentOptions['errors'] = array();
 	if (!isset($attachmentOptions['post']))
 		$attachmentOptions['post'] = 0;
-	if (!isset($attachmentOptions['approved']))
-		$attachmentOptions['approved'] = 1;
 
 	$already_uploaded = preg_match('~^post_tmp_' . $attachmentOptions['poster'] . '_\d+$~', $attachmentOptions['tmp_name']) != 0;
 	$file_restricted = @ini_get('open_basedir') != '' && !$already_uploaded;
@@ -1633,12 +1631,12 @@ function createAttachment(&$attachmentOptions)
 		array(
 			'id_folder' => 'int', 'id_msg' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
 			'size' => 'int', 'width' => 'int', 'height' => 'int',
-			'mime_type' => 'string-20', 'approved' => 'int',
+			'mime_type' => 'string-20',
 		),
 		array(
 			$id_folder, (int) $attachmentOptions['post'], $attachmentOptions['name'], $attachmentOptions['file_hash'], $attachmentOptions['fileext'],
 			(int) $attachmentOptions['size'], (empty($attachmentOptions['width']) ? 0 : (int) $attachmentOptions['width']), (empty($attachmentOptions['height']) ? '0' : (int) $attachmentOptions['height']),
-			(!empty($attachmentOptions['mime_type']) ? $attachmentOptions['mime_type'] : ''), (int) $attachmentOptions['approved'],
+			(!empty($attachmentOptions['mime_type']) ? $attachmentOptions['mime_type'] : ''),
 		),
 		array('id_attach')
 	);
@@ -1646,19 +1644,6 @@ function createAttachment(&$attachmentOptions)
 
 	if (empty($attachmentOptions['id']))
 		return false;
-
-	// If it's not approved add to the approval queue.
-	if (!$attachmentOptions['approved'])
-		wesql::insert('',
-			'{db_prefix}approval_queue',
-			array(
-				'id_attach' => 'int', 'id_msg' => 'int',
-			),
-			array(
-				$attachmentOptions['id'], (int) $attachmentOptions['post'],
-			),
-			array()
-		);
 
 	$attachmentOptions['destination'] = getAttachmentFilename(basename($attachmentOptions['name']), $attachmentOptions['id'], $id_folder, false, $attachmentOptions['file_hash']);
 
@@ -1777,11 +1762,11 @@ function createAttachment(&$attachmentOptions)
 				'{db_prefix}attachments',
 				array(
 					'id_folder' => 'int', 'id_msg' => 'int', 'attachment_type' => 'int', 'filename' => 'string-255', 'file_hash' => 'string-40', 'fileext' => 'string-8',
-					'size' => 'int', 'width' => 'int', 'height' => 'int', 'mime_type' => 'string-20', 'approved' => 'int',
+					'size' => 'int', 'width' => 'int', 'height' => 'int', 'mime_type' => 'string-20',
 				),
 				array(
 					$id_folder, (int) $attachmentOptions['post'], 3, $thumb_filename, $thumb_file_hash, $attachmentOptions['fileext'],
-					$thumb_size, $thumb_width, $thumb_height, $thumb_mime, (int) $attachmentOptions['approved'],
+					$thumb_size, $thumb_width, $thumb_height, $thumb_mime,
 				),
 				array('id_attach')
 			);
@@ -2181,11 +2166,9 @@ function approvePosts($msgs, $approve = true)
 
 		wesql::query('
 			DELETE FROM {db_prefix}approval_queue
-			WHERE id_msg IN ({array_int:message_list})
-				AND id_attach = {int:id_attach}',
+			WHERE id_msg IN ({array_int:message_list})',
 			array(
 				'message_list' => $msgs,
-				'id_attach' => 0,
 			)
 		);
 	}

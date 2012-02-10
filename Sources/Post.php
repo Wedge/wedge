@@ -517,8 +517,7 @@ function Post($post_errors = array())
 					m.id_member, m.modified_time, m.smileys_enabled, m.body,
 					m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
 					IFNULL(a.size, -1) AS filesize, a.filename, a.id_attach,
-					a.approved AS attachment_approved, t.id_member_started AS id_member_poster,
-					m.poster_time
+					t.id_member_started AS id_member_poster, m.poster_time
 				FROM {db_prefix}messages AS m
 					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 					LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = m.id_msg AND a.attachment_type = {int:attachment_type})
@@ -559,7 +558,7 @@ function Post($post_errors = array())
 			if (!empty($settings['attachmentEnable']))
 			{
 				$request = wesql::query('
-					SELECT IFNULL(size, -1) AS filesize, filename, id_attach, approved
+					SELECT IFNULL(size, -1) AS filesize, filename, id_attach
 					FROM {db_prefix}attachments
 					WHERE id_msg = {int:id_msg}
 						AND attachment_type = {int:attachment_type}',
@@ -575,7 +574,6 @@ function Post($post_errors = array())
 					$context['current_attachments'][] = array(
 						'name' => htmlspecialchars($row['filename']),
 						'id' => $row['id_attach'],
-						'approved' => $row['approved'],
 					);
 				}
 				wesql::free_result($request);
@@ -621,8 +619,7 @@ function Post($post_errors = array())
 				m.id_member, m.modified_time, m.smileys_enabled, m.body,
 				m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
 				IFNULL(a.size, -1) AS filesize, a.filename, a.id_attach,
-				a.approved AS attachment_approved, t.id_member_started AS id_member_poster,
-				m.poster_time
+				t.id_member_started AS id_member_poster, m.poster_time
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 				LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = m.id_msg AND a.attachment_type = {int:attachment_type})
@@ -685,7 +682,6 @@ function Post($post_errors = array())
 				$context['current_attachments'][] = array(
 					'name' => htmlspecialchars($attachment['filename']),
 					'id' => $attachment['id_attach'],
-					'approved' => $attachment['attachment_approved'],
 				);
 		}
 
@@ -795,7 +791,7 @@ function Post($post_errors = array())
 	$context['msg_parent'] = isset($_REQUEST['parent']) ? $_REQUEST['parent'] : (isset($_REQUEST['quote']) ? $_REQUEST['quote'] : 0);
 
 	// !!! This won't work if you're posting an event.
-	if (allowedTo('post_attachment') || allowedTo('post_unapproved_attachments'))
+	if (allowedTo('post_attachment'))
 	{
 		if (empty($_SESSION['temp_attachments']))
 			$_SESSION['temp_attachments'] = array();
@@ -1003,8 +999,7 @@ function Post($post_errors = array())
 	// We need to check permissions, and also send the maximum allowed attachments through to the front end - it's dealt with there.
 	// !!! This won't work if you're posting an event.
 	$context['max_allowed_attachments'] = empty($settings['attachmentNumPerPostLimit']) ? 50 : $settings['attachmentNumPerPostLimit'];
-	$context['can_post_attachment'] = !empty($settings['attachmentEnable']) && $settings['attachmentEnable'] == 1 && (allowedTo('post_attachment') || ($settings['postmod_active'] && allowedTo('post_unapproved_attachments'))) && $context['max_allowed_attachments'] > 0;
-	$context['can_post_attachment_unapproved'] = allowedTo('post_attachment');
+	$context['can_post_attachment'] = !empty($settings['attachmentEnable']) && $settings['attachmentEnable'] == 1 && allowedTo('post_attachment') && $context['max_allowed_attachments'] > 0;
 
 	$context['subject'] = addcslashes($form_subject, '"');
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);

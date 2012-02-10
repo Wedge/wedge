@@ -188,8 +188,7 @@ function scheduled_approval_notification()
 
 	// Grab all the items awaiting approval and sort type then board - clear up any things that are no longer relevant.
 	$request = wesql::query('
-		SELECT aq.id_msg, aq.id_attach, aq.id_event, m.id_topic, m.id_board, m.subject, t.id_first_msg,
-			b.id_profile
+		SELECT aq.id_msg, m.id_topic, m.id_board, m.subject, t.id_first_msg, b.id_profile
 		FROM {db_prefix}approval_queue AS aq
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = aq.id_msg)
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
@@ -208,8 +207,6 @@ function scheduled_approval_notification()
 		// What type is it?
 		if ($row['id_first_msg'] && $row['id_first_msg'] == $row['id_msg'])
 			$type = 'topic';
-		elseif ($row['id_attach'])
-			$type = 'attach';
 		else
 			$type = 'msg';
 
