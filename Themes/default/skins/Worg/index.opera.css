@@ -1,0 +1,11 @@
+
+/*
+	Opera + jQuery don't like doing animations on inline blocks, so
+	we have to be move the declaration to a safer place.
+
+	Most (not all) issues can also be fixed by issuing a .delay(100)
+	right before animating the dropdown, but CSS is better!
+*/
+
+.sbox unextends .inline-block
+.display extends .inline-block

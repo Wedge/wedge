@@ -210,7 +210,7 @@
 				$display.blur();
 				$sb.removeClass('open');
 				$dd
-					.animate(is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100)
+					.animate({ opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100)
 					.attr('aria-hidden', true);
 			}
 			$(document).unbind('.sb');
@@ -299,7 +299,7 @@
 			if (via_keyboard)
 				$orig.triggerHandler('click');
 			// Animate height, except for Opera where issues with the inline-block status may lead to glitches.
-			$dd.animate(!showDown || is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantOpen ? 0 : 150);
+			$dd.animate(!showDown ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantOpen ? 0 : 150);
 			$sb.addClass('open');
 		},
 
