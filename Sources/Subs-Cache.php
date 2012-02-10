@@ -290,7 +290,8 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 	$folder = end($context['css_folders']);
 	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? array() : array(substr(strrchr($theme['theme_dir'], '/'), 1));
-	$id[0] = $folder === 'skins' ? substr($id[0], 0, -1) : $id[0] . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
+	if (!empty($id))
+		$id[0] = $folder === 'skins' ? substr($id[0], 0, -1) : $id[0] . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
@@ -307,7 +308,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
 
 		// And the language.
-		isset($context['user']) && $context['user']['language'] !== 'english' : $context['user']['language'] : array()
+		isset($context['user']) && $context['user']['language'] !== 'english' ? (array) $context['user']['language'] : array()
 	));
 
 	// Cache final file and retrieve its name.
@@ -368,7 +369,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 		array($context['enabled_plugins'][$plugin_name]),
 		$basefiles,
 		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
-		isset($context['user']) && $context['user']['language'] !== 'english' : $context['user']['language'] : array()
+		isset($context['user']) && $context['user']['language'] !== 'english' ? (array) $context['user']['language'] : array()
 	));
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');

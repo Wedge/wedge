@@ -652,7 +652,7 @@ function cache_getMembergroupList()
 	return array(
 		'data' => $groupCache,
 		'expires' => time() + 3600,
-		'refresh_eval' => 'return $GLOBALS[\'modSettings\'][\'settings_updated\'] > ' . time() . ';',
+		'refresh_eval' => 'return $GLOBALS[\'settings\'][\'settings_updated\'] > ' . time() . ';',
 	);
 }
 
