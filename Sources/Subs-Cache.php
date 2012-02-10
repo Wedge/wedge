@@ -230,7 +230,7 @@ function add_css()
  */
 function add_css_file($original_files = array(), $add_link = false, $is_main = false)
 {
-	global $theme, $settings, $context, $db_show_debug, $cachedir, $boardurl;
+	global $theme, $settings, $context, $db_show_debug, $boardurl;
 
 	// Delete all duplicates and ensure $original_files is an array.
 	$files = $original_files = array_keys(array_flip((array) $original_files));
@@ -289,39 +289,29 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	}
 
 	$folder = end($context['css_folders']);
-	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? '' : substr(strrchr($theme['theme_dir'], '/'), 1) . '-';
-	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
+	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? array() : array(substr(strrchr($theme['theme_dir'], '/'), 1));
+	$id[0] = $folder === 'skins' ? substr($id[0], 0, -1) : $id[0] . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
 
-	$id .= '-' . implode('-', array_diff($original_files, array('index', 'sections', 'custom')));
+	$id = array_filter(array_merge(
+		$id,
 
-	// We need to cache different versions for different browsers, even if we don't have overrides available.
-	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-	$id .= '-' . implode('-', $context['css_suffixes']);
+		// We don't need to show 'index-sections-custom' in the filename, do we?
+		array_diff($original_files, array('index', 'sections', 'custom')),
 
-	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
-	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
-		$id = preg_replace('~\bwebkit\b~', '', $id, 1);
+		// We need to cache different versions for different browsers, even if we don't have overrides available.
+		// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
+		// Make sure to only keep 'webkit' if we have no other browser name on record.
+		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
 
-	if (isset($context['user']) && $context['user']['language'] !== 'english')
-		$id .= '-' . $context['user']['language'];
+		// And the language.
+		isset($context['user']) && $context['user']['language'] !== 'english' : $context['user']['language'] : array()
+	));
 
-	$has_dupes = 1;
-	while ($has_dupes) // Probably faster than a preg_replace!
-		$id = str_replace('--', '-', $id, $has_dupes);
-
-	if (!empty($settings['obfuscate_filenames']))
-		$id = md5(substr($id, 0, -1));
-
-	$full_name = $id . '-' . $latest_date . $ext;
-
-	$final_file = $cachedir . '/' . $full_name;
-	$final_script = $boardurl . '/cache/' . $full_name;
-
-	if (!file_exists($final_file))
-		wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext);
+	// Cache final file and retrieve its name.
+	$final_script = $boardurl . '/cache/' . wedge_cache_css_files($id, $latest_date, $css, $can_gzip, $ext);
 
 	if ($is_main)
 		return $context['cached_css'] = $final_script;
@@ -336,7 +326,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false)
 {
-	global $context, $settings, $theme, $cachedir, $boardurl, $pluginsdir;
+	global $context, $settings, $theme, $boardurl, $pluginsdir;
 
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
@@ -372,28 +362,20 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 
 	$pluginurl = '..' . str_replace($boardurl, '', $context['plugins_url'][$plugin_name]);
 
-	$id = $context['enabled_plugins'][$plugin_name] . '-' . implode('-', $basefiles) . '-';
-
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-	$id .= implode('-', $context['css_suffixes']);
+	$id = array_filter(array_merge(
+		array($context['enabled_plugins'][$plugin_name]),
+		$basefiles,
+		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
+		isset($context['user']) && $context['user']['language'] !== 'english' : $context['user']['language'] : array()
+	));
 
-	// We don't need to have 'webkit' in the URL if we already have a named browser in it.
-	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
-		$id = preg_replace('~(?:\bwebkit-|-webkit\b)~', '', $id, 1);
-
-	if (isset($context['user']) && $context['user']['language'] !== 'english')
-		$id .= '-' . $context['user']['language'];
-
-	$id = (!empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) : $id) . '-';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
 
-	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
-	if (!file_exists($final_file))
-		wedge_cache_css_files($id, $latest_date, $final_file, $files, $can_gzip, $ext, $context['plugins_url'][$plugin_name]);
-
-	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
+	// Cache final file and retrieve its name.
+	$final_script = $boardurl . '/cache/' . wedge_cache_css_files($id, $latest_date, $files, $can_gzip, $ext, $context['plugins_url'][$plugin_name]);
 
 	// Do we just want the URL?
 	if (!$add_link)
@@ -406,19 +388,27 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 /**
  * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
  */
-function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, $ext, $plugin_path = '')
+function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugin_path = '')
 {
 	global $theme, $settings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
 
+	$id = empty($settings['obfuscate_filenames']) ? implode('-', $ids) : md5(implode('-', $ids));
+
+	$full_name = $id . '-' . $latest_date . $ext;
+	$final_file = $cachedir . '/' . $full_name;
+
+	if (file_exists($final_file))
+		return $full_name;
+
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	foreach (glob($cachedir . '/' . $id . '*' . $ext) as $del)
+	foreach (glob($cachedir . '/' . $id . '-*' . $ext) as $del)
 		if (!strpos($del, $latest_date))
 			@unlink($del);
 
 	$final = '';
 	$discard_dir = strlen($boarddir) + 1;
 
-	// Load our sweet, short and fast CSS parser
+	// Load WeCSS, our sweet, short and fast CSS parser :)
 	loadSource('Class-CSS');
 
 	$plugins = array(
@@ -517,6 +507,8 @@ function wedge_cache_css_files($id, $latest_date, $final_file, $css, $can_gzip, 
 		$final = gzencode($final, 9);
 
 	file_put_contents($final_file, $final);
+
+	return $full_name;
 }
 
 function wedge_replace_placeholders($str, $arr, &$final)
