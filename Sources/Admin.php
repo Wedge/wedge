@@ -274,7 +274,7 @@ function Admin()
 				),
 				'aeva_settings' => array(
 					'label' => $txt['media_admin_labels_settings'],
-					'icon' => 'corefeatures.gif',
+					'icon' => 'settings.gif',
 					'bigicon' => 'media_settings.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
@@ -427,7 +427,7 @@ function Admin()
 					'label' => $txt['member_options_title'],
 					'file' => 'ManageMemberOptions',
 					'function' => 'ManageMemberOptions',
-					'icon' => 'corefeatures.gif',
+					'icon' => 'settings.gif',
 					'permission' => 'admin_forum',
 					'subsections' => array(
 						'options' => array($txt['configure_options']),
@@ -869,7 +869,6 @@ function AdminSearchInternal()
 
 	// This is a special array of functions that contain setting data - we query all these to simply pull all setting bits!
 	$settings_search = array(
-		array('ModifyCoreFeatures', 'area=corefeatures'),
 		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
 		array('ModifyPrettyURLs', 'area=featuresettings;sa=pretty'),
 		array('ModifyMemberSettings', 'area=memberoptions;sa=options'),

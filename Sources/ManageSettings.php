@@ -26,9 +26,6 @@ if (!defined('WEDGE'))
 	void ModifyModSettings()
 		// !!!
 
-	void ModifyCoreFeatures()
-		// !!!
-
 	void ModifyBasicSettings()
 		// !!!
 
