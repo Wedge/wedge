@@ -468,7 +468,7 @@ function updateSettings($changeArray, $update = false)
 		}
 
 		// Clean out the cache and make sure the cobwebs are gone too.
-		cache_put_data('modSettings', null, 90);
+		cache_put_data('settings', null, 90);
 
 		return;
 	}
@@ -500,7 +500,7 @@ function updateSettings($changeArray, $update = false)
 	);
 
 	// Kill the cache - it needs redoing now, but we won't bother ourselves with that here.
-	cache_put_data('modSettings', null, 90);
+	cache_put_data('settings', null, 90);
 }
 
 /**
@@ -1954,7 +1954,7 @@ function setupMenuContext()
 				'show' => $context['allow_admin'] || $context['allow_moderation_center'],
 				'sub_items' => array(
 					'featuresettings' => array(
-						'title' => $txt['modSettings_title'],
+						'title' => $txt['settings_title'],
 						'href' => $scripturl . '?action=admin;area=featuresettings',
 						'show' => allowedTo('admin_forum'),
 					),

@@ -71,7 +71,7 @@ function ModifyFeatureSettings()
 {
 	global $context, $txt, $scripturl, $theme;
 
-	$context['page_title'] = $txt['modSettings_title'];
+	$context['page_title'] = $txt['settings_title'];
 
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
@@ -82,9 +82,9 @@ function ModifyFeatureSettings()
 
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
-		'title' => $txt['modSettings_title'],
+		'title' => $txt['settings_title'],
 		'help' => 'featuresettings',
-		'description' => sprintf($txt['modSettings_desc'], $theme['theme_id'], $context['session_query'], $scripturl),
+		'description' => sprintf($txt['settings_desc'], $theme['theme_id'], $context['session_query'], $scripturl),
 		'tabs' => array(
 			'basic' => array(
 			),

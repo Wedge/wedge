@@ -403,7 +403,7 @@ function ModifyCacheSettings($return_config = false)
 
 		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
 		$settings['cache_enable'] = 1;
-		cache_put_data('modSettings', null, 90);
+		cache_put_data('settings', null, 90);
 
 		redirectexit('action=admin;area=serversettings;sa=cache;' . $context['session_query']);
 	}
@@ -534,7 +534,7 @@ function ModifyProxySettings($return_config = false)
 
 		// We have to manually force the clearing of the cache otherwise the changed settings might not get noticed.
 		$settings['cache_enable'] = 1;
-		cache_put_data('modSettings', null, 90);
+		cache_put_data('settings', null, 90);
 
 		redirectexit('action=admin;area=serversettings;sa=proxy;' . $context['session_query']);
 	}

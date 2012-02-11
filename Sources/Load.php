@@ -37,7 +37,7 @@ function reloadSettings()
 	);
 
 	// Try to load it from the cache first; it'll never get cached if the setting is off.
-	if (($settings = cache_get_data('modSettings', 90)) == null)
+	if (($settings = cache_get_data('settings', 90)) == null)
 	{
 		$request = wesql::query('
 			SELECT variable, value
@@ -64,7 +64,7 @@ function reloadSettings()
 		$settings['pretty_filters'] = unserialize($settings['pretty_filters']);
 
 		if (!empty($settings['cache_enable']))
-			cache_put_data('modSettings', $settings, 90);
+			cache_put_data('settings', $settings, 90);
 	}
 
 	// Deal with loading plugins.

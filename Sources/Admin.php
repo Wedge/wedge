@@ -65,7 +65,7 @@ function Admin()
 			'permission' => array('admin_forum'),
 			'areas' => array(
 				'featuresettings' => array(
-					'label' => $txt['modSettings_title'],
+					'label' => $txt['settings_title'],
 					'file' => 'ManageSettings',
 					'function' => 'ModifyFeatureSettings',
 					'icon' => 'features.gif',
