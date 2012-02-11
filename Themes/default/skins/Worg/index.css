@@ -838,6 +838,7 @@ li.separator
 
 .menu .note
 	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
+	font-size: 80%
 	float: right
 	padding: 4px 5px 5px
 	margin: -1px -4px 0 8px

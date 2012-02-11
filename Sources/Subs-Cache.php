@@ -480,7 +480,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
 	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
 
-	// Some CSS3 rules that are prominent enough in Wedge get the honor of a custom function. No need to use a prefix on them, although you may.
+	// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
 	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
 	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
@@ -522,7 +522,6 @@ function wedge_replace_placeholders($str, $arr, &$final)
 
 /**
  * Add browser-specific prefixes to a few commonly used CSS attributes (in Wedge at least.)
- * This is pretty basic, and could probably benefit from being less hackish and more systematic.
  *
  * @param string $matches The actual CSS contents
  * @return string Updated CSS contents with fixed code
@@ -531,13 +530,20 @@ function wedge_fix_browser_css($matches)
 {
 	global $browser, $prefix;
 
-	if ($browser['is_ie'] && $browser['version'] >= 9 && strpos($matches[0], 'border-radius') === 0)
+	// Only IE6/7/8 don't support border-radius these days. Don't bother.
+	if (strpos($matches[0], 'border-radius') === 0)
 		return $matches[0];
 
-	if (!empty($prefix) && (!$browser['is_opera'] || strpos($matches[0], 'bo') !== 0))
-		return $prefix . $matches[0];
+	// IE6/7/8, Safari and Safari Mobile mostly require a prefix.
+	if (strpos($matches[0], 'box-shadow') === 0)
+		return $browser['is_ie8down'] || $browser['is_safari'] ? $prefix . $matches[0] : $matches[0];
 
-	return $matches[0];
+	// Only IE6 and IE7 still have problems with box-sizing.
+	if (strpos($matches[0], 'box-sizing') === 0)
+		return $browser['is_ie6'] || $browser['is_ie7'] ? $prefix . $matches[0] : $matches[0];
+
+	// transition always requires a prefix, for now.
+	return $prefix . $matches[0];
 }
 
 // Dynamic function to cache language flags into index.css
