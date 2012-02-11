@@ -2851,7 +2851,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
 	$icourl = '
 			<img style="width: 10px; height: 10px" src="' . $theme['images_aeva'] . '/';
-	$new_icon = '<div class="new_icon"></div>';
+	$new_icon = '<div class="note">' . $txt['new'] . '</div>';
 	// If we're in an external embed, we might not have all the space we would like...
 	$ico = !empty($amSettings['icons_only']);
 	$can_moderate &= isset($_REQUEST['action']) && $_REQUEST['action'] == 'media';

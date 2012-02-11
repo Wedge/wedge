@@ -148,7 +148,7 @@ function template_boards()
 						if (!$child['is_redirect'])
 						{
 							$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('topics', $child['topics']) . ', ' . number_context('posts', $child['posts']) . ')';
-							$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '"><div class="new_icon new_posts"></div>' : '') . '</a>';
+							$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '"><div class="note new_posts">' . $txt['new_short'] . '</div>' : '') . '</a>';
 						}
 						else
 							$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('redirects', $child['posts']) . '">' . $child['name'] . '</a>';

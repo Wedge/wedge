@@ -392,8 +392,8 @@ function template_sidebar_before()
 			', $txt['thought'], '
 		</we:title>
 		<div style="padding: 8px 0 0">
-			<a href="#" onclick="oThought.edit(\'\', \'\', true); return false;">', $txt['new'], '</a> |
-			<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['modify'], '</a>
+			<a href="#" onclick="oThought.edit(\'\', \'\', true); return false;">', $txt['add_thought'], '</a> |
+			<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['edit_thought'], '</a>
 		</div>
 		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
 
@@ -403,7 +403,7 @@ function template_sidebar_before()
 		add_js('
 	oThought = new Thought({
 		aPrivacy: { 1: "', $txt['privacy_public'], '", 5: "', $txt['privacy_members'], '", 8: "', $txt['privacy_self'], '" },
-		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '", sEdit: "', $txt['modify'], '", sReply: "', $txt['reply'], '", sDelete: "', $txt['delete'], '",
+		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '", sEdit: "', $txt['edit_thought'], '", sReply: "', $txt['reply'], '", sDelete: "', $txt['delete'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '
 	});');
@@ -681,7 +681,7 @@ function template_menu()
 		<li id="item_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>
 			<span class="m_' . $act . '"></span>
 			<h4><a href="', $item['href'], '"', isset($item['target']) ? ' target="' . $item['target'] . '"' : '', '>',
-			$item['title'], !empty($item['notice']) ? '<strong>' . $item['notice'] . '</strong>' : '', '</a></h4>';
+			$item['title'], !empty($item['notice']) ? '<div class="note">' . $item['notice'] . '</div>' : '', '</a></h4>';
 
 		if (!empty($item['sub_items']))
 		{
@@ -698,7 +698,7 @@ function template_menu()
 				}
 				echo '
 				<li><a href="', $sub_item['href'], '"', isset($sub_item['target']) ? ' target="' . $sub_item['target'] . '"' : '', '>',
-				!empty($sub_item['notice']) ? '<strong>' . $sub_item['notice'] . '</strong>' : '',
+				!empty($sub_item['notice']) ? '<div class="note">' . $sub_item['notice'] . '</div>' : '',
 				$sub_item['title'], '</a>';
 
 				// 3rd-level menus
@@ -857,7 +857,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 
 		// If we're in a topic page, and later pages have unread posts, show a New icon next to the following page number!
 		if (!empty($topicinfo['new_from']) && $topicinfo['new_from'] <= $topicinfo['id_last_msg'])
-			$pageindex .= ' <div class="new_icon next_page" title="' . $txt['new'] . '"></div>';
+			$pageindex .= ' <div class="note next_page">' . $txt['new_short'] . '</div>';
 	}
 
 	return $pageindex;

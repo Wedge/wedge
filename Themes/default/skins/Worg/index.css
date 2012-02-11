@@ -280,6 +280,21 @@ em
 .ping
 	box-shadow: none !important
 
+// The 'New' icon, generally speaking.
+.note
+	display: inline
+	border-radius: 7px
+	background-color: rgba(255,0,0,.8)
+	gradient: #fa6, #c8a
+	color: #fff
+	font-size: 75%
+	font-weight: 700
+	line-height: 100%
+	text-transform: uppercase
+	vertical-align: .1em
+	margin: 0 0 0 4px
+	padding: 1px 5px
+
 /* Common styles used for inheritance. You can declare
 	them anywhere you like, but having them near the
 	start of the file should avoid cascading issues.
@@ -297,8 +312,8 @@ em
 	margin-top: 2px
 	margin-bottom: 4px
 	padding: .9em 1.2em
-	border-radius: 6px
-	// !!! border: 1px solid rgba(0,0,0, .1)
+//	border-radius: 6px
+//	border: 1px solid rgba(0,0,0, .1)
 	p
 		margin: 0 0 .5em
 		:only-child
@@ -672,8 +687,6 @@ input[type=file]
 #main_menu
 	padding: 5px 0 0
 	float: left
-	.new_icon
-		margin: 2px 5px 0 10px
 	li.nodrop h4
 		background-image: none
 	h4:hover, h4.hove
@@ -823,25 +836,16 @@ li.separator
 #main .menu
 	margin-bottom: 4px
 
-.menu strong
-	color: #fff
-	font-size: 85%
-	text-transform: uppercase
-	background-color: rgba(255,0,0,.8)
+.menu .note
 	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
-	border-radius: 7px
 	float: right
 	padding: 4px 5px 5px
-	line-height: 100%
 	margin: -1px -4px 0 8px
 
-.menu h4 strong
-	margin: 0 0 0 4px
-	font-weight: 700
-	font-size: 80%
-	gradient: #d55a61, #b63c47
-	padding: 2px 5px 1px
+.menu h4 .note
 	float: none
+	margin: 0 0 0 4px
+	padding: 2px 5px
 
 .menu li.menu-top
 	position: absolute
