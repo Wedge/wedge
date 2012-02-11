@@ -289,9 +289,8 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	}
 
 	$folder = end($context['css_folders']);
-	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? array() : array(substr(strrchr($theme['theme_dir'], '/'), 1));
-	if (!empty($id))
-		$id[0] = $folder === 'skins' ? substr($id[0], 0, -1) : $id[0] . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
+	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? '' : substr(strrchr($theme['theme_dir'], '/'), 1) . '-';
+	$id = array($folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder));
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
@@ -481,7 +480,20 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
 
 	// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
-	$final = preg_replace_callback('~(?<!-)(?:border-radius|box-shadow|box-sizing|transition):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
+	$rules = array(
+		'border-radius',				// Rounded corners
+		'box-shadow',					// Rectangular drop shadows
+		'box-sizing',					// Determines whether a container's width includes padding and border
+		'border-image',					// Border images
+		'hyphens',						// Automatic hyphens on long words
+		'transition',					// Animated transitions
+		'column-[a-z-]+',				// Multi-column layout
+		'box-[a-z-]+',					// Flexible box model -- requires setting "display: -prefix-box" before!
+		'grid-[a-z]+',					// Grid layout
+		'animation(?:-[a-z-]+)?',		// Animations
+		'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
+	);
+	$final = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . ') *:[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
 	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
 	$final = str_replace(
@@ -530,20 +542,30 @@ function wedge_fix_browser_css($matches)
 {
 	global $browser, $prefix;
 
+	$full = $prefix . $matches[0] . $matches[0];
+
 	// Only IE6/7/8 don't support border-radius these days. Don't bother.
-	if (strpos($matches[0], 'border-radius') === 0)
+	if ($matches[1] === 'border-radius')
 		return $matches[0];
 
+	// Only Chrome 16+ supports border-image without a prefix.
+	if ($matches[1] === 'border-image')
+		return !$browser['is_chrome'] ? $full : $matches[0];
+
 	// IE6/7/8, Safari and Safari Mobile mostly require a prefix.
-	if (strpos($matches[0], 'box-shadow') === 0)
-		return $browser['is_ie8down'] || $browser['is_safari'] ? $prefix . $matches[0] : $matches[0];
+	if ($matches[1] === 'box-shadow')
+		return $browser['is_ie8down'] || $browser['is_safari'] ? $full : $matches[0];
 
 	// Only IE6 and IE7 still have problems with box-sizing.
-	if (strpos($matches[0], 'box-sizing') === 0)
-		return $browser['is_ie6'] || $browser['is_ie7'] ? $prefix . $matches[0] : $matches[0];
+	if ($matches[1] === 'box-sizing')
+		return $browser['is_ie6'] || $browser['is_ie7'] ? $full : $matches[0];
 
-	// transition always requires a prefix, for now.
-	return $prefix . $matches[0];
+	// All browsers need prefixes for columns, except for IE10 and Opera.
+	if (strpos($matches[1], 'column-') === 0)
+		return !$browser['is_opera'] && !$browser['is_ie10'] ? $full : $matches[0];
+
+	// transition, transform and flex box layouts always require a prefix, for now.
+	return $full;
 }
 
 // Dynamic function to cache language flags into index.css
