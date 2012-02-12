@@ -655,7 +655,7 @@ function Thought(opt)
 			pr += '<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
 
 		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
-		thought.toggle(is_new && tid).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
+		thought.toggle(tid && is_new).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
 			+ pr + '</select><input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '"><input type="submit" value="'
 			+ opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save"><input type="button" value="'
 			+ opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel"></form>').siblings('.thought_actions').hide();
@@ -685,8 +685,9 @@ function Thought(opt)
 
 		sendXMLDocument(
 			ajaxUrl,
-			'parent=' + tid + ';master=' + mid + ';oid=' + $('#noid').val().php_urlencode() + ';privacy=' + $('#npriv').val().php_urlencode() + ';text=' + $('#ntho').val().php_urlencode(),
-			function (XMLDoc) {
+			'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
+			function (XMLDoc)
+			{
 				var thought = $('thought', XMLDoc), nid = tid ? thought.attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid, user = $('user', XMLDoc);
 				if (!$(new_id).length)
 					new_thought.after(new_thought.html().replace('{date}', $('date', XMLDoc).text()).replace('{uname}', user.text()).replace('{text}', thought.text()));
@@ -704,7 +705,8 @@ function Thought(opt)
 		$('#thought_update')
 			.attr('title', opt.sLabelThought)
 			.click(function () { oThought.edit(''); });
-		$('.thought').each(function () {
+		$('.thought').each(function ()
+		{
 			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
 			if (tid)
 				thought.after('\
