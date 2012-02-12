@@ -48,7 +48,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
  * Notes:
  * - This function handles all bbcode parsing, as well as containing the list of all bbcodes known to the system, and where new bbcodes should be added.
  * - The state of bbcode disabled in the admin panel is stored in $settings['disabledBBC'] as a comma-separated list and parsed here.
- * - The master toggle switch of $settings['enableBBC'] is applied here, as is $settings['enablePostHTML'] being able to handle basic HTML (including b, u, i, s, em, ins, del, pre, blockquote; a and img are converted to bbcode equivalents)
+ * - The master toggle switch of $settings['enableBBC'] is applied here, as is $settings['enablePostHTML'] being able to handle basic HTML (including b, u, i, s, em, pre, blockquote; a and img are converted to bbcode equivalents)
  * - Long words are also fixed here as directed by $settings['fixLongWords'].
  *
  * @param mixed $message The original text, including bbcode, to be parsed. This is expected to have been parsed with {@link preparsecode()} previously (for handling of quotes and apostrophes). Alternatively, if boolean false is passed here, the return value is the array listing the acceptable bbcode types.
@@ -272,7 +272,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					$data = str_replace(array('&lt;' . $tag . '&gt;', '&lt;' . $tag . '/&gt;', '&lt;' . $tag . ' /&gt;'), '[' . $tag . ' /]', $data);
 
 				// b, u, i, s, pre... basic closable tags.
-				foreach (array('b', 'u', 'i', 's', 'em', 'ins', 'del', 'pre', 'blockquote') as $tag)
+				foreach (array('b', 'u', 'i', 's', 'em', 'pre', 'blockquote') as $tag)
 				{
 					$diff = substr_count($data, '&lt;' . $tag . '&gt;') - substr_count($data, '&lt;/' . $tag . '&gt;');
 					$data = strtr($data, array('&lt;' . $tag . '&gt;' => '<' . $tag . '>', '&lt;/' . $tag . '&gt;' => '</' . $tag . '>'));
