@@ -49,7 +49,7 @@ function JSModify()
 			SELECT
 				t.locked, t.num_replies, t.id_member_started, t.id_first_msg,
 				m.id_msg, m.id_member, m.poster_time, m.subject, m.smileys_enabled, m.body, m.icon,
-				m.modified_time, m.modified_name, m.approved
+				m.modified_time, m.modified_name, m.modified_member, m.approved
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 			WHERE m.id_msg = {raw:id_msg}
@@ -180,6 +180,7 @@ function JSModify()
 			{
 				$msgOptions['modify_time'] = time();
 				$msgOptions['modify_name'] = $user_info['name'];
+				$msgOptions['modify_member'] = $user_info['id'];
 			}
 		}
 		// If nothing was changed there's no need to add an entry to the moderation log.
@@ -193,6 +194,7 @@ function JSModify()
 		{
 			$msgOptions['modify_time'] = $row['modified_time'];
 			$msgOptions['modify_name'] = $row['modified_name'];
+			$msgOptions['modify_member'] = $row['modified_member'];
 		}
 
 		// Changing the first subject updates other subjects to 'Re: new_subject'.

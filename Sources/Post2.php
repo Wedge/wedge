@@ -808,6 +808,7 @@ function Post2()
 		{
 			$msgOptions['modify_time'] = time();
 			$msgOptions['modify_name'] = $user_info['name'];
+			$msgOptions['modify_member'] = $user_info['id'];
 		}
 
 		// This will save some time...

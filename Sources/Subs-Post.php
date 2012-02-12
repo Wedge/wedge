@@ -1836,13 +1836,14 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		$messages_columns['modified_time'] = $msgOptions['modify_time'];
 		$messages_columns['modified_name'] = $msgOptions['modify_name'];
+		$messages_columns['modified_member'] = $msgOptions['modify_member'];
 		$messages_columns['id_msg_modified'] = $settings['maxMsgID'];
 	}
 	if (isset($msgOptions['smileys_enabled']))
 		$messages_columns['smileys_enabled'] = empty($msgOptions['smileys_enabled']) ? 0 : 1;
 
 	// Which columns need to be ints?
-	$messageInts = array('modified_time', 'id_msg_modified', 'smileys_enabled');
+	$messageInts = array('modified_time', 'modified_member', 'id_msg_modified', 'smileys_enabled');
 	$update_parameters = array(
 		'id_msg' => $msgOptions['id'],
 	);

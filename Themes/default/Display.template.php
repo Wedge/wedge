@@ -173,7 +173,7 @@ function template_display_posts()
 		// Show "Last Edit on Date by Person" if this post was edited.
 		if ($theme['show_modify'] && !empty($message['modified']['name']))
 			echo '
-									', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '';
+									', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . (!empty($message['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $message['modified']['member'] . '">' . $message['modified']['name'] . '</a>' : $message['modified']['name']) : '';
 
 		echo '
 								</div>';

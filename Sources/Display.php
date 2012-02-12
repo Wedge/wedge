@@ -772,7 +772,7 @@ function Display()
 
 	// Get each post and poster in this topic.
 	$request = wesql::query('
-		SELECT id_msg, id_member, approved, poster_time
+		SELECT id_msg, id_member, modified_member, approved, poster_time
 		FROM {db_prefix}messages
 		WHERE id_topic = {int:current_topic}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : (!empty($settings['db_mysql_group_by_fix']) ? '' : '
 		GROUP BY id_msg') . '
@@ -806,6 +806,8 @@ function Display()
 	{
 		if (!empty($row['id_member']))
 			$all_posters[$row['id_msg']] = $row['id_member'];
+		if (!empty($row['modified_member']))
+			$all_posters[$row['id_msg'] . 'mod'] = $row['modified_member'];
 		$messages[] = $row['id_msg'];
 		$times[$row['id_msg']] = $row['poster_time'];
 	}
@@ -997,7 +999,7 @@ function Display()
 		$messages_request = wesql::query('
 			SELECT
 				id_msg, icon, subject, poster_time, li.member_ip AS poster_ip, id_member,
-				modified_time, modified_name, body, smileys_enabled, poster_name, poster_email,
+				modified_time, modified_name, modified_member, body, smileys_enabled, poster_name, poster_email,
 				approved, id_msg_modified < {int:new_from} AS is_read
 			FROM {db_prefix}messages AS m
 				LEFT JOIN {db_prefix}log_ips AS li ON (m.poster_ip = li.id_ip)
@@ -1364,7 +1366,8 @@ function prepareDisplayContext($reset = false)
 		'modified' => array(
 			'time' => on_timeformat($message['modified_time']),
 			'timestamp' => forum_time(true, $message['modified_time']),
-			'name' => $message['modified_name']
+			'name' => $message['modified_name'],
+			'member' => $message['modified_member'],
 		),
 		'body' => $message['body'],
 		'new' => empty($message['is_read']) && !$is_new,
