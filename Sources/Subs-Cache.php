@@ -474,7 +474,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 	$final = preg_replace('~\s+final\b~', '', $final);
 
 	// Remove extra whitespace.
-	$final = preg_replace('~\s*([+:;,>{}[\]\s])\s*~', '$1', $final);
+	$final = preg_replace('~\s*([][+:;,>{}\s])\s*~', '$1', $final);
 
 	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
 	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
@@ -493,7 +493,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 		'animation(?:-[a-z-]+)?',		// Animations
 		'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
 	);
-	$final = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . ') *:[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
+	$final = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . '):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
 	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
 	$final = str_replace(

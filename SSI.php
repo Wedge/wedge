@@ -282,7 +282,7 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 		'is_approved' => 1,
 		'include_boards' => $include_boards === null ? '' : $include_boards,
 		'exclude_boards' => empty($exclude_boards) ? '' : $exclude_boards,
-		'min_message_id' => $settings['maxMsgID'] - 25 * min($num_recent, 5),
+		'min_message_id' => $settings['maxMsgID'] - 25 * $num_recent,
 	);
 
 	// Past to this simpleton of a function...
@@ -443,12 +443,11 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			AND {query_wanna_see_board}' . ($settings['postmod_active'] ? '
 			AND t.approved = {int:is_approved}
 			AND ml.approved = {int:is_approved}' : '') . '
-		ORDER BY t.id_last_msg DESC
 		LIMIT ' . $num_recent,
 		array(
 			'include_boards' => empty($include_boards) ? '' : $include_boards,
 			'exclude_boards' => empty($exclude_boards) ? '' : $exclude_boards,
-			'min_message_id' => $settings['maxMsgID'] - 35 * min($num_recent, 5),
+			'min_message_id' => $settings['maxMsgID'] - 35 * $num_recent,
 			'is_approved' => 1,
 		)
 	);
@@ -473,7 +472,8 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = mf.id_member)' . (!$user_info['is_guest'] ? '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})' : '') . '
-		WHERE t.id_topic IN ({array_int:topic_list})',
+		WHERE t.id_topic IN ({array_int:topic_list})
+		ORDER BY t.id_last_msg DESC',
 		array(
 			'current_member' => $user_info['id'],
 			'topic_list' => array_keys($topics),

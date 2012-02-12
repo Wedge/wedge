@@ -138,6 +138,3 @@ ul.buttonlist
 	background: url($images/icons/thought.png) no-repeat
 	width: width($images_dir/icons/thought.png)px
 	height: height($images_dir/icons/thought.png)px
-
-#new_thought
-	display: none

@@ -135,7 +135,7 @@ ul#noava
 		float: left
 		a
 			color: #766
-			font: 100 2.9em "Bebas Neue", "PT Sans", "Segoe UI Light", "Segoe UI", Georgia
+			font: 100 2.9em "Bebas Neue", "PT Sans", "Segoe UI Light", "Segoe UI", Arial
 //			text-shadow: 0 0 8px #333
 
 #siteslogan
@@ -292,7 +292,7 @@ em
 	line-height: 100%
 	text-transform: uppercase
 	vertical-align: .1em
-	margin: 0 0 0 4px
+	margin: 0 3px
 	padding: 1px 5px
 
 /* Common styles used for inheritance. You can declare
@@ -1243,6 +1243,9 @@ table.thought_list
 			display: inline-block
 		:hover .hide
 			display: none
+
+#new_thought
+	display: none
 
 /* AJAX notification bar
 ------------------------------------------------------- */

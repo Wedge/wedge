@@ -575,9 +575,10 @@ class wecss_nesting extends wecss
 				$level -= $indent;
 			}
 		}
+		$tree = preg_replace('~^(\s*)(@(?:import|charset)\s+.*?);$~mi', '$1<rule selector="$2"></rule>', $tree); // Transform single-line @rules into selectors
+		$tree = preg_replace('~([a-z-, ]+)\s*:(?!//)\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
+		$tree = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*{~mi', '$1<rule selector="$2">', $tree); // Transform selectors
 
-		$tree = preg_replace('~([a-z-, ]+)\s*:\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
-		$tree = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*\{~mi', '$1<rule selector="$2">', $tree); // Transform selectors
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
 
@@ -711,12 +712,21 @@ class wecss_nesting extends wecss
 		// Do the proper nesting
 		foreach ($this->rules as &$node)
 		{
-			// @todo: should this only check for @media and @-*-keyframes, or actually give the same treatment to all @ commands?
-			if ($node['selector'][0] === '@' && (strpos($node['selector'], '@media') === 0 || preg_match('~@(?:-[a-z]+-)?keyframes~i', $node['selector'])))
+			// Is this rule actually an at-rule?
+			if ($node['selector'][0] === '@')
 			{
-				$standard_nest = $node['selector'];
-				$css .= $node['selector'] . ' {';
-				continue;
+				if (stripos($node['selector'], '@import') === 0 || stripos($node['selector'], '@charset') === 0)
+				{
+					$css .= $node['selector'] . ';';
+					continue;
+				}
+				// @todo: should this only check for @media and @-*-keyframes, or actually give the same treatment to all @ commands?
+				if (stripos($node['selector'], '@media') === 0 || preg_match('~@(?:-[a-z]+-)?keyframes~i', $node['selector']))
+				{
+					$standard_nest = $node['selector'];
+					$css .= $node['selector'] . ' {';
+					continue;
+				}
 			}
 
 			$selector = str_replace('&gt;', '>', $this->parse_ancestors($this->get_ancestors($node)));

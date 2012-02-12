@@ -272,7 +272,7 @@ img.new_posts
 
 	h4
 		margin: .2em 0 .2em 1.1em
-		font: 700 120%/120% "PT Sans", $head_font
+		font: 700 120%/120% "PT Sans", "Franklin Gothic Medium", Arial
 		overflow: hidden
 		text-overflow: ellipsis
 		:hover, &.show
