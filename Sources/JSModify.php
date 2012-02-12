@@ -241,7 +241,7 @@ function JSModify()
 				'modified' => array(
 					'time' => isset($msgOptions['modify_time']) ? timeformat($msgOptions['modify_time']) : '',
 					'timestamp' => isset($msgOptions['modify_time']) ? forum_time(true, $msgOptions['modify_time']) : 0,
-					'name' => isset($msgOptions['modify_time']) ? $msgOptions['modify_name'] : '',
+					'name' => isset($msgOptions['modify_time']) ? '<a href="<URL>?action=profile;u=' . $msgOptions['modify_member'] . '">' . $msgOptions['modify_name'] . '</a>' : '',
 				),
 				'subject' => $msgOptions['subject'],
 				'first_in_topic' => $row['id_msg'] == $row['id_first_msg'],
