@@ -56,19 +56,8 @@ function QuickModeration()
 	}
 	else
 	{
-		// !!! Ugly.  There's no getting around this, is there?
 		// !!! Maybe just do this on the actions people want to use?
-		$boards_can = array(
-			'pin_topic' => boardsAllowedTo('pin_topic'),
-			'move_any' => boardsAllowedTo('move_any'),
-			'move_own' => boardsAllowedTo('move_own'),
-			'remove_any' => boardsAllowedTo('remove_any'),
-			'remove_own' => boardsAllowedTo('remove_own'),
-			'lock_any' => boardsAllowedTo('lock_any'),
-			'lock_own' => boardsAllowedTo('lock_own'),
-			'merge_any' => boardsAllowedTo('merge_any'),
-			'approve_posts' => boardsAllowedTo('approve_posts'),
-		);
+		$boards_can = boardsAllowedTo(array('pin_topic', 'move_any', 'move_own', 'remove_any', 'remove_own', 'lock_any', 'lock_own', 'merge_any', 'approve_posts'));
 
 		$redirect_url = isset($_POST['redirect_url']) ? $_POST['redirect_url'] : (isset($_SESSION['old_url']) ? $_SESSION['old_url'] : '');
 	}
