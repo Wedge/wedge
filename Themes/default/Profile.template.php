@@ -1589,14 +1589,6 @@ function template_profile_theme_settings()
 							<option value="2"', !empty($context['member']['options']['display_quick_reply']) && $context['member']['options']['display_quick_reply'] == 2 ? ' selected' : '', '>', $txt['display_quick_reply3'], '</option>
 						</select></label>
 					</li>
-					<li>
-						<label>', $txt['display_quick_mod'], '
-						<select name="default_options[display_quick_mod]" id="display_quick_mod">
-							<option value="0"', empty($context['member']['options']['display_quick_mod']) ? ' selected' : '', '>', $txt['display_quick_mod_none'], '</option>
-							<option value="1"', !empty($context['member']['options']['display_quick_mod']) && $context['member']['options']['display_quick_mod'] == 1 ? ' selected' : '', '>', $txt['display_quick_mod_check'], '</option>
-							<option value="2"', !empty($context['member']['options']['display_quick_mod']) && $context['member']['options']['display_quick_mod'] != 1 ? ' selected' : '', '>', $txt['display_quick_mod_image'], '</option>
-						</select></label>
-					</li>
 				</ul>
 				<dl>
 					<dd style="margin: 0"></dd>';

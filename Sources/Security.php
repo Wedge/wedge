@@ -895,51 +895,114 @@ function boardsAllowedTo($permissions, $check_access = true)
 {
 	global $user_info, $settings;
 
-	// Administrators are all powerful, sorry.
-	if ($user_info['is_admin'])
-		return array(0);
-
-	// Arrays are nice, most of the time.
-	if (!is_array($permissions))
-		$permissions = array($permissions);
-
 	// All groups the user is in except 'moderator'.
 	$groups = array_diff($user_info['groups'], array(3));
 
-	// Guest and guest access disabled?
-	if ($user_info['is_guest'] && empty($settings['allow_guestAccess']))
-		return array();
-
-	$request = wesql::query('
-		SELECT b.id_board, bp.add_deny
-		FROM {db_prefix}board_permissions AS bp
-			INNER JOIN {db_prefix}boards AS b ON (b.id_profile = bp.id_profile)
-			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})
-		WHERE bp.id_group IN ({array_int:group_list}, {int:moderator_group})
-			AND bp.permission IN ({array_string:permissions})
-			AND (mods.id_member IS NOT NULL OR bp.id_group != {int:moderator_group})' .
-			($check_access ? ' AND {query_see_board}' : ''),
-		array(
-			'current_member' => $user_info['id'],
-			'group_list' => $groups,
-			'moderator_group' => 3,
-			'permissions' => $permissions,
-		)
-	);
-	$boards = array();
-	$deny_boards = array();
-	while ($row = wesql::fetch_assoc($request))
+	if (!is_array($permissions))
 	{
-		if (empty($row['add_deny']))
-			$deny_boards[] = $row['id_board'];
-		else
-			$boards[] = $row['id_board'];
+		// Administrators are all powerful, sorry.
+		if ($user_info['is_admin'])
+			return array(0);
+
+		// Guest and guest access disabled?
+		if ($user_info['is_guest'] && empty($settings['allow_guestAccess']))
+			return array();
+
+		$request = wesql::query('
+			SELECT b.id_board, bp.add_deny
+			FROM {db_prefix}board_permissions AS bp
+				INNER JOIN {db_prefix}boards AS b ON (b.id_profile = bp.id_profile)
+				LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})
+			WHERE bp.id_group IN ({array_int:group_list}, {int:moderator_group})
+				AND bp.permission IN ({string:permissions})
+				AND (mods.id_member IS NOT NULL OR bp.id_group != {int:moderator_group})' .
+				($check_access ? ' AND {query_see_board}' : ''),
+			array(
+				'current_member' => $user_info['id'],
+				'group_list' => $groups,
+				'moderator_group' => 3,
+				'permissions' => $permissions,
+			)
+		);
+		$boards = array();
+		$deny_boards = array();
+		while ($row = wesql::fetch_assoc($request))
+		{
+			if (empty($row['add_deny']))
+				$deny_boards[] = $row['id_board'];
+			else
+				$boards[] = $row['id_board'];
+		}
+		wesql::free_result($request);
+
+		$boards = array_unique(array_values(array_diff($boards, $deny_boards)));
+
+		return $boards;
 	}
-	wesql::free_result($request);
+	else
+	{
+		// Administrators are all powerful, sorry.
+		if ($user_info['is_admin'])
+		{
+			$final_list = array();
+			foreach ($permissions as $perm)
+			{
+				$final_list[$perm] = array(0);
+			}
+			return $final_list;
+		}
 
-	$boards = array_unique(array_values(array_diff($boards, $deny_boards)));
+		// Guest and guest access disabled?
+		if ($user_info['is_guest'] && empty($settings['allow_guestAccess']))
+		{
+			$final_list = array();
+			foreach ($permissions as $perm)
+			{
+				$final_list[$perm] = array();
+			}
+			return $final_list;
+		}
 
-	return $boards;
+		$boards = array();
+		$deny_boards = array();
+		$final_list = array();
+		$request = wesql::query('
+			SELECT b.id_board, bp.permission, bp.add_deny
+			FROM {db_prefix}board_permissions AS bp
+				INNER JOIN {db_prefix}boards AS b ON (b.id_profile = bp.id_profile)
+				LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board AND mods.id_member = {int:current_member})
+			WHERE bp.id_group IN ({array_int:group_list}, {int:moderator_group})
+				AND bp.permission IN ({array_string:permissions})
+				AND (mods.id_member IS NOT NULL OR bp.id_group != {int:moderator_group})' .
+				($check_access ? ' AND {query_see_board}' : ''),
+			array(
+				'current_member' => $user_info['id'],
+				'group_list' => $groups,
+				'moderator_group' => 3,
+				'permissions' => $permissions,
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+		{
+			if (empty($row['add_deny']))
+				$deny_boards[$row['permission']][] = $row['id_board'];
+			else
+				$boards[$row['permission']][] = $row['id_board'];
+		}
+		wesql::free_result($request);
+
+		foreach ($permissions as $perm)
+		{
+			if (empty($boards[$perm]))
+				$boards[$perm] = array();
+			if (empty($deny_boards[$perm]))
+				$deny_boards[$perm] = array();
+
+			$final_list[$perm] = array_unique(array_values(array_diff($boards[$perm], $deny_boards[$perm])));
+		}
+
+		return $final_list;
+	}
 }
 
 /**

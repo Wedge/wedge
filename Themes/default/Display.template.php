@@ -99,7 +99,7 @@ function template_display_posts()
 									<li><a id="mm', $message['id'], '" class="acme more_button">', $txt['more_actions'], '</a></li>';
 
 		// Show a checkbox for quick moderation?
-		if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $message['can_remove'])
+		if ($message['can_remove'])
 			echo '
 									<li class="inline_mod_check hide" id="in_topic_mod_check_', $message['id'], '"></li>';
 
@@ -236,7 +236,7 @@ function template_display_posts()
 				</form>
 			</div>';
 
-	if (!empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && $context['can_remove_post'])
+	if ($context['can_remove_post'])
 		add_js('
 	var oInTopicModeration = new InTopicModeration({
 		sSelf: \'oInTopicModeration\',

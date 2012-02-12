@@ -130,16 +130,6 @@ function template_options()
 			),
 			'default' => true,
 		),
-		array(
-			'id' => 'display_quick_mod',
-			'label' => $txt['display_quick_mod'],
-			'options' => array(
-				0 => $txt['display_quick_mod_none'],
-				1 => $txt['display_quick_mod_check'],
-				2 => $txt['display_quick_mod_image'],
-			),
-			'default' => true,
-		),
 	);
 
 	// !!! Must find a better way of doing this.

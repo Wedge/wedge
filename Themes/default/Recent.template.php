@@ -86,12 +86,7 @@ function template_unread()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="recent">';
-
-	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1;
-
-	if ($show_checkboxes)
-		echo '
+	<div id="recent">
 		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="qaction" value="markread">
@@ -102,8 +97,7 @@ function template_unread()
 		'markread' => array('text' => !empty($context['no_board_limits']) ? 'mark_as_read' : 'mark_read_short', 'url' => $scripturl . '?action=markasread;sa=' . (!empty($context['no_board_limits']) ? 'all' : 'board' . $context['querystring_board_limits']) . ';' . $context['session_query']),
 	);
 
-	if ($show_checkboxes)
-		$mark_read['markselectread'] = array('text' => 'quick_mod_markread', 'url' => 'javascript:document.quickModForm.submit();');
+	$mark_read['markselectread'] = array('text' => 'quick_mod_markread', 'url' => 'javascript:document.quickModForm.submit();');
 
 	if (!empty($context['topics']))
 	{
@@ -131,19 +125,14 @@ function template_unread()
 							</th>';
 
 		// Show a "select all" box for quick moderation?
-		if ($show_checkboxes)
-			echo '
+		echo '
 							<th scope="col" style="width: 22%">
 								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>
 							<th class="last_th">
 								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
 							</th>';
-		else
-			echo '
-							<th scope="col" class="smalltext last_th" style="width: 22%">
-								<a href="', $scripturl, '?action=unread', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] == 'last_post' && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] == 'last_post' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
-							</th>';
+
 		echo '
 						</tr>
 					</thead>
@@ -189,8 +178,7 @@ function template_unread()
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 							</td>';
 
-			if ($show_checkboxes)
-				echo '
+			echo '
 							<td class="windowbg2 middle center">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 							</td>';
@@ -225,11 +213,8 @@ function template_unread()
 			</div>
 		</we:cat>';
 
-	if ($show_checkboxes)
-		echo '
-		</form>';
-
 	echo '
+		</form>
 	</div>';
 }
 
@@ -238,12 +223,7 @@ function template_replies()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="recent">';
-
-	$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1;
-
-	if ($show_checkboxes)
-		echo '
+	<div id="recent">
 		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="qaction" value="markread">
@@ -256,8 +236,7 @@ function template_replies()
 			'markread' => array('text' => 'mark_as_read', 'url' => $scripturl . '?action=markasread;sa=unreadreplies;topics=' . $context['topics_to_mark'] . ';' . $context['session_query']),
 		);
 
-		if ($show_checkboxes)
-			$mark_read['markselectread'] = array('text' => 'quick_mod_markread', 'url' => 'javascript:document.quickModForm.submit();');
+		$mark_read['markselectread'] = array('text' => 'quick_mod_markread', 'url' => 'javascript:document.quickModForm.submit();');
 	}
 
 	if (!empty($context['topics']))
@@ -286,19 +265,14 @@ function template_replies()
 							</th>';
 
 		// Show a "select all" box for quick moderation?
-		if ($show_checkboxes)
-				echo '
+		echo '
 							<th scope="col" style="width: 22%">
 								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 							</th>
 							<th class="last_th">
 								<input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');">
 							</th>';
-		else
-			echo '
-							<th scope="col" class="last_th" style="width: 22%">
-								<a href="', $scripturl, '?action=unreadreplies', $context['querystring_board_limits'], ';sort=last_post', $context['sort_by'] === 'last_post' && $context['sort_direction'] === 'up' ? ';desc' : '', '">', $txt['last_post'], $context['sort_by'] === 'last_post' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
-							</th>';
+
 		echo '
 						</tr>
 					</thead>
@@ -344,8 +318,7 @@ function template_replies()
 								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 							</td>';
 
-			if ($show_checkboxes)
-				echo '
+			echo '
 							<td class="windowbg2 middle center">
 								<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 							</td>';
@@ -370,11 +343,8 @@ function template_replies()
 				</div>
 			</we:cat>';
 
-	if ($show_checkboxes)
-		echo '
-		</form>';
-
 	echo '
+		</form>
 	</div>';
 }
 

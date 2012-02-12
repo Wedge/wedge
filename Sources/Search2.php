@@ -1387,31 +1387,13 @@ function Search2()
 
 	if (!empty($context['topics']))
 	{
-		// Create an array for the permissions.
-		$boards_can = array(
-			'post_reply_own' => boardsAllowedTo('post_reply_own'),
-			'post_reply_any' => boardsAllowedTo('post_reply_any'),
-			'mark_any_notify' => boardsAllowedTo('mark_any_notify')
-		);
+		$boards_can = boardsAllowedTo(array('post_reply_own', 'post_reply_any', 'mark_any_notify', 'lock_any', 'lock_own', 'pin_topic', 'move_any', 'move_own', 'remove_any', 'remove_own', 'merge_any'));
 
-		// How's about some quick moderation?
-		if (!empty($options['display_quick_mod']))
-		{
-			$boards_can['lock_any'] = boardsAllowedTo('lock_any');
-			$boards_can['lock_own'] = boardsAllowedTo('lock_own');
-			$boards_can['pin_topic'] = boardsAllowedTo('pin_topic');
-			$boards_can['move_any'] = boardsAllowedTo('move_any');
-			$boards_can['move_own'] = boardsAllowedTo('move_own');
-			$boards_can['remove_any'] = boardsAllowedTo('remove_any');
-			$boards_can['remove_own'] = boardsAllowedTo('remove_own');
-			$boards_can['merge_any'] = boardsAllowedTo('merge_any');
-
-			$context['can_lock'] = in_array(0, $boards_can['lock_any']);
-			$context['can_pin'] = in_array(0, $boards_can['pin_topic']);
-			$context['can_move'] = in_array(0, $boards_can['move_any']);
-			$context['can_remove'] = in_array(0, $boards_can['remove_any']);
-			$context['can_merge'] = in_array(0, $boards_can['merge_any']);
-		}
+		$context['can_lock'] = in_array(0, $boards_can['lock_any']);
+		$context['can_pin'] = in_array(0, $boards_can['pin_topic']);
+		$context['can_move'] = in_array(0, $boards_can['move_any']);
+		$context['can_remove'] = in_array(0, $boards_can['remove_any']);
+		$context['can_merge'] = in_array(0, $boards_can['merge_any']);
 
 		// What messages are we using?
 		$msg_list = array_keys($context['topics']);
@@ -1703,34 +1685,31 @@ function prepareSearchContext($reset = false)
 	$body_highlighted = $message['body'];
 	$subject_highlighted = $message['subject'];
 
-	if (!empty($options['display_quick_mod']))
+	$started = $output['first_post']['member']['id'] == $user_info['id'];
+
+	$output['quick_mod'] = array(
+		'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
+		'pin' => (in_array(0, $boards_can['pin_topic']) || in_array($output['board']['id'], $boards_can['pin_topic'])),
+		'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
+		'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
+	);
+
+	$context['can_lock'] |= $output['quick_mod']['lock'];
+	$context['can_pin'] |= $output['quick_mod']['pin'];
+	$context['can_move'] |= $output['quick_mod']['move'];
+	$context['can_remove'] |= $output['quick_mod']['remove'];
+	$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);
+
+	// If we've found a message we can move, and we don't already have it, load the destinations.
+	if (!isset($context['move_to_boards']) && $context['can_move'])
 	{
-		$started = $output['first_post']['member']['id'] == $user_info['id'];
-
-		$output['quick_mod'] = array(
-			'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
-			'pin' => (in_array(0, $boards_can['pin_topic']) || in_array($output['board']['id'], $boards_can['pin_topic'])),
-			'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
-			'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
+		loadSource('Subs-MessageIndex');
+		$boardListOptions = array(
+			'use_permissions' => true,
+			'not_redirection' => true,
+			'selected_board' => empty($_SESSION['move_to_topic']) ? null : $_SESSION['move_to_topic'],
 		);
-
-		$context['can_lock'] |= $output['quick_mod']['lock'];
-		$context['can_pin'] |= $output['quick_mod']['pin'];
-		$context['can_move'] |= $output['quick_mod']['move'];
-		$context['can_remove'] |= $output['quick_mod']['remove'];
-		$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);
-
-		// If we've found a message we can move, and we don't already have it, load the destinations.
-		if ($options['display_quick_mod'] == 1 && !isset($context['move_to_boards']) && $context['can_move'])
-		{
-			loadSource('Subs-MessageIndex');
-			$boardListOptions = array(
-				'use_permissions' => true,
-				'not_redirection' => true,
-				'selected_board' => empty($_SESSION['move_to_topic']) ? null : $_SESSION['move_to_topic'],
-			);
-			$context['move_to_boards'] = getBoardList($boardListOptions);
-		}
+		$context['move_to_boards'] = getBoardList($boardListOptions);
 	}
 
 	foreach ($context['key_words'] as $query)

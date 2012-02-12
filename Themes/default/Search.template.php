@@ -244,11 +244,7 @@ function template_results()
 
 	if ($context['compact'])
 	{
-		// Quick moderation set to checkboxes? Oh, how fun... :/
-		$show_checkboxes = !empty($options['display_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']);
-
-		if ($show_checkboxes)
-			echo '
+		echo '
 	<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="topicForm">';
 
 		echo '
@@ -283,40 +279,10 @@ function template_results()
 						<span class="smalltext">&#171;&nbsp;', $message['time'], ' ', $txt['by'], ' <strong>', $message['member']['link'], '</strong>&nbsp;&#187;</span>
 					</div>';
 
-				if (!empty($options['display_quick_mod']))
-				{
-					echo '
-					<div class="floatright">';
-
-					if ($show_checkboxes)
-						echo '
-						<input type="checkbox" name="topics[]" value="', $topic['id'], '">';
-					else
-					{
-						if ($topic['quick_mod']['remove'])
-							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $theme['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
-
-						if ($topic['quick_mod']['lock'])
-							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $theme['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
-
-						if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
-							echo '
-						<br>';
-
-						if ($topic['quick_mod']['pin'])
-							echo '
-						<a href="', $scripturl, '?action=quickmod;actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $quickmod, ');"><img src="', $theme['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
-
-						if ($topic['quick_mod']['move'])
-							echo '
-						<a href="', $scripturl, '?action=movetopic;topic=', $topic['id'], '.0"><img src="', $theme['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
-					}
-
-					echo '
+				echo '
+					<div class="floatright">
+						<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 					</div>';
-				}
 
 				if ($message['body_highlighted'] != '')
 					echo '
@@ -336,9 +302,7 @@ function template_results()
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
-		if ($show_checkboxes)
-		{
-			echo '
+		echo '
 		<div class="roundframe">
 			<div class="floatright">
 				<select class="fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
@@ -380,7 +344,6 @@ function template_results()
 		</div>
 		<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 	</form>';
-		}
 	}
 	else
 	{

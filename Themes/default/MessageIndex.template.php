@@ -33,7 +33,7 @@ function template_main_board()
 	</div>';
 
 		// If Quick Moderation is enabled start the form.
-		if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] > 0 && !empty($context['topics']))
+		if (!empty($context['can_quick_mod']))
 			echo '
 	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
 
@@ -60,7 +60,7 @@ function template_main_board()
 					<th scope="col" class="left" style="width: 22%">', template_messageindex_sortlink('last_post', $txt['last_post']), '</th>';
 
 			// Show a "select all" box for quick moderation?
-			if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1)
+			if (!empty($context['can_quick_mod']))
 				echo '
 					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"></th>';
 
@@ -143,38 +143,15 @@ function template_main_board()
 			if (!empty($context['can_quick_mod']))
 			{
 				echo '
-					<td class="center moderation ', $color_class, '">';
-				if ($options['display_quick_mod'] == 1)
-					echo '
-						<input type="checkbox" name="topics[]" value="', $topic['id'], '">';
-				else
-				{
-					// Check permissions on each and show only the ones they are allowed to use.
-					$confirm = JavaScriptEscape($txt['quickmod_confirm']);
-
-					if ($topic['quick_mod']['remove'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
-
-					if ($topic['quick_mod']['lock'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
-
-					if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
-						echo '<br>';
-
-					if ($topic['quick_mod']['pin'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
-
-					if ($topic['quick_mod']['move'])
-						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $theme['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
-				}
-				echo '
+					<td class="center moderation ', $color_class, '">
+						<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 					</td>';
 			}
 			echo '
 				</tr>';
 		}
 
-		if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']))
+		if (!empty($context['can_quick_mod']))
 		{
 			echo '
 				<tr class="titlebg">
@@ -225,7 +202,7 @@ function template_main_board()
 	<a id="bot"></a>';
 
 		// Finish off the form - again.
-		if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] > 0 && !empty($context['topics']))
+		if (!empty($context['can_quick_mod']))
 			echo '
 	<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 	</form>';
@@ -288,8 +265,8 @@ function template_main_blog()
 		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
 	</div>';
 
-		// If Quick Moderation is enabled start the form.
-		if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']))
+		// Start the form for quick moderation if we can do something.
+		if (!empty($context['can_quick_mod']))
 			echo '
 	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
 
@@ -315,7 +292,7 @@ function template_main_blog()
 					<th scope="col" class="left" style="width: 22%">', template_messageindex_sortlink('replies', $txt['replies']), ' / ', template_messageindex_sortlink('views', $txt['views']), '</th>';
 
 			// Show a "select all" box for quick moderation?
-			if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1)
+			if (!empty($context['can_quick_mod']))
 				echo '
 					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"></th>';
 
@@ -394,38 +371,15 @@ function template_main_blog()
 			if (!empty($context['can_quick_mod']))
 			{
 				echo '
-					<td class="center moderation ', $color_class, '">';
-				if ($options['display_quick_mod'] == 1)
-					echo '
-						<input type="checkbox" name="topics[]" value="', $topic['id'], '">';
-				else
-				{
-					// Check permissions on each and show only the ones they are allowed to use.
-					$confirm = JavaScriptEscape($txt['quickmod_confirm']);
-
-					if ($topic['quick_mod']['remove'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=remove;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_remove.gif" width="16" alt="', $txt['remove_topic'], '" title="', $txt['remove_topic'], '"></a>';
-
-					if ($topic['quick_mod']['lock'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=lock;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_lock.gif" width="16" alt="', $txt['set_lock'], '" title="', $txt['set_lock'], '"></a>';
-
-					if ($topic['quick_mod']['lock'] || $topic['quick_mod']['remove'])
-						echo '<br>';
-
-					if ($topic['quick_mod']['pin'])
-						echo '<a href="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], ';actions[', $topic['id'], ']=pin;', $context['session_query'], '" onclick="return confirm(', $confirm, ');"><img src="', $theme['images_url'], '/icons/quick_pin.gif" width="16" alt="', $txt['set_pin'], '" title="', $txt['set_pin'], '"></a>';
-
-					if ($topic['quick_mod']['move'])
-						echo '<a href="', $scripturl, '?action=movetopic;board=', $context['current_board'], '.', $context['start'], ';topic=', $topic['id'], '.0"><img src="', $theme['images_url'], '/icons/quick_move.gif" width="16" alt="', $txt['move_topic'], '" title="', $txt['move_topic'], '"></a>';
-				}
-				echo '
+					<td class="center moderation ', $color_class, '">
+						<input type="checkbox" name="topics[]" value="', $topic['id'], '">
 					</td>';
 			}
 			echo '
 				</tr>';
 		}
 
-		if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']))
+		if (!empty($context['can_quick_mod']))
 		{
 			echo '
 				<tr class="titlebg">
@@ -475,7 +429,7 @@ function template_main_blog()
 	<a id="bot"></a>';
 
 		// Finish off the form - again.
-		if (!empty($context['can_quick_mod']) && $options['display_quick_mod'] == 1 && !empty($context['topics']))
+		if (!empty($context['can_quick_mod']))
 			echo '
 	<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 	</form>';

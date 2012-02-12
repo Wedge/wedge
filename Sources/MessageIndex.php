@@ -543,8 +543,8 @@ function MessageIndex()
 		}
 	}
 
-	// Is Quick Moderation active/needed?
-	if (!empty($options['display_quick_mod']) && !empty($context['topics']))
+	// Deal with quick moderation.
+	if (!empty($context['topics']))
 	{
 		$context['can_lock'] = allowedTo('lock_any');
 		$context['can_pin'] = allowedTo('pin_topic');
@@ -574,7 +574,7 @@ function MessageIndex()
 		}
 
 		// Find the boards/categories they can move their topic to.
-		if ($options['display_quick_mod'] == 1 && $context['can_move'] && !empty($context['topics']))
+		if ($context['can_move'])
 		{
 			loadSource('Subs-MessageIndex');
 			$boardListOptions = array(
@@ -597,12 +597,7 @@ function MessageIndex()
 			if (empty($context['move_to_boards']))
 				$context['can_move'] = false;
 		}
-		// Can we use quick moderation checkboxes?
-		if ($options['display_quick_mod'] == 1)
-			$context['can_quick_mod'] = $context['user']['is_logged'] || $context['can_approve'] || $context['can_remove'] || $context['can_lock'] || $context['can_pin'] || $context['can_move'] || $context['can_merge'] || $context['can_restore'];
-		// Or the icons?
-		else
-			$context['can_quick_mod'] = $context['can_remove'] || $context['can_lock'] || $context['can_pin'] || $context['can_move'];
+		$context['can_quick_mod'] = $context['user']['is_logged'] || $context['can_approve'] || $context['can_remove'] || $context['can_lock'] || $context['can_pin'] || $context['can_move'] || $context['can_merge'] || $context['can_restore'];
 	}
 
 	// If there are children, but no topics and no ability to post topics...
