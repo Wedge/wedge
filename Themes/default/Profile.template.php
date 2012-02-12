@@ -2380,7 +2380,7 @@ function template_profile_group_manage()
 						<dfn>(<a href="', $scripturl, '?action=help;in=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</dfn>
 					</dt>
 					<dd>
-						<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) this.value = 1;"' : ''), '>';
+						<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) $(this).val(1).sb();"' : ''), '>';
 
 	// Fill the select box with all primary member groups that can be assigned to a member.
 	foreach ($context['member_groups'] as $member_group)

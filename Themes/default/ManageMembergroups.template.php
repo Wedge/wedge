@@ -222,7 +222,7 @@ function template_edit_group()
 						<label for="group_hidden_input"><strong>', $txt['membergroups_edit_hidden'], ':</strong></label>
 					</dt>
 					<dd>
-						<select name="group_hidden" id="group_hidden_input" onchange="if (this.value == 2 && !confirm(', JavaScriptEscape($txt['membergroups_edit_hidden_warning']), ')) this.value = 0;">
+						<select name="group_hidden" id="group_hidden_input" onchange="if (this.value == 2 && !confirm(', JavaScriptEscape($txt['membergroups_edit_hidden_warning']), ')) $(this).val(0).sb();">
 							<option value="0"', $context['group']['hidden'] ? '' : ' selected', '>', $txt['membergroups_edit_hidden_no'], '</option>
 							<option value="1"', $context['group']['hidden'] == 1 ? ' selected' : '', '>', $txt['membergroups_edit_hidden_boardindex'], '</option>
 							<option value="2"', $context['group']['hidden'] == 2 ? ' selected' : '', '>', $txt['membergroups_edit_hidden_all'], '</option>

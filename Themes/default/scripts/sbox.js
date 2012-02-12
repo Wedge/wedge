@@ -210,7 +210,7 @@
 				$display.blur();
 				$sb.removeClass('open');
 				$dd
-					.animate({ opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100)
+					.animate(is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100)
 					.attr('aria-hidden', true);
 			}
 			$(document).unbind('.sb');
@@ -299,7 +299,7 @@
 			if (via_keyboard)
 				$orig.triggerHandler('click');
 			// Animate height, except for Opera where issues with the inline-block status may lead to glitches.
-			$dd.animate(!showDown ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantOpen ? 0 : 150);
+			$dd.animate(!showDown || is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantOpen ? 0 : 150);
 			$sb.addClass('open');
 		},
 
@@ -321,7 +321,7 @@
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
 			newwi = $oritex.width();
 			if (!fixed)
-				$oritex.stop(true, true).width(oriwi).animate({ width: newwi });
+				$oritex.stop(true, true).width(oriwi).delay(100).animate({ width: newwi });
 		},
 
 		setSelected = function ($item)
