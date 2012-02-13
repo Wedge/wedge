@@ -80,6 +80,7 @@ function Admin()
 					'file' => 'ManageSettings',
 					'function' => 'ModifySecuritySettings',
 					'icon' => 'security.gif',
+					'bigicon' => 'security.png',
 					'subsections' => array(
 						'spam' => array($txt['antispam_title']),
 						'moderation' => array($txt['moderation_settings_short']),
@@ -90,6 +91,7 @@ function Admin()
 					'file' => 'ManageModeration',
 					'function' => 'ManageModeration',
 					'icon' => 'permissions.gif',
+					'bigicon' => 'moderation_filters.png',
 				),
 				'',
 				'languages' => array(
@@ -138,6 +140,7 @@ function Admin()
 					'file' => 'ManageBoards',
 					'function' => 'ManageBoards',
 					'icon' => 'boards.gif',
+					'bigicon' => 'boards.png',
 					'permission' => array('manage_boards'),
 					'subsections' => array(
 						'main' => array($txt['boardsEdit']),
@@ -152,6 +155,7 @@ function Admin()
 					'function' => 'ManagePostSettings',
 					'permission' => array('admin_forum'),
 					'icon' => 'posts.gif',
+					'bigicon' => 'poststopics.png',
 					'subsections' => array(
 						'posts' => array($txt['manageposts_settings']),
 						'topics' => array($txt['manageposts_topic_settings']),
