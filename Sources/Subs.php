@@ -1949,7 +1949,6 @@ function setupMenuContext()
 			),
 			'admin' => array(
 				'title' => $txt['admin'],
-				'notice' => $error_count,
 				'href' => $scripturl . ($context['allow_admin'] ? '?action=admin' : '?action=moderate'),
 				'show' => $context['allow_admin'] || $context['allow_moderation_center'],
 				'sub_items' => array(
@@ -1989,6 +1988,7 @@ function setupMenuContext()
 						'title' => $txt['mc_reported_posts'],
 						'href' => $scripturl . '?action=moderate;area=reports',
 						'show' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'notice' => $context['open_mod_reports'],
 					),
 					'poststopics' => array(
 						'title' => $txt['mc_unapproved_poststopics'],
@@ -2107,6 +2107,10 @@ function setupMenuContext()
 				'show' => !$user_info['is_guest'],
 			),
 		);
+
+		// Amalgamate the items in the admin menu.
+		if (!empty($items['admin']['sub_items']['errorlog']['notice']) || !empty($items['admin']['sub_items']['reports']['notice']))
+			$items['admin']['notice'] = (int) $items['admin']['sub_items']['errorlog']['notice'] + (int) $items['admin']['sub_items']['reports']['notice'];
 
 		// Allow editing menu items easily.
 		// Use PHP's array_splice to add entries at a specific position.
