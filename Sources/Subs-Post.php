@@ -2489,7 +2489,8 @@ function adminNotify($type, $memberID, $member_name = null)
 	global $txt, $settings, $language, $scripturl, $user_info, $context;
 
 	// If the setting isn't enabled then just exit.
-	if (empty($settings['notify_new_registration']))
+	$notify_list = !empty($settings['notify_new_registration']) ? unserialize($settings['notify_new_registration']) : array();
+	if (empty($notify_list))
 		return;
 
 	if ($member_name == null)
@@ -2511,38 +2512,17 @@ function adminNotify($type, $memberID, $member_name = null)
 	$toNotify = array();
 	$groups = array();
 
-	// All membergroups who can approve members.
-	$request = wesql::query('
-		SELECT id_group
-		FROM {db_prefix}permissions
-		WHERE permission = {string:moderate_forum}
-			AND add_deny = {int:add_deny}
-			AND id_group != {int:id_group}',
-		array(
-			'add_deny' => 1,
-			'id_group' => 0,
-			'moderate_forum' => 'moderate_forum',
-		)
-	);
-	while ($row = wesql::fetch_assoc($request))
-		$groups[] = $row['id_group'];
-	wesql::free_result($request);
-
-	// Add administrators too...
-	$groups[] = 1;
-	$groups = array_unique($groups);
-
-	// Get a list of all members who have ability to approve accounts - these are the people who we inform.
+	// Get a list of all members who the admins have elected to inform.
 	$request = wesql::query('
 		SELECT id_member, lngfile, email_address
 		FROM {db_prefix}members
-		WHERE (id_group IN ({array_int:group_list}) OR FIND_IN_SET({raw:group_array_implode}, additional_groups) != 0)
+		WHERE id_member IN ({array_int:members})
 			AND notify_types != {int:notify_types}
 		ORDER BY lngfile',
 		array(
 			'group_list' => $groups,
 			'notify_types' => 4,
-			'group_array_implode' => implode(', additional_groups) != 0 OR FIND_IN_SET(', $groups),
+			'members' => $notify_list,
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))

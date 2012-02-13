@@ -738,12 +738,31 @@ function template_show_settings()
 				elseif ($config_var['type'] == 'select')
 				{
 					echo '
-						<select name="', $config_var['name'], '" id="', $config_var['name'], '" ', $javascript, $disabled, !empty($config_var['multiple']) ? ' multiple' : '', '>';
+						<select name="', $config_var['name'], '" id="', $config_var['name'], '" ', $javascript, $disabled, '>';
 					foreach ($config_var['data'] as $option)
 						echo '
-							<option value="', $option[0], '"', $option[0] == $config_var['value'] || (!empty($config_var['multiple']) && isset($config_var['value']) && in_array($option[0], $config_var['value'])) ? ' selected' : '', '>', $option[1], '</option>';
+							<option value="', $option[0], '"', $option[0] == $config_var['value'], '>', $option[1], '</option>';
 					echo '
 						</select>';
+				}
+				elseif ($config_var['type'] == 'multi_select')
+				{
+					echo '
+						<fieldset id="fs_', $config_var['name'], '">
+							<legend><a href="#" onclick="$(\'#fs_', $config_var['name'], '\').hide(); $(\'#fs_', $config_var['name'], '_groups_link\').show(); return false;">', $txt['select_from_list'], '</a></legend>
+							<ul class="permission_groups">';
+					foreach ($config_var['data'] as $option)
+						echo '
+								<li>
+									<input type="checkbox" name="', $config_var['name'], '[', $option[0], ']" value="on"', isset($config_var['value']) && in_array($option[0], $config_var['value']) ? ' checked' : '', '>
+									', $option[1], '
+								</li>';
+					echo '
+							</ul>
+						</fieldset>
+						<a href="#" onclick="$(\'#fs_', $config_var['name'], '\').show(); $(\'#fs_', $config_var['name'], '_link\').hide(); return false;" id="fs_', $config_var['name'], '_link" class="hide">[ ', $txt['click_to_see_more'], ' ]</a>';
+
+					add_js('$("#fs_', $config_var['name'], '").hide(); $("#fs_', $config_var['name'], '_link").show();');
 				}
 				// Text area?
 				elseif ($config_var['type'] == 'large_text')

@@ -265,14 +265,23 @@ function SetReserve()
  */
 function ModifyRegistrationSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $scripturl, $settings, $user_profile;
 
 	// This is really quite wanting.
-	loadSource('ManageServer');
+	loadSource(array('ManageServer', 'Subs-Members'));
+
+	// Get a list of everyone who can approve posts.
+	$members_approve = membersAllowedTo('moderate_forum');
+	$members_approve = loadMemberData($members_approve, false, 'minimal');
+	$members_approve = array_flip($members_approve);
+	foreach ($members_approve as $id => $name)
+		if (!empty($user_profile[$id]))
+			$members_approve[$id] = '<a href="<URL>?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
+	asort($members_approve);
 
 	$config_vars = array(
 			array('select', 'registration_method', array($txt['setting_registration_standard'], $txt['setting_registration_activate'], $txt['setting_registration_approval'], $txt['setting_registration_disabled'])),
-			array('check', 'notify_new_registration'),
+			array('multi_select', 'notify_new_registration', $members_approve),
 			array('check', 'send_welcomeEmail'),
 			array('check', 'send_validation_onChange'),
 		'',
