@@ -157,8 +157,7 @@ function template_main_board()
 				<tr class="titlebg">
 					<td colspan="5" class="round-bottom right">
 						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
-							<option value="">--- ', $txt['moderate'], ' ---</option>
-							<option class="hr"></option>', $context['can_remove'] ? '
+							<option data-hide>--- ', $txt['moderate'], ' ---</option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
 							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_pin'] ? '
 							<option value="pin">' . $txt['quick_mod_pin'] . '</option>' : '', $context['can_move'] ? '
@@ -383,9 +382,9 @@ function template_main_blog()
 		{
 			echo '
 				<tr class="titlebg">
-					<td colspan="5" class="right">
+					<td colspan="5" class="round-bottom right">
 						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
-							<option class="hr"></option>', $context['can_remove'] ? '
+							<option data-hide>--- ', $txt['moderate'], ' ---</option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
 							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_pin'] ? '
 							<option value="pin">' . $txt['quick_mod_pin'] . '</option>' : '', $context['can_move'] ? '

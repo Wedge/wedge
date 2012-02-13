@@ -958,11 +958,7 @@ function template_showPermissions()
 				<we:cat>
 					<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
 					<select name="board" onchange="if ($(this).val()) this.form.submit();">
-						<option value="0"', $context['board'] == 0 ? ' selected' : '', '>', $txt['showPermissions_global'], '&nbsp;</option>';
-
-		if (!empty($context['boards']))
-			echo '
-						<option class="hr"></option>';
+						<option value="0"', $context['board'] == 0 ? ' selected' : '', ' data-hide>', $txt['showPermissions_global'], '&nbsp;</option>';
 
 		// Fill the box with any local permission boards.
 		foreach ($context['boards'] as $board)
@@ -2163,8 +2159,7 @@ function template_issueWarning()
 				</dt>
 				<dd>
 					<select name="warn_temp" id="warn_temp" disabled onchange="populateNotifyTemplate();" style="font-size: x-small">
-						<option value="-1">', $txt['profile_warning_notify_template'], '</option>
-						<option class="hr"></option>';
+						<option value="-1" data-hide>', $txt['profile_warning_notify_template'], '</option>';
 
 		foreach ($context['notification_templates'] as $id_template => $template)
 			echo '

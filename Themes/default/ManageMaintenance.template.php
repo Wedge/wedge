@@ -347,7 +347,7 @@ function template_maintain_topics()
 			<form action="', $scripturl, '?action=admin;area=maintain;sa=topics;activity=massmove" method="post" accept-charset="UTF-8">
 				<p><label>', $txt['move_topics_from'], '
 				<select name="id_board_from" id="id_board_from">
-					<option disabled>(', $txt['move_topics_select_board'], ')</option>';
+					<option data-hide>(', $txt['move_topics_select_board'], ')</option>';
 
 	// From board
 	foreach ($context['categories'] as $category)

@@ -893,8 +893,7 @@ function GroupRequests()
 				'position' => 'bottom_of_list',
 				'value' => '
 					<select name="req_action" onchange="if (this.value != 0 && (this.value == \'reason\' || confirm(' . $warning . '))) this.form.submit();">
-						<option value="0">' . $txt['with_selected'] . ':</option>
-						<option class="hr"></option>
+						<option value="0" data-hide>' . $txt['with_selected'] . ':</option>
 						<option value="approve">' . $txt['mc_groupr_approve'] . '</option>
 						<option value="reject">' . $txt['mc_groupr_reject'] . '</option>
 						<option value="reason">' . $txt['mc_groupr_reject_w_reason'] . '</option>
