@@ -292,6 +292,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_albums'],
 					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'mgallery.png',
+					'bigicon' => 'albums.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
@@ -328,6 +329,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_quotas'],
 					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'attachment.gif',
+					'bigicon' => 'quotas.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 				),
@@ -348,6 +350,7 @@ function Admin()
 					'label' => $txt['media_admin_labels_ftp'],
 					'enabled' => !empty($settings['media_enabled']),
 					'icon' => 'boards.gif',
+					'bigicon' => 'ftpimport.png',
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 				),
@@ -432,6 +435,7 @@ function Admin()
 					'file' => 'ManageMemberOptions',
 					'function' => 'ManageMemberOptions',
 					'icon' => 'settings.gif',
+					'bigicon' => 'memberoptions.png',
 					'permission' => 'admin_forum',
 					'subsections' => array(
 						'options' => array($txt['configure_options']),
