@@ -121,7 +121,7 @@ function template_main_board()
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && $context['user']['is_logged'])
 					echo '
-							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '"><div class="note">', $txt['new'], '</div></a>';
+							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
 
 			echo '
 							<p>', $txt['started_by'], ' ', $topic['first_post']['member']['link'], '
@@ -353,7 +353,7 @@ function template_main_blog()
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && $context['user']['is_logged'])
 					echo '
-							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '"><div class="note">', $txt['new'], '</div></a>';
+							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
 
 			echo '
 							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['last_post']['time'], '
@@ -571,7 +571,7 @@ function template_messageindex_childboards()
 					if (!$child['is_redirect'])
 					{
 						$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('topics', $child['topics']) . ', ' . number_context('posts', $child['posts']) . ')';
-						$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . ($child['new'] ? '</a> <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '"><div class="note new_posts">' . $txt['new'] . '</div>' : '') . '</a>';
+						$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new'] . '</a>' : '');
 					}
 					else
 						$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('redirects', $child['posts']) . '">' . $child['name'] . '</a>';

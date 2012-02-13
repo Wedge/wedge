@@ -364,10 +364,6 @@ function template_sidebar_before()
 			echo '
 				<li>', number_context('approve_members_waiting', $context['unapproved_members']), '</li>';
 
-		if (!empty($context['open_mod_reports']) && $context['show_open_reports'])
-			echo '
-				<li><a href="<URL>?action=moderate;area=reports">', number_context('mod_reports_waiting', $context['open_mod_reports']), '</a></li>';
-
 		echo '
 			</ul>
 			<p class="now">', $context['current_time'], '</p>
@@ -681,7 +677,7 @@ function template_menu()
 		<li id="item_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>
 			<span class="m_' . $act . '"></span>
 			<h4><a href="', $item['href'], '"', isset($item['target']) ? ' target="' . $item['target'] . '"' : '', '>',
-			$item['title'], !empty($item['notice']) ? '<div class="note">' . $item['notice'] . '</div>' : '', '</a></h4>';
+			$item['title'], !empty($item['notice']) ? '<span class="note">' . $item['notice'] . '</span>' : '', '</a></h4>';
 
 		if (!empty($item['sub_items']))
 		{
@@ -698,8 +694,7 @@ function template_menu()
 				}
 				echo '
 				<li><a href="', $sub_item['href'], '"', isset($sub_item['target']) ? ' target="' . $sub_item['target'] . '"' : '', '>',
-				!empty($sub_item['notice']) ? '<div class="note">' . $sub_item['notice'] . '</div>' : '',
-				$sub_item['title'], '</a>';
+				$sub_item['title'], !empty($sub_item['notice']) ? '<span class="note">' . $sub_item['notice'] . '</span>' : '', '</a>';
 
 				// 3rd-level menus
 				if (!empty($sub_item['sub_items']))

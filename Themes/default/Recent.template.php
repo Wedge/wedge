@@ -159,7 +159,7 @@ function template_unread()
 							<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
 								<div>
 									', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_', $topic['first_post']['id'], '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
-									<a href="', $topic['new_href'], '"><div class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</div></a>
+									<a href="', $topic['new_href'], '" class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</a>
 									<p>
 										', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
 										', $txt['in'], ' <em>', $topic['board']['link'], '</em>
@@ -299,7 +299,7 @@ function template_replies()
 							<td class="subject ', $alternate_class, '">
 								<div>
 									', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new_link'], '</span>', $topic['is_pinned'] ? '</strong>' : '', '
-									<a href="', $topic['new_href'], '"><div class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</div></a>
+									<a href="', $topic['new_href'], '" class="note" title="', $txt['new_posts'], '">', $context['nb_new'][$topic['id']], '</a>
 									<p>
 										', $txt['started_by'], ' <strong>', $topic['first_post']['member']['link'], '</strong>
 										', $txt['in'], ' <em>', $topic['board']['link'], '</em>

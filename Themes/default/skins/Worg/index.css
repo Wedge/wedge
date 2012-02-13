@@ -281,19 +281,18 @@ em
 	box-shadow: none !important
 
 // The 'New' icon, generally speaking.
-.note
-	display: inline
+.note extends .inline-block
 	border-radius: 7px
 	background-color: rgba(255,0,0,.8)
 	gradient: #fa6, #c8a
-	color: #fff
-	font-size: 75%
-	font-weight: 700
-	line-height: 100%
-	text-transform: uppercase
+	color: #fff !important
+	font: 700 75%/100% Tahoma
+	text-transform: lowercase
 	vertical-align: .1em
 	margin: 0 3px
-	padding: 1px 5px
+	padding: 1px 5px 3px
+	:hover
+		text-decoration: none
 
 /* Common styles used for inheritance. You can declare
 	them anywhere you like, but having them near the
@@ -845,8 +844,9 @@ li.separator
 
 .menu h4 .note
 	float: none
+	font-size: 70%
 	margin: 0 0 0 4px
-	padding: 2px 5px
+	padding: 2px 5px 3px
 
 .menu li.menu-top
 	position: absolute
