@@ -1995,6 +1995,12 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=moderate;area=postmod;sa=posts',
 						'show' => $settings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
 					),
+					'unappmembers' => array(
+						'title' => $txt['unapproved_members'],
+						'href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
+						'show' => !empty($context['unapproved_members']),
+						'notice' => !empty($context['unapproved_members']) ? $context['unapproved_members'] : 0,
+					),
 				),
 			),
 			'profile' => array(
@@ -2109,8 +2115,8 @@ function setupMenuContext()
 		);
 
 		// Amalgamate the items in the admin menu.
-		if (!empty($items['admin']['sub_items']['errorlog']['notice']) || !empty($items['admin']['sub_items']['reports']['notice']))
-			$items['admin']['notice'] = (int) $items['admin']['sub_items']['errorlog']['notice'] + (int) $items['admin']['sub_items']['reports']['notice'];
+		if (!empty($error_count) || !empty($items['admin']['sub_items']['reports']['notice']) || $context['unapproved_members'])
+			$items['admin']['notice'] = $error_count + (int) $items['admin']['sub_items']['reports']['notice'] + (int) $context['unapproved_members'];
 
 		// Allow editing menu items easily.
 		// Use PHP's array_splice to add entries at a specific position.
