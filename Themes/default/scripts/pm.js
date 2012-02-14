@@ -31,7 +31,7 @@ function wePersonalMessageSend(oOptions)
 	if (!this.opt.bBccShowByDefault)
 	{
 		// Hide the BCC control.
-		$('#' + this.opt.sBccDivId + ',#' + this.opt.sBccDivId2).hide();
+		$('#' + this.opt.sBccDivId + ', #' + this.opt.sBccDivId2).hide();
 
 		// Show the link to set the BCC control back.
 		$('#' + this.opt.sBccLinkContainerId).show();
@@ -41,23 +41,19 @@ function wePersonalMessageSend(oOptions)
 	}
 
 	oToAutoSuggest = new weAutoSuggest({
+		bItemList: true,
 		sControlId: this.opt.sToControlId,
 		sPostName: 'recipient_to',
-		sURLMask: 'action=profile;u=%item_id%',
 		sTextDeleteItem: this.opt.sTextDeleteItem,
-		bItemList: true,
-		sItemListContainerId: 'to_item_list_container',
 		aListItems: this.opt.aToRecipients
 	});
 	oToAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);
 
 	oBccAutoSuggest = new weAutoSuggest({
+		bItemList: true,
 		sControlId: this.opt.sBccControlId,
 		sPostName: 'recipient_bcc',
-		sURLMask: 'action=profile;u=%item_id%',
 		sTextDeleteItem: this.opt.sTextDeleteItem,
-		bItemList: true,
-		sItemListContainerId: 'bcc_item_list_container',
 		aListItems: this.opt.aBccRecipients
 	});
 	oBccAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);
@@ -66,5 +62,5 @@ function wePersonalMessageSend(oOptions)
 wePersonalMessageSend.prototype.showBcc = function ()
 {
 	// No longer hide it, show it to the world!
-	$('#' + this.opt.sBccDivId + ',#' + this.opt.sBccDivId2).show();
+	$('#' + this.opt.sBccDivId + ', #' + this.opt.sBccDivId2).show();
 };

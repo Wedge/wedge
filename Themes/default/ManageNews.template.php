@@ -140,7 +140,6 @@ function template_email_members()
 						<dfn>', $txt['admin_news_select_members_desc'], '</dfn>
 					</dt>
 					<dd>
-						<span id="members_container"></span>
 						<input type="text" name="members" id="members" value="" size="30">
 					</dd>
 				</dl>
@@ -165,7 +164,6 @@ function template_email_members()
 						<dfn>', $txt['admin_news_select_excluded_members_desc'], '</dfn>
 					</dt>
 					<dd>
-						<span id="exclude_members_container"></span>
 						<input type="text" name="exclude_members" id="exclude_members" value="" size="30">
 					</dd>
 				</dl>
@@ -194,22 +192,18 @@ function template_email_members()
 	add_js('
 	$("#advanced_select_div").show();
 	new weAutoSuggest({
-		sControlId: \'members\',
 		bItemList: true,
+		sControlId: \'members\',
 		sPostName: \'member_list\',
-		sURLMask: \'action=profile;u=%item_id%\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		sItemListContainerId: \'members_container\',
-		aListItems: []
+		aListItems: {}
 	});
 	new weAutoSuggest({
-		sControlId: \'exclude_members\',
 		bItemList: true,
+		sControlId: \'exclude_members\',
 		sPostName: \'exclude_member_list\',
-		sURLMask: \'action=profile;u=%item_id%\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		sItemListContainerId: \'exclude_members_container\',
-		aListItems: []
+		aListItems: {}
 	});');
 }
 

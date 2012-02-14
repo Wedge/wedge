@@ -253,7 +253,7 @@ function template_ban_edit()
 	if ($context['ban']['is_new'] && empty($_REQUEST['u']))
 		add_js('
 	new weAutoSuggest({
-		sControlId: "user",
+		sControlId: \'user\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
 }

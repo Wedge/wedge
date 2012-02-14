@@ -1576,20 +1576,26 @@ h6.alt2
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */
 
-.auto_suggest_div extends .hide
-	border: 1px solid #000
-	position: absolute
+.auto_suggest extends .hide
 	color: #000
+	background: #fff
+	border: 1px solid #cbcdd3
+	border-radius: 6px
+	display: inline
+	padding: 2px
+	font-size: 90%
+	list-style: none
+	overflow: hidden
+	position: absolute
+	z-index: 999
+	box-shadow: 0 2px 5px rgba(0,0,0, .3)
+	div
+		border-radius: 3px
+		padding: 2px 3px
 
-.auto_suggest_item
-	background-color: #ece8f0
-	padding: 2px 3px 1px
-
-.auto_suggest_item_hover
-	background-color: #988
-	padding: 2px 3px 1px
+.auto_suggest_hover
+	background-color: #eee
 	cursor: pointer
-	color: #fff
 
 // The dropdown menu toggle icon
 #menu_toggle

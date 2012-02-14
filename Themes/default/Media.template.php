@@ -64,12 +64,15 @@ function template_aeva_subtabs()
 {
 	global $context;
 
+	echo '
+		<div class="pagesection">';
+
 	// area-tabs maybe?
 	if (!empty($context['aeva_header']['areatabs']))
 	{
 		$buttons = array();
-		foreach ($context['aeva_header']['areatabs'] as $tab)
-			$buttons[] = array(
+		foreach ($context['aeva_header']['areatabs'] as $key => $tab)
+			$buttons[$key] = array(
 				'text' => $tab['title'],
 				'url' => $tab['url'],
 				'class' => $tab['class']
@@ -81,14 +84,17 @@ function template_aeva_subtabs()
 	if (!empty($context['aeva_header']['subtabs']))
 	{
 		$buttons = array();
-		foreach ($context['aeva_header']['subtabs'] as $tab)
-			$buttons[] = array(
+		foreach ($context['aeva_header']['subtabs'] as $key => $tab)
+			$buttons[$key] = array(
 				'text' => $tab['title'],
 				'url' => $tab['url'],
 				'class' => $tab['class']
 			);
 		template_button_strip($buttons, '');
 	}
+
+	echo '
+		</div>';
 }
 
 function template_aeva_home()
@@ -1185,11 +1191,15 @@ function template_aeva_search_searching()
 		<div class="windowbg wrc">
 			<table class="w100 cs1 cp8">
 			<tr>
-				<td class="', !empty($context['custom_fields']) ? 'w50 top right ' : 'center" colspan="2"', '>
+				<td class="w50 top right">
 					<label>', $txt['media_search_in_title'], ' <input type="checkbox" name="sch_title" checked id="seala1"></label><br>
-					<label>', $txt['media_search_in_description'], ' <input type="checkbox" name="sch_desc" id="seala2"></label><br>
-					<label>', $txt['media_search_in_kw'], ' <input type="checkbox" name="sch_kw" id="seala3"></label><br>
-					<label>', $txt['media_search_in_album_name'], ' <input type="checkbox" name="sch_an" id="seala4"></label>';
+					<label>', $txt['media_search_in_description'], ' <input type="checkbox" name="sch_desc" id="seala2"></label><br>', empty($context['custom_fields']) ? '
+				</td>
+				<td class="w50 top left">
+					<label><input type="checkbox" name="sch_kw" id="seala3"> ' . $txt['media_search_in_kw'] . '</label><br>
+					<label><input type="checkbox" name="sch_an" id="seala4"> ' . $txt['media_search_in_album_name'] . '</label>' : '
+					<label>' . $txt['media_search_in_kw'] . ' <input type="checkbox" name="sch_kw" id="seala3"></label><br>
+					<label>' . $txt['media_search_in_album_name'] . ' <input type="checkbox" name="sch_an" id="seala4"></label>';
 
 	if (!empty($context['custom_fields']))
 	{
@@ -1225,7 +1235,6 @@ function template_aeva_search_searching()
 				</td>
 				<td class="w50 left">
 					<input name="sch_mem" id="sch_mem" type="text" size="25">
-					<a href="', $scripturl, '?action=media;action=findmember;input=sch_mem;' . $context['session_query'], '" onclick="return reqWin(this, 350, 400);"><img src="', $theme['images_url'], '/icons/assist.gif" class="aeva_vera"></a>
 				</td>
 			</tr>
 			<tr>
@@ -1234,6 +1243,16 @@ function template_aeva_search_searching()
 			</table>
 		</div>
 	</form>';
+
+	add_js_file('scripts/suggest.js');
+
+	add_js('
+	new weAutoSuggest({
+		bItemList: true,
+		sControlId: \'sch_mem\',
+		sPostName:  \'sch_mem_list\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+	});');
 }
 
 function template_aeva_search_results()
@@ -1241,14 +1260,14 @@ function template_aeva_search_results()
 	global $context, $txt, $scripturl;
 
 	echo '
-	<div style="padding: 5px"><b>', $context['aeva_total_results'], '</b> ', $txt['media_search_results_for'], ' <b>', $context['aeva_searching_for'], '</b></div>';
+	<div style="padding: 5px"><strong>', $context['aeva_total_results'], '</strong> ', $txt['media_search_results_for'], ' <strong>', $context['aeva_searching_for'], '</strong></div>';
 
 	if (!empty($context['aeva_foxy_rendered_search']))
 		echo $context['aeva_foxy_rendered_search'];
-	else
+	elseif (!empty($context['aeva_items']))
 		echo $context['aeva_page_index'], '
 	<div id="search_items">',
-	aeva_listItems($context['aeva_items']), '
+		aeva_listItems($context['aeva_items']), '
 	</div>', $context['aeva_page_index'], '
 	<div class="clear"></div>';
 }

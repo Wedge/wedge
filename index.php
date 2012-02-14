@@ -80,7 +80,6 @@ $action_list = array(
 	'dlattach' => array('Dlattach.php', 'Dlattach'),
 	'emailuser' => array('SendTopic.php', 'EmailUser'),
 	'feed' => array('Feed.php', 'Feed'),
-	'findmember' => array('FindMember.php', 'FindMember'),
 	'groups' => array('Groups.php', 'Groups'),
 	'help' => array('Help.php', 'Help'),
 	'im' => array('PersonalMessage.php', 'MessageMain'),

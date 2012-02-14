@@ -454,12 +454,15 @@ function aeva_mgSearch()
 
 		$joins = array();
 
+		if (isset($_REQUEST['sch_mem']) && empty($_REQUEST['sch_mem_list']))
+			$_REQUEST['sch_mem_list'] = explode(',', $_REQUEST['sch_mem']);
+
 		$filters = array(
 			'title' => isset($_REQUEST['sch_title']),
 			'desc' => isset($_REQUEST['sch_desc']),
 			'keywords' => isset($_REQUEST['sch_kw']),
 			'alname' => isset($_REQUEST['sch_an']),
-			'member' => isset($_REQUEST['sch_mem']) && trim($_REQUEST['sch_mem']) != '' ? westr::htmlspecialchars($_REQUEST['sch_mem']) : false,
+			'member' => isset($_REQUEST['sch_mem_list']) && is_array($_REQUEST['sch_mem_list']) ? $_REQUEST['sch_mem_list'] : false,
 			'album' => !empty($_REQUEST['sch_album']) ? (int) $_REQUEST['sch_album'] : false,
 			'custom_fields' => !empty($_REQUEST['fields']) && is_array($_REQUEST['fields']) ? $_REQUEST['fields'] : array(),
 		);
@@ -491,28 +494,12 @@ function aeva_mgSearch()
 			$search_query[] = 'm.description LIKE {string:search}';
 		if ($filters['alname'])
 			$search_query[] = 'a.name LIKE {string:search}';
-		$members_to_filter = array();
+
 		if ($filters['member'])
 		{
-			$members = explode(',',$filters['member']);
-			// Get possible members we're searching for
-			$members = strtr(addslashes(westr::htmlspecialchars(stripslashes($filters['member']), ENT_QUOTES)), array('&quot;' => '"'));
-			preg_match_all('~"([^"]+)"~', $members, $matches);
-			$who = array_merge($matches[1], explode(',', preg_replace('~"([^"]+)"~', '', $members)));
-			for ($k = 0, $n = count($who); $k < $n; $k++)
-			{
-				$who[$k] = trim($who[$k]);
-				if (strlen($who[$k]) == 0)
-				unset($who[$k]);
-			}
-			$request = wesql::query('
-				SELECT id_member
-				FROM {db_prefix}members
-				WHERE real_name IN ({string:name}) OR member_name IN ({string:name})',
-				array('name' => implode(',',$who))
-			);
-			while ($row = wesql::fetch_assoc($request))
-				$members_to_filter[] = $row['id_member'];
+			$members_to_filter = array();
+			foreach ($filters['member'] as $mem)
+				$members_to_filter[(int) $mem] = (int) $mem;
 
 			if (!empty($members_to_filter))
 			{
@@ -522,6 +509,7 @@ function aeva_mgSearch()
 			else
 				fatal_lang_error('media_search_mem_not_found',false);
 		}
+
 		if ($filters['album'])
 		{
 			foreach ($albums as $k => $v)
@@ -595,7 +583,7 @@ function aeva_mgSearch()
 			AND m.approved = 1' : ''),
 			array(
 				'user' => $user_info['id'],
-				'mem' => !empty($members_to_filter) ? implode(' OR m.id_member = ',$members_to_filter) : '',
+				'mem' => !empty($members_to_filter) ? implode(' OR m.id_member = ', $members_to_filter) : '',
 				'album' => $filters['album'],
 				'search' => $searching_for
 			)
@@ -612,8 +600,8 @@ function aeva_mgSearch()
 			$pageindexURL .= ';sch_kw';
 		if ($filters['alname'])
 			$pageindexURL .= ';sch_an';
-		if ($filters['member'])
-			$pageindexURL .= ';sch_mem=' . $filters['member'];
+		if (!empty($members_to_filter))
+			$pageindexURL .= ';sch_mem=' . implode(',', $members_to_filter);
 		$pageindexURL .= ';' . implode(';', $field_query);
 		$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 		$context['aeva_page_index'] = template_page_index($pageindexURL, $start, $total_items, empty($context['current_board']) ? 15 : 30);
@@ -847,11 +835,6 @@ function aeva_albumCP($is_admin = false)
 	}
 }
 
-function aeva_editAlbum()
-{
-	aeva_addAlbum(false, false);
-}
-
 // We could do all lists at the same time instead of separately, but who cares...
 function aeva_getFromMemberlist($lis, $owner = 1)
 {
@@ -873,6 +856,11 @@ function aeva_getFromMemberlist($lis, $owner = 1)
 		$lis[$row[0]] = $row[1];
 	wesql::free_result($request);
 	return $lis;
+}
+
+function aeva_editAlbum()
+{
+	aeva_addAlbum(false, false);
 }
 
 function aeva_addAlbum($is_admin = false, $is_add = true)
@@ -1109,6 +1097,53 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	else
 		$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_albums;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album) . ';' . $context['session_query'];
 
+	add_js_file('scripts/suggest.js');
+
+	$memlists = array(1 => '', '', '', '');
+	foreach (array(1 => $members_allowed, $members_denied, $members_allowed_write, $members_denied_write) as $num => $lis)
+		foreach ($lis as $key => $val)
+			$memlists[$num] .= '
+			' . $key . ': ' . JavaScriptEscape($val) . ',';
+
+	add_js('
+	var sDelSuggest = ', JavaScriptEscape($txt['autosuggest_delete_item']), ';
+	new weAutoSuggest({
+		sControlId: \'change_owner\',
+		sTextDeleteItem: sDelSuggest
+	});
+	new weAutoSuggest({
+		bItemList: true,
+		sControlId: \'allowed_members\',
+		sPostName:  \'allowed_members_list\',
+		sTextDeleteItem: sDelSuggest,
+		aListItems: {', $memlists[1], '
+		}
+	});
+	new weAutoSuggest({
+		bItemList: true,
+		sControlId: \'allowed_write\',
+		sPostName:  \'allowed_write_list\',
+		sTextDeleteItem: sDelSuggest,
+		aListItems: {', $memlists[2], '
+		}
+	});
+	new weAutoSuggest({
+		bItemList: true,
+		sControlId: \'denied_members\',
+		sPostName:  \'denied_members_list\',
+		sTextDeleteItem: sDelSuggest,
+		aListItems: {', $memlists[3], '
+		}
+	});
+	new weAutoSuggest({
+		bItemList: true,
+		sControlId: \'denied_write\',
+		sPostName:  \'denied_write_list\',
+		sTextDeleteItem: sDelSuggest,
+		aListItems: {', $memlists[4], '
+		}
+	});');
+
 	loadLanguage('ManageMedia');
 	$context['aeva_form'] = array(
 		'note' => array(
@@ -1139,7 +1174,6 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'fieldname' => 'change_owner',
 			'value' => $is_add ? $user_info['username'] : $owner_name,
 			'custom' => 'maxlength="30" id="change_owner"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=change_owner;delim=null;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'featured' => array(
 			'label' => $txt['media_featured_album'],
@@ -1236,36 +1270,32 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			'subtext' => $txt['media_allowed_members_desc'],
 			'type' => 'text',
 			'fieldname' => 'allowed_members',
-			'value' => empty($members_allowed) ? '' : implode(', ', $members_allowed),
+			'value' => '',
 			'custom' => 'maxlength="52" id="allowed_members"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_members;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'allowed_write' => array(
 			'label' => $txt['media_allowed_write'],
 			'subtext' => $txt['media_allowed_write_desc'],
 			'type' => 'text',
 			'fieldname' => 'allowed_write',
-			'value' => empty($members_allowed_write) ? '' : implode(', ', $members_allowed_write),
+			'value' => '',
 			'custom' => 'maxlength="52" id="allowed_write"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=allowed_write;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'denied_members' => array(
 			'label' => $txt['media_denied_members'],
 			'subtext' => $txt['media_denied_members_desc'],
 			'type' => 'text',
 			'fieldname' => 'denied_members',
-			'value' => empty($members_denied) ? '' : implode(', ', $members_denied),
+			'value' => '',
 			'custom' => 'maxlength="52" id="denied_members"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_members;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'denied_write' => array(
 			'label' => $txt['media_denied_write'],
 			'subtext' => $txt['media_denied_write_desc'],
 			'type' => 'text',
 			'fieldname' => 'denied_write',
-			'value' => empty($members_denied_write) ? '' : implode(', ', $members_denied_write),
+			'value' => '',
 			'custom' => 'maxlength="52" id="denied_write"',
-			'next' => '<a href="' . $scripturl . '?' . ($is_admin ? '' : 'action=media;') . 'action=findmember;input=denied_write;' . $context['session_query'] . '" onclick="return reqWin(this, 350, 400);"><img src="' . $theme['images_url'] . '/icons/assist.gif"></a>',
 		),
 		'hidden' => array(
 			'label' => $txt['media_album_hidden'],
@@ -1431,14 +1461,14 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		}
 
 		// Load member lists
-		if (!empty($_POST['allowed_members']))
-			$list_allowed = implode(',', array_keys(aeva_getFromMemberlist($_POST['allowed_members'], $owner)));
-		if (!empty($_POST['allowed_write']))
-			$list_allowed_write = implode(',', array_keys(aeva_getFromMemberlist($_POST['allowed_write'], $owner)));
-		if (!empty($_POST['denied_members']))
-			$list_denied = implode(',', array_keys(aeva_getFromMemberlist($_POST['denied_members'], $owner)));
-		if (!empty($_POST['denied_write']))
-			$list_denied_write = implode(',', array_keys(aeva_getFromMemberlist($_POST['denied_write'], $owner)));
+		if (!empty($_POST['allowed_members_list']) && is_array($_POST['allowed_members_list']))
+			$list_allowed = implode(',', $_POST['allowed_members_list']);
+		if (!empty($_POST['allowed_write_list']) && is_array($_POST['allowed_write_list']))
+			$list_allowed_write = implode(',', $_POST['allowed_write_list']);
+		if (!empty($_POST['denied_members_list']) && is_array($_POST['denied_members_list']))
+			$list_denied = implode(',', $_POST['denied_members_list']);
+		if (!empty($_POST['denied_write_list']) && is_array($_POST['denied_write_list']))
+			$list_denied_write = implode(',', $_POST['denied_write_list']);
 
 		if ($is_add)
 		{

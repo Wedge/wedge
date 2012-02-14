@@ -873,7 +873,6 @@ function template_send()
 	// Autosuggest will be added by the JavaScript later on.
 	echo '
 				<dd id="pm_to" class="clear_right">
-					<div id="to_item_list_container"></div>
 					<input type="text" name="to" id="to_control" value="', $context['to_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px">';
 
 	// A link to add BCC
@@ -887,7 +886,6 @@ function template_send()
 					<span', (isset($context['post_error']['no_to']) || isset($context['post_error']['bad_bcc']) ? ' class="error"' : ''), '>', $txt['pm_bcc'], ':</span>
 				</dt>
 				<dd id="bcc_div2">
-					<div id="bcc_item_list_container"></div>
 					<input type="text" name="bcc" id="bcc_control" value="', $context['bcc_value'], '" tabindex="', $context['tabindex']++, '" size="40" style="width: 130px">
 				</dd>';
 
@@ -954,30 +952,24 @@ function template_send()
 	var oPersonalMessageSend = new wePersonalMessageSend({
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		sToControlId: \'to_control\',
-		aToRecipients: [');
+		aToRecipients: {');
 
 	$j = count($context['recipients']['to']) - 1;
 	foreach ($context['recipients']['to'] as $i => $member)
 		add_js('
-			{
-				sItemId: ', JavaScriptEscape($member['id']), ',
-				sItemName: ', JavaScriptEscape($member['name']), '
-			}', $i == $j ? '' : ',');
+			', (int) $member['id'], ': ', JavaScriptEscape($member['name']), $i == $j ? '' : ',');
 
 	add_js('
-		],
-		aBccRecipients: [');
+		},
+		aBccRecipients: {');
 
 	$j = count($context['recipients']['bcc']) - 1;
 	foreach ($context['recipients']['bcc'] as $i => $member)
 		add_js('
-			{
-				sItemId: ', JavaScriptEscape($member['id']), ',
-				sItemName: ', JavaScriptEscape($member['name']), '
-			}', $i == $j ? '' : ',');
+			', (int) $member['id'], ': ', JavaScriptEscape($member['name']), $i == $j ? '' : ',');
 
 	add_js('
-		],
+		},
 		sBccControlId: \'bcc_control\',
 		sBccDivId: \'bcc_div\',
 		sBccDivId2: \'bcc_div2\',

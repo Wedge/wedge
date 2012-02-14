@@ -215,7 +215,6 @@ function template_edit_group()
 						<label for="group_moderators"><strong>', $txt['moderators'], ':</strong></label>
 					</dt>
 					<dd>
-						<div id="moderator_container"></div>
 						<input type="text" name="group_moderators" id="group_moderators" value="', $context['group']['moderator_list'], '" size="30">
 					</dd>
 					<dt id="group_hidden_text">
@@ -339,23 +338,18 @@ function template_edit_group()
 
 		add_js('
 	new weAutoSuggest({
-		sControlId: "group_moderators",
 		bItemList: true,
+		sControlId: "group_moderators",
 		sPostName: "moderator_list",
-		sURLMask: "action=profile;u=%item_id%",
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		sItemListContainerId: "moderator_container",
-		aListItems: [');
+		aListItems: {');
 
 		foreach ($context['group']['moderators'] as $id_member => $member_name)
 			add_js('
-			{
-				sItemId: ', JavaScriptEscape($id_member), ',
-				sItemName: ', JavaScriptEscape($member_name), '
-			}', $id_member == $context['group']['last_moderator_id'] ? '' : ',');
+			', (int) $id_member, ': ', JavaScriptEscape($member_name), $id_member == $context['group']['last_moderator_id'] ? '' : ',');
 
 		add_js('
-		]
+		}
 	});');
 	}
 
@@ -522,8 +516,7 @@ function template_group_members()
 				', $txt['membergroups_members_add_title'], '
 			</we:cat>
 			<div class="windowbg wrc">
-				<strong>', $txt['membergroups_members_add_desc'], ':</strong>
-				<div id="toAddItemContainer"></div>
+				<strong>', $txt['membergroups_members_add_desc'], ':</strong><br>
 				<input type="text" name="toAdd" id="toAdd" value="">
 				<input type="submit" name="add" value="', $txt['membergroups_members_add'], '" class="new">
 			</div>';
@@ -541,12 +534,10 @@ function template_group_members()
 
 		add_js('
 	new weAutoSuggest({
-		sControlId: "toAdd",
 		bItemList: true,
+		sControlId: "toAdd",
 		sPostName: "member_add",
-		sURLMask: "action=profile;u=%item_id%",
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		sItemListContainerId: "toAddItemContainer"
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
 	});');
 	}
 }

@@ -1804,21 +1804,15 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if (!isset($txt))
 		$txt = array();
 
-	// These simple actions will skip the index template entirely. Don't use macros in their templates!
-	$simpleActions = array(
-		'findmember',
-		'printpage',
-		'spellcheck',
-	);
-
 	// Initializing the Wedge templating magic.
 	$context['macros'] = array();
 	$context['skeleton'] = '';
 	$context['sidebar_position'] = 'right';
 	wetem::getInstance();
 
-	// Output is fully XML or a simple action?
-	if (isset($_REQUEST['xml']) || !empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
+	// If output is fully XML, or the print-friendly version, or the spellchecking page,
+	// skip the index template entirely. Don't use macros in their templates!
+	if (isset($_REQUEST['xml']) || !empty($_REQUEST['action']) && ($_REQUEST['action'] == 'printpage' || $_REQUEST['action'] == 'spellcheck'))
 	{
 		if (isset($_REQUEST['xml']))
 			loadTemplate('Xml');

@@ -21,7 +21,7 @@ function weAutoSuggest(oOptions)
 	this.opt.sSearchType = 'member';
 
 	// Store the handle to the text box.
-	var oText = $('#' + this.opt.sControlId)[0];
+	var oText = $('#' + this.opt.sControlId);
 
 	// An annoying bug in Packer makes some servers crash on long strings.
 	// It is probably when it attempts to find comments and make sure they aren't enclosed in strings.
@@ -30,7 +30,6 @@ function weAutoSuggest(oOptions)
 	sItemTemplate += '&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%">';
 
 	this.oTextHandle = oText;
-
 	this.oSuggestDivHandle = null;
 	this.oXmlRequestHandle = null;
 	this.oSelectedDiv = null;
@@ -55,40 +54,28 @@ function weAutoSuggest(oOptions)
 	// Should selected items be added to a list?
 	this.bItemList = !!this.opt.bItemList;
 
-	// Are there any items that should be added in advance?
-	this.aListItems = this.opt.aListItems || [];
-
 	this.sItemTemplate = this.opt.sItemTemplate || sItemTemplate;
 	this.sTextDeleteItem = this.opt.sTextDeleteItem || '';
-	this.sURLMask = this.opt.sURLMask || '';
+	this.sURLMask = this.opt.sURLMask || 'action=profile;u=%item_id%';
 
 	// Create a div that'll contain the results later on.
-	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest_div').appendTo('body')[0];
+	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest').appendTo('body')[0];
 
 	// Create a backup text input for single-entry inputs.
-	this.oRealTextHandle = $('<input type="hidden" name="' + oText.name + '" />').val(oText.value).appendTo(oText.form);
+	this.oRealTextHandle = $('<input type="hidden" name="' + oText[0].name + '" />').val(oText.val()).appendTo(oText[0].form);
 
 	// Disable autocomplete in any browser by obfuscating the name.
 	var that = this;
-	$(oText).attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
+	oText.attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
 		.bind(is_opera || is_ie ? 'keypress keydown' : 'keydown', function (oEvent) { return that.handleKey(oEvent); })
 		.bind('keyup change focus', function (oEvent) { return that.autoSuggestUpdate(oEvent); })
 		.blur(function (oEvent) { return that.autoSuggestHide(oEvent); });
 
 	if (this.bItemList)
-	{
-		if (this.opt.sItemListContainerId)
-			this.oItemList = $('#' + this.opt.sItemListContainerId)[0];
-		else
-		{
-			this.oItemList = document.createElement('div');
-			oText.parentNode.insertBefore(this.oItemList, oText.nextSibling);
-		}
-	}
+		this.oItemList = $('<div></div>').insertBefore(oText);
 
-	if (this.aListItems.length > 0)
-		for (var i = 0, n = this.aListItems.length; i < n; i++)
-			this.addItemLink(this.aListItems[i].sItemId, this.aListItems[i].sItemName);
+	// Are there any items that should be added in advance?
+	$.each(this.opt.aListItems || {}, function (sItemId, sItemName) { that.addItemLink(sItemId, sItemName); });
 
 	return true;
 }
@@ -206,7 +193,7 @@ weAutoSuggest.prototype.handleSubmit = function()
 		}
 	}
 
-	if (entryId == null || !bReturnValue)
+	if (entryId == null || !bReturnValue || !this.bItemList)
 		return bReturnValue;
 	else
 	{
@@ -225,12 +212,11 @@ weAutoSuggest.prototype.positionDiv = function ()
 	this.bPositionComplete = true;
 
 	// Put the div under the text box.
-	var aParentPos = $(this.oTextHandle).offset();
+	var aParentPos = this.oTextHandle.offset();
 
 	$(this.oSuggestDivHandle).css({
 		left: aParentPos.left,
-		top: aParentPos.top + this.oTextHandle.offsetHeight + 1,
-		width: this.oTextHandle.style.width
+		top: aParentPos.top + this.oTextHandle.outerHeight() + 1
 	});
 };
 
@@ -243,9 +229,9 @@ weAutoSuggest.prototype.itemClicked = function (oCurElement)
 
 	// Otherwise clear things down.
 	else
-		this.oTextHandle.value = oCurElement.innerHTML.php_unhtmlspecialchars();
+		this.oTextHandle.val(oCurElement.innerHTML.php_unhtmlspecialchars());
 
-	this.oRealTextHandle.val(this.oTextHandle.value);
+	this.oRealTextHandle.val(this.oTextHandle.val());
 	this.autoSuggestActualHide();
 	this.bPositionComplete = false;
 };
@@ -255,7 +241,7 @@ weAutoSuggest.prototype.removeLastSearchString = function ()
 {
 	// Remove the text we searched for from the div.
 	var
-		sTempText = this.oTextHandle.value.toLowerCase(),
+		sTempText = this.oTextHandle.val().toLowerCase(),
 		iStartString = sTempText.indexOf(this.sLastSearch.toLowerCase());
 
 	// Just attempt to remove the bits we just searched for.
@@ -274,11 +260,11 @@ weAutoSuggest.prototype.removeLastSearchString = function ()
 		}
 
 		// Now remove anything from iStartString upwards.
-		this.oTextHandle.value = this.oTextHandle.value.substr(0, iStartString);
+		this.oTextHandle.val(this.oTextHandle.val().substr(0, iStartString));
 	}
 	// Just take it all.
 	else
-		this.oTextHandle.value = '';
+		this.oTextHandle.val('');
 };
 
 // Add a result if not already done.
@@ -307,7 +293,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	this.removeLastSearchString();
 
 	// If we came from a submit, and there's still more to go, turn on auto add for all the other things.
-	this.bDoAutoAdd = this.oTextHandle.value != '' && bFromSubmit;
+	this.bDoAutoAdd = this.oTextHandle.val() != '' && bFromSubmit;
 
 	// Update the fellow...
 	this.autoSuggestUpdate();
@@ -366,12 +352,10 @@ weAutoSuggest.prototype.populateDiv = function (aResults, undefined)
 		return true;
 	}
 
-	var aNewDisplayData = [], i;
-	for (i = 0; i < (aResults.length > this.iMaxDisplayQuantity ? this.iMaxDisplayQuantity : aResults.length); i++)
+	for (var aNewDisplayData = [], i = 0, j = Math.min(this.iMaxDisplayQuantity, aResults.length); i < j; i++)
 		// Create the sub element, and attach some events to it so we can do stuff.
 		aNewDisplayData[i] = $('<div></div>')
 			.data({ sItemId: aResults[i].sItemId, that: this })
-			.addClass('auto_suggest_item')
 			.html(aResults[i].sItemName)
 			.appendTo(this.oSuggestDivHandle)
 			.mouseenter(function (oEvent) { $(this).data('that').itemMouseEnter(this); })
@@ -387,13 +371,13 @@ weAutoSuggest.prototype.populateDiv = function (aResults, undefined)
 weAutoSuggest.prototype.itemMouseEnter = function (oCurElement)
 {
 	this.oSelectedDiv = oCurElement;
-	oCurElement.className = 'auto_suggest_item_hover';
+	$(oCurElement).addClass('auto_suggest_hover');
 };
 
 // Unfocus the element
 weAutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 {
-	oCurElement.className = 'auto_suggest_item';
+	$(oCurElement).removeClass('auto_suggest_hover');
 };
 
 weAutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
@@ -431,9 +415,9 @@ weAutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 // Get a new suggestion.
 weAutoSuggest.prototype.autoSuggestUpdate = function ()
 {
-	this.oRealTextHandle.val(this.oTextHandle.value);
+	this.oRealTextHandle.val(this.oTextHandle.val());
 
-	if ($.trim(this.oTextHandle.value) === '')
+	if ($.trim(this.oTextHandle.val()) === '')
 	{
 		this.aCache = [];
 		this.populateDiv();
@@ -443,13 +427,13 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 	}
 
 	// Nothing changed?
-	if (this.oTextHandle.value == this.sLastDirtySearch)
+	if (this.oTextHandle.val() == this.sLastDirtySearch)
 		return true;
 
-	this.sLastDirtySearch = this.oTextHandle.value;
+	this.sLastDirtySearch = this.oTextHandle.val();
 
 	// We're only actually interested in the last string.
-	var sSearchString = this.oTextHandle.value.replace(/^("[^"]+",[ ]*)+/, '').replace(/^([^,]+,[ ]*)+/, '');
+	var sSearchString = this.oTextHandle.val().replace(/^("[^"]+",[ ]*)+/, '').replace(/^([^,]+,[ ]*)+/, '');
 	if (sSearchString[0] == '"')
 		sSearchString = sSearchString.substr(1);
 

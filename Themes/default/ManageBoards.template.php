@@ -389,7 +389,6 @@ function template_modify_board()
 					</dt>
 					<dd>
 						<input type="text" name="moderators" id="moderators" value="', $context['board']['moderator_list'], '" size="30">
-						<div id="moderator_container"></div>
 					</dd>
 				</dl>
 				<hr>';
@@ -577,24 +576,19 @@ function template_modify_board()
 
 	add_js('
 	new weAutoSuggest({
-		sControlId: \'moderators\',
 		bItemList: true,
+		sControlId: \'moderators\',
 		sPostName: \'moderator_list\',
-		sURLMask: \'action=profile;u=%item_id%\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
-		sItemListContainerId: \'moderator_container\',
-		aListItems: [');
+		aListItems: {');
 
 	foreach ($context['board']['moderators'] as $id_member => $member_name)
 		add_js('
-			{
-				sItemId: ', JavaScriptEscape($id_member), ',
-				sItemName: ', JavaScriptEscape($member_name), '
-			}', $id_member == $context['board']['last_moderator_id'] ? '' : ',');
+			', (int) $id_member, ': ', JavaScriptEscape($member_name), $id_member == $context['board']['last_moderator_id'] ? '' : ',');
 
 	add_js('
-			]
-		});');
+		}
+	});');
 
 	// JavaScript for deciding what to show.
 	add_js_inline('
