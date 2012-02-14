@@ -19,7 +19,7 @@ if (!defined('WEDGE'))
  *
  * Unlike most actions within the forum, this action is explicitly not listed within the action array in index.php, because it is the default action; if no known action, board or topic is specified, this function will be used.
  *
- * - Loads the Boards template, or alternatively uses the wireless version
+ * - Loads the Boards template.
  * - Defines the canonical URL of the page to be the principal forum URL (as $scripturl) in case we fell through to here (if action is one the forum is not aware of, and there is no topic or board, this action will be called)
  * - Ordinarily, the board index page will be directed to be indexed, however this is turned off in the event that $_GET is non-empty.
  * - The board list is then loaded from {@link getBoardIndex()} in Subs-BoardIndex.php.
@@ -35,31 +35,25 @@ function Boards()
 {
 	global $txt, $user_info, $settings, $context, $theme, $scripturl, $options;
 
-	// For wireless, we use the Wireless template...
-	if (WIRELESS)
-		wetem::load('wap2_boards');
-	else
-	{
-		loadTemplate('Boards');
-		loadTemplate('InfoCenter');
-		// We load the info center into our sidebar...
-		wetem::add('sidebar', array(
-			'info_center' => array(
-				'info_center_statistics',
-				'info_center_usersonline',
-				'info_center_personalmsg',
-			),
-		));
-		// And the rest into our default layer.
-		wetem::load(
-			array(
-				'boards_ministats',
-				'boards_newsfader',
-				'boards',
-				'boards_below',
-			)
-		);
-	}
+	loadTemplate('Boards');
+	loadTemplate('InfoCenter');
+	// We load the info center into our sidebar...
+	wetem::add('sidebar', array(
+		'info_center' => array(
+			'info_center_statistics',
+			'info_center_usersonline',
+			'info_center_personalmsg',
+		),
+	));
+	// And the rest into our default layer.
+	wetem::load(
+		array(
+			'boards_ministats',
+			'boards_newsfader',
+			'boards',
+			'boards_below',
+		)
+	);
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . (isset($_GET['action']) && $_GET['action'] === 'boards' ? '?action=boards' : (isset($_GET['category']) && is_integer($_GET['category']) ? '?category=' . $_GET['category'] : ''));

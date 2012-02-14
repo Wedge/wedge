@@ -177,26 +177,6 @@ set_error_handler('error_handler');
 // Start the session. (assuming it hasn't already been.)
 loadSession();
 
-// Determine if this is using WAP2.
-if (isset($_REQUEST['wap2']))
-	unset($_SESSION['nowap']);
-elseif (isset($_REQUEST['nowap']))
-	$_SESSION['nowap'] = true;
-elseif (!isset($_SESSION['nowap']) && isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/vnd.wap.xhtml+xml') !== false)
-	$_REQUEST['wap2'] = 1;
-
-if (!defined('WIRELESS'))
-	define('WIRELESS', isset($_REQUEST['wap2']));
-
-if (WIRELESS)
-{
-	// Some cellphones can't handle output compression...
-	$settings['enableCompressedOutput'] = '0';
-	// !!! Do we want these hard coded?
-	$settings['defaultMaxMessages'] = 5;
-	$settings['defaultMaxTopics'] = 9;
-}
-
 // What function shall we execute? (done like this for memory's sake.)
 $function = wedge_main();
 
@@ -372,8 +352,8 @@ function index_action($hook_action = 'default_action')
 		if (!empty($func) && is_callable($func))
 			return $func;
 
-	// Otherwise, if the admin specified a custom homepage, fall back to it, unless we're in Wireless mode.
-	if (!WIRELESS && isset($settings['default_index']) && file_exists($sourcedir . '/' . $settings['default_index'] . '.php'))
+	// Otherwise, if the admin specified a custom homepage, fall back to it.
+	if (isset($settings['default_index']) && file_exists($sourcedir . '/' . $settings['default_index'] . '.php'))
 	{
 		loadSource($settings['default_index']);
 		return $settings['default_index'];

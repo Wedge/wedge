@@ -2,7 +2,8 @@
 /**
  * Wedge
  *
- * This file handles searches for users when in WAP2 mode (for sending them a message)
+ * This file handles the old search method for users (for sending them a message).
+ * @todo: remove it!
  *
  * @package wedge
  * @copyright 2010-2012 Wedgeward, wedge.org
@@ -23,9 +24,6 @@ function FindMember()
 	checkSession('get');
 
 	loadSource('Subs-Auth');
-
-	if (WIRELESS)
-		wetem::load('wap2_pm');
 
 	if (isset($_REQUEST['search']))
 		$context['last_search'] = westr::htmlspecialchars($_REQUEST['search'], ENT_QUOTES);
@@ -56,14 +54,11 @@ function FindMember()
 
 		$context['page_index'] = template_page_index($scripturl . '?action=findmember;search=' . $context['last_search'] . ';' . $context['session_query'] . ';input=' . $context['input_box_name'] . ($context['quote_results'] ? ';quote=1' : '') . ($context['buddy_search'] ? ';buddies' : ''), $_REQUEST['start'], $total_results, 7);
 
-		// Determine the navigation context (especially useful for the wireless template).
+		// Determine the navigation context.
 		$base_url = $scripturl . '?action=findmember;search=' . urlencode($context['last_search']) . (empty($_REQUEST['u']) ? '' : ';u=' . $_REQUEST['u']) . ';' . $context['session_query'];
 		$context['links'] = array(
-			'first' => $_REQUEST['start'] >= 7 ? $base_url . ';start=0' : '',
 			'prev' => $_REQUEST['start'] >= 7 ? $base_url . ';start=' . ($_REQUEST['start'] - 7) : '',
 			'next' => $_REQUEST['start'] + 7 < $total_results ? $base_url . ';start=' . ($_REQUEST['start'] + 7) : '',
-			'last' => $_REQUEST['start'] + 7 < $total_results ? $base_url . ';start=' . (floor(($total_results - 1) / 7) * 7) : '',
-			'up' => $scripturl . '?action=pm;sa=send' . (empty($_REQUEST['u']) ? '' : ';u=' . $_REQUEST['u']),
 		);
 		$context['page_info'] = array(
 			'current_page' => $_REQUEST['start'] / 7 + 1,
@@ -72,8 +67,6 @@ function FindMember()
 
 		$context['results'] = array_slice($context['results'], $_REQUEST['start'], 7);
 	}
-	else
-		$context['links']['up'] = $scripturl . '?action=pm;sa=send' . (empty($_REQUEST['u']) ? '' : ';u=' . $_REQUEST['u']);
 }
 
 ?>

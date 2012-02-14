@@ -1006,15 +1006,7 @@ function BanEdit()
 
 	// Template needs this to show errors using javascript
 	loadLanguage('Errors');
-
-	// If we're in wireless mode remove the admin template layer and use a special template.
-	if (WIRELESS)
-	{
-		wetem::hide('html');
-		wetem::load('wap2_ban_edit');
-	}
-	else
-		wetem::load('ban_edit');
+	wetem::load('ban_edit');
 }
 
 function BanEditTrigger()

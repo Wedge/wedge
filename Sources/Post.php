@@ -55,13 +55,12 @@ if (!defined('WEDGE'))
  * - Are there more replies than we thought there were? If so, flag that to the user.
  * - Is this topic over the threshold of being old? If so, flag that to the user.
  * - Set the page title and link tree depending on what we're doing.
- * - If using wireless, rewrite the last link tree item to point to the full post page instead.
  * - Instance the editor component.
  * - Get all the possible icons in this board, and prepare them ready for the template.
  * - All the relevant posts to display after the editor box (i.e. the last replies, or the last posts before your currently-editing post)
  * - Set up whether they can see the additional options including attachments (and the details of any such restrictions)
  * - Set up CAPTCHA if appropriate (and also add error if they came from quick reply without said CAPTCHA)
- * - Last bits: set up whether WYSIWYG is available, set the nonce so we can't submit twice normally, and load the normal or wireless template as appropriate.
+ * - Last bits: set up whether WYSIWYG is available, set the nonce so we can't submit twice normally, and load the template.
  *
  * @todo Why is the response prefix cached? Is it really that much effort to determine... what... 4 friggin' bytes? Would be better in $settings in that case.
  * @todo Is it possible to force something through approval if you edit the form manually?
@@ -992,10 +991,6 @@ function Post($post_errors = array())
 			'extra_after' => '<span' . ($theme['linktree_inline'] ? ' class="smalltext"' : '') . '><strong class="nav">]</strong></span>'
 		);
 
-	// Give wireless a linktree url to the post screen, so that they can switch to full version.
-	if (WIRELESS)
-		$context['linktree'][count($context['linktree']) - 1]['url'] = $scripturl . '?action=post;' . (!empty($topic) ? 'topic=' . $topic : 'board=' . $board) . '.' . $_REQUEST['start'] . (isset($_REQUEST['msg']) ? ';msg=' . (int) $_REQUEST['msg'] . ';' . $context['session_query'] : '');
-
 	// We need to check permissions, and also send the maximum allowed attachments through to the front end - it's dealt with there.
 	// !!! This won't work if you're posting an event.
 	$context['max_allowed_attachments'] = empty($settings['attachmentNumPerPostLimit']) ? 50 : $settings['attachmentNumPerPostLimit'];
@@ -1146,9 +1141,7 @@ function Post($post_errors = array())
 	checkSubmitOnce('register');
 
 	// Finally, load the template.
-	if (WIRELESS)
-		wetem::load('wap2_post');
-	elseif (!isset($_REQUEST['xml']))
+	if (!isset($_REQUEST['xml']))
 	{
 		loadTemplate('Post');
 		wetem::load(

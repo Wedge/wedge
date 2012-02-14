@@ -20,7 +20,6 @@ if (!defined('WEDGE'))
 
 	void Display()
 		- loads the posts in a topic up so they can be displayed.
-		- supports wireless, using wap2 and the Wireless templates.
 		- uses the main block of the Display template.
 		- requires a topic, and can go to the previous or next topic from it.
 		- jumps to the correct post depending on a number/time/IS_MSG passed.
@@ -68,26 +67,21 @@ function Display()
 	}
 
 	// Load the proper template and/or block.
-	if (WIRELESS)
-		wetem::load('wap2_display');
-	else
-	{
-		loadTemplate('Display');
-		wetem::load(
-			array(
-				'report_success',
-				'display_draft',
-				'title_upper',
-				'topic_poll',
-				'postlist' => array(
-					'display_posts',
-				),
-				'title_lower',
-				'mod_buttons',
-				'quick_reply'
-			)
-		);
-	}
+	loadTemplate('Display');
+	wetem::load(
+		array(
+			'report_success',
+			'display_draft',
+			'title_upper',
+			'topic_poll',
+			'postlist' => array(
+				'display_posts',
+			),
+			'title_lower',
+			'mod_buttons',
+			'quick_reply'
+		)
+	);
 
 	// Not only does a prefetch make things slower for the server, but it makes it impossible to know if they read it.
 	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
@@ -98,7 +92,7 @@ function Display()
 	}
 
 	// How much are we sticking on each page?
-	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
+	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 
 	// Let's do some work on what to search index.
 	if (count($_GET) > 2)
@@ -430,7 +424,7 @@ function Display()
 	$context['draft_saved'] = isset($_GET['draftsaved']);
 
 	// Let's get nosey, who is viewing this topic?
-	if (!empty($settings['display_who_viewing']) && !WIRELESS)
+	if (!empty($settings['display_who_viewing']))
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('topic');
@@ -455,13 +449,10 @@ function Display()
 		'num_pages' => floor(($context['total_visible_posts'] - 1) / $context['messages_per_page']) + 1,
 	);
 
-	// Figure out all the link to the next/prev/first/last/up for Wireless and header <link>.
+	// Figure out the previous/next links for header <link>.
 	$context['links'] = array(
-		'first' => $_REQUEST['start'] >= $context['messages_per_page'] ? '<URL>?topic=' . $topic . '.0' : '',
 		'prev' => $_REQUEST['start'] >= $context['messages_per_page'] ? '<URL>?topic=' . $topic . '.' . ($_REQUEST['start'] - $context['messages_per_page']) : '',
 		'next' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? '<URL>?topic=' . $topic. '.' . ($_REQUEST['start'] + $context['messages_per_page']) : '',
-		'last' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? '<URL>?topic=' . $topic. '.' . (floor($context['total_visible_posts'] / $context['messages_per_page']) * $context['messages_per_page']) : '',
-		'up' => $scripturl . '?board=' . $board . '.0'
 	);
 
 	// If they are viewing all the posts, show all the posts, otherwise limit the number.
@@ -1087,13 +1078,6 @@ function Display()
 	// Can restore topic? That's if the topic is in the recycle board and has a previous restore state.
 	$context['can_restore_topic'] &= !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board && !empty($topicinfo['id_previous_board']);
 	$context['can_restore_msg'] &= !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board && !empty($topicinfo['id_previous_topic']);
-
-	// Wireless shows a "more" if you can do anything special.
-	if (WIRELESS)
-	{
-		$context['wireless_more'] = $context['can_pin'] || $context['can_lock'] || allowedTo('modify_any');
-		$context['wireless_moderate'] = isset($_GET['moderate']) ? ';moderate' : '';
-	}
 
 	// Load up the "double post" sequencing magic.
 	if (!empty($options['display_quick_reply']))

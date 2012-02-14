@@ -52,7 +52,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
  * - Long words are also fixed here as directed by $settings['fixLongWords'].
  *
  * @param mixed $message The original text, including bbcode, to be parsed. This is expected to have been parsed with {@link preparsecode()} previously (for handling of quotes and apostrophes). Alternatively, if boolean false is passed here, the return value is the array listing the acceptable bbcode types.
- * @param mixed $smileys Whether smileys should be parsed too, prior to (and in addition to) any bbcode, defaults to true. Nominally this is a boolean value, true for 'parse smileys', false for not, however the function also accepts the string 'print', for parsing in the print-page environment, which disables non printable tags and smileys. This is also overridden in wireless mode.
+ * @param mixed $smileys Whether smileys should be parsed too, prior to (and in addition to) any bbcode, defaults to true. Nominally this is a boolean value, true for 'parse smileys', false for not, however the function also accepts the string 'print', for parsing in the print-page environment, which disables non printable tags and smileys.
  * @param string $cache_id If specified, a quasi-unique key for the item being parsed, so that if it took over 0.05 seconds, it can be cached. (The final key used for the cache takes the supplied key and includes details such as the user's locale and time offsets, an MD5 digest of the message and other details that potentially affect the way parsing occurs)
  * @param array $parse_tags An array of tags that will be allowed for this parse only. (This overrides any user settings for what is and is not allowed. Additionally, runs with this set are never cached, regardless of cache id being set)
  * @return mixed If $message was boolean false, the return set is the master list of available bbcode, otherwise it is the parsed message.
@@ -67,10 +67,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	if ($message === '')
 		return '';
 
-	// Never show smileys for wireless clients. More bytes, and may not see them anyway :P
-	if (WIRELESS)
-		$smileys = false;
-	elseif ($smileys !== null && ($smileys == '1' || $smileys == '0'))
+	if ($smileys !== null && ($smileys == '1' || $smileys == '0'))
 		$smileys = (bool) $smileys;
 
 	if (empty($settings['enableBBC']) && $message !== false)
@@ -1086,7 +1083,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 /**
  * Takes the specified message, parses it for smileys and updates them in place.
  *
- * This function is called from {@link parse_bbc()} to manage smileys, depending on whether smileys were requested, whether this is the printer-friendly version or wireless mode.
+ * This function is called from {@link parse_bbc()} to manage smileys, depending on whether smileys were requested, and whether this is the printer-friendly version.
  * - Firstly, load the default smileys; if custom smileys are not enabled, use the default set, otherwise load them from cache (if available) or database. They will persist for the life of page in any case (stored statically in the function for multiple calls)
  * - A complex regular expression is then built up of all the search/replaces to be made to substitute all the smileys for their image counterparts.
  * - The regular expression is crafted so expressions within tags do not get parsed, e.g. [url=mailto:David@bla.com] doesn't parse the :D smiley

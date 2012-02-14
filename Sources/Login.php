@@ -19,8 +19,6 @@ if (!defined('WEDGE'))
 		- caches the referring URL in $_SESSION['login_url'].
 		- uses the Login template and language file with the login sub
 		  template.
-		- if you are using a wireless device, uses the protocol_login sub
-		  template in the Wireless template.
 		- accessed from ?action=login.
 */
 
@@ -32,16 +30,10 @@ function Login()
 	if (!$context['user']['is_guest'])
 		redirectexit();
 
-	// In wireless?  If so, use the correct block.
-	if (WIRELESS)
-		wetem::load('wap2_login');
-	// Otherwise, we need to load the Login template/language file.
-	else
-	{
-		loadLanguage('Login');
-		loadTemplate('Login');
-		wetem::load('login');
-	}
+	// We need to load the Login template/language file.
+	loadLanguage('Login');
+	loadTemplate('Login');
+	wetem::load('login');
 
 	// Get the template ready.... not really much else to do.
 	$context['page_title'] = $txt['login'];

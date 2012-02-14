@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
  * - Session validation is done based on the URL containing the normal session identifiers.
  * - The action will be logged in the moderation log (if enabled, see {@link logAction()})
  * - Send notifications to relevant users.
- * - Return to the topic once done (into moderation mode if in wireless viewing)
+ * - Return to the topic once done.
  */
 function Pin()
 {
@@ -71,7 +71,7 @@ function Pin()
 	sendNotifications($topic, 'pin');
 
 	// Take them back to the topic.
-	redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . (WIRELESS ? ';moderate' : ''));
+	redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
 }
 
 ?>

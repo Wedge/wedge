@@ -737,15 +737,14 @@ function template_footer()
 		echo '
 			<li class="stats"><!-- insert stats here --></li>';
 
-	// Show the credit page (forum admin/mod team and credits), link to the WAP2 version, and valid HTML5
+	// Show the credit page (forum admin/mod team and credits), and a link to a HTML5 conformity
 	// check. Note: the W3 validator, at as January 2012, no longer validates HTML5+Microdata files, so
 	// the breadcrumb code will make it fail on both validator.w3.org and Unicorn. Switched to validator.nu.
 	echo '
 			<li class="copyright">', $txt['copyright'], '</li>
 			<li class="links">
 				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.nu/?doc=', $user_info['url'], '" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
-				<a id="button_wap2" href="<URL>?wap2" class="new_win">', $txt['wap2'], '</a>
+				<a id="button_html5" href="http://validator.nu/?doc=', $user_info['url'], '" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>
 			</li>
 		</ul>
 	</div></div>';
@@ -755,7 +754,6 @@ function template_footer()
  * This function is used to construct the page lists used throughout the application, e.g. 1 ... 6 7 [8] 9 10 ... 15.
  *
  * - The function accepts a start position, for calculating the page out of the list of possible pages, however if the value is not the start of an actual page, the function will sanitise the value so that it will be the actual start of the 'page' of content. It also will sanitise where the start is beyond the last item.
- * - Parameters such as wireless being in the URL are also managed.
  * - Many URLs in the application are in the form of item=x.y format, e.g. index.php?topic=1.20 to denote topic 1, 20 items in. This can be achieved by specifying $flexible_start as true, and %1$d in the basic URL component, e.g. passing the base URL as index.php?topic=1.%1$d
  * - Only the first and last pages are linked to, and the display will consist of 5 contiguous items centered on the current page, so displaying the current page and 2 page-links either side)
  *
@@ -784,10 +782,6 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 	// And it has to be a multiple of $num_per_page!
 	else
 		$start = max(0, (int) $start - ((int) $start % (int) $num_per_page));
-
-	// Wireless will need the protocol on the URL somewhere.
-	if (WIRELESS)
-		$base_url .= ';wap2';
 
 	$base_link = '<a href="' . ($flexible_start ? $base_url : strtr($base_url, array('%' => '%%')) . ';start=%1$d') . '">%2$s</a> ';
 	$pageindex = '';

@@ -111,19 +111,17 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 	$_SESSION['USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
 
 	// Hand off the output to the portal, etc. we're integrated with.
-	call_hook('exit', array($do_finish && !WIRELESS));
+	call_hook('exit', array($do_finish));
 
 	// Don't exit if we're coming from index.php; that will pass through normally.
-	if (!$from_index || WIRELESS)
+	if (!$from_index)
 	{
 		if (!isset($settings['app_error_count']))
 			$settings['app_error_count'] = 0;
 		if (!empty($context['app_error_count']))
-			updateSettings(
-				array(
-					'app_error_count' => $settings['app_error_count'] + $context['app_error_count'],
-				)
-			);
+			updateSettings(array(
+				'app_error_count' => $settings['app_error_count'] + $context['app_error_count'],
+			));
 		exit;
 	}
 }
@@ -557,7 +555,7 @@ function start_output()
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-		if (!isset($_REQUEST['xml']) && !WIRELESS)
+		if (!isset($_REQUEST['xml']))
 			header('Content-Type: text/html; charset=UTF-8');
 	}
 
@@ -663,7 +661,7 @@ function while_we_re_here()
 }
 
 /**
- * Display the debug data at the foot of the page if debug mode ($db_show_debug) is set to boolean true (only) and not in wireless or the query viewer page.
+ * Display the debug data at the foot of the page if debug mode ($db_show_debug) is set to boolean true (only) and not in the query viewer page.
  *
  * Lots of interesting debug information is collated through workflow and displayed in this function, called from the footer.
  * - Check if the current user is on the list of people who can see the debug (and query debug) information, and clear information if not appropriate.
@@ -682,7 +680,8 @@ function db_debug_junk()
 	global $db_cache, $db_count, $db_show_debug, $cache_count, $cache_hits;
 
 	// Is debugging on? (i.e. it is set, and it is true, and we're not on action=viewquery or an help popup.
-	$show_debug = (isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || ($_GET['action'] != 'viewquery' && $_GET['action'] != 'help')) && !WIRELESS);
+	$show_debug = isset($db_show_debug) && $db_show_debug === true && (!isset($_GET['action']) || ($_GET['action'] != 'viewquery' && $_GET['action'] != 'help'));
+
 	// Check groups
 	if (empty($settings['db_show_debug_who']) || $settings['db_show_debug_who'] == 'admin')
 		$show_debug &= $context['user']['is_admin'];
@@ -1258,9 +1257,6 @@ final class wetem
 	 */
 	static function render()
 	{
-		if (WIRELESS && !isset(self::$layers['default']))
-			fatal_lang_error('wireless_error_notyet', false);
-
 		if (empty(self::$layers['default']))
 			fatal_lang_error('default_layer_missing');
 
@@ -1426,7 +1422,7 @@ final class wetem
 					)
 				)
 			);
-		// Or finally... Do we want to keep/add a specific layer, like 'print' or wireless maybe?
+		// Or finally... Do we want to keep/add a specific layer, like 'print' maybe?
 		else
 			self::$skeleton = array(
 				'dummy' => array(
@@ -1622,7 +1618,7 @@ final class wetem
 		// No valid layer found.
 		if (empty($to))
 		{
-			// If we try to insert a sideback block in minimal mode (hide_chrome), Wireless or XML, it will fail.
+			// If we try to insert a sideback block in XML or minimal mode (hide_chrome), it will fail.
 			// Plugins should provide a 'default' fallback if they consider it vital to show the block, e.g. array('sidebar', 'default').
 			if (!empty($where) && $where !== 'before' && $where !== 'after')
 				return false;

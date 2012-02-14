@@ -91,15 +91,10 @@ function Login2()
 	elseif (!empty($_POST['cookielength']) && ($_POST['cookielength'] >= 1 || $_POST['cookielength'] <= 525600))
 		$settings['cookieTime'] = (int) $_POST['cookielength'];
 
+	// Load the template stuff
 	loadLanguage('Login');
-	// Load the template stuff - wireless or normal.
-	if (WIRELESS)
-		wetem::load('wap2_login');
-	else
-	{
-		loadTemplate('Login');
-		wetem::load('login');
-	}
+	loadTemplate('Login');
+	wetem::load('login');
 
 	// Set up the default/fallback stuff.
 	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', htmlspecialchars($_POST['user'])) : '';

@@ -325,7 +325,7 @@ function error_handler($error_level, $error_string, $file, $line)
  * - Attempt to prevent recursively trying to error
  * - Check if the theme is loaded (e.g. from action=dlattach, where the theme is not normally loaded)
  * - Set up general page details - no robots meta tag, the page title (based on the error message if possible, in $context['error_title'] if set)
- * - Determine the appropriate template (either the normal fatal_error template, or the wireless template)
+ * - Load the fatal_error template
  * - Check whether we are using SSI and if so whether SSI-specific fatal error handling is indicated.
  * - Finally, pass control to {@link obExit()} to end execution.
  *
@@ -357,15 +357,9 @@ function setup_fatal_error_context($error_message)
 	if (empty($context['page_title']))
 		$context['page_title'] = $context['error_title'];
 
-	// Display the error message - wireless?
-	if (defined('WIRELESS') && WIRELESS)
-		wetem::load('wap2_error');
 	// Load the template and set the block.
-	else
-	{
-		loadTemplate('Errors');
-		wetem::load('fatal_error');
-	}
+	loadTemplate('Errors');
+	wetem::load('fatal_error');
 
 	// If this is SSI, what do they want us to do?
 	if (WEDGE == 'SSI')

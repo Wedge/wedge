@@ -545,10 +545,6 @@ function ModifyProfile($post_errors = array())
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
 	$context['require_password'] = $check_password;
 
-	// If we're in wireless then we have a cut down template...
-	if (WIRELESS && wetem::has('summary'))
-		wetem::load('wap2_profile');
-
 	// These will get populated soon!
 	$post_errors = array();
 	$profile_vars = array();

@@ -133,7 +133,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	$thisVerification =& $context['controls']['verification'][$verificationOptions['id']];
 
 	// Add javascript for the object.
-	if ($thisVerification['show_visual'] && !WIRELESS)
+	if ($thisVerification['show_visual'])
 		add_js('
 	$(\'.vv_special\').remove();
 	var verification' . $verificationOptions['id'] . 'Handle = new weCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '");');

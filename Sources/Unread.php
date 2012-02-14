@@ -31,7 +31,7 @@ function Unread()
 	}
 
 	$context['start'] = (int) $_REQUEST['start'];
-	$context['topics_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $settings['defaultMaxTopics'];
+	$context['topics_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['topics_per_page']) ? $options['topics_per_page'] : $settings['defaultMaxTopics'];
 	$context['page_title'] = $txt['unread_topics'];
 
 	if (!empty($context['load_average']) && !empty($settings['loadavg_allunread']) && $context['load_average'] >= $settings['loadavg_allunread'])
@@ -223,13 +223,8 @@ function Unread()
 		'name' => $txt['unread_topics'],
 	);
 
-	if (WIRELESS)
-		wetem::load('wap2_recent');
-	else
-	{
-		loadTemplate('Recent');
-		wetem::load('unread');
-	}
+	loadTemplate('Recent');
+	wetem::load('unread');
 
 	// Setup the default topic icons... for checking they exist and the like ;)
 	$stable_icons = stable_icons();
@@ -367,11 +362,8 @@ function Unread()
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
 		$context['links'] = array(
-			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
 			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'up' => $scripturl,
 		);
 		$context['page_info'] = array(
 			'current_page' => $_REQUEST['start'] / $context['topics_per_page'] + 1,
@@ -447,11 +439,8 @@ function Unread()
 		$context['current_page'] = (int) $_REQUEST['start'] / $context['topics_per_page'];
 
 		$context['links'] = array(
-			'first' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], 0) . $context['querystring_sort_limits'] : '',
 			'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 			'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'last' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], floor(($num_topics - 1) / $context['topics_per_page']) * $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
-			'up' => $scripturl,
 		);
 		$context['page_info'] = array(
 			'current_page' => $_REQUEST['start'] / $context['topics_per_page'] + 1,
@@ -556,7 +545,7 @@ function Unread()
 		// Decide how many pages the topic should have.
 		// @todo Should this use a variation on template_page_index?
 		$topic_length = $row['num_replies'] + 1;
-		$messages_per_page = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
+		$messages_per_page = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 		if ($topic_length > $messages_per_page)
 		{
 			$tmppages = array();

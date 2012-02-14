@@ -17,9 +17,7 @@
  *
  * guest, member, rtl, opera, webkit, chrome, safari, iphone, android, gecko, firefox, ie6, ie7, ie8, ie9.
  *
- * These files should be theme-agnostic, and thus are not skinnable per se:
- * install.css, report.css, wireless.css
- * @todo: Consider 'wireless' as an override keyword instead?
+ * The "install.css" and "report.css" files are theme-agnostic, and thus are not skinnable per se.
  *
  * Go crazy with CSS comments like this; they're automatically deleted when the cache is generated.
  * CSS cached files are put inside the /cache/ folder, so any relative URLs will fail unless they use it

@@ -34,20 +34,15 @@ function MessageIndex()
 		redirectexit($board_info['redirect']);
 	}
 
-	if (WIRELESS)
-		wetem::load('wap2_messageindex');
-	else
-	{
-		loadTemplate('MessageIndex');
+	loadTemplate('MessageIndex');
 
-		// Did someone save a conventional draft of a new topic? If so, add it as a block but make sure we don't screw other things up.
-		$templates = array();
-		if (isset($_GET['draftsaved']))
-			$templates[] = 'messageindex_draft';
-		$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
-		wetem::load($templates);
-		wetem::add('sidebar', 'messageindex_statistics');
-	}
+	// Did someone save a conventional draft of a new topic? If so, add it as a block but make sure we don't screw other things up.
+	$templates = array();
+	if (isset($_GET['draftsaved']))
+		$templates[] = 'messageindex_draft';
+	$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
+	wetem::load($templates);
+	wetem::add('sidebar', 'messageindex_statistics');
 
 	$context['name'] = $board_info['name'];
 	$context['description'] = $board_info['description'];
@@ -61,8 +56,8 @@ function MessageIndex()
 	if ($board_info['type'] == 'blog')
 		$context['topics_per_page'] = 8;
 	else
-		$context['topics_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['topics_per_page']) && !WIRELESS ? $options['topics_per_page'] : $settings['defaultMaxTopics'];
-	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
+		$context['topics_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['topics_per_page']) ? $options['topics_per_page'] : $settings['defaultMaxTopics'];
+	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 	$maxindex = isset($_REQUEST['all']) && !empty($settings['enableAllMessages']) ? $board_info['total_topics'] : $context['topics_per_page'];
 
 	// Right, let's only index normal stuff!
@@ -92,11 +87,8 @@ function MessageIndex()
 	$context['canonical_url'] = $scripturl . '?board=' . $board . '.' . $context['start'];
 
 	$context['links'] = array(
-		'first' => $context['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.0' : '',
 		'prev' => $context['start'] >= $context['topics_per_page'] ? $scripturl . '?board=' . $board . '.' . ($context['start'] - $context['topics_per_page']) : '',
 		'next' => $context['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . ($context['start'] + $context['topics_per_page']) : '',
-		'last' => $context['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . (floor(($board_info['total_topics'] - 1) / $context['topics_per_page']) * $context['topics_per_page']) : '',
-		'up' => $board_info['parent'] == 0 ? $scripturl . '?' : $scripturl . '?board=' . $board_info['parent'] . '.0'
 	);
 
 	$context['page_info'] = array(
@@ -219,7 +211,7 @@ function MessageIndex()
 	$context['boards'] = getBoardIndex($boardIndexOptions);
 
 	// Nosey, nosey - who's viewing this topic?
-	if (!empty($settings['display_who_viewing']) && !WIRELESS)
+	if (!empty($settings['display_who_viewing']))
 	{
 		loadSource('Subs-MembersOnline');
 		getMembersOnlineDetails('board');
@@ -318,7 +310,7 @@ function MessageIndex()
 	if (!$pre_query || !empty($topic_ids))
 	{
 		// For search engine effectiveness we'll link guests differently.
-		$context['pageindex_multiplier'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) && !WIRELESS ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
+		$context['pageindex_multiplier'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 
 		$result = wesql::query('
 			SELECT

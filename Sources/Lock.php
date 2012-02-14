@@ -23,7 +23,7 @@ if (!defined('WEDGE'))
  * - Session validation is done based on the URL containing the normal session identifiers.
  * - The action will be logged in the moderation log (if enabled, see {@link logAction()}) - provided it is a moderator lock. Users locking their own topics (user locks) are not recorded.
  * - Send notifications to relevant users.
- * - Return to the topic once done (into moderation mode if in wireless viewing)
+ * - Return to the topic once done.
  */
 function Lock()
 {
@@ -89,7 +89,7 @@ function Lock()
 	sendNotifications($topic, empty($locked) ? 'unlock' : 'lock');
 
 	// Back to the topic!
-	redirectexit('topic=' . $topic . '.' . $_REQUEST['start'] . (WIRELESS ? ';moderate' : ''));
+	redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
 }
 
 ?>

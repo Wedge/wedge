@@ -1481,7 +1481,7 @@ function detectBrowser()
  * - Initialize $context['header'] and $context['footer'] for later use, as well as some $theme paths, some global $context values, $txt initially.
  * - Set up common server-side settings for later reference (in case of server configuration specific tweaks)
  * - Ensure the forum name is the first item in the link tree.
- * - Load the wireless template or the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
+ * - Load the XML template if that is what we are going to use, otherwise load the index template (plus any templates the theme has specified it uses), and do not initialise template layers if we are using a 'simple' action that does not need them.
  * - Initialize the theme by calling the init block.
  * - Load any theme specific language files.
  * - See if scheduled tasks need to be loaded, if so add the call into the HTML header so they will be triggered next page load.
@@ -1817,15 +1817,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['sidebar_position'] = 'right';
 	wetem::getInstance();
 
-	// Wireless mode? Load up the wireless stuff.
-	if (WIRELESS)
-	{
-		loadTemplate('Wireless');
-		loadLanguage('Wireless+index');
-		wetem::hide('wap2');
-	}
 	// Output is fully XML or a simple action?
-	elseif (isset($_REQUEST['xml']) || !empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
+	if (isset($_REQUEST['xml']) || !empty($_REQUEST['action']) && in_array($_REQUEST['action'], $simpleActions))
 	{
 		if (isset($_REQUEST['xml']))
 			loadTemplate('Xml');

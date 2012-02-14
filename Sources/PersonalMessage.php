@@ -45,9 +45,6 @@ if (!defined('WEDGE'))
 	void MessagePost2()
 		// !!! ?action=pm;sa=post2
 
-	void WirelessAddBuddy()
-		// !!!
-
 	void MessageActionsApply()
 		// !!! ?action=pm;sa=pmactions
 
@@ -123,11 +120,7 @@ function MessageMain()
 	}
 
 	loadLanguage('PersonalMessage');
-
-	if (WIRELESS)
-		wetem::load('wap2_pm');
-	else
-		loadTemplate('PersonalMessage');
+	loadTemplate('PersonalMessage');
 
 	// Load up the members maximum message capacity.
 	if ($user_info['is_admin'])
@@ -269,10 +262,9 @@ function MessageMain()
 	);
 
 	// Preferences...
-	$context['display_mode'] = WIRELESS ? 0 : $user_settings['pm_prefs'] & 3;
+	$context['display_mode'] = $user_settings['pm_prefs'] & 3;
 
 	$subActions = array(
-		'addbuddy' => 'WirelessAddBuddy',
 		'manlabels' => 'ManageLabels',
 		'manrules' => 'ManageRules',
 		'markunread' => 'MarkUnread',
@@ -445,8 +437,7 @@ function messageIndexBar($area)
 	$context['menu_item_selected'] = $pm_include_data['current_area'];
 
 	// obExit will know what to do!
-	if (!WIRELESS)
-		wetem::outer('pm');
+	wetem::outer('pm');
 }
 
 // A folder, ie. inbox/sent etc.
@@ -643,13 +634,10 @@ function MessageFolder()
 	$context['page_index'] = template_page_index($scripturl . '?action=pm;f=' . $context['folder'] . (isset($_REQUEST['l']) ? ';l=' . (int) $_REQUEST['l'] : '') . ';sort=' . $context['sort_by'] . ($descending ? ';desc' : ''), $_GET['start'], $max_messages, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
-	// Determine the navigation context (especially useful for the wireless template).
+	// Determine the navigation context.
 	$context['links'] = array(
-		'first' => $_GET['start'] >= $settings['defaultMaxMessages'] ? $scripturl . '?action=pm;start=0' : '',
 		'prev' => $_GET['start'] >= $settings['defaultMaxMessages'] ? $scripturl . '?action=pm;start=' . ($_GET['start'] - $settings['defaultMaxMessages']) : '',
 		'next' => $_GET['start'] + $settings['defaultMaxMessages'] < $max_messages ? $scripturl . '?action=pm;start=' . ($_GET['start'] + $settings['defaultMaxMessages']) : '',
-		'last' => $_GET['start'] + $settings['defaultMaxMessages'] < $max_messages ? $scripturl . '?action=pm;start=' . (floor(($max_messages - 1) / $settings['defaultMaxMessages']) * $settings['defaultMaxMessages']) : '',
-		'up' => $scripturl,
 	);
 	$context['page_info'] = array(
 		'current_page' => $_GET['start'] / $settings['defaultMaxMessages'] + 1,
@@ -889,8 +877,7 @@ function MessageFolder()
 	$context['can_send_pm'] = allowedTo('pm_send');
 	$context['page_title'] = $txt['pm_inbox'];
 
-	if (!WIRELESS)
-		wetem::load('folder');
+	wetem::load('folder');
 
 	// Finally mark the relevant messages as read.
 	if ($context['folder'] != 'sent' && !empty($context['labels'][(int) $context['current_label_id']]['unread_messages']))
@@ -1601,11 +1588,8 @@ function MessagePost()
 	loadLanguage('PersonalMessage');
 
 	// Just in case it was loaded from somewhere else.
-	if (!WIRELESS)
-	{
-		loadTemplate('PersonalMessage');
-		wetem::load('send');
-	}
+	loadTemplate('PersonalMessage');
+	wetem::load('send');
 
 	// Needed for the WYSIWYG editor.
 	loadSource(array('Subs-Editor', 'Class-Editor'));
@@ -1946,8 +1930,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
-	if (!WIRELESS)
-		wetem::load('send');
+	wetem::load('send');
 
 	$context['page_title'] = $txt['send_message'];
 
@@ -2398,45 +2381,6 @@ function getPmRecipients(&$recipientList, &$namedRecipientList, &$namesNotFound)
 
 		// Make sure we don't include the same name twice
 		$recipientList[$recipientType] = array_unique($recipientList[$recipientType]);
-	}
-}
-
-// This function lists all buddies for wireless protocols.
-function WirelessAddBuddy()
-{
-	global $scripturl, $txt, $user_info, $context;
-
-	isAllowedTo('pm_send');
-	$context['page_title'] = $txt['wireless_pm_add_buddy'];
-
-	$current_buddies = empty($_REQUEST['u']) ? array() : explode(',', $_REQUEST['u']);
-	foreach ($current_buddies as $key => $buddy)
-		$current_buddies[$key] = (int) $buddy;
-
-	$base_url = $scripturl . '?action=pm;sa=send;u=' . (empty($current_buddies) ? '' : implode(',', $current_buddies) . ',');
-	$context['pm_href'] = $scripturl . '?action=pm;sa=send' . (empty($current_buddies) ? '' : ';u=' . implode(',', $current_buddies));
-
-	$context['buddies'] = array();
-	if (!empty($user_info['buddies']))
-	{
-		$request = wesql::query('
-			SELECT id_member, real_name
-			FROM {db_prefix}members
-			WHERE id_member IN ({array_int:buddy_list})
-			ORDER BY real_name
-			LIMIT ' . count($user_info['buddies']),
-			array(
-				'buddy_list' => $user_info['buddies'],
-			)
-		);
-		while ($row = wesql::fetch_assoc($request))
-			$context['buddies'][] = array(
-				'id' => $row['id_member'],
-				'name' => $row['real_name'],
-				'selected' => in_array($row['id_member'], $current_buddies),
-				'add_href' => $base_url . $row['id_member'],
-			);
-		wesql::free_result($request);
 	}
 }
 

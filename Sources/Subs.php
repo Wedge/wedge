@@ -986,20 +986,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 
 	$add = preg_match('~^(ftp|http)[s]?://~', $setLocation) == 0 && substr($setLocation, 0, 6) != 'about:';
 
-	if (WIRELESS)
-	{
-		// Add the scripturl on if needed.
-		if ($add)
-			$setLocation = $scripturl . '?' . $setLocation;
-
-		$char = strpos($setLocation, '?') === false ? '?' : ';';
-
-		if (strpos($setLocation, '#') !== false)
-			$setLocation = strtr($setLocation, array('#' => $char . 'wap2#'));
-		else
-			$setLocation .= $char . 'wap2';
-	}
-	elseif ($add)
+	if ($add)
 		$setLocation = $scripturl . ($setLocation != '' ? '?' . $setLocation : '');
 
 	// Put the session ID in.
@@ -1033,8 +1020,8 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 	if ($permanent)
 		header('HTTP/1.1 301 Moved Permanently');
 
-	// We send a Refresh header only in special cases because Location looks better. (and is quicker...)
-	if ($refresh && !WIRELESS)
+	// We send a Refresh header only in special cases because Location looks better. And is quicker...
+	if ($refresh)
 		header('Refresh: 0; URL=' . strtr($setLocation, array(' ' => '%20')));
 	else
 		header('Location: ' . str_replace(' ', '%20', $setLocation));
