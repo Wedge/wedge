@@ -737,9 +737,8 @@ function template_footer()
 		echo '
 			<li class="stats"><!-- insert stats here --></li>';
 
-	// Show the credit page (forum admin/mod team and credits), and a link to a HTML5 conformity
-	// check. Note: the W3 validator, at as January 2012, no longer validates HTML5+Microdata files, so
-	// the breadcrumb code will make it fail on both validator.w3.org and Unicorn. Switched to validator.nu.
+	// Show the credit page (forum admin/mod team and credits),
+	// and a link to an HTML conformity checker, for geeks.
 	echo '
 			<li class="copyright">', $txt['copyright'], '</li>
 			<li class="links">
@@ -869,7 +868,7 @@ function template_button_strip($button_strip, $direction = 'right', $strip_optio
 	foreach ($button_strip as $key => $value)
 		if (!isset($value['test']) || !empty($context[$value['test']]))
 			$buttons[] = '
-					<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="' . $key . (isset($value['class']) ? ' ' . $value['class'] . '"' : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
+					<li><a' . (isset($value['id']) ? ' id="button_strip_' . $value['id'] . '"' : '') . ' class="' . $key . (isset($value['class']) ? ' ' . $value['class'] : '') . '" href="' . $value['url'] . '"' . (isset($value['custom']) ? ' ' . $value['custom'] : '') . '>' . $txt[$value['text']] . '</a></li>';
 
 	// No buttons? No button strip either.
 	if (empty($buttons))
