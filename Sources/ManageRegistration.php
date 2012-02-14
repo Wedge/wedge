@@ -287,6 +287,7 @@ function ModifyRegistrationSettings($return_config = false)
 		'',
 			array('select', 'password_strength', array($txt['setting_password_strength_low'], $txt['setting_password_strength_medium'], $txt['setting_password_strength_high'])),
 			array('int', 'failed_login_threshold'),
+			array('check', 'enable_quick_login'),
 			array('title', 'age_restrictions'),
 			array('int', 'coppaAge', 'subtext' => $txt['setting_coppaAge_desc'], 'onchange' => 'checkCoppa();'),
 			array('select', 'coppaType', array($txt['setting_coppaType_reject'], $txt['setting_coppaType_approval']), 'onchange' => 'checkCoppa();'),

@@ -168,12 +168,6 @@ function template_settings()
 		),
 	'',
 		array(
-			'id' => 'quick_login',
-			'label' => $txt['enable_quick_login'],
-			'description' => $txt['enable_quick_login_desc'],
-		),
-	'',
-		array(
 			'id' => 'enable_news',
 			'label' => $txt['enable_random_news'],
 		),

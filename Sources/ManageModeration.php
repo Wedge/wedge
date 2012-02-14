@@ -21,6 +21,7 @@ function ManageModeration()
 
 	$subactions = array(
 		'home' => 'ManageModHome',
+		'add' => 'AddFilterRule',
 		'approveall' => 'ManageModApprove',
 	);
 
@@ -182,6 +183,68 @@ function ManageModHome()
 			$context['users'][$row['id_member']] = $row;
 		wesql::free_result($query);
 	}
+}
+
+function AddFilterRule()
+{
+	global $context, $settings, $txt;
+
+	loadLanguage('ManageMembers');
+	$context['page_title'] = $txt['modfilter_addrule'];
+	wetem::load('modfilter_add');
+
+	$context['modfilter_action_list'] = array('prevent', 'moderate', '', 'pin', 'unpin', '', 'lock', 'unlock');
+
+	loadSource('Subs-Moderation');
+	$variables = getBaseRuleVars(true);
+	$context['modfilter_rule_types'] = array();
+
+	foreach ($variables as $id => $details)
+		if (isset($txt['modfilter_condtype_' . $id]) && is_callable('template_modfilter_' . $id))
+			$context['modfilter_rule_types'][] = $id;
+
+	// There are certain things we need to get.
+	$context['boardlist'] = array();
+	$request = wesql::query('
+		SELECT c.name AS cat_name, c.id_cat, b.id_board, b.name AS board_name, b.child_level
+		FROM {db_prefix}boards AS b
+			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' . (empty($settings['recycle_enable']) ? '' : '
+		WHERE b.id_board != {int:recycle_board}'),
+		array(
+			'recycle_board' => !empty($settings['recycle_board']) ? $settings['recycle_board'] : 0,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+	{
+		if (!isset($context['boardlist'][$row['id_cat']]))
+			$context['boardlist'][$row['id_cat']] = array(
+				'name' => $row['cat_name'],
+				'boards' => array(),
+			);
+
+		$context['boardlist'][$row['id_cat']]['boards'][$row['id_board']] = array(
+			'board_name' => $row['board_name'],
+			'child_level' => $row['child_level'],
+		);
+	}
+	wesql::free_result($request);
+	// Purge empty categories and if we have nothing, remove boards as a possible filter
+	if (!empty($context['boardlist']))
+		foreach ($context['boardlist'] as $id_cat => $cat)
+			if (empty($cat['boards']))
+				unset($context['boardlist'][$id_cat]);
+
+	if (empty($context['boardlist']))
+		$context['modfilter_rule_types'] = array_diff($context['modfilter_rule_types'], array('boards'));
+
+	$context['grouplist'] = array();
+	$request = wesql::query('
+		SELECT id_group, group_name, online_color, min_posts
+		FROM {db_prefix}membergroups
+		ORDER BY id_group');
+	while ($row = wesql::fetch_assoc($request))
+		$context['grouplist'][$row['min_posts'] == -1 ? 'assign' : 'post'][$row['id_group']] = !empty($row['online_color']) ? '<span style="color:' . $row['online_color'] . '">' . $row['group_name'] . '</span>' : '<span>' . $row['group_name'] . '</span>';
+	wesql::free_result($request);
 }
 
 function ManageModApprove()

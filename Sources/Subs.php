@@ -1881,6 +1881,7 @@ function setupMenuContext()
 	$context['allow_memberlist'] = allowedTo('view_mlist');
 	$context['allow_moderation_center'] = $context['user']['can_mod'];
 	$context['allow_pm'] = allowedTo('pm_read');
+	$context['unapproved_members'] = !empty($context['unapproved_members']) ? $context['unapproved_members'] : 0;
 
 	$cacheTime = $settings['lastActive'] * 60;
 
@@ -1985,8 +1986,8 @@ function setupMenuContext()
 					'unappmembers' => array(
 						'title' => $txt['unapproved_members'],
 						'href' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
-						'show' => !empty($context['unapproved_members']),
-						'notice' => !empty($context['unapproved_members']) ? $context['unapproved_members'] : 0,
+						'show' => $context['unapproved_members'],
+						'notice' => $context['unapproved_members'],
 					),
 				),
 			),
@@ -2102,7 +2103,7 @@ function setupMenuContext()
 		);
 
 		// Amalgamate the items in the admin menu.
-		if (!empty($error_count) || !empty($items['admin']['sub_items']['reports']['notice']) || $context['unapproved_members'])
+		if (!empty($error_count) || !empty($items['admin']['sub_items']['reports']['notice']) || !empty($context['unapproved_members']))
 			$items['admin']['notice'] = $error_count + (int) $items['admin']['sub_items']['reports']['notice'] + (int) $context['unapproved_members'];
 
 		// Allow editing menu items easily.

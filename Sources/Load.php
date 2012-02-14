@@ -1776,7 +1776,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['load_average'] = $settings['load_average'];
 
 	// Set some permission related settings
-	$context['show_login_bar'] = $user_info['is_guest'] && !empty($theme['quick_login']);
+	$context['show_login_bar'] = $user_info['is_guest'] && !empty($settings['enable_quick_login']);
 
 	// This determines the server... not used in many places, except for login fixing.
 	$context['server'] = array(
