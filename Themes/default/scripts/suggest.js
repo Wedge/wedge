@@ -27,7 +27,7 @@ function weAutoSuggest(oOptions)
 	// It is probably when it attempts to find comments and make sure they aren't enclosed in strings.
 	// I don't know more. Let's keep it quiet, shall we?
 	var sItemTemplate = '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>';
-	sItemTemplate += '&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%">';
+	sItemTemplate += '&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
 
 	this.oTextHandle = oText;
 	this.oSuggestDivHandle = null;
@@ -281,7 +281,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	var that = this, eid = 'suggest_' + this.opt.sControlId + '_' + sItemId;
 	if (!$('#' + eid).length)
 	{
-		$('<div id="' + eid + '"></div>').html(
+		$('<span id="' + eid + '"></span>').html(
 			this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
 			.replace(/%item_href%/g, we_prepareScriptUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
 			.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + '/images').replace(/%delete_text%/g, this.sTextDeleteItem)
@@ -340,29 +340,19 @@ weAutoSuggest.prototype.autoSuggestShow = function ()
 };
 
 // Populate the actual div.
-weAutoSuggest.prototype.populateDiv = function (aResults, undefined)
+weAutoSuggest.prototype.populateDiv = function (aResults)
 {
-	// Cannot have any children yet.
-	$(this.oSuggestDivHandle).empty();
-
-	// Something to display?
-	if (aResults === undefined)
-	{
-		this.aDisplayData = [];
-		return true;
-	}
-
 	for (var aNewDisplayData = [], i = 0, j = Math.min(this.iMaxDisplayQuantity, aResults.length); i < j; i++)
 		// Create the sub element, and attach some events to it so we can do stuff.
 		aNewDisplayData[i] = $('<div></div>')
 			.data({ sItemId: aResults[i].sItemId, that: this })
 			.html(aResults[i].sItemName)
-			.appendTo(this.oSuggestDivHandle)
 			.mouseenter(function (oEvent) { $(this).data('that').itemMouseEnter(this); })
 			.mouseleave(function (oEvent) { $(this).data('that').itemMouseLeave(this); })
 			.click(function (oEvent) { $(this).data('that').itemClicked(this); })[0];
 
 	this.aDisplayData = aNewDisplayData;
+	$(this.oSuggestDivHandle).html(aNewDisplayData);
 
 	return true;
 };
@@ -419,8 +409,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 
 	if ($.trim(this.oTextHandle.val()) === '')
 	{
-		this.aCache = [];
-		this.populateDiv();
+		this.populateDiv(this.aCache = []);
 		this.autoSuggestHide();
 
 		return true;
@@ -443,7 +432,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 
 	// Either nothing or we've completed a sentence.
 	if (sSearchString == '' || sSearchString.substr(sSearchString.length - 1) == '"')
-		return this.populateDiv();
+		return this.populateDiv([]);
 
 	// Nothing?
 	var sLowercaseSearch = sSearchString.toLowerCase();
@@ -467,10 +456,8 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		this.aCache = [];
 		if (aNewCache.length != 0)
 		{
-			this.aCache = aNewCache;
-
 			// Repopulate.
-			this.populateDiv(this.aCache);
+			this.populateDiv(this.aCache = aNewCache);
 
 			// Can it be seen?
 			this.autoSuggestShow();
