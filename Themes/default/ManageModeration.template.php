@@ -240,6 +240,11 @@ function template_modfilter_add()
 		</div>
 	</form>';
 
+	// Just to summarise the code
+	// updateForm is used to work out where the user is in workflow, and only show them the right parts of the form
+	// setRuleContent takes the selection of what type of criteria the user wants to add and puts it into the container to work with; note that it clones the existing markup rather naively, so it has to rebind events, remove duplicate markup of selectbox and then create a new selectbox
+	// addRow adds a row to the table of rules, which deals with appending to the table, making sure the input is created etc.
+	// deleteRow deletes a row from the table of rules, and makes sure we show the 'none added' block if appropriate
 	add_js('
 function updateForm()
 {
@@ -273,7 +278,7 @@ function setRuleContent()
 		$("#rulecontainer").html($("#container_" + $("#condtype").val()).html());
 		$("#rulecontainer .ruleSave").hide();
 
-		$("#rulecontainer input[data-eve]").each(function ()
+		$("#rulecontainer input[data-eve], #rulecontainer select[data-eve]").each(function ()
 		{
 			var that = $(this);
 			$.each(that.attr("data-eve").split(" "), function ()
@@ -281,6 +286,8 @@ function setRuleContent()
 				that.bind(eves[this][0], eves[this][1]);
 			});
 		});
+		$("#rulecontainer div.sbox").remove();
+		$("#rulecontainer select").sb();
 	}
 	else
 	{
@@ -462,7 +469,67 @@ function addBoards(e)
 		});
 		addRow(applies_type == "id" ? inBoards : exBoards, boardStr.join(", "), "boards", applies_type + ";" + boardVal.join(","));
 	}
-}');
+};');
+}
+
+function template_modfilter_postcount()
+{
+	global $context, $txt;
+
+	$js_conds = array();
+	echo '
+		<br>', $txt['modfilter_postcount_is'], '
+		<select name="rangesel" onchange="validatePostcount();">';
+
+	foreach (array('lt', 'lte', 'eq', 'gte', 'gt') as $item)
+	{
+		// Step through the possible ranges - but also store the JS versions away for later.
+		echo '
+			<option value="', $item, '">', $txt['modfilter_range_' . $item], '</option>';
+		$js_conds[] = $item . ': ' . JavaScriptEscape($txt['modfilter_range_' . $item]);
+	}
+
+	echo '
+		</select>
+		<input type="text" size="5" name="postcount" style="padding: 3px 5px 5px 5px" onchange="validatePostcount();">
+		<div class="pagesection ruleSave">
+			<div class="floatright">
+				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addPostcount(e);">
+			</div>
+		</div>';
+
+	add_js('
+function validatePostcount()
+{
+	var applies_type = $("#rulecontainer select[name=rangesel]").val();
+	var postcount = $("#rulecontainer input[name=postcount]").val();
+	var pc_num = parseInt(postcount);
+	if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0)
+	{
+		$("#rulecontainer .ruleSave").show();
+	}
+	else
+	{
+		$("#rulecontainer .ruleSave").hide();
+	}
+};
+
+function addPostcount(e)
+{
+	e.preventDefault();
+	var
+		range = {' . implode(',', $js_conds) . '},
+		pc = ' . JavaScriptEscape($txt['modfilter_cond_postcount']) . ';
+
+	var applies_type = $("#rulecontainer select[name=rangesel]").val();
+	var postcount = $("#rulecontainer input[name=postcount]").val();
+	var pc_num = parseInt(postcount);
+	if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0)
+	{
+		addRow(pc, range[applies_type] + " " + postcount, "postcount", applies_type + ";" + postcount);
+	}
+};');
+
 }
 
 ?>
