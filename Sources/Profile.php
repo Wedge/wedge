@@ -219,7 +219,7 @@ function ModifyProfile($post_errors = array())
 				'skin' => array(
 					'label' => $txt['change_skin'],
 					'enabled' => !empty($settings['theme_allow']) || allowedTo('admin_forum'),
-					'custom_url' => $scripturl . '?action=skin;u=' . $context['id_member'],
+					'custom_url' => $scripturl . '?action=skin;u=' . $memID,
 					'permission' => array(
 						'own' => array('profile_extra_any', 'profile_extra_own'),
 						'any' => array('profile_extra_any'),
@@ -337,7 +337,7 @@ function ModifyProfile($post_errors = array())
 			'areas' => array(
 				'sendpm' => array(
 					'label' => $txt['profileSendIm'],
-					'custom_url' => $scripturl . '?action=pm;sa=send',
+					'custom_url' => $scripturl . '?action=pm;sa=send;u=' . $memID,
 					'permission' => array(
 						'own' => array(),
 						'any' => array('pm_send'),
@@ -376,7 +376,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'banuser' => array(
 					'label' => $txt['profileBanUser'],
-					'custom_url' => $scripturl . '?action=admin;area=ban;sa=add',
+					'custom_url' => $scripturl . '?action=admin;area=ban;sa=add;u=' . $memID,
 					'enabled' => $cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups'])),
 					'permission' => array(
 						'own' => array(),
