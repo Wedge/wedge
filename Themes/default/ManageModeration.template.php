@@ -36,8 +36,8 @@ function template_modfilter_home()
 	<table class="table_grid cs0" style="width: 100%">
 		<thead>
 			<tr class="catbg">
-				<th scope="col" class="first_th" style="text-align:left">', $txt['modfilter_rule_' . $type], '</th>
-				<th style="text-align:left">', $txt['modfilter_conditions'], '</th>
+				<th scope="col" class="first_th left">', $txt['modfilter_rule_' . $type], '</th>
+				<th class="left">', $txt['modfilter_conditions'], '</th>
 				<th scope="col" class="last_th"></th>
 			</tr>
 		</thead>
@@ -138,7 +138,7 @@ function template_modfilter_home()
 	<form action="<URL>?action=admin;area=modfilters;sa=add" method="post">
 		<div class="pagesection">
 			<div class="floatright">
-				<div class="additional_row" style="text-align: right;"><input type="submit" name="new" value="', $txt['modfilter_addrule'], '" class="new"></div>
+				<div class="additional_row right"><input type="submit" name="new" value="', $txt['modfilter_addrule'], '" class="new"></div>
 			</div>
 		</div>
 	</form>
@@ -170,14 +170,13 @@ function template_modfilter_add()
 				<dl class="settings">
 					<dt>', $txt['modfilter_action_rule'], '</dt>
 					<select id="action" name="action" onchange="updateForm();">
-						<option value="">', $txt['modfilter_action_selectone'], '</option>
-						<option value="" class="hr" disabled></option>';
+						<option value="" data-hide>', $txt['modfilter_action_selectone'], '</option>';
 
 	foreach ($context['modfilter_action_list'] as $item)
 	{
 		if (empty($item) || empty($txt['modfilter_actionlist_' . $item]))
 			echo '
-						<option value="" class="hr" disabled></option>';
+						<option class="hr"></option>';
 		else
 			echo '
 						<option value="', $item, '"> ', $txt['modfilter_actionlist_' . $item], '</option>';
@@ -204,8 +203,8 @@ function template_modfilter_add()
 				<table class="table_grid cs0" style="width: 100%" id="conds">
 					<thead>
 						<tr class="catbg">
-							<th scope="col" class="first_th" style="text-align:left; width: 40%">', $txt['modfilter_conds_item'], '</th>
-							<th scope="col" style="text-align:left">', $txt['modfilter_conds_criteria'], '</th>
+							<th scope="col" class="first_th left" style="width: 40%">', $txt['modfilter_conds_item'], '</th>
+							<th scope="col" class="left">', $txt['modfilter_conds_criteria'], '</th>
 							<th scope="col" class="last_th" style="width: 10%"></th>
 						</tr>
 					</thead>
@@ -218,10 +217,9 @@ function template_modfilter_add()
 				</table>
 				<br>
 				<div class="righttext">
-				', $txt['modfilter_conds_new'], '
+					', $txt['modfilter_conds_new'], '
 					<select name="condtype" id="condtype" onchange="setRuleContent();">
-						<option value="0">', $txt['modfilter_conds_select'], '</option>
-						<option value="" class="hr" disabled></option>';
+						<option value="" data-hide>', $txt['modfilter_conds_select'], '</option>';
 
 	foreach ($context['modfilter_rule_types'] as $type)
 		echo '
@@ -234,90 +232,72 @@ function template_modfilter_add()
 			</fieldset>
 			<div class="pagesection" id="btnSave">
 				<div class="floatright">
-					<div class="additional_row" style="text-align: right;"><input type="submit" class="save" value="', $txt['modfilter_save_this_rule'], '"></div>
+					<div class="additional_row right"><input type="submit" class="save" value="', $txt['modfilter_save_this_rule'], '"></div>
 				</div>
 			</div>
 		</div>
 	</form>';
 
-	// Just to summarise the code
+	// Just to summarise the code.
 	// updateForm is used to work out where the user is in workflow, and only show them the right parts of the form
 	// setRuleContent takes the selection of what type of criteria the user wants to add and puts it into the container to work with; note that it clones the existing markup rather naively, so it has to rebind events, remove duplicate markup of selectbox and then create a new selectbox
 	// addRow adds a row to the table of rules, which deals with appending to the table, making sure the input is created etc.
 	// deleteRow deletes a row from the table of rules, and makes sure we show the 'none added' block if appropriate
 	add_js('
-function updateForm()
-{
-	$("#btnSave").hide();
-
-	if ($("#action").val() != "")
+	function updateForm()
 	{
-		$("#fs_applies").show();
+		$("#btnSave").hide();
 
-		var applies = $("input:radio[name=applies]:checked").val();
-		if (applies == "posts" || applies == "topics")
+		if ($("#action").val() != "")
 		{
-			$("#fs_conds").show();
+			$("#fs_applies").show();
+
+			var applies = $("input:radio[name=applies]:checked").val();
+			$("#fs_conds").toggle(applies == "posts" || applies == "topics");
 		}
 		else
+			$("#fs_applies, #fs_conds").hide();
+	};
+	updateForm();
+
+	function setRuleContent()
+	{
+		if ($("#condtype").val() != "")
 		{
-			$("#fs_conds").hide();
+			$("#rulecontainer").html($("#container_" + $("#condtype").val()).html());
+			$("#rulecontainer .ruleSave").hide();
+
+			bindEvents("#rulecontainer input[data-eve], #rulecontainer select[data-eve]");
+			$("#rulecontainer div.sbox").remove();
+			$("#rulecontainer select").sb();
 		}
-	}
-	else
-	{
-		$("#fs_applies, #fs_conds").hide();
-	}
-};
-updateForm();
+		else
+			$("#rulecontainer").empty();
+	};
 
-function setRuleContent()
-{
-	if ($("#condtype").val() != "")
+	rows_added = 0;
+	function addRow(rule, details, ruletype, rulevalue)
 	{
-		$("#rulecontainer").html($("#container_" + $("#condtype").val()).html());
-		$("#rulecontainer .ruleSave").hide();
+		rows_added++;
+		$("#conds_empty").hide();
+		$("#conds_notempty").append("<tr id=\"cond_row_" + rows_added + "\" class=\"windowbg\"><td>" + rule + "</td><td>" + details + "<input type=\"hidden\" name=\"rule[]\" rulevalue=\"" + ruletype + ";" + rulevalue + "\"></td><td class=\"centertext\"><a href=\"#\" onclick=\"removeRow(" + rows_added + "); return false;\">" + ' . JavaScriptEscape($txt['remove']) . ' + "</a></td></tr>");
 
-		$("#rulecontainer input[data-eve], #rulecontainer select[data-eve]").each(function ()
-		{
-			var that = $(this);
-			$.each(that.attr("data-eve").split(" "), function ()
-			{
-				that.bind(eves[this][0], eves[this][1]);
-			});
-		});
-		$("#rulecontainer div.sbox").remove();
-		$("#rulecontainer select").sb();
-	}
-	else
-	{
+		$("#condtype").val(0).sb();
 		$("#rulecontainer").empty();
-	}
-};
+		$("#btnSave").show();
+	};
 
-rows_added = 0;
-function addRow(rule, details, ruletype, rulevalue)
-{
-	rows_added++;
-	$("#conds_empty").hide();
-	$("#conds_notempty").append("<tr id=\"cond_row_" + rows_added + "\" class=\"windowbg\"><td>" + rule + "</td><td>" + details + "<input type=\"hidden\" name=\"rule[]\" rulevalue=\"" + ruletype + ";" + rulevalue + "\"></td><td class=\"centertext\"><a href=\"#\" onclick=\"removeRow(" + rows_added + "); return false;\">" + ' . JavaScriptEscape($txt['remove']) . ' + "</a></td></tr>");
-
-	$("#condtype").val(0).sb();
-	$("#rulecontainer").empty();
-	$("#btnSave").show();
-};
-
-function removeRow(id)
-{
-	$("#cond_row_" + id).remove();
-	if ($("#conds_notempty tr").length == 0)
+	function removeRow(id)
 	{
-		$("#conds_empty").show();
-		$("#btnSave").hide();
-	}
+		$("#cond_row_" + id).remove();
+		if ($("#conds_notempty tr").length == 0)
+		{
+			$("#conds_empty").show();
+			$("#btnSave").hide();
+		}
 
-	return false;
-};');
+		return false;
+	};');
 
 	// Lastly before we go, make sure we dump all the containers for all the magic types.
 	// It is not accidental that this is outside the core form.
@@ -363,45 +343,36 @@ function template_modfilter_groups()
 		</div>';
 
 	add_js('
-function validateGroups()
-{
-	var applies_type = $("#rulecontainer input:radio[name=appliesgroup]:checked").val();
-	if ((applies_type == "id" || applies_type == "except-id") && $("#rulecontainer input.groups:checked").length != 0)
+	function validateGroups()
 	{
-		$("#rulecontainer .ruleSave").show();
-	}
-	else
-	{
-		$("#rulecontainer .ruleSave").hide();
-	}
-};
+		var applies_type = $("#rulecontainer input:radio[name=appliesgroup]:checked").val();
+		$("#rulecontainer .ruleSave").toggle((applies_type == "id" || applies_type == "except-id") && $("#rulecontainer input.groups:checked").length != 0);
+	};
 
-function addGroups(e)
-{
-	e.preventDefault();
-	var
-		inGroups = ' . JavaScriptEscape($txt['modfilter_cond_groups_in']) . ',
-		exGroups = ' . JavaScriptEscape($txt['modfilter_cond_groups_ex']) . ',
-		groupStr = [],
-		groupVal = [];
-
-	var applies_type = $("#rulecontainer input:radio[name=appliesgroup]:checked").val();
-	var groups = $("#rulecontainer input.groups:checked");
-	if ((applies_type == "id" || applies_type == "except-id") && groups.length != 0)
+	function addGroups(e)
 	{
-		$(groups).each(function() {
-			groupVal.push($(this).val());
-			var item = $(this).parent().children("span");
-			var itemHtml = item.html();
-			if (item.attr("style"))
+		e.preventDefault();
+		var
+			inGroups = ' . JavaScriptEscape($txt['modfilter_cond_groups_in']) . ',
+			exGroups = ' . JavaScriptEscape($txt['modfilter_cond_groups_ex']) . ',
+			groupStr = [],
+			groupVal = [];
+
+		var applies_type = $("#rulecontainer input:radio[name=appliesgroup]:checked").val();
+		var groups = $("#rulecontainer input.groups:checked");
+		if ((applies_type == "id" || applies_type == "except-id") && groups.length != 0)
+		{
+			$(groups).each(function()
 			{
-				itemHtml = "<span style=\"" + item.attr("style") + "\">" + itemHtml + "</span>";
-			}
-			groupStr.push(itemHtml);
-		});
-		addRow(applies_type == "id" ? inGroups : exGroups, groupStr.join(", "), "groups", applies_type + ";" + groupVal.join(","));
-	}
-}');
+				groupVal.push($(this).val());
+				var item = $(this).parent().children("span"), itemHtml = item.html();
+				if (item.attr("style"))
+					itemHtml = "<span style=\"" + item.attr("style") + "\">" + itemHtml + "</span>";
+				groupStr.push(itemHtml);
+			});
+			addRow(applies_type == "id" ? inGroups : exGroups, groupStr.join(", "), "groups", applies_type + ";" + groupVal.join(","));
+		}
+	}');
 }
 
 function template_modfilter_boards()
@@ -431,45 +402,36 @@ function template_modfilter_boards()
 		</div>';
 
 	add_js('
-function validateBoards()
-{
-	var applies_type = $("#rulecontainer input:radio[name=appliesboard]:checked").val();
-	if ((applies_type == "id" || applies_type == "except-id") && $("#rulecontainer input.boards:checked").length != 0)
+	function validateBoards()
 	{
-		$("#rulecontainer .ruleSave").show();
-	}
-	else
-	{
-		$("#rulecontainer .ruleSave").hide();
-	}
-};
+		var applies_type = $("#rulecontainer input:radio[name=appliesboard]:checked").val();
+		$("#rulecontainer .ruleSave").toggle((applies_type == "id" || applies_type == "except-id") && $("#rulecontainer input.boards:checked").length != 0);
+	};
 
-function addBoards(e)
-{
-	e.preventDefault();
-	var
-		inBoards = ' . JavaScriptEscape($txt['modfilter_cond_boards_in']) . ',
-		exBoards = ' . JavaScriptEscape($txt['modfilter_cond_boards_ex']) . ',
-		boardStr = [],
-		boardVal = [];
-
-	var applies_type = $("#rulecontainer input:radio[name=appliesboard]:checked").val();
-	var boards = $("#rulecontainer input.boards:checked");
-	if ((applies_type == "id" || applies_type == "except-id") && boards.length != 0)
+	function addBoards(e)
 	{
-		$(boards).each(function() {
-			boardVal.push($(this).val());
-			var item = $(this).parent().children("span");
-			var itemHtml = item.html();
-			if (item.attr("style"))
-			{
-				itemHtml = "<span style=\"" + item.attr("style") + "\">" + itemHtml + "</span>";
-			}
-			boardStr.push(itemHtml);
-		});
-		addRow(applies_type == "id" ? inBoards : exBoards, boardStr.join(", "), "boards", applies_type + ";" + boardVal.join(","));
-	}
-};');
+		e.preventDefault();
+		var
+			inBoards = ' . JavaScriptEscape($txt['modfilter_cond_boards_in']) . ',
+			exBoards = ' . JavaScriptEscape($txt['modfilter_cond_boards_ex']) . ',
+			boardStr = [],
+			boardVal = [],
+			applies_type = $("#rulecontainer input:radio[name=appliesboard]:checked").val(),
+			boards = $("#rulecontainer input.boards:checked");
+
+		if ((applies_type == "id" || applies_type == "except-id") && boards.length != 0)
+		{
+			$(boards).each(function() {
+				boardVal.push($(this).val());
+				var item = $(this).parent().children("span");
+				var itemHtml = item.html();
+				if (item.attr("style"))
+					itemHtml = "<span style=\"" + item.attr("style") + "\">" + itemHtml + "</span>";
+				boardStr.push(itemHtml);
+			});
+			addRow(applies_type == "id" ? inBoards : exBoards, boardStr.join(", "), "boards", applies_type + ";" + boardVal.join(","));
+		}
+	};');
 }
 
 function template_modfilter_postcount()
@@ -499,37 +461,29 @@ function template_modfilter_postcount()
 		</div>';
 
 	add_js('
-function validatePostcount()
-{
-	var applies_type = $("#rulecontainer select[name=rangesel]").val();
-	var postcount = $("#rulecontainer input[name=postcount]").val();
-	var pc_num = parseInt(postcount);
-	if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0)
+	function validatePostcount()
 	{
-		$("#rulecontainer .ruleSave").show();
-	}
-	else
+		var
+			applies_type = $("#rulecontainer select[name=rangesel]").val(),
+			postcount = $("#rulecontainer input[name=postcount]").val(),
+			pc_num = parseInt(postcount);
+
+		$("#rulecontainer .ruleSave").toggle(in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0);
+	};
+
+	function addPostcount(e)
 	{
-		$("#rulecontainer .ruleSave").hide();
-	}
-};
+		e.preventDefault();
+		var
+			range = {' . implode(',', $js_conds) . '},
+			pc = ' . JavaScriptEscape($txt['modfilter_cond_postcount']) . ',
+			applies_type = $("#rulecontainer select[name=rangesel]").val(),
+			postcount = $("#rulecontainer input[name=postcount]").val(),
+			pc_num = parseInt(postcount);
 
-function addPostcount(e)
-{
-	e.preventDefault();
-	var
-		range = {' . implode(',', $js_conds) . '},
-		pc = ' . JavaScriptEscape($txt['modfilter_cond_postcount']) . ';
-
-	var applies_type = $("#rulecontainer select[name=rangesel]").val();
-	var postcount = $("#rulecontainer input[name=postcount]").val();
-	var pc_num = parseInt(postcount);
-	if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0)
-	{
-		addRow(pc, range[applies_type] + " " + postcount, "postcount", applies_type + ";" + postcount);
-	}
-};');
-
+		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0)
+			addRow(pc, range[applies_type] + " " + postcount, "postcount", applies_type + ";" + postcount);
+	};');
 }
 
 ?>

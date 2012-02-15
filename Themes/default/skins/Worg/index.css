@@ -914,11 +914,12 @@ li.separator
 header, footer, aside, section, article, nav
 	display: block
 
-.floatright
-	float: right
-
+// Left and right-floating
 .floatleft
 	float: left
+
+.floatright
+	float: right
 
 .flow_auto
 	overflow: auto
@@ -949,19 +950,19 @@ header, footer, aside, section, article, nav
 .largetext
 	font-size: 1.4em
 
-.centertext
+// Centering an element that has width
+.centered
 	margin: 0 auto
+
+// Centering, right and left-aligning text within an element
+.left
+	text-align: left
+
+.center
 	text-align: center
 
-.righttext
-	margin-left: auto
-	margin-right: 0
+.right
 	text-align: right
-
-.lefttext
-	margin-left: 0
-	margin-right: auto
-	text-align: left
 
 .double_height
 	line-height: 2em
@@ -1003,7 +1004,7 @@ ul.reset, ul.reset li
 		font-size: 92%
 		line-height: 1.4em
 		border-top: 1px dotted #99a
-		padding: 1.2em 2.2em
+		padding: 12px 16px
 		margin: 0
 		overflow: auto
 		background: rgba(0, 0, 0, .07)
@@ -1400,7 +1401,7 @@ dl#feed
 			padding: 4px 3px
 	th.last_th input
 		margin: 0 2px
-	th.lefttext
+	th.left
 		padding: 0 .7em
 	td, th
 		padding: 3px
@@ -1511,12 +1512,6 @@ table
 		&.right th, &.right td
 			text-align: right
 		&.center th, &.center td
-			text-align: center
-		th.left, td.left
-			text-align: left
-		th.right, td.right
-			text-align: right
-		th.center, td.center
 			text-align: center
 
 /* Used for sections that need corners and a border frame.
