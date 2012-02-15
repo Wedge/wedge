@@ -185,7 +185,7 @@ function aeva_foxy_playlist()
 	}');
 
 		$context['aeva_extra_data'] = '
-		<table class="cp4 cs0 center" style="width: 90%; padding-top: 16px">';
+		<table class="cp4 cs0 centered" style="width: 90%; padding-top: 16px">';
 
 		$curpos = $prev = 0;
 		foreach ($my_playlist_data as $m)
@@ -1537,7 +1537,7 @@ function aeva_foxy_fill_player(&$playlist, $swo = 1, $type = 'audio', &$details,
 	$bcol = !empty($context['aeva_override_bcolor']) ? $context['aeva_override_bcolor'] : (!empty($amSettings['player_bcolor']) ? ($amSettings['player_bcolor'][0] == '#' ? substr($amSettings['player_bcolor'], 1) : $amSettings['player_bcolor']) : '');
 
 	$tx = (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'search' ? '<!-- aeva_page_index -->' : '') . '
-<table class="foxy_album w100 center">
+<table class="foxy_album w100 centered">
 <tr><td style="height: ' . $thei . 'px"><div id="aefoxy' . $swo . '" style="overflow: auto; height: ' . $thei . 'px">&nbsp;</div></td></tr>
 <tr><td><div id="foxlist' . $swo . '" class="foxy_playlist" onmousedown="return false;">
 	<table class="w100 cp4 cs0">';

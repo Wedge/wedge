@@ -829,7 +829,7 @@ function template_show_settings()
 	if (empty($context['settings_save_dont_show']))
 		echo '
 				<hr>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="', $txt['save'], '"', !empty($context['save_disabled']) ? ' disabled' : '', !empty($context['settings_save_onclick']) ? ' onclick="' . $context['settings_save_onclick'] . '"' : '', ' class="submit">
 				</div>';
 
@@ -1157,7 +1157,7 @@ function template_edit_profile_field()
 						</dd>
 					</dl>
 				</fieldset>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="save" value="', $txt['save'], '" class="submit">';
 
 	if ($context['fid'])
@@ -1265,7 +1265,7 @@ function template_add_language()
 
 	echo '
 				</fieldset>
-				<div class="righttext">', $context['browser']['is_ie'] ? '
+				<div class="right">', $context['browser']['is_ie'] ? '
 					<input type="text" name="ie_fix" class="hide"> ' : '', '
 					<input type="submit" name="we_add_sub" value="', $txt['search'], '" class="submit">
 				</div>
@@ -1467,7 +1467,7 @@ function template_download_language()
 
 	// Install?
 	echo '
-			<div class="righttext padding">
+			<div class="right padding">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" name="do_install" value="', $txt['add_language_wedge_install'], '" class="submit">
 			</div>
@@ -1551,7 +1551,7 @@ function template_modify_language_entries()
 					</dd>
 				</dl>
 				</fieldset>
-				<div class="righttext">
+				<div class="right">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 					<input type="submit" name="save_main" value="', $txt['save'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' class="save">';
 

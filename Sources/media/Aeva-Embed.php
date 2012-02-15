@@ -547,7 +547,7 @@ function aeva_build_object($input)
 	if (!empty($plugin))
 	{
 		$object .= '
-<table class="maeva cp0 cs0' . (!empty($settings['embed_center']) || !empty($center_this) ? ' centertext' : '') . '" style="width: ' . $swp . '" id="sae' . $swfobjects . '">
+<table class="maeva cp0 cs0' . (!empty($settings['embed_center']) || !empty($center_this) ? ' centered' : '') . '" style="width: ' . $swp . '" id="sae' . $swfobjects . '">
 <tr><td style="width: ' . $swp . '; height: ' . $shp . '"' . ($show_something_below ? ' colspan="2"' : '') . ' id="saeva' . $swfobjects . '">';
 
 		// Some sites might have stuff to show before

@@ -158,7 +158,7 @@ function template_ban_edit()
 	}
 
 	echo '
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="', $context['ban']['is_new'] ? 'add_ban' : 'modify_ban', '" value="', $context['ban']['is_new'] ? $txt['ban_add'] . '" class="new"' : $txt['ban_modify'] . '" class="save"', '>
 					<input type="hidden" name="old_expire" value="', $context['ban']['expiration']['days'], '">
 					<input type="hidden" name="bg" value="', $context['ban']['id'], '">
@@ -309,7 +309,7 @@ function template_ban_edit_trigger()
 						</dd>
 					</dl>
 				</fieldset>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="', $context['ban_trigger']['is_new'] ? 'add_new_trigger' : 'edit_trigger', '" value="', $context['ban_trigger']['is_new'] ? $txt['ban_add_trigger_submit'] . '" class="new"' : $txt['ban_edit_trigger_submit'] . '" class="save"', '>
 				</div>
 			</div>

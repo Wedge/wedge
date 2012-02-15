@@ -277,7 +277,7 @@ function template_registration_form()
 				', $txt['verification'], '
 			</we:title2>
 			<div class="windowbg2 wrc">
-				<fieldset class="centertext">
+				<fieldset class="center">
 					', template_control_verification($context['visual_verification_id'], 'all'), '
 				</fieldset>
 			</div>';
@@ -358,9 +358,9 @@ function template_coppa_form()
 
 	// Show the form (As best we can)
 	echo '
-		<table class="w100 cp4 cs0 centertext">
+		<table class="w100 cp4 cs0">
 			<tr>
-				<td class="left">', $context['forum_contacts'], '</td>
+				<td>', $context['forum_contacts'], '</td>
 			</tr>
 			<tr>
 				<td class="right">
@@ -377,7 +377,7 @@ function template_coppa_form()
 				</td>
 			</tr>
 			<tr>
-				<td class="left">
+				<td>
 					', $context['coppa_body'], '
 				</td>
 			</tr>
@@ -403,7 +403,7 @@ function template_verification_sound()
 	echo '
 </head>
 <body style="margin: 1ex">
-	<div class="popuptext centertext">
+	<div class="popuptext center">
 		<audio src="', $context['verification_sound_href'], '" controls="controls">';
 
 	if ($context['browser']['is_ie'])

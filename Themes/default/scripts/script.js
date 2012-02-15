@@ -180,9 +180,9 @@ function invertAll(oInvertCheckbox, oForm, sMask)
 }
 
 // Bind all delayed inline events to their respective DOM elements.
-function bindEvents()
+function bindEvents(items)
 {
-	$('*[data-eve]').each(function ()
+	$(items || '*[data-eve]').each(function ()
 	{
 		var that = $(this);
 		$.each(that.attr('data-eve').split(' '), function ()
@@ -718,7 +718,6 @@ function Thought(opt)
 		});
 	}
 };
-
 
 /* Optimize:
 _formSubmitted = _f

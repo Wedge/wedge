@@ -88,7 +88,7 @@ function template_kick_guest()
 
 	// Show the message or default message.
 	echo '
-			<p class="information centertext">
+			<p class="information center">
 				', empty($context['kick_message']) ? $txt['only_members_can_access'] : $context['kick_message'], '<br>
 				', $txt['login_below'], ' <a href="', $scripturl, '?action=register">', $txt['register_an_account'], '</a> ', sprintf($txt['login_with_forum'], $context['forum_name_html_safe']), '
 			</p>';
@@ -110,8 +110,8 @@ function template_kick_guest()
 					<dt>', $txt['always_logged_in'], ':</dt>
 					<dd><input type="checkbox" name="cookieneverexp" onclick="this.form.cookielength.disabled = this.checked;"></dd>
 				</dl>
-				<p class="centertext"><input type="submit" value="', $txt['login'], '" class="submit"></p>
-				<p class="centertext smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
+				<p class="center"><input type="submit" value="', $txt['login'], '" class="submit"></p>
+				<p class="center smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
 			</div>
 			<input type="hidden" name="hash_passwrd" value="">
 		</div>
@@ -155,7 +155,7 @@ function template_maintenance()
 				<dt>', $txt['always_logged_in'], ':</dt>
 				<dd><input type="checkbox" name="cookieneverexp"></dd>
 			</dl>
-			<p class="centertext"><input type="submit" value="', $txt['login'], '" class="submit"></p>
+			<p class="center"><input type="submit" value="', $txt['login'], '" class="submit"></p>
 		</div>
 		<input type="hidden" name="hash_passwrd" value="">
 	</div>
@@ -177,7 +177,7 @@ function template_admin_login()
 			<img src="', $theme['images_url'], '/icons/login_sm.gif">
 			', $txt['login'], '
 		</we:cat>
-		<div class="roundframe centertext">';
+		<div class="roundframe center">';
 
 	if (!empty($context['incorrect_password']))
 		echo '

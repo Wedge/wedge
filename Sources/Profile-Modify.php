@@ -1627,7 +1627,7 @@ function notification($memID)
 			'board_name' => array(
 				'header' => array(
 					'value' => $txt['notifications_boards'],
-					'class' => 'lefttext first_th',
+					'class' => 'left first_th',
 				),
 				'data' => array(
 					'function' => create_function('$board', '
@@ -1649,7 +1649,7 @@ function notification($memID)
 			'delete' => array(
 				'header' => array(
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
-					'style' => 'width: 4%;',
+					'style' => 'width: 4%',
 				),
 				'data' => array(
 					'sprintf' => array(
@@ -1658,7 +1658,7 @@ function notification($memID)
 							'id' => false,
 						),
 					),
-					'style' => 'text-align: center;',
+					'style' => 'text-align: center',
 				),
 			),
 		),
@@ -1709,7 +1709,7 @@ function notification($memID)
 			'subject' => array(
 				'header' => array(
 					'value' => $txt['notifications_topics'],
-					'class' => 'lefttext first_th',
+					'class' => 'left first_th',
 				),
 				'data' => array(
 					'function' => create_function('$topic', '
@@ -1733,7 +1733,7 @@ function notification($memID)
 			'started_by' => array(
 				'header' => array(
 					'value' => $txt['started_by'],
-					'class' => 'lefttext',
+					'class' => 'left',
 				),
 				'data' => array(
 					'db' => 'poster_link',
@@ -1746,7 +1746,7 @@ function notification($memID)
 			'last_post' => array(
 				'header' => array(
 					'value' => $txt['last_post'],
-						'class' => 'lefttext',
+						'class' => 'left',
 				),
 				'data' => array(
 					'sprintf' => array(
@@ -1765,7 +1765,7 @@ function notification($memID)
 			'delete' => array(
 				'header' => array(
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
-					'style' => 'width: 4%;',
+					'style' => 'width: 4%',
 				),
 				'data' => array(
 					'sprintf' => array(
@@ -1774,7 +1774,7 @@ function notification($memID)
 							'id' => false,
 						),
 					),
-					'style' => 'text-align: center;',
+					'style' => 'text-align: center',
 				),
 			),
 		),

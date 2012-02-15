@@ -335,6 +335,7 @@ function template_sub_thoughts(&$thought)
 	if (empty($thought['sub']))
 		return;
 
+	// !! @todo: multi-page thought list...
 	// !! @todo: allow editing & replying to thoughts directly from within the Profile area...?
 	// onclick="oThought.edit(', $tho['id'], !empty($tho['id_master']) && $tho['id'] != $tho['id_master'] ? ', ' . $tho['id_master'] : '', ');"
 
@@ -421,7 +422,7 @@ function template_showDrafts()
 	// No drafts? Just end the table with an informative message.
 	if (empty($context['posts']))
 		echo '
-		<div class="windowbg2 padding centertext">
+		<div class="windowbg2 padding center">
 			', $txt['show_drafts_none'], '
 		</div>';
 
@@ -532,7 +533,7 @@ function template_showPosts()
 	else
 	{
 		echo '
-		<table class="table_grid w100 cs1 cp2 centertext">
+		<table class="table_grid w100 cs1 cp2 center">
 			<thead>
 				<tr class="titlebg">
 					<th class="first_th left w25" scope="col">
@@ -570,7 +571,7 @@ function template_showPosts()
 			echo '
 				<tr class="postbg', $alternate ? '' : '2', '">
 					<td><a href="', $scripturl, '?action=dlattach;topic=', $attachment['topic'], '.0;attach=', $attachment['id'], '">', $attachment['filename'], '</a>', '</td>
-					<td class="center">', $attachment['downloads'], '</td>
+					<td>', $attachment['downloads'], '</td>
 					<td><a href="', $scripturl, '?topic=', $attachment['topic'], '.msg', $attachment['msg'], '#msg', $attachment['msg'], '" rel="nofollow">', $attachment['subject'], '</a></td>
 					<td>', $attachment['posted'], '</td>
 				</tr>';
@@ -586,7 +587,7 @@ function template_showPosts()
 					</td>
 				</tr>';
 
-			echo '
+		echo '
 			</tbody>
 		</table>';
 	}
@@ -608,7 +609,7 @@ function template_editBuddies()
 			<img src="', $theme['images_url'], '/icons/profile_sm.gif">', $txt['editBuddies'], '
 		</we:cat>
 
-		<table class="table_grid w100 cs1 cp4 centertext">
+		<table class="table_grid w100 cs1 cp4 center">
 			<tr class="catbg">
 				<th class="first_th left" scope="col" style="width: 20%">', $txt['name'], '</th>
 				<th scope="col">', $txt['status'], '</th>
@@ -677,7 +678,7 @@ function template_editIgnoreList()
 		<we:cat>
 			<img src="', $theme['images_url'], '/icons/profile_sm.gif">', $txt['editIgnoreList'], '
 		</we:cat>
-		<table class="table_grid w100 cs1 cp4 centertext">
+		<table class="table_grid w100 cs1 cp4 center">
 			<tr class="catbg">
 				<th class="first_th" scope="col" style="width: 20%">', $txt['name'], '</th>
 				<th scope="col">', $txt['status'], '</th>
@@ -697,7 +698,7 @@ function template_editIgnoreList()
 	foreach ($context['ignore_list'] as $member)
 	{
 		echo '
-			<tr class="windowbg', $alternate ? '' : '2', ' center">
+			<tr class="windowbg', $alternate ? '' : '2', '">
 				<td class="left">', $member['link'], '</td>
 				<td><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '"></a></td>
 				<td>', ($member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>'), '</td>

@@ -90,7 +90,7 @@ function template_main()
 		// Button to add a new board.
 		echo '
 				</ul>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="', $txt['mboards_new_board'], '" class="new">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
@@ -154,7 +154,7 @@ function template_modify_category()
 	echo '
 				</dl>
 				<hr>
-				<div class="righttext">';
+				<div class="right">';
 
 	if (isset($context['category']['is_new']))
 		echo '
@@ -221,7 +221,7 @@ function template_confirm_category_delete()
 					</select>
 				</p>
 				<hr>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="delete" value="', $txt['mboards_delete_confirm'], '" class="delete">
 					<input type="submit" name="cancel" value="', $txt['mboards_delete_cancel'], '" class="cancel">
 					<input type="hidden" name="confirmation" value="1">
@@ -546,7 +546,7 @@ function template_modify_board()
 				<input type="hidden" name="rid" value="', $context['redirect_location'], '">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<hr>
-				<div class="righttext">';
+				<div class="right">';
 
 	// If this board has no children don't bother with the next confirmation screen.
 	if ($context['board']['no_children'])

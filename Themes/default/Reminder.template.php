@@ -23,12 +23,12 @@ function template_main()
 				', $txt['authentication_reminder'], '
 			</we:cat>
 			<div class="roundframe">
-				<p class="smalltext centertext">', $txt['password_reminder_desc'], '</p>
+				<p class="smalltext center">', $txt['password_reminder_desc'], '</p>
 				<dl>
 					<dt>', $txt['user_email'], ':</dt>
 					<dd><input type="text" name="user" size="30"></dd>
 				</dl>
-				<p class="centertext"><input type="submit" value="', $txt['reminder_continue'], '" class="submit"></p>
+				<p class="center"><input type="submit" value="', $txt['reminder_continue'], '" class="submit"></p>
 			</div>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -56,7 +56,7 @@ function template_reminder_pick()
 					<label><input type="radio" name="reminder_type" id="reminder_type_secret" value="secret">
 					', $txt['authentication_password_secret'], '</label>
 				</p>
-				<p class="centertext"><input type="submit" value="', $txt['reminder_continue'], '" class="submit"></p>
+				<p class="center"><input type="submit" value="', $txt['reminder_continue'], '" class="submit"></p>
 			</div>
 		</div>
 		<input type="hidden" name="uid" value="', $context['current_member']['id'], '">

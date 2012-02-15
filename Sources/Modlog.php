@@ -185,7 +185,7 @@ function ViewModlog()
 			'action' => array(
 				'header' => array(
 					'value' => $txt['modlog_action'],
-					'class' => 'lefttext first_th',
+					'class' => 'left first_th',
 				),
 				'data' => array(
 					'db' => 'action_text',
@@ -199,7 +199,7 @@ function ViewModlog()
 			'time' => array(
 				'header' => array(
 					'value' => $txt['modlog_date'],
-					'class' => 'lefttext',
+					'class' => 'left',
 				),
 				'data' => array(
 					'db' => 'time',
@@ -213,7 +213,7 @@ function ViewModlog()
 			'moderator' => array(
 				'header' => array(
 					'value' => $txt['modlog_member'],
-					'class' => 'lefttext',
+					'class' => 'left',
 				),
 				'data' => array(
 					'db' => 'moderator_link',
@@ -227,7 +227,7 @@ function ViewModlog()
 			'position' => array(
 				'header' => array(
 					'value' => $txt['modlog_position'],
-					'class' => 'lefttext',
+					'class' => 'left',
 				),
 				'data' => array(
 					'db' => 'position',
@@ -241,7 +241,7 @@ function ViewModlog()
 			'ip' => array(
 				'header' => array(
 					'value' => $txt['modlog_ip'],
-					'class' => 'lefttext',
+					'class' => 'left',
 				),
 				'data' => array(
 					'db' => 'ip',
@@ -260,7 +260,7 @@ function ViewModlog()
 					'function' => create_function('$entry', '
 						return \'<input type="checkbox" name="delete[]" value="\' . $entry[\'id\'] . \'"\' . ($entry[\'editable\'] ? \'\' : \' disabled\') . \'>\';
 					'),
-					'style' => 'text-align: center;',
+					'style' => 'text-align: center',
 				),
 			),
 		),
@@ -278,7 +278,7 @@ function ViewModlog()
 				'position' => 'after_title',
 				'value' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log_desc'],
 				'class' => 'smalltext',
-				'style' => 'padding: 2ex;',
+				'style' => 'padding: 2ex',
 			),
 			array(
 				'position' => 'below_table_data',

@@ -21,7 +21,7 @@ function template_popup()
 		echo '<div class="windowbg2 wrc smalltext nodrag">
 	', $context['help_text'], '
 </div>
-<div class="smalltext centertext" style="padding: 8px 0 0">
+<div class="smalltext center" style="padding: 8px 0 0">
 	<a href="#" onclick="$(\'#helf\').remove(); return false;">', $txt['close_window'], '</a>
 </div>';
 	}
