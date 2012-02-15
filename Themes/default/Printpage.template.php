@@ -88,7 +88,7 @@ function template_print_before()
 			{
 				font-size: large;
 			}
-			.centertext
+			.center
 			{
 				text-align: center;
 			}

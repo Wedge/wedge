@@ -86,7 +86,7 @@ function template_main()
 						</dd>
 					</dl>
 				</fieldset>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="send" value="', $txt['sendtopic_send'], '" class="submit">
 				</div>
 			</div>
@@ -167,7 +167,7 @@ function template_custom_email()
 						<textarea id="email_body" name="email_body" rows="10" cols="20" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 90%; min-width: 90%' : 'width: 90%') . ';"></textarea>
 					</dd>
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="send" value="', $txt['sendtopic_send'], '" class="submit">
 				</div>
 			</div>';
@@ -241,8 +241,8 @@ function template_report()
 
 	echo '
 				</dl>
-				<div class="righttext">
-					<input type="submit" name="submit" value="', $txt['rtm10'], '" style="margin-left: 1ex" class="submit">
+				<div class="right">
+					<input type="submit" name="submit" value="', $txt['rtm10'], '" class="submit">
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

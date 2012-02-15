@@ -206,7 +206,7 @@ function template_add_plugins()
 	{
 		echo '
 				<tr class="windowbg">
-					<td class="centertext" colspan="4">', $txt['plugins_no_repos'], '</td>
+					<td class="center" colspan="4">', $txt['plugins_no_repos'], '</td>
 				</tr>';
 	}
 	else
@@ -217,7 +217,7 @@ function template_add_plugins()
 			echo '
 				<tr class="windowbg', $use_bg2 ? '2' : '', '">
 					<td>', $repo['name'], $repo['auth'] ? ' <span class="plugin_auth inline-block" title="' . $txt['plugins_repo_auth'] . '"></span>' : '', '</td>
-					<td class="centertext">';
+					<td class="center">';
 
 			// While it's fairly straightforward here, it may be more complex in future.
 			switch ($repo['status'])
@@ -234,8 +234,8 @@ function template_add_plugins()
 			}
 
 			echo '</td>
-					<td class="centertext"><a href="<URL>?action=admin;area=plugins;sa=add;browserepo=', $repo_id, '">', $txt['plugins_browse'], '</a></td>
-					<td class="centertext"><a href="<URL>?action=admin;area=plugins;sa=add;editrepo=', $repo_id, '">', $txt['plugins_modify'], '</a></td>
+					<td class="center"><a href="<URL>?action=admin;area=plugins;sa=add;browserepo=', $repo_id, '">', $txt['plugins_browse'], '</a></td>
+					<td class="center"><a href="<URL>?action=admin;area=plugins;sa=add;editrepo=', $repo_id, '">', $txt['plugins_modify'], '</a></td>
 				</tr>';
 
 			$use_bg2 = !$use_bg2;
@@ -267,7 +267,7 @@ function template_add_plugins()
 						<input type="file" name="plugin">
 					</dd>
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="', $txt['plugins_upload_plugin'], '" class="save">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
@@ -316,7 +316,7 @@ function template_edit_repo()
 						<dd><input type="password" name="password" size="44" value=""></dd>
 					</dl>
 				</fieldset>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="', $txt['save'], '" class="save">
 					<input type="submit" name="delete" value="', $txt['plugins_repo_delete'], '" class="delete" onclick="return confirm(', JavaScriptEscape($txt['plugins_repo_delete_confirm']), ');">
 				</div>

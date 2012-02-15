@@ -18,7 +18,7 @@ function template_admin()
 
 	// Welcome the admin, and mention any outstanding updates.
 	echo '
-	<div id="admincenter">
+	<div id="admin_home">
 		<we:cat>
 			', $txt['admin_center'], '
 		</we:cat>
@@ -45,9 +45,6 @@ function template_admin()
 			', $txt['admin_search_welcome'], '
 		</div>';
 
-	echo '
-		<div id="admin_home">';
-
 	// Now, let's do the main admin stuff. We'll take an alias to the menu stuff because it's simply easier than fighting with anything else.
 	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
 
@@ -58,8 +55,8 @@ function template_admin()
 			continue;
 
 		echo '
-			<fieldset id="admin_area_', $section_id, '" class="windowbg', $use_bg2 ? '2' : '', ' wrc">
-				<legend>', $section['title'], '</legend>';
+		<fieldset id="admin_area_', $section_id, '" class="windowbg', $use_bg2 ? '2' : '', ' wrc">
+			<legend>', $section['title'], '</legend>';
 
 		foreach ($section['areas'] as $area_id => $area)
 		{
@@ -70,11 +67,11 @@ function template_admin()
 				$area['bigicon'] = '<img src="' . $context['menu_image_path'] . '/features_and_options.png" style="width: 32px; height: 32px">';
 
 			echo '
-				<div class="admin_item inline-block"><a href="', $scripturl, '?action=admin;area=', $area_id, ';' , $context['session_query'], '">', $area['bigicon'], '<br>', $area['label'], '</a></div>';
+			<div class="admin_item inline-block"><a href="', $scripturl, '?action=admin;area=', $area_id, ';' , $context['session_query'], '">', $area['bigicon'], '<br>', $area['label'], '</a></div>';
 		}
 
 		echo '
-			</fieldset>';
+		</fieldset>';
 
 		$use_bg2 = !$use_bg2;
 	}
@@ -534,7 +531,7 @@ function template_edit_censored()
 				', $txt['censor_test'], '
 			</we:cat>
 			<div class="windowbg wrc">
-				<p class="centertext">
+				<p class="center">
 					<input type="text" name="censortest" value="', empty($context['censor_test']) ? '' : $context['censor_test'], '">
 					<input type="submit" value="', $txt['censor_test_save'], '" class="submit">
 				</p>
@@ -1195,7 +1192,7 @@ function template_admin_search_results()
 
 	if (empty($context['search_results']))
 		echo '
-		<p class="centertext"><strong>', $txt['admin_search_results_none'], '</strong></p>';
+		<p class="center"><strong>', $txt['admin_search_results_none'], '</strong></p>';
 
 	else
 	{

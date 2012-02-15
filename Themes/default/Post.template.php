@@ -771,7 +771,7 @@ function template_spellcheck()
 				</td>
 			</tr>
 		</table>
-		<div class="righttext" style="padding: 4px;">
+		<div class="right" style="padding: 4px">
 			<input type="button" name="change" value="', $txt['spellcheck_change'], '" onclick="replaceWord();">
 			<input type="button" name="changeall" value="', $txt['spellcheck_change_all'], '" onclick="replaceAll();">
 			<input type="button" name="ignore" value="', $txt['spellcheck_ignore'], '" onclick="nextWord(false);">

@@ -948,18 +948,16 @@ header, footer, aside, section, article, nav
 .largetext
 	font-size: 1.4em
 
-.centertext
+.centered
 	margin: 0 auto
+
+.center
 	text-align: center
 
-.righttext
-	margin-left: auto
-	margin-right: 0
+.right
 	text-align: right
 
-.lefttext
-	margin-left: 0
-	margin-right: auto
+.left
 	text-align: left
 
 .double_height
@@ -1378,7 +1376,7 @@ dl#feed
 			padding: 4px 3px
 	th.last_th input
 		margin: 0 2px
-	th.lefttext
+	th.left
 		padding: 0 .7em
 	td, th
 		padding: 3px
@@ -1489,12 +1487,6 @@ table
 		&.right th, &.right td
 			text-align: right
 		&.center th, &.center td
-			text-align: center
-		th.left, td.left
-			text-align: left
-		th.right, td.right
-			text-align: right
-		th.center, td.center
 			text-align: center
 
 /* Used for sections that need corners and a border frame.

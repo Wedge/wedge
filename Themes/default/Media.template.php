@@ -804,7 +804,7 @@ function template_aeva_item_comments()
 						<div class="floatleft padding">
 							<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
 						</div>
-						<div class="righttext padding">',
+						<div class="right padding">',
 							$context['postbox']->outputButtons(), '
 						</div>
 						<input type="hidden" name="submit_aeva">

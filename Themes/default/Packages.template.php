@@ -280,7 +280,7 @@ function template_view_package()
 	// Are we effectively ready to install?
 	if (!$context['ftp_needed'] && (!empty($context['actions']) || !empty($context['database_changes'])))
 		echo '
-			<div class="righttext padding">
+			<div class="right padding">
 				<input type="submit" value="', $context['uninstalling'] ? $txt['package_uninstall_now'] : $txt['package_install_now'], '" onclick="return ', !empty($context['has_failure']) ? '(submitThisOnce(this) && confirm(' . JavaScriptEscape($context['uninstalling'] ? $txt['package_will_fail_popup_uninstall'] : $txt['package_will_fail_popup']) . '))' : 'submitThisOnce(this)', ';" class="', $context['uninstalling'] ? 'delete' : 'submit', '">
 			</div>';
 
@@ -524,7 +524,7 @@ function template_browse()
 							<input type="text" name="version_emulate" id="ve" value="', $context['forum_version'], '" size="25">
 						</dd>
 					</dl>
-					<div class="righttext padding">
+					<div class="right padding">
 						<input type="submit" value="', $txt['package_apply'], '" class="submit">
 					</div>
 				</div>
@@ -659,7 +659,7 @@ function template_servers()
 						<input type="text" size="50" name="ftp_path" id="ftp_path" value="', $context['package_ftp']['path'], '" style="width: 99%">
 					</dd>
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="', $txt['package_proceed'], '" class="submit">
 				</div>
 			</form>
@@ -700,7 +700,7 @@ function template_servers()
 							<input type="text" name="serverurl" size="44" value="http://">
 						</dd>
 					</dl>
-					<div class="righttext">
+					<div class="right">
 						<input type="submit" value="' . $txt['add_server'] . '" class="new">
 						<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 					</div>
@@ -724,7 +724,7 @@ function template_servers()
 							<dfn>', $txt['package_download_filename_info'], '</dfn>
 						</dd>
 					</dl>
-					<div class="righttext">
+					<div class="right">
 						<input type="submit" value="', $txt['download'], '" class="save">
 					</div>
 				</form>
@@ -744,7 +744,7 @@ function template_servers()
 						<input type="file" name="package">
 					</dd>
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="' . $txt['package_upload'] . '" class="save">
 					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 				</div>
@@ -982,7 +982,7 @@ function template_install_options()
 				</dl>
 				<label><input type="checkbox" name="package_make_backups" id="package_make_backups" value="1"', $context['package_make_backups'] ? ' checked' : '', '> ', $txt['package_install_options_make_backups'], '</label>
 				<br><br>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="submit" value="', $txt['save'], '" class="submit">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
@@ -1061,7 +1061,7 @@ function template_control_chmod()
 	if (empty($context['package_ftp']['form_elements_only']))
 		echo '
 
-					<div class="righttext" style="margin: 1ex">
+					<div class="right" style="margin: 1ex">
 						<span id="test_ftp_placeholder_full"></span>
 						<input type="submit" value="', $txt['package_proceed'], '" class="submit">
 					</div>';
@@ -1545,7 +1545,7 @@ function template_file_permissions()
 
 	echo '
 			<span id="test_ftp_placeholder_full"></span>
-			<div class="righttext padding">
+			<div class="right padding">
 				<input type="hidden" name="action_changes" value="1">
 				<input type="submit" value="', $txt['package_file_perms_go'], '" name="go" class="submit">
 			</div>
@@ -1724,7 +1724,7 @@ function template_action_permissions()
 	echo '
 				<input type="hidden" name="method" value="', $context['method'], '">
 				<input type="hidden" name="action_changes" value="1">
-				<div class="righttext padding">
+				<div class="right padding">
 					<input type="submit" name="go" id="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '" class="submit">
 				</div>
 			</div>

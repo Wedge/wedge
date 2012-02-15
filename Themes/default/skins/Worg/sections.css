@@ -714,7 +714,7 @@ dl.register_form
 tr.titlebg td
 	padding-left: .7em
 
-#admin_login .centertext
+#admin_login .center
 	padding: 1em
 	.error
 		padding: 0 0 1em 0

@@ -128,7 +128,7 @@ function template_modify_subscription()
 						<label><input type="checkbox" name="allowed_groups[', $id, ']"', in_array($id, $context['sub']['allowed_groups']) ? ' checked' : '', !empty($context['disable_groups']) ? ' disabled' : '', ' class="allowed_groups">&nbsp;<span class="smalltext">', $name, '</span></label><br>';
 
 	echo '
-						<div class="righttext">
+						<div class="right">
 							<label><input type="checkbox" id="allowed_groups_check_all" onclick="$(\'.allowed_groups\').attr(\'checked\', $(\'#allowed_groups_check_all\').attr(\'checked\'));"> ', $txt['check_all'], '</label>
 						</div>
 					</dd>
@@ -219,7 +219,7 @@ function template_modify_subscription()
 						</dl>
 					</fieldset>
 				</div>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="save" value="', $txt['paid_settings_save'], '" class="save">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>

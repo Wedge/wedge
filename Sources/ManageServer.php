@@ -194,9 +194,9 @@ function ModifySettings()
 		$settings_backup_fail = !@is_writable($boarddir . '/Settings_bak.php') || !@copy($boarddir . '/Settings.php', $boarddir . '/Settings_bak.php');
 
 		if ($settings_not_writable)
-			$context['settings_message'] = '<p class="centertext"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
+			$context['settings_message'] = '<p class="center"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
 		elseif ($settings_backup_fail)
-			$context['settings_message'] = '<p class="centertext"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
+			$context['settings_message'] = '<p class="center"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
 
 		$context['settings_not_writable'] = $settings_not_writable;
 	}
@@ -1254,9 +1254,9 @@ function ModifyLanguageSettings($return_config = false)
 	$context['save_disabled'] = $settings_not_writable;
 
 	if ($settings_not_writable)
-		$context['settings_message'] = '<p class="centertext"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
+		$context['settings_message'] = '<p class="center"><strong>' . $txt['settings_not_writable'] . '</strong></p><br>';
 	elseif ($settings_backup_fail)
-		$context['settings_message'] = '<p class="centertext"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
+		$context['settings_message'] = '<p class="center"><strong>' . $txt['admin_backup_fail'] . '</strong></p><br>';
 
 	// Fill the config array.
 	prepareServerSettingsContext($config_vars);

@@ -32,10 +32,8 @@ function template_main()
 	// No categories so show a label.
 	if (empty($context['categories']))
 		echo '
-		<div class="windowbg wrc">
-			<div class="centertext">
-				', $txt['mboards_no_cats'], '
-			</div>
+		<div class="windowbg wrc center">
+			', $txt['mboards_no_cats'], '
 		</div>';
 
 	// Loop through every category, listing the boards in each as we go.

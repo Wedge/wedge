@@ -21,7 +21,7 @@ function template_main()
 			<we:cat>
 				', $txt['move_topic'], '
 			</we:cat>
-			<div class="windowbg wrc centertext">
+			<div class="windowbg wrc center">
 				<div class="move_topic">
 					<dl class="settings">
 						<dt>
@@ -82,7 +82,7 @@ function template_main()
 							</dd>
 						</dl>
 					</fieldset>
-					<div class="righttext">
+					<div class="right">
 						<input type="submit" value="', $txt['move_topic'], '" onclick="return submitThisOnce(this);" accesskey="s" class="submit">
 					</div>
 				</div>

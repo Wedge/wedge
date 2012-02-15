@@ -184,7 +184,7 @@ function template_permission_index()
 						</dd>
 					</dl>
 				</fieldset>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="', $txt['permissions_set_permissions'], '" onclick="return checkSubmit();" class="submit">
 				</div>
 			</div>';
@@ -255,7 +255,7 @@ function template_by_board()
 
 	if (!$context['edit_all'])
 		echo '
-		<div class="righttext">
+		<div class="right">
 			<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>
 		</div>';
 
@@ -312,7 +312,7 @@ function template_by_board()
 	}
 
 	echo '
-		<div class="righttext">';
+		<div class="right">';
 
 	if ($context['edit_all'])
 		echo '
@@ -378,7 +378,7 @@ function template_edit_profiles()
 	echo '
 				</tbody>
 			</table>
-			<div class="righttext padding">
+			<div class="right padding">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">';
 
 	if ($context['can_edit_something'])
@@ -416,7 +416,7 @@ function template_edit_profiles()
 						</select>
 					</dd>
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 					<input type="submit" name="create" value="', $txt['permissions_profile_new_create'], '" class="new">
 				</div>
@@ -505,7 +505,7 @@ function template_modify_group()
 
 	if ($context['profile']['can_modify'])
 		echo '
-			<div class="righttext padding">
+			<div class="right padding">
 				<input type="submit" value="', $txt['permissions_commit'], '" class="submit">
 			</div>';
 

@@ -440,7 +440,7 @@ function ModifySignatureSettings($return_config = false)
 	$context['post_url'] = $scripturl . '?action=admin;area=memberoptions;save;sa=sig';
 	$context['settings_title'] = $txt['signature_settings'];
 
-	$context['settings_message'] = '<p class="centertext">' . sprintf($txt['signature_settings_warning'], $scripturl, $context['session_query']) . '</p>';
+	$context['settings_message'] = '<p class="center">' . sprintf($txt['signature_settings_warning'], $scripturl, $context['session_query']) . '</p>';
 
 	prepareDBSettingContext($config_vars);
 }

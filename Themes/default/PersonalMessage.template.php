@@ -348,7 +348,7 @@ function template_folder()
 			if ($context['folder'] != 'sent' || !empty($context['message_can_unread'][$message['id']]))
 			{
 				echo '
-				<div class="reportlinks righttext">';
+				<div class="reportlinks right">';
 				if ($context['folder'] != 'sent')
 					echo '
 					<a href="<URL>?action=pm;sa=report;l=', $context['current_label_id'], ';pmsg=', $message['id'], '">', $txt['pm_report_to_admin'], '</a>&nbsp;';
@@ -392,7 +392,7 @@ function template_folder()
 			if ($context['folder'] != 'sent' && !empty($context['currently_using_labels']) && $context['display_mode'] != 2)
 			{
 				echo '
-				<div class="labels righttext">';
+				<div class="labels right">';
 
 				// Add the label drop down box.
 				if (!empty($context['currently_using_labels']))
@@ -739,7 +739,7 @@ function template_search_results()
 			</div>
 			<div class="postbg', $alternate ? '2' : '', ' wrc">
 				', $message['body'], '
-				<p class="pm_reply righttext smalltext">';
+				<p class="pm_reply right smalltext">';
 
 			if ($context['can_send_pm'])
 			{
@@ -785,7 +785,7 @@ function template_search_results()
 	if (empty($context['personal_messages']))
 		echo '
 		<div class="windowbg wrc">
-			<p class="centertext">', $txt['pm_search_none_found'], '</p>
+			<p class="center">', $txt['pm_search_none_found'], '</p>
 		</div>';
 
 	echo '
@@ -1006,7 +1006,7 @@ function template_prune()
 		</we:cat>
 		<div class="windowbg wrc">
 			<p>', $txt['pm_prune_desc1'], ' <input type="text" name="age" size="3" value="14"> ', $txt['pm_prune_desc2'], '</p>
-			<div class="righttext">
+			<div class="right">
 				<input type="submit" value="', $txt['delete'], '" class="delete">
 			</div>
 		</div>
@@ -1076,7 +1076,7 @@ function template_labels()
 
 	if (!count($context['labels']) < 2)
 		echo '
-		<div class="padding righttext">
+		<div class="padding right">
 			<input type="submit" name="save" value="', $txt['save'], '" class="save">
 			<input type="submit" name="delete" value="', $txt['quickmod_delete_selected'], '" onclick="return confirm(', JavaScriptEscape($txt['pm_labels_delete']), ');" class="delete">
 		</div>';
@@ -1098,7 +1098,7 @@ function template_labels()
 					<input type="text" id="add_label" name="label" value="" size="30" maxlength="30">
 				</dd>
 			</dl>
-			<div class="righttext">
+			<div class="right">
 				<input type="submit" name="add" value="', $txt['pm_label_add_new'], '" class="new">
 			</div>
 		</div>
@@ -1154,7 +1154,7 @@ function template_report_message()
 					<textarea name="reason" rows="4" cols="70" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 80%; min-width: 80%' : 'width: 80%') . ';"></textarea>
 				</dd>
 			</dl>
-			<div class="righttext">
+			<div class="right">
 				<input type="submit" name="report" value="', $txt['pm_report_message'], '" class="submit">
 			</div>
 		</div>
@@ -1235,7 +1235,7 @@ function template_rules()
 	echo '
 		</tbody>
 		</table>
-		<div class="righttext">
+		<div class="right">
 			[<a href="<URL>?action=pm;sa=manrules;add;rid=0">', $txt['pm_add_rule'], '</a>]';
 
 	if (!empty($context['rules']))
@@ -1537,7 +1537,7 @@ function template_add_rule()
 		<div class="information">
 			<div id="ruletext">', $txt['pm_rule_js_disabled'], '</div>
 		</div>
-		<div class="righttext">
+		<div class="right">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="submit" name="save" value="', $txt['pm_rule_save'], '" class="save">
 		</div>
@@ -1639,7 +1639,7 @@ function template_pm_drafts()
 	// A great, big, threatening button which must not be pressed under any circumstances, am I right?
 	if (!empty($context['posts']))
 		echo '
-		<div class="righttext padding">
+		<div class="right padding">
 			<form action="<URL>?action=pm;sa=showdrafts;deleteall" method="post" onclick="return confirm(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ');">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" value="', $txt['remove_all_drafts'], '" class="delete">

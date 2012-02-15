@@ -87,6 +87,9 @@ function template_unread()
 
 	echo '
 	<div id="recent">
+		<we:cat>
+			', $txt['show_unread'], '
+		</we:cat>
 		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="qaction" value="markread">
@@ -207,11 +210,9 @@ function template_unread()
 	}
 	else
 		echo '
-		<we:cat>
-			<div class="centertext">
+			<div class="center padding">
 				', $txt['msg_alert_none'], '
-			</div>
-		</we:cat>';
+			</div>';
 
 	echo '
 		</form>
@@ -224,6 +225,9 @@ function template_replies()
 
 	echo '
 	<div id="recent">
+		<we:cat>
+			', $txt['show_unread_replies'], '
+		</we:cat>
 		<form action="', $scripturl, '?action=quickmod" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="qaction" value="markread">
@@ -337,11 +341,9 @@ function template_replies()
 	}
 	else
 		echo '
-			<we:cat>
-				<div class="centertext">
-					', $txt['msg_alert_none'], '
-				</div>
-			</we:cat>';
+			<div class="center padding">
+				', $txt['msg_alert_none'], '
+			</div>';
 
 	echo '
 		</form>

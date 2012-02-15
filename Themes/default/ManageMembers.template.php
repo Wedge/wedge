@@ -27,7 +27,7 @@ function template_search_members()
 				<div class="flow_hidden">
 					<div class="msearch_details floatleft">
 						<dl class="settings right">
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['member_id'], ':</strong>
 								<select name="types[mem_id]">
 									<option value="--">&lt;</option>
@@ -40,7 +40,7 @@ function template_search_members()
 							<dd>
 								<input type="text" name="mem_id" value="" size="6">
 							</dd>
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['age'], ':</strong>
 								<select name="types[age]">
 									<option value="--">&lt;</option>
@@ -53,7 +53,7 @@ function template_search_members()
 							<dd>
 								<input type="text" name="age" value="" size="6">
 							</dd>
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['member_postcount'], ':</strong>
 								<select name="types[posts]">
 									<option value="--">&lt;</option>
@@ -66,7 +66,7 @@ function template_search_members()
 							<dd>
 								<input type="text" name="posts" value="" size="6">
 							</dd>
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['date_registered'], ':</strong>
 								<select name="types[reg_date]">
 									<option value="--">&lt;</option>
@@ -79,7 +79,7 @@ function template_search_members()
 							<dd>
 								<input type="text" name="reg_date" value="" size="10"><span class="smalltext">', $txt['date_format'], '</span>
 							</dd>
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['viewmembers_online'], ':</strong>
 								<select name="types[last_online]">
 									<option value="--">&lt;</option>
@@ -96,31 +96,31 @@ function template_search_members()
 					</div>
 					<div class="msearch_details floatright">
 						<dl class="settings right">
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['username'], ':</strong>
 							</dt>
 							<dd>
 								<input type="text" name="membername" value="">
 							</dd>
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['email_address'], ':</strong>
 							</dt>
 							<dd>
 								<input type="text" name="email" value="">
 							</dd>
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['website'], ':</strong>
 							</dt>
 							<dd>
 								<input type="text" name="website" value="">
 							</dd>
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['location'], ':</strong>
 							</dt>
 							<dd>
 								<input type="text" name="location" value="">
 							</dd>
-							<dt class="righttext">
+							<dt class="right">
 								<strong>', $txt['ip_address'], ':</strong>
 							</dt>
 							<dd>
@@ -225,7 +225,7 @@ function template_search_members()
 				</table>
 			</div>
 			<br>
-			<div class="righttext">
+			<div class="right">
 				<input type="submit" value="', $txt['search'], '" class="submit">
 			</div>
 		</form>

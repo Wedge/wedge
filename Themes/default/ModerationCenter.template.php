@@ -285,7 +285,7 @@ function template_reported_posts()
 	if (empty($context['reports']))
 		echo '
 			<div class="windowbg2 wrc">
-				<p class="centertext">', $txt['mc_reportedp_none_found'], '</p>
+				<p class="center">', $txt['mc_reportedp_none_found'], '</p>
 			</div>';
 
 	echo '
@@ -322,7 +322,7 @@ function template_unapproved_posts()
 	if (empty($context['unapproved_items']))
 		echo '
 			<div class="windowbg2 wrc">
-				<p class="centertext">', $txt['mc_unapproved_' . $context['current_view'] . '_none_found'], '</p>
+				<p class="center">', $txt['mc_unapproved_' . $context['current_view'] . '_none_found'], '</p>
 			</div>';
 	else
 		echo '
@@ -426,7 +426,7 @@ function template_viewmodreport()
 
 	if (empty($context['report']['mod_comments']))
 		echo '
-				<p class="centertext">', $txt['mc_modreport_no_mod_comment'], '</p>';
+				<p class="center">', $txt['mc_modreport_no_mod_comment'], '</p>';
 
 	foreach ($context['report']['mod_comments'] as $comment)
 		echo '
@@ -591,7 +591,7 @@ function template_moderation_settings()
 
 	echo '
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 					<input type="submit" name="save" value="', $txt['save'], '" class="save">
 				</div>

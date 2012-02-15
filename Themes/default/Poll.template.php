@@ -139,7 +139,7 @@ function template_main()
 						<input type="checkbox" name="resetVoteCount" value="on"> ' . $txt['reset_votes_check'] . '
 					</fieldset>';
 	echo '
-					<div class="righttext padding">
+					<div class="right padding">
 						<input type="submit" name="post" value="', $txt['save'], '" onclick="return submitThisOnce(this);" accesskey="s" class="save">
 					</div>
 				</div>

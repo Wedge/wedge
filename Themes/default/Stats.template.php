@@ -110,7 +110,7 @@ function template_main()
 							</div>';
 
 		echo '
-							<span class="righttext">', $poster['num_posts'], '</span>
+							<span>', $poster['num_posts'], '</span>
 						</dd>';
 	}
 
@@ -141,7 +141,7 @@ function template_main()
 								<div style="width: ', $board['post_percent'], 'px;"></div>
 							</div>';
 		echo '
-							<span class="righttext">', $board['num_posts'], '</span>
+							<span>', $board['num_posts'], '</span>
 						</dd>';
 	}
 
@@ -175,7 +175,7 @@ function template_main()
 							</div>';
 
 		echo '
-							<span class="righttext">' . $topic['num_replies'] . '</span>
+							<span>' . $topic['num_replies'] . '</span>
 						</dd>';
 	}
 	echo '
@@ -205,7 +205,7 @@ function template_main()
 							</div>';
 
 		echo '
-							<span class="righttext">' . $topic['num_views'] . '</span>
+							<span>' . $topic['num_views'] . '</span>
 						</dd>';
 	}
 
@@ -239,7 +239,7 @@ function template_main()
 							</div>';
 
 		echo '
-							<span class="righttext">', $poster['num_topics'], '</span>
+							<span>', $poster['num_topics'], '</span>
 						</dd>';
 	}
 

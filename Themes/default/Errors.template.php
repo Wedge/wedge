@@ -30,7 +30,9 @@ function template_fatal_error()
 	// Show a back button (using javascript.)
 	if (empty($context['no_back_link']))
 		echo '
-	<div class="centertext"><a href="javascript:history.go(-1)">', $txt['back'], '</a></div>';
+	<div class="center">
+		<a href="javascript:history.go(-1)">', $txt['back'], '</a>
+	</div>';
 }
 
 function template_error_log()

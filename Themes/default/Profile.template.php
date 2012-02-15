@@ -435,7 +435,7 @@ function template_showDrafts()
 	// A great, big, threatening button which must not be pressed under any circumstances, am I right?
 	if (!empty($context['posts']))
 		echo '
-		<div class="righttext padding">
+		<div class="right padding">
 			<form action="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;deleteall" method="post" onclick="return confirm(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ');">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" value="', $txt['remove_all_drafts'], '" class="delete">
@@ -1348,7 +1348,7 @@ function template_edit_options()
 				</dl>';
 
 	echo '
-				<div class="righttext">';
+				<div class="right">';
 
 	// The button shouldn't say "Change profile" unless we're changing the profile...
 	if (!empty($context['submit_button_text']))
@@ -1690,7 +1690,7 @@ function template_groupMembership()
 				<div class="roundframe">
 					', $txt['request_group_membership_desc'], ':
 					<textarea name="reason" rows="4" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%') . '"></textarea>
-					<div class="righttext" style="margin: 0.5em 0.5% 0">
+					<div class="right" style="margin: 0.5em 0.5% 0">
 						<input type="hidden" name="gid" value="', $context['group_request']['id'], '">
 						<input type="submit" name="req" value="', $txt['submit_request'], '" class="submit">
 					</div>
@@ -1744,7 +1744,7 @@ function template_groupMembership()
 
 		if ($context['can_edit_primary'])
 			echo '
-			<div class="padding righttext">
+			<div class="padding right">
 				<input type="submit" value="', $txt['make_primary'], '" class="submit">
 			</div>';
 
@@ -2174,7 +2174,7 @@ function template_issueWarning()
 	}
 	echo '
 			</dl>
-			<div class="righttext">
+			<div class="right">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" name="save" value="', $context['user']['is_owner'] ? $txt['change_profile'] : $txt['profile_warning_issue'], '" class="submit">
 			</div>
@@ -2337,7 +2337,7 @@ function template_profile_save()
 					</dl>';
 
 	echo '
-					<div class="righttext">
+					<div class="right">
 						<input type="submit" value="', $txt['change_profile'], '" class="save">
 						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 						<input type="hidden" name="u" value="', $context['id_member'], '">

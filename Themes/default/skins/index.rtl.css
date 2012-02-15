@@ -14,14 +14,10 @@
 .clear_right
 	clear: left
 
-.righttext
-	margin-left: auto
-	margin-right: 0
+.right
 	text-align: left
 
-.lefttext
-	margin-left: 0
-	margin-right: auto
+.left
 	text-align: right
 
 // Styling for BBC tags

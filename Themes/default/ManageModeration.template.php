@@ -126,7 +126,7 @@ function template_modfilter_home()
 					<ul><li>', implode('</li><li>', $print_criteria), '</li></ul>';
 
 			echo '</td>
-				<td style="width:15%" class="centertext"><a href="<URL>?action=admin;area=modfilters;sa=edit;type=', $type, ';rule=', ($id+1), '">', $txt['modify'], '</td>
+				<td style="width: 15%" class="center"><a href="<URL>?action=admin;area=modfilters;sa=edit;type=', $type, ';rule=', ($id+1), '">', $txt['modify'], '</td>
 			</tr>';
 		}
 		echo '
@@ -210,13 +210,13 @@ function template_modfilter_add()
 					</thead>
 					<tbody id="conds_empty">
 						<tr class="windowbg2">
-							<td colspan="3" class="centertext">', $txt['modfilter_conds_no_conditions'], '</td>
+							<td colspan="3" class="center">', $txt['modfilter_conds_no_conditions'], '</td>
 						</tr>
 					</tbody>
 					<tbody id="conds_notempty"></tbody>
 				</table>
 				<br>
-				<div class="righttext">
+				<div class="right">
 					', $txt['modfilter_conds_new'], '
 					<select name="condtype" id="condtype" onchange="setRuleContent();">
 						<option value="" data-hide>', $txt['modfilter_conds_select'], '</option>';
@@ -280,7 +280,7 @@ function template_modfilter_add()
 	{
 		rows_added++;
 		$("#conds_empty").hide();
-		$("#conds_notempty").append("<tr id=\"cond_row_" + rows_added + "\" class=\"windowbg\"><td>" + rule + "</td><td>" + details + "<input type=\"hidden\" name=\"rule[]\" rulevalue=\"" + ruletype + ";" + rulevalue + "\"></td><td class=\"centertext\"><a href=\"#\" onclick=\"removeRow(" + rows_added + "); return false;\">" + ' . JavaScriptEscape($txt['remove']) . ' + "</a></td></tr>");
+		$("#conds_notempty").append("<tr id=\"cond_row_" + rows_added + "\" class=\"windowbg\"><td>" + rule + "</td><td>" + details + "<input type=\"hidden\" name=\"rule[]\" rulevalue=\"" + ruletype + ";" + rulevalue + "\"></td><td class=\"center\"><a href=\"#\" onclick=\"removeRow(" + rows_added + "); return false;\">" + ' . JavaScriptEscape($txt['remove']) . ' + "</a></td></tr>");
 
 		$("#condtype").val(0).sb();
 		$("#rulecontainer").empty();

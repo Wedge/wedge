@@ -96,7 +96,7 @@ function template_main()
 						<span class="smalltext pick_theme"><a href="', $scripturl, '?action=theme;sa=pick;u=0;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
 					</dd>
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="submit" value="' . $txt['save'] . '" class="save">
 				</div>
 			</div>
@@ -161,7 +161,7 @@ function template_main()
 
 	echo '
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="submit" value="', $txt['theme_install_go'], '" class="submit">
 				</div>
 			</div>
@@ -355,7 +355,7 @@ function template_set_options()
 
 	echo '
 				</ul>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="submit" value="', $txt['save'], '" class="save">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
@@ -509,7 +509,7 @@ function template_set_settings()
 
 	echo '
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="submit" value="', $txt['save'], '" class="save">
 				</div>
 			</div>
@@ -904,7 +904,7 @@ function template_edit_style()
 
 	echo '
 				<textarea name="entire_file" cols="80" rows="20" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . '; font-family: monospace; margin-top: 1ex; white-space: pre">', $context['entire_file'], '</textarea><br>
-				<div class="righttext" style="margin: 4px 5% 0">
+				<div class="right" style="margin: 4px 5% 0">
 					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="save">
 					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);">
 				</div>
@@ -950,12 +950,12 @@ function template_edit_template()
 	foreach ($context['file_parts'] as $part)
 		echo '
 				<label for="on_line', $part['line'], '">', $txt['themeadmin_edit_on_line'], ' ', $part['line'], '</label>:<br>
-				<div class="centertext">
+				<div class="center">
 					<textarea id="on_line', $part['line'], '" name="entire_file[]" cols="80" rows="', $part['lines'] > 14 ? '14' : $part['lines'], '" class="edit_file">', $part['data'], '</textarea>
 				</div>';
 
 	echo '
-				<div class="righttext" style="margin: 8px 5% 0">
+				<div class="right" style="margin: 8px 5% 0">
 					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
 					<input type="hidden" name="filename" value="', $context['edit_filename'], '">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -991,7 +991,7 @@ function template_edit_file()
 			</we:cat>
 			<div class="windowbg wrc">
 				<textarea name="entire_file" id="entire_file" cols="80" rows="20" class="edit_file">', $context['entire_file'], '</textarea><br>
-				<div class="righttext" style="margin: 8px 5% 0">
+				<div class="right" style="margin: 8px 5% 0">
 					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
 					<input type="hidden" name="filename" value="', $context['edit_filename'], '">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

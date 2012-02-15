@@ -38,7 +38,7 @@ function template_ask()
 						<label><input type="radio" id="selective" name="step2" value="selective"> ', $txt['select_split_posts'], '</label>
 					</li>
 				</ul>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="', $txt['split'], '" class="submit">
 				</div>
 			</div>

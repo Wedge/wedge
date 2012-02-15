@@ -135,7 +135,7 @@ function template_new_group()
 						</fieldset>
 					</dd>
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" value="', $txt['membergroups_add_group'], '" class="new">
 				</div>
 			</div>';
@@ -322,7 +322,7 @@ function template_edit_group()
 
 	echo '
 				</dl>
-				<div class="righttext">
+				<div class="right">
 					<input type="submit" name="submit" value="', $txt['membergroups_edit_save'], '" class="save">', $context['group']['allow_delete'] ? '
 					<input type="submit" name="delete" value="' . $txt['membergroups_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['membergroups_confirm_delete']) . ');" class="delete">' : '', '
 				</div>
