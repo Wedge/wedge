@@ -162,14 +162,14 @@ function template_modfilter_add()
 
 	echo '
 	<we:cat>', $txt['modfilter_addrule'], '</we:cat>
-	<form action="<URL>?action=admin;area=modfilters;sa=add2" method="post">
+	<form action="<URL>?action=admin;area=modfilters;sa=save" method="post">
 		<div class="windowbg2 wrc">
 			<fieldset>
 				<legend>', $txt['modfilter_action_legend'], '</legend>
 				<p>', $txt['modfilter_action_desc'], '</p>
 				<dl class="settings">
 					<dt>', $txt['modfilter_action_rule'], '</dt>
-					<select id="action" name="action" onchange="updateForm();">
+					<select id="action" name="modaction" onchange="updateForm();">
 						<option value="" data-hide>', $txt['modfilter_action_selectone'], '</option>';
 
 	foreach ($context['modfilter_action_list'] as $item)
@@ -236,6 +236,7 @@ function template_modfilter_add()
 				</div>
 			</div>
 		</div>
+		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>';
 
 	// Just to summarise the code.

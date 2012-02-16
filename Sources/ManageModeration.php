@@ -18,10 +18,12 @@ function ManageModeration()
 {
 	loadTemplate('ManageModeration');
 	loadLanguage('ManageSettings');
+	loadSource('Subs-Moderation');
 
 	$subactions = array(
 		'home' => 'ManageModHome',
 		'add' => 'AddFilterRule',
+		'save' => 'SaveFilterRule',
 		'approveall' => 'ManageModApprove',
 	);
 
@@ -38,7 +40,6 @@ function ManageModHome()
 	$context['page_title'] = $txt['admin_mod_filters'];
 	wetem::load('modfilter_home');
 
-	loadSource('Subs-Moderation');
 	$known_variables = getBaseRuleVars(true);
 
 	$load = array(
@@ -195,7 +196,6 @@ function AddFilterRule()
 
 	$context['modfilter_action_list'] = array('prevent', 'moderate', '', 'pin', 'unpin', '', 'lock', 'unlock');
 
-	loadSource('Subs-Moderation');
 	$variables = getBaseRuleVars(true);
 	$context['modfilter_rule_types'] = array();
 
@@ -245,6 +245,101 @@ function AddFilterRule()
 	while ($row = wesql::fetch_assoc($request))
 		$context['grouplist'][$row['min_posts'] == -1 ? 'assign' : 'post'][$row['id_group']] = !empty($row['online_color']) ? '<span style="color:' . $row['online_color'] . '">' . $row['group_name'] . '</span>' : '<span>' . $row['group_name'] . '</span>';
 	wesql::free_result($request);
+}
+
+function SaveFilterRule()
+{
+	global $context, $txt, $settings;
+
+	checkSession();
+
+	// Validate we got something.
+	if (empty($_POST['applies']) || ($_POST['applies'] != 'posts' && $_POST['applies'] != 'topics') || empty($_POST['rule']) || !is_array($_POST['rule']))
+		fatal_lang_error('modfilter_error_saving');
+
+	// This should be the same array as used in the form, for the simple expedient of having one hook that does everything we need it to.
+	$context['modfilter_action_list'] = array('prevent', 'moderate', '', 'pin', 'unpin', '', 'lock', 'unlock');
+
+	$known_variables = getBaseRuleVars(true);
+
+	$context['modfilter_action_list'] = array_diff($context['modfilter_action_list'], array(''));
+
+	// Also check that what we're trying to do is valid, because we couldn't check that before.
+	if (empty($_POST['modaction']) || !in_array($_POST['modaction'], $context['modfilter_action_list']))
+		fatal_lang_error('modfilter_error_saving');
+
+	//libxml_use_internal_errors();
+	// So we're saving. Whatever we are doing, we're going to need the existing (or new) rules in SimpleXML.
+	if (empty($settings['postmod_rules']))
+		$rules = new SimpleXMLElement('<rules />');
+	else
+		$rules = simplexml_load_string($settings['postmod_rules']);
+
+	$findcontainer = $rules->xpath('rule[@for="' . $_POST['applies'] . '"]');
+	if (empty($findcontainer))
+	{
+		// It doesn't exist, we need to add the relevant block to the $rules
+		$rulecontainer = $rules->addChild('rule');
+		$rulecontainer->addAttribute('for', $_POST['applies']);
+	}
+	else
+		$rulecontainer = $findcontainer[0];
+	
+	// Let's first build the new criteria
+	$criteria = $rulecontainer->addChild('criteria');
+	$criteria->addAttribute('for', $_POST['modaction']);
+	$elements = array();
+	foreach ($_POST['rule'] as $new_rule)
+	{
+		list ($rule_type, $params) = explode(';', $new_rule, 2);
+		if (!isset($known_variables[$rule_type]))
+			fatal_lang_error('modfilter_error_saving');
+
+		// Depending on the internal type of rule it is, this reflects what the processing requirements will be.
+		switch ($known_variables[$rule_type]['type'])
+		{
+			case 'id':
+			case 'multi-id':
+				if (strpos($params, ';') === false)
+					fatal_lang_error('modfilter_error_saving');
+				list ($method, $list) = explode(';', $params, 2);
+				if (($method != 'id' && $method != 'except-id') || empty($list))
+					fatal_lang_error('modfilter_error_saving');
+				if (isset($known_variables[$rule_type]['cast']) && $known_variables[$rule_type]['cast'] == 'int')
+				{
+					$array = explode(',', $list);
+					foreach ($array as $k => $v)
+						$array[$k] = (int) $v;
+					$list = implode(',', $array);
+				}
+				$elements[] = $criteria->addChild($rule_type);
+				$elements[count($elements)-1]->addAttribute($method, $list);
+				break;
+			case 'range':
+				if (strpos($params, ';') === false)
+					fatal_lang_error('modfilter_error_saving');
+				list ($method, $value) = explode(';', $params, 2);
+				if (!in_array($method, array('lt', 'lte', 'eq', 'gte', 'gt')) || !is_numeric($value))
+					fatal_lang_error('modfilter_error_saving');
+				$elements[] = $criteria->addChild($rule_type);
+				$elements[count($elements)-1]->addAttribute($method, $value);
+				break;
+			case 'regex':
+				if (substr_count($params, ';') < 2)
+					fatal_lang_error('modfilter_error_saving');
+				list ($method, $caseins, $value) = explode(';', $params, 3);
+				if (!in_array($method, array('begins', 'ends', 'contains', 'matches', 'regex')) || empty($caseins) || empty($value))
+					fatal_lang_error('modfilter_error_saving');
+				$elements[] = $criteria->addChild($rule_type, $value);
+				if ($method != 'regex')
+					$elements[count($elements)-1]->addAttribute('apply', $method);
+				$elements[count($elements)-1]->addAttribute('case-ins', $caseins == 'casesens=no' ? 'yes' : 'no');
+				break;
+		}
+	}
+
+	updateSettings(array('postmod_rules' => $rules->asXML()));
+	redirectexit('action=admin;area=modfilters');
 }
 
 function ManageModApprove()
