@@ -156,13 +156,28 @@ function template_modfilter_home()
 	<br class="clear">';
 }
 
-function template_modfilter_add()
+function template_modfilter_edit()
 {
 	global $context, $txt;
 
+	if (empty($context['edit_modaction']))
+		$context['edit_modaction'] = '';
+	if (empty($context['edit_applies']))
+		$context['edit_applies'] = '';
+	if (empty($context['edit_rules']))
+		$context['edit_rules'] = array();
+
 	echo '
-	<we:cat>', $txt['modfilter_addrule'], '</we:cat>
-	<form action="<URL>?action=admin;area=modfilters;sa=save" method="post">
+	<we:cat>', $context['page_title'], '</we:cat>
+	<form action="<URL>?action=admin;area=modfilters;sa=save" method="post">';
+
+	// Are we doing an edit?
+	if (!empty($context['prev_type']))
+		echo '
+		<input type="hidden" name="prev_type" value="', $context['prev_type'], '">
+		<input type="hidden" name="prev_id" value="', $context['prev_id'], '">';
+
+	echo '
 		<div class="windowbg2 wrc">
 			<fieldset>
 				<legend>', $txt['modfilter_action_legend'], '</legend>
@@ -179,7 +194,7 @@ function template_modfilter_add()
 						<option class="hr"></option>';
 		else
 			echo '
-						<option value="', $item, '"> ', $txt['modfilter_actionlist_' . $item], '</option>';
+						<option value="', $item, '"', $context['edit_modaction'] == $item ? ' selected' : '', '> ', $txt['modfilter_actionlist_' . $item], '</option>';
 	}
 
 	echo '
@@ -192,8 +207,8 @@ function template_modfilter_add()
 				<dl class="settings">
 					<dt>', $txt['modfilter_applies_rule'], '</dt>
 					<dd>
-						<label><input type="radio" name="applies" value="posts" onchange="updateForm();"> ', $txt['modfilter_applies_posts'], '</label><br>
-						<label><input type="radio" name="applies" value="topics" onchange="updateForm();"> ', $txt['modfilter_applies_topics'], '</label><br>
+						<label><input type="radio" name="applies" value="posts"', $context['edit_applies'] == 'posts' ? ' checked' : '', ' onchange="updateForm();"> ', $txt['modfilter_applies_posts'], '</label><br>
+						<label><input type="radio" name="applies" value="topics"', $context['edit_applies'] == 'topics' ? ' checked' : '', ' onchange="updateForm();"> ', $txt['modfilter_applies_topics'], '</label><br>
 					</dd>
 				</dl>
 			</fieldset>
@@ -213,7 +228,23 @@ function template_modfilter_add()
 							<td colspan="3" class="center">', $txt['modfilter_conds_no_conditions'], '</td>
 						</tr>
 					</tbody>
-					<tbody id="conds_notempty"></tbody>
+					<tbody id="conds_notempty">';
+
+	if (!empty($context['edit_rules']))
+	{
+		foreach ($context['edit_rules'] as $id => $rule)
+		{
+			echo '<tr id="cond_row_', ($id + 1), '" class="windowbg"><td>', $rule['rule'], '</td><td>', $rule['details'];
+			if (!empty($rule['rulevalue']))
+				echo '<input type="hidden" name="rule[]" value="', $rule['rulevalue'], '">';
+			echo '</td><td class="center"><a href="#" onclick="removeRow(', ($id + 1), '); return false;">', $txt['remove'], '</a></td></tr>';
+		}
+		add_js('
+	$("#conds_empty").hide();');
+	}
+
+	echo '
+					</tbody>
 				</table>
 				<br>
 				<div class="right">
@@ -275,7 +306,7 @@ function template_modfilter_add()
 			$("#rulecontainer").empty();
 	};
 
-	rows_added = 0;
+	rows_added = ' . count($context['edit_rules']) . ';
 	function addRow(rule, details, ruletype, rulevalue)
 	{
 		rows_added++;

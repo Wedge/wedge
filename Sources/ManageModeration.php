@@ -23,6 +23,7 @@ function ManageModeration()
 	$subactions = array(
 		'home' => 'ManageModHome',
 		'add' => 'AddFilterRule',
+		'edit' => 'ModifyFilterRule',
 		'save' => 'SaveFilterRule',
 		'approveall' => 'ManageModApprove',
 	);
@@ -192,7 +193,7 @@ function AddFilterRule()
 
 	loadLanguage('ManageMembers');
 	$context['page_title'] = $txt['modfilter_addrule'];
-	wetem::load('modfilter_add');
+	wetem::load('modfilter_edit');
 
 	$context['modfilter_action_list'] = array('prevent', 'moderate', '', 'pin', 'unpin', '', 'lock', 'unlock');
 
@@ -245,6 +246,50 @@ function AddFilterRule()
 	while ($row = wesql::fetch_assoc($request))
 		$context['grouplist'][$row['min_posts'] == -1 ? 'assign' : 'post'][$row['id_group']] = !empty($row['online_color']) ? '<span style="color:' . $row['online_color'] . '">' . $row['group_name'] . '</span>' : '<span>' . $row['group_name'] . '</span>';
 	wesql::free_result($request);
+}
+
+function ModifyFilterRule()
+{
+	global $context, $settings, $txt;
+
+	// Get some of the basic stuff set up
+	AddFilterRule();
+
+	$context['page_title'] = $txt['modfilter_editrule'];
+
+	// Now we figure out what we're trying to edit and actually get the relevant details.
+	$type = empty($_GET['type']) || ($_GET['type'] != 'topics' && $_GET['type'] != 'posts') ? '' : $_GET['type'];
+	$id = empty($_GET['rule']) ? 0 : (int) $_GET['rule'];
+	if (empty($settings['postmod_rules']) || empty($type) || empty($id))
+		fatal_lang_error('modfilter_rule_not_found');
+
+	$id--; // We pushed it +1 through the URL so that we wouldn't spuriously get 0 entries which are ambiguous. So we need to correct it here.
+
+	$rules = simplexml_load_string($settings['postmod_rules']);
+	$this_block = $rules->xpath('rule[@for="' . $type . '"]/criteria');
+	if (empty($this_block) || empty($this_block[$id]))
+		fatal_lang_error('modfilter_rule_not_found');
+	
+	$context += array(
+		'prev_type' => $type,
+		'prev_id' => $id,
+		'edit_modaction' => $this_block[$id]['for'],
+		'edit_applies' => $type,
+		'edit_rules' => array(),
+	);
+
+	$rule_list = $this_block[$id]->children();
+	foreach ($rule_list as $rule)
+	{
+		$function = 'displayRow_' . $rule->getName();
+		if (is_callable($function))
+			$context['edit_rules'][] = $function($rule);
+		else
+			$context['edit_rules'][] = array(
+				'rule' => $txt['modfilter_cond_unknownrule'],
+				'details' => htmlspecialchars($rule->asXML()),
+			);
+	}
 }
 
 function SaveFilterRule()
@@ -369,6 +414,105 @@ function ManageModApprove()
 
 	$context['approved_all'] = true;
 	ManageModHome();
+}
+
+function displayRow_groups($rule)
+{
+	global $context, $txt;
+	$array = array(
+		'rule' => !empty($rule['id']) ? $txt['modfilter_cond_groups_in'] : $txt['modfilter_cond_groups_ex'],
+	);
+	// Merge the arrays but do not reindex.
+	$groups = $context['grouplist']['assign'] + $context['grouplist']['post'];
+	ksort($groups);
+	$matched_groups = array();
+	$list = !empty($rule['id']) ? explode(',', (string) $rule['id']) : explode(',', (string) $rule['except-id']);
+	foreach ($list as $item)
+	{
+		$item = (int) $item;
+		if (isset($groups[$item]))
+			$matched_groups[] = $groups[$item];
+	}
+	$array['details'] = implode(', ', $matched_groups);
+	$array['rulevalue'] = 'groups;' . (!empty($rule['id']) ? 'id' : 'except-id') . ';' . implode(',', $list);
+	return $array;
+}
+
+function displayRow_boards($rule)
+{
+	global $context, $txt;
+	$array = array(
+		'rule' => !empty($rule['id']) ? $txt['modfilter_cond_boards_in'] : $txt['modfilter_cond_boards_ex'],
+	);
+	// We need to figure out what boards we are using, but the list of boards is a multi-dimensional array. Needs flattening first.
+	$flat_boards = array();
+	foreach ($context['boardlist'] as $id_cat => $cat)
+		foreach ($cat['boards'] as $id_board => $board)
+			$flat_boards[$id_board] = $board['board_name'];
+	$list = !empty($rule['id']) ? explode(',', (string) $rule['id']) : explode(',', (string) $rule['except-id']);
+	$matched_boards = array();
+	foreach ($list as $item)
+	{
+		$item = (int) $item;
+		if (isset($flat_boards[$item]))
+			$matched_boards[] = $flat_boards[$item];
+	}
+	$array['details'] = implode(', ', $matched_boards);
+	$array['rulevalue'] = 'boards;' . (!empty($rule['id']) ? 'id' : 'except-id') . ';' . implode(',', $list);
+	return $array;
+}
+
+function displayRow_subject($rule)
+{
+	return simpleRegex_displayRow($rule, 'subject');
+}
+
+function displayRow_body($rule)
+{
+	return simpleRegex_displayRow($rule, 'body');
+}
+
+function simpleRegex_displayRow($rule, $type)
+{
+	global $context, $txt;
+	$apply = !empty($rule['apply']) && in_array((string) $rule['apply'], array('begins', 'ends', 'contains', 'matches')) ? (string) $rule['apply'] : 'regex';
+	$case_ins = !empty($rule['case-ins']) && (string) $rule['case-ins'] == 'yes';
+	$content = htmlspecialchars((string) $rule);
+
+	return array(
+		'rule' => $txt['modfilter_cond_' . $type . '_' . $apply],
+		'details' => $content . ' ' . ($case_ins ? $txt['modfilter_case_insensitive'] : $txt['modfilter_case_sensitive']),
+		'rulevalue' => $type . ';' . $apply . ';' . ($case_ins ? 'casesens=no' : 'casesens=yes') . ';' . $content,
+	);
+}
+
+// There's no different logic here other than the names of variables.
+function displayRow_postcount($rule)
+{
+	return simpleRange_displayRow($rule, 'postcount');
+}
+
+function displayRow_warning($rule)
+{
+	return simpleRange_displayRow($rule, 'warning');
+}
+
+function simpleRange_displayRow($rule, $type)
+{
+	global $context, $txt;
+	$array = array(
+		'rule' => $txt['modfilter_cond_' . $type],
+	);
+	foreach (array('lt', 'lte', 'eq', 'gte', 'gt') as $item)
+	{
+		if (isset($rule[$item]))
+		{
+			$array['details'] = $txt['modfilter_range_' . $item] . ' ' . (int) $rule[$item];
+			$array['rulevalue'] = $type . ';' . $item . ';' . (int) $rule[$item];
+			break;
+		}
+	}
+	return $array;
 }
 
 ?>
