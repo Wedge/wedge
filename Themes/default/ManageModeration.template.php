@@ -279,7 +279,8 @@ function template_modfilter_add()
 	{
 		rows_added++;
 		$("#conds_empty").hide();
-		$("#conds_notempty").append("<tr id=\"cond_row_" + rows_added + "\" class=\"windowbg\"><td>" + rule + "</td><td>" + details + "<input type=\"hidden\" name=\"rule[]\" rulevalue=\"" + ruletype + ";" + rulevalue + "\"></td><td class=\"center\"><a href=\"#\" onclick=\"removeRow(" + rows_added + "); return false;\">" + ' . JavaScriptEscape($txt['remove']) . ' + "</a></td></tr>");
+		$("#conds_notempty").append("<tr id=\"cond_row_" + rows_added + "\" class=\"windowbg\"><td>" + rule + "</td><td>" + details + "<input type=\"hidden\" name=\"rule[]\"></td><td class=\"center\"><a href=\"#\" onclick=\"removeRow(" + rows_added + "); return false;\">" + ' . JavaScriptEscape($txt['remove']) . ' + "</a></td></tr>");
+		$("#cond_row_" + rows_added + " input").val(ruletype + ";" + rulevalue);
 
 		$("#condtype").val(0).sb();
 		$("#rulecontainer").empty();
@@ -534,6 +535,68 @@ function template_modfilter_warning()
 
 		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && warning == wn_num && wn_num >= 0 && wn_num <= 100)
 			addRow(wn, range[applies_type] + " " + warning, "warning", applies_type + ";" + warning);
+	};');
+}
+
+// Most of the others have something unique to them, e.g. warning is different to post count in one way, even though in all other respects they are the same
+// These two, however, only differ in the language strings and a parameter, there are no extra or different tests to perform here.
+function template_modfilter_body()
+{
+	template_regex_modfilter('body');
+}
+
+function template_modfilter_subject()
+{
+	template_regex_modfilter('subject');
+}
+
+function template_regex_modfilter($type)
+{
+	global $context, $txt;
+	$utype = ucfirst($type);
+	$js_conds = array();
+	echo '
+		<br>', $txt['modfilter_the_post_' . $type], '
+		<select name="typesel" onchange="validate' . $utype . '();">';
+
+	foreach (array('begins', 'ends', 'contains', 'matches', 'regex') as $item)
+	{
+		// Step through the possible ranges - but also store the JS versions away for later.
+		echo '
+			<option value="', $item, '">', $txt['modfilter_regex_' . $item], '</option>';
+		$js_conds[] = $item . ': ' . JavaScriptEscape($txt['modfilter_cond_' . $type . '_' . $item]);
+	}
+
+	echo '
+		</select>
+		<input type="text" size="20" name="criteria" style="padding: 3px 5px 5px 5px" onchange="validate' . $utype . '();">
+		<div class="pagesection ruleSave">
+			<div class="floatright">
+				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="add' . $utype . '(e);">
+			</div>
+		</div>';
+
+	add_js('
+	function validate' . $utype . '()
+	{
+		var
+			applies_type = $("#rulecontainer select[name=typesel]").val(),
+			criteria = $("#rulecontainer input[name=criteria]").val();
+
+		$("#rulecontainer .ruleSave").toggle(in_array(applies_type, ["begins", "contains", "ends", "matches", "regex"]) && criteria != "");
+	};
+
+	function add' . $utype . '(e)
+	{
+		e.preventDefault();
+		var
+			types = {' . implode(',', $js_conds) . '},
+			applies_type = $("#rulecontainer select[name=typesel]").val(),
+			criteria = $("#rulecontainer input[name=criteria]").val();
+			criteria = criteria.php_htmlspecialchars();
+
+		if (in_array(applies_type, ["begins", "contains", "ends", "matches", "regex"]) && criteria != "")
+			addRow(types[applies_type], criteria, "' . $type . '", applies_type + ";" + criteria);
 	};');
 }
 
