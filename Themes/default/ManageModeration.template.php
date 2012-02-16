@@ -246,17 +246,16 @@ function template_modfilter_add()
 	add_js('
 	function updateForm()
 	{
-		$("#btnSave").hide();
-
 		if ($("#action").val() != "")
 		{
 			$("#fs_applies").show();
 
 			var applies = $("input:radio[name=applies]:checked").val();
 			$("#fs_conds").toggle(applies == "posts" || applies == "topics");
+			$("#btnSave").toggle((applies == "posts" || applies == "topics") && $("#conds_notempty tr").length > 0);
 		}
 		else
-			$("#fs_applies, #fs_conds").hide();
+			$("#fs_applies, #fs_conds, #btnSave").hide();
 	};
 	updateForm();
 
@@ -483,6 +482,58 @@ function template_modfilter_postcount()
 
 		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0)
 			addRow(pc, range[applies_type] + " " + postcount, "postcount", applies_type + ";" + postcount);
+	};');
+}
+
+function template_modfilter_warning()
+{
+	global $context, $txt;
+
+	$js_conds = array();
+	echo '
+		<br>', $txt['modfilter_warning_is'], '
+		<select name="rangesel" onchange="validateWarning();">';
+
+	foreach (array('lt', 'lte', 'eq', 'gte', 'gt') as $item)
+	{
+		// Step through the possible ranges - but also store the JS versions away for later.
+		echo '
+			<option value="', $item, '">', $txt['modfilter_range_' . $item], '</option>';
+		$js_conds[] = $item . ': ' . JavaScriptEscape($txt['modfilter_range_' . $item]);
+	}
+
+	echo '
+		</select>
+		<input type="text" size="5" name="warning" style="padding: 3px 5px 5px 5px" onchange="validateWarning();"> %
+		<div class="pagesection ruleSave">
+			<div class="floatright">
+				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addWarning(e);">
+			</div>
+		</div>';
+
+	add_js('
+	function validateWarning()
+	{
+		var
+			applies_type = $("#rulecontainer select[name=rangesel]").val(),
+			warning = $("#rulecontainer input[name=warning]").val(),
+			wn_num = parseInt(warning);
+
+		$("#rulecontainer .ruleSave").toggle(in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && warning == wn_num && wn_num >= 0 && wn_num <= 100);
+	};
+
+	function addWarning(e)
+	{
+		e.preventDefault();
+		var
+			range = {' . implode(',', $js_conds) . '},
+			wn = ' . JavaScriptEscape($txt['modfilter_cond_warning']) . ',
+			applies_type = $("#rulecontainer select[name=rangesel]").val(),
+			warning = $("#rulecontainer input[name=warning]").val(),
+			wn_num = parseInt(warning);
+
+		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && warning == wn_num && wn_num >= 0 && wn_num <= 100)
+			addRow(wn, range[applies_type] + " " + warning, "warning", applies_type + ";" + warning);
 	};');
 }
 
