@@ -1722,19 +1722,19 @@ function loadSubscriptions()
 			switch ($match[2])
 			{
 				case 'D':
-					$length .= $txt['paid_mod_span_days'];
+					$length .= $match[1] == 1 ? $txt['day'] : $txt['paid_mod_span_days'];
 					$num_length *= 86400;
 					break;
 				case 'W':
-					$length .= $txt['paid_mod_span_weeks'];
+					$length .= $match[1] == 1 ? $txt['week'] : $txt['paid_mod_span_weeks'];
 					$num_length *= 604800;
 					break;
 				case 'M':
-					$length .= $txt['paid_mod_span_months'];
+					$length .= $match[1] == 1 ? $txt['month'] : $txt['paid_mod_span_months'];
 					$num_length *= 2629743;
 					break;
 				case 'Y':
-					$length .= $txt['paid_mod_span_years'];
+					$length .= $match[1] == 1 ? $txt['year'] : $txt['paid_mod_span_years'];
 					$num_length *= 31556926;
 					break;
 			}
@@ -1789,10 +1789,9 @@ function loadSubscriptions()
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
-	{
 		if (isset($context['subscriptions'][$row['id_subscribe']]))
 			$context['subscriptions'][$row['id_subscribe']]['pending'] = $row['total_pending'];
-	}
+
 	wesql::free_result($request);
 }
 

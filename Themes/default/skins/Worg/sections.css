@@ -1095,14 +1095,6 @@ tr.windowbg td
 		margin: 10px 0
 		padding: 0
 
-// Paid Subscriptions
-#paid_subscription
-	width: 100%
-	dl.settings
-		margin-bottom: 0
-		dd, dt
-			margin-bottom: 4px
-
 // Pick theme
 #pick_theme
 	width: 100%

@@ -421,7 +421,6 @@ function template_user_subscription()
 	global $context, $txt, $scripturl, $settings;
 
 	echo '
-	<div id="paid_subscription">
 		<form action="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=subscriptions;confirm" method="post">
 			<we:cat>
 				', $txt['subscriptions'], '
@@ -452,11 +451,10 @@ function template_user_subscription()
 				continue;
 
 			echo '
-			<we:cat>
+			<we:title>
 				', $subscription['name'], '
-			</we:cat>
+			</we:title>
 			<div class="windowbg', $alternate ? '' : '2', ' wrc">
-				<p><strong>', $subscription['name'], '</strong></p>
 				<p class="smalltext">', $subscription['desc'], '</p>';
 
 			if (!$subscription['flexible'])
@@ -483,17 +481,16 @@ function template_user_subscription()
 				}
 				else
 					echo '
-				', sprintf($settings['paid_currency_symbol'], $subscription['costs']['fixed']);
+				', sprintf($settings['paid_currency_symbol'], $subscription['costs']['fixed']), '<br>';
 
 				echo '
-				<br>
-				<input type="submit" name="sub_id[', $subscription['id'], ']" value="', $txt['paid_order'], '" class="submit">', !empty($subscription['group_warning']) ? '
-				<br>' . $txt['paid_subs_admin_override'] : '';
+				<input type="submit" name="sub_id[', $subscription['id'], ']" value="', $txt['paid_order'], '" class="submit" style="margin-top: 8px">', !empty($subscription['group_warning']) ? '
+				<br><br><div class="errorbox">' . $txt['paid_subs_admin_override'] . '</div>' : '';
 			}
 			else
 				echo '
 				<a href="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $subscription['id'], ';uid=', $context['member']['id'], (empty($context['current'][$subscription['id']]) ? '' : ';lid=' . $context['current'][$subscription['id']]['id']), '">', empty($context['current'][$subscription['id']]) ? $txt['paid_admin_add'] : $txt['paid_edit_subscription'], '</a>', !empty($subscription['group_warning']) ? '
-				<br>' . $txt['paid_subs_admin_override'] : '';
+				<br><br><div class="errorbox">' . $txt['paid_subs_admin_override'] . '</div>' : '';
 
 			echo '
 			</div>';
@@ -503,9 +500,9 @@ function template_user_subscription()
 	echo '
 		</form>
 		<br>
-		<we:title>
+		<we:cat>
 			', $txt['paid_current'], '
-		</we:title>
+		</we:cat>
 		<div class="information">
 			', $txt['paid_current_desc'], '
 		</div>
@@ -549,9 +546,7 @@ function template_user_subscription()
 	}
 	echo '
 			</tbody>
-		</table>
-	</div>
-	<br class="clear">';
+		</table>';
 }
 
 // The "choose payment" dialog.
@@ -560,7 +555,6 @@ function template_choose_payment()
 	global $context, $txt, $settings, $scripturl;
 
 	echo '
-	<div id="paid_subscription">
 		<we:cat>
 			', $txt['paid_confirm_payment'], '
 		</we:cat>
@@ -607,10 +601,6 @@ function template_choose_payment()
 			</form>
 		</div>';
 	}
-
-	echo '
-	</div>
-	<br class="clear">';
 }
 
 // The "thank you" bit...
@@ -619,7 +609,6 @@ function template_paid_done()
 	global $context, $txt, $settings, $scripturl;
 
 	echo '
-	<div id="paid_subscription">
 		<we:title>
 			', $txt['paid_done'], '
 		</we:title>
@@ -627,9 +616,7 @@ function template_paid_done()
 			<p>', $txt['paid_done_desc'], '</p>
 			<br>
 			<a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=subscriptions">', $txt['paid_sub_return'], '</a>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 ?>

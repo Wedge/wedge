@@ -81,10 +81,10 @@ function template_generic_menu_dropdown()
 
 	if (!empty($menu_context['can_toggle_drop_down']))
 		echo '
-<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" id="menu_toggle"></a>';
+	<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" id="menu_toggle"></a>';
 
 	echo '
-<ul id="amen', $mid > 1 ? '_' . ($mid - 1) : '', '" class="css menu">';
+	<ul id="amen', $mid > 1 ? '_' . ($mid - 1) : '', '" class="css menu">';
 
 	// IE6 needs an extra space to avoid breaking layout. Ah ah.
 	$end_a = $context['browser']['is_ie6'] ? ' </a>' : '</a>';
@@ -97,9 +97,9 @@ function template_generic_menu_dropdown()
 			continue;
 
 		echo '
-	<li', $section['id'] == $menu_context['current_section'] ? ' class="chosen"' : '', '>
-		<h4>', $section['title'], !empty($section['notice']) ? '<div class="note">' . $section['notice'] . '</div>' : '', '</h4>', !empty($section['areas']) ? '
-		<ul>' : '';
+		<li', $section['id'] == $menu_context['current_section'] ? ' class="chosen"' : '', '>
+			<h4>', $section['title'], !empty($section['notice']) ? '<div class="note">' . $section['notice'] . '</div>' : '', '</h4>', !empty($section['areas']) ? '
+			<ul>' : '';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
 		foreach ($section['areas'] as $id => $area)
@@ -109,7 +109,7 @@ function template_generic_menu_dropdown()
 			{
 				if (empty($area))
 					echo '
-			<li class="separator"><a><hr></a></li>';
+				<li class="separator"><a><hr></a></li>';
 				continue;
 			}
 
@@ -117,14 +117,14 @@ function template_generic_menu_dropdown()
 			$class = empty($class) ? '' : ' class="' . ltrim($class) . '"';
 
 			echo '
-			<li', $class, '><a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id), $menu_context['extra_parameters'], '">',
-				!empty($area['notice']) ? '<strong>' . $area['notice'] . '</strong>' : '', $area['icon'], $area['label'], $end_a;
+				<li', $class, '><a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id), $menu_context['extra_parameters'], '">',
+					!empty($area['notice']) ? '<strong>' . $area['notice'] . '</strong>' : '', $area['icon'], $area['label'], $end_a;
 
 			// Is there any subsections?
 			if (!empty($area['subsections']))
 			{
 				echo '
-				<ul>';
+					<ul>';
 
 				foreach ($area['subsections'] as $sa => $sub)
 				{
@@ -132,29 +132,29 @@ function template_generic_menu_dropdown()
 					{
 						if (is_numeric($sa))
 							echo '
-					<li class="separator"><a><hr></a></li>';
+						<li class="separator"><a><hr></a></li>';
 						continue;
 					}
 
 					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id) . ';sa=' . $sa;
 
 					echo '
-					<li', !empty($sub['selected']) ? ' class="active"' : '', '><a href="', $url, $menu_context['extra_parameters'], '">', $sub['label'], '</a></li>';
+						<li', !empty($sub['selected']) ? ' class="active"' : '', '><a href="', $url, $menu_context['extra_parameters'], '">', $sub['label'], '</a></li>';
 				}
 
 				echo '
-				</ul>
-			';
+					</ul>
+				';
 			}
 			echo '</li>';
 		}
 		echo !empty($section['areas']) ? '
-		</ul>' : '', '
-	</li>';
+			</ul>' : '', '
+		</li>';
 	}
 
 	echo '
-</ul>';
+	</ul>';
 
 	add_js('
 	$("#amen' . ($mid > 1 ? '_' . ($mid - 1) : '') . '").menu();');
