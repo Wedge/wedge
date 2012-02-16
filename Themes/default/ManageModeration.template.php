@@ -569,7 +569,8 @@ function template_regex_modfilter($type)
 
 	echo '
 		</select>
-		<input type="text" size="20" name="criteria" style="padding: 3px 5px 5px 5px" onchange="validate' . $utype . '();">
+		<input type="text" size="20" name="criteria" style="padding: 3px 5px 5px 5px" onchange="validate' . $utype . '();"><br>
+		<label><input type="checkbox" name="casesens"> ', $txt['modfilter_be_case_sensitive'], '</label>
 		<div class="pagesection ruleSave">
 			<div class="floatright">
 				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="add' . $utype . '(e);">
@@ -591,12 +592,15 @@ function template_regex_modfilter($type)
 		e.preventDefault();
 		var
 			types = {' . implode(',', $js_conds) . '},
+			strCaseSens = ' . JavaScriptEscape($txt['modfilter_case_sensitive']) . ',
+			strCaseInsens = ' . JavaScriptEscape($txt['modfilter_case_insensitive']) . ',
 			applies_type = $("#rulecontainer select[name=typesel]").val(),
-			criteria = $("#rulecontainer input[name=criteria]").val();
+			criteria = $("#rulecontainer input[name=criteria]").val(),
+			casesens = $("#rulecontainer input[name=casesens]:checked").length != 0;
 			criteria = criteria.php_htmlspecialchars();
 
 		if (in_array(applies_type, ["begins", "contains", "ends", "matches", "regex"]) && criteria != "")
-			addRow(types[applies_type], criteria, "' . $type . '", applies_type + ";" + criteria);
+			addRow(types[applies_type], criteria + " " + (casesens ? strCaseSens : strCaseInsens), "' . $type . '", applies_type + ";" + (casesens ? "casesens=yes;" : "casesens=no;") + criteria);
 	};');
 }
 
