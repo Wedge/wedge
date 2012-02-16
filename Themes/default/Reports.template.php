@@ -17,7 +17,6 @@ function template_report_type()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=reports" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['generate_reports'], '
@@ -47,9 +46,7 @@ function template_report_type()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // This is the standard template for showing reports in.
@@ -64,7 +61,6 @@ function template_main()
 	);
 
 	echo '
-	<div id="admincenter">
 		<we:title>
 			', $txt['results'], '
 		</we:title>
@@ -143,9 +139,6 @@ function template_main()
 			</tbody>
 		</table>';
 	}
-	echo '
-	</div>
-	<br class="clear">';
 }
 
 // Header of the print page!

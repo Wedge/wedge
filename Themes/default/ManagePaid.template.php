@@ -25,7 +25,6 @@ function template_modify_subscription()
 	}');
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], '" method="post">
 			<we:cat>
 				', $txt['paid_' . $context['action_type'] . '_subscription'], '
@@ -224,9 +223,7 @@ function template_modify_subscription()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_delete_subscription()
@@ -234,7 +231,6 @@ function template_delete_subscription()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modify;sid=', $context['sub_id'], ';delete" method="post">
 			<we:cat>
 				', $txt['paid_delete_subscription'], '
@@ -244,9 +240,7 @@ function template_delete_subscription()
 				<input type="submit" name="delete_confirm" value="', $txt['paid_delete_subscription'], '" class="delete">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Add or edit an existing subscriber.
@@ -279,7 +273,6 @@ function template_modify_user_subscription()
 	}');
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=paidsubscribe;sa=modifyuser;sid=', $context['sub_id'], ';lid=', $context['log_id'], '" method="post">
 			<we:cat>
 				', $txt[$context['action_type'] . '_subscriber'], ' - ', $context['current_subscription']['name'], '
@@ -420,10 +413,6 @@ function template_modify_user_subscription()
 			</ul>
 		</div>';
 	}
-
-	echo '
-	</div>
-	<br class="clear">';
 }
 
 // Template for a user to edit/pick their subscriptions.

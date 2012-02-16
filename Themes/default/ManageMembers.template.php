@@ -16,7 +16,6 @@ function template_search_members()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8">
 			<we:cat>
 				<span class="smalltext floatright">', $txt['wild_cards_allowed'], '</span>
@@ -163,8 +162,8 @@ function template_search_members()
 					</thead>
 					<tbody>';
 
-			foreach ($context['membergroups'] as $membergroup)
-				echo '
+	foreach ($context['membergroups'] as $membergroup)
+		echo '
 						<tr class="windowbg2">
 							<td>', $membergroup['name'], '</td>
 							<td class="center">
@@ -175,7 +174,7 @@ function template_search_members()
 							</td>
 						</tr>';
 
-			echo '
+	echo '
 						<tr class="windowbg2">
 							<td>
 								<em>', $txt['check_all'], '</em>
@@ -201,8 +200,8 @@ function template_search_members()
 					</thead>
 					</tbody>';
 
-			foreach ($context['postgroups'] as $postgroup)
-				echo '
+	foreach ($context['postgroups'] as $postgroup)
+		echo '
 						<tr class="windowbg2">
 							<td>
 								', $postgroup['name'], '
@@ -212,7 +211,7 @@ function template_search_members()
 							</td>
 						</tr>';
 
-			echo '
+	echo '
 						<tr class="windowbg2">
 							<td>
 								<em>', $txt['check_all'], '</em>
@@ -228,17 +227,12 @@ function template_search_members()
 			<div class="right">
 				<input type="submit" value="', $txt['search'], '" class="submit">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_admin_browse()
 {
 	global $context, $theme, $options, $scripturl, $txt, $settings;
-
-	echo '
-	<div id="admincenter">';
 
 	template_show_list('approve_list');
 
@@ -306,10 +300,6 @@ function template_admin_browse()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 	}
-
-	echo '
-	</div>
-	<br class="clear">';
 }
 
 ?>

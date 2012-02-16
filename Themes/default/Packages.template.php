@@ -21,7 +21,6 @@ function template_view_package()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt[($context['uninstalling'] ? 'un' : '') . 'install_mod'], '
 		</we:cat>
@@ -299,9 +298,7 @@ function template_view_package()
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">', (isset($context['form_sequence_number']) && !$context['ftp_needed']) ? '
 			<input type="hidden" name="seqnum" value="' . $context['form_sequence_number'] . '">' : '', '
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	// Operations.
 	if (!empty($js_operations))
@@ -337,9 +334,6 @@ function template_extract_package()
 	{
 		window.location = "', $context['redirect_url'], '";
 	}');
-
-	echo '
-	<div id="admincenter">';
 
 	if (empty($context['redirect_url']))
 		echo '
@@ -391,10 +385,6 @@ function template_extract_package()
 		echo '<br>';
 		template_show_list('restore_file_permissions');
 	}
-
-	echo '
-	</div>
-	<br class="clear">';
 }
 
 function template_list()
@@ -402,7 +392,6 @@ function template_list()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['list_file'], '
 		</we:cat>
@@ -420,9 +409,7 @@ function template_list()
 			</ol>
 			<br>
 			<a href="', $scripturl, '?action=admin;area=packages">[ ', $txt['back'], ' ]</a>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 function template_examine()
@@ -430,7 +417,6 @@ function template_examine()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['package_examine_file'], '
 		</we:cat>
@@ -440,9 +426,7 @@ function template_examine()
 		<div class="windowbg wrc">
 			<pre class="file_content">', $context['filedata'], '</pre>
 			<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $context['package'], '">[ ', $txt['list_files'], ' ]</a>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 function template_browse()
@@ -450,7 +434,6 @@ function template_browse()
 	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			<a href="', $scripturl, '?action=help;in=latest_packages" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['packages_latest'], '
@@ -532,9 +515,7 @@ function template_browse()
 			<input type="hidden" name="action" value="admin">
 			<input type="hidden" name="area" value="packages">
 			<input type="hidden" name="sa" value="browse">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_sublist(&$mod_list, $mod_heading)
@@ -616,7 +597,6 @@ function template_servers()
 					</div>';
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['download_new_package'], '
 		</we:cat>';
@@ -749,9 +729,7 @@ function template_servers()
 					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 				</div>
 			</form>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 function template_package_confirm()
@@ -759,16 +737,13 @@ function template_package_confirm()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $context['page_title'], '
 		</we:cat>
 		<div class="windowbg wrc">
 			<p>', $context['confirm_message'], '</p>
 			<a href="', $context['proceed_href'], '">[ ', $txt['package_confirm_proceed'], ' ]</a> <a href="JavaScript:history.go(-1);">[ ', $txt['package_confirm_go_back'], ' ]</a>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 function template_package_list()
@@ -776,7 +751,6 @@ function template_package_list()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $context['page_title'], '
 		</we:cat>
@@ -890,9 +864,7 @@ function template_package_list()
 			', $txt['package_installed_key'], '
 			<img src="', $theme['images_url'], '/icons/package_installed.gif" class="middle" style="margin-left: 1ex"> ', $txt['package_installed_current'], '
 			<img src="', $theme['images_url'], '/icons/package_old.gif" class="middle" style="margin-left: 2ex"> ', $txt['package_installed_old'], '
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 
 	// Now go through and turn off all the sections.
 	if (!empty($context['package_list']))
@@ -925,7 +897,6 @@ function template_downloaded()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $context['page_title'], '
 		</we:cat>
@@ -940,9 +911,7 @@ function template_downloaded()
 			</ul>
 			<br><br>
 			<p><a href="', $scripturl, '?action=admin;area=packages;get', (isset($context['package_server']) ? ';sa=browse;server=' . $context['package_server'] : ''), '">[ ', $txt['back'], ' ]</a></p>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 function template_install_options()
@@ -950,7 +919,6 @@ function template_install_options()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['package_install_options'], '
 		</we:cat>
@@ -987,9 +955,7 @@ function template_install_options()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</form>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 function template_control_chmod()
@@ -1650,7 +1616,6 @@ function template_action_permissions()
 	$countDown = 3;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=packages;sa=perms;', $context['session_query'], '" id="perm_submit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['package_file_perms_applying'], '
@@ -1728,9 +1693,7 @@ function template_action_permissions()
 					<input type="submit" name="go" id="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '" class="submit">
 				</div>
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	// Just the countdown stuff
 	add_js_inline('

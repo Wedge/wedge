@@ -18,12 +18,11 @@ function template_permission_index()
 	// Not allowed to edit?
 	if (!$context['can_modify'])
 		echo '
-	<div class="errorbox">
-		', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'), '
-	</div>';
+		<div class="errorbox">
+			', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'), '
+		</div>';
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=quick" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm">';
 
 	if (!empty($context['profile']))
@@ -229,9 +228,7 @@ function template_permission_index()
 			</table>';
 
 	echo '
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_by_board()
@@ -239,37 +236,37 @@ function template_by_board()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<form id="admincenter" action="', $scripturl, '?action=admin;area=permissions;sa=board" method="post" accept-charset="UTF-8">
-		<we:cat>
-			', $txt['permissions_boards'], '
-		</we:cat>
-		<div class="information">
-			', $txt['permissions_boards_desc'], '
-		</div>
-		<we:title>
-			<div class="flow_hidden">
-				<span class="perm_name floatleft">', $txt['board_name'], '</span>
-				<span class="perm_profile floatleft">', $txt['permission_profile'], '</span>
+		<form action="', $scripturl, '?action=admin;area=permissions;sa=board" method="post" accept-charset="UTF-8">
+			<we:cat>
+				', $txt['permissions_boards'], '
+			</we:cat>
+			<div class="information">
+				', $txt['permissions_boards_desc'], '
 			</div>
-		</we:title>';
+			<we:title>
+				<div class="flow_hidden">
+					<span class="perm_name floatleft">', $txt['board_name'], '</span>
+					<span class="perm_profile floatleft">', $txt['permission_profile'], '</span>
+				</div>
+			</we:title>';
 
 	if (!$context['edit_all'])
 		echo '
-		<div class="right">
-			<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>
-		</div>';
+			<div class="right">
+				<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>
+			</div>';
 
 	foreach ($context['categories'] as $category)
 	{
 		echo '
-		<we:cat>
-			', $category['name'], '
-		</we:cat>';
+			<we:cat>
+				', $category['name'], '
+			</we:cat>';
 
 		if (!empty($category['boards']))
 			echo '
-		<div class="windowbg wrc">
-			<ul class="perm_boards flow_hidden">';
+			<div class="windowbg wrc">
+				<ul class="perm_boards flow_hidden">';
 
 		$alternate = false;
 
@@ -278,54 +275,53 @@ function template_by_board()
 			$alternate = !$alternate;
 
 			echo '
-				<li class="flow_hidden windowbg', $alternate ? '' : '2', '">
-					<span class="perm_board floatleft">
-						<a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], ';rid=permissions;', $context['session_query'], '">', str_repeat('-', $board['child_level']), ' ', $board['name'], '</a>
-					</span>
-					<span class="perm_boardprofile floatleft">';
+					<li class="flow_hidden windowbg', $alternate ? '' : '2', '">
+						<span class="perm_board floatleft">
+							<a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], ';rid=permissions;', $context['session_query'], '">', str_repeat('-', $board['child_level']), ' ', $board['name'], '</a>
+						</span>
+						<span class="perm_boardprofile floatleft">';
 
 			if ($context['edit_all'])
 			{
 				echo '
-						<select name="boardprofile[', $board['id'], ']">';
+							<select name="boardprofile[', $board['id'], ']">';
 
 				foreach ($context['profiles'] as $id => $profile)
 					echo '
-							<option value="', $id, '"', $id == $board['profile'] ? ' selected' : '', '>', $profile['name'], '</option>';
+								<option value="', $id, '"', $id == $board['profile'] ? ' selected' : '', '>', $profile['name'], '</option>';
 
 				echo '
-						</select>';
+							</select>';
 			}
 			else
 				echo '
-						<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $board['profile'], ';', $context['session_query'], '"> [', $board['profile_name'], ']</a>';
+							<a href="', $scripturl, '?action=admin;area=permissions;sa=index;pid=', $board['profile'], ';', $context['session_query'], '"> [', $board['profile_name'], ']</a>';
 
 			echo '
-					</span>
-				</li>';
+						</span>
+					</li>';
 		}
 
 		if (!empty($category['boards']))
 			echo '
-			</ul>
-		</div>';
+				</ul>
+			</div>';
 	}
 
 	echo '
-		<div class="right">';
+			<div class="right">';
 
 	if ($context['edit_all'])
 		echo '
-			<input type="submit" name="save_changes" value="', $txt['save'], '" class="save">';
+				<input type="submit" name="save_changes" value="', $txt['save'], '" class="save">';
 	else
 		echo '
-			<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>';
+				<a href="', $scripturl, '?action=admin;area=permissions;sa=board;edit;', $context['session_query'], '">[', $txt['permissions_board_all'], ']</a>';
 
 	echo '
-			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</div>
-	</form>
-	<br class="clear">';
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			</div>
+		</form>';
 }
 
 // Edit permission profiles (predefined).
@@ -334,7 +330,6 @@ function template_edit_profiles()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=profiles" method="post" accept-charset="UTF-8">
 			<we:title>
 				', $txt['permissions_profile_edit'], '
@@ -421,9 +416,7 @@ function template_edit_profiles()
 					<input type="submit" name="create" value="', $txt['permissions_profile_new_create'], '" class="new">
 				</div>
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_modify_group()
@@ -432,12 +425,10 @@ function template_modify_group()
 
 	// Cannot be edited?
 	if (!$context['profile']['can_modify'])
-	{
 		echo '
 		<div class="errorbox">
 			', sprintf($txt['permission_cannot_edit'], $scripturl . '?action=admin;area=permissions;sa=profiles'), '
 		</div>';
-	}
 	else
 		add_js('
 	window.weUsedDeny = false;
@@ -448,7 +439,6 @@ function template_modify_group()
 	}');
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'], '" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm" onsubmit="return warnAboutDeny();">';
 
 	if (!empty($settings['permission_enable_deny']) && $context['group']['id'] != -1)
@@ -511,9 +501,7 @@ function template_modify_group()
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 }
 

@@ -25,7 +25,6 @@ function template_new_group()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=membergroups;sa=add" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['membergroups_new_group'], '
@@ -152,9 +151,7 @@ function template_new_group()
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_edit_group()
@@ -162,7 +159,6 @@ function template_edit_group()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=membergroups;sa=edit;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8" name="groupForm" id="groupForm">
 			<we:cat>
 				', $txt['membergroups_edit_group'], ' - ', $context['group']['name'], '
@@ -328,9 +324,7 @@ function template_edit_group()
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	if ($context['group']['id'] != 3 && $context['group']['id'] != 4)
 	{
@@ -382,7 +376,6 @@ function template_group_members()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=', $context['current_action'], isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '', ';sa=members;group=', $context['group']['id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
@@ -524,9 +517,7 @@ function template_group_members()
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	if (!empty($context['group']['assignable']))
 	{
@@ -549,7 +540,6 @@ function template_group_request_reason()
 
 	// Show a welcome message to the user.
 	echo '
-	<div id="moderationcenter">
 		<form action="', $scripturl, '?action=groups;sa=requests" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['mc_groups_reason_title'], '
@@ -574,9 +564,7 @@ function template_group_request_reason()
 				<input type="hidden" name="req_action" value="got_reason">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 ?>

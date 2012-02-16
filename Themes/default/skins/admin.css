@@ -119,7 +119,7 @@ ol.search_results
 
 /* Common admin center classes.
 ------------------------------------------------------- */
-#admincenter hr
+#admin #main hr
 	margin: 10px 0
 
 .title form
@@ -486,7 +486,7 @@ ul.moderation_notes
 
 /* Miscellaneous.
 ------------------------------------------------- */
-#admincenter, #manage_boards, #manage_maintenance, #manage_mail
+#admin #main, #manage_boards, #manage_maintenance, #manage_mail
 	& .wrc
 		margin-bottom: 4px
 

@@ -1,7 +1,7 @@
 
-/* Styles for the admincenter (reverse admin.css)
+/* Styles for the admin center (reverse admin.css)
 ------------------------------------------------- */
-#admincenter
+#admin #main
 	clear: right
 
 #quick_search

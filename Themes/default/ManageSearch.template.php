@@ -16,7 +16,6 @@ function template_modify_weights()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=weights" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['search_weights'], '
@@ -82,9 +81,7 @@ function template_modify_weights()
 				<input type="submit" name="save" value="', $txt['search_weights_save'], '" class="save floatright">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	add_js('
 	function calculateNewValues()
@@ -103,7 +100,6 @@ function template_select_search_method()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=method" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['search_method'], '
@@ -229,9 +225,7 @@ function template_select_search_method()
 				</div>
 			</div>
 			<div class="clear"></div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_create_index()
@@ -239,7 +233,6 @@ function template_create_index()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" method="post" accept-charset="UTF-8" name="create_index">
 			<we:cat>
 				', $txt['search_create_index'], '
@@ -260,9 +253,7 @@ function template_create_index()
 				<input type="submit" name="save" value="', $txt['search_create_index_start'], '" class="save">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_create_index_progress()
@@ -270,7 +261,6 @@ function template_create_index_progress()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=managesearch;sa=createmsgindex;step=1" name="autoSubmit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['search_create_index'], '
@@ -288,9 +278,7 @@ function template_create_index_progress()
 			<input type="hidden" name="start" value="', $context['start'], '">
 			<input type="hidden" name="bytes_per_word" value="', $context['index_settings']['bytes_per_word'], '">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	add_js_inline('
 	var countdown = 10;
@@ -314,7 +302,6 @@ function template_create_index_done()
 {
 	global $context, $theme, $options, $scripturl, $txt;
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['search_create_index'], '
 		</we:cat>
@@ -323,9 +310,7 @@ function template_create_index_done()
 			<p>
 				<strong><a href="', $scripturl, '?action=admin;area=managesearch;sa=method">', $txt['search_create_index_done_link'], '</a></strong>
 			</p>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 // Add or edit a search engine spider.
@@ -333,7 +318,6 @@ function template_spider_edit()
 {
 	global $context, $theme, $options, $scripturl, $txt;
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=sengines;sa=editspiders;sid=', $context['spider']['id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
@@ -368,18 +352,13 @@ function template_spider_edit()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" name="save" value="', $context['page_title'], '" class="save">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Show... spider... logs...
 function template_show_spider_log()
 {
 	global $context, $txt, $theme, $scripturl;
-
-	echo '
-	<div id="admincenter">';
 
 	// Standard fields.
 	template_show_list('spider_log');
@@ -399,9 +378,7 @@ function template_show_spider_log()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" name="delete_entries" value="', $txt['spider_log_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && confirm(' . JavaScriptEscape($txt['spider_log_delete_confirm']) . ');" class="delete">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 ?>

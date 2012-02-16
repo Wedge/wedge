@@ -33,7 +33,6 @@ function template_edit_scheduled_tasks()
 
 	// Starts off with general maintenance procedures.
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=scheduledtasks;sa=taskedit;save;tid=', $context['task']['id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['scheduled_task_edit'], '
@@ -83,9 +82,7 @@ function template_edit_scheduled_tasks()
 					<input type="submit" name="save" value="', $txt['scheduled_tasks_save_changes'], '" class="save">
 				</div>
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 ?>

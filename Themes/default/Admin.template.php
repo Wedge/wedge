@@ -134,11 +134,6 @@ function template_credits()
 {
 	global $context, $theme, $options, $scripturl, $txt;
 
-	// Show the user version information from their server.
-	echo '
-
-	<div id="admincenter">';
-
 	// Display latest support questions from wedge.org
 	echo '
 		<we:cat>
@@ -189,9 +184,7 @@ function template_credits()
 	}
 
 	echo '
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 // Displays information about file versions installed, and compares them to current version.
@@ -200,7 +193,6 @@ function template_view_versions()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['admin_version_check'], '
 		</we:cat>
@@ -438,10 +430,6 @@ function template_view_versions()
 			</table>';
 	}
 
-	echo '
-		</div>
-		<br class="clear">';
-
 	/*
 		Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
 		held at wedge.org and works out if they are up to date. If they aren't it colors that files number red.
@@ -472,7 +460,6 @@ function template_edit_censored()
 
 	// First section is for adding/removing words from the censored list.
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=postsettings;sa=censor" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['admin_censored_words'], '
@@ -538,9 +525,7 @@ function template_edit_censored()
 			</div>
 
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Maintenance is a lovely thing, isn't it?
@@ -549,7 +534,6 @@ function template_not_done()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['not_done_title'], '
 		</we:cat>
@@ -580,9 +564,7 @@ function template_not_done()
 				<div style="margin: 1ex; text-align: right"><input type="submit" name="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '"></div>
 				', $context['continue_post_data'], '
 			</form>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 
 	add_js_inline('
 	var countdown = ', $context['continue_countdown'], ';
@@ -609,12 +591,11 @@ function template_show_settings()
 
 	if ($context['was_saved'])
 		echo '
-	<div class="windowbg" id="profile_success">
-		', $txt['changes_saved'], '
-	</div>';
+		<div class="windowbg" id="profile_success">
+			', $txt['changes_saved'], '
+		</div>';
 
 	echo '
-	<div id="admincenter">
 		<form action="', $context['post_url'], '" method="post" accept-charset="UTF-8"', !empty($context['force_form_onsubmit']) ? ' onsubmit="' . $context['force_form_onsubmit'] . '"' : '', '>';
 
 	// Is there a custom title?
@@ -836,9 +817,7 @@ function template_show_settings()
 
 	echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Template for showing custom profile fields.
@@ -895,7 +874,6 @@ function template_edit_profile_field()
 	}');
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=memberoptions;sa=profileedit;fid=', $context['fid'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
@@ -1165,9 +1143,7 @@ function template_edit_profile_field()
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Results page for an admin search.
@@ -1245,7 +1221,6 @@ function template_add_language()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=add;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['add_language'], '
@@ -1300,9 +1275,7 @@ function template_add_language()
 	}
 
 	echo '
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Download a new language file?
@@ -1314,28 +1287,24 @@ function template_download_language()
 	if (!empty($context['install_complete']))
 	{
 		echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['languages_download_complete'], '
 		</we:cat>
 		<div class="windowbg wrc">
 			', $context['install_complete'], '
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 		return;
 	}
 
 	// An error?
 	if (!empty($context['error_message']))
 		echo '
-	<div id="errorbox">
-		<p>', $context['error_message'], '</p>
-	</div>';
+		<div id="errorbox">
+			<p>', $context['error_message'], '</p>
+		</div>';
 
 	// Provide something of an introduction...
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=downloadlang;did=', $context['download_id'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['languages_download'], '
@@ -1468,9 +1437,7 @@ function template_download_language()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" name="do_install" value="', $txt['add_language_wedge_install'], '" class="submit">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	// The javascript for expanding and collapsing sections.
 	// Each theme gets its own handler.
@@ -1501,7 +1468,6 @@ function template_modify_language_entries()
 	global $context, $theme, $options, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=languages;sa=editlang;lid=', $context['lang_id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['edit_languages'], '
@@ -1650,10 +1616,9 @@ function template_modify_language_entries()
 		echo '
 			</div>';
 	}
+
 	echo '
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // This little beauty shows questions and answer from the captcha type feature.
@@ -1755,7 +1720,6 @@ function template_repair_boards()
 	global $context, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $context['error_search'] ? $txt['errors_list'] : $txt['errors_fixing'], '
 		</we:cat>
@@ -1817,9 +1781,7 @@ function template_repair_boards()
 	}
 
 	echo '
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 
 	if (!empty($context['redirect_to_recount']))
 		add_js_inline('

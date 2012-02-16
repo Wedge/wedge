@@ -16,9 +16,6 @@ function template_editsets()
 {
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
-	echo '
-	<div id="admincenter">';
-
 	template_show_list('smiley_set_list');
 
 	echo '
@@ -28,9 +25,7 @@ function template_editsets()
 		</we:cat>
 		<div class="windowbg wrc">
 			<div id="smileysLatest">', $txt['smiley_sets_latest_fetch'], '</div>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 
 	if (empty($settings['disable_wedge_js']))
 		add_js_file($scripturl . '?action=viewremote;filename=latest-smileys.js', true);
@@ -47,7 +42,6 @@ function template_modifyset()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=editsets" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['current_set']['is_new'] ? $txt['smiley_set_new'] : $txt['smiley_set_modify_existing'], '
@@ -123,9 +117,7 @@ function template_modifyset()
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="set" value="', $context['current_set']['id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Editing an individual smiley
@@ -134,7 +126,6 @@ function template_modifysmiley()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=editsmileys" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm">
 			<we:cat>
 				', $txt['smiley_modify_existing'], '
@@ -209,9 +200,7 @@ function template_modifysmiley()
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="smiley" value="', $context['current_smiley']['id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	add_js('
 	function updatePreview()
@@ -246,7 +235,6 @@ function template_addsmiley()
 	}');
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=addsmiley" method="post" accept-charset="UTF-8" name="smileyForm" id="smileyForm" enctype="multipart/form-data">
 			<we:cat>
 				', $txt['smileys_add_method'], '
@@ -370,9 +358,7 @@ function template_addsmiley()
 				<input type="submit" value="', $txt['smileys_save'], '" class="save">
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	add_js('
 	function updatePreview()
@@ -385,9 +371,6 @@ function template_addsmiley()
 function template_setorder()
 {
 	global $context, $theme, $options, $scripturl, $txt, $settings;
-
-	echo '
-	<div id="admincenter">';
 
 	foreach ($context['smileys'] as $location)
 	{
@@ -425,12 +408,8 @@ function template_setorder()
 		echo '
 			</div>
 			<input type="hidden" name="reorder" value="1">
-		</form>
-		<br>';
+		</form>';
 	}
-	echo '
-	</div>
-	<br class="clear">';
 }
 
 // Editing Message Icons
@@ -447,7 +426,6 @@ function template_editicon()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=smileys;sa=editicon;icon=', $context['new_icon'] ? '0' : $context['icon']['id'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['new_icon'] ? $txt['icons_new_icon'] : $txt['icons_edit_icon'], '
@@ -488,7 +466,7 @@ function template_editicon()
 	foreach ($context['categories'] as $category)
 	{
 		echo '
-							<optgroup label="', $category['name'], '">';
+							<optgroup label="', westr::safe($category['name']), '">';
 
 		foreach ($category['boards'] as $board)
 			echo '
@@ -528,9 +506,7 @@ function template_editicon()
 				<input type="submit" value="', $txt['smileys_save'], '" class="save">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 ?>

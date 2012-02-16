@@ -444,7 +444,6 @@ function template_admin_register()
 	}');
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['admin_browse_register_new'], '
 		</we:cat>
@@ -523,9 +522,7 @@ function template_admin_register()
 					</div>
 				</div>
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // Form for editing the agreement shown for people registering to the forum.

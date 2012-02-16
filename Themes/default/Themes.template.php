@@ -17,7 +17,6 @@ function template_main()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;sa=admin" method="post" accept-charset="UTF-8">
 			<input type="hidden" value="0" name="options[theme_allow]">
 			<we:cat>
@@ -166,9 +165,7 @@ function template_main()
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	add_js('
 	window.weSessionQuery = "', $context['session_query'], '";
@@ -187,7 +184,6 @@ function template_list_themes()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['themeadmin_list_heading'], '
 		</we:cat>
@@ -244,9 +240,7 @@ function template_list_themes()
 				<input type="submit" name="submit" value="', $txt['themeadmin_list_reset_go'], '" class="submit">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_reset_list()
@@ -254,7 +248,6 @@ function template_reset_list()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['themeadmin_reset_title'], '
 		</we:cat>
@@ -287,10 +280,6 @@ function template_reset_list()
 			</ul>
 		</div>';
 	}
-
-	echo '
-	</div>
-	<br class="clear">';
 }
 
 function template_set_options()
@@ -298,7 +287,6 @@ function template_set_options()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_settings']['theme_id'], ';sa=reset" method="post" accept-charset="UTF-8">
 			<input type="hidden" name="who" value="', $context['theme_options_reset'] ? 1 : 0, '">
 			<we:cat>
@@ -360,9 +348,7 @@ function template_set_options()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_set_settings()
@@ -370,7 +356,6 @@ function template_set_settings()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;sa=settings;th=', $context['theme_settings']['theme_id'], '" method="post" accept-charset="UTF-8">
 			<we:title>
 				<a href="', $scripturl, '?action=help;in=theme_settings" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
@@ -514,9 +499,7 @@ function template_set_settings()
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // This template allows for the selection of different themes ;)
@@ -579,8 +562,7 @@ function template_pick()
 
 	echo '
 		</form>
-	</div>
-	<br class="clear">';
+	</div>';
 }
 
 function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', $is_child = false)
@@ -631,7 +613,6 @@ function template_installed()
 
 	// Not much to show except a link back...
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $context['page_title'], '
 		</we:cat>
@@ -642,9 +623,7 @@ function template_installed()
 			<p>
 				<a href="', $scripturl, '?action=admin;area=theme;sa=admin;', $context['session_query'], '">', $txt['back'], '</a>
 			</p>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 function template_edit_list()
@@ -652,7 +631,6 @@ function template_edit_list()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['themeadmin_edit_title'], '
 		</we:cat>';
@@ -676,10 +654,6 @@ function template_edit_list()
 			</ul>
 		</div>';
 	}
-
-	echo '
-	</div>
-	<br class="clear">';
 }
 
 function template_copy_template()
@@ -687,7 +661,6 @@ function template_copy_template()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<we:cat>
 			', $txt['themeadmin_edit_filename'], '
 		</we:cat>
@@ -719,9 +692,7 @@ function template_copy_template()
 
 	echo '
 			</ul>
-		</div>
-	</div>
-	<br class="clear">';
+		</div>';
 }
 
 function template_edit_browse()
@@ -729,7 +700,6 @@ function template_edit_browse()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<table class="table_grid w100 cs0">
 		<thead>
 			<tr class="catbg">
@@ -768,9 +738,7 @@ function template_edit_browse()
 
 	echo '
 		</tbody>
-		</table>
-	</div>
-	<br class="clear">';
+		</table>';
 }
 
 // Wanna edit the stylesheet?
@@ -780,12 +748,9 @@ function template_edit_style()
 
 	if ($context['session_error'])
 		echo '
-	<div class="errorbox">
-		', $txt['error_session_timeout'], '
-	</div>';
-
-	echo '
-	<div id="admincenter">';
+		<div class="errorbox">
+			', $txt['error_session_timeout'], '
+		</div>';
 
 	add_js('
 	var previewData = "", previewTimeout, refreshPreviewCache;
@@ -911,9 +876,7 @@ function template_edit_style()
 			</div>
 			<input type="hidden" name="filename" value="', $context['edit_filename'], '">
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 // This edits the template...
@@ -923,20 +886,19 @@ function template_edit_template()
 
 	if ($context['session_error'])
 		echo '
-	<div class="errorbox">
-		', $txt['error_session_timeout'], '
-	</div>';
+		<div class="errorbox">
+			', $txt['error_session_timeout'], '
+		</div>';
 
 	if (isset($context['parse_error']))
 		echo '
-	<div class="errorbox">
-		', $txt['themeadmin_edit_error'], '
+		<div class="errorbox">
+			', $txt['themeadmin_edit_error'], '
 			<div><tt>', $context['parse_error'], '</tt></div>
-	</div>';
+		</div>';
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['theme_edit'], ' - ', $context['edit_filename'], '
@@ -961,8 +923,7 @@ function template_edit_template()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
-		</form>
-	</div>';
+		</form>';
 }
 
 function template_edit_file()
@@ -971,20 +932,19 @@ function template_edit_file()
 
 	if ($context['session_error'])
 		echo '
-	<div class="errorbox">
-		', $txt['error_session_timeout'], '
-	</div>';
+		<div class="errorbox">
+			', $txt['error_session_timeout'], '
+		</div>';
 
 	//Is this file writeable?
 	if (!$context['allow_save'])
 		echo '
-	<div class="errorbox">
-		', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '
-	</div>';
+		<div class="errorbox">
+			', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '
+		</div>';
 
 	// Just show a big box.... gray out the Save button if it's not saveable... (ie. not 777.)
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';sa=edit" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['theme_edit'], ' - ', $context['edit_filename'], '
@@ -997,9 +957,7 @@ function template_edit_file()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 ?>

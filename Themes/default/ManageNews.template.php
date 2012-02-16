@@ -17,7 +17,6 @@ function template_edit_news()
 	global $context, $scripturl, $txt;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=editnews" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify">
 			<table class="table_grid w100 cs0">
 				<thead>
@@ -73,9 +72,7 @@ function template_edit_news()
 				<input type="submit" name="save_items" value="', $txt['save'], '" class="save"> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return confirm(', JavaScriptEscape($txt['editnews_remove_confirm']), ');" class="delete">
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_email_members()
@@ -91,7 +88,6 @@ function template_email_members()
 	}');
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingcompose" class="flow_hidden" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['admin_newsletters'], '
@@ -182,9 +178,7 @@ function template_email_members()
 				<input type="submit" value="', $txt['admin_next'], '" class="submit">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	// Make the javascript stuff visible.
 	add_js_file('scripts/suggest.js');
@@ -212,7 +206,6 @@ function template_email_members_compose()
 	global $context, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8">
 			<we:cat>
 				<a href="', $scripturl, '?action=help;in=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
@@ -247,9 +240,7 @@ function template_email_members_compose()
 			<input type="hidden" name="', $key, '" value="', implode(($key == 'emails' ? ';' : ','), $values), '">';
 
 	echo '
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 }
 
 function template_email_members_send()
@@ -257,7 +248,6 @@ function template_email_members_send()
 	global $context, $txt, $scripturl;
 
 	echo '
-	<div id="admincenter">
 		<form action="', $scripturl, '?action=admin;area=news;sa=mailingsend" method="post" accept-charset="UTF-8" name="autoSubmit" id="autoSubmit">
 			<we:cat>
 				<a href="', $scripturl, '?action=help;in=email_members" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
@@ -285,9 +275,7 @@ function template_email_members_send()
 
 	echo '
 			</div>
-		</form>
-	</div>
-	<br class="clear">';
+		</form>';
 
 	add_js_inline('
 	var countdown = 2;
