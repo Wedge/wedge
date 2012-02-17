@@ -119,8 +119,11 @@ ol.search_results
 
 /* Common admin center classes.
 ------------------------------------------------------- */
-#admin #main hr
-	margin: 10px 0
+#admin #main
+	hr
+		margin: 10px 0
+	.menu hr
+		margin: 0
 
 .title form
 	font-size: 80%
