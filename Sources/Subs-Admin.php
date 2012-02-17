@@ -60,6 +60,9 @@ function getServerVersions($checkFor)
 	loadSource('media/Class-Media');
 	loadLanguage('Admin');
 
+	$tick = '<img src="' . $theme['images_aeva'] . '/tick.png" class="middle">';
+	$untick = '<img src="' . $theme['images_aeva'] . '/untick2.png" class="middle">';
+
 	$versions = array();
 
 	// Server versions
@@ -85,16 +88,51 @@ function getServerVersions($checkFor)
 		$safe_mode = !(empty($safe_mode) || $safe_mode == 'off');
 		$versions['safe_mode'] = array(
 			'title' => $txt['support_safe_mode'],
-			'version' => '<img src="' . $theme['images_aeva'] . '/' . ($safe_mode ? 'untick2' : 'tick') . '.png" class="middle"> ' . ($safe_mode ? $txt['support_safe_mode_enabled'] : $txt['support_safe_mode_disabled'])
+			'version' => ($safe_mode ? $untick2 : $tick) . ' ' . ($safe_mode ? $txt['support_safe_mode_enabled'] : $txt['support_safe_mode_disabled'])
 		);
 	}
 	// Is GD available?  If it is, we should show version information for it too.
 	if (in_array('gd', $checkFor) && function_exists('gd_info'))
 	{
 		$temp = gd_info();
-		$versions['gd'] = array('title' => $txt['support_versions_gd'], 'version' => $temp['GD Version']);
+		$versions['gd'] = array(
+			'title' => $txt['support_versions_gd'], 'version' => $temp['GD Version']);
+	}
+	// What about FFMPEG?
+	if (in_array('ffmpeg', $checkFor))
+		$versions['ffmpeg'] = array('title' => $txt['support_ffmpeg'], 'version' => class_exists('ffmpeg_movie') ? $tick . ' ' . $txt['support_available'] : $untick . ' ' . $txt['support_not_available']);
+
+	// ImageMagick?
+	if (in_array('imagick', $checkFor))
+	{
+		$data = array();
+		if (media_handler::testIMagick())
+		{
+			$data['imagick'] = true;
+			$imagick = new Imagick;
+			$data['imagick_ver'] = $imagick->getVersion();
+			$imv = $data['imagick_ver']['versionString'];
+		}
+		if (media_handler::testMW())
+		{
+			$data['mw'] = true;
+			$data['mw_ver'] = MagickGetVersion();
+			$imv = $data['mw_ver'][0];
+		}
+		if ($im_ver = media_handler::testImageMagick())
+			$imv = $im_ver;
+		if (isset($imv))
+			$versions['imagick'] = array(
+				'title' => $txt['support_imagemagick'],
+				'version' => $tick . ' (' . $imv . ')</em><br>
+				&nbsp; ' . $txt['support_imagick'] . ': <em>' . (isset($data['imagick']) ? $tick . ' ' . $txt['support_available'] : $untick . ' ' . $txt['support_not_available']) . '</em><br>
+				&nbsp; ' . $txt['support_MW'] . ': <em>' . (isset($data['mw']) ? $tick . ' ' . $txt['support_available'] : $untick . ' ' . $txt['support_not_available']), // don't end the /em tag! The template already does that...
+			);
+		else
+			$versions['imagick'] = array('title' => $txt['support_imagemagick'], 'version' => $untick . ' ' . $txt['support_not_available']);
 	}
 
+	// Then all the accelerators...
 	// If we're using memcache we need the server info.
 	if (empty($memcached) && function_exists('memcache_get') && isset($settings['cache_memcached']) && trim($settings['cache_memcached']) != '')
 		get_memcached_server();

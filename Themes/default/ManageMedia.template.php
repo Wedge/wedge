@@ -402,54 +402,6 @@ function template_aeva_admin_about()
 	global $txt, $scripturl, $context, $amSettings;
 
 	echo '
-		<table class="w100 cp8 cs1" style="margin-top: 1ex">
-			<tr class="titlebg">
-				<td>', $txt['media_admin_credits'], ' <span class="smalltext" style="font-weight: normal">~ ', $txt['media_admin_credits_thanks'], '</span></td>
-			</tr>';
-
-	foreach ($context['aeva_credits'] as $credit)
-		echo '
-			<tr class="windowbg2">
-				<td>', $credit['name'], !empty($credit['nickname']) ? ' ' . $txt['media_aka'] . ' ' . $credit['nickname'] : '', !empty($credit['site']) ? ' - <a href="' . $credit['site'] . '">' . $credit['site'] . '</a>' : '', ' - ', $credit['position'], '</td>
-			</tr>';
-
-	echo '
-		</table>
-
-		<table class="w100" style="margin-top: 8px">
-			<tr><td style="width: 40%" class="top">
-			</td><td id="servInfo" class="top">
-				<table class="w100 cp0 cs1 bordercolor">
-					<tr class="catbg center"><td style="padding: 6px">', $txt['media_admin_about_header'], '</td></tr>
-					<tr><td height="207">
-						<table class="w100 cp4 cs1 windowbg" style="height: 172px">
-							<tr>
-								<td class="windowbg w50">', $txt['media_admin_wedge_ver'], ': ', $context['aeva_data']['wedge'], '</td>
-								<td class="windowbg w50">', $txt['media_admin_php_ver'], ': ', $context['aeva_data']['php'], '</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="windowbg">', $txt['media_admin_safe_mode' . ($context['aeva_data']['safe_mode'] ? '' : '_none')], '</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="windowbg">', $txt['media_admin_ffmpeg'], ': ', $context['aeva_data']['ffmpeg'], '</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="windowbg">', $txt['media_gd2'], ': ', $context['aeva_data']['gd'], '</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="windowbg">', $txt['media_imagemagick'], ': ', $context['aeva_data']['imagemagick'], '
-								(', $txt['media_imagick'], ': ', $context['aeva_data']['imagick'], ' -
-								', $txt['media_MW'], ': ', $context['aeva_data']['magickwand'], ')</td>
-							</tr>
-							<tr>
-								<td colspan="2" class="windowbg2">', $txt['media_admin_installed_on'], ': ', timeformat($amSettings['installed_on']), '</td>
-							</tr>
-						</table>
-					</td></tr>
-				</table>
-			</td></tr>
-		</table>
-
 		<table class="w100 cp4 cs1 bordercolor" style="margin-top: 8px">
 			<tr class="titlebg">
 				<td>', $txt['media_admin_about_modd'], '</td>

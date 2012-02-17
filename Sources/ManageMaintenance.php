@@ -1437,9 +1437,13 @@ function VersionDetail()
 			'php',
 			'db_server',
 		),
-		'right' => array(
+		'right_top' => array(
 			'safe_mode',
 			'gd',
+			'ffmpeg',
+			'imagick',
+		),
+		'right_bot' => array(
 			'eaccelerator',
 			'phpa',
 			'apc',
@@ -1462,6 +1466,10 @@ function VersionDetail()
 		),
 		'sep1' => '',
 	) + $context['current_versions']['left'];
+
+	// And combine the right
+	$context['current_versions']['right'] = $context['current_versions']['right_top'] + array('sep2' => '') + $context['current_versions']['right_bot'];
+	unset($context['current_versions']['right_top'], $context['current_versions']['right_bot']);
 
 	// Now the file versions.
 	$versionOptions = array(

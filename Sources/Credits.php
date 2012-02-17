@@ -119,6 +119,10 @@ function Credits($in_admin = false)
 				'TE',
 				'Thantos',
 			)), 'winrules'),
+			'aeva' => sprintf($txt['credits_aeme'], implode(', ', array(
+				'Nao &#23578;',
+				'Dragooon',
+			)), 'Karl Benson'),
 		),
 		'images' => array(
 			'famfamfam' => '<a href="http://famfamfam.com/">FamFamFam</a> Flags &amp; Silk &copy; Mark James, 2005',
