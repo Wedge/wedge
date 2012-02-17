@@ -1420,26 +1420,48 @@ function AdminBoardRecount()
 // Perform a detailed version check.  A very good thing ;).
 function VersionDetail()
 {
-	global $txt, $context;
+	global $txt, $context, $theme;
 
 	isAllowedTo('admin_forum');
 
 	// Call the function that'll get all the version info we need.
 	loadSource('Subs-Admin');
 
+	// Because we use pretty images from here.
+	$theme['images_aeva'] = file_exists($theme['theme_dir'] . '/images/aeva') ? $theme['images_url'] . '/aeva' : $theme['default_images_url'] . '/aeva';
+
 	// Get a list of current server versions.
 	$checkFor = array(
-		'gd',
-		'db_server',
-		'eaccelerator',
-		'phpa',
-		'apc',
-		'memcache',
-		'xcache',
-		'php',
-		'server',
+		'left' => array(
+			'server',
+			'php',
+			'db_server',
+		),
+		'right' => array(
+			'safe_mode',
+			'gd',
+			'eaccelerator',
+			'phpa',
+			'apc',
+			'memcache',
+			'xcache',
+		),
 	);
-	$context['current_versions'] = getServerVersions($checkFor);
+	foreach ($checkFor as $key => $list)
+		$context['current_versions'][$key] = getServerVersions($list);
+
+	// Then we need to prepend some stuff into the left column - Wedge versions etc.
+	$context['current_versions']['left'] = array(
+		'yourVersion' => array(
+			'title' => $txt['support_versions_forum'],
+			'version' => WEDGE_VERSION,
+		),
+		'wedgeVersion' => array(
+			'title' => $txt['support_versions_current'],
+			'version' => '??',
+		),
+		'sep1' => '',
+	) + $context['current_versions']['left'];
 
 	// Now the file versions.
 	$versionOptions = array(

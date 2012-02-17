@@ -55,19 +55,18 @@ if (!defined('WEDGE'))
 
 function getServerVersions($checkFor)
 {
-	global $txt, $db_connection, $_PHPA, $memcached, $settings;
+	global $txt, $db_connection, $_PHPA, $memcached, $settings, $theme;
 
+	loadSource('media/Class-Media');
 	loadLanguage('Admin');
 
 	$versions = array();
 
-	// Is GD available?  If it is, we should show version information for it too.
-	if (in_array('gd', $checkFor) && function_exists('gd_info'))
-	{
-		$temp = gd_info();
-		$versions['gd'] = array('title' => $txt['support_versions_gd'], 'version' => $temp['GD Version']);
-	}
-
+	// Server versions
+	if (in_array('server', $checkFor))
+		$versions['server'] = array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']);
+	if (in_array('php', $checkFor))
+		$versions['php'] = array('title' => 'PHP', 'version' => PHP_VERSION);
 	// Now let's check for the Database.
 	if (in_array('db_server', $checkFor))
 	{
@@ -76,6 +75,24 @@ function getServerVersions($checkFor)
 			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
 		else
 			$versions['db_server'] = array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => wedbExtra::get_version());
+	}
+
+	// Now the right hand column
+	if (in_array('safe_mode', $checkFor))
+	{
+		// It used to be simple. Now it isn't, with safe mode being deprecated and phased out.
+		$safe_mode = @ini_get('safe_mode');
+		$safe_mode = !(empty($safe_mode) || $safe_mode == 'off');
+		$versions['safe_mode'] = array(
+			'title' => $txt['support_safe_mode'],
+			'version' => '<img src="' . $theme['images_aeva'] . '/' . ($safe_mode ? 'untick2' : 'tick') . '.png" class="middle"> ' . ($safe_mode ? $txt['support_safe_mode_enabled'] : $txt['support_safe_mode_disabled'])
+		);
+	}
+	// Is GD available?  If it is, we should show version information for it too.
+	if (in_array('gd', $checkFor) && function_exists('gd_info'))
+	{
+		$temp = gd_info();
+		$versions['gd'] = array('title' => $txt['support_versions_gd'], 'version' => $temp['GD Version']);
 	}
 
 	// If we're using memcache we need the server info.
@@ -93,11 +110,6 @@ function getServerVersions($checkFor)
 		$versions['memcache'] = array('title' => 'Memcached', 'version' => empty($memcached) ? '???' : memcache_get_version($memcached));
 	if (in_array('xcache', $checkFor) && function_exists('xcache_set'))
 		$versions['xcache'] = array('title' => 'XCache', 'version' => XCACHE_VERSION);
-	if (in_array('php', $checkFor))
-		$versions['php'] = array('title' => 'PHP', 'version' => PHP_VERSION);
-
-	if (in_array('server', $checkFor))
-		$versions['server'] = array('title' => $txt['support_versions_server'], 'version' => $_SERVER['SERVER_SOFTWARE']);
 
 	return $versions;
 }

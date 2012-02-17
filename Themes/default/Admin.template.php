@@ -201,19 +201,29 @@ function template_view_versions()
 			', $txt['support_title'], '
 		</we:cat>
 		<div class="windowbg wrc">
-			<strong>', $txt['support_versions'], ':</strong><br>
-				', $txt['support_versions_forum'], ':
-			<em id="yourVersion">', $context['forum_version'], '</em><br>
-				', $txt['support_versions_current'], ':
-			<em id="wedgeVersion">??</em><br>';
+			<strong>', $txt['support_versions'], ':</strong><br>';
 
 	// Display all the variables we have server information for, and the Wedge version itself.
-	foreach ($context['current_versions'] as $version)
+	foreach ($context['current_versions'] as $list_key => $list)
+	{
 		echo '
-			', $version['title'], ':
-			<em>', $version['version'], '</em><br>';
+			<div class="two-columns">';
+
+		foreach ($list as $key => $version)
+			if (empty($version))
+				echo '
+				<br>';
+			else
+				echo '
+				', $version['title'], ':
+				<em id="', $key, '">', $version['version'], '</em><br>';
+
+		echo '
+			</div>';
+	}
 
 	echo '
+			<br class="clear">
 		</div>';
 
 	// And the JS to include all the version numbers, not to mention the actual information we need.
@@ -236,8 +246,11 @@ function template_view_versions()
 
 	weSupportVersions.forum = "', $context['forum_version'], '";');
 
-	foreach ($context['current_versions'] as $variable => $version)
-		add_js('
+	// If we're going to do this, we need to do all of it.
+	$version_list = $context['current_versions']['left'] + $context['current_versions']['right'];
+	foreach ($version_list as $variable => $version)
+		if (!empty($version))
+			add_js('
 	weSupportVersions.', $variable, ' = "', $version['version'], '";');
 
 	echo '

@@ -17,6 +17,8 @@ function template_show_list($list_id = null)
 
 	// Get a shortcut to the current list.
 	$list_id = $list_id === null ? $context['default_list'] : $list_id;
+	if (empty($context[$list_id]))
+		return;
 	$cur_list =& $context[$list_id];
 
 	if (isset($cur_list['form']))
@@ -99,6 +101,9 @@ function template_show_list($list_id = null)
 			</thead>
 			<tbody>';
 	}
+	else
+		echo '
+			<tbody>';
 
 	// Show a nice message informing there are no items in this list.
 	if (empty($cur_list['rows']) && !empty($cur_list['no_items_label']))
