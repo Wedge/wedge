@@ -270,11 +270,6 @@ function Admin()
 					'enabled' => !empty($settings['media_enabled']),
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
-					'subsections' => array(
-						'about' => array($txt['media_admin_labels_index']),
-						'readme' => array($txt['media_admin_readme']),
-						'changelog' => array($txt['media_admin_changelog']),
-					),
 				),
 				'aeva_settings' => array(
 					'label' => $txt['media_admin_labels_settings'],

@@ -243,8 +243,6 @@ function aeva_initGallery($gal_url = null)
 			'icon' => 'report.png',
 			'sub_areas' => array(
 				'about' => array('enabled' => true, 'title' => 'media_admin_labels_about', 'default' => true),
-				'readme' => array('enabled' => true, 'title' => 'media_admin_readme'),
-				'changelog' => array('enabled' => true, 'title' => 'media_admin_changelog'),
 				'submissions' => array(
 					'enabled' => true,
 					'skip_main_func' => true,
@@ -364,12 +362,6 @@ function aeva_initGallery($gal_url = null)
 			'areas' => array(
 				'about' => array(
 					'label' => $txt['media_admin_labels_about'],
-				),
-				'readme' => array(
-					'label' => $txt['media_admin_readme'],
-				),
-				'changelog' => array(
-					'label' => $txt['media_admin_changelog'],
 				),
 				'submissions' => array(
 					'label' => $txt['media_admin_labels_submissions'],

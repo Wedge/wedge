@@ -401,17 +401,6 @@ function template_aeva_admin_about()
 {
 	global $txt, $scripturl, $context, $amSettings;
 
-	if (!empty($context['aeva_readme_file']))
-	{
-		echo '
-		<div class="windowbg2 wrc" style="margin-top: 8px">
-			<div class="readme">
-				', $context['aeva_readme_file'], '
-			</div>
-		</div>';
-		return;
-	}
-
 	echo '
 		<table class="w100 cp8 cs1" style="margin-top: 1ex">
 			<tr class="titlebg">

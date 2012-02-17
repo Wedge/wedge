@@ -149,44 +149,8 @@ function aeva_admin_about()
 {
 	global $context, $txt, $scripturl, $amSettings, $memberContext, $boarddir, $theme;
 
-	$sa = isset($_REQUEST['sa']) && in_array($_REQUEST['sa'], array('index', 'readme', 'changelog')) ? $_REQUEST['sa'] : 'index';
-
 	// Call the template
 	wetem::load('aeva_admin_about');
-
-	if ($sa == 'readme' || $sa == 'changelog')
-	{
-		$context['disable_media_tag'] = true;
-		$readme = trim(@file_get_contents($boarddir . '/Themes/default/aeva/' . $sa . '.txt'));
-		if (empty($readme))
-			return;
-		// A lovely series of regex to turn the ugly changelog layout into Audrey Hepburn.
-		if ($sa == 'changelog')
-		{
-			parsesmileys($readme);
-			$readme = str_replace(
-				array('bullet_!', 'bullet_@', 'bullet_+', 'bullet_-', 'bullet_*'),
-				array('bullet_f', 'bullet_c', 'bullet_a', 'bullet_r', 'bullet_m'),
-				preg_replace('~(?:^\t*</ul>|<ul class="bbc_list">\t*$)~', '', preg_replace(
-				array(
-					'/^(Version[^\r\n]*?)\s{2,}([^\r\n]*)[\r\n]+\-+/m',
-					'/^# ([^\r\n]*)$/m',
-					'/^([*+@!-]) ([^\r\n]*)(?:[\r\n]+ ( [^\r\n]+))*/m',
-					'/<ul class="bbc_list">[\r\n]*<\/ul>/',
-				), array(
-					'</ul><div style="font-size: 11pt; color: #396; font-weight: bold; padding-top: 12px"><div style="float: right;">$2</div>$1</div><hr><ul class="bbc_list">',
-					'</ul><div style="padding: 8px 16px">$1</div><ul class="bbc_list">',
-					'<li class="bullet_$1">$2$3$4$5</li>',
-					'',
-				),
-				$readme)));
-			$readme = substr_replace($readme, '', strpos($readme, '; padding-top: 12px'), 19);
-		}
-		else
-			$readme = parse_bbc($readme);
-		$context['aeva_readme_file'] = str_replace(array('& ', '<pre></pre>'), array('&amp; ', ''), $readme);
-		return;
-	}
 
 	// Let's load the credits
 	$context['aeva_credits'] = array(
