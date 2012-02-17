@@ -261,9 +261,17 @@ function template_modfilter_edit()
 				</div>
 				<div id="rulecontainer"></div>
 			</fieldset>
-			<div class="pagesection" id="btnSave">
+			<div class="pagesection">
 				<div class="floatright">
-					<div class="additional_row right"><input type="submit" class="save" value="', $txt['modfilter_save_this_rule'], '"></div>
+					<div class="additional_row right">
+						<input id="btnSave" type="submit" class="save" value="', $txt['modfilter_save_this_rule'], '">';
+
+	if (!empty($context['prev_id']))
+		echo '
+						<input name="delete" type="submit" class="delete" value="', $txt['modfilter_remove_this_rule'], '">';
+
+	echo '
+					</div>
 				</div>
 			</div>
 		</div>

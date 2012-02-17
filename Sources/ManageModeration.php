@@ -272,7 +272,7 @@ function ModifyFilterRule()
 	
 	$context += array(
 		'prev_type' => $type,
-		'prev_id' => $id,
+		'prev_id' => $id + 1,
 		'edit_modaction' => $this_block[$id]['for'],
 		'edit_applies' => $type,
 		'edit_rules' => array(),
@@ -329,7 +329,17 @@ function SaveFilterRule()
 	}
 	else
 		$rulecontainer = $findcontainer[0];
-	
+
+	if (!empty($_POST['delete']))
+	{
+		if (!empty($_POST['prev_type']) && ($_POST['prev_type'] == 'posts' || $_POST['prev_type'] == 'topics') && !empty($_POST['prev_id']) && (int) $_POST['prev_id'] > 0)
+			deleteRuleNode($rules, $_POST['prev_type'], ((int) $_POST['prev_id']) - 1);
+		cleanupRuleNodes($rules);
+		$result = (count($rules->children()) > 0) ? $rules->asXML() : '';
+		updateSettings(array('postmod_rules' => $result));
+		redirectexit('action=admin;area=modfilters');
+	}
+
 	// Let's first build the new criteria
 	$criteria = $rulecontainer->addChild('criteria');
 	$criteria->addAttribute('for', $_POST['modaction']);
@@ -383,7 +393,14 @@ function SaveFilterRule()
 		}
 	}
 
-	updateSettings(array('postmod_rules' => $rules->asXML()));
+	// Are we modifying a rule? Then we should strip the original node before proceeding.
+	if (!empty($_POST['prev_type']) && ($_POST['prev_type'] == 'posts' || $_POST['prev_type'] == 'topics') && !empty($_POST['prev_id']) && (int) $_POST['prev_id'] > 0)
+		deleteRuleNode($rules, $_POST['prev_type'], ((int) $_POST['prev_id']) - 1);
+
+	cleanupRuleNodes($rules);
+	$result = (count($rules->children()) > 0) ? $rules->asXML() : '';
+		
+	updateSettings(array('postmod_rules' => $result));
 	redirectexit('action=admin;area=modfilters');
 }
 
@@ -513,6 +530,45 @@ function simpleRange_displayRow($rule, $type)
 		}
 	}
 	return $array;
+}
+
+// There's no easy way to delete nodes in SimpleXML. But we can do it if we can target the node precisely from its root, which we can.
+// Note that you can't do it even if you foreach($sxml as &$element) and then unset the element, because you just unset the ref, not the actual element.
+// Once we've done that, we do need to make sure that we clean up any stray branches.
+// Returns a SimpleXMLElement if there's something there, or bool false if not.
+function deleteRuleNode(&$rules, $parent_branch, $node_position)
+{
+	$branch_pos = -1;
+	$found = false;
+	foreach ($rules->rule as $ruleblock)
+	{
+		$branch_pos++;
+		if ((string) $ruleblock['for'] == $parent_branch)
+		{
+			$found = true;
+			break;
+		}
+	}
+	if ($found && !empty($rules->rule[$branch_pos]->criteria[$node_position]))
+		unset($rules->rule[$branch_pos]->criteria[$node_position]);
+}
+
+function cleanupRuleNodes(&$rules)
+{
+	$prune = array();
+	$branch_pos = -1;
+	foreach ($rules->rule as $ruleblock)
+	{
+		$branch_pos++;
+		if (count($ruleblock->children()) == 0)
+			$prune[] = $branch_pos;
+	}
+	if (!empty($prune))
+	{
+		$prune = array_reverse($prune);
+		foreach ($prune as $prune_pos)
+			unset($rules->rule[$prune_pos]);
+	}
 }
 
 ?>

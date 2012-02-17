@@ -244,8 +244,6 @@ function ModifyModerationSettings($return_config = false)
 			'rem1' => array('int', 'user_limit'),
 			'rem2' => array('int', 'warning_decrement'),
 			array('select', 'warning_show', array($txt['setting_warning_show_mods'], $txt['setting_warning_show_user'], $txt['setting_warning_show_all'])),
-		'',
-			array('large_text', 'postmod_rules', 'size' => 20),
 	);
 
 	if ($return_config)
