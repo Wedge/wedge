@@ -20,13 +20,17 @@ ul.buttonlist
 	a.lock, a.pin, a.add_poll
 		padding-left: 22px
 		background-image: url($images/small_lock.gif)
-		background-position: 6px 5px
+		background-position: 6px 2px
 		background-repeat: no-repeat
 	a.pin
 		padding-left: 23px
 		background-image: url($images/small_pin.gif)
 	a.add_poll
 		background-image: url($images/small_poll.gif)
+
+.table_list a.unreadlink
+	font-size: .9em
+	float: right
 
 /* Styles for the personal messages section.
 ------------------------------------------------- */
@@ -89,29 +93,35 @@ ul.buttonlist
 /* Styles for entering thoughts.
 ------------------------------------------------- */
 
-#thought_update, #thought_form input[type="text"]
-	font-size: 9.5pt
-	padding: 3px
-	cursor: pointer
-	border: 1px solid transparent
-	width: 208px
-	margin: 8px 0
-	:hover
-		border: 1px solid #adadff
-		background: #fff
-		color: #000
-
 #thought_form
 	display: inline-block
 	input
 		margin: 0 1px 0 2px
 		padding: 2px 4px
-		background-position: 0 100px, 0 0, 0 0
+		&[type=submit]
+			background-position: 0 100px, 0 0, 0 0
+	.sbox
+		margin-top: -3px
+		font-size: 13px
+		max-width: 85px
+
+#thought_update input
+	margin: 0 0 8px
+
+#thought_form input[type="text"], #thought_update
+	font-size: 9.5pt
+	padding: 3px
+	border: 1px solid transparent
+	width: 208px
+	margin: 8px 0
+
+#thought_form input[type="text"], #thought_update:hover
+	border: 1px solid #999
+	background: #fff
+	color: #000
 
 #thought_update
-	margin: 8px 0
-	input
-		margin: 0 0 8px
+	cursor: pointer
 
 .thought
 	ul
@@ -125,29 +135,6 @@ ul.buttonlist
 
 .thought_icon extends .inline-block
 	text-decoration: none
-	vertical-align: -3px
 	background: url($images/icons/thought.png) no-repeat
 	width: width($images_dir/icons/thought.png)px
 	height: height($images_dir/icons/thought.png)px
-
-table.thought_list
-	td
-		padding: 4px !important
-		.thought_actions
-			display: none
-			opacity: 0
-			transition: opacity .5s ease
-		:hover .thought_actions
-			margin-top, margin-bottom: -4px
-			opacity: 1
-			display: inline-block
-		:hover .hide
-			display: none
-	.bc, .bc2
-		width: 5%
-		white-space: nowrap
-	.bc2
-		background-color: rgba(0,0,0,.05)
-
-#new_thought
-	display: none

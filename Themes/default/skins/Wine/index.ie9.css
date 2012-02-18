@@ -1,6 +1,9 @@
 
+#upper_section h1
+	filter: glow(color=#666666, strength=2)
+
 input[type=button], input[type=submit]
-	padding: 4px 4px 2px
+	padding: 3px 4px
 
 input.submit
 	padding-left: 23px
@@ -8,6 +11,3 @@ input.submit
 .menu h4 strong
 	filter: none
 	background: #c74c55
-
-.note
-	display: inline-block

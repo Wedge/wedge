@@ -1,7 +1,7 @@
 
 /*!
- * Wine for Wedge.org
- * (c) 2011, Wedgeward (http://wedge.org)
+ * Wine skin for Wedge
+ * Copyright (c) 2010-2012, Wedgeward (http://wedge.org)
  */
 
 // Set a fontsize that will look the same in all browsers.
@@ -10,7 +10,7 @@ body extends .grad700
 	color: #ccc
 	font: 88%/130% $main_font
 	margin: 0
-	padding: 0 4px
+	padding: 0 6px
 
 
 /* Main layout declarations (body, sidebar...)
@@ -22,13 +22,9 @@ body extends .grad700
 
 #header, #navi, #footer
 	base: .grad700
-	background-color: #e3e0da
-	gradient: lighten($head_bg, 6%), $head_bg
-	color: #553
-
-#navi
-	background-color: $head_bg
-	background-image: none
+	background-color: #693636
+	background-position: 0 -100px
+	color: #ddc
 
 #content
 	color: #444
@@ -43,36 +39,36 @@ body extends .grad700
 	table-layout: fixed
 	padding-top: 6px
 
-#responsive
-	#edge
-		clear: both
-		display: block
-	#sidebar
-		display: block
-		width: 100%
-		section extends .inline-block
-			width: $sidebar-width
-			vertical-align: top !important
-			padding: 0 8px 8px
-			margin: 8px
-	#main
-		display: block
-		padding: 4px 0 12px 6px
-
 #sidebar
 	display: table-cell
 	vertical-align: top
 	width: $sidebar-width
-	font-size: .9em
-//	border: 1px solid #ccc
-//	background: #f2f3ea
-//	border-radius: 8px
+	border: 1px solid #ccc
+	background: #f2f3ea
+	border-radius: 8px
 	a
-		color: #47a // #a54
-//		border-bottom: 1px dotted #600
-//		text-decoration: none
+		color: #a54
+		border-bottom: 1px dotted #600
+		text-decoration: none
 	.column
 		padding: 8px 12px 12px
+
+#responsive
+	#edge
+		display: block
+		position: relative
+	#sidebar
+		display: block
+		position: absolute
+		z-index: 8
+		left: -260px
+		transition: left .3s ease
+		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
+		:hover
+			left: -40px
+	#main
+		display: block
+		padding: 4px 0 12px 6px
 
 #userbox
 	overflow: hidden
@@ -84,6 +80,7 @@ body extends .grad700
 		$max-width: 70px
 	p
 		margin: 0 0 2px
+		font-size: .9em
 	p.now
 		margin: 0
 	ul
@@ -91,12 +88,9 @@ body extends .grad700
 		margin: 0 0 0 12px
 		list-style-type: disc
 		li
+			font-size: .9em
 			margin: 0 0 2px 0
 			padding: 0
-
-img.opaque
-	box-shadow: #999 0 0 6px
-	border-radius: 6px
 
 ul#noava
 	margin: 0
@@ -105,7 +99,7 @@ ul#noava
 	display: table-cell
 	vertical-align: top
 	min-height: 200px
-	padding: 4px 22px 12px 8px
+	padding: 4px 0 12px 30px
 
 // Top header (search box, etc.)
 #top_section
@@ -124,19 +118,18 @@ ul#noava
 			text-align, float: right
 
 #header
-//	background-image: -prefix-linear-gradient(rgba(255,255,255,.3), rgba(255,255,255,0))
 	a
 		color: #fff
 	h2
-		color: #939380
+		color: #fc9
 	// The main title
 	h1
 		margin: 42px 0 0 30px
 		float: left
 		a
-			color: #766
-			font: 100 2.9em "Bebas Neue", "PT Sans", "Segoe UI Light", "Segoe UI", Arial
-//			text-shadow: 0 0 8px #333
+			color: lighten(hue(#fc9, 20), 10%)
+			font: bold 2.9em $head_font
+			text-shadow: 0 0 8px #333
 
 #siteslogan
 	float: right
@@ -144,14 +137,14 @@ ul#noava
 
 // Banner header
 #upper_section
-//	background: url($images/theme/bg.jpg)
+	background: url($images/theme/bg.jpg)
 	height: 100px
 	overflow: hidden
 	width: 100%
 	.frame
 		width: 100%
 		height: 100px
-//		gradient: $head_bg, darken($head_bg, 20%)
+		gradient: $head_bg, darken($head_bg, 20%)
 
 // The navigation list (i.e. linktree)
 #linktree
@@ -183,29 +176,25 @@ ul#noava
 // The footer with copyright links etc.
 #footer
 	margin: 0 auto
-	border-top: 1px solid #bdb5b5
-	div.frame::before
-		float: left
-		padding-right: 10px
-		content: url($here/../wedgebox57_.png)
+	border-top: 3px solid #bdb5b5
 	div.frame extends .wedgesymbol
 		padding: 10px 20px
 	a
-		color: #679
-		border-bottom: 1px dashed #679
+		color: #fff
+		border-bottom: 1px dashed #fff
 		text-decoration: none
 	ul
 		padding: 0 0 8px 0
 		li
 			display: block
+			padding: 0 2px
 			line-height: 160%
 			&.rd, &.stats
 				display: inline
-
-#upper_section .frame::before
-	float: right
-	margin: 20px
-	content: url($images/welogo30.png)
+			&.links
+				margin: 0 -8px
+				a
+					margin: 0 8px
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -253,7 +242,7 @@ h1, h2, h3, h4, h5, h6
 fieldset
 	border: 1px solid #c4c4c4
 	padding: 1em
-	margin: .5em 0
+	margin: 0 0 .5em 0
 	border-radius: 10px
 	legend
 		font-weight: bold
@@ -262,7 +251,7 @@ fieldset
 		border: 0
 		legend
 			background: $main_bg
-			border-radius: 6px
+			border-radius: 0 0 6px 6px
 			padding: 2px 6px
 
 // No image should have a border when linked.
@@ -279,20 +268,6 @@ em
 .ping
 	box-shadow: none !important
 
-// The 'New' icon, generally speaking.
-.note extends .inline-block
-	border-radius: 7px
-	background-color: rgba(255,0,0,.8)
-	gradient: #fa6, #c8a
-	color: #fff !important
-	font: 700 75%/100% Tahoma
-	text-transform: lowercase
-	vertical-align: .1em
-	margin: 0 3px
-	padding: 1px 5px 3px
-	:hover
-		text-decoration: none
-
 /* Common styles used for inheritance. You can declare
 	them anywhere you like, but having them near the
 	start of the file should avoid cascading issues.
@@ -303,29 +278,28 @@ em
 	background-repeat: no-repeat
 
 .wedgesymbol
-	background: transparent url($images/we3s.png) 98.5% 75% no-repeat
+	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
 
 // "With rounded corners" class, for modern browsers...
 .wrc, .wrc_top, .wrc_bottom
 	margin-top: 2px
 	margin-bottom: 4px
 	padding: .9em 1.2em
-//	border-radius: 6px
-//	border: 1px solid rgba(0,0,0, .1)
+	border-radius: 12px
+	// !!! border: 1px solid rgba(0,0,0, .1)
 	p
 		margin: 0 0 .5em
 		:only-child
 			margin-top: .5em
 
 .wrc_top
-//	border-radius: 12px 12px 0 0
+	border-radius: 12px 12px 0 0
 	border-bottom, margin-bottom: 0
 
 .wrc_bottom
-//	border-radius: 0 0 12px 12px
+	border-radius: 0 0 12px 12px
 	border-top, margin-top: 0
 
-/*
 .grad40
 	background-image: url($images/theme/grad40.png)
 	background-repeat: repeat-x
@@ -333,7 +307,6 @@ em
 .grad700
 	background-image: url($images/theme/grad700.png)
 	background-repeat: repeat-x
-*/
 
 // Can't use an extends on .zoom-loading, because it's in a different file.
 .loading, .zoom-loading
@@ -548,20 +521,16 @@ select.sb
 				background: #e8ece8
 				background: -prefix-linear-gradient(left, #ddd, #e8ece8, #ccc)
 
-#sidebar .sbox
-	max-width: 200px
-
-#jump_to
-	margin: .5em 0
-	height: 25px
-	visibility: hidden
-
 .cat .sbox
 	font-size: 14px
 	text-shadow: none
 
 tr.catbg .sbox, tr.titlebg .sbox
 	font-size: 11px
+
+#thought_form .sbox
+	font-size: 13px
+	max-width: 85px
 
 .qaction
 	font-size: .85em
@@ -587,11 +556,10 @@ input, select, textarea
 // The font size of textareas should be just a little bit larger.
 textarea
 	font: 100%/130% $main_font
-	border-radius: 0
 
 // No need to style input[type=reset], not using it.
 input[type=submit], input[type=button], .ie_button
-	background: #eee url($images/theme/bevel.png)
+	background: #e5e5e5 url($images/theme/bevel.png)
 	margin: 0
 	outline: none
 	cursor: pointer
@@ -602,9 +570,10 @@ input[type=submit], input[type=button], .ie_button
 	box-shadow: 0 1px 2px rgba(0,0,0,.1)
 	padding: 3px 5px 4px
 	color: #555
+
 	:hover
-		background-color: #f3f3f3
-		text-decoration: none
+		background-color: #dee
+		color: #000
 
 input.submit
 	background: url($images/buttons/submit.png) no-repeat $bevel
@@ -648,9 +617,10 @@ input.submit
 	background-position: 5px center, 0 0, 0 0
 
 input.search
-	background: rgba(255,255,235,.42) url($images/filter.gif) 5px 5px no-repeat
-	padding-left: 24px
-	height: 25px
+	background: #fdfaf9 url($images/filter.gif) 5px 4px no-repeat
+	height, padding-left: 24px
+	#header &
+		background: rgb(235,235,215) url($images/filter.gif) 5px 4px no-repeat
 
 // All input elements that are checkboxes or radio buttons shouldn't have a border around them.
 input[type=checkbox], input[type=radio]
@@ -678,21 +648,22 @@ input[type=file]
 
 #navi
 	color: #999
-	border-bottom: 1px solid #bdb5b5
+	border-bottom: 3px solid #bdb5b5
 	overflow: hidden
 	padding: 0 25px
 
 #main_menu
 	padding: 5px 0 0
 	float: left
+	h4 a
+		color: #fff
+	.new_icon
+		margin: 2px 5px 0 10px
 	li.nodrop h4
 		background-image: none
 	h4:hover, h4.hove
 		background-color: #5a6c85
 		background-position: 98% -26px
-		color: #fff
-		a
-			color: #fff
 
 .menu li a
 	display: block
@@ -763,18 +734,14 @@ input[type=file]
 	background-color: rgba(0,0,0, .075)
 	background-position: 98% 4px
 	color: #000
-	a
-		color: #000
 
 .menu .chosen h4
-	background-color: #95a89d
+	background-color: #3fa6c3
 	background-position: 98% -26px
 	font-weight: 700
 	color: #fff
 	a
 		color: #fff
-	&.hove
-		background-color: lighten(#95a89d, 8%)
 
 li.active > a
 	font-weight: 700
@@ -802,7 +769,8 @@ li.subsection > a extends .arrows
 			background-color: rgba(0,0,0, .075)
 
 #main_menu .chosen h4, #context_menus .chosen h4
-	&:hover, &.hove
+	background-color: #95a89d
+	&.hove
 		background-color: lighten(#95a89d, 8%)
 
 .nodrop h4, #main_menu .nodrop h4
@@ -834,18 +802,25 @@ li.separator
 #main .menu
 	margin-bottom: 4px
 
-.menu .note
+.menu strong
+	color: #fff
+	font-size: 85%
+	text-transform: uppercase
+	background-color: rgba(255,0,0,.8)
 	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
-	font-size: 80%
+	border-radius: 7px
 	float: right
 	padding: 4px 5px 5px
+	line-height: 100%
 	margin: -1px -4px 0 8px
 
-.menu h4 .note
-	float: none
-	font-size: 70%
+.menu h4 strong
 	margin: 0 0 0 4px
-	padding: 2px 5px 3px
+	font-weight: 700
+	font-size: 80%
+	gradient: #d55a61, #b63c47
+	padding: 2px 5px 1px
+	float: none
 
 .menu li.menu-top
 	position: absolute
@@ -913,12 +888,11 @@ li.separator
 header, footer, aside, section, article, nav
 	display: block
 
-// Left and right-floating
-.floatleft
-	float: left
-
 .floatright
 	float: right
+
+.floatleft
+	float: left
 
 .flow_auto
 	overflow: auto
@@ -949,19 +923,17 @@ header, footer, aside, section, article, nav
 .largetext
 	font-size: 1.4em
 
-// Centering an element that has width
 .centered
 	margin: 0 auto
-
-// Centering, right and left-aligning text within an element
-.left
-	text-align: left
 
 .center
 	text-align: center
 
 .right
 	text-align: right
+
+.left
+	text-align: left
 
 .double_height
 	line-height: 2em
@@ -1003,7 +975,7 @@ ul.reset, ul.reset li
 		font-size: 92%
 		line-height: 1.4em
 		border-top: 1px dotted #99a
-		padding: 12px 16px
+		padding: 1.2em 2.2em
 		margin: 0
 		overflow: auto
 		background: rgba(0, 0, 0, .07)
@@ -1143,25 +1115,16 @@ td.footnum a:target, a.fnotel:target
 section.block extends .wrc
 	overflow: hidden
 	header extends .wehead
-		background-color: #a39f99
+		background-color: #b3afa9
 		padding: 3px 12px
 		border-radius: 8px 8px 0 0
 		margin: -0.9em -1.2em 1em
-		a
-			text-decoration: underline
 	footer extends .wefoot
 		padding: 3px 12px
 		border-radius: 0 0 8px 8px
 		margin: .5em -1.2em -0.9em
 	dl.settings
 		margin: 0
-
-.bc, .bc2
-	white-space: nowrap
-.bc
-	width: 5%
-.bc2
-	background-color: rgba(0,0,0,.05)
 
 tr.catbg
 	td extends .wehead, th extends .wehead
@@ -1210,42 +1173,28 @@ tr.titlebg
 	.windowbg2&
 		background: #d8e1e7
 
-// Post error notices, general alert notices, and mute/ban warnings
-.error,
-.alert,
-.warn_mute,
-.warn_ban
+// Sometimes there will be an error when you post
+.error
+	color: red
+
+// Messages that somehow need to attract the attention.
+.alert
+	color: red
+
+// Colors for warnings
+.warn_mute, .warn_ban
 	color: red
 
 .warn_moderate
 	color: orange
 
-.warn_watch,
-.success
+.warn_watch, .success
 	color: green
 
 a.moderation_link
 	&, :visited
 		color: red
 		font-weight: bold
-
-table.thought_list
-	td
-		.thought_actions
-			display: none
-			opacity: 0
-			transition: opacity .5s ease
-			input
-				padding-top, padding-bottom: 2px
-		:hover .thought_actions
-			margin-top, margin-bottom: -4px
-			opacity: 1
-			display: inline-block
-		:hover .hide
-			display: none
-
-#new_thought
-	display: none
 
 /* AJAX notification bar
 ------------------------------------------------------- */
@@ -1278,12 +1227,12 @@ dl
 // Lists with settings use these a lot.
 dl.settings
 	clear: right
-	margin: 5px 0 5px
+	margin: 0 0 10px
 	dt, dd
 		float: left
 		padding: 0
 	dt
-		margin: 5px 0 5px
+		margin: 0 0 10px
 		clear: both
 		width: 40%
 	dt.windowbg final
@@ -1291,7 +1240,7 @@ dl.settings
 		margin: 0 0 3px 0
 		padding: 0 0 5px 0
 	dd
-		margin: 5px 0 5px 2%
+		margin: 0 0 3px 1.5%
 		width: 56%
 	img
 		margin: 0 10px 0 0
@@ -1321,69 +1270,73 @@ dl#feed
 /* Styles for section headers.
 ------------------------------------------------------- */
 
-// .cat, .title and .title2 are closely related... Inheritance fiesta!
+// .cat, .title, .title2 and .posthead are closely related... Inheritance fiesta!
 .catbase extends .grad40
 	overflow: hidden
-//	border-radius: 5px
+	border-radius: 5px
 	padding: 5px 10px 5px
 	margin-bottom: 4px
 	border: 1px solid rgba(0,0,0, .15)
-	font: 100 180%/1.3em $head_font
+	font: 700 140%/20px $head_font
 	img
+		vertical-align: -3px
 		padding-right: 2px
+
+.posthead extends .catbase
+	width: 100%
+	display: table
+	box-sizing: border-box
+	background: rgba(0,0,0, .03)
+	text-shadow: white 0 1px 2px
+	color: gray
 
 .cat extends .catbase
 	clear: left
-	letter-spacing: -1px
-	color: #666
+	background-color: #b3afa9
+	color: white
 	a
+		color: #fda !important
 		font-weight: 400
 		text-decoration: underline !important
 		text-shadow: none
 		border-bottom: 0 !important
+		:hover
+			color: #fff !important
 	img
 		padding-right: 4px
 
 .cat final
-	background-color: #f2f0ee
-	background: $left_gradient2
+	background-color: #c3b9c3
 	border-color: #fd9604
-	border-width: 0 0 0 2px
-	border-radius: 4px
+	border-width: 2px 0 0 0
+	text-shadow: black 0 1px 2px
 	.table_list &
 		margin: -5px
 
 .title extends .cat
 	padding: 4px 8px
 	border, margin: 0
-	color: #777
-
-#sidebar .title final
-	margin-top: 6px
-	padding: 4px 0 0
-	font-size: 1.6em
+	#sidebar &
+		margin-top: 6px
+	a
+		color: #faf8f8
 
 .title2 extends .title
-	font-size: 1.6em
-	font-weight: 400
+	font-size: 1.2em
 	background: none
 	border-bottom: 1px dotted rgba(0,0,0, .5)
 	border-radius: 0
+	text-shadow: white 0 1px 2px
 	&, a
-		color: #777 // channels(gray,0,0,30%)
+		color: channels(gray,0,0,30%)
+	.current_skin > & final
+		background: #fafafa
 
 .cat final, .title final
-	font: 100 1.5em/1.3em $head_font
+	font: bold 1.2em/1.2em $head_font
 
 .title final
-	font-size: 1.4em
-	position: relative
-/*	:after
-		content: ""
-		position: absolute
-		left, right, bottom: 0
-		height: 2px
-		background: -prefix-linear-gradient(left, rgba(153,153,153,.3), transparent) */
+	font: 400 1em $main_font
 
 // A general table class
 .table_grid
@@ -1555,7 +1508,7 @@ h6
 	margin: 12px 0 8px
 	border-bottom: 1px solid #ccc
 	text-transform: uppercase
-	font: 700 9pt Tahoma
+	font: 700 9pt Tahoma, Verdana
 	img
 		vertical-align: -3px
 h6.top
@@ -1568,26 +1521,20 @@ h6.alt2
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */
 
-.auto_suggest extends .hide
-	color: #000
-	background: #fff
-	border: 1px solid #cbcdd3
-	border-radius: 6px
-	display: inline
-	padding: 2px
-	font-size: 90%
-	list-style: none
-	overflow: hidden
+.auto_suggest_div extends .hide
+	border: 1px solid #000
 	position: absolute
-	z-index: 999
-	box-shadow: 0 2px 5px rgba(0,0,0, .3)
-	div
-		border-radius: 3px
-		padding: 2px 3px
+	color: #000
 
-.auto_suggest_hover
-	background-color: #eee
+.auto_suggest_item
+	background-color: #ece8f0
+	padding: 2px 3px 1px
+
+.auto_suggest_item_hover
+	background-color: #988
+	padding: 2px 3px 1px
 	cursor: pointer
+	color: #fff
 
 // The dropdown menu toggle icon
 #menu_toggle
@@ -1605,6 +1552,8 @@ h6.alt2
 	width: 100%
 	td, th
 		padding: 5px
+	a.unreadlink
+		float: right
 	a.collapse
 		float: right
 		margin: -1px 0 0 .5em
@@ -1645,30 +1594,28 @@ th.last_th
 
 $main_font = Arial, sans-serif
 $menu_font = $main_font
-$head_font = "Franklin Gothic Medium", "Gill Sans", "Segoe UI Light", "Segoe UI", Georgia, Arial, Tahoma, sans-serif
+$head_font = "PT Sans", $main_font
 $mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace
 
-$post_font = 95%/133% Verdana, Arial, Segoe UI, Tahoma, Verdana, $main_font
+$post_font = 9pt/140% Verdana, $main_font
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""
-$button_gradient = ", $left_gradient1"
+$button_gradient = ", -prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
 $button_gradient {ie9} = ""
-$left_gradient1 = "-prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
-$left_gradient2 = "-prefix-linear-gradient(left, rgba(212, 212, 212, .2), rgba(212, 212, 212, 0))"
 
 $max-width = "max-width"
 $max-width {ie6} = "width"
 
 $main_bg = #fffdfa
-$head_bg = darken(#e3e0da, 3%)
+$head_bg = rgba(221, 200, 137, .66)
 $menu_border = rgba(220, 224, 220, .95)
 $menu_bg = -prefix-linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
 $menu_bg {ie9} =           average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
 $menu_bg {ie6,ie7,ie8} =   #f7fcf7
 $board_col = #d97b33
-$window_bg = lighten(#e3e0d0, 12%) // #f2f3ea // #f9f6f0
-$window_bg2 = lighten(#e3e0d0, 10%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent
+$window_bg = #f2f3ea // #f9f6f0
+$window_bg2 = #f3f7f3
 $window_bg3 = #f0f0f0
 $sidebar-width = "240px"
 $sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table mode

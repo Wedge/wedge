@@ -10,7 +10,7 @@
 #board_list
 	box-sizing: border-box
 	td.info a.subject
-		font: 700 120% $head_font
+		font: 700 120% "PT Sans", $head_font
 		color: $board_col
 	td.children
 		color: #555
@@ -66,17 +66,15 @@ section.ic
 		padding: .5em
 	.last
 		margin: 0
-		padding: .5em
-		border-top: 2px dotted #bbb
+		border-top: 1px dotted #bbb
 	.inline
 		border: none
 		margin: 0
-		padding: .2em .5em
 	.pminfo
 		margin: 0
-		padding: .5em
 	.stats
-		padding-top: 8px
+		margin-top: 8px
+		padding-top: 0
 
 // The small stats
 #index_common_stats
@@ -107,8 +105,25 @@ img.new_posts
 
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
+// Topic title and Quick access
+.posthead
+	width: 100%
+	display: table
+	box-sizing: border-box
+	padding: 8px
+	margin: 4px
+	border-radius: 12px
+	background: rgba(0,0,0, .015)
+
+#top_subject extends .cell
+	padding: 4px 8px
+	font: 100 1.6em/1.2em $head_font
+	color: gray
+	letter-spacing: -1px
+
+// Previous/next topic links inside .posthead
 .prevnext_prev extends .cell
-	font: normal 60%/1.3em Arial
+	font: normal 1em/1.3em Arial
 	text-align: left
 	width: 20%
 	a
@@ -116,11 +131,6 @@ img.new_posts
 
 .prevnext_next extends .prevnext_prev
 	text-align: right
-
-#top_subject extends .cell
-	padding: 4px 8px
-	font-family: "PT Sans", $main_font
-	letter-spacing: -1px
 
 #moderationbuttons
 	overflow: hidden
@@ -192,7 +202,7 @@ img.new_posts
 // Alternating backgrounds for posts, and several other sections of the forum.
 .postbg extends .windowbg
 .postbg2 extends .windowbg2
-	background-color: transparent
+	background: #fbf9f6
 
 #forumposts
 	.wrc
@@ -216,6 +226,7 @@ img.new_posts
 	overflow: auto
 	width: 100%
 
+// Post title, date and action list
 .postheader extends .flow_hidden
 	width: 100%
 	display: table
@@ -224,7 +235,7 @@ img.new_posts
 		overflow: hidden
 		text-overflow: ellipsis
 		white-space: nowrap
-		line-height, height: 1.2em
+		line-height: 1.2em
 
 .keyinfo
 	display: table-cell
@@ -250,7 +261,6 @@ img.new_posts
 	display: table-cell
 	background: rgba(0,0,0,.042)
 	width: 14em
-	border-radius: 12px 0 0 12px
 	padding: 10px 12px 12px 0
 	vertical-align: top
 
@@ -262,7 +272,7 @@ img.new_posts
 
 	h4
 		margin: .2em 0 .2em 1.1em
-		font: 700 120%/120% $head_font
+		font: 700 120%/120% "PT Sans", "Franklin Gothic Medium", Arial
 		overflow: hidden
 		text-overflow: ellipsis
 		:hover, &.show
@@ -290,6 +300,17 @@ img.new_posts
 			vertical-align: bottom
 			padding: 0 .2em
 
+// Could also do with a grayscale filter... IE accepts "filter: gray", while other
+// browsers will do with "filter: grayscale()". Waiting for wider implementation.
+li.profile img
+	opacity: .3
+	transition: opacity .3s ease
+	:hover
+		filter: none
+		opacity: 1
+		transition: opacity .3s ease
+
+/*
 .right-side .poster
 	border-radius: 0 12px 12px 0
 	text-align: right
@@ -299,6 +320,7 @@ img.new_posts
 		margin: 0 1.3em 0 1em
 	h4
 		margin: .2em 1.1em .2em 0
+*/
 
 .postarea
 	display: table-cell
@@ -335,7 +357,7 @@ img.new_posts
 	padding: 1em 0 3px
 	border-top: 1px solid #aaa
 	line-height: 1.4em
-	font-size: .85em
+	font-size: .9em
 
 .custom_fields_above_signature
 	width: 98%
@@ -476,32 +498,24 @@ ul.usermenuitem li a
 	div
 		padding: 0 .5em
 
-ul.buttonlist extends ul.quickbuttons
-	margin-right: -8px
+ul.buttonlist extends ul.reset
+	margin: 5px -8px 5px 0
+	padding: 0 1% 0 0
 	overflow: hidden
-	padding-right: 1%
-	ul
-		padding: 5px
-		margin: 0
-		li
-			margin, padding: 0
-			list-style: none
-			float: left
+	li
+		margin, padding: 0
+		float: left
+		border-right: 1px solid #ddd
+		&.last
+			border-right: 0
 	a
-		padding: 3px 5px 4px
+		padding: 0 8px
 		color: #679
-		background: #f3f3f3
-		height, line-height: 15px
-		text-decoration: none
-		border: 1px solid rgba(0,0,0, .07)
-		border-radius: 6px
+		line-height: 15px
 		&.active
-			background: #8a8ca5
-			color: #fff
 			font-weight: bold
 		:hover
-			background: #fd9604
-			color: #fff
+			color: #a54
 
 /* Styles for the quick reply area.
 ---------------------------------------------------- */
@@ -512,9 +526,6 @@ ul.buttonlist extends ul.quickbuttons
 	.roundframe
 		padding-left: 8%
 		padding-right: 8%
-
-#quickreply a
-	font-family: $main_font
 
 .qr_content
 	padding-left: 10px
@@ -721,7 +732,7 @@ tr.titlebg td
 /* Styles for sidebar menus.
 ------------------------------------------------------- */
 .left_menu
-	margin: .5em 2em
+	margin: .1em 2em .5em
 	padding: 0
 	li
 		padding: 0
@@ -825,7 +836,7 @@ tr.windowbg td
 	width: 20%
 	float: left
 	h4
-		font: 700 120%/105% $head_font
+		font: 700 120%/105% "PT Sans", $head_font
 		white-space: pre-wrap
 		overflow: hidden
 		span.position
@@ -1094,18 +1105,14 @@ tr.windowbg td
 		margin: 10px 0
 		padding: 0
 
-// Paid Subscriptions
-#paid_subscription
-	width: 100%
-	dl.settings
-		margin-bottom: 0
-		dd, dt
-			margin-bottom: 4px
-
 // Pick theme
 #pick_theme
 	width: 100%
 	float: left
+	fieldset, legend
+		border: 1px solid #c4c4c4
+	.current_skin legend
+		background: #f0fbf0
 
 // Issue a warning
 #warn_body
@@ -1323,18 +1330,11 @@ dl.stats
 
 /* More icons.
 ------------------------------------------------- */
-.new_icon extends .inline-block
-	background: url($language/new.gif) no-repeat
-	width: width($language_dir/new.gif)px
-	height: height($language_dir/new.gif)px
-	text-decoration: none
-
 .feed_icon extends .inline-block
 	background: url($images/icons/feed.gif) no-repeat
 	width: width($images_dir/icons/feed.gif)px
 	height: height($images_dir/icons/feed.gif)px
 	text-decoration: none
-	vertical-align: -3px
 	.catfeed &
 		margin-left: -4px
 
@@ -1351,7 +1351,8 @@ dl.stats
 	background: url($images/helptopics.gif) no-repeat
 	width, height: 16px
 	vertical-align: -2px
-
+	.cat & final
+		vertical-align: 0
 
 /* More hacks.
 ------------------------------------------------- */

@@ -1,3 +1,6 @@
 
+#upper_section h1
+	filter: glow(color=#666666, strength=2)
+
 input[type=button], input[type=submit]
 	padding-right: 4px

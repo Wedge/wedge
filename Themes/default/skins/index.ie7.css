@@ -1,4 +1,7 @@
 
+.clearfix
+    zoom: 1
+
 .cat input[type=checkbox]
 	margin: 0 4px
 
@@ -186,9 +189,6 @@ input.cancel
 // IE7 needs inline-block to be reset to inline separately... How annoying.
 .inline-block
 	display: inline
-
-#upper_section h1
-	filter: glow(color=#666666, strength=3)
 
 // Without this, the clear: both on dt will fail.
 dl.settings dd

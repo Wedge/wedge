@@ -1,30 +1,34 @@
 <?xml version="1.0"?>
 <!--
-	See Warm/skin.xml for descriptions.
+	See Wine/Warm/skin.xml for descriptions and more options.
 -->
 <skin>
 
 	<name>
-		Wuthering
+		Wine
 	</name>
 
 	<type>
-		add
+		replace
 	</type>
 
 	<comment><![CDATA[
-		By Nao, inspired by Bloc's Curve.
+		By Nao.
 	]]></comment>
+
+	<sidebar>
+		left
+	</sidebar>
 
 	<code for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
-	DD_belatedPNG.fix('.ping,#wedgelogo,#footer,#footer div.frame');
+	DD_belatedPNG.fix('.ping,#wedgelogo,#footer,#footer div.frame,.cat,.title');
 	$.ie6hover();
 	]]></code>
 
 	<code for="iphone,tablet"><![CDATA[
-	$('#main').insertBefore('#edge');
+	$('#sidebar').insertAfter('#main');
 	]]></code>
 
 </skin>

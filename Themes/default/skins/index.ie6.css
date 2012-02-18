@@ -1,4 +1,7 @@
 
+.clearfix
+    zoom: 1
+
 /* The dropdown menus
 ------------------------------------------------------- */
 .menu
@@ -332,7 +335,6 @@ input.cancel
 
 #upper_section h1
 	display: inline // IE6 double margin bug fix
-	filter: glow(color=#666666, strength=3)
 
 hr
 	clear: both

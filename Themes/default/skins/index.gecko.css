@@ -1,10 +1,4 @@
 
-// Firefox 3.6 doesn't correctly position the sidebar.
-#responsive #sidebar
-	left: -220px
-	:hover
-		left: 0
-
 // Firefox 2.x doesn't support inline-block. This hack will still suck,
 // but at least the layout won't break horribly. Hopefully.
 .inline-block
