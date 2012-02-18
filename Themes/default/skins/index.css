@@ -573,6 +573,10 @@ select.sb
 tr.catbg .sbox, tr.titlebg .sbox
 	font-size: 11px
 
+#thought_form .sbox
+	font-size: 13px
+	max-width: 85px
+
 .qaction
 	font-size: .85em
 
@@ -1334,7 +1338,6 @@ dl#feed
 // .cat, .title and .title2 are closely related... Inheritance fiesta!
 .catbase extends .grad40
 	overflow: hidden
-//	border-radius: 5px
 	padding: 5px 10px 5px
 	margin-bottom: 4px
 	border: 1px solid rgba(0,0,0, .15)
@@ -1388,12 +1391,6 @@ dl#feed
 .title final
 	font-size: 1.4em
 	position: relative
-/*	:after
-		content: ""
-		position: absolute
-		left, right, bottom: 0
-		height: 2px
-		background: -prefix-linear-gradient(left, rgba(153,153,153,.3), transparent) */
 
 // A general table class
 .table_grid

@@ -310,18 +310,6 @@ li.profile img
 		opacity: 1
 		transition: opacity .3s ease
 
-/*
-.right-side .poster
-	border-radius: 0 12px 12px 0
-	text-align: right
-	ul
-		margin-right: 0
-	> ul
-		margin: 0 1.3em 0 1em
-	h4
-		margin: .2em 1.1em .2em 0
-*/
-
 .postarea
 	display: table-cell
 	padding-left: 14px
@@ -1111,7 +1099,7 @@ tr.windowbg td
 	float: left
 	fieldset, legend
 		border: 1px solid #c4c4c4
-	.current_skin legend
+	.current_skin > legend
 		background: #f0fbf0
 
 // Issue a warning

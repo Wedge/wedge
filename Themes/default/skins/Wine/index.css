@@ -251,7 +251,7 @@ fieldset
 		border: 0
 		legend
 			background: $main_bg
-			border-radius: 0 0 6px 6px
+			border-radius: 6px
 			padding: 2px 6px
 
 // No image should have a border when linked.
@@ -267,6 +267,20 @@ em
 
 .ping
 	box-shadow: none !important
+
+// The 'New' icon, generally speaking.
+.note extends .inline-block
+	border-radius: 7px
+	background-color: rgba(255,0,0,.8)
+	gradient: #fa6, #c8a
+	color: #fff !important
+	font: 700 75%/100% Tahoma
+	text-transform: lowercase
+	vertical-align: .1em
+	margin: 0 3px
+	padding: 1px 5px 3px
+	:hover
+		text-decoration: none
 
 /* Common styles used for inheritance. You can declare
 	them anywhere you like, but having them near the
@@ -521,6 +535,14 @@ select.sb
 				background: #e8ece8
 				background: -prefix-linear-gradient(left, #ddd, #e8ece8, #ccc)
 
+#sidebar .sbox
+	max-width: 200px
+
+#jump_to
+	margin: 1em 0
+	height: 25px
+	visibility: hidden
+
 .cat .sbox
 	font-size: 14px
 	text-shadow: none
@@ -556,6 +578,7 @@ input, select, textarea
 // The font size of textareas should be just a little bit larger.
 textarea
 	font: 100%/130% $main_font
+	border-radius: 0
 
 // No need to style input[type=reset], not using it.
 input[type=submit], input[type=button], .ie_button
@@ -657,8 +680,6 @@ input[type=file]
 	float: left
 	h4 a
 		color: #fff
-	.new_icon
-		margin: 2px 5px 0 10px
 	li.nodrop h4
 		background-image: none
 	h4:hover, h4.hove
@@ -770,7 +791,7 @@ li.subsection > a extends .arrows
 
 #main_menu .chosen h4, #context_menus .chosen h4
 	background-color: #95a89d
-	&.hove
+	&:hover, &.hove
 		background-color: lighten(#95a89d, 8%)
 
 .nodrop h4, #main_menu .nodrop h4
@@ -802,25 +823,18 @@ li.separator
 #main .menu
 	margin-bottom: 4px
 
-.menu strong
-	color: #fff
-	font-size: 85%
-	text-transform: uppercase
-	background-color: rgba(255,0,0,.8)
+.menu .note
 	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
-	border-radius: 7px
+	font-size: 80%
 	float: right
 	padding: 4px 5px 5px
-	line-height: 100%
 	margin: -1px -4px 0 8px
 
-.menu h4 strong
-	margin: 0 0 0 4px
-	font-weight: 700
-	font-size: 80%
-	gradient: #d55a61, #b63c47
-	padding: 2px 5px 1px
+.menu h4 .note
 	float: none
+	font-size: 70%
+	margin: 0 0 0 4px
+	padding: 2px 5px 3px
 
 .menu li.menu-top
 	position: absolute
@@ -888,11 +902,12 @@ li.separator
 header, footer, aside, section, article, nav
 	display: block
 
-.floatright
-	float: right
-
+// Left and right-floating
 .floatleft
 	float: left
+
+.floatright
+	float: right
 
 .flow_auto
 	overflow: auto
@@ -923,17 +938,19 @@ header, footer, aside, section, article, nav
 .largetext
 	font-size: 1.4em
 
+// Centering an element that has width
 .centered
 	margin: 0 auto
+
+// Centering, right and left-aligning text within an element
+.left
+	text-align: left
 
 .center
 	text-align: center
 
 .right
 	text-align: right
-
-.left
-	text-align: left
 
 .double_height
 	line-height: 2em
@@ -975,7 +992,7 @@ ul.reset, ul.reset li
 		font-size: 92%
 		line-height: 1.4em
 		border-top: 1px dotted #99a
-		padding: 1.2em 2.2em
+		padding: 12px 16px
 		margin: 0
 		overflow: auto
 		background: rgba(0, 0, 0, .07)
@@ -1126,6 +1143,13 @@ section.block extends .wrc
 	dl.settings
 		margin: 0
 
+.bc, .bc2
+	white-space: nowrap
+.bc
+	width: 5%
+.bc2
+	background-color: rgba(0,0,0,.05)
+
 tr.catbg
 	td extends .wehead, th extends .wehead
 tr.titlebg
@@ -1173,28 +1197,42 @@ tr.titlebg
 	.windowbg2&
 		background: #d8e1e7
 
-// Sometimes there will be an error when you post
-.error
-	color: red
-
-// Messages that somehow need to attract the attention.
-.alert
-	color: red
-
-// Colors for warnings
-.warn_mute, .warn_ban
+// Post error notices, general alert notices, and mute/ban warnings
+.error,
+.alert,
+.warn_mute,
+.warn_ban
 	color: red
 
 .warn_moderate
 	color: orange
 
-.warn_watch, .success
+.warn_watch,
+.success
 	color: green
 
 a.moderation_link
 	&, :visited
 		color: red
 		font-weight: bold
+
+table.thought_list
+	td
+		.thought_actions
+			display: none
+			opacity: 0
+			transition: opacity .5s ease
+			input
+				padding-top, padding-bottom: 2px
+		:hover .thought_actions
+			margin-top, margin-bottom: -4px
+			opacity: 1
+			display: inline-block
+		:hover .hide
+			display: none
+
+#new_thought
+	display: none
 
 /* AJAX notification bar
 ------------------------------------------------------- */
@@ -1508,7 +1546,7 @@ h6
 	margin: 12px 0 8px
 	border-bottom: 1px solid #ccc
 	text-transform: uppercase
-	font: 700 9pt Tahoma, Verdana
+	font: 700 9pt Tahoma
 	img
 		vertical-align: -3px
 h6.top
@@ -1521,20 +1559,26 @@ h6.alt2
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */
 
-.auto_suggest_div extends .hide
-	border: 1px solid #000
-	position: absolute
+.auto_suggest extends .hide
 	color: #000
+	background: #fff
+	border: 1px solid #cbcdd3
+	border-radius: 6px
+	display: inline
+	padding: 2px
+	font-size: 90%
+	list-style: none
+	overflow: hidden
+	position: absolute
+	z-index: 999
+	box-shadow: 0 2px 5px rgba(0,0,0, .3)
+	div
+		border-radius: 3px
+		padding: 2px 3px
 
-.auto_suggest_item
-	background-color: #ece8f0
-	padding: 2px 3px 1px
-
-.auto_suggest_item_hover
-	background-color: #988
-	padding: 2px 3px 1px
+.auto_suggest_hover
+	background-color: #eee
 	cursor: pointer
-	color: #fff
 
 // The dropdown menu toggle icon
 #menu_toggle

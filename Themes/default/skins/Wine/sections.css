@@ -107,6 +107,13 @@ img.new_posts
 
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
+
+#top_subject extends .cell
+	padding: 4px 8px
+	font-family: "PT Sans", $main_font
+	letter-spacing: -1px
+
+// Previous/next topic links inside .posthead
 .prevnext_prev extends .cell
 	font: normal 60%/1.3em Arial
 	text-align: left
@@ -116,11 +123,6 @@ img.new_posts
 
 .prevnext_next extends .prevnext_prev
 	text-align: right
-
-#top_subject extends .cell
-	padding: 4px 8px
-	font-family: "PT Sans", $main_font
-	letter-spacing: -1px
 
 #moderationbuttons
 	overflow: hidden
@@ -216,6 +218,7 @@ img.new_posts
 	overflow: auto
 	width: 100%
 
+// Post title, date and action list
 .postheader extends .flow_hidden
 	width: 100%
 	display: table
@@ -224,7 +227,7 @@ img.new_posts
 		overflow: hidden
 		text-overflow: ellipsis
 		white-space: nowrap
-		line-height, height: 1.2em
+		line-height: 1.2em
 
 .keyinfo
 	display: table-cell
@@ -289,6 +292,16 @@ img.new_posts
 		a img
 			vertical-align: bottom
 			padding: 0 .2em
+
+// Could also do with a grayscale filter... IE accepts "filter: gray", while other
+// browsers will do with "filter: grayscale()". Waiting for wider implementation.
+li.profile img
+	opacity: .3
+	transition: opacity .3s ease
+	:hover
+		filter: none
+		opacity: 1
+		transition: opacity .3s ease
 
 .right-side .poster
 	border-radius: 0 12px 12px 0
@@ -1094,18 +1107,14 @@ tr.windowbg td
 		margin: 10px 0
 		padding: 0
 
-// Paid Subscriptions
-#paid_subscription
-	width: 100%
-	dl.settings
-		margin-bottom: 0
-		dd, dt
-			margin-bottom: 4px
-
 // Pick theme
 #pick_theme
 	width: 100%
 	float: left
+	fieldset, legend
+		border: 1px solid #c4c4c4
+	.current_skin > legend
+		background: #f0fbf0
 
 // Issue a warning
 #warn_body
@@ -1323,12 +1332,6 @@ dl.stats
 
 /* More icons.
 ------------------------------------------------- */
-.new_icon extends .inline-block
-	background: url($language/new.gif) no-repeat
-	width: width($language_dir/new.gif)px
-	height: height($language_dir/new.gif)px
-	text-decoration: none
-
 .feed_icon extends .inline-block
 	background: url($images/icons/feed.gif) no-repeat
 	width: width($images_dir/icons/feed.gif)px
