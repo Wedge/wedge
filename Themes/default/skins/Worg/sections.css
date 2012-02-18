@@ -300,6 +300,16 @@ img.new_posts
 			vertical-align: bottom
 			padding: 0 .2em
 
+// Could also do with a grayscale filter... IE accepts "filter: gray", while other
+// browsers will do with "filter: grayscale()". Waiting for wider implementation.
+li.profile img
+	opacity: .3
+	transition: opacity .3s ease
+	:hover
+		filter: none
+		opacity: 1
+		transition: opacity .3s ease
+
 /*
 .right-side .poster
 	border-radius: 0 12px 12px 0
@@ -1099,6 +1109,10 @@ tr.windowbg td
 #pick_theme
 	width: 100%
 	float: left
+	fieldset, legend
+		border: 1px solid #c4c4c4
+	.current_skin legend
+		background: #f0fbf0
 
 // Issue a warning
 #warn_body

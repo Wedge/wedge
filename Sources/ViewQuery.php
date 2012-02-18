@@ -143,7 +143,7 @@ function ViewQuery()
 
 		if (isset($query_data['s'], $query_data['t'], $txt['debug_query_which_took_at']))
 			echo sprintf($txt['debug_query_which_took_at'], round($query_data['t'], 8), round($query_data['s'], 8));
-		else
+		elseif (isset($query_data['t']))
 			echo sprintf($txt['debug_query_which_took'], round($query_data['t'], 8));
 
 		echo '

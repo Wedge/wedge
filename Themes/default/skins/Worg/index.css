@@ -198,7 +198,6 @@ ul#noava
 		padding: 0 0 8px 0
 		li
 			display: block
-			padding: 0 2px
 			line-height: 160%
 			&.rd, &.stats
 				display: inline
@@ -254,7 +253,7 @@ h1, h2, h3, h4, h5, h6
 fieldset
 	border: 1px solid #c4c4c4
 	padding: 1em
-	margin: 0 0 .5em 0
+	margin: .5em 0
 	border-radius: 10px
 	legend
 		font-weight: bold
@@ -263,7 +262,7 @@ fieldset
 		border: 0
 		legend
 			background: $main_bg
-			border-radius: 0 0 6px 6px
+			border-radius: 6px
 			padding: 2px 6px
 
 // No image should have a border when linked.
@@ -1292,7 +1291,7 @@ dl.settings
 		margin: 0 0 3px 0
 		padding: 0 0 5px 0
 	dd
-		margin: 5px 0 5px 1.5%
+		margin: 5px 0 5px 2%
 		width: 56%
 	img
 		margin: 0 10px 0 0
@@ -1372,8 +1371,6 @@ dl#feed
 	border-radius: 0
 	&, a
 		color: #777 // channels(gray,0,0,30%)
-	.current_skin > & final
-		background: #fafafa
 
 .cat final, .title final
 	font: 100 1.5em/1.3em $head_font
