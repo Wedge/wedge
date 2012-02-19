@@ -556,9 +556,9 @@ function wedge_fix_browser_css($matches)
 	if ($matches[1] === 'box-shadow')
 		return $browser['is_ie8down'] || $browser['is_safari'] ? $full : $matches[0];
 
-	// Only IE6 and IE7 still have problems with box-sizing.
+	// IE6 and IE7 don't support box-sizing, and Mozilla and Safari require a prefix.
 	if ($matches[1] === 'box-sizing')
-		return $browser['is_ie6'] || $browser['is_ie7'] ? $full : $matches[0];
+		return $browser['is_ie6'] || $browser['is_ie7'] || $browser['is_firefox'] || $browser['is_safari'] ? $full : $matches[0];
 
 	// All browsers need prefixes for columns, except for IE10 and Opera.
 	if (strpos($matches[1], 'column-') === 0)
