@@ -592,10 +592,47 @@ class wecss_nesting extends wecss
 		$css = $standard_nest = '';
 		$bases = $removals = $unextends = array();
 
+		// 'reset' keyword: remove earlier occurrences of a selector.
+		// e.g.: ".class reset" -> removes all previous ".class" definitions
+		foreach ($this->rules as $n => &$node)
+		{
+			if (strpos($node['selector'], ' reset') !== false)
+			{
+				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				foreach ($matches as $m)
+				{
+					$quoted = preg_quote($m[1], '~');
+					$full_test = '~(?:^|\s|,)' . $quoted . '(?:,|\s|$)~m';
+
+					// Run through all earlier rules and delete anything related to this.
+					foreach ($this->rules as $n2 => &$node2)
+					{
+						if ($n === $n2)
+							break;
+						// Remove our reset selector from the current selector.
+						if (strpos($node2['selector'], $m[1]) !== false && preg_match($full_test, $node2['selector']))
+						{
+							$node2['selector'] = trim(preg_replace('~(?:^|,)[^,]*' . $quoted . '[^,]*(?:,|$)~m', ',', $node2['selector']), "\x00..\x1F,");
+							$node2['selector'] = str_replace(',,', ',', $node2['selector']);
+							if (empty($node2['selector']))
+								$this->unset_recursive($n2);
+						}
+					}
+				}
+				$node['selector'] = preg_replace('~\breset\b~i', '', $node['selector']);
+				if (trim($node['selector'] == ''))
+				{
+					unset($this->rules[$n]);
+					continue;
+				}
+			}
+		}
+
 		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
 		foreach ($this->rules as $n => &$node)
 		{
-			// Reset properties based on the @remove command.
+			// '@remove' keyword: remove properties as specified from the entire CSS file.
+			// e.g.: "@remove (line break) (tab) background: #fff" -> removes all "background: #fff" from the file
 			if ($node['selector'] == '@remove')
 			{
 				foreach ($node['props'] as $remove)
@@ -604,7 +641,8 @@ class wecss_nesting extends wecss
 				continue;
 			}
 
-			// Reset inheritance based on the unextend keyword.
+			// 'unextends' keyword: reset specified inheritance.
+			// e.g.: ".class unextends .orig "-> cancels any earlier ".class extends .orig"
 			if (strpos($node['selector'], ' unextends') !== false)
 			{
 				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
@@ -618,6 +656,8 @@ class wecss_nesting extends wecss
 				}
 			}
 
+			// 'extends' keyword: selector inheritance.
+			// e.g.: ".class extends .orig" -> turns all ".orig" definitions into ".orig, .class"
 			if (strpos($node['selector'], 'extends') !== false)
 			{
 				// A quick hack to turn direct selectors into normal selectors when in IE6. This is because it ignores direct selectors, as well as
@@ -800,6 +840,15 @@ class wecss_nesting extends wecss
 			$css .= '}';
 	}
 
+	private function unset_recursive(&$n)
+	{
+		foreach ($this->rules[$n]['props'] as $n2 => $dummy)
+			unset($this->rules[$n2], $this->props[$n2]);
+		foreach ($this->rules[$n]['children'] as $n2)
+			$this->unset_recursive($n2);
+		unset($this->rules[$n]);
+	}
+
 	private function get_ancestors(&$node)
 	{
 		if (empty($node['parent']))
@@ -857,18 +906,23 @@ class wecss_nesting extends wecss
 					$rules[$id] = array(
 						'selector' => $tag[4],
 						'parent' => $parent[$level],
+						'children' => array(),
 						'props' => array(),
 					);
+					if (!empty($parent[$level]))
+						$rules[$parent[$level]]['children'][] = $id;
 					$parent[++$level] = $id++;
 				}
 				elseif ($tag[2] === $prop)
 				{
-					$props[$id++] = array(
+					$props[$id] = array(
 						'name' => $tag[3],
 						'value' => $tag[4],
-						'id' => $id - 1,
+						'id' => $id,
 						'parent' => $parent[$level],
 					);
+					$rules[$parent[$level]]['props'][$id] =& $props[$id];
+					$id++;
 				}
 			}
 			// If the nesting is broken, $level will be < 0 and will generate an esoteric error.
@@ -876,9 +930,6 @@ class wecss_nesting extends wecss
 			elseif ($level > 0)
 				$level--;
 		}
-
-		foreach ($props as $id => &$node)
-			$rules[$node['parent']]['props'][$id] =& $node;
 
 		$this->rules =& $rules;
 		$this->props =& $props;

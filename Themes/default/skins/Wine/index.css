@@ -274,7 +274,7 @@ em
 	background-color: rgba(255,0,0,.8)
 	gradient: #fa6, #c8a
 	color: #fff !important
-	font: 700 75%/100% Tahoma
+	font: 700 75%/100% Tahoma, sans-serif
 	text-transform: lowercase
 	vertical-align: .1em
 	margin: 0 3px
@@ -1542,7 +1542,7 @@ h6
 	margin: 12px 0 8px
 	border-bottom: 1px solid #ccc
 	text-transform: uppercase
-	font: 700 9pt Tahoma
+	font: 700 9pt Tahoma, sans-serif
 	img
 		vertical-align: -3px
 h6.top
