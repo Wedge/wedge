@@ -1,4 +1,7 @@
 
+.clearfix
+    zoom: 1
+
 .cat input[type=checkbox]
 	margin: 0 4px
 

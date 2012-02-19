@@ -550,10 +550,6 @@ select.sb
 tr.catbg .sbox, tr.titlebg .sbox
 	font-size: 11px
 
-#thought_form .sbox
-	font-size: 13px
-	max-width: 85px
-
 .qaction
 	font-size: .85em
 
@@ -1596,8 +1592,6 @@ h6.alt2
 	width: 100%
 	td, th
 		padding: 5px
-	a.unreadlink
-		float: right
 	a.collapse
 		float: right
 		margin: -1px 0 0 .5em

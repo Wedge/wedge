@@ -573,10 +573,6 @@ select.sb
 tr.catbg .sbox, tr.titlebg .sbox
 	font-size: 11px
 
-#thought_form .sbox
-	font-size: 13px
-	max-width: 85px
-
 .qaction
 	font-size: .85em
 

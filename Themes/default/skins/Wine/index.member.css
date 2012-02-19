@@ -28,6 +28,9 @@ ul.buttonlist
 	a.add_poll
 		background-image: url($images/small_poll.gif)
 
+.table_list a.unreadlink
+	float: right
+
 /* Styles for the personal messages section.
 ------------------------------------------------- */
 
@@ -108,6 +111,10 @@ ul.buttonlist
 		padding: 2px 4px
 		background-position: 0 100px, 0 0, 0 0
 
+#thought_form .sbox
+	font-size: 13px
+	max-width: 85px
+
 #thought_update
 	margin: 8px 0
 	input
@@ -129,25 +136,3 @@ ul.buttonlist
 	background: url($images/icons/thought.png) no-repeat
 	width: width($images_dir/icons/thought.png)px
 	height: height($images_dir/icons/thought.png)px
-
-table.thought_list
-	td
-		padding: 4px !important
-		.thought_actions
-			display: none
-			opacity: 0
-			transition: opacity .5s ease
-		:hover .thought_actions
-			margin-top, margin-bottom: -4px
-			opacity: 1
-			display: inline-block
-		:hover .hide
-			display: none
-	.bc, .bc2
-		width: 5%
-		white-space: nowrap
-	.bc2
-		background-color: rgba(0,0,0,.05)
-
-#new_thought
-	display: none
