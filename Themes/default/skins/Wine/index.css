@@ -16,6 +16,10 @@ body extends .grad700
 /* Main layout declarations (body, sidebar...)
 ------------------------------------------------------- */
 
+#header reset
+#navi reset
+#footer reset
+
 #header, #content, #linktree
 	margin: 0 auto
 	background: $main_bg
@@ -39,7 +43,7 @@ body extends .grad700
 	table-layout: fixed
 	padding-top: 6px
 
-#sidebar
+#sidebar reset
 	display: table-cell
 	vertical-align: top
 	width: $sidebar-width
@@ -91,6 +95,10 @@ body extends .grad700
 			font-size: .9em
 			margin: 0 0 2px 0
 			padding: 0
+
+img.opaque
+	box-shadow: #999 0 0 6px
+	border-radius: 6px
 
 ul#noava
 	margin: 0
@@ -1211,24 +1219,6 @@ a.moderation_link
 	&, :visited
 		color: red
 		font-weight: bold
-
-table.thought_list
-	td
-		.thought_actions
-			display: none
-			opacity: 0
-			transition: opacity .5s ease
-			input
-				padding-top, padding-bottom: 2px
-		:hover .thought_actions
-			margin-top, margin-bottom: -4px
-			opacity: 1
-			display: inline-block
-		:hover .hide
-			display: none
-
-#new_thought
-	display: none
 
 /* AJAX notification bar
 ------------------------------------------------------- */

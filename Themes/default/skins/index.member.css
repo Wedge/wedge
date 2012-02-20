@@ -138,3 +138,22 @@ ul.buttonlist
 	background: url($images/icons/thought.png) no-repeat
 	width: width($images_dir/icons/thought.png)px
 	height: height($images_dir/icons/thought.png)px
+
+table.thought_list
+	td
+		.thought_actions
+			float: right
+			display: none
+			opacity: 0
+			transition: opacity .5s ease
+			input
+				padding-top, padding-bottom: 2px
+		:hover .thought_actions
+			margin-top, margin-bottom: -2px
+			opacity: 1
+			display: inline-block
+		:hover .hide
+			display: none
+
+#new_thought
+	display: none

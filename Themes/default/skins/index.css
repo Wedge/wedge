@@ -1239,24 +1239,6 @@ a.moderation_link
 		color: red
 		font-weight: bold
 
-table.thought_list
-	td
-		.thought_actions
-			display: none
-			opacity: 0
-			transition: opacity .5s ease
-			input
-				padding-top, padding-bottom: 2px
-		:hover .thought_actions
-			margin-top, margin-bottom: -4px
-			opacity: 1
-			display: inline-block
-		:hover .hide
-			display: none
-
-#new_thought
-	display: none
-
 /* AJAX notification bar
 ------------------------------------------------------- */
 
