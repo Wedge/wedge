@@ -546,23 +546,23 @@ function wedge_fix_browser_css($matches)
 
 	// Only IE6/7/8 don't support border-radius these days. Don't bother.
 	if ($matches[1] === 'border-radius')
-		return $matches[0];
+		return $browser['is_ie8down'] ? '' : $matches[0];
 
 	// Only Chrome 16+ supports border-image without a prefix.
 	if ($matches[1] === 'border-image')
 		return !$browser['is_chrome'] ? $full : $matches[0];
 
-	// IE6/7/8, Safari and Safari Mobile mostly require a prefix.
+	// IE6/7/8 don't support box-shadow, and Safari and Safari Mobile often require a prefix.
 	if ($matches[1] === 'box-shadow')
-		return $browser['is_ie8down'] || $browser['is_safari'] ? $full : $matches[0];
+		return $browser['is_ie8down'] ? '' : ($browser['is_safari'] ? $full : $matches[0]);
 
 	// IE6 and IE7 don't support box-sizing, and Mozilla and Safari require a prefix.
 	if ($matches[1] === 'box-sizing')
-		return $browser['is_ie6'] || $browser['is_ie7'] || $browser['is_firefox'] || $browser['is_safari'] ? $full : $matches[0];
+		return $browser['is_ie6'] || $browser['is_ie7'] ? '' : ($browser['is_firefox'] || $browser['is_safari'] ? $full : $matches[0]);
 
-	// All browsers need prefixes for columns, except for IE10 and Opera.
+	// IE6/7/8/9 don't support columns, IE10 and Opera support them, other browsers require a prefix.
 	if (strpos($matches[1], 'column-') === 0)
-		return !$browser['is_opera'] && !$browser['is_ie10'] ? $full : $matches[0];
+		return $browser['is_ie8down'] || $browser['is_ie9'] ? '' : (!$browser['is_opera'] && !$browser['is_ie10'] ? $full : $matches[0]);
 
 	// transition, transform and flex box layouts always require a prefix, for now.
 	return $full;

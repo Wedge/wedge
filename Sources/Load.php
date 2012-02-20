@@ -352,7 +352,7 @@ function loadUserSettings()
 	if (!empty($user_settings['id_attach']) && !$user_settings['transparency'])
 	{
 		$filename = getAttachmentFilename($user_settings['filename'], $user_settings['id_attach'], $user_settings['id_folder']);
-		$user_settings['transparency'] = we_resetTransparency($user_settings['id_attach']) ? 'transparent' : 'opaque';
+		$user_settings['transparency'] = we_resetTransparency($user_settings['id_attach'], $filename, $user_settings['filename']) ? 'transparent' : 'opaque';
 	}
 
 	// Set up the $user_info array.
@@ -1305,7 +1305,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 			if (!$profile['transparency'])
 			{
 				$filename = getAttachmentFilename($profile['filename'], $profile['id_attach'], $profile['id_folder']);
-				$profile['transparency'] = we_resetTransparency($profile['id_attach']) ? 'transparent' : 'opaque';
+				$profile['transparency'] = we_resetTransparency($profile['id_attach'], $filename, $profile['filename']) ? 'transparent' : 'opaque';
 			}
 			$memberContext[$user]['avatar'] = array(
 				'name' => $profile['avatar'],
@@ -1370,10 +1370,10 @@ function loadMemberContext($user, $display_custom_fields = false)
  * This is mainly useful to determine whether you can add a box-shadow
  * around an attachment thumbnail, or something.
  */
-function we_resetTransparency($id_attach, $path)
+function we_resetTransparency($id_attach, $path, $real_name)
 {
 	loadSource('media/Subs-Media');
-	$is_transparent = aeva_isTransparent($path);
+	$is_transparent = aeva_isTransparent($path, $real_name);
 	wesql::query('
 		UPDATE {db_prefix}attachments
 		SET transparency = {string:transparency}
