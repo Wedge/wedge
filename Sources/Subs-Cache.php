@@ -457,7 +457,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 	$final = preg_replace('~/\*(?!!).*?\*/~s', '', $final); // Strip comments except for copyrights.
 
 	// And this is where we preserve some of the comments.
-	preg_match_all('~/\*!(.*?)\*/~s', $final, $comments);
+	preg_match_all('~\n?/\*!(.*?)\*/\n?~s', $final, $comments);
 	$final = preg_replace('~/\*!.*?\*/~s', '.wedge_comment_placeholder{border:0}', $final);
 
 	$final = preg_replace('~\n\t*//[^\n]*~', "\n", $final); // Strip comments at the beginning of lines.

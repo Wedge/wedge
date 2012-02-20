@@ -59,7 +59,7 @@ function weAutoSuggest(oOptions)
 	this.sURLMask = this.opt.sURLMask || 'action=profile;u=%item_id%';
 
 	// Create a div that'll contain the results later on.
-	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest').appendTo('body')[0];
+	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest').hide().appendTo('body')[0];
 
 	// Create a backup text input for single-entry inputs.
 	this.oRealTextHandle = $('<input type="hidden" name="' + oText[0].name + '" />').val(oText.val()).appendTo(oText[0].form);
@@ -68,8 +68,8 @@ function weAutoSuggest(oOptions)
 	var that = this;
 	oText.attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
 		.bind(is_opera || is_ie ? 'keypress keydown' : 'keydown', function (oEvent) { return that.handleKey(oEvent); })
-		.bind('keyup change focus', function (oEvent) { return that.autoSuggestUpdate(oEvent); })
-		.blur(function (oEvent) { return that.autoSuggestHide(oEvent); });
+		.bind('keyup change focus', function () { return that.autoSuggestUpdate(); })
+		.blur(function () { return that.autoSuggestHide(); });
 
 	if (this.bItemList)
 		this.oItemList = $('<div></div>').insertBefore(oText);
@@ -353,6 +353,8 @@ weAutoSuggest.prototype.populateDiv = function (aResults)
 
 	this.aDisplayData = aNewDisplayData;
 	$(this.oSuggestDivHandle).html(aNewDisplayData);
+	if (!aResults.length)
+		$(this.oSuggestDivHandle).hide();
 
 	return true;
 };
