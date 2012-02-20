@@ -4,44 +4,17 @@
  * Copyright (c) 2010-2012, Wedgeward (http://wedge.org)
  */
 
-// Set a fontsize that will look the same in all browsers.
 body extends .grad700
-	background: #444
-	color: #ccc
-	font: 88%/130% $main_font
-	margin: 0
 	padding: 0 6px
-
 
 /* Main layout declarations (body, sidebar...)
 ------------------------------------------------------- */
-
-#header reset
-#navi reset
-#footer reset
-
-#header, #content, #linktree
-	margin: 0 auto
-	background: $main_bg
 
 #header, #navi, #footer
 	base: .grad700
 	background-color: #693636
 	background-position: 0 -100px
 	color: #ddc
-
-#content
-	color: #444
-	div.frame
-		padding: 0 30px 20px
-		max-width: 1200px
-		margin: auto
-
-#edge
-	width: 100%
-	display: table
-	table-layout: fixed
-	padding-top: 6px
 
 #sidebar reset
 	display: table-cell
@@ -55,11 +28,11 @@ body extends .grad700
 		border-bottom: 1px dotted #600
 		text-decoration: none
 	.column
-		padding: 8px 12px 12px
+		padding: 14px 12px 12px
 
 #responsive
 	#edge
-		display: block
+		clear: none
 		position: relative
 	#sidebar
 		display: block
@@ -70,249 +43,60 @@ body extends .grad700
 		box-shadow: 2px 2px 5px 0 rgba(0,0,0, .15)
 		:hover
 			left: -40px
-	#main
-		display: block
-		padding: 4px 0 12px 6px
 
 #userbox
-	overflow: hidden
-	margin: 1em 0
-	img.avatar
-		float: right
-		margin: 0 .2em 0 1em
-		padding: 0
-		$max-width: 70px
 	p
-		margin: 0 0 2px
 		font-size: .9em
-	p.now
-		margin: 0
-	ul
-		padding: 0
-		margin: 0 0 0 12px
-		list-style-type: disc
-		li
-			font-size: .9em
-			margin: 0 0 2px 0
-			padding: 0
+	li
+		font-size: .9em
 
-img.opaque
-	box-shadow: #999 0 0 6px
-	border-radius: 6px
-
-ul#noava
-	margin: 0
-
-#main extends .clearfix
-	display: table-cell
-	vertical-align: top
-	min-height: 200px
+#main
 	padding: 4px 0 12px 30px
 
-// Top header (search box, etc.)
-#top_section
-	overflow: hidden
-	padding: 8px 30px
-	.frame
-		p, h2
-			display: inline-block
-			margin: .4em 1em 0 0
-			padding: 0
-		h2 extends .arrows
-			background-position: right -51px
-			margin-right: .3em
-			padding-right: 18px
-		form
-			text-align, float: right
-
 #header
-	a
-		color: #fff
 	h2
 		color: #fc9
 	// The main title
-	h1
-		margin: 42px 0 0 30px
-		float: left
-		a
-			color: lighten(hue(#fc9, 20), 10%)
-			font: bold 2.9em $head_font
-			text-shadow: 0 0 8px #333
-
-#siteslogan
-	float: right
-	line-height: 3em
+	h1 a
+		color: lighten(hue(#fc9, 20), 10%)
+		font: bold 2.9em $head_font
+		text-shadow: 0 0 8px #333
 
 // Banner header
 #upper_section
 	background: url($images/theme/bg.jpg)
-	height: 100px
-	overflow: hidden
-	width: 100%
 	.frame
-		width: 100%
-		height: 100px
 		gradient: $head_bg, darken($head_bg, 20%)
-
-// The navigation list (i.e. linktree)
-#linktree
-	clear: both
-	color: #999
-	padding: 0 0 1.5em
-	a
-		color: #963
-	ul
-		padding: 7px
-		margin: 0 12px
-		list-style: none
-		overflow: hidden
-		border: 1px dotted #999
-		border-width: 0 0 1px 0
-		li extends .arrows
-			display: inline
-			line-height: 20px
-			padding: .5em 1.4em .5em 0
-			background-position: right -44px
-			&.last
-				background: none
-
-#linktree_bt extends #linktree
-	padding: 0
-	ul
-		border-width: 1px 0 0 0
 
 // The footer with copyright links etc.
 #footer
-	margin: 0 auto
 	border-top: 3px solid #bdb5b5
-	div.frame extends .wedgesymbol
-		padding: 10px 20px
+	div.frame::before
+		content: ""
 	a
 		color: #fff
 		border-bottom: 1px dashed #fff
-		text-decoration: none
 	ul
-		padding: 0 0 8px 0
 		li
-			display: block
 			padding: 0 2px
-			line-height: 160%
-			&.rd, &.stats
-				display: inline
 			&.links
 				margin: 0 -8px
 				a
 					margin: 0 8px
 
+#upper_section .frame::before
+	content: ""
+
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
-
-// Normal, standard links.
-a
-	color: #de874d // b96f17, c06002
-	text-decoration: none
-	cursor: pointer
-	:hover
-		color: #a54
-		text-decoration: underline
-
-// Inside a post, if you publish a link, you want it to stand out...
-.post a
-	text-decoration: underline
-
-// Links that open in a new window.
-a.new_win
-	:link, :visited
-		color: #679
-
-// Tables should show empty cells.
-table
-	empty-cells: show
-
-// Wraps the entire forum when a forum width is set.
-#wrapper
-	margin: 0 auto
-
-// Standard horizontal rule.. ([hr], etc.)
-hr
-	height: 1px
-	border: 0
-	color: #ccc
-	background-color: #ccc
-
-// By default set the color on these tags to #000.
-h1, h2, h3, h4, h5, h6
-	color: #000
-	font-size: 1em
-	margin, padding: 0
-
-// Fieldsets are used to group elements.
-fieldset
-	border: 1px solid #c4c4c4
-	padding: 1em
-	margin: 0 0 .5em 0
-	border-radius: 10px
-	legend
-		font-weight: bold
-		color: #866
-	&.wrc final
-		border: 0
-		legend
-			background: $main_bg
-			border-radius: 6px
-			padding: 2px 6px
-
-// No image should have a border when linked.
-a img
-	border: 0
-
-// Define strong as bold, and em as italics
-strong
-	font-weight: bold
-
-em
-	font-style: italic
-
-.ping
-	box-shadow: none !important
-
-// The 'New' icon, generally speaking.
-.note extends .inline-block
-	border-radius: 7px
-	background-color: rgba(255,0,0,.8)
-	gradient: #fa6, #c8a
-	color: #fff !important
-	font: 700 75%/100% Tahoma, sans-serif
-	text-transform: lowercase
-	vertical-align: .1em
-	margin: 0 3px
-	padding: 1px 5px 3px
-	:hover
-		text-decoration: none
-
-/* Common styles used for inheritance. You can declare
-	them anywhere you like, but having them near the
-	start of the file should avoid cascading issues.
-------------------------------------------------------- */
-
-.arrows
-	background-image: url($images/menu.gif)
-	background-repeat: no-repeat
 
 .wedgesymbol
 	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
 
 // "With rounded corners" class, for modern browsers...
 .wrc, .wrc_top, .wrc_bottom
-	margin-top: 2px
-	margin-bottom: 4px
-	padding: .9em 1.2em
 	border-radius: 12px
 	// !!! border: 1px solid rgba(0,0,0, .1)
-	p
-		margin: 0 0 .5em
-		:only-child
-			margin-top: .5em
 
 .wrc_top
 	border-radius: 12px 12px 0 0
@@ -330,1016 +114,73 @@ em
 	background-image: url($images/theme/grad700.png)
 	background-repeat: repeat-x
 
-// Can't use an extends on .zoom-loading, because it's in a different file.
-.loading, .zoom-loading
-	background-image: url($images/loader.gif)
-	background-repeat: no-repeat;
-
 .wehead extends .grad40
-	background-color: hue(lighten(#936f69, 50%), -90)
-	color: #fff
-	a
-		color: #eef0ff
-
 .wefoot extends .grad40
-	background-color: hue(lighten(#936f69, 50%), 90)
-	color: #fff
-	a
-		color: #eed
-
-// Alternating generic backgrounds
 .windowbg extends .grad700
-	color: #444
-	background-color: $window_bg
-	background-position: 0 -550px
-	a
-		color: #47a
-
-.windowbg2 extends .windowbg
-	background-color: $window_bg2
-
-.windowbg3 extends .windowbg
-	background-color: $window_bg3
-
-.inline-block
-	display: inline-block
-	mixin: ie-inline-block
-	vertical-align: middle
-
-.cell
-	text-align: center
-	display: table-cell
-	vertical-align: middle
-
-// We worship his shadow.
-.hide
-	display: none
-
-// Clearfix
-.clearfix
-	:before, :after
-		content: ""
-		display: table
-	:after
-		clear: both
 
 /* Custom Select box styles
 --------------------------------------------------------- */
 
-select
-	visibility: hidden
-select[size]
-	visibility: visible
-
-/* Hide the original <select> from view */
-select.sb
-	visibility: visible
-	position: absolute
-	left, text-indent: -999999em
-
-.sbox extends .inline-block
-	font-weight: 400
-	text-align: left
-	margin: 1px
-
-	.text extends .inline-block
-		vertical-align: baseline
-		white-space: nowrap
-
-	.details
-		font-style: italic
-		font-size: .9em
-		padding: 3px
-		clear: left
-		color: #666
-
-	/* Display area (always visible) */
-	.display
-		background: rgba(255,255,255,.5)
-		border: 1px solid #abadb3
-		color: #000
-		cursor: default
-		font-weight: normal
-		height, line-height: 1.46em
-		overflow: hidden
-		position: relative
-		text-decoration, outline: none
-		padding: 2px 22px 2px 2px
-		border-radius: 6px
-
-		.text
-			padding: 0 3px
-
-		.btn
-			background: #dbdbdb url($images/select_arrow_bg.gif) repeat-x left center
-			position: absolute
-			border: 1px solid #707070
-			border-radius: 4px
-			width: 14px
-			line-height: 1em
-			padding: 1px
-			text-align: center
-			right, top, bottom: 2px
-
-			div extends .inline-block
-				background: transparent url($images/select_arrow.gif) no-repeat center center
-				width: 7px
-				height: 4px
-
-	&.disabled .display
-		color: #999
-
-	&.focused .display
-		background: #fff
-
-		.text
-			border-radius: 4px 0 0 4px
-			border-color: #7b7d83
-			background-color: #39f
-			color: #fcfcfc
-
-		.btn
-			box-shadow: inset 0 0 1px 1px #9eb0ba
-
-	&.focused .display .btn, .hover .btn
-		background-image: url($images/select_arrow_bg_hover.gif)
-
-	/* Dropdown styles */
-	.items
-		background: #fff
-		border: 1px solid #cbcdd3
-		border-radius: 6px
-		display: inline
-		padding: 2px
-		margin: 0
-		list-style: none
-		overflow: hidden
-		position: absolute
-		z-index: 999
-		box-shadow: 0 2px 5px rgba(0,0,0, .3)
-
-		&.above
-			box-shadow: 0 -2px 5px rgba(0,0,0, .3)
-
-		.item
-			color: #000
-			cursor: default
-			display: block
-			padding: 4px 6px
-			text-decoration: none
-
-		.selected .item
-			background-color: #eee
-
-		.disabled .item
-			color: #999
-
-		.hr
-			border-top: 1px solid #ccc
-			padding, height: 0
-			margin: 2px
-
-		// <optgroup> styles
-		.optgroup .label
-			gradient: #fff, #e5eeee
-			color: #666
-			cursor: default
-			font-weight: bold
-			padding: 7px
-		.sub .item
-			padding-left: 1.5em
-
-		/* Rounded corners */
-		.first .item
-			border-radius: 6px 6px 0 0
-		.last .item
-			border-radius: 0 0 6px 6px
-
-	/* Scrollbar viewport */
-	.overview, .viewport
-		position: relative
-		float: left
-
-	/* The scrollbar itself */
-	.scrollbar
-		position: relative
-		float: right
-		right: 1px
-		width: 11px
-		background: #f5f8f5
-
-		/* Scrollbar thumb */
-		div
-			position: absolute
-			overflow: hidden
-			background: #e0e3e0
-			background: -prefix-linear-gradient(left, #ddd, #e0e6e0, #ccc)
-			border-radius: 6px
-			cursor: pointer
-			height: 18px
-			width: 13px
-			left: -1px
-			:hover
-				background: #e8ece8
-				background: -prefix-linear-gradient(left, #ddd, #e8ece8, #ccc)
-
-#sidebar .sbox
-	max-width: 200px
-
 #jump_to
 	margin: 1em 0
-	height: 25px
-	visibility: hidden
-
-.cat .sbox
-	font-size: 14px
-	text-shadow: none
-
-tr.catbg .sbox, tr.titlebg .sbox
-	font-size: 11px
-
-.qaction
-	font-size: .85em
 
 /* Styles for buttons and other form elements
 ------------------------------------------------------- */
 
-// Let's give all forms zero padding/margins
-form
-	margin, padding: 0
-
-input, select, textarea
-	font: 95%/115% $main_font
-	color: #000
-	background: $main_bg
-	box-sizing: border-box
-	border-radius: 5px
-	border: 1px solid #abadb3
-	padding: 4px 5px
-	:hover, :focus
-		border: 1px solid #6f8da9
-
-// The font size of textareas should be just a little bit larger.
-textarea
-	font: 100%/130% $main_font
-	border-radius: 0
-
-// No need to style input[type=reset], not using it.
-input[type=submit], input[type=button], .ie_button
-	background: #e5e5e5 url($images/theme/bevel.png)
-	margin: 0
-	outline: none
-	cursor: pointer
-	font-size: 13px
-	line-height: normal
-	border-width: 1px
-	border-radius: 6px
-	box-shadow: 0 1px 2px rgba(0,0,0,.1)
-	padding: 3px 5px 4px
-	color: #555
-
-	:hover
-		background-color: #dee
-		color: #000
-
-input.submit
-	background: url($images/buttons/submit.png) no-repeat $bevel
-	background-color: #e2f3ea
-	padding-left: 23px
-	:hover final
-		background-color: #e8f9f0
-
-input.save extends input.submit
-	background: url($images/buttons/save.png) no-repeat $bevel
-	background-color: #dff3e8
-	:hover
-		background-color: #e5f9ed
-
-input.delete extends input.submit
-	background: url($images/buttons/delete.png) no-repeat $bevel
-	background-color: #f5efe9
-	:hover
-		background-color: #fbf5ef
-
-input.new extends input.submit
-	background: url($images/buttons/new.png) no-repeat $bevel
-	background-color: #e0eaf6
-	:hover
-		background-color: #e6f0fc
-
-input.spell extends input.submit
-	background: url($images/buttons/spell.png) no-repeat $bevel
-	background-color: #e0eaf6
-	:hover
-		background-color: #e6f0fc
-
-input.cancel
-	background-color: #fff0e3
-	padding-left: 5px
-	:hover
-		background-color: #fff5e8
-
-// Declare position only here, so that inherited classes can also set it.
-input.submit
-	background-position: 5px center, 0 0, 0 0
-
-input.search
-	background: #fdfaf9 url($images/filter.gif) 5px 4px no-repeat
-	height, padding-left: 24px
-	#header &
-		background: rgb(235,235,215) url($images/filter.gif) 5px 4px no-repeat
-
-// All input elements that are checkboxes or radio buttons shouldn't have a border around them.
-input[type=checkbox], input[type=radio]
-	mixin: checkbox-styling
-
-.cat input[type=checkbox]
-	margin: 5px -3px 0 7px
-
-// Give disabled text input elements a different background color.
-input[type=text][disabled]
-	background-color: #eee
-
-input[type=file]
-	width: 300px
+#search_form
+	input.search
+		color: white
+	input[type=submit]
+		background: #b3a9a3
+		border-color: #ddd #aaa #aaa #ddd
+		color: white
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
 
-.menu
-	font-family: $menu_font
-	min-height: 2em
-	display: block
-	margin: 0
-	padding: 5px 0 2px
-
 #navi
-	color: #999
 	border-bottom: 3px solid #bdb5b5
-	overflow: hidden
-	padding: 0 25px
 
 #main_menu
-	padding: 5px 0 0
-	float: left
 	h4 a
 		color: #fff
-	li.nodrop h4
-		background-image: none
-	h4:hover, h4.hove
-		background-color: #5a6c85
-		background-position: 98% -26px
-
-.menu li a
-	display: block
-	color: #300
-	text-decoration: none
-	border-left: 4px solid $menu_border // #fbe2c8
-	padding: 6px 8px
-	margin: 0
-
-.menu h4 extends .arrows
-	float: left
-	background-position: 98% 4px
-	padding: 3px 19px 3px 6px
-	font-weight: normal
-	margin-right: 2px
-	a
-		border, padding: 0
-
-.menu li ul
-	background: #f7fcf7
-	background: $menu_bg
-	position: absolute
-	display: block
-	border: 1px solid #bbb
-	z-index: 42
-	box-shadow: 2px 2px 6px 0 rgba(0,0,0, .15)
-	border-radius: 0 10px 10px 0
-	font-size: 10pt
-	clear: left
-	visibility: hidden
-	opacity, padding: 0
-	transition: opacity .3s ease
-	margin-top: 30px
-
-.css li ul
-	margin-top: 25px
-
-.css > li > ul
-	transition: opacity .15s ease
-
-.menu li li ul
-	margin-left: 160px
-	margin-top: -24px
-
-.menu li
-	margin, padding: 0
-	list-style: none
-	cursor: pointer
-	height: auto
-	float: left
-	display: block
-
-// This is the same as above, but for anything else than IE6. Uh.
-.menu > li
-	display: inline-block
-	// Until white-space-collapsing is finalized...
-	margin: 0 0 0 -3px
-	padding: 0
-	float: none
-
-.menu li li
-	display: block
-	float: none
-	margin: 0
-	white-space: nowrap
-
-.css h4:hover, h4.hove
-	background-color: rgba(0,0,0, .075)
-	background-position: 98% 4px
-	color: #000
 
 .menu .chosen h4
 	background-color: #3fa6c3
-	background-position: 98% -26px
-	font-weight: 700
-	color: #fff
-	a
-		color: #fff
-
-li.active > a
-	font-weight: 700
-
-li.subsection > a extends .arrows
-	background-position: 98% -46px
-	padding: 6px 24px 6px 8px
-
-.css > li li:hover, li.hove
-	color: #000
-	border-radius: 0 9px 9px 0
-	background-color: rgba(0,0,0, .075)
-
-.menu > li > a, .menu h4
-	border-radius: 6px
-
-#context_menus
-	padding-left: 1em
-	min-height: 2.5em
-	overflow: hidden
-	h4
-		background-image: none
-		padding-right: 6px
-		:hover
-			background-color: rgba(0,0,0, .075)
 
 #main_menu .chosen h4, #context_menus .chosen h4
 	background-color: #95a89d
-	&:hover, &.hove
-		background-color: lighten(#95a89d, 8%)
-
-.nodrop h4, #main_menu .nodrop h4
-	background-image: none
-	padding-right: 6px
-
-// Separator code
-li.separator
-	a
-		padding: 4px 8px
-	hr
-		margin: 0
-	&.hove
-		background: none
-
-/*	Pure CSS menu emulation... Until JS takes over
-	to add the hover timer and proper widths! */
-.css
-	li:hover ul ul, li:hover ul ul ul
-		display: none
-		visibility: hidden
-		opacity: 0
-
-	li:hover ul, ul li:hover ul, ul ul li:hover ul
-		display: block
-		visibility: visible
-		opacity: 1
-
-#main .menu
-	margin-bottom: 4px
-
-.menu .note
-	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
-	font-size: 80%
-	float: right
-	padding: 4px 5px 5px
-	margin: -1px -4px 0 8px
-
-.menu h4 .note
-	float: none
-	font-size: 70%
-	margin: 0 0 0 4px
-	padding: 2px 5px 3px
-
-.menu li.menu-top
-	position: absolute
-	top: -11px
-	width: 100%
-	height: 11px
-	padding-bottom: 3px
-	background: url($images/theme/menurow.gif) no-repeat 0 3px
-
-/* Top-level menu icons.
-------------------------------------------------------- */
-// It may look complicated, but it isn't. Just fetch documentation on
-// image spriting. You can also simply use single images to show icons.
-
-.m_home
-	float: left
-	width, height: 16px
-	padding: 0
-	margin: 4px 4px 0 2px
-	background-repeat: no-repeat
-	background-image: url($images/icons/sprite.png)
-	background-position: -74px 0
-
-.m_board extends .m_home
-	background-position: -74px 0
-
-.m_search extends .m_home
-	background-position: -131px 0
-	height: 17px
-
-.m_admin extends .m_home
-	background-position: -36px 0
-
-.m_profile extends .m_home
-	background-position: 0 0
-
-.m_pm extends .m_home
-	background-position: -93px 0
-
-.m_pm_unread extends .m_home
-	background-position: -112px 0
-
-.m_media extends .m_home
-	background-position: -54px 0
-	width: 18px
-
-.m_mlist extends .m_home
-	background-position: -19px 0
-	width: 14px
-
-.m_login extends .m_home
-	background-position: -168px 0
-	width: 15px
-
-.m_register extends .m_home
-	background-position: -186px 0
-
-.m_logout extends .m_home
-	background-position: -150px 0
-	width: 15px
-
-/* Common classes to ease styling.
-------------------------------------------------------- */
-
-header, footer, aside, section, article, nav
-	display: block
-
-// Left and right-floating
-.floatleft
-	float: left
-
-.floatright
-	float: right
-
-.flow_auto
-	overflow: auto
-
-.flow_hidden
-	overflow: hidden
-	.windowbg
-		margin-top: 2px
-
-.clear
-	clear: both
-
-.clear_left
-	clear: left
-
-.clear_right
-	clear: right
-
-.nowrap
-	white-space: nowrap
-
-.smalltext, tr.smalltext th
-	font-size: .9em
-
-.normaltext
-	font-size: 1em
-
-.largetext
-	font-size: 1.4em
-
-// Centering an element that has width
-.centered
-	margin: 0 auto
-
-// Centering, right and left-aligning text within an element
-.left
-	text-align: left
-
-.center
-	text-align: center
-
-.right
-	text-align: right
-
-.double_height
-	line-height: 2em
-
-// Some common padding styles
-.padding
-	padding: .7em
-
-.main_section
-	padding-bottom: .5em
-
-// A quick reset list class.
-ul.reset, ul.reset li
-	padding, margin: 0
-	list-style: none
-
-/* Some BBC related styles.
-------------------------------------------------------- */
-
-// The "Quote:" and "Code:" header parts...
-.bbc_code, .bbc_quote
-	header
-		color: #666
-		border-bottom: 0
-		font: 400 80% "Lucida Sans Unicode", "Trebuchet MS", $main_font
-		padding: .3em
-
-// A quote, usually from another post.
-.bbc_quote
-	border-radius: 6px
-	border: 1px dotted #99a
-	gradient: rgba(255, 255, 255, .5), rgba(230, 255, 235, .3)
-	margin: 0 0 .5em
-	// The "Quote:" header part...
-	> header
-		padding: 2px 2px 2px 24px
-		background: url($images/theme/quote.png) 2px 3px no-repeat
-	> blockquote
-		font-size: 92%
-		line-height: 1.4em
-		border-top: 1px dotted #99a
-		padding: 12px 16px
-		margin: 0
-		overflow: auto
-		background: rgba(0, 0, 0, .07)
-		border-radius: 6px
-	> footer
-		display: none
-
-// A code block - regular or with PHP syntax highlighting
-.bbc_code, .php_code
-	code
-		display: block
-		font: 8pt/1.5em $mono_font
-		background: rgba(240, 235, 255, .5)
-		border-top: 2px solid #999
-		border-bottom: 2px solid #999
-		padding: 3px 1em
-		overflow: auto
-		white-space: pre
-		// Show a scrollbar after about 24 lines.
-		max-height: 24em
-
-// For links to change the code stuff...
-.codeoperation
-	font-weight: normal
-
-// Styling for BBC tags
-.bbc_link
-	:link, :visited
-		color: #789
-
-.bbc_size
-	line-height: 1.4em
-
-.bbc_color a
-	color: inherit
-
-.bbc_img
-	border: 0
-	max-width: 650px
-
-.bbc_table
-	font, color: inherit
-	td
-		font, color: inherit
-		vertical-align: top
-
-.bbc_u
-	text-decoration: underline
-
-.bbc_list
-	text-align: left
-
-.bbc_tt
-	font-family: $mono_font
-
-.bbc_pre
-	display: inline
-	white-space: pre
-	margin, padding: 0
-
-// emote, try typing "/me uses this a lot" in a post.
-.meaction
-	color: red
-
-// Highlighted text - such as search results.
-mark
-	background-color: #ffd0a0 !important
-	font-weight: bold
-	color: #000 !important
-	padding: 0 2px 1px
-
-// A more discreet highlight color, for selected membergroups etc.
-.highlight
-	background-color: #d1e1ef
-	color: #000 !important
-
-table.footnotes
-	border-top: 1px solid #888
-	margin-top: 20px
-	padding-top: 4px
-	td
-		font-size: smaller
-		padding: 0 2px
-	blockquote &
-		margin: 8px 0 4px
-
-td.footnum
-	vertical-align: top
-	text-align: right
-	width: 30px
-	a
-		text-decoration: none
-
-a.fnotel
-	text-decoration: none
-	vertical-align: super
-	font-size: smaller
-	line-height: normal
-
-td.footnum a:target, a.fnotel:target
-	background-color: #def !important
-
-.spoilerhint
-	color: gray
-	font-size: .9em
-	font-style: italic
-	input
-		border: 1px dotted #999
-		padding: 2px 4px
-		margin: 4px 8px 4px 4px
-		font-size: 1.1em
-
-.spoiled
-	border: 1px dotted #999
-	padding: 4px 8px
-
-.readmore
-	font-style: italic
-	color: gray
-
-.post .headline
-	font: italic 120% Georgia, serif
-	padding-bottom: 8px
-
-// Merged double posts
-.mergedate
-	font-size: 10px
-	text-align: right
-	color: gray
-	padding: 5px 0 0
-	margin: 0
-	border-bottom: 1px dashed #999
 
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-section.block extends .wrc
-	overflow: hidden
-	header extends .wehead
-		background-color: #b3afa9
-		padding: 3px 12px
-		border-radius: 8px 8px 0 0
-		margin: -0.9em -1.2em 1em
-	footer extends .wefoot
-		padding: 3px 12px
-		border-radius: 0 0 8px 8px
-		margin: .5em -1.2em -0.9em
-	dl.settings
-		margin: 0
-
-.bc, .bc2
-	white-space: nowrap
-.bc
-	width: 5%
-.bc2
-	background-color: rgba(0,0,0,.05)
-
-tr.catbg
-	td extends .wehead, th extends .wehead
-tr.titlebg
-	td extends .wefoot, th extends .wefoot
-
-// The page navigation area
-.pagesection
-	clear: left
-	font-size: .9em
-	padding: .2em
-	overflow: hidden
-	margin-bottom: 1px
-	.floatright input
-		margin-top: 3px
-	nav
-		float: left
-		padding: .3em 0 .3em
-		a[data-href]
-			font-weight: bold
-
-// Colors for background of posts requiring approval
-.approve
-	color: #000
-	background-color: #ffeaea
-	.postbg2&
-		background-color: #fff2f2
-
-// Color for background of *topics* requiring approval
-.approvet
-	color: #000
-	background-color: #e4a17c
-	.windowbg2&
-		background-color: #f3bd9f
-
-// Pinned topics get a different background
-.pinned
-	background: #e8d8cf
-	.windowbg2&
-		background: #f2e3d9
-
-// Locked posts get a different shade, too!
-.locked
-	background: #d4dce2
-	font-style: italic
-	.windowbg2&
-		background: #d8e1e7
-
-// Post error notices, general alert notices, and mute/ban warnings
-.error,
-.alert,
-.warn_mute,
-.warn_ban
-	color: red
-
-.warn_moderate
-	color: orange
-
-.warn_watch,
-.success
-	color: green
-
-a.moderation_link
-	&, :visited
-		color: red
-		font-weight: bold
-
-/* AJAX notification bar
-------------------------------------------------------- */
-
-#ajax_in_progress
-	background: #fff
-	border-bottom: 3px solid #f96f00
-	box-shadow: 0 0 8px #000
-	color: #f96f00
-	text-align: center
-	font-size: 16pt
-	padding: 16px
-	width: 100%
-	line-height: 25px
-	position: fixed
-	top, left: 0
-	a extends .loading
-		float: right
-		margin: 8px 25px 0 0
-		display: inline-block
-		width, height: 12px
-
-/* Definition lists
-------------------------------------------------------- */
-
-dl
-	overflow: hidden
-	padding, margin: 0
-
-// Lists with settings use these a lot.
-dl.settings
-	clear: right
-	margin: 0 0 10px
-	dt, dd
-		float: left
-		padding: 0
-	dt
-		margin: 0 0 10px
-		clear: both
-		width: 40%
-	dt.windowbg final
-		width: 98%
-		margin: 0 0 3px 0
-		padding: 0 0 5px 0
-	dd
-		margin: 0 0 3px 1.5%
-		width: 56%
-	img
-		margin: 0 10px 0 0
-
-// Used mainly as <dt> descriptions, but can be used elsewhere too.
-dfn
-	display: block
-	padding: 3px 20px 3px 8px
-	font-style: italic
-	font-size: 95%
-	color: #888
-
-dl#feed
-	clear: right
-	overflow: auto
-	margin: 10px 0 0
-	padding: 0
-	dt, dd
-		margin, padding: 0
-	dt
-		float: left
-		width: 86px
-		text-align: right
-	dd
-		margin: 0 0 2px 90px
+section.block header
+	background-color: #b3afa9
 
 /* Styles for section headers.
 ------------------------------------------------------- */
 
 // .cat, .title, .title2 and .posthead are closely related... Inheritance fiesta!
 .catbase extends .grad40
-	overflow: hidden
 	border-radius: 5px
-	padding: 5px 10px 5px
-	margin-bottom: 4px
-	border: 1px solid rgba(0,0,0, .15)
 	font: 700 140%/20px $head_font
 	img
 		vertical-align: -3px
-		padding-right: 2px
-
-.posthead extends .catbase
-	width: 100%
-	display: table
-	box-sizing: border-box
-	background: rgba(0,0,0, .03)
-	text-shadow: white 0 1px 2px
-	color: gray
 
 .cat extends .catbase
-	clear: left
 	background-color: #b3afa9
+	letter-spacing: 0
 	color: white
 	a
 		color: #fda !important
-		font-weight: 400
-		text-decoration: underline !important
-		text-shadow: none
-		border-bottom: 0 !important
 		:hover
 			color: #fff !important
-	img
-		padding-right: 4px
 
 .cat final
 	background-color: #c3b9c3
-	border-color: #fd9604
 	border-width: 2px 0 0 0
 	text-shadow: black 0 1px 2px
-	.table_list &
-		margin: -5px
 
-.title extends .cat
-	padding: 4px 8px
-	border, margin: 0
 	#sidebar &
 		margin-top: 6px
 	a
@@ -1347,268 +188,15 @@ dl#feed
 
 .title2 extends .title
 	font-size: 1.2em
-	background: none
-	border-bottom: 1px dotted rgba(0,0,0, .5)
-	border-radius: 0
 	text-shadow: white 0 1px 2px
 	&, a
 		color: channels(gray,0,0,30%)
-	.current_skin > & final
-		background: #fafafa
 
-.cat final, .title final
+.cat final
 	font: bold 1.2em/1.2em $head_font
 
 .title final
 	font: 400 1em $main_font
-
-// A general table class
-.table_grid
-	border-collapse: separate
-	margin-top: .1em
-	// The header bars for some tables.
-	tr.catbg th
-		white-space: nowrap
-	tr.catbg, tr.titlebg
-		font-size: 10pt
-		th
-			padding: 4px 3px
-	th.last_th input
-		margin: 0 2px
-	th.left
-		padding: 0 .7em
-	td, th
-		padding: 3px
-		border: 1px solid #fff
-		border-width: 0 1px 1px 0
-	td:last-child
-		border-right-width: 0
-	tr:last-child td
-		border-bottom-width: 0
-	th
-		border-width: 0 0 1px 0
-
-// GenericList
-.additional_row
-	padding: .5em 0 .5em
-
-// A descriptive style
-.plainbox
-	padding: .5em 1em
-	font-size: .9em
-	line-height: 1.4em
-	border: 1px solid #bbb
-	background: #f0f5f0
-	margin: .2em 1px 1em
-	border-radius: 4px
-
-.description extends .plainbox
-	overflow: hidden
-
-.description_board extends .plainbox
-	margin-top: 0
-
-// An informative style
-.information
-	padding: .5em 1em
-	font-size: .9em
-	line-height: 1.3em
-	border: 1px solid #bbb
-	background: #f0f6f0
-	margin: .2em 1px 1em
-	p
-		padding: .3em 1em
-		margin: 0
-
-/* HTML5 overrides for deprecated alignment/width params
---------------------------------------------------------- */
-
-.w100
-	width: 100%
-.w75
-	width: 75%
-.w50
-	width: 50%
-.w25
-	width: 25%
-
-.two-columns
-	width: 49%
-	float: left
-	margin: 0 .5%
-
-img.top, td.top, th.top, tr.top td, tr.top th
-	vertical-align: top
-img.middle, td.middle, th.middle, tr.middle td, tr.middle th
-	vertical-align: middle
-img.bottom, td.bottom, th.bottom, tr.bottom td, tr.bottom th
-	vertical-align: bottom
-img.center
-	margin: auto
-img.left
-	float: left
-img.right
-	float: right
-
-/*
-	It's important to repeat left/right/center statements to
-	respect child priority when setting multiple classes in a table.
-	<table><tr class="center"><td class="left"> should be left-aligned.
-*/
-table
-	&.cs0
-		border-collapse: separate
-		border-spacing: 0
-	&.cs1 extends &.cs0
-		border-spacing: 1px
-	&.cs3 extends &.cs0
-		border-spacing: 3px
-	&.cs8 extends &.cs0
-		border-spacing: 8px
-	&.cp0
-		th, td
-			padding: 0
-	&.cp4
-		th, td
-			padding: 4px
-	&.cp8
-		th, td
-			padding: 8px
-	&.left th, &.left td
-		text-align: left
-	&.right th, &.right td
-		text-align: right
-	&.center th, &.center td
-		text-align: center
-	tr
-		&.left th, &.left td
-			text-align: left
-		&.right th, &.right td
-			text-align: right
-		&.center th, &.center td
-			text-align: center
-
-/* Used for sections that need corners and a border frame.
------------------------------------------------------------ */
-
-.roundframe
-	overflow: hidden
-	margin-top: 1px
-	padding: 10px 10px 9px
-	background: #f5f5f5
-	border: 1px solid rgba(0,0,0, .15)
-	border-radius: 8px
-	dl, dt, p
-		margin: 0
-	p
-		padding: .5em
-
-.round-bottom
-	border-radius: 0 0 8px 8px
-
-// Help popup's body
-#help_page
-	padding: 1em
-
-#helf
-	max-height: 90%
-	a
-		text-decoration: underline
-	> div
-		box-shadow: 2px 2px 8px 0 rgba(0,0,0, .25)
-
-#help_page, #helf
-	h2 extends .title2
-		margin-bottom: 12px !important
-	.windowbg2 final
-		border: 1px solid #d0d0d0
-
-/* Intertitles
-------------------------------------------------------- */
-
-h6
-	color: #866
-	padding: 0 0 3px
-	margin: 12px 0 8px
-	border-bottom: 1px solid #ccc
-	text-transform: uppercase
-	font: 700 9pt Tahoma, sans-serif
-	img
-		vertical-align: -3px
-h6.top
-	margin-top: 0
-h6.alt
-	color: #963
-h6.alt2
-	color: #396
-
-/* Styles used by the auto suggest control.
-------------------------------------------------------- */
-
-.auto_suggest extends .hide
-	color: #000
-	background: #fff
-	border: 1px solid #cbcdd3
-	border-radius: 6px
-	display: inline
-	padding: 2px
-	font-size: 90%
-	list-style: none
-	overflow: hidden
-	position: absolute
-	z-index: 999
-	box-shadow: 0 2px 5px rgba(0,0,0, .3)
-	div
-		border-radius: 3px
-		padding: 2px 3px
-
-.auto_suggest_hover
-	background-color: #eee
-	cursor: pointer
-
-// The dropdown menu toggle icon
-#menu_toggle
-	float: left
-	margin: 10px 12px 0 0
-
-#sidebar_toggle
-	float: right
-	margin: 3px 0 0 7px
-
-/* Styles for a typical table.
-------------------------------------------------------- */
-
-.table_list
-	width: 100%
-	td, th
-		padding: 5px
-	a.collapse
-		float: right
-		margin: -1px 0 0 .5em
-	p
-		padding, margin: 0
-
-/* Styles for print media.
-------------------------------------------------------- */
-
-@media print
-	#headerarea
-		display: none
-
-/* A few more header styles...
-------------------------------------------------------- */
-
-th.first_th
-	border-radius: 8px 0 0 0
-	padding-left: 8px !important
-
-th.last_th
-	border-radius: 0 8px 0 0
-
-/* Don't touch this -- this hack dynamically adds language flags.
------------------------------------------------------------------- */
-
-{%language_flags%}
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
@@ -1647,43 +235,3 @@ $window_bg2 = #f3f7f3
 $window_bg3 = #f0f0f0
 $sidebar-width = "240px"
 $sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table mode
-
-// Unused, but I like to keep these around...
-$other_bg = #e7e9b8
-$reddish = "#cc6600"
-
-/*
-	$alphamix is a RGB value that should stand for your main area's background.
-	You only need it if you're using alpha values in your CSS. Don't use a variable
-	name in it, it's already complicated enough to calculate...
-*/
-
-$alphamix = #fffdfa
-
-/* And our mixins... */
-
-// IE6 needs layout to show inline-block divs... And a default right margin from my experience.
-mixin {ie6,ie7} ie-inline-block
-	margin-right: 6px
-	zoom: 1
-
-mixin checkbox-styling
-	background: none
-	border: 0
-
-/*
-// This example is here to showcase the mixin power.
-mixin example($border: 1px solid black, $width: 777px, $co = #888)
-	width: $width
-	font-size: 1em
-	background: $main_bg
-	a
-		border: $border
-		color: $board_col
-
-.class
-	.thing
-		mixin: example
-		mixin: example(1px dotted white)
-		mixin: example(,, #fff)
-*/

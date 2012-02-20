@@ -34,7 +34,7 @@
  */
 
 // Set a fontsize that will look the same in all browsers.
-body extends .grad700
+body
 	background: #444
 	color: #ccc
 	font: 88%/130% $main_font
@@ -50,7 +50,6 @@ body extends .grad700
 	background: $main_bg
 
 #header, #navi, #footer
-	base: .grad700
 	background-color: #e3e0da
 	gradient: lighten($head_bg, 6%), $head_bg
 	color: #553
@@ -114,9 +113,9 @@ body extends .grad700
 		padding: 0
 		margin: 0 0 0 12px
 		list-style-type: disc
-		li
-			margin: 0 0 2px 0
-			padding: 0
+	li
+		margin: 0 0 2px 0
+		padding: 0
 
 img.opaque
 	box-shadow: #999 0 0 6px
@@ -207,7 +206,7 @@ ul#noava
 	div.frame::before
 		float: left
 		padding-right: 10px
-		content: url($here/../wedgebox57_.png)
+		content: url($here/img/wedgebox57_.png)
 	div.frame extends .wedgesymbol
 		padding: 10px 20px
 	a
@@ -335,35 +334,25 @@ em
 		:only-child
 			margin-top: .5em
 
-/*
-.grad40
-	background-image: url($images/theme/grad40.png)
-	background-repeat: repeat-x
-
-.grad700
-	background-image: url($images/theme/grad700.png)
-	background-repeat: repeat-x
-*/
-
 // Can't use an extends on .zoom-loading, because it's in a different file.
 .loading, .zoom-loading
 	background-image: url($images/loader.gif)
 	background-repeat: no-repeat;
 
-.wehead extends .grad40
+.wehead
 	background-color: hue(lighten(#936f69, 50%), -90)
 	color: #fff
 	a
 		color: #eef0ff
 
-.wefoot extends .grad40
+.wefoot
 	background-color: hue(lighten(#936f69, 50%), 90)
 	color: #fff
 	a
 		color: #eed
 
 // Alternating generic backgrounds
-.windowbg extends .grad700
+.windowbg
 	color: #444
 	background-color: $window_bg
 	background-position: 0 -550px
@@ -614,7 +603,6 @@ input[type=submit], input[type=button], .ie_button
 	color: #555
 	:hover
 		background-color: #f3f3f3
-		text-decoration: none
 
 input.submit
 	background: url($images/buttons/submit.png) no-repeat $bevel
@@ -658,7 +646,7 @@ input.submit
 	background-position: 5px center, 0 0, 0 0
 
 input.search
-	background: rgba(255,255,235,.42) url($images/filter.gif) 5px 5px no-repeat
+	background: rgba(255,255,235,.32) url($images/filter.gif) 5px 5px no-repeat
 	padding-left: 24px
 	height: 25px
 
@@ -1314,7 +1302,7 @@ dl#feed
 ------------------------------------------------------- */
 
 // .cat, .title and .title2 are closely related... Inheritance fiesta!
-.catbase extends .grad40
+.catbase
 	overflow: hidden
 	padding: 5px 10px 5px
 	margin-bottom: 4px
@@ -1361,7 +1349,7 @@ dl#feed
 	border-bottom: 1px dotted rgba(0,0,0, .5)
 	border-radius: 0
 	&, a
-		color: #777 // channels(gray,0,0,30%)
+		color: #777
 
 .cat final, .title final
 	font: 100 1.5em/1.3em $head_font

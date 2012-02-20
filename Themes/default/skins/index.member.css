@@ -141,15 +141,16 @@ ul.buttonlist
 
 table.thought_list
 	td
+		position: relative
 		.thought_actions
-			float: right
+			position: absolute
+			right: 8px
 			display: none
 			opacity: 0
 			transition: opacity .5s ease
 			input
 				padding-top, padding-bottom: 2px
 		:hover .thought_actions
-			margin-top, margin-bottom: -2px
 			opacity: 1
 			display: inline-block
 		:hover .hide
