@@ -601,7 +601,17 @@ class wecss_nesting extends wecss
 				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
-					$quoted = preg_quote($m[1], '~');
+					// Start by rebuilding a full selector. For efficiency reasons, and because I'm too lazy to rework this,
+					// Wedge will only parse single parents, and will reject comma-separated classes and parents using
+					// keywords such as 'extends'. If you come up with an implementation to support them, feel free to share!
+					$selector = $m[1];
+					$current_node = $node;
+					while ($current_node['parent'] > 0)
+					{
+						$current_node = $this->rules[$current_node['parent']];
+						$selector = $current_node['selector'] . ' ' . $selector;
+					}
+					$quoted = preg_quote($selector, '~');
 					$full_test = '~(?:^|\s|,)' . $quoted . '(?:,|\s|$)~m';
 
 					// Run through all earlier rules and delete anything related to this.
@@ -610,7 +620,7 @@ class wecss_nesting extends wecss
 						if ($n === $n2)
 							break;
 						// Remove our reset selector from the current selector.
-						if (strpos($node2['selector'], $m[1]) !== false && preg_match($full_test, $node2['selector']))
+						if (strpos($node2['selector'], $selector) !== false && preg_match($full_test, $node2['selector']))
 						{
 							$node2['selector'] = trim(preg_replace('~(?:^|,)[^,]*' . $quoted . '[^,]*(?:,|$)~m', ',', $node2['selector']), "\x00..\x1F,");
 							$node2['selector'] = str_replace(',,', ',', $node2['selector']);

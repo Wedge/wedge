@@ -3598,9 +3598,9 @@ function aeva_testPixel(&$im, $x, $y)
 
 // Test whether the current image is transparent or not.
 // If GD isn't installed on the server, PNG and GIF images are assumed to be.
-function aeva_isTransparent($path)
+function aeva_isTransparent($path, $real_path = false)
 {
-	$ext = substr($path, -3);
+	$ext = substr($real_path ? $real_path : $path, -3);
 	if ($ext !== 'png' && $ext !== 'gif')
 		return false;
 

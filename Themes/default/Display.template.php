@@ -771,8 +771,9 @@ function template_title_lower()
 {
 	global $context;
 
-	// Show the prev/next navigation again.
-	echo '
+	// Show the prev/next navigation again, but don't show the container if they're empty.
+	if (empty($context['no_prevnext']))
+		echo '
 			<div class="posthead">',
 				$context['prevnext_prev'],
 				$context['prevnext_next'], '
