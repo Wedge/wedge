@@ -44,9 +44,6 @@ em
 		padding: 5px 25px 10px 15px
 	#responsive &
 		background-color: #f6f8ef
-	input.search
-		width: 90px
-		margin-right: 4px
 
 #top_section
 	display: none
@@ -216,6 +213,9 @@ tr.titlebg th, tr.catbg th
 	a
 		color: lighten(channels(gray, 30%), 10%) !important
 
+.wehead a
+	color: #fda
+
 .cat final
 	border: 1px solid rgba(0,0,0, 0.15)
 	color: gray
@@ -240,6 +240,18 @@ tr.titlebg th, tr.catbg th
 #top_subject
 	font-family: inherit
 	font-size: 1.1em
+
+#search_form
+	input.search
+		width: 100px
+		margin-right: 4px
+		color: #000
+	input[type=submit]
+		background: #d3dad3
+		border-color: #eee #bbb #bbb #eee
+		color: #000
+		:hover
+			background: #e3eae3
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */

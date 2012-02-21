@@ -239,10 +239,9 @@ function template_aeva_admin_maintenance_prune()
 					<td height="25">', $txt['media_albums'], '</td>
 				</tr>
 				<tr>
-					<td class="windowbg2"><input type="checkbox" name="all_albums"> ', $txt['media_all_albums'], '</td>
-				</tr>
-				<tr>
 					<td class="windowbg2">
+						<label><input type="checkbox" name="all_albums"> ', $txt['media_all_albums'], '</label>
+						<br><br>
 						<select name="albums[]" multiple size="9">';
 
 		foreach ($context['aeva_album_list'] as $list)
@@ -260,7 +259,7 @@ function template_aeva_admin_maintenance_prune()
 
 	echo '
 				<tr>
-					<td class="windowbg2 center"><input type="submit" value="', $txt['media_submit'], '" name="submit_aeva" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');"></td>
+					<td class="windowbg2 right"><input type="submit" value="', $txt['media_submit'], '" name="submit_aeva" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');"></td>
 				</tr>
 			</table>
 		</form>';

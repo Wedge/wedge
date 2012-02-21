@@ -145,6 +145,8 @@ table.thought_list
 		.thought_actions
 			position: absolute
 			right: 8px
+			top: 50%
+			margin-top: -11px // Min height is at 22px
 			display: none
 			opacity: 0
 			transition: opacity .5s ease

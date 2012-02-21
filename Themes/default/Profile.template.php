@@ -959,7 +959,7 @@ function template_showPermissions()
 				<we:cat>
 					<a id="board_permissions"></a>', $txt['showPermissions_select'], ':
 					<select name="board" onchange="if ($(this).val()) this.form.submit();">
-						<option value="0"', $context['board'] == 0 ? ' selected' : '', ' data-hide>', $txt['showPermissions_global'], '&nbsp;</option>';
+						<option value="0"', $context['board'] == 0 ? ' selected' : '', ' data-hide>', $txt['showPermissions_global'], '</option>';
 
 		// Fill the box with any local permission boards.
 		foreach ($context['boards'] as $board)

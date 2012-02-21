@@ -1957,8 +1957,8 @@ function wedge_show_skins(&$th, &$style, $level, $current_theme_id, $current_ski
 	$current = 1;
 	foreach ($style as $sty)
 	{
-		$intro = '&nbsp;' . str_repeat('&#9130;&nbsp;&nbsp;', $level - 1) . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
-		echo '<option value="', $th['id'], '_', base64_encode($sty['dir']), '"', $current_theme_id == $th['id'] && $current_skin == $sty['dir'] ? ' selected' : '', '>', $intro, $sty['name'], '&nbsp;&nbsp;&nbsp;</option>';
+		$intro = str_repeat('&#9130;&nbsp;&nbsp;', $level - 1) . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
+		echo '<option value="', $th['id'], '_', base64_encode($sty['dir']), '"', $current_theme_id == $th['id'] && $current_skin == $sty['dir'] ? ' selected' : '', '>', $intro, $sty['name'], '</option>';
 		if (!empty($sty['skins']))
 			wedge_show_skins($th, $sty['skins'], $level + 1, $current_theme_id, $current_skin);
 		$current++;

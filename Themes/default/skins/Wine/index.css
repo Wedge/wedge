@@ -127,13 +127,20 @@ body extends .grad700
 /* Styles for buttons and other form elements
 ------------------------------------------------------- */
 
+@remove
+	background: rgba(255,255,235,.32) url($images/filter.gif) 5px 5px no-repeat
+
 #search_form
 	input.search
 		color: white
+		border-color: #777 #aaa #aaa #777
+		background: rgba(0,0,0,.1) url($images/filter.gif) 5px 5px no-repeat
 	input[type=submit]
-		background: #b3a9a3
-		border-color: #ddd #aaa #aaa #ddd
+		background: #938983
+		border-color: #bbb #888 #888 #bbb
 		color: white
+		:hover
+			background: #a39993
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
@@ -172,9 +179,9 @@ section.block header
 	letter-spacing: 0
 	color: white
 	a
-		color: #fda !important
+		color: #fda
 		:hover
-			color: #fff !important
+			color: #fff
 
 .cat final
 	background-color: #c3b9c3
