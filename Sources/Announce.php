@@ -62,9 +62,7 @@ function AnnouncementSelectMembergroup()
 {
 	global $txt, $context, $topic, $board, $board_info;
 
-	$groups = array_merge($board_info['groups'], array(1));
-	foreach ($groups as $id => $group)
-		$groups[$id] = (int) $group;
+	$groups = getAnnounceGroups();
 
 	$context['groups'] = array();
 	if (in_array(0, $groups))
@@ -157,7 +155,7 @@ function AnnouncementSend()
 	$chunkSize = empty($settings['mail_queue']) ? 50 : 500;
 
 	$context['start'] = empty($_REQUEST['start']) ? 0 : (int) $_REQUEST['start'];
-	$groups = array_merge($board_info['groups'], array(1));
+	$groups = getAnnounceGroups();
 
 	if (isset($_POST['membergroups']))
 		$_POST['who'] = explode(',', $_POST['membergroups']);
@@ -267,4 +265,26 @@ function AnnouncementSend()
 		loadLanguage('Post');
 }
 
+function getAnnounceGroups()
+{
+	global $board_info;
+
+	$request = wesql::query('
+		SELECT id_group, enter_perm
+		FROM {db_prefix}board_groups
+		WHERE id_board = {int:board}',
+		array(
+			'board' => $board_info['id'],
+		)
+	);
+	$access = array(
+		'enter_allow' => array(1),
+		'enter_deny' => array(),
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$access['enter_' . $row['enter_perm']][] = (int) $row['id_group'];
+
+	$groups = array_diff($access['enter_allow'], $access['enter_deny']);
+	return $groups;
+}
 ?>

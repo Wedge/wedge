@@ -453,16 +453,16 @@ function loadUserSettings()
 				$access['view_' . $row['view_perm']][] = $row['id_board'];
 				$access['enter_' . $row['enter_perm']][] = $row['id_board'];
 			}
-			$access['view_allow'] = array_diff($access['view_allow'], $access['view_deny']);
-			$access['enter_allow'] = array_diff($access['enter_allow'], $access['enter_deny']);
-			$user_info['query_list_board'] = empty($access['view_allow']) ? '0=1' : 'b.id_board IN (' . implode(',', $access['view_allow']) . ')';
-			$user_info['query_see_board'] = empty($access['enter_allow']) ? '0=1' : 'b.id_board IN (' . implode(',', $access['enter_allow']) . ')';
+			$user_info['qlb_boards'] = array_diff($access['view_allow'], $access['view_deny']);
+			$user_info['qsb_boards'] = array_diff($access['enter_allow'], $access['enter_deny']);
+			$user_info['query_list_board'] = empty($user_info['qlb_boards']) ? '0=1' : 'b.id_board IN (' . implode(',', $user_info['qlb_boards']) . ')';
+			$user_info['query_see_board'] = empty($user_info['qsb_boards']) ? '0=1' : 'b.id_board IN (' . implode(',', $user_info['qsb_boards']) . ')';
 
 			$cache = array(
 				'query_list_board' => $user_info['query_list_board'],
 				'query_see_board' => $user_info['query_see_board'],
-				'qlb_boards' => $access['view_allow'],
-				'qsb_boards' => $access['enter_allow'],
+				'qlb_boards' => $user_info['qlb_boards'],
+				'qsb_boards' => $user_info['qsb_boards'],
 			);
 			cache_put_data('board_access_' . $cache_groups, $cache, 300);
 		}
@@ -678,9 +678,6 @@ function loadBoard()
 			else
 				$board_info['privacy'] = 'everyone';
 
-			// Load the membergroups allowed, and check permissions.
-			$board_info['groups'] = $row['member_groups'] == '' ? array() : explode(',', $row['member_groups']);
-
 			if (!empty($row['id_owner']))
 				$board_info['moderators'] = array(
 					$row['id_owner'] => array(
@@ -758,10 +755,33 @@ function loadBoard()
 		if ($board_info['banned_member'] && !$board_info['allowed_member'])
 			$board_info['error'] = 'access';
 
-		if (count(array_intersect($user_info['groups'], $board_info['groups'])) == 0 && !$user_info['is_admin'])
-			if (!$user_info['is_mod'] && ($user_info['id'] != $board_info['owner_id']))
-				if ($board_info['privacy'] == 'friends' && !in_array($user_info['id'], explode(',', $board_info['friends'])))
-					$board_info['error'] = 'access';
+		if ($user_info['id'] != 1)
+			trigger_error('qsb = ' . print_r($user_info['qsb_boards'], true) . '; board = ' . $board_info['id'] . '; privacy ' . $board_info['privacy']);
+		if (!$user_info['is_admin'] && !in_array($board_info['id'], $user_info['qsb_boards']))
+		{
+			if (!$user_info['is_mod'] && (!empty($board_info['owner_id']) && $user_info['id'] != $board_info['owner_id']))
+			{
+				switch ($board_info['privacy'])
+				{
+					case 'friends':
+						if (!in_array($user_info['id'], explode(',', $board_info['friends'])))
+							$board_info['error'] = 'access';
+						break;
+					case 'members':
+						if ($user_info['is_guest'])
+							$board_info['error'] = 'access';
+						break;
+					case 'justme':
+						$board_info['error'] = 'access'; // We've already established that the user is not the owner
+						break;
+					case 'everyone':
+						$board_info['error'] = 'access'; // The fact we're here means there are some groups denying/not granting access which must be adhered to
+						break;
+				}
+			}
+			else
+				$board_info['error'] = 'access'; // You're not permitted here, not an admin or mod and there's no owner rights to allow you in either.
+		}
 
 		// Build up the linktree.
 		$context['linktree'] = array_merge(
