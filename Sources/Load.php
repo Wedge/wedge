@@ -755,8 +755,6 @@ function loadBoard()
 		if ($board_info['banned_member'] && !$board_info['allowed_member'])
 			$board_info['error'] = 'access';
 
-		if ($user_info['id'] != 1)
-			trigger_error('qsb = ' . print_r($user_info['qsb_boards'], true) . '; board = ' . $board_info['id'] . '; privacy ' . $board_info['privacy']);
 		if (!$user_info['is_admin'] && !in_array($board_info['id'], $user_info['qsb_boards']))
 		{
 			if (!$user_info['is_mod'] && (!empty($board_info['owner_id']) && $user_info['id'] != $board_info['owner_id']))
