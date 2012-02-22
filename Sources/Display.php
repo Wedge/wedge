@@ -327,7 +327,6 @@ function Display()
 		$sort = $sort_methods[$sort_by]['sort'];
 		$ascending = $board_info['sort_override'] === 'force_asc' || $board_info['sort_override'] === 'natural_asc';
 
-		// !!! @todo: {query_see_topic}
 		$request = wesql::query('
 			(
 				SELECT t.id_topic, m.subject, 1
@@ -336,8 +335,8 @@ function Display()
 				WHERE t.id_topic = (
 					SELECT t.id_topic' . (isset($sort_methods[$sort_by]['select']) ? $sort_methods[$sort_by]['select'] : '') . '
 					FROM {db_prefix}topics AS t' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
-					WHERE t.id_board = {int:current_board}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
+					WHERE {query_see_topic}
+						AND t.id_board = {int:current_board}
 						AND ' . $sort . ' ' . $sort_methods[$sort_by]['cmp'] . '
 					ORDER BY t.is_pinned' . ($ascending ? ' DESC' : '') . ', ' . $sort . ($ascending ? ' DESC' : '') . '
 					LIMIT 1
@@ -351,8 +350,8 @@ function Display()
 				WHERE t.id_topic = (
 					SELECT t.id_topic' . (isset($sort_methods[$sort_by]['select']) ? $sort_methods[$sort_by]['select'] : '') . '
 					FROM {db_prefix}topics AS t' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
-					WHERE t.id_board = {int:current_board}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-						AND (t.approved = 1 OR (t.id_member_started != 0 AND t.id_member_started = {int:current_member}))') . '
+					WHERE {query_see_topic}
+						AND t.id_board = {int:current_board}
 						AND ' . $sort . ' ' . str_replace('>', '<', $sort_methods[$sort_by]['cmp']) . '
 					ORDER BY t.is_pinned' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
 					LIMIT 1
@@ -388,6 +387,7 @@ function Display()
 				<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '&laquo;&nbsp;<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a>') . '</div>';
 	$context['prevnext_next'] = '
 				<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="' . $scripturl . '?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
+	$context['no_prevnext'] = empty($prev_topic) && empty($next_topic);
 
 	// Check if spellchecking is both enabled and actually working. (for quick reply.)
 	$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');

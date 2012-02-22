@@ -251,7 +251,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 // Recent post list: Board | Subject by | Poster | Date
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
-	global $context, $theme, $txt, $db_prefix, $user_info, $settings;
+	global $context, $theme, $txt, $db_prefix, $settings, $user_info;
 
 	// Excluding certain boards...
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
@@ -265,6 +265,8 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 	elseif ($include_boards != null)
 		$include_boards = array();
 
+	setupTopicPrivacy();
+
 	// Let's restrict the query boys (and girls)
 	$query_where = '
 		m.id_msg >= {int:min_message_id}
@@ -272,11 +274,10 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 		AND b.id_board NOT IN ({array_int:exclude_boards})') . '
 		' . ($include_boards === null ? '' : '
 		AND b.id_board IN ({array_int:include_boards})') . '
-		AND {query_wanna_see_board}' . ($settings['postmod_active'] ? '
-		AND m.approved = {int:is_approved}' : '');
+		AND {query_wanna_see_board}' . (empty($user_info['can_skip_approval']) ? '
+		AND m.approved = 1' : '');
 
 	$query_where_params = array(
-		'is_approved' => 1,
 		'include_boards' => $include_boards === null ? '' : $include_boards,
 		'exclude_boards' => empty($exclude_boards) ? '' : $exclude_boards,
 		'min_message_id' => $settings['maxMsgID'] - 25 * $num_recent,
@@ -289,15 +290,17 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 // Fetch a post with a particular ID. By default will only show if you have permission to the see the board in question - this can be overriden.
 function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method = 'echo')
 {
-	global $user_info, $settings;
+	global $user_info;
 
 	// Allow the user to request more than one - why not?
 	$post_ids = is_array($post_ids) ? $post_ids : array($post_ids);
 
+	setupTopicPrivacy();
+
 	// Restrict the posts required...
 	$query_where = '
 		m.id_msg IN ({array_int:message_list})' . ($override_permissions ? '' : '
-			AND {query_wanna_see_board}') . ($settings['postmod_active'] ? '
+			AND {query_wanna_see_board}') . (empty($user_info['can_skip_approval']) ? '
 			AND m.approved = {int:is_approved}' : '');
 	$query_where_params = array(
 		'message_list' => $post_ids,
@@ -312,7 +315,6 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
 {
 	global $context, $theme, $scripturl, $txt, $db_prefix, $user_info;
-	global $settings;
 
 	// Find all the posts. Newer ones will have higher IDs.
 	$request = wesql::query('
@@ -405,8 +407,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 // Recent topic list: [Board] | Subject by | Poster | Date
 function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo')
 {
-	global $context, $theme, $scripturl, $txt, $db_prefix, $user_info;
-	global $settings;
+	global $context, $settings, $theme, $scripturl, $txt, $db_prefix, $user_info;
 
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
 		$exclude_boards = array($settings['recycle_board']);
@@ -427,6 +428,8 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 	foreach ($stable_icons as $icon)
 		$icon_sources[$icon] = 'images_url';
 
+	setupTopicPrivacy();
+
 	// Find all the posts in distinct topics. Newer ones will have higher IDs.
 	$request = wesql::query('
 		SELECT
@@ -434,11 +437,11 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-		WHERE t.id_last_msg >= {int:min_message_id}' . (empty($exclude_boards) ? '' : '
+		WHERE {query_see_topic}
+			AND t.id_last_msg >= {int:min_message_id}' . (empty($exclude_boards) ? '' : '
 			AND b.id_board NOT IN ({array_int:exclude_boards})') . '' . (empty($include_boards) ? '' : '
 			AND b.id_board IN ({array_int:include_boards})') . '
-			AND {query_wanna_see_board}' . ($settings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}
+			AND {query_wanna_see_board}' . (empty($user_info['can_skip_approval']) ? '
 			AND ml.approved = {int:is_approved}' : '') . '
 		LIMIT ' . $num_recent,
 		array(
@@ -555,7 +558,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 // Show the top poster's name and profile link.
 function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 {
-	global $db_prefix, $scripturl, $context;
+	global $db_prefix, $scripturl, $context, $settings;
 
 	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
 		return array();
@@ -655,19 +658,20 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 {
 	global $db_prefix, $txt, $scripturl, $user_info, $settings, $context;
 
+	setupTopicPrivacy();
+
 	if ($settings['totalMessages'] > 100000)
 	{
 		// !!! Added {query_wanna_see_board} here, for security reasons. May be bad for performance.
 		$request = wesql::query('
 			SELECT id_topic
-			FROM {db_prefix}topics
+			FROM {db_prefix}topics AS t
 			WHERE {query_wanna_see_board}
-				AND num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . ($settings['postmod_active'] ? '
-				AND approved = {int:is_approved}' : '') . '
+				AND {query_see_topic}
+				AND num_' . ($type != 'replies' ? 'views' : 'replies') . ' != 0' . '
 			ORDER BY num_' . ($type != 'replies' ? 'views' : 'replies') . ' DESC
 			LIMIT {int:limit}',
 			array(
-				'is_approved' => 1,
 				'limit' => $num_topics > 100 ? ($num_topics + ($num_topics / 2)) : 100,
 			)
 		);
@@ -684,15 +688,14 @@ function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'ec
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-		WHERE {query_wanna_see_board}' . ($settings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '') . (!empty($topic_ids) ? '
+		WHERE {query_wanna_see_board}
+			AND {query_see_topic}' . (!empty($topic_ids) ? '
 			AND t.id_topic IN ({array_int:topic_list})' : '') . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_enable}' : '') . '
 		ORDER BY t.num_' . ($type != 'replies' ? 'views' : 'replies') . ' DESC
 		LIMIT {int:limit}',
 		array(
 			'topic_list' => $topic_ids,
-			'is_approved' => 1,
 			'recycle_enable' => $settings['recycle_board'],
 			'limit' => $num_topics,
 		)
@@ -1016,7 +1019,7 @@ function ssi_logOnline($output_method = 'echo')
 // Shows a login box.
 function ssi_login($redirect_to = '', $output_method = 'echo')
 {
-	global $scripturl, $txt, $user_info, $context, $settings;
+	global $scripturl, $txt, $user_info;
 
 	if ($redirect_to != '')
 		$_SESSION['login_url'] = $redirect_to;
@@ -1060,10 +1063,12 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	if (empty($boardsAllowed))
 		return array();
 
+	setupTopicPrivacy();
+
 	$request = wesql::query('
 		SELECT p.id_poll, p.question, t.id_topic, p.max_votes, p.guest_vote, p.hide_results, p.expire_time
 		FROM {db_prefix}polls AS p
-			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll' . ($settings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
+			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = p.id_poll AND {query_see_topic})
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)' . ($topPollInstead ? '
 			INNER JOIN {db_prefix}poll_choices AS pc ON (pc.id_poll = p.id_poll)' : '') . '
 			LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_poll = p.id_poll AND lp.id_member > {int:no_member} AND lp.id_member = {int:current_member})
@@ -1078,7 +1083,6 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 		array(
 			'current_member' => $user_info['id'],
 			'boards_allowed_list' => $boardsAllowed,
-			'is_approved' => 1,
 			'guest_vote_allowed' => 1,
 			'no_member' => 0,
 			'voting_opened' => 0,
@@ -1184,12 +1188,14 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 
 function ssi_showPoll($topic = null, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $theme, $boardurl, $user_info, $context, $settings;
+	global $db_prefix, $txt, $theme, $boardurl, $user_info, $context;
 
 	$boardsAllowed = boardsAllowedTo('poll_view');
 
 	if (empty($boardsAllowed))
 		return array();
+
+	setupTopicPrivacy();
 
 	if ($topic === null && isset($_REQUEST['ssi_topic']))
 		$topic = (int) $_REQUEST['ssi_topic'];
@@ -1203,14 +1209,13 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			INNER JOIN {db_prefix}polls AS p ON (p.id_poll = t.id_poll)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 		WHERE t.id_topic = {int:current_topic}
-			AND {query_see_board}' . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_allowed_see})' : '') . ($settings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '') . '
+			AND {query_see_board}
+			AND {query_see_topic}' . (!in_array(0, $boardsAllowed) ? '
+			AND b.id_board IN ({array_int:boards_allowed_see})' : '') . '
 		LIMIT 1',
 		array(
 			'current_topic' => $topic,
 			'boards_allowed_see' => $boardsAllowed,
-			'is_approved' => 1,
 		)
 	);
 
@@ -1379,6 +1384,8 @@ function ssi_pollVote()
 
 	$_POST['poll'] = (int) $_POST['poll'];
 
+	setupTopicPrivacy();
+
 	// Check if they have already voted, or voting is locked.
 	$request = wesql::query('
 		SELECT
@@ -1390,13 +1397,12 @@ function ssi_pollVote()
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_poll = p.id_poll AND lp.id_member = {int:current_member})
 		WHERE p.id_poll = {int:current_poll}
-			AND {query_see_board}' . ($settings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '') . '
+			AND {query_see_board}
+			AND {query_see_topic}
 		LIMIT 1',
 		array(
 			'current_member' => $user_info['id'],
 			'current_poll' => $_POST['poll'],
-			'is_approved' => 1,
 		)
 	);
 	if (wesql::num_rows($request) == 0)
@@ -1558,17 +1564,18 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	foreach ($stable_icons as $icon)
 		$icon_sources[$icon] = 'images_url';
 
+	setupTopicPrivacy();
+
 	// Find the post ids.
 	$request = wesql::query('
 		SELECT id_first_msg
-		FROM {db_prefix}topics
-		WHERE id_board = {int:current_board}' . ($settings['postmod_active'] ? '
-			AND approved = {int:is_approved}' : '') . '
+		FROM {db_prefix}topics AS t
+		WHERE t.id_board = {int:current_board}
+			AND {query_see_topic}
 		ORDER BY id_first_msg DESC
 		LIMIT ' . $start . ', ' . $limit,
 		array(
 			'current_board' => $board,
-			'is_approved' => 1,
 		)
 	);
 	$posts = array();
@@ -1699,7 +1706,7 @@ function ssi_checkPassword($id = null, $password = null, $is_username = false)
 // We want to show the recent attachments outside of the forum.
 function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(), $output_method = 'echo')
 {
-	global $context, $settings, $scripturl, $txt, $theme;
+	global $context, $settings, $scripturl, $txt, $theme, $user_info;
 
 	// We want to make sure that we only get attachments for boards that we can see *if* any.
 	$attachments_boards = boardsAllowedTo('view_attachments');
@@ -1712,6 +1719,8 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 	if (!is_array($attachment_ext))
 		$attachment_ext = array($attachment_ext);
 
+	setupTopicPrivacy();
+
 	// Let's build the query.
 	$request = wesql::query('
 		SELECT
@@ -1723,19 +1732,18 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (empty($settings['attachmentShowImages']) || empty($settings['attachmentThumbnails']) ? '' : '
 			LEFT JOIN {db_prefix}attachments AS thumb ON (thumb.id_attach = att.id_thumb)') . '
-		WHERE att.attachment_type = 0' . ($attachments_boards === array(0) ? '' : '
+		WHERE {query_see_topic}
+			AND att.attachment_type = 0' . ($attachments_boards === array(0) ? '' : '
 			AND m.id_board IN ({array_int:boards_can_see})') . (!empty($attachment_ext) ? '
 			AND att.fileext IN ({array_string:attachment_ext})' : '') .
-			(!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-			AND t.approved = {int:is_approved}
-			AND m.approved = {int:is_approved}') . '
+			(empty($user_info['can_skip_approval']) ? '
+			AND m.approved = 1' : '') . '
 		ORDER BY att.id_attach DESC
 		LIMIT {int:num_attachments}',
 		array(
 			'boards_can_see' => $attachments_boards,
 			'attachment_ext' => $attachment_ext,
 			'num_attachments' => $num_attachments,
-			'is_approved' => 1,
 		)
 	);
 

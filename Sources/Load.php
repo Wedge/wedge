@@ -495,10 +495,48 @@ function loadUserSettings()
 		}
 	}
 
+	setupTopicPrivacy();
+
 	wesql::register_replacement('query_see_board', $user_info['query_see_board']);
 	wesql::register_replacement('query_list_board', $user_info['query_list_board']);
 	wesql::register_replacement('query_wanna_see_board', $user_info['query_wanna_see_board']);
 	wesql::register_replacement('query_wanna_list_board', $user_info['query_wanna_list_board']);
+}
+
+/**
+ * {query_see_topic}, which has basic t.approved tests as well
+ * as more elaborate topic privacy, is set up here.
+ */
+function setupTopicPrivacy()
+{
+	global $db_prefix, $user_info, $settings;
+
+	if (isset($user_info['query_see_topic']))
+		return;
+
+	if ($user_info['is_admin'])
+		$user_info['query_see_topic'] = '1=1';
+
+	elseif ($user_info['is_guest'])
+		$user_info['query_see_topic'] = empty($settings['postmod_active']) ? 't.privacy = \'default\'' : '(t.approved = 1 AND t.privacy = \'default\')';
+
+	else
+	{
+		$user_info['can_skip_approval'] = empty($settings['postmod_active']) || allowedTo(array('moderate_forum', 'moderate_board', 'approve_posts'));
+		$user_info['query_see_topic'] = '
+		(
+			t.id_member_started = ' . $uid . ' OR (' . ($user_info['can_skip_approval'] ? '' : 't.approved = 1 AND ') . '
+				(
+					t.privacy = \'default\'
+					OR (t.privacy = \'members\')
+					OR (t.privacy = \'contacts\' AND t.id_member_started != 0
+							AND FIND_IN_SET(' . $uid . ', (SELECT buddy_list FROM ' . $db_prefix . 'members WHERE id_member = t.id_member_started)))
+				)
+			)
+		)';
+	}
+
+	wesql::register_replacement('query_see_topic', $user_info['query_see_topic']);
 }
 
 /**
@@ -600,7 +638,7 @@ function loadBoard()
 				b.num_posts, b.id_parent, c.name AS cname, IFNULL(mem.id_member, 0) AS id_moderator,
 				mem.real_name' . (!empty($topic) ? ', b.id_board' : '') . ', b.child_level, b.skin,
 				b.id_theme, b.override_theme, b.count_posts, b.id_profile, b.redirect, b.language, bm.permission = \'deny\' AS banned,
-				bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS friends, b.board_type, b.sort_method,
+				bm.permission = \'access\' AS allowed, mco.real_name AS owner_name, mco.buddy_list AS contacts, b.board_type, b.sort_method,
 				b.sort_override, b.unapproved_topics, b.unapproved_posts' . (!empty($topic) ? ', t.approved, t.id_member_started' : '') . '
 			FROM {db_prefix}boards AS b' . (!empty($topic) ? '
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})' : '') . '
@@ -656,7 +694,7 @@ function loadBoard()
 				'cur_topic_starter' => empty($topic) ? 0 : $row['id_member_started'],
 				'allowed_member' => $row['allowed'],
 				'banned_member' => $row['banned'],
-				'friends' => $row['friends'],
+				'contacts' => $row['contacts'],
 				'language' => $row['language'],
 				'type' => $row['board_type'],
 				'sort_method' => $row['sort_method'],
@@ -668,11 +706,11 @@ function loadBoard()
 				$board_info['privacy'] = 'members';
 			elseif ($row['member_groups'] === '-1,0')
 				$board_info['privacy'] = 'everyone';
-			elseif ($row['member_groups'] === 'friends')
-				$board_info['privacy'] = 'friends';
+			elseif ($row['member_groups'] === 'contacts')
+				$board_info['privacy'] = 'contacts';
 			elseif ($row['member_groups'] === '')
 			{
-				$board_info['privacy'] = 'justme';
+				$board_info['privacy'] = 'author';
 				$row['member_groups'] = '';
 			}
 			else
@@ -761,15 +799,15 @@ function loadBoard()
 			{
 				switch ($board_info['privacy'])
 				{
-					case 'friends':
-						if (!in_array($user_info['id'], explode(',', $board_info['friends'])))
+					case 'contacts':
+						if (!in_array($user_info['id'], explode(',', $board_info['contacts'])))
 							$board_info['error'] = 'access';
 						break;
 					case 'members':
 						if ($user_info['is_guest'])
 							$board_info['error'] = 'access';
 						break;
-					case 'justme':
+					case 'author':
 						$board_info['error'] = 'access'; // We've already established that the user is not the owner
 						break;
 					case 'everyone':
