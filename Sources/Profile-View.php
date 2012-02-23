@@ -629,11 +629,10 @@ function showPosts($memID)
 			FROM {db_prefix}topics AS t' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
 			WHERE t.id_member_started = {int:current_member}' . (!empty($board) ? '
-				AND t.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
-				AND t.approved = {int:is_approved}'),
+				AND t.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
+				AND {query_see_topic}'),
 			array(
 				'current_member' => $memID,
-				'is_approved' => 1,
 				'board' => $board,
 			)
 		);
@@ -717,8 +716,8 @@ function showPosts($memID)
 				WHERE t.id_member_started = {int:current_member}' . (!empty($board) ? '
 					AND t.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
-					AND {query_see_board}' . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
-					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
+					AND {query_see_board}' . ($context['user']['is_owner'] ? '' : '
+					AND {query_see_topic}' . (!$settings['postmod_active'] ? '' : ' AND m.approved = {int:is_approved}')) . '
 				ORDER BY t.id_first_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
 				array(
@@ -742,8 +741,8 @@ function showPosts($memID)
 				WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
 					AND b.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
-					AND {query_see_board}' . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
-					AND t.approved = {int:is_approved} AND m.approved = {int:is_approved}') . '
+					AND {query_see_board}' . ($context['user']['is_owner'] ? '' : '
+					AND {query_see_topic}' . (!$settings['postmod_active'] ? '' : ' AND m.approved = {int:is_approved}')) . '
 				ORDER BY m.id_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
 				array(

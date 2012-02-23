@@ -1219,12 +1219,12 @@ function AdminBoardRecount()
 			$request = wesql::query('
 				SELECT /*!40001 SQL_NO_CACHE */ t.id_board, COUNT(*) AS real_unapproved_topics
 				FROM {db_prefix}topics AS t
-				WHERE t.approved = {int:is_approved}
+				WHERE t.approved = {int:is_unapproved}
 					AND t.id_topic > {int:id_topic_min}
 					AND t.id_topic <= {int:id_topic_max}
 				GROUP BY t.id_board',
 				array(
-					'is_approved' => 0,
+					'is_unapproved' => 0,
 					'id_topic_min' => $_REQUEST['start'],
 					'id_topic_max' => $_REQUEST['start'] + $increment,
 				)

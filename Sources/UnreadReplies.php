@@ -278,13 +278,12 @@ function UnreadReplies()
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})' . (isset($sortKey_joins[$_REQUEST['sort']]) ? $sortKey_joins[$_REQUEST['sort']] : '') . '
 			WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
-				AND t.id_board = {int:current_board}' : '') . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved}' : '') . '
+				AND t.id_board = {int:current_board}' : '') . '
+				AND {query_see_topic}
 			GROUP BY m.id_topic',
 			array(
 				'current_board' => $board,
 				'current_member' => $user_info['id'],
-				'is_approved' => 1,
 				'string_zero' => '0',
 				'db_error_skip' => true,
 			)
@@ -331,11 +330,10 @@ function UnreadReplies()
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
 			WHERE t.' . $query_this_board . '
 				AND m.id_member = {int:current_member}
-				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg' . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved}' : ''),
+				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg
+				AND {query_see_topic}',
 			array_merge($query_parameters, array(
 				'current_member' => $user_info['id'],
-				'is_approved' => 1,
 			))
 		);
 		list ($num_topics, $min_message) = wesql::fetch_row($request);
@@ -392,13 +390,12 @@ function UnreadReplies()
 			WHERE t.' . $query_this_board . '
 				AND t.id_last_msg >= {int:min_message}
 				AND (IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0))) < t.id_last_msg
-				AND t.approved = {int:is_approved}
+				AND {query_see_topic}
 			ORDER BY {raw:order}
 			LIMIT {int:offset}, {int:limit}',
 			array_merge($query_parameters, array(
 				'current_member' => $user_info['id'],
 				'min_message' => (int) $min_message,
-				'is_approved' => 1,
 				'order' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
 				'offset' => $_REQUEST['start'],
 				'limit' => $context['topics_per_page'],

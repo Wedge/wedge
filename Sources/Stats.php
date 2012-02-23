@@ -284,14 +284,13 @@ function Stats()
 	{
 		$request = wesql::query('
 			SELECT id_topic
-			FROM {db_prefix}topics
-			WHERE num_replies != {int:no_replies}' . ($settings['postmod_active'] ? '
-				AND approved = {int:is_approved}' : '') . '
+			FROM {db_prefix}topics AS t
+			WHERE num_replies != {int:no_replies}
+				AND {query_see_topic}
 			ORDER BY num_replies DESC
 			LIMIT 100',
 			array(
 				'no_replies' => 0,
-				'is_approved' => 1,
 			)
 		);
 		$topic_ids = array();
@@ -310,14 +309,13 @@ function Stats()
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . ')
 		WHERE {query_see_board}' . (!empty($topic_ids) ? '
-			AND t.id_topic IN ({array_int:topic_list})' : ($settings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '')) . '
+			AND t.id_topic IN ({array_int:topic_list})' : '
+			AND {query_see_topic}') . '
 		ORDER BY t.num_replies DESC
 		LIMIT 10',
 		array(
 			'topic_list' => $topic_ids,
 			'recycle_board' => $settings['recycle_board'],
-			'is_approved' => 1,
 		)
 	);
 	$context['top_topics_replies'] = array();
@@ -380,14 +378,13 @@ function Stats()
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_board}' : '') . ')
 		WHERE {query_see_board}' . (!empty($topic_ids) ? '
-			AND t.id_topic IN ({array_int:topic_list})' : ($settings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : '')) . '
+			AND t.id_topic IN ({array_int:topic_list})' : '
+			AND {query_see_topic}') . '
 		ORDER BY t.num_views DESC
 		LIMIT 10',
 		array(
 			'topic_list' => $topic_ids,
 			'recycle_board' => $settings['recycle_board'],
-			'is_approved' => 1,
 		)
 	);
 	$context['top_topics_views'] = array();

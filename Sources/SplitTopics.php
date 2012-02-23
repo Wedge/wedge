@@ -756,11 +756,11 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 	if (!$split2_approved)
 		wesql::query('
 			UPDATE {db_prefix}messages
-			SET approved = {int:approved}
+			SET approved = {int:is_unapproved}
 			WHERE id_msg = {int:id_msg}
 				AND id_topic = {int:id_topic}',
 			array(
-				'approved' => 0,
+				'is_unapproved' => 0,
 				'id_msg' => $split2_first_msg,
 				'id_topic' => $split2_id_topic,
 			)
@@ -859,7 +859,7 @@ function MergeIndex()
 	else
 		$onlyApproved = false;
 
-	// How many topics are on this board?  (used for paging.)
+	// How many topics are on this board? (Used for paging.)
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}topics AS t
@@ -1340,12 +1340,12 @@ function MergeExecute($topics = array())
 			unapproved_posts = {int:unapproved_posts},
 			num_views = {int:num_views},
 			is_pinned = {int:is_pinned},
-			approved = {int:approved}
+			approved = {int:approved_state}
 		WHERE id_topic = {int:id_topic}',
 		array(
 			'id_board' => $target_board,
 			'is_pinned' => $is_pinned,
-			'approved' => $topic_approved,
+			'approved_state' => $topic_approved,
 			'id_topic' => $id_topic,
 			'id_member_started' => $member_started,
 			'id_member_updated' => $member_updated,

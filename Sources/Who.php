@@ -405,7 +405,7 @@ function determineActions($urls, $preferred_prefix = false)
 					SELECT m.id_topic, m.subject
 					FROM {db_prefix}messages AS m
 						INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic' . ($settings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
+						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic AND {query_see_topic})
 					WHERE m.id_msg = {int:id_msg}
 						AND {query_see_board}' . ($settings['postmod_active'] ? '
 						AND m.approved = {int:is_approved}' : '') . '
@@ -508,12 +508,11 @@ function determineActions($urls, $preferred_prefix = false)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 			WHERE {query_see_board}
-				AND t.id_topic IN ({array_int:topic_list})' . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved}' : '') . '
+				AND t.id_topic IN ({array_int:topic_list})
+				AND {query_see_topic}
 			LIMIT {int:limit}',
 			array(
 				'topic_list' => array_keys($topic_ids),
-				'is_approved' => 1,
 				'limit' => count($topic_ids),
 			)
 		);

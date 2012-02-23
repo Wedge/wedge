@@ -1813,19 +1813,16 @@ function notification($memID)
 
 function list_getTopicNotificationCount($memID)
 {
-	global $user_info, $context, $settings;
+	global $user_info, $context;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
-		FROM {db_prefix}log_notify AS ln' . (!$settings['postmod_active'] && $user_info['query_see_board'] === '1=1' ? '' : '
-			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic)') . ($user_info['query_see_board'] === '1=1' ? '' : '
-			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)') . '
-		WHERE ln.id_member = {int:selected_member}' . ($user_info['query_see_board'] === '1=1' ? '' : '
-			AND {query_see_board}') . ($settings['postmod_active'] ? '
-			AND t.approved = {int:is_approved}' : ''),
+		FROM {db_prefix}log_notify AS ln' . ($user_info['query_see_topic'] === '1=1' ? '' : '
+			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic AND {query_see_topic})') . ($user_info['query_see_board'] === '1=1' ? '' : '
+			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
+		WHERE ln.id_member = {int:selected_member}',
 		array(
 			'selected_member' => $memID,
-			'is_approved' => 1,
 		)
 	);
 	list ($totalNotifications) = wesql::fetch_row($request);
@@ -1836,7 +1833,7 @@ function list_getTopicNotificationCount($memID)
 
 function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $txt, $scripturl, $user_info, $context, $settings;
+	global $txt, $scripturl, $user_info, $context;
 
 	// All the topics with notification on...
 	$request = wesql::query('
@@ -1846,7 +1843,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 			ml.id_msg_modified, ml.poster_time, ml.id_member AS id_member_updated,
 			IFNULL(mem2.real_name, ml.poster_name) AS last_real_name
 		FROM {db_prefix}log_notify AS ln
-			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic' . ($settings['postmod_active'] ? ' AND t.approved = {int:is_approved}' : '') . ')
+			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic AND {query_see_topic})
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})
 			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
@@ -1859,7 +1856,6 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 		LIMIT {int:offset}, {int:items_per_page}',
 		array(
 			'current_member' => $user_info['id'],
-			'is_approved' => 1,
 			'selected_member' => $memID,
 			'sort' => $sort,
 			'offset' => $start,

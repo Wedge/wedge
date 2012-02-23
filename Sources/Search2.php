@@ -174,13 +174,13 @@ function Search2()
 			SELECT ' . (empty($search_params['maxage']) ? '0, ' : 'IFNULL(MIN(id_msg), -1), ') . (empty($search_params['minage']) ? '0' : 'IFNULL(MAX(id_msg), -1)') . '
 			FROM {db_prefix}messages
 			WHERE 1=1' . ($settings['postmod_active'] ? '
-				AND approved = {int:is_approved_true}' : '') . (empty($search_params['minage']) ? '' : '
+				AND approved = {int:is_approved}' : '') . (empty($search_params['minage']) ? '' : '
 				AND poster_time <= {int:timestamp_minimum_age}') . (empty($search_params['maxage']) ? '' : '
 				AND poster_time >= {int:timestamp_maximum_age}'),
 			array(
 				'timestamp_minimum_age' => empty($search_params['minage']) ? 0 : time() - 86400 * $search_params['minage'],
 				'timestamp_maximum_age' => empty($search_params['maxage']) ? 0 : time() - 86400 * $search_params['maxage'],
-				'is_approved_true' => 1,
+				'is_approved' => 1,
 			)
 		);
 		list ($minMsgID, $maxMsgID) = wesql::fetch_row($request);
@@ -282,12 +282,11 @@ function Search2()
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 			WHERE t.id_topic = {int:search_topic_id}
-				AND {query_see_board}' . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved_true}' : '') . '
+				AND {query_see_board}
+				AND {query_see_topic}
 			LIMIT 1',
 			array(
 				'search_topic_id' => $search_params['topic'],
-				'is_approved_true' => 1,
 			)
 		);
 
@@ -797,11 +796,8 @@ function Search2()
 						'from' => '{db_prefix}topics AS t',
 						'inner_join' => array(),
 						'left_join' => array(),
-						'where' => array(),
+						'where' => array('{query_see_topic}'),
 					);
-
-					if ($settings['postmod_active'])
-						$subject_query['where'][] = 't.approved = {int:is_approved}';
 
 					$numTables = 0;
 					$prev_join = 0;
@@ -890,7 +886,6 @@ function Search2()
 							'min_msg' => $minMsg,
 							'recent_message' => $recentMsg,
 							'huge_topic_posts' => $humungousTopicPosts,
-							'is_approved' => 1,
 						))
 					);
 

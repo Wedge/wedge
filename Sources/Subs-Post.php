@@ -2110,11 +2110,11 @@ function approvePosts($msgs, $approve = true)
 			SELECT id_topic, MAX(id_msg) AS id_last_msg
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topic_list})
-				AND approved = {int:approved}
+				AND approved = {int:is_approved}
 			GROUP BY id_topic',
 			array(
 				'topic_list' => $topics,
-				'approved' => 1,
+				'is_approved' => 1,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -2126,11 +2126,11 @@ function approvePosts($msgs, $approve = true)
 	foreach ($topic_changes as $id => $changes)
 		wesql::query('
 			UPDATE {db_prefix}topics
-			SET approved = {int:approved}, unapproved_posts = unapproved_posts + {int:unapproved_posts},
+			SET approved = {int:approved_state}, unapproved_posts = unapproved_posts + {int:unapproved_posts},
 				num_replies = num_replies + {int:num_replies}, id_last_msg = {int:id_last_msg}
 			WHERE id_topic = {int:id_topic}',
 			array(
-				'approved' => $changes['approved'],
+				'approved_state' => $changes['approved'],
 				'unapproved_posts' => $changes['unapproved_posts'],
 				'num_replies' => $changes['replies'],
 				'id_last_msg' => $changes['id_last_msg'],
@@ -2376,11 +2376,11 @@ function updateLastMessages($setboards, $id_msg = 0)
 			SELECT id_board, MAX(id_last_msg) AS id_msg
 			FROM {db_prefix}topics
 			WHERE id_board IN ({array_int:board_list})
-				AND approved = {int:approved}
+				AND approved = {int:is_approved}
 			GROUP BY id_board',
 			array(
 				'board_list' => $setboards,
-				'approved' => 1,
+				'is_approved' => 1,
 			)
 		);
 		$lastMsg = array();

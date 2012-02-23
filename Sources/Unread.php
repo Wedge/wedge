@@ -324,12 +324,11 @@ function Unread()
 				INNER JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic)
 			WHERE lt.id_member = {int:current_member}
 				AND t.' . $query_this_board . (empty($earliest_msg) ? '' : '
-				AND t.id_last_msg > {int:earliest_msg}') . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved}' : ''),
+				AND t.id_last_msg > {int:earliest_msg}') . '
+				AND {query_see_topic}',
 			array_merge($query_parameters, array(
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
-				'is_approved' => 1,
 				'db_error_skip' => true,
 			))
 		) !== false;
@@ -346,12 +345,11 @@ function Unread()
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
 			WHERE t.' . $query_this_board . (!empty($earliest_msg) ? '
 				AND t.id_last_msg > {int:earliest_msg}' : '') . '
-				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg' . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved}' : ''),
+				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg
+				AND {query_see_topic}',
 			array_merge($query_parameters, array(
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
-				'is_approved' => 1,
 			))
 		);
 		list ($num_topics, $min_message) = wesql::fetch_row($request);
@@ -422,13 +420,12 @@ function Unread()
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})
 			WHERE t.' . $query_this_board . (!empty($earliest_msg) ? '
 				AND t.id_last_msg > {int:earliest_msg}' : '') . '
-				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg' . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved}' : ''),
+				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg
+				AND {query_see_topic}',
 			array_merge($query_parameters, array(
 				'current_member' => $user_info['id'],
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'id_msg_last_visit' => $_SESSION['id_msg_last_visit'],
-				'is_approved' => 1,
 			))
 		);
 		list ($num_topics, $min_message) = wesql::fetch_row($request);

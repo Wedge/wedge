@@ -266,12 +266,12 @@ function Post($post_errors = array())
 				FROM {db_prefix}messages
 				WHERE id_topic = {int:current_topic}
 					AND id_msg > {int:last}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-					AND approved = {int:approved}') . '
+					AND approved = {int:is_approved}') . '
 				LIMIT 1',
 				array(
 					'current_topic' => $topic,
 					'last' => (int) $_REQUEST['last'],
-					'approved' => 1,
+					'is_approved' => 1,
 				)
 			);
 			list ($context['new_replies']) = wesql::fetch_row($request);
@@ -1201,12 +1201,12 @@ function getTopic()
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . (isset($_REQUEST['msg']) ? '
 			AND m.id_msg < {int:id_msg}' : '') .(!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
-			AND m.approved = {int:approved}') . '
+			AND m.approved = {int:is_approved}') . '
 		ORDER BY m.id_msg DESC' . $limit,
 		array(
 			'current_topic' => $topic,
 			'id_msg' => isset($_REQUEST['msg']) ? (int) $_REQUEST['msg'] : 0,
-			'approved' => 1,
+			'is_approved' => 1,
 		)
 	);
 	$context['previous_posts'] = array();

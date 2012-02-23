@@ -2355,8 +2355,8 @@ function aeva_modifyItem($options)
 		// Are we really going to change the approved flag?
 		if ($options['approved'] != $previous_approved)
 		{
-			$update[] = 'approved = {int:approved}';
-			$params['approved'] = $options['approved'];
+			$update[] = 'approved = {int:is_approved}';
+			$params['is_approved'] = $options['approved'];
 
 			// Handle the id_last_media
 			if ($options['approved'] && $id_last_media < $options['id'])

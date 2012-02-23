@@ -201,11 +201,10 @@ function Search()
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)
 			WHERE t.id_topic = {int:search_topic_id}
-				AND {query_see_board}' . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved_true}' : '') . '
+				AND {query_see_board}
+				AND {query_see_topic}
 			LIMIT 1',
 			array(
-				'is_approved_true' => 1,
 				'search_topic_id' => $context['search_params']['topic'],
 			)
 		);

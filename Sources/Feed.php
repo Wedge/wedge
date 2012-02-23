@@ -474,12 +474,11 @@ function getXmlNews($xml_format)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 			WHERE ' . $query_this . (empty($optimize_msg) ? '' : '
-				AND {raw:optimize_msg}') . ($settings['postmod_active'] ? '
-				AND t.approved = {int:is_approved}' : '') . '
+				AND {raw:optimize_msg}') . '
+				AND {query_see_topic}
 			ORDER BY t.id_first_msg DESC
 			LIMIT {int:limit}',
 			array(
-				'is_approved' => 1,
 				'limit' => $_GET['limit'],
 				'optimize_msg' => $optimize_msg,
 			)

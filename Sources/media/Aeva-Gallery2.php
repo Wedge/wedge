@@ -1730,7 +1730,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			wesql::query('
 				UPDATE {db_prefix}media_albums
 				SET
-					name = {string:name}, description = {string:desc}, icon = {int:icon}, bigicon = {int:bigicon}, passwd = {string:passwd}, options = {string:options}, approved = {int:approved},
+					name = {string:name}, description = {string:desc}, icon = {int:icon}, bigicon = {int:bigicon}, passwd = {string:passwd}, options = {string:options}, approved = {int:approved_state},
 					id_perm_profile = {int:profile}, id_quota_profile = {int:qprofile}, featured = {int:featured}, hidden = {int:hidden}, access = {string:access}, access_write = {string:access_write},
 					allowed_members = {string:allow}, allowed_write = {string:allow_write}, denied_members = {string:deny}, denied_write = {string:deny_write}, album_of = {int:owner_id}
 				WHERE id_album = {int:album}',
@@ -1738,7 +1738,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 					'name' => $name, 'description' => $desc, 'icon' => $icon, 'bigicon' => $big_icon, 'passwd' => $passwd,
 					'access' => $mgroups, 'access_write' => $mwgroups, 'desc' => $desc, 'album' => $id_album,
 					'options' => serialize($peralbum),
-					'approved' => $will_be_unapproved ? 0 : 1,
+					'approved_state' => $will_be_unapproved ? 0 : 1,
 					'profile' => $id_profile,
 					'qprofile' => $id_quota_profile,
 					'featured' => $featured,
@@ -2307,7 +2307,7 @@ function aeva_profileSummary($memID)
 		SELECT a.id_album, a.name, COUNT(m.id_media) AS total_items
 		FROM {db_prefix}media_albums AS a
 			LEFT JOIN {db_prefix}media_items AS m ON (m.album_id = a.id_album)
-		WHERE m.approved = {int:approved}
+		WHERE m.approved = {int:is_approved}
 		AND m.id_member = {int:member}
 		AND {query_see_album}
 		GROUP BY m.album_id
@@ -2315,7 +2315,7 @@ function aeva_profileSummary($memID)
 		ORDER BY total_items DESC
 		LIMIT 10',
 		array(
-			'approved' => 1,
+			'is_approved' => 1,
 			'member' => $memID,
 		)
 	);
