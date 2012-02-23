@@ -520,17 +520,25 @@ function setupTopicPrivacy()
 	elseif ($user_info['is_guest'])
 		$user_info['query_see_topic'] = empty($settings['postmod_active']) ? 't.privacy = \'default\'' : '(t.approved = 1 AND t.privacy = \'default\')';
 
+	// If we're in a board, the approve_posts permission may be set for the current topic.
+	// If not in a board, rely on mod_cache to see if you can approve this specific topic.
 	else
 	{
 		$user_info['can_skip_approval'] = empty($settings['postmod_active']) || allowedTo(array('moderate_forum', 'moderate_board', 'approve_posts'));
 		$user_info['query_see_topic'] = '
 		(
-			t.id_member_started = ' . $uid . ' OR (' . ($user_info['can_skip_approval'] ? '' : 't.approved = 1 AND ') . '
+			t.id_member_started = ' . $uid . ' OR (' . ($user_info['can_skip_approval'] ? '' : (empty($user_info['mod_cache']['ap']) ? '
+				t.approved = 1' : '
+				(t.approved = 1 OR t.id_board IN (' . implode(', ', $user_info['mod_cache']['ap']) . '))') . '
+				AND') . '
 				(
 					t.privacy = \'default\'
 					OR (t.privacy = \'members\')
-					OR (t.privacy = \'contacts\' AND t.id_member_started != 0
-							AND FIND_IN_SET(' . $uid . ', (SELECT buddy_list FROM ' . $db_prefix . 'members WHERE id_member = t.id_member_started)))
+					OR (
+						t.privacy = \'contacts\'
+						AND t.id_member_started != 0
+						AND FIND_IN_SET(' . $uid . ', (SELECT buddy_list FROM ' . $db_prefix . 'members WHERE id_member = t.id_member_started))
+					)
 				)
 			)
 		)';
@@ -1786,8 +1794,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'is_guest' => &$user_info['is_guest'],
 		'is_admin' => &$user_info['is_admin'],
 		'is_mod' => &$user_info['is_mod'],
-		// A user can mod if they have permission to see the mod center, or they are a board/group/approval moderator.
-		'can_mod' => allowedTo('access_mod_center') || (!$user_info['is_guest'] && ($user_info['mod_cache']['gq'] != '0=1' || $user_info['mod_cache']['bq'] != '0=1' || ($settings['postmod_active'] && !empty($user_info['mod_cache']['ap'])))),
 		'username' => &$user_info['username'],
 		'language' => &$user_info['language'],
 		'email' => &$user_info['email'],

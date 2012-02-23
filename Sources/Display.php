@@ -1301,7 +1301,7 @@ function prepareDisplayContext($reset = false)
 	{
 		$memberContext[$message['id_member']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member'] == $user_info['id'] && allowedTo('profile_view_own'));
 		$memberContext[$message['id_member']]['is_topic_starter'] = $message['id_member'] == $context['topic_starter_id'];
-		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && ($context['user']['can_mod'] || (!$user_info['is_guest'] && !empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member'] == $user_info['id'])));
+		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && (allowedTo('issue_warning') || (!$user_info['is_guest'] && !empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member'] == $user_info['id'])));
 	}
 
 	$memberContext[$message['id_member']]['ip'] = format_ip($message['poster_ip']);

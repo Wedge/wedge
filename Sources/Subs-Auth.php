@@ -570,7 +570,6 @@ function rebuildModCache()
 		'time' => time(),
 		// This looks a bit funny but protects against the login redirect.
 		'id' => $user_info['id'] && $user_info['name'] ? $user_info['id'] : 0,
-		// If you change the format of 'gq' and/or 'bq' make sure to adjust 'can_mod' in Load.php.
 		'gq' => $group_query,
 		'bq' => $board_query,
 		'ap' => boardsAllowedTo('approve_posts'),

@@ -416,15 +416,15 @@ function ModBlockReportedPosts()
 
 	if (($reported_posts = cache_get_data('reported_posts_' . $cachekey, 90)) === null)
 	{
-		// By George, that means we in a position to get the reports, jolly good.
+		// By Jove, that means we're in a position to get the reports, jolly good.
 		$request = wesql::query('
 			SELECT lr.id_report, lr.id_msg, lr.id_topic, lr.id_board, lr.id_member, lr.subject,
 				lr.num_reports, IFNULL(mem.real_name, lr.membername) AS author_name,
 				IFNULL(mem.id_member, 0) AS id_author
 			FROM {db_prefix}log_reported AS lr
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lr.id_member)
-			WHERE ' . ($user_info['mod_cache']['bq'] == '1=1' || $user_info['mod_cache']['bq'] == '0=1' ? $user_info['mod_cache']['bq'] : 'lr.' . $user_info['mod_cache']['bq']) . '
-				AND lr.closed = {int:not_closed}
+			WHERE' . ($user_info['mod_cache']['bq'] == '1=1' ? '' : ' lr.' . $user_info['mod_cache']['bq'] . ' AND ') . '
+				lr.closed = {int:not_closed}
 				AND lr.ignore_all = {int:not_ignored}
 			ORDER BY lr.time_updated DESC
 			LIMIT 10',

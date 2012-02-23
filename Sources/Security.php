@@ -384,7 +384,6 @@ function is_not_banned($forceCheck = false)
 			'is_logged' => false,
 			'is_admin' => false,
 			'is_mod' => false,
-			'can_mod' => false,
 			'language' => $user_info['language'],
 		);
 
@@ -433,7 +432,6 @@ function is_not_banned($forceCheck = false)
 			'is_logged' => false,
 			'is_admin' => false,
 			'is_mod' => false,
-			'can_mod' => false,
 			'language' => $user_info['language'],
 		);
 
