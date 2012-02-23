@@ -121,8 +121,8 @@ function Display()
 	// Get all the important topic info.
 	$request = wesql::query('
 		SELECT
-			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll,
-			t.id_member_started, t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, ms.poster_time,
+			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll, t.id_member_started,
+			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, t.tags, ms.poster_time,
 			' . ($user_info['is_guest'] ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
 			' . (!empty($settings['recycle_board']) && $settings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
 		FROM {db_prefix}topics AS t
