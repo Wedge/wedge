@@ -389,11 +389,11 @@ function QuickModeration()
 			SELECT id_topic, id_member_started
 			FROM {db_prefix}topics
 			WHERE id_topic IN ({array_int:approve_topic_ids})
-				AND approved = {int:not_approved}
+				AND approved = {int:is_unapproved}
 			LIMIT ' . count($approveCache),
 			array(
 				'approve_topic_ids' => $approveCache,
-				'not_approved' => 0,
+				'is_unapproved' => 0,
 			)
 		);
 		$approveCache = array();

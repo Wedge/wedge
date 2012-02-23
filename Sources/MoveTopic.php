@@ -573,7 +573,7 @@ function moveTopics($topics, $toBoard)
 			SELECT id_msg
 			FROM {db_prefix}messages
 			WHERE id_topic IN ({array_int:topics})
-				and approved = {int:not_approved}',
+				AND approved = {int:not_approved}',
 			array(
 				'topics' => $topics,
 				'not_approved' => 0,

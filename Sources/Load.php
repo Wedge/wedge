@@ -167,7 +167,7 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $settings, $user_settings, $cookiename, $user_info, $language;
+	global $settings, $user_settings, $cookiename, $user_info, $language, $db_prefix;
 
 	$id_member = 0;
 
@@ -495,25 +495,8 @@ function loadUserSettings()
 		}
 	}
 
-	setupTopicPrivacy();
-
-	wesql::register_replacement('query_see_board', $user_info['query_see_board']);
-	wesql::register_replacement('query_list_board', $user_info['query_list_board']);
-	wesql::register_replacement('query_wanna_see_board', $user_info['query_wanna_see_board']);
-	wesql::register_replacement('query_wanna_list_board', $user_info['query_wanna_list_board']);
-}
-
-/**
- * {query_see_topic}, which has basic t.approved tests as well
- * as more elaborate topic privacy, is set up here.
- */
-function setupTopicPrivacy()
-{
-	global $db_prefix, $user_info, $settings;
-
-	if (isset($user_info['query_see_topic']))
-		return;
-
+	// {query_see_topic}, which has basic t.approved tests as well
+	// as more elaborate topic privacy, is set up here.
 	if ($user_info['is_admin'])
 		$user_info['query_see_topic'] = '1=1';
 
@@ -545,6 +528,10 @@ function setupTopicPrivacy()
 	}
 
 	wesql::register_replacement('query_see_topic', $user_info['query_see_topic']);
+	wesql::register_replacement('query_see_board', $user_info['query_see_board']);
+	wesql::register_replacement('query_list_board', $user_info['query_list_board']);
+	wesql::register_replacement('query_wanna_see_board', $user_info['query_wanna_see_board']);
+	wesql::register_replacement('query_wanna_list_board', $user_info['query_wanna_list_board']);
 }
 
 /**
@@ -756,11 +743,11 @@ function loadBoard()
 					SELECT COUNT(id_topic)
 					FROM {db_prefix}topics
 					WHERE id_member_started={int:id_member}
-						AND approved = {int:unapproved}
+						AND approved = {int:is_unapproved}
 						AND id_board = {int:board}',
 					array(
 						'id_member' => $user_info['id'],
-						'unapproved' => 0,
+						'is_unapproved' => 0,
 						'board' => $board,
 					)
 				);

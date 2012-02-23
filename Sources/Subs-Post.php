@@ -2208,17 +2208,17 @@ function approveTopics($topics, $approve = true)
 	if (empty($topics))
 		return false;
 
-	$approve_type = $approve ? 0 : 1;
+	$approved = $approve ? 0 : 1;
 
 	// Just get the messages to be approved and pass through...
 	$request = wesql::query('
 		SELECT id_msg
 		FROM {db_prefix}messages
 		WHERE id_topic IN ({array_int:topic_list})
-			AND approved = {int:approve_type}',
+			AND approved = {int:approved_state}',
 		array(
 			'topic_list' => $topics,
-			'approve_type' => $approve_type,
+			'approved_state' => $approved,
 		)
 	);
 	$msgs = array();
@@ -2377,9 +2377,11 @@ function updateLastMessages($setboards, $id_msg = 0)
 			FROM {db_prefix}topics
 			WHERE id_board IN ({array_int:board_list})
 				AND approved = {int:is_approved}
+				AND privacy = {string:default_privacy}
 			GROUP BY id_board',
 			array(
 				'board_list' => $setboards,
+				'default_privacy' => 'default',
 				'is_approved' => 1,
 			)
 		);

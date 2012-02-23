@@ -413,9 +413,9 @@ function ManageModApprove()
 	$request = wesql::query('
 		SELECT id_msg
 		FROM {db_prefix}messages
-		WHERE approved = {int:not_approved}',
+		WHERE approved = {int:is_unapproved}',
 		array(
-			'not_approved' => 0,
+			'is_unapproved' => 0,
 		)
 	);
 	$msgs = array();

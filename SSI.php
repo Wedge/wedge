@@ -265,8 +265,6 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 	elseif ($include_boards != null)
 		$include_boards = array();
 
-	setupTopicPrivacy();
-
 	// Let's restrict the query boys (and girls)
 	$query_where = '
 		m.id_msg >= {int:min_message_id}
@@ -294,8 +292,6 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 
 	// Allow the user to request more than one - why not?
 	$post_ids = is_array($post_ids) ? $post_ids : array($post_ids);
-
-	setupTopicPrivacy();
 
 	// Restrict the posts required...
 	$query_where = '
@@ -427,8 +423,6 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 	$icon_sources = array();
 	foreach ($stable_icons as $icon)
 		$icon_sources[$icon] = 'images_url';
-
-	setupTopicPrivacy();
 
 	// Find all the posts in distinct topics. Newer ones will have higher IDs.
 	$request = wesql::query('
@@ -657,8 +651,6 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'echo')
 {
 	global $db_prefix, $txt, $scripturl, $user_info, $settings, $context;
-
-	setupTopicPrivacy();
 
 	if ($settings['totalMessages'] > 100000)
 	{
@@ -1063,8 +1055,6 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	if (empty($boardsAllowed))
 		return array();
 
-	setupTopicPrivacy();
-
 	$request = wesql::query('
 		SELECT p.id_poll, p.question, t.id_topic, p.max_votes, p.guest_vote, p.hide_results, p.expire_time
 		FROM {db_prefix}polls AS p
@@ -1194,8 +1184,6 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 
 	if (empty($boardsAllowed))
 		return array();
-
-	setupTopicPrivacy();
 
 	if ($topic === null && isset($_REQUEST['ssi_topic']))
 		$topic = (int) $_REQUEST['ssi_topic'];
@@ -1384,8 +1372,6 @@ function ssi_pollVote()
 
 	$_POST['poll'] = (int) $_POST['poll'];
 
-	setupTopicPrivacy();
-
 	// Check if they have already voted, or voting is locked.
 	$request = wesql::query('
 		SELECT
@@ -1564,8 +1550,6 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 	foreach ($stable_icons as $icon)
 		$icon_sources[$icon] = 'images_url';
 
-	setupTopicPrivacy();
-
 	// Find the post ids.
 	$request = wesql::query('
 		SELECT id_first_msg
@@ -1718,8 +1702,6 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 	// Is it an array?
 	if (!is_array($attachment_ext))
 		$attachment_ext = array($attachment_ext);
-
-	setupTopicPrivacy();
 
 	// Let's build the query.
 	$request = wesql::query('
