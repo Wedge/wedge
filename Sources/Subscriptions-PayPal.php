@@ -65,7 +65,6 @@ class paypal_display
 		$return_data['hidden']['amount'] = $value;
 		$return_data['hidden']['cmd'] = !$sub_data['repeatable'] ? '_xclick' : '_xclick-subscriptions';
 		$return_data['hidden']['return'] = $return_url;
-		$return_data['hidden']['a3'] = $value;
 		$return_data['hidden']['src'] = 1;
 		$return_data['hidden']['notify_url'] = $boardurl . '/subscriptions.php';
 
@@ -123,15 +122,17 @@ class paypal_display
 		// Now stuff that depends on what we're doing.
 		if ($sub_data['flexible'])
 		{
+			$return_data['hidden']['a3'] = $value;
 			$return_data['hidden']['p3'] = 1;
 			$return_data['hidden']['t3'] = strtoupper(substr($period, 0, 1));
 		}
-		else
+		elseif (!$sub_data['lifetime'])
 		{
 			preg_match('~(\d*)(\w)~', $sub_data['real_length'], $match);
 			$unit = $match[1];
 			$period = $match[2];
 
+			$return_data['hidden']['a3'] = $value;
 			$return_data['hidden']['p3'] = $unit;
 			$return_data['hidden']['t3'] = $period;
 		}

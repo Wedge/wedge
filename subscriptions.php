@@ -221,7 +221,7 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 		}
 
 		// If we have the duration then we're done.
-		if ($found_duration!== 0)
+		if ($found_duration !== 0)
 		{
 			$notify = true;
 			addSubscription($subscription_id, $member_id, $found_duration);
@@ -229,6 +229,7 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 	}
 	else
 	{
+		// Note that fixed and lifetime are validated and added the same way.
 		$actual_cost = $cost['fixed'];
 		// It must be at least the right amount.
 		if ($total_cost != 0 && $total_cost >= $actual_cost)

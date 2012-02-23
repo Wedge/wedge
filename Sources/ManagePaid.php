@@ -413,29 +413,34 @@ function ModifySubscription()
 		checkSession();
 
 		// Some cleaning...
+		if (empty($_POST['duration_type']))
+			$_POST['duration_type'] = 'fixed';
+
 		$isActive = isset($_POST['active']) ? 1 : 0;
-		$isRepeatable = isset($_POST['repeatable']) ? 1 : 0;
+		$isRepeatable = isset($_POST['repeatable']) && $_POST['duration_type'] != 'lifetime' ? 1 : 0;
 		$allowpartial = isset($_POST['allow_partial']) ? 1 : 0;
 		$reminder = isset($_POST['reminder']) ? (int) $_POST['reminder'] : 0;
 		$emailComplete = strlen($_POST['emailcomplete']) > 10 ? trim($_POST['emailcomplete']) : '';
 
-		// Is this a fixed one?
-		if ($_POST['duration_type'] == 'fixed')
+		// Is this a fixed one? Lifetime's kind of fixed too :P
+		if ($_POST['duration_type'] == 'fixed' || $_POST['duration_type'] == 'lifetime')
 		{
+			// There needs to be something.
+			if (empty($_POST['cost']) || ($_POST['duration_type'] == 'fixed' && empty($_POST['span_value'])))
+				fatal_lang_error('paid_no_cost_value');
+
 			// Clean the span.
-			$span = $_POST['span_value'] . $_POST['span_unit'];
+			$span = $_POST['duration_type'] == 'fixed' ? $_POST['span_value'] . $_POST['span_unit'] : 'LT';
 
 			// Sort out the cost.
 			$cost = array('fixed' => sprintf('%01.2f', strtr($_POST['cost'], ',', '.')));
-
-			// There needs to be something.
-			if (empty($_POST['span_value']) || empty($_POST['cost']))
-				fatal_lang_error('paid_no_cost_value');
 		}
 		// Flexible is harder but more fun ;)
 		else
 		{
 			$span = 'F';
+			if (empty($_POST['cost_day']) && empty($_POST['cost_week']) && empty($_POST['cost_month']) && empty($_POST['cost_year']))
+				fatal_lang_error('paid_all_freq_blank');
 
 			$cost = array(
 				'day' => sprintf('%01.2f', strtr($_POST['cost_day'], ',', '.')),
@@ -443,9 +448,6 @@ function ModifySubscription()
 				'month' => sprintf('%01.2f', strtr($_POST['cost_month'], ',', '.')),
 				'year' => sprintf('%01.2f', strtr($_POST['cost_year'], ',', '.')),
 			);
-
-			if (empty($_POST['cost_day']) && empty($_POST['cost_week']) && empty($_POST['cost_month']) && empty($_POST['cost_year']))
-				fatal_lang_error('paid_all_freq_blank');
 		}
 		$cost = serialize($cost);
 
@@ -597,12 +599,6 @@ function ModifySubscription()
 				$span_unit = 'D';
 			}
 
-			// Is this a flexible one?
-			if ($row['length'] == 'F')
-				$isFlexible = true;
-			else
-				$isFlexible = false;
-
 			$context['sub'] = array(
 				'name' => $row['name'],
 				'desc' => $row['description'],
@@ -616,7 +612,7 @@ function ModifySubscription()
 				'active' => $row['active'],
 				'repeatable' => $row['repeatable'],
 				'allow_partial' => $row['allow_partial'],
-				'duration' => $isFlexible ? 'flexible' : 'fixed',
+				'duration' => $row['length'] == 'F' ? 'flexible' : ($row['length'] == 'LT' ? 'lifetime' : 'fixed'),
 				'email_complete' => htmlspecialchars($row['email_complete']),
 				'reminder' => $row['reminder'],
 				'allowed_groups' => array(),
@@ -893,8 +889,9 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 
 	$request = wesql::query('
 		SELECT ls.id_sublog, IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, {string:guest}) AS name, ls.start_time, ls.end_time,
-			ls.status, ls.payments_pending
+			ls.status, ls.payments_pending, s.length
 		FROM {db_prefix}log_subscribed AS ls
+			INNER JOIN {db_prefix}subscriptions AS s ON (ls.id_subscribe = s.id_subscribe)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ls.id_member)
 		WHERE ls.id_subscribe = {int:current_subscription} ' . $search_string . '
 			AND (ls.end_time != {int:no_end_time} OR ls.payments_pending != {int:no_payments_pending})
@@ -914,7 +911,7 @@ function list_getSubscribedUsers($start, $items_per_page, $sort, $id_sub, $searc
 			'id_member' => $row['id_member'],
 			'name' => $row['name'],
 			'start_date' => timeformat($row['start_time'], false),
-			'end_date' => $row['end_time'] == 0 ? 'N/A' : timeformat($row['end_time'], false),
+			'end_date' => $row['length'] == 'LT' ? $txt['paid_mod_span_lifetime_expires'] : ($row['end_time'] == 0 ? $txt['not_applicable'] : timeformat($row['end_time'], false)),
 			'pending' => $row['payments_pending'],
 			'status' => $row['status'],
 			'status_text' => $row['status'] == 0 ? ($row['payments_pending'] == 0 ? $txt['paid_finished'] : $txt['paid_pending']) : $txt['paid_active'],
@@ -970,9 +967,17 @@ function ModifyUserSubscription()
 	{
 		checkSession();
 
-		// Work out the dates...
-		$starttime = mktime($_POST['hour'], $_POST['minute'], 0, $_POST['month'], $_POST['day'], $_POST['year']);
-		$endtime = mktime($_POST['hourend'], $_POST['minuteend'], 0, $_POST['monthend'], $_POST['dayend'], $_POST['yearend']);
+		if (!empty($_POST['year']) && !empty($_POST['yearend']))
+		{
+			// Work out the dates...
+			$starttime = mktime($_POST['hour'], $_POST['minute'], 0, $_POST['month'], $_POST['day'], $_POST['year']);
+			$endtime = mktime($_POST['hourend'], $_POST['minuteend'], 0, $_POST['monthend'], $_POST['dayend'], $_POST['yearend']);
+		}
+		else
+		{
+			$starttime = time();
+			$endtime = 0;
+		}
 
 		// Status.
 		$status = $_POST['status'];
@@ -1285,10 +1290,11 @@ function reapplySubscriptions($users)
 		FROM {db_prefix}log_subscribed AS ls
 			INNER JOIN {db_prefix}subscriptions AS s ON (s.id_subscribe = ls.id_subscribe)
 		WHERE ls.id_member IN ({array_int:user_list})
-			AND ls.end_time > {int:current_time}',
+			AND (ls.end_time > {int:current_time} OR s.length = {string:lifetime})',
 		array(
 			'user_list' => $users,
 			'current_time' => time(),
+			'lifetime' => 'LT',
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
@@ -1370,13 +1376,14 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 		}
 	}
 
-	// Firstly, see whether it exists, and is active. If so then this is meerly an extension.
+	// Firstly, see whether it exists, and is active. If so then this is merely an extension.
 	$request = wesql::query('
-		SELECT id_sublog, end_time, start_time
-		FROM {db_prefix}log_subscribed
-		WHERE id_subscribe = {int:current_subscription}
-			AND id_member = {int:current_member}
-			AND status = {int:is_active}',
+		SELECT ls.id_sublog, ls.end_time, ls.start_time, s.length
+		FROM {db_prefix}log_subscribed AS ls
+			INNER JOIN {db_prefix}subscriptions AS s ON (ls.id_subscribe = s.id_subscribe)
+		WHERE ls.id_subscribe = {int:current_subscription}
+			AND ls.id_member = {int:current_member}
+			AND ls.status = {int:is_active}',
 		array(
 			'current_subscription' => $id_subscribe,
 			'current_member' => $id_member,
@@ -1385,31 +1392,35 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	);
 	if (wesql::num_rows($request) != 0)
 	{
-		list ($id_sublog, $endtime, $starttime) = wesql::fetch_row($request);
+		list ($id_sublog, $endtime, $starttime, $sub_length) = wesql::fetch_row($request);
 
-		// If this has already expired but is active, extension means the period from now.
-		if ($endtime < time())
-			$endtime = time();
-		if ($starttime == 0)
-			$starttime = time();
+		// We don't have to do anything here for lifetime subscriptions, they're lifetime after all, and we already have it!
+		if ($sub_length != 'LT')
+		{
+			// If this has already expired but is active, extension means the period from now.
+			if ($endtime < time())
+				$endtime = time();
+			if ($starttime == 0)
+				$starttime = time();
 
-		// Work out the new expiry date.
-		$endtime += $duration;
+			// Work out the new expiry date.
+			$endtime += $duration;
 
-		if ($forceEndTime != 0)
-			$endtime = $forceEndTime;
+			if ($forceEndTime != 0)
+				$endtime = $forceEndTime;
 
-		// As everything else should be good, just update!
-		wesql::query('
-			UPDATE {db_prefix}log_subscribed
-			SET end_time = {int:end_time}, start_time = {int:start_time}
-			WHERE id_sublog = {int:current_subscription_item}',
-			array(
-				'end_time' => $endtime,
-				'start_time' => $starttime,
-				'current_subscription_item' => $id_sublog,
-			)
-		);
+			// As everything else should be good, just update!
+			wesql::query('
+				UPDATE {db_prefix}log_subscribed
+				SET end_time = {int:end_time}, start_time = {int:start_time}
+				WHERE id_sublog = {int:current_subscription_item}',
+				array(
+					'end_time' => $endtime,
+					'start_time' => $starttime,
+					'current_subscription_item' => $id_sublog,
+				)
+			);
+		}
 
 		return;
 	}
@@ -1479,7 +1490,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 			'current_member' => $id_member,
 		)
 	);
-	//!!! Don't really need to do this twice...
+	//!!! Don't really need to do this twice... Though it's a slightly different query now...
 	if (wesql::num_rows($request) != 0)
 	{
 		list ($id_sublog, $endtime, $starttime) = wesql::fetch_row($request);
@@ -1517,9 +1528,12 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 	wesql::free_result($request);
 
 	// Otherwise a very simple insert.
-	$endtime = time() + $duration;
 	if ($forceEndTime != 0)
 		$endtime = $forceEndTime;
+	elseif ($context['subscriptions'][$id_subscribe]['lifetime'])
+		$endtime = 0;
+	else
+		$endtime = time() + $duration;
 
 	if ($forceStartTime == 0)
 		$starttime = time();
@@ -1715,7 +1729,9 @@ function loadSubscriptions()
 
 		// Do the span.
 		preg_match('~(\d*)(\w)~', $row['length'], $match);
-		if (isset($match[2]))
+		if ($row['length'] == 'LT')
+			$length = $txt['paid_mod_span_lifetime'];
+		elseif (isset($match[2]))
 		{
 			$num_length = $match[1];
 			$length = $match[1] . ' ';
@@ -1749,7 +1765,7 @@ function loadSubscriptions()
 			'cost' => $cost,
 			'real_cost' => $row['cost'],
 			'length' => $length,
-			'num_length' => $num_length,
+			'num_length' => empty($num_length) ? 0 : $num_length,
 			'real_length' => $row['length'],
 			'pending' => 0,
 			'finished' => 0,
@@ -1757,8 +1773,9 @@ function loadSubscriptions()
 			'active' => $row['active'],
 			'prim_group' => $row['id_group'],
 			'add_groups' => $row['add_groups'],
-			'flexible' => $row['length'] == 'F' ? true : false,
-			'repeatable' => $row['repeatable'],
+			'flexible' => $row['length'] == 'F',
+			'repeatable' => $row['repeatable'] && $row['length'] != 'LT',
+			'lifetime' => $row['length'] == 'LT',
 		);
 	}
 	wesql::free_result($request);

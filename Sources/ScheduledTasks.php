@@ -1464,13 +1464,16 @@ function scheduled_paid_subscriptions()
 
 	// Start off by checking for removed subscriptions.
 	$request = wesql::query('
-		SELECT id_subscribe, id_member
-		FROM {db_prefix}log_subscribed
-		WHERE status = {int:is_active}
-			AND end_time < {int:time_now}',
+		SELECT ls.id_subscribe, id_member
+		FROM {db_prefix}log_subscribed AS ls
+			INNER JOIN {db_prefix}subscriptions AS s ON (s.id_subscribe = ls.id_subscribe)
+		WHERE ls.status = {int:is_active}
+			AND ls.end_time < {int:time_now}
+			AND s.length != {string:lifetime}',
 		array(
 			'is_active' => 1,
 			'time_now' => time(),
+			'lifetime' => 'LT',
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
@@ -1489,12 +1492,14 @@ function scheduled_paid_subscriptions()
 		WHERE ls.status = {int:is_active}
 			AND ls.reminder_sent = {int:reminder_sent}
 			AND s.reminder > {int:reminder_wanted}
-			AND ls.end_time < ({int:time_now} + s.reminder * 86400)',
+			AND ls.end_time < ({int:time_now} + s.reminder * 86400)
+			AND s.length != {string:lifetime}',
 		array(
 			'is_active' => 1,
 			'reminder_sent' => 0,
 			'reminder_wanted' => 0,
 			'time_now' => time(),
+			'lifetime' => 'LT',
 		)
 	);
 	$subs_reminded = array();

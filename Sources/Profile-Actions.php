@@ -646,7 +646,7 @@ function subscriptions($memID)
 			'hide' => $row['status'] == 0 && $row['end_time'] == 0 && $row['payments_pending'] == 0,
 			'name' => $context['subscriptions'][$row['id_subscribe']]['name'],
 			'start' => timeformat($row['start_time'], false),
-			'end' => $row['end_time'] == 0 ? $txt['not_applicable'] : timeformat($row['end_time'], false),
+			'end' => $row['end_time'] == 0 ? $txt['not_applicable'] : ($row['end_time'] == 1 ? $txt['paid_mod_span_lifetime_expires'] : timeformat($row['end_time'], false)),
 			'pending_details' => $row['pending_details'],
 			'status' => $row['status'],
 			'status_text' => $row['status'] == 0 ? ($row['payments_pending'] ? $txt['paid_pending'] : $txt['paid_finished']) : $txt['paid_active'],
@@ -739,9 +739,12 @@ function subscriptions($memID)
 			$context['cost'] = sprintf($settings['paid_currency_symbol'], $context['value']);
 
 			// Recur?
-			preg_match('~(\d*)(\w)~', $context['sub']['real_length'], $match);
-			$context['paypal_unit'] = $match[1];
-			$context['paypal_period'] = $match[2];
+			if ($context['sub']['real_length'] != 'LT')
+			{
+				preg_match('~(\d*)(\w)~', $context['sub']['real_length'], $match);
+				$context['paypal_unit'] = $match[1];
+				$context['paypal_period'] = $match[2];
+			}
 		}
 
 		// Setup the gateway context.

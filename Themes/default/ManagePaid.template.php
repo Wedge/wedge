@@ -20,8 +20,21 @@ function template_modify_subscription()
 	add_js('
 	function toggleDuration(toChange)
 	{
-		$("#fixed_area").slideToggle(toChange == \'fixed\');
-		$("#flexible_area").slideToggle(toChange != \'fixed\');
+		switch (toChange)
+		{
+			case \'fixed\':
+				$("#fixed_area, #repeatable_check_dt, #repeatable_check_dd").slideDown();
+				$("#flexible_area, #lifetime_area").slideUp();
+				break;
+			case \'flexible\':
+				$("#flexible_area, #repeatable_check_dt, #repeatable_check_dd").slideDown();
+				$("#fixed_area, #lifetime_area").slideUp();
+				break;
+			case \'lifetime\':
+				$("#lifetime_area").slideDown();
+				$("#fixed_area, #repeatable_check_dt, #repeatable_check_dd, #flexible_area").slideUp();
+				break;
+		}
 	}');
 
 	echo '
@@ -51,10 +64,10 @@ function template_modify_subscription()
 					<dd>
 						<textarea name="desc" rows="3" cols="40">', $context['sub']['desc'], '</textarea>
 					</dd>
-					<dt>
+					<dt id="repeatable_check_dt"', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'lifetime' ? ' class="hide"' : '', '>
 						<label for="repeatable_check">', $txt['paid_mod_repeatable'], '</label>:
 					</dt>
-					<dd>
+					<dd id="repeatable_check_dd"', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'lifetime' ? ' class="hide"' : '', '>
 						<input type="checkbox" name="repeatable" id="repeatable_check"', empty($context['sub']['repeatable']) ? '' : ' checked', '>
 					</dd>
 					<dt>
@@ -218,6 +231,21 @@ function template_modify_subscription()
 						</dl>
 					</fieldset>
 				</div>
+				<label><input type="radio" name="duration_type" id="duration_type_lifetime" value="lifetime"', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'lifetime' ? ' checked' : '', ' onclick="toggleDuration(\'lifetime\');">
+				<strong>', $txt['paid_mod_lifetime_price'], '</strong></label>
+				<br>
+				<div id="lifetime_area"', !empty($context['sub']['duration']) && $context['sub']['duration'] == 'lifetime' ? '' : ' class="hide"', '>
+					<fieldset>
+						<dl class="settings">
+							<dt>
+								', $txt['paid_cost'], ' (', str_replace('%1.2f', '', $settings['paid_currency_symbol']), '):
+							</dt>
+							<dd>
+								<input type="text" name="cost" value="', empty($context['sub']['cost']['fixed']) ? '0' : $context['sub']['cost']['fixed'], '" size="4">
+							</dd>
+						</dl>
+					</fieldset>
+				</div>
 				<div class="right">
 					<input type="submit" name="save" value="', $txt['paid_settings_save'], '" class="save">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -249,7 +277,8 @@ function template_modify_user_subscription()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// Some quickly stolen javascript from Post, could do with being more efficient :)
-	add_js('
+	if (!$context['current_subscription']['lifetime'])
+		add_js('
 	var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function generateDays(offset)
@@ -302,37 +331,41 @@ function template_modify_user_subscription()
 							<option value="1"', $context['sub']['status'] == 1 ? ' selected' : '', '>', $txt['paid_active'], '</option>
 						</select>
 					</dd>
-				</dl>
+				</dl>';
+				
+	if (!$context['current_subscription']['lifetime'])
+	{
+		echo '
 				<fieldset>
 					<legend>', $txt['start_date_and_time'], '</legend>
 					<select name="year" id="year" onchange="generateDays(\'\');">';
 
-	// Show a list of all the years we allow...
-	for ($year = 2005; $year <= 2030; $year++)
-		echo '
+		// Show a list of all the years we allow...
+		for ($year = 2005; $year <= 2030; $year++)
+			echo '
 						<option value="', $year, '"', $year == $context['sub']['start']['year'] ? ' selected' : '', '>', $year, '</option>';
 
-	echo '
+		echo '
 					</select>&nbsp;
 					', (isset($txt['month']) ? $txt['month'] : ''), ':&nbsp;
 					<select name="month" id="month" onchange="generateDays(\'\');">';
 
-	// There are 12 months per year - ensure that they all get listed.
-	for ($month = 1; $month <= 12; $month++)
-		echo '
+		// There are 12 months per year - ensure that they all get listed.
+		for ($month = 1; $month <= 12; $month++)
+			echo '
 						<option value="', $month, '"', $month == $context['sub']['start']['month'] ? ' selected' : '', '>', $txt['months'][$month], '</option>';
 
-	echo '
+		echo '
 					</select>&nbsp;
 					', (isset($txt['day']) ? $txt['day'] : ''), ':&nbsp;
 					<select name="day" id="day">';
 
-	// This prints out all the days in the current month - this changes dynamically as we switch months.
-	for ($day = 1; $day <= $context['sub']['start']['last_day']; $day++)
-		echo '
+		// This prints out all the days in the current month - this changes dynamically as we switch months.
+		for ($day = 1; $day <= $context['sub']['start']['last_day']; $day++)
+			echo '
 						<option value="', $day, '"', $day == $context['sub']['start']['day'] ? ' selected' : '', '>', $day, '</option>';
 
-	echo '
+		echo '
 					</select>
 					', $txt['hour'], ': <input type="text" name="hour" value="', $context['sub']['start']['hour'], '" size="2">
 					', $txt['minute'], ': <input type="text" name="minute" value="', $context['sub']['start']['min'], '" size="2">
@@ -341,36 +374,39 @@ function template_modify_user_subscription()
 					<legend>', $txt['end_date_and_time'], '</legend>
 					<select name="yearend" id="yearend" onchange="generateDays(\'end\');">';
 
-	// Show a list of all the years we allow...
-	for ($year = 2005; $year <= 2030; $year++)
-		echo '
+		// Show a list of all the years we allow...
+		for ($year = 2005; $year <= 2030; $year++)
+			echo '
 						<option value="', $year, '"', $year == $context['sub']['end']['year'] ? ' selected' : '', '>', $year, '</option>';
 
-	echo '
+		echo '
 					</select>&nbsp;
 					', (isset($txt['month']) ? $txt['month'] : ''), ':&nbsp;
 					<select name="monthend" id="monthend" onchange="generateDays(\'end\');">';
 
-	// There are 12 months per year - ensure that they all get listed.
-	for ($month = 1; $month <= 12; $month++)
-		echo '
+		// There are 12 months per year - ensure that they all get listed.
+		for ($month = 1; $month <= 12; $month++)
+			echo '
 						<option value="', $month, '"', $month == $context['sub']['end']['month'] ? ' selected' : '', '>', $txt['months'][$month], '</option>';
 
-	echo '
+		echo '
 					</select>&nbsp;
 					', (isset($txt['day']) ? $txt['day'] : ''), ':&nbsp;
 					<select name="dayend" id="dayend">';
 
 	// This prints out all the days in the current month - this changes dynamically as we switch months.
-	for ($day = 1; $day <= $context['sub']['end']['last_day']; $day++)
-		echo '
+		for ($day = 1; $day <= $context['sub']['end']['last_day']; $day++)
+			echo '
 						<option value="', $day, '"', $day == $context['sub']['end']['day'] ? ' selected' : '', '>', $day, '</option>';
 
-	echo '
+		echo '
 					</select>
 					', $txt['hour'], ': <input type="text" name="hourend" value="', $context['sub']['end']['hour'], '" size="2">
 					', $txt['minute'], ': <input type="text" name="minuteend" value="', $context['sub']['end']['min'], '" size="2">
-				</fieldset>
+				</fieldset>';
+	}
+
+	echo '
 				<input type="submit" name="save_sub" value="', $txt['paid_settings_save'], '" class="save">
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
