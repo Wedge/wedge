@@ -186,6 +186,9 @@ input.submit
 input.cancel
 	background-position: 0 100px
 
+#thought_form input[type=submit]
+	background-position: -99px -99px
+
 // IE7 needs inline-block to be reset to inline separately... How annoying.
 .inline-block
 	display: inline

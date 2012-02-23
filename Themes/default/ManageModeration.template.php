@@ -201,7 +201,7 @@ function template_modfilter_edit()
 					</select>
 				</dl>
 			</fieldset>
-			<fieldset id="fs_applies">
+			<fieldset id="fs_applies" class="hide">
 				<legend>', $txt['modfilter_applies_legend'], '</legend>
 				<p>', $txt['modfilter_applies_desc'], '</p>
 				<dl class="settings">
@@ -212,7 +212,7 @@ function template_modfilter_edit()
 					</dd>
 				</dl>
 			</fieldset>
-			<fieldset id="fs_conds">
+			<fieldset id="fs_conds" class="hide">
 				<legend>', $txt['modfilter_conds_legend'], '</legend>
 				<p>', $txt['modfilter_conds_desc'], '</p>
 				<table class="table_grid cs0" style="width: 100%" id="conds">
@@ -345,7 +345,7 @@ function template_modfilter_edit()
 	{
 		$function = 'template_modfilter_' . $type;
 		echo '
-	<div id="container_', $type, '" style="display:none">', $function(), '
+	<div id="container_', $type, '" class="hide">', $function(), '
 	</div>';
 	}
 }

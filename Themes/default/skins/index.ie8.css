@@ -28,6 +28,9 @@ input.submit
 	padding-left: 23px
 	background-position: 4px center
 
+#thought_form input[type=submit]
+	background-position: -99px -99px
+
 .postheader
 	display: block
 
