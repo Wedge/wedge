@@ -48,7 +48,7 @@ function template_init()
 	$theme['require_theme_strings'] = false;
 
 	/* You can define macros for your theme, with default contents. Then, skins can override them through
-		the skin.xml file (see the skins/Warm/skin.xml file for a sample implementation.)
+		the skin.xml file (see the skins/Wine/Warm/skin.xml file for a sample implementation.)
 		Macro names are case-sensitive, for performance reasons. */
 
 	$theme['macros'] = array(
@@ -65,27 +65,27 @@ function template_init()
 						. '{body}'
 						. '<if:footer><footer>{footer}</footer></if:footer></section>',
 
-		// Our sidebar. Note that we can serve different content to different browsers by using an array
-		// with browser names and a "else" fallback. This can also be done in skin.xml
-		// with the <macro name="..." for="ie6,ie7"> keyword.
-		'sidebar'	=> array(
+		// Our main content. Note that we can serve different content to different browsers by using an array
+		// with browser names and a "else" fallback. This can also be done in skin.xml with the
+		// <macro name="..." for="ie6,ie7"> keyword. Plus, you don't have to repeat identical strings.
+		'offside'	=> array(
 			'ie6'	=> '
-	<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
+	<table id="edge"><tr><td class="top">{body}</td>',
 			'ie7'	=> '
-	<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td>',
-			'else'	=> '
-	<div id="edge">
-		<aside id="sidebar"><div class="column">{body}</div></aside>',
+	<table id="edge"><tr><td class="top">{body}</td>',
+			'else'	=> '<div id="edge">{body}',
 		),
 
-		// Now for a little trick -- since IE6 and IE7 need to be in a table, we're closing here
-		// the table that was opened in the sidebar macro.
-		'offside'	=> array(
-			'ie6'	=> '<td class="top">{body}
-	</td></tr></table>',
-			'ie7'	=> '<td class="top">{body}
-	</td></tr></table>',
-			'else'	=> '{body}
+		// Our sidebar. Now for a little trick -- since IE6 and IE7 need to be in a table,
+		// we're closing here the table that was opened in the sidebar macro.
+		'sidebar'	=> array(
+			'ie6'	=> '
+	<td id="sidebar" class="top"><div class="column">{body}</div></td></tr></table>',
+			'ie7'	=> '
+	<td id="sidebar" class="top"><div class="column">{body}</div></td></tr></table>',
+			'else'	=> '
+	<aside id="sidebar"><div class="column">{body}
+	</div></aside>
 	</div>',
 		),
 
@@ -123,9 +123,6 @@ function template_skeleton()
 					<menu />
 					<linktree />
 					<content_wrap>
-						<sidebar_wrap>
-							<sidebar></sidebar>
-						</sidebar_wrap>
 						<offside_wrap>
 							<main_wrap>
 								<top></top>
@@ -134,6 +131,9 @@ function template_skeleton()
 								</default>
 							</main_wrap>
 						</offside_wrap>
+						<sidebar_wrap>
+							<sidebar></sidebar>
+						</sidebar_wrap>
 					</content_wrap>
 					<footer />
 				</wrapper>

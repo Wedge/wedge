@@ -27,6 +27,50 @@
 	$.ie6hover();
 	]]></code>
 
+	<skeleton>
+		<html>
+			<body>
+				<wrapper>
+					<header>
+						<logo_toggler />
+						<search_box />
+						<language_selector />
+						<random_news />
+					</header>
+					<menu />
+					<linktree />
+					<content_wrap>
+						<sidebar_wrap>
+							<sidebar></sidebar>
+						</sidebar_wrap>
+						<offside_wrap>
+							<main_wrap>
+								<top></top>
+								<default>
+									<main />
+								</default>
+							</main_wrap>
+						</offside_wrap>
+					</content_wrap>
+					<footer />
+				</wrapper>
+			</body>
+		</html>
+	</skeleton>
+
+	<macro name="sidebar">
+	<div id="edge">
+		<aside id="sidebar"><div class="column">{body}</div></aside></macro>
+
+	<macro name="sidebar" for="ie6,ie7">
+	<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td></macro>
+
+	<macro name="offside">{body}
+	</div></macro>
+
+	<macro name="offside" for="ie6,ie7"><td class="top">{body}
+	</td></tr></table></macro>
+
 	<code for="iphone,tablet"><![CDATA[
 	$('#sidebar').insertAfter('#main');
 	]]></code>

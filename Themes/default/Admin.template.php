@@ -86,47 +86,50 @@ function template_admin()
 function template_admin_live_news()
 {
 	global $txt, $scripturl;
+
 	echo '
-		<section>
-			<we:title>
-				<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-				', $txt['live'], '
-			</we:title>
-			<div id="wedge_news">', $txt['lfyi'], '</div>
-		</section>';
+	<section>
+		<we:title>
+			<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			', $txt['live'], '
+		</we:title>
+		<div id="wedge_news">', $txt['lfyi'], '</div>
+	</section>';
 }
 
 // Display version numbers and who the admins are.
 function template_admin_support_info()
 {
 	global $scripturl, $txt, $context;
+
 	// Show the user version information from their server.
 	echo '
-		<section>
-			<we:title>
-				', $txt['support_title'], '
-			</we:title>
-			<div id="version_details">
-				<strong>', $txt['support_versions'], ':</strong><br>
-				', $txt['support_versions_forum'], ':
-				<em id="yourVersion">', $context['forum_version'], '</em><br>
-				', $txt['support_versions_current'], ':
-				<em id="wedgeVersion">??</em><br>
-				', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
+	<section>
+		<we:title>
+			', $txt['support_title'], '
+		</we:title>
+		<div id="version_details">
+			<strong>', $txt['support_versions'], ':</strong><br>
+			', $txt['support_versions_forum'], ':
+			<em id="yourVersion">', $context['forum_version'], '</em><br>
+			', $txt['support_versions_current'], ':
+			<em id="wedgeVersion">??</em><br>
+			', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
 
 	// Display all the members who can administrate the forum.
 	echo '
-				<br>
-				<strong>', $txt['administrators'], ':</strong>
-				', implode(', ', $context['administrators']);
+			<br>
+			<strong>', $txt['administrators'], ':</strong>
+			', implode(', ', $context['administrators']);
+
 	// If we have lots of admins... don't show them all.
 	if (!empty($context['more_admins_link']))
 		echo '
-				(', $context['more_admins_link'], ')';
+			(', $context['more_admins_link'], ')';
 
 	echo '
-			</div>
-		</section>';
+		</div>
+	</section>';
 }
 
 // Show some support information and credits to those who helped make this.
@@ -142,15 +145,13 @@ function template_credits()
 		</we:cat>
 		<div class="windowbg2 wrc">
 			<div id="latestSupport">', $txt['support_latest_fetch'], '</div>
-		</div>';
-
-	// The most important part - the credits :P.
-	echo '
+		</div>
 		<we:cat>
 			', $txt['admin_credits'], '
 		</we:cat>
 		<div class="windowbg wrc">';
 
+	// The most important part - the credits. :P
 	foreach ($context['credits'] as $section)
 	{
 		if (isset($section['pretext']))

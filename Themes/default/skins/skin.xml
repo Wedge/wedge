@@ -19,37 +19,6 @@
 	$.ie6hover();
 	]]></code>
 
-	<skeleton>
-		<html>
-			<body>
-				<wrapper>
-					<header>
-						<logo_toggler />
-						<search_box />
-						<language_selector />
-						<random_news />
-					</header>
-					<menu />
-					<linktree />
-					<content_wrap>
-						<offside_wrap>
-							<main_wrap>
-								<top></top>
-								<default>
-									<main />
-								</default>
-							</main_wrap>
-						</offside_wrap>
-						<sidebar_wrap>
-							<sidebar></sidebar>
-						</sidebar_wrap>
-					</content_wrap>
-					<footer />
-				</wrapper>
-			</body>
-		</html>
-	</skeleton>
-
 	<macro name="offside"><div id="edge">{body}</macro>
 
 	<macro name="sidebar">
