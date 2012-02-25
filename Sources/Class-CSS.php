@@ -575,6 +575,21 @@ class wecss_nesting extends wecss
 				$level -= $indent;
 			}
 		}
+
+		// '@replace' command: replaces any string with another. Just put @replace on a line, and add
+		// two indented lines: search string on the first, replacement string on the second. For instance:
+		//
+		// 	@replace
+		//		rule: search
+		//		rule: replace
+
+		preg_match_all('~\n[\t ]*@replace[\t ]*{\n[\t ]*([^\n]+);\n[\t ]*([^\n]*)}~i', $tree, $replacements, PREG_SET_ORDER);
+		if (!empty($replacements))
+			foreach ($replacements as $replace)
+				$tree = str_replace($replace[1], $replace[2], $tree);
+		$tree = preg_replace('~\n[\t ]*@replace[\t ]*\n[\t ]*[^\n]+;\n[\t ]*[^\n]*}~i', "\n", $tree);
+
+		// And a few more pre-parsing actions...
 		$tree = preg_replace('~^(\s*)(@(?:import|charset)\s+.*?);$~mi', '$1<rule selector="$2"></rule>', $tree); // Transform single-line @rules into selectors
 		$tree = preg_replace('~([a-z-, ]+)\s*:(?!//)\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
 		$tree = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*{~mi', '$1<rule selector="$2">', $tree); // Transform selectors
@@ -641,7 +656,7 @@ class wecss_nesting extends wecss
 		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
 		foreach ($this->rules as $n => &$node)
 		{
-			// '@remove' keyword: remove properties as specified from the entire CSS file.
+			// '@remove' command: remove properties as specified from the entire CSS file.
 			// e.g.: "@remove (line break) (tab) background: #fff" -> removes all "background: #fff" from the file
 			if ($node['selector'] == '@remove')
 			{
