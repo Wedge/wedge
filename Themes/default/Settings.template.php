@@ -173,15 +173,6 @@ function template_settings()
 		),
 	'',
 		array(
-			'id' => 'show_newsfader',
-			'label' => $txt['news_fader'],
-		),
-		array(
-			'id' => 'newsfader_time',
-			'label' => $txt['admin_fader_delay'],
-			'type' => 'number',
-		),
-		array(
 			'id' => 'show_stats_index',
 			'label' => $txt['show_stats_index'],
 		),

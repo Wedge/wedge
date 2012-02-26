@@ -200,7 +200,7 @@ function template_boards_newsfader()
 	// Show the news fader?  (assuming there are things to show...)
 	global $context, $theme, $options, $txt, $scripturl, $settings;
 
-	if ($theme['show_newsfader'] && !empty($context['fader_news_lines']))
+	if (!empty($settings['show_newsfader']) && !empty($context['fader_news_lines']))
 	{
 		echo '
 	<div id="newsfader">
@@ -225,7 +225,7 @@ function template_boards_newsfader()
 	new weFader({
 		control: \'fadeScroller\',
 		template: ', JavaScriptEscape('<strong>%1$s</strong>'), ',
-		delay: ', empty($theme['newsfader_time']) ? 5000 : $theme['newsfader_time'], '
+		delay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
 	});
 
 	new weToggle({', empty($options['collapse_news_fader']) ? '' : '
