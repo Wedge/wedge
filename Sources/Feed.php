@@ -207,8 +207,7 @@ function Feed()
 
 		$feed_title = ' - ' . strip_tags($subject);
 
-		// !!! Needs to be changed to {query_see_topic} once per-topic permissions are implemented.
-		$query_this = '{query_see_board}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
+		$query_this = '{query_see_board} AND {query_see_topic}' . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != ' . $settings['recycle_board'] : '') . ' AND t.id_topic = ' . (int) $id_topic;
 
 		// Try to look through just a few messages, if at all possible.
@@ -568,7 +567,7 @@ function getXmlRecent($xml_format)
 			SELECT m.id_msg
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
+				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic AND {query_see_topic})
 			WHERE ' . $query_this . (empty($optimize_msg) ? '' : '
 				AND {raw:optimize_msg}') . ($settings['postmod_active'] ? '
 				AND m.approved = {int:is_approved}' : '') . '

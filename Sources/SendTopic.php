@@ -69,8 +69,9 @@ function SendTopic()
 	$request = wesql::query('
 		SELECT m.subject, t.approved
 		FROM {db_prefix}topics AS t
-			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
+		INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 		WHERE t.id_topic = {int:current_topic}
+			AND {query_see_topic}
 		LIMIT 1',
 		array(
 			'current_topic' => $topic,

@@ -441,7 +441,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 		'$images' => $images_url,
 		'$theme_dir' => $theme['theme_dir'],
 		'$theme' => '..' . str_replace($boardurl, '', $theme['theme_url']),
-		'$root' => '../',
+		'$root' => '..',
 	);
 	if (!empty($plugin_path))
 		$css_vars['$plugindir'] = $plugin_path;

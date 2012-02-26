@@ -135,9 +135,9 @@ ul.buttonlist
 
 .thought_icon extends .inline-block
 	text-decoration: none
-	background: url($images/icons/thought.png) no-repeat
-	width: width($images_dir/icons/thought.png)px
-	height: height($images_dir/icons/thought.png)px
+	background: url($images/icons/thought.gif) no-repeat
+	width: width($images_dir/icons/thought.gif)px
+	height: height($images_dir/icons/thought.gif)px
 
 table.thought_list
 	td
