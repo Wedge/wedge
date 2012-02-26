@@ -557,7 +557,9 @@ function ModifyPmSettings($return_config = false)
 			'pm3' => array('int', 'pm_posts_per_hour'),
 			'',
 			array('check', 'masterSavePmDrafts'),
+			array('permissions', 'save_pm_draft', 'exclude' => array(-1)),
 			array('check', 'masterAutoSavePmDrafts'),
+			array('permissions', 'auto_save_pm_draft', 'exclude' => array(-1)),
 		));
 
 	loadLanguage('ManageSettings');

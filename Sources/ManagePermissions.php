@@ -1580,6 +1580,14 @@ function loadAllPermissions($loadType = 'classic')
 		$relabelPermissions['post_reply'] = 'auto_approve_replies';
 	}
 
+	if (empty($settings['pm_enabled']))
+	{
+		$hiddenPermissions[] = 'pm_read';
+		$hiddenPermissions[] = 'pm_send';
+		$hiddenPermissions[] = 'save_pm_draft';
+		$hiddenPermissions[] = 'auto_save_pm_draft';
+	}
+
 	// Provide a practical way to modify permissions.
 	call_hook('load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions));
 
