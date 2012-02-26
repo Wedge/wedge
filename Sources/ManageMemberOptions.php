@@ -121,6 +121,8 @@ function ModifySignatureSettings($return_config = false)
 			// Are signatures even enabled?
 			array('check', 'signature_enable'),
 		'',
+			array('int', 'signature_minposts'),
+		'',
 			// Tweaking settings!
 			array('int', 'signature_max_length'),
 			array('int', 'signature_max_lines'),
@@ -432,6 +434,7 @@ function ModifySignatureSettings($return_config = false)
 		// Even though we have practically no settings let's keep the convention going!
 		$save_vars = array();
 		$save_vars[] = array('text', 'signature_settings');
+		$save_vars[] = array('int', 'signature_minposts');
 
 		saveDBSettings($save_vars);
 		redirectexit('action=admin;area=memberoptions;sa=sig');

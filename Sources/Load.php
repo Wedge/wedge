@@ -510,7 +510,7 @@ function loadUserSettings()
 		$user_info['can_skip_approval'] = empty($settings['postmod_active']) || allowedTo(array('moderate_forum', 'moderate_board', 'approve_posts'));
 		$user_info['query_see_topic'] = '
 		(
-			t.id_member_started = ' . $uid . ' OR (' . ($user_info['can_skip_approval'] ? '' : (empty($user_info['mod_cache']['ap']) ? '
+			t.id_member_started = ' . $user_info['id'] . ' OR (' . ($user_info['can_skip_approval'] ? '' : (empty($user_info['mod_cache']['ap']) ? '
 				t.approved = 1' : '
 				(t.approved = 1 OR t.id_board IN (' . implode(', ', $user_info['mod_cache']['ap']) . '))') . '
 				AND') . '
@@ -520,7 +520,7 @@ function loadUserSettings()
 					OR (
 						t.privacy = \'contacts\'
 						AND t.id_member_started != 0
-						AND FIND_IN_SET(' . $uid . ', (SELECT buddy_list FROM ' . $db_prefix . 'members WHERE id_member = t.id_member_started))
+						AND FIND_IN_SET(' . $user_info['id'] . ', (SELECT buddy_list FROM ' . $db_prefix . 'members WHERE id_member = t.id_member_started))
 					)
 				)
 			)
@@ -1015,7 +1015,7 @@ function loadPermissions()
  */
 function loadMemberData($users, $is_name = false, $set = 'normal')
 {
-	global $user_profile, $settings, $board_info;
+	global $user_profile, $settings, $board_info, $user_info;
 
 	// Can't just look for no users :P.
 	if (empty($users))
@@ -1110,6 +1110,16 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			$row['options'] = array();
 			$row['member_ip'] = format_ip($row['member_ip']);
 			$row['member_ip2'] = format_ip($row['member_ip2']);
+
+			if (!empty($settings['signature_minposts']) && ((int) $row['posts'] < (int) $settings['signature_minposts']))
+			{
+				// Hide normally (e.g. topic view) except if user is an admin
+				if ($set == 'normal' && $row['id_group'] != 1)
+					$row['signature'] = '';
+				// Hide in profile unless it's the user's own profile and they have permission, or they have permission to modify anyone's.
+				elseif ($set == 'profile' && !(($row['id_member'] == $user_info['id'] && allowedTo('profile_signature_own')) || allowedTo('profile_signature_any')))
+					$row['signature'] = '';
+			}
 			$user_profile[$row['id_member']] = $row;
 		}
 		wesql::free_result($request);

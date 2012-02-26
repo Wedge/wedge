@@ -2439,7 +2439,12 @@ function template_profile_signature_modify()
 	echo '
 					<dt>
 						<strong>', $txt['signature'], ':</strong>
-						<dfn>', $txt['sig_info'], '</dfn>
+						<dfn>', $txt['sig_info'], '</dfn>';
+	if (!empty($context['signature_minposts']))
+		echo '
+						<dfn>', $context['signature_minposts'], '</dfn>';
+
+	echo '
 						<br>';
 
 	if ($context['show_spellchecking'])
