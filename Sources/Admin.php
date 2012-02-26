@@ -438,6 +438,14 @@ function Admin()
 						'profile' => array($txt['custom_profile_shorttitle']),
 					),
 				),
+				'pm' => array(
+					'label' => $txt['admin_personal_messages'],
+					'file' => 'ManageSettings',
+					'function' => 'ModifyPmSettings',
+					'icon' => 'members.gif',
+					'bigicon' => !empty($settings['pm_enabled']) ? 'personal_messages_on.png' : 'personal_messages_off.png',
+					'permission' => 'admin_forum',
+				),
 				'',
 				'paidsubscribe' => array(
 					'label' => $txt['paid_subscriptions'],
@@ -899,6 +907,7 @@ function AdminSearchInternal()
 		array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
 		array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
 		array('ModifyLogSettings', 'area=logs;sa=settings'),
+		array('ModifyPmSettings', 'area=pm'),
 	);
 
 	// It will probably never be used by anyone, but anyway...

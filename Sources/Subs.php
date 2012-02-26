@@ -1880,7 +1880,7 @@ function setupMenuContext()
 	$context['allow_edit_profile'] = !$user_info['is_guest'] && allowedTo(array('profile_view_own', 'profile_view_any', 'profile_identity_own', 'profile_identity_any', 'profile_extra_own', 'profile_extra_any', 'profile_remove_own', 'profile_remove_any', 'moderate_forum', 'manage_membergroups', 'profile_title_own', 'profile_title_any'));
 	$context['allow_memberlist'] = allowedTo('view_mlist');
 	$context['allow_moderation_center'] = allowedTo('access_mod_center');
-	$context['allow_pm'] = allowedTo('pm_read');
+	$context['allow_pm'] = !empty($settings['pm_enabled']) && allowedTo('pm_read');
 	$context['unapproved_members'] = !empty($context['unapproved_members']) ? $context['unapproved_members'] : 0;
 
 	$cacheTime = $settings['lastActive'] * 60;

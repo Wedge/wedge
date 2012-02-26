@@ -135,6 +135,9 @@ $action_list = array(
 	'who' => array('Who.php', 'Who'),
 );
 
+if (empty($settings['pm_enabled']))
+	unset($action_list['pm']);
+
 if (!empty($context['extra_actions']))
 	$action_list = array_merge($action_list, $context['extra_actions']);
 

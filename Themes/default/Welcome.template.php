@@ -13,14 +13,21 @@
 
 function template_main()
 {
+	global $context;
+
 	echo '
 	<div class="windowbg2 wrc">
 		<h1>
 			Welcome, hacker!
 		</h1>
 		<ul>
-			<li><a href="<URL>?action=boards">Board index</a></li>
-			<li><a href="<URL>?action=pm">Personal messages</a></li>
+			<li><a href="<URL>?action=boards">Board index</a></li>';
+
+	if (!empty($context['allow_pm']))
+		echo '
+			<li><a href="<URL>?action=pm">Personal messages</a></li>';
+
+	echo '
 		</ul>
 	</div>';
 }

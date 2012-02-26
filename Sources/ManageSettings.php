@@ -539,6 +539,66 @@ function ModifyLogSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
+function ModifyPmSettings($return_config = false)
+{
+	global $context, $txt, $settings;
+	$config_vars = array(
+		array('check', 'pm_enabled'),
+	);
+
+	if (!empty($settings['pm_enabled']))
+		$config_vars = array_merge($config_vars, array(
+			'',
+			array('permissions', 'pm_read', 'exclude' => array(-1)),
+			array('permissions', 'pm_send', 'exclude' => array(-1)),
+			'',
+			'pm1' => array('int', 'max_pm_recipients'),
+			'pm2' => array('int', 'pm_posts_verification'),
+			'pm3' => array('int', 'pm_posts_per_hour'),
+			'',
+			array('check', 'masterSavePmDrafts'),
+			array('check', 'masterAutoSavePmDrafts'),
+		));
+
+	loadLanguage('ManageSettings');
+
+	if ($return_config)
+		return $config_vars;
+
+	loadSource('ManageServer');
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		$save_vars = $config_vars;
+		// Fix PM settings.
+		if (!empty($settings['pm_enabled']))
+		{
+			$_POST['pm_spam_settings'] = (int) $_POST['max_pm_recipients'] . ',' . (int) $_POST['pm_posts_verification'] . ',' . (int) $_POST['pm_posts_per_hour'];
+
+			unset($save_vars['pm1'], $save_vars['pm2'], $save_vars['pm3']);
+
+			$save_vars[] = array('text', 'pm_spam_settings');
+		}
+
+		saveDBSettings($save_vars);
+
+		writeLog();
+		redirectexit('action=admin;area=pm');
+	}
+
+	$context['post_url'] = '<URL>?action=admin;area=pm;save';
+	$context['page_title'] = $context['settings_title'] = $txt['admin_personal_messages'];
+
+	// Hacky mess for PM settings
+	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
+
+	wetem::load('show_settings');
+	prepareDBSettingContext($config_vars);
+}
+
 /**
  *	To Plugin Authors:
  *	You may add your plugin settings area here.
