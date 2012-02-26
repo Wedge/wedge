@@ -73,9 +73,6 @@ body
 	input.search
 		background-color: rgb(235,225,215)
 
-@remove
-	background: url($images/theme/bg.jpg)
-
 // The upper_section, float the two each way
 #upper_section
 	border, padding: 0
@@ -115,12 +112,6 @@ body
 		padding: 0
 		li a
 			color: #679
-
-@remove
-	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
-
-.wedgesymbol
-	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -265,3 +256,10 @@ tr.titlebg
 $main_font = "Segoe UI", Arial, sans-serif
 $subcat_font = normal 1.1em main_font
 $post_font = 10.5pt/140% $main_font
+
+@remove
+	background: url($images/theme/bg.jpg)
+
+@replace
+	url($images/minilogo.png)
+	url($images/minilogow.png)
