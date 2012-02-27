@@ -54,7 +54,7 @@ function loadCaptchaTypes()
 {
 	global $sourcedir;
 
-	$captcha_types = array('none');
+	$captcha_types = array();
 	if ($dh = scandir($sourcedir . '/captcha'))
 	{
 		foreach ($dh as $file)
