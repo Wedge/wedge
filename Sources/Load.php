@@ -450,8 +450,10 @@ function loadUserSettings()
 			);
 			while ($row = wesql::fetch_assoc($request))
 			{
-				$access['view_' . $row['view_perm']][] = $row['id_board'];
-				$access['enter_' . $row['enter_perm']][] = $row['id_board'];
+				if ($row['view_perm'] != 'disallow')
+					$access['view_' . $row['view_perm']][] = $row['id_board'];
+				if ($row['enter_perm'] != 'disallow')
+					$access['enter_' . $row['enter_perm']][] = $row['id_board'];
 			}
 			$user_info['qlb_boards'] = array_diff($access['view_allow'], $access['view_deny']);
 			$user_info['qsb_boards'] = array_diff($access['enter_allow'], $access['enter_deny']);
@@ -697,6 +699,7 @@ function loadBoard()
 			);
 
 			// Load privacy settings.
+			// !!! Are we still meant to be using this now we have query_see_topic ? It's going to be inaccurate!
 			if ($row['member_groups'] === '0')
 				$board_info['privacy'] = 'members';
 			elseif ($row['member_groups'] === '-1,0')

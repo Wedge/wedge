@@ -407,7 +407,6 @@ function EditBoard()
 
 		// Some things that need to be setup for a new board.
 		$curBoard = array(
-			'member_groups' => array(0, -1),
 			'category' => (int) $_REQUEST['cat']
 		);
 		$context['board_order'] = array();
@@ -454,13 +453,11 @@ function EditBoard()
 		-1 => array(
 			'id' => '-1',
 			'name' => $txt['parent_guests_only'],
-			'checked' => in_array('-1', $curBoard['member_groups']),
 			'is_post_group' => false,
 		),
 		0 => array(
 			'id' => '0',
 			'name' => $txt['parent_members_only'],
-			'checked' => in_array('0', $curBoard['member_groups']),
 			'is_post_group' => false,
 		)
 	);
@@ -478,13 +475,9 @@ function EditBoard()
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{
-		if ($_REQUEST['sa'] == 'newboard' && $row['min_posts'] == -1)
-			$curBoard['member_groups'][] = $row['id_group'];
-
 		$context['groups'][(int) $row['id_group']] = array(
 			'id' => $row['id_group'],
 			'name' => trim($row['group_name']),
-			'checked' => in_array($row['id_group'], $curBoard['member_groups']),
 			'is_post_group' => $row['min_posts'] != -1,
 		);
 	}
@@ -492,6 +485,48 @@ function EditBoard()
 
 	if (empty($settings['allow_guestAccess']))
 		unset($context['groups'][-1]);
+
+	// For new boards, we need to simply set up defaults for each of the groups
+	$context['view_enter_same'] = true;
+	$context['need_deny_perm'] = false;
+	if ($_REQUEST['sa'] == 'newboard')
+	{
+		foreach ($context['groups'] as $id_group => $details)
+			$context['groups'][$id_group] += array(
+				'view_perm' => !$details['is_post_group'] ? 'allow' : 'disallow',
+				'enter_perm' => !$details['is_post_group'] ? 'allow' : 'disallow',
+			);
+	}
+	else
+	{
+		$query = wesql::query('
+			SELECT id_group, view_perm, enter_perm
+			FROM {db_prefix}board_groups
+			WHERE id_board = {int:board}',
+			array(
+				'board' => $_REQUEST['boardid'],
+			)
+		);
+		while ($row = wesql::fetch_assoc($query))
+		{
+			$context['groups'][(int) $row['id_group']]['view_perm'] = $row['view_perm'];
+			$context['groups'][(int) $row['id_group']]['enter_perm'] = $row['enter_perm'];
+			if ($row['view_perm'] != $row['enter_perm'])
+				$context['view_enter_same'] = false;
+			if ($row['view_perm'] == 'deny' || $row['enter_perm'] == 'deny')
+				$context['need_deny_perm'] = true;
+		}
+		wesql::free_result($query);
+
+		// Go through and fix up any missing items
+		foreach ($context['groups'] as $id_group => $group)
+		{
+			if (!isset($group['view_perm']))
+				$context['groups'][$id_group]['view_perm'] = 'disallow';
+			if (!isset($group['enter_perm']))
+				$context['groups'][$id_group]['enter_perm'] = 'disallow';
+		}
+	}
 
 	// Category doesn't exist, man... sorry.
 	if (!isset($boardList[$curBoard['category']]))
@@ -642,14 +677,61 @@ function EditBoard2()
 		// Checkboxes....
 		$boardOptions['posts_count'] = isset($_POST['count']);
 		$boardOptions['override_theme'] = isset($_POST['override_theme']);
-		$boardOptions['access_groups'] = array();
 
-		if (!empty($_POST['groups']))
-			foreach ($_POST['groups'] as $group)
-				$boardOptions['access_groups'][] = (int) $group;
+		// We're going to need the list of groups for this.
+		$boardOptions['access'] = array(
+			-1 => array('id_group' => -1, 'view_perm' => 'disallow', 'enter_perm' => 'disallow'),
+			0 => array('id_group' => 0, 'view_perm' => 'disallow', 'enter_perm' => 'disallow'),
+		);
+		$request = wesql::query('
+			SELECT id_group
+			FROM {db_prefix}membergroups
+			WHERE id_group > {int:admin_group} AND id_group != {int:moderator}',
+			array(
+				'moderator' => 3,
+				'admin_group' => 1,
+			)
+		);
+
+		while ($row = wesql::fetch_assoc($request))
+			$boardOptions['access'][$row['id_group']] = array('id_group' => $row['id_group'], 'view_perm' => 'disallow', 'enter_perm' => 'disallow');
+		wesql::free_result($request);
+
+		if (!empty($_POST['viewgroup']))
+		{
+			foreach ($_POST['viewgroup'] as $id_group => $access)
+			{
+				if (!isset($boardOptions['access'][$id_group]))
+					continue;
+				if (empty($_POST['need_deny_perm']) && $access == 'deny')
+					$access = 'disallow';
+
+				$boardOptions['access'][$id_group]['view_perm'] = $access;
+			}
+		}
+
+		// If the enter rules are the same as the view rules, we do not care what $_POST has.
+		if (!empty($_POST['view_enter_same']))
+		{
+			foreach ($boardOptions['access'] as $id_group => $access)
+				$boardOptions['access'][$id_group]['enter_perm'] = $access['view_perm'];
+		}
+		elseif (!empty($_POST['entergroup']))
+		{
+			foreach ($_POST['entergroup'] as $id_group => $access)
+			{
+				if (!isset($boardOptions['access'][$id_group]))
+					continue;
+
+				if (empty($_POST['need_deny_perm']) && $access == 'deny')
+					$access = 'disallow';
+
+				$boardOptions['access'][$id_group]['enter_perm'] = $access;
+			}
+		}
 
 		if (empty($settings['allow_guestAccess']))
-			$boardOptions['access_groups'] = array_diff($boardOptions['access_groups'], array(-1));
+			unset($boardOptions['access'][-1]);
 
 		// Change '1 & 2' to '1 &amp; 2', but not '&amp;' to '&amp;amp;'...
 		$boardOptions['board_name'] = preg_replace('~&(?!amp;)~', '&amp;', $_POST['board_name']);

@@ -607,13 +607,6 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['override_theme'] = $boardOptions['override_theme'] ? 1 : 0;
 	}
 
-	// Who's allowed to access this board.
-	if (isset($boardOptions['access_groups']))
-	{
-		$boardUpdates[] = 'member_groups = {string:member_groups}';
-		$boardUpdateParameters['member_groups'] = implode(',', $boardOptions['access_groups']);
-	}
-
 	if (isset($boardOptions['board_name']))
 	{
 		$boardUpdates[] = 'name = {string:board_name}';
@@ -671,6 +664,34 @@ function modifyBoard($board_id, &$boardOptions)
 				)
 			)
 		);
+
+	// Who's allowed to access this board.
+	if (isset($boardOptions['access']))
+	{
+		// Remove all the old ones.
+		wesql::query('
+			DELETE FROM {db_prefix}board_groups
+			WHERE id_board = {int:board}',
+			array(
+				'board' => $board_id,
+			)
+		);
+		$rows = array();
+		foreach ($boardOptions['access'] as $id_group => $row)
+		{
+			// Skip empty rows
+			if ($row['view_perm'] == 'disallow' && $row['enter_perm'] == 'disallow')
+				continue;
+			$rows[] = array($board_id, $id_group, $row['view_perm'], $row['enter_perm']);
+		}
+
+		wesql::insert('insert',
+			'{db_prefix}board_groups',
+			array('id_board' => 'int', 'id_group' => 'int', 'view_perm' => 'string', 'enter_perm' => 'string'),
+			$rows,
+			array('id_board', 'id_group')
+		);
+	}
 
 	// Set moderators of this board.
 	if (isset($boardOptions['moderators']) || isset($boardOptions['moderator_string']))
@@ -822,7 +843,6 @@ function createBoard($boardOptions)
 		'override_theme' => false,
 		'board_theme' => 0,
 		'board_skin' => '',
-		'access_groups' => array(),
 		'board_description' => '',
 		'profile' => 1,
 		'moderators' => '',

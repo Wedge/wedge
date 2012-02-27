@@ -361,10 +361,85 @@ function template_modify_board()
 						<strong>', $txt['mboards_groups'], ':</strong>
 						<dfn>', $txt['mboards_groups_desc'], '</dfn>
 					</dt>
-					<dd>';
+					<dd>
+						<label><input type="checkbox" name="view_enter_same" id="view_enter_same"', !empty($context['view_enter_same']) ? ' checked' : '', ' onclick="$(\'#enter_perm_col\').toggle(!this.checked)"> ', $txt['mboards_groups_view_enter_same'], '</label><br>
+						<label><input type="checkbox" name="need_deny_perm" id="need_deny_perm"', !empty($context['need_deny_perm']) ? ' checked' : '', ' onclick="$(\'.deny_perm\').toggle(this.checked)"> ', $txt['mboards_groups_need_deny_perm'], '</label><br>
+						<br>
+						<div id="view_perm_col" class="two-columns">
+							<fieldset>
+								<legend>', $txt['mboards_view_board'], '</legend>
+								<table>
+									<tr>
+										<th></th>
+										<th>', $txt['mboards_yes'], '</th>
+										<th>', $txt['mboards_no'], '</th>
+										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['mboards_never'], '</th>
+									</tr>';
+
+	foreach ($context['groups'] as $group)
+	{
+						echo '
+									<tr>
+										<td class="smalltext">
+											<span', $group['is_post_group'] ? ' class="post_group" title="' . $txt['mboards_groups_post_group'] . '"' : '', $group['id'] == 0 ? ' class="regular_members" title="' . $txt['mboards_groups_regular_members'] . '"' : '', '>
+											', $group['name'], '
+											</span>	
+										</td>
+										<td>
+											<input type="radio" name="viewgroup[', $group['id'], ']" value="allow"', $group['view_perm'] == 'allow' ? ' checked' : '', '>
+										</td>
+										<td>
+											<input type="radio" name="viewgroup[', $group['id'], ']" value="disallow"', (empty($context['need_deny_perm']) && $group['view_perm'] == 'deny') || $group['view_perm'] == 'disallow' ? ' checked' : '', '>
+										</td>
+										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+											<input type="radio" name="viewgroup[', $group['id'], ']" value="deny"', !empty($context['need_deny_perm']) && $group['view_perm'] == 'deny' ? ' checked' : '', '>
+										</td>
+									</tr>';
+	}
+
+	echo '
+								</table>
+							</fieldset>
+						</div>
+						<div id="enter_perm_col" class="two-columns"', !empty($context['view_enter_same']) ? ' style="display:none"' : '', '>
+							<fieldset>
+								<legend>', $txt['mboards_enter_board'], '</legend>
+								<table>
+									<tr>
+										<th></th>
+										<th>', $txt['mboards_yes'], '</th>
+										<th>', $txt['mboards_no'], '</th>
+										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none;"' : '', '>', $txt['mboards_never'], '</th>
+									</tr>';
+
+	foreach ($context['groups'] as $group)
+	{
+						echo '
+									<tr>
+										<td class="smalltext">
+											<span', $group['is_post_group'] ? ' class="post_group" title="' . $txt['mboards_groups_post_group'] . '"' : '', $group['id'] == 0 ? ' class="regular_members" title="' . $txt['mboards_groups_regular_members'] . '"' : '', '>
+											', $group['name'], '
+											</span>	
+										</td>
+										<td>
+											<input type="radio" name="entergroup[', $group['id'], ']" value="allow"', $group['enter_perm'] == 'allow' ? ' checked' : '', '>
+										</td>
+										<td>
+											<input type="radio" name="entergroup[', $group['id'], ']" value="disallow"', (empty($context['need_deny_perm']) && $group['enter_perm'] == 'deny') || $group['enter_perm'] == 'disallow' ? ' checked' : '', '>
+										</td>
+										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none;"' : '', '>
+											<input type="radio" name="entergroup[', $group['id'], ']" value="deny"', !empty($context['need_deny_perm']) && $group['enter_perm'] == 'deny' ? ' checked' : '', '>
+										</td>
+									</tr>';
+	}
+
+	echo '
+								</table>
+							</fieldset>
+						</div>';
 
 	// List all the membergroups so the user can choose who may access this board.
-	foreach ($context['groups'] as $group)
+	/*foreach ($context['groups'] as $group)
 		echo '
 						<label>
 							<input type="checkbox" name="groups[]" value="', $group['id'], '" id="groups_', $group['id'], '"', $group['checked'] ? ' checked' : '', '>
@@ -372,11 +447,10 @@ function template_modify_board()
 								', $group['name'], '
 							</span>
 						</label>
-						<br>';
+						<br>';*/
 
 	echo '
-						<em>', $txt['check_all'], '</em> <input type="checkbox" onclick="invertAll(this, this.form, \'groups[]\');">
-						<br><br>
+						<br class="clear"><br>
 					</dd>';
 
 	// Options to choose moderators, specifiy as announcement board and choose whether to count posts here.
