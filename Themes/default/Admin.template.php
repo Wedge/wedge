@@ -760,6 +760,10 @@ function template_show_settings()
 				elseif ($config_var['type'] == 'large_text')
 					echo '
 						<textarea rows="', $config_var['size'] ? $config_var['size'] : 4, '" cols="30" ', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '">', $config_var['value'], '</textarea>';
+				// Email address?
+				elseif ($config_var['type'] == 'email')
+					echo '
+						<input type="email"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', '>';
 				// Permission group?
 				elseif ($config_var['type'] == 'permissions')
 					theme_inline_permissions($config_var['name']);
@@ -788,6 +792,10 @@ function template_show_settings()
 				elseif ($config_var['type'] == 'var_message')
 					echo '
 						<div', !empty($config_var['name']) ? ' id="' . $config_var['name'] . '"' : '', '>', $config_var['var_message'], '</div>';
+				// Numeric (int)?
+				elseif ($config_var['type'] == 'int')
+					echo '
+						<input type="number"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', isset($config_var['min']) ? ' min="' . $config_var['min'] . '"' : '', isset($config_var['max']) ? ' max="' . $config_var['max'] . '"' : '', ' step="', $config_var['step'], '">';
 				// Assume it must be a text box.
 				else
 					echo '

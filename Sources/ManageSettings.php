@@ -180,7 +180,7 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			// Who's online?
 			array('check', 'who_enabled'),
-			array('int', 'lastActive'),
+			array('int', 'lastActive', 'max' => 1440), // Prevent absurd boundaries here - make it a day tops.
 			array('select', 'display_who_viewing', array($txt['who_display_viewing_off'], $txt['who_display_viewing_numbers'], $txt['who_display_viewing_names'])),
 		'',
 			// Statistics.
@@ -214,10 +214,6 @@ function ModifyBasicSettings($return_config = false)
 	{
 		checkSession();
 
-		// Prevent absurd boundaries here - make it a day tops.
-		if (isset($_POST['lastActive']))
-			$_POST['lastActive'] = min((int) $_POST['lastActive'], 1440);
-
 		saveDBSettings($config_vars);
 
 		writeLog();
@@ -237,7 +233,7 @@ function ModifyModerationSettings($return_config = false)
 
 	$config_vars = array(
 			// Warning system?
-			array('int', 'warning_watch', 'help' => 'warning_enable'),
+			array('int', 'warning_watch', 'help' => 'warning_enable', 'min' => 0, 'max' => 100),
 			'moderate' => array('int', 'warning_moderate'),
 			array('int', 'warning_mute'),
 		'',
@@ -258,6 +254,7 @@ function ModifyModerationSettings($return_config = false)
 	{
 		checkSession();
 
+		// Sadly, we can't use the normal validation routine here because we're doing a fun combination.
 		$_POST['warning_watch'] = min($_POST['warning_watch'], 100);
 		$_POST['warning_moderate'] = $settings['postmod_active'] ? min($_POST['warning_moderate'], 100) : 0;
 		$_POST['warning_mute'] = min($_POST['warning_mute'], 100);

@@ -222,8 +222,8 @@ function ModifyGeneralSettings($return_config = false)
 		array('mtitle', $txt['maintenance_subject'], 'file', 'text', 36),
 		array('mmessage', $txt['maintenance_message'], 'file', 'text', 36),
 		'',
-		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30, 'webmaster_email'),
-		array('mail_from', $txt['admin_from_email'], 'db', 'text', 30, 'mail_from'),
+		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'email', 30, 'webmaster_email'),
+		array('mail_from', $txt['admin_from_email'], 'db', 'email', 30, 'mail_from'),
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('enableCompressedData', $txt['enableCompressedData'], 'db', 'check', null, 'enableCompressedData'),
@@ -2001,6 +2001,16 @@ function prepareDBSettingContext(&$config_vars)
 				'postinput' => isset($config_var['postinput']) ? $config_var['postinput'] : '',
 			);
 
+			// If it's an int, there may be extra stuff.
+			if ($config_var[0] == 'int')
+			{
+				if (isset($config_var['min']))
+					$context['config_vars'][$config_var[1]]['min'] = $config_var['min'];
+				if (isset($config_var['max']))
+					$context['config_vars'][$config_var[1]]['max'] = $config_var['max'];
+				$context['config_vars'][$config_var[1]]['step'] = isset($config_var['step']) ? $config_var['step'] : 1;
+			}
+
 			// If this is a select box handle any data.
 			if (!empty($config_var[2]) && is_array($config_var[2]))
 			{
@@ -2241,12 +2251,18 @@ function saveDBSettings(&$config_vars)
 		}
 		// Integers!
 		elseif ($var[0] == 'int')
+		{
 			$setArray[$var[1]] = (int) $_POST[$var[1]];
+			if (isset($var['min']) && $setArray[$var[1]] < $var['min'])
+				$setArray[$var[1]] = $var['min'];
+			if (isset($var['max']) && $setArray[$var[1]] > $var['max'])
+				$setArray[$var[1]] = $var['max'];
+		}
 		// Floating point!
 		elseif ($var[0] == 'float')
 			$setArray[$var[1]] = (float) $_POST[$var[1]];
 		// Text!
-		elseif ($var[0] == 'text' || $var[0] == 'large_text')
+		elseif ($var[0] == 'text' || $var[0] == 'large_text' || $var[0] == 'email')
 			$setArray[$var[1]] = $_POST[$var[1]];
 		// Passwords!
 		elseif ($var[0] == 'password')
