@@ -41,6 +41,45 @@ body
 	margin: 0
 	padding: 0 4px
 
+header, footer, aside, section, article, nav
+	display: block
+
+/* Common styles used for inheritance. You can declare
+	them anywhere you like, but having them near the
+	start of the file should avoid cascading issues.
+------------------------------------------------------- */
+
+// Alternating generic backgrounds
+.windowbg
+	color: #444
+	background-color: $window_bg
+	background-position: 0 -550px
+	a
+		color: #47a
+
+.windowbg2 extends .windowbg
+	background-color: $window_bg2
+
+.windowbg3 extends .windowbg
+	background-color: $window_bg3
+
+.inline-block
+	display: inline-block
+	mixin: ie-inline-block
+	vertical-align: middle
+
+.cell
+	text-align: center
+	display: table-cell
+	vertical-align: middle
+
+// Clearfix
+.clearfix
+	:before, :after
+		content: ""
+		display: table
+	:after
+		clear: both
 
 /* Main layout declarations (body, sidebar...)
 ------------------------------------------------------- */
@@ -80,7 +119,7 @@ body
 		width: 100%
 		section extends .inline-block
 			width: $sidebar-width
-			vertical-align: top !important
+			vertical-align: top
 			padding: 0 8px 8px
 			margin: 8px
 	#main
@@ -136,7 +175,7 @@ ul#noava
 	padding: 8px 30px
 	.frame
 		p, h2
-			display: inline-block
+			base: .inline-block
 			margin: .4em 1em 0 0
 			padding: 0
 		h2 extends .arrows
@@ -298,23 +337,7 @@ em
 .ping
 	box-shadow: none !important
 
-// The 'New' icon, generally speaking.
-.note extends .inline-block
-	border-radius: 7px
-	background-color: rgba(255,0,0,.8)
-	gradient: #fa6, #c8a
-	color: #fff !important
-	font: 700 75%/100% Tahoma, sans-serif
-	text-transform: lowercase
-	vertical-align: .1em
-	margin: 0 3px
-	padding: 1px 5px 3px
-	:hover
-		text-decoration: none
-
-/* Common styles used for inheritance. You can declare
-	them anywhere you like, but having them near the
-	start of the file should avoid cascading issues.
+/* More common styles used for inheritance.
 ------------------------------------------------------- */
 
 .arrows
@@ -351,41 +374,23 @@ em
 	a
 		color: #eed
 
-// Alternating generic backgrounds
-.windowbg
-	color: #444
-	background-color: $window_bg
-	background-position: 0 -550px
-	a
-		color: #47a
-
-.windowbg2 extends .windowbg
-	background-color: $window_bg2
-
-.windowbg3 extends .windowbg
-	background-color: $window_bg3
-
-.inline-block
-	display: inline-block
-	mixin: ie-inline-block
-	vertical-align: middle
-
-.cell
-	text-align: center
-	display: table-cell
-	vertical-align: middle
+// The 'New' icon, generally speaking.
+.note extends .inline-block
+	border-radius: 7px
+	background-color: rgba(255,0,0,.8)
+	gradient: #fa6, #c8a
+	color: #fff !important
+	font: 700 75%/100% Tahoma, sans-serif
+	text-transform: lowercase
+	vertical-align: .1em
+	margin: 0 3px
+	padding: 1px 5px 3px
+	:hover
+		text-decoration: none
 
 // We worship his shadow.
 .hide
 	display: none
-
-// Clearfix
-.clearfix
-	:before, :after
-		content: ""
-		display: table
-	:after
-		clear: both
 
 /* Custom Select box styles
 --------------------------------------------------------- */
@@ -907,9 +912,6 @@ li.separator
 
 /* Common classes to ease styling.
 ------------------------------------------------------- */
-
-header, footer, aside, section, article, nav
-	display: block
 
 // Left and right-floating
 .floatleft
@@ -1618,7 +1620,7 @@ th.last_th
 
 $main_font = Arial, sans-serif
 $menu_font = $main_font
-$head_font = "Franklin Gothic Medium", "Gill Sans", "Segoe UI Light", "Segoe UI", Georgia, Arial, Tahoma, sans-serif
+$head_font = "Franklin Gothic Medium", "Franklin Gothic", "Gill Sans", "Segoe UI Light", "Segoe UI", Georgia, Arial, Tahoma, sans-serif
 $mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace
 
 $post_font = 95%/133% Verdana, Arial, Segoe UI, Tahoma, Verdana, $main_font

@@ -139,24 +139,24 @@ ul.buttonlist
 	width: width($images_dir/icons/thought.gif)px
 	height: height($images_dir/icons/thought.gif)px
 
-table.thought_list
-	td
-		position: relative
-		.thought_actions
-			position: absolute
-			right: 8px
-			top: 50%
-			margin-top: -11px // Min height is at 22px
-			display: none
-			opacity: 0
-			transition: opacity .5s ease
-			input
-				padding-top, padding-bottom: 2px
-		:hover .thought_actions
-			opacity: 1
-			display: inline-block
-		:hover .hide
-			display: none
+table.thought_list td
+	position: relative
+
+.thought_actions
+	position: absolute
+	right: 8px
+	top: 50%
+	opacity: 0
+	transition: opacity .5s ease
+	margin-top: -11px // Min height is at 22px
+	input
+		padding-top, padding-bottom: 2px
+
+table.thought_list td:hover
+	.thought_actions
+		opacity: 1
+	.hide
+		display: none
 
 #new_thought
 	display: none
