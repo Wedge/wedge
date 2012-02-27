@@ -102,10 +102,16 @@ function ListPlugins()
 							'language' => array(),
 						),
 						'readmes' => array(),
-						'acp_url' => $manifest->{'acp-url'},
+						'acp_url' => '',
 						'install_errors' => array(),
 						'enabled' => false,
 					);
+
+					// Use the supplied link if, well, given, but failing that check to see if they used an auto admin page.
+					if (!empty($manifest->{'acp-url'}))
+						$plugin['acp_url'] = (string) $manifest->{'acp-url'};
+					elseif (!empty($manifest->{'settings-page'}['area']))
+						$plugin['acp_url'] = 'action=admin;area=' . (string) $manifest->{'settings-page'}['area'];
 
 					// Do some sanity checking, to validate that any given URL or email are at least vaguely legal.
 					if (empty($plugin['author_url']) || (strpos($plugin['author_url'], 'http://') !== 0 && strpos($plugin['author_url'], 'https://') !== 0))
@@ -1005,7 +1011,7 @@ function EnablePlugin()
 
 	// Lastly, commit the hooks themselves.
 	$plugin_details = array(
-		'id' => (string) $manifest['id'],
+		'id' => $manifest_id,
 		'provides' => $hooks_provided,
 	);
 	// We make a special exception for last-minute actions.
@@ -1026,6 +1032,35 @@ function EnablePlugin()
 			$plugin_details['actions'] = $new_actions;
 	}
 
+	// Admin settings page?
+	if (!empty($manifest->{'settings-page'}))
+	{
+		if (!empty($settings['plugins_admin']))
+		{
+			$admin_cache = unserialize($settings['plugins_admin']);
+			unset ($admin_cache[$manifest_id]);
+		}
+		else
+			$admin_cache = array();
+
+		$new_item = array();
+		$settings_page = $manifest->{'settings-page'};
+		if (!empty($settings_page['area']))
+		{
+			$new_item['area'] = (string) $settings_page['area'];
+			$new_item['name'] = (string) $manifest->name;
+			foreach (array('icon', 'bigicon', 'permission') as $item)
+				if (!empty($settings_page[$item]))
+					$new_item[$item] = (string) $settings_page[$item];
+
+			$admin_cache[$manifest_id] = $new_item;
+		}
+
+		$admin_cache = !empty($admin_cache) ? serialize($admin_cache) : '';
+	}
+	else
+		$admin_cache = !empty($settings['plugins_admin']) ? $settings['plugins_admin'] : '';
+
 	foreach ($hook_data as $point => $details)
 		foreach ($details as $hooked_details)
 			$plugin_details[$point][] = (string) $hooked_details['function'] . '|' . (string) $hooked_details['filename'] . '|plugin' . $hooked_details['priority'];
@@ -1037,6 +1072,7 @@ function EnablePlugin()
 			'enabled_plugins' => implode(',', $enabled_plugins),
 			'plugin_' . $_GET['plugin'] => serialize($plugin_details),
 			'settings_updated' => time(),
+			'plugins_admin' => $admin_cache,
 		)
 	);
 
@@ -1062,6 +1098,8 @@ function DisablePlugin()
 		fatal_lang_error('fatal_already_disabled', false);
 
 	// Disabling is much simpler than enabling.
+
+	$manifest_id = (string) $manifest['id'];
 
 	// Database changes: disable script
 	if (!empty($manifest->database->scripts->disable))
@@ -1096,10 +1134,20 @@ function DisablePlugin()
 			DELETE FROM {db_prefix}bbcode
 			WHERE id_plugin = {string:plugin}',
 			array(
-				'plugin' => (string) $manifest['id'],
+				'plugin' => $manifest_id,
 			)
 		);
 	}
+
+	// Remove this plugin from the cache of plugins that might be integrating into the admin panel using simple settings pages.
+	if (!empty($settings['plugins_admin']))
+	{
+		$admin_cache = unserialize($settings['plugins_admin']);
+		unset ($admin_cache[$manifest_id]);
+		$admin_cache = !empty($admin_cache) ? serialize($admin_cache) : '';
+	}
+	else
+		$admin_cache = '';
 
 	// Note that the internal cache of per-plugin hook info is cleared, not removed. When actually removing the plugin, then we'd purge it.
 	// It's not like we have to call remove_hook or anything, because the whole point is that we don't 'add' them in the first place...
@@ -1109,6 +1157,7 @@ function DisablePlugin()
 			'enabled_plugins' => implode(',', $enabled_plugins),
 			'plugin_' . $_GET['plugin'] => '',
 			'settings_updated' => time(),
+			'plugins_admin' => $admin_cache,
 		)
 	);
 

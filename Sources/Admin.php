@@ -638,6 +638,29 @@ function Admin()
 		}
 	}
 
+	// Integrate plugins with handy menu pages.
+	if (!empty($settings['plugins_admin']))
+	{
+		$admin_areas['plugins']['areas'][] = '';
+		$admin_cache = unserialize($settings['plugins_admin']);
+		foreach ($admin_cache as $plugin_id => $plugin_details)
+		{
+			if (!isset($context['plugins_dir'][$plugin_id]))
+				continue;
+
+			$new_item = array(
+				'label' => $plugin_details['name'],
+				'file' => 'ManageSettings',
+				'function' => 'ModifySettingsPageHandler',
+				'plugin_id' => $plugin_id,
+			);
+			foreach (array('icon', 'bigicon', 'permission') as $item)
+				if (isset($plugin_details[$item]))
+					$new_item[$item] = strtr($plugin_details[$item], array('$pluginurl' => $context['plugins_url'][$plugin_id]));
+			$admin_areas['plugins']['areas'][$plugin_details['area']] = $new_item;
+		}
+	}
+
 	// Let modders modify admin areas easily. You can insert a top-level menu
 	// into the admin menu (global $admin_areas) by doing something like this in your hook:
 	// $admin_areas = array_merge(array_splice($admin_areas, 0, 2), $my_top_level_menu_array, $admin_areas);
@@ -828,7 +851,7 @@ function AdminSearch()
 // A complicated but relatively quick internal search.
 function AdminSearchInternal()
 {
-	global $context, $txt, $helptxt, $scripturl, $settings_search;
+	global $context, $txt, $helptxt, $scripturl, $settings_search, $settings;
 
 	// Try to get some more memory.
 	@ini_set('memory_limit', '128M');
@@ -910,13 +933,27 @@ function AdminSearchInternal()
 		array('ModifyPmSettings', 'area=pm'),
 	);
 
+	if (!empty($settings['plugins_admin']))
+	{
+		$admin_cache = unserialize($settings['plugins_admin']);
+		foreach ($admin_cache as $plugin_id => $plugin_details)
+		{
+			if (!isset($context['plugins_dir'][$plugin_id]))
+				continue;
+			$settings_search[] = array('ModifySettingsPageHandler', 'area=' . $plugin_details['area'], $plugin_id);
+		}
+	}
+
 	// It will probably never be used by anyone, but anyway...
 	call_hook('admin_search', array(&$settings_search));
 
 	foreach ($settings_search as $setting_area)
 	{
 		// Get a list of their variables.
-		$config_vars = $setting_area[0](true);
+		if (isset($setting_area[2]))
+			$config_vars = $setting_area[0](true, $setting_area[2]);
+		else
+			$config_vars = $setting_area[0](true);
 
 		foreach ($config_vars as $var)
 			if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc')))

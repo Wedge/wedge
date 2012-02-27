@@ -234,11 +234,11 @@ function ModifyModerationSettings($return_config = false)
 	$config_vars = array(
 			// Warning system?
 			array('int', 'warning_watch', 'help' => 'warning_enable', 'min' => 0, 'max' => 100),
-			'moderate' => array('int', 'warning_moderate'),
-			array('int', 'warning_mute'),
+			'moderate' => array('int', 'warning_moderate', 'min' => 0, 'max' => 100),
+			array('int', 'warning_mute', 'min' => 0, 'max' => 100),
 		'',
-			'rem1' => array('int', 'user_limit'),
-			'rem2' => array('int', 'warning_decrement'),
+			'rem1' => array('int', 'user_limit', 'min' => 0, 'max' => 100),
+			'rem2' => array('int', 'warning_decrement', 'min' => 0, 'max' => 100),
 			array('select', 'warning_show', array($txt['setting_warning_show_mods'], $txt['setting_warning_show_user'], $txt['setting_warning_show_all'])),
 	);
 
@@ -731,6 +731,113 @@ function ModifyPrettyURLs($return_config = false)
 		'cache' => !empty($settings['pretty_enable_cache']) ? $settings['pretty_enable_cache'] : 0,
 		'index' => !empty($settings['pretty_remove_index']) ? $settings['pretty_remove_index'] : 0,
 	);
+}
+
+// This is a special function for handling plugins that want to create a simple one-page configuration area through the XML manifest.
+function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
+{
+	global $context, $txt, $settings, $admin_areas;
+
+	// We can either call it with a supplied plugin id, or we can go attempt to match it from the URL.
+	if ($plugin_id === null && !empty($_GET['area']) && !empty($admin_areas['plugins']['areas'][$_GET['area']]['plugin_id']))
+		$plugin_id = $admin_areas['plugins']['areas'][$_GET['area']]['plugin_id'];
+
+	if (empty($plugin_id) || empty($context['plugins_dir'][$plugin_id]) || !file_exists($context['plugins_dir'][$plugin_id] . '/plugin-info.xml'))
+		redirectexit('action=admin');
+
+	$manifest = simplexml_load_file($context['plugins_dir'][$plugin_id] . '/plugin-info.xml');
+	if (empty($manifest->{'settings-page'}))
+		redirectexit('action=admin');
+
+	// First, attempt to load any language files.
+	foreach ($manifest->{'settings-page'}->language as $lang)
+		if (!empty($lang['file']))
+			loadPluginLanguage($plugin_id, (string) $lang['file']);
+
+	// Now go through the rest of the manifest.
+	$config_vars = array();
+	$elements = $manifest->{'settings-page'}->children();
+	foreach ($elements as $element)
+	{
+		$item = $element->getName();
+		$name = !empty($element['name']) ? (string) $element['name'] : '';
+		if (empty($name))
+			continue;
+		switch ($item)
+		{
+			case 'desc':
+			case 'title':
+			case 'check':
+			case 'email':
+			case 'password':
+			case 'bbc':
+			case 'float':
+				$config_vars[] = array($item, $name);
+				break;
+			case 'text':
+			case 'large-text':
+				$array = array($item, $name);
+				if (!empty($element['size']))
+					$array['size'] = (string) $element['size'];
+				$config_vars[] = $array;
+				break;
+			case 'select':
+			case 'multi-select':
+				$array = array($item, $name, array());
+				foreach ($element->option as $opt)
+				{
+					if (!empty($opt['name']) && isset($opt['value']))
+					{
+						$n = (string) $opt['name'];
+						$array[2][(string) $opt['value']] = isset($txt[$n]) ? $txt[$n] : $n;
+					}
+
+				}
+				if (!empty($array[2]))
+					$config_vars[] = $array;
+				break;
+			case 'int':
+				$array = array($item, $name);
+				foreach (array('step', 'min', 'max', 'size') as $attr)
+					if (isset($element[$attr]))
+						$array[$attr] = (int) $attr;
+				$config_vars[] = $array;
+				break;
+			case 'permissions':
+				$array = array($item, $name);
+				if (!empty($element['noguests']) && $element['noguests'] == 'yes')
+					$array['exclude'] = array(-1);
+				$config_vars[] = $array;
+				break;
+			case 'literal':
+				$config_vars[] = isset($txt[$name]) ? $txt[$name] : $name;
+			// We already did language, just to clarify that we specifically do not want to do anything here with it.
+			case 'language':
+			default:
+				break;
+		}
+	}
+
+	if ($return_config)
+		return $config_vars;
+
+	loadSource('ManageServer');
+	$admin_cache = unserialize($settings['plugins_admin']);
+	$return_area = $admin_cache[$plugin_id]['area'];
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		saveDBSettings($config_vars);
+		redirectexit('action=admin;area=' . $return_area);
+	}
+
+	$context['post_url'] = '<URL>?action=admin;area=' . $return_area . ';save';
+	$context['settings_title'] = $context['page_title'] = $admin_cache[$plugin_id]['name'];
+	wetem::load('show_settings');
+	prepareDBSettingContext($config_vars);
 }
 
 ?>

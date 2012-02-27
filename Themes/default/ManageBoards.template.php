@@ -438,17 +438,6 @@ function template_modify_board()
 							</fieldset>
 						</div>';
 
-	// List all the membergroups so the user can choose who may access this board.
-	/*foreach ($context['groups'] as $group)
-		echo '
-						<label>
-							<input type="checkbox" name="groups[]" value="', $group['id'], '" id="groups_', $group['id'], '"', $group['checked'] ? ' checked' : '', '>
-							<span', $group['is_post_group'] ? ' class="post_group" title="' . $txt['mboards_groups_post_group'] . '"' : '', $group['id'] == 0 ? ' class="regular_members" title="' . $txt['mboards_groups_regular_members'] . '"' : '', '>
-								', $group['name'], '
-							</span>
-						</label>
-						<br>';*/
-
 	echo '
 						<br class="clear"><br>
 					</dd>';
