@@ -196,7 +196,8 @@ ul#noava
 		float: left
 		a
 			color: #766
-			font: 100 2.9em "Bebas Neue", "PT Sans", "Segoe UI Light", "Segoe UI", Arial
+			letter-spacing: -3px
+			font: 100 2.9em "Segoe UI Light", "Segoe UI", Optima, Arial, sans-serif
 
 #siteslogan
 	float: right
@@ -839,16 +840,11 @@ li.separator
 
 .menu .note
 	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
-	font-size: 80%
-	float: right
-	padding: 4px 5px 5px
-	margin: -1px -4px 0 8px
+	margin: 2px -4px 0 8px
 
 .menu h4 .note
 	float: none
-	font-size: 70%
 	margin: 0 0 0 4px
-	padding: 2px 5px 3px
 
 .menu li.menu-top
 	position: absolute
