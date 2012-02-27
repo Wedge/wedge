@@ -1267,7 +1267,7 @@ function template_edit_options()
 			elseif ($field['type'] == 'select')
 			{
 				echo '
-						<select name="', $key, '" id="', $key, '">';
+						<select name="', $key, '" id="', $key, '"', !empty($field['class']) ? ' class="' . $field['class'] . '"' : '', '>';
 
 				if (isset($field['options']))
 				{

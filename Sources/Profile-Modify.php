@@ -286,6 +286,7 @@ function loadProfileFields($force_reload = false)
 			'options' => 'return array(0 => \'\', 1 => $txt[\'male\'], 2 => $txt[\'female\']);',
 			'label' => $txt['gender'],
 			'permission' => 'profile_extra',
+			'class' => 'fixed',
 		),
 		'hide_email' => array(
 			'type' => 'check',
