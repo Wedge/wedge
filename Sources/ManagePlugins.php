@@ -1651,9 +1651,7 @@ function knownHooks()
 			// Admin
 			'admin_areas',
 			'admin_search',
-			'modify_modifications',
 			'moderation_rules',
-			'plugin_settings',
 			'output_error',
 			'spam_settings',
 			'remove_board',

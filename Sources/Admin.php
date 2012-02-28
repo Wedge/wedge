@@ -606,18 +606,6 @@ function Admin()
 						'options' => array($txt['package_settings']),
 					),
 				),
-				'modsettings' => array(
-					'label' => $txt['admin_modifications'],
-					'file' => 'ManageSettings',
-					'function' => 'ModifyModSettings',
-					'icon' => 'modifications.gif',
-					'bigicon' => 'plugin_settings.png',
-					'subsections' => array(
-						'general' => array($txt['mods_cat_modifications_misc']),
-						// Mod Authors, don't edit these lines. Instead, add the 'admin_area' hook
-						// to automatically insert your menu entry into this spot.
-					),
-				),
 			),
 		),
 	);
@@ -909,7 +897,6 @@ function AdminSearchInternal()
 		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
 		array('ModifySpamSettings', 'area=securitysettings;sa=spam'),
 		array('ModifyModerationSettings', 'area=securitysettings;sa=moderation'),
-		array('ModifyGeneralModSettings', 'area=modsettings;sa=general'),
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
 		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
