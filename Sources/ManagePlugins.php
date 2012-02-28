@@ -1654,7 +1654,7 @@ function knownHooks()
 			'moderation_rules',
 			'output_error',
 			'spam_settings',
-			'remove_board',
+			'remove_boards',
 			'repair_errors_tests',
 			'repair_errors_finished',
 			'theme_settings',
