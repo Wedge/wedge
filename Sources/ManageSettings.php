@@ -761,7 +761,7 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 	{
 		$item = $element->getName();
 		$name = !empty($element['name']) ? (string) $element['name'] : '';
-		if (empty($name))
+		if (empty($name) && $item != 'hr')
 			continue;
 		switch ($item)
 		{
@@ -800,7 +800,7 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 				$array = array($item, $name);
 				foreach (array('step', 'min', 'max', 'size') as $attr)
 					if (isset($element[$attr]))
-						$array[$attr] = (int) $attr;
+						$array[$attr] = (int) $element[$attr];
 				$config_vars[] = $array;
 				break;
 			case 'permissions':
@@ -811,6 +811,10 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 				break;
 			case 'literal':
 				$config_vars[] = isset($txt[$name]) ? $txt[$name] : $name;
+				break;
+			case 'hr':
+				$config_vars[] = '';
+				break;
 			// We already did language, just to clarify that we specifically do not want to do anything here with it.
 			case 'language':
 			default:
