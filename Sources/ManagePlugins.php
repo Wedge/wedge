@@ -525,7 +525,7 @@ function EnablePlugin()
 	// Database changes
 	if (!empty($manifest->database))
 	{
-		$valid_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'float', 'real', 'double', 'text', 'mediumtext', 'char', 'varchar', 'set', 'enum');
+		$valid_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'float', 'real', 'double', 'text', 'mediumtext', 'char', 'varchar', 'set', 'enum', 'date', 'datetime');
 		$int_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint');
 		$float_types = array('float', 'real', 'double');
 
@@ -593,6 +593,22 @@ function EnablePlugin()
 					{
 						// Block text columns can't have a default, can't be auto inc and can't be unsigned.
 						unset($this_col['auto'], $this_col['unsigned'], $this_col['default']);
+					}
+					elseif ($this_col['type'] == 'date')
+					{
+						// Date columns can have a default, but can't be auto inc or unsigned.
+						unset($this_col['auto'], $this_col['unsigned']);
+						// But check the date is meaningful.
+						if (empty($this_col['default']) || !preg_match('~^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[0-2])$~', $this_col['default']))
+							unset($this_col['default']);
+					}
+					elseif ($this_col['type'] == 'datetime')
+					{
+						// Datetime columns can have a default, but can't be auto inc or unsigned.
+						unset($this_col['auto'], $this_col['unsigned']);
+						// But check the date is meaningful.
+						if (empty($this_col['default']) || !preg_match('~^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[0-2]) ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$~', $this_col['default']))
+							unset($this_col['default']);
 					}
 
 					// This applies to everything but set and enum: get rid of the values. If it IS set or enum, check it does have values.
@@ -677,6 +693,22 @@ function EnablePlugin()
 				{
 					// Block text columns can't have a default, can't be auto inc and can't be unsigned.
 					unset($this_col['auto'], $this_col['unsigned'], $this_col['default']);
+				}
+				elseif ($this_col['type'] == 'date')
+				{
+					// Date columns can have a default, but can't be auto inc or unsigned.
+					unset($this_col['auto'], $this_col['unsigned']);
+					// But check the date is meaningful.
+					if (empty($this_col['default']) || !preg_match('~^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[0-2])$~', $this_col['default']))
+						unset($this_col['default']);
+				}
+				elseif ($this_col['type'] == 'datetime')
+				{
+					// Datetime columns can have a default, but can't be auto inc or unsigned.
+					unset($this_col['auto'], $this_col['unsigned']);
+					// But check the date is meaningful.
+					if (empty($this_col['default']) || !preg_match('~^[0-9]{4}\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[0-2]) ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$~', $this_col['default']))
+						unset($this_col['default']);
 				}
 
 				// This applies to everything but set and enum: get rid of the values. If it IS set or enum, check it does have values.

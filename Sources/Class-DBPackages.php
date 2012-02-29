@@ -576,7 +576,7 @@ class wedbPackages
 		}
 
 		// In case something stupid like text(255) was specified, deal with it.
-		if (in_array($type_name, array('text', 'mediumtext', 'set', 'enum')))
+		if (in_array($type_name, array('text', 'mediumtext', 'set', 'enum', 'date', 'datetime')))
 			$type_size = null;
 
 		return array($type_name, $type_size);
