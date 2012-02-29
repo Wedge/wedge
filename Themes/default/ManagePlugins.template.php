@@ -54,7 +54,7 @@ function template_browse()
 				$item[] = array(
 					'icon' => 'plugin_settings.png',
 					'url' => $scripturl . '?' . $plugin['acp_url'],
-					'title' => $txt['admin_modifications'],
+					'title' => $txt['admin_plugin_settings'],
 				);
 
 			$icons[$id] = $item;

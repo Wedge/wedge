@@ -1114,7 +1114,8 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 		$query_parts[] = 'poster_name = {string:member_name}';
 	$query = implode(' AND ', $query_parts);
 
-	// Finally, update the posts themselves!
+	// Next, update the posts themselves!
+	$counts = array();
 	wesql::query('
 		UPDATE {db_prefix}messages
 		SET id_member = {int:memID}
@@ -1125,8 +1126,22 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 			'member_name' => $membername,
 		)
 	);
+	$counts['messages'] = wesql::affected_rows();
 
-	return wesql::affected_rows();
+	// Then the topics too.
+	wesql::query('
+		UPDATE {db_prefix}topics as t, {db_prefix}messages as m
+		SET t.id_member_started = {int:memID}
+		WHERE m.id_member = {int:memID}
+			AND t.id_member_started = 0
+			AND t.id_first_msg = m.id_msg',
+		array(
+			'memID' => $memID,
+		)
+	);
+	$counts['topics'] = wesql::affected_rows();
+
+	return $counts;
 }
 
 function list_getMembers($start, $items_per_page, $sort, $where, $where_params = array(), $get_duplicates = false)
