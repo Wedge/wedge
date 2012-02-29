@@ -165,10 +165,10 @@ function ManageAttachmentSettings($return_config = false)
 		'',
 			// Directory and size limits.
 			empty($settings['currentAttachmentUploadDir']) ? array('text', 'attachmentUploadDir', 40, 'invalid' => !$context['valid_upload_dir']) : array('var_message', 'attachmentUploadDir_multiple', 'message' => 'attachmentUploadDir_multiple_configure'),
-			array('text', 'attachmentDirSizeLimit', 6, 'postinput' => $txt['kilobyte']),
-			array('text', 'attachmentPostLimit', 6, 'postinput' => $txt['kilobyte']),
-			array('text', 'attachmentSizeLimit', 6, 'postinput' => $txt['kilobyte']),
-			array('text', 'attachmentNumPerPostLimit', 6),
+			array('int', 'attachmentDirSizeLimit', 'size' => 6, 'min' => 0, 'postinput' => $txt['kilobyte']),
+			array('int', 'attachmentPostLimit', 'size' => 6, 'min' => 0, 'postinput' => $txt['kilobyte']),
+			array('int', 'attachmentSizeLimit', 'size' => 6, 'min' => 0, 'postinput' => $txt['kilobyte']),
+			array('int', 'attachmentNumPerPostLimit', 'size' => 6, 'min' => 0, 'max' => 50),
 		'',
 			// Image settings.
 			array('check', 'attachment_image_reencode'),
@@ -181,8 +181,8 @@ function ManageAttachmentSettings($return_config = false)
 			array('check', 'attachmentShowImages'),
 			array('check', 'attachmentThumbnails'),
 			array('check', 'attachment_thumb_png'),
-			array('text', 'attachmentThumbWidth', 6),
-			array('text', 'attachmentThumbHeight', 6),
+			array('int', 'attachmentThumbWidth', 'size' => 6, 'min' => 0, 'max' => 400),
+			array('int', 'attachmentThumbHeight', 'size' => 6, 'min' => 0, 'max' => 400),
 	);
 
 	if ($return_config)
@@ -216,15 +216,15 @@ function ManageAvatarSettings($return_config = false)
 	$config_vars = array(
 		// Server stored avatars!
 		array('title', 'avatar_server_stored'),
-			array('permissions', 'profile_server_avatar', 0, $txt['avatar_server_stored_groups']),
+			array('permissions', 'profile_server_avatar', 0, $txt['avatar_server_stored_groups'], 'exclude' => array(-1)),
 			array('text', 'avatar_directory', 40, 'invalid' => !$context['valid_avatar_dir']),
 			array('text', 'avatar_url', 40),
 		// External avatars?
 		array('title', 'avatar_external'),
-			array('permissions', 'profile_remote_avatar', 0, $txt['avatar_external_url_groups']),
+			array('permissions', 'profile_remote_avatar', 0, $txt['avatar_external_url_groups'], 'exclude' => array(-1)),
 			array('check', 'avatar_download_external', 0, 'onchange' => 'updateFormStatus();'),
-			array('text', 'avatar_max_width_external', 6),
-			array('text', 'avatar_max_height_external', 6),
+			array('int', 'avatar_max_width_external', 'size' => 6, 'min' => 0, 'max' => 250),
+			array('int', 'avatar_max_height_external', 'size' => 6, 'min' => 0, 'max' => 250),
 			array('select', 'avatar_action_too_large',
 				array(
 					'option_refuse' => $txt['option_refuse'],
@@ -236,8 +236,8 @@ function ManageAvatarSettings($return_config = false)
 		// Uploadable avatars?
 		array('title', 'avatar_upload'),
 			array('permissions', 'profile_upload_avatar', 0, $txt['avatar_upload_groups']),
-			array('text', 'avatar_max_width_upload', 6),
-			array('text', 'avatar_max_height_upload', 6),
+			array('int', 'avatar_max_width_upload', 'size' => 6, 'min' => 0, 'max' => 250),
+			array('int', 'avatar_max_height_upload', 'size' => 6, 'min' => 0, 'max' => 250),
 			array('check', 'avatar_resize_upload'),
 			array('check', 'avatar_reencode'),
 		'',
