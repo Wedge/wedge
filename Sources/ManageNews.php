@@ -383,6 +383,7 @@ function ComposeMailing()
 		$condition_array[] = '{string:email_' . $count . '}';
 		$condition_array_params['email_' . $count++] = $row['email_address'];
 	}
+	wesql::free_result($request);
 
 	if (!empty($condition_array))
 	{
@@ -394,6 +395,8 @@ function ComposeMailing()
 		);
 		while ($row = wesql::fetch_assoc($request))
 			$context['recipients']['exclude_members'][] = $row['id_member'];
+
+		wesql::free_result($request);
 	}
 
 	// Did they select moderators - if so add them as specific members...

@@ -1037,7 +1037,6 @@ function cache_quick_get($key, $file, $function, $params, $level = 1)
  *
  * This function supports the following cache methods:
  * - Memcache
- * - eAccelerator
  * - Alternative PHP Cache
  * - Zend Platform/ZPS
  * - or a custom file cache
@@ -1078,16 +1077,6 @@ function cache_put_data($key, $val, $ttl = 120)
 			return;
 
 		memcache_set($memcached, $key, $val, 0, $ttl);
-	}
-	elseif ($cache_type === 'eaccelerator')
-	{
-		if (mt_rand(0, 10) == 1)
-			eaccelerator_gc();
-
-		if ($val === null)
-			@eaccelerator_rm($key);
-		else
-			eaccelerator_put($key, $val, $ttl);
 	}
 	elseif ($cache_type === 'apc')
 	{
@@ -1175,8 +1164,6 @@ function cache_get_data($key, $ttl = 120)
 
 		$val = memcache_get($memcached, $key);
 	}
-	elseif ($cache_type === 'eaccelerator')
-		$val = eaccelerator_get($key);
 	elseif ($cache_type === 'apc')
 		$val = apc_fetch($key . 'wedge');
 	elseif ($cache_type === 'zend')
@@ -1212,9 +1199,6 @@ function get_cache_type()
 	// Okay, let's go for it memcached!
 	if (isset($settings['cache_memcached']) && function_exists('memcache_get') && function_exists('memcache_set') && trim($settings['cache_memcached']) !== '')
 		$cache_type = 'memcached';
-	// eAccelerator.
-	elseif (function_exists('eaccelerator_get') && function_exists('eaccelerator_put'))
-		$cache_type = 'eaccelerator';
 	// Alternative PHP Cache from PECL.
 	elseif (function_exists('apc_fetch') && function_exists('apc_store'))
 		$cache_type = 'apc';

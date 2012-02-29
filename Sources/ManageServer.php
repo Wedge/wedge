@@ -418,9 +418,7 @@ function ModifyCacheSettings($return_config = false)
 	$context['settings_message'] = $txt['caching_information'];
 
 	// Detect an optimizer?
-	if (is_callable('eaccelerator_put'))
-		$detected = 'eAccelerator';
-	elseif (is_callable('apc_store'))
+	if (is_callable('apc_store'))
 		$detected = 'APC';
 	elseif (is_callable('output_cache_put'))
 		$detected = 'Zend';

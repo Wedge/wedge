@@ -1444,7 +1444,6 @@ function VersionDetail()
 			'imagick',
 		),
 		'right_bot' => array(
-			'eaccelerator',
 			'phpa',
 			'apc',
 			'memcache',

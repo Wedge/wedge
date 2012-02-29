@@ -2439,13 +2439,6 @@ function loadSession()
 		elseif (@ini_get('session.gc_maxlifetime') <= 1440 && !empty($settings['databaseSession_lifetime']))
 			@ini_set('session.gc_maxlifetime', max($settings['databaseSession_lifetime'], 60));
 
-		// Use cache setting sessions?
-		if (empty($settings['databaseSession_enable']) && !empty($settings['cache_enable']) && php_sapi_name() != 'cli')
-		{
-			if (function_exists('eaccelerator_set_session_handlers'))
-				eaccelerator_set_session_handlers();
-		}
-
 		session_start();
 
 		// Change it so the cache settings are a little looser than default.
