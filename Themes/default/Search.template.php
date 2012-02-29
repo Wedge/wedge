@@ -15,15 +15,15 @@ function template_main()
 {
 	global $context, $theme, $options, $txt, $scripturl, $settings;
 
+	if (!empty($context['search_errors']))
+		echo '
+	<div class="errorbox">', implode('<br>', $context['search_errors']['messages']), '</div>';
+
 	echo '
 	<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<we:cat>
 			', !empty($theme['use_buttons']) ? '<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', $txt['set_parameters'], '
 		</we:cat>';
-
-	if (!empty($context['search_errors']))
-		echo '
-		<p id="search_error" class="error">', implode('<br>', $context['search_errors']['messages']), '</p>';
 
 	// Simple Search?
 	if ($context['simple_search'])

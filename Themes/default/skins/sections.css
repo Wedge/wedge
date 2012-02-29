@@ -1196,10 +1196,6 @@ dl.stats
 	text-align: center !important
 	margin: 0
 
-#search_error
-	font-style: italic
-	padding: .3em 1em
-
 #search_term_input
 	font-size: 115%
 	margin: 0 0 1em

@@ -581,19 +581,17 @@ function template_search()
 		$("#expandLabelsIcon").toggleClass("fold", !current);
 	}');
 
+	if (!empty($context['search_errors']))
+		echo '
+	<div class="errorbox">
+		', implode('<br>', $context['search_errors']['messages']), '
+	</div>';
+
 	echo '
 	<form action="<URL>?action=pm;sa=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<we:cat>
 			', $txt['pm_search_title'], '
 		</we:cat>';
-
-	if (!empty($context['search_errors']))
-	{
-		echo '
-		<div class="errorbox">
-			', implode('<br>', $context['search_errors']['messages']), '
-		</div>';
-	}
 
 	if ($context['simple_search'])
 	{

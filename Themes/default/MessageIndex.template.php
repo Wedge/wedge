@@ -597,8 +597,7 @@ function template_messageindex_draft()
 {
 	global $context, $txt, $scripturl;
 
-	if ($context['draft_saved'])
-		echo '
+	echo '
 	<div class="windowbg" id="profile_success">
 		', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
 	</div>';

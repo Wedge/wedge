@@ -373,7 +373,7 @@ function AddMembergroup()
 			),
 			array(
 				$id_group, '', $_POST['group_name'], ($postCountBasedGroup ? (int) $_POST['min_posts'] : '-1'),
-				'1#star.gif', '', $_POST['group_type'],
+				'1#rank.gif', '', $_POST['group_type'],
 			),
 			array('id_group')
 		);
