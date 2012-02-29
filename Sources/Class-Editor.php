@@ -2429,12 +2429,12 @@ class wedit
 		// Output the bbc area
 		if ($this->show_bbc && empty($this->editorOptions['custom_bbc_div']))
 			echo '
-		<div id="bbcBox_', $this->id, '"></div>';
+				<div id="bbcBox_', $this->id, '"></div>';
 
 		// What about smileys?
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && empty($this->editorOptions['custom_smiley_div']))
 			echo '
-		<div id="smileyBox_', $this->id, '"></div>';
+				<div id="smileyBox_', $this->id, '"></div>';
 
 		if ($context['browser']['is_ie'])
 			add_js('
@@ -2442,14 +2442,14 @@ class wedit
 
 		$has_error = isset($context['post_error']) && (isset($context['post_error']['no_message']) || in_array(array('long_message', $settings['max_messageLength']), $context['post_error']));
 		echo '
-		<div class="writer">
-			<div>
-				<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns,
-				'" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, $has_error ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
-			</div>
-			<div id="', $this->id, '_resizer" style="width: ', $this->width, '" class="hide richedit_resize"></div>
-		</div>
-		<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0">';
+				<div class="writer">
+					<div>
+						<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns,
+						'" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, $has_error ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
+					</div>
+					<div id="', $this->id, '_resizer" style="width: ', $this->width, '" class="hide richedit_resize"></div>
+				</div>
+				<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0">';
 
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
@@ -2656,22 +2656,22 @@ class wedit
 				$class = ' class="' . trim($class) . '"';
 
 			echo '
-		<input type="submit" name="', $button['name'], '" value="', $button['button_text'], '" tabindex="', $context['tabindex']++, '"', !empty($button['onclick']) ? ' onclick="' . $button['onclick'] . '"' : '', !empty($button['accesskey']) ? ' accesskey="' . $button['accesskey'] . '"' : '', $class, '>';
+				<input type="submit" name="', $button['name'], '" value="', $button['button_text'], '" tabindex="', $context['tabindex']++, '"', !empty($button['onclick']) ? ' onclick="' . $button['onclick'] . '"' : '', !empty($button['accesskey']) ? ' accesskey="' . $button['accesskey'] . '"' : '', $class, '>';
 		}
 
 		// These two buttons get added semi-magically rather than not.
 		if ($this->editorOptions['drafts'] != 'none')
 			echo '
-		<input type="hidden" id="draft_id" name="draft_id" value="', empty($_REQUEST['draft_id']) ? '0' : $_REQUEST['draft_id'], '">
-		<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return ', in_array($this->editorOptions['drafts'], array('basic_post', 'auto_post')) ? 'confirm(' . JavaScriptEscape($txt['save_draft_warning']) . ') && ' : '', 'submitThisOnce(this);" accesskey="d" class="save">';
+				<input type="hidden" id="draft_id" name="draft_id" value="', empty($_REQUEST['draft_id']) ? '0' : $_REQUEST['draft_id'], '">
+				<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return ', in_array($this->editorOptions['drafts'], array('basic_post', 'auto_post')) ? 'confirm(' . JavaScriptEscape($txt['save_draft_warning']) . ') && ' : '', 'submitThisOnce(this);" accesskey="d" class="save">';
 
 		if ($context['show_spellchecking'])
 			echo '
-		<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="spell">';
+				<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="spell">';
 
 		if (in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm')))
 			echo '
-		<span id="draft_lastautosave"></span>';
+				<span id="draft_lastautosave"></span>';
 	}
 }
 

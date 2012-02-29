@@ -201,17 +201,17 @@ img.new_posts
 
 // Alternating backgrounds for posts, and several other sections of the forum.
 .postbg extends .windowbg
-.postbg2 extends .windowbg2
+	display: table
+	// Without this, wide code blocks will break layout.
+	table-layout: fixed
+	width: 100%
+	padding: 0
+
+.postbg2 extends ".windowbg2, .postbg"
 	background: #fbf9f6
+	margin: 3px 0
 
 #forumposts
-	.wrc
-		display: table
-		// Without this, wide code blocks will break layout.
-		table-layout: fixed
-		width: 100%
-		padding: 0
-
 	// Author and topic information
 	#author
 		margin: 0 7.7em 0 10px
@@ -606,8 +606,6 @@ dl.send_mail
 	width: 49%
 
 ul.split_messages
-	li.postbg
-		margin: 1px
 	li a.split_icon
 		padding: 0 .5em
 	div.post

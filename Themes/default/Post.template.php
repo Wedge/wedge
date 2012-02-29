@@ -115,7 +115,7 @@ function template_postbox()
 	global $context, $txt;
 
 	// Show the actual posting area...
-	echo "\n", $context['postbox']->outputEditor();
+	echo $context['postbox']->outputEditor();
 
 	// If this message has been edited in the past - display when it was.
 	if (isset($context['last_modified']))

@@ -47,7 +47,8 @@ section.ic
 ---------------------------------------------------- */
 
 // Alternating backgrounds for posts, and several other sections of the forum.
-.postbg2
+.postbg extends .wrc
+.postbg2 extends .wrc
 	background: transparent
 
 // Poster details and list of items

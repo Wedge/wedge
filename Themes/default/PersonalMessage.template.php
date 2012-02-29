@@ -144,7 +144,7 @@ function template_folder()
 			$window_class = $message['alternate'] == 0 ? 'postbg' : 'postbg2';
 
 			echo '
-	<div class="', $window_class, ' wrc pm"><div class="post_wrapper">
+	<div class="', $window_class, ' pm"><div class="post_wrapper">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';
@@ -737,7 +737,7 @@ function template_search_results()
 
 			echo '</h3>
 			</div>
-			<div class="postbg', $alternate ? '2' : '', ' wrc">
+			<div class="postbg', $alternate ? '2' : '', ' pm">
 				', $message['body'], '
 				<p class="pm_reply right smalltext">';
 
@@ -936,7 +936,7 @@ function template_send()
 	<we:title>
 		', $txt['subject'], ': ', $context['quoted_message']['subject'], '
 	</we:title>
-	<div class="postbg2 wrc clear">
+	<div class="postbg2 pm clear">
 		<span class="smalltext floatright">', $txt['on'], ': ', $context['quoted_message']['time'], '</span>
 		<strong>', $txt['from'], ': ', $context['quoted_message']['member']['name'], '</strong>
 		<hr>
@@ -1600,7 +1600,7 @@ function template_pm_drafts()
 	{
 		echo '
 		<div class="topic">
-			<div class="postbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
+			<div class="postbg', $post['alternate'] == 0 ? '2' : '', ' pm core_posts">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5><strong>', $post['subject'], '</strong></h5>
