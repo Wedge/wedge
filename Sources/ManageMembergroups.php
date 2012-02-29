@@ -380,7 +380,11 @@ function AddMembergroup()
 
 		// Update the post groups now, if this is a post group!
 		if (isset($_POST['min_posts']))
+		{
+			// But make sure we flush the cache before we use it. (We want the cache the rest of the time for posting, just flushed here.)
+			cache_put_data('updateStats:postgroups', null);
 			updateStats('postgroups');
+		}
 
 		// You cannot set permissions for post groups if they are disabled.
 		if ($postCountBasedGroup && empty($settings['permission_enable_postgroups']))

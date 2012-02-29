@@ -95,41 +95,46 @@ if (!defined('WEDGE'))
 
 */
 
-/*	Adding options to one of the setting screens isn't hard. Call prepareDBSettingsContext;
+/*	Most of the admin panel pages use this standardised setup.
+	If you're building a plugin, very often you just need to use <settings-page> in your plugin-info.xml
+	file. You only need to worry about this if you have a reason to do any of it manually, and if you
+	do, this is how it works.
+
+	Setting up options for one of the setting screens isn't hard. Call prepareDBSettingsContext;
 	The basic format for a checkbox is:
-		array('check', 'nameInModSettingsAndSQL'),
+		array('check', 'nameInSettingsAndSQL'),
 
 	And for a text box:
-		array('text', 'nameInModSettingsAndSQL')
+		array('text', 'nameInSettingsAndSQL')
 
-	(NOTE: You have to add an entry for this at the bottom!)
-
-	In these cases, it will look for $txt['nameInModSettingsAndSQL'] as the description,
-	and $helptxt['nameInModSettingsAndSQL'] as the help popup description.
+	In these cases, it will look for $txt['nameInSettingsAndSQL'] as the description,
+	and $helptxt['nameInSettingsAndSQL'] as the help popup description.
 
 	Here's a quick explanation of how to add a new item:
 
 	* A text input box. For textual values.
-	ie.	array('text', 'nameInModSettingsAndSQL', 'OptionalInputBoxWidth'),
+	ie.	array('text', 'nameInSettingsAndSQL', 'OptionalInputBoxWidth'),
 
 	* A text input box. For numerical values.
-	ie.	array('int', 'nameInModSettingsAndSQL', 'OptionalInputBoxWidth'),
+	ie.	array('int', 'nameInSettingsAndSQL', 'OptionalInputBoxWidth', 'min' => optional min, 'max' => optional max, 'step' => optional stepping value),
+	The stepping value is if you want a value to be stepped in increments that aren't 1.
+	!!! Stepping is only in supported browsers, not actually enforced in code at this time.
 
 	* A text input box. For floating point values.
-	ie.	array('float', 'nameInModSettingsAndSQL', 'OptionalInputBoxWidth'),
+	ie.	array('float', 'nameInSettingsAndSQL', 'OptionalInputBoxWidth'),
 
 	* A large text input box. Used for textual values spanning multiple lines.
-	ie.	array('large_text', 'nameInModSettingsAndSQL', 'OptionalNumberOfRows'),
+	ie.	array('large_text', 'nameInSettingsAndSQL', 'OptionalNumberOfRows'),
 
 	* A check box. Either one or zero (boolean.)
-	ie.	array('check', 'nameInModSettingsAndSQL'),
+	ie.	array('check', 'nameInSettingsAndSQL'),
 
 	* A selection box. Used for the selection of something from a list.
-	ie.	array('select', 'nameInModSettingsAndSQL', array('valueForSQL' => $txt['displayedValue'])),
+	ie.	array('select', 'nameInSettingsAndSQL', array('valueForSQL' => $txt['displayedValue'])),
 	Note that just saying array('first', 'second') will put 0 in the SQL for 'first'.
 
 	* A password input box. Used for passwords, no less!
-	ie.	array('password', 'nameInModSettingsAndSQL', 'OptionalInputBoxWidth'),
+	ie.	array('password', 'nameInSettingsAndSQL', 'OptionalInputBoxWidth'),
 
 	* A permission - for picking groups who have a permission.
 	ie.	array('permissions', 'manage_groups'),
