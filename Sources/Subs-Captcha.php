@@ -59,7 +59,7 @@ function loadCaptchaTypes()
 	{
 		foreach ($dh as $file)
 		{
-			if (!is_dir($file) && preg_match('~captcha-([A-Za-z\d_]+)\.php~', $file, $matches))
+			if (!is_dir($file) && preg_match('~captcha-([A-Za-z\d_]+)\.php$~', $file, $matches))
 			{
 				// Check this is definitely a valid API!
 				$fp = fopen($sourcedir . '/captcha/' . $file, 'rb');

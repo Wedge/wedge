@@ -125,6 +125,8 @@ else
 	$sc = $_SESSION['session_value'];
 }
 
+header('Content-Type: text/html; charset=UTF-8');
+
 // Get rid of $board and $topic... do stuff loadBoard would do.
 unset($board, $topic);
 $user_info['is_mod'] = false;
