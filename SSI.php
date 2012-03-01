@@ -1381,12 +1381,10 @@ function ssi_pollVote()
 			t.id_topic,
 			IFNULL(lp.id_choice, -1) AS selected
 		FROM {db_prefix}polls AS p
-			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = {int:current_poll})
-			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
+			INNER JOIN {db_prefix}topics AS t ON (t.id_poll = {int:current_poll} AND {query_see_topic})
+			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})
 			LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_poll = p.id_poll AND lp.id_member = {int:current_member})
 		WHERE p.id_poll = {int:current_poll}
-			AND {query_see_board}
-			AND {query_see_topic}
 		LIMIT 1',
 		array(
 			'current_member' => $user_info['id'],
