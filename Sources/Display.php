@@ -476,7 +476,6 @@ function Display()
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?topic=' . $topic . '.0',
 		'name' => $topicinfo['subject'],
-		'extra_before' => $theme['linktree_inline'] ? $txt['topic'] . ': ' : ''
 	);
 
 	// Build a list of this board's moderators.

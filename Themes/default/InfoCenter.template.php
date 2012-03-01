@@ -16,11 +16,21 @@ function template_info_center_statistics()
 {
 	global $context, $theme, $options, $txt, $scripturl, $settings;
 
-	if ($theme['show_stats_index'])
-		echo '
+	if (empty($theme['show_stats_index']))
+		return;
+
+	echo '
 	<section class="ic">
-		<we:title>
-			<a href="', $scripturl, '?action=stats"><img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '"></a>
+		<we:title>';
+
+	if (empty($settings['trackStats']))
+		echo '
+			<img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '">';
+	else
+		echo '
+			<a href="', $scripturl, '?action=stats"><img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['forum_stats'], '"></a>';
+
+	echo '
 			', $txt['forum_stats'], '
 		</we:title>
 		<ul class="stats">

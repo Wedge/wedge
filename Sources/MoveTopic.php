@@ -117,7 +117,6 @@ function MoveTopic()
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?topic=' . $topic . '.0',
 		'name' => $context['subject'],
-		'extra_before' => $theme['linktree_inline'] ? $txt['topic'] . ': ' : '',
 	);
 
 	$context['linktree'][] = array(

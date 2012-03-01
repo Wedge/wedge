@@ -90,7 +90,7 @@ function template_kick_guest()
 	echo '
 			<p class="information center">
 				', empty($context['kick_message']) ? $txt['only_members_can_access'] : $context['kick_message'], '<br>
-				', $txt['login_below'], ' <a href="', $scripturl, '?action=register">', $txt['register_an_account'], '</a> ', sprintf($txt['login_with_forum'], $context['forum_name_html_safe']), '
+				', (empty($settings['registration_method']) || $settings['registration_method'] != 3) ? sprintf($txt['login_below_register'], $scripturl . '?action=register', $context['forum_name_html_safe']) : sprintf($txt['login_below'], $context['forum_name_html_safe']), '
 			</p>';
 
 	// And now the login information.

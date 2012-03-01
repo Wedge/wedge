@@ -409,7 +409,7 @@ function template_sidebar_before()
 	{
 		echo '
 			<form id="guest_form" action="<URL>?action=login2" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
-				<div class="info">', $txt['login_or_register'], '</div>
+				<div class="info">', (empty($settings['registration_method']) || $settings['registration_method'] != 3) ? $txt['login_or_register'] : $txt['please_login'], '</div>
 				<input type="text" name="user" size="10">
 				<input type="password" name="passwrd" size="10">
 				<select name="cookielength">

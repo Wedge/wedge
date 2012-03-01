@@ -2093,7 +2093,7 @@ function setupMenuContext()
 			'register' => array(
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=register',
-				'show' => $user_info['is_guest'],
+				'show' => $user_info['is_guest'] && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
 			),
 			'logout' => array(
 				'title' => $txt['logout'],

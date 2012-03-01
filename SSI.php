@@ -204,12 +204,12 @@ function ssi_shutdown()
 // Display a welcome message, like:  Hey, User, you have 0 messages, 0 are new.
 function ssi_welcome($output_method = 'echo')
 {
-	global $context, $txt;
+	global $context, $txt, $settings;
 
 	if ($output_method == 'echo')
 	{
 		if ($context['user']['is_guest'])
-			echo sprintf($txt['welcome_guest'], $txt['guest_title']);
+			echo sprintf((empty($settings['registration_method']) || $settings['registration_method'] != 3) ? $txt['welcome_guest'] : $txt['welcome_guest_noregister'], $txt['guest_title']);
 		else
 			echo $txt['hello_member'], ' <strong>', $context['user']['name'], '</strong>', allowedTo('pm_read') ? ', ' . str_replace('{new}', number_context('unread_pms', $context['user']['unread_messages']), number_context('you_have_msg', $context['user']['messages'])) : '';
 	}

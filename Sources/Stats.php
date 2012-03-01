@@ -74,6 +74,9 @@ function Stats()
 	loadLanguage('Stats');
 	loadTemplate('Stats');
 
+	if (empty($settings['trackStats']))
+		fatal_lang_error('stats_not_available', false);
+
 	// Build the link tree......
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=stats',

@@ -987,8 +987,8 @@ function Post($post_errors = array())
 		$context['linktree'][] = array(
 			'url' => $scripturl . '?topic=' . $topic . '.' . $_REQUEST['start'],
 			'name' => $form_subject,
-			'extra_before' => '<span' . ($theme['linktree_inline'] ? ' class="smalltext"' : '') . '><strong class="nav">' . $context['page_title'] . ' [</strong></span>',
-			'extra_after' => '<span' . ($theme['linktree_inline'] ? ' class="smalltext"' : '') . '><strong class="nav">]</strong></span>'
+			'extra_before' => '<strong class="nav">' . $context['page_title'] . ' [</strong>',
+			'extra_after' => '<strong class="nav">]</strong>'
 		);
 
 	// We need to check permissions, and also send the maximum allowed attachments through to the front end - it's dealt with there.

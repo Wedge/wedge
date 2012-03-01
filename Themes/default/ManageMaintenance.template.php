@@ -287,7 +287,7 @@ function template_maintain_topics()
 	// The otherwise hidden "choose which boards to prune".
 	echo '
 					<p>
-						<a id="rotLink"></a>', $txt['maintain_old_since_days1'], '<input type="text" name="maxdays" value="30" size="3">', $txt['maintain_old_since_days2'], '
+						<a id="rotLink"></a>', $txt['maintain_old_since_days1'], '<input type="number" name="maxdays" value="30" min="0" max="9999" size="3">', $txt['maintain_old_since_days2'], '
 					</p>
 					<p>
 						<label><input type="radio" name="delete_type" id="delete_type_nothing" value="nothing"> ', $txt['maintain_old_nothing_else'], '</label><br>
