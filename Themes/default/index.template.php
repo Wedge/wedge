@@ -168,7 +168,7 @@ function template_html_before()
 
 	echo theme_base_css(), '
 	<!-- Powered by Wedge, © Wedgeward - http://wedge.org -->
-	<title>', $context['page_title_html_safe'], '</title>';
+	<title>', $context['page_title_html_safe'], !empty($context['page_indicator']) ? $context['page_indicator'] : '', '</title>';
 
 	// If the forum is in a sub-folder, in which case it needs to explicitly set a favicon URL.
 	if (strpos(trim(substr($boardurl, strpos($boardurl, '://') + 3), '/'), '/') !== false)
@@ -766,7 +766,7 @@ function template_footer()
  */
 function template_page_index($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
-	global $settings, $theme, $topicinfo, $txt;
+	global $settings, $theme, $topicinfo, $txt, $context;
 
 	// Save whether $start was less than 0 or not.
 	$start = (int) $start;
@@ -813,7 +813,12 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 
 	// Show the current page. (1 ... 6 7 >[8]< 9 10 ... 15)
 	if (!$start_invalid)
-		$pageindex .= '[<strong>' . ($start / $num_per_page + 1) . '</strong>] ';
+	{
+		$page_num = ($start / $num_per_page + 1);
+		$pageindex .= '[<strong>' . $page_num . '</strong>] ';
+		if ($page_num > 1 && !isset($context['page_indicator']))
+			$context['page_indicator'] = number_context('page_indicator', $page_num);
+	}
 	else
 		$pageindex .= sprintf($base_link, $start, $start / $num_per_page + 1);
 
