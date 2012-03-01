@@ -231,7 +231,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$incorrectQuestions = array();
 			while ($row = wesql::fetch_assoc($request))
 			{
-				if (empty($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) || trim(westr::htmlspecialchars(strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]))) != strtolower($row['answer']))
+				if (!isset($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) || trim(westr::htmlspecialchars(strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]))) != strtolower($row['answer']))
 					$incorrectQuestions[] = $row['id_comment'];
 			}
 			wesql::free_result($request);

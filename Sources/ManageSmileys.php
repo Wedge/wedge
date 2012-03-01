@@ -1465,7 +1465,7 @@ function EditMessageIcons()
 	wesql::free_result($request);
 
 	// Submitting a form?
-	if (isset($_POST[$context['session_var']]))
+	if (isset($_POST['save_smiley']))
 	{
 		checkSession();
 

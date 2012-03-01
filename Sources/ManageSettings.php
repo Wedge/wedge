@@ -258,11 +258,6 @@ function ModifySpamSettings($return_config = false)
 			'guest_verify' => array('check', 'guests_require_captcha', 'subtext' => $txt['setting_guests_require_captcha_desc']),
 			array('int', 'posts_require_captcha', 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0) $(\'#guests_require_captcha\').attr({ checked: true, disabled: true }); else $(\'#guests_require_captcha\').attr(\'disabled\', false);'),
 			array('check', 'guests_report_require_captcha'),
-		'',
-			// PM Settings
-			'pm1' => array('int', 'max_pm_recipients'),
-			'pm2' => array('int', 'pm_posts_verification'),
-			'pm3' => array('int', 'pm_posts_per_hour'),
 			// Visual verification.
 			array('title', 'configure_captcha'),
 			array('desc', 'configure_captcha_desc'),
@@ -306,17 +301,9 @@ function ModifySpamSettings($return_config = false)
 	{
 		checkSession();
 
-		// Fix PM settings.
-		$_POST['pm_spam_settings'] = (int) $_POST['max_pm_recipients'] . ',' . (int) $_POST['pm_posts_verification'] . ',' . (int) $_POST['pm_posts_per_hour'];
-
 		// Hack in guest requiring verification!
 		if (empty($_POST['posts_require_captcha']) && !empty($_POST['guests_require_captcha']))
 			$_POST['posts_require_captcha'] = -1;
-
-		$save_vars = $config_vars;
-		unset($save_vars['pm1'], $save_vars['pm2'], $save_vars['pm3'], $save_vars['guest_verify']);
-
-		$save_vars[] = array('text', 'pm_spam_settings');
 
 		// Handle verification questions.
 		$questionInserts = array();
@@ -388,7 +375,7 @@ function ModifySpamSettings($return_config = false)
 			$_POST['qa_verification_number'] = $count_questions;
 
 		// Now save.
-		saveDBSettings($save_vars);
+		saveDBSettings($config_vars);
 
 		cache_put_data('verificationQuestionIds', null, 300);
 
@@ -399,9 +386,6 @@ function ModifySpamSettings($return_config = false)
 	$_SESSION['visual_verification_code'] = '';
 	for ($i = 0; $i < 6; $i++)
 		$_SESSION['visual_verification_code'] .= $character_range[array_rand($character_range)];
-
-	// Hack for PM spam settings.
-	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
 
 	// Hack for guests requiring verification.
 	$settings['guests_require_captcha'] = !empty($settings['posts_require_captcha']);
@@ -514,9 +498,9 @@ function ModifyPmSettings($return_config = false)
 			array('permissions', 'pm_read', 'exclude' => array(-1)),
 			array('permissions', 'pm_send', 'exclude' => array(-1)),
 			'',
-			'pm1' => array('int', 'max_pm_recipients'),
-			'pm2' => array('int', 'pm_posts_verification'),
-			'pm3' => array('int', 'pm_posts_per_hour'),
+			'pm1' => array('int', 'max_pm_recipients', 'min' => 0),
+			'pm2' => array('int', 'pm_posts_verification', 'min' => 0),
+			'pm3' => array('int', 'pm_posts_per_hour', 'min' => 0),
 			'',
 			array('check', 'masterSavePmDrafts'),
 			array('permissions', 'save_pm_draft', 'exclude' => array(-1)),

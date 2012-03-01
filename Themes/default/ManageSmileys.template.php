@@ -503,7 +503,7 @@ function template_editicon()
 
 	echo '
 
-				<input type="submit" value="', $txt['smileys_save'], '" class="save">
+				<input type="submit" name="save_smiley" value="', $txt['smileys_save'], '" class="save">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>';
