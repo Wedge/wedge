@@ -1869,9 +1869,9 @@ function template_pretty_urls()
 			echo '
 			<div>
 				<label>
-					<input type="checkbox" name="pretty_filter_', $id, '"', $enabled ? ' checked' : '',
+					<input type="checkbox" id="pretty_filter_', $id, '" name="pretty_filter_', $id, '"', $enabled ? ' checked' : '',
 					$id === 'actions' || $id === 'profiles' ? ' onclick="$(\'select[name=pretty_prefix_' . substr($id, 0, -1) . ']\').slideToggle(200);"' : '', '>
-					', $txt['pretty_filter_' . $id], '
+					', $txt['pretty_filter_' . $id], !empty($txt['pretty_filter_' . $id . '_example']) ? '<div class="pretty_filter">' . $txt['pretty_filter_' . $id . '_example'] . '</div>' : '', '
 				</label>';
 
 			if ($id === 'actions')

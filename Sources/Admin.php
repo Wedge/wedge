@@ -906,6 +906,8 @@ function AdminSearchInternal()
 		array('ModifyPostSettings', 'area=postsettings;sa=posts'),
 		array('ModifyBBCSettings', 'area=postsettings;sa=bbc'),
 		array('ModifyTopicSettings', 'area=postsettings;sa=topics'),
+		array('ModifyMergeSettings', 'area=postsettings;sa=merge'),
+		array('ModifyDraftSettings', 'area=postsettings;sa=drafts'),
 		array('EditSearchSettings', 'area=managesearch;sa=settings'),
 		array('EditSmileySettings', 'area=smileys;sa=settings'),
 		array('ModifyGeneralSettings', 'area=serversettings;sa=general'),

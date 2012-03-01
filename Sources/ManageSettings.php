@@ -581,7 +581,12 @@ function ModifyPrettyURLs($return_config = false)
 
 	// For the administrative search function not to get upset.
 	if ($return_config)
-		return array();
+		return array(
+			array('check', 'pretty_filter_boards'),
+			array('check', 'pretty_filter_topics'),
+			array('check', 'pretty_filter_actions'),
+			array('check', 'pretty_filter_profiles'),
+		);
 
 	wetem::load('pretty_urls');
 	$context['page_title'] = $txt['admin_pretty_urls'];

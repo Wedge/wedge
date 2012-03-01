@@ -431,16 +431,16 @@ function ModifyMergeSettings($return_config = false)
 	$config_vars = array(
 			// Automatic merge options
 			array('check', 'merge_post_auto'),
-			array('int', 'merge_post_auto_time'),
+			array('int', 'merge_post_auto_time', 'subtext' => $txt['merge_post_auto_time_subtext']),
 		'',
 			// Admins can make double posts
 			array('check', 'merge_post_admin_double_post'),
 		'',
 			// Merging options
-			array('check', 'merge_post_old_time_add'),
+			array('check', 'merge_post_no_time'),
 			array('check', 'merge_post_no_sep'),
-			array('check', 'merge_post_custom_separator'),
-			array('large_text', 'merge_post_separator', 5),
+			array('check', 'merge_post_custom_separator', 'subtext' => $txt['merge_post_custom_separator_subtext']),
+			array('large_text', 'merge_post_separator', 5, 'subtext' => $txt['merge_post_separator_subtext']),
 		'',
 			array('check', 'merge_post_ignore_length'),
 	);

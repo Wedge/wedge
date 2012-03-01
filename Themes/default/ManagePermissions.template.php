@@ -617,8 +617,8 @@ function template_modify_group_simple($type)
 
 				echo '
 					</tr>';
+				$alternate = !$alternate;
 			}
-			$alternate = !$alternate;
 		}
 
 		if (!$permissionGroup['hidden'] && $has_display_content)
