@@ -181,8 +181,8 @@ function ManageAttachmentSettings($return_config = false)
 			array('check', 'attachmentShowImages'),
 			array('check', 'attachmentThumbnails'),
 			array('check', 'attachment_thumb_png'),
-			array('int', 'attachmentThumbWidth', 'size' => 6, 'min' => 0, 'max' => 400),
-			array('int', 'attachmentThumbHeight', 'size' => 6, 'min' => 0, 'max' => 400),
+			array('int', 'attachmentThumbWidth', 'size' => 6, 'min' => 0, 'max' => 1280),
+			array('int', 'attachmentThumbHeight', 'size' => 6, 'min' => 0, 'max' => 1024),
 	);
 
 	if ($return_config)

@@ -3605,9 +3605,10 @@ function aeva_isTransparent($path, $real_path = false)
 		return false;
 
 	$crea = 'imagecreatefrom' . $ext;
-	if (!function_exists($crea))
-		return true;
-	list ($w, $h) = getimagesize($path);
+	if (!is_callable($crea) || !is_callable('getimagesize'))
+		return false;
+
+	list ($w, $h) = @getimagesize($path);
 	$im = @$crea($path);
 
 	$is_transparent = ($im !== false) && (

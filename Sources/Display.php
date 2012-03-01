@@ -897,6 +897,7 @@ function Display()
 		elseif (isset($_REQUEST['topicseen']))
 		{
 			// Use the mark read tables... and the last visit to figure out if this should be read or not.
+			// @todo: should this use {query_see_topic}? Wouldn't recommend, as a topic might be marked private, but later published.
 			$request = wesql::query('
 				SELECT COUNT(*)
 				FROM {db_prefix}topics AS t
@@ -1506,7 +1507,7 @@ function loadAttachmentContext($id_msg)
 			if (empty($attachment['transparency']))
 			{
 				$filename = getAttachmentFilename($attachment['filename'], $attachment['id_attach'], $attachment['id_folder']);
-				$attachmentData[$i]['transparent'] = we_resetTransparency($attachment['id_attach'], $filename);
+				$attachmentData[$i]['transparent'] = we_resetTransparency($attachment['id_attach'], $filename, $attachment['filename']);
 			}
 			else
 				$filename = '';
