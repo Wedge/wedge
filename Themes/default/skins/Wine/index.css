@@ -62,6 +62,10 @@ body extends .grad700
 		font: bold 2.9em $head_font
 		text-shadow: 0 0 8px #333
 
+@replace
+	letter-spacing: -3px
+	letter-spacing: -1px
+
 // Banner header
 #upper_section
 	background: url($images/theme/bg.jpg)

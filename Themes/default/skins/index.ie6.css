@@ -265,9 +265,6 @@ ul.quickbuttons
 #navi, #linktree, #linktree ul, .cat, .title, .posthead, .wrc
 	zoom: 1
 
-#navi, #top_section
-	background: #928585
-
 #main_menu
 	margin-bottom: -1px
 
@@ -318,6 +315,9 @@ input.submit, input.delete, input.save, input.new
 	padding-right: 6px
 	overflow: visible
 	width: auto
+
+input.search
+	height: auto
 
 // Old IEs reset background-position to 0 if you provide them with multiples values :-/
 input.submit
@@ -377,9 +377,6 @@ ul.usermenuitem, ul.acmenuitem
 		width: 120px
 		a
 			text-align: right
-
-// IE6 doesn't deserve a hack.
-.windowbg unextends .grad700
 
 // Fix IE6's tendency to enlarge select boxes to full width. Tss.
 .sbox

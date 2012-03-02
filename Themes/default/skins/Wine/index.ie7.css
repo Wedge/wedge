@@ -1,3 +1,6 @@
 
 #upper_section h1
 	filter: glow(color=#666666, strength=3)
+
+#navi, #top_section
+	background: #928585

@@ -1,3 +1,10 @@
 
 #upper_section h1
 	filter: glow(color=#666666, strength=3)
+
+#navi, #top_section
+	background: #928585
+
+// IE6 doesn't deserve a hack.
+.grad700 reset
+	filter: none
