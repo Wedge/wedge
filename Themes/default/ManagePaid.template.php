@@ -156,7 +156,7 @@ function template_modify_subscription()
 								', $txt['paid_cost'], ' (', str_replace('%1.2f', '', $settings['paid_currency_symbol']), '):
 							</dt>
 							<dd>
-								<input type="text" name="cost" value="', empty($context['sub']['cost']['fixed']) ? '0' : $context['sub']['cost']['fixed'], '" size="4">
+								<input type="text" name="fixed_cost" value="', empty($context['sub']['cost']['fixed']) || empty($context['sub']['duration']) || $context['sub']['duration'] != 'fixed' ? '0' : $context['sub']['cost']['fixed'], '" size="4">
 							</dd>
 							<dt>
 								', $txt['paid_mod_span'], ':
@@ -241,7 +241,7 @@ function template_modify_subscription()
 								', $txt['paid_cost'], ' (', str_replace('%1.2f', '', $settings['paid_currency_symbol']), '):
 							</dt>
 							<dd>
-								<input type="text" name="cost" value="', empty($context['sub']['cost']['fixed']) ? '0' : $context['sub']['cost']['fixed'], '" size="4">
+								<input type="text" name="life_cost" value="', empty($context['sub']['cost']['fixed']) || empty($context['sub']['duration']) || $context['sub']['duration'] != 'lifetime' ? '0' : $context['sub']['cost']['fixed'], '" size="4">
 							</dd>
 						</dl>
 					</fieldset>

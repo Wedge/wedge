@@ -2423,7 +2423,7 @@ function profileSaveAvatarData(&$value)
 		// Remove any attached avatar...
 		removeAttachments(array('id_member' => $memID));
 
-		$profile_vars['avatar'] = str_replace('%20', '', preg_replace('~action(?:=|%3d)(?!dlattach)~i', 'action-', $_POST['userpicpersonal']));
+		$profile_vars['avatar'] = str_replace(' ', '%20', preg_replace('~action(?:=|%3d)(?!dlattach)~i', 'action-', $_POST['userpicpersonal']));
 
 		if ($profile_vars['avatar'] == 'http://' || $profile_vars['avatar'] == 'http:///')
 			$profile_vars['avatar'] = '';

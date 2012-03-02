@@ -423,17 +423,30 @@ function ModifySubscription()
 		$emailComplete = strlen($_POST['emailcomplete']) > 10 ? trim($_POST['emailcomplete']) : '';
 
 		// Is this a fixed one? Lifetime's kind of fixed too :P
-		if ($_POST['duration_type'] == 'fixed' || $_POST['duration_type'] == 'lifetime')
+		if ($_POST['duration_type'] == 'fixed')
 		{
 			// There needs to be something.
-			if (empty($_POST['cost']) || ($_POST['duration_type'] == 'fixed' && empty($_POST['span_value'])))
+			if (empty($_POST['fixed_cost']) || ($_POST['duration_type'] == 'fixed' && empty($_POST['span_value'])))
 				fatal_lang_error('paid_no_cost_value');
 
 			// Clean the span.
-			$span = $_POST['duration_type'] == 'fixed' ? $_POST['span_value'] . $_POST['span_unit'] : 'LT';
+			$span = $_POST['span_value'] . $_POST['span_unit'];
 
 			// Sort out the cost.
-			$cost = array('fixed' => sprintf('%01.2f', strtr($_POST['cost'], ',', '.')));
+			$cost = array('fixed' => sprintf('%01.2f', strtr($_POST['fixed_cost'], ',', '.')));
+		}
+		// Lifetime?
+		elseif ($_POST['duration_type'] == 'lifetime')
+		{
+			// There needs to be something.
+			if (empty($_POST['life_cost']))
+				fatal_lang_error('paid_no_cost_value');
+
+			// Clean the span.
+			$span = 'LT';
+
+			// Sort out the cost.
+			$cost = array('fixed' => sprintf('%01.2f', strtr($_POST['life_cost'], ',', '.')));
 		}
 		// Flexible is harder but more fun ;)
 		else
@@ -831,7 +844,7 @@ function ViewSubscribedUsers()
 				'position' => 'below_table_data',
 				'value' => '
 					<div class="floatleft">
-						<input type="submit" name="add" value="' . $txt['paid_add_subscription'] . '" class="new">
+						<input type="submit" name="add" value="' . $txt['add_subscriber'] . '" class="new">
 					</div>
 					<div class="floatright">
 						<input type="submit" name="finished" value="' . $txt['complete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['complete_are_sure']) . ');" class="submit">

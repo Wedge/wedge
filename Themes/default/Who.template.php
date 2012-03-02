@@ -19,9 +19,9 @@ function template_main()
 	// Display the table header and linktree.
 	echo '
 		<form action="<URL>?action=who" method="post" id="whoFilter" accept-charset="UTF-8">
-			<we:title2>
+			<we:cat>
 				', $txt['who_title'], '
-			</we:title2>
+			</we:cat>
 			<div class="topic_table" id="mlist">
 				<div class="pagesection">
 					<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>';

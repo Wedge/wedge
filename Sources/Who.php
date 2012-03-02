@@ -135,7 +135,7 @@ function Who()
 		$conditions[] = $show_methods[$_REQUEST['show']];
 	}
 	// Perhaps we saved a filter earlier in the session?
-	elseif (isset($_SESSION['who_online_filter']))
+	elseif (isset($_SESSION['who_online_filter'], $show_methods[$_SESSION['who_online_filter']]))
 	{
 		$context['show_by'] = $_SESSION['who_online_filter'];
 		$conditions[] = $show_methods[$_SESSION['who_online_filter']];
