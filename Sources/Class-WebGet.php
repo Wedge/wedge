@@ -98,7 +98,7 @@ class weget
 
 		// Couldn't match scheme? Throw it back up the chain to resolve.
 		if (empty($match[1]))
-			throw new Exception('weget requested to get a URL, but no valid URL supplied');
+			throw new Exception('weget requested to get a URL, but no valid URL supplied (' . $this->url . ')');
 
 		// Having broken the requested URL up, let's store the relevant details.
 		$this->protocol = $match[1];
@@ -119,9 +119,16 @@ class weget
 	// I like keeping everything tidy. Only use the $url here if you're explicitly trying to reuse the object, e.g. making multiple requests in a single page...
 	public function get($url = '')
 	{
-		if (!empty($url))
-			$this->parse_url($url);
-
+		try
+		{
+			if (!empty($url))
+				$this->parse_url($url);
+		}
+		catch (Exception $e)
+		{
+			return false;
+		}
+		
 		return $this->curl ? $this->getCurl() : $this->getFSock();
 	}
 

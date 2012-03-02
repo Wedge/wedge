@@ -2360,8 +2360,16 @@ function profileSaveAvatarData(&$value)
 		loadSource('Class-WebGet');
 
 		$url = parse_url($_POST['userpicpersonal']);
-		$weget = new weget('http://' . $url['host'] . (empty($url['port']) ? '' : ':' . $url['port']) . str_replace(' ', '%20', trim($url['path'])));
-		$contents = $weget->get();
+		try
+		{
+			$weget = new weget('http://' . $url['host'] . (empty($url['port']) ? '' : ':' . $url['port']) . str_replace(' ', '%20', trim($url['path'])));
+			$contents = $weget->get();
+		}
+		catch (Exception $e)
+		{
+			$contents = false;
+			return 'bad_avatar';
+		}
 
 		if ($contents != false && $tmpAvatar = fopen($uploadDir . '/avatar_tmp_' . $memID, 'wb'))
 		{
@@ -2455,6 +2463,8 @@ function profileSaveAvatarData(&$value)
 						return 'bad_avatar';
 				}
 			}
+			elseif (empty($sizes))
+				return 'bad_avatar';
 		}
 	}
 	elseif (($value == 'upload' && allowedTo('profile_upload_avatar')) || $downloadedExternalAvatar)
