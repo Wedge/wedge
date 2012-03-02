@@ -315,11 +315,14 @@ function ViewMemberlist()
 			// Date values have to match the specified format.
 			elseif ($param_info['type'] == 'date')
 			{
-				// Check if this date format is valid.
-				if (preg_match('/^\d{4}-\d{1,2}-\d{1,2}$/', $_POST[$param_name]) == 0)
-					continue;
+				// Check if this date format is valid. It might be an int, or it might be a date. If it's an int, leave it as is, otherwise convert to an int.
+				if ($_POST[$param_name] != (string) (int) $_POST[$param_name])
+				{
+					if (preg_match('/^\d{4}-\d{1,2}-\d{1,2}$/', $_POST[$param_name]) == 0)
+						continue;
 
-				$_POST[$param_name] = strtotime($_POST[$param_name]);
+					$_POST[$param_name] = strtotime($_POST[$param_name]);
+				}
 			}
 
 			// Those values that are in some kind of range (<, <=, =, >=, >).
