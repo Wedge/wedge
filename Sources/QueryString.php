@@ -227,7 +227,7 @@ function cleanRequest()
 	}
 
 	// Don't bother going further if we've come here from a *REAL* 404.
-	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png')))
+	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js')))
 	{
 		loadLanguage('Errors');
 
@@ -238,7 +238,7 @@ function cleanRequest()
 		updateOnlineWithError('404 Not Found', false);
 		if (!empty($settings['enableErrorLogging']))
 		{
-			log_error('File not found: ' . $full_request, 'filenotfound');
+			log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
 			loadSource('ManageErrors');
 			updateErrorCount();
 		}

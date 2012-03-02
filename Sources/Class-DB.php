@@ -31,8 +31,7 @@ class wesql
 		global $db_prefix, $user_info;
 
 		self::$callback_values = array(
-			'db_prefix' => $db_prefix,
-			//'query_see_topic' => $user_info['query_see_topic'],
+			'db_prefix' => $db_prefix
 		);
 	}
 
@@ -81,8 +80,7 @@ class wesql
 		);
 
 		// Otherwise set, and return true so that we can tell we did manage a connection.
-		self::$_db_con = $connection;
-		return self::$_db_con;
+		return self::$_db_con = $connection;
 	}
 
 	public static function extend($type = 'extra')

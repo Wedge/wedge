@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  * @param mixed $file Specify the file path that the error occurred in. If not supplied, no attempt will be made to back-check (it is normally only supplied from the error-handler; workflow instanced errors do not generally record filename.
  * @param mixed $line The line number an error occurred on. Like $file, this is only generally supplied by a PHP error; errors such as permissions or other application type errors do not have this logged.
  */
-function log_error($error_message, $error_type = 'general', $file = null, $line = null)
+function log_error($error_message, $error_type = 'general', $file = null, $line = null, $referrer = null)
 {
 	global $txt, $settings, $user_info, $scripturl, $last_error, $context, $full_request, $pluginsdir;
 	static $plugin_dir = null;
@@ -84,6 +84,10 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 
 	// Find the best query string we can...
 	$query_string = $user_info['url'];
+
+	// Is this an external 404 error? Then the referrer URL might be of more help.
+	if (!empty($referrer))
+		$query_string = $referrer;
 
 	// Are we using shortened or pretty URLs here?
 	$is_short = strpos($query_string, $scripturl . '?');
