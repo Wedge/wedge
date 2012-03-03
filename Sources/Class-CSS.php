@@ -587,12 +587,13 @@ class wecss_nesting extends wecss
 		if (!empty($replacements))
 			foreach ($replacements as $replace)
 				$tree = str_replace($replace[1], $replace[2], $tree);
-		$tree = preg_replace('~\n[\t ]*@replace[\t ]*\n[\t ]*[^\n]+;\n[\t ]*[^\n]*}~i', "\n", $tree);
+		$tree = preg_replace('~\n[\t ]*@replace[\t ]*{\n[\t ]*[^\n]+;\n[\t ]*[^\n]*}~i', "\n", $tree);
 
 		// And a few more pre-parsing actions...
-		$tree = preg_replace('~^(\s*)(@(?:import|charset)\s+.*?);$~mi', '$1<rule selector="$2"></rule>', $tree); // Transform single-line @rules into selectors
+		$tree = preg_replace('~^(@(?:import|charset)\s+.*?);$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
+		$tree = preg_replace('~^([+>&#*@:.a-z][^{};]*?\s*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
 		$tree = preg_replace('~([a-z-, ]+)\s*:(?!//)\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
-		$tree = preg_replace('~^(\s*)([+>&#*@:.a-z][^{]*?)\s*{~mi', '$1<rule selector="$2">', $tree); // Transform selectors
+		$tree = preg_replace('~^([+>&#*@:.a-z][^{]*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors
 
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab

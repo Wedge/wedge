@@ -1656,7 +1656,7 @@ function createAttachment(&$attachmentOptions)
 	@chmod($attachmentOptions['destination'], 0644);
 
 	$size = @getimagesize($attachmentOptions['destination']);
-	list ($attachmentOptions['width'], $attachmentOptions['height']) = empty($size) ? array(null, null, null) : $size;
+	list ($attachmentOptions['width'], $attachmentOptions['height']) = empty($size) ? array(null, null) : $size;
 
 	// We couldn't access the file before...
 	if ($file_restricted)
