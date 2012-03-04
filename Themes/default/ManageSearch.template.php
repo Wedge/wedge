@@ -381,4 +381,29 @@ function template_show_spider_log()
 		</form>';
 }
 
+function template_show_spider_stats()
+{
+	global $context, $txt, $theme, $scripturl;
+
+	// Standard fields.
+	template_show_list('spider_stat_list');
+
+	echo '
+		<br>
+		<we:cat>
+			', $txt['spider_log_delete'], '
+		</we:cat>
+		<form action="', $scripturl, '?action=admin;area=sengines;sa=stats;', $context['session_query'], '" method="post" accept-charset="UTF-8">
+			<div class="windowbg wrc">
+				<p>
+					', $txt['spider_log_delete_older'], '
+					<input type="text" name="older" id="older" value="7" size="3">
+					', $txt['spider_log_delete_day'], '
+				</p>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="submit" name="delete_entries" value="', $txt['spider_log_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && confirm(' . JavaScriptEscape($txt['spider_log_delete_confirm']) . ');" class="delete">
+			</div>
+		</form>';
+}
+
 ?>

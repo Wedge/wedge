@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Entry point for this section.
 function SearchEngines()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	isAllowedTo('admin_forum');
 
@@ -629,7 +629,7 @@ function SpiderLog()
 	loadTemplate('ManageSearch');
 
 	// Did they want to delete some entries?
-	if (!empty($_POST['delete_entries']) && isset($_POST['older']))
+	if (!empty($_POST['delete_entries']) && isset($_POST['older']) && $_POST['older'] > 0)
 	{
 		checkSession();
 
@@ -770,11 +770,30 @@ function SpiderStats()
 {
 	global $context, $txt, $scripturl;
 
+	loadLanguage('Search');
+	loadTemplate('ManageSearch');
+
 	// Force an update of the stats every 60 seconds.
 	if (!isset($_SESSION['spider_stat']) || $_SESSION['spider_stat'] < time() - 60)
 	{
 		consolidateSpiderStats();
 		$_SESSION['spider_stat'] = time();
+	}
+
+	if (!empty($_POST['delete_entries']) && isset($_POST['older']) && $_POST['older'] > 0)
+	{
+		checkSession();
+
+		$deleteTime = time() - (((int) $_POST['older']) * 24 * 60 * 60);
+
+		// Delete the entires.
+		wesql::query('
+			DELETE FROM {db_prefix}log_spider_stats
+			WHERE last_seen < {int:delete_period}',
+			array(
+				'delete_period' => $deleteTime,
+			)
+		);
 	}
 
 	// Get the earliest and latest dates.
@@ -912,8 +931,7 @@ function SpiderStats()
 	loadSource('Subs-List');
 	createList($listOptions);
 
-	wetem::load('show_list');
-	$context['default_list'] = 'spider_stat_list';
+	wetem::load('show_spider_stats');
 }
 
 function list_getSpiderStats($start, $items_per_page, $sort)

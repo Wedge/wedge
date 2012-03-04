@@ -702,7 +702,7 @@ function Admin()
 			'url' => $scripturl . '?action=admin;area=' . $admin_include_data['current_area'] . ';' . $context['session_query'],
 			'name' => $admin_include_data['label'],
 		);
-	if (!empty($admin_include_data['current_subsection']) && $admin_include_data['subsections'][$admin_include_data['current_subsection']][0] != $admin_include_data['label'])
+	if (!empty($admin_include_data['current_subsection']) && $admin_include_data['current_area'] != 'index' && $admin_include_data['subsections'][$admin_include_data['current_subsection']][0] != $admin_include_data['label'])
 		$context['linktree'][] = array(
 			'url' => $scripturl . '?action=admin;area=' . $admin_include_data['current_area'] . ';sa=' . $admin_include_data['current_subsection'] . ';' . $context['session_query'],
 			'name' => $admin_include_data['subsections'][$admin_include_data['current_subsection']][0],
