@@ -52,6 +52,7 @@ function ManageMemberOptions()
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
+		'whosonline' => 'ModifyWhosOnline',
 	);
 
 	// By default do the basic settings.
@@ -72,6 +73,9 @@ function ManageMemberOptions()
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
 			),
+			'whosonline' => array(
+				'description' => $txt['whos_online_desc'],
+			),
 		),
 	);
 
@@ -85,11 +89,14 @@ function ModifyMemberSettings($return_config = false)
 
 	$config_vars = array(
 			// Basic stuff, titles, flash, permissions...
+			array('check', 'allow_guestAccess'),
+		'',
 			array('check', 'enable_buddylist'),
 			array('check', 'allow_editDisplayName'),
-			array('check', 'allow_hideOnline'),
 			array('check', 'titlesEnable'),
 			array('check', 'approveAccountDeletion'),
+		'',
+			array('check', 'allow_disableAnnounce'),
 	);
 
 	if ($return_config)
@@ -1268,6 +1275,39 @@ function EditCustomProfiles()
 		updateSettings(array('displayFields' => !empty($fields) ? serialize($fields) : ''));
 		redirectexit('action=admin;area=memberoptions;sa=profile');
 	}
+}
+
+function ModifyWhosOnline($return_config = false)
+{
+	global $txt, $scripturl, $context, $theme, $settings;
+
+	$config_vars = array(
+			array('check', 'who_enabled'),
+			array('permissions', 'who_view', 'help' => 'permissionhelp_who_view'),
+			array('int', 'lastActive', 'max' => 1440), // Prevent absurd boundaries here - make it a day tops.
+			array('select', 'display_who_viewing', array($txt['who_display_viewing_off'], $txt['who_display_viewing_numbers'], $txt['who_display_viewing_names'])),
+		'',
+			array('check', 'allow_hideOnline'),
+	);
+
+	if ($return_config)
+		return $config_vars;
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		saveDBSettings($config_vars);
+
+		writeLog();
+		redirectexit('action=admin;area=memberoptions;sa=whosonline');
+	}
+
+	$context['post_url'] = $scripturl . '?action=admin;area=memberoptions;save;sa=whosonline';
+	$context['settings_title'] = $txt['mods_cat_features'];
+
+	prepareDBSettingContext($config_vars);
 }
 
 ?>

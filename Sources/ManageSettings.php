@@ -135,25 +135,16 @@ function ModifyBasicSettings($return_config = false)
 			// Big Options... polls, pinned, bbc....
 			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
 		'',
-			// Basic stuff, titles, flash, permissions...
-			array('check', 'allow_guestAccess'),
-		'',
 			// Number formatting, timezones.
 			array('float', 'time_offset'),
 			'default_timezone' => array('select', 'default_timezone', array()),
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
-		'',
-			// Who's online?
-			array('check', 'who_enabled'),
-			array('int', 'lastActive', 'max' => 1440), // Prevent absurd boundaries here - make it a day tops.
-			array('select', 'display_who_viewing', array($txt['who_display_viewing_off'], $txt['who_display_viewing_numbers'], $txt['who_display_viewing_names'])),
 		'',
 			// Statistics.
 			array('check', 'trackStats'),
 			array('check', 'hitStats'),
 		'',
 			// Option-ish things... miscellaneous sorta.
-			array('check', 'allow_disableAnnounce'),
 			array('check', 'disallow_sendBody'),
 	);
 
@@ -170,6 +161,8 @@ function ModifyBasicSettings($return_config = false)
 		if (isset($useful_regions[$region]))
 			$config_vars['default_timezone'][2][$zone] = $zone;
 	}
+	// Don't forget UTC!
+	$config_vars['default_timezone'][2]['UTC'] = 'UTC';
 
 	if ($return_config)
 		return $config_vars;

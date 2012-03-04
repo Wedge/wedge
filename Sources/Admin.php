@@ -436,6 +436,7 @@ function Admin()
 						'options' => array($txt['configure_options']),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle']),
+						'whosonline' => array($txt['admin_whos_online']),
 					),
 				),
 				'pm' => array(
@@ -677,7 +678,7 @@ function Admin()
 	{
 		$admin_include_data['current_area'] = 'search';
 		$admin_include_data['function'] = 'AdminSearch';
-		$admin_include_data['label'] = $txt['admin_main'];
+		$admin_include_data['label'] = $txt['admin_search_results'];
 		$menu_context['current_section'] = '';
 		$menu_context['current_area'] = '';
 		$menu_context['toggle_url'] = $menu_context['base_url'] . $menu_context['extra_parameters'] . ';togglebar';
@@ -895,6 +896,7 @@ function AdminSearchInternal()
 		array('ModifyPrettyURLs', 'area=featuresettings;sa=pretty'),
 		array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
 		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
+		array('ModifyWhosOnline', 'area=memberoptions;sa=whosonline'),
 		array('ModifySpamSettings', 'area=securitysettings;sa=spam'),
 		array('ModifyModerationSettings', 'area=securitysettings;sa=moderation'),
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
@@ -952,7 +954,7 @@ function AdminSearchInternal()
 	$context['page_title'] = $txt['admin_search_results'];
 	$context['search_results'] = array();
 
-	$search_term = strtolower($context['search_term']);
+	$search_term = strtolower(un_htmlspecialchars($context['search_term']));
 	// Go through all the search data trying to find this text!
 	foreach ($search_data as $section => $data)
 	{
