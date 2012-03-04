@@ -1405,7 +1405,7 @@ function PackageOptions()
 {
 	global $txt, $scripturl, $context, $settings;
 
-	if (isset($_POST['submit']))
+	if (isset($_POST['save']))
 	{
 		checkSession('post');
 

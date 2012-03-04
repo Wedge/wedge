@@ -264,7 +264,7 @@ function template_search_box()
 	echo '
 			<form id="search_form" action="<URL>?action=search2" method="post" accept-charset="UTF-8">
 				<input type="search" name="search" value="" class="search">
-				<input type="submit" name="submit" value="', $txt['search'], '">
+				<input type="submit" value="', $txt['search'], '">
 				<input type="hidden" name="advanced" value="0">';
 
 	// Search within current topic?

@@ -556,10 +556,11 @@ function template_aeva_admin_perms_view()
 						</select>
 					</td>
 					<td style="width: 16%" class="bottom">
-						<input type="submit" name="submit" value="', $txt['media_submit'], '">
+						<input type="submit" value="', $txt['media_submit'], '">
 					</td>
 				</tr>
-			</table>';
+			</table>
+		</form>';
 }
 
 // Membergroup quota template

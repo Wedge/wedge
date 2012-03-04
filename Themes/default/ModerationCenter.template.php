@@ -365,7 +365,7 @@ function template_unapproved_posts()
 						<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
 						<option value="delete">&nbsp;--&nbsp;', $txt['delete'], '</option>
 					</select>
-					<noscript><input type="submit" name="submit" value="', $txt['go'], '"></noscript>
+					<noscript><input type="submit" value="', $txt['go'], '"></noscript>
 				</div>';
 
 	if (!empty($context['unapproved_items']))

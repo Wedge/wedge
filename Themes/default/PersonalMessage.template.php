@@ -601,7 +601,7 @@ function template_search()
 				<div id="search_term_input">
 					<strong>', $txt['pm_search_text'], ':</strong>
 					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="search">
-					<input type="submit" name="submit" value="', $txt['pm_search_go'], '">
+					<input type="submit" value="', $txt['pm_search_go'], '">
 				</div>
 				<a href="<URL>?action=pm;sa=search;advanced" onclick="this.href += \';search=\' + encodeURIComponent(document.forms.searchform.search.value);">', $txt['pm_search_advanced'], '</a>
 				<input type="hidden" name="advanced" value="0">
@@ -648,7 +648,7 @@ function template_search()
 					<dd>', $txt['pm_search_between'], ' <input type="text" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="5">&nbsp;', $txt['pm_search_between_and'], '&nbsp;<input type="text" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="5"> ', $txt['pm_search_between_days'], '</dd>
 				</dl>', !$context['currently_using_labels'] ? '
 				<hr>
-				<input type="submit" name="submit" value="' . $txt['pm_search_go'] . '" class="submit floatright">' : '', '
+				<input type="submit" value="' . $txt['pm_search_go'] . '" class="submit floatright">' : '', '
 			</div>
 		</fieldset>';
 
@@ -674,7 +674,7 @@ function template_search()
 				</ul>
 				<p>
 					<span class="floatleft"><label><input type="checkbox" name="all" id="check_all" value=""', $context['check_all'] ? ' checked' : '', ' onclick="invertAll(this, this.form, \'searchlabel\');"> <em>', $txt['check_all'], '</em></label></span>
-					<input type="submit" name="submit" value="', $txt['pm_search_go'], '" class="submit floatright">
+					<input type="submit" value="', $txt['pm_search_go'], '" class="submit floatright">
 				</p>
 			</div>
 		</fieldset>';

@@ -96,7 +96,7 @@ function template_main()
 					</dd>
 				</dl>
 				<div class="right">
-					<input type="submit" name="submit" value="' . $txt['save'] . '" class="save">
+					<input type="submit" name="save" value="' . $txt['save'] . '" class="save">
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -161,7 +161,7 @@ function template_main()
 	echo '
 				</dl>
 				<div class="right">
-					<input type="submit" name="submit" value="', $txt['theme_install_go'], '" class="submit">
+					<input type="submit" name="save" value="', $txt['theme_install_go'], '" class="submit">
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -237,7 +237,7 @@ function template_list_themes()
 						<input type="text" name="reset_url" id="reset_url" value="', $context['reset_url'], '" size="40" style="width: 80%">
 					</dd>
 				</dl>
-				<input type="submit" name="submit" value="', $txt['themeadmin_list_reset_go'], '" class="submit">
+				<input type="submit" name="save" value="', $txt['themeadmin_list_reset_go'], '" class="submit">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>';
@@ -344,7 +344,7 @@ function template_set_options()
 	echo '
 				</ul>
 				<div class="right">
-					<input type="submit" name="submit" value="', $txt['save'], '" class="save">
+					<input type="submit" name="save" value="', $txt['save'], '" class="save">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</div>
@@ -495,7 +495,7 @@ function template_set_settings()
 	echo '
 				</dl>
 				<div class="right">
-					<input type="submit" name="submit" value="', $txt['save'], '" class="save">
+					<input type="submit" name="save" value="', $txt['save'], '" class="save">
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
@@ -869,7 +869,7 @@ function template_edit_style()
 	echo '
 				<textarea name="entire_file" cols="80" rows="20" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . '; font-family: monospace; margin-top: 1ex; white-space: pre">', $context['entire_file'], '</textarea><br>
 				<div class="right" style="margin: 4px 5% 0">
-					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="save">
+					<input type="submit" name="save" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="save">
 					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);">
 				</div>
 			</div>
@@ -917,7 +917,7 @@ function template_edit_template()
 
 	echo '
 				<div class="right" style="margin: 8px 5% 0">
-					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
+					<input type="submit" name="save" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
 					<input type="hidden" name="filename" value="', $context['edit_filename'], '">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
@@ -951,7 +951,7 @@ function template_edit_file()
 			<div class="windowbg wrc">
 				<textarea name="entire_file" id="entire_file" cols="80" rows="20" class="edit_file">', $context['entire_file'], '</textarea><br>
 				<div class="right" style="margin: 8px 5% 0">
-					<input type="submit" name="submit" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
+					<input type="submit" name="save" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' class="save">
 					<input type="hidden" name="filename" value="', $context['edit_filename'], '">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>

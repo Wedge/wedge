@@ -951,7 +951,7 @@ function template_install_options()
 				<label><input type="checkbox" name="package_make_backups" id="package_make_backups" value="1"', $context['package_make_backups'] ? ' checked' : '', '> ', $txt['package_install_options_make_backups'], '</label>
 				<br><br>
 				<div class="right">
-					<input type="submit" name="submit" value="', $txt['save'], '" class="submit">
+					<input type="submit" name="save" value="', $txt['save'], '" class="submit">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</form>

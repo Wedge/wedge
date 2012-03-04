@@ -242,7 +242,7 @@ function template_report()
 	echo '
 				</dl>
 				<div class="right">
-					<input type="submit" name="submit" value="', $txt['rtm10'], '" class="submit">
+					<input type="submit" name="send" value="', $txt['rtm10'], '" class="submit">
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

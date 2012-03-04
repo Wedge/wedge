@@ -156,7 +156,7 @@ function ThemeAdmin()
 	isAllowedTo('admin_forum');
 
 	// If we aren't submitting - that is, if we are about to...
-	if (!isset($_POST['submit']))
+	if (!isset($_POST['save']))
 	{
 		loadTemplate('Themes');
 
@@ -252,7 +252,7 @@ function ThemeList()
 	loadLanguage('Admin');
 	isAllowedTo('admin_forum');
 
-	if (isset($_POST['submit']))
+	if (isset($_POST['save']))
 	{
 		checkSession();
 
@@ -448,7 +448,7 @@ function SetThemeOptions()
 	}
 
 	// Submit?
-	if (isset($_POST['submit']) && empty($_POST['who']))
+	if (isset($_POST['save']) && empty($_POST['who']))
 	{
 		checkSession();
 
@@ -500,7 +500,7 @@ function SetThemeOptions()
 
 		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=reset');
 	}
-	elseif (isset($_POST['submit']) && $_POST['who'] == 1)
+	elseif (isset($_POST['save']) && $_POST['who'] == 1)
 	{
 		checkSession();
 
@@ -771,7 +771,7 @@ function SetThemeSettings()
 	execBlock('settings');
 
 	// Submitting!
-	if (isset($_POST['submit']))
+	if (isset($_POST['save']))
 	{
 		checkSession();
 
@@ -1569,7 +1569,7 @@ function EditTheme()
 			fatal_lang_error('theme_edit_missing', false);
 	}
 
-	if (isset($_POST['submit']))
+	if (isset($_POST['save']))
 	{
 		if (checkSession('post', '', false) == '')
 		{

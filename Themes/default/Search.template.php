@@ -34,7 +34,7 @@ function template_main()
 				<div id="search_term_input">
 					<strong>', $txt['search_for'], ':</strong>
 					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="search">
-					', $context['require_verification'] ? '' : '&nbsp;<input type="submit" name="submit" value="' . $txt['search'] . '" class="submit">
+					', $context['require_verification'] ? '' : '&nbsp;<input type="submit" value="' . $txt['search'] . '" class="submit">
 				</div>';
 
 		if (empty($settings['search_simple_fulltext']))
@@ -46,7 +46,7 @@ function template_main()
 				<div class="verification>
 					<strong>', $txt['search_visual_verification_label'], ':</strong>
 					<br>', template_control_verification($context['visual_verification_id'], 'all'), '<br>
-					<input id="submit" type="submit" name="submit" value="' . $txt['search'] . '" class="submit">
+					<input id="submit" type="submit" value="' . $txt['search'] . '" class="submit">
 				</div>';
 
 		echo '
@@ -175,7 +175,7 @@ function template_main()
 				</div>
 				<br class="clear">
 				<div class="padding">
-					<input type="submit" name="submit" value="', $txt['search'], '" class="submit floatright">
+					<input type="submit" value="', $txt['search'], '" class="submit floatright">
 				</div>
 				<br class="clear">
 			</fieldset>
@@ -221,7 +221,7 @@ function template_results()
 			<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
 				<strong>', $txt['search_for'], ':</strong>
 				<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="search">
-				<input type="submit" name="submit" value="', $txt['search_adjust_submit'], '">
+				<input type="submit" value="', $txt['search_adjust_submit'], '">
 				<input type="hidden" name="searchtype" value="', !empty($context['search_params']['searchtype']) ? $context['search_params']['searchtype'] : 0, '">
 				<input type="hidden" name="userspec" value="', !empty($context['search_params']['userspec']) ? $context['search_params']['userspec'] : '', '">
 				<input type="hidden" name="show_complete" value="', !empty($context['search_params']['show_complete']) ? 1 : 0, '">
