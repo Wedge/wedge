@@ -133,13 +133,13 @@ function cleanRequest()
 		$_GET += $temp;
 	}
 
+	$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
 	if (isset($_GET['board']) && is_numeric($_GET['board']))
 		$board = (int) $_GET['board'];
 	elseif (!empty($settings['pretty_enable_filters']))
 	{
 		// !!! Authorize URLs with a port number
 		//	$_SERVER['HTTP_HOST'] = strpos($_SERVER['HTTP_HOST'], ':') === false ? $_SERVER['HTTP_HOST'] : substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], ':'));
-		$full_request = $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
 		$query_string = str_replace(substr($boardurl, strpos($boardurl, '://') + 3), '/', $full_request);
 
 		$query = wesql::query('
@@ -235,7 +235,6 @@ function cleanRequest()
 		header('Content-Type: text/plain; charset=UTF-8');
 
 		// Webmasters might want to log the error, so they can fix any broken image links.
-		updateOnlineWithError('404 Not Found', false);
 		if (!empty($settings['enableErrorLogging']))
 		{
 			log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
