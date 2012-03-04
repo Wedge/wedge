@@ -227,9 +227,6 @@ function ModifyGeneralSettings($return_config = false)
 		array('mtitle', $txt['maintenance_subject'], 'file', 'text', 36),
 		array('mmessage', $txt['maintenance_message'], 'file', 'text', 36),
 		'',
-		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'email', 30, 'webmaster_email'),
-		array('mail_from', $txt['admin_from_email'], 'db', 'email', 30, 'mail_from'),
-		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('enableCompressedData', $txt['enableCompressedData'], 'db', 'check', null, 'enableCompressedData'),
 		array('obfuscate_filenames', $txt['obfuscate_filenames'], 'db', 'check', null, 'obfuscate_filenames'),
@@ -1935,7 +1932,7 @@ function prepareServerSettingsContext(&$config_vars)
 			$varname = $config_var[0];
 			global $$varname;
 
-			$context['config_vars'][] = array(
+			$item = array(
 				'label' => $config_var[1],
 				'help' => isset($config_var[5]) ? $config_var[5] : '',
 				'type' => $config_var[3],
@@ -1949,6 +1946,18 @@ function prepareServerSettingsContext(&$config_vars)
 				'preinput' => '',
 				'postinput' => '',
 			);
+			
+			// If it's an int, there may be extra stuff.
+			if ($config_var[3] == 'int')
+			{
+				if (isset($config_var['min']))
+					$item['min'] = $config_var['min'];
+				if (isset($config_var['max']))
+					$item['max'] = $config_var['max'];
+				$item['step'] = isset($config_var['step']) ? $config_var['step'] : 1;
+			}
+
+			$context['config_vars'][] = $item;
 		}
 	}
 
@@ -2211,7 +2220,16 @@ function saveSettings(&$config_vars)
 			continue;
 
 		// Rewrite the definition a bit.
-		if ($config_var[3] != 'select')
+		if ($config_var[3] == 'int')
+		{
+			$array = array($config_var[3], $config_var[0]);
+			if (isset($config_var['min']))
+				$array['min'] = $config_var['min'];
+			if (isset($config_var['max']))
+				$array['max'] = $config_var['max'];
+			$new_settings[] = $array;
+		}
+		elseif ($config_var[3] != 'select')
 			$new_settings[] = array($config_var[3], $config_var[0]);
 		else
 			$new_settings[] = array($config_var[3], $config_var[0], $config_var[4]);
