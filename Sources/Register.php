@@ -57,8 +57,8 @@ function Register($reg_errors = array())
 	if ($context['show_coppa'])
 	{
 		$context['skip_coppa'] = false;
-		$context['coppa_agree_above'] = sprintf($txt['agreement_agree_coppa_above'], $settings['coppaAge']);
-		$context['coppa_agree_below'] = sprintf($txt['agreement_agree_coppa_below'], $settings['coppaAge']);
+		$context['coppa_agree_above'] = sprintf($txt[($context['require_agreement'] ? 'agreement_agree' : 'noagreement') . '_coppa_above'], $settings['coppaAge']);
+		$context['coppa_agree_below'] = sprintf($txt[($context['require_agreement'] ? 'agreement_agree' : 'noagreement') . '_coppa_below'], $settings['coppaAge']);
 	}
 
 	// What step are we at?
@@ -77,10 +77,7 @@ function Register($reg_errors = array())
 
 			// Are they saying they're under age, while under age registration is disabled?
 			if (empty($settings['coppaType']) && empty($_SESSION['skip_coppa']))
-			{
-				loadLanguage('Login');
 				fatal_lang_error('under_age_registration_prohibited', false, array($settings['coppaAge']));
-			}
 		}
 	}
 	// Make sure they don't squeeze through without agreeing.
@@ -212,13 +209,13 @@ function Register2()
 	if (!isset($_SESSION['old_url']))
 		redirectexit('action=register');
 
+	// If we don't require an agreement, we need a extra check for coppa.
+	if (empty($settings['requireAgreement']) && !empty($settings['coppaAge']))
+		$_SESSION['skip_coppa'] = !empty($_POST['accept_agreement']);
+
 	// Are they under age, and under age users are banned?
 	if (!empty($settings['coppaAge']) && empty($settings['coppaType']) && empty($_SESSION['skip_coppa']))
-	{
-		// !!! This should be put in Errors, imho.
-		loadLanguage('Login');
 		fatal_lang_error('under_age_registration_prohibited', false, array($settings['coppaAge']));
-	}
 
 	// Check whether the visual verification code was entered correctly.
 	if (!empty($settings['reg_verification']))

@@ -284,8 +284,17 @@ function template_registration_form()
 	}
 
 	echo '
-			<div id="confirm_buttons">
-				<input type="submit" name="regSubmit" value="', $txt['register'], '" tabindex="', $context['tabindex']++, '" class="submit">
+			<div id="confirm_buttons">';
+
+	if (!$context['require_agreement'] && $context['show_coppa'])
+		echo '
+				<input type="submit" name="accept_agreement" value="', $context['coppa_agree_above'], '" class="submit" /><br><br>
+				<input type="submit" name="accept_agreement_coppa" value="', $context['coppa_agree_below'], '" class="submit">';
+	else
+		echo '
+				<input type="submit" name="regSubmit" value="', $txt['register'], '" tabindex="', $context['tabindex']++, '" class="submit">';
+
+	echo '
 			</div>
 			<input type="hidden" name="step" value="2">
 			<input type="hidden" name="time_offset" value="0" id="time_offset">
