@@ -116,7 +116,10 @@ function template_main_board()
 					</td>
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" onmouseout="mouse_on_div = 0;" onmouseover="mouse_on_div = 1;" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
-							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'], (!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '</span>', $topic['is_pinned'] ? '</strong>' : '';
+							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">',
+							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
+							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
+							'</span>', $topic['is_pinned'] ? '</strong>' : '';
 
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && $context['user']['is_logged'])
@@ -647,8 +650,8 @@ function template_messageindex_legend()
 		<p>
 			<img src="' . $theme['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
 			<img src="' . $theme['images_url'] . '/icons/quick_pin.gif" class="middle"> ', $txt['pinned_topic'], '<br>', $settings['pollMode'] == '1' ? '
-			<img src="' . $theme['images_url'] . '/topic/normal_poll.gif" class="middle"> ' . $txt['poll'] : '', '<br>', !empty($settings['enableParticipation']) && $context['user']['is_logged'] ? '
-			<img src="' . $theme['images_url'] . '/topic/my_normal_post.gif" class="middle"> ' . $txt['participation_caption'] : '', '
+			<img src="' . $theme['images_url'] . '/topic/normal_poll.png" class="middle"> ' . $txt['poll'] : '', '<br>', !empty($settings['enableParticipation']) && $context['user']['is_logged'] ? '
+			<img src="' . $theme['images_url'] . '/topic/my_normal_post.png" class="middle"> ' . $txt['participation_caption'] : '', '
 		</p>
 	</section>';
 }

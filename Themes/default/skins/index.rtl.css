@@ -525,11 +525,8 @@ dl.stats
 	dd
 		text-align: left
 
-.statsbar div.bar
+.statsbar .bar
 	float: right
-	div
-		right: -6px
-		padding: 0 0 0 6px
 
 tr.windowbg2
 	th.stats_month, td.stats_day

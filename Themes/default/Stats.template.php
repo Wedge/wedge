@@ -105,9 +105,7 @@ function template_main()
 
 		if (!empty($poster['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px;">
-								<div style="width: ', $poster['post_percent'], 'px;"></div>
-							</div>';
+							<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px"></div>';
 
 		echo '
 							<span>', $poster['num_posts'], '</span>
@@ -137,9 +135,7 @@ function template_main()
 
 		if (!empty($board['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $board['post_percent'] + 4, 'px;">
-								<div style="width: ', $board['post_percent'], 'px;"></div>
-							</div>';
+							<div class="bar" style="width: ', $board['post_percent'] + 4, 'px"></div>';
 		echo '
 							<span>', $board['num_posts'], '</span>
 						</dd>';
@@ -170,9 +166,7 @@ function template_main()
 
 		if (!empty($topic['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px;">
-								<div style="width: ', $topic['post_percent'], 'px;"></div>
-							</div>';
+							<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px"></div>';
 
 		echo '
 							<span>' . $topic['num_replies'] . '</span>
@@ -200,9 +194,7 @@ function template_main()
 
 		if (!empty($topic['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px;">
-								<div style="width: ', $topic['post_percent'], 'px;"></div>
-							</div>';
+							<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px"></div>';
 
 		echo '
 							<span>' . $topic['num_views'] . '</span>
@@ -234,9 +226,7 @@ function template_main()
 
 		if (!empty($poster['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px;">
-								<div style="width: ', $poster['post_percent'], 'px;"></div>
-							</div>';
+							<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px"></div>';
 
 		echo '
 							<span>', $poster['num_topics'], '</span>
@@ -266,9 +256,7 @@ function template_main()
 
 		if (!empty($poster['time_percent']))
 			echo '
-							<div class="bar" style="width: ', $poster['time_percent'] + 4, 'px;">
-								<div style="width: ', $poster['time_percent'], 'px;"></div>
-							</div>';
+							<div class="bar" style="width: ', $poster['time_percent'] + 4, 'px"></div>';
 
 		echo '
 							<span>', $poster['time_online'], '</span>

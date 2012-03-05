@@ -51,6 +51,10 @@ body
 #sidebar
 	background: #edefe6
 
+#responsive
+	#sidebar
+		top: 0
+
 #main
 	padding: 4px 22px 12px 8px
 

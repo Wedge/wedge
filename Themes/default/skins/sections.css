@@ -139,26 +139,33 @@ img.new_posts
 #moderationbuttons_strip
 	margin: 4px 0 0
 
-// Poll question
-#poll
+// A generic bar, for use in polls and stats.
+.bar
+	float: left
+	gradient: lighten(#6294ce, 20%), hue(darken(#6294ce, 20%), -10)
+	border-radius: 4px
+	margin: 0 4px
+	height: 16px
+
+.poll
 	overflow: hidden
 
-#poll_question
-	padding: 0 0 .5em 2em
+	h4
+		padding: 0 0 .5em 2em
 
-// Poll vote options
-#poll_options
-	ul.options
+	// Poll vote options
+	ul
 		border-top: 1px solid #9999aa
 		padding: 1em 2.5em 0 2em
 		margin: 0 0 1em
-	div.submitbutton
+
+	.sendpoll
 		clear: both
 		padding: 0 0 1em 2em
 		margin: 0
 
 	// Poll results
-	dl.options
+	dl
 		border: solid #9999aa
 		border-width: 1px 0 0 0
 		padding: 1em 2.5em 0 2em
@@ -187,7 +194,11 @@ img.new_posts
 		margin: 0 1.5em .2em
 		padding: 0 .5em .5em
 
-#poll_moderation
+	.bar
+		max-width: 100%
+		margin-top: 3px
+
+.poll_moderation
 	margin: .5em 0 0
 	padding: 0 .2em .2em 0
 	overflow: hidden
@@ -908,9 +919,7 @@ tr.windowbg td
 		img.avatar
 			float: right
 			vertical-align: top
-		ul
-			clear: left
-	#userstatus
+	#basicinfo ul, #userstatus
 		clear: left
 	#infolinks
 		display: none
@@ -969,15 +978,11 @@ tr.windowbg td
 			text-align: center
 		&.last span
 			border-right: none
-		div.bar
-			margin: 0 auto
+		.bar
+			float: none
 			width: 15px
-			div
-				background: #6294ce
-			span
-				position: absolute
-				top: -1000em
-				left: -1000em
+			margin: 0 auto
+			border-radius: 4px 4px 0 0
 
 // Most popular boards by posts and activity
 #popularposts
@@ -1159,18 +1164,6 @@ dl.stats
 
 .statsbar
 	width: 45%
-	div.bar
-		float: left
-		background: url($images/bar_stats.png) no-repeat
-		display: block
-		margin: 0 4px
-		height: 16px
-		div
-			position: relative
-			right: -4px
-			padding: 0 4px 0 0
-			background: url($images/bar_stats.png) no-repeat 100%
-			height: 16px
 
 #stats th
 	&.stats_year, &.stats_month

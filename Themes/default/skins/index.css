@@ -197,7 +197,7 @@ ul#noava
 		a
 			color: #766
 			letter-spacing: -3px
-			font: 100 2.9em "Segoe UI Light", "Segoe UI", Optima, Arial, sans-serif
+			font: 100 2.9em $big_font
 
 #siteslogan
 	float: right
@@ -364,28 +364,25 @@ em
 	background-repeat: no-repeat;
 
 .wehead
-	background-color: hue(lighten(#936f69, 50%), -90)
+	background-color: #a39f99
 	color: #fff
 	a
-		color: #eef0ff
+		color: #fff
 
-.wefoot
-	background-color: hue(lighten(#936f69, 50%), 90)
-	color: #fff
-	a
-		color: #eed
+.wefoot extends .wehead
+	background-color: #a5b09d
 
 // The 'New' icon, generally speaking.
 .note extends .inline-block
 	border-radius: 7px
 	background-color: rgba(255,0,0,.8)
-	gradient: #fa6, #c8a
+	gradient: #fa6, #d76
 	color: #fff !important
-	font: 700 75%/100% Tahoma, sans-serif
-	text-transform: lowercase
+	font: 700 7pt/100% Tahoma, Arial, sans-serif
+	text-transform: uppercase
 	vertical-align: .1em
 	margin: 0 3px
-	padding: 1px 5px 3px
+	padding: 3px 5px
 	:hover
 		text-decoration: none
 
@@ -1139,7 +1136,6 @@ td.footnum a:target, a.fnotel:target
 section.block extends .wrc
 	overflow: hidden
 	header extends .wehead
-		background-color: #a39f99
 		padding: 3px 12px
 		border-radius: 8px 8px 0 0
 		margin: -0.9em -1.2em 1em
@@ -1195,13 +1191,13 @@ tr.titlebg
 
 // Pinned topics get a different background
 .pinned
-	background: #e8d8cf
+	background-color: #e8d8cf
 	.windowbg2&
 		background: #f2e3d9
 
 // Locked posts get a different shade, too!
 .locked
-	background: #d4dce2
+	background-color: #d4dce2
 	font-style: italic
 	.windowbg2&
 		background: #d8e1e7
@@ -1616,10 +1612,11 @@ th.last_th
 
 $main_font = Arial, sans-serif
 $menu_font = $main_font
-$head_font = "Franklin Gothic Medium", "Franklin Gothic", "Gill Sans", "Segoe UI Light", "Segoe UI", Georgia, Arial, Tahoma, sans-serif
+$big_font = "Segoe UI Light", "Segoe UI", Optima, Arial, sans-serif
+$head_font = "Franklin Gothic Medium", "Franklin Gothic", $big_font
 $mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace
 
-$post_font = 95%/133% Verdana, Arial, Segoe UI, Tahoma, Verdana, $main_font
+$post_font = 95%/133% Verdana, "Segoe UI", Arial, sans-serif
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""
@@ -1631,7 +1628,7 @@ $left_gradient2 = "-prefix-linear-gradient(left, rgba(212, 212, 212, .2), rgba(2
 $max-width = "max-width"
 $max-width {ie6} = "width"
 
-$main_bg = #fffdfa
+$main_bg = #fff
 $head_bg = darken(#e3e0da, 3%)
 $menu_border = rgba(220, 224, 220, .95)
 $menu_bg = -prefix-linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))

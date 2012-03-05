@@ -886,7 +886,8 @@ class wecss_nesting extends wecss
 		foreach ($this->rules[$n]['props'] as $n2 => $dummy)
 			unset($this->rules[$n2], $this->props[$n2]);
 		foreach ($this->rules[$n]['children'] as $n2)
-			$this->unset_recursive($n2);
+			if (isset($this->rules[$n2]))
+				$this->unset_recursive($n2);
 		unset($this->rules[$n]);
 	}
 

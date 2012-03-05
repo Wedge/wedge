@@ -555,72 +555,70 @@ function template_topic_poll()
 
 	$show_voters = ($context['poll']['show_results'] || !$context['allow_vote']) && $context['allow_poll_view'];
 	echo '
-		<div id="poll_moderation">', template_button_strip($poll_buttons), '
+		<div class="poll_moderation">', template_button_strip($poll_buttons), '
 		</div>
-		<we:block id="poll" class="windowbg" header="', $txt['poll'], '" footer="', empty($context['poll']['expire_time']) ? '' :
+		<we:block class="poll windowbg" header="', $txt['poll'], '" footer="', empty($context['poll']['expire_time']) ? '' :
 			($context['poll']['is_expired'] ? $txt['poll_expired_on'] : $txt['poll_expires_on']) . ': ' . $context['poll']['expire_time'] . ($show_voters ? ' - ' : ''),
 			$show_voters ? $txt['poll_total_voters'] . ': ' . $context['poll']['total_votes'] : '', '">
-			<div id="poll_options">
-				<h4 id="poll_question">
-					<img src="', $theme['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.gif" style="vertical-align: -4px">
-					', $context['poll']['question'], '
-				</h4>';
+			<h4>
+				<img src="', $theme['images_url'], '/topic/', $context['poll']['is_locked'] ? 'normal_poll_locked' : 'normal_poll', '.png" style="vertical-align: -4px">
+				', $context['poll']['question'], '
+			</h4>';
 
 	// Are they not allowed to vote but allowed to view the options?
 	if ($context['poll']['show_results'] || !$context['allow_vote'])
 	{
 		echo '
-				<dl class="options">';
+			<dl>';
 
 		// Show each option with its corresponding percentage bar.
 		foreach ($context['poll']['options'] as $option)
 		{
 			echo '
-					<dt', $option['voted_this'] ? ' class="voted"' : '', '>', $option['option'], '</dt>
-					<dd class="statsbar', $option['voted_this'] ? ' voted' : '', '">';
+				<dt', $option['voted_this'] ? ' class="voted"' : '', '>', $option['option'], '</dt>
+				<dd class="statsbar', $option['voted_this'] ? ' voted' : '', '">';
 
 			if ($context['allow_poll_view'])
 				echo '
-						', $option['bar_ndt'], '
-						<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
+					', $option['bar_ndt'], '
+					<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
 
 			echo '
-					</dd>';
+				</dd>';
 		}
 
 		echo '
-				</dl>';
+			</dl>';
 	}
 	// They are allowed to vote! Go to it!
 	else
 	{
 		echo '
-				<form action="<URL>?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
+			<form action="<URL>?action=poll;sa=vote;topic=', $context['current_topic'], '.', $context['start'], ';poll=', $context['poll']['id'], '" method="post" accept-charset="UTF-8">';
 
 		// Show a warning if they are allowed more than one option.
 		if ($context['poll']['allowed_warning'])
 			echo '
-					<p class="smallpadding">', $context['poll']['allowed_warning'], '</p>';
+				<p class="smallpadding">', $context['poll']['allowed_warning'], '</p>';
 
 		echo '
-					<ul class="reset options">';
+				<ul class="reset">';
 
 		// Show each option with its button - a radio likely.
 		foreach ($context['poll']['options'] as $option)
 			echo '
-						<li><label>', $option['vote_button'], ' ', $option['option'], '</label></li>';
+					<li><label>', $option['vote_button'], ' ', $option['option'], '</label></li>';
 
 		echo '
-					</ul>
-					<div class="submitbutton">
-						<input type="submit" value="', $txt['poll_vote'], '">
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-					</div>
-				</form>';
+				</ul>
+				<div class="sendpoll">
+					<input type="submit" value="', $txt['poll_vote'], '">
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				</div>
+			</form>';
 	}
 
 	echo '
-			</div>
 		</we:block>';
 }
 
