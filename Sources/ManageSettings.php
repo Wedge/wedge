@@ -20,13 +20,10 @@ if (!defined('WEDGE'))
 	void ModifyFeatureSettings()
 		// !!!
 
-	void ModifySecuritySettings()
-		// !!!
-
 	void ModifyBasicSettings()
 		// !!!
 
-	void ModifyModerationSettings()
+	void ModifyWarningSettings()
 		// !!!
 
 	void ModifySpamSettings()
@@ -95,38 +92,6 @@ function ModifyFeatureSettings()
 	$subActions[$_REQUEST['sa']]();
 }
 
-// This function passes control through to the relevant security tab.
-function ModifySecuritySettings()
-{
-	global $context, $txt;
-
-	$context['page_title'] = $txt['admin_security_moderation'];
-
-	$subActions = array(
-		'spam' => 'ModifySpamSettings',
-		'moderation' => 'ModifyModerationSettings',
-	);
-
-	loadGeneralSettingParameters($subActions, 'spam');
-
-	// Load up all the tabs...
-	$context[$context['admin_menu_name']]['tab_data'] = array(
-		'title' => $txt['admin_security_moderation'],
-		'help' => 'securitysettings',
-		'description' => $txt['security_settings_desc'],
-		'tabs' => array(
-			'spam' => array(
-				'description' => $txt['antispam_Settings_desc'],
-			),
-			'moderation' => array(
-			),
-		),
-	);
-
-	// Call the right function for this sub-acton.
-	$subActions[$_REQUEST['sa']]();
-}
-
 function ModifyBasicSettings($return_config = false)
 {
 	global $txt, $scripturl, $context;
@@ -167,9 +132,17 @@ function ModifyBasicSettings($return_config = false)
 }
 
 // Moderation type settings - although there are fewer than we have you believe ;)
-function ModifyModerationSettings($return_config = false)
+function ModifyWarningSettings($return_config = false)
 {
 	global $txt, $scripturl, $context, $settings;
+
+	isAllowedTo('admin_forum');
+
+	loadLanguage('Help');
+	loadLanguage('ManageSettings');
+
+	// Will need the utility functions from here.
+	loadSource('ManageServer');
 
 	$config_vars = array(
 			// Warning system?
@@ -195,9 +168,9 @@ function ModifyModerationSettings($return_config = false)
 		checkSession();
 
 		// Sadly, we can't use the normal validation routine here because we're doing a fun combination.
-		$_POST['warning_watch'] = min($_POST['warning_watch'], 100);
+		$_POST['warning_watch'] = max(min($_POST['warning_watch'], 100), 0);
 		$_POST['warning_moderate'] = $settings['postmod_active'] ? min($_POST['warning_moderate'], 100) : 0;
-		$_POST['warning_mute'] = min($_POST['warning_mute'], 100);
+		$_POST['warning_mute'] = max(min($_POST['warning_mute'], 100), 0);
 
 		// Fix the warning setting array!
 		$_POST['warning_settings'] = min(100, (int) $_POST['user_limit']) . ',' . min(100, (int) $_POST['warning_decrement']);
@@ -206,15 +179,16 @@ function ModifyModerationSettings($return_config = false)
 		unset($save_vars['rem1'], $save_vars['rem2']);
 
 		saveDBSettings($save_vars);
-		redirectexit('action=admin;area=securitysettings;sa=moderation');
+		redirectexit('action=admin;area=warnings');
 	}
 
 	// We actually store lots of these together - for efficiency.
 	list ($settings['user_limit'], $settings['warning_decrement']) = explode(',', $settings['warning_settings']);
 
-	$context['post_url'] = $scripturl . '?action=admin;area=securitysettings;save;sa=moderation';
-	$context['settings_title'] = $txt['moderation_settings'];
+	$context['post_url'] = $scripturl . '?action=admin;area=warnings;save';
+	$context['page_title'] = $context['settings_title'] = $txt['warning_title'];
 
+	wetem::load('show_settings');
 	prepareDBSettingContext($config_vars);
 }
 
@@ -223,10 +197,18 @@ function ModifySpamSettings($return_config = false)
 {
 	global $txt, $scripturl, $context, $settings;
 
+	isAllowedTo('admin_forum');
+
+	loadLanguage('Help');
+	loadLanguage('ManageSettings');
+
+	loadSource('ManageServer');
+
 	// Generate a sample registration image.
 	$context['verification_image_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand());
 
 	$config_vars = array(
+			array('desc', 'antispam_Settings_desc'),
 			array('check', 'reg_verification'),
 			array('check', 'search_enable_captcha'),
 			// This, my friend, is a cheat :p
@@ -354,7 +336,7 @@ function ModifySpamSettings($return_config = false)
 
 		cache_put_data('verificationQuestionIds', null, 300);
 
-		redirectexit('action=admin;area=securitysettings;sa=spam');
+		redirectexit('action=admin;area=antispam');
 	}
 
 	$character_range = array_merge(range('A', 'H'), array('K', 'M', 'N', 'P', 'R'), range('T', 'Y'));
@@ -371,8 +353,10 @@ function ModifySpamSettings($return_config = false)
 		add_js('
 	$(\'#guests_require_captcha\').attr(\'disabled\', true);');
 
-	$context['post_url'] = $scripturl . '?action=admin;area=securitysettings;save;sa=spam';
-	$context['settings_title'] = $txt['antispam_Settings'];
+	$context['post_url'] = $scripturl . '?action=admin;area=antispam;save';
+	$context['page_title'] = $context['settings_title'] = $txt['antispam_Settings'];
+
+	wetem::load('show_settings');
 
 	prepareDBSettingContext($config_vars);
 }

@@ -75,17 +75,6 @@ function Admin()
 						'pretty' => array($txt['pretty_urls']),
 					),
 				),
-				'securitysettings' => array(
-					'label' => $txt['admin_security_moderation'],
-					'file' => 'ManageSettings',
-					'function' => 'ModifySecuritySettings',
-					'icon' => 'security.gif',
-					'bigicon' => 'security.png',
-					'subsections' => array(
-						'spam' => array($txt['antispam_title']),
-						'moderation' => array($txt['moderation_settings_short']),
-					),
-				),
 				'modfilters' => array(
 					'label' => $txt['admin_mod_filters'],
 					'file' => 'ManageModeration',
@@ -167,21 +156,13 @@ function Admin()
 					),
 				),
 				'',
-				'smileys' => array(
-					'label' => $txt['smileys_manage'],
-					'file' => 'ManageSmileys',
-					'function' => 'ManageSmileys',
-					'icon' => 'smiley.gif',
-					'bigicon' => 'smileys.png',
-					'permission' => array('manage_smileys'),
+				'antispam' => array(
+					'label' => $txt['antispam_title'],
+					'file' => 'ManageSettings',
+					'function' => 'ModifySpamSettings',
+					'icon' => 'security.gif',
+					'bigicon' => 'security.png',
 					'subsections' => array(
-						'editsets' => array($txt['smiley_sets']),
-						'addsmiley' => array($txt['smileys_add'], 'enabled' => !empty($settings['smiley_enable'])),
-						'editsmileys' => array($txt['smileys_edit'], 'enabled' => !empty($settings['smiley_enable'])),
-						'setorder' => array($txt['smileys_set_order'], 'enabled' => !empty($settings['smiley_enable'])),
-						'editicons' => array($txt['icons_edit_message_icons'], 'enabled' => !empty($settings['messageIcons_enable'])),
-						'',
-						'settings' => array($txt['settings']),
 					),
 				),
 				'manageattachments' => array(
@@ -209,6 +190,23 @@ function Admin()
 					'subsections' => array(
 						'config' => array($txt['media_admin_settings_config']),
 						'sites' => array($txt['media_admin_settings_sites']),
+					),
+				),
+				'smileys' => array(
+					'label' => $txt['smileys_manage'],
+					'file' => 'ManageSmileys',
+					'function' => 'ManageSmileys',
+					'icon' => 'smiley.gif',
+					'bigicon' => 'smileys.png',
+					'permission' => array('manage_smileys'),
+					'subsections' => array(
+						'editsets' => array($txt['smiley_sets']),
+						'addsmiley' => array($txt['smileys_add'], 'enabled' => !empty($settings['smiley_enable'])),
+						'editsmileys' => array($txt['smileys_edit'], 'enabled' => !empty($settings['smiley_enable'])),
+						'setorder' => array($txt['smileys_set_order'], 'enabled' => !empty($settings['smiley_enable'])),
+						'editicons' => array($txt['icons_edit_message_icons'], 'enabled' => !empty($settings['messageIcons_enable'])),
+						'',
+						'settings' => array($txt['settings']),
 					),
 				),
 				'',
@@ -395,6 +393,15 @@ function Admin()
 						'profiles' => array($txt['permissions_profiles'], 'manage_permissions'),
 						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
+					),
+				),
+				'warnings' => array(
+					'label' => $txt['warning_title'],
+					'file' => 'ManageSettings',
+					'function' => 'ModifyWarningSettings',
+					'icon' => 'security.gif',
+					'bigicon' => 'security.png',
+					'subsections' => array(
 					),
 				),
 				'ban' => array(
@@ -871,7 +878,7 @@ function AdminSearchInternal()
 		),
 		'settings' => array(
 			array('COPPA', 'area=regcenter;sa=settings'),
-			array('CAPTCHA', 'area=securitysettings;sa=spam'),
+			array('CAPTCHA', 'area=antispam'),
 		),
 	);
 
@@ -897,8 +904,8 @@ function AdminSearchInternal()
 		array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
 		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
 		array('ModifyWhosOnline', 'area=memberoptions;sa=whosonline'),
-		array('ModifySpamSettings', 'area=securitysettings;sa=spam'),
-		array('ModifyModerationSettings', 'area=securitysettings;sa=moderation'),
+		array('ModifySpamSettings', 'area=antispam'),
+		array('ModifyModerationSettings', 'area=warnings'),
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
 		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
