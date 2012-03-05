@@ -219,7 +219,7 @@ function Post($post_errors = array())
 	if ($locked && !allowedTo('moderate_board'))
 		fatal_lang_error('topic_locked', false);
 	// Check the users permissions - is the user allowed to add or post a poll?
-	if (isset($_REQUEST['poll']) && $settings['pollMode'] == '1')
+	if (isset($_REQUEST['poll']))
 	{
 		// New topic, new poll.
 		if (empty($topic))

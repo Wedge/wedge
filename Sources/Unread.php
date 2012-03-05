@@ -496,9 +496,6 @@ function Unread()
 
 	while ($row = wesql::fetch_assoc($request))
 	{
-		if ($row['id_poll'] > 0 && $settings['pollMode'] == '0')
-			continue;
-
 		$topic_ids[] = $row['id_topic'];
 
 		if (!empty($theme['message_index_preview']))
@@ -621,7 +618,7 @@ function Unread()
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($row['num_replies'] == 0 ? '.0' : '.msg' . $row['new_from']) . ';topicseen#msg' . $row['new_from'] . '" rel="nofollow">' . $row['first_subject'] . '</a>',
 			'is_pinned' => !empty($row['is_pinned']),
 			'is_locked' => !empty($row['locked']),
-			'is_poll' => $settings['pollMode'] == '1' && $row['id_poll'] > 0,
+			'is_poll' => $row['id_poll'] > 0,
 			'is_posted_in' => false,
 			'icon' => $row['first_icon'],
 			'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',

@@ -97,9 +97,6 @@ function ModifyBasicSettings($return_config = false)
 	global $txt, $scripturl, $context;
 
 	$config_vars = array(
-			// Big Options... polls, pinned, bbc....
-			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
-		'',
 			// Number formatting, timezones.
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
 		'',

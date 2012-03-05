@@ -499,7 +499,7 @@ function Display()
 	$context['is_pinned'] = $topicinfo['is_pinned'];
 	$context['is_approved'] = $topicinfo['approved'];
 
-	$context['is_poll'] = $topicinfo['id_poll'] > 0 && $settings['pollMode'] == '1' && allowedTo('poll_view');
+	$context['is_poll'] = $topicinfo['id_poll'] > 0 && allowedTo('poll_view');
 
 	// Did this user start the topic or not?
 	$context['user']['started'] = $user_info['id'] == $topicinfo['id_member_started'] && !$user_info['is_guest'];
@@ -1058,8 +1058,8 @@ function Display()
 
 	// Cleanup all the permissions with extra stuff...
 	$context['can_mark_notify'] &= !$context['user']['is_guest'];
-	$context['can_add_poll'] &= $settings['pollMode'] == '1' && $topicinfo['id_poll'] <= 0;
-	$context['can_remove_poll'] &= $settings['pollMode'] == '1' && $topicinfo['id_poll'] > 0;
+	$context['can_add_poll'] &= $topicinfo['id_poll'] <= 0;
+	$context['can_remove_poll'] &= $topicinfo['id_poll'] > 0;
 	$context['can_reply'] &= empty($topicinfo['locked']) || allowedTo('moderate_board');
 	$context['can_reply_unapproved'] &= $settings['postmod_active'] && (empty($topicinfo['locked']) || allowedTo('moderate_board'));
 	// Handle approval flags...

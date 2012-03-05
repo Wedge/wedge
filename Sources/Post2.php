@@ -419,7 +419,7 @@ function Post2()
 	}
 
 	// Validate the poll...
-	if (isset($_REQUEST['poll']) && $settings['pollMode'] == '1')
+	if (isset($_REQUEST['poll']))
 	{
 		if (!empty($topic) && !isset($_REQUEST['msg']))
 			fatal_lang_error('no_access', false);

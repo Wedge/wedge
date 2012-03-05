@@ -1624,7 +1624,7 @@ function prepareSearchContext($reset = false)
 		'id' => $message['id_topic'],
 		'is_pinned' => !empty($message['is_pinned']),
 		'is_locked' => !empty($message['locked']),
-		'is_poll' => $settings['pollMode'] == '1' && $message['id_poll'] > 0,
+		'is_poll' => $message['id_poll'] > 0,
 		'posted_in' => !empty($participants[$message['id_topic']]),
 		'views' => $message['num_views'],
 		'replies' => $message['num_replies'],

@@ -195,7 +195,7 @@ function MessageIndex()
 	// Set the variables up for the template.
 	$context['can_mark_notify'] = allowedTo('mark_notify') && !$user_info['is_guest'];
 	$context['can_post_new'] = allowedTo('post_new') || ($settings['postmod_active'] && allowedTo('post_unapproved_topics'));
-	$context['can_post_poll'] = $settings['pollMode'] == '1' && allowedTo('poll_post') && $context['can_post_new'];
+	$context['can_post_poll'] = allowedTo('poll_post') && $context['can_post_new'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
 	$context['can_approve_posts'] = allowedTo('approve_posts');
 
@@ -348,9 +348,6 @@ function MessageIndex()
 		// Begin 'printing' the message index for current board.
 		while ($row = wesql::fetch_assoc($result))
 		{
-			if ($row['id_poll'] > 0 && $settings['pollMode'] == '0')
-				continue;
-
 			if (!$pre_query)
 				$topic_ids[] = $row['id_topic'];
 
@@ -490,7 +487,7 @@ function MessageIndex()
 				),
 				'is_pinned' => !empty($row['is_pinned']),
 				'is_locked' => !empty($row['locked']),
-				'is_poll' => $settings['pollMode'] == '1' && $row['id_poll'] > 0,
+				'is_poll' => $row['id_poll'] > 0,
 				'is_posted_in' => false,
 				'icon' => $row['first_icon'],
 				'icon_url' => $theme[$context['icon_sources'][$row['first_icon']]] . '/post/' . $row['first_icon'] . '.gif',

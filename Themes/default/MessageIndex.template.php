@@ -649,8 +649,8 @@ function template_messageindex_legend()
 		</we:title>
 		<p>
 			<img src="' . $theme['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
-			<img src="' . $theme['images_url'] . '/icons/quick_pin.gif" class="middle"> ', $txt['pinned_topic'], '<br>', $settings['pollMode'] == '1' ? '
-			<img src="' . $theme['images_url'] . '/topic/normal_poll.png" class="middle"> ' . $txt['poll'] : '', '<br>', !empty($settings['enableParticipation']) && $context['user']['is_logged'] ? '
+			<img src="' . $theme['images_url'] . '/icons/quick_pin.gif" class="middle"> ', $txt['pinned_topic'], '<br>
+			<img src="' . $theme['images_url'] . '/topic/normal_poll.png" class="middle"> ' . $txt['poll'], '<br>', !empty($settings['enableParticipation']) && $context['user']['is_logged'] ? '
 			<img src="' . $theme['images_url'] . '/topic/my_normal_post.png" class="middle"> ' . $txt['participation_caption'] : '', '
 		</p>
 	</section>';
