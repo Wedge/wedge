@@ -703,8 +703,7 @@ function Display()
 				'votes' => $option['votes'],
 				'voted_this' => $option['voted_this'] != -1,
 				'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif"><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif"></span>',
-				// Note: IE < 8 requires us to set a width on the container, too.
-				'bar_ndt' => $bar > 0 ? '<div class="bar" style="width: ' . ($bar * 3.5 + 4) . 'px"><div style="width: ' . $bar * 3.5 . 'px"></div></div>' : '',
+				'bar_ndt' => $bar > 0 ? '<div class="bar" style="width: ' . ($bar * 3) . 'px"></div>' : '',
 				'bar_width' => $barWide,
 				'option' => parse_bbc($option['label']),
 				'vote_button' => '<input type="' . ($pollinfo['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'

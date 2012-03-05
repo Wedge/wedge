@@ -205,7 +205,7 @@ function ModifySpamSettings($return_config = false)
 	$context['verification_image_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand());
 
 	$config_vars = array(
-			array('desc', 'antispam_Settings_desc'),
+			array('desc', 'antispam_settings_desc'),
 			array('check', 'reg_verification'),
 			array('check', 'search_enable_captcha'),
 			// This, my friend, is a cheat :p
@@ -351,7 +351,7 @@ function ModifySpamSettings($return_config = false)
 	$(\'#guests_require_captcha\').attr(\'disabled\', true);');
 
 	$context['post_url'] = $scripturl . '?action=admin;area=antispam;save';
-	$context['page_title'] = $context['settings_title'] = $txt['antispam_Settings'];
+	$context['page_title'] = $context['settings_title'] = $txt['antispam_settings'];
 
 	wetem::load('show_settings');
 

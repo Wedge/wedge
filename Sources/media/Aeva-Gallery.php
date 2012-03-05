@@ -731,7 +731,7 @@ function aeva_viewAlbum()
 	aeva_addHeaders(empty($current_album['options']['autosize']) || $current_album['options']['autosize'] == 'yes');
 }
 
-function aeva_PrevNextThumb($myurl, &$prev)
+function aeva_prevNextThumb($myurl, &$prev)
 {
 	global $galurl, $amSettings;
 
@@ -1050,21 +1050,21 @@ function aeva_viewItem()
 	// Try to keep prev/next titles on a single line
 	$mtl = 20;
 	$item_data['current_title'] = westr::cut($item_data['title'], $mtl);
-	$item_data['current_thumb'] = aeva_PrevNextThumb($myurl, $prevnext[$cur]);
+	$item_data['current_thumb'] = aeva_prevNextThumb($myurl, $prevnext[$cur]);
 	$item_data['prev_page'] = $cur > 1 ? $prevnext[max(0, $cur-5)][0] . $urlmore : 0;
 	$item_data['prev2'] = $cur > 1 ? $prevnext[$cur-2][0] . $urlmore : 0;
 	$item_data['prev2_title'] = $cur > 1 ? westr::cut($prevnext[$cur-2][1], $mtl) : '';
-	$item_data['prev2_thumb'] = $cur <= 1 ? '' : aeva_PrevNextThumb($myurl, $prevnext[$cur-2]);
+	$item_data['prev2_thumb'] = $cur <= 1 ? '' : aeva_prevNextThumb($myurl, $prevnext[$cur-2]);
 	$item_data['prev'] = $cur > 0 ? $prevnext[$cur-1][0] . $urlmore : 0;
 	$item_data['prev_title'] = $cur > 0 ? westr::cut($prevnext[$cur-1][1], $mtl) : '';
-	$item_data['prev_thumb'] = $cur <= 0 ? '' : aeva_PrevNextThumb($myurl, $prevnext[$cur-1]);
+	$item_data['prev_thumb'] = $cur <= 0 ? '' : aeva_prevNextThumb($myurl, $prevnext[$cur-1]);
 	$maxc = count($prevnext) - 1;
 	$item_data['next'] = $cur < $maxc ? $prevnext[$cur+1][0] . $urlmore : 0;
 	$item_data['next_title'] = $cur < $maxc ? westr::cut($prevnext[$cur+1][1], $mtl) : '';
-	$item_data['next_thumb'] = $cur >= $maxc ? '' : aeva_PrevNextThumb($myurl, $prevnext[$cur+1]);
+	$item_data['next_thumb'] = $cur >= $maxc ? '' : aeva_prevNextThumb($myurl, $prevnext[$cur+1]);
 	$item_data['next2'] = $cur < $maxc - 1 ? $prevnext[$cur+2][0] . $urlmore : 0;
 	$item_data['next2_title'] = $cur < $maxc - 1 ? westr::cut($prevnext[$cur+2][1], $mtl) : '';
-	$item_data['next2_thumb'] = $cur >= $maxc - 1 ? '' : aeva_PrevNextThumb($myurl, $prevnext[$cur+2]);
+	$item_data['next2_thumb'] = $cur >= $maxc - 1 ? '' : aeva_prevNextThumb($myurl, $prevnext[$cur+2]);
 	$item_data['next_page'] = $cur < $maxc ? $prevnext[min($maxc, $cur+5)][0] . $urlmore : 0;
 	unset($prevnext);
 

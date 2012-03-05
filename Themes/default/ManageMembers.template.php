@@ -364,63 +364,64 @@ function template_admin_member_prefs()
 		</form>';
 
 	add_js('
-str_default = ' . JavaScriptEscape($txt['member_prefs_default']) . ';
-str_change = ' . JavaScriptEscape($txt['member_prefs_change']) . ';
-str_guests = ' . JavaScriptEscape($txt['member_prefs_guest']) . ';
-str_members = ' . JavaScriptEscape($txt['member_prefs_members']) . ';
-str_override = ' . JavaScriptEscape($txt['member_prefs_override']) . ';
-str_nochange = ' . JavaScriptEscape($txt['no_change']) . ';
-str_leavealone = ' . JavaScriptEscape($txt['leave_alone']) . ';
-str_yes = ' . JavaScriptEscape($txt['yes']) . ';
-str_no = ' . JavaScriptEscape($txt['no']) . ';
-items = {' . implode(',', $context['js_opts']) . '};
-$.each(items, function (index, value) {
-	$("#dd_" + index).append(\'<input type="button" class="modify membopt" value="\' + str_change + \'" onclick="modifyItem(\\\'\' + index + \'\\\');">\');
-});
-function modifyItem(index)
-{
-	var this_item = items[index], this_html = "";
-	if (this_item[0] == "check")
-	{
-		this_html = str_guests + " <select name=\"guests[" + index + "]\">";
-		if (this_item[1] == 0)
-		{
-			this_html += "<option value=\"0\" selected>" + (str_nochange.replace("%s", str_no)) + "</option>";
-			this_html += "<option value=\"1\">" + str_yes + "</option>";
-		}
-		else
-		{
-			this_html += "<option value=\"0\">" + str_no + "</option>";
-			this_html += "<option value=\"1\" selected>" + (str_nochange.replace("%s", str_yes)) + "</option>";
-		}
-		this_html += "</select><br>";
-		this_html += str_members + " <select name=\"members[" + index + "]\">";
-		this_html += "<option value=\"leavealone\" selected>" + str_leavealone + "</option>";
-		this_html += "<option value=\"0\">" + (str_override.replace("%s", str_no)) + "</option>";
-		this_html += "<option value=\"1\">" + (str_override.replace("%s", str_yes)) + "</option>";
-		this_html += "</select>";
+	str_default = ' . JavaScriptEscape($txt['member_prefs_default']) . ';
+	str_change = ' . JavaScriptEscape($txt['member_prefs_change']) . ';
+	str_guests = ' . JavaScriptEscape($txt['member_prefs_guest']) . ';
+	str_members = ' . JavaScriptEscape($txt['member_prefs_members']) . ';
+	str_override = ' . JavaScriptEscape($txt['member_prefs_override']) . ';
+	str_nochange = ' . JavaScriptEscape($txt['no_change']) . ';
+	str_leavealone = ' . JavaScriptEscape($txt['leave_alone']) . ';
+	str_yes = ' . JavaScriptEscape($txt['yes']) . ';
+	str_no = ' . JavaScriptEscape($txt['no']) . ';
+	items = {' . implode(',', $context['js_opts']) . '};
+	$.each(items, function (idx, val) {
+		$("#dd_" + idx).append(\'<input type="button" class="modify membopt" value="\' + str_change + \'" onclick="modifyItem(\\\'\' + idx + \'\\\');">\');
+	});
 
-		$("#dd_" + index).html(this_html);
-		$("#dd_" + index + " select").sb();
-	}
-	else if (this_item[0] == "select")
+	function modifyItem(index)
 	{
-		this_html = str_guests + " <select name=\"guests[" + index + "]\">";
-		$.each(this_item[2], function (idx, val) {
-			this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", val) : ">" + val) + "</option>";
-		});
-		this_html += "</select><br>";
-		this_html += str_members + " <select name=\"members[" + index + "]\">";
-		this_html += "<option value=\"leavealone\" selected>" + str_leavealone + "</option>";
-		$.each(this_item[2], function (idx, val) {
-			this_html += "<option value=\"" + idx + "\">" + (str_override.replace("%s", val)) + "</option>";
-		});
-		this_html += "</select>";
+		var this_item = items[index], this_html = "";
+		if (this_item[0] == "check")
+		{
+			this_html = str_guests + " <select name=\"guests[" + index + "]\">";
+			if (this_item[1] == 0)
+			{
+				this_html += "<option value=\"0\" selected>" + (str_nochange.replace("%s", str_no)) + "</option>";
+				this_html += "<option value=\"1\">" + str_yes + "</option>";
+			}
+			else
+			{
+				this_html += "<option value=\"0\">" + str_no + "</option>";
+				this_html += "<option value=\"1\" selected>" + (str_nochange.replace("%s", str_yes)) + "</option>";
+			}
+			this_html += "</select><br>";
+			this_html += str_members + " <select name=\"members[" + index + "]\">";
+			this_html += "<option value=\"leavealone\" selected>" + str_leavealone + "</option>";
+			this_html += "<option value=\"0\">" + (str_override.replace("%s", str_no)) + "</option>";
+			this_html += "<option value=\"1\">" + (str_override.replace("%s", str_yes)) + "</option>";
+			this_html += "</select>";
 
-		$("#dd_" + index).html(this_html);
-		$("#dd_" + index + " select").sb();
-	}
-};');
+			$("#dd_" + index).html(this_html);
+			$("#dd_" + index + " select").sb();
+		}
+		else if (this_item[0] == "select")
+		{
+			this_html = str_guests + " <select name=\"guests[" + index + "]\">";
+			$.each(this_item[2], function (idx, val) {
+				this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", val) : ">" + val) + "</option>";
+			});
+			this_html += "</select><br>";
+			this_html += str_members + " <select name=\"members[" + index + "]\">";
+			this_html += "<option value=\"leavealone\" selected>" + str_leavealone + "</option>";
+			$.each(this_item[2], function (idx, val) {
+				this_html += "<option value=\"" + idx + "\">" + (str_override.replace("%s", val)) + "</option>";
+			});
+			this_html += "</select>";
+
+			$("#dd_" + index).html(this_html);
+			$("#dd_" + index + " select").sb();
+		}
+	};');
 }
 
 ?>
