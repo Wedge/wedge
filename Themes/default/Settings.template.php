@@ -18,7 +18,7 @@ function template_options()
 	$context['theme_options'] = array(
 		array(
 			'id' => 'show_board_desc',
-			'label' => $txt['board_desc_inside'],
+			'label' => $txt['show_board_desc'],
 			'default' => true,
 		),
 		array(
@@ -58,12 +58,12 @@ function template_options()
 		),
 		array(
 			'id' => 'view_newest_first',
-			'label' => $txt['recent_posts_at_top'],
+			'label' => $txt['view_newest_first'],
 			'default' => true,
 		),
 		array(
 			'id' => 'view_newest_pm_first',
-			'label' => $txt['recent_pms_at_top'],
+			'label' => $txt['view_newest_pm_first'],
 			'default' => true,
 		),
 		array(

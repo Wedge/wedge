@@ -1249,7 +1249,7 @@ function ModifyLanguageSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = array(
-		'language' => array('language', $txt['default_language'], 'file', 'select', array(), null, 'disabled' => $settings_not_writable),
+		'language' => array('language', $txt['setting_language'], 'file', 'select', array(), null, 'disabled' => $settings_not_writable),
 		array('userLanguage', $txt['userLanguage'], 'db', 'check', null, 'userLanguage'),
 	);
 

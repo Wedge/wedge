@@ -16,36 +16,6 @@ ol.search_results
 		border-bottom: 1px solid #ccc
 
 
-/* Styles for the core features screen.
-------------------------------------------------------- */
-.features
-	overflow: visible
-	float: left
-	width: 50%
-	min-width: 300px
-	.wrc
-		padding: 0 1em !important
-		margin: .3em
-		min-height: 130px
-	h4
-		padding: 1em 0 0.5em 0.5em
-		margin: 0
-		font-size: 1.1em
-		a
-			text-decoration: underline
-	p
-		padding: 0 1em 1em
-		margin: 0
-
-.features_image
-	float: left
-	margin: 2.4em 2em 0.5em 1em
-
-.features_switch
-	margin: 1.5em 1em 1em 1em
-	float: right
-
-
 /* Styles for the admin home screen bar.
 ------------------------------------------------------- */
 #admin_main_section
@@ -104,6 +74,7 @@ ol.search_results
 #yourVersion, #wedgeVersion
 	white-space: nowrap
 
+
 /* Plugin manager goodies
 ------------------------------------------------------- */
 .plugin_item extends .admin_item
@@ -116,6 +87,7 @@ ol.search_results
 	width: 16px
 	height: 16px
 	background: url($images/admin/members.gif) no-repeat
+
 
 /* Common admin center classes.
 ------------------------------------------------------- */
@@ -391,6 +363,18 @@ ul.pending_payments
 	width: 20px
 	display: inline-block
 	text-align: center
+
+
+/* Styles for manage member options.
+------------------------------------------------- */
+input.membopt
+	margin-left: 1em
+	opacity: 0
+	transition: opacity .5s ease
+
+dl.settings dd.memberopt:hover
+	input.membopt
+		opacity: 1
 
 
 /* Styles for the themes section.

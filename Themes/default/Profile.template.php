@@ -1403,7 +1403,7 @@ function template_profile_pm_settings()
 										</select>
 								</dd>
 								<dt>
-										<label for="view_newest_pm_first">', $txt['recent_pms_at_top'], '</label>
+										<label for="view_newest_pm_first">', $txt['view_newest_pm_first'], '</label>
 								</dt>
 								<dd>
 										<input type="hidden" name="default_options[view_newest_pm_first]" value="0">
@@ -1481,7 +1481,7 @@ function template_profile_theme_settings()
 				<ul id="theme_settings">
 					<li>
 						<input type="hidden" name="default_options[show_board_desc]" value="0">
-						<label><input type="checkbox" name="default_options[show_board_desc]" id="show_board_desc" value="1"', !empty($context['member']['options']['show_board_desc']) ? ' checked' : '', '> ', $txt['board_desc_inside'], '</label>
+						<label><input type="checkbox" name="default_options[show_board_desc]" id="show_board_desc" value="1"', !empty($context['member']['options']['show_board_desc']) ? ' checked' : '', '> ', $txt['show_board_desc'], '</label>
 					</li>
 					<li>
 						<input type="hidden" name="default_options[show_children]" value="0">
@@ -1527,7 +1527,7 @@ function template_profile_theme_settings()
 	echo '
 					<li>
 						<input type="hidden" name="default_options[view_newest_first]" value="0">
-						<label><input type="checkbox" name="default_options[view_newest_first]" id="view_newest_first" value="1"', !empty($context['member']['options']['view_newest_first']) ? ' checked' : '', '> ', $txt['recent_posts_at_top'], '</label>
+						<label><input type="checkbox" name="default_options[view_newest_first]" id="view_newest_first" value="1"', !empty($context['member']['options']['view_newest_first']) ? ' checked' : '', '> ', $txt['view_newest_first'], '</label>
 					</li>';
 
 	// Choose WYSIWYG settings?

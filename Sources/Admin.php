@@ -427,6 +427,7 @@ function Admin()
 					'subsections' => array(
 						'options' => array($txt['configure_options']),
 						'sig' => array($txt['signature_settings_short']),
+						'prefs' => array($txt['admin_member_prefs']),
 						'profile' => array($txt['custom_profile_shorttitle']),
 						'whosonline' => array($txt['admin_whos_online']),
 					),

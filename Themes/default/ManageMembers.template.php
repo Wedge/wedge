@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Displays the search and browse features for the admin-only member list.
+ * Displays the search and browse features for the admin-only member list as well as handling member preferences.
  *
  * @package wedge
  * @copyright 2010-2012 Wedgeward, wedge.org
@@ -300,6 +300,127 @@ function template_admin_browse()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 	}
+}
+
+function template_admin_member_prefs()
+{
+	global $context, $txt;
+
+	echo '
+		<we:cat>', $txt['admin_member_prefs'], '</we:cat>
+		<form action="<URL>?action=admin;area=memberoptions;sa=prefs;save" method="post">
+			<div class="windowbg2 wrc">
+				<dl class="settings">';
+
+	$in_dl = true;
+	foreach ($context['member_options'] as $key => $config_var)
+	{
+		if (is_array($config_var))
+		{
+			if (!$in_dl)
+				echo '
+				<dl class="settings">';
+			$in_dl = true;
+
+			echo '
+					<dt id="dt_', $key, '">', isset($txt[$key]) ? $txt[$key] : $key, '</dt>
+					<dd id="dd_', $key, '" class="memberopt">', $txt['member_prefs_default'], ' 
+						';
+			if ($config_var[0] == 'check')
+				echo '<strong>', !empty($config_var['current']) ? $txt['yes'] : $txt['no'], '</strong>';
+			elseif ($config_var[0] == 'select')
+			{
+				// Do we have a current value that we know about? If not, use the first in the list.
+				if (!isset($config_var['current'], $config_var[2][$config_var['current']]))
+				{
+					$keys = array_keys($config_var[2]);
+					$config_var['current'] = $keys[0];
+				}
+				echo '<strong>', $config_var[2][$config_var['current']], '</strong>';
+			}
+
+			echo '
+					</dd>';
+		}
+		else
+		{
+			if ($in_dl)
+				echo '
+				</dl>';
+			$in_dl = false;
+			echo '
+				<hr>';
+		}
+	}
+
+	echo '
+				</dl>
+				<hr>
+				<div class="right">
+					<input type="submit" value="', $txt['save'], '" class="submit">
+				</div>
+			</div>
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+		</form>';
+
+	add_js('
+str_default = ' . JavaScriptEscape($txt['member_prefs_default']) . ';
+str_change = ' . JavaScriptEscape($txt['member_prefs_change']) . ';
+str_guests = ' . JavaScriptEscape($txt['member_prefs_guest']) . ';
+str_members = ' . JavaScriptEscape($txt['member_prefs_members']) . ';
+str_override = ' . JavaScriptEscape($txt['member_prefs_override']) . ';
+str_nochange = ' . JavaScriptEscape($txt['no_change']) . ';
+str_leavealone = ' . JavaScriptEscape($txt['leave_alone']) . ';
+str_yes = ' . JavaScriptEscape($txt['yes']) . ';
+str_no = ' . JavaScriptEscape($txt['no']) . ';
+items = {' . implode(',', $context['js_opts']) . '};
+$.each(items, function (index, value) {
+	$("#dd_" + index).append(\'<input type="button" class="modify membopt" value="\' + str_change + \'" onclick="modifyItem(\\\'\' + index + \'\\\');">\');
+});
+function modifyItem(index)
+{
+	var this_item = items[index], this_html = "";
+	if (this_item[0] == "check")
+	{
+		this_html = str_guests + " <select name=\"guests[" + index + "]\">";
+		if (this_item[1] == 0)
+		{
+			this_html += "<option value=\"0\" selected>" + (str_nochange.replace("%s", str_no)) + "</option>";
+			this_html += "<option value=\"1\">" + str_yes + "</option>";
+		}
+		else
+		{
+			this_html += "<option value=\"0\">" + str_no + "</option>";
+			this_html += "<option value=\"1\" selected>" + (str_nochange.replace("%s", str_yes)) + "</option>";
+		}
+		this_html += "</select><br>";
+		this_html += str_members + " <select name=\"members[" + index + "]\">";
+		this_html += "<option value=\"leavealone\" selected>" + str_leavealone + "</option>";
+		this_html += "<option value=\"0\">" + (str_override.replace("%s", str_no)) + "</option>";
+		this_html += "<option value=\"1\">" + (str_override.replace("%s", str_yes)) + "</option>";
+		this_html += "</select>";
+
+		$("#dd_" + index).html(this_html);
+		$("#dd_" + index + " select").sb();
+	}
+	else if (this_item[0] == "select")
+	{
+		this_html = str_guests + " <select name=\"guests[" + index + "]\">";
+		$.each(this_item[2], function (idx, val) {
+			this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", val) : ">" + val) + "</option>";
+		});
+		this_html += "</select><br>";
+		this_html += str_members + " <select name=\"members[" + index + "]\">";
+		this_html += "<option value=\"leavealone\" selected>" + str_leavealone + "</option>";
+		$.each(this_item[2], function (idx, val) {
+			this_html += "<option value=\"" + idx + "\">" + (str_override.replace("%s", val)) + "</option>";
+		});
+		this_html += "</select>";
+
+		$("#dd_" + index).html(this_html);
+		$("#dd_" + index + " select").sb();
+	}
+};');
 }
 
 ?>

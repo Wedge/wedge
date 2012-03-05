@@ -50,6 +50,7 @@ function ManageMemberOptions()
 	$subActions = array(
 		'options' => 'ModifyMemberSettings',
 		'sig' => 'ModifySignatureSettings',
+		'prefs' => 'ModifyMemberPreferences',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
 		'whosonline' => 'ModifyWhosOnline',
@@ -69,6 +70,9 @@ function ManageMemberOptions()
 			),
 			'sig' => array(
 				'description' => $txt['signature_settings_desc'],
+			),
+			'prefs' => array(
+				'description' => $txt['member_prefs_desc'],
 			),
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
@@ -1310,4 +1314,113 @@ function ModifyWhosOnline($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
+function ModifyMemberPreferences($return_config = false)
+{
+	global $context, $txt, $settings;
+
+	loadLanguage('Profile');
+
+	$config_vars = array(
+		array('check', 'show_board_desc'),
+		array('check', 'show_children'),
+		array('check', 'use_sidebar_menu'),
+		array('check', 'show_no_avatars'),
+		array('check', 'show_no_signatures'),
+		array('check', 'show_no_censored'),
+		array('check', 'return_to_post'),
+		array('check', 'no_new_reply_warning'),
+		array('check', 'view_newest_first'),
+		array('check', 'posts_apply_ignore_list'),
+		array('check', 'wysiwyg_default'),
+		array('check', 'auto_notify'),
+		array('check', 'popup_messages'),
+		'',
+		array('check', 'view_newest_pm_first'),
+		array('check', 'copy_to_outbox'),
+		array('check', 'pm_remove_inbox_label'),
+		'',
+		array('select', 'topics_per_page', array(
+			0 => $txt['per_page_default'],
+			5 => 5,
+			10 => 10,
+			25 => 25,
+			50 => 50,
+		)),
+		array('select', 'messages_per_page', array(
+			0 => $txt['per_page_default'],
+			5 => 5,
+			10 => 10,
+			25 => 25,
+			50 => 50,
+		)),
+		'',
+		array('select', 'display_quick_reply', array(
+			0 => $txt['display_quick_reply1'],
+			1 => $txt['display_quick_reply2'],
+			2 => $txt['display_quick_reply3']
+		)),
+	);
+
+	call_hook('member_prefs', array(&$config_vars, &$return_config));
+
+	// This isn't the usual setup for this page, but since we still want it to be searchable and it isn't any extra effort
+	// to make it so (since we still need a list of options, ultimately...) we may as well.
+	if ($return_config)
+		return $config_vars;
+
+	// First, get everything in context, as well as preparing things for elsewhere.
+	$context['member_options'] = array();
+	$opts = array();
+	$context['js_opts'] = array();
+	foreach ($config_vars as $var)
+	{
+		if (isset($var[1]))
+		{
+			$context['member_options'][$var[1]] = $var;
+			$opts[] = $var[1];
+		}
+		else
+			$context['member_options'][] = $var;
+	}
+
+	// Now we get all the default values for these things.
+	$request = wesql::query('
+		SELECT variable, value
+		FROM {db_prefix}themes
+		WHERE id_member = {int:guest}
+			AND variable IN ({array_string:vars})',
+		array(
+			'guest' => -1, // In the themes table, id_member = -1 is guest/new user option, 0 = theme option, any other = user id it applies to
+			'vars' => $opts,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$context['member_options'][$row['variable']]['current'] = $row['value'];
+	wesql::free_result($request);
+
+	foreach ($context['member_options'] as $key => $var)
+	{
+		if (!is_array($var))
+			continue;
+		if ($var[0] == 'check')
+			$item = $key . ':[' . JavaScriptEscape($var[0]) . ',' . (!empty($var['current']) ? 1 : 0) . ']'; // key => (type, current)
+		elseif ($var[0] == 'select')
+		{
+			$item = $key . ':[' . JavaScriptEscape($var[0]) . ',' . JavaScriptEscape(!empty($var['current']) ? $var['current'] : (isset($var['default']) ? $var['default'] : 0)) . ',{';
+			$this_choice = array();
+			foreach ($var[2] as $k => $v)
+				$this_choice[] = $k . ':' . JavaScriptEscape($v);
+			if (empty($this_choice))
+				continue;
+			$item .= implode(',', $this_choice) . '}]';
+		}
+		else
+			continue;
+
+		$context['js_opts'][] = $item;
+	}
+
+	loadTemplate('ManageMembers');
+	wetem::load('admin_member_prefs');
+}
 ?>

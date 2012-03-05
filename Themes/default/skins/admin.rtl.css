@@ -8,16 +8,6 @@
 	margin-left: 5px
 	float: left
 
-.features_image
-	float: right
-	margin: 0 1em 0.5em 2em
-
-.features_switch
-	float: left
-
-.features h4
-	padding: 1em 0.5em 0.5em 0
-
 // Admin home
 #wedge_news dd
 	padding: 0
