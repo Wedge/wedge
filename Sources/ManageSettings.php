@@ -136,8 +136,6 @@ function ModifyBasicSettings($return_config = false)
 			array('select', 'pollMode', array($txt['disable_polls'], $txt['enable_polls'], $txt['polls_as_topics'])),
 		'',
 			// Number formatting, timezones.
-			array('float', 'time_offset'),
-			'default_timezone' => array('select', 'default_timezone', array()),
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
 		'',
 			// Statistics.
@@ -147,22 +145,6 @@ function ModifyBasicSettings($return_config = false)
 			// Option-ish things... miscellaneous sorta.
 			array('check', 'disallow_sendBody'),
 	);
-
-	// PHP can give us a list of all the time zones. Yay.
-	$all_zones = timezone_identifiers_list();
-
-	// Make sure we set the value to the same as the printed value.
-	$useful_regions = array_flip(array('America', 'Antartica', 'Arctic', 'Asia', 'Atlantic', 'Europe', 'Indian', 'Pacific'));
-	foreach ($all_zones as $zone)
-	{
-		if (strpos($zone, '/') === false)
-			continue;
-		list ($region, $country) = explode('/', $zone, 2);
-		if (isset($useful_regions[$region]))
-			$config_vars['default_timezone'][2][$zone] = $zone;
-	}
-	// Don't forget UTC!
-	$config_vars['default_timezone'][2]['UTC'] = 'UTC';
 
 	if ($return_config)
 		return $config_vars;

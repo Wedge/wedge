@@ -212,21 +212,6 @@ function Admin()
 					),
 				),
 				'',
-				'managesearch' => array(
-					'label' => $txt['manage_search'],
-					'file' => 'ManageSearch',
-					'function' => 'ManageSearch',
-					'icon' => 'search.gif',
-					'bigicon' => 'search.png',
-					'permission' => array('admin_forum'),
-					'subsections' => array(
-						'weights' => array($txt['search_weights']),
-						'method' => array($txt['search_method']),
-						'',
-						'settings' => array($txt['settings']),
-					),
-				),
-				'',
 				'news' => array(
 					'label' => $txt['news_title'],
 					'file' => 'ManageNews',
@@ -439,6 +424,14 @@ function Admin()
 						'whosonline' => array($txt['admin_whos_online']),
 					),
 				),
+				'reports' => array(
+					'label' => $txt['generate_reports'],
+					'file' => 'Reports',
+					'function' => 'ReportsMain',
+					'icon' => 'reports.gif',
+					'bigicon' => 'reports.png',
+				),
+				'',
 				'pm' => array(
 					'label' => $txt['admin_personal_messages'],
 					'file' => 'ManageSettings',
@@ -538,12 +531,19 @@ function Admin()
 					),
 				),
 				'',
-				'reports' => array(
-					'label' => $txt['generate_reports'],
-					'file' => 'Reports',
-					'function' => 'ReportsMain',
-					'icon' => 'reports.gif',
-					'bigicon' => 'reports.png',
+				'managesearch' => array(
+					'label' => $txt['manage_search'],
+					'file' => 'ManageSearch',
+					'function' => 'ManageSearch',
+					'icon' => 'search.gif',
+					'bigicon' => 'search.png',
+					'permission' => array('admin_forum'),
+					'subsections' => array(
+						'weights' => array($txt['search_weights']),
+						'method' => array($txt['search_method']),
+						'',
+						'settings' => array($txt['settings']),
+					),
 				),
 				'',
 				'logs' => array(

@@ -215,6 +215,8 @@ function ModifyGeneralSettings($return_config = false)
 {
 	global $scripturl, $context, $txt, $settings, $cachedir;
 
+	loadLanguage('ManageSettings');
+
 	/* If you're writing a mod, it's a BAD idea to add anything here....
 	For each option:
 		variable name, description, type (constant), size/possible values, helptext.
@@ -223,9 +225,12 @@ function ModifyGeneralSettings($return_config = false)
 	$config_vars = array(
 		array('mbname', $txt['admin_title'], 'file', 'text', 30),
 		'',
-		array('maintenance', $txt['admin_maintain'], 'file', 'check'),
-		array('mtitle', $txt['maintenance_subject'], 'file', 'text', 36),
-		array('mmessage', $txt['maintenance_message'], 'file', 'text', 36),
+		array('maintenance', $txt['maintenance'], 'file', 'check'),
+		array('mtitle', $txt['setting_mtitle'], 'file', 'text', 36),
+		array('mmessage', $txt['setting_mmessage'], 'file', 'text', 36),
+		'',
+		array('time_offset', $txt['setting_time_offset'], 'db', 'float', null, 'time_offset'),
+		'default_timezone' => array('default_timezone', $txt['setting_default_timezone'], 'db', 'select', array()),
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('enableCompressedData', $txt['enableCompressedData'], 'db', 'check', null, 'enableCompressedData'),
@@ -244,6 +249,22 @@ function ModifyGeneralSettings($return_config = false)
 		'',
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
 	);
+
+	// PHP can give us a list of all the time zones. Yay.
+	$all_zones = timezone_identifiers_list();
+
+	// Make sure we set the value to the same as the printed value. But this is sadly messy.
+	$useful_regions = array_flip(array('America', 'Antartica', 'Arctic', 'Asia', 'Atlantic', 'Europe', 'Indian', 'Pacific'));
+	foreach ($all_zones as $zone)
+	{
+		if (strpos($zone, '/') === false)
+			continue;
+		list ($region, $country) = explode('/', $zone, 2);
+		if (isset($useful_regions[$region]))
+			$config_vars['default_timezone'][4][$zone] = array($zone, $zone);
+	}
+	// Don't forget UTC!
+	$config_vars['default_timezone'][4]['UTC'] = array('UTC', 'UTC');
 
 	if ($return_config)
 		return $config_vars;
