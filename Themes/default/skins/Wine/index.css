@@ -94,7 +94,7 @@ body extends .grad700
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
 
-.wedgesymbol
+#footer div.frame
 	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
 
 // "With rounded corners" class, for modern browsers...

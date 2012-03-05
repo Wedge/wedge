@@ -246,8 +246,8 @@ ul#noava
 	div.frame::before
 		float: left
 		padding-right: 10px
-		content: url($here/img/wedgebox57_.png)
-	div.frame extends .wedgesymbol
+		content: url($images/wedgebot.png)
+	div.frame
 		padding: 10px 20px
 	a
 		color: #679
@@ -263,8 +263,8 @@ ul#noava
 
 #upper_section .frame::before
 	float: right
-	margin: 20px
-	content: url($images/welogo30.png)
+	margin: 15px 20px
+	content: url($images/wedgetop.png)
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -344,9 +344,6 @@ em
 .arrows
 	background-image: url($images/menu.gif)
 	background-repeat: no-repeat
-
-.wedgesymbol
-	background: transparent url($images/we3s.png) 98.5% 75% no-repeat
 
 // "With rounded corners" class, for modern browsers...
 .wrc, .wrc_top, .wrc_bottom
