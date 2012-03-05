@@ -955,7 +955,24 @@ function AdminSearchInternal()
 
 		foreach ($config_vars as $var)
 			if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning')))
-				$search_data['settings'][] = array($var[(isset($var[2]) && in_array($var[2], array('file', 'db'))) ? 0 : 1], $setting_area[1]);
+			{
+				// Using the construction of prepareServerSettingsContext?
+				if (isset($var[2]) && in_array($var[2], array('file', 'db')))
+				{
+					$item = array($var[0], $setting_area[1]);
+					if (isset($var[5], $helptxt[$var[5]]))
+						$item[2] = $var[5];
+					$search_data['settings'][] = $item;
+				}
+				// Then it's prepareDBSettingsContext style.
+				else
+				{
+					$item = array($var[1], $setting_area[1]);
+					if (isset($var['help'], $helptxt[$var['help']]))
+						$item[2] = $var['help'];
+					$search_data['settings'][] = $item;
+				}
+			}
 	}
 
 	$context['page_title'] = $txt['admin_search_results'];
@@ -990,7 +1007,7 @@ function AdminSearchInternal()
 					'url' => (substr($item[1], 0, 4) == 'area' ? $scripturl . '?action=admin;' . $item[1] : $item[1]) . ';' . $context['session_query'] . ((substr($item[1], 0, 4) == 'area' && $section == 'settings' ? '#' . $item[0][0] : '')),
 					'name' => $name,
 					'type' => $section,
-					'help' => shorten_subject(isset($item[2]) ? strip_tags($helptxt[$item2]) : (isset($helptxt[$found]) ? strip_tags($helptxt[$found]) : ''), 255),
+					'help' => shorten_subject(isset($item[2]) ? strip_tags($helptxt[$item[2]]) : (isset($helptxt[$found]) ? strip_tags($helptxt[$found]) : ''), 255),
 				);
 			}
 		}
