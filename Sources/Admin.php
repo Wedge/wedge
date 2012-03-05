@@ -400,7 +400,7 @@ function Admin()
 					'file' => 'ManageSettings',
 					'function' => 'ModifyWarningSettings',
 					'icon' => 'security.gif',
-					'bigicon' => 'security.png',
+					'bigicon' => 'warning.png',
 					'subsections' => array(
 					),
 				),
@@ -905,7 +905,7 @@ function AdminSearchInternal()
 		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
 		array('ModifyWhosOnline', 'area=memberoptions;sa=whosonline'),
 		array('ModifySpamSettings', 'area=antispam'),
-		array('ModifyModerationSettings', 'area=warnings'),
+		array('ModifyWarningSettings', 'area=warnings'),
 		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
 		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
 		array('EditBoardSettings', 'area=manageboards;sa=settings'),
@@ -954,7 +954,7 @@ function AdminSearchInternal()
 			$config_vars = $setting_area[0](true);
 
 		foreach ($config_vars as $var)
-			if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc')))
+			if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning')))
 				$search_data['settings'][] = array($var[(isset($var[2]) && in_array($var[2], array('file', 'db'))) ? 0 : 1], $setting_area[1]);
 	}
 
@@ -984,7 +984,7 @@ function AdminSearchInternal()
 			{
 				// Format the name - and remove any descriptions the entry may have.
 				$name = isset($txt[$found]) ? $txt[$found] : (isset($txt['setting_' . $found]) ? $txt['setting_' . $found] : $found);
-				$name = preg_replace('~<(?:div|span)\sclass="smalltext">.+?</(?:div|span)>~', '', $name);
+				$name = preg_replace('~<(?:dfn)>.+?</(?:dfn)>~', '', $name);
 
 				$context['search_results'][] = array(
 					'url' => (substr($item[1], 0, 4) == 'area' ? $scripturl . '?action=admin;' . $item[1] : $item[1]) . ';' . $context['session_query'] . ((substr($item[1], 0, 4) == 'area' && $section == 'settings' ? '#' . $item[0][0] : '')),
