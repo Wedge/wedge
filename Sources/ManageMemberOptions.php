@@ -1326,12 +1326,12 @@ function ModifyMemberPreferences($return_config = false)
 		array('check', 'use_sidebar_menu'),
 		array('check', 'show_no_avatars'),
 		array('check', 'show_no_signatures'),
-		array('check', 'show_no_censored'),
+		array('check', 'show_no_censored', 'disabled' => empty($settings['allow_no_censored'])),
 		array('check', 'return_to_post'),
 		array('check', 'no_new_reply_warning'),
 		array('check', 'view_newest_first'),
 		array('check', 'posts_apply_ignore_list'),
-		array('check', 'wysiwyg_default'),
+		array('check', 'wysiwyg_default', 'disabled' => !empty($settings['disable_wysiwyg'])),
 		array('check', 'auto_notify'),
 		array('check', 'popup_messages'),
 		'',
@@ -1345,14 +1345,14 @@ function ModifyMemberPreferences($return_config = false)
 			10 => 10,
 			25 => 25,
 			50 => 50,
-		)),
+		), 'disabled' => !empty($settings['disableCustomPerPage'])),
 		array('select', 'messages_per_page', array(
 			0 => $txt['per_page_default'],
 			5 => 5,
 			10 => 10,
 			25 => 25,
 			50 => 50,
-		)),
+		), 'disabled' => !empty($settings['disableCustomPerPage'])),
 		'',
 		array('select', 'display_quick_reply', array(
 			0 => $txt['display_quick_reply1'],
@@ -1372,15 +1372,23 @@ function ModifyMemberPreferences($return_config = false)
 	$context['member_options'] = array();
 	$opts = array();
 	$context['js_opts'] = array();
+	$last = array();
 	foreach ($config_vars as $var)
 	{
+		if ($last == $var)
+			continue;
+
 		if (isset($var[1]))
 		{
+			if (!empty($var['disabled']))
+				continue;
 			$context['member_options'][$var[1]] = $var;
 			$opts[] = $var[1];
 		}
 		else
 			$context['member_options'][] = $var;
+
+		$last = $var;
 	}
 
 	// Now we get all the default values for these things.
@@ -1484,7 +1492,7 @@ function ModifyMemberPreferences($return_config = false)
 					FROM {db_prefix}members',
 					array(
 						'variable' => $variable,
-						'value' => (is_array($val) ? implode(',', $value) : $value),
+						'value' => (is_array($value) ? implode(',', $value) : $value),
 					)
 				);
 		}

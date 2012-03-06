@@ -97,6 +97,8 @@ function ModifyBasicSettings($return_config = false)
 	global $txt, $scripturl, $context;
 
 	$config_vars = array(
+			array('text', 'home_url', 'subtext' => $txt['home_url_note']),
+		'',
 			// Number formatting, timezones.
 			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
 		'',

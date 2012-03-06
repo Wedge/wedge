@@ -1909,8 +1909,13 @@ function setupMenuContext()
 		$is_b = !empty($board_info['id']);
 
 		$items = array(
-			'home' => array(
+			'site_home' => array(
 				'title' => $txt['home'],
+				'href' => !empty($settings['home_url']) ? $settings['home_url'] : '',
+				'show' => !empty($settings['home_url']),
+			),
+			'home' => array(
+				'title' => !empty($settings['home_url']) ? $txt['community'] : $txt['home'],
 				'href' => $scripturl,
 				'show' => true,
 				'sub_items' => array(
