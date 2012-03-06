@@ -417,6 +417,12 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_identity',
 			'is_dummy' => true,
 		),
+		'prefslist' => array(
+			'type' => 'callback',
+			'callback_func' => 'display_prefslist',
+			'permission' => 'profile_extra',
+			'is_dummy' => true,
+		),
 		// This does ALL the pm settings
 		'pm_prefs' => array(
 			'type' => 'callback',
@@ -1593,11 +1599,17 @@ function options($memID)
 	wetem::load('edit_options');
 	$context['page_desc'] = $txt['options_info'];
 
+	// Now we need to load the remainder of the member options.
+	loadSource('ManageMemberOptions');
+	$context['member_options'] = ModifyMemberPreferences(true);
+	// We will need to do some work on these before displaying, however.
+	processMemberPrefs('looklayout');
+
 	setupProfileContext(
 		array(
 			'smiley_set', 'hr',
 			'time_format', 'time_offset', 'hr',
-			'theme_settings',
+			'prefslist',
 		)
 	);
 }
@@ -2042,6 +2054,30 @@ function ignoreboards($memID)
 	}
 
 	loadThemeOptions($memID);
+}
+
+// ModifyMemberPreferences provides all possible preferences. This has to process them to exclude disabled items, and items not of $type.
+// That way, we have generic preferences 'profile fields'.
+function processMemberPrefs($type)
+{
+	global $context;
+	$new_items = array();
+	$last = array();
+	foreach ($context['member_options'] as $key => $pref)
+	{
+		if (is_array($pref) && (!empty($pref['disabled']) || empty($pref['display']) || $pref['display'] != $type))
+			continue;
+
+		if ($pref != $last)
+			if (!is_array($pref))
+				$new_items[] = '';
+			else
+				$new_items[$key] = $pref;
+
+		$last = $pref;
+	}
+
+	$context['member_options'] = $new_items;
 }
 
 // Load all the languages for the profile.

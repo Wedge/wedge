@@ -1470,118 +1470,47 @@ function template_profile_pm_settings()
 
 }
 
-// Template for showing theme settings. Note: template_options() actually adds the theme specific options.
-function template_profile_theme_settings()
+function template_profile_display_prefslist()
 {
-	global $context, $scripturl, $settings, $txt;
+	global $context, $settings, $txt;
 
+	// Finish the previous item.
 	echo '
 					<dd style="margin: 0"></dd>
 				</dl>
-				<ul id="theme_settings">
-					<li>
-						<input type="hidden" name="default_options[show_board_desc]" value="0">
-						<label><input type="checkbox" name="default_options[show_board_desc]" id="show_board_desc" value="1"', !empty($context['member']['options']['show_board_desc']) ? ' checked' : '', '> ', $txt['show_board_desc'], '</label>
-					</li>
-					<li>
-						<input type="hidden" name="default_options[show_children]" value="0">
-						<label><input type="checkbox" name="default_options[show_children]" id="show_children" value="1"', !empty($context['member']['options']['show_children']) ? ' checked' : '', '> ', $txt['show_children'], '</label>
-					</li>
-					<li>
-						<input type="hidden" name="default_options[use_sidebar_menu]" value="0">
-						<label><input type="checkbox" name="default_options[use_sidebar_menu]" id="use_sidebar_menu" value="1"', !empty($context['member']['options']['use_sidebar_menu']) ? ' checked' : '', '> ', $txt['use_sidebar_menu'], '</label>
-					</li>
-					<li>
-						<input type="hidden" name="default_options[show_no_avatars]" value="0">
-						<label><input type="checkbox" name="default_options[show_no_avatars]" id="show_no_avatars" value="1"', !empty($context['member']['options']['show_no_avatars']) ? ' checked' : '', '> ', $txt['show_no_avatars'], '</label>
-					</li>
-					<li>
-						<input type="hidden" name="default_options[show_no_signatures]" value="0">
-						<label><input type="checkbox" name="default_options[show_no_signatures]" id="show_no_signatures" value="1"', !empty($context['member']['options']['show_no_signatures']) ? ' checked' : '', '> ', $txt['show_no_signatures'], '</label>
-					</li>';
+				<ul id="theme_settings">';
 
-	if (!empty($settings['allow_no_censored']))
-		echo '
-					<li>
-						<input type="hidden" name="default_options[show_no_censored]" value="0">
-						<label><input type="checkbox" name="default_options[show_no_censored]" id="show_no_censored" value="1"' . (!empty($context['member']['options']['show_no_censored']) ? ' checked' : '') . '> ' . $txt['show_no_censored'] . '</label>
-					</li>';
+	foreach ($context['member_options'] as $key => $var)
+	{
+		if (!is_array($var))
+			continue;
 
+		if ($var[0] == 'check')
+			echo '
+					<li>
+						<input type="hidden" name="default_options[', $var[1], ']" value="0">
+						<label><input type="checkbox" name="default_options[', $var[1], ']" id="', $var[1], '" value="1"', !empty($context['member']['options'][$var[1]]) ? ' checked' : '', '> ', $txt[$var[1]], '</label>
+					</li>';
+		elseif ($var[0] == 'select')
+		{
+			echo '
+					<li>
+						<label>', $txt[$var[1]], '
+						<select name="default_options[', $var[1], ']" id="', $var[1], '">';
+
+			$current = !empty($context['member']['options'][$var[1]]) ? $context['member']['options'][$var[1]] : 0;
+			foreach ($var[2] as $optk => $optv)
+				echo '
+							<option value="', $optk, '"', $current == $optk ? ' selected' : '', '>', $optv, '</option>';
+
+			echo '
+						</select></label>
+					</li>';
+		}
+	}
+
+	// End this list and prepare for the end of form.
 	echo '
-					<li>
-						<input type="hidden" name="default_options[return_to_post]" value="0">
-						<label><input type="checkbox" name="default_options[return_to_post]" id="return_to_post" value="1"', !empty($context['member']['options']['return_to_post']) ? ' checked' : '', '> ', $txt['return_to_post'], '</label>
-					</li>
-					<li>
-						<input type="hidden" name="default_options[no_new_reply_warning]" value="0">
-						<label><input type="checkbox" name="default_options[no_new_reply_warning]" id="no_new_reply_warning" value="1"', !empty($context['member']['options']['no_new_reply_warning']) ? ' checked' : '', '> ', $txt['no_new_reply_warning'], '</label>
-					</li>';
-
-	if (!empty($settings['enable_buddylist']))
-		echo '
-					<li>
-						<input type="hidden" name="default_options[posts_apply_ignore_list]" value="0">
-						<label><input type="checkbox" name="default_options[posts_apply_ignore_list]" id="posts_apply_ignore_list" value="1"', !empty($context['member']['options']['posts_apply_ignore_list']) ? ' checked' : '', '> ', $txt['posts_apply_ignore_list'], '</label>
-					</li>';
-
-	echo '
-					<li>
-						<input type="hidden" name="default_options[view_newest_first]" value="0">
-						<label><input type="checkbox" name="default_options[view_newest_first]" id="view_newest_first" value="1"', !empty($context['member']['options']['view_newest_first']) ? ' checked' : '', '> ', $txt['view_newest_first'], '</label>
-					</li>';
-
-	// Choose WYSIWYG settings?
-	if (empty($settings['disable_wysiwyg']))
-		echo '
-					<li>
-						<input type="hidden" name="default_options[wysiwyg_default]" value="0">
-						<label><input type="checkbox" name="default_options[wysiwyg_default]" id="wysiwyg_default" value="1"', !empty($context['member']['options']['wysiwyg_default']) ? ' checked' : '', '> ', $txt['wysiwyg_default'], '</label>
-					</li>';
-
-	if (empty($settings['disableCustomPerPage']))
-		echo '
-					<li>
-						<label>', $txt['topics_per_page'], '
-						<select name="default_options[topics_per_page]" id="topics_per_page">
-							<option value="0"', empty($context['member']['options']['topics_per_page']) ? ' selected' : '', '>', $txt['per_page_default'], ' (', $settings['defaultMaxTopics'], ')</option>
-							<option value="5"', !empty($context['member']['options']['topics_per_page']) && $context['member']['options']['topics_per_page'] == 5 ? ' selected' : '', '>5</option>
-							<option value="10"', !empty($context['member']['options']['topics_per_page']) && $context['member']['options']['topics_per_page'] == 10 ? ' selected' : '', '>10</option>
-							<option value="25"', !empty($context['member']['options']['topics_per_page']) && $context['member']['options']['topics_per_page'] == 25 ? ' selected' : '', '>25</option>
-							<option value="50"', !empty($context['member']['options']['topics_per_page']) && $context['member']['options']['topics_per_page'] == 50 ? ' selected' : '', '>50</option>
-						</select></label>
-					</li>
-					<li>
-						<label>', $txt['messages_per_page'], '
-						<select name="default_options[messages_per_page]" id="messages_per_page">
-							<option value="0"', empty($context['member']['options']['messages_per_page']) ? ' selected' : '', '>', $txt['per_page_default'], ' (', $settings['defaultMaxMessages'], ')</option>
-							<option value="5"', !empty($context['member']['options']['messages_per_page']) && $context['member']['options']['messages_per_page'] == 5 ? ' selected' : '', '>5</option>
-							<option value="10"', !empty($context['member']['options']['messages_per_page']) && $context['member']['options']['messages_per_page'] == 10 ? ' selected' : '', '>10</option>
-							<option value="25"', !empty($context['member']['options']['messages_per_page']) && $context['member']['options']['messages_per_page'] == 25 ? ' selected' : '', '>25</option>
-							<option value="50"', !empty($context['member']['options']['messages_per_page']) && $context['member']['options']['messages_per_page'] == 50 ? ' selected' : '', '>50</option>
-						</select></label>
-					</li>';
-
-	// !!! This has really really got to go but it really depends on cleaning this whole area up. Until then, this is what's needed.
-	if (!empty($context['plugins_url']['Wedgeward:Calendar']))
-		echo '
-					<li>
-						<label>', $txt['calendar_start_day'], ':
-						<select name="default_options[calendar_start_day]" id="calendar_start_day">
-							<option value="0"', empty($context['member']['options']['calendar_start_day']) ? ' selected' : '', '>', $txt['days'][0], '</option>
-							<option value="1"', !empty($context['member']['options']['calendar_start_day']) && $context['member']['options']['calendar_start_day'] == 1 ? ' selected' : '', '>', $txt['days'][1], '</option>
-							<option value="6"', !empty($context['member']['options']['calendar_start_day']) && $context['member']['options']['calendar_start_day'] == 6 ? ' selected' : '', '>', $txt['days'][6], '</option>
-						</select></label>
-					</li>';
-
-	echo '
-					<li>
-						<label>', $txt['display_quick_reply'], '
-						<select name="default_options[display_quick_reply]" id="display_quick_reply">
-							<option value="0"', empty($context['member']['options']['display_quick_reply']) ? ' selected' : '', '>', $txt['display_quick_reply1'], '</option>
-							<option value="1"', !empty($context['member']['options']['display_quick_reply']) && $context['member']['options']['display_quick_reply'] == 1 ? ' selected' : '', '>', $txt['display_quick_reply2'], '</option>
-							<option value="2"', !empty($context['member']['options']['display_quick_reply']) && $context['member']['options']['display_quick_reply'] == 2 ? ' selected' : '', '>', $txt['display_quick_reply3'], '</option>
-						</select></label>
-					</li>
 				</ul>
 				<dl>
 					<dd style="margin: 0"></dd>';

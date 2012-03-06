@@ -1320,45 +1320,48 @@ function ModifyMemberPreferences($return_config = false)
 
 	loadLanguage('Profile');
 
+	// This array is structurally similar to the ones we see elsewhere. Type is the first item, name/id the second.
+	// 'disabled' speaks for itself, 'display' is where it should be displayed in the profile area.
+	// IMPORTANT: If type is 'select', the third item MUST be the list of options.
 	$config_vars = array(
-		array('check', 'show_board_desc'),
-		array('check', 'show_children'),
-		array('check', 'use_sidebar_menu'),
-		array('check', 'show_no_avatars'),
-		array('check', 'show_no_signatures'),
-		array('check', 'show_no_censored', 'disabled' => empty($settings['allow_no_censored'])),
-		array('check', 'return_to_post'),
-		array('check', 'no_new_reply_warning'),
-		array('check', 'view_newest_first'),
-		array('check', 'posts_apply_ignore_list'),
-		array('check', 'wysiwyg_default', 'disabled' => !empty($settings['disable_wysiwyg'])),
-		array('check', 'auto_notify'),
-		array('check', 'popup_messages'),
+		array('check', 'show_board_desc', 'display' => 'looklayout'),
+		array('check', 'show_children', 'display' => 'looklayout'),
+		array('check', 'use_sidebar_menu', 'display' => 'looklayout'),
+		array('check', 'show_no_avatars', 'display' => 'looklayout'),
+		array('check', 'show_no_signatures', 'display' => 'looklayout'),
+		array('check', 'show_no_censored', 'display' => 'looklayout', 'disabled' => empty($settings['allow_no_censored'])),
+		array('check', 'return_to_post', 'display' => 'looklayout'),
+		array('check', 'no_new_reply_warning', 'display' => 'looklayout'),
+		array('check', 'view_newest_first', 'display' => 'looklayout'),
+		array('check', 'posts_apply_ignore_list', 'display' => 'looklayout', 'disabled' => empty($settings['enable_buddylist'])),
+		array('check', 'wysiwyg_default', 'display' => 'looklayout', 'disabled' => !empty($settings['disable_wysiwyg'])),
 		'',
-		array('check', 'view_newest_pm_first'),
-		array('check', 'copy_to_outbox'),
-		array('check', 'pm_remove_inbox_label'),
+		array('check', 'auto_notify', 'display' => 'pm'),
+		array('check', 'popup_messages', 'display' => 'pm'),
+		array('check', 'view_newest_pm_first', 'display' => 'pm'),
+		array('check', 'copy_to_outbox', 'display' => 'pm'),
+		array('check', 'pm_remove_inbox_label', 'display' => 'pm'),
 		'',
 		array('select', 'topics_per_page', array(
-			0 => $txt['per_page_default'],
+			0 => $txt['per_page_default'] . ' (' . $settings['defaultMaxTopics'] . ')',
 			5 => 5,
 			10 => 10,
 			25 => 25,
 			50 => 50,
-		), 'disabled' => !empty($settings['disableCustomPerPage'])),
+		), 'display' => 'looklayout', 'disabled' => !empty($settings['disableCustomPerPage'])),
 		array('select', 'messages_per_page', array(
-			0 => $txt['per_page_default'],
+			0 => $txt['per_page_default'] . ' (' . $settings['defaultMaxMessages'] . ')',
 			5 => 5,
 			10 => 10,
 			25 => 25,
 			50 => 50,
-		), 'disabled' => !empty($settings['disableCustomPerPage'])),
+		), 'display' => 'looklayout', 'disabled' => !empty($settings['disableCustomPerPage'])),
 		'',
 		array('select', 'display_quick_reply', array(
 			0 => $txt['display_quick_reply1'],
 			1 => $txt['display_quick_reply2'],
 			2 => $txt['display_quick_reply3']
-		)),
+		), 'display' => 'looklayout'),
 	);
 
 	call_hook('member_prefs', array(&$config_vars, &$return_config));
@@ -1498,6 +1501,7 @@ function ModifyMemberPreferences($return_config = false)
 		}
 
 		$context['was_saved'] = true;
+		cache_put_data('theme_settings-1', null, 90);
 	}
 
 	foreach ($context['member_options'] as $key => $var)

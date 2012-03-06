@@ -1690,7 +1690,7 @@ function knownHooks()
 			'repair_errors_tests',
 			'repair_errors_finished',
 			'theme_settings',
-			'theme_options',
+			'member_prefs',
 			// User related
 			'login',
 			'validate_login',

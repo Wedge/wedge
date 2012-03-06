@@ -881,6 +881,8 @@ function AdminSearchInternal()
 			array('COPPA', 'area=regcenter;sa=settings'),
 			array('CAPTCHA', 'area=antispam'),
 		),
+		'preferences' => array(
+		),
 	);
 
 	// Go through the admin menu structure trying to find suitably named areas!
@@ -899,37 +901,42 @@ function AdminSearchInternal()
 	}
 
 	// This is a special array of functions that contain setting data - we query all these to simply pull all setting bits!
-	$settings_search = array(
-		array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
-		array('ModifyPrettyURLs', 'area=featuresettings;sa=pretty'),
-		array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
-		array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
-		array('ModifyWhosOnline', 'area=memberoptions;sa=whosonline'),
-		array('ModifySpamSettings', 'area=antispam'),
-		array('ModifyWarningSettings', 'area=warnings'),
-		array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
-		array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
-		array('EditBoardSettings', 'area=manageboards;sa=settings'),
-		array('ModifyMailSettings', 'area=mailqueue;sa=settings'),
-		array('ModifyNewsSettings', 'area=news;sa=settings'),
-		array('GeneralPermissionSettings', 'area=permissions;sa=settings'),
-		array('ModifyPostSettings', 'area=postsettings;sa=posts'),
-		array('ModifyBBCSettings', 'area=postsettings;sa=bbc'),
-		array('ModifyTopicSettings', 'area=postsettings;sa=topics'),
-		array('ModifyMergeSettings', 'area=postsettings;sa=merge'),
-		array('ModifyDraftSettings', 'area=postsettings;sa=drafts'),
-		array('EditSearchSettings', 'area=managesearch;sa=settings'),
-		array('EditSmileySettings', 'area=smileys;sa=settings'),
-		array('ModifyGeneralSettings', 'area=serversettings;sa=general'),
-		array('ModifyDatabaseSettings', 'area=serversettings;sa=database'),
-		array('ModifyCookieSettings', 'area=serversettings;sa=cookie'),
-		array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
-		array('ModifyLanguageSettings', 'area=languages;sa=settings'),
-		array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
-		array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
-		array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
-		array('ModifyLogSettings', 'area=logs;sa=settings'),
-		array('ModifyPmSettings', 'area=pm'),
+	$search = array(
+		'settings' => array(
+			array('ModifyBasicSettings', 'area=featuresettings;sa=basic'),
+			array('ModifyPrettyURLs', 'area=featuresettings;sa=pretty'),
+			array('ModifyMemberSettings', 'area=memberoptions;sa=options'),
+			array('ModifySignatureSettings', 'area=memberoptions;sa=sig'),
+			array('ModifyWhosOnline', 'area=memberoptions;sa=whosonline'),
+			array('ModifySpamSettings', 'area=antispam'),
+			array('ModifyWarningSettings', 'area=warnings'),
+			array('ManageAttachmentSettings', 'area=manageattachments;sa=attachments'),
+			array('ManageAvatarSettings', 'area=manageattachments;sa=avatars'),
+			array('EditBoardSettings', 'area=manageboards;sa=settings'),
+			array('ModifyMailSettings', 'area=mailqueue;sa=settings'),
+			array('ModifyNewsSettings', 'area=news;sa=settings'),
+			array('GeneralPermissionSettings', 'area=permissions;sa=settings'),
+			array('ModifyPostSettings', 'area=postsettings;sa=posts'),
+			array('ModifyBBCSettings', 'area=postsettings;sa=bbc'),
+			array('ModifyTopicSettings', 'area=postsettings;sa=topics'),
+			array('ModifyMergeSettings', 'area=postsettings;sa=merge'),
+			array('ModifyDraftSettings', 'area=postsettings;sa=drafts'),
+			array('EditSearchSettings', 'area=managesearch;sa=settings'),
+			array('EditSmileySettings', 'area=smileys;sa=settings'),
+			array('ModifyGeneralSettings', 'area=serversettings;sa=general'),
+			array('ModifyDatabaseSettings', 'area=serversettings;sa=database'),
+			array('ModifyCookieSettings', 'area=serversettings;sa=cookie'),
+			array('ModifyCacheSettings', 'area=serversettings;sa=cache'),
+			array('ModifyLanguageSettings', 'area=languages;sa=settings'),
+			array('ModifyRegistrationSettings', 'area=regcenter;sa=settings'),
+			array('ManageSearchEngineSettings', 'area=sengines;sa=settings'),
+			array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
+			array('ModifyLogSettings', 'area=logs;sa=settings'),
+			array('ModifyPmSettings', 'area=pm'),
+		),
+		'preferences' => array(
+			array('ModifyMemberPreferences', 'area=memberoptions;sa=prefs'),
+		),
 	);
 
 	if (!empty($settings['plugins_admin']))
@@ -939,42 +946,43 @@ function AdminSearchInternal()
 		{
 			if (!isset($context['plugins_dir'][$plugin_id]))
 				continue;
-			$settings_search[] = array('ModifySettingsPageHandler', 'area=' . $plugin_details['area'], $plugin_id);
+			$search['settings'][] = array('ModifySettingsPageHandler', 'area=' . $plugin_details['area'], $plugin_id);
 		}
 	}
 
 	// It will probably never be used by anyone, but anyway...
-	call_hook('admin_search', array(&$settings_search));
+	call_hook('admin_search', array(&$search));
 
-	foreach ($settings_search as $setting_area)
-	{
-		// Get a list of their variables.
-		if (isset($setting_area[2]))
-			$config_vars = $setting_area[0](true, $setting_area[2]);
-		else
-			$config_vars = $setting_area[0](true);
+	foreach ($search as $setting_type => $search_places)
+		foreach ($search_places as $setting_area)
+		{
+			// Get a list of their variables.
+			if (isset($setting_area[2]))
+				$config_vars = $setting_area[0](true, $setting_area[2]);
+			else
+				$config_vars = $setting_area[0](true);
 
-		foreach ($config_vars as $var)
-			if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning')))
-			{
-				// Using the construction of prepareServerSettingsContext?
-				if (isset($var[2]) && in_array($var[2], array('file', 'db')))
+			foreach ($config_vars as $var)
+				if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning')))
 				{
-					$item = array($var[0], $setting_area[1]);
-					if (isset($var[5], $helptxt[$var[5]]))
-						$item[2] = $var[5];
-					$search_data['settings'][] = $item;
+					// Using the construction of prepareServerSettingsContext?
+					if (isset($var[2]) && in_array($var[2], array('file', 'db')))
+					{
+						$item = array($var[0], $setting_area[1]);
+						if (isset($var[5], $helptxt[$var[5]]))
+							$item[2] = $var[5];
+						$search_data[$setting_type][] = $item;
+					}
+					// Then it's prepareDBSettingsContext style.
+					else
+					{
+						$item = array($var[1], $setting_area[1]);
+						if (isset($var['help'], $helptxt[$var['help']]))
+							$item[2] = $var['help'];
+						$search_data[$setting_type][] = $item;
+					}
 				}
-				// Then it's prepareDBSettingsContext style.
-				else
-				{
-					$item = array($var[1], $setting_area[1]);
-					if (isset($var['help'], $helptxt[$var['help']]))
-						$item[2] = $var['help'];
-					$search_data['settings'][] = $item;
-				}
-			}
-	}
+		}
 
 	$context['page_title'] = $txt['admin_search_results'];
 	$context['search_results'] = array();
@@ -1005,7 +1013,7 @@ function AdminSearchInternal()
 				$name = preg_replace('~<(?:dfn)>.+?</(?:dfn)>~', '', $name);
 
 				$context['search_results'][] = array(
-					'url' => (substr($item[1], 0, 4) == 'area' ? $scripturl . '?action=admin;' . $item[1] : $item[1]) . ';' . $context['session_query'] . ((substr($item[1], 0, 4) == 'area' && $section == 'settings' ? '#' . $item[0][0] : '')),
+					'url' => (substr($item[1], 0, 4) == 'area' ? $scripturl . '?action=admin;' . $item[1] : $item[1]) . ';' . $context['session_query'] . ((substr($item[1], 0, 4) == 'area' && $section != 'sections' ? '#' . $item[0][0] : '')),
 					'name' => $name,
 					'type' => $section,
 					'help' => shorten_subject(isset($item[2]) ? strip_tags($helptxt[$item[2]]) : (isset($helptxt[$found]) ? strip_tags($helptxt[$found]) : ''), 255),
