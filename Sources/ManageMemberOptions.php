@@ -1398,6 +1398,100 @@ function ModifyMemberPreferences($return_config = false)
 		$context['member_options'][$row['variable']]['current'] = $row['value'];
 	wesql::free_result($request);
 
+	$changes = array(
+		'guests' => array(),
+		'members' => array(),
+		'reset' => array(),
+	);
+	$context['was_saved'] = false;
+	if (isset($_REQUEST['save']) && !empty($_POST['guests']) && is_array($_POST['guests']))
+	{
+		checkSession();
+		foreach ($context['member_options'] as $key => $var)
+		{
+			$current = !empty($var['current']) ? $var['current'] : (!empty($var['default']) ? $var['default'] : 0);
+			if (!is_array($var))
+				continue;
+			if ($var[0] == 'check')
+			{
+				$new_new = !empty($_POST['guests'][$key]) ? 1 : 0;
+				$new_existing = isset($_POST['members'][$key]) ? (int) $_POST['members'][$key] : 'leavealone';
+			}
+			elseif ($var[0] == 'select')
+			{
+				$array_keys = array_keys($var[2]);
+				$new_new = isset($_POST['guests'][$key], $var[2][$_POST['guests'][$key]]) ? $_POST['guests'][$key] : $array_keys[0];
+				$new_existing = isset($_POST['members'][$key], $var[2][$_POST['members'][$key]]) ? $_POST['members'][$key] : 'leavealone';
+			}
+
+			// Having figured out the relevant values, figure out what we need do with them.
+			
+			if ($new_new != $current)
+			{
+				$changes['guests'][$key] = $new_new;
+				$context['member_options'][$key]['current'] = $new_new;
+			}
+			if ($new_existing != 'leavealone')
+				$changes[$new_existing == $new_new ? 'reset' : 'members'][$key] = $new_existing;
+				// More specifically, if it's not 'leave it alone', is it changing it to the same as the new default?
+				// If it is, that means we just set the new default, and prune all the member specific choices for that pref.
+		}
+
+		if (!empty($changes['guests']))
+		{
+			$setValues = array();
+			foreach ($changes['guests'] as $variable => $value)
+				$setValues[] = array(-1, 1, $variable, $value);
+
+			wesql::insert('replace',
+				'{db_prefix}themes',
+				array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
+				$setValues,
+				array('id_theme', 'variable', 'id_member')
+			);
+		}
+
+		if (!empty($changes['reset']))
+			wesql::query('
+				DELETE FROM {db_prefix}themes
+				WHERE id_member > {int:no_member}
+					AND variable IN ({array_string:variables})',
+				array(
+					'no_member' => 0,
+					'variables' => array_keys($changes['reset']),
+				)
+			);
+
+		if (!empty($changes['members']))
+		{
+			// This is the scary one, because we have to add a row for every member. It's also extremely cheeky.
+			// First, remove the existing options.
+			wesql::query('
+				DELETE FROM {db_prefix}themes
+				WHERE id_member > {int:no_member}
+					AND variable IN ({array_string:variables})',
+				array(
+					'no_member' => 0,
+					'variables' => array_keys($changes['members']),
+				)
+			);
+			// Now we perform a mystical insert, one per option.
+			foreach ($changes['members'] as $variable => $value)
+				wesql::query('
+					INSERT INTO {db_prefix}themes
+						(id_member, id_theme, variable, value)
+					SELECT id_member, 1, SUBSTRING({string:variable}, 1, 255), SUBSTRING({string:value}, 1, 65534)
+					FROM {db_prefix}members',
+					array(
+						'variable' => $variable,
+						'value' => (is_array($val) ? implode(',', $value) : $value),
+					)
+				);
+		}
+
+		$context['was_saved'] = true;
+	}
+
 	foreach ($context['member_options'] as $key => $var)
 	{
 		if (!is_array($var))

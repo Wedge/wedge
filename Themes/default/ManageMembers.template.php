@@ -306,6 +306,12 @@ function template_admin_member_prefs()
 {
 	global $context, $txt;
 
+	if ($context['was_saved'])
+		echo '
+		<div class="windowbg" id="profile_success">
+			', $txt['changes_saved'], '
+		</div>';
+
 	echo '
 		<we:cat>', $txt['admin_member_prefs'], '</we:cat>
 		<form action="<URL>?action=admin;area=memberoptions;sa=prefs;save" method="post">
@@ -384,16 +390,10 @@ function template_admin_member_prefs()
 		if (this_item[0] == "check")
 		{
 			this_html = str_guests + " <select name=\"guests[" + index + "]\">";
-			if (this_item[1] == 0)
-			{
-				this_html += "<option value=\"0\" selected>" + (str_nochange.replace("%s", str_no)) + "</option>";
-				this_html += "<option value=\"1\">" + str_yes + "</option>";
-			}
-			else
-			{
-				this_html += "<option value=\"0\">" + str_no + "</option>";
-				this_html += "<option value=\"1\" selected>" + (str_nochange.replace("%s", str_yes)) + "</option>";
-			}
+			var choices = {0: str_no, 1: str_yes};
+			$.each(choices, function (idx, val) {
+				this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", val) : ">" + val) + "</option>";
+			});
 			this_html += "</select><br>";
 			this_html += str_members + " <select name=\"members[" + index + "]\">";
 			this_html += "<option value=\"leavealone\" selected>" + str_leavealone + "</option>";
