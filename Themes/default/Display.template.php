@@ -210,7 +210,7 @@ function template_display_posts()
 		}
 
 		// Show the member's signature?
-		if (!empty($message['member']['signature']) && empty($options['show_no_signatures']) && $context['signature_enabled'])
+		if (!empty($message['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
 			echo '
 						<div class="signature" id="msg_', $message['id'], '_signature">', $message['member']['signature'], '</div>';
 
@@ -378,7 +378,7 @@ function template_display_posts()
 
 function template_userbox(&$message)
 {
-	global $context, $settings, $txt, $theme;
+	global $context, $settings, $txt, $theme, $options;
 
 	echo '
 						<h4>';
@@ -415,7 +415,7 @@ function template_userbox(&$message)
 							<li class="stars">', $message['member']['group_stars'], '</li>';
 
 		// Show avatars, images, etc.?
-		if (!empty($theme['show_user_images']) && empty($options['show_no_avatars']) && !empty($message['member']['avatar']['image']))
+		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))
 			echo '
 							<li class="avatar">
 								<a href="<URL>?action=profile;u=', $message['member']['id'], '">

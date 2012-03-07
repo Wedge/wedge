@@ -1961,6 +1961,7 @@ function template_issueWarning()
 	{
 		var enable = $("#warn_notify").is(":checked");
 		$("#warn_sub, #warn_body, #warn_temp").attr("disabled", !enable);
+		$("#warn_temp").sb();
 		$("#new_template_link").toggle(enable);
 	}
 

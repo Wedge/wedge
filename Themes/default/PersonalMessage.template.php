@@ -180,7 +180,7 @@ function template_folder()
 				<li class="stars">', $message['member']['group_stars'], '</li>';
 
 				// Show avatars, images, etc.?
-				if (!empty($theme['show_user_images']) && empty($options['show_no_avatars']) && !empty($message['member']['avatar']['image']))
+				if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))
 					echo '
 				<li class="avatar">
 					<a href="<URL>?action=profile;u=', $message['member']['id'], '">
@@ -384,7 +384,7 @@ function template_folder()
 			}
 
 			// Show the member's signature?
-			if (!empty($message['member']['signature']) && empty($options['show_no_signatures']) && $context['signature_enabled'])
+			if (!empty($message['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
 				echo '
 				<div class="signature">', $message['member']['signature'], '</div>';
 
