@@ -1436,7 +1436,6 @@ function ModifyMemberPreferences($return_config = false)
 			}
 
 			// Having figured out the relevant values, figure out what we need do with them.
-			
 			if ($new_new != $current)
 			{
 				$changes['guests'][$key] = $new_new;
@@ -1529,4 +1528,5 @@ function ModifyMemberPreferences($return_config = false)
 	loadTemplate('ManageMembers');
 	wetem::load('admin_member_prefs');
 }
+
 ?>
