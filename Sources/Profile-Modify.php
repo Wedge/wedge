@@ -554,17 +554,6 @@ function loadProfileFields($force_reload = false)
 				return true;
 			'),
 		),
-		// Pretty much a dummy entry - it populates all the theme settings.
-		'theme_settings' => array(
-			'type' => 'callback',
-			'callback_func' => 'theme_settings',
-			'permission' => 'profile_extra',
-			'is_dummy' => true,
-			'preload' => create_function('', '
-				loadLanguage(\'Settings\');
-				return true;
-			'),
-		),
 		'time_format' => array(
 			'type' => 'callback',
 			'callback_func' => 'timeformat_modify',

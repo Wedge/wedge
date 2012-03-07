@@ -618,7 +618,9 @@ function Admin()
 		),
 	);
 
-	$menuOptions = array();
+	$menuOptions = array(
+		'menu_type' => '_dropdown',
+	);
 	if (isset($_GET['togglebar']) && (empty($_GET['area']) || $_GET['area'] == 'index'))
 		$menuOptions['toggle_redirect_url'] = 'action=admin;' . $context['session_query'];
 

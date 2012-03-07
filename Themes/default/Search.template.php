@@ -302,7 +302,9 @@ function template_results()
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
-		echo '
+		if (!empty($context['topics']))
+		{
+			echo '
 		<div class="roundframe">
 			<div class="floatright">
 				<select class="fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
@@ -315,33 +317,36 @@ function template_results()
 					<option value="markread">', $txt['quick_mod_markread'], '</option>
 				</select>';
 
-			if ($context['can_move'])
-			{
-					echo '
+				if ($context['can_move'])
+				{
+						echo '
 				<select id="moveItTo" name="move_to" class="hide">';
 
-					foreach ($context['move_to_boards'] as $category)
-					{
-						echo '
+						foreach ($context['move_to_boards'] as $category)
+						{
+							echo '
 					<optgroup label="', $category['name'], '">';
 
-						foreach ($category['boards'] as $board)
-								echo '
+							foreach ($category['boards'] as $board)
+									echo '
 					<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
 
-						echo '
+							echo '
 					</optgroup>';
-					}
-					echo '
+						}
+						echo '
 				</select>';
-			}
+				}
 
-			echo '
+				echo '
 				<input type="hidden" name="redirect_url" value="', $scripturl . '?action=search2;params=' . $context['params'], '">
 				<input type="submit" style="font-size: 0.8em" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && confirm(', $quickmod, ');">
 			</div>
 			<br class="clear">
-		</div>
+		</div>';
+		}
+
+		echo '
 		<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 	</form>';
 	}
