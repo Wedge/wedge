@@ -531,6 +531,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		// Password isn't legal?
 		if ($passwordError != null)
 		{
+			loadLanguage('Errors');
 			if ($passwordError == 'short')
 				$txt['profile_error_password_short'] = sprintf($txt['profile_error_password_short'], empty($settings['password_strength']) ? 4 : 8);
 
