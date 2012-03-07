@@ -881,7 +881,7 @@ class wecss_nesting extends wecss
 			$css .= '}';
 	}
 
-	private function unset_recursive(&$n)
+	private function unset_recursive($n)
 	{
 		foreach ($this->rules[$n]['props'] as $n2 => $dummy)
 			unset($this->rules[$n2], $this->props[$n2]);

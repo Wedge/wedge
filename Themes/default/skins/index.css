@@ -49,6 +49,18 @@ header, footer, aside, section, article, nav
 	start of the file should avoid cascading issues.
 ------------------------------------------------------- */
 
+.two-columns
+	box-sizing: border-box
+	width: 49%
+	float: left
+	margin: 0 .5%
+
+// Two columns become one if viewed on a small screen.
+@media all and (max-width: 800px)
+	.two-columns
+		width: 100%
+		margin: 0
+
 // Alternating generic backgrounds
 .windowbg
 	color: #444
@@ -349,11 +361,20 @@ em
 .wrc, .wrc_top, .wrc_bottom
 	margin-top: 2px
 	margin-bottom: 4px
+	border-radius: 6px
 	padding: .9em 1.2em
 	p
 		margin: 0 0 .5em
 		:only-child
 			margin-top: .5em
+
+.wrc_top // !! Set border-bottom to 0 if you add a border to .wrc
+	border-radius: 12px 12px 0 0
+	margin-bottom: 0
+
+.wrc_bottom // !! Set border-top to 0 if you add a border to .wrc
+	border-radius: 0 0 12px 12px
+	margin-top: 0
 
 // Can't use an extends on .zoom-loading, because it's in a different file.
 .loading, .zoom-loading
@@ -361,13 +382,12 @@ em
 	background-repeat: no-repeat;
 
 .wehead
-	background-color: #a39f99
-	color: #fff
+	background-color: #e2e8d8
 	a
-		color: #fff
+		color: #444
 
 .wefoot extends .wehead
-	background-color: #a5b09d
+	background-color: #e5e5e8
 
 // The 'New' icon, generally speaking.
 .note extends .inline-block
@@ -1298,7 +1318,7 @@ dl#feed
 	padding: 5px 10px 5px
 	margin-bottom: 4px
 	border: 1px solid rgba(0,0,0, .15)
-	font: 100 180%/1.3em $head_font
+	font: 100 1.5em/1.3em $head_font
 	img
 		padding-right: 2px
 
@@ -1307,10 +1327,9 @@ dl#feed
 	letter-spacing: -1px
 	color: #666
 	a
-		font-weight: 400
+		border-bottom: 0 !important
 		text-decoration: underline !important
 		text-shadow: none
-		border-bottom: 0 !important
 	img
 		padding-right: 4px
 
@@ -1334,8 +1353,6 @@ dl#feed
 	font-size: 1.6em
 
 .title2 extends .title
-	font-size: 1.6em
-	font-weight: 400
 	background: none
 	border-bottom: 1px dotted rgba(0,0,0, .5)
 	border-radius: 0
@@ -1418,11 +1435,6 @@ dl#feed
 	width: 50%
 .w25
 	width: 25%
-
-.two-columns
-	width: 49%
-	float: left
-	margin: 0 .5%
 
 img.top, td.top, th.top, tr.top td, tr.top th
 	vertical-align: top

@@ -563,6 +563,8 @@ function weToggle(opt)
 		this.cs(!collapsed);
 	};
 
+	this.opt = opt;
+
 	// If cookies are enabled and they were set, override the initial state.
 	if (opt.sCookie)
 		if ((cookieValue = weCookie(opt.sCookie)) != null)

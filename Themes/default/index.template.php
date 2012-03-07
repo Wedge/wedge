@@ -54,9 +54,9 @@ function template_init()
 	$theme['macros'] = array(
 
 		// We start with the header bars. Nothing special about them...
-		'title'		=> '<header class="title">{body}</header>',
-		'title2'	=> '<header class="title2">{body}</header>',
-		'cat'		=> '<header class="cat">{body}</header>',
+		'title'		=> '<header class="title<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header>',
+		'title2'	=> '<header class="title2<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header>',
+		'cat'		=> '<header class="cat<if:class> {class}</if:class>"<if:style> style="{style}"</if:style><if:id> id="{id}"</if:id>>{body}</header>',
 
 		// Now with a regular content macro. You may add a class, title and/or footer to it. If you don't specify a title,
 		// everything between the <if:title> tags will be hidden. Same for the footer and class.
@@ -327,7 +327,7 @@ function template_logo_toggler()
 	new weToggle({', empty($options['collapse_header']) ? '' : '
 		bCurrentlyCollapsed: true,', '
 		aSwappableContainers: [\'upper_section\'],
-		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), '}],', $context['user']['is_guest'] ? '
+		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],', $context['user']['is_guest'] ? '
 		sCookie: \'upshrink\'' : '
 		sOptionName: \'collapse_header\'', '
 	});');

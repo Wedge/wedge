@@ -390,7 +390,7 @@ function template_admin_member_prefs()
 		if (this_item[0] == "check")
 		{
 			this_html = str_guests + " <select name=\"guests[" + index + "]\">";
-			var choices = {0: str_no, 1: str_yes};
+			var choices = { 0: str_no, 1: str_yes };
 			$.each(choices, function (idx, val) {
 				this_html += "<option value=\"" + idx + "\"" + (this_item[1] == idx ? " selected>" + str_nochange.replace("%s", val) : ">" + val) + "</option>";
 			});

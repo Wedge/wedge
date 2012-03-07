@@ -75,7 +75,7 @@ body extends .grad700
 // The footer with copyright links etc.
 #footer
 	border-top: 3px solid #bdb5b5
-	div.frame::before
+	div.frame:before
 		content: ""
 	a
 		color: #fff
@@ -88,7 +88,7 @@ body extends .grad700
 				a
 					margin: 0 8px
 
-#upper_section .frame::before
+#upper_section .frame:before
 	content: ""
 
 /* Styles for the general looks for the default theme.
@@ -96,19 +96,6 @@ body extends .grad700
 
 #footer div.frame
 	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
-
-// "With rounded corners" class, for modern browsers...
-.wrc, .wrc_top, .wrc_bottom
-	border-radius: 12px
-	// !!! border: 1px solid rgba(0,0,0, .1)
-
-.wrc_top
-	border-radius: 12px 12px 0 0
-	border-bottom, margin-bottom: 0
-
-.wrc_bottom
-	border-radius: 0 0 12px 12px
-	border-top, margin-top: 0
 
 .grad40
 	background-image: url($images/theme/grad40.png)
@@ -164,6 +151,9 @@ body extends .grad700
 
 section.block header
 	background-color: #b3afa9
+	color: #fff
+	a
+		color: #fff
 
 /* Styles for section headers.
 ------------------------------------------------------- */
@@ -175,7 +165,7 @@ section.block header
 	img
 		vertical-align: -3px
 
-.cat extends .catbase
+.cat
 	background-color: #b3afa9
 	letter-spacing: 0
 	color: white
@@ -194,11 +184,8 @@ section.block header
 	a
 		color: #faf8f8
 
-.title2 extends .title
+.title2
 	font-size: 1.2em
-	text-shadow: white 0 1px 2px
-	&, a
-		color: channels(gray,0,0,30%)
 
 .cat final
 	font: bold 1.2em/1.2em $head_font

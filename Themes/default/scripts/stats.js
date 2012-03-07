@@ -12,7 +12,7 @@
 
 function weStatsCenter(oOptions)
 {
-	this.oTable = $('#' + oOptions.sTableId);
+	this.oTable = $('#stats_history');
 
 	// Is the table actually present?
 	if (!this.oTable.length)
@@ -47,10 +47,9 @@ function weStatsCenter(oOptions)
 			// Setup the toggle element for the year.
 			oCurYear.oToggle = new weToggle({
 				bCurrentlyCollapsed: oCurYear.bIsCollapsed,
-				instanceRef: that,
 				sYearId: sYearId,
 				funcOnBeforeCollapse: function () {
-					this.opt.instanceRef.onBeforeCollapseYear(this);
+					that.onBeforeCollapseYear(this);
 				},
 				aSwappableContainers: [],
 				aSwapImages: [
@@ -91,13 +90,12 @@ function weStatsCenter(oOptions)
 			// Setup the toggle element for the month.
 			oCurMonth.oToggle = new weToggle({
 				bCurrentlyCollapsed: oCurMonth.bIsCollapsed,
-				instanceRef: that,
 				sMonthId: sMonthId,
 				funcOnBeforeCollapse: function () {
-					this.opt.instanceRef.onBeforeCollapseMonth(this);
+					that.onBeforeCollapseMonth(this);
 				},
 				funcOnBeforeExpand: function () {
-					this.opt.instanceRef.onBeforeExpandMonth(this);
+					that.onBeforeExpandMonth(this);
 				},
 				aSwappableContainers: [],
 				aSwapImages: [
@@ -195,7 +193,7 @@ weStatsCenter.prototype.onDocReceived = function (oXMLDoc)
 				var oCurCell = oCurRow.insertCell(-1);
 
 				if (that.opt.aDataCells[iCellIndex] == 'date')
-					oCurCell.className = 'stats_day';
+					oCurCell.className = 'day';
 
 				oCurCell.appendChild(document.createTextNode(this.getAttribute(that.opt.aDataCells[iCellIndex])));
 			}

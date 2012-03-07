@@ -327,7 +327,7 @@ li.profile img
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
-	font: $post_font
+	font-family: $post_font
 	padding: .1em 0
 	clear: right
 
@@ -1112,65 +1112,44 @@ tr.windowbg td
 
 /* Styles for the statistics center.
 ------------------------------------------------- */
-#statistics
-	padding: .5em 0
-	.title
-		margin: 4px 0
-	.cat
-		text-align: center
+#stats
 	dl
 		min-height: 210px
 	div.top_row dl
 		min-height: 150px
 
-#stats_left, #top_posters, #top_topics_replies, #top_topics_starter
-	float: left
-	width: 49.5%
+dl.stats
+	overflow: hidden
+	margin, padding: 0
+	dt, dd
+		max-width: 90%
+		margin: 0 0 4px
+		padding: 0
+		font-size: 1em
+		line-height: 16px
+	dt
+		clear, float: left
+	dd
+		clear, float, text-align: right
+		width: 45%
 
-#stats_right, #top_boards, #top_topics_views, #most_online
-	float: right
-	width: 50%
+div.top_row dd
+	width: auto
 
-#stats
+#stats_history
 	margin-top: 5px
 	td
 		text-align: center
-		&.stats_day
-			padding: 0 0 0 3em
-			text-align: left
 	th
 		width: 15%
-
-dl.stats
-	clear: both
-	overflow: hidden
-	margin: 0
-	padding: 0
-	dt
-		max-width: 90%
-		float: left
-		margin: 0 0 4px
-		line-height: 16px
-		padding: 0
-		clear: both
-		font-size: 1em
-	dd
-		max-width: 90%
-		float, text-align: right
-		font-size: 1em
-		margin: 0 0 4px
-		line-height: 16px
-		padding: 0
-
-.statsbar
-	width: 45%
-
-#stats th
-	&.stats_year, &.stats_month
+	.day
+		padding: 0 0 0 3em
+		text-align: left
+	.year, .month
 		width: 25%
 		padding: .3em 0 .3em .75em
 		text-align: left
-	&.stats_month
+	.month
 		padding: .3em 0 .3em 1.5em
 
 /* Styles for the memberlist section.

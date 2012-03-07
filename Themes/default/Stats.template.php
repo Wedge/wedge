@@ -16,261 +16,233 @@ function template_main()
 	global $context, $theme, $options, $txt, $scripturl, $settings;
 
 	echo '
-	<div id="statistics" class="main_section">
 		<we:cat>
 			', $context['page_title'], '
 		</we:cat>
-		<we:title2>
+		<we:title2 style="margin-bottom: 8px">
 			<img src="', $theme['images_url'], '/stats_info.gif">
 			', $txt['general_stats'], '
 		</we:title2>
-		<div class="flow_hidden">
-			<div id="stats_left">
-				<div class="windowbg wrc">
-					<div class="top_row">
-						<dl class="stats">
-							<dt>', $txt['total_members'], ':</dt>
-							<dd>', $context['show_member_list'] ? '<a href="' . $scripturl . '?action=mlist">' . $context['num_members'] . '</a>' : $context['num_members'], '</dd>
-							<dt>', $txt['total_posts'], ':</dt>
-							<dd>', $context['num_posts'], '</dd>
-							<dt>', $txt['total_topics'], ':</dt>
-							<dd>', $context['num_topics'], '</dd>
-							<dt>', $txt['total_boards'], ':</dt>
-							<dd>', $context['num_boards'], '</dd>
-							<dt>', $txt['total_cats'], ':</dt>
-							<dd>', $context['num_categories'], '</dd>
-							<dt>', $txt['latest_member'], ':</dt>
-							<dd>', $context['common_stats']['latest_member']['link'], '</dd>
-							<dt>', $txt['gender_ratio'], ':</dt>
-							<dd>', $context['gender']['ratio'], '</dd>';
+
+		<div class="two-columns windowbg wrc top_row">
+			<dl class="stats">
+				<dt>', $txt['total_members'], ':</dt>
+				<dd>', $context['show_member_list'] ? '<a href="' . $scripturl . '?action=mlist">' . $context['num_members'] . '</a>' : $context['num_members'], '</dd>
+				<dt>', $txt['total_posts'], ':</dt>
+				<dd>', $context['num_posts'], '</dd>
+				<dt>', $txt['total_topics'], ':</dt>
+				<dd>', $context['num_topics'], '</dd>
+				<dt>', $txt['total_boards'], ':</dt>
+				<dd>', $context['num_boards'], '</dd>
+				<dt>', $txt['total_cats'], ':</dt>
+				<dd>', $context['num_categories'], '</dd>
+				<dt>', $txt['latest_member'], ':</dt>
+				<dd>', $context['common_stats']['latest_member']['link'], '</dd>
+				<dt>', $txt['gender_ratio'], ':</dt>
+				<dd>', $context['gender']['ratio'], '</dd>';
 
 	if (!empty($settings['hitStats']))
 		echo '
-							<dt>', $txt['num_hits'], ':</dt>
-							<dd>', $context['num_hits'], '</dd>';
+				<dt>', $txt['num_hits'], ':</dt>
+				<dd>', $context['num_hits'], '</dd>';
 
 	echo '
-						</dl>
-						<div class="clear"></div>
-					</div>
-				</div>
-			</div>
-			<div id="stats_right">
-				<div class="windowbg2 wrc">
-					<div class="top_row">
-						<dl class="stats">
-							<dt>', $txt['average_members'], ':</dt>
-							<dd>', $context['average_members'], '</dd>
-							<dt>', $txt['average_posts'], ':</dt>
-							<dd>', $context['average_posts'], '</dd>
-							<dt>', $txt['average_topics'], ':</dt>
-							<dd>', $context['average_topics'], '</dd>
-							<dt>', $txt['average_online'], ':</dt>
-							<dd>', $context['average_online'], '</dd>
-							<dt>', $txt['users_online_today'], ':</dt>
-							<dd>', $context['online_today'], '</dd>
-							<dt>', $txt['users_online'], ':</dt>
-							<dd>', $context['users_online'], '</dd>
-							<dt>', $txt['most_online_ever'], ':</dt>
-							<dd>', $context['most_members_online']['number'], ' - ', $context['most_members_online']['date'], '</dd>';
-
-	if (!empty($settings['hitStats']))
-		echo '
-							<dt>', $txt['average_hits'], ':</dt>
-							<dd>', $context['average_hits'], '</dd>';
-
-	echo '
-						</dl>
-						<div class="clear"></div>
-					</div>
-				</div>
-			</div>
+			</dl>
 		</div>
-		<div class="flow_hidden">
-			<div id="top_posters">
-				<div class="windowbg2 wrc">
-					<h6 class="top">
-						<img src="', $theme['images_url'], '/stats_posters.gif">
-						', $txt['top_posters'], '
-					</h6>
-					<dl class="stats">';
+
+		<div class="two-columns windowbg2 wrc top_row">
+			<dl class="stats">
+				<dt>', $txt['average_members'], ':</dt>
+				<dd>', $context['average_members'], '</dd>
+				<dt>', $txt['average_posts'], ':</dt>
+				<dd>', $context['average_posts'], '</dd>
+				<dt>', $txt['average_topics'], ':</dt>
+				<dd>', $context['average_topics'], '</dd>
+				<dt>', $txt['average_online'], ':</dt>
+				<dd>', $context['average_online'], '</dd>
+				<dt>', $txt['users_online_today'], ':</dt>
+				<dd>', $context['online_today'], '</dd>
+				<dt>', $txt['users_online'], ':</dt>
+				<dd>', $context['users_online'], '</dd>
+				<dt>', $txt['most_online_ever'], ':</dt>
+				<dd>', $context['most_members_online']['number'], ' (', $context['most_members_online']['date'], ')</dd>';
+
+	if (!empty($settings['hitStats']))
+		echo '
+				<dt>', $txt['average_hits'], ':</dt>
+				<dd>', $context['average_hits'], '</dd>';
+
+	echo '
+			</dl>
+		</div>
+
+		<div class="two-columns windowbg2 wrc">
+			<h6 class="top">
+				<img src="', $theme['images_url'], '/stats_posters.gif">
+				', $txt['top_posters'], '
+			</h6>
+			<dl class="stats">';
 
 	foreach ($context['top_posters'] as $poster)
 	{
 		echo '
-						<dt>
-							', $poster['link'], '
-						</dt>
-						<dd class="statsbar">';
+				<dt>
+					', $poster['link'], '
+				</dt>
+				<dd>';
 
 		if (!empty($poster['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px"></div>';
+					<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px"></div>';
 
 		echo '
-							<span>', $poster['num_posts'], '</span>
-						</dd>';
+					<span>', $poster['num_posts'], '</span>
+				</dd>';
 	}
 
 	echo '
-					</dl>
-					<div class="clear"></div>
-				</div>
-			</div>
-			<div id="top_boards">
-				<div class="windowbg wrc">
-					<h6 class="top">
-						<img src="', $theme['images_url'], '/stats_board.gif">
-						', $txt['top_boards'], '
-					</h6>
-					<dl class="stats">';
+			</dl>
+		</div>
+
+		<div class="two-columns windowbg wrc">
+			<h6 class="top">
+				<img src="', $theme['images_url'], '/stats_board.gif">
+				', $txt['top_boards'], '
+			</h6>
+			<dl class="stats">';
 
 	foreach ($context['top_boards'] as $board)
 	{
 		echo '
-						<dt>
-							', $board['link'], '
-						</dt>
-						<dd class="statsbar">';
+				<dt>
+					', $board['link'], '
+				</dt>
+				<dd>';
 
 		if (!empty($board['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $board['post_percent'] + 4, 'px"></div>';
+					<div class="bar" style="width: ', $board['post_percent'] + 4, 'px"></div>';
+
 		echo '
-							<span>', $board['num_posts'], '</span>
-						</dd>';
+					<span>', $board['num_posts'], '</span>
+				</dd>';
 	}
 
 	echo '
-					</dl>
-					<div class="clear"></div>
-				</div>
-			</div>
+			</dl>
 		</div>
-		<div class="flow_hidden">
-			<div id="top_topics_replies">
-				<div class="windowbg wrc">
-					<h6 class="top">
-						<img src="', $theme['images_url'], '/stats_replies.gif">
-						', $txt['top_topics_replies'], '
-					</h6>
-					<dl class="stats">';
+
+		<div class="two-columns windowbg wrc">
+			<h6 class="top">
+				<img src="', $theme['images_url'], '/stats_replies.gif">
+				', $txt['top_topics_replies'], '
+			</h6>
+			<dl class="stats">';
 
 	foreach ($context['top_topics_replies'] as $topic)
 	{
 		echo '
-						<dt>
-							', $topic['link'], '
-						</dt>
-						<dd class="statsbar">';
+				<dt>
+					', $topic['link'], '
+				</dt>
+				<dd>';
 
 		if (!empty($topic['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px"></div>';
+					<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px"></div>';
 
 		echo '
-							<span>' . $topic['num_replies'] . '</span>
-						</dd>';
+					<span>' . $topic['num_replies'] . '</span>
+				</dd>';
 	}
 	echo '
-					</dl>
-					<div class="clear"></div>
-				</div>
-			</div>
+			</dl>
+		</div>
 
-			<div id="top_topics_views">
-				<div class="windowbg2 wrc">
-					<h6 class="top">
-						<img src="', $theme['images_url'], '/stats_views.gif">
-						', $txt['top_topics_views'], '
-					</h6>
-					<dl class="stats">';
+		<div class="two-columns windowbg2 wrc">
+			<h6 class="top">
+				<img src="', $theme['images_url'], '/stats_views.gif">
+				', $txt['top_topics_views'], '
+			</h6>
+			<dl class="stats">';
 
 	foreach ($context['top_topics_views'] as $topic)
 	{
 		echo '
-						<dt>', $topic['link'], '</dt>
-						<dd class="statsbar">';
+				<dt>', $topic['link'], '</dt>
+				<dd>';
 
 		if (!empty($topic['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px"></div>';
+					<div class="bar" style="width: ', $topic['post_percent'] + 4, 'px"></div>';
 
 		echo '
-							<span>' . $topic['num_views'] . '</span>
-						</dd>';
+					<span>' . $topic['num_views'] . '</span>
+				</dd>';
 	}
 
 	echo '
-					</dl>
-					<div class="clear"></div>
-				</div>
-			</div>
+			</dl>
 		</div>
-		<div class="flow_hidden">
-			<div id="top_topics_starter">
-				<div class="windowbg2 wrc">
-					<h6 class="top">
-						<img src="', $theme['images_url'], '/stats_replies.gif">
-						', $txt['top_starters'], '
-					</h6>
-					<dl class="stats">';
+
+		<div class="two-columns windowbg2 wrc">
+			<h6 class="top">
+				<img src="', $theme['images_url'], '/stats_replies.gif">
+				', $txt['top_starters'], '
+			</h6>
+			<dl class="stats">';
 
 	foreach ($context['top_starters'] as $poster)
 	{
 		echo '
-						<dt>
-							', $poster['link'], '
-						</dt>
-						<dd class="statsbar">';
+				<dt>
+					', $poster['link'], '
+				</dt>
+				<dd>';
 
 		if (!empty($poster['post_percent']))
 			echo '
-							<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px"></div>';
+					<div class="bar" style="width: ', $poster['post_percent'] + 4, 'px"></div>';
 
 		echo '
-							<span>', $poster['num_topics'], '</span>
-						</dd>';
+					<span>', $poster['num_topics'], '</span>
+				</dd>';
 	}
 
 	echo '
-					</dl>
-					<div class="clear"></div>
-				</div>
-			</div>
-			<div id="most_online">
-				<div class="windowbg wrc">
-					<h6 class="top">
-						<img src="', $theme['images_url'], '/stats_views.gif">
-						', $txt['most_time_online'], '
-					</h6>
-					<dl class="stats">';
+			</dl>
+		</div>
+
+		<div class="two-columns windowbg wrc">
+			<h6 class="top">
+				<img src="', $theme['images_url'], '/stats_views.gif">
+				', $txt['most_time_online'], '
+			</h6>
+			<dl class="stats">';
 
 	foreach ($context['top_time_online'] as $poster)
 	{
 		echo '
-						<dt>
-							', $poster['link'], '
-						</dt>
-						<dd class="statsbar">';
+				<dt>
+					', $poster['link'], '
+				</dt>
+				<dd>';
 
 		if (!empty($poster['time_percent']))
 			echo '
-							<div class="bar" style="width: ', $poster['time_percent'] + 4, 'px"></div>';
+					<div class="bar" style="width: ', $poster['time_percent'] + 4, 'px"></div>';
 
 		echo '
-							<span>', $poster['time_online'], '</span>
-						</dd>';
+					<span>', $poster['time_online'], '</span>
+				</dd>';
 	}
 
 	echo '
-					</dl>
-					<div class="clear"></div>
-				</div>
-			</div>
+			</dl>
 		</div>
-		<br class="clear">
-		<div class="flow_hidden">
+
+		<br>
+		<div class="flow_hidden clear">
 			<we:title2>
 				<img src="', $theme['images_url'], '/stats_history.gif">
 				', $txt['forum_history'], '
@@ -279,7 +251,7 @@ function template_main()
 	if (!empty($context['yearly']))
 	{
 		echo '
-			<table class="table_grid w100 cs0 cp4" id="stats">
+			<table class="table_grid w100 cs0 cp4" id="stats_history">
 				<thead>
 					<tr class="titlebg">
 						<th class="first_th w25">', $txt['yearly_summary'], '</th>
@@ -301,7 +273,7 @@ function template_main()
 		{
 			echo '
 					<tr class="windowbg2" id="year_', $id, '">
-						<th class="stats_year">
+						<th class="year">
 							<span class="foldable fold" id="year_img_', $id, '"></span>
 							<a href="#year_', $id, '" id="year_link_', $id, '">', $year['year'], '</a>
 						</th>
@@ -321,7 +293,7 @@ function template_main()
 			{
 				echo '
 					<tr class="windowbg2" id="tr_month_', $month['id'], '">
-						<th class="stats_month">
+						<th class="month">
 							<span class="foldable', $month['expanded'] ? ' fold' : '', '" id="img_', $month['id'], '"></span>
 							<a id="m', $month['id'], '" href="', $month['href'], '">', $month['month'], ' ', $month['year'], '</a>
 						</th>
@@ -343,7 +315,7 @@ function template_main()
 					{
 						echo '
 					<tr class="windowbg2" id="tr_day_', $day['year'], '-', $day['month'], '-', $day['day'], '">
-						<td class="stats_day">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
+						<td class="day">', $day['year'], '-', $day['month'], '-', $day['day'], '</td>
 						<td>', $day['new_topics'], '</td>
 						<td>', $day['new_posts'], '</td>
 						<td>', $day['new_members'], '</td>
@@ -363,15 +335,12 @@ function template_main()
 		echo '
 				</tbody>
 			</table>
-		</div>
-	</div>';
+		</div>';
 
 		add_js_file('scripts/stats.js');
 
 		add_js('
 	var oStatsCenter = new weStatsCenter({
-		sTableId: \'stats\',
-
 		reYearPattern: /year_(\d+)/,
 		sYearImageIdPrefix: \'year_img_\',
 		sYearLinkIdPrefix: \'year_link_\',
