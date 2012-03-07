@@ -45,7 +45,7 @@ function ManageMemberOptions()
 	loadSource('ManageServer');
 	wetem::load('show_settings');
 
-	$context['page_title'] = $txt['themeadmin_reset_title'];
+	$context['page_title'] = $txt['member_options_title'];
 
 	$subActions = array(
 		'options' => 'ModifyMemberSettings',
