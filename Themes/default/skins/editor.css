@@ -147,6 +147,10 @@ ul.post_options
 	border-right: 1px solid #fff
 	margin: 3px 2px 3px 3px !important
 
+.seledit
+	margin: 0 0 0 3px
+	padding: 1px
+
 #post_confirm_strip
 	max-width: 50%
 	padding: .7em .5em

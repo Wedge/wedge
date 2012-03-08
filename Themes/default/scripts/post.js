@@ -223,7 +223,7 @@ function weButtonBox(opt)
 
 				// Fighting JavaScript's idea of order in a for loop... :P
 				if ('' in this[2])
-					sOptions = '<option value="">' + this[2][''].php_htmlspecialchars() + '</option>';
+					sOptions = '<option data-hide>' + this[2][''].php_htmlspecialchars() + '</option>';
 				for (sSelectValue in this[2])
 				{
 					// we've been through this before

@@ -2605,7 +2605,7 @@ class wedit
 		sButtonBackgroundPosHover: [0, 0],
 		sActiveButtonBackgroundPos: [0, 0],
 		sDividerTemplate: ' . JavaScriptEscape('<div class="bbc_divider"></div>') . ',
-		sSelectTemplate: ' . JavaScriptEscape('<select name="%selectName%" id="%selectId%" tabindex="' . ($context['tabindex'] - 2) . '" style="margin: 4px 0 0 3px; padding: 1px; font-size: 9pt">%selectOptions%</select>') . ',
+		sSelectTemplate: ' . JavaScriptEscape('<select name="%selectName%" id="%selectId%" tabindex="' . ($context['tabindex'] - 2) . '" class="seledit">%selectOptions%</select>') . ',
 		sButtonRowTemplate: ' . JavaScriptEscape('<div>%buttonRow%</div>') . '
 	});');
 		}

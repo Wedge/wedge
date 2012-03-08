@@ -237,7 +237,7 @@
 		centerOnSelected = function ()
 		{
 			if (scrollbar)
-				scrollbar.st($selected.position().top, $selected.height());
+				scrollbar.st($selected.is(':hidden') ? 0 : $selected.position().top, $selected.height());
 			else
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
