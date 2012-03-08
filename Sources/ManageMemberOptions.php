@@ -1331,7 +1331,7 @@ function ModifyMemberPreferences($return_config = false)
 		array('check', 'show_signatures', 'display' => 'looklayout'),
 		array('check', 'show_no_censored', 'display' => 'looklayout', 'disabled' => empty($settings['allow_no_censored'])),
 		array('check', 'return_to_post', 'display' => 'looklayout'),
-		array('check', 'no_new_reply_warning', 'display' => 'looklayout'),
+		array('check', 'new_reply_warning', 'display' => 'looklayout'),
 		array('check', 'view_newest_first', 'display' => 'looklayout'),
 		array('check', 'posts_apply_ignore_list', 'display' => 'looklayout', 'disabled' => empty($settings['enable_buddylist'])),
 		array('check', 'wysiwyg_default', 'display' => 'looklayout', 'disabled' => !empty($settings['disable_wysiwyg'])),

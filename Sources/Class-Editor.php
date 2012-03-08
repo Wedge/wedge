@@ -2553,14 +2553,24 @@ class wedit
 				if ($i == 0)
 				{
 					// Show the font drop down...
-					if (!isset($this->disabled_tags['font']))
-						$context['footer_js'] .= ',
-				["select", "sel_face", {
-					"": ' . JavaScriptEscape($txt['font_face']) . ', "courier new": "Courier New",
-					"arial": "Arial", "impact": "Impact", "verdana": "Verdana",
-					"times new roman": "Times New Roman", "georgia": "Georgia",
-					"trebuchet ms": "Trebuchet MS", "segoe ui": "Segoe UI"
-				}]';
+					if (!isset($this->disabled_tags['font']) && !empty($settings['editorFonts']))
+					{
+						$fonts = explode("\n", $settings['editorFonts']);
+						foreach ($fonts as $k => $v)
+							if (trim($v) == '')
+								unset($fonts[$k]);
+							else
+								$fonts[$k] = trim($v);
+						if (!empty($fonts))
+						{
+							$context['footer_js'] .= ',
+				["select", "sel_face", {"": ' . JavaScriptEscape($txt['font_face']);
+							foreach ($fonts as $font)
+								$context['footer_js'] .= ', "' . strtolower($font) . '": "' . $font . '"';
+							
+							$context['footer_js'] .= '}]';
+						}
+					}
 
 					// Font sizes anyone?
 					if (!isset($this->disabled_tags['size']))

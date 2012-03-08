@@ -288,6 +288,7 @@ function ModifyBBCSettings($return_config = false)
 			// Main tweaks
 			array('check', 'enableBBC'),
 			array('check', 'enablePostHTML'),
+			array('large_text', 'editorFonts', 'subtext' => $txt['editorFonts_note']),
 			array('check', 'autoLinkUrls'),
 		'',
 			array('bbc', 'disabledBBC'),
