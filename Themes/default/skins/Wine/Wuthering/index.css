@@ -265,5 +265,5 @@ $post_font = 10.5pt/140% $main_font
 	background: url($images/theme/bg.jpg)
 
 @replace
-	url($images/minilogo.png)
 	url($images/minilogow.png)
+	url($images/minilogo.png)

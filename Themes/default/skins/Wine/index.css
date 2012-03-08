@@ -95,7 +95,7 @@ body extends .grad700
 ------------------------------------------------------- */
 
 #footer div.frame
-	background: transparent url($images/minilogo.png) 98.5% 75% no-repeat
+	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
 
 .grad40
 	background-image: url($images/theme/grad40.png)
@@ -149,11 +149,16 @@ body extends .grad700
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 
-section.block header
-	background-color: #b3afa9
+section.block header, .wehead, .wefoot
 	color: #fff
 	a
 		color: #fff
+
+section.block header, .wehead
+	background-color: #c3afa9
+
+.wefoot
+	background-color: #afc3a9
 
 /* Styles for section headers.
 ------------------------------------------------------- */

@@ -204,6 +204,7 @@ tr.titlebg th, tr.catbg th
 .title
 	font-size: 1.2em
 	background: none
+	color: channels(gray, 30%)
 	a
 		color: lighten(channels(gray, 30%), 10%) !important
 
@@ -213,9 +214,6 @@ tr.titlebg th, tr.catbg th
 .cat final
 	border: 1px solid rgba(0,0,0, 0.15)
 	color: gray
-
-.title final
-	color: channels(gray, 30%)
 
 .table_grid
 	tr.catbg, tr.titlebg
@@ -262,5 +260,5 @@ $ita_font = "Segoe UI", "Trebuchet MS", Arial, sans-serif
 $post_font = 9.5pt/140% "Lucida Sans Unicode", Verdana, $main_font
 
 @replace
-	url($images/minilogo.png)
 	url($images/minilogow.png)
+	url($images/minilogo.png)

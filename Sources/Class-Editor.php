@@ -2555,12 +2555,7 @@ class wedit
 					// Show the font drop down...
 					if (!isset($this->disabled_tags['font']) && !empty($settings['editorFonts']))
 					{
-						$fonts = explode("\n", $settings['editorFonts']);
-						foreach ($fonts as $k => $v)
-							if (trim($v) == '')
-								unset($fonts[$k]);
-							else
-								$fonts[$k] = trim($v);
+						$fonts = array_filter(array_map('trim', preg_split('~[\s,]+~', $settings['editorFonts'])));
 						if (!empty($fonts))
 						{
 							$context['footer_js'] .= ',
