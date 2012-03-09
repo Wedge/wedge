@@ -306,8 +306,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		// Make sure to only keep 'webkit' if we have no other browser name on record.
 		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
 
-		// And the language.
-		isset($context['user']) && $context['user']['language'] !== 'english' ? (array) $context['user']['language'] : array()
+		// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
+		isset($context['user']) && $context['user']['language'] !== 'english' &&
+			isset($context['skin_available_languages']) && count($context['skin_available_languages']) > 1 ? (array) $context['user']['language'] : array()
 	));
 
 	// Cache final file and retrieve its name.
@@ -433,10 +434,9 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
 	$images_url = '..' . str_replace($boardurl, '', $theme['images_url']);
-	$language_folder = isset($context['user']) && file_exists($theme['theme_dir'] . '/images/' . $context['user']['language']) ? $context['user']['language'] : 'english';
+	$languages = isset($context['skin_available_languages']) ? $context['skin_available_languages'] : array('english');
 	$css_vars = array(
-		'$language_dir' => $theme['theme_dir'] . '/images/' . $language_folder,
-		'$language' => $images_url . '/' . $language_folder,
+		'$language' => isset($context['user']['language']) && in_array($context['user']['language'], $languages) ? $context['user']['language'] : $languages[0],
 		'$images_dir' => $theme['theme_dir'] . '/images',
 		'$images' => $images_url,
 		'$theme_dir' => $theme['theme_dir'],
@@ -904,6 +904,7 @@ function wedge_get_skin_options()
 			$context['sidebar_position'] = trim($match[1]);
 
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
+		{
 			foreach ($matches as $match)
 			{
 				if (!empty($match[3]) && (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1]))))
@@ -918,6 +919,7 @@ function wedge_get_skin_options()
 	<link rel="stylesheet" href="' . $css_file . '">';
 				}
 			}
+		}
 
 		if (strpos($set, '</code>') !== false && preg_match_all('~<code(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</code>~s', $set, $matches, PREG_SET_ORDER))
 		{
@@ -952,6 +954,9 @@ function wedge_get_skin_options()
 				);
 			}
 		}
+
+		if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
+			$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
 	}
 }
 

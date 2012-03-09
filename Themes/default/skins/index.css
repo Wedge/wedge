@@ -23,7 +23,7 @@
  * CSS cached files are put inside the /cache/ folder, so any relative URLs will fail unless they use it
  * as their root, or use the available path variables.
  *
- * $language - current user's language (e.g. $images/$language/new.gif)
+ * $language - current user's language - see Wine/Warm/skin.xml for details
  * $images - current theme's image folder URL
  * $theme - current theme's root folder URL
  * $here - current skin's root folder URL

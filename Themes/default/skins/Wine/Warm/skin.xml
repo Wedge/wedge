@@ -199,4 +199,18 @@
 	<macro name="offside"><div id="offside">{body}</div></div></macro>
 	<macro name="offside" for="ie6,ie7"><td class="top">{body}</td></tr></table></macro>
 
+	<!--
+		Available languages: a comma-separated (or newline-separated) list of languages.
+		If you use the $languages variable in your CSS, it means you're expecting to show
+		a custom style depending on the language, e.g. background: url($here/icons/image-$language.png)
+		would show 'image-french.png' if the user had their preferred language set to French.
+		Since you can't account for all available languages, just list here all of those you did consider.
+
+		The first in the list will be the fallback (usually English.)
+		Don't use this tag if you don't offer custom language styling, obviously.
+	-->
+	<languages>
+		english, french
+	</languages>
+
 </skin>
