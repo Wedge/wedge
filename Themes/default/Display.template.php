@@ -568,6 +568,7 @@ function template_topic_poll()
 	// Are they not allowed to vote but allowed to view the options?
 	if ($context['poll']['show_results'] || !$context['allow_vote'])
 	{
+		$bar_num = 1;
 		echo '
 			<dl>';
 
@@ -576,7 +577,7 @@ function template_topic_poll()
 		{
 			echo '
 				<dt', $option['voted_this'] ? ' class="voted"' : '', '>', $option['option'], '</dt>
-				<dd class="statsbar', $option['voted_this'] ? ' voted' : '', '">';
+				<dd class="bar', $bar_num++, $bar_num % 2 ? ' alt' : '', $option['voted_this'] ? ' voted' : '', '">';
 
 			if ($context['allow_poll_view'])
 				echo '

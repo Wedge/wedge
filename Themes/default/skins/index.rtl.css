@@ -513,19 +513,13 @@ tr.titlebg td
 
 /* Styles for the statistics center.
 ------------------------------------------------- */
-#stats_left, #top_posters, #top_topics_replies, #top_topics_starter
-	float: right
-
-#stats_right, #top_boards, #top_topics_views, #most_online
-	float: left
-
 dl.stats
 	dt
 		float: right
 	dd
 		text-align: left
 
-.statsbar .bar
+.bar
 	float: right
 
 tr.windowbg2
