@@ -327,7 +327,7 @@ li.profile img
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
-	font-family: $post_font
+	font: $post_font
 	padding: .1em 0
 	clear: right
 

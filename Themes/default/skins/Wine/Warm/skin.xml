@@ -213,4 +213,15 @@
 		english, french
 	</languages>
 
+	<!--
+		Replacements
+		@todo: document this...
+	-->
+	<!--
+		<replace>
+			<from><![CDATA[<li><we:nested:li></li>]]></from>
+			<to><li><we:nested:li> (This is a dummy test.)</li></to>
+		</replace>
+	-->
+
 </skin>

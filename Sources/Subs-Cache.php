@@ -903,6 +903,11 @@ function wedge_get_skin_options()
 		if (strpos($set, '</sidebar>') !== false && preg_match('~<sidebar>(.*?)</sidebar>~s', $set, $match))
 			$context['sidebar_position'] = trim($match[1]);
 
+		if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
+			foreach ($matches as $match)
+				if (!empty($match[3]) && (empty($match[2]) || in_array($context['browser']['agent'], explode(',', $match[2]))))
+					$context['skin_replace'][trim($match[3], "\x00..\x1F")] = array(trim($match[4], "\x00..\x1F"), !empty($match[1]));
+
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $match)

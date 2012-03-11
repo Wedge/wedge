@@ -259,6 +259,94 @@ function ob_sessrewrite($buffer)
 		}
 	}
 
+	if (!empty($context['skin_replace']))
+	{
+		// Don't waste time replacing macros if there are none in the first place.
+		foreach ($context['skin_replace'] as $from => $to)
+		{
+			// Regular expression? Easy as pie...
+			if ($to[1])
+			{
+				$buffer = preg_replace('~' . str_replace('~', '\~', $from) . '~si', $to[0], $buffer);
+				continue;
+			}
+			$to = $to[0];
+			preg_match('~<we:nested:(\w+)[ /]*>~i', $from, $nested);
+
+			// Just a simple string, no funny business?
+			if (empty($nested))
+			{
+				$buffer = str_replace($from, $to, $buffer);
+				continue;
+			}
+
+			// So, we found ourselves a nested area... Gonna be fun. The main reason for the size of this code
+			// is that we don't want to use a recursive regex, which would do the bulk to the work in a single line,
+			// but would be both slower and more fragile. Never do that on a large string like a web page buffer.
+			$nest = $nested[1];
+			$nestlen = strlen($nest);
+			$split = strpos($from, $nested[0]);
+			$from = str_replace($nested[0], '', $from);
+			$opener_code = substr($from, 0, $split);
+			$closer_code = substr($from, $split);
+			$start = 0;
+
+			while ($start !== false)
+			{
+				$from_start = strpos($buffer, $opener_code, $start);
+
+				// Opening part not found..? Just skip this replacement.
+				if ($from_start === false)
+					break;
+
+				// Otherwise, start going through the string from our first occurrence.
+				$p = $offset = $from_start + $split;
+				$nestlevel = 0;
+
+				// First, we need to establish whether there really is a nested item within our queried string.
+				while (($test1 = strpos($buffer, '<' . $nest, $p)) !== false && ($buffer[$test1 + $nestlen + 1] !== ' ' && $buffer[$test1 + $nestlen + 1] !== '>'));
+				$from_end = strpos($buffer, $closer_code, $p);
+				$do_test = $test1 !== false && $from_end !== false && $test1 < $from_end;
+				$next_closer = $from_end;
+
+				while ($do_test)
+				{
+					$next_opener = $p;
+					while (($next_opener = strpos($buffer, '<' . $nest, $next_opener)) !== false && ($buffer[$next_opener + $nestlen + 1] !== ' ' && $buffer[$next_opener + $nestlen + 1] !== '>'));
+					$next_closer = strpos($buffer, '</' . $nest . '>', $p);
+					// Nothing left? Then it's broken HTML... Let's get out of here.
+					if ($next_closer === false)
+						break;
+					// No opener left? Then the closer must be the one we're looking for.
+					if ($next_opener === false)
+						$next_opener = $next_closer + 1;
+					// Otherwise, increase or decrease the nesting level depending on which came first.
+					$p = min($next_opener, $next_closer) + 1;
+					$nestlevel += $next_opener < $next_closer ? 1 : -1;
+					// Have we reached the end of our nested area?
+					if ($nestlevel < 0)
+						break;
+				}
+
+				// Okay, mission accomplished, we found a proper closer.
+				if ($next_closer !== false)
+				{
+					$actual_replace = str_replace($nested[0], substr($buffer, $offset, $next_closer - $offset), $to);
+					$buffer = substr_replace(
+						$buffer,
+						$actual_replace,
+						$offset - $split,
+						strlen($from) + $next_closer - $offset
+					);
+				}
+
+				// Let's ensure all subsequent finds are also replaced.
+				$start = $offset - $split + strlen($actual_replace);
+				unset($actual_replace);
+			}
+		}
+	}
+
 	// Very fast on-the-fly replacement of <URL>...
 	$buffer = str_replace('<URL>', $scripturl, $buffer);
 
