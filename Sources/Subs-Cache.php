@@ -903,7 +903,7 @@ function wedge_get_skin_options()
 		// Skin options, such as <sidebar> position.
 		if (strpos($set, '</options>') !== false && preg_match('~<options>(.*?)</options>~s', $set, $match))
 		{
-			preg_match_all('~<([\w-]+)>(.*?)<\\1>~s', $set, $options, PREG_SET_ORDER);
+			preg_match_all('~<([\w-]+)>(.*?)</\\1>~s', $match[1], $options, PREG_SET_ORDER);
 			foreach ($options as $option)
 				$context['skin_options'][$option[1]] = trim($option[2]);
 		}

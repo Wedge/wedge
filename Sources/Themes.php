@@ -1539,7 +1539,17 @@ function wedge_get_skin_list($dir, $files = array(), &$root = array())
 		if ($is_root)
 			$this_dir = $dir;
 		$these_files = scandir($this_dir);
-		if (!in_array('index.css', $these_files))
+		$is_valid = false;
+		// We need to have at least one .css file *or* skin.xml for a skin to be valid.
+		foreach ($these_files as $test)
+		{
+			if (substr($test, -4) === '.css')
+			{
+				$is_valid = true;
+				break;
+			}
+		}
+		if (!$is_valid && !in_array('skin.xml', $these_files))
 			continue;
 		if (in_array('skin.xml', $these_files))
 		{
