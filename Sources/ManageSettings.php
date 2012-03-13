@@ -624,6 +624,7 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 		$name = !empty($element['name']) ? (string) $element['name'] : '';
 		if (empty($name) && $item != 'hr')
 			continue;
+		$new_item = array();
 		switch ($item)
 		{
 			case 'desc':
@@ -633,14 +634,14 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 			case 'password':
 			case 'bbc':
 			case 'float':
-				$config_vars[] = array($item, $name);
+				$new_item = array($item, $name);
 				break;
 			case 'text':
 			case 'large-text':
 				$array = array($item, $name);
 				if (!empty($element['size']))
 					$array['size'] = (string) $element['size'];
-				$config_vars[] = $array;
+				$new_item = $array;
 				break;
 			case 'select':
 			case 'multi-select':
@@ -652,34 +653,40 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 						$n = (string) $opt['name'];
 						$array[2][(string) $opt['value']] = isset($txt[$n]) ? $txt[$n] : $n;
 					}
-
 				}
 				if (!empty($array[2]))
-					$config_vars[] = $array;
+					$new_item = $array;
 				break;
 			case 'int':
 				$array = array($item, $name);
 				foreach (array('step', 'min', 'max', 'size') as $attr)
 					if (isset($element[$attr]))
 						$array[$attr] = (int) $element[$attr];
-				$config_vars[] = $array;
+				$new_item = $array;
 				break;
 			case 'permissions':
 				$array = array($item, $name);
 				if (!empty($element['noguests']) && $element['noguests'] == 'yes')
 					$array['exclude'] = array(-1);
-				$config_vars[] = $array;
+				$new_item = $array;
 				break;
 			case 'literal':
-				$config_vars[] = isset($txt[$name]) ? $txt[$name] : $name;
+				$new_item = isset($txt[$name]) ? $txt[$name] : $name;
 				break;
 			case 'hr':
-				$config_vars[] = '';
+				$config_vars[] = ''; // This would ordinarily fall through the next test we do.
 				break;
 			// We already did language, just to clarify that we specifically do not want to do anything here with it.
 			case 'language':
 			default:
 				break;
+		}
+
+		if (!empty($new_item))
+		{
+			if (isset($txt[$name . '_subtext']))
+				$new_item['subtext'] = $txt[$name . '_subtext'];
+			$config_vars[] = $new_item;
 		}
 	}
 
