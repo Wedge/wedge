@@ -19,7 +19,7 @@
 #content div.frame
 	padding: 0 10px 20px
 
-#board_list
+.board_list
 	td.stats
 		display: none
 	td.lastpost

@@ -7,8 +7,9 @@
 ------------------------------------------------- */
 
 // The board title!
-#board_list
+.board_list
 	box-sizing: border-box
+	margin-bottom: 10px
 	td.info a.subject
 		font: 700 120% "PT Sans", $head_font
 		color: $board_col

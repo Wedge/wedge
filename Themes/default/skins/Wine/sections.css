@@ -7,7 +7,7 @@
 ------------------------------------------------- */
 
 // The board title!
-#board_list
+.board_list
 	td.info a.subject
 		font: 700 120% $head_font
 
