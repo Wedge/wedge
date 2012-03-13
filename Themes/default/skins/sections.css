@@ -217,7 +217,6 @@ img.new_posts
 	// Without this, wide code blocks will break layout.
 	table-layout: fixed
 	width: 100%
-	padding: 0
 
 .postbg2 extends ".windowbg2, .postbg"
 	background: #fbf9f6
@@ -461,7 +460,6 @@ ul.quickbuttons extends ul.reset
 		background-image: url($images/new_some.png)
 		background-position: 0 0
 		padding-left: 25px
-
 
 ul.usermenuitem, ul.acmenuitem
 	padding: 2px

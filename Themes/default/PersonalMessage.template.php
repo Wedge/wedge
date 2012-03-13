@@ -330,7 +330,7 @@ function template_folder()
 				// This is for "forwarding" - even if the member is gone.
 				else
 					echo '
-					<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="forward_button">', $txt['reply_quote'], '</a></li>';
+					<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="forward_button">', $txt['quote'], '</a></li>';
 			}
 			echo '
 					<li><a href="<URL>?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');" class="remove_button">', $txt['delete'], '</a></li>';
@@ -741,7 +741,7 @@ function template_search_results()
 
 			if ($context['can_send_pm'])
 			{
-				$quote_button = create_button('quote.gif', 'reply_quote', 'reply_quote', 'class="middle"');
+				$quote_button = create_button('quote.gif', 'quote', 'quote', 'class="middle"');
 				$reply_button = create_button('im_reply.gif', 'reply', 'reply', 'class="middle"');
 				// You can only reply if they are not a guest...
 				if (!$message['member']['is_guest'])

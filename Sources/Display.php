@@ -1159,6 +1159,26 @@ function Display()
 	$context['action_menu'] = array();
 	$context['action_menu_items_show'] = array();
 	$context['action_menu_items'] = array(
+		'lk' => array(
+			'caption' => 'acme_like',
+			'action' => '\'' . $scripturl . '?action=like;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'class' => '\'like_button\'',
+		),
+		'uk' => array(
+			'caption' => 'acme_unlike',
+			'action' => '\'' . $scripturl . '?action=like;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'class' => '\'unlike_button\'',
+		),
+		'qu' => array(
+			'caption' => 'acme_quote',
+			'action' => '\'' . $scripturl . '?action=post;quote=%id%;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last=' . $context['topic_last_message'] . '\'',
+			'class' => '\'quote_button\'',
+		),
+		'mo' => array(
+			'caption' => 'acme_modify',
+			'action' => '\'' . $scripturl . '?action=post;msg=%id%;topic=' . $context['current_topic'] . '\'',
+			'class' => '\'modify_button\'',
+		),
 		'ap' => array(
 			'caption' => 'acme_approve',
 			'action' => '\'' . $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
@@ -1440,6 +1460,11 @@ function prepareDisplayContext($reset = false)
 	{
 		// Start by putting the last message's id, for merging purposes.
 		$menu = array($output['last_post_id']);
+
+		if (empty($context['liked_posts'][$output['id']]['you']))
+			$menu[] = 'lk';
+		else
+			$menu[] = 'uk';
 
 		// Maybe we can approve it, maybe we should?
 		if ($output['can_approve'])

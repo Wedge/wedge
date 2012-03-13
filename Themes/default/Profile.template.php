@@ -458,7 +458,7 @@ function template_showPosts()
 		</div>';
 
 	// Button shortcuts
-	$quote_button = create_button('quote.gif', 'reply_quote', 'quote', 'class="middle"');
+	$quote_button = create_button('quote.gif', 'quote', 'quote', 'class="middle"');
 	$reply_button = create_button('reply_sm.gif', 'reply', 'reply', 'class="middle"');
 	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'class="middle"');
 	$notify_button = create_button('notify_sm.gif', 'notify_replies', 'notify', 'class="middle"');

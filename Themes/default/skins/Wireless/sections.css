@@ -1,0 +1,31 @@
+
+.poster
+	display: block
+	box-sizing: border-box
+	width: 100%
+	height: 58px
+	padding: 10px 12px 12px
+
+	h4
+		margin-top, margin-left: 0
+	div.avatar
+		float: left
+		margin-right: 12px
+	img.avatar
+		max-height: 40px
+
+.postarea
+	display: block
+
+.tinyuser
+	float, text-align: right
+	max-width: 50%
+	span
+		float: right
+		font-size: 90%
+	> ul.quickbuttons
+		float: right
+		margin: 3px 0 0
+
+.inner
+	border-top: 0
