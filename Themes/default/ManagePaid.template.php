@@ -332,7 +332,7 @@ function template_modify_user_subscription()
 						</select>
 					</dd>
 				</dl>';
-				
+
 	if (!$context['current_subscription']['lifetime'])
 	{
 		echo '

@@ -269,7 +269,7 @@ function ModifyFilterRule()
 	$this_block = $rules->xpath('rule[@for="' . $type . '"]/criteria');
 	if (empty($this_block) || empty($this_block[$id]))
 		fatal_lang_error('modfilter_rule_not_found');
-	
+
 	$context += array(
 		'prev_type' => $type,
 		'prev_id' => $id + 1,
@@ -399,7 +399,7 @@ function SaveFilterRule()
 
 	cleanupRuleNodes($rules);
 	$result = (count($rules->children()) > 0) ? $rules->asXML() : '';
-		
+
 	updateSettings(array('postmod_rules' => $result));
 	redirectexit('action=admin;area=modfilters');
 }

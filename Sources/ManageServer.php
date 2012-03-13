@@ -1968,7 +1968,7 @@ function prepareServerSettingsContext(&$config_vars)
 				'postinput' => '',
 				'subtext' => !empty($config_var['subtext']) ? $config_var['subtext'] : '',
 			);
-			
+
 			// If it's an int, there may be extra stuff.
 			if ($config_var[3] == 'int')
 			{

@@ -48,11 +48,11 @@ function template_display_posts()
 			<a id="msg', $message['id'], '"></a>', $message['first_new'] ? '<a id="new"></a>' : '';
 
 		echo '
-			<div class="postbg', $message['alternate'] == 0 ? '' : '2', $message['approved'] ? '' : ' approve', $message['id'] !== $context['first_message'] ? '' : ' first-post', $context['sidebar_position'] === 'right' ? '' : ' right-side', '">
+			<div class="postbg', $message['alternate'] == 0 ? '' : '2', $message['approved'] ? '' : ' approve', $message['id'] !== $context['first_message'] ? '' : ' first-post', empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] === 'right' ? '' : ' right-side', '">
 				<div class="post_wrapper">';
 
 		// Show information about the poster of this message.
-		if ($context['sidebar_position'] !== 'left')
+		if (empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] !== 'left')
 			echo '
 					<div class="poster">',
 						template_userbox($message), '
@@ -218,7 +218,7 @@ function template_display_posts()
 					</div>';
 
 		// Show information about the poster of this message.
-		if ($context['sidebar_position'] === 'left')
+		if (!empty($context['skin_options']['sidebar']) && $context['skin_options']['sidebar'] === 'left')
 			echo '
 					<div class="poster">',
 						template_userbox($message), '

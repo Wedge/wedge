@@ -128,7 +128,7 @@ class weget
 		{
 			return false;
 		}
-		
+
 		return $this->curl ? $this->getCurl() : $this->getFSock();
 	}
 

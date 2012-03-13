@@ -16,9 +16,11 @@
 		By Nao.
 	]]></comment>
 
-	<sidebar>
-		left
-	</sidebar>
+	<options>
+		<sidebar>
+			left
+		</sidebar>
+	</options>
 
 	<code for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');

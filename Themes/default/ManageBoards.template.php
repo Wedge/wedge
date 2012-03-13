@@ -382,8 +382,8 @@ function template_modify_board()
 									<tr>
 										<td class="smalltext">
 											<span', $group['is_post_group'] ? ' class="post_group" title="' . $txt['mboards_groups_post_group'] . '"' : '', $group['id'] == 0 ? ' class="regular_members" title="' . $txt['mboards_groups_regular_members'] . '"' : '', '>
-											', $group['name'], '
-											</span>	
+												', $group['name'], '
+											</span>
 										</td>
 										<td>
 											<input type="radio" name="viewgroup[', $group['id'], ']" value="allow"', $group['view_perm'] == 'allow' ? ' checked' : '', '>
@@ -418,8 +418,8 @@ function template_modify_board()
 									<tr>
 										<td class="smalltext">
 											<span', $group['is_post_group'] ? ' class="post_group" title="' . $txt['mboards_groups_post_group'] . '"' : '', $group['id'] == 0 ? ' class="regular_members" title="' . $txt['mboards_groups_regular_members'] . '"' : '', '>
-											', $group['name'], '
-											</span>	
+												', $group['name'], '
+											</span>
 										</td>
 										<td>
 											<input type="radio" name="entergroup[', $group['id'], ']" value="allow"', $group['enter_perm'] == 'allow' ? ' checked' : '', '>

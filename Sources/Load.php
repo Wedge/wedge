@@ -1868,7 +1868,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Initializing the Wedge templating magic.
 	$context['macros'] = array();
 	$context['skeleton'] = '';
-	$context['sidebar_position'] = 'right';
+	$context['skin_options'] = array();
 	wetem::getInstance();
 
 	// If output is fully XML, or the print-friendly version, or the spellchecking page,

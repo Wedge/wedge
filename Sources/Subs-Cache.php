@@ -900,8 +900,13 @@ function wedge_get_skin_options()
 			$set = str_replace($match[1], '', $set);
 		}
 
-		if (strpos($set, '</sidebar>') !== false && preg_match('~<sidebar>(.*?)</sidebar>~s', $set, $match))
-			$context['sidebar_position'] = trim($match[1]);
+		// Skin options, such as <sidebar> position.
+		if (strpos($set, '</options>') !== false && preg_match('~<options>(.*?)</options>~s', $set, $match))
+		{
+			preg_match_all('~<([\w-]+)>(.*?)<\\1>~s', $set, $options, PREG_SET_ORDER);
+			foreach ($options as $option)
+				$context['skin_options'][$option[1]] = trim($option[2]);
+		}
 
 		if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)

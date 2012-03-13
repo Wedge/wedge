@@ -118,17 +118,27 @@
 	</skeleton>
 
 	<!--
-		Sidebar position. Default is 'right'. Wedge supports 'left' and 'right' by default,
-		but support really depends on the current theme and plugins.
+		Skin options. Wedge's default theme only offers two options for skins:
 
-		Your design should conform to the sidebar's position. For instance, if you have
-		a sidebar-like block in your default layer, try to make sure it's shown opposite
-		the sidebar, or at least make sure that having both sidebars on the same side works.
+		<mobile> (meaning the skin is optimized for mobile devices.)
+		<sidebar> (sidebar position)
+
+		Possible values for <mobile> are '0' (false, also default) and '1' (true).
+		Using boolean digits makes it possible to just test for !empty() on the variable.
+
+		Possible values for <sidebar> are 'right' (default) and 'left'. If you want
+		to add more values or even more options, you can do it by creating a new theme.
+		Of course, you'll have to account for these new values in your own design.
+		For instance, if you have a sidebar-like block in your default layer, try to make
+		sure it's shown opposite the sidebar, or at least make sure that having both
+		sidebars on the same side works.
 	-->
 
-	<sidebar>
-		left
-	</sidebar>
+	<options>
+		<sidebar>
+			left
+		</sidebar>
+	</options>
 
 	<!--
 		Code. This section allows you to define extra JavaScript that should be

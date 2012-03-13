@@ -2562,7 +2562,6 @@ class wedit
 				["select", "sel_face", {"": ' . JavaScriptEscape($txt['font_face']);
 							foreach ($fonts as $font)
 								$context['footer_js'] .= ', "' . strtolower($font) . '": "' . $font . '"';
-							
 							$context['footer_js'] .= '}]';
 						}
 					}
