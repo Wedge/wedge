@@ -145,13 +145,13 @@ function ModifyWarningSettings($return_config = false)
 
 	$config_vars = array(
 			// Warning system?
-			array('int', 'warning_watch', 'help' => 'warning_enable', 'min' => 0, 'max' => 100),
-			'moderate' => array('int', 'warning_moderate', 'min' => 0, 'max' => 100),
-			array('int', 'warning_mute', 'min' => 0, 'max' => 100),
+			array('int', 'warning_watch', 'help' => 'warning_enable', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_warning_watch_subtext']),
+			'moderate' => array('int', 'warning_moderate', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_warning_moderate_subtext']),
+			array('int', 'warning_mute', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_warning_mute_subtext']),
 		'',
-			'rem1' => array('int', 'user_limit', 'min' => 0, 'max' => 100),
-			'rem2' => array('int', 'warning_decrement', 'min' => 0, 'max' => 100),
-			array('select', 'warning_show', array($txt['setting_warning_show_mods'], $txt['setting_warning_show_user'], $txt['setting_warning_show_all'])),
+			'rem1' => array('int', 'user_limit', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_user_limit_subtext']),
+			'rem2' => array('int', 'warning_decrement', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_warning_decrement_subtext']),
+			array('select', 'warning_show', array($txt['setting_warning_show_mods'], $txt['setting_warning_show_user'], $txt['setting_warning_show_all']), 'subtext' => $txt['setting_warning_show_subtext']),
 	);
 
 	if ($return_config)
@@ -373,20 +373,20 @@ function ModifyLogSettings($return_config = false)
 			array('check', 'enableErrorLogging'),
 			array('check', 'enableErrorQueryLogging'),
 		'',
-			array('check', 'log_enabled_moderate'),
-			array('check', 'log_enabled_admin'),
-			array('check', 'log_enabled_profile'),
+			array('check', 'log_enabled_moderate', 'subtext' => $txt['log_enabled_moderate_subtext']),
+			array('check', 'log_enabled_admin', 'subtext' => $txt['log_enabled_admin_subtext']),
+			array('check', 'log_enabled_profile', 'subtext' => $txt['log_enabled_profile_subtext']),
 			// Even do the pruning?
 			array('title', 'logPruning'),
 			// The array indexes are there so we can remove/change them before saving.
 			'pruningOptions' => array('check', 'pruningOptions'),
 		'',
 			// Various logs that could be pruned.
-			array('int', 'pruneErrorLog', 'postinput' => $txt['days_word']), // Error log.
-			array('int', 'pruneModLog', 'postinput' => $txt['days_word']), // Moderation log.
-			array('int', 'pruneReportLog', 'postinput' => $txt['days_word']), // Report to moderator log.
-			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word']), // Log of the scheduled tasks and how long they ran.
-			array('int', 'pruneSpiderHitLog', 'postinput' => $txt['days_word']), // Log of the scheduled tasks and how long they ran.
+			array('int', 'pruneErrorLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['pruneZeroDisable']), // Error log.
+			array('int', 'pruneModLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['pruneZeroDisable']), // Moderation log.
+			array('int', 'pruneReportLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['pruneZeroDisable']), // Report to moderator log.
+			array('int', 'pruneScheduledTaskLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['pruneZeroDisable']), // Log of the scheduled tasks and how long they ran.
+			array('int', 'pruneSpiderHitLog', 'postinput' => $txt['days_word'], 'subtext' => $txt['pruneZeroDisable']), // Log of the scheduled tasks and how long they ran.
 			// If you add any additional logs make sure to add them after this point.  Additionally, make sure you add them to the weekly scheduled task.
 			// Plugin developers: do NOT use the pruningOptions master variable for this as Wedge may overwrite your setting in the future!
 	);
@@ -450,23 +450,23 @@ function ModifyPmSettings($return_config = false)
 		array('check', 'pm_enabled'),
 	);
 
+	loadLanguage('ManageSettings');
+
 	if (!empty($settings['pm_enabled']))
 		$config_vars = array_merge($config_vars, array(
 			'',
 			array('permissions', 'pm_read', 'exclude' => array(-1)),
 			array('permissions', 'pm_send', 'exclude' => array(-1)),
 			'',
-			'pm1' => array('int', 'max_pm_recipients', 'min' => 0),
-			'pm2' => array('int', 'pm_posts_verification', 'min' => 0),
-			'pm3' => array('int', 'pm_posts_per_hour', 'min' => 0),
+			'pm1' => array('int', 'max_pm_recipients', 'min' => 0, 'subtext' => $txt['max_pm_recipients_subtext']),
+			'pm2' => array('int', 'pm_posts_verification', 'min' => 0, 'subtext' => $txt['pm_posts_verification_subtext']),
+			'pm3' => array('int', 'pm_posts_per_hour', 'min' => 0, 'subtext' => $txt['pm_posts_per_hour_subtext']),
 			'',
 			array('check', 'masterSavePmDrafts'),
 			array('permissions', 'save_pm_draft', 'exclude' => array(-1)),
 			array('check', 'masterAutoSavePmDrafts'),
 			array('permissions', 'auto_save_pm_draft', 'exclude' => array(-1)),
 		));
-
-	loadLanguage('ManageSettings');
 
 	if ($return_config)
 		return $config_vars;

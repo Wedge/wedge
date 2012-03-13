@@ -204,7 +204,7 @@ function ModifyPostSettings($return_config = false)
 			array('int', 'max_messageLength', 'subtext' => $txt['max_messageLength_zero'], 'postinput' => $txt['manageposts_characters']),
 			array('int', 'fixLongWords', 'subtext' => $txt['fixLongWords_zero'] . ' <span class="alert">' . $txt['fixLongWords_warning'] . '</span>', 'postinput' => $txt['manageposts_characters']),
 			array('int', 'topicSummaryPosts', 'postinput' => $txt['manageposts_posts']),
-			array('int', 'max_urlLength'),
+			array('int', 'max_urlLength', 'subtext' => $txt['max_urlLength_subtext']),
 		'',
 			// Automatic image resizing.
 			array('int', 'max_image_width'),

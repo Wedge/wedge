@@ -135,16 +135,16 @@ function ModifySignatureSettings($return_config = false)
 			array('int', 'signature_minposts'),
 		'',
 			// Tweaking settings!
-			array('int', 'signature_max_length'),
-			array('int', 'signature_max_lines'),
-			array('int', 'signature_max_font_size'),
+			array('int', 'signature_max_length', 'subtext' => $txt['signature_zero_no_max']),
+			array('int', 'signature_max_lines', 'subtext' => $txt['signature_zero_no_max']),
+			array('int', 'signature_max_font_size', 'subtext' => $txt['signature_max_font_size_subtext']),
 			array('check', 'signature_allow_smileys', 'onclick' => '$(\'#signature_max_smileys\').attr(\'disabled\', !this.checked);'),
-			array('int', 'signature_max_smileys'),
+			array('int', 'signature_max_smileys', 'subtext' => $txt['signature_zero_no_max']),
 		'',
 			// Image settings.
-			array('int', 'signature_max_images'),
-			array('int', 'signature_max_image_width'),
-			array('int', 'signature_max_image_height'),
+			array('int', 'signature_max_images', 'subtext' => $txt['signature_max_images_subtext']),
+			array('int', 'signature_max_image_width', 'subtext' => $txt['signature_zero_no_max']),
+			array('int', 'signature_max_image_height', 'subtext' => $txt['signature_zero_no_max']),
 		'',
 			array('bbc', 'signature_bbc'),
 	);

@@ -229,7 +229,7 @@ function ModifyGeneralSettings($return_config = false)
 		array('mtitle', $txt['setting_mtitle'], 'file', 'text', 36),
 		array('mmessage', $txt['setting_mmessage'], 'file', 'text', 36),
 		'',
-		array('time_offset', $txt['setting_time_offset'], 'db', 'float', null, 'time_offset'),
+		array('time_offset', $txt['setting_time_offset'], 'db', 'float', null, 'time_offset', 'subtext' => $txt['setting_time_offset_subtext']),
 		'default_timezone' => array('default_timezone', $txt['setting_default_timezone'], 'db', 'select', array()),
 		'',
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
@@ -321,7 +321,7 @@ function ModifyDatabaseSettings($return_config = false)
 		array('ssi_db_passwd', $txt['ssi_db_passwd'], 'file', 'password'),
 		'',
 		array('autoFixDatabase', $txt['autoFixDatabase'], 'db', 'check', false, 'autoFixDatabase'),
-		array('autoOptMaxOnline', $txt['autoOptMaxOnline'], 'db', 'int'),
+		array('autoOptMaxOnline', $txt['autoOptMaxOnline'], 'db', 'int', 'subtext' => $txt['autoOptMaxOnline_subtext']),
 		'',
 		array('boardurl', $txt['admin_url'], 'file', 'text', 36),
 		array('boarddir', $txt['boarddir'], 'file', 'text', 36),
@@ -360,9 +360,9 @@ function ModifyCookieSettings($return_config = false)
 		// Cookies...
 		array('cookiename', $txt['cookie_name'], 'file', 'text', 20),
 		array('cookieTime', $txt['cookieTime'], 'db', 'int'),
-		array('localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'),
-		array('globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'),
-		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !isset($_SERVER['HTTPS']) || !($_SERVER['HTTPS'] == '1' || strtolower($_SERVER['HTTPS']) == 'on')),
+		array('localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies', 'subtext' => $txt['localCookies_subtext']),
+		array('globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies', 'subtext' => $txt['globalCookies_subtext']),
+		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies', 'disabled' => !isset($_SERVER['HTTPS']) || !($_SERVER['HTTPS'] == '1' || strtolower($_SERVER['HTTPS']) == 'on'), 'subtext' => $txt['secureCookies_subtext']),
 		'',
 		// Sessions
 		array('databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'),
@@ -1966,6 +1966,7 @@ function prepareServerSettingsContext(&$config_vars)
 				'javascript' => '',
 				'preinput' => '',
 				'postinput' => '',
+				'subtext' => !empty($config_var['subtext']) ? $config_var['subtext'] : '',
 			);
 			
 			// If it's an int, there may be extra stuff.
@@ -2077,15 +2078,6 @@ function prepareDBSettingContext(&$config_vars)
 					$context['config_vars'][$config_var[1]]['label'] = $txt['setting_' . $config_var[1]];
 				elseif (isset($txt['groups_' . $config_var[1]]))
 					$context['config_vars'][$config_var[1]]['label'] = $txt['groups_' . $config_var[1]];
-			}
-
-			// Set the subtext in case it's part of the label.
-			// !!! Temporary. Preventing divs inside label tags.
-			$divPos = strpos($context['config_vars'][$config_var[1]]['label'], '<div');
-			if ($divPos !== false)
-			{
-				$context['config_vars'][$config_var[1]]['subtext'] = preg_replace('~</?div[^>]*>~', '', substr($context['config_vars'][$config_var[1]]['label'], $divPos));
-				$context['config_vars'][$config_var[1]]['label'] = substr($context['config_vars'][$config_var[1]]['label'], 0, $divPos);
 			}
 		}
 	}
