@@ -413,6 +413,10 @@ ul.quickbuttons extends ul.reset
 	 * or simply use another file like this: background: url($here/file) no-repeat 0 0
 	 */
 
+	.like_button
+		background-position: 0 -270px
+	.unlike_button
+		background-position: 0 -300px
 	.quote_button
 		background-position: 3px 0
 	.modify_button

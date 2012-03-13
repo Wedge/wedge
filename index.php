@@ -86,6 +86,7 @@ $action_list = array(
 	'jseditor' => array('JSEditor.php', 'JSEditor'),
 	'jsmodify' => array('JSModify.php', 'JSModify'),
 	'jsoption' => array('JSOption.php', 'JSOption'),
+	'like' => array('Like.php', 'Like'),
 	'lock' => array('Lock.php', 'Lock'),
 	'login' => array('Login.php', 'Login'),
 	'login2' => array('Login2.php', 'Login2'),

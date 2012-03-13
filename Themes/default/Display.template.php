@@ -79,6 +79,11 @@ function template_display_posts()
 			echo '
 							<ul class="quickbuttons">';
 
+		// Can they like? Is it liked?
+		if ($context['can_like'])
+			echo '
+								<li><a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', empty($context['liked_posts'][$message['id']]['you']) ? 'like' : 'unlike', '_button" id="like_button_', $message['id'], '">', empty($context['liked_posts'][$message['id']]['you']) ? $txt['like'] : $txt['unlike'], '</a></li>';
+
 		// Can they reply? Have they turned on quick reply?
 		if ($context['can_quote'] && !empty($options['display_quick_reply']))
 			echo '
@@ -184,6 +189,13 @@ function template_display_posts()
 							</div>';
 
 		echo '
+						</div>';
+
+		// Did anyone like this post?
+		if (!empty($context['liked_posts'][$message['id']]))
+			echo '
+						<div class="post_like">
+							', template_show_likes($message['id']), '
 						</div>';
 
 		// Are there any custom profile fields for above the signature?
@@ -534,6 +546,31 @@ function template_profile_icons(&$message)
 	echo '
 								</ul>
 							</li>';
+}
+
+function template_show_likes($message_id)
+{
+	global $context, $txt, $user_profile;
+
+	$string = '';
+	// Simplest case, it's just you.
+	if (!empty($context['liked_posts'][$message_id]['you']) && empty($context['liked_posts'][$message_id]['names']))
+		$string = $txt['you_like_this'];
+	// So we have some names to display?
+	elseif (!empty($context['liked_posts'][$message_id]['names']))
+	{
+		$base_id = !empty($context['liked_posts'][$message_id]['you']) ? 'you_' : '';
+		if (!empty($context['liked_posts'][$message_id]['others']))
+			$string = number_context($base_id . 'n_like_this', $context['liked_posts'][$message_id]['others']);
+		else
+			$string = $txt[$base_id . count($context['liked_posts'][$message_id]['names']) . '_like_this'];
+
+		// OK so at this point we have the string with the number of 'others' added, and also 'You' if appropriate. Now to add other names.
+		foreach ($context['liked_posts'][$message_id]['names'] as $k => $v)
+			$string = str_replace('{name' . ($k + 1) . '}', '<a href="<URL>?action=profile;u=' . $v . '">' . $user_profile[$v]['real_name'] . '</a>', $string);
+	}
+
+	return $string;
 }
 
 function template_topic_poll()
