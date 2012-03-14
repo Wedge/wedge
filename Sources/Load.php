@@ -821,7 +821,7 @@ function loadBoard()
 		$context['linktree'] = array_merge(
 			$context['linktree'],
 			array(array(
-				'url' => $scripturl . '?action=boards;c=' . $board_info['cat']['id'],
+				'url' => $scripturl . '?category=' . $board_info['cat']['id'],
 				'name' => $board_info['cat']['name']
 			)),
 			array_reverse($board_info['parent_boards']),
@@ -1828,6 +1828,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['session_query'] = $context['session_var'] . '=' . $context['session_id'];
 	$context['forum_name'] = $mbname;
 	$context['forum_name_html_safe'] = westr::htmlspecialchars($context['forum_name']);
+	// !! @todo: This needs fixing...
 	$context['header_logo_url_html_safe'] = empty($theme['header_logo_url']) ? $context['forum_name_html_safe']
 		: '<img src="' . westr::htmlspecialchars($theme['header_logo_url']) . '" alt="' . $context['forum_name'] . '">';
 	$context['site_slogan'] = empty($theme['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan">' . $theme['site_slogan'] . '</div>';
