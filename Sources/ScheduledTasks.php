@@ -300,7 +300,7 @@ function scheduled_approval_notification()
 		// Check whether they are interested.
 		if (!empty($row['mod_prefs']))
 		{
-			list (,, $pref_binary) = explode('|', $row['mod_prefs']);
+			list (, $pref_binary) = explode('|', $row['mod_prefs']);
 			if (!($pref_binary & 4))
 				continue;
 		}

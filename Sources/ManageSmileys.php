@@ -135,7 +135,7 @@ function EditSmileySettings($return_config = false)
 		array('title', 'settings'),
 			// Inline permissions.
 			array('permissions', 'manage_smileys'),
-			array('check', 'smiley_enable', 'subtext' => $txt['smileys_enable_note']),
+			array('check', 'smiley_enable', 'subtext' => $txt['smileys_enable_subtext']),
 		'',
 			array('select', 'smiley_sets_default', $smiley_context),
 			array('check', 'smiley_sets_enable'),
@@ -143,7 +143,7 @@ function EditSmileySettings($return_config = false)
 			array('text', 'smileys_dir', 'invalid' => !$context['smileys_dir_found']),
 		'',
 			// Message icons.
-			array('check', 'messageIcons_enable', 'subtext' => $txt['setting_messageIcons_enable_note']),
+			array('check', 'messageIcons_enable', 'subtext' => $txt['setting_messageIcons_enable_subtext']),
 	);
 
 	if ($return_config)

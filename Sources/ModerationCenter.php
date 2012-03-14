@@ -211,7 +211,7 @@ function ModerationHome()
 	if (empty($user_settings['mod_prefs']))
 		$user_blocks = 'n' . ($context['can_moderate_boards'] ? 'wr' : '') . ($context['can_moderate_groups'] ? 'g' : '');
 	else
-		list (, $user_blocks) = explode('|', $user_settings['mod_prefs']);
+		list ($user_blocks) = explode('|', $user_settings['mod_prefs']);
 
 	$user_blocks = str_split($user_blocks);
 
@@ -1957,11 +1957,10 @@ function ModerationSettings()
 	{
 		$mod_blocks = 'n' . ($context['can_moderate_boards'] ? 'wr' : '') . ($context['can_moderate_groups'] ? 'g' : '');
 		$pref_binary = 5;
-		$show_reports = 1;
 	}
 	else
 	{
-		list ($show_reports, $mod_blocks, $pref_binary) = explode('|', $user_settings['mod_prefs']);
+		list ($mod_blocks, $pref_binary) = explode('|', $user_settings['mod_prefs']);
 	}
 
 	// Are we saving?
@@ -1969,10 +1968,9 @@ function ModerationSettings()
 	{
 		checkSession('post');
 		/* Current format of mod_prefs is:
-			x|ABCD|yyy
+			ABCD|yyy
 
 			WHERE:
-				x = Show report count on forum header.
 				ABCD = Block indexes to show on moderation main page.
 				yyy = Integer with the following bit status:
 					- yyy & 1 = Always notify on reports.
@@ -1996,22 +1994,14 @@ function ModerationSettings()
 		if ($context['can_moderate_approvals'] && !empty($_POST['mod_notify_approval']))
 			$pref_binary |= 4;
 
-		if ($context['can_moderate_boards'])
-		{
-			if (!empty($_POST['mod_notify_report']))
-				$pref_binary |= ($_POST['mod_notify_report'] == 2 ? 1 : 2);
+		if ($context['can_moderate_boards'] && !empty($_POST['mod_notify_report']))
+			$pref_binary |= ($_POST['mod_notify_report'] == 2 ? 1 : 2);
 
-			$show_reports = !empty($_POST['mod_show_reports']) ? 1 : 0;
-		}
-
-		// Put it all together.
-		$mod_prefs = $show_reports . '|' . $mod_blocks . '|' . $pref_binary;
-		updateMemberData($user_info['id'], array('mod_prefs' => $mod_prefs));
+		updateMemberData($user_info['id'], array('mod_prefs' => $mod_blocks . '|' . $pref_binary));
 	}
 
 	// What blocks does the user currently have selected?
 	$context['mod_settings'] = array(
-		'show_reports' => $show_reports,
 		'notify_report' => $pref_binary & 2 ? 1 : ($pref_binary & 1 ? 2 : 0),
 		'notify_approval' => $pref_binary & 4,
 		'user_blocks' => str_split($mod_blocks),

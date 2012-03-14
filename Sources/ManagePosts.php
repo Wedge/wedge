@@ -288,7 +288,7 @@ function ModifyBBCSettings($return_config = false)
 			// Main tweaks
 			array('check', 'enableBBC'),
 			array('check', 'enablePostHTML'),
-			array('large_text', 'editorFonts', 'subtext' => $txt['editorFonts_note']),
+			array('large_text', 'editorFonts', 'subtext' => $txt['editorFonts_subtext']),
 			array('check', 'autoLinkUrls'),
 		'',
 			array('bbc', 'disabledBBC'),
@@ -392,8 +392,6 @@ function ModifyDraftSettings($return_config = false)
 	$config_vars = array(
 			array('check', 'masterSavePostDrafts', 'subtext' => $txt['draftsave_subnote']),
 			array('check', 'masterAutoSavePostDrafts', 'subtext' => $txt['draftautosave_subnote']),
-			array('check', 'masterSavePmDrafts', 'subtext' => $txt['draftsave_subnote']),
-			array('check', 'masterAutoSavePmDrafts', 'subtext' => $txt['draftautosave_subnote']),
 			array('int', 'masterAutoSaveDraftsDelay', 'postinput' => $txt['manageposts_seconds']),
 			array('int', 'pruneSaveDrafts', 'subtext' => $txt['oldTopicDays_zero']),
 	);

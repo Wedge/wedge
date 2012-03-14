@@ -98,8 +98,8 @@ function ModifyBasicSettings($return_config = false)
 
 	$config_vars = array(
 			array('mbname', $txt['setting_mbname'], 'file', 'text', 30),
-			array('home_url', $txt['home_url'], 'db', 'text', 30, 'subtext' => $txt['home_url_note']),
-			array('home_link', $txt['home_link'], 'db', 'check', 'subtext' => $txt['home_link_note']),
+			array('home_url', $txt['home_url'], 'db', 'text', 30, 'subtext' => $txt['home_url_subtext']),
+			array('home_link', $txt['home_link'], 'db', 'check', 'subtext' => $txt['home_link_subtext']),
 		'',
 			// Number formatting, timezones.
 			array('todayMod', $txt['todayMod'], 'db', 'select', array(
@@ -110,7 +110,7 @@ function ModifyBasicSettings($return_config = false)
 		'',
 			// Statistics.
 			array('trackStats', $txt['trackStats'], 'db', 'check', null, 'trackStats'),
-			array('hitStats', $txt['hitStats'], 'db', 'check', null, 'hitStats'),
+			array('hitStats', $txt['hitStats'], 'db', 'check'),
 		'',
 			// Option-ish things... miscellaneous sorta.
 			array('disallow_sendBody', $txt['disallow_sendBody'], 'db', 'check', 'null', 'disallow_sendBody'),
@@ -471,6 +471,7 @@ function ModifyPmSettings($return_config = false)
 			array('permissions', 'save_pm_draft', 'exclude' => array(-1)),
 			array('check', 'masterAutoSavePmDrafts'),
 			array('permissions', 'auto_save_pm_draft', 'exclude' => array(-1)),
+			$txt['pm_draft_other_settings'],
 		));
 
 	if ($return_config)
