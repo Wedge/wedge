@@ -97,8 +97,11 @@ ol.search_results
 	.menu hr
 		margin: 0
 
-.title form
+.title form final
 	font-size: 80%
+
+.title .help final
+	vertical-align: -1px
 
 .windowbg ol
 	margin-top, margin-bottom: 0
