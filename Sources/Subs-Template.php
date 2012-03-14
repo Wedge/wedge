@@ -151,12 +151,17 @@ function ob_sessrewrite($buffer)
 		$old_load_time = microtime(true);
 	}
 
+	// Very fast on-the-fly replacement of <URL>...
+	$buffer = str_replace('<URL>', $scripturl, $buffer);
+
+	$preg_scripturl = preg_quote($scripturl, '~');
+
 	// Do nothing if the session is cookied, or they are a crawler - guests are caught by redirectexit().
 	if (empty($_COOKIE) && SID != '' && empty($context['browser']['possibly_robot']))
-		$buffer = preg_replace('/"' . preg_quote($scripturl, '/') . '(?!\?' . preg_quote(SID, '/') . ')\\??/', '"' . $scripturl . '?' . SID . '&amp;', $buffer);
+		$buffer = preg_replace('~"' . $preg_scripturl . '(?!\?' . preg_quote(SID, '~') . ')\\??~', '"' . $scripturl . '?' . SID . '&amp;', $buffer);
 	// Debugging templates, are we?
 	elseif (isset($_GET['debug']))
-		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
+		$buffer = preg_replace('~(?<!<link rel="canonical" href=)"' . $preg_scripturl . '\\??~', '"' . $scripturl . '?debug;', $buffer);
 
 	call_hook('dynamic_rewrite', array(&$buffer));
 
@@ -347,7 +352,7 @@ function ob_sessrewrite($buffer)
 		}
 	}
 
-	// Very fast on-the-fly replacement of <URL>...
+	// And a second replacement, in case macros added <URL> again.
 	$buffer = str_replace('<URL>', $scripturl, $buffer);
 
 	// Load cached membergroup colors.
@@ -378,13 +383,13 @@ function ob_sessrewrite($buffer)
 	// If guests/users can't view user profiles, we might as well unlink them!
 	if (!allowedTo('profile_view_any'))
 		$buffer = preg_replace(
-			'~<a(?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?(?:[^"]+)?\baction=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
+			'~<a(?:\s+|\s[^>]*\s)href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
 			'$1', $buffer
 		);
 	// Now we'll color profile links based on membergroup.
 	else
 		$buffer = preg_replace_callback(
-			'~<a((?:\s+|\s[^>]*\s)href="' . preg_quote($scripturl, '~') . '\?(?:[^"]+)?\baction=profile;(?:[^"]+;)?u=(\d+)"[^>]*)>(.*?)</a>~',
+			'~<a((?:\s+|\s[^>]*\s)href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile;(?:[^"]+;)?u=(\d+)"[^>]*)>(.*?)</a>~',
 			'wedge_profile_colors', $buffer
 		);
 
@@ -395,7 +400,6 @@ function ob_sessrewrite($buffer)
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($settings['pretty_enable_filters']))
 	{
-		$insideurl = preg_quote($scripturl, '~');
 		$use_cache = !empty($settings['pretty_enable_cache']);
 		$session_var = $context['session_var'];
 
@@ -405,8 +409,8 @@ function ob_sessrewrite($buffer)
 		$buffer = preg_replace_callback('~<script.+?</script>~s', 'pretty_scripts_remove', $buffer);
 
 		// Find all URLs in the buffer
-		$context['pretty']['search_patterns'][] =  '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action|category)=[^"\'#]+)~';
-		$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $insideurl . '([^"\'#]*?[?;&](board|topic|action|category)=([^"]+"|[^\']+\'))~';
+		$context['pretty']['search_patterns'][] =  '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $preg_scripturl . '([^"\'#]*?[?;&](board|topic|action|category)=[^"\'#]+)~';
+		$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $preg_scripturl . '([^"\'#]*?[?;&](board|topic|action|category)=([^"]+"|[^\']+\'))~';
 		$urls_query = array();
 		$uncached_urls = array();
 
