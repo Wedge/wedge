@@ -22,7 +22,7 @@
 // Initialize the template... mainly little settings.
 function template_init()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $theme, $settings, $options, $txt;
 
 	// Add the theme-specific JavaScript files to our priority cache list.
 	if (!empty($context['javascript_files']))
@@ -92,7 +92,7 @@ function template_init()
 		// The main header of the website. Feel free to redefine it in your skins and themes.
 		'header'	=> '
 			<if:logo><h1>
-				<a href="<URL>">{logo}</a>
+				<a href="' . (!empty($settings['home_url']) && !empty($settings['home_link']) ? $settings['home_url']  : '<URL>') . '">{logo}</a>
 			</h1></if:logo>
 			{body}',
 

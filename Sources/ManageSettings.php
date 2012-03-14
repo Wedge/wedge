@@ -97,17 +97,23 @@ function ModifyBasicSettings($return_config = false)
 	global $txt, $scripturl, $context;
 
 	$config_vars = array(
-			array('text', 'home_url', 'subtext' => $txt['home_url_note']),
+			array('mbname', $txt['setting_mbname'], 'file', 'text', 30),
+			array('home_url', $txt['home_url'], 'db', 'text', 30, 'subtext' => $txt['home_url_note']),
+			array('home_link', $txt['home_link'], 'db', 'check', 'subtext' => $txt['home_link_note']),
 		'',
 			// Number formatting, timezones.
-			array('select', 'todayMod', array($txt['today_disabled'], $txt['today_only'], $txt['yesterday_today'])),
+			array('todayMod', $txt['todayMod'], 'db', 'select', array(
+				0 => array(0, $txt['today_disabled']),
+				1 => array(1, $txt['today_only']),
+				2 => array(2, $txt['yesterday_today'])
+			), 'todayMod'),
 		'',
 			// Statistics.
-			array('check', 'trackStats'),
-			array('check', 'hitStats'),
+			array('trackStats', $txt['trackStats'], 'db', 'check', null, 'trackStats'),
+			array('hitStats', $txt['hitStats'], 'db', 'check', null, 'hitStats'),
 		'',
 			// Option-ish things... miscellaneous sorta.
-			array('check', 'disallow_sendBody'),
+			array('disallow_sendBody', $txt['disallow_sendBody'], 'db', 'check', 'null', 'disallow_sendBody'),
 	);
 
 	if ($return_config)
@@ -118,16 +124,15 @@ function ModifyBasicSettings($return_config = false)
 	{
 		checkSession();
 
-		saveDBSettings($config_vars);
+		saveSettings($config_vars);
 
-		writeLog();
 		redirectexit('action=admin;area=featuresettings;sa=basic');
 	}
 
 	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=basic';
 	$context['settings_title'] = $txt['mods_cat_features'];
 
-	prepareDBSettingContext($config_vars);
+	prepareServerSettingsContext($config_vars);
 }
 
 // Moderation type settings - although there are fewer than we have you believe ;)

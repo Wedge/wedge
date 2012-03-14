@@ -223,8 +223,6 @@ function ModifyGeneralSettings($return_config = false)
 	OR	an empty string for a horizontal rule.
 	OR	a string for a titled section. */
 	$config_vars = array(
-		array('mbname', $txt['admin_title'], 'file', 'text', 30),
-		'',
 		array('maintenance', $txt['maintenance'], 'file', 'check'),
 		array('mtitle', $txt['setting_mtitle'], 'file', 'text', 36),
 		array('mmessage', $txt['setting_mmessage'], 'file', 'text', 36),
