@@ -75,27 +75,12 @@ body extends .grad700
 // The footer with copyright links etc.
 #footer
 	border-top: 3px solid #bdb5b5
-	div.frame:before
-		content: ""
 	a
 		color: #fff
 		border-bottom: 1px dashed #fff
-	ul
-		li
-			padding: 0 2px
-			&.links
-				margin: 0 -8px
-				a
-					margin: 0 8px
-
-#upper_section .frame:before
-	content: ""
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
-
-#footer div.frame
-	background: transparent url($images/minilogow.png) 98.5% 75% no-repeat
 
 .grad40
 	background-image: url($images/theme/grad40.png)

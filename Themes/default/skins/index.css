@@ -255,28 +255,22 @@ ul#noava
 #footer
 	margin: 0 auto
 	border-top: 1px solid #bdb5b5
-	div.frame::before
-		float: left
-		padding-right: 10px
-		content: url($images/wedgebot.png)
 	div.frame
 		padding: 10px 20px
 	a
 		color: #679
 		border-bottom: 1px dashed #679
 		text-decoration: none
-	ul
-		padding: 0 0 8px 0
-		li
-			display: block
-			line-height: 160%
-			&.rd, &.stats
-				display: inline
 
-#upper_section .frame::before
-	float: right
-	margin: 15px 20px
-	content: url($images/wedgetop.png)
+	ul extends .clearfix
+		background: url($images/webelowine.png) 0 5px no-repeat
+		padding: 5px 0 10px 60px
+		li
+			margin-left: 4px
+			float: left
+			line-height: 160%
+			&.copyright
+				clear: left
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -1335,9 +1329,9 @@ dl#feed
 
 .cat final
 	background-color: #f2f0ee
-	background: $left_gradient2
-	border-color: #fd9604
-	border-width: 0 0 0 2px
+	background: $gradient2
+	border-color: #ddd // #fd9604
+	border-width: 0 0 2px 2px
 	border-radius: 4px
 	.table_list &
 		margin: -5px
@@ -1629,10 +1623,10 @@ $post_font = 95%/133% Verdana, "Segoe UI", Arial, sans-serif
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""
-$button_gradient = ", $left_gradient1"
+$button_gradient = ", $gradient1"
 $button_gradient {ie9} = ""
-$left_gradient1 = "-prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
-$left_gradient2 = "-prefix-linear-gradient(left, rgba(212, 212, 212, .2), rgba(212, 212, 212, 0))"
+$gradient1 = "-prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
+$gradient2 = "-prefix-linear-gradient(bottom, rgba(212, 212, 212, .2), rgba(212, 212, 212, 0))"
 
 $max-width = "max-width"
 $max-width {ie6} = "width"

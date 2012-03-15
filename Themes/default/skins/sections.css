@@ -211,7 +211,7 @@ img.new_posts
 /* Post styling (still in the Display template)
 ---------------------------------------------------- */
 
-// Alternating backgrounds for posts, and several other sections of the forum.
+// Alternating backgrounds for posts
 .postbg extends .windowbg
 	display: table
 	// Without this, wide code blocks will break layout.

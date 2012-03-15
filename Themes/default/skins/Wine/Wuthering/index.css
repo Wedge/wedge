@@ -111,11 +111,9 @@ body
 	border-radius: 0 0 12px 12px
 	color: #333
 	div.frame
-		padding: 15px 20px
-	ul
-		padding: 0
-		li a
-			color: #679
+		padding: 10px 20px
+	ul li a
+		color: #679
 
 /* Styles for the general looks for the default theme.
 ------------------------------------------------------- */
@@ -263,7 +261,3 @@ $post_font = 10.5pt/140% $main_font
 
 @remove
 	background: url($images/theme/bg.jpg)
-
-@replace
-	url($images/minilogow.png)
-	url($images/minilogo.png)
