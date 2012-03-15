@@ -340,7 +340,7 @@ function template_sidebar_wrap_before()
 
 function template_sidebar_before()
 {
-	global $txt, $context, $settings;
+	global $txt, $context, $settings, $user_info;
 
 	echo '
 	<section>
@@ -398,7 +398,10 @@ function template_sidebar_before()
 
 		add_js('
 	oThought = new Thought({
-		aPrivacy: { 1: "', $txt['privacy_public'], '", 5: "', $txt['privacy_members'], '", 8: "', $txt['privacy_self'], '" },
+		aPrivacy: { "_-3": "', $txt['privacy_public'], '", "_0": "', $txt['privacy_members'], '", ',
+		// !! This is temporary code for use on Wedge.org. Clean this up!!
+		// Also, the underscore is required for Chrome and Opera to respect the sort order... Silly.
+		in_array(18, $user_info['groups']) ? '"_18": "Friends", ' : '', '"_-5": "', $txt['privacy_self'], '" },
 		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '", sEdit: "', $txt['edit_thought'], '", sReply: "', $txt['reply'], '", sDelete: "', $txt['delete'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '

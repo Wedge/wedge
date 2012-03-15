@@ -646,7 +646,8 @@ function Thought(opt)
 		cancel();
 
 		var
-			thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(), privacies = opt.aPrivacy, privacy = thought.data('prv'),
+			thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(),
+			privacies = opt.aPrivacy, privacy = (thought.data('prv') + '').split(','),
 
 			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
 			was_personal.php_unhtmlspecialchars() : $('thought', getXMLDocument(ajaxUrl + 'in=' + tid).responseXML).text())),
@@ -654,7 +655,7 @@ function Thought(opt)
 			pr = '';
 
 		for (p in privacies)
-			pr += '<option value="' + p + '"' + (p == privacy ? ' selected' : '') + '>' + privacies[p] + '</option>';
+			pr += '<option value="' + p.substr(1) + '"' + (in_array(p.substr(1), privacy) ? ' selected' : '') + '>' + privacies[p] + '</option>';
 
 		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
 		thought.toggle(tid && is_new).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'

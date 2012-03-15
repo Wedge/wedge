@@ -126,7 +126,7 @@ function Thought()
 	$oid = isset($_POST['oid']) ? (int) $_POST['oid'] : 0;
 
 	// Is this a public thought?
-	$privacy = isset($_POST['privacy']) && is_numeric($_POST['privacy']) && $_POST['privacy'] <= 4 ? (int) $_POST['privacy'] : 1;
+	$privacy = isset($_POST['privacy']) && preg_match('~-?[\d,]+~', $_POST['privacy']) ? $_POST['privacy'] : '-3';
 
 	/*
 		// Delete thoughts when they're older than 3 years...?
@@ -257,7 +257,7 @@ function Thought()
 					LIMIT 1',
 					array(
 						'member' => $member,
-						'heed_my_words' => 0,
+						'heed_my_words' => -3,
 					)
 				);
 				list ($personal_id_thought, $personal_thought) = wesql::fetch_row($request);
@@ -287,7 +287,7 @@ function Thought()
 		// Okay, so this is a new thought... Insert it, we'll cache it if it's not a comment.
 		wesql::query('
 			INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
-			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {int:privacy}, {int:updated}, {string:thought})', array(
+			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {string:privacy}, {int:updated}, {string:thought})', array(
 				'id_parent' => !empty($_POST['parent']) ? (int) $_POST['parent'] : 0,
 				'id_member' => $user_info['id'],
 				'id_master' => !empty($_POST['master']) ? (int) $_POST['master'] : 0,
@@ -319,10 +319,10 @@ function Thought()
 			'thought' => $text,
 			'thought_privacy' => $privacy,
 		));
-		// If the thought is public, we can store it as personal text. We'll also parse it now,
+		// If the thought is visible to everyone, we can store it as personal text. We'll also parse it now,
 		// for performance reasons. Personal texts are likely to change, so BBC changes
 		// shouldn't have a major influence on these fields. Correct me if I'm wrong.
-		if ($privacy === 0)
+		if ($privacy == -3)
 			updateMemberData($user_info['id'], array('personal_text' => parse_bbc_inline($text)));
 	}
 }

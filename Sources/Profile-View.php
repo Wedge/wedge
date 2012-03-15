@@ -286,18 +286,22 @@ function viewThoughts($memID)
 				{db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
 			LEFT JOIN
 				{db_prefix}members AS m2 ON (h2.id_member = m2.id_member)
-			WHERE
-				(h.id_thought IN ({array_int:think})
+			WHERE (
+				h.id_thought IN ({array_int:think})
 				OR h.id_master IN ({array_int:think})
-				OR h.id_parent IN ({array_int:think}))
-			AND
-				(h.id_member = {int:me}
-				OR (h.privacy' . ($user_info['is_guest'] ? ' IN (0, 1))' : ' IN (0, 1, 2))
-				OR (h.privacy = 3 AND (FIND_IN_SET({int:me}, m.buddy_list) != 0))') . ')
+				OR h.id_parent IN ({array_int:think})
+			)' . ($memID == $user_info['id'] ? '' : '
+			AND (
+				h.id_member = {int:me}
+				OR h.privacy = {int:everyone}
+				OR FIND_IN_SET(' . implode(', h.privacy)
+				OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
+			)') . '
 			ORDER BY h.id_thought',
 			array(
 				'think' => $think,
 				'me' => $user_info['id'],
+				'everyone' => -3,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -318,7 +322,7 @@ function viewThoughts($memID)
 			{
 				if (!isset($thoughts[$row['id_master']]))
 				{
-					$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '#t' . $row['id_parent'] . '" class="bbc_link">' . $row['parent_name'] . '</a>&gt; ' . $row['thought'];
+					$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '#t' . $row['id_parent'] . '" class="bbc_link">' . $row['parent_name'] . '</a>&gt; ' . parse_bbc_inline($row['thought']);
 					$thoughts[$row['id_master']] = $thought;
 				}
 				elseif ($row['id_master'] === $row['id_parent'] || !isset($thoughts[$row['id_master']]['sub']))
