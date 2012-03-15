@@ -125,12 +125,17 @@ function template_display_posts()
 			// If we're in mobile mode, we'll move the Quote and Modify buttons to the Action menu.
 			$menu = $context['action_menu'][$message['id']];
 
-			// Insert them after the previous message's id and Like link.
+			// Insert them after the previous message's id.
 			if ($message['can_modify'])
-				array_splice($menu, 2, 0, 'mo');
+				array_splice($menu, 1, 0, 'mo');
 
 			if ($context['can_quote'])
-				array_splice($menu, 2, 0, 'qu');
+				array_splice($menu, 1, 0, 'qu');
+
+			if (empty($context['liked_posts'][$message['id']]['you']))
+				array_splice($menu, 1, 0, 'lk');
+			else
+				array_splice($menu, 1, 0, 'uk');
 
 			$context['action_menu'][$message['id']] = $menu;
 			$context['action_menu_items_show'] += array_flip($menu);

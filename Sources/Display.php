@@ -1461,11 +1461,6 @@ function prepareDisplayContext($reset = false)
 		// Start by putting the last message's id, for merging purposes.
 		$menu = array($output['last_post_id']);
 
-		if (empty($context['liked_posts'][$output['id']]['you']))
-			$menu[] = 'lk';
-		else
-			$menu[] = 'uk';
-
 		// Maybe we can approve it, maybe we should?
 		if ($output['can_approve'])
 			$menu[] = 'ap';

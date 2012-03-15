@@ -225,13 +225,28 @@
 
 	<!--
 		Replacements
-		@todo: document this...
+
+		Use the replace tag to define a string to replace with another every time it is found in the HTML.
+		The examples below are not actually used in Warm (they would slow it down by a few milliseconds for
+		nothing), so they were disabled with a bang. Just replace !replace with replace. Do you copy?
+
+		You can use the 'regex' parameter to play with regular expressions if you're comfortable with them.
+
+		You may also use the <we:nested:tag> tag where you replace 'tag' with a HTML tag of your choice
+		that should be recursively excluded. For instance, <li><we:nested:li></li> will match only those <li>
+		tags that are NOT contained within another <li> tag. It is very useful to match the correct closer div
+		for a div with a special ID or class, when you just want to add something *after* the closer div.
+
+		!! NOTE: <we:nested> is not yet available in regex mode.
 	-->
-	<!--
-		<replace>
-			<from><![CDATA[<li><we:nested:li></li>]]></from>
-			<to><li><we:nested:li> (This is a dummy test.)</li></to>
-		</replace>
-	-->
+	<!replace>
+		<from><div id="wedge"><we:nested:div></div></from>
+		<to><div id="wedge">IT WORKED!!!! <we:nested:div> YES!!!</div></to>
+	</!replace>
+
+	<!replace regex>
+		<from><aside id="sidebar">(.*?)</aside></from>
+		<to><aside id="sidebar">Testing opener. $1 Testing closer.</aside></to>
+	</!replace>
 
 </skin>

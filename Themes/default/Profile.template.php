@@ -2298,8 +2298,9 @@ function template_profile_group_manage()
 
 	echo '
 					<dt>
+						<a href="', $scripturl, '?action=help;in=primary_membergroup" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 						<strong>', $txt['primary_membergroup'], ': </strong>
-						<dfn>(<a href="', $scripturl, '?action=help;in=moderator_why_missing" onclick="return reqWin(this);">', $txt['moderator_why_missing'], '</a>)</dfn>
+						<dfn>', $txt['primary_membergroup_subtext'], '</dfn>
 					</dt>
 					<dd>
 						<select name="id_group" ', ($context['user']['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !confirm(' . JavaScriptEscape($txt['deadmin_confirm']) . ')) $(this).val(1).sb();"' : ''), '>';
