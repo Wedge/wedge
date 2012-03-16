@@ -298,10 +298,8 @@ img.new_posts
 	li.stars, li.avatar, li.blurb, li.postcount, li.im_icons ul
 		margin-top: .5em
 
-	li.blurb
+	li.blurb, li.avatar
 		color: #888
-
-	li.avatar
 		overflow: hidden
 
 	li.warning

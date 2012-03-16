@@ -594,9 +594,8 @@ input, select, textarea
 	:hover, :focus
 		border: 1px solid #6f8da9
 
-// The font size of textareas should be just a little bit larger.
 textarea
-	font: 100%/130% $main_font
+	line-height: 130%
 	border-radius: 0
 
 // No need to style input[type=reset], not using it.
@@ -1476,6 +1475,12 @@ table
 		&.right th, &.right td
 			text-align: right
 		&.center th, &.center td
+			text-align: center
+		th.left, td.left
+			text-align: left
+		th.right, td.right
+			text-align: right
+		th.center, td.center
 			text-align: center
 
 /* Used for sections that need corners and a border frame.

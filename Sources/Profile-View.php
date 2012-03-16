@@ -1511,8 +1511,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 
 function TrackIP($memID = 0)
 {
-	global $user_profile, $scripturl, $txt, $user_info, $settings;
-	global $context;
+	global $user_profile, $scripturl, $txt, $user_info, $settings, $context;
 
 	// Can the user do this?
 	isAllowedTo('moderate_forum');
@@ -1566,7 +1565,7 @@ function TrackIP($memID = 0)
 	// Start with the user messages.
 	$listOptions = array(
 		'id' => 'track_message_list',
-		'title' => $txt['messages_from_ip'] . ' ' . $context['ip'],
+		'title' => sprintf($txt['messages_from_ip'], $context['ip']),
 		'start_var_name' => 'messageStart',
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['no_messages_from_ip'],
@@ -1656,7 +1655,7 @@ function TrackIP($memID = 0)
 	// Set the options for the error lists.
 	$listOptions = array(
 		'id' => 'track_user_list',
-		'title' => $txt['errors_from_ip'] . ' ' . $context['ip'],
+		'title' => sprintf($txt['errors_from_ip'], $context['ip']),
 		'start_var_name' => 'errorStart',
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'no_items_label' => $txt['no_errors_from_ip'],

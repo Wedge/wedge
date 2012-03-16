@@ -1333,8 +1333,7 @@ function prepareDisplayContext($reset = false)
 	censorText($message['body']);
 	censorText($message['subject']);
 
-	$merge_max_limit_length = true;
-	$merge_safe = false;
+	$merge_safe = true;
 
 	// Avoid having too large a post if we do any merger.
 	if (empty($settings['merge_post_ignore_length']) && $settings['max_messageLength'] > 0)

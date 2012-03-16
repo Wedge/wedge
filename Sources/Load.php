@@ -1830,9 +1830,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['session_query'] = $context['session_var'] . '=' . $context['session_id'];
 	$context['forum_name'] = $mbname;
 	$context['forum_name_html_safe'] = westr::htmlspecialchars($context['forum_name']);
-	// !! @todo: This needs fixing...
 	$context['header_logo_url_html_safe'] = empty($theme['header_logo_url']) ? $context['forum_name_html_safe']
-		: '<img src="' . westr::htmlspecialchars($theme['header_logo_url']) . '" alt="' . $context['forum_name'] . '">';
+		: 'htmlsafe::' . westr::htmlspecialchars('<img src="' . westr::htmlspecialchars($theme['header_logo_url']) . '" alt="' . $context['forum_name'] . '">');
 	$context['site_slogan'] = empty($theme['site_slogan']) ? '<div id="wedgelogo"></div>' : '<div id="siteslogan">' . $theme['site_slogan'] . '</div>';
 	$context['current_action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 	$context['current_subaction'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : null;

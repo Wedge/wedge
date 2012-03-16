@@ -806,7 +806,7 @@ function template_trackIP()
 		</we:cat>
 		<div class="windowbg2 wrc">
 			<form action="', $context['base_url'], '" method="post" accept-charset="UTF-8">
-				', $txt['enter_ip'], ':&nbsp;&nbsp;<input type="search" name="searchip" value="', $context['ip'], '" class="search">&nbsp;&nbsp;<input type="submit" value="', $txt['trackIP'], '">
+				', $txt['enter_ip'], ':&nbsp;&nbsp;<input type="search" name="searchip" value="', $context['ip'], '" class="search">&nbsp;&nbsp;<input type="submit" value="', $txt['trackIP'], '" class="submit">
 			</form>
 		</div>
 		<br>';
@@ -816,7 +816,7 @@ function template_trackIP()
 	{
 		echo '
 		<we:title>
-			', $txt['whois_title'], ' ', $context['ip'], '
+			', sprintf($txt['whois_title'], $context['ip']), '
 		</we:title>
 		<div class="windowbg2 wrc">';
 
@@ -832,7 +832,7 @@ function template_trackIP()
 	// The second table lists all the members who have been logged as using this IP address.
 	echo '
 		<we:title>
-			', $txt['members_from_ip'], ' ', $context['ip'], '
+			', sprintf($txt['members_from_ip'], $context['ip']), '
 		</we:title>';
 	if (empty($context['ips']))
 		echo '

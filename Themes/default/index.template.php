@@ -399,9 +399,9 @@ function template_sidebar_before()
 		add_js('
 	oThought = new Thought({
 		aPrivacy: { "_-3": "', $txt['privacy_public'], '", "_0": "', $txt['privacy_members'], '", ',
-		// !! This is temporary code for use on Wedge.org. Clean this up!!
+		// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
 		// Also, the underscore is required for Chrome and Opera to respect the sort order... Silly.
-		in_array(18, $user_info['groups']) ? '"_18": "Friends", ' : '', '"_-5": "', $txt['privacy_self'], '" },
+		in_array(20, $user_info['groups']) ? '"_20": "Friends", ' : '', '"_-5": "', $txt['privacy_self'], '" },
 		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '", sEdit: "', $txt['edit_thought'], '", sReply: "', $txt['reply'], '", sDelete: "', $txt['delete'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '

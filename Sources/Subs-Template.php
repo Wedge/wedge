@@ -257,7 +257,7 @@ function ob_sessrewrite($buffer)
 					// ...And replace with the contents.
 					if (!empty($params))
 						foreach ($params[1] as $id => $param)
-							$body = str_replace('{' . $param . '}', $params[2][$id], $body);
+							$body = str_replace('{' . $param . '}', strpos($params[2][$id], 'htmlsafe::') === 0 ? html_entity_decode(substr($params[2][$id], 10)) : $params[2][$id], $body);
 				}
 				$buffer = str_replace(substr($buffer, $p, $end_code + strlen($code) + 6 - $p), $body, $buffer);
 			}

@@ -147,7 +147,7 @@ function QuickReply(oOptions)
 {
 	this.opt = oOptions;
 	this.bCollapsed = this.opt.bDefaultCollapsed;
-	$('#' + this.opt.sSwitchMode).slideDown(200);
+	$('#' + this.opt.sSwitchMode).show();
 }
 
 // When a user presses quote, put it in the quick reply box (if expanded).
