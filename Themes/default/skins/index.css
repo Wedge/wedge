@@ -265,6 +265,7 @@ ul#noava
 	ul extends .clearfix
 		background: url($images/webelowine.png) 0 5px no-repeat
 		padding: 5px 0 10px 60px
+		min-height: 35px
 		li
 			margin-left: 4px
 			float: left
