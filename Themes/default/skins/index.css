@@ -66,8 +66,6 @@ header, footer, aside, section, article, nav
 	color: #444
 	background-color: $window_bg
 	background-position: 0 -550px
-	a
-		color: #47a
 
 .windowbg2 extends .windowbg
 	background-color: $window_bg2
@@ -136,15 +134,13 @@ header, footer, aside, section, article, nav
 			margin: 8px
 	#main
 		display: block
-		padding: 4px 0 12px 6px
+		padding: 4px 0 12px
 
 #sidebar
 	display: table-cell
 	vertical-align: top
 	width: $sidebar-width
 	font-size: .9em
-	a
-		color: #47a
 	.column
 		padding: 8px 12px 12px
 
@@ -179,7 +175,7 @@ ul#noava
 	display: table-cell
 	vertical-align: top
 	min-height: 200px
-	padding: 4px 22px 12px 8px
+	padding: 4px 22px 12px 4px
 
 // Top header (search box, etc.)
 #top_section
@@ -278,7 +274,7 @@ ul#noava
 
 // Normal, standard links.
 a
-	color: #de874d // b96f17, c06002
+	color: #47a// #de874d, b96f17, c06002
 	text-decoration: none
 	cursor: pointer
 	:hover

@@ -726,7 +726,7 @@ function template_menu()
 // The same footer area...
 function template_footer()
 {
-	global $context, $txt, $user_info;
+	global $context, $txt, $user_info, $theme;
 
 	if (!empty($context['bottom_linktree']))
 		template_linktree(false, true);
@@ -742,8 +742,9 @@ function template_footer()
 
 	// Show the credit page (forum admin/mod team and credits),
 	// and a link to an HTML conformity checker, for geeks.
+	// !! @worg: rev.txt
 	echo '
-			<li class="copyright">', $txt['copyright'], '</li>
+			<li class="copyright">', $txt['copyright'], ' (rev <a href="http://wedge.org/pub/feats/6108/new-revs/">', file_get_contents($theme['theme_dir'] . '/rev.txt'), '</a>) -</li>
 			<li class="links">
 				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
 				<a id="button_html5" href="http://validator.nu/?doc=', $user_info['url'], '" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>
