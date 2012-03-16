@@ -43,3 +43,7 @@
 		width: 100%
 		position: static
 		box-shadow: none
+
+.smalltext
+	font-size: .6em
+	line-height: 1.2em

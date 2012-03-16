@@ -439,6 +439,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			AND b.id_board IN ({array_int:include_boards})') . '
 			AND {query_wanna_see_board}' . (empty($user_info['can_skip_approval']) ? '
 			AND ml.approved = {int:is_approved}' : '') . '
+		ORDER BY t.id_last_msg DESC
 		LIMIT ' . $num_recent,
 		array(
 			'include_boards' => empty($include_boards) ? '' : $include_boards,

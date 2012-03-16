@@ -168,7 +168,7 @@ class weget
 
 			// We stored them as an associative array to deal with duplicates, but setopt doesn't like that.
 			if (!empty($this->headers))
-				curl_setopt($curl, CURLOPT_HTMLHEADER, array_values($this->headers));
+				curl_setopt($curl, CURLOPT_HTTPHEADER, array_values($this->headers));
 		}
 		// Stuff specific for FTP uses.
 		elseif ($this->protocol == 'ftp')

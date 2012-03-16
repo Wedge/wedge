@@ -32,7 +32,7 @@ function template_main_board()
 		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
 	</div>';
 
-		// If Quick Moderation is enabled start the form.
+		// If Quick Moderation is enabled, start the form.
 		if (!empty($context['can_quick_mod']))
 			echo '
 	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
@@ -263,11 +263,11 @@ function template_main_blog()
 		', $board_info['name'], '
 	</we:cat>
 	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#bot"><strong>' . $txt['go_down'] . '</strong></a></nav>',
+		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#bot"><strong>', $txt['go_down'], '</strong></a></nav>',
 		empty($context['button_list']) ? '' : template_button_strip($context['button_list']), '
 	</div>';
 
-		// Start the form for quick moderation if we can do something.
+		// If Quick Moderation is enabled, start the form.
 		if (!empty($context['can_quick_mod']))
 			echo '
 	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
@@ -336,7 +336,7 @@ function template_main_blog()
 			if ($topic['is_pinned'])
 				$color_class .= ' pinned';
 			// Locked topics get special treatment as well.
-			elseif ($topic['is_locked'])
+			if ($topic['is_locked'])
 				$color_class .= ' locked';
 
 			// Some columns require a different shade of the color class.
@@ -348,9 +348,12 @@ function template_main_blog()
 					<td class="icon ', $color_class, '">
 						<img src="', $topic['first_post']['icon_url'], '">
 					</td>
-					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
+					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '" style="background-color: transparent">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" onmouseout="mouse_on_div = 0;" onmouseover="mouse_on_div = 1;" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
-							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">', $topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'], (!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : ''), '</span>', $topic['is_pinned'] ? '</strong>' : '';
+							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">',
+							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
+							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
+							'</span>', $topic['is_pinned'] ? '</strong>' : '';
 
 			// Is this topic new? (assuming they are logged in!)
 			if ($topic['new'] && $context['user']['is_logged'])
@@ -361,6 +364,8 @@ function template_main_blog()
 							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['last_post']['time'], '
 								<small id="pages' . $topic['first_post']['id'] . '">', $topic['pages'], '</small>
 							</p>
+						</div>
+						<div class="padding">
 							', $topic['first_post']['preview'], '
 						</div>
 					</td>
@@ -402,7 +407,7 @@ function template_main_blog()
 			if ($context['can_move'])
 			{
 				echo '
-						<select class="qaction" id="moveItTo" name="move_to">';
+						<select class="qaction hide" id="moveItTo" name="move_to">';
 
 				foreach ($context['move_to_boards'] as $category)
 				{
@@ -439,7 +444,6 @@ function template_main_blog()
 		echo '
 	<div class="pagesection">', empty($context['button_list']) ? '' :
 		template_button_strip($context['button_list']), '
-		<p id="message_index_jump_to"><label>', $txt['jump_to'], ': </label></p>
 		<nav>', $txt['pages'], ': ', $context['page_index'], $context['menu_separator'], '&nbsp;&nbsp;<a href="#top"><strong>', $txt['go_up'], '</strong></a></nav>
 	</div>';
 	}
@@ -454,15 +458,12 @@ function template_main_blog()
 	// Hide certain bits during topic edit.
 	hide_prefixes.push("pages", "newicon");
 
-	// Use it to detect when we\'ve stopped editing.
-	document.onclick = modify_topic_click;
-
+	// Detect when we\'ve stopped editing.
 	var mouse_on_div;
-	function modify_topic_click()
-	{
+	$(document).click(function () {
 		if (is_editing() && mouse_on_div == 0)
 			modify_topic_save();
-	}
+	});
 
 	function modify_topic_keypress(e)
 	{
