@@ -532,7 +532,7 @@ function wedge_autoDraft(opt)
 
 	var that = this;
 	if (opt.iFreq > 0)
-		setInterval(function () { that.draftSend.call(that); }, opt.iFreq);
+		this.opt.timer = setInterval(function () { that.draftSend.call(that); }, opt.iFreq);
 }
 
 wedge_autoDraft.prototype.needsUpdate = function (update)
@@ -601,6 +601,7 @@ wedge_autoDraft.prototype.draftSend = function ()
 				$('#' + lastSavedDiv).empty();
 				$('#draft_id').val('0');
 			});
+			clearInterval(object.opt.timer);
 			return false;
 		});
 		object.needsUpdate(false);

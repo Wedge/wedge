@@ -74,6 +74,19 @@ function Boards()
 	);
 	$context['categories'] = getBoardIndex($boardIndexOptions);
 
+	// Set up the linktree.
+	$context['linktree'] = array(
+		array(
+			'url' => $scripturl,
+			'name' => $context['forum_name_html_safe'],
+		),
+	);
+	if (!empty($boardIndexOptions['category']))
+		$context['linktree'][] = array(
+			'url' => $scripturl . '?category=' . $boardIndexOptions['category'],
+			'name' => $context['categories'][$boardIndexOptions['category']]['name'],
+		);
+
 	// Get the user online list.
 	loadSource('Subs-MembersOnline');
 	$membersOnlineOptions = array(
