@@ -1669,7 +1669,7 @@ function ip2range($fullip)
  *
  * Bots invariably occupy IP ranges; this allows us to specify netblocks to exclude that are more in line with the sorts of behavior we will be checking for.
  *
- * @param string $ip A regular IP address in dotted notation (127.0.0.1)
+ * @param string $ip A regular IP address in Wedge internal format (32 hex characters)
  * @param mixed $cidr_block A single IP in netblock format as a string, or an array of similar (e.g. 10.0.0.0/8)
  * @return bool Whether the individual CIDR netblock matched or not (can be recursive)
  */
@@ -1683,12 +1683,36 @@ function match_cidr($ip, $cidr_block)
 	}
 	else
 	{
+		// If no subnet is specified, there's no need to do anything but a straight comparison.
 		if (strpos($cidr_block, '/') === false)
-			$cidr_block .= '/32';
+		{
+			$cidr_block = expand_ip($cidr_block);
+			return $cidr_block == $ip;
+		}
 
 		list ($cidr_ip, $mask) = explode('/', $cidr_block);
-		$mask = pow(2, 32) - pow(2, 32 - $mask);
-		return (ip2long($ip) & $mask) === (ip2long($cidr_ip) & $mask);
+		$cidr_ip = expand_ip($cidr_ip);
+
+		// OK, can we do a simple case, where the mask hits a digit boundary?
+		if ($mask % 4 == 0)
+		{
+			$len = 32 - $mask / 4;
+			return (substr($cidr_ip, 0, $len) === substr($ip, 0, $len));
+		}
+		else
+		{
+			// Bah, guess not. Time to get complicated.
+			$whole_digits = 32 - ceil($mask / 4);
+			if (substr($cidr_ip, 0, $whole_digits) != substr($ip, 0, $whole_digits))
+				return false;
+
+			// OK, so we need to figure out what's going on with these last digits.
+			$cidr_ip = substr($cidr_ip, $whole_digits, 1);
+			$ip = substr($ip, $whole_digits, 1);
+
+			$mask = 16 - (2 ^ ($mask % 4));
+			return ($cidr_ip & $mask) == ($ip & $mask);
+		}
 	}
 	return false;
 }
