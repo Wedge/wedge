@@ -359,7 +359,7 @@ class wecss_color extends wecss
 		elseif ($browser['is_webkit'])
 			$grad = '-webkit-gradient(linear, 0%% 0%%, ' . ($dir == 'left' ? '100%% 0%%' : '0%% 100%%') . ', from(%1$s), to(%2$s))';
 
-		return $input[1] . 'background-image: ' . sprintf($grad, $bg1, $bg2);
+		return $input[1] . 'background: ' . sprintf($grad, $bg1, $bg2);
 	}
 
 	// Now, go with the actual color parsing.

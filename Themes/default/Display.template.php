@@ -13,14 +13,14 @@
 
 function template_display_posts()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $scripturl, $settings, $board_info;
 
 	// OK, we're going to need this!
 	add_js_file('scripts/topic.js');
 
 	// Show the topic information - icon, subject, etc.
 	echo '
-		<div id="forumposts">
+		<div id="forumposts"', $board_info['type'] == 'board' ? '' : ' class="blog"', '>
 			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave() : false">';
 
 	$ignoredMsgs = array();

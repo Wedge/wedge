@@ -155,7 +155,7 @@ function weEditor(oOptions)
 			.bind('keydown', this.aEventWrappers.shortcutCheck);
 		this.oText
 			.bind('keydown', this.aEventWrappers.shortcutCheck)
-			.bind('keydown', splitQuote);
+			.bind('keydown', splitQuote)[0].instanceRef = this;
 
 		if (this.opt.oDrafts)
 			this.oText.keyup(function () {

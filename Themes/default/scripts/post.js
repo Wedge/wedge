@@ -31,7 +31,7 @@ function splitQuote(e)
 	var
 		selection = this.value.substr(0, selectionStart), lcs = selection.toLowerCase(), nextBreak, has_slash,
 		lcsl = lcs.length, pos = 0, tag, bbcode, taglist = [], baretags = [], baretag, extag, log_tags = true,
-		protect_tags = this.instanceRef.opt.aProtectTags, closed_tags = this.instanceRef.opt.aClosedTags;
+		that = this.instanceRef, protect_tags = that.opt.aProtectTags, closed_tags = that.opt.aClosedTags;
 
 	// Build a list of opened tags...
 	while (true)
@@ -77,7 +77,7 @@ function splitQuote(e)
 	}
 
 	if (baretags.length)
-		surroundText('[/' + baretags.reverse().join('][/') + ']\n', '\n\n[' + taglist.join('][') + ']', this);
+		that.surroundText('[/' + baretags.reverse().join('][/') + ']\n', '\n\n[' + taglist.join('][') + ']', this);
 
 	return true;
 };

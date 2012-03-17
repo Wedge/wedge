@@ -90,7 +90,7 @@ function template_init()
 		),
 
 		// The main header of the website. Feel free to redefine it in your skins and themes.
-		'header'	=> '
+		'banner'	=> '
 			<if:logo><h1>
 				<a href="' . (!empty($settings['home_url']) && !empty($settings['home_link']) ? $settings['home_url']  : '<URL>') . '">{logo}</a>
 			</h1></if:logo>
@@ -248,8 +248,8 @@ function template_header_after()
 
 	echo '
 		</div></div>
-		<div id="upper_section"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:header logo="',
-		$context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:header>
+		<div id="upper_section"', empty($options['collapse_header']) ? '' : ' class="hide"', '><div class="frame"><we:banner logo="',
+		$context['header_logo_url_html_safe'], '">', $context['site_slogan'], '</we:banner>
 		</div></div>
 	</div></div>';
 }

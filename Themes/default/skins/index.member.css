@@ -95,6 +95,7 @@ ul.buttonlist
 
 #thought_form
 	display: inline-block
+	margin-left: 8px
 	input
 		margin: 0 1px 0 2px
 		padding: 2px 4px
@@ -104,6 +105,8 @@ ul.buttonlist
 		margin-top: -2px
 		font-size: 13px
 		max-width: 85px
+	#sidebar &
+		margin-left: 0
 
 #thought_update input
 	margin: 0 0 8px

@@ -7,7 +7,7 @@
 ------------------------------------------------- */
 
 // The board title!
-.board_list
+#board_list, .board_list
 	box-sizing: border-box
 	margin-bottom: 10px
 	td.info a.subject
@@ -230,6 +230,13 @@ img.new_posts
 	// A post separator, useful when printing.
 	.post_separator
 		display: none
+
+// Like #forumposts, but for blogs only.
+.blog
+	.first-post
+		background: transparent
+		.inner
+			font-size: 1.1em
 
 // Poster and postarea + moderation area underneath
 .post_wrapper

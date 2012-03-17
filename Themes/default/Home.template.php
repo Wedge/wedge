@@ -97,30 +97,6 @@ function template_main()
 	</we:block>';
 }
 
-function template_info_before()
-{
-	echo '
-	<div class="roundframe" style="margin: 16px 0">';
-}
-
-function template_info_after()
-{
-	echo '
-	</div>';
-}
-
-function template_thoughts_before()
-{
-	echo '
-	<div class="roundframe" style="margin: 16px 0">';
-}
-
-function template_thoughts_after()
-{
-	echo '
-	</div>';
-}
-
 function template_thoughts($limit = 18)
 {
 	global $txt, $user_info, $context;
@@ -132,13 +108,13 @@ function template_thoughts($limit = 18)
 
 	if (!$is_thought_page)
 		echo '
-		<we:title>
+		<we:cat style="margin-top: 16px">
 			<div class="thought_icon"></div>
 			', $txt['thoughts'], '... (<a href="<URL>?s=thoughts">', $txt['all_pages'], '</a>)
-		</we:title>';
+		</we:cat>';
 
 	echo '
-		<div class="tborder" style="margin: 5px 0 10px 0">
+		<div class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
 		<table class="w100 cp4 cs0 thought_list">';
 
 	if ($is_thought_page)
@@ -171,8 +147,10 @@ function template_thoughts($limit = 18)
 		</div>';
 }
 
+// Only restore this if we decide to remove the board index...
 function template_quickboard()
 {
+/*
 	global $user_info;
 
 	$can_view = array_intersect($user_info['groups'], array(1, 18, 20, 21));
@@ -200,6 +178,7 @@ function template_quickboard()
 			<br /><b><a href="http://wedge.org/off/">Off-topic</a></b>' : '', '
 		</div>
 	</section>';
+*/
 }
 
 ?>
