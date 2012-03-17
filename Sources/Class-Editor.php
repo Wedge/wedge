@@ -1553,6 +1553,8 @@ class wedit
 			$disabled_tags = explode(',', $settings['disabledBBC']);
 		if (empty($settings['enableEmbeddedFlash']))
 			$disabled_tags[] = 'flash';
+		if (empty($settings['media_enabled']))
+			$disabled_tags[] = 'add_media';
 
 		$this->disabled_tags = array();
 		foreach ($disabled_tags as $tag)

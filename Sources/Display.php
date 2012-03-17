@@ -715,13 +715,11 @@ function Display()
 	$ascending = empty($options['view_newest_first']);
 	$start = $_REQUEST['start'] + ($board_info['type'] != 'board' ? 1 : 0);
 	$limit = $context['messages_per_page'];
-	$firstIndex = 0;
 	if ($_REQUEST['start'] >= $context['total_visible_posts'] / 2 && $context['messages_per_page'] != -1)
 	{
 		$ascending = !$ascending;
 		$limit = $context['total_visible_posts'] <= $_REQUEST['start'] + $limit ? $context['total_visible_posts'] - $_REQUEST['start'] : $limit;
 		$start = $context['total_visible_posts'] <= $_REQUEST['start'] + $limit ? 0 : $context['total_visible_posts'] - $_REQUEST['start'] - $limit;
-		$firstIndex = $limit - 1;
 	}
 
 	// Find out if there is a double post...
@@ -1007,7 +1005,7 @@ function Display()
 			$context['start_from'] = $context['total_visible_posts'] - 1;
 
 		// Since the anchor information is needed on the top of the page we load these variables beforehand.
-		$context['first_message'] = isset($messages[$firstIndex]) ? $messages[$firstIndex] : $messages[0];
+		$context['first_message'] = min($messages);
 		if (empty($options['view_newest_first']))
 			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['start_from'];
 		else

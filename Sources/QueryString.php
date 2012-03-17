@@ -227,7 +227,7 @@ function cleanRequest()
 	}
 
 	// Don't bother going further if we've come here from a *REAL* 404.
-	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js')))
+	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js')) && strpos($full_request, 'mobiquo/tapatalk') === false)
 	{
 		loadLanguage('Errors');
 
@@ -237,7 +237,7 @@ function cleanRequest()
 		// Webmasters might want to log the error, so they can fix any broken image links.
 		if (!empty($settings['enableErrorLogging']))
 		{
-			log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
+			log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? str_replace('&amp;', '&', $_SERVER['HTTP_REFERER']) : '');
 			loadSource('ManageErrors');
 			updateErrorCount();
 		}

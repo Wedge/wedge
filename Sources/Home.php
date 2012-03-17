@@ -33,6 +33,20 @@ function Home()
 	loadTemplate('Home');
 	loadLanguage('Home');
 
+	////////////////////
+	// Retrieve the categories and boards.
+	loadTemplate('Boards');
+	loadSource('Subs-BoardIndex');
+	$context['categories'] = getBoardIndex(array(
+		'include_categories' => true,
+		'base_level' => 0,
+		'parent_id' => 0,
+		'category' => 0,
+		'set_latest_post' => true,
+		'countChildPosts' => !empty($settings['countChildPosts']),
+	));
+	////////////////////
+
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl;
 
@@ -47,6 +61,7 @@ function Home()
 	wetem::add(
 		array(
 			'thoughts',
+			'boards',
 			'info' => array(
 				'info_center' => array(
 					'info_center_statistics',

@@ -1910,7 +1910,7 @@ function template_pretty_urls()
 				', $txt['pretty_remove_index'], '
 			</label>
 			<div class="floatright">
-				<input type="submit" name="save" value="', $txt['pretty_save'], '">
+				<input type="submit" name="save" value="', $txt['pretty_save'], '" class="save">
 			</div>
 		</form>
 		<br class="clear">
