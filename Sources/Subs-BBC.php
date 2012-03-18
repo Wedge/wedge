@@ -642,6 +642,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					'block_level' => true,
 					'require_children' => array('li'),
 					'disallow_children' => isset($inside['disallow_children']) ? $inside['disallow_children'] : null,
+					'trim' => 'outside',
 				);
 				$code = '<ul class="bbc_list">';
 			}

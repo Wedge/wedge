@@ -1122,7 +1122,7 @@ class Net_SSH2
 			return false;
 		}
 
-		list(, $type) = unpack('C', $this->_string_shift($response, 1));
+		list (, $type) = unpack('C', $this->_string_shift($response, 1));
 
 		switch ($type) {
 			case NET_SSH2_MSG_CHANNEL_SUCCESS:
@@ -1718,17 +1718,17 @@ class Net_SSH2
 				$w = $s->modInverse($q);
 
 				$u1 = $w->multiply(new Math_BigInteger(sha1($this->exchange_hash), 16));
-				list(, $u1) = $u1->divide($q);
+				list (, $u1) = $u1->divide($q);
 
 				$u2 = $w->multiply($r);
-				list(, $u2) = $u2->divide($q);
+				list (, $u2) = $u2->divide($q);
 
 				$g = $g->modPow($u1, $p);
 				$y = $y->modPow($u2, $p);
 
 				$v = $g->multiply($y);
-				list(, $v) = $v->divide($p);
-				list(, $v) = $v->divide($q);
+				list (, $v) = $v->divide($p);
+				list (, $v) = $v->divide($q);
 
 				if (!$v->equals($r)) {
 					user_error('Bad server signature', E_USER_NOTICE);
@@ -3056,7 +3056,7 @@ class Math_BigInteger {
 		$divisor->value = array(10000000);
 		$result = '';
 		while (count($temp->value)) {
-			list($temp, $mod) = $temp->divide($divisor);
+			list ($temp, $mod) = $temp->divide($divisor);
 			$result = str_pad(isset($mod->value[0]) ? $mod->value[0] : '', 7, '0', STR_PAD_LEFT) . $result;
 		}
 		$result = ltrim($result, '0');
@@ -3521,7 +3521,7 @@ class Math_BigInteger {
 				$quotient = new Math_BigInteger();
 				$remainder = new Math_BigInteger();
 
-				list($quotient->value, $remainder->value) = gmp_div_qr($this->value, $y->value);
+				list ($quotient->value, $remainder->value) = gmp_div_qr($this->value, $y->value);
 
 				if (gmp_sign($remainder->value) < 0) {
 					$remainder->value = gmp_add($remainder->value, gmp_abs($y->value));
@@ -3543,7 +3543,7 @@ class Math_BigInteger {
 		}
 
 		if (count($y->value) == 1) {
-			list($q, $r) = $this->_divide_digit($this->value, $y->value[0]);
+			list ($q, $r) = $this->_divide_digit($this->value, $y->value[0]);
 			$quotient = new Math_BigInteger();
 			$remainder = new Math_BigInteger();
 			$quotient->value = $q;
@@ -3731,14 +3731,14 @@ class Math_BigInteger {
 		}
 
 		if ( $e->value == array(1) ) {
-			list(, $temp) = $this->divide($n);
+			list (, $temp) = $this->divide($n);
 			return $this->_normalize($temp);
 		}
 
 		if ( $e->value == array(2) ) {
 			$temp = new Math_BigInteger();
 			$temp->value = $this->_square($this->value);
-			list(, $temp) = $temp->divide($n);
+			list (, $temp) = $temp->divide($n);
 			return $this->_normalize($temp);
 		}
 
@@ -3776,7 +3776,7 @@ class Math_BigInteger {
 		$temp = $temp->multiply($y2);
 
 		$result = $result->add($temp);
-		list(, $result) = $result->divide($n);
+		list (, $result) = $result->divide($n);
 
 		return $this->_normalize($result);
 	}
@@ -3863,7 +3863,7 @@ class Math_BigInteger {
 				$lhs->value = $x;
 				$rhs = new Math_BigInteger();
 				$rhs->value = $n;
-				list(, $temp) = $lhs->divide($rhs);
+				list (, $temp) = $lhs->divide($rhs);
 				return $temp->value;
 			case MATH_BIGINTEGER_NONE:
 				return $x;
@@ -3922,7 +3922,7 @@ class Math_BigInteger {
 			$rhs = new Math_BigInteger();
 			$lhs->value = $n;
 			$rhs->value = $m;
-			list(, $temp) = $lhs->divide($rhs);
+			list (, $temp) = $lhs->divide($rhs);
 			return $temp->value;
 		}
 
@@ -3942,7 +3942,7 @@ class Math_BigInteger {
 			$rhs = new Math_BigInteger();
 			$rhs->value = $m;
 
-			list($u, $m1) = $lhs->divide($rhs);
+			list ($u, $m1) = $lhs->divide($rhs);
 			$u = $u->value;
 			$m1 = $m1->value;
 
@@ -3994,7 +3994,7 @@ class Math_BigInteger {
 			$rhs = new Math_BigInteger();
 			$lhs->value = $x;
 			$rhs->value = $n;
-			list(, $temp) = $lhs->divide($rhs);
+			list (, $temp) = $lhs->divide($rhs);
 			return $temp->value;
 		}
 
@@ -4007,7 +4007,7 @@ class Math_BigInteger {
 			$lhs_value[] = 1;
 			$rhs = new Math_BigInteger();
 			$rhs->value = $n;
-			list($temp, ) = $lhs->divide($rhs);
+			list ($temp, ) = $lhs->divide($rhs);
 			$cache[MATH_BIGINTEGER_DATA][] = $temp->value;
 		}
 
@@ -4171,7 +4171,7 @@ class Math_BigInteger {
 		$rhs = new Math_BigInteger();
 		$rhs->value = $n;
 
-		list(, $temp) = $lhs->divide($rhs);
+		list (, $temp) = $lhs->divide($rhs);
 		return $temp->value;
 	}
 
@@ -4891,7 +4891,7 @@ class Math_BigInteger {
 
 		if ( MATH_BIGINTEGER_MODE != MATH_BIGINTEGER_MODE_INTERNAL ) {
 			foreach ($primes as $prime) {
-				list(, $r) = $this->divide($prime);
+				list (, $r) = $this->divide($prime);
 				if ($r->equals($zero)) {
 					return $this->equals($prime);
 				}
@@ -4899,7 +4899,7 @@ class Math_BigInteger {
 		} else {
 			$value = $this->value;
 			foreach ($primes as $prime) {
-				list(, $r) = $this->_divide_digit($value, $prime);
+				list (, $r) = $this->_divide_digit($value, $prime);
 				if (!$r) {
 					return count($value) == 1 && $value[0] == $prime;
 				}
@@ -5481,7 +5481,7 @@ class Crypt_Hash
 
 			}
 
-			list($a, $b, $c, $d, $e, $f, $g, $h) = $hash;
+			list ($a, $b, $c, $d, $e, $f, $g, $h) = $hash;
 
 			for ($i = 0; $i < 64; $i++) {
 				$s0 = $this->_rightRotate($a,  2) ^
@@ -6626,11 +6626,11 @@ class Crypt_RC4
 		switch ($mode) {
 			case CRYPT_RC4_ENCRYPT:
 				$keyStream = $this->encryptStream;
-				list($i, $j) = $this->encryptIndex;
+				list ($i, $j) = $this->encryptIndex;
 				break;
 			case CRYPT_RC4_DECRYPT:
 				$keyStream = $this->decryptStream;
-				list($i, $j) = $this->decryptIndex;
+				list ($i, $j) = $this->decryptIndex;
 		}
 
 		$newText = '';
@@ -8238,7 +8238,7 @@ class Crypt_RSA
 				}
 
 				if ($i == $num_primes) {
-					list($min, $temp) = $absoluteMin->divide($n);
+					list ($min, $temp) = $absoluteMin->divide($n);
 					if (!$temp->equals($this->zero)) {
 						$min = $min->add($this->one);                     }
 					$primes[$i] = $generator->randomPrime($min, $finalMax, $timeout);
@@ -8279,7 +8279,7 @@ class Crypt_RSA
 				$exponents[$i] = $e->modInverse($temp);
 			}
 
-			list($lcm) = $lcm['top']->divide($lcm['bottom']);
+			list ($lcm) = $lcm['top']->divide($lcm['bottom']);
 			$gcd = $lcm->gcd($e);
 			$i0 = 1;
 		} while (!$gcd->equals($this->one));
@@ -8794,7 +8794,7 @@ class Crypt_RSA
 		$length = ord($this->_string_shift($string));
 		if ( $length & 0x80 ) {             $length&= 0x7F;
 			$temp = $this->_string_shift($string, $length);
-			list(, $length) = unpack('N', substr(str_pad($temp, 4, chr(0), STR_PAD_LEFT), -4));
+			list (, $length) = unpack('N', substr(str_pad($temp, 4, chr(0), STR_PAD_LEFT), -4));
 		}
 		return $length;
 	}
@@ -8914,7 +8914,7 @@ class Crypt_RSA
 			);
 			$h = $m_i[1]->subtract($m_i[2]);
 			$h = $h->multiply($this->coefficients[2]);
-			list(, $h) = $h->divide($this->primes[1]);
+			list (, $h) = $h->divide($this->primes[1]);
 			$m = $m_i[2]->add($h->multiply($this->primes[2]));
 
 			$r = $this->primes[1];
@@ -8925,7 +8925,7 @@ class Crypt_RSA
 
 				$h = $m_i->subtract($m);
 				$h = $h->multiply($this->coefficients[$i]);
-				list(, $h) = $h->divide($this->primes[$i]);
+				list (, $h) = $h->divide($this->primes[$i]);
 
 				$m = $m->add($r->multiply($h));
 			}
@@ -8948,7 +8948,7 @@ class Crypt_RSA
 			);
 			$h = $m_i[1]->subtract($m_i[2]);
 			$h = $h->multiply($this->coefficients[2]);
-			list(, $h) = $h->divide($this->primes[1]);
+			list (, $h) = $h->divide($this->primes[1]);
 			$m = $m_i[2]->add($h->multiply($this->primes[2]));
 
 			$r = $this->primes[1];
@@ -8959,7 +8959,7 @@ class Crypt_RSA
 
 				$h = $m_i->subtract($m);
 				$h = $h->multiply($this->coefficients[$i]);
-				list(, $h) = $h->divide($this->primes[$i]);
+				list (, $h) = $h->divide($this->primes[$i]);
 
 				$m = $m->add($r->multiply($h));
 			}
@@ -8975,7 +8975,7 @@ class Crypt_RSA
 
 		$r = $r->modInverse($this->primes[$i]);
 		$x = $x->multiply($r);
-		list(, $x) = $x->divide($this->primes[$i]);
+		list (, $x) = $x->divide($this->primes[$i]);
 
 		return $x;
 	}

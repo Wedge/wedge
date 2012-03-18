@@ -30,7 +30,7 @@ function Like()
 			fatal_lang_error('not_a_topic', false);
 
 		foreach ($result as $func => $response)
-			list($id_content, $content_type) = $response;
+			list ($id_content, $content_type) = $response;
 	}
 	else
 	{

@@ -193,7 +193,7 @@ function Feed()
 	elseif (!empty($topic))
 	{
 		$request = wesql::query('
-			SELECT t.id_topic, m.subject
+			SELECT t.num_replies, t.id_topic, m.subject
 			FROM {db_prefix}topics AS t, {db_prefix}messages AS m
 			WHERE t.id_topic = {int:current_topic}
 				AND m.id_msg = t.id_first_msg
