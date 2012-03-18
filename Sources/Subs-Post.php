@@ -2641,7 +2641,12 @@ function saveDraft($is_pm, $id_context = 0)
 {
 	global $context, $txt, $board, $user_info, $settings;
 
-	if ($user_info['is_guest'] || !allowedTo('save_post_draft') || empty($settings['masterSavePostDrafts']) || !empty($_REQUEST['msg']))
+	// Do the basics first.
+	if ($user_info['is_guest'] || !empty($_REQUEST['msg']))
+		return false;
+
+	// Is it a post, and if so what's the permission like? Failing that, PMs?
+	if ((!$is_pm && (!allowedTo('save_post_draft') || empty($settings['masterSavePostDrafts']))) || ($is_pm && (!allowedTo('save_pm_draft') || empty($settings['masterSavePmDrafts']))))
 		return false;
 
 	// Clean up what we may or may not have
