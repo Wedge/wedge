@@ -241,6 +241,34 @@ function template_main()
 			</dl>
 		</div>
 
+		<div class="two-columns windowbg2 wrc">
+			<h6 class="top">
+				<span class="quick_button like_button"></span>
+				', $txt['top_likes'], '
+			</h6>
+			<dl class="stats">';
+
+	foreach ($context['top_likes'] as $like)
+	{
+		echo '
+				<dt>
+					', $like['link'], '
+				</dt>
+				<dd>';
+
+		if (!empty($like['post_percent']))
+			echo '
+					<div class="bar" style="width: ', $like['post_percent'] + 4, 'px"></div>';
+
+		echo '
+					<span>', $like['num_likes'], '</span>
+				</dd>';
+	}
+
+	echo '
+			</dl>
+		</div>
+
 		<br>
 		<div class="flow_hidden clear">
 			<we:title2>

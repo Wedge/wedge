@@ -535,6 +535,43 @@ function Stats()
 	if ($temp !== $temp2)
 		cache_put_data('stats_total_time_members', $temp2, 480);
 
+	// Liked posts top 10.
+	$likes_result = wesql::query('
+		SELECT COUNT(k.id_member) AS likes, m.id_member, m.real_name, msg.id_msg, msg.id_topic, msg.subject
+		FROM {db_prefix}likes AS k
+		LEFT JOIN {db_prefix}messages AS msg ON k.id_content = msg.id_msg AND k.content_type = {string:post}
+		LEFT JOIN {db_prefix}members AS m ON msg.id_member = m.id_member
+		GROUP BY msg.id_msg
+		ORDER BY likes DESC
+		LIMIT 10',
+		array(
+			'post' => 'post',
+		)
+	);
+	$context['top_likes'] = array();
+	while ($row_likes = wesql::fetch_assoc($likes_result))
+	{
+		if (!isset($max_num_likes))
+			$max_num_likes = $row_likes['likes'];
+
+		$context['top_likes'][] = array(
+			'num_likes' => $row_likes['likes'],
+			'subject' => $row_likes['subject'],
+			'member_name' => $row_likes['real_name'],
+			'id_member' => $row_likes['id_member'],
+			'href' => '<URL>?topic=' . $row_likes['id_topic'] . '.msg' . $row_likes['id_msg'] . '#msg' . $row_likes['id_msg'],
+			'link' => '<a href="<URL>?topic=' . $row_likes['id_topic'] . '.msg' . $row_likes['id_msg'] . '#msg' . $row_likes['id_msg'] . '">' . $row_likes['subject'] . '</a> (<a href="<URL>?action=profile;u=' . $row_likes['id_member'] . '">' . $row_likes['real_name'] . '</a>)'
+		);
+	}
+	wesql::free_result($likes_result);
+
+	foreach ($context['top_likes'] as $i => $like)
+	{
+		$context['top_likes'][$i]['post_percent'] = round(($like['num_likes'] * 100) / $max_num_likes);
+		$context['top_likes'][$i]['num_likes'] = comma_format($context['top_likes'][$i]['num_likes']);
+	}
+
+
 	// Activity by month.
 	$months_result = wesql::query('
 		SELECT
