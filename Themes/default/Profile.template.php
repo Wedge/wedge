@@ -2040,7 +2040,9 @@ function template_issueWarning()
 						<div class="smalltext">', $txt['profile_warning_impact'], ':<br>';
 
 	add_js('
-	$("#warning_contain").bind("mousedown mousemove mouseup", setWarningBarPos).mouseleave(function () { isMoving = false; });');
+	$("#warning_contain").bind("mousedown mousemove mouseup", setWarningBarPos).mouseleave(function () { isMoving = false; });
+	$("#warndiv1").show();
+	$("#warndiv2").hide();');
 
 	// For non-JavaScript give a better list.
 	foreach ($context['level_effects'] as $limit => $effect)
@@ -2050,11 +2052,7 @@ function template_issueWarning()
 	echo '
 						</div>
 					</div>
-				</dd>
-				<script><!--
-					document.getElementById("warndiv2").style.display = "none";
-					document.getElementById("warndiv1").style.display = "";
-				// --></script>';
+				</dd>';
 
 	if (!$context['user']['is_owner'])
 	{
@@ -2130,7 +2128,7 @@ function template_issueWarning()
 	{
 		$alternate = !$alternate;
 		echo '
-			<tr class="postbg', $alternate ? '' : '2', '">
+			<tr class="windowbg', $alternate ? '' : '2', '">
 				<td class="smalltext">', $warning['issuer']['link'], '</td>
 				<td class="smalltext">', $warning['time'], '</td>
 				<td class="smalltext">
