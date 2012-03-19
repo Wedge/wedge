@@ -772,7 +772,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 		// Get ex-name...
 		$result = wesql::query('
-			SELECT url, id_cat
+			SELECT url, id_owner
 			FROM {db_prefix}boards
 			WHERE id_board = {int:id_board}', array(
 				'id_board' => $board_id
@@ -788,7 +788,7 @@ function modifyBoard($board_id, &$boardOptions)
 			$purl = $boardOptions['board_name'];
 
 		// Generate a new one
-		$pretty_url = pretty_generate_url($purl, false, true);
+		$pretty_url = pretty_generate_url($purl, true, true);
 		$new_name = $dom . ($pretty_url != '' ? '/' . $pretty_url : '');
 
 		// Can't be a number
@@ -798,7 +798,7 @@ function modifyBoard($board_id, &$boardOptions)
 
 		// Can't be already in use
 		$in_use = is_already_taken($new_name, $board_id, $id_owner);
-		if ($in_use && $in_use != $board_id)
+		if ($in_use !== false && $in_use != $board_id)
 			fatal_lang_error('pretty_duplicateboard', false);
 
 		// Save to the database

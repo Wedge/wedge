@@ -653,7 +653,7 @@ class wecss_nesting extends wecss
 						// Remove our reset selector from the current selector.
 						if (strpos($node2['selector'], $selector) !== false && preg_match($full_test, $node2['selector']))
 						{
-							$node2['selector'] = trim(preg_replace('~(?:^|,)[^,]*' . $quoted . '[^,]*(?:,|$)~m', ',', $node2['selector']), "\x00..\x1F,");
+							$node2['selector'] = trim(preg_replace('~(?:^|,)[^,]*' . $quoted . '[^,]*(?:,|$)~m', ',', $node2['selector']), "\x00..\x20,");
 							$node2['selector'] = str_replace(',,', ',', $node2['selector']);
 							if (empty($node2['selector']))
 								$this->unset_recursive($n2);

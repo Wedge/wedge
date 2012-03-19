@@ -73,7 +73,7 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 		'zh' =>	array('ж', 'Ж'),
 	);
 
-	$text = preg_replace('/(&#(\d{1,7});)/e', 'fix_accents(\'$2\')', $text); // Turns &#12345; to UTF-8
+	$text = preg_replace('~(&#(\d{1,7});)~e', 'fix_accents(\'$2\')', $text); // Turns &#12345; to UTF-8
 
 	$text = str_replace(array('&amp;', '&quot;', '£', '¥', 'ß', '¹', '²', '³', '©', '®', '™', '½', '¼', '¾', '§'),
 						array('&', '"', 'p', 'yen', 'ss', '1', '2', '3', 'c', 'r', 'tm', '1-2', '1-4', '3-4', 's'), $text);
@@ -87,20 +87,20 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 	else
 		$text = strtolower(htmlentities($text, ENT_NOQUOTES, 'UTF-8'));
 
-	$text = preg_replace('/[\x80-\xff]/', '-', $text);
-	$text = preg_replace('/&(..?)(acute|grave|cedil|uml|circ|ring|tilde|lig|slash);/', '$1', $text);
+	$text = preg_replace('~[\x80-\xff]~', '-', $text);
+	$text = preg_replace('~&(..?)(acute|grave|cedil|uml|circ|ring|tilde|lig|slash);~', '$1', $text);
 	$text = str_replace(array('&#169;', '&#0169;', '&copy;', '&#153;', '&#0153;', '&trade;', '&#174;', '&#0174;', '&reg;', '&#160;', '&nbsp;'),
 						array('c', 'c', 'c', 'tm', 'tm', 'tm', 'r', 'r', 'r', '-', '-'), $text); // © ™ ® nbsp
-	$text = preg_replace('/(&#(\d{1,7}|x[0-9a-f]{1,6});)/e', 'entity_replace(\'$2\')', $text); // Turns &#12345; to %AB%CD
+	$text = preg_replace('~(&#(\d{1,7}|x[0-9a-f]{1,6});)~e', 'entity_replace(\'$2\')', $text); // Turns &#12345; to %AB%CD
 
-	$text = preg_replace(array('/[\x00-\x1f\x80-\xff]/', '/&[^;]*?;/', '~[^a-z0-9\$%_' . ($slash ? '/' : '') . '-]~'), '-', $text);
+	$text = preg_replace(array('~[\x00-\x1f\x80-\xff]~', '~&[^;]*?;~', '~[^a-z0-9\$%_' . ($slash ? '/' : '') . '-]~'), '-', $text);
 	$text = str_replace(array('"', "'"), chr(18), $text);
 
 	// If this is a board name, then only [a-z0-9] and hyphens are allowed -- standard host name policy.
 	if ($is_board)
-		$text = preg_replace('/[^a-z0-9-]/', '-', $text);
+		$text = rtrim(preg_replace('~[^/a-z0-9-]~', '-', $text), "\x00..x20/");
 
-	return preg_replace(array('/^-+|-+$/', '/-+/'), array('', '-'), $text);
+	return preg_replace(array('~^-+|-+$~', '~-+~'), array('', '-'), $text);
 }
 
 function entity_replace($string)
@@ -111,7 +111,7 @@ function entity_replace($string)
 	chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ?
 	chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) :
 	chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63)))));
-	return preg_replace('/([\x80-\xff])/e', 'sprintf(\'%%%x\', ord(\'$1\'))', $rep);
+	return preg_replace('~([\x80-\xff])~e', 'sprintf(\'%%%x\', ord(\'$1\'))', $rep);
 }
 
 function fix_accents($num)
@@ -127,31 +127,35 @@ function trimpercent($str)
 {
 	if (strpos($str, '%') === false)
 		return trim($str, '-' . chr(18));
-	return trim(preg_replace('/(?:%f[0-4](?:%(?:[8-9a-b](?:[0-9a-f](?:%(?:[8-9a-b](?:[0-9a-f](?:%[8-9a-b]?)?)?)?)?)?)?)?|%e[0-9a-f](?:%(?:[8-9a-b](?:[0-9a-f](?:%[8-9a-b]?)?)?)?)?|%d[0-9a-f](?:%[8-9a-b]?)?|%c[2-9a-f](?:%[8-9a-b]?)?|%[0-f]?)$/', '', $str), '-' . chr(18));
+	return trim(preg_replace('~(?:%f[0-4](?:%(?:[8-9a-b](?:[0-9a-f](?:%(?:[8-9a-b](?:[0-9a-f](?:%[8-9a-b]?)?)?)?)?)?)?)?|%e[0-9a-f](?:%(?:[8-9a-b](?:[0-9a-f](?:%[8-9a-b]?)?)?)?)?|%d[0-9a-f](?:%[8-9a-b]?)?|%c[2-9a-f](?:%[8-9a-b]?)?|%[0-f]?)$~', '', $str), '-' . chr(18));
 }
 
 // Check a new pretty URL against the list of existing boards to ensure there won't be a conflict.
 function is_already_taken($url, $id, $id_owner)
 {
-	global $context, $action_list, $boardurl;
+	global $context, $user_info, $action_list, $boardurl;
 
 	// Is the board name in the action list?
 	$board_name = substr($url, strlen($boardurl) + 1);
-	$board_name = substr($board_name, 0, strpos($board_name, '/') ? strpos($board_name, '/') : PHP_INT_MAX);
 	$forbidden = array_merge($action_list, array('do' => true));
-	if (isset($forbidden[$board_name]))
-		return -1;
+
+	foreach (explode('/', $board_name) as $name)
+		if (isset($forbidden[$name]))
+			return -1;
 
 	$query = wesql::query('
 		SELECT id_board, url, id_owner
 		FROM {db_prefix}boards AS b
-		WHERE
-			(b.url = SUBSTRING({string:url}, 1, urllen) AND b.id_owner != {int:owner})
-			OR (b.url = {string:url} AND b.id_board != {int:id})',
+		WHERE (b.url = {string:url} AND b.id_board != {int:id})' . ($user_info['is_admin'] ? '' : '
+			OR (SUBSTRING(b.url, 1, {int:slashlen}) = {string:slash} AND b.id_owner != {int:owner})
+			OR (b.url = SUBSTRING({string:url}, 1, urllen) AND b.id_owner != {int:owner})') . '
+		LIMIT 1',
 		array(
 			'url' => $url,
+			'slash' => $url . '/',
 			'id' => $id,
 			'owner' => $id_owner,
+			'slashlen' => strlen($board_name) + 1,
 		)
 	);
 
