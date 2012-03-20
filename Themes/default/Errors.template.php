@@ -95,10 +95,13 @@ function template_error_log()
 				</td>
 				<td class="half_width">
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
-					<strong>', $error['member']['link'], '</strong><br>
+					<strong>', $error['member']['link'], '</strong><br>';
+		if (!empty($error['member']['display_ip']))
+			echo '
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=ip;value=', $error['member']['ip'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"></a>
-					<strong><a href="', $scripturl, '?action=trackip;searchip=', $error['member']['display_ip'], '">', $error['member']['display_ip'], '</a></strong>&nbsp;&nbsp;
-					<br>&nbsp;
+					<strong><a href="', $scripturl, '?action=trackip;searchip=', $error['member']['display_ip'], '">', $error['member']['display_ip'], '</a></strong>&nbsp;&nbsp;';
+
+		echo '
 				</td>
 				<td class="half_width">
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? '' : ';desc', $context['has_filter'] ? $context['filter']['href'] : '', '" title="', $txt['reverse_direction'], '">
@@ -126,6 +129,130 @@ function template_error_log()
 					', $txt['line'], ': ', $error['file']['line'];
 
 		echo '
+				</td>
+			</tr>';
+	}
+
+	if (!empty($context['errors']))
+		echo '
+			<tr class="titlebg left">
+				<td colspan="3">
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
+					<label style="line-height: 24px"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
+				</td>
+			</tr>';
+	else
+		echo '
+			<tr>
+				<td colspan="3" class="windowbg2">', $txt['errlog_no_entries'], '</td>
+			</tr>';
+
+	echo '
+			<tr>
+				<td colspan="3" class="windowbg">
+					&nbsp;&nbsp;', $txt['pages'], ': ', $context['page_index'], '
+				</td>
+			</tr>
+		</table><br>';
+
+	if ($context['sort_direction'] == 'down')
+		echo '
+		<input type="hidden" name="desc" value="1">';
+	echo '
+		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+	</form>';
+}
+
+function template_intrusion_log()
+{
+	global $context, $theme, $options, $scripturl, $txt, $settings;
+
+	add_js('
+	var lastClicked = "";');
+
+	echo '
+	<form action="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="return (lastClicked != \'remove_all\') || confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ');">
+		<div class="clear_right">
+			<we:title>
+				', $txt['log_intrusion'], '
+			</we:title>
+		</div>
+		<table class="table_grid w100 cs1" id="error_log">
+			<tr>
+				<td colspan="3" class="windowbg">
+					&nbsp;&nbsp;', $txt['apply_filter_of_type'], ':
+					<ul>';
+
+	$error_types = array();
+	foreach ($context['error_types'] as $type => $details)
+		echo '
+						<li>', $details['is_selected'] ? '<img src="' . $theme['images_url'] . '/selected.gif"> ' : '', '<a href="', $details['url'], '"', $details['is_selected'] ? ' style="font-weight: bold;"' : '', '">', $details['label'], '</a></li>';
+
+	echo '
+					</ul>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3" class="windowbg">
+					&nbsp;&nbsp;', $txt['pages'], ': ', $context['page_index'], '
+				</td>
+			</tr>';
+
+	if ($context['has_filter'])
+		echo '
+			<tr>
+				<td colspan="3" class="windowbg">
+					<strong>', $txt['applying_filter'], ':</strong> ', $context['filter']['entity'], ' ', $context['filter']['value']['html'], ' (<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', '">', $txt['clear_filter'], '</a>)
+				</td>
+			</tr>';
+
+	if (!empty($context['errors']))
+		echo '
+			<tr class="titlebg left">
+				<td colspan="3">
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
+					<label style="line-height: 24px"><input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all2.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
+				</td>
+			</tr>';
+
+	foreach ($context['errors'] as $error)
+	{
+		echo '
+			<tr class="windowbg', $error['alternate'] ? '2' : '', '">
+				<td rowspan="2" class="checkbox_column">
+					<input type="checkbox" name="delete[]" value="', $error['id'], '">
+				</td>
+				<td class="half_width">
+					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
+					<strong>', $error['member']['link'], '</strong><br>';
+
+		if (!empty($error['member']['display_ip']))
+			echo '
+					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=ip;value=', $error['member']['ip'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ip'], '"></a>
+					<strong><a href="', $scripturl, '?action=trackip;searchip=', $error['member']['display_ip'], '">', $error['member']['display_ip'], '</a></strong>';
+
+		echo '
+				</td>
+				<td class="half_width">
+					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? '' : ';desc', $context['has_filter'] ? $context['filter']['href'] : '', '" title="', $txt['reverse_direction'], '">
+						<img src="', $theme['images_url'], '/sort_', $context['sort_direction'], '.gif" alt="', $txt['reverse_direction'], '">
+					</a>
+					', $error['time'], '<br>
+					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=protocol;value=', $error['protocol']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a> ', $txt['request_protocol'], ': ', $error['protocol']['html'], '
+				</td>
+			</tr>';
+
+	echo '
+			<tr class="windowbg', $error['alternate'] ? '2' : '', '">
+				<td colspan="2" class="middle">
+					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=http_method;value=', $error['http_method'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
+					', $error['http_method'], '
+					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=request_uri;value=', $error['request_uri']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_url'], '"></a>
+					', $error['request_uri']['html'], '<br><br>
+					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=error_type;value=', $error['error_type']['type'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_type'], '"></a>
+					', $txt['error_type'], ': ', $error['error_type']['name'], '<br>
+					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=user_agent;value=', $error['user_agent']['href'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_ua'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_ua'], '"></a> ', $txt['user_agent'], ': ', $error['user_agent']['html'], '<br><br>
+					', $txt['http_headers'], '<br>', $error['headers'], '
 				</td>
 			</tr>';
 	}

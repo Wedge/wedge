@@ -254,8 +254,8 @@ function ViewErrorLog()
 		'is_selected' => empty($filter),
 	);
 
-	$sum = 0;
 	// What type of errors do we have and how many do we have?
+	$sum = 0;
 	$request = wesql::query('
 		SELECT error_type, COUNT(*) AS num_errors
 		FROM {db_prefix}log_errors
@@ -335,6 +335,288 @@ function deleteErrors()
 
 	// Back to the error log!
 	redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
+}
+
+function ViewIntrusionLog()
+{
+	global $scripturl, $txt, $context, $settings, $user_profile, $filter, $boarddir, $themedir;
+
+	// Check for the administrative permission to do this.
+	isAllowedTo('admin_forum');
+
+	// Templates, etc...
+	loadLanguage('ManageMaintenance');
+	loadLanguage('Security');
+	loadTemplate('Errors');
+
+	// You can filter by any of the following columns:
+	$filters = array(
+		'id_member' => $txt['username'],
+		'ip' => $txt['ip_address'],
+		'request_uri' => $txt['error_url'],
+		'error_type' => $txt['error_type'],
+		'http_method' => $txt['request_method'],
+		'protocol' => $txt['request_protocol'],
+		'user_agent' => $txt['user_agent'],
+	);
+
+	// Set up the filtering...
+	if (isset($_GET['value'], $_GET['filter'], $filters[$_GET['filter']]))
+		$filter = array(
+			'variable' => $_GET['filter'],
+			'value' => array(
+				'sql' => in_array($_GET['filter'], array('request_uri', 'protocol', 'user_agent')) ? base64_decode(strtr($_GET['value'], array(' ' => '+'))) : wesql::escape_wildcard_string($_GET['value']),
+			),
+			'href' => ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'],
+			'entity' => $filters[$_GET['filter']]
+		);
+
+	// Deleting, are we?
+	if (isset($_POST['delall']) || isset($_POST['delete']))
+		deleteIntrusions();
+
+	// Just how many errors are there?
+	$result = wesql::query('
+		SELECT COUNT(*)
+		FROM {db_prefix}log_intrusion' . (isset($filter) ? '
+		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : ''),
+		array(
+			'filter' => isset($filter) ? $filter['value']['sql'] : '',
+		)
+	);
+	list ($num_errors) = wesql::fetch_row($result);
+	wesql::free_result($result);
+
+	// If this filter is empty...
+	if ($num_errors == 0 && isset($filter))
+		redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
+
+	// Clean up start.
+	if (!isset($_GET['start']) || $_GET['start'] < 0)
+		$_GET['start'] = 0;
+
+	// Do we want to reverse error listing?
+	$context['sort_direction'] = isset($_REQUEST['desc']) ? 'down' : 'up';
+
+	// Set the page listing up.
+	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
+	$context['start'] = $_GET['start'];
+
+	// Find and sort out the errors.
+	$request = wesql::query('
+		SELECT id_event, id_member, error_type, ip, li.member_ip AS display_ip, event_time, http_method, request_uri, protocol, user_agent, headers
+		FROM {db_prefix}log_intrusion AS lt
+			LEFT JOIN {db_prefix}log_ips AS li ON (lt.ip = li.id_ip)' . (isset($filter) ? '
+		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : '') . '
+		ORDER BY id_event ' . ($context['sort_direction'] == 'down' ? 'DESC' : '') . '
+		LIMIT ' . $_GET['start'] . ', ' . $settings['defaultMaxMessages'],
+		array(
+			'filter' => isset($filter) ? $filter['value']['sql'] : '',
+		)
+	);
+	$context['errors'] = array();
+	$members = array();
+
+	for ($i = 0; $row = wesql::fetch_assoc($request); $i++)
+	{
+		$context['errors'][$row['id_event']] = array(
+			'alternate' => $i %2 == 0,
+			'member' => array(
+				'id' => $row['id_member'],
+				'ip' => $row['ip'],
+				'display_ip' => format_ip($row['display_ip']),
+			),
+			'time' => timeformat($row['event_time']),
+			'timestamp' => $row['event_time'],
+			'http_method' => $row['http_method'],
+			'request_uri' => array(
+				'html' => htmlspecialchars((strpos($row['request_uri'], '?') === 0 ? $scripturl : '') . $row['request_uri']),
+				'href' => base64_encode(wesql::escape_wildcard_string($row['request_uri']))
+			),
+			'protocol' => array(
+				'html' => htmlspecialchars($row['protocol']),
+				'href' => base64_encode(wesql::escape_wildcard_string($row['protocol']))
+			),
+			'user_agent' => array(
+				'html' => htmlspecialchars($row['user_agent']),
+				'href' => base64_encode(wesql::escape_wildcard_string($row['user_agent']))
+			),
+			'id' => $row['id_event'],
+			'error_type' => array(
+				'type' => $row['error_type'],
+				'name' => isset($txt['behav_' . $row['error_type'] . '_log']) ? $txt['behav_' . $row['error_type'] . '_log'] : $row['error_type'],
+			),
+			'headers' => '',
+		);
+
+		if ($filter['variable'] == 'ip')
+			$context['filtering_ip'] = format_ip($row['display_ip']);
+
+		$row['headers'] = explode('<br>', $row['headers']);
+		foreach ($row['headers'] as $k => $v)
+		{
+			$row['headers'][$k] = preg_replace('~^([a-z0-9-]+)=(.*)~i', '<b>$1</b>: $2', $v);
+			if (strpos($v, 'Cookie') === 0)
+				$row['headers'][$k] = '<span class="smalltext">' . str_replace('%', '%&shy;', $row['headers'][$k]) . '</span>';
+		}
+		$context['errors'][$row['id_event']]['headers'] = implode('<br>', $row['headers']);
+
+		// Make a list of members to load later.
+		$members[$row['id_member']] = $row['id_member'];
+	}
+	wesql::free_result($request);
+
+	// Load the member data.
+	if (!empty($members))
+	{
+		// Get some additional member info...
+		$request = wesql::query('
+			SELECT id_member, member_name, real_name
+			FROM {db_prefix}members
+			WHERE id_member IN ({array_int:member_list})
+			LIMIT ' . count($members),
+			array(
+				'member_list' => $members,
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+			$members[$row['id_member']] = $row;
+		wesql::free_result($request);
+
+		// This is a guest...
+		$members[0] = array(
+			'id_member' => 0,
+			'member_name' => '',
+			'real_name' => $txt['guest_title']
+		);
+
+		// Go through each error and tack the data on.
+		foreach ($context['errors'] as $id => $dummy)
+		{
+			$memID = $context['errors'][$id]['member']['id'];
+			if (empty($members[$memID]) || !is_array($members[$memID]))
+				$memID = 0; // If they're not currently a member, they're a guest...
+
+			$context['errors'][$id]['member']['username'] = $members[$memID]['member_name'];
+			$context['errors'][$id]['member']['name'] = $members[$memID]['real_name'];
+			$context['errors'][$id]['member']['href'] = empty($memID) ? '' : $scripturl . '?action=profile;u=' . $memID;
+			$context['errors'][$id]['member']['link'] = empty($memID) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $memID . '">' . $context['errors'][$id]['member']['name'] . '</a>';
+		}
+	}
+
+	// Filtering anything?
+	if (isset($filter))
+	{
+		$context['filter'] =& $filter;
+
+		// Set the filtering context.
+		if ($filter['variable'] == 'id_member')
+		{
+			$id = $filter['value']['sql'];
+			loadMemberData($id, false, 'minimal');
+			$context['filter']['value']['html'] = '<a href="' . $scripturl . '?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
+		}
+		elseif ($filter['variable'] == 'request_uri')
+			$context['filter']['value']['html'] = '\'' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '\'';
+		elseif ($filter['variable'] == 'error_type')
+		{
+			$context['filter']['value']['html'] = '\'' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '\'';
+		}
+		elseif ($filter['variable'] == 'ip')
+		{
+			$context['filter']['value']['html'] = $context['filtering_ip']; // we already stored this earlier!
+		}
+		else
+			$context['filter']['value']['html'] =& $filter['value']['sql'];
+	}
+
+	$context['error_types'] = array();
+
+	$context['error_types']['all'] = array(
+		'label' => $txt['errortype_all'],
+		'url' => $scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'down' ? ';desc' : ''),
+		'is_selected' => empty($filter),
+	);
+
+	// What type of errors do we have and how many do we have?
+	$sum = 0;
+	$request = wesql::query('
+		SELECT error_type, COUNT(*) AS num_errors
+		FROM {db_prefix}log_intrusion
+		GROUP BY error_type
+		ORDER BY error_type = {string:critical_type} DESC, error_type ASC',
+		array(
+			'critical_type' => 'critical',
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+	{
+		// Total errors so far?
+		$sum += $row['num_errors'];
+
+		$context['error_types'][$sum] = array(
+			'label' => (isset($txt['behav_' . $row['error_type'] . '_log']) ? $txt['behav_' . $row['error_type'] . '_log'] : $row['error_type']) . ' (' . $row['num_errors'] . ')',
+			'url' => $scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . ';filter=error_type;value=' . $row['error_type'],
+			'is_selected' => isset($filter) && $filter['value']['sql'] == wesql::escape_wildcard_string($row['error_type']),
+		);
+	}
+	wesql::free_result($request);
+
+	// Update the all errors tab with the total number of errors
+	$context['error_types']['all']['label'] .= ' (' . $sum . ')';
+
+	// And this is pretty basic ;)
+	$context['page_title'] = $txt['log_intrusion'];
+	$context['has_filter'] = isset($filter);
+	wetem::load('intrusion_log');
+
+	// Don't rewrite any URLs, we need them to remain exact!
+	$settings['pretty_filters'] = array();
+	$settings['pretty_enable_filters'] = false;
+}
+
+function deleteIntrusions()
+{
+	global $filter;
+
+	// Make sure the session exists and is correct; otherwise, might be a hacker.
+	checkSession();
+
+	// Delete all or just some?
+	if (isset($_POST['delall']) && !isset($filter))
+		wesql::query('
+			TRUNCATE {db_prefix}log_intrusion',
+			array(
+			)
+		);
+	// Deleting all with a filter?
+	elseif (isset($_POST['delall'], $filter))
+		wesql::query('
+			DELETE FROM {db_prefix}log_intrusion
+			WHERE ' . $filter['variable'] . ' LIKE {string:filter}',
+			array(
+				'filter' => $filter['value']['sql'],
+			)
+		);
+	// Just specific errors?
+	elseif (!empty($_POST['delete']))
+	{
+		wesql::query('
+			DELETE FROM {db_prefix}log_intrusion
+			WHERE id_event IN ({array_int:error_list})',
+			array(
+				'error_list' => array_unique($_POST['delete']),
+			)
+		);
+		updateErrorCount();
+
+		// Go back to where we were.
+		redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['desc']) ? ';desc' : '') . ';start=' . $_GET['start'] . (isset($filter) ? ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'] : ''));
+	}
+	updateErrorCount();
+
+	// Back to the intrusion log!
+	redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
 }
 
 function updateErrorCount()

@@ -560,6 +560,7 @@ function Admin()
 					'bigicon' => 'logs.png',
 					'subsections' => array(
 						'errorlog' => array($txt['log_error'], 'admin_forum', 'enabled' => !empty($settings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'),
+						'intrusionlog' => array($txt['log_intrusion'], 'admin_forum'),
 						'',
 						'adminlog' => array($txt['log_admin'], 'admin_forum', 'enabled' => !empty($settings['log_enabled_admin'])),
 						'modlog' => array($txt['log_moderation'], 'admin_forum', 'enabled' => !empty($settings['log_enabled_moderate'])),
@@ -1045,6 +1046,7 @@ function AdminLogs()
 	// These are the logs they can load.
 	$log_functions = array(
 		'errorlog' => array('ManageErrors', 'ViewErrorLog'),
+		'intrusionlog' => array('ManageErrors', 'ViewIntrusionLog'),
 		'adminlog' => array('Modlog', 'ViewModlog'),
 		'modlog' => array('Modlog', 'ViewModlog'),
 		'spiderlog' => array('ManageSearchEngines', 'SpiderLog'),
@@ -1066,6 +1068,9 @@ function AdminLogs()
 			'errorlog' => array(
 				'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
 				'description' => sprintf($txt['errlog_desc'], $txt['remove']),
+			),
+			'intrusionlog' => array(
+				'description' => $txt['intrusion_log_desc'],
 			),
 			'adminlog' => array(
 				'description' => $txt['admin_log_desc'],

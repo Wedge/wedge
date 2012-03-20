@@ -465,19 +465,6 @@ function scheduled_daily_maintenance()
 		consolidateSpiderStats();
 	}
 
-	// Check the database version - for some buggy MySQL version.
-	$server_version = wesql::server_info();
-	if (in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51')))
-		updateSettings(array('db_mysql_group_by_fix' => '1'));
-	elseif (!empty($settings['db_mysql_group_by_fix']))
-		wesql::query('
-			DELETE FROM {db_prefix}settings
-			WHERE variable = {string:mysql_fix}',
-			array(
-				'mysql_fix' => 'db_mysql_group_by_fix',
-			)
-		);
-
 	// Clear out any old drafts if appropriate.
 	if (!empty($settings['pruneSaveDrafts']))
 		wesql::query('
@@ -487,6 +474,31 @@ function scheduled_daily_maintenance()
 				'old_time' => time() - ($settings['pruneSaveDrafts'] * 86400),
 			)
 		);
+
+	// Clear out the error and intrusion logs.
+	if (!empty($settings['pruningOptions']) && strpos($settings['pruningOptions'], ',') !== false)
+		list ($settings['pruneErrorLog']) = explode(',', $settings['pruningOptions']);
+
+	if (!empty($settings['pruneErrorLog']))
+	{
+		// Figure out when our cutoff time is.  1 day = 86400 seconds.
+		$t = time() - $settings['pruneErrorLog'] * 86400;
+
+		wesql::query('
+			DELETE FROM {db_prefix}log_errors
+			WHERE log_time < {int:log_time}',
+			array(
+				'log_time' => $t,
+			)
+		);
+		wesql::query('
+			DELETE FROM {db_prefix}log_intrusion
+			WHERE event_time < {int:log_time}',
+			array(
+				'log_time' => $t,
+			)
+		);
+	}
 
 	// Log we've done it...
 	return true;
@@ -1328,20 +1340,6 @@ function scheduled_weekly_maintenance()
 	{
 		if (!empty($settings['pruningOptions']) && strpos($settings['pruningOptions'], ',') !== false)
 			list ($settings['pruneErrorLog'], $settings['pruneModLog'], $settings['pruneReportLog'], $settings['pruneScheduledTaskLog'], $settings['pruneSpiderHitLog']) = explode(',', $settings['pruningOptions']);
-
-		if (!empty($settings['pruneErrorLog']))
-		{
-			// Figure out when our cutoff time is.  1 day = 86400 seconds.
-			$t = time() - $settings['pruneErrorLog'] * 86400;
-
-			wesql::query('
-				DELETE FROM {db_prefix}log_errors
-				WHERE log_time < {int:log_time}',
-				array(
-					'log_time' => $t,
-				)
-			);
-		}
 
 		if (!empty($settings['pruneModLog']))
 		{
