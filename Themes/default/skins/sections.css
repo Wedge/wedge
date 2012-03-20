@@ -261,19 +261,6 @@ img.new_posts
 	span
 		font-size: .85em
 
-.moderatorbar
-	margin: 14px 0 0
-	font-size: .85em
-	float: left
-	width: 50%
-	.modified
-		color: #a0aaa0
-		font-style: italic
-	.report
-		margin-right: 1.5em
-		img
-			vertical-align: -3px
-
 // Poster details and list of items
 .poster
 	display: table-cell
@@ -357,7 +344,7 @@ li.profile img
 .signature, .attachments
 	width: 98%
 	overflow: auto
-	clear: right
+	clear: both
 	padding: 1em 0 3px
 	border-top: 1px solid #aaa
 	line-height: 1.4em
@@ -376,17 +363,6 @@ li.profile img
 	margin: 0 .5em 0 0
 	img
 		padding: 6px 3px
-
-// The quick edit button
-.modifybutton
-	background: url($images/icons/modify_inline.gif) no-repeat 0 0
-	display: inline
-	width: 20px
-	height: 20px
-	clear: right
-	float: right
-	margin: 8px 20px 10px 0
-	cursor: pointer
 
 // The quick buttons
 .quickbuttons_wrap
@@ -414,7 +390,8 @@ ul.quickbuttons extends ul.reset
  */
 
 .quick_button
-	background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
+	background-image: url($images/theme/quickbuttons.png)
+	background-repeat: no-repeat
 	padding-left: 22px
 	height: 20px
 	:hover

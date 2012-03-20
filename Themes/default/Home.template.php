@@ -127,13 +127,21 @@ function template_thoughts($limit = 18)
 				<td class="bc">{date}</td><td class="windowbg thought">{uname} &raquo; {text}</td>
 			</tr>';
 
+	// @worg!!
+	$privacy_icon = array(
+		-3 => 'everyone',
+		0 => 'members',
+		5 => 'justme',
+		20 => 'friends',
+	);
+
 	foreach ($context['thoughts'] as $id => $thought)
 	{
 		$col = empty($col) ? 2 : '';
 		echo '
 			<tr class="windowbg', $col, '">
 				<td class="bc', $col, '">', $thought['updated'], '</td>
-				<td><div><a id="t', $id, '"></a><a href="<URL>?action=profile;u=', $thought['id_member'], '">',
+				<td><div>', $thought['privacy'] != -3 ? '<div class="privacy_' . $privacy_icon[$thought['privacy']] . '"></div>' : '', '<a id="t', $id, '"></a><a href="<URL>?action=profile;u=', $thought['id_member'], '">',
 				$thought['owner_name'], '</a> &raquo; ', $thought['text'], '</div></td>
 			</tr>';
 	}

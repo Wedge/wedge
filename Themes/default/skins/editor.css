@@ -158,6 +158,7 @@ ul.post_options
 
 #draft_lastautosave
 	base: .inline-block
+	font-size: .9em
 	line-height: 1.7em
 	clear: right
 

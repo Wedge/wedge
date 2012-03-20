@@ -33,6 +33,10 @@ var
 	is_android = is_webkit && ua.indexOf('android') != -1,
 	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android && !is_tablet,
 
+	// This should allow us to catch more touch devices like smartphones and tablets...
+	is_touch = 'ontouchstart' in document.documentElement,
+
+	// IE gets version variables as well. Do you have to ask why..?
 	is_ie = !!$.browser.msie && !is_opera,
 	is_ie6 = is_ie && $.browser.version == 6,
 	is_ie7 = is_ie && $.browser.version == 7,
@@ -655,7 +659,7 @@ function Thought(opt)
 			pr = '';
 
 		for (p in privacies)
-			pr += '<option value="' + p.substr(1) + '"' + (in_array(p.substr(1), privacy) ? ' selected' : '') + '>' + privacies[p] + '</option>';
+			pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
 
 		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
 		thought.toggle(tid && is_new).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'

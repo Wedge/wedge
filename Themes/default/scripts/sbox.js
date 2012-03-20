@@ -268,7 +268,7 @@
 
 				// Show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).
 				// Touch-enabled phones have poor usability and shouldn't bother -- let them stretch all the way.
-				ddMaxHeight = Math.min(is_iphone || is_tablet ? 9e9 : 250, ddHeight, Math.max(bottomSpace + 50, topSpace)),
+				ddMaxHeight = Math.min(is_touch ? 9e9 : 250, ddHeight, Math.max(bottomSpace + 50, topSpace)),
 
 				// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
 				// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.

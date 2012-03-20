@@ -200,9 +200,9 @@ function template_html_before()
 	<link rel="next" href="', $context['links']['next'], '">';
 	}
 
-	if ($context['browser']['is_iphone'])
+	if (!empty($context['skin_options']['mobile']))
 		echo '
-	<meta name="viewport" content="width=device-width; initial-scale=0.5; maximum-scale=2.0; minimum-scale=0.5; user-scalable=1;">';
+	<meta name="viewport" content="width=device-width; initial-scale=0.7; maximum-scale=2.0; minimum-scale=0.7; user-scalable=1;">';
 
 	if (!empty($context['meta_description']))
 		echo '
@@ -398,10 +398,9 @@ function template_sidebar_before()
 
 		add_js('
 	oThought = new Thought({
-		aPrivacy: { "_-3": "', $txt['privacy_public'], '", "_0": "', $txt['privacy_members'], '", ',
+		aPrivacy: [[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
 		// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
-		// Also, the underscore is required for Chrome and Opera to respect the sort order... Silly.
-		in_array(20, $user_info['groups']) ? '"_20": "Friends", ' : '', '"_-5": "', $txt['privacy_self'], '" },
+		in_array(20, $user_info['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]],
 		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '", sEdit: "', $txt['edit_thought'], '", sReply: "', $txt['reply'], '", sDelete: "', $txt['delete'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '
@@ -742,12 +741,13 @@ function template_footer()
 
 	// Show the credit page (forum admin/mod team and credits),
 	// and a link to an HTML conformity checker, for geeks.
-	// !! @worg: rev.txt
+	// !! @worg: rev.txt, facebook link
 	echo '
 			<li class="copyright">', $txt['copyright'], ' (rev <a href="http://wedge.org/pub/feats/6108/new-revs/">', file_get_contents($theme['theme_dir'] . '/rev.txt'), '</a>) -</li>
 			<li class="links">
 				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.nu/?doc=', $user_info['url'], '" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>
+				<a id="button_html5" href="http://validator.nu/?doc=', $user_info['url'], '" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
+				Like us on <img src="http://static.ak.fbcdn.net/rsrc.php/v1/yH/r/eIpbnVKI9lR.png" style="width: 14px; height: 14px; margin-bottom: -2px; border: 0"> <a href="http://www.facebook.com/wedgebook">Facebook</a>
 			</li>
 		</ul>
 	</div></div>';

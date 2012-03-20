@@ -227,21 +227,25 @@ function cleanRequest()
 	}
 
 	// Don't bother going further if we've come here from a *REAL* 404.
-	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js')) && strpos($full_request, 'mobiquo/tapatalk') === false)
+	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js')))
 	{
-		loadLanguage('Errors');
-
-		header('HTTP/1.0 404 Not Found');
-		header('Content-Type: text/plain; charset=UTF-8');
-
-		// Webmasters might want to log the error, so they can fix any broken image links.
-		if (!empty($settings['enableErrorLogging']))
+		// Reject Tapatalk spam and Google Cache, probably trying to access the SMF version of your website...?
+		if (strpos($full_request, 'mobiquo/tapatalk') === false && (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'googleusercontent.com') === false))
 		{
-			log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? str_replace('&amp;', '&', $_SERVER['HTTP_REFERER']) : '');
-			loadSource('ManageErrors');
-			updateErrorCount();
+			loadLanguage('Errors');
+
+			header('HTTP/1.0 404 Not Found');
+			header('Content-Type: text/plain; charset=UTF-8');
+
+			// Webmasters might want to log the error, so they can fix any broken image links.
+			if (!empty($settings['enableErrorLogging']))
+			{
+				log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? str_replace('&amp;', '&', $_SERVER['HTTP_REFERER']) : '');
+				loadSource('ManageErrors');
+				updateErrorCount();
+			}
+			die('404 Not Found');
 		}
-		die('404 Not Found');
 	}
 
 	// If magic quotes are on, we have some work to do...

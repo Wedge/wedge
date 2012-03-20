@@ -32,6 +32,29 @@ ul.buttonlist
 	font-size: .9em
 	float: right
 
+// The quick edit button
+.modifybutton
+	background: url($images/icons/modify_inline.gif) no-repeat 0 0
+	display: inline
+	width, height: 20px
+	clear, float: right
+	margin: 8px 20px 10px 0
+	cursor: pointer
+
+// Why would guests need to see that div?
+.moderatorbar
+	margin: 12px 0 0
+	font-size: .85em
+	float: left
+	width: 50%
+	.modified
+		color: #a0aaa0
+		font-style: italic
+	.report
+		margin-right: 1.5em
+		img
+			vertical-align: -3px
+
 /* Styles for the personal messages section.
 ------------------------------------------------- */
 
@@ -104,9 +127,10 @@ ul.buttonlist
 	.sbox
 		margin-top: -2px
 		font-size: 13px
-		max-width: 85px
 	#sidebar &
 		margin-left: 0
+		.sbox
+			max-width: 85px
 
 #thought_update input
 	margin: 0 0 8px
@@ -163,3 +187,24 @@ table.thought_list td:hover
 
 #new_thought
 	display: none
+
+.privacy_default extends .inline-block
+	background: url($images/icons/privacy.png) 0 0 no-repeat
+	margin-right: 4px
+	width: 10px
+	height: 10px
+
+.privacy_everyone extends .privacy_default
+	background-position: 0 -10px
+
+.privacy_members extends .privacy_default
+	background-position: 0 -20px
+
+.privacy_groups extends .privacy_default
+	background-position: 0 -30px
+
+.privacy_friends extends .privacy_default
+	background-position: 0 -40px
+
+.privacy_justme extends .privacy_default
+	background-position: 0 -50px
