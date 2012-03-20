@@ -114,6 +114,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		'critical',
 		'database',
 		'undefined_vars',
+		'password',
 		'user',
 		'template',
 		'debug',
