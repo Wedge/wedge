@@ -254,7 +254,7 @@ function template_reported_posts()
 	foreach ($context['reports'] as $report)
 	{
 		echo '
-			<div class="postbg', $report['alternate'] ? '' : '2', ' wrc">
+			<div class="windowbg', $report['alternate'] ? '' : '2', ' wrc core_posts">
 				<div>
 					<div class="floatright">
 						<a href="', $report['report_href'], '">', $details_button, '</a>
@@ -264,8 +264,7 @@ function template_reported_posts()
 					</div>
 					<strong><a href="', $report['topic_href'], '">', $report['subject'], '</a></strong> ', $txt['mc_reportedp_by'], ' <strong>', $report['author']['link'], '</strong>
 				</div>
-				<br>
-				<div class="smalltext">
+				<div class="clear smalltext">
 					&#171; ', $txt['mc_reportedp_last_reported'], ': ', $report['last_updated'], ' &#187;<br>';
 
 		// Prepare the comments...
@@ -338,7 +337,7 @@ function template_unapproved_posts()
 				<span class="smalltext floatleft"><a href="', $scripturl, '?category=', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
 				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
 			</we:title>
-			<div class="postbg', $item['alternate'] ? '' : '2', ' wrc">
+			<div class="windowbg', $item['alternate'] ? '' : '2', ' wrc core_posts">
 				<div class="post">', $item['body'], '</div>
 				<span class="floatright">
 					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';approve=', $item['id'], '">', $approve_button, '</a>';

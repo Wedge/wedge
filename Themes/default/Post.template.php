@@ -34,7 +34,7 @@ function template_preview()
 			<we:cat>
 				<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
 			</we:cat>
-			<div class="postbg wrc">
+			<div class="windowbg wrc core_posts">
 				<div class="post" id="preview_body">
 					', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
 				</div>
@@ -406,7 +406,7 @@ function template_postform_after()
 			if ($("is_ignored", this).text() != 0)
 				ignored_replies.push(ignoring = id);
 
-			newPostsHTML += \'<div class="postbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <div class="note" id="image_new_\' + id + \'">' . $txt['new'] . '</div></div>\';');
+			newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <div class="note" id="image_new_\' + id + \'">' . $txt['new'] . '</div></div>\';');
 
 	if ($context['can_quote'])
 		add_js('
@@ -646,7 +646,7 @@ function template_show_previous_posts()
 			$ignored_posts[] = $ignoring = $post['id'];
 
 		echo '
-			<div class="postbg', $post['alternate'] ? '2' : '', ' wrc core_posts">
+			<div class="windowbg', $post['alternate'] ? '2' : '', ' wrc core_posts">
 				<div id="msg', $post['id'], '">
 					<div class="floatleft">
 						<h5>', $txt['posted_by'], ': ', $post['poster'], '</h5>

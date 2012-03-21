@@ -143,10 +143,10 @@ function template_folder()
 
 		while ($message = $context['get_pmessage']('message'))
 		{
-			$window_class = $message['alternate'] == 0 ? 'postbg' : 'postbg2';
+			$window_class = $message['alternate'] == 0 ? '' : '2';
 
 			echo '
-	<div class="', $window_class, ' pm"><div class="post_wrapper">
+	<div class="postbg', $window_class, ' pm"><div class="post_wrapper">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';
@@ -718,12 +718,13 @@ function template_search_results()
 		if (!empty($context['search_params']['show_complete']))
 		{
 			echo '
-			<we:title>
-				<span class="floatright">', $txt['search_on'], ': ', $message['time'], '</span>
-				<span class="floatleft">', $message['counter'], '&nbsp;&nbsp;<a href="', $message['href'], '">', $message['subject'], '</a></span>
-			</we:title>
-			<div class="padding">
-				<h3>', $txt['from'], ': ', $message['member']['link'], ', ', $txt['to'], ': ';
+		<div class="topic">
+			<div class="windowbg', $alternate ? '2' : '', ' wrc core_posts pm">
+				<div class="counter">', $message['counter'], '</div>
+				<div class="topic_details">
+					<span class="floatright">', $txt['search_on'], ': ', $message['time'], '</span>
+					<h3><a href="', $message['href'], '">', $message['subject'], '</a></h3>
+					', $txt['from'], ': <strong>', $message['member']['link'], '</strong>, ', $txt['to'], ': <strong>';
 
 			// Show the recipients.
 			// !!! This doesn't deal with the sent item searching quite right for bcc.
@@ -733,29 +734,31 @@ function template_search_results()
 			elseif ($context['folder'] != 'sent')
 				echo '(', $txt['pm_undisclosed_recipients'], ')';
 
-			echo '</h3>
-			</div>
-			<div class="postbg', $alternate ? '2' : '', ' pm">
-				', $message['body'], '
-				<p class="pm_reply right smalltext">';
+			echo '</strong>
+				</div>
+				<div class="list_posts">
+					', $message['body'], '
+					<p class="pm_reply right smalltext">';
 
 			if ($context['can_send_pm'])
 			{
 				$quote_button = create_button('quote.gif', 'quote', 'quote', 'class="middle"');
 				$reply_button = create_button('im_reply.gif', 'reply', 'reply', 'class="middle"');
+
 				// You can only reply if they are not a guest...
 				if (!$message['member']['is_guest'])
 					echo '
-					<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '">', $quote_button, '</a>', $context['menu_separator'], '
-					<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '">', $reply_button, '</a> ', $context['menu_separator'];
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '">', $quote_button, '</a>', $context['menu_separator'], '
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '">', $reply_button, '</a> ', $context['menu_separator'];
 				// This is for "forwarding" - even if the member is gone.
 				else
 					echo '
-					<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $quote_button, '</a>', $context['menu_separator'];
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $quote_button, '</a>', $context['menu_separator'];
 			}
 
 			echo '
-				</p>
+					</p>
+				</div>
 			</div>';
 		}
 		// Otherwise just a simple list!
@@ -934,12 +937,12 @@ function template_send()
 	<we:title>
 		', $txt['subject'], ': ', $context['quoted_message']['subject'], '
 	</we:title>
-	<div class="postbg2 pm clear">
+	<div class="windowbg2 wrc core_posts pm clear clearfix">
 		<span class="smalltext floatright">', $txt['on'], ': ', $context['quoted_message']['time'], '</span>
 		<strong>', $txt['from'], ': ', $context['quoted_message']['member']['name'], '</strong>
 		<hr>
 		', $context['quoted_message']['body'], '
-	</div><br class="clear">';
+	</div>';
 
 	add_js_file(array(
 		'scripts/pm.js',
@@ -1598,7 +1601,7 @@ function template_pm_drafts()
 	{
 		echo '
 		<div class="topic">
-			<div class="postbg', $post['alternate'] == 0 ? '2' : '', ' pm core_posts">
+			<div class="windowbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts pm">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5><strong>', $post['subject'], '</strong></h5>

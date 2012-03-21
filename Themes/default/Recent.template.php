@@ -30,7 +30,7 @@ function template_main()
 	foreach ($context['posts'] as $post)
 	{
 		echo '
-			<div class="windowbg', $post['alternate'] == 0 ? '' : '2', ' core_posts wrc">
+			<div class="windowbg', $post['alternate'] == 0 ? '' : '2', ' wrc core_posts">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5>', $post['board']['link'], ' / ', $post['link'], '</h5>

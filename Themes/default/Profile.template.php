@@ -393,7 +393,7 @@ function template_showDrafts()
 	{
 		echo '
 		<div class="topic">
-			<div class="postbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
+			<div class="windowbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5><strong>', $post['board']['link'], ' / ', $post['topic']['link'], '</strong></h5>
@@ -473,7 +473,7 @@ function template_showPosts()
 		{
 			echo '
 		<div class="topic">
-			<div class="postbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
+			<div class="windowbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">';
 
@@ -569,7 +569,7 @@ function template_showPosts()
 		foreach ($context['attachments'] as $attachment)
 		{
 			echo '
-				<tr class="postbg', $alternate ? '' : '2', '">
+				<tr class="windowbg', $alternate ? '' : '2', '">
 					<td><a href="', $scripturl, '?action=dlattach;topic=', $attachment['topic'], '.0;attach=', $attachment['id'], '">', $attachment['filename'], '</a>', '</td>
 					<td>', $attachment['downloads'], '</td>
 					<td><a href="', $scripturl, '?topic=', $attachment['topic'], '.msg', $attachment['msg'], '#msg', $attachment['msg'], '" rel="nofollow">', $attachment['subject'], '</a></td>
