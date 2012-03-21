@@ -227,25 +227,29 @@ function cleanRequest()
 	}
 
 	// Don't bother going further if we've come here from a *REAL* 404.
+	// Reject anything with a query string or unusual extensions.
 	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js')))
 	{
-		// Reject Tapatalk spam and Google Cache, probably trying to access the SMF version of your website...?
-		if (strpos($full_request, 'mobiquo/tapatalk') === false && (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'googleusercontent.com') === false))
+		loadLanguage('Errors');
+
+		header('HTTP/1.0 404 Not Found');
+		header('Content-Type: text/plain; charset=UTF-8');
+
+		// Webmasters might want to log the error, so they can fix any broken image links.
+		// Don't bother to log errors for avatar links (in case a user changed their avatar recently), cache files
+		// (probably Google trying to index a regenerated CSS/JS file), strange Tapatalk spam and Google Cache, which
+		// might be trying to access a file from the SMF version of your website... And will stop doing so after a while.
+		if (!empty($settings['enableErrorLogging'])
+		&& strpos($full_request, '/avatar_') === false
+		&& strpos($full_request, '/cache/') === false
+		&& strpos($full_request, 'mobiquo/tapatalk') === false
+		&& (!isset($_SERVER['HTTP_REFERER']) || (strpos($_SERVER['HTTP_REFERER'], 'googleusercontent.com') === false)))
 		{
-			loadLanguage('Errors');
-
-			header('HTTP/1.0 404 Not Found');
-			header('Content-Type: text/plain; charset=UTF-8');
-
-			// Webmasters might want to log the error, so they can fix any broken image links.
-			if (!empty($settings['enableErrorLogging']))
-			{
-				log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? str_replace('&amp;', '&', $_SERVER['HTTP_REFERER']) : '');
-				loadSource('ManageErrors');
-				updateErrorCount();
-			}
-			die('404 Not Found');
+			log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? str_replace('&amp;', '&', $_SERVER['HTTP_REFERER']) : '');
+			loadSource('ManageErrors');
+			updateErrorCount();
 		}
+		die('404 Not Found');
 	}
 
 	// If magic quotes are on, we have some work to do...
