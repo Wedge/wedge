@@ -185,18 +185,18 @@
 
 	<!--
 		Macros. These examples are actually fairly useless since they just
-		repeat the default macros defined in index.template.php, but it makes
-		it easier to get the point. Use these settings to override any macros
-		set up in the theme with your own versions. Makes it easier to change
-		the header banner with limited effort.
+		mostly repeat the default macros defined in index.template.php, but it
+		makes it easier to get the point. Use these settings to override any
+		macros set up in the theme with your own versions. For instance, you
+		can change the header banner with little effort.
 	-->
 
-	<macro name="header">
+	<macro name="banner">
+			{body}
 			<if:logo><h1>
 				<a href="<URL>">{logo}</a>
-			</h1></if:logo>
-			{body}
-	</macro>
+			</h1></if:logo></macro>
+
 	<macro name="title"><header class="title">{body}</header></macro>
 
 	<macro name="sidebar">

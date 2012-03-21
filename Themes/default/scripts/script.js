@@ -619,7 +619,7 @@ function JumpTo(control, id)
 						// Show the board option, with special treatment for the current one.
 						sList += '<option value="' + (that.attr('url') || that.attr('id')) + '"'
 								+ (that.attr('id') == id ? ' disabled>=> ' + name + ' &lt;=' :
-									'>' + new Array(+that.attr('level') + 1).join('==') + '=> ' + name)
+									'>' + new Array(+that.attr('level') + 1).join('&nbsp;&nbsp;&nbsp;&nbsp;') + name)
 								+ '</option>';
 				});
 
