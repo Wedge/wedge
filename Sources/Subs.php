@@ -2062,7 +2062,7 @@ function setupMenuContext()
 			),
 			'pm' => array(
 				'title' => $txt['pm_short'],
-				'notice' => $has_new_pm ? $txt['new_short'] : '',
+				'notice' => $has_new_pm ? $context['user']['unread_messages'] : '',
 				'href' => $scripturl . '?action=pm',
 				'show' => $context['allow_pm'],
 				'sub_items' => array(
@@ -2087,7 +2087,7 @@ function setupMenuContext()
 			),
 			'media' => array(
 				'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
-				'notice' => $can_view_unseen ? $txt['new_short'] : '',
+				'notice' => $can_view_unseen ? $user_info['media_unseen'] : '',
 				'href' => $scripturl . '?action=media',
 				'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
 				'sub_items' => array(

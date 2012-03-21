@@ -1028,7 +1028,7 @@ function showEmailAddress($userProfile_hideEmail, $userProfile_id)
  */
 function checkUserBehavior()
 {
-	global $context, $settings, $user_info, $txt, $webmaster_email;
+	global $context, $settings, $user_info, $txt, $webmaster_email, $board, $board_info;
 
 	$context['http_headers'] = get_http_headers();
 	// Did we get any additional headers that wouldn't normally be picked up for any reason?
@@ -1091,6 +1091,13 @@ function checkUserBehavior()
 
 			// OK, let's start up enough of Wedge to display this error nicely.
 			$context['linktree'] = array();
+			$context['open_mod_reports'] = $board = 0;
+			$_GET['board'] = $_GET['topic'] = '';
+			$board_info = array(
+				'moderators' => array(),
+				'skin' => '',
+			);
+
 			loadPermissions();
 			loadTheme();
 

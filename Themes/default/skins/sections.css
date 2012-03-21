@@ -378,72 +378,68 @@ ul.quickbuttons extends ul.reset
 		display: table-cell
 	li extends .inline-block
 		margin: 0 0 0 5px
-	a extends .quick_button
+	a
 		display: block
-		padding-right: 4px
+		height: 20px
+		padding: 0 4px 0 22px
+		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
+		:hover
+			color: #a70
 
-/**
- * This is where you can change the reply/edit/delete etc. icons for your posts.
- * You can either modify the quickbuttons.png sprite file (in which case you just
- * need to set background-position to the correction position as seen below),
- * or simply use another file like this: background: url($here/file) no-repeat 0 0
- */
+	/**
+	 * This is where you can change the reply/edit/delete etc. icons for your posts.
+	 * You can either modify the quickbuttons.png sprite file (in which case you just
+	 * need to set background-position to the correction position as seen below),
+	 * or simply use another file like this: background: url($here/file) no-repeat 0 0
+	 */
 
-.quick_button
-	background-image: url($images/theme/quickbuttons.png)
-	background-repeat: no-repeat
-	padding-left: 22px
-	height: 20px
-	:hover
-		color: #a70
-
-.like_button
-	background-position: 0 -270px
-.unlike_button
-	background-position: 0 -300px
-.quote_button
-	background-position: 3px 0
-.modify_button
-	background-position: 0 -60px
-.more_button extends .upshrinks
-	background-position: -18px 2px !important
-.remove_button
-	background-position: 0 -30px
-.approve_button
-	background-position: 3px -90px
-.restore_button
-	background-position: 0 -120px
-.reply_button
-	background-position: 0 -180px
-.reply_all_button
-	background-position: 0 -180px
-.notify_button
-	background-position: 0 -210px
-.split_button
-	background-position: 4px -150px
-.mergepost_button
-	background-position: 4px -242px
-.report_button
-	background-image: url($images/report.png)
-	background-position: 0 0
-	padding-left: 20px
-.profile_button
-	background-image: url($images/icons/profile_sm.gif)
-	background-position: 0 0
-.email_button
-	background-image: url($images/email_sm.gif)
-	background-position: 0 0
-.ip_button
-	background-image: url($images/ip.gif)
-	background-position: 0 0
-.www_button
-	background-image: url($images/www_sm.gif)
-	background-position: 0 0
-// !!! While waiting for better icons... Here's a temp.
-.post_button
-	background-image: url($images/new_some.png)
-	background-position: 0 0
-	padding-left: 25px
+	.like_button
+		background-position: 0 -270px
+	.unlike_button
+		background-position: 0 -300px
+	.quote_button
+		background-position: 3px 0
+	.modify_button
+		background-position: 0 -60px
+	.more_button extends .upshrinks
+		background-position: -18px 2px !important
+	.remove_button
+		background-position: 0 -30px
+	.approve_button
+		background-position: 3px -90px
+	.restore_button
+		background-position: 0 -120px
+	.reply_button
+		background-position: 0 -180px
+	.reply_all_button
+		background-position: 0 -180px
+	.notify_button
+		background-position: 0 -210px
+	.split_button
+		background-position: 4px -150px
+	.mergepost_button
+		background-position: 4px -242px
+	.report_button
+		background-image: url($images/report.png)
+		background-position: 0 0
+		padding-left: 20px
+	.profile_button
+		background-image: url($images/icons/profile_sm.gif)
+		background-position: 0 0
+	.email_button
+		background-image: url($images/email_sm.gif)
+		background-position: 0 0
+	.ip_button
+		background-image: url($images/ip.gif)
+		background-position: 0 0
+	.www_button
+		background-image: url($images/www_sm.gif)
+		background-position: 0 0
+	// !!! While waiting for better icons... Here's a temp.
+	.post_button
+		background-image: url($images/new_some.png)
+		background-position: 0 0
+		padding-left: 25px
 
 
 ul.usermenuitem, ul.acmenuitem
@@ -1121,6 +1117,11 @@ dl.stats
 	dd
 		clear, float, text-align: right
 		width: 45%
+
+.top_likes extends "ul.quickbuttons a, ul.quickbuttons  .like_button"
+	display: inline-block
+	vertical-align: -3px
+	padding: 0 0 0 16px
 
 div.top_row dd
 	width: auto

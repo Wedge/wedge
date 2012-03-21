@@ -243,7 +243,7 @@ function template_main()
 
 		<div class="two-columns windowbg2 wrc">
 			<h6 class="top">
-				<span class="quick_button like_button"></span>
+				<span class="top_likes"></span>
 				', $txt['top_likes'], '
 			</h6>
 			<dl class="stats">';
