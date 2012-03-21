@@ -58,6 +58,8 @@ function template_folder()
 {
 	global $context, $theme, $options, $settings, $txt;
 
+	$is_mobile = !empty($context['skin_options']['mobile']);
+
 	// The ever helpful JavaScript!
 	add_js('
 	var currentLabels = [], allLabels = { ');
@@ -157,20 +159,20 @@ function template_folder()
 			echo '
 				', $message['member']['link'], '
 			</h4>
-			<ul class="reset smalltext" id="msg_', $message['id'], '_extra_info">';
+			<ul class="reset" id="msg_', $message['id'], '_extra_info">';
 
 			// Show the member's custom title, if they have one.
-			if (isset($message['member']['title']) && $message['member']['title'] != '')
+			if (!empty($message['member']['title']) && !$is_mobile)
 				echo '
 				<li class="mtitle">', $message['member']['title'], '</li>';
 
 			// Show the member's primary group (like 'Administrator') if they have one.
-			if (isset($message['member']['group']) && $message['member']['group'] != '')
+			if (!empty($message['member']['group']))
 				echo '
 				<li class="membergroup">', $message['member']['group'], '</li>';
 
-			// Don't show these things for guests.
-			if (!$message['member']['is_guest'])
+			// Don't show these things for guests or mobile skins.
+			if (!$message['member']['is_guest'] && !$is_mobile)
 			{
 				// Show the post group if and only if they have no other group or the option is on, and they are in a post group.
 				if ((empty($theme['hide_post_group']) || $message['member']['group'] == '') && $message['member']['post_group'] != '')
@@ -260,17 +262,15 @@ function template_folder()
 
 				// Any custom fields for standard placement?
 				if (!empty($message['member']['custom_fields']))
-				{
 					foreach ($message['member']['custom_fields'] as $custom)
 						if (empty($custom['placement']) || empty($custom['value']))
 							echo '
 				<li class="custom">', $custom['title'], ': ', $custom['value'], '</li>';
-				}
 
 				// Are we showing the warning status?
 				if ($message['member']['can_see_warning'])
 				echo '
-				<li class="warning">', $context['can_issue_warning'] ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
+				<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '</a>' : '', '<span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
 			}
 
 			// Done with the information about the poster... on to the post itself.

@@ -139,7 +139,7 @@ function template_summary()
 	if ($context['member']['age'] !== $txt['not_applicable'])
 		echo '
 				<dt>', $txt['age'], ':</dt>
-				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? ' &nbsp; <img src="' . $theme['images_url'] . '/cake.png">' : ''), '</dd>';
+				<dd>', $context['member']['age'] . ($context['member']['today_is_birthday'] ? '<br><img src="' . $theme['images_url'] . '/cake.png">' : ''), '</dd>';
 
 	if (!empty($context['member']['action']))
 		echo '

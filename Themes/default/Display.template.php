@@ -75,7 +75,7 @@ function template_display_posts()
 									<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>', $message['new'] ? '
 									<div class="note">' . $txt['new'] . '</div>' : '', '
 								</h5>
-								<span>&#171; <strong>', !empty($message['counter']) ? $txt['reply_noun'] . ' #' . $message['counter'] : '', ' </strong> ', $message['time'], ' &#187;</span>
+								<span>&#171; ', !empty($message['counter']) ? sprintf($txt['reply_number'], $message['counter']) : '', ' ', $message['time'], ' &#187;</span>
 								<div id="msg_', $message['id'], '_quick_mod"></div>
 							</div>';
 
