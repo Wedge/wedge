@@ -235,15 +235,16 @@ function cleanRequest()
 		header('HTTP/1.0 404 Not Found');
 		header('Content-Type: text/plain; charset=UTF-8');
 
-		// Webmasters might want to log the error, so they can fix any broken image links.
-		// Don't bother to log errors for avatar links (in case a user changed their avatar recently), cache files
-		// (probably Google trying to index a regenerated CSS/JS file), strange Tapatalk spam and Google Cache, which
-		// might be trying to access a file from the SMF version of your website... And will stop doing so after a while.
-		if (!empty($settings['enableErrorLogging'])
-		&& strpos($full_request, '/avatar_') === false
-		&& strpos($full_request, '/cache/') === false
-		&& strpos($full_request, 'mobiquo/tapatalk') === false
-		&& (!isset($_SERVER['HTTP_REFERER']) || (strpos($_SERVER['HTTP_REFERER'], 'googleusercontent.com') === false)))
+		// Webmasters might want to log the error, so they can fix any broken image links. Wedge has some hardcoded exceptions
+		// so it doesn't waste time logging some common 404 errors, such as Google Cache, which might be trying to access
+		// a file from the SMF version of your website... And will stop doing so after a while.
+
+		if (!empty($settings['enableErrorLogging']) // make sure we really want to log the error...
+		&& strpos($full_request, '/avatar_') === false // search bot looking for a previous avatar that got regenerated since then?
+		&& strpos($full_request, '/cache/') === false // same, but with regenerated CSS or JS files?
+		&& strpos($full_request, '/mobiquo/tapatalk') === false // Tapatalk spam. What is that?!
+		&& strpos($full_request, '/apple-touch-icon') === false // iOS looking for a big icon. If it finds it, it won't execute this anyway.
+		&& (!isset($_SERVER['HTTP_REFERER']) || (strpos($_SERVER['HTTP_REFERER'], 'googleusercontent.com') === false))) // Google Cache
 		{
 			log_error('File not found: ' . $full_request, 'filenotfound', null, null, isset($_SERVER['HTTP_REFERER']) ? str_replace('&amp;', '&', $_SERVER['HTTP_REFERER']) : '');
 			loadSource('ManageErrors');

@@ -45,10 +45,10 @@ function createMenu($menuData, $menuOptions = array())
 		// Redirect as this seems to work best.
 		redirectexit(
 			isset($menuOptions['toggle_redirect_url']) ? $menuOptions['toggle_redirect_url'] : 'action=' .
-			(isset($_GET['action']) ? $_GET['action'] : 'admin') .
-			(isset($_GET['u']) ? ';u=' . $_GET['u'] : '') . ';area=' .
-			(isset($_GET['area']) ? $_GET['area'] : 'index') . ';sa=' .
-			(isset($_GET['sa']) ? $_GET['sa'] : 'settings') . ';' . $context['session_query']
+			(!empty($_GET['action']) ? $_GET['action'] : 'admin') .
+			(!empty($_GET['u']) ? ';u=' . $_GET['u'] : '') . ';area=' .
+			(!empty($_GET['area']) ? $_GET['area'] : 'index') . ';sa=' .
+			(!empty($_GET['sa']) ? $_GET['sa'] : 'settings') . ';' . $context['session_query']
 		);
 	}
 
