@@ -24,6 +24,10 @@ function template_generic_menu_sidebar()
 	$firstSection = true;
 	foreach ($menu_context['sections'] as $section)
 	{
+		// Is this a section you can't see?
+		if (empty($section['id']))
+			continue;
+
 		// Show the section header - and pump up the line spacing for readability.
 		echo '
 	<section>

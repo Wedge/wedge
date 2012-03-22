@@ -401,29 +401,33 @@ function ModifyProfile($post_errors = array())
 	// Let modders modify profile areas easily.
 	call_hook('profile_areas', array(&$profile_areas));
 
+	if (empty($settings['media_enabled']))
+		unset($profile_areas['aeva']);
+
 	// Do some cleaning ready for the menu function.
 	$context['password_areas'] = array();
 	$current_area = isset($_REQUEST['area']) ? $_REQUEST['area'] : '';
 
-	foreach ($profile_areas as $section_id => $section)
+	foreach ($profile_areas as $section_id => &$section)
 	{
 		// Do a bit of spring cleaning so to speak.
-		foreach ($section['areas'] as $area_id => $area)
+		foreach ($section['areas'] as $area_id => &$area)
 		{
 			if (is_numeric($area_id))
 				continue;
 			// If it said no permissions that meant it wasn't valid!
 			if (empty($area['permission'][$context['user']['is_owner'] ? 'own' : 'any']))
-				$profile_areas[$section_id]['areas'][$area_id]['enabled'] = false;
+				$area['enabled'] = false;
 			// Otherwise pick the right set.
 			else
-				$profile_areas[$section_id]['areas'][$area_id]['permission'] = $area['permission'][$context['user']['is_owner'] ? 'own' : 'any'];
+				$area['permission'] = $area['permission'][$context['user']['is_owner'] ? 'own' : 'any'];
 
 			// Password required?
 			if (!empty($area['password']))
 				$context['password_areas'][] = $area_id;
 		}
 	}
+	unset($area, $section);
 
 	// Is there an updated message to show?
 	if (isset($_GET['updated']))
