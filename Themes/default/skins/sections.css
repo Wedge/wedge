@@ -402,7 +402,7 @@ ul.quickbuttons extends ul.reset
 	.modify_button
 		background-position: 0 -60px
 	.more_button extends .upshrinks
-		background-position: -18px 2px !important
+		background-position: -18px 2px
 	.remove_button
 		background-position: 0 -30px
 	.approve_button
@@ -1209,10 +1209,6 @@ div.top_row dd
 
 /* Foldable icons.
 ------------------------------------------------- */
-.upshrinks extends .inline-block
-	background: url($images/upshrinks.png) no-repeat
-	text-decoration: none
-
 .foldable extends .upshrinks
 	width, height: 14px
 	background-position: -20px 0

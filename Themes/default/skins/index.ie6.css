@@ -327,8 +327,8 @@ input.cancel
 .thought_actions
 	display: none
 
-table.thought_list td:hover .thought_actions
-	display: inline-block
+table.thought_list div:hover .thought_actions
+	display: inline
 
 // IE6 needs inline-block to be reset to inline separately... How annoying.
 .inline-block
@@ -383,4 +383,4 @@ ul.usermenuitem, ul.acmenuitem
 	zoom: normal
 
 .two-columns
-	width: 45%
+	width: 49.1%

@@ -57,10 +57,15 @@ body extends .grad700
 	h2
 		color: #fc9
 	// The main title
-	h1 a
-		color: lighten(hue(#fc9, 20), 10%)
-		font: bold 2.9em $head_font
-		text-shadow: 0 0 8px #333
+	h1
+		margin-top: 36px
+		a
+			color: lighten(hue(#fc9, 20), 10%)
+			font: bold 2.8em $head_font
+			text-shadow: 0 0 8px #333
+
+#siteslogan
+	float: right
 
 @replace
 	letter-spacing: -3px
@@ -183,40 +188,14 @@ section.block header, .wehead
 .title final
 	font: 400 1em $main_font
 
-/* These are our CSS variable and mixin definitions.
+/* CSS variables.
 ------------------------------------------------------- */
 
-/*
-	They can be put anywhere, they'll be considered as globals.
-	They can contain other variables in their definition.
-	They can be rewritten later in the CSS file, or any CSS file
-	included with it. The new value will be used everywhere.
-*/
-
-$main_font = Arial, sans-serif
-$menu_font = $main_font
 $head_font = "PT Sans", $main_font
-$mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace
 
 $post_font = 9pt/140% Verdana, $main_font
 
-$bevel = ", url($images/theme/bevel.png) $button_gradient"
-$bevel {ie6,ie7,ie8} = ""
-$button_gradient = ", -prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
-$button_gradient {ie9} = ""
-
-$max-width = "max-width"
-$max-width {ie6} = "width"
-
 $main_bg = #fffdfa
 $head_bg = rgba(221, 200, 137, .66)
-$menu_border = rgba(220, 224, 220, .95)
-$menu_bg = -prefix-linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$menu_bg {ie9} =           average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$menu_bg {ie6,ie7,ie8} =   #f7fcf7
-$board_col = #d97b33
 $window_bg = #f2f3ea // #f9f6f0
 $window_bg2 = #f3f7f3
-$window_bg3 = #f0f0f0
-$sidebar-width = "240px"
-$sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table mode

@@ -49,18 +49,6 @@ header, footer, aside, section, article, nav
 	start of the file should avoid cascading issues.
 ------------------------------------------------------- */
 
-.two-columns
-	box-sizing: border-box
-	width: 49%
-	float: left
-	margin: 0 .5%
-
-// Two columns become one if viewed on a small screen.
-@media all and (max-width: 800px)
-	.two-columns
-		width: 100%
-		margin: 0
-
 // Alternating generic backgrounds
 .windowbg
 	color: #444
@@ -82,6 +70,18 @@ header, footer, aside, section, article, nav
 	text-align: center
 	display: table-cell
 	vertical-align: middle
+
+.two-columns extends .inline-block
+	box-sizing: border-box
+	vertical-align: top
+	width: 49%
+	margin: 0 .4%
+
+// Two columns become one if viewed on a small screen.
+@media all and (max-width: 800px)
+	.two-columns
+		width: 100%
+		margin: 0
 
 // Clearfix
 .clearfix
@@ -205,20 +205,23 @@ ul#noava
 		a
 			color: #766
 			letter-spacing: -3px
-			font: 100 2.9em $big_font
+			font: 100 3em/1em $big_font
 
 #siteslogan
-	float: right
-	line-height: 3em
+	float: left
+	margin: 57px 30px 0 20px
+	color: #888
+	font: 100 1.6em/1em $big_font
+	white-space: nowrap
 
 // Banner header
 #upper_section
-	height: 100px
+	height: 95px
 	overflow: hidden
 	width: 100%
 	.frame
 		width: 100%
-		height: 100px
+		height: 95px
 
 // The navigation list (i.e. linktree)
 #linktree
@@ -372,6 +375,11 @@ em
 	background-image: url($images/loader.gif)
 	background-repeat: no-repeat;
 
+// Fold/unfold icon
+.upshrinks extends .inline-block
+	background: url($images/upshrinks.png) no-repeat
+	text-decoration: none
+
 .wehead
 	background-color: #e2e8d8
 	a
@@ -452,14 +460,14 @@ select.sb
 			border-radius: 4px
 			width: 14px
 			line-height: 1em
-			padding: 1px
+			padding-top: 3px
 			text-align: center
 			right, top, bottom: 2px
 
 			div extends .inline-block
-				background: transparent url($images/select_arrow.gif) no-repeat center center
-				width: 7px
-				height: 4px
+				border: 4px solid transparent
+				border-top-color: rgba(0,0,0,.5)
+				width, height: 0
 
 	&.disabled .display
 		color: #999
@@ -522,7 +530,7 @@ select.sb
 			font-weight: bold
 			padding: 7px
 		.sub .item
-			padding-left: 1.5em
+			padding-left: 15px
 
 		/* Rounded corners */
 		.first .item
@@ -721,7 +729,7 @@ input[type=file]
 
 .menu li ul
 	background: #f7fcf7
-	background: $menu_bg
+	background: $menu_gradient
 	position: absolute
 	display: block
 	border: 1px solid #bbb
@@ -1324,8 +1332,8 @@ dl#feed
 		padding-right: 4px
 
 .cat final
-	background-color: #f2f0ee
-	background: $gradient2
+	background: #fcfaf8
+	gradient: rgba(212, 212, 212, 0), rgba(212, 212, 212, .2)
 	border-color: #ddd // #fd9604
 	border-width: 0 0 2px 2px
 	border-radius: 4px
@@ -1625,10 +1633,8 @@ $post_font = 95%/133% Verdana, "Segoe UI", Arial, sans-serif
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""
-$button_gradient = ", $gradient1"
+$button_gradient = ", -prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
 $button_gradient {ie9} = ""
-$gradient1 = "-prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
-$gradient2 = "-prefix-linear-gradient(bottom, rgba(212, 212, 212, .2), rgba(212, 212, 212, 0))"
 
 $max-width = "max-width"
 $max-width {ie6} = "width"
@@ -1636,9 +1642,8 @@ $max-width {ie6} = "width"
 $main_bg = #fff
 $head_bg = darken(#e3e0da, 3%)
 $menu_border = rgba(220, 224, 220, .95)
-$menu_bg = -prefix-linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$menu_bg {ie9} =           average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$menu_bg {ie6,ie7,ie8} =   #f7fcf7
+$menu_gradient = -prefix-linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
+$menu_gradient {ie9} =           average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
 $board_col = #d97b33
 $window_bg = lighten(#e3e0d0, 12%) // #f2f3ea // #f9f6f0
 $window_bg2 = lighten(#e3e0d0, 10%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent

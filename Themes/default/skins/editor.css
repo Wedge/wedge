@@ -156,11 +156,14 @@ ul.post_options
 	padding: .7em .5em
 	float, text-align: right
 
-#draft_lastautosave
-	base: .inline-block
+#draft_lastautosave extends .inline-block
+	margin-left: 3px
 	font-size: .9em
 	line-height: 1.7em
 	clear: right
+
+#remove_draft
+	margin-left: -5px
 
 #shortcuts
 	padding: .9em 0 0

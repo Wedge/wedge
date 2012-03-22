@@ -68,7 +68,7 @@ body
 		color: #000
 	h1
 		float: right
-		margin: 20px 30px 0 0
+		margin: 32px 30px 0 0
 		a
 			color: #78a
 			font: italic bold 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
@@ -76,6 +76,9 @@ body
 			text-shadow: white 0 1px 2px
 	input.search
 		background-color: rgb(235,225,215)
+
+#siteslogan
+	float: left
 
 // The upper_section, float the two each way
 #upper_section
@@ -261,3 +264,7 @@ $post_font = 10.5pt/140% $main_font
 
 @remove
 	background: url($images/theme/bg.jpg)
+
+@replace
+	webelowine.png
+	webelow.png

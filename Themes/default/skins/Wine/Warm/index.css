@@ -56,7 +56,7 @@ em
 	h2, p
 		color: #000
 	h1
-		margin: 38px 0 0 30px
+		margin: 28px 0 0 30px
 		a
 			color: #866
 			font: italic bold 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
@@ -121,12 +121,16 @@ dl#feed
 	dt
 		margin: 0 1em
 
+// !! That one's pretty much a hack...
+#siteslogan
+	margin-top: 60px
+
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
 #navi
 	border-bottom: 1px dotted #000
 	background: $main_bg
-	background: $menu_bg
+	gradient: $menu_gradient
 
 #main_menu
 	padding: 5px 0 0
@@ -173,12 +177,6 @@ tr.titlebg
 // Adjust the table versions of headers
 tr.titlebg th, tr.catbg th
 	padding: 0 6px
-
-.windowbg
-	background: #e7eaef
-
-.windowbg2
-	background: #f0f4f7
 
 .windowbg3
 	background: rgba(50%, 75%, 50%, .1) // #cacdd3
