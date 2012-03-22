@@ -556,11 +556,11 @@ wedge_autoDraft.prototype.draftSend = function ()
 			message: $('#' + this.opt.sEditor).val(),
 			message_mode: $('#' + this.opt.sEditor + '_mode').val()
 		},
-		object = this,
+		that = this,
 		lastSavedDiv = this.opt.sLastNote;
 
-	if (message === '')
-		return false;
+	if (draftInfo.message === '')
+		return;
 
 	// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
 	if (draftInfo.message_mode == 1)
@@ -600,15 +600,14 @@ wedge_autoDraft.prototype.draftSend = function ()
 			url = obj.attr('url').replace(/DraftId/, draft_id).replace(/SessVar/, we_sessvar).replace(/SessId/, we_sessid);
 
 		$('#draft_id').val(draft_id);
-		$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val(object.opt.sRemove));
+		$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val(that.opt.sRemove));
 		$('#remove_draft').click(function () {
 			$.get(url, function () {
 				$('#' + lastSavedDiv).empty();
 				$('#draft_id').val('0');
 			});
-			clearInterval(object.opt.timer);
+			clearInterval(that.opt.timer);
 			return false;
 		});
 	});
-	return false;
 };

@@ -730,7 +730,7 @@ function Display()
 			LIMIT {int:postbefore}, 1',
 			array(
 				'id_topic' => $topic,
-				'postbefore' => $_REQUEST['start'] - 1,
+				'postbefore' => $_REQUEST['start'] - $including_first,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -1001,9 +1001,9 @@ function Display()
 		// Since the anchor information is needed on the top of the page we load these variables beforehand.
 		$context['first_message'] = min($messages);
 		if (empty($options['view_newest_first']))
-			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['start_from'];
+			$context['first_new_message'] = isset($context['start_from']) && $including_first && $_REQUEST['start'] == $context['start_from'];
 		else
-			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['total_visible_posts'] - 1 - $context['start_from'];
+			$context['first_new_message'] = isset($context['start_from']) && $including_first && $_REQUEST['start'] == $context['total_visible_posts'] - 1 - $context['start_from'];
 	}
 	else
 	{
@@ -1255,11 +1255,11 @@ function prepareDisplayContext($reset = false)
 	if ($messages_request == false)
 		return false;
 
-	$excluding_first = $topicinfo['approved'] && $board_info['type'] == 'board' ? 0 : 1;
+	$excluding_first = $topicinfo['approved'] && $board_info['type'] == 'board' ? 0 : (empty($options['view_newest_first']) ? 1 : -1);
 
 	// Remember which message this is, e.g. reply #83.
 	if ($counter === null || $reset)
-		$counter = empty($options['view_newest_first']) ? $context['start'] - $excluding_first : $context['total_visible_posts'] - $context['start'] + $excluding_first;
+		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
 
 	// Start from the beginning...
 	if ($reset)
@@ -1372,7 +1372,7 @@ function prepareDisplayContext($reset = false)
 		'body' => $message['body'],
 		'new' => empty($message['is_read']) && !$is_new,
 		'approved' => $message['approved'],
-		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
+		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter - $excluding_first,
 		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
@@ -1387,19 +1387,21 @@ function prepareDisplayContext($reset = false)
 	$output['can_mergeposts'] &= !empty($output['last_post_id']);
 
 	// Is this a board? If not, we're dealing with this as replies to a post, and we won't allow merging the first reply into the post.
-	if ($board_info['type'] != 'board')
-		$output['can_mergeposts'] &= $counter != 1;
+	if ($board_info['type'] != 'board' && $message['id_msg'] == $context['first_message'])
+		$output['can_mergeposts'] = false;
+	else
+	{
+		if (!empty($message['id_member']))
+			$context['last_user_id'] = $message['id_member'];
+		// If you're the admin, you can merge guest posts
+		elseif ($user_info['is_admin'])
+			$context['last_user_id'] = $message['poster_email'];
+		$context['last_msg_id'] = $message['id_msg'];
+		$context['last_post_length'] = $context['current_post_length'];
+	}
 
 	// Is this user the message author?
 	$output['is_message_author'] = $is_me = $message['id_member'] == $user_info['id'];
-
-	if (!empty($message['id_member']))
-		$context['last_user_id'] = $message['id_member'];
-	// If you're the admin, you can merge guest posts
-	elseif ($user_info['is_admin'])
-		$context['last_user_id'] = $message['poster_email'];
-	$context['last_msg_id'] = $message['id_msg'];
-	$context['last_post_length'] = $context['current_post_length'];
 
 	// Now, to business. Is it not a guest, and we haven't done this before?
 	if ($output['member']['id'] != 0 && !isset($context['user_menu'][$output['member']['id']]))
@@ -1452,7 +1454,7 @@ function prepareDisplayContext($reset = false)
 	if ($output['member']['id'] != 0)
 	{
 		// Start by putting the last message's id, for merging purposes.
-		$menu = array($output['last_post_id']);
+		$menu = $output['can_mergeposts'] ? array($output['last_post_id']) : array('');
 
 		// Maybe we can approve it, maybe we should?
 		if ($output['can_approve'])
