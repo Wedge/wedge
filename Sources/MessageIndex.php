@@ -91,11 +91,6 @@ function MessageIndex()
 		'next' => $context['start'] + $context['topics_per_page'] < $board_info['total_topics'] ? $scripturl . '?board=' . $board . '.' . ($context['start'] + $context['topics_per_page']) : '',
 	);
 
-	$context['page_info'] = array(
-		'current_page' => $context['start'] / $context['topics_per_page'] + 1,
-		'num_pages' => floor(($board_info['total_topics'] - 1) / $context['topics_per_page']) + 1
-	);
-
 	if (isset($_REQUEST['all']) && !empty($settings['enableAllMessages']) && $maxindex > $settings['enableAllMessages'])
 	{
 		$maxindex = $settings['enableAllMessages'];

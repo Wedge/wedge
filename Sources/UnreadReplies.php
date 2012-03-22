@@ -348,10 +348,6 @@ function UnreadReplies()
 		'prev' => $_REQUEST['start'] >= $context['topics_per_page'] ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] - $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 		'next' => $_REQUEST['start'] + $context['topics_per_page'] < $num_topics ? $scripturl . '?action=' . $_REQUEST['action'] . sprintf($context['querystring_board_limits'], $_REQUEST['start'] + $context['topics_per_page']) . $context['querystring_sort_limits'] : '',
 	);
-	$context['page_info'] = array(
-		'current_page' => $_REQUEST['start'] / $context['topics_per_page'] + 1,
-		'num_pages' => floor(($num_topics - 1) / $context['topics_per_page']) + 1
-	);
 
 	if ($num_topics == 0)
 	{

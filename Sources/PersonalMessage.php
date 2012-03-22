@@ -639,10 +639,6 @@ function MessageFolder()
 		'prev' => $_GET['start'] >= $settings['defaultMaxMessages'] ? $scripturl . '?action=pm;start=' . ($_GET['start'] - $settings['defaultMaxMessages']) : '',
 		'next' => $_GET['start'] + $settings['defaultMaxMessages'] < $max_messages ? $scripturl . '?action=pm;start=' . ($_GET['start'] + $settings['defaultMaxMessages']) : '',
 	);
-	$context['page_info'] = array(
-		'current_page' => $_GET['start'] / $settings['defaultMaxMessages'] + 1,
-		'num_pages' => floor(($max_messages - 1) / $settings['defaultMaxMessages']) + 1
-	);
 
 	// First work out what messages we need to see - if grouped is a little trickier...
 	if ($context['display_mode'] == 2)

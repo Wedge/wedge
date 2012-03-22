@@ -10,7 +10,7 @@
  * @version 0.1
  */
 
-// Split a quote (or any unclosed tag) if we press Enter inside it.
+// Split a quote (or any unclosed tag) if we press Shift+Enter inside it.
 function splitQuote(e)
 {
 	// Did we just press Shift+Enter or Ctrl+Enter?
@@ -545,6 +545,8 @@ wedge_autoDraft.prototype.draftSend = function ()
 	if (!this.opt.needsUpdate)
 		return;
 
+	this.opt.needsUpdate = false;
+
 	var
 		sUrl = $('#' + this.opt.sForm).attr('action'),
 		draftInfo = {
@@ -555,7 +557,10 @@ wedge_autoDraft.prototype.draftSend = function ()
 			message_mode: $('#' + this.opt.sEditor + '_mode').val()
 		},
 		object = this,
-		lastSavedDiv = object.opt.sLastNote;
+		lastSavedDiv = this.opt.sLastNote;
+
+	if (message === '')
+		return false;
 
 	// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
 	if (draftInfo.message_mode == 1)
@@ -604,7 +609,6 @@ wedge_autoDraft.prototype.draftSend = function ()
 			clearInterval(object.opt.timer);
 			return false;
 		});
-		object.needsUpdate(false);
 	});
 	return false;
 };

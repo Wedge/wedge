@@ -152,7 +152,7 @@ function Display()
 
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
 	// We also need to discount the first post if this is a blog board.
-	$including_first = $topicinfo['approved'] && $board_info['type'] == 'board';
+	$including_first = $topicinfo['approved'] && $board_info['type'] == 'board' ? 1 : 0;
 	if ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !$user_info['is_guest'] && !allowedTo('approve_posts'))
 	{
 		$request = wesql::query('
@@ -169,10 +169,10 @@ function Display()
 		list ($myUnapprovedPosts) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['total_visible_posts'] = $context['num_replies'] + $myUnapprovedPosts + ($including_first ? 1 : 0);
+		$context['total_visible_posts'] = $context['num_replies'] + $myUnapprovedPosts + $including_first;
 	}
 	else
-		$context['total_visible_posts'] = $context['num_replies'] + $topicinfo['unapproved_posts'] + ($including_first ? 1 : 0);
+		$context['total_visible_posts'] = $context['num_replies'] + $topicinfo['unapproved_posts'] + $including_first;
 
 	// The start isn't a number; it's information about what to do, where to go.
 	if (!is_numeric($_REQUEST['start']))
@@ -442,12 +442,6 @@ function Display()
 	// Construct the page index, allowing for the .START method...
 	$context['page_index'] = template_page_index($scripturl . '?topic=' . $topic . '.%1$d', $_REQUEST['start'], $context['total_visible_posts'], $context['messages_per_page'], true);
 	$context['start'] = $_REQUEST['start'];
-
-	// This is information about which page is current, and which page we're on - in case you don't like the constructed page index. (again, wireles..)
-	$context['page_info'] = array(
-		'current_page' => $_REQUEST['start'] / $context['messages_per_page'] + 1,
-		'num_pages' => floor(($context['total_visible_posts'] - 1) / $context['messages_per_page']) + 1,
-	);
 
 	// Figure out the previous/next links for header <link>.
 	$context['links'] = array(
@@ -937,7 +931,7 @@ function Display()
 
 	$attachments = array();
 
-	// If there _are_ messages here... (probably an error otherwise :!)
+	// If there _are_ messages here... (Probably an error otherwise!)
 	if (!empty($messages))
 	{
 		// Fetch attachments.
@@ -1261,9 +1255,11 @@ function prepareDisplayContext($reset = false)
 	if ($messages_request == false)
 		return false;
 
+	$excluding_first = $topicinfo['approved'] && $board_info['type'] == 'board' ? 0 : 1;
+
 	// Remember which message this is, e.g. reply #83.
 	if ($counter === null || $reset)
-		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
+		$counter = empty($options['view_newest_first']) ? $context['start'] - $excluding_first : $context['total_visible_posts'] - $context['start'] + $excluding_first;
 
 	// Start from the beginning...
 	if ($reset)
