@@ -1,6 +1,6 @@
 
 #upper_section h1
-	filter: glow(color=#666666, strength=2)
+	filter: shadow(color=#666666, direction=135, strength=5)
 
-input[type=button], input[type=submit]
-	padding: 3px 4px
+#header, #navi, #footer
+	filter: none

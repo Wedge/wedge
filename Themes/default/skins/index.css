@@ -1314,7 +1314,7 @@ dl#feed
 .catbase
 	overflow: hidden
 	padding: 5px 10px 5px
-	margin-bottom: 4px
+	margin: 4px 0
 	border: 1px solid rgba(0,0,0, .15)
 	font: 100 1.5em/1.3em $head_font
 	img

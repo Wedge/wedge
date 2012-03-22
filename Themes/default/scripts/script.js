@@ -697,7 +697,7 @@ function Thought(opt)
 			{
 				var thought = $('thought', XMLDoc), nid = tid ? thought.attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid, user = $('user', XMLDoc);
 				if (!$(new_id).length)
-					new_thought.after(new_thought.html().replace('{date}', $('date', XMLDoc).text()).replace('{uname}', user.text()).replace('{text}', thought.text()));
+					new_thought.after($('<tr class="windowbg">').html(new_thought.html().replace('{date}', $('date', XMLDoc).text()).replace('{uname}', user.text()).replace('{text}', thought.text())));
 				$(new_id + ' span').html(thought.text());
 				cancel();
 				hide_ajax();

@@ -892,7 +892,7 @@ tr.windowbg td
 	padding: 0 3px
 
 // If the screen is too small, show the avatar on top
-@media all and (max-width: 1000px)
+@media all and (max-width: 900px)
 	.prevnext_prev
 		display: none
 	#basicinfo, #detailedinfo

@@ -1,3 +1,6 @@
 
 #upper_section h1
-	filter: glow(color=#777777, strength=3)
+	filter: shadow(color=#666666, direction=135, strength=5)
+
+#header, #navi, #footer
+	filter: none
