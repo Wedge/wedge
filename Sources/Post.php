@@ -1156,10 +1156,11 @@ function Post($post_errors = array())
 						'post_subject',
 					),
 					'postbox',
+					'post_buttons',
 					'post_additional_options',
 					'post_attachments',
 					'post_verification',
-					'post_buttons',
+					'post_shortcuts',
 				),
 			)
 		);

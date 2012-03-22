@@ -1992,9 +1992,9 @@ function setupMenuContext()
 						'href' => $scripturl . '?action=admin;area=permissions',
 						'show' => allowedTo('manage_permissions'),
 					),
-					'packages' => array(
+					'plugins' => array(
 						'title' => $txt['plugin_manager'],
-						'href' => $scripturl . '?action=admin;area=packages',
+						'href' => $scripturl . '?action=admin;area=plugins',
 						'show' => allowedTo('admin_forum'),
 					),
 					'',

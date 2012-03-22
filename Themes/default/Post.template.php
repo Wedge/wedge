@@ -247,12 +247,20 @@ function template_post_verification()
 
 function template_post_buttons()
 {
-	global $context, $txt;
+	global $context;
 
-	// Finally, the submit buttons.
+	// And... the submit buttons.
 	echo '
 				<div id="post_confirm_strip">', $context['postbox']->outputButtons(), '
-				</div>
+				</div>';
+}
+
+function template_post_shortcuts()
+{
+	global $context, $txt;
+
+	// List of keyboard shortcuts.
+	echo '
 				<div id="shortcuts">
 					<span class="smalltext">', $context['browser']['is_opera'] ? $txt['shortcuts_opera'] : ($context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts']), '</span>
 				</div>';
