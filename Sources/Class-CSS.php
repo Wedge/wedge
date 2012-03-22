@@ -621,7 +621,7 @@ class wecss_nesting extends wecss
 		 ******************************************************************************/
 
 		$css = $standard_nest = '';
-		$bases = $removals = $unextends = array();
+		$bases = $removals = $selector_removals = $unextends = array();
 
 		// 'reset' keyword: remove earlier occurrences of a selector.
 		// e.g.: ".class reset" -> removes all previous ".class" definitions
@@ -672,12 +672,24 @@ class wecss_nesting extends wecss
 		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
 		foreach ($this->rules as $n => &$node)
 		{
-			// '@remove' command: remove properties as specified from the entire CSS file.
-			// e.g.: "@remove (line break) (tab) background: #fff" -> removes all "background: #fff" from the file
-			if ($node['selector'] == '@remove')
+			// '@remove' command: remove properties as specified. To remove all "background: #fff" rules from .class and h1
+			// and associated selectors (anything that inherits .class or h1, or is inherited by it), use this:
+			//
+			//	@remove .class, h1
+			//		background: #fff
+			//
+			// Of course you may also use just one selector, or provide no selectors; WeCSS will target all selectors in the entire file.
+			if (strpos($node['selector'], '@remove') === 0)
 			{
+				$sels = preg_match('~@remove\s+(?:from\s+)?([^\n]+)~', $node['selector'], $sels) ? array_map('trim', explode(',', trim(str_replace('#wedge-quote#', '"', $sels[1]), "\x00..\x20\""))) : array();
 				foreach ($node['props'] as $remove)
-					$removals[$remove['name'] . ':' . $remove['value']] = true;
+				{
+					if (empty($sels))
+						$removals[$remove['name'] . ':' . $remove['value']] = true;
+					else
+						foreach ($sels as $selector)
+							$selector_removals[$selector][$remove['name'] . ':' . $remove['value']] = true;
+				}
 				unset($this->rules[$n]);
 				continue;
 			}
@@ -847,6 +859,11 @@ class wecss_nesting extends wecss
 				}
 			}
 
+			$specific_removals = array();
+			foreach (array_map('trim', explode(',', $selector)) as $removable_selector)
+				if (isset($selector_removals[$removable_selector]))
+					$specific_removals += $selector_removals[$removable_selector];
+
 			if (!empty($standard_nest))
 			{
 				if (substr_count($selector, $standard_nest))
@@ -862,8 +879,11 @@ class wecss_nesting extends wecss
 
 			foreach ($node['props'] as &$prop)
 			{
-				// Is it a @removed property?
+				// Does this property belong to a general @remove?
 				if (isset($removals[$prop['name'] . ':' . $prop['value']]))
+					continue;
+				// Does this property belong to a @remove specific to this selector?
+				if (isset($specific_removals[$prop['name'] . ':' . $prop['value']]))
 					continue;
 				// Or maybe a regular one?
 				if (!strpos($prop['name'], ','))
