@@ -116,8 +116,12 @@ iframe.aext
 
 #aeva_toplinks
 	margin: 8px 0 0 0
+	background: rgba(0,0,0,.03)
 	.title
+		font-size: 1.2em
 		text-align: center
+		img
+			vertical-align: middle
 
 #home
 	.recent_comments

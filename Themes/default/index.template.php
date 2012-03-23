@@ -152,6 +152,8 @@ function template_html_before()
 		$id = 'topic';
 	elseif (!empty($context['current_board']))
 		$id = 'board';
+	if (wetem::has_block('admin_login'))
+		$id = 'login';
 
 	// Declare our HTML5 doctype, and whether to show right to left.
 	// The charset is already specified in the headers so it may be omitted,

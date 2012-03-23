@@ -8,3 +8,6 @@ input.submit
 // Firefox doesn't support 'position: relative' on a table cell, unlike other browsers.
 table.thought_list td > div
 	position: relative
+
+.two-columns
+	width: 48.9%

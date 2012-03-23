@@ -64,9 +64,9 @@ function ManagePostSettings()
 
 	$subActions = array(
 		'posts' => 'ModifyPostSettings',
+		'topics' => 'ModifyTopicSettings',
 		'bbc' => 'ModifyBBCSettings',
 		'censor' => 'SetCensor',
-		'topics' => 'ModifyTopicSettings',
 		'drafts' => 'ModifyDraftSettings',
 		'merge' => 'ModifyMergeSettings',
 	);
@@ -85,14 +85,14 @@ function ManagePostSettings()
 			'posts' => array(
 				'description' => $txt['manageposts_settings_description'],
 			),
+			'topics' => array(
+				'description' => $txt['manageposts_topic_settings_description'],
+			),
 			'bbc' => array(
 				'description' => $txt['manageposts_bbc_settings_description'],
 			),
 			'censor' => array(
 				'description' => $txt['admin_censored_desc'],
-			),
-			'topics' => array(
-				'description' => $txt['manageposts_topic_settings_description'],
 			),
 			'drafts' => array(
 				'description' => $txt['manageposts_draft_settings_description'],
