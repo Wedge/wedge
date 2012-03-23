@@ -770,7 +770,7 @@ function template_footer()
  */
 function template_page_index($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
-	global $settings, $theme, $topicinfo, $txt, $context;
+	global $settings, $options, $theme, $topicinfo, $txt, $context;
 
 	// Save whether $start was less than 0 or not.
 	$start = (int) $start;
@@ -794,7 +794,13 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 
 	// First of all, do we want a 'next' button to take us closer to the first (most interesting) page?
 	if ($show_prevnext && $start >= $num_per_page)
+	{
+		// If we're in a topic page, and later pages have unread posts, show a New notification after the Next link!
+		if (!empty($options['view_newest_first']) && !empty($topicinfo['new_from']) && $topicinfo['new_from'] <= $topicinfo['id_last_msg'])
+			$pageindex .= ' <div class="note next_page">' . $txt['new_short'] . '</div>';
+
 		$pageindex .= sprintf($base_link, $start - $num_per_page, $txt['previous_next_back']);
+	}
 
 	// Show the first page. (>1< ... 6 7 [8] 9 10 ... 15)
 	if ($start > $num_per_page * $contiguous)
@@ -852,8 +858,8 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 	{
 		$pageindex .= sprintf($base_link, $start + $num_per_page, $txt['previous_next_forward']);
 
-		// If we're in a topic page, and later pages have unread posts, show a New icon next to the following page number!
-		if (!empty($topicinfo['new_from']) && $topicinfo['new_from'] <= $topicinfo['id_last_msg'])
+		// If we're in a topic page, and later pages have unread posts, show a New notification after the Next link!
+		if (empty($options['view_newest_first']) && !empty($topicinfo['new_from']) && $topicinfo['new_from'] <= $topicinfo['id_last_msg'])
 			$pageindex .= ' <div class="note next_page">' . $txt['new_short'] . '</div>';
 	}
 

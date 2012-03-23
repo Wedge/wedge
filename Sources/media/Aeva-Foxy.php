@@ -1290,19 +1290,8 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 
 		if ($nvotes != 0 && in_array('votes', $details))
 		{
-			$nrating = sprintf('%.2f', $total_rating / $nvotes);
-
-			$rating = $nrating[0];
-			$finr = substr($nrating, 2, 2);
-			if ($finr < 25) $star = $rating;
-			elseif ($finr < 75) $star = $rating . '5';
-			else $star = $rating + 1;
-			$altstar = $star;
-			if (strlen($altstar) > 1) $altstar = $rating . '.5';
-
 			$box .= '</tr><tr><td><div class="vote"><div class="vote_header"><b>' . $txt['media_rating'] . ': <span style="color: red">' . $nrating . '/5</span></b> (' . $nvotes . ' ' . $txt['media_vote' . ($nvotes > 1 ? 's' : '') . '_noun'] . ')';
-			$box .= '<br><img src="' . $theme['images_aeva'] . '/star' . $star . '.gif" class="aevera" alt="' . $altstar . '">';
-
+			$box .= '<br>' . aeva_showStars($total_rating / $nvotes);
 			$box .= ' <a href="#" onclick="$(this.parentNode.parentNode.lastChild).toggle(); return false;"><img src="' . $theme['images_aeva'] . '/magnifier.png" width="16" height="16" alt="' . $txt['media_who_rated_what'] . '" title="' . $txt['media_who_rated_what'] . '" class="aevera"></a></div>
 			<div class="vote_details hide" style="padding: 12px 0 0 12px">';
 
@@ -1314,11 +1303,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 
 			$request = wesql::query($req, array('id' => array_keys($playlist)));
 			while ($row = wesql::fetch_assoc($request))
-			{
-				$mystar = (int) $row['rating'];
-				$box .= '<img src="' . $theme['images_aeva'] . '/star' . $mystar . '.gif" class="aevera" alt="' . $mystar . '">';
-				$box .= ' ' . $txt['by'] . ' <a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a><br>';
-			}
+				$box .= aeva_showStars($row['rating']) . ' ' . $txt['by'] . ' <a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=aevavotes">' . $row['real_name'] . '</a><br>';
 			$box .= '</div></div></td>';
 			wesql::free_result($request);
 		}
@@ -1551,23 +1536,15 @@ function aeva_foxy_fill_player(&$playlist, $swo = 1, $type = 'audio', &$details,
 		$tx .= '<tr><td class="top" style="width: 55px"><img src="' . $i['thumb'] . '" width="55" height="55" title="Click to Play"></td>';
 		$tx .= '<td class="playlistlo middle" onmouseover="mover(this, ' . $idi . ');" onmouseout="mout(this, ' . $idi . ');" style="padding: 4px">';
 
-		if (in_array('votes', $details) || in_array('none', $details))
-		{
-			$nrating = $i['voters'] == 0 ? 0 : sprintf('%.2f', $i['rating'] / $i['voters']);
-			$rating = $nrating[0];
-			$finr = substr($nrating, 2, 2);
-			$star = $finr < 25 ? $rating : ($finr < 75 ? $rating . '5' : $rating + 1);
-			$altstar = strlen($star) > 1 ? $rating . '.5' : $star;
-		}
-
 		$tx .= $i['title'] . ' <a href="' . $scripturl . '?action=media;sa=item;in=' . $i['id'] . '" target="_blank" title="" onclick="lnFlag=1;"><img src="' . $theme['images_aeva'] . '/magnifier.png" width="16" height="16" style="vertical-align: text-bottom"></a>';
 		$tx .= ' (' . floor($i['duration'] / 60) . ':' . ($i['duration'] % 60 < 10 ? '0' : '') . ($i['duration'] % 60) . ')';
 
 		$tx .= '<div style="float: right; text-align: right">';
 		if (aeva_allowedTo('moderate') || $user_info['id'] == $i['owner'])
 			$tx .= '<a href="' . $scripturl . '?action=media;sa=post;in=' . $i['id'] . '" onclick="lnFlag=1;">' . $txt['modify'] . '</a><div class="foxy_small">';
-		$tx .= (in_array('votes', $details) || in_array('none', $details) ? '<img src="' . $theme['images_aeva'] . '/star' . $star . '.gif" class="aevera" alt="' . $altstar . '">'
-				. ($i['voters'] > 0 ? '<br>' . $nrating . '/5 (' . $i['voters'] . ' ' . $txt['media_vote' . ($i['voters'] > 1 ? 's' : '') . '_noun'] . ')' : '') : '') . '</div></div>';
+		$tx .= (in_array('votes', $details) || in_array('none', $details) ? aeva_showStars($i['voters'] > 0 ? $i['rating'] / $i['voters'] : 0)
+			. ($i['voters'] > 0 ? '<br>' . ($i['voters'] == 0 ? 0 : sprintf('%.2f', $i['rating'] / $i['voters'])) . '/5 (' . $i['voters']
+			. ' ' . $txt['media_vote' . ($i['voters'] > 1 ? 's' : '') . '_noun'] . ')' : '') : '') . '</div></div>';
 
 		$tx .= '<br>';
 		$tx .= $i['album_hidden'] ? '<b>' . $i['album'] . '</b>' : '<b><a href="' . $scripturl . '?action=media;sa=album;in=' . $i['album_id'] . '" target="_blank" onclick="lnFlag=1;">' . $i['album'] . '</a></b>' ;

@@ -996,7 +996,8 @@ function Post($post_errors = array())
 	$context['max_allowed_attachments'] = empty($settings['attachmentNumPerPostLimit']) ? 50 : $settings['attachmentNumPerPostLimit'];
 	$context['can_post_attachment'] = !empty($settings['attachmentEnable']) && $settings['attachmentEnable'] == 1 && allowedTo('post_attachment') && $context['max_allowed_attachments'] > 0;
 
-	$context['subject'] = addcslashes($form_subject, '"');
+	// Because the subject will shown inside an input box's parameter, we want its double quotes to be made safer.
+	$context['subject'] = str_replace(array('"', '<', '>'), array('&quot;', '&lt;', '&gt;'), $form_subject);
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
 
 	// Hang on, we might be loading a draft.

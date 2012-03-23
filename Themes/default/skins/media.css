@@ -17,6 +17,9 @@ div.subheader
 		margin: 0
 		padding: 6px
 
+.ae_header
+	border-bottom: 1px dotted #d2d8c8
+
 .aep
 	margin: 6px auto
 

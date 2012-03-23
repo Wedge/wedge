@@ -292,6 +292,7 @@ function ajaxRating()
 		'rating=' + $('#rating').val(),
 		function (XMLDoc) {
 			$('#ratingElement').html($('ratingObject', XMLDoc).text());
+			$('#rating').sb();
 			hide_ajax();
 		}
 	);

@@ -91,6 +91,10 @@
 			color: #fc9
 		.mg_desc
 			color: #ccc
+	h2
+		color: #eee
+	h3, .title final
+		color: #e2e8d8
 
 .zoom-white extends .zoom-base
 .zoom-glass extends .zoom-base

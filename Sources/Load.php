@@ -2082,6 +2082,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 {
 	global $context, $settings, $user_info, $language, $txt, $db_show_debug;
 	static $already_loaded = array();
+
 	if (empty($context['plugins_dir'][$plugin_name]))
 		return;
 
@@ -2099,7 +2100,8 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 
 	// Then go with user preference, followed by forum default (assuming it isn't already one of the previous)
 	$attempts[$lang] = false;
-	$attempts[$language] = false;
+	if ($language !== 'english')
+		$attempts[$language] = false;
 
 	$found = false;
 	foreach ($attempts as $load_lang => $continue)

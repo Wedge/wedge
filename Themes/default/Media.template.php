@@ -614,7 +614,7 @@ function template_aeva_item_actions()
 					</select>
 					<p class="mgra">
 						<input type="submit" value="', $txt['media_submit'], '" class="submit" name="submit_aeva">
-						<input type="button" onclick="return hs.close(this);" value="', $txt['media_close'], '" class="cancel">
+						<input type="button" onclick="return $(\'#zoom-close\').click();" value="', $txt['media_close'], '" class="cancel">
 					</p>
 				</form>
 			</div>';
@@ -729,7 +729,7 @@ function template_aeva_item_comments()
 		{
 			$alternative = !$alternative;
 			echo '
-		<div class="postbg', $alternative ? '' : '2', ' wrc">
+		<div class="windowbg', $alternative ? '' : '2', ' wrc core_posts">
 			<table class="w100 cp0 cs0 tlf"><tr>
 			<td style="width: 20%"', $c['is_edited'] ? ' rowspan="2"' : '', ' class="top">', empty($c['member']['id']) ? '
 				<h4>' . $txt['guest'] . '</h4>' : '
@@ -775,11 +775,12 @@ function template_aeva_item_comments()
 				($c['last_edited']['id'] > -2 ? ' ' . strtolower($txt['media_by']) . ' ' . $c['last_edited']['link'] : '') . '</div>
 			</td></tr>' : '', '
 			</table>
-		</div>
+		</div>';
+		}
+		echo '
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $item['com_page_index'], '</nav>
 		</div>';
-		}
 	}
 
 	if (aeva_allowedTo('comment'))
@@ -1882,8 +1883,8 @@ function template_aeva_profile_viewvotes()
 
 		foreach ($context['aeva_ratingLogs'] as $log)
 		{
-			echo ' <img src="' . $theme['images_aeva'] . '/star' . $log['star'] . '.gif" class="aeva_vera" alt="' . $log['star'] . '">';
-			echo '&nbsp;&nbsp;<b><a href="' . $scripturl . '?action=media;sa=item;in=' . $log['id_media'] . '">' . $log['title'] . '</a></b>';
+			echo '
+			', aeva_showStars($log['star']), '&nbsp;&nbsp;<b><a href="' . $scripturl . '?action=media;sa=item;in=' . $log['id_media'] . '">' . $log['title'] . '</a></b>';
 			echo ' (<a href="' . $scripturl . '?action=media;sa=album;in=' . $log['album_id'] . '">' . $log['name'] . '</a>)';
 			if (!empty($log['messages']))
 				echo ' (' . $log['messages'] . ' <a href="' . $scripturl . '?topic=' . $log['id_topic'] . '.0">' . $txt['media_post' . ($log['messages'] > 1 ? 's' : '') . '_noun'] . '</a>)';
@@ -1928,7 +1929,7 @@ function template_aeva_whoRatedWhat()
 			echo '
 				<tr>
 					<td class="windowbg2"><a href="', $log['member_link'], '">', $log['member_name'], '</a></td>
-					<td class="windowbg2">', str_repeat('<img src="' . $theme['images_url'] . '/star.gif" alt="*">', $log['rating']), '</td>
+					<td class="windowbg2">', aeva_showStars($log['rating']), '</td>
 					<td class="windowbg2">', $log['time'], '</td>
 				</tr>';
 		}
@@ -2000,7 +2001,9 @@ function template_aeva_rating_object($item)
 
 	$object = ($item['can_rate'] ? '
 				<form action="' . $galurl . 'sa=item;in=' . $item['id_media'] . '" method="post" id="ratingForm">' : '') . '
-					' . ($item['voters'] > 0 ? str_repeat('<img src="'.$theme['images_url'].'/star.gif">', round($item['avg_rating'])) . ' ' . round($item['avg_rating'], 2) . ' (' . (aeva_allowedTo('whoratedwhat') ? '<a href="' . $galurl . 'sa=whoratedwhat;in=' . $item['id_media'] . '">' : '') . $item['voters'] . ' ' . $txt['media_vote' . ($item['voters'] > 1 ? 's' : '') . '_noun'] . (aeva_allowedTo('whoratedwhat') ? '</a>' : '') . ')' : '') .
+					' . ($item['voters'] > 0 ? aeva_showStars($item['avg_rating'], '') . round($item['avg_rating'], 2) . '
+					(' . (aeva_allowedTo('whoratedwhat') ? '<a href="' . $galurl . 'sa=whoratedwhat;in=' . $item['id_media'] . '">' : '') .
+					$item['voters'] . ' ' . $txt['media_vote' . ($item['voters'] > 1 ? 's' : '') . '_noun'] . (aeva_allowedTo('whoratedwhat') ? '</a>' : '') . ')' : '') .
 					(!empty($item['weighted']) ? ' (' . $txt['media_weighted_mean'] . ': ' . sprintf('%01.2f', $item['weighted']) . ')' : '');
 
 	if ($item['can_rate'])

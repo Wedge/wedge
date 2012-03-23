@@ -2447,7 +2447,7 @@ function aeva_profileVotes($memID)
 			$context['aeva_voter_id'] = $memID;
 		}
 		$context['aeva_ratingLogs'][] = array(
-			'star' => (int) $row['rating'],
+			'star' => $row['rating'],
 			'id_media' => $row['id_media'],
 			'id_topic' => $row['id_topic'],
 			'title' => $row['title'],
