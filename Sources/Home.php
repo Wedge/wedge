@@ -135,12 +135,13 @@ function Home()
 	$request = wesql::query('
 		SELECT
 			h.updated, h.thought, h.id_thought, h.id_parent, h.privacy,
-			h.id_member, h.id_master, h2.id_member AS id_parent_owner,
+			h.id_member, h.id_master, hm.id_member AS id_parent_owner,
 			m.real_name AS owner_name, mp.real_name AS parent_name, m.posts
 		FROM {db_prefix}thoughts AS h
 		LEFT JOIN {db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
-		LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
+		LEFT JOIN {db_prefix}thoughts AS hm ON (h.id_master = hm.id_thought)
 		LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
+		LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
 		WHERE h.id_member = {int:me}
 			OR h.privacy = {int:everyone}
 			OR FIND_IN_SET(' . implode(', h.privacy)

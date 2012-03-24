@@ -310,10 +310,6 @@ function cleanRequest()
 	else
 		$board = 0;
 
-	// If there's a threadid, it's probably an old YaBB SE link. Flow with it.
-	if (isset($_REQUEST['threadid']) && !isset($_REQUEST['topic']))
-		$_REQUEST['topic'] = $_REQUEST['threadid'];
-
 	// We've got topic!
 	if (isset($_REQUEST['topic']))
 	{
