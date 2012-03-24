@@ -102,10 +102,9 @@ function MessageIndex()
 	$context['link_moderators'] = array();
 	if (!empty($board_info['moderators']))
 	{
+		wetem::add('sidebar', 'messageindex_staff');
 		foreach ($board_info['moderators'] as $mod)
-			$context['link_moderators'][] ='<a href="' . $scripturl . '?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
-
-		$context['linktree'][count($context['linktree']) - 1]['extra_after'] = ' (' . (count($context['link_moderators']) == 1 ? $txt['moderator'] : $txt['moderators']) . ': ' . implode(', ', $context['link_moderators']) . ')';
+			$context['link_moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
 	}
 
 	// Mark current and parent boards as seen.

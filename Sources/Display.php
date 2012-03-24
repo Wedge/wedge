@@ -384,9 +384,9 @@ function Display()
 	$short_prev = empty($prev_title) ? '' : westr::cut($prev_title, 60);
 	$short_next = empty($next_title) ? '' : westr::cut($next_title, 60);
 	$context['prevnext_prev'] = '
-				<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '&laquo;&nbsp;<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a>') . '</div>';
+			<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '&laquo;&nbsp;<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a>') . '</div>';
 	$context['prevnext_next'] = '
-				<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="' . $scripturl . '?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
+			<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="' . $scripturl . '?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
 	$context['no_prevnext'] = empty($prev_topic) && empty($next_topic);
 
 	// Check if spellchecking is both enabled and actually working. (for quick reply.)
@@ -477,12 +477,9 @@ function Display()
 	$context['link_moderators'] = array();
 	if (!empty($board_info['moderators']))
 	{
-		// Add a link for each moderator...
+		wetem::add('sidebar', 'display_staff');
 		foreach ($board_info['moderators'] as $mod)
 			$context['link_moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
-
-		// And show it after the board's name.
-		$context['linktree'][count($context['linktree']) - 2]['extra_after'] = ' (' . (count($context['link_moderators']) == 1 ? $txt['moderator'] : $txt['moderators']) . ': ' . implode(', ', $context['link_moderators']) . ')';
 	}
 
 	// Show it at the page foot too.
@@ -738,7 +735,7 @@ function Display()
 			if (!empty($row['id_member']))
 				$context['last_user_id'] = $row['id_member'];
 			// If you're the admin, you can merge guest posts
-			elseif ($user_info['is_admin'])
+			elseif (allowedTo('modify_any'))
 				$context['last_user_id'] = $row['poster_email'];
 			if (!empty($row['id_msg']))
 				$context['last_msg_id'] = $row['id_msg'];
@@ -758,7 +755,7 @@ function Display()
 		WHERE id_topic = {int:current_topic}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 		GROUP BY id_msg
 		HAVING (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')') . '
-		ORDER BY id_msg ' . ($ascending ? '' : 'DESC') . ($context['messages_per_page'] == -1 ? '' : '
+		ORDER BY id_msg' . ($ascending ? '' : ' DESC') . ($context['messages_per_page'] == -1 ? '' : '
 		LIMIT ' . $start . ', ' . $limit),
 		array(
 			'current_member' => $user_info['id'],
@@ -1163,7 +1160,7 @@ function Display()
 		),
 		'qu' => array(
 			'caption' => 'acme_quote',
-			'action' => '\'' . $scripturl . '?action=post;quote=%id%;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last=' . $context['topic_last_message'] . '\'',
+			'action' => '\'' . $scripturl . '?action=post;quote=%id%;topic=' . $context['current_topic'] . ';last=' . $context['topic_last_message'] . '\'',
 			'class' => '\'quote_button\'',
 		),
 		'mo' => array(
@@ -1173,12 +1170,12 @@ function Display()
 		),
 		'ap' => array(
 			'caption' => 'acme_approve',
-			'action' => '\'' . $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'' . $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'approve_button\'',
 		),
 		're' => array(
 			'caption' => 'acme_remove',
-			'action' => '\'' . $scripturl . '?action=deletemsg;topic=' . $context['current_topic'] . '.' . $context['start'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'' . $scripturl . '?action=deletemsg;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'remove_button\'',
 			'custom' => JavaScriptEscape('onclick="return confirm(' . JavaScriptEscape($txt['remove_message_confirm']) . ');"'),
 		),
@@ -1383,7 +1380,10 @@ function prepareDisplayContext($reset = false)
 		'last_post_id' => $context['last_msg_id'],
 	);
 
-	$is_new |= empty($message['is_read']);
+	// Keep showing the New logo on every unread post in Newest First mode. Otherwise it gets confusing.
+	if (empty($options['view_newest_first']))
+		$is_new |= empty($message['is_read']);
+
 	$output['can_mergeposts'] &= !empty($output['last_post_id']);
 
 	// Is this a board? If not, we're dealing with this as replies to a post, and we won't allow merging the first reply into the post.
@@ -1394,7 +1394,7 @@ function prepareDisplayContext($reset = false)
 		if (!empty($message['id_member']))
 			$context['last_user_id'] = $message['id_member'];
 		// If you're the admin, you can merge guest posts
-		elseif ($user_info['is_admin'])
+		elseif (allowedTo('modify_any'))
 			$context['last_user_id'] = $message['poster_email'];
 		$context['last_msg_id'] = $message['id_msg'];
 		$context['last_post_length'] = $context['current_post_length'];

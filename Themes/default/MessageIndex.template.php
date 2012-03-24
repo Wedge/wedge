@@ -681,4 +681,20 @@ function template_messageindex_statistics()
 	</section>';
 }
 
+
+function template_messageindex_staff()
+{
+	global $context, $txt;
+
+	echo '
+	<section>
+		<we:title>
+			', count($context['link_moderators']) == 1 ? $txt['moderator'] : $txt['moderators'], '
+		</we:title>
+		<p>
+			', implode('<br>', $context['link_moderators']), '
+		</p>
+	</section>';
+}
+
 ?>

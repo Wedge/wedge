@@ -2819,16 +2819,14 @@ function aeva_listChildren(&$albums, $skip_table = false)
 			</div>';
 		}
 		echo '
-		</td>', $i % $cols == $cols - 1 ? '</tr>' : '';
+		</td>', $i % $cols === 0 ? '</tr>' : '';
 	}
 
-	if ($i++ % $cols != $cols - 1)
-	{
-		while (($i++ % $cols != 0) && !$is_alone)
-			echo '
+	while (!$is_alone && ($i++ % $cols !== 0))
+		echo '
 		<td colspan="2"></td>';
-		echo '</tr>';
-	}
+
+	echo '</tr>';
 
 	if (!$skip_table)
 		echo '

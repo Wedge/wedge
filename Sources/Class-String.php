@@ -309,12 +309,15 @@ class westr extends westr_mb
 	// Closes all open tags, in recursive order, in order for pages not to be broken and to validate.
 	static function close_tags(&$str, $hard_limit)
 	{
+		// These tags can safely be ignored, as they're self-closing.
+		static $self_closed = '(?!area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)\b';
+
 		// Could be made faster with substr_count(), but it wouldn't always validate.
-		if (!preg_match_all('~<([^/\s>]+)(?:>|[^>]*?[^/]>)~', $str, $m) || empty($m[1]))
+		if (!preg_match_all('~<' . $self_closed . '([^/\s>]+)(?:>|[^>]*?[^/]>)~', $str, $m) || empty($m[1]))
 			return;
 
 		$mo = $m[1];
-		preg_match_all('~</([^>]+)~', $str, $m);
+		preg_match_all('~</' . $self_closed . '([^>]+)~', $str, $m);
 		$mc = $m[1];
 		$ct = array();
 		if (count($mo) > count($mc))
