@@ -1887,7 +1887,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
 	if (!$theme['use_image_buttons'])
 		return $txt[$alt];
 	elseif (!empty($theme['use_buttons']))
-		return '<img src="' . $theme['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>&nbsp;' . $txt[$label];
+		return '<img src="' . $theme['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>' . (isset($txt[$label]) ? '&nbsp;' . $txt[$label] : '');
 	else
 		return '<img src="' . $theme['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
 }

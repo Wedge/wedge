@@ -153,7 +153,7 @@ function template_select()
 	{
 		if (!can_ajax)
 			return true;
-		getXMLDocument(we_prepareScriptUrl() + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id + ";xml", onDocReceived);
+		getXMLDocument(we_prepareScriptUrl() + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id + ";ajax", onDocReceived);
 		return false;
 	}
 	function onDocReceived(XMLDoc)

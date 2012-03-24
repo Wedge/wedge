@@ -119,7 +119,7 @@ function SplitTopics()
 	isAllowedTo('split_any');
 
 	// Load up the "dependencies" - the template, getMsgMemberID(), and sendNotifications().
-	if (!isset($_REQUEST['xml']))
+	if (!isset($_REQUEST['ajax'])) // like 'xml', but won't load the Xml template.
 		loadTemplate('SplitTopics');
 
 	loadSource(array('Subs-Boards', 'Subs-Post'));
@@ -274,13 +274,14 @@ function SplitSelectTopics()
 	$context['new_subject'] = $_REQUEST['subname'];
 
 	// Using the "select" block.
-	wetem::load(isset($_REQUEST['xml']) ? 'split' : 'select');
+	if (!isset($_REQUEST['ajax']))
+		wetem::load('select');
 
 	// Are we using a custom messages per page?
 	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 
 	// Get the message ID's from before the move.
-	if (isset($_REQUEST['xml']))
+	if (isset($_REQUEST['ajax']))
 	{
 		$original_msgs = array(
 			'not_selected' => array(),
@@ -473,7 +474,7 @@ function SplitSelectTopics()
 	}
 
 	// The XMLhttp (Ajax) method only needs the stuff that changed, so let's compare.
-	if (isset($_REQUEST['xml']))
+	if (isset($_REQUEST['ajax']))
 	{
 		$changes = array(
 			'remove' => array(
@@ -504,6 +505,29 @@ function SplitSelectTopics()
 						$context['changes']['insert' . $id_msg]['insert_value'] = $context[$section]['messages'][$id_msg];
 				}
 			}
+
+		header('Content-Type: text/xml; charset=UTF-8');
+		echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
+<we>
+	<pageIndex section="not_selected" startFrom="', $context['not_selected']['start'], '"><![CDATA[', $context['not_selected']['page_index'], ']]></pageIndex>
+	<pageIndex section="selected" startFrom="', $context['selected']['start'], '"><![CDATA[', $context['selected']['page_index'], ']]></pageIndex>';
+		foreach ($context['changes'] as $change)
+		{
+			if ($change['type'] == 'remove')
+				echo '
+	<change id="', $change['id'], '" curAction="remove" section="', $change['section'], '" />';
+			else
+				echo '
+	<change id="', $change['id'], '" curAction="insert" section="', $change['section'], '">
+		<subject><![CDATA[', cleanXml($change['insert_value']['subject']), ']]></subject>
+		<time><![CDATA[', cleanXml($change['insert_value']['time']), ']]></time>
+		<body><![CDATA[', cleanXml($change['insert_value']['body']), ']]></body>
+		<poster><![CDATA[', cleanXml($change['insert_value']['poster']), ']]></poster>
+	</change>';
+		}
+		echo '
+</we>';
+		obExit(false);
 	}
 }
 

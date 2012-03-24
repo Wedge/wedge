@@ -31,14 +31,13 @@ function template_main()
 	$next = $n < 50 ? ($n < 20 ? ($n < 10 ? 10 : 20) : 50) : 100;
 
 	echo '
-	<we:block class="windowbg" style="margin-top: 16px">
-		<header>', $n == $next ? '' : '
-			<a href="?n=' . $next . '"><div class="floatleft foldable" style="margin: 1px 4px 1px 1px"></div></a>', '
-			<span class="floatright"><a href="<URL>?action=boards">', $txt['board_index'], '</a></span>
-			Forums
-		</header>
-		<div style="margin: -.8em -.9em">
-			<table class="homeposts w100 cs1 cp0">';
+	<we:cat style="margin-top: 16px">', $n == $next ? '' : '
+		<a href="?n=' . $next . '"><div class="floatleft foldable" style="margin: 5px 4px 1px 1px"></div></a>', '
+		<span class="floatright"><a href="<URL>?action=boards">', $txt['board_index'], '</a></span>
+		', $txt['recent_posts'], '
+	</we:cat>
+	<we:block class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
+		<table class="homeposts w100 cs0">';
 
 	loadSource('../SSI');
 	$naoboards = ssi_recentTopics($n, null, null, 'naos', false, 0);
@@ -76,24 +75,23 @@ function template_main()
 		$safe = strpos($post['board']['url'], '/pub') === false;
 		$blo = strpos($post['board']['url'], '/blog') !== false;
 		echo '
-				<tr>
-					<td class="windowbg latestp1">
-						<div>', strftime('%d/%m %H:%M', $post['timestamp']), '<br>', $post['poster']['link'], '</div>
-					</td>
-					<td class="windowbg2 latestp2">
-						', $post['board']['name'], ' &gt; ';
+			<tr>
+				<td class="windowbg latestp1">
+					<div>', strftime('%d/%m %H:%M', $post['timestamp']), '<br>', $post['poster']['link'], '</div>
+				</td>
+				<td class="windowbg2 latestp2">
+					', $post['board']['name'], ' &gt; ';
 
 		if ($post['is_new'] && !$user_info['is_guest'])
 			echo isset($nb_new[$post['topic']]) ? '<a href="' . $post['href'] . '" class="note">' . $nb_new[$post['topic']] . '</a> ' : '';
 
 		echo '<a href="', $post['href'], $safe ? '" style="color: ' . ($blo ? '#a62' : 'green') : '', '">', $post['subject'], '</a>
-					</td>
-				</tr>';
+				</td>
+			</tr>';
 		}
 
 	echo '
-			</table>
-		</div>
+		</table>
 	</we:block>';
 }
 
@@ -109,8 +107,9 @@ function template_thoughts($limit = 18)
 	if (!$is_thought_page)
 		echo '
 		<we:cat style="margin-top: 16px">
+			<span class="floatright"><a href="<URL>?s=thoughts">', $txt['all_pages'], '</a></span>
 			<div class="thought_icon"></div>
-			', $txt['thoughts'], '... (<a href="<URL>?s=thoughts">', $txt['all_pages'], '</a>)
+			', $txt['thoughts'], '...
 		</we:cat>';
 
 	echo '
