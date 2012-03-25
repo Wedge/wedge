@@ -1626,9 +1626,12 @@ function MergePosts($error_report = true)
 			m.id_msg, m.id_member, m.body, b.count_posts, m.id_board,
 			t.id_first_msg, m.subject, m.poster_time, m.poster_email, m.poster_name
 		FROM
-			({db_prefix}messages AS m, {db_prefix}boards AS b, {db_prefix}topics AS t)
+			{db_prefix}messages AS m,
+			{db_prefix}boards AS b,
+			{db_prefix}topics AS t
 		WHERE
-			m.id_topic = {int:id_topic}
+			{query_see_topic}
+			AND m.id_topic = {int:id_topic}
 			AND id_msg ' . ($qc ? '<' : '>') . '= {int:id_msg}
 			AND b.id_board = m.id_board
 			AND t.id_topic = m.id_topic
@@ -1713,6 +1716,8 @@ function MergePosts($error_report = true)
 				$msn['0']['subject'] = str_replace("'", "&#039;", $msn['0']['subject']);
 				$oldsubject = ', subject = {string:subject}';
 			}
+
+			// !! @todo: merge Likes as well!
 
 			// Uhh the old post can have attachments
 			// If SQL finds some attachments, it should replace them with the new id

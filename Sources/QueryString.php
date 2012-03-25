@@ -228,8 +228,26 @@ function cleanRequest()
 
 	// Don't bother going further if we've come here from a *REAL* 404.
 	// Reject anything with a query string or unusual extensions.
-	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js')))
+	if (strpos($full_request, '?') === false && in_array(strtolower(strrchr($full_request, '.')), array('.gif', '.jpg', '.jpeg', '.png', '.css', '.js', '.gz', '.cgz', '.jgz')))
 	{
+		$is_cache_file = in_array(strtolower(strrchr($full_request, '.')), array('.gz', '.cgz', '.jgz'));
+		if ($is_cache_file) // A cached file? Try to redirect to the latest version.
+		{
+			$regex = '~(/[^/]+-)[0-9]+\.(js\.gz|css\.gz|cgz|jgz)$~';
+			if (preg_match($regex, $full_request, $filename))
+			{
+				// There are probably faster ways to retrieve an 'existing' cached version.
+				global $cachedir;
+				list ($first_match) = glob($cachedir . $filename[1] . '*.' . $filename[2]);
+				if (preg_match($regex, (string) $first_match, $new_filename))
+				{
+					header('HTTP/1.1 301 Moved Permanently');
+					header('Location: http://' . str_replace($filename[0], $new_filename[0], $full_request));
+					exit();
+				}
+			}
+		}
+
 		loadLanguage('Errors');
 
 		header('HTTP/1.0 404 Not Found');
@@ -240,6 +258,7 @@ function cleanRequest()
 		// a file from the SMF version of your website... And will stop doing so after a while.
 
 		if (!empty($settings['enableErrorLogging']) // make sure we really want to log the error...
+		&& !$is_cache_file // don't log cached files, probably Google Cache.
 		&& strpos($full_request, '/avatar_') === false // search bot looking for a previous avatar that got regenerated since then?
 		&& strpos($full_request, '/cache/') === false // same, but with regenerated CSS or JS files?
 		&& strpos($full_request, '/mobiquo/tapatalk') === false // Tapatalk spam. What is that?!

@@ -66,7 +66,7 @@ function splitQuote(e)
 		}
 		// Then it's an opener tag. If we're not within a protected tag loop,
 		// and it's not a self-closed tag, add it to the tag stack.
-		else if (log_tags && !in_array(baretag, closed_tags))
+		else if (log_tags && !in_array(baretag, closed_tags) && /[^a-zA-Z0-9]/.exec(baretag) !== null)
 		{
 			taglist.push(bbcode);
 			baretags.push(baretag);

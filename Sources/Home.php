@@ -143,13 +143,15 @@ function Home()
 		LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
 		LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
 		WHERE h.id_member = {int:me}
-			OR h.privacy = {int:everyone}
+			OR h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
+			OR h.privacy = {int:members}
 			OR FIND_IN_SET(' . implode(', h.privacy)
-			OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
+			OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)') . '
 		ORDER BY h.id_thought DESC LIMIT ' . ($page * 30) . ', ' . $limit,
 		array(
 			'me' => $user_info['id'],
 			'everyone' => -3,
+			'members' => 0,
 		)
 	);
 	$is_touch = $context['browser']['is_iphone'] || $context['browser']['is_tablet'];

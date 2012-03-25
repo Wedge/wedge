@@ -13,12 +13,15 @@
 
 function template_main()
 {
-	global $user_info, $txt;
+	global $context, $user_info, $txt;
 
 	echo '
 	<we:cat>
 		Welcome! Wedge is the next generation of free forum software.
-	</we:cat>
+	</we:cat>';
+
+	if (empty($context['skin_options']['mobile']))
+		echo '
 	<div class="windowbg2 wrc">
 		Built in PHP 5 upon the SMF platform by some of its top devs (see the <a href="/pub/faq/">FAQ</a> for more),
 		it allows you to create and maintain <strong>message boards</strong> with a modern twist. Blogs, HTML 5, CSS 3, jQuery, object
@@ -97,7 +100,7 @@ function template_main()
 
 function template_thoughts($limit = 18)
 {
-	global $txt, $user_info, $context;
+	global $context, $user_info, $txt;
 
 	if (empty($context['thoughts']))
 		return;
