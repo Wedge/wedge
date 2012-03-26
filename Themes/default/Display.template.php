@@ -21,7 +21,7 @@ function template_display_posts()
 	// Show the topic information - icon, subject, etc.
 	echo '
 		<div id="forumposts"', $board_info['type'] == 'board' ? '' : ' class="blog"', '>
-			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.sCurMessageId ? oQuickModify.modifySave() : false">';
+			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify ? oQuickModify.modifySave() : false">';
 
 	$ignoredMsgs = array();
 	$removableMessageIDs = array();
@@ -148,6 +148,10 @@ function template_display_posts()
 							', $txt['ignoring_user'], '
 							<a href="#" id="msg_', $message['id'], '_ignored_link" class="hide">', $txt['show_ignore_user_post'], '</a>
 						</div>';
+
+		if ($is_mobile)
+			echo '
+						<h5 id="subject_', $message['id'], '"></h5>';
 
 		// Show the post itself, finally!
 		echo '
@@ -301,15 +305,15 @@ function template_display_posts()
 			sTemplateBodyEdit: ' . JavaScriptEscape('
 				<div id="quick_edit_body_container" style="width: 90%">
 					<div id="error_box" style="padding: 4px" class="error"></div>
-					<textarea class="editor" name="message" rows="12" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px" tabindex="' . $context['tabindex']++ . '">%body%</textarea>
+					<textarea class="editor" id="qm_post" rows="12" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px" tabindex="' . $context['tabindex']++ . '">%body%</textarea>
 					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-					<input type="hidden" name="topic" value="' . $context['current_topic'] . '">
-					<input type="hidden" name="msg" value="%msg_id%">
+					<input type="hidden" id="qm_topic" value="' . $context['current_topic'] . '">
+					<input type="hidden" id="qm_msg" value="%msg_id%">
 					<div class="right">
 						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return oQuickModify.modifySave();" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['form_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
 					</div>
 				</div>') . ',
-			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%" name="subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
+			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
 			sTemplateBodyNormal: \'%body%\',
 			sTemplateSubjectNormal: ' . JavaScriptEscape('<a href="' . $scripturl . '?topic=' . $context['current_topic'] . '.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>') . ',
 			sErrorBorderStyle: \'1px solid red\'

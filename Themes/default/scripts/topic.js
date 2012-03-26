@@ -19,21 +19,13 @@ function is_editing()
 
 function go_up()
 {
-	$('html,body').animate(
-		{ scrollTop: 0 },
-		1000
-	);
-
+	$('html,body').animate({ scrollTop: 0 }, 1000);
 	return false;
 }
 
 function go_down()
 {
-	$('html,body').animate(
-		{ scrollTop: $(document).height() - $(window).height() },
-		1000
-	);
-
+	$('html,body').animate({ scrollTop: $(document).height() - $(window).height() }, 1000);
 	return false;
 }
 
@@ -41,7 +33,7 @@ function go_down()
 function modify_topic_show_edit(subject)
 {
 	// Just template the subject.
-	cur_subject_div.html('<input type="text" name="subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(e);"><input type="hidden" name="topic" value="' + cur_topic_id + '"><input type="hidden" name="msg" value="' + cur_msg_id.substr(4) + '">');
+	cur_subject_div.html('<input type="text" id="qm_subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(e);"><input type="hidden" id="qm_topic" value="' + cur_topic_id + '"><input type="hidden" id="qm_msg" value="' + cur_msg_id.substr(4) + '">');
 }
 
 // And the reverse for hiding it.
@@ -69,21 +61,21 @@ function modify_topic(topic_id, first_msg_id)
 	cur_topic_id = topic_id;
 
 	show_ajax();
-	getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + first_msg_id + ';modify;xml', onDocReceived_modify_topic);
-}
+	getXMLDocument(
+		we_prepareScriptUrl() + 'action=quotefast;quote=' + first_msg_id + ';modify;xml',
+		function (XMLDoc) {
+			cur_msg_id = $('message', XMLDoc).attr('id').substr(4);
 
-function onDocReceived_modify_topic(XMLDoc)
-{
-	cur_msg_id = $('message', XMLDoc).attr('id').substr(4);
+			cur_subject_div = $('#msg_' + cur_msg_id);
+			buff_subject = cur_subject_div.html();
 
-	cur_subject_div = $('#msg_' + cur_msg_id);
-	buff_subject = cur_subject_div.html();
+			// Here we hide any other things they want hiding on edit.
+			set_hidden_topic_areas(false);
 
-	// Here we hide any other things they want hiding on edit.
-	set_hidden_topic_areas(false);
-
-	modify_topic_show_edit($('subject', XMLDoc).text());
-	hide_ajax();
+			modify_topic_show_edit($('subject', XMLDoc).text());
+			hide_ajax();
+		}
+	);
 }
 
 function modify_topic_cancel()
@@ -100,37 +92,33 @@ function modify_topic_save()
 	if (!in_edit_mode)
 		return true;
 
-	var x = [], qm = document.forms.quickModForm;
-	x.push('subject=' + qm.subject.value.replace(/&#/g, '&#38;#').php_urlencode());
-	x.push('topic=' + qm.elements.topic.value);
-	x.push('msg=' + qm.elements.msg.value);
-
 	show_ajax();
-	sendXMLDocument(we_prepareScriptUrl() + 'action=jsmodify;topic=' + qm.elements.topic.value + ';' + we_sessvar + '=' + we_sessid + ';xml', x.join('&'), modify_topic_done);
+	sendXMLDocument(
+		we_prepareScriptUrl() + 'action=jsmodify;topic=' + $('#qm_topic').val() + ';' + we_sessvar + '=' + we_sessid + ';xml',
+		'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
+		function (XMLDoc) {
+			if (!XMLDoc)
+			{
+				modify_topic_cancel();
+				return true;
+			}
 
-	return false;
-}
+			var
+				subject = $('we message subject', XMLDoc),
+				error = $('we message error', XMLDoc);
 
-function modify_topic_done(XMLDoc)
-{
-	if (!XMLDoc)
-	{
-		modify_topic_cancel();
-		return true;
-	}
+			hide_ajax();
 
-	var
-		subject = $('we message subject', XMLDoc),
-		error = $('we message error', XMLDoc);
+			if (!subject.length || error.length)
+				return false;
 
-	hide_ajax();
+			modify_topic_hide_edit(subject.text());
+			set_hidden_topic_areas(true);
+			in_edit_mode = 0;
 
-	if (!subject.length || error.length)
-		return false;
-
-	modify_topic_hide_edit(subject.text());
-	set_hidden_topic_areas(true);
-	in_edit_mode = 0;
+			return false;
+		}
+	);
 
 	return false;
 }
@@ -206,165 +194,168 @@ QuickReply.prototype.switchMode = function ()
 };
 
 // *** QuickModify object.
-function QuickModify(oOptions)
+function QuickModify(opt)
 {
-	this.opt = oOptions;
-	this.sCurMessageId = '';
-	this.oCurMessageDiv = null;
-	this.oCurSubjectDiv = null;
-	this.sMessageBuffer = '';
-	this.sSubjectBuffer = '';
-}
-
-// Function called when a user presses the edit button.
-QuickModify.prototype.modifyMsg = function (iMessage)
-{
-	if (!can_ajax)
-		return;
-
-	// iMessageId is taken from the owner ID -- modify_button_xxx
-	var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(14) : '';
-
-	// Did we press the Quick Modify button by error while trying to submit? Oops.
-	if (this.sCurMessageId && this.sCurMessageId.substr(4) == iMessageId)
-		return;
-
-	// First cancel if there's another message still being edited.
-	if (this.sCurMessageId)
-		this.modifyCancel();
-
-	// Send out the Ajax request to get more info
-	show_ajax();
-
-	getXMLDocument.call(this, we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';modify;xml', this.onMessageReceived);
-};
-
-// The callback function used for the Ajax request retrieving the message.
-QuickModify.prototype.onMessageReceived = function (XMLDoc)
-{
-	// Hide the 'loading...' sign.
-	hide_ajax();
-
-	// Grab the message ID.
-	var sId = $('message', XMLDoc).attr('id');
-
-	if (sId == this.sCurMessageId)
-		return;
-	else if (this.sCurMessageId)
-		this.modifyCancel();
-	this.sCurMessageId = sId;
-
-	// If this is not valid then simply give up.
-	this.oCurMessageDiv = $('#' + this.sCurMessageId);
-
-	if (!this.oCurMessageDiv.length)
-		return this.modifyCancel();
-
-	this.sMessageBuffer = this.oCurMessageDiv.html();
-
-	// We have to force the body to lose its dollar signs thanks to IE.
-	// !!! Is it still a valid fix, BTW...?
-	var sBodyText = $('message', XMLDoc).text().replace(/\$/g, '{&dollarfix;$}');
-
-	// Actually create the content, with a bodge for disappearing dollar signs.
-	this.oCurMessageDiv.html(this.opt.sTemplateBodyEdit.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%body%/, sBodyText).replace(/\{&dollarfix;\$\}/g, '$'));
-
-	// Replace the subject part.
-	this.oCurSubjectDiv = $('#subject_' + this.sCurMessageId.substr(4));
-	this.sSubjectBuffer = this.oCurSubjectDiv.html();
-
-	var sSubjectText = $('subject', XMLDoc).text().replace(/\$/g, '{&dollarfix;$}');
-	this.oCurSubjectDiv.html(this.opt.sTemplateSubjectEdit.replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g, '$'));
-};
-
-// Function in case the user presses cancel (or other circumstances cause it).
-QuickModify.prototype.modifyCancel = function ()
-{
-	// Roll back the HTML to its original state.
-	if (this.oCurMessageDiv)
-	{
-		this.oCurMessageDiv.html(this.sMessageBuffer);
-		this.oCurSubjectDiv.html(this.sSubjectBuffer);
-	}
-
-	// No longer in edit mode, that's right.
-	this.sCurMessageId = '';
-
-	return false;
-};
-
-// The function called after a user wants to save his precious message.
-QuickModify.prototype.modifySave = function ()
-{
-	// We cannot save if we weren't in edit mode.
-	if (!this.sCurMessageId)
-		return true;
-
-	var x = [], qm = document.forms.quickModForm;
-	x.push('subject=' + qm.subject.value.replace(/&#/g, '&#38;#').php_urlencode());
-	x.push('message=' + qm.message.value.replace(/&#/g, '&#38;#').php_urlencode());
-	x.push('topic=' + qm.elements.topic.value);
-	x.push('msg=' + qm.elements.msg.value);
-
-	// Send in the Ajax request and let's hope for the best.
-	show_ajax();
-	sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jsmodify;topic=' + this.opt.iTopicId + ';' + we_sessvar + '=' + we_sessid + ';xml', x.join('&'), this.onModifyDone);
-
-	return false;
-};
-
-// Callback function of the Ajax request sending the modified message.
-QuickModify.prototype.onModifyDone = function (XMLDoc)
-{
-	// We've finished the loading part.
-	hide_ajax();
-
 	var
-		message = $('we message', XMLDoc),
-		body = $('body', message),
-		error = $('error', message);
+		sMessageBuffer = '',
+		sSubjectBuffer = '',
+		sCurMessageId = '',
+		oCurMessageDiv = null,
+		oCurSubjectDiv = null,
 
-	// If we didn't get a valid document, just cancel.
-	if (!XMLDoc || !message.length)
+		// The callback function used for the Ajax request retrieving the message.
+		onMessageReceived = function (XMLDoc)
+		{
+			// Hide the 'loading...' sign.
+			hide_ajax();
+
+			// Grab the message ID.
+			var sId = $('message', XMLDoc).attr('id');
+
+			if (sId == sCurMessageId)
+				return;
+			else if (sCurMessageId)
+				this.modifyCancel();
+			sCurMessageId = sId;
+
+			// If this is not valid then simply give up.
+			oCurMessageDiv = $('#' + sCurMessageId);
+
+			if (!oCurMessageDiv.length)
+				return this.modifyCancel();
+
+			sMessageBuffer = oCurMessageDiv.html();
+
+			// Actually create the content, with a bodge for disappearing dollar signs.
+			oCurMessageDiv.html(
+				opt.sTemplateBodyEdit
+					.replace(/%msg_id%/g, sCurMessageId.substr(4))
+					// We have to force the body to lose its dollar signs thanks to IE.
+					// !!! Is it still a valid fix, BTW...?
+					.replace(/%body%/, $('message', XMLDoc).text().replace(/\$/g, '{&dollarfix;$}'))
+					.replace(/\{&dollarfix;\$\}/g, '$')
+			);
+
+			// Replace the subject part.
+			oCurSubjectDiv = $('#subject_' + sCurMessageId.substr(4));
+			sSubjectBuffer = oCurSubjectDiv.html();
+
+			oCurSubjectDiv.html(
+				opt.sTemplateSubjectEdit
+					.replace(/%subject%/, $('subject', XMLDoc).text().replace(/\$/g, '{&dollarfix;$}'))
+					.replace(/\{&dollarfix;\$\}/g, '$')
+			);
+		},
+
+		// Callback function of the Ajax request sending the modified message.
+		onModifyDone = function (XMLDoc)
+		{
+			// We've finished the loading part.
+			hide_ajax();
+
+			var
+				message = $('we message', XMLDoc),
+				body = $('body', message),
+				error = $('error', message);
+
+			// If we didn't get a valid document, just cancel.
+			if (!XMLDoc || !message.length)
+			{
+				// If you could instead tell us what's wrong...?
+				if (XMLDoc)
+					$('#error_box').html(XMLDoc.childNodes && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror' ? XMLDoc.firstChild.textContent : XMLDoc);
+				else
+					this.modifyCancel();
+				return;
+			}
+
+			if (body.length)
+			{
+				// Show new body.
+				sMessageBuffer = opt.sTemplateBodyNormal.replace(/%body%/, body.text().replace(/\$/g, '{&dollarfix;$}')).replace(/\{&dollarfix;\$\}/g,'$');
+				oCurMessageDiv.html(sMessageBuffer);
+
+				// Show new subject.
+				var oSubject = $('subject', message), sSubjectText = oSubject.text().replace(/\$/g, '{&dollarfix;$}');
+				sSubjectBuffer = opt.sTemplateSubjectNormal.replace(/%msg_id%/g, sCurMessageId.substr(4)).replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g,'$');
+				oCurSubjectDiv.html(sSubjectBuffer);
+
+				// If this is the first message, also update the topic subject.
+				if (oSubject.attr('is_first') == '1')
+					$('#top_subject').html(sSubjectText.replace(/\{&dollarfix;\$\}/g, '$'));
+
+				// Show this message as 'modified on x by y'.
+				if (opt.bShowModify)
+					$('#modified_' + sCurMessageId.substr(4)).html($('modified', message).text());
+
+				// Finally, we can safely declare we're up and running...
+				sCurMessageId = '';
+			}
+			else if (error.length)
+			{
+				$('#error_box').html(error.text());
+				$('#qm_post').css('border', error.attr('in_body') == '1' ? opt.sErrorBorderStyle : '');
+				$('#qm_subject').css('border', error.attr('in_subject') == '1' ? opt.sErrorBorderStyle : '');
+			}
+		};
+
+	// Function called when a user presses the edit button.
+	this.modifyMsg = function (iMessage)
 	{
-		// If you could instead tell us what's wrong...?
-		if (XMLDoc)
-			$('#error_box').html(XMLDoc.childNodes && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror' ? XMLDoc.firstChild.textContent : XMLDoc);
-		else
+		if (!can_ajax)
+			return;
+
+		// iMessageId is taken from the owner ID -- modify_button_xxx
+		var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(14) : '';
+
+		// Did we press the Quick Modify button by error while trying to submit? Oops.
+		if (sCurMessageId && sCurMessageId.substr(4) == iMessageId)
+			return;
+
+		// First cancel if there's another message still being edited.
+		if (sCurMessageId)
 			this.modifyCancel();
-		return;
-	}
 
-	if (body.length)
+		// Send out the Ajax request to get more info
+		show_ajax();
+		getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';modify;xml', onMessageReceived);
+	};
+
+	// Function in case the user presses cancel (or other circumstances cause it).
+	this.modifyCancel = function ()
 	{
-		// Show new body.
-		this.sMessageBuffer = this.opt.sTemplateBodyNormal.replace(/%body%/, body.text().replace(/\$/g, '{&dollarfix;$}')).replace(/\{&dollarfix;\$\}/g,'$');
-		this.oCurMessageDiv.html(this.sMessageBuffer);
+		// Roll back the HTML to its original state.
+		if (oCurMessageDiv)
+		{
+			oCurMessageDiv.html(sMessageBuffer);
+			oCurSubjectDiv.html(sSubjectBuffer);
+		}
 
-		// Show new subject.
-		var oSubject = $('subject', message), sSubjectText = oSubject.text().replace(/\$/g, '{&dollarfix;$}');
-		this.sSubjectBuffer = this.opt.sTemplateSubjectNormal.replace(/%msg_id%/g, this.sCurMessageId.substr(4)).replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g,'$');
-		this.oCurSubjectDiv.html(this.sSubjectBuffer);
+		// No longer in edit mode, that's right.
+		sCurMessageId = '';
 
-		// If this is the first message, also update the topic subject.
-		if (oSubject.attr('is_first') == '1')
-			$('#top_subject').html(sSubjectText.replace(/\{&dollarfix;\$\}/g, '$'));
+		return false;
+	};
 
-		// Show this message as 'modified on x by y'.
-		if (this.opt.bShowModify)
-			$('#modified_' + this.sCurMessageId.substr(4)).html($('modified', message).text());
-
-		// Finally, we can safely declare we're up and running...
-		this.sCurMessageId = '';
-	}
-	else if (error.length)
+	// The function called after a user wants to save his precious message.
+	this.modifySave = function ()
 	{
-		$('#error_box').html(error.text());
-		var qm = document.forms.quickModForm;
-		qm.message.style.border = error.attr('in_body') == '1' ? this.opt.sErrorBorderStyle : '';
-		qm.subject.style.border = error.attr('in_subject') == '1' ? this.opt.sErrorBorderStyle : '';
-	}
-};
+		// We cannot save if we weren't in edit mode.
+		if (!sCurMessageId)
+			return false;
+
+		// Send in the Ajax request and let's hope for the best.
+		show_ajax();
+		sendXMLDocument(
+			we_prepareScriptUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&message=' + $('#qm_post').val().replace(/&#/g, '&#38;#').php_urlencode()
+			+ '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
+			onModifyDone
+		);
+
+		return false;
+	};
+}
 
 function InTopicModeration(oOptions)
 {
