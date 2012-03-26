@@ -1116,13 +1116,12 @@ dl.stats
 	overflow: hidden
 	margin, padding: 0
 	dt, dd
-		width: 54%
 		margin: 0 0 4px
 		padding: 0
-		font-size: 1em
 		line-height: 16px
 	dt
-		clear, float: left
+		clear: both
+		float: left
 	dd
 		clear, float, text-align: right
 		width: 45%

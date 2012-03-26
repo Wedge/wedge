@@ -2650,16 +2650,11 @@ function template_profile_timeoffset_modify()
 	global $txt, $context;
 
 	add_js('
-	function autoDetectTimeOffset(currentTime)
+	// Get the difference between the two, set it up so that the sign will tell us who is ahead of whom.
+	// Currently only supports timezones in hourly increments. Our apologies to India.
+	function autoDetectTimeOffset(serverTime)
 	{
-		var localTime = +new Date, serverTime = typeof currentTime != "number" ? currentTime : +new Date(currentTime);
-
-		if (!localTime || !serverTime)
-			return 0;
-
-		// Get the difference between the two, set it up so that the sign will tell us who is ahead of whom.
-		// Currently only supports timezones in hourly increments. Our apologies to India.
-		return Math.round((localTime - serverTime) / 3600000) % 24;
+		return serverTime ? Math.round((+new Date - serverTime) / 3600000) % 24 : 0;
 	}');
 
 	echo '
@@ -2668,7 +2663,7 @@ function template_profile_timeoffset_modify()
 						<dfn>', $txt['personal_time_offset'], '</dfn>
 					</dt>
 					<dd>
-						<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '"> <a href="#" onclick="currentDate = new Date(', $context['current_forum_time_js'], '000); $(\'#time_offset\').val(autoDetectTimeOffset(currentDate)); return false;">', $txt['timeoffset_autodetect'], '</a><br>', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
+						<input type="text" name="time_offset" id="time_offset" size="5" maxlength="5" value="', $context['member']['time_offset'], '"> <a href="#" onclick="$(\'#time_offset\').val(autoDetectTimeOffset(+new Date(', $context['current_forum_time_js'], '000))); return false;">', $txt['timeoffset_autodetect'], '</a><br>', $txt['current_time'], ': <em>', $context['current_forum_time'], '</em>
 					</dd>';
 }
 
