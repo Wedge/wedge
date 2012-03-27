@@ -178,14 +178,11 @@ function Display()
 	if (!is_numeric($_REQUEST['start']))
 	{
 		// Redirect to the page and post with new messages, originally by Omar Bazavilvazo.
-		if ($_REQUEST['start'] == 'new')
+		if ($_REQUEST['start'] === 'new')
 		{
 			// Guests automatically go to the last post.
 			if ($user_info['is_guest'])
-			{
-				$context['start_from'] = $context['total_visible_posts'] - 1;
-				$_REQUEST['start'] = empty($options['view_newest_first']) ? $context['start_from'] : 0;
-			}
+				$_REQUEST['start'] = 'msg' . $topicinfo['id_last_msg'];
 			else
 			{
 				// Find the earliest unread message in the topic. The use of topics here is just for both tables.
@@ -210,42 +207,12 @@ function Display()
 			}
 		}
 
-		// Start from a certain time index, not a message.
-		if (strpos($_REQUEST['start'], 'from') === 0)
-		{
-			$timestamp = (int) substr($_REQUEST['start'], 4);
-			if ($timestamp === 0)
-				$_REQUEST['start'] = 0;
-			else
-			{
-				// Find the number of messages posted before said time...
-				$request = wesql::query('
-					SELECT COUNT(*)
-					FROM {db_prefix}messages
-					WHERE poster_time < {int:timestamp}
-						AND id_topic = {int:current_topic}' . ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !allowedTo('approve_posts') ? '
-						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
-					array(
-						'current_topic' => $topic,
-						'current_member' => $user_info['id'],
-						'is_approved' => 1,
-						'timestamp' => $timestamp,
-					)
-				);
-				list ($context['start_from']) = wesql::fetch_row($request);
-				wesql::free_result($request);
-
-				// Handle view_newest_first options, and get the correct start value.
-				$_REQUEST['start'] = empty($options['view_newest_first']) ? $context['start_from'] : $context['total_visible_posts'] - $context['start_from'] - 1;
-			}
-		}
-
 		// Link to a message...
-		elseif (strpos($_REQUEST['start'], 'msg') === 0)
+		if (strpos($_REQUEST['start'], 'msg') === 0)
 		{
 			$virtual_msg = (int) substr($_REQUEST['start'], 3);
 			if (!$topicinfo['unapproved_posts'] && $virtual_msg >= $topicinfo['id_last_msg'])
-				$context['start_from'] = $context['total_visible_posts'] - 1;
+				$context['start_from'] = $context['total_visible_posts'] - 1 + ($board_info['type'] == 'board' ? 0 : 1);
 			elseif (!$topicinfo['unapproved_posts'] && $virtual_msg <= $topicinfo['id_first_msg'])
 				$context['start_from'] = 0;
 			else
@@ -262,11 +229,12 @@ function Display()
 						'current_topic' => $topic,
 						'virtual_msg' => $virtual_msg,
 						'is_approved' => 1,
-						'no_member' => 0,
 					)
 				);
 				list ($context['start_from']) = wesql::fetch_row($request);
 				wesql::free_result($request);
+				if ($board_info['type'] != 'board')
+					$context['start_from']--;
 			}
 
 			// We need to reverse the start as well in this case.
@@ -435,15 +403,21 @@ function Display()
 	$can_show_all = !empty($settings['enableAllMessages']) && $context['total_visible_posts'] > $context['messages_per_page'] && $context['total_visible_posts'] < $settings['enableAllMessages'];
 	if (isset($_REQUEST['all']) && !$can_show_all)
 		unset($_REQUEST['all']);
-	// Otherwise, it must be allowed... so pretend start was -1.
+	// Otherwise, it must be allowed...
 	elseif (isset($_REQUEST['all']))
-		$_REQUEST['start'] = -1;
+		$context['messages_per_page'] = $context['total_visible_posts'];
+
+	// !! Because template_page_index will overwrite $_REQUEST['start'], it's a good idea to store it before.
+	// @todo: make use of this...
+	$start_index = $_REQUEST['start'];
+	$_REQUEST['start'] = max(0, $_REQUEST['start']);
 
 	// Construct the page index, allowing for the .START method...
 	$context['page_index'] = template_page_index($scripturl . '?topic=' . $topic . '.%1$d', $_REQUEST['start'], $context['total_visible_posts'], $context['messages_per_page'], true);
 	$context['start'] = $_REQUEST['start'];
 
 	// Figure out the previous/next links for header <link>.
+	// !! Doesn't work in View Newest First mode...
 	$context['links'] = array(
 		'prev' => $_REQUEST['start'] >= $context['messages_per_page'] ? '<URL>?topic=' . $topic . '.' . ($_REQUEST['start'] - $context['messages_per_page']) : '',
 		'next' => $_REQUEST['start'] + $context['messages_per_page'] < $context['total_visible_posts'] ? '<URL>?topic=' . $topic. '.' . ($_REQUEST['start'] + $context['messages_per_page']) : '',
@@ -453,17 +427,10 @@ function Display()
 	if ($can_show_all)
 	{
 		if (isset($_REQUEST['all']))
-		{
-			// No limit! (actually, there is a limit, but...)
-			$context['messages_per_page'] = -1;
-			$context['page_index'] .= '[<strong>' . $txt['all_pages'] . '</strong>] ';
-
-			// Set start back to 0...
-			$_REQUEST['start'] = 0;
-		}
+			$context['page_index'] = str_replace('[<strong>1</strong>]', '[<strong>' . $txt['all_pages'] . '</strong>]', $context['page_index']);
 		// They aren't using it, but the *option* is there, at least.
 		else
-			$context['page_index'] .= '&nbsp;<a href="' . $scripturl . '?topic=' . $topic . '.0;all">' . $txt['all_pages'] . '</a> ';
+			$context['page_index'] .= '<a href="' . $scripturl . '?topic=' . $topic . '.0;all">' . $txt['all_pages'] . '</a>';
 	}
 
 	// Build the link tree.
@@ -482,7 +449,7 @@ function Display()
 			$context['link_moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
 	}
 
-	// Show it at the page foot too.
+	// Show linktree at the page foot too.
 	$context['bottom_linktree'] = true;
 
 	// Information about the current topic...
@@ -704,37 +671,41 @@ function Display()
 
 	// Calculate the fastest way to get the messages!
 	$ascending = empty($options['view_newest_first']);
-	$start = $_REQUEST['start'] + ($board_info['type'] != 'board' ? 1 : 0);
+	$start = $_REQUEST['start'] + ($ascending && $board_info['type'] != 'board' ? 1 : 0);
 	$limit = $context['messages_per_page'];
-	if ($_REQUEST['start'] >= $context['total_visible_posts'] / 2 && $context['messages_per_page'] != -1)
+
+	/* The following code is buggy. I'm leaving it here, but commented out for now. Can't even see notable performance improvements...
+
+	if ($start >= $context['total_visible_posts'] / 2 && $context['messages_per_page'] != -1)
 	{
 		$ascending = !$ascending;
-		$limit = $context['total_visible_posts'] <= $_REQUEST['start'] + $limit ? $context['total_visible_posts'] - $_REQUEST['start'] : $limit;
-		$start = $context['total_visible_posts'] <= $_REQUEST['start'] + $limit ? 0 : $context['total_visible_posts'] - $_REQUEST['start'] - $limit;
+		$limit = min($context['total_visible_posts'] - $_REQUEST['start'], $limit);
+		$start = max($context['total_visible_posts'] - $_REQUEST['start'] - $limit, $ascending && $board_info['type'] != 'board' ? 1 : 0);
 	}
+	*/
 
 	// Find out if there is a double post...
 	$context['last_user_id'] = 0;
 	$context['last_msg_id'] = 0;
 
-	if ($_REQUEST['start'] != 0 && $context['messages_per_page'] != -1)
+	if ($start > 0 && $context['messages_per_page'] != -1)
 	{
 		$request = wesql::query('
 			SELECT id_member, id_msg, body, poster_email
 			FROM {db_prefix}messages
 			WHERE id_topic = {int:id_topic}
-			ORDER BY id_msg
+			ORDER BY id_msg' . ($ascending ? '' : ' DESC') . '
 			LIMIT {int:postbefore}, 1',
 			array(
 				'id_topic' => $topic,
-				'postbefore' => $_REQUEST['start'] - $including_first,
+				'postbefore' => $start - 1,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
 		{
 			if (!empty($row['id_member']))
 				$context['last_user_id'] = $row['id_member'];
-			// If you're the admin, you can merge guest posts
+			// If you have moderation rights, you can merge guest posts.
 			elseif (allowedTo('modify_any'))
 				$context['last_user_id'] = $row['poster_email'];
 			if (!empty($row['id_msg']))
@@ -991,16 +962,12 @@ function Display()
 			)
 		);
 
-		// Go to the last message if the given time is beyond the time of the last message.
-		if (isset($context['start_from']) && $context['start_from'] >= $context['total_visible_posts'])
-			$context['start_from'] = $context['total_visible_posts'] - 1;
-
 		// Since the anchor information is needed on the top of the page we load these variables beforehand.
-		$context['first_message'] = min($messages);
+		$context['first_message'] = empty($options['view_newest_first']) || $board_info['type'] != 'board' ? min($messages) : max($messages);
 		if (empty($options['view_newest_first']))
-			$context['first_new_message'] = isset($context['start_from']) && $including_first && $_REQUEST['start'] == $context['start_from'];
+			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['start_from'];
 		else
-			$context['first_new_message'] = isset($context['start_from']) && $including_first && $_REQUEST['start'] == $context['total_visible_posts'] - 1 - $context['start_from'];
+			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['total_visible_posts'] - 1 - $context['start_from'];
 	}
 	else
 	{
@@ -1252,11 +1219,9 @@ function prepareDisplayContext($reset = false)
 	if ($messages_request == false)
 		return false;
 
-	$excluding_first = $topicinfo['approved'] && $board_info['type'] == 'board' ? 0 : (empty($options['view_newest_first']) ? 1 : -1);
-
 	// Remember which message this is, e.g. reply #83.
 	if ($counter === null || $reset)
-		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
+		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'] + ($board_info['type'] == 'board' ? -1 : 1);
 
 	// Start from the beginning...
 	if ($reset)
@@ -1369,7 +1334,7 @@ function prepareDisplayContext($reset = false)
 		'body' => $message['body'],
 		'new' => empty($message['is_read']) && !$is_new,
 		'approved' => $message['approved'],
-		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter - $excluding_first,
+		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
 		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
