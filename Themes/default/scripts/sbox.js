@@ -95,10 +95,17 @@
 				.addClass('sb')
 				.before($sb);
 
+			$dd.find('.details').hide();
+			$items.width($items.width());
+			$dd.find('.details').show();
+
 			// The 'apply' call below will return the widest width from a list of elements.
-			// Note: add .details to the list to ensure they're as long as possible. Not sure if this is best though...
 			if (fixed && $items.not('.disabled').length)
-				$sb.width(Math.max.apply(0, $dd.find('.text,.optgroup').map(function () { return $(this).outerWidth(true); }).get()) + extraWidth($display) + extraWidth($('.text', $display)));
+			{
+				// So... I'm hardcoding button margins. Sue me.
+				$sb.width($items.width() + $('.btn', $display).outerWidth() + 2);
+				$items.width($sb.width());
+			}
 
 			// Hide the dropdown now that it's initialized
 			$dd.hide();
@@ -242,11 +249,6 @@
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
 
-		extraWidth = function ($dom)
-		{
-			return $dom.outerWidth(true) - $dom.width();
-		},
-
 		// Show, reposition, and reset dropdown markup.
 		openSB = function (instantOpen, doFocus)
 		{
@@ -258,7 +260,7 @@
 
 			// Modify dropdown css for getting values
 			$dd.stop(true, true).show().css({ visibility: 'hidden' })
-				.width(Math.max($dd.width(), $display.outerWidth() - extraWidth($dd) + 1));
+				.width(Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) - $dd.width() + 1));
 
 			var
 				// Figure out if we should show above/below the display box, first by calculating the free space around it.

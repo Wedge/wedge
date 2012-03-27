@@ -730,7 +730,7 @@ function template_show_settings()
 				elseif ($config_var['type'] == 'select')
 				{
 					echo '
-						<select name="', $config_var['name'], '" id="', $config_var['name'], '" ', $javascript, $disabled, '>';
+						<select name="', $config_var['name'], '" id="', $config_var['name'], '"', $javascript, $disabled, '>';
 					foreach ($config_var['data'] as $option)
 						echo '
 							<option value="', $option[0], '"', $option[0] == $config_var['value'] ? ' selected' : '', '>', $option[1], '</option>';
@@ -759,7 +759,7 @@ function template_show_settings()
 				// Text area?
 				elseif ($config_var['type'] == 'large_text')
 					echo '
-						<textarea rows="', $config_var['size'] ? $config_var['size'] : 4, '" cols="30" ', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '">', $config_var['value'], '</textarea>';
+						<textarea rows="', $config_var['size'] ? $config_var['size'] : 4, '" cols="30"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '">', $config_var['value'], '</textarea>';
 				// Email address?
 				elseif ($config_var['type'] == 'email')
 					echo '
