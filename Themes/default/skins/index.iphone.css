@@ -47,3 +47,20 @@
 .smalltext
 	font-size: .6em
 	line-height: 1.2em
+
+// The thought list should give more space to thoughts themselves.
+.bc, .bc2
+	white-space: normal
+
+@remove .thought_actions
+	position: absolute
+
+@remove .thought_actions
+	opacity: 0
+
+.thought_actions
+	display: none
+
+table.thought_list td:hover
+	.thought_actions
+		display: inline

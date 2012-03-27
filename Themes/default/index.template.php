@@ -799,7 +799,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 	{
 		// If we're in a topic page, and later pages have unread posts, show a New notification after the Next link!
 		if (!empty($options['view_newest_first']) && !empty($topicinfo['new_from']) && $topicinfo['new_from'] <= $topicinfo['id_last_msg'])
-			$pageindex .= ' <div class="note next_page">' . $txt['new_short'] . '</div>';
+			$pageindex .= '<div class="note next_page">' . $txt['new_short'] . '</div> ';
 
 		$pageindex .= sprintf($base_link, $start - $num_per_page, $txt['previous_next_back']);
 	}
@@ -862,7 +862,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 
 		// If we're in a topic page, and later pages have unread posts, show a New notification after the Next link!
 		if (empty($options['view_newest_first']) && !empty($topicinfo['new_from']) && $topicinfo['new_from'] <= $topicinfo['id_last_msg'])
-			$pageindex .= ' <div class="note next_page">' . $txt['new_short'] . '</div>';
+			$pageindex .= ' <div class="note next_page">' . $txt['new_short'] . '</div> ';
 	}
 
 	return $pageindex;
