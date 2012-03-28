@@ -1107,7 +1107,7 @@ function checkUserBehavior()
 
 			foreach ($context['http_headers'] as $k => $v)
 				if ($k != 'User-Agent')
-					$headers .= ($headers != '' ? '<br>' : '') . htmlspecialchars($k . '=' . $v);
+					$headers .= ($headers != '' ? '<br>' : '') . htmlspecialchars($k . '=' . ($k != 'X-Forwarded-For' ? $v : format_ip($v)));
 
 			$entity = htmlspecialchars(implode("\n", $_POST));
 			foreach ($_POST as $k => $v)

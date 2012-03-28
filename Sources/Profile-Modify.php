@@ -571,7 +571,7 @@ function loadProfileFields($force_reload = false)
 				);
 
 				$context[\'member\'][\'time_format\'] = $cur_profile[\'time_format\'];
-				$context[\'current_forum_time\'] = timeformat(time() - $user_info[\'time_offset\'] * 3600, false);
+				$context[\'current_forum_time\'] = timeformat(time() - $user_info[\'time_offset\'] * 3600 + date_offset_get(), false);
 				$context[\'current_forum_time_js\'] = time() + $settings[\'time_offset\'] * 3600;
 				$context[\'current_forum_time_hour\'] = (int) strftime(\'%H\', forum_time(false));
 				return true;
