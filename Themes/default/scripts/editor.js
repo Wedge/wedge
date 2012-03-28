@@ -655,10 +655,7 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 	if (oSelectProperties[1] == 'sel_face')
 	{
 		if (!this.bRichTextEnabled)
-		{
-			sValue = sValue.replace(/"/, '');
-			this.surroundText('[font=' + sValue + ']', '[/font]');
-		}
+			this.surroundText('[font=' + sValue.replace(/"/, '') + ']', '[/font]');
 		else // WYSIWYG
 			this.we_execCommand('fontname', false, sValue);
 	}
@@ -678,6 +675,9 @@ weEditor.prototype.handleSelectChange = function (oSelectProperties)
 		else // WYSIWYG
 			this.we_execCommand('forecolor', false, sValue);
 	}
+
+	if (!this.bRichTextEnabled)
+		sel.attr('selectedIndex', 0).sb();
 
 	this.updateEditorControls();
 

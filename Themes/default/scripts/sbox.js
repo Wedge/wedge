@@ -95,17 +95,9 @@
 				.addClass('sb')
 				.before($sb);
 
-			$dd.find('.details').hide();
-			$items.width($items.width());
-			$dd.find('.details').show();
-
 			// The 'apply' call below will return the widest width from a list of elements.
 			if (fixed && $items.not('.disabled').length)
-			{
-				// So... I'm hardcoding button margins. Sue me.
-				$sb.width($items.width() + $('.btn', $display).outerWidth() + 2);
-				$items.width($sb.width());
-			}
+				$sb.width($dd.width() + $('.btn', $display).outerWidth() + 2); // So... I'm hardcoding button margins. Sue me.
 
 			// Hide the dropdown now that it's initialized
 			$dd.hide();
@@ -258,9 +250,11 @@
 			// we'll also actually simulate the focus to trigger any related events.
 			doFocus ? $orig.triggerHandler('focus') : focusSB();
 
-			// Modify dropdown css for getting values
-			$dd.stop(true, true).show().css({ visibility: 'hidden' })
-				.width(Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) - $dd.width() + 1));
+			// Stop dropdown animation (if any), and hack into its visibility to get its (.details-free) width.
+			$dd.stop(true, true).show().css({ visibility: 'hidden' }).find('.details').toggle();
+
+			// Set dropdown width to at least the display area's width.
+			$dd.width(Math.max($dd.width(), $display.outerWidth() - $dd.outerWidth(true) - $dd.width() + 1)).find('.details').toggle();
 
 			var
 				// Figure out if we should show above/below the display box, first by calculating the free space around it.
