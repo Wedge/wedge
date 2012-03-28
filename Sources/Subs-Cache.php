@@ -136,7 +136,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  */
 function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $pluginsdir, $cachedir, $boardurl, $footer_coding;
+	global $context, $pluginsdir, $cachedir, $boardurl, $settings, $footer_coding;
 	static $done_files = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
