@@ -182,7 +182,7 @@ function Thought()
 	}
 
 	// Overwrite previous thought if it's just an edit.
-	if (!empty($last_thought) && (allowedTo('moderate') || $last_member === $user_info['id']))
+	if (!empty($last_thought) && (allowedTo('moderate_forum') || $last_member === $user_info['id']))
 	{
 		similar_text($last_text, $text, $percent);
 
