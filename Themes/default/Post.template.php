@@ -328,7 +328,7 @@ function template_postform_after()
 	{
 		array_walk($field_items, 'JavaScriptEscape');
 		add_js('
-		var ', $field_type, 'Fields = [' . implode(',', $field_items) . '];');
+		var ', $field_type, 'Fields = ["' . implode('","', $field_items) . '"];');
 	}
 	add_js('
 		var x = [];

@@ -17,7 +17,7 @@ function template_main()
 
 	echo '
 	<we:cat>
-		Welcome! Wedge is the next generation of free forum software.
+		Welcome to Wedge, the upcoming computer-aided community builder.
 	</we:cat>';
 
 	if (empty($context['skin_options']['mobile']))
@@ -43,7 +43,7 @@ function template_main()
 		<table class="homeposts w100 cs0">';
 
 	loadSource('../SSI');
-	$naoboards = ssi_recentTopics($n, null, null, 'naos', false, 0);
+	$naoboards = ssi_recentTopicTitles($n, null, null, 'naos');
 
 	$new_stuff = array();
 	if (!$user_info['is_guest'])

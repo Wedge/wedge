@@ -248,6 +248,7 @@ img.new_posts
 .postheader extends .flow_hidden
 	width: 100%
 	display: table
+	table-layout: fixed
 	padding: 10px 0 6px
 	h5
 		overflow: hidden
@@ -585,7 +586,7 @@ dl.send_mail
 	dt
 		width: 35%
 	dd
-		width: 64%
+		width: 63%
 
 /* Styles for the report topic section.
 ---------------------------------------------------- */

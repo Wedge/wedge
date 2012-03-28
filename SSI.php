@@ -403,7 +403,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 }
 
 // Recent topic list: [Board] | Subject by | Poster | Date
-function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo')
+function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $just_titles = false)
 {
 	global $context, $settings, $theme, $scripturl, $txt, $db_prefix, $user_info;
 
@@ -462,7 +462,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			t.id_topic, ml.poster_time, mf.subject, ml.id_member, ml.id_msg, t.num_replies, t.num_views,
 			IFNULL(mem.real_name, ml.poster_name) AS poster_name, ' . ($user_info['is_guest'] ? '1 AS is_read, 0 AS new_from' : '
 			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) >= ml.id_msg_modified AS is_read,
-			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from') . ', SUBSTRING(ml.body, 1, 384) AS body, ml.smileys_enabled, ml.icon
+			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from') . ($just_titles ? '' : ', SUBSTRING(ml.body, 1, 384) AS body') . ', ml.smileys_enabled, ml.icon
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 			INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
@@ -480,13 +480,17 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 	$posts = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br />' => '&#10;')));
-		if (westr::strlen($row['body']) > 128)
-			$row['body'] = westr::substr($row['body'], 0, 128) . '...';
+		if (!$just_titles)
+		{
+			$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br />' => '&#10;')));
+			if (westr::strlen($row['body']) > 128)
+				$row['body'] = westr::substr($row['body'], 0, 128) . '...';
+		}
 
 		// Censor the subject.
 		censorText($row['subject']);
-		censorText($row['body']);
+		if (!$just_titles)
+			censorText($row['body']);
 
 		if (!empty($settings['messageIconChecks_enable']) && !isset($icon_sources[$row['icon']]))
 			$icon_sources[$row['icon']] = file_exists($theme['theme_dir'] . '/images/post/' . $row['icon'] . '.gif') ? 'images_url' : 'default_images_url';
@@ -511,7 +515,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'replies' => $row['num_replies'],
 			'views' => $row['num_views'],
 			'short_subject' => shorten_subject($row['subject'], 25),
-			'preview' => $row['body'],
+			'preview' => $just_titles ? '' : $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row['id_msg'] : $row['new_from']) . ($row['is_read'] ? '' : ';topicseen') . '#new',
@@ -550,6 +554,12 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 
 	echo '
 		</table>';
+}
+
+// Shortcut to ssi_recentTopics() specifying that we don't want bodies to be parsed, because we won't be showing them.
+function ssi_recentTopicTitles($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo')
+{
+	return ssi_recentTopics($num_recent, $exclude_boards, $include_boards, $output_method, true);
 }
 
 // Show the top poster's name and profile link.
