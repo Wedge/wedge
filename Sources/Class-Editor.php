@@ -2214,7 +2214,7 @@ class wedit
 		wesql::free_result($result);
 		$is_block['nb'] = 1;
 
-		preg_match_all('~\[(/)?(' . implode('|', array_keys($is_block)) . ')[^]]*]~', $text, $bbcs, PREG_SET_ORDER);
+		preg_match_all('~\[(/)?(' . implode('|', array_keys($is_block)) . ')\b[^]]*]~', $text, $bbcs, PREG_SET_ORDER);
 		$bbcs = unserialize(strtolower(serialize($bbcs)));
 		$restart = true;
 		$last_safe = 0;

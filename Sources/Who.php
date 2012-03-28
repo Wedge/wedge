@@ -321,6 +321,9 @@ function determineActions($urls, $preferred_prefix = false)
 	$data = array();
 	foreach ($url_list as $k => $url)
 	{
+		// By default, unlisted or unknown action.
+		$data[$k] = $txt['who_unknown'];
+
 		// Get the request parameters..
 		$actions = @unserialize($url[0]);
 		if ($actions === false)
@@ -446,18 +449,13 @@ function determineActions($urls, $preferred_prefix = false)
 					$data[$k] = $txt['who_hidden'];
 				elseif ($ret[0] == 'direct')
 					$data[$k] = $ret[1];
+				// Viewing an item? We'll need to fetch up data...
 				else
-				{
-					// We'll need to fetch up data...
 					$mediaFetch[$ret[3]][$k] = array(
 						'id' => $ret[2],
 						'type' => $ret[1]
 					);
-				}
 			}
-			// Unlisted or unknown action.
-			else
-				$data[$k] = $txt['who_unknown'];
 
 			$data[$k] = str_replace('{forum_name}', $context['forum_name'], $data[$k]);
 		}
@@ -493,11 +491,9 @@ function determineActions($urls, $preferred_prefix = false)
 	}
 
 	if (!empty($mediaFetch))
-	{
 		foreach ($mediaFetch as $type => $array)
 			if ($dat = aeva_getFetchData($type, $array))
-				$data += $dat;
-	}
+				$data = array_merge($data, $dat);
 
 	// Load topic names.
 	if (!empty($topic_ids))
