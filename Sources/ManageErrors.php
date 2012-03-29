@@ -626,7 +626,7 @@ function updateErrorCount($count = 0)
 {
 	global $settings;
 
-	if (!empty($count))
+	if (empty($count))
 	{
 		$request = wesql::query('
 			SELECT COUNT(id_error) AS errors
