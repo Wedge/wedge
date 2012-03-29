@@ -680,7 +680,7 @@ function template_menu()
 		echo '
 		<li id="item_', $act, '"', $class ? ' class="' . ltrim($class) . '"' : '', '>
 			<span class="m_' . $act . '"></span>
-			<h4><a href="', $item['href'], '"', isset($item['target']) ? ' target="' . $item['target'] . '"' : '', '>',
+			<h4><a href="', $item['href'], '"', !empty($item['nofollow']) ? ' rel="nofollow"' : '', '>',
 			$item['title'], !empty($item['notice']) ? '<span class="note">' . $item['notice'] . '</span>' : '', '</a></h4>';
 
 		if (!empty($item['sub_items']))
@@ -697,7 +697,7 @@ function template_menu()
 					continue;
 				}
 				echo '
-				<li><a href="', $sub_item['href'], '"', isset($sub_item['target']) ? ' target="' . $sub_item['target'] . '"' : '', '>',
+				<li><a href="', $sub_item['href'], '">',
 				$sub_item['title'], !empty($sub_item['notice']) ? '<span class="note">' . $sub_item['notice'] . '</span>' : '', '</a>';
 
 				// 3rd-level menus
@@ -707,7 +707,7 @@ function template_menu()
 					<ul>';
 
 					foreach ($sub_item['sub_items'] as $subsub_item)
-						echo '<li><a href="', $subsub_item['href'], '"', isset($subsub_item['target']) ? ' target="' . $subsub_item['target'] . '"' : '', '>', $subsub_item['title'], '</a></li>';
+						echo '<li><a href="', $subsub_item['href'], '">', $subsub_item['title'], '</a></li>';
 
 					echo '</ul>
 				';

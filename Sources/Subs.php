@@ -2125,11 +2125,13 @@ function setupMenuContext()
 				'title' => $txt['login'],
 				'href' => $scripturl . '?action=login',
 				'show' => $user_info['is_guest'],
+				'nofollow' => !empty($user_info['possibly_robot']),
 			),
 			'register' => array(
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=register',
 				'show' => $user_info['is_guest'] && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
+				'nofollow' => !empty($user_info['possibly_robot']),
 			),
 			'logout' => array(
 				'title' => $txt['logout'],

@@ -52,6 +52,7 @@ function Register($reg_errors = array())
 	$context['require_agreement'] = !empty($settings['requireAgreement']);
 	$context['registration_passed_agreement'] = !empty($_SESSION['registration_agreed']);
 	$context['show_coppa'] = !empty($settings['coppaAge']);
+	$context['robot_no_index'] = true;
 
 	// Under age restrictions?
 	if ($context['show_coppa'])
