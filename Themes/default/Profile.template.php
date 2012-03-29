@@ -2564,20 +2564,48 @@ function template_profile_avatar_select()
 
 	// If the user can link to an off server avatar, show them a box to input the address. But don't put in the Gravatar email if it is currently that...
 	if (!empty($context['member']['avatar']['allow_external']))
+	{
 		echo '
 						<div id="avatar_external">
 							<div class="smalltext">', $txt['avatar_by_url'], '</div>
 							<br>
-							<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onchange="if (typeof previewExternalAvatar != \'undefined\') previewExternalAvatar(this.value);">
+							<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onchange="if (typeof previewExternalAvatar != \'undefined\') previewExternalAvatar(this.value);">';
+
+		if (!empty($settings['avatar_max_width_external']) && !empty($settings['avatar_max_height_external']))
+			echo '
+							<dfn>', sprintf($txt['avatar_resize_' . ($settings['avatar_action_too_large'] != 'option_refuse' ? 'warning' : 'forbid')], $settings['avatar_max_width_external'], $settings['avatar_max_height_external']), '</dfn>';
+		elseif (!empty($settings['avatar_max_width_external']))
+			echo '
+							<dfn>', sprintf($txt['avatar_resize_' . ($settings['avatar_action_too_large'] != 'option_refuse' ? 'warning' : 'forbid') . '_width'], $settings['avatar_max_width_external']), '</dfn>';
+		elseif (!empty($settings['avatar_max_height_external']))
+			echo '
+							<dfn>', sprintf($txt['avatar_resize_' . ($settings['avatar_action_too_large'] != 'option_refuse' ? 'warning' : 'forbid') . '_height'], $settings['avatar_max_height_external']), '</dfn>';
+
+		echo '
 						</div>';
+	}
 
 	// If the user is able to upload avatars to the server show them an upload box.
 	if (!empty($context['member']['avatar']['allow_upload']))
+	{
 		echo '
 						<div id="avatar_upload">
 							<input type="file" name="attachment">
-							', ($context['member']['avatar']['id_attach'] > 0 ? '<br><br><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '"><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '">' : ''), '
+							', ($context['member']['avatar']['id_attach'] > 0 ? '<br><br><img src="' . $context['member']['avatar']['href'] . (strpos($context['member']['avatar']['href'], '?') === false ? '?' : '&amp;') . 'time=' . time() . '"><input type="hidden" name="id_attach" value="' . $context['member']['avatar']['id_attach'] . '">' : '');
+
+		if (!empty($settings['avatar_max_width_upload']) && !empty($settings['avatar_max_height_upload']))
+			echo '
+							<dfn>', sprintf($txt['avatar_resize_' . (!empty($settings['avatar_resize_upload']) ? 'warning' : 'forbid')], $settings['avatar_max_width_upload'], $settings['avatar_max_height_upload']), '</dfn>';
+		elseif (!empty($settings['avatar_max_width_upload']))
+			echo '
+							<dfn>', sprintf($txt['avatar_resize_' . (!empty($settings['avatar_resize_upload']) ? 'warning' : 'forbid') . '_width'], $settings['avatar_max_width_upload']), '</dfn>';
+		elseif (!empty($settings['avatar_max_height_upload']))
+			echo '
+							<dfn>', sprintf($txt['avatar_resize_' . (!empty($settings['avatar_resize_upload']) ? 'warning' : 'forbid') . '_height'], $settings['avatar_max_height_upload']), '</dfn>';
+
+		echo '
 						</div>';
+	}
 
 	// Using a Gravatar? Well, maybe there is an option for you, maybe there isn't...
 	if (!empty($context['member']['avatar']['allow_gravatar']))
