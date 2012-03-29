@@ -282,6 +282,9 @@ function ViewErrorLog()
 	// Update the all errors tab with the total number of errors
 	$context['error_types']['all']['label'] .= ' (' . $sum . ')';
 
+	if ($settings['app_error_count'] != $sum)
+		updateErrorCount($sum);
+
 	// And this is pretty basic ;)
 	$context['page_title'] = $txt['errlog'];
 	$context['has_filter'] = isset($filter);
@@ -619,17 +622,22 @@ function deleteIntrusions()
 	redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
 }
 
-function updateErrorCount()
+function updateErrorCount($count = 0)
 {
 	global $settings;
 
-	$request = wesql::query('
-		SELECT COUNT(id_error) AS errors
-		FROM {db_prefix}log_errors',
-		array()
-	);
+	if (!empty($count))
+	{
+		$request = wesql::query('
+			SELECT COUNT(id_error) AS errors
+			FROM {db_prefix}log_errors',
+			array()
+		);
 
-	list ($count) = wesql::fetch_row($request);
+		list ($count) = wesql::fetch_row($request);
+		wesql::free_result($request);
+	}
+
 	updateSettings(
 		array(
 			'app_error_count' => $count,
