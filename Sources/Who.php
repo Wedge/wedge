@@ -321,9 +321,6 @@ function determineActions($urls, $preferred_prefix = false)
 	$data = array();
 	foreach ($url_list as $k => $url)
 	{
-		// By default, unlisted or unknown action.
-		$data[$k] = $txt['who_unknown'];
-
 		// Get the request parameters..
 		$actions = @unserialize($url[0]);
 		if ($actions === false)
@@ -332,6 +329,9 @@ function determineActions($urls, $preferred_prefix = false)
 		// If it's the admin or moderation center, and there is an area set, use that instead.
 		if (isset($actions['action'], $actions['area']) && ($actions['action'] == 'admin' || $actions['action'] == 'moderate'))
 			$actions['action'] = $actions['area'];
+
+		// By default, unlisted or unknown action.
+		$data[$k] = $txt['who_unknown'];
 
 		// Check if there was no action or the action is display.
 		if (!isset($actions['action']) || $actions['action'] == 'display')

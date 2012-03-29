@@ -144,7 +144,7 @@ function Thought()
 		$request = wesql::query('
 			SELECT id_thought, privacy, thought
 			FROM {db_prefix}thoughts
-			WHERE id_thought = {int:original_id}' . (allowedTo('moderate') ? '' : '
+			WHERE id_thought = {int:original_id}' . (allowedTo('moderate_forum') ? '' : '
 			AND id_member = {int:id_member}'),
 			array(
 				'id_member' => $user_info['id'],

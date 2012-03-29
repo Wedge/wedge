@@ -268,6 +268,7 @@ function template_edit_group()
 					</dd>
 					<dt>
 						<label for="star_count_input"><strong>', $txt['membergroups_star_count'], ':</strong></label>
+						<dfn>', $txt['membergroups_star_count_note'], '</dfn>
 					</dt>
 					<dd>
 						<input type="text" name="star_count" id="star_count_input" value="', $context['group']['star_count'], '" size="4" onkeyup="if (this.value.length > 2) this.value = 99;" onkeydown="this.onkeyup();" onchange="if (this.value != 0) this.form.star_image.onchange();">
@@ -297,8 +298,8 @@ function template_edit_group()
 						<dfn>' . $txt['membergroups_new_board_post_groups'] . '</dfn>' : '', '
 					</dt>
 					<dd>
-						<fieldset id="visible_boards" style="width: 95%">
-							<legend><a href="#" onclick="$(\'#visible_boards\').hide(); $(\'#visible_boards_link\').show(); return false;">', $txt['membergroups_new_board_desc'], '</a></legend>';
+						<fieldset id="visible_boards" class="hide" style="width: 95%">
+							<legend><a href="#" onclick="$(\'#visible_boards, #visible_boards_link\').toggle(); return false;">', $txt['membergroups_new_board_desc'], '</a></legend>';
 
 		foreach ($context['boards'] as $board)
 			echo '
@@ -308,12 +309,12 @@ function template_edit_group()
 							<br>
 							<label><input type="checkbox" id="checkall_check" onclick="invertAll(this, this.form, \'boardaccess\');"> <em>', $txt['check_all'], '</em></label>
 						</fieldset>
-						<a href="#" onclick="$(\'#visible_boards\').show(); $(\'#visible_boards_link\').hide(); return false;" id="visible_boards_link" class="hide">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
+						<a href="#" onclick="$(\'#visible_boards, #visible_boards_link\').toggle(); return false;" id="visible_boards_link" class="hide">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
 					</dd>';
 
-		add_js_inline('
-	document.getElementById("visible_boards_link").style.display = "";
-	document.getElementById("visible_boards").style.display = "none";');
+		add_js('
+	$("#visible_boards_link").show();
+	$("#visible_boards").hide();');
 	}
 
 	echo '
