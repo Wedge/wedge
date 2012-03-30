@@ -787,14 +787,9 @@ function modifyBoard($board_id, &$boardOptions)
 		if (empty($purl))
 			$purl = $boardOptions['board_name'];
 
-		// Generate a new one
+		// Generate a new one. If it's empty or a number, use b1234 (where id_board = 1234) as the new name.
 		$pretty_url = pretty_generate_url($purl, true, true);
-		$new_name = $dom . ($pretty_url != '' ? '/' . $pretty_url : '');
-
-		// Can't be a number
-		if (is_numeric($pretty_url))
-			// Add suffix '-bboard_id' to the pretty url
-			$new_name .= ($pretty_url != '' ? '-' : 'b') . $board_id;
+		$new_name = $dom . '/' . ($pretty_url !== '' && !is_numeric($pretty_url) ? $pretty_url : 'b' . $board_id);
 
 		// Can't be already in use
 		$in_use = is_already_taken($new_name, $board_id, $id_owner);
@@ -812,7 +807,7 @@ function modifyBoard($board_id, &$boardOptions)
 			));
 
 		// Mass-replace board name in cache
-		if (!empty($ex_name))
+		if (!empty($ex_name) && !preg_match('~^dummy[0-9]+$~', $ex_name))
 			wesql::query('
 				DELETE FROM {db_prefix}pretty_urls_cache
 				WHERE replacement LIKE \'http://' . $ex_name . '%\'');
@@ -868,7 +863,7 @@ function createBoard($boardOptions)
 	if (empty($board_id))
 		return 0;
 
-	if (!isset($boardOptions['pretty_url']))
+	if (empty($boardOptions['pretty_url']))
 		$boardOptions['pretty_url'] = $boardOptions['board_name'];
 
 	// Change the board according to the given specifications.

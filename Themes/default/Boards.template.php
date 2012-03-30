@@ -242,7 +242,7 @@ function template_boards_below()
 	if ($context['user']['is_logged'])
 	{
 		echo '
-	<div id="posting_icons" class="floatleft">';
+	<ul id="posting_icons" class="reset floatleft">';
 
 		// Mark read button.
 		$mark_read_button = array(
@@ -250,12 +250,10 @@ function template_boards_below()
 		);
 
 		echo '
-		<ul class="reset">
-			<li class="floatleft"><div class="mini_boardstate_on"></div> ', $txt['new_posts'], '</li>
-			<li class="floatleft"><div class="mini_boardstate_off"></div> ', $txt['old_posts'], '</li>
-			<li class="floatleft"><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
-		</ul>
-	</div>';
+		<li class="floatleft"><div class="mini_boardstate_on"></div> ', $txt['new_posts'], '</li>
+		<li class="floatleft"><div class="mini_boardstate_off"></div> ', $txt['old_posts'], '</li>
+		<li><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
+	</ul>';
 
 		// Show the mark all as read button?
 		if (!empty($context['categories']))
@@ -263,12 +261,10 @@ function template_boards_below()
 	}
 	else
 		echo '
-	<div id="posting_icons" class="flow_hidden">
-		<ul class="reset">
-			<li class="floatleft"><div class="mini_boardstate_off"></div> ', $txt['old_posts'], '</li>
-			<li class="floatleft"><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
-		</ul>
-	</div>';
+	<ul id="posting_icons" class="reset flow_hidden">
+		<li class="floatleft"><div class="mini_boardstate_off"></div> ', $txt['old_posts'], '</li>
+		<li><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
+	</ul>';
 }
 
 ?>

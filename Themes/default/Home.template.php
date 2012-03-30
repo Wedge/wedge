@@ -22,12 +22,14 @@ function template_main()
 
 	if (empty($context['skin_options']['mobile']))
 		echo '
-	<div class="windowbg2 wrc">
-		Built in PHP 5 upon the SMF platform by some of its top devs (see the <a href="/pub/faq/">FAQ</a> for more),
-		it allows you to create and maintain <strong>message boards</strong> with a modern twist. Blogs, HTML 5, CSS 3, jQuery, object
-		programming, UTF8, CSS pre-parsing, improved security, drafts, easier theming and modding, it\'s got it all.
-		Read the full <a href="/pub/feats/">feature list</a>. With its dozens of new features, including the exclusive
-		Aeva Media gallery system, it puts control back into your hands. <a href="/blog/">Stay tuned</a> for more&hellip;
+	<div class="windowbg2 wrc home-intro">
+		Built in PHP 5 upon the SMF platform by some of its top devs (see the <a href="/pub/faq/">FAQ</a> for more) for several years,
+		Wedge allows you to create and maintain <b>message boards</b> with a modern twist. Blogs, HTML 5, CSS 3, jQuery, object
+		programming, UTF8, CSS pre-parsing, improved security, drafts, easier theming and modding? Will do! We think that once it\'s
+		released, you\'ll agree that Wedge is the <strong>best free forum software</strong> available.
+		Read the full <a href="/pub/feats/">feature list</a>. With dozens of new features, including the exclusive Aeva Media gallery system,
+		Wedge puts control back into your hands. When is it coming out? When it\'s ready.
+		<a href="/blog/">Stay tuned</a> and subscribe to our blog\'s <a href="http://wedge.org/blog/?action=feed;sa=news">RSS feed</a> to make sure not to miss it!
 	</div>';
 
 	$n = isset($_REQUEST['n']) ? (int) $_REQUEST['n'] : 5;
@@ -43,7 +45,7 @@ function template_main()
 		<table class="homeposts w100 cs0">';
 
 	loadSource('../SSI');
-	$naoboards = ssi_recentTopicTitles($n, null, null, 'naos');
+	$naoboards = ssi_recentTopicTitles($n, $user_info['is_admin'] ? null : array(136), null, 'naos');
 
 	$new_stuff = array();
 	if (!$user_info['is_guest'])

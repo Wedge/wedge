@@ -98,9 +98,9 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 
 	// If this is a board name, then only [a-z0-9] and hyphens are allowed -- standard host name policy.
 	if ($is_board)
-		$text = rtrim(preg_replace('~[^/a-z0-9-]~', '-', $text), "\x00..x20/");
+		$text = trim(preg_replace('~[^/a-z0-9-]~', '-', $text), '/-');
 
-	return preg_replace(array('~^-+|-+$~', '~-+~'), array('', '-'), $text);
+	return trim(preg_replace('~-+~', '-', $text), '-');
 }
 
 function entity_replace($string)

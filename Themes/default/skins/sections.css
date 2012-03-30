@@ -36,19 +36,16 @@ p.moderators
 
 // The posting icons
 #posting_icons
-	padding: 0 1em .5em
-	margin: 0 0 1em
+	margin: 0
+	padding: 0 1em 1.5em
 	line-height: 1em
-	ul
-		font-size: .8em
+	font-size: .9em
 	img
 		vertical-align: -5px
 		padding: 0 2px 0 10px
 
 .mark_read
 	padding: 0 .5em
-	.buttonlist
-		padding-top: 0
 
 // The newsfader
 #fadeScroller
