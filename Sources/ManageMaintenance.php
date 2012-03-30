@@ -204,9 +204,22 @@ function MaintainDatabase()
 }
 
 // Supporting function for the routine maintenance area.
-function MaintainRoutine()
+function MaintainRoutine($return_value = false)
 {
 	global $context, $txt;
+
+	$context['maintenance_tasks'] = array(
+		'maintain_version' => array($txt['maintain_version'], $txt['maintain_version_info'], 'action=admin;area=maintain;sa=routine;activity=version'),
+		'maintain_errors' => array($txt['maintain_errors'], $txt['maintain_errors_info'], 'action=admin;area=repairboards'),
+		'maintain_recount' => array($txt['maintain_recount'], $txt['maintain_recount_info'], 'action=admin;area=maintain;sa=routine;activity=recount'),
+		'maintain_logs' => array($txt['maintain_logs'], $txt['maintain_logs_info'], 'action=admin;area=maintain;sa=routine;activity=logs'),
+		'maintain_cache' => array($txt['maintain_cache'], $txt['maintain_cache_info'], 'action=admin;area=maintain;sa=routine;activity=cleancache'),
+	);
+
+	call_hook('maintenance_routine', array(&$return_value));
+
+	if ($return_value)
+		return $context['maintenance_tasks'];
 
 	if (isset($_GET['done']) && $_GET['done'] == 'recount')
 		$context['maintenance_finished'] = $txt['maintain_recount'];

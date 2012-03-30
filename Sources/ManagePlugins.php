@@ -1691,6 +1691,7 @@ function knownHooks()
 			'repair_errors_finished',
 			'theme_settings',
 			'member_prefs',
+			'maintenance_routine',
 			// User related
 			'login',
 			'validate_login',

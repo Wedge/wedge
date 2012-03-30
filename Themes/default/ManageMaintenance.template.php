@@ -55,57 +55,26 @@ function template_maintain_routine()
 
 	// Starts off with general maintenance procedures.
 	echo '
-	<div id="manage_maintenance">
+	<div id="manage_maintenance">';
+
+	$use_bg2 = false;
+	foreach ($context['maintenance_tasks'] as $id => $task)
+	{
+		echo '
 		<we:title>
-			', $txt['maintain_version'], '
+			', $task[0], '
 		</we:title>
-		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=version" method="post" accept-charset="UTF-8">
-				<p>', $txt['maintain_version_info'], '</p>
+		<div class="windowbg', $use_bg2 ? '2' : '', ' wrc" id="', $id, '">
+			<form action="', $scripturl, '?', $task[2], '" method="post" accept-charset="UTF-8">
+				<p>', $task[1], '</p>
 				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
-		</div>
-		<we:title>
-			', $txt['maintain_errors'], '
-		</we:title>
-		<div class="windowbg2 wrc">
-			<form action="', $scripturl, '?action=admin;area=repairboards" method="post" accept-charset="UTF-8">
-				<p>', $txt['maintain_errors_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</form>
-		</div>
-		<we:title>
-			', $txt['maintain_recount'], '
-		</we:title>
-		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" method="post" accept-charset="UTF-8">
-				<p>', $txt['maintain_recount_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</form>
-		</div>
-		<we:title>
-			', $txt['maintain_logs'], '
-		</we:title>
-		<div class="windowbg2 wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=logs" method="post" accept-charset="UTF-8">
-				<p>', $txt['maintain_logs_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</form>
-		</div>
-		<we:title>
-			', $txt['maintain_cache'], '
-		</we:title>
-		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=cleancache" method="post" accept-charset="UTF-8">
-				<p>', $txt['maintain_cache_info'], '</p>
-				<span><input type="submit" value="', $txt['maintain_run_now'], '"></span>
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			</form>
-		</div>
+		</div>';
+		$use_bg2 = !$use_bg2;
+	}
+
+	echo '
 	</div>
 	<br class="clear">';
 }

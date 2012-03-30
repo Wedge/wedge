@@ -858,13 +858,13 @@ function AdminSearchInternal()
 	// Load a lot of language files.
 	$language_files = array(
 		'Help', 'ManageMail', 'ManageSettings', 'ManageBoards', 'ManagePaid', 'ManagePermissions', 'Search',
-		'Login', 'ManageSmileys',
+		'Login', 'ManageSmileys', 'ManageMaintenance',
 	);
 	loadLanguage(implode('+', $language_files));
 
 	// All the files we need to include.
 	$include_files = array(
-		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManageMemberOptions', 'ManagePaid',
+		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManageMemberOptions', 'ManagePaid', 'ManageMaintenance',
 		'ManagePermissions', 'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys',
 	);
 	loadSource($include_files);
@@ -884,6 +884,8 @@ function AdminSearchInternal()
 			array('CAPTCHA', 'area=antispam'),
 		),
 		'preferences' => array(
+		),
+		'tasks' => array(
 		),
 	);
 
@@ -939,6 +941,9 @@ function AdminSearchInternal()
 		'preferences' => array(
 			array('ModifyMemberPreferences', 'area=memberoptions;sa=prefs'),
 		),
+		'tasks' => array(
+			array('MaintainRoutine', 'area=maintain'),
+		),
 	);
 
 	if (!empty($settings['plugins_admin']))
@@ -956,35 +961,49 @@ function AdminSearchInternal()
 	call_hook('admin_search', array(&$search));
 
 	foreach ($search as $setting_type => $search_places)
-		foreach ($search_places as $setting_area)
-		{
-			// Get a list of their variables.
-			if (isset($setting_area[2]))
-				$config_vars = $setting_area[0](true, $setting_area[2]);
-			else
-				$config_vars = $setting_area[0](true);
+	{
+		if ($setting_type == 'tasks')
+			foreach ($search_places as $setting_area)
+			{
+				$tasks = $setting_area[0](true);
+				foreach ($tasks as $id => $task)
+					$search_data[$setting_type][] = array($id, $setting_area[1]);
+			}
+		else
+			foreach ($search_places as $setting_area)
+			{
+				// Get a list of their variables.
+				if (isset($setting_area[2]))
+					$config_vars = $setting_area[0](true, $setting_area[2]);
+				else
+					$config_vars = $setting_area[0](true);
 
-			foreach ($config_vars as $var)
-				if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning')))
-				{
-					// Using the construction of prepareServerSettingsContext?
-					if (isset($var[2]) && in_array($var[2], array('file', 'db')))
+				foreach ($config_vars as $var)
+					if (!empty($var[1]) && !in_array($var[0], array('permissions', 'switch', 'desc', 'warning')))
 					{
-						$item = array($var[0], $setting_area[1]);
-						if (isset($var[5], $helptxt[$var[5]]))
-							$item[2] = $var[5];
-						$search_data[$setting_type][] = $item;
+						// Using the construction of prepareServerSettingsContext?
+						if (isset($var[2]) && in_array($var[2], array('file', 'db')))
+						{
+							$item = array($var[0], $setting_area[1]);
+							if (isset($var[5], $helptxt[$var[5]]))
+								$item[2] = $var[5];
+							$search_data[$setting_type][] = $item;
+						}
+						// Then it's prepareDBSettingsContext style.
+						else
+						{
+							$item = array($var[1], $setting_area[1]);
+							if (isset($var['help'], $helptxt[$var['help']]))
+								$item[2] = $var['help'];
+							$search_data[$setting_type][] = $item;
+						}
 					}
-					// Then it's prepareDBSettingsContext style.
-					else
-					{
-						$item = array($var[1], $setting_area[1]);
-						if (isset($var['help'], $helptxt[$var['help']]))
-							$item[2] = $var['help'];
-						$search_data[$setting_type][] = $item;
-					}
-				}
-		}
+			}
+	}
+
+	$temp = $search_data;
+	unset($temp['settings'], $temp['sections']);
+	trigger_error(print_r($temp, true));
 
 	$context['page_title'] = $txt['admin_search_results'];
 	$context['search_results'] = array();
