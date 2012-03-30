@@ -355,6 +355,9 @@ function ob_sessrewrite($buffer)
 	// And a second replacement, in case macros added <URL> again.
 	$buffer = str_replace('<URL>', $scripturl, $buffer);
 
+	if (isset($context['ob_replacements']))
+		$buffer = str_replace(array_keys($context['ob_replacements']), array_values($context['ob_replacements']), $buffer);
+
 	// Load cached membergroup colors.
 	if (($member_colors = cache_get_data('member-colors', 5000)) === null)
 	{
@@ -623,6 +626,15 @@ function pretty_scripts_restore($match)
 	global $context;
 
 	return $context['pretty']['scripts'][(int) $match[1]];
+}
+
+// A helper function for plugins to easily add simple output buffer replacements.
+function add_replacement($from, $to)
+{
+	global $context;
+	if (!isset($context['ob_replacements']))
+		$context['ob_replacements'] = array();
+	$context['ob_replacements'][$from] = $to;
 }
 
 /**

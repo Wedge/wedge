@@ -670,7 +670,7 @@ function MessageFolder()
 	// This is kinda simple!
 	else
 	{
-		// !!! SLOW This query uses a filesort. (inbox only.)
+		// !!! SLOW This query uses a filesort. (Inbox only.)
 		$request = wesql::query('
 			SELECT pm.id_pm, pm.id_pm_head, pm.id_member_from
 			FROM {db_prefix}personal_messages AS pm' . ($context['folder'] == 'sent' ? '' . ($context['sort_by'] == 'name' ? '
@@ -817,11 +817,9 @@ function MessageFolder()
 
 		// Make sure we don't load unnecessary data.
 		if ($context['display_mode'] == 1)
-		{
 			foreach ($posters as $k => $v)
 				if (!in_array($k, $display_pms))
 					unset($posters[$k]);
-		}
 
 		// Load any users....
 		$posters = array_unique($posters);
@@ -836,7 +834,7 @@ function MessageFolder()
 			foreach (array_reverse($pms) as $pm)
 				$orderBy[] = 'pm.id_pm = ' . $pm;
 
-			// Seperate query for these bits!
+			// Separate query for these bits!
 			$subjects_request = wesql::query('
 				SELECT pm.id_pm, pm.subject, pm.id_member_from, pm.msgtime, IFNULL(mem.real_name, pm.from_name) AS from_name,
 					IFNULL(mem.id_member, 0) AS not_guest
@@ -871,7 +869,10 @@ function MessageFolder()
 		$messages_request = false;
 
 	$context['can_send_pm'] = allowedTo('pm_send');
-	$context['page_title'] = $txt['pm_inbox'];
+	if ($context['display_mode'] == 0)
+		$context['page_title'] = $txt['pm_inbox'];
+	else
+		$context['page_title'] = '@replace:pm_convo@';
 
 	wetem::load('folder');
 
@@ -894,18 +895,17 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	global $user_info, $subjects_request;
 
 	// Count the current message number....
-	static $counter = null;
+	static $counter = null, $last_subject = '', $temp_pm_selected = null;
 	if ($counter === null || $reset)
 		$counter = $context['start'];
 
-	static $temp_pm_selected = null;
 	if ($temp_pm_selected === null)
 	{
 		$temp_pm_selected = isset($_SESSION['pm_selected']) ? $_SESSION['pm_selected'] : array();
 		$_SESSION['pm_selected'] = array();
 	}
 
-	// If we're in non-boring view do something exciting!
+	// Is this for the inbox list of subjects?
 	if ($context['display_mode'] != 0 && $subjects_request && $type == 'subject')
 	{
 		$subject = wesql::fetch_assoc($subjects_request);
@@ -944,7 +944,11 @@ function prepareMessageContext($type = 'subject', $reset = false)
 
 	// Bail if it's false, ie. no messages.
 	if ($messages_request == false)
+	{
+		if ($context['display_mode'] != 0)
+			add_replacement('@replace:pm_convo@', $txt['conversation']);
 		return false;
+	}
 
 	// Reset the data?
 	if ($reset == true)
@@ -957,6 +961,8 @@ function prepareMessageContext($type = 'subject', $reset = false)
 		if ($type != 'subject')
 			wesql::free_result($messages_request);
 
+		if ($context['display_mode'] != 0)
+			add_replacement('@replace:pm_convo@', $txt['conversation'] . ' - ' . $last_subject);
 		return false;
 	}
 
@@ -984,6 +990,8 @@ function prepareMessageContext($type = 'subject', $reset = false)
 	// Censor all the important text...
 	censorText($message['body']);
 	censorText($message['subject']);
+	if (!empty($message['subject']))
+		$last_subject = $message['subject'];
 
 	// Run UBBC interpreter on the message.
 	$message['body'] = parse_bbc($message['body'], true, 'pm' . $message['id_pm']);
@@ -1864,7 +1872,7 @@ function MessagePost()
 	}
 
 	// Set the defaults...
-	$context['subject'] = $form_subject != '' ? $form_subject : $txt['no_subject'];
+	$context['subject'] = $form_subject;
 	$context['message'] = str_replace(array('"', '<', '>', '&nbsp;'), array('&quot;', '&lt;', '&gt;', ' '), $form_message);
 	$context['post_error'] = array();
 	$context['copy_to_outbox'] = !empty($options['copy_to_outbox']);
