@@ -1073,7 +1073,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.posts, mem.last_login, mem.media_items, mem.media_comments, mem.member_ip, mem.member_ip2,
 			mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list, mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from,
-			mem.time_offset, mem.time_format, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
+			mem.time_offset, mem.time_format, mem.timezone, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
 			mem.total_time_logged_in, mem.id_post_group, mem.notify_announcements, mem.notify_regularity, mem.notify_send_body, mem.warning,
 			mem.notify_types, lo.url, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank}) AS member_group,
 			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank}) AS post_group, mem.ignore_boards,

@@ -1001,10 +1001,6 @@ function AdminSearchInternal()
 			}
 	}
 
-	$temp = $search_data;
-	unset($temp['settings'], $temp['sections']);
-	trigger_error(print_r($temp, true));
-
 	$context['page_title'] = $txt['admin_search_results'];
 	$context['search_results'] = array();
 
