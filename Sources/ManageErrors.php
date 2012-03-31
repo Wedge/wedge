@@ -30,6 +30,9 @@ if (!defined('WEDGE'))
 		- attempts to TRUNCATE the table to reset the auto_increment.
 		- redirects back to the error log when done.
 
+	void ViewIntrusionLog()
+		- shows all intrusion attempts caught by the security code.
+
 	void ViewFile()
 		- will do php highlighting on the file specified in $_REQUEST['file']
 		- file must be readable
@@ -95,17 +98,17 @@ function ViewErrorLog()
 
 	// If this filter is empty...
 	if ($num_errors == 0 && isset($filter))
-		redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
+		redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['asc']) ? ';asc' : ''));
 
 	// Clean up start.
 	if (!isset($_GET['start']) || $_GET['start'] < 0)
 		$_GET['start'] = 0;
 
 	// Do we want to reverse error listing?
-	$context['sort_direction'] = isset($_REQUEST['desc']) ? 'down' : 'up';
+	$context['sort_direction'] = isset($_REQUEST['asc']) ? 'up' : 'down';
 
 	// Set the page listing up.
-	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Find and sort out the errors.
@@ -114,7 +117,7 @@ function ViewErrorLog()
 		FROM {db_prefix}log_errors AS le
 			LEFT JOIN {db_prefix}log_ips AS li ON (le.ip = li.id_ip)' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : '') . '
-		ORDER BY id_error ' . ($context['sort_direction'] == 'down' ? 'DESC' : '') . '
+		ORDER BY id_error' . ($context['sort_direction'] == 'down' ? ' DESC' : '') . '
 		LIMIT ' . $_GET['start'] . ', ' . $settings['defaultMaxMessages'],
 		array(
 			'filter' => isset($filter) ? $filter['value']['sql'] : '',
@@ -250,7 +253,7 @@ function ViewErrorLog()
 	$context['error_types']['all'] = array(
 		'label' => $txt['errortype_all'],
 		'description' => isset($txt['errortype_all_desc']) ? $txt['errortype_all_desc'] : '',
-		'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : ''),
+		'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : ''),
 		'is_selected' => empty($filter),
 	);
 
@@ -273,7 +276,7 @@ function ViewErrorLog()
 		$context['error_types'][$sum] = array(
 			'label' => (isset($txt['errortype_' . $row['error_type']]) ? $txt['errortype_' . $row['error_type']] : $row['error_type']) . ' (' . $row['num_errors'] . ')',
 			'description' => isset($txt['errortype_' . $row['error_type'] . '_desc']) ? $txt['errortype_' . $row['error_type'] . '_desc'] : '',
-			'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . ';filter=error_type;value=' . $row['error_type'],
+			'url' => $scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';filter=error_type;value=' . $row['error_type'],
 			'is_selected' => isset($filter) && $filter['value']['sql'] == wesql::escape_wildcard_string($row['error_type']),
 		);
 	}
@@ -332,12 +335,12 @@ function deleteErrors()
 		updateErrorCount();
 
 		// Go back to where we were.
-		redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['desc']) ? ';desc' : '') . ';start=' . $_GET['start'] . (isset($filter) ? ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'] : ''));
+		redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['asc']) ? ';asc' : '') . ';start=' . $_GET['start'] . (isset($filter) ? ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'] : ''));
 	}
 	updateErrorCount();
 
 	// Back to the error log!
-	redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
+	redirectexit('action=admin;area=logs;sa=errorlog' . (isset($_REQUEST['asc']) ? ';asc' : ''));
 }
 
 function ViewIntrusionLog()
@@ -392,17 +395,17 @@ function ViewIntrusionLog()
 
 	// If this filter is empty...
 	if ($num_errors == 0 && isset($filter))
-		redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
+		redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['asc']) ? ';asc' : ''));
 
 	// Clean up start.
 	if (!isset($_GET['start']) || $_GET['start'] < 0)
 		$_GET['start'] = 0;
 
 	// Do we want to reverse error listing?
-	$context['sort_direction'] = isset($_REQUEST['desc']) ? 'down' : 'up';
+	$context['sort_direction'] = isset($_REQUEST['asc']) ? 'up' : 'down';
 
 	// Set the page listing up.
-	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Find and sort out the errors.
@@ -411,7 +414,7 @@ function ViewIntrusionLog()
 		FROM {db_prefix}log_intrusion AS lt
 			LEFT JOIN {db_prefix}log_ips AS li ON (lt.ip = li.id_ip)' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : '') . '
-		ORDER BY id_event ' . ($context['sort_direction'] == 'down' ? 'DESC' : '') . '
+		ORDER BY id_event' . ($context['sort_direction'] == 'down' ? ' DESC' : '') . '
 		LIMIT ' . $_GET['start'] . ', ' . $settings['defaultMaxMessages'],
 		array(
 			'filter' => isset($filter) ? $filter['value']['sql'] : '',
@@ -537,7 +540,7 @@ function ViewIntrusionLog()
 
 	$context['error_types']['all'] = array(
 		'label' => $txt['errortype_all'],
-		'url' => $scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'down' ? ';desc' : ''),
+		'url' => $scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : ''),
 		'is_selected' => empty($filter),
 	);
 
@@ -559,7 +562,7 @@ function ViewIntrusionLog()
 
 		$context['error_types'][$sum] = array(
 			'label' => (isset($txt['behav_' . $row['error_type'] . '_log']) ? $txt['behav_' . $row['error_type'] . '_log'] : $row['error_type']) . ' (' . $row['num_errors'] . ')',
-			'url' => $scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'down' ? ';desc' : '') . ';filter=error_type;value=' . $row['error_type'],
+			'url' => $scripturl . '?action=admin;area=logs;sa=intrusionlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';filter=error_type;value=' . $row['error_type'],
 			'is_selected' => isset($filter) && $filter['value']['sql'] == wesql::escape_wildcard_string($row['error_type']),
 		);
 	}
@@ -614,12 +617,12 @@ function deleteIntrusions()
 		updateErrorCount();
 
 		// Go back to where we were.
-		redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['desc']) ? ';desc' : '') . ';start=' . $_GET['start'] . (isset($filter) ? ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'] : ''));
+		redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['asc']) ? ';asc' : '') . ';start=' . $_GET['start'] . (isset($filter) ? ';filter=' . $_GET['filter'] . ';value=' . $_GET['value'] : ''));
 	}
 	updateErrorCount();
 
 	// Back to the intrusion log!
-	redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['desc']) ? ';desc' : ''));
+	redirectexit('action=admin;area=logs;sa=intrusionlog' . (isset($_REQUEST['asc']) ? ';asc' : ''));
 }
 
 function updateErrorCount($count = 0)

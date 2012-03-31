@@ -559,7 +559,7 @@ function Admin()
 					'icon' => 'logs.gif',
 					'bigicon' => 'logs.png',
 					'subsections' => array(
-						'errorlog' => array($txt['log_error'], 'admin_forum', 'enabled' => !empty($settings['enableErrorLogging']), 'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc'),
+						'errorlog' => array($txt['log_error'], 'admin_forum', 'enabled' => !empty($settings['enableErrorLogging'])),
 						'intrusionlog' => array($txt['log_intrusion'], 'admin_forum'),
 						'',
 						'adminlog' => array($txt['log_admin'], 'admin_forum', 'enabled' => !empty($settings['log_enabled_admin'])),
@@ -1081,7 +1081,6 @@ function AdminLogs()
 		'description' => $txt['maintain_info'],
 		'tabs' => array(
 			'errorlog' => array(
-				'url' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
 				'description' => sprintf($txt['errlog_desc'], $txt['remove']),
 			),
 			'intrusionlog' => array(
