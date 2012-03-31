@@ -140,9 +140,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		$bbc_codes = array();
 	}
 
-	if (empty($parse_tags) && empty($context['uninstalling']))
+	if (empty($parse_tags))
 	{
-		if (stripos($message, '[media') !== false)
+		if (empty($disabled['media']) && stripos($message, '[media') !== false)
 		{
 			if (!function_exists('aeva_protect_bbc'))
 				loadSource('media/Subs-Media');
@@ -994,7 +994,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// Cleanup whitespace.
 	$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br>', '<br> ' => '<br>&nbsp;', '&#13;' => "\n"));
 
-	if (empty($parse_tags) && empty($context['uninstalling']))
+	if (empty($parse_tags))
 	{
 		// Do the actual embedding
 		if (!empty($has_link))
@@ -1004,7 +1004,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			aeva_parse_bbc2($message, $smileys, $cache_id);
 		}
 
-		if (function_exists('aeva_parse_bbc') && stripos($message, '[media') !== false)
+		if (function_exists('aeva_parse_bbc') && empty($disabled['media']) && stripos($message, '[media') !== false)
 			aeva_parse_bbc($message, $cache_id);
 	}
 
@@ -1045,17 +1045,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					$message .= '<foot:' . $feet . '>';
 			}
 
-			$message = preg_replace_callback('~(?:<foot:\d+>)+~', create_function('$match', '
-				global $addnote;
-				$msg = \'<table class="footnotes" style="width: 100%">\';
-				preg_match_all(\'~<foot:(\d+)>~\', $match[0], $mat);
-				foreach ($mat[1] as $note)
-				{
-					$n =& $addnote[$note];
-					$msg .= \'<tr><td class="footnum"><a id="footnote\' . $n[0] . \'" href="#footlink\' . $n[0] . \'">&nbsp;\' . $n[1] . \'.&nbsp;</a></td><td class="footnote">\'
-						 . (stripos($n[2], \'[nb]\', 1) === false ? $n[2] : parse_bbc($n[2])) . \'</td></tr>\';
-				}
-				return $msg . \'</table>\';'), $message);
+			$message = preg_replace_callback('~(?:<foot:\d+>)+~', 'parse_footnotes', $message);
 		}
 	}
 
@@ -1208,6 +1198,22 @@ function replace_smileys($match)
 		return $smileyPregReplace[$match[1]];
 	}
 	return '';
+}
+
+// The footnote parser. As the name says.
+function parse_footnotes($match)
+{
+	global $addnote;
+
+	$msg = '<table class="footnotes w100">';
+	preg_match_all('~<foot:(\d+)>~', $match[0], $mat);
+	foreach ($mat[1] as $note)
+	{
+		$n =& $addnote[$note];
+		$msg .= '<tr><td class="footnum"><a id="footnote' . $n[0] . '" href="#footlink' . $n[0] . '">&nbsp;' . $n[1] . '.&nbsp;</a></td><td class="footnote">'
+			 . (stripos($n[2], '[nb]', 1) === false ? $n[2] : parse_bbc($n[2])) . '</td></tr>';
+	}
+	return $msg . '</table>';
 }
 
 /**

@@ -1031,22 +1031,15 @@ function aeva_parse_bbc2(&$message, &$smileys, &$cache_id)
 {
 	global $context, $settings, $txt;
 
-	if (empty($context['uninstalling']))
+	if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && $smileys !== 'print' && strpos($cache_id, 'sig') === false)
+		$message = aeva_main($message);
+	else
 	{
-		if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && $smileys !== 'print' && strpos($cache_id, 'sig') === false)
-			$message = aeva_main($message);
-		else
-		{
-			// Removes any noembed
-			$message = aeva_protection(array('noembed' => false), $message, false);
+		// Removes any noembed
+		$message = aeva_protection(array('noembed' => false), $message, false);
 
-			// And reverses any protection already in place
-			$message = aeva_reverse_protection($message);
-		}
-		// Reset any technical reasons to stop
-		unset($context['embed_disable']);
-		if (isset($context['aeva']['skip']))
-			unset($context['aeva']['skip']);
+		// And reverses any protection already in place
+		$message = aeva_reverse_protection($message);
 	}
 
 	// Reset any technical reasons to stop

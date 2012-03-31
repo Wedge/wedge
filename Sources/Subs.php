@@ -1984,7 +1984,7 @@ function setupMenuContext()
 					'errorlog' => array(
 						'title' => $txt['errlog'],
 						'notice' => $error_count,
-						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;desc',
+						'href' => $scripturl . '?action=admin;area=logs;sa=errorlog',
 						'show' => allowedTo('admin_forum') && !empty($settings['enableErrorLogging']),
 					),
 					'permissions' => array(
