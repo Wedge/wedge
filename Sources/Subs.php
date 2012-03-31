@@ -1693,6 +1693,8 @@ function match_cidr($ip, $cidr_block)
 		list ($cidr_ip, $mask) = explode('/', $cidr_block);
 		$cidr_ip = expand_ip($cidr_ip);
 
+		$mask = (strpos($cidr_block, ':') !== false ? 128 : 32) - $mask;
+
 		// OK, can we do a simple case, where the mask hits a digit boundary?
 		if ($mask % 4 == 0)
 		{
