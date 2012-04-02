@@ -253,6 +253,18 @@ class wecss_var extends wecss
 		return strlen(trim($a)) < strlen(trim($b));
 	}
 
+	private static function develop_var($k, $limit = 0)
+	{
+		global $css_vars;
+
+		if (strpos($css_vars[$k], '$') !== false)
+			foreach ($css_vars as $key => $val)
+				$css_vars[$k] = str_replace($key, $val, $css_vars[$k]);
+
+		if (strpos($css_vars[$k], '$') !== false && $limit < 8)
+			wecss_var::develop_var($k, ++$limit);
+	}
+
 	function process(&$css)
 	{
 		global $css_vars, $context, $alphamix;
@@ -280,33 +292,31 @@ class wecss_var extends wecss
 		{
 			// Sort the matches by key length, to avoid conflicts as much as possible.
 			$decs = $matches[0];
-			$a=microtime(true);
 			usort($decs, 'wecss_var::lensort');
 
 			// Erase all traces of variable definitions.
 			$css = str_replace($decs, '', $css);
 			unset($decs);
 
-			foreach ($matches[0] as $i => &$dec)
-			{
+			foreach ($matches[0] as $i => $dec)
 				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_suffixes']))
 					$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
 
-				// We need to keep this one for later...
-				if ($matches[1][$i] === '$alphamix')
-					$alphamix = trim($matches[4][$i], '"');
-			}
+			foreach ($css_vars as $key => $val)
+				wecss_var::develop_var($key);
 
 			// Same as above, but for the actual variables.
 			$keys = array_map('strlen', array_keys($css_vars));
 			array_multisort($keys, SORT_DESC, $css_vars);
+
+			// We need to keep this one for later...
+			if (isset($css_vars['$alphamix']))
+				$alphamix = trim($css_vars['$alphamix'], '"');
 		}
 
-		// Replace recursively - good for variables referencing variables. Also has a safety against endless loops.
-		$left = $count = 1;
+		// Replace away!
 		if (!empty($css_vars))
-			while ($left && $count++ < 10)
-				$css = str_replace(array_keys($css_vars), array_values($css_vars), $css, $left);
+			$css = str_replace(array_keys($css_vars), array_values($css_vars), $css);
 	}
 }
 

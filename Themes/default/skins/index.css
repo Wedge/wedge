@@ -1656,12 +1656,11 @@ $other_bg = #e7e9b8
 $reddish = "#cc6600"
 
 /*
-	$alphamix is a RGB value that should stand for your main area's background.
-	You only need it if you're using alpha values in your CSS. Don't use a variable
-	name in it, it's already complicated enough to calculate...
+	$alphamix is a RGB value that should stand for your main area's background. You
+	only need it if you're using alpha values in your CSS. Set to $main_bg if unsure.
 */
 
-$alphamix = #fffdfa
+$alphamix = $main_bg
 
 /* And our mixins... */
 
