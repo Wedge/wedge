@@ -570,8 +570,8 @@ function wedge_profile_colors($match)
 function wedge_indenazi($match)
 {
 	if ($match[2] < 0)
-		return str_replace("\n" . str_repeat("\t", -$match[2]), "\n", $match[3]);
-	return str_replace("\n", "\n" . str_repeat("\t", $match[2]), $match[3]);
+		return preg_replace('~(\n\t*)' . str_repeat("\t", -$match[2]) . '(?=<)~', '$1', $match[3]);
+	return preg_replace('~(\n\t*)(?=<)~', '$1' . str_repeat("\t", $match[2]), $match[3]);
 }
 
 // Remove and save script tags
