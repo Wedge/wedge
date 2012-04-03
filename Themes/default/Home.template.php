@@ -29,7 +29,7 @@ function template_main()
 		released, you\'ll agree that Wedge is the <strong>best free forum software</strong> available.
 		Read the full <a href="/pub/feats/">feature list</a>. With dozens of new features, including the exclusive Aeva Media gallery system,
 		Wedge puts control back into your hands. When is it coming out? When it\'s ready.
-		<a href="/blog/">Stay tuned</a> and subscribe to our blog\'s <a href="http://wedge.org/blog/?action=feed;sa=news">RSS feed</a> to make sure not to miss it!
+		<a href="/blog/">Stay tuned</a> and subscribe to our blog\'s <a href="<URL>?action=feed;board=132;sa=news">RSS feed</a> to make sure not to miss it!
 	</div>';
 
 	$n = isset($_REQUEST['n']) ? (int) $_REQUEST['n'] : 5;
