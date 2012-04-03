@@ -170,8 +170,8 @@ function Thought()
 			SELECT t.id_thought, t.thought, t.id_member, m.real_name
 			FROM {db_prefix}thoughts AS t
 			INNER JOIN {db_prefix}members AS m ON m.id_member = t.id_member
-			WHERE t.id_thought = {int:original_id}
-			AND t.id_member = {int:id_member}',
+			WHERE t.id_thought = {int:original_id}' . (allowedTo('moderate_forum') ? '' : '
+			AND t.id_member = {int:id_member}'),
 			array(
 				'id_member' => $user_info['id'],
 				'original_id' => $oid,
@@ -182,7 +182,7 @@ function Thought()
 	}
 
 	// Overwrite previous thought if it's just an edit.
-	if (!empty($last_thought) && (allowedTo('moderate_forum') || $last_member === $user_info['id']))
+	if (!empty($last_thought))
 	{
 		similar_text($last_text, $text, $percent);
 

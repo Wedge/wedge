@@ -81,8 +81,7 @@ function MoveTopic()
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 		WHERE {query_see_board}
-			AND b.redirect = {string:blank_redirect}
-			AND b.id_board != {int:current_board}' . ($boards != array(0) ? '
+			AND b.redirect = {string:blank_redirect}' . ($boards != array(0) ? '
 			AND b.id_board IN ({array_int:board_list})' : ''),
 		array(
 			'blank_redirect' => '',
