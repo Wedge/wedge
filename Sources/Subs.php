@@ -626,7 +626,7 @@ function number_context($string, $number, $format_comma = true)
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $context, $user_info, $txt, $settings;
-	static $non_twelve_hour, $year_shortcut;
+	static $non_twelve_hour, $year_shortcut, $nowtime, $then, $now;
 
 	// Offset the time.
 	if (!$offset_type)
@@ -645,10 +645,12 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if ($show_today === true && $settings['todayMod'] >= 1)
 	{
 		// Get the current time.
-		$nowtime = forum_time();
-
-		$then = @getdate($time);
-		$now = @getdate($nowtime);
+		if (!isset($nowtime))
+		{
+			$nowtime = forum_time();
+			$then = @getdate($time);
+			$now = @getdate($nowtime);
+		}
 
 		// Try to make something of a time format string...
 		$s = strpos($format, '%S') === false ? '' : ':%S';
@@ -702,9 +704,10 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 
 	if ($user_info['setlocale'])
 	{
-		foreach (array('%a', '%A', '%b', '%B') as $token)
-			if (strpos($str, $token) !== false)
-				$str = str_replace($token, !empty($txt['lang_capitalize_dates']) ? westr::ucwords(strftime($token, $time)) : strftime($token, $time), $str);
+		if (!empty($txt['lang_capitalize_dates']))
+			foreach (array('%a', '%A', '%b', '%B') as $token)
+				if (strpos($str, $token) !== false)
+					$str = str_replace($token, westr::ucwords(strftime($token, $time)), $str);
 	}
 	else
 	{
