@@ -15,9 +15,6 @@
 /*
 	This file handles the moderation panel of the gallery.
 
-	void aeva_modCP()
-		- Handles the homepage of modcp
-
 	void aeva_modCP_submissions()
 		- Shows the submissions index
 		- Shows items, comments as well as albums
@@ -41,17 +38,6 @@
 		- Shows the complete moderation log
 		- Also gives them an option to delete entries
 */
-
-// Home of our wonderful moderation center
-function aeva_modCP()
-{
-	global $context;
-
-	// Let's repeat the Admin's about page.....
-	loadSource('media/ManageMedia');
-	loadTemplate('ManageMedia');
-	aeva_admin_about();
-}
 
 // Handles the submissions area as well as the homepage of it
 function aeva_modCP_submissions()

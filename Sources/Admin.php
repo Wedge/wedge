@@ -245,14 +245,6 @@ function Admin()
 			'title' => $txt['media_title'],
 			'permission' => array('media_manage'), // if not specified lower down, this will just be inherited, no need to set it individually!
 			'areas' => array(
-				'aeva_about' => array(
-					'label' => $txt['media_admin_labels_about'],
-					'icon' => 'administration.gif',
-					'bigicon' => 'about.png',
-					'enabled' => !empty($settings['media_enabled']),
-					'file' => 'media/ManageMedia',
-					'function' => 'aeva_admin_init',
-				),
 				'aeva_settings' => array(
 					'label' => $txt['media_admin_labels_settings'],
 					'icon' => 'settings.gif',

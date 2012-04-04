@@ -395,44 +395,15 @@ function template_aeva_admin_bans()
 		</table>';
 }
 
-// The admin "about" page
-function template_aeva_admin_about()
-{
-	global $txt, $scripturl, $context, $amSettings;
-
-	echo '
-		<table class="w100 cp4 cs1 bordercolor" style="margin-top: 8px">
-			<tr class="titlebg">
-				<td>', $txt['media_admin_about_modd'], '</td>
-			</tr>';
-
-	$managers = array();
-	$moderators = array();
-	if (isset($context['aeva_admins']['managers']))
-		foreach ($context['aeva_admins']['managers'] as $m)
-			$managers[] = $m['link'];
-	if (isset($context['aeva_admins']['moderators']))
-		foreach ($context['aeva_admins']['moderators'] as $m)
-			$moderators[] = $m['link'];
-	echo '
-			<tr class="windowbg2">
-				<td>
-					', !empty($managers) ? '<div>'.$txt['media_admin_managers'].': '.implode(', ', $managers).'</div>' : '',
-					!empty($moderators) ? '<div>'.$txt['media_admin_moderators'].': '.implode(', ', $moderators).'</div>' : '', '
-				</td>
-			</tr>
-		</table>';
-}
-
 function template_aeva_admin_perms()
 {
 	global $txt, $context, $scripturl, $theme;
 
 	echo '
-	<we:title>
+	<we:cat>
 		<span title="', $txt['media_permissions_help'], '" class="help"></span>
 		', $txt['media_admin_labels_perms'], '
-	</we:title>
+	</we:cat>
 	<div class="information">
 		', $txt['media_admin_perms_desc'], '
 	</div>
@@ -569,9 +540,9 @@ function template_aeva_admin_quotas()
 	global $txt, $context, $scripturl;
 
 	echo '
-	<we:title>
+	<we:cat>
 		', $txt['media_admin_labels_quotas'], '
-	</we:title>
+	</we:cat>
 	<div class="information">
 		', $txt['media_admin_quotas_desc'], '
 	</div>
@@ -715,9 +686,9 @@ function template_aeva_admin_ftpimport()
 	<option value="' . $list . '">' . str_repeat('-', $context['aeva_albums'][$list]['child_level']) . ' [' . $context['aeva_albums'][$list]['owner']['name'] . '] ' . $context['aeva_albums'][$list]['name'] . '</option>';
 
 	echo '
-	<we:title>
+	<we:cat>
 		', $txt['media_admin_labels_ftp'], '
-	</we:title>
+	</we:cat>
 	<div class="information">
 		', $txt['media_admin_ftp_desc'], '
 	</div>

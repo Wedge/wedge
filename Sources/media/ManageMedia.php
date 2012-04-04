@@ -22,10 +22,6 @@ if (!defined('WEDGE'))
 		- Initializes the admin page
 		- Leads to the appropriate page
 
-	void aeva_admin_about()
-		- Loads the gallery's "About" page
-		- Shows versions, credits, latest version, moderators and managers
-
 	void aeva_admin_settings()
 		- Shows the settings page of the gallery
 
@@ -98,10 +94,8 @@ function aeva_admin_init()
 	loadLanguage('ManageMedia');
 	loadTemplate('ManageMedia');
 
-	// Check the session. No need for the About area, so we can redirect to there from the package installer.
-	$_REQUEST['area'] = substr($_REQUEST['area'], 5);
-	if ($_REQUEST['area'] != 'about')
-		checkSession('get');
+	// Check the session.
+	checkSession('get');
 
 	// Check for permission
 	if (!allowedTo('media_manage'))
@@ -109,8 +103,7 @@ function aeva_admin_init()
 
 	// Our sub-actions
 	// 'sub-action' => 'Function to call'
-	$area = array(
-		'about' => 'aeva_admin_about',
+	$areas = array(
 		'settings' =>'aeva_admin_settings',
 		'embed' =>'aeva_admin_embed',
 		'albums' => 'aeva_admin_albums',
@@ -122,57 +115,27 @@ function aeva_admin_init()
 		'fields' => 'aeva_admin_fields',
 	);
 
-	$title = isset($_REQUEST['area']) ? $_REQUEST['area'] : 'about';
+	$area = isset($_REQUEST['area']) ? substr($_REQUEST['area'], 5) : 'settings';
+	$_REQUEST['area'] = $area;
 
 	$context[$context['admin_menu_name']]['tab_data'] = array(
-		'title' => $title == 'fields' ? $txt['media_cf'] : $txt['media_admin_labels_' . $title],
-		'description' => $title == 'fields' ? $txt['media_cf_desc'] : $txt['media_admin_' . $title . '_desc'],
+		'title' => $area == 'fields' ? $txt['media_cf'] : $txt['media_admin_labels_' . $area],
+		'description' => $area == 'fields' ? $txt['media_cf_desc'] : $txt['media_admin_' . $area . '_desc'],
 		'tabs' => array(
 		),
 	);
 
 	wetem::outer('aeva_admin');
 
-	$context['page_title'] = $txt['media_title'] . ' - ' . $txt['media_admin_labels_' . $_REQUEST['area']];
+	$context['page_title'] = $txt['media_title'] . ' - ' . $txt['media_admin_labels_' . $area];
 
 	// OK let's finish this by calling the function
-	if (isset($area[$_REQUEST['area']]))
-		$area[$_REQUEST['area']]();
+	if (isset($areas[$area]))
+		$areas[$area]();
 
 	// Some CSS and JS we'll be using
 	add_css_file('media', true);
 	add_js_file('scripts/mediadmin.js');
-}
-
-// The good old "about" page :)
-function aeva_admin_about()
-{
-	global $context, $txt, $scripturl, $amSettings, $memberContext, $boarddir, $theme;
-
-	// Call the template
-	wetem::load('aeva_admin_about');
-
-	// Get gallery managers and moderators
-	loadSource('Subs-Members');
-
-	$managers = membersAllowedTo('media_manage');
-	$moderators = membersAllowedTo('media_moderate');
-	// Let's make sure they are unique
-	foreach ($managers as $m)
-		foreach ($moderators as $k => $v)
-			if ($v == $m)
-				unset($moderators[$k]);
-	$members = array_merge($managers, $moderators);
-	$context['aeva_admins'] = array();
-	$confirmed_members = loadMemberData($members);
-	foreach ($members as $mem)
-	{
-		if ($confirmed_members && in_array($mem, $confirmed_members))
-		{
-			loadMemberContext($mem);
-			$context['aeva_admins'][in_array($mem, $managers) ? 'managers' : 'moderators'][] = $memberContext[$mem];
-		}
-	}
 }
 
 // Handles the settings page

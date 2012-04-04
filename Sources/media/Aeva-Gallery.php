@@ -116,6 +116,10 @@ function aeva_initGallery($gal_url = null)
 
 	aeva_loadAlbum();
 
+	// If we're just here to view or download a file, do that now and then exit.
+	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'media')
+		aeva_getMedia();
+
 	// Load all our areas
 	$areas = array(
 		'home' => array(
@@ -127,7 +131,6 @@ function aeva_initGallery($gal_url = null)
 		),
 		'album' => array('function' => 'aeva_viewAlbum'),
 		'item' => array('function' => 'aeva_viewItem'),
-		'media' => array('function' => 'aeva_getMedia'),
 		'post' => array(
 			'enabled' => !$user_info['is_guest'],
 			'function' => 'aeva_mgPost',
@@ -226,23 +229,16 @@ function aeva_initGallery($gal_url = null)
 		loadLanguage('Admin');
 		loadLanguage('ManageMedia');
 
-		$areas['admin'] = array(
-			'title' => $txt['media_admin'],
-			'icon' => 'cog.png',
-			'href' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_query'],
-			'enabled' => aeva_allowedTo('manage'),
-		);
 		$areas['moderate'] = array(
 			'title' => $txt['media_modcp'],
 			'description' => $txt['media_modcp_desc'],
 			'enabled' => aeva_allowedTo('moderate'),
 			'file' => 'Aeva-ModCP',
-			'function' => 'aeva_modCP',
+			'function' => 'aeva_modCP_submissions',
 			'url_index' => 'area',
 			'sub_url_index' => 'sa',
 			'icon' => 'report.png',
 			'sub_areas' => array(
-				'about' => array('enabled' => true, 'title' => 'media_admin_labels_about', 'default' => true),
 				'submissions' => array(
 					'enabled' => true,
 					'skip_main_func' => true,
@@ -334,7 +330,7 @@ function aeva_initGallery($gal_url = null)
 		$media_areas['admin'] = array(
 			'title' => $txt['media_admin'],
 			'icon' => 'cog.png',
-			'url' => $scripturl . '?action=admin;area=aeva_about;' . $context['session_query'],
+			'href' => $scripturl . '?action=admin;area=aeva_settings;' . $context['session_query'],
 			'permission' => array('media_manage'),
 			'areas' => array(
 				'settings' => array(
@@ -360,9 +356,6 @@ function aeva_initGallery($gal_url = null)
 			'permission' => array('media_moderate'),
 			'icon' => 'report.png',
 			'areas' => array(
-				'about' => array(
-					'label' => $txt['media_admin_labels_about'],
-				),
 				'submissions' => array(
 					'label' => $txt['media_admin_labels_submissions'],
 				),
@@ -504,7 +497,7 @@ function aeva_initGallery($gal_url = null)
 function aeva_home()
 {
 	// This function loads up Aeva Media's home page
-	global $galurl, $txt, $context, $amSettings, $user_info;
+	global $txt, $context, $amSettings, $user_info, $galurl;
 
 	// Templates
 	wetem::load('aeva_home');
@@ -579,6 +572,7 @@ function aeva_home()
 
 	// Page title
 	$context['aeva_header']['data']['title'] = $txt['media_home'];
+	$context['canonical_url'] = $galurl . (isset($_GET['fw']) ? 'fw;' : '') . (isset($_GET['sort']) ? 'sort=' . $_GET['sort'] : '') . (isset($_GET['asc']) ? 'asc' : '') . (isset($_GET['desc']) ? 'desc' : '');
 	$context['page_title'] = $txt['media_gallery'];
 }
 
@@ -727,6 +721,7 @@ function aeva_viewAlbum()
 	$context['album_data'] = $current_album;
 	wetem::load('aeva_viewAlbum');
 	$context['page_title'] = $current_album['name'];
+	$context['canonical_url'] = $galurl . 'sa=album;in=' . $p['id'];
 
 	aeva_addHeaders(empty($current_album['options']['autosize']) || $current_album['options']['autosize'] == 'yes');
 }
@@ -1178,7 +1173,8 @@ function aeva_viewItem()
 			if (!$p['hidden'] || $p['owner'] == $user_info['id'])
 				add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
 	}
-	add_linktree($galurl.'sa=item;in='.$item_data['id_media'],$item_data['title']);
+	add_linktree($galurl . 'sa=item;in=' . $item_data['id_media'], $item_data['title']);
+	$context['canonical_url'] = $galurl . 'sa=item;in=' . $item_data['id_media'];
 
 	// Page headers
 	$context['aeva_header']['data']['title'] = $txt['media_type_' . $item_data['type']];

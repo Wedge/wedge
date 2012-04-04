@@ -626,7 +626,7 @@ function number_context($string, $number, $format_comma = true)
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $context, $user_info, $txt, $settings;
-	static $non_twelve_hour, $year_shortcut, $nowtime, $then, $now;
+	static $non_twelve_hour, $year_shortcut, $nowtime, $now;
 
 	// Offset the time.
 	if (!$offset_type)
@@ -648,9 +648,9 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 		if (!isset($nowtime))
 		{
 			$nowtime = forum_time();
-			$then = @getdate($time);
 			$now = @getdate($nowtime);
 		}
+		$then = @getdate($time);
 
 		// Try to make something of a time format string...
 		$s = strpos($format, '%S') === false ? '' : ':%S';
