@@ -263,6 +263,8 @@ function MessageMain()
 
 	// Preferences...
 	$context['display_mode'] = $user_settings['pm_prefs'] & 3;
+	if ($context['folder'] == 'sent')
+		$context['display_mode'] = 0;
 
 	$subActions = array(
 		'manlabels' => 'ManageLabels',
@@ -797,7 +799,7 @@ function MessageFolder()
 			if ($context['folder'] == 'sent' || empty($row['bcc']))
 				$recipients[$id][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
-			if ($context['folder'] == 'sent' && $user_info['id'] == $posters[$id])
+			if ($context['folder'] == 'sent' && isset($posters[$id]) && $posters[$id] == $user_info['id'])
 				$context['message_replied'][$id] = (isset($context['message_replied'][$id]) ? $context['message_replied'][$id] : 0) + (($row['is_read'] & 2) >> 1);
 			elseif ($user_info['id'] == $row['id_member_to'])
 			{

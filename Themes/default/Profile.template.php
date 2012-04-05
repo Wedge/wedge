@@ -368,7 +368,7 @@ function template_showDrafts()
 			<img src="', $theme['images_url'], '/icons/im_newmsg.gif">
 			', $txt['showDrafts'], ' - ', $context['member']['name'], '
 		</we:cat>
-		<p class="windowbg description">
+		<p class="description">
 			', $txt['showDrafts_desc'];
 
 	if (!empty($settings['pruneSaveDrafts']))

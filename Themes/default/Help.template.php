@@ -35,11 +35,12 @@ function template_popup()
 	<title>', $context['page_title'], '</title>',
 	theme_base_css(), '
 </head>
-<body id="help_page">
-	<div class="description wrc">
+<body class="windowbg" id="help_page">
+	<div class="windowbg2 wrc smalltext">
 		', $context['help_text'], '
-		<br><br>
-		<a href="#" onclick="history.back(); return false;">', $txt['back'], '</a>
+	</div>
+	<div class="smalltext center" style="padding: 8px 0 0">
+		<a href="#" onclick="window.close(); return false;">', $txt['close_window'], '</a>
 	</div>
 </body>
 </html>';
