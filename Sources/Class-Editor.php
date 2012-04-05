@@ -67,11 +67,11 @@ class wedit
 	var oEditorStrings = {
 		wont_work: ' . JavaScriptEscape($txt['rich_edit_wont_work']) . ',
 		func_disabled: ' . JavaScriptEscape($txt['rich_edit_function_disabled']) . ',
-		prompt_text_email: ' . JavaScriptEscape($txt['prompt_text_email']) . ',
-		prompt_text_ftp: ' . JavaScriptEscape($txt['prompt_text_ftp']) . ',
-		prompt_text_url: ' . JavaScriptEscape($txt['prompt_text_url']) . ',
-		prompt_text_img: ' . JavaScriptEscape($txt['prompt_text_img']) . ',
-		prompt_text_desc: ' . JavaScriptEscape($txt['prompt_text_desc']) . '
+		email: ' . JavaScriptEscape($txt['prompt_text_email']) . ',
+		ftp: ' . JavaScriptEscape($txt['prompt_text_ftp']) . ',
+		url: ' . JavaScriptEscape($txt['prompt_text_url']) . ',
+		img: ' . JavaScriptEscape($txt['prompt_text_img']) . ',
+		desc: ' . JavaScriptEscape($txt['prompt_text_desc']) . '
 	}');
 			add_js_file(array(
 				'scripts/editor.js',

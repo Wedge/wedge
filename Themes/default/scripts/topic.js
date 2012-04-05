@@ -688,7 +688,7 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 		paw = $(acme ? parent : oLink).width();
 		$men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0 })
 			.mouseleave(leave)
-			.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 500, function () {
+			.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 300, function () {
 				$men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
 				$body.unbind(mmove);
 				// Once the animation is completed, is the mouse still inside the menu area?
@@ -699,7 +699,7 @@ MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
 	else
 	{
 		$men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 });
-		$men.mouseleave(leave).show(500, function () {
+		$men.mouseleave(leave).show(300, function () {
 			$body.unbind(mmove);
 			if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
 				leave();
