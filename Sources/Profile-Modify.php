@@ -386,7 +386,7 @@ function loadProfileFields($force_reload = false)
 
 			// Note this will only work if passwrd2 also exists!
 			'input_validate' => create_function('&$value', '
-				global $user_info, $cur_profile;
+				global $user_info, $cur_profile, $txt;
 
 				// If we didn\'t try it then ignore it!
 				if ($value == \'\')
@@ -402,7 +402,15 @@ function loadProfileFields($force_reload = false)
 
 				// Were there errors?
 				if ($passwordErrors != null)
+				{
+					if ($passwordErrors == \'short\')
+					{
+						loadLanguage(\'Errors\');
+						$txt[\'profile_error_password_short\'] = sprintf($txt[\'profile_error_password_short\'], empty($settings[\'password_strength\']) ? 4 : 8);
+					}
+
 					return \'password_\' . $passwordErrors;
+				}
 
 				// Set up the new password variable... ready for storage.
 				$value = sha1(strtolower($cur_profile[\'member_name\']) . un_htmlspecialchars($value));

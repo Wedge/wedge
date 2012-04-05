@@ -1326,7 +1326,11 @@ function trackActivity($memID)
 	$context['ip_ids'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . format_ip($row['poster_ip']) . '">' . format_ip($row['poster_ip']) . '</a>';
+		$format_ip = format_ip($row['member_ip']);
+		if (empty($format_ip))
+			continue;
+
+		$context['ips'][] = '<a href="' . $scripturl . '?action=profile;u=' . $memID . ';area=tracking;sa=ip;searchip=' . $format_ip . '">' . $format_ip . '</a>';
 		$ips[] = $row['poster_ip'];
 	}
 	wesql::free_result($request);
@@ -1429,10 +1433,11 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 	// Get a list of error messages from this ip (range).
 	$request = wesql::query('
 		SELECT
-			le.log_time, le.ip, le.url, le.message, IFNULL(mem.id_member, 0) AS id_member,
+			le.log_time, le.ip, li.member_ip, le.url, le.message, IFNULL(mem.id_member, 0) AS id_member,
 			IFNULL(mem.real_name, {string:guest_title}) AS display_name, mem.member_name
 		FROM {db_prefix}log_errors AS le
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = le.id_member)
+			LEFT JOIN {db_prefix}log_ips AS li ON (le.ip = li.id_ip)
 		WHERE ' . $where . '
 		ORDER BY ' . $sort . '
 		LIMIT ' . $start . ', ' . $items_per_page,
@@ -1443,7 +1448,7 @@ function list_getUserErrors($start, $items_per_page, $sort, $where, $where_vars 
 	$error_messages = array();
 	while ($row = wesql::fetch_assoc($request))
 		$error_messages[] = array(
-			'ip' => $row['ip'],
+			'ip' => format_ip($row['member_ip']),
 			'member_link' => $row['id_member'] > 0 ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>' : $row['display_name'],
 			'message' => strtr($row['message'], array('&lt;span class=&quot;remove&quot;&gt;' => '', '&lt;/span&gt;' => '')),
 			'url' => $row['url'],
@@ -1478,11 +1483,12 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 	// !!! SLOW This query is using a filesort.
 	$request = wesql::query('
 		SELECT
-			m.id_msg, m.poster_ip, IFNULL(mem.real_name, m.poster_name) AS display_name, mem.id_member,
+			m.id_msg, m.poster_ip, li.member_ip, IFNULL(mem.real_name, m.poster_name) AS display_name, mem.id_member,
 			m.subject, m.poster_time, m.id_topic, m.id_board
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
+			LEFT JOIN {db_prefix}log_ips AS li ON (m.poster_ip = li.id_ip)
 		WHERE {query_see_board} AND ' . $where . '
 		ORDER BY ' . $sort . '
 		LIMIT ' . $start . ', ' . $items_per_page,
@@ -1492,7 +1498,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 	$messages = array();
 	while ($row = wesql::fetch_assoc($request))
 		$messages[] = array(
-			'ip' => $row['poster_ip'],
+			'ip' => format_ip($row['member_ip']),
 			'member_link' => empty($row['id_member']) ? $row['display_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['display_name'] . '</a>',
 			'board' => array(
 				'id' => $row['id_board'],
@@ -1535,11 +1541,90 @@ function TrackIP($memID = 0)
 	if (isset($_REQUEST['searchip']))
 		$context['ip'] = trim($_REQUEST['searchip']);
 
-	if (preg_match('/^\d{1,3}\.(\d{1,3}|\*)\.(\d{1,3}|\*)\.(\d{1,3}|\*)$/', $context['ip']) == 0)
-		fatal_lang_error('invalid_tracking_ip', false);
+	// OK, let's validate this as some kind of IP.
+	if (strpos($context['ip'], '*') !== false)
+	{
+		// It's a ranged one. Fix the ranges then expand and valiate.
+		$testing_ip = str_replace('*', '0', $context['ip']);
+		$testing_ip_exp = expand_ip($testing_ip);
+		if ($testing_ip_exp == INVALID_IP)
+			fatal_lang_error('invalid_tracking_ip', false);
 
-	$ip_var = str_replace('*', '%', $context['ip']);
-	$ip_string = strpos($ip_var, '%') === false ? '= {string:ip_address}' : 'LIKE {string:ip_address}';
+		// Having established that it's ranged, we need to process it and build the SQL clauses.
+		if (strpos($context['ip'], '.') !== false)
+		{
+			// It's IPv4.
+			$ip_search = '00000000000000000000ffff';
+			$blocks = explode('.', $context['ip']);
+			for ($i = 0; $i <= 3; $i++)
+				$ip_search .= ($blocks[$i] == '*') ? '%' : substr($testing_ip_exp, 24 + $i * 2, 2);
+		}
+		else
+		{
+			// It's IPv6. This is likely unreliable.
+			$pieces = explode('::', $testing_ip);
+
+			$before_pieces = explode(':', $pieces[0]);
+			$after_pieces = explode(':', $pieces[1]);
+			foreach ($before_pieces as $k => $v)
+				if ($v == '')
+					unset($before_pieces[$k]);
+			foreach ($after_pieces as $k => $v)
+				if ($v == '')
+					unset($after_pieces[$k]);
+			// Glue everything back together.
+			$ip = preg_replace('~((?<!\:):$)~', '', $pieces[0] . (count($before_pieces) ? ':' : '') . str_repeat('0:', 8 - (count($before_pieces) + count($after_pieces))) . $pieces[1]);
+
+			$ipv6 = explode(':', $ip);
+			foreach ($ipv6 as $k => $v)
+				$ipv6[$k] = $v != '*' ? str_pad($v, 4, '0', STR_PAD_LEFT) : '%';
+			$ip_search = implode('', $ipv6);
+		}
+		
+		// Now get all the IP ids.
+		$query = wesql::query('
+			SELECT id_ip
+			FROM {db_prefix}log_ips
+			WHERE member_ip LIKE {string:ip}',
+			array(
+				'ip' => $ip_search,
+			)
+		);
+		if (wesql::num_rows($query) == 0)
+		{
+			$ip_var = 0;
+			$ip_string = '1=0';
+		}
+		else
+		{
+			$ip_var = array();
+			while ($row = wesql::fetch_row($query))
+				$ip_var[] = $row[0];
+			wesql::free_result($query);
+			$ip_string = 'IN ({array_int:ip_address})';
+		}
+	}
+	else
+	{
+		$testing_ip = expand_ip($context['ip']);
+		// It's not ranged. But we do need to identify the specific ID that we want to use.
+		$query = wesql::query('
+			SELECT id_ip
+			FROM {db_prefix}log_ips
+			WHERE member_ip = {string:ip}',
+			array(
+				'ip' => $testing_ip,
+			)
+		);
+		if (wesql::num_rows($query) == 1)
+			list ($ip_var) = wesql::fetch_row($query);
+		else
+			$ip_var = -1;
+
+		$ip_string = '= {int:ip_address}';
+
+		wesql::free_result($query);
+	}
 
 	if (empty($context['tracking_area']))
 		$context['page_title'] = $txt['trackIP'] . ' - ' . $context['ip'];
