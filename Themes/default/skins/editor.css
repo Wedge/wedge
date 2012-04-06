@@ -28,8 +28,12 @@
 iframe.rich_editor
 	padding: 2px
 
+// textarea has a font-size of 95% by default, but it's inherited from the body's 88%.
+// As we're applying this to the body, we want to calculate 95% of 88% instead.
+// Plus, that's a nice sample of what WeCSS can do.
 body.rich_editor
 	border, padding: 0
+	font-size: math(.95*88)%
 
 // The resize handle.
 .richedit_resize

@@ -17,16 +17,24 @@ function weEditor(opt)
 	 * Global and local variables
 	 */
 
-	this.opt = opt;
-
-	// Create some links to the editor object.
-	var sCurrentText = opt.sText || '';
-
 	this.bRichTextEnabled = !!opt.bWysiwyg;
 	this.bRichTextPossible = !opt.bRichEditOff && (is_ie || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
 
-	// Kinda holds all the useful stuff.
-	var aKeyboardShortcuts = [];
+	// Create some links to the editor object.
+	var
+		sCurrentText = opt.sText || '',
+		aKeyboardShortcuts = [],
+		sFormId = opt.sFormId || 'postmodify',
+		iArrayPosition = weEditors.length,
+
+		// Current resize state.
+		oCurrentResize = {},
+
+		// Define the event wrapper functions.
+		that = this,
+
+		// Get a reference to the textarea.
+		oText = $('#' + opt.sUniqueId);
 
 	// This is all the elements that can have a simple execCommand.
 	this.oSimpleExec = {
@@ -76,25 +84,6 @@ function weEditor(opt)
 		limegreen: '#32cd32'
 	};
 
-	this.sFormId = opt.sFormId || 'postmodify';
-	var iArrayPosition = weEditors.length;
-
-	// Current resize state.
-	var oCurrentResize = {};
-
-	// Define the event wrapper functions.
-	var oCaller = this;
-	this.aEventWrappers = {
-		editorKeyUp: function (oEvent) { return oCaller.editorKeyUp(oEvent); },
-		shortcutCheck: function (oEvent) { return oCaller.shortcutCheck(oEvent); },
-		startResize: function (oEvent) { return oCaller.startResize(oEvent); },
-		resizeOver: function (oEvent) { return oCaller.resizeOver(oEvent); },
-		endResize: function (oEvent) { return oCaller.endResize(oEvent); }
-	};
-
-	// Get a reference to the textarea.
-	var oText = $('#' + opt.sUniqueId);
-
 	/**
 	 * Public functions
 	 */
@@ -104,7 +93,7 @@ function weEditor(opt)
 	{
 		var sText, bCurMode = bModeOverride !== undefined ? bModeOverride : this.bRichTextEnabled;
 
-		if (!bCurMode || !this.oFrameDoc)
+		if (!bCurMode || !oFrameDoc)
 		{
 			sText = oText.val();
 			if (bPrepareEntities)
@@ -112,7 +101,7 @@ function weEditor(opt)
 		}
 		else
 		{
-			sText = this.$FrameBody.html();
+			sText = $FrameBody.html();
 			if (bPrepareEntities)
 				sText = sText.replace(/&lt;/g, '#welt#').replace(/&gt;/g, '#wegt#').replace(/&amp;/g, '#weamp#');
 		}
@@ -125,13 +114,13 @@ function weEditor(opt)
 		return sText;
 	};
 
-	this.editorKeyUp = function ()
+	var editorKeyUp = function ()
 	{
 		if (opt.oDrafts)
 			opt.oDrafts.needsUpdate(true);
 
 		// Rebuild the breadcrumb.
-		this.updateEditorControls();
+		that.updateEditorControls();
 	};
 
 	// Rebuild the breadcrumb etc - and set things to the correct context.
@@ -149,10 +138,10 @@ function weEditor(opt)
 		var
 			aCrumb = [], aAllCrumbs = [],
 			iMaxLength = 6, i = 0,
-			that = this, sCurFontName = '', sCurFontSize = '', sCurFontColor = '', sCrumbName;
+			sCurFontName = '', sCurFontSize = '', sCurFontColor = '', sCrumbName,
 
 			// What is the current element?
-			oCurTag = this.getCurElement(),
+			oCurTag = getCurElement(),
 			array_key = function (variable, theArray)
 			{
 				for (i in theArray)
@@ -267,7 +256,7 @@ function weEditor(opt)
 	this.doSubmit = function ()
 	{
 		if (this.bRichTextEnabled)
-			oText.val(this.$FrameBody.html());
+			oText.val($FrameBody.html());
 	};
 
 
@@ -379,16 +368,16 @@ function weEditor(opt)
 		{
 			if (this.bRichTextEnabled)
 			{
-				this.$FrameBody.html(sText);
+				$FrameBody.html(sText);
 
 				// Trick the cursor into coming back!
 				if (is_opera || is_ff)
 				{
 					// For some obscure reason, some Opera versions still require this.
 					// Firefox also needs it to focus, although it doesn't actually blink.
-					this.$FrameBody[0].contentEditable = false;
-					this.oFrameDoc.designMode = 'off';
-					this.oFrameDoc.designMode = 'on';
+					$FrameBody[0].contentEditable = false;
+					oFrameDoc.designMode = 'off';
+					oFrameDoc.designMode = 'on';
 				}
 			}
 			else
@@ -400,10 +389,10 @@ function weEditor(opt)
 			if (this.bRichTextEnabled)
 			{
 				// IE croaks if you have an image selected and try to insert!
-				if (this.oFrameDoc.selection && this.oFrameDoc.selection.type != 'Text' && this.oFrameDoc.selection.type != 'None' && this.oFrameDoc.selection.clear)
-					this.oFrameDoc.selection.clear();
+				if (oFrameDoc.selection && oFrameDoc.selection.type != 'Text' && oFrameDoc.selection.type != 'None' && oFrameDoc.selection.clear)
+					oFrameDoc.selection.clear();
 
-				var oRange = this.getRange();
+				var oRange = getRange();
 
 				if (oRange && oRange.pasteHTML)
 				{
@@ -423,8 +412,8 @@ function weEditor(opt)
 					// Does the cursor needs to be repositioned?
 					if (iMoveCursorBack)
 					{
-						var oSelection = this.getSelect();
-						oSelection.getRangeAt(0).insertNode(this.oFrameDoc.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
+						var oSelection = getSelect();
+						oSelection.getRangeAt(0).insertNode(oFrameDoc.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
 					}
 				}
 			}
@@ -442,7 +431,7 @@ function weEditor(opt)
 		if (opt.oDrafts)
 			opt.oDrafts.needsUpdate(true);
 
-		return this.oFrameDoc.execCommand(sCommand, bUi, sValue);
+		return oFrameDoc.execCommand(sCommand, bUi, sValue);
 	};
 
 	this.insertSmiley = function (oSmileyProperties)
@@ -597,13 +586,13 @@ function weEditor(opt)
 	this.insertStyle = function (sCss)
 	{
 		this.we_execCommand('fontSize', false, '7'); // Thanks to Tim Down for the concept!
-		$(this.oFrameDoc).find('font[size=7]').removeAttr('size').css(sCss);
+		$(oFrameDoc).find('font[size=7]').removeAttr('size').css(sCss);
 	};
 
 	// Put in some custom HTML.
 	this.insertCustomHTML = function (sLeftTag, sRightTag)
 	{
-		var sSelection = this.getSelect(true, true);
+		var sSelection = getSelect(true, true);
 
 		if (sSelection.length == 0)
 			sSelection = '';
@@ -639,7 +628,7 @@ function weEditor(opt)
 				sText = 'mailto:' + sText;
 
 			// Check if we have text selected and if not force us to have some.
-			var oCurText = this.getSelect(true, true);
+			var oCurText = getSelect(true, true);
 
 			if (oCurText.toString().length)
 			{
@@ -662,23 +651,23 @@ function weEditor(opt)
 		this.we_execCommand('insertimage', false, sSrc);
 	};
 
-	this.getSelect = function (bWantText, bWantHTMLText)
+	var getSelect = function (bWantText, bWantHTMLText)
 	{
 		// This is mainly Firefox.
-		if (this.oFrameWindow.getSelection)
+		if (oFrameWindow.getSelection)
 		{
 			// Plain text?
 			if (bWantText && !bWantHTMLText)
-				return this.oFrameWindow.getSelection().toString();
+				return oFrameWindow.getSelection().toString();
 
 			// HTML is harder - currently using: http://www.faqts.com/knowledge_base/view.phtml/aid/32427
 			else if (bWantHTMLText)
 			{
-				var oSelection = this.oFrameWindow.getSelection();
+				var oSelection = oFrameWindow.getSelection();
 
 				if (oSelection.rangeCount > 0)
 				{
-					var oDiv = this.oFrameDoc.createElement('div');
+					var oDiv = oFrameDoc.createElement('div');
 					oDiv.appendChild(oSelection.getRangeAt(0).cloneContents());
 					return oDiv.innerHTML;
 				}
@@ -687,29 +676,29 @@ function weEditor(opt)
 			}
 
 			// Want the whole object then.
-			return this.oFrameWindow.getSelection();
+			return oFrameWindow.getSelection();
 		}
 
-		if (this.oFrameDoc.selection) // IE?
+		if (oFrameDoc.selection) // IE?
 		{
 			// Just want plain text?
 			if (bWantText && !bWantHTMLText)
-				return this.oFrameDoc.selection.createRange().text;
+				return oFrameDoc.selection.createRange().text;
 			// We want the HTML flavoured variety?
 			else if (bWantHTMLText)
-				return this.oFrameDoc.selection.createRange().htmlText;
+				return oFrameDoc.selection.createRange().htmlText;
 
-			return this.oFrameDoc.selection;
+			return oFrameDoc.selection;
 		}
 
 		// If we're here it's not good.
-		return this.oFrameDoc.getSelection();
-	};
+		return oFrameDoc.getSelection();
+	},
 
-	this.getRange = function ()
+	getRange = function ()
 	{
 		// Get the current selection.
-		var oSelection = this.getSelect();
+		var oSelection = getSelect();
 
 		if (!oSelection)
 			return null;
@@ -718,12 +707,12 @@ function weEditor(opt)
 			return oSelection.createRange();
 
 		return oSelection.rangeCount == 0 ? null : oSelection.getRangeAt(0);
-	};
+	},
 
 	// Get the current element.
-	this.getCurElement = function ()
+	getCurElement = function ()
 	{
-		var oRange = this.getRange();
+		var oRange = getRange();
 
 		if (!oRange)
 			return null;
@@ -738,18 +727,13 @@ function weEditor(opt)
 		else
 		{
 			var oElement = oRange.commonAncestorContainer;
-			return this.getParentElement(oElement);
+			do {
+				if (oElement.nodeType == 1)
+					return oElement;
+			} while (oElement = oElement.parentNode)
+
+			return null;
 		}
-	};
-
-	this.getParentElement = function (oNode)
-	{
-		do {
-			if (oNode.nodeType == 1)
-				return oNode;
-		} while (oNode = oNode.parentNode)
-
-		return null;
 	};
 
 	// Remove formatting for the selected text.
@@ -814,10 +798,15 @@ function weEditor(opt)
 		// Get the text.
 		var sText = this.getText(true, !bView).replace(/&#/g, '&#38;#').php_urlencode();
 
-		sendXMLDocument.call(this, we_prepareScriptUrl() + 'action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid + ';xml', 'message=' + sText, this.onToggleDataReceived);
+		sendXMLDocument.call(
+			this,
+			we_prepareScriptUrl() + 'action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			'message=' + sText,
+			onToggled
+		);
 	};
 
-	this.onToggleDataReceived = function (oXMLDoc)
+	var onToggled = function (oXMLDoc)
 	{
 		var sText = '';
 		$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
@@ -827,13 +816,13 @@ function weEditor(opt)
 
 		if (this.bRichTextEnabled)
 		{
-			this.$Frame.show();
+			$Frame.show();
 			oText.hide();
 		}
 		else
 		{
 			sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-			this.$Frame.hide();
+			$Frame.hide();
 			oText.show();
 		}
 
@@ -855,9 +844,9 @@ function weEditor(opt)
 		if (!this.bRichTextEnabled)
 			oText[0].focus();
 		else if (is_ff || is_opera)
-			this.$Frame[0].focus();
+			$Frame[0].focus();
 		else
-			this.oFrameWindow.focus();
+			oFrameWindow.focus();
 	};
 
 	// Start up the spellchecker!
@@ -872,17 +861,17 @@ function weEditor(opt)
 				this,
 				we_prepareScriptUrl() + 'action=jseditor;view=0;' + we_sessvar + '=' + we_sessid + ';xml',
 				'message=' + this.getText(true, 1).php_urlencode(),
-				this.onSpellCheckDataReceived
+				onDataReceived
 			);
 		// Otherwise start spell-checking right away.
 		else
-			spellCheck(this.sFormId, opt.sUniqueId);
+			spellCheck(sFormId, opt.sUniqueId);
 
 		return true;
 	};
 
 	// This contains the spellcheckable text.
-	this.onSpellCheckDataReceived = function (oXMLDoc)
+	var onDataReceived = function (oXMLDoc)
 	{
 		var sText = '';
 		$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
@@ -890,7 +879,7 @@ function weEditor(opt)
 		sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 
 		oText.val(sText);
-		spellCheck(this.sFormId, opt.sUniqueId);
+		spellCheck(sFormId, opt.sUniqueId);
 	};
 
 	// Function called when the Spellchecker is finished and ready to pass back.
@@ -902,14 +891,14 @@ function weEditor(opt)
 				this,
 				we_prepareScriptUrl() + 'action=jseditor;view=1;' + we_sessvar + '=' + we_sessid + ';xml',
 				'message=' + this.getText(true, 0).php_urlencode(),
-				weEditors[iArrayPosition].onSpellCheckCompleteDataReceived
+				weEditors[iArrayPosition].onComplete
 			);
 		else
 			this.setFocus();
 	};
 
 	// The corrected text.
-	this.onSpellCheckCompleteDataReceived = function (oXMLDoc)
+	this.onComplete = function (oXMLDoc)
 	{
 		var sText = '';
 		$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
@@ -953,7 +942,7 @@ function weEditor(opt)
 	};
 
 	// Check whether the key has triggered a shortcut?
-	this.checkShortcut = function (oEvent)
+	var checkShortcut = function (oEvent)
 	{
 		// To be a shortcut it needs to be one of these, duh!
 		if (!oEvent.altKey && !oEvent.ctrlKey)
@@ -968,12 +957,12 @@ function weEditor(opt)
 		});
 
 		return sReturnCode;
-	};
+	},
 
 	// The actual event check for the above!
-	this.shortcutCheck = function (oEvent)
+	shortcutCheck = function (oEvent)
 	{
-		var sFoundCode = this.checkShortcut(oEvent);
+		var sFoundCode = checkShortcut(oEvent);
 
 		// Run it and exit.
 		if (typeof sFoundCode == 'string' && sFoundCode != '')
@@ -982,7 +971,7 @@ function weEditor(opt)
 			if (sFoundCode == 'submit')
 			{
 				// So much to do!
-				var oForm = document.getElementById(this.sFormId);
+				var oForm = document.getElementById(sFormId);
 				submitThisOnce(oForm);
 				submitonce();
 				weSaveEntities(oForm.name, ['subject', opt.sUniqueId, 'guestname', 'evtitle', 'question']);
@@ -1014,10 +1003,10 @@ function weEditor(opt)
 		}
 
 		return true;
-	};
+	},
 
 	// This is the method called after clicking the resize bar.
-	this.startResize = function (oEvent)
+	startResize = function (oEvent)
 	{
 		if (!oEvent || window.weCurrentResizeEditor != null)
 			return true;
@@ -1029,36 +1018,31 @@ function weEditor(opt)
 
 		// Set the necessary events for resizing.
 		$(document)
-			.bind('mousemove', this.aEventWrappers.resizeOver)
-			.bind('mouseup', this.aEventWrappers.endResize);
+			.bind('mousemove', resizeOver)
+			.bind('mouseup', endResize);
 
 		return false;
-	};
-
-	this.resizeTextArea = function (newHeight)
-	{
-		newHeight = Math.max(30, newHeight);
-
-		// Do the HTML editor - but only if it's enabled!
-		if (this.bRichTextPossible)
-			this.$Frame.height(newHeight);
-
-		// Do the text box regardless!
-		oText.height(newHeight);
-	};
+	},
 
 	// This resizes an editor.
-	this.resizeOver = function (oEvent)
+	resizeOver = function (oEvent)
 	{
 		if (!oEvent || window.weCurrentResizeEditor == null)
 			return true;
 
-		this.resizeTextArea(oEvent.pageY - oCurrentResize.old_y + oCurrentResize.cur_height);
+		var newHeight = Math.max(30, oEvent.pageY - oCurrentResize.old_y + oCurrentResize.cur_height);
+
+		// Do the HTML editor - but only if it's enabled!
+		if (that.bRichTextPossible)
+			$Frame.height(newHeight);
+
+		// Do the text box regardless!
+		oText.height(newHeight);
 
 		return false;
-	};
+	},
 
-	this.endResize = function (oEvent)
+	endResize = function (oEvent)
 	{
 		if (window.weCurrentResizeEditor == null)
 			return true;
@@ -1067,8 +1051,8 @@ function weEditor(opt)
 
 		// Remove the event...
 		$(document)
-			.unbind('mousemove', this.aEventWrappers.resizeOver)
-			.unbind('mouseup', this.aEventWrappers.endResize);
+			.unbind('mousemove', resizeOver)
+			.unbind('mouseup', endResize);
 
 		return false;
 	};
@@ -1085,7 +1069,7 @@ function weEditor(opt)
 	if (this.bRichTextPossible)
 	{
 		// Make the iframe itself, give it its proper dimensions, stick it next to the current text area, and give it an ID.
-		var fh = this.$Frame = $('<iframe class="rich_editor" id="html_' + opt.sUniqueId + '" src="about:blank" tabindex="' + oText[0].tabIndex + '"></iframe>')
+		var $Frame = $('<iframe class="rich_editor" id="html_' + opt.sUniqueId + '" src="about:blank" tabindex="' + oText[0].tabIndex + '"></iframe>')
 			.width(opt.sEditWidth || '70%')
 			.height(opt.sEditHeight || 150)
 			.insertAfter(oText)
@@ -1095,53 +1079,50 @@ function weEditor(opt)
 		oText.toggle(!this.bRichTextEnabled);
 
 		// Create some handy shortcuts.
-		this.oFrameDoc = this.$Frame[0].contentDocument || this.$Frame[0].contentWindow.document;
-		this.oFrameWindow = this.$Frame[0].contentWindow || this.oFrameDoc.parentWindow;
+		var
+			oFrameDoc = $Frame[0].contentDocument || $Frame[0].contentWindow.document,
+			oFrameWindow = $Frame[0].contentWindow || oFrameDoc.parentWindow;
 
 		// Populate the editor with nothing by default. Opera doesn't need that, but won't complain either.
-		this.oFrameDoc.open();
-		this.oFrameDoc.write('');
-		this.oFrameDoc.close();
+		oFrameDoc.open();
+		oFrameDoc.write('');
+		oFrameDoc.close();
 
 		// Inherit direction (LTR/RTL) from our <html> tag.
-		this.$FrameBody = $(this.oFrameDoc.body);
-		this.$FrameBody[0].dir = $(document).find('html')[0].dir;
+		var $FrameBody = $(oFrameDoc.body);
+		$FrameBody[0].dir = $(document).find('html')[0].dir;
 
 		// Mark it as editable...
-		if (this.$FrameBody[0].contentEditable)
-			this.$FrameBody[0].contentEditable = true;
+		if ($FrameBody[0].contentEditable)
+			$FrameBody[0].contentEditable = true;
 		else
 		{
-			this.$Frame.show();
-			this.oFrameDoc.designMode = 'on';
-			this.$Frame.hide();
+			$Frame.show();
+			oFrameDoc.designMode = 'on';
+			$Frame.hide();
 		}
 
-		$('link[rel=stylesheet]').each(function() { fh.contents().find('head').append($('<p>').append($(this).clone()).html()); });
+		$('link[rel=stylesheet]').each(function() { $Frame.contents().find('head').append($('<p>').append($(this).clone()).html()); });
 
 		// Apply the class and set the frame padding/margin inside the editor.
-		this.$FrameBody.addClass('rich_editor');
+		$FrameBody.addClass('rich_editor');
 
 		// Attach functions to the key and mouse events.
-		$(this.oFrameDoc)
-			.bind('keyup mouseup', this.aEventWrappers.editorKeyUp)
-			.bind('keydown', this.aEventWrappers.shortcutCheck);
+		$(oFrameDoc)
+			.bind('keyup mouseup', editorKeyUp)
+			.bind('keydown', shortcutCheck);
 		oText
-			.bind('keydown', this.aEventWrappers.shortcutCheck)
+			.bind('keydown', shortcutCheck)
 			.bind('keydown', splitQuote)[0].instanceRef = this;
-
-		if (opt.oDrafts)
-			oText.keyup(function () {
-				oCaller.opt.oDrafts.needsUpdate(true); // oCaller is 'this' (established earlier in this function.)
-			});
 	}
 	// If we can't do advanced stuff, then just do the basics.
 	else
-	{
 		this.bRichTextEnabled = false;
-		if (opt.oDrafts)
-			oText.keyup(opt.oDrafts.needsUpdate(true));
-	}
+
+	if (opt.oDrafts)
+		oText.keyup(function () {
+			opt.oDrafts.needsUpdate(true);
+		});
 
 	// Make sure we set the message mode correctly.
 	$('#' + opt.sUniqueId + '_mode').val(+this.bRichTextEnabled);
@@ -1152,7 +1133,7 @@ function weEditor(opt)
 	{
 		// Currently nothing is being resized... I assume!
 		window.weCurrentResizeEditor = null;
-		sizer.show().bind('mousedown', this.aEventWrappers.startResize);
+		sizer.show().bind('mousedown', startResize);
 	}
 
 	// Set the text - if WYSIWYG is enabled that is.

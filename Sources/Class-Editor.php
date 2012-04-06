@@ -2665,15 +2665,15 @@ class wedit
 				<input type="submit" name="', $button['name'], '" value="', $button['button_text'], '" tabindex="', $context['tabindex']++, '"', !empty($button['onclick']) ? ' onclick="' . $button['onclick'] . '"' : '', !empty($button['accesskey']) ? ' accesskey="' . $button['accesskey'] . '"' : '', $class, '>';
 		}
 
+		if ($context['show_spellchecking'])
+			echo '
+				<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="spell">';
+
 		// These two buttons get added semi-magically rather than not.
 		if ($this->editorOptions['drafts'] != 'none')
 			echo '
 				<input type="hidden" id="draft_id" name="draft_id" value="', empty($_REQUEST['draft_id']) ? '0' : $_REQUEST['draft_id'], '">
 				<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return ', in_array($this->editorOptions['drafts'], array('basic_post', 'auto_post')) ? 'confirm(' . JavaScriptEscape($txt['save_draft_warning']) . ') && ' : '', 'submitThisOnce(this);" accesskey="d" class="save">';
-
-		if ($context['show_spellchecking'])
-			echo '
-				<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="spell">';
 
 		if (in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm')))
 			echo '
