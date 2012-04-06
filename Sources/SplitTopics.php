@@ -1717,8 +1717,6 @@ function MergePosts($error_report = true)
 				$oldsubject = ', subject = {string:subject}';
 			}
 
-			// !! @todo: merge Likes as well!
-
 			// Uhh the old post can have attachments
 			// If SQL finds some attachments, it should replace them with the new id
 			wesql::query('
@@ -1756,6 +1754,60 @@ function MergePosts($error_report = true)
 			// the member's posts when it was posted, decrease his or her post count.
 			if (!empty($memberid) && empty($postcount))
 				updateMemberData($memberid, array('posts' => '-'));
+
+			// Update likes on the old post to the new post.
+			// Unfortunately we can't just update one to the other, in case people individually liked both posts.
+			$likes = array(
+				$oldpostid => array(),
+				$newpostid => array(),
+			);
+			$query = wesql::query('
+				SELECT id_content, id_member
+				FROM {db_prefix}likes
+				WHERE id_content IN ({array_int:ids}) AND content_type = {string:post}',
+				array(
+					'ids' => array($newpostid, $oldpostid),
+					'post' => 'post',
+				)
+			);
+			while ($row = wesql::fetch_assoc($query))
+				$likes[$row['id_content']][] = $row['id_member'];
+			wesql::free_result($query);
+
+			if (!empty($likes[$oldpostid]))
+			{
+				// OK, so someone actually liked the old post. Have they liked the new post too?
+				$liked_both = array_intersect($likes[$oldpostid], $likes[$newpostid]);
+				if (!empty($liked_both))
+					wesql::query('
+						DELETE FROM {db_prefix}likes
+						WHERE id_content = {int:oldpostid}
+							AND content_type = {string:post}
+							AND id_member IN ({array_int:likesboth})',
+						array(
+							'oldpostid' => $oldpostid,
+							'post' => 'post',
+							'likesboth' => $liked_both,
+						)
+					);
+
+				// Anyone left who liked the old post on its own?
+				$liked_old = array_diff($likes[$oldpostid], $liked_both);
+				if (!empty($liked_old))
+					wesql::query('
+						UPDATE {db_prefix}likes
+						SET id_content = {int:newpostid}
+						WHERE id_content = {int:oldpostid}
+							AND content_type = {string:post}
+							AND id_member IN ({array_int:likesold})',
+						array(
+							'newpostid' => $newpostid,
+							'oldpostid' => $oldpostid,
+							'post' => 'post',
+							'likesold' => $liked_old,
+						)
+					);
+			}
 
 			// Merge the post
 			wesql::query('
