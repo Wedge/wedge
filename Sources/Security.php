@@ -1081,6 +1081,31 @@ function checkUserBehavior()
 
 	if (checkUserRequest_blacklist() || checkUserRequest_request() || checkUserRequest_useragent() || checkUserRequest_post())
 	{
+		// Process the headers into a nice string then log the intrusion.
+		$headers = '';
+		$entity = '';
+
+		foreach ($context['http_headers'] as $k => $v)
+			if ($k != 'User-Agent')
+				$headers .= ($headers != '' ? '<br>' : '') . htmlspecialchars($k . '=' . ($k != 'X-Forwarded-For' ? $v : format_ip($v)));
+
+		foreach ($_POST as $k => $v)
+			$entity .= ($entity != '' ? '<br>' : '') . htmlspecialchars($k . '=' . $v);
+
+		wesql::insert('insert',
+			'{db_prefix}log_intrusion',
+			array(
+				'id_member' => 'int', 'error_type' => 'string', 'ip' => 'int', 'event_time' => 'int', 'http_method' => 'string',
+				'request_uri' => 'string', 'protocol' => 'string', 'user_agent' => 'string', 'headers' => 'string', 'request_entity' => 'string',
+			),
+			array(
+				$user_info['id'], substr($context['behavior_error'], 6), get_ip_identifier($_SERVER['REMOTE_ADDR']), time(), $_SERVER['REQUEST_METHOD'],
+				$_SERVER['REQUEST_URI'], $_SERVER['SERVER_PROTOCOL'], $context['http_headers']['User-Agent'], $headers, $entity,
+			),
+			array('id_event')
+		);
+		$error_id = wesql::insert_id();
+
 		if ($user_info['is_admin'])
 			return false;
 		else
@@ -1100,32 +1125,6 @@ function checkUserBehavior()
 
 			loadPermissions();
 			loadTheme();
-
-			// Process the headers into a nice string then log the intrusion.
-			$headers = '';
-			$entity = '';
-
-			foreach ($context['http_headers'] as $k => $v)
-				if ($k != 'User-Agent')
-					$headers .= ($headers != '' ? '<br>' : '') . htmlspecialchars($k . '=' . ($k != 'X-Forwarded-For' ? $v : format_ip($v)));
-
-			$entity = htmlspecialchars(implode("\n", $_POST));
-			foreach ($_POST as $k => $v)
-				$entity .= ($entity != '' ? '<br>' : '') . htmlspecialchars($k . '=' . $v);
-
-			wesql::insert('insert',
-				'{db_prefix}log_intrusion',
-				array(
-					'id_member' => 'int', 'error_type' => 'string', 'ip' => 'int', 'event_time' => 'int', 'http_method' => 'string',
-					'request_uri' => 'string', 'protocol' => 'string', 'user_agent' => 'string', 'headers' => 'string', 'request_entity' => 'string',
-				),
-				array(
-					$user_info['id'], substr($context['behavior_error'], 6), get_ip_identifier($_SERVER['REMOTE_ADDR']), time(), $_SERVER['REQUEST_METHOD'],
-					$_SERVER['REQUEST_URI'], $_SERVER['SERVER_PROTOCOL'], $context['http_headers']['User-Agent'], $headers, $entity,
-				),
-				array('id_event')
-			);
-			$error_id = wesql::insert_id();
 
 			// Set the page up
 			loadTemplate('Errors');
