@@ -1100,7 +1100,7 @@ function checkUserBehavior()
 			),
 			array(
 				$user_info['id'], substr($context['behavior_error'], 6), get_ip_identifier($_SERVER['REMOTE_ADDR']), time(), $_SERVER['REQUEST_METHOD'],
-				$_SERVER['REQUEST_URI'], $_SERVER['SERVER_PROTOCOL'], $context['http_headers']['User-Agent'], $headers, $entity,
+				isset($_SERVER['REAL_REQUEST_URI']) ? $_SERVER['REAL_REQUEST_URI'] : $_SERVER['REQUEST_URI'], $_SERVER['SERVER_PROTOCOL'], $context['http_headers']['User-Agent'], $headers, $entity,
 			),
 			array('id_event')
 		);

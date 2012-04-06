@@ -182,6 +182,7 @@ function cleanRequest()
 
 			// The happy place where boards are identified.
 			$_GET['board'] = $board = $full_board['id_board'];
+			$_SERVER['REAL_REQUEST_URI'] = $_SERVER['REQUEST_URI'];
 			$_SERVER['REAL_HTTP_HOST'] = $_SERVER['HTTP_HOST'];
 			$_SERVER['HTTP_HOST'] = $full_board['url'];
 			$_SERVER['REQUEST_URI'] = $ru = str_replace($full_board['url'], '', $full_request);
@@ -670,6 +671,10 @@ function get_http_headers()
 	foreach ($_SERVER as $key => $value)
 		if (strpos($key, 'HTTP_') === 0)
 			$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))))] = $value;
+
+	if (!empty($_SERVER['REAL_HTTP_HOST']) && $_SERVER['REAL_HTTP_HOST'] != $headers['Host'])
+		$headers['Host'] = $_SERVER['REAL_HTTP_HOST'];
+
 	return $headers;
 }
 
