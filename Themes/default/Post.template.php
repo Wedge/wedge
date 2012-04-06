@@ -753,6 +753,9 @@ function template_spellcheck()
 		}
 	</style>';
 
+	// We're skipping the index template, so jQuery is not marked as initialized at this point.
+	weInitJS();
+
 	// As you may expect - we need a lot of JavaScript for this... Load it from the separate files.
 	echo theme_base_js(1), '
 	<script src="', add_js_file('scripts/spellcheck.js', false, true), '"></script>

@@ -413,7 +413,7 @@ function template_verification_sound()
 </head>
 <body style="margin: 1ex">
 	<div class="popuptext center">
-		<audio src="', $context['verification_sound_href'], '" controls="controls">';
+		<audio src="', $context['verification_sound_href'], '" controls id="audio">';
 
 	if ($context['browser']['is_ie'])
 		echo '
@@ -430,7 +430,7 @@ function template_verification_sound()
 	echo '
 		</audio>
 		<br>
-		<a href="', $context['verification_sound_href'], ';sound" rel="nofollow">', $txt['visual_verification_sound_again'], '</a><br>
+		<a href="#" onclick="$(\'#audio\')[0].play();">', $txt['visual_verification_sound_again'], '</a><br>
 		<a href="#" onclick="$(\'#helf\').remove(); return false;">', $txt['visual_verification_sound_close'], '</a><br>
 		<a href="', $context['verification_sound_href'], '" rel="nofollow">', $txt['visual_verification_sound_direct'], '</a>
 	</div>

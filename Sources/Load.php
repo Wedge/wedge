@@ -1904,18 +1904,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		loadLanguage($required_files, '', false);
 
 		// Initialize our JS files to cache right before we run template_init().
-		if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
-			$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js', 'scripts/sbox.js');
-		else
-		{
-			$remote = array(
-				'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
-				'jquery' =>		'http://code.jquery.com/jquery-1.5.2.min.js',
-				'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
-			);
-			$context['remote_javascript_files'] = array($remote[$settings['jquery_origin']]);
-			$context['javascript_files'] = array('scripts/script.js', 'scripts/sbox.js');
-		}
+		weInitJS();
 
 		// Initialize the theme and load the default macros.
 		execBlock('init', 'ignore');
@@ -2053,6 +2042,24 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// We are ready to go.
 	$context['theme_loaded'] = true;
+}
+
+function weInitJS()
+{
+	global $settings, $context;
+
+	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
+		$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js', 'scripts/sbox.js');
+	else
+	{
+		$remote = array(
+			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
+			'jquery' =>		'http://code.jquery.com/jquery-1.5.2.min.js',
+			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
+		);
+		$context['remote_javascript_files'] = array($remote[$settings['jquery_origin']]);
+		$context['javascript_files'] = array('scripts/script.js', 'scripts/sbox.js');
+	}
 }
 
 function loadPluginSource($plugin_name, $source_name)
