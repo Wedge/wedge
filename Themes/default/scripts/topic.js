@@ -357,111 +357,87 @@ function QuickModify(opt)
 	};
 }
 
-function InTopicModeration(oOptions)
+function InTopicModeration(opt)
 {
-	this.opt = oOptions;
-	this.bButtonsShown = false;
-	this.iNumSelected = 0;
+	var bButtonsShown = false, iNumSelected = 0,
+
+	handleClick = function ()
+	{
+		var
+			display = opt.sStrip + '_strip',
+			// Adds a button to a certain button strip.
+			addButton = function (sClass)
+			{
+				// Add the button.
+				$('<li></li>').addClass(sClass).html('<a href="#"></a>')
+					.click(handleSubmit).hide().appendTo('#' + display);
+			};
+
+		if (!bButtonsShown)
+		{
+			// Make sure it can go somewhere.
+			if (!$('#' + display).length)
+				$('<ul id="' + display + '"></ul>').addClass('buttonlist floatleft').appendTo('#' + opt.sStrip);
+			else
+				$('#' + display).show();
+
+			// Add the 'remove selected items' button.
+			if (opt.sRemoveLabel)
+				addButton('modrem');
+
+			// Add the 'restore selected items' button.
+			if (opt.sRestoreLabel)
+				addButton('modres');
+
+			// Adding these buttons once should be enough.
+			bButtonsShown = true;
+		}
+
+		// Keep stats on how many items were selected. ('this' is the checkbox.)
+		iNumSelected += this.checked ? 1 : -1;
+
+		// Show the number of messages selected in the button.
+		$('.modrem a').html(opt.sRemoveLabel + ' [' + iNumSelected + ']').parent().filter(iNumSelected > 0 ? ':hidden' : ':visible').fadeToggle(iNumSelected * 300);
+		$('.modres a').html(opt.sRestoreLabel + ' [' + iNumSelected + ']').parent().filter(iNumSelected > 0 ? ':hidden' : ':visible').fadeToggle(iNumSelected * 300);
+
+		// Try to restore the correct position.
+		$('#' + display + ' li').removeClass('last').filter(':visible:last').addClass('last');
+	},
+
+	handleSubmit = function ()
+	{
+		// Make sure this form isn't submitted in another way than this function.
+		var
+			oForm = $('#' + opt.sFormId)[0],
+			oInput = $('<input type="hidden" name="' + we_sessvar + '" />').val(we_sessid).appendTo(oForm);
+
+		if ($(this).hasClass('modrem')) // 'this' is the remove button itself.
+		{
+			if (!confirm(opt.sRemoveConfirm))
+				return false;
+
+			oForm.action = oForm.action.replace(/;restore_selected=1/, '');
+		}
+		else // restore button?
+		{
+			if (!confirm(opt.sRestoreConfirm))
+				return false;
+
+			oForm.action = oForm.action + ';restore_selected=1';
+		}
+
+		oForm.submit();
+		return true;
+	};
 
 	// Add checkboxes to all the messages.
-	for (var i = 0, n = this.opt.aMessageIds.length; i < n; i++)
-		$('#' + this.opt.sCheckboxContainerMask + this.opt.aMessageIds[i]).append(
-			$('<input type="checkbox" name="msgs[]" value="' + this.opt.aMessageIds[i] + '"></input>')
-			.data('that', this).click(function () { $(this).data('that').handleClick(this); })
-		).show();
+	$('.' + opt.sClass).each(function () {
+		$('<input type="checkbox" name="msgs[]" value="' + this.id.substr(17) + '"></input>')
+		.click(handleClick)
+		.appendTo(this);
+	});
 }
 
-InTopicModeration.prototype.handleClick = function (oCheckbox)
-{
-	var
-		opt = this.opt,
-		button_strip = opt.sButtonStrip,
-		use_image = opt.bUseImageButton,
-		display = opt.sButtonStripDisplay;
-
-	if (!this.bButtonsShown)
-	{
-		// Make sure it can go somewhere.
-		if (!$('#' + display).length)
-			$('<ul id="' + display + '" class="' + (opt.sButtonStripClass ? opt.sButtonStripClass : 'buttonlist floatleft') + '"></ul>').appendTo('#' + button_strip);
-		else
-			$('#' + display).show();
-
-		// Add the 'remove selected items' button.
-		if (opt.bCanRemove)
-			wedge_addButton(button_strip, use_image, {
-				sId: opt.sSelf + '_remove_button',
-				sText: opt.sRemoveButtonLabel,
-				sImage: opt.sRemoveButtonImage,
-				sCustom: ' onclick="return ' + opt.sSelf + '.handleSubmit(\'remove\')"'
-			});
-
-		// Add the 'restore selected items' button.
-		if (opt.bCanRestore)
-			wedge_addButton(button_strip, use_image, {
-				sId: opt.sSelf + '_restore_button',
-				sText: opt.sRestoreButtonLabel,
-				sImage: opt.sRestoreButtonImage,
-				sCustom: ' onclick="return ' + opt.sSelf + '.handleSubmit(\'restore\')"'
-			});
-
-		// Adding these buttons once should be enough.
-		this.bButtonsShown = true;
-	}
-
-	// Keep stats on how many items were selected.
-	this.iNumSelected += oCheckbox.checked ? 1 : -1;
-	var i = this.iNumSelected;
-
-	// Show the number of messages selected in the button.
-	if (opt.bCanRemove && !use_image)
-		var but1 = $('#' + opt.sSelf + '_remove_button')
-			.html(opt.sRemoveButtonLabel + ' [' + i + ']');
-
-	if (opt.bCanRestore && !use_image)
-		var but2 = $('#' + opt.sSelf + '_restore_button')
-			.html(opt.sRestoreButtonLabel + ' [' + i + ']');
-
-	if (but1 && i < 1 && but1.is(':visible'))
-		but1.fadeOut(300).hide();
-	if (but1 && i > 0 && but1.is(':hidden'))
-		but1.fadeIn(300).show();
-	if (but2 && i < 1 && but2.is(':visible'))
-		but2.fadeOut(300).hide();
-	if (but2 && i > 0 && but2.is(':hidden'))
-		but2.fadeIn(300).show();
-
-	// Try to restore the correct position.
-	$('#' + button_strip + ' li').slice(-3, -1).toggleClass('position_holder', i > 0).toggleClass('last', i < 1);
-};
-
-InTopicModeration.prototype.handleSubmit = function (sSubmitType)
-{
-	// Make sure this form isn't submitted in another way than this function.
-	var
-		oForm = $('#' + this.opt.sFormId)[0],
-		oInput = $('<input type="hidden" name="' + we_sessvar + '" />').val(we_sessid).appendTo(oForm);
-
-	if (sSubmitType == 'remove')
-	{
-		if (!confirm(this.opt.sRemoveButtonConfirm))
-			return false;
-
-		oForm.action = oForm.action.replace(/;restore_selected=1/, '');
-	}
-	else if (sSubmitType == 'restore')
-	{
-		if (!confirm(this.opt.sRestoreButtonConfirm))
-			return false;
-
-		oForm.action = oForm.action + ';restore_selected=1';
-	}
-	else
-		return false;
-
-	oForm.submit();
-	return true;
-};
 
 // A global array containing all IconList objects.
 var aIconLists = [];
@@ -613,15 +589,6 @@ function expandThumb(thumbID)
 	return false;
 }
 
-// Adds a button to a certain button strip.
-function wedge_addButton(sButtonStripId, bUseImage, oOptions)
-{
-	$('#' + sButtonStripId + ' li').last().removeClass('last').addClass('position_holder');
-
-	// Add the button.
-	$('<li></li>').html('<a href="#"' + oOptions.sCustom + ' class="last" id="' + oOptions.sId + '">' + oOptions.sText + '</a>')
-		.hide().appendTo($('#' + sButtonStripId + ' ul')).fadeIn(300);
-}
 
 
 // *** The UserMenu

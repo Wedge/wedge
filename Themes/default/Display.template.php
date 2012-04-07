@@ -112,7 +112,7 @@ function template_display_posts()
 				// Show a checkbox for quick moderation?
 				if ($message['can_remove'])
 					echo '
-								<li class="inline_mod_check hide" id="in_topic_mod_check_', $message['id'], '"></li>';
+								<li class="inline_mod_check" id="inline_mod_check_', $message['id'], '"></li>';
 
 				echo '
 							</ul>';
@@ -278,21 +278,13 @@ function template_display_posts()
 
 	if ($context['can_remove_post'])
 		add_js('
-	var oInTopicModeration = new InTopicModeration({
-		sSelf: \'oInTopicModeration\',
-		sCheckboxContainerMask: \'in_topic_mod_check_\',
-		aMessageIds: [' . implode(',', $removableMessageIDs) . '],
-		sButtonStrip: \'moderationbuttons\',
-		sButtonStripDisplay: \'moderationbuttons_strip\',
-		bUseImageButton: false,
-		bCanRemove: ' . ($context['can_remove_post'] ? 'true' : 'false') . ',
-		sRemoveButtonLabel: \'' . $txt['quickmod_delete_selected'] . '\',
-		sRemoveButtonImage: \'delete_selected.gif\',
-		sRemoveButtonConfirm: \'' . $txt['quickmod_confirm'] . '\',
-		bCanRestore: ' . ($context['can_restore_msg'] ? 'true' : 'false') . ',
-		sRestoreButtonLabel: \'' . $txt['quick_mod_restore'] . '\',
-		sRestoreButtonImage: \'restore_selected.gif\',
-		sRestoreButtonConfirm: \'' . $txt['quickmod_confirm'] . '\',
+	new InTopicModeration({
+		sClass: \'inline_mod_check\',' . ($context['can_remove_post'] ? '
+		sRemoveLabel: \'' . $txt['quickmod_delete_selected'] . '\',
+		sRemoveConfirm: \'' . $txt['quickmod_confirm'] . '\',' : '') . ($context['can_restore_msg'] ? '
+		sRestoreLabel: \'' . $txt['quick_mod_restore'] . '\',
+		sRestoreConfirm: \'' . $txt['quickmod_confirm'] . '\',' : '') . '
+		sStrip: \'moderationbuttons\',
 		sFormId: \'quickModForm\'
 	});');
 

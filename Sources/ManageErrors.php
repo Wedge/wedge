@@ -660,7 +660,7 @@ function ViewFile()
 	$line = isset($_REQUEST['line']) ? (int) $_REQUEST['line'] : 0;
 
 	// Make sure the file we are looking for is one they are allowed to look at
-	if (!is_readable($file) || (strpos($file, '../') !== false && ( strpos($file, $boarddir) === false || strpos($file, $sourcedir) === false)))
+	if (!is_readable($file) || (strpos($file, '../') !== false && (strpos($file, $boarddir) === false || strpos($file, $sourcedir) === false)))
 		fatal_lang_error('error_bad_file', true, array(htmlspecialchars($file)));
 
 	// Get the min and max lines
