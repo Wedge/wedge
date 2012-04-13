@@ -2163,9 +2163,10 @@ function loadSource($source_name)
  * @param string $lang Specifies the language to attempt to load; if not specified (or empty), load it in the current user's default language.
  * @param bool $fatal Whether to issue a fatal error in the event the language file could not be loaded.
  * @param bool $force_reload Whether to reload the language file even if previously loaded before.
+ * @param bool $fallback Are we in a fallback call? (i.e. loading English prior to loading another language.)
  * @return string The name of the language from which the loaded language file was taken.
  */
-function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false)
+function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
 	global $user_info, $language, $theme, $context, $settings;
 	global $cachedir, $db_show_debug, $txt;
@@ -2177,7 +2178,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 	// Do we want the English version of language file as fallback?
 	if (empty($settings['disable_language_fallback']) && $lang !== 'english')
-		loadLanguage($template_name, 'english', false);
+		loadLanguage($template_name, 'english', false, false, true);
 
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
@@ -2244,12 +2245,17 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			break;
 		}
 
-		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that.
-		if ($found && $template === 'index')
+		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that. And only once.
+		if ($found && !$fallback && $template === 'index')
 		{
 			$user_info['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
 			if (empty($user_info['time_format']))
 				$user_info['time_format'] = $txt['time_format'];
+
+			// Set up day suffixes (1st, 2nd...)
+			foreach ($txt['day_suffix'] as $day => $suffix)
+				$txt['day_suffix_' . $day] = $suffix;
+			unset($txt['day_suffix']);
 		}
 	}
 

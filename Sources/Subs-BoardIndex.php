@@ -59,7 +59,8 @@ function getBoardIndex($boardIndexOptions)
 		WHERE {query_see_board}' . (empty($boardIndexOptions['category']) ? '' : '
 			AND b.id_cat = {int:category}') . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
 			AND b.child_level >= {int:child_level}') : '
-			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)),
+			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)) . (empty($boardIndexOptions['category']) ? '' : '
+			ORDER BY b.board_order'),
 		array(
 			'current_member' => $user_info['id'],
 			'child_level' => $boardIndexOptions['base_level'],

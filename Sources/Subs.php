@@ -721,6 +721,9 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if ($context['server']['is_windows'] && strpos($str, '%e') !== false)
 		$str = str_replace('%e', '%#d', $str);
 
+	if (strpos($str, '%@') !== false)
+		$str = str_replace('%@', number_context('day_suffix', (int) strftime('%d', $time), false), $str);
+
 	// Format any other characters..
 	return strftime($str, $time);
 }
