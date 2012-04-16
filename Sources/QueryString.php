@@ -262,7 +262,7 @@ function cleanRequest()
 		// logging some common 404 errors, such as Google Cache, which might be trying to access a file
 		// from the SMF version of your website... And will stop doing so after a while.
 
-		if (!empty($settings['enableErrorLogging'] && !empty($settings['enableError404Logging'])) // make sure we REALLY want to log the error...
+		if (!empty($settings['enableErrorLogging']) && !empty($settings['enableError404Logging']) // make sure we REALLY want to log the error...
 		&& !$is_cache_file // don't log cached files, probably Google Cache.
 		&& strpos($full_request, '/avatar_') === false // search bot looking for a previous avatar that got regenerated since then?
 		&& strpos($full_request, '/cache/') === false // same, but with regenerated CSS or JS files?

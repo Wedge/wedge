@@ -70,6 +70,9 @@ function Feed()
 
 	loadLanguage('Stats');
 
+	// Get rid of session IDs!
+	$context['no_sid_thank_you'] = true;
+
 	// Default to latest 5. No more than 255, please. Why 255, I don't know. Because it sounds geeky?
 	$_GET['limit'] = empty($_GET['limit']) || (int) $_GET['limit'] < 1 ? 5 : min((int) $_GET['limit'], 255);
 
@@ -275,10 +278,8 @@ function Feed()
 	{
 		ob_start('ob_sessrewrite');
 		$insideurl = preg_quote($scripturl, '~');
-		$context['pretty']['search_patterns'][]  = '~(<link>|<comments>|<guid>|<uri>)' . $insideurl . '([^<"]*?[?;&](board|topic|u)=[^#<"]+)~';
-		$context['pretty']['replace_patterns'][] = '~(<link>|<comments>|<guid>|<uri>)' . $insideurl . '([^<"]*?[?;&](board|topic|u)=([^<"]+))~';
-		$context['pretty']['search_patterns'][]  = '~(<category scheme=)"' . $insideurl . '([^<"]*?[?;&](board|topic|u)=[^#<"]+)~';
-		$context['pretty']['replace_patterns'][] = '~(<category scheme=)"' . $insideurl . '([^<"]*?[?;&](board|topic|u)=([^#<"]+"))~';
+		$context['pretty']['patterns'][]  = '~(?<=<link>|<comments>|<guid>|<uri>)' . $insideurl . '([?;&](?:[^<"]*?[?;&])?(board|topic|u)=[^#<]+)~';
+		$context['pretty']['patterns'][]  = '~(?<=<category scheme=")' . $insideurl . '([?;&](?:[^<"]*?[?;&])?(board|topic|u)=[^#"]+)~';
 	}
 
 	if (isset($_REQUEST['debug']))

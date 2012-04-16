@@ -1009,13 +1009,14 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
 		$url = array(0 => array('url' => str_replace($scripturl, '', $setLocation)));
 		foreach ($settings['pretty_filters'] as $id => $enabled)
 		{
+			$func = 'pretty_filter_' . $id;
 			if ($enabled)
-				$pretty_url = call_user_func('pretty_filter_' . $id, $url);
-			if (isset($pretty_url[0]['replacement']))
+				$func($url);
+			if (isset($url[0]['replacement']))
 				break;
 		}
-		if (isset($pretty_url[0]['replacement']))
-			$setLocation = $pretty_url[0]['replacement'];
+		if (isset($url[0]['replacement']))
+			$setLocation = $url[0]['replacement'];
 		$setLocation = str_replace(chr(18), '\'', $setLocation);
 		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~[?;=]#|&amp;#~', '~[?;=#]$|&amp;$~'), array(';', '?', '#', ''), $setLocation);
 	}

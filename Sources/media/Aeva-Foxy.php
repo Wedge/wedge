@@ -899,8 +899,7 @@ function aeva_foxy_feed()
 	if (!empty($settings['pretty_filters']['actions']))
 	{
 		$insideurl = preg_quote($scripturl, '~');
-		$context['pretty']['search_patterns'][]  = '~(<link>|<guid>)' . $insideurl . '([^<]*?[?;&](action)=[^#<]+)~';
-		$context['pretty']['replace_patterns'][] = '~(<link>|<guid>)' . $insideurl . '([^<]*?[?;&](action)=([^<]+))~';
+		$context['pretty']['patterns'][] = '~(?<=<link>|<guid>)' . $insideurl . '([?;&](action)=[^#<]+)~';
 	}
 
 	header('Content-Type: application/rss+xml; charset=UTF-8');

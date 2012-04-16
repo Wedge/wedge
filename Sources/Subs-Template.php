@@ -154,14 +154,8 @@ function ob_sessrewrite($buffer)
 	// Very fast on-the-fly replacement of <URL>...
 	$buffer = str_replace('<URL>', $scripturl, $buffer);
 
+	// A regex-ready $scripturl, useful later.
 	$preg_scripturl = preg_quote($scripturl, '~');
-
-	// Do nothing if the session is cookied, or they are a crawler - guests are caught by redirectexit().
-	if (empty($_COOKIE) && SID != '' && empty($context['browser']['possibly_robot']))
-		$buffer = preg_replace('~(?<!<link rel="canonical" href=)"' . $preg_scripturl . '(?!\?' . preg_quote(SID, '~') . ')\\??~', '"' . $scripturl . '?' . SID . '&amp;', $buffer);
-	// Debugging templates, are we?
-	elseif (isset($_GET['debug']))
-		$buffer = preg_replace('~(?<!<link rel="canonical" href=)"' . $preg_scripturl . '\\??~', '"' . $scripturl . '?debug;', $buffer);
 
 	call_hook('dynamic_rewrite', array(&$buffer));
 
@@ -386,13 +380,13 @@ function ob_sessrewrite($buffer)
 	// If guests/users can't view user profiles, we might as well unlink them!
 	if (!allowedTo('profile_view_any'))
 		$buffer = preg_replace(
-			'~<a(?:\s+|\s[^>]*\s)href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
+			'~<a\b[^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
 			'$1', $buffer
 		);
 	// Now we'll color profile links based on membergroup.
 	else
 		$buffer = preg_replace_callback(
-			'~<a((?:\s+|\s[^>]*\s)href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile;(?:[^"]+;)?u=(\d+)"[^>]*)>(.*?)</a>~',
+			'~<a\b([^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile;(?:[^"]+;)?u=(\d+)"[^>]*)>(.*?)</a>~',
 			'wedge_profile_colors', $buffer
 		);
 
@@ -400,39 +394,52 @@ function ob_sessrewrite($buffer)
 	if (!empty($settings['minify_html']))
 		$buffer = preg_replace("~\n\t+~", "\n", $buffer);
 
+	// If the session is not cookied, or they are a crawler, add the session ID to all URLs.
+	if (empty($_COOKIE) && SID != '' && empty($context['no_sid_thank_you']) && empty($context['browser']['possibly_robot']))
+	{
+		$buffer = preg_replace('~(?<!<link rel="canonical" href=")' . $preg_scripturl . '(?!\?' . preg_quote(SID, '~') . ')(?:\?|(?="))~', $scripturl . '?' . SID . ';', $buffer);
+		$buffer = str_replace('"' . $scripturl . '?' . SID . ';"', '"' . $scripturl . '?' . SID . '"', $buffer);
+	}
+	// Debugging templates, are we?
+	elseif (isset($_GET['debug']))
+		$buffer = preg_replace('~(?<!<link rel="canonical" href=")"' . $preg_scripturl . '\??~', $scripturl . '?debug;', $buffer);
+
 	// Rewrite the buffer with pretty URLs!
 	if (!empty($settings['pretty_enable_filters']))
 	{
 		$use_cache = !empty($settings['pretty_enable_cache']);
-		$session_var = $context['session_var'];
+		$session_var = $context['session_query'];
 
 		// Remove the script tags
 		$context['pretty']['scriptID'] = 0;
 		$context['pretty']['scripts'] = array();
 		$buffer = preg_replace_callback('~<script.+?</script>~s', 'pretty_scripts_remove', $buffer);
-
 		// Find all URLs in the buffer
-		$context['pretty']['search_patterns'][] =  '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $preg_scripturl . '([^"\'#]*?[?;&](board|topic|action|category)=[^"\'#]+)~';
-		$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\']' . $preg_scripturl . '([^"\'#]*?[?;&](board|topic|action|category)=([^"]+"|[^\']+\'))~';
+		// !! If you want to be stricter, start with this instead: '~(?<=(?:<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\'>])'
+		$context['pretty']['patterns'][] =  '~(?<=["\'>])' . $preg_scripturl . '([?;&](?:[^"\'#]*?[;&])?(board|topic|action|category)=[^"\'<#]+)~';
 		$urls_query = array();
 		$uncached_urls = array();
 
 		// Making sure we don't execute patterns twice.
-		$context['pretty']['search_patterns'] = array_flip(array_flip($context['pretty']['search_patterns']));
+		$context['pretty']['patterns'] = array_flip(array_flip($context['pretty']['patterns']));
 
-		foreach ($context['pretty']['search_patterns'] as $pattern)
+		foreach ($context['pretty']['patterns'] as $pattern)
 		{
 			preg_match_all($pattern, $buffer, $matches, PREG_PATTERN_ORDER);
-			foreach ($matches[2] as $match)
+			foreach ($matches[1] as $match)
 			{
 				// Rip out everything that shouldn't be cached
 				// !!! base64_encode sometimes finishes strings with '=' gaps IIRC. Should check whether they're not going to be ripped by this.
 				// !!! Also, '~=?;+~' (in various places) should probably be rewritten as '~=;+|;{2,}~'
 				if ($use_cache)
-					$match = preg_replace(array('~^["\']|PHPSESSID=[^&;]+|' . $session_var . '=[^;]+~', '~"~', '~=?;+~', '~\?;|\?&amp;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $match);
+				{
+					$match = str_replace(SID ? array(SID, $session_var) : $session_var, '', $match);
+					$match = preg_replace(array('~=?;+~', '~\?&amp;~', '~[?;=]+$~'), array(';', '?', ''), $match);
+				}
 				else
 					// !!! This can easily be optimized into a simple str_replace by adding placeholders for ^ and $.
-					$match = preg_replace(array('~^["\']~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $match);
+					$match = preg_replace(array('~=?;+~', '~[?;=]+$~'), array(';', ''), $match);
+				$match = str_replace(array('"', '?;'), array('%22', '?'), $match);
 				$url_id = $match;
 				$urls_query[] = $url_id;
 				$uncached_urls[$match] = array(
@@ -475,9 +482,13 @@ function ob_sessrewrite($buffer)
 				// Run each filter callback function on each URL
 				if (!function_exists('pretty_filter_topics'))
 					loadSource('PrettyUrls-Filters');
+
 				foreach ($settings['pretty_filters'] as $id => $enabled)
+				{
+					$func = 'pretty_filter_' . $id;
 					if ($enabled)
-						$uncached_urls = call_user_func('pretty_filter_' . $id, $uncached_urls);
+						$func($uncached_urls);
+				}
 
 				// Fill the cached URLs array
 				$cache_data = array();
@@ -498,7 +509,7 @@ function ob_sessrewrite($buffer)
 			}
 
 			// Put the URLs back into the buffer
-			foreach ($context['pretty']['replace_patterns'] as $pattern)
+			foreach ($context['pretty']['patterns'] as $pattern)
 				$buffer = preg_replace_callback($pattern, 'pretty_buffer_callback', $buffer);
 		}
 
@@ -587,37 +598,48 @@ function pretty_scripts_remove($match)
 // A callback function to replace the buffer's URLs with their cached URLs
 function pretty_buffer_callback($matches)
 {
-	global $cached_urls, $scripturl, $use_cache, $session_var;
+	global $cached_urls, $scripturl, $use_cache, $session_var, $user_info;
+	static $immediate_cache = array();
 
-	// Is this URL part of a feed?
-	$isFeed = strpos($matches[1], '>') === false ? '"' : '';
+	if (isset($immediate_cache[$matches[0]]))
+		return $immediate_cache[$matches[0]];
 
-	// Remove those annoying quotes
-	$matches[2] = preg_replace('~^[\"\']|[\"\']$~', '', $matches[2]);
-
-	// Store the parts of the URL that won't be cached so they can be inserted later
 	if ($use_cache)
 	{
-		preg_match('~PHPSESSID=[^;#&]+~', $matches[2], $PHPSESSID);
-		preg_match('~' . $session_var . '=[^;#]+~', $matches[2], $sesc);
-		preg_match('~#.*~', $matches[2], $fragment);
-		$url_id = preg_replace(array('~PHPSESSID=[^;#]+|' . $session_var . '=[^;#]+|#.*$~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $matches[2]);
+		// Store the parts of the URL that won't be cached so they can be inserted later
+		$has_sid = SID && strpos($matches[1], SID) !== false;
+		$has_sesc = strpos($matches[1], $session_var) !== false;
+		$url_id = rtrim(
+			preg_replace(
+				'~=?;+~',
+				';',
+				str_replace(
+					array('"', '?;', SID, $session_var),
+					array('%22', '?', '', ''),
+					$matches[1]
+				)
+			),
+			'&?;='
+		);
+		// Stitch everything back together
+		$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
+		if ($has_sid)
+			$replacement .= (strpos($replacement, '?') === false ? '?' : ';') . SID;
+		if ($has_sesc)
+			$replacement .= (strpos($replacement, '?') === false ? '?' : ';') . $session_var;
 	}
 	else
 	{
-		preg_match('~#.*~', $matches[2], $fragment);
 		// Rip out everything that won't have been cached
-		$url_id = preg_replace(array('~#.*$~', '~"~', '~=?;+~', '~\?;~', '~[?;=]+$~'), array('', '%22', ';', '?', ''), $matches[2]);
+		$url_id = rtrim(str_replace(array('"', '?;'), array('%22', '?'), preg_replace('~=?;+~', ';', $matches[1])), '&?;=');
+		// Stitch everything back together
+		$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
 	}
 
-	// Stitch everything back together, clean it up and return
-	$replacement = isset($cached_urls[$url_id]) ? $cached_urls[$url_id] : $url_id;
-	$replacement .= (strpos($replacement, '?') === false ? '?' : ';') . (isset($PHPSESSID[0]) ? $PHPSESSID[0] : '') . ';' . (isset($sesc[0]) ? $sesc[0] : '') . (isset($fragment[0]) ? $fragment[0] : '');
-	$replacement = preg_replace(array('~=?;+~', '~\?;~', '~[?;=]+#|&amp;#~', '~[?;=#]+$|&amp;$~'), array(';', '?', '#', ''), $replacement);
-
+	$immediate_cache[$matches[0]] = $replacement;
 	if (empty($replacement) || $replacement[0] == '?')
 		$replacement = $scripturl . $replacement;
-	return $matches[1] . $isFeed . $replacement . $isFeed;
+	return $replacement;
 }
 
 // Put the script tags back

@@ -72,7 +72,7 @@ function pretty_synchronize_topic_urls()
 		{
 			// Add suffix '-tID_TOPIC' to the pretty url
 			$pretty_text = trimpercent(substr($pretty_text, 0, 70)) . ($pretty_text != '' ? '-t' : 't') . $row['id_topic'];
-			$pretty_text = preg_replace('/-+/', '-', $pretty_text);
+			$pretty_text = preg_replace('~-+~', '-', $pretty_text);
 		}
 
 		// Update the arrays
@@ -97,58 +97,45 @@ function pretty_synchronize_topic_urls()
  *	- Categories are really just a shortcut to action=boards with an extra param.
  *	- And this is the fastest function to do it in (only takes an extra millisecond)
  */
-function pretty_filter_actions($urls)
+function pretty_filter_actions(&$urls)
 {
 	global $boardurl, $settings;
 
-	$action_pattern = '~(.*)\baction=([^;]+)~S';
-	$action_replacement = $boardurl . '/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '$2/$1';
-	$cat_pattern = '~(.*)\bcategory=([^;]+)~S';
-	$cat_replacement = $boardurl . '/category/$2/$1';
+	$action_pattern = '~(?<=[?;&])action=([^;]+)~';
+	$action_replacement = isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/';
 
 	foreach ($urls as &$url)
 	{
-		if (isset($url['replacement']))
-			continue;
-		if (strpos($url['url'], 'action=') !== false && preg_match($action_pattern, $url['url']))
-			$url['replacement'] = preg_replace($action_pattern, $action_replacement, $url['url']);
-		elseif (strpos($url['url'], 'category=') !== false && preg_match($cat_pattern, $url['url']))
-			$url['replacement'] = preg_replace($cat_pattern, $cat_replacement, $url['url']);
+		if (!isset($url['replacement']))
+			$url['replacement'] = $boardurl . '/' . $url['url'];
+		if (strpos($url['replacement'], 'action=') !== false && preg_match($action_pattern, $url['replacement'], $action))
+			$url['replacement'] = str_replace($action[0], '', substr_replace($url['replacement'], $action_replacement . $action[1] . '/', strpos($url['replacement'], '?'), 0));
 	}
-
-	return $urls;
 }
 
 /**
  *	Filter topic URLs
  */
-function pretty_filter_topics($urls)
+function pretty_filter_topics(&$urls)
 {
 	global $boardurl, $settings, $context;
 
-	$pattern = '~(.*[?;&])\btopic=([.a-zA-Z0-9$%d]+)(.*)~S';
+	$pattern = '~(?<=[?;&])topic=(\d+)(?:\.([a-zA-Z0-9$%]+))?~';
 	$query_data = array();
 	foreach ($urls as &$url)
 	{
 		// Get the topic data ready to query the database with
 		if (!isset($url['replacement']) && strpos($url['url'], 'topic=') !== false && preg_match($pattern, $url['url'], $matches))
 		{
-			if (strpos($matches[2], '.') !== false)
-				list ($url['topic_id'], $url['start']) = explode('.', $matches[2]);
-			else
-			{
-				$url['topic_id'] = $matches[2];
-				$url['start'] = '0';
-			}
-			$url['topic_id'] = (int) $url['topic_id'];
-			$url['match1'] = $matches[1];
-			$url['match3'] = $matches[3];
+			$url['pass1'] = str_replace($matches[0], '', $url['url']);
+			$url['topic_id'] = (int) $matches[1];
+			$url['start'] = isset($matches[2]) && $matches[2] !== 'msg0' ? $matches[2] : '';
 			$query_data[] = $url['topic_id'];
 		}
 	}
 
 	// Query the database with these topic IDs
-	if (count($query_data) != 0)
+	if (count($query_data) !== 0)
 	{
 		// Look for existing topic URLs
 		$query_data = array_keys(array_flip($query_data));
@@ -216,7 +203,7 @@ function pretty_filter_topics($urls)
 				{
 					// Add suffix '-tID_TOPIC' to the pretty url
 					$pretty_text = trimpercent(substr($pretty_text, 0, 70)) . '-t' . $row['id_topic'];
-					$pretty_text = preg_replace('/-+/', '-', $pretty_text);
+					$pretty_text = preg_replace('~-+~', '-', $pretty_text);
 				}
 				$query_check[] = $pretty_text;
 				$new_urls[$row['id_topic']] = $pretty_text;
@@ -248,18 +235,17 @@ function pretty_filter_topics($urls)
 		{
 			if (isset($url['topic_id']) && isset($topicData[$url['topic_id']]))
 			{
-				$start = ($url['start'] !== '0' && $url['start'] !== 'msg0') || is_numeric($topicData[$url['topic_id']]['pretty_url']) ? $url['start'] . '/' : '';
-				$url['replacement'] = $topicData[$url['topic_id']]['pretty_board'] . '/' . $url['topic_id'] . '/' . $topicData[$url['topic_id']]['pretty_url'] . '/' . $start . $url['match1'] . $url['match3'];
+				$start = !empty($url['start']) || is_numeric($topicData[$url['topic_id']]['pretty_url']) ? $url['start'] . '/' : '';
+				$url['replacement'] = $topicData[$url['topic_id']]['pretty_board'] . '/' . $url['topic_id'] . '/' . $topicData[$url['topic_id']]['pretty_url'] . '/' . $start . $url['pass1'];
 			}
 		}
 	}
-	return $urls;
 }
 
 /**
  * Filter board URLs
  */
-function pretty_filter_boards($urls)
+function pretty_filter_boards(&$urls)
 {
 	global $boardurl, $context;
 
@@ -285,14 +271,18 @@ function pretty_filter_boards($urls)
 			$url['match1'] = $matches[1];
 			$url['cattag'] = !empty($matches[3]) ? $matches[3] . '/' . $matches[4] . '/' : '';
 			$url['epoch'] = !empty($ere) ? substr($ere, 0, 4) . '/' : '';
-			$url['epoch'] .= substr($ere, 4, 2) != '' ? substr($ere, 4, 2) . '/' : '';
-			$url['epoch'] .= substr($ere, 6, 2) != '' ? substr($ere, 6, 2) . '/' : '';
+			if (substr($ere, 4, 2) != '')
+			{
+				$url['epoch'] .= substr($ere, 4, 2) . '/';
+				if (substr($ere, 6, 2) != '')
+					$url['epoch'] .= substr($ere, 6, 2) . '/';
+			}
 			$url['match6'] = $matches[6];
 		}
 	}
 
 	$url_list = array();
-	if (count($bo_list) > 0)
+	if (count($bo_list) !== 0)
 	{
 		$query = wesql::query('
 			SELECT id_board, url
@@ -304,19 +294,21 @@ function pretty_filter_boards($urls)
 
 		foreach ($urls as &$url)
 			if (!isset($url['replacement']) && isset($url['board_id']))
-			{
-				$board_id = $url['board_id'];
-				$url['replacement'] = (!empty($url_list[$board_id]) ? 'http://' . $url_list[$board_id] : $boardurl) . '/' . $url['cattag'] . $url['epoch'] . $url['start'] . $url['match1'] . $url['match6'];
-			}
+				$url['replacement'] = (!empty($url_list[$url['board_id']]) ? 'http://' . $url_list[$url['board_id']] : $boardurl) . '/' . $url['cattag'] . $url['epoch'] . $url['start'] . $url['match1'] . $url['match6'];
 	}
 
-	return $urls;
+	$cat_pattern = '~(.*)\bcategory=([^;]+)~S';
+	$cat_replacement = $boardurl . '/category/$2/$1';
+
+	foreach ($urls as &$url)
+		if (!isset($url['replacement']) && strpos($url['url'], 'category=') !== false && preg_match($cat_pattern, $url['url']))
+			$url['replacement'] = preg_replace($cat_pattern, $cat_replacement, $url['url']);
 }
 
 /**
  * Filter profile URLs
  */
-function pretty_filter_profiles($urls)
+function pretty_filter_profiles(&$urls)
 {
 	global $boardurl, $settings;
 
@@ -341,7 +333,7 @@ function pretty_filter_profiles($urls)
 	}
 
 	// Query the database with these profile IDs
-	if (count($query_data) != 0)
+	if (count($query_data) !== 0)
 	{
 		$memberNames = array();
 		$query = wesql::query('
@@ -363,7 +355,6 @@ function pretty_filter_profiles($urls)
 			if (isset($url['profile_id']))
 				$url['replacement'] = $boardurl . $prefix . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? $me_postfix : 'guest/')) . $url['match1'] . $url['match3'];
 	}
-	return $urls;
 }
 
 ?>

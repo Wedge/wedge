@@ -77,9 +77,7 @@ function GetJumpTo()
 	if (!empty($settings['pretty_enable_filters']))
 	{
 		ob_start('ob_sessrewrite');
-		$insideurl = preg_quote($scripturl, '~');
-		$context['pretty']['search_patterns'][] =  '~(url=)"' . $insideurl . '([^<"]*?[?;&](board|action)=[^"#]+)~';
-		$context['pretty']['replace_patterns'][] = '~(url=)"' . $insideurl . '([^<"]*?[?;&](board|action)=([^"]+"))~';
+		$context['pretty']['patterns'][] =  '~(?<=url=")' . preg_quote($scripturl, '~') . '([?;&](board)=[^"]+)~';
 	}
 
 	wetem::load('jump_to');
