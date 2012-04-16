@@ -376,6 +376,7 @@ function ModifyLogSettings($return_config = false)
 
 	$config_vars = array(
 			array('check', 'enableErrorLogging'),
+			array('check', 'enableError404Logging'),
 			array('check', 'enableErrorQueryLogging'),
 		'',
 			array('check', 'log_enabled_moderate', 'subtext' => $txt['log_enabled_moderate_subtext']),

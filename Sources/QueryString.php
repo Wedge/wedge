@@ -78,8 +78,10 @@ function cleanRequest()
 		die;
 	}
 
+	$supports_semicolon = strpos(@ini_get('arg_separator.input'), ';') !== false;
+
 	// Are we going to need to parse the ; out?
-	if (strpos(@ini_get('arg_separator.input'), ';') === false && !empty($_SERVER['QUERY_STRING']))
+	if (!$supports_semicolon && !empty($_SERVER['QUERY_STRING']))
 	{
 		// Get rid of the old one! You don't know where it's been!
 		$_GET = array();
@@ -88,13 +90,13 @@ function cleanRequest()
 		$_SERVER['QUERY_STRING'] = urldecode(substr($_SERVER['QUERY_STRING'], 0, 5) === 'url=/' ? $_SERVER['REDIRECT_QUERY_STRING'] : $_SERVER['QUERY_STRING']);
 
 		// Replace ';' with '&' and '&something&' with '&something=&'. (This is done for compatibility...)
-		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
+		parse_str(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
 
 		// Magic quotes still applies with parse_str - so clean it up.
 		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$_GET = $removeMagicQuoteFunction($_GET);
 	}
-	elseif (strpos(@ini_get('arg_separator.input'), ';') !== false)
+	elseif (!$supports_semicolon)
 	{
 		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$_GET = $removeMagicQuoteFunction($_GET);
@@ -127,7 +129,7 @@ function cleanRequest()
 	// Compatibility with older URLs. Replace 'index.php/a,b,c/d/e,f' with 'a=b,c&d=&e=f' and parse it into $_GET.
 	if (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], basename($scripturl) . '/') !== false)
 	{
-		parse_str(substr(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
+		parse_str(substr(preg_replace('~&(\w+)(?=&|$)~', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($_SERVER['REQUEST_URI'], strpos($_SERVER['REQUEST_URI'], basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
 		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($settings['integrate_magic_quotes']))
 			$temp = $removeMagicQuoteFunction($temp);
 		$_GET += $temp;
@@ -161,7 +163,7 @@ function cleanRequest()
 			unset($_GET['board']);
 
 			// URL has the form domain.com/profile/User?
-			if (preg_match('`/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)`', $query_string, $m))
+			if (preg_match('~/' . (isset($settings['pretty_prefix_profile']) ? $settings['pretty_prefix_profile'] : 'profile/') . '([^/?]*)~', $query_string, $m))
 			{
 				if (empty($m[1]))
 					$_GET['u'] = 0;
@@ -169,11 +171,8 @@ function cleanRequest()
 					$_GET['user'] = urldecode($m[1]);
 				$_GET['action'] = 'profile';
 			}
-			// If URL has the form domain.com/do/action, it's an action. Really.
-			elseif (preg_match('`/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)`', $query_string, $m) && isset($action_list[$m[1]]))
-				$_GET['action'] = $m[1];
 			// URL: /category/42/ (shows the board list, hiding all categories but number 42)
-			elseif (preg_match('`/category/(\d+)`', $full_request, $m) && (int) $m[1] > 0)
+			elseif (preg_match('~/category/(\d+)~', $full_request, $m) && (int) $m[1] > 0)
 				$_GET['category'] = (int) $m[1];
 		}
 		else
@@ -223,6 +222,10 @@ function cleanRequest()
 		}
 		wesql::free_result($query);
 
+		// If URL has the form domain.com/wahetever/do/action, it's an action. Really.
+		if (preg_match('~/' . (isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/') . '([a-zA-Z0-9]+)~', $query_string, $m) && isset($action_list[$m[1]]))
+			$_GET['action'] = $m[1];
+
 		// Plug-ins may want to play with their own URL system.
 		call_hook('determine_location', array($full_request, $full_board));
 	}
@@ -254,11 +257,12 @@ function cleanRequest()
 		header('HTTP/1.0 404 Not Found');
 		header('Content-Type: text/plain; charset=UTF-8');
 
-		// Webmasters might want to log the error, so they can fix any broken image links. Wedge has some hardcoded exceptions
-		// so it doesn't waste time logging some common 404 errors, such as Google Cache, which might be trying to access
-		// a file from the SMF version of your website... And will stop doing so after a while.
+		// Webmasters might want to log the error, so they can fix any broken image links. This is done by enabling 404 logging
+		// in Admin > Server > Logs > Settings > Log errors 404. Wedge hardcodes some exceptions so it doesn't waste time
+		// logging some common 404 errors, such as Google Cache, which might be trying to access a file
+		// from the SMF version of your website... And will stop doing so after a while.
 
-		if (!empty($settings['enableErrorLogging']) // make sure we really want to log the error...
+		if (!empty($settings['enableErrorLogging'] && !empty($settings['enableError404Logging'])) // make sure we REALLY want to log the error...
 		&& !$is_cache_file // don't log cached files, probably Google Cache.
 		&& strpos($full_request, '/avatar_') === false // search bot looking for a previous avatar that got regenerated since then?
 		&& strpos($full_request, '/cache/') === false // same, but with regenerated CSS or JS files?
@@ -354,7 +358,7 @@ function cleanRequest()
 		else
 		{
 			$_REQUEST['topic'] = str_replace(array('&#039;', '&#39;', '\\'), array(chr(18), chr(18), ''), $_REQUEST['topic']);
-			$_REQUEST['topic'] = preg_replace('`([\x80-\xff])`e', 'sprintf(\'%%%x\', ord(\'$1\'))', $_REQUEST['topic']);
+			$_REQUEST['topic'] = preg_replace('~([\x80-\xff])~e', 'sprintf(\'%%%x\', ord(\'$1\'))', $_REQUEST['topic']);
 			// Are we feeling lucky?
 			$query = wesql::query('
 				SELECT p.id_topic, t.id_board
