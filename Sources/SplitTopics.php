@@ -864,12 +864,10 @@ function MergeTopics()
 // Merge two topics together.
 function MergeIndex()
 {
-	global $txt, $board, $context;
-	global $scripturl, $topic, $user_info, $settings;
+	global $txt, $board, $topic, $context, $scripturl, $user_info, $settings;
 
-	if (!isset($_GET['from']))
+	if (!isset($topic))
 		fatal_lang_error('no_access', false);
-	$_GET['from'] = (int) $_GET['from'];
 
 	$_REQUEST['targetboard'] = isset($_REQUEST['targetboard']) ? (int) $_REQUEST['targetboard'] : $board;
 	$context['target_board'] = $_REQUEST['targetboard'];
@@ -898,7 +896,7 @@ function MergeIndex()
 	wesql::free_result($request);
 
 	// Make the page list.
-	$context['page_index'] = template_page_index($scripturl . '?action=mergetopics;from=' . $_GET['from'] . ';targetboard=' . $_REQUEST['targetboard'] . ';board=' . $board . '.%1$d', $_REQUEST['start'], $topiccount, $settings['defaultMaxTopics'], true);
+	$context['page_index'] = template_page_index($scripturl . '?action=mergetopics;topic=' . $topic . ';targetboard=' . $_REQUEST['targetboard'] . ';board=' . $board . '.%1$d', $_REQUEST['start'], $topiccount, $settings['defaultMaxTopics'], true);
 
 	// Get the topic's subject.
 	$request = wesql::query('
@@ -911,7 +909,7 @@ function MergeIndex()
 		LIMIT 1',
 		array(
 			'current_board' => $board,
-			'id_topic' => $_GET['from'],
+			'id_topic' => $topic,
 			'is_approved' => 1,
 		)
 	);
@@ -921,7 +919,7 @@ function MergeIndex()
 	wesql::free_result($request);
 
 	// Tell the template a few things..
-	$context['origin_topic'] = $_GET['from'];
+	$context['origin_topic'] = $topic;
 	$context['origin_subject'] = $subject;
 	$context['origin_js_subject'] = addcslashes(addslashes($subject), '/');
 	$context['page_title'] = $txt['merge'];
@@ -965,7 +963,7 @@ function MergeIndex()
 		LIMIT {int:offset}, {int:limit}',
 		array(
 			'id_board' => $_REQUEST['targetboard'],
-			'id_topic' => $_GET['from'],
+			'id_topic' => $topic,
 			'sort' => 't.is_pinned DESC, t.id_last_msg DESC',
 			'offset' => $_REQUEST['start'],
 			'limit' => $settings['defaultMaxTopics'],
@@ -1000,8 +998,7 @@ function MergeIndex()
 // Now that the topic IDs are known, do the proper merging.
 function MergeExecute($topics = array())
 {
-	global $user_info, $txt, $context, $scripturl;
-	global $language, $settings;
+	global $user_info, $txt, $context, $scripturl, $language, $settings;
 
 	// Check the session.
 	checkSession('request');

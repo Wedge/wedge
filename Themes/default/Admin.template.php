@@ -732,8 +732,20 @@ function template_show_settings()
 					echo '
 						<select name="', $config_var['name'], '" id="', $config_var['name'], '"', $javascript, $disabled, '>';
 					foreach ($config_var['data'] as $option)
-						echo '
+						if (isset($option[2])) // optgroup?
+						{
+							if (isset($has_opened_optgroup))
+								echo '
+							</optgroup>';
+							echo '
+							<optgroup label="', $option[2], '">';
+						}
+						else
+							echo '
 							<option value="', $option[0], '"', $option[0] == $config_var['value'] ? ' selected' : '', '>', $option[1], '</option>';
+					if (isset($has_opened_optgroup))
+						echo '
+							</optgroup>';
 					echo '
 						</select>';
 				}

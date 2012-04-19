@@ -1168,18 +1168,6 @@ function Display()
 		),
 	);
 
-	$su = '~' . preg_quote($scripturl, '~');
-
-	// A total hack for pretty URLs... Wanna spend more processing time on this detail? I don't think so!
-	if (!empty($settings['pretty_filters']['actions']))
-	{
-		$action_prefix = isset($settings['pretty_prefix_action']) ? $settings['pretty_prefix_action'] : 'do/';
-		foreach ($context['user_menu_items'] as &$user)
-			$user['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/' . $action_prefix . '$1/?', $user['action']);
-		foreach ($context['action_menu_items'] as &$action)
-			$action['action'] = preg_replace($su . '\?action=([a-z]+);~', $boardurl . '/' . $action_prefix . '$1/?', $action['action']);
-	}
-
 	// Lastly, set up the navigation items that we're going to be using.
 	$context['nav_buttons'] = array(
 		'normal' => array(
@@ -1194,7 +1182,7 @@ function Display()
 			'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['are_sure_remove_topic']) . ');"', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_query']),
 			'lock' => array('test' => 'can_lock', 'text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'url' => $scripturl . '?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'pin' => array('test' => 'can_pin', 'text' => empty($context['is_pinned']) ? 'set_pin' : 'set_unpin', 'url' => $scripturl . '?action=pin;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-			'merge' => array('test' => 'can_merge', 'text' => 'merge', 'url' => $scripturl . '?action=mergetopics;board=' . $context['current_board'] . '.0;from=' . $context['current_topic']),
+			'merge' => array('test' => 'can_merge', 'text' => 'merge', 'url' => $scripturl . '?action=mergetopics;topic=' . $context['current_topic']),
 			'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'url' => $scripturl . '?action=poll;sa=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
 		),
 	);

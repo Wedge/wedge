@@ -252,16 +252,24 @@ function ModifyGeneralSettings($return_config = false)
 	$all_zones = timezone_identifiers_list();
 
 	// Make sure we set the value to the same as the printed value. But this is sadly messy.
-	$useful_regions = array_flip(array('America', 'Antartica', 'Arctic', 'Asia', 'Atlantic', 'Europe', 'Indian', 'Pacific'));
+	$useful_regions = array_flip(array('Africa', 'America', 'Antartica', 'Arctic', 'Asia', 'Atlantic', 'Europe', 'Indian', 'Pacific'));
+	$last_region = '';
+
 	foreach ($all_zones as $zone)
 	{
 		if (strpos($zone, '/') === false)
 			continue;
-		list ($region, $country) = explode('/', $zone, 2);
-		if (isset($useful_regions[$region]))
-			$config_vars['default_timezone'][4][$zone] = array($zone, $zone);
+		list ($region, $place) = explode('/', $zone, 2);
+		if (!isset($useful_regions[$region]))
+			continue;
+		if ($region !== $last_region)
+			$config_vars['default_timezone'][4][$zone] = array('', '', $region);
+		else
+			$config_vars['default_timezone'][4][$zone] = array($zone, strtr($place, '_', ' '));
+		$last_region = $region;
 	}
 	// Don't forget UTC!
+	$config_vars['default_timezone'][4]['UTC_group'] = array('', '', 'UTC');
 	$config_vars['default_timezone'][4]['UTC'] = array('UTC', 'UTC');
 
 	if ($return_config)
@@ -2189,34 +2197,22 @@ function saveSettings(&$config_vars)
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();
 	foreach ($config_passwords as $config_var)
-	{
 		if (isset($_POST[$config_var][1]) && $_POST[$config_var][0] == $_POST[$config_var][1])
 			$new_settings[$config_var] = '\'' . addcslashes($_POST[$config_var][0], '\'\\') . '\'';
-	}
+
 	foreach ($config_strs as $config_var)
-	{
 		if (isset($_POST[$config_var]))
 			$new_settings[$config_var] = '\'' . addcslashes($_POST[$config_var], '\'\\') . '\'';
-	}
+
 	foreach ($config_ints as $config_var)
-	{
 		if (isset($_POST[$config_var]))
 			$new_settings[$config_var] = (int) $_POST[$config_var];
-	}
+
 	foreach ($config_bools as $key)
-	{
-		if (!empty($_POST[$key]))
-			$new_settings[$key] = '1';
-		else
-			$new_settings[$key] = '0';
-	}
+		$new_settings[$key] = !empty($_POST[$key]) ? '1' : '0';
+
 	foreach ($config_truebools as $key)
-	{
-		if (!empty($_POST[$key]))
-			$new_settings[$key] = 'true';
-		else
-			$new_settings[$key] = 'false';
-	}
+		$new_settings[$key] = !empty($_POST[$key]) ? 'true' : 'false';
 
 	// Save the relevant settings in the Settings.php file.
 	loadSource('Subs-Admin');
