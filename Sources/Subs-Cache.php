@@ -246,6 +246,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			$files[] = $file . '.' . $gen;
 
 	$fallback_folder = $theme[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/' . reset($context['css_folders']) . '/';
+	$deep_folder = end($context['css_folders']);
 	$found_files = array();
 
 	foreach ($context['skin_folders'] as $folder)
@@ -256,6 +257,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			$fallback_folder = '';
 		foreach ($files as &$file)
 		{
+			// If we find a *.local.css file, only process it if it's at the final level.
+			if ($fold !== $deep_folder && $file === 'local')
+				continue;
 			$add = $fold . $file . '.css';
 			if (file_exists($add))
 			{
@@ -298,8 +302,8 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$id = array_filter(array_merge(
 		$id,
 
-		// We don't need to show 'index-sections-custom' in the filename, do we?
-		array_diff($original_files, array('index', 'sections', 'custom')),
+		// We don't need to show 'index-sections-custom-local' in the filename, do we?
+		array_diff($original_files, array('index', 'sections', 'custom', 'local')),
 
 		// We need to cache different versions for different browsers, even if we don't have overrides available.
 		// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
@@ -307,8 +311,8 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
 
 		// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
-		isset($context['user']) && $context['user']['language'] !== 'english' &&
-			isset($context['skin_available_languages']) && count($context['skin_available_languages']) > 1 ? (array) $context['user']['language'] : array()
+		isset($context['user'], $context['skin_available_languages']) && $context['user']['language'] !== 'english'
+			&& count($context['skin_available_languages']) > 1 ? (array) $context['user']['language'] : array()
 	));
 
 	// Cache final file and retrieve its name.
@@ -811,7 +815,7 @@ function theme_base_css()
 	// We only generate the cached file at the last moment (i.e. when first needed.)
 	// Make sure custom.css, if available, is added last.
 	if (empty($context['cached_css']))
-		add_css_file(array_merge($context['css_main_files'], (array) 'custom'), false, true);
+		add_css_file(array_merge($context['css_main_files'], array('custom', 'local')), false, true);
 
 	if (!empty($context['header_css']))
 	{
@@ -1076,8 +1080,13 @@ function cache_put_data($key, $val, $ttl = 120)
 		$st = microtime(true);
 	}
 
-	$key = md5($boardurl . filemtime($sourcedir . '/Collapse.php')) . '-Wedge-' . strtr($key, ':', '-');
-	$val = $val === null ? null : serialize($val);
+	if (empty($settings['cache_hash']))
+		$settings['cache_hash'] = md5($boardurl . filemtime($sourcedir . '/Collapse.php'));
+
+	$key = $settings['cache_hash'] . '-' . bin2hex($key);
+
+	if ($val !== null)
+		$val = serialize($val);
 
 	if (empty($cache_type))
 		get_cache_type();
@@ -1164,7 +1173,10 @@ function cache_get_data($key, $ttl = 120)
 		$st = microtime(true);
 	}
 
-	$key = md5($boardurl . filemtime($sourcedir . '/Collapse.php')) . '-Wedge-' . strtr($key, ':', '-');
+	if (empty($settings['cache_hash']))
+		$settings['cache_hash'] = md5($boardurl . filemtime($sourcedir . '/Collapse.php'));
+
+	$key = $settings['cache_hash'] . '-' . bin2hex($key);
 
 	if (empty($cache_type))
 		get_cache_type();

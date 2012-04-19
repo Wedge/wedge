@@ -410,10 +410,6 @@ function ob_sessrewrite($buffer)
 		$use_cache = !empty($settings['pretty_enable_cache']);
 		$session_var = $context['session_query'];
 
-		// Remove the script tags
-		$context['pretty']['scriptID'] = 0;
-		$context['pretty']['scripts'] = array();
-		$buffer = preg_replace_callback('~<script.+?</script>~s', 'pretty_scripts_remove', $buffer);
 		// Find all URLs in the buffer
 		// !! If you want to be stricter, start with this instead: '~(?<=(?:<a[^>]+href=|<link[^>]+href=|<img[^>]+?src=|<form[^>]+?action=)["\'>])'
 		$context['pretty']['patterns'][] =  '~(?<=["\'>])' . $preg_scripturl . '([?;&](?:[^"\'#]*?[;&])?(board|topic|action|category)=[^"\'<#]+)~';
@@ -512,10 +508,6 @@ function ob_sessrewrite($buffer)
 			foreach ($context['pretty']['patterns'] as $pattern)
 				$buffer = preg_replace_callback($pattern, 'pretty_buffer_callback', $buffer);
 		}
-
-		// Restore the script tags
-		if ($context['pretty']['scriptID'] > 0)
-			$buffer = preg_replace_callback('~' . chr(20) . '([0-9]+)' . chr(20) . '~', 'pretty_scripts_restore', $buffer);
 	}
 
 	if (!empty($context['debugging_info']))
@@ -585,16 +577,6 @@ function wedge_indenazi($match)
 	return preg_replace('~(\n\t*)(?=<)~', '$1' . str_repeat("\t", $match[2]), $match[3]);
 }
 
-// Remove and save script tags
-function pretty_scripts_remove($match)
-{
-	global $context;
-
-	$context['pretty']['scriptID']++;
-	$context['pretty']['scripts'][$context['pretty']['scriptID']] = $match[0];
-	return chr(20) . $context['pretty']['scriptID'] . chr(20);
-}
-
 // A callback function to replace the buffer's URLs with their cached URLs
 function pretty_buffer_callback($matches)
 {
@@ -640,14 +622,6 @@ function pretty_buffer_callback($matches)
 	if (empty($replacement) || $replacement[0] == '?')
 		$replacement = $scripturl . $replacement;
 	return $replacement;
-}
-
-// Put the script tags back
-function pretty_scripts_restore($match)
-{
-	global $context;
-
-	return $context['pretty']['scripts'][(int) $match[1]];
 }
 
 // A helper function for plugins to easily add simple output buffer replacements.

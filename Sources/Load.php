@@ -341,7 +341,7 @@ function loadUserSettings()
 	// Figure out the new time offset.
 	if (!empty($user_settings['timezone']))
 	{
-		// Get the offsets from UTC for the server, then for the user.+
+		// Get the offsets from UTC for the server, then for the user.
 		$tz_system = new DateTimeZone(@date_default_timezone_get());
 		$tz_user = new DateTimeZone($user_settings['timezone']);
 		$time_system = new DateTime("now", $tz_system);
@@ -1977,8 +1977,15 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if ($context['right_to_left'])
 		$context['css_suffixes'][] = 'rtl';
 
-	// We also have a special stylesheet for guests/members. May become useful.
+	// We may also have special stylesheets for guests and members.
 	$context['css_suffixes'][] = $user_info['is_guest'] ? 'guest' : 'member';
+
+	// Is the user an administrator?
+	if ($user_info['is_admin'])
+		$context['css_suffixes'][] = 'admin';
+	// Or maybe a moderator, then?
+	elseif ($user_info['is_mod'])
+		$context['css_suffixes'][] = 'mod';
 
 	$context['tabindex'] = 1;
 
