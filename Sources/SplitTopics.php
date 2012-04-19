@@ -885,10 +885,12 @@ function MergeIndex()
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}topics AS t
-		WHERE t.id_board = {int:id_board}' . ($onlyApproved ? '
+		WHERE t.id_board = {int:id_board}
+			AND t.id_topic != {int:id_topic}' . ($onlyApproved ? '
 			AND t.approved = {int:is_approved}' : ''),
 		array(
 			'id_board' => $_REQUEST['targetboard'],
+			'id_topic' => $topic,
 			'is_approved' => 1,
 		)
 	);
@@ -896,7 +898,8 @@ function MergeIndex()
 	wesql::free_result($request);
 
 	// Make the page list.
-	$context['page_index'] = template_page_index($scripturl . '?action=mergetopics;topic=' . $topic . ';targetboard=' . $_REQUEST['targetboard'] . ';board=' . $board . '.%1$d', $_REQUEST['start'], $topiccount, $settings['defaultMaxTopics'], true);
+	$_REQUEST['page'] = empty($_REQUEST['page']) ? 0 : (int) $_REQUEST['page'];
+	$context['page_index'] = template_page_index($scripturl . '?action=mergetopics;topic=' . $topic . ';targetboard=' . $_REQUEST['targetboard'] . ';page=%1$d', $_REQUEST['page'], $topiccount, $settings['defaultMaxTopics'], true);
 
 	// Get the topic's subject.
 	$request = wesql::query('
@@ -965,7 +968,7 @@ function MergeIndex()
 			'id_board' => $_REQUEST['targetboard'],
 			'id_topic' => $topic,
 			'sort' => 't.is_pinned DESC, t.id_last_msg DESC',
-			'offset' => $_REQUEST['start'],
+			'offset' => $_REQUEST['page'],
 			'limit' => $settings['defaultMaxTopics'],
 			'is_approved' => 1,
 		)
