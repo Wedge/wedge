@@ -123,6 +123,7 @@ function SplitTopics()
 		loadTemplate('SplitTopics');
 
 	loadSource(array('Subs-Boards', 'Subs-Post'));
+	loadLanguage('ManageTopics');
 
 	$subActions = array(
 		'selectTopics' => 'SplitSelectTopics',
@@ -846,6 +847,7 @@ function MergeTopics()
 {
 	// Load the template....
 	loadTemplate('SplitTopics');
+	loadLanguage('ManageTopics');
 
 	$subActions = array(
 		'done' => 'MergeDone',

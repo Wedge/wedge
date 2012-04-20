@@ -74,6 +74,7 @@ function MoveTopic()
 		$boards = array(-1); // Just so it doesn't foul the query up.
 
 	loadTemplate('MoveTopic');
+	loadLanguage('ManageTopics');
 
 	// Get a list of boards this moderator can move to.
 	$request = wesql::query('
@@ -188,6 +189,7 @@ function MoveTopic2()
 
 	checkSession();
 	loadSource(array('Subs-Post', 'Class-Editor'));
+	loadLanguage('ManageTopics');
 
 	// The destination board must be numeric.
 	$_POST['toboard'] = (int) $_POST['toboard'];
