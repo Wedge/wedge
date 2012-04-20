@@ -87,6 +87,7 @@ function template_modfilter_home()
 						break;
 					case 'postcount':
 					case 'warning':
+					case 'links':
 						$print_criteria[] = $txt['modfilter_cond_' . $criteria['name']] . ' ' . $txt['modfilter_range_' . $criteria['term']] . ' ' . $criteria['value'];
 						break;
 					case 'subject':
@@ -523,6 +524,58 @@ function template_modfilter_postcount()
 
 		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0)
 			addRow(pc, range[applies_type] + " " + postcount, "postcount", applies_type + ";" + postcount);
+	};');
+}
+
+function template_modfilter_links()
+{
+	global $context, $txt;
+
+	$js_conds = array();
+	echo '
+		<br>', $txt['modfilter_links_is'], '
+		<select name="rangesel" onchange="validateLinks();">';
+
+	foreach (array('lt', 'lte', 'eq', 'gte', 'gt') as $item)
+	{
+		// Step through the possible ranges - but also store the JS versions away for later.
+		echo '
+			<option value="', $item, '">', $txt['modfilter_range_' . $item], '</option>';
+		$js_conds[] = $item . ': ' . JavaScriptEscape($txt['modfilter_range_' . $item]);
+	}
+
+	echo '
+		</select>
+		<input type="text" size="5" name="links" style="padding: 3px 5px 5px 5px" onchange="validateLinks();">
+		<div class="pagesection ruleSave">
+			<div class="floatright">
+				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addLinks(e);">
+			</div>
+		</div>';
+
+	add_js('
+	function validateLinks()
+	{
+		var
+			applies_type = $("#rulecontainer select[name=rangesel]").val(),
+			links = $("#rulecontainer input[name=links]").val(),
+			pc_num = parseInt(links);
+
+		$("#rulecontainer .ruleSave").toggle(in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && links == pc_num && pc_num >= 0);
+	};
+
+	function addLinks(e)
+	{
+		e.preventDefault();
+		var
+			range = {' . implode(',', $js_conds) . '},
+			pc = ' . JavaScriptEscape($txt['modfilter_condtype_links']) . ',
+			applies_type = $("#rulecontainer select[name=rangesel]").val(),
+			links = $("#rulecontainer input[name=links]").val(),
+			pc_num = parseInt(links);
+
+		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && links == pc_num && pc_num >= 0)
+			addRow(pc, range[applies_type] + " " + links, "links", applies_type + ";" + links);
 	};');
 }
 

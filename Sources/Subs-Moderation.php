@@ -37,6 +37,8 @@ function getBaseRuleVars($admin = false)
 
 		admin_override - for multi-id, whether the current user is an admin or not will make a difference (only used for permissions, where the admin has no defined permissions normally)
 
+		func_val - name of a function to call to actually get the 'current' value for this variable (used for the links type to count how many links in a given post)
+
 		function - name of a function to call to get the display entry in the admin panel, none of the core types use it
 	*/
 
@@ -72,6 +74,11 @@ function getBaseRuleVars($admin = false)
 			'type' => 'multi-id',
 			'current' => $user_info['permissions'],
 			'admin_override' => $user_info['is_admin'],
+		),
+		'links' => array(
+			'type' => 'range',
+			'current' => 0, // this will be overridden later!
+			'func_val' => 'count_links_post',
 		),
 	);
 
@@ -125,6 +132,9 @@ function checkPostModeration($subject, $body)
 					$rule_name = $rule->getName();
 					if (!isset($known_variables[$rule_name]))
 						continue;
+
+					if (isset($known_variables[$rule_name]['func_val']) && is_callable($known_variables[$rule_name]['func_val']))
+						$known_variables[$rule_name]['current'] = $known_variables[$rule_name]['func_val']($subject, $body);
 
 					switch ($known_variables[$rule_name]['type'])
 					{
@@ -219,6 +229,28 @@ function checkPostModeration($subject, $body)
 	}
 
 	return $returnActions;
+}
+
+/**
+ * Evaluates the post content for how many links are in it.
+ *
+ * @param string $subject The post subject
+ * @param string $body The post body
+ * @return int The number of links found in the post
+ */
+function count_links_post($subject, $body)
+{
+	$body = strtolower($body); // We don't care about case, and we can use this to make things faster.
+
+	// We need to normalise links. We have to cope with bare URLs, urls written as [url]http://blah[/url] and [url=http://blah]some text[/url]
+	// To do this, we start by converting [url=...] form to [url]
+	$body = preg_replace('~\[url.*?]~', '[url]', $body);
+
+	// Then we convert bare links to [url] wrappings
+	$body = preg_replace('~(?<!\[url])(https?://)~', '[url]$1', $body);
+
+	// Then lastly we count the number of [url] items.
+	return substr_count($body, '[url]');
 }
 
 ?>

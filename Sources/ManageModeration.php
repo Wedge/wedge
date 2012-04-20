@@ -514,6 +514,11 @@ function displayRow_warning($rule)
 	return simpleRange_displayRow($rule, 'warning');
 }
 
+function displayRow_links($rule)
+{
+	return simpleRange_displayRow($rule, 'links');
+}
+
 function simpleRange_displayRow($rule, $type)
 {
 	global $context, $txt;
