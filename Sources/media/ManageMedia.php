@@ -121,8 +121,7 @@ function aeva_admin_init()
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $area == 'fields' ? $txt['media_cf'] : $txt['media_admin_labels_' . $area],
 		'description' => $area == 'fields' ? $txt['media_cf_desc'] : $txt['media_admin_' . $area . '_desc'],
-		'tabs' => array(
-		),
+		'tabs' => array(),
 	);
 
 	wetem::outer('aeva_admin');

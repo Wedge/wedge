@@ -80,7 +80,10 @@ function RemindPick()
 
 	// You must enter a username/email address.
 	if (empty($where))
+	{
+		loadLanguage('Login');
 		fatal_lang_error('username_no_exist', false);
+	}
 
 	// Find the user!
 	$request = wesql::query('
@@ -105,7 +108,10 @@ function RemindPick()
 			))
 		);
 		if (wesql::num_rows($request) == 0)
+		{
+			loadLanguage('Login');
 			fatal_lang_error('no_user_with_email', false);
+		}
 	}
 
 	$row = wesql::fetch_assoc($request);
@@ -157,9 +163,7 @@ function RemindPick()
 	}
 	// Otherwise are ready to answer the question?
 	elseif (isset($_POST['reminder_type']) && $_POST['reminder_type'] == 'secret')
-	{
 		return SecretAnswerInput();
-	}
 
 	// No we're here setup the context for template number 2!
 	wetem::load('reminder_pick');
@@ -319,12 +323,11 @@ function SecretAnswer2()
 	global $txt, $context, $settings;
 
 	checkSession();
+	loadLanguage('Login');
 
 	// Hacker? How did you get this far without an email or username?
 	if (empty($_REQUEST['uid']))
 		fatal_lang_error('username_no_exist', false);
-
-	loadLanguage('Login');
 
 	// Get the information from the database.
 	$request = wesql::query('

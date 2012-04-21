@@ -2656,7 +2656,7 @@ function template_profile_timeformat_modify()
 	echo '
 					<dt>
 						<a href="', $scripturl, '?action=help;in=time_format" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
-						<strong>', $txt['choose_time_format'], ':</strong>
+						<strong>', $txt['choose_time_format'], '</strong>
 						<dfn>', $txt['date_format'], '</dfn>
 					</dt>
 					<dd>
@@ -2677,9 +2677,9 @@ function template_profile_timeoffset_modify()
 {
 	global $txt, $context;
 
-	add_js('
 	// Get the difference between the two, set it up so that the sign will tell us who is ahead of whom.
 	// Currently only supports timezones in hourly increments. Our apologies to India.
+	add_js('
 	function autoDetectTimeOffset(serverTime)
 	{
 		return serverTime ? Math.round((+new Date - serverTime) / 3600000) % 24 : 0;

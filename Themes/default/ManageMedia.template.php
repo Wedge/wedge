@@ -401,7 +401,7 @@ function template_aeva_admin_perms()
 
 	echo '
 	<we:cat>
-		<span title="', $txt['media_permissions_help'], '" class="help"></span>
+		<a href="<URL>?action=help;in=media_permissions" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 		', $txt['media_admin_labels_perms'], '
 	</we:cat>
 	<div class="information">

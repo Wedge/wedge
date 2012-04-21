@@ -468,7 +468,10 @@ function validateUsername($memID, $username)
 
 	loadSource('Subs-Members');
 	if (isReservedName($username, $memID, false))
+	{
+		loadLanguage('Login');
 		fatal_error('(' . htmlspecialchars($username) . ') ' . $txt['name_in_use'], false);
+	}
 
 	return null;
 }
