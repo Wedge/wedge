@@ -700,17 +700,17 @@ function aeva_autolink_urls($input)
 	if (empty($settings['autoLinkUrls']))
 		return $input;
 
-	// Parse any URLs....
-	if (preg_match('~http://|www\.~i', $input))
+	// Parse any URLs.... And ensure they're not already auto-linked!
+	if (preg_match('~(?<!=|\[url])(?:http://|www\.)~i', $input))
 	{
 		$input = strtr($input, array('&#039;' => '\'', '&quot;' => '>">', '"' => '<"<', '&lt;' => '<lt<'));
 		$input = preg_replace(
 			array(
-				'`(^|[]\s>.(;\'"])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`',
-				'`(^|[]\s>.(;\'"])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'
+				'`(?<=^|[]\s>.(;\'"])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`',
+				'`(?<=^|[]\s>.(;\'"])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'
 			), array(
-				'$1[url]$2[/url]',
-				'$1[url=http://$2]$2[/url]'
+				'[url]$1[/url]',
+				'[url=http://$1]$1[/url]'
 			), $input
 		);
 		$input = strtr($input, array('>">' => '&quot;', '<"<' => '"', '<lt<' => '&lt;'));

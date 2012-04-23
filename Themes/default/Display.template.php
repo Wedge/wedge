@@ -191,7 +191,7 @@ function template_display_posts()
 				}
 				echo '
 								<a href="', $attachment['href'], '"><img src="' . $theme['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a>
-								(', $attachment['size'], $attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] : '', ' - ', number_context($txt[$attachment['is_image'] ? 'attach_viewed' : 'attach_downloaded'], $attachment['downloads']), ')<br>';
+								(', $attachment['size'], $attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] : '', ' - ', number_context($attachment['is_image'] ? 'attach_viewed' : 'attach_downloaded', $attachment['downloads']), ')<br>';
 			}
 
 			echo '
