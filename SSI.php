@@ -170,7 +170,10 @@ else
 
 // Make sure they didn't muss around with the settings... but only if it's not cli.
 if (isset($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['is_cli']) && session_id() == '')
+{
+	loadLanguage('Errors', '', false);
 	trigger_error($txt['ssi_session_broken'], E_USER_NOTICE);
+}
 
 // Without visiting the forum this session variable might not be set on submit.
 if (!isset($_SESSION['USER_AGENT']) && (!isset($_GET['ssi_function']) || $_GET['ssi_function'] !== 'pollVote'))
@@ -186,7 +189,10 @@ if (isset($_GET['ssi_function']))
 	exit;
 // You shouldn't just access SSI.php directly by URL!!
 elseif (basename($_SERVER['PHP_SELF']) == 'SSI.php')
+{
+	loadLanguage('Errors', '', false);
 	die(sprintf($txt['ssi_not_direct'], $user_info['is_admin'] ? '\'' . addslashes(__FILE__) . '\'' : '\'SSI.php\''));
+}
 
 error_reporting($ssi_error_reporting);
 if (function_exists('set_magic_quotes_runtime'))

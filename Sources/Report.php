@@ -73,7 +73,7 @@ function Report()
 	}
 
 	// Show the inputs for the comment, etc.
-	loadLanguage('Post');
+	loadLanguage(array('Post', 'ManageTopics'));
 	loadTemplate('SendTopic');
 
 	$context['comment_body'] = !isset($_POST['comment']) ? '' : trim($_POST['comment']);

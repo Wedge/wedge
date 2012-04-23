@@ -292,6 +292,9 @@ class wesql
 		global $txt, $context, $webmaster_email, $settings, $db_last_error, $db_persist;
 		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
 
+		if (isset($txt) && !isset($txt['mysql_error_space']))
+			loadLanguage('Errors');
+
 		// Get the file and line numbers.
 		list ($file, $line) = self::error_backtrace('', '', 'return', __FILE__, __LINE__);
 
@@ -314,7 +317,7 @@ class wesql
 
 		// Log the error.
 		if ($query_errno != 1213 && $query_errno != 1205 && function_exists('log_error'))
-			log_error($txt['database_error'] . ': ' . $query_error . (!empty($settings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
+			log_error((empty($txt) ? 'Database error' : $txt['database_error']) . ': ' . $query_error . (!empty($settings['enableErrorQueryLogging']) ? "\n\n$db_string" : ''), 'database', $file, $line);
 
 		// Database error auto fixing ;)
 		if (function_exists('cache_get_data') && (!isset($settings['autoFixDatabase']) || $settings['autoFixDatabase'] == '1'))
@@ -376,7 +379,7 @@ class wesql
 						REPAIR TABLE $table", false, false);
 
 				// And send off an email!
-				sendmail($webmaster_email, $txt['database_error'], $txt['tried_to_repair']);
+				sendmail($webmaster_email, empty($txt) ? 'Database error' : $txt['database_error'], empty($txt) ? 'Please try again.' : $txt['tried_to_repair']);
 
 				$settings['cache_enable'] = $old_cache;
 
@@ -433,17 +436,7 @@ class wesql
 			}
 			// Are they out of space, perhaps?
 			elseif ($query_errno == 1030 && (strpos($query_error, ' -1 ') !== false || strpos($query_error, ' 28 ') !== false || strpos($query_error, ' 12 ') !== false))
-			{
-				if (!isset($txt))
-					$query_error .= ' - check database storage space.';
-				else
-				{
-					if (!isset($txt['mysql_error_space']))
-						loadLanguage('Errors');
-
-					$query_error .= !isset($txt['mysql_error_space']) ? ' - check database storage space.' : $txt['mysql_error_space'];
-				}
-			}
+				$query_error .= !isset($txt, $txt['mysql_error_space']) ? ' - check database storage space.' : $txt['mysql_error_space'];
 		}
 
 		// Nothing's defined yet... just die with it.

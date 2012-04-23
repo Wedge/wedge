@@ -2187,9 +2187,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	if (empty($settings['disable_language_fallback']) && $lang !== 'english')
 		loadLanguage($template_name, 'english', false, false, true);
 
-	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
-		return $lang;
-
 	// Make sure we have $theme - if not we're in trouble and need to find it!
 	if (empty($theme['default_theme_dir']))
 	{
@@ -2203,8 +2200,11 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		$theme_name = 'unknown';
 
 	// For each file open it up and write it out!
-	foreach (explode('+', $template_name) as $template)
+	foreach ((array) $template_name as $template)
 	{
+		if (!$force_reload && isset($already_loaded[$template]) && $already_loaded[$template] == $lang)
+			continue;
+
 		// Obviously, the current theme is most important to check.
 		$attempts = array(
 			array($theme['theme_dir'], $template, $lang, $theme['theme_url']),
@@ -2248,7 +2248,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		// That couldn't be found! Log the error, but *try* to continue normally.
 		if (!$found && $fatal)
 		{
-			log_error(sprintf($txt['theme_language_error'], $template_name . '.' . $lang, 'template'));
+			log_error(sprintf($txt['theme_language_error'], $template . '.' . $lang, 'template'));
 			break;
 		}
 
@@ -2264,14 +2264,14 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				$txt['day_suffix_' . $day] = $suffix;
 			unset($txt['day_suffix']);
 		}
+
+		// Keep track of what we're up to soldier.
+		if ($db_show_debug === true)
+			$context['debug']['language_files'][] = $template . '.' . $lang . ' (' . $theme_name . ')';
+
+		// Remember what we have loaded, and in which language.
+		$already_loaded[$template] = $lang;
 	}
-
-	// Keep track of what we're up to soldier.
-	if ($db_show_debug === true)
-		$context['debug']['language_files'][] = $template_name . '.' . $lang . ' (' . $theme_name . ')';
-
-	// Remember what we have loaded, and in which language.
-	$already_loaded[$template_name] = $lang;
 
 	// Return the language actually loaded.
 	return $lang;

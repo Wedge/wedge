@@ -127,9 +127,9 @@ function MoveTopic()
 
 	if ($user_info['language'] != $language)
 	{
-		loadLanguage('index', $language);
+		loadLanguage('ManageTopics', $language);
 		$temp = $txt['movetopic_default'];
-		loadLanguage('index');
+		loadLanguage('ManageTopics');
 
 		$txt['movetopic_default'] = $temp;
 	}
@@ -275,12 +275,12 @@ function MoveTopic2()
 	}
 
 	// Create a link to this in the old board.
-	//!!! Does this make sense if the topic was unapproved before? I'd just about say so.
+	// !!! Does this make sense if the topic was unapproved before? I'd just about say so.
 	if (isset($_POST['postRedirect']))
 	{
 		// Should be in the boardwide language.
 		if ($user_info['language'] != $language)
-			loadLanguage('index', $language);
+			loadLanguage('ManageTopics', $language);
 
 		$_POST['reason'] = westr::htmlspecialchars($_POST['reason'], ENT_QUOTES);
 		wedit::preparsecode($_POST['reason']);

@@ -90,7 +90,7 @@ function ModifyPermissions()
 {
 	global $txt, $scripturl, $context;
 
-	loadLanguage('ManagePermissions+ManageMembers');
+	loadLanguage(array('ManagePermissions', 'ManageMembers'));
 	loadTemplate('ManagePermissions');
 
 	// Format: 'sub-action' => array('function_to_call', 'permission_needed'),

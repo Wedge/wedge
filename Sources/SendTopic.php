@@ -31,7 +31,7 @@ if (!defined('WEDGE'))
 
 */
 
-// The main handling function for sending specialist (Or otherwise) emails to a user.
+// The main handling function for sending specialist (or otherwise) emails to a user.
 function EmailUser()
 {
 	global $topic, $txt, $context, $scripturl;
@@ -41,6 +41,7 @@ function EmailUser()
 
 	// Load the template.
 	loadTemplate('SendTopic');
+	loadLanguage('ManageTopics');
 
 	$sub_actions = array(
 		'email' => 'CustomEmail',

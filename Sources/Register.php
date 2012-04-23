@@ -89,6 +89,9 @@ function Register($reg_errors = array())
 	wetem::load($current_step == 1 ? 'registration_agreement' : 'registration_form');
 	$context['page_title'] = $current_step == 1 ? $txt['registration_agreement'] : $txt['registration_form'];
 
+	if ($current_step != 1) // needs allow_user_email string
+		loadLanguage('Profile');
+
 	$context['current_forum_time_js'] = time() + $settings['time_offset'] * 3600 + date_offset_get(new DateTime);
 
 	// Add the register chain to the link tree.

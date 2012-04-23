@@ -92,6 +92,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 					else
 						loadSource($fun[1]);
 				}
+				ob_start($call);
 			}
 		}
 
@@ -711,6 +712,8 @@ function while_we_re_here()
 
 		if (!empty($security_files) || (!empty($settings['cache_enable']) && !is_writable($cachedir)))
 		{
+			loadLanguage('Errors');
+
 			echo '
 			<div class="errorbox">
 				<p class="alert">!!</p>
@@ -838,14 +841,16 @@ function db_debug_junk()
 		$_SESSION['debug'] =& $db_cache;
 	}
 
+	$show_list_js = "$(this).hide().next().show(); return false;";
 	$temp = '
-<div class="smalltext" style="text-align: left; margin: 1ex">
-	' . $txt['debug_templates'] . count($context['debug']['templates']) . ': <em>' . implode(', ', $context['debug']['templates']) . '</em>.<br>
-	' . $txt['debug_blocks'] . count($context['debug']['blocks']) . ': <em>' . implode(', ', $context['debug']['blocks']) . '</em>.<br>
-	' . $txt['debug_language_files'] . count($context['debug']['language_files']) . ': <em>' . implode(', ', $context['debug']['language_files']) . '</em>.<br>
-	' . $txt['debug_stylesheets'] . count($context['debug']['sheets']) . ': <em>' . implode(', ', $context['debug']['sheets']) . '</em>.<br>
-	' . $txt['debug_files_included'] . count($files) . ' - ' . round($total_size / 1024) . $txt['debug_kb'] . ' (<a href="javascript:void(0)" onclick="$(\'#debug_include_info\').show(); $(this).hide();">' . $txt['debug_show'] . '</a><span id="debug_include_info" class="hide"><em>' . implode(', ', $files) . '</em></span>)<br>
-	' . $txt['debug_peak_memory_use'] . ceil(memory_get_peak_usage() / 1024) . $txt['debug_kb'] . '<br>';
+<div class="smalltext" style="text-align: left; margin: 1ex">' . sprintf($txt['debug_report'],
+		count($context['debug']['templates']),		implode(', ', $context['debug']['templates']),
+		count($context['debug']['blocks']),			implode(', ', $context['debug']['blocks']),
+		count($context['debug']['language_files']),	implode(', ', $context['debug']['language_files']),
+		count($context['debug']['sheets']),			implode(', ', $context['debug']['sheets']),
+		count($files), round($total_size / 1024), $show_list_js, implode(', ', $files),
+		ceil(memory_get_peak_usage() / 1024)
+	);
 
 	if (!empty($settings['cache_enable']) && !empty($cache_hits))
 	{
@@ -854,23 +859,17 @@ function db_debug_junk()
 		$total_s = 0;
 		foreach ($cache_hits as $cache_hit)
 		{
-			$entries[] = $cache_hit['d'] . ' ' . $cache_hit['k'] . ': ' . sprintf($txt['debug_cache_seconds_bytes'], comma_format($cache_hit['t'], 5), $cache_hit['s']);
+			$entries[] = sprintf($txt['debug_cache_seconds_bytes'], $cache_hit['d'] . ' ' . $cache_hit['k'], comma_format($cache_hit['t'], 5), $cache_hit['s']);
 			$total_t += $cache_hit['t'];
 			$total_s += $cache_hit['s'];
 		}
-
-		$temp .= '
-	' . $txt['debug_cache_hits'] . $cache_count . ': ' . sprintf($txt['debug_cache_seconds_bytes_total'], comma_format($total_t, 5), comma_format($total_s)) . ' (<a href="javascript:void(0)" onclick="$(\'#debug_cache_info\').show(); $(this).hide();">' . $txt['debug_show'] . '</a><span id="debug_cache_info" class="hide"><em>' . implode(', ', $entries) . '</em></span>)<br>';
+		$temp .= sprintf($txt['debug_cache_hits'], $cache_count, comma_format($total_t, 5), comma_format($total_s), $show_list_js, implode(', ', $entries));
 	}
 
 	if ($show_debug_query)
-		$temp .= '
-	<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . ($warnings == 0 ? sprintf($txt['debug_queries_used'], (int) $db_count) : sprintf($txt['debug_queries_used_and_warnings'], (int) $db_count, $warnings)) . '</a><br>
-	<br>';
+		$temp .= '<a href="' . $scripturl . '?action=viewquery" target="_blank" class="new_win">' . sprintf($txt['debug_queries_used' . ($warnings == 0 ? '' : '_and_warnings')], $db_count, $warnings) . '</a><br><br>';
 	else
-		$temp .= '
-	' . sprintf($txt['debug_queries_used'], (int) $db_count) . '<br>
-	<br>';
+		$temp .= sprintf($txt['debug_queries_used'], $db_count) . '<br><br>';
 
 	if ($_SESSION['view_queries'] == 1 && !empty($db_cache))
 		foreach ($db_cache as $q => $qq)
@@ -904,13 +903,11 @@ function db_debug_junk()
 				$temp .= sprintf($txt['debug_query_which_took_at'], round($qq['t'], 8), round($qq['s'], 8)) . '<br>';
 			elseif (isset($qq['t']))
 				$temp .= sprintf($txt['debug_query_which_took'], round($qq['t'], 8)) . '<br>';
-			$temp .= '
-	<br>';
+			$temp .= '<br>';
 		}
 
 	if ($show_debug_query)
-		$temp .= '
-	<a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
+		$temp .= '<a href="' . $scripturl . '?action=viewquery;sa=hide">' . $txt['debug_' . (empty($_SESSION['view_queries']) ? 'show' : 'hide') . '_queries'] . '</a>';
 
 	$context['debugging_info'] = $temp . '
 </div>';
@@ -968,6 +965,9 @@ function template_include($filename, $once = false)
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		header('Cache-Control: no-cache');
+
+		if (!isset($txt['template_parse_error']))
+			loadLanguage('Errors', '', false);
 
 		if (!isset($txt['template_parse_error']))
 		{

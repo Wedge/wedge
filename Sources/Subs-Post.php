@@ -274,6 +274,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 		{
 			if (!mail(strtr($to, array("\r" => '', "\n" => '')), $subject, $message, $headers))
 			{
+				loadLanguage('Post');
 				log_error(sprintf($txt['mail_send_unable'], $to));
 				$mail_result = false;
 			}
@@ -685,11 +686,12 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	censorText($message);
 	censorText($subject);
 	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc(htmlspecialchars($message), false), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
+	$languages_to_load = array('index', 'PersonalMessage');
 
 	foreach ($notifications as $lang => $notification_list)
 	{
 		// Make sure to use the right language.
-		loadLanguage('index+PersonalMessage', $lang, false);
+		loadLanguage($languages_to_load, $lang, false);
 
 		// Replace the right things in the message strings.
 		$mailsubject = str_replace(array('SUBJECT', 'SENDER'), array($subject, un_htmlspecialchars($from['name'])), $txt['new_pm_subject']);
@@ -701,7 +703,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	}
 
 	// Back to what we were on before!
-	loadLanguage('index+PersonalMessage');
+	loadLanguage($languages_to_load);
 
 	// Add one to their unread and read message counts.
 	foreach ($all_to as $k => $id)

@@ -848,18 +848,16 @@ function AdminSearchInternal()
 	@ini_set('memory_limit', '128M');
 
 	// Load a lot of language files.
-	$language_files = array(
+	loadLanguage(array(
 		'Help', 'ManageMail', 'ManageSettings', 'ManageBoards', 'ManagePaid', 'ManagePermissions', 'Search',
 		'Login', 'ManageSmileys', 'ManageMaintenance',
-	);
-	loadLanguage(implode('+', $language_files));
+	));
 
 	// All the files we need to include.
-	$include_files = array(
+	loadSource(array(
 		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManageMemberOptions', 'ManagePaid', 'ManageMaintenance',
 		'ManagePermissions', 'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys',
-	);
-	loadSource($include_files);
+	));
 
 	/* This is the huge array that defines everything... it's a huge array of items formatted as follows:
 		0 = Language index (Can be array of indexes) to search through for this setting.
