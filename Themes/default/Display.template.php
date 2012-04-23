@@ -908,8 +908,8 @@ function template_display_statistics()
 			', $txt['topic_stats'], '
 		</we:title>
 		<p>
-			', number_context('views', $context['num_views']), '
-			<br>', number_context('replies', $context['num_replies']), '
+			', number_context('num_views', $context['num_views']), '
+			<br>', number_context('num_replies', $context['num_replies']), '
 		</p>
 	</section>';
 }

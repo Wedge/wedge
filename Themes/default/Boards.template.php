@@ -114,8 +114,8 @@ function template_boards()
 				echo '
 					</td>
 					<td class="stats">
-						<p>', number_context($board['is_redirect'] ? 'redirects' : 'posts', $board['posts']),
-						$board['is_redirect'] ? '' : '<br>' . number_context('topics', $board['topics']), '</p>
+						<p>', number_context($board['is_redirect'] ? 'num_redirects' : 'num_posts', $board['posts']),
+						$board['is_redirect'] ? '' : '<br>' . number_context('num_topics', $board['topics']), '</p>
 					</td>
 					<td class="lastpost">';
 
@@ -148,11 +148,11 @@ function template_boards()
 					{
 						if (!$child['is_redirect'])
 						{
-							$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('topics', $child['topics']) . ', ' . number_context('posts', $child['posts']) . ')';
+							$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('num_topics', $child['topics']) . ', ' . number_context('num_posts', $child['posts']) . ')';
 							$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new_short'] . '</a>' : '');
 						}
 						else
-							$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('redirects', $child['posts']) . '">' . $child['name'] . '</a>';
+							$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('num_redirects', $child['posts']) . '">' . $child['name'] . '</a>';
 
 						// Has it posts awaiting approval?
 						if ($child['can_approve_posts'] && ($child['unapproved_posts'] || $child['unapproved_topics']))

@@ -133,8 +133,8 @@ function template_main_board()
 						</div>
 					</td>
 					<td class="stats ', $color_class, '">
-						', number_context('replies', $topic['replies']), '
-						<br>', number_context('views', $topic['views']), '
+						', number_context('num_replies', $topic['replies']), '
+						<br>', number_context('num_views', $topic['views']), '
 					</td>
 					<td class="lastpost ', $alternate_class, '">
 						<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
@@ -370,8 +370,8 @@ function template_main_blog()
 						</div>
 					</td>
 					<td class="stats ', $color_class, '">
-						', number_context('replies', $topic['replies']), '
-						<br>', number_context('views', $topic['views']), '
+						', number_context('num_replies', $topic['replies']), '
+						<br>', number_context('num_views', $topic['views']), '
 					</td>';
 
 			// Show the quick moderation options?
@@ -538,8 +538,8 @@ function template_messageindex_childboards()
 			echo '
 					</td>
 					<td class="stats windowbg">
-						<p>', number_context($board['is_redirect'] ? 'redirects' : 'posts', $board['posts']), ' <br>
-						', $board['is_redirect'] ? '' : number_context('topics', $board['topics']), '
+						<p>', number_context($board['is_redirect'] ? 'num_redirects' : 'num_posts', $board['posts']), ' <br>
+						', $board['is_redirect'] ? '' : number_context('num_topics', $board['topics']), '
 						</p>
 					</td>
 					<td class="lastpost">';
@@ -573,11 +573,11 @@ function template_messageindex_childboards()
 				{
 					if (!$child['is_redirect'])
 					{
-						$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('topics', $child['topics']) . ', ' . number_context('posts', $child['posts']) . ')';
+						$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('num_topics', $child['topics']) . ', ' . number_context('num_posts', $child['posts']) . ')';
 						$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new'] . '</a>' : '');
 					}
 					else
-						$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('redirects', $child['posts']) . '">' . $child['name'] . '</a>';
+						$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('num_redirects', $child['posts']) . '">' . $child['name'] . '</a>';
 
 					// Has it posts awaiting approval?
 					if ($child['can_approve_posts'] && ($child['unapproved_posts'] | $child['unapproved_topics']))
@@ -676,7 +676,7 @@ function template_messageindex_statistics()
 			', $txt[$type . '_stats'], '
 		</we:title>
 		<p>
-			', $board_info['num_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', number_context('topics', $board_info['total_topics']), '<br>
+			', $board_info['num_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', number_context('num_topics', $board_info['total_topics']), '<br>
 		</p>
 	</section>';
 }
