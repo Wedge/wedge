@@ -2258,11 +2258,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			$user_info['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
 			if (empty($user_info['time_format']))
 				$user_info['time_format'] = $txt['time_format'];
-
-			// Set up day suffixes (1st, 2nd...)
-			foreach ($txt['day_suffix'] as $day => $suffix)
-				$txt['day_suffix_' . $day] = $suffix;
-			unset($txt['day_suffix']);
 		}
 
 		// Keep track of what we're up to soldier.

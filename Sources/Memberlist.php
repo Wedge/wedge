@@ -77,7 +77,7 @@ function Memberlist()
 	// Set up the columns...
 	$context['columns'] = array(
 		'is_online' => array(
-			'label' => $txt['status'],
+			'label' => $txt['online_status'],
 			'width' => '60',
 			'class' => 'first_th',
 		),

@@ -340,8 +340,8 @@ function ComposeMailing()
 	// Clean the other vars.
 	SendMailing(true);
 
-	// We need a couple strings from the email template file
-	loadLanguage('EmailTemplates');
+	// We need a couple strings from the email template file and sendtopic_send from ManageTopics.
+	loadLanguage(array('EmailTemplates', 'ManageTopics'));
 
 	// Get a list of all full banned users.  Use their Username and email to find them.  Only get the ones that can't login to turn off notification.
 	$request = wesql::query('

@@ -612,7 +612,7 @@ function template_editBuddies()
 		<table class="table_grid w100 cs1 cp4 center">
 			<tr class="catbg">
 				<th class="first_th left" scope="col" style="width: 20%">', $txt['name'], '</th>
-				<th scope="col">', $txt['status'], '</th>
+				<th scope="col">', $txt['online_status'], '</th>
 				<th scope="col">', $txt['email'], '</th>
 				<th class="last_th" scope="col"></th>
 			</tr>';
@@ -681,7 +681,7 @@ function template_editIgnoreList()
 		<table class="table_grid w100 cs1 cp4 center">
 			<tr class="catbg">
 				<th class="first_th" scope="col" style="width: 20%">', $txt['name'], '</th>
-				<th scope="col">', $txt['status'], '</th>
+				<th scope="col">', $txt['online_status'], '</th>
 				<th scope="col">', $txt['email'], '</th>
 				<th class="last_th" scope="col"></th>
 			</tr>';
