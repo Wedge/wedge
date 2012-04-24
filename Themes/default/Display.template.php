@@ -68,8 +68,8 @@ function template_display_posts()
 			echo '
 						<div class="postheader">
 							<div class="keyinfo">
-								<div class="messageicon">
-									<img src="', $message['icon_url'] . '"', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', '>
+								<div class="messageicon"', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', '>
+									<img src="', $message['icon_url'] . '">
 								</div>
 								<h5 id="subject_', $message['id'], '">
 									<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>', $message['new'] ? '
@@ -292,7 +292,6 @@ function template_display_posts()
 	if (can_ajax)
 	{
 		var oQuickModify = new QuickModify({
-			bShowModify: ', $theme['show_modify'] ? 'true' : 'false', ',
 			iTopicId: ' . $context['current_topic'] . ',
 			sTemplateBodyEdit: ' . JavaScriptEscape('
 				<div id="quick_edit_body_container" style="width: 90%">
@@ -311,24 +310,12 @@ function template_display_posts()
 			sErrorBorderStyle: \'1px solid red\'
 		});
 
-		aIconLists.push(new IconList({
-			sBackReference: "aIconLists[" + aIconLists.length + "]",
-			sIconIdPrefix: "msg_icon_",
-			bShowModify: ', $theme['show_modify'] ? 'true' : 'false', ',
+		new IconList({
+			sPrefix: "msg_icon_",
+			sLabels: "' . $txt['message_icon'] . '",
 			iBoardId: ' . $context['current_board'] . ',
-			iTopicId: ' . $context['current_topic'] . ',
-			sLabelIconList: "' . $txt['message_icon'] . '",
-			sBoxBackground: "transparent",
-			sBoxBackgroundHover: "#ffffff",
-			iBoxBorderWidthHover: 1,
-			sBoxBorderColorHover: "#adadad",
-			sContainerBackground: "#ffffff",
-			sContainerBorder: "1px solid #adadad",
-			sItemBorder: "1px solid #ffffff",
-			sItemBorderHover: "1px dotted gray",
-			sItemBackground: "transparent",
-			sItemBackgroundHover: "#e0e0f0"
-		}));
+			iTopicId: ' . $context['current_topic'] . '
+		});
 	}');
 
 	if (!empty($ignoredMsgs))

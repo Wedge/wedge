@@ -257,7 +257,7 @@ function template_message_icons()
 <we>';
 	foreach ($context['icons'] as $icon)
 		echo '
-	<icon value="', $icon['value'], '" url="', $icon['url'], '"><![CDATA[', cleanXml($icon['name']), ']]></icon>';
+	<icon value="', $icon['value'], '" url="', $icon['url'], '"><![CDATA[', cleanXml('<img src="' . $icon['url'] . '" alt="' . $icon['value'] . '" title="' . $icon['name'] . '">'), ']]></icon>';
 	echo '
 </we>';
 }

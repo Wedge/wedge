@@ -25,12 +25,10 @@ if (!defined('WEDGE'))
  * - Sanitize the incoming title (check not empty, and if so: replace CR, LF or TAB with empty string and custom htmlspecialchars replacement, then truncate to 100 characters)
  * - Sanitize the incoming message (check not empty, check not over-long, custom htmlspecialchars, preparsecode, check that if the tags except img are removed that there is some content)
  * - Handle the message locking and pinned status.
- * - If no errors from the above, prepare the array triplet (msg/topic/poster Options) and pass to {@link modifyPost()} noting that the post is modified on subject/message/icon changing.
+ * - If no errors from the above, prepare the array triplet (msg/topic/poster Options) and pass to {@link modifyPost()} noting that the post is modified on subject/message changing.
  * - If there are no errors and we edited something in the message, prepare the newly edited message for return, i.e. build an array with everything needed to make the post, parsed for BBC, and return via XML.
  * - If there were no errors but we only changed the icon or subject, return only those details.
  * - Otherwise there were some errors - so get ready to return those too (including loading the relevant language file, and do any preprocessing on the strings, e.g. the long_message one)
- *
- * - @todo Remove icon being logged as an edit - there is no reason to flag it as edited if only the icon has changed.
  */
 function JSModify()
 {
@@ -172,8 +170,8 @@ function JSModify()
 		);
 		$posterOptions = array();
 
-		// Only consider marking as editing if they have edited the subject, message or icon.
-		if ((isset($_POST['subject']) && $_POST['subject'] != $row['subject']) || (isset($_POST['message']) && $_POST['message'] != $row['body']) || (isset($_REQUEST['icon']) && $_REQUEST['icon'] != $row['icon']))
+		// Only consider marking as editing if they have edited the subject or message.
+		if ((isset($_POST['subject']) && $_POST['subject'] != $row['subject']) || (isset($_POST['message']) && $_POST['message'] != $row['body']))
 		{
 			// And even then only if the time has passed...
 			if (time() - $row['poster_time'] > $settings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
@@ -189,7 +187,7 @@ function JSModify()
 
 		modifyPost($msgOptions, $topicOptions, $posterOptions);
 
-		// If we didn't change anything this time but had before put back the old info.
+		// If we didn't change anything this time but had before, put back the old info.
 		if (!isset($msgOptions['modify_time']) && !empty($row['modified_time']))
 		{
 			$msgOptions['modify_time'] = $row['modified_time'];

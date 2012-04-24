@@ -126,9 +126,10 @@ function modify_topic_save()
 // Simply restore any hidden bits during topic editing.
 function set_hidden_topic_areas(state)
 {
-	for (var i = 0; i < hide_prefixes.length; i++)
-		$('#' + hide_prefixes[i] + cur_msg_id).toggle(state);
+	$.each(hide_prefixes, function () { $('#' + this + cur_msg_id).toggle(state); });
 }
+
+
 
 // *** QuickReply object.
 function QuickReply(oOptions)
@@ -152,21 +153,16 @@ QuickReply.prototype.quote = function (iMessage)
 	else
 	{
 		show_ajax();
-		getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), this.onQuoteReceived);
+		getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), function (oXMLDoc) {
+			oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
+			hide_ajax();
+		});
 
 		// Move the view to the quick reply box.
 		window.location.hash = (is_ie ? '' : '#') + this.opt.sJumpAnchor;
 
 		return false;
 	}
-};
-
-// This is the callback function used after the Ajax request.
-QuickReply.prototype.onQuoteReceived = function (oXMLDoc)
-{
-	oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
-
-	hide_ajax();
 };
 
 // The function handling the swapping of the quick reply.
@@ -193,15 +189,17 @@ QuickReply.prototype.switchMode = function ()
 		oEditorHandle_message.toggleView(true);
 };
 
+
+
 // *** QuickModify object.
 function QuickModify(opt)
 {
 	var
-		sMessageBuffer = '',
-		sSubjectBuffer = '',
 		sCurMessageId = '',
-		oCurMessageDiv = null,
-		oCurSubjectDiv = null,
+		sMessageBuffer,
+		sSubjectBuffer,
+		oCurMessageDiv,
+		oCurSubjectDiv,
 
 		// The callback function used for the Ajax request retrieving the message.
 		onMessageReceived = function (XMLDoc)
@@ -284,9 +282,9 @@ function QuickModify(opt)
 				if (oSubject.attr('is_first') == '1')
 					$('#top_subject').html(sSubjectText.replace(/\{&dollarfix;\$\}/g, '$'));
 
-				// Show this message as 'modified on x by y'.
-				if (opt.bShowModify)
-					$('#modified_' + sCurMessageId.substr(4)).html($('modified', message).text());
+				// Show this message as 'modified on x by y'. If the theme doesn't support this,
+				// the request will simply be ignored because jQuery won't find the target.
+				$('#modified_' + sCurMessageId.substr(4)).html($('modified', message).text());
 
 				// Finally, we can safely declare we're up and running...
 				sCurMessageId = '';
@@ -325,7 +323,7 @@ function QuickModify(opt)
 	this.modifyCancel = function ()
 	{
 		// Roll back the HTML to its original state.
-		if (oCurMessageDiv)
+		if (oCurMessageDiv && oCurMessageDiv.length)
 		{
 			oCurMessageDiv.html(sMessageBuffer);
 			oCurSubjectDiv.html(sSubjectBuffer);
@@ -357,6 +355,8 @@ function QuickModify(opt)
 	};
 }
 
+
+
 function InTopicModeration(opt)
 {
 	var bButtonsShown = false, iNumSelected = 0,
@@ -365,12 +365,10 @@ function InTopicModeration(opt)
 	{
 		var
 			display = opt.sStrip + '_strip',
-			// Adds a button to a certain button strip.
 			addButton = function (sClass)
 			{
-				// Add the button.
-				$('<li></li>').addClass(sClass).html('<a href="#"></a>')
-					.click(handleSubmit).hide().appendTo('#' + display);
+				// Adds a button to the button strip.
+				$('<li></li>').addClass(sClass).html('<a href="#"></a>').click(handleSubmit).hide().appendTo('#' + display);
 			};
 
 		if (!bButtonsShown)
@@ -415,14 +413,12 @@ function InTopicModeration(opt)
 		{
 			if (!confirm(opt.sRemoveConfirm))
 				return false;
-
 			oForm.action = oForm.action.replace(/;restore_selected=1/, '');
 		}
 		else // restore button?
 		{
 			if (!confirm(opt.sRestoreConfirm))
 				return false;
-
 			oForm.action = oForm.action + ';restore_selected=1';
 		}
 
@@ -439,153 +435,101 @@ function InTopicModeration(opt)
 }
 
 
-// A global array containing all IconList objects.
-var aIconLists = [];
 
 // *** IconList object.
-function IconList(oOptions)
+function IconList(opt)
 {
+	var oContainerDiv, oCurDiv, iCurMessageId,
+
+	// Show the list of icons after the user clicked the original icon.
+	openPopup = function (oDiv, iMessageId)
+	{
+		iCurMessageId = iMessageId;
+		oCurDiv = oDiv;
+
+		if (!oContainerDiv)
+		{
+			// Create a container div.
+			oContainerDiv = $('<div id="iconlist"></div>').hide().css('width', oCurDiv.offsetWidth).appendTo('body');
+
+			// Start to fetch its contents.
+			show_ajax();
+			getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=messageicons;board=' + opt.iBoardId + ';xml', function (oXMLDoc)
+			{
+				$('we icon', oXMLDoc).each(function ()
+				{
+					var iconxml = this;
+					oContainerDiv.append(
+						$('<div class="item"></div>')
+							.hover(function () { $(this).toggleClass('hover'); })
+							.mousedown(function ()
+							{
+								// Event handler for clicking on one of the icons.
+								var thisicon = this;
+								show_ajax();
+
+								getXMLDocument(
+									we_prepareScriptUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';msg=' + iCurMessageId + ';'
+									+ we_sessvar + '=' + we_sessid + ';icon=' + $(iconxml).attr('value') + ';xml',
+									function (oXMLDoc)
+									{
+										var oMessage = $('we message', oXMLDoc);
+
+										if (!($('error', oMessage).length))
+											$('img', oCurDiv).attr('src', $('img', thisicon).attr('src'));
+
+										hide_ajax();
+									}
+								);
+							})
+							.append($(iconxml).text())
+					);
+				});
+
+				if (is_ie)
+					oContainerDiv.css('width', oContainerDiv.clientWidth);
+
+				hide_ajax();
+			});
+		}
+
+		// Show the container, and position it.
+		oContainerDiv.fadeIn().css({
+			top: $(oCurDiv).offset().top + oDiv.offsetHeight,
+			left: $(oCurDiv).offset().left - 1
+		});
+
+
+		// If user clicks outside, this will close the list.
+		$('body').bind('mousedown.ic', function () {
+			oContainerDiv.fadeOut();
+			$('body').unbind('mousedown.ic');
+		});
+	};
+
 	if (!can_ajax)
 		return;
 
-	this.opt = oOptions;
-	this.bListLoaded = false;
-	this.oContainerDiv = null;
-	this.funcMousedownHandler = null;
-	this.funcParent = this;
-	this.iCurMessageId = 0;
-	this.iCurTimeout = 0;
-
 	// Replace all message icons by icons with hoverable and clickable div's.
-	for (var i = document.images.length - 1, iPrefixLength = this.opt.sIconIdPrefix.length; i >= 0; i--)
-		if (document.images[i].id.substr(0, iPrefixLength) == this.opt.sIconIdPrefix)
-			$(document.images[i]).replaceWith('<div title="' + this.opt.sLabelIconList + '" onclick="' + this.opt.sBackReference + '.openPopup(this, ' + document.images[i].id.substr(iPrefixLength) + ')" onmouseover="' + this.opt.sBackReference + '.onBoxHover(this, true)" onmouseout="' + this.opt.sBackReference + '.onBoxHover(this, false)" style="background: ' + this.opt.sBoxBackground + '; cursor: pointer; padding: 3px 3px 1px; text-align: center"><img src="' + document.images[i].src + '" alt="' + document.images[i].alt + '" id="' + document.images[i].id + '" style="margin: 0px; padding: ' + (is_ie ? '3px' : '3px 0 2px') + '"></div>');
+	$('.messageicon').each(function () {
+		var id = this.id.substr(opt.sPrefix.length);
+		$(this)
+			.addClass('iconbox')
+			.hover(function () { $(this).toggleClass('hover'); })
+			.click(function () { openPopup(this, id); });
+	});
 }
 
-// Event for the mouse hovering over the original icon.
-IconList.prototype.onBoxHover = function (oDiv, bMouseOver)
-{
-	var i = (3 - this.opt.iBoxBorderWidthHover);
-	$(oDiv).css({
-		border: bMouseOver ? this.opt.iBoxBorderWidthHover + 'px solid ' + this.opt.sBoxBorderColorHover : '',
-		background: bMouseOver ? this.opt.sBoxBackgroundHover : this.opt.sBoxBackground,
-		padding: bMouseOver ? i + 'px ' + i + 'px 0' : '3px 3px 1px'
-	});
-};
-
-// Show the list of icons after the user clicked the original icon.
-IconList.prototype.openPopup = function (oDiv, iMessageId)
-{
-	this.iCurMessageId = iMessageId;
-
-	if (!this.bListLoaded && this.oContainerDiv == null)
-	{
-		// Create a container div.
-		this.oContainerDiv = $('<div></div>', { id: 'iconList' }).hide().css({
-			cursor: 'pointer',
-			position: 'absolute',
-			width: oDiv.offsetWidth,
-			background: this.opt.sContainerBackground,
-			border: this.opt.sContainerBorder,
-			padding: 1,
-			textAlign: 'center'
-		}).appendTo('body');
-
-		// Start to fetch its contents.
-		show_ajax();
-		getXMLDocument.call(this, we_prepareScriptUrl() + 'action=ajax;sa=messageicons;board=' + this.opt.iBoardId + ';xml', this.onIconsReceived);
-	}
-
-	// Set the position of the container.
-	var aPos = $(oDiv).offset();
-
-	this.oContainerDiv.css({
-		top: aPos.top + oDiv.offsetHeight,
-		left: aPos.left - 1
-	}).toggle(this.bListLoaded);
-
-	this.oClickedIcon = oDiv;
-
-	$('body').mousedown(this.onWindowMouseDown);
-};
-
-// Setup the list of icons once it is received through Ajax.
-IconList.prototype.onIconsReceived = function (oXMLDoc)
-{
-	var sItems = '', br = this.opt.sBackReference, bord = this.opt.sItemBorder, bg = this.opt.sItemBackground;
-
-	$('we icon', oXMLDoc).each(function () {
-		sItems += '<div onmouseover="' + br + '.onItemHover(this, true)" onmouseout="' + br + '.onItemHover(this, false)" onmousedown="' + br + '.onItemMouseDown(this, \'' + $(this).attr('value') + '\')" style="padding: 3px 0px; margin-left: auto; margin-right: auto; border: ' + bord + '; background: ' + bg + '"><img src="' + $(this).attr('url') + '" alt="' + $(this).attr('name') + '" title="' + $(this).text() + '"></div>';
-	});
-
-	this.oContainerDiv.html(sItems).show();
-	this.bListLoaded = true;
-
-	if (is_ie)
-		this.oContainerDiv.css('width', this.oContainerDiv.clientWidth);
-
-	hide_ajax();
-};
-
-// Event handler for hovering over the icons.
-IconList.prototype.onItemHover = function (oDiv, bMouseOver)
-{
-	oDiv.style.background = bMouseOver ? this.opt.sItemBackgroundHover : this.opt.sItemBackground;
-	oDiv.style.border = bMouseOver ? this.opt.sItemBorderHover : this.opt.sItemBorder;
-	if (this.iCurTimeout != 0)
-		clearTimeout(this.iCurTimeout);
-	if (bMouseOver)
-		this.onBoxHover(this.oClickedIcon, true);
-	else
-		this.iCurTimeout = setTimeout(this.opt.sBackReference + '.collapseList();', 500);
-};
-
-// Event handler for clicking on one of the icons.
-IconList.prototype.onItemMouseDown = function (oDiv, sNewIcon)
-{
-	if (this.iCurMessageId != 0)
-	{
-		show_ajax();
-		var oXMLDoc = getXMLDocument(we_prepareScriptUrl() + 'action=jsmodify;topic=' + this.opt.iTopicId + ';msg=' + this.iCurMessageId + ';' + we_sessvar + '=' + we_sessid + ';icon=' + sNewIcon + ';xml');
-		hide_ajax();
-
-		var oMessage = $('we message', oXMLDoc.responseXML);
-		if (!($('error', oMessage).length))
-		{
-			if (this.opt.bShowModify && $('modified', oMessage).length)
-				$('#modified_' + this.iCurMessageId).html($('modified', oMessage).text());
-			$('img', this.oClickedIcon).attr('src', $('img', oDiv).attr('src'));
-		}
-	}
-};
-
-// Event handler for clicking outside the list (will make the list disappear).
-IconList.prototype.onWindowMouseDown = function ()
-{
-	for (var i = aIconLists.length - 1; i >= 0; i--)
-		aIconLists[i].collapseList.call(aIconLists[i].funcParent);
-};
-
-// Collapse the list of icons.
-IconList.prototype.collapseList = function ()
-{
-	this.onBoxHover(this.oClickedIcon, false);
-	this.oContainerDiv.hide();
-	this.iCurMessageId = 0;
-	$('body').mousedown(this.onWindowMouseDown);
-};
 
 
-// *** Other functions...
+// Expand an attached thumbnail
 function expandThumb(thumbID)
 {
-	var img = $('#thumb_' + thumbID)[0];
-	var link = $('#link_' + thumbID)[0];
-	var tmp = img.src;
+	var img = $('#thumb_' + thumbID)[0], link = $('#link_' + thumbID)[0], tmp = img.src;
 	img.src = link.href;
-	link.href = tmp;
 	img.style.width = '';
 	img.style.height = '';
+	link.href = tmp;
 	return false;
 }
 
@@ -594,12 +538,73 @@ function expandThumb(thumbID)
 // *** The UserMenu
 function MiniMenu(oList, bAcme, oStrings)
 {
-	var that = this, is_right_side = bAcme ? true : $('.right-side').length > 0;
-	that.list = oList;
-	that.strings = oStrings;
 	$(bAcme ? '.acme' : '.umme')
-		.mouseenter(function () {
-			that.switchMenu(this, bAcme, is_right_side ? 'left' : '');
+		.mouseenter(function ()
+		{
+			var
+				is_right_side = bAcme || $('.right-side').length > 0,
+				details = this.id.substr(2).split('_'),
+				iMsg = details[0], id = details[bAcme ? 0 : 1],
+				pos = $(this).offset(), parent = $(this).parent(),
+				aLinkList = oList[id], $body = $('body'),
+				menuid = (bAcme ? '#actMenu' : '#userMenu') + iMsg;
+				mm = bAcme ? 'acme' : 'umme', mmove = 'mousemove.' + mm,
+				leave = function (e) {
+					if (!e || e.relatedTarget.className.indexOf(mm) == -1)
+					{
+						parent.removeClass('show');
+						$(this).remove();
+					}
+				};
+
+			if ($(menuid).length || !aLinkList)
+				return;
+
+			var sHTML = '', i = 1, j = aLinkList.length, mtarget, pms, sLink, $men, mpo, paw;
+			for (; i < j; i++)
+			{
+				pms = oStrings[aLinkList[i].substr(0, 2)];
+				sLink = pms[2] ? pms[2].replace(/%id%/, id).replace(/%special%/, aLinkList[i].substr(3)) : this.href;
+				if (!bAcme && sLink.charAt(0) == '?')
+					sLink = this.href + sLink;
+
+				sHTML += '<li><a href="' + sLink + '"'
+					+ (pms[3] ? ' class="' + pms[3] + '"' : '')
+					+ (pms[4] ? ' ' + pms[4] : '') // Custom data, such as events?
+					+ (pms[1] ? ' title="' + pms[1] + '"' : '')
+					+ '>' + pms[0] + '</a></li>';
+			}
+			parent.addClass('show');
+
+			$men = bAcme ?
+				$('<div class="acmenu" id="actMenu' + id + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>') :
+				$('<div class="usermenu' + (is_right_side ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</ul>');
+			$men.hide().appendTo($body);
+
+			if (is_right_side == 'left')
+			{
+				mpo = [ $men.width(), $men.height() ];
+				paw = $(bAcme ? parent : this).width();
+				$men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(this).width() + 1, width: 0, height: 0 })
+					.mouseleave(leave)
+					.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 300, function () {
+						$men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
+						$body.unbind(mmove);
+						// Once the animation is completed, is the mouse still inside the menu area?
+						if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
+							leave();
+					});
+			}
+			else
+			{
+				$men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(this).width() + 1 });
+				$men.mouseleave(leave).show(300, function () {
+					$body.unbind(mmove);
+					if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
+						leave();
+				});
+			}
+			$body.bind(mmove, function (e) { mtarget = e.target; });
 		})
 		.mouseleave(function (e) {
 			var menu = (bAcme ? 'ac' : 'user') + 'menu', target = e.relatedTarget;
@@ -607,70 +612,3 @@ function MiniMenu(oList, bAcme, oStrings)
 				$('.' + menu).remove();
 		});
 }
-
-MiniMenu.prototype.switchMenu = function (oLink, acme, direction)
-{
-	var
-		details = oLink.id.substr(2).split('_'),
-		iMsg = details[0], id = details[acme ? 0 : 1],
-		pos = $(oLink).offset(), parent = $(oLink).parent(),
-		aLinkList = this.list[id], $body = $('body'),
-		menuid = (acme ? '#actMenu' : '#userMenu') + iMsg;
-		mm = acme ? 'acme' : 'umme', mmove = 'mousemove.' + mm,
-		leave = function (e) {
-			if (!e || e.relatedTarget.className.indexOf(mm) == -1)
-			{
-				parent.removeClass('show');
-				$(this).remove();
-			}
-		};
-
-	if ($(menuid).length || !aLinkList)
-		return;
-
-	var sHTML = '', i = 1, j = aLinkList.length, special = aLinkList[0], mtarget, pms, sLink, $men, mpo, paw;
-	for (; i < j; i++)
-	{
-		pms = this.strings[aLinkList[i]];
-		sLink = pms[2] ? pms[2].replace(/%id%/, id).replace(/%special%/, special) : oLink.href;
-		if (!acme && sLink.charAt(0) == '?')
-			sLink = oLink.href + sLink;
-
-		sHTML += '<li><a href="' + sLink + '"'
-			+ (pms[3] ? ' class="' + pms[3] + '"' : '')
-			+ (pms[4] ? ' ' + pms[4] : '') // Custom data, such as events?
-			+ (pms[1] ? ' title="' + pms[1] + '"' : '')
-			+ '>' + pms[0] + '</a></li>';
-	}
-	parent.addClass('show');
-
-	$men = acme ?
-		$('<div class="acmenu" id="actMenu' + id + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>') :
-		$('<div class="usermenu' + (direction == 'left' ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</ul>');
-	$men.hide().appendTo($body);
-
-	if (direction == 'left')
-	{
-		mpo = [ $men.width(), $men.height() ];
-		paw = $(acme ? parent : oLink).width();
-		$men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(oLink).width() + 1, width: 0, height: 0 })
-			.mouseleave(leave)
-			.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 300, function () {
-				$men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
-				$body.unbind(mmove);
-				// Once the animation is completed, is the mouse still inside the menu area?
-				if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
-					leave();
-			});
-	}
-	else
-	{
-		$men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(oLink).width() + 1 });
-		$men.mouseleave(leave).show(300, function () {
-			$body.unbind(mmove);
-			if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
-				leave();
-		});
-	}
-	$body.bind(mmove, function (e) { mtarget = e.target; });
-};
