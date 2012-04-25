@@ -95,7 +95,11 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		$is_default_theme &= $target === 'default_theme_';
 		$add = $theme[$target . 'dir'] . '/' . $file;
 		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
-		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
+		$temp_name = str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3));
+
+		// Don't add theme.js, sbox.js and custom.js files to the final filename, to save a few bytes on all pages.
+		if ($temp_name !== 'theme' && $temp_name !== 'sbox' && $temp_name !== 'custom')
+			$id .= $temp_name . '-';
 		$latest_date = max($latest_date, filemtime($add));
 	}
 

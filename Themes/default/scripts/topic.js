@@ -132,62 +132,61 @@ function set_hidden_topic_areas(state)
 
 
 // *** QuickReply object.
-function QuickReply(oOptions)
+function QuickReply(opt)
 {
-	this.opt = oOptions;
-	this.bCollapsed = this.opt.bDefaultCollapsed;
-	$('#' + this.opt.sSwitchMode).show();
+	// When a user presses quote, put it in the quick reply box (if expanded).
+	this.quote = function (iMessage)
+	{
+		// iMessageId is taken from the owner ID -- quote_button_xxx
+		var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(13) : '';
+
+		if (bCollapsed)
+		{
+			window.location.href = we_prepareScriptUrl() + 'action=post;quote=' + iMessageId + ';topic=' + opt.iTopicId + '.' + opt.iStart;
+			return false;
+		}
+		else
+		{
+			show_ajax();
+			getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), function (oXMLDoc) {
+				oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
+				hide_ajax();
+			});
+
+			// Move the view to the quick reply box.
+			window.location.hash = (is_ie ? '' : '#') + opt.sJumpAnchor;
+
+			return false;
+		}
+	};
+
+	// The function handling the swapping of the quick reply.
+	this.swap = function ()
+	{
+		var cont = $('#' + opt.sContainerId);
+		$('#' + opt.sImageId).toggleClass('fold', bCollapsed);
+		bCollapsed ? cont.slideDown(150) : cont.slideUp(200);
+		bCollapsed = !bCollapsed;
+
+		return false;
+	};
+
+	// Switch from basic to more powerful editor
+	this.switchMode = function ()
+	{
+		if (opt.sBbcDiv != '')
+			$('#' + opt.sBbcDiv).slideDown(500);
+		if (opt.sSmileyDiv != '')
+			$('#' + opt.sSmileyDiv).slideDown(500);
+		if (opt.sBbcDiv != '' || opt.sSmileyDiv != '')
+			$('#' + opt.sSwitchMode).slideUp(500);
+		if (opt.bUsingWysiwyg)
+			oEditorHandle_message.toggleView(true);
+	};
+
+	var bCollapsed = opt.bDefaultCollapsed;
+	$('#' + opt.sSwitchMode).show();
 }
-
-// When a user presses quote, put it in the quick reply box (if expanded).
-QuickReply.prototype.quote = function (iMessage)
-{
-	// iMessageId is taken from the owner ID -- quote_button_xxx
-	var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(13) : '';
-
-	if (this.bCollapsed)
-	{
-		window.location.href = we_prepareScriptUrl() + 'action=post;quote=' + iMessageId + ';topic=' + this.opt.iTopicId + '.' + this.opt.iStart;
-		return false;
-	}
-	else
-	{
-		show_ajax();
-		getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), function (oXMLDoc) {
-			oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
-			hide_ajax();
-		});
-
-		// Move the view to the quick reply box.
-		window.location.hash = (is_ie ? '' : '#') + this.opt.sJumpAnchor;
-
-		return false;
-	}
-};
-
-// The function handling the swapping of the quick reply.
-QuickReply.prototype.swap = function ()
-{
-	var cont = $('#' + this.opt.sContainerId);
-	$('#' + this.opt.sImageId).toggleClass('fold', this.bCollapsed);
-	this.bCollapsed ? cont.slideDown(150) : cont.slideUp(200);
-
-	this.bCollapsed = !this.bCollapsed;
-	return false;
-};
-
-// Switch from basic to more powerful editor
-QuickReply.prototype.switchMode = function ()
-{
-	if (this.opt.sBbcDiv != '')
-		$('#' + this.opt.sBbcDiv).slideDown(500);
-	if (this.opt.sSmileyDiv != '')
-		$('#' + this.opt.sSmileyDiv).slideDown(500);
-	if (this.opt.sBbcDiv != '' || this.opt.sSmileyDiv != '')
-		$('#' + this.opt.sSwitchMode).slideUp(500);
-	if (this.bUsingWysiwyg)
-		oEditorHandle_message.toggleView(true);
-};
 
 
 
@@ -581,7 +580,16 @@ function MiniMenu(oList, bAcme, oStrings)
 				$('<div class="usermenu' + (is_right_side ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</ul>');
 			$men.hide().appendTo($body);
 
-			if (is_right_side == 'left')
+			if (!is_right_side)
+			{
+				$men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(this).width() + 1 });
+				$men.mouseleave(leave).show(300, function () {
+					$body.unbind(mmove);
+					if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
+						leave();
+				});
+			}
+			else
 			{
 				mpo = [ $men.width(), $men.height() ];
 				paw = $(bAcme ? parent : this).width();
@@ -594,15 +602,6 @@ function MiniMenu(oList, bAcme, oStrings)
 						if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
 							leave();
 					});
-			}
-			else
-			{
-				$men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(this).width() + 1 });
-				$men.mouseleave(leave).show(300, function () {
-					$body.unbind(mmove);
-					if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
-						leave();
-				});
 			}
 			$body.bind(mmove, function (e) { mtarget = e.target; });
 		})

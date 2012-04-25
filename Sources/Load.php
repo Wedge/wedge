@@ -2056,7 +2056,7 @@ function weInitJS()
 	global $settings, $context;
 
 	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
-		$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js', 'scripts/sbox.js');
+		$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js', 'scripts/sbox.js', 'scripts/custom.js');
 	else
 	{
 		$remote = array(
@@ -2065,7 +2065,7 @@ function weInitJS()
 			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
 		);
 		$context['remote_javascript_files'] = array($remote[$settings['jquery_origin']]);
-		$context['javascript_files'] = array('scripts/script.js', 'scripts/sbox.js');
+		$context['javascript_files'] = array('scripts/script.js', 'scripts/sbox.js', 'scripts/custom.js');
 	}
 }
 
