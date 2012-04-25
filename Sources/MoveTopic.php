@@ -128,10 +128,12 @@ function MoveTopic()
 	if ($user_info['language'] != $language)
 	{
 		loadLanguage('ManageTopics', $language);
-		$temp = $txt['movetopic_default'];
+		$temp1 = $txt['movetopic_default'];
+		$temp2 = $txt['movetopic_default_pm'];
 		loadLanguage('ManageTopics');
 
-		$txt['movetopic_default'] = $temp;
+		$txt['movetopic_default'] = $temp1;
+		$txt['movetopic_default_pm'] = $temp2;
 	}
 
 	// Register this form and get a sequence number in $context.
@@ -150,6 +152,8 @@ function MoveTopic2()
 	// You can't choose to have a redirection topic and use an empty reason.
 	if (isset($_POST['postRedirect']) && (!isset($_POST['reason']) || trim($_POST['reason']) == ''))
 		fatal_lang_error('movetopic_no_reason', false);
+	if (isset($_POST['sendPm']) && (!isset($_POST['pm']) || trim($_POST['pm']) == ''))
+		fatal_lang_error('movetopic_no_pm', false);
 
 	// Make sure this form hasn't been submitted before.
 	checkSubmitOnce('check');
@@ -326,6 +330,30 @@ function MoveTopic2()
 				addNextImperative($time * 86400 + time(), $task);
 			}
 		}
+	}
+
+	// Send the topic starter a PM if we wanted to do so.
+	if (isset($_POST['sendPm']))
+	{
+		// Should be in the boardwide language.
+		if ($user_info['language'] != $language)
+			loadLanguage('ManageTopics', $language);
+
+		// Make it basically safe but DO NOT preparse it! The PM system does that itself, not here.
+		$_POST['pm'] = westr::htmlspecialchars($_POST['pm'], ENT_QUOTES);
+
+		// Add a URL onto the message.
+		$_POST['pm'] = strtr($_POST['pm'], array(
+			$txt['movetopic_auto_board'] => '[url=' . $scripturl . '?board=' . $_POST['toboard'] . '.0]' . $board_name . '[/url]',
+			$txt['movetopic_auto_topic'] => '[iurl=' . $scripturl . '?topic=' . $topic . '.0]' . $subject . '[/iurl]'
+		));
+
+		//$id_member_started
+		$recipients = array(
+			'to' => array($id_member_started),
+			'bcc' => array(),
+		);
+		sendpm($recipients, $txt['moved'] . ': ' . $subject, $_POST['pm']);
 	}
 
 	$request = wesql::query('
