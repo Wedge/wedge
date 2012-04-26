@@ -115,7 +115,7 @@ function template_main_board()
 						<img src="', $topic['first_post']['icon_url'], '">
 					</td>
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
-						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" onmouseout="mouse_on_div = 0;" onmouseover="mouse_on_div = 1;" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
+						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
 							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">',
 							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
@@ -224,23 +224,7 @@ function template_main_board()
 
 	add_js('
 	// Hide certain bits during topic edit.
-	hide_prefixes.push("pages", "newicon");
-
-	// Detect when we\'ve stopped editing.
-	var mouse_on_div;
-	$(document).click(function () {
-		if (is_editing() && mouse_on_div == 0)
-			modify_topic_save();
-	});
-
-	function modify_topic_keypress(e)
-	{
-		if (e.which == 13)
-		{
-			modify_topic_save();
-			e.preventDefault();
-		}
-	}');
+	hide_prefixes.push("pages", "newicon");');
 }
 
 function template_main_blog()
@@ -349,7 +333,7 @@ function template_main_blog()
 						<img src="', $topic['first_post']['icon_url'], '">
 					</td>
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '" style="background-color: transparent">
-						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" onmouseout="mouse_on_div = 0;" onmouseover="mouse_on_div = 1;" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
+						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
 							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">',
 							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
@@ -456,23 +440,7 @@ function template_main_blog()
 
 	add_js('
 	// Hide certain bits during topic edit.
-	hide_prefixes.push("pages", "newicon");
-
-	// Detect when we\'ve stopped editing.
-	var mouse_on_div;
-	$(document).click(function () {
-		if (is_editing() && mouse_on_div == 0)
-			modify_topic_save();
-	});
-
-	function modify_topic_keypress(e)
-	{
-		if (e.which == 13)
-		{
-			modify_topic_save();
-			e.preventDefault();
-		}
-	}');
+	hide_prefixes.push("pages", "newicon");');
 }
 
 function template_messageindex_childboards()

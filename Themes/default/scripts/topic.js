@@ -10,12 +10,7 @@
  * @version 0.1
  */
 
-var cur_topic_id, cur_msg_id, cur_subject_div, buff_subject, in_edit_mode = 0, hide_prefixes = [];
-
-function is_editing()
-{
-	return in_edit_mode == 1;
-}
+var hide_prefixes = [];
 
 function go_up()
 {
@@ -29,36 +24,107 @@ function go_down()
 	return false;
 }
 
-// For templating, shown when an inline edit is made.
-function modify_topic_show_edit(subject)
-{
-	// Just template the subject.
-	cur_subject_div.html('<input type="text" id="qm_subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80" onkeypress="modify_topic_keypress(e);"><input type="hidden" id="qm_topic" value="' + cur_topic_id + '"><input type="hidden" id="qm_msg" value="' + cur_msg_id.substr(4) + '">');
-}
-
-// And the reverse for hiding it.
-function modify_topic_hide_edit(subject)
-{
-	// Re-template the subject!
-	cur_subject_div.html('<a href="' + we_prepareScriptUrl() + 'topic=' + cur_topic_id + '.0">' + subject + '</a>');
-}
 
 function modify_topic(topic_id, first_msg_id)
 {
+	var cur_topic_id, cur_msg_id, cur_subject_div, buff_subject, in_edit_mode = false,
+
+	// For templating, shown when an inline edit is made.
+	show_edit = function (subject)
+	{
+		// Just template the subject.
+		cur_subject_div.html('<input type="text" id="qm_subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80"><input type="hidden" id="qm_topic" value="' + cur_topic_id + '"><input type="hidden" id="qm_msg" value="' + cur_msg_id.substr(4) + '">');
+		$('#qm_subject').keypress(key_press);
+	},
+
+	// And the reverse for hiding it.
+	hide_edit = function (subject)
+	{
+		// Re-template the subject!
+		cur_subject_div.html('<a href="' + we_prepareScriptUrl() + 'topic=' + cur_topic_id + '.0">' + subject + '</a>');
+	},
+
+	key_press = function (e)
+	{
+		if (e.which == 13)
+		{
+			save();
+			e.preventDefault();
+		}
+	},
+
+	cancel = function ()
+	{
+		cur_subject_div.html(buff_subject);
+		set_hidden_topic_areas(true);
+
+		in_edit_mode = false;
+		$('body').unbind('.mt');
+		return false;
+	},
+
+	save = function ()
+	{
+		if (!in_edit_mode)
+			return true;
+
+		show_ajax();
+		sendXMLDocument(
+			we_prepareScriptUrl() + 'action=jsmodify;topic=' + $('#qm_topic').val() + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
+			function (XMLDoc) {
+				if (!XMLDoc)
+				{
+					cancel();
+					return true;
+				}
+
+				var
+					subject = $('we message subject', XMLDoc),
+					error = $('we message error', XMLDoc);
+
+				hide_ajax();
+
+				if (!subject.length || error.length)
+					return false;
+
+				hide_edit(subject.text());
+				set_hidden_topic_areas(true);
+				in_edit_mode = false;
+				$('body').unbind('.mt');
+
+				return false;
+			}
+		);
+
+		return false;
+	},
+
+	// Simply restore any hidden bits during topic editing.
+	set_hidden_topic_areas = function (state)
+	{
+		$.each(hide_prefixes, function () { $('#' + this + cur_msg_id).toggle(state); });
+	};
+
 	if (!can_ajax)
 		return;
 
-	if (in_edit_mode == 1)
+	if (in_edit_mode)
 	{
 		if (cur_topic_id == topic_id)
 			return;
 		else
-			modify_topic_cancel();
+			cancel();
 	}
 
-	mouse_on_div = 1;
-	in_edit_mode = 1;
+	in_edit_mode = true;
 	cur_topic_id = topic_id;
+
+	// Clicking outside the edit area will save the topic.
+	$('body').bind('click.mt', function (e) {
+		if (in_edit_mode && !$(e.target).closest('#topic_' + cur_topic_id).length)
+			save();
+	});
 
 	show_ajax();
 	getXMLDocument(
@@ -72,61 +138,10 @@ function modify_topic(topic_id, first_msg_id)
 			// Here we hide any other things they want hiding on edit.
 			set_hidden_topic_areas(false);
 
-			modify_topic_show_edit($('subject', XMLDoc).text());
+			show_edit($('subject', XMLDoc).text());
 			hide_ajax();
 		}
 	);
-}
-
-function modify_topic_cancel()
-{
-	cur_subject_div.html(buff_subject);
-	set_hidden_topic_areas(true);
-
-	in_edit_mode = 0;
-	return false;
-}
-
-function modify_topic_save()
-{
-	if (!in_edit_mode)
-		return true;
-
-	show_ajax();
-	sendXMLDocument(
-		we_prepareScriptUrl() + 'action=jsmodify;topic=' + $('#qm_topic').val() + ';' + we_sessvar + '=' + we_sessid + ';xml',
-		'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
-		function (XMLDoc) {
-			if (!XMLDoc)
-			{
-				modify_topic_cancel();
-				return true;
-			}
-
-			var
-				subject = $('we message subject', XMLDoc),
-				error = $('we message error', XMLDoc);
-
-			hide_ajax();
-
-			if (!subject.length || error.length)
-				return false;
-
-			modify_topic_hide_edit(subject.text());
-			set_hidden_topic_areas(true);
-			in_edit_mode = 0;
-
-			return false;
-		}
-	);
-
-	return false;
-}
-
-// Simply restore any hidden bits during topic editing.
-function set_hidden_topic_areas(state)
-{
-	$.each(hide_prefixes, function () { $('#' + this + cur_msg_id).toggle(state); });
 }
 
 
@@ -195,10 +210,8 @@ function QuickModify(opt)
 {
 	var
 		sCurMessageId = '',
-		sMessageBuffer,
-		sSubjectBuffer,
-		oCurMessageDiv,
-		oCurSubjectDiv,
+		sMessageBuffer, sSubjectBuffer,
+		oCurMessageDiv, oCurSubjectDiv,
 
 		// The callback function used for the Ajax request retrieving the message.
 		onMessageReceived = function (XMLDoc)
@@ -227,10 +240,8 @@ function QuickModify(opt)
 			oCurMessageDiv.html(
 				opt.sTemplateBodyEdit
 					.replace(/%msg_id%/g, sCurMessageId.substr(4))
-					// We have to force the body to lose its dollar signs thanks to IE.
-					// !!! Is it still a valid fix, BTW...?
-					.replace(/%body%/, $('message', XMLDoc).text().replace(/\$/g, '{&dollarfix;$}'))
-					.replace(/\{&dollarfix;\$\}/g, '$')
+					// .replace() uses $ as a meta-character in replacement strings, so we need to convert them to $$$$ first.
+					.replace(/%body%/, $('message', XMLDoc).text().replace(/\$/g, '$$$$'))
 			);
 
 			// Replace the subject part.
@@ -239,8 +250,7 @@ function QuickModify(opt)
 
 			oCurSubjectDiv.html(
 				opt.sTemplateSubjectEdit
-					.replace(/%subject%/, $('subject', XMLDoc).text().replace(/\$/g, '{&dollarfix;$}'))
-					.replace(/\{&dollarfix;\$\}/g, '$')
+					.replace(/%subject%/, $('subject', XMLDoc).text().replace(/\$/g, '$$$$'))
 			);
 		},
 
@@ -269,17 +279,17 @@ function QuickModify(opt)
 			if (body.length)
 			{
 				// Show new body.
-				sMessageBuffer = opt.sTemplateBodyNormal.replace(/%body%/, body.text().replace(/\$/g, '{&dollarfix;$}')).replace(/\{&dollarfix;\$\}/g,'$');
+				sMessageBuffer = opt.sTemplateBodyNormal.replace(/%body%/, body.text().replace(/\$/g, '$$$$'));
 				oCurMessageDiv.html(sMessageBuffer);
 
 				// Show new subject.
-				var oSubject = $('subject', message), sSubjectText = oSubject.text().replace(/\$/g, '{&dollarfix;$}');
-				sSubjectBuffer = opt.sTemplateSubjectNormal.replace(/%msg_id%/g, sCurMessageId.substr(4)).replace(/%subject%/, sSubjectText).replace(/\{&dollarfix;\$\}/g,'$');
+				var oSubject = $('subject', message), sSubjectText = oSubject.text().replace(/\$/g, '$$$$');
+				sSubjectBuffer = opt.sTemplateSubjectNormal.replace(/%msg_id%/g, sCurMessageId.substr(4)).replace(/%subject%/, sSubjectText);
 				oCurSubjectDiv.html(sSubjectBuffer);
 
 				// If this is the first message, also update the topic subject.
 				if (oSubject.attr('is_first') == '1')
-					$('#top_subject').html(sSubjectText.replace(/\{&dollarfix;\$\}/g, '$'));
+					$('#top_subject').html(sSubjectText);
 
 				// Show this message as 'modified on x by y'. If the theme doesn't support this,
 				// the request will simply be ignored because jQuery won't find the target.

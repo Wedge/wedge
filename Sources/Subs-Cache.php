@@ -86,11 +86,14 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$is_default_theme = true;
 	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
 
-	foreach ($files as &$file)
+	foreach ($files as $fid => $file)
 	{
 		$target = $not_default && file_exists($theme['theme_dir'] . '/' . $file) ? 'theme_' : (file_exists($theme['default_theme_dir'] . '/' . $file) ? 'default_theme_' : false);
 		if (!$target)
+		{
+			unset($files[$fid]);
 			continue;
+		}
 
 		$is_default_theme &= $target === 'default_theme_';
 		$add = $theme[$target . 'dir'] . '/' . $file;
