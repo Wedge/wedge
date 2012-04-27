@@ -153,6 +153,18 @@ function template_registration_form()
 							</span>
 						</dd>
 					</dl>
+					<dl class="register_form" id="timezone_group">
+						<dt><strong><label for="timezone">', $txt['choose_timezone'], '</label></strong></dt>
+						<dd>
+							<select name="timezone" id="timezone">';
+	foreach ($context['user_timezones'] as $tz_id => $tz_desc)
+		echo '	
+								<option value="', $tz_id, '">', $tz_desc, '</option>';
+
+	echo '
+							</select>
+						</dd>
+					</dl>
 				</fieldset>
 			</div>';
 

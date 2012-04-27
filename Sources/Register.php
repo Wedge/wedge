@@ -138,14 +138,12 @@ function Register($reg_errors = array())
 	}
 
 	// Any custom fields we want filled in?
-	loadSource('Profile');
+	loadSource(array('Profile', 'Profile-Modify'));
 	loadCustomFields(0, 'register');
 
 	// Or any standard ones?
 	if (!empty($settings['registration_fields']))
 	{
-		loadSource('Profile-Modify');
-
 		// Setup some important context.
 		loadLanguage('Profile');
 		loadTemplate('Profile');
@@ -190,6 +188,8 @@ function Register($reg_errors = array())
 	if (!empty($reg_errors))
 		foreach ($reg_errors as $error)
 			$context['registration_errors'][] = $error;
+
+	$context['user_timezones'] = get_wedge_timezones();
 }
 
 // Actually register the member.
@@ -261,7 +261,7 @@ function Register2()
 		'buddy_list', 'pm_ignore_list',
 		'signature', 'personal_text', 'avatar',
 		'secret_question', 'secret_answer',
-		'time_format',
+		'time_format', 'timezone',
 		'smiley_set',
 		'lngfile',
 		'data',
@@ -317,6 +317,15 @@ function Register2()
 	}
 	else
 		unset($_POST['lngfile']);
+
+	// What about timezone?
+	if (isset($_POST['timezone']))
+	{
+		loadSource('Profile-Modify');
+		$tz = get_wedge_timezones();
+		if (!isset($tz[$_POST['timezone']]))
+			unset($_POST['timezone']);
+	}
 
 	// Set the options needed for registration.
 	$regOptions = array(

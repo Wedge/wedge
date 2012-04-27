@@ -1134,21 +1134,11 @@ function cache_put_data($key, $val, $ttl = 120)
 		else
 		{
 			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=time()<' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';?' . '>';
-			$fh = @fopen($cachedir . '/data/' . $key . '.php', 'w');
-			if ($fh)
-			{
-				// Write the file.
-				set_file_buffer($fh, 0);
-				flock($fh, LOCK_EX);
-				$cache_bytes = fwrite($fh, $cache_data);
-				flock($fh, LOCK_UN);
-				fclose($fh);
 
-				// Check that the cache write was successful; all the data should be written
-				// If it fails due to low diskspace, remove the cache file
-				if ($cache_bytes != strlen($cache_data))
-					@unlink($cachedir . '/data/' . $key . '.php');
-			}
+			// Check that the cache write was successful; all the data should be written
+			// If it fails due to low diskspace, remove the cache file
+			if (file_put_contents($cachedir . '/data/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
+				@unlink($cachedir . '/data/' . $key . '.php');
 		}
 	}
 
