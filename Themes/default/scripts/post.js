@@ -562,6 +562,9 @@ wedge_autoDraft.prototype.draftSend = function ()
 	if (draftInfo.message === '')
 		return;
 
+	// We need to indicate that we're calling this to request XML.
+	sUrl += (sUrl.indexOf('?') > 0 ? ';' : '?') + 'xml';
+
 	// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
 	if (draftInfo.message_mode == 1)
 		draftInfo.message = $('#html_' + this.opt.sEditor).html();
@@ -590,7 +593,7 @@ wedge_autoDraft.prototype.draftSend = function ()
 			draftInfo['recipient_bcc[]'] = recipients;
 	}
 
-	$.post(sUrl + ';xml', draftInfo, function (data)
+	$.post(sUrl, draftInfo, function (data)
 	{
 		$('#remove_draft').unbind('click'); // Just in case bad stuff happens.
 

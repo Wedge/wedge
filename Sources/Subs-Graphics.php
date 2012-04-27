@@ -199,10 +199,6 @@ function createThumbnail($source, $max_width, $max_height)
 
 function reencodeImage($fileName, $preferred_format = 0)
 {
-	// There is nothing we can do without GD, sorry!
-	if (!checkGD())
-		return false;
-
 	if (!resizeImageFile($fileName, $fileName . '.tmp', null, null, $preferred_format))
 	{
 		if (file_exists($fileName . '.tmp'))

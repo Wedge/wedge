@@ -149,7 +149,7 @@ function imperative_removeTopic($details)
 		return false;
 
 	loadSource('RemoveTopic');
-	removeTopics($details['topic'], $details['update_postcount'], $details['use_recycle']);
+	removeTopics($details['topic'], $details['update_postcount'], !$details['use_recycle']);
 
 	return true;
 }
