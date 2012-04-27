@@ -299,6 +299,10 @@ function MessageIndex()
 			$topic_ids[] = $row['id_topic'];
 	}
 
+	$can_reply_own = allowedTo('post_reply_own');
+	$can_reply_any = allowedTo('post_reply_any');
+	$can_moderate = allowedTo('moderate_board');
+
 	// Grab the appropriate topic information...
 	if (!$pre_query || !empty($topic_ids))
 	{
@@ -496,6 +500,7 @@ function MessageIndex()
 				'views' => $row['num_views'],
 				'approved' => $row['approved'],
 				'unapproved_posts' => $row['unapproved_posts'],
+				'can_reply' => !empty($row['locked']) ? $can_moderate : $can_reply_any || ($can_reply_own && $row['first_id_member'] == $user_info['id']),
 			);
 		}
 		wesql::free_result($result);

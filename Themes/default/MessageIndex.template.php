@@ -263,32 +263,7 @@ function template_main_blog()
 				<tr class="catbg">';
 
 		// Are there actually any topics to show?
-		if (!empty($context['topics']))
-		{
-			echo '
-					<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
-					<th scope="col" class="left">', template_messageindex_sortlink('subject', $txt['subject']), ' / ', template_messageindex_sortlink('starter', $txt['started_by']), '</th>';
-
-			// Show a "select all" box for quick moderation?
-			if (empty($context['can_quick_mod']))
-				echo '
-					<th scope="col" class="left last_th" style="width: 22%">', template_messageindex_sortlink('replies', $txt['replies']), ' / ', template_messageindex_sortlink('views', $txt['views']), '</th>';
-			else
-				echo '
-					<th scope="col" class="left" style="width: 22%">', template_messageindex_sortlink('replies', $txt['replies']), ' / ', template_messageindex_sortlink('views', $txt['views']), '</th>';
-
-			// Show a "select all" box for quick moderation?
-			if (!empty($context['can_quick_mod']))
-				echo '
-					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"></th>';
-
-			// If it's on in "image" mode, don't show anything but the column.
-			elseif (!empty($context['can_quick_mod']))
-				echo '
-					<th class="last_th" style="width: 4%">&nbsp;</th>';
-		}
-		// No topics.... just say, "sorry bub".
-		else
+		if (empty($context['topics']))
 			echo '
 					<th scope="col" class="first_th" style="width: 8%">&nbsp;</th>
 					<th colspan="3"><strong>', $txt['msg_alert_none'], '</strong></th>
@@ -304,15 +279,18 @@ function template_main_blog()
 		{
 			echo '
 				<tr class="windowbg2">
-					<td colspan="', !empty($context['can_quick_mod']) ? '4' : '3', '">
+					<td colspan="', !empty($context['can_quick_mod']) ? '3' : '2', '">
 						<span class="alert">!</span> ', $context['unapproved_posts_message'], '
 					</td>
 				</tr>';
 		}
 
+		$use_bg2 = true;
 		foreach ($context['topics'] as $topic)
 		{
-			$color_class = '';
+			$use_bg2 = !$use_bg2;
+
+			$color_class = $use_bg2 ? 'windowbg2' : 'windowbg';
 			// Is this topic pending approval, or does it have any posts pending approval?
 			if ($context['can_approve_posts'] && $topic['unapproved_posts'])
 				$color_class .= !$topic['approved'] ? ' approvet' : ' approve';
@@ -323,18 +301,11 @@ function template_main_blog()
 			if ($topic['is_locked'])
 				$color_class .= ' locked';
 
-			// Some columns require a different shade of the color class.
-			$alternate_class = 'windowbg2' . $color_class;
-			$color_class = 'windowbg' . $color_class;
-
 			echo '
 				<tr>
-					<td class="icon ', $color_class, '">
-						<img src="', $topic['first_post']['icon_url'], '">
-					</td>
-					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '" style="background-color: transparent">
+					<td class="subject ', $color_class, '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
-							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">',
+							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">', '<img src="', $topic['first_post']['icon_url'], '">&nbsp;',
 							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
 							'</span>', $topic['is_pinned'] ? '</strong>' : '';
@@ -344,29 +315,45 @@ function template_main_blog()
 					echo '
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
 
+			// Show the quick moderation options?
+			if (!empty($context['can_quick_mod']))
+				echo '
+						<input type="checkbox" name="topics[]" class="floatright" value="', $topic['id'], '">';
+
 			echo '
 							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['last_post']['time'], '
-								<small id="pages' . $topic['first_post']['id'] . '">', $topic['pages'], '</small>
+							&nbsp; (', number_context('num_views', $topic['views']), ')
+								<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>
 							</p>
 						</div>
 						<div class="padding">
-							', $topic['first_post']['preview'], '
-						</div>
-					</td>
-					<td class="stats ', $color_class, '">
-						', number_context('num_replies', $topic['replies']), '
-						<br>', number_context('num_views', $topic['views']), '
-					</td>';
+							', $topic['first_post']['preview'];
 
-			// Show the quick moderation options?
-			if (!empty($context['can_quick_mod']))
+			if (!empty($topic['replies']) || $topic['can_reply'])
 			{
 				echo '
-					<td class="center moderation ', $color_class, '">
-						<input type="checkbox" name="topics[]" value="', $topic['id'], '">
-					</td>';
+							<br><br>';
+
+				if (!empty($topic['replies']))
+					echo '
+							<a href="', $topic['new'] && $context['user']['is_logged'] ? $topic['new_href'] : $topic['first_post']['href'], '">', number_context('num_replies', $topic['replies']), '</a>', $topic['can_reply'] ? ' | ' : '';
+
+				if ($topic['can_reply'])
+				{
+					// If quick reply is open, point directly to it, otherwise use the regular reply page
+					if (empty($options['display_quick_reply']) || $options['display_quick_reply'] != 2)
+						$reply_url = $scripturl . '?action=post;topic=' . $topic['id'] . '.0;last_msg=' . $topic['last_post']['id'];
+					else
+						$reply_url = substr($topic['last_post']['href'], 0, strpos($topic['last_post']['href'], '#')) . '#quickreply';
+
+					echo '
+							<a href="', $reply_url, '">', $txt['reply'], '</a>';
+				}
 			}
+
 			echo '
+						</div>
+					</td>
 				</tr>';
 		}
 
@@ -375,6 +362,7 @@ function template_main_blog()
 			echo '
 				<tr class="titlebg">
 					<td colspan="5" class="round-bottom right">
+						<label><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"> ', $txt['check_all'], '</label> &nbsp;
 						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
 							<option data-hide>--- ', $txt['moderate'], ' ---</option>', $context['can_remove'] ? '
 							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
