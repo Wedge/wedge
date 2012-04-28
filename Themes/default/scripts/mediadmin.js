@@ -19,7 +19,7 @@ function admin_toggle(id)
 		$('#img_' + id).load(function () {
 			$('#tr_expand_' + id).show();
 			$(this).unbind();
-		}).attr('src', we_prepareScriptUrl() + 'action=media;sa=media;in=' + id + ';icon');
+		}).attr('src', weUrl() + 'action=media;sa=media;in=' + id + ';icon');
 	}
 	else
 	{
@@ -70,9 +70,4 @@ function permDelCheck(id, el, conf_text)
 
 	$('select[name="del_prof"] option[value=' + id + ']').toggle(!el.checked);
 	$('select[name="del_prof"]').sb();
-}
-
-function aeva_prepareScriptUrl(sUrl)
-{
-	return sUrl.indexOf('?') == -1 ? sUrl + '?' : sUrl + (sUrl.charAt(sUrl.length - 1) == '?' || sUrl.charAt(sUrl.length - 1) == '&' || sUrl.charAt(sUrl.length - 1) == ';' ? '' : ';');
 }

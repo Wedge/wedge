@@ -1166,6 +1166,11 @@ function Display()
 			'action' => '\'' . $scripturl . '?action=report;topic=' . $context['current_topic'] . ';msg=%id%\'',
 			'class' => '\'report_button\'',
 		),
+		'wa' => array(
+			'caption' => 'acme_warn',
+			'action' => '\'' . $scripturl . '?action=profile;u=%special%;area=issuewarning;msg=%id%\'',
+			'class' => '\'warn_button\'',
+		),
 	);
 
 	// Lastly, set up the navigation items that we're going to be using.
@@ -1369,15 +1374,15 @@ function prepareDisplayContext($reset = false)
 		}
 
 		// 2. Figure out that user's menu to the stack. It may be different if it's our menu.
-		// Start by putting the user's website URL.
-		$menu = array(!empty($output['member']['website']['url']) ? $output['member']['website']['url'] : '');
+		$menu = array();
+
 		if ($is_me)
 		{
 			// Can't PM, email, add to buddy list
 			if ($profile_own)
 				$menu[] = 'pr';
 			if (!empty($output['member']['website']['url']))
-				$menu[] = 'we';
+				$menu[] = 'we/' . $output['member']['website']['url'];
 			if ($profile_own)
 				$menu[] = 'po';
 		}
@@ -1388,7 +1393,7 @@ function prepareDisplayContext($reset = false)
 			if ($can_pm)
 				$menu[] = 'pm';
 			if (!empty($output['member']['website']['url']))
-				$menu[] = 'we';
+				$menu[] = 'we/' . $output['member']['website']['url'];
 			if ($profile_any)
 				$menu[] = 'po';
 			if ($buddy)
@@ -1396,18 +1401,20 @@ function prepareDisplayContext($reset = false)
 		}
 
 		// If we can't do anything, it's not even worth recording the user's website...
-		if (count($menu) > 1)
+		if (count($menu))
 		{
 			$context['user_menu'][$output['member']['id']] = $menu;
-			$context['user_menu_items_show'] += array_flip($menu);
+			$amenu = array();
+			foreach ($menu as $mid => $name)
+				$amenu[substr($name, 0, 2)] = true;
+			$context['user_menu_items_show'] += $amenu;
 		}
 	}
 
 	// Bit longer, but this should be helpful too... The per-post menu.
 	if ($output['member']['id'] != 0)
 	{
-		// Start by putting the last message's id, for merging purposes.
-		$menu = $output['can_mergeposts'] ? array($output['last_post_id']) : array('');
+		$menu = array();
 
 		// Maybe we can approve it, maybe we should?
 		if ($output['can_approve'])
@@ -1423,7 +1430,7 @@ function prepareDisplayContext($reset = false)
 
 		// Can we merge this post to the previous one? (Normally requires same author)
 		if ($output['can_mergeposts'])
-			$menu[] = 'me';
+			$menu[] = 'me/' . $output['last_post_id'];
 
 		// Can we restore topics?
 		if ($context['can_restore_msg'])
@@ -1432,11 +1439,17 @@ function prepareDisplayContext($reset = false)
 		if ($context['can_report_moderator'] && !$is_me)
 			$menu[] = 'rp';
 
+		if ($context['can_issue_warning'] && !$is_me && !$output['member']['is_guest'])
+			$menu[] = 'wa/' . $output['member']['id'];
+
 		// If we can't do anything, it's not even worth recording the last message ID...
-		if (count($menu) > 1)
+		if (!empty($menu))
 		{
 			$context['action_menu'][$output['id']] = $menu;
-			$context['action_menu_items_show'] += array_flip($menu);
+			$amenu = array();
+			foreach ($menu as $mid => $name)
+				$amenu[substr($name, 0, 2)] = true;
+			$context['action_menu_items_show'] += $amenu;
 		}
 	}
 

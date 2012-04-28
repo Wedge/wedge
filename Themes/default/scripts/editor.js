@@ -114,15 +114,6 @@ function weEditor(opt)
 		return sText;
 	};
 
-	var editorKeyUp = function ()
-	{
-		if (opt.oDrafts)
-			opt.oDrafts.needsUpdate(true);
-
-		// Rebuild the breadcrumb.
-		that.updateEditorControls();
-	};
-
 	// Rebuild the breadcrumb etc - and set things to the correct context.
 	this.updateEditorControls = function ()
 	{
@@ -651,6 +642,193 @@ function weEditor(opt)
 		this.we_execCommand('insertimage', false, sSrc);
 	};
 
+	// Remove formatting for the selected text.
+	this.removeFormatting = function ()
+	{
+		// Do both at once.
+		if (this.bRichTextEnabled)
+		{
+			this.we_execCommand('removeFormat');
+			this.we_execCommand('unlink');
+		}
+		// Otherwise do a crude move indeed.
+		else
+		{
+			// Get the current selection first.
+			var cText;
+
+			if (oText[0].caretPos)
+				cText = oText[0].caretPos.text;
+
+			else if ('selectionStart' in oText[0])
+				cText = oText[0].value.substr(oText[0].selectionStart, (oText[0].selectionEnd - oText[0].selectionStart));
+
+			else
+				return;
+
+			// Do bits that are likely to have attributes.
+			cText = cText.replace(RegExp("\\[/?(url|img|iurl|ftp|email|img|color|font|size|list|bdo).*?\\]", 'g'), '');
+			// Then just anything that looks like BBC.
+			cText = cText.replace(RegExp("\\[/?[A-Za-z]+\\]", 'g'), '');
+
+			this.replaceText(cText);
+		}
+	};
+
+	// Upload/add a media file (picture, video...)
+	this.addMedia = function ()
+	{
+		reqWin(weUrl() + 'action=media;sa=post;noh=' + opt.sUniqueId, Math.min(1000, self.screen.availWidth - 50), Math.min(700, self.screen.availHeight - 50), false, true, true);
+	};
+
+	// Toggle wysiwyg/normal mode.
+	this.toggleView = function (bView)
+	{
+		if (!this.bRichTextPossible)
+		{
+			alert(oEditorStrings.wont_work);
+			return false;
+		}
+
+		// Overriding or alternating?
+		bView = bView || !this.bRichTextEnabled;
+
+		// Request the message in a different form.
+		// Replace with a force reload.
+		if (!can_ajax)
+		{
+			alert(oEditorStrings.func_disabled);
+			return;
+		}
+
+		// Get the text.
+		var sText = this.getText(true, !bView).replace(/&#/g, '&#38;#').php_urlencode();
+
+		sendXMLDocument.call(
+			this,
+			weUrl() + 'action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			'message=' + sText,
+			function (oXMLDoc)
+			{
+				var sText = '';
+				$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
+
+				// What is this new view we have?
+				this.bRichTextEnabled = oXMLDoc.getElementsByTagName('message')[0].getAttribute('view') != '0';
+
+				if (this.bRichTextEnabled)
+				{
+					$Frame.show();
+					oText.hide();
+				}
+				else
+				{
+					sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+					$Frame.hide();
+					oText.show();
+				}
+
+				// First we focus.
+				this.setFocus();
+
+				this.insertText(sText, true);
+
+				// Record the new status.
+				$('#' + opt.sUniqueId + '_mode').val(+this.bRichTextEnabled);
+
+				// Rebuild the bread crumb!
+				this.updateEditorControls();
+			}
+		);
+	};
+
+	// Set the focus for the editing window.
+	this.setFocus = function ()
+	{
+		if (!this.bRichTextEnabled)
+			oText[0].focus();
+		else if (is_ff || is_opera)
+			$Frame[0].focus();
+		else
+			oFrameWindow.focus();
+	};
+
+	// Start up the spellchecker!
+	this.spellCheckStart = function ()
+	{
+		if (!spellCheck)
+			return false;
+
+		// If we're in HTML mode we need to get the non-HTML text.
+		if (this.bRichTextEnabled)
+			sendXMLDocument.call(
+				this,
+				weUrl() + 'action=jseditor;view=0;' + we_sessvar + '=' + we_sessid + ';xml',
+				'message=' + this.getText(true, 1).php_urlencode(),
+				function (oXMLDoc)
+				{
+					// This contains the spellcheckable text.
+					var sText = '';
+					$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
+					oText.val(sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));
+					spellCheck(sFormId, opt.sUniqueId);
+				}
+			);
+		// Otherwise start spell-checking right away.
+		else
+			spellCheck(sFormId, opt.sUniqueId);
+
+		return true;
+	};
+
+	// Function called when the Spellchecker is finished and ready to pass back.
+	this.spellCheckEnd = function ()
+	{
+		// If HTML edit put the text back!
+		if (this.bRichTextEnabled)
+			sendXMLDocument.call(
+				this,
+				weUrl() + 'action=jseditor;view=1;' + we_sessvar + '=' + we_sessid + ';xml',
+				'message=' + this.getText(true, 0).php_urlencode(),
+				function (oXMLDoc)
+				{
+					// The corrected text.
+					var sText = '';
+					$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
+
+					this.insertText(sText, true);
+					this.setFocus();
+				}
+			);
+		else
+			this.setFocus();
+	};
+
+	// Register a keyboard shortcut.
+	this.registerShortcut = function (sLetter, sModifiers, sCodeName)
+	{
+		if (!sCodeName)
+			return;
+
+		var oNewShortcut = {
+			code: sCodeName,
+			key: sLetter.toUpperCase().charCodeAt(0),
+			alt: false,
+			ctrl: false
+		};
+
+		$.each(sModifiers.split(','), function () {
+			if (this in oNewShortcut)
+				oNewShortcut[this] = true;
+		});
+
+		aKeyboardShortcuts.push(oNewShortcut);
+	};
+
+	/**
+	 * Private functions
+	 */
+
 	var getSelect = function (bWantText, bWantHTMLText)
 	{
 		// This is mainly Firefox.
@@ -734,206 +912,10 @@ function weEditor(opt)
 
 			return null;
 		}
-	};
-
-	// Remove formatting for the selected text.
-	this.removeFormatting = function ()
-	{
-		// Do both at once.
-		if (this.bRichTextEnabled)
-		{
-			this.we_execCommand('removeFormat');
-			this.we_execCommand('unlink');
-		}
-		// Otherwise do a crude move indeed.
-		else
-		{
-			// Get the current selection first.
-			var cText;
-
-			if (oText[0].caretPos)
-				cText = oText[0].caretPos.text;
-
-			else if ('selectionStart' in oText[0])
-				cText = oText[0].value.substr(oText[0].selectionStart, (oText[0].selectionEnd - oText[0].selectionStart));
-
-			else
-				return;
-
-			// Do bits that are likely to have attributes.
-			cText = cText.replace(RegExp("\\[/?(url|img|iurl|ftp|email|img|color|font|size|list|bdo).*?\\]", 'g'), '');
-			// Then just anything that looks like BBC.
-			cText = cText.replace(RegExp("\\[/?[A-Za-z]+\\]", 'g'), '');
-
-			this.replaceText(cText);
-		}
-	};
-
-	// Upload/add a media file (picture, video...)
-	this.addMedia = function ()
-	{
-		reqWin(we_prepareScriptUrl() + 'action=media;sa=post;noh=' + opt.sUniqueId, Math.min(1000, self.screen.availWidth - 50), Math.min(700, self.screen.availHeight - 50), false, true, true);
-	};
-
-	// Toggle wysiwyg/normal mode.
-	this.toggleView = function (bView)
-	{
-		if (!this.bRichTextPossible)
-		{
-			alert(oEditorStrings.wont_work);
-			return false;
-		}
-
-		// Overriding or alternating?
-		bView = bView || !this.bRichTextEnabled;
-
-		// Request the message in a different form.
-		// Replace with a force reload.
-		if (!can_ajax)
-		{
-			alert(oEditorStrings.func_disabled);
-			return;
-		}
-
-		// Get the text.
-		var sText = this.getText(true, !bView).replace(/&#/g, '&#38;#').php_urlencode();
-
-		sendXMLDocument.call(
-			this,
-			we_prepareScriptUrl() + 'action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid + ';xml',
-			'message=' + sText,
-			function (oXMLDoc)
-			{
-				var sText = '';
-				$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
-
-				// What is this new view we have?
-				this.bRichTextEnabled = oXMLDoc.getElementsByTagName('message')[0].getAttribute('view') != '0';
-
-				if (this.bRichTextEnabled)
-				{
-					$Frame.show();
-					oText.hide();
-				}
-				else
-				{
-					sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-					$Frame.hide();
-					oText.show();
-				}
-
-				// First we focus.
-				this.setFocus();
-
-				this.insertText(sText, true);
-
-				// Record the new status.
-				$('#' + opt.sUniqueId + '_mode').val(+this.bRichTextEnabled);
-
-				// Rebuild the bread crumb!
-				this.updateEditorControls();
-			}
-		);
-	};
-
-	// Set the focus for the editing window.
-	this.setFocus = function ()
-	{
-		if (!this.bRichTextEnabled)
-			oText[0].focus();
-		else if (is_ff || is_opera)
-			$Frame[0].focus();
-		else
-			oFrameWindow.focus();
-	};
-
-	// Start up the spellchecker!
-	this.spellCheckStart = function ()
-	{
-		if (!spellCheck)
-			return false;
-
-		// If we're in HTML mode we need to get the non-HTML text.
-		if (this.bRichTextEnabled)
-			sendXMLDocument.call(
-				this,
-				we_prepareScriptUrl() + 'action=jseditor;view=0;' + we_sessvar + '=' + we_sessid + ';xml',
-				'message=' + this.getText(true, 1).php_urlencode(),
-				function (oXMLDoc)
-				{
-					// This contains the spellcheckable text.
-					var sText = '';
-					$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
-					oText.val(sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));
-					spellCheck(sFormId, opt.sUniqueId);
-				}
-			);
-		// Otherwise start spell-checking right away.
-		else
-			spellCheck(sFormId, opt.sUniqueId);
-
-		return true;
-	};
-
-	// Function called when the Spellchecker is finished and ready to pass back.
-	this.spellCheckEnd = function ()
-	{
-		// If HTML edit put the text back!
-		if (this.bRichTextEnabled)
-			sendXMLDocument.call(
-				this,
-				we_prepareScriptUrl() + 'action=jseditor;view=1;' + we_sessvar + '=' + we_sessid + ';xml',
-				'message=' + this.getText(true, 0).php_urlencode(),
-				function (oXMLDoc)
-				{
-					// The corrected text.
-					var sText = '';
-					$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
-
-					this.insertText(sText, true);
-					this.setFocus();
-				}
-			);
-		else
-			this.setFocus();
-	};
-
-	// Register default keyboard shortcuts.
-	this.registerDefaultShortcuts = function ()
-	{
-		if (!is_ff)
-			return;
-
-		this.registerShortcut('b', 'ctrl', 'b');
-		this.registerShortcut('u', 'ctrl', 'u');
-		this.registerShortcut('i', 'ctrl', 'i');
-		this.registerShortcut('p', 'alt', 'preview');
-		this.registerShortcut('s', 'alt', 'submit');
-	};
-
-	// Register a keyboard shortcut.
-	this.registerShortcut = function (sLetter, sModifiers, sCodeName)
-	{
-		if (!sCodeName)
-			return;
-
-		var oNewShortcut = {
-			code: sCodeName,
-			key: sLetter.toUpperCase().charCodeAt(0),
-			alt: false,
-			ctrl: false
-		};
-
-		$.each(sModifiers.split(','), function () {
-			if (this in oNewShortcut)
-				oNewShortcut[this] = true;
-		});
-
-		aKeyboardShortcuts.push(oNewShortcut);
-	};
+	},
 
 	// Check whether the key has triggered a shortcut?
-	var checkShortcut = function (oEvent)
+	checkShortcut = function (oEvent)
 	{
 		// To be a shortcut it needs to be one of these, duh!
 		if (!oEvent.altKey && !oEvent.ctrlKey)
@@ -1081,8 +1063,15 @@ function weEditor(opt)
 
 		// Attach functions to the key and mouse events.
 		$(oFrameDoc)
-			.bind('keyup mouseup', editorKeyUp)
-			.bind('keydown', shortcutCheck);
+			.bind('keydown', shortcutCheck)
+			.bind('keyup mouseup', function ()
+			{
+				if (opt.oDrafts)
+					opt.oDrafts.needsUpdate(true);
+
+				// Rebuild the breadcrumb.
+				that.updateEditorControls();
+			});
 		oText
 			.bind('keydown', shortcutCheck)
 			.bind('keydown', splitQuote)[0].instanceRef = this;
@@ -1134,6 +1123,15 @@ function weEditor(opt)
 	}
 
 	// Finally, register shortcuts.
-	this.registerDefaultShortcuts();
+	// Register default keyboard shortcuts.
+	if (!is_ff)
+		return;
+
+	this.registerShortcut('b', 'ctrl', 'b');
+	this.registerShortcut('u', 'ctrl', 'u');
+	this.registerShortcut('i', 'ctrl', 'i');
+	this.registerShortcut('p', 'alt', 'preview');
+	this.registerShortcut('s', 'alt', 'submit');
+
 	this.updateEditorControls();
 }

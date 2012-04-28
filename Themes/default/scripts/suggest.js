@@ -283,7 +283,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	{
 		$('<span id="' + eid + '"></span>').html(
 			this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
-			.replace(/%item_href%/g, we_prepareScriptUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
+			.replace(/%item_href%/g, weUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
 			.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + '/images').replace(/%delete_text%/g, this.sTextDeleteItem)
 		).appendTo(this.oItemList);
 		$('#' + eid).find('img').click(function () { that.deleteAddedItem(sItemId); });
@@ -474,7 +474,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 
 	// Get the document.
 	this.oXmlRequestHandle = getXMLDocument.call(this, this.sRetrieveURL
-		.replace(/%scripturl%/g, we_prepareScriptUrl())
+		.replace(/%scripturl%/g, weUrl())
 		.replace(/%suggest_type%/g, this.opt.sSearchType)
 		.replace(/%search%/g, sSearchString.php_urlencode())
 		.replace(/%sessionVar%/g, we_sessvar)

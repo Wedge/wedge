@@ -55,7 +55,7 @@ function template_view_package()
 		<div class="windowbg2 wrc">
 			', $context['package_readme'], '
 			<span class="floatright">', $txt['package_available_readme_language'], '
-				<select name="readme_language" id="readme_language" onchange="if (this.options[this.selectedIndex].value) window.location.href = we_prepareScriptUrl() + \'action=admin;area=packages;sa=', $context['uninstalling'] ? 'uninstall' : 'install', ';package=', $context['filename'], ';readme=\' + this.options[this.selectedIndex].value;">';
+				<select name="readme_language" id="readme_language" onchange="if (this.options[this.selectedIndex].value) window.location.href = weUrl(\'action=admin;area=packages;sa=', $context['uninstalling'] ? 'uninstall' : 'install', ';package=', $context['filename'], ';readme=\' + this.options[this.selectedIndex].value);">';
 
 		foreach ($context['readmes'] as $a => $b)
 			echo '
@@ -1081,7 +1081,7 @@ function template_control_chmod()
 			sPostData += (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + $("#" + oPostData[i]).val().php_urlencode();
 
 		// Post the data out.
-		sendXMLDocument(we_prepareScriptUrl() + \'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\', sPostData, testFTPResults);
+		sendXMLDocument(weUrl(\'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\'), sPostData, testFTPResults);
 	}
 	function testFTPResults(oXMLDoc)
 	{
@@ -1185,7 +1185,7 @@ function template_file_permissions()
 		if (can_ajax)
 		{
 			show_ajax();
-			getXMLDocument(we_prepareScriptUrl() + "action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
+			getXMLDocument(weUrl() + "action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
 		}
 
 		// Otherwise reload.
@@ -1201,7 +1201,7 @@ function template_file_permissions()
 	{
 		show_ajax();
 
-		getXMLDocument(we_prepareScriptUrl() + "action=admin;area=packages;fileoffset=" + (parseInt(this.offset) + ', $context['file_limit'], ') + ";onlyfind=" + this.path.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
+		getXMLDocument(weUrl("action=admin;area=packages;fileoffset=" + (parseInt(this.offset) + ', $context['file_limit'], ') + ";onlyfind=" + this.path.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '"), onNewFolderReceived);
 	}
 	function repeatString(sString, iTime)
 	{

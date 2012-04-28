@@ -129,7 +129,7 @@ function template_aeva_home()
 		echo '
 	<we:title>
 		', $txt['media_recent_items'], $can_feed ?
-		' <a href="' . $galurl . 'sa=feed"><img src="' . $theme['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
+		' <a href="' . $galurl . 'sa=feed"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', '
 	</we:title>';
 
 		// Page index and sorting things
@@ -176,7 +176,7 @@ function template_aeva_home()
 	<div', !empty($context['recent_albums']) ? ' class="recent_comments"' : '', '>
 		<we:title>
 			', $txt['media_recent_comments'], $can_feed ?
-			' <a href="' . $galurl . 'sa=feed;type=comments"><img src="' . $theme['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
+			' <a href="' . $galurl . 'sa=feed;type=comments"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', '
 		</we:title>
 		<div class="windowbg wrc" style="line-height: 1.4em">';
 
@@ -425,7 +425,7 @@ function template_aeva_item_details()
 				<dt>' . $txt['media_downloads'] . '</dt>
 				<dd>' . $item['downloads'] . '</dd>' : '', $item['can_rate'] || $item['voters'] > 0 ? '
 				<dt>' . $txt['media_rating'] . '</dt>
-				<dd id="ratingElement">' . template_aeva_rating_object($item) . '</dd>' : '', !empty($item['num_comments']) ? '
+				<dd id="ratingE">' . template_aeva_rating_object($item) . '</dd>' : '', !empty($item['num_comments']) ? '
 				<dt>' . $txt['media_comments'] . '</dt>
 				<dd>' . $item['num_comments'] . '</dd>' : '';
 
@@ -1024,7 +1024,7 @@ function template_aeva_viewAlbum()
 			<div class="mg_large mg_pb4">', !empty($album_data['passwd']) ? aeva_lockedAlbum($album_data['passwd'], $album_data['id'], $album_data['owner']) : '',
 			$album_data['name'], !empty($settings['xmlnews_enable']) ? '&nbsp;&nbsp;&nbsp;<span class="title_feed">
 			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . '"><span class="feed_icon"></span> ' . $txt['media_items'] . '</a>
-			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';type=comments"><img src="' . $theme['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>
+			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';type=comments"><div class="feed_icon" title="' . $txt['feed'] . '"></div> ' . $txt['media_comments'] . '</a></span>' : '', '</div>
 			<div>', $album_data['type2'], !empty($album_data['owner']['id']) ? '
 			- ' . $txt['media_owner'] . ': ' . aeva_profile($album_data['owner']['id'], $album_data['owner']['name']) : '', '
 			- ', $album_data['num_items'] == 0 ? $txt['media_no_items'] : $album_data['num_items'] . ' ' . $txt['media_lower_item' . ($album_data['num_items'] == 1 ? '' : 's')], !empty($album_data['last_item']) ? ' - ' . $txt['media_latest_item'] . ': <a href="'.$galurl.'sa=item;in='.$album_data['last_item'].'">'.$album_data['last_item_title'].'</a> (' . $album_data['last_item_date'] . ')' : '', '</div>', !empty($album_data['description']) ? '
@@ -1085,8 +1085,8 @@ function template_aeva_viewAlbum()
 	{
 		echo '
 		<div class="titlebg" style="padding: 4px">', $txt['media_sub_albums'], !empty($settings['xmlnews_enable']) ? '&nbsp;&nbsp;&nbsp;<span class="title_feed">
-			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';children"><img src="' . $theme['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_items'] . '</a>
-			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';children;type=comments"><img src="' . $theme['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"> ' . $txt['media_comments'] . '</a></span>' : '', '</div>';
+			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';children"><div class="feed_icon" title="' . $txt['feed'] . '"></div> ' . $txt['media_items'] . '</a>
+			<a href="' . $galurl . 'sa=feed;album=' . $album_data['id'] . ';children;type=comments"><div class="feed_icon" title="' . $txt['feed'] . '"></div> ' . $txt['media_comments'] . '</a></span>' : '', '</div>';
 		aeva_listChildren($context['aeva_sub_albums']);
 	}
 
@@ -1300,7 +1300,7 @@ function template_aeva_viewUserAlbums()
 		echo '
 	<we:title>
 		', empty($first['owner']['id']) ? '' : $txt['media_owner'] . ': ' . aeva_profile($id, $first['owner']['name']), $can_feed ?
-		' <a href="' . $galurl . 'sa=feed;user=' . $id . ';albums"><img src="' . $theme['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', '
+		' <a href="' . $galurl . 'sa=feed;user=' . $id . ';albums"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', '
 	</we:title>';
 
 		aeva_listChildren($album);
@@ -1739,8 +1739,8 @@ function template_aeva_profile_summary()
 			', $txt['media_profile_stats'], '
 		</we:title>
 		<div class="windowbg2 wrc">
-			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . '"><img src="' . $theme['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
-			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';type=comments"><img src="' . $theme['images_aeva'] . '/feed.png" alt="' . $txt['feed'] . '" class="aeva_vera"></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
+			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . '"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevaitems">', $txt['media_total_items'], '</a>: ', $member['items'], '<br>
+			', $can_feed ? '<a href="' . $galurl . 'sa=feed;user=' . $member['id'] . ';type=comments"><div class="feed_icon" title="' . $txt['feed'] . '"></div></a>' : '', ' <a href="', $scripturl, '?action=profile;u=', $member['id'], ';area=aevacoms">', $txt['media_total_comments'], '</a>: ', $member['coms'], '<br>
 			', $txt['media_avg_items'], ': ', $member['avg_items'], '<br>
 			', $txt['media_avg_comments'], ': ', $member['avg_coms'], '<br>
 		</div>';
@@ -2000,7 +2000,7 @@ function template_aeva_rating_object($item)
 	global $context, $theme, $txt, $galurl;
 
 	$object = ($item['can_rate'] ? '
-				<form action="' . $galurl . 'sa=item;in=' . $item['id_media'] . '" method="post" id="ratingForm">' : '') . '
+				<form action="' . $galurl . 'sa=item;in=' . $item['id_media'] . '" method="post" id="ratingF">' : '') . '
 					' . ($item['voters'] > 0 ? aeva_showStars($item['avg_rating'], '') . round($item['avg_rating'], 2) . '
 					(' . (aeva_allowedTo('whoratedwhat') ? '<a href="' . $galurl . 'sa=whoratedwhat;in=' . $item['id_media'] . '">' : '') .
 					$item['voters'] . ' ' . $txt['media_vote' . ($item['voters'] > 1 ? 's' : '') . '_noun'] . (aeva_allowedTo('whoratedwhat') ? '</a>' : '') . ')' : '') .
@@ -2027,7 +2027,7 @@ function template_aeva_xml_rated()
 	global $context, $txt;
 
 	echo '<?xml version="1.0" encoding="UTF-8"?', '>
-<ratingObject><![CDATA[', template_aeva_rating_object($context['item_data']), ']]></ratingObject>';
+<item><![CDATA[', template_aeva_rating_object($context['item_data']), ']]></item>';
 }
 
 ?>

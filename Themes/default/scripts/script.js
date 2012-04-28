@@ -207,7 +207,7 @@ function bindEvents(items)
 		// Prevent a Firefox bug from hammering the server.
 		if (we_script && curTime - lastKeepAliveCheck > 9e5)
 		{
-			new Image().src = we_prepareScriptUrl() + 'action=keepalive;time=' + curTime;
+			new Image().src = weUrl() + 'action=keepalive;time=' + curTime;
 			lastKeepAliveCheck = curTime;
 		}
 		setTimeout(sessionKeepAlive, 12e5);
@@ -283,26 +283,28 @@ function hide_ajax()
 	$('#ajax_in_progress').remove();
 }
 
-// Rating boxes in Media area
+// Rating boxes in Media area.
 function ajaxRating()
 {
 	show_ajax();
 	sendXMLDocument(
-		$('#ratingForm').attr('action') + ';xml',
+		$('#ratingF').attr('action') + ';xml',
 		'rating=' + $('#rating').val(),
 		function (XMLDoc) {
-			$('#ratingElement').html($('ratingObject', XMLDoc).text());
+			$('#ratingE').html($('item', XMLDoc).text());
 			$('#rating').sb();
 			hide_ajax();
 		}
 	);
 }
 
-// This function takes the script URL and prepares it to allow the query string to be appended to it.
-// It also replaces the host name with the current one. Which is required for security reasons.
-function we_prepareScriptUrl()
+// This function takes an URL (by default the script URL), and adds a question mark (or semicolon)
+// so we can append a query string to it. It also replaces the host name with the current one,
+// which is sometimes required for security reasons.
+function weUrl(url)
 {
-	return (we_script + (we_script.indexOf('?') == -1 ? '?' : (in_array(we_script.charAt(we_script.length - 1), ['?', '&', ';']) ? '' : ';')))
+	url = url || we_script;
+	return (url + (url.indexOf('?') == -1 ? '?' : (url.match(/[?&;]$/) ? '' : ';')))
 			.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
 }
 
@@ -558,7 +560,7 @@ function weToggle(opt)
 
 		if (!bInit && opt.sOptionName)
 			// Set a theme option through javascript.
-			new Image().src = we_prepareScriptUrl() + 'action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';'
+			new Image().src = weUrl() + 'action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';'
 								+ we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + +new Date();
 	};
 
@@ -606,7 +608,7 @@ function JumpTo(control, id)
 				show_ajax();
 
 				// Fill the select box with entries loaded through Ajax.
-				$('we item', getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function ()
+				$('we item', getXMLDocument(weUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function ()
 				{
 					that = $(this);
 					// This removes entities from the name...
@@ -638,7 +640,7 @@ function JumpTo(control, id)
 function Thought(opt)
 {
 	var
-		ajaxUrl = we_prepareScriptUrl() + 'action=ajax;sa=thought;xml;',
+		ajaxUrl = weUrl() + 'action=ajax;sa=thought;xml;',
 
 		// Make that personal text editable (again)!
 		cancel = function () {

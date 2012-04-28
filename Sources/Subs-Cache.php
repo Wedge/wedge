@@ -1135,8 +1135,7 @@ function cache_put_data($key, $val, $ttl = 120)
 		{
 			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=time()<' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';?' . '>';
 
-			// Check that the cache write was successful; all the data should be written
-			// If it fails due to low diskspace, remove the cache file
+			// Check that the cache write was successful. If it fails due to low diskspace, remove the cache file.
 			if (file_put_contents($cachedir . '/data/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
 				@unlink($cachedir . '/data/' . $key . '.php');
 		}

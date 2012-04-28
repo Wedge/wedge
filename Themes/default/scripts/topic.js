@@ -41,7 +41,7 @@ function modify_topic(topic_id, first_msg_id)
 	hide_edit = function (subject)
 	{
 		// Re-template the subject!
-		cur_subject_div.html('<a href="' + we_prepareScriptUrl() + 'topic=' + cur_topic_id + '.0">' + subject + '</a>');
+		cur_subject_div.html('<a href="' + weUrl() + 'topic=' + cur_topic_id + '.0">' + subject + '</a>');
 	},
 
 	key_press = function (e)
@@ -70,7 +70,7 @@ function modify_topic(topic_id, first_msg_id)
 
 		show_ajax();
 		sendXMLDocument(
-			we_prepareScriptUrl() + 'action=jsmodify;topic=' + $('#qm_topic').val() + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			weUrl() + 'action=jsmodify;topic=' + $('#qm_topic').val() + ';' + we_sessvar + '=' + we_sessid + ';xml',
 			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
 			function (XMLDoc) {
 				if (!XMLDoc)
@@ -128,7 +128,7 @@ function modify_topic(topic_id, first_msg_id)
 
 	show_ajax();
 	getXMLDocument(
-		we_prepareScriptUrl() + 'action=quotefast;quote=' + first_msg_id + ';modify;xml',
+		weUrl() + 'action=quotefast;quote=' + first_msg_id + ';modify;xml',
 		function (XMLDoc) {
 			cur_msg_id = $('message', XMLDoc).attr('id').substr(4);
 
@@ -157,13 +157,13 @@ function QuickReply(opt)
 
 		if (bCollapsed)
 		{
-			window.location.href = we_prepareScriptUrl() + 'action=post;quote=' + iMessageId + ';topic=' + opt.iTopicId + '.' + opt.iStart;
+			window.location.href = weUrl() + 'action=post;quote=' + iMessageId + ';topic=' + opt.iTopicId + '.' + opt.iStart;
 			return false;
 		}
 		else
 		{
 			show_ajax();
-			getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), function (oXMLDoc) {
+			getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), function (oXMLDoc) {
 				oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
 				hide_ajax();
 			});
@@ -325,7 +325,7 @@ function QuickModify(opt)
 
 		// Send out the Ajax request to get more info
 		show_ajax();
-		getXMLDocument(we_prepareScriptUrl() + 'action=quotefast;quote=' + iMessageId + ';modify;xml', onMessageReceived);
+		getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';modify;xml', onMessageReceived);
 	};
 
 	// Function in case the user presses cancel (or other circumstances cause it).
@@ -354,7 +354,7 @@ function QuickModify(opt)
 		// Send in the Ajax request and let's hope for the best.
 		show_ajax();
 		sendXMLDocument(
-			we_prepareScriptUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			weUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';' + we_sessvar + '=' + we_sessid + ';xml',
 			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&message=' + $('#qm_post').val().replace(/&#/g, '&#38;#').php_urlencode()
 			+ '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
 			onModifyDone
@@ -463,7 +463,7 @@ function IconList(opt)
 
 			// Start to fetch its contents.
 			show_ajax();
-			getXMLDocument(we_prepareScriptUrl() + 'action=ajax;sa=messageicons;board=' + opt.iBoardId + ';xml', function (oXMLDoc)
+			getXMLDocument(weUrl() + 'action=ajax;sa=messageicons;board=' + opt.iBoardId + ';xml', function (oXMLDoc)
 			{
 				$('we icon', oXMLDoc).each(function ()
 				{
@@ -478,7 +478,7 @@ function IconList(opt)
 								show_ajax();
 
 								getXMLDocument(
-									we_prepareScriptUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';msg=' + iCurMessageId + ';'
+									weUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';msg=' + iCurMessageId + ';'
 									+ we_sessvar + '=' + we_sessid + ';icon=' + $(iconxml).attr('value') + ';xml',
 									function (oXMLDoc)
 									{

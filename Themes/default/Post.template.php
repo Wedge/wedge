@@ -349,7 +349,7 @@ function template_postform_after()
 			if (checkboxFields[i] in postmod && postmod.elements[checkboxFields[i]].checked)
 				x.push(checkboxFields[i] + "=" + postmod.elements[checkboxFields[i]].value);
 
-		sendXMLDocument(we_prepareScriptUrl() + "action=post2" + (current_board ? ";board=" + current_board : "") + (make_poll ? ";poll" : "") + ";preview;xml", x.join("&"), onDocSent);
+		sendXMLDocument(weUrl() + "action=post2" + (current_board ? ";board=" + current_board : "") + (make_poll ? ";poll" : "") + ";preview;xml", x.join("&"), onDocSent);
 
 		$("#preview_section").show();
 		$("#preview_subject").html(txt_preview_title);
@@ -706,7 +706,7 @@ function template_show_previous_posts()
 	add_js('
 	function insertQuoteFast(messageid)
 	{
-		getXMLDocument(we_prepareScriptUrl() + "action=quotefast;quote=" + messageid + ";xml;mode=" + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
+		getXMLDocument(weUrl() + "action=quotefast;quote=" + messageid + ";xml;mode=" + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
 		return true;
 	}
 	function onDocReceived(XMLDoc)

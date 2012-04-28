@@ -66,7 +66,7 @@ function splitQuote(e)
 		}
 		// Then it's an opener tag. If we're not within a protected tag loop,
 		// and it's not a self-closed tag, add it to the tag stack.
-		else if (log_tags && !in_array(baretag, closed_tags) && /[^a-zA-Z0-9]/.exec(baretag) === null)
+		else if (log_tags && !in_array(baretag, closed_tags) && !baretag.match(/[^a-zA-Z0-9]/))
 		{
 			taglist.push(bbcode);
 			baretags.push(baretag);
@@ -413,12 +413,10 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 
 function wedgeAttachSelect(opt)
 {
-	this.count = 0;
-	this.attachId = 0;
-	this.max = opt.max ? opt.max : -1;
+	var count = 0, attachId = 0, max = opt.max || -1,
 
 	// Yay for scope issues.
-	this.checkExtension = function (filename)
+	checkExtension = function (filename)
 	{
 		if (!opt.attachment_ext)
 			return true; // We're not checking
@@ -438,20 +436,9 @@ function wedgeAttachSelect(opt)
 		}
 
 		return true;
-	};
+	},
 
-	this.checkActive = function ()
-	{
-		var session_attach = 0;
-		$('input[type=checkbox]').each(function () {
-			if (this.name == 'attach_del[]' && this.checked == true)
-				session_attach++;
-		});
-
-		this.current_element.disabled = !(this.max == -1 || (this.max >= (session_attach + this.count)));
-	};
-
-	this.selectorHandler = function (event)
+	selectorHandler = function (event)
 	{
 		var element = event.target;
 
@@ -459,13 +446,13 @@ function wedgeAttachSelect(opt)
 			return false;
 
 		// We've got one!! Check it, bag it.
-		if (that.checkExtension(element.value))
+		if (checkExtension(element.value))
 		{
 			// Hide this input.
 			$(element).css({ position: 'absolute', left: -1000 });
 
 			// Add a new file selector.
-			that.createFileSelector();
+			createFileSelector();
 
 			// Add the display entry and remove button.
 			var new_row = document.createElement('div');
@@ -483,42 +470,52 @@ function wedgeAttachSelect(opt)
 
 			$('#' + opt.file_container).append(new_row);
 
-			that.count++;
-			that.current_element = element;
+			count++;
+			current_element = element;
 			that.checkActive();
 		}
-		else
-		// Uh oh.
+		else // Uh oh.
 		{
 			alert(opt.message_ext_error_final);
-			that.createFileSelector();
+			createFileSelector();
 			$(element).remove();
 		}
-	};
+	},
 
-	this.prepareFileSelector = function (element)
+	prepareFileSelector = function (element)
 	{
 		if (element.tagName != 'INPUT' || element.type != 'file')
 			return;
 
 		$(element).attr({
-			id: 'file_' + this.attachId++,
+			id: 'file_' + attachId++,
 			name: 'attachment[]'
 		});
 		element.multi_selector = this;
-		$(element).bind('change', function (event) { that.selectorHandler(event); });
-	};
+		$(element).change(selectorHandler);
+	},
 
-	this.createFileSelector = function ()
+	createFileSelector = function ()
 	{
 		var new_element = $('<input type="file">').prependTo('#' + opt.file_container);
-		this.current_element = new_element[0];
-		this.prepareFileSelector(new_element[0]);
+		current_element = new_element[0];
+		prepareFileSelector(new_element[0]);
+	};
+
+	this.checkActive = function ()
+	{
+		var session_attach = 0;
+		$('input[type=checkbox]').each(function () {
+			if (this.name == 'attach_del[]' && this.checked == true)
+				session_attach++;
+		});
+
+		current_element.disabled = !(max == -1 || (max >= (session_attach + count)));
 	};
 
 	// And finally, we begin.
 	var that = this;
-	that.prepareFileSelector($('#' + opt.file_item)[0]);
+	prepareFileSelector($('#' + opt.file_item)[0]);
 };
 
 /*
@@ -562,9 +559,6 @@ wedge_autoDraft.prototype.draftSend = function ()
 	if (draftInfo.message === '')
 		return;
 
-	// We need to indicate that we're calling this to request XML.
-	sUrl += (sUrl.indexOf('?') > 0 ? ';' : '?') + 'xml';
-
 	// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
 	if (draftInfo.message_mode == 1)
 		draftInfo.message = $('#html_' + this.opt.sEditor).html();
@@ -593,7 +587,8 @@ wedge_autoDraft.prototype.draftSend = function ()
 			draftInfo['recipient_bcc[]'] = recipients;
 	}
 
-	$.post(sUrl, draftInfo, function (data)
+	// We need to indicate that we're calling this to request XML.
+	$.post(weUrl(sUrl) + 'xml', draftInfo, function (data)
 	{
 		$('#remove_draft').unbind('click'); // Just in case bad stuff happens.
 

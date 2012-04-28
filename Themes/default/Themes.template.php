@@ -653,7 +653,7 @@ function template_edit_style()
 		$("#css_preview_box").show();
 
 		// Revert to the theme they actually use ;)
-		new Image().src = we_prepareScriptUrl() + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + +new Date;
+		new Image().src = weUrl() + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + +new Date;
 
 		refreshPreviewCache = null;
 		refreshPreview(false);
@@ -671,7 +671,7 @@ function template_edit_style()
 
 		getXMLDocument(url + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), '" + anchor, navigateCallback);
 	}
-	navigatePreview(we_prepareScriptUrl());
+	navigatePreview(weUrl());
 
 	function refreshPreview(check)
 	{

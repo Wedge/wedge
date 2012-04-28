@@ -142,7 +142,7 @@ weStatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 	if (!oToggle.bCollapsed)
 	{
 		// Tell Wedge that the state has changed.
-		getXMLDocument(we_prepareScriptUrl() + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
+		getXMLDocument(weUrl() + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
 
 		// Remove the month rows from the year toggle.
 		var aNewContainers = [], oYearToggle = this.oYears[oToggle.opt.sMonthId.substr(0, 4)].oToggle;
@@ -164,12 +164,12 @@ weStatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 	if (oToggle.opt.aSwappableContainers.length == 0)
 	{
 		show_ajax();
-		getXMLDocument.call(this, we_prepareScriptUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
+		getXMLDocument.call(this, weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
 		this.bIsLoading = true;
 	}
 	// Silently let Wedge know this one is expanded.
 	else
-		getXMLDocument(we_prepareScriptUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
+		getXMLDocument(weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
 };
 
 weStatsCenter.prototype.onDocReceived = function (oXMLDoc)

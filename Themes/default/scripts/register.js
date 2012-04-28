@@ -200,7 +200,7 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 			show_ajax();
 
 		// Request a search on that username.
-		getXMLDocument(we_prepareScriptUrl() + 'action=register;sa=usernamecheck;xml;username=' + curUsername.php_urlencode(), checkUsernameCallback);
+		getXMLDocument(weUrl() + 'action=register;sa=usernamecheck;xml;username=' + curUsername.php_urlencode(), checkUsernameCallback);
 
 		return true;
 	}
