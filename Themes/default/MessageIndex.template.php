@@ -305,7 +305,7 @@ function template_main_blog()
 				<tr>
 					<td class="subject ', $color_class, '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
-							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">', '<img src="', $topic['first_post']['icon_url'], '">&nbsp;',
+							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">', '<img src="', $topic['first_post']['icon_url'], '" class="middle">&nbsp;',
 							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
 							'</span>', $topic['is_pinned'] ? '</strong>' : '';

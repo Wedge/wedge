@@ -455,24 +455,25 @@ function wedgeAttachSelect(opt)
 			createFileSelector();
 
 			// Add the display entry and remove button.
-			var new_row = document.createElement('div');
-			new_row.element = element;
-			new_row.innerHTML = '&nbsp; &nbsp;' + element.value;
-
-			$('<input type="button" class="delete" style="margin-top: 4px" value="' + opt.message_txt_delete + '" />').click(function () {
-				// Remove element from form
-				this.parentNode.element.parentNode.removeChild(this.parentNode.element);
-				this.parentNode.parentNode.removeChild(this.parentNode);
-				this.parentNode.element.multi_selector.count--;
-				that.checkActive();
-				return false;
-			}).prependTo(new_row);
-
-			$('#' + opt.file_container).append(new_row);
+			$('<div></div>')
+				.html('&nbsp; &nbsp;' + element.value)
+				.prepend(
+					$('<input type="button" class="delete" style="margin-top: 4px" value="' + opt.message_txt_delete + '" />').click(function () {
+						// Remove element from form
+						$(this.parentNode.el).remove();
+						$(this.parentNode).slideUp(500, function() {
+							$(this).remove();
+							count--;
+							checkActive();
+						});
+						return false;
+					})
+				)
+				.appendTo('#' + opt.file_container)
+				.hide().slideDown(500)[0].el = element;
 
 			count++;
-			current_element = element;
-			that.checkActive();
+			checkActive();
 		}
 		else // Uh oh.
 		{
@@ -490,31 +491,27 @@ function wedgeAttachSelect(opt)
 		$(element).attr({
 			id: 'file_' + attachId++,
 			name: 'attachment[]'
-		});
-		element.multi_selector = this;
-		$(element).change(selectorHandler);
+		}).change(selectorHandler);
 	},
 
 	createFileSelector = function ()
 	{
 		var new_element = $('<input type="file">').prependTo('#' + opt.file_container);
-		current_element = new_element[0];
-		prepareFileSelector(new_element[0]);
-	};
+		prepareFileSelector(current_element = new_element[0]);
+	},
 
-	this.checkActive = function ()
+	checkActive = function ()
 	{
 		var session_attach = 0;
-		$('input[type=checkbox]').each(function () {
-			if (this.name == 'attach_del[]' && this.checked == true)
+		$('input[type=checkbox][name="attach_del[]"]').each(function () {
+			if (this.checked)
 				session_attach++;
 		});
-
-		current_element.disabled = !(max == -1 || (max >= (session_attach + count)));
+		current_element.disabled = max != -1 && max <= session_attach + count;
 	};
 
 	// And finally, we begin.
-	var that = this;
+	this.checkActive = checkActive;
 	prepareFileSelector($('#' + opt.file_item)[0]);
 };
 

@@ -331,9 +331,7 @@ function template_postform_after()
 		var ', $field_type, 'Fields = ["' . implode('","', $field_items) . '"];');
 	}
 	add_js('
-		var x = [];
-
-		for (var i = 0, n = textFields.length; i < n; i++)
+		for (var i = 0, x = [], n = textFields.length; i < n; i++)
 			if (textFields[i] in postmod)
 			{
 				// Handle the WYSIWYG editor.
@@ -342,10 +340,10 @@ function template_postform_after()
 				else
 					x.push(textFields[i] + "=" + postmod[textFields[i]].value.replace(/&#/g, "&#38;#").php_urlencode());
 			}
-		for (var i = 0, n = numericFields.length; i < n; i++)
+		for (i = 0, n = numericFields.length; i < n; i++)
 			if (numericFields[i] in postmod && "value" in postmod[numericFields[i]])
 				x.push(numericFields[i] + "=" + parseInt(postmod.elements[numericFields[i]].value));
-		for (var i = 0, n = checkboxFields.length; i < n; i++)
+		for (i = 0, n = checkboxFields.length; i < n; i++)
 			if (checkboxFields[i] in postmod && postmod.elements[checkboxFields[i]].checked)
 				x.push(checkboxFields[i] + "=" + postmod.elements[checkboxFields[i]].value);
 

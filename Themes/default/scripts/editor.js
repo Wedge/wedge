@@ -261,7 +261,7 @@ function weEditor(opt)
 		{
 			var caretPos = oTextHandle.caretPos;
 
-			caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text + ' ' : text;
+			caretPos.text = caretPos.text.match(/ $/) ? text + ' ' : text;
 			caretPos.select();
 		}
 		// Mozilla text range replace.
@@ -300,7 +300,7 @@ function weEditor(opt)
 		{
 			var caretPos = oTextHandle.caretPos, temp_length = caretPos.text.length;
 
-			caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text1 + caretPos.text + text2 + ' ' : text1 + caretPos.text + text2;
+			caretPos.text = caretPos.text.match(/ $/) ? text1 + caretPos.text + text2 + ' ' : text1 + caretPos.text + text2;
 
 			if (temp_length == 0)
 			{
