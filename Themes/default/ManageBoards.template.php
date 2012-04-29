@@ -274,7 +274,7 @@ function template_modify_board()
 
 		// The first select box gives the user the option to position it before, after or as a child of another board.
 		echo '
-						<select id="order" name="placement" onchange="this.form.board_order.disabled = this.options[this.selectedIndex].value == \'\';">
+						<select id="order" name="placement" onchange="if ($(\'#order\').val() == \'\') $(\'#board_order\').attr(\'disabled\', \'disabled\'); else $(\'#board_order\').removeAttr(\'disabled\'); $(\'#board_order\').sb();">
 							', !isset($context['board']['is_new']) ? '<option value="">(' . $txt['mboards_unchanged'] . ')</option>' : '', '
 							<option value="after">' . $txt['mboards_order_after'] . '...</option>
 							<option value="child">' . $txt['mboards_order_child_of'] . '...</option>
