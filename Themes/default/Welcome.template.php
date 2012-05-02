@@ -94,7 +94,7 @@ function template_thoughts($limit = 18)
 	if (!$user_info['is_guest'])
 		echo '
 			<tr id="new_thought">
-				<td class="bc">{date}</td><td class="windowbg thought">{uname} &raquo; {text}</td>
+				<td class="bc">%date%</td><td class="windowbg thought">%uname% &raquo; %text%</td>
 			</tr>';
 
 	foreach ($context['thoughts'] as $id => $thought)

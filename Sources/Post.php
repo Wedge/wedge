@@ -1053,7 +1053,7 @@ function Post($post_errors = array())
 				array(
 					'name' => 'preview',
 					'button_text' => $txt['preview'],
-					'onclick' => 'return event.ctrlKey || previewPost();',
+					'onclick' => 'return e.ctrlKey || previewPost();',
 					'accesskey' => 'p',
 				),
 			),

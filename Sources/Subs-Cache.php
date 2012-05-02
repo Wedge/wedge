@@ -53,7 +53,7 @@ function add_js_inline()
  * @param boolean $is_out_of_flow Set to true if you want to get the URL immediately and not put it into the JS flow. Used for jQuery/script.js.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false)
+function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
 {
 	global $context, $settings, $footer_coding, $theme, $cachedir, $boardurl;
 	static $done_files = array();
@@ -85,6 +85,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
+	$ignore_files = array_flip($ignore_files);
 
 	foreach ($files as $fid => $file)
 	{
@@ -101,7 +102,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		$temp_name = str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3));
 
 		// Don't add theme.js, sbox.js and custom.js files to the final filename, to save a few bytes on all pages.
-		if ($temp_name !== 'theme' && $temp_name !== 'sbox' && $temp_name !== 'custom')
+		if (!isset($ignore_files[$temp_name]))
 			$id .= $temp_name . '-';
 		$latest_date = max($latest_date, filemtime($add));
 	}
@@ -235,7 +236,7 @@ function add_css()
  * @param boolean $is_main Determines whether this is the primary CSS file list (index.css and other files), which gets special treatment.
  * @return string The generated code for direct inclusion in the source code, if $out_of_flow is set. Otherwise, nothing.
  */
-function add_css_file($original_files = array(), $add_link = false, $is_main = false)
+function add_css_file($original_files = array(), $add_link = false, $is_main = false, $ignore_files = array())
 {
 	global $theme, $settings, $context, $db_show_debug, $boardurl;
 
@@ -265,7 +266,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		foreach ($files as &$file)
 		{
 			// If we find a *.local.css file, only process it if it's at the final level.
-			if ($fold !== $deep_folder && $file === 'local')
+			if ($fold !== $deep_folder && substr($file, -6) === '.local')
 				continue;
 			$add = $fold . $file . '.css';
 			if (file_exists($add))
@@ -309,8 +310,8 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$id = array_filter(array_merge(
 		$id,
 
-		// We don't need to show 'index-sections-custom-local' in the filename, do we?
-		array_diff($original_files, array('index', 'sections', 'custom', 'local')),
+		// We don't need to show 'index-sections-custom' in the main filename, do we?
+		array_diff($original_files, $ignore_files),
 
 		// We need to cache different versions for different browsers, even if we don't have overrides available.
 		// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
@@ -820,9 +821,9 @@ function theme_base_css()
 	global $context, $boardurl;
 
 	// We only generate the cached file at the last moment (i.e. when first needed.)
-	// Make sure custom.css, if available, is added last.
+	// Make sure custom.css, if available, is added last. Also, ignore strip index/sections/custom from the final filename.
 	if (empty($context['cached_css']))
-		add_css_file(array_merge($context['css_main_files'], array('custom', 'local')), false, true);
+		add_css_file(array_merge($context['css_main_files'], (array) 'custom'), false, true, array('index', 'sections', 'custom'));
 
 	if (!empty($context['header_css']))
 	{
@@ -851,7 +852,7 @@ function theme_base_js($indenting = 0)
 	return (!empty($context['remote_javascript_files']) ? '
 ' . $tab . '<script src="' . implode('"></script>
 ' . $tab . '<script src="', $context['remote_javascript_files']) . '"></script>' : '') . '
-' . $tab . '<script src="' . add_js_file($context['javascript_files'], false, true) . '"></script>';
+' . $tab . '<script src="' . add_js_file($context['javascript_files'], false, true, array('sbox', 'theme', 'custom')) . '"></script>';
 }
 
 /**

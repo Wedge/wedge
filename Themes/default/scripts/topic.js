@@ -163,7 +163,7 @@ function QuickReply(opt)
 		else
 		{
 			show_ajax();
-			getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + (oEditorHandle_message.bRichTextEnabled ? 1 : 0), function (oXMLDoc) {
+			getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + +oEditorHandle_message.bRichTextEnabled, function (oXMLDoc) {
 				oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
 				hide_ajax();
 			});
@@ -239,9 +239,10 @@ function QuickModify(opt)
 			// Actually create the content, with a bodge for disappearing dollar signs.
 			oCurMessageDiv.html(
 				opt.sTemplateBodyEdit
-					.replace(/%msg_id%/g, sCurMessageId.substr(4))
-					// .replace() uses $ as a meta-character in replacement strings, so we need to convert them to $$$$ first.
-					.replace(/%body%/, $('message', XMLDoc).text().replace(/\$/g, '$$$$'))
+					.wereplace({
+						msg_id: sCurMessageId.substr(4),
+						body: $('message', XMLDoc).text()
+					})
 			);
 
 			// Replace the subject part.
@@ -250,7 +251,9 @@ function QuickModify(opt)
 
 			oCurSubjectDiv.html(
 				opt.sTemplateSubjectEdit
-					.replace(/%subject%/, $('subject', XMLDoc).text().replace(/\$/g, '$$$$'))
+					.wereplace({
+						subject: $('subject', XMLDoc).text()
+					})
 			);
 		},
 
@@ -279,12 +282,15 @@ function QuickModify(opt)
 			if (body.length)
 			{
 				// Show new body.
-				sMessageBuffer = opt.sTemplateBodyNormal.replace(/%body%/, body.text().replace(/\$/g, '$$$$'));
+				sMessageBuffer = opt.sTemplateBodyNormal.wereplace({ body: body.text() });
 				oCurMessageDiv.html(sMessageBuffer);
 
 				// Show new subject.
-				var oSubject = $('subject', message), sSubjectText = oSubject.text().replace(/\$/g, '$$$$');
-				sSubjectBuffer = opt.sTemplateSubjectNormal.replace(/%msg_id%/g, sCurMessageId.substr(4)).replace(/%subject%/, sSubjectText);
+				var oSubject = $('subject', message), sSubjectText = oSubject.text();
+				sSubjectBuffer = opt.sTemplateSubjectNormal.wereplace({
+					msg_id: sCurMessageId.substr(4),
+					subject: sSubjectText
+				});
 				oCurSubjectDiv.html(sSubjectBuffer);
 
 				// If this is the first message, also update the topic subject.
@@ -573,7 +579,10 @@ function MiniMenu(oList, bAcme, oStrings)
 			for (; i < j; i++)
 			{
 				pms = oStrings[aLinkList[i].substr(0, 2)];
-				sLink = pms[2] ? pms[2].replace(/%id%/, id).replace(/%special%/, aLinkList[i].substr(3)) : this.href;
+				sLink = pms[2] ? pms[2].wereplace({
+					id: id,
+					special: aLinkList[i].substr(3)
+				}) : this.href;
 				if (!bAcme && sLink.charAt(0) == '?')
 					sLink = this.href + sLink;
 

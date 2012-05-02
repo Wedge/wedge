@@ -304,148 +304,34 @@ function template_postform_after()
 		add_js_inline('
 		"' . $icon['value'] . '": "' . $icon['url'] . '"' . ($icon['is_last'] ? '' : ','));
 	add_js_inline('
-	};
-
-	function showimage()
-	{
-		document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
 	};');
 
 	// More general stuff, before diving into the preview functions.
 	add_js('
-	var postmod = document.forms.postmodify;
+	var postmod = document.forms.postmodify,
+		postbox = ' . JavaScriptEscape($context['postbox']->id) . ',
+		posthandle = oEditorHandle_' . $context['postbox']->id . ',
 
-	var current_board = ' . (empty($context['current_board']) ? 'null' : $context['current_board']) . ';
-	var make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ';
-	var txt_preview_title = "' . $txt['preview_title'] . '";
-	var txt_preview_fetch = "' . $txt['preview_fetch'] . '";
-	var new_replies = [], reply_counter = ' . (empty($counter) ? 0 : $counter) . ';
-	function previewPost()
-	{');
+		current_board = ' . (empty($context['current_board']) ? 'null' : $context['current_board']) . ',
+		make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ',
+		new_replies = [], reply_counter = ' . (empty($counter) ? 0 : $counter) . ',
+		can_quote = ' . ($context['can_quote'] ? 'true' : 'false') . ',
+		ptxt = {
+			posted_by: ' . JavaScriptEscape($txt['posted_by']) . ',
+			on: ' . JavaScriptEscape($txt['on']) . ',
+			is_new: ' . JavaScriptEscape($txt['new']) . ',
+			bbc_quote: ' . JavaScriptEscape($txt['bbc_quote']) . ',
+			ignoring_user: ' . JavaScriptEscape($txt['ignoring_user']) . ',
+			show_ignore_user_post: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
+		};');
 
 	// !!! Currently not sending poll options and option checkboxes.
 	foreach ($context['form_fields'] as $field_type => $field_items)
 	{
 		array_walk($field_items, 'JavaScriptEscape');
 		add_js('
-		var ', $field_type, 'Fields = ["' . implode('","', $field_items) . '"];');
+	var ', $field_type, 'Fields = ["' . implode('","', $field_items) . '"];');
 	}
-	add_js('
-		for (var i = 0, x = [], n = textFields.length; i < n; i++)
-			if (textFields[i] in postmod)
-			{
-				// Handle the WYSIWYG editor.
-				if (textFields[i] == ' . JavaScriptEscape($context['postbox']->id) . ' && ' . JavaScriptEscape('oEditorHandle_' . $context['postbox']->id) . ' && oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled)
-					x.push("message_mode=1&" + textFields[i] + "=" + oEditorHandle_' . $context['postbox']->id . '.getText(false).replace(/&#/g, "&#38;#").php_urlencode());
-				else
-					x.push(textFields[i] + "=" + postmod[textFields[i]].value.replace(/&#/g, "&#38;#").php_urlencode());
-			}
-		for (i = 0, n = numericFields.length; i < n; i++)
-			if (numericFields[i] in postmod && "value" in postmod[numericFields[i]])
-				x.push(numericFields[i] + "=" + parseInt(postmod.elements[numericFields[i]].value));
-		for (i = 0, n = checkboxFields.length; i < n; i++)
-			if (checkboxFields[i] in postmod && postmod.elements[checkboxFields[i]].checked)
-				x.push(checkboxFields[i] + "=" + postmod.elements[checkboxFields[i]].value);
-
-		sendXMLDocument(weUrl() + "action=post2" + (current_board ? ";board=" + current_board : "") + (make_poll ? ";poll" : "") + ";preview;xml", x.join("&"), onDocSent);
-
-		$("#preview_section").show();
-		$("#preview_subject").html(txt_preview_title);
-		$("#preview_body").html(txt_preview_fetch);
-
-		return false;
-	}
-
-	function onDocSent(XMLDoc)
-	{
-		if (!XMLDoc)
-			$(postmod.preview).click(function () { return true; }).click();
-
-		// Show the preview section.
-		$("#preview_subject").html($("we preview subject", XMLDoc).text());
-		$("#preview_body").html($("we preview body", XMLDoc).text()).attr("class", "post");
-
-		// Show a list of errors (if any).
-		var errors = $("we errors", XMLDoc), errorList = [];
-		$("error", errors).each(function () {
-			errorList.push($(this).text());
-		});
-		$("#errors").toggle(errorList.length > 0);
-		$("#error_serious").toggle(errors.attr("serious") == 1);
-		$("#error_list").html(errorList.length > 0 ? errorList.join("<br>") : "");
-
-		// Show a warning if the topic has been locked.
-		$("#lock_warning").toggle(errors.attr("topic_locked") == 1);
-
-		// Adjust the color of captions if the given data is erroneous.
-		$("caption", errors).each(function () {
-			$("#caption_" + $(this).attr("name")).attr("class", $(this).attr("class"));
-		});
-
-		if ($("post_error", errors).length)
-			postmod.' . $context['postbox']->id . '.style.border = "1px solid red";
-		else if (postmod.' . $context['postbox']->id . '.style.borderColor == "red" || postmod.' . $context['postbox']->id . '.style.borderColor == "red red red red")
-		{
-			if ("runtimeStyle" in postmod.' . $context['postbox']->id . ')
-				postmod.' . $context['postbox']->id . '.style.borderColor = "";
-			else
-				postmod.' . $context['postbox']->id . '.style.border = null;
-		}
-
-		// Set the new last message id.
-		if ("last_msg" in postmod)
-			postmod.last_msg.value = $("we last_msg", XMLDoc).text();
-
-		// Remove the new image from old-new replies!
-		for (i = 0; i < new_replies.length; i++)
-			$("#image_new_" + new_replies[i]).hide();
-
-		new_replies = [];
-		var ignored_replies = [], ignoring;
-		var newPostsHTML = "", id;
-
-		$("we new_posts post", XMLDoc).each(function () {
-			id = $(this).attr("id");
-			new_replies.push(id);
-
-			ignoring = false;
-			if ($("is_ignored", this).text() != 0)
-				ignored_replies.push(ignoring = id);
-
-			newPostsHTML += \'<div class="windowbg\' + (++reply_counter % 2 == 0 ? \'2\' : \'\') + \' wrc core_posts"><div id="msg\' + id + \'"><div class="floatleft"><h5>' . $txt['posted_by'] . ': \' + $("poster", this).text() + \'</h5><span class="smalltext">&#171;&nbsp;<strong>' . $txt['on'] . ':</strong> \' + $("time", this).text() + \'&nbsp;&#187;</span> <div class="note" id="image_new_\' + id + \'">' . $txt['new'] . '</div></div>\';');
-
-	if ($context['can_quote'])
-		add_js('
-			newPostsHTML += \'<ul class="quickbuttons" id="msg_\' + id + \'_quote"><li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(\\\'\' + id + \'\\\');">' . $txt['bbc_quote'] . '<\' + \'/a></li></ul>\';');
-
-	add_js('
-			newPostsHTML += \'<br class="clear">\';
-
-			if (ignoring)
-				newPostsHTML += \'<div id="msg_\' + id + \'_ignored_prompt" class="smalltext">' . $txt['ignoring_user'] . '<a href="#" id="msg_\' + id + \'_ignored_link" class="hide">' . $txt['show_ignore_user_post'] . '</a></div>\';
-
-			newPostsHTML += \'<div class="list_posts smalltext" id="msg_\' + id + \'_body">\' + $("message", this).text() + \'<\' + \'/div></div></div>\';
-		});
-
-		$("#new_replies").append(newPostsHTML);
-
-		$.each(ignored_replies, function () {
-			new weToggle({
-				bCurrentlyCollapsed: true,
-				aSwappableContainers: [
-					"msg_" + this + "_body",
-					"msg_" + this + "_quote",
-				],
-				aSwapLinks: [
-					{
-						sId: "msg_" + this + "_ignored_link",
-						msgExpanded: "",
-						msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
-					}
-				]
-			});
-		});
-	}');
 
 	// Code for showing and hiding additional options.
 	if (!empty($settings['additional_options_collapsable']))
@@ -453,9 +339,7 @@ function template_postform_after()
 		// If we're collapsed, hide everything now and don't trigger the animation.
 		if (empty($context['show_additional_options']))
 			add_js('
-	$("#postMoreOptions").hide();
-	$("#postAttachment").hide();
-	$("#postAttachment2").hide();');
+	$("#postMoreOptions, #postAttachment, #postAttachment2").hide();');
 
 		add_js('
 	new weToggle({', empty($context['show_additional_options']) ? '
@@ -535,37 +419,9 @@ function template_make_poll()
 {
 	global $context, $txt;
 
-	// This is a poll - use some JavaScript to ensure the user doesn't create a poll with illegal option combinations.
 	add_js('
-	function pollOptions()
-	{
-		if ($.trim($("#poll_expire").val()) == 0)
-		{
-			postmod.poll_hide[2].disabled = true;
-			if (postmod.poll_hide[2].checked)
-				postmod.poll_hide[1].checked = true;
-		}
-		else
-			postmod.poll_hide[2].disabled = false;
-	}
-
-	var pollOptionNum = 0, pollTabIndex;
-	function addPollOption()
-	{
-		if (pollOptionNum == 0)
-		{
-			for (var i = 0, n = postmod.elements.length; i < n; i++)
-				if (postmod.elements[i].id.substr(0, 8) == "options-")
-				{
-					pollOptionNum++;
-					pollTabIndex = postmod.elements[i].tabIndex;
-				}
-		}
-		pollOptionNum++;
-
-		$("#pollMoreOptions").append(' . JavaScriptEscape('<li><label>' . $txt['option'] . ' ') . ' + pollOptionNum + ' . JavaScriptEscape(': <input type="text" name="options[') . ' + pollOptionNum + ' . JavaScriptEscape(']" value="" maxlength="255" tabindex="') . ' + pollTabIndex + ' . JavaScriptEscape('" class="w50"></label></li>') . ');
-		return false;
-	}');
+	var pollOptionTxt = ' . JavaScriptEscape($txt['option']) . ',
+		pollOptionTemplate = \'<li><label>%pollOptionTxt% %pollOptionNum%: <input type="text" name="options[%pollOptionNum%]" value="" maxlength="255" tabindex="%pollTabIndex%" class="w50"></label></li>\';');
 
 	echo '
 				<div id="edit_poll">
@@ -584,7 +440,7 @@ function template_make_poll()
 
 	echo '
 						</ul>
-						<strong><a href="#" onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
+						<strong style="margin-left: 30px"><a href="#" onclick="return addPollOption();">(', $txt['poll_add_option'], ')</a></strong>
 					</fieldset>
 					<fieldset id="poll_options">
 						<legend>', $txt['poll_options'], '</legend>
@@ -696,21 +552,10 @@ function template_show_previous_posts()
 			{
 				sId: "msg_' . $post_id . '_ignored_link",
 				msgExpanded: "",
-				msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
+				msgCollapsed: ptxt.show_ignore_user_post
 			}
 		]
 	});');
-
-	add_js('
-	function insertQuoteFast(messageid)
-	{
-		getXMLDocument(weUrl() + "action=quotefast;quote=" + messageid + ";xml;mode=" + (oEditorHandle_' . $context['postbox']->id . '.bRichTextEnabled ? 1 : 0), onDocReceived);
-		return true;
-	}
-	function onDocReceived(XMLDoc)
-	{
-		oEditorHandle_' . $context['postbox']->id . '.insertText($("quote", XMLDoc).text(), false, true);
-	}');
 }
 
 // The template for the spellchecker.

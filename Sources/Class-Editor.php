@@ -75,8 +75,9 @@ class wedit
 	}');
 			add_js_file(array(
 				'scripts/editor.js',
-				'scripts/post.js'
-			));
+				'scripts/editor-func.js',
+				'scripts/postpage.js'
+			), false, false, array('editor-func', 'postpage'));
 
 			$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])
@@ -2634,6 +2635,8 @@ class wedit
 
 		// Now it's all drawn out we'll actually setup the box.
 		add_js('
+	var protectTags = ["' . implode('", "', array_flip(array_flip($unparsed_tags))) . '"],
+		closedTags = ["' . implode('", "', array_flip(array_flip($closed_tags))) . '"];
 	var oEditorHandle_' . $this->id . ' = new weEditor({
 		sFormId: ' . JavaScriptEscape($this->form) . ',
 		sUniqueId: ' . JavaScriptEscape($this->id) . ($this->rich_active ? ',
@@ -2644,9 +2647,7 @@ class wedit
 		bRichEditOff: true') . ',
 		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
 		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . ',
-		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . (empty($unparsed_tags) ? '' : ',
-		aProtectTags: ["' . implode('", "', array_flip(array_flip($unparsed_tags))) . '"]') . (empty($closed_tags) ? '' : ',
-		aClosedTags: ["' . implode('", "', array_flip(array_flip($closed_tags))) . '"]') . '
+		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . '
 	});
 	weEditors.push(oEditorHandle_' . $this->id . ');');
 	}

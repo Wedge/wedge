@@ -1987,6 +1987,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 	elseif ($user_info['is_mod'])
 		$context['css_suffixes'][] = 'mod';
 
+	$context['css_suffixes'][] = 'local';
+	$context['css_suffixes'][] = 'global';
+
 	$context['tabindex'] = 1;
 
 	// If we think we have mail to send, let's offer up some possibilities... robots get pain (Now with scheduled task support!)

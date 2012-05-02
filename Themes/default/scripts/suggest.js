@@ -29,6 +29,17 @@ function weAutoSuggest(oOptions)
 	var sItemTemplate = '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>';
 	sItemTemplate += '&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
 
+	this.sItemTemplate = this.opt.sItemTemplate || sItemTemplate;
+	this.sRetrieveURL = this.opt.sRetrieveURL || '%scripturl%action=suggest;suggest_type=%suggest_type%;search=%search%;%sessionVar%=%sessionID%;xml;time=%time%';
+	this.sTextDeleteItem = this.opt.sTextDeleteItem || '';
+	this.sURLMask = this.opt.sURLMask || 'action=profile;u=%item_id%';
+
+	// How many objects can we show at once?
+	this.iMaxDisplayQuantity = this.opt.iMaxDisplayQuantity || 15;
+
+	// How many characters shall we start searching on?
+	this.iMinimumSearchChars = this.opt.iMinimumSearchChars || 3;
+
 	this.oTextHandle = oText;
 	this.oSuggestDivHandle = null;
 	this.oXmlRequestHandle = null;
@@ -43,20 +54,8 @@ function weAutoSuggest(oOptions)
 	this.sLastDirtySearch = '';
 	this.sLastSearch = '';
 
-	this.sRetrieveURL = this.opt.sRetrieveURL || '%scripturl%action=suggest;suggest_type=%suggest_type%;search=%search%;%sessionVar%=%sessionID%;xml;time=%time%';
-
-	// How many objects can we show at once?
-	this.iMaxDisplayQuantity = this.opt.iMaxDisplayQuantity || 15;
-
-	// How many characters shall we start searching on?
-	this.iMinimumSearchChars = this.opt.iMinimumSearchChars || 3;
-
 	// Should selected items be added to a list?
 	this.bItemList = !!this.opt.bItemList;
-
-	this.sItemTemplate = this.opt.sItemTemplate || sItemTemplate;
-	this.sTextDeleteItem = this.opt.sTextDeleteItem || '';
-	this.sURLMask = this.opt.sURLMask || 'action=profile;u=%item_id%';
 
 	// Create a div that'll contain the results later on.
 	this.oSuggestDivHandle = $('<div></div>').addClass('auto_suggest').hide().appendTo('body')[0];
@@ -282,9 +281,14 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	if (!$('#' + eid).length)
 	{
 		$('<span id="' + eid + '"></span>').html(
-			this.sItemTemplate.replace(/%post_name%/g, this.opt.sPostName).replace(/%item_id%/g, sItemId)
-			.replace(/%item_href%/g, weUrl() + this.sURLMask.replace(/%item_id%/g, sItemId))
-			.replace(/%item_name%/g, sItemName).replace(/%images_url%/g, we_theme_url + '/images').replace(/%delete_text%/g, this.sTextDeleteItem)
+			this.sItemTemplate.wereplace({
+				post_name: this.opt.sPostName,
+				item_id: sItemId,
+				item_href: weUrl() + this.sURLMask.wereplace({ item_id: sItemId }),
+				item_name: sItemName,
+				images_url: we_theme_url + '/images',
+				delete_text: this.sTextDeleteItem
+			})
 		).appendTo(this.oItemList);
 		$('#' + eid).find('img').click(function () { that.deleteAddedItem(sItemId); });
 	}
@@ -473,13 +477,14 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		this.oXmlRequestHandle.abort();
 
 	// Get the document.
-	this.oXmlRequestHandle = getXMLDocument.call(this, this.sRetrieveURL
-		.replace(/%scripturl%/g, weUrl())
-		.replace(/%suggest_type%/g, this.opt.sSearchType)
-		.replace(/%search%/g, sSearchString.php_urlencode())
-		.replace(/%sessionVar%/g, we_sessvar)
-		.replace(/%sessionID%/g, we_sessid)
-		.replace(/%time%/g, +new Date()), this.onSuggestionReceived);
+	this.oXmlRequestHandle = getXMLDocument.call(this, this.sRetrieveURL.wereplace({
+		scripturl: weUrl(),
+		suggest_type: this.opt.sSearchType,
+		search: sSearchString.php_urlencode(),
+		sessionVar: we_sessvar,
+		sessionID: we_sessid,
+		time: +new Date()
+	}), this.onSuggestionReceived);
 
 	return true;
 };

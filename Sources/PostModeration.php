@@ -164,13 +164,9 @@ function UnapprovedPosts()
 		if (!empty($toAction))
 		{
 			if ($curAction == 'approve')
-			{
 				approveMessages ($toAction, $details, $context['current_view']);
-			}
 			else
-			{
 				removeMessages ($toAction, $details, $context['current_view']);
-			}
 		}
 	}
 
@@ -222,8 +218,8 @@ function UnapprovedPosts()
 	// If we are filtering some boards out then make sure to send that along with the links.
 	if (isset($_REQUEST['brd']))
 	{
-		$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['posts']['add_params'] = ';brd=' . (int) $_REQUEST['brd'];
-		$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['topics']['add_params'] = ';brd=' . (int) $_REQUEST['brd'];
+		$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['posts']['url'] = $scripturl . '?action=moderate;area=postmod;sa=posts;brd=' . (int) $_REQUEST['brd'];
+		$context['menu_data_' . $context['moderation_menu_id']]['sections']['posts']['areas']['postmod']['subsections']['topics']['url'] = $scripturl . '?action=moderate;area=postmod;sa=topics;brd=' . (int) $_REQUEST['brd'];
 	}
 
 	// Get all unapproved posts.

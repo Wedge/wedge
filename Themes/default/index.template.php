@@ -540,7 +540,7 @@ function template_wrapper_after()
 
 function template_body_after()
 {
-	global $context, $theme, $options, $txt, $settings, $user_info, $footer_coding;
+	global $context, $theme, $options, $txt, $settings, $footer_coding;
 
 	$no_resize = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 	echo '
@@ -569,10 +569,10 @@ function template_body_after()
 <script><!-- // --><![CDATA[', $context['footer_js_inline'], '
 // ]]></script>';
 
-	// If user is logged in and has loaded a page in the last 10 minutes,
+	// If user has loaded at least a page in the current session,
 	// assume their script files are cached and run them in the header.
 	// IE 6-8 should always put it below because they're too slow anyway.
-	if (!$context['browser']['is_ie8down'] && (time() - $user_info['last_login'] < 600))
+	if (!$context['browser']['is_ie8down'] && isset($_SESSION['js_loaded']))
 	{
 		$context['header'] .= theme_base_js(1);
 		echo '
@@ -581,10 +581,13 @@ function template_body_after()
 	$("select").sb();';
 	}
 	else
+	{
+		$_SESSION['js_loaded'] = true;
 		echo '
 <script><!-- // --><![CDATA[
 	<!-- insert inline events here -->
 // ]]></script>', "\n", theme_base_js(), '<script><!-- // --><![CDATA[';
+	}
 
 	echo '
 	var

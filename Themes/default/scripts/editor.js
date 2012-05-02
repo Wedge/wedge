@@ -25,7 +25,6 @@ function weEditor(opt)
 		sCurrentText = opt.sText || '',
 		aKeyboardShortcuts = [],
 		sFormId = opt.sFormId || 'postmodify',
-		iArrayPosition = weEditors.length,
 
 		// Current resize state.
 		oCurrentResize = {},
@@ -981,7 +980,7 @@ function weEditor(opt)
 	// This resizes an editor.
 	resizeOver = function (oEvent)
 	{
-		if (!oEvent || window.weCurrentResizeEditor == null)
+		if (!oEvent)
 			return true;
 
 		var newHeight = Math.max(30, oEvent.pageY - oCurrentResize.old_y + oCurrentResize.cur_height);
@@ -998,11 +997,6 @@ function weEditor(opt)
 
 	endResize = function (oEvent)
 	{
-		if (window.weCurrentResizeEditor == null)
-			return true;
-
-		window.weCurrentResizeEditor = null;
-
 		// Remove the event...
 		$(document)
 			.unbind('mousemove', resizeOver)
@@ -1092,14 +1086,10 @@ function weEditor(opt)
 	var sizer = $('#' + opt.sUniqueId + '_resizer');
 	if (sizer.length && (!is_opera || is_opera95up))
 	{
-		// Currently nothing is being resized... I assume!
-		window.weCurrentResizeEditor = null;
 		sizer.show().bind('mousedown', function (oEvent) {
 			// This is the method called after clicking the resize bar.
-			if (!oEvent || window.weCurrentResizeEditor != null)
+			if (!oEvent)
 				return true;
-
-			window.weCurrentResizeEditor = iArrayPosition;
 
 			oCurrentResize.old_y = oEvent.pageY;
 			oCurrentResize.cur_height = oText.height();

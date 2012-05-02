@@ -43,7 +43,7 @@ function we_AdminIndex(oOptions)
 	// Load the text box that says there's a new version available.
 	if (this.opt.bLoadUpdateNotification)
 		this.checkUpdateAvailable();
-};
+}
 
 we_AdminIndex.prototype.setAnnouncements = function ()
 {
@@ -112,7 +112,7 @@ function we_ViewVersions(oOptions)
 	this.opt = oOptions;
 	this.oSwaps = {};
 	this.determineVersions();
-};
+}
 
 we_ViewVersions.prototype.swapOption = function (oSendingElement, sName)
 {

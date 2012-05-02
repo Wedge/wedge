@@ -1,7 +1,7 @@
-/*!
+/**
  * Wedge
  *
- * Helper functions for manipulating text and sending posts
+ * Helper functions used by the post editor.
  *
  * @package wedge
  * @copyright 2010-2012 Wedgeward, wedge.org
@@ -30,8 +30,7 @@ function splitQuote(e)
 
 	var
 		selection = this.value.substr(0, selectionStart), lcs = selection.toLowerCase(), nextBreak, has_slash,
-		lcsl = lcs.length, pos = 0, tag, bbcode, taglist = [], baretags = [], baretag, extag, log_tags = true,
-		that = this.instanceRef, protect_tags = that.opt.aProtectTags, closed_tags = that.opt.aClosedTags;
+		lcsl = lcs.length, pos = 0, tag, bbcode, taglist = [], baretags = [], baretag, extag, log_tags = true;
 
 	// Build a list of opened tags...
 	while (true)
@@ -60,36 +59,43 @@ function splitQuote(e)
 			{
 				taglist.pop();
 				extag = baretags.pop();
-				log_tags |= in_array(extag, protect_tags);
+				log_tags |= in_array(extag, protectTags);
 			}
 			while (extag && baretag != extag);
 		}
 		// Then it's an opener tag. If we're not within a protected tag loop,
 		// and it's not a self-closed tag, add it to the tag stack.
-		else if (log_tags && !in_array(baretag, closed_tags) && !baretag.match(/[^a-zA-Z0-9]/))
+		else if (log_tags && !in_array(baretag, closedTags) && !baretag.match(/[^a-zA-Z0-9]/))
 		{
 			taglist.push(bbcode);
 			baretags.push(baretag);
 
 			// If we just met a protected opener, like [code], we'll ignore all further tags until we find a closer for it.
-			log_tags &= !in_array(baretag, protect_tags);
+			log_tags &= !in_array(baretag, protectTags);
 		}
 	}
 
 	if (baretags.length)
-		that.surroundText('[/' + baretags.reverse().join('][/') + ']\n', '\n\n[' + taglist.join('][') + ']', this);
+		this.instanceRef.surroundText('[/' + baretags.reverse().join('][/') + ']\n', '\n\n[' + taglist.join('][') + ']', this);
 
 	return true;
-};
+}
 
-String.prototype.easyReplace = function (oReplacements)
+// A function needed to discern HTML entities from non-western characters.
+function weSaveEntities(sFormName, aElementNames, sMask, nm)
 {
-	var sResult = this, sSearch;
-	for (sSearch in oReplacements)
-		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), oReplacements[sSearch]);
+	nm = document.forms[sFormName];
+	if (sMask)
+		$.each(nm.elements, function () {
+			if (this.id.substr(0, sMask.length) == sMask)
+				aElementNames.push(this.name);
+		});
 
-	return sResult;
-};
+	$.each(aElementNames, function (key, val) {
+		if (nm[val])
+			nm[val].value = nm[val].value.replace(/&#/g, '&#38;#');
+	});
+}
 
 
 /*
@@ -107,9 +113,9 @@ function weSmileyBox(opt)
 	that.getSmileyRowsContent('postform');
 
 	// Inject the HTML.
-	$('#' + opt.sContainer).html(opt.sSmileyBoxTemplate.easyReplace({
+	$('#' + opt.sContainer).html(opt.sSmileyBoxTemplate.wereplace({
 		smileyRows: that.oSmileyRowsContent.postform,
-		moreSmileys: opt.oSmileyLocations.popup.length == 0 ? '' : opt.sMoreSmileysTemplate.easyReplace({
+		moreSmileys: opt.oSmileyLocations.popup.length == 0 ? '' : opt.sMoreSmileysTemplate.wereplace({
 			moreSmileysId: opt.sContainer + '_addMoreSmileys'
 		})
 	}));
@@ -146,7 +152,7 @@ weSmileyBox.prototype.getSmileyRowsContent = function (sLocation)
 		var sSmileyRowContent = '';
 		$.each(this, function (iSmileyIndex)
 		{
-			sSmileyRowContent += opt.sSmileyTemplate.easyReplace({
+			sSmileyRowContent += opt.sSmileyTemplate.wereplace({
 				smileySource: this[1].php_htmlspecialchars(),
 				smileyDesc: this[2].php_htmlspecialchars(),
 				smileyCode: this[0].php_htmlspecialchars(),
@@ -154,7 +160,7 @@ weSmileyBox.prototype.getSmileyRowsContent = function (sLocation)
 			});
 		});
 
-		that.oSmileyRowsContent[sLocation] += opt.sSmileyRowTemplate.easyReplace({
+		that.oSmileyRowsContent[sLocation] += opt.sSmileyRowTemplate.wereplace({
 			smileyRow: sSmileyRowContent
 		});
 	});
@@ -205,7 +211,7 @@ function weButtonBox(opt)
 			{
 				if (this[1])
 				{
-					sRowContent += opt.sButtonTemplate.easyReplace({
+					sRowContent += opt.sButtonTemplate.wereplace({
 						buttonId: opt.sContainer.php_htmlspecialchars() + '_button_' + iButtonRowIndex + '_' + iButtonIndex,
 						buttonSrc: (is_sprite ? opt.sSprite : this[2]).php_htmlspecialchars(),
 						posX: is_sprite ? this[2][0] : 0,
@@ -234,10 +240,10 @@ function weButtonBox(opt)
 					else if (this[1] == 'sel_color')
 						optname = '<span style="color: %val%">&diams;</span> %opt%';
 					if (sSelectValue != '')
-						sOptions += '<option value="' + sSelectValue.php_htmlspecialchars() + '">' + optname.replace(/%val%/g, sSelectValue).replace(/%opt%/g, this[2][sSelectValue]).php_htmlspecialchars() + '</option>';
+						sOptions += '<option value="' + sSelectValue.php_htmlspecialchars() + '">' + optname.wereplace({ val: sSelectValue, opt: this[2][sSelectValue] }).php_htmlspecialchars() + '</option>';
 				}
 
-				sRowContent += opt.sSelectTemplate.easyReplace({
+				sRowContent += opt.sSelectTemplate.wereplace({
 					selectName: this[1],
 					selectId: opt.sContainer.php_htmlspecialchars() + '_select_' + iButtonRowIndex + '_' + iButtonIndex,
 					selectOptions: sOptions
@@ -254,7 +260,7 @@ function weButtonBox(opt)
 			}
 		});
 
-		sBbcContent += opt.sButtonRowTemplate.easyReplace({
+		sBbcContent += opt.sButtonRowTemplate.wereplace({
 			buttonRow: sRowContent
 		});
 	});
@@ -406,116 +412,6 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 };
 
 /*
-	Attachment selector, originally based on http://the-stickman.com/web-development/javascript/upload-multiple-files-with-a-single-file-element/
-	The original code is MIT licensed, as discussed on http://the-stickman.com/using-code-from-this-site-ie-licence/
-	This is quite heavily rewritten, though, to suit our purposes.
-*/
-
-function wedgeAttachSelect(opt)
-{
-	var count = 0, attachId = 0, max = opt.max || -1,
-
-	// Yay for scope issues.
-	checkExtension = function (filename)
-	{
-		if (!opt.attachment_ext)
-			return true; // We're not checking
-
-		var dot = filename.lastIndexOf('.');
-		if (!filename || filename.length == 0 || dot == -1)
-		{
-			opt.message_ext_error_final = opt.message_ext_error.replace(' ({ext})', '');
-			return false; // Pfft, didn't specify anything, or no extension
-		}
-
-		var extension = (filename.substr(dot + 1, filename.length)).toLowerCase();
-		if (!in_array(extension, opt.attachment_ext))
-		{
-			opt.message_ext_error_final = opt.message_ext_error.replace('{ext}', extension);
-			return false;
-		}
-
-		return true;
-	},
-
-	selectorHandler = function (event)
-	{
-		var element = event.target;
-
-		if ($(element).val() === '')
-			return false;
-
-		// We've got one!! Check it, bag it.
-		if (checkExtension(element.value))
-		{
-			// Hide this input.
-			$(element).css({ position: 'absolute', left: -1000 });
-
-			// Add a new file selector.
-			createFileSelector();
-
-			// Add the display entry and remove button.
-			$('<div></div>')
-				.html('&nbsp; &nbsp;' + element.value)
-				.prepend(
-					$('<input type="button" class="delete" style="margin-top: 4px" value="' + opt.message_txt_delete + '" />').click(function () {
-						// Remove element from form
-						$(this.parentNode.el).remove();
-						$(this.parentNode).slideUp(500, function() {
-							$(this).remove();
-							count--;
-							checkActive();
-						});
-						return false;
-					})
-				)
-				.appendTo('#' + opt.file_container)
-				.hide().slideDown(500)[0].el = element;
-
-			count++;
-			checkActive();
-		}
-		else // Uh oh.
-		{
-			alert(opt.message_ext_error_final);
-			createFileSelector();
-			$(element).remove();
-		}
-	},
-
-	prepareFileSelector = function (element)
-	{
-		if (element.tagName != 'INPUT' || element.type != 'file')
-			return;
-
-		$(element).attr({
-			id: 'file_' + attachId++,
-			name: 'attachment[]'
-		}).change(selectorHandler);
-	},
-
-	createFileSelector = function ()
-	{
-		var new_element = $('<input type="file">').prependTo('#' + opt.file_container);
-		prepareFileSelector(current_element = new_element[0]);
-	},
-
-	checkActive = function ()
-	{
-		var session_attach = 0;
-		$('input[type=checkbox][name="attach_del[]"]').each(function () {
-			if (this.checked)
-				session_attach++;
-		});
-		current_element.disabled = max != -1 && max <= session_attach + count;
-	};
-
-	// And finally, we begin.
-	this.checkActive = checkActive;
-	prepareFileSelector($('#' + opt.file_item)[0]);
-};
-
-/*
 	Handles auto-saving of posts.
 */
 
@@ -592,7 +488,7 @@ wedge_autoDraft.prototype.draftSend = function ()
 		var
 			obj = $('#lastsave', data),
 			draft_id = obj.attr('draft'),
-			url = obj.attr('url').replace(/DraftId/, draft_id).replace(/SessVar/, we_sessvar).replace(/SessId/, we_sessid);
+			url = obj.attr('url').wereplace({ id: draft_id + ';' + we_sessvar + '=' + we_sessid });
 
 		$('#draft_id').val(draft_id);
 		$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val(that.opt.sRemove));

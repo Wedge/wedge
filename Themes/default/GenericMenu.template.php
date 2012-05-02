@@ -208,9 +208,6 @@ function template_generic_tabs()
 		// Has a custom URL been defined in the main structure?
 		if (isset($tab['url']) && !isset($tab_context['tabs'][$id]['url']))
 			$tab_context['tabs'][$id]['url'] = $tab['url'];
-		// Any additional parameters for the URL?
-		if (isset($tab['add_params']) && !isset($tab_context['tabs'][$id]['add_params']))
-			$tab_context['tabs'][$id]['add_params'] = $tab['add_params'];
 		// Has it been deemed selected?
 		if (!empty($tab['is_selected']))
 			$tab_context['tabs'][$id]['is_selected'] = true;
@@ -242,21 +239,28 @@ function template_generic_tabs()
 		', $tab_context['title'], '
 	</we:cat>';
 
-	echo '
+	if (!empty($selected_tab['description']) || !empty($tab_context['description']))
+		echo '
 	<p class="description">
 		', !empty($selected_tab['description']) ? $selected_tab['description'] : $tab_context['description'], '
 	</p>';
 
+	template_show_generic_tabs($tab_context['tabs'], $menu_context);
+}
+
+function template_show_generic_tabs(&$tabs, &$menu_context = array(), $class = '')
+{
 	// The tabs.
 	echo '
-	<ul class="menu" id="context_menus">';
+	<ul class="context menu', $class ? ' ' . $class : '', '">';
 
 	// Print out all the items in this tab.
-	foreach ($tab_context['tabs'] as $sa => $tab)
+	// If you're showing custom tabs, make sure to provide 'url' and 'label' for each tab.
+	foreach ($tabs as $sa => $tab)
 		if (!empty($tab) && empty($tab['disabled']) && isset($tab['label']))
 			echo '
 		<li', !empty($tab['is_selected']) ? ' class="chosen"' : '', '>
-			<h4><a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, $menu_context['extra_parameters'], isset($tab['add_params']) ? $tab['add_params'] : '', '">', $tab['label'], '</a></h4>
+			<h4><a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, isset($menu_context['extra_parameters']) ? $menu_context['extra_parameters'] : '', '">', $tab['label'], '</a></h4>
 		</li>';
 
 	// the end of tabs

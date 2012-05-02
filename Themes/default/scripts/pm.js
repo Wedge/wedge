@@ -10,14 +10,17 @@
  * @version 0.1
  */
 
-function wePersonalMessageSend(oOptions)
+function wePersonalMessageSend(opt)
 {
-	this.opt = oOptions;
-	this.oToListContainer = null;
-
 	var
 		oToAutoSuggest = null,
 		oBccAutoSuggest = null,
+
+		showBcc = function ()
+		{
+			// No longer hide it, show it to the world!
+			$('#' + opt.sBccDivId + ', #' + opt.sBccDivId2).show();
+		},
 
 		// Prevent items to be added twice or to both the 'To' and 'Bcc'.
 		onAddItem = function (sSuggestId)
@@ -28,39 +31,33 @@ function wePersonalMessageSend(oOptions)
 			return true;
 		};
 
-	if (!this.opt.bBccShowByDefault)
+	if (!opt.bBccShowByDefault)
 	{
 		// Hide the BCC control.
-		$('#' + this.opt.sBccDivId + ', #' + this.opt.sBccDivId2).hide();
+		$('#' + opt.sBccDivId + ', #' + opt.sBccDivId2).hide();
 
 		// Show the link to set the BCC control back.
-		$('#' + this.opt.sBccLinkContainerId).show();
+		$('#' + opt.sBccLinkContainerId).show();
 
 		// Make the link show the BCC control.
-		$('#' + this.opt.sBccLinkId).data('that', this).click(function () { return !!$(this).data('that').showBcc(); });
+		$('#' + opt.sBccLinkId).click(showBcc);
 	}
 
 	oToAutoSuggest = new weAutoSuggest({
 		bItemList: true,
-		sControlId: this.opt.sToControlId,
+		sControlId: opt.sToControlId,
 		sPostName: 'recipient_to',
-		sTextDeleteItem: this.opt.sTextDeleteItem,
-		aListItems: this.opt.aToRecipients
+		sTextDeleteItem: opt.sTextDeleteItem,
+		aListItems: opt.aToRecipients
 	});
 	oToAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);
 
 	oBccAutoSuggest = new weAutoSuggest({
 		bItemList: true,
-		sControlId: this.opt.sBccControlId,
+		sControlId: opt.sBccControlId,
 		sPostName: 'recipient_bcc',
-		sTextDeleteItem: this.opt.sTextDeleteItem,
-		aListItems: this.opt.aBccRecipients
+		sTextDeleteItem: opt.sTextDeleteItem,
+		aListItems: opt.aBccRecipients
 	});
 	oBccAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);
-};
-
-wePersonalMessageSend.prototype.showBcc = function ()
-{
-	// No longer hide it, show it to the world!
-	$('#' + this.opt.sBccDivId + ', #' + this.opt.sBccDivId2).show();
-};
+}

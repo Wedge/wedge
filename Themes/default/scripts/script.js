@@ -11,7 +11,7 @@
  */
 
 var
-	weEditors = [], aJumpTo = [],
+	weEditors = [],
 	_formSubmitted = false, oThought,
 
 	// Basic browser detection
@@ -28,7 +28,7 @@ var
 	// The webkit ones. Oh my, that's a long list... Right now we're only support iPhone/iPod Touch/iPad and generic Android browsers.
 	is_webkit = !!$.browser.webkit,
 	is_chrome = ua.indexOf('chrome') != -1,
-	is_iphone = is_webkit && ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1,
+	is_iphone = is_webkit && (ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1),
 	is_tablet = is_webkit && ua.indexOf('ipad') != -1,
 	is_android = is_webkit && ua.indexOf('android') != -1,
 	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android && !is_tablet,
@@ -53,8 +53,7 @@ function getXMLDocument(sUrl, funcCallback, undefined)
 // Send a post form to the server using Ajax.
 function sendXMLDocument(sUrl, sContent, funcCallback, undefined)
 {
-	$.ajax($.extend({ url: sUrl, data: sContent, type: 'POST', context: this }, funcCallback !== undefined ? { success: funcCallback } : {}));
-	return true;
+	return $.ajax($.extend({ url: sUrl, data: sContent, type: 'POST', context: this }, funcCallback !== undefined ? { success: funcCallback } : {})) || true;
 }
 
 String.prototype.php_urlencode = function ()
@@ -71,6 +70,17 @@ String.prototype.php_unhtmlspecialchars = function ()
 {
 	return this.replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
 };
+
+String.prototype.wereplace = function (oReplacements)
+{
+	var sSearch, sResult = this;
+	// .replace() uses $ as a meta-character in replacement strings, so we need to convert it to $$$$ first.
+	for (sSearch in oReplacements)
+		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), (oReplacements[sSearch] + '').replace(/\$/g, '$$$$'));
+
+	return sResult;
+};
+
 
 // Open a new popup window.
 function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asWindow)
@@ -347,29 +357,13 @@ function weSelectText(oCurElement)
 	return false;
 }
 
-// A function needed to discern HTML entities from non-western characters.
-function weSaveEntities(sFormName, aElementNames, sMask, nm)
-{
-	nm = document.forms[sFormName];
-	if (sMask)
-		$.each(nm.elements, function () {
-			if (this.id.substr(0, sMask.length) == sMask)
-				aElementNames.push(this.name);
-		});
-
-	$.each(aElementNames, function (key, val) {
-		if (nm[val])
-			nm[val].value = nm[val].value.replace(/&#/g, '&#38;#');
-	});
-}
-
 function weCookie(sKey)
 {
 	var aNameValuePair, ret = null;
 	$.each((document.cookie || '').split(';'), function ()
 	{
 		aNameValuePair = this.split('=');
-		if (aNameValuePair[0].replace(/^\s+|\s+$/g, '') === sKey)
+		if ($.trim(aNameValuePair[0]) === sKey)
 		{
 			ret = decodeURIComponent(aNameValuePair[1]);
 			return false;
@@ -591,7 +585,7 @@ function weToggle(opt)
 	$.each(opt.aSwapLinks || [], function () {
 		$('#' + this.sId).show().data('that', that).click(toggle_me);
 	});
-};
+}
 
 
 // *** JumpTo class.
@@ -628,12 +622,12 @@ function JumpTo(control, id)
 
 				// Add the remaining items after the currently selected item.
 				$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
-					window.location.href = parseInt($val = $(this).val()) ? we_script.replace(/\?.*/g, '') + '?board=' + $val + '.0' : $val;
+					window.location.href = parseInt($val = $(this).val()) ? weUrl() + 'board=' + $val + '.0' : $val;
 				});
 
 				hide_ajax();
 			});
-};
+}
 
 
 // *** Thought class.
@@ -700,7 +694,11 @@ function Thought(opt)
 			{
 				var thought = $('thought', XMLDoc), nid = tid ? thought.attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid, user = $('user', XMLDoc);
 				if (!$(new_id).length)
-					new_thought.after($('<tr class="windowbg">').html(new_thought.html().replace('{date}', $('date', XMLDoc).text()).replace('{uname}', user.text()).replace('{text}', thought.text())));
+					new_thought.after($('<tr class="windowbg">').html(new_thought.html().wereplace({
+						date: $('date', XMLDoc).text(),
+						uname: user.text(),
+						text: thought.text()
+					})));
 				$(new_id + ' span').html(thought.text());
 				cancel();
 				hide_ajax();
@@ -727,7 +725,7 @@ function Thought(opt)
 		</div>');
 		});
 	}
-};
+}
 
 /* Optimize:
 _formSubmitted = _f
