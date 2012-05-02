@@ -173,11 +173,11 @@
 		using the include parameter), or your inline styles use the "$behavior"
 		keyword, which is mandatory if you want to use behavior files for IE.
 
-		Example:
-			.windowbg { behavior: url($behavior/Themes/default/PIE.htc); }
+		Examples (remove the ! from the css tags):
+		<!css>.windowbg { behavior: url($behavior/Themes/default/PIE.htc); }</css>
+		<!css include="http://fonts.googleapis.com/css?family=Droid+Sans:400,700"></css>
+		Note that it isn't recommended to use web fonts on stock installs.
 	-->
-
-	<css include="http://fonts.googleapis.com/css?family=Droid+Sans:400,700"></css>
 
 	<css for="no_browser"><![CDATA[
 	.ie_sucks_anyway {}

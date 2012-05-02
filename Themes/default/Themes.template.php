@@ -47,32 +47,12 @@ function template_main()
 	echo '
 						</div>
 						<a href="#" onclick="$(\'#known_themes_list\').show(); $(\'#known_themes_link\').hide(); return false; " id="known_themes_link" class="hide">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
-					</dd>
-					<dt>
-						<label for="theme_guests">', $txt['theme_guests'], ':</label>
-					</dt>
-					<dd>
-						<select name="options[theme_guests]" id="theme_guests">
-							';
+					</dd>';
 
-	add_js('
-	$("#known_themes_list").hide();
-	$("#known_themes_link").show();');
-
-	$skin = empty($settings['theme_skin_guests']) ? 'skins' : $settings['theme_skin_guests'];
-
-	// Put an option for each theme in the select box.
-	foreach ($context['themes'] as $th)
-	{
-		echo '<option value="', $th['id'], '"', $settings['theme_guests'] == $th['id'] && $skin == 'skins' ? ' selected' : '', '>', $th['name'], '</option>';
-		if (!empty($th['skins']))
-			wedge_show_skins($th, $th['skins'], 1, $settings['theme_guests'], $skin);
-	}
+	template_guest_selector(false);
+	template_guest_selector(true);
 
 	echo '
-						</select>
-						<span class="smalltext pick_theme"><a href="', $scripturl, '?action=theme;sa=pick;u=-1;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
-					</dd>
 					<dt>
 						<label for="theme_reset">', $txt['theme_reset'], '</label>:
 					</dt>
@@ -177,6 +157,40 @@ function template_main()
 	add_js('
 	if (typeof window.weLatestThemes != "undefined")
 		$("#themeLatest").html(window.weLatestThemes);');
+}
+
+function template_guest_selector($is_mobile = false)
+{
+	global $context, $settings, $txt;
+
+	$guests = $is_mobile ? 'guests_mobile' : 'guests';
+
+	echo '
+					<dt>
+						<label for="theme_', $guests, '">', $txt['theme_' . $guests], ':</label>
+					</dt>
+					<dd>
+						<select name="options[theme_', $guests, ']" id="theme_', $guests, '">
+							';
+
+	add_js('
+	$("#known_themes_list").hide();
+	$("#known_themes_link").show();');
+
+	$skin = empty($settings['theme_skin_' . $guests]) ? ($is_mobile ? 'skins/Wireless' : 'skins') : $settings['theme_skin_' . $guests];
+
+	// Put an option for each theme in the select box.
+	foreach ($context['themes'] as $th)
+	{
+		echo '<option value="', $th['id'], '"', $settings['theme_' . $guests] == $th['id'] && $skin == 'skins' ? ' selected' : '', '>', $th['name'], '</option>';
+		if (!empty($th['skins']))
+			wedge_show_skins($th, $th['skins'], 1, $settings['theme_' . $guests], $skin);
+	}
+
+	echo '
+						</select>
+						<span class="smalltext pick_theme"><a href="<URL>?action=theme;sa=pick;u=-1;', $context['session_query'], '">', $txt['theme_select'], '</a></span>
+					</dd>';
 }
 
 function template_list_themes()

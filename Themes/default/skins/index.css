@@ -143,6 +143,8 @@ header, footer, aside, section, article, nav
 	font-size: .9em
 	.column
 		padding: 8px 12px 12px
+		section
+			margin: 0 0 15px
 
 #userbox
 	overflow: hidden
@@ -165,7 +167,7 @@ header, footer, aside, section, article, nav
 		padding: 0
 
 img.opaque
-	box-shadow: #999 0 0 6px
+	box-shadow: #766 1px 1px 3px
 	border-radius: 6px
 
 ul#noava
@@ -373,7 +375,7 @@ em
 // Can't use an extends on .zoom-loading, because it's in a different file.
 .loading, .zoom-loading
 	background-image: url($images/loader.gif)
-	background-repeat: no-repeat;
+	background-repeat: no-repeat
 
 // Fold/unfold icon
 .upshrinks extends .inline-block
@@ -401,6 +403,10 @@ em
 	padding: 3px 5px
 	:hover
 		text-decoration: none
+
+// Same, but scarier.
+.warn extends .note
+	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
 
 // We worship his shadow.
 .hide
@@ -807,7 +813,7 @@ li.subsection > a extends .arrows
 .menu > li > a, .menu h4
 	border-radius: 6px
 
-#context_menus
+.context.menu
 	padding-left: 1em
 	min-height: 2.5em
 	overflow: hidden
@@ -817,7 +823,7 @@ li.subsection > a extends .arrows
 		:hover
 			background-color: rgba(0,0,0, .075)
 
-#main_menu .chosen h4, #context_menus .chosen h4
+#main_menu .chosen h4, .context .chosen h4
 	&:hover, &.hove
 		background-color: lighten(#95a89d, 8%)
 
@@ -851,7 +857,6 @@ li.separator
 	margin-bottom: 4px
 
 .menu .note
-	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
 	margin: 2px -4px 0 8px
 
 .menu h4 .note
@@ -871,7 +876,7 @@ li.separator
 // It may look complicated, but it isn't. Just fetch documentation on
 // image spriting. You can also simply use single images to show icons.
 
-.m_home
+#m_home
 	float: left
 	width, height: 16px
 	padding: 0
@@ -880,41 +885,41 @@ li.separator
 	background-image: url($images/icons/sprite.png)
 	background-position: -74px 0
 
-.m_board extends .m_home
+#m_board extends #m_home
 	background-position: -74px 0
 
-.m_search extends .m_home
+#m_search extends #m_home
 	background-position: -131px 0
 	height: 17px
 
-.m_admin extends .m_home
+#m_admin extends #m_home
 	background-position: -36px 0
 
-.m_profile extends .m_home
+#m_profile extends #m_home
 	background-position: 0 0
 
-.m_pm extends .m_home
+#m_pm extends #m_home
 	background-position: -93px 0
 
-.m_pm_unread extends .m_home
+#m_pm_unread extends #m_home
 	background-position: -112px 0
 
-.m_media extends .m_home
+#m_media extends #m_home
 	background-position: -54px 0
 	width: 18px
 
-.m_mlist extends .m_home
+#m_mlist extends #m_home
 	background-position: -19px 0
 	width: 14px
 
-.m_login extends .m_home
+#m_login extends #m_home
 	background-position: -168px 0
 	width: 15px
 
-.m_register extends .m_home
+#m_register extends #m_home
 	background-position: -186px 0
 
-.m_logout extends .m_home
+#m_logout extends #m_home
 	background-position: -150px 0
 	width: 15px
 
@@ -1002,7 +1007,7 @@ ul.reset, ul.reset li
 	border-radius: 6px
 	border: 1px dotted #99a
 	gradient: rgba(255, 255, 255, .5), rgba(230, 255, 235, .3)
-	margin: 0 0 .5em
+	margin: 0 0 .8em
 	// The "Quote:" header part...
 	> header
 		padding: 2px 2px 2px 24px
@@ -1346,7 +1351,7 @@ dl#feed
 	color: #777
 
 #sidebar .title final
-	margin-top: 6px
+	margin: 0 0 15px
 	padding: 4px 0 0
 	font-size: 1.6em
 
