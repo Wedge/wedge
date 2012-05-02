@@ -1,4 +1,4 @@
-/**
+/*!
  * Wedge
  *
  * Helper functions for the media admin area.
@@ -11,21 +11,18 @@
  * @version 0.1
  */
 
-// !!! Needs a rewrite to use the Wedge toggle...
 function admin_toggle(id)
 {
 	if ($('#tr_expand_' + id).is(':hidden'))
 	{
 		$('#img_' + id).load(function () {
-			$('#tr_expand_' + id).show();
+			$('#tr_expand_' + id).show().find('td').children().hide().slideDown();
 			$(this).unbind();
 		}).attr('src', weUrl() + 'action=media;sa=media;in=' + id + ';icon');
 	}
 	else
-	{
-		$('#tr_expand_' + id).hide();
-		$('#img_' + id).attr('src', '');
-	}
+		$('#tr_expand_' + id).find('td').children().slideUp(500, function () { $(this).parent().parent().hide(); });
+
 	$('#toggle_img_' + id).toggleClass('fold');
 
 	return false;

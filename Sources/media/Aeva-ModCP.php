@@ -133,10 +133,11 @@ function aeva_modCP_submissions()
 	$context['aeva_total'] = $total;
 
 	// Get the subtabs
+	$context['page_title'] = $txt['media_admin_moderation'];
 	$context['aeva_header']['subtabs'] = array(
-		'items' => array('title' => 'media_items', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], 'class' => $filter == 'items' ? 'active' : ''),
-		'comments' => array('title' => 'media_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], 'class' => $filter == 'coms' ? 'active' : ''),
-		'albums' => array('title' => 'media_albums', 'url' => $scripturl.'?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], 'class' => $filter == 'albums' ? 'active' : ''),
+		'items' => array('title' => 'media_items', 'url' => $scripturl . '?action=media;area=moderate;sa=submissions;filter=items;' . $context['session_query'], 'class' => $filter == 'items' ? 'active' : ''),
+		'comments' => array('title' => 'media_comments', 'url' => $scripturl . '?action=media;area=moderate;sa=submissions;filter=coms;' . $context['session_query'], 'class' => $filter == 'coms' ? 'active' : ''),
+		'albums' => array('title' => 'media_albums', 'url' => $scripturl . '?action=media;area=moderate;sa=submissions;filter=albums;' . $context['session_query'], 'class' => $filter == 'albums' ? 'active' : ''),
 	);
 
 	// HTML headers
@@ -440,8 +441,8 @@ function aeva_modCP_reports()
 
 	// Header tabs
 	$context['aeva_header']['subtabs'] = array(
-		'items' => array('title' => 'aeva2_items', 'url' => $scripturl.'?action=media;area=moderate;sa=reports;items;' . $context['session_query'], 'active' => $type == 'item'),
-		'comments' => array('title' => 'aeva2_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=reports;comments;' . $context['session_query'], 'active' => $type == 'comment'),
+		'items' => array('title' => 'aeva2_items', 'url' => $scripturl.'?action=media;area=moderate;sa=reports;items;' . $context['session_query'], 'class' => $type == 'item' ? 'active' : ''),
+		'comments' => array('title' => 'aeva2_comments', 'url' => $scripturl.'?action=media;area=moderate;sa=reports;comments;' . $context['session_query'], 'class' => $type == 'comment' ? 'active' : ''),
 	);
 
 	// Load all the reports
@@ -494,6 +495,7 @@ function aeva_modCP_reports()
 
 	loadTemplate('ManageMedia');
 	wetem::load('aeva_admin_reports');
+	$context['page_title'] = $txt['media_admin_moderation'];
 	// HTML headers
 	$context['header'] .= '
 	<script src="' . add_js_file('scripts/mediadmin.js', false, true) . '"></script>';
@@ -742,6 +744,7 @@ function aeva_modCP_modLog()
 
 	loadTemplate('ManageMedia');
 	wetem::load('aeva_admin_modlog');
+	$context['page_title'] = $txt['media_admin_moderation'];
 
 	// HTML headers
 	$context['header'] .= '

@@ -14,7 +14,7 @@
 
 function template_aeva_admin_before()
 {
-	template_aeva_subtabs();
+	template_aeva_tabs();
 }
 
 function template_aeva_admin_after()
@@ -283,7 +283,7 @@ function template_aeva_admin_modlog()
 				</td>
 			</tr>
 		</table>
-		<table class="w100 cp8 cs0">
+		<table class="w100 cp8 cs1">
 			<tr class="titlebg">
 				<td style="width: 5%">&nbsp;</td>
 				<td>', $txt['media_action'], '</td>
@@ -295,10 +295,10 @@ function template_aeva_admin_modlog()
 	{
 		echo '
 			<tr class="windowbg2">
-				<td class="middle" style="width: 5%"><input type="checkbox" name="to_delete[]" value="'.$log['id'].'"></td>
+				<td class="middle"><input type="checkbox" name="to_delete[]" value="', $log['id'], '"></td>
 				<td class="smalltext">', $log['text'], '</td>
 				<td class="smalltext">', $log['time'], '</td>
-				<td class="smalltext"><a href="'.$log['action_by_href'].'">'.$log['action_by_name'].'</a></td>
+				<td class="smalltext"><a href="', $log['action_by_href'], '">', $log['action_by_name'], '</a></td>
 			</tr>';
 	}
 

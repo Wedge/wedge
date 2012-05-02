@@ -47,7 +47,6 @@ function aeva_foxy_playlist()
 {
 	global $context, $scripturl, $txt, $user_info, $galurl, $theme;
 
-	$context['aeva_header']['data']['title'] = $txt['media_playlist'];
 	$context['page_title'] = $txt['media_playlist'];
 	$id = empty($_GET['in']) ? 0 : (int) $_GET['in'];
 
@@ -271,7 +270,6 @@ function aeva_foxy_playlists()
 	global $amSettings, $context, $txt, $scripturl, $user_info, $theme, $galurl;
 
 	$context['page_title'] = $txt['media_playlists'];
-	$context['aeva_header']['data']['title'] = $txt['media_playlists'];
 
 	// My playlists -- which I can edit or delete.
 	$request = wesql::query('

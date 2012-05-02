@@ -86,7 +86,7 @@ function aeva_initGallery($gal_url = null)
 	if (isset($_REQUEST['noh']))
 		wetem::hide('html');
 
-	// If you are not allowed to enter......What are you doing here?
+	// If you are not allowed to enter.... What are you doing here?
 	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] != 'media')
 	{
 		if (empty($settings['media_enabled']))
@@ -371,11 +371,11 @@ function aeva_initGallery($gal_url = null)
 
 	foreach ($media_areas as $id => &$area)
 	{
-		$area['title'] = '<a href="' . (isset($area['href']) ? $area['href'] : $scripturl . '?action=media;area=' . $id) . '">' . $area['title'] . '</a>';
+		$area['title'] = '<a href="' . (isset($area['href']) ? $area['href'] : $galurl . ($id === 'home' ? '' : 'area=' . $id)) . '">' . $area['title'] . '</a>';
 
 		if (!empty($area['areas']))
 			foreach ($area['areas'] as $sub_id => &$sub_area)
-				$sub_area['custom_url'] = isset($sub_area['href']) ? $sub_area['href'] : (isset($area['href']) ? $area['href'] . ';sa=' . $sub_id : $galurl . 'area=' . $id . ';sa=' . $sub_id);
+				$sub_area['custom_url'] = isset($sub_area['href']) ? $sub_area['href'] : (isset($area['href']) ? $area['href'] . ';sa=' . $sub_id : $galurl . ($id === 'home' ? '' : 'area=' . $id . ';') . 'sa=' . $sub_id);
 	}
 
 	// Let modders modify the media menu easily.
@@ -397,7 +397,7 @@ function aeva_initGallery($gal_url = null)
 
 	if (!isset($_REQUEST['xml']))
 	{
-		wetem::add('top', array('aeva_header', 'aeva_subtabs'));
+		wetem::add('top', array('aeva_header', 'aeva_tabs'));
 
 		// Start the linktree
 		$context['linktree'] = array();
@@ -410,7 +410,6 @@ function aeva_initGallery($gal_url = null)
 	}
 
 	$context['aeva_header'] = array(
-		'areatabs' => array(),
 		'subtabs' => array(),
 		'data' => array(),
 	);
@@ -460,10 +459,10 @@ function aeva_initGallery($gal_url = null)
 				}
 
 				if (!empty($sadetails['title']))
-					$context['aeva_header']['areatabs'][$sa] = array(
-						'title' => $sadetails['title'],
-						'class' => $surlvar == $sa || (empty($surlvar) && !empty($sadetails['default'])) ? 'active' : '',
+					$context['aeva_tabs'][$sa] = array(
+						'label' => $txt[$sadetails['title']],
 						'url' => isset($areas[$area]['href']) ? $areas[$area]['href'] : $galurl . (isset($areas[$area]['url_index']) ? $areas[$area]['url_index'] : 'sa') . '=' . $area . ';' . (isset($details['sub_url_index']) ? $details['sub_url_index'] : 'do') . '=' . $sa,
+						'is_selected' => $surlvar == $sa,
 					);
 			}
 
@@ -502,7 +501,6 @@ function aeva_home()
 	// Templates
 	wetem::load('aeva_home');
 
-	$context['aeva_current'] = 'home';
 	$context['aeva_welcome'] = parse_bbc(!empty($amSettings['welcome']) ? $amSettings['welcome'] : (isset($txt['media_welcome']) ? $txt['media_welcome'] : $txt['media_default_welcome']));
 
 	if ($user_info['is_admin'])
@@ -571,9 +569,8 @@ function aeva_home()
 		$context['recent_albums'] = aeva_getMediaAlbums(0, $amSettings['recent_albums_limit']);
 
 	// Page title
-	$context['aeva_header']['data']['title'] = $txt['media_home'];
 	$context['canonical_url'] = $galurl . (isset($_GET['fw']) ? 'fw;' : '') . (isset($_GET['sort']) ? 'sort=' . $_GET['sort'] : '') . (isset($_GET['asc']) ? 'asc' : '') . (isset($_GET['desc']) ? 'desc' : '');
-	$context['page_title'] = $txt['media_gallery'];
+	$context['page_title'] = $txt['media_home'];
 }
 
 function aeva_sortBox($current_album, $count_items, $start, $per_page, $persort = 'm.id_media DESC')
@@ -674,7 +671,6 @@ function aeva_viewAlbum()
 			aeva_markAllSeen();
 	}
 
-	$context['aeva_header']['data']['title'] = $txt['media_album'];
 	$current_album['type2'] = $current_album['featured'] ? $txt['media_featured_album'] : $txt['media_album'];
 
 	$context['aeva_can_add_item'] = $current_album['can_upload'] && aeva_allowedTo(array('moderate', 'add_videos', 'add_embeds', 'add_audios', 'add_images', 'add_docs'), true);
@@ -720,7 +716,7 @@ function aeva_viewAlbum()
 	// Finish this by loading the template and page title
 	$context['album_data'] = $current_album;
 	wetem::load('aeva_viewAlbum');
-	$context['page_title'] = $current_album['name'];
+	$context['page_title'] = sprintf($txt['media_album_is'], $current_album['name']);
 	$context['canonical_url'] = $galurl . 'sa=album;in=' . $p['id'];
 
 	aeva_addHeaders(empty($current_album['options']['autosize']) || $current_album['options']['autosize'] == 'yes');
@@ -910,12 +906,12 @@ function aeva_viewItem()
 
 	$item_data['keyword_list'] = aeva_getTags($item_data['keywords']);
 
-	// Comments........
+	// Comments....
 	$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 	$per_page = 20;
 	$sort = isset($_REQUEST['com_desc']) ? 'DESC' : 'ASC';
 
-	$pageIndexURL = $galurl.'sa=item;in='.$item_data['id_media'];
+	$pageIndexURL = $galurl . 'sa=item;in=' . $item_data['id_media'];
 	if (isset($_REQUEST['com_desc']))
 		$pageIndexURL .= ';com_desc';
 	$item_data['com_page_index'] = template_page_index($pageIndexURL, $start, $item_data['num_comments'], $per_page);
@@ -930,7 +926,7 @@ function aeva_viewItem()
 		{raw:approvals}
 		ORDER BY com.id_comment {raw:sort}
 		LIMIT {int:start},{int:per_page}',
-		array('media' => $item_data['id_media'], 'sort' => $sort, 'per_page' => $per_page, 'approvals' => !aeva_allowedTo('moderate') ? 'AND (com.approved = 1 OR com.id_member = '.$user_info['id'].')' : '', 'start' => $start));
+		array('media' => $item_data['id_media'], 'sort' => $sort, 'per_page' => $per_page, 'approvals' => !aeva_allowedTo('moderate') ? 'AND (com.approved = 1 OR com.id_member = ' . $user_info['id'] . ')' : '', 'start' => $start));
 	$item_data['comments'] = array();
 	$item_data['no_comments'] = false;
 	$members = array();
@@ -1028,7 +1024,7 @@ function aeva_viewItem()
 		ORDER BY ' . $sort,
 		array(
 			'current_album' => $item_data['album_id'],
-			'approvals' => !aeva_allowedTo('moderate') ? 'AND (approved = 1 OR id_member = '.$user_info['id'].')' : ''
+			'approvals' => !aeva_allowedTo('moderate') ? 'AND (approved = 1 OR id_member = ' . $user_info['id'] . ')' : ''
 		));
 
 	// And fetch the ones just before and just after the current one.
@@ -1074,17 +1070,19 @@ function aeva_viewItem()
 	if ($item_data['type'] == 'embed')
 	{
 		$item_data['is_resized'] = !empty($item_data['id_preview']);
-		if (!$amSettings['enable_cache'] || !($item_data['embed_object'] = cache_get_data('aeva-embed-link-'.$item_data['embed_url'], 1200)))
+		preg_match('~\[url=([^]]+)~', $item_data['embed_url'], $match);
+		$key = md5($match[1]) . '-' . md5($item_data['embed_url']);
+		if (!$amSettings['enable_cache'] || !($item_data['embed_object'] = cache_get_data('aeva-embed-link-' . $key, 1200)))
 		{
 			loadSource('media/Aeva-Embed');
 
 			$item_data['embed_object'] = aeva_embed_video($item_data['embed_url'], $item_data['id_media'], $item_data['id_preview']);
-			cache_put_data('aeva-embed-link-'.$item_data['embed_url'], $item_data['embed_object'], 1200);
+			cache_put_data('aeva-embed-link-' . $key, $item_data['embed_object'], 1200);
 		}
 	}
 	else
 	{
-		if ($amSettings['enable_cache'] && ($temp_data = cache_get_data('aeva-file-info-'.$item_data['id_file'].'-'.$item_data['filename'], 1200)))
+		if ($amSettings['enable_cache'] && ($temp_data = cache_get_data('aeva-file-info-' . $item_data['id_file'] . '-' . $item_data['filename'], 1200)))
 		{
 			$item_data['embed_object'] = $temp_data['embed_object'];
 			$item_data['extra_info'] = $temp_data['extra_info'];
@@ -1125,7 +1123,7 @@ function aeva_viewItem()
 
 				foreach ($xtra_info as $key => $value)
 				{
-					if (isset($amSettings['show_info_'.$key]) && $amSettings['show_info_'.$key] == 1)
+					if (isset($amSettings['show_info_' . $key]) && $amSettings['show_info_' . $key] == 1)
 						$item_data['extra_info'][$key] = $value;
 				}
 			}
@@ -1140,7 +1138,7 @@ function aeva_viewItem()
 					'extra_info' => $item_data['extra_info'],
 					'is_resized' => $item_data['is_resized']
 				);
-				cache_put_data('aeva-file-info-'.$item_data['id_file'].'-'.$item_data['filename'], $cache, 1200);
+				cache_put_data('aeva-file-info-' . $item_data['id_file'] . '-' . $item_data['filename'], $cache, 1200);
 			}
 		}
 	}
@@ -1177,8 +1175,7 @@ function aeva_viewItem()
 	$context['canonical_url'] = $galurl . 'sa=item;in=' . $item_data['id_media'];
 
 	// Page headers
-	$context['aeva_header']['data']['title'] = $txt['media_type_' . $item_data['type']];
-	$context['page_title'] = $item_data['title'];
+	$context['page_title'] = $txt['media_type_' . $item_data['type']] . ': ' . $item_data['title'];
 
 	// Filesize
 	if ($item_data['filesize'] >= 1048576)
@@ -1221,7 +1218,7 @@ function aeva_viewItem()
 				$albums['sep' . ++$sep] = array($context['aeva_albums'][$list]['owner']['name'], false, 'begin');
 				$prev_owner = $new_owner;
 			}
-			$albums[$list] = array(str_repeat('-', $context['aeva_albums'][$list]['child_level']).' '.westr::cut($context['aeva_albums'][$list]['name'], 42), $list == $item_data['album_id'], null);
+			$albums[$list] = array(str_repeat('-', $context['aeva_albums'][$list]['child_level']) . ' ' . westr::cut($context['aeva_albums'][$list]['name'], 42), $list == $item_data['album_id'], null);
 		}
 		$albums['sep' . ++$sep] = array('', false, '');
 		$context['aeva_move_albums'] =& $albums;
@@ -1324,7 +1321,7 @@ function aeva_mgComment()
 
 		media_resetUnseen();
 		aeva_increaseSettings($approved == 1 ? 'total_comments' : 'num_unapproved_comments');
-		redirectexit($galurl.'sa=item;in='.$item_data['id_media'].'#com'.$id_comment);
+		redirectexit($galurl . 'sa=item;in=' . $item_data['id_media'] . '#com' . $id_comment);
 	}
 	else
 		wetem::load('aeva_form');
@@ -1337,24 +1334,23 @@ function aeva_mgComment()
 		foreach ($parents as $p)
 			add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
 	}
-	add_linktree($galurl.'sa=item;in='.$item_data['id_media'],$item_data['title']);
-	add_linktree($galurl.'sa=comment;in='.$item_data['id_media'],$txt['media_commenting']);
+	add_linktree($galurl . 'sa=item;in=' . $item_data['id_media'], $item_data['title']);
+	add_linktree($galurl . 'sa=comment;in=' . $item_data['id_media'], $txt['media_commenting']);
 
 	// End it up!
 	$context['item_data'] = $item_data;
 	$context['page_title'] = $txt['media_commenting'];
-	$context['aeva_header']['data']['title'] = $txt['media_commenting'];
 }
 
 function aeva_mgReport()
 {
 	// Handles reporting of comments/items
-	global $txt, $galurl, $scripturl, $db_prefix, $user_info, $context;
+	global $txt, $galurl, $db_prefix, $user_info, $context;
 
 	$type = $_GET['type'] == 'comment' ? 'com' : 'item';
 
-	if (!aeva_allowedTo('report_'.$type))
-		fatal_lang_error('media_'.$type.'_report_denied');
+	if (!aeva_allowedTo('report_' . $type))
+		fatal_lang_error('media_' . $type . '_report_denied');
 
 	// Get its data
 	if ($type == 'com')
@@ -1375,14 +1371,15 @@ function aeva_mgReport()
 	$request = wesql::query($query, array('id' => (int) $_GET['in']));
 
 	if (wesql::num_rows($request) == 0)
-		fatal_lang_error('media_'.$type.'_not_found');
+		fatal_lang_error('media_' . $type . '_not_found');
 	$dat = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
 	$context['aeva_reported'] = false;
 
-	$reporting_title = $type == 'com' ? $txt['media_comment'].': <a href="'.$galurl.'sa=item;in='.$dat['id_media'].'#com'.$dat['id_comment'].'">'.$dat['title'].'</a> '.$txt['media_by'].' <a href="'.$scripturl.'?action=profile;u='.$dat['id_member'].'">'.$dat['member_name'].'</a>'
-		: '<a href="'.$galurl.'sa=item;in='.$dat['id_media'].'">'.$dat['title'].'</a>';
+	$reporting_title = $type == 'com' ? $txt['media_comment'] . ': <a href="' . $galurl . 'sa=item;in=' . $dat['id_media'] . '#com' . $dat['id_comment'] . '">'
+		. $dat['title'] . '</a> ' . $txt['media_by'] . ' <a href="<URL>?action=profile;u=' . $dat['id_member'] . '">' . $dat['member_name'] . '</a>'
+		: '<a href="' . $galurl . 'sa=item;in=' . $dat['id_media'] . '">' . $dat['title'] . '</a>';
 
 	wetem::load('aeva_form');
 
@@ -1402,7 +1399,7 @@ function aeva_mgReport()
 			'custom' => 'rows="8" style="width: 98%"',
 		),
 	);
-	$context['aeva_form_url'] = $galurl.'sa=report;type='.($type == 'com' ? 'comment;in='.$dat['id_comment'] : 'item;in='.$dat['id_media']);
+	$context['aeva_form_url'] = $galurl . 'sa=report;type=' . ($type == 'com' ? 'comment;in=' . $dat['id_comment'] : 'item;in=' . $dat['id_media']);
 
 	// Reporting?
 	if (isset($_POST['submit_aeva']))
@@ -1415,25 +1412,24 @@ function aeva_mgReport()
 
 		wesql::insert('',
 			'{db_prefix}media_variables',
-			$type == 'com' ? array('type','val1','val2','val3', 'val4') : array('type','val1','val2','val3', 'val4', 'val5'),
+			$type == 'com' ? array('type', 'val1', 'val2', 'val3', 'val4') : array('type', 'val1', 'val2', 'val3', 'val4', 'val5'),
 			$type == 'com' ?
 				array('comment_report', $user_info['id'], time(), $reason, $dat['id_comment']) :
 				array('item_report', $user_info['id'], time(), $reason, $dat['id_media'], $dat['title'])
 		);
 		aeva_increaseSettings($type == 'com' ? 'num_reported_comments' : 'num_reported_items');
 		wetem::load('aeva_done');
-		$return = $scripturl . '?action=media;' . ($type == 'com' ? 'sa=item;in=' . $dat['id_media'] : 'sa=album;in=' . $dat['id_album']);
+		$return = $galurl . ($type == 'com' ? 'sa=item;in=' . $dat['id_media'] : 'sa=album;in=' . $dat['id_album']);
 		$context['aeva_done_txt'] = sprintf($txt['media_reported'], $return);
 	}
 
 	// Linktree
 	$parents = array_reverse(aeva_getAlbumParents($dat['id_album'], $dat['master']));
 	foreach ($parents as $p)
-		add_linktree($galurl.'sa=album;in='.$p['id'],$p['name']);
-	add_linktree($galurl.'sa=item;in='.$dat['id_media'],$dat['title']);
+		add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
+	add_linktree($galurl . 'sa=item;in=' . $dat['id_media'], $dat['title']);
 
 	$context['page_title'] = $txt['media_reporting'];
-	$context['aeva_header']['data']['title'] = $txt['media_reporting'];
 }
 
 // Handles adding/editing of items
@@ -1605,7 +1601,7 @@ function aeva_mgPost()
 			'type' => 'title',
 		),
 		'item' => array(
-			'label' => sprintf($txt['media_editing_item'], $galurl.'sa=item;in='.$data['id_media'], $data['title']),
+			'label' => sprintf($txt['media_editing_item'], $galurl . 'sa=item;in=' . $data['id_media'], $data['title']),
 			'class' => 'windowbg',
 			'perm' => $editing,
 			'type' => 'title',
@@ -1616,7 +1612,7 @@ function aeva_mgPost()
 			'type' => 'title',
 		),
 		'album' => array(
-			'label' => sprintf($txt['media_what_album'], $galurl.'sa=album;in='.$data['id_album'], $data['album_name']),
+			'label' => sprintf($txt['media_what_album'], $galurl . 'sa=album;in=' . $data['id_album'], $data['album_name']),
 			'class' => 'windowbg',
 			'perm' => !$editing,
 			'type' => 'title',
@@ -1664,7 +1660,7 @@ function aeva_mgPost()
 			'fieldname' => 'thumbnail',
 			'type' => 'file',
 			'subtext' => $txt['media_force_thumbnail_desc'] . ($editing ? $txt['media_force_thumbnail_edit'] : ''),
-			'add_text' => $editing ? '<p><img src="'.$galurl.'sa=media;in='.$data['id_media'].';thumb" style="padding-left: 4px"></p>' : '',
+			'add_text' => $editing ? '<p><img src="' . $galurl . 'sa=media;in=' . $data['id_media'] . ';thumb" style="padding-left: 4px"></p>' : '',
 			'colspan' => aeva_allowedTo('moderate') || $data['album_owner'] == $context['user']['id'] ? 2 : 0,
 		),
 		'as_icon' => array(
@@ -2105,7 +2101,7 @@ function aeva_mgEdit()
 
 function aeva_mgEditCom()
 {
-	global $scripturl, $txt, $context, $galurl, $user_info, $settings;
+	global $txt, $context, $galurl, $user_info, $settings;
 
 	// Load comment data
 	$request = wesql::query('
@@ -2137,9 +2133,10 @@ function aeva_mgEditCom()
 		),
 	);
 	$context['aeva_form_headers'] = array(
-		array($txt['media_editing_com'].' : <a href="'.$galurl.'sa=item;in='.$com_data['id_media'].'#com'.$com_data['id_comment'].'">'.$com_data['title'].'</a> '.$txt['media_by'].' <a href="'.$scripturl.'?action=profile;u='.$com_data['id_member'].'">'.$com_data['member_name'].'</a>'),
+		array($txt['media_editing_com'] . ' : <a href="' . $galurl . 'sa=item;in=' . $com_data['id_media'] . '#com' . $com_data['id_comment'] . '">'
+			. $com_data['title'] . '</a> ' . $txt['media_by'] . ' <a href="<URL>?action=profile;u=' . $com_data['id_member'] . '">' . $com_data['member_name'] . '</a>'),
 	);
-	$context['aeva_form_url'] = $galurl.'sa=edit;type=comment;in='.$com_data['id_comment'];
+	$context['aeva_form_url'] = $galurl . 'sa=edit;type=comment;in=' . $com_data['id_comment'];
 
 	// Editor
 	aeva_createTextEditor('comment', 'aeva_form', false, $com_data['message']);
@@ -2176,7 +2173,7 @@ function aeva_mgEditCom()
 			)
 		);
 
-		redirectexit($galurl.'sa=item;in='.$com_data['id_media'].'#com'.$com_data['id_comment']);
+		redirectexit($galurl . 'sa=item;in=' . $com_data['id_media'] . '#com' . $com_data['id_comment']);
 	}
 	else
 		wetem::load('aeva_form');
@@ -2187,10 +2184,10 @@ function aeva_mgEditCom()
 	{
 		$parents = array_reverse($parents);
 		foreach ($parents as $p)
-			add_linktree($galurl.'sa=album;in='.$p['id'],$p['name']);
+			add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
 	}
-	add_linktree($galurl.'sa=item;in='.$com_data['id_media'],$com_data['title']);
-	add_linktree($galurl.'sa=comment;in='.$com_data['id_media'],$txt['media_editing_com']);
+	add_linktree($galurl . 'sa=item;in=' . $com_data['id_media'], $com_data['title']);
+	add_linktree($galurl . 'sa=comment;in=' . $com_data['id_media'], $txt['media_editing_com']);
 }
 
 // A common function to delete comments and items
@@ -2236,7 +2233,7 @@ function aeva_delete()
 		// Delete it
 		aeva_deleteComments($com_data['id_comment']);
 
-		redirectexit($galurl.'sa=item;in='.$com_data['id_media']);
+		redirectexit($galurl . 'sa=item;in=' . $com_data['id_media']);
 	}
 	else
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
@@ -2330,7 +2327,7 @@ function aeva_mgApprove()
 			fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 		aeva_approveItems(array($item_data['id_media'] => $item_data['title']), $approval);
-		redirectexit($galurl.'sa=item;in='.$item_data['id_media']);
+		redirectexit($galurl . 'sa=item;in=' . $item_data['id_media']);
 	}
 	else
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));

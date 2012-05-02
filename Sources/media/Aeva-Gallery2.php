@@ -109,7 +109,7 @@ function aeva_moveItems()
 			LEFT JOIN {db_prefix}media_files AS f ON (f.id_file = m.id_file)
 			LEFT JOIN {db_prefix}media_files AS t ON (t.id_file = m.id_thumb)
 			LEFT JOIN {db_prefix}media_files AS p ON (p.id_file = m.id_preview)
-		WHERE m.id_media '. (is_array($ids) ? 'IN ({array_int:media})' : '= {int:media}'),
+		WHERE m.id_media ' . (is_array($ids) ? 'IN ({array_int:media})' : '= {int:media}'),
 		array('media' => array_values($ids))
 	);
 	if (wesql::num_rows($request) == 0)
@@ -148,14 +148,14 @@ function aeva_moveItems()
 			$albums['sep' . ++$sep] = array($context['aeva_albums'][$list]['owner']['name'], false, 'begin');
 			$prev_owner = $new_owner;
 		}
-		$albums[$list] = array(str_repeat('-', $context['aeva_albums'][$list]['child_level']).' '.$context['aeva_albums'][$list]['name'], false, $list == $items[0]['id_album'] ? ' disabled' : null);
+		$albums[$list] = array(str_repeat('-', $context['aeva_albums'][$list]['child_level']) . ' ' . $context['aeva_albums'][$list]['name'], false, $list == $items[0]['id_album'] ? ' disabled' : null);
 	}
 	$albums['sep' . ++$sep] = array('', false, '');
 
 	// Load up the form
 	$context['aeva_form_headers'] = array(
 		array($txt['media_moving_item'] . ': ' . $moving_link),
-		array($txt['media_album'] . ': <a href="' . $galurl . 'sa=album;in=' . $items[0]['id_album'] . '">' . $items[0]['name'] . '</a>'),
+		array(sprintf($txt['media_album_is'], '<a href="' . $galurl . 'sa=album;in=' . $items[0]['id_album'] . '">' . $items[0]['name'] . '</a>')),
 	);
 	$context['aeva_form_url'] = $galurl . 'sa=move';
 	$context['aeva_form'] = array(
@@ -186,7 +186,7 @@ function aeva_moveItems()
 		// then we'll update the album's stats and then we'll move the actual items... Phew!
 		foreach ($items as $i)
 		{
-			$main_file = $amSettings['data_dir_path'].'/'.$i['file_dir'].'/'.aeva_getEncryptedFilename($i['filename'], $i['id_file']);
+			$main_file = $amSettings['data_dir_path'] . '/' . $i['file_dir'] . '/' . aeva_getEncryptedFilename($i['filename'], $i['id_file']);
 
 			// If file type is not supported by target album, or it's larger than the allowed quota, skip it!
 			// If user is a moderator, they probably know what they're doing -- allow them anything.
@@ -196,13 +196,13 @@ function aeva_moveItems()
 				continue;
 
 			// Files
-			if ($i['id_thumb'] > 4 && file_exists($amSettings['data_dir_path'].'/'.$i['thumb_dir'].'/'.aeva_getEncryptedFilename($i['thumb_file'], $i['id_thumb'], true)))
+			if ($i['id_thumb'] > 4 && file_exists($amSettings['data_dir_path'] . '/' . $i['thumb_dir'] . '/' . aeva_getEncryptedFilename($i['thumb_file'], $i['id_thumb'], true)))
 			{
 				$new_dir = aeva_getSuitableDir($album_id);
 				$_new_dir = substr($new_dir, strlen($amSettings['data_dir_path']) + 1);
 				$success = rename(
-					$amSettings['data_dir_path'].'/'.$i['thumb_dir'].'/'.aeva_getEncryptedFilename($i['thumb_file'], $i['id_thumb'], true),
-					$new_dir.'/'.aeva_getEncryptedFilename($i['thumb_file'], $i['id_thumb'], true)
+					$amSettings['data_dir_path'] . '/' . $i['thumb_dir'] . '/' . aeva_getEncryptedFilename($i['thumb_file'], $i['id_thumb'], true),
+					$new_dir . '/' . aeva_getEncryptedFilename($i['thumb_file'], $i['id_thumb'], true)
 				);
 				if (!$success)
 					fatal_lang_error('media_filemove_failed');
@@ -213,13 +213,13 @@ function aeva_moveItems()
 					array('file' => $i['id_thumb'], 'dir' => $_new_dir, 'album' => $album_id)
 				);
 			}
-			if ($i['id_preview'] > 4 && file_exists($amSettings['data_dir_path'].'/'.$i['preview_dir'].'/'.aeva_getEncryptedFilename($i['preview_file'], $i['id_preview'])))
+			if ($i['id_preview'] > 4 && file_exists($amSettings['data_dir_path'] . '/' . $i['preview_dir'] . '/' . aeva_getEncryptedFilename($i['preview_file'], $i['id_preview'])))
 			{
 				$new_dir = aeva_getSuitableDir($album_id);
 				$_new_dir = substr($new_dir, strlen($amSettings['data_dir_path']) + 1);
 				$success = rename(
-					$amSettings['data_dir_path'].'/'.$i['preview_dir'].'/'.aeva_getEncryptedFilename($i['preview_file'],
-					$i['id_preview']), $new_dir.'/'.aeva_getEncryptedFilename($i['preview_file'], $i['id_preview'])
+					$amSettings['data_dir_path'] . '/' . $i['preview_dir'] . '/' . aeva_getEncryptedFilename($i['preview_file'],
+					$i['id_preview']), $new_dir . '/' . aeva_getEncryptedFilename($i['preview_file'], $i['id_preview'])
 				);
 				if (!$success)
 					fatal_lang_error('media_filemove_failed');
@@ -235,8 +235,8 @@ function aeva_moveItems()
 				$new_dir = aeva_getSuitableDir($album_id);
 				$_new_dir = substr($new_dir, strlen($amSettings['data_dir_path']) + 1);
 				$success = rename(
-					$amSettings['data_dir_path'].'/'.$i['file_dir'].'/'.aeva_getEncryptedFilename($i['filename'],
-					$i['id_file']), $new_dir.'/'.aeva_getEncryptedFilename($i['filename'], $i['id_file'])
+					$amSettings['data_dir_path'] . '/' . $i['file_dir'] . '/' . aeva_getEncryptedFilename($i['filename'],
+					$i['id_file']), $new_dir . '/' . aeva_getEncryptedFilename($i['filename'], $i['id_file'])
 				);
 				if (!$success)
 					fatal_lang_error('media_filemove_failed');
@@ -291,8 +291,8 @@ function aeva_moveItems()
 				'name' => $user_info['name'],
 			),
 			'extra_info' => array(
-				'val8' => $album_id.','.$context['aeva_albums'][$album_id]['name'],
-				'val9' => $items[0]['id_album'].','.$items[0]['name'],
+				'val8' => $album_id . ',' . $context['aeva_albums'][$album_id]['name'],
+				'val9' => $items[0]['id_album'] . ',' . $items[0]['name'],
 			),
 		);
 		aeva_logModAction($opts);
@@ -417,9 +417,7 @@ function aeva_unseen()
 
 	$context['aeva_page_index'] = template_page_index($galurl . 'sa=unseen' . (isset($_REQUEST['album']) ? ';album=' . (int) $_REQUEST['album'] : ''), $start, $total_items, $per_page);
 
-	$context['aeva_header']['data']['title'] = $txt['media_viewing_unseen'];
 	$context['page_title'] = $txt['media_viewing_unseen'];
-	$context['aeva_current'] = 'unseen';
 	wetem::load('aeva_unseen');
 	add_linktree($galurl . 'sa=unseen', $txt['media_viewing_unseen']);
 }
@@ -433,15 +431,7 @@ function aeva_mgSearch()
 	aeva_getAlbums();
 	$albums = array();
 	foreach ($context['aeva_album_list'] as $album)
-		$albums[$album] = str_repeat('-', $context['aeva_albums'][$album]['child_level']).' '.$context['aeva_albums'][$album]['name'];
-	// Search linktree
-	add_linktree($galurl . 'sa=search', $txt['media_search']);
-
-	// Page title
-	$context['page_title'] = $txt['media_search'];
-
-	// Tab data
-	$context['aeva_current'] = 'search';
+		$albums[$album] = str_repeat('-', $context['aeva_albums'][$album]['child_level']) . ' ' . $context['aeva_albums'][$album]['name'];
 
 	// Fields
 	$context['custom_fields'] = aeva_loadCustomFields(null, array(), 'cf.searchable = 1');
@@ -631,6 +621,12 @@ function aeva_mgSearch()
 		wetem::load('aeva_search_searching');
 		$context['aeva_albums'] = $albums;
 	}
+
+	// Page title
+	$context['page_title'] = $txt['media_search'];
+
+	// Search linktree
+	add_linktree($galurl . 'sa=search', $txt['media_search']);
 }
 
 function aeva_listAlbums()
@@ -677,8 +673,7 @@ function aeva_listAlbums()
 	// End this
 	wetem::load('aeva_viewUserAlbums');
 	add_linktree($galurl . 'sa=vua', $txt['media_albums']);
-	$context['aeva_header']['data']['title'] = $txt['media_albums'];
-	$context['page_title'] = $txt['media_gallery'];
+	$context['page_title'] = $txt['media_albums'];
 }
 
 function aeva_mgStats()
@@ -758,9 +753,7 @@ function aeva_mgStats()
 	);
 
 	wetem::load('aeva_stats');
-	$context['aeva_header']['data']['title'] = $txt['media_stats'];
-	$context['page_title'] = $txt['media_gallery'] . ' - ' . $txt['media_stats'];
-	$context['aeva_current'] = 'stats';
+	$context['page_title'] = $txt['media_stats'];
 	add_linktree($galurl . 'sa=stats', $txt['media_stats']);
 }
 
@@ -776,8 +769,6 @@ function aeva_albumCP($is_admin = false)
 		add_js_file('scripts/mediadmin.js');
 
 		$context['page_title'] = $txt['media_my_user_albums'];
-		$context['aeva_header']['data']['title'] = $txt['media_my_user_albums'];
-
 		add_linktree($galurl . 'area=mya', $txt['media_my_user_albums']);
 	}
 
@@ -819,7 +810,7 @@ function aeva_albumCP($is_admin = false)
 
 		if ($moving !== false && $moving != $list)
 		{
-			$move_url = '<a href="' . $alburl . ';sa=move;target='.$context['aeva_albums'][$list]['id'].';src='.$moving.';pos=%s"><img src="'.$theme['images_aeva'].'/arrow_%s.png" title="%s" style="vertical-align: bottom"></a>';
+			$move_url = '<a href="' . $alburl . ';sa=move;target=' . $context['aeva_albums'][$list]['id'] . ';src=' . $moving . ';pos=%s"><img src="' . $theme['images_aeva'] . '/arrow_%s.png" title="%s" style="vertical-align: bottom"></a>';
 			$context['aeva_my_albums'][$list]['move_links'] = array(
 				'before' => sprintf($move_url, 'before', 'up', $txt['media_admin_before']),
 				'after' => sprintf($move_url, 'after', 'down', $txt['media_admin_after']),
@@ -1041,8 +1032,8 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 
 	foreach ($sort_list as $counter => $tmp)
 	{
-		$sort_fields[$tmp.' DESC'] = array($txt['media_sort_by_'.$counter] . ' (' . $txt['media_sort_order_desc'] . ') - ' . $sort_help[$counter*2] . '...', $peralbum['sort'] == $tmp.' DESC');
-		$sort_fields[$tmp.' ASC'] = array($txt['media_sort_by_'.$counter] . ' (' . $txt['media_sort_order_asc'] . ') - ' . $sort_help[$counter*2+1] . '...', $peralbum['sort'] == $tmp.' ASC');
+		$sort_fields[$tmp . ' DESC'] = array($txt['media_sort_by_' . $counter] . ' (' . $txt['media_sort_order_desc'] . ') - ' . $sort_help[$counter*2] . '...', $peralbum['sort'] == $tmp . ' DESC');
+		$sort_fields[$tmp . ' ASC'] = array($txt['media_sort_by_' . $counter] . ' (' . $txt['media_sort_order_asc'] . ') - ' . $sort_help[$counter*2+1] . '...', $peralbum['sort'] == $tmp . ' ASC');
 	}
 
 	// Create the text editor
@@ -1095,7 +1086,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	if (empty($_GET['action']) || $_GET['action'] != 'admin')
 		$context['aeva_form_url'] = $galurl . 'area=mya;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album);
 	else
-		$context['aeva_form_url'] = $scripturl.'?action=admin;area=aeva_albums;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album) . ';' . $context['session_query'];
+		$context['aeva_form_url'] = $scripturl . '?action=admin;area=aeva_albums;sa=' . ($is_add ? 'add' : 'edit;in=' . $id_album) . ';' . $context['session_query'];
 
 	add_js_file('scripts/suggest.js');
 
@@ -1547,7 +1538,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 
 				if ($can_delete_icon)
 				{
-					@unlink($amSettings['data_dir_path'].'/'.$big_directory.'/'.aeva_getEncryptedFilename($big_filename, $big_icon));
+					@unlink($amSettings['data_dir_path'] . '/' . $big_directory . '/' . aeva_getEncryptedFilename($big_filename, $big_icon));
 					wesql::query('
 						DELETE FROM {db_prefix}media_files
 						WHERE id_file = {int:file}',
@@ -1560,7 +1551,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			$big_icon = 0;
 			$filename = basename($_FILES['icon']['name']);
 			$encfile = $filename . '_tmp';
-			$dir = $amSettings['data_dir_path'].'/album_icons';
+			$dir = $amSettings['data_dir_path'] . '/album_icons';
 			if (!file_exists($dir))
 				@mkdir($dir, 0777);
 			$dir2 = 'album_icons';
@@ -1649,13 +1640,13 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 					$big_icon = wesql::insert_id();
 
 					if ($bigiconed)
-						@rename($dir.'/big_'.$filename, $dir.'/'.aeva_getEncryptedFilename('big_'.$filename, $big_icon));
+						@rename($dir . '/big_' . $filename, $dir . '/' . aeva_getEncryptedFilename('big_' . $filename, $big_icon));
 					else
-						move_uploaded_file($_FILES['icon']['tmp_name'], $dir.'/'.aeva_getEncryptedFilename('big_'.$filename, $big_icon));
+						move_uploaded_file($_FILES['icon']['tmp_name'], $dir . '/' . aeva_getEncryptedFilename('big_' . $filename, $big_icon));
 				}
 			}
 			else
-				move_uploaded_file($_FILES['icon']['tmp_name'], $dir.'/'.aeva_getEncryptedFilename($filename, $icon, true));
+				move_uploaded_file($_FILES['icon']['tmp_name'], $dir . '/' . aeva_getEncryptedFilename($filename, $icon, true));
 		}
 		elseif ($is_add)
 			$icon = 4;
@@ -1879,7 +1870,7 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 	// Remove the icon
 	if ($icon > 4)
 	{
-		@unlink($amSettings['data_dir_path'].'/album_icons/'.aeva_getEncryptedFilename($file, $icon, true));
+		@unlink($amSettings['data_dir_path'] . '/album_icons/' . aeva_getEncryptedFilename($file, $icon, true));
 		wesql::query('
 			DELETE FROM {db_prefix}media_files
 			WHERE id_file = {int:file}',
@@ -1890,7 +1881,7 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 	// Remove the big icon
 	if ($big_icon > 0)
 	{
-		@unlink($amSettings['data_dir_path'].'/'.$big_dir.'/'.aeva_getEncryptedFilename($big_file, $big_icon));
+		@unlink($amSettings['data_dir_path'] . '/' . $big_dir . '/' . aeva_getEncryptedFilename($big_file, $big_icon));
 		wesql::query('
 			DELETE FROM {db_prefix}media_files
 			WHERE id_file = {int:file}',
@@ -2296,7 +2287,7 @@ function aeva_profileSummary($memID)
 	);
 
 	// Load recent items
-	$context['aeva_member']['recent_items'] = aeva_getMediaItems(0, $amSettings['recent_item_limit'], 'm.time_added DESC', true, array(), 'm.id_member = '. $memID);
+	$context['aeva_member']['recent_items'] = aeva_getMediaItems(0, $amSettings['recent_item_limit'], 'm.time_added DESC', true, array(), 'm.id_member = ' . $memID);
 
 	// Load the albums
 	aeva_getAlbums('a.album_of = ' . $memID, 1, true, 'a.child_level, a.a_order', '', true, true, true);
@@ -2359,7 +2350,7 @@ function aeva_profileItems($memID)
 	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=aevaitems', $_REQUEST['start'], $context['member']['media']['total_items'], 20);
 
 	// Load the items
-	$context['aeva_items'] = aeva_getMediaItems((int) $_REQUEST['start'], 20, 'm.id_media DESC', true, array(), 'm.id_member = '.$memID);
+	$context['aeva_items'] = aeva_getMediaItems((int) $_REQUEST['start'], 20, 'm.id_media DESC', true, array(), 'm.id_member = ' . $memID);
 
 	wetem::load('aeva_profile_viewitems');
 	$context['page_title'] = $txt['media_profile_viewitems'];
@@ -2382,7 +2373,7 @@ function aeva_profileComments($memID)
 	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=aevacoms', $_REQUEST['start'], $context['member']['media']['total_comments'], 20);
 
 	// Load the items
-	$context['aeva_coms'] = aeva_getMediaComments((int) $_REQUEST['start'], 20, false, array(), 'com.id_member = '.$memID);
+	$context['aeva_coms'] = aeva_getMediaComments((int) $_REQUEST['start'], 20, false, array(), 'com.id_member = ' . $memID);
 
 	wetem::load('aeva_profile_viewcoms');
 	$context['page_title'] = $txt['media_profile_viewcoms'];
@@ -2559,7 +2550,7 @@ function aeva_massDownload()
 	$context['aeva_form_url'] = $galurl . 'sa=massdown;do=create';
 	$context['aeva_form'] = array(
 		'title' => array(
-			'label' => '<input type="hidden" name="album" value="' . $context['aeva_album']['id'] . '">' . $txt['media_multi_download'] . ' - <a href="' . $galurl . 'sa=album;in=' . $context['aeva_album']['id'] . '">' . $context['aeva_album']['name'] . '</a>',
+			'label' => '<input type="hidden" name="album" value="' . $context['aeva_album']['id'] . '">' . sprintf($txt['media_album_is'], '<a href="' . $galurl . 'sa=album;in=' . $context['aeva_album']['id'] . '">' . $context['aeva_album']['name'] . '</a>'),
 			'type' => 'title',
 		),
 		'title2' => array(
