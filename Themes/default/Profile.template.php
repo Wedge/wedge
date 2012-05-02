@@ -2418,9 +2418,9 @@ function template_profile_signature_modify()
 		{
 			oldSignature = currentSignature;
 
-			if (currentSignature.replace(/\r/, "").length > maxLength)
-				document.forms.creator.signature.value = currentSignature.replace(/\r/, "").substring(0, maxLength);
-			currentSignature = document.forms.creator.signature.value.replace(/\r/, "");
+			if (currentSignature.replace(/\r/g, "").length > maxLength)
+				document.forms.creator.signature.value = currentSignature.replace(/\r/g, "").substring(0, maxLength);
+			currentSignature = document.forms.creator.signature.value.replace(/\r/g, "");
 		}
 
 		$("#signatureLeft").html(maxLength - currentSignature.length);

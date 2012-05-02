@@ -264,7 +264,7 @@
 
 				// Show scrollbars if the dropdown is taller than 250 pixels (or the viewport height).
 				// Touch-enabled phones have poor usability and shouldn't bother -- let them stretch all the way.
-				ddMaxHeight = Math.min(is_touch ? 9e9 : 250, ddHeight, Math.max(bottomSpace + 50, topSpace)),
+				ddMaxHeight = Math.min(250, ddHeight, Math.max(bottomSpace + 50, topSpace)),
 
 				// If we have enough space below the button, or if we don't have enough room above either, show a dropdown.
 				// Otherwise, show a drop-up, but only if there's enough size, or the space above is more comfortable.
@@ -497,7 +497,7 @@
 			startPos = 0, iMouse, iScroll = 0,
 			thumbAxis, viewportAxis, contentAxis,
 			$content, $scrollbar, $thumb,
-			scrollbarRatio, newwi,
+			scrollbarRatio, newwi, iTouch,
 
 		wheel = function (e)
 		{
@@ -578,6 +578,15 @@
 		}
 		else
 			$dd[0].onmousewheel = wheel;
+
+		$dd[0].addEventListener('touchstart', function (e) {
+			iTouch = e.touches[0].pageY;
+			startPos = parseInt($thumb.css('top') || 0);
+		});
+		$dd[0].addEventListener('touchmove', function (e) {
+			scrollTo(startPos - e.touches[0].pageY + iTouch);
+			e.preventDefault();
+		});
 	};
 
 	// .sb() takes a select box and restyles it.
