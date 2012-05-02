@@ -355,6 +355,14 @@ function loadUserSettings()
 		$user_settings['transparency'] = we_resetTransparency($user_settings['id_attach'], $filename, $user_settings['filename']) ? 'transparent' : 'opaque';
 	}
 
+	if (isset($_SESSION['is_mobile']))
+		$user_info['is_mobile'] = $_SESSION['is_mobile'];
+	else
+	{
+		loadSource('Class-MoDe');
+		$user_info['is_mobile'] = $_SESSION['is_mobile'] = weMoDe::isMobile();
+	}
+
 	// Set up the $user_info array.
 	$user_info += array(
 		'id' => $id_member,
@@ -365,8 +373,8 @@ function loadUserSettings()
 		'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $language : $user_settings['lngfile'],
 		'is_guest' => $id_member == 0,
 		'is_admin' => in_array(1, $user_info['groups']),
-		'theme' => empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme'],
-		'skin' => empty($user_settings['id_theme']) ? '' : $user_settings['skin'],
+		'theme' => $user_info['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? 0 : $user_settings['id_theme_mobile']) : (empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme']),
+		'skin' => $user_info['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['id_theme']) ? '' : $user_settings['skin']),
 		'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 		'ip' => $_SERVER['REMOTE_ADDR'],
 		'ip2' => $_SERVER['BAN_CHECK_IP'],
@@ -1582,6 +1590,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$id_theme = $user_info['theme'];
 		$skin = $user_info['skin'];
 	}
+	// The theme is the forum's mobile default.
+	elseif (!empty($user_info['is_mobile']))
+	{
+		$id_theme = $settings['theme_guests_mobile'];
+		$skin = $settings['theme_skin_guests_mobile'];
+	}
 	// The theme was specified by the board.
 	elseif (!empty($board_info['theme']))
 	{
@@ -1615,8 +1629,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Time to determine our CSS list...
 	// First, load our requested skin folder.
-	$context['skin'] = empty($skin) ?
-		(empty($id_theme) ? $settings['theme_skin_guests'] : 'skins') :
+	$context['skin'] = empty($skin) ? (empty($id_theme) ?
+		(empty($user_info['is_mobile']) ? $settings['theme_skin_guests'] : $settings['theme_skin_guests_mobile']) :
+		(empty($user_info['is_mobile']) ? 'skins' : 'skins/Wireless')) :
 		($skin === 'skins' || strpos($skin, 'skins/') === 0 ? '' : 'skins/') . $skin;
 	$folders = explode('/', $context['skin']);
 	$context['css_folders'] = array();

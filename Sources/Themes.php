@@ -217,12 +217,15 @@ function ThemeAdmin()
 				fatal_lang_error('themes_default_selectable', false);
 
 		$arrh = explode('_', $_POST['options']['theme_guests']);
+		$arrm = explode('_', $_POST['options']['theme_guests_mobile']);
 
 		// Commit the new settings.
 		updateSettings(array(
 			'theme_allow' => $_POST['options']['theme_allow'],
 			'theme_guests' => $arrh[0],
+			'theme_guests_mobile' => $arrm[0],
 			'theme_skin_guests' => isset($arrh[1]) ? base64_decode($arrh[1]) : 'skins',
+			'theme_skin_guests_mobile' => isset($arrm[1]) ? base64_decode($arrm[1]) : 'skins/Wireless',
 			'knownThemes' => implode(',', $_POST['options']['known_themes']),
 		));
 
@@ -230,10 +233,7 @@ function ThemeAdmin()
 		{
 			$reset = explode('_', $_POST['theme_reset']);
 			if ((int) $reset[0] === 0 || in_array($reset[0], $_POST['options']['known_themes']))
-				updateMemberData(null, array(
-					'id_theme' => (int) $reset[0],
-					'skin' => isset($reset[1]) ? base64_decode($reset[1]) : ''
-				));
+				wedge_update_skin(null, (int) $reset[0], isset($reset[1]) ? base64_decode($reset[1]) : '');
 		}
 
 		redirectexit('action=admin;area=theme;' . $context['session_query'] . ';sa=admin');
@@ -548,10 +548,13 @@ function RemoveTheme()
 	$known = strtr(implode(',', $known), array(',,' => ','));
 
 	// Fix it if the theme was the overall default theme.
+	$upd = array('knownThemes' => $known);
 	if ($settings['theme_guests'] == $_GET['th'])
-		updateSettings(array('theme_guests' => '1', 'knownThemes' => $known));
-	else
-		updateSettings(array('knownThemes' => $known));
+		$upd['theme_guests'] = '1';
+	if ($settings['theme_guests_mobile'] == $_GET['th'])
+		$upd['theme_guests_mobile'] = '1';
+
+	updateSettings($upd);
 
 	redirectexit('action=admin;area=theme;sa=list;' . $context['session_query']);
 }
@@ -587,38 +590,36 @@ function PickTheme()
 		// Save for this user.
 		if ($u === null || !allowedTo('admin_forum'))
 		{
-			updateMemberData($user_info['id'], array(
-				'id_theme' => $id,
-				'skin' => $css
-			));
+			wedge_update_skin($user_info['id'], $id, $css);
 			redirectexit('action=skin');
 		}
 
 		// For everyone.
 		if ($u == '0')
 		{
-			updateMemberData(null, array(
-				'id_theme' => $id,
-				'skin' => $css
-			));
+			wedge_update_skin(null, $id, $css);
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
 		// Change the default/guest theme.
 		elseif ($u == '-1')
 		{
-			updateSettings(array(
-				'theme_guests' => $id,
-				'theme_skin_guests' => $css
-			));
+			// Let's assume the admin is in mobile mode. Meaning they want to change the default mobile skin...
+			if (!empty($user_info['is_mobile']))
+				updateSettings(array(
+					'theme_guests_mobile' => $id,
+					'theme_skin_guests_mobile' => $css
+				));
+			else
+				updateSettings(array(
+					'theme_guests' => $id,
+					'theme_skin_guests' => $css
+				));
 			redirectexit('action=admin;area=theme;sa=admin;' . $context['session_query']);
 		}
 		// Change a specific member's theme.
 		else
 		{
-			updateMemberData((int) $u, array(
-				'id_theme' => $id,
-				'skin' => $css
-			));
+			wedge_update_skin((int) $u, $id, $css);
 			redirectexit('action=skin;u=' . (int) $u);
 		}
 	}
@@ -641,8 +642,8 @@ function PickTheme()
 	elseif ($u == '-1')
 	{
 		$context['specify_member'] = ';u=-1';
-		$context['current_theme'] = $settings['theme_guests'];
-		$context['current_skin'] = $settings['theme_skin_guests'];
+		$context['current_theme'] = !empty($user_info['is_mobile']) ? $settings['theme_guests_mobile'] : $settings['theme_guests'];
+		$context['current_skin'] = !empty($user_info['is_mobile']) ? $settings['theme_skin_guests_mobile'] : $settings['theme_skin_guests'];
 	}
 	// Someone else :P
 	else
@@ -650,7 +651,7 @@ function PickTheme()
 		$context['specify_member'] = ';u=' . (int) $u;
 
 		$request = wesql::query('
-			SELECT id_theme, skin
+			SELECT ' . (!empty($user_info['is_mobile']) ? 'id_theme_mobile, skin_mobile' : 'id_theme, skin') . '
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_member}
 			LIMIT 1',
@@ -1603,6 +1604,22 @@ function wedge_show_skins(&$th, &$style, $level, $current_theme_id, $current_ski
 			wedge_show_skins($th, $sty['skins'], $level + 1, $current_theme_id, $current_skin);
 		$current++;
 	}
+}
+
+function wedge_update_skin($mem, $id_theme, $skin)
+{
+	global $user_info;
+
+	if (!empty($user_info['is_mobile']))
+		updateMemberData($mem, array(
+			'id_theme_mobile' => $id_theme,
+			'skin_mobile' => $skin
+		));
+	else
+		updateMemberData($mem, array(
+			'id_theme' => $id_theme,
+			'skin' => $skin
+		));
 }
 
 ?>
