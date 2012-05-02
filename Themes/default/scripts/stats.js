@@ -126,7 +126,7 @@ function weStatsCenter(oOptions)
 	// Collapse all collapsed years!
 	for (i = 0; i < oOptions.aCollapsedYears.length; i++)
 		this.oYears[this.opt.aCollapsedYears[i]].oToggle.toggle();
-};
+}
 
 weStatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {

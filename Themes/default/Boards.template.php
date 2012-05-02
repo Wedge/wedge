@@ -111,7 +111,8 @@ function template_boards()
 						<p class="moderators">', count($board['moderators']) == 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
 
 				// Show some basic information about the number of posts, etc.
-				echo '
+				if (empty($context['skin_options']['mobile']))
+					echo '
 					</td>
 					<td class="stats">
 						<p>', number_context($board['is_redirect'] ? 'num_redirects' : 'num_posts', $board['posts']),

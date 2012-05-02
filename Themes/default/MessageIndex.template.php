@@ -48,16 +48,21 @@ function template_main_board()
 		{
 			echo '
 					<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
-					<th scope="col" class="left">', template_messageindex_sortlink('subject', $txt['subject']), ' / ', template_messageindex_sortlink('starter', $txt['started_by']), '</th>
+					<th scope="col" class="left">', template_messageindex_sortlink('subject', $txt['subject']), ' / ', template_messageindex_sortlink('starter', $txt['started_by']), '</th>';
+
+			if (empty($context['skin_options']['mobile']))
+			{
+				echo '
 					<th scope="col" style="width: 14%">', template_messageindex_sortlink('replies', $txt['replies']), ' / ', template_messageindex_sortlink('views', $txt['views']), '</th>';
 
-			// Show a "select all" box for quick moderation?
-			if (empty($context['can_quick_mod']))
-				echo '
+				// Show a "select all" box for quick moderation?
+				if (empty($context['can_quick_mod']))
+					echo '
 					<th scope="col" class="left last_th" style="width: 22%">', template_messageindex_sortlink('last_post', $txt['last_post']), '</th>';
-			else
-				echo '
+				else
+					echo '
 					<th scope="col" class="left" style="width: 22%">', template_messageindex_sortlink('last_post', $txt['last_post']), '</th>';
+			}
 
 			// Show a "select all" box for quick moderation?
 			if (!empty($context['can_quick_mod']))
@@ -130,16 +135,23 @@ function template_main_board()
 							<p>', $txt['started_by'], ' ', $topic['first_post']['member']['link'], '
 								<small id="pages' . $topic['first_post']['id'] . '">', $topic['pages'], '</small>
 							</p>
-						</div>
+						</div>';
+
+			if (empty($context['skin_options']['mobile']))
+				echo '
 					</td>
 					<td class="stats ', $color_class, '">
 						', number_context('num_replies', $topic['replies']), '
 						<br>', number_context('num_views', $topic['views']), '
 					</td>
-					<td class="lastpost ', $alternate_class, '">
-						<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
-						', $topic['last_post']['time'], '
-						<br>', $txt['by'], ' ', $topic['last_post']['member']['link'], '
+					<td class="lastpost ', $alternate_class, '">';
+
+			echo '
+						<p>
+							<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
+							', $topic['last_post']['time'], '
+							<br>', $txt['by'], ' ', $topic['last_post']['member']['link'], '
+						</p>
 					</td>';
 
 			// Show the quick moderation options?
@@ -491,7 +503,8 @@ function template_messageindex_childboards()
 						<p class="moderators">', count($board['moderators']) === 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
 
 			// Show some basic information about the number of posts, etc.
-			echo '
+			if (empty($context['skin_options']['mobile']))
+				echo '
 					</td>
 					<td class="stats windowbg">
 						<p>', number_context($board['is_redirect'] ? 'num_redirects' : 'num_posts', $board['posts']), ' <br>

@@ -76,8 +76,8 @@ class wedit
 			add_js_file(array(
 				'scripts/editor.js',
 				'scripts/editor-func.js',
-				'scripts/postpage.js'
-			), false, false, array('editor-func', 'postpage'));
+				'scripts/post.js'
+			), false, false, array('editor-func', 'post'));
 
 			$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
 			if ($context['show_spellchecking'])
