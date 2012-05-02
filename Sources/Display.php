@@ -61,7 +61,7 @@ function Display()
 	// !!! Should we just be taking the original HTTP var and redirect to it?
 	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($settings['pretty_filters']['topics']))
 	{
-		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['topicseen']) ? ';topicseen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
+		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['seen']) ? ';seen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
 		header('HTTP/1.1 301 Moved Permanently');
 		redirectexit($url, false);
 	}
@@ -850,10 +850,10 @@ function Display()
 		}
 
 		// Have we recently cached the number of new topics in this board, and it's still a lot?
-		if (isset($_REQUEST['topicseen'], $_SESSION['topicseen_cache'][$board]) && $_SESSION['topicseen_cache'][$board] > 5)
-			$_SESSION['topicseen_cache'][$board]--;
+		if (isset($_REQUEST['seen'], $_SESSION['seen_cache'][$board]) && $_SESSION['seen_cache'][$board] > 5)
+			$_SESSION['seen_cache'][$board]--;
 		// Mark board as seen if this is the only new topic.
-		elseif (isset($_REQUEST['topicseen']))
+		elseif (isset($_REQUEST['seen']))
 		{
 			// Use the mark read tables... and the last visit to figure out if this should be read or not.
 			// @todo: should this use {query_see_topic}? Wouldn't recommend, as a topic might be marked private, but later published.
@@ -879,11 +879,11 @@ function Display()
 			if (empty($numNewTopics))
 				$_REQUEST['boardseen'] = true;
 			else
-				$_SESSION['topicseen_cache'][$board] = $numNewTopics;
+				$_SESSION['seen_cache'][$board] = $numNewTopics;
 		}
 		// Probably one less topic - maybe not, but even if we decrease this too fast it will only make us look more often.
-		elseif (isset($_SESSION['topicseen_cache'][$board]))
-			$_SESSION['topicseen_cache'][$board]--;
+		elseif (isset($_SESSION['seen_cache'][$board]))
+			$_SESSION['seen_cache'][$board]--;
 
 		// Mark board as seen if we came using the last post link from the board list or other places.
 		if (isset($_REQUEST['boardseen']))

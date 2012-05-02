@@ -25,8 +25,8 @@ function QuickModeration()
 	if (isset($_REQUEST['qaction']) && $_REQUEST['qaction'] == 'restore' && !empty($_REQUEST['topics']))
 		redirectexit('action=restoretopic;topics=' . implode(',', $_REQUEST['topics']) . ';' . $context['session_query']);
 
-	if (isset($_SESSION['topicseen_cache']))
-		$_SESSION['topicseen_cache'] = array();
+	if (isset($_SESSION['seen_cache']))
+		$_SESSION['seen_cache'] = array();
 
 	// This is going to be needed to send off the notifications and for updateLastMessages().
 	loadSource('Subs-Post');

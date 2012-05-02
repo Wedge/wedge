@@ -372,7 +372,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			'body' => $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ($row['is_read'] ? '' : ';topicseen') . '#new',
+			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . ($row['is_read'] ? '' : ';seen') . '#new',
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'] . '" rel="nofollow">' . $row['subject'] . '</a>',
 			'new' => !empty($row['is_read']),
 			'is_new' => empty($row['is_read']),
@@ -397,7 +397,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 				<td class="top">
 					<a href="', $post['href'], '">', $post['subject'], '</a>
 					', $txt['by'], ' ', $post['poster']['link'], '
-					', $post['is_new'] ? '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ($post['is_new'] ? ';topicseen' : '') . '#new" rel="nofollow" class="note">' . $txt['new'] . '</a>' : '', '
+					', $post['is_new'] ? '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ($post['is_new'] ? ';seen' : '') . '#new" rel="nofollow" class="note">' . $txt['new'] . '</a>' : '', '
 				</td>
 				<td class="right nowrap">
 					', $post['time'], '
@@ -524,7 +524,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'preview' => $just_titles ? '' : $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row['id_msg'] : $row['new_from']) . ($row['is_read'] ? '' : ';topicseen') . '#new',
+			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row['id_msg'] : $row['new_from']) . ($row['is_read'] ? '' : ';seen') . '#new',
 			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row['id_msg'] : $row['new_from']) . '#new" rel="nofollow">' . $row['subject'] . '</a>',
 			// Retained for compatibility - is technically incorrect!
 			'new' => !empty($row['is_read']),
@@ -551,7 +551,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 				<td class="top">
 					<a href="', $post['href'], '">', $post['subject'], '</a>
 					', $txt['by'], ' ', $post['poster']['link'], '
-					', !$post['is_new'] ? '' : '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ($post['is_new'] ? ';topicseen' : '') . '#new" rel="nofollow" class="note">' . $txt['new'] . '</a>', '
+					', !$post['is_new'] ? '' : '<a href="' . $scripturl . '?topic=' . $post['topic'] . '.msg' . $post['new_from'] . ($post['is_new'] ? ';seen' : '') . '#new" rel="nofollow" class="note">' . $txt['new'] . '</a>', '
 				</td>
 				<td class="top right nowrap">
 					', $post['time'], '

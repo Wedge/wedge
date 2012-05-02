@@ -141,12 +141,12 @@ function MessageIndex()
 
 			// We've seen all these boards now!
 			foreach ($board_info['parent_boards'] as $k => $dummy)
-				if (isset($_SESSION['topicseen_cache'][$k]))
-					unset($_SESSION['topicseen_cache'][$k]);
+				if (isset($_SESSION['seen_cache'][$k]))
+					unset($_SESSION['seen_cache'][$k]);
 		}
 
-		if (isset($_SESSION['topicseen_cache'][$board]))
-			unset($_SESSION['topicseen_cache'][$board]);
+		if (isset($_SESSION['seen_cache'][$board]))
+			unset($_SESSION['seen_cache'][$board]);
 
 		$request = wesql::query('
 			SELECT sent

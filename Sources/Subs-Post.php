@@ -1070,7 +1070,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 		$replacements = array(
 			'TOPICSUBJECT' => $topicData[$row['id_topic']]['subject'],
 			'POSTERNAME' => un_htmlspecialchars($topicData[$row['id_topic']]['name']),
-			'TOPICLINK' => $scripturl . '?topic=' . $row['id_topic'] . '.new;topicseen#new',
+			'TOPICLINK' => $scripturl . '?topic=' . $row['id_topic'] . '.new;seen#new',
 			'UNSUBSCRIBELINK' => $scripturl . '?action=notify;topic=' . $row['id_topic'] . '.0',
 		);
 
@@ -1450,8 +1450,8 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$_SESSION['last_read_topic'] = 0;
 
 	// Better safe than sorry.
-	if (isset($_SESSION['topicseen_cache'][$topicOptions['board']]))
-		$_SESSION['topicseen_cache'][$topicOptions['board']]--;
+	if (isset($_SESSION['seen_cache'][$topicOptions['board']]))
+		$_SESSION['seen_cache'][$topicOptions['board']]--;
 
 	// Update all the stats so everyone knows about this new topic and message.
 	updateStats('message', true, $msgOptions['id']);
@@ -2313,7 +2313,7 @@ function sendApprovalNotifications(&$topicData)
 			$replacements = array(
 				'TOPICSUBJECT' => $topicData[$row['id_topic']]['subject'],
 				'POSTERNAME' => un_htmlspecialchars($topicData[$row['id_topic']]['name']),
-				'TOPICLINK' => $scripturl . '?topic=' . $row['id_topic'] . '.new;topicseen#new',
+				'TOPICLINK' => $scripturl . '?topic=' . $row['id_topic'] . '.new;seen#new',
 				'UNSUBSCRIBELINK' => $scripturl . '?action=notify;topic=' . $row['id_topic'] . '.0',
 			);
 
