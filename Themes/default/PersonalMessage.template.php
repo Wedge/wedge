@@ -56,7 +56,7 @@ function template_pm_after()
 
 function template_folder()
 {
-	global $context, $theme, $options, $settings, $txt;
+	global $context, $theme, $options, $settings, $txt, $user_info;
 
 	$is_mobile = !empty($context['skin_options']['mobile']);
 
@@ -146,7 +146,7 @@ function template_folder()
 			$window_class = $message['alternate'] == 0 ? '' : '2';
 
 			echo '
-	<div class="postbg', $window_class, ' pm"><div class="post_wrapper">
+	<div class="postbg', $window_class, $message['member']['id'] === $user_info['id'] ? ' self' : '', ' pm"><div class="post_wrapper">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';
@@ -178,6 +178,7 @@ function template_folder()
 				if ((empty($theme['hide_post_group']) || $message['member']['group'] == '') && $message['member']['post_group'] != '')
 					echo '
 				<li class="postgroup">', $message['member']['post_group'], '</li>';
+
 				echo '
 				<li class="stars">', $message['member']['group_stars'], '</li>';
 
@@ -296,7 +297,7 @@ function template_folder()
 				echo '(', $txt['pm_undisclosed_recipients'], ')';
 
 			echo '
-						', $message['time'], '
+						', $message['on_time'], '
 					</span>';
 
 			// If we're in the sent items, show who it was sent to besides the "To:" people.
@@ -536,7 +537,7 @@ function template_subject_list()
 		<tr class="', $next_alternate ? 'windowbg' : 'windowbg2', '">
 			<td class="center" style="width: 4%">
 				', $message['is_replied_to'] ? '<img src="' . $theme['images_url'] . '/icons/pm_replied.gif" style="margin-right: 4px" alt="' . $txt['pm_replied'] . '">' : '<img src="' . $theme['images_url'] . '/icons/pm_read.gif" style="margin-right: 4px" alt="' . $txt['pm_read'] . '">', '</td>
-			<td>', $message['time'], '</td>
+			<td>', $message['on_time'], '</td>
 			<td>', ($context['display_mode'] != 0 && $context['current_pm'] == $message['id'] ? '<img src="' . $theme['images_url'] . '/selected.gif">' : ''), '<a href="', ($context['display_mode'] == 0 || $context['current_pm'] == $message['id'] ? '' : ('<URL>?action=pm;pmid=' . $message['id'] . ';kstart;f=' . $context['folder'] . ';start=' . $context['start'] . ';sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';' : ';desc') . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : ''))), '#msg', $message['id'], '">', $message['subject'], '</a>', $message['is_unread'] ? '&nbsp;<div class="note">' . $txt['new'] . '</div>' : '', '</td>
 			<td>', ($context['from_or_to'] == 'from' ? $message['member']['link'] : (empty($message['recipients']['to']) ? '' : implode(', ', $message['recipients']['to']))), '</td>
 			<td class="center" style="width: 4%"><input type="checkbox" name="pms[]" id="deletelisting', $message['id'], '" value="', $message['id'], '"', $message['is_selected'] ? ' checked' : '', ' onclick="$(\'#deletedisplay', $message['id'], '\').attr(\'checked\', this.checked);"></td>
@@ -722,7 +723,7 @@ function template_search_results()
 			<div class="windowbg', $alternate ? '2' : '', ' wrc core_posts pm">
 				<div class="counter">', $message['counter'], '</div>
 				<div class="topic_details">
-					<span class="floatright">', $txt['search_on'], ': ', $message['time'], '</span>
+					<span class="floatright">', $message['on_time'], '</span>
 					<h3><a href="', $message['href'], '">', $message['subject'], '</a></h3>
 					', $txt['from'], ': <strong>', $message['member']['link'], '</strong>, ', $txt['to'], ': <strong>';
 
@@ -767,7 +768,7 @@ function template_search_results()
 			// !!! No context at all of the search?
 			echo '
 			<tr class="windowbg', $alternate ? '2' : '', ' top">
-				<td>', $message['time'], '</td>
+				<td>', $message['on_time'], '</td>
 				<td>', $message['link'], '</td>
 				<td>', $message['member']['link'], '</td>
 			</tr>';
@@ -938,7 +939,7 @@ function template_send()
 		', $txt['subject'], ': ', $context['quoted_message']['subject'], '
 	</we:title>
 	<div class="windowbg2 wrc core_posts pm clear clearfix">
-		<span class="smalltext floatright">', $txt['on'], ': ', $context['quoted_message']['time'], '</span>
+		<span class="smalltext floatright">', $context['quoted_message']['on_time'], '</span>
 		<strong>', $txt['from'], ': ', $context['quoted_message']['member']['name'], '</strong>
 		<hr>
 		', $context['quoted_message']['body'], '
@@ -950,7 +951,7 @@ function template_send()
 	));
 
 	add_js('
-	var oPersonalMessageSend = new wePersonalMessageSend({
+	new wePersonalMessageSend({
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		sToControlId: \'to_control\',
 		aToRecipients: {');
@@ -1606,7 +1607,7 @@ function template_pm_drafts()
 				<div class="topic_details">
 					<h5><strong>', $post['subject'], '</strong></h5>
 					<div class="smalltext"><strong>', $txt['pm_to'], ':</strong> ', empty($post['recipients']['to']) ? '<span class="alert">' . $txt['no_recipients'] . '</span>' : implode(', ', $post['recipients']['to']), (empty($post['recipients']['bcc']) ? '' : ', <strong>' . $txt['pm_bcc'] . ':</strong> ' . implode(', ', $post['recipients']['bcc'])), '
-					', $post['time'], '</div>
+					', $post['on_time'], '</div>
 				</div>
 				<div class="list_posts">
 					', $post['body'], '

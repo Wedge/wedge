@@ -1224,7 +1224,7 @@ function getTopic()
 			'alternate' => $counter % 2,
 			'poster' => $row['poster_name'],
 			'message' => $row['body'],
-			'time' => timeformat($row['poster_time']),
+			'on_time' => on_timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'id' => $row['id_msg'],
 			'is_new' => !empty($context['new_replies']),

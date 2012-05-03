@@ -80,7 +80,7 @@ function template_latest_news()
 				%content%
 			</dl>'), ',
 		sAnnouncementMessageTemplate: ', JavaScriptEscape('
-			<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
+			<dt><a href="%href%">%subject%</a> ' . sprintf($txt['on_date'], '%time%') . '</dt>
 			<dd>
 				%message%
 			</dd>'), ',
@@ -335,7 +335,7 @@ function template_unapproved_posts()
 			<we:title>
 				<span class="smalltext floatleft">', $item['counter'], '&nbsp;</span>
 				<span class="smalltext floatleft"><a href="', $scripturl, '?category=', $item['category']['id'], '">', $item['category']['name'], '</a> / <a href="', $scripturl, '?board=', $item['board']['id'], '.0">', $item['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $item['topic']['id'], '.msg', $item['id'], '#msg', $item['id'], '">', $item['subject'], '</a></span>
-				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $txt['on'], ': ', $item['time'], '</span>
+				<span class="smalltext floatright">', $txt['mc_unapproved_by'], ' ', $item['poster']['link'], ' ', $item['on_time'], '</span>
 			</we:title>
 			<div class="windowbg', $item['alternate'] ? '' : '2', ' wrc core_posts">
 				<div class="post">', $item['body'], '</div>

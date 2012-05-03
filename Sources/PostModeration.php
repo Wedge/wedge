@@ -128,11 +128,11 @@ function UnapprovedPosts()
 				continue;
 
 			$can_add = false;
+
 			// If we're approving this is simple.
 			if ($curAction == 'approve' && ($any_array == array(0) || in_array($row['id_board'], $any_array)))
-			{
 				$can_add = true;
-			}
+
 			// Delete requires more permission checks...
 			elseif ($curAction == 'delete')
 			{
@@ -142,31 +142,31 @@ function UnapprovedPosts()
 				// Is it a reply to their own topic?
 				elseif ($row['id_member'] == $row['id_member_started'] && $row['id_msg'] != $row['id_first_msg'] && ($delete_own_replies == array(0) || in_array($row['id_board'], $delete_own_replies)))
 					$can_add = true;
-				// Someone elses?
+				// Someone else's?
 				elseif ($row['id_member'] != $user_info['id'] && ($delete_any_boards == array(0) || in_array($row['id_board'], $delete_any_boards)))
 					$can_add = true;
 			}
 
 			if ($can_add)
-				$anItem = $context['current_view'] == 'topics' ? $row['id_topic'] : $row['id_msg'];
+				$anItem = $row[$context['current_view'] == 'topics' ? 'id_topic' : 'id_msg'];
 			$toAction[] = $anItem;
 
 			// All clear. What have we got now, what, what?
 			$details[$anItem] = array();
-			$details[$anItem]["subject"] = $row['subject'];
-			$details[$anItem]["topic"] = $row['id_topic'];
-			$details[$anItem]["member"] = ($context['current_view'] == 'topics') ? $row['id_member_started'] : $row['id_member'];
-			$details[$anItem]["board"] = $row['id_board'];
+			$details[$anItem]['subject'] = $row['subject'];
+			$details[$anItem]['topic'] = $row['id_topic'];
+			$details[$anItem]['member'] = $row[$context['current_view'] == 'topics' 'id_member_started' : 'id_member'];
+			$details[$anItem]['board'] = $row['id_board'];
 		}
 		wesql::free_result($request);
 
-		// If we have anything left we can actually do the approving (etc).
+		// If we have anything left we can actually do the approving (etc.)
 		if (!empty($toAction))
 		{
 			if ($curAction == 'approve')
-				approveMessages ($toAction, $details, $context['current_view']);
+				approveMessages($toAction, $details, $context['current_view']);
 			else
-				removeMessages ($toAction, $details, $context['current_view']);
+				removeMessages($toAction, $details, $context['current_view']);
 		}
 	}
 
@@ -263,7 +263,7 @@ function UnapprovedPosts()
 			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . $row['id_msg'] . '#msg' . $row['id_msg'],
 			'subject' => $row['subject'],
 			'body' => parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']),
-			'time' => timeformat($row['poster_time']),
+			'on_time' => on_timeformat($row['poster_time']),
 			'poster' => array(
 				'id' => $row['id_member'],
 				'name' => $row['poster_name'],
@@ -345,18 +345,14 @@ function approveMessages($messages, $messageDetails, $current_view = 'replies')
 		approveTopics($messages);
 		// and tell the world about it
 		foreach ($messages as $topic)
-		{
 			logAction('approve_topic', array('topic' => $topic, 'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']));
-		}
 	}
 	else
 	{
 		approvePosts($messages);
 		// and tell the world about it again
 		foreach ($messages as $post)
-		{
 			logAction('approve', array('topic' => $messageDetails[$post]['topic'], 'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']));
-		}
 	}
 }
 
@@ -372,7 +368,9 @@ function removeMessages($messages, $messageDetails, $current_view = 'replies')
 		foreach ($messages as $topic)
 			// Note, only log topic ID in native form if it's not gone forever.
 			logAction('remove', array(
-				(empty($settings['recycle_enable']) || $settings['recycle_board'] != $messageDetails[$topic]['board'] ? 'topic' : 'old_topic_id') => $topic, 'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']));
+				(empty($settings['recycle_enable']) || $settings['recycle_board'] != $messageDetails[$topic]['board'] ? 'topic' : 'old_topic_id') => $topic,
+				'subject' => $messageDetails[$topic]['subject'], 'member' => $messageDetails[$topic]['member'], 'board' => $messageDetails[$topic]['board']
+			));
 	}
 	else
 	{
@@ -380,7 +378,9 @@ function removeMessages($messages, $messageDetails, $current_view = 'replies')
 		{
 			removeMessage($post);
 			logAction('delete', array(
-				(empty($settings['recycle_enable']) || $settings['recycle_board'] != $messageDetails[$post]['board'] ? 'topic' : 'old_topic_id') => $messageDetails[$post]['topic'], 'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']));
+				(empty($settings['recycle_enable']) || $settings['recycle_board'] != $messageDetails[$post]['board'] ? 'topic' : 'old_topic_id') => $messageDetails[$post]['topic'],
+				'subject' => $messageDetails[$post]['subject'], 'member' => $messageDetails[$post]['member'], 'board' => $messageDetails[$post]['board']
+			));
 		}
 	}
 }

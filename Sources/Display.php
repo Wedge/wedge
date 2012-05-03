@@ -1315,11 +1315,11 @@ function prepareDisplayContext($reset = false)
 		'icon' => $message['icon'],
 		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
-		'time' => on_timeformat($message['poster_time']),
+		'on_time' => on_timeformat($message['poster_time']),
 		'timestamp' => forum_time(true, $message['poster_time']),
 		'counter' => $board_info['type'] == 'board' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(
-			'time' => on_timeformat($message['modified_time']),
+			'on_time' => on_timeformat($message['modified_time']),
 			'timestamp' => forum_time(true, $message['modified_time']),
 			'name' => $message['modified_name'],
 			'member' => $message['modified_member'],

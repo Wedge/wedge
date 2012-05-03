@@ -311,15 +311,13 @@ function template_postform_after()
 	var postmod = document.forms.postmodify,
 		postbox = ' . JavaScriptEscape($context['postbox']->id) . ',
 		posthandle = oEditorHandle_' . $context['postbox']->id . ',
-
 		current_board = ' . (empty($context['current_board']) ? 'null' : $context['current_board']) . ',
 		make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ',
 		new_replies = [], reply_counter = ' . (empty($counter) ? 0 : $counter) . ',
 		can_quote = ' . ($context['can_quote'] ? 'true' : 'false') . ',
+		new_post_tpl = ' . JavaScriptEscape('<div class="windowbg%counter% wrc core_posts"><div id="msg%id%"><div class="floatleft"><h5>' . $txt['posted_by'] . ': %poster%</h5>'
+			. '<span class="smalltext">&#171;&nbsp;%date%&nbsp;&#187;</span><div class="note" id="image_new_%id%">%new%</div></div>') . ',
 		ptxt = {
-			posted_by: ' . JavaScriptEscape($txt['posted_by']) . ',
-			on: ' . JavaScriptEscape($txt['on']) . ',
-			is_new: ' . JavaScriptEscape($txt['new']) . ',
 			bbc_quote: ' . JavaScriptEscape($txt['bbc_quote']) . ',
 			ignoring_user: ' . JavaScriptEscape($txt['ignoring_user']) . ',
 			show_ignore_user_post: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
@@ -512,7 +510,7 @@ function template_show_previous_posts()
 				<div id="msg', $post['id'], '">
 					<div class="floatleft">
 						<h5>', $txt['posted_by'], ': ', $post['poster'], '</h5>
-						<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
+						<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
 					</div>';
 
 		if ($context['can_quote'])

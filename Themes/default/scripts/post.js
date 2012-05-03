@@ -75,9 +75,11 @@ function previewPost()
 			if ($('is_ignored', this).text() != 0)
 				ignored_replies.push(ignoring = id);
 
-			newPostsHTML += '<div class="windowbg' + (++reply_counter % 2 == 0 ? '2' : '') + ' wrc core_posts"><div id="msg' + id + '"><div class="floatleft"><h5>'
-				+ ptxt.posted_by + ' ' + $('poster', this).text() + '</h5><span class="smalltext">&#171;&nbsp;<strong>' + ptxt.on + ':</strong> ' + $('time', this).text()
-				+ '&nbsp;&#187;</span><div class="note" id="image_new_' + id + '">' + ptxt.is_new + '</div></div>';
+			newPostsHTML += new_post_tpl.wereplace({
+				reply: ++reply_counter % 2 == 0 ? '2' : '',
+				id: id, poster: $('poster', this).text(),
+				date: $('time', this).text()
+			});
 
 			if (can_quote)
 				newPostsHTML += '<ul class="quickbuttons" id="msg_' + id + '_quote"><li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(\''

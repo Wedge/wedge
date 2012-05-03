@@ -375,8 +375,8 @@ function populate_sub_thoughts(&$here, &$thought)
 	}
 }
 
-// View the drafts of the user.
-function viewDrafts($memID)
+// Show the user's drafts.
+function showDrafts($memID)
 {
 	global $context, $memberContext, $txt, $settings, $user_info, $user_profile, $scripturl;
 
@@ -520,7 +520,7 @@ function viewDrafts($memID)
 				'locked' => !empty($row['locked']),
 				'no_edit' => !empty($row['id_context']) && empty($row['id_topic']),
 			),
-			'time' => on_timeformat($row['post_time']),
+			'on_time' => on_timeformat($row['post_time']),
 			'timestamp' => forum_time(true, $row['post_time']),
 			'icon' => $row['extra']['post_icon'],
 		);

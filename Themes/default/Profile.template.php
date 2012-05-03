@@ -397,7 +397,7 @@ function template_showDrafts()
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5><strong>', $post['board']['link'], ' / ', $post['topic']['link'], '</strong></h5>
-					<span class="smalltext">&#171;&nbsp;<strong>', $txt['on'], ':</strong> ', $post['time'], '&nbsp;&#187;</span>
+					<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
 				</div>
 				<div class="list_posts">
 					', $post['body'], '

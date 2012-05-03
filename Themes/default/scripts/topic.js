@@ -575,7 +575,7 @@ function MiniMenu(oList, bAcme, oStrings)
 			if ($(menuid).length || !aLinkList)
 				return;
 
-			var sHTML = '', i = 1, j = aLinkList.length, mtarget, pms, sLink, $men, mpo, paw;
+			var sHTML = '', i = 0, j = aLinkList.length, mtarget, pms, sLink, $men, mpo, paw;
 			for (; i < j; i++)
 			{
 				pms = oStrings[aLinkList[i].substr(0, 2)];

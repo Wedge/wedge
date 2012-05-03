@@ -119,7 +119,7 @@ function template_post()
 		foreach ($context['previous_posts'] as $post)
 			echo '
 		<post id="', $post['id'], '">
-			<time><![CDATA[', $post['time'], ']]></time>
+			<time><![CDATA[', $post['on_time'], ']]></time>
 			<poster><![CDATA[', cleanXml($post['poster']), ']]></poster>
 			<message><![CDATA[', cleanXml($post['message']), ']]></message>
 			<is_ignored>', $post['is_ignored'] ? '1' : '0', '</is_ignored>

@@ -781,7 +781,7 @@ function setupAdminSidebar()
 			</dl>
 		'), ',
 		sAnnouncementMessageTemplate: ', JavaScriptEscape('
-			<dt><a href="%href%">%subject%</a> ' . $txt['on'] . ' %time%</dt>
+			<dt><a href="%href%">%subject%</a> ' . sprintf($txt['on_date'], '%time%'), '</dt>
 			<dd>
 				%message%
 			</dd>

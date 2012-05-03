@@ -149,7 +149,7 @@ function template_main_board()
 			echo '
 						<p>
 							<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
-							', $topic['last_post']['time'], '
+							', $topic['last_post']['on_time'], '
 							<br>', $txt['by'], ' ', $topic['last_post']['member']['link'], '
 						</p>
 					</td>';

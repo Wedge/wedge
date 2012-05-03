@@ -75,7 +75,7 @@ function template_display_posts()
 									<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>', $message['new'] ? '
 									<div class="note">' . $txt['new'] . '</div>' : '', '
 								</h5>
-								<span>&#171; ', !empty($message['counter']) ? sprintf($txt['reply_number'], $message['counter']) : '', ' ', $message['time'], ' &#187;</span>
+								<span>&#171; ', !empty($message['counter']) ? sprintf($txt['reply_number'], $message['counter']) : '', ' ', $message['on_time'], ' &#187;</span>
 								<div id="msg_', $message['id'], '_quick_mod"></div>
 							</div>';
 
@@ -123,19 +123,19 @@ function template_display_posts()
 		else
 		{
 			// If we're in mobile mode, we'll move the Quote and Modify buttons to the Action menu.
-			$menu = $context['action_menu'][$message['id']];
+			$menu = isset($context['action_menu'][$message['id']]) ? $context['action_menu'][$message['id']] : array();
 
 			// Insert them after the previous message's id.
 			if ($message['can_modify'])
-				array_splice($menu, 1, 0, 'mo');
+				array_unshift($menu, 'mo');
 
 			if ($context['can_quote'])
-				array_splice($menu, 1, 0, 'qu');
+				array_unshift($menu, 'qu');
 
 			if (empty($context['liked_posts'][$message['id']]['you']))
-				array_splice($menu, 1, 0, 'lk');
+				array_unshift($menu, 'lk');
 			else
-				array_splice($menu, 1, 0, 'uk');
+				array_unshift($menu, 'uk');
 
 			$context['action_menu'][$message['id']] = $menu;
 			$context['action_menu_items_show'] += array_flip($menu);
@@ -206,7 +206,7 @@ function template_display_posts()
 		// Show "Last Edit on Date by Person" if this post was edited.
 		if ($theme['show_modify'] && !empty($message['modified']['name']))
 			echo '
-								', $txt['last_edit'], ' ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . (!empty($message['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $message['modified']['member'] . '">' . $message['modified']['name'] . '</a>' : $message['modified']['name']) : '';
+								', $txt['last_edit'], ' ', $message['modified']['on_time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . (!empty($message['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $message['modified']['member'] . '">' . $message['modified']['name'] . '</a>' : $message['modified']['name']) : '';
 
 		echo '
 							</div>';
@@ -347,7 +347,7 @@ function template_display_posts()
 
 		foreach ($context['user_menu'] as $user => $linklist)
 			$context['footer_js'] .= '
-		' . $user. ': [ "' . implode('", "', $linklist) . '" ],';
+		' . $user. ': ["' . implode('", "', $linklist) . '"],';
 
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
 	}, false, {';
@@ -356,13 +356,13 @@ function template_display_posts()
 			if (!isset($context['user_menu_items_show'][$key]))
 				continue;
 			$context['footer_js'] .= '
-		' . $key . ': [ ';
+		' . $key . ': [';
 			foreach ($pmi as $type => $item)
 				if ($type === 'caption')
 					$context['footer_js'] .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
 				else
 					$context['footer_js'] .= $item . ', ';
-			$context['footer_js'] = substr($context['footer_js'], 0, -2) . ' ],';
+			$context['footer_js'] = substr($context['footer_js'], 0, -2) . '],';
 		}
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
 	});';
@@ -375,7 +375,7 @@ function template_display_posts()
 
 		foreach ($context['action_menu'] as $post => $linklist)
 			$context['footer_js'] .= '
-		' . $post . ': [ "' . implode('", "', $linklist) . '" ],';
+		' . $post . ': ["' . implode('", "', $linklist) . '"],';
 
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
 	}, true, {';
@@ -384,13 +384,13 @@ function template_display_posts()
 			if (!isset($context['action_menu_items_show'][$key]))
 				continue;
 			$context['footer_js'] .= '
-		' . $key . ': [ ';
+		' . $key . ': [';
 			foreach ($pmi as $type => $item)
 				if ($type === 'caption')
 					$context['footer_js'] .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
 				else
 					$context['footer_js'] .= $item . ', ';
-			$context['footer_js'] = substr($context['footer_js'], 0, -2) . ' ],';
+			$context['footer_js'] = substr($context['footer_js'], 0, -2) . '],';
 		}
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
 	});';
@@ -410,7 +410,7 @@ function template_userbox(&$message)
 						<div class="tinyuser">
 							<span>', timeformat($message['timestamp']), '</span>
 							<ul class="quickbuttons">
-								<li><a id="mm', $message['id'], '" class="acme more_button">', $txt['more_actions'], '</a></li>
+								<li><a id="mm', $message['id'], '" class="acme more_button">', $txt['actions_button'], '</a></li>
 							</ul>
 						</div>';
 

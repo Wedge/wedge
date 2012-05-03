@@ -55,13 +55,13 @@ function PrintPage()
 	wesql::free_result($request);
 
 	// Let's "output" all that info.
-	loadTemplate('Printpage');
+	loadTemplate('PrintPage');
 	wetem::hide('print');
 
 	$context['board_name'] = $board_info['name'];
 	$context['category_name'] = $board_info['cat']['name'];
 	$context['poster_name'] = $row['poster_name'];
-	$context['post_time'] = timeformat($row['poster_time'], false);
+	$context['post_on_time'] = on_timeformat($row['poster_time'], false);
 	$context['parent_boards'] = array();
 	foreach ($board_info['parent_boards'] as $parent)
 		$context['parent_boards'][] = $parent['name'];
@@ -90,7 +90,7 @@ function PrintPage()
 		$context['posts'][] = array(
 			'subject' => $row['subject'],
 			'member' => $row['poster_name'],
-			'time' => timeformat($row['poster_time'], false),
+			'on_time' => on_timeformat($row['poster_time'], false),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'body' => parse_bbc($row['body'], 'print'),
 		);
