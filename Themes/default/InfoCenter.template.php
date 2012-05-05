@@ -36,7 +36,7 @@ function template_info_center_statistics()
 		<ul class="stats">
 			<li>', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '.</li>', !empty($theme['show_latest_member']) ? '
 			<li>' . $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong></li>' : '', !empty($context['latest_post']) ? '
-			<li>' . $txt['latest_post'] . ': <strong>&quot;' . $context['latest_post']['link'] . '&quot;</strong> (' . $context['latest_post']['time'] . ')</li>' : '', '
+			<li>' . $txt['latest_post'] . ': <strong>&quot;' . $context['latest_post']['link'] . '&quot;</strong> (' . $context['latest_post']['on_time'] . ')</li>' : '', '
 			<li><a href="', $scripturl, '?action=recent">', $txt['recent_view'], '</a></li>', $context['show_stats'] ? '
 			<li><a href="' . $scripturl . '?action=stats">' . $txt['more_stats'] . '</a></li>' : '', '
 		</ul>

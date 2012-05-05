@@ -793,7 +793,7 @@ function showPosts($memID)
 			'topic' => $row['id_topic'],
 			'subject' => $row['subject'],
 			'start' => 'msg' . $row['id_msg'],
-			'time' => on_timeformat($row['poster_time']),
+			'on_time' => on_timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'id' => $row['id_msg'],
 			'can_reply' => false,

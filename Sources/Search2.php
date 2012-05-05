@@ -37,7 +37,7 @@ if (!defined('WEDGE'))
 // Gather the results and show them.
 function Search2()
 {
-	global $scripturl, $settings, $sourcedir, $txt, $db_connection;
+	global $settings, $sourcedir, $txt, $db_connection;
 	global $user_info, $context, $options, $messages_request, $boards_can;
 	global $excludedWords, $participants, $searchAPI;
 
@@ -90,7 +90,7 @@ function Search2()
 	loadLanguage('Search');
 	if (!isset($_REQUEST['xml']))
 		loadTemplate('Search');
-	//If we're doing XML we need to use the results template regardless really.
+	// If we're doing Ajax we need to use the XML template's results block.
 	else
 		wetem::load('results');
 
@@ -440,7 +440,7 @@ function Search2()
 			unset($phraseArray[$index]);
 		}
 
-	// Now we look for -test, etc.... normaller.
+	// Now we look for single-word -word requests.
 	foreach ($wordArray as $index => $word)
 		if (strpos(trim($word), '-') === 0)
 		{
@@ -719,11 +719,11 @@ function Search2()
 
 	// ... and add the links to the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=search;params=' . $context['params'],
+		'url' => '<URL>?action=search;params=' . $context['params'],
 		'name' => $txt['search']
 	);
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=search2;params=' . $context['params'],
+		'url' => '<URL>?action=search2;params=' . $context['params'],
 		'name' => $txt['search_results']
 	);
 
@@ -1470,7 +1470,7 @@ function Search2()
 	}
 
 	// Now that we know how many results to expect we can start calculating the page numbers.
-	$context['page_index'] = template_page_index($scripturl . '?action=search2;params=' . $context['params'], $_REQUEST['start'], $num_results, $settings['search_results_per_page'], false);
+	$context['page_index'] = template_page_index('<URL>?action=search2;params=' . $context['params'], $_REQUEST['start'], $num_results, $settings['search_results_per_page'], false);
 
 	// Consider the search complete!
 	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
@@ -1494,7 +1494,7 @@ function Search2()
 // !!! Fix this, update it, whatever... from Display.php mainly.
 function prepareSearchContext($reset = false)
 {
-	global $txt, $settings, $scripturl, $user_info;
+	global $txt, $settings, $user_info;
 	global $memberContext, $context, $theme, $options, $messages_request;
 	global $boards_can, $participants;
 
@@ -1554,7 +1554,7 @@ function prepareSearchContext($reset = false)
 		if (westr::strlen($message['body']) > $charLimit)
 		{
 			if (empty($context['key_words']))
-				$message['body'] = westr::substr($message['body'], 0, $charLimit) . '<strong>...</strong>';
+				$message['body'] = westr::substr($message['body'], 0, $charLimit) . '<strong>&hellip;</strong>';
 			else
 			{
 				$matchString = '';
@@ -1580,7 +1580,7 @@ function prepareSearchContext($reset = false)
 				foreach ($matches[0] as $index => $match)
 				{
 					$match = strtr(htmlspecialchars($match, ENT_QUOTES), array("\n" => '&nbsp;'));
-					$message['body'] .= '<strong>......</strong>&nbsp;' . $match . '&nbsp;<strong>......</strong>';
+					$message['body'] .= '<strong>&hellip;&hellip;</strong>&nbsp;' . $match . '&nbsp;<strong>&hellip;&hellip;</strong>';
 				}
 			}
 
@@ -1588,11 +1588,9 @@ function prepareSearchContext($reset = false)
 			$message['body'] = preg_replace('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~e', 'westr::entity_fix(\'\\1\')', $message['body']);
 		}
 	}
+	// Run BBC interpreter on the message.
 	else
-	{
-		// Run BBC interpreter on the message.
 		$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
-	}
 
 	// Make sure we don't end up with a practically empty message body.
 	$message['body'] = preg_replace('~^(?:&nbsp;)+$~', '', $message['body']);
@@ -1620,6 +1618,11 @@ function prepareSearchContext($reset = false)
 	// Do we have quote tag enabled?
 	$quote_enabled = empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC']));
 
+	$body_highlighted = $message['body'];
+	$subject_highlighted = $message['subject'];
+	$started = $message['first_member_id'] == $user_info['id'];
+	$id_board = $message['id_board'];
+
 	$output = array_merge($context['topics'][$message['id_msg']], array(
 		'id' => $message['id_topic'],
 		'is_pinned' => !empty($message['is_pinned']),
@@ -1628,72 +1631,28 @@ function prepareSearchContext($reset = false)
 		'posted_in' => !empty($participants[$message['id_topic']]),
 		'views' => $message['num_views'],
 		'replies' => $message['num_replies'],
-		'can_reply' => in_array($message['id_board'], $boards_can['post_reply_any']) || in_array(0, $boards_can['post_reply_any']),
-		'can_quote' => (in_array($message['id_board'], $boards_can['post_reply_any']) || in_array(0, $boards_can['post_reply_any'])) && $quote_enabled,
-		'can_mark_notify' => in_array($message['id_board'], $boards_can['mark_any_notify']) || in_array(0, $boards_can['mark_any_notify']) && !$context['user']['is_guest'],
-		'first_post' => array(
-			'id' => $message['first_msg'],
-			'time' => timeformat($message['first_poster_time']),
-			'timestamp' => forum_time(true, $message['first_poster_time']),
-			'subject' => $message['first_subject'],
-			'href' => $scripturl . '?topic=' . $message['id_topic'] . '.0',
-			'link' => '<a href="' . $scripturl . '?topic=' . $message['id_topic'] . '.0">' . $message['first_subject'] . '</a>',
-			'icon' => $message['first_icon'],
-			'icon_url' => $theme[$context['icon_sources'][$message['first_icon']]] . '/post/' . $message['first_icon'] . '.gif',
-			'member' => array(
-				'id' => $message['first_member_id'],
-				'name' => $message['first_member_name'],
-				'href' => !empty($message['first_member_id']) ? $scripturl . '?action=profile;u=' . $message['first_member_id'] : '',
-				'link' => !empty($message['first_member_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $message['first_member_id'] . '" title="' . $txt['view_profile'] . '">' . $message['first_member_name'] . '</a>' : $message['first_member_name']
-			)
-		),
-		'last_post' => array(
-			'id' => $message['last_msg'],
-			'time' => timeformat($message['last_poster_time']),
-			'timestamp' => forum_time(true, $message['last_poster_time']),
-			'subject' => $message['last_subject'],
-			'href' => $scripturl . '?topic=' . $message['id_topic'] . ($message['num_replies'] == 0 ? '.0' : '.msg' . $message['last_msg']) . '#msg' . $message['last_msg'],
-			'link' => '<a href="' . $scripturl . '?topic=' . $message['id_topic'] . ($message['num_replies'] == 0 ? '.0' : '.msg' . $message['last_msg']) . '#msg' . $message['last_msg'] . '">' . $message['last_subject'] . '</a>',
-			'icon' => $message['last_icon'],
-			'icon_url' => $theme[$context['icon_sources'][$message['last_icon']]] . '/post/' . $message['last_icon'] . '.gif',
-			'member' => array(
-				'id' => $message['last_member_id'],
-				'name' => $message['last_member_name'],
-				'href' => !empty($message['last_member_id']) ? $scripturl . '?action=profile;u=' . $message['last_member_id'] : '',
-				'link' => !empty($message['last_member_id']) ? '<a href="' . $scripturl . '?action=profile;u=' . $message['last_member_id'] . '" title="' . $txt['view_profile'] . '">' . $message['last_member_name'] . '</a>' : $message['last_member_name']
-			)
-		),
+		'can_reply' => in_array($id_board, $boards_can['post_reply_any']) || in_array(0, $boards_can['post_reply_any']),
+		'can_quote' => (in_array($id_board, $boards_can['post_reply_any']) || in_array(0, $boards_can['post_reply_any'])) && $quote_enabled,
+		'can_mark_notify' => in_array($id_board, $boards_can['mark_any_notify']) || in_array(0, $boards_can['mark_any_notify']) && !$context['user']['is_guest'],
 		'board' => array(
-			'id' => $message['id_board'],
+			'id' => $id_board,
 			'name' => $message['board_name'],
-			'href' => $scripturl . '?board=' . $message['id_board'] . '.0',
-			'link' => '<a href="' . $scripturl . '?board=' . $message['id_board'] . '.0">' . $message['board_name'] . '</a>'
+			'href' => '<URL>?board=' . $id_board . '.0',
+			'link' => '<a href="<URL>?board=' . $id_board . '.0">' . $message['board_name'] . '</a>'
 		),
-		'category' => array(
-			'id' => $message['id_cat'],
-			'name' => $message['cat_name'],
-			'href' => $scripturl . '?category=' . $message['id_cat'],
-			'link' => '<a href="' . $scripturl . '?category=' . $message['id_cat'] . '">' . $message['cat_name'] . '</a>'
-		)
+		'quick_mod' => array(
+			'lock' => in_array(0, $boards_can['lock_any']) || in_array($id_board, $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($id_board, $boards_can['lock_own']))),
+			'pin' => (in_array(0, $boards_can['pin_topic']) || in_array($id_board, $boards_can['pin_topic'])),
+			'move' => in_array(0, $boards_can['move_any']) || in_array($id_board, $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($id_board, $boards_can['move_own']))),
+			'remove' => in_array(0, $boards_can['remove_any']) || in_array($id_board, $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($id_board, $boards_can['remove_own']))),
+		),
 	));
-
-	$body_highlighted = $message['body'];
-	$subject_highlighted = $message['subject'];
-
-	$started = $output['first_post']['member']['id'] == $user_info['id'];
-
-	$output['quick_mod'] = array(
-		'lock' => in_array(0, $boards_can['lock_any']) || in_array($output['board']['id'], $boards_can['lock_any']) || ($started && (in_array(0, $boards_can['lock_own']) || in_array($output['board']['id'], $boards_can['lock_own']))),
-		'pin' => (in_array(0, $boards_can['pin_topic']) || in_array($output['board']['id'], $boards_can['pin_topic'])),
-		'move' => in_array(0, $boards_can['move_any']) || in_array($output['board']['id'], $boards_can['move_any']) || ($started && (in_array(0, $boards_can['move_own']) || in_array($output['board']['id'], $boards_can['move_own']))),
-		'remove' => in_array(0, $boards_can['remove_any']) || in_array($output['board']['id'], $boards_can['remove_any']) || ($started && (in_array(0, $boards_can['remove_own']) || in_array($output['board']['id'], $boards_can['remove_own']))),
-	);
 
 	$context['can_lock'] |= $output['quick_mod']['lock'];
 	$context['can_pin'] |= $output['quick_mod']['pin'];
 	$context['can_move'] |= $output['quick_mod']['move'];
 	$context['can_remove'] |= $output['quick_mod']['remove'];
-	$context['can_merge'] |= in_array($output['board']['id'], $boards_can['merge_any']);
+	$context['can_merge'] |= in_array($id_board, $boards_can['merge_any']);
 
 	// If we've found a message we can move, and we don't already have it, load the destinations.
 	if (!isset($context['move_to_boards']) && $context['can_move'])
@@ -1725,11 +1684,11 @@ function prepareSearchContext($reset = false)
 		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'subject_highlighted' => $subject_highlighted,
-		'time' => on_timeformat($message['poster_time']),
+		'on_time' => on_timeformat($message['poster_time']),
 		'timestamp' => forum_time(true, $message['poster_time']),
 		'counter' => $counter,
 		'modified' => array(
-			'time' => timeformat($message['modified_time']),
+			'on_time' => on_timeformat($message['modified_time']),
 			'timestamp' => forum_time(true, $message['modified_time']),
 			'name' => $message['modified_name']
 		),

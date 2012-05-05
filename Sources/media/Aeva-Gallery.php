@@ -1071,7 +1071,7 @@ function aeva_viewItem()
 	{
 		$item_data['is_resized'] = !empty($item_data['id_preview']);
 		preg_match('~\[url=([^]]+)~', $item_data['embed_url'], $match);
-		$key = md5($match[1]) . '-' . md5($item_data['embed_url']);
+		$key = (isset($match[1]) ? md5($match[1]) . '-' : '') . md5($item_data['embed_url']);
 		if (!$amSettings['enable_cache'] || !($item_data['embed_object'] = cache_get_data('aeva-embed-link-' . $key, 1200)))
 		{
 			loadSource('media/Aeva-Embed');

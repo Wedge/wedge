@@ -510,7 +510,7 @@ function template_showPosts()
 
 			echo '
 					<h5><strong><a href="', $scripturl, '?board=', $post['board']['id'], '.0">', $post['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $post['topic'], '.', $post['start'], '#msg', $post['id'], '">', $post['subject'], '</a></strong></h5>
-					<span class="smalltext">&#171;&nbsp;', $post['time'], '&nbsp;&#187;</span>
+					<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
 				</div>
 				<div class="list_posts">';
 

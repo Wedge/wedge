@@ -167,69 +167,6 @@ if (!function_exists('template_button_strip'))
 	}
 }
 
-function template_results()
-{
-	global $context, $txt;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>';
-
-	if (empty($context['topics']))
-		echo '
-		<noresults>', $txt['search_no_results'], '</noresults>';
-	else
-	{
-		echo '
-		<results>';
-
-		while ($topic = $context['get_topics']())
-		{
-			echo '
-			<result>
-				<id>', $topic['id'], '</id>
-				<relevance>', $topic['relevance'], '</relevance>
-				<board>
-					<id>', $topic['board']['id'], '</id>
-					<name>', cleanXml($topic['board']['name']), '</name>
-					<href>', $topic['board']['href'], '</href>
-				</board>
-				<category>
-					<id>', $topic['category']['id'], '</id>
-					<name>', cleanXml($topic['category']['name']), '</name>
-					<href>', $topic['category']['href'], '</href>
-				</category>
-				<messages>';
-			foreach ($topic['matches'] as $message)
-			{
-				echo '
-					<message>
-						<id>', $message['id'], '</id>
-						<subject><![CDATA[', cleanXml($message['subject_highlighted'] != '' ? $message['subject_highlighted'] : $message['subject']), ']]></subject>
-						<body><![CDATA[', cleanXml($message['body_highlighted'] != '' ? $message['body_highlighted'] : $message['body']), ']]></body>
-						<time>', $message['time'], '</time>
-						<timestamp>', $message['timestamp'], '</timestamp>
-						<start>', $message['start'], '</start>
-
-						<author>
-							<id>', $message['member']['id'], '</id>
-							<name>', cleanXml($message['member']['name']), '</name>
-							<href>', $message['member']['href'], '</href>
-						</author>
-					</message>';
-			}
-			echo '
-				</messages>
-			</result>';
-		}
-
-		echo '
-		</results>';
-	}
-
-	echo '
-</we>';
-}
-
 function template_jump_to()
 {
 	global $context, $scripturl, $settings;

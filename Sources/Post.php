@@ -658,7 +658,7 @@ function Post($post_errors = array())
 
 		// When was it last modified?
 		if (!empty($row['modified_time']))
-			$context['last_modified'] = timeformat($row['modified_time']);
+			$context['last_modified'] = on_timeformat($row['modified_time']);
 
 		// Get the stuff ready for the form.
 		$form_subject = $row['subject'];
