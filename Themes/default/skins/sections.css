@@ -11,7 +11,7 @@
 	box-sizing: border-box
 	margin-bottom: 10px
 	td.info a.subject
-		font: 700 120% "PT Sans", $head_font
+		font: 700 120% "PT Sans", "Segoe UI", Optima, Arial, sans-serif
 		color: $board_col
 	td.children
 		color: #555
@@ -246,74 +246,73 @@ img.new_posts
 	width: 100%
 	display: table
 	table-layout: fixed
-	padding: 10px 0 6px
+	padding: 10px 0 5px
+	border-bottom: 1px solid #ccc
 	h5
-		overflow: hidden
-		text-overflow: ellipsis
-		white-space: nowrap
 		line-height: 1.2em
 
 .keyinfo
-	display: table-cell
-	vertical-align: middle
 	span
 		font-size: .85em
+	.modified
+		font-style: italic
+		color: #a0aaa0
+
+.inline_mod_check
+	float: right
+	margin: 0 -3px 0 10px
 
 // Poster details and list of items
 .poster
+	width: 14em
 	display: table-cell
 	background: rgba(0,0,0,.042)
-	width: 14em
 	padding: 10px 12px 12px 0
 	vertical-align: top
 
-	ul
+	h4
+		margin: 3px 0 3px 16px // 19px originally.
+
+	ul.info extends ul.reset
 		padding: 0
-		margin: 0 1em 0 1.5em
+		margin: 0 12px 0 20px
 		line-height: 1.2em
 		font-size: 90%
 
-	h4
-		margin: .2em 0 .2em 1.1em
-		font: 700 120%/120% "PT Sans", "Franklin Gothic Medium", Arial
-		overflow: hidden
-		text-overflow: ellipsis
-		:hover, &.show
-			overflow: visible
+		// Custom fields
+		ul
+			margin: .3em 1em 0 0
+			padding: 0
+			li
+				display: inline
 
-	ul ul
-		margin: .3em 1em 0 0
-		padding: 0
-		li
-			display: inline
+		li.stars, li.avatar, li.blurb, li.postcount, li.im_icons ul
+			margin-top: .5em
 
-	li.stars, li.avatar, li.blurb, li.postcount, li.im_icons ul
-		margin-top: .5em
+		li.blurb, li.avatar
+			color: #888
+			overflow: hidden
 
-	li.blurb, li.avatar
-		color: #888
-		overflow: hidden
+		li.warning
+			line-height: 1.2em
+			padding-top: 1em
+			a img
+				vertical-align: bottom
+				padding: 0 .2em
 
-	li.warning
-		line-height: 1.2em
-		padding-top: 1em
-		a img
-			vertical-align: bottom
-			padding: 0 .2em
-
-// Could also do with a grayscale filter... IE accepts "filter: gray", while other
-// browsers will do with "filter: grayscale()". Waiting for wider implementation.
-li.profile img
-	opacity: .3
-	transition: opacity .3s ease
-	:hover
-		filter: none
-		opacity: 1
-		transition: opacity .3s ease
+		// Could also do with a grayscale filter... IE accepts "filter: gray", while other
+		// browsers will do with "filter: grayscale()". Waiting for wider implementation.
+		li.profile img
+			opacity: .3
+			transition: opacity .3s ease
+			:hover
+				filter: none
+				opacity: 1
+				transition: opacity .3s ease
 
 .postarea
 	display: table-cell
-	padding-left: 14px
+	padding: 0 15px
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
@@ -321,35 +320,34 @@ li.profile img
 	padding: .1em 0
 	clear: right
 
-// The user menu in the post display.
-.usermenu, .acmenu
-	position: absolute
-	background: rgba(255,255,255,.5)
-	padding: 24px 4px 4px
-	width: auto
-	white-space: nowrap
-	z-index: 0
-	border: 1px solid rgba(0,0,0, .2)
-	border-radius: 5px
-	box-shadow: 0 0 6px rgba(0,0,0, .15)
-	overflow: hidden
+.post
+	padding: 0
+	margin: 1.2em 0
 
+// Mini-menu parent items
 .umme, .acme
 	position: relative
-	z-index: 1
+
+.umme
+	font: 700 120%/120% "PT Sans", "Franklin Gothic Medium", Arial
+
+// The mini-menus in the post display.
+.mimenu
+	position: absolute
+	padding: 10px 0 0
+	font: 400 14px/20px $main_font
 
 // All the signatures used in the forum. You might want to add max-height here ;)
 .signature, .attachments
-	width: 98%
 	overflow: auto
 	clear: both
 	padding: 1em 0 3px
 	border-top: 1px solid #aaa
 	line-height: 1.4em
 	font-size: .9em
+	color: #888
 
 .custom_fields_above_signature
-	width: 98%
 	clear: right
 	padding: 1em 0 3px
 	border-top: 1px solid #aaa
@@ -397,8 +395,6 @@ ul.quickbuttons extends ul.reset
 	padding: 0 3% 0 0
 	clear, text-align: right
 	vertical-align: bottom
-	#forumposts &
-		display: table-cell
 	li extends .inline-block
 		margin: 0 0 0 5px
 	a
@@ -416,14 +412,10 @@ ul.quickbuttons extends ul.reset
 	 * or simply use another file like this: background: url($here/file) no-repeat 0 0
 	 */
 
-	.like_button
-		background-position: 0 -270px
-	.unlike_button
-		background-position: 0 -300px
 	.quote_button
 		background-position: 3px 0
 	.modify_button
-		background-position: 0 -60px
+		background-position: 0 -61px
 	.more_button extends .upshrinks
 		background-position: -18px 2px
 	.remove_button
@@ -443,46 +435,53 @@ ul.quickbuttons extends ul.reset
 	.mergepost_button
 		background-position: 4px -242px
 	.report_button
-		background-image: url($images/report.png)
-		background-position: 0 0
-		padding-left: 20px
+		background-image: url-no-base64($images/report.png)
+		background-position: 2px 0
+	.warn_button
+		background-image: url-no-base64($images/warn.gif)
+		background-position: 2px 0
 	.profile_button
-		background-image: url($images/icons/profile_sm.gif)
+		background-image: url-no-base64($images/icons/profile_sm.gif)
 		background-position: 0 0
 	.email_button
-		background-image: url($images/email_sm.gif)
+		background-image: url-no-base64($images/email_sm.gif)
 		background-position: 0 0
 	.ip_button
-		background-image: url($images/ip.gif)
+		background-image: url-no-base64($images/ip.gif)
 		background-position: 0 0
 	.www_button
-		background-image: url($images/www_sm.gif)
+		background-image: url-no-base64($images/www_sm.gif)
 		background-position: 0 0
 	// !!! While waiting for better icons... Here's a temp.
 	.post_button
-		background-image: url($images/new_some.png)
+		background-image: url-no-base64($images/new_some.png)
 		background-position: 0 0
-		padding-left: 25px
 
 
-ul.usermenuitem, ul.acmenuitem
-	padding: 2px
-	text-align: left
+ul.mimenuitem
+	width: auto
+	white-space: nowrap
+	background: #fbfbf8 // rgba(255,255,255, .5)
+	margin: 0
+	padding: 4px
+	border: 1px solid rgba(0,0,0, .2)
+	border-radius: 5px
+	box-shadow: 1px 1px 6px rgba(0,0,0, .25)
+	overflow: hidden
+
 	li
+		background: #f6f6f0 // rgba(255,255,255, .8)
 		overflow: hidden
 		display: block
+		margin: 0
+		padding: 1px 2px
+		text-align: left
 		a
-			float: right
-
-ul.usermenuitem li a
-	float: left
-	.right-side &
-		float: right
+			padding-left: 25px
 
 .inner
-	padding: 1em .7em 0 .7em
 	margin: 0 1em 0 0
-	border-top: 1px solid #bbb
+	padding: 0 .7em
 
 .smiley extends .inline-block
 	vertical-align: bottom
@@ -490,16 +489,29 @@ ul.usermenuitem li a
 	font: 0/0 Arial
 	overflow: hidden
 
-.signature
-	#forumposts &, .post &
-		margin: 1em 0 .7em
-	#forumposts &
-		color: #888
+// Likes and Action menu...
+.actionbar extends .clearfix
+	padding: 6px 0 4px
+	border-top: 1px solid #ccc
+	ul.quickbuttons
+		float: right
+		clear: none
+		a
+			color: darken(#47a, 80%)
+			opacity: .6
+			transition: opacity .3s ease
+			:hover
+				opacity: 1
+				transition: opacity .3s ease
+	.report
+		margin-right: 1.5em
+		img
+			vertical-align: -3px
 
 .attachments
+	clear: both
 	padding: 1em 0 2em
 	hr
-		clear: both
 		margin: 1em 0
 	div
 		padding: 0 .5em
@@ -651,7 +663,6 @@ fieldset.merge_options
 /* Styles for the login areas.
 ------------------------------------------------------- */
 .login
-	width: 540px
 	margin: 0 auto
 	dl
 		overflow: auto
@@ -905,7 +916,9 @@ tr.windowbg td
 .signature, .custom_fields_above_signature
 	border-top: 1px #ccc solid
 
+// Signature header
 .signature h5
+	color: #444
 	font-size: 1.2em
 	margin-bottom: 10px
 
@@ -1024,10 +1037,7 @@ tr.windowbg td
 	padding: 0
 	text-indent: -1000em
 
-// View posts
-.topic .time
-	float: right
-
+// View contributions
 .counter
 	margin: 0
 	padding: .2em .5em .1em .2em
@@ -1048,11 +1058,11 @@ tr.windowbg td
 .topic
 	h4
 		margin: 3px 0
+	.time
+		float: right
 	.post
 		margin: 0 1em
 		min-height: 80px
-		height: auto !important
-		height: 80px
 	.mod_icons
 		text-align: right
 		margin-right: 1em
@@ -1149,10 +1159,24 @@ dl.stats
 		clear, float, text-align: right
 		width: 45%
 
-.top_likes extends "ul.quickbuttons a, ul.quickbuttons  .like_button"
+.post_like
+	float: left
+	height: 20px
+	margin-right: 8px
+	font-size: .8em
+
+.like_button extends ul.quickbuttons a
+	background-position: 2px -270px
+	padding: 0 0 0 22px
+	font-size: 1.2em
+
+.unlike_button extends .like_button
+	background-position: 2px -300px
+
+.top_likes extends .like_button
 	display: inline-block
-	vertical-align: -3px
-	padding: 0 0 0 16px
+	vertical-align: -5px
+	padding: 0 3px 0 16px
 
 div.top_row dd
 	width: auto

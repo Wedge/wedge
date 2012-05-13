@@ -553,80 +553,52 @@ function expandThumb(thumbID)
 // *** The UserMenu
 function MiniMenu(oList, bAcme, oStrings)
 {
-	$(bAcme ? '.acme' : '.umme')
-		.mouseenter(function ()
+	$(bAcme ? '.acme' : '.umme').hover(
+		function ()
 		{
 			var
-				is_right_side = bAcme || $('.right-side').length > 0,
+				is_right_side = $(this).css('textAlign') === 'right',
 				details = this.id.substr(2).split('_'),
-				iMsg = details[0], id = details[bAcme ? 0 : 1],
-				pos = $(this).offset(), parent = $(this).parent(),
-				aLinkList = oList[id], $body = $('body'),
-				menuid = (bAcme ? '#actMenu' : '#userMenu') + iMsg;
-				mm = bAcme ? 'acme' : 'umme', mmove = 'mousemove.' + mm,
-				leave = function (e) {
-					if (!e || e.relatedTarget.className.indexOf(mm) == -1)
-					{
-						parent.removeClass('show');
-						$(this).remove();
-					}
-				};
+				iMsg = details[0], id = details[1 - bAcme],
+				$men = $(this).children('.mimenu');
 
-			if ($(menuid).length || !aLinkList)
+			if (!oList[id])
 				return;
 
-			var sHTML = '', i = 0, j = aLinkList.length, mtarget, pms, sLink, $men, mpo, paw;
-			for (; i < j; i++)
+			if (!$men.length)
 			{
-				pms = oStrings[aLinkList[i].substr(0, 2)];
-				sLink = pms[2] ? pms[2].wereplace({
-					id: id,
-					special: aLinkList[i].substr(3)
-				}) : this.href;
-				if (!bAcme && sLink.charAt(0) == '?')
-					sLink = this.href + sLink;
+				var sHTML = '', href = this.href, pms, sLink;
+				$.each(oList[id], function ()
+				{
+					pms = oStrings[this.substr(0, 2)];
+					sLink = pms[2] ? pms[2].wereplace({
+						id: id,
+						special: this.substr(3)
+					}) : href;
+					if (!bAcme && sLink.charAt(0) == '?')
+						sLink = href + sLink;
 
-				sHTML += '<li><a href="' + sLink + '"'
-					+ (pms[3] ? ' class="' + pms[3] + '"' : '')
-					+ (pms[4] ? ' ' + pms[4] : '') // Custom data, such as events?
-					+ (pms[1] ? ' title="' + pms[1] + '"' : '')
-					+ '>' + pms[0] + '</a></li>';
-			}
-			parent.addClass('show');
-
-			$men = bAcme ?
-				$('<div class="acmenu" id="actMenu' + id + '"></div>').html('<ul class="quickbuttons acmenuitem windowbg">' + sHTML + '</ul>') :
-				$('<div class="usermenu' + (is_right_side ? ' right-side' : '') + '" id="userMenu' + iMsg + '"></div>').html('<ul class="quickbuttons usermenuitem windowbg">' + sHTML + '</ul>');
-			$men.hide().appendTo($body);
-
-			if (!is_right_side)
-			{
-				$men.css({ left: pos.left - 6, top: pos.top - 4, minWidth: $(this).width() + 1 });
-				$men.mouseleave(leave).show(300, function () {
-					$body.unbind(mmove);
-					if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
-						leave();
+					sHTML += '<li><a href="' + sLink + '"'
+						+ (pms[3] ? ' class="' + pms[3] + '"' : '')
+						+ (pms[4] ? ' ' + pms[4] : '') // Custom data, such as events?
+						+ (pms[1] ? ' title="' + pms[1] + '"' : '')
+						+ '>' + pms[0] + '</a></li>';
 				});
+
+				$men = $('<div class="mimenu' + (is_right_side ? ' right' : '') + '"></div>')
+					.html('<ul class="quickbuttons mimenuitem windowbg"><li class="menu-top"></li>' + sHTML + '</ul>')
+					.appendTo(this);
+
+				$(this) // If we're animating from the right, we need to force right to 0.
+					.data('start', { width: 60, height: 60, opacity: 0, paddingLeft: 0, paddingTop: 0, right: is_right_side ? 0 : 'auto' })
+					.data('end', { width: $men.width(), height: $men.height(), paddingLeft: $men.css('paddingLeft'), paddingTop: $men.css('paddingTop'), opacity: 1 });
 			}
-			else
-			{
-				mpo = [ $men.width(), $men.height() ];
-				paw = $(bAcme ? parent : this).width();
-				$men.css({ right: $(window).width() - (pos.left + paw + 6), top: pos.top - 4, minWidth: $(this).width() + 1, width: 0, height: 0 })
-					.mouseleave(leave)
-					.animate({ width: mpo[0], height: mpo[1], opacity: 'show' }, 300, function () {
-						$men.css({ left: pos.left + paw - mpo[0] - 4, right: 'auto' });
-						$body.unbind(mmove);
-						// Once the animation is completed, is the mouse still inside the menu area?
-						if (mtarget && mtarget.className != mm && !$(mtarget).parents(menuid).length)
-							leave();
-					});
-			}
-			$body.bind(mmove, function (e) { mtarget = e.target; });
-		})
-		.mouseleave(function (e) {
-			var menu = (bAcme ? 'ac' : 'user') + 'menu', target = e.relatedTarget;
-			if (target.className.indexOf(menu) == -1 && !$(target).parents('.' + menu).length)
-				$('.' + menu).remove();
-		});
+
+			$men.stop(true).css($(this).data('start')).animate($(this).data('end'), 300, function () { $(this).css('overflow', 'visible'); });
+		},
+		function ()
+		{
+			$(this).children('.mimenu').stop(true).animate($(this).data('start'), 200, function () { $(this).css('overflow', 'visible'); });
+		}
+	);
 }

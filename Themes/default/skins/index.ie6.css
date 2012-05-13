@@ -9,6 +9,14 @@
 	a:hover
 		text-decoration: none
 
+	li
+		margin, padding: 0
+		list-style: none
+		cursor: pointer
+		height: auto
+		float: left
+		display: block
+
 	/*	Sort of a hasLayout fix for IE6... Without it, we get an horizontal frame below any menu entry
 		that has a submenu itself. If you have a better fix, please share. Curse you, IE6! */
 	li li
@@ -109,9 +117,6 @@ li.separator
 #quickreply
 	clear: both
 
-.moderatorbar
-	display: block
-
 .buttonlist a
 	text-decoration: none
 	width: 1%
@@ -144,6 +149,9 @@ li.separator
 	margin: 0 1%
 	padding: 0
 	width: 45%
+
+.topic .post
+	height: 80px
 
 
 /* Overrides for the personal messages template
@@ -365,7 +373,7 @@ body
 	text-indent: 0
 
 // IE6 totally screws up the menus without all of these together.
-ul.usermenuitem, ul.acmenuitem
+ul.mimenuitem
 	float: none
 	width: auto
 	li

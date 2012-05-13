@@ -206,10 +206,7 @@ span.percent
 	float: right
 	width: 15em
 
-.postarea, .moderatorbar
-	margin: 0 16em 0 0
-
-.moderatorbar
+.actionbar
 	clear: left
 
 // Poster details and list of items
@@ -233,6 +230,10 @@ span.percent
 	float, clear, text-align: left
 	margin: 8px 0 10px 20px
 
+.inline_mod_check
+	float: left
+	margin: 0 10px 0 -3px
+
 // The quick buttons
 ul.quickbuttons
 	margin: 0.9em 0 0 11px
@@ -243,9 +244,6 @@ ul.quickbuttons
 		a
 			padding: 0 20px 0 0
 			float: left
-	li.inline_mod_check
-		margin: 0 5px 0 0
-
 	li.quote_button
 		background-position: 100% 0
 	li.remove_button

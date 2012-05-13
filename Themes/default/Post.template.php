@@ -121,8 +121,7 @@ function template_postbox()
 	if (isset($context['last_modified']))
 		echo '
 				<div class="padding smalltext">
-					<strong>', $txt['last_edit'], ':</strong>
-					', $context['last_modified'], '
+					<strong>', strtr($txt['last_edit_mine'], array('{date}' => $context['last_modified'])), '</strong>
 				</div>';
 }
 
@@ -319,8 +318,7 @@ function template_postform_after()
 			. '<span class="smalltext">&#171;&nbsp;%date%&nbsp;&#187;</span><div class="note" id="image_new_%id%">%new%</div></div>') . ',
 		ptxt = {
 			bbc_quote: ' . JavaScriptEscape($txt['bbc_quote']) . ',
-			ignoring_user: ' . JavaScriptEscape($txt['ignoring_user']) . ',
-			show_ignore_user_post: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
+			ignoring_user: ' . JavaScriptEscape($txt['ignoring_user']) . '
 		};');
 
 	// !!! Currently not sending poll options and option checkboxes.
@@ -524,9 +522,8 @@ function template_show_previous_posts()
 
 		if ($ignoring)
 			echo '
-					<div id="msg_', $post['id'], '_ignored_prompt" class="smalltext">
+					<div class="ignored" id="msg_', $post['id'], '_ignored">
 						', $txt['ignoring_user'], '
-						<a href="#" id="msg_', $post['id'], '_ignored_link" class="hide">', $txt['show_ignore_user_post'], '</a>
 					</div>';
 
 		echo '
@@ -544,15 +541,9 @@ function template_show_previous_posts()
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
 			"msg_' . $post_id . '_body",
-			"msg_' . $post_id . '_quote",
+			"msg_' . $post_id . '_quote"
 		],
-		aSwapLinks: [
-			{
-				sId: "msg_' . $post_id . '_ignored_link",
-				msgExpanded: "",
-				msgCollapsed: ptxt.show_ignore_user_post
-			}
-		]
+		aSwapLinks: [{ sId: "msg_' . $post_id . '_ignored" }]
 	});');
 }
 

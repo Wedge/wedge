@@ -3,16 +3,15 @@
 	margin-left: 0
 
 // We want really comfortable menu items for use in wireless devices.
-ul.usermenuitem, ul.acmenuitem
-	li
-		font-size: 2em
-		padding: 16px
+ul.mimenuitem li
+	font-size: 2em
+	padding: 16px
 
 .tinyuser > ul.quickbuttons
 	margin-top: 0
 
-.poster h4
-	font-size: 1.2em
-
 .poster
 	height: 75px
+
+.poster h4
+	font-size: 1.2em

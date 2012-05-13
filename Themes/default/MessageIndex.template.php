@@ -149,8 +149,10 @@ function template_main_board()
 			echo '
 						<p>
 							<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '"></a>
-							', $topic['last_post']['on_time'], '
-							<br>', $txt['by'], ' ', $topic['last_post']['member']['link'], '
+							', strtr($txt['last_post_time_author'], array(
+								'{time}' => $topic['last_post']['on_time'],
+								'{author}' => $topic['last_post']['member']['link']
+							)), '
 						</p>
 					</td>';
 
@@ -333,7 +335,7 @@ function template_main_blog()
 						<input type="checkbox" name="topics[]" class="floatright" value="', $topic['id'], '">';
 
 			echo '
-							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['last_post']['time'], '
+							<p>', $txt['posted_by'], ' ', $topic['first_post']['member']['link'], ', ', $topic['last_post']['on_time'], '
 							&nbsp; (', number_context('num_views', $topic['views']), ')
 								<small id="pages', $topic['first_post']['id'], '">', $topic['pages'], '</small>
 							</p>
@@ -520,10 +522,10 @@ function template_messageindex_childboards()
 			if (!empty($board['last_post']['id']))
 				echo '
 						<p>
-							', strtr($txt['board_index_last_post'], array(
-								'{member_link}' => $board['last_post']['member']['link'],
-								'{post_link}' => $board['last_post']['link'],
-								'{post_time}' => $board['last_post']['time'])
+							', strtr($txt['last_post_author_link_time'], array(
+								'{author}' => $board['last_post']['member']['link'],
+								'{link}' => $board['last_post']['link'],
+								'{time}' => $board['last_post']['on_time'])
 							), '
 						</p>';
 

@@ -125,7 +125,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE.
-	$('<div class="windowbg wrc' + (noDrag && (noDrag === true) ? ' nodrag' : '') + '"></div>')
+	$('<div class="wrc' + (noDrag && (noDrag === true) ? ' nodrag' : '') + '"></div>')
 		.hide()
 		.load(help_page, function () {
 			if (title)
@@ -134,9 +134,10 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 				overflow: noScrollbars ? 'hidden' : auto,
 				width: alternateWidth - 25,
 				height: alternateHeight ? alternateHeight - 20 : auto,
+				marginLeft: 200,
 				padding: '10px 12px 12px',
 				border: '1px solid #999'
-			}).fadeIn(300);
+			}).animate({ marginLeft: 0, opacity: 'show' }, 999);
 			$(helf).dragslide();
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', help_page).css({
@@ -151,7 +152,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
 	$(document).bind('click.h', function (e) {
 		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
-		if (!$(e.srcElement).parents(helf).length)
+		if (!$(e.srcElement).closest(helf).length)
 		{
 			$(helf).remove();
 			$(this).unbind(e);
@@ -186,8 +187,7 @@ function in_array(variable, theArray)
 // Invert all checkboxes at once by clicking a single checkbox.
 function invertAll(oInvertCheckbox, oForm, sMask)
 {
-	$.each(oForm, function ()
-	{
+	$.each(oForm, function () {
 		if (this.name && !this.disabled && (!sMask || this.name.substr(0, sMask.length) == sMask || this.id.substr(0, sMask.length) == sMask))
 			this.checked = oInvertCheckbox.checked;
 	});
@@ -199,8 +199,7 @@ function bindEvents(items)
 	$(items || '*[data-eve]').each(function ()
 	{
 		var that = $(this);
-		$.each(that.attr('data-eve').split(' '), function ()
-		{
+		$.each(that.attr('data-eve').split(' '), function () {
 			that.bind(eves[this][0], eves[this][1]);
 		});
 	});
@@ -233,7 +232,8 @@ function we_avatarResize()
 		tempAvatars[i] = new Image();
 		tempAvatars[i].avatar = this;
 
-		$(tempAvatars[i++]).load(function () {
+		$(tempAvatars[i++]).load(function ()
+		{
 			var ava = this.avatar;
 			ava.width = this.width;
 			ava.height = this.height;
@@ -252,39 +252,33 @@ function we_avatarResize()
 }
 
 
-// Shows the page numbers by clicking the dots (in compact view).
+// Shows the page numbers by clicking the dots.
 function expandPages(spanNode, firstPage, lastPage, perPage)
 {
-	var replacement = '', i = firstPage, oldLastPage, perPageLimit = 50, baseURL = $(spanNode).data('href');
+	var i = firstPage, pageLimit = 50, baseURL = $(spanNode).data('href');
 
-	// Prevent too many pages to be loaded at once.
-	if ((lastPage - firstPage) / perPage > perPageLimit)
+	// Prevent too many pages from being loaded at once.
+	if ((lastPage - firstPage) / perPage > pageLimit)
 	{
-		oldLastPage = lastPage;
-		lastPage = firstPage + perPageLimit * perPage;
+		var oldLastPage = lastPage;
+		lastPage = firstPage + perPage * pageLimit;
 	}
 
 	// Calculate the new pages.
 	for (; i < lastPage; i += perPage)
-		replacement += '<a href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ';
+		$(spanNode).before('<a href="' + baseURL.replace(/%1\$d/, i).replace(/%%/g, '%') + '">' + (1 + i / perPage) + '</a> ');
 
 	if (oldLastPage)
-		replacement += '<a data-href="' + baseURL + '" onclick="expandPages(this, ' + lastPage + ', ' + oldLastPage + ', ' + perPage + ');">&hellip;</a> ';
+		$(spanNode).before($(spanNode).clone().click(function () { expandPages(this, lastPage, oldLastPage, perPage); }));
 
-	$(spanNode).before(replacement).remove();
-}
-
-function selectText(box)
-{
-	box.focus();
-	box.select();
+	$(spanNode).remove();
 }
 
 // Create the div for the indicator, and add the image, link to turn it off, and loading text.
 function show_ajax()
 {
 	$('<div id="ajax_in_progress"></div>')
-		.html('<a href="#" onclick="hide_ajax();"' + (we_cancel ? ' title="' + we_cancel + '"' : '') + '></a>' + we_loading)
+		.html('<a href="#" onclick="hide_ajax();" title="' + (we_cancel || '') + '"></a>' + we_loading)
 		.css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {}).appendTo('body');
 }
 
@@ -380,8 +374,6 @@ function weCookie(sKey)
 	// You may set an area as non-draggable by adding the nodrag class to it.
 	// This way, you can drag the element, but still access UI elements within it.
 	$.fn.dragslide = function () {
-		var origin = this.selector;
-
 		// Updates the position during the dragging process
 		$(document)
 			.mousemove(function (e) {
@@ -404,22 +396,24 @@ function weCookie(sKey)
 			});
 
 		return this
-			.css("cursor", "move").find(".nodrag").css("cursor", "default").end()
+			.css('cursor', 'move')
 			// Start the dragging process
 			.mousedown(function (e) {
-				if ($(e.target).parentsUntil(origin).andSelf().hasClass("nodrag"))
+				if ($(e.target).closest('.nodrag').length)
 					return true;
-				is_fixed = this.style.position == "fixed";
+				is_fixed = this.style.position == 'fixed';
 
 				// Position it to absolute, except if it's already fixed
-				$(this).css({ position: is_fixed ? "fixed" : "absolute", zIndex: 999 });
+				$(this).css({ position: is_fixed ? 'fixed' : 'absolute', zIndex: 999 });
 
 				origMouse = { X: e.pageX, Y: e.pageY };
 				currentPos = { X: parseInt(is_fixed ? this.style.right : this.offsetLeft, 10), Y: parseInt(is_fixed ? this.style.bottom : this.offsetTop, 10) };
 				currentDrag = this;
 
 				return false;
-			});
+			})
+			.find('.nodrag')
+			.css('cursor', 'default');
 	};
 
 })();
@@ -471,7 +465,7 @@ function weCookie(sKey)
 		// Are we leaving the menu entirely, and thus triggering the time
 		// threshold, or are we just switching to another menu item?
 		var id = this.id;
-		$(e.relatedTarget).parents('.menu').length ?
+		$(e.relatedTarget).closest('.menu').length ?
 			menu_hide_children(id) :
 			menu_delay[id.substring(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
 	},
@@ -576,7 +570,6 @@ function weToggle(opt)
 		this.cs(true, true);
 
 	// Initialize the images to be clickable.
-
 	$.each(opt.aSwapImages || [], function () {
 		$('#' + this.sId).show().css({ visibility: 'visible' }).data('that', that).click(toggle_me).css('cursor', 'pointer').mousedown(false);
 	});
@@ -677,7 +670,7 @@ function Thought(opt)
 		sendXMLDocument(ajaxUrl + 'remove', 'oid=' + toDelete.data('oid'));
 
 		// We'll be assuming Wedge uses table tags to show thought lists.
-		toDelete.parents('tr').first().remove();
+		toDelete.closest('tr').remove();
 
 		hide_ajax();
 	};

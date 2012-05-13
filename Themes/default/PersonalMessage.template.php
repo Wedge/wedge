@@ -159,7 +159,7 @@ function template_folder()
 			echo '
 				', $message['member']['link'], '
 			</h4>
-			<ul class="reset" id="msg_', $message['id'], '_extra_info">';
+			<ul class="info" id="msg_', $message['id'], '_extra_info">';
 
 			// Show the member's custom title, if they have one.
 			if (!empty($message['member']['title']) && !$is_mobile)
@@ -487,7 +487,7 @@ function template_subject_list()
 				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 			</th>
 			<th class="left">
-				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="window.location=\'', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(\'#selPMView\').val();">';
+				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="window.location=\'', $scripturl, '?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(this).val();">';
 
 	foreach ($context['view_select_types'] as $display_mode => $display_desc)
 		echo '

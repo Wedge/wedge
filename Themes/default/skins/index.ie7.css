@@ -126,7 +126,7 @@ ul.quickbuttons
 	float: right
 
 // IE7 totally screws up the menus without all of these together.
-ul.usermenuitem, ul.acmenuitem
+ul.mimenuitem
 	float: none
 	width: auto
 	li

@@ -88,8 +88,7 @@ function previewPost()
 			newPostsHTML += '<br class="clear">';
 
 			if (ignoring)
-				newPostsHTML += '<div id="msg_' + id + '_ignored_prompt" class="smalltext">' + ptxt.ignoring_user
-							 + '<a href="#" id="msg_' + id + '_ignored_link" class="hide">' + ptxt.show_ignore_user_post + '</a></div>';
+				newPostsHTML += '<div class="ignored" id="msg_' + id + '_ignored">' + ptxt.ignoring_user + '</div>';
 
 			newPostsHTML += '<div class="list_posts smalltext" id="msg_' + id + '_body">' + $('message', this).text() + '</div></div></div>';
 		});
@@ -101,15 +100,9 @@ function previewPost()
 				bCurrentlyCollapsed: true,
 				aSwappableContainers: [
 					'msg_' + this + '_body',
-					'msg_' + this + '_quote',
+					'msg_' + this + '_quote'
 				],
-				aSwapLinks: [
-					{
-						sId: 'msg_' + this + '_ignored_link',
-						msgExpanded: '',
-						msgCollapsed: ptxt.show_ignore_user_post
-					}
-				]
+				aSwapLinks: [{ sId: 'msg_' + this + '_ignored' }]
 			});
 		});
 

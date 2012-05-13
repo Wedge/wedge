@@ -38,10 +38,7 @@ function template_display_posts()
 
 		// Are we ignoring this message?
 		if (!empty($message['is_ignored']))
-		{
-			$ignoring = true;
-			$ignoredMsgs[] = $message['id'];
-		}
+			$ignoredMsgs[] = $ignoring = $message['id'];
 
 		// Show the message anchor and a "new" anchor if this message is new.
 		if ($message['id'] != $context['first_message'])
@@ -66,7 +63,14 @@ function template_display_posts()
 		if (!$is_mobile)
 		{
 			echo '
-						<div class="postheader">
+						<div class="postheader">';
+
+			// Show a checkbox for quick moderation?
+			if ($message['can_remove'])
+				echo '
+							<span class="inline_mod_check" id="inline_mod_check_', $message['id'], '"></span>';
+
+			echo '
 							<div class="keyinfo">
 								<div class="messageicon"', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', '>
 									<img src="', $message['icon_url'] . '">
@@ -76,48 +80,14 @@ function template_display_posts()
 									<div class="note">' . $txt['new'] . '</div>' : '', '
 								</h5>
 								<span>&#171; ', !empty($message['counter']) ? sprintf($txt['reply_number'], $message['counter']) : '', ' ', $message['on_time'], ' &#187;</span>
+								<span class="modified" id="modified_', $message['id'], '">', $theme['show_modify'] && !empty($message['modified']['name']) ?
+									// Show "Last Edit on Date by Person" if this post was edited.
+									strtr($txt[$message['modified']['name'] !== $message['member']['name'] ? 'last_edit' : 'last_edit_mine'], array(
+										'{date}' => $message['modified']['on_time'],
+										'{name}' => !empty($message['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $message['modified']['member'] . '">' . $message['modified']['name'] . '</a>' : $message['modified']['name']
+									)) : '', '</span>
 								<div id="msg_', $message['id'], '_quick_mod"></div>
-							</div>';
-
-			// If this is the first post, (#0) just say when it was posted - otherwise give the reply #.
-			if ($message['has_buttons'])
-			{
-				echo '
-							<ul class="quickbuttons">';
-
-				// Can they like? Is it liked?
-				if ($context['can_like'])
-					echo '
-								<li><a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', empty($context['liked_posts'][$message['id']]['you']) ? 'like' : 'unlike', '_button" id="like_button_', $message['id'], '">', empty($context['liked_posts'][$message['id']]['you']) ? $txt['like'] : $txt['unlike'], '</a></li>';
-
-				// Can they reply? Have they turned on quick reply?
-				if ($context['can_quote'] && !empty($options['display_quick_reply']))
-					echo '
-								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" id="quote_button_', $message['id'], '" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
-
-				// So... quick reply is off, but they *can* reply?
-				elseif ($context['can_quote'])
-					echo '
-								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
-
-				// Can the user modify the contents of this post?
-				if ($message['can_modify'])
-					echo '
-								<li><a href="<URL>?action=post;msg=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
-
-				if (!empty($context['action_menu'][$message['id']]))
-					echo '
-								<li><a id="mm', $message['id'], '" class="acme more_button">', $txt['more_actions'], '</a></li>';
-
-				// Show a checkbox for quick moderation?
-				if ($message['can_remove'])
-					echo '
-								<li class="inline_mod_check" id="inline_mod_check_', $message['id'], '"></li>';
-
-				echo '
-							</ul>';
-			}
-			echo '
+							</div>
 						</div>';
 		}
 		else
@@ -132,11 +102,6 @@ function template_display_posts()
 			if ($context['can_quote'])
 				array_unshift($menu, 'qu');
 
-			if (empty($context['liked_posts'][$message['id']]['you']))
-				array_unshift($menu, 'lk');
-			else
-				array_unshift($menu, 'uk');
-
 			$context['action_menu'][$message['id']] = $menu;
 			$context['action_menu_items_show'] += array_flip($menu);
 		}
@@ -144,9 +109,8 @@ function template_display_posts()
 		// Ignoring this user? Hide the post.
 		if ($ignoring)
 			echo '
-						<div id="msg_', $message['id'], '_ignored_prompt">
+						<div class="ignored" id="msg_', $message['id'], '_ignored">
 							', $txt['ignoring_user'], '
-							<a href="#" id="msg_', $message['id'], '_ignored_link" class="hide">', $txt['show_ignore_user_post'], '</a>
 						</div>';
 
 		if ($is_mobile)
@@ -162,20 +126,63 @@ function template_display_posts()
 							<div class="approve_post">
 								', $txt['post_awaiting_approval'], '
 							</div>';
+
 		echo '
 							<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>
 						</div>';
 
+		if ($ignoring)
+			echo '
+						<div id="msg_', $message['id'], '_footer">';
+
+		echo '
+						<div class="actionbar">';
+
 		// Can the user modify the contents of this post?  Show the modify inline image.
 		if ($message['can_modify'])
 			echo '
-						<div class="modifybutton" id="modify_button_', $message['id'], '" title="', $txt['modify_msg'], '" onclick="if (window.oQuickModify) oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
+							<div class="modifybutton" id="modify_button_', $message['id'], '" title="', $txt['modify_msg'], '" onclick="if (window.oQuickModify) oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
+
+		if ($message['has_buttons'])
+		{
+			echo '
+							<ul class="quickbuttons">';
+
+			// Can they reply? Have they turned on quick reply?
+			if ($context['can_quote'] && !empty($options['display_quick_reply']) && !$is_mobile)
+				echo '
+								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" id="quote_button_', $message['id'], '" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
+
+			// So... quick reply is off, but they *can* reply?
+			elseif ($context['can_quote'] && !$is_mobile)
+				echo '
+								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
+
+			// Can the user modify the contents of this post?
+			if ($message['can_modify'] && !$is_mobile)
+				echo '
+								<li><a href="<URL>?action=post;msg=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
+
+			if (!empty($context['action_menu'][$message['id']]))
+				echo '
+								<li><a id="mm', $message['id'], '" class="acme more_button">', $txt[$is_mobile ? 'actions_button' : 'more_actions'], '</a></li>';
+
+			echo '
+							</ul>';
+		}
+
+		// Did anyone like this post?
+		if ($context['can_like'] || !empty($context['liked_posts'][$message['id']]))
+			template_show_likes($message);
+
+		echo '
+						</div>';
 
 		// Assuming there are attachments...
 		if (!empty($message['attachment']))
 		{
 			echo '
-						<div id="msg_', $message['id'], '_footer" class="attachments smalltext">
+						<div class="attachments">
 							<div style="overflow: ', $context['browser']['is_firefox'] ? 'visible' : 'auto', '">';
 
 			foreach ($message['attachment'] as $attachment)
@@ -198,35 +205,6 @@ function template_display_posts()
 							</div>
 						</div>';
 		}
-
-		echo '
-						<div class="moderatorbar">
-							<div class="modified" id="modified_', $message['id'], '">';
-
-		// Show "Last Edit on Date by Person" if this post was edited.
-		if ($theme['show_modify'] && !empty($message['modified']['name']))
-			echo '
-								', $txt['last_edit'], ' ', $message['modified']['on_time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . (!empty($message['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $message['modified']['member'] . '">' . $message['modified']['name'] . '</a>' : $message['modified']['name']) : '';
-
-		echo '
-							</div>';
-
-		// Can we issue a warning because of this post?  Remember, we can't give guests warnings.
-		if ($context['can_issue_warning'] && !$message['is_message_author'] && !$message['member']['is_guest'])
-			echo '
-							<div class="report">
-								<a href="<URL>?action=profile;u=', $message['member']['id'], ';area=issuewarning;msg=', $message['id'], '"><img src="', $theme['images_url'], '/warn.gif" alt="', $txt['issue_warning_post'], '" title="', $txt['issue_warning_post'], '"></a>
-							</div>';
-
-		echo '
-						</div>';
-
-		// Did anyone like this post?
-		if (!empty($context['liked_posts'][$message['id']]))
-			echo '
-						<div class="post_like">
-							', template_show_likes($message['id']), '
-						</div>';
 
 		// Are there any custom profile fields for above the signature?
 		if (!empty($message['member']['custom_fields']))
@@ -254,9 +232,13 @@ function template_display_posts()
 		// Show the member's signature?
 		if (!empty($message['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
 			echo '
-						<div class="signature" id="msg_', $message['id'], '_signature">', $message['member']['signature'], '</div>';
+						<div class="signature">', $message['member']['signature'], '</div>';
 
 		echo '
+					</div>';
+
+		if ($ignoring)
+			echo '
 					</div>';
 
 		// Show information about the poster of this message.
@@ -324,20 +306,11 @@ function template_display_posts()
 	new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
-			\'msg_' . $msgid . '_extra_info\',
 			\'msg_' . $msgid . '\',
-			\'msg_' . $msgid . '_footer\',
-			\'msg_' . $msgid . '_quick_mod\',
-			\'modify_button_' . $msgid . '\',
-			\'msg_' . $msgid . '_signature\'
+			\'msg_' . $msgid . '_extra_info\',
+			\'msg_' . $msgid . '_footer\'
 		],
-		aSwapLinks: [
-			{
-				sId: \'msg_' . $msgid . '_ignored_link\',
-				msgExpanded: \'\',
-				msgCollapsed: ' . JavaScriptEscape($txt['show_ignore_user_post']) . '
-			}
-		]
+		aSwapLinks: [{ sId: \'msg_' . $msgid . '_ignored\' }]
 	});');
 
 	if (!empty($context['user_menu']))
@@ -409,9 +382,6 @@ function template_userbox(&$message)
 			echo '
 						<div class="tinyuser">
 							<span>', timeformat($message['timestamp']), '</span>
-							<ul class="quickbuttons">
-								<li><a id="mm', $message['id'], '" class="acme more_button">', $txt['actions_button'], '</a></li>
-							</ul>
 						</div>';
 
 		// Show avatar for mobile skins
@@ -436,7 +406,7 @@ function template_userbox(&$message)
 	echo '
 							<a href="', $message['member']['href'], '" id="um', $message['id'], '_', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
 						</h4>
-						<ul class="reset" id="msg_', $message['id'], '_extra_info">';
+						<ul class="info" id="msg_', $message['id'], '_extra_info">';
 
 	// Show the member's custom title, if they have one.
 	if (!empty($message['member']['title']) && !$is_mobile)
@@ -581,29 +551,60 @@ function template_profile_icons(&$message)
 							</li>';
 }
 
-function template_show_likes($message_id)
+function template_show_likes(&$message)
 {
 	global $context, $txt, $user_profile;
 
 	$string = '';
-	// Simplest case, it's just you.
-	if (!empty($context['liked_posts'][$message_id]['you']) && empty($context['liked_posts'][$message_id]['names']))
-		$string = $txt['you_like_this'];
-	// So we have some names to display?
-	elseif (!empty($context['liked_posts'][$message_id]['names']))
+	$likes =& $context['liked_posts'][$message['id']];
+	$you_like = !empty($likes['you']);
+
+	if (!empty($likes))
 	{
-		$base_id = !empty($context['liked_posts'][$message_id]['you']) ? 'you_' : '';
-		if (!empty($context['liked_posts'][$message_id]['others']))
-			$string = number_context($base_id . 'n_like_this', $context['liked_posts'][$message_id]['others']);
-		else
-			$string = $txt[$base_id . count($context['liked_posts'][$message_id]['names']) . '_like_this'];
+		// Simplest case, it's just you.
+		if ($you_like && empty($likes['names']))
+		{
+			$string = $txt['you_like_this'];
+			$num_likes = 1;
+		}
+		// So we have some names to display?
+		elseif (!empty($likes['names']))
+		{
+			$base_id = $you_like ? 'you_' : '';
+			if (!empty($likes['others']))
+				$string = number_context($base_id . 'n_like_this', $likes['others']);
+			else
+				$string = $txt[$base_id . count($likes['names']) . '_like_this'];
 
-		// OK so at this point we have the string with the number of 'others' added, and also 'You' if appropriate. Now to add other names.
-		foreach ($context['liked_posts'][$message_id]['names'] as $k => $v)
-			$string = str_replace('{name' . ($k + 1) . '}', '<a href="<URL>?action=profile;u=' . $v . '">' . $user_profile[$v]['real_name'] . '</a>', $string);
+			// OK so at this point we have the string with the number of 'others' added, and also 'You' if appropriate. Now to add other names.
+			foreach ($likes['names'] as $k => $v)
+				$string = str_replace('{name' . ($k + 1) . '}', '<a href="<URL>?action=profile;u=' . $v . '">' . $user_profile[$v]['real_name'] . '</a>', $string);
+			$num_likes = ($you_like ? 1 : 0) + count($likes['names']) + (empty($likes['others']) ? 0 : $likes['others']);
+		}
 	}
+	else
+		$num_likes = 0;
 
-	return $string;
+	$show_likes = $num_likes ? '<span class="note' . ($you_like ? 'nice' : '') . '">' . $num_likes . '</span>' : '';
+
+	// Is this an Ajax request to get who likes what?
+	if (isset($_REQUEST['xml']))
+		return $string;
+
+	echo '
+							<div class="post_like">';
+
+	// Can they use the Like button?
+	if ($context['can_like'])
+		echo '
+								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button" id="like_button_', $message['id'], '" title="', strip_tags($string), '">
+									', $num_likes ? $show_likes . ' ' : '', $txt[$you_like ? 'unlike' : 'like'], '</a>';
+	elseif ($num_likes)
+		echo '
+								<span class="like_button" title="', strip_tags($string), '">', $show_likes, '</span>';
+
+	echo '
+							</div>';
 }
 
 function template_topic_poll()

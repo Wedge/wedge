@@ -37,12 +37,18 @@
 body
 	background: #444
 	color: #ccc
-	font: 88%/130% $main_font
+	font: $main_font_size $main_font
 	margin: 0
 	padding: 0 4px
 
 header, footer, aside, section, article, nav
 	display: block
+
+/* Let's be crazy... Universal selector! This should prevent words from breaking the layout.
+	Obviously, where we DON'T want words to be broken, we should specify 'normal'. */
+
+*
+	word-wrap: break-word
 
 /* Common styles used for inheritance. You can declare
 	them anywhere you like, but having them near the
@@ -405,8 +411,12 @@ em
 		text-decoration: none
 
 // Same, but scarier.
-.warn extends .note
+.notewarn extends .note
 	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
+
+// Same, but positive.
+.notenice extends .note
+	gradient: rgb(100, 175, 100), rgb(100, 190, 100)
 
 // We worship his shadow.
 .hide
@@ -760,12 +770,9 @@ input[type=file]
 	margin-top: -24px
 
 .menu li
-	margin, padding: 0
 	list-style: none
 	cursor: pointer
 	height: auto
-	float: left
-	display: block
 
 // This is the same as above, but for anything else than IE6. Uh.
 .menu > li
@@ -863,13 +870,21 @@ li.separator
 	float: none
 	margin: 0 0 0 4px
 
-.menu li.menu-top
-	position: absolute
-	top: -11px
-	width: 100%
-	height: 11px
-	padding-bottom: 3px
-	background: url($images/theme/menurow.gif) no-repeat 0 3px
+// Used in both normal and mini-menus...
+.menu, .mimenu
+	li.menu-top
+		position: absolute
+		top: -11px
+		width: 100%
+		height: 11px
+		padding-bottom: 3px
+		background: url($images/theme/menurow.gif) no-repeat 0 3px
+
+.mimenu
+	li.menu-top
+		top: 0
+	&.right li.menu-top
+		background-position: 66% 3px
 
 /* Top-level menu icons.
 ------------------------------------------------------- */
@@ -1523,12 +1538,13 @@ table
 	a
 		text-decoration: underline
 	> div
+		background: #fff
 		box-shadow: 2px 2px 8px 0 rgba(0,0,0, .25)
 
 #help_page, #helf
 	h2 extends .title2
 		margin-bottom: 12px !important
-	.windowbg2 final
+	.wrc final
 		border: 1px solid #d0d0d0
 
 /* Intertitles
@@ -1629,6 +1645,7 @@ th.last_th
 */
 
 $main_font = Arial, sans-serif
+$main_font_size = 88%/130%
 $menu_font = $main_font
 $big_font = "Segoe UI Light", "Segoe UI", Optima, Arial, sans-serif
 $head_font = "Franklin Gothic Medium", "Franklin Gothic", $big_font

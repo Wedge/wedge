@@ -682,7 +682,7 @@ function template_menu()
 		<li', $class ? ' class="' . ltrim($class) . '"' : '', '>
 			<span id="m_' . $act . '"></span>
 			<h4><a href="', $item['href'], '"', !empty($item['nofollow']) ? ' rel="nofollow"' : '', '>',
-			$item['title'], !empty($item['notice']) ? '<span class="' . ($act === 'media' ? 'note' : 'warn') . '">' . $item['notice'] . '</span>' : '', '</a></h4>';
+			$item['title'], !empty($item['notice']) ? '<span class="note' . ($act === 'media' ? '' : ($act === 'pm' ? 'nice' : 'warn')) . '">' . $item['notice'] . '</span>' : '', '</a></h4>';
 
 		if (!empty($item['sub_items']))
 		{

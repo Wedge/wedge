@@ -34,7 +34,7 @@ function template_main()
 				<div class="counter">', $post['counter'], '</div>
 				<div class="topic_details">
 					<h5>', $post['board']['link'], ' / ', $post['link'], '</h5>
-					<span class="smalltext">&#171;&nbsp;', $post['time'], ' ', $txt['by'], ' <strong>', $post['poster']['link'], '</strong>&nbsp;&#187;</span>
+					<span class="smalltext">&#171;&nbsp;', $post['on_time'], ' ', $txt['by'], ' <strong>', $post['poster']['link'], '</strong>&nbsp;&#187;</span>
 				</div>
 				<div class="list_posts">', $post['message'], '</div>';
 
@@ -177,8 +177,10 @@ function template_unread()
 							</td>
 							<td class="', $alternate_class, ' lastpost">
 								<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
-								', $topic['last_post']['time'], '<br>
-								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
+								', strtr($txt['last_post_time_author'], array(
+									'{time}' => $topic['last_post']['time'],
+									'{author}' => $topic['last_post']['member']['link']
+								)), '
 							</td>';
 
 			echo '
@@ -318,8 +320,10 @@ function template_replies()
 							</td>
 							<td class="', $alternate_class, ' lastpost">
 								<a href="', $topic['last_post']['href'], '"><img src="', $theme['images_url'], '/icons/last_post.gif" alt="', $txt['last_post'], '" title="', $txt['last_post'], '" class="right"></a>
-								', $topic['last_post']['time'], '<br>
-								', $txt['by'], ' ', $topic['last_post']['member']['link'], '
+								', strtr($txt['last_post_time_author'], array(
+									'{time}' => $topic['last_post']['time'],
+									'{author}' => $topic['last_post']['member']['link']
+								)), '
 							</td>';
 
 			echo '

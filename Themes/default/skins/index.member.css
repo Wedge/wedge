@@ -38,22 +38,18 @@ ul.buttonlist
 	display: inline
 	width, height: 20px
 	clear, float: right
-	margin: 8px 20px 10px 0
+	margin: 0 20px 0 0
 	cursor: pointer
 
-// Why would guests need to see that div?
-.moderatorbar
-	margin: 12px 0 0
-	font-size: .85em
-	float: left
-	width: 50%
-	.modified
-		color: #a0aaa0
-		font-style: italic
-	.report
-		margin-right: 1.5em
-		img
-			vertical-align: -3px
+// "You are ignoring..." box. Obviously, only members can see this.
+.ignored
+	margin: 8px 0 0
+	padding: 8px
+	border: 1px dotted #999
+	font-style: italic
+	color: #999
+	:hover
+		text-decoration: underline
 
 /* Styles for the personal messages section.
 ------------------------------------------------- */
@@ -62,6 +58,11 @@ ul.buttonlist
 	.pm
 		overflow: auto
 		clear: both
+	// We don't need to show reply buttons on our own PMs.
+	.self
+		background: #e8e8f0
+		.reply_button, .quote_button
+			display: none
 	#author, #topic_title
 		float: left
 	#author
