@@ -596,7 +596,7 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 		fatal_lang_error('selected_all_posts', false);
 	while ($row = wesql::fetch_assoc($request))
 	{
-		// Get the right first and last message dependant on approved state...
+		// Get the right first and last message depending on approved state...
 		if (empty($split1_first_msg) || $row['myid_first_msg'] < $split1_first_msg)
 			$split1_first_msg = $row['myid_first_msg'];
 		if (empty($split1_last_msg) || $row['approved'])
@@ -639,7 +639,7 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{
-		// As before get the right first and last message dependant on approved state...
+		// As before get the right first and last message depending on approved state...
 		if (empty($split2_first_msg) || $row['myid_first_msg'] < $split2_first_msg)
 			$split2_first_msg = $row['myid_first_msg'];
 		if (empty($split2_last_msg) || $row['approved'])
@@ -1003,14 +1003,14 @@ function MergeIndex()
 // Now that the topic IDs are known, do the proper merging.
 function MergeExecute($topics = array())
 {
-	global $user_info, $txt, $context, $scripturl, $language, $settings;
+	global $user_info, $txt, $context, $scripturl, $language, $settings, $topic;
 
 	// Check the session.
 	checkSession('request');
 
 	// Handle URLs from MergeIndex.
-	if (!empty($_GET['from']) && !empty($_GET['to']))
-		$topics = array((int) $_GET['from'], (int) $_GET['to']);
+	if (!empty($topic) && !empty($_GET['to']))
+		$topics = array((int) $topic, (int) $_GET['to']);
 
 	// If we came from a form, the topic IDs came by post.
 	if (!empty($_POST['topics']) && is_array($_POST['topics']))

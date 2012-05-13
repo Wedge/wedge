@@ -716,7 +716,7 @@ function SendMailing($clean_only = false)
 			// We might need this
 			$cleanMemberName = empty($_POST['send_html']) || $context['send_pm'] ? un_htmlspecialchars($row['real_name']) : $row['real_name'];
 
-			// Replace the member-dependant variables
+			// Replace the member-dependent variables
 			$message = str_replace($from_member,
 				array(
 					$row['email_address'],

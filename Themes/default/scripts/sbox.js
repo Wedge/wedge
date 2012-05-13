@@ -571,22 +571,25 @@
 				.bind('mouseup.sc', function () { $(document).unbind('.sc'); return false; });
 			return false;
 		});
+
 		if ($dd[0].addEventListener)
 		{
 			$dd[0].addEventListener('DOMMouseScroll', wheel, false);
 			$dd[0].addEventListener('mousewheel', wheel, false);
+
+			// This should add support for scrolling on touch devices.
+			$dd[0].addEventListener('touchstart', function (e) {
+				iTouch = e.touches[0].pageY;
+				startPos = parseInt($thumb.css('top') || 0);
+			});
+			$dd[0].addEventListener('touchmove', function (e) {
+				scrollTo(startPos - e.touches[0].pageY + iTouch);
+				e.preventDefault();
+			});
 		}
+		// IE fallback
 		else
 			$dd[0].onmousewheel = wheel;
-
-		$dd[0].addEventListener('touchstart', function (e) {
-			iTouch = e.touches[0].pageY;
-			startPos = parseInt($thumb.css('top') || 0);
-		});
-		$dd[0].addEventListener('touchmove', function (e) {
-			scrollTo(startPos - e.touches[0].pageY + iTouch);
-			e.preventDefault();
-		});
 	};
 
 	// .sb() takes a select box and restyles it.

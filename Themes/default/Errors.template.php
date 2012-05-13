@@ -50,7 +50,21 @@ function template_error_log()
 				', $txt['errlog'], '
 			</we:title>
 		</div>
-		<table class="table_grid w100 cs1" id="error_log">
+		<table class="table_grid w100 cs1" id="error_log">';
+
+	if (empty($context['errors']))
+	{
+		echo '
+			<tr>
+				<td class="windowbg2">', $txt['errlog_no_entries'], '</td>
+			</tr>
+		</table><br>
+	</form>';
+
+		return;
+	}
+
+	echo '
 			<tr>
 				<td colspan="3" class="windowbg">
 					&nbsp;&nbsp;', $txt['apply_filter_of_type'], ':';
@@ -77,8 +91,7 @@ function template_error_log()
 				</td>
 			</tr>';
 
-	if (!empty($context['errors']))
-		echo '
+	echo '
 			<tr class="titlebg left">
 				<td colspan="3">
 					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
@@ -133,21 +146,13 @@ function template_error_log()
 			</tr>';
 	}
 
-	if (!empty($context['errors']))
-		echo '
+	echo '
 			<tr class="titlebg left">
 				<td colspan="3">
 					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
-			</tr>';
-	else
-		echo '
-			<tr>
-				<td colspan="3" class="windowbg2">', $txt['errlog_no_entries'], '</td>
-			</tr>';
-
-	echo '
+			</tr>
 			<tr>
 				<td colspan="3" class="windowbg">
 					&nbsp;&nbsp;', $txt['pages'], ': ', $context['page_index'], '
@@ -158,6 +163,7 @@ function template_error_log()
 	if ($context['sort_direction'] == 'down')
 		echo '
 		<input type="hidden" name="desc" value="1">';
+
 	echo '
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>';

@@ -51,10 +51,6 @@ function Help()
 
 	// What help string should be used?
 	$context['help_text'] = isset($helptxt[$_GET['in']]) ? $helptxt[$_GET['in']] : (isset($txt[$_GET['in']]) ? $txt[$_GET['in']] : $_GET['in']);
-
-	// Does this text contain a link that we should fill in?
-	if (strpos($context['help_text'], '%1$s') !== false)
-		$context['help_text'] = sprintf($context['help_text'], $scripturl, $context['session_query']);
 }
 
 ?>

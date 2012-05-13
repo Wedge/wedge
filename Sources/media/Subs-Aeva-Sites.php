@@ -238,8 +238,9 @@ $sites = array(
 		'type' => 'pop',
 		// http://vimeo.com/45084
 		'pattern' => 'http://(?:www\.|player\.)?vimeo\.com/(?:video/)?(\d{1,12})',
-		'movie' => 'http://assets.vimeo.com/flash/moogaloop/5.0.5/moogaloop.swf?v=5.0.5&clip_id=$2&server=vimeo.com&fullscreen=1&show_title=1&show_byline=1&show_portrait=0&color=01AAEA',
-		'size' => array(640, 360),
+		'plugin' => 'html',
+		'movie' => '<iframe class="aext" src="http://player.vimeo.com/video/$2" width="{int:width}" height="{int:height}" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>',
+		'size' => array(500, 375),
 		'fix-html-pattern' => '<object [^>]*>\s{0,3}<param name="allowfullscreen" value="true" />\s{0,3}<param name="allowscriptaccess" value="always" />\s{0,3}<param name="movie" value="http://vimeo\.com/moogaloop\.swf\?clip_id=(\d{1,12})[^<>]*?>.*?</object>(?:<p><a href="http://vimeo\.com.*?</a>.*?</a>.*?</a>\.</p>)?',
 		'fix-html-url' => 'http://www.vimeo.com/$1',
 		'lookup-title' => true,

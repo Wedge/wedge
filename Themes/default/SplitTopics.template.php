@@ -273,7 +273,7 @@ function template_merge()
 						<strong>', $txt['target_board'], ':</strong>
 					</dt>
 					<dd>
-						<form action="<URL>?action=mergetopics;from=', $context['origin_topic'], ';targetboard=', $context['target_board'], ';board=', $context['current_board'], '.0" method="post" accept-charset="UTF-8">
+						<form action="<URL>?topic=', $context['origin_topic'], ';action=mergetopics;targetboard=', $context['target_board'], '" method="post" accept-charset="UTF-8">
 							<input type="hidden" name="from" value="', $context['origin_topic'], '">
 							<select name="targetboard" onchange="this.form.submit();">';
 			foreach ($context['boards'] as $board)
@@ -313,12 +313,12 @@ function template_merge()
 			<div class="windowbg2 wrc">
 				<ul class="reset merge_topics">';
 
-	$merge_button = create_button('merge.gif', 'merge', '');
+	$merge_button = create_button('merge.gif', 'merge', '', 'class="middle"');
 
 	foreach ($context['topics'] as $topic)
 		echo '
 					<li>
-						<a href="<URL>?action=mergetopics;sa=options;board=', $context['current_board'], '.0;from=', $context['origin_topic'], ';to=', $topic['id'], ';', $context['session_query'], '">', $merge_button, '</a>&nbsp;
+						<a href="<URL>?topic=', $context['origin_topic'], ';action=mergetopics;sa=options;to=', $topic['id'], ';', $context['session_query'], '">', $merge_button, '</a>&nbsp;
 						<a href="<URL>?topic=', $topic['id'], '.0" target="_blank" class="new_win">', $topic['subject'], '</a> ', $txt['started_by'], ' ', $topic['poster']['link'], '
 					</li>';
 

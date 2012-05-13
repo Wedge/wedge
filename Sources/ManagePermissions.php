@@ -1408,7 +1408,7 @@ function loadAllPermissions($loadType = 'classic')
 {
 	global $context, $txt, $settings;
 
-	// List of all the groups dependant on the currently selected view - for the order so it looks pretty, yea?
+	// List of all the groups dependent on the currently selected view - for the order so it looks pretty, yeah?
 	$permissionGroups = array(
 		'membergroup' => array(
 			'simple' => array(
@@ -1645,7 +1645,7 @@ function loadAllPermissions($loadType = 'classic')
 						'permissions' => array()
 					);
 
-			// This is where we set up the permission dependant on the view.
+			// This is where we set up the permission dependent on the view.
 			if ($loadType == 'classic')
 			{
 				$context['permissions'][$permissionType]['columns'][$position][$own_group]['permissions'][$permission] = array(

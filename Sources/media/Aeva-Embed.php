@@ -110,8 +110,8 @@ function aeva_main($message)
 		$offset = 0;
 
 		// Now, we get a list of all <aeva> tags (i.e. videos to embed), as well as their position.
-		preg_match_all('`<aeva .*?</aeva>`', $test, $matches, PREG_OFFSET_CAPTURE);
-		preg_match_all('`<aeva .*?</aeva>`', $message, $original_matches, PREG_OFFSET_CAPTURE);
+		preg_match_all('~<aeva .*?</aeva>~', $test, $matches, PREG_OFFSET_CAPTURE);
+		preg_match_all('~<aeva .*?</aeva>~', $message, $original_matches, PREG_OFFSET_CAPTURE);
 
 		foreach ($matches[0] as $i => &$match)
 		{
@@ -124,9 +124,9 @@ function aeva_main($message)
 			$final = substr($first, strrpos($first, '<br>') + 4) . substr($last, 0, strpos ($last,  '<br>'));
 
 			// ...and remove whitespace and other <aeva>'s. If there's anything left, it means we're in a sentence. Hail to the king.
-			if (trim(preg_replace('`<aeva .*?</aeva>`', '', $final)) !== '')
+			if (trim(preg_replace('~<aeva .*?</aeva>~', '', $final)) !== '')
 			{
-				$message = substr_replace($message, str_replace(array('<aeva ', '</aeva>'), array('<a ', '</a>'), $match[0]), $original_matches[0][$i][1] + $offset, $len);
+				$message = substr_replace($message, str_replace(array('<aeva ', '</aeva>'), array('<a ', '</a>'), $match[0]), $original_matches[0][$i][1] - $offset, strlen($original_matches[0][$i][0]));
 				$offset += 6;
 			}
 		}
