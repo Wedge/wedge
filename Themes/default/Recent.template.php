@@ -30,48 +30,46 @@ function template_main()
 	foreach ($context['posts'] as $post)
 	{
 		echo '
-			<div class="windowbg', $post['alternate'] == 0 ? '' : '2', ' wrc core_posts">
-				<div class="counter">', $post['counter'], '</div>
-				<div class="topic_details">
-					<h5>', $post['board']['link'], ' / ', $post['link'], '</h5>
-					<span class="smalltext">&#171;&nbsp;', $post['on_time'], ' ', $txt['by'], ' <strong>', $post['poster']['link'], '</strong>&nbsp;&#187;</span>
-				</div>
-				<div class="list_posts">', $post['message'], '</div>';
+		<div class="windowbg', $post['alternate'] == 0 ? '' : '2', ' wrc core_posts">
+			<div class="counter">', $post['counter'], '</div>
+			<div class="topic_details">
+				<h5>', $post['board']['link'], ' / ', $post['link'], '</h5>
+				<span class="smalltext">&#171;&nbsp;', $post['on_time'], ' ', $txt['by'], ' <strong>', $post['poster']['link'], '</strong>&nbsp;&#187;</span>
+			</div>
+			<div class="list_posts">', $post['message'], '</div>';
 
 		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
 			echo '
-				<div class="quickbuttons_wrap">
-					<ul class="quickbuttons">';
+			<div class="actionbar">
+				<ul class="actions">';
 
 		// If they *can* reply?
 		if ($post['can_reply'])
 			echo '
-						<li><a href="', $scripturl, '?action=post;topic=', $post['topic'], '.', $post['start'], '" class="reply_button">', $txt['reply'], '</a></li>';
+					<li><a href="', $scripturl, '?action=post;topic=', $post['topic'], '.', $post['start'], '" class="reply_button">', $txt['reply'], '</a></li>';
 
 		// If they *can* quote?
 		if ($post['can_quote'])
 			echo '
-						<li><a href="', $scripturl, '?action=post;topic=', $post['topic'], '.', $post['start'], ';quote=', $post['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
+					<li><a href="', $scripturl, '?action=post;topic=', $post['topic'], '.', $post['start'], ';quote=', $post['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
 
 		// Can we request notification of topics?
 		if ($post['can_mark_notify'])
 			echo '
-						<li><a href="', $scripturl, '?action=notify;topic=', $post['topic'], '.', $post['start'], '" class="notify_button">', $txt['notify'], '</a></li>';
+					<li><a href="', $scripturl, '?action=notify;topic=', $post['topic'], '.', $post['start'], '" class="notify_button">', $txt['notify'], '</a></li>';
 
 		// How about... even... remove it entirely?!
 		if ($post['can_delete'])
 			echo '
-						<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove'], '</a></li>';
+					<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove'], '</a></li>';
 
 		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
 			echo '
-					</ul>
-				</div>';
-
-		echo '
-				<div class="clear"></div>
+				</ul>
 			</div>';
 
+		echo '
+		</div>';
 	}
 
 	echo '

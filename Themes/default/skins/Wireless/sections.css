@@ -25,7 +25,7 @@
 	span
 		float: right
 		font-size: 90%
-	> ul.quickbuttons
+	> ul.actions
 		float: right
 		margin: 3px 0 0
 

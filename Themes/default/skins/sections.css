@@ -325,7 +325,7 @@ img.new_posts
 	margin: 1.2em 0
 
 // Mini-menu parent items
-.umme, .acme
+.acme
 	position: relative
 
 .umme
@@ -333,6 +333,7 @@ img.new_posts
 
 // The mini-menus in the post display.
 .mimenu
+	z-index: 42
 	position: absolute
 	padding: 10px 0 0
 	font: 400 14px/20px $main_font
@@ -341,7 +342,7 @@ img.new_posts
 .signature, .attachments
 	overflow: auto
 	clear: both
-	padding: 1em 0 3px
+	padding: 1em 0 8px
 	border-top: 1px solid #aaa
 	line-height: 1.4em
 	font-size: .9em
@@ -385,13 +386,8 @@ img.new_posts
 			border: 1px dotted gray
 			background: #e0e0f0
 
-// The quick buttons
-.quickbuttons_wrap
-	padding: .2em 0
-	width: 100%
-	float: left
-
-ul.quickbuttons extends ul.reset
+// The action buttons
+ul.actions extends ul.reset
 	padding: 0 3% 0 0
 	clear, text-align: right
 	vertical-align: bottom
@@ -401,13 +397,13 @@ ul.quickbuttons extends ul.reset
 		display: block
 		height: 20px
 		padding: 0 4px 0 22px
-		background: url($images/theme/quickbuttons.png) no-repeat 0 -500px
+		background: url($images/theme/actions.png) no-repeat 0 -500px
 		:hover
 			color: #a70
 
 	/**
 	 * This is where you can change the reply/edit/delete etc. icons for your posts.
-	 * You can either modify the quickbuttons.png sprite file (in which case you just
+	 * You can either modify the actions.png sprite file (in which case you just
 	 * need to set background-position to the correction position as seen below),
 	 * or simply use another file like this: background: url($here/file) no-repeat 0 0
 	 */
@@ -493,7 +489,7 @@ ul.mimenuitem
 .actionbar extends .clearfix
 	padding: 6px 0 4px
 	border-top: 1px solid #ccc
-	ul.quickbuttons
+	ul.actions
 		float: right
 		clear: none
 		a
@@ -1046,9 +1042,10 @@ tr.windowbg td
 	color: #3f3f3f
 	float: left
 
+// A generic class for showing post bodies
 .list_posts
 	border-top: 1px solid #b3b3bf
-	padding-top: 12px
+	padding-top, padding-bottom: 12px
 	margin-top: 6px
 	overflow: auto
 
@@ -1165,7 +1162,7 @@ dl.stats
 	margin-right: 8px
 	font-size: .8em
 
-.like_button extends ul.quickbuttons a
+.like_button extends ul.actions a
 	background-position: 2px -270px
 	padding: 0 0 0 22px
 	font-size: 1.2em

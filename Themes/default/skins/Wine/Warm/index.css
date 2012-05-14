@@ -155,7 +155,7 @@ dl#feed
 .bbc_code code, .php_code code
 	background: #eef5ec
 
-.mimenuitem
+ul.mimenuitem
 	background-color: #ece8e5 !important
 
 /* Generic, mostly color-related, classes.

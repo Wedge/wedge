@@ -79,18 +79,18 @@ function previewPost()
 				reply: ++reply_counter % 2 == 0 ? '2' : '',
 				id: id, poster: $('poster', this).text(),
 				date: $('time', this).text()
-			});
-
-			if (can_quote)
-				newPostsHTML += '<ul class="quickbuttons" id="msg_' + id + '_quote"><li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(\''
-							 + id + '\');">' + ptxt.bbc_quote + '</a></li></ul>';
-
-			newPostsHTML += '<br class="clear">';
+			}) + '<div class="list_posts smalltext clear" id="msg_' + id + '_body">';
 
 			if (ignoring)
 				newPostsHTML += '<div class="ignored" id="msg_' + id + '_ignored">' + ptxt.ignoring_user + '</div>';
 
-			newPostsHTML += '<div class="list_posts smalltext" id="msg_' + id + '_body">' + $('message', this).text() + '</div></div></div>';
+			newPostsHTML += $('message', this).text() + '</div>';
+
+			if (can_quote)
+				newPostsHTML += '<div class="actionbar"><ul class="actions" id="msg_' + id + '_quote"><li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(\''
+							 + id + '\');">' + ptxt.bbc_quote + '</a></li></ul></div>';
+
+			newPostsHTML += '</div></div>';
 		});
 
 		$('#new_replies').append(newPostsHTML);

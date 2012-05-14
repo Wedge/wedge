@@ -226,7 +226,7 @@ li.separator
 	width: 20%
 	padding-right: 0
 
-ul.quickbuttons
+ul.actions
 	float: right
 
 #forumposts
@@ -242,7 +242,7 @@ ul.quickbuttons
 	display: block
 	width: 47%
 
-ul.quickbuttons
+ul.actions
 	display: block
 	width: 40%
 	li

@@ -234,8 +234,8 @@ span.percent
 	float: left
 	margin: 0 10px 0 -3px
 
-// The quick buttons
-ul.quickbuttons
+// The action buttons
+ul.actions
 	margin: 0.9em 0 0 11px
 	float, clear, text-align: left
 	li

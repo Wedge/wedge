@@ -311,7 +311,8 @@ function template_folder()
 
 			echo '
 				</div>
-				<ul class="quickbuttons">';
+				<div class="actionbar">
+					<ul class="actions">';
 
 			// Show reply buttons if you have the permission to send PMs.
 			if ($context['can_send_pm'])
@@ -322,26 +323,27 @@ function template_folder()
 					// Is there than more than one recipient you can reply to?
 					if ($message['number_recipients'] > 1 && $context['display_mode'] != 2)
 						echo '
-					<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=all"class="reply_all_button">', $txt['reply_to_all'], '</a></li>';
+						<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=all"class="reply_all_button">', $txt['reply_to_all'], '</a></li>';
 
 					echo '
-					<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '" class="reply_button">', $txt['reply'], '</a></li>
-					<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote', $context['folder'] == 'sent' ? '' : ';u=' . $message['member']['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
+						<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '" class="reply_button">', $txt['reply'], '</a></li>
+						<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote', $context['folder'] == 'sent' ? '' : ';u=' . $message['member']['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
 				}
 				// This is for "forwarding" - even if the member is gone.
 				else
 					echo '
-					<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="forward_button">', $txt['quote'], '</a></li>';
+						<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="forward_button">', $txt['quote'], '</a></li>';
 			}
 			echo '
-					<li><a href="<URL>?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');" class="remove_button">', $txt['delete'], '</a></li>';
+						<li><a href="<URL>?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');" class="remove_button">', $txt['delete'], '</a></li>';
 
 			if (empty($context['display_mode']))
 				echo '
-					<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="$(\'#deletelisting', $message['id'], '\').attr(\'checked\', this.checked);"></li>';
+						<li class="inline_mod_check"><input type="checkbox" name="pms[]" id="deletedisplay', $message['id'], '" value="', $message['id'], '" onclick="$(\'#deletelisting', $message['id'], '\').attr(\'checked\', this.checked);"></li>';
 
 			echo '
-				</ul>
+					</ul>
+				</div>
 			</div>
 			<div class="post">
 				<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>';
@@ -1614,13 +1616,12 @@ function template_pm_drafts()
 				</div>';
 
 		echo '
-				<div class="floatright">
-					<ul class="quickbuttons">
+				<div class="actionbar">
+					<ul class="actions">
 						<li><a href="<URL>?action=pm;sa=send;draft_id=', $post['id'], empty($post['pmsg']) ? '' : ';pmsg=' . $post['pmsg'], '" class="reply_button">', $txt['edit_draft'], '</a></li>
 						<li><a href="<URL>?action=pm;sa=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove_draft'], '</a></li>
 					</ul>
 				</div>
-				<br class="clear">
 			</div>
 		</div>';
 	}

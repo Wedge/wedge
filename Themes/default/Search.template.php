@@ -380,8 +380,8 @@ function template_results()
 
 				if ($topic['can_reply'] || $topic['can_mark_notify'])
 					echo '
-				<div class="quickbuttons_wrap">
-					<ul class="quickbuttons">';
+				<div class="actionbar">
+					<ul class="actions">';
 
 				// If they *can* reply?
 				if ($topic['can_reply'])
@@ -404,7 +404,6 @@ function template_results()
 				</div>';
 
 				echo '
-				<br class="clear">
 			</div>
 		</div>';
 			}

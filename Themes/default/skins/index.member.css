@@ -6,7 +6,7 @@
 		line-height: 1.5em
 
 // These user menu options definitely aren't available to guests.
-ul.quickbuttons
+ul.actions
 	.contact_button
 		background-image: url($images/icons/online.gif)
 		background-position: 0 0
@@ -101,7 +101,7 @@ ul.buttonlist
 		.btn div
 			margin-top: -2px
 
-#personal_drafts ul.quickbuttons
+#personal_drafts ul.actions
 	padding-right: 0
 
 #searchLabelsExpand li

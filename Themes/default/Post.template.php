@@ -509,15 +509,7 @@ function template_show_previous_posts()
 					<div class="floatleft">
 						<h5>', $txt['posted_by'], ': ', $post['poster'], '</h5>
 						<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
-					</div>';
-
-		if ($context['can_quote'])
-			echo '
-					<ul class="quickbuttons" id="msg_', $post['id'], '_quote">
-						<li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(', $post['id'], ');">', $txt['bbc_quote'], '</a></li>
-					</ul>';
-
-		echo '
+					</div>
 					<br class="clear">';
 
 		if ($ignoring)
@@ -527,7 +519,17 @@ function template_show_previous_posts()
 					</div>';
 
 		echo '
-					<div class="list_posts smalltext" id="msg_', $post['id'], '_body">', $post['message'], '</div>
+					<div class="list_posts smalltext" id="msg_', $post['id'], '_body">', $post['message'], '</div>';
+
+		if ($context['can_quote'])
+			echo '
+					<div class="actionbar">
+						<ul class="actions" id="msg_', $post['id'], '_quote">
+							<li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(', $post['id'], ');">', $txt['bbc_quote'], '</a></li>
+						</ul>
+					</div>';
+
+		echo '
 				</div>
 			</div>';
 	}

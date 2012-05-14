@@ -408,13 +408,12 @@ function template_showDrafts()
 				<div class="smalltext">', $post['topic']['locked'] ? $txt['topic_is_locked'] : $txt['topic_no_longer_available'], '</div>';
 
 		echo '
-				<div class="floatright">
-					<ul class="quickbuttons">
+				<div class="actionbar">
+					<ul class="actions">
 						<li><a href="', $scripturl . '?action=post;', ($post['topic']['no_edit'] || empty($post['topic']['id'])) ? 'board=' . $post['board']['id'] : 'topic=' . $post['topic']['original_topic'], '.0;draft_id=', $post['id'], '" class="reply_button">', $txt['edit_draft'], '</a></li>
 						<li><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove_draft'], '</a></li>
 					</ul>
 				</div>
-				<br class="clear">
 			</div>
 		</div>';
 	}
@@ -475,40 +474,7 @@ function template_showPosts()
 		<div class="topic">
 			<div class="windowbg', $post['alternate'] == 0 ? '2' : '', ' wrc core_posts">
 				<div class="counter">', $post['counter'], '</div>
-				<div class="topic_details">';
-
-			if ($post['can_reply'] || $post['can_quote'] || $post['can_mark_notify'] || $post['can_delete'])
-			{
-				echo '
-					<div class="floatright">
-						<ul class="quickbuttons">';
-
-				// If they *can* reply?
-				if ($post['can_reply'])
-					echo '
-							<li><a href="', $scripturl, '?action=post;topic=', $post['topic'], '.', $post['start'], '" class="reply_button">', $txt['reply'], '</a></li>';
-
-				// If they *can* quote?
-				if ($post['can_quote'])
-					echo '
-							<li><a href="', $scripturl . '?action=post;topic=', $post['topic'], '.', $post['start'], ';quote=', $post['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
-
-				// Can we request notification of topics?
-				if ($post['can_mark_notify'])
-					echo '
-							<li><a href="', $scripturl, '?action=notify;topic=', $post['topic'], '.', $post['start'], '" class="notify_button">', $txt['notify'], '</a></li>';
-
-				// How about... even... remove it entirely?!
-				if ($post['can_delete'])
-					echo '
-							<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove'], '</a></li>';
-
-				echo '
-						</ul>
-					</div>';
-			}
-
-			echo '
+				<div class="topic_details">
 					<h5><strong><a href="', $scripturl, '?board=', $post['board']['id'], '.0">', $post['board']['name'], '</a> / <a href="', $scripturl, '?topic=', $post['topic'], '.', $post['start'], '#msg', $post['id'], '">', $post['subject'], '</a></strong></h5>
 					<span class="smalltext">&#171;&nbsp;', $post['on_time'], '&nbsp;&#187;</span>
 				</div>
@@ -524,8 +490,38 @@ function template_showPosts()
 					', $post['body'], '
 				</div>';
 
+			if ($post['can_reply'] || $post['can_quote'] || $post['can_mark_notify'] || $post['can_delete'])
+			{
+				echo '
+				<div class="actionbar">
+					<ul class="actions">';
+
+				// If they *can* reply?
+				if ($post['can_reply'])
+					echo '
+						<li><a href="', $scripturl, '?action=post;topic=', $post['topic'], '.', $post['start'], '" class="reply_button">', $txt['reply'], '</a></li>';
+
+				// If they *can* quote?
+				if ($post['can_quote'])
+					echo '
+						<li><a href="', $scripturl . '?action=post;topic=', $post['topic'], '.', $post['start'], ';quote=', $post['id'], '" class="quote_button">', $txt['quote'], '</a></li>';
+
+				// Can we request notification of topics?
+				if ($post['can_mark_notify'])
+					echo '
+						<li><a href="', $scripturl, '?action=notify;topic=', $post['topic'], '.', $post['start'], '" class="notify_button">', $txt['notify'], '</a></li>';
+
+				// How about... even... remove it entirely?!
+				if ($post['can_delete'])
+					echo '
+						<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove'], '</a></li>';
+
+				echo '
+					</ul>
+				</div>';
+			}
+
 			echo '
-				<br class="clear">
 			</div>
 		</div>';
 		}

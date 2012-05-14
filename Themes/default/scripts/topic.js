@@ -586,7 +586,7 @@ function MiniMenu(oList, bAcme, oStrings)
 				});
 
 				$men = $('<div class="mimenu' + (is_right_side ? ' right' : '') + '"></div>')
-					.html('<ul class="quickbuttons mimenuitem windowbg"><li class="menu-top"></li>' + sHTML + '</ul>')
+					.html('<ul class="actions mimenuitem windowbg"><li class="menu-top"></li>' + sHTML + '</ul>')
 					.appendTo(this);
 
 				$(this) // If we're animating from the right, we need to force right to 0.
@@ -594,11 +594,11 @@ function MiniMenu(oList, bAcme, oStrings)
 					.data('end', { width: $men.width(), height: $men.height(), paddingLeft: $men.css('paddingLeft'), paddingTop: $men.css('paddingTop'), opacity: 1 });
 			}
 
-			$men.stop(true).css($(this).data('start')).animate($(this).data('end'), 300, function () { $(this).css('overflow', 'visible'); });
+			$men.stop(true).css($(this).data('start')).show().animate($(this).data('end'), 300, function () { $(this).css('overflow', 'visible'); });
 		},
 		function ()
 		{
-			$(this).children('.mimenu').stop(true).animate($(this).data('start'), 200, function () { $(this).css('overflow', 'visible'); });
+			$(this).children('.mimenu').stop(true).animate($(this).data('start'), 200, function () { $(this).css({ width: 0, height: 0, display: 'none' }); });
 		}
 	);
 }

@@ -146,7 +146,7 @@ function template_display_posts()
 		if ($message['has_buttons'])
 		{
 			echo '
-							<ul class="quickbuttons">';
+							<ul class="actions">';
 
 			// Can they reply? Have they turned on quick reply?
 			if ($context['can_quote'] && !empty($options['display_quick_reply']) && !$is_mobile)
