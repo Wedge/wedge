@@ -77,7 +77,10 @@ function Like()
 			'user' => $user_info['id'],
 		)
 	);
+
+	$like_time = time();
 	if ($row = wesql::fetch_row($request))
+	{
 		// We had a row. Kill it.
 		wesql::query('
 			DELETE FROM {db_prefix}likes
@@ -90,16 +93,23 @@ function Like()
 				'user' => $user_info['id'],
 			)
 		);
+		$now_liked = false;
+	}
 	else
+	{
 		// No we didn't, insert it.
 		wesql::insert('insert',
 			'{db_prefix}likes',
 			array('id_content' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'),
-			array($id_content, $content_type, $user_info['id'], time()),
+			array($id_content, $content_type, $user_info['id'], $like_time),
 			array('id_content', 'content_type', 'id_member')
 		);
+		$now_liked = true;
+	}
 
 	wesql::free_result($request);
+
+	call_hook('liked_content', array(&$content_type, &$id_content, &$now_liked, &$like_time));
 
 	if (isset($_REQUEST['xml']))
 	{

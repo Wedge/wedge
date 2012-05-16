@@ -1729,6 +1729,13 @@ function knownHooks()
 			'post_post_validate',
 			'save_post_draft',
 			'save_pm_draft',
+			// Likes
+			'like_handler',
+			'liked_content',
+			// Thoughts
+			'thought_add',
+			'thought_update',
+			'thought_delete',
 			// Process flow and execution
 			'default_action',
 			'fallback_action',
@@ -1757,6 +1764,7 @@ function knownHooks()
 			'profile_areas',
 			'ssi',
 			'suggest',
+			'thought',
 		),
 	);
 }

@@ -188,7 +188,7 @@ function Thought()
 		if (isset($_REQUEST['remove']))
 		{
 			// Does any member actually use this thought?
-			$old_thought = 's:10:"id_thought";s:' . strlen($last_thought) . ':"' . $last_thought . '"';
+			$old_thought = 's:10:"id_thought";s:' . strlen($last_text) . ':"' . $last_text . '"';
 			$request = wesql::query('
 				SELECT id_member, data
 				FROM {db_prefix}members
@@ -265,30 +265,43 @@ function Thought()
 				if (!empty($personal_id_thought))
 					updateMemberData($member, array('personal_text' => parse_bbc_inline($personal_thought)));
 			}
+
+			// We don't need to pass the updated personal text stuff anywhere, that can be hooked from
+			// hooking into updating member data if you should so wish. But in case you need the new valid ID...
+			if (empty($personal_id_thought))
+				$personal_id_thought = 0;
+			call_hook('thought_delete', array(&$last_thought, &$last_text, &$personal_id_thought));
 			die;
 		}
 		// If it's similar to the earlier version, don't update the time.
 		else
+		{
+			$update = $percent >= 90 ? 'updated' : time();
 			wesql::query('
 				UPDATE {db_prefix}thoughts
 				SET updated = {raw:updated}, thought = {string:thought}, privacy = {int:privacy}
 				WHERE id_thought = {int:id_thought}', array(
 					'id_thought' => $last_thought,
 					'privacy' => $privacy,
-					'updated' => $percent >= 90 ? 'updated' : time(),
+					'updated' => $update,
 					'thought' => $text
 				)
 			);
+			call_hook('thought_update', array(&$last_thought, &$privacy, &$update, &$text));
+		}
 	}
 	else
 	{
+		$id_parent = !empty($_POST['parent']) ? (int) $_POST['parent'] : 0;
+		$id_master = !empty($_POST['master']) ? (int) $_POST['master'] : 0;
+		
 		// Okay, so this is a new thought... Insert it, we'll cache it if it's not a comment.
 		wesql::query('
 			INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
 			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {string:privacy}, {int:updated}, {string:thought})', array(
-				'id_parent' => !empty($_POST['parent']) ? (int) $_POST['parent'] : 0,
+				'id_parent' => $id_parent,
 				'id_member' => $user_info['id'],
-				'id_master' => !empty($_POST['master']) ? (int) $_POST['master'] : 0,
+				'id_master' => $id_master,
 				'privacy' => $privacy,
 				'updated' => time(),
 				'thought' => $text
@@ -298,6 +311,8 @@ function Thought()
 
 		$user_id = empty($_POST['parent']) ? 0 : (empty($last_member) ? $user_info['id'] : $last_member);
 		$user_name = empty($last_name) ? $user_info['name'] : $last_name;
+
+		call_hook('thought_add', array(&$privacy, &$text, &$id_parent, &$id_master, &$last_thought, &$user_id, &$user_name));
 	}
 
 	// This is for use in the XML template.
