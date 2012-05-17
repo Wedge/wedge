@@ -64,3 +64,8 @@
 table.thought_list td:hover
 	.thought_actions
 		display: inline
+
+// iOS needs its hacks, too. Don't even bother, this one makes absolutely
+// no frigging sense. If set to 'relative', the menu refuses to show up.
+h4 .mime
+	position: absolute

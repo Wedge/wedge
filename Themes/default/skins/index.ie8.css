@@ -52,7 +52,7 @@ table.thought_list td:hover .thought_actions
 // This isn't needed in IE9 + IE8 compatibility mode, but apparently the 'real' IE8 has issues with it.
 // Thank you, Microsoft, for your very useful compatibility tools!
 .menu > li
-	display: inline
+	margin-right: 4px
 
 // Because IE8 doesn't support :only-child...
 .wrc, .wrc_top, .wrc_bottom

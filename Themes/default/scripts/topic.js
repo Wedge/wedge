@@ -550,35 +550,37 @@ function expandThumb(thumbID)
 
 
 
-// *** The UserMenu
-function MiniMenu(oList, bAcme, oStrings)
+// *** Mini-menu plugin. Yay.
+$.fn.MiniMenu = function (oList, oStrings)
 {
-	$(bAcme ? '.acme' : '.umme').hover(
-		function ()
+	this
+		.wrap('<span class="mime"></span>')
+		.parent()
+		.hover(function ()
 		{
 			var
-				is_right_side = $(this).css('textAlign') === 'right',
-				details = this.id.substr(2).split('_'),
-				iMsg = details[0], id = details[1 - bAcme],
-				$men = $(this).children('.mimenu');
-
-			if (!oList[id])
-				return;
+				$mime = $(this).addClass('hover').children(':first'),
+				is_right_side = $mime.css('textAlign') === 'right',
+				sHTML = '', href = $mime[0].href,
+				// Extract the context id from the end of the HTML id
+				// (e.g. <a id="menu-567-123"> gets an id of 123)
+				id = $mime[0].id.match(/\d+$/),
+				$men = $mime.next();
 
 			if (!$men.length)
 			{
-				var sHTML = '', href = this.href, pms, sLink;
+				if (!oList[id])
+					return;
+
 				$.each(oList[id], function ()
 				{
-					pms = oStrings[this.substr(0, 2)];
-					sLink = pms[2] ? pms[2].wereplace({
-						id: id,
-						special: this.substr(3)
-					}) : href;
-					if (!bAcme && sLink.charAt(0) == '?')
-						sLink = href + sLink;
+					var pms = oStrings[this.substr(0, 2)],
+						sLink = pms[2] ? pms[2].wereplace({
+							id: id,
+							special: this.substr(3)
+						}) : href;
 
-					sHTML += '<li><a href="' + sLink + '"'
+					sHTML += '<li><a href="' + (sLink.charAt(0) == '?' ? href : '') + sLink + '"'
 						+ (pms[3] ? ' class="' + pms[3] + '"' : '')
 						+ (pms[4] ? ' ' + pms[4] : '') // Custom data, such as events?
 						+ (pms[1] ? ' title="' + pms[1] + '"' : '')
@@ -587,18 +589,42 @@ function MiniMenu(oList, bAcme, oStrings)
 
 				$men = $('<div class="mimenu' + (is_right_side ? ' right' : '') + '"></div>')
 					.html('<ul class="actions mimenuitem windowbg"><li class="menu-top"></li>' + sHTML + '</ul>')
-					.appendTo(this);
+					.insertAfter($mime);
 
-				$(this) // If we're animating from the right, we need to force right to 0.
-					.data('start', { width: 60, height: 60, opacity: 0, paddingLeft: 0, paddingTop: 0, right: is_right_side ? 0 : 'auto' })
-					.data('end', { width: $men.width(), height: $men.height(), paddingLeft: $men.css('paddingLeft'), paddingTop: $men.css('paddingTop'), opacity: 1 });
+				$(this)
+					// This is the starter position (or end position if we're closing the menu.)
+					.data('start', {
+						// If we start from a 60x60 square, the animation looks nicer.
+						width: 60,
+						height: 60,
+						opacity: 0,
+						paddingTop: 0,
+						top: $mime.height(),
+						// We need to force left to 0, otherwise IE doesn't like it.
+						left: !is_right_side ? 0 : 'auto',
+						// And if we're animating from the right, we'll simply force right to 0.
+						right: is_right_side ? 0 : 'auto'
+					})
+					.data('end', {
+						width: $men.width(),
+						height: $men.height(),
+						opacity: 1,
+						paddingTop: $men.css('paddingTop')
+					});
 			}
 
-			$men.stop(true).css($(this).data('start')).show().animate($(this).data('end'), 300, function () { $(this).css('overflow', 'visible'); });
+			$men
+				.stop(true)
+				.css($(this).data('start'))
+				.show()
+				.animate($(this).data('end'), 300, function () { $(this).css('overflow', 'visible'); });
 		},
 		function ()
 		{
-			$(this).children('.mimenu').stop(true).animate($(this).data('start'), 200, function () { $(this).css({ width: 0, height: 0, display: 'none' }); });
-		}
-	);
+			$(this)
+				.removeClass('hover')
+				.children('.mimenu')
+				.stop(true)
+				.animate($(this).data('start'), 200, function () { $(this).hide(); });
+		});
 }

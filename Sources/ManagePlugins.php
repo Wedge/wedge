@@ -380,7 +380,7 @@ function PluginReadme()
 			if (!empty($manifest->version))
 				$name .= ' ' . westr::htmlspecialchars((string) $manifest->version);
 
-			$name = '<h6 class="top">' . $name . '</h6>';
+			$name = '<h6>' . $name . '</h6>';
 		}
 
 		$context['help_text'] = $name . parse_bbc($contents);

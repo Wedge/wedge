@@ -129,15 +129,14 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 		.hide()
 		.load(help_page, function () {
 			if (title)
-				$('.windowbg2', this).first().prepend('<h6 class="top">' + title + '</h6>');
+				$(this).first().prepend('<h6>' + title + '</h6>');
 			$(this).css({
 				overflow: noScrollbars ? 'hidden' : auto,
 				width: alternateWidth - 25,
 				height: alternateHeight ? alternateHeight - 20 : auto,
-				marginLeft: 200,
 				padding: '10px 12px 12px',
 				border: '1px solid #999'
-			}).animate({ marginLeft: 0, opacity: 'show' }, 999);
+			}).fadeIn(300);
 			$(helf).dragslide();
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', help_page).css({
@@ -448,7 +447,7 @@ function weCookie(sKey)
 		if (!is_visible)
 			$('ul', this).first()
 				.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 9 : 36 } : { marginLeft: w })
-				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 }, 'fast');
+				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 }, 300);
 
 		clearTimeout(menu_delay[id.substring(2)]);
 
@@ -473,7 +472,7 @@ function weCookie(sKey)
 	// Hide all children menus.
 	menu_hide_children = function (id)
 	{
-		$('#' + id).children().andSelf().removeClass(hove).find('ul').css({ visibility: 'hidden', opacity: +is_ie8down });
+		$('#' + id).children().andSelf().removeClass(hove).find('ul').css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 	};
 
 	// Make sure to only call this on one element...
@@ -489,7 +488,7 @@ function weCookie(sKey)
 				.mousedown(false)
 				.click(function () {
 					$('.' + hove).removeClass(hove);
-					$('ul', elem).css({ visibility: 'hidden', opacity: +is_ie8down });
+					$('ul', elem).css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 				});
 		});
 

@@ -137,7 +137,7 @@ function template_credits()
 			echo '
 		<div', empty($context['site_credits']['mods']) ? '' : ' class="two-columns"', '>
 			<div class="windowbg2 wrc">
-				<h6 class="top">', number_context('credits_admins', count($context['site_credits']['admins'])), '</h6>
+				<h6>', number_context('credits_admins', count($context['site_credits']['admins'])), '</h6>
 				<ul class="last">';
 
 			foreach ($context['site_credits']['admins'] as $admin)
@@ -155,7 +155,7 @@ function template_credits()
 			echo '
 		<div', empty($context['site_credits']['admins']) ? '' : ' class="two-columns"', '>
 			<div class="windowbg2 wrc">
-				<h6 class="top">', number_context('credits_moderators', count($context['site_credits']['mods'])), '</h6>
+				<h6>', number_context('credits_moderators', count($context['site_credits']['mods'])), '</h6>
 				<ul class="last">';
 
 			foreach ($context['site_credits']['mods'] as $mod)
@@ -185,7 +185,7 @@ function template_credits()
 		$max = count($section['groups']);
 		foreach ($section['groups'] as $group)
 			echo '
-				<h6', $i === 1 ? ' class="top"' : '', '>', $group['title'], '</h6>
+				<h6>', $group['title'], '</h6>
 				<ul', $i === $max ? ' class="last"' : '', '>
 					<li>', implode('</li>
 					<li>', $group['members']), '</li>
@@ -203,7 +203,7 @@ function template_credits()
 		</div>
 		<div class="two-columns">
 			<we:block class="windowbg wrc" header="', westr::safe($txt['credits_copyright']), '">
-				<h6 class="top">', $txt['credits_forum'], '</h6>
+				<h6>', $txt['credits_forum'], '</h6>
 				<ul>
 					<li>', implode('</li>
 					<li style="padding-top: 8px">', $context['copyrights']['software']), '</li>

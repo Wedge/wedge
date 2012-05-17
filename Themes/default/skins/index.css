@@ -711,12 +711,10 @@ input[type=file]
 #navi
 	color: #999
 	border-bottom: 1px solid #bdb5b5
-	overflow: hidden
 	padding: 0 25px
 
 #main_menu
 	padding: 5px 0 0
-	float: left
 	li.nodrop h4
 		background-image: none
 	h4:hover, h4.hove
@@ -774,7 +772,7 @@ input[type=file]
 	cursor: pointer
 	height: auto
 
-// This is the same as above, but for anything else than IE6. Uh.
+// For anything else than IE6...
 .menu > li
 	display: inline-block
 	// Until white-space-collapsing is finalized...
@@ -938,7 +936,7 @@ li.separator
 	background-position: -150px 0
 	width: 15px
 
-/* Common classes to ease styling.
+/* Common positioning/sizing classes to ease styling.
 ------------------------------------------------------- */
 
 // Left and right-floating
@@ -1005,6 +1003,76 @@ li.separator
 ul.reset, ul.reset li
 	padding, margin: 0
 	list-style: none
+
+/* HTML5 overrides for deprecated alignment/width params.
+--------------------------------------------------------- */
+
+.w100
+	width: 100%
+.w75
+	width: 75%
+.w50
+	width: 50%
+.w25
+	width: 25%
+
+.top, tr.top td, tr.top th
+	vertical-align: top
+.middle, tr.middle td, tr.middle th
+	vertical-align: middle
+.bottom, tr.bottom td, tr.bottom th
+	vertical-align: bottom
+
+img.center
+	margin: auto
+img.left
+	float: left
+img.right
+	float: right
+
+/*
+	It's important to repeat left/right/center statements to
+	respect child priority when setting multiple classes in a table.
+	<table><tr class="center"><td class="left"> should be left-aligned.
+*/
+table
+	&.cs0
+		border-collapse: separate
+		border-spacing: 0
+	&.cs1 extends &.cs0
+		border-spacing: 1px
+	&.cs3 extends &.cs0
+		border-spacing: 3px
+	&.cs8 extends &.cs0
+		border-spacing: 8px
+	&.cp0
+		th, td
+			padding: 0
+	&.cp4
+		th, td
+			padding: 4px
+	&.cp8
+		th, td
+			padding: 8px
+	&.left th, &.left td
+		text-align: left
+	&.right th, &.right td
+		text-align: right
+	&.center th, &.center td
+		text-align: center
+	tr
+		&.left th, &.left td
+			text-align: left
+		&.right th, &.right td
+			text-align: right
+		&.center th, &.center td
+			text-align: center
+		th.left, td.left
+			text-align: left
+		th.right, td.right
+			text-align: right
+		th.center, td.center
+			text-align: center
 
 /* Some BBC related styles.
 ------------------------------------------------------- */
@@ -1442,75 +1510,6 @@ dl#feed
 		padding: .3em 1em
 		margin: 0
 
-/* HTML5 overrides for deprecated alignment/width params
---------------------------------------------------------- */
-
-.w100
-	width: 100%
-.w75
-	width: 75%
-.w50
-	width: 50%
-.w25
-	width: 25%
-
-img.top, td.top, th.top, tr.top td, tr.top th
-	vertical-align: top
-img.middle, td.middle, th.middle, tr.middle td, tr.middle th
-	vertical-align: middle
-img.bottom, td.bottom, th.bottom, tr.bottom td, tr.bottom th
-	vertical-align: bottom
-img.center
-	margin: auto
-img.left
-	float: left
-img.right
-	float: right
-
-/*
-	It's important to repeat left/right/center statements to
-	respect child priority when setting multiple classes in a table.
-	<table><tr class="center"><td class="left"> should be left-aligned.
-*/
-table
-	&.cs0
-		border-collapse: separate
-		border-spacing: 0
-	&.cs1 extends &.cs0
-		border-spacing: 1px
-	&.cs3 extends &.cs0
-		border-spacing: 3px
-	&.cs8 extends &.cs0
-		border-spacing: 8px
-	&.cp0
-		th, td
-			padding: 0
-	&.cp4
-		th, td
-			padding: 4px
-	&.cp8
-		th, td
-			padding: 8px
-	&.left th, &.left td
-		text-align: left
-	&.right th, &.right td
-		text-align: right
-	&.center th, &.center td
-		text-align: center
-	tr
-		&.left th, &.left td
-			text-align: left
-		&.right th, &.right td
-			text-align: right
-		&.center th, &.center td
-			text-align: center
-		th.left, td.left
-			text-align: left
-		th.right, td.right
-			text-align: right
-		th.center, td.center
-			text-align: center
-
 /* Used for sections that need corners and a border frame.
 ----------------------------------------------------------- */
 
@@ -1559,12 +1558,8 @@ h6
 	font: 400 10pt "Franklin Gothic Medium", Tahoma, sans-serif
 	img
 		vertical-align: -3px
-h6.top
-	margin-top: 0
-h6.alt
-	color: #963
-h6.alt2
-	color: #396
+	:first-child
+		margin-top: 0
 
 /* Styles used by the auto suggest control.
 ------------------------------------------------------- */
@@ -1651,7 +1646,8 @@ $big_font = "Segoe UI Light", "Segoe UI", Optima, Arial, sans-serif
 $head_font = "Franklin Gothic Medium", "Franklin Gothic", $big_font
 $mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace
 
-$post_font = 95%/133% Verdana, "Segoe UI", Arial, sans-serif
+$post_font_size = 95%/133%
+$post_font = Verdana, "Segoe UI", Arial, sans-serif
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""

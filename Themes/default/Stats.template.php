@@ -77,7 +77,7 @@ function template_main()
 		</div>
 
 		<div class="two-columns windowbg2 wrc">
-			<h6 class="top">
+			<h6>
 				<img src="', $theme['images_url'], '/stats_posters.gif">
 				', $txt['top_posters'], '
 			</h6>
@@ -105,7 +105,7 @@ function template_main()
 		</div>
 
 		<div class="two-columns windowbg wrc">
-			<h6 class="top">
+			<h6>
 				<img src="', $theme['images_url'], '/stats_board.gif">
 				', $txt['top_boards'], '
 			</h6>
@@ -133,7 +133,7 @@ function template_main()
 		</div>
 
 		<div class="two-columns windowbg wrc">
-			<h6 class="top">
+			<h6>
 				<img src="', $theme['images_url'], '/stats_replies.gif">
 				', $txt['top_topics_replies'], '
 			</h6>
@@ -160,7 +160,7 @@ function template_main()
 		</div>
 
 		<div class="two-columns windowbg2 wrc">
-			<h6 class="top">
+			<h6>
 				<img src="', $theme['images_url'], '/stats_views.gif">
 				', $txt['top_topics_views'], '
 			</h6>
@@ -186,7 +186,7 @@ function template_main()
 		</div>
 
 		<div class="two-columns windowbg2 wrc">
-			<h6 class="top">
+			<h6>
 				<img src="', $theme['images_url'], '/stats_replies.gif">
 				', $txt['top_starters'], '
 			</h6>
@@ -214,7 +214,7 @@ function template_main()
 		</div>
 
 		<div class="two-columns windowbg wrc">
-			<h6 class="top">
+			<h6>
 				<img src="', $theme['images_url'], '/stats_views.gif">
 				', $txt['most_time_online'], '
 			</h6>
@@ -242,7 +242,7 @@ function template_main()
 		</div>
 
 		<div class="two-columns windowbg2 wrc">
-			<h6 class="top">
+			<h6>
 				<span class="top_likes"></span>
 				', $txt['top_likes'], '
 			</h6>

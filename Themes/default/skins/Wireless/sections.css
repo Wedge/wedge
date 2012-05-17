@@ -2,7 +2,7 @@
 .poster
 	display: block
 	box-sizing: border-box
-	width: 100%
+	width: auto
 	height: 58px
 	padding: 10px 12px 12px
 
@@ -18,6 +18,7 @@
 
 .postarea
 	display: block
+	width: auto // mostly for IE6
 
 .tinyuser
 	float, text-align: right

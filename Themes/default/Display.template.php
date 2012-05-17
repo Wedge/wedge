@@ -135,48 +135,51 @@ function template_display_posts()
 			echo '
 						<div id="msg_', $message['id'], '_footer">';
 
-		echo '
-						<div class="actionbar">';
-
-		// Can the user modify the contents of this post?  Show the modify inline image.
-		if ($message['can_modify'])
-			echo '
-							<div class="modifybutton" id="modify_button_', $message['id'], '" title="', $txt['modify_msg'], '" onclick="if (window.oQuickModify) oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
-
-		if ($message['has_buttons'])
+		if ($message['can_modify'] || $message['has_buttons'] || $context['can_like'] || !empty($context['liked_posts'][$message['id']]))
 		{
 			echo '
+						<div class="actionbar">';
+
+			// Can the user modify the contents of this post?  Show the modify inline image.
+			if ($message['can_modify'])
+				echo '
+							<div class="modifybutton" id="modify_button_', $message['id'], '" title="', $txt['modify_msg'], '" onclick="if (window.oQuickModify) oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
+
+			if ($message['has_buttons'])
+			{
+				echo '
 							<ul class="actions">';
 
-			// Can they reply? Have they turned on quick reply?
-			if ($context['can_quote'] && !empty($options['display_quick_reply']) && !$is_mobile)
-				echo '
+				// Can they reply? Have they turned on quick reply?
+				if ($context['can_quote'] && !empty($options['display_quick_reply']) && !$is_mobile)
+					echo '
 								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" id="quote_button_', $message['id'], '" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
 
-			// So... quick reply is off, but they *can* reply?
-			elseif ($context['can_quote'] && !$is_mobile)
-				echo '
+				// So... quick reply is off, but they *can* reply?
+				elseif ($context['can_quote'] && !$is_mobile)
+					echo '
 								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
 
-			// Can the user modify the contents of this post?
-			if ($message['can_modify'] && !$is_mobile)
-				echo '
+				// Can the user modify the contents of this post?
+				if ($message['can_modify'] && !$is_mobile)
+					echo '
 								<li><a href="<URL>?action=post;msg=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
 
-			if (!empty($context['action_menu'][$message['id']]))
-				echo '
+				if (!empty($context['action_menu'][$message['id']]))
+					echo '
 								<li><a id="mm', $message['id'], '" class="acme more_button">', $txt[$is_mobile ? 'actions_button' : 'more_actions'], '</a></li>';
 
-			echo '
+				echo '
 							</ul>';
-		}
+			}
 
-		// Did anyone like this post?
-		if ($context['can_like'] || !empty($context['liked_posts'][$message['id']]))
-			template_show_likes($message);
+			// Did anyone like this post?
+			if ($context['can_like'] || !empty($context['liked_posts'][$message['id']]))
+				template_show_likes($message);
 
-		echo '
+			echo '
 						</div>';
+		}
 
 		// Assuming there are attachments...
 		if (!empty($message['attachment']))
@@ -316,14 +319,14 @@ function template_display_posts()
 	if (!empty($context['user_menu']))
 	{
 		$context['footer_js'] .= '
-	new MiniMenu({';
+	$(".umme").MiniMenu({';
 
 		foreach ($context['user_menu'] as $user => $linklist)
 			$context['footer_js'] .= '
 		' . $user. ': ["' . implode('", "', $linklist) . '"],';
 
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
-	}, false, {';
+	}, {';
 		foreach ($context['user_menu_items'] as $key => $pmi)
 		{
 			if (!isset($context['user_menu_items_show'][$key]))
@@ -344,14 +347,14 @@ function template_display_posts()
 	if (!empty($context['action_menu']))
 	{
 		$context['footer_js'] .= '
-	new MiniMenu({';
+	$(".acme").MiniMenu({';
 
 		foreach ($context['action_menu'] as $post => $linklist)
 			$context['footer_js'] .= '
 		' . $post . ': ["' . implode('", "', $linklist) . '"],';
 
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
-	}, true, {';
+	}, {';
 		foreach ($context['action_menu_items'] as $key => $pmi)
 		{
 			if (!isset($context['action_menu_items_show'][$key]))
@@ -373,6 +376,7 @@ function template_display_posts()
 function template_userbox(&$message)
 {
 	global $context, $settings, $txt, $theme, $options;
+	static $unique_id = 1;
 
 	$is_mobile = !empty($context['skin_options']['mobile']);
 
@@ -404,7 +408,7 @@ function template_userbox(&$message)
 
 	// Show a link to the member's profile.
 	echo '
-							<a href="', $message['member']['href'], '" id="um', $message['id'], '_', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
+							<a href="', $message['member']['href'], '" id="um', $unique_id++, '-', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
 						</h4>
 						<ul class="info" id="msg_', $message['id'], '_extra_info">';
 
@@ -892,7 +896,7 @@ function template_display_statistics()
 	echo '
 	<section>
 		<we:title>
-			<img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '">
+			<img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt['topic_stats'], '" class="top" style="padding-right: 0">
 			', $txt['topic_stats'], '
 		</we:title>
 		<p>

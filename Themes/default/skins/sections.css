@@ -266,12 +266,13 @@ img.new_posts
 .poster
 	width: 14em
 	display: table-cell
-	background: rgba(0,0,0,.042)
+	background: rgba(0,0,0, .042)
 	padding: 10px 12px 12px 0
 	vertical-align: top
 
 	h4
 		margin: 3px 0 3px 16px // 19px originally.
+		font: 700 120%/120% "PT Sans", "Franklin Gothic Medium", Arial
 
 	ul.info extends ul.reset
 		padding: 0
@@ -316,27 +317,13 @@ img.new_posts
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage
-	font: $post_font
+	font: $post_font_size $post_font
 	padding: .1em 0
 	clear: right
 
 .post
 	padding: 0
 	margin: 1.2em 0
-
-// Mini-menu parent items
-.acme
-	position: relative
-
-.umme
-	font: 700 120%/120% "PT Sans", "Franklin Gothic Medium", Arial
-
-// The mini-menus in the post display.
-.mimenu
-	z-index: 42
-	position: absolute
-	padding: 10px 0 0
-	font: 400 14px/20px $main_font
 
 // All the signatures used in the forum. You might want to add max-height here ;)
 .signature, .attachments
@@ -394,6 +381,7 @@ ul.actions extends ul.reset
 	li extends .inline-block
 		margin: 0 0 0 5px
 	a
+		word-wrap: normal
 		display: block
 		height: 20px
 		padding: 0 4px 0 22px
@@ -453,28 +441,6 @@ ul.actions extends ul.reset
 		background-image: url-no-base64($images/new_some.png)
 		background-position: 0 0
 
-
-ul.mimenuitem
-	width: auto
-	white-space: nowrap
-	background: #fbfbf8 // rgba(255,255,255, .5)
-	margin: 0
-	padding: 4px
-	border: 1px solid rgba(0,0,0, .2)
-	border-radius: 5px
-	box-shadow: 1px 1px 6px rgba(0,0,0, .25)
-	overflow: hidden
-
-	li
-		background: #f6f6f0 // rgba(255,255,255, .8)
-		overflow: hidden
-		display: block
-		margin: 0
-		padding: 1px 2px
-		text-align: left
-		a
-			padding-left: 25px
-
 .inner
 	margin: 0 1em 0 0
 	padding: 0 .7em
@@ -530,6 +496,47 @@ ul.buttonlist extends ul.reset
 			font-weight: bold
 		:hover
 			color: #a54
+
+/* Styles for the mini-menus.
+---------------------------------------------------- */
+
+// Wrapper span that will contain the menu...
+.mime
+	position: relative
+	float: none
+
+// Styling for the parent link when the menu is open.
+span.hover > a
+	text-decoration: underline
+
+// Styling for the mini-menu container below the parent link...
+.mimenu
+	z-index: 42
+	position: absolute
+	padding: 10px 0 0
+	font: 400 14px/20px $main_font
+
+// ...And for the mini-menu itself (phew.)
+ul.mimenuitem
+	width: auto
+	white-space: nowrap
+	background: #fbfbf8 // rgba(255,255,255, .5)
+	margin: 0
+	padding: 4px
+	border: 1px solid rgba(0,0,0, .2)
+	border-radius: 5px
+	box-shadow: 1px 1px 6px rgba(0,0,0, .25)
+	overflow: hidden
+
+	li
+		background: #f6f6f0 // rgba(255,255,255, .8)
+		overflow: hidden
+		display: block
+		margin: 0
+		padding: 1px 2px
+		text-align: left
+		a
+			padding-left: 25px
 
 /* Styles for the quick reply area.
 ---------------------------------------------------- */
