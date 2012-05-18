@@ -297,16 +297,19 @@ function template_show_file()
 {
 	global $context;
 
+	$alt = '';
+
 	echo '
-	<table class="nodrag cp0 cs3 monospace">';
+	<table class="nodrag cp0 cs0 monospace">';
 
 	foreach ($context['file_data']['contents'] as $index => $line)
 	{
-		$line_num = $index+$context['file_data']['min'];
+		$alt = $alt ? '' : '2';
+		$line_num = $index + $context['file_data']['min'];
 		$is_target = $line_num == $context['file_data']['target'];
 		echo '
-		<tr>
-			<td class="right"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
+		<tr class="windowbg', $alt, '">
+			<td class="nowrap right"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
 			<td class="nowrap"', $is_target ? ' style="border: 1px solid black; border-width: 1px 1px 1px 0;">' : '>', $line, '</td>
 		</tr>';
 	}

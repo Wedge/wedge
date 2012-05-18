@@ -34,11 +34,11 @@ ul.buttonlist
 
 // The quick edit button
 .modifybutton
-	background: url($images/icons/modify_inline.gif) no-repeat 0 0
+	background: url($images/icons/modify_inline.gif) no-repeat 0 -1px
 	display: inline
 	width, height: 20px
 	clear, float: right
-	margin: 0 20px 0 0
+	margin: 0 20px 0 -10px
 	cursor: pointer
 
 // "You are ignoring..." box. Obviously, only members can see this.

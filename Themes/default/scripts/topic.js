@@ -550,27 +550,29 @@ function expandThumb(thumbID)
 
 
 
-// *** Mini-menu plugin. Yay.
-$.fn.MiniMenu = function (oList, oStrings)
+// *** Mini-menu (mime) plugin. Yay.
+$.fn.mime = function (oList, oStrings)
 {
 	this
 		.wrap('<span class="mime"></span>')
 		.parent()
 		.hover(function ()
 		{
-			var
-				$mime = $(this).addClass('hover').children(':first'),
-				is_right_side = $mime.css('textAlign') === 'right',
-				sHTML = '', href = $mime[0].href,
-				// Extract the context id from the end of the HTML id
-				// (e.g. <a id="menu-567-123"> gets an id of 123)
-				id = $mime[0].id.match(/\d+$/),
-				$men = $mime.next();
+			var $men = $(this)
+				.toggleClass('hover')
+				.find('.mimenu')
+					.stop(true);
 
+			// Do we need to initialize the actual menu?
 			if (!$men.length)
 			{
-				if (!oList[id])
-					return;
+				var
+					$mime = $(this).children().first(),
+					is_right_side = $mime.css('textAlign') === 'right',
+					sHTML = '', href = $mime[0].href,
+					// Extract the context id from the digits at the end of the HTML id
+					// (e.g. <a id="menu-567-123"> gets an id of 123)
+					id = $mime[0].id.match(/\d+$/);
 
 				$.each(oList[id], function ()
 				{
@@ -594,10 +596,10 @@ $.fn.MiniMenu = function (oList, oStrings)
 				$(this)
 					// This is the starter position (or end position if we're closing the menu.)
 					.data('start', {
+						opacity: 0,
 						// If we start from a 60x60 square, the animation looks nicer.
 						width: 60,
 						height: 60,
-						opacity: 0,
 						paddingTop: 0,
 						top: $mime.height(),
 						// We need to force left to 0, otherwise IE doesn't like it.
@@ -606,15 +608,14 @@ $.fn.MiniMenu = function (oList, oStrings)
 						right: is_right_side ? 0 : 'auto'
 					})
 					.data('end', {
+						opacity: 1,
 						width: $men.width(),
 						height: $men.height(),
-						opacity: 1,
 						paddingTop: $men.css('paddingTop')
 					});
 			}
 
 			$men
-				.stop(true)
 				.css($(this).data('start'))
 				.show()
 				.animate($(this).data('end'), 300, function () { $(this).css('overflow', 'visible'); });
@@ -622,9 +623,10 @@ $.fn.MiniMenu = function (oList, oStrings)
 		function ()
 		{
 			$(this)
-				.removeClass('hover')
-				.children('.mimenu')
-				.stop(true)
-				.animate($(this).data('start'), 200, function () { $(this).hide(); });
-		});
+				.toggleClass('hover')
+				.find('.mimenu')
+					.stop(true)
+					.animate($(this).data('start'), 200, function () { $(this).hide(); });
+		}
+	);
 }

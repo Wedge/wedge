@@ -1643,7 +1643,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 
 	// Then, we need to list the CSS files that will be part of our main CSS file.
-	$context['css_main_files'] = array('index', 'sections');
+	$context['main_css_files'] = array(
+		'index' => true,
+		'sections' => false
+	);
 	$context['css_suffixes'] = array();
 
 	$member = empty($user_info['id']) ? -1 : $user_info['id'];
@@ -2074,7 +2077,12 @@ function weInitJS()
 	global $settings, $context;
 
 	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
-		$context['javascript_files'] = array('scripts/jquery-1.5.2.js', 'scripts/script.js', 'scripts/sbox.js', 'scripts/custom.js');
+		$context['main_js_files'] = array(
+			'scripts/jquery-1.5.2.js' => true,
+			'scripts/script.js' => true,
+			'scripts/sbox.js' => false,
+			'scripts/custom.js' => false
+		);
 	else
 	{
 		$remote = array(
@@ -2082,8 +2090,12 @@ function weInitJS()
 			'jquery' =>		'http://code.jquery.com/jquery-1.5.2.min.js',
 			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
 		);
-		$context['remote_javascript_files'] = array($remote[$settings['jquery_origin']]);
-		$context['javascript_files'] = array('scripts/script.js', 'scripts/sbox.js', 'scripts/custom.js');
+		$context['remote_js_files'] = array($remote[$settings['jquery_origin']]);
+		$context['main_js_files'] = array(
+			'scripts/script.js' => true,
+			'scripts/sbox.js' => false,
+			'scripts/custom.js' => false
+		);
 	}
 }
 

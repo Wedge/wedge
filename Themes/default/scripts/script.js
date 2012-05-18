@@ -11,8 +11,9 @@
  */
 
 var
+	oThought,
 	weEditors = [],
-	_formSubmitted = false, oThought,
+	_formSubmitted = false,
 
 	// Basic browser detection
 	ua = navigator.userAgent.toLowerCase(),
@@ -224,31 +225,6 @@ function bindEvents(items)
 	setTimeout(sessionKeepAlive, 12e5);
 })();
 
-function we_avatarResize()
-{
-	var tempAvatars = [], i = 0, maxWidth = we_avatarMaxSize[0], maxHeight = we_avatarMaxSize[1];
-	$('img.avatar').each(function () {
-		tempAvatars[i] = new Image();
-		tempAvatars[i].avatar = this;
-
-		$(tempAvatars[i++]).load(function ()
-		{
-			var ava = this.avatar;
-			ava.width = this.width;
-			ava.height = this.height;
-			if (maxWidth != 0 && this.width > maxWidth)
-			{
-				ava.height = (maxWidth * this.height) / this.width;
-				ava.width = maxWidth;
-			}
-			if (maxHeight != 0 && ava.height > maxHeight)
-			{
-				ava.width = (maxHeight * ava.width) / ava.height;
-				ava.height = maxHeight;
-			}
-		}).attr('src', this.src);
-	});
-}
 
 
 // Shows the page numbers by clicking the dots.
@@ -478,17 +454,19 @@ function weCookie(sKey)
 	// Make sure to only call this on one element...
 	$.fn.menu = function ()
 	{
-		var elem = this.show();
-		$('h4+ul', elem).prepend('<li class="menu-top"></li>');
-
-		$('li', elem).each(function () {
+		var $elem = this.show();
+		this.find('h4+ul').prepend('<li class="menu-top"></li>');
+		this.find('li').each(function () {
 			$(this).attr('id', 'li' + menu_baseId++)
 				.bind('mouseenter focus', menu_show_me)
 				.bind('mouseleave blur', menu_hide_me)
+				// Disable double clicks...
 				.mousedown(false)
+				// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
+				.filter(':has(>a,>h4>a)')
 				.click(function () {
 					$('.' + hove).removeClass(hove);
-					$('ul', elem).css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+					$elem.find('ul').css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
 				});
 		});
 
@@ -631,6 +609,18 @@ function Thought(opt)
 		// Make that personal text editable (again)!
 		cancel = function () {
 			$('#thought_form').siblings().show().end().remove();
+		},
+
+		interact_thoughts = function ()
+		{
+			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid') || '';
+			if (tid)
+				thought.after('\
+		<div class="thought_actions">' + (thought.data('self') !== '' ? '' : '\
+			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + ', \'' + mid + '\');">\
+			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">') + '\
+			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + ', \'' + mid + '\', true);">\
+		</div>');
 		};
 
 	// Show the input after the user has clicked the text.
@@ -691,7 +681,9 @@ function Thought(opt)
 						uname: user.text(),
 						text: thought.text()
 					})));
-				$(new_id + ' span').html(thought.text());
+				else
+					$(new_id + ' span').html(thought.text());
+				$(new_id).each(interact_thoughts);
 				cancel();
 				hide_ajax();
 			}
@@ -705,17 +697,7 @@ function Thought(opt)
 		$('#thought_update')
 			.attr('title', opt.sLabelThought)
 			.click(function () { oThought.edit(''); });
-		$('.thought').each(function ()
-		{
-			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
-			if (tid)
-				thought.after('\
-		<div class="thought_actions">' + (thought.data('self') !== '' ? '' : '\
-			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ');">\
-			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">') + '\
-			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + (mid ? ', ' + mid : ', \'\'') + ', true);">\
-		</div>');
-		});
+		$('.thought').each(interact_thoughts);
 	}
 }
 

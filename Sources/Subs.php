@@ -1517,9 +1517,17 @@ function setupThemeContext($forceload = false)
 
 	// Resize avatars the fancy, but non-GD requiring way.
 	if ($settings['avatar_action_too_large'] == 'option_js_resize' && (!empty($settings['avatar_max_width_external']) || !empty($settings['avatar_max_height_external'])))
+	{
+		// Add avasize.js to the list of files to load, and hide its filename.
+		// Usually we'd want to show it but since it's a site-wide feature, it's okay to hide it.
+		// !! It would be a good idea to delete the script cache when the setting is changed, though.
+		if (!empty($context['main_js_files']))
+			$context['main_js_files']['scripts/avasize.js'] = false;
+
 		add_js('
 	var we_avatarMaxSize = [' . (int) $settings['avatar_max_width_external'] . ', ' . (int) $settings['avatar_max_height_external'] . '];
 	$(window).load(we_avatarResize);');
+	}
 
 	// This looks weird, but it's because Boards.php references the variable.
 	$context['common_stats']['latest_member'] = array(

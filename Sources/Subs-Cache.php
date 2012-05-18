@@ -85,7 +85,6 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$latest_date = 0;
 	$is_default_theme = true;
 	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
-	$ignore_files = array_flip($ignore_files);
 
 	foreach ($files as $fid => $file)
 	{
@@ -98,12 +97,12 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 
 		$is_default_theme &= $target === 'default_theme_';
 		$add = $theme[$target . 'dir'] . '/' . $file;
-		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
-		$temp_name = str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3));
 
+		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
 		// Don't add theme.js, sbox.js and custom.js files to the final filename, to save a few bytes on all pages.
-		if (!isset($ignore_files[$temp_name]))
-			$id .= $temp_name . '-';
+		if (!isset($ignore_files[$file]))
+			$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
+
 		$latest_date = max($latest_date, filemtime($add));
 	}
 
@@ -821,9 +820,17 @@ function theme_base_css()
 	global $context, $boardurl;
 
 	// We only generate the cached file at the last moment (i.e. when first needed.)
-	// Make sure custom.css, if available, is added last. Also, ignore strip index/sections/custom from the final filename.
+	// Make sure custom.css, if available, is added last. Also, strip index/sections/custom from the final filename.
 	if (empty($context['cached_css']))
-		add_css_file(array_merge($context['css_main_files'], (array) 'custom'), false, true, array('index', 'sections', 'custom'));
+	{
+		$context['main_css_files']['custom'] = false;
+
+		add_css_file(
+			array_keys($context['main_css_files']),
+			false, true,
+			array_keys(array_diff($context['main_css_files'], array_filter($context['main_css_files'])))
+		);
+	}
 
 	if (!empty($context['header_css']))
 	{
@@ -841,18 +848,22 @@ function theme_base_css()
 
 /**
  * Shows the base JavaScript calls, i.e. including jQuery and script.js
+ * Also transmits a list of filenames to ignore (e.g. sbox, avasize, theme, custom...)
  *
  * @param boolean $indenting Number of tabs on each new line. For the average anal-retentive web developer.
  */
 function theme_base_js($indenting = 0)
 {
-	global $context;
+	global $context,$user_info;
 
 	$tab = str_repeat("\t", $indenting);
-	return (!empty($context['remote_javascript_files']) ? '
+	return (!empty($context['remote_js_files']) ? '
 ' . $tab . '<script src="' . implode('"></script>
-' . $tab . '<script src="', $context['remote_javascript_files']) . '"></script>' : '') . '
-' . $tab . '<script src="' . add_js_file($context['javascript_files'], false, true, array('sbox', 'theme', 'custom')) . '"></script>';
+' . $tab . '<script src="', $context['remote_js_files']) . '"></script>' : '') . '
+' . $tab . '<script src="' . add_js_file(
+		array_keys($context['main_js_files']), false, true,
+		array_diff($context['main_js_files'], array_filter($context['main_js_files']))
+	) . '"></script>';
 }
 
 /**

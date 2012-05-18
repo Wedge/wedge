@@ -25,11 +25,11 @@ function template_init()
 	global $context, $theme, $settings, $options, $txt;
 
 	// Add the theme-specific JavaScript files to our priority cache list.
-	if (!empty($context['javascript_files']))
+	if (!empty($context['main_js_files']))
 	{
-		$context['javascript_files'][] = 'scripts/theme.js';
+		$context['main_js_files']['scripts/theme.js'] = false;
 		if ($context['user']['is_guest'] && empty($context['disable_login_hashing']) && !empty($context['show_login_bar']))
-			$context['javascript_files'][] = 'scripts/sha1.js';
+			$context['main_js_files']['scripts/sha1.js'] = true;
 	}
 
 	/* Use images from default theme when using templates from the default theme?
@@ -595,7 +595,7 @@ function template_body_after()
 		we_default_theme_url = ', $theme['theme_url'] === $theme['theme_url'] ? 'we_theme_url = ' : '', '"', $theme['default_theme_url'], '", ', $theme['theme_url'] === $theme['theme_url'] ? '' : '
 		we_theme_url = "' . $theme['theme_url'] . '",', '
 		we_sessid = "', $context['session_id'], '",
-		we_sessvar = "', $context['session_var'], '",', $context['server']['iso_case_folding'] && in_array('scripts/sha1.js', $context['javascript_files']) ? '
+		we_sessvar = "', $context['session_var'], '",', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
 		we_iso_case_folding = true' : '', '
 		we_loading = "', $txt['ajax_in_progress'], '",
 		we_cancel = "', $txt['form_cancel'], '";

@@ -16,7 +16,7 @@ function template_login()
 	global $context, $theme, $options, $scripturl, $settings, $txt;
 
 	if (empty($context['disable_login_hashing']))
-		$context['javascript_files'][] = 'scripts/sha1.js';
+		$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
 		<form action="', $scripturl, '?action=login2" name="frmLogin" id="frmLogin" method="post" accept-charset="UTF-8" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
@@ -77,7 +77,7 @@ function template_kick_guest()
 
 	// This isn't that much... just like normal login but with a message at the top.
 	if (empty($context['disable_login_hashing']))
-		$context['javascript_files'][] = 'scripts/sha1.js';
+		$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
 	<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
@@ -129,7 +129,7 @@ function template_maintenance()
 
 	// Display the administrator's message at the top.
 	if (empty($context['disable_login_hashing']))
-		$context['javascript_files'][] = 'scripts/sha1.js';
+		$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
 <form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
@@ -168,7 +168,7 @@ function template_admin_login()
 	global $context, $theme, $options, $scripturl, $txt;
 
 	// Since this should redirect to whatever they were doing, send all the get data.
-	$context['javascript_files'][] = 'scripts/sha1.js';
+	$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
 <form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">

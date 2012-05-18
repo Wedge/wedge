@@ -21,7 +21,7 @@ function template_display_posts()
 	// Show the topic information - icon, subject, etc.
 	echo '
 		<div id="forumposts"', $board_info['type'] == 'board' ? '' : ' class="blog"', '>
-			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify ? oQuickModify.modifySave() : false">';
+			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.modifySave()">';
 
 	$ignoredMsgs = array();
 	$removableMessageIDs = array();
@@ -286,7 +286,7 @@ function template_display_posts()
 					<input type="hidden" id="qm_topic" value="' . $context['current_topic'] . '">
 					<input type="hidden" id="qm_msg" value="%msg_id%">
 					<div class="right">
-						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return oQuickModify.modifySave();" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['form_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
+						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return window.oQuickModify && oQuickModify.modifySave();" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['form_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
 					</div>
 				</div>') . ',
 			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
@@ -319,7 +319,7 @@ function template_display_posts()
 	if (!empty($context['user_menu']))
 	{
 		$context['footer_js'] .= '
-	$(".umme").MiniMenu({';
+	$(".umme").mime({';
 
 		foreach ($context['user_menu'] as $user => $linklist)
 			$context['footer_js'] .= '
@@ -347,7 +347,7 @@ function template_display_posts()
 	if (!empty($context['action_menu']))
 	{
 		$context['footer_js'] .= '
-	$(".acme").MiniMenu({';
+	$(".acme").mime({';
 
 		foreach ($context['action_menu'] as $post => $linklist)
 			$context['footer_js'] .= '

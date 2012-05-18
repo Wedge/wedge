@@ -503,7 +503,6 @@ ul.buttonlist extends ul.reset
 // Wrapper span that will contain the menu...
 .mime
 	position: relative
-	float: none
 
 // Styling for the parent link when the menu is open.
 span.hover > a
