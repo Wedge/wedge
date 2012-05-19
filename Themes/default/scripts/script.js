@@ -26,7 +26,7 @@ var
 	is_ff = !is_opera && ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1,
 	is_gecko = !is_opera && ua.indexOf('gecko') != -1,
 
-	// The webkit ones. Oh my, that's a long list... Right now we're only support iPhone/iPod Touch/iPad and generic Android browsers.
+	// The webkit ones. Oh my, that's a long list... Right now we're only supporting iOS and generic Android browsers.
 	is_webkit = !!$.browser.webkit,
 	is_chrome = ua.indexOf('chrome') != -1,
 	is_iphone = is_webkit && (ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1),
@@ -283,7 +283,7 @@ function ajaxRating()
 function weUrl(url)
 {
 	url = url || we_script;
-	return (url + (url.indexOf('?') == -1 ? '?' : (url.match(/[?&;]$/) ? '' : ';')))
+	return (url + (url.indexOf('?') == -1 ? '?' : (url.search(/[?&;]$/) ? '' : ';')))
 			.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
 }
 
@@ -324,21 +324,6 @@ function weSelectText(oCurElement)
 	}
 
 	return false;
-}
-
-function weCookie(sKey)
-{
-	var aNameValuePair, ret = null;
-	$.each((document.cookie || '').split(';'), function ()
-	{
-		aNameValuePair = this.split('=');
-		if ($.trim(aNameValuePair[0]) === sKey)
-		{
-			ret = decodeURIComponent(aNameValuePair[1]);
-			return false;
-		}
-	});
-	return ret;
 }
 
 
@@ -448,7 +433,7 @@ function weCookie(sKey)
 	// Hide all children menus.
 	menu_hide_children = function (id)
 	{
-		$('#' + id).children().andSelf().removeClass(hove).find('ul').css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+		$('#' + id).children().andSelf().removeClass(hove).find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
 	};
 
 	// Make sure to only call this on one element...
@@ -466,7 +451,7 @@ function weCookie(sKey)
 				.filter(':has(>a,>h4>a)')
 				.click(function () {
 					$('.' + hove).removeClass(hove);
-					$elem.find('ul').css(is_ie8down ? { visibility: 'hidden' } : { visibility: 'hidden', opacity: 0 });
+					$elem.find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
 				});
 		});
 
@@ -481,7 +466,6 @@ function weCookie(sKey)
 function weToggle(opt)
 {
 	var
-		cookieValue,
 		that = this,
 		collapsed = false,
 		toggle_me = function () {
@@ -535,20 +519,19 @@ function weToggle(opt)
 		this.cs(!collapsed);
 	};
 
+	// Note that this is only used in stats.js...
 	this.opt = opt;
 
-	// If cookies are enabled and they were set, override the initial state.
-	if (opt.sCookie)
-		if ((cookieValue = weCookie(opt.sCookie)) != null)
-			opt.bCurrentlyCollapsed = cookieValue == '1';
-
 	// If the init state is set to be collapsed, collapse it.
-	if (opt.bCurrentlyCollapsed)
+	// If cookies are enabled and our toggler cookie is set to '1', override the initial state.
+	// Note: the cookie retrieval code is below, you can turn it into a function by replacing opt.sCookie with a param.
+	// It's not used anywhere else in Wedge, which is why we won't bother with a weCookie object.
+	if (opt.bCurrentlyCollapsed || (opt.sCookie && document.cookie.search('\\b' + opt.sCookie + '\\s*=\\s*1\\b') != -1))
 		this.cs(true, true);
 
 	// Initialize the images to be clickable.
 	$.each(opt.aSwapImages || [], function () {
-		$('#' + this.sId).show().css({ visibility: 'visible' }).data('that', that).click(toggle_me).css('cursor', 'pointer').mousedown(false);
+		$('#' + this.sId).show().data('that', that).click(toggle_me).css({ visibility: 'visible' }).css('cursor', 'pointer').mousedown(false);
 	});
 
 	// Initialize links.

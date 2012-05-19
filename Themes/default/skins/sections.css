@@ -266,7 +266,7 @@ img.new_posts
 .poster
 	width: 14em
 	display: table-cell
-	background: rgba(0,0,0, .042)
+	background: rgba(0,0,0, .025)
 	padding: 10px 12px 12px 0
 	vertical-align: top
 
