@@ -16,6 +16,9 @@
 .richedit_resize
 	padding: 0 !important
 
+#qm_post
+	width: 635px
+	max-width, min-width: 100%
 
 /* Misc hacks
 ------------- */

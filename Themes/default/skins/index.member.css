@@ -33,19 +33,27 @@ ul.buttonlist
 	float: right
 
 // The quick edit button
-.modifybutton
+.quick_edit
 	background: url($images/icons/modify_inline.gif) no-repeat 0 -1px
 	display: inline
 	width, height: 20px
 	clear, float: right
-	margin: 0 20px 0 -10px
+	margin: 0 20px 0 -3px
 	cursor: pointer
+
+#error_box
+	padding: 4px
+
+#qm_subject
+	width: 80%
+
+#qm_post
+	margin-bottom: 10px
+	width: 100%
 
 // "You are ignoring..." box. Obviously, only members can see this.
 .ignored
-	margin: 8px 0 0
-	padding: 8px
-	border: 1px dotted #999
+	margin: 8px
 	font-style: italic
 	color: #999
 	:hover

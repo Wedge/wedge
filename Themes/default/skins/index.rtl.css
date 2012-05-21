@@ -226,7 +226,7 @@ span.percent
 .keyinfo
 	float: right
 
-.modifybutton
+.quick_edit
 	float, clear, text-align: left
 	margin: 8px 0 10px 20px
 
@@ -244,25 +244,25 @@ ul.actions
 		a
 			padding: 0 20px 0 0
 			float: left
-	li.quote_button
+	.quote_button
 		background-position: 100% 0
-	li.remove_button
+	.remove_button
 		background-position: 100% -30px
-	li.modify_button
+	.modify_button
 		background-position: 100% -60px
-	li.approve_button
+	.approve_button
 		background-position: 100% -90px
-	li.restore_button
+	.restore_button
 		background-position: 100% -120px
-	li.split_button
+	.split_button
 		background-position: 100% -150px
-	li.reply_button
+	.reply_button
 		background-position: 100% -180px
-	li.reply_all_button
+	.reply_all_button
 		background-position: 100% -180px
-	li.notify_button
+	.notify_button
 		background-position: 100% -210px
-	li.mergepost_button
+	.mergepost_button
 		background-position: 100% -242px
 
 .post

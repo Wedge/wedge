@@ -40,14 +40,24 @@ function template_display_posts()
 		if (!empty($message['is_ignored']))
 			$ignoredMsgs[] = $ignoring = $message['id'];
 
-		// Show the message anchor and a "new" anchor if this message is new.
-		if ($message['id'] != $context['first_message'])
+		// Show a "new" anchor if this message is new.
+		if ($message['first_new'] && $message['id'] != $context['first_message'])
 			echo '
-			<a id="msg', $message['id'], '"></a>', $message['first_new'] ? '<a id="new"></a>' : '';
+			<a id="new"></a>';
 
+		// msg123 serves as the anchor, as well as an easy way to find the message ID,
+		// or other classes (such as can-mod), from within it. For instance,
+		// var id_msg = $(this).closest('.root').attr('id').substr(3);
 		echo '
-			<div class="postbg', $message['alternate'] == 0 ? '' : '2', $message['approved'] ? '' : ' approve', $message['id'] !== $context['first_message'] ? '' : ' first-post', empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] === 'right' ? '' : ' right-side', '">
-				<div class="post_wrapper', $is_mobile ? ' mobile' : '', '">';
+			<div id="msg', $message['id'], '" class="root',
+				$message['alternate'] == 0 ? ' postbg' : ' postbg2',
+				$message['approved'] ? '' : ' approve',
+				$message['can_modify'] ? ' can-mod' : '',
+				$is_mobile ? ' mobile' : '',
+				$message['id'] !== $context['first_message'] ? '' : ' first-post',
+				empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] === 'right' ? '' : ' right-side',
+			'">
+				<div class="post_wrapper">';
 
 		// Show information about the poster of this message.
 		if (empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] !== 'left')
@@ -68,25 +78,25 @@ function template_display_posts()
 			// Show a checkbox for quick moderation?
 			if ($message['can_remove'])
 				echo '
-							<span class="inline_mod_check" id="inline_mod_check_', $message['id'], '"></span>';
+							<span class="inline_mod_check"></span>';
 
 			echo '
 							<div class="keyinfo">
-								<div class="messageicon"', $message['can_modify'] ? ' id="msg_icon_' . $message['id'] . '"' : '', '>
+								<div class="messageicon">
 									<img src="', $message['icon_url'] . '">
 								</div>
-								<h5 id="subject_', $message['id'], '">
+								<h5>
 									<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>', $message['new'] ? '
 									<div class="note">' . $txt['new'] . '</div>' : '', '
 								</h5>
 								<span>&#171; ', !empty($message['counter']) ? sprintf($txt['reply_number'], $message['counter']) : '', ' ', $message['on_time'], ' &#187;</span>
-								<span class="modified" id="modified_', $message['id'], '">', $theme['show_modify'] && !empty($message['modified']['name']) ?
+								<span class="modified">', $theme['show_modify'] && !empty($message['modified']['name']) ?
 									// Show "Last Edit on Date by Person" if this post was edited.
 									strtr($txt[$message['modified']['name'] !== $message['member']['name'] ? 'last_edit' : 'last_edit_mine'], array(
 										'{date}' => $message['modified']['on_time'],
 										'{name}' => !empty($message['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $message['modified']['member'] . '">' . $message['modified']['name'] . '</a>' : $message['modified']['name']
-									)) : '', '</span>
-								<div id="msg_', $message['id'], '_quick_mod"></div>
+									)) : '',
+								'</span>
 							</div>
 						</div>';
 		}
@@ -109,13 +119,13 @@ function template_display_posts()
 		// Ignoring this user? Hide the post.
 		if ($ignoring)
 			echo '
-						<div class="ignored" id="msg_', $message['id'], '_ignored">
+						<div class="ignored">
 							', $txt['ignoring_user'], '
 						</div>';
 
 		if ($is_mobile)
 			echo '
-						<h5 id="subject_', $message['id'], '"></h5>';
+						<h5></h5>';
 
 		// Show the post itself, finally!
 		echo '
@@ -128,12 +138,12 @@ function template_display_posts()
 							</div>';
 
 		echo '
-							<div class="inner" id="msg_', $message['id'], '"', '>', $message['body'], '</div>
+							<div class="inner">', $message['body'], '</div>
 						</div>';
 
 		if ($ignoring)
 			echo '
-						<div id="msg_', $message['id'], '_footer">';
+						<footer>';
 
 		if ($message['can_modify'] || $message['has_buttons'] || $context['can_like'] || !empty($context['liked_posts'][$message['id']]))
 		{
@@ -143,7 +153,7 @@ function template_display_posts()
 			// Can the user modify the contents of this post?  Show the modify inline image.
 			if ($message['can_modify'])
 				echo '
-							<div class="modifybutton" id="modify_button_', $message['id'], '" title="', $txt['modify_msg'], '" onclick="if (window.oQuickModify) oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
+							<div class="quick_edit" title="', $txt['modify_msg'], '" onclick="return window.oQuickModify && oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
 
 			if ($message['has_buttons'])
 			{
@@ -153,7 +163,7 @@ function template_display_posts()
 				// Can they reply? Have they turned on quick reply?
 				if ($context['can_quote'] && !empty($options['display_quick_reply']) && !$is_mobile)
 					echo '
-								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" id="quote_button_', $message['id'], '" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
+								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
 
 				// So... quick reply is off, but they *can* reply?
 				elseif ($context['can_quote'] && !$is_mobile)
@@ -167,7 +177,7 @@ function template_display_posts()
 
 				if (!empty($context['action_menu'][$message['id']]))
 					echo '
-								<li><a id="mm', $message['id'], '" class="acme more_button">', $txt[$is_mobile ? 'actions_button' : 'more_actions'], '</a></li>';
+								<li><a class="acme more_button">', $txt[$is_mobile ? 'actions_button' : 'more_actions'], '</a></li>';
 
 				echo '
 							</ul>';
@@ -237,11 +247,11 @@ function template_display_posts()
 			echo '
 						<div class="signature">', $message['member']['signature'], '</div>';
 
-		echo '
-					</div>';
-
 		if ($ignoring)
 			echo '
+					</footer>';
+
+		echo '
 					</div>';
 
 		// Show information about the poster of this message.
@@ -279,9 +289,9 @@ function template_display_posts()
 		var oQuickModify = new QuickModify({
 			iTopicId: ' . $context['current_topic'] . ',
 			sTemplateBodyEdit: ' . JavaScriptEscape('
-				<div id="quick_edit_body_container" style="width: 90%">
-					<div id="error_box" style="padding: 4px" class="error"></div>
-					<textarea class="editor" id="qm_post" rows="12" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 100%; min-width: 100%' : 'width: 100%') . '; margin-bottom: 10px" tabindex="' . $context['tabindex']++ . '">%body%</textarea>
+				<div id="quick_edit_body_container">
+					<div id="error_box" class="error"></div>
+					<textarea class="editor" id="qm_post" rows="12" tabindex="' . $context['tabindex']++ . '">%body%</textarea>
 					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 					<input type="hidden" id="qm_topic" value="' . $context['current_topic'] . '">
 					<input type="hidden" id="qm_msg" value="%msg_id%">
@@ -289,15 +299,14 @@ function template_display_posts()
 						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return window.oQuickModify && oQuickModify.modifySave();" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['form_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
 					</div>
 				</div>') . ',
-			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" style="width: 90%" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
+			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
 			sTemplateBodyNormal: \'%body%\',
 			sTemplateSubjectNormal: ' . JavaScriptEscape('<a href="' . $scripturl . '?topic=' . $context['current_topic'] . '.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>') . ',
 			sErrorBorderStyle: \'1px solid red\'
 		});
 
 		new IconList({
-			sPrefix: "msg_icon_",
-			sLabels: "' . $txt['message_icon'] . '",
+			sLabels: \'' . $txt['message_icon'] . '\',
 			iBoardId: ' . $context['current_board'] . ',
 			iTopicId: ' . $context['current_topic'] . '
 		});
@@ -309,11 +318,11 @@ function template_display_posts()
 	new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
-			\'msg_' . $msgid . '\',
-			\'msg_' . $msgid . '_extra_info\',
-			\'msg_' . $msgid . '_footer\'
+			\'msg' . $msgid . ' .info\',
+			\'msg' . $msgid . ' .inner\',
+			\'msg' . $msgid . ' .actionbar\'
 		],
-		aSwapLinks: [{ sId: \'msg_' . $msgid . '_ignored\' }]
+		aSwapLinks: [{ sId: \'msg' . $msgid . ' .ignored\' }]
 	});');
 
 	if (!empty($context['user_menu']))
@@ -410,7 +419,7 @@ function template_userbox(&$message)
 	echo '
 							<a href="', $message['member']['href'], '" id="um', $unique_id++, '-', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
 						</h4>
-						<ul class="info" id="msg_', $message['id'], '_extra_info">';
+						<ul class="info">';
 
 	// Show the member's custom title, if they have one.
 	if (!empty($message['member']['title']) && !$is_mobile)
@@ -601,8 +610,8 @@ function template_show_likes(&$message)
 	// Can they use the Like button?
 	if ($context['can_like'])
 		echo '
-								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button" id="like_button_', $message['id'], '" title="', strip_tags($string), '">
-									', $num_likes ? $show_likes . ' ' : '', $txt[$you_like ? 'unlike' : 'like'], '</a>';
+								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
+								$num_likes ? $show_likes . ' ' : '', $txt[$you_like ? 'unlike' : 'like'], '</a>';
 	elseif ($num_likes)
 		echo '
 								<span class="like_button" title="', strip_tags($string), '">', $show_likes, '</span>';
@@ -808,9 +817,9 @@ function template_title_upper()
 {
 	global $context;
 
-	// Show the anchor for the top and for the first message. If the first message is new, say so. Then the title and prev/next navigation.
-	echo '
-		<a id="msg', $context['first_message'], '"></a>', $context['first_new_message'] ? '<a id="new"></a>' : '', '
+	// Show the anchor for the first message if it's new. Then the title and prev/next navigation.
+	echo $context['first_new_message'] ? '
+		<a id="new"></a>' : '', '
 		<div class="posthead">', $context['prevnext_prev'], '
 			<div id="top_subject">', $context['subject'], '</div>', $context['prevnext_next'], '
 		</div>';

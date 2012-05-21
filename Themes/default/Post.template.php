@@ -514,17 +514,17 @@ function template_show_previous_posts()
 
 		if ($ignoring)
 			echo '
-					<div class="ignored" id="msg_', $post['id'], '_ignored">
+					<div class="ignored">
 						', $txt['ignoring_user'], '
 					</div>';
 
 		echo '
-					<div class="list_posts smalltext" id="msg_', $post['id'], '_body">', $post['message'], '</div>';
+					<div class="list_posts smalltext">', $post['message'], '</div>';
 
 		if ($context['can_quote'])
 			echo '
 					<div class="actionbar">
-						<ul class="actions" id="msg_', $post['id'], '_quote">
+						<ul class="actions">
 							<li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(', $post['id'], ');">', $txt['bbc_quote'], '</a></li>
 						</ul>
 					</div>';
@@ -542,10 +542,10 @@ function template_show_previous_posts()
 	new weToggle({
 		bCurrentlyCollapsed: true,
 		aSwappableContainers: [
-			"msg_' . $post_id . '_body",
-			"msg_' . $post_id . '_quote"
+			"msg' . $post_id . ' .list_posts",
+			"msg' . $post_id . ' .actions"
 		],
-		aSwapLinks: [{ sId: "msg_' . $post_id . '_ignored" }]
+		aSwapLinks: [{ sId: "msg' . $post_id . ' .ignored" }]
 	});');
 }
 

@@ -18,19 +18,40 @@ function showimage()
 
 function previewPost()
 {
-	var onDocSent = function (XMLDoc)
+	var x = [];
+	$.each(textFields, function () {
+		if (this in postmod)
+		{
+			// Handle the WYSIWYG editor.
+			if (this == postbox && posthandle && posthandle.bRichTextEnabled)
+				x.push('message_mode=1&' + this + '=' + posthandle.getText(false).replace(/&#/g, '&#38;#').php_urlencode());
+			else
+				x.push(this + '=' + postmod[this].value.replace(/&#/g, '&#38;#').php_urlencode());
+		}
+	});
+	$.each(numericFields, function () {
+		if (this in postmod && 'value' in postmod[this])
+			x.push(this + '=' + parseInt(postmod.elements[this].value));
+	});
+	$.each(checkboxFields, function () {
+		if (this in postmod && postmod.elements[this].checked)
+			x.push(this + '=' + postmod.elements[this].value);
+	});
+
+	show_ajax();
+	sendXMLDocument(weUrl() + 'action=post2' + (current_board ? ';board=' + current_board : '') + (make_poll ? ';poll' : '') + ';preview;xml', x.join('&'), function (XMLDoc)
 	{
 		if (!XMLDoc)
 			$(postmod.preview).click(function () { return true; }).click();
 
 		// Create and show the preview section, with a fine little animation.
-		$('#preview_body').html($('we preview body', XMLDoc).text()).addClass('post');
-		$('#preview_subject').html($('we preview subject', XMLDoc).text());
+		$('#preview_body').html($('preview body', XMLDoc).text()).addClass('post');
+		$('#preview_subject').html($('preview subject', XMLDoc).text());
 		$('#preview_section').animate({ opacity: 'show', height: 'show' });
 
 		var
 			errorList = [],
-			errors = $('we errors', XMLDoc),
+			errors = $('errors', XMLDoc),
 			$postbox = $('#' + postbox),
 			newPostsHTML = '',
 			ignored_replies = [],
@@ -59,7 +80,7 @@ function previewPost()
 
 		// Set the new last message id.
 		if ('last_msg' in postmod)
-			postmod.last_msg.value = $('we last_msg', XMLDoc).text();
+			postmod.last_msg.value = $('last_msg', XMLDoc).text();
 
 		// Remove the new image from old-new replies!
 		for (i = 0; i < new_replies.length; i++)
@@ -67,7 +88,7 @@ function previewPost()
 
 		new_replies = [];
 
-		$('we new_posts post', XMLDoc).each(function () {
+		$('new_posts post', XMLDoc).each(function () {
 			id = $(this).attr('id');
 			new_replies.push(id);
 
@@ -77,19 +98,21 @@ function previewPost()
 
 			newPostsHTML += new_post_tpl.wereplace({
 				reply: ++reply_counter % 2 == 0 ? '2' : '',
-				id: id, poster: $('poster', this).text(),
-				date: $('time', this).text()
-			}) + '<div class="list_posts smalltext clear" id="msg_' + id + '_body">';
+				poster: $('poster', this).text(),
+				date: $('time', this).text(),
+				id: id
+			});
 
 			if (ignoring)
-				newPostsHTML += '<div class="ignored" id="msg_' + id + '_ignored">' + ptxt.ignoring_user + '</div>';
+				newPostsHTML += '<div class="ignored">' + ptxt.ignoring_user + '</div>';
 
-			newPostsHTML += $('message', this).text() + '</div>';
+			newPostsHTML += '<div class="list_posts smalltext clear">' + $('message', this).text() + '</div>';
 
 			if (can_quote)
-				newPostsHTML += '<div class="actionbar"><ul class="actions" id="msg_' + id + '_quote"><li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(\''
+				newPostsHTML += '<div class="actionbar"><ul class="actions"><li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(\''
 							 + id + '\');">' + ptxt.bbc_quote + '</a></li></ul></div>';
 
+			// Closing the two div's opened in new_post_tpl...
 			newPostsHTML += '</div></div>';
 		});
 
@@ -99,38 +122,15 @@ function previewPost()
 			new weToggle({
 				bCurrentlyCollapsed: true,
 				aSwappableContainers: [
-					'msg_' + this + '_body',
-					'msg_' + this + '_quote'
+					'msg' + this + ' .list_posts',
+					'msg' + this + ' .actionbar'
 				],
-				aSwapLinks: [{ sId: 'msg_' + this + '_ignored' }]
+				aSwapLinks: [{ sId: 'msg' + this + ' .ignored' }]
 			});
 		});
 
 		hide_ajax();
-	};
-
-	var x = [];
-	$.each(textFields, function () {
-		if (this in postmod)
-		{
-			// Handle the WYSIWYG editor.
-			if (this == postbox && posthandle && posthandle.bRichTextEnabled)
-				x.push('message_mode=1&' + this + '=' + posthandle.getText(false).replace(/&#/g, '&#38;#').php_urlencode());
-			else
-				x.push(this + '=' + postmod[this].value.replace(/&#/g, '&#38;#').php_urlencode());
-		}
 	});
-	$.each(numericFields, function () {
-		if (this in postmod && 'value' in postmod[this])
-			x.push(this + '=' + parseInt(postmod.elements[this].value));
-	});
-	$.each(checkboxFields, function () {
-		if (this in postmod && postmod.elements[this].checked)
-			x.push(this + '=' + postmod.elements[this].value);
-	});
-
-	show_ajax();
-	sendXMLDocument(weUrl() + 'action=post2' + (current_board ? ';board=' + current_board : '') + (make_poll ? ';poll' : '') + ';preview;xml', x.join('&'), onDocSent);
 
 	return false;
 }

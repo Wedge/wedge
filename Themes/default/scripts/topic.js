@@ -33,7 +33,7 @@ function modify_topic(topic_id, first_msg_id)
 	show_edit = function (subject)
 	{
 		// Just template the subject.
-		cur_subject_div.html('<input type="text" id="qm_subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80"><input type="hidden" id="qm_topic" value="' + cur_topic_id + '"><input type="hidden" id="qm_msg" value="' + cur_msg_id.substr(4) + '">');
+		cur_subject_div.html('<input type="text" id="qm_subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80"><input type="hidden" id="qm_topic" value="' + cur_topic_id + '"><input type="hidden" id="qm_msg" value="' + cur_msg_id + '">');
 		$('#qm_subject').keypress(key_press);
 	},
 
@@ -72,7 +72,10 @@ function modify_topic(topic_id, first_msg_id)
 		sendXMLDocument(
 			weUrl() + 'action=jsmodify;topic=' + $('#qm_topic').val() + ';' + we_sessvar + '=' + we_sessid + ';xml',
 			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
-			function (XMLDoc) {
+			function (XMLDoc)
+			{
+				hide_ajax();
+
 				if (!XMLDoc)
 				{
 					cancel();
@@ -80,10 +83,8 @@ function modify_topic(topic_id, first_msg_id)
 				}
 
 				var
-					subject = $('we message subject', XMLDoc),
-					error = $('we message error', XMLDoc);
-
-				hide_ajax();
+					subject = $('subject', XMLDoc),
+					error = $('error', XMLDoc);
 
 				if (!subject.length || error.length)
 					return false;
@@ -129,8 +130,10 @@ function modify_topic(topic_id, first_msg_id)
 	show_ajax();
 	getXMLDocument(
 		weUrl() + 'action=quotefast;quote=' + first_msg_id + ';modify;xml',
-		function (XMLDoc) {
-			cur_msg_id = $('message', XMLDoc).attr('id').substr(4);
+		function (XMLDoc)
+		{
+			hide_ajax();
+			cur_msg_id = $('message', XMLDoc).attr('id');
 
 			cur_subject_div = $('#msg_' + cur_msg_id);
 			buff_subject = cur_subject_div.html();
@@ -139,7 +142,6 @@ function modify_topic(topic_id, first_msg_id)
 			set_hidden_topic_areas(false);
 
 			show_edit($('subject', XMLDoc).text());
-			hide_ajax();
 		}
 	);
 }
@@ -152,8 +154,7 @@ function QuickReply(opt)
 	// When a user presses quote, put it in the quick reply box (if expanded).
 	this.quote = function (iMessage)
 	{
-		// iMessageId is taken from the owner ID -- quote_button_xxx
-		var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(13) : '';
+		var iMessageId = $(iMessage).closest('.root').attr('id').substr(3);
 
 		if (bCollapsed)
 		{
@@ -163,9 +164,10 @@ function QuickReply(opt)
 		else
 		{
 			show_ajax();
-			getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + +oEditorHandle_message.bRichTextEnabled, function (oXMLDoc) {
-				oEditorHandle_message.insertText($('quote', oXMLDoc).text(), false, true);
+			getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + +oEditorHandle_message.bRichTextEnabled, function (XMLDoc)
+			{
 				hide_ajax();
+				oEditorHandle_message.insertText($('quote', XMLDoc).text(), false, true);
 			});
 
 			// Move the view to the quick reply box.
@@ -209,107 +211,25 @@ function QuickReply(opt)
 function QuickModify(opt)
 {
 	var
-		sCurMessageId = '',
-		sMessageBuffer, sSubjectBuffer,
-		oCurMessageDiv, oCurSubjectDiv,
+		sCurMessageId = 0,
+		sSubjectBuffer = 0,
+		oCurMessageDiv,
+		oCurSubjectDiv,
 
-		// The callback function used for the Ajax request retrieving the message.
-		onMessageReceived = function (XMLDoc)
+		// Function in case the user presses cancel (or other circumstances cause it).
+		modifyCancel = function ()
 		{
-			// Hide the 'loading...' sign.
-			hide_ajax();
-
-			// Grab the message ID.
-			var sId = $('message', XMLDoc).attr('id');
-
-			if (sId == sCurMessageId)
-				return;
-			else if (sCurMessageId)
-				this.modifyCancel();
-			sCurMessageId = sId;
-
-			// If this is not valid then simply give up.
-			oCurMessageDiv = $('#' + sCurMessageId);
-
-			if (!oCurMessageDiv.length)
-				return this.modifyCancel();
-
-			sMessageBuffer = oCurMessageDiv.html();
-
-			// Actually create the content, with a bodge for disappearing dollar signs.
-			oCurMessageDiv.html(
-				opt.sTemplateBodyEdit
-					.wereplace({
-						msg_id: sCurMessageId.substr(4),
-						body: $('message', XMLDoc).text()
-					})
-			);
-
-			// Replace the subject part.
-			oCurSubjectDiv = $('#subject_' + sCurMessageId.substr(4));
-			sSubjectBuffer = oCurSubjectDiv.html();
-
-			oCurSubjectDiv.html(
-				opt.sTemplateSubjectEdit
-					.wereplace({
-						subject: $('subject', XMLDoc).text()
-					})
-			);
-		},
-
-		// Callback function of the Ajax request sending the modified message.
-		onModifyDone = function (XMLDoc)
-		{
-			// We've finished the loading part.
-			hide_ajax();
-
-			var
-				message = $('we message', XMLDoc),
-				body = $('body', message),
-				error = $('error', message);
-
-			// If we didn't get a valid document, just cancel.
-			if (!XMLDoc || !message.length)
+			// Roll back the HTML to its original state.
+			if (sSubjectBuffer !== 0)
 			{
-				// If you could instead tell us what's wrong...?
-				if (XMLDoc)
-					$('#error_box').html(XMLDoc.childNodes && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror' ? XMLDoc.firstChild.textContent : XMLDoc);
-				else
-					this.modifyCancel();
-				return;
-			}
-
-			if (body.length)
-			{
-				// Show new body.
-				sMessageBuffer = opt.sTemplateBodyNormal.wereplace({ body: body.text() });
-				oCurMessageDiv.html(sMessageBuffer);
-
-				// Show new subject.
-				var oSubject = $('subject', message), sSubjectText = oSubject.text();
-				sSubjectBuffer = opt.sTemplateSubjectNormal.wereplace({
-					msg_id: sCurMessageId.substr(4),
-					subject: sSubjectText
-				});
 				oCurSubjectDiv.html(sSubjectBuffer);
-
-				// If this is the first message, also update the topic subject.
-				if (oSubject.attr('is_first') == '1')
-					$('#top_subject').html(sSubjectText);
-
-				// Show this message as 'modified on x by y'. If the theme doesn't support this,
-				// the request will simply be ignored because jQuery won't find the target.
-				$('#modified_' + sCurMessageId.substr(4)).html($('modified', message).text());
-
-				// Finally, we can safely declare we're up and running...
-				sCurMessageId = '';
+				oCurMessageDiv.show().next().remove();
 			}
-			else if (error.length)
-			{
-				$('#error_box').html(error.text());
-				$('#qm_post').css('border', error.attr('in_body') == '1' ? opt.sErrorBorderStyle : '');
-				$('#qm_subject').css('border', error.attr('in_subject') == '1' ? opt.sErrorBorderStyle : '');
-			}
+
+			// No longer in edit mode, that's right.
+			sCurMessageId = 0;
+
+			return false;
 		};
 
 	// Function called when a user presses the edit button.
@@ -318,36 +238,61 @@ function QuickModify(opt)
 		if (!can_ajax)
 			return;
 
-		// iMessageId is taken from the owner ID -- modify_button_xxx
-		var iMessageId = iMessage && iMessage.id ? iMessage.id.substr(14) : '';
+		var iMessageId = $(iMessage).closest('.root').attr('id').substr(3);
 
 		// Did we press the Quick Modify button by error while trying to submit? Oops.
-		if (sCurMessageId && sCurMessageId.substr(4) == iMessageId)
+		if (sCurMessageId == iMessageId)
 			return;
 
 		// First cancel if there's another message still being edited.
 		if (sCurMessageId)
-			this.modifyCancel();
+			modifyCancel();
+
+		sCurMessageId = iMessageId;
+		oCurMessageDiv = $('#msg' + sCurMessageId + ' .inner');
+
+		// If this is not valid then simply give up.
+		if (!oCurMessageDiv.length)
+			return modifyCancel();
 
 		// Send out the Ajax request to get more info
 		show_ajax();
-		getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';modify;xml', onMessageReceived);
-	};
 
-	// Function in case the user presses cancel (or other circumstances cause it).
-	this.modifyCancel = function ()
-	{
-		// Roll back the HTML to its original state.
-		if (oCurMessageDiv && oCurMessageDiv.length)
+		getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';modify;xml', function (XMLDoc)
 		{
-			oCurMessageDiv.html(sMessageBuffer);
-			oCurSubjectDiv.html(sSubjectBuffer);
-		}
+			// The callback function used for the Ajax request retrieving the message.
+			hide_ajax();
 
-		// No longer in edit mode, that's right.
-		sCurMessageId = '';
+			// Confirming that the message ID is the same as requested...
+			if (sCurMessageId != $('message', XMLDoc).attr('id'))
+				return modifyCancel();
 
-		return false;
+			// Create the textarea after the message, and show it through a slide animation.
+			oCurMessageDiv
+				.slideUp(500)
+				.after(
+					opt.sTemplateBodyEdit.wereplace({
+						msg_id: sCurMessageId,
+						body: $('message', XMLDoc).text()
+					})
+				)
+				.next()
+				.hide()
+				.slideDown(500);
+
+			// Replace the subject part.
+			oCurSubjectDiv = $('#msg' + sCurMessageId + ' h5');
+			sSubjectBuffer = oCurSubjectDiv.html();
+
+			oCurSubjectDiv
+				.html(
+					opt.sTemplateSubjectEdit.wereplace({
+						subject: $('subject', XMLDoc).text()
+					})
+				)
+				.hide()
+				.slideDown(500);
+		});
 	};
 
 	// The function called after a user wants to save his precious message.
@@ -361,13 +306,63 @@ function QuickModify(opt)
 		show_ajax();
 		sendXMLDocument(
 			weUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';' + we_sessvar + '=' + we_sessid + ';xml',
-			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&message=' + $('#qm_post').val().replace(/&#/g, '&#38;#').php_urlencode()
-			+ '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
-			onModifyDone
+			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() +
+			'&message=' + $('#qm_post').val().replace(/&#/g, '&#38;#').php_urlencode() +
+			'&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
+			function (XMLDoc)
+			{
+				// Done saving -- now show the user whether everything's okay!
+				hide_ajax();
+
+				// If we didn't get a valid document, just cancel.
+				if (!XMLDoc || !$('we', XMLDoc).length)
+				{
+					// If you could instead tell us what's wrong...?
+					if (XMLDoc)
+						$('#error_box').html(XMLDoc.childNodes && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror' ? XMLDoc.firstChild.textContent : XMLDoc);
+					else
+						modifyCancel();
+					return;
+				}
+
+				if ($('body', XMLDoc).length)
+				{
+					// Show new body.
+					oCurMessageDiv.html(opt.sTemplateBodyNormal.wereplace({
+						body: $('body', XMLDoc).text()
+					}));
+
+					// Show new subject.
+					oCurSubjectDiv.html(opt.sTemplateSubjectNormal.wereplace({
+						msg_id: sCurMessageId,
+						subject: $('subject', XMLDoc).text()
+					}));
+
+					// If this is the first message, also update the topic subject.
+					if ($('subject', XMLDoc).attr('is_first'))
+						$('#top_subject').html($('subject', XMLDoc).text());
+
+					// Show this message as 'modified on x by y'. If the theme doesn't support this,
+					// the request will simply be ignored because jQuery won't find the target.
+					$('#msg' + sCurMessageId + ' .modified').html($('modified', XMLDoc).text());
+
+					// Finally, we can safely declare we're up and running...
+					sCurMessageId = 0;
+					sSubjectBuffer = 0;
+				}
+				else if ($('error', XMLDoc).length)
+				{
+					$('#error_box').html($('error', XMLDoc).text());
+					$('#qm_post').css('border', $('error', XMLDoc).attr('in_body') == '1' ? opt.sErrorBorderStyle : '');
+					$('#qm_subject').css('border', $('error', XMLDoc).attr('in_subject') == '1' ? opt.sErrorBorderStyle : '');
+				}
+			}
 		);
 
 		return false;
 	};
+
+	this.modifyCancel = modifyCancel;
 }
 
 
@@ -469,9 +464,10 @@ function IconList(opt)
 
 			// Start to fetch its contents.
 			show_ajax();
-			getXMLDocument(weUrl() + 'action=ajax;sa=messageicons;board=' + opt.iBoardId + ';xml', function (oXMLDoc)
+			getXMLDocument(weUrl() + 'action=ajax;sa=messageicons;board=' + opt.iBoardId + ';xml', function (XMLDoc)
 			{
-				$('we icon', oXMLDoc).each(function ()
+				hide_ajax();
+				$('icon', XMLDoc).each(function ()
 				{
 					var iconxml = this;
 					oContainerDiv.append(
@@ -488,12 +484,9 @@ function IconList(opt)
 									+ we_sessvar + '=' + we_sessid + ';icon=' + $(iconxml).attr('value') + ';xml',
 									function (oXMLDoc)
 									{
-										var oMessage = $('we message', oXMLDoc);
-
-										if (!($('error', oMessage).length))
-											$('img', oCurDiv).attr('src', $('img', thisicon).attr('src'));
-
 										hide_ajax();
+										if (!$('error', oXMLDoc).length)
+											$('img', oCurDiv).attr('src', $('img', thisicon).attr('src'));
 									}
 								);
 							})
@@ -503,8 +496,6 @@ function IconList(opt)
 
 				if (is_ie)
 					oContainerDiv.css('width', oContainerDiv.clientWidth);
-
-				hide_ajax();
 			});
 		}
 
@@ -526,9 +517,10 @@ function IconList(opt)
 		return;
 
 	// Replace all message icons by icons with hoverable and clickable div's.
-	$('.messageicon').each(function () {
-		var id = this.id.substr(opt.sPrefix.length);
+	$('.can-mod').each(function () {
+		var id = this.id.substr(3);
 		$(this)
+			.find('.messageicon')
 			.addClass('iconbox')
 			.hover(function () { $(this).toggleClass('hover'); })
 			.click(function () { openPopup(this, id); });
@@ -570,9 +562,8 @@ $.fn.mime = function (oList, oStrings)
 					$mime = $(this).children().first(),
 					is_right_side = $mime.css('textAlign') === 'right',
 					sHTML = '', href = $mime[0].href,
-					// Extract the context id from the digits at the end of the HTML id
-					// (e.g. <a id="menu-567-123"> gets an id of 123)
-					id = $mime[0].id.match(/\d+$/);
+					// Extract the context id from the parent message
+					id = $mime.closest('.root').attr('id').substr(3);
 
 				$.each(oList[id], function ()
 				{

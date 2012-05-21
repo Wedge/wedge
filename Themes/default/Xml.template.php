@@ -38,7 +38,7 @@ function template_modifyfast()
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>
 	<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
-	<message id="msg_', $context['message']['id'], '"><![CDATA[', cleanXml($context['message']['body']), ']]></message>
+	<message id="', $context['message']['id'], '"><![CDATA[', cleanXml($context['message']['body']), ']]></message>
 </we>';
 }
 
@@ -47,20 +47,18 @@ function template_modifydone()
 	global $context, $txt;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>
-	<message id="msg_', $context['message']['id'], '">';
+<we>';
 	if (empty($context['message']['errors']))
 	{
 		echo '
-		<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml(sprintf($txt['last_edit'], $context['message']['modified']['time'], $context['message']['modified']['name'])), ']]></modified>
-		<subject is_first="', $context['message']['first_in_topic'] ? '1' : '0', '"><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
-		<body><![CDATA[', $context['message']['body'], ']]></body>';
+	<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml(sprintf($txt['last_edit'], $context['message']['modified']['time'], $context['message']['modified']['name'])), ']]></modified>
+	<subject', $context['message']['first_in_topic'] ? ' is_first="1"' : '', '><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>
+	<body><![CDATA[', $context['message']['body'], ']]></body>';
 	}
 	else
 		echo '
-		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '" in_body="', cleanXml($context['message']['error_in_body']) ? '1' : '0', '"><![CDATA[', implode('<br>', $context['message']['errors']), ']]></error>';
+	<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '" in_body="', cleanXml($context['message']['error_in_body']) ? '1' : '0', '"><![CDATA[', implode('<br>', $context['message']['errors']), ']]></error>';
 	echo '
-	</message>
 </we>';
 }
 
@@ -70,7 +68,7 @@ function template_modifytopicdone()
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>
-	<message id="msg_', $context['message']['id'], '">';
+	<message id="', $context['message']['id'], '">';
 	if (empty($context['message']['errors']))
 	{
 		echo '
