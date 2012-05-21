@@ -312,6 +312,8 @@ function template_display_posts()
 		});
 	}');
 
+	// Collapse any ignored messages. If a message has a 'like', at least show the action bar, in case the user
+	// would like to read it anyway. (Maybe they're ignoring someone only because of their signal/noise ratio?)
 	if (!empty($ignoredMsgs))
 		foreach ($ignoredMsgs as $msgid)
 			add_js('
@@ -320,7 +322,7 @@ function template_display_posts()
 		aSwappableContainers: [
 			\'msg' . $msgid . ' .info\',
 			\'msg' . $msgid . ' .inner\',
-			\'msg' . $msgid . ' .actionbar\'
+			\'msg' . $msgid . ' ' . (empty($context['liked_posts'][$msgid]) ? '.actionbar' : '.actions') . '\'
 		],
 		aSwapLinks: [{ sId: \'msg' . $msgid . ' .ignored\' }]
 	});');

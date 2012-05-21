@@ -67,21 +67,19 @@ function template_modifytopicdone()
 	global $context, $txt;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>
-	<message id="', $context['message']['id'], '">';
+<we>';
 	if (empty($context['message']['errors']))
 	{
 		echo '
-		<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml($txt['last_edit'] . ' ' . $context['message']['modified']['time'] . ' ' . $txt['by'] . ' ' . $context['message']['modified']['name']), ']]></modified>';
+	<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml($txt['last_edit'] . ' ' . $context['message']['modified']['time'] . ' ' . $txt['by'] . ' ' . $context['message']['modified']['name']), ']]></modified>';
 		if (!empty($context['message']['subject']))
 			echo '
-		<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>';
+	<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>';
 	}
 	else
 		echo '
-		<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '"><![CDATA[', cleanXml(implode('<br>', $context['message']['errors'])), ']]></error>';
+	<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '"><![CDATA[', cleanXml(implode('<br>', $context['message']['errors'])), ']]></error>';
 	echo '
-	</message>
 </we>';
 }
 
@@ -137,7 +135,7 @@ function template_stats()
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>';
 	foreach ($context['yearly'] as $year)
-		foreach ($year['months'] as $month);
+		foreach ($year['months'] as $month)
 		{
 			echo '
 	<month id="', $month['date']['year'], $month['date']['month'], '">';
@@ -209,20 +207,33 @@ function template_check_username()
 
 function template_thought()
 {
-	global $context, $txt;
+	global $context, $txt, $user_info;
 
-	if (!empty($context['return_thought']['user_id']))
-		loadLanguage('Post');
+	// mid = master ID (thought thread's original thought ID)
+	// pid = parent ID (thought that is being replied to)
+	// uid = user ID (current thought's author)
+	$th =& $context['return_thought'];
+	$id = $th['id_thought'];
+	$mid = $th['mid'];
+	$uid = $th['user_id'];
+	$thought = $th['thought'];
+
+	// Is this a reply to another thought...? Then we should try and style it as well.
+	if ($uid)
+		$thought = '@<a href="<URL>?action=profile;u=' . $th['master_id'] . ';area=thoughts#t' . $th['pid'] . '">' . $th['parent_name'] . '</a>&gt;'
+			. ' <span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $th['privacy'] . '"'
+			. (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
+			. ($user_info['id'] == $uid || $user_info['is_admin'] ? ' data-self' : '')
+			. ($context['browser']['is_iphone'] || $context['browser']['is_tablet'] ? ' onclick="return true;"' : '') . '><span>' . $thought . '</span></span>';
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>
-	<thought id="', $context['return_thought']['id_thought'], '" privacy="', $context['return_thought']['privacy'], '"><![CDATA[',
-	cleanXml($context['return_thought']['thought']), empty($txt['reload_page']) ? '' : ' <em class="smalltext">' . $txt['reload_page'] . '</em>', ']]></thought>';
+	<thought id="', $id, '" privacy="', $th['privacy'], '"><![CDATA[', cleanXml($thought), ']]></thought>';
 
-	if (!empty($txt['reload_page']))
+	if ($uid)
 		echo '
 	<date><![CDATA[', timeformat(time()), ']]></date>
-	<user id="', $context['return_thought']['user_id'], '">', cleanXml($context['return_thought']['user_name']), '</user>';
+	<user id="', $uid, '">', cleanXml($th['user_name']), '</user>';
 
 	echo '
 </we>';
