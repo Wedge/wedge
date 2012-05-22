@@ -283,7 +283,7 @@ function ajaxRating()
 function weUrl(url)
 {
 	url = url || we_script;
-	return (url + (url.indexOf('?') == -1 ? '?' : (url.search(/[?&;]$/) ? '' : ';')))
+	return (url + (url.indexOf('?') == -1 ? '?' : (url.search(/[?&;]$/) == -1 ? ';' : '')))
 			.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
 }
 
