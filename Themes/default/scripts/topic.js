@@ -291,7 +291,7 @@ function QuickModify(opt)
 					})
 				)
 				.hide()
-				.slideDown(500);
+				.slideDown(sSubjectBuffer == '' ? 500 : 0);
 		});
 	};
 
