@@ -149,7 +149,11 @@ function Welcome()
 		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"' . (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '') . ($is_touch ? ' onclick="return true;"' : '') . '><span>' . $thought['text'] . '</span></span>';
 
 		if (!empty($row['id_parent_owner']))
-			$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . ';area=thoughts#t' . $row['id_parent'] . '" class="bbc_link">' . $row['parent_name'] . '</a>&gt; ' . $thought['text'];
+		{
+			if (empty($row['parent_name']) && !isset($txt['deleted_thought']))
+					loadLanguage('Post');
+			$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . ';area=thoughts#t' . $row['id_parent'] . '">' . (empty($row['parent_name']) ? $txt['deleted_thought'] : $row['parent_name']) . '</a>&gt; ' . $thought['text'];
+		}
 	}
 	wesql::free_result($request);
 

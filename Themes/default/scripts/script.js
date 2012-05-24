@@ -656,17 +656,25 @@ function Thought(opt)
 			'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
 			function (XMLDoc)
 			{
-				var $new_id = $('#thought_update' + (tid || $('text', XMLDoc).attr('id'))), $new_thought = $('#new_thought');
+				var
+					$text = $('text', XMLDoc),
+					$new_thought = $('#new_thought'),
+					new_id = '#thought_update' + (tid ? $text.attr('id') : '');
+
 				// Is this a thought reply?
-				if (!$new_id.length)
-					$new_thought.after($('<tr class="windowbg">').html($new_thought.html().wereplace({
-						date: $('date', XMLDoc).text(),
-						text: $('text', XMLDoc).text()
-					})));
-				// If not, it's food for thought.
+				if (!$(new_id).length)
+				{
+					$new_thought.after($('<tr>').addClass($new_thought.attr('class')).html(
+						$new_thought.html().wereplace({
+							date: $('date', XMLDoc).text(),
+							text: $text.text()
+						})
+					));
+					$(new_id).each(interact_thoughts);
+				}
+				// If not, it's food for thought -- either new, or an edit.
 				else
-					$new_id.find('span').html($('text', XMLDoc).text());
-				$new_id.each(interact_thoughts);
+					$(new_id).find('span').html($text.text());
 				cancel();
 				hide_ajax();
 			}
