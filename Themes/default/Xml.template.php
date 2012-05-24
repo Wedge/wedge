@@ -207,20 +207,45 @@ function template_check_username()
 
 function template_thought()
 {
-	global $context, $txt;
+	global $context, $user_info;
 
-	if (!empty($context['return_thought']['user_id']))
-		loadLanguage('Post');
+	$th =& $context['return_thought'];
+	$thought = $th['thought'];
+	$id = $th['id_thought'];
+	$uid = isset($th['user_id']) ? $th['user_id'] : 0;
+
+	// Is this a reply to another thought...? Then we should try and style it as well.
+	if ($uid)
+	{
+		// master ID: thought thread's original thought ID
+		// parent ID: thought that is being replied to
+		// user ID: current thought's author
+		$mid = isset($th['mid']) ? $th['mid'] : 0;
+
+		// @worg!!
+		$privacy_icon = array(
+			-3 => 'everyone',
+			0 => 'members',
+			5 => 'justme',
+			20 => 'friends',
+		);
+
+		$thought = '<div>' . ($th['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$th['privacy']] . '"></div>' : '') . '<a id="t' . $id . '"></a>'
+			. '<a href="<URL>?action=profile;u=' . $uid . '">' . $th['user_name'] . '</a> &raquo;'
+			. ' @<a href="<URL>?action=profile;u=' . $th['master_id'] . ';area=thoughts#t' . $th['pid'] . '">' . $th['parent_name'] . '</a>&gt;'
+			. ' <span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $th['privacy'] . '"'
+			. (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
+			. ($user_info['id'] == $uid || $user_info['is_admin'] ? ' data-self' : '')
+			. ($context['browser']['is_iphone'] || $context['browser']['is_tablet'] ? ' onclick="return true;"' : '') . '><span>' . $thought . '</span></span></div>';
+	}
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
 <we>
-	<thought id="', $context['return_thought']['id_thought'], '" privacy="', $context['return_thought']['privacy'], '"><![CDATA[',
-	cleanXml($context['return_thought']['thought']), empty($txt['reload_page']) ? '' : ' <em class="smalltext">' . $txt['reload_page'] . '</em>', ']]></thought>';
+	<text id="', $id, '"><![CDATA[', cleanXml($thought), ']]></text>';
 
-	if (!empty($txt['reload_page']))
+	if ($uid)
 		echo '
-	<date><![CDATA[', timeformat(time()), ']]></date>
-	<user id="', $context['return_thought']['user_id'], '">', cleanXml($context['return_thought']['user_name']), '</user>';
+	<date><![CDATA[', timeformat(time()), ']]></date>';
 
 	echo '
 </we>';

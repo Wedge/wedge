@@ -616,7 +616,7 @@ function Thought(opt)
 			privacies = opt.aPrivacy, privacy = (thought.data('prv') + '').split(','),
 
 			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-			was_personal.php_unhtmlspecialchars() : $('thought', getXMLDocument(ajaxUrl + 'in=' + tid).responseXML).text())),
+			was_personal.php_unhtmlspecialchars() : $('text', getXMLDocument(ajaxUrl + 'in=' + tid).responseXML).text())),
 
 			pr = '';
 
@@ -657,15 +657,14 @@ function Thought(opt)
 			'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
 			function (XMLDoc)
 			{
-				var thought = $('thought', XMLDoc), nid = tid ? thought.attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid, user = $('user', XMLDoc);
+				var nid = tid ? $('text', XMLDoc).attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid;
 				if (!$(new_id).length)
 					new_thought.after($('<tr class="windowbg">').html(new_thought.html().wereplace({
 						date: $('date', XMLDoc).text(),
-						uname: user.text(),
-						text: thought.text()
+						text: $('text', XMLDoc).text()
 					})));
 				else
-					$(new_id + ' span').html(thought.text());
+					$(new_id + ' span').html($('text', XMLDoc).text());
 				$(new_id).each(interact_thoughts);
 				cancel();
 				hide_ajax();

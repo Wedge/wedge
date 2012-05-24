@@ -122,6 +122,33 @@ function Thought()
 
 	// Original thought ID (in case of an edit.)
 	$oid = isset($_POST['oid']) ? (int) $_POST['oid'] : 0;
+	$pid = !empty($_POST['parent']) ? (int) $_POST['parent'] : 0;
+	$mid = !empty($_POST['master']) ? (int) $_POST['master'] : 0;
+	$parents = array();
+
+	// If we have a parent, then get the member data for parent and master thoughts.
+	// Master data is used to point to the correct profile page where the thought thread will show.
+	// Parent data is only used to retrieve the name of the parent thought's author.
+	if ($pid || $mid)
+	{
+		$request = wesql::query('
+			SELECT t.id_thought, m.id_member, m.real_name
+			FROM {db_prefix}thoughts AS t
+			LEFT JOIN {db_prefix}members AS m ON t.id_member = m.id_member
+			WHERE' . ($mid == $pid ? '
+				id_thought = {int:id_master}
+			LIMIT 1' : '
+				id_thought IN ({int:id_master}, {int:id_parent})
+			LIMIT 2'),
+			array(
+				'id_master' => $mid,
+				'id_parent' => $pid,
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+			$parents[$row['id_thought']] = $row;
+		wesql::free_result($request);
+	}
 
 	// Is this a public thought?
 	$privacy = isset($_POST['privacy']) && preg_match('~-?[\d,]+~', $_POST['privacy']) ? $_POST['privacy'] : '-3';
@@ -143,7 +170,8 @@ function Thought()
 			SELECT id_thought, privacy, thought
 			FROM {db_prefix}thoughts
 			WHERE id_thought = {int:original_id}' . (allowedTo('moderate_forum') ? '' : '
-			AND id_member = {int:id_member}'),
+			AND id_member = {int:id_member}
+			LIMIT 1'),
 			array(
 				'id_member' => $user_info['id'],
 				'original_id' => $_GET['in'],
@@ -187,8 +215,8 @@ function Thought()
 		// Think before you think!
 		if (isset($_REQUEST['remove']))
 		{
-			// Does any member actually use this thought?
-			$old_thought = 's:10:"id_thought";s:' . strlen($last_text) . ':"' . $last_text . '"';
+			// Does the author actually use this thought?
+			$old_thought = 's:10:"id_thought";s:' . strlen($last_thought) . ':"' . $last_thought . '"';
 			$request = wesql::query('
 				SELECT id_member, data
 				FROM {db_prefix}members
@@ -292,16 +320,13 @@ function Thought()
 	}
 	else
 	{
-		$id_parent = !empty($_POST['parent']) ? (int) $_POST['parent'] : 0;
-		$id_master = !empty($_POST['master']) ? (int) $_POST['master'] : 0;
-		
 		// Okay, so this is a new thought... Insert it, we'll cache it if it's not a comment.
 		wesql::query('
 			INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
 			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {string:privacy}, {int:updated}, {string:thought})', array(
-				'id_parent' => $id_parent,
+				'id_parent' => $pid,
 				'id_member' => $user_info['id'],
-				'id_master' => $id_master,
+				'id_master' => $mid,
 				'privacy' => $privacy,
 				'updated' => time(),
 				'thought' => $text
@@ -309,10 +334,10 @@ function Thought()
 		);
 		$last_thought = wesql::insert_id();
 
-		$user_id = empty($_POST['parent']) ? 0 : (empty($last_member) ? $user_info['id'] : $last_member);
+		$user_id = $pid ? (empty($last_member) ? $user_info['id'] : $last_member) : 0;
 		$user_name = empty($last_name) ? $user_info['name'] : $last_name;
 
-		call_hook('thought_add', array(&$privacy, &$text, &$id_parent, &$id_master, &$last_thought, &$user_id, &$user_name));
+		call_hook('thought_add', array(&$privacy, &$text, &$pid, &$mid, &$last_thought, &$user_id, &$user_name));
 	}
 
 	// This is for use in the XML template.
@@ -322,10 +347,14 @@ function Thought()
 		'privacy' => $privacy,
 		'user_id' => empty($user_id) ? 0 : $user_id,
 		'user_name' => empty($user_name) ? '' : $user_name,
+		'pid' => $pid,
+		'mid' => $mid,
+		'master_id' => empty($parents[$mid]) ? 0 : $parents[$mid]['id_member'],
+		'parent_name' => empty($parents[$pid]) ? 0 : $parents[$pid]['real_name'],
 	);
 
 	// Only update the thought area if it's a public comment, and isn't a comment on another thought...
-	if (empty($_POST['parent']) && !empty($last_thought))
+	if (!$pid && !empty($last_thought))
 	{
 		updateMyData(array(
 			'id_thought' => $last_thought,

@@ -19,6 +19,9 @@ if (!defined('WEDGE'))
 	void summary(int id_member)
 		// !!!
 
+	void viewThoughts(int id_member)
+		// !!!
+
 	void showDrafts(int id_member)
 		// !!!
 
@@ -293,7 +296,8 @@ function viewThoughts($memID)
 			)' . ($memID == $user_info['id'] ? '' : '
 			AND (
 				h.id_member = {int:me}
-				OR h.privacy = {int:everyone}
+				OR h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
+				OR h.privacy = {int:members}') . '
 				OR FIND_IN_SET(' . implode(', h.privacy)
 				OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
 			)') . '
@@ -302,6 +306,7 @@ function viewThoughts($memID)
 				'think' => $think,
 				'me' => $user_info['id'],
 				'everyone' => -3,
+				'members' => 0,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -316,6 +321,7 @@ function viewThoughts($memID)
 				'updated' => timeformat($row['updated']),
 				'text' => $row['thought'],
 			);
+
 			if (empty($thought['id_master'])) // !! Alternatively, add: || $row['id_master'] != $row['id_member']
 				$thoughts[$thought['id']] = $thought;
 			else

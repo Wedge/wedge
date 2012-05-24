@@ -954,6 +954,7 @@ class wecss_nesting extends wecss
 
 			$growth = $fresh;
 		}
+		sort($growth);
 		return implode(',', $growth);
 	}
 
