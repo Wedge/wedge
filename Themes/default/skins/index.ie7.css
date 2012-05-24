@@ -126,7 +126,7 @@ ul.actions
 	float: right
 
 // IE7 totally screws up the menus without all of these together.
-ul.mimenuitem
+ul.mimeitem
 	float: none
 	width: auto
 	li

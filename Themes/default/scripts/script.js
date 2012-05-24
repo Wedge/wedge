@@ -440,7 +440,6 @@ function weSelectText(oCurElement)
 	$.fn.menu = function ()
 	{
 		var $elem = this.show();
-		this.find('h4+ul').prepend('<li class="menu-top"></li>');
 		this.find('li').each(function () {
 			$(this).attr('id', 'li' + menu_baseId++)
 				.bind('mouseenter focus', menu_show_me)
@@ -657,15 +656,17 @@ function Thought(opt)
 			'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
 			function (XMLDoc)
 			{
-				var nid = tid ? $('text', XMLDoc).attr('id') : tid, new_thought = $('#new_thought'), new_id = '#thought_update' + nid;
-				if (!$(new_id).length)
-					new_thought.after($('<tr class="windowbg">').html(new_thought.html().wereplace({
+				var $new_id = $('#thought_update' + (tid || $('text', XMLDoc).attr('id'))), $new_thought = $('#new_thought');
+				// Is this a thought reply?
+				if (!$new_id.length)
+					$new_thought.after($('<tr class="windowbg">').html($new_thought.html().wereplace({
 						date: $('date', XMLDoc).text(),
 						text: $('text', XMLDoc).text()
 					})));
+				// If not, it's food for thought.
 				else
-					$(new_id + ' span').html($('text', XMLDoc).text());
-				$(new_id).each(interact_thoughts);
+					$new_id.find('span').html($('text', XMLDoc).text());
+				$new_id.each(interact_thoughts);
 				cancel();
 				hide_ajax();
 			}

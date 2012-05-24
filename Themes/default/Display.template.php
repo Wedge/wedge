@@ -352,7 +352,7 @@ function template_display_posts()
 			$context['footer_js'] = substr($context['footer_js'], 0, -2) . '],';
 		}
 		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
-	});';
+	}, true);';
 	}
 
 	if (!empty($context['action_menu']))
@@ -387,7 +387,6 @@ function template_display_posts()
 function template_userbox(&$message)
 {
 	global $context, $settings, $txt, $theme, $options;
-	static $unique_id = 1;
 
 	$is_mobile = !empty($context['skin_options']['mobile']);
 
@@ -419,7 +418,7 @@ function template_userbox(&$message)
 
 	// Show a link to the member's profile.
 	echo '
-							<a href="', $message['member']['href'], '" id="um', $unique_id++, '-', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
+							<a href="', $message['member']['href'], '" data-id="', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
 						</h4>
 						<ul class="info">';
 

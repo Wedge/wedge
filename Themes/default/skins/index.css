@@ -869,9 +869,10 @@ li.separator
 	margin: 0 0 0 4px
 
 // Used in both normal and mini-menus...
-.menu, .mimenu
-	li.menu-top
+.menu h4 + ul, .mimenu ul
+	> li:first-child:before
 		position: absolute
+		content: ""
 		top: -11px
 		width: 100%
 		height: 11px
@@ -879,9 +880,9 @@ li.separator
 		background: url($images/theme/menurow.gif) no-repeat 0 3px
 
 .mimenu
-	li.menu-top
+	ul > li:first-child:before
 		top: 0
-	&.right li.menu-top
+	&.right ul > li:first-child:before
 		background-position: 66% 3px
 
 /* Top-level menu icons.

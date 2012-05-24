@@ -543,7 +543,7 @@ function expandThumb(thumbID)
 
 
 // *** Mini-menu (mime) plugin. Yay.
-$.fn.mime = function (oList, oStrings)
+$.fn.mime = function (oList, oStrings, bUseDataId)
 {
 	this
 		.wrap('<span class="mime"></span>')
@@ -563,7 +563,7 @@ $.fn.mime = function (oList, oStrings)
 					is_right_side = $mime.css('textAlign') === 'right',
 					sHTML = '', href = $mime[0].href,
 					// Extract the context id from the parent message
-					id = $mime.closest('.root').attr('id').substr(3);
+					id = bUseDataId ? $mime.data('id') : $mime.closest('.root').attr('id').substr(3);
 
 				$.each(oList[id], function ()
 				{
@@ -581,7 +581,7 @@ $.fn.mime = function (oList, oStrings)
 				});
 
 				$men = $('<div class="mimenu' + (is_right_side ? ' right' : '') + '"></div>')
-					.html('<ul class="actions mimenuitem windowbg"><li class="menu-top"></li>' + sHTML + '</ul>')
+					.html('<ul class="actions">' + sHTML + '</ul>')
 					.insertAfter($mime);
 
 				$(this)
