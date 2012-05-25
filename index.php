@@ -127,6 +127,7 @@ $action_list = array(
 	'stats' => array('Stats.php', 'Stats'),
 	'suggest' => array('Suggest.php', 'Suggest'),
 	'theme' => array('Themes.php', 'ThemesMain'),
+	'thoughts' => array('Thoughts.php', 'Thoughts'),
 	'trackip' => array('Profile-View.php', 'trackIP'),
 	'unread' => array('Unread.php', 'Unread'),
 	'unreadreplies' => array('UnreadReplies.php', 'UnreadReplies'),

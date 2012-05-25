@@ -135,13 +135,12 @@ function Home()
 	$request = wesql::query('
 		SELECT
 			h.updated, h.thought, h.id_thought, h.id_parent, h.privacy,
-			h.id_member, h.id_master, hm.id_member AS id_parent_owner,
+			h.id_member, h.id_master, h2.id_member AS id_parent_owner,
 			m.real_name AS owner_name, mp.real_name AS parent_name, m.posts
 		FROM {db_prefix}thoughts AS h
 		LEFT JOIN {db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
-		LEFT JOIN {db_prefix}thoughts AS hm ON (h.id_master = hm.id_thought)
-		LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
 		LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
+		LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
 		WHERE h.id_member = {int:me}
 			OR h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
 			OR h.privacy = {int:members}
@@ -182,7 +181,7 @@ function Home()
 		{
 			if (empty($row['parent_name']) && !isset($txt['deleted_thought']))
 					loadLanguage('Post');
-			$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . ';area=thoughts#t' . $row['id_parent'] . '">' . (empty($row['parent_name']) ? $txt['deleted_thought'] : $row['parent_name']) . '</a>&gt; ' . $thought['text'];
+			$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . (empty($row['parent_name']) ? $txt['deleted_thought'] : $row['parent_name']) . '</a>&gt; ' . $thought['text'];
 		}
 	}
 	wesql::free_result($request);

@@ -186,7 +186,7 @@ table.thought_list td
 	right: 8px
 	top: 50%
 	opacity: 0
-	transition: opacity .5s ease
+	transition: opacity .3s ease
 	margin-top: -11px // Min height is at 22px
 	input
 		padding-top, padding-bottom: 2px

@@ -113,8 +113,8 @@ function ModifyProfile($post_errors = array())
 				),
 				'thoughts' => array(
 					'label' => $txt['showThoughts'],
-					'file' => 'Profile-View',
-					'function' => 'viewThoughts',
+					'file' => 'Thoughts',
+					'function' => 'memberThoughts',
 					'enabled' => true, // @todo: add a counter and enable based on it being non-zero?
 					'permission' => array(
 						'own' => 'profile_view_own',

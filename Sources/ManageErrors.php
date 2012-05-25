@@ -664,8 +664,8 @@ function ViewFile()
 		fatal_lang_error('error_bad_file', true, array(htmlspecialchars($file)));
 
 	// Get the min and max lines
-	$min = max(1, $line - 15);
-	$max = $line + 16; // One additional line to make everything work out correctly
+	$min = max(1, $line - 12);
+	$max = $line + 13;
 
 	if ($max <= 0 || $min >= $max)
 		fatal_lang_error('error_bad_line');
@@ -675,7 +675,7 @@ function ViewFile()
 	// We don't want to slice off too many so let's make sure we stop at the last one
 	$max = min($max, max(array_keys($file_data)));
 
-	$file_data = array_slice($file_data, $min-1, $max - $min);
+	$file_data = array_slice($file_data, $min - 1, $max - $min);
 
 	$context['file_data'] = array(
 		'contents' => $file_data,

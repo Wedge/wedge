@@ -47,29 +47,28 @@ function we_AdminIndex(oOptions)
 
 we_AdminIndex.prototype.setAnnouncements = function ()
 {
-	var opt = this.opt, sMessages = '', ann = window.wedge_news, i, j, k;
-	var time_replace = function (str, va, nu) {
+	var opt = this.opt, sMessages = '',
+		time_replace = function (str, va, nu) {
 		if (va == 'month')
 			return opt.sMonths[nu - 1];
 		if (va == 'shortmonth')
 			return opt.sMonthsShort[nu - 1];
 		if (va == 'day')
-			return opt.sMonths[nu];
+			return opt.sDays[nu];
 		if (va == 'shortday')
-			return opt.sMonthsShort[nu];
+			return opt.sDaysShort[nu];
 	};
 
-	if (!('wedge_news' in window) || !('length' in ann))
-		return;
+	$.each(window.wedge_news || {}, function () {
+		sMessages += opt.sAnnouncementMessageTemplate.wereplace({
+			href: this.href,
+			subject: this.subject,
+			time: this.time.replace(/\$(shortmonth|month|shortday|day)-(\d+)/g, time_replace),
+			message: this.message
+		});
+	});
 
-	for (i = 0, k = ann.length; i < k; i++)
-		sMessages += opt.sAnnouncementMessageTemplate
-			.replace('%href%', ann[i].href)
-			.replace('%subject%', ann[i].subject)
-			.replace('%time%', ann[i].time.replace(/\$(shortmonth|month|shortday|day)-(\d+)/g, time_replace))
-			.replace('%message%', ann[i].message);
-
-	$('#' + opt.sAnnouncementContainerId).html(opt.sAnnouncementTemplate.replace('%content%', sMessages));
+	$('#' + opt.sAnnouncementContainerId).html(opt.sAnnouncementTemplate.wereplace({ content: sMessages }));
 };
 
 we_AdminIndex.prototype.showCurrentVersion = function ()
@@ -102,7 +101,7 @@ we_AdminIndex.prototype.checkUpdateAvailable = function ()
 	$('#update_section').show();
 
 	// Parse in the package download URL if it exists in the string.
-	$('#update-link').attr('href', this.opt.sUpdateLink.replace('%package%', window.weUpdatePackage));
+	$('#update-link').attr('href', this.opt.sUpdateLink.wereplace({ 'package': window.weUpdatePackage }));
 };
 
 
