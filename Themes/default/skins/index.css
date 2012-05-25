@@ -1095,7 +1095,13 @@ table
 	// The "Quote:" header part...
 	> header
 		padding: 2px 2px 2px 24px
-		background: url($images/theme/quote.png) 2px 3px no-repeat
+		:before
+			display: block
+			margin-left: -20px
+			content: "\201c"
+			color: #999
+			height: 1px
+			font: 3.6em/1 Cochin, Georgia, serif
 	> blockquote
 		font-size: 92%
 		line-height: 1.4em

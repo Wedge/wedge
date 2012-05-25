@@ -1,0 +1,4 @@
+
+// IE6 and IE7 need inline-block to be reset to inline separately... How annoying.
+.inline-block
+	display: inline

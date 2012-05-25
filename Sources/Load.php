@@ -1998,7 +1998,22 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$context['css_suffixes'][] = 'rtl';
 
 	// We may also have special stylesheets for guests and members.
-	$context['css_suffixes'][] = $user_info['is_guest'] ? 'guest' : 'member';
+	if ($user_info['is_guest'])
+		$context['css_suffixes'][] = 'guest';
+	else
+	{
+		$context['css_suffixes'][] = 'member';
+		$context['css_suffixes'][] = 'm' . $user_info['id'];
+	}
+
+	// And even for boards and categories. Freedom is good.
+	if (isset($board_info['id']))
+	{
+		$context['css_suffixes'][] = 'b' . $board_info['id'];
+		$context['css_suffixes'][] = 'c' . $board_info['cat']['id'];
+	}
+	elseif (!empty($_GET['category']) && (int) $_GET['category'])
+		$context['css_suffixes'][] = 'c' . (int) $_GET['category'];
 
 	// Is the user an administrator?
 	if ($user_info['is_admin'])
@@ -2007,8 +2022,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	elseif ($user_info['is_mod'])
 		$context['css_suffixes'][] = 'mod';
 
-	$context['css_suffixes'][] = 'local';
-	$context['css_suffixes'][] = 'global';
+	// These are special flow-control keywords.
+	$context['css_suffixes'][] = 'local';		// index.local.css will only be included if the file is in the current skin's folder.
+	$context['css_suffixes'][] = 'global';		// index.global.css will be included in the current skin and all its sub-skins (default.)
+	$context['css_suffixes'][] = 'replace';		// index.replace.css will ensure that all parent folders' index.css and index.*.css files will be excluded.
 
 	$context['tabindex'] = 1;
 

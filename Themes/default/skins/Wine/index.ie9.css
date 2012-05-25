@@ -1,6 +1,0 @@
-
-#upper_section h1
-	filter: shadow(color=#666666, direction=135, strength=5)
-
-#header, #navi, #footer
-	filter: none

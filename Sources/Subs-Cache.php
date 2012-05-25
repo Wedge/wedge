@@ -237,23 +237,22 @@ function add_css()
  */
 function add_css_file($original_files = array(), $add_link = false, $is_main = false, $ignore_files = array())
 {
-	global $theme, $settings, $context, $db_show_debug, $boardurl;
+	global $theme, $settings, $context, $db_show_debug, $boardurl, $files;
+	static $cached_files = array();
 
 	// Delete all duplicates and ensure $original_files is an array.
-	$files = $original_files = array_keys(array_flip((array) $original_files));
+	$original_files = array_flip((array) $original_files);
+	$files = array_keys($original_files);
 	$latest_date = 0;
 
 	// If we didn't go through the regular theme initialization flow, get the skin options.
 	if (!isset($context['skin_folders']))
 		wedge_get_skin_options();
 
-	// Add all possible variations of a file name.
-	foreach ($files as $file)
-		foreach ($context['css_suffixes'] as $gen)
-			$files[] = $file . '.' . $gen;
-
 	$fallback_folder = $theme[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/' . reset($context['css_folders']) . '/';
 	$deep_folder = end($context['css_folders']);
+	$requested_suffixes = array('' => 0) + array_flip($context['css_suffixes']);
+	$found_suffixes = array();
 	$found_files = array();
 
 	foreach ($context['skin_folders'] as $folder)
@@ -262,42 +261,85 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		$target = $folder[1];
 		if ($fold === $fallback_folder)
 			$fallback_folder = '';
-		foreach ($files as &$file)
+
+		if (empty($cached_files[$fold]))
+			$cached_files[$fold] = array_diff(scandir($fold, 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml'));
+
+		foreach ($cached_files[$fold] as $file)
 		{
-			// If we find a *.local.css file, only process it if it's at the final level.
-			if ($fold !== $deep_folder && substr($file, -6) === '.local')
+			if (substr($file, -4) !== '.css')
 				continue;
-			$add = $fold . $file . '.css';
-			if (file_exists($add))
-			{
-				$css[] = $add;
-				$found_files[] = $file;
-				if ($db_show_debug === true)
-					$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
-				$latest_date = max($latest_date, filemtime($add));
-			}
+
+			$radix = substr($file, 0, strpos($file, '.'));
+			if (!isset($original_files[$radix]))
+				continue;
+
+			// Get the list of suffixes in the file name.
+			$suffixes = array_flip(explode(',', substr(strstr($file, '.'), 1, -4)));
+			$suffixes_to_keep = array_intersect_key($suffixes, $requested_suffixes);
+
+			// If we find a local suffix in the filename, only process it if it's at the final level.
+			// Also, if we can't find a required suffix in the suffix list, skip the file.
+			if (!$suffixes_to_keep || (isset($suffixes['local']) && $fold !== $deep_folder))
+				continue;
+
+			// If we find a replace suffix, delete any parent skin file with the same radix.
+			// !! This is a work in progress. Needs some extra fine-tuning.
+			if (isset($suffixes['replace']))
+				foreach ($css as $key => $val)
+					if (strpos($val, '/' . $radix . '.') !== false)
+						unset($css[$key]);
+
+			$css[] = $fold . $file;
+
+			// If a suffix-less file was found, make sure we tell Wedge.
+			if (isset($suffixes['']))
+				$found_files[] = $radix;
+
+			$found_suffixes += $suffixes_to_keep;
+			if ($db_show_debug === true)
+				$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
+			$latest_date = max($latest_date, filemtime($fold . $file));
 		}
 	}
 
 	// The following code is only executed if parsing a replace-type skin and one of the files wasn't found.
 	if (!empty($fallback_folder))
 	{
-		$not_found = array_diff($files, $found_files);
-		foreach ($not_found as $file)
+		$not_found = array_flip(array_diff($files, $found_files));
+		$fold = $fallback_folder;
+
+		if (empty($cached_files[$fold]))
+			$cached_files[$fold] = array_diff(scandir($fold, 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml'));
+
+		foreach ($cached_files[$fold] as $file)
 		{
-			// If this is a satellite file (*.ie6.css or whatever), only include it if the main file wasn't found as well.
-			if (strpos($file, '.') !== false && !in_array(substr($file, 0, strpos($file, '.')), $not_found))
+			if (substr($file, -4) !== '.css')
 				continue;
-			$add = $fallback_folder . $file . '.css';
-			if (file_exists($add))
-			{
-				$css[] = $add;
-				if ($db_show_debug === true)
-					$context['debug']['sheets'][] = $file . ' (' . basename($theme[$context['skin_uses_default_theme'] ? 'default_theme_url' : 'theme_url']) . ')';
-				$latest_date = max($latest_date, filemtime($add));
-			}
+
+			$radix = substr($file, 0, strpos($file, '.'));
+			if (!isset($original_files[$radix], $not_found[$radix]))
+				continue;
+
+			// Get the list of suffixes in the file name.
+			$suffixes = array_flip(explode(',', substr(strstr($file, '.'), 1, -4)));
+			$keep_suffixes = array_intersect_key($suffixes, $requested_suffixes);
+
+			// Ignore local files (we're only guests in this folder.)
+			// Also, if we can't find a required suffix in the suffix list, skip the file.
+			if (!$keep_suffixes || isset($keep_suffixes['local']))
+				continue;
+
+			$css[] = $fold . $file;
+
+			if ($db_show_debug === true)
+				$context['debug']['sheets'][] = $file . ' (' . basename($theme[$target . 'url']) . ')';
+			$latest_date = max($latest_date, filemtime($fold . $file));
 		}
 	}
+
+	// Now that we have our final css file list, sort it.
+	usort($css, 'sort_skin_files');
 
 	$folder = end($context['css_folders']);
 	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? '' : substr(strrchr($theme['theme_dir'], '/'), 1) . '-';
@@ -306,16 +348,24 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
 
+	// If you add a local/global override and later remove it, reupload other CSS files or empty your cache.
+	unset($found_suffixes['local'], $found_suffixes['global']);
+
+	// We need to cache different versions for different browsers, even if we don't have overrides available.
+	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
+	$found_suffixes[$context['browser']['agent']] = true;
+
+	// Make sure to only keep 'webkit' if we have no other browser name on record.
+	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
+		unset($found_suffixes['webkit']);
+
 	$id = array_filter(array_merge(
 		$id,
 
 		// We don't need to show 'index-sections-custom' in the main filename, do we?
-		array_diff($original_files, $ignore_files),
+		array_diff($files, $ignore_files),
 
-		// We need to cache different versions for different browsers, even if we don't have overrides available.
-		// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-		// Make sure to only keep 'webkit' if we have no other browser name on record.
-		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
+		array_keys($found_suffixes),
 
 		// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
 		isset($context['user'], $context['skin_available_languages']) && $context['user']['language'] !== 'english'
@@ -334,6 +384,49 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 	$context['header'] .= '
 	<link rel="stylesheet" href="' . $final_script . '">';
+}
+
+// This function will sort a CSS file list in this order:
+// skins/index, skins/index.suffix.css, skins/SubSkin/index.css,
+// skins/sections.css, skins/SubSkin/sections.suffix.css, etc.
+function sort_skin_files($a, $b)
+{
+	$x = strrpos($a, '/');
+	$y = strrpos($b, '/');
+
+	$c = substr($a, $x + 1);
+	$d = substr($b, $y + 1);
+
+	$i = substr($c, 0, strpos($c, '.'));
+	$j = substr($d, 0, strpos($d, '.'));
+
+	// Same main file name?
+	if ($i == $j)
+	{
+		// Most top-level folder wins.
+		if ($x > $y)
+			return 1;
+		if ($x < $y)
+			return -1;
+
+		// Same folder, same starting name? Shortest suffix wins.
+		$x = strlen($c);
+		$y = strlen($d);
+		if ($x > $y)
+			return 1;
+		if ($x < $y)
+			return -1;
+		return 0;
+	}
+
+	// Different file names? First in $files wins.
+	global $files;
+	foreach ($files as $file)
+		if ($i === $file)
+			return -1;
+		elseif ($j === $file)
+			return 1;
+	return 0;
 }
 
 function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false)
@@ -414,7 +507,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	foreach (glob($cachedir . '/' . $id . '-*' . $ext) as $del)
-		if (!strpos($del, $latest_date))
+		if (strpos($del, $latest_date) === false)
 			@unlink($del);
 
 	$final = '';
@@ -659,7 +752,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	foreach (glob($cachedir . '/' . $id. '*' . $ext) as $del)
-		if (!strpos($del, $latest_date))
+		if (strpos($del, $latest_date) === false)
 			@unlink($del);
 
 	$minify = empty($settings['minify']) ? 'none' : $settings['minify'];
@@ -1015,7 +1108,7 @@ function clean_cache($extensions = 'php', $filter = '')
 		$extensions = array('js', 'jgz', 'js.gz');
 
 	// Remove the files in Wedge's own disk cache, if any.
-	$dh = scandir($folder);
+	$dh = scandir($folder, 1);
 	$exts = array_flip((array) $extensions);
 	foreach ($dh as $file)
 		if ($file[0] !== '.' && $file !== 'index.php' && (!$filter || strpos($file, $filter) !== false))

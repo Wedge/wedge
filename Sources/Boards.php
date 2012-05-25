@@ -56,7 +56,7 @@ function Boards()
 	);
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl . (isset($_GET['action']) && $_GET['action'] === 'boards' ? '?action=boards' : (isset($_GET['category']) && is_integer($_GET['category']) ? '?category=' . $_GET['category'] : ''));
+	$context['canonical_url'] = $scripturl . (isset($_GET['action']) && $_GET['action'] === 'boards' ? '?action=boards' : (isset($_GET['category']) && (int) $_GET['category'] ? '?category=' . $_GET['category'] : ''));
 
 	// Do not let search engines index anything if there is a random thing in $_GET.
 	if (!empty($_GET))
