@@ -287,28 +287,22 @@ function template_display_posts()
 	if (can_ajax)
 	{
 		var oQuickModify = new QuickModify({
-			iTopicId: ' . $context['current_topic'] . ',
-			sTemplateBodyEdit: ' . JavaScriptEscape('
+			sSubject: ' . JavaScriptEscape('<input type="text" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
+			sBody: ' . JavaScriptEscape('
 				<div id="quick_edit_body_container">
 					<div id="error_box" class="error"></div>
 					<textarea class="editor" id="qm_post" rows="12" tabindex="' . $context['tabindex']++ . '">%body%</textarea>
 					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-					<input type="hidden" id="qm_topic" value="' . $context['current_topic'] . '">
 					<input type="hidden" id="qm_msg" value="%msg_id%">
 					<div class="right">
 						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return window.oQuickModify && oQuickModify.modifySave();" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['form_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
 					</div>
-				</div>') . ',
-			sTemplateSubjectEdit: ' . JavaScriptEscape('<input type="text" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
-			sTemplateBodyNormal: \'%body%\',
-			sTemplateSubjectNormal: ' . JavaScriptEscape('<a href="' . $scripturl . '?topic=' . $context['current_topic'] . '.msg%msg_id%#msg%msg_id%" rel="nofollow">%subject%</a>') . ',
-			sErrorBorderStyle: \'1px solid red\'
+				</div>') . '
 		});
 
 		new IconList({
 			sLabels: \'' . $txt['message_icon'] . '\',
-			iBoardId: ' . $context['current_board'] . ',
-			iTopicId: ' . $context['current_topic'] . '
+			iBoardId: ' . $context['current_board'] . '
 		});
 	}');
 
@@ -773,7 +767,6 @@ function template_quick_reply()
 	add_js('
 	var oQuickReply = new QuickReply({
 		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
-		iTopicId: ' . $context['current_topic'] . ',
 		iStart: ' . $context['start'] . ',
 		sContainerId: "qr_options",
 		sImageId: "qr_expand",

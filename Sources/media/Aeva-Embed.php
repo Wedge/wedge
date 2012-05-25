@@ -336,19 +336,18 @@ function aeva_build_object($input)
 	if (empty($arr['plugin']) || $arr['plugin'] == 'flash')
 	{
 		$plugin = array(
-			'classid' => 'CLSID:D27CDB6E-AE6D-11CF-96B8-444553540000',
+			'classid' => 'clsid:d27cdb6e-ae6d-11cf-96b8-444553540000',
 			'type' => 'application/x-shockwave-flash',
-			'codebase' => 'http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,115,0',
 			'params' => array(
 				'wmode' => 'transparent', 'quality' => 'high', 'allowFullScreen' => 'true', 'allowScriptAccess' => !empty($arr['allow-script']) ? 'always' : 'never',
-				'pluginspage' => 'http://www.macromedia.com/go/getflashplayer', 'autoplay' => 'false', 'autostart' => 'false',
+				'pluginspage' => 'http://get.adobe.com/flashplayer', 'autoplay' => 'false', 'autostart' => 'false',
 			),
 		);
 	}
 	elseif ($arr['plugin'] == 'divx')
 	{
 		$plugin = array(
-			'classid' => 'CLSID:67DABFBF-D0AB-41FA-9C46-CC0F21721616',
+			'classid' => 'clsid:67dabfbf-d0ab-41fa-9c46-cc0f21721616',
 			'type' => 'video/divx',
 			'codebase' => 'http://go.divx.com/plugin/DivXBrowserPlugin.cab',
 			'params' => array(
@@ -362,12 +361,11 @@ function aeva_build_object($input)
 	elseif ($arr['plugin'] == 'wmp')
 	{
 		$plugin = array(
-			'classid' => 'CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95',
+			'classid' => 'clsid:22d6f312-b0f6-11d0-94ab-0080c74c7e95',
 			'type' => 'application/x-mplayer2',
-			'codebase' => 'http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=6,4,7,1112',
 			'params' => array(
 				'wmode' => 'transparent', 'quality' => 'high', 'allowFullScreen' => 'true', 'allowScriptAccess' => 'never',
-				'ShowControls' => 'True', 'autostart' => 'false', 'autoplay' => 'false',
+				'pluginspage' => 'http://www.microsoft.com/Windows/MediaPlayer/', 'ShowControls' => 'True', 'autostart' => 'false', 'autoplay' => 'false',
 			),
 			'src' => 'filename', // wmp uses filename instead of src or movie for the param name
 		);
@@ -375,7 +373,7 @@ function aeva_build_object($input)
 	elseif ($arr['plugin'] == 'quicktime')
 	{
 		$plugin = array(
-			'classid' => 'CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B',
+			'classid' => 'clsid:02bf25d5-8c17-4b23-bc80-d3488abddc6b',
 			'type' => 'video/quicktime',
 			'codebase' => 'http://www.apple.com/qtactivex/qtplugin.cab',
 			'params' => array(
@@ -388,14 +386,14 @@ function aeva_build_object($input)
 	elseif ($arr['plugin'] == 'realmedia')
 	{
 		$plugin = array(
-			'classid' => 'CLSID:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA',
+			'classid' => 'clsid:cfcdaa03-8be4-11cf-b84b-0020afbbccfa',
 			'type' => 'audio/x-pn-realaudio-plugin',
 			'params' => array(
 				'pluginspage' => 'http://www.real.com', 'wmode' => 'transparent', 'quality' => 'high', 'allowFullScreen' => 'true',
 				'allowScriptAccess' => 'never', 'controls' => 'imagewindow', 'console' => 'video', 'autostart' => 'false',
 			),
 			'src' => 'src',
-			'extra' => ($context['browser']['is_ie'] ? '<object id="rvocx" classid="CLSID:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA" width="$8px" height="30px"><param name="src" value="$1"><param name="autostart" value="false"><param name="controls" value="ControlPanel"><param name="console" value="video">' : '') .
+			'extra' => ($context['browser']['is_ie'] ? '<object id="rvocx" classid="clsid:cfcdaa03-8be4-11cf-b84b-0020afbbccfa" width="$8px" height="30px"><param name="src" value="$1"><param name="autostart" value="false"><param name="controls" value="ControlPanel"><param name="console" value="video">' : '') .
 				'<embed src="$1" width="$8px" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="false"></embed>' . ($context['browser']['is_ie'] ? '</object>' : ''),
 		);
 	}

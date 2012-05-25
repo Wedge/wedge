@@ -51,6 +51,9 @@ ul.buttonlist
 	margin-bottom: 10px
 	width: 100%
 
+.qm_error
+	border: 1px solid red
+
 // "You are ignoring..." box. Obviously, only members can see this.
 .ignored
 	margin: 8px

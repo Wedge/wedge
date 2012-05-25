@@ -57,7 +57,7 @@ function template_modifydone()
 	}
 	else
 		echo '
-	<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '" in_body="', cleanXml($context['message']['error_in_body']) ? '1' : '0', '"><![CDATA[', implode('<br>', $context['message']['errors']), ']]></error>';
+	<error where="#qm_', $context['message']['error_in_subject'] ? 'subject' : ($context['message']['error_in_body'] ? 'post' : ''), '"><![CDATA[', implode('<br>', $context['message']['errors']), ']]></error>';
 	echo '
 </we>';
 }
@@ -67,18 +67,13 @@ function template_modifytopicdone()
 	global $context, $txt;
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>';
-	if (empty($context['message']['errors']))
-	{
-		echo '
+<we>
 	<modified><![CDATA[', empty($context['message']['modified']['time']) ? '' : cleanXml($txt['last_edit'] . ' ' . $context['message']['modified']['time'] . ' ' . $txt['by'] . ' ' . $context['message']['modified']['name']), ']]></modified>';
-		if (!empty($context['message']['subject']))
-			echo '
-	<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>';
-	}
-	else
+
+	if (!empty($context['message']['subject']))
 		echo '
-	<error in_subject="', $context['message']['error_in_subject'] ? '1' : '0', '"><![CDATA[', cleanXml(implode('<br>', $context['message']['errors'])), ']]></error>';
+	<subject><![CDATA[', cleanXml($context['message']['subject']), ']]></subject>';
+
 	echo '
 </we>';
 }

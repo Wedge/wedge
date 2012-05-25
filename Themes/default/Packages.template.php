@@ -1131,7 +1131,7 @@ function template_view_operations()
 	<title>', $txt['operation_title'], '</title>
 	<meta charset="utf-8">',
 	theme_base_css(), '
-	<link rel="stylesheet" href="', add_css_file('admin'), '">',
+	<link rel="stylesheet" href="', add_css_file('mana'), '">',
 	theme_base_js(1), '
 </head>
 <body>

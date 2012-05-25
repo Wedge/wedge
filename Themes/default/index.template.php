@@ -598,7 +598,8 @@ function template_body_after()
 		we_sessvar = "', $context['session_var'], '",', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
 		we_iso_case_folding = true' : '', '
 		we_loading = "', $txt['ajax_in_progress'], '",
-		we_cancel = "', $txt['form_cancel'], '";
+		we_cancel = "', $txt['form_cancel'], '"', empty($context['current_topic']) ? '' : '
+		we_topic = "' . $context['current_topic'] . '"', ';
 
 	', $no_resize ? '' : '$(window).resize(weres).resize();
 	', '$("#main_menu").menu();', $context['show_pm_popup'] ? '

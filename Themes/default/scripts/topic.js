@@ -33,15 +33,12 @@ function modify_topic(topic_id, first_msg_id)
 	show_edit = function (subject)
 	{
 		// Just template the subject.
-		cur_subject_div.html('<input type="text" id="qm_subject" value="' + subject + '" size="60" style="width: 95%" maxlength="80"><input type="hidden" id="qm_topic" value="' + cur_topic_id + '"><input type="hidden" id="qm_msg" value="' + cur_msg_id + '">');
-		$('#qm_subject').keypress(key_press);
-	},
-
-	// And the reverse for hiding it.
-	hide_edit = function (subject)
-	{
-		// Re-template the subject!
-		cur_subject_div.html('<a href="' + weUrl() + 'topic=' + cur_topic_id + '.0">' + subject + '</a>');
+		cur_subject_div.html('<input type="text" id="qm_subject" size="60" style="width: 95%" maxlength="80">');
+		$('#qm_subject')
+			.data('id', cur_topic_id)
+			.data('msg', cur_msg_id)
+			.keypress(key_press)
+			.val(subject);
 	},
 
 	key_press = function (e)
@@ -53,11 +50,11 @@ function modify_topic(topic_id, first_msg_id)
 		}
 	},
 
-	cancel = function ()
+	restore_subject = function ()
 	{
 		cur_subject_div.html(buff_subject);
-		set_hidden_topic_areas(true);
 
+		set_hidden_topic_areas(true);
 		in_edit_mode = false;
 		$('body').unbind('.mt');
 		return false;
@@ -70,29 +67,20 @@ function modify_topic(topic_id, first_msg_id)
 
 		show_ajax();
 		sendXMLDocument(
-			weUrl() + 'action=jsmodify;topic=' + $('#qm_topic').val() + ';' + we_sessvar + '=' + we_sessid + ';xml',
-			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
+			weUrl() + 'action=jsmodify;topic=' + $('#qm_subject').data('id') + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&msg=' + $('#qm_subject').data('msg'),
 			function (XMLDoc)
 			{
 				hide_ajax();
 
-				if (!XMLDoc)
-				{
-					cancel();
-					return true;
-				}
-
-				var
-					subject = $('subject', XMLDoc),
-					error = $('error', XMLDoc);
-
-				if (!subject.length || error.length)
+				// Any problems?
+				if (!XMLDoc || !$('subject', XMLDoc).length)
 					return false;
 
-				hide_edit(subject.text());
-				set_hidden_topic_areas(true);
-				in_edit_mode = false;
-				$('body').unbind('.mt');
+				restore_subject();
+
+				// Re-template the subject!
+				cur_subject_div.find('a').html($('subject', XMLDoc).text());
 
 				return false;
 			}
@@ -115,7 +103,7 @@ function modify_topic(topic_id, first_msg_id)
 		if (cur_topic_id == topic_id)
 			return;
 		else
-			cancel();
+			restore_subject();
 	}
 
 	in_edit_mode = true;
@@ -158,7 +146,7 @@ function QuickReply(opt)
 
 		if (bCollapsed)
 		{
-			window.location.href = weUrl() + 'action=post;quote=' + iMessageId + ';topic=' + opt.iTopicId + '.' + opt.iStart;
+			window.location.href = weUrl() + 'action=post;quote=' + iMessageId + ';topic=' + we_topic + '.' + opt.iStart;
 			return false;
 		}
 		else
@@ -271,7 +259,7 @@ function QuickModify(opt)
 			oCurMessageDiv
 				.slideUp(500)
 				.after(
-					opt.sTemplateBodyEdit.wereplace({
+					opt.sBody.wereplace({
 						msg_id: sCurMessageId,
 						body: $('message', XMLDoc).text()
 					})
@@ -286,7 +274,7 @@ function QuickModify(opt)
 
 			oCurSubjectDiv
 				.html(
-					opt.sTemplateSubjectEdit.wereplace({
+					opt.sSubject.wereplace({
 						subject: $('subject', XMLDoc).text()
 					})
 				)
@@ -305,10 +293,10 @@ function QuickModify(opt)
 		// Send in the Ajax request and let's hope for the best.
 		show_ajax();
 		sendXMLDocument(
-			weUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			weUrl() + 'action=jsmodify;topic=' + we_topic + ';' + we_sessvar + '=' + we_sessid + ';xml',
 			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() +
 			'&message=' + $('#qm_post').val().replace(/&#/g, '&#38;#').php_urlencode() +
-			'&topic=' + $('#qm_topic').val() + '&msg=' + $('#qm_msg').val(),
+			'&msg=' + $('#qm_msg').val(),
 			function (XMLDoc)
 			{
 				// Done saving -- now show the user whether everything's okay!
@@ -327,16 +315,14 @@ function QuickModify(opt)
 
 				if ($('body', XMLDoc).length)
 				{
-					// Show new body.
-					oCurMessageDiv.html(opt.sTemplateBodyNormal.wereplace({
-						body: $('body', XMLDoc).text()
-					}));
+					// Replace current body.
+					oCurMessageDiv.html($('body', XMLDoc).text());
 
-					// Show new subject.
-					oCurSubjectDiv.html(opt.sTemplateSubjectNormal.wereplace({
-						msg_id: sCurMessageId,
-						subject: $('subject', XMLDoc).text()
-					}));
+					// Destroy the textarea and show the new body...
+					modifyCancel();
+
+					// Replace subject text with the new one.
+					oCurSubjectDiv.find('a').html($('subject', XMLDoc).text());
 
 					// If this is the first message, also update the topic subject.
 					if ($('subject', XMLDoc).attr('is_first'))
@@ -353,8 +339,8 @@ function QuickModify(opt)
 				else if ($('error', XMLDoc).length)
 				{
 					$('#error_box').html($('error', XMLDoc).text());
-					$('#qm_post').css('border', $('error', XMLDoc).attr('in_body') == '1' ? opt.sErrorBorderStyle : '');
-					$('#qm_subject').css('border', $('error', XMLDoc).attr('in_subject') == '1' ? opt.sErrorBorderStyle : '');
+					$('#msg' + sCurMessageId + ' input').removeClass('qm_error');
+					$($('error', XMLDoc).attr('where')).addClass('qm_error');
 				}
 			}
 		);
@@ -480,7 +466,7 @@ function IconList(opt)
 								show_ajax();
 
 								getXMLDocument(
-									weUrl() + 'action=jsmodify;topic=' + opt.iTopicId + ';msg=' + iCurMessageId + ';'
+									weUrl() + 'action=jsmodify;topic=' + we_topic + ';msg=' + iCurMessageId + ';'
 									+ we_sessvar + '=' + we_sessid + ';icon=' + $(iconxml).attr('value') + ';xml',
 									function (oXMLDoc)
 									{
