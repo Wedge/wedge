@@ -33,7 +33,11 @@
  * skin folder, link to url($here/sprite.png) rather than url(sprite.png).
  */
 
-// Set a fontsize that will look the same in all browsers.
+/* The main styling that everything else should inherit.
+	Font size should be the same in all browsers if using
+	a percentage. Also reset HTML5 elements we use.
+------------------------------------------------------- */
+
 body
 	background: #444
 	color: #ccc
@@ -44,8 +48,10 @@ body
 header, footer, aside, section, article, nav
 	display: block
 
-/* Let's be crazy... Universal selector! This should prevent words from breaking the layout.
-	Obviously, where we DON'T want words to be broken, we should specify 'normal'. */
+/* Let's be crazy... Universal selector! This should
+	prevent words from breaking the layout. Obviously,
+	reset to 'normal' on specific selectors as needed.
+------------------------------------------------------- */
 
 *
 	word-wrap: break-word
@@ -1091,7 +1097,7 @@ table
 	border-radius: 6px
 	border: 1px dotted #99a
 	gradient: rgba(255, 255, 255, .5), rgba(230, 255, 235, .3)
-	margin: 0 0 .8em
+	margin: .8em 0
 	// The "Quote:" header part...
 	> header
 		padding: 2px 2px 2px 24px
@@ -1102,17 +1108,16 @@ table
 			color: #999
 			height: 1px
 			font: 3.6em/1 Cochin, Georgia, serif
-	> blockquote
+	> div
 		font-size: 92%
 		line-height: 1.4em
 		border-top: 1px dotted #99a
-		padding: 12px 16px
-		margin: 0
 		overflow: auto
 		background: rgba(0, 0, 0, .07)
 		border-radius: 6px
-	> footer
-		display: none
+		> blockquote
+			margin: 12px 16px 8px
+			padding: 0
 
 // A code block - regular or with PHP syntax highlighting
 .bbc_code, .php_code

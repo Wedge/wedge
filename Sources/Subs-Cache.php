@@ -263,7 +263,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			$fallback_folder = '';
 
 		if (empty($cached_files[$fold]))
-			$cached_files[$fold] = array_diff(scandir($fold, 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml'));
+			$cached_files[$fold] = array_diff(scandir($fold, 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
 
 		foreach ($cached_files[$fold] as $file)
 		{
@@ -310,7 +310,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		$fold = $fallback_folder;
 
 		if (empty($cached_files[$fold]))
-			$cached_files[$fold] = array_diff(scandir($fold, 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml'));
+			$cached_files[$fold] = array_diff(scandir($fold, 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
 
 		foreach ($cached_files[$fold] as $file)
 		{
@@ -994,6 +994,9 @@ function wedge_get_skin_options()
 		if (file_exists($fold . 'skin.xml'))
 		{
 			$set = file_get_contents($fold . '/skin.xml');
+			if (file_exists($fold . 'custom.xml'))
+				$set .= file_get_contents($fold . '/custom.xml');
+
 			// If this is a replace-type skin, forget all of the parent folders.
 			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
 				$context['skin_folders'] = array();

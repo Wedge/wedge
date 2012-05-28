@@ -201,7 +201,7 @@ $sites = array(
 		'website' => 'http://maps.google.com',
 		'type' => 'pop',
 		'plugin' => 'html',
-		'pattern' => '(http://maps\.google\.[^">]+/\w*?\?[^">]+)',
+		'pattern' => '(https?://maps\.google\.[^">]+/\w*?\?[^">]+)',
 		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="$1&amp;output=embed"></iframe>',
 		'size' => array(425, 350),
 		'ui-height' => 0,

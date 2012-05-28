@@ -2474,22 +2474,18 @@ Those functions return an array with the requested information. They are also us
 function aeva_protect_bbc(&$message)
 {
 	global $settings;
-	if (empty($settings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
-		return;
 
-	$protect_tags = array('code', 'html', 'php', 'noembed', 'nobbc');
-	foreach ($protect_tags as $tag)
-		if (stripos($message, '[' . $tag . ']') !== false)
-			$message = preg_replace('~\[' . $tag . ']((?>[^[]|\[(?!/?' . $tag . '])|(?R))+?)\[/' . $tag . ']~ie',
-				"'[" . $tag . "]' . str_ireplace('[media', '&#91;media', '$1') . '[/" . $tag . "]'", $message);
+	if (!empty($settings['enableBBC']) && (!isset($_REQUEST, $_REQUEST['action']) || $_REQUEST['action'] != 'jseditor') || stripos($message, '[code]') !== false || stripos($message, '[noembed]') !== false || stripos($message, '[html]') !== false)
+		$message = preg_replace('~\[(code|noembed|html)]((?>[^[]|\[(?!/?\\1])|(?R))+?)\[/\\1]~ie',
+			"'[$1]' . str_ireplace('[media', '&#91;media', '$2') . '[/$1]'", $message);
 }
 
 function aeva_parse_bbc(&$message, $id_msg = -1)
 {
 	global $settings, $context;
-	if ($id_msg >= 0)
+	if ((int) $id_msg >= 0)
 		$context['aeva_id_msg'] = $id_msg;
-	if (isset($context['disable_media_tag']) || empty($settings['enableBBC']) || (isset($_REQUEST) && isset($_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
+	if (isset($context['disable_media_tag']) || empty($settings['enableBBC']) || (isset($_REQUEST, $_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
 	{
 		unset($context['disable_media_tag']);
 		return;
@@ -2506,17 +2502,18 @@ function aeva_parse_bbc_each($data)
 	global $context;
 	$params = array(
 		'id' => array('match' => '(\d+(?:,\d+)*)'),
-		'type' => array('optional' => true, 'match' => '(normal|box|av|link|preview|full|album|playlist|(?:media|audio|video|photo)_album)'),
-		'align' => array('optional' => true, 'match' => '(none|right|left|center)'),
-		'width' => array('optional' => true, 'match' => '(\d+)'),
-		'details' => array('optional' => true, 'match' => '(none|all|no_name|(?:name|description|playlists|votes)(?:,(?:name|description|playlists|votes))*)'),
-		'caption' => array('optional' => true, 'quoted' => true),
+		'type' => array('match' => '(normal|box|av|link|preview|full|album|playlist|(?:media|audio|video|photo)_album)'),
+		'align' => array('match' => '(none|right|left|center)'),
+		'width' => array('match' => '(\d+)'),
+		'details' => array('match' => '(none|all|no_name|(?:name|description|playlists|votes)(?:,(?:name|description|playlists|votes))*)'),
+		'caption' => array('quoted' => true),
 	);
-	// Admins should preparse() their strings before going through parse_bbc() on SSI pages. This hack is only meant to fix this tag's behavior.
-	$q2 = '(?:' . ($q = (strpos($data, '"') !== false) ? '"' : '&quot;') . ')';
 	$done = array('id' => '', 'type' => '', 'align' => '', 'width' => '', 'caption' => '');
+
+	// Admins/modders should preparsecode() their strings that are meant to go through parse_bbc(). This hack is only meant to fix this tag's behavior.
+	$data = str_replace('&quot;', '"', $data);
 	foreach ($params as $id => $cond)
-		if (preg_match('/' . $id . '=' . (isset($cond['quoted']) ? $q2 . '?((?<=' . $q . ').+?(?=' . $q . ')|[^]\s]+)' . $q2 . '?' : $q2 . '?' . $cond['match']) . $q2 . '?/i', $data, $this_one))
+		if (preg_match('~' . $id . '="?' . (isset($cond['quoted']) ? '((?<=")[^"]+|[^]\s]+)' : '"?' . $cond['match']) . '"?~i', $data, $this_one))
 			$done[$id] = $this_one[1];
 
 	$result = aeva_showThumbnail($done);
