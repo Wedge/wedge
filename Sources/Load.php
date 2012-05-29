@@ -86,7 +86,12 @@ function reloadSettings()
 				$context['plugins_url'][$plugin_details['id']] = $pluginsurl . '/' . $plugin;
 				if (isset($plugin_details['actions']))
 					foreach ($plugin_details['actions'] as $action)
+					{
+						if (strpos($action['function'], '::') !== false)
+							$action['function'] = explode('::', $action['function']);
+
 						$context['extra_actions'][$action['action']] = array($action['filename'], $action['function'], $plugin_details['id']);
+					}
 				unset($plugin_details['id'], $plugin_details['provides'], $plugin_details['actions']);
 
 				foreach ($plugin_details as $hook => $functions)

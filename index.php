@@ -196,7 +196,7 @@ if (empty($_REQUEST['action']) || !defined('WEDGE_NO_LOG'))
 }
 
 // After all this time... After everything we saw, after everything we lost... I have only one thing to say to you... Bye!
-$function();
+call_user_func($function);
 
 wetem::add('sidebar', 'sidebar_quick_access');
 
