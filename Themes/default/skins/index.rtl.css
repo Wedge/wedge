@@ -406,12 +406,6 @@ tr.titlebg td
 		background-position: 2% 4px
 
 
-/* Styles for (fatal) errors.
-------------------------------------------------- */
-.errorbox p.alert
-	float: right
-
-
 /* Styles for the profile section.
 ------------------------------------------------- */
 #basicinfo

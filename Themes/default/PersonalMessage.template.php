@@ -853,12 +853,12 @@ function template_send()
 	{
 		echo '
 			<div class="errorbox">
-				<strong>', $txt['error_while_submitting'], '</strong>
-				<ul class="reset">';
+				<h3>', $txt['error_while_submitting'], '</h3>
+				<ul class="error">';
 
 		foreach ($context['post_error']['messages'] as $error)
 			echo '
-					<li class="error">', $error, '</li>';
+					<li>', $error, '</li>';
 
 		echo '
 				</ul>

@@ -1590,7 +1590,7 @@ function template_modify_language_entries()
 	if (!empty($context['entries_not_writable_message']))
 		echo '
 			<div id="errorbox">
-				<span class="alert">', $context['entries_not_writable_message'], '</span>
+				<p class="alert">', $context['entries_not_writable_message'], '</p>
 			</div>';
 
 	// Already have some?

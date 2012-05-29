@@ -11,7 +11,7 @@
 	box-sizing: border-box
 	margin-bottom: 10px
 	td.info a.subject
-		font: 700 120% "PT Sans", "Segoe UI", Optima, Arial, sans-serif
+		font: 700 120% $subject_font
 		color: $board_col
 	td.children
 		color: #555
@@ -272,7 +272,7 @@ img.new_posts
 
 	h4
 		margin: 3px 0 3px 16px // 19px originally.
-		font: 700 120%/120% "PT Sans", "Franklin Gothic Medium", Arial
+		font: 700 120%/120% $subject_font
 
 	ul.info extends ul.reset
 		padding: 0
@@ -828,19 +828,21 @@ tr.windowbg td
 	border: 1px solid #c34
 	color: #000
 	background-color: #ffe4e9
-	margin-bottom: 1em
 	h3
 		font-size: 1.1em
 	ul
 		margin-bottom: 0
+		margin-top: .5em
 		padding-left: 20px
+	ul:first-child
+		margin-top: 0
 	p
 		margin: 1em 0 0
-	p.alert
+	.alert
 		padding, margin: 0
-		float: left
 		width: 1em
 		font-size: 1.5em
+	// Styling for mismatched tags
 	.bread
 		padding: 4px 8px
 		font-family: monospace
@@ -857,7 +859,7 @@ tr.windowbg td
 	width: 20%
 	float: left
 	h4
-		font: 700 120%/105% "PT Sans", $head_font
+		font: 700 120%/105% $subject_font
 		white-space: pre-wrap
 		overflow: hidden
 		span.position
