@@ -121,7 +121,8 @@ function JSModify()
 		}
 		else
 		{
-			$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
+			loadSource('media/Aeva-Embed');
+			$_POST['message'] = westr::htmlspecialchars(aeva_onposting($_POST['message'], ENT_QUOTES));
 
 			wedit::preparsecode($_POST['message']);
 

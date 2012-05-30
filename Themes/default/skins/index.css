@@ -1448,7 +1448,7 @@ dl#feed
 #sidebar .title final
 	margin: 0 0 15px
 	padding: 4px 0 0
-	font-size: 1.6em
+	font-size: ifnull($sidebar_title_font_size, 1.6em)
 
 .title2 extends .title
 	background: none
@@ -1458,10 +1458,10 @@ dl#feed
 		color: #777
 
 .cat final, .title final
-	font: 100 1.5em/1.3em $head_font
+	font: 100 1.5em/1.3em ifnull($cat_font, $head_font)
 
 .title final
-	font-size: 1.4em
+	font-size: ifnull($title_font_size, 1.4em)
 	position: relative
 
 // A general table class
