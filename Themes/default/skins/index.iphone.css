@@ -52,6 +52,10 @@
 .bc, .bc2
 	white-space: normal
 
+.bbc_code, .php_code
+	code
+		word-wrap: break-word
+
 @remove .thought_actions
 	position: absolute
 

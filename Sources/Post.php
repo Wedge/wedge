@@ -759,7 +759,8 @@ function Post($post_errors = array())
 
 			// Remove any nested quotes, if necessary.
 			if (!empty($settings['removeNestedQuotes']))
-				$form_message = preg_replace(array('~\n?\[quote.*?].+?\[/quote]\n?~is', '~^\n~', '~\[/quote]~'), '', $form_message);
+				while (preg_match_all('~\[quote(.*?)](?>[^[]|\[(?!/?quote))*\[/quote]\n?~i', $form_message, $matches))
+					$form_message = str_replace($matches[0], '', $form_message);
 
 			// Add a quote string on the front and end.
 			$form_message = '[quote author=' . $mname . ' link=msg=' . (int) $_REQUEST['quote'] . ' date=' . $mdate . ']' . "\n" . rtrim($form_message) . "\n" . '[/quote]';

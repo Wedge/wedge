@@ -1130,6 +1130,7 @@ table
 		padding: 3px 1em
 		overflow: auto
 		white-space: pre
+		word-wrap: normal
 		// Show a scrollbar after about 24 lines.
 		max-height: 24em
 

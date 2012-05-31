@@ -2480,26 +2480,26 @@ function aeva_protect_bbc(&$message)
 			"'[$1]' . str_ireplace('[media', '&#91;media', '$2') . '[/$1]'", $message);
 }
 
-function aeva_parse_bbc(&$message, $id_msg = -1)
+function aeva_parse_bbc(&$message, $cache_id = -1)
 {
 	global $settings, $context;
-	if ((int) $id_msg >= 0)
-		$context['aeva_id_msg'] = $id_msg;
-	if (isset($context['disable_media_tag']) || empty($settings['enableBBC']) || (isset($_REQUEST, $_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
-	{
-		unset($context['disable_media_tag']);
+
+	if ((int) $cache_id >= 0)
+		$context['aeva_id_msg'] = $cache_id;
+
+	if (empty($settings['enableBBC']) || (isset($_REQUEST, $_REQUEST['action']) && $_REQUEST['action'] == 'jseditor'))
 		return;
-	}
-	preg_match_all('~\[media\s+([^]]*?(?:&quot;.+?&quot;.*?(?!&quot;))?)](?:<br>)?[\r\n]?~i', $message, $aeva_stuff);
+
+	preg_match_all('~\[media\s+((?:&quot;.*?&quot;|[^]])+?)](?:<br>)?[\r\n]?~i', $message, $aeva_stuff);
 	if (!empty($aeva_stuff))
 		foreach ($aeva_stuff[1] as $id => $aeva_replace)
 			$message = str_replace($aeva_stuff[0][$id], aeva_parse_bbc_each($aeva_replace), $message);
+
 	unset($context['aeva_id_msg']);
 }
 
 function aeva_parse_bbc_each($data)
 {
-	global $context;
 	$params = array(
 		'id' => array('match' => '(\d+(?:,\d+)*)'),
 		'type' => array('match' => '(normal|box|av|link|preview|full|album|playlist|(?:media|audio|video|photo)_album)'),
@@ -2513,8 +2513,8 @@ function aeva_parse_bbc_each($data)
 	// Admins/modders should preparsecode() their strings that are meant to go through parse_bbc(). This hack is only meant to fix this tag's behavior.
 	$data = str_replace('&quot;', '"', $data);
 	foreach ($params as $id => $cond)
-		if (preg_match('~' . $id . '="?' . (isset($cond['quoted']) ? '((?<=")[^"]+|[^]\s]+)' : '"?' . $cond['match']) . '"?~i', $data, $this_one))
-			$done[$id] = $this_one[1];
+		if (preg_match('~' . $id . '=("?+)' . (!empty($cond['quoted']) ? '((?<=")[^"]+|[^]\s]+)' : $cond['match']) . '\\1~i', $data, $this_one))
+			$done[$id] = $this_one[2];
 
 	$result = aeva_showThumbnail($done);
 	return !empty($result) ? $result : '[media ' . $data . ']';
