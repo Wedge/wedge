@@ -725,7 +725,7 @@ function template_quick_reply()
 				<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $settings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
 				<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
 				<br>' : '', '
-				<form action="<URL>?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);">
+				<form action="<URL>?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);" class="clearfix">
 					<input type="hidden" name="topic" value="', $context['current_topic'], '">
 					<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
 					<input type="hidden" name="icon" value="xx">
@@ -754,11 +754,11 @@ function template_quick_reply()
 						<div id="smileyBox_message" class="hide"></div>',
 						$context['postbox']->outputEditor(), '
 					</div>
-					<div class="floatleft padding">
-						<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
-					</div>
-					<div class="right padding">',
+					<div class="postbuttons">',
 						$context['postbox']->outputButtons(), '
+					</div>
+					<div class="padding">
+						<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
 					</div>
 				</form>
 			</div>

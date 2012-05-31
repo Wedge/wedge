@@ -317,7 +317,7 @@ class wecss_var extends wecss
 		// Replace ifnull($var1, $var2) with $var1, or $var2 if $var1 doesn't exist.
 		while (preg_match_all('~ifnull\((\$[\w-]+)\s*,\s*+(?!ifnull)([^)]+)\s*\)~i', $css, $matches))
 			foreach ($matches[1] as $i => $var)
-				$css = str_replace($matches[0][$i], isset($css_vars[$var]) ? $var : $matches[3][$i], $css);
+				$css = str_replace($matches[0][$i], isset($css_vars[$var]) ? $var : $matches[2][$i], $css);
 
 		// Replace away!
 		if (!empty($css_vars))

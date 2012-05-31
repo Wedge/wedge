@@ -155,10 +155,12 @@ ul.post_options
 	margin: 0 0 0 3px
 	padding: 1px
 
-#post_confirm_strip
+.postbuttons
 	max-width: 50%
 	padding: .7em .5em
 	float, text-align: right
+	input
+		margin-bottom: 5px
 
 #draft_lastautosave extends .inline-block
 	margin-left: 3px

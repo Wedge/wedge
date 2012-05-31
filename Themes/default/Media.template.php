@@ -444,11 +444,11 @@ function template_aeva_item_details()
 		echo '
 				<dt>', $txt['media_embed_bbc'], '</dt>
 				<dd>
-					<input id="bbc_embed" type="text" size="18" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="selectText(this);" readonly>
+					<input id="bbc_embed" type="text" size="18" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="this.focus(); this.select();" readonly>
 					<a href="', $scripturl, '?action=help;in=mediatag" onclick="return reqWin(this, 600, 400, false, true);" class="help"></a>
 				</dd>';
 
-		// Don't show html/direct links if the helper file was deleted
+		// Don't show html/direct links if the helper file was deleted.
 		if ($amSettings['show_linking_code'] == 1)
 		{
 			if (strpos($item['embed_object'], 'swfobject.embedSWF') === false)
@@ -457,13 +457,13 @@ function template_aeva_item_details()
 				<dd>
 					<input id="html_embed" type="text" size="24" value="', $item['type'] == 'image' ?
 						westr::htmlspecialchars('<img src="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '">') :
-						westr::htmlspecialchars(trim(preg_replace('/[\t\r\n]+/', ' ', $item['embed_object']))), '" onclick="selectText(this);" readonly>
+						westr::htmlspecialchars(trim(preg_replace('/[\t\r\n]+/', ' ', $item['embed_object']))), '" onclick="this.focus(); this.select();" readonly>
 				</dd>';
 			if ($item['type'] != 'embed')
 				echo '
 				<dt>', $txt['media_direct_link'], '</td>
 				<dd>
-					<input id="direct_link" type="text" size="24" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="selectText(this);" readonly>
+					<input id="direct_link" type="text" size="24" value="' . $boardurl . '/MGalleryItem.php?id=' . $item['id_media'] . '" onclick="this.focus(); this.select();" readonly>
 				</dd>';
 		}
 	}
@@ -791,11 +791,11 @@ function template_aeva_item_comments()
 							<div id="smileyBox_message" class="hide"></div>',
 							$context['postbox']->outputEditor(), '
 						</div>
-						<div class="floatleft padding">
-							<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
-						</div>
-						<div class="right padding">',
+						<div class="postbuttons">',
 							$context['postbox']->outputButtons(), '
+						</div>
+						<div class="padding floatleft">
+							<input type="button" name="switch_mode" id="switch_mode" value="', $txt['switch_mode'], '" class="hide" onclick="if (window.oQuickReply) oQuickReply.switchMode();">
 						</div>
 						<input type="hidden" name="submit_aeva">
 					</form>
@@ -1095,17 +1095,17 @@ function template_aeva_viewAlbum()
 	<form action="' . $scripturl . '?action=media;sa=quickmod;in=' . $album_data['id'] . '" method="post" enctype="multipart/form-data" id="aeva_form" name="aeva_form" onsubmit="submitonce(this);">' : '') . '
 		<div class="titlebg sort_options">
 			<div class="view_options">
-				', $txt['media_items_view'], ': ', $album_data['view'] == 'normal' ? '<b>' . $txt['media_view_normal'] . '</b> <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . ';fw;'. $context['aeva_urlmore'] . '">' . $txt['media_view_filestack'] . '</a>' : '<a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . ';nw;' . $context['aeva_urlmore'] . '">' . $txt['media_view_normal'] . '</a> <b>' . $txt['media_view_filestack'] . '</b>', '
+				', $txt['media_items_view'], ': ', $album_data['view'] == 'normal' ? '<b>' . $txt['media_view_normal'] . '</b> <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . ';fw;' . $context['aeva_urlmore'] . '">' . $txt['media_view_filestack'] . '</a>' : '<a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . ';' . $context['aeva_urlmore'] . '">' . $txt['media_view_normal'] . '</a> <b>' . $txt['media_view_filestack'] . '</b>', '
 			</div>
 			', $txt['media_sort_by'], ':';
 	$sort = empty($sort_list[$context['aeva_sort']]) ? 0 : $sort_list[$context['aeva_sort']];
 	for ($i = 0; $i < 5; $i++)
-		echo $sort == $i ? ' <b>' . $txt['media_sort_by_'.$i] . '</b>' :
-			' <a href="'.$galurl.'sa=album;in='.$album_data['id'] . ';sort=' . $i . ($album_data['view'] == 'normal' ? ';nw' : ';fw') . '">' . $txt['media_sort_by_'.$i] . '</a>';
+		echo $sort == $i ? ' <b>' . $txt['media_sort_by_' . $i] . '</b>' :
+			' <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . ';sort=' . $i . ($album_data['view'] == 'normal' ? '' : ';fw') . '">' . $txt['media_sort_by_' . $i] . '</a>';
 	echo '
 			| ', $txt['media_sort_order'], ':',
-		($context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_asc'] . '</b>' : ' <a href="'.$galurl.'sa=album;in='.$album_data['id'].(isset($_REQUEST['sort']) ? ';sort='.$_REQUEST['sort'] : '').';asc;' . ($album_data['view'] == 'normal' ? 'nw' : 'fw') . '">' . $txt['media_sort_order_asc'] . '</a>'),
-		(!$context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_desc'] . '</b>' : ' <a href="'.$galurl.'sa=album;in='.$album_data['id'] . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '').';desc;' . ($album_data['view'] == 'normal' ? 'nw' : 'fw') . '">'.$txt['media_sort_order_desc'].'</a>'), '
+		($context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_asc'] . '</b>' : ' <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . ';asc' . ($album_data['view'] == 'normal' ? '' : ';fw') . '">' . $txt['media_sort_order_asc'] . '</a>'),
+		(!$context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_desc'] . '</b>' : ' <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . ';desc' . ($album_data['view'] == 'normal' ? '' : ';fw') . '">' . $txt['media_sort_order_desc'] . '</a>'), '
 		</div>
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>

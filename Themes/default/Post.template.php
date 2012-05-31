@@ -250,7 +250,7 @@ function template_post_buttons()
 
 	// And... the submit buttons.
 	echo '
-				<div id="post_confirm_strip">', $context['postbox']->outputButtons(), '
+				<div class="postbuttons">', $context['postbox']->outputButtons(), '
 				</div>';
 }
 

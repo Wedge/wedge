@@ -917,7 +917,7 @@ function template_send()
 
 	// Send, Preview, spellcheck buttons.
 	echo '
-			<div id="post_confirm_strip">', $context['postbox']->outputButtons(), '
+			<div class="postbuttons">', $context['postbox']->outputButtons(), '
 			</div>
 			<div id="shortcuts">
 				<label><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked' : '', '> ', $txt['pm_save_outbox'], '</label>

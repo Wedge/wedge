@@ -140,10 +140,6 @@ th.last_th
 	img
 		margin: 0 4ex 0 0
 
-#postbuttons_upper ul li a span
-	line-height: 19px
-	padding: 0 6px 0 0
-
 .catfold
 	margin: 3px 0.6em -3px 0
 
@@ -156,16 +152,6 @@ th.last_th
 
 /* Styles for the display template (topic view).
 ---------------------------------------------------- */
-#postbuttons
-	div.buttons
-		float: right
-	span
-		text-align: left
-	span.lower
-		clear: left
-	.buttonlist
-		float: left
-
 #pollquestion
 	padding: 0.5em 2em 0.5em 0
 
