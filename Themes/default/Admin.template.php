@@ -32,6 +32,50 @@ function template_admin()
 		</div>';
 
 	if ($context['user']['is_admin'])
+	{
+		if (empty($options['hide_admin_intro']))
+		{
+			echo '
+		<fieldset id="admin_intro" class="windowbg2 wrc">
+			<legend>', $txt['new_to_wedge'], '</legend>
+			', $txt['new_to_wedge_intro'], '<br><br>';
+
+			foreach ($context['admin_intro'] as $column => $items)
+			{
+				echo '
+			<div class="two-columns smalltext">';
+
+				foreach ($items as $key => $url)
+					echo '
+				', $txt['new_to_wedge_' . $key], '<br>
+				&nbsp; ', sprintf($txt['new_to_wedge_' . $key . '_answer'], $url), '<br><br>';
+
+				echo '
+			</div>';
+			}
+
+			echo '
+			<br class="clear">
+			<hr>
+			<div class="right">
+				<form action="<URL>?action=admin" method="get">
+					<input type="submit" class="delete" value="', $txt['hide_new_to_wedge'], '" onclick="hideAdminIntro(e);">
+				</form>
+			</div>
+		</fieldset>';
+
+			// And add the JS to deal with hiding the area. Note that we need to hide the button before sliding because some browsers drop
+			// the floating aspects when performing the slide, causing the button to visibly jump further up the fieldset before it slides up.
+			add_js('
+	function hideAdminIntro(e)
+	{
+		e.preventDefault();
+		$("#admin_intro input").hide();
+		$("#admin_intro").slideUp();
+		new Image().src = weUrl() + \'action=jsoption;th=1;var=hide_admin_intro;val=1;\' + we_sessvar + \'=\' + we_sessid + \';time=\' + +new Date();
+	};');
+		}
+
 		echo '
 		<div id="quick_search">
 			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright">
@@ -44,6 +88,7 @@ function template_admin()
 			</form>
 			', $txt['admin_search_welcome'], '
 		</div>';
+	}
 
 	// Now, let's do the main admin stuff. We'll take an alias to the menu stuff because it's simply easier than fighting with anything else.
 	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
@@ -1660,92 +1705,97 @@ function template_callback_question_answer_list()
 {
 	global $txt, $context;
 
-	echo '
-			<dt>
-				<strong>', $txt['setup_verification_question'], '</strong>
-			</dt>
-			<dd>
-				<strong>', $txt['setup_verification_answer'], '</strong>
-			</dd>';
+	// First, we need to output the languages to JS.
+	$lang_js = '';
+	foreach ($context['languages'] as $lang_id => $lang)
+		$lang_js .= ($lang_js != '' ? ', ' : '') . JavaScriptEscape($lang_id) . ':' . JavaScriptEscape($lang['name']);
 
-	foreach ($context['question_answers'] as $data)
-		echo '
-
-			<dt>
-				<input type="text" name="question[', $data['id'], ']" value="', $data['question'], '" size="42" class="verification_question">
-			</dt>
-			<dd>
-				<input type="text" name="answer[', $data['id'], ']" value="', $data['answer'], '" size="42" class="verification_answer">
-			</dd>';
-
-	// Some blank ones.
-	for ($count = 0; $count < 3; $count++)
-		echo '
-			<dt>
-				<input type="text" name="question[]" size="42" class="verification_question">
-			</dt>
-			<dd>
-				<input type="text" name="answer[]" size="42" class="verification_answer">
-			</dd>';
+	$row = 0;
 
 	echo '
-			<dt id="add_more_question_placeholder" class="hide"></dt>
-			<dd></dd>
-			<dt id="add_more_link_div" class="hide">
-				<a href="#" onclick="addAnotherQuestion(); return false;">&#171; ', $txt['setup_verification_add_more'], ' &#187;</a>
-			</dt>
-			<dd></dd>';
+			<div class="right">
+				<input type="button" class="new" value="', $txt['setup_verification_add'], '" onclick="addNewRow();">
+			</div>
+			<table class="w100 cs0">
+				<tbody id="antispam">
+					<tr>
+						<th></th>
+						<th>', $txt['setup_verification_question'], '</th>
+						<th>', $txt['setup_verification_answer'], '</th>
+					</tr>';
 
-	// Create a named element dynamically
-	// Thanks to: http://www.thunderguy.com/semicolon/2005/05/23/setting-the-name-attribute-in-internet-explorer/
-	add_js_inline('
-	function createNamedElement(type, name, customFields)
+	if (!empty($context['qa_verification_qas']))
 	{
-		var element = null;
-
-		if (!customFields)
-			customFields = "";
-
-		// Try the IE way; this fails on standards-compliant browsers
-		try
+		foreach ($context['qa_verification_qas'] as $row => $question)
 		{
-			element = document.createElement("<" + type + \' name="\' + name + \'" \' + customFields + ">");
-		}
-		catch (e) {}
-		if (!element || element.nodeName != type.toUpperCase())
-		{
-			// Non-IE browser; use canonical method to create named element
-			element = document.createElement(type);
-			element.name = name;
-		}
+			echo '
+					<tr id="row', $row, '">
+						<td class="lang">
+							<select name="lang_select[', $row, ']" id="lang_select[', $row, ']">';
+			foreach ($context['languages'] as $lang_id => $lang)
+				echo '
+								<option value="', $lang_id, '"', $question['lang'] == $lang_id ? ' selected' : '', '>&lt;div class="flag_', $lang_id, '"&gt;&lt;/div&gt;', $lang['name'], '</option>';
 
-		return element;
+			echo '
+							</select>
+						</td>
+						<td class="question"><input type="text" name="question[', $row, ']" value="', $question['question'], '" size="42"></td>
+						<td class="answer">';
+			$answers = array();
+			foreach ($question['answers'] as $answer)
+				$answers[] = '<input type="text" name="answer[' . $row . '][]" value="' . $answer . '" size="25">';
+			echo '
+							', implode('<br>', $answers), '
+						</td>
+						<td><input type="submit" class="new" value="', $txt['setup_verification_add_answer'], '" onclick="addAnswer(', $row, '); return false;"></td>
+						<td><input type="submit" class="delete" value="', $txt['remove'], '" onclick="removeRow(', $row, '); return false;"></td>
+					</tr>';
+		}
+		$row++;
 	}
 
-	var placeHolder = document.getElementById(\'add_more_question_placeholder\');
+	echo '
+				</tbody>
+			</table>';
 
-	function addAnotherQuestion()
+	add_js('
+	var langs = {' . $lang_js . '},
+		nextrow = ' . $row . ';
+		remove_str = ' . JavaScriptEscape($txt['remove']) . ',
+		addans_str = ' . JavaScriptEscape($txt['setup_verification_add_answer']) . ';
+
+	function addNewRow()
 	{
-		var newDT = document.createElement("dt");
+		var row_id = \'row\' + nextrow;
+		$(\'#antispam\').append(\'<tr id="\' + row_id + \'"></tr>\');
+		var lang_select = \'<td class="lang"><select name="lang_select[\' + nextrow + \']" id="lang_select[\' + nextrow + \']">\';
+		$.each(langs, function(key, value) {
+			lang_select += \'<option value="\' + key + \'">&lt;div class="flag_\' + key + \'"&gt;&lt;/div&gt;\' + value + \'</option>\';
+		});
+		lang_select += \'</select></td>\';
+		$(\'#\' + row_id).append(lang_select);
 
-		var newInput = createNamedElement("input", "question[]");
-		newInput.type = "text";
-		newInput.size = "42";
-		newInput.setAttribute("class", "verification_question");
-		newDT.appendChild(newInput);
+		$(\'#\' + row_id).append(\'<td class="question"><input type="text" name="question[\' + nextrow + \']" size="42"></td>\');
+		$(\'#\' + row_id).append(\'<td class="answer"><input type="text" name="answer[\' + nextrow + \'][]" size="25"></td>\');
+		$(\'#\' + row_id).append(\'<td><input type="submit" class="new" value="\' + addans_str + \'" onclick="addAnswer(\' + nextrow + \'); return false;"></td>\');
+		$(\'#\' + row_id).append(\'<td><input type="submit" class="delete" value="\' + remove_str + \'" onclick="removeRow(\' + nextrow + \'); return false;"></td>\');
+		$(\'#\' + row_id + \' select\').sb();
 
-		newDD = document.createElement("dd");
+		nextrow++;
+		return false;
+	};
 
-		newInput = createNamedElement("input", "answer[]");
-		newInput.type = "text";
-		newInput.size = "42";
-		newInput.setAttribute("class", "verification_answer");
-		newDD.appendChild(newInput);
+	function removeRow(row)
+	{
+		$(\'#row\' + row).remove();
+	};
 
-		placeHolder.parentNode.insertBefore(newDT, placeHolder);
-		placeHolder.parentNode.insertBefore(newDD, placeHolder);
-	}
-	document.getElementById(\'add_more_link_div\').style.display = \'\';');
+	function addAnswer(row)
+	{
+		$(\'#row\' + row + \' td.answer\').append(\'<br><input type="text" name="answer[\' + row + \'][]" size="25">\');
+	};
+
+	addNewRow();');
 }
 
 // Repairing boards.

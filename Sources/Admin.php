@@ -745,6 +745,20 @@ function AdminHome()
 
 	// For readability.
 	$menu_context =& $context['menu_data_' . $context['max_menu_id']];
+
+	// The array key, e.g. add_boards, defines what strings should be used, and the value is the URL to get there.
+	$context['admin_intro'] = array(
+		'left' => array(
+			'add_boards' => '<URL>?action=admin;area=manageboards',
+			'mod_filters' => '<URL>?action=admin;area=modfilters',
+		),
+		'right' => array(
+			'censored' => '<URL>?action=admin;area=postsettings;sa=censor',
+			'antispam' => '<URL>?action=admin;area=antispam',
+		),
+	);
+	// If a plugin wants to add its own to the header, it can do so. It can even force it to be displayed by overriding $options['hide_admin_intro'] if it wishes.
+	call_hook('admin_intro');
 }
 
 // We have to do some stuff for the admin sidebar.

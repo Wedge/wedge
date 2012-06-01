@@ -1683,6 +1683,7 @@ function knownHooks()
 			// Admin
 			'admin_areas',
 			'admin_search',
+			'admin_intro',
 			'moderation_rules',
 			'output_error',
 			'spam_settings',

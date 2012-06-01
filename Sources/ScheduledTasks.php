@@ -118,7 +118,7 @@ function AutoTask()
 			if (!empty($row['sourcefile']))
 			{
 				if (strpos($row['sourcefile'], 'plugin;') === 0)
-					require_once(substr($row['sourcefile'], 6) . '.php');
+					require_once(substr($row['sourcefile'], 7) . '.php');
 				else
 					loadSource($row['sourcefile']);
 			}

@@ -139,7 +139,12 @@ function ScheduledTasks()
 		while ($row = wesql::fetch_assoc($request))
 		{
 			if (!empty($row['sourcefile']))
-				loadSource($row['sourcefile']);
+			{
+				if (strpos($row['sourcefile'], 'plugin;') === 0)
+					require_once(substr($row['sourcefile'], 7) . '.php');
+				else
+					loadSource($row['sourcefile']);
+			}
 
 			$start_time = microtime(true);
 			// The functions got to exist for us to use it.

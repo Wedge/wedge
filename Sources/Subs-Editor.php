@@ -97,7 +97,7 @@ function getMessageIcons($board_id)
 // Create a anti-bot verification control?
 function create_control_verification(&$verificationOptions, $do_test = false)
 {
-	global $txt, $settings, $options, $context, $user_info, $scripturl;
+	global $txt, $settings, $options, $context, $user_info, $scripturl, $language;
 
 	// First verification means we need to set up some bits...
 	if (empty($context['controls']['verification']))
@@ -155,7 +155,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		return true;
 
 	// If we want questions do we have a cache of all the IDs?
-	if (!empty($thisVerification['number_questions']) && empty($settings['question_id_cache']))
+	/*if (!empty($thisVerification['number_questions']) && empty($settings['question_id_cache']))
 	{
 		if (($settings['question_id_cache'] = cache_get_data('verificationQuestionIds', 300)) == null)
 		{
@@ -175,7 +175,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			if (!empty($settings['cache_enable']))
 				cache_put_data('verificationQuestionIds', $settings['question_id_cache'], 300);
 		}
-	}
+	}*/
 
 	if (!isset($_SESSION[$verificationOptions['id'] . '_vv']))
 		$_SESSION[$verificationOptions['id'] . '_vv'] = array();
@@ -217,24 +217,25 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$verification_errors[] = 'wrong_verification_code';
 		if ($thisVerification['number_questions'])
 		{
-			// Get the answers and see if they are all right!
-			$request = wesql::query('
-				SELECT id_comment, recipient_name AS answer
-				FROM {db_prefix}log_comments
-				WHERE comment_type = {string:ver_test}
-					AND id_comment IN ({array_int:comment_ids})',
-				array(
-					'ver_test' => 'ver_test',
-					'comment_ids' => $_SESSION[$verificationOptions['id'] . '_vv']['q'],
-				)
-			);
 			$incorrectQuestions = array();
-			while ($row = wesql::fetch_assoc($request))
+			$qa = unserialize($settings['qa_verification_qas']);
+			foreach ($_SESSION[$verificationOptions['id'] . '_vv']['q'] as $q_id)
 			{
-				if (!isset($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) || trim(westr::htmlspecialchars(strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]))) != strtolower($row['answer']))
-					$incorrectQuestions[] = $row['id_comment'];
+				list($lang, $id) = explode(':', $q_id);
+				if (!isset($qa[$lang][$id]) || !isset($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id]))
+					$incorrectQuestions[] = $q_id;
+				else
+				{
+					// Get all the answers, make them all lowercase.
+					$answers = $qa[$lang][$id];
+					array_shift($answers);
+					foreach ($answers as $k => $v)
+						$answers[$k] = strtolower($v);
+
+					if (!in_array(trim(westr::htmlspecialchars(strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id]), ENT_QUOTES)), $answers))
+						$incorrectQuestions[] = $q_id;
+				}
 			}
-			wesql::free_result($request);
 
 			if (!empty($incorrectQuestions))
 				$verification_errors[] = 'wrong_verification_answer';
@@ -291,15 +292,28 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		}
 
 		// Getting some new questions?
-		if ($thisVerification['number_questions'])
+		if ($thisVerification['number_questions'] && !empty($settings['qa_verification_qas']))
 		{
+			$qa = unserialize($settings['qa_verification_qas']);
+			// OK, so which language are we going to use? Try session, followed by user choice, then forum default, and lastly whichever one is first - so we have *something*.
+			if (isset($_SESSION['language'], $qa[$_SESSION['language']]))
+				$lang = $_SESSION['language'];
+			elseif (isset($qa[$user_info['language']]))
+				$lang = $user_info['language'];
+			elseif (isset($qa[$language]))
+				$lang = $language;
+			else
+			{
+				$items = array_keys($qa);
+				$lang = array_shift($items);
+			}
+
 			// Pick some random IDs
 			$questionIDs = array();
-			if ($thisVerification['number_questions'] == 1)
-				$questionIDs[] = $settings['question_id_cache'][array_rand($settings['question_id_cache'], $thisVerification['number_questions'])];
-			else
-				foreach (array_rand($settings['question_id_cache'], $thisVerification['number_questions']) as $index)
-					$questionIDs[] = $settings['question_id_cache'][$index];
+			$keys = array_keys($qa[$lang]);
+			$q_ids = (array) array_rand($keys, $thisVerification['number_questions']);
+			foreach ($q_ids as $id)
+				$questionIDs[] = $lang . ':' . $id;
 		}
 
 		if (!empty($thisVerification['other_vv']))
@@ -315,29 +329,21 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	// Have we got some questions to load?
 	if (!empty($questionIDs))
 	{
-		$request = wesql::query('
-			SELECT id_comment, body AS question
-			FROM {db_prefix}log_comments
-			WHERE comment_type = {string:ver_test}
-				AND id_comment IN ({array_int:comment_ids})',
-			array(
-				'ver_test' => 'ver_test',
-				'comment_ids' => $questionIDs,
-			)
-		);
+		$qa = unserialize($settings['qa_verification_qas']);
 		$_SESSION[$verificationOptions['id'] . '_vv']['q'] = array();
-		while ($row = wesql::fetch_assoc($request))
+		foreach ($questionIDs as $q_id)
 		{
+			list($lang, $id) = explode(':', $q_id);
+			$row = $qa[$lang][$id];
+			$question = array_shift($row);
 			$thisVerification['questions'][] = array(
-				'id' => $row['id_comment'],
-				'q' => parse_bbc($row['question']),
-				'is_error' => !empty($incorrectQuestions) && in_array($row['id_comment'], $incorrectQuestions),
-				// Remember a previous submission?
-				'a' => isset($_REQUEST[$verificationOptions['id'] . '_vv'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) ? westr::htmlspecialchars($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$row['id_comment']]) : '',
+				'id' => $q_id,
+				'q' => $question,
+				'is_error' => !empty($incorrectQuestions) && in_array($q_id, $incorrectQuestions),
+				'a' => isset($_REQUEST[$verificationOptions['id'] . '_vv'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'], $_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id]) ? westr::htmlspecialchars($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id], ENT_QUOTES) : '',
 			);
-			$_SESSION[$verificationOptions['id'] . '_vv']['q'][] = $row['id_comment'];
+			$_SESSION[$verificationOptions['id'] . '_vv']['q'][] = $q_id;
 		}
-		wesql::free_result($request);
 	}
 
 	$_SESSION[$verificationOptions['id'] . '_vv']['count'] = empty($_SESSION[$verificationOptions['id'] . '_vv']['count']) ? 1 : $_SESSION[$verificationOptions['id'] . '_vv']['count'] + 1;

@@ -199,7 +199,7 @@ function ModifyWarningSettings($return_config = false)
 // Let's try keep the spam to a minimum ah Thantos?
 function ModifySpamSettings($return_config = false)
 {
-	global $txt, $scripturl, $context, $settings;
+	global $txt, $scripturl, $context, $settings, $theme;
 
 	isAllowedTo('admin_forum');
 
@@ -227,7 +227,7 @@ function ModifySpamSettings($return_config = false)
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
 			array('title', 'setup_verification_questions'),
 			array('desc', 'setup_verification_questions_desc'),
-			array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
+			array('int', 'qa_verification_number', 'min' => 0, 'max' => 5, 'subtext' => $txt['setting_qa_verification_number_desc']),
 		'',
 			array('callback', 'question_answer_list'),
 	);
@@ -238,24 +238,40 @@ function ModifySpamSettings($return_config = false)
 		return $config_vars;
 
 	// Load any question and answers!
-	$context['question_answers'] = array();
-	$request = wesql::query('
-		SELECT id_comment, body AS question, recipient_name AS answer
-		FROM {db_prefix}log_comments
-		WHERE comment_type = {string:ver_test}',
-		array(
-			'ver_test' => 'ver_test',
-		)
-	);
-	while ($row = wesql::fetch_assoc($request))
+	getLanguages();
+
+	$css = array();
+	foreach ($context['languages'] as $lang_id => $lang)
+		$css[] = '#antispam .flag_' . $lang_id;
+	add_css('
+	' . implode(', ', $css) . ' { margin-right: 4px; margin-bottom: 1px } #antispam td { vertical-align: top; text-align: center }');
+
+	$context['qa_verification_qas'] = array();
+
+	if (!empty($settings['qa_verification_qas']))
 	{
-		$context['question_answers'][$row['id_comment']] = array(
-			'id' => $row['id_comment'],
-			'question' => $row['question'],
-			'answer' => $row['answer'],
-		);
+		$qa = unserialize($settings['qa_verification_qas']);
+		foreach ($qa as $lang => $questions)
+			foreach ($questions as $q_a_set)
+			{
+				$question = array_shift($q_a_set);
+				$context['qa_verification_qas'][] = array(
+					'lang' => $lang,
+					'question' => $question,
+					'answers' => $q_a_set,
+				);
+			}
 	}
-	wesql::free_result($request);
+
+	/*
+	'english' => array(
+		(question, answer, answer)
+		(question, answer)
+	),
+	'french' => array(
+		(le question, le answer)
+	),
+	*/
 
 	// Saving?
 	if (isset($_GET['save']))
@@ -266,70 +282,55 @@ function ModifySpamSettings($return_config = false)
 		if (empty($_POST['posts_require_captcha']) && !empty($_POST['guests_require_captcha']))
 			$_POST['posts_require_captcha'] = -1;
 
-		// Handle verification questions.
-		$questionInserts = array();
 		$count_questions = 0;
-		foreach ($_POST['question'] as $id => $question)
+		// Slightly hackish but means we push everything through one place.
+		if (empty($_POST['question']))
 		{
-			$question = trim(westr::htmlspecialchars($question, ENT_COMPAT));
-			$answer = trim(westr::strtolower(westr::htmlspecialchars($_POST['answer'][$id], ENT_COMPAT)));
+			$config_vars[] = array('text', 'qa_verification_qas');
+			$_POST['qa_verification_number'] = 0;
+			$_POST['qa_verification_qas'] = '';
+		}
+		else
+		{
+			$qa_verification_qas = array();
+			$lang_list = array();
 
-			// Already existed?
-			if (isset($context['question_answers'][$id]))
+			foreach ($_POST['lang_select'] as $id => $lang)
 			{
-				$count_questions++;
-				// Changed?
-				if ($context['question_answers'][$id]['question'] != $question || $context['question_answers'][$id]['answer'] != $answer)
+				if (empty($lang) || !isset($context['languages'][$lang]) || empty($_POST['question']) || !is_array($_POST['question']) || empty($_POST['question'][$id]))
+					continue;
+
+				$question = trim(westr::htmlspecialchars($_POST['question'][$id], ENT_QUOTES));
+				if (empty($_POST['answer']) || !is_array($_POST['answer']) || empty($_POST['answer'][$id]))
+					continue;
+				$answers = array();
+				foreach ($_POST['answer'][$id] as $answer)
 				{
-					if ($question == '' || $answer == '')
-					{
-						wesql::query('
-							DELETE FROM {db_prefix}log_comments
-							WHERE comment_type = {string:ver_test}
-								AND id_comment = {int:id}',
-							array(
-								'id' => $id,
-								'ver_test' => 'ver_test',
-							)
-						);
-						$count_questions--;
-					}
+					$answer = trim(westr::htmlspecialchars($answer, ENT_QUOTES));
+					if (!empty($answer))
+						$answers[] = $answer;
+				}
+				if (!empty($question) && !empty($answers))
+				{
+					$qa_verification_qas[$lang][] = array_merge((array) $question, $answers);
+					if (isset($lang_list[$lang]))
+						$lang_list[$lang]++;
 					else
-						wesql::query('
-							UPDATE {db_prefix}log_comments
-							SET body = {string:question}, recipient_name = {string:answer}
-							WHERE comment_type = {string:ver_test}
-								AND id_comment = {int:id}',
-							array(
-								'id' => $id,
-								'ver_test' => 'ver_test',
-								'question' => $question,
-								'answer' => $answer,
-							)
-						);
+						$lang_list[$lang] = 1;
 				}
 			}
-			// It's so shiny and new!
-			elseif ($question != '' && $answer != '')
-			{
-				$questionInserts[] = array(
-					'comment_type' => 'ver_test',
-					'body' => $question,
-					'recipient_name' => $answer,
-				);
-			}
-		}
+			if (!empty($lang_list))
+				$count_questions = min($lang_list);
 
-		// Any questions to insert?
-		if (!empty($questionInserts))
-		{
-			wesql::insert('',
-				'{db_prefix}log_comments',
-				array('comment_type' => 'string', 'body' => 'string-65535', 'recipient_name' => 'string-80'),
-				$questionInserts,
-				array('id_comment')
-			);
-			$count_questions++;
+			if (!empty($qa_verification_qas))
+			{
+				$qa_string = serialize($qa_verification_qas);
+				if (strlen($qa_string) <= 65535)
+				{
+					$_POST['qa_verification_qas'] = $qa_string;
+					$config_vars[] = array('text', 'qa_verification_qas');
+				}
+			}
 		}
 
 		if (empty($count_questions) || $_POST['qa_verification_number'] > $count_questions)
@@ -337,8 +338,6 @@ function ModifySpamSettings($return_config = false)
 
 		// Now save.
 		saveDBSettings($config_vars);
-
-		cache_put_data('verificationQuestionIds', null, 300);
 
 		redirectexit('action=admin;area=antispam');
 	}

@@ -2032,7 +2032,7 @@ function prepareDBSettingContext(&$config_vars)
 				'size' => !empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : (in_array($config_var[0], array('int', 'float')) ? 6 : 0),
 				'data' => array(),
 				'name' => $config_var[1],
-				'value' => isset($settings[$config_var[1]]) ? ($config_var[0] == 'select' || $config_var[0] == 'multi_select' ? $settings[$config_var[1]] : htmlspecialchars($settings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float')) ? 0 : ''),
+				'value' => !isset($config_var['value']) ? (isset($settings[$config_var[1]]) ? ($config_var[0] == 'select' || $config_var[0] == 'multi_select' ? $settings[$config_var[1]] : htmlspecialchars($settings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float')) ? 0 : '')) : $config_var['value'],
 				'disabled' => false,
 				'invalid' => !empty($config_var['invalid']),
 				'javascript' => '',
