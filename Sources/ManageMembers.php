@@ -310,7 +310,7 @@ function ViewMemberlist()
 				continue;
 
 			// Make sure numeric values are really numeric.
-			if (in_array($param_info['type'], array('int', 'age')))
+			if ($param_info['type'] == 'int' || $param_info['type'] == 'age')
 				$_POST[$param_name] = (int) $_POST[$param_name];
 			// Date values have to match the specified format.
 			elseif ($param_info['type'] == 'date')

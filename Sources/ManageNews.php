@@ -781,7 +781,7 @@ function ModifyNewsSettings($return_config = false)
 			array('permissions', 'send_mail', 'exclude' => array(-1)),
 		'',
 			array('check', 'show_newsfader'),
-			array('int', 'newsfader_time'),
+			array('int', 'newsfader_time', 'min' => 100),
 		'',
 			// Just the remaining settings.
 			array('check', 'xmlnews_enable', 'onclick' => '$(\'#xmlnews_maxlen\').attr(\'disabled\', !this.checked);'),

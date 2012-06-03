@@ -852,7 +852,7 @@ function template_show_settings()
 				// Numeric (int)?
 				elseif ($config_var['type'] == 'int')
 					echo '
-						<input type="number"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', isset($config_var['min']) ? ' min="' . $config_var['min'] . '"' : '', isset($config_var['max']) ? ' max="' . $config_var['max'] . '"' : '', ' step="', !empty($config_var['step']) ? $config_var['step'] : 1, '">';
+						<input type="number"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', ' min="', isset($config_var['min']) ? $config_var['min'] : 0, '"', isset($config_var['max']) ? ' max="' . $config_var['max'] . '"' : '', ' step="', !empty($config_var['step']) ? $config_var['step'] : 1, '">';
 				// Assume it must be a text box.
 				else
 					echo '

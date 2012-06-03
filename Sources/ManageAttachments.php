@@ -165,10 +165,10 @@ function ManageAttachmentSettings($return_config = false)
 		'',
 			// Directory and size limits.
 			empty($settings['currentAttachmentUploadDir']) ? array('text', 'attachmentUploadDir', 40, 'invalid' => !$context['valid_upload_dir'], 'subtext' => $txt['attachmentUploadDir_multiple_configure']) : array('var_message', 'attachmentUploadDir_multiple', 'message' => 'attachmentUploadDir_multiple_configure'),
-			array('int', 'attachmentDirSizeLimit', 'size' => 6, 'min' => 0, 'postinput' => $txt['kilobyte'], 'subtext' => $txt['attachmentZeroNoLimit']),
-			array('int', 'attachmentPostLimit', 'size' => 6, 'min' => 0, 'postinput' => $txt['kilobyte'], 'subtext' => $txt['attachmentZeroNoLimit']),
-			array('int', 'attachmentSizeLimit', 'size' => 6, 'min' => 0, 'postinput' => $txt['kilobyte'], 'subtext' => $txt['attachmentZeroNoLimit']),
-			array('int', 'attachmentNumPerPostLimit', 'size' => 6, 'min' => 0, 'max' => 50, 'subtext' => $txt['attachmentZeroNoLimit']),
+			array('int', 'attachmentDirSizeLimit', 'size' => 6, 'postinput' => $txt['kilobyte'], 'subtext' => $txt['attachmentZeroNoLimit']),
+			array('int', 'attachmentPostLimit', 'size' => 6, 'postinput' => $txt['kilobyte'], 'subtext' => $txt['attachmentZeroNoLimit']),
+			array('int', 'attachmentSizeLimit', 'size' => 6, 'postinput' => $txt['kilobyte'], 'subtext' => $txt['attachmentZeroNoLimit']),
+			array('int', 'attachmentNumPerPostLimit', 'size' => 6, 'max' => 50, 'subtext' => $txt['attachmentZeroNoLimit']),
 		'',
 			// Image settings.
 			array('check', 'attachment_image_reencode'),
@@ -181,8 +181,8 @@ function ManageAttachmentSettings($return_config = false)
 			array('check', 'attachmentShowImages'),
 			array('check', 'attachmentThumbnails'),
 			array('check', 'attachment_thumb_png'),
-			array('int', 'attachmentThumbWidth', 'size' => 6, 'min' => 0, 'max' => 1280),
-			array('int', 'attachmentThumbHeight', 'size' => 6, 'min' => 0, 'max' => 1024),
+			array('int', 'attachmentThumbWidth', 'size' => 6, 'max' => 1280),
+			array('int', 'attachmentThumbHeight', 'size' => 6, 'max' => 1024),
 	);
 
 	if ($return_config)
@@ -223,8 +223,8 @@ function ManageAvatarSettings($return_config = false)
 		array('title', 'avatar_external'),
 			array('permissions', 'profile_remote_avatar', 0, $txt['avatar_external_url_groups'], 'exclude' => array(-1)),
 			array('check', 'avatar_download_external', 0, 'onchange' => 'updateFormStatus();'),
-			array('int', 'avatar_max_width_external', 'size' => 6, 'min' => 0, 'max' => 250, 'subtext' => $txt['attachmentZeroNoLimit']),
-			array('int', 'avatar_max_height_external', 'size' => 6, 'min' => 0, 'max' => 250, 'subtext' => $txt['attachmentZeroNoLimit']),
+			array('int', 'avatar_max_width_external', 'size' => 6, 'max' => 250, 'subtext' => $txt['attachmentZeroNoLimit']),
+			array('int', 'avatar_max_height_external', 'size' => 6, 'max' => 250, 'subtext' => $txt['attachmentZeroNoLimit']),
 			array('select', 'avatar_action_too_large',
 				array(
 					'option_refuse' => $txt['option_refuse'],
@@ -236,8 +236,8 @@ function ManageAvatarSettings($return_config = false)
 		// Uploadable avatars?
 		array('title', 'avatar_upload'),
 			array('permissions', 'profile_upload_avatar', 0, $txt['avatar_upload_groups']),
-			array('int', 'avatar_max_width_upload', 'size' => 6, 'min' => 0, 'max' => 250, 'subtext' => $txt['attachmentZeroNoLimit']),
-			array('int', 'avatar_max_height_upload', 'size' => 6, 'min' => 0, 'max' => 250, 'subtext' => $txt['attachmentZeroNoLimit']),
+			array('int', 'avatar_max_width_upload', 'size' => 6, 'max' => 250, 'subtext' => $txt['attachmentZeroNoLimit']),
+			array('int', 'avatar_max_height_upload', 'size' => 6, 'max' => 250, 'subtext' => $txt['attachmentZeroNoLimit']),
 			array('check', 'avatar_resize_upload'),
 			array('check', 'avatar_reencode'),
 		'',

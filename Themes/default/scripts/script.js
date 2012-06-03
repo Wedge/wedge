@@ -130,7 +130,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 		.hide()
 		.load(help_page, function () {
 			if (title)
-				$(this).first().prepend('<h6>' + title + '</h6>');
+				$(this).find('div').first().prepend('<h6>' + title + '</h6>');
 			$(this).css({
 				overflow: noScrollbars ? 'hidden' : auto,
 				width: alternateWidth - 25,

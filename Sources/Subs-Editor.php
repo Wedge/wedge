@@ -154,29 +154,6 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	elseif (!$isNew && !$do_test)
 		return true;
 
-	// If we want questions do we have a cache of all the IDs?
-	/*if (!empty($thisVerification['number_questions']) && empty($settings['question_id_cache']))
-	{
-		if (($settings['question_id_cache'] = cache_get_data('verificationQuestionIds', 300)) == null)
-		{
-			$request = wesql::query('
-				SELECT id_comment
-				FROM {db_prefix}log_comments
-				WHERE comment_type = {string:ver_test}',
-				array(
-					'ver_test' => 'ver_test',
-				)
-			);
-			$settings['question_id_cache'] = array();
-			while ($row = wesql::fetch_assoc($request))
-				$settings['question_id_cache'][] = $row['id_comment'];
-			wesql::free_result($request);
-
-			if (!empty($settings['cache_enable']))
-				cache_put_data('verificationQuestionIds', $settings['question_id_cache'], 300);
-		}
-	}*/
-
 	if (!isset($_SESSION[$verificationOptions['id'] . '_vv']))
 		$_SESSION[$verificationOptions['id'] . '_vv'] = array();
 
@@ -221,7 +198,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			$qa = unserialize($settings['qa_verification_qas']);
 			foreach ($_SESSION[$verificationOptions['id'] . '_vv']['q'] as $q_id)
 			{
-				list($lang, $id) = explode(':', $q_id);
+				list ($lang, $id) = explode(':', $q_id);
 				if (!isset($qa[$lang][$id]) || !isset($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id]))
 					$incorrectQuestions[] = $q_id;
 				else
@@ -333,7 +310,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		$_SESSION[$verificationOptions['id'] . '_vv']['q'] = array();
 		foreach ($questionIDs as $q_id)
 		{
-			list($lang, $id) = explode(':', $q_id);
+			list ($lang, $id) = explode(':', $q_id);
 			$row = $qa[$lang][$id];
 			$question = array_shift($row);
 			$thisVerification['questions'][] = array(

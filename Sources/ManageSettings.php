@@ -150,12 +150,12 @@ function ModifyWarningSettings($return_config = false)
 
 	$config_vars = array(
 			// Warning system?
-			array('int', 'warning_watch', 'help' => 'warning_enable', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_warning_watch_subtext']),
-			'moderate' => array('int', 'warning_moderate', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_warning_moderate_subtext']),
-			array('int', 'warning_mute', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_warning_mute_subtext']),
+			array('int', 'warning_watch', 'help' => 'warning_enable', 'max' => 100, 'subtext' => $txt['setting_warning_watch_subtext']),
+			'moderate' => array('int', 'warning_moderate', 'max' => 100, 'subtext' => $txt['setting_warning_moderate_subtext']),
+			array('int', 'warning_mute', 'max' => 100, 'subtext' => $txt['setting_warning_mute_subtext']),
 		'',
-			'rem1' => array('int', 'user_limit', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_user_limit_subtext']),
-			'rem2' => array('int', 'warning_decrement', 'min' => 0, 'max' => 100, 'subtext' => $txt['setting_warning_decrement_subtext']),
+			'rem1' => array('int', 'user_limit', 'max' => 100, 'subtext' => $txt['setting_user_limit_subtext']),
+			'rem2' => array('int', 'warning_decrement', 'max' => 100, 'subtext' => $txt['setting_warning_decrement_subtext']),
 			array('select', 'warning_show', array($txt['setting_warning_show_mods'], $txt['setting_warning_show_user'], $txt['setting_warning_show_all']), 'subtext' => $txt['setting_warning_show_subtext']),
 	);
 
@@ -227,7 +227,7 @@ function ModifySpamSettings($return_config = false)
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
 			array('title', 'setup_verification_questions'),
 			array('desc', 'setup_verification_questions_desc'),
-			array('int', 'qa_verification_number', 'min' => 0, 'max' => 5, 'subtext' => $txt['setting_qa_verification_number_desc']),
+			array('int', 'qa_verification_number', 'max' => 5, 'subtext' => $txt['setting_qa_verification_number_desc']),
 		'',
 			array('callback', 'question_answer_list'),
 	);
@@ -265,11 +265,11 @@ function ModifySpamSettings($return_config = false)
 
 	/*
 	'english' => array(
-		(question, answer, answer)
-		(question, answer)
+		(a question, a possible answer, another possible answer)
+		(another question, the only possible answer)
 	),
 	'french' => array(
-		(le question, le answer)
+		(la seule question, la seule réponse possible)
 	),
 	*/
 
@@ -463,9 +463,9 @@ function ModifyPmSettings($return_config = false)
 			array('permissions', 'pm_read', 'exclude' => array(-1)),
 			array('permissions', 'pm_send', 'exclude' => array(-1)),
 			'',
-			'pm1' => array('int', 'max_pm_recipients', 'min' => 0, 'subtext' => $txt['max_pm_recipients_subtext']),
-			'pm2' => array('int', 'pm_posts_verification', 'min' => 0, 'subtext' => $txt['pm_posts_verification_subtext']),
-			'pm3' => array('int', 'pm_posts_per_hour', 'min' => 0, 'subtext' => $txt['pm_posts_per_hour_subtext']),
+			'pm1' => array('int', 'max_pm_recipients', 'subtext' => $txt['max_pm_recipients_subtext']),
+			'pm2' => array('int', 'pm_posts_verification', 'subtext' => $txt['pm_posts_verification_subtext']),
+			'pm3' => array('int', 'pm_posts_per_hour', 'subtext' => $txt['pm_posts_per_hour_subtext']),
 			'',
 			array('check', 'masterSavePmDrafts'),
 			array('permissions', 'save_pm_draft', 'exclude' => array(-1)),

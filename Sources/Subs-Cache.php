@@ -263,7 +263,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			$fallback_folder = '';
 
 		if (empty($cached_files[$fold]))
-			$cached_files[$fold] = array_diff(scandir($fold, 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
+			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
 
 		foreach ($cached_files[$fold] as $file)
 		{
@@ -310,7 +310,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		$fold = $fallback_folder;
 
 		if (empty($cached_files[$fold]))
-			$cached_files[$fold] = array_diff(scandir($fold, 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
+			$cached_files[$fold] = array_diff((array) @scandir($fold ? $fold : '', 1), array('.', '..', '.htaccess', 'index.php', 'skin.xml', 'custom.xml'));
 
 		foreach ($cached_files[$fold] as $file)
 		{

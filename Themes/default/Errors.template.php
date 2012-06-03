@@ -299,8 +299,10 @@ function template_show_file()
 
 	$alt = '';
 
+	// The file URL will be shown after the <div> and before the <table>.
 	echo '
-	<table class="nodrag cp0 cs0 monospace">';
+	<div>
+		<table class="nodrag cp0 cs0 monospace">';
 
 	foreach ($context['file_data']['contents'] as $index => $line)
 	{
@@ -308,14 +310,15 @@ function template_show_file()
 		$line_num = $index + $context['file_data']['min'];
 		$is_target = $line_num == $context['file_data']['target'];
 		echo '
-		<tr class="windowbg', $alt, '">
-			<td class="nowrap right"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
-			<td class="nowrap"', $is_target ? ' style="border: 1px solid black; border-width: 1px 1px 1px 0;">' : '>', $line, '</td>
-		</tr>';
+			<tr class="windowbg', $alt, '">
+				<td class="nowrap right"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
+				<td class="nowrap"', $is_target ? ' style="border: 1px solid black; border-width: 1px 1px 1px 0;">' : '>', $line, '</td>
+			</tr>';
 	}
 
 	echo '
-	</table>';
+		</table>
+	</div>';
 }
 
 ?>
