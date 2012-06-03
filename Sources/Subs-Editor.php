@@ -230,9 +230,9 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 					$answers = $qa[$lang][$id];
 					array_shift($answers);
 					foreach ($answers as $k => $v)
-						$answers[$k] = strtolower($v);
+						$answers[$k] = westr::strtolower($v);
 
-					if (!in_array(trim(westr::htmlspecialchars(strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id]), ENT_QUOTES)), $answers))
+					if (!in_array(trim(westr::htmlspecialchars(westr::strtolower($_REQUEST[$verificationOptions['id'] . '_vv']['q'][$q_id]), ENT_QUOTES)), $answers))
 						$incorrectQuestions[] = $q_id;
 				}
 			}

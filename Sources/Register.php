@@ -190,6 +190,8 @@ function Register($reg_errors = array())
 			$context['registration_errors'][] = $error;
 
 	$context['user_timezones'] = get_wedge_timezones();
+	if (!isset($context['user_selected_timezone']))
+		$context['user_selected_timezone'] = 'Europe/London';
 }
 
 // Actually register the member.
@@ -326,6 +328,7 @@ function Register2()
 		if (!isset($tz[$_POST['timezone']]))
 			unset($_POST['timezone']);
 	}
+	$context['user_selected_timezone'] = isset($_POST['timezone']) ? $_POST['timezone'] : 'Europe/London';
 
 	// Set the options needed for registration.
 	$regOptions = array(
