@@ -1136,7 +1136,7 @@ tr.windowbg td
 	width: 80%
 	font-size: .9em
 
-#profile_thoughts li:target > div
+.thought_list li:target > div
 	padding: 4px 8px
 	margin: 4px 0
 	border: 1px solid #fff

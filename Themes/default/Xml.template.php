@@ -202,7 +202,7 @@ function template_check_username()
 
 function template_thought()
 {
-	global $context, $user_info;
+	global $context, $user_info, $theme, $scripturl;
 
 	$th =& $context['return_thought'];
 	$thought = $th['thought'];
@@ -213,8 +213,6 @@ function template_thought()
 	if ($uid)
 	{
 		// master ID: thought thread's original thought ID
-		// parent ID: thought that is being replied to
-		// user ID: current thought's author
 		$mid = isset($th['mid']) ? $th['mid'] : 0;
 
 		// @worg!!
@@ -227,7 +225,7 @@ function template_thought()
 
 		$thought = '<div>' . ($th['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$th['privacy']] . '"></div>' : '') . '<a id="t' . $id . '"></a>'
 			. '<a href="<URL>?action=profile;u=' . $uid . '">' . $th['user_name'] . '</a> &raquo;'
-			. ' @<a href="<URL>?action=profile;u=' . $th['master_id'] . ';area=thoughts#t' . $th['pid'] . '">' . $th['parent_name'] . '</a>&gt;'
+			. ' @<a href="<URL>?action=profile;u=' . $th['parent_id'] . '">' . $th['parent_name'] . '</a>&gt;'
 			. ' <span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $th['privacy'] . '"'
 			. (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
 			. ($user_info['id'] == $uid || $user_info['is_admin'] ? ' data-self' : '')
@@ -240,7 +238,7 @@ function template_thought()
 
 	if ($uid)
 		echo '
-	<date><![CDATA[', timeformat(time()), ']]></date>';
+	<date><![CDATA[<a href="', $scripturl, '?action=thoughts;in=', $mid, '#t', $id, '"><img src="', $theme['images_url'], '/icons/last_post.gif" class="middle"></a> ', timeformat(time()), ']]></date>';
 
 	echo '
 </we>';

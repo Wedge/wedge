@@ -124,29 +124,21 @@ function Thought()
 	$oid = isset($_POST['oid']) ? (int) $_POST['oid'] : 0;
 	$pid = !empty($_POST['parent']) ? (int) $_POST['parent'] : 0;
 	$mid = !empty($_POST['master']) ? (int) $_POST['master'] : 0;
-	$parents = array();
 
-	// If we have a parent, then get the member data for parent and master thoughts.
-	// Master data is used to point to the correct profile page where the thought thread will show.
-	// Parent data is only used to retrieve the name of the parent thought's author.
-	if ($pid || $mid)
+	// If we have a parent, then get the member data for the parent thought.
+	if ($pid)
 	{
 		$request = wesql::query('
-			SELECT t.id_thought, m.id_member, m.real_name
+			SELECT m.id_member, m.real_name
 			FROM {db_prefix}thoughts AS t
 			LEFT JOIN {db_prefix}members AS m ON t.id_member = m.id_member
-			WHERE' . ($mid == $pid ? '
-				id_thought = {int:id_master}
-			LIMIT 1' : '
-				id_thought IN ({int:id_master}, {int:id_parent})
-			LIMIT 2'),
+			WHERE id_thought = {int:id_parent}
+			LIMIT 1',
 			array(
-				'id_master' => $mid,
 				'id_parent' => $pid,
 			)
 		);
-		while ($row = wesql::fetch_assoc($request))
-			$parents[$row['id_thought']] = $row;
+		list ($parent_id, $parent_name) = wesql::fetch_row($request);
 		wesql::free_result($request);
 	}
 
@@ -347,10 +339,9 @@ function Thought()
 		'privacy' => $privacy,
 		'user_id' => empty($user_id) ? 0 : $user_id,
 		'user_name' => empty($user_name) ? '' : $user_name,
-		'pid' => $pid,
 		'mid' => $mid,
-		'master_id' => empty($parents[$mid]) ? 0 : $parents[$mid]['id_member'],
-		'parent_name' => empty($parents[$pid]) ? 0 : $parents[$pid]['real_name'],
+		'parent_id' => empty($parent_id) ? 0 : $parent_id,
+		'parent_name' => empty($parent_name) ? 0 : $parent_name,
 	);
 
 	// Only update the thought area if it's a public comment, and isn't a comment on another thought...
