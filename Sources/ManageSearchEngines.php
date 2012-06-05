@@ -370,7 +370,7 @@ function EditSpider()
 				)
 			);
 		else
-			wesql::insert('insert',
+			wesql::insert('',
 				'{db_prefix}spiders',
 				array(
 					'spider_name' => 'string', 'user_agent' => 'string', 'ip_info' => 'string',
@@ -547,7 +547,7 @@ function logSpider()
 		else
 			$url = '';
 
-		wesql::insert('insert',
+		wesql::insert('',
 			'{db_prefix}log_spider_hits',
 			array('id_spider' => 'int', 'log_time' => 'int', 'url' => 'string'),
 			array($_SESSION['id_robot'], time(), $url),

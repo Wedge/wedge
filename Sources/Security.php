@@ -1092,7 +1092,7 @@ function checkUserBehavior()
 		foreach ($_POST as $k => $v)
 			$entity .= ($entity != '' ? '<br>' : '') . htmlspecialchars($k . '=' . $v);
 
-		wesql::insert('insert',
+		wesql::insert('',
 			'{db_prefix}log_intrusion',
 			array(
 				'id_member' => 'int', 'error_type' => 'string', 'ip' => 'int', 'event_time' => 'int', 'http_method' => 'string',

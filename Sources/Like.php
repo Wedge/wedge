@@ -98,7 +98,7 @@ function Like()
 	else
 	{
 		// No we didn't, insert it.
-		wesql::insert('insert',
+		wesql::insert('',
 			'{db_prefix}likes',
 			array('id_content' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'),
 			array($id_content, $content_type, $user_info['id'], $like_time),

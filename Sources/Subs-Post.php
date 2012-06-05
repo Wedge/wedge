@@ -673,7 +673,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			$insertRows[] = array($id_pm, $to, in_array($to, $recipients['bcc']) ? 1 : 0, isset($deletes[$to]) ? 1 : 0, 1);
 		}
 
-		wesql::insert('insert',
+		wesql::insert('',
 			'{db_prefix}pm_recipients',
 			array(
 				'id_pm' => 'int', 'id_member' => 'int', 'bcc' => 'int', 'deleted' => 'int', 'is_new' => 'int'
@@ -1949,7 +1949,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$inserts = array();
 			foreach ($inserted_words as $word)
 				$inserts[] = array($word, $msgOptions['id']);
-			wesql::insert('insert',
+			wesql::insert('',
 				'{db_prefix}log_search_words',
 				array('id_word' => 'string', 'id_msg' => 'int'),
 				$inserts,
@@ -2758,7 +2758,7 @@ function saveDraft($is_pm, $id_context = 0)
 	}
 
 	// Guess it is a new draft after all
-	wesql::insert('insert',
+	wesql::insert('',
 		'{db_prefix}drafts',
 		array(
 			'id_member' => 'int',

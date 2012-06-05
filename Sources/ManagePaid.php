@@ -548,7 +548,7 @@ function ModifySubscription()
 					$allowed_groups[] = array($context['sub_id'], (int) $id);
 
 			if (!empty($allowed_groups))
-				wesql::insert('insert',
+				wesql::insert('',
 					'{db_prefix}subscriptions_groups',
 					array(
 						'id_subscribe' => 'int', 'id_group' => 'int',

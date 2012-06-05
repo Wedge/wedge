@@ -685,7 +685,7 @@ function modifyBoard($board_id, &$boardOptions)
 			$rows[] = array($board_id, $id_group, $row['view_perm'], $row['enter_perm']);
 		}
 
-		wesql::insert('insert',
+		wesql::insert('',
 			'{db_prefix}board_groups',
 			array('id_board' => 'int', 'id_group' => 'int', 'view_perm' => 'string', 'enter_perm' => 'string'),
 			$rows,
@@ -747,7 +747,7 @@ function modifyBoard($board_id, &$boardOptions)
 			foreach ($boardOptions['moderators'] as $moderator)
 				$inserts[] = array($board_id, $moderator);
 
-			wesql::insert('insert',
+			wesql::insert('',
 				'{db_prefix}moderators',
 				array('id_board' => 'int', 'id_member' => 'int'),
 				$inserts,

@@ -443,7 +443,7 @@ function AddMembergroup()
 			wesql::free_result($request);
 
 			if (!empty($inserts))
-				wesql::insert('insert',
+				wesql::insert('',
 					'{db_prefix}permissions',
 					array('id_group' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
 					$inserts,
@@ -464,7 +464,7 @@ function AddMembergroup()
 			wesql::free_result($request);
 
 			if (!empty($inserts))
-				wesql::insert('insert',
+				wesql::insert('',
 					'{db_prefix}board_permissions',
 					array('id_group' => 'int', 'id_profile' => 'int', 'permission' => 'string', 'add_deny' => 'int'),
 					$inserts,
@@ -915,7 +915,7 @@ function EditMembergroup()
 				foreach ($group_moderators as $moderator)
 					$mod_insert[] = array($_REQUEST['group'], $moderator);
 
-				wesql::insert('insert',
+				wesql::insert('',
 					'{db_prefix}group_moderators',
 					array('id_group' => 'int', 'id_member' => 'int'),
 					$mod_insert,

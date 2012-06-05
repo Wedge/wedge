@@ -239,7 +239,7 @@ function Vote()
 	}
 
 	// Add their vote to the tally.
-	wesql::insert('insert',
+	wesql::insert('',
 		'{db_prefix}log_polls',
 		array('id_poll' => 'int', 'id_member' => 'int', 'id_choice' => 'int'),
 		$inserts,

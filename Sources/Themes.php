@@ -1036,7 +1036,7 @@ function ThemeInstall()
 			$inserts[] = array($id_theme, $var, $val);
 
 		if (!empty($inserts))
-			wesql::insert('insert',
+			wesql::insert('',
 				'{db_prefix}themes',
 				array('id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 				$inserts,

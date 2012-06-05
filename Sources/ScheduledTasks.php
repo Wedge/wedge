@@ -1034,7 +1034,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			));
 
 		// Add our email back to the queue, manually.
-		wesql::insert('insert',
+		wesql::insert('',
 			'{db_prefix}mail_queue',
 			array('recipient' => 'string', 'body' => 'string', 'subject' => 'string', 'headers' => 'string', 'send_html' => 'string'),
 			$failed_emails,

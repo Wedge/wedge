@@ -117,7 +117,7 @@ function addNextImperative($time, $task)
 	if (empty($task['function']) || empty($time) || $time < time())
 		return false;
 
-	wesql::insert('insert',
+	wesql::insert('',
 		'{db_prefix}scheduled_imperative',
 		array(
 			'instr_time' => 'int', 'instr_details' => 'string',

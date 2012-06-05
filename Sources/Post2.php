@@ -752,7 +752,7 @@ function Post2()
 			$i++;
 		}
 
-		wesql::insert('insert',
+		wesql::insert('',
 			'{db_prefix}poll_choices',
 			array('id_poll' => 'int', 'id_choice' => 'int', 'label' => 'string-255'),
 			$pollOptions,

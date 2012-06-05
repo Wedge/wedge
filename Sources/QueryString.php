@@ -872,7 +872,7 @@ function get_ip_identifier($ip)
 
 	// Oops, not in the log, so cleanup then add to log.
 	wesql::free_result($query);
-	wesql::insert('insert',
+	wesql::insert('ignore',
 		'{db_prefix}log_ips',
 		array(
 			'member_ip' => 'string',

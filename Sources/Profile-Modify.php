@@ -1195,7 +1195,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			array('id_theme', 'variable', 'id_member')
 		);
 		if (!empty($log_changes) && !empty($settings['log_enabled_profile']))
-			wesql::insert('insert',
+			wesql::insert('',
 				'{db_prefix}log_actions',
 				array(
 					'action' => 'string', 'id_log' => 'int', 'log_time' => 'int', 'id_member' => 'int', 'ip' => 'int',
