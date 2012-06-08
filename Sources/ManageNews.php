@@ -785,7 +785,7 @@ function ModifyNewsSettings($return_config = false)
 		'',
 			// Just the remaining settings.
 			array('check', 'xmlnews_enable', 'onclick' => '$(\'#xmlnews_maxlen\').attr(\'disabled\', !this.checked);'),
-			array('text', 'xmlnews_maxlen', 10, 'subtext' => $txt['xmlnews_maxlen_subtext']),
+			array('int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_subtext']),
 	);
 
 	if ($return_config)

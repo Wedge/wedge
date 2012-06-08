@@ -302,7 +302,7 @@ function template_show_file()
 	// The file URL will be shown after the <div> and before the <table>.
 	echo '
 	<div>
-		<table class="nodrag cp0 cs0 monospace">';
+		<table class="nodrag w100 cp0 cs0 monospace">';
 
 	foreach ($context['file_data']['contents'] as $index => $line)
 	{

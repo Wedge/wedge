@@ -63,14 +63,14 @@ function template_sub_thoughts(&$thought)
 	echo '</ul>';
 }
 
-function template_showMemberThoughts()
+function template_showLatestThoughts()
 {
 	global $context, $theme, $txt;
 
 	echo '
 		<we:cat>
 			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
-			', $txt['showThoughts'], ' - ', $context['member']['name'], ' (', $context['total_thoughts'], ')
+			', $txt['showThoughts'], empty($context['member']) ? '' : ' - ' . $context['member']['name'], ' (', $context['total_thoughts'], ')
 		</we:cat>
 		<div class="pagesection">
 			', $context['page_index'], '
@@ -96,7 +96,7 @@ function template_showMemberThoughts()
 		echo '
 			<tr class="windowbg', $col, '">
 				<td class="bc', $col, '"><a href="<URL>?action=thoughts;in=', $thought['id_master'] ? $thought['id_master'] : $id, '#t', $id, '"><img src="', $theme['images_url'], '/icons/last_post.gif" class="middle"></a> ', $thought['updated'], '</td>
-				<td><div>', $thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '>',
+				<td><div>', $thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
 				$thought['owner_name'], '</a> &raquo; ', $thought['text'], '</div></td>
 			</li></ul></td></tr>';
 	}

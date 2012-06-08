@@ -27,9 +27,9 @@ function Thoughts()
 	$context['page_title'] = $txt['showThoughts'];
 	$master = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
 
-	// We're not going to let users view all thoughts on a single page...
+	// If we're not in a specific thought thread, we're asking for the latest thoughts.
 	if (!$master)
-		redirectexit();
+		return latestThoughts();
 
 	$context['thoughts'] = $thoughts = array();
 	$request = wesql::query('
@@ -119,7 +119,7 @@ function Thoughts()
 				{
 					if (empty($row['parent_name']) && !isset($txt['deleted_thought']))
 						loadLanguage('Post');
-					$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . (empty($row['parent_name']) ? $txt['deleted_thought'] : $row['parent_name']) . '</a>&gt; ' . parse_bbc_inline($row['thought']);
+					$thought['text'] = (empty($row['parent_name']) ? '@' . $txt['deleted_thought'] : '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . $row['parent_name'] . '</a>') . '&gt; ' . parse_bbc_inline($row['thought']);
 					$thoughts[$row['id_master']] = $thought;
 				}
 				elseif ($row['id_master'] === $row['id_parent'] || !isset($thoughts[$row['id_master']]['sub']))
@@ -146,21 +146,23 @@ function populate_sub_thoughts(&$here, &$thought)
 	}
 }
 
-function memberThoughts($memID)
+function latestThoughts($memID = 0)
 {
 	global $context, $txt, $user_info;
 
 	// Some initial context.
 	loadTemplate('Thoughts');
-	wetem::load('showMemberThoughts');
+	wetem::load('showLatestThoughts');
 	$context['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 	$thoughts_per_page = 20;
 
 	$request = wesql::query('
 		SELECT COUNT(h.id_thought)
 		FROM {db_prefix}thoughts AS h
-		WHERE h.id_member = {int:id_member}' . ($user_info['id'] == $memID ? '' : '
-		AND (
+		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && ($user_info['id'] == $memID) ? '' : '
+		AND (' . ($memID ? '' : '
+			h.id_member = {int:me}
+			OR ') . '
 			h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
 			OR h.privacy = {int:members}') . '
 			OR FIND_IN_SET(' . implode(', h.privacy)
@@ -168,6 +170,7 @@ function memberThoughts($memID)
 		)') . '
 		LIMIT 1',
 		array(
+			'me' => $user_info['id'],
 			'id_member' => $memID,
 			'everyone' => -3,
 			'members' => 0,
@@ -177,8 +180,8 @@ function memberThoughts($memID)
 	wesql::free_result($request);
 
 	// Because I'm too lazy to show this properly...
-	$context['page_title'] = $txt['showThoughts'] . ' - ' . $context['member']['name'] . ' (' . $total_thoughts . ')';
-	$context['page_index'] = template_page_index('<URL>?action=profile;u=' . $memID . ';area=thoughts', $context['start'], $total_thoughts, $thoughts_per_page);
+	$context['page_title'] = $txt['showThoughts'] . (empty($context['member']) ? '' : ' - ' . $context['member']['name']) . ' (' . $total_thoughts . ')';
+	$context['page_index'] = template_page_index($memID ? '<URL>?action=profile;u=' . $memID . ';area=thoughts' : '<URL>?action=thoughts', $context['start'], $total_thoughts, $thoughts_per_page);
 	$context['total_thoughts'] = $total_thoughts;
 
 	// Now we get our thought list from this member.
@@ -186,20 +189,24 @@ function memberThoughts($memID)
 	$request = wesql::query('
 		SELECT h.id_thought
 		FROM {db_prefix}thoughts AS h
-		WHERE h.id_member = {int:id_member}' . ($user_info['id'] == $memID ? '' : '
-		AND (
+		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && ($user_info['id'] == $memID) ? '' : '
+		AND (' . ($memID ? '' : '
+			h.id_member = {int:me}
+			OR ') . '
 			h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
 			OR h.privacy = {int:members}') . '
 			OR FIND_IN_SET(' . implode(', h.privacy)
 			OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
 		)') . '
 		ORDER BY h.id_thought DESC
-		LIMIT {int:start}, 30',
+		LIMIT {int:start}, {int:per_page}',
 		array(
+			'me' => $user_info['id'],
 			'id_member' => $memID,
 			'everyone' => -3,
 			'members' => 0,
 			'start' => floor($context['start'] / $thoughts_per_page) * $thoughts_per_page,
+			'per_page' => $thoughts_per_page,
 		)
 	);
 	$think = array();
@@ -262,7 +269,7 @@ function memberThoughts($memID)
 			{
 				if (empty($thought['parent_name']) && !isset($txt['deleted_thought']))
 					loadLanguage('Post');
-				$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . (empty($row['parent_name']) ? $txt['deleted_thought'] : $row['parent_name']) . '</a>&gt; ' . parse_bbc_inline($row['thought']);
+				$thought['text'] = (empty($row['parent_name']) ? '@' . $txt['deleted_thought'] : '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . $row['parent_name'] . '</a>') . '&gt; ' . parse_bbc_inline($row['thought']);
 			}
 			if ($row['has_children'])
 				$thought['text'] .= ' <em>(&hellip;)</em>';

@@ -108,30 +108,6 @@ function Home()
 	call_hook('info_center');
 
 	// Now onto the thoughts...
-	$page = isset($_GET['page']) ? $_GET['page'] : 0;
-
-	$limit = 15;
-	if (isset($_GET['s']) && $_GET['s'] === 'thoughts')
-	{
-		$limit = 30;
-		$request = wesql::query('
-			SELECT COUNT(h.id_thought)
-			FROM {db_prefix}thoughts AS h
-			WHERE h.id_member = {int:me}
-				OR h.privacy = {int:everyone}
-				OR FIND_IN_SET(' . implode(', h.privacy)
-				OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
-			LIMIT 1',
-			array(
-				'me' => $user_info['id'],
-				'everyone' => -3,
-			)
-		);
-		list ($total_thoughts) = wesql::fetch_row($request);
-		wesql::free_result($request);
-		$context['page_index'] = template_page_index('<URL>?s=thoughts;page=%1$d', $page, round($total_thoughts / 30), 1, true);
-	}
-
 	$request = wesql::query('
 		SELECT
 			h.updated, h.thought, h.id_thought, h.id_parent, h.privacy,
@@ -146,11 +122,13 @@ function Home()
 			OR h.privacy = {int:members}
 			OR FIND_IN_SET(' . implode(', h.privacy)
 			OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)') . '
-		ORDER BY h.id_thought DESC LIMIT ' . ($page * 30) . ', ' . $limit,
+		ORDER BY h.id_thought DESC
+		LIMIT {int:per_page}',
 		array(
 			'me' => $user_info['id'],
 			'everyone' => -3,
 			'members' => 0,
+			'per_page' => 10,
 		)
 	);
 	$is_touch = $context['browser']['is_iphone'] || $context['browser']['is_tablet'];
