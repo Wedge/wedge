@@ -99,20 +99,9 @@ function template_main_board()
 
 		foreach ($context['topics'] as $topic)
 		{
-			$color_class = '';
-			// Is this topic pending approval, or does it have any posts pending approval?
-			if ($context['can_approve_posts'] && $topic['unapproved_posts'])
-				$color_class .= !$topic['approved'] ? ' approvet' : ' approve';
-			// Pinned topics should get a different color, too.
-			if ($topic['is_pinned'])
-				$color_class .= ' pinned';
-			// Locked topics get special treatment as well.
-			if ($topic['is_locked'])
-				$color_class .= ' locked';
-
 			// Some columns require a different shade of the color class.
-			$alternate_class = 'windowbg2' . $color_class;
-			$color_class = 'windowbg' . $color_class;
+			$alternate_class = 'windowbg2' . $topic['style'];
+			$color_class = 'windowbg' . $topic['style'];
 
 			echo '
 				<tr>
@@ -304,20 +293,9 @@ function template_main_blog()
 		{
 			$use_bg2 = !$use_bg2;
 
-			$color_class = $use_bg2 ? 'windowbg2' : 'windowbg';
-			// Is this topic pending approval, or does it have any posts pending approval?
-			if ($context['can_approve_posts'] && $topic['unapproved_posts'])
-				$color_class .= !$topic['approved'] ? ' approvet' : ' approve';
-			// Pinned topics should get a different color, too.
-			if ($topic['is_pinned'])
-				$color_class .= ' pinned';
-			// Locked topics get special treatment as well.
-			if ($topic['is_locked'])
-				$color_class .= ' locked';
-
 			echo '
 				<tr>
-					<td class="subject ', $color_class, '">
+					<td class="subject ', $use_bg2 ? 'windowbg2' : 'windowbg', $topic['style'], '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
 							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">', '<img src="', $topic['first_post']['icon_url'], '" class="middle">&nbsp;',
 							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],

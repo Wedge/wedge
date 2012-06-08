@@ -444,6 +444,17 @@ function MessageIndex()
 					$context['icon_sources'][$row['last_icon']] = 'images_url';
 			}
 
+			$color_class = '';
+			// Is this topic pending approval, or does it have any posts pending approval?
+			if ($context['can_approve_posts'] && $row['unapproved_posts'])
+				$color_class .= !$row['approved'] ? ' approvet' : ' approve';
+			// Pinned topics should get a different color, too.
+			if (!empty($row['is_pinned']))
+				$color_class .= ' pinned';
+			// Locked topics get special treatment as well.
+			if (!empty($row['locked']))
+				$color_class .= ' locked';
+
 			// 'Print' the topic info.
 			$context['topics'][$row['id_topic']] = array(
 				'id' => $row['id_topic'],
@@ -502,6 +513,7 @@ function MessageIndex()
 				'approved' => $row['approved'],
 				'unapproved_posts' => $row['unapproved_posts'],
 				'can_reply' => !empty($row['locked']) ? $can_moderate : $can_reply_any || ($can_reply_own && $row['first_id_member'] == $user_info['id']),
+				'style' => $color_class,
 			);
 		}
 		wesql::free_result($result);
