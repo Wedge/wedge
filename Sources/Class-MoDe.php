@@ -34,7 +34,7 @@ class weMoDe
 			'Symbian' => 'symbian',
 			'Windows' => 'windows ce|windows phone',
 			'PalmOS' => 'palm|avantgo|plucker|xiino',
-			'Others' => 'kindle|silk|playstation|nintendo|wap|up.|bolt|opera mobi'
+			'Others' => 'kindle|silk|samsung|htc|playstation|nintendo|wap|up.|bolt|opera mobi'
 		))) as $device)
 			if (strpos($ua, $device) !== false)
 				return true;

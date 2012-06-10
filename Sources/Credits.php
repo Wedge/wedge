@@ -56,7 +56,7 @@ function Credits($in_admin = false)
 						<br>
 						<div class="floatleft"><img src="http://wedge.org/about/pete.png" style="margin: 8px auto 4px"><br class="clear">Peter Spicer</div>
 						<div class="floatleft" style="margin-left: 8px"><img src="http://wedge.org/about/nao.png" style="margin: 8px auto 4px"><br class="clear">Ren&eacute;-Gilles Deberdt</div>
-						<br class="clear">',
+						<div class="clear"></div>',
 					),
 				),
 				array(

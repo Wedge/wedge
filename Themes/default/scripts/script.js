@@ -45,6 +45,11 @@ var
 	is_ie8down = is_ie && $.browser.version < 9,
 	is_ie9up = is_ie && !is_ie8down;
 
+// Add a jQuery easing type for animations.
+$.easing.out = function (x, t, b, c, d) {
+	return b + c * (t == d ? 1 : (1 - Math.pow(2, -10 * t / d)));
+};
+
 // Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback, undefined)
 {
@@ -136,8 +141,9 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 				width: alternateWidth - 25,
 				height: alternateHeight ? alternateHeight - 20 : auto,
 				padding: '10px 12px 12px',
-				border: '1px solid #999'
-			}).fadeIn(300);
+				border: '1px solid #999',
+				marginLeft: 50
+			}).animate({ opacity: 'show', marginLeft: 0 }, 999, 'out');
 			$(helf).dragslide();
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', help_page).css({

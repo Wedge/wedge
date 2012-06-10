@@ -71,7 +71,12 @@ function template_showLatestThoughts()
 		<we:cat>
 			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
 			', $txt['showThoughts'], empty($context['member']) ? '' : ' - ' . $context['member']['name'], ' (', $context['total_thoughts'], ')
-		</we:cat>
+		</we:cat>';
+
+	if (empty($context['thoughts']))
+		return;
+
+	echo '
 		<div class="pagesection">
 			', $context['page_index'], '
 		</div>

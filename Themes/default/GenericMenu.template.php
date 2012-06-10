@@ -171,20 +171,19 @@ function template_generic_tabs()
 
 	// Search for the current area. Make sure we're playing with the correct menu!
 	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 1)];
-	foreach ($menu_context['sections'] as $section)
-		foreach ($section['areas'] as $id => $area)
-			if ($id === $menu_context['current_area'])
-			{
-				$tabs = isset($area['subsections']) ? $area['subsections'] : array();
-				break;
-			}
+
+	if (!empty($menu_context['sections']))
+		foreach ($menu_context['sections'] as $section)
+			foreach ($section['areas'] as $id => $area)
+				if ($id === $menu_context['current_area'])
+				{
+					$tabs = isset($area['subsections']) ? $area['subsections'] : array();
+					break;
+				}
 
 	// If there are no "tabs" set up, don't waste time here.
 	if (empty($tabs))
 		return;
-
-	// Which menu are we rendering?
-	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 1)];
 
 	// Handy shortcut.
 	$tab_context =& $menu_context['tab_data'];
