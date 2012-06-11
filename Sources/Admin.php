@@ -1009,18 +1009,20 @@ function AdminSearchInternal()
 	$context['search_results'] = array();
 
 	$search_term = strtolower(un_htmlspecialchars($context['search_term']));
+
 	// Go through all the search data trying to find this text!
 	foreach ($search_data as $section => $data)
 	{
 		foreach ($data as $item)
 		{
 			$found = false;
-			if (!is_array($item[0]))
-				$item[0] = array($item[0]);
+			$item[0] = (array) $item[0];
 			foreach ($item[0] as $term)
 			{
 				$lc_term = strtolower($term);
-				if (strpos($lc_term, $search_term) !== false || (isset($txt[$term]) && strpos(strtolower($txt[$term]), $search_term) !== false) || (isset($txt['setting_' . $term]) && strpos(strtolower($txt['setting_' . $term]), $search_term) !== false))
+				if (strpos($lc_term, $search_term) !== false
+				|| (isset($txt[$term]) && strpos(strtolower(is_array($txt[$term]) ? serialize($txt[$term]) : $txt[$term]), $search_term) !== false)
+				|| (isset($txt['setting_' . $term]) && strpos(strtolower(is_array($txt['setting_' . $term]) ? serialize($txt['setting_' . $term]) : $txt['setting_' . $term]), $search_term) !== false))
 				{
 					$found = $term;
 					break;
@@ -1031,6 +1033,20 @@ function AdminSearchInternal()
 			{
 				// Format the name - and remove any descriptions the entry may have.
 				$name = isset($txt[$found]) ? $txt[$found] : (isset($txt['setting_' . $found]) ? $txt['setting_' . $found] : $found);
+				if (is_array($name))
+				{
+					foreach ($name as $n)
+						if (strpos(strtolower($n), $search_term) !== false)
+						{
+							$name = $n;
+							break;
+						}
+					if (is_array($name))
+						if (strpos($lc_term, $search_term) !== false)
+							$name = reset($name);
+						else // Did we stumble upon a non-existent entry? e.g. a number-context array key...
+							continue;
+				}
 				$name = preg_replace('~<(?:dfn)>.+?</(?:dfn)>~', '', $name);
 
 				$context['search_results'][] = array(

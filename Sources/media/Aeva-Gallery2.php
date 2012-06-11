@@ -1404,9 +1404,9 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		// WYSIWYG?
 		if (!empty($_REQUEST['desc_mode']) && isset($_REQUEST['desc']))
 		{
-			loadSource('Subs-Editor');
+			loadSource('Class-Editor');
 
-			$_REQUEST['desc'] = html_to_bbc($_REQUEST['desc']);
+			$_REQUEST['desc'] = wedit::html_to_bbc($_REQUEST['desc']);
 
 			// We need to unhtml it now as it gets done shortly.
 			$_REQUEST['desc'] = un_htmlspecialchars($_REQUEST['desc']);

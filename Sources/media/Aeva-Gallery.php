@@ -1286,8 +1286,8 @@ function aeva_mgComment()
 		// WYSIWYG?
 		if (!empty($_REQUEST['comment_mode']) && isset($_POST['comment']))
 		{
-			loadSource('Subs-Editor');
-			$_POST['comment'] = un_htmlspecialchars(html_to_bbc($_POST['comment']));
+			loadSource('Class-Editor');
+			$_POST['comment'] = un_htmlspecialchars(wedit::html_to_bbc($_POST['comment']));
 		}
 
 		loadSource('Class-Editor');
@@ -1749,9 +1749,9 @@ function aeva_mgPost()
 		// WYSIWYG?
 		if (!empty($_REQUEST['desc_mode']) && isset($_REQUEST['desc']))
 		{
-			loadSource('Subs-Editor');
+			loadSource('Class-Editor');
 
-			$_REQUEST['desc'] = html_to_bbc($_REQUEST['desc']);
+			$_REQUEST['desc'] = wedit::html_to_bbc($_REQUEST['desc']);
 
 			// We need to unhtml it now as it gets done shortly.
 			$_REQUEST['desc'] = un_htmlspecialchars($_REQUEST['desc']);
@@ -2147,9 +2147,9 @@ function aeva_mgEditCom()
 		// WYSIWYG?
 		if (!empty($_REQUEST['comment_mode']) && isset($_REQUEST['comment']))
 		{
-			loadSource('Subs-Editor');
+			loadSource('Class-Editor');
 
-			$_REQUEST['comment'] = html_to_bbc($_REQUEST['comment']);
+			$_REQUEST['comment'] = wedit::html_to_bbc($_REQUEST['comment']);
 
 			// We need to unhtml it now as it gets done shortly.
 			$_REQUEST['comment'] = un_htmlspecialchars($_REQUEST['comment']);
