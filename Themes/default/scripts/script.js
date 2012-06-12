@@ -45,11 +45,6 @@ var
 	is_ie8down = is_ie && $.browser.version < 9,
 	is_ie9up = is_ie && !is_ie8down;
 
-// Add a jQuery easing type for animations.
-$.easing.out = function (x, t, b, c, d) {
-	return b + c * (t == d ? 1 : (1 - Math.pow(2, -10 * t / d)));
-};
-
 // Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback, undefined)
 {
@@ -61,6 +56,12 @@ function sendXMLDocument(sUrl, sContent, funcCallback, undefined)
 {
 	return $.ajax($.extend({ url: sUrl, data: sContent, type: 'POST', context: this }, funcCallback !== undefined ? { success: funcCallback } : {})) || true;
 }
+
+// Add a jQuery easing type for animations.
+$.easing.sqr = function (x, t, b, c, d)
+{
+	return b + c * Math.sqrt(1 - (t = t / d - 1) * t);
+};
 
 String.prototype.php_urlencode = function ()
 {
@@ -93,7 +94,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 {
 	var
 		help_page = from && from.href ? from.href : from,
-		vpw = $(window).width() * 0.8, vph = $(window).height() * 0.8, nextSib,
+		vpw = $(window).width() * .8, vph = $(window).height() * .8, nextSib,
 		helf = '#helf', $helf = $(helf), previousTarget = $helf.data('src'), auto = 'auto', title = $(from).text();
 
 	alternateWidth = alternateWidth ? alternateWidth : 480;
@@ -143,7 +144,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 				padding: '10px 12px 12px',
 				border: '1px solid #999',
 				marginLeft: 50
-			}).animate({ opacity: 'show', marginLeft: 0 }, 999, 'out');
+			}).animate({ opacity: 'show', marginLeft: 0 }, 999, 'sqr');
 			$(helf).dragslide();
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', help_page).css({
@@ -502,7 +503,7 @@ function weToggle(opt)
 
 		// Now go through all the sections to be collapsed.
 		$.each(opt.aSwappableContainers, function () {
-			bCollapse ? $('#' + this).slideUp(bInit ? 0 : 300) : $('#' + this).slideDown(bInit ? 0 : 300);
+			$('#' + this)[bCollapse ? 'slideUp' : 'slideDown'](bInit ? 0 : 300, 'sqr');
 		});
 
 		// Update the new state.

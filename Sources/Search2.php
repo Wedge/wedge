@@ -581,7 +581,6 @@ function Search2()
 			if (empty($pspell_link))
 				continue;
 
-			$word = $word;
 			// Don't check phrases.
 			if (preg_match('~^\w+$~', $word) === 0)
 			{
@@ -635,8 +634,6 @@ function Search2()
 			$temp_excluded = array('search' => array(), 'display' => array());
 			foreach ($excludedWords as $word)
 			{
-				$word = $word;
-
 				if (preg_match('~^\w+$~', $word) == 0)
 				{
 					$temp_excluded['search'][] = '-"' . $word . '"';

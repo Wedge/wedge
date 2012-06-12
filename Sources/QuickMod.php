@@ -92,7 +92,7 @@ function QuickModeration()
 			if (empty($_REQUEST['topics']) || count($_REQUEST['topics']) < 2)
 				redirectexit($redirect_url);
 
-			loadSource('SplitTopics');
+			loadSource('Merge');
 			return MergeExecute($_REQUEST['topics']);
 		}
 

@@ -330,7 +330,7 @@ function template_admin_member_prefs()
 
 			echo '
 					<dt id="dt_', $key, '">', isset($txt[$key]) ? $txt[$key] : $key, '</dt>
-					<dd id="dd_', $key, '" class="memberopt">', $txt['member_prefs_default'], ' 
+					<dd id="dd_', $key, '" class="memberopt">', $txt['member_prefs_default'], '
 						';
 			if ($config_var[0] == 'check')
 				echo '<strong>', !empty($config_var['current']) ? $txt['yes'] : $txt['no'], '</strong>';

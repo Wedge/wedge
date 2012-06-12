@@ -1337,7 +1337,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$_REQUEST['msgid'] = $msgOptions['id'];
 			$_REQUEST['pid'] = $msgOptions['id'];
 			$_REQUEST['topic'] = $topicOptions['id'];
-			loadSource('SplitTopics');
+			loadSource('Merge');
 			MergePosts(false);
 		}
 	}
