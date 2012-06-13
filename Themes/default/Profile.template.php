@@ -388,7 +388,7 @@ function template_showPosts()
 	echo '
 		<we:cat>
 			<img src="', $theme['images_url'], '/icons/profile_sm.gif">
-			', (!isset($context['attachments']) && empty($context['is_topics']) ? $txt['showMessages'] : (!empty($context['is_topics']) ? $txt['showTopics'] : $txt['showAttachments'])), ' - ', $context['member']['name'], '
+			', !isset($context['attachments']) && empty($context['is_topics']) ? $txt['showMessages'] : (!empty($context['is_topics']) ? $txt['showTopics'] : $txt['showAttachments']), ' - ', !empty($_GET['guest']) ? base64_decode($_GET['guest']) : $context['member']['name'], '
 		</we:cat>
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>

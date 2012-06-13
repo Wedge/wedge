@@ -58,7 +58,8 @@ function sendXMLDocument(sUrl, sContent, funcCallback, undefined)
 }
 
 // Add a jQuery easing type for animations.
-$.easing.sqr = function (x, t, b, c, d)
+$.easing.swing2 = $.easing.swing;
+$.easing.swing = function (x, t, b, c, d)
 {
 	return b + c * Math.sqrt(1 - (t = t / d - 1) * t);
 };
@@ -144,7 +145,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 				padding: '10px 12px 12px',
 				border: '1px solid #999',
 				marginLeft: 50
-			}).animate({ opacity: 'show', marginLeft: 0 }, 999, 'sqr');
+			}).animate({ opacity: 'show', marginLeft: 0 }, 999);
 			$(helf).dragslide();
 		}).appendTo(
 			$('<div id="helf"></div>').data('src', help_page).css({
@@ -406,7 +407,7 @@ function weSelectText(oCurElement)
 		{
 			style.visibility = 'visible';
 			style.opacity = 1;
-			style['margin' + (d && d == 'rtl' ? 'Right' : 'Left')] = (is_top ? $('span', this).width() || 0 : w - 5) + 'px';
+			style[d && d == 'rtl' ? 'marginRight' : 'marginLeft'] = (is_top ? $('span', this).width() || 0 : w - 5) + 'px';
 		}
 
 		if (!is_top || !$('h4', this).first().addClass(hove).length)
@@ -414,7 +415,7 @@ function weSelectText(oCurElement)
 
 		if (!is_visible)
 			$('ul', this).first()
-				.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 9 : 36 } : { marginLeft: w })
+				.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 12 : 39 } : { marginLeft: w })
 				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 }, 300);
 
 		clearTimeout(menu_delay[id.substring(2)]);
@@ -503,7 +504,7 @@ function weToggle(opt)
 
 		// Now go through all the sections to be collapsed.
 		$.each(opt.aSwappableContainers, function () {
-			$('#' + this)[bCollapse ? 'slideUp' : 'slideDown'](bInit ? 0 : 300, 'sqr');
+			$('#' + this)[bCollapse ? 'slideUp' : 'slideDown'](bInit ? 0 : 300);
 		});
 
 		// Update the new state.

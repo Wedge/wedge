@@ -178,6 +178,9 @@ function template_generic_tabs()
 				if ($id === $menu_context['current_area'])
 				{
 					$tabs = isset($area['subsections']) ? $area['subsections'] : array();
+					if (isset($area['url']))
+						foreach ($tabs as $key => &$val)
+							$val['url'] = $area['url'] . ';sa=' . $key;
 					break;
 				}
 

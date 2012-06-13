@@ -206,7 +206,7 @@ function summary($memID)
 			$ban_query_vars['email'] = $context['member']['email'];
 		}
 
-		// So... are they banned?  Dying to know!
+		// So... are they banned? Dying to know!
 		$request = wesql::query('
 			SELECT bg.id_ban_group, bg.name, bg.cannot_access, bg.cannot_post, bg.cannot_register,
 				bg.cannot_login, bg.reason
@@ -429,6 +429,17 @@ function showPosts($memID)
 	global $txt, $user_info, $scripturl, $settings;
 	global $context, $user_profile, $board;
 
+	$guest = '';
+	$specGuest = '';
+	$specUrl = '';
+	if (isset($_GET['guest']))
+	{
+		$memID = 0;
+		$guest = base64_decode($_GET['guest']);
+		$specGuest .= ' AND m.poster_name = {string:guest}';
+		$specUrl .= ';guest=' . $_GET['guest'];
+	}
+
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['current_member'] = $memID;
@@ -449,7 +460,7 @@ function showPosts($memID)
 	);
 
 	// Set the page title
-	$context['page_title'] = $txt['showPosts'] . ' - ' . $user_profile[$memID]['real_name'];
+	$context['page_title'] = $txt['showPosts'] . ' - ' . (!$guest ? $user_profile[$memID]['real_name'] : base64_decode($guest));
 
 	// Is the load average too high to allow searching just now?
 	if (!empty($context['load_average']) && !empty($settings['loadavg_show_posts']) && $context['load_average'] >= $settings['loadavg_show_posts'])
@@ -501,29 +512,32 @@ function showPosts($memID)
 
 	if ($context['is_topics'])
 		$request = wesql::query('
-			SELECT COUNT(*)
-			FROM {db_prefix}topics AS t' . ($user_info['query_see_board'] == '1=1' ? '' : '
+			SELECT COUNT(t.id_topic)
+			FROM {db_prefix}topics AS t
+				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
-			WHERE t.id_member_started = {int:current_member}' . (!empty($board) ? '
+			WHERE t.id_member_started = {int:current_member}' . $specGuest . (!empty($board) ? '
 				AND t.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
 				AND {query_see_topic}'),
 			array(
 				'current_member' => $memID,
 				'board' => $board,
+				'guest' => $guest,
 			)
 		);
 	else
 		$request = wesql::query('
-			SELECT COUNT(*)
+			SELECT COUNT(m.id_msg)
 			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
-			WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
+			WHERE m.id_member = {int:current_member}' . $specGuest . (!empty($board) ? '
 				AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 				AND m.approved = {int:is_approved}'),
 			array(
 				'current_member' => $memID,
 				'is_approved' => 1,
 				'board' => $board,
+				'guest' => $guest,
 			)
 		);
 	list ($msgCount) = wesql::fetch_row($request);
@@ -532,8 +546,10 @@ function showPosts($memID)
 	$request = wesql::query('
 		SELECT MIN(id_msg), MAX(id_msg)
 		FROM {db_prefix}messages AS m
+		INNER JOIN {db_prefix}topics AS t ON (m.id_topic = t.id_topic)
 		WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
-			AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND m.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
+			AND {query_see_topic}') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
 		array(
 			'current_member' => $memID,
@@ -549,7 +565,7 @@ function showPosts($memID)
 	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=profile;u=' . $memID . ';area=showposts' . ($context['is_topics'] ? ';sa=topics' : '') . (!empty($board) ? ';board=' . $board : ''), $context['start'], $msgCount, $maxIndex);
+	$context['page_index'] = template_page_index('<URL>?action=profile' . ($context['user']['is_owner'] ? ';u=' . $memID : '') . ';area=showposts' . $specUrl . ($context['is_topics'] ? ';sa=topics' : '') . (!empty($board) ? ';board=' . $board : ''), $context['start'], $msgCount, $maxIndex);
 	$context['current_page'] = $context['start'] / $maxIndex;
 
 	// Reverse the query if we're past 50% of the pages for better performance.
@@ -575,7 +591,7 @@ function showPosts($memID)
 			$range_limit = $reverse ? 'm.id_msg < ' . ($min_msg_member + $margin) : 'm.id_msg > ' . ($max_msg_member - $margin);
 	}
 
-	// Find this user's posts.  The left join on categories somehow makes this faster, weird as it looks.
+	// Find this user's posts. The left join on categories somehow makes this faster, weird as it looks.
 	$looped = false;
 	while (true)
 	{
@@ -589,7 +605,7 @@ function showPosts($memID)
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 					LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
-				WHERE t.id_member_started = {int:current_member}' . (!empty($board) ? '
+				WHERE t.id_member_started = {int:current_member}' . $specGuest . (!empty($board) ? '
 					AND t.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
 					AND {query_see_board}' . ($context['user']['is_owner'] ? '' : '
@@ -600,6 +616,7 @@ function showPosts($memID)
 					'current_member' => $memID,
 					'is_approved' => 1,
 					'board' => $board,
+					'guest' => $guest,
 				)
 			);
 		}
@@ -614,7 +631,7 @@ function showPosts($memID)
 					INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 					INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
 					LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
-				WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
+				WHERE m.id_member = {int:current_member}' . $specGuest . (!empty($board) ? '
 					AND b.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
 					AND {query_see_board}' . ($context['user']['is_owner'] ? '' : '
@@ -625,6 +642,7 @@ function showPosts($memID)
 					'current_member' => $memID,
 					'is_approved' => 1,
 					'board' => $board,
+					'guest' => $guest,
 				)
 			);
 		}
@@ -762,11 +780,13 @@ function showAttachments($memID)
 		FROM {db_prefix}attachments AS a
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = a.id_msg)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})
+			INNER JOIN {db_prefix}topics AS t ON (m.id_topic = t.id_topic)
 		WHERE a.attachment_type = {int:attachment_type}
 			AND a.id_msg != {int:no_message}
 			AND m.id_member = {int:current_member}' . (!empty($board) ? '
 			AND b.id_board = {int:board}' : '') . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_list})' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND b.id_board IN ({array_int:boards_list})' : '') . ($context['user']['is_owner'] ? '' : '
+			AND {query_see_topic}') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
 		array(
 			'boards_list' => $boardsAllowed,

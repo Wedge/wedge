@@ -41,7 +41,13 @@ function ModifyProfile($post_errors = array())
 
 	// Did we get the user by name...
 	if (isset($_REQUEST['user']))
-		$memberResult = loadMemberData($_REQUEST['user'], true, 'profile');
+	{
+		$user = $_REQUEST['user'];
+		if (empty($user) || $user == 'guest') // viewing guest posts? Then load fake data (from your own profile)
+			$memberResult = loadMemberData($user_info['id'], false, 'profile');
+		else
+			$memberResult = loadMemberData($user, true, 'profile');
+	}
 	// ... or by id_member?
 	elseif (!empty($_REQUEST['u']))
 		$memberResult = loadMemberData((int) $_REQUEST['u'], false, 'profile');
@@ -397,6 +403,9 @@ function ModifyProfile($post_errors = array())
 			),
 		),
 	);
+
+	if (!empty($user))
+		$profile_areas['info']['areas']['showposts']['custom_url'] = $scripturl . '?action=profile;u=0;area=showposts;guest=' . $_REQUEST['guest'];
 
 	// Let modders modify profile areas easily.
 	call_hook('profile_areas', array(&$profile_areas));
