@@ -299,7 +299,7 @@ function template_language_selector()
 
 	foreach ($context['languages'] as $language)
 		echo '
-				<a href="' . $lng . 'language=' . $language['filename'] . '" class="flag_' . $language['filename'] . '" title="' . westr::htmlspecialchars($language['name']) . '"></a>';
+				<a href="' . $lng . 'language=' . $language['filename'] . '"' . (empty($language['code']) ? '' : ' rel="alternate" hreflang="' . $language['code'] . '"') . ' class="flag_' . $language['filename'] . '" title="' . westr::htmlspecialchars($language['name']) . '"></a>';
 
 	echo '
 			</p>';
@@ -344,7 +344,8 @@ function template_sidebar_before()
 {
 	global $txt, $context, $settings, $user_info;
 
-	echo '
+	if ($context['user']['is_logged'] || !empty($context['show_login_bar']))
+		echo '
 	<section>
 		<we:title>
 			<span class="greeting">', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</span>
@@ -383,7 +384,9 @@ function template_sidebar_before()
 		$thought_id = isset($context['user']['data']['id_thought']) ? $context['user']['data']['id_thought'] : 0;
 		$thought_prv = isset($context['user']['data']['thought_privacy']) ? $context['user']['data']['thought_privacy'] : 1;
 
-		echo '
+		if (!empty($user_info['can_think']))
+		{
+			echo '
 	<section>
 		<we:title>
 			<div class="thought_icon"></div>
@@ -393,10 +396,10 @@ function template_sidebar_before()
 		<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['edit_thought'], '</a>
 		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
 
-		echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>
+			echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>
 	</section>';
 
-		add_js('
+			add_js('
 	oThought = new Thought({
 		aPrivacy: [[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
 		// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
@@ -405,6 +408,7 @@ function template_sidebar_before()
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '
 	});');
+		}
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
 	elseif (!empty($context['show_login_bar']))
@@ -430,10 +434,6 @@ function template_sidebar_before()
 		</div>
 	</section>';
 	}
-	else
-		echo '
-		</div>
-	</section>';
 }
 
 // Show the Quick Access (JumpTo) select box.

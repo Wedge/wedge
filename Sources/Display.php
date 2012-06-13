@@ -938,7 +938,7 @@ function Display()
 
 		// What? It's not like it *couldn't* be only guests in this topic...
 		if (!empty($posters))
-			loadMemberData($posters);
+			loadMemberData($posters, false, 'userbox');
 
 		// Figure out the ordering.
 		if ($board_info['type'] != 'board')
@@ -965,7 +965,7 @@ function Display()
 		// Since the anchor information is needed on the top of the page we load these variables beforehand.
 		$context['first_message'] = empty($options['view_newest_first']) || $board_info['type'] != 'board' ? min($messages) : max($messages);
 		if (empty($options['view_newest_first']))
-			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['start_from'];
+			$context['first_new_message'] = isset($context['start_from']) && empty($_REQUEST['start']) && empty($context['start_from']);
 		else
 			$context['first_new_message'] = isset($context['start_from']) && $_REQUEST['start'] == $context['total_visible_posts'] - 1 - $context['start_from'];
 	}
@@ -1262,7 +1262,7 @@ function prepareDisplayContext($reset = false)
 		$memberContext[$message['id_member']]['name'] = $message['poster_name'];
 		$memberContext[$message['id_member']]['id'] = 0;
 		$memberContext[$message['id_member']]['group'] = $txt['guest_title'];
-		// Wedge supports showing guest posts, grouping them by e-mail address. Can restrict to current board: add ;only=$context['current_board']
+		// Wedge supports showing guest posts, grouping them by e-mail address. Can restrict to current board: add ;board=$context['current_board']
 		$memberContext[$message['id_member']]['href'] = $scripturl . '?action=profile;u=0;area=showposts;guest=' . base64_encode($message['poster_name']);
 		$memberContext[$message['id_member']]['link'] = '<a href="' . $memberContext[$message['id_member']]['href'] . '">' . $message['poster_name'] . '</a>';
 		$memberContext[$message['id_member']]['email'] = $message['poster_email'];

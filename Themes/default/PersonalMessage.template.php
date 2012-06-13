@@ -141,6 +141,8 @@ function template_folder()
 		<span id="topic_title">', $txt[$context['display_mode'] == 0 ? 'messages' : 'conversation'], '</span>
 	</we:cat>';
 
+		$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
+
 		while ($message = $context['get_pmessage']('message'))
 		{
 			$window_class = $message['alternate'] == 0 ? '' : '2';
@@ -167,20 +169,24 @@ function template_folder()
 				<li class="mtitle">', $message['member']['title'], '</li>';
 
 			// Show the member's primary group (like 'Administrator') if they have one.
-			if (!empty($message['member']['group']))
+			if (!empty($message['member']['group']) && ($gts === 'all' || $gts === 'normal' || $gts === 'cond'))
 				echo '
 				<li class="membergroup">', $message['member']['group'], '</li>';
 
 			// Don't show these things for guests or mobile skins.
 			if (!$message['member']['is_guest'] && !$is_mobile)
 			{
-				// Show the post group if and only if they have no other group or the option is on, and they are in a post group.
-				if ((empty($theme['hide_post_group']) || $message['member']['group'] == '') && $message['member']['post_group'] != '')
+				// Show the post-based group if allowed by $settings['group_text_show'].
+				if (!empty($message['member']['post_group']) && ($gts === 'all' || $gts === 'post' || ($gts === 'cond' && empty($message['member']['group']))))
 					echo '
 				<li class="postgroup">', $message['member']['post_group'], '</li>';
 
-				echo '
-				<li class="stars">', $message['member']['group_stars'], '</li>';
+				if (!empty($message['member']['group_badges']))
+					echo '
+				<li class="stars">
+					<div>', implode('</div>
+					<div>', $message['member']['group_badges']), '
+				</li>';
 
 				// Show avatars, images, etc.?
 				if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))

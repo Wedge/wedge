@@ -1130,6 +1130,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'pm_send',
 		'save_pm_draft',
 		'auto_save_pm_draft',
+		'post_thought',
 		'profile_view_any',
 		'profile_extra_own',
 		'profile_signature_own',
@@ -1153,7 +1154,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'view_attachments',
 	));
 
-	// Moderator - ie. moderators :P.  They can do what standard can, and more.
+	// Moderator - ie. moderators :P. They can do what standard can, and more.
 	$groupLevels['global']['moderator'] = array_merge($groupLevels['global']['standard'], array(
 		'access_mod_center',
 		'issue_warning',
@@ -1228,7 +1229,7 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'remove_own',
 	));
 
-	// Free for All - Scary.  Just scary.
+	// Free for All - Scary. Just scary.
 	$boardLevels['free'] = array_merge($boardLevels['publish'], array(
 		'poll_lock_any',
 		'poll_edit_any',
@@ -1468,6 +1469,7 @@ function loadAllPermissions($loadType = 'classic')
 			'view_mlist' => array(false, 'general', 'view_basic_info'),
 			'who_view' => array(false, 'general', 'view_basic_info'),
 			'search_posts' => array(false, 'general', 'view_basic_info'),
+			'post_thought' => array(false, 'general', 'view_basic_info'),
 			'pm_read' => array(false, 'pm', 'use_pm_system'),
 			'pm_send' => array(false, 'pm', 'use_pm_system'),
 			'save_pm_draft' => array(false, 'pm', 'use_pm_system'),
@@ -2202,6 +2204,7 @@ function loadIllegalGuestPermissions()
 		'auto_save_pm_draft',
 		'save_post_draft',
 		'auto_save_post_draft',
+		'post_thought',
 		'profile_identity',
 		'profile_extra',
 		'profile_signature',

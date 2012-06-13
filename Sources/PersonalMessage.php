@@ -826,7 +826,7 @@ function MessageFolder()
 		// Load any users....
 		$posters = array_unique($posters);
 		if (!empty($posters))
-			loadMemberData($posters);
+			loadMemberData($posters, false, 'userbox');
 
 		// If we're on grouped/restricted view get a restricted list of messages.
 		if ($context['display_mode'] != 0)

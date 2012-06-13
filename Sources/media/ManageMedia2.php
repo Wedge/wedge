@@ -126,6 +126,13 @@ function aeva_sameDomain($dom)
 	return $dom1 == $dom2;
 }
 
+function aeva_timeSpent()
+{
+	global $time_start;
+
+	return microtime(true) - $time_start;
+}
+
 // Regenerates thumbnails and previews
 function aeva_admin_maintenance_regenerate()
 {

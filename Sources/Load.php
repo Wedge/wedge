@@ -360,13 +360,12 @@ function loadUserSettings()
 		$user_settings['transparency'] = we_resetTransparency($user_settings['id_attach'], $filename, $user_settings['filename']) ? 'transparent' : 'opaque';
 	}
 
-	if (isset($_SESSION['is_mobile']))
-		$user_info['is_mobile'] = $_SESSION['is_mobile'];
-	else
+	if (!isset($_SESSION['is_mobile']))
 	{
 		loadSource('Class-MoDe');
-		$user_info['is_mobile'] = $_SESSION['is_mobile'] = weMoDe::isMobile();
+		$_SESSION['is_mobile'] = weMoDe::isMobile();
 	}
+	$user_info['is_mobile'] = $_SESSION['is_mobile'];
 
 	// Set up the $user_info array.
 	$user_info += array(
@@ -404,7 +403,12 @@ function loadUserSettings()
 		'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : array(),
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => array(),
+		'can_think' => true,
 	);
+
+	// Prevent user from posting thoughts if they don't have permission, or are muted or banned from posting.
+	if (!allowedTo('post_thought') || isset($_SESSION['ban']['cannot_post']) || (!empty($settings['warning_mute']) && $settings['warning_mute'] <= $user_info['warning']))
+		$user_info['can_think'] = false;
 
 	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 	$user_info['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];
@@ -1035,7 +1039,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 {
 	global $user_profile, $settings, $board_info, $user_info;
 
-	// Can't just look for no users :P.
+	// Can't just look for no users. :P
 	if (empty($users))
 		return false;
 
@@ -1058,52 +1062,106 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		}
 	}
 
-	if ($set == 'normal')
+	if ($set === 'normal')
 	{
 		$select_columns = '
 			IFNULL(lo.log_time, 0) AS is_online,
 			IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.transparency, a.id_folder,
-			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
-			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
-			mem.birthdate, mem.member_ip, mem.member_ip2, mem.posts, mem.last_login, mem.id_post_group, mem.lngfile,
-			mem.id_group, mem.time_offset, mem.show_online, mem.media_items, mem.media_comments, mem.buddy_list, mem.warning,
-			mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank}) AS member_group,
-			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank}) AS post_group, mem.is_activated,
-			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank} THEN pg.stars ELSE mg.stars END AS stars'
+			mem.id_member, mem.member_name, mem.real_name, mem.signature, mem.personal_text, mem.location, mem.gender,
+			mem.avatar, mem.email_address, mem.hide_email, mem.website_title, mem.website_url, mem.birthdate,
+			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated,
+
+			mem.last_login, mem.member_ip, mem.member_ip2, mem.lngfile,
+			mem.time_offset, mem.date_registered, mem.buddy_list,
+			mem.media_items, mem.media_comments,
+
+			IFNULL(mg.group_name, {string:blank}) AS member_group,
+			IFNULL(pg.group_name, {string:blank}) AS post_group'
 			. (!empty($settings['titlesEnable']) ? ', mem.usertitle' : '');
+
 		$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)';
 	}
-	elseif ($set == 'profile')
+	elseif ($set === 'profile')
 	{
 		$select_columns = '
 			IFNULL(lo.log_time, 0) AS is_online,
 			IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.transparency, a.id_folder,
-			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
-			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
-			mem.birthdate, mem.posts, mem.last_login, mem.media_items, mem.media_comments, mem.member_ip, mem.member_ip2,
-			mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list, mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from,
-			mem.time_offset, mem.time_format, mem.timezone, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
-			mem.total_time_logged_in, mem.id_post_group, mem.notify_announcements, mem.notify_regularity, mem.notify_send_body, mem.warning,
-			mem.notify_types, lo.url, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank}) AS member_group,
-			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank}) AS post_group, mem.ignore_boards,
-			CASE WHEN mem.id_group = 0 OR mg.stars = {string:blank} THEN pg.stars ELSE mg.stars END AS stars, mem.password_salt, mem.pm_prefs'
+			mem.id_member, mem.member_name, mem.real_name, mem.signature, mem.personal_text, mem.location, mem.gender,
+			mem.avatar, mem.email_address, mem.hide_email, mem.website_title, mem.website_url, mem.birthdate,
+			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated,
+
+			mem.last_login, mem.member_ip, mem.member_ip2, mem.lngfile,
+			mem.time_offset, mem.date_registered, mem.buddy_list,
+			mem.media_items, mem.media_comments,
+
+			mem.additional_groups,
+
+			mem.id_theme, mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from,
+			mem.time_format, mem.timezone, mem.secret_question, mem.smiley_set, mem.total_time_logged_in,
+			mem.ignore_boards, mem.notify_announcements, mem.notify_regularity, mem.notify_send_body,
+			mem.notify_types, lo.url, mem.password_salt, mem.pm_prefs,
+
+			IFNULL(mg.group_name, {string:blank}) AS member_group,
+			IFNULL(pg.group_name, {string:blank}) AS post_group'
 			. (!empty($settings['titlesEnable']) ? ', mem.usertitle' : '');
+
 		$select_tables = '
 			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)';
 	}
-	elseif ($set == 'minimal')
+	elseif ($set === 'minimal')
 	{
 		$select_columns = '
 			mem.id_member, mem.member_name, mem.real_name, mem.email_address, mem.hide_email, mem.date_registered,
 			mem.posts, mem.last_login, mem.member_ip, mem.member_ip2, mem.lngfile, mem.id_group';
+
 		$select_tables = '';
+	}
+	elseif ($set === 'userbox')
+	{
+		$select_columns = '
+			IFNULL(lo.log_time, 0) AS is_online,
+			IFNULL(a.id_attach, 0) AS id_attach, a.filename, a.attachment_type, a.transparency, a.id_folder,
+			mem.id_member, mem.member_name, mem.real_name, mem.signature, mem.personal_text, mem.location, mem.gender,
+			mem.avatar, mem.email_address, mem.hide_email, mem.website_title, mem.website_url, mem.birthdate,
+			mem.posts, mem.id_group, mem.id_post_group, mem.show_online, mem.warning, mem.is_activated,
+
+			mem.additional_groups,
+
+			IFNULL(mg.group_name, {string:blank}) AS member_group,
+			IFNULL(pg.group_name, {string:blank}) AS post_group'
+			. (!empty($settings['titlesEnable']) ? ', mem.usertitle' : '');
+
+		$select_tables = '
+			LEFT JOIN {db_prefix}log_online AS lo ON (lo.id_member = mem.id_member)
+			LEFT JOIN {db_prefix}attachments AS a ON (a.id_member = mem.id_member)
+			LEFT JOIN {db_prefix}membergroups AS pg ON (pg.id_group = mem.id_post_group)
+			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)';
+
+		// Load cached membergroup badges (or rank images) and when to show them.
+		if (($member_badges = cache_get_data('member-badges', 5000)) === null)
+		{
+			$member_badges = array();
+			$request = wesql::query('
+				SELECT g.id_group, g.stars, g.show_when
+				FROM {db_prefix}membergroups AS g
+				WHERE g.show_when != {int:never}',
+				array(
+					'never' => 0,
+				)
+			);
+
+			while ($row = wesql::fetch_assoc($request))
+				$member_badges[$row['id_group']] = array($row['show_when'], $row['stars']);
+			wesql::free_result($request);
+			cache_put_data('member-badges', $member_badges, 5000);
+		}
 	}
 	else
 		trigger_error('loadMemberData(): Invalid member data set \'' . $set . '\'', E_USER_WARNING);
@@ -1126,16 +1184,19 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			$new_loaded_ids[] = $row['id_member'];
 			$loaded_ids[] = $row['id_member'];
 			$row['options'] = array();
-			$row['member_ip'] = format_ip($row['member_ip']);
-			$row['member_ip2'] = format_ip($row['member_ip2']);
+			if (!empty($row['member_ip']))
+			{
+				$row['member_ip'] = format_ip($row['member_ip']);
+				$row['member_ip2'] = format_ip($row['member_ip2']);
+			}
 
 			if (!empty($settings['signature_minposts']) && ((int) $row['posts'] < (int) $settings['signature_minposts']))
 			{
 				// Hide normally (e.g. topic view) except if user is an admin
-				if ($set == 'normal' && $row['id_group'] != 1)
+				if (($set === 'normal' || $set === 'userbox') && $row['id_group'] != 1)
 					$row['signature'] = '';
 				// Hide in profile unless it's the user's own profile and they have permission, or they have permission to modify anyone's.
-				elseif ($set == 'profile' && !(($row['id_member'] == $user_info['id'] && allowedTo('profile_signature_own')) || allowedTo('profile_signature_any')))
+				elseif ($set === 'profile' && !(($row['id_member'] == $user_info['id'] && allowedTo('profile_signature_own')) || allowedTo('profile_signature_any')))
 					$row['signature'] = '';
 			}
 			$user_profile[$row['id_member']] = $row;
@@ -1143,7 +1204,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 		wesql::free_result($request);
 	}
 
-	if (!empty($new_loaded_ids) && $set !== 'minimal')
+	if (!empty($new_loaded_ids) && $set !== 'minimal' && $set !== 'userbox')
 	{
 		$request = wesql::query('
 			SELECT *
@@ -1159,18 +1220,16 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 	}
 
 	if (!empty($new_loaded_ids) && !empty($settings['cache_enable']) && $settings['cache_enable'] >= 3)
-	{
 		for ($i = 0, $n = count($new_loaded_ids); $i < $n; $i++)
 			cache_put_data('member_data-' . $set . '-' . $new_loaded_ids[$i], $user_profile[$new_loaded_ids[$i]], 240);
-	}
 
 	// Are we loading any moderators? If so, fix their group data...
-	if (!empty($loaded_ids) && !empty($board_info['moderators']) && $set === 'normal' && count($temp_mods = array_intersect($loaded_ids, array_keys($board_info['moderators']))) !== 0)
+	if (!empty($loaded_ids) && !empty($board_info['moderators']) && ($set === 'normal' || $set === 'userbox') && count($temp_mods = array_intersect($loaded_ids, array_keys($board_info['moderators']))) > 0)
 	{
 		if (($row = cache_get_data('moderator_group_info', 480)) == null)
 		{
 			$request = wesql::query('
-				SELECT group_name AS member_group, online_color AS member_group_color, stars
+				SELECT group_name AS member_group, stars
 				FROM {db_prefix}membergroups
 				WHERE id_group = {int:moderator_group}
 				LIMIT 1',
@@ -1183,9 +1242,14 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 
 			cache_put_data('moderator_group_info', $row, 480);
 		}
-
 		foreach ($temp_mods as $id)
 		{
+			// Add the local moderator group to the list.
+			if (empty($user_profile[$id]['additional_groups']))
+				$user_profile[$id]['additional_groups'] = '3';
+			else
+				$user_profile[$id]['additional_groups'] .= ',3';
+
 			// By popular demand, don't show admins or global moderators as moderators.
 			if ($user_profile[$id]['id_group'] != 1 && $user_profile[$id]['id_group'] != 2)
 				$user_profile[$id]['member_group'] = $row['member_group'];
@@ -1193,8 +1257,40 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			// If the Moderator group has no color or stars, but their group does... don't overwrite.
 			if (!empty($row['stars']))
 				$user_profile[$id]['stars'] = $row['stars'];
-			if (!empty($row['member_group_color']))
-				$user_profile[$id]['member_group_color'] = $row['member_group_color'];
+		}
+	}
+
+	// Shall we show member badges..?
+	if (!empty($loaded_ids) && $set === 'userbox')
+	{
+		// Badge types (show_when):
+		// 0: never show (e.g. a custom user group can't have a badge.)
+		// 1: always show (primary groups always show a badge, regardless of show_when.)
+		// 2: only show when it's a primary group
+		// 3: only show when there's no other badge already
+		foreach ($loaded_ids as $id)
+		{
+			if (isset($user_profile[$id]['badges']))
+				continue;
+			$user_profile[$id]['badges'] = array();
+
+			// Should we show a badge for the primary group?
+			$gid = $user_profile[$id]['id_group'];
+			if (!empty($member_badges[$gid]))
+				$user_profile[$id]['badges'][$gid] = $member_badges[$gid][1];
+
+			$groups = explode(',', $user_profile[$id]['additional_groups']);
+			sort($groups);
+
+			// Now do the additional groups -- and test whether we can show more than one badge.
+			foreach ($groups as $gid)
+				if (!empty($member_badges[$gid]) && $member_badges[$gid][0] != 2 && ($member_badges[$gid][0] == 1 || empty($user_profile[$id]['badges'])))
+					$user_profile[$id]['badges'][$gid] = $member_badges[$gid][1];
+
+			// And finally, do the post group.
+			$gid = $user_profile[$id]['id_post_group'];
+			if (!empty($member_badges[$gid]) && ($member_badges[$gid][0] == 1 || empty($user_profile[$id]['badges'])))
+				$user_profile[$id]['badges'][$gid] = $member_badges[$gid][1];
 		}
 	}
 
@@ -1221,16 +1317,16 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
  * - Online details: online (array; is_online, boolean whether the user is online or not; text, localized string for 'online' or 'offline'; href, URL to send this user a PM; link, the HTML for a link to send this user a PM; image_href, the HTML to send this user a PM, but with the online/offline indicator; label, same as 'text')
  * - User's language: language, the language name, capitalized
  * - Account status: is_activated (boolean for whether account is active), is_banned (boolean for whether account is currently banned), is_guest (true - user is not a guest), warning (user's warning level), warning_status (level of warn status: '', watch, moderate, mute)
- * - Groups: group (string, the user's primary group), group_color (string, color for user's primary group), group_id (integer, user's primary group id), post_group (string, the user's post group), post_group_color (string, color for user's post group), group_stars (HTML markup for displaying the user's badge)
- * - Other: options (array of user's options), local_time (user's local time, using their offset), custom_fields (if $display_custom_fields is true, but content depends on custom fields)
+ * - Groups: group (string, the user's primary group), group_id (integer, user's primary group id), post_group (string, the user's post group), group_badges (HTML markup for displaying the user's badge)
+ * - Other: options (array of user's options), local_time (user's local time, using their offset), custom_fields (if $full_profile is true, but content depends on custom fields)
  *
  * The results are stored in the global $memberContext array, keyed by user id.
  *
  * @param int $user The user id to process for.
- * @param bool $display_custom_fields Whether to load and process custom fields.
+ * @param bool $full_profile Is this intended to be used in a full profile box, like Display or PM pages? This mostly defines group badge loading and custom field processing.
  * @return bool Return true if user's data was able to be loaded, false if not. (Error will be thrown if the user id is non-zero but the user was not passed through {@link loadMemberData()} first.
  */
-function loadMemberContext($user, $display_custom_fields = false)
+function loadMemberContext($user, $full_profile = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
 	global $context, $settings, $board_info, $theme;
@@ -1264,7 +1360,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 	$profile['signature'] = parse_bbc($profile['signature'], true, 'sig' . $profile['id_member']);
 
 	$profile['is_online'] = (!empty($profile['show_online']) || allowedTo('moderate_forum')) && $profile['is_online'] > 0;
-	$profile['stars'] = empty($profile['stars']) ? array('', '') : explode('#', $profile['stars']);
 	// Setup the buddy status here (One whole in_array call saved :P)
 	$profile['buddy'] = in_array($profile['id_member'], $user_info['buddies']);
 	$buddy_list = !empty($profile['buddy_list']) ? explode(',', $profile['buddy_list']) : array();
@@ -1291,7 +1386,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'buddies' => $buddy_list,
 		'title' => !empty($settings['titlesEnable']) ? $profile['usertitle'] : '',
 		'href' => $scripturl . '?action=profile;u=' . $profile['id_member'],
-		'link' => '<a href="' . $scripturl . '?action=profile;u=' . $profile['id_member'] . '" title="' . $txt['view_profile'] . '"' . (!empty($profile['member_group_color']) ? ' style="color: ' . $profile['member_group_color'] . '"' : '') . '>' . $profile['real_name'] . '</a>',
+		'link' => '<a href="' . $scripturl . '?action=profile;u=' . $profile['id_member'] . '" title="' . $txt['view_profile'] . '">' . $profile['real_name'] . '</a>',
 		'email' => $profile['email_address'],
 		'show_email' => showEmailAddress(!empty($profile['hide_email']), $profile['id_member']),
 		'registered' => empty($profile['date_registered']) ? $txt['not_applicable'] : timeformat($profile['date_registered']),
@@ -1312,8 +1407,8 @@ function loadMemberContext($user, $display_custom_fields = false)
 		'posts' => comma_format($profile['posts']),
 		'last_login' => empty($profile['last_login']) ? $txt['never'] : timeformat($profile['last_login']),
 		'last_login_timestamp' => empty($profile['last_login']) ? 0 : forum_time(0, $profile['last_login']),
-		'ip' => htmlspecialchars($profile['member_ip']),
-		'ip2' => htmlspecialchars($profile['member_ip2']),
+		'ip' => isset($profile['member_ip']) ? htmlspecialchars($profile['member_ip']) : '',
+		'ip2' => isset($profile['member_ip2']) ? htmlspecialchars($profile['member_ip2']) : '',
 		'online' => array(
 			'is_online' => $profile['is_online'],
 			'text' => $txt[$profile['is_online'] ? 'online' : 'offline'],
@@ -1322,24 +1417,22 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'image_href' => $theme['images_url'] . '/' . ($profile['buddy'] ? 'buddy_' : '') . ($profile['is_online'] ? 'useron' : 'useroff') . '.gif',
 			'label' => $txt[$profile['is_online'] ? 'online' : 'offline']
 		),
-		'language' => westr::ucwords(strtr($profile['lngfile'], array('_' => ' ', '-utf8' => ''))),
+		'language' => isset($profile['lngfile']) ? westr::ucwords(strtr($profile['lngfile'], array('_' => ' ', '-utf8' => ''))) : '',
 		'is_activated' => isset($profile['is_activated']) ? $profile['is_activated'] : 1,
 		'is_banned' => isset($profile['is_activated']) ? $profile['is_activated'] >= 10 : 0,
 		'options' => $profile['options'],
 		'is_guest' => false,
 		'group' => $profile['member_group'],
-		'group_color' => $profile['member_group_color'],
 		'group_id' => $profile['id_group'],
 		'post_group' => $profile['post_group'],
-		'post_group_color' => $profile['post_group_color'],
-		'group_stars' => str_repeat('<img src="' . str_replace('$language', $context['user']['language'], isset($profile['stars'][1]) ? $theme['images_url'] . '/' . $profile['stars'][1] : '') . '">', empty($profile['stars'][0]) || empty($profile['stars'][1]) ? 0 : $profile['stars'][0]),
+		'group_badges' => array(),
 		'warning' => $profile['warning'],
 		'warning_status' => empty($settings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= 10 ? 'ban' : ($settings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($settings['warning_watch']) && $settings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
-		'local_time' => timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false),
-		'media' => array(
+		'local_time' => isset($profile['time_offset']) ? timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false) : 0,
+		'media' => isset($profile['media_items']) ? array(
 			'total_items' => $profile['media_items'],
 			'total_comments' => $profile['media_comments'],
-		),
+		) : array(),
 		'avatar' => array(
 			'name' => '',
 			'image' => '',
@@ -1347,6 +1440,16 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'url' => '',
 		),
 	);
+
+	if (!empty($profile['badges']))
+	{
+		foreach ($profile['badges'] as $badge)
+		{
+			$stars = explode('#', $badge);
+			if (!empty($stars[0]) && !empty($stars[1]))
+				$memberContext[$user]['group_badges'][] = str_repeat('<img src="' . str_replace('$language', $context['user']['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
+		}
+	}
 
 	// Avatars are tricky, so let's do them next.
 	// So, they're not banned, or if they are, we're not hiding their avatar.
@@ -1400,7 +1503,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 	}
 
 	// Are we also loading the members custom fields into context?
-	if ($display_custom_fields && !empty($settings['displayFields']))
+	if ($full_profile && !empty($settings['displayFields']))
 	{
 		$memberContext[$user]['custom_fields'] = array();
 		if (!isset($context['display_fields']))
@@ -2441,8 +2544,11 @@ function getLanguages($use_cache = true)
 		{
 			if (!preg_match('~/index\.([^.]+)\.php$~', $entry, $matches))
 				continue;
+			// Try including this to retrieve the country code. If it doesn't work -- can live with it.
+			@include($entry);
 			$context['languages'][$matches[1]] = array(
 				'name' => westr::ucwords(strtr($matches[1], array('_' => ' '))),
+				'code' => isset($txt['lang_dictionary']) ? $txt['lang_dictionary'] : '',
 				'filename' => $matches[1],
 				'location' => $entry,
 			);

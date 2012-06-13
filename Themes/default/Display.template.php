@@ -41,7 +41,7 @@ function template_display_posts()
 			$ignoredMsgs[] = $ignoring = $message['id'];
 
 		// Show a "new" anchor if this message is new.
-		if ($message['first_new'] && $message['id'] != $context['first_message'])
+		if ($message['first_new'] && (!$context['first_new_message'] || !empty($_REQUEST['start'])))
 			echo '
 			<a id="new"></a>';
 
@@ -383,6 +383,7 @@ function template_userbox(&$message)
 	global $context, $settings, $txt, $theme, $options;
 
 	$is_mobile = !empty($context['skin_options']['mobile']);
+	$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
 
 	if ($is_mobile)
 	{
@@ -421,21 +422,25 @@ function template_userbox(&$message)
 		echo '
 							<li class="mtitle">', $message['member']['title'], '</li>';
 
-	// Show the member's primary group (like 'Administrator') if they have one.
-	if (!empty($message['member']['group']))
+	// Show the member's primary group (like 'Administrator') if they have one, and if allowed.
+	if (!empty($message['member']['group']) && ($gts === 'all' || $gts === 'normal' || $gts === 'cond'))
 		echo '
 							<li class="membergroup">', $message['member']['group'], '</li>';
 
 	// Don't show these things for guests or mobile skins.
 	if (!$message['member']['is_guest'] && !$is_mobile)
 	{
-		// Show the post group if and only if they have no other group or the option is on, and they are in a post group.
-		if ((empty($theme['hide_post_group']) || $message['member']['group'] == '') && $message['member']['post_group'] != '')
+		// Show the post-based group if allowed by $settings['group_text_show'].
+		if (!empty($message['member']['post_group']) && ($gts === 'all' || $gts === 'post' || ($gts === 'cond' && empty($message['member']['group']))))
 			echo '
 							<li class="postgroup">', $message['member']['post_group'], '</li>';
 
-		echo '
-							<li class="stars">', $message['member']['group_stars'], '</li>';
+		if (!empty($message['member']['group_badges']))
+			echo '
+							<li class="stars">
+								<div>', implode('</div>
+								<div>', $message['member']['group_badges']), '
+							</li>';
 
 		// Show avatars, images, etc.?
 		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))
@@ -811,9 +816,13 @@ function template_title_upper()
 {
 	global $context;
 
-	// Show the anchor for the first message if it's new. Then the title and prev/next navigation.
-	echo $context['first_new_message'] ? '
-		<a id="new"></a>' : '', '
+	// Show the anchor for the first message if it's new.
+	if ($context['first_new_message'])
+		echo '
+		<a id="new"></a>';
+
+	// Then the title and prev/next navigation.
+	echo '
 		<div class="posthead">', $context['prevnext_prev'], '
 			<div id="top_subject">', $context['subject'], '</div>', $context['prevnext_next'], '
 		</div>';

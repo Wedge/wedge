@@ -1055,14 +1055,27 @@ function ModifyMembergroupsettings()
 	// Don't allow assignment of guests.
 	$context['permissions_excluded'] = array(-1);
 
+	// !! Show we add a hook for plugins to add to these options...?
+	$which_groups = array(
+		'none' => $txt['group_show_none'],
+		'all' => $txt['group_show_all'],
+		'normal' => $txt['group_show_normal'],
+		'post' => $txt['group_show_post'],
+		'cond' => $txt['group_show_cond']
+	);
+
 	// Only one thing here!
 	$config_vars = array(
-			array('permissions', 'manage_membergroups'),
+		array('permissions', 'manage_membergroups'),
+		array('select', 'group_text_show', $which_groups),
 	);
 
 	if (isset($_REQUEST['save']))
 	{
 		checkSession();
+
+		// Validate the group select box.
+		$_POST['group_text_show'] = isset($_POST['group_text_show'], $which_groups[$_POST['group_text_show']]) ? $_POST['group_text_show'] : 'cond';
 
 		// Yeppers, saving this...
 		saveDBSettings($config_vars);
