@@ -348,8 +348,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
 
-	// If you add a local/global override and later remove it, reupload other CSS files or empty your cache.
-	unset($found_suffixes['local'], $found_suffixes['global']);
+	// Don't add the flow control keywords to the final URL. If you add a local/global override
+	// and decide to remove it later, simply reupload other CSS files or empty your cache.
+	unset($found_suffixes['local'], $found_suffixes['global'], $found_suffixes['replace']);
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
@@ -480,7 +481,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
 
 	// Cache final file and retrieve its name.
-	$final_script = $boardurl . '/cache/' . wedge_cache_css_files($id, $latest_date, $files, $can_gzip, $ext, $context['plugins_url'][$plugin_name]);
+	$final_script = $boardurl . '/cache/' . wedge_cache_css_files($id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
 
 	// Do we just want the URL?
 	if (!$add_link)
@@ -492,12 +493,19 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 
 /**
  * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
+ *
+ * @param mixed $ids A filename or an array of filename radixes, such as 'index'.
+ * @param integer $latest_date The most recent filedate (Unix timestamp format), to be used to differentiate the latest copy from expired ones.
+ * @param string $css The CSS file to process, or an array of CSS files to process, in order, with complete path names.
+ * @param boolean $gzip Set to true if you want the final file to be compressed with gzip.
+ * @param string $ext The extension for the final file. Default is '.css', some browsers may have problems with '.css.gz' if gzipping is enabled.
+ * @return array $additional_vars An array of key-pair values to associate custom CSS variables with their intended replacements.
  */
-function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugin_path = '')
+function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
 	global $theme, $settings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
 
-	$id = empty($settings['obfuscate_filenames']) ? implode('-', $ids) : md5(implode('-', $ids));
+	$id = empty($settings['obfuscate_filenames']) ? implode('-', (array) $ids) : md5(implode('-', (array) $ids));
 
 	$full_name = $id . '-' . $latest_date . $ext;
 	$final_file = $cachedir . '/' . $full_name;
@@ -532,7 +540,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)
-	if ($can_gzip && !$context['browser']['is_ie6'] && !$context['browser']['is_ie7'])
+	if ($gzip && !$context['browser']['is_ie6'] && !$context['browser']['is_ie7'])
 		$plugins[] = new wecss_base64();
 
 	// Default CSS variables (paths are set relative to the cache folder)
@@ -547,13 +555,12 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 		'$theme' => '..' . str_replace($boardurl, '', $theme['theme_url']),
 		'$root' => '..',
 	);
-	if (!empty($plugin_path))
-		$css_vars['$plugindir'] = $plugin_path;
-	else
-		unset($css_vars['$plugindir']);
+	if (!empty($additional_vars))
+		foreach ($additional_vars as $key => $val)
+			$css_vars[$key] = $val;
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
-	foreach ($css as $file)
+	foreach ((array) $css as $file)
 		$final .= str_replace('$here', '..' . str_replace('\\', '/', str_replace($boarddir, '', dirname($file))), file_get_contents($file));
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
@@ -620,7 +627,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $can_gzip, $ext, $plugi
 	if (strpos($final, '{}') !== false)
 		$final = preg_replace('~[^{}]+{}~', '', $final);
 
-	if ($can_gzip)
+	if ($gzip)
 		$final = gzencode($final, 9);
 
 	file_put_contents($final_file, $final);
@@ -660,9 +667,9 @@ function wedge_fix_browser_css($matches)
 	if ($matches[1] === 'box-shadow')
 		return $browser['is_ie8down'] ? '' : ($browser['is_safari'] ? $full : $matches[0]);
 
-	// IE6 and IE7 don't support box-sizing, and Mozilla and Safari require a prefix.
+	// IE6 and IE7 don't support box-sizing, and Mozilla, older Androids and older Safaris require a prefix.
 	if ($matches[1] === 'box-sizing')
-		return $browser['is_ie6'] || $browser['is_ie7'] ? '' : ($browser['is_firefox'] || $browser['is_safari'] ? $full : $matches[0]);
+		return $browser['is_ie6'] || $browser['is_ie7'] ? '' : ($browser['is_firefox'] || $browser['is_safari'] || $browser['is_android'] ? $full : $matches[0]);
 
 	// IE6/7/8/9 don't support columns, IE10 and Opera support them, other browsers require a prefix.
 	if (strpos($matches[1], 'column-') === 0)

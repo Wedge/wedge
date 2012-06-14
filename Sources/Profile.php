@@ -404,7 +404,7 @@ function ModifyProfile($post_errors = array())
 		),
 	);
 
-	if (!empty($user))
+	if (!empty($user) && isset($_REQUEST['guest']))
 		$profile_areas['info']['areas']['showposts']['custom_url'] = $scripturl . '?action=profile;u=0;area=showposts;guest=' . $_REQUEST['guest'];
 
 	// Let modders modify profile areas easily.

@@ -620,11 +620,15 @@ class wecss_nesting extends wecss
 		$tree = preg_replace('~\n[\t ]*@replace[\t ]*{\n[\t ]*[^\n]+;\n[\t ]*[^\n]*}~i', "\n", $tree);
 
 		// And a few more pre-parsing actions...
-		$tree = preg_replace('~^(@(?:import|charset)\s+.*?);$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
+		// A couple of reminders on @import:
+		// (1) avoid using them in CSS files. REALLY. Use <css> in custom.xml, or add_css_file(), or add_css().
+		// (2) @import won't work if used inside a suffixed file, because @import is only parsed when
+		//     found at the start of a physical file (or within <style> tags in the main HTML.)
+		$tree = preg_replace('~^(@(?:import|charset)\s+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
 		$tree = preg_replace('~^([+>&#*@:.a-z][^{};]*?\s*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
+		$tree = preg_replace('~(\burl\([^)]+\))~e', 'str_replace(\':\', \'#wedge-colon#\', \'$1\')', $tree); // Protect colons (:) inside URLs
 		$tree = preg_replace('~([a-z-, ]+)\s*:(?!//)\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
-		$tree = preg_replace('~^([+>&#*@:.a-z][^{]*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors
-
+		$tree = preg_replace('~^([+>&#*@:.a-z](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
 
@@ -738,15 +742,12 @@ class wecss_nesting extends wecss
 				{
 					$save_selector = $node['selector'];
 					$node['selector'] = $m[1];
-					$path = $this->parse_ancestors($this->get_ancestors($node));
-					// In case we extend directly from a parent's property, make sure to keep only one parent if we have several.
+					$path = implode(',', $this->parse_ancestors($node));
+
+					// In case we extend directly from a parent's property, make sure to keep only the first parent (reset) if we have several.
 					if (strpos($m[2], '&') !== false)
-					{
-						$parent = $this->parse_ancestors($this->get_ancestors($this->rules[$node['parent']]));
-						if (strpos($parent, ',') !== false)
-							$parent = substr($parent, 0, strpos($parent, ','));
-						$m[2] = str_replace('&', $parent, $m[2]);
-					}
+						$m[2] = str_replace('&', reset($this->parse_ancestors($this->rules[$node['parent']])), $m[2]);
+
 					// And if we have multiple inheritance, add each selector to the base list.
 					$targets = array_map('trim', explode(',', trim($m[2], '"')));
 					foreach ($targets as $target)
@@ -766,18 +767,17 @@ class wecss_nesting extends wecss
 		{
 			if ($node['name'] === 'base')
 			{
-				$selectors = preg_split('/,\s*/', $this->rules[$node['parent']]['selector']);
+				$selectors = $this->split_selectors($this->rules[$node['parent']]['selector']);
 				foreach ($selectors as &$here)
 				{
 					$parent = empty($this->rules[$node['parent']]['parent']) ? array() : $this->get_ancestors($this->rules[$this->rules[$node['parent']]['parent']]);
-					$path = $this->parse_ancestors(array_merge((array) $here, $parent));
+					$path = $this->parse_ancestors(array_merge((array) $here, $parent), true);
+
 					if (strpos($node['value'], '&') !== false)
-					{
-						if (strpos($path, ',') !== false)
-							$path = substr($path, 0, strpos($path, ','));
-						$node['value'] = str_replace('&', $path, $node['value']);
-					}
-					$targets = array_map('trim', explode(',', $node['value']));
+						$node['value'] = str_replace('&', $path[0], $node['value']);
+
+					$path = implode(',', $path);
+					$targets = $this->split_selectors($node['value']);
 					foreach ($targets as $target)
 						$bases[] = array(
 							$target, // Add to this class in the tree...
@@ -799,7 +799,7 @@ class wecss_nesting extends wecss
 			// Do we have multiple selectors to extend?
 			elseif (strpos($base[2], ',') !== false)
 			{
-				$selectors = array_map('trim', explode(',', $base[2]));
+				$selectors = $this->split_selectors($base[2]);
 				$base[2] = $selectors[0];
 				unset($selectors[0]);
 				foreach ($selectors as $sel)
@@ -837,8 +837,11 @@ class wecss_nesting extends wecss
 				}
 			}
 
-			$selector = str_replace('&gt;', '>', $this->parse_ancestors($this->get_ancestors($node)));
-			$selectors = $done = array();
+			$selectors = $this->parse_ancestors($node);
+			foreach ($selectors as $key => $val)
+				if (strpos($val, '&gt;') !== false)
+					$selectors[$key] = str_replace('&gt;', '>', $val);
+			$done = array();
 			$changed = true;
 
 			while ($changed)
@@ -848,11 +851,17 @@ class wecss_nesting extends wecss
 				foreach ($bases as $i => &$base)
 				{
 					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
-					if (strpos($selector, $base[0]) !== false)
+					$is_in = false;
+					foreach ($selectors as $sel)
 					{
-						// Note: this will fail on any strings with commas. If you have a good reason to use them, please share.
-						if (empty($selectors))
-							$selectors = explode(',', $selector);
+						if (strpos($sel, $base[0]) !== false)
+						{
+							$is_in = true;
+							break;
+						}
+					}
+					if ($is_in)
+					{
 						$beginning = isset($alpha[$base[0][0]]) ? '(?<![a-z0-9_-])' : '';
 
 						foreach ($selectors as &$snippet)
@@ -860,22 +869,24 @@ class wecss_nesting extends wecss
 							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![a-z0-9_-]|.*\s+final\b)~i', $snippet))
 							{
 								// And our magic trick happens here. Then we restart the process to handle inherited extends.
-								$selector .= ', ' . str_replace($base[0], $base[2], $snippet);
+								$selectors[] = trim(str_replace($base[0], $base[2], $snippet));
 								$done_temp[$snippet] = true;
 								$changed = true;
 							}
 						}
 					}
 				}
+
 				if ($changed)
-				{
-					$selectors = explode(',', $selector);
 					$done = array_merge($done, $done_temp);
-				}
 			}
 
+			$selectors = array_flip(array_flip($selectors));
+			sort($selectors);
+			$selector = implode(',', $selectors);
+
 			$specific_removals = array();
-			foreach (array_map('trim', explode(',', $selector)) as $removable_selector)
+			foreach ($selectors as $removable_selector)
 				if (isset($selector_removals[$removable_selector]))
 					$specific_removals += $selector_removals[$removable_selector];
 
@@ -914,6 +925,8 @@ class wecss_nesting extends wecss
 
 		if (!empty($standard_nest))
 			$css .= '}';
+
+		$css = str_replace('#wedge-colon#', ':', $css);
 	}
 
 	private function unset_recursive($n)
@@ -934,12 +947,15 @@ class wecss_nesting extends wecss
 		return array_merge((array) $node['selector'], $this->get_ancestors($this->rules[$node['parent']]));
 	}
 
-	private function parse_ancestors($ancestors = array())
+	private function parse_ancestors($node, $is_ancestors = false)
 	{
+		$ancestors = $is_ancestors ? $node : $this->get_ancestors($node);
 		$growth = array();
+
 		foreach ($ancestors as $selector)
 		{
-			$these = preg_split('/,\s*/', $selector);
+			$these = $this->split_selectors($selector);
+
 			if (empty($growth))
 			{
 				$growth = $these;
@@ -959,8 +975,25 @@ class wecss_nesting extends wecss
 
 			$growth = $fresh;
 		}
+
 		sort($growth);
-		return implode(',', $growth);
+		return $growth;
+	}
+
+	private function split_selectors($selector)
+	{
+		// Does this selector have commas in it? We'll have to protect it first...
+		// Basically, (..,..) [..,..] "..,.." and '..,..' will be base64-encoded before the split.
+		if (strpos($selector, ',') !== false)
+			while (preg_match('~\([^(]*,[^(]*\)|\[[^[]*,[^[]*]|"[^"]*,[^"]*"|\'[^\']*,[^\']*\'~', $selector, $match))
+				$selector = str_replace($match[0], '#we-protect#' . base64_encode($match[0]) . '#we-protect#', $selector);
+
+		$arr = array_map('trim', explode(',', $selector));
+		foreach ($arr as $key => $val)
+			if (strpos($val, '#we-protect#') !== false)
+				$arr[$key] = preg_replace('~#we-protect#(.*?)#we-protect#~e', 'base64_decode(\'$1\')', $val);
+
+		return $arr;
 	}
 
 	private function pierce(&$data)

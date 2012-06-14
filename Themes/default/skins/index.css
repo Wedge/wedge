@@ -408,7 +408,7 @@ em
 	background-color: rgba(255,0,0,.8)
 	gradient: #fa6, #d76
 	color: #fff !important
-	font: 700 7pt/100% Tahoma, Arial, sans-serif
+	font: 700 7.5pt/100% Tahoma, Arial, sans-serif
 	text-transform: uppercase
 	vertical-align: .1em
 	margin: 0 3px
@@ -634,7 +634,7 @@ input[type=submit], input[type=button], .ie_button
 	margin: 0
 	outline: none
 	cursor: pointer
-	font-size: 13px
+	font-size: 13.5px
 	line-height: normal
 	border-width: 1px
 	border-radius: 6px
@@ -1568,7 +1568,7 @@ h6
 	margin: 12px 0 8px
 	border-bottom: 1px solid #ccc
 	text-transform: uppercase
-	font: 400 10pt "Franklin Gothic Medium", Tahoma, sans-serif
+	font: 400 10pt "Franklin Gothic Medium", "Franklin Gothic", Tahoma, sans-serif
 	img
 		vertical-align: -3px
 	:first-child
@@ -1660,8 +1660,8 @@ $head_font = "Franklin Gothic Medium", "Franklin Gothic", $big_font
 $mono_font = Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New", monospace
 $subject_font = "PT Sans", "Segoe UI", Optima, Arial, sans-serif
 
-$post_font_size = 95%/133%
-$post_font = Verdana, "Segoe UI", Arial, sans-serif
+$post_font_size = 100%/133%
+$post_font = Arial, sans-serif
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""
@@ -1677,8 +1677,8 @@ $menu_border = rgba(220, 224, 220, .95)
 $menu_gradient = -prefix-linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
 $menu_gradient {ie9} =           average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
 $board_col = #d97b33
-$window_bg = lighten(#e3e0d0, 12%) // #f2f3ea // #f9f6f0
-$window_bg2 = lighten(#e3e0d0, 10%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent
+$window_bg = lighten(#e3e0d0, 13%) // #f2f3ea // #f9f6f0
+$window_bg2 = lighten(#e3e0d0, 11%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent
 $window_bg3 = #f0f0f0
 $sidebar-width = "240px"
 $sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table mode

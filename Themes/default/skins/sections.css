@@ -210,13 +210,14 @@ img.new_posts
 
 // Alternating backgrounds for posts
 .postbg extends .windowbg
+	background: #f2f3ee
 	display: table
 	// Without this, wide code blocks will break layout.
 	table-layout: fixed
 	width: 100%
 
 .postbg2 extends ".windowbg2, .postbg"
-	background: #fbf9f6
+	background: #f3f7f3
 	margin: 3px 0
 
 #forumposts
@@ -446,7 +447,6 @@ ul.actions extends ul.reset
 	padding: 0 .7em
 
 .smiley extends .inline-block
-	vertical-align: bottom
 	text-indent: -999em
 	font: 0/0 Arial
 	overflow: hidden
