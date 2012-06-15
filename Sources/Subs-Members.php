@@ -490,7 +490,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		$reg_errors[] = array('lang', 'error_long_name');
 
 	// Only these characters are permitted.
-	if (preg_match('~[<>&"\'=\\\\]~', preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $regOptions['username'])) != 0 || $regOptions['username'] == '_' || $regOptions['username'] == '|' || strpos($regOptions['username'], '[code') !== false || strpos($regOptions['username'], '[/code') !== false)
+	if (preg_match('~[<>&"\'=\\\\]~', preg_replace('~&#(?:\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $regOptions['username'])) != 0 || $regOptions['username'] == '_' || $regOptions['username'] == '|' || strpos($regOptions['username'], '[code') !== false || strpos($regOptions['username'], '[/code') !== false)
 		$reg_errors[] = array('lang', 'error_invalid_characters_username');
 
 	if (westr::strtolower($regOptions['username']) === westr::strtolower($txt['guest_title']))

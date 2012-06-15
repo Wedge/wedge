@@ -460,7 +460,7 @@ function validateUsername($memID, $username)
 		fatal_lang_error('need_username', false);
 
 	// Only these characters are permitted.
-	if (in_array($username, array('_', '|')) || preg_match('~[<>&"\'=\\\\]~', preg_replace('~&#(?:\\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $username)) != 0 || strpos($username, '[code') !== false || strpos($username, '[/code') !== false)
+	if (in_array($username, array('_', '|')) || preg_match('~[<>&"\'=\\\\]~', preg_replace('~&#(?:\d{1,7}|x[0-9a-fA-F]{1,6});~', '', $username)) != 0 || strpos($username, '[code') !== false || strpos($username, '[/code') !== false)
 		fatal_lang_error('error_invalid_characters_username', false);
 
 	if (stristr($username, $txt['guest_title']) !== false)

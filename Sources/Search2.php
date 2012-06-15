@@ -1558,7 +1558,7 @@ function prepareSearchContext($reset = false)
 				$force_partial_word = false;
 				foreach ($context['key_words'] as $keyword)
 				{
-					$keyword = preg_replace('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~e', 'westr::entity_fix(\'\\1\')', strtr($keyword, array('\\\'' => '\'', '&' => '&amp;')));
+					$keyword = westr::entity_clean(strtr($keyword, array('\\\'' => '\'', '&' => '&amp;')));
 
 					if (preg_match('~[\'.,/@%&;:(){}[\]_+\\\\-]$~', $keyword) != 0 || preg_match('~^[\'.,/@%&;:(){}[\]_+\\\\-]~', $keyword) != 0)
 						$force_partial_word = true;
@@ -1582,7 +1582,7 @@ function prepareSearchContext($reset = false)
 			}
 
 			// Re-fix the international characters.
-			$message['body'] = preg_replace('~&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});~e', 'westr::entity_fix(\'\\1\')', $message['body']);
+			$message['body'] = westr::entity_clean($message['body']);
 		}
 	}
 	// Run BBC interpreter on the message.

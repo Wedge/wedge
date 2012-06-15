@@ -97,7 +97,7 @@ function Login2()
 	wetem::load('login');
 
 	// Set up the default/fallback stuff.
-	$context['default_username'] = isset($_POST['user']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', htmlspecialchars($_POST['user'])) : '';
+	$context['default_username'] = isset($_POST['user']) ? westr::htmlspecialchars($_POST['user']) : '';
 	$context['default_password'] = '';
 	$context['never_expire'] = $settings['cookieTime'] == 525600 || $settings['cookieTime'] == 3153600;
 	$context['login_errors'] = array($txt['error_occured']);
