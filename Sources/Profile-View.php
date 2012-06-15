@@ -141,13 +141,13 @@ function summary($memID)
 		$context['can_see_ip'] = false;
 
 	// Can we see what the user is doing?
-	if (!empty($settings['who_enabled']) && allowedTo('who_view'))
+	if (!empty($settings['who_enabled']) && allowedTo('who_view') && (allowedTo('moderate_forum') || !empty($user_profile[$memID]['show_online'])))
 	{
 		loadSource('Who');
 		$action = determineActions($user_profile[$memID]['url']);
 
 		if ($action !== false)
-			$context['member']['action'] = $action;
+			$context['member']['action'] = empty($user_profile[$memID]['show_online']) ? '<em>' . $action . '</em>' : $action;
 	}
 
 	// If the user is awaiting activation, and the viewer has permission - setup some activation context messages.

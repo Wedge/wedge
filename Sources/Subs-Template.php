@@ -391,6 +391,12 @@ function ob_sessrewrite($buffer)
 			'wedge_profile_colors', $buffer
 		);
 
+	// Separate topic names from topic prefixes.
+	$buffer = preg_replace(
+		'~(<a\b[^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\btopic=\d+[^"]*"[^>]*>)(Re:\s)?((?:\[[^]<>]*]\s*)+)(.+?</a>)~',
+		'$3$1$2$4', $buffer
+	);
+
 	// Fast on-the-fly replacement of whitespace...
 	if (!empty($settings['minify_html']))
 		$buffer = preg_replace("~\n\t+~", "\n", $buffer);
