@@ -67,8 +67,8 @@ function template_main()
 								</span>';
 
 		echo '
-								<span class="member', $member['is_hidden'] ? ' hidden' : '', '">
-									', $member['is_guest'] ? $member['name'] : '<a href="' . $member['href'] . '" title="' . $txt['view_profile'] . '">' . $member['name'] . '</a>', '
+								<span class="member">
+									', $member['is_guest'] ? $member['name'] : ($member['is_hidden'] ? '<em>' : '') . '<a href="' . $member['href'] . '" title="' . $txt['view_profile'] . '">' . $member['name'] . '</a>' . ($member['is_hidden'] ? '</em>' : ''), '
 								</span>';
 
 		if (!empty($member['ip']))

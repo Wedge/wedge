@@ -384,7 +384,7 @@ function template_sidebar_before()
 		$thought_id = isset($context['user']['data']['id_thought']) ? $context['user']['data']['id_thought'] : 0;
 		$thought_prv = isset($context['user']['data']['thought_privacy']) ? $context['user']['data']['thought_privacy'] : 1;
 
-		if (!empty($user_info['can_think']))
+		if (allowedTo('post_thought'))
 		{
 			echo '
 	<section>

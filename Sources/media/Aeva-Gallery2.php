@@ -1022,7 +1022,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		wesql::free_result($request);
 
 		$groups['sep3'] = 'sep';
-		$groups['check_all'] = array('<i>' . $txt['check_all'] . '</i>', 'custom' => 'onclick="invertAll(this, this.form, \'$1[]\');"');
+		$groups['check_all'] = array('<em>' . $txt['check_all'] . '</em>', 'custom' => 'onclick="invertAll(this, this.form, \'$1[]\');"');
 	}
 
 	$sort_list = array('m.id_media', 'm.time_added', 'm.title', 'm.views', 'm.weighted');

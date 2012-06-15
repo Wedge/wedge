@@ -465,6 +465,7 @@ function banPermissions()
 	{
 		$denied_permissions = array(
 			'pm_send',
+			'post_thought',
 			'poll_post',
 			'poll_add_own', 'poll_add_any',
 			'poll_edit_own', 'poll_edit_any',

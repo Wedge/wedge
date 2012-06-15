@@ -403,12 +403,7 @@ function loadUserSettings()
 		'ignoreusers' => !empty($user_settings['pm_ignore_list']) ? explode(',', $user_settings['pm_ignore_list']) : array(),
 		'warning' => isset($user_settings['warning']) ? $user_settings['warning'] : 0,
 		'permissions' => array(),
-		'can_think' => true,
 	);
-
-	// Prevent user from posting thoughts if they don't have permission, or are muted or banned from posting.
-	if (!allowedTo('post_thought') || isset($_SESSION['ban']['cannot_post']) || (!empty($settings['warning_mute']) && $settings['warning_mute'] <= $user_info['warning']))
-		$user_info['can_think'] = false;
 
 	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 	$user_info['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];

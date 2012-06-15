@@ -228,7 +228,7 @@ function Who()
 			$spiderContext[$id] = array(
 				'id' => 0,
 				// Spiders get their own Noisen style.
-				'name' => '<i style="color: green">' . $name . '</i>',
+				'name' => '<em style="color: green">' . $name . '</em>',
 				'group' => $txt['spiders'],
 				'href' => '',
 				'link' => $name,
@@ -487,6 +487,9 @@ function determineActions($urls, $preferred_prefix = false)
 
 			if (!empty($error_message))
 				$data[$k] = '<img src="' . $theme['images_url'] . '/' . ($is_warn ? 'who_warn' : 'who_error') . '.gif" title="' . $error_message . '" alt="' . $error_message . '"> ' . $data[$k];
+
+			// !!! Should we store the full URL into the session, à la Noisen?
+			$data[$k] .= ' (<abbr title="' . str_replace('"', "''", var_export($actions, true)) . '">?</abbr>)';
 		}
 	}
 
