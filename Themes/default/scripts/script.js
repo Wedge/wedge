@@ -17,7 +17,6 @@ var
 
 	// Basic browser detection
 	ua = navigator.userAgent.toLowerCase(),
-	can_ajax = $.support.ajax,
 
 	// If you need support for more versions, just test for $.browser.version yourself...
 	is_opera = !!$.browser.opera,
@@ -551,42 +550,41 @@ function weToggle(opt)
 // *** JumpTo class.
 function JumpTo(control, id)
 {
-	if (can_ajax)
-		$('#' + control)
-			.html('<select><option data-hide>=> ' + $('#' + control).text() + '</option></select>')
-			.css({ visibility: 'visible' })
-			.find('select').sb().focus(function ()
+	$('#' + control)
+		.html('<select><option data-hide>=> ' + $('#' + control).text() + '</option></select>')
+		.css({ visibility: 'visible' })
+		.find('select').sb().focus(function ()
+		{
+			var sList = '', $val, that, name;
+
+			show_ajax();
+
+			// Fill the select box with entries loaded through Ajax.
+			$('we item', getXMLDocument(weUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function ()
 			{
-				var sList = '', $val, that, name;
+				that = $(this);
+				// This removes entities from the name...
+				name = that.text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
 
-				show_ajax();
-
-				// Fill the select box with entries loaded through Ajax.
-				$('we item', getXMLDocument(weUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function ()
-				{
-					that = $(this);
-					// This removes entities from the name...
-					name = that.text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
-
-					// Just for the record, we don't NEED to close the optgroup at the end
-					// of the list, even if it doesn't feel right. Saves us a few bytes...
-					if (that.attr('type') == 'c') // Category?
-						sList += '<optgroup label="' + name + '">';
-					else
-						// Show the board option, with special treatment for the current one.
-						sList += '<option value="' + (that.attr('url') || that.attr('id')) + '"'
-								+ (that.attr('id') == id ? ' disabled>=> ' + name + ' &lt;=' :
-									'>' + new Array(+that.attr('level') + 1).join('&nbsp;&nbsp;&nbsp;&nbsp;') + name)
-								+ '</option>';
-				});
-
-				// Add the remaining items after the currently selected item.
-				$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
-					window.location.href = parseInt($val = $(this).val()) ? weUrl() + 'board=' + $val + '.0' : $val;
-				});
-
-				hide_ajax();
+				// Just for the record, we don't NEED to close the optgroup at the end
+				// of the list, even if it doesn't feel right. Saves us a few bytes...
+				if (that.attr('type') == 'c') // Category?
+					sList += '<optgroup label="' + name + '">';
+				else
+					// Show the board option, with special treatment for the current one.
+					sList += '<option value="' + (that.attr('url') || that.attr('id')) + '"'
+							+ (that.attr('id') == id ? ' disabled>=> ' + name + ' &lt;=' :
+								'>' + new Array(+that.attr('level') + 1).join('&nbsp;&nbsp;&nbsp;&nbsp;') + name)
+							+ '</option>';
 			});
+
+			// Add the remaining items after the currently selected item.
+			$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
+				window.location.href = parseInt($val = $(this).val()) ? weUrl() + 'board=' + $val + '.0' : $val;
+			});
+
+			hide_ajax();
+		});
 }
 
 
@@ -691,13 +689,10 @@ function Thought(opt)
 
 	this.cancel = cancel;
 
-	if (can_ajax)
-	{
-		$('#thought_update')
-			.attr('title', opt.sLabelThought)
-			.click(function () { oThought.edit(''); });
-		$('.thought').each(interact_thoughts);
-	}
+	$('#thought_update')
+		.attr('title', opt.sLabelThought)
+		.click(function () { oThought.edit(''); });
+	$('.thought').each(interact_thoughts);
 }
 
 /* Optimize:

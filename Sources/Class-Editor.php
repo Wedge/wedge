@@ -66,7 +66,6 @@ class wedit
 			add_js('
 	var oEditorStrings = {
 		wont_work: ' . JavaScriptEscape($txt['rich_edit_wont_work']) . ',
-		func_disabled: ' . JavaScriptEscape($txt['rich_edit_function_disabled']) . ',
 		email: ' . JavaScriptEscape($txt['prompt_text_email']) . ',
 		ftp: ' . JavaScriptEscape($txt['prompt_text_ftp']) . ',
 		url: ' . JavaScriptEscape($txt['prompt_text_url']) . ',

@@ -1054,7 +1054,7 @@ function template_control_chmod()
 		generatedButton = true;
 
 		// No XML?
-		if (!can_ajax || (!$("#test_ftp_placeholder").length && !$("#test_ftp_placeholder_full").length))
+		if (!$("#test_ftp_placeholder").length && !$("#test_ftp_placeholder_full").length)
 			return false;
 
 		var ftpTest = $(\'<input type="button"></input>\').click(testFTP);
@@ -1182,14 +1182,10 @@ function template_file_permissions()
 			return false;
 
 		// Otherwise we need to get the wicked thing.
-		if (can_ajax)
-		{
-			show_ajax();
-			getXMLDocument(weUrl() + "action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
-		}
+		show_ajax();
+		getXMLDocument(weUrl() + "action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
 
-		// Otherwise reload.
-		return !can_ajax;
+		return false;
 	}
 	function dynamicExpandFolder()
 	{

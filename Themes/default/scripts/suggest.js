@@ -12,9 +12,6 @@
 
 function weAutoSuggest(oOptions)
 {
-	if (!can_ajax)
-		return false;
-
 	this.opt = oOptions;
 
 	// Nothing else for now.

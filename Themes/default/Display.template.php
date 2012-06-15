@@ -284,27 +284,24 @@ function template_display_posts()
 	});');
 
 	add_js('
-	if (can_ajax)
-	{
-		var oQuickModify = new QuickModify({
-			sSubject: ' . JavaScriptEscape('<input type="text" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
-			sBody: ' . JavaScriptEscape('
-				<div id="quick_edit_body_container">
-					<div id="error_box" class="error"></div>
-					<textarea class="editor" id="qm_post" rows="12" tabindex="' . $context['tabindex']++ . '">%body%</textarea>
-					<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-					<input type="hidden" id="qm_msg" value="%msg_id%">
-					<div class="right">
-						<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return window.oQuickModify && oQuickModify.modifySave();" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['form_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
-					</div>
-				</div>') . '
-		});
+	var oQuickModify = new QuickModify({
+		sSubject: ' . JavaScriptEscape('<input type="text" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
+		sBody: ' . JavaScriptEscape('
+			<div id="quick_edit_body_container">
+				<div id="error_box" class="error"></div>
+				<textarea class="editor" id="qm_post" rows="12" tabindex="' . $context['tabindex']++ . '">%body%</textarea>
+				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
+				<input type="hidden" id="qm_msg" value="%msg_id%">
+				<div class="right">
+					<input type="submit" name="post" value="' . $txt['save'] . '" tabindex="' . $context['tabindex']++ . '" accesskey="s" onclick="return window.oQuickModify && oQuickModify.modifySave();" class="save">&nbsp;&nbsp;' . ($context['show_spellchecking'] ? '<input type="button" value="' . $txt['spell_check'] . '" tabindex="' . $context['tabindex']++ . '" onclick="spellCheck(\'quickModForm\', \'message\');" class="spell">&nbsp;&nbsp;' : '') . '<input type="submit" name="cancel" value="' . $txt['form_cancel'] . '" tabindex="' . $context['tabindex']++ . '" onclick="return oQuickModify.modifyCancel();" class="cancel">
+				</div>
+			</div>') . '
+	});
 
-		new IconList({
-			sLabels: \'' . $txt['message_icon'] . '\',
-			iBoardId: ' . $context['current_board'] . '
-		});
-	}');
+	new IconList({
+		sLabels: \'' . $txt['message_icon'] . '\',
+		iBoardId: ' . $context['current_board'] . '
+	});');
 
 	// Collapse any ignored messages. If a message has a 'like', at least show the action bar, in case the user
 	// would like to read it anyway. (Maybe they're ignoring someone only because of their signal/noise ratio?)

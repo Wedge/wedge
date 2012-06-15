@@ -95,9 +95,6 @@ function modify_topic(topic_id, first_msg_id)
 		$.each(hide_prefixes, function () { $('#' + this + cur_msg_id).toggle(state); });
 	};
 
-	if (!can_ajax)
-		return;
-
 	if (in_edit_mode)
 	{
 		if (cur_topic_id == topic_id)
@@ -223,9 +220,6 @@ function QuickModify(opt)
 	// Function called when a user presses the edit button.
 	this.modifyMsg = function (iMessage)
 	{
-		if (!can_ajax)
-			return;
-
 		var iMessageId = $(iMessage).closest('.root').attr('id').substr(3);
 
 		// Did we press the Quick Modify button by error while trying to submit? Oops.
@@ -498,9 +492,6 @@ function IconList(opt)
 			$('body').unbind('mousedown.ic');
 		});
 	};
-
-	if (!can_ajax)
-		return;
 
 	// Replace all message icons by icons with hoverable and clickable div's.
 	$('.can-mod').each(function () {

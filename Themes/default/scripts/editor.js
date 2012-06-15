@@ -692,14 +692,6 @@ function weEditor(opt)
 		// Overriding or alternating?
 		bView = bView || !this.bRichTextEnabled;
 
-		// Request the message in a different form.
-		// Replace with a force reload.
-		if (!can_ajax)
-		{
-			alert(oEditorStrings.func_disabled);
-			return;
-		}
-
 		// Get the text.
 		var sText = this.getText(true, !bView).replace(/&#/g, '&#38;#').php_urlencode();
 

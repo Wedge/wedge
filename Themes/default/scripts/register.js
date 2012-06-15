@@ -78,7 +78,7 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 			var curType = 0, id = this.id;
 
 			// Username can only be done with XML.
-			if (id.indexOf('username') != -1 && can_ajax)
+			if (id.indexOf('username') != -1)
 				curType = 'username';
 			else if (id.indexOf('pwmain') != -1)
 				curType = 'pwmain';
