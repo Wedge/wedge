@@ -1281,18 +1281,20 @@ final class wetemItem
  * The skeleton itself can't be accessed from outside the object.
  * Thus, you'll have to rely on the public functions to manipulate it.
  *
- * wetem::load()	- load a block, layer or array of these *into* a given layer
+ * wetem::load()	- load a block ('block_name'), layer (array('layer_name' => array())) or array of these *into* a given layer
  * wetem::replace()	- same, but deletes existing sub-layers in the process
  * wetem::add()		- same, but adds data to given layer
  * wetem::first()	- same, but prepends data to given layer
  * wetem::before()	- same, but inserts data *before* given layer or block
  * wetem::after()	- same, but inserts data *after* given layer or block
  *
+ * wetem::layer()	- various layer creation functions (see documentation for the function)
  * wetem::rename()	- rename an existing layer
- * wetem::outer()	- wrap an outer layer around the given layer
- * wetem::inner()	- inject an inner layer directly below the given layer
- * wetem::hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
+ * wetem::outer()	- wrap a new outer layer around the given layer
+ * wetem::inner()	- inject a new inner layer directly below the given layer
  * wetem::remove()	- remove a block or layer from the skeleton
+ *
+ * wetem::hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
  *
  * wetem::parent()	- return the name of the block/layer's parent layer
  * wetem::get()		- see weitemItem description. If you only have one action to apply, avoid using it.
@@ -1868,7 +1870,7 @@ final class wetem
 			list ($target, $blocks) = array('default', $target);
 
 		$blocks = self::list_blocks((array) $blocks);
-		$has_layer = count($blocks) !== count($blocks, COUNT_RECURSIVE);
+		$has_layer = (bool) count(array_filter($blocks, 'is_array'));
 
 		$to = self::find($target, $where);
 		if (empty($to))
@@ -1938,6 +1940,7 @@ final class wetem
 
 		if ($has_layer)
 			self::reindex();
+
 		return $to;
 	}
 }

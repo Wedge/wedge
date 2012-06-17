@@ -32,6 +32,11 @@ function Credits($in_admin = false)
 	// Don't blink. Don't even blink. Blink and you're dead.
 	loadLanguage('Who');
 
+	$context['linktree'][] = array(
+		'url' => '<URL>?action=credits',
+		'name' => $txt['site_credits']
+	);
+
 	$context['site_credits'] = array();
 	$query = wesql::query('
 		SELECT id_member, real_name, id_group, additional_groups

@@ -1767,8 +1767,8 @@ function host_from_ip($ip)
 	// This should work for IPv4, its status is unknown for IPv6 however.
 	if (preg_match('~\d{2,3}(\.\d{1,3}){3}~', $ip) && !isset($host) && is_callable('dns_get_record'))
 	{
-		$details = dns_get_record(implode('.', array_reverse(explode('.', $ip))) . '.in-addr.arpa', DNS_PTR);
-		if (!empty($details[0]['target']))
+		$details = @dns_get_record(implode('.', array_reverse(explode('.', $ip))) . '.in-addr.arpa', DNS_PTR);
+		if (is_array($details) && !empty($details[0]['target']))
 			$host = $details[0]['target'];
 	}
 

@@ -241,7 +241,7 @@ ul#noava
 #linktree
 	clear: both
 	color: #999
-	padding: 0 0 1.5em
+	padding: 0 0 1em
 	a
 		color: #963
 	ul
@@ -1662,6 +1662,8 @@ $subject_font = "PT Sans", "Segoe UI", Optima, Arial, sans-serif
 
 $post_font_size = 100%/133%
 $post_font = Arial, sans-serif
+$blog_font_size = 100%/140%
+$blog_font = $post_font
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""

@@ -67,7 +67,7 @@ function template_main()
 		echo '
 							<option value="', $th['id'], '">', $th['name'], '</option>';
 		if (!empty($th['skins']))
-			wedge_show_skins($th, $th['skins'], 1, '', '');
+			wedge_show_skins($th, $th['skins']);
 	}
 
 	echo '
@@ -184,7 +184,7 @@ function template_guest_selector($is_mobile = false)
 	{
 		echo '<option value="', $th['id'], '"', $settings['theme_' . $guests] == $th['id'] && $skin == 'skins' ? ' selected' : '', '>', $th['name'], '</option>';
 		if (!empty($th['skins']))
-			wedge_show_skins($th, $th['skins'], 1, $settings['theme_' . $guests], $skin);
+			wedge_show_skins($th, $th['skins'], $settings['theme_' . $guests], $skin);
 	}
 
 	echo '

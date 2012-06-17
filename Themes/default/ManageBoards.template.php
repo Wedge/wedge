@@ -540,7 +540,7 @@ function template_modify_board()
 	{
 		echo '<option value="', $th['id'], '"', $context['board']['theme'] == $th['id'] && (empty($context['board']['skin']) || $context['board']['skin'] == 'skins') ? ' selected' : '', '>', $th['name'], '</option>';
 		if (!empty($th['skins']))
-			wedge_show_skins($th, $th['skins'], 1, $context['board']['theme'], $context['board']['skin']);
+			wedge_show_skins($th, $th['skins'], $context['board']['theme'], $context['board']['skin']);
 	}
 
 	echo '

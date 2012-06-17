@@ -80,11 +80,6 @@ function template_settings()
 			'id' => 'show_gender',
 			'label' => $txt['gender_images'],
 		),
-		array(
-			'id' => 'hide_post_group',
-			'label' => $txt['hide_post_group'],
-			'description' => $txt['hide_post_group_desc'],
-		),
 	);
 
 	// !!! Must find a better way of doing this.

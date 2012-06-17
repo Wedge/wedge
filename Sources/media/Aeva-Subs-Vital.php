@@ -22,9 +22,6 @@
 	int aeva_get_num_files(string path)
 		- Gets the number of files inside the specified path
 
-	void add_linktree(string url, string name)
-		- Adds an element to the linktree
-
 	bool aeva_allowedTo(mixed permissions, bool single_true)
 		- Uses allowedTo to determine whether the user can perform a specific action against a permission name or not
 		- If permissions is an array, performs test on all permissions

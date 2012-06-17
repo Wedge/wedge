@@ -1590,7 +1590,7 @@ function wedge_get_skin_list($dir, $files = array(), &$root = array())
 /**
  * Return a list of <option> variables for use in Themes and ManageBoard templates.
  */
-function wedge_show_skins(&$th, &$style, $level, $current_theme_id, $current_skin)
+function wedge_show_skins(&$th, &$style, $current_theme_id = '', $current_skin = '', $filler = '')
 {
 	global $context;
 
@@ -1598,10 +1598,10 @@ function wedge_show_skins(&$th, &$style, $level, $current_theme_id, $current_ski
 	$current = 1;
 	foreach ($style as $sty)
 	{
-		$intro = str_repeat('&#9130;&nbsp;&nbsp;', $level - 1) . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
-		echo '<option value="', $th['id'], '_', base64_encode($sty['dir']), '"', $current_theme_id == $th['id'] && $current_skin == $sty['dir'] ? ' selected' : '', '>', $intro, $sty['name'], '</option>';
+		$intro = $filler . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
+		echo '<option value="', $th['id'], '_', base64_encode($sty['dir']), '"', empty($context['do_not_select_skin']) && $current_theme_id == $th['id'] && $current_skin == $sty['dir'] ? ' selected' : '', '>', $intro, $sty['name'], '</option>';
 		if (!empty($sty['skins']))
-			wedge_show_skins($th, $sty['skins'], $level + 1, $current_theme_id, $current_skin);
+			wedge_show_skins($th, $sty['skins'], $current_theme_id, $current_skin, $current == $last ? $filler . '&nbsp;&nbsp;&nbsp;' : $filler . '&#9130;&nbsp;&nbsp;');
 		$current++;
 	}
 }

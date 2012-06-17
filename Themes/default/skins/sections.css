@@ -234,7 +234,7 @@ img.new_posts
 	.first-post
 		background: transparent
 		.inner
-			font-size: 1.1em
+			font: $blog_font_size $blog_font
 
 // Poster and postarea + moderation area underneath
 .post_wrapper
@@ -544,8 +544,8 @@ span.hover > a
 #postmodify
 	margin: 0
 	.roundframe
-		padding-left: 8%
-		padding-right: 8%
+		padding-left: 5%
+		padding-right: 5%
 
 .qr_content
 	padding: 0 10px
