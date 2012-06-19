@@ -185,7 +185,7 @@ function template_folder()
 					echo '
 				<li class="stars">
 					<div>', implode('</div>
-					<div>', $message['member']['group_badges']), '
+					<div>', $message['member']['group_badges']), '</div>
 				</li>';
 
 				// Show avatars, images, etc.?

@@ -436,7 +436,7 @@ function template_userbox(&$message)
 			echo '
 							<li class="stars">
 								<div>', implode('</div>
-								<div>', $message['member']['group_badges']), '
+								<div>', $message['member']['group_badges']), '</div>
 							</li>';
 
 		// Show avatars, images, etc.?
@@ -769,7 +769,6 @@ function template_quick_reply()
 	add_js('
 	var oQuickReply = new QuickReply({
 		bDefaultCollapsed: ', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? 'false' : 'true', ',
-		iStart: ' . $context['start'] . ',
 		sContainerId: "qr_options",
 		sImageId: "qr_expand",
 		sJumpAnchor: "quickreply",

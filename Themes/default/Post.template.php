@@ -186,7 +186,7 @@ function template_post_attachments()
 					</dt>
 					<dd class="smalltext">
 						<div id="attachments_container">
-							<input type="file" name="attachment[]" id="attachment1">
+							<input type="file" name="attachment[]" id="attachment1" multiple>
 						</div>
 					</dd>
 					<dd class="smalltext">';
@@ -294,7 +294,7 @@ function template_postform_after()
 	// When using Go Back due to fatal_error, allow the form to be re-submitted with changes, through a non-standard DOM event.
 	if ($context['browser']['is_firefox'])
 		add_js('
-	window.addEventListener("pageshow", function () { document.forms.postmodify.message.readOnly = false; }, false);');
+	addEventListener("pageshow", function () { document.forms.postmodify.message.readOnly = false; }, false);');
 
 	// Message icons - and any missing from this theme - followed by the selector helper.
 	add_js_inline('

@@ -13,7 +13,7 @@
 
 function showimage()
 {
-	document.images.icons.src = icon_urls[document.forms.postmodify.icon.options[document.forms.postmodify.icon.selectedIndex].value];
+	$('#icons').attr('src', icon_urls[$('#icon').val()]);
 }
 
 function previewPost()

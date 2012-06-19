@@ -141,12 +141,7 @@ function QuickReply(opt)
 	{
 		var iMessageId = $(iMessage).closest('.root').attr('id').substr(3);
 
-		if (bCollapsed)
-		{
-			window.location.href = weUrl() + 'action=post;quote=' + iMessageId + ';topic=' + we_topic + '.' + opt.iStart;
-			return false;
-		}
-		else
+		if (!bCollapsed)
 		{
 			show_ajax();
 			getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + +oEditorHandle_message.bRichTextEnabled, function (XMLDoc)
@@ -157,9 +152,8 @@ function QuickReply(opt)
 
 			// Move the view to the quick reply box.
 			window.location.hash = (is_ie ? '' : '#') + opt.sJumpAnchor;
-
-			return false;
 		}
+		return bCollapsed;
 	};
 
 	// The function handling the swapping of the quick reply.

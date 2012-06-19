@@ -132,29 +132,32 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE.
-	$('<div class="wrc' + (noDrag && (noDrag === true) ? ' nodrag' : '') + '"></div>')
-		.hide()
-		.load(help_page, function () {
-			if (title)
-				$(this).find('div').first().prepend('<h6>' + title + '</h6>');
-			$(this).css({
-				overflow: noScrollbars ? 'hidden' : auto,
-				width: alternateWidth - 25,
-				height: alternateHeight ? alternateHeight - 20 : auto,
-				padding: '10px 12px 12px',
-				border: '1px solid #999',
-				marginLeft: 50
-			}).animate({ opacity: 'show', marginLeft: 0 }, 999);
-			$(helf).dragslide();
-		}).appendTo(
-			$('<div id="helf"></div>').data('src', help_page).css({
-				position: is_ie6 ? 'absolute' : 'fixed',
-				width: alternateWidth,
-				height: alternateHeight ? alternateHeight : auto,
-				bottom: 10,
-				right: 10
-			}).appendTo('body')
-		);
+	$('body').append(
+		$('<div id="helf"></div>').data('src', help_page).css({
+			position: is_ie6 ? 'absolute' : 'fixed',
+			width: alternateWidth,
+			height: alternateHeight ? alternateHeight : auto,
+			bottom: 10,
+			right: 10
+		})
+		.append(
+			$('<div class="wrc' + (noDrag && (noDrag === true) ? ' nodrag' : '') + '"></div>')
+				.hide()
+				.load(help_page, function () {
+					if (title)
+						$(this).find('div').first().prepend('<h6>' + title + '</h6>');
+					$(this).css({
+						overflow: noScrollbars ? 'hidden' : auto,
+						width: alternateWidth - 25,
+						height: alternateHeight ? alternateHeight - 20 : auto,
+						padding: '10px 12px 12px',
+						border: '1px solid #999',
+						marginLeft: 50
+					}).animate({ opacity: 'show', marginLeft: 0 }, 999);
+					$(helf).dragslide();
+				})
+		)
+	);
 
 	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
 	$(document).bind('click.h', function (e) {
@@ -259,9 +262,11 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 // Create the div for the indicator, and add the image, link to turn it off, and loading text.
 function show_ajax()
 {
-	$('<div id="ajax_in_progress"></div>')
-		.html('<a href="#" onclick="hide_ajax();" title="' + (we_cancel || '') + '"></a>' + we_loading)
-		.css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {}).appendTo('body');
+	$('body').append(
+		$('<div id="ajax_in_progress"></div>')
+			.html('<a href="#" onclick="hide_ajax();" title="' + (we_cancel || '') + '"></a>' + we_loading)
+			.css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {})
+	);
 }
 
 function hide_ajax()
