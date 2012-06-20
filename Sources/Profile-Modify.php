@@ -2107,7 +2107,7 @@ function profileLoadLanguages()
 // Load all the group info for the profile.
 function profileLoadGroups()
 {
-	global $cur_profile, $txt, $context, $user_settings;
+	global $cur_profile, $txt, $context, $user_settings, $theme;
 
 	$context['member_groups'] = array(
 		0 => array(
@@ -2116,13 +2116,15 @@ function profileLoadGroups()
 			'is_primary' => $cur_profile['id_group'] == 0,
 			'can_be_additional' => false,
 			'can_be_primary' => true,
+			'badge' => '',
+			'show_when' => 0,
 		)
 	);
 	$curGroups = explode(',', $cur_profile['additional_groups']);
 
 	// Load membergroups, but only those groups the user can assign.
 	$request = wesql::query('
-		SELECT group_name, id_group, hidden
+		SELECT group_name, id_group, hidden, stars, show_when
 		FROM {db_prefix}membergroups
 		WHERE id_group != {int:moderator_group}
 			AND min_posts = {int:min_posts}' . (allowedTo('admin_forum') ? '' : '
@@ -2141,6 +2143,14 @@ function profileLoadGroups()
 		if ($row['id_group'] == 1 && !allowedTo('admin_forum'))
 			continue;
 
+		$badge = '';
+		if (!empty($row['show_when']))
+		{
+			$stars = explode('#', $row['stars']);
+			if (!empty($stars[0]) && !empty($stars[1]))
+				$badge = str_repeat('<img src="' . str_replace('$language', $context['user']['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
+		}
+
 		$context['member_groups'][$row['id_group']] = array(
 			'id' => $row['id_group'],
 			'name' => $row['group_name'],
@@ -2148,6 +2158,8 @@ function profileLoadGroups()
 			'is_additional' => in_array($row['id_group'], $curGroups),
 			'can_be_additional' => true,
 			'can_be_primary' => $row['hidden'] != 2,
+			'badge' => $badge,
+			'show_when' => $row['show_when'],
 		);
 	}
 	wesql::free_result($request);

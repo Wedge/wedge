@@ -152,7 +152,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 						height: alternateHeight ? alternateHeight - 20 : auto,
 						padding: '10px 12px 12px',
 						border: '1px solid #999',
-						marginLeft: 50
+						marginLeft: 25
 					}).animate({ opacity: 'show', marginLeft: 0 }, 999);
 					$(helf).dragslide();
 				})

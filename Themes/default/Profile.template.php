@@ -2242,7 +2242,7 @@ function template_profile_group_manage()
 		if (!empty($member_group['can_be_primary']))
 			echo '
 							<option value="', $member_group['id'], '"', $member_group['is_primary'] ? ' selected' : '', '>
-								', $member_group['name'], '
+								', !empty($member_group['badge']) ? westr::htmlspecialchars($member_group['badge']) . '|' : '', $member_group['name'], '
 							</option>';
 
 	echo '
@@ -2257,9 +2257,21 @@ function template_profile_group_manage()
 
 	// For each membergroup show a checkbox so members can be assigned to more than one group.
 	foreach ($context['member_groups'] as $member_group)
+	{
 		if ($member_group['can_be_additional'])
+		{
+			// Only show a badge if: there's one available, it's set to be shown, and it's not set to be hidden for additional groups. (value = 2)
+			$show_badge = !empty($member_group['badge']) && !empty($member_group['show_when']) && $member_group['show_when'] != 2;
+
 			echo '
-							<label><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked' : '', '> ', $member_group['name'], '</label><br>';
+							<label style="margin: .5em 0; display: block"><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked' : '', ' style="vertical-align: top"> ';
+
+			if ($show_badge)
+				echo '<div class="inline-block">', $member_group['badge'], '<dfn>', $member_group['name'], '</dfn></div></label>';
+			else
+				echo $member_group['name'], '</label>';
+		}
+	}
 
 	echo '
 						</span>
