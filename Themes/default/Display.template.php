@@ -608,7 +608,7 @@ function template_show_likes(&$message)
 	if ($context['can_like'])
 		echo '
 								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
-								$num_likes ? $show_likes . ' ' : '', $txt[$you_like ? 'unlike' : 'like'], '</a>';
+								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=displaylike;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this, false, false, false, false, false, true);">' . $show_likes . '</a>' : '';
 	elseif ($num_likes)
 		echo '
 								<span class="like_button" title="', strip_tags($string), '">', $show_likes, '</span>';
@@ -658,12 +658,35 @@ function template_topic_poll()
 		{
 			echo '
 				<dt', $option['voted_this'] ? ' class="voted"' : '', '>', $option['option'], '</dt>
-				<dd class="bar', $bar_num++, $bar_num % 2 ? ' alt' : '', $option['voted_this'] ? ' voted' : '', '">';
+				<dd class="bar', $bar_num++, $bar_num % 2 ? ' alt' : '', '">';
 
 			if ($context['allow_poll_view'])
+			{
 				echo '
 					', $option['bar_ndt'], '
-					<span class="percentage">', $option['votes'], ' (', $option['percent'], '%)</span>';
+					<span class="percentage', $option['voted_this'] ? ' voted' : '', '">', $option['votes'], ' (', $option['percent'], '%)</span>';
+
+				// Showing votes to users? Means we must have some votes!
+				if ($context['poll']['showing_voters'] && !empty($option['votes']))
+				{
+					echo '
+					<br class="clear">';
+
+					// There are some names to show
+					if (!empty($option['voters']))
+					{
+						foreach ($option['voters'] as $k => $v)
+							echo ' <a href="<URL>?action=profile;u=', $k, '">', $v, '</a>';
+
+						// Any votes that we didn't count?
+						if (count($option['voters']) < $option['votes'])
+							echo ' ', number_context('poll_voters', $option['votes'] - count($option['voters']));
+					}
+					// No names but some votes? Gotta be guests
+					elseif (!empty($option['votes']))
+						echo number_context('poll_voters_guests_only', $option['votes']);
+				}
+			}
 
 			echo '
 				</dd>';
@@ -698,6 +721,10 @@ function template_topic_poll()
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
 			</form>';
+
+		$values = array('admin', 'creator', 'members', 'anyone');
+		echo '
+			', $txt['poll_visibility_' . $values[$context['poll']['voters_visible']]];
 	}
 
 	echo '

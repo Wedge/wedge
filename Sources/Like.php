@@ -170,4 +170,67 @@ function Like()
 		redirectexit($context['redirect_from_like']);
 }
 
+function DisplayLike()
+{
+	global $context, $txt, $memberContext;
+
+	$_GET['cid'] = !empty($_GET['cid']) ? (int) $_GET['cid'] : 0;
+	if ($_GET['cid'] == 0)
+		fatal_lang_error('no_access', false);
+
+	if (empty($_GET['type']) || !preg_match('~^[a-z0-9]{1,6}$~i', $_GET['type']))
+		fatal_lang_error('no_access', false);
+
+	$likes = array();
+
+	$request = wesql::query('
+		SELECT id_member, like_time
+		FROM {db_prefix}likes
+		WHERE id_content = {int:cid}
+			AND content_type = {string:type}
+		ORDER BY like_time DESC',
+		array(
+			'cid' => $_GET['cid'],
+			'type' => $_GET['type'],
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$likes[$row['id_member']] = $row['like_time'];
+
+	wesql::free_result($request);
+
+	$members = array_keys($likes);
+	$members_actual = loadMemberData($members);
+	if (count($members_actual) != count($members))
+	{
+		// So we couldn't find all the members. Let's get rid of the ones we're not interested in
+		$diff = array_diff($members, $members_actual);
+		foreach ($diff as $diff_item)
+			unset($likes[$diff_item]);
+	}
+
+	loadTemplate('Help');
+	loadLanguage('Help');
+	wetem::hide();
+	wetem::load('popup');
+
+	if (empty($likes))
+	{
+		$context['help_text'] = $txt['nobody_likes_this'];
+		return;
+	}
+
+	$context['help_text'] = '<h6>' . number_context('likes_header', count($likes)) . '</h6>
+	<table id="likes" class="w100 cs3">';
+	foreach ($likes as $member => $like_time)
+	{
+		loadMemberContext($member);
+		$context['help_text'] .= '
+		<tr><td class="ava">' . $memberContext[$member]['avatar']['image'] . '</td><td class="link">' . $memberContext[$member]['link'] . '</td><td class="right">' . timeformat($like_time) . '</td></tr>';
+	}
+
+	$context['help_text'] .= '
+	</table>';
+}
+
 ?>

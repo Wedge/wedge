@@ -1170,11 +1170,18 @@ dl.stats
 	height: 20px
 	margin-right: 8px
 	font-size: .8em
+	.fadein
+		opacity: .6
+		transition: opacity .3s ease
+		:hover
+			opacity: 1
+			transition: opacity .3s ease
 
 .like_button extends ul.actions a
 	background-position: 2px -270px
 	padding: 0 0 0 22px
 	font-size: 1.2em
+	display: inline-block
 
 .unlike_button extends .like_button
 	background-position: 2px -300px

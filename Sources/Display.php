@@ -491,7 +491,7 @@ function Display()
 		// Get the question and if it's locked.
 		$request = wesql::query('
 			SELECT
-				p.question, p.voting_locked, p.hide_results, p.expire_time, p.max_votes, p.change_vote,
+				p.question, p.voting_locked, p.hide_results, p.voters_visible, p.expire_time, p.max_votes, p.change_vote,
 				p.guest_vote, p.id_member, IFNULL(mem.real_name, p.poster_name) AS poster_name, p.num_guest_voters, p.reset_poll
 			FROM {db_prefix}polls AS p
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = p.id_member)
@@ -539,10 +539,32 @@ function Display()
 		{
 			censorText($row['label']);
 			$pollOptions[$row['id_choice']] = $row;
+			$pollOptions[$row['id_choice']]['voters'] = array();
 			$realtotal += $row['votes'];
 			$pollinfo['has_voted'] |= $row['voted_this'] != -1;
 		}
 		wesql::free_result($request);
+
+		// Can we actually see who the voters were? (Assuming there were some voters)
+		// voters_visible -> 0 = admin only, 1 = admin + creator only, 2 = members, 3 = anyone
+		if ($realtotal > 0 && ($user_info['is_admin'] || ($pollinfo['voters_visible'] == 1 && $context['user']['started']) || ($pollinfo['voters_visible'] == 2 && !$user_info['is_guest']) || ($pollinfo['voters_visible'] == 3)))
+		{
+			$pollinfo['showing_voters'] = true;
+			$request = wesql::query('
+				SELECT lp.id_member, lp.id_choice, mem.real_name
+				FROM {db_prefix}log_polls AS lp
+					INNER JOIN {db_prefix}members AS mem ON (lp.id_member = mem.id_member)
+				WHERE lp.id_poll = {int:poll}
+				ORDER BY lp.id_choice, mem.real_name',
+				array(
+					'poll' => $topicinfo['id_poll'],
+				)
+			);
+			while ($row = wesql::fetch_assoc($request))
+				$pollOptions[$row['id_choice']]['voters'][$row['id_member']] = $row['real_name'];
+
+			wesql::free_result($request);
+		}
 
 		// If this is a guest we need to do our best to work out if they have voted, and what they voted for.
 		if ($user_info['is_guest'] && $pollinfo['guest_vote'] && allowedTo('poll_vote'))
@@ -589,6 +611,8 @@ function Display()
 			'image' => 'normal_' . (empty($pollinfo['voting_locked']) ? 'poll' : 'locked_poll'),
 			'question' => parse_bbc($pollinfo['question']),
 			'total_votes' => $pollinfo['total'],
+			'voters_visible' => $pollinfo['voters_visible'],
+			'showing_voters' => !empty($pollinfo['showing_voters']),
 			'change_vote' => !empty($pollinfo['change_vote']),
 			'is_locked' => !empty($pollinfo['voting_locked']),
 			'options' => array(),
@@ -659,9 +683,10 @@ function Display()
 			$context['poll']['options'][$i] = array(
 				'percent' => $bar,
 				'votes' => $option['votes'],
+				'voters' => $option['voters'],
 				'voted_this' => $option['voted_this'] != -1,
 				'bar' => '<span class="nowrap"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'right' : 'left') . '.gif"><img src="' . $theme['images_url'] . '/poll_middle.gif" width="' . $barWide . '" height="12"><img src="' . $theme['images_url'] . '/poll_' . ($context['right_to_left'] ? 'left' : 'right') . '.gif"></span>',
-				'bar_ndt' => $bar > 0 ? '<div class="bar" style="width: ' . ($bar * 3) . 'px"></div>' : '',
+				'bar_ndt' => $bar > 0 ? '<div class="bar' . ($option['voted_this'] != -1 ? ' voted' : '') . '" style="width: ' . ($bar * 3) . 'px"></div>' : '',
 				'bar_width' => $barWide,
 				'option' => parse_bbc($option['label']),
 				'vote_button' => '<input type="' . ($pollinfo['max_votes'] > 1 ? 'checkbox' : 'radio') . '" name="options[]" value="' . $i . '">'

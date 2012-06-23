@@ -90,12 +90,12 @@ String.prototype.wereplace = function (oReplacements)
 
 
 // Open a new popup window.
-function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asWindow)
+function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asWindow, noTitle)
 {
 	var
 		help_page = from && from.href ? from.href : from,
 		vpw = $(window).width() * .8, vph = $(window).height() * .8, nextSib,
-		helf = '#helf', $helf = $(helf), previousTarget = $helf.data('src'), auto = 'auto', title = $(from).text();
+		helf = '#helf', $helf = $(helf), previousTarget = $helf.data('src'), auto = 'auto', title = noTitle ? false : $(from).text();
 
 	alternateWidth = alternateWidth ? alternateWidth : 480;
 	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
@@ -114,7 +114,7 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 	}
 
 	// Try and get the title for the current link.
-	if (!title)
+	if (!title && !noTitle)
 	{
 		nextSib = from.nextSibling;
 		// Newlines are seen as stand-alone text nodes, so skip these...

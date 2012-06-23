@@ -353,7 +353,7 @@ function EditPoll()
 	// Check if a poll currently exists on this topic, and get the id, question and starter.
 	$request = wesql::query('
 		SELECT
-			t.id_member_started, p.id_poll, p.question, p.hide_results, p.expire_time, p.max_votes, p.change_vote,
+			t.id_member_started, p.id_poll, p.question, p.hide_results, p.voters_visible, p.expire_time, p.max_votes, p.change_vote,
 			m.subject, p.guest_vote, p.id_member AS poll_starter
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
@@ -399,6 +399,7 @@ function EditPoll()
 			'id' => $pollinfo['id_poll'],
 			'question' => $question,
 			'hide_results' => empty($_POST['poll_hide']) ? 0 : $_POST['poll_hide'],
+			'voters_visible' => empty($_POST['poll_voters_visible']) ? 0 : $_POST['poll_voters_visible'],
 			'change_vote' => isset($_POST['poll_change_vote']),
 			'guest_vote' => isset($_POST['poll_guest_vote']),
 			'guest_vote_allowed' => in_array(-1, $groupsAllowedVote['allowed']),
@@ -524,6 +525,7 @@ function EditPoll()
 			'id' => $pollinfo['id_poll'],
 			'question' => $pollinfo['question'],
 			'hide_results' => $pollinfo['hide_results'],
+			'voters_visible' => $pollinfo['voters_visible'],
 			'max_votes' => $pollinfo['max_votes'],
 			'change_vote' => !empty($pollinfo['change_vote']),
 			'guest_vote' => !empty($pollinfo['guest_vote']),
@@ -579,6 +581,7 @@ function EditPoll()
 				'id' => 0,
 				'question' => '',
 				'hide_results' => 0,
+				'voters_visible' => 0,
 				'max_votes' => 1,
 				'change_vote' => 0,
 				'guest_vote' => 0,
@@ -703,6 +706,10 @@ function EditPoll2()
 	$_POST['poll_change_vote'] = isset($_POST['poll_change_vote']) ? 1 : 0;
 	$_POST['poll_guest_vote'] = isset($_POST['poll_guest_vote']) ? 1 : 0;
 
+	$_POST['poll_voters_visible'] = (int) $_POST['poll_voters_visible'];
+	if ($_POST['poll_votes_visible'] < 0 || $_POST['poll_votes_visible'] > 3)
+		$_POST['poll_votes_visible'] = 0; // If it's not a safe value, make it safe!
+
 	// Make sure guests are actually allowed to vote generally.
 	if ($_POST['poll_guest_vote'])
 	{
@@ -733,6 +740,7 @@ function EditPoll2()
 	// If we're editing, let's commit the changes.
 	if ($isEdit)
 	{
+		// Remember, we do not know or care about voters_visible here. It cannot be changed by way of edits.
 		wesql::query('
 			UPDATE {db_prefix}polls
 			SET question = {string:question}, change_vote = {int:change_vote},' . (allowedTo('moderate_board') ? '
@@ -759,11 +767,11 @@ function EditPoll2()
 		wesql::insert('',
 			'{db_prefix}polls',
 			array(
-				'question' => 'string-255', 'hide_results' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
+				'question' => 'string-255', 'hide_results' => 'int', 'voters_visible' => 'int', 'max_votes' => 'int', 'expire_time' => 'int', 'id_member' => 'int',
 				'poster_name' => 'string-255', 'change_vote' => 'int', 'guest_vote' => 'int'
 			),
 			array(
-				$_POST['question'], $_POST['poll_hide'], $_POST['poll_max_votes'], $_POST['poll_expire'], $user_info['id'],
+				$_POST['question'], $_POST['poll_hide'], $_POST['poll_voters_visible'], $_POST['poll_max_votes'], $_POST['poll_expire'], $user_info['id'],
 				$user_info['username'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
 			),
 			array('id_poll')
