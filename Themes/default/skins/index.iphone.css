@@ -73,3 +73,6 @@ table.thought_list td:hover
 // no frigging sense. If set to 'relative', the menu refuses to show up.
 h4 .mime
 	position: absolute
+
+#ajax_in_progress, #help_pop
+	position: absolute

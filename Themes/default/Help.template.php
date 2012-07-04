@@ -15,15 +15,17 @@ function template_popup()
 {
 	global $context, $txt;
 
+	$title = isset($_GET['title']) ? $_GET['title'] : '';
+
 	// Since this is a popup of its own we need to start the html, unless we're coming from jQuery.
 	if ($context['is_ajax'])
 	{
-		echo '<div class="windowbg2 wrc smalltext nodrag">
-	', $context['help_text'], '
-</div>
-<div class="smalltext center" style="padding: 8px 0 0">
-	<a href="#" onclick="$(\'#helf\').remove(); return false;">', $txt['close_window'], '</a>
-</div>';
+		echo '
+	<header>', $title ? $title : $txt['help'], '</header>
+	<section class="nodrag">
+		', $context['help_text'], '
+	</section>
+	<footer><a href="#" onclick="$(\'#help_pop\').remove(); return false;">', $txt['close_window'], '</a></footer>';
 	}
 	else
 	{
@@ -35,13 +37,12 @@ function template_popup()
 	<title>', $context['page_title'], '</title>',
 	theme_base_css(), '
 </head>
-<body class="windowbg" id="help_page">
-	<div class="windowbg2 wrc smalltext">
+<body class="windowbg" id="helf">
+	<header>', $title ? $title : $txt['help'], '</header>
+	<section>
 		', $context['help_text'], '
-	</div>
-	<div class="smalltext center" style="padding: 8px 0 0">
-		<a href="#" onclick="window.close(); return false;">', $txt['close_window'], '</a>
-	</div>
+	</section>
+	<footer><a href="#" onclick="window.close(); return false;">', $txt['close_window'], '</a></footer>
 </body>
 </html>';
 	}

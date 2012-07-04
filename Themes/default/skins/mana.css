@@ -469,8 +469,18 @@ ul.moderation_notes
 	td div.marginleft
 		margin: 0 0 0 1ex
 
-.monospace
+#fileviewer
 	font: 9pt/1.2em $mono_font
+	box-sizing: border-box
+	margin: -16px
+	padding: 4px
+	.tar1
+		font-weight: bold
+		border: 1px solid black
+		border-right-width: 0
+	.tar2
+		border: 1px solid black
+		border-left-width: 0
 
 /* Miscellaneous.
 ------------------------------------------------- */

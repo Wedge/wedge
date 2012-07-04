@@ -220,8 +220,11 @@ function DisplayLike()
 		return;
 	}
 
-	$context['help_text'] = '<h6>' . number_context('likes_header', count($likes)) . '</h6>
+	$_GET['title'] = number_context('likes_header', count($likes));
+
+	$context['help_text'] = '
 	<table id="likes" class="w100 cs3">';
+
 	foreach ($likes as $member => $like_time)
 	{
 		loadMemberContext($member);

@@ -154,7 +154,7 @@ function template_view_package()
 					echo '
 							<tr class="windowbg', $alternate2 ? '' : '2', '">
 								<td style="width: 0"></td>
-								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400, false);"><img src="', $theme['default_images_url'], '/admin/package_ops.gif"></a></td>
+								<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 680, 400);"><img src="', $theme['default_images_url'], '/admin/package_ops.gif"></a></td>
 								<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 								<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
 								<td class="w50 smalltext">', $operation['action'], '</td>

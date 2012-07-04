@@ -56,7 +56,7 @@ function sendXMLDocument(sUrl, sContent, funcCallback, undefined)
 	return $.ajax($.extend({ url: sUrl, data: sContent, type: 'POST', context: this }, funcCallback !== undefined ? { success: funcCallback } : {})) || true;
 }
 
-// Add a jQuery easing type for animations.
+// Replace the default jQuery easing type for animations.
 $.easing.swing2 = $.easing.swing;
 $.easing.swing = function (x, t, b, c, d)
 {
@@ -89,34 +89,20 @@ String.prototype.wereplace = function (oReplacements)
 };
 
 
-// Open a new popup window.
-function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asWindow, noTitle)
+// Open a new popup div (or a window, for large images for instance.)
+function reqWin(from, desiredWidth, desiredHeight, asWindow)
 {
 	var
 		help_page = from && from.href ? from.href : from,
-		vpw = $(window).width() * .8, vph = $(window).height() * .8, nextSib,
-		helf = '#helf', $helf = $(helf), previousTarget = $helf.data('src'), auto = 'auto', title = noTitle ? false : $(from).text();
-
-	alternateWidth = alternateWidth ? alternateWidth : 480;
-	if ((vpw < alternateWidth) || (alternateHeight && vph < alternateHeight))
-	{
-		noScrollbars = 0;
-		alternateWidth = Math.min(alternateWidth, vpw);
-		alternateHeight = Math.min(alternateHeight, vph);
-	}
-	else
-		noScrollbars = noScrollbars && (noScrollbars === true);
-
-	if (asWindow)
-	{
-		window.open(help_page, 'requested_popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=' + (noScrollbars ? 'no' : 'yes') + ',width=' + (alternateWidth ? alternateWidth : 480) + ',height=' + (alternateHeight ? alternateHeight : 220) + ',resizable=no');
-		return false;
-	}
+		title = $(from).text(),
+		viewportWidth = $(window).width(),
+		viewportHeight = $(window).height(),
+		previousTarget = $('#helf').data('src');
 
 	// Try and get the title for the current link.
-	if (!title && !noTitle)
+	if (!title)
 	{
-		nextSib = from.nextSibling;
+		var nextSib = from.nextSibling;
 		// Newlines are seen as stand-alone text nodes, so skip these...
 		while (nextSib && nextSib.nodeType == 3 && $.trim($(nextSib).text()) === '')
 			nextSib = nextSib.nextSibling;
@@ -124,49 +110,74 @@ function reqWin(from, alternateWidth, alternateHeight, noScrollbars, noDrag, asW
 		title = $.trim($(nextSib).clone().find('dfn').remove().end().text());
 	}
 
+	// Popup windows (e.g. for attachment images) always have desired dimensions set.
+	if (asWindow)
+	{
+		window.open(help_page + ';title=' + title.php_urlencode(), 'help_pop', 'toolbar=no,titlebar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=' + desiredWidth + ',height=' + desiredHeight);
+		return false;
+	}
+
 	// If the reqWin event was created on the fly, it'll bubble up to the body and cancel itself... Avoid that.
 	$.event.fix(window.event || {}).stopPropagation();
 
 	// Clicking the help icon twice should close the popup and remove the global click event.
-	if ($('body').unbind('click.h') && $helf.remove().length && previousTarget == help_page)
+	if ($('body').unbind('click.h') && $('#help_pop').remove().length && previousTarget == help_page)
 		return false;
 
-	// We create the popup inside a dummy div to fix positioning in freakin' IE.
+	desiredWidth = Math.min(desiredWidth || 480, viewportWidth - 20);
+	desiredHeight = Math.min(desiredHeight || 0, viewportHeight - 20);
+
+	// We create the popup inside a dummy div to fix positioning in freakin' IE6.
 	$('body').append(
-		$('<div id="helf"></div>').data('src', help_page).css({
-			position: is_ie6 ? 'absolute' : 'fixed',
-			width: alternateWidth,
-			height: alternateHeight ? alternateHeight : auto,
-			bottom: 10,
-			right: 10
+		$('<div></div>')
+		.attr('id', 'help_pop')
+		.css({
+			width: viewportWidth,
+			height: viewportHeight
 		})
 		.append(
-			$('<div class="wrc' + (noDrag && (noDrag === true) ? ' nodrag' : '') + '"></div>')
-				.hide()
-				.load(help_page, function () {
-					if (title)
-						$(this).find('div').first().prepend('<h6>' + title + '</h6>');
-					$(this).css({
-						overflow: noScrollbars ? 'hidden' : auto,
-						width: alternateWidth - 25,
-						height: alternateHeight ? alternateHeight - 20 : auto,
-						padding: '10px 12px 12px',
-						border: '1px solid #999',
-						marginLeft: 25
-					}).animate({ opacity: 'show', marginLeft: 0 }, 999);
-					$(helf).dragslide();
-				})
+			$('<div></div>')
+			.attr('id', 'helf')
+			.data('src', help_page)
+			.load(help_page + ';title=' + title.php_urlencode(), function () {
+				var $section = $('section', this);
+
+				// Ensure that the popup never goes past the viewport boundaries.
+				$section.css({
+					width: desiredWidth,
+					height: desiredHeight || 'auto',
+					maxWidth: viewportWidth - 20 - $(this).width() + $section.width(),
+					maxHeight: viewportHeight - 20 - $(this).height() + $section.height()
+				});
+
+				$(this)
+					.hide()
+					.css({
+						visibility: 'visible',
+						left: (viewportWidth - $(this).width()) / 2,
+						top: (viewportHeight - $(this).height()) / 2 + (is_ie6 || is_iphone ? $(window).scrollTop() : 0) - 20
+					})
+					// !! Can also use specialEasing for diversity...
+					.animate(
+						{
+							opacity: 'show',
+							top: '+=20'
+						},
+						300
+					)
+					.dragslide();
+			})
 		)
 	);
 
 	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
 	$(document).bind('click.h', function (e) {
 		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
-		if (!$(e.srcElement).closest(helf).length)
-		{
-			$(helf).remove();
-			$(this).unbind(e);
-		}
+		if (!$(e.target).closest('#helf').length)
+			$('#helf').fadeOut(300, function () {
+				$('#help_pop').remove();
+				$(this).unbind(e);
+			});
 	});
 
 	// Return false so the click won't follow the link ;)
@@ -206,6 +217,7 @@ function invertAll(oInvertCheckbox, oForm, sMask)
 // Bind all delayed inline events to their respective DOM elements.
 function bindEvents(items)
 {
+	// If $items isn't specified, do it for all elements with a delayed event.
 	$(items || '*[data-eve]').each(function ()
 	{
 		var that = $(this);
@@ -265,7 +277,7 @@ function show_ajax()
 	$('body').append(
 		$('<div id="ajax_in_progress"></div>')
 			.html('<a href="#" onclick="hide_ajax();" title="' + (we_cancel || '') + '"></a>' + we_loading)
-			.css(is_ie6 ? { position: 'absolute', top: $(document).scrollTop() } : {})
+			.css(is_ie6 ? { position: 'absolute', top: $(window).scrollTop() } : {})
 	);
 }
 
@@ -341,7 +353,7 @@ function weSelectText(oCurElement)
 
 (function ()
 {
-	var origMouse, currentPos, is_fixed, currentDrag = 0;
+	var origMouse, currentPos, currentDrag = 0;
 
 	// You may set an area as non-draggable by adding the nodrag class to it.
 	// This way, you can drag the element, but still access UI elements within it.
@@ -351,13 +363,9 @@ function weSelectText(oCurElement)
 			.mousemove(function (e) {
 				if (currentDrag)
 				{
-					// If it's in a fixed position, it's a bottom-right aligned popup.
-					$(currentDrag).css(is_fixed ? {
-						right: currentPos.X - e.pageX + origMouse.X,
-						bottom: currentPos.Y - e.pageY + origMouse.Y
-					} : {
-						left: currentPos.X + e.pageX - origMouse.X,
-						top: currentPos.Y + e.pageY - origMouse.Y
+					$(currentDrag).css({
+						left: currentPos.x + e.pageX - origMouse.x,
+						top: currentPos.y + e.pageY - origMouse.y
 					});
 					return false;
 				}
@@ -373,13 +381,11 @@ function weSelectText(oCurElement)
 			.mousedown(function (e) {
 				if ($(e.target).closest('.nodrag').length)
 					return true;
-				is_fixed = this.style.position == 'fixed';
 
-				// Position it to absolute, except if it's already fixed
-				$(this).css({ position: is_fixed ? 'fixed' : 'absolute', zIndex: 999 });
+				$(this).css('zIndex', 999);
 
-				origMouse = { X: e.pageX, Y: e.pageY };
-				currentPos = { X: parseInt(is_fixed ? this.style.right : this.offsetLeft, 10), Y: parseInt(is_fixed ? this.style.bottom : this.offsetTop, 10) };
+				origMouse = { x: e.pageX, y: e.pageY };
+				currentPos = { x: parseInt(this.offsetLeft, 10), y: parseInt(this.offsetTop, 10) };
 				currentDrag = this;
 
 				return false;
@@ -398,7 +404,7 @@ function weSelectText(oCurElement)
 
 (function ()
 {
-	var menu_baseId = 0, menu_delay = [], hove = 'hove',
+	var menu_baseId = 0, menu_delay = [],
 
 	// Entering a menu entry?
 	menu_show_me = function ()
@@ -414,8 +420,8 @@ function weSelectText(oCurElement)
 			style[d && d == 'rtl' ? 'marginRight' : 'marginLeft'] = (is_top ? $('span', this).width() || 0 : w - 5) + 'px';
 		}
 
-		if (!is_top || !$('h4', this).first().addClass(hove).length)
-			$(this).addClass(hove).parentsUntil('.menu>li').filter('li').addClass(hove);
+		if (!is_top || !$('h4', this).first().addClass('hove').length)
+			$(this).addClass('hove').parentsUntil('.menu>li').filter('li').addClass('hove');
 
 		if (!is_visible)
 			$('ul', this).first()
@@ -432,7 +438,7 @@ function weSelectText(oCurElement)
 	{
 		// The deepest level should hide the hover class immediately.
 		if (!$(this).children('ul').length)
-			$(this).children().andSelf().removeClass(hove);
+			$(this).children().andSelf().removeClass('hove');
 
 		// Are we leaving the menu entirely, and thus triggering the time
 		// threshold, or are we just switching to another menu item?
@@ -445,7 +451,7 @@ function weSelectText(oCurElement)
 	// Hide all children menus.
 	menu_hide_children = function (id)
 	{
-		$('#' + id).children().andSelf().removeClass(hove).find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
+		$('#' + id).children().andSelf().removeClass('hove').find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
 	};
 
 	// Make sure to only call this on one element...
@@ -461,7 +467,7 @@ function weSelectText(oCurElement)
 				// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
 				.filter(':has(>a,>h4>a)')
 				.click(function () {
-					$('.' + hove).removeClass(hove);
+					$('.hove').removeClass('hove');
 					$elem.find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
 				});
 		});

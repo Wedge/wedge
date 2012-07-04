@@ -608,7 +608,7 @@ function template_show_likes(&$message)
 	if ($context['can_like'])
 		echo '
 								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
-								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=displaylike;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this, false, false, false, false, false, true);">' . $show_likes . '</a>' : '';
+								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=displaylike;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
 	elseif ($num_likes)
 		echo '
 								<span class="like_button" title="', strip_tags($string), '">', $show_likes, '</span>';
