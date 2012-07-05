@@ -2242,7 +2242,7 @@ function template_profile_group_manage()
 		if (!empty($member_group['can_be_primary']))
 			echo '
 							<option value="', $member_group['id'], '"', $member_group['is_primary'] ? ' selected' : '', '>
-								', !empty($member_group['badge']) ? westr::htmlspecialchars($member_group['badge']) . '|' : '', $member_group['name'], '
+								', $member_group['name'], !empty($member_group['badge']) ? '|' . westr::htmlspecialchars($member_group['badge']) : '', '
 							</option>';
 
 	echo '
@@ -2267,7 +2267,7 @@ function template_profile_group_manage()
 							<label style="margin: .5em 0; display: block"><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked' : '', ' style="vertical-align: top"> ';
 
 			if ($show_badge)
-				echo '<div class="inline-block">', $member_group['badge'], '<dfn>', $member_group['name'], '</dfn></div></label>';
+				echo '<div class="inline-block">', $member_group['name'], '<dfn>', $member_group['badge'], '</dfn></div></label>';
 			else
 				echo $member_group['name'], '</label>';
 		}

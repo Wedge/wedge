@@ -67,7 +67,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	if (empty($files))
 		return;
 
-	if ($is_direct_url)
+	if ($is_direct_url || strpos($files[0], '://') !== false)
 	{
 		if (!empty($footer_coding))
 		{
