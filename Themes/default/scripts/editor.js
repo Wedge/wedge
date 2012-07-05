@@ -301,7 +301,7 @@ function weEditor(opt)
 
 			caretPos.text = caretPos.text.match(/ $/) ? text1 + caretPos.text + text2 + ' ' : text1 + caretPos.text + text2;
 
-			if (temp_length == 0)
+			if (!temp_length)
 			{
 				caretPos.moveStart('character', -text2.length);
 				caretPos.moveEnd('character', -text2.length);
@@ -330,7 +330,7 @@ function weEditor(opt)
 					goForward1 = t1 ? t1.length : 0,
 					goForward2 = t2 ? t2.length : 0;
 
-				if (selection.length == 0)
+				if (!selection.length)
 					oTextHandle.setSelectionRange(newCursorPos + text1.length + goForward1, newCursorPos + text1.length + goForward1);
 				else
 					oTextHandle.setSelectionRange(newCursorPos, newCursorPos + text1.length + selection.length + text2.length + goForward1 + goForward2);
@@ -439,7 +439,7 @@ function weEditor(opt)
 				if (sel == null || (sel.text.charAt(0) != ' ' && sel.text.charAt(0) != ''))
 					smileytext = ' ' + smileytext;
 			}
-			else if ('selectionStart' in handle && handle.selectionStart > 0 && handle.value.charAt(handle.selectionStart - 1) != ' ')
+			else if (handle.selectionStart > 0 && handle.value.charAt(handle.selectionStart - 1) != ' ')
 				smileytext = ' ' + smileytext;
 
 			this.insertText(smileytext);
@@ -584,14 +584,14 @@ function weEditor(opt)
 	{
 		var sSelection = getSelect(true, true);
 
-		if (sSelection.length == 0)
+		if (!sSelection.length)
 			sSelection = '';
 
 		// Are we overwriting?
 		if (sRightTag == '')
 			this.insertText(sLeftTag);
 		// If something was selected, replace and position cursor at the end of it.
-		else if (sSelection.length > 0)
+		else if (sSelection.length)
 			this.insertText(sLeftTag + sSelection + sRightTag, false, false, 0);
 		// Wrap the tags around the cursor position.
 		else
@@ -875,7 +875,7 @@ function weEditor(opt)
 		if (is_ie && oSelection.createRange)
 			return oSelection.createRange();
 
-		return oSelection.rangeCount == 0 ? null : oSelection.getRangeAt(0);
+		return !oSelection.rangeCount ? null : oSelection.getRangeAt(0);
 	},
 
 	// Get the current element.

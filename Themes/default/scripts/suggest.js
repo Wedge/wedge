@@ -85,13 +85,13 @@ weAutoSuggest.prototype.handleKey = function (oEvent)
 	// Tab.
 	if (iKeyPress == 9)
 	{
-		if (this.aDisplayData.length > 0)
+		if (this.aDisplayData.length)
 			this.oSelectedDiv != null ? this.itemClicked(this.oSelectedDiv) : this.handleSubmit();
 	}
 	// Enter. (Returns false to prevent submitting the form.)
 	else if (iKeyPress == 13)
 	{
-		if (this.aDisplayData.length > 0 && this.oSelectedDiv != null)
+		if (this.aDisplayData.length && this.oSelectedDiv != null)
 			this.itemClicked(this.oSelectedDiv);
 		return false;
 	}
@@ -157,10 +157,8 @@ weAutoSuggest.prototype.registerCallback = function (sCallbackType, sCallback)
 // User hit submit?
 weAutoSuggest.prototype.handleSubmit = function()
 {
-	var bReturnValue = true, entryId = entryName = null, i = 0;
-
 	// Do we have something that matches the current text?
-	for (; i < this.aCache.length; i++)
+	for (var bReturnValue = true, entryId = entryName = null, i = 0; i < this.aCache.length; i++)
 	{
 		var sLastSearch = this.sLastSearch.toLowerCase(), entry = this.aCache[i];
 
@@ -457,7 +455,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 				aNewCache[j++] = this.aCache[k];
 
 		this.aCache = [];
-		if (aNewCache.length != 0)
+		if (aNewCache.length)
 		{
 			// Repopulate.
 			this.populateDiv(this.aCache = aNewCache);

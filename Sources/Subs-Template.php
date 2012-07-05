@@ -538,7 +538,7 @@ function ob_sessrewrite($buffer)
 		$buffer = preg_replace_callback('~<inden@zi=([^=>]+)=(-?\d+)>(.*?)</inden@zi=\\1>~s', 'wedge_indenazi', $buffer);
 
 	// Return the changed buffer, and make a final optimization.
-	return str_replace("\n// ]]></script>\n<script><!-- // --><![CDATA[", '', $buffer);
+	return preg_replace("~\n// ]]></script>\n*<script><!-- // --><!\[CDATA\[~", '', $buffer);
 }
 
 // Move inline events to the end

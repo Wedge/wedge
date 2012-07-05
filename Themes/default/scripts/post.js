@@ -159,7 +159,7 @@ function pollOptions()
 var pollOptionNum = 0, pollTabIndex;
 function addPollOption()
 {
-	if (pollOptionNum == 0)
+	if (!pollOptionNum)
 		$.each(postmod.elements, function () {
 			if (this.id.substr(0, 8) == 'options-')
 			{

@@ -295,7 +295,7 @@ function QuickModify(opt)
 				{
 					// If you could instead tell us what's wrong...?
 					if (XMLDoc)
-						$('#error_box').html(XMLDoc.childNodes && XMLDoc.childNodes.length > 0 && XMLDoc.firstChild.nodeName == 'parsererror' ? XMLDoc.firstChild.textContent : XMLDoc);
+						$('#error_box').html(XMLDoc.childNodes && XMLDoc.childNodes.length && XMLDoc.firstChild.nodeName == 'parsererror' ? XMLDoc.firstChild.textContent : XMLDoc);
 					else
 						modifyCancel();
 					return;

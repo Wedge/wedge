@@ -2,7 +2,7 @@
  * Wedge
  *
  * Zoomedia is the lightbox component for all media Wedge.
- * Developed by Nao.
+ * Developed by René-Gilles Deberdt (Nao) for Wedge.
  * Uses portions by Steve Smith (http://orderedlist.com/)
  *
  * @package wedge
@@ -14,8 +14,8 @@
 
 (function ($) {
 
-	$.fn.zoomedia = function (options, onComplete) {
-
+	$.fn.zoomedia = function (options, onComplete)
+	{
 		var
 			double_clicked, img, $img, $fullsize, $anchor,
 			img_width, img_height, show_loading,
@@ -33,27 +33,9 @@
 
 			zooming = active = false,
 			original_size = {},
-			win = $(window);
+			win = $(window),
 
-		$(this).each(function () {
-			$(this).click(show).dblclick(function (e) {
-				if (zooming)
-					double_clicked = true;
-				return false;
-			});
-			$('<div>').appendTo(this).css({
-				position: 'absolute',
-				left: 0,
-				top: 0,
-				width: $(this).width(),
-				height: $(this).height(),
-				zIndex: 2
-			}).mousedown(false);
-		});
-
-		return this;
-
-		function show(e)
+		show = function (e)
 		{
 			if (zooming)
 				return false;
@@ -80,7 +62,7 @@
 			// Use namespaces on any events not inside our zoom box.
 			$(document).bind({
 				'click.zoom': function (e) {
-					if (active && e.target.id != 'zoom' && !$(e.target).parents(zoom + ':visible').length)
+					if (active && e.target.id != 'zoom' && !$(e.target).closest(zoom + ':visible').length)
 						hide();
 				},
 				'keyup.zoom': function (e) {
@@ -106,8 +88,8 @@
 			loading(original_size.x + original_size.w / 2, original_size.y + original_size.h / 2);
 
 			// This gets executed once the item to zoom is ready to show.
-			var whenReady = function () {
-
+			var whenReady = function ()
+			{
 				img = this;
 				$img = $(img);
 				// Width set by options, or natural image width, or div width if it's HTML.
@@ -190,7 +172,8 @@
 					},
 					duration,
 					null,
-					function () {
+					function ()
+					{
 						if (options.noScale)
 							$zoom_content.html(img);
 
@@ -208,20 +191,21 @@
 						}
 						zooming = false;
 						active = true;
-					})
+					}
+				)
 				.dragslide();
 			};
 
-			var $frame = $anchor.next('.zoom-html'), fw = $frame.width(), fh = $frame.height();
-			if (!fw)
+			var $frame = $anchor.next('.zoom-html');
+			if (!$frame.width())
 				$('<img>').bind('load.zoom', whenReady).attr('src', url);
 			else
 				whenReady.call($frame.clone().addClass('nodrag').appendTo($zoom_content).show()[0]);
 
 			return false;
-		}
+		},
 
-		function double_click(e)
+		double_click = function (e)
 		{
 			double_clicked = false;
 			$fullsize = $zoom_desc.find('.fullsize').attr('href'); // $zoom_desc or $anchor.next('.zoom-overlay')
@@ -229,7 +213,8 @@
 			{
 				var pos = $img.offset();
 				loading(pos.left + $img.width() / 2, pos.top + $img.height() / 2);
-				$img.unbind('load.zoom').load(function () {
+				$img.unbind('load.zoom').load(function ()
+				{
 					var
 						wt = img.naturalWidth,
 						ht = img.naturalHeight,
@@ -262,13 +247,14 @@
 			else
 				$zoom_close.show();
 			return false;
-		}
+		},
 
 		// Add the 'Loading' label at the center of our current object. If the item is already cached,
 		// it'll hide it immediately, so we only show it if it's actually loading something.
-		function loading(x, y)
+		loading = function (x, y)
 		{
-			show_loading = setTimeout(function () {
+			show_loading = setTimeout(function ()
+			{
 				var loa = $('<div class="zoom-loading">' + (lang.loading || '') + '</div>').click(function () {
 					zooming = false;
 					$('img').unbind('load.zoom');
@@ -280,16 +266,16 @@
 					top: y - loa.outerHeight() / 2
 				}).fadeIn(300);
 			}, 200);
-		}
+		},
 
-		function done_loading()
+		done_loading = function ()
 		{
 			$zoom_close.hide();
 			clearTimeout(show_loading);
 			$('.zoom-loading').hide();
-		}
+		},
 
-		function hide()
+		hide = function ()
 		{
 			if (zooming || !active)
 				return false;
@@ -321,7 +307,25 @@
 				}
 			);
 			return false;
-		}
+		};
+
+		$(this).each(function () {
+			$(this).click(show).dblclick(function (e) {
+				if (zooming)
+					double_clicked = true;
+				return false;
+			});
+			$('<div>').appendTo(this).css({
+				position: 'absolute',
+				left: 0,
+				top: 0,
+				width: $(this).width(),
+				height: $(this).height(),
+				zIndex: 2
+			}).mousedown(false);
+		});
+
+		return this;
 	};
 
 })(jQuery);

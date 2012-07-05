@@ -220,7 +220,7 @@ function nextWord(ignoreall)
 	{
 		$('#spellview').html(htmlspecialchars(mispstr).replace(/_\|_/g, '<br>'));
 
-		while (spellingForm.suggestions.options.length > 0)
+		while (spellingForm.suggestions.options.length)
 			spellingForm.suggestions.options[0] = null;
 
 		alert(txt.done);
@@ -249,7 +249,7 @@ function nextWord(ignoreall)
 	}
 
 	// Clear out the suggestions box!
-	while (spellingForm.suggestions.options.length > 0)
+	while (spellingForm.suggestions.options.length)
 		spellingForm.suggestions.options[0] = null;
 
 	// Re-populate the suggestions box if there are any suggested spellings for the word.
@@ -269,7 +269,7 @@ function nextWord(ignoreall)
 		}
 	}
 
-	if (spellingForm.suggestions.options.length == 0)
+	if (!spellingForm.suggestions.options.length)
 		spellingForm.changeto.value = '';
 
 	highlightWord();

@@ -421,7 +421,7 @@ function wedge_autoDraft(opt)
 	this.opt.needsUpdate = false;
 
 	var that = this;
-	if (opt.iFreq > 0)
+	if (opt.iFreq)
 		this.opt.timer = setInterval(function () { that.draftSend.call(that); }, opt.iFreq);
 }
 
