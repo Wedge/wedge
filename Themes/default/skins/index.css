@@ -334,7 +334,7 @@ fieldset
 	margin: .5em 0
 	border-radius: 10px
 	legend
-		font-weight: bold
+		font-weight: 700
 		color: #866
 	&.wrc final
 		border: 0
@@ -349,7 +349,7 @@ a img
 
 // Define strong as bold, and em as italics
 strong
-	font-weight: bold
+	font-weight: 700
 
 em
 	font-style: italic
@@ -463,7 +463,7 @@ select.sb
 		border: 1px solid #abadb3
 		color: #000
 		cursor: default
-		font-weight: normal
+		font-weight: 400
 		height, line-height: 1.46em
 		overflow: hidden
 		position: relative
@@ -548,7 +548,7 @@ select.sb
 			gradient: #fff, #e5eeee
 			color: #666
 			cursor: default
-			font-weight: bold
+			font-weight: 700
 			padding: 7px
 		.sub .item
 			padding-left: 15px
@@ -731,7 +731,7 @@ input[type=file]
 
 .menu li a
 	display: block
-	color: #300
+	color: #444
 	text-decoration: none
 	border-left: 4px solid $menu_border // #fbe2c8
 	padding: 6px 8px
@@ -741,7 +741,7 @@ input[type=file]
 	float: left
 	background-position: 98% 4px
 	padding: 3px 19px 3px 6px
-	font-weight: normal
+	font-weight: 400
 	margin-right: 2px
 	a
 		border, padding: 0
@@ -755,7 +755,6 @@ input[type=file]
 	z-index: 42
 	box-shadow: 2px 2px 6px 0 rgba(0,0,0, .15)
 	border-radius: 0 10px 10px 0
-	font-size: 10pt
 	clear: left
 	visibility: hidden
 	opacity, padding: 0
@@ -1135,7 +1134,7 @@ table
 
 // For links to change the code stuff...
 .codeoperation
-	font-weight: normal
+	font-weight: 400
 
 // Styling for BBC tags
 .bbc_link
@@ -1179,7 +1178,7 @@ table
 // Highlighted text - such as search results.
 mark
 	background-color: #ffd0a0 !important
-	font-weight: bold
+	font-weight: 700
 	color: #000 !important
 	padding: 0 2px 1px
 
@@ -1288,7 +1287,7 @@ tr.titlebg
 		float: left
 		padding: .3em 0 .3em
 		a[data-href]
-			font-weight: bold
+			font-weight: 700
 
 // Colors for background of posts requiring approval
 .approve
@@ -1334,7 +1333,7 @@ tr.titlebg
 a.moderation_link
 	&, :visited
 		color: red
-		font-weight: bold
+		font-weight: 700
 
 /* AJAX notification bar
 ------------------------------------------------------- */
@@ -1558,7 +1557,7 @@ dl#feed
 	#helf
 		visibility: hidden
 		border-radius: 12px
-		box-shadow: 2px 2px 8px 0 rgba(0,0,0, .25)
+		box-shadow: 2px 2px 10px 0 rgba(0,0,0, .75)
 		position: absolute
 
 #helf
@@ -1568,6 +1567,7 @@ dl#feed
 		border-radius: 12px 12px 0 0
 		border-bottom: 1px solid #bbb
 		text-align: center
+		font-weight: 700
 	footer extends .wefoot
 		padding: 8px
 		border-radius: 0 0 12px 12px

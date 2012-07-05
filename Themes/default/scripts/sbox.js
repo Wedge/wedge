@@ -47,16 +47,16 @@
 		loadSB = function ()
 		{
 			// Create the new sb
-			$sb = $('<div class="sbox ' + $orig.attr('class') + '" id="sb' + ($orig.attr('id') || ++unique) + '" role=listbox></div>')
+			$sb = $('<div class="sbox ' + $orig.attr('class') + '" id="sb' + ($orig.attr('id') || ++unique) + '" role="listbox"></div>')
 				.attr('aria-haspopup', true);
 
 			$display = $('<div class="display" id="sbd' + ++unique + '"></div>')
 				// Generate the display markup
-				.append(optionFormat($orig.find('option:selected')))
+				.append(optionFormat($orig.data('default') || $orig.find('option:selected')))
 				.append('<div class="btn"><div></div></div>');
 
 			// Generate the dropdown markup
-			$dd = $('<div class="items" id="sbdd' + unique + '" role=menu onselectstart="return false;"></div>')
+			$dd = $('<div class="items" id="sbdd' + unique + '" role="menu" onselectstart="return false;"></div>')
 				.attr('aria-hidden', true);
 
 			// For accessibility/styling, and an easy custom .trigger('close') shortcut.
@@ -65,7 +65,7 @@
 				.attr('aria-owns', $dd.attr('id'))
 				.find('.details').remove();
 
-			if ($orig.children().length == 0)
+			if (!$orig.children().length)
 				$dd.append(createOption().addClass('selected'));
 			else
 				$orig.children().each(function ()
@@ -104,8 +104,9 @@
 
 			// Attach the original select box's event attributes to our display area.
 			if ($orig.attr('data-eve'))
-				for (var eve = 0, elis = $orig.attr('data-eve').split(' '), eil = elis.length; eve < eil; eve++)
-					$display.bind(eves[elis[eve]][0], eves[elis[eve]][1]);
+				$.each($orig.attr('data-eve').split(' '), function () {
+					$display.bind(eves[this][0], eves[this][1]);
+				});
 
 			// Bind events
 			if (!$orig.is(':disabled'))
@@ -158,7 +159,7 @@
 			// you can use the magic word: <option data-hide>
 			var visible = $option.attr('data-hide') !== '';
 
-			return $('<div id="sbo' + ++unique + '" role=option></div>')
+			return $('<div id="sbo' + ++unique + '" role="option"></div>')
 				.data('orig', $option)
 				.data('value', $option.attr('value') || '')
 				.attr('aria-disabled', !!$option.is(':disabled'))
@@ -176,7 +177,7 @@
 		// Formatting for the display
 		optionFormat = function ($dom)
 		{
-			return '<div class="text">' + ($dom.text().replace(/\|/g, '</div><div class="details">') || '&nbsp;') + '</div>';
+			return '<div class="text">' + (($dom.text ? $dom.text().replace(/\|/g, '</div><div class="details">') : $dom + '') || '&nbsp;') + '</div>';
 		},
 
 		// Destroy then load, maintaining open/focused state if applicable

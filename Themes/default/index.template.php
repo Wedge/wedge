@@ -544,14 +544,13 @@ function template_body_after()
 
 	$no_resize = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 	echo '
-', $no_resize ? '' : '
 <script><!-- // --><![CDATA[
-	function weres()
+	function weres()', $no_resize ? ' {}' : '
 	{
 		var d=document,b=d.body,m=d.getElementById("main"),w=m?m.clientWidth:0;
 		b.id=w&&w<728?"responsive":w>=969?"":b.id;
 	}
-	weres();
+	weres();', '
 // ]]></script>';
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main

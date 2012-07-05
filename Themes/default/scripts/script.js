@@ -96,7 +96,7 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 		help_page = from && from.href ? from.href : from,
 		title = $(from).text(),
 		viewportWidth = $(window).width(),
-		viewportHeight = $(window).height(),
+		viewportHeight = window.innerHeight || $(window).height(),
 		previousTarget = $('#helf').data('src');
 
 	// Try and get the title for the current link.
