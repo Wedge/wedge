@@ -89,8 +89,8 @@ function template_aeva_admin_submissions()
 				</tr>
 				<tr id="tr_expand_' . $item['id'] . '" class="windowbg', $alt ? '2' : '', ' hide">
 					<td colspan="', $filter == 'albums' ? 4 : 5, '">', !empty($item['description']) ? '
-						<div>' . $txt['media_add_desc'] .' : '. $item['description'] . '</div>' : '', !empty($item['keywords']) ? '
-						<div>' . $txt['media_keywords'] . ' : ' . $item['keywords'] . '</div>' : '', '
+						<div>' . $txt['media_add_desc'] .': '. $item['description'] . '</div>' : '', !empty($item['keywords']) ? '
+						<div>' . $txt['media_keywords'] . ': ' . $item['keywords'] . '</div>' : '', '
 					</td>
 				</tr>';
 		$alt = !$alt;
@@ -99,7 +99,7 @@ function template_aeva_admin_submissions()
 	echo '
 				<tr class="windowbg', $alt ? '' : '2', '">
 					<td colspan="', $filter == 'albums' ? 5 : 6, '" class="right">
-						', $txt['media_admin_wselected'], ' :
+						', $txt['media_admin_wselected'], ':
 						<select name="do">
 							<option value="approve">', $txt['media_admin_approve'], '</option>
 							<option value="delete">', $txt['media_admin_delete'], '</option>
@@ -310,7 +310,7 @@ function template_aeva_admin_modlog()
 		<table class="w100 cp8 cs0">
 			<tr class="titlebg">
 				<td>
-					', $txt['media_admin_modlog_qsearch'], ' : <input type="text" name="qsearch_mem" size="15"> <input type="submit" name="qsearch_go" value="', $txt['media_submit'], '">
+					', $txt['media_admin_modlog_qsearch'], ': <input type="text" name="qsearch_mem" size="15"> <input type="submit" name="qsearch_go" value="', $txt['media_submit'], '">
 				</td>
 			</tr>
 		</table>
@@ -439,7 +439,7 @@ function template_aeva_admin_perms()
 				<td colspan="2">', $txt['media_admin_prof_del_switch'], '<br><span class="smalltext">', $txt['media_admin_prof_del_switch_help'], '</span></td>
 				<td>
 					<select name="del_prof">
-						<option value=""></option>';
+						<option data-hide></option>';
 
 	foreach ($context['aeva_profiles'] as $prof)
 		echo '
@@ -461,7 +461,7 @@ function template_aeva_admin_perms()
 				<td>', $txt['media_admin_profile_add'], '</td>
 			</tr>
 			<tr class="windowbg2">
-				<td>', $txt['media_admin_prof_name'], ' : <input type="text" name="name"></td>
+				<td>', $txt['media_admin_prof_name'], ': <input type="text" name="name"></td>
 			</tr>
 			<tr class="windowbg">
 				<td class="right"><input type="submit" name="submit_aeva" value="', $txt['media_admin_create_prof'], '"></td>
@@ -478,7 +478,7 @@ function template_aeva_admin_perms_view()
 		<form action="', $context['base_url'], ';sa=quick;profile=', $context['aeva_profile']['id'], '" method="post">
 			<table class="tborder w75 cp4 cs1 center" style="margin-top: 2ex;">
 				<tr class="catbg">
-					<td colspan="5">', $txt['media_perm_profile'], ' : "', $context['aeva_profile']['name'], '"</td>
+					<td colspan="5">', $txt['media_perm_profile'], ': "', $context['aeva_profile']['name'], '"</td>
 				</tr>
 				<tr class="titlebg">
 					<td style="width: 40%">', $txt['media_admin_membergroups'], '</td>
@@ -501,23 +501,25 @@ function template_aeva_admin_perms_view()
 					<td><a href="', $context['base_url'], ';sa=edit;in=', $context['aeva_profile']['id'], ';group=', $id, '">', $txt['media_edit_this_item'], '</a></td>
 					<td><input type="checkbox" name="groups[]" value="', $id, '" id="groups[]"></td>
 				</tr>';
-		$membergroup_string .= "\n" . '<option value="' . $id . '">' . $group['name'] . '</option>';
+		$membergroup_string .= '
+							<option value="' . $id . '">' . $group['name'] . '</option>';
 	}
 
 	echo '
 				<tr class="windowbg', $alt ? '' : '2', '">
 					<td colspan="4" class="right" style="margin-top: 2px">
 						<div style="margin-bottom: 1ex">', $txt['media_admin_wselected'], '</div>
-						', $txt['media_admin_set_mg_perms'], ' :
-							<select name="copy_membergroup">
-								<option value=""></option>', $membergroup_string, '
-							</select><br><br>
+						', $txt['media_admin_set_mg_perms'], ':
+						<select name="copy_membergroup">
+							<option data-hide></option>', $membergroup_string, '
+						</select>
+						<div style="margin: 1ex 0">', $txt['media_admin_select_or'], '</div>
 						<select name="with_selected">
 							<option value="apply">', $txt['media_admin_apply_perm'], '</option>
 							<option value="clear">', $txt['media_admin_clear_perm'], '</option>
 						</select>&nbsp;
 						<select name="selected_perm">
-							<option value=""></option>';
+							<option data-hide></option>';
 
 	foreach ($context['aeva_album_permissions'] as $perm)
 		echo '
@@ -577,7 +579,7 @@ function template_aeva_admin_quotas()
 					<td colspan="2">', $txt['media_admin_prof_del_switch'], '<br><span class="smalltext">', $txt['media_admin_prof_del_switch_help'], '</span></td>
 					<td>
 						<select name="del_prof">
-							<option value=""></option>';
+							<option data-hide></option>';
 		foreach ($context['aeva_profiles'] as $prof)
 			echo '
 							<option value="', $prof['id'], '">', $prof['name'], '</option>';
@@ -601,7 +603,7 @@ function template_aeva_admin_quotas()
 				<td>', $txt['media_admin_profile_add'], '</td>
 			</tr>
 			<tr class="windowbg2">
-				<td>', $txt['media_admin_prof_name'], ' : <input type="text" name="name"></td>
+				<td>', $txt['media_admin_prof_name'], ': <input type="text" name="name"></td>
 			</tr>
 			<tr class="windowbg right">
 				<td><input type="submit" name="submit_aeva" value="', $txt['media_admin_create_prof'], '"></td>
@@ -618,7 +620,7 @@ function template_aeva_admin_quota_view()
 	echo '
 		<table class="tborder w75 center cp4 cs1" style="margin-top: 2ex;">
 			<tr class="catbg">
-				<td colspan="4">', $txt['media_quota_profile'], ' : "', $context['aeva_profile']['name'], '"</td>
+				<td colspan="4">', $txt['media_quota_profile'], ': "', $context['aeva_profile']['name'], '"</td>
 			</tr>
 			<tr class="titlebg">
 				<td style="width: 65%">', $txt['media_admin_membergroups'], '</td>

@@ -169,7 +169,7 @@ function ViewErrorLog()
 				'file' => $row['file'],
 				'line' => $row['line'],
 				'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'],
-				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 800, 560, false, true);">' . $row['file'] . '</a>' : $row['file'],
+				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 1280, 560);">' . $row['file'] . '</a>' : $row['file'],
 				'search' => base64_encode($row['file']),
 			);
 		}
@@ -230,15 +230,15 @@ function ViewErrorLog()
 			$context['filter']['value']['html'] = '<a href="' . $scripturl . '?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
 		elseif ($filter['variable'] == 'url')
-			$context['filter']['value']['html'] = '\'' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '\'';
+			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
 		elseif ($filter['variable'] == 'message')
 		{
-			$context['filter']['value']['html'] = '\'' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '\'';
+			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '&quot;';
 			$context['filter']['value']['html'] = preg_replace('~&amp;lt;span class=&amp;quot;remove&amp;quot;&amp;gt;(.+?)&amp;lt;/span&amp;gt;~', '$1', $context['filter']['value']['html']);
 		}
 		elseif ($filter['variable'] == 'error_type')
 		{
-			$context['filter']['value']['html'] = '\'' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '\'';
+			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '&quot;';
 		}
 		elseif ($filter['variable'] == 'ip')
 		{
@@ -523,15 +523,11 @@ function ViewIntrusionLog()
 			$context['filter']['value']['html'] = '<a href="' . $scripturl . '?action=profile;u=' . $id . '">' . $user_profile[$id]['real_name'] . '</a>';
 		}
 		elseif ($filter['variable'] == 'request_uri')
-			$context['filter']['value']['html'] = '\'' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '\'';
+			$context['filter']['value']['html'] = '&quot;' . strtr(htmlspecialchars((substr($filter['value']['sql'], 0, 1) == '?' ? $scripturl : '') . $filter['value']['sql']), array('\_' => '_')) . '&quot;';
 		elseif ($filter['variable'] == 'error_type')
-		{
-			$context['filter']['value']['html'] = '\'' . strtr(htmlspecialchars($filter['value']['sql']), array("\n" => '<br>', '&lt;br&gt;' => '<br>', "\t" => '&nbsp;&nbsp;&nbsp;', '\_' => '_', '\\%' => '%', '\\\\' => '\\')) . '\'';
-		}
+			$context['filter']['value']['html'] = '&quot;' . (isset($txt['behav_' . $_GET['value'] . '_log']) ? $txt['behav_' . $_GET['value'] . '_log'] : $_GET['value']) . '&quot;';
 		elseif ($filter['variable'] == 'ip')
-		{
-			$context['filter']['value']['html'] = $context['filtering_ip']; // we already stored this earlier!
-		}
+			$context['filter']['value']['html'] = $context['filtering_ip']; // We already stored this earlier!
 		else
 			$context['filter']['value']['html'] =& $filter['value']['sql'];
 	}
@@ -591,10 +587,8 @@ function deleteIntrusions()
 	// Delete all or just some?
 	if (isset($_POST['delall']) && !isset($filter))
 		wesql::query('
-			TRUNCATE {db_prefix}log_intrusion',
-			array(
-			)
-		);
+			TRUNCATE {db_prefix}log_intrusion
+		');
 	// Deleting all with a filter?
 	elseif (isset($_POST['delall'], $filter))
 		wesql::query('
@@ -677,20 +671,32 @@ function ViewFile()
 
 	$file_data = array_slice($file_data, $min - 1, $max - $min);
 
-	$context['file_data'] = array(
-		'contents' => $file_data,
-		'min' => $min,
-		'target' => $line,
-		'file' => strtr($file, array('"' => '\\"')),
-	);
+	$context['page_title'] = $context['help_title'] = strtr($file, array('"' => '\\"'));
 
-	if ($context['is_ajax'])
-		wetem::hide();
-	else
-		$context['page_title'] = $context['file_data']['file'];
+	// The file URL will be inserted into the <header>.
+	$context['help_text'] = '
+		<table id="fileviewer" class="w100 cp0 cs0">';
 
-	loadTemplate('Errors');
-	wetem::load('show_file');
+	$alt = '';
+	foreach ($file_data as $index => $body)
+	{
+		$alt = $alt ? '' : '2';
+		$line_num = $index + $min;
+		$is_target = $line_num == $line;
+		$context['help_text'] .= '
+			<tr class="windowbg' . $alt . '">
+				<td class="nowrap right' . ($is_target ? ' tar1">==&gt;' : '">') . $line_num . ':</td>
+				<td class="nowrap left' . ($is_target ? ' tar2">' : '">') . $body . '</td>
+			</tr>';
+	}
+
+	$context['help_text'] .= '
+		</table>';
+
+	loadLanguage('Help');
+	loadTemplate('Help');
+	wetem::hide();
+	wetem::load('popup');
 }
 
 ?>

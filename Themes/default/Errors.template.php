@@ -192,7 +192,7 @@ function template_intrusion_log()
 	$error_types = array();
 	foreach ($context['error_types'] as $type => $details)
 		echo '
-						<li>', $details['is_selected'] ? '<img src="' . $theme['images_url'] . '/selected.gif"> ' : '', '<a href="', $details['url'], '"', $details['is_selected'] ? ' style="font-weight: bold;"' : '', '">', $details['label'], '</a></li>';
+						<li>', $details['is_selected'] ? '<img src="' . $theme['images_url'] . '/selected.gif"> ' : '', '<a href="', $details['url'], '"', $details['is_selected'] ? ' style="font-weight: bold"' : '', '">', $details['label'], '</a></li>';
 
 	echo '
 					</ul>
@@ -291,34 +291,6 @@ function template_intrusion_log()
 	echo '
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>';
-}
-
-function template_show_file()
-{
-	global $context;
-
-	$alt = '';
-
-	// The file URL will be shown after the <div> and before the <table>.
-	echo '
-	<div>
-		<table class="nodrag w100 cp0 cs0 monospace">';
-
-	foreach ($context['file_data']['contents'] as $index => $line)
-	{
-		$alt = $alt ? '' : '2';
-		$line_num = $index + $context['file_data']['min'];
-		$is_target = $line_num == $context['file_data']['target'];
-		echo '
-			<tr class="windowbg', $alt, '">
-				<td class="nowrap right"', $is_target ? ' style="font-weight: bold; border: 1px solid black; border-width: 1px 0 1px 1px;">==&gt;' : '>', $line_num, ':</td>
-				<td class="nowrap"', $is_target ? ' style="border: 1px solid black; border-width: 1px 1px 1px 0;">' : '>', $line, '</td>
-			</tr>';
-	}
-
-	echo '
-		</table>
-	</div>';
 }
 
 ?>

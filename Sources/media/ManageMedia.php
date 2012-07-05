@@ -734,14 +734,14 @@ function aeva_admin_perms_quick()
 	wesql::free_result($request);
 
 	// What is the type? And it has to be unique!
-	if (trim($_POST['copy_membergroup']) != '' && !empty($_POST['with_selected']) && !empty($_POST['selected_perm']))
+	if (trim($_POST['copy_membergroup']) !== '' && !empty($_POST['with_selected']) && trim($_POST['selected_perm'], "\x00..\x1f\xa0\xc2") !== '')
 		fatal_lang_error('media_admin_unique_permission', false);
 	// There has to be at least one thing selected. Actually there has to be only one thing selected...
-	elseif (trim($_POST['copy_membergroup']) == '' && (empty($_POST['with_selected']) || empty($_POST['selected_perm']) || !in_array($_POST['with_selected'], array('apply', 'clear')) || !in_array($_POST['selected_perm'], $context['aeva_album_permissions'])))
+	elseif (trim($_POST['copy_membergroup']) === '' && (empty($_POST['with_selected']) || empty($_POST['selected_perm']) || !in_array($_POST['with_selected'], array('apply', 'clear')) || !in_array($_POST['selected_perm'], $context['aeva_album_permissions'])))
 		fatal_lang_error('media_admin_quick_none', false);
-	// We're good
+	// We're good! :)
 	else
-		$type = empty($_POST['copy_membergroup']) ? $_POST['with_selected'] : 'copy';
+		$type = trim($_POST['copy_membergroup']) === '' ? $_POST['with_selected'] : 'copy';
 
 	// Invalid groups?
 	if (empty($_POST['groups']) || !is_array($_POST['groups']))
