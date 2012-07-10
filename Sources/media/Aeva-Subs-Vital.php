@@ -292,19 +292,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 				else
 				{
 					if (!$swfobjects++)
-					{
-						$scr = "\n\t" . '<script src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script>';
-						if (ob_get_length() === 0)
-							$context['header'] .= $scr;
-						else
-						{
-							$temp = ob_get_contents();
-							ob_clean();
-
-							echo substr_replace($temp, $scr . "\n" . '</head>', stripos($temp, '</head>'), 7);
-							unset($temp);
-						}
-					}
+						add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js');
 
 					$output .= '
 		<div id="sob'. $swfobjects . '">&nbsp;</div>
@@ -400,7 +388,6 @@ function aeva_initZoom($autosize, $peralbum = array())
 
 	add_js_file('scripts/zoomedia.js');
 	add_js('
-
 	$("a.zoom").zoomedia({
 		lang: {
 			move: "', $txt['media_zoom_move'], '",
@@ -418,8 +405,7 @@ function aeva_initZoom($autosize, $peralbum = array())
 		},
 		outline: "', empty($peralbum) || !in_array($peralbum['outline'], array('drop-shadow', 'white', 'black')) ? 'glass' : $peralbum['outline'], '",
 		expand: ', !isset($peralbum['expand']) ? 800 : (int) $peralbum['expand'], '
-	});
-');
+	});');
 	return;
 
 	// !!! WIP !! @todo: Convert this to the new format...

@@ -1308,7 +1308,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			$nrating = '';
 
 		$box .= '</tr></table>' . (!empty($playlist_name) && in_array('name', $details) ? '
-<h1 class="foxy_playlist_name">' . $playlist_name . '</h1>' : '');
+<h5 class="foxy_playlist_name">' . $playlist_name . '</h5>' : '');
 
 		$box .= '<div class="foxy_stats">';
 		if ($has_type['audio'] && !$has_type['video'] && !$has_type['image'])
@@ -1343,39 +1343,10 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 
 	if (!in_array('none', $details))
 		$box .= '<br><br>';
-	list ($tx, $scr_player) = aeva_foxy_fill_player($playlist, $swfobjects++, $type, $details, 0, $pwid, 430, $thei + 20);
 
-	if ($swfobjects == 2)
-	{
-		$scr_object = "\n\t" . '<script src="http://ajax.googleapis.com/ajax/libs/swfobject/2.1/swfobject.js"></script>';
-		if (ob_get_length() === 0)
-		{
-			$scr = '';
-			if (strpos($context['header'], '2.1/swfobject.js"') === false)
-				$scr .= $scr_object . $scr_player;
-			elseif (strpos($context['header'], '#foxlist') === false)
-				$scr .= $scr_player;
-			$context['header'] .= $scr;
-		}
-		else
-		{
-			$temp = ob_get_contents();
-			ob_clean();
+	add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', true);
 
-			$scr = '';
-			if (strpos($temp, '2.1/swfobject.js"') === false)
-				$scr .= $scr_object . $scr_player;
-			elseif (strpos($temp, '#foxlist') === false)
-				$scr .= $scr_player;
-			echo substr_replace($temp, $scr . "\n" . '</head>', stripos($temp, '</head>'), 7);
-
-			unset($temp);
-		}
-	}
-
-	$box .= $tx;
-
-	return $box;
+	return $box . aeva_foxy_fill_player($playlist, $swfobjects++, $type, $details, 0, $pwid, 430, $thei + 20);
 }
 
 function aeva_foxy_fill_player(&$playlist, $swo = 1, $type = 'audio', &$details, $play = 0, $wid = 470, $hei = 430, $thei = 70)
@@ -1384,136 +1355,12 @@ function aeva_foxy_fill_player(&$playlist, $swo = 1, $type = 'audio', &$details,
 
 	$swo = (int) $swo;
 	add_css('
-		.foxy_playlist {
-			text-align: left;
-			width: 100%;
-			height: auto !important;
-			height: '. $hei . 'px;
-			max-height: '. $hei . 'px;
-			overflow-x: hidden !important;
-			overflow-y: auto !important;
-		}
-		.foxy_album {
-			clear: both;
-			border: 1px solid #888;
-		}
-		.foxy_stats {
-			font: 0.85em/1.25em "Trebuchet MS", Trebuchet, Arial, Verdana, helvetica, sans-serif;
-			text-transform: uppercase;
-			padding: 0 0 8px 0;
-		}
-
-		.playinglo, .playinghi, .playlistlo, .playlisthi { font: 12px verdana, arial, helvetica, sans-serif; color: #000; cursor: pointer; }
-		.playinghi, .playlisthi { background: transparent url(/Themes/default/images/white-op40.png) !important; background: none }
-		.foxy_small { font-size: 0.85em; padding: 2px 0 0 0 }');
-
-	add_js_inline('
-	myfile = "' . $scripturl . '?action%3Dmedia;sa%3Dmedia;in%3D";
-	player = [], myplaylist = [], ply = [], plyHeight = [], plyTotalHeight = [], lnFlag = 0;
-	currentPlayer = 1, currentItem = [], previousItem = [], targetScrollTop = [];
-	currentState = [], previousState = [], foxp = [];
-
-	function playerReady(thePlayer)
-	{
-		thisPlayer = thePlayer.id.substring(6);
-		if (player[thisPlayer])
-			return;
-		player[thisPlayer] = window.document[thePlayer.id];
-		ply[thisPlayer] = document.getElementById("foxlist" + thisPlayer);
-		plyHeight[thisPlayer] = ply[thisPlayer].clientHeight;
-		previousItem[thisPlayer] = -1;
-		currentItem[thisPlayer] = -1;
-		addListeners();
-	}
-
-	function addListeners()
-	{
-		if (player[thisPlayer])
-		{
-			player[thisPlayer].addControllerListener("ITEM", "itemListener");
-			player[thisPlayer].addModelListener("STATE", "stateListener");
-			player[thisPlayer].sendEvent("LOAD", myplaylist[thisPlayer]);
-			document.getElementById("foxlist" + thisPlayer).onselectstart = function() { return false; };
-		}
-		else
-			setTimeout(addListeners, 100);
-	}
-
-	function itemListener(obj)
-	{
-		if (obj.index != currentItem[currentPlayer])
-		{
-			previousItem[currentPlayer] = currentItem[currentPlayer];
-			currentItem[currentPlayer] = obj.index;
-			setItemStyle(currentItem[currentPlayer]);
-		}
-	}
-
-	function stateListener(obj) // IDLE, BUFFERING, PLAYING, PAUSED, COMPLETED
-	{
-		if (obj.newstate == "PAUSED" || (currentState[currentPlayer] == "PAUSED" && obj.newstate == "PLAYING"))
-			return;
-		currentState[currentPlayer] = obj.newstate;
-
-		if (currentState[currentPlayer] != previousState[currentPlayer])
-		{
-			setItemStyle(currentItem[currentPlayer]);
-			previousState[currentPlayer] = currentState[currentPlayer];
-		}
-	}
-
-	function mover(obj, idx)
-	{
-		obj.className = idx == currentItem[currentPlayer] ? "playinghi" : "playlisthi";
-	}
-
-	function mout(obj, idx)
-	{
-		lnFlag = 0;
-		obj.className = idx == currentItem[currentPlayer] ? "playinglo" : "playlistlo";
-	}
-
-	function scrollMe()
-	{
-		var cur = ply[currentPlayer].scrollTop;
-		if (cur < targetScrollTop[currentPlayer])
-			ply[currentPlayer].scrollTop += Math.max(1, Math.round((targetScrollTop[currentPlayer]-cur)/40));
-		else if (cur > targetScrollTop[currentPlayer])
-			ply[currentPlayer].scrollTop -= Math.max(1, Math.round((cur-targetScrollTop[currentPlayer])/40));
-		else
-			return;
-		setTimeout(scrollMe, 20);
-	}
-
-	function setItemStyle(idx)
-	{
-		if (typeof idx == "undefined" || (currentState[currentPlayer] != "PLAYING" && currentState[currentPlayer] != "IDLE"))
-			return;
-
-		var foxLength = foxp[currentPlayer].length;
-		var posTop = 0, posList = [], heiList = [];
-		for (var i = 0; i < foxLength; i++)
-		{
-			var tmp = document.getElementById("fxm" + foxp[currentPlayer][i][0]);
-			var giveClass = i == currentItem[currentPlayer] && currentState[currentPlayer] == "PLAYING" ? "windowbg3" : "";
-			if (tmp.className != giveClass)
-				tmp.className = giveClass;
-
-			posList[i] = posTop;
-			heiList[i] = tmp.clientHeight + 4;
-			posTop += heiList[i];
-		}
-		if (currentItem[currentPlayer] == previousItem[currentPlayer] || plyTotalHeight[currentPlayer]-plyHeight[currentPlayer] < 2)
-			return;
-		if (!plyTotalHeight[currentPlayer])
-			plyTotalHeight[currentPlayer] = ply[currentPlayer].scrollHeight;
-		if (plyTotalHeight[currentPlayer]-plyHeight[currentPlayer] < 2)
-			return;
-
-		var offs = Math.round((plyHeight[currentPlayer] - heiList[idx])/2);
-		targetScrollTop[currentPlayer] = Math.min(plyTotalHeight[currentPlayer]-plyHeight[currentPlayer], Math.max(0, posList[idx] - Math.max(0, offs)));
-		setTimeout(scrollMe, 20);
+	.foxy_playlist {
+		height: '. $hei . 'px;
+		max-height: '. $hei . 'px;
 	}');
+
+	add_js_file('scripts/player.js');
 
 	$pcol = !empty($amSettings['player_color']) ? ($amSettings['player_color'][0] == '#' ? substr($amSettings['player_color'], 1) : $amSettings['player_color']) : '';
 	$bcol = !empty($context['aeva_override_bcolor']) ? $context['aeva_override_bcolor'] : (!empty($amSettings['player_bcolor']) ? ($amSettings['player_bcolor'][0] == '#' ? substr($amSettings['player_bcolor'], 1) : $amSettings['player_bcolor']) : '');
@@ -1608,10 +1455,9 @@ function aeva_foxy_fill_player(&$playlist, $swo = 1, $type = 'audio', &$details,
 	'image: myfile + "', $first['id'], $first['type'] == 'image' ? ';preview' : ';thumba', '", plugins: "', aeva_theme_url('eq.swf'), '", showdigits: "true", repeat: "always", type: "', $first['type'], '", duration: "', floor($first['duration']), '" };
 	swfobject.embedSWF("', aeva_theme_url('player.swf'), '", "aefoxy', $swo, '", "100%", "', $thei, '", "9", "', $boardurl, '/expressInstall.swf", ',
 	'fvars, { allowFullscreen: "true", allowScriptAccess: "always" }, { id: "player', $swo, '", name: "player', $swo, '" });');
-
 	// !! alternative screencolor: "E7E4D9"
 
-	return array($tx, $player);
+	return $tx;
 }
 
 ?>

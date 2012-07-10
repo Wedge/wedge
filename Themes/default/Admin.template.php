@@ -1526,8 +1526,8 @@ function template_download_language()
 
 		add_js('
 	new weToggle({
-		bCurrentlyCollapsed: true,
-		aSwappableContainers: [');
+		isCollapsed: true,
+		aSwapContainers: [');
 
 		foreach ($group as $file)
 			add_js('

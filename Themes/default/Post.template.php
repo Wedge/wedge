@@ -296,15 +296,6 @@ function template_postform_after()
 		add_js('
 	addEventListener("pageshow", function () { document.forms.postmodify.message.readOnly = false; }, false);');
 
-	// Message icons - and any missing from this theme - followed by the selector helper.
-	add_js_inline('
-	var icon_urls = {');
-	foreach ($context['icons'] as $icon)
-		add_js_inline('
-		"' . $icon['value'] . '": "' . $icon['url'] . '"' . ($icon['is_last'] ? '' : ','));
-	add_js_inline('
-	};');
-
 	// More general stuff, before diving into the preview functions.
 	add_js('
 	var postmod = document.forms.postmodify,
@@ -339,10 +330,10 @@ function template_postform_after()
 
 		add_js('
 	new weToggle({', empty($context['show_additional_options']) ? '
-		bCurrentlyCollapsed: true,' : '', '
-		funcOnBeforeCollapse: function () { $("#additional_options").val("0"); },
-		funcOnBeforeExpand: function () { $("#additional_options").val("1"); },
-		aSwappableContainers: [
+		isCollapsed: true,' : '', '
+		onBeforeCollapse: function () { $("#additional_options").val("0"); },
+		onBeforeExpand: function () { $("#additional_options").val("1"); },
+		aSwapContainers: [
 			"postMoreOptions",
 			"postAttachment",
 			"postAttachment2"
@@ -372,7 +363,7 @@ function template_postform_after()
 function template_post_header_before()
 {
 	echo '
-				<dl id="post_header">';
+				<div id="post_header">';
 }
 
 function template_post_subject()
@@ -380,33 +371,24 @@ function template_post_subject()
 	global $context, $txt;
 	// Now show the subject box for this post.
 	echo '
-					<dt>
-						<span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span>
-					</dt>
-					<dd>
-						<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">
-					</dd>
-					<dt class="clear_left">
-						', $txt['message_icon'], ':
-					</dt>
-					<dd>
-						<select name="icon" id="icon" tabindex="', $context['tabindex']++, '" onchange="showimage();">';
+					<strong>', $txt['message_icon'], ' / <span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span></strong>
+					<hr style="height: 0; margin: 4px">
+					<select name="icon" id="icon" tabindex="', $context['tabindex']++, '" onchange="showimage();">';
 
 	// Loop through each message icon allowed, adding it to the drop down list.
 	foreach ($context['icons'] as $icon)
-		echo '
-							<option value="', $icon['value'], '"', $icon['value'] == $context['icon'] ? ' selected' : '', '>', $icon['name'], '</option>';
+		echo '<option value="', $icon['value'], '"', $icon['value'] == $context['icon'] ? ' selected' : '', '>&lt;img src=&quot;', $icon['url'], '&quot;&gt;&nbsp; ', $icon['name'], '</option>';
 
 	echo '
-						</select>
-						<img src="', $context['icon_url'], '" id="icons" style="padding-left: 8px">
-					</dd>';
+					</select>
+					<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">
+				</div>';
 }
 
 function template_post_header_after()
 {
 	echo '
-				</dl>
+				</ul>
 				<hr class="clear">';
 }
 
@@ -550,8 +532,8 @@ function template_show_previous_posts()
 	foreach ($ignored_posts as $post_id)
 		add_js('
 	new weToggle({
-		bCurrentlyCollapsed: true,
-		aSwappableContainers: [
+		isCollapsed: true,
+		aSwapContainers: [
 			"msg' . $post_id . ' .list_posts",
 			"msg' . $post_id . ' .actions"
 		],

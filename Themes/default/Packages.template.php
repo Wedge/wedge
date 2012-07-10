@@ -247,7 +247,7 @@ function template_view_package()
 							echo '
 								<tr class="windowbg', $alternate2 ? '' : '2', '">
 									<td style="width: 0"></td>
-									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400, false);"><img src="', $theme['default_images_url'], '/admin/package_ops.gif"></a></td>
+									<td style="width: 30px" class="smalltext"><a href="' . $scripturl . '?action=admin;area=packages;sa=showoperations;operation_key=', $operation['operation_key'], ';package=', $_REQUEST['package'], ';filename=', $operation['filename'], (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'uninstall' ? ';reverse' : ''), '" onclick="return reqWin(this, 600, 400);"><img src="', $theme['default_images_url'], '/admin/package_ops.gif"></a></td>
 									<td style="width: 30px" class="smalltext">', $operation_num, '.</td>
 									<td style="width: 23%" class="smalltext">', $txt[$operation_text], '</td>
 									<td class="w50 smalltext">', $operation['action'], '</td>
@@ -305,8 +305,8 @@ function template_view_package()
 		foreach ($js_operations as $key => $operation)
 			add_js('
 	new weToggle({
-		bCurrentlyCollapsed: ', $operation ? 'false' : 'true', ',
-		aSwappableContainers: [\'operation_', $key, '\'],
+		isCollapsed: ', $operation ? 'false' : 'true', ',
+		aSwapContainers: [\'operation_', $key, '\'],
 		aSwapImages: [{ sId: \'operation_img_', $key, '\' }]
 	});');
 
@@ -875,8 +875,8 @@ function template_package_list()
 		{
 			add_js('
 	new weToggle({
-		bCurrentlyCollapsed: ', count($ps['items']) == 1 || $section_count == 1 ? 'false' : 'true', ',
-		aSwappableContainers: [\'package_section_', $section, '\'],
+		isCollapsed: ', count($ps['items']) == 1 || $section_count == 1 ? 'false' : 'true', ',
+		aSwapContainers: [\'package_section_', $section, '\'],
 		aSwapImages: [{ sId: \'ps_img_', $section, '\' }]
 	});');
 
@@ -884,8 +884,8 @@ function template_package_list()
 				if (!$package['is_text'] && !$package['is_line'] && !$package['is_remote'])
 					add_js('
 	new weToggle({
-		bCurrentlyCollapsed: true,
-		aSwappableContainers: [\'package_section_', $section, '_pkg_', $id, '\'],
+		isCollapsed: true,
+		aSwapContainers: [\'package_section_', $section, '_pkg_', $id, '\'],
 		aSwapImages: [{ sId: \'ps_img_', $section, '_pkg_', $id, '\' }]
 	});');
 		}

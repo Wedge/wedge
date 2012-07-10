@@ -1981,6 +1981,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Detect the browser. This is separated out because it's also used in attachment downloads.
 	detectBrowser();
 
+	// Add support for media queries to IE 6-8. Don't wanna waste time on other browsers.
+	if ($context['browser']['is_ie8down'])
+		add_js_file('scripts/respond.js');
+
 	// Set the top level linktree up
 	array_unshift($context['linktree'], array(
 		'url' => $scripturl,

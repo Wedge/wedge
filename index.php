@@ -77,7 +77,6 @@ $action_list = array(
 	'credits' => array('Credits.php', 'Credits'),
 	'deletemsg' => array('RemoveTopic.php', 'DeleteMessage'),
 	'display' => array('Display.php', 'Display'),
-	'displaylike' => array('Like.php', 'DisplayLike'),
 	'dlattach' => array('Dlattach.php', 'Dlattach'),
 	'emailuser' => array('SendTopic.php', 'EmailUser'),
 	'feed' => array('Feed.php', 'Feed'),

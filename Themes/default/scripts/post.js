@@ -11,11 +11,6 @@
  */
 
 
-function showimage()
-{
-	$('#icons').attr('src', icon_urls[$('#icon').val()]);
-}
-
 function previewPost()
 {
 	var x = [];
@@ -120,8 +115,8 @@ function previewPost()
 
 		$.each(ignored_replies, function () {
 			new weToggle({
-				bCurrentlyCollapsed: true,
-				aSwappableContainers: [
+				isCollapsed: true,
+				aSwapContainers: [
 					'msg' + this + ' .list_posts',
 					'msg' + this + ' .actionbar'
 				],

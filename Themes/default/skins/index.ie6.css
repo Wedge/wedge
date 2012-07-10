@@ -66,7 +66,7 @@ li.separator
 ------------------------------------------------------- */
 .bbc_code
 	width: 96%
-	margin: 0 auto
+	margin: auto
 
 // The page section
 .pagesection
@@ -165,7 +165,7 @@ li.separator
 ----------------------------------------------------------- */
 #registration_agreement
 	width: 99.5%
-	margin: 0 auto
+	margin: auto
 
 #edit_poll ul.poll_main li
 	padding-left: 0
@@ -400,3 +400,4 @@ ul.mimeitem
 // IE6 doesn't support position: fixed...
 #help_pop
 	position: absolute
+	background: transparent

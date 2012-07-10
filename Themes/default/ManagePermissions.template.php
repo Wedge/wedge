@@ -204,8 +204,8 @@ function template_permission_index()
 		// JavaScript for the advanced stuff.
 		add_js('
 	new weToggle({', empty($context['show_advanced_options']) ? '
-		bCurrentlyCollapsed: true,' : '', '
-		aSwappableContainers: [\'permissions_panel_advanced\'],
+		isCollapsed: true,' : '', '
+		aSwapContainers: [\'permissions_panel_advanced\'],
 		aSwapImages: [{ sId: \'permissions_panel_toggle\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }]', $context['user']['is_guest'] ? '' : ',
 		sOptionName: \'admin_preferences\',
 		sExtra: \';admin_key=app;th=1\'', '

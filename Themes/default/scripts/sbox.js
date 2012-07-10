@@ -573,24 +573,17 @@
 			return false;
 		});
 
-		if ($dd[0].addEventListener)
-		{
-			$dd[0].addEventListener('DOMMouseScroll', wheel, false);
-			$dd[0].addEventListener('mousewheel', wheel, false);
-
+		$dd
+			.bind('DOMMouseScroll mousewheel', wheel)
 			// This should add support for scrolling on touch devices.
-			$dd[0].addEventListener('touchstart', function (e) {
-				iTouch = e.touches[0].pageY;
-				startPos = parseInt($thumb.css('top') || 0);
-			});
-			$dd[0].addEventListener('touchmove', function (e) {
-				scrollTo(startPos - e.touches[0].pageY + iTouch);
+			.bind('touchstart', function (e) {
+				iTouch = e.originalEvent.touches[0].pageY;
+				startPos = parseInt($thumb.css('top'));
+			})
+			.bind('touchmove', function (e) {
+				scrollTo(startPos - e.originalEvent.touches[0].pageY + iTouch);
 				e.preventDefault();
 			});
-		}
-		// IE fallback
-		else
-			$dd[0].onmousewheel = wheel;
 	};
 
 	// .sb() takes a select box and restyles it.

@@ -204,7 +204,7 @@ function template_display_posts()
 				{
 					if ($attachment['thumbnail']['has_thumb'])
 						echo '
-								<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" onclick="', $attachment['thumbnail']['javascript'], '"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
+								<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" ', empty($attachment['thumbnail']['javascript']) ? 'class="zoom"' : 'onclick="' . $attachment['thumbnail']['javascript'] . '"', '><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
 					else
 						echo '
 								<img src="', $attachment['href'], ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"><br>';
@@ -309,8 +309,8 @@ function template_display_posts()
 		foreach ($ignoredMsgs as $msgid)
 			add_js('
 	new weToggle({
-		bCurrentlyCollapsed: true,
-		aSwappableContainers: [
+		isCollapsed: true,
+		aSwapContainers: [
 			\'msg' . $msgid . ' .info\',
 			\'msg' . $msgid . ' .inner\',
 			\'msg' . $msgid . ' ' . (empty($context['liked_posts'][$msgid]) ? '.actionbar' : '.actions') . '\'
@@ -608,7 +608,7 @@ function template_show_likes(&$message)
 	if ($context['can_like'])
 		echo '
 								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
-								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=displaylike;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
+								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=like;sa=view;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
 	elseif ($num_likes)
 		echo '
 								<span class="like_button" title="', strip_tags($string), '">', $show_likes, '</span>';

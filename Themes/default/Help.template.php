@@ -25,7 +25,7 @@ function template_popup()
 	<section class="nodrag">
 		', $context['help_text'], '
 	</section>
-	<footer><a href="#" onclick="$(\'#help_pop\').remove(); return false;">', $txt['close_window'], '</a></footer>';
+	<footer><a href="#" onclick="$(\'#help_pop\').fadeOut(function () { $(this).remove(); }); return false;">', $txt['close_window'], '</a></footer>';
 	}
 	else
 	{

@@ -20,7 +20,6 @@ var
 
 	// If you need support for more versions, just test for $.browser.version yourself...
 	is_opera = !!$.browser.opera,
-	is_opera95up = is_opera && $.browser.version >= 9.5,
 
 	is_ff = !is_opera && ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1,
 	is_gecko = !is_opera && ua.indexOf('gecko') != -1,
@@ -89,14 +88,17 @@ String.prototype.wereplace = function (oReplacements)
 };
 
 
-// Open a new popup div (or a window, for large images for instance.)
+// Open a new popup window.
+// @string from: specifies the URL to open. Use 'this' on a link to automatically use its href value.
+// @mixed desiredWidth / desiredHeight: use custom dimensions. Omit or set to 0 for default (480 width and auto height.)
+// @boolean asWindow: open as a window popup (useful for images), instead of an Ajax popup.
 function reqWin(from, desiredWidth, desiredHeight, asWindow)
 {
 	var
 		help_page = from && from.href ? from.href : from,
 		title = $(from).text(),
 		viewportWidth = $(window).width(),
-		viewportHeight = window.innerHeight || $(window).height(),
+		viewportHeight = window.innerHeight || $(window).height(), // innerHeight is an iOS hack (fixed in jQuery 1.8)
 		previousTarget = $('#helf').data('src');
 
 	// Try and get the title for the current link.
@@ -117,11 +119,8 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 		return false;
 	}
 
-	// If the reqWin event was created on the fly, it'll bubble up to the body and cancel itself... Avoid that.
-	$.event.fix(window.event || {}).stopPropagation();
-
-	// Clicking the help icon twice should close the popup and remove the global click event.
-	if ($('body').unbind('click.h') && $('#help_pop').remove().length && previousTarget == help_page)
+	// Clicking the help icon twice should close the popup.
+	if ($('#help_pop').remove().length && previousTarget == help_page)
 		return false;
 
 	desiredWidth = Math.min(desiredWidth || 480, viewportWidth - 20);
@@ -133,8 +132,10 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 		.attr('id', 'help_pop')
 		.css({
 			width: viewportWidth,
-			height: viewportHeight
+			height: viewportHeight,
+			top: is_ie6 || is_iphone ? $(window).scrollTop() : 0
 		})
+		.fadeIn()
 		.append(
 			$('<div></div>')
 			.attr('id', 'helf')
@@ -155,28 +156,24 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 					.css({
 						visibility: 'visible',
 						left: (viewportWidth - $(this).width()) / 2,
-						top: (viewportHeight - $(this).height()) / 2 + (is_ie6 || is_iphone ? $(window).scrollTop() : 0) - 20
+						top: (viewportHeight - $(this).height()) / 2 - 20
 					})
 					// !! Can also use specialEasing for diversity...
-					.animate(
-						{
-							opacity: 'show',
-							top: '+=20'
-						},
-						300
-					)
+					.animate({
+						opacity: 'show',
+						top: '+=20'
+					})
 					.dragslide();
 			})
 		)
 	);
 
-	// Clicking anywhere on the page should close the popup. The namespace is for the earlier unbind().
-	$(document).bind('click.h', function (e) {
+	// Clicking anywhere on the page should close the popup.
+	$('#help_pop').click(function (e) {
 		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
 		if (!$(e.target).closest('#helf').length)
-			$('#helf').fadeOut(300, function () {
-				$('#help_pop').remove();
-				$(this).unbind(e);
+			$(this).fadeOut(function () {
+				$(this).remove();
 			});
 	});
 
@@ -426,7 +423,7 @@ function weSelectText(oCurElement)
 		if (!is_visible)
 			$('ul', this).first()
 				.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 12 : 39 } : { marginLeft: w })
-				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 }, 300);
+				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 });
 
 		clearTimeout(menu_delay[id.substring(2)]);
 
@@ -495,12 +492,12 @@ function weToggle(opt)
 	this.cs = function (bCollapse, bInit)
 	{
 		// Handle custom function hook before collapse.
-		if (!bInit && bCollapse && opt.funcOnBeforeCollapse)
-			opt.funcOnBeforeCollapse.call(this);
+		if (!bInit && bCollapse && opt.onBeforeCollapse)
+			opt.onBeforeCollapse.call(this);
 
 		// Handle custom function hook before expand.
-		else if (!bInit && !bCollapse && opt.funcOnBeforeExpand)
-			opt.funcOnBeforeExpand.call(this);
+		else if (!bInit && !bCollapse && opt.onBeforeExpand)
+			opt.onBeforeExpand.call(this);
 
 		// Loop through all the images that need to be toggled.
 		$.each(opt.aSwapImages || [], function () {
@@ -513,8 +510,8 @@ function weToggle(opt)
 		});
 
 		// Now go through all the sections to be collapsed.
-		$.each(opt.aSwappableContainers, function () {
-			$('#' + this)[bCollapse ? 'slideUp' : 'slideDown'](bInit ? 0 : 300);
+		$.each(opt.aSwapContainers, function () {
+			$('#' + this)[bCollapse ? 'slideUp' : 'slideDown'](bInit ? 0 : 250);
 		});
 
 		// Update the new state.
@@ -543,7 +540,7 @@ function weToggle(opt)
 	// If cookies are enabled and our toggler cookie is set to '1', override the initial state.
 	// Note: the cookie retrieval code is below, you can turn it into a function by replacing opt.sCookie with a param.
 	// It's not used anywhere else in Wedge, which is why we won't bother with a weCookie object.
-	if (opt.bCurrentlyCollapsed || (opt.sCookie && document.cookie.search('\\b' + opt.sCookie + '\\s*=\\s*1\\b') != -1))
+	if (opt.isCollapsed || (opt.sCookie && document.cookie.search('\\b' + opt.sCookie + '\\s*=\\s*1\\b') != -1))
 		this.cs(true, true);
 
 	// Initialize the images to be clickable.

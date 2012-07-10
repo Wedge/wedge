@@ -227,8 +227,8 @@ function template_boards_newsfader()
 	});
 
 	new weToggle({', empty($options['collapse_news_fader']) ? '' : '
-		bCurrentlyCollapsed: true,', '
-		aSwappableContainers: [\'fadeScroller\'],
+		isCollapsed: true,', '
+		aSwapContainers: [\'fadeScroller\'],
 		aSwapImages: [{ sId: \'newsupshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],
 		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_news_fader\' }', $context['user']['is_guest'] ? ',
 		sCookieName: \'newsupshrink\'' : '', '

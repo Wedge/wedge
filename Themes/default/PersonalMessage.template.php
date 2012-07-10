@@ -407,7 +407,7 @@ function template_folder()
 				if (!empty($context['currently_using_labels']))
 				{
 					echo '
-					<select name="pm_actions[', $message['id'], ']" onchange="if ($(this).val()) this.form.submit();" class="fixed">
+					<select name="pm_actions[', $message['id'], ']" onchange="if ($(this).val()) this.form.submit();">
 						<option data-hide>', $txt['pm_msg_label_title'], '</option>';
 
 					// Are there any labels which can be added to this?
@@ -564,7 +564,7 @@ function template_subject_list()
 	{
 		if (!empty($context['currently_using_labels']) && $context['folder'] != 'sent')
 			echo '
-				<select name="pm_action" onchange="if ($(this).val()) this.form.submit();" onfocus="loadLabelChoices();" class="fixed">
+				<select name="pm_action" onchange="if ($(this).val()) this.form.submit();" onfocus="loadLabelChoices();">
 					<option data-hide>', $txt['pm_sel_label_title'], '</option>
 				</select>';
 

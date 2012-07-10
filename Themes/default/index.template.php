@@ -327,8 +327,8 @@ function template_logo_toggler()
 
 	add_js('
 	new weToggle({', empty($options['collapse_header']) ? '' : '
-		bCurrentlyCollapsed: true,', '
-		aSwappableContainers: [\'upper_section\'],
+		isCollapsed: true,', '
+		aSwapContainers: [\'upper_section\'],
 		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],', $context['user']['is_guest'] ? '
 		sCookie: \'upshrink\'' : '
 		sOptionName: \'collapse_header\'', '
@@ -542,10 +542,9 @@ function template_body_after()
 {
 	global $context, $theme, $options, $txt, $settings, $footer_coding;
 
-	$no_resize = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 	echo '
 <script><!-- // --><![CDATA[
-	function weres()', $no_resize ? ' {}' : '
+	function weres()', $context['browser']['is_ie6'] || $context['browser']['is_ie7'] ? ' {}' : '
 	{
 		var d=document,b=d.body,m=d.getElementById("main"),w=m?m.clientWidth:0;
 		b.id=w&&w<728?"responsive":w>=969?"":b.id;
@@ -600,8 +599,8 @@ function template_body_after()
 		we_cancel = "', $txt['form_cancel'], '"', empty($context['current_topic']) ? '' : '
 		we_topic = "' . $context['current_topic'] . '"', ';
 
-	', $no_resize ? '' : '$(window).resize(weres).resize();
-	', '$("#main_menu").menu();', $context['show_pm_popup'] ? '
+	$(window).resize(weres).resize();
+	$("#main_menu").menu();', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
 		window.open(weUrl() + "action=pm");' : '';

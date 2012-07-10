@@ -666,7 +666,7 @@ fieldset.merge_options
 /* Styles for the login areas.
 ------------------------------------------------------- */
 .login
-	margin: 0 auto
+	margin: auto
 	dl
 		overflow: auto
 		clear: right
@@ -821,7 +821,7 @@ tr.windowbg td
 ------------------------------------------------- */
 #fatal_error
 	width: 80%
-	margin: 0 auto
+	margin: auto
 	padding: 25px 0 10px
 
 .errorbox
@@ -1010,7 +1010,7 @@ tr.windowbg td
 		.bar
 			float: none
 			width: 15px
-			margin: 0 auto
+			margin: auto
 			border-radius: 4px 4px 0 0
 
 // Most popular boards by posts and activity
@@ -1245,7 +1245,7 @@ div.top_row dd
 		clear: both
 
 #search_options
-	margin: 0 auto
+	margin: auto
 	width: 600px
 	padding-top: 1em
 	overflow: hidden

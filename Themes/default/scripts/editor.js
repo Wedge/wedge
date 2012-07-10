@@ -18,7 +18,7 @@ function weEditor(opt)
 	 */
 
 	this.bRichTextEnabled = !!opt.bWysiwyg;
-	this.bRichTextPossible = !opt.bRichEditOff && (is_ie || is_ff || is_opera95up || is_webkit) && !(is_iphone || is_android);
+	this.bRichTextPossible = !opt.bRichEditOff && (is_ie || is_ff || is_opera || is_webkit) && !(is_iphone || is_android);
 
 	// Create some links to the editor object.
 	var
@@ -675,9 +675,10 @@ function weEditor(opt)
 	};
 
 	// Upload/add a media file (picture, video...)
+	// !! Integrate this cleanly.
 	this.addMedia = function ()
 	{
-		reqWin(weUrl() + 'action=media;sa=post;noh=' + opt.sUniqueId, Math.min(1000, self.screen.availWidth - 50), Math.min(700, self.screen.availHeight - 50), false, true, true);
+		reqWin(weUrl() + 'action=media;sa=post;noh=' + opt.sUniqueId, Math.min(1000, self.screen.availWidth - 50), Math.min(700, self.screen.availHeight - 50), false, true);
 	};
 
 	// Toggle wysiwyg/normal mode.
@@ -1076,7 +1077,7 @@ function weEditor(opt)
 
 	// Show the resizer.
 	var sizer = $('#' + opt.sUniqueId + '_resizer');
-	if (sizer.length && (!is_opera || is_opera95up))
+	if (sizer.length)
 	{
 		sizer.show().bind('mousedown', function (oEvent) {
 			// This is the method called after clicking the resize bar.

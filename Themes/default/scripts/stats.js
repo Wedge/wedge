@@ -46,12 +46,12 @@ function weStatsCenter(oOptions)
 
 			// Setup the toggle element for the year.
 			oCurYear.oToggle = new weToggle({
-				bCurrentlyCollapsed: oCurYear.bIsCollapsed,
+				isCollapsed: oCurYear.bIsCollapsed,
 				sYearId: sYearId,
-				funcOnBeforeCollapse: function () {
+				onBeforeCollapse: function () {
 					that.onBeforeCollapseYear(this);
 				},
-				aSwappableContainers: [],
+				aSwapContainers: [],
 				aSwapImages: [
 					{
 						sId: oOptions.sYearImageIdPrefix + sYearId,
@@ -89,15 +89,15 @@ function weStatsCenter(oOptions)
 
 			// Setup the toggle element for the month.
 			oCurMonth.oToggle = new weToggle({
-				bCurrentlyCollapsed: oCurMonth.bIsCollapsed,
+				isCollapsed: oCurMonth.bIsCollapsed,
 				sMonthId: sMonthId,
-				funcOnBeforeCollapse: function () {
+				onBeforeCollapse: function () {
 					that.onBeforeCollapseMonth(this);
 				},
-				funcOnBeforeExpand: function () {
+				onBeforeExpand: function () {
 					that.onBeforeExpandMonth(this);
 				},
-				aSwappableContainers: [],
+				aSwapContainers: [],
 				aSwapImages: [
 					{
 						sId: oOptions.sMonthImageIdPrefix + sMonthId,
@@ -113,13 +113,13 @@ function weStatsCenter(oOptions)
 				]
 			});
 
-			oCurYear.oToggle.opt.aSwappableContainers.push(this.id);
+			oCurYear.oToggle.opt.aSwapContainers.push(this.id);
 		}
 
 		else if ((aResults = oOptions.reDayPattern.exec(this.id)) != null)
 		{
-			oCurMonth.oToggle.opt.aSwappableContainers.push(this.id);
-			oCurYear.oToggle.opt.aSwappableContainers.push(this.id);
+			oCurMonth.oToggle.opt.aSwapContainers.push(this.id);
+			oCurYear.oToggle.opt.aSwapContainers.push(this.id);
 		}
 	});
 
@@ -132,7 +132,7 @@ weStatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
 {
 	// Tell Wedge that all underlying months have disappeared.
 	$.each(this.oYears[oToggle.opt.sYearId].oMonths, function () {
-		if (this.oToggle.opt.aSwappableContainers.length)
+		if (this.oToggle.opt.aSwapContainers.length)
 			this.oToggle.cs(true);
 	});
 };
@@ -147,12 +147,12 @@ weStatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 		// Remove the month rows from the year toggle.
 		var aNewContainers = [], oYearToggle = this.oYears[oToggle.opt.sMonthId.substr(0, 4)].oToggle;
 
-		$.each(oYearToggle.opt.aSwappableContainers, function () {
-			if (!in_array(this + '', oToggle.opt.aSwappableContainers))
+		$.each(oYearToggle.opt.aSwapContainers, function () {
+			if (!in_array(this + '', oToggle.opt.aSwapContainers))
 				aNewContainers.push(this + '');
 		});
 
-		oYearToggle.opt.aSwappableContainers = aNewContainers;
+		oYearToggle.opt.aSwapContainers = aNewContainers;
 	}
 };
 
@@ -162,7 +162,7 @@ weStatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 	if (this.bIsLoading)
 		return;
 
-	if (!oToggle.opt.aSwappableContainers.length)
+	if (!oToggle.opt.aSwapContainers.length)
 	{
 		show_ajax();
 		getXMLDocument.call(this, weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
@@ -200,8 +200,8 @@ weStatsCenter.prototype.onDocReceived = function (oXMLDoc)
 			}
 
 			// Add these day rows to the toggle objects in case of collapse.
-			that.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwappableContainers.push(oCurRow.id);
-			that.oYears[sYearId].oToggle.opt.aSwappableContainers.push(oCurRow.id);
+			that.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwapContainers.push(oCurRow.id);
+			that.oYears[sYearId].oToggle.opt.aSwapContainers.push(oCurRow.id);
 		});
 	});
 

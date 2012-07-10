@@ -106,7 +106,7 @@ header, footer, aside, section, article, nav
 ------------------------------------------------------- */
 
 #header, #content, #linktree
-	margin: 0 auto
+	margin: auto
 	background: $main_bg
 
 #header, #navi, #footer
@@ -265,7 +265,7 @@ ul#noava
 
 // The footer with copyright links etc.
 #footer
-	margin: 0 auto
+	margin: auto
 	border-top: 1px solid #bdb5b5
 	div.frame
 		padding: 10px 20px
@@ -312,7 +312,7 @@ table
 
 // Wraps the entire forum when a forum width is set.
 #wrapper
-	margin: 0 auto
+	margin: auto
 
 // Standard horizontal rule.. ([hr], etc.)
 hr
@@ -982,7 +982,7 @@ li.separator
 
 // Centering an element that has width
 .centered
-	margin: 0 auto
+	margin: auto
 
 // Centering, right and left-aligning text within an element
 .left
@@ -1550,12 +1550,12 @@ dl#feed
 #help_pop
 	position: fixed
 	left, top: 0
+	background-color: rgba(0,0,0, .2)
 	a
 		text-decoration: underline
 
 	// Actual body for the JavaScript popup
 	#helf
-		visibility: hidden
 		border-radius: 12px
 		box-shadow: 2px 2px 10px 0 rgba(0,0,0, .75)
 		position: absolute
