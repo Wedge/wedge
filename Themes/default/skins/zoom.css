@@ -32,6 +32,10 @@
 	width, height: 30px
 	background: url($images/aeva/close.png) no-repeat
 
+#zoom-desc
+	max-height: 5em
+	overflow: hidden
+
 .zoom-desc-contain
 	box-sizing: border-box
 	margin: 0 10px 10px
@@ -40,10 +44,6 @@
 	color: #000
 	.mg_desc
 		color: #888
-
-.lonely
-	float: none
-	text-align: center
 
 .zoom-overlay, .zoom-html
 	display: none

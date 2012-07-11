@@ -2641,7 +2641,7 @@ function aeva_showThumbnail($data)
 	$caption_box = ($type != 'link' && $caption == $txt['media_gotolink']) ? '' : '<div class="aeva_caption">' . ($type == 'link' ? '<a href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' : '') . $caption . ($type == 'link' ? '</a>' : '') . '</div>';
 
 	$data =
-		($show_main_div ? '<table class="aextbox' . (!empty($align) ? ' ' . $align . 'text' : '') . '"'
+		($show_main_div ? '<table class="aextbox"' . ($align ? ' style="margin: ' . ($align == 'left' ? '0 auto 0 0' : ($align == 'right' ? '0 0 0 auto' : 'auto')) . '"' : '')
 		. (!empty($css_stuff) ? ' style="' . implode('; ', $css_stuff) . '"' : '') . '><tr><td>' : '')
 		. $box . (empty($inside_caption) ? '' : $inside_caption)
 		. ($show_main_div && !empty($caption_box) ? '</td></tr><tr><td>' : '')
@@ -2899,12 +2899,12 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 			<div class="aeva_quickmod"><input type="checkbox" name="mod_item[' . $i['id'] . ']"></div>' : '';
 		$dest_link = $is_image && $i['type'] == 'embed' && !$i['has_preview'] ? $i['embed_url'] : $galurl . 'sa=' . ($is_image ? 'media' : 'item') . ';in=' . $i['id'] . ($is_image ? ';preview' : '');
 		$re .= '
-		<div class="indpic center' . ($i['approved'] ? '' : ' unapp') . '" style="margin: auto; width: ' . ($amSettings['max_thumb_width'] + 20) . 'px">
+		<div class="indpic center centered' . ($i['approved'] ? '' : ' unapp') . '" style="width: ' . ($amSettings['max_thumb_width'] + 20) . 'px">
 			<a href="' . $dest_link . '"' . (($is_image || $is_embed) && $amSettings['use_zoom'] ? ' id="hsm' . $in_page . '" class="zoom'
 			. ($is_embed ? ' is_media" data-width="' . $siz[1] : '') . '"' : '') . '><div class="aep' . ($i['transparent'] ? ' ping' : '') . '" style="width: ' . $i['w_thumb'] . 'px; height: ' . $i['h_thumb'] . 'px; background: url(' . $i['thumb_url'] . ') 0 0"></div></a>'
 			. $inside_caption . '
 
-			<div style="margin: auto; width: ' . ($amSettings['max_thumb_width'] + 10) . 'px">' . $check . ($i['is_new'] ? $new_icon : '') . '
+			<div class="centered" style="width: ' . ($amSettings['max_thumb_width'] + 10) . 'px">' . $check . ($i['is_new'] ? $new_icon : '') . '
 				<a href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '"' . ($title != $i['title'] ? ' title="'
 				. preg_replace('/&amp;(#[0-9]+|[a-zA-Z]+);/', '&$1;', westr::htmlspecialchars($i['title'])) . '"' : '') . '>' . $title . '</a>
 			</div>
@@ -3543,27 +3543,24 @@ function aeva_markAllSeen()
 function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 {
 	global $context, $txt, $settings, $amSettings, $scripturl;
+	static $done = false;
 
-	if (isset($context['mg_headers_sent']))
+	if ($done)
 		return;
+	$done = true;
 
 	aeva_loadLanguage('media_move');
 
-	$use_zoomedia &= !empty($amSettings['use_zoom']);
-	$zoom = (empty($_GET['action']) || $_GET['action'] != 'media' ? '
-	<link rel="stylesheet" href="' . add_css_file('media') . '">' : '') . (!$use_zoomedia ? '' : '
-	<link rel="stylesheet" href="' . add_css_file('zoom') . '" media="screen">');
+	if (empty($_GET['action']) || $_GET['action'] != 'media')
+		add_css_file('media', true);
 
 	if ((empty($_GET['action']) || $_GET['action'] != 'media') && (($context['browser']['is_firefox'] && $pfx = 'moz') || ($context['browser']['is_safari'] && $pfx = 'webkit')))
 		add_css('
 		.pics td { -' . $pfx . '-border-radius: 5px; }
 		.aeva_rounded { -' . $pfx . '-border-radius: 5px; }');
 
-	if ($use_zoomedia)
-		$zoom .= aeva_initZoom($autosize, isset($context['album_data'], $context['album_data']['options']) ? $context['album_data']['options'] : array());
-
-	$context['header'] .= $zoom;
-	$context['mg_headers_sent'] = true;
+	if ($use_zoomedia && !empty($amSettings['use_zoom']))
+		aeva_initZoom($autosize, isset($context['album_data'], $context['album_data']['options']) ? $context['album_data']['options'] : array());
 }
 
 function aeva_loadLanguage($str)

@@ -204,7 +204,7 @@ function template_display_posts()
 				{
 					if ($attachment['thumbnail']['has_thumb'])
 						echo '
-								<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" ', empty($attachment['thumbnail']['javascript']) ? 'class="zoom"' : 'onclick="' . $attachment['thumbnail']['javascript'] . '"', '><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
+								<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" class="zoom"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
 					else
 						echo '
 								<img src="', $attachment['href'], ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"><br>';

@@ -240,8 +240,8 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 
 	if ($show_audio_preview)
 		$output .= '
-		<div align="center" style="margin: auto; text-align: center; width: ' . max($cur_width, $pwid) . 'px">
-		<img src="' . $preview_image . '"' . ($cur_width > 0 && $cur_height > 0 ? ' width="' . $cur_width . '" height="' . $cur_height . '"' : '') . ' align="middle" style="padding-bottom: 8px">';
+		<div class="centered" style="width: ' . max($cur_width, $pwid) . 'px">
+		<img src="' . $preview_image . '"' . ($cur_width > 0 && $cur_height > 0 ? ' width="' . $cur_width . '" height="' . $cur_height . '"' : '') . ' class="center" style="padding-bottom: 8px">';
 
 	$ext = aeva_getExt($obj->src);
 	if ($type == 'image')
@@ -384,8 +384,13 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 
 function aeva_initZoom($autosize, $peralbum = array())
 {
-	global $txt, $theme;
+	global $txt, $context;
+	static $done = false;
 
+	if ($done)
+		return;
+	$done = true;
+	add_css_file('zoom', true);
 	add_js_file('scripts/zoomedia.js');
 	add_js('
 	$("a.zoom").zoomedia({

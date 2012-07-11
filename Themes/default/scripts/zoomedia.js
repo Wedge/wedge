@@ -18,12 +18,9 @@
 	{
 		var
 			double_clicked, img, $img, $fullsize, $anchor,
-			img_width, img_height, show_loading,
-			padding, double_padding,
-			css_width = 'width',
-			css_auto = 'auto',
+			show_loading, padding,
 
-			zoom = '#zoom', $zoom, $zoom_desc, $zoom_close,
+			$zoom, $zoom_desc, $zoom_close,
 			$zoom_content, $zoom_desc_contain,
 
 			options = options || {},
@@ -42,7 +39,7 @@
 			zooming = true;
 
 			// In case we already have a zoomed item...
-			$(zoom).remove();
+			$('#zoom').remove();
 
 			$('body').append('\
 				<div id="zoom" class="zoom-' + outline + '">\
@@ -53,23 +50,22 @@
 					<a href="#" title="' + (lang.closeTitle || '') + '" id="zoom-close"></a>\
 				</div>');
 
-			$zoom = $(zoom);
-			$zoom_desc = $(zoom + '-desc');
-			$zoom_content = $(zoom + '-content').dblclick(false);
-			$zoom_close = $(zoom + '-close').click(hide);
+			$zoom = $('#zoom');
+			$zoom_desc = $('#zoom-desc');
+			$zoom_content = $('#zoom-content').dblclick(false);
+			$zoom_close = $('#zoom-close').click(hide);
 			$zoom_desc_contain = $('.zoom-desc-contain', $zoom);
 
 			// Use namespaces on any events not inside our zoom box.
-			$(document).bind({
-				'click.zoom': function (e) {
-					if (active && e.target.id != 'zoom' && !$(e.target).closest(zoom + ':visible').length)
+			$(document)
+				.bind('click.zoom', function (e) {
+					if (active && e.target.id != 'zoom' && !$(e.target).closest('#zoom:visible').length)
 						hide();
-				},
-				'keyup.zoom': function (e) {
+				})
+				.bind('keyup.zoom', function (e) {
 					if (active && e.which == 27)
 						hide();
-				}
-			});
+				});
 
 			$anchor = $(this);
 
@@ -90,88 +86,76 @@
 			// This gets executed once the item to zoom is ready to show.
 			var whenReady = function ()
 			{
-				img = this;
-				$img = $(img);
-				// Width set by options, or natural image width, or div width if it's HTML.
-				img_width = options.width || img.width || $img.width();
-				img_height = options.height || img.height || $img.height();
+				$img = $(img = this);
 
+				// Width set by options, or natural image width, or div width if it's HTML.
 				var
+					img_width = options.width || img.width || $img.width(),
+					img_height = options.height || img.height || $img.height() || 1,
+					ratio = img_width / img_height,
+
 					win_width = win.width(),
 					win_height = win.height(),
 					is_html = !!$frame.length,
-					scrollTop = is_ie8down ? document.documentElement.scrollTop : window.pageYOffset,
-					scrollLeft = is_ie8down ? document.documentElement.scrollLeft : window.pageXOffset,
 					desc = $anchor.next('.zoom-overlay').html() || '';
 
 				done_loading();
-				$zoom_desc_contain.toggle(desc != '');
+				$zoom_desc_contain.toggle(desc != '').width(img_width);
+				$zoom_desc.html(desc);
 				$zoom_content.html(options.noScale ? '' : $img.addClass('scale'));
+				padding = $zoom.width() - img_width;
 
-				double_padding = $zoom.width() - img_width;
-				padding = double_padding / 2;
-
-				if (desc)
+				// If the image is too large for our viewport, reduce it horizontally.
+				if (img_width > win_width)
 				{
-					// Force width on description, to see what height we end up with.
-					$zoom_desc.css(css_width, $zoom_desc_contain.width()).html(desc);
-
-					// If the viewport is too small, keep only the links in the description, reduce the picture height
-					// to match the maximum height, and resize the description to match the new picture width.
-					// (This code could be simpler, but it wouldn't work on IE. Known song.)
-					if (!is_html && $zoom.height() > win_height)
-					{
-						$zoom_desc.html($zoom_desc.find('.aelink').addClass('lonely')).css(css_width, css_auto);
-						if ($zoom.height() > win_height)
-							$img.css({ width: css_auto, height: $img.height() + win_height - $zoom.height() });
-						$zoom_desc.css(css_width, $zoom_desc_contain.width());
-						$zoom.css({ width: $zoom.width(), height: $zoom.height() });
-						img_width = $img.width();
-						img_height = $img.height();
-					}
-					// Is it a narrow element with a long description? If yes, enlarge its parent to at least 500px.
-					else if (!is_html && img_width < 500 && ($zoom_desc.outerWidth(true) > img_width || $zoom_desc.outerHeight(true) > 200))
-					{
-						var resized = true;
-						$img.css({
-							maxWidth: width,
-							maxHeight: height
-						});
-						$zoom.css(css_width, Math.max($zoom_desc.outerWidth(), 500));
-						$zoom_desc.css(css_width, css_auto);
-					}
+					img_width += win_width - $zoom.width();
+					img_height = img_width / ratio;
+					$zoom_desc_contain.width('auto');
+					$img
+						.width(img_width)
+						.height(img_height);
 				}
 
-				// Target size -- make sure it's within the browser viewport.
-				var
-					width = $zoom.width(),
-					height = $zoom.height(),
-					on_width = !is_html && height > win_height ? width * (win_height / height) : width,
-					on_height = !is_html ? Math.min(win_height, height) : height,
-					on_top = Math.max(0, (win_height - on_height) / 2 + scrollTop),
-					on_left = (win_width - on_width) / 2 + scrollLeft;
+				// And/or if it's too tall, reduce it even more.
+				if ($zoom.height() > win_height)
+				{
+					img_height += win_height - $zoom.height();
+					img_width = img_height * ratio;
+					$zoom_desc_contain.width('auto');
+					$img
+						.width(img_width)
+						.height(img_height);
+				}
 
-				$zoom_desc_contain.css('overflow', 'hidden');
-				if (!resized && !is_html)
-					$img.css({ width: '100%', height: css_auto });
+				var width = $zoom.width(), height = $zoom.height();
+
+				$zoom_desc_contain
+					.css('overflow', 'hidden')
+					.width('auto')
+					.height('auto');
+
+				if (!is_html)
+					$img
+						.width('100%')
+						.height('auto');
 
 				$zoom.css({
-					left: original_size.x - padding,
-					top: original_size.y - padding,
-					width: original_size.w + double_padding,
-					height: original_size.h + double_padding,
+					left: original_size.x - padding / 2,
+					top: original_size.y - padding / 2,
+					width: original_size.w + padding,
+					height: original_size.h + padding,
 					visibility: 'visible'
 				})
 				.toggle(is_html)
 				.animate({
-						left: on_left,
-						top: on_top,
-						width: on_width,
-						height: on_height,
+						left: Math.max(0, win.scrollLeft() + (win_width - width) / 2),
+						top: Math.max(0, win.scrollTop() + (win_height - height) / 2),
+						width: width,
+						height: height,
 						opacity: is_html ? '+=0' : 'show'
 					},
 					duration,
-					null,
+					'swing2',
 					function ()
 					{
 						if (options.noScale)
@@ -187,7 +171,7 @@
 						else
 						{
 							$zoom_content.one('dblclick', double_click);
-							$zoom_close.show();
+							$zoom_close.fadeIn(300, 'linear');
 						}
 						zooming = false;
 						active = true;
@@ -219,15 +203,17 @@
 						wt = img.naturalWidth,
 						ht = img.naturalHeight,
 						rezoom = function () {
+							var w2 = Math.min(win.width() - $zoom.width() + $img.width(), wt, wt * (win.height() - $zoom.height() + $img.height()) / ht);
+							ht = ht * w2 / wt;
 							done_loading();
-							$zoom_desc.css(css_width, css_auto);
+							$zoom_desc.width('auto');
 							$zoom.animate({
-								left: '-=' + (wt - $img.width()) / 2,
+								left: '-=' + (w2 - $img.width()) / 2,
 								top: '-=' + (ht - $img.height()) / 2,
-								width: '+=' + (wt - $img.width()),
+								width: '+=' + (w2 - $img.width()),
 								height: '+=' + (ht - $img.height())
 							}, 500, null, function () {
-								$zoom_close.show();
+								$zoom_close.fadeIn(300, 'linear');
 							});
 						};
 					if (wt > 0)
@@ -245,7 +231,7 @@
 				}).attr('src', $fullsize);
 			}
 			else
-				$zoom_close.show();
+				$zoom_close.fadeIn(300, 'linear');
 			return false;
 		},
 
@@ -280,10 +266,8 @@
 			if (zooming || !active)
 				return false;
 			zooming = true;
-			$zoom.unbind();
-			$zoom_content.unbind();
-			$('html').unbind('click.zoom');
-			$(document).unbind('keyup.zoom');
+			$($zoom, $zoom_content).unbind();
+			$(document).unbind('.zoom');
 
 			if (options.noScale)
 				$zoom_content.html('');
@@ -292,10 +276,10 @@
 			$zoom_desc_contain.css('overflow', 'hidden');
 			$zoom.animate(
 				{
-					left: original_size.x - padding,
-					top: original_size.y - padding,
-					width: original_size.w + double_padding,
-					height: original_size.h + double_padding,
+					left: original_size.x - padding / 2,
+					top: original_size.y - padding / 2,
+					width: original_size.w + padding,
+					height: original_size.h + padding,
 					opacity: 'hide'
 				},
 				duration,

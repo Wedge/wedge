@@ -614,7 +614,11 @@ function aeva_viewAlbum()
 
 	if (empty($album) || empty($current_album))
 		fatal_lang_error('media_album_denied', !empty($amSettings['log_access_errors']));
-	if (!empty($current_album['hidden']) && !aeva_allowedTo('moderate') && !$is_owner)
+
+	// We need to determine whether user has upload rights, regardless of other settings.
+	$context['aeva_can_add_item'] = $current_album['can_upload'] && aeva_allowedTo(array('moderate', 'add_videos', 'add_embeds', 'add_audios', 'add_images', 'add_docs'), true);
+
+	if (!empty($current_album['hidden']) && !$context['aeva_can_add_item'] && !$is_owner)
 		fatal_lang_error('media_album_denied', !empty($amSettings['log_access_errors']));
 
 	if (isset($_REQUEST['markseen']))
@@ -673,7 +677,6 @@ function aeva_viewAlbum()
 
 	$current_album['type2'] = $current_album['featured'] ? $txt['media_featured_album'] : $txt['media_album'];
 
-	$context['aeva_can_add_item'] = $current_album['can_upload'] && aeva_allowedTo(array('moderate', 'add_videos', 'add_embeds', 'add_audios', 'add_images', 'add_docs'), true);
 	$context['aeva_can_multi_upload'] = $context['aeva_can_add_item'] && aeva_allowedTo('multi_upload');
 	$context['aeva_can_moderate_here'] = aeva_allowedTo('moderate') || $is_owner;
 	$context['aeva_can_approve_here'] = aeva_allowedTo('moderate') || ($is_owner && aeva_allowedTo('auto_approve_item'));
@@ -934,11 +937,7 @@ function aeva_viewItem()
 
 	// Include Zoomedia here to avoid further issues
 	if ($amSettings['use_zoom'])
-	{
-		$context['mg_headers_sent'] = true;
-		$context['header'] .= '
-	<link rel="stylesheet" href="' . add_css_file('zoom') . '" media="screen">' . aeva_initZoom($peralbum['autosize'], $peralbum);
-	}
+		aeva_initZoom($peralbum['autosize'], $peralbum);
 
 	$can_delete_one_comment = false;
 	if (wesql::num_rows($result) > 0)
