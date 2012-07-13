@@ -94,13 +94,6 @@ function aeva_admin_init()
 	loadLanguage('ManageMedia');
 	loadTemplate('ManageMedia');
 
-	// Check the session.
-	checkSession('get');
-
-	// Check for permission
-	if (!allowedTo('media_manage'))
-		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
-
 	// Our sub-actions
 	// 'sub-action' => 'Function to call'
 	$areas = array(
@@ -123,6 +116,13 @@ function aeva_admin_init()
 		'description' => $area == 'fields' ? $txt['media_cf_desc'] : $txt['media_admin_' . $area . '_desc'],
 		'tabs' => array(),
 	);
+
+	// Check the session.
+	checkSession('get');
+
+	// Check for permission
+	if (!allowedTo('media_manage'))
+		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 	wetem::outer('aeva_admin');
 

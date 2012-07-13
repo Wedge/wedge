@@ -112,7 +112,6 @@ function ModifyPermissions()
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['permissions_title'],
 		'help' => 'permissions',
-		'description' => '',
 		'tabs' => array(
 			'index' => array(
 				'description' => $txt['permissions_groups'],

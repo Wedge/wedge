@@ -74,7 +74,7 @@ function PackageGet()
 	// Now create the tabs for the template.
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['package_manager'],
-		//'help' => 'registrations',
+		// !!! 'help' => 'registrations',
 		'description' => $txt['package_manager_desc'],
 		'tabs' => array(
 			'browse' => array(

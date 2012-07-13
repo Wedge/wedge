@@ -522,7 +522,6 @@ function ReportedPosts()
 	// Put the open and closed options into tabs, because we can...
 	$context[$context['moderation_menu_name']]['tab_data'] = array(
 		'title' => $txt['mc_reported_posts'],
-		'help' => '',
 		'description' => $txt['mc_reported_posts_desc'],
 	);
 
@@ -1047,7 +1046,6 @@ function ViewWatchedUsers()
 	// Put some pretty tabs on cause we're gonna be doing hot stuff here...
 	$context[$context['moderation_menu_name']]['tab_data'] = array(
 		'title' => $txt['mc_watched_users_title'],
-		'help' => '',
 		'description' => $txt['mc_watched_users_desc'],
 	);
 

@@ -64,7 +64,6 @@ function ManageMail()
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['mailqueue_title'],
-		'help' => '',
 		'description' => $txt['mailqueue_desc'],
 	);
 

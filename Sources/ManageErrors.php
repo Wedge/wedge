@@ -169,7 +169,7 @@ function ViewErrorLog()
 				'file' => $row['file'],
 				'line' => $row['line'],
 				'href' => $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'],
-				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 1280, 500);">' . $row['file'] . '</a>' : $row['file'],
+				'link' => $linkfile ? '<a href="' . $scripturl . '?action=admin;area=logs;sa=errorlog;file=' . base64_encode($row['file']) . ';line=' . $row['line'] . '" onclick="return reqWin(this, 1280);">' . $row['file'] . '</a>' : $row['file'],
 				'search' => base64_encode($row['file']),
 			);
 		}
@@ -692,6 +692,12 @@ function ViewFile()
 
 	$context['help_text'] .= '
 		</table>';
+
+	if (empty($file_data))
+	{
+		loadLanguage('ManageMaintenance');
+		$context['help_text'] = $txt['file_out_of_bounds'];
+	}
 
 	loadLanguage('Help');
 	loadTemplate('Help');

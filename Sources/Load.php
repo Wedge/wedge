@@ -172,7 +172,7 @@ function reloadSettings()
  */
 function loadUserSettings()
 {
-	global $settings, $user_settings, $cookiename, $user_info, $language, $db_prefix;
+	global $settings, $user_settings, $cookiename, $user_info, $language, $db_prefix, $boardurl;
 
 	$id_member = 0;
 
@@ -191,6 +191,7 @@ function loadUserSettings()
 		}
 	}
 
+	// Aeva Media's Flash-based mass-upload feature doesn't carry the cookie with it.
 	if (isset($_REQUEST['upcook']))
 		$_COOKIE[$cookiename] = base64_decode(urldecode($_REQUEST['upcook']));
 
@@ -406,14 +407,15 @@ function loadUserSettings()
 	);
 
 	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
-	$user_info['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];
+	// Note that HTTP_X_FORWARDED_SERVER is mostly used by proxy servers. If the client doesn't provide anything, it's probably a bot.
+	$user_info['host'] = empty($_SERVER['REAL_HTTP_HOST']) ? (empty($_SERVER['HTTP_HOST']) ? (empty($_SERVER['HTTP_X_FORWARDED_SERVER']) ? substr(strrchr($boardurl, ':'), 3) : $_SERVER['HTTP_X_FORWARDED_SERVER']) : $_SERVER['HTTP_HOST']) : $_SERVER['REAL_HTTP_HOST'];
 	$user_info['server'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 's' : '') . '://' . $user_info['host'];
 
 	// The URL in your address bar. Also contains the query string.
 	// Do not print this without sanitizing first!
 	$user_info['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $user_info['server'] : substr($user_info['server'], 0, strpos($user_info['server'], '/')) . '//' . $_SERVER['HTTP_HOST']) . $_SERVER['REQUEST_URI'];
 
-	// All users (including guests) also belong to the -3 (aka Everyone) virtual membergroup.
+	// All users (including guests) also belong to the -3 (aka everyone) virtual membergroup.
 	$user_info['groups'] = array_unique(array_merge((array) -3, $user_info['groups']));
 
 	// Make sure that the last item in the ignore boards array is valid. If the list was too long it could have an ending comma that could cause problems.
