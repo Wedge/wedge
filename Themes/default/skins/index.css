@@ -1162,6 +1162,8 @@ table
 
 .bbc_list
 	text-align: left
+	li
+		padding-top, padding-bottom: 2px
 
 .bbc_tt
 	font-family: $mono_font

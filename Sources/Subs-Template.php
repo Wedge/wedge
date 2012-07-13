@@ -59,9 +59,9 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
 	// Has the template been started yet?
 	if ($do_start)
 	{
-		// Was the page title set last minute? Also update the HTML safe one.
+		// Generate a HTML-safe version of the page title: notably, remove any tags and encode entities. What a messy call though...
 		if (!empty($context['page_title']) && empty($context['page_title_html_safe']))
-			$context['page_title_html_safe'] = westr::htmlspecialchars(un_htmlspecialchars($context['page_title']));
+			$context['page_title_html_safe'] = westr::htmlspecialchars(un_htmlspecialchars(strip_tags($context['page_title'])), ENT_COMPAT, false, false);
 
 		// Start up the session URL fixer.
 		ob_start('ob_sessrewrite');

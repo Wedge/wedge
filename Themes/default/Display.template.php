@@ -669,18 +669,21 @@ function template_topic_poll()
 				// Showing votes to users? Means we must have some votes!
 				if ($context['poll']['showing_voters'] && !empty($option['votes']))
 				{
-					echo '
+					$voters = '
 					<br class="clear">';
 
 					// There are some names to show
 					if (!empty($option['voters']))
 					{
 						foreach ($option['voters'] as $k => $v)
-							echo ' <a href="<URL>?action=profile;u=', $k, '">', $v, '</a>';
+							$voters .= '<a href="<URL>?action=profile;u=' . $k . '">' . $v . '</a>, ';
+						$voters = substr($voters, 0, -2);
 
 						// Any votes that we didn't count?
 						if (count($option['voters']) < $option['votes'])
-							echo ' ', number_context('poll_voters', $option['votes'] - count($option['voters']));
+							$voters .= ' ' . number_context('poll_voters', $option['votes'] - count($option['voters']));
+
+						echo $voters;
 					}
 					// No names but some votes? Gotta be guests
 					elseif (!empty($option['votes']))

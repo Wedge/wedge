@@ -313,7 +313,7 @@
 
 			// Update the title attr and the display markup
 			$oritex
-				.css('width', 'auto')
+				.width('auto')
 				.html($newtex.html() || '&nbsp;')
 				.attr('title', $newtex.text().php_unhtmlspecialchars());
 			newwi = $oritex.width();
@@ -547,7 +547,7 @@
 		if ($dd.find('.viewport').length)
 			return;
 
-		$dd.css('width', 'auto').contents().wrapAll('<div class="viewport"><div class="overview"></div></div>');
+		$dd.width('auto').contents().wrapAll('<div class="viewport"><div class="overview"></div></div>');
 
 		newwi = $dd.width();
 

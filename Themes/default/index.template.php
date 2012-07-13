@@ -741,14 +741,15 @@ function template_footer()
 		echo '
 			<li class="stats"><!-- insert stats here --></li>';
 
-	// Show the credit page (forum admin/mod team and credits),
-	// and a link to an HTML conformity checker, for geeks.
+	// Show the credit page (forum admin/mod team and credits), and a link to an HTML conformity checker, for geeks.
+	// If you want to use validator.nu instead, replace the w3.org link with:
+	// "http://validator.nu/?doc=', $user_info['url'], '"
 	// !! @worg: rev.txt, facebook link
 	echo '
 			<li class="copyright">', $txt['copyright'], ' (rev <a href="http://wedge.org/pub/feats/6108/new-revs/">', file_get_contents($theme['theme_dir'] . '/rev.txt'), '</a>) -</li>
 			<li class="links">
 				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.nu/?doc=', $user_info['url'], '" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
+				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
 				Like us on <img src="http://static.ak.fbcdn.net/rsrc.php/v1/yH/r/eIpbnVKI9lR.png" style="width: 14px; height: 14px; margin-bottom: -2px; border: 0"> <a href="http://www.facebook.com/wedgebook">Facebook</a>
 			</li>
 		</ul>

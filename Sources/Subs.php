@@ -1545,9 +1545,6 @@ function setupThemeContext($forceload = false)
 
 	if (!isset($context['page_title']))
 		$context['page_title'] = '';
-
-	// Set some specific vars.
-	$context['page_title_html_safe'] = westr::htmlspecialchars(un_htmlspecialchars($context['page_title']), ENT_COMPAT, false, false);
 }
 
 /**
