@@ -1174,7 +1174,7 @@ function aeva_viewItem()
 	$context['canonical_url'] = $galurl . 'sa=item;in=' . $item_data['id_media'];
 
 	// Page headers
-	$context['page_title'] = $txt['media_type_' . $item_data['type']] . ': ' . $item_data['title'];
+	$context['page_title'] = '<span class="mg_item_type">' . $txt['media_type_' . $item_data['type']] . '</span>: ' . $item_data['title'];
 
 	// Filesize
 	if ($item_data['filesize'] >= 1048576)

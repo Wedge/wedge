@@ -1,7 +1,7 @@
 /*!
  * Wedge
  *
- * Helper functions used by the media player.
+ * Helper functions used by media playlists.
  *
  * @package wedge
  * @copyright 2010-2012 Wedgeward, wedge.org
@@ -13,13 +13,15 @@
 
 var
 	myfile = weUrl() + 'action%3Dmedia;sa%3Dmedia;in%3D';
+	lnFlag = 0,
+	currentPlayer = 1,
+	thisPlayer = 0,
+
 	player = [],
 	myplaylist = [],
 	ply = [],
 	plyHeight = [],
 	plyTotalHeight = [],
-	lnFlag = 0,
-	currentPlayer = 1,
 	currentItem = [],
 	previousItem = [],
 	targetScrollTop = [],
@@ -77,6 +79,15 @@ function stateListener(obj) // IDLE, BUFFERING, PLAYING, PAUSED, COMPLETED
 	}
 }
 
+function recreatePlayer(pid, fid)
+{
+	if (currentPlayer != pid)
+		player[currentPlayer].sendEvent('STOP');
+	currentPlayer = pid;
+	if (!lnFlag && player[pid])
+		player[pid].sendEvent('ITEM', fid);
+}
+
 function mover(obj, idx)
 {
 	obj.className = idx == currentItem[currentPlayer] ? 'playinghi' : 'playlisthi';
@@ -102,9 +113,9 @@ function scrollMe()
 	setTimeout(scrollMe, 20);
 }
 
-function setItemStyle(idx)
+function setItemStyle(idx, undefined)
 {
-	if (typeof idx == 'undefined' || (currentState[currentPlayer] != 'PLAYING' && currentState[currentPlayer] != 'IDLE'))
+	if (idx === undefined || (currentState[currentPlayer] != 'PLAYING' && currentState[currentPlayer] != 'IDLE'))
 		return;
 
 	var
@@ -133,4 +144,52 @@ function setItemStyle(idx)
 		Math.max(0, posList[idx] - Math.max(0, Math.round((plyHeight[currentPlayer] - heiList[idx]) / 2)))
 	);
 	setTimeout(scrollMe, 20);
+}
+
+function weplay(opt)
+{
+	var swo = opt.swo;
+
+	myplaylist[swo] = [];
+	$.each(foxp[swo], function () {
+		var mytype = ['image', 'video', 'sound'][this[2]];
+		myplaylist[swo].push({
+			file: myfile + this[0] + (mytype == 'image' ? ';preview' : '') + ';.' + this[3],
+			image: myfile + this[0] + (mytype == 'image' ? ';preview' : ';thumba'),
+			type: mytype, duration: this[1]
+		});
+	});
+
+	var fvars = {
+		file: myfile + opt.id,
+		image: myfile + opt.id + (opt.type == 'image' ? ';preview' : ';thumba'),
+		plugins: opt.plugins,
+		showdigits: 'true',
+		repeat: 'always',
+		type: opt.type,
+		duration: opt.duration
+	};
+
+	if (opt.bcol)
+		fvars.backcolor = opt.bcol;
+	if (opt.scol)
+		fvars.screencolor = opt.scol;
+
+	swfobject.embedSWF(
+		opt.player,
+		'aefoxy' + swo,
+		'100%',
+		opt.height,
+		'9',
+		opt.install || null,
+		fvars,
+		{
+			allowFullscreen: 'true',
+			allowScriptAccess: 'always'
+		},
+		{
+			id: 'player' + swo,
+			name: 'player' + swo
+		}
+	);
 }

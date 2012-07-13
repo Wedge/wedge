@@ -390,6 +390,8 @@ function aeva_initZoom($autosize, $peralbum = array())
 	if ($done)
 		return;
 	$done = true;
+
+	loadLanguage('Media');
 	add_css_file('zoom', true);
 	add_js_file('scripts/zoomedia.js');
 	add_js('
