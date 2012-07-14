@@ -50,8 +50,10 @@ function template_summary()
 	<div id="basicinfo">
 		<div class="windowbg wrc">
 			<div class="flow_auto">
-				<div class="username"><h4', empty($context['member'][$group . '_color']) ? '' : ' style="color: ' . $context['member'][$group . '_color'] . '"', '>',
-				$context['member']['name'], ' <span class="position">', $context['member'][$group], '</span></h4></div>
+				<div class="username">
+					<h4>', $context['member']['link'], '</h4>
+					<span class="position">', $context['member'][$group], '</span>
+				</div>
 				', $context['member']['avatar']['image'], '
 				<ul class="reset">';
 

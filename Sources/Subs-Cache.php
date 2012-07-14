@@ -34,6 +34,20 @@ function add_js()
 }
 
 /**
+ * Alias to add_js that will keep track of possible duplicates and ignore them.
+ */
+function add_js_unique($code)
+{
+	static $uniques = array();
+
+	if (isset($uniques[$code]))
+		return;
+	$uniques[$code] = true;
+
+	add_js($code);
+}
+
+/**
  * This function adds a string to the footer JavaScript. Because this will be shown before jQuery or script.js are loaded,
  * you must not use any of the functions provided by default in Wedge. This is only good for quick snippets that manipulate document IDs.
  */

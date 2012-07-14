@@ -103,16 +103,15 @@ class wedit
 			}
 		}
 
-		$this->LoadBBC();
-		$this->LoadSmileys();
+		$this->loadBBC();
+		$this->loadSmileys();
 	}
 
 	public function __get($name)
 	{
 		if (isset($this->editorOptions[$name]))
 			return $this->editorOptions[$name];
-		else
-			return null;
+		return null;
 	}
 
 	public static function add_button($name, $button_text, $onclick = '', $access_key = '')
@@ -413,11 +412,9 @@ class wedit
 				// Put the tags back into the body.
 				$text = substr($text, 0, $start_pos) . $tag . '[' . $matches[3] . ']' . $content . '[/' . $matches[3] . ']' . substr($text, $end_pos);
 			}
+			// Just get rid of this evil tag.
 			else
-			{
-				// Just get rid of this evil tag.
 				$text = substr($text, 0, $start_pos) . substr($text, $start_pos + strlen($matches[0]));
-			}
 		}
 
 		// Let's do some special stuff for fonts - cause we all love fonts.
@@ -1319,7 +1316,7 @@ class wedit
 		return $text;
 	}
 
-	public function LoadBBC()
+	public function loadBBC()
 	{
 		global $settings, $txt, $theme;
 
@@ -1569,7 +1566,7 @@ class wedit
 		}
 	}
 
-	public function LoadSmileys()
+	public function loadSmileys()
 	{
 		global $settings, $user_info, $txt;
 
