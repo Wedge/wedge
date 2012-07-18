@@ -1337,7 +1337,7 @@ function cache_get_data($key, $ttl = 120)
 	}
 
 	// If the operation requires re-caching, return null to let the script know.
-	if (isset($val))
+	if (!empty($val))
 		return unserialize($val);
 	return null;
 }

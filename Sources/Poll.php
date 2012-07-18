@@ -399,7 +399,7 @@ function EditPoll()
 			'id' => $pollinfo['id_poll'],
 			'question' => $question,
 			'hide_results' => empty($_POST['poll_hide']) ? 0 : $_POST['poll_hide'],
-			'voters_visible' => empty($_POST['poll_voters_visible']) ? 0 : $_POST['poll_voters_visible'],
+			'voters_visible' => empty($_POST['poll_voters_visible']) ? 0 : (int) $_POST['poll_voters_visible'],
 			'change_vote' => isset($_POST['poll_change_vote']),
 			'guest_vote' => isset($_POST['poll_guest_vote']),
 			'guest_vote_allowed' => in_array(-1, $groupsAllowedVote['allowed']),
@@ -706,9 +706,9 @@ function EditPoll2()
 	$_POST['poll_change_vote'] = isset($_POST['poll_change_vote']) ? 1 : 0;
 	$_POST['poll_guest_vote'] = isset($_POST['poll_guest_vote']) ? 1 : 0;
 
-	$_POST['poll_voters_visible'] = (int) $_POST['poll_voters_visible'];
-	if ($_POST['poll_votes_visible'] < 0 || $_POST['poll_votes_visible'] > 3)
-		$_POST['poll_votes_visible'] = 0; // If it's not a safe value, make it safe!
+	$_POST['poll_voters_visible'] = empty($_POST['poll_voters_visible']) ? 0 : (int) $_POST['poll_voters_visible'];
+	if ($_POST['poll_voters_visible'] < 0 || $_POST['poll_voters_visible'] > 3)
+		$_POST['poll_voters_visible'] = 0; // If it's not a safe value, make it safe!
 
 	// Make sure guests are actually allowed to vote generally.
 	if ($_POST['poll_guest_vote'])
