@@ -297,11 +297,7 @@ function template_display_posts()
 				</div>
 			</div>') . '
 	});
-
-	new IconList({
-		sLabels: \'' . $txt['message_icon'] . '\',
-		iBoardId: ' . $context['current_board'] . '
-	});');
+	new IconList();');
 
 	// Collapse any ignored messages. If a message has a 'like', at least show the action bar, in case the user
 	// would like to read it anyway. (Maybe they're ignoring someone only because of their signal/noise ratio?)

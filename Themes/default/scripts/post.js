@@ -34,7 +34,7 @@ function previewPost()
 	});
 
 	show_ajax();
-	sendXMLDocument(weUrl() + 'action=post2' + (current_board ? ';board=' + current_board : '') + (make_poll ? ';poll' : '') + ';preview;xml', x.join('&'), function (XMLDoc)
+	sendXMLDocument(weUrl() + 'action=post2' + (we_board ? ';board=' + we_board : '') + (make_poll ? ';poll' : '') + ';preview;xml', x.join('&'), function (XMLDoc)
 	{
 		if (!XMLDoc)
 			$(postmod.preview).click(function () { return true; }).click();

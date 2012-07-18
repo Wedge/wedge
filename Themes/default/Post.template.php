@@ -301,7 +301,6 @@ function template_postform_after()
 	var postmod = document.forms.postmodify,
 		postbox = ' . JavaScriptEscape($context['postbox']->id) . ',
 		posthandle = oEditorHandle_' . $context['postbox']->id . ',
-		current_board = ' . (empty($context['current_board']) ? 'null' : $context['current_board']) . ',
 		make_poll = ' . ($context['make_poll'] ? 'true' : 'false') . ',
 		new_replies = [], reply_counter = ' . (empty($counter) ? 0 : $counter) . ',
 		can_quote = ' . ($context['can_quote'] ? 'true' : 'false') . ',

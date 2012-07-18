@@ -421,7 +421,7 @@ function InTopicModeration(opt)
 
 
 // *** IconList object.
-function IconList(opt)
+function IconList()
 {
 	var oContainerDiv, oCurDiv, iCurMessageId,
 
@@ -438,7 +438,7 @@ function IconList(opt)
 
 			// Start to fetch its contents.
 			show_ajax();
-			getXMLDocument(weUrl() + 'action=ajax;sa=messageicons;board=' + opt.iBoardId + ';xml', function (XMLDoc)
+			getXMLDocument(weUrl() + 'action=ajax;sa=messageicons;board=' + we_board + ';xml', function (XMLDoc)
 			{
 				hide_ajax();
 				$('icon', XMLDoc).each(function ()

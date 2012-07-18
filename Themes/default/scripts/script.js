@@ -614,7 +614,7 @@ function Thought(opt)
 				thought.after('\
 		<div class="thought_actions">' + (thought.data('self') !== '' ? '' : '\
 			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + ', \'' + mid + '\');">\
-			<input type="button" class="delete" value="' + opt.sDelete + '" onclick="oThought.remove(' + tid + ');">') + '\
+			<input type="button" class="delete" value="' + we_delete + '" onclick="oThought.remove(' + tid + ');">') + '\
 			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + ', \'' + mid + '\', true);">\
 		</div>');
 		};
@@ -639,8 +639,8 @@ function Thought(opt)
 		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
 		thought.toggle(tid && is_new).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
 			+ pr + '</select><input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '"><input type="submit" value="'
-			+ opt.sSubmit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save"><input type="button" value="'
-			+ opt.sCancel + '" onclick="oThought.cancel(); return false;" class="cancel"></form>').siblings('.thought_actions').hide();
+			+ we_submit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save"><input type="button" value="'
+			+ we_cancel + '" onclick="oThought.cancel(); return false;" class="cancel"></form>').siblings('.thought_actions').hide();
 		$('#ntho').focus().val(cur_text);
 		$('#npriv').sb();
 	};

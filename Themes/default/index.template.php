@@ -404,7 +404,7 @@ function template_sidebar_before()
 		aPrivacy: [[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
 		// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
 		in_array(20, $user_info['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]],
-		sSubmit: "', $txt['form_submit'], '", sCancel: "', $txt['form_cancel'], '", sEdit: "', $txt['edit_thought'], '", sReply: "', $txt['reply'], '", sDelete: "', $txt['delete'], '",
+		sSubmit: "', $txt['form_submit'], '", sEdit: "', $txt['edit_thought'], '", sReply: "', $txt['reply'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '
 	});');
@@ -588,16 +588,18 @@ function template_body_after()
 	}
 
 	echo '
-	var
-		we_script = "<URL>",
-		we_default_theme_url = ', $theme['theme_url'] === $theme['theme_url'] ? 'we_theme_url = ' : '', '"', $theme['default_theme_url'], '", ', $theme['theme_url'] === $theme['theme_url'] ? '' : '
-		we_theme_url = "' . $theme['theme_url'] . '",', '
-		we_sessid = "', $context['session_id'], '",
-		we_sessvar = "', $context['session_var'], '",', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
-		we_iso_case_folding = true' : '', '
-		we_loading = "', $txt['ajax_in_progress'], '",
-		we_cancel = "', $txt['form_cancel'], '"', empty($context['current_topic']) ? '' : '
-		we_topic = "' . $context['current_topic'] . '"', ';
+	we_script = "<URL>";
+	we_default_theme_url = ', $theme['theme_url'] === $theme['theme_url'] ? 'we_theme_url = ' : '', '"', $theme['default_theme_url'], '";', $theme['theme_url'] === $theme['theme_url'] ? '' : '
+	we_theme_url = "' . $theme['theme_url'] . '";', '
+	we_sessid = "', $context['session_id'], '";
+	we_sessvar = "', $context['session_var'], '";', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
+	we_iso_case_folding = true' : '', '
+	we_loading = "', $txt['ajax_in_progress'], '";
+	we_submit = "', $txt['form_submit'], '";
+	we_cancel = "', $txt['form_cancel'], '";
+	we_delete = "', $txt['delete'], '";', empty($context['current_topic']) ? '' : '
+	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '
+	we_board = ' . $context['current_board'] . ';', '
 
 	$(window).resize(weres).resize();
 	$("#main_menu").menu();', $context['show_pm_popup'] ? '
