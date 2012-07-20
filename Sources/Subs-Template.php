@@ -168,18 +168,6 @@ function ob_sessrewrite($buffer)
 	if (!empty($context['header']) && wetem::has_layer('html') && ($where = strpos($buffer, "\n</head>")) !== false)
 		$buffer = substr_replace($buffer, $context['header'], $where, 0);
 
-	// Hidden variable 'minify_html' will minify inline JavaScript and remove tabs for maximum gains.
-	// !! Please note that minifying JS is horribly slow (about as slow as generating the page itself),
-	// !! hence the hidden aspect. @todo: cache every single match against its MD5 or something.
-	if (!empty($settings['minify_html']))
-	{
-		// Only use JSMin, whatever your preference is. It's 3 times faster than Packer.
-		loadSource('Class-JSMin');
-		preg_match_all('~<script><!-- // --><!\[CDATA\[\n(.*?)\n// ]]></script>~s', $buffer, $matches, PREG_SET_ORDER);
-		foreach ($matches as $match)
-			$buffer = str_replace($match[1], JSMin::minify($match[1]), $buffer);
-	}
-
 	// Moving all inline events (<code onclick="event();">) to the footer, to make
 	// sure they're not triggered before jQuery and stuff are loaded. Trick and treats!
 	$context['delayed_events'] = array();
@@ -397,10 +385,6 @@ function ob_sessrewrite($buffer)
 		'$3$1$2$4', $buffer
 	);
 
-	// Fast on-the-fly replacement of whitespace...
-	if (!empty($settings['minify_html']))
-		$buffer = preg_replace("~\n\t+~", "\n", $buffer);
-
 	// If the session is not cookied, or they are a crawler, add the session ID to all URLs.
 	if (empty($_COOKIE) && SID != '' && empty($context['no_sid_thank_you']) && empty($context['browser']['possibly_robot']))
 	{
@@ -536,6 +520,10 @@ function ob_sessrewrite($buffer)
 	$max_loops = 100;
 	while (strpos($buffer, '<inden@zi=') !== false && $max_loops-- > 0)
 		$buffer = preg_replace_callback('~<inden@zi=([^=>]+)=(-?\d+)>(.*?)</inden@zi=\\1>~s', 'wedge_indenazi', $buffer);
+
+	// The following hidden variable, 'minify_html', will remove tabs and thus please Google PageSpeed. Whatever.
+	if (!empty($settings['minify_html']))
+		$buffer = preg_replace("~\n\t+~", "\n", $buffer);
 
 	// Return the changed buffer, and make a final optimization.
 	return preg_replace("~\n// ]]></script>\n*<script><!-- // --><!\[CDATA\[~", '', $buffer);
@@ -1109,7 +1097,7 @@ function template_include($filename, $once = false)
 </html>';
 		}
 
-		die;
+		exit;
 	}
 }
 
@@ -1173,7 +1161,7 @@ function loadTemplate($template_name, $fatal = true)
 		if ($template_name != 'Errors' && $template_name != 'index')
 			fatal_lang_error('theme_template_error', 'template', array((string) $template_name));
 		else
-			die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load Themes/default/%s.template.php!', (string) $template_name), 'template'));
+			exit(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['theme_template_error'] : 'Unable to load Themes/default/%s.template.php!', (string) $template_name), 'template'));
 	}
 	else
 		return false;
@@ -1187,7 +1175,7 @@ function loadTemplate($template_name, $fatal = true)
  * Additionally, if debug is part of the URL (?debug or ;debug), there will be divs added for administrators to mark where template layers begin and end, with orange background and red borders.
  *
  * @param string $block_name The name of the function (without template_ prefix) to be called.
- * @param mixed $fatal Whether to die fatally on a template not being available; if passed as boolean false, it is a fatal error through the usual template layers and including forum header. Also accepted is the string 'ignore' which means to skip the error; otherwise end execution with a basic text error message.
+ * @param mixed $fatal Whether to exit fatally on a template not being available; if passed as boolean false, it is a fatal error through the usual template layers and including forum header. Also accepted is the string 'ignore' which means to skip the error; otherwise end execution with a basic text error message.
  */
 function execBlock($block_name, $fatal = false)
 {
@@ -1214,7 +1202,7 @@ function execBlock($block_name, $fatal = false)
 	elseif ($fatal === false)
 		fatal_lang_error('template_block_error', 'template', array((string) $block_name));
 	elseif ($fatal !== 'ignore')
-		die(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['template_block_error'] : 'Unable to load the "%s" template block!', (string) $block_name), 'template'));
+		exit(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['template_block_error'] : 'Unable to load the "%s" template block!', (string) $block_name), 'template'));
 
 	if (function_exists($theme_function_after = $theme_function . '_after'))
 		$theme_function_after();

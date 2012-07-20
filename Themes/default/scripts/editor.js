@@ -882,21 +882,13 @@ function weEditor(opt)
 	// Get the current element.
 	getCurElement = function ()
 	{
-		var oRange = getRange();
+		var oRange = getRange(), oElement;
 
 		if (!oRange)
 			return null;
 
-		if (is_ie)
+		if (oElement = oRange.commonAncestorContainer)
 		{
-			if (oRange.item)
-				return oRange.item(0);
-			else
-				return oRange.parentElement();
-		}
-		else
-		{
-			var oElement = oRange.commonAncestorContainer;
 			do {
 				if (oElement.nodeType == 1)
 					return oElement;
@@ -904,6 +896,8 @@ function weEditor(opt)
 
 			return null;
 		}
+		else // IE?
+			return oRange.item ? oRange.item(0) : oRange.parentElement();
 	},
 
 	// Check whether the key has triggered a shortcut?

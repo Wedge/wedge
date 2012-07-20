@@ -502,3 +502,15 @@ wedge_autoDraft.prototype.draftSend = function ()
 		});
 	});
 };
+
+
+/*
+	Always keep the session alive when editing a textarea!
+*/
+
+$('textarea,.rich_editor').live('focusin', function () {
+	$('textarea,.rich_editor').die();
+	setInterval(function () {
+		$.get(weUrl() + 'action=keepalive;time=' + +new Date);
+	}, 8e5);
+});

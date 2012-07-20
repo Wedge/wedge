@@ -12,34 +12,115 @@
 
 function weStatsCenter(oOptions)
 {
-	this.oTable = $('#stats_history');
+	this.onBeforeCollapseYear = function (oToggle)
+	{
+		// Tell Wedge that all underlying months have disappeared.
+		$.each(oYears[oToggle.opt.sYearId].oMonths, function () {
+			if (this.oToggle.opt.aSwapContainers.length)
+				this.oToggle.cs(true);
+		});
+	};
 
-	// Is the table actually present?
-	if (!this.oTable.length)
-		return;
+	this.onBeforeCollapseMonth = function (oToggle)
+	{
+		if (oToggle.bCollapsed)
+			return;
 
-	this.opt = oOptions;
-	this.oYears = {};
-	this.bIsLoading = false;
+		// Tell Wedge that the state has changed.
+		getXMLDocument(weUrl() + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
+
+		// Remove the month rows from the year toggle.
+		var aNewContainers = [], oYearToggle = oYears[oToggle.opt.sMonthId.substr(0, 4)].oToggle;
+
+		$.each(oYearToggle.opt.aSwapContainers, function () {
+			if (!in_array(this + '', oToggle.opt.aSwapContainers))
+				aNewContainers.push(this + '');
+		});
+
+		oYearToggle.opt.aSwapContainers = aNewContainers;
+	};
+
+	this.onBeforeExpandMonth = function (oToggle)
+	{
+		// Ignore if we're still loading the previous batch.
+		if (bIsLoading)
+			return;
+
+		// Silently let Wedge know this one is expanded.
+		if (oToggle.opt.aSwapContainers.length)
+			getXMLDocument(weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
+		else
+		{
+			show_ajax();
+			getXMLDocument(weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', function (oXMLDoc)
+			{
+				// Loop through all the months we got from the XML.
+				$('month', oXMLDoc).each(function () {
+					var
+						sMonthId = this.getAttribute('id'),
+						sYearId = sMonthId.substr(0, 4),
+						sStart = $('#tr_month_' + sMonthId)[0].rowIndex + 1;
+
+					// Within the current months, check out all the days.
+					$('day', this).each(function (index) {
+						var oCurRow = oTable[0].insertRow(sStart + index);
+						oCurRow.className = oOptions.sDayRowClassname;
+						oCurRow.id = oOptions.sDayRowIdPrefix + this.getAttribute('date');
+
+						for (var iCellIndex = 0, iNumCells = oOptions.aDataCells.length; iCellIndex < iNumCells; iCellIndex++)
+						{
+							var oCurCell = oCurRow.insertCell(-1);
+
+							if (oOptions.aDataCells[iCellIndex] == 'date')
+								oCurCell.className = 'day';
+
+							oCurCell.appendChild(document.createTextNode(this.getAttribute(oOptions.aDataCells[iCellIndex])));
+						}
+
+						// Add these day rows to the toggle objects in case of collapse.
+						oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwapContainers.push(oCurRow.id);
+						oYears[sYearId].oToggle.opt.aSwapContainers.push(oCurRow.id);
+					});
+				});
+
+				bIsLoading = false;
+				hide_ajax();
+			});
+			bIsLoading = true;
+		}
+	};
 
 	// Find all months and years defined in the table.
-	var aResults = [], sYearId = null, oCurYear = null, sMonthId = null, oCurMonth = null, i, that = this;
+	var
+		i,
+		aResults,
+		oYears = {},
+		oCurYear = null,
+		oCurMonth = null,
+		bIsLoading = false,
+		that = this,
+		oTable = $('#stats_history');
 
-	$('tr', this.oTable).each(function () {
+	// Is the table actually present?
+	if (!oTable.length)
+		return;
+
+	$('tr', oTable).each(function ()
+	{
 		// Check if the current row represents a year.
 		if ((aResults = oOptions.reYearPattern.exec(this.id)) != null)
 		{
 			// The id is part of the pattern match.
-			sYearId = aResults[1];
+			var sYearId = aResults[1];
 
 			// Setup the object that'll have the state information of the year.
-			that.oYears[sYearId] = {
+			oYears[sYearId] = {
 				oCollapseImage: document.getElementById(oOptions.sYearImageIdPrefix + sYearId),
 				oMonths: {}
 			};
 
 			// Create a shortcut, makes things more readable.
-			oCurYear = that.oYears[sYearId];
+			oCurYear = oYears[sYearId];
 
 			// Use the collapse image to determine the current state.
 			oCurYear.bIsCollapsed = !$(oCurYear.oCollapseImage).hasClass('fold');
@@ -72,7 +153,7 @@ function weStatsCenter(oOptions)
 		else if ((aResults = oOptions.reMonthPattern.exec(this.id)) != null)
 		{
 			// Set the id to the matched pattern.
-			sMonthId = aResults[1];
+			var sMonthId = aResults[1];
 
 			// Initialize the month as a child object of the year.
 			oCurYear.oMonths[sMonthId] = {
@@ -84,8 +165,6 @@ function weStatsCenter(oOptions)
 
 			// Determine whether the month is currently collapsed or expanded..
 			oCurMonth.bIsCollapsed = !$(oCurMonth.oCollapseImage).hasClass('fold');
-
-			var sLinkText = $('#' + oOptions.sMonthLinkIdPrefix + sMonthId).html();
 
 			// Setup the toggle element for the month.
 			oCurMonth.oToggle = new weToggle({
@@ -108,7 +187,7 @@ function weStatsCenter(oOptions)
 				aSwapLinks: [
 					{
 						sId: oOptions.sMonthLinkIdPrefix + sMonthId,
-						msgExpanded: sLinkText
+						msgExpanded: $('#' + oOptions.sMonthLinkIdPrefix + sMonthId).html()
 					}
 				]
 			});
@@ -124,87 +203,7 @@ function weStatsCenter(oOptions)
 	});
 
 	// Collapse all collapsed years!
-	for (i = 0; i < oOptions.aCollapsedYears.length; i++)
-		this.oYears[oOptions.aCollapsedYears[i]].oToggle.toggle();
+	$.each(oOptions.aCollapsedYears, function () {
+		oYears[oOptions.aCollapsedYears[i]].oToggle.toggle();
+	});
 }
-
-weStatsCenter.prototype.onBeforeCollapseYear = function (oToggle)
-{
-	// Tell Wedge that all underlying months have disappeared.
-	$.each(this.oYears[oToggle.opt.sYearId].oMonths, function () {
-		if (this.oToggle.opt.aSwapContainers.length)
-			this.oToggle.cs(true);
-	});
-};
-
-weStatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
-{
-	if (!oToggle.bCollapsed)
-	{
-		// Tell Wedge that the state has changed.
-		getXMLDocument(weUrl() + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
-
-		// Remove the month rows from the year toggle.
-		var aNewContainers = [], oYearToggle = this.oYears[oToggle.opt.sMonthId.substr(0, 4)].oToggle;
-
-		$.each(oYearToggle.opt.aSwapContainers, function () {
-			if (!in_array(this + '', oToggle.opt.aSwapContainers))
-				aNewContainers.push(this + '');
-		});
-
-		oYearToggle.opt.aSwapContainers = aNewContainers;
-	}
-};
-
-weStatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
-{
-	// Ignore if we're still loading the previous batch.
-	if (this.bIsLoading)
-		return;
-
-	if (!oToggle.opt.aSwapContainers.length)
-	{
-		show_ajax();
-		getXMLDocument.call(this, weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', this.onDocReceived);
-		this.bIsLoading = true;
-	}
-	// Silently let Wedge know this one is expanded.
-	else
-		getXMLDocument(weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
-};
-
-weStatsCenter.prototype.onDocReceived = function (oXMLDoc)
-{
-	// Loop through all the months we got from the XML.
-	var that = this;
-	$('month', oXMLDoc).each(function () {
-		var
-			sMonthId = this.getAttribute('id'),
-			sYearId = sMonthId.substr(0, 4),
-			sStart = $('#tr_month_' + sMonthId)[0].rowIndex + 1;
-
-		// Within the current months, check out all the days.
-		$('day', this).each(function (index) {
-			var oCurRow = that.oTable[0].insertRow(sStart + index);
-			oCurRow.className = that.opt.sDayRowClassname;
-			oCurRow.id = that.opt.sDayRowIdPrefix + this.getAttribute('date');
-
-			for (var iCellIndex = 0, iNumCells = that.opt.aDataCells.length; iCellIndex < iNumCells; iCellIndex++)
-			{
-				var oCurCell = oCurRow.insertCell(-1);
-
-				if (that.opt.aDataCells[iCellIndex] == 'date')
-					oCurCell.className = 'day';
-
-				oCurCell.appendChild(document.createTextNode(this.getAttribute(that.opt.aDataCells[iCellIndex])));
-			}
-
-			// Add these day rows to the toggle objects in case of collapse.
-			that.oYears[sYearId].oMonths[sMonthId].oToggle.opt.aSwapContainers.push(oCurRow.id);
-			that.oYears[sYearId].oToggle.opt.aSwapContainers.push(oCurRow.id);
-		});
-	});
-
-	this.bIsLoading = false;
-	hide_ajax();
-};

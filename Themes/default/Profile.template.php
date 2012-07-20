@@ -2489,24 +2489,14 @@ function template_profile_avatar_select()
 
 	function previewExternalAvatar(src)
 	{
-		if (!$("#avatar").length)
-			return;
-
-		var maxHeight = ', !empty($settings['avatar_max_height_external']) ? $settings['avatar_max_height_external'] : 0, ';
-		var maxWidth = ', !empty($settings['avatar_max_width_external']) ? $settings['avatar_max_width_external'] : 0, ';
-		var tempImage = new Image();
-
-		tempImage.src = src;
-		if (maxWidth != 0 && tempImage.width > maxWidth)
-			$("#avatar").css({
-				height: parseInt((maxWidth * tempImage.height) / tempImage.width) + "px",
-				width: maxWidth + "px"
-			}).attr("src", src);
-		else if (maxHeight != 0 && tempImage.height > maxHeight)
-			$("#avatar").css({
-				width: parseInt((maxHeight * tempImage.width) / tempImage.height) + "px",
-				height: maxHeight + "px"
-			}).attr("src", src);
+		$("#external_avatar").load(function () {
+			var	maxHeight = ', !empty($settings['avatar_max_height_external']) ? $settings['avatar_max_height_external'] : 0, ',
+				maxWidth = ', !empty($settings['avatar_max_width_external']) ? $settings['avatar_max_width_external'] : 0, ';
+			if (maxWidth != 0 && $(this).width() > maxWidth)
+				$(this).height((maxWidth * $(this).height()) / $(this).width()).width(maxWidth);
+			else if (maxHeight != 0 && $(this).height() > maxHeight)
+				$(this).width((maxHeight * $(this).width()) / $(this).height()).height(maxHeight);
+		}).attr("src", src);
 	}');
 	}
 
@@ -2517,7 +2507,7 @@ function template_profile_avatar_select()
 						<div id="avatar_external">
 							<div class="smalltext">', $txt['avatar_by_url'], '</div>
 							<br>
-							<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onchange="if (typeof previewExternalAvatar != \'undefined\') previewExternalAvatar(this.value);">';
+							<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['choice'] != 'gravatar' ? $context['member']['avatar']['external'] : 'http://', '" onchange="previewExternalAvatar(this.value);">';
 
 		if (!empty($settings['avatar_max_width_external']) && !empty($settings['avatar_max_height_external']))
 			echo '
@@ -2530,6 +2520,7 @@ function template_profile_avatar_select()
 							<dfn>', sprintf($txt['avatar_resize_' . ($settings['avatar_action_too_large'] != 'option_refuse' ? 'warning' : 'forbid') . '_height'], $settings['avatar_max_height_external']), '</dfn>';
 
 		echo '
+							<div><img id="external_avatar" src="', !empty($context['member']['avatar']['allow_external']) && $context['member']['avatar']['choice'] == 'external' ? $context['member']['avatar']['external'] : $settings['avatar_url'] . '/blank.gif', '"></div>
 						</div>';
 	}
 

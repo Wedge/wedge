@@ -46,13 +46,13 @@ var
 // Load an XML document using Ajax.
 function getXMLDocument(sUrl, funcCallback, undefined)
 {
-	return $.ajax($.extend({ url: sUrl, context: this }, funcCallback !== undefined ? { success: funcCallback } : { async: false }));
+	return $.ajax(sUrl, { context: this, success: funcCallback || null, async: funcCallback !== undefined });
 }
 
 // Send a post form to the server using Ajax.
-function sendXMLDocument(sUrl, sContent, funcCallback, undefined)
+function sendXMLDocument(sUrl, sContent, funcCallback)
 {
-	return $.ajax($.extend({ url: sUrl, data: sContent, type: 'POST', context: this }, funcCallback !== undefined ? { success: funcCallback } : {})) || true;
+	return $.ajax(sUrl, { context: this, success: funcCallback || null, data: sContent, type: 'POST' }) || true;
 }
 
 // Replace the default jQuery easing type for animations.
@@ -130,11 +130,9 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 	$('body').append(
 		$('<div></div>')
 		.attr('id', 'help_pop')
-		.css({
-			width: viewportWidth,
-			height: viewportHeight,
-			top: is_ie6 || is_iphone ? $(window).scrollTop() : 0
-		})
+		.width(viewportWidth)
+		.height(viewportHeight)
+		.css({ top: is_ie6 || is_iphone ? $(window).scrollTop() : 0 })
 		.fadeIn()
 		.append(
 			$('<div></div>')
@@ -144,12 +142,17 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 				var $section = $('section', this);
 
 				// Ensure that the popup never goes past the viewport boundaries.
-				$section.css({
-					width: desiredWidth,
-					height: desiredHeight || 'auto',
-					maxWidth: viewportWidth - 20 - $(this).width() + $section.width(),
-					maxHeight: viewportHeight - 20 - $(this).height() + $section.height()
-				});
+				$section
+					.width(desiredWidth)
+					.height(desiredHeight || 'auto')
+					.css({
+						maxWidth: viewportWidth - 20 - $(this).width() + $section.width(),
+						maxHeight: viewportHeight - 20 - $(this).height() + $section.height()
+					});
+
+				// In case the height was set to auto, some browsers (ahem)
+				// will misbehave. Reset it to a hard number.
+				$section.height($section.height());
 
 				$(this)
 					.hide()
@@ -223,28 +226,6 @@ function bindEvents(items)
 		});
 	});
 }
-
-// Keep the session alive - always!
-(function () {
-	var lastKeepAliveCheck = +new Date();
-
-	function sessionKeepAlive()
-	{
-		var curTime = +new Date();
-
-		// Prevent a Firefox bug from hammering the server.
-		if (we_script && curTime - lastKeepAliveCheck > 9e5)
-		{
-			new Image().src = weUrl() + 'action=keepalive;time=' + curTime;
-			lastKeepAliveCheck = curTime;
-		}
-		setTimeout(sessionKeepAlive, 12e5);
-	}
-
-	setTimeout(sessionKeepAlive, 12e5);
-})();
-
-
 
 // Shows the page numbers by clicking the dots.
 function expandPages(spanNode, firstPage, lastPage, perPage)
@@ -521,10 +502,9 @@ function weToggle(opt)
 		if (opt.sCookie)
 			document.cookie = opt.sCookie + '=' + collapsed;
 
+		// Set a theme option through javascript.
 		if (!bInit && opt.sOptionName)
-			// Set a theme option through javascript.
-			new Image().src = weUrl() + 'action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';'
-								+ we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + +new Date();
+			$.get(weUrl() + 'action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';' + we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + +new Date);
 	};
 
 	// Reverse the current state.
