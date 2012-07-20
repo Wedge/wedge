@@ -167,10 +167,10 @@ function template_post_attachments()
 						<input type="hidden" name="attach_del[]" value="0">
 						', $txt['uncheck_unwatchd_attach'], ':
 					</dd>';
-		foreach ($context['current_attachments'] as $attachment)
+		foreach ($context['current_attachments'] as $id => $attachment)
 			echo '
 					<dd class="smalltext">
-						<label><input type="checkbox" id="attachment_', $attachment['id'], '" name="attach_del[]" value="', $attachment['id'], '"', empty($attachment['unchecked']) ? ' checked' : '', ' onclick="oAttach.checkActive();"> ', $attachment['name'], '</label>
+						<label><input type="checkbox" id="attachment_', $id, '" name="attach_del[]" value="', $id, '"', empty($attachment['unchecked']) ? ' checked' : '', ' onclick="oAttach.checkActive();"> ', $attachment['name'], '</label>
 					</dd>';
 		echo '
 				</dl>';

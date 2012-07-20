@@ -567,14 +567,8 @@ function Post($post_errors = array())
 					)
 				);
 				while ($row = wesql::fetch_assoc($request))
-				{
-					if ($row['filesize'] <= 0)
-						continue;
-					$context['current_attachments'][] = array(
-						'name' => htmlspecialchars($row['filename']),
-						'id' => $row['id_attach'],
-					);
-				}
+					if ($row['filesize'] >= 0)
+						$context['current_attachments'][$row['id_attach']] = array('name' => htmlspecialchars($row['filename']));
 				wesql::free_result($request);
 			}
 
@@ -676,13 +670,8 @@ function Post($post_errors = array())
 
 		// Load up 'em attachments!
 		foreach ($attachment_stuff as $attachment)
-		{
 			if ($attachment['filesize'] >= 0 && !empty($settings['attachmentEnable']))
-				$context['current_attachments'][] = array(
-					'name' => htmlspecialchars($attachment['filename']),
-					'id' => $attachment['id_attach'],
-				);
-		}
+				$context['current_attachments'][$attachment['id_attach']] = array('name' => htmlspecialchars($attachment['filename']));
 
 		// Allow moderators to change names....
 		if (allowedTo('moderate_forum') && empty($row['id_member']))
@@ -860,11 +849,7 @@ function Post($post_errors = array())
 				$quantity++;
 				$total_size += filesize($current_attach_dir . '/' . $attachID);
 
-				$context['current_attachments'][] = array(
-					'name' => htmlspecialchars($name),
-					'id' => $attachID,
-					'approved' => 1,
-				);
+				$context['current_attachments'][$attachID] = array('name' => htmlspecialchars($name));
 			}
 		}
 
@@ -875,7 +860,7 @@ function Post($post_errors = array())
 				$del_temp[$i] = (int) $dummy;
 
 			foreach ($context['current_attachments'] as $k => $dummy)
-				if (!in_array($dummy['id'], $del_temp))
+				if (!in_array($k, $del_temp))
 				{
 					$context['current_attachments'][$k]['unchecked'] = true;
 					$deleted_attachments = !isset($deleted_attachments) || is_bool($deleted_attachments) ? 1 : $deleted_attachments + 1;
@@ -940,11 +925,7 @@ function Post($post_errors = array())
 
 				$attachID = 'post_tmp_' . $user_info['id'] . '_' . $temp_start++;
 				$_SESSION['temp_attachments'][$attachID] = basename($_FILES['attachment']['name'][$n]);
-				$context['current_attachments'][] = array(
-					'name' => htmlspecialchars(basename($_FILES['attachment']['name'][$n])),
-					'id' => $attachID,
-					'approved' => 1,
-				);
+				$context['current_attachments'][$attachID] = array('name' => htmlspecialchars(basename($_FILES['attachment']['name'][$n])));
 
 				$destName = $current_attach_dir . '/' . $attachID;
 
@@ -996,6 +977,10 @@ function Post($post_errors = array())
 	// !!! This won't work if you're posting an event.
 	$context['max_allowed_attachments'] = empty($settings['attachmentNumPerPostLimit']) ? 50 : $settings['attachmentNumPerPostLimit'];
 	$context['can_post_attachment'] = !empty($settings['attachmentEnable']) && $settings['attachmentEnable'] == 1 && allowedTo('post_attachment') && $context['max_allowed_attachments'] > 0;
+
+	// This is better than sorting it with the query...
+	if (!empty($context['current_attachments']))
+		ksort($context['current_attachments'], SORT_STRING);
 
 	// Because the subject will shown inside an input box's parameter, we want its double quotes to be made safer.
 	$context['subject'] = str_replace(array('"', '<', '>'), array('&quot;', '&lt;', '&gt;'), $form_subject);
