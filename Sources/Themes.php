@@ -1055,7 +1055,7 @@ function EditTheme()
 
 	// !!! Should this be removed?
 	if (isset($_REQUEST['preview']))
-		die;
+		exit;
 
 	isAllowedTo('admin_forum');
 	loadTemplate('Themes');

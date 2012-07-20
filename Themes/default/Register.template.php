@@ -63,7 +63,7 @@ function template_registration_form()
 
 	function autoDetectTimeOffset(currentTime)
 	{
-		var localTime = +new Date(), serverTime = typeof currentTime != "number" ? currentTime : +new Date(currentTime);
+		var localTime = +new Date, serverTime = typeof currentTime != "number" ? currentTime : +new Date(currentTime);
 
 		if (!localTime || !serverTime)
 			return 0;

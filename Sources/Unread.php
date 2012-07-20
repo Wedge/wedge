@@ -27,7 +27,7 @@ function Unread()
 	{
 		ob_end_clean();
 		header('HTTP/1.1 403 Forbidden');
-		die;
+		exit;
 	}
 
 	$context['start'] = (int) $_REQUEST['start'];

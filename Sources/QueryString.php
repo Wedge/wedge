@@ -55,12 +55,12 @@ function cleanRequest()
 
 	// These keys shouldn't be set... Ever.
 	if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']))
-		die('Invalid request variable.');
+		exit('Invalid request variable.');
 
 	// Same goes for numeric keys.
 	foreach (array_merge(array_keys($_POST), array_keys($_GET), array_keys($_FILES)) as $key)
 		if (is_numeric($key))
-			die('Numeric request keys are invalid.');
+			exit('Numeric request keys are invalid.');
 
 	// Numeric keys in cookies are less of a problem. Just unset those.
 	foreach ($_COOKIE as $key => $value)
@@ -75,7 +75,7 @@ function cleanRequest()
 	if (strpos($_SERVER['QUERY_STRING'], 'http') === 0)
 	{
 		header('HTTP/1.1 400 Bad Request');
-		die;
+		exit;
 	}
 
 	$supports_semicolon = strpos(@ini_get('arg_separator.input'), ';') !== false;
@@ -247,7 +247,7 @@ function cleanRequest()
 				{
 					header('HTTP/1.1 301 Moved Permanently');
 					header('Location: http://' . str_replace($filename[0], $new_filename[0], $full_request));
-					exit();
+					exit;
 				}
 			}
 		}
@@ -275,7 +275,7 @@ function cleanRequest()
 			loadSource('ManageErrors');
 			updateErrorCount();
 		}
-		die('404 Not Found');
+		exit('404 Not Found');
 	}
 
 	// If magic quotes are on, we have some work to do...

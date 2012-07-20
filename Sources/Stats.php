@@ -574,7 +574,6 @@ function Stats()
 		$context['top_likes'][$i]['num_likes'] = comma_format($context['top_likes'][$i]['num_likes']);
 	}
 
-
 	// Activity by month.
 	$months_result = wesql::query('
 		SELECT

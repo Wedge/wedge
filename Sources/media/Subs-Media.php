@@ -13,7 +13,7 @@
  */
 
 if (!defined('WEDGE'))
-	die('Hacking Attempt...');
+	die('Hacking attempt...');
 
 /* This file contains vital functions used by the gallery in order to function
 

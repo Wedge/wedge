@@ -225,7 +225,7 @@ function wedge_main()
 
 	// Special case: session keep-alive, output a transparent pixel.
 	if ($action === 'keepalive')
-		blankGif();
+		exit;
 
 	// Load the user's cookie (or set as guest) and load their settings.
 	loadUserSettings();
@@ -242,7 +242,7 @@ function wedge_main()
 		{
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location: ' . $correcturl);
-			exit();
+			exit;
 		}
 	}
 

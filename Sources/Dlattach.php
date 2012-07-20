@@ -127,7 +127,7 @@ function Dlattach()
 		header('Content-Type: text/plain; charset=UTF-8');
 
 		// We need to die like this *before* we send any anti-caching headers as below.
-		die('404 - ' . $txt['attachment_not_found']);
+		exit('404 - ' . $txt['attachment_not_found']);
 	}
 
 	// If it hasn't been modified since the last time this attachement was retrieved, there's no need to display it again.

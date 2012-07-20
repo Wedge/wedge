@@ -114,7 +114,7 @@ class media_handler
 		if (empty($amSettings['upload_security_check']))
 			return;
 		if (preg_match('~[\x00-\x1F/\\\\]~', $filename))
-			die('Malformed filename... /, \\ or control code found! (' . westr::htmlspecialchars($filename) . ')');
+			exit('Malformed filename... /, \\ or control code found! (' . westr::htmlspecialchars($filename) . ')');
 		if (function_exists('file_get_contents'))
 		{
 			$scan_file = @file_get_contents($this->src, FILE_BINARY, null, 0, 256);

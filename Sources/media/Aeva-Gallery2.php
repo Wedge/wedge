@@ -2705,7 +2705,7 @@ function aeva_massDownloadSend()
 	global $context, $amSettings, $user_info;
 
 	if (!file_exists($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
-		die('Hacking attempt');
+		die('Hacking attempt...');
 
 	$path = $amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album'] . '_data';
 	$filename = '[' . date('Y-m-d', $_SESSION['aeva_mdl']['time']) . '] ' . $_SESSION['aeva_mdl']['album_name'] . '.zip';
@@ -2751,13 +2751,12 @@ function aeva_massDownloadSend()
 			@fclose($file);
 		}
 		else
-			die('Something went wrong... ' . $path);
+			exit('Something went wrong... ' . $path);
 	}
 
 	@unlink($path);
 
-	// DIE!
-	die;
+	exit;
 }
 
 ?>

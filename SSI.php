@@ -52,7 +52,7 @@ $ssi_on_error_method = false;
 
 // Don't do anything if the forum's been shut down competely.
 if ($maintenance == 2 && (!isset($ssi_maintenance_off) || $ssi_maintenance_off !== true))
-	die($mmessage);
+	exit($mmessage);
 
 // Fix for using the current directory as a path.
 if ($sourcedir[0] === '.' && $sourcedir[1] !== '.')
@@ -191,7 +191,7 @@ if (isset($_GET['ssi_function']))
 elseif (basename($_SERVER['PHP_SELF']) == 'SSI.php')
 {
 	loadLanguage('Errors', '', false);
-	die(sprintf($txt['ssi_not_direct'], $user_info['is_admin'] ? '\'' . addslashes(__FILE__) . '\'' : '\'SSI.php\''));
+	exit(sprintf($txt['ssi_not_direct'], $user_info['is_admin'] ? '\'' . addslashes(__FILE__) . '\'' : '\'SSI.php\''));
 }
 
 error_reporting($ssi_error_reporting);
@@ -1409,7 +1409,7 @@ function ssi_pollVote()
 		)
 	);
 	if (wesql::num_rows($request) == 0)
-		die;
+		exit;
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 

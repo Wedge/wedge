@@ -13,7 +13,7 @@
  */
 
 if (!defined('WEDGE'))
-	die('Hacking Attempt...');
+	die('Hacking attempt...');
 
 /*
 	The core and heart of Aeva Media, it handles all the actions and requests.
@@ -2384,7 +2384,7 @@ function aeva_getMedia()
 	if (!$path)
 	{
 		header('HTTP/1.0 404 Not Found');
-		die('Error! File not found');
+		exit('Error! File not found');
 	}
 
 	// Update media item view count.
@@ -2478,7 +2478,7 @@ function aeva_getMedia()
 			@fclose($file);
 		}
 		else
-			die('Something went wrong... ' . $path);
+			exit('Something went wrong... ' . $path);
 	}
 
 	// Could use output buffers to put all calls into one. May not be worth the effort.
@@ -2498,7 +2498,7 @@ function aeva_getMedia()
 		);
 
 	// Nothing more to come
-	die;
+	exit;
 }
 
 ?>

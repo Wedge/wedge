@@ -317,7 +317,7 @@ class paypal_payment
 			);
 		}
 
-		exit();
+		exit;
 	}
 
 	// A private function to find out the subscription details.

@@ -52,7 +52,7 @@ function Spellcheck()
 	// If an error happened, just close the window and look innocent.
 	// (Why do I need to have *THIS* be valid HTML5?! I must be sick.)
 	if (!isset($_POST['spellstring']) || !$pspell_link)
-		die('<!DOCTYPE html>
+		exit('<!DOCTYPE html>
 <head><title></title><script>
 	window.close();
 </script></head>');

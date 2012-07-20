@@ -159,14 +159,12 @@ function aeva_modCP_submissions_approve()
 	if (!in_array($type, array('albums', 'items', 'coms')))
 	{
 		if (isset($_REQUEST['xml']))
-		{
-			echo '<?xml version="1.0" encoding="ISO-8859-1"?', '>
+			exit('<?xml version="1.0" encoding="ISO-8859-1"?' . '>
 <ret>
-	<id>', $items[0], '</id>
+	<id>' . $items[0] . '</id>
 	<succ>false</succ>
-</ret>';
-			die;
-		}
+</ret>');
+
 		return false;
 	}
 
@@ -342,14 +340,11 @@ function aeva_modCP_submissions_approve()
 
 	// Everything done :)
 	if (isset($_REQUEST['xml']))
-	{
-		echo '<?xml version="1.0" encoding="ISO-8859-1"?', '>
+		exit('<?xml version="1.0" encoding="ISO-8859-1"?' . '>
 <ret>
-	<id>', $items[0], '</id>
+	<id>' . $items[0] . '</id>
 	<succ>true</succ>
-</ret>';
-		die;
-	}
+</ret>');
 
 	redirectexit($galurl . 'area=moderate;sa=submissions;filter=' . $type);
 }
@@ -407,12 +402,11 @@ function aeva_modCP_submissions_delete()
 	if (isset($_REQUEST['xml']))
 	{
 		header('Content-Type: text/xml; charset=ISO-8859-1');
-		echo '<?xml version="1.0" encoding="ISO-8859-1"?', '>
+		exit('<?xml version="1.0" encoding="ISO-8859-1"?' . '>
 <ret>
-	<id>', (int) $_REQUEST['in'], '</id>
+	<id>' . (int) $_REQUEST['in'] . '</id>
 	<succ>true</succ>
-</ret>';
-		die;
+</ret>');
 	}
 
 	redirectexit($galurl . 'area=moderate;sa=submissions;filter=' . $type);

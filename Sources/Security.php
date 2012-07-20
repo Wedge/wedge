@@ -648,7 +648,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	{
 		ob_end_clean();
 		header('HTTP/1.1 403 Forbidden');
-		die;
+		exit;
 	}
 
 	// Check the referring site - it should be the same server at least!
@@ -703,7 +703,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 		{
 			ob_end_clean();
 			header('HTTP/1.1 403 Forbidden - Session timeout');
-			die;
+			exit;
 		}
 		else
 			fatal_lang_error($error, isset($log_error) ? 'user' : false);

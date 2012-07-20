@@ -14,7 +14,7 @@ function we_avatarResize()
 {
 	var tempAvatars = [], i = 0, maxWidth = we_avatarMaxSize[0], maxHeight = we_avatarMaxSize[1];
 	$('img.avatar').each(function () {
-		tempAvatars[i] = new Image();
+		tempAvatars[i] = new Image;
 		tempAvatars[i].avatar = this;
 
 		$(tempAvatars[i++]).load(function ()

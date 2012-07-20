@@ -883,7 +883,7 @@ function loadBoard()
 		{
 			ob_end_clean();
 			header('HTTP/1.1 403 Forbidden');
-			die;
+			exit;
 		}
 		elseif ($user_info['is_guest'])
 		{
@@ -2137,32 +2137,30 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['css_suffixes'][] = 'replace';		// index.replace.css will ensure that all parent folders' index.css and index.*.css files will be excluded.
 
 	$context['tabindex'] = 1;
+	$time = time();
 
 	// If we think we have mail to send, let's offer up some possibilities... robots get pain (Now with scheduled task support!)
-	if ((!empty($settings['mail_next_send']) && $settings['mail_next_send'] < time() && empty($settings['mail_queue_use_cron'])) || empty($settings['next_task_time']) || $settings['next_task_time'] < time())
+	if ((!empty($settings['mail_next_send']) && $settings['mail_next_send'] < $time && empty($settings['mail_queue_use_cron'])) || empty($settings['next_task_time']) || $settings['next_task_time'] < $time)
 	{
+		$is_task = empty($settings['next_task_time']) || $settings['next_task_time'] < $time;
 		if ($context['browser']['possibly_robot'])
 		{
 			//!!! Maybe move this somewhere better?!
 			loadSource('ScheduledTasks');
 
 			// What to do, what to do?!
-			if (empty($settings['next_task_time']) || $settings['next_task_time'] < time())
+			if ($is_task)
 				AutoTask();
 			else
 				ReduceMailQueue();
 		}
 		else
 		{
-			$type = empty($settings['next_task_time']) || $settings['next_task_time'] < time() ? 'task' : 'mailq';
+			$type = $is_task ? 'task' : 'mailq';
 			$ts = $type == 'mailq' ? $settings['mail_next_send'] : $settings['next_task_time'];
 
 			add_js('
-	function weAutoTask()
-	{
-		new Image().src = "' . $scripturl . '?scheduled=' . $type . ';ts=' . $ts . '";
-	}
-	setTimeout(weAutoTask, 1);');
+	$.get(weUrl() + "scheduled=' . $type . ';ts=' . $ts . '");');
 		}
 	}
 
@@ -2173,13 +2171,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 		recalculateNextImperative();
 	}
 
-	if ($settings['next_imperative'] < time())
+	if ($settings['next_imperative'] < $time)
 		add_js('
-	function weImperativeTask()
-	{
-		new Image().src = "' . $scripturl . '?imperative;ts=' . time() . '";
-	}
-	setTimeout(weImperativeTask, 1);');
+	$.get(weUrl() + "imperative");');
 
 	// Any files to include at this point?
 	if (!empty($settings['integrate_theme_include']))

@@ -38,9 +38,9 @@ function JSOption()
 	// Check the session id.
 	checkSession('get');
 
-	// This good-for-nothing pixel is being used to keep the session alive.
+	// If no variables are provided, leave the hell out of here.
 	if (empty($_GET['var']) || !isset($_GET['val']))
-		blankGif();
+		exit;
 
 	// Sorry, guests can't go any further than this..
 	if ($user_info['is_guest'] || $user_info['id'] == 0)
@@ -66,7 +66,7 @@ function JSOption()
 
 	// Can't change reserved vars.
 	if (in_array(strtolower($_GET['var']), $reservedVars))
-		blankGif();
+		exit;
 
 	// Use a specific theme?
 	if (isset($_GET['th']) || isset($_GET['id']))
@@ -100,7 +100,7 @@ function JSOption()
 	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . $user_info['id'], null, 60);
 
 	// Don't output anything...
-	blankGif();
+	exit;
 }
 
 ?>

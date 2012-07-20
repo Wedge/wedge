@@ -19,7 +19,7 @@
 
 // Start things rolling by getting Wedge alive...
 if (!file_exists(dirname(__FILE__) . '/SSI.php'))
-	die('Cannot find SSI.php');
+	exit('Cannot find SSI.php');
 
 require_once(dirname(__FILE__) . '/SSI.php');
 loadSource(array('ManagePaid', 'Subs-Admin')); // for subscriptions core and admin emailing
@@ -28,7 +28,7 @@ loadLanguage('ManagePaid');
 
 // If there's literally nothing coming in, let's take flight!
 if (empty($_POST))
-	die($txt['paid_no_data']);
+	exit($txt['paid_no_data']);
 
 // I assume we're even active?
 if (empty($settings['paid_enabled']))

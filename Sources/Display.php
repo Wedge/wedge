@@ -88,7 +88,7 @@ function Display()
 	{
 		ob_end_clean();
 		header('HTTP/1.1 403 Prefetch Forbidden');
-		die;
+		exit;
 	}
 
 	// How much are we sticking on each page?

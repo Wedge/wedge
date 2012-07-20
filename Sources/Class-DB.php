@@ -441,7 +441,7 @@ class wesql
 
 		// Nothing's defined yet... just die with it.
 		if (empty($context) || empty($txt))
-			die($db_string . '<br><br>' . $query_error);
+			exit($db_string . '<br><br>' . $query_error);
 
 		// Show an error message, if possible.
 		$context['error_title'] = $txt['database_error'];

@@ -179,7 +179,7 @@ function fatal_error($error, $log = 'general', $header = 403)
 
 	// We don't have $txt yet, but that's okay...
 	if (empty($txt))
-		die($error);
+		exit($error);
 
 	updateOnlineWithError($error, false);
 	setup_fatal_error_context($log || (!empty($settings['enableErrorLogging']) && $settings['enableErrorLogging'] == 2) ? log_error($error, $log) : $error);
@@ -218,7 +218,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 
 	// If we have no theme stuff we can't have the language file...
 	if (empty($context['theme_loaded']) && !isset($txt[$error]))
-		die($error);
+		exit($error);
 
 	$reload_lang_file = true;
 	// Log the error in the forum's language, but don't waste the time if we aren't logging
@@ -469,7 +469,7 @@ function show_db_error($loadavg = false)
 	</body>
 </html>';
 
-	die;
+	exit;
 }
 
 /**

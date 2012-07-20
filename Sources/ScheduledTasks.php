@@ -175,10 +175,7 @@ function AutoTask()
 	if (!isset($_GET['scheduled']))
 		return true;
 
-	// Finally, send some stuff...
-	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-	header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-	blankGif();
+	exit;
 }
 
 // Function to sending out approval notices to moderators etc.

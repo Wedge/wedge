@@ -106,12 +106,12 @@ function Thought()
 
 	// !! We need $user_info if we're going to allow the editing of older messages... Don't forget to check for sessions?
 	if ($user_info['is_guest'])
-		die;
+		exit;
 
 	// !! Should we use censorText at store time, or display time...? $context['user'] (Load.php:1696) begs to differ.
 	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text']), ENT_QUOTES) : '';
 	if (empty($text) && empty($_GET['in']) && !isset($_REQUEST['remove']))
-		die();
+		exit;
 
 	if (!empty($text))
 	{
@@ -291,7 +291,7 @@ function Thought()
 			if (empty($personal_id_thought))
 				$personal_id_thought = 0;
 			call_hook('thought_delete', array(&$last_thought, &$last_text, &$personal_id_thought));
-			die;
+			exit;
 		}
 		// If it's similar to the earlier version, don't update the time.
 		else

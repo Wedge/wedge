@@ -47,7 +47,7 @@ function showCodeImage($code)
 	header('Content-type: image/gif');
 	imagegif($image);
 	imagedestroy($image);
-	die();
+	exit;
 }
 
 function loadCaptchaTypes()
