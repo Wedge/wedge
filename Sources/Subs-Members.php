@@ -893,7 +893,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 			// If it's not just entire word, check for it in there somewhere...
 			if ($checkMe == $reservedCheck || (westr::strpos($checkMe, $reservedCheck) !== false && empty($settings['reserveWord'])))
 				if ($fatal)
-					fatal_lang_error('username_reserved', 'password', array($reserved));
+					fatal_lang_error('username_reserved', false, array($reserved));
 				else
 					return true;
 		}
@@ -901,7 +901,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 		$censor_name = $name;
 		if (censorText($censor_name) != $name)
 			if ($fatal)
-				fatal_lang_error('name_censored', 'password', array($name));
+				fatal_lang_error('name_censored', false, array($name));
 			else
 				return true;
 	}
@@ -911,7 +911,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 	foreach (array('*') as $char)
 		if (strpos($checkName, $char) !== false)
 			if ($fatal)
-				fatal_lang_error('username_reserved', 'password', array($char));
+				fatal_lang_error('username_reserved', false, array($char));
 			else
 				return true;
 

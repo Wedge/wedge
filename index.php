@@ -201,7 +201,7 @@ call_user_func($function);
 wetem::add('sidebar', 'sidebar_quick_access');
 
 // Just quickly sneak the feed stuff in...
-if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_feed'))
+if (!empty($settings['xmlnews_enable']) && !empty($settings['xmlnews_sidebar']) && (!empty($settings['allow_guestAccess']) || $context['user']['is_logged']) && function_exists('template_sidebar_feed'))
 	wetem::add('sidebar', 'sidebar_feed');
 
 obExit(null, null, true);

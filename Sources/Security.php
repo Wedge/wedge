@@ -1201,7 +1201,7 @@ function checkUserRequest_blacklist()
 			// supplied by honeypot
 			'blogsearchbot-martin',
 			'Mozilla/4.0(',
-			// spammers
+			// spammers / robots
 			'8484 Boston Project',
 			'adwords',
 			'Forum Poster',
@@ -1215,6 +1215,7 @@ function checkUserRequest_blacklist()
 			'Movable Type',
 			'NutchCVS',
 			'Nutscrape/',
+			'Opera/9.64(',
 			'PussyCat ',
 			'PycURL',
 			'Python-urllib',
@@ -1248,6 +1249,7 @@ function checkUserRequest_blacklist()
 			'Murzillo compatible',
 			'.NET CLR 1)',
 			'POE-Component-Client',
+			'Ubuntu/9.25',
 			'Windows NT 4.0;)',
 			'Windows NT 5.0;)',
 			'Windows NT 5.1;)',

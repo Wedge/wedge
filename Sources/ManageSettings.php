@@ -375,6 +375,7 @@ function ModifyLogSettings($return_config = false)
 
 	$config_vars = array(
 			array('check', 'enableErrorLogging'),
+			array('check', 'enableErrorPasswordLogging'),
 			array('check', 'enableError404Logging'),
 			array('check', 'enableErrorQueryLogging'),
 		'',

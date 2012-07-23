@@ -201,7 +201,8 @@ function Login2()
 				redirectexit('action=reminder');
 			else
 			{
-				log_error($txt['incorrect_password'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', 'password');
+				if (!empty($settings['enableErrorPasswordLogging']))
+					log_error($txt['incorrect_password'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', 'password');
 
 				$context['disable_login_hashing'] = true;
 				$context['login_errors'] = array($txt['incorrect_password']);
@@ -312,7 +313,8 @@ function Login2()
 			else
 			{
 				// Log an error so we know that it didn't go well in the error log.
-				log_error($txt['incorrect_password'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', 'password');
+				if (!empty($settings['enableErrorPasswordLogging']))
+					log_error($txt['incorrect_password'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', 'password');
 
 				$context['login_errors'] = array($txt['incorrect_password']);
 				return;
