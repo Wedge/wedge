@@ -11,3 +11,13 @@ input.submit
 
 .two-columns
 	width: 48.9%
+
+.note
+	filter: none
+	background-color: #eb8c66
+
+.notewarn
+	background-color: #d55a61
+
+.notenice
+	background-color: rgb(100, 175, 100)

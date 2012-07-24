@@ -151,7 +151,7 @@ function QuickReply(opt)
 			});
 
 			// Move the view to the quick reply box.
-			window.location.hash = (is_ie ? '' : '#') + opt.sJumpAnchor;
+			location.hash = (is_ie ? '' : '#') + opt.sJumpAnchor;
 		}
 		return bCollapsed;
 	};

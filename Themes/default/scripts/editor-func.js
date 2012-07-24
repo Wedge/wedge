@@ -481,7 +481,8 @@ wedge_autoDraft.prototype.draftSend = function ()
 	}
 
 	// We need to indicate that we're calling this to request XML.
-	$.post(weUrl(sUrl) + 'xml', draftInfo, function (data)
+	// Going through this will set $context['is_ajax'] on the request.
+	$.post(sUrl, draftInfo, function (data)
 	{
 		$('#remove_draft').unbind('click'); // Just in case bad stuff happens.
 

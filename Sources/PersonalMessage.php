@@ -113,7 +113,7 @@ function MessageMain()
 		$session_timeout = checkSession('post', '', false) != '';
 		$draft = saveDraft(true, isset($_REQUEST['replied_to']) ? (int) $_REQUEST['replied_to'] : 0);
 		if (!empty($draft) && !$session_timeout)
-			if (isset($_GET['xml']))
+			if ($context['is_ajax'])
 				draftXmlReturn($draft, true);
 			else
 				redirectexit('action=pm;draftsaved');

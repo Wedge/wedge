@@ -112,7 +112,8 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 		title = $.trim($(nextSib).clone().find('dfn').remove().end().text());
 	}
 
-	// Popup windows (e.g. for attachment images) always have desired dimensions set.
+	// Popup windows always have desired dimensions set.
+	// !! Only used by the media upload popup. @todo: delete ASAP.
 	if (asWindow)
 	{
 		window.open(help_page + ';title=' + title.php_urlencode(), 'help_pop', 'toolbar=no,titlebar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=' + desiredWidth + ',height=' + desiredHeight);
@@ -279,14 +280,12 @@ function ajaxRating()
 	);
 }
 
-// This function takes an URL (by default the script URL), and adds a question mark (or semicolon)
-// so we can append a query string to it. It also replaces the host name with the current one,
+// This function takes the script URL, and adds a question mark (or semicolon) so we can
+// append a query string (url) to it. It also replaces the host name with the current one,
 // which is sometimes required for security reasons.
 function weUrl(url)
 {
-	url = url || we_script;
-	return (url + (url.indexOf('?') == -1 ? '?' : (url.search(/[?&;]$/) == -1 ? ';' : '')))
-			.replace(/:\/\/[^\/]+/g, '://' + window.location.host);
+	return (we_script + (we_script.indexOf('?') == -1 ? '?' : (we_script.search(/[?&;]$/) == -1 ? ';' : ''))).replace(/:\/\/[^\/]+/g, '://' + location.host) + (url || '');
 }
 
 // Get the text in a code tag.
@@ -504,7 +503,7 @@ function weToggle(opt)
 
 		// Set a theme option through javascript.
 		if (!bInit && opt.sOptionName)
-			$.get(weUrl() + 'action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';' + we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + +new Date);
+			$.get(weUrl('action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';' + we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + +new Date));
 	};
 
 	// Reverse the current state.
@@ -548,7 +547,7 @@ function JumpTo(control, id)
 			show_ajax();
 
 			// Fill the select box with entries loaded through Ajax.
-			$('we item', getXMLDocument(weUrl() + 'action=ajax;sa=jumpto;xml').responseXML).each(function ()
+			$('we item', getXMLDocument(weUrl('action=ajax;sa=jumpto;xml')).responseXML).each(function ()
 			{
 				that = $(this);
 				// This removes entities from the name...
@@ -568,7 +567,7 @@ function JumpTo(control, id)
 
 			// Add the remaining items after the currently selected item.
 			$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
-				window.location.href = parseInt($val = $(this).val()) ? weUrl() + 'board=' + $val + '.0' : $val;
+				location.href = parseInt($val = $(this).val()) ? weUrl('board=' + $val + '.0') : $val;
 			});
 
 			hide_ajax();
@@ -580,7 +579,7 @@ function JumpTo(control, id)
 function Thought(opt)
 {
 	var
-		ajaxUrl = weUrl() + 'action=ajax;sa=thought;xml;',
+		ajaxUrl = weUrl('action=ajax;sa=thought;xml;'),
 
 		// Make that personal text editable (again)!
 		cancel = function () {

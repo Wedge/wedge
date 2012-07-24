@@ -478,7 +478,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		search: sSearchString.php_urlencode(),
 		sessionVar: we_sessvar,
 		sessionID: we_sessid,
-		time: +new Date()
+		time: +new Date
 	}), this.onSuggestionReceived);
 
 	return true;
