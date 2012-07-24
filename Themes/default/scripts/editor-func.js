@@ -512,6 +512,6 @@ wedge_autoDraft.prototype.draftSend = function ()
 $('textarea,.rich_editor').live('focusin', function () {
 	$('textarea,.rich_editor').die();
 	setInterval(function () {
-		$.get(weUrl() + 'action=keepalive;time=' + +new Date);
+		$.get(weUrl('action=keepalive;time=' + +new Date));
 	}, 8e5);
 });

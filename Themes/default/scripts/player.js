@@ -12,7 +12,7 @@
 
 
 var
-	myfile = weUrl() + 'action%3Dmedia;sa%3Dmedia;in%3D';
+	myfile = weUrl('action%3Dmedia;sa%3Dmedia;in%3D'),
 	lnFlag = 0,
 	currentPlayer = 1,
 	thisPlayer = 0,

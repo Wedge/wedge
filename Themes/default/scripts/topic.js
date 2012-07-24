@@ -67,7 +67,7 @@ function modify_topic(topic_id, first_msg_id)
 
 		show_ajax();
 		sendXMLDocument(
-			weUrl() + 'action=jsmodify;topic=' + $('#qm_subject').data('id') + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			weUrl('action=jsmodify;topic=' + $('#qm_subject').data('id') + ';' + we_sessvar + '=' + we_sessid + ';xml'),
 			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&msg=' + $('#qm_subject').data('msg'),
 			function (XMLDoc)
 			{
@@ -114,7 +114,7 @@ function modify_topic(topic_id, first_msg_id)
 
 	show_ajax();
 	getXMLDocument(
-		weUrl() + 'action=quotefast;quote=' + first_msg_id + ';modify;xml',
+		weUrl('action=quotefast;quote=' + first_msg_id + ';modify;xml'),
 		function (XMLDoc)
 		{
 			hide_ajax();
@@ -144,7 +144,7 @@ function QuickReply(opt)
 		if (!bCollapsed)
 		{
 			show_ajax();
-			getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';xml;mode=' + +oEditorHandle_message.bRichTextEnabled, function (XMLDoc)
+			getXMLDocument(weUrl('action=quotefast;quote=' + iMessageId + ';xml;mode=' + +oEditorHandle_message.bRichTextEnabled), function (XMLDoc)
 			{
 				hide_ajax();
 				oEditorHandle_message.insertText($('quote', XMLDoc).text(), false, true);
@@ -234,7 +234,7 @@ function QuickModify(opt)
 		// Send out the Ajax request to get more info
 		show_ajax();
 
-		getXMLDocument(weUrl() + 'action=quotefast;quote=' + iMessageId + ';modify;xml', function (XMLDoc)
+		getXMLDocument(weUrl('action=quotefast;quote=' + iMessageId + ';modify;xml'), function (XMLDoc)
 		{
 			// The callback function used for the Ajax request retrieving the message.
 			hide_ajax();
@@ -281,7 +281,7 @@ function QuickModify(opt)
 		// Send in the Ajax request and let's hope for the best.
 		show_ajax();
 		sendXMLDocument(
-			weUrl() + 'action=jsmodify;topic=' + we_topic + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			weUrl('action=jsmodify;topic=' + we_topic + ';' + we_sessvar + '=' + we_sessid + ';xml'),
 			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() +
 			'&message=' + $('#qm_post').val().replace(/&#/g, '&#38;#').php_urlencode() +
 			'&msg=' + $('#qm_msg').val(),
@@ -438,7 +438,7 @@ function IconList()
 
 			// Start to fetch its contents.
 			show_ajax();
-			getXMLDocument(weUrl() + 'action=ajax;sa=messageicons;board=' + we_board + ';xml', function (XMLDoc)
+			getXMLDocument(weUrl('action=ajax;sa=messageicons;board=' + we_board + ';xml'), function (XMLDoc)
 			{
 				hide_ajax();
 				$('icon', XMLDoc).each(function ()
@@ -454,8 +454,8 @@ function IconList()
 								show_ajax();
 
 								getXMLDocument(
-									weUrl() + 'action=jsmodify;topic=' + we_topic + ';msg=' + iCurMessageId + ';'
-									+ we_sessvar + '=' + we_sessid + ';icon=' + $(iconxml).attr('value') + ';xml',
+									weUrl('action=jsmodify;topic=' + we_topic + ';msg=' + iCurMessageId + ';'
+									+ we_sessvar + '=' + we_sessid + ';icon=' + $(iconxml).attr('value') + ';xml'),
 									function (oXMLDoc)
 									{
 										hide_ajax();

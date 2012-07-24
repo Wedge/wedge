@@ -27,7 +27,7 @@ function weStatsCenter(oOptions)
 			return;
 
 		// Tell Wedge that the state has changed.
-		$.get(weUrl() + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
+		$.get(weUrl('action=stats;collapse=' + oToggle.opt.sMonthId + ';xml'));
 
 		// Remove the month rows from the year toggle.
 		var aNewContainers = [], oYearToggle = oYears[oToggle.opt.sMonthId.substr(0, 4)].oToggle;
@@ -48,11 +48,11 @@ function weStatsCenter(oOptions)
 
 		// Silently let Wedge know this one is expanded.
 		if (oToggle.opt.aSwapContainers.length)
-			$.get(weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
+			$.get(weUrl('action=stats;expand=' + oToggle.opt.sMonthId + ';xml'));
 		else
 		{
 			show_ajax();
-			$.get(weUrl() + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml', function (oXMLDoc)
+			$.get(weUrl('action=stats;expand=' + oToggle.opt.sMonthId + ';xml'), function (oXMLDoc)
 			{
 				// Loop through all the months we got from the XML.
 				$('month', oXMLDoc).each(function () {

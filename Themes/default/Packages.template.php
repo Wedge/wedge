@@ -1183,7 +1183,7 @@ function template_file_permissions()
 
 		// Otherwise we need to get the wicked thing.
 		show_ajax();
-		getXMLDocument(weUrl() + "action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '", onNewFolderReceived);
+		getXMLDocument(weUrl("action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '"), onNewFolderReceived);
 
 		return false;
 	}

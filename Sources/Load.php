@@ -2160,7 +2160,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			$ts = $type == 'mailq' ? $settings['mail_next_send'] : $settings['next_task_time'];
 
 			add_js('
-	$.get(weUrl() + "scheduled=' . $type . ';ts=' . $ts . '");');
+	$.get(weUrl("scheduled=' . $type . ';ts=' . $ts . '"));');
 		}
 	}
 
@@ -2173,7 +2173,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	if ($settings['next_imperative'] < $time)
 		add_js('
-	$.get(weUrl() + "imperative");');
+	$.get(weUrl("imperative"));');
 
 	// Any files to include at this point?
 	if (!empty($settings['integrate_theme_include']))

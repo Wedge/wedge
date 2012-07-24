@@ -661,18 +661,6 @@ function template_edit_style()
 	var previewData = "", previewTimeout, refreshPreviewCache;
 	var editFilename = ', JavaScriptEscape($context['edit_filename']), ';
 
-	function navigateCallback(response)
-	{
-		previewData = response;
-		$("#css_preview_box").show();
-
-		// Revert to the theme they actually use ;)
-		$.get(weUrl() + "action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + +new Date);
-
-		refreshPreviewCache = null;
-		refreshPreview(false);
-	}
-
 	// Load up a page, but apply our stylesheet.
 	function navigatePreview(url)
 	{
@@ -683,9 +671,22 @@ function template_edit_style()
 			url = url.substr(0, url.indexOf("#"));
 		}
 
-		getXMLDocument(url + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), '" + anchor, navigateCallback);
+		getXMLDocument(
+			url + (url.indexOf("?") == -1 ? "?" : ";") + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), '" + anchor,
+			function (response)
+			{
+				previewData = response;
+				$("#css_preview_box").show();
+
+				// Revert to the theme they actually use.
+				$.get(weUrl("action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + +new Date));
+
+				refreshPreviewCache = null;
+				refreshPreview(false);
+			}
+		);
 	}
-	navigatePreview(weUrl());
+	navigatePreview(we_scripturl);
 
 	function refreshPreview(check)
 	{

@@ -279,7 +279,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 			this.sItemTemplate.wereplace({
 				post_name: this.opt.sPostName,
 				item_id: sItemId,
-				item_href: weUrl() + this.sURLMask.wereplace({ item_id: sItemId }),
+				item_href: weUrl(this.sURLMask.wereplace({ item_id: sItemId })),
 				item_name: sItemName,
 				images_url: we_theme_url + '/images',
 				delete_text: this.sTextDeleteItem
@@ -473,7 +473,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 
 	// Get the document.
 	this.oXmlRequestHandle = getXMLDocument.call(this, this.sRetrieveURL.wereplace({
-		scripturl: weUrl(),
+		scripturl: weUrl(''),
 		suggest_type: this.opt.sSearchType,
 		search: sSearchString.php_urlencode(),
 		sessionVar: we_sessvar,

@@ -151,7 +151,7 @@ function template_select()
 
 	function select(direction, msg_id)
 	{
-		getXMLDocument(weUrl() + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id + ";ajax", onDocReceived);
+		getXMLDocument(weUrl("action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id), onDocReceived);
 		return false;
 	}
 	function onDocReceived(XMLDoc)
@@ -190,7 +190,7 @@ function template_select()
 				// Let\'s create a nice container for the message.
 				var newItem = $("<div></div>").html("\
 	<div class=\\"message_header\\">\
-		<a class=\\"split_icon float" + (is_selected ? "left" : "right") + "\\" href=\\"" + weUrl() + "action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (is_selected ? "up" : "down") + ";msg=" + curId + "\\" onclick=\\"return select(\'" + (is_selected ? "up" : "down") + "\', " + curId + ");\\">\
+		<a class=\\"split_icon float" + (is_selected ? "left" : "right") + "\\" href=\\"" + weUrl("action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '.', $context['not_selected']['start'], ';start2=', $context['selected']['start'], ';move=" + (is_selected ? "up" : "down") + ";msg=" + curId) + "\\" onclick=\\"return select(\'" + (is_selected ? "up" : "down") + "\', " + curId + ");\\">\
 			<img src=\\"', $theme['images_url'], '/split_" + (is_selected ? "de" : "") + "select.gif\\" alt=\\"" + (is_selected ? "&lt;-" : "-&gt;") + "\\">\
 		</a>\
 		<strong>" + $("subject", this).text() + "</strong> ', $txt['by'], ' <strong>" + $("poster", this).text() + "</strong>\

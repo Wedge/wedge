@@ -18,7 +18,7 @@ function admin_toggle(id)
 		$('#img_' + id).load(function () {
 			$('#tr_expand_' + id).show().find('td').children().hide().slideDown();
 			$(this).unbind();
-		}).attr('src', weUrl() + 'action=media;sa=media;in=' + id + ';icon');
+		}).attr('src', weUrl('action=media;sa=media;in=' + id + ';icon'));
 	}
 	else
 		$('#tr_expand_' + id).find('td').children().slideUp(500, function () { $(this).parent().parent().hide(); });

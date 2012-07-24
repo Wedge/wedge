@@ -72,7 +72,7 @@ function template_admin()
 		e.preventDefault();
 		$("#admin_intro input").hide();
 		$("#admin_intro").slideUp();
-		$.get(weUrl() + "action=jsoption;th=1;var=hide_admin_intro;val=1;" + we_sessvar + "=" + we_sessid + ";time=" + +new Date);
+		$.get(weUrl("action=jsoption;th=1;var=hide_admin_intro;val=1;" + we_sessvar + "=" + we_sessid + ";time=" + +new Date));
 	};');
 		}
 

@@ -605,7 +605,7 @@ function template_body_after()
 	$("#main_menu").menu();', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
-		window.open(weUrl() + "action=pm");' : '';
+		window.open(weUrl("action=pm"));' : '';
 
 	// Output any postponed JavaScript added by templates
 	// and mods, and close all outstanding tags. We're done!

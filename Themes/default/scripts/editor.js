@@ -678,7 +678,7 @@ function weEditor(opt)
 	// !! Integrate this cleanly.
 	this.addMedia = function ()
 	{
-		reqWin(weUrl() + 'action=media;sa=post;noh=' + opt.sUniqueId, Math.min(1000, self.screen.availWidth - 50), Math.min(700, self.screen.availHeight - 50), false, true);
+		reqWin(weUrl('action=media;sa=post;noh=' + opt.sUniqueId), Math.min(1000, self.screen.availWidth - 50), Math.min(700, self.screen.availHeight - 50), false, true);
 	};
 
 	// Toggle wysiwyg/normal mode.
@@ -698,7 +698,7 @@ function weEditor(opt)
 
 		sendXMLDocument.call(
 			this,
-			weUrl() + 'action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid + ';xml',
+			weUrl('action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid + ';xml'),
 			'message=' + sText,
 			function (oXMLDoc)
 			{
@@ -755,7 +755,7 @@ function weEditor(opt)
 		if (this.bRichTextEnabled)
 			sendXMLDocument.call(
 				this,
-				weUrl() + 'action=jseditor;view=0;' + we_sessvar + '=' + we_sessid + ';xml',
+				weUrl('action=jseditor;view=0;' + we_sessvar + '=' + we_sessid + ';xml'),
 				'message=' + this.getText(true, 1).php_urlencode(),
 				function (oXMLDoc)
 				{
@@ -780,7 +780,7 @@ function weEditor(opt)
 		if (this.bRichTextEnabled)
 			sendXMLDocument.call(
 				this,
-				weUrl() + 'action=jseditor;view=1;' + we_sessvar + '=' + we_sessid + ';xml',
+				weUrl('action=jseditor;view=1;' + we_sessvar + '=' + we_sessid + ';xml'),
 				'message=' + this.getText(true, 0).php_urlencode(),
 				function (oXMLDoc)
 				{
