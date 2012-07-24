@@ -2220,7 +2220,7 @@ function setupMenuContext()
 	elseif ($context['current_action'] == 'login2' || ($user_info['is_guest'] && $context['current_action'] == 'reminder'))
 		$current_action = 'login';
 	elseif ($context['current_action'] == 'groups' && $context['allow_moderation_center'])
-		$current_action = 'moderate';
+		$current_action = 'admin';
 
 	$menu_items[$current_action]['active_item'] = true;
 }

@@ -342,9 +342,12 @@ table.thought_list div:hover .thought_actions
 .inline-block
 	display: inline
 
-// And it doesn't show the 'off' icons in boardstatus.png. I'm nice, so I'm giving it another file to play with.
-.boardstatus
-	background-image: url($images/boardstatus-ie6.png)
+// And it doesn't support opacity.
+.boardstate_off
+	filter: alpha(opacity=50)
+
+.boardstate_redirect
+	filter: alpha(opacity=25)
 
 #upper_section h1
 	display: inline // IE6 double margin bug fix

@@ -1308,33 +1308,16 @@ div.top_row dd
 
 /* Board status icons.
 ------------------------------------------------- */
-.boardstatus extends .inline-block
-	background: url($images/boardstatus.png) 0 0 no-repeat
-	width: 38px
+.boardstate_on extends .inline-block
+	background: url($images/boardicon.png) 0 0 no-repeat
+	width: 37px
 	height: 42px
 
-.boardstate_on extends .boardstatus
+.boardstate_off extends .boardstate_on
+	opacity: .4
 
-.boardstate_new extends .boardstatus
-	background-position: -53px 0
-
-.boardstate_off extends .boardstatus
-	background-position: -110px 0
-
-.boardstate_redirect extends .boardstatus
-	background-position: -163px 0
-
-.mini_boardstate_off extends .boardstatus
-	background-position: -208px -3px
-	width: 19px
-	height: 21px
-	margin: -1px 4px 1px 12px
-
-.mini_boardstate_on extends .mini_boardstate_off
-	background-position: -239px -3px
-
-.mini_boardstate_redirect extends .mini_boardstate_off
-	background-position: -273px -3px
+.boardstate_redirect extends .boardstate_on
+	opacity: .2
 
 /* More icons.
 ------------------------------------------------- */

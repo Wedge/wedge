@@ -176,6 +176,10 @@ function GroupList()
 	// Making a list is not hard with this beauty.
 	loadSource('Subs-List');
 
+	wetem::load('show_list');
+	$context['default_list'] = 'group_lists';
+	$context['page_title'] = $txt['viewing_groups'];
+
 	// Use the standard templates for showing this.
 	$listOptions = array(
 		'id' => 'group_lists',
@@ -236,10 +240,6 @@ function GroupList()
 
 	// Create the request list.
 	createList($listOptions);
-
-	wetem::load('show_list');
-	$context['default_list'] = 'group_lists';
-	$context['page_title'] = $txt['viewing_groups'];
 }
 
 // Get the group information for the list.

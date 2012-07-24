@@ -80,11 +80,11 @@ function template_boards()
 				// If the board or children is new, show an indicator.
 				elseif ($board['new'] || $board['children_new'])
 					echo '
-							<div class="boardstate_', $board['new'] ? 'new' : 'on', '" title="', $txt['new_posts'], '"></div>';
+							<div class="boardstate_on" title="', $txt['new_posts'], '"></div>';
 				// Is it a redirection board?
 				elseif ($board['is_redirect'])
 					echo '
-							<div class="boardstate_redirect"></div>';
+							<div class="boardstate_redirect" title="', $txt['redirect_board'], '"></div>';
 				// No new posts at all! The agony!!
 				else
 					echo '
@@ -238,7 +238,7 @@ function template_boards_newsfader()
 
 function template_boards_below()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context;
 
 	if ($context['user']['is_logged'])
 	{
@@ -247,25 +247,16 @@ function template_boards_below()
 
 		// Mark read button.
 		$mark_read_button = array(
-			'markread' => array('text' => 'mark_as_read', 'url' => $scripturl . '?action=markasread;sa=all;' . $context['session_query']),
+			'markread' => array('text' => 'mark_as_read', 'url' => '<URL>?action=markasread;sa=all;' . $context['session_query']),
 		);
 
 		echo '
-		<li class="floatleft"><div class="mini_boardstate_on"></div> ', $txt['new_posts'], '</li>
-		<li class="floatleft"><div class="mini_boardstate_off"></div> ', $txt['old_posts'], '</li>
-		<li><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
 	</ul>';
 
 		// Show the mark all as read button?
 		if (!empty($context['categories']))
 			echo '<div class="mark_read">', template_button_strip($mark_read_button), '</div>';
 	}
-	else
-		echo '
-	<ul id="posting_icons" class="reset flow_hidden">
-		<li class="floatleft"><div class="mini_boardstate_off"></div> ', $txt['old_posts'], '</li>
-		<li><div class="mini_boardstate_redirect"></div> ', $txt['redirect_board'], '</li>
-	</ul>';
 }
 
 ?>
