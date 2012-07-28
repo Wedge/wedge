@@ -678,7 +678,7 @@ function weEditor(opt)
 	// !! Integrate this cleanly.
 	this.addMedia = function ()
 	{
-		reqWin(weUrl('action=media;sa=post;noh=' + opt.sUniqueId), Math.min(1000, self.screen.availWidth - 50), Math.min(700, self.screen.availHeight - 50), false, true);
+		open(weUrl('action=media;sa=post;noh=' + opt.sUniqueId), 'media', 'toolbar=no,titlebar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=' + Math.min(1000, screen.availWidth - 50) + ',height=' + Math.min(700, screen.availHeight - 50));
 	};
 
 	// Toggle wysiwyg/normal mode.

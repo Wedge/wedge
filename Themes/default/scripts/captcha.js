@@ -32,7 +32,7 @@ function weCaptcha(imageURL, uniqueID)
 	// Request a sound... play it Mr Soundman...
 	function playSound(ev)
 	{
-		return reqWin(this, 400, 120);
+		return reqWin(this, 400);
 	}
 
 	// Is there anything to cycle images with - if so attach the refresh image function?

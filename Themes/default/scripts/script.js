@@ -90,9 +90,8 @@ String.prototype.wereplace = function (oReplacements)
 
 // Open a new popup window.
 // @string from: specifies the URL to open. Use 'this' on a link to automatically use its href value.
-// @mixed desiredWidth / desiredHeight: use custom dimensions. Omit or set to 0 for default (480 width and auto height.)
-// @boolean asWindow: open as a window popup (useful for images), instead of an Ajax popup.
-function reqWin(from, desiredWidth, desiredHeight, asWindow)
+// @mixed desiredWidth: use custom width. Omit or set to 0 for default (480px). Height is always auto.
+function reqWin(from, desiredWidth)
 {
 	var
 		help_page = from && from.href ? from.href : from,
@@ -112,20 +111,9 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 		title = $.trim($(nextSib).clone().find('dfn').remove().end().text());
 	}
 
-	// Popup windows always have desired dimensions set.
-	// !! Only used by the media upload popup. @todo: delete ASAP.
-	if (asWindow)
-	{
-		window.open(help_page + ';title=' + title.php_urlencode(), 'help_pop', 'toolbar=no,titlebar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=' + desiredWidth + ',height=' + desiredHeight);
-		return false;
-	}
-
 	// Clicking the help icon twice should close the popup.
 	if ($('#help_pop').remove().length && previousTarget == help_page)
 		return false;
-
-	desiredWidth = Math.min(desiredWidth || 480, viewportWidth - 20);
-	desiredHeight = Math.min(desiredHeight || 0, viewportHeight - 20);
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE6.
 	$('body').append(
@@ -144,8 +132,7 @@ function reqWin(from, desiredWidth, desiredHeight, asWindow)
 
 				// Ensure that the popup never goes past the viewport boundaries.
 				$section
-					.width(desiredWidth)
-					.height(desiredHeight || 'auto')
+					.width(Math.min(desiredWidth || 480, viewportWidth - 20))
 					.css({
 						maxWidth: viewportWidth - 20 - $(this).width() + $section.width(),
 						maxHeight: viewportHeight - 20 - $(this).height() + $section.height()
@@ -285,7 +272,7 @@ function ajaxRating()
 // which is sometimes required for security reasons.
 function weUrl(url)
 {
-	return (we_script + (we_script.indexOf('?') == -1 ? '?' : (we_script.search(/[?&;]$/) == -1 ? ';' : ''))).replace(/:\/\/[^\/]+/g, '://' + location.host) + (url || '');
+	return we_script.replace(/:\/\/[^\/]+/g, '://' + location.host) + (we_script.indexOf('?') == -1 ? '?' : '') + url;
 }
 
 // Get the text in a code tag.
@@ -503,7 +490,7 @@ function weToggle(opt)
 
 		// Set a theme option through javascript.
 		if (!bInit && opt.sOptionName)
-			$.get(weUrl('action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';' + we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + +new Date));
+			$.get(weUrl('action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';' + we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + $.now()));
 	};
 
 	// Reverse the current state.
