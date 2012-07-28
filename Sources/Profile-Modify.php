@@ -2203,7 +2203,7 @@ function profileLoadSignatureData()
 	$context['member']['signature'] = empty($cur_profile['signature']) ? '' : str_replace(array('<br>', '<', '>', '"', '\''), array("\n", '&lt;', '&gt;', '&quot;', '&#039;'), $cur_profile['signature']);
 
 	if (!empty($settings['signature_minposts']) && (int) $cur_profile['posts'] < (int) $settings['signature_minposts'] && $cur_profile['id_group'] != 1)
-		$context['signature_minposts'] = number_context('signature_minposts', $settings['signature_minposts']);
+		$context['signature_minposts'] = number_context('signature_needs_posts', $settings['signature_minposts']);
 
 	return true;
 }

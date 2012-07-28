@@ -18,7 +18,7 @@ function template_main()
 	echo '
 	<div id="recent" class="main_section">
 		<we:cat>
-			<img src="', $theme['images_url'], '/post/xx.gif">
+			<img src="', $theme['images_url'], '/post/xx.gif" class="middle">
 			', $txt['recent_posts'], '
 		</we:cat>
 		<div class="pagesection">

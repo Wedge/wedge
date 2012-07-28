@@ -24,6 +24,14 @@ class wecss
 	 * based on 'Fundamentals of Interactive Computer Graphics' (J.D. Foley, 1982.)
 	 */
 
+	protected function rgb2hex($r, $g, $b)
+	{
+		$hex = sprintf('%02x%02x%02x', $r, $g, $b);
+		if (preg_match('~^([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3?$~i', $hex, $m))
+			return '#' . $m[1] . $m[2] . $m[3];
+		return '#' . $hex;
+	}
+
 	// Converts from a RGBA color to a string
 	protected function color2string($r, $g, $b, $a)
 	{
@@ -32,7 +40,7 @@ class wecss
 		$g = max(0, min(255, round($g)));
 		$b = max(0, min(255, round($b)));
 
-		return $a === 1 ? '#' . sprintf('%02x%02x%02x', $r, $g, $b) : "rgba($r, $g, $b, $a)";
+		return $a === 1 ? wecss::rgb2hex($r, $g, $b) : "rgba($r, $g, $b, $a)";
 	}
 
 	// Converts from hue to RGB
@@ -625,10 +633,10 @@ class wecss_nesting extends wecss
 		// (2) @import won't work if used inside a suffixed file, because @import is only parsed when
 		//     found at the start of a physical file (or within <style> tags in the main HTML.)
 		$tree = preg_replace('~^(@(?:import|charset)\s+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
-		$tree = preg_replace('~^([+>&#*@:.a-z][^{};]*?\s*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
+		$tree = preg_replace('~^([+>&#*@:.a-z0-9][^{};]*?\s*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
 		$tree = preg_replace('~(\burl\([^)]+\))~e', 'str_replace(\':\', \'#wedge-colon#\', \'$1\')', $tree); // Protect colons (:) inside URLs
 		$tree = preg_replace('~([a-z-, ]+)\s*:(?!//)\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
-		$tree = preg_replace('~^([+>&#*@:.a-z](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors
+		$tree = preg_replace('~^([+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
 
@@ -648,7 +656,7 @@ class wecss_nesting extends wecss
 		{
 			if (strpos($node['selector'], ' reset') !== false)
 			{
-				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z0-9][^{};,\n"]+)\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					// Start by rebuilding a full selector. For efficiency reasons, and because I'm too lazy to rework this,
@@ -717,7 +725,7 @@ class wecss_nesting extends wecss
 			// e.g.: ".class unextends .orig "-> cancels any earlier ".class extends .orig"
 			if (strpos($node['selector'], ' unextends') !== false)
 			{
-				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z0-9][^{};,\n"]+)\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 					$unextends[$m[1]] = $n;
 				$node['selector'] = preg_replace('~\bunextends\b~i', '', $node['selector']);
@@ -737,7 +745,7 @@ class wecss_nesting extends wecss
 				if ($browser['is_ie6'] && strpos($node['selector'], '>') !== false)
 					$node['selector'] = ' ';
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
-				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z][^{};,\n"]+)[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z0-9][^{};,\n"]+)[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					$save_selector = $node['selector'];
@@ -1053,7 +1061,7 @@ class wecss_math extends wecss
 {
 	function process(&$css)
 	{
-		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(em|ex|px|pt|pc|rem|deg|rad|grad|in|cm|mm|ms|s|hz|khz)|\b(?:round|ceil|floor|abs|fmod|min|max|rand)\()+)\)~i', $css, $matches))
+		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(em|ex|px|pt|pc|rem|fr|deg|rad|grad|in|cm|mm|ms|s|hz|khz)|\b(?:round|ceil|floor|abs|fmod|min|max|rand)\()+)\)~i', $css, $matches))
 			return;
 
 		$done = array();
@@ -1072,7 +1080,7 @@ class wecss_math extends wecss
 }
 
 // IE 6/7/8 don't support rgba/hsla, so we're replacing them with regular rgb colors mixed with an alpha variable.
-// The only exception is the gradient function. It accepts a #aarrggbb value, and only that, so IE6/7/8/9 get the treatment.
+// The only exception is the gradient function, because it accepts a #aarrggbb value.
 class wecss_rgba extends wecss
 {
 	// Converts from a string (possibly rgba) value to a rgb string
@@ -1090,7 +1098,7 @@ class wecss_rgba extends wecss
 		list ($r, $g, $b, $a) = $str[1] ? $str[1] : wecss::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
 
 		if ($a == 1)
-			return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+			return $cache[$input[0]] = $input[1] . wecss::rgb2hex($r, $g, $b);
 		if (!empty($input[1]))
 			return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
 
@@ -1110,15 +1118,14 @@ class wecss_rgba extends wecss
 		$g = $a * $g + $ma * $alphamix[1];
 		$b = $a * $b + $ma * $alphamix[2];
 
-		return $cache[$input[0]] = '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+		return $cache[$input[0]] = wecss::rgb2hex($r, $g, $b);
 	}
 
 	function process(&$css)
 	{
 		global $browser;
 
-		$ie_sucks = $browser['version'] < 10;
-		$css = preg_replace_callback('~(colorstr=)' . ($ie_sucks ? '?' : '') . '((?:rgba' . ($ie_sucks ? '?' : '') . '|hsla?)\([^()]*\))~i', 'wecss_rgba::rgba2rgb', $css);
+		$css = preg_replace_callback('~(colorstr=)' . ($browser['is_ie8down'] ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i', 'wecss_rgba::rgba2rgb', $css);
 	}
 }
 
