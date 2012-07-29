@@ -2621,7 +2621,7 @@ function template_profile_timeoffset_modify()
 	add_js('
 	function autoDetectTimeOffset(serverTime)
 	{
-		return serverTime ? Math.round((+new Date - serverTime) / 3600000) % 24 : 0;
+		return serverTime ? Math.round(($.now() - serverTime) / 3600000) % 24 : 0;
 	}');
 
 	echo '

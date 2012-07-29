@@ -679,7 +679,7 @@ function template_edit_style()
 				$("#css_preview_box").show();
 
 				// Revert to the theme they actually use.
-				$.get(weUrl("action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + +new Date));
+				$.get(weUrl("action=admin;area=theme;sa=edit;theme=', $context['theme_id'], !empty($user_info['skin']) ? '_' . base64_encode($user_info['skin']) : '', ';preview;" + $.now()));
 
 				refreshPreviewCache = null;
 				refreshPreview(false);

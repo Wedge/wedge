@@ -502,12 +502,10 @@
 
 		wheel = function (e)
 		{
-			e = $.event.fix(e || window.event);
 			// Below: (e.wheelDelta * 40/120) or (-e.detail * 40/3) = 40 pixels per wheel movement
 			iScroll = Math.min(contentAxis - viewportAxis, Math.max(0, iScroll - (e.wheelDelta || -e.detail * 40) / 3));
 			$thumb.css('top', iScroll / scrollbarRatio);
 			$content.css('top', -iScroll);
-
 			e.preventDefault();
 		},
 

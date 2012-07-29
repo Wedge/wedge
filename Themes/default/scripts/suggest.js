@@ -17,14 +17,10 @@ function weAutoSuggest(oOptions)
 	// Nothing else for now.
 	this.opt.sSearchType = 'member';
 
-	// Store the handle to the text box.
-	var oText = $('#' + this.opt.sControlId);
-
-	// An annoying bug in Packer makes some servers crash on long strings.
-	// It is probably when it attempts to find comments and make sure they aren't enclosed in strings.
-	// I don't know more. Let's keep it quiet, shall we?
-	var sItemTemplate = '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>';
-	sItemTemplate += '&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
+	var
+		// Store the handle to the text box.
+		oText = $('#' + this.opt.sControlId),
+		sItemTemplate = '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
 
 	this.sItemTemplate = this.opt.sItemTemplate || sItemTemplate;
 	this.sRetrieveURL = this.opt.sRetrieveURL || '%scripturl%action=suggest;suggest_type=%suggest_type%;search=%search%;%sessionVar%=%sessionID%;xml;time=%time%';
@@ -478,7 +474,7 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		search: sSearchString.php_urlencode(),
 		sessionVar: we_sessvar,
 		sessionID: we_sessid,
-		time: +new Date
+		time: $.now()
 	}), this.onSuggestionReceived);
 
 	return true;
