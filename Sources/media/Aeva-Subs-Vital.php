@@ -428,7 +428,7 @@ function aeva_initZoom($autosize, $peralbum = array())
 		{
 			if (j[i].value.indexOf(\'htmlExpand\') != -1)
 			{
-				getXMLDocument(\'index.php?action=media;sa=addview;in=\' + this.a.id.substr(3), function() {});
+				$.get(weUrl(\'action=media;sa=addview;in=\' + this.a.id.substr(3)));
 				return;
 			}
 		}

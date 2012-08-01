@@ -394,7 +394,7 @@ weAutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
 	this.populateDiv(this.aCache = ac);
 
 	// Make sure we can see it.
-	aItems.length ? this.autoSuggestShow() : this.autoSuggestHide();
+	ac.length ? this.autoSuggestShow() : this.autoSuggestHide();
 
 	return true;
 };
@@ -468,14 +468,20 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		this.oXmlRequestHandle.abort();
 
 	// Get the document.
-	this.oXmlRequestHandle = getXMLDocument.call(this, this.sRetrieveURL.wereplace({
-		scripturl: weUrl(''),
-		suggest_type: this.opt.sSearchType,
-		search: sSearchString.php_urlencode(),
-		sessionVar: we_sessvar,
-		sessionID: we_sessid,
-		time: $.now()
-	}), this.onSuggestionReceived);
+	this.oXmlRequestHandle = $.ajax(
+		this.sRetrieveURL.wereplace({
+			scripturl: weUrl(''),
+			suggest_type: this.opt.sSearchType,
+			search: sSearchString.php_urlencode(),
+			sessionVar: we_sessvar,
+			sessionID: we_sessid,
+			time: $.now()
+		}),
+		{
+			context: this,
+			success: this.onSuggestionReceived
+		}
+	);
 
 	return true;
 };

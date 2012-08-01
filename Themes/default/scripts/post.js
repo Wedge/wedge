@@ -1,4 +1,4 @@
-/*!
+/**
  * Wedge
  *
  * Helper functions used by the post page.
@@ -13,35 +13,39 @@
 
 function previewPost()
 {
-	var x = [];
+	var params = {};
+
 	$.each(textFields, function () {
 		if (this in postmod)
 		{
 			// Handle the WYSIWYG editor.
 			if (this == postbox && posthandle && posthandle.bRichTextEnabled)
-				x.push('message_mode=1&' + this + '=' + posthandle.getText(false).replace(/&#/g, '&#38;#').php_urlencode());
+			{
+				params['message_mode'] = 1;
+				params[this] = posthandle.getText(false);
+			}
 			else
-				x.push(this + '=' + postmod[this].value.replace(/&#/g, '&#38;#').php_urlencode());
+				params[this] = postmod[this].value;
 		}
 	});
 	$.each(numericFields, function () {
 		if (this in postmod && 'value' in postmod[this])
-			x.push(this + '=' + parseInt(postmod.elements[this].value));
+			params[this] = parseInt(postmod[this].value);
 	});
 	$.each(checkboxFields, function () {
-		if (this in postmod && postmod.elements[this].checked)
-			x.push(this + '=' + postmod.elements[this].value);
+		if (this in postmod && postmod[this].checked)
+			params[this] = postmod[this].value;
 	});
-
 	show_ajax();
-	sendXMLDocument(weUrl('action=post2' + (we_board ? ';board=' + we_board : '') + (make_poll ? ';poll' : '') + ';preview;xml'), x.join('&'), function (XMLDoc)
+
+	$.post(weUrl('action=post2' + (we_board ? ';board=' + we_board : '') + (make_poll ? ';poll' : '') + ';preview;xml'), params, function (XMLDoc)
 	{
 		if (!XMLDoc)
 			$(postmod.preview).click(function () { return true; }).click();
 
 		// Create and show the preview section, with a fine little animation.
-		$('#preview_body').html($('preview body', XMLDoc).text()).addClass('post');
-		$('#preview_subject').html($('preview subject', XMLDoc).text());
+		$('#preview_body').html($('body', XMLDoc).text()).addClass('post');
+		$('#preview_subject').html($('subject', XMLDoc).text());
 		$('#preview_section').animate({ opacity: 'show', height: 'show' });
 
 		var
@@ -56,8 +60,8 @@ function previewPost()
 		$('error', errors).each(function () {
 			errorList.push($(this).text());
 		});
-		$('#errors').toggle(errorList.length > 0);
 		$('#error_serious').toggle(errors.attr('serious') == 1);
+		$('#errors').toggle(errorList.length > 0);
 		$('#error_list').html(errorList.length > 0 ? errorList.join('<br>') : '');
 
 		// Show a warning if the topic has been locked.
@@ -132,9 +136,12 @@ function previewPost()
 
 function insertQuoteFast(msg)
 {
-	getXMLDocument(weUrl('action=quotefast;quote=' + msg + ';xml;mode=' + +posthandle.bRichTextEnabled), function (XMLDoc) {
-		posthandle.insertText($('quote', XMLDoc).text(), false, true);
-	});
+	$.get(
+		weUrl('action=quotefast;quote=' + msg + ';xml;mode=' + +posthandle.bRichTextEnabled),
+		function (XMLDoc) {
+			posthandle.insertText($('quote', XMLDoc).text(), false, true);
+		}
+	);
 	return true;
 }
 

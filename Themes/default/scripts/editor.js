@@ -660,15 +660,16 @@ function weEditor(opt)
 				cText = oText[0].caretPos.text;
 
 			else if ('selectionStart' in oText[0])
-				cText = oText[0].value.substr(oText[0].selectionStart, (oText[0].selectionEnd - oText[0].selectionStart));
+				cText = oText[0].value.substr(oText[0].selectionStart, oText[0].selectionEnd - oText[0].selectionStart);
 
 			else
 				return;
 
-			// Do bits that are likely to have attributes.
-			cText = cText.replace(RegExp("\\[/?(url|img|iurl|ftp|email|img|color|font|size|list|bdo).*?\\]", 'g'), '');
-			// Then just anything that looks like BBC.
-			cText = cText.replace(RegExp("\\[/?[A-Za-z]+\\]", 'g'), '');
+			cText = cText
+				// Do bits that are likely to have attributes.
+				.replace(RegExp("\\[/?(url|img|iurl|ftp|email|img|color|font|size|list|bdo).*?\\]", 'g'), '')
+				// Then just anything that looks like BBC.
+				.replace(RegExp("\\[/?[A-Za-z]+\\]", 'g'), '');
 
 			this.replaceText(cText);
 		}
@@ -691,45 +692,45 @@ function weEditor(opt)
 		}
 
 		// Overriding or alternating?
-		bView = bView || !this.bRichTextEnabled;
+		bView |= !this.bRichTextEnabled;
 
-		// Get the text.
-		var sText = this.getText(true, !bView).replace(/&#/g, '&#38;#').php_urlencode();
-
-		sendXMLDocument.call(
-			this,
-			weUrl('action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid + ';xml'),
-			'message=' + sText,
-			function (oXMLDoc)
+		$.ajax(
+			weUrl('action=jseditor;xml;view=' + +bView + ';' + we_sessvar + '=' + we_sessid),
 			{
-				var sText = '';
-				$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
-
-				// What is this new view we have?
-				this.bRichTextEnabled = oXMLDoc.getElementsByTagName('message')[0].getAttribute('view') != '0';
-
-				if (this.bRichTextEnabled)
+				data: { message: this.getText(true, !bView) },
+				context: this,
+				type: 'POST',
+				success: function (oXMLDoc)
 				{
-					$Frame.show();
-					oText.hide();
+					var sText = '';
+					$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
+
+					// What is this new view we have?
+					this.bRichTextEnabled = oXMLDoc.getElementsByTagName('message')[0].getAttribute('view') != '0';
+
+					if (this.bRichTextEnabled)
+					{
+						$Frame.show();
+						oText.hide();
+					}
+					else
+					{
+						sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+						$Frame.hide();
+						oText.show();
+					}
+
+					// First we focus.
+					this.setFocus();
+
+					this.insertText(sText, true);
+
+					// Record the new status.
+					$('#' + opt.sUniqueId + '_mode').val(+this.bRichTextEnabled);
+
+					// Rebuild the bread crumb!
+					this.updateEditorControls();
 				}
-				else
-				{
-					sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-					$Frame.hide();
-					oText.show();
-				}
-
-				// First we focus.
-				this.setFocus();
-
-				this.insertText(sText, true);
-
-				// Record the new status.
-				$('#' + opt.sUniqueId + '_mode').val(+this.bRichTextEnabled);
-
-				// Rebuild the bread crumb!
-				this.updateEditorControls();
 			}
 		);
 	};
@@ -753,17 +754,20 @@ function weEditor(opt)
 
 		// If we're in HTML mode we need to get the non-HTML text.
 		if (this.bRichTextEnabled)
-			sendXMLDocument.call(
-				this,
-				weUrl('action=jseditor;view=0;' + we_sessvar + '=' + we_sessid + ';xml'),
-				'message=' + this.getText(true, 1).php_urlencode(),
-				function (oXMLDoc)
+			$.ajax(
+				weUrl('action=jseditor;xml;view=0;' + we_sessvar + '=' + we_sessid),
 				{
-					// This contains the spellcheckable text.
-					var sText = '';
-					$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
-					oText.val(sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));
-					spellCheck(sFormId, opt.sUniqueId);
+					data: { message: this.getText(true, 1) },
+					context: this,
+					type: 'POST',
+					success: function (oXMLDoc)
+					{
+						// This contains the spellcheckable text.
+						var sText = '';
+						$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
+						oText.val(sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));
+						spellCheck(sFormId, opt.sUniqueId);
+					}
 				}
 			);
 		// Otherwise start spell-checking right away.
@@ -778,18 +782,21 @@ function weEditor(opt)
 	{
 		// If HTML edit put the text back!
 		if (this.bRichTextEnabled)
-			sendXMLDocument.call(
-				this,
-				weUrl('action=jseditor;view=1;' + we_sessvar + '=' + we_sessid + ';xml'),
-				'message=' + this.getText(true, 0).php_urlencode(),
-				function (oXMLDoc)
+			$.ajax(
+				weUrl('action=jseditor;xml;view=1;' + we_sessvar + '=' + we_sessid),
 				{
-					// The corrected text.
-					var sText = '';
-					$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
+					data: { message: this.getText(true, 0) },
+					context: this,
+					type: 'POST',
+					success: function (oXMLDoc)
+					{
+						// The corrected text.
+						var sText = '';
+						$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
 
-					this.insertText(sText, true);
-					this.setFocus();
+						this.insertText(sText, true);
+						this.setFocus();
+					}
 				}
 			);
 		else

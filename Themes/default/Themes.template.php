@@ -671,7 +671,7 @@ function template_edit_style()
 			url = url.substr(0, url.indexOf("#"));
 		}
 
-		getXMLDocument(
+		$.get(
 			url + (url.indexOf("?") == -1 ? "?" : ";") + "theme=', $context['theme_id'], '_', base64_encode(dirname($context['edit_filename'])), '" + anchor,
 			function (response)
 			{

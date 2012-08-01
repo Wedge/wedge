@@ -43,18 +43,6 @@ var
 	is_ie8down = is_ie && $.browser.version < 9,
 	is_ie9up = is_ie && !is_ie8down;
 
-// Load an XML document using Ajax.
-function getXMLDocument(sUrl, funcCallback, undefined)
-{
-	return $.ajax(sUrl, { context: this, success: funcCallback || null, async: funcCallback !== undefined });
-}
-
-// Send a post form to the server using Ajax.
-function sendXMLDocument(sUrl, sContent, funcCallback)
-{
-	return $.ajax(sUrl, { context: this, success: funcCallback || null, data: sContent, type: 'POST' }) || true;
-}
-
 // Replace the default jQuery easing type for animations.
 $.easing.swing2 = $.easing.swing;
 $.easing.swing = function (x, t, b, c, d)
@@ -256,9 +244,9 @@ function hide_ajax()
 function ajaxRating()
 {
 	show_ajax();
-	sendXMLDocument(
+	$.post(
 		$('#ratingF').attr('action') + ';xml',
-		'rating=' + $('#rating').val(),
+		{ rating: $('#rating').val() },
 		function (XMLDoc) {
 			$('#ratingE').html($('item', XMLDoc).text());
 			$('#rating').sb();
@@ -529,35 +517,41 @@ function JumpTo(control, id)
 		.css({ visibility: 'visible' })
 		.find('select').sb().focus(function ()
 		{
-			var sList = '', $val, that, name;
+			var sList = '', $val;
 
 			show_ajax();
 
 			// Fill the select box with entries loaded through Ajax.
-			$('we item', getXMLDocument(weUrl('action=ajax;sa=jumpto;xml')).responseXML).each(function ()
-			{
-				that = $(this);
-				// This removes entities from the name...
-				name = that.text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
+			$.get(
+				weUrl('action=ajax;sa=jumpto;xml'),
+				function (XMLDoc) {
+					$('we item', XMLDoc).each(function ()
+					{
+						var
+							that = $(this),
+							// This removes entities from the name...
+							name = that.text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
 
-				// Just for the record, we don't NEED to close the optgroup at the end
-				// of the list, even if it doesn't feel right. Saves us a few bytes...
-				if (that.attr('type') == 'c') // Category?
-					sList += '<optgroup label="' + name + '">';
-				else
-					// Show the board option, with special treatment for the current one.
-					sList += '<option value="' + (that.attr('url') || that.attr('id')) + '"'
-							+ (that.attr('id') == id ? ' disabled>=> ' + name + ' &lt;=' :
-								'>' + new Array(+that.attr('level') + 1).join('&nbsp;&nbsp;&nbsp;&nbsp;') + name)
-							+ '</option>';
-			});
+						// Just for the record, we don't NEED to close the optgroup at the end
+						// of the list, even if it doesn't feel right. Saves us a few bytes...
+						if (that.attr('type') == 'c') // Category?
+							sList += '<optgroup label="' + name + '">';
+						else
+							// Show the board option, with special treatment for the current one.
+							sList += '<option value="' + (that.attr('url') || that.attr('id')) + '"'
+									+ (that.attr('id') == id ? ' disabled>=> ' + name + ' &lt;=' :
+										'>' + new Array(+that.attr('level') + 1).join('&nbsp;&nbsp;&nbsp;&nbsp;') + name)
+									+ '</option>';
+					});
 
-			// Add the remaining items after the currently selected item.
-			$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
-				location.href = parseInt($val = $(this).val()) ? weUrl('board=' + $val + '.0') : $val;
-			});
+					// Add the remaining items after the currently selected item.
+					$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
+						location = parseInt($val = $(this).val()) ? weUrl('board=' + $val + '.0') : $val;
+					});
 
-			hide_ajax();
+					hide_ajax();
+				}
+			);
 		});
 }
 
@@ -595,7 +589,7 @@ function Thought(opt)
 			privacies = opt.aPrivacy, privacy = (thought.data('prv') + '').split(','),
 
 			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-			was_personal.php_unhtmlspecialchars() : $('text', getXMLDocument(ajaxUrl + 'in=' + tid).responseXML).text())),
+				was_personal.php_unhtmlspecialchars() : $('text', $.ajax(ajaxUrl + 'in=' + tid, { context: this, async: false }).responseXML).text())),
 
 			pr = '';
 
@@ -618,7 +612,10 @@ function Thought(opt)
 
 		show_ajax();
 
-		sendXMLDocument(ajaxUrl + 'remove', 'oid=' + toDelete.data('oid'));
+		$.post(
+			ajaxUrl + 'remove',
+			{ oid: toDelete.data('oid') }
+		);
 
 		// We'll be assuming Wedge uses table tags to show thought lists.
 		toDelete.closest('tr').remove();
@@ -631,9 +628,15 @@ function Thought(opt)
 	{
 		show_ajax();
 
-		sendXMLDocument(
+		$.post(
 			ajaxUrl,
-			'parent=' + tid + '&master=' + mid + '&oid=' + $('#noid').val().php_urlencode() + '&privacy=' + $('#npriv').val().php_urlencode() + '&text=' + $('#ntho').val().php_urlencode(),
+			{
+				parent: tid,
+				master: mid,
+				oid: $('#noid').val(),
+				privacy: $('#npriv').val(),
+				text: $('#ntho').val()
+			},
 			function (XMLDoc)
 			{
 				var

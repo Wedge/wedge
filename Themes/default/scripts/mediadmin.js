@@ -39,7 +39,7 @@ function admin_toggle_all()
 
 function doSubAction(url)
 {
-	getXMLDocument(url, function (XMLDoc) {
+	$.post(url, function (XMLDoc) {
 		var id = $('ret id', XMLDoc).text();
 		if ($('ret succ', XMLDoc).text() == 'true')
 			$('#' + id + ', #tr_expand_' + id).hide();
@@ -49,7 +49,7 @@ function doSubAction(url)
 
 function getPermAlbums(id_profile, args)
 {
-	sendXMLDocument(location.href + (typeof args != 'undefined' ? args : '') + ';sa=albums', 'prof=' + id_profile, function (XMLDoc) {
+	$.post(location + (args || '') + ';sa=albums', 'prof=' + id_profile, function (XMLDoc) {
 		var id_profile = $('albums id_profile', XMLDoc).text();
 		$('#albums_td_' + id_profile).html($('albums album_string', XMLDoc).text()).show();
 		$('#albums_' + id_profile).show();

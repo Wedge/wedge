@@ -66,9 +66,13 @@ function modify_topic(topic_id, first_msg_id)
 			return true;
 
 		show_ajax();
-		sendXMLDocument(
-			weUrl('action=jsmodify;topic=' + $('#qm_subject').data('id') + ';' + we_sessvar + '=' + we_sessid + ';xml'),
-			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() + '&msg=' + $('#qm_subject').data('msg'),
+		$.post(
+			weUrl('action=jsmodify;xml;' + we_sessvar + '=' + we_sessid),
+			{
+				topic: $('#qm_subject').data('id'),
+				subject: $('#qm_subject').val().replace(/&#/g, '&#38;#'),
+				msg: $('#qm_subject').data('msg')
+			},
 			function (XMLDoc)
 			{
 				hide_ajax();
@@ -113,22 +117,18 @@ function modify_topic(topic_id, first_msg_id)
 	});
 
 	show_ajax();
-	getXMLDocument(
-		weUrl('action=quotefast;quote=' + first_msg_id + ';modify;xml'),
-		function (XMLDoc)
-		{
-			hide_ajax();
-			cur_msg_id = $('message', XMLDoc).attr('id');
+	$.post(weUrl('action=quotefast;xml;modify'), { quote: first_msg_id }, function (XMLDoc) {
+		hide_ajax();
+		cur_msg_id = $('message', XMLDoc).attr('id');
 
-			cur_subject_div = $('#msg_' + cur_msg_id);
-			buff_subject = cur_subject_div.html();
+		cur_subject_div = $('#msg_' + cur_msg_id);
+		buff_subject = cur_subject_div.html();
 
-			// Here we hide any other things they want hiding on edit.
-			set_hidden_topic_areas(false);
+		// Here we hide any other things they want hiding on edit.
+		set_hidden_topic_areas(false);
 
-			show_edit($('subject', XMLDoc).text());
-		}
-	);
+		show_edit($('subject', XMLDoc).text());
+	});
 }
 
 
@@ -144,11 +144,18 @@ function QuickReply(opt)
 		if (!bCollapsed)
 		{
 			show_ajax();
-			getXMLDocument(weUrl('action=quotefast;quote=' + iMessageId + ';xml;mode=' + +oEditorHandle_message.bRichTextEnabled), function (XMLDoc)
-			{
-				hide_ajax();
-				oEditorHandle_message.insertText($('quote', XMLDoc).text(), false, true);
-			});
+			$.post(
+				weUrl('action=quotefast;xml'),
+				{
+					quote: iMessageId,
+					mode: +oEditorHandle_message.bRichTextEnabled
+				},
+				function (XMLDoc)
+				{
+					hide_ajax();
+					oEditorHandle_message.insertText($('quote', XMLDoc).text(), false, true);
+				}
+			);
 
 			// Move the view to the quick reply box.
 			location.hash = (is_ie ? '' : '#') + opt.sJumpAnchor;
@@ -234,7 +241,7 @@ function QuickModify(opt)
 		// Send out the Ajax request to get more info
 		show_ajax();
 
-		getXMLDocument(weUrl('action=quotefast;quote=' + iMessageId + ';modify;xml'), function (XMLDoc)
+		$.post(weUrl('action=quotefast;xml;modify'), { quote: iMessageId }, function (XMLDoc)
 		{
 			// The callback function used for the Ajax request retrieving the message.
 			hide_ajax();
@@ -280,11 +287,14 @@ function QuickModify(opt)
 
 		// Send in the Ajax request and let's hope for the best.
 		show_ajax();
-		sendXMLDocument(
-			weUrl('action=jsmodify;topic=' + we_topic + ';' + we_sessvar + '=' + we_sessid + ';xml'),
-			'subject=' + $('#qm_subject').val().replace(/&#/g, '&#38;#').php_urlencode() +
-			'&message=' + $('#qm_post').val().replace(/&#/g, '&#38;#').php_urlencode() +
-			'&msg=' + $('#qm_msg').val(),
+		$.post(
+			weUrl('action=jsmodify;xml;' + we_sessvar + '=' + we_sessid),
+			{
+				topic: we_topic,
+				subject: $('#qm_subject').val().replace(/&#/g, '&#38;#'),
+				message: $('#qm_post').val().replace(/&#/g, '&#38;#'),
+				msg: $('#qm_msg').val()
+			},
 			function (XMLDoc)
 			{
 				// Done saving -- now show the user whether everything's okay!
@@ -438,12 +448,11 @@ function IconList()
 
 			// Start to fetch its contents.
 			show_ajax();
-			getXMLDocument(weUrl('action=ajax;sa=messageicons;board=' + we_board + ';xml'), function (XMLDoc)
+			$.post(weUrl('action=ajax;sa=messageicons;xml'), { board: we_board }, function (XMLDoc)
 			{
 				hide_ajax();
-				$('icon', XMLDoc).each(function ()
+				$('icon', XMLDoc).each(function (key, iconxml)
 				{
-					var iconxml = this;
 					oContainerDiv.append(
 						$('<div class="item"></div>')
 							.hover(function () { $(this).toggleClass('hover'); })
@@ -453,9 +462,13 @@ function IconList()
 								var thisicon = this;
 								show_ajax();
 
-								getXMLDocument(
-									weUrl('action=jsmodify;topic=' + we_topic + ';msg=' + iCurMessageId + ';'
-									+ we_sessvar + '=' + we_sessid + ';icon=' + $(iconxml).attr('value') + ';xml'),
+								$.post(
+									weUrl('action=jsmodify;xml;' + we_sessvar + '=' + we_sessid),
+									{
+										topic: we_topic,
+										msg: iCurMessageId,
+										icon: $(iconxml).attr('value')
+									},
 									function (oXMLDoc)
 									{
 										hide_ajax();

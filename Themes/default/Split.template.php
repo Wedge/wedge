@@ -151,7 +151,7 @@ function template_select()
 
 	function select(direction, msg_id)
 	{
-		getXMLDocument(weUrl("action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id), onDocReceived);
+		$.get(weUrl("action=splittopics;sa=selectTopics;subname=', $context['topic']['subject'], ';topic=', $context['topic']['id'], '." + start[0] + ";start2=" + start[1] + ";move=" + direction + ";msg=" + msg_id), onDocReceived);
 		return false;
 	}
 	function onDocReceived(XMLDoc)
