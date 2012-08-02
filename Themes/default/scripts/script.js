@@ -15,14 +15,13 @@ var
 	weEditors = [],
 	_formSubmitted = false,
 
-	// Basic browser detection
+	// Basic browser detection. $.browser is being deprecated in jQuery,
+	// but v1.5 still has it, and Wedge will keep supporting it.
 	ua = navigator.userAgent.toLowerCase(),
 
 	// If you need support for more versions, just test for $.browser.version yourself...
 	is_opera = !!$.browser.opera,
-
-	is_ff = !is_opera && ua.indexOf('gecko/') != -1 && ua.indexOf('like gecko') == -1,
-	is_gecko = !is_opera && ua.indexOf('gecko') != -1,
+	is_ff = !!$.browser.mozilla,
 
 	// The webkit ones. Oh my, that's a long list... Right now we're only supporting iOS and generic Android browsers.
 	is_webkit = !!$.browser.webkit,
@@ -48,11 +47,6 @@ $.easing.swing2 = $.easing.swing;
 $.easing.swing = function (x, t, b, c, d)
 {
 	return b + c * Math.sqrt(1 - (t = t / d - 1) * t);
-};
-
-String.prototype.php_urlencode = function ()
-{
-	return encodeURIComponent(this);
 };
 
 String.prototype.php_htmlspecialchars = function ()
@@ -260,7 +254,7 @@ function ajaxRating()
 // which is sometimes required for security reasons.
 function weUrl(url)
 {
-	return we_script.replace(/:\/\/[^\/]+/g, '://' + location.host) + (we_script.indexOf('?') == -1 ? '?' : '') + url;
+	return we_script.replace(/:\/\/[^\/]+/g, '://' + location.host) + (we_script.indexOf('?') == -1 ? '?' : (we_script.search(/[?&;]$/) == -1 ? ';' : '')) + url;
 }
 
 // Get the text in a code tag.

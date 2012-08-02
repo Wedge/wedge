@@ -300,17 +300,6 @@ function QuickModify(opt)
 				// Done saving -- now show the user whether everything's okay!
 				hide_ajax();
 
-				// If we didn't get a valid document, just cancel.
-				if (!XMLDoc || !$('we', XMLDoc).length)
-				{
-					// If you could instead tell us what's wrong...?
-					if (XMLDoc)
-						$('#error_box').html(XMLDoc.childNodes && XMLDoc.childNodes.length && XMLDoc.firstChild.nodeName == 'parsererror' ? XMLDoc.firstChild.textContent : XMLDoc);
-					else
-						modifyCancel();
-					return;
-				}
-
 				if ($('body', XMLDoc).length)
 				{
 					// Replace current body.
@@ -340,6 +329,12 @@ function QuickModify(opt)
 					$('#msg' + sCurMessageId + ' input').removeClass('qm_error');
 					$($('error', XMLDoc).attr('where')).addClass('qm_error');
 				}
+			}
+		)
+		// Unexpected error...?
+		.error(
+			function (XHR, textStatus, errorThrown) {
+				$('#error_box').html(textStatus + (errorThrown ? ' - ' + errorThrown : ''));
 			}
 		);
 

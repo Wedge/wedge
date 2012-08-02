@@ -409,7 +409,7 @@ function template_aeva_admin_perms()
 	</div>
 
 	<form method="post" action="', $context['base_url'], '">
-		<table class="w75 center cp4 cs1 tborder" style="margin-top: 2ex">
+		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 			<tr class="windowbg2">
 				<td colspan="3">', sprintf($txt['media_admin_perms_warning'], $scripturl . '?action=admin;area=permissions;' . $context['session_query']), '</td>
 			</tr>
@@ -456,7 +456,7 @@ function template_aeva_admin_perms()
 	</form>
 
 	<form method="post" action="', $context['base_url'], ';sa=add">
-		<table class="w75 center cp4 cs1 tborder" style="margin-top: 2ex">
+		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 			<tr class="titlebg">
 				<td>', $txt['media_admin_profile_add'], '</td>
 			</tr>
@@ -476,7 +476,7 @@ function template_aeva_admin_perms_view()
 
 	echo '
 		<form action="', $context['base_url'], ';sa=quick;profile=', $context['aeva_profile']['id'], '" method="post">
-			<table class="tborder w75 cp4 cs1 center" style="margin-top: 2ex;">
+			<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 				<tr class="catbg">
 					<td colspan="5">', $txt['media_perm_profile'], ': "', $context['aeva_profile']['name'], '"</td>
 				</tr>
@@ -550,7 +550,7 @@ function template_aeva_admin_quotas()
 	</div>
 
 	<form method="post" action="', $scripturl, '?action=admin;area=aeva_quotas;', $context['session_query'], '">
-		<table class="tborder w75 center cp4 cs1" style="margin-top: 2ex;">
+		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 			<tr class="catbg">
 				<td class="w50">', $txt['media_admin_prof_name'], '</td>
 				<td class="w25">', $txt['media_albums'], '</td>
@@ -598,7 +598,7 @@ function template_aeva_admin_quotas()
 
 		echo '
 	<form method="post" action="', $scripturl, '?action=admin;area=aeva_quotas;sa=add;', $context['session_query'], '">
-		<table class="tborder w75 center c^4 cs1" style="margin-top: 2ex;">
+		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 			<tr class="titlebg">
 				<td>', $txt['media_admin_profile_add'], '</td>
 			</tr>
@@ -618,7 +618,7 @@ function template_aeva_admin_quota_view()
 	global $txt, $context, $scripturl;
 
 	echo '
-		<table class="tborder w75 center cp4 cs1" style="margin-top: 2ex;">
+		<table class="w100 center cp4 cs1 tborder" style="margin-top: 2ex">
 			<tr class="catbg">
 				<td colspan="4">', $txt['media_quota_profile'], ': "', $context['aeva_profile']['name'], '"</td>
 			</tr>

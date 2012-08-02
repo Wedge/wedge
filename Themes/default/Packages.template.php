@@ -1078,7 +1078,7 @@ function template_control_chmod()
 		}, sPostData = "";
 
 		for (i = 0; i < 5; i++)
-			sPostData += (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + $("#" + oPostData[i]).val().php_urlencode();
+			sPostData += (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + encodeURIComponent($("#" + oPostData[i]).val());
 
 		// Post the data out.
 		$.post(weUrl(\'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\'), sPostData, testFTPResults);
@@ -1183,7 +1183,7 @@ function template_file_permissions()
 
 		// Otherwise we need to get the wicked thing.
 		show_ajax();
-		$.get(weUrl("action=admin;area=packages;onlyfind=" + folderReal.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '"), onNewFolderReceived);
+		$.get(weUrl("action=admin;area=packages;onlyfind=" + encodeURIComponent(folderReal) + ";sa=perms;xml;', $context['session_query'], '"), onNewFolderReceived);
 
 		return false;
 	}

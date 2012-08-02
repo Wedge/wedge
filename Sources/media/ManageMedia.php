@@ -1044,7 +1044,7 @@ function aeva_admin_perms_albums()
 	ob_clean();
 
 	// Ensure we can access this profile...
-	if ($_REQUEST['prof'] != 1)
+	if ($_POST['prof'] != 1)
 	{
 		$request = wesql::query('
 			SELECT id
@@ -1052,7 +1052,7 @@ function aeva_admin_perms_albums()
 			WHERE id = {int:id}
 				AND type = {string:type}',
 			array(
-				'id' => (int) $_REQUEST['prof'],
+				'id' => (int) $_POST['prof'],
 				'type' => 'perm_profile',
 			)
 		);
@@ -1070,7 +1070,7 @@ function aeva_admin_perms_albums()
 		FROM {db_prefix}media_albums AS a
 		WHERE a.id_perm_profile = {int:prof}
 		ORDER BY name ASC',
-		array('prof' => (int) $_REQUEST['prof'])
+		array('prof' => (int) $_POST['prof'])
 	);
 	$string_parts = array();
 	while ($album_row = wesql::fetch_assoc($request))
@@ -1413,7 +1413,7 @@ function aeva_admin_quotas_albums()
 	ob_clean();
 
 	// Ensure we can access this profile...
-	if ($_REQUEST['prof'] != 1)
+	if ($_POST['prof'] != 1)
 	{
 		$request = wesql::query('
 			SELECT id
@@ -1421,7 +1421,7 @@ function aeva_admin_quotas_albums()
 			WHERE id = {int:id}
 				AND type = {string:type}',
 			array(
-				'id' => (int) $_REQUEST['prof'],
+				'id' => (int) $_POST['prof'],
 				'type' => 'quota_prof',
 			)
 		);
@@ -1439,7 +1439,7 @@ function aeva_admin_quotas_albums()
 		FROM {db_prefix}media_albums AS a
 		WHERE a.id_quota_profile = {int:prof}
 		ORDER BY name ASC',
-		array('prof' => (int) $_REQUEST['prof'])
+		array('prof' => (int) $_POST['prof'])
 	);
 	$string_parts = array();
 	while ($album_row = wesql::fetch_assoc($request))
@@ -1447,7 +1447,7 @@ function aeva_admin_quotas_albums()
 	wesql::free_result($request);
 
 	if (empty($string_parts))
-		$string_parts[] = '<span style="font-style: italic;">None</span>';
+		$string_parts[] = '<span style="font-style: italic">None</span>';
 
 	header('Content-Type: text/xml; charset=UTF-8');
 	echo '<?xml version="1.0" encoding="UTF-8"?', '>
@@ -1713,7 +1713,7 @@ function aeva_getMembergroups($perms = false)
 	$postGroups = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		$groups[$row['id']] = array('name' => $row['min_posts'] > -1 ? '<span style="font-style: italic;">' . $row['name'] . '</span>' : $row['name'], 'num_members' => 0);
+		$groups[$row['id']] = array('name' => $row['min_posts'] > -1 ? '<span style="font-style: italic">' . $row['name'] . '</span>' : $row['name'], 'num_members' => 0);
 		if ($row['min_posts'] == -1)
 			$normalGroups[$row['id']] = $row['id'];
 		else

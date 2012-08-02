@@ -17,21 +17,10 @@ function weAutoSuggest(oOptions)
 	// Nothing else for now.
 	this.opt.sSearchType = 'member';
 
-	var
-		// Store the handle to the text box.
-		oText = $('#' + this.opt.sControlId),
-		sItemTemplate = '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
+	// Store the handle to the text box.
+	var oText = $('#' + this.opt.sControlId), that = this;
 
-	this.sItemTemplate = this.opt.sItemTemplate || sItemTemplate;
-	this.sRetrieveURL = this.opt.sRetrieveURL || '%scripturl%action=suggest;suggest_type=%suggest_type%;search=%search%;%sessionVar%=%sessionID%;xml;time=%time%';
-	this.sTextDeleteItem = this.opt.sTextDeleteItem || '';
-	this.sURLMask = this.opt.sURLMask || 'action=profile;u=%item_id%';
-
-	// How many objects can we show at once?
-	this.iMaxDisplayQuantity = this.opt.iMaxDisplayQuantity || 15;
-
-	// How many characters shall we start searching on?
-	this.iMinimumSearchChars = this.opt.iMinimumSearchChars || 3;
+	this.opt.sItemTemplate = this.opt.sItemTemplate || '<input type="hidden" name="%post_name%[]" value="%item_id%"><a href="%item_href%" class="extern" onclick="window.open(this.href, \'_blank\'); return false;">%item_name%</a>&nbsp;<img src="%images_url%/pm_recipient_delete.gif" alt="%delete_text%" title="%delete_text%"> &nbsp; ';
 
 	this.oTextHandle = oText;
 	this.oSuggestDivHandle = null;
@@ -57,7 +46,6 @@ function weAutoSuggest(oOptions)
 	this.oRealTextHandle = $('<input type="hidden" name="' + oText[0].name + '" />').val(oText.val()).appendTo(oText[0].form);
 
 	// Disable autocomplete in any browser by obfuscating the name.
-	var that = this;
 	oText.attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
 		.bind(is_opera || is_ie ? 'keypress keydown' : 'keydown', function (oEvent) { return that.handleKey(oEvent); })
 		.bind('keyup change focus', function () { return that.autoSuggestUpdate(); })
@@ -272,13 +260,13 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 	if (!$('#' + eid).length)
 	{
 		$('<span id="' + eid + '"></span>').html(
-			this.sItemTemplate.wereplace({
+			this.opt.sItemTemplate.wereplace({
 				post_name: this.opt.sPostName,
 				item_id: sItemId,
-				item_href: weUrl(this.sURLMask.wereplace({ item_id: sItemId })),
+				item_href: weUrl((this.opt.sURLMask || 'action=profile;u=%item_id%').wereplace({ item_id: sItemId })),
 				item_name: sItemName,
 				images_url: we_theme_url + '/images',
-				delete_text: this.sTextDeleteItem
+				delete_text: this.opt.sTextDeleteItem || ''
 			})
 		).appendTo(this.oItemList);
 		$('#' + eid).find('img').click(function () { that.deleteAddedItem(sItemId); });
@@ -337,7 +325,8 @@ weAutoSuggest.prototype.autoSuggestShow = function ()
 // Populate the actual div.
 weAutoSuggest.prototype.populateDiv = function (aResults)
 {
-	for (var aNewDisplayData = [], i = 0, j = Math.min(this.iMaxDisplayQuantity, aResults.length); i < j; i++)
+	// How many objects can we show at once?
+	for (var aNewDisplayData = [], i = 0, j = Math.min(this.opt.iMaxDisplayQuantity || 15, aResults.length); i < j; i++)
 		// Create the sub element, and attach some events to it so we can do stuff.
 		aNewDisplayData[i] = $('<div></div>')
 			.data({ sItemId: aResults[i].sItemId, that: this })
@@ -367,9 +356,9 @@ weAutoSuggest.prototype.itemMouseLeave = function (oCurElement)
 	$(oCurElement).removeClass('auto_suggest_hover');
 };
 
-weAutoSuggest.prototype.onSuggestionReceived = function (oXMLDoc)
+weAutoSuggest.prototype.onSuggestionReceived = function (XMLDoc)
 {
-	var aItems = $('item', oXMLDoc), i, ac = [];
+	var aItems = $('item', XMLDoc), i, ac = [];
 
 	aItems.each(function (i) {
 		ac[i] = { sItemId: $(this).attr('id'), sItemName: $(this).text() };
@@ -436,8 +425,8 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 	if (sRealLastSearch.toLowerCase() == sLowercaseSearch)
 		return true;
 
-	// Too small?
-	else if (sSearchString.length < this.iMinimumSearchChars)
+	// How many characters shall we start searching on? Too small?
+	else if (sSearchString.length < (this.opt.iMinimumSearchChars || 3))
 	{
 		this.aCache = [];
 		this.autoSuggestHide();
@@ -464,21 +453,22 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 	}
 
 	// In progress means destroy!
-	if (typeof this.oXmlRequestHandle == 'object' && this.oXmlRequestHandle != null)
+	if (this.oXmlRequestHandle && this.oXmlRequestHandle.abort)
 		this.oXmlRequestHandle.abort();
+
+	var data = {
+		suggest_type: this.opt.sSearchType,
+		search: sSearchString,
+		time: $.now()
+	};
+	data[we_sessvar] = we_sessid;
 
 	// Get the document.
 	this.oXmlRequestHandle = $.ajax(
-		this.sRetrieveURL.wereplace({
-			scripturl: weUrl(''),
-			suggest_type: this.opt.sSearchType,
-			search: sSearchString.php_urlencode(),
-			sessionVar: we_sessvar,
-			sessionID: we_sessid,
-			time: $.now()
-		}),
+		weUrl('action=suggest;xml'),
 		{
 			context: this,
+			data: data,
 			success: this.onSuggestionReceived
 		}
 	);
