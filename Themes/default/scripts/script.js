@@ -69,18 +69,63 @@ String.prototype.wereplace = function (oReplacements)
 	return sResult;
 };
 
+var confirm_var = false;
+confirm = function (string)
+{
+	if (!confirm_var)
+		reqWin('', 0, string.replace(/\n/g, '<br>'), true);
+
+	return confirm_var;
+};
 
 // Open a new popup window.
 // @string from: specifies the URL to open. Use 'this' on a link to automatically use its href value.
-// @mixed desiredWidth: use custom width. Omit or set to 0 for default (480px). Height is always auto.
-function reqWin(from, desiredWidth)
+// @mixed desired_width: use custom width. Omit or set to 0 for default (480px). Height is always auto.
+// @string string: oh, what an original name... This is just the message for confirm boxes.
+// @boolean is_modal: is this a modal pop-up? (i.e. can't cancel it until you click one of the buttons...)
+function reqWin(from, desired_width, string, is_modal)
 {
 	var
 		help_page = from && from.href ? from.href : from,
 		title = $(from).text(),
-		viewportWidth = $(window).width(),
-		viewportHeight = window.innerHeight || $(window).height(), // innerHeight is an iOS hack (fixed in jQuery 1.8)
-		previousTarget = $('#helf').data('src');
+		viewport_width = $(window).width(),
+		viewport_height = window.innerHeight || $(window).height(), // innerHeight is an iOS hack (fixed in jQuery 1.8)
+		previous_target = $('#helf').data('src'),
+		event = window.event,
+		close_window = function ()
+		{
+			$('#help_pop').fadeOut(function () { $(this).remove(); });
+		},
+		animate_popup = function ()
+		{
+			var $section = $('section', this);
+
+			// Ensure that the popup never goes past the viewport boundaries.
+			$section
+				.width(Math.min(desired_width || 480, viewport_width - 20))
+				.css({
+					maxWidth: viewport_width - 20 - $(this).width() + $section.width(),
+					maxHeight: viewport_height - 20 - $(this).height() + $section.height()
+				});
+
+			// In case the height was set to auto, some browsers (ahem)
+			// will misbehave. Reset it to a hard number.
+			$section.height($section.height());
+
+			$(this)
+				.hide()
+				.css({
+					visibility: 'visible',
+					left: (viewport_width - $(this).width()) / 2,
+					top: (viewport_height - $(this).height()) / 2 - 20
+				})
+				// !! Can also use specialEasing for diversity...
+				.animate({
+					opacity: 'show',
+					top: '+=20'
+				})
+				.dragslide();
+		};
 
 	// Try and get the title for the current link.
 	if (!title)
@@ -94,60 +139,55 @@ function reqWin(from, desiredWidth)
 	}
 
 	// Clicking the help icon twice should close the popup.
-	if ($('#help_pop').remove().length && previousTarget == help_page)
+	if ($('#help_pop').remove().length && previous_target == help_page)
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE6.
 	$('body').append(
 		$('<div></div>')
 		.attr('id', 'help_pop')
-		.width(viewportWidth)
-		.height(viewportHeight)
+		.width(viewport_width)
+		.height(viewport_height)
 		.css({ top: is_ie6 || is_iphone ? $(window).scrollTop() : 0 })
 		.fadeIn()
 		.append(
 			$('<div></div>')
 			.attr('id', 'helf')
 			.data('src', help_page)
-			.load(help_page + ';title=' + title.php_urlencode(), function () {
-				var $section = $('section', this);
-
-				// Ensure that the popup never goes past the viewport boundaries.
-				$section
-					.width(Math.min(desiredWidth || 480, viewportWidth - 20))
-					.css({
-						maxWidth: viewportWidth - 20 - $(this).width() + $section.width(),
-						maxHeight: viewportHeight - 20 - $(this).height() + $section.height()
-					});
-
-				// In case the height was set to auto, some browsers (ahem)
-				// will misbehave. Reset it to a hard number.
-				$section.height($section.height());
-
-				$(this)
-					.hide()
-					.css({
-						visibility: 'visible',
-						left: (viewportWidth - $(this).width()) / 2,
-						top: (viewportHeight - $(this).height()) / 2 - 20
-					})
-					// !! Can also use specialEasing for diversity...
-					.animate({
-						opacity: 'show',
-						top: '+=20'
-					})
-					.dragslide();
-			})
 		)
 	);
 
+	if (is_modal)
+		$('#helf')
+			.html('<header></header><section class="nodrag confirm">' + string + '</section><footer>\
+				<input type="button" class="delete floatright" />\
+				<input type="button" class="submit floatleft" value="Yes" />\
+			</footer>')
+			.each(animate_popup)
+			.find('input')
+			.val(we_cancel)
+			.click(function () {
+				close_window();
+				if ($(this).hasClass('submit'))
+				{
+					confirm_var = true;
+					$(event.target).trigger(event.type);
+					confirm_var = false;
+				}
+			})
+			.filter('.submit')
+			.val(we_ok);
+	else
+		$('#helf')
+			.load(help_page, { t: title }, animate_popup);
+
 	// Clicking anywhere on the page should close the popup.
 	$('#help_pop').click(function (e) {
+		if (is_modal)
+			return false;
 		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
 		if (!$(e.target).closest('#helf').length)
-			$(this).fadeOut(function () {
-				$(this).remove();
-			});
+			close_window();
 	});
 
 	// Return false so the click won't follow the link ;)
