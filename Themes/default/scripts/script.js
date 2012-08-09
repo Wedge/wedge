@@ -69,20 +69,16 @@ String.prototype.wereplace = function (oReplacements)
 	return sResult;
 };
 
+// Alert and confirm replacements
 var confirm_var = false;
-confirm = function (string)
-{
-	if (!confirm_var)
-		reqWin('', 0, string.replace(/\n/g, '<br>'), true);
-
-	return confirm_var;
-};
+window.confirm	= function (string) { return confirm_var || reqWin('', 350, string, 1); };
+window.alert	= function (string) { return confirm_var || reqWin('', 350, string, 2); };
 
 // Open a new popup window.
 // @string from: specifies the URL to open. Use 'this' on a link to automatically use its href value.
 // @mixed desired_width: use custom width. Omit or set to 0 for default (480px). Height is always auto.
 // @string string: oh, what an original name... This is just the message for confirm boxes.
-// @boolean is_modal: is this a modal pop-up? (i.e. can't cancel it until you click one of the buttons...)
+// @int is_modal: is this a modal pop-up? (i.e. requires attention) 0 = no, 1 = confirm, 2 = alert
 function reqWin(from, desired_width, string, is_modal)
 {
 	var
@@ -91,7 +87,7 @@ function reqWin(from, desired_width, string, is_modal)
 		viewport_width = $(window).width(),
 		viewport_height = window.innerHeight || $(window).height(), // innerHeight is an iOS hack (fixed in jQuery 1.8)
 		previous_target = $('#helf').data('src'),
-		event = window.event,
+		e = window.event,
 		close_window = function ()
 		{
 			$('#help_pop').fadeOut(function () { $(this).remove(); });
@@ -159,10 +155,11 @@ function reqWin(from, desired_width, string, is_modal)
 
 	if (is_modal)
 		$('#helf')
-			.html('<header></header><section class="nodrag confirm">' + string + '</section><footer>\
-				<input type="button" class="delete floatright" />\
-				<input type="button" class="submit floatleft" value="Yes" />\
-			</footer>')
+			.html(is_modal === 1 ?
+				'<section class="nodrag confirm">' + string + '</section>\
+				<footer><input type="button" class="submit floatleft" /><input type="button" class="delete floatright" /></footer>' :
+				'<section class="nodrag confirm">' + string + '</section>\
+				<footer><input type="button" class="submit" /></footer>')
 			.each(animate_popup)
 			.find('input')
 			.val(we_cancel)
@@ -171,7 +168,8 @@ function reqWin(from, desired_width, string, is_modal)
 				if ($(this).hasClass('submit'))
 				{
 					confirm_var = true;
-					$(event.target).trigger(event.type);
+					if (e)
+						$(e.target).trigger(e.type);
 					confirm_var = false;
 				}
 			})

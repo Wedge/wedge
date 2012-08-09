@@ -268,15 +268,14 @@ function weEditor(opt)
 		{
 			var
 				begin = oTextHandle.value.substr(0, oTextHandle.selectionStart),
-				end = oTextHandle.value.substr(oTextHandle.selectionEnd),
 				scrollPos = oTextHandle.scrollTop;
 
-			oTextHandle.value = begin + text + end;
+			oTextHandle.value = begin + text + oTextHandle.value.substr(oTextHandle.selectionEnd);
 
 			if (oTextHandle.setSelectionRange)
 			{
 				oTextHandle.focus();
-				var ma, goForward = is_opera && (ma = text.match(/\n/g)) ? ma.length : 0;
+				var goForward = is_opera ? text.split('\n').length - 1 : 0;
 				oTextHandle.setSelectionRange(begin.length + text.length + goForward, begin.length + text.length + goForward);
 			}
 			oTextHandle.scrollTop = scrollPos;
@@ -294,7 +293,7 @@ function weEditor(opt)
 	{
 		var oTextHandle = oText[0];
 
-		// Can a text range be created?
+		// Can a text range be created? (IE version.)
 		if ('caretPos' in oTextHandle && oTextHandle.createTextRange)
 		{
 			var caretPos = oTextHandle.caretPos, temp_length = caretPos.text.length;
@@ -310,30 +309,37 @@ function weEditor(opt)
 			else
 				oTextHandle.focus(caretPos);
 		}
-		// Mozilla text range wrap.
+		// Mozilla text range wrap. (Standards version.)
 		else if ('selectionStart' in oTextHandle)
 		{
+			// !! Opera 12.50 Alpha has a bug in which selectionStart is broken due to textareas now using \n instead
+			// of \r\n newlines, while the selectionStart setter will still behave as if \r hadn't been deleted.
+			// cr/lf is a quick and dirty attempt to at least fix that... It's not perfect. Tough life.
+			// !! @todo: remove this once Opera fixes the bug...
 			var
-				begin = oTextHandle.value.substr(0, oTextHandle.selectionStart),
-				selection = oTextHandle.value.substr(oTextHandle.selectionStart, oTextHandle.selectionEnd - oTextHandle.selectionStart),
-				end = oTextHandle.value.substr(oTextHandle.selectionEnd),
-				newCursorPos = oTextHandle.selectionStart,
+				cr = is_opera ? oTextHandle.value.substr(0, oTextHandle.selectionStart).split('\r').length - 1 : 0,
+				lf = is_opera ? oTextHandle.value.substr(0, oTextHandle.selectionStart).split('\n').length - 1 : 0,
+				selectionLength = oTextHandle.selectionEnd - oTextHandle.selectionStart,
 				scrollPos = oTextHandle.scrollTop;
 
-			oTextHandle.value = begin + text1 + selection + text2 + end;
+			// This is where 
+			oTextHandle.value =
+				oTextHandle.value.substr(0, oTextHandle.selectionStart + cr - lf)
+				+ text1
+				+ oTextHandle.value.substr(oTextHandle.selectionStart + cr - lf, selectionLength)
+				+ text2
+				+ oTextHandle.value.substr(oTextHandle.selectionEnd + cr - lf);
 
 			if (oTextHandle.setSelectionRange)
 			{
 				var
-					t1 = is_opera ? text1.match(/\n/g) : '',
-					t2 = is_opera ? text2.match(/\n/g) : '',
-					goForward1 = t1 ? t1.length : 0,
-					goForward2 = t2 ? t2.length : 0;
+					txlen1 = text1.length + (is_opera ? text1.split('\n').length - 1 : 0),
+					txlen2 = text2.length + (is_opera ? text2.split('\n').length - 1 : 0);
 
 				if (!selection.length)
-					oTextHandle.setSelectionRange(newCursorPos + text1.length + goForward1, newCursorPos + text1.length + goForward1);
+					oTextHandle.setSelectionRange(oTextHandle.selectionStart + txlen1, oTextHandle.selectionStart + txlen1);
 				else
-					oTextHandle.setSelectionRange(newCursorPos, newCursorPos + text1.length + selection.length + text2.length + goForward1 + goForward2);
+					oTextHandle.setSelectionRange(oTextHandle.selectionStart, oTextHandle.selectionStart + selectionLength + txlen1 + txlen2);
 				oTextHandle.focus();
 			}
 			oTextHandle.scrollTop = scrollPos;
