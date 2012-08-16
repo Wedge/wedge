@@ -1617,13 +1617,17 @@ function detectBrowser()
 	|| preg_match('~' . ($browser['is_opera'] ? 'opera[/ ]' : 'version[/ ]') . '([\d.]+)~i', $ua, $ver);
 	$browser['version'] = $ver = isset($ver[1]) ? (float) $ver[1] : 0;
 
+	// If this is an iDevice, the iOS version should tell us more about it than the Safari version.
+	if (($browser['is_iphone'] || $browser['is_tablet']) && preg_match('~iP(?:hone|od|ad) OS (\d+(?:_\d+))~', $ua, $ios))
+		$browser['version'] = (float) str_replace('_', '.', $ios[1]);
+
 	$browser['is_ie8down'] = $is_ie && $ver <= 8;
 	for ($i = 6; $i <= 10; $i++)
 		$browser['is_ie' . $i] = $is_ie && $ver == $i;
 
 	// Store our browser name...
 	$browser['agent'] = '';
-	foreach (array('opera', 'chrome', 'iphone', 'tablet', 'android', 'safari', 'webkit', 'firefox', 'gecko', 'ie6', 'ie7', 'ie8', 'ie9', 'ie10') as $agent)
+	foreach (array('opera', 'chrome', 'firefox', 'ie', 'iphone', 'android', 'tablet', 'safari', 'webkit', 'gecko') as $agent)
 	{
 		if ($browser['is_' . $agent])
 		{
@@ -1643,6 +1647,47 @@ function detectBrowser()
 	$context['browser'] =& $browser;
 
 	call_hook('detect_browser');
+}
+
+/**
+ * Analyzes the given string (or array of strings) and tries to determine if it encompasses the current browser version.
+ * Returns the string that was recognized as the browser, or false if nothing was found.
+ */
+function hasBrowser($strings)
+{
+	global $browser;
+
+	foreach ((array) $strings as $string)
+	{
+		$split = explode('[', $string);
+
+		if ($browser['agent'] != trim($split[0]))
+			continue;
+
+		$split = trim(trim($split[1], ']'));
+
+		// ie (any version)
+		if ($split === '')
+			return $string;
+
+		// ie[-7] (up to version 7)
+		if ($split[0] == '-' && $browser['version'] <= (int) substr($split, 1))
+			return $string;
+
+		// ie[7-] (version 7 or above)
+		if (substr($split, -1) == '-' && $browser['version'] >= (int) substr($split, 0, -1))
+			return $string;
+
+		// ie[7-8] (version 7 or 8)
+		if (strpos($split, '-') !== false && ($versions = explode('-', $split)) && $browser['version'] >= (int) $versions[0] && $browser['version'] <= (int) $versions[1])
+			return $string;
+
+		// ie[7] (version 7 only)
+		if ($browser['version'] == (int) $split)
+			return $string;
+	}
+
+	return false;
 }
 
 /**
@@ -2045,8 +2090,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 			foreach ($theme['macros'] as $name => $contents)
 			{
 				if (is_array($contents))
-					$contents = isset($contents[$context['browser']['agent']]) ? $contents[$context['browser']['agent']] :
-							(isset($contents['else']) ? $contents['else'] : '{body}');
+					if ($version = hasBrowser(array_keys($contents)))
+						$contents = $contents[$version];
+					else
+						$contents = isset($contents['else']) ? $contents['else'] : '{body}';
 
 				$context['macros'][$name] = array(
 					'has_if' => strpos($contents, '<if:') !== false,
@@ -2100,7 +2147,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Add any potential browser-based fixes.
 	if (!empty($context['browser']['agent']))
-		$context['css_suffixes'][] = $context['browser']['agent'];
+		$context['css_suffixes'][] = $context['browser']['agent'] . preg_replace('~\.0+~', '', sprintf('%.1f', $context['browser']['version']));
 
 	// RTL languages require an additional stylesheet.
 	if ($context['right_to_left'])

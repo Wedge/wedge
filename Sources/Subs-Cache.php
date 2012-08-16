@@ -255,7 +255,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	static $cached_files = array();
 
 	// Delete all duplicates and ensure $original_files is an array.
-	$original_files = array_flip((array) $original_files);
+	$original_files = array_merge(array('common' => false), array_flip((array) $original_files));
 	$files = array_keys($original_files);
 	$latest_date = 0;
 
@@ -266,9 +266,12 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$fallback_folder = $theme[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/' . reset($context['css_folders']) . '/';
 	$deep_folder = end($context['css_folders']);
 	$requested_suffixes = array('' => 0) + array_flip($context['css_suffixes']);
+	$ignore_versions = array();
 	$found_suffixes = array();
 	$found_files = array();
 
+	// !! @todo: the following is quite resource intensive... Maybe we should cache the results somehow?
+	// !! e.g. cache for several minutes, but delete cache if the filemtime for current folder or its parent folders was updated.
 	foreach ($context['skin_folders'] as $folder)
 	{
 		$fold = $folder[0];
@@ -289,7 +292,16 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 				continue;
 
 			// Get the list of suffixes in the file name.
-			$suffixes = array_flip(explode(',', substr(strstr($file, '.'), 1, -4)));
+			$suffix_string = substr(strstr($file, '.'), 1, -4);
+			$suffixes = array_flip(explode(',', $suffix_string));
+
+			// If we found our browser version in the suffix list, then add to the list of files to load.
+			$brow = isset($suffixes[$context['browser']['agent']]) ? $context['browser']['agent'] : '';
+			if ($brow || (strpos($suffix_string, '[') !== false && $brow = hasBrowser($suffix_string)))
+			{
+				$requested_suffixes[$brow] = true;
+				$ignore_versions[] = $brow;
+			}
 			$suffixes_to_keep = array_intersect_key($suffixes, $requested_suffixes);
 
 			// If we find a local suffix in the filename, only process it if it's at the final level.
@@ -368,7 +380,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-	$found_suffixes[$context['browser']['agent']] = true;
+	$found_suffixes[$context['browser']['agent'] . preg_replace('~\.0+~', '', sprintf('%.1f', $context['browser']['version']))] = true;
 
 	// Make sure to only keep 'webkit' if we have no other browser name on record.
 	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
@@ -377,10 +389,10 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$id = array_filter(array_merge(
 		$id,
 
-		// We don't need to show 'index-sections-custom' in the main filename, do we?
-		array_diff($files, $ignore_files),
+		// We don't need to show 'common-index-sections-hacks-custom' in the main filename, do we?
+		array_diff($files, (array) 'common', $ignore_files),
 
-		array_keys($found_suffixes),
+		array_diff(array_keys($found_suffixes), $ignore_versions),
 
 		// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
 		isset($context['user'], $context['skin_available_languages']) && $context['user']['language'] !== 'english'
@@ -545,7 +557,8 @@ function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '
 		new wecss_color(),		// CSS color transforms
 		new wecss_func(),		// Various CSS functions
 		new wecss_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
-		new wecss_math()		// Math function (math(1px + 3px), math((4*$var)/2em)...)
+		new wecss_math(),		// Math function (math(1px + 3px), math((4*$var)/2em)...)
+		new wecss_prefixes(),
 	);
 
 	// rgba to rgb conversion for IE 6/7/8/9
@@ -554,6 +567,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '
 
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)
+	// Note that this is called last, mostly to avoid conflicts with the semicolon character.
 	if ($gzip && !$context['browser']['is_ie6'] && !$context['browser']['is_ie7'])
 		$plugins[] = new wecss_base64();
 
@@ -588,6 +602,11 @@ function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '
 	$final = preg_replace('~\n\t*//[^\n]*~', "\n", $final); // Strip comments at the beginning of lines.
 	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
 
+	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
+	// Please note that it isn't currently used by Wedge itself, but you can use it to provide both prefixed and standard versions of a tag that isn't
+	// already taken into account by the wecss_prefixes() function (otherwise you only need to provide the unprefixed version.)
+	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
+
 	// Just like comments, we're going to preserve content tags.
 	preg_match_all('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~', $final, $contags);
 	$final = preg_replace('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~', 'content: wedge', $final);
@@ -600,25 +619,6 @@ function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '
 
 	// Remove extra whitespace.
 	$final = preg_replace('~\s*([][+:;,>{}\s])\s*~', '$1', $final);
-
-	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
-	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
-
-	// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
-	$rules = array(
-		'border-radius',				// Rounded corners
-		'box-shadow',					// Rectangular drop shadows
-		'box-sizing',					// Determines whether a container's width includes padding and border
-		'border-image',					// Border images
-		'hyphens',						// Automatic hyphens on long words
-		'transition',					// Animated transitions
-		'column-[a-z-]+',				// Multi-column layout
-		'box-[a-z-]+',					// Flexible box model -- requires setting "display: -prefix-box" before!
-		'grid-[a-z]+',					// Grid layout
-		'animation(?:-[a-z-]+)?',		// Animations
-		'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
-	);
-	$final = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . '):[^\n;]+[\n;]~', 'wedge_fix_browser_css', $final);
 
 	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
 	$final = str_replace(
@@ -655,42 +655,6 @@ function wedge_replace_placeholders($str, $arr, &$final)
 	$len = strlen($str);
 	while (($pos = strpos($final, $str)) !== false)
 		$final = substr_replace($final, $arr[$i++], $pos, $len);
-}
-
-/**
- * Add browser-specific prefixes to a few commonly used CSS attributes (in Wedge at least.)
- *
- * @param string $matches The actual CSS contents
- * @return string Updated CSS contents with fixed code
- */
-function wedge_fix_browser_css($matches)
-{
-	global $browser, $prefix;
-
-	$full = $prefix . $matches[0] . $matches[0];
-
-	// Only IE6/7/8 don't support border-radius these days. Don't bother.
-	if ($matches[1] === 'border-radius')
-		return $browser['is_ie8down'] ? '' : $matches[0];
-
-	// Only Chrome 16+ supports border-image without a prefix.
-	if ($matches[1] === 'border-image')
-		return !$browser['is_chrome'] ? $full : $matches[0];
-
-	// IE6/7/8 don't support box-shadow, and Safari and Safari Mobile often require a prefix.
-	if ($matches[1] === 'box-shadow')
-		return $browser['is_ie8down'] ? '' : ($browser['is_safari'] ? $full : $matches[0]);
-
-	// IE6 and IE7 don't support box-sizing, and Mozilla, older Androids and older Safaris require a prefix.
-	if ($matches[1] === 'box-sizing')
-		return $browser['is_ie6'] || $browser['is_ie7'] ? '' : ($browser['is_firefox'] || $browser['is_safari'] || $browser['is_android'] ? $full : $matches[0]);
-
-	// IE6/7/8/9 don't support columns, IE10 and Opera support them, other browsers require a prefix.
-	if (strpos($matches[1], 'column-') === 0)
-		return $browser['is_ie8down'] || $browser['is_ie9'] ? '' : (!$browser['is_opera'] && !$browser['is_ie10'] ? $full : $matches[0]);
-
-	// transition, transform and flex box layouts always require a prefix, for now.
-	return $full;
 }
 
 // Dynamic function to cache language flags into index.css
@@ -931,12 +895,24 @@ function wedge_cache_smileys($set, $smileys)
  */
 function theme_base_css()
 {
-	global $context, $boardurl;
+	global $context, $boardurl, $settings, $cachedir;
+
+	// First, let's purge the cache if any files are over a month old. This ensures we don't waste space for IE6 & co. when they die out.
+	$one_month_ago = time() - 30 * 24 * 3600;
+	if (empty($settings['last_cache_purge']) || $settings['last_cache_purge'] < $one_month_ago)
+	{
+		$search_extensions = array('.gz', '.css', '.js', '.cgz', '.jgz');
+		foreach (glob($cachedir . '/*.*') as $del)
+			if (in_array(strrchr($del, '.'), $search_extensions) && is_file($del) && filemtime($del) < $one_month_ago)
+				@unlink($del);
+		updateSettings(array('last_cache_purge' => time()));
+	}
 
 	// We only generate the cached file at the last moment (i.e. when first needed.)
-	// Make sure custom.css, if available, is added last. Also, strip index/sections/custom from the final filename.
+	// Make sure hacks.css and custom.css, if available, are added last. Also, strip index/sections/hacks/custom from the final filename.
 	if (empty($context['cached_css']))
 	{
+		$context['main_css_files']['hacks'] = false;
 		$context['main_css_files']['custom'] = false;
 
 		add_css_file(
@@ -1050,14 +1026,14 @@ function wedge_get_skin_options()
 
 		if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
-				if (!empty($match[3]) && (empty($match[2]) || in_array($context['browser']['agent'], explode(',', $match[2]))))
+				if (!empty($match[3]) && (empty($match[2]) || hasBrowser(explode(',', $match[2]))))
 					$context['skin_replace'][trim($match[3], "\x00..\x1F")] = array(trim($match[4], "\x00..\x1F"), !empty($match[1]));
 
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[3]) && (empty($match[1]) || in_array($context['browser']['agent'], explode(',', $match[1]))))
+				if (!empty($match[3]) && (empty($match[1]) || hasBrowser(explode(',', $match[1]))))
 					add_css(rtrim($match[3], "\t"));
 				if (!empty($match[2]))
 				{
@@ -1075,7 +1051,7 @@ function wedge_get_skin_options()
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[1]) && !in_array($context['browser']['agent'], explode(',', $match[1])))
+				if (!empty($match[1]) && !hasBrowser(explode(',', $match[1])))
 					continue;
 
 				if (!empty($match[2]))
@@ -1096,7 +1072,7 @@ function wedge_get_skin_options()
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[2]) && !in_array($context['browser']['agent'], explode(',', $match[2])))
+				if (!empty($match[2]) && !hasBrowser(explode(',', $match[2])))
 					continue;
 				$context['macros'][$match[1]] = array(
 					'has_if' => strpos($match[3], '<if:') !== false,

@@ -339,23 +339,15 @@ class wecss_var extends wecss
 class wecss_color extends wecss
 {
 	// Transforms "gradient: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
-	// Transforms "gradient: color1, color2, [top|left]?" into linear-gradient([top|left]?, color1, color2), or the equivalent IE filter.
-	// The direction parameter is optional.
+	// Transforms "gradient: color1, color2, [angle]" into linear-gradient([angle], color1, color2), or the equivalent IE filter. Default angle is 180deg (top to bottom).
+	// The angle parameter is optional. You can either use a direction (to left...), or the angle of the destination (0deg = from bottom to top)
 	protected static function gradient_background($input)
 	{
 		global $browser;
-		static $test_gradient_support = true, $no_gradients;
 
-		if ($test_gradient_support)
-		{
-			$test_gradient_support = false;
-			$no_gradients = $browser['is_ie'] && $browser['version'] <= 9;
-			$no_gradients |= $browser['is_firefox'] && $browser['version'] < 3.6;
-			$no_gradients |= $browser['is_opera'] && $browser['version'] < 11.1;
-		}
 		$bg1 = $input[2];
 		$bg2 = empty($input[3]) ? $bg1 : $input[3];
-		$dir = empty($input[4]) ? 'top' : $input[4];
+		$dir = empty($input[4]) ? '180deg' : $input[4];
 
 		// IE 6, 7 and 8 will need a filter to apply the transparency effect, except for IE9. Also, IE8 can do without hasLayout.
 		if ($browser['is_ie8down'] || ($browser['is_ie9'] && $bg1 != $bg2))
@@ -369,20 +361,15 @@ class wecss_color extends wecss
 		}
 
 		// Better than nothing...
-		if ($no_gradients)
+		if ($browser['is_ie'] && $browser['version'] < 10)
 			return $input[1] . 'background-color: ' . $bg1;
 
-		$grad = 'linear-gradient(' . ($dir == 'top' ? '' : $dir . ', ') . '%1$s, %2$s)';
-		if ($browser['is_opera'])
-			$grad = '-o-' . $grad;
-		elseif ($browser['is_gecko'])
-			$grad = '-moz-' . $grad;
-		elseif ($browser['is_ie10'])
-			$grad = '-ms-' . $grad;
-		elseif ($browser['is_webkit'])
-			$grad = '-webkit-gradient(linear, 0%% 0%%, ' . ($dir == 'left' ? '100%% 0%%' : '0%% 100%%') . ', from(%1$s), to(%2$s))';
-
-		return $input[1] . 'background: ' . sprintf($grad, $bg1, $bg2);
+		return $input[1] . 'background: ' . sprintf($browser['is_safari'] && $browser['version'] < 5.1 ?
+			'-webkit-gradient(linear, 0%% 0%%, ' . ($dir == 'left' ? '100%% 0%%' : '0%% 100%%') . ', from(%1$s), to(%2$s))' :
+			'linear-gradient(' . ($dir == '180deg' ? '' : $dir . ', ') . '%1$s, %2$s)',
+			$bg1,
+			$bg2
+		);
 	}
 
 	// Now, go with the actual color parsing.
@@ -540,7 +527,9 @@ class wecss_nesting extends wecss
 	// Sort the bases array by the first argument's length.
 	private static function lensort($a, $b)
 	{
-		return strlen($a[0]) < strlen($b[0]);
+		$la = strlen($a[0]);
+		$lb = strlen($b[0]);
+		return $la == $lb ? strlen($b[2]) - strlen($a[2]) : $lb - $la;
 	}
 
 	private static function indentation($a)
@@ -648,7 +637,7 @@ class wecss_nesting extends wecss
 		 ******************************************************************************/
 
 		$css = $standard_nest = '';
-		$bases = $removals = $selector_removals = $unextends = array();
+		$bases = $virtuals = $used_virtuals = $removals = $selector_removals = $unextends = array();
 
 		// 'reset' keyword: remove earlier occurrences of a selector.
 		// e.g.: ".class reset" -> removes all previous ".class" definitions
@@ -692,6 +681,20 @@ class wecss_nesting extends wecss
 				{
 					unset($this->rules[$n]);
 					continue;
+				}
+			}
+		}
+
+		// 'virtual' keyword: remove rule if nothing extends on it.
+		// Please note that WeCSS will only accept one virtual selector at a time.
+		foreach ($this->rules as $n => &$node)
+		{
+			if (strpos($node['selector'], ' virtual') !== false)
+			{
+				if (preg_match('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z0-9][^{};,\n"]+)\s+virtual\b~i', $node['selector'], $matches))
+				{
+					$node['selector'] = str_replace($matches[0], $matches[1], $node['selector']);
+					$virtuals[$matches[1]] = $n;
 				}
 			}
 		}
@@ -820,10 +823,26 @@ class wecss_nesting extends wecss
 			}
 		}
 
-		// Sort the bases array by the first argument's length.
+		// Sort the bases array by the first argument's length, and then by the third argument's length.
 		usort($bases, 'wecss_nesting::lensort');
-		$prop = 'property';
+
+		// Delete any virtuals that aren't actually inherited. Additionally,
+		// ignore the $base value in case it's set by another virtual.
+		foreach ($bases as $i => &$base)
+			if (isset($virtuals[$base[0]]) && !isset($virtuals[$base[2]]))
+				$used_virtuals[$base[0]] = $virtuals[$base[0]];
+		$unused_virtuals = array_diff_key($virtuals, $used_virtuals);
+		foreach ($unused_virtuals as $n2)
+			$this->unset_recursive($n2);
+
+		// A time-saver to determine whether a character is within the alphabet...
 		$alpha = array_flip(array_merge(range('a', 'z'), range('A', 'Z')));
+
+		// We'll build this regex now. It determines whether a base selector is within a string.
+		$no_virtuals_regex = '';
+		foreach ($virtuals as $virtual => $dummy)
+			$no_virtuals_regex .= (isset($alpha[$virtual[0]]) ? '(?<![a-z0-9_-])' : '') . preg_quote($virtual, '~') . '|';
+		$no_virtuals_regex = '~(' . substr($no_virtuals_regex, 0, -1) . ')(?![a-z0-9_-])~i';
 
 		// Do the proper nesting
 		foreach ($this->rules as &$node)
@@ -876,8 +895,10 @@ class wecss_nesting extends wecss
 						{
 							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![a-z0-9_-]|.*\s+final\b)~i', $snippet))
 							{
-								// And our magic trick happens here. Then we restart the process to handle inherited extends.
+								// And our magic trick happens here.
 								$selectors[] = trim(str_replace($base[0], $base[2], $snippet));
+
+								// Then we restart the process to handle inherited extends.
 								$done_temp[$snippet] = true;
 								$changed = true;
 							}
@@ -890,6 +911,10 @@ class wecss_nesting extends wecss
 			}
 
 			$selectors = array_flip(array_flip($selectors));
+			foreach ($selectors as $i => $sel)
+				if (preg_match($no_virtuals_regex, $sel))
+					unset($selectors[$i]);
+
 			sort($selectors);
 			$selector = implode(',', $selectors);
 
@@ -1013,7 +1038,7 @@ class wecss_nesting extends wecss
 		$level = 0;
 		$rules = $props = array();
 		$rule = 'rule';
-		$prop = 'property';
+		$property = 'property';
 
 		// This is where we analyze the nesting levels and rebuild the original structure.
 		foreach ($tags as &$tag)
@@ -1032,7 +1057,7 @@ class wecss_nesting extends wecss
 						$rules[$parent[$level]]['children'][] = $id;
 					$parent[++$level] = $id++;
 				}
-				elseif ($tag[2] === $prop)
+				elseif ($tag[2] === $property)
 				{
 					$props[$id] = array(
 						'name' => $tag[3],
@@ -1061,7 +1086,7 @@ class wecss_math extends wecss
 {
 	function process(&$css)
 	{
-		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)(em|ex|px|pt|pc|rem|fr|deg|rad|grad|in|cm|mm|ms|s|hz|khz)|\b(?:round|ceil|floor|abs|fmod|min|max|rand)\()+)\)~i', $css, $matches))
+		if (!preg_match_all('~math\(((?:[\t ()\d.+/*%-]|(?<=\d)([a-z]{2,4})|\b(?:round|ceil|floor|abs|fmod|min|max|rand)\()+)\)~i', $css, $matches))
 			return;
 
 		$done = array();
@@ -1129,6 +1154,188 @@ class wecss_rgba extends wecss
 	}
 }
 
+// Fix some commonly used CSS properties/values to use prefixes as required by the current browser.
+class wecss_prefixes extends wecss
+{
+	/**
+	 * Fix CSS properties, i.e. rules, anything before a colon.
+	 * Compatibility sheet is adapted from caniuse.com
+	 *
+	 * @param string $matches The actual CSS contents
+	 * @return string Updated CSS contents with fixed code
+	 */
+	private static function fix_rules($matches)
+	{
+		global $browser, $prefix;
+
+		// Some shortcuts...
+		$unchanged = $matches[0];
+		$prefixed = $prefix . $unchanged;
+		$both = $prefixed . $unchanged;
+		$v = $browser['version'];
+		$b = $browser;
+		list ($ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $iphone, $android, $webkit) = array(
+			$b['is_ie8down'], $b['is_ie9'], $b['is_ie10'], $b['is_opera'], $b['is_firefox'], $b['is_safari'],
+			$b['is_chrome'], $b['is_iphone'], $b['is_android'], $b['is_webkit']
+		);
+
+		// Only IE6/7/8 don't support border-radius these days.
+		if ($matches[1] === 'border-radius')
+		{
+			if ($ie8down || ($opera && $v < 10.5))
+				return '';
+			// Older browsers require a prefix...
+			if (($firefox && $v < 4) || ($safari && $v < 5) || ($iphone && $v < 4) || ($android && $v < 2.2))
+				return $prefixed;
+			return $unchanged;
+		}
+
+		// Only newer Chrome and Safari versions support border-image without a prefix.
+		if ($matches[1] === 'border-image')
+		{
+			if ($ie || ($opera && $v < 10.5))
+				return '';
+			if ($chrome || ($safari && $v >= 6))
+				return $unchanged;
+			return $prefixed;
+		}
+
+		// IE6/7/8 don't support box-shadow, and Safari Mobile requires a prefix up to version 5.
+		if ($matches[1] === 'box-shadow')
+		{
+			if ($ie8down || ($opera && $v < 10.5))
+				return '';
+			if (($firefox && $v < 4) || ($iphone && $v < 5) || ($safari && $v < 5.1))
+				return $prefixed;
+			if ($android)
+				return $both;
+			return $unchanged;
+		}
+
+		// IE6 and IE7 don't support box-sizing, and Mozilla, older Androids and older Safaris require a prefix.
+		if ($matches[1] === 'box-sizing')
+		{
+			if (($b['is_ie'] && $v < 8) || ($opera && $v < 9.5))
+				return '';
+			if ($firefox || ($iphone && $v < 5) || ($safari && $v < 5.1) || ($android && $v < 4))
+				return $prefixed;
+			return $unchanged;
+		}
+
+		// IE6/7/8/9 don't support columns, IE10 and Opera support them, other browsers require a prefix.
+		if (strpos($matches[1], 'column-') === 0)
+		{
+			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1) || ($safari && $v < 3.2))
+				return '';
+			return $opera || $ie10 ? $unchanged : $prefixed;
+		}
+
+		// IE6/7/8/9 don't support transitions, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
+		if ($matches[1] === 'transition')
+		{
+			if ($ie8down || $ie9 || ($firefox && $v < 4) || ($safari && $v < 3.2))
+				return '';
+			if (($opera && $v < 12.5) || ($firefox && $v < 16) || $webkit)
+				return $prefixed;
+			return $unchanged;
+		}
+
+		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
+		if (strpos($matches[1], 'animation') === 0)
+		{
+			if ($ie8down || $ie9 || ($firefox && $v < 4) || ($safari && $v < 3.2))
+				return '';
+			if (($opera && $v < 12.5) || ($firefox && $v < 16) || $webkit)
+				return $prefixed;
+			return $unchanged;
+		}
+
+		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
+		if (strpos($matches[1], '@keyframes') === 0)
+		{
+			if (($opera && $v < 12.5) || ($firefox && $v < 16) || $webkit)
+				return str_replace('@keyframes', '@' . $prefix . 'keyframes', $unchanged);
+			return $unchanged;
+		}
+
+		// IE6/7/8 don't support transforms, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
+		if (strpos($matches[1], 'transform') === 0)
+		{
+			if ($ie8down || ($opera && $v < 10.5) || ($firefox && $v < 3.5) || ($safari && $v < 3.1))
+				return '';
+			if ($is9 || ($opera && $v < 12.5) || ($firefox && $v < 16) || $webkit)
+				return $prefixed;
+			return $unchanged;
+		}
+
+		// hyphens and flex box layouts either aren't supported or always require a prefix, for now.
+		return $both;
+	}
+
+	/**
+	 * Same as above, but with some common values.
+	 *
+	 * @param string $matches The actual CSS contents
+	 * @return string Updated CSS contents with fixed code
+	 */
+	private static function fix_values($matches)
+	{
+		global $browser, $prefix;
+
+		$ver = $browser['version'];
+
+		// IE6/7/8/9 don't support gradients (screw 'em!), IE10 supports them unprefixed, and Firefox 16+ dropped the prefix.
+		// Note that AFAIK, repeating-* still is prefixed everywhere as of August 2012, it's fixable but give me a break for now.
+		if (strpos($matches[1], 'gradient(') !== false)
+		{
+			if (($browser['is_gecko'] && $ver >= 16) || ($browser['is_opera'] && $ver >= 12.5))
+				return $matches[0];
+
+			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\s*\()~', $prefix . '$1', $matches[0]);
+
+			// !! Is it worth supporting gradians, radians and turns..? Wedge only uses degrees.
+			if (strpos($prefixed, 'deg') !== false)
+				$prefixed = preg_replace('~(gradient\s*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~e', '\'$1\' . (90 - \'$2\')', $prefixed);
+
+			return $prefixed;
+		}
+
+		// Nothing bad was found? Just ignore.
+		return $matches[0];
+	}
+
+	function process(&$css)
+	{
+		global $browser, $prefix;
+
+		// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
+		$rules = array(
+
+			'border-radius',				// Rounded corners
+			'box-shadow',					// Rectangular drop shadows
+			'box-sizing',					// Determines whether a container's width includes padding and border
+			'border-image',					// Border images
+			'hyphens',						// Automatic hyphens on long words
+			'transition',					// Animated transitions
+			'column-[a-z-]+',				// Multi-column layout
+			'box-[a-z-]+',					// Flexible box model -- requires setting "display: -prefix-box" before!
+			'grid-[a-z]+',					// Grid layout
+			'animation(?:-[a-z-]+)?',		// Animations
+			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
+
+		);
+		$css = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . '):[^\n;]+[\n;]~', 'wecss_prefixes::fix_rules', $css);
+
+		// Same thing for a few more complex properties...
+		$values = array(
+
+			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
+
+		);
+		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wecss_prefixes::fix_values', $css);
+	}
+}
+
 class wecss_base64 extends wecss
 {
 	function process(&$css)
@@ -1147,7 +1354,7 @@ class wecss_base64 extends wecss
 				$absolut = $boarddir . substr($img, 2);
 
 				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
-				if (file_exists($absolut) && filesize($absolut) <= 4096)
+				if (file_exists($absolut) && filesize($absolut) <= 3072)
 				{
 					$img_raw = file_get_contents($absolut);
 					$img_data = 'url(data:image/' . $img_ext . ';base64,' . base64_encode($img_raw) . ')';
