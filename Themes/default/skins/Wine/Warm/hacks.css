@@ -17,9 +17,11 @@ em
 
 #responsive
 	#sidebar
-		left: -220px
-		:hover
-			left: 0
+		background: $side_bg
+		text-align: left
+		.column > *
+			float: left
+			width: 240px
 	#offside
 		display: block
 
@@ -42,15 +44,12 @@ em
 		color: #744
 	.column
 		padding: 20px 25px 10px 15px
-	#responsive &
-		background-color: #f6f8ef
 
 #top_section
 	display: none
 
-.wehead
-	a
-		color: #444
+.wehead a
+	color: #666
 
 #header
 	h2, p
@@ -129,8 +128,7 @@ dl#feed
 ------------------------------------------------------- */
 #navi
 	border-bottom: 1px dotted #000
-	background: $main_bg
-	gradient: $menu_gradient
+	gradient: rgba(232, 236, 232, .96), rgba(255, 255, 255, .96)
 
 #main_menu
 	padding: 5px 0 0
@@ -204,9 +202,6 @@ tr.titlebg th, tr.catbg th
 	a
 		color: lighten(channels(gray, 30%), 10%) !important
 
-.wehead a
-	color: #fda
-
 .cat final
 	border: 1px solid rgba(0,0,0, 0.15)
 	color: gray
@@ -251,7 +246,8 @@ $side_bg   = #e8e3cb
 $footer_bg = lighten($side_bg, 5%)
 $main_font = "PT Sans", Arial, sans-serif
 $ita_font = "Segoe UI", "Trebuchet MS", Arial, sans-serif
-$post_font = 9.5pt/140% "Lucida Sans Unicode", Verdana, $main_font
+$post_font = "Lucida Sans Unicode", Verdana, $main_font
+$post_font_size = 9.5pt/140%
 
 @replace
 	webelowine.png

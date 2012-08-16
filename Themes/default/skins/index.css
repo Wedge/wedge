@@ -38,12 +38,18 @@
 	a percentage. Also reset HTML5 elements we use.
 ------------------------------------------------------- */
 
+html
+	min-height: 100%
+	background: #369																			// For old browsers...
+	background: fixed linear-gradient(45deg, #505b66, #a0a6ab 500px, #505b66 1000px, #505b66)	// Fallback background for browsers that support linear gradients...
+	background: radial-gradient(50% 40%, circle cover, #eee, #012)								// Fallback for the old radial-gradient syntax...
+	background: radial-gradient(farthest-corner circle at 50% 40%, #eee, #012)					// And this is the final one. Phew...
+
 body
-	background: #444
 	color: #ccc
 	font: $main_font_size $main_font
 	margin: 0
-	padding: 0 4px
+	padding: 12px
 
 header, footer, aside, section, article, nav
 	display: block
@@ -72,11 +78,6 @@ header, footer, aside, section, article, nav
 .windowbg3 extends .windowbg
 	background-color: $window_bg3
 
-.inline-block
-	display: inline-block
-	mixin: ie-inline-block
-	vertical-align: middle
-
 .cell
 	text-align: center
 	display: table-cell
@@ -94,19 +95,14 @@ header, footer, aside, section, article, nav
 		width: 100%
 		margin: 0
 
-// Clearfix
-.clearfix
-	:before, :after
-		content: ""
-		display: table
-	:after
-		clear: both
-
 /* Main layout declarations (body, sidebar...)
 ------------------------------------------------------- */
 
-#header, #content, #linktree
+#wedge
+	max-width: 1240px
 	margin: auto
+
+#header, #content, #linktree
 	background: $main_bg
 
 #header, #navi, #footer
@@ -122,8 +118,6 @@ header, footer, aside, section, article, nav
 	color: #444
 	div.frame
 		padding: 0 30px 20px
-		max-width: 1200px
-		margin: auto
 
 #edge
 	width: 100%
@@ -137,12 +131,18 @@ header, footer, aside, section, article, nav
 		display: block
 	#sidebar
 		display: block
-		width: 100%
+		box-sizing: border-box
+		width: auto
+		background: $window_bg
+		border-top: 1px solid #bdb5b5
+		margin: 0 -30px -20px
 		section extends .inline-block
 			width: $sidebar-width
 			vertical-align: top
 			padding: 0 8px 8px
 			margin: 8px
+			header
+				background: none
 	#main
 		display: block
 		padding: 4px 0 12px
@@ -217,7 +217,7 @@ ul#noava
 		float: left
 		a
 			color: #766
-			letter-spacing: -3px
+			letter-spacing: -1px
 			font: 100 3em/1em $big_font
 
 #siteslogan
@@ -393,18 +393,9 @@ em
 	background: url($images/upshrinks.png) no-repeat
 	text-decoration: none
 
-.wehead
-	background-color: #e2e8d8
-	a
-		color: #444
-
-.wefoot extends .wehead
-	background-color: #e5e5e8
-
 // The 'New' icon, generally speaking.
 .note extends .inline-block
 	border-radius: 7px
-	background-color: rgba(255,0,0,.8)
 	gradient: #fa6, #d76
 	color: #fff !important
 	font: 700 7.5pt/100% Tahoma, Arial, sans-serif
@@ -475,20 +466,15 @@ select.sb
 			padding: 0 3px
 
 		.btn
-			background: #dbdbdb url($images/select_arrow_bg.gif) repeat-x left center
+			background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf 100%)
 			position: absolute
 			border: 1px solid #707070
 			border-radius: 4px
 			width: 14px
-			line-height: 1em
-			padding-top: 3px
 			text-align: center
 			right, top, bottom: 2px
-
-			div extends .inline-block
-				border: 4px solid transparent
-				border-top-color: rgba(0,0,0,.5)
-				width, height: 0
+			color: rgba(0,0,0,.5)
+			font-size: 7px
 
 	&.disabled .display
 		color: #999
@@ -506,7 +492,7 @@ select.sb
 			box-shadow: inset 0 0 1px 1px #9eb0ba
 
 	&.focused .display .btn, .hover .btn
-		background-image: url($images/select_arrow_bg_hover.gif)
+		background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5 100%)
 
 	/* Dropdown styles */
 	.items
@@ -577,7 +563,7 @@ select.sb
 			position: absolute
 			overflow: hidden
 			background: #e0e3e0
-			background: -prefix-linear-gradient(left, #ddd, #e0e6e0, #ccc)
+			background: linear-gradient(90deg, #ddd, #e0e6e0, #ccc)
 			border-radius: 6px
 			cursor: pointer
 			height: 18px
@@ -585,7 +571,7 @@ select.sb
 			left: -1px
 			:hover
 				background: #e8ece8
-				background: -prefix-linear-gradient(left, #ddd, #e8ece8, #ccc)
+				background: linear-gradient(270deg, #ddd, #e8ece8, #ccc)
 
 #sidebar .sbox
 	max-width: 200px
@@ -753,7 +739,7 @@ input[type=file]
 	display: block
 	border: 1px solid #bbb
 	z-index: 42
-	box-shadow: 2px 2px 6px 0 rgba(0,0,0, .15)
+	box-shadow: 2px 2px 3px 0 rgba(0,0,0, .2)
 	border-radius: 0 10px 10px 0
 	clear: left
 	visibility: hidden
@@ -1006,7 +992,7 @@ li.separator
 
 // A quick reset list class.
 ul.reset, ul.reset li
-	padding, margin: 0
+	margin, padding: 0
 	list-style: none
 
 /* HTML5 overrides for deprecated alignment/width params.
@@ -1270,10 +1256,7 @@ section.block extends .wrc
 
 .bc, .bc2
 	white-space: nowrap
-.bc
 	width: 5%
-.bc2
-	background-color: rgba(0,0,0,.05)
 
 tr.catbg
 	td extends .wehead, th extends .wehead
@@ -1367,7 +1350,7 @@ a.moderation_link
 
 dl
 	overflow: hidden
-	padding, margin: 0
+	margin, padding: 0
 
 // Lists with settings use these a lot.
 dl.settings
@@ -1416,7 +1399,7 @@ dl#feed
 ------------------------------------------------------- */
 
 // .cat, .title and .title2 are closely related... Inheritance fiesta!
-.catbase
+.catbase virtual
 	overflow: hidden
 	padding: 5px 10px 5px
 	margin: 4px 0
@@ -1499,16 +1482,6 @@ dl#feed
 .additional_row
 	padding: .5em 0 .5em
 
-// A descriptive style
-.plainbox
-	padding: .5em 1em
-	font-size: .9em
-	line-height: 1.4em
-	border: 1px solid #bbb
-	background-color: #f0f5f0
-	margin: .2em 1px 1em
-	border-radius: 4px
-
 .description extends .plainbox
 	overflow: hidden
 
@@ -1568,23 +1541,31 @@ dl#feed
 
 #helf
 	header extends .wehead
-		color: #444
 		padding: 8px
+		overflow: hidden
+		text-align: center
 		border-radius: 12px 12px 0 0
 		border-bottom: 1px solid #bbb
-		text-align: center
 		font-weight: 700
+		color: #444
 	footer extends .wefoot
 		padding: 8px
+		overflow: hidden
+		text-align: center
 		border-radius: 0 0 12px 12px
 		border-top: 1px solid #bbb
-		text-align: center
 	section
 		padding: 16px
-		color: #444
+		overflow: auto
 		font-size: .9em
 		background-color: $window_bg
-		overflow: auto
+		color: #444
+		&.confirm
+			padding-left: 60px
+			border-radius: 12px 12px 0 0
+			background-image: url-no-base64($images/aeva/failed.png)
+			background-position: 10px 50%
+			background-repeat: no-repeat
 	#likes
 		img
 			max-width: 40px
@@ -1592,6 +1573,10 @@ dl#feed
 			width: 45px
 			height: 45px
 			padding: 1px
+
+#helf.confirm
+	header
+		line-height: 32px
 
 /* Intertitles
 ------------------------------------------------------- */
@@ -1652,7 +1637,7 @@ h6
 		float: right
 		margin: -1px 0 0 .5em
 	p
-		padding, margin: 0
+		margin, padding: 0
 
 /* Styles for print media.
 ------------------------------------------------------- */
@@ -1689,7 +1674,7 @@ th.last_th
 $main_font = Arial, sans-serif
 $main_font_size = 88%/130%
 $menu_font = $main_font
-$big_font = "Segoe UI Light", "Segoe UI", Optima, Arial, sans-serif
+$big_font = "Segoe UI Light", "Segoe UI", Optima, Helvetica, Arial, sans-serif
 $head_font = "Franklin Gothic Medium", "Franklin Gothic", $big_font
 $mono_font = Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New", monospace
 $subject_font = "PT Sans", "Segoe UI", Optima, Arial, sans-serif
@@ -1701,7 +1686,7 @@ $blog_font = $post_font
 
 $bevel = ", url($images/theme/bevel.png) $button_gradient"
 $bevel {ie6,ie7,ie8} = ""
-$button_gradient = ", -prefix-linear-gradient(left, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
+$button_gradient = ", linear-gradient(90deg, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
 $button_gradient {ie9} = ""
 
 $max-width = "max-width"
@@ -1710,8 +1695,8 @@ $max-width {ie6} = "width"
 $main_bg = #fff
 $head_bg = darken(#e3e0da, 3%)
 $menu_border = rgba(220, 224, 220, .95)
-$menu_gradient = -prefix-linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$menu_gradient {ie9} =           average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
+$menu_gradient = linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
+$menu_gradient {ie9} =   average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
 $board_col = #d97b33
 $window_bg = darken($window_bg2, 1%) // lighten(#e3e0d0, 13%) // #f2f3ea // #f9f6f0
 $window_bg2 = #f8faf8 // lighten(#e3e0d0, 11%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent
@@ -1721,7 +1706,7 @@ $sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table
 
 // Unused, but I like to keep these around...
 $other_bg = #e7e9b8
-$reddish = "#cc6600"
+$reddish = #c60
 
 /*
 	$alphamix is a RGB value that should stand for your main area's background. You
@@ -1730,12 +1715,7 @@ $reddish = "#cc6600"
 
 $alphamix = $main_bg
 
-/* And our mixins... */
-
-// IE6 needs layout to show inline-block divs... And a default right margin from my experience.
-mixin {ie6,ie7} ie-inline-block
-	margin-right: 6px
-	zoom: 1
+/* And our mixin... */
 
 mixin checkbox-styling
 	background: none

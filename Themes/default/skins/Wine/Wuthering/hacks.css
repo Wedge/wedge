@@ -10,14 +10,16 @@ body
 	color: #333
 	padding: 0
 
-#wedge extends .grad700
+.grad250
+	background: linear-gradient(rgb(160,160,160), transparent) 0 0 / auto 250px repeat-x
+
+#wedge
 	padding: 15px 0
 
 #header, #navi, #content, #footer, #linktree
 	margin: auto
 	width: 95%
 	max-width: 1200px
-	background: none
 
 #navi extends .grad250
 	background-position: 0 -200px
@@ -53,7 +55,10 @@ body
 
 #responsive
 	#sidebar
-		top: 0
+		top, border-radius: 0
+		border-width: 1px 0 0
+		display: block
+		margin: 0 -20px -20px
 
 #main
 	padding: 4px 22px 12px 8px
@@ -140,7 +145,6 @@ a, #linktree a
 #main_menu
 	border-width: 1px 0
 	margin: 0 30px
-	width: 100%
 	padding: 5px 0 2px
 	h4 a
 		color: #000
@@ -182,9 +186,6 @@ a, #linktree a
 
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
-.grad250
-	background-image: url($images/theme/grad250.png)
-	background-repeat: repeat-x
 
 .windowbg final
 	background-color: #f5f5f0
@@ -205,13 +206,13 @@ a, #linktree a
 
 .cat final
 	background-color: #e5eee5
-	background-position: 0 -20px
+	background-position: 0 -22px
 	border: 1px solid rgba(160,160,160, .5)
 	letter-spacing: 1px
 
 .title
 	background-color: #e3e9ef
-	background-position: 0 -20px
+	background-position: 0 -22px
 	border: 1px solid rgba(0,0,0, .15)
 
 .title2
@@ -241,7 +242,7 @@ a, #linktree a
 tr.catbg
 	th, td
 		background-color: #e3e9ef
-		background-position: 0 -18px
+		background-position: 0 -28px
 		font: $subcat_font
 		&, a
 			color: #666
@@ -249,10 +250,34 @@ tr.catbg
 tr.titlebg
 	th, td
 		background-color: #e5eee5
-		background-position: 0 -18px
+		background-position: 0 -28px
 		font: $subcat_font
 		&, a
 			color: #222
+
+/* More hacks.
+------------------------------------------------- */
+#forumposts .cat final
+	margin-bottom: 3px
+
+.left_menu
+	list-style: none
+	margin: .5em 0
+	li
+		padding: 0 0 0 1em
+
+#statistics
+	.title final
+		margin: 4px 0
+	.cat final
+		text-align: center
+
+#upshrinkHeaderIC
+	.cat final, .title2 final
+		font-size: 1.1em
+
+dfn
+	line-height: 140%
 
 
 /* These are our CSS variable and mixin definitions.
@@ -260,7 +285,9 @@ tr.titlebg
 
 $main_font = "Segoe UI", Arial, sans-serif
 $subcat_font = normal 1.1em main_font
-$post_font = 10.5pt/140% $main_font
+$post_font = $main_font
+$post_font_size = 10.5pt/140%
+$board_col = #d97b33
 
 @remove
 	background: url($images/theme/bg.jpg)

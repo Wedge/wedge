@@ -1,10 +1,4 @@
 
-// Copied from index.css... I know, a bit annoying, but IE6/7 need this.
-.inline-block
-	display: inline-block
-	mixin: ie-inline-block
-	vertical-align: middle
-
 // This is the editor's playground.
 .editor, .rich_editor
 	display: block
@@ -176,11 +170,6 @@ ul.post_options
 	label
 		display: block
 		padding-bottom: .8em
-
-// IE6 needs layout to show inline-block divs... And a default right margin from my experience.
-mixin {ie6,ie7} ie-inline-block
-	margin-right: 6px
-	zoom: 1
 
 $editor_overflow = ""
 $editor_overflow {ie6,ie7,ie8,ie9,ie10} = "overflow: auto"

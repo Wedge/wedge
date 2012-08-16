@@ -98,7 +98,7 @@
 
 .zoom-white extends .zoom-base
 .zoom-glass extends .zoom-base
-	background: -prefix-linear-gradient(bottom, #fff, rgba(255,255,255, .9) 100px, rgba(128,128,128, .5) 100%)
+	background: linear-gradient(#fff, rgba(255,255,255, .9) 100px, rgba(128,128,128, .5))
 
 .zoom-black extends .zoom-base
 	background: #000

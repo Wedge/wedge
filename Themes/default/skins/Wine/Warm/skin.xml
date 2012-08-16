@@ -155,7 +155,7 @@
 		iOS devices to show the sidebar below the main content.
 	-->
 
-	<code for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
+	<code for="ie[6]" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	DD_belatedPNG.fix('.ping,#wedgelogo,#footer,#footer div.frame');
@@ -203,11 +203,11 @@
 	<div id="edge">
 		<aside id="sidebar"><div class="column">{body}</div></aside></macro>
 
-	<macro name="sidebar" for="ie6,ie7">
+	<macro name="sidebar" for="ie[-7]">
 	<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td></macro>
 
 	<macro name="offside"><div id="offside">{body}</div></div></macro>
-	<macro name="offside" for="ie6,ie7"><td class="top">{body}</td></tr></table></macro>
+	<macro name="offside" for="ie[-7]"><td class="top">{body}</td></tr></table></macro>
 
 	<!--
 		Available languages: a comma-separated (or newline-separated) list of languages.
@@ -217,11 +217,13 @@
 		Since you can't account for all available languages, just list here all of those you did consider.
 
 		The first in the list will be the fallback (usually English.)
-		Don't use this tag if you don't offer custom language styling, obviously.
+		- Remove the bangs (!) to enable the feature. <languages> is the right tag for this.
+		- Don't use the tag if you don't offer custom language styling, obviously, otherwise it will
+		  just waste several bytes per page by adding the language name to the cached file URL.
 	-->
-	<languages>
+	<!languages>
 		english, french
-	</languages>
+	</!languages>
 
 	<!--
 		Replacements

@@ -1,11 +1,2 @@
 
-.inline-block
-	display: inline-block
-	mixin: ie-inline-block
-
-// IE6 needs layout to show inline-block divs... And a default right margin from my experience.
-mixin {ie6,ie7} ie-inline-block
-	margin-right: 6px
-	zoom: 1
-
 {%admin_menu_icons%}

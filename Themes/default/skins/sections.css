@@ -555,7 +555,7 @@ span.hover > a
 	form textarea
 		height: 100px
 		margin: .25em 0 0
-		text-size: .9em
+		font-size: .9em
 	.roundframe extends #postmodify .roundframe
 
 /* Styles for edit poll section.
@@ -1228,7 +1228,6 @@ div.top_row dd
 
 #search_term_input
 	font-size: 115%
-	margin: 0 0 1em
 	.search
 		background-position: 5px 4px
 	.submit

@@ -1,9 +1,0 @@
-
-/*
-	A peculiarity of IE9... You can make it crash easily by simply removing this file.
-	This is apparently because it doesn't like setting a :first-letter on an element
-	that has a filter. What can I say? Good times...
-*/
-
-#upper_section h1
-	filter: none

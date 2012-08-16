@@ -109,8 +109,8 @@ ul.buttonlist
 	th .sbox .display
 		line-height, height: 13px
 		font-size: .9em
-		.btn div
-			margin-top: -2px
+		.btn
+			line-height: 13px
 
 #personal_drafts ul.actions
 	padding-right: 0
@@ -140,7 +140,7 @@ ul.buttonlist
 		margin-top: -2px
 		font-size: 13px
 	#sidebar &
-		margin-left: 0
+		margin: 0
 		.sbox
 			max-width: 85px
 

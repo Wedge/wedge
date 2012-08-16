@@ -22,7 +22,7 @@
 		</sidebar>
 	</options>
 
-	<code for="ie6" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
+	<code for="ie[6]" include="scripts/pngfix.js scripts/ie6hover.js"><![CDATA[
 	$('input[type=checkbox], input[type=radio]').addClass('ie_check');
 	$('input[type=submit], input[type=button]').addClass('ie_button');
 	DD_belatedPNG.fix('.ping,#wedgelogo,#footer,#footer div.frame,.cat,.title');
@@ -64,13 +64,13 @@
 	<div id="edge">
 		<aside id="sidebar"><div class="column">{body}</div></aside></macro>
 
-	<macro name="sidebar" for="ie6,ie7">
+	<macro name="sidebar" for="ie[-7]">
 	<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td></macro>
 
 	<macro name="offside">{body}
 	</div></macro>
 
-	<macro name="offside" for="ie6,ie7"><td class="top">{body}
+	<macro name="offside" for="ie[-7]"><td class="top">{body}
 	</td></tr></table></macro>
 
 	<code for="iphone,tablet"><![CDATA[

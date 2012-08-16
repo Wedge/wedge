@@ -1,0 +1,44 @@
+
+/* This file is included automatically at the beginning of any compiled CSS file.
+	It's the ideal place to put virtual selectors, so this is what we'll be doing.
+	NOTE: avoid including url() files here, if anything use url-no-base64() instead!
+------------------------------------------------------- */
+
+// A common inline-block hack (for old IE compatibility.)
+.inline-block virtual
+	display: inline-block
+	mixin: ie-inline-block
+	vertical-align: middle
+
+// A descriptive style
+.plainbox virtual
+	padding: .5em 1em
+	font-size: .9em
+	line-height: 1.4em
+	border: 1px solid #bbb
+	background-color: #f0f5f0
+	margin: .2em 1px 1em
+	border-radius: 4px
+
+// A common header (e.g. alert box)
+.wehead virtual
+	background-color: #e2e8d8
+	a
+		color: #444
+
+// A common footer (e.g. alert box)
+.wefoot virtual extends .wehead
+	background-color: #e5e5e8
+
+// A common clearfix hack for float parents, in case setting overflow: hidden on the parent isn't enough for you.
+.clearfix virtual
+	:before, :after
+		content: ""
+		display: table
+	:after
+		clear: both
+
+// IE6 needs layout to show inline-block divs... And a default right margin from my experience.
+mixin {ie6,ie7} ie-inline-block
+	margin-right: 6px
+	zoom: 1

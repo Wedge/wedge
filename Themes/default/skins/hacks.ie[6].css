@@ -213,8 +213,7 @@ li.separator
 .postarea
 	display: block
 	float: right
-	width: 80%
-	padding: 0
+	width: 75%
 
 .post
 	padding: 0 12px 0 14px
@@ -388,10 +387,6 @@ ul.mimeitem
 // Fix IE6's tendency to enlarge select boxes to full width. Tss.
 .sbox
 	width: 1%
-	.display .btn div
-		border-color: #000 red red
-		filter: chroma(color=red)
-		margin-top, margin-left: 5px
 
 // Remove hasLayout from optgroup styling because it breaks item widths.
 .sbox .items .optgroup .label

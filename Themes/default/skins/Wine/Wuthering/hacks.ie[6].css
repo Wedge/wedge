@@ -1,0 +1,28 @@
+
+/* Menus and gradients
+------------------------------------------------------- */
+#navi, #header, .menu ul
+	background-image: none
+
+#main_menu
+	margin: 0
+
+/* Overrides for the display template
+------------------------------------------------------- */
+#forumposts .cat
+	clear: both
+
+/* Misc hacks
+------------- */
+#content div.frame
+	width: auto
+
+h4.hove
+	background: #e2ebe7 url($images/menu.gif) no-repeat 98% 4px
+
+li.hove
+	background: #e2ebe7
+
+.cat
+	overflow: hidden
+	width: auto

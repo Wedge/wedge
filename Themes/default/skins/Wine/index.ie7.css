@@ -1,9 +1,0 @@
-
-#upper_section h1
-	filter: shadow(color=#666666, direction=135, strength=5)
-
-#navi, #top_section
-	background: #928585
-
-#header, #navi, #footer
-	filter: none

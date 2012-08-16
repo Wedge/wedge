@@ -1,0 +1,7 @@
+
+// Replacement gradients for select box buttons.
+.sbox
+	.display .btn
+		background: #dbdbdb url($images/select_arrow_bg.gif) repeat-x left center
+	&.focused .display .btn, .hover .btn
+		background-image: url($images/select_arrow_bg_hover.gif)

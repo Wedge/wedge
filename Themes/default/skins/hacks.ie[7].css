@@ -108,8 +108,7 @@
 .postarea
 	display: block
 	float: left
-	width: 80%
-	padding-left: 0
+	width: 75%
 
 .post
 	padding: 0 12px 0 14px
@@ -169,13 +168,9 @@ li.separator
 
 // Annoying hacks...
 .menu
-	strong
-		float: none
-		margin-right: 8px
 	> li
 		display: inline
 		margin-left: 2px
-		vertical-align: top
 
 input[type=submit]
 	overflow: visible
