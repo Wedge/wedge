@@ -375,7 +375,7 @@ body
 	text-indent: 0
 
 // IE6 totally screws up the menus without all of these together.
-ul.mimeitem
+.mimenu ul
 	float: none
 	width: auto
 	li
