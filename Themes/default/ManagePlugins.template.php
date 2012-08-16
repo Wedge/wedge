@@ -114,7 +114,7 @@ function template_browse()
 
 		// Plugin author, including links home.
 		echo '
-		<div class="smalltext inline-block floatleft" style="width:33%">', $txt['plugin_written_by'], ': ', $plugin['author'];
+		<div class="plugin_from">', $txt['plugin_written_by'], ': ', $plugin['author'];
 		if (!empty($plugin['author_url']))
 			echo '
 		&nbsp;<a href="', $plugin['author_url'], '" target="_blank"><img src="', $theme['images_url'], '/icons/profile_sm.gif" title="', $txt['plugin_author_url'], '"></a>';

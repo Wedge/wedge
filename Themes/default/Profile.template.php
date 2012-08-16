@@ -2269,7 +2269,7 @@ function template_profile_group_manage()
 							<label style="margin: .5em 0; display: block"><input type="checkbox" name="additional_groups[]" value="', $member_group['id'], '" id="additional_groups-', $member_group['id'], '"', $member_group['is_additional'] ? ' checked' : '', ' style="vertical-align: top"> ';
 
 			if ($show_badge)
-				echo '<div class="inline-block">', $member_group['name'], '<dfn>', $member_group['badge'], '</dfn></div></label>';
+				echo '<div style="display: inline-block">', $member_group['name'], '<dfn>', $member_group['badge'], '</dfn></div></label>';
 			else
 				echo $member_group['name'], '</label>';
 		}
