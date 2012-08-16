@@ -32,9 +32,9 @@ function weStatsCenter(oOptions)
 		// Remove the month rows from the year toggle.
 		var aNewContainers = [], oYearToggle = oYears[oToggle.opt.sMonthId.substr(0, 4)].oToggle;
 
-		$.each(oYearToggle.opt.aSwapContainers, function () {
-			if (!in_array(this + '', oToggle.opt.aSwapContainers))
-				aNewContainers.push(this + '');
+		$.each(oYearToggle.opt.aSwapContainers, function (i, container) {
+			if (!in_array(container, oToggle.opt.aSwapContainers))
+				aNewContainers.push(container);
 		});
 
 		oYearToggle.opt.aSwapContainers = aNewContainers;
@@ -115,7 +115,7 @@ function weStatsCenter(oOptions)
 
 			// Setup the object that'll have the state information of the year.
 			oYears[sYearId] = {
-				oCollapseImage: document.getElementById(oOptions.sYearImageIdPrefix + sYearId),
+				oImage: $('#' + oOptions.sYearImageIdPrefix + sYearId),
 				oMonths: {}
 			};
 
@@ -123,7 +123,7 @@ function weStatsCenter(oOptions)
 			oCurYear = oYears[sYearId];
 
 			// Use the collapse image to determine the current state.
-			oCurYear.bIsCollapsed = !$(oCurYear.oCollapseImage).hasClass('fold');
+			oCurYear.bIsCollapsed = !oCurYear.oImage.hasClass('fold');
 
 			// Setup the toggle element for the year.
 			oCurYear.oToggle = new weToggle({
@@ -157,14 +157,14 @@ function weStatsCenter(oOptions)
 
 			// Initialize the month as a child object of the year.
 			oCurYear.oMonths[sMonthId] = {
-				oCollapseImage: document.getElementById(oOptions.sMonthImageIdPrefix + sMonthId)
+				oImage: $('#' + oOptions.sMonthImageIdPrefix + sMonthId)
 			};
 
 			// Create a shortcut to the current month.
 			oCurMonth = oCurYear.oMonths[sMonthId];
 
 			// Determine whether the month is currently collapsed or expanded..
-			oCurMonth.bIsCollapsed = !$(oCurMonth.oCollapseImage).hasClass('fold');
+			oCurMonth.bIsCollapsed = !oCurMonth.oImage.hasClass('fold');
 
 			// Setup the toggle element for the month.
 			oCurMonth.oToggle = new weToggle({
@@ -203,7 +203,7 @@ function weStatsCenter(oOptions)
 	});
 
 	// Collapse all collapsed years!
-	$.each(oOptions.aCollapsedYears, function () {
-		oYears[oOptions.aCollapsedYears[i]].oToggle.toggle();
+	$.each(oOptions.aCollapsedYears, function (i, year) {
+		oYears[year].oToggle.toggle();
 	});
 }

@@ -19,7 +19,7 @@ var
 	// but v1.5 still has it, and Wedge will keep supporting it.
 	ua = navigator.userAgent.toLowerCase(),
 
-	// If you need support for more versions, just test for $.browser.version yourself...
+	// If you need support for more browsers, just test for $.browser.version yourself...
 	is_opera = !!$.browser.opera,
 	is_ff = !!$.browser.mozilla,
 
@@ -69,17 +69,31 @@ String.prototype.wereplace = function (oReplacements)
 	return sResult;
 };
 
-// Alert and confirm replacements
+// alert() alternative
+function say(string, callback)
+{
+	reqWin('', 350, string, 2, callback);
+}
+// confirm() alternative
 var confirm_var = false;
-window.confirm	= function (string) { return confirm_var || reqWin('', 350, string, 1); };
-window.alert	= function (string) { return confirm_var || reqWin('', 350, string, 2); };
+function ask(string, e, callback)
+{
+	return confirm_var || reqWin('', 350, string, 1, callback, e);
+}
 
-// Open a new popup window.
-// @string from: specifies the URL to open. Use 'this' on a link to automatically use its href value.
-// @mixed desired_width: use custom width. Omit or set to 0 for default (480px). Height is always auto.
-// @string string: oh, what an original name... This is just the message for confirm boxes.
-// @int is_modal: is this a modal pop-up? (i.e. requires attention) 0 = no, 1 = confirm, 2 = alert
-function reqWin(from, desired_width, string, is_modal)
+/*
+	Open a new popup window. The first two params are for generic pop-ups, while the rest is for confirm/alert boxes.
+
+	@string from: specifies the URL to open. Use 'this' on a link to automatically use its href value.
+	@mixed desired_width: use custom width. Omit or set to 0 for default (480px). Height is always auto.
+
+	@string string: if provided, this is the contents. Otherwise, it will be retrieved through Ajax.
+	@int modal_type: is this a modal pop-up? (i.e. requires attention) 0 = no, 1 = confirm, 2 = alert
+	@function callback: if this is a modal pop-up (confirm, alert...), you can set a function to call with a boolean
+						param (true = OK, false = Cancel). You can force cancelling the event by returning false from it.
+	@object e: again, if this is a modal pop-up, we may need to re-call the original event.
+*/
+function reqWin(from, desired_width, string, modal_type, callback, e)
 {
 	var
 		help_page = from && from.href ? from.href : from,
@@ -87,7 +101,6 @@ function reqWin(from, desired_width, string, is_modal)
 		viewport_width = $(window).width(),
 		viewport_height = window.innerHeight || $(window).height(), // innerHeight is an iOS hack (fixed in jQuery 1.8)
 		previous_target = $('#helf').data('src'),
-		e = window.event,
 		close_window = function ()
 		{
 			$('#help_pop').fadeOut(function () { $(this).remove(); });
@@ -153,9 +166,9 @@ function reqWin(from, desired_width, string, is_modal)
 		)
 	);
 
-	if (is_modal)
+	if (modal_type)
 		$('#helf')
-			.html(is_modal === 1 ?
+			.html(modal_type == 1 ?
 				'<section class="nodrag confirm">' + string + '</section>\
 				<footer><input type="button" class="submit floatleft" /><input type="button" class="delete floatright" /></footer>' :
 				'<section class="nodrag confirm">' + string + '</section>\
@@ -165,11 +178,12 @@ function reqWin(from, desired_width, string, is_modal)
 			.val(we_cancel)
 			.click(function () {
 				close_window();
-				if ($(this).hasClass('submit'))
+				if (callback && callback.call(e ? e.target : this, $(this).hasClass('submit')) === false)
+					return;
+				if (e && $(this).hasClass('submit'))
 				{
 					confirm_var = true;
-					if (e)
-						$(e.target).trigger(e.type);
+					$(e.target).trigger(e.type);
 					confirm_var = false;
 				}
 			})
@@ -181,7 +195,7 @@ function reqWin(from, desired_width, string, is_modal)
 
 	// Clicking anywhere on the page should close the popup.
 	$('#help_pop').click(function (e) {
-		if (is_modal)
+		if (modal_type)
 			return false;
 		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
 		if (!$(e.target).closest('#helf').length)

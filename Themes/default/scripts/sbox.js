@@ -53,7 +53,7 @@
 			$display = $('<div class="display" id="sbd' + ++unique + '"></div>')
 				// Generate the display markup
 				.append(optionFormat($orig.data('default') || $orig.find('option:selected')))
-				.append('<div class="btn"><div></div></div>');
+				.append('<div class="btn">&#9660;</div>');
 
 			// Generate the dropdown markup
 			$dd = $('<div class="items" id="sbdd' + unique + '" role="menu" onselectstart="return false;"></div>')

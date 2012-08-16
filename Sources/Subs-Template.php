@@ -183,7 +183,7 @@ function ob_sessrewrite($buffer)
 		$thing = 'var eves = {';
 		foreach ($context['delayed_events'] as $eve)
 			$thing .= '
-		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { event = e; ' . $eve[2] . ' }],';
+		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
 		$thing = substr($thing, 0, -1) . '
 	};';
 		if (empty($settings['minify_html']))

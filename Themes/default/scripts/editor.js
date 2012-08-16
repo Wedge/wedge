@@ -322,7 +322,7 @@ function weEditor(opt)
 				selectionLength = oTextHandle.selectionEnd - oTextHandle.selectionStart,
 				scrollPos = oTextHandle.scrollTop;
 
-			// This is where 
+			// This is where the insertion actually happens.
 			oTextHandle.value =
 				oTextHandle.value.substr(0, oTextHandle.selectionStart + cr - lf)
 				+ text1

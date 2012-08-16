@@ -39,11 +39,8 @@ function template_error_log()
 {
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
-	add_js('
-	var lastClicked = "";');
-
 	echo '
-	<form action="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="return (lastClicked != \'remove_all\') || confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ');">
+	<form action="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8">
 		<div class="clear_right">
 			<we:title>
 				<a href="', $scripturl, '?action=help;in=error_log" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
@@ -94,7 +91,7 @@ function template_error_log()
 	echo '
 			<tr class="titlebg left">
 				<td colspan="3">
-					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all2.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>';
@@ -149,7 +146,7 @@ function template_error_log()
 	echo '
 			<tr class="titlebg left">
 				<td colspan="3">
-					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>
@@ -173,11 +170,8 @@ function template_intrusion_log()
 {
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
-	add_js('
-	var lastClicked = "";');
-
 	echo '
-	<form action="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8" onsubmit="return (lastClicked != \'remove_all\') || confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ');">
+	<form action="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';start=', $context['start'], $context['has_filter'] ? $context['filter']['href'] : '', '" method="post" accept-charset="UTF-8">
 		<div class="clear_right">
 			<we:title>
 				', $txt['log_intrusion'], '
@@ -216,7 +210,7 @@ function template_intrusion_log()
 		echo '
 			<tr class="titlebg left">
 				<td colspan="3">
-					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all2.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>';
@@ -267,7 +261,7 @@ function template_intrusion_log()
 		echo '
 			<tr class="titlebg left">
 				<td colspan="3">
-					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" onclick="lastClicked = \'remove_selection\';" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="lastClicked = \'remove_all\';" class="delete"></div>
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>';

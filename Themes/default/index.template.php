@@ -67,23 +67,19 @@ function template_init()
 
 		// Our main content. Note that we can serve different content to different browsers by using an array
 		// with browser names and a "else" fallback. This can also be done in skin.xml with the
-		// <macro name="..." for="ie6,ie7"> keyword. Plus, you don't have to repeat identical strings.
+		// <macro name="..." for="ie[-7]"> keyword. Plus, you don't have to repeat identical strings.
 		'offside'	=> array(
-			'ie6'	=> '
+			'ie[-7]'	=> '
 	<table id="edge"><tr><td class="top">{body}</td>',
-			'ie7'	=> '
-	<table id="edge"><tr><td class="top">{body}</td>',
-			'else'	=> '<div id="edge">{body}',
+			'else'		=> '<div id="edge">{body}',
 		),
 
 		// Our sidebar. Now for a little trick -- since IE6 and IE7 need to be in a table,
 		// we're closing here the table that was opened in the sidebar macro.
 		'sidebar'	=> array(
-			'ie6'	=> '
+			'ie[-7]'	=> '
 	<td id="sidebar" class="top"><div class="column">{body}</div></td></tr></table>',
-			'ie7'	=> '
-	<td id="sidebar" class="top"><div class="column">{body}</div></td></tr></table>',
-			'else'	=> '
+			'else'		=> '
 	<aside id="sidebar"><div class="column">{body}
 	</div></aside>
 	</div>',
@@ -146,20 +142,11 @@ function template_html_before()
 {
 	global $context, $theme, $options, $txt, $settings, $boardurl, $topic;
 
-	if (!empty($context['current_action']))
-		$id = $context['current_action'];
-	elseif (!empty($context['current_topic']))
-		$id = 'topic';
-	elseif (!empty($context['current_board']))
-		$id = 'board';
-	if (wetem::has_block('admin_login'))
-		$id = 'login';
-
 	// Declare our HTML5 doctype, and whether to show right to left.
 	// The charset is already specified in the headers so it may be omitted,
 	// but the specs recommend leaving them in, if the document is viewed offline.
 	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_dictionary']) ? ' lang="' . $txt['lang_dictionary'] . '"' : '', isset($id) ? ' id="' . $id . '"' : '', '>
+<html', $context['right_to_left'] ? ' dir="rtl"' : '', !empty($txt['lang_dictionary']) ? ' lang="' . $txt['lang_dictionary'] . '"' : '', '>
 <head>', empty($topic) ? '' : '
 	<meta charset="utf-8">';
 
@@ -508,8 +495,19 @@ function template_offside_wrap_after()
 
 function template_content_wrap_before()
 {
+	global $context;
+
+	if (!empty($context['current_action']))
+		$id = $context['current_action'];
+	elseif (!empty($context['current_topic']))
+		$id = 'topic';
+	elseif (!empty($context['current_board']))
+		$id = 'board';
+	if (wetem::has_block('admin_login'))
+		$id = 'login';
+
 	echo '
-	<div id="content"><div class="frame">';
+	<div id="content"><div class="frame"', isset($id) ? ' id="' . $id . '"' : '', '>';
 }
 
 function template_main_wrap_before()
@@ -542,14 +540,19 @@ function template_body_after()
 {
 	global $context, $theme, $options, $txt, $settings, $footer_coding;
 
-	echo '
+	// IE 6/7 can't resize properly. As we say in France: no arms, no chocolate.
+	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'])
+		echo '
 <script><!-- // --><![CDATA[
-	function weres()', $context['browser']['is_ie6'] || $context['browser']['is_ie7'] ? ' {}' : '
-	{
+	weres = false;
+// ]]></script>';
+	else
+		echo '
+<script><!-- // --><![CDATA[
+	(weres = function () {
 		var d=document,b=d.body,m=d.getElementById("main"),w=m?m.clientWidth:0;
 		b.id=w&&w<728?"responsive":w>=969?"":b.id;
-	}
-	weres();', '
+	})();
 // ]]></script>';
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
