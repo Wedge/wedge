@@ -389,7 +389,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$id = array_filter(array_merge(
 		$id,
 
-		// We don't need to show 'common-index-sections-hacks-custom' in the main filename, do we?
+		// We don't need to show 'common-index-sections-extra-custom' in the main filename, do we?
 		array_diff($files, (array) 'common', $ignore_files),
 
 		array_diff(array_keys($found_suffixes), $ignore_versions),
@@ -909,10 +909,10 @@ function theme_base_css()
 	}
 
 	// We only generate the cached file at the last moment (i.e. when first needed.)
-	// Make sure hacks.css and custom.css, if available, are added last. Also, strip index/sections/hacks/custom from the final filename.
+	// Make sure extra.css and custom.css, if available, are added last. Also, strip index/sections/extra/custom from the final filename.
 	if (empty($context['cached_css']))
 	{
-		$context['main_css_files']['hacks'] = false;
+		$context['main_css_files']['extra'] = false;
 		$context['main_css_files']['custom'] = false;
 
 		add_css_file(
