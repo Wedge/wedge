@@ -615,7 +615,7 @@ function ViewMemberlist()
 	if (!allowedTo('view_ip_address_any'))
 		unset($listOptions['columns']['ip']);
 
-	// Without not enough permissions, don't show 'delete members' checkboxes.
+	// Without enough permissions, don't show 'delete members' checkboxes.
 	if (!allowedTo('profile_remove_any'))
 		unset($listOptions['columns']['check'], $listOptions['form'], $listOptions['additional_rows']);
 

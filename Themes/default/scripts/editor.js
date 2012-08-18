@@ -319,14 +319,15 @@ function weEditor(opt)
 			var
 				cr = is_opera ? oTextHandle.value.substr(0, oTextHandle.selectionStart).split('\r').length - 1 : 0,
 				lf = is_opera ? oTextHandle.value.substr(0, oTextHandle.selectionStart).split('\n').length - 1 : 0,
-				selectionLength = oTextHandle.selectionEnd - oTextHandle.selectionStart,
+				selectionStart = oTextHandle.selectionStart,
+				selectionLength = oTextHandle.selectionEnd - selectionStart,
 				scrollPos = oTextHandle.scrollTop;
 
 			// This is where the insertion actually happens.
 			oTextHandle.value =
-				oTextHandle.value.substr(0, oTextHandle.selectionStart + cr - lf)
+				oTextHandle.value.substr(0, selectionStart + cr - lf)
 				+ text1
-				+ oTextHandle.value.substr(oTextHandle.selectionStart + cr - lf, selectionLength)
+				+ oTextHandle.value.substr(selectionStart + cr - lf, selectionLength)
 				+ text2
 				+ oTextHandle.value.substr(oTextHandle.selectionEnd + cr - lf);
 
@@ -336,10 +337,10 @@ function weEditor(opt)
 					txlen1 = text1.length + (is_opera ? text1.split('\n').length - 1 : 0),
 					txlen2 = text2.length + (is_opera ? text2.split('\n').length - 1 : 0);
 
-				if (!selection.length)
-					oTextHandle.setSelectionRange(oTextHandle.selectionStart + txlen1, oTextHandle.selectionStart + txlen1);
+				if (!selectionLength)
+					oTextHandle.setSelectionRange(selectionStart + txlen1, selectionStart + txlen1);
 				else
-					oTextHandle.setSelectionRange(oTextHandle.selectionStart, oTextHandle.selectionStart + selectionLength + txlen1 + txlen2);
+					oTextHandle.setSelectionRange(selectionStart, selectionStart + txlen1 + txlen2 + selectionLength);
 				oTextHandle.focus();
 			}
 			oTextHandle.scrollTop = scrollPos;

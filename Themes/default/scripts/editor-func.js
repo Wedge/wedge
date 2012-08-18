@@ -440,7 +440,7 @@ wedge_autoDraft.prototype.draftSend = function ()
 	var
 		sUrl = $('#' + this.opt.sForm).attr('action'),
 		draftInfo = {
-			draft: 'draft',
+			draft: '',
 			draft_id: $('#draft_id').val(),
 			subject: $('#' + this.opt.sForm + ' input[name="subject"]').val(),
 			message: $('#' + this.opt.sEditor).val(),
