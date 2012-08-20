@@ -1290,6 +1290,9 @@ class wecss_prefixes extends wecss
 			if (strpos($prefixed, 'deg') !== false)
 				$prefixed = preg_replace('~(gradient\s*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~e', '\'$1\' . (90 - \'$2\')', $prefixed);
 
+			if (strpos($prefixed, 'radial-gradient') !== false)
+				$prefixed = preg_replace('~(?<=radial-gradient\()([\sa-z-]+\s+)?at\s([^,]+)(?=,)~e', '\'$2\' . (\'$1\' != \'\' ? \', $1\' : \'\')', $prefixed);
+
 			return $prefixed;
 		}
 
@@ -1309,11 +1312,11 @@ class wecss_prefixes extends wecss
 			'box-sizing',					// Determines whether a container's width includes padding and border
 			'border-image',					// Border images
 			'hyphens',						// Automatic hyphens on long words
-			'transition',					// Animated transitions
 			'column-[a-z-]+',				// Multi-column layout
 			'box-[a-z-]+',					// Flexible box model -- requires setting "display: -prefix-box" before!
 			'grid-[a-z]+',					// Grid layout
-			'animation(?:-[a-z-]+)?',		// Animations
+			'transition(?:-[a-z-]+)?',		// Animated transitions
+			'animation(?:-[a-z-]+)?',		// Proper animations
 			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
 
 		);
@@ -1328,6 +1331,8 @@ class wecss_prefixes extends wecss
 		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wecss_prefixes::fix_values', $css);
 
 		// And now for some 'easy' rules that don't need our regex machine.
+		$v = $browser['version'];
+
 		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
 		if (($browser['is_opera'] && $v < 12.5) || ($browser['is_firefox'] && $v < 16) || $browser['is_webkit'])
 			$css = str_replace('@keyframes ', '@' . $prefix . 'keyframes ', $css);
