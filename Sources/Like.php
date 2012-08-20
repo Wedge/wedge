@@ -18,7 +18,7 @@ function Like()
 {
 	global $topic, $user_info, $context, $user_profile, $settings;
 
-	if (empty($user_info['id']))
+	if (empty($user_info['id']) || empty($settings['likes_enabled']))
 		fatal_lang_error('no_access', false);
 
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'view')
@@ -44,7 +44,7 @@ function Like()
 
 		// Validate this message is in this topic.
 		$request = wesql::query('
-			SELECT id_topic
+			SELECT id_topic, id_member
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:msg}',
 			array(
@@ -54,11 +54,11 @@ function Like()
 		$in_topic = false;
 		if (wesql::num_rows($request) != 0)
 		{
-			$row = wesql::fetch_row($request);
-			$in_topic = $row[0] == $topic;
+			list($id_topic, $id_author) = wesql::fetch_row($request);
+			$in_topic = $id_topic == $topic;
 		}
 		wesql::free_result($request);
-		if (!$in_topic)
+		if (!$in_topic || (empty($settings['likes_own_posts']) && $id_author == $user_info['id']))
 			fatal_lang_error('not_a_topic', false);
 
 		$context['redirect_from_like'] = 'topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'];

@@ -464,7 +464,7 @@ function Display()
 	$context['topic_starter_id'] = $topicinfo['id_member_started'];
 
 	// Set the topic's information for the template.
-	$context['subject'] = $topicinfo['subject'];
+	$context['subject'] = westr::safe($topicinfo['subject'], ENT_QUOTES);
 	$context['num_views'] = $topicinfo['num_views'];
 	$context['mark_unread_time'] = $topicinfo['new_from'];
 
@@ -1002,7 +1002,8 @@ function Display()
 	}
 
 	// Get the likes.
-	prepareLikeContext($messages);
+	if (!empty($settings['likes_enabled']))
+		prepareLikeContext($messages);
 
 	// Set the callback. (Do you REALIZE how much memory all the messages would take?!?)
 	$context['get_message'] = 'prepareDisplayContext';
@@ -1040,7 +1041,6 @@ function Display()
 		$context[$contextual] = allowedTo($perm . '_any') || ($context['user']['started'] && allowedTo($perm . '_own'));
 
 	// Cleanup all the permissions with extra stuff...
-	$context['can_like'] = !$context['user']['is_guest'];
 	$context['can_mark_notify'] &= !$context['user']['is_guest'];
 	$context['can_add_poll'] &= $topicinfo['id_poll'] <= 0;
 	$context['can_remove_poll'] &= $topicinfo['id_poll'] > 0;
@@ -1337,6 +1337,7 @@ function prepareDisplayContext($reset = false)
 		'href' => $scripturl . '?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
 		'link' => '<a href="' . $scripturl . '?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
 		'member' => &$memberContext[$message['id_member']],
+		'can_like' => !$context['user']['is_guest'] && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $message['id_member'] != $context['user']['id']),
 		'icon' => $message['icon'],
 		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],

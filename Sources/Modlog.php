@@ -137,6 +137,7 @@ function ViewModlog()
 		'string' => $search_params['string'],
 		'type' => $search_params['type'],
 		'label' => $searchTypes[$search_params_type]['label'],
+		'display_string' => westr::safe($search_params['string'], ENT_QUOTES),
 	);
 
 	// If they are searching by action, then we must do some manual intervention to search in their language!
@@ -284,7 +285,7 @@ function ViewModlog()
 				'position' => 'below_table_data',
 				'value' => '
 					' . $txt['modlog_search'] . ' (' . $txt['modlog_by'] . ': ' . $context['search']['label'] . '):
-					<input type="search" name="search" size="18" value="' . $context['search']['string'] . '"> <input type="submit" name="is_search" value="' . $txt['modlog_go'] . '">
+					<input type="search" name="search" size="18" value="' . $context['search']['display_string'] . '"> <input type="submit" name="is_search" value="' . $txt['modlog_go'] . '">
 					' . ($context['can_delete'] ? ' |
 						<input type="submit" name="remove" value="' . $txt['modlog_remove'] . '" class="delete">
 						<input type="submit" name="removeall" value="' . $txt['modlog_removeall'] . '" class="delete">' : ''),

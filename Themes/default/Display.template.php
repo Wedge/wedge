@@ -145,7 +145,7 @@ function template_display_posts()
 			echo '
 						<footer>';
 
-		if ($message['can_modify'] || $message['has_buttons'] || $context['can_like'] || !empty($context['liked_posts'][$message['id']]))
+		if ($message['can_modify'] || $message['has_buttons'] || $message['can_like'] || !empty($context['liked_posts'][$message['id']]))
 		{
 			echo '
 						<div class="actionbar">';
@@ -184,7 +184,7 @@ function template_display_posts()
 			}
 
 			// Did anyone like this post?
-			if ($context['can_like'] || !empty($context['liked_posts'][$message['id']]))
+			if (!empty($settings['likes_enabled']) && ($message['can_like'] || !empty($context['liked_posts'][$message['id']])))
 				template_show_likes($message);
 
 			echo '
@@ -601,13 +601,13 @@ function template_show_likes(&$message)
 							<div class="post_like">';
 
 	// Can they use the Like button?
-	if ($context['can_like'])
+	if ($message['can_like'])
 		echo '
 								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
 								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=like;sa=view;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
 	elseif ($num_likes)
 		echo '
-								<span class="like_button" title="', strip_tags($string), '">', $show_likes, '</span>';
+								<span class="like_button" title="', strip_tags($string), '"> <a href="<URL>?action=like;sa=view;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a></span>';
 
 	echo '
 							</div>';

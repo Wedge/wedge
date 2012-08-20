@@ -512,6 +512,43 @@ function ModifyPmSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
+function ModifyLikeSettings($return_config = false)
+{
+	global $context, $txt, $settings;
+	$config_vars = array(
+		array('check', 'likes_enabled'),
+	);
+
+	loadLanguage('ManageSettings');
+
+	if (!empty($settings['likes_enabled']))
+		$config_vars = array_merge($config_vars, array(
+			'',
+			array('check', 'likes_own_posts'),
+		));
+
+	if ($return_config)
+		return $config_vars;
+
+	loadSource('ManageServer');
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		checkSession();
+
+		saveDBSettings($config_vars);
+
+		redirectexit('action=admin;area=likes');
+	}
+
+	$context['post_url'] = '<URL>?action=admin;area=likes;save';
+	$context['page_title'] = $context['settings_title'] = $txt['admin_likes'];
+
+	wetem::load('show_settings');
+	prepareDBSettingContext($config_vars);
+}
+
 /*
 	Pretty URLs - custom version for Wedge.
 	Contains portions distributed under the New BSD license.
