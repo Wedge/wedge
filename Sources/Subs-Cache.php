@@ -292,15 +292,14 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 				continue;
 
 			// Get the list of suffixes in the file name.
-			$suffix_string = substr(strstr($file, '.'), 1, -4);
-			$suffixes = array_flip(explode(',', $suffix_string));
+			$suffixes = array_flip(explode(',', substr(strstr($file, '.'), 1, -4)));
 
 			// If we found our browser version in the suffix list, then add to the list of files to load.
-			$brow = isset($suffixes[$context['browser']['agent']]) ? $context['browser']['agent'] : '';
-			if ($brow || (strpos($suffix_string, '[') !== false && $brow = hasBrowser($suffix_string)))
+			if ($brow = hasBrowser($suffixes))
 			{
 				$requested_suffixes[$brow] = true;
-				$ignore_versions[] = $brow;
+				if ($brow != $context['browser']['agent'] . $context['browser']['version'])
+					$ignore_versions[$brow] = true;
 			}
 			$suffixes_to_keep = array_intersect_key($suffixes, $requested_suffixes);
 
@@ -369,7 +368,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 	$folder = end($context['css_folders']);
 	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? '' : substr(strrchr($theme['theme_dir'], '/'), 1) . '-';
-	$id = array($folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder));
+	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
@@ -380,19 +379,19 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-	$found_suffixes[$context['browser']['agent'] . preg_replace('~\.0+~', '', sprintf('%.1f', $context['browser']['version']))] = true;
+	$found_suffixes[$context['browser']['agent'] . $context['browser']['version']] = true;
 
 	// Make sure to only keep 'webkit' if we have no other browser name on record.
 	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
 		unset($found_suffixes['webkit']);
 
 	$id = array_filter(array_merge(
-		$id,
+		(array) $id,
 
 		// We don't need to show 'common-index-sections-extra-custom' in the main filename, do we?
 		array_diff($files, (array) 'common', $ignore_files),
 
-		array_diff(array_keys($found_suffixes), $ignore_versions),
+		array_keys(array_diff_key($found_suffixes, $ignore_versions)),
 
 		// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
 		isset($context['user'], $context['skin_available_languages']) && $context['user']['language'] !== 'english'
@@ -1026,14 +1025,14 @@ function wedge_get_skin_options()
 
 		if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
-				if (!empty($match[3]) && (empty($match[2]) || hasBrowser(explode(',', $match[2]))))
+				if (!empty($match[3]) && (empty($match[2]) || hasBrowser($match[2])))
 					$context['skin_replace'][trim($match[3], "\x00..\x1F")] = array(trim($match[4], "\x00..\x1F"), !empty($match[1]));
 
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[3]) && (empty($match[1]) || hasBrowser(explode(',', $match[1]))))
+				if (!empty($match[3]) && (empty($match[1]) || hasBrowser($match[1])))
 					add_css(rtrim($match[3], "\t"));
 				if (!empty($match[2]))
 				{
@@ -1051,7 +1050,7 @@ function wedge_get_skin_options()
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[1]) && !hasBrowser(explode(',', $match[1])))
+				if (!empty($match[1]) && !hasBrowser($match[1]))
 					continue;
 
 				if (!empty($match[2]))
@@ -1072,7 +1071,7 @@ function wedge_get_skin_options()
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[2]) && !hasBrowser(explode(',', $match[2])))
+				if (!empty($match[2]) && !hasBrowser($match[2]))
 					continue;
 				$context['macros'][$match[1]] = array(
 					'has_if' => strpos($match[3], '<if:') !== false,
