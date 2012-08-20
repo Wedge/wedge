@@ -59,7 +59,11 @@ function template_merge()
 
 	if (!empty($context['boards']) && count($context['boards']) > 1)
 	{
-			echo '
+		$board_list = array();
+		foreach ($context['boards'] as $board)
+			$board_list[$board['category']][$board['id']] = $board['name'];
+
+		echo '
 					<dt>
 						<strong>', $txt['target_board'], ':</strong>
 					</dt>
@@ -67,10 +71,21 @@ function template_merge()
 						<form action="<URL>?topic=', $context['origin_topic'], ';action=mergetopics;targetboard=', $context['target_board'], '" method="post" accept-charset="UTF-8">
 							<input type="hidden" name="from" value="', $context['origin_topic'], '">
 							<select name="targetboard" onchange="this.form.submit();">';
-			foreach ($context['boards'] as $board)
-				echo '
-								<option value="', $board['id'], '"', $board['id'] == $context['target_board'] ? ' selected' : '', '>', $board['category'], ' - ', $board['name'], '</option>';
+
+		foreach ($board_list as $cat => $boards)
+		{
 			echo '
+								<optgroup label="', $cat, '">';
+
+			foreach ($boards as $board_id => $board_name)
+				echo '
+									<option value="', $board_id, '"', $board_id == $context['target_board'] ? ' selected' : '', '>', $board_name, '</option>';
+
+			echo '
+								</optgroup>';
+		}
+
+		echo '
 							</select>
 							<input type="submit" value="', $txt['go'], '">
 						</form>
@@ -174,7 +189,7 @@ function template_merge_extra_options()
 			<div class="windowbg wrc">
 				<fieldset id="merge_subject" class="merge_options">
 					<legend>', $txt['merge_select_subject'], '</legend>
-					<select name="subject" onchange="this.form.custom_subject.style.display = (this.options[this.selectedIndex].value != 0) ? \'none\': \'\' ;">';
+					<select id="subject_sel" name="subject" onchange="$(\'#custom_subject\').toggle($(\'#subject_sel\').val() == 0);">';
 
 	foreach ($context['topics'] as $topic)
 		echo '

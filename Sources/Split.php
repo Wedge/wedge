@@ -153,7 +153,7 @@ function SplitIndex()
 	// Basic template information....
 	$context['message'] = array(
 		'id' => $_GET['at'],
-		'subject' => $_REQUEST['subname']
+		'subject' => westr::safe($_REQUEST['subname'], ENT_QUOTES),
 	);
 	wetem::load('ask');
 	$context['page_title'] = $txt['split'];
