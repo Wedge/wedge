@@ -231,7 +231,7 @@ function in_array(variable, theArray)
 function invertAll(oInvertCheckbox, oForm, sMask)
 {
 	$.each(oForm, function () {
-		if (this.name && !this.disabled && (!sMask || this.name.substr(0, sMask.length) == sMask || this.id.substr(0, sMask.length) == sMask))
+		if (this.name && !this.disabled && (!sMask || this.name.indexOf(sMask) === 0|| this.id.indexOf(sMask) === 0))
 			this.checked = oInvertCheckbox.checked;
 	});
 }

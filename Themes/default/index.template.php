@@ -544,7 +544,7 @@ function template_body_after()
 	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'])
 		echo '
 <script><!-- // --><![CDATA[
-	weres = false;
+	weres = function () {};
 // ]]></script>';
 	else
 		echo '

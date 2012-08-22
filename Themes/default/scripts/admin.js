@@ -229,7 +229,7 @@ we_ViewVersions.prototype.determineVersions = function ()
 		sYourVersion = $('#your' + sID).html();
 
 		for (sVersionType in oLowVersion)
-			if (sFilename.substr(0, sVersionType.length) == sVersionType)
+			if (sFilename.indexOf(sVersionType) === 0)
 			{
 				sCurVersionType = sVersionType;
 				break;

@@ -368,6 +368,7 @@ em
 	margin-top: 2px
 	margin-bottom: 4px
 	border-radius: 6px
+	box-sizing: border-box
 	padding: .9em 1.2em
 	p
 		margin: 0 0 .5em

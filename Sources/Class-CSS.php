@@ -307,8 +307,16 @@ class wecss_var extends wecss
 			unset($decs);
 
 			foreach ($matches[0] as $i => $dec)
-				if (empty($matches[2][$i]) || array_intersect(explode(',', strtolower($matches[2][$i])), $context['css_suffixes']))
+			{
+				if (empty($matches[2][$i]))
 					$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
+				else
+				{
+					$ls = explode(',', strtolower($matches[2][$i]));
+					if (array_intersect($ls, $context['css_suffixes']) || hasBrowser(array_flip($ls)))
+						$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
+				}
+			}
 
 			foreach ($css_vars as $key => $val)
 				wecss_var::develop_var($key);
