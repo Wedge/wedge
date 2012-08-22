@@ -1186,8 +1186,8 @@ class wecss_prefixes extends wecss
 		$unchanged = $matches[0];
 		$prefixed = $prefix . $unchanged;
 		$both = $prefixed . $unchanged;
-		$v = $browser['version'];
 		$b = $browser;
+		$v = $b['version'];
 		list ($ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $iphone, $android, $webkit) = array(
 			$b['is_ie8down'], $b['is_ie9'], $b['is_ie10'], $b['is_opera'], $b['is_firefox'], $b['is_safari'],
 			$b['is_chrome'], $b['is_iphone'], $b['is_android'], $b['is_webkit']
@@ -1289,13 +1289,14 @@ class wecss_prefixes extends wecss
 		global $browser, $prefix;
 
 		$unchanged = $matches[0];
-		$v = $browser['version'];
+		$b = $browser;
+		$v = $b['version'];
 
 		// IE6/7/8/9 don't support gradients (screw 'em!), IE10 supports them unprefixed, and Firefox 16+ dropped the prefix.
 		// Note that AFAIK, repeating-* still is prefixed everywhere as of August 2012, it's fixable but give me a break for now.
 		if (strpos($matches[1], 'gradient(') !== false)
 		{
-			if (($browser['is_gecko'] && $v >= 16) || ($browser['is_opera'] && $v >= 12.5))
+			if (($b['is_gecko'] && $v >= 16) || ($b['is_opera'] && $v >= 12.5) || ($b['is_ie'] && $v >= 10))
 				return $unchanged;
 
 			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\s*\()~', $prefix . '$1', $unchanged);
@@ -1345,10 +1346,11 @@ class wecss_prefixes extends wecss
 		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wecss_prefixes::fix_values', $css);
 
 		// And now for some 'easy' rules that don't need our regex machine.
-		$v = $browser['version'];
+		$b = $browser;
+		$v = $b['version'];
 
 		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
-		if (($browser['is_opera'] && $v < 12.5) || ($browser['is_firefox'] && $v < 16) || $browser['is_webkit'])
+		if (($b['is_opera'] && $v < 12.5) || ($b['is_firefox'] && $v < 16) || $b['is_webkit'])
 			$css = str_replace('@keyframes ', '@' . $prefix . 'keyframes ', $css);
 	}
 }

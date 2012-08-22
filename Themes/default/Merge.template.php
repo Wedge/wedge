@@ -189,7 +189,7 @@ function template_merge_extra_options()
 			<div class="windowbg wrc">
 				<fieldset id="merge_subject" class="merge_options">
 					<legend>', $txt['merge_select_subject'], '</legend>
-					<select id="subject_sel" name="subject" onchange="$(\'#custom_subject\').toggle($(\'#subject_sel\').val() == 0);">';
+					<select id="subject_sel" name="subject" onchange="$(\'#custom_subject\').toggle($(this).val() == 0);">';
 
 	foreach ($context['topics'] as $topic)
 		echo '

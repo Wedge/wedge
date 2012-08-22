@@ -109,7 +109,7 @@ function template_main_board()
 						<img src="', $topic['first_post']['icon_url'], '">
 					</td>
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
-						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
+						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['id'] . '" ondblclick="modify_topic(' . $topic['id'] . ', ' . $topic['first_post']['id'] . ');"' : ''), '>
 							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">',
 							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
