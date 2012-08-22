@@ -215,7 +215,7 @@ class getID3
 							foreach ($lines as $line) {
 								$line = trim($line);
 								if (preg_match('#^([0-9/]{10}) +([0-9:]{4,5}( [AP]M)?) +(<DIR>|[0-9,]+) +([^ ]{0,11}) +(.+)$#', $line, $matches)) {
-									list($dummy, $date, $time, $ampm, $filesize, $shortname, $filename) = $matches;
+									list ($dummy, $date, $time, $ampm, $filesize, $shortname, $filename) = $matches;
 									if ((strtoupper($filesize) == '<DIR>') && (strtolower($filename) == strtolower($value))) {
 										$value = $shortname;
 									}
@@ -1217,7 +1217,7 @@ class getID3
 
 		// loop through comments array
 		foreach ($tags as $comment_name => $tagname_encoding_array) {
-			list($tag_name, $encoding) = $tagname_encoding_array;
+			list ($tag_name, $encoding) = $tagname_encoding_array;
 
 			// fill in default encoding type if not already present
 			if (isset($this->info[$comment_name]) && !isset($this->info[$comment_name]['encoding'])) {

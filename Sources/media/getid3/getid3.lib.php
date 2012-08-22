@@ -93,7 +93,7 @@ class getid3_lib
 	}
 
 	static function DecimalizeFraction($fraction) {
-		list($numerator, $denominator) = explode('/', $fraction);
+		list ($numerator, $denominator) = explode('/', $fraction);
 		return $numerator / ($denominator ? $denominator : 1);
 	}
 

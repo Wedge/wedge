@@ -54,7 +54,7 @@ function Like()
 		$in_topic = false;
 		if (wesql::num_rows($request) != 0)
 		{
-			list($id_topic, $id_author) = wesql::fetch_row($request);
+			list ($id_topic, $id_author) = wesql::fetch_row($request);
 			$in_topic = $id_topic == $topic;
 		}
 		wesql::free_result($request);

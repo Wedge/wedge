@@ -31,7 +31,7 @@
 	SelectBox = function ($orig)
 	{
 		var
-			keyfunc = is_opera ? 'keypress.sb' : 'keydown.sb',
+			keyfunc = is_opera ? 'keypress.sb keydown.sb' : 'keydown.sb',
 			fixed = $orig.hasClass('fixed'), // Should dropdown expand to widest and display conform to whatever is selected?
 			resizeTimeout,
 			via_keyboard,
@@ -87,8 +87,8 @@
 			$items = $dd.children().not('.optgroup');
 			setSelected($orig_item = $items.filter('.selected'));
 
-			$dd.children(':first').addClass('first');
-			$dd.children(':last').addClass('last');
+			$dd.children().first().addClass('first');
+			$dd.children().last().addClass('last');
 
 			// Place the new markup in its semantic location
 			$orig
@@ -424,13 +424,13 @@
 			}
 			else if (e.keyCode == 35) // end
 			{
-				selectItem($enabled.filter(':last'));
+				selectItem($enabled.last());
 				centerOnSelected();
 				e.preventDefault();
 			}
 			else if (e.keyCode == 36) // home
 			{
-				selectItem($enabled.filter(':first'));
+				selectItem($enabled.first());
 				centerOnSelected();
 				e.preventDefault();
 			}
