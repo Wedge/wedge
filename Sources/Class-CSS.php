@@ -194,7 +194,7 @@ class wecss_mixin extends wecss
 				// Do we have variables to set?
 				if (!empty($mixin[3]) && preg_match_all('~(\$[\w-]+)\s*[:=]\s*"?([^",]+)~', $mixin[3], $variables, PREG_SET_ORDER))
 				{
-					foreach ($variables as $i => &$var)
+					foreach ($variables as $i => $var)
 					{
 						$mix[$mixin[2]] = str_replace($var[1], '$%' . $i . '%', $mix[$mixin[2]]);
 						$def[$mixin[2]][$i] = trim($var[2], '" ');
@@ -217,7 +217,7 @@ class wecss_mixin extends wecss
 						{
 							$variables = explode(',', $mixin[3]);
 							$i = 0;
-							foreach ($variables as $i => &$var)
+							foreach ($variables as $i => $var)
 								if (!empty($var))
 									$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
 						}
@@ -382,7 +382,7 @@ class wecss_color extends wecss
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
 		while (preg_match_all('~(darken|lighten|desaturize|saturize|hue|complement|average|alpha|channels)\(((?:(?:rgb|hsl)a?\([^()]+\)|[^()])+)\)~i', $css, $matches))
 		{
-			foreach ($matches[0] as $i => &$dec)
+			foreach ($matches[0] as $i => $dec)
 			{
 				if (isset($nodupes[$dec]))
 					continue;
@@ -416,7 +416,7 @@ class wecss_color extends wecss
 				if ($code === 'channels' && !isset($arg[0], $arg[1], $arg[2], $arg[3]))
 					for ($i = 1; $i < 4; $i++)
 						$arg[$i] = isset($arg[$i]) ? $arg[$i] : 0;
-				foreach ($arg as $i => &$a)
+				foreach ($arg as $i => $a)
 					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : false;
 				$hsl = $hsl ? $hsl : wecss::rgb2hsl($color[0], $color[1], $color[2], $color[3]);
 
@@ -527,9 +527,7 @@ class wecss_nesting extends wecss
 	// Sort the bases array by the first argument's length.
 	private static function lensort($a, $b)
 	{
-		$la = strlen($a[0]);
-		$lb = strlen($b[0]);
-		return $la == $lb ? strlen($b[2]) - strlen($a[2]) : $lb - $la;
+		return strlen($b[0]) - strlen($a[0]);
 	}
 
 	private static function indentation($a)
@@ -803,10 +801,12 @@ class wecss_nesting extends wecss
 			}
 		}
 
-		foreach ($bases as $i => &$base)
+		foreach ($bases as $i => $base)
 		{
+			// Delete unextends
 			if (isset($unextends[$base[2]]) && $base[3] < $unextends[$base[2]])
 				unset($bases[$i]);
+
 			// Do we have multiple selectors to extend?
 			elseif (strpos($base[2], ',') !== false)
 			{
@@ -828,12 +828,25 @@ class wecss_nesting extends wecss
 
 		// Delete any virtuals that aren't actually inherited. Additionally,
 		// ignore the $base value in case it's set by another virtual.
-		foreach ($bases as $i => &$base)
+		foreach ($bases as $i => $base)
 			if (isset($virtuals[$base[0]]) && !isset($virtuals[$base[2]]))
 				$used_virtuals[$base[0]] = $virtuals[$base[0]];
 		$unused_virtuals = array_diff_key($virtuals, $used_virtuals);
 		foreach ($unused_virtuals as $n2)
 			$this->unset_recursive($n2);
+
+		// Now that all your base are belong to us, we'll just regroup them!
+		$extends = array();
+		foreach ($bases as $base)
+		{
+			if (isset($extends[$base[0]]))
+				$extends[$base[0]][2][] = $base[2];
+			else
+			{
+				$extends[$base[0]] = $base;
+				$extends[$base[0]][2] = array($extends[$base[0]][0] => $extends[$base[0]][2]);
+			}
+		}
 
 		// A time-saver to determine whether a character is within the alphabet...
 		$alpha = array_flip(array_merge(range('a', 'z'), range('A', 'Z')));
@@ -847,7 +860,7 @@ class wecss_nesting extends wecss
 		// Do the proper nesting
 		foreach ($this->rules as &$node)
 		{
-			// Is this rule actually an at-rule?
+			// Is this rule actually an at-rule? They need special treatment.
 			if ($node['selector'][0] === '@')
 			{
 				if (stripos($node['selector'], '@import') === 0 || stripos($node['selector'], '@charset') === 0)
@@ -855,8 +868,8 @@ class wecss_nesting extends wecss
 					$css .= $node['selector'] . ';';
 					continue;
 				}
-				// @todo: should this only check for @media and @-*-keyframes, or actually give the same treatment to all @ commands?
-				if (stripos($node['selector'], '@media') === 0 || preg_match('~@(?:-[a-z]+-)?keyframes~i', $node['selector']))
+				// !! @todo: should this only check for @media and @keyframes, or actually give the same treatment to all @ commands?
+				if (stripos($node['selector'], '@media') === 0 || stripos($node['selector'], '@keyframes') === 0)
 				{
 					$standard_nest = $node['selector'];
 					$css .= $node['selector'] . ' {';
@@ -875,13 +888,13 @@ class wecss_nesting extends wecss
 			{
 				$done_temp = array();
 				$changed = false;
-				foreach ($bases as $i => &$base)
+				foreach ($extends as $name => $base)
 				{
 					// We have a selector like ".class, #id > div a" and we want to know if it has the base "#id > div" in it
 					$is_in = false;
 					foreach ($selectors as $sel)
 					{
-						if (strpos($sel, $base[0]) !== false)
+						if (strpos($sel, $name) !== false)
 						{
 							$is_in = true;
 							break;
@@ -889,14 +902,15 @@ class wecss_nesting extends wecss
 					}
 					if ($is_in)
 					{
-						$beginning = isset($alpha[$base[0][0]]) ? '(?<![a-z0-9_-])' : '';
+						$beginning = isset($alpha[$name[0]]) ? '(?<![\w-])' : '';
 
 						foreach ($selectors as &$snippet)
 						{
-							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![a-z0-9_-]|.*\s+final\b)~i', $snippet))
+							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![\w-]|.*\s+final\b)~i', $snippet))
 							{
 								// And our magic trick happens here.
-								$selectors[] = trim(str_replace($base[0], $base[2], $snippet));
+								foreach ($base[2] as $extend)
+									$selectors[] = trim(str_replace($name, $extend, $snippet));
 
 								// Then we restart the process to handle inherited extends.
 								$done_temp[$snippet] = true;

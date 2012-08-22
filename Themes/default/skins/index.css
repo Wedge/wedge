@@ -42,8 +42,7 @@ html
 	min-height: 100%
 	background: #369																			// For old browsers...
 	background: fixed linear-gradient(45deg, #505b66, #a0a6ab 500px, #505b66 1000px, #505b66)	// Fallback background for browsers that support linear gradients...
-	background: radial-gradient(50% 40%, circle cover, #eee, #012)								// Fallback for the old radial-gradient syntax...
-	background: radial-gradient(farthest-corner circle at 50% 40%, #eee, #012)					// And this is the final one. Phew...
+	background: radial-gradient(circle farthest-corner at 50% 40%, #eee, #012)					// And this is the one we want. Phew...
 
 body
 	color: #ccc
@@ -466,7 +465,7 @@ select.sb
 			padding: 0 3px
 
 		.btn
-			background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf 100%)
+			background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)
 			position: absolute
 			border: 1px solid #707070
 			border-radius: 4px
@@ -492,7 +491,7 @@ select.sb
 			box-shadow: inset 0 0 1px 1px #9eb0ba
 
 	&.focused .display .btn, .hover .btn
-		background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5 100%)
+		background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5)
 
 	/* Dropdown styles */
 	.items
@@ -571,7 +570,7 @@ select.sb
 			left: -1px
 			:hover
 				background: #e8ece8
-				background: linear-gradient(270deg, #ddd, #e8ece8, #ccc)
+				background: linear-gradient(90deg, #ddd, #e8ece8, #ccc)
 
 #sidebar .sbox
 	max-width: 200px
