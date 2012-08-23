@@ -234,8 +234,7 @@ function Stats()
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
 		);
 
-		if ($max_num_posts < $row_members['posts'])
-			$max_num_posts = $row_members['posts'];
+		$max_num_posts = max($max_num_posts, $row_members['posts']);
 	}
 	wesql::free_result($members_result);
 
@@ -271,8 +270,7 @@ function Stats()
 			'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['name'] . '</a>'
 		);
 
-		if ($max_num_posts < $row_board['num_posts'])
-			$max_num_posts = $row_board['num_posts'];
+		$max_num_posts = max($max_num_posts, $row_board['num_posts']);
 	}
 	wesql::free_result($boards_result);
 
@@ -341,8 +339,7 @@ function Stats()
 			'link' => '<a href="' . $scripturl . '?topic=' . $row_topic_reply['id_topic'] . '.0">' . $row_topic_reply['subject'] . '</a>'
 		);
 
-		if ($max_num_replies < $row_topic_reply['num_replies'])
-			$max_num_replies = $row_topic_reply['num_replies'];
+		$max_num_replies = max($max_num_replies, $row_topic_reply['num_replies']);
 	}
 	wesql::free_result($topic_reply_result);
 
@@ -410,8 +407,7 @@ function Stats()
 			'link' => '<a href="' . $scripturl . '?topic=' . $row_topic_views['id_topic'] . '.0">' . $row_topic_views['subject'] . '</a>'
 		);
 
-		if ($max_num_views < $row_topic_views['num_views'])
-			$max_num_views = $row_topic_views['num_views'];
+		$max_num_views = max($max_num_views, $row_topic_views['num_views']);
 	}
 	wesql::free_result($topic_view_result);
 
@@ -470,8 +466,7 @@ function Stats()
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
 		);
 
-		if ($max_num_topics < $members[$row_members['id_member']])
-			$max_num_topics = $members[$row_members['id_member']];
+		$max_num_topics = max($max_num_topics, $members[$row_members['id_member']]);
 	}
 	wesql::free_result($members_result);
 
@@ -526,8 +521,7 @@ function Stats()
 			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
 		);
 
-		if ($max_time_online < $row_members['total_time_logged_in'])
-			$max_time_online = $row_members['total_time_logged_in'];
+		$max_time_online = max($max_time_online, $row_members['total_time_logged_in']);
 	}
 	wesql::free_result($members_result);
 
@@ -551,12 +545,10 @@ function Stats()
 			'post' => 'post',
 		)
 	);
+	$max_num_likes = 0;
 	$context['top_likes'] = array();
 	while ($row_likes = wesql::fetch_assoc($likes_result))
 	{
-		if (!isset($max_num_likes))
-			$max_num_likes = $row_likes['likes'];
-
 		$context['top_likes'][] = array(
 			'num_likes' => $row_likes['likes'],
 			'subject' => $row_likes['subject'],
@@ -565,6 +557,8 @@ function Stats()
 			'href' => '<URL>?topic=' . $row_likes['id_topic'] . '.msg' . $row_likes['id_msg'] . '#msg' . $row_likes['id_msg'],
 			'link' => '<a href="<URL>?topic=' . $row_likes['id_topic'] . '.msg' . $row_likes['id_msg'] . '#msg' . $row_likes['id_msg'] . '">' . $row_likes['subject'] . '</a> (<a href="<URL>?action=profile;u=' . $row_likes['id_member'] . '">' . $row_likes['real_name'] . '</a>)'
 		);
+
+		$max_num_likes = max($max_num_likes, $row_likes['likes']);
 	}
 	wesql::free_result($likes_result);
 
@@ -572,6 +566,39 @@ function Stats()
 	{
 		$context['top_likes'][$i]['post_percent'] = round(($like['num_likes'] * 100) / $max_num_likes);
 		$context['top_likes'][$i]['num_likes'] = comma_format($context['top_likes'][$i]['num_likes']);
+	}
+
+	// Liked authors top 10.
+	$likes_result = wesql::query('
+		SELECT COUNT(k.id_content) AS likes, m.id_member, m.real_name
+		FROM {db_prefix}likes AS k
+		LEFT JOIN {db_prefix}messages AS msg ON k.id_content = msg.id_msg AND k.content_type = {string:post}
+		LEFT JOIN {db_prefix}members AS m ON msg.id_member = m.id_member
+		GROUP BY msg.id_member
+		ORDER BY likes DESC
+		LIMIT 10',
+		array(
+			'post' => 'post',
+		)
+	);
+	$max_num_likes = 0;
+	$context['top_author_likes'] = array();
+	while ($row_likes = wesql::fetch_assoc($likes_result))
+	{
+		$context['top_author_likes'][] = array(
+			'num_likes' => $row_likes['likes'],
+			'member_name' => $row_likes['real_name'],
+			'id_member' => $row_likes['id_member']
+		);
+
+		$max_num_likes = max($max_num_likes, $row_likes['likes']);
+	}
+	wesql::free_result($likes_result);
+
+	foreach ($context['top_author_likes'] as $i => $like)
+	{
+		$context['top_author_likes'][$i]['post_percent'] = round(($like['num_likes'] * 100) / $max_num_likes);
+		$context['top_author_likes'][$i]['num_likes'] = comma_format($context['top_author_likes'][$i]['num_likes']);
 	}
 
 	// Activity by month.

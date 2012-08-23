@@ -244,7 +244,7 @@ function template_main()
 		<div class="two-columns windowbg wrc">
 			<h6>
 				<span class="top_likes"></span>
-				', $txt['top_likes'], '
+				', $txt['top_liked'], '
 			</h6>
 			<dl class="stats">';
 
@@ -253,6 +253,34 @@ function template_main()
 		echo '
 				<dt>
 					', $like['link'], '
+				</dt>
+				<dd>';
+
+		if (!empty($like['post_percent']))
+			echo '
+					<div class="bar" style="width: ', $like['post_percent'] + 4, 'px"></div>';
+
+		echo '
+					<span>', $like['num_likes'], '</span>
+				</dd>';
+	}
+
+	echo '
+			</dl>
+		</div>
+
+		<div class="two-columns windowbg wrc">
+			<h6>
+				<span class="top_likes"></span>
+				', $txt['top_liked_posters'], '
+			</h6>
+			<dl class="stats">';
+
+	foreach ($context['top_author_likes'] as $like)
+	{
+		echo '
+				<dt>
+					<a href="<URL>?action=profile;u=', $like['id_member'], '">', $like['member_name'], '</a>
 				</dt>
 				<dd>';
 
