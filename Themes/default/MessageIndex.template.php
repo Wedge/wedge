@@ -449,8 +449,8 @@ function template_messageindex_childboards()
 			if (!empty($board['custom_class']))
 				echo '
 							<div class="boardstatus ', $board['custom_class'], '"', !empty($board['custom_title']) ? ' title="' . $board['custom_title'] . '"' : '', '></div>';
-			// If the board or children is new, show an indicator.
-			if ($board['new'] || $board['children_new'])
+			// If the board has new posts, show an indicator.
+			if ($board['new'])
 				echo '
 							<div class="boardstate_on" title="', $txt['new_posts'], '"></div>';
 			// Is it a redirection board?
