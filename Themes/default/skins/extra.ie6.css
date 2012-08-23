@@ -198,6 +198,10 @@ li.separator
 .richedit_resize
 	padding: 0 !important
 
+// No support for box-sizing...
+#preview_section > .postbg
+	width: auto
+
 
 /* Topic pages - post list
 ------------------------------------------------------- */

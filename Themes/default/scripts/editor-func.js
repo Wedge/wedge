@@ -87,7 +87,7 @@ function weSaveEntities(sFormName, aElementNames, sMask, nm)
 	nm = document.forms[sFormName];
 	if (sMask)
 		$.each(nm.elements, function () {
-			if (this.id.substr(0, sMask.length) == sMask)
+			if (this.id.indexOf(sMask) === 0)
 				aElementNames.push(this.name);
 		});
 
@@ -381,17 +381,18 @@ weButtonBox.prototype.setActive = function (aButtons)
 
 weButtonBox.prototype.emulateClick = function (sCode)
 {
-	var that = this;
+	var that = this, bCancel = true;
 	$.each(this.opt.aButtonRows, function () {
 		$.each(this, function () {
 			if (this[0] == 'button' && this[3] == sCode)
 			{
 				that.opt.sButtonClickHandler(this);
-				return;
+				return bCancel = false;
 			}
+			return bCancel;
 		});
 	});
-	return false;
+	return bCancel;
 };
 
 weButtonBox.prototype.setSelect = function (sSelectName, sValue)

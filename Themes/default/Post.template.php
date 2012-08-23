@@ -17,7 +17,7 @@ function template_postform_before()
 	global $context, $txt;
 	// Start the form, the header and the container for all the markup
 	echo '
-		<form action="<URL>?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', ($context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ');'), 'submitonce(); weSaveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">
+		<form action="<URL>?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', $context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . '); ', 'submitonce(); weSaveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
@@ -34,10 +34,8 @@ function template_preview()
 			<we:cat>
 				<span id="preview_subject">', empty($context['preview_subject']) ? '' : $context['preview_subject'], '</span>
 			</we:cat>
-			<div class="windowbg wrc core_posts">
-				<div class="post" id="preview_body">
-					', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
-				</div>
+			<div class="postbg wrc core_posts">
+				', empty($context['preview_message']) ? '<br>' : $context['preview_message'], '
 			</div><br>
 		</div>';
 }
@@ -261,7 +259,7 @@ function template_post_shortcuts()
 	// List of keyboard shortcuts.
 	echo '
 				<div id="shortcuts">
-					<span class="smalltext">', $context['browser']['is_opera'] ? $txt['shortcuts_opera'] : ($context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts']), '</span>
+					<span class="smalltext">', $txt['shortcuts'], '</span>
 				</div>';
 }
 

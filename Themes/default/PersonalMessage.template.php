@@ -927,7 +927,7 @@ function template_send()
 			</div>
 			<div id="shortcuts">
 				<label><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked' : '', '> ', $txt['pm_save_outbox'], '</label>
-				<span class="smalltext">', $context['browser']['is_opera'] ? $txt['shortcuts_opera'] : ($context['browser']['is_firefox'] ? $txt['shortcuts_firefox'] : $txt['shortcuts']), '</span>
+				<span class="smalltext">', $txt['shortcuts'], '</span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">

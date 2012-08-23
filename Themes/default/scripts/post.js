@@ -44,9 +44,9 @@ function previewPost()
 			$(postmod.preview).click(function () { return true; }).click();
 
 		// Create and show the preview section, with a fine little animation.
-		$('#preview_body').html($('body', XMLDoc).text()).addClass('post');
 		$('#preview_subject').html($('subject', XMLDoc).text());
-		$('#preview_section').animate({ opacity: 'show', height: 'show' });
+		$('#preview_section > .postbg').html($('body', XMLDoc).text());
+		$('#preview_section').animate({ opacity: 'show', height: 'show' }).addClass('post');
 
 		var
 			errorList = [],
@@ -74,7 +74,7 @@ function previewPost()
 
 		if ($('post_error', errors).length)
 			$postbox.css('border', '1px solid red');
-		else if ($postbox.css('border').indexOf('red') != -1)
+		else if ($postbox.css('border-color').indexOf('red') != -1)
 			$postbox.css('border', 0);
 
 		// Set the new last message id.

@@ -709,11 +709,10 @@ function weEditor(opt)
 				type: 'POST',
 				success: function (oXMLDoc)
 				{
-					var sText = '';
-					$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
+					var sText = $('message', oXMLDoc).text();
 
 					// What is this new view we have?
-					this.bRichTextEnabled = oXMLDoc.getElementsByTagName('message')[0].getAttribute('view') != '0';
+					this.bRichTextEnabled = $('message', oXMLDoc).attr('view') != '0';
 
 					if (this.bRichTextEnabled)
 					{
@@ -769,9 +768,8 @@ function weEditor(opt)
 					type: 'POST',
 					success: function (oXMLDoc)
 					{
-						// This contains the spellcheckable text.
-						var sText = '';
-						$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
+						// The spellcheckable text.
+						var sText = $('message', oXMLDoc).text();
 						oText.val(sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));
 						spellCheck(sFormId, opt.sUniqueId);
 					}
@@ -798,9 +796,7 @@ function weEditor(opt)
 					success: function (oXMLDoc)
 					{
 						// The corrected text.
-						var sText = '';
-						$.each(oXMLDoc.getElementsByTagName('message')[0].childNodes || [], function () { sText += this.nodeValue; });
-
+						var sText = $('message', oXMLDoc).text();
 						this.insertText(sText, true);
 						this.setFocus();
 					}
@@ -810,23 +806,17 @@ function weEditor(opt)
 			this.setFocus();
 	};
 
-	// Register a keyboard shortcut.
+	// Register a keyboard shortcut. ('s', 'ctrl,alt', 'submit') => ctrl+alt+s calls shortcutCheck with the 'submit' param.
 	this.registerShortcut = function (sLetter, sModifiers, sCodeName)
 	{
-		if (!sCodeName)
-			return;
-
 		var oNewShortcut = {
 			code: sCodeName,
 			key: sLetter.toUpperCase().charCodeAt(0),
-			alt: false,
-			ctrl: false
+			ctrl: false,
+			alt: false
 		};
 
-		$.each(sModifiers.split(','), function () {
-			if (this in oNewShortcut)
-				oNewShortcut[this] = true;
-		});
+		$.each(sModifiers.split(','), function () { oNewShortcut[this] = true; });
 
 		aKeyboardShortcuts.push(oNewShortcut);
 	};
@@ -914,68 +904,38 @@ function weEditor(opt)
 			return oRange.item ? oRange.item(0) : oRange.parentElement();
 	},
 
-	// Check whether the key has triggered a shortcut?
-	checkShortcut = function (oEvent)
-	{
-		// To be a shortcut it needs to be one of these, duh!
-		if (!oEvent.altKey && !oEvent.ctrlKey)
-			return false;
-
-		var sReturnCode = false;
-
-		// Let's take a look at each of our shortcuts shall we?
-		$.each(aKeyboardShortcuts, function () {
-			if (oEvent.altKey == this.alt && oEvent.ctrlKey == this.ctrl && oEvent.which == this.key)
-				sReturnCode = this.code; // Found something?
-		});
-
-		return sReturnCode;
-	},
-
 	// The actual event check for the above!
 	shortcutCheck = function (oEvent)
 	{
-		var sFoundCode = checkShortcut(oEvent);
+		var sFoundCode;
 
-		// Run it and exit.
-		if (typeof sFoundCode == 'string' && sFoundCode != '')
+		// Check whether the key has triggered a shortcut?
+		if (oEvent.altKey || oEvent.ctrlKey)
+			$.each(aKeyboardShortcuts, function () {
+				if (oEvent.altKey == this.alt && oEvent.ctrlKey == this.ctrl && oEvent.which == this.key)
+					sFoundCode = this.code; // Found something?
+			});
+
+		// Trigger corresponding buttons and prevent default keyboard action if found.
+		if (sFoundCode == 'submit')
 		{
-			var bCancelEvent = false;
-			if (sFoundCode == 'submit')
-			{
-				// So much to do!
-				var oForm = document.getElementById(sFormId);
-				submitThisOnce(oForm);
-				submitonce();
-				weSaveEntities(oForm.name, ['subject', opt.sUniqueId, 'guestname', 'evtitle', 'question']);
-				oForm.submit();
-
-				bCancelEvent = true;
-			}
-			else if (sFoundCode == 'preview')
-			{
-				previewPost();
-				bCancelEvent = true;
-			}
-			else
-				bCancelEvent = opt.oBBCBox.emulateClick(sFoundCode);
-
-			if (bCancelEvent)
-			{
-				if (is_ie && oEvent.cancelBubble)
-					oEvent.cancelBubble = true;
-
-				else if (oEvent.stopPropagation)
-				{
-					oEvent.stopPropagation();
-					oEvent.preventDefault();
-				}
-
-				return false;
-			}
+			$('#' + sFormId + ' input[name=post_button]').click();
+			return false;
 		}
-
-		return true;
+		else if (sFoundCode == 'draft')
+		{
+			$('#' + sFormId + ' input[name=draft]').click();
+			return false;
+		}
+		else if (sFoundCode == 'preview')
+		{
+			// - This doesn't save entities, i.e. &# stuff won't show up the same way as in the final post.
+			// - No need to trigger the click, because e.ctrlKey was already rejected at this point.
+			previewPost();
+			return false;
+		}
+		else if (sFoundCode)
+			return opt.oBBCBox.emulateClick(sFoundCode);
 	},
 
 	// This resizes an editor.
@@ -1115,14 +1075,12 @@ function weEditor(opt)
 
 	// Finally, register shortcuts.
 	// Register default keyboard shortcuts.
-	if (!is_ff)
-		return;
-
 	this.registerShortcut('b', 'ctrl', 'b');
 	this.registerShortcut('u', 'ctrl', 'u');
 	this.registerShortcut('i', 'ctrl', 'i');
 	this.registerShortcut('p', 'alt', 'preview');
 	this.registerShortcut('s', 'alt', 'submit');
+	this.registerShortcut('d', 'alt', 'draft');
 
 	this.updateEditorControls();
 }

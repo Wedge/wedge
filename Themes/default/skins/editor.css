@@ -126,13 +126,6 @@ ul.post_options
 	.smpost
 		margin: 0 2px
 
-#preview_body
-	color: #444
-	background: #f9f6f0
-	background-position: 0 -550px
-	a
-		color: #47a
-
 .bbc_divider, .bbc_button, .bbc_button div
 	base: .inline-block
 	width: 23px
@@ -170,6 +163,9 @@ ul.post_options
 	label
 		display: block
 		padding-bottom: .8em
+	kbd
+		color: #600
+		font-size: 120%
 
 $editor_overflow = ""
 $editor_overflow {ie6,ie7,ie8,ie9,ie10} = "overflow: auto"
