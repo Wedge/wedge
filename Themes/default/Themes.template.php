@@ -42,11 +42,11 @@ function template_main()
 
 	foreach ($context['themes'] as $th)
 		echo '
-							<label><input type="checkbox" name="options[known_themes][]" id="options-known_themes_', $th['id'], '" value="', $th['id'], '"', $th['known'] ? ' checked' : '', '> ', $th['name'], '</label><br>';
+							<label><input type="checkbox" name="options[known_themes][]" id="options-known_themes_', $th['id'], '" value="', $th['id'], '"', !empty($th['known']) ? ' checked' : '', '> ', $th['name'], '</label><br>';
 
 	echo '
 						</div>
-						<a href="#" onclick="$(\'#known_themes_list\').show(); $(\'#known_themes_link\').hide(); return false; " id="known_themes_link" class="hide">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
+						<a href="#" onclick="$(\'#known_themes_list\').show(); $(\'#known_themes_link\').hide(); return false;" id="known_themes_link" class="hide">[ ', $txt['themeadmin_themelist_link'], ' ]</a>
 					</dd>';
 
 	template_guest_selector(false);
@@ -440,7 +440,6 @@ function template_pick()
 				<p>
 					', $th['description'], '
 				</p>
-				<br>
 				<p>
 					<em class="smalltext">', number_context('theme_users', $th['num_users']), '</em>
 				</p>
@@ -495,6 +494,12 @@ function template_list_skins(&$th, $theme_id, $theme_url = '', $theme_dir = '', 
 						<a href="' . $scripturl . '?action=skin' . $context['specify_member'] . ';theme=' . $target . ';' . $context['session_query'] . '" id="theme_thumb_preview_' . $target . '" title="' . $txt['theme_preview'] . '"><img src="' . $thumbnail_href . '" id="theme_thumb_' . $target . '" class="padding"' . ($is_child ? ' style="max-width: 75px"' : '') . '></a>
 					</div>' : '', '
 					<p>', $sty['comment'], '</p>';
+
+		if (!empty($sty['num_users']))
+			echo '
+					<p>
+						<em class="smalltext">', number_context('theme_users', $sty['num_users']), '</em>
+					</p>';
 
 		if (!$is_current_skin)
 			echo '

@@ -711,12 +711,11 @@ function PickTheme()
 		$guest_theme = $settings['theme_guests'];
 
 	$request = wesql::query('
-		SELECT id_theme, COUNT(*) AS the_count
+		SELECT id_theme, skin, COUNT(*) AS the_count
 		FROM {db_prefix}members
-		GROUP BY id_theme
-		ORDER BY id_theme DESC',
-		array(
-		)
+		GROUP BY id_theme, skin
+		ORDER BY id_theme, skin DESC',
+		array()
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{
@@ -727,7 +726,15 @@ function PickTheme()
 			$row['id_theme'] = $guest_theme;
 
 		if (isset($context['available_themes'][$row['id_theme']]))
+		{
+			// Empty $row['skin'] = user didn't change their (desktop) skin to begin with, so we'll consider it to be the default.
+			if (empty($row['skin']))
+				$row['skin'] = $settings['theme_skin_guests'];
+			$skin =& wedge_find_skin($row['skin'], $context['available_themes'][$row['id_theme']]);
 			$context['available_themes'][$row['id_theme']]['num_users'] += $row['the_count'];
+			if (!empty($skin))
+				$skin['num_users'] += $row['the_count'];
+		}
 		else
 			$context['available_themes'][$guest_theme]['num_users'] += $row['the_count'];
 	}
@@ -1560,6 +1567,7 @@ function wedge_get_skin_list($dir, $files = array(), &$root = array())
 				'name' => preg_match('~<name>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</name>~sui', $setxml, $match) ? trim($match[1]) : $file,
 				'type' => $is_root ? 'replace' : (preg_match('~<type>(.*?)</type>~sui', $setxml, $match) ? trim($match[1]) : 'add'),
 				'comment' => preg_match('~<comment>(?:<!\[CDATA\[)?(.*?)(?:]]>)?</comment>~sui', $setxml, $match) ? trim($match[1]) : '',
+				'num_users' => 0,
 			);
 		}
 		else
@@ -1567,6 +1575,7 @@ function wedge_get_skin_list($dir, $files = array(), &$root = array())
 				'name' => $file,
 				'type' => 'add',
 				'comment' => '',
+				'num_users' => 0,
 			);
 		$skin['dir'] = substr($this_dir, strpos($this_dir, $is_root ? '/skins' : '/skins/') + 1);
 		if ($skin['type'] == 'add')
@@ -1585,6 +1594,17 @@ function wedge_get_skin_list($dir, $files = array(), &$root = array())
 		}
 	}
 	return $skins;
+}
+
+function &wedge_find_skin($target, &$root)
+{
+	foreach ($root['skins'] as &$skin)
+		if ($skin['dir'] == $target)
+			return $skin;
+		elseif (isset($skin['skins']) && ($found =& wedge_find_skin($target, $skin)))
+			return $found;
+	$dummy = false;
+	return $dummy;
 }
 
 /**
