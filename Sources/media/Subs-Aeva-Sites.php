@@ -131,13 +131,16 @@ $sites = array(
 		'title' => 'YouTube',
 		'website' => 'http://www.youtube.com',
 		'type' => 'pop',
+		'plugin' => 'html',
 		'pattern' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtu(?:be\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))|\.be/)([\w-]{11})',
-		'movie' => 'http://www.youtube.com/v/$2&rel=0&fs=1',
+		// If you want to force the use of Flash, remove the 'plugin' line above, set ui-height to 25 and replace the 'movie' line with the one below:
+		// 'movie' => 'http://www.youtube.com/v/$2?version=3',
+		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" src="http://www.youtube.com/embed/$2?theme=light" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe>',
 		'size' => array(
 			'normal' => array(480, 385),
 			'ws' => array(640, 385),
 		),
-		'ui-height' => 25,
+		'ui-height' => 0,
 		// http://www.youtube.com/watch?v=-X8mD76W4F0 or v=MxGofCFHYCc (all hail Jochen Hippel!)
 		// On Google - http://video.google.co.uk/url?docid=-8978185459530152475&ev=v&len=91&srcurl=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dg2cT5J0gxeU
 		// http://www.youtube.com/watch?v=M29NUeffJNA - Example of "Embedding Disabled By Request"
@@ -146,7 +149,6 @@ $sites = array(
 		'lookup-url' => 'http://(?:video\.google\.(?:com|com?\.[a-z]{2}|[a-z]{2})/[^"]*?)?(?:(?:www|[a-z]{2})\.)?youtube\.com/[^"#[]*?(?:[&/?;]|&amp;|%[23]F)(?:video_id=|v(?:/|=|%3D|%2F))([\w-]{11})[^]#[]*',
 		'lookup-actual-url' => 'http://gdata.youtube.com/feeds/api/videos/$1?v=2',
 		'lookup-final-url' => 'http://www.youtube.com/watch?v=$1',
-		'lookup-title' => true,
 		'lookup-title-skip' => true,
 		'lookup-pattern' => array(
 			'id' => '<id>.*?:([\w-]+)</id>',
@@ -160,9 +162,10 @@ $sites = array(
 		'title' => 'YouTube (Playlists)',
 		'website' => 'http://www.youtube.com',
 		'type' => 'pop',
+		'plugin' => 'html',
 		// http://uk.youtube.com/view_play_list?p=7262E1895FA61B39
-		'pattern' => 'http://(?:(?:www|[a-z]{2})\.)?youtube\.com/[^"]*?(?:[&/?;]|&amp;)(?:id=|p=|p/)([0-9a-f]{16})',
-		'movie' => 'http://www.youtube.com/p/$2&rel=0&fs=1',
+		'pattern' => 'http://(?:(?:www|[a-z]{2})\.)?youtube\.com/(?:playlist\?list=PL|[^"]*?(?:[&/?;]|&amp;)(?:id=|p=|p/))([0-9a-fA-F]{16})',
+		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" src="http://www.youtube.com/embed?listType=playlist&list=PL$2&theme=light" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe>',
 		'size' => array(480, 385),
 		'ui-height' => 25,
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="$1" />.*?</object>',
@@ -179,7 +182,7 @@ $sites = array(
 		'movie' => 'http://www.dailymotion.com/swf/$2&related=0',
 		'size' => array(520, 416),
 		'ui-height' => 21,
-		'lookup-title' => '<h1 class="[^"]+">(.*?)</h1>',
+		'lookup-title-skip' => true,
 		'fix-html-pattern' => '(?:<div\>)?<object [^>]*><param name="movie" value="$1">.*?</object>(?:<br /><b><a href="$1">[^<]*</a></b>(?:<br /><i>[^<]*<a href="[^"]*">[^<]*</a></i>)?</div\>)?',
 	),
 	array(
@@ -202,7 +205,7 @@ $sites = array(
 		'type' => 'pop',
 		'plugin' => 'html',
 		'pattern' => '(https?://maps\.google\.[^">]+/\w*?\?[^">]+)',
-		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="$1&amp;output=embed"></iframe>',
+		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" src="$1&amp;output=embed" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe>',
 		'size' => array(425, 350),
 		'ui-height' => 0,
 		'fix-html-pattern' => '<iframe [^>]+src="$1"></iframe>(?:<br /><small>.*?</small>)?',
@@ -243,7 +246,6 @@ $sites = array(
 		'size' => array(500, 375),
 		'fix-html-pattern' => '<object [^>]*>\s{0,3}<param name="allowfullscreen" value="true" />\s{0,3}<param name="allowscriptaccess" value="always" />\s{0,3}<param name="movie" value="http://vimeo\.com/moogaloop\.swf\?clip_id=(\d{1,12})[^<>]*?>.*?</object>(?:<p><a href="http://vimeo\.com.*?</a>.*?</a>.*?</a>\.</p>)?',
 		'fix-html-url' => 'http://www.vimeo.com/$1',
-		'lookup-title' => true,
 		'lookup-title-skip' => true,
 	),
 
