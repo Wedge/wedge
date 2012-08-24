@@ -10,8 +10,11 @@ body
 	color: #333
 	padding: 0
 
-.grad250
-	background: linear-gradient(rgb(160,160,160), transparent) 0 0 / auto 250px repeat-x
+.lightgrad
+	gradient: #eee, #faf8f6
+
+.darkgrad
+	gradient: #bcbcbb, #f3f2f0
 
 #wedge
 	padding: 15px 0
@@ -21,16 +24,14 @@ body
 	width: 95%
 	max-width: 1200px
 
-#navi extends .grad250
-	background-position: 0 -200px
+#navi extends .lightgrad
 	background-color: #faf8f6
 	border: 1px solid #999
 	border-width: 0 1px
 	padding: 0
 
-#header extends .grad250
+#header extends .darkgrad
 	background-color: #faf8f6
-	background-position: 0 -50px
 	border: 1px solid #999
 	border-bottom: 0
 	border-radius: 12px 12px 0 0
@@ -59,6 +60,9 @@ body
 		border-width: 1px 0 0
 		display: block
 		margin: 0 -20px -20px
+		section header
+			color: #000
+			border: 0
 
 #main
 	padding: 4px 22px 12px 8px
@@ -81,6 +85,7 @@ body
 			text-shadow: white 0 1px 2px
 	input.search
 		background-color: rgb(235,225,215)
+		color: #000
 
 #siteslogan
 	float: left
@@ -110,9 +115,8 @@ body
 	border: 0
 
 // The footer with copyright links etc.
-#footer extends .grad250
+#footer extends .lightgrad
 	text-align: center
-	background-position: 0 -180px
 	background-color: #f4f2f3
 	border: 1px solid #999
 	border-top: 1px solid #ccc
@@ -159,9 +163,8 @@ a, #linktree a
 		a
 			color: #fff
 
-.menu ul extends .grad250
+.menu ul extends .lightgrad
 	background-color: #fff8f1
-	background-position: 0 -150px
 
 .css > li li:hover, li.hove
 	color: #000
@@ -172,12 +175,6 @@ a, #linktree a
 
 /* Some BBC related styles.
 ------------------------------------------------------- */
-
-.bbc_quote blockquote
-	background: #e7eafc url($images/theme/quote.png) .1em .1em no-repeat
-
-.alternate blockquote
-	background-color: #daddef
 
 .bbc_code code, .php_code code
 	background: #eef
@@ -284,7 +281,7 @@ dfn
 ------------------------------------------------------- */
 
 $main_font = "Segoe UI", Arial, sans-serif
-$subcat_font = normal 1.1em main_font
+$subcat_font = normal 1.1em $main_font
 $post_font = $main_font
 $post_font_size = 10.5pt/140%
 $board_col = #d97b33

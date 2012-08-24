@@ -167,7 +167,5 @@ ul.post_options
 		color: #600
 		font-size: 120%
 
-$editor_overflow = ""
-$editor_overflow {ie6,ie7,ie8,ie9,ie10} = "overflow: auto"
-$editor_resize = ""
+$editor_overflow {ie[-10]} = "overflow: auto"
 $editor_resize {webkit,firefox} = "resize: none"

@@ -292,10 +292,11 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 				continue;
 
 			// Get the list of suffixes in the file name.
-			$suffixes = array_flip(explode(',', substr(strstr($file, '.'), 1, -4)));
+			$suffix_string = substr(strstr($file, '.'), 1, -4);
+			$suffixes = array_flip(explode(',', $suffix_string));
 
 			// If we found our browser version in the suffix list, then add to the list of files to load.
-			if ($brow = hasBrowser($suffixes))
+			if (!empty($suffix_string) && $brow = hasBrowser($suffixes))
 			{
 				$requested_suffixes[$brow] = true;
 				if ($brow != $context['browser']['agent'] . $context['browser']['version'])

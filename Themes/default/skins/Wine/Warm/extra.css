@@ -144,10 +144,10 @@ dl#feed
 		a
 			color: #fff
 
-.bbc_quote blockquote
+.bbc_quote > div
 	background-color: #e8eee8
 
-.alternate blockquote
+.alternate > div
 	background-color: #e3eae3
 
 .bbc_code code, .php_code code

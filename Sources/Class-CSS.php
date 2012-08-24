@@ -615,6 +615,8 @@ class wecss_nesting extends wecss
 		// 	@replace
 		//		rule: search
 		//		rule: replace
+		//
+		// !! @todo: rewrite this at the end of the parser so that we can specify a target selectors after the @replace keyword.
 
 		preg_match_all('~\n[\t ]*@replace[\t ]*{\n[\t ]*([^\n]+);\n[\t ]*([^\n]*)}~i', $tree, $replacements, PREG_SET_ORDER);
 		if (!empty($replacements))

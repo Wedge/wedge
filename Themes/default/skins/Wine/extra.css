@@ -35,7 +35,7 @@ html
 	border-radius: 8px
 	.title
 		font-size: 1.2em
-		padding: 4px
+		padding: 4px 4px 4px 8px
 	a
 		color: #a54
 		border-bottom: 1px dotted #600
@@ -201,6 +201,10 @@ section.block header, .wehead
 .board_list
 	td.info a.subject
 		font: 700 120% $head_font
+
+// This is a fix for topic list backgrounds.
+.topic_table .subject
+	background-size: auto
 
 /* Styles for the info center on the board index.
 ---------------------------------------------------- */
