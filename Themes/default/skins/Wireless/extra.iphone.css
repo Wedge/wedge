@@ -3,7 +3,7 @@
 	margin-left: 0
 
 // We want really comfortable menu items for use in wireless devices.
-ul.mimeitem li
+.mimenu ul li
 	font-size: 1.8em
 	line-height: 1.3em
 	padding: 10px

@@ -153,9 +153,6 @@ dl#feed
 .bbc_code code, .php_code code
 	background: #eef5ec
 
-ul.mimeitem
-	background-color: #ece8e5 !important
-
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
 tr.catbg

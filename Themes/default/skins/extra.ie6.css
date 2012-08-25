@@ -229,9 +229,6 @@ li.separator
 	width: 20%
 	padding-right: 0
 
-ul.actions
-	float: right
-
 #forumposts
 	.cat
 		clear: both
@@ -248,6 +245,7 @@ ul.actions
 ul.actions
 	display: block
 	width: 40%
+	float: right
 	li
 		width: 1%
 

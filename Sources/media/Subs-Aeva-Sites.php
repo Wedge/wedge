@@ -163,8 +163,8 @@ $sites = array(
 		'website' => 'http://www.youtube.com',
 		'type' => 'pop',
 		'plugin' => 'html',
-		// http://uk.youtube.com/view_play_list?p=7262E1895FA61B39
-		'pattern' => 'http://(?:(?:www|[a-z]{2})\.)?youtube\.com/(?:playlist\?list=PL|[^"]*?(?:[&/?;]|&amp;)(?:id=|p=|p/))([0-9a-fA-F]{16})',
+		// http://www.youtube.com/playlist?list=PL550C8549B4CCBF8A
+		'pattern' => 'http://(?:(?:www|[a-z]{2})\.)?youtube\.com/[^"]*?(?:[&/?;]|&amp;)(?:list=PL|p=|p/)([0-9a-fA-F]{16})',
 		'movie' => '<iframe class="aext" width="{int:width}" height="{int:height}" src="http://www.youtube.com/embed?listType=playlist&list=PL$2&theme=light" type="text/html" scrolling="no" marginheight="0" marginwidth="0" frameborder="0"></iframe>',
 		'size' => array(480, 385),
 		'ui-height' => 25,
