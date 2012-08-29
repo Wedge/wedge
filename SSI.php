@@ -90,8 +90,6 @@ elseif (isset($_REQUEST['ssi_theme']) && (int) $_REQUEST['ssi_theme'] == (int) $
 	die('Hacking attempt...');
 elseif (isset($_COOKIE['ssi_theme']) && (int) $_COOKIE['ssi_theme'] == (int) $ssi_theme)
 	die('Hacking attempt...');
-elseif (isset($_REQUEST['ssi_layers'], $ssi_layers) && (@get_magic_quotes_gpc() ? stripslashes($_REQUEST['ssi_layers']) : $_REQUEST['ssi_layers']) == $ssi_layers)
-	die('Hacking attempt...');
 if (isset($_REQUEST['context']))
 	die('Hacking attempt...');
 
@@ -100,9 +98,6 @@ if (isset($ssi_gzip) && $ssi_gzip === true && (int) @ini_get('zlib.output_compre
 	ob_start('ob_gzhandler');
 else
 	$settings['enableCompressedOutput'] = '0';
-
-// Primarily, this is to fix the URLs...
-ob_start('ob_sessrewrite');
 
 // Start the session... known to scramble SSI includes in cases...
 if (!headers_sent())
@@ -159,14 +154,7 @@ if (isset($_REQUEST['ssi_ban']) || (isset($ssi_ban) && $ssi_ban === true))
 	is_not_banned();
 
 // Load the stuff like the menu bar, etc.
-if (isset($ssi_layers))
-{
-	foreach (array_reverse($ssi_layers) as $layer)
-		wetem::outer($layer);
-	start_output();
-}
-else
-	setupThemeContext();
+setupThemeContext();
 
 // Make sure they didn't muss around with the settings... but only if it's not cli.
 if (isset($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['is_cli']) && session_id() == '')
@@ -200,11 +188,11 @@ if (function_exists('set_magic_quotes_runtime'))
 
 return true;
 
-// This shuts down the SSI and shows the footer.
-function ssi_shutdown()
+// This will run the template_main() function in your SSI files.
+function ssi_run()
 {
 	if (!isset($_GET['ssi_function']) || $_GET['ssi_function'] != 'shutdown')
-		finish_output();
+		obExit();
 }
 
 // Display a welcome message, like:  Hey, User, you have 0 messages, 0 are new.

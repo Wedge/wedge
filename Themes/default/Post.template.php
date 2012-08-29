@@ -463,7 +463,7 @@ function template_make_poll()
 								<div class="smalltext">', $txt['poll_voters_no_change_future'], ' <a href="<URL>?action=help;in=cannot_change_voter_visibility" class="help" title="', $txt['help'], '" onclick="return reqWin(this);"></a></div>
 							</dt>
 							<dd>
-								<label><input type="radio" name="poll_voters_visible" id="poll_voters_admin" value="0"> ', $txt['poll_voters_visibility_admin'], '</label> <a href="<URL>?action=help;in=admins_see_votes" class="help" title="', $txt['help'], '" onclick="return reqWin(this);"></a><br>
+								<label><input type="radio" name="poll_voters_visible" id="poll_voters_admin" value="0" checked> ', $txt['poll_voters_visibility_admin'], '</label> <a href="<URL>?action=help;in=admins_see_votes" class="help" title="', $txt['help'], '" onclick="return reqWin(this);"></a><br>
 								<label><input type="radio" name="poll_voters_visible" id="poll_voters_creator" value="1"> ', $txt['poll_voters_visibility_creator'], '</label><br>
 								<label><input type="radio" name="poll_voters_visible" id="poll_voters_members" value="2"> ', $txt['poll_voters_visibility_members'], '</label><br>
 								<label><input type="radio" name="poll_voters_visible" id="poll_voters_anyone" value="3"> ', $txt['poll_voters_visibility_anyone'], '</label>
