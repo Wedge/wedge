@@ -49,7 +49,7 @@ function template_main()
 	// Disable the reason textarea when the postRedirect checkbox is unchecked...
 	echo '
 					</dl>
-					<label><input type="checkbox" name="reset_subject" id="reset_subject" onclick="$(\'#subjectArea\').toggle();"> ', $txt['moveTopic2'], '</label><br>
+					<label><input type="checkbox" name="reset_subject" id="reset_subject" onclick="$(\'#subjectArea\').slideToggle();"> ', $txt['moveTopic2'], '</label><br>
 					<fieldset id="subjectArea" class="hide" style="padding: .7em 1em">
 						<dl class="settings">
 							<dt><strong>', $txt['moveTopic3'], ':</strong></dt>
@@ -57,7 +57,7 @@ function template_main()
 						</dl>
 						<label><input type="checkbox" name="enforce_subject"> ', $txt['moveTopic4'], '</label>
 					</fieldset>
-					<label><input type="checkbox" name="postRedirect"', $context['is_approved'] ? ' checked' : '', ' onclick="', $context['is_approved'] ? '' : 'if (this.checked && !confirm(' . JavaScriptEscape($txt['move_topic_unapproved_js']) . ')) return false; ', '$(\'#reasonArea\').toggle(this.checked);"> ', $txt['moveTopic1'], '</label><br>
+					<label><input type="checkbox" name="postRedirect"', $context['is_approved'] ? ' checked' : '', ' onclick="', $context['is_approved'] ? '' : 'if (this.checked && !confirm(' . JavaScriptEscape($txt['move_topic_unapproved_js']) . ')) return false; ', '$(\'#reasonArea\').slideToggle(this.checked);"> ', $txt['moveTopic1'], '</label><br>
 					<fieldset id="reasonArea" style="padding: .7em 1em; margin-top: 1ex"', $context['is_approved'] ? '' : ' class="hide"', '>
 						<dl class="settings">
 							<dt>
@@ -82,7 +82,7 @@ function template_main()
 							</dd>
 						</dl>
 					</fieldset>
-					<label><input type="checkbox" name="sendPm" checked onclick="$(\'#pmArea\').toggle(this.checked);">', $txt['movetopic_sendpm'], '</label>
+					<label><input type="checkbox" name="sendPm" checked onclick="$(\'#pmArea\').slideToggle(this.checked);">', $txt['movetopic_sendpm'], '</label>
 					<fieldset id="pmArea" style="padding: .7em 1em">
 						<dl class="settings">
 							<dt>', $txt['movetopic_sendpm_desc'], '</dt>
