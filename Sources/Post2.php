@@ -66,8 +66,7 @@ if (!defined('WEDGE'))
  */
 function Post2()
 {
-	global $board, $topic, $txt, $settings, $context;
-	global $user_info, $board_info, $options;
+	global $board, $topic, $txt, $settings, $context, $user_info, $board_info, $options;
 
 	// Sneaking off, are we?
 	if (empty($_POST) && empty($topic))
@@ -87,8 +86,7 @@ function Post2()
 	// On posting new topic/reply/full modify: replace embed HTML, do lookups, and/or check whether YouTube links are embeddable
 	if (!empty($_POST['message']))
 	{
-		if (!function_exists('aeva_onposting'))
-			loadSource('media/Aeva-Embed');
+		loadSource('media/Aeva-Embed');
 		$_POST['message'] = aeva_onposting($_POST['message']);
 	}
 

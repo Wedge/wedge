@@ -146,16 +146,14 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	{
 		if (empty($disabled['media']) && stripos($message, '[media') !== false)
 		{
-			if (!function_exists('aeva_protect_bbc'))
-				loadSource('media/Subs-Media');
+			loadSource('media/Subs-Media');
 			aeva_protect_bbc($message);
 		}
 
 		// Protect noembed & autolink items from embedding *before* BBC parsing - wrap quotes, but don't protect
 		if (!empty($settings['embed_enabled']) && strlen($message) > 15)
 		{
-			if (!function_exists('aeva_preprotect'))
-				loadSource('media/Aeva-Embed');
+			loadSource('media/Aeva-Embed');
 			$has_link = aeva_preprotect($message, $cache_id);
 		}
 	}
@@ -206,11 +204,20 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				$bbc_codes[substr($code['tag'], 0, 1)][] = $code;
 	}
 
-	// Shall we take the time to cache this?
-	if ($cache_id != '' && !empty($settings['cache_enable']) && (($settings['cache_enable'] >= 2 && strlen($message) > 1000) || strlen($message) > 2400) && empty($parse_tags))
+	// Purify quotes. Whitespace is trimmed from both inside and outside them.
+	$message = preg_replace('~(?:<br>|&nbsp;|\s)*(\[noae])?\[(/?)quote\b([^]]*)](\[/noae])?(?:<br>|&nbsp;|\s)*~is', '$1[$2quote$3]$4', $message);
+
+	// !! We could do the same for images..?
+	//	$message = preg_replace('~(?:<br>|&nbsp;|\s)*(\[url=[^]]*?)?\[img\b([^]]*)]([^\[]+?)\[/img](\[/url])?(<br>|&nbsp;|\s)*~is', '$1[img$2]$3[/img]$4', $message);
+
+	// Shall we take the time to cache this? Do it if: cache is enabled, at a high level, message is long enough to warrant it,
+	// and after making sure that it doesn't hold an embeddable link -- except if we're in a signature, in which case we won't embed it.
+	if ($cache_id != '' && !empty($settings['cache_enable']) && (($settings['cache_enable'] >= 2 && strlen($message) > 1000) || strlen($message) > 2400)
+		&& empty($parse_tags) && (strpos($cache_id, 'sig') !== false || (strpos($message, 'http://') === false)))
 	{
 		// It's likely this will change if the message is modified.
-		$cache_key = 'parse:' . $cache_id . '-' . md5(md5($message) . '-' . $smileys . (empty($disabled) ? '' : implode(',', array_keys($disabled))) . serialize($context['browser']) . $txt['lang_locale'] . $user_info['time_offset'] . $user_info['time_format']);
+		$cache_key = 'parse:' . $cache_id . '-' . md5(md5($message) . '-' . $smileys . (empty($disabled) ? '' : implode(',', array_keys($disabled)))
+					. serialize($context['browser']) . $txt['lang_locale'] . $user_info['time_offset'] . $user_info['time_format']);
 
 		if (($temp = cache_get_data($cache_key, 240)) != null)
 			return $temp;
@@ -341,9 +348,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 						// Only do this if the preg survives.
 						if (is_string($result = preg_replace(array(
-							'~(?<=[\s>.(;\'"]|^)((?:http|https)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w\~%.@!,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i',
-							'~(?<=[\s>.(;\'"]|^)((?:ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w\~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i',
-							'~(?<=[\s>(\'<]|^)(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w\~%.@!,?&;=#(){}+:\'\\\\-]*)*[/\w\~%@?;=#}\\\\-])~i'
+							'`(?<=[\s>.(;\'"]|^)((?:http|https)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\!(){}-]*)*[/\w~%@?;=#}\\\\-])`i',
+							'`(?<=[\s>.(;\'"]|^)((?:ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i',
+							'`(?<=[\s>(\'<]|^)(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@!,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'
 						), array(
 							'[url]$1[/url]',
 							'[ftp]$1[/ftp]',
@@ -466,7 +473,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				// See the comment at the end of the big loop - just eating whitespace ;)
 				if ($tag['block_level'] && substr($message, $pos, 4) === '<br>')
 					$message = substr($message, 0, $pos) . substr($message, $pos + 4);
-				if (($tag['trim'] === 'outside' || $tag['trim'] === 'both') && preg_match('~(<br>|&nbsp;|\s)*~', substr($message, $pos), $matches) === 1)
+				if (($tag['trim'] === 'outside' || $tag['trim'] === 'both') && preg_match('~^(?:<br>|&nbsp;|\s)+~', substr($message, $pos), $matches) === 1)
 					$message = substr($message, 0, $pos) . substr($message, $pos + strlen($matches[0]));
 			}
 
@@ -722,7 +729,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				// Trim or eat trailing stuff... see comment at the end of the big loop.
 				if (!empty($open_tags[$i]['block_level']) && substr($message, $pos, 4) === '<br>')
 					$message = substr($message, 0, $pos) . substr($message, $pos + 4);
-				if (!empty($open_tags[$i]['trim']) && ($tag['trim'] === 'outside' || $tag['trim'] === 'both') && preg_match('~(<br>|&nbsp;|\s)*~', substr($message, $pos), $matches) === 1)
+				if (!empty($open_tags[$i]['trim']) && ($tag['trim'] === 'outside' || $tag['trim'] === 'both') && preg_match('~^(?:<br>|&nbsp;|\s)+~', substr($message, $pos), $matches) === 1)
 					$message = substr($message, 0, $pos) . substr($message, $pos + strlen($matches[0]));
 
 				array_pop($open_tags);
@@ -941,8 +948,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		if (!empty($tag['block_level']) && substr($message, $pos + 1, 4) === '<br>')
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 5);
 
-		// Are we trimming outside this tag?
-		if (($tag['trim'] === 'inside' || $tag['trim'] === 'both') && preg_match('~(<br>|&nbsp;|\s)*~', substr($message, $pos + 1), $matches) === 1)
+		// Are we trimming inside this tag?
+		if (($tag['trim'] === 'inside' || $tag['trim'] === 'both') && preg_match('~^(?:<br>|&nbsp;|\s)+~', substr($message, $pos + 1), $matches) === 1)
 			$message = substr($message, 0, $pos + 1) . substr($message, $pos + 1 + strlen($matches[0]));
 	}
 
@@ -975,8 +982,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		// Do the actual embedding
 		if (!empty($has_link))
 		{
-			if (!function_exists('aeva_parse_bbc2'))
-				loadSource('media/Aeva-Embed');
+			loadSource('media/Aeva-Embed');
 			aeva_parse_bbc2($message, $smileys, $cache_id);
 		}
 
@@ -987,7 +993,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// Deal with footnotes... They're more complex, so can't be parsed like other bbcodes.
 	if (stripos($message, '[nb]') !== false && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'jseditor') && (empty($parse_tags) || in_array('nb', $parse_tags)))
 	{
-		preg_match_all('~\s*\[nb]((?>[^[]|\[(?!/?nb])|(?R))+?)\[/nb\]~i', $message, $matches, PREG_SET_ORDER);
+		preg_match_all('~\[nb]((?>[^[]|\[(?!/?nb])|(?R))+?)\[/nb\]~i', $message, $matches, PREG_SET_ORDER);
 
 		if (count($matches) > 0)
 		{

@@ -1725,10 +1725,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	elseif (!empty($_REQUEST['theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
 	{
 		$th = explode('_', $_REQUEST['theme']);
-		$id_theme = (int) $th[0];
-		$skin = isset($th[1]) ? base64_decode($th[1]) : '';
-		$_SESSION['id_theme'] = $id_theme;
-		$_SESSION['skin'] = $skin;
+		$id_theme = $_SESSION['id_theme'] = (int) $th[0];
+		$skin = $_SESSION['skin'] = isset($th[1]) ? base64_decode($th[1]) : '';
 	}
 	// The theme was specified by REQUEST... previously.
 	elseif (!empty($_SESSION['id_theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
@@ -2092,10 +2090,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			foreach ($theme['macros'] as $name => $contents)
 			{
 				if (is_array($contents))
-					if ($version = hasBrowser($contents))
-						$contents = $contents[$version];
-					else
-						$contents = isset($contents['else']) ? $contents['else'] : '{body}';
+					$contents = ($version = hasBrowser($contents)) !== false ? $contents[$version] : (isset($contents['else']) ? $contents['else'] : '{body}');
 
 				$context['macros'][$name] = array(
 					'has_if' => strpos($contents, '<if:') !== false,
@@ -2357,9 +2352,14 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 function loadSource($source_name)
 {
 	global $sourcedir;
+	static $done = array();
 
 	foreach ((array) $source_name as $file)
-		require_once($sourcedir . '/' . $file . '.php');
+		if (!isset($done[$file]))
+		{
+			require_once($sourcedir . '/' . $file . '.php');
+			$done[$file] = true;
+		}
 }
 
 /**

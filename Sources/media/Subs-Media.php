@@ -293,10 +293,13 @@ function aeva_getAlbumParents($current, $master, $simple = false)
 	}
 
 	$alb = $albums = array();
-	$req = 'SELECT a.id_album, a.parent' . ($simple ? '' : ', a.name, a.hidden, a.album_of') . '
-			FROM {db_prefix}media_albums AS a
-			WHERE a.master = {int:master}';
-	$request = wesql::query($req, array('master' => $master));
+	$request = wesql::query('
+		SELECT a.id_album, a.parent' . ($simple ? '' : ', a.name, a.hidden, a.album_of') . '
+		FROM {db_prefix}media_albums AS a
+		WHERE a.master = {int:master}',
+		array('master' => $master)
+	);
+
 	while ($row = wesql::fetch_assoc($request))
 		$alb[$row['id_album']] = $row;
 	if (!empty($alb))
@@ -330,11 +333,13 @@ function aeva_getAlbumChildren($current)
 {
 	$albums = array();
 
-	$req = 'SELECT a.id_album
-			FROM {db_prefix}media_albums AS a
-			WHERE a.parent = {int:album}
-			LIMIT 1';
-	$request = wesql::query($req, array('album' => $current));
+	$request = wesql::query('
+		SELECT a.id_album
+		FROM {db_prefix}media_albums AS a
+		WHERE a.parent = {int:album}
+		LIMIT 1',
+		array('album' => $current)
+	);
 
 	while ($row = wesql::fetch_assoc($request))
 		$albums = array_merge($albums, (array) $row['id_album'], aeva_getAlbumChildren($row['id_album']));
@@ -440,13 +445,13 @@ function aeva_createAlbumSubdir($album_id)
 	$path_to_album = '/' . $row['directory'];
 	wesql::free_result($result);
 
-	$result = wesql::query("
+	$result = wesql::query('
 		SELECT val2
 		FROM {db_prefix}media_variables
 		WHERE val1 = {int:album_id}
 		AND type = {string:type}
 		ORDER BY id DESC
-		LIMIT 1",
+		LIMIT 1',
 		array(
 			'album_id' => $album_id,
 			'type' => 'dir',
@@ -2863,8 +2868,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 		$is_embed = !$is_image && $i['type'] == 'embed' && !empty($settings['embed_enabled']);
 		if ($is_embed)
 		{
-			if (!function_exists('aeva_main'))
-				loadSource('media/Aeva-Embed');
+			loadSource('media/Aeva-Embed');
 			$match = preg_replace(array('~\[url=([^]]+)]([^[]+)\[/url]~', '~\[url]([^[]+)\[/url]~'), array('<a href="$1">$2</a>', '<a href="$1"></a>'), $i['embed_url']);
 			$match = strpos($match, '://') !== false ? '<a href="' . $match . '">Test</a>' : $match;
 			$match = aeva_main($match);

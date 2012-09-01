@@ -467,8 +467,7 @@ function ob_sessrewrite($buffer)
 			if (count($uncached_urls) != 0)
 			{
 				// Run each filter callback function on each URL
-				if (!function_exists('pretty_filter_topics'))
-					loadSource('PrettyUrls-Filters');
+				loadSource('PrettyUrls-Filters');
 
 				foreach ($settings['pretty_filters'] as $id => $enabled)
 				{

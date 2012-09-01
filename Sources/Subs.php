@@ -158,8 +158,7 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
 		// Insert the new subject.
 		if ($parameter2 !== null)
 		{
-			if (!function_exists('pretty_generate_url'))
-				loadSource('Subs-PrettyUrls');
+			loadSource('Subs-PrettyUrls');
 			pretty_update_topic($parameter2, $parameter1);
 
 			$parameter1 = (int) $parameter1;
