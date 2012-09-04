@@ -450,7 +450,7 @@ function template_browse()
 	window.weVersion = "', $context['forum_version'], '";');
 
 	if (empty($settings['disable_wedge_js']))
-		add_js_file($scripturl . '?action=viewremote;filename=latest-packages.js', true);
+		add_js_file($scripturl . '?action=viewremote;filename=latest-plugins.js', true);
 
 	add_js('
 	if (typeof window.weLatestPackages != "undefined")

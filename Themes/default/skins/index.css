@@ -124,28 +124,6 @@ header, footer, aside, section, article, nav
 	table-layout: fixed
 	padding-top: 6px
 
-#responsive
-	#edge
-		clear: both
-		display: block
-	#sidebar
-		display: block
-		box-sizing: border-box
-		width: auto
-		background: $window_bg
-		border-top: 1px solid #bdb5b5
-		margin: 0 -30px -20px
-		section extends .inline-block
-			width: $sidebar-width
-			vertical-align: top
-			padding: 0 8px 8px
-			margin: 8px
-			header
-				background: none
-	#main
-		display: block
-		padding: 4px 0 12px
-
 #sidebar
 	display: table-cell
 	vertical-align: top
@@ -765,9 +743,7 @@ input[type=file]
 // For anything else than IE6...
 .menu > li
 	display: inline-block
-	// Until white-space-collapsing is finalized...
-	margin: 0 0 0 -3px
-	padding: 0
+	margin, padding: 0
 	float: none
 
 .menu li li
@@ -1680,7 +1656,7 @@ $mono_font = Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New
 $subject_font = "PT Sans", "Segoe UI", Optima, Arial, sans-serif
 
 $post_font_size = 100%/133%
-$post_font = Arial, sans-serif
+$post_font = $main_font
 $blog_font_size = 100%/140%
 $blog_font = $post_font
 

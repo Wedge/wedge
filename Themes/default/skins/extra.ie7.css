@@ -197,10 +197,6 @@ input.cancel
 table.thought_list td:hover .thought_actions
 	display: inline-block
 
-// IE7 needs inline-block to be reset to inline separately... How annoying.
-.inline-block
-	display: inline
-
 // Without this, the clear: both on dt will fail.
 dl.settings dd
 	float: none

@@ -47,7 +47,7 @@ function template_error_log()
 				', $txt['errlog'], '
 			</we:title>
 		</div>
-		<table class="table_grid w100 cs1" id="error_log">';
+		<table class="table_grid cs1" id="error_log">';
 
 	if (empty($context['errors']))
 	{
@@ -103,7 +103,7 @@ function template_error_log()
 				<td rowspan="2" class="checkbox_column">
 					<input type="checkbox" name="delete[]" value="', $error['id'], '">
 				</td>
-				<td class="half_width">
+				<td class="w50">
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
 					<strong>', $error['member']['link'], '</strong><br>';
 		if (!empty($error['member']['display_ip']))
@@ -113,7 +113,7 @@ function template_error_log()
 
 		echo '
 				</td>
-				<td class="half_width">
+				<td class="w50">
 					<a href="', $scripturl, '?action=admin;area=logs;sa=errorlog', $context['sort_direction'] == 'down' ? '' : ';desc', $context['has_filter'] ? $context['filter']['href'] : '', '" title="', $txt['reverse_direction'], '">
 						<img src="', $theme['images_url'], '/sort_', $context['sort_direction'], '.gif" alt="', $txt['reverse_direction'], '">
 					</a>
@@ -177,7 +177,7 @@ function template_intrusion_log()
 				', $txt['log_intrusion'], '
 			</we:title>
 		</div>
-		<table class="table_grid w100 cs1" id="error_log">
+		<table class="table_grid cs1" id="error_log">
 			<tr>
 				<td colspan="3" class="windowbg">
 					&nbsp;&nbsp;', $txt['apply_filter_of_type'], ':
@@ -222,7 +222,7 @@ function template_intrusion_log()
 				<td rowspan="2" class="checkbox_column">
 					<input type="checkbox" name="delete[]" value="', $error['id'], '">
 				</td>
-				<td class="half_width">
+				<td class="w50">
 					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? ';desc' : '', ';filter=id_member;value=', $error['member']['id'], '" title="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"><img src="', $theme['images_url'], '/filter.gif" alt="', $txt['apply_filter'], ': ', $txt['filter_only_member'], '"></a>
 					<strong>', $error['member']['link'], '</strong><br>';
 
@@ -233,7 +233,7 @@ function template_intrusion_log()
 
 		echo '
 				</td>
-				<td class="half_width">
+				<td class="w50">
 					<a href="', $scripturl, '?action=admin;area=logs;sa=intrusionlog', $context['sort_direction'] == 'down' ? '' : ';desc', $context['has_filter'] ? $context['filter']['href'] : '', '" title="', $txt['reverse_direction'], '">
 						<img src="', $theme['images_url'], '/sort_', $context['sort_direction'], '.gif" alt="', $txt['reverse_direction'], '">
 					</a>

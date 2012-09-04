@@ -40,7 +40,7 @@ ol.search_results
 		border-bottom: 1px dotted #666
 	dd
 		font-size: 8pt
-		line-height: 1.25em
+		line-height: 1.25
 		padding: 0
 		margin: 1em
 
@@ -166,7 +166,7 @@ ul.packages li
 	font-family: $mono_font
 	font-size: x-small
 	background: #eef
-	line-height: 1.5em
+	line-height: 1.5
 	padding: 3px 1em
 	overflow: auto
 	white-space: pre
@@ -462,20 +462,17 @@ ul.moderation_notes
 	width: 100%
 	td
 		padding: 4px 8px
-		line-height: 150%
+		line-height: 1.5
 		img
 			vertical-align: middle
-	td.half_width
-		width: 50%
 	td.checkbox_column
 		width: 15px
 		vertical-align: top
-		text-align: center
 	td div.marginleft
 		margin: 0 0 0 1ex
 
 #fileviewer
-	font: 9pt/1.2em $mono_font
+	font: 9pt/1.2 $mono_font
 	box-sizing: border-box
 	margin: -16px
 	padding: 4px

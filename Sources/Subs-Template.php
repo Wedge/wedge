@@ -180,19 +180,20 @@ function ob_sessrewrite($buffer)
 
 	if (!empty($context['delayed_events']))
 	{
-		$thing = 'var eves = {';
+		$thing = 'eves = {';
 		foreach ($context['delayed_events'] as $eve)
 			$thing .= '
 		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
 		$thing = substr($thing, 0, -1) . '
 	};';
-		if (empty($settings['minify_html']))
-			$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
-		else
-			$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!--insert inline events here-->'), 32);
 	}
 	else
-		$buffer = str_replace(empty($settings['minify_html']) ? "\n\t<!-- insert inline events here -->" : "\n\t<!--insert inline events here-->", '', $buffer);
+		$thing = 'eves = 1;';
+
+	if (empty($settings['minify_html']))
+		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
+	else
+		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!--insert inline events here-->'), 32);
 
 	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))

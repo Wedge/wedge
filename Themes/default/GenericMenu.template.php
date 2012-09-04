@@ -49,13 +49,11 @@ function template_generic_menu_sidebar()
 			if (empty($area['label']))
 			{
 				if (empty($area))
-					echo '
-			<li class="separator"><a><hr></a></li>';
+					echo '<li class="separator"><a><hr></a></li>';
 				continue;
 			}
 
-			echo '
-			<li>';
+			echo '<li>';
 
 			// Is this the current area, or just some area?
 			if ($id == $menu_context['current_area'])
@@ -100,10 +98,8 @@ function template_generic_menu_dropdown()
 		if (empty($section['id']))
 			continue;
 
-		echo '
-		<li', $section['id'] == $menu_context['current_section'] ? ' class="chosen"' : '', '>
-			<h4>', $section['title'], !empty($section['notice']) ? '<div class="note">' . $section['notice'] . '</div>' : '', '</h4>', !empty($section['areas']) ? '
-			<ul>' : '';
+		echo '<li', $section['id'] == $menu_context['current_section'] ? ' class="chosen"' : '', '><h4>', $section['title'],
+			!empty($section['notice']) ? '<div class="note">' . $section['notice'] . '</div>' : '', '</h4>', !empty($section['areas']) ? '<ul>' : '';
 
 		// For every area of this section show a link to that area (bold if it's currently selected.)
 		foreach ($section['areas'] as $id => $area)
@@ -112,49 +108,40 @@ function template_generic_menu_dropdown()
 			if (empty($area['label']))
 			{
 				if (empty($area))
-					echo '
-				<li class="separator"><a><hr></a></li>';
+					echo '<li class="separator"><a><hr></a></li>';
 				continue;
 			}
 
 			$class = ($id == $menu_context['current_area'] ? ' active' : '') . (!empty($area['subsections']) ? ' subsection' : '');
 			$class = empty($class) ? '' : ' class="' . ltrim($class) . '"';
 
-			echo '
-				<li', $class, '><a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id), $menu_context['extra_parameters'], '">',
+			echo '<li', $class, '><a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id), $menu_context['extra_parameters'], '">',
 					!empty($area['notice']) ? '<strong>' . $area['notice'] . '</strong>' : '', $area['icon'], $area['label'], $end_a;
 
 			// Is there any subsections?
 			if (!empty($area['subsections']))
 			{
-				echo '
-					<ul>';
+				echo '<ul>';
 
 				foreach ($area['subsections'] as $sa => $sub)
 				{
 					if (empty($sub))
 					{
 						if (is_numeric($sa))
-							echo '
-						<li class="separator"><a><hr></a></li>';
+							echo '<li class="separator"><a><hr></a></li>';
 						continue;
 					}
 
 					$url = isset($sub['url']) ? $sub['url'] : (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id) . ';sa=' . $sa;
 
-					echo '
-						<li', !empty($sub['selected']) ? ' class="active"' : '', '><a href="', $url, $menu_context['extra_parameters'], '">', $sub['label'], '</a></li>';
+					echo '<li', !empty($sub['selected']) ? ' class="active"' : '', '><a href="', $url, $menu_context['extra_parameters'], '">', $sub['label'], '</a></li>';
 				}
 
-				echo '
-					</ul>
-				';
+				echo '</ul>';
 			}
 			echo '</li>';
 		}
-		echo !empty($section['areas']) ? '
-			</ul>' : '', '
-		</li>';
+		echo !empty($section['areas']) ? '</ul>' : '', '</li>';
 	}
 
 	echo '
@@ -260,10 +247,9 @@ function template_show_generic_tabs(&$tabs, &$menu_context = array(), $class = '
 	// If you're showing custom tabs, make sure to provide 'url' and 'label' for each tab.
 	foreach ($tabs as $sa => $tab)
 		if (!empty($tab) && empty($tab['disabled']) && isset($tab['label']))
-			echo '
-		<li', !empty($tab['is_selected']) ? ' class="chosen"' : '', '>
-			<h4><a href="', isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa, isset($menu_context['extra_parameters']) ? $menu_context['extra_parameters'] : '', '">', $tab['label'], '</a></h4>
-		</li>';
+			echo '<li', !empty($tab['is_selected']) ? ' class="chosen"' : '', '><h4><a href="',
+				isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa,
+				isset($menu_context['extra_parameters']) ? $menu_context['extra_parameters'] : '', '">', $tab['label'], '</a></h4></li>';
 
 	// the end of tabs
 	echo '

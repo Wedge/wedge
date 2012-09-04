@@ -69,17 +69,22 @@ String.prototype.wereplace = function (oReplacements)
 	return sResult;
 };
 
-// alert() alternative
-function say(string, callback)
-{
-	reqWin('', 350, string, 2, callback);
-}
-// confirm() alternative
-var confirm_var = false;
-function ask(string, e, callback)
-{
-	return confirm_var || reqWin('', 350, string, 1, callback, e);
-}
+/*
+	Because these functions aren't perfect, they aren't used in Wedge for now,
+	so we might as well comment out the code. But our plans are to use them ASAP.
+
+	// alert() alternative
+	function say(string, callback)
+	{
+		reqWin('', 350, string, 2, callback);
+	}
+	// confirm() alternative
+	var confirm_var = false;
+	function ask(string, e, callback)
+	{
+		return confirm_var || reqWin('', 350, string, 1, callback, e);
+	}
+*/
 
 /*
 	Open a new popup window. The first two params are for generic pop-ups, while the rest is for confirm/alert boxes.

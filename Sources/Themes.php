@@ -591,7 +591,8 @@ function PickTheme()
 		if ($u === null || !allowedTo('admin_forum'))
 		{
 			wedge_update_skin($user_info['id'], $id, $css);
-			redirectexit('action=skin');
+			// Redirect to the last page visited, if available -- useful for a skin selector :)
+			redirectexit(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'action=skin');
 		}
 
 		// For everyone.

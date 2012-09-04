@@ -324,7 +324,7 @@ function LockVoting()
 	else
 		$voting_locked = '1';
 
-	// Lock!  *Poof* - no one can vote.
+	// Lock! *Poof* - no one can vote.
 	wesql::query('
 		UPDATE {db_prefix}polls
 		SET voting_locked = {int:voting_locked}
@@ -389,7 +389,7 @@ function EditPoll()
 	loadSource('Subs-Members');
 	$groupsAllowedVote = groupsAllowedTo('poll_vote', $board);
 
-	// Want to make sure before you actually submit?  Must be a lot of options, or something.
+	// Want to make sure before you actually submit? Must be a lot of options, or something.
 	if (isset($_POST['preview']))
 	{
 		$question = westr::htmlspecialchars($_POST['question']);
@@ -453,7 +453,7 @@ function EditPoll()
 				$totalPostOptions++;
 
 		$count = 1;
-		// If an option exists, update it.  If it is new, add it - but don't reuse ids!
+		// If an option exists, update it. If it is new, add it - but don't reuse ids!
 		foreach ($_POST['options'] as $id => $label)
 		{
 			$label = westr::htmlspecialchars($label);
@@ -792,7 +792,7 @@ function EditPoll2()
 		);
 	}
 
-	// Get all the choices.  (no better way to remove all emptied and add previously non-existent ones.)
+	// Get all the choices. (No better way to remove all emptied and add previously non-existent ones.)
 	$request = wesql::query('
 		SELECT id_choice
 		FROM {db_prefix}poll_choices
@@ -812,10 +812,10 @@ function EditPoll2()
 		// Make sure the key is numeric for sanity's sake.
 		$k = (int) $k;
 
-		// They've cleared the box.  Either they want it deleted, or it never existed.
+		// They've cleared the box. Either they want it deleted, or it never existed.
 		if (trim($option) == '')
 		{
-			// They want it deleted.  Bye.
+			// They want it deleted. Bye.
 			if (in_array($k, $choices))
 				$delete_options[] = $k;
 
@@ -826,7 +826,7 @@ function EditPoll2()
 		// Dress the option up for its big date with the database.
 		$option = westr::htmlspecialchars($option);
 
-		// If it's already there, update it.  If it's not... add it.
+		// If it's already there, update it. If it's not... add it.
 		if (in_array($k, $choices))
 			wesql::query('
 				UPDATE {db_prefix}poll_choices
@@ -852,7 +852,7 @@ function EditPoll2()
 			);
 	}
 
-	// I'm sorry, but... well, no one was choosing you.  Poor options, I'll put you out of your misery.
+	// I'm sorry, but... well, no one was choosing you. Poor options, I'll put you out of your misery.
 	if (!empty($delete_options))
 	{
 		wesql::query('

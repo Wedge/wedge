@@ -1353,3 +1353,37 @@ div.top_row dd
 
 #mlist table tbody td.windowbg2
 	text-align: center
+
+/* Media queries. Responsive design, i.e.
+   mobile-friendly rules, is done here.
+------------------------------------------------- */
+
+@media $responsive
+	body
+		#edge
+			clear: both
+			display: block
+		#sidebar
+			display: block
+			box-sizing: border-box
+			width: auto
+			background: $window_bg
+			border-top: 1px solid #bdb5b5
+			margin: 0 -30px -20px
+			// We can't inherit anything inside a @media query,
+			// so we have to reproduce .inline-block directly here.
+			section
+				display: inline-block
+				mixin: ie-inline-block
+				width: $sidebar-width
+				vertical-align: top
+				padding: 0 8px 8px
+				margin: 8px
+				header
+					background: none
+		#main
+			display: block
+			padding: 4px 0 12px
+
+$responsive_max_width = 1000px
+$responsive = "all and (max-width: $responsive_max_width)"

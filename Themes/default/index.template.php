@@ -540,21 +540,6 @@ function template_body_after()
 {
 	global $context, $theme, $options, $txt, $settings, $footer_coding;
 
-	// IE 6/7 can't resize properly. As we say in France: no arms, no chocolate.
-	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'])
-		echo '
-<script><!-- // --><![CDATA[
-	weres = function () {};
-// ]]></script>';
-	else
-		echo '
-<script><!-- // --><![CDATA[
-	(weres = function () {
-		var d=document,b=d.body,m=d.getElementById("main"),w=m?m.clientWidth:0;
-		b.id=w&&w<728?"responsive":w>=969?"":b.id;
-	})();
-// ]]></script>';
-
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// JavaScript section -- files to include, main vars and functions to start.
 	// Don't modify the HTML comments, as they're placeholders for Wedge.
@@ -605,7 +590,6 @@ function template_body_after()
 	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '
 	we_board = ' . $context['current_board'] . ';', '
 
-	$(window).resize(weres).resize();
 	$("#main_menu").menu();', $context['show_pm_popup'] ? '
 
 	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
@@ -677,57 +661,50 @@ function template_menu()
 	global $context, $theme, $options, $txt;
 
 	echo '
-	<div id="navi"><ul id="main_menu" class="css menu">';
+	<div id="navi">
+		<ul id="main_menu" class="css menu">';
 
 	foreach ($context['menu_items'] as $act => $item)
 	{
 		$class = ($item['active_item'] ? ' chosen' : '') . (empty($item['sub_items']) ? ' nodrop' : '');
 
-		echo '
-		<li', $class ? ' class="' . ltrim($class) . '"' : '', '>
-			<span id="m_' . $act . '"></span>
-			<h4><a href="', $item['href'], '"', !empty($item['nofollow']) ? ' rel="nofollow"' : '', '>',
-			$item['title'], !empty($item['notice']) ? '<span class="note' . ($act === 'media' ? '' : ($act === 'pm' ? 'nice' : 'warn')) . '">' . $item['notice'] . '</span>' : '', '</a></h4>';
+		echo '<li', $class ? ' class="' . ltrim($class) . '"' : '', '><span id="m_' . $act . '"></span><h4><a href="', $item['href'], '"',
+			!empty($item['nofollow']) ? ' rel="nofollow"' : '', '>', $item['title'],
+			!empty($item['notice']) ? '<span class="note' . ($act === 'media' ? '' : ($act === 'pm' ? 'nice' : 'warn')) . '">' . $item['notice'] . '</span>' : '',
+			'</a></h4>';
 
 		if (!empty($item['sub_items']))
 		{
-			echo '
-			<ul>';
+			echo '<ul>';
 
 			foreach ($item['sub_items'] as $sub_item)
 			{
 				if (empty($sub_item))
 				{
-					echo '
-				<li class="separator"><a><hr></a></li>';
+					echo '<li class="separator"><a><hr></a></li>';
 					continue;
 				}
-				echo '
-				<li><a href="', $sub_item['href'], '">',
+				echo '<li><a href="', $sub_item['href'], '">',
 				$sub_item['title'], !empty($sub_item['notice']) ? '<span class="note">' . $sub_item['notice'] . '</span>' : '', '</a>';
 
 				// 3rd-level menus
 				if (!empty($sub_item['sub_items']))
 				{
-					echo '
-					<ul>';
+					echo '<ul>';
 
 					foreach ($sub_item['sub_items'] as $subsub_item)
 						echo '<li><a href="', $subsub_item['href'], '">', $subsub_item['title'], '</a></li>';
 
-					echo '</ul>
-				';
+					echo '</ul>';
 				}
 				echo '</li>';
 			}
-			echo '
-			</ul>';
+			echo '</ul>';
 		}
-		echo '
-		</li>';
+		echo '</li>';
 	}
-	echo '
-	</ul></div>';
+	echo '</ul>
+	</div>';
 }
 
 // The same footer area...
