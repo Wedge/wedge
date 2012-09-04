@@ -120,6 +120,28 @@ function Memberlist()
 		$context['colspan'] += isset($column['colspan']) ? $column['colspan'] : 1;
 	}
 
+	// Are there any custom fields for the memberlist? (Ordering as per the member options code!)
+	$context['custom_fields'] = array();
+	$request = wesql::query('
+		SELECT col_name, field_name
+		FROM {db_prefix}custom_fields
+		WHERE show_mlist = {int:show_mlist}',
+		array(
+			'show_mlist' => 1,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+	{
+		// We get this both for the main column list and for our own reference for later.
+		$context['custom_fields'][$row['col_name']] = array(
+			'label' => $row['field_name'],
+			'no_sort' => true,
+		);
+		$context['colspan']++;
+	}
+	if (!empty($context['custom_fields']))
+		$context['columns'] = array_insert($context['columns'], 'id_group', $context['custom_fields']);
+
 	// Aesthetic stuff.
 	end($context['columns']);
 	$context['columns'][key($context['columns'])]['class'] = 'last_th';
@@ -244,6 +266,14 @@ function MLAll()
 	// Sort out the column information.
 	foreach ($context['columns'] as $col => $column_details)
 	{
+		if (!empty($column_details['no_sort']))
+		{
+			$context['columns'][$col]['href'] = '';
+			$context['columns'][$col]['link'] = $column_details['label'];
+			$context['columns'][$col]['selected'] = false;
+			continue;
+		}
+
 		$context['columns'][$col]['href'] = $scripturl . '?action=mlist;sort=' . $col . ';start=0';
 
 		if ((!isset($_REQUEST['desc']) && $col == $_REQUEST['sort']) || ($col != $_REQUEST['sort'] && !empty($column_details['default_sort_rev'])))
@@ -545,10 +575,14 @@ function printMemberListRows($request)
 	$context['members'] = array();
 	foreach ($members as $member)
 	{
-		if (!loadMemberContext($member))
+		if (!loadMemberContext($member, true))
 			continue;
 
+		// We need to do some work on the custom fields, because we need to be selective about it.
 		$context['members'][$member] = $memberContext[$member];
+		foreach ($context['members'][$member]['custom_fields'] as $field)
+			$context['members'][$member]['mlist_cf'][$field['colname']] = $field['value'];
+
 		$context['members'][$member]['post_percent'] = round(($context['members'][$member]['real_posts'] * 100) / $most_posts);
 		$context['members'][$member]['registered_date'] = strftime('%Y-%m-%d', $context['members'][$member]['registered_timestamp']);
 	}

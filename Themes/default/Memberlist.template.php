@@ -82,6 +82,11 @@ function template_main()
 			echo '
 					<td>', $member['website']['url'] != '' ? '<a href="' . $member['website']['url'] . '" target="_blank" class="new_win"><img src="' . $theme['images_url'] . '/www.gif" alt="' . $member['website']['title'] . '" title="' . $member['website']['title'] . '"></a>' : '', '</td>';
 
+		// Custom Fields
+		foreach ($context['custom_fields'] as $field_name => $details)
+			echo '
+					<td>', !empty($member['mlist_cf'][$field_name]) ? $member['mlist_cf'][$field_name] : '', '</td>';
+
 		// Group and date.
 		echo '
 					<td>', empty($member['group']) ? $member['post_group'] : $member['group'], '</td>

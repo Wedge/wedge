@@ -795,8 +795,8 @@ function EditCustomProfiles()
 		$request = wesql::query('
 			SELECT
 				id_field, col_name, field_name, field_desc, field_type, field_length, field_options,
-				show_reg, show_display, show_profile, private, guest_access, active, default_value,
-				can_search, bbc, mask, enclose, placement
+				show_reg, show_display, show_profile, show_mlist, private, guest_access, active,
+				default_value, can_search, bbc, mask, enclose, placement
 			FROM {db_prefix}custom_fields
 			WHERE id_field = {int:current_field}',
 			array(
@@ -820,6 +820,7 @@ function EditCustomProfiles()
 				'colname' => $row['col_name'],
 				'profile_area' => $row['show_profile'] === 'theme' ? 'options' : $row['show_profile'],
 				'reg' => $row['show_reg'],
+				'mlist' => $row['show_mlist'],
 				'display' => $row['show_display'],
 				'type' => $row['field_type'],
 				'max_length' => $row['field_length'],
@@ -850,6 +851,7 @@ function EditCustomProfiles()
 			'desc' => '',
 			'profile_area' => 'forumprofile',
 			'reg' => false,
+			'mlist' => true,
 			'display' => false,
 			'type' => 'text',
 			'max_length' => 255,
@@ -989,6 +991,7 @@ function EditCustomProfiles()
 
 		// Checkboxes...
 		$show_reg = isset($_POST['reg']) ? (int) $_POST['reg'] : 0;
+		$show_mlist = isset($_POST['mlist']) ? 1 : 0;
 		$show_display = isset($_POST['display']) ? 1 : 0;
 		$bbc = isset($_POST['bbc']) ? 1 : 0;
 		$show_profile = $_POST['profile_area'];
@@ -1143,7 +1146,8 @@ function EditCustomProfiles()
 					field_name = {string:field_name}, field_desc = {string:field_desc},
 					field_type = {string:field_type}, field_length = {int:field_length},
 					field_options = {string:field_options}, show_reg = {int:show_reg},
-					show_display = {int:show_display}, show_profile = {string:show_profile},
+					show_display = {int:show_display}, show_mlist = {int:show_mlist},
+					show_profile = {string:show_profile},
 					private = {int:private}, guest_access = {int:guest_access},
 					active = {int:active}, default_value = {string:default_value},
 					can_search = {int:can_search}, bbc = {int:bbc}, mask = {string:mask},
@@ -1152,6 +1156,7 @@ function EditCustomProfiles()
 				array(
 					'field_length' => $field_length,
 					'show_reg' => $show_reg,
+					'show_mlist' => $show_mlist,
 					'show_display' => $show_display,
 					'private' => $private,
 					'guest_access' => $guest_access,
@@ -1192,14 +1197,14 @@ function EditCustomProfiles()
 				array(
 					'col_name' => 'string', 'field_name' => 'string', 'field_desc' => 'string',
 					'field_type' => 'string', 'field_length' => 'string', 'field_options' => 'string',
-					'show_reg' => 'int', 'show_display' => 'int', 'show_profile' => 'string',
+					'show_reg' => 'int', 'show_mlist', 'show_display' => 'int', 'show_profile' => 'string',
 					'private' => 'int', 'guest_access' => 'int', 'active' => 'int', 'default_value' => 'string',
 					'can_search' => 'int', 'bbc' => 'int', 'mask' => 'string', 'enclose' => 'string', 'placement' => 'int',
 				),
 				array(
 					$colname, $_POST['field_name'], $_POST['field_desc'],
 					$_POST['field_type'], $field_length, $field_options,
-					$show_reg, $show_display, $show_profile,
+					$show_reg, $show_mlist, $show_display, $show_profile,
 					$private, $guest_access, $active, $default,
 					$can_search, $bbc, $mask, $enclose, $placement,
 				),
@@ -1208,6 +1213,7 @@ function EditCustomProfiles()
 		}
 
 		// As there's currently no option to priorize certain fields over others, let's order them alphabetically.
+		// Remember to update the member list if we change this.
 		wesql::query('
 			ALTER TABLE {db_prefix}custom_fields
 			ORDER BY field_name',
