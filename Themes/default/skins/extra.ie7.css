@@ -15,6 +15,26 @@
 		display: inline
 
 
+/* The dropdown menus
+------------------------------------------------------- */
+li.hove
+	background: #e2ebe7
+
+li.separator
+	a
+		padding: 0
+	hr
+		margin: 0
+		width: 80px
+
+#context_menus h4:hover
+	background-color: #ebe7e2
+
+// Annoying hack...
+.menu > li
+	display: inline
+
+
 /* Overrides for the messageindex template
 ------------------------------------------------------- */
 #messageindex table
@@ -56,6 +76,7 @@
 	float: left
 	display: block
 	width: 47%
+
 
 /* Overrides for the profile template
 ------------------------------------------------------- */
@@ -152,30 +173,6 @@ ul.actions
 .table_list a.collapse
 	width: 14px
 
-h4.hove
-	background: #e2ebe7 url($images/menu.gif) no-repeat 98% 4px
-
-li.hove
-	background: #e2ebe7
-
-li.separator
-	a
-		padding: 0 8px
-	hr
-		position: absolute
-		margin: 6px 0 0 0
-		width: 16px
-		display: block
-
-#context_menus h4:hover
-	background-color: #ebe7e2
-
-// Annoying hacks...
-.menu
-	> li
-		display: inline
-		margin-left: 2px
-
 input[type=submit]
 	overflow: visible
 
@@ -213,3 +210,9 @@ dl.settings dd
 
 .two-columns
 	width: 49.1%
+
+// Best we can do with table-heavy IE7 is to remove the padding around the window...
+// We could instead hide the sidebar (#sidebar display: none), but people wouldn't like it.
+@media $responsive reset
+	body
+		padding: 0

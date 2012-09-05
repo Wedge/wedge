@@ -881,6 +881,9 @@ class wecss_nesting extends wecss
 				// !! @todo: should this only check for @media and @keyframes, or actually give the same treatment to all @ commands?
 				if (stripos($node['selector'], '@media') === 0 || stripos($node['selector'], '@keyframes') === 0)
 				{
+					// Are we already in a @keyword block? Then close it first...
+					if (!empty($standard_nest))
+						$css .= '}';
 					$standard_nest = $node['selector'];
 					$css .= $node['selector'] . ' {';
 					continue;

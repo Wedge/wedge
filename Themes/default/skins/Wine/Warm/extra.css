@@ -15,15 +15,16 @@ em
 #offside
 	display: table-cell
 
-#responsive
-	#sidebar
-		background: $side_bg
-		text-align: left
-		.column > *
-			float: left
-			width: 240px
-	#offside
-		display: block
+@media $responsive
+	body
+		#sidebar
+			background: $side_bg
+			text-align: left
+			.column > *
+				float: left
+				width: 240px
+		#offside
+			display: block
 
 #content div.frame
 	margin: 0

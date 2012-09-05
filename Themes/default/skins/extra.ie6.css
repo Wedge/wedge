@@ -2,6 +2,7 @@
 .clearfix
     zoom: 1
 
+
 /* The dropdown menus
 ------------------------------------------------------- */
 .menu
@@ -24,18 +25,10 @@
 
 	li ul
 		margin-top: 0
-	li.subsection a extends .arrows
-		background-position: 98% -46px
-		padding: 6px 24px 6px 8px
-	li.subsection li a
-		background: none
 	strong
 		float: none
 		padding-top, padding-bottom: 0
-		background-color: #c74c55 !important
-
-.menu li li.menu-top
-	border: 0
+		background-color: #c74c55
 
 li.hove
 	background-color: #e2ebe7
@@ -43,12 +36,10 @@ li.hove
 li.separator
 	background: none
 	a
-		padding: 0 8px
+		padding: 0
 	hr
-		position: absolute
-		margin: 6px 0 0 0
-		width: 16px
-		display: block
+		margin: 0
+		width: 80px
 
 // Sub-area non-dropdown menus in the admin area
 #context_menus
@@ -82,7 +73,7 @@ li.separator
 // Generic lists header
 // Side paddings must NOT be defined here.
 .table_grid thead th
-	padding-top, padding-bottom: 0 !important
+	padding-top, padding-bottom: 0
 
 
 /* Overrides for the message index template
@@ -196,7 +187,7 @@ li.separator
 		border: 0
 
 .richedit_resize
-	padding: 0 !important
+	padding: 0
 
 // No support for box-sizing...
 #preview_section > .postbg
@@ -281,7 +272,7 @@ ul.actions
 	width: 14px
 
 #button_home
-	padding-left: 10px !important
+	padding-left: 10px
 
 #admin_main_section
 	width: 100%
@@ -397,3 +388,9 @@ body
 #help_pop
 	position: absolute
 	background: transparent
+
+// Best we can do with table-heavy IE6 is to remove the padding around the window...
+// We could instead hide the sidebar (#sidebar display: none), but people wouldn't like it.
+@media $responsive reset
+	body
+		padding: 0

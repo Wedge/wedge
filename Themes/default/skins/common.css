@@ -38,6 +38,25 @@
 	:after
 		clear: both
 
+.vertical-arrow virtual
+	:after
+		opacity: .25
+		content: "\25be"
+		margin-left: 8px
+	&:hover:after
+		opacity: .5
+		transition: opacity .5s
+
+.horizontal-arrow virtual
+	:after
+		opacity: .25
+		content: "\25b8"
+		margin-left: 8px
+		margin-right: 4px
+	&:hover:after
+		opacity: .5
+		transition: opacity .5s
+
 // IE6 needs layout to show inline-block divs... And a default right margin from my experience.
 mixin {ie6,ie7} ie-inline-block
 	margin-right: 6px

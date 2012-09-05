@@ -301,7 +301,7 @@ function template_random_news()
 		return;
 
 	echo '
-			<h2>', $txt['news'], '</h2>
+			<h2>', $txt['news'], $context['browser']['is_ie6'] || $context['browser']['is_ie7'] ? ' > ' : '', '</h2>
 			<p>', $context['random_news_line'], '</p>';
 }
 
@@ -622,6 +622,8 @@ function template_linktree($force_show = false, $on_bottom = false)
 	// If linktree is empty, just return - also allow an override.
 	if (!empty($context['linktree']) && ($linksize = count($context['linktree'])) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
 	{
+		$needs_fix = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
+
 		echo '
 		<ul itemprop="breadcrumb">';
 
@@ -644,6 +646,8 @@ function template_linktree($force_show = false, $on_bottom = false)
 				echo $tree['extra_after'];
 
 			echo '</li>';
+			if ($needs_fix)
+				echo ' > ';
 		}
 		echo '
 		</ul>';
@@ -729,7 +733,8 @@ function template_footer()
 	// "http://validator.nu/?doc=', $user_info['url'], '"
 	// !! @worg: rev.txt, facebook link
 	echo '
-			<li class="copyright">', $txt['copyright'], ' (rev <a href="http://wedge.org/pub/feats/6108/new-revs/">', file_get_contents($theme['theme_dir'] . '/rev.txt'), '</a>) -</li>
+			<li class="copyright">', $txt['copyright'], ' (rev <a href="http://wedge.org/pub/feats/6108/new-revs/">', file_get_contents($theme['theme_dir'] . '/rev.txt'), '</a>)',
+			$context['show_load_time'] ? ' -</li>' : '</li><br class="clear">', '
 			<li class="links">
 				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
 				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |

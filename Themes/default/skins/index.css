@@ -8,14 +8,25 @@
  * This is the base CSS file for the default theme.
  *
  * Here's a list of files that can be restyled by adding a new subfolder to the CSS folder:
- * index.css, sections.css, admin.css, editor.css, custom.css
- * custom.css doesn't exist, you can create it to rewrite styles without modifying the original files.
+ * - index.css, sections.css, admin.css, editor.css
+ * - custom.css doesn't exist, you can create it them rewrite styles without modifying the original files.
+ * - extra.css isn't always there, it's intended as an easy way to add CSS at the very end of the file.
  *
  * There are also user-specific stylesheets. If you need to add a browser hack, just create a new file in
- * your folder, using this file name format: filename.override.css. For instance, if you want to override
- * index.css for IE6, name it index.ie6.css. The following override keywords are available to you:
+ * your folder, using this file name format: filename.suffix.css. For instance, if you want to add some custom
+ * CSS to index.css for IE6, name it index.ie6.css. The following suffixes are available to you:
  *
- * guest, member, rtl, opera, webkit, chrome, safari, iphone, android, gecko, firefox, ie6, ie7, ie8, ie9.
+ * - guest, member, admin, rtl, m#, b#, c#
+ * - will target guests, members, administrators, RTL languages, member #, board # or category #.
+ *
+ * - opera, firefox, chrome, safari, ie, gecko, webkit, iphone, android.
+ * - will target that browser, browser family or OS. You may also add a version number next to it. Ranges are also
+ *   accepted: index.ie[-8].css will target IE 6/7/8, while index.opera12.5.css should target Opera 12.5 only.
+ *
+ * - local, global, replace
+ * - any file with the 'local' keyword won't be reused by sub-skins. Use 'global' (or no keyword) to allow re-use.
+ *   Finally, 'replace' will do the opposite and, just like replace-type skins do, it will forget any parent files
+ *   with the same keywords (e.g. index.replace,ie6.css will replace the parent's index.ie6.css file if it exists.)
  *
  * The "install.css" and "report.css" files are theme-agnostic, and thus are not skinnable per se.
  *
@@ -176,10 +187,8 @@ ul#noava
 			base: .inline-block
 			margin: .4em 1em 0 0
 			padding: 0
-		h2 extends .arrows
-			background-position: right -51px
-			margin-right: .3em
-			padding-right: 18px
+		h2 extends .horizontal-arrow
+			margin-right: 0
 		form
 			text-align, float: right
 
@@ -227,13 +236,12 @@ ul#noava
 		overflow: hidden
 		border: 1px dotted #999
 		border-width: 0 0 1px 0
-		li extends .arrows
+		li extends .horizontal-arrow
 			display: inline
 			line-height: 20px
-			padding: .5em 1.4em .5em 0
-			background-position: right -44px
-			&.last
-				background: none
+			padding: .5em 0
+			&.last:after
+				display: none
 
 #linktree_bt extends #linktree
 	padding: 0
@@ -336,10 +344,6 @@ em
 
 /* More common styles used for inheritance.
 ------------------------------------------------------- */
-
-.arrows
-	background-image: url($images/menu.gif)
-	background-repeat: no-repeat
 
 // "With rounded corners" class, for modern browsers...
 .wrc, .wrc_top, .wrc_bottom
@@ -684,31 +688,27 @@ input[type=file]
 
 #main_menu
 	padding: 5px 0 0
-	li.nodrop h4
-		background-image: none
 	h4:hover, h4.hove
 		background-color: #5a6c85
-		background-position: 98% -26px
 		color: #fff
 		a
 			color: #fff
 
 .menu li a
-	display: block
 	color: #444
 	text-decoration: none
+
+.menu li li a
+	display: block
 	border-left: 4px solid $menu_border // #fbe2c8
 	padding: 6px 8px
 	margin: 0
 
-.menu h4 extends .arrows
+.menu h4 extends .vertical-arrow
 	float: left
-	background-position: 98% 4px
-	padding: 3px 19px 3px 6px
+	padding: 3px 6px
 	font-weight: 400
 	margin-right: 2px
-	a
-		border, padding: 0
 
 .menu li ul
 	background: #f7fcf7
@@ -721,8 +721,8 @@ input[type=file]
 	border-radius: 0 10px 10px 0
 	clear: left
 	visibility: hidden
-	opacity, padding: 0
 	transition: opacity .3s ease
+	padding: 0
 	margin-top: 30px
 
 .css li ul
@@ -754,14 +754,12 @@ input[type=file]
 
 .css h4:hover, h4.hove
 	background-color: rgba(0,0,0, .075)
-	background-position: 98% 4px
 	color: #000
 	a
 		color: #000
 
-.menu .chosen h4
+.chosen h4
 	background-color: #95a89d
-	background-position: 98% -26px
 	font-weight: 700
 	color: #fff
 	a
@@ -772,9 +770,20 @@ input[type=file]
 li.active > a
 	font-weight: 700
 
-li.subsection > a extends .arrows
-	background-position: 98% -46px
-	padding: 6px 24px 6px 8px
+li.subsection > a
+	padding: 6px 8px
+	// Like .horizontal-arrow, but right-floated.
+	:before
+		opacity: .25
+		content: "\25ba"
+		font-size: 60%
+		margin-left: 8px
+		float: right
+
+// Quick hack for arrow colors on selected parents.
+li.hove > a:before, .menu h4.hove:after
+	opacity: .5
+	transition: opacity .3s
 
 .css > li li:hover, li.hove
 	color: #000
@@ -789,18 +798,22 @@ li.subsection > a extends .arrows
 	min-height: 2.5em
 	overflow: hidden
 	h4
-		background-image: none
 		padding-right: 6px
 		:hover
 			background-color: rgba(0,0,0, .075)
+		// We don't need arrows.
+		:after
+			display: none
 
 #main_menu .chosen h4, .context .chosen h4
 	&:hover, &.hove
 		background-color: lighten(#95a89d, 8%)
 
-.nodrop h4, #main_menu .nodrop h4
-	background-image: none
-	padding-right: 6px
+// Hide arrows from menu items with no sub-menus.
+li.nodrop h4
+	&, .menu &, #main_menu &
+		:after
+			display: none
 
 // Separator code
 li.separator

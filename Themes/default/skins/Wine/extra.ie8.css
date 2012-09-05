@@ -1,3 +1,4 @@
 
-#responsive #edge
-	table-layout: auto
+@media $responsive
+	body #edge
+		table-layout: auto

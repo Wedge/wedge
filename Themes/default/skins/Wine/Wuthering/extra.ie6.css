@@ -17,10 +17,7 @@
 #content div.frame
 	width: auto
 
-h4.hove
-	background: #e2ebe7 url($images/menu.gif) no-repeat 98% 4px
-
-li.hove
+h4.hove, li.hove
 	background: #e2ebe7
 
 .cat
