@@ -41,8 +41,9 @@
 .vertical-arrow virtual
 	:after
 		opacity: .3
-		content: "\25be"
-		margin-left: 4px
+		font: .6em/1 Arial
+		vertical-align: .12em
+		content: "\a0\a0\25bc"
 	&:hover:after
 		opacity: .5
 		transition: opacity .5s
@@ -50,9 +51,9 @@
 .horizontal-arrow virtual
 	:after
 		opacity: .3
-		content: "\25b8"
-		margin-left: 4px
-		margin-right: 4px
+		font: .6em/1 Arial
+		vertical-align: .12em
+		content: "\a0\a0\25ba"
 	&:hover:after
 		opacity: .5
 		transition: opacity .5s

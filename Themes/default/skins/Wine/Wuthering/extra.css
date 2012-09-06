@@ -11,12 +11,10 @@ body
 	padding: 0
 
 .lightgrad virtual
-	background-image: none
-	// gradient: #eee, #faf8f6
+	gradient: #eee, #faf8f6
 
 .darkgrad virtual
-	background-image: none
-	// gradient: #bcbcbb, #f3f2f0
+	gradient: #bcbcbb, #f3f2f0
 
 .wehead, .catbase
 	background-image: none
@@ -191,8 +189,7 @@ a, #linktree a
 	padding: 4px 8px
 	margin-top: 8px
 	overflow: auto
-	box-shadow: none
-	text-shadow: none
+	box-shadow, text-shadow: none
 	font: italic 1.2em/20px $main_font
 
 .cat final

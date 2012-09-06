@@ -747,14 +747,16 @@ input[type=file]
 li.active > a
 	font-weight: 700
 
+// We need a right-floated .horizontal-arrow for our sub-menus...
 li.subsection > a
 	padding: 6px 8px
-	// Like .horizontal-arrow, but right-floated.
+	overflow: hidden
 	:before
 		opacity: .3
-		content: "\25ba"
-		font-size: 60%
-		margin-left: 8px
+		font: .6em/1 Arial
+		vertical-align: .12em
+		content: "\a0\a0\25ba"
+		margin-top: .6em
 		float: right
 
 // Hover colors. We're using box-shadow to keep the ability to set hover-independent background colors.

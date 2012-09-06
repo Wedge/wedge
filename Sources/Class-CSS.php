@@ -630,10 +630,10 @@ class wecss_nesting extends wecss
 		// (2) @import won't work if used inside a suffixed file, because @import is only parsed when
 		//     found at the start of a physical file (or within <style> tags in the main HTML.)
 		$tree = preg_replace('~^(@(?:import|charset)\s+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
-		$tree = preg_replace('~^([+>&#*@:.a-z0-9][^{};]*?\s*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
+		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\s*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
 		$tree = preg_replace('~(\burl\([^)]+\))~e', 'str_replace(\':\', \'#wedge-colon#\', \'$1\')', $tree); // Protect colons (:) inside URLs
 		$tree = preg_replace('~([a-z-, ]+)\s*:(?!//)\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
-		$tree = preg_replace('~^([+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
+		$tree = preg_replace('~^([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
 
@@ -653,7 +653,7 @@ class wecss_nesting extends wecss
 		{
 			if (strpos($node['selector'], ' reset') !== false)
 			{
-				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z0-9][^{};,\n"]+)\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					// Start by rebuilding a full selector. For efficiency reasons, and because I'm too lazy to rework this,
@@ -699,7 +699,7 @@ class wecss_nesting extends wecss
 		{
 			if (strpos($node['selector'], ' virtual') !== false)
 			{
-				if (preg_match('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z0-9][^{};,\n"]+)\s+virtual\b~i', $node['selector'], $matches))
+				if (preg_match('~((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)\s+virtual\b~i', $node['selector'], $matches))
 				{
 					$node['selector'] = str_replace($matches[0], $matches[1], $node['selector']);
 					$virtuals[$matches[1]] = $n;
@@ -736,7 +736,7 @@ class wecss_nesting extends wecss
 			// e.g.: ".class unextends .orig "-> cancels any earlier ".class extends .orig"
 			if (strpos($node['selector'], ' unextends') !== false)
 			{
-				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z0-9][^{};,\n"]+)\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 					$unextends[$m[1]] = $n;
 				$node['selector'] = preg_replace('~\bunextends\b~i', '', $node['selector']);
@@ -756,7 +756,7 @@ class wecss_nesting extends wecss
 				if ($browser['is_ie6'] && strpos($node['selector'], '>') !== false)
 					$node['selector'] = ' ';
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
-				preg_match_all('~((?<![a-z])[abipqsu]|[+>&#*@:.a-z0-9][^{};,\n"]+)[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					$save_selector = $node['selector'];
