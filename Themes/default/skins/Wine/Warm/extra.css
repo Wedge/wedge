@@ -133,18 +133,21 @@ dl#feed
 
 #main_menu
 	padding: 5px 0 0
-	h4 a
-		color: #000
 	h4:hover, h4.hove
-		background-color: rgba(0,0,0, .075)
-		background-position: 98% 4px
+		background-color: transparent
+		color: #000
 		a
 			color: #000
+	h4, h4 a
+		color: #000
 	li.chosen h4
-		background-color: #fd9604
+		background-color: lighten($reddish, 3%) !important
+		color: #fff
 		a
 			color: #fff
 
+/* Custom BBCode styling.
+------------------------------------------------------- */
 .bbc_quote > div
 	background-color: #e8eee8
 
@@ -182,6 +185,7 @@ tr.titlebg th, tr.catbg th
 ------------------------------------------------------- */
 .catbase
 	background: rgba(0,0,0, .03)
+	box-shadow: none
 	text-shadow: white 0 1px 2px
 	font: 700 1.1em/20px $main_font
 	img

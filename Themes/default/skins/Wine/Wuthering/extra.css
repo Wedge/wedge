@@ -10,11 +10,16 @@ body
 	color: #333
 	padding: 0
 
-.lightgrad
-	gradient: #eee, #faf8f6
+.lightgrad virtual
+	background-image: none
+	// gradient: #eee, #faf8f6
 
-.darkgrad
-	gradient: #bcbcbb, #f3f2f0
+.darkgrad virtual
+	background-image: none
+	// gradient: #bcbcbb, #f3f2f0
+
+.wehead, .catbase
+	background-image: none
 
 #wedge
 	padding: 15px 0
@@ -54,8 +59,8 @@ body
 #sidebar
 	background: #edefe6
 
-#responsive
-	#sidebar
+@media $responsive
+	body #sidebar
 		top, border-radius: 0
 		border-width: 1px 0 0
 		display: block
@@ -106,10 +111,6 @@ body
 		font-size: 110%
 		border: 0
 		background: none
-		li
-			background-position: right -49px
-			height, line-height: 21px
-			padding: 0 1.7em 0 5px
 
 #linktree_bt ul
 	border: 0
@@ -149,28 +150,20 @@ a, #linktree a
 #main_menu
 	border-width: 1px 0
 	margin: 0 30px
-	padding: 5px 0 2px
-	h4 a
-		color: #000
 	h4:hover, h4.hove
-		background-color: rgba(0,0,0, .075)
-		background-position: 98% 4px
+		background-color: transparent
+		color: #000
 		a
 			color: #000
+	h4, h4 a
+		color: #000
 	li.chosen h4
-		background-color: #fd9604
-		background-position: 98% -26px
+		color: #fff
 		a
 			color: #fff
 
 .menu ul extends .lightgrad
 	background-color: #fff8f1
-
-.css > li li:hover, li.hove
-	color: #000
-	border-radius: 0 9px 9px 0
-	background-color: #ebe7e2
-	background-color: rgba(0,0,0, .075)
 
 
 /* Some BBC related styles.
@@ -198,6 +191,7 @@ a, #linktree a
 	padding: 4px 8px
 	margin-top: 8px
 	overflow: auto
+	box-shadow: none
 	text-shadow: none
 	font: italic 1.2em/20px $main_font
 

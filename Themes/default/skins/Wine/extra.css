@@ -43,14 +43,6 @@ html
 	.column
 		padding: 14px 12px 12px
 
-#responsive
-	#edge
-		display: table
-	#sidebar
-		display: table-footer-group
-		header
-			color: #333
-
 #userbox
 	p
 		font-size: .9em
@@ -129,14 +121,8 @@ html
 	border-bottom: 3px solid #bdb5b5
 
 #main_menu
-	h4 a
+	h4, h4 a
 		color: #fff
-
-.menu .chosen h4
-	background-color: #3fa6c3
-
-#main_menu .chosen h4, #context_menus .chosen h4
-	background-color: #95a89d
 
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
@@ -296,6 +282,37 @@ ul.buttonlist
 
 .cat .help final
 	vertical-align: -2px
+
+/* CSS for smaller widths.
+------------------------------------------------------- */
+
+// Alternatively, you can avoid precedence problems by resetting the query,
+// just by typing this instead: @media $responsive reset
+@media $responsive reset
+	body
+		#edge
+			clear: both
+			display: table
+		#sidebar
+			display: table-footer-group
+			box-sizing: border-box
+			width: auto
+			background: $window_bg
+			border-top: 1px solid #bdb5b5
+			margin: 0 -30px -20px
+			section
+				display: inline-block
+				width: $sidebar-width
+				vertical-align: top
+				padding: 0 8px 8px
+				margin: 8px
+				header
+					background: rgba(0,0,0,.05)
+					box-shadow: none
+					color: #333
+		#main
+			display: block
+			padding: 4px 0 12px
 
 /* CSS variables.
 ------------------------------------------------------- */

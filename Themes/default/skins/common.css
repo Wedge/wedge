@@ -40,18 +40,18 @@
 
 .vertical-arrow virtual
 	:after
-		opacity: .25
+		opacity: .3
 		content: "\25be"
-		margin-left: 8px
+		margin-left: 4px
 	&:hover:after
 		opacity: .5
 		transition: opacity .5s
 
 .horizontal-arrow virtual
 	:after
-		opacity: .25
+		opacity: .3
 		content: "\25b8"
-		margin-left: 8px
+		margin-left: 4px
 		margin-right: 4px
 	&:hover:after
 		opacity: .5

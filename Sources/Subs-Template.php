@@ -178,22 +178,23 @@ function ob_sessrewrite($buffer)
 	if (!empty($cut[1]))
 		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^">]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
 
-	if (!empty($context['delayed_events']))
+	$this_pos = strpos($buffer, empty($settings['minify_html']) ? '<!-- insert inline events here -->' : '<!--insert inline events here-->');
+	if ($this_pos !== false)
 	{
-		$thing = 'eves = {';
-		foreach ($context['delayed_events'] as $eve)
-			$thing .= '
-		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
-		$thing = substr($thing, 0, -1) . '
-	};';
-	}
-	else
-		$thing = 'eves = 1;';
+		if (!empty($context['delayed_events']))
+		{
+			$thing = 'eves = {';
+			foreach ($context['delayed_events'] as $eve)
+				$thing .= '
+			' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
+			$thing = substr($thing, 0, -1) . '
+		};';
+		}
+		else
+			$thing = 'eves = 1;';
 
-	if (empty($settings['minify_html']))
-		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!-- insert inline events here -->'), 34);
-	else
-		$buffer = substr_replace($buffer, $thing, strpos($buffer, '<!--insert inline events here-->'), 32);
+		$buffer = substr_replace($buffer, $thing, $this_pos, empty($settings['minify_html']) ? 34 : 32);
+	}
 
 	// Nerd alert -- the first few lines (tag search process) can be done in a simple regex.
 	//	while (preg_match_all('~<we:([^>\s]+)\s*([a-z][^>]+)?\>((?' . '>[^<]+|<(?!/?we:\\1))*?)</we:\\1>~i', $buffer, $matches, PREG_SET_ORDER))

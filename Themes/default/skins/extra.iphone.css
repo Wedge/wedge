@@ -34,15 +34,10 @@
 .smiley
 	vertical-align: middle
 
-#responsive
-	#edge
-		position: static
-	#sidebar
-		display: block
-		clear: both
-		width: 100%
-		position: static
-		box-shadow: none
+@media $responsive
+	body
+		#sidebar
+			margin: 0 -10px
 
 .smalltext
 	font-size: .6em

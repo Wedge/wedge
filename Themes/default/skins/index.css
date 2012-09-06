@@ -674,98 +674,75 @@ input[type=file]
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
 
-.menu
-	font-family: $menu_font
-	min-height: 2em
-	display: block
-	margin: 0
-	padding: 5px 0 2px
-
 #navi
 	color: #999
 	border-bottom: 1px solid #bdb5b5
-	padding: 0 25px
+	padding: 0 15px
 
-#main_menu
-	padding: 5px 0 0
-	h4:hover, h4.hove
-		background-color: #5a6c85
-		color: #fff
-		a
-			color: #fff
-
-.menu li a
-	color: #444
-	text-decoration: none
-
-.menu li li a
-	display: block
-	border-left: 4px solid $menu_border // #fbe2c8
-	padding: 6px 8px
+.menu
+	font-family: $menu_font
+	min-height: 2em
 	margin: 0
+	padding: 5px 0 1px
 
-.menu h4 extends .vertical-arrow
-	float: left
-	padding: 3px 6px
-	font-weight: 400
-	margin-right: 2px
+	li a
+		color: #444
+		text-decoration: none
 
-.menu li ul
-	background: #f7fcf7
-	background: $menu_gradient
-	position: absolute
-	display: block
-	border: 1px solid #bbb
-	z-index: 42
-	box-shadow: 2px 2px 3px 0 rgba(0,0,0, .2)
-	border-radius: 0 10px 10px 0
-	clear: left
-	visibility: hidden
-	transition: opacity .3s ease
-	padding: 0
-	margin-top: 30px
+	li li a
+		display: block
+		border-left: 4px solid $menu_border // #fbe2c8
+		padding: 6px 8px
+		margin: 0
 
+	h4 extends .vertical-arrow
+		float: left
+		padding: 3px 6px
+		font-weight: 400
+		margin-right: 2px
+
+	li ul
+		background: #f7fcf7
+		background: $menu_gradient
+		position: absolute
+		display: block
+		border: 1px solid #bbb
+		z-index: 42
+		box-shadow: 2px 2px 3px 0 rgba(0,0,0, .2)
+		border-radius: 0 10px 10px 0
+		clear: left
+		visibility: hidden
+		transition: opacity .3s ease
+		padding: 0
+		margin-top: 30px
+
+	li li ul
+		margin-left: 160px
+		margin-top: -24px
+
+	li
+		list-style: none
+		cursor: pointer
+		height: auto
+
+	// For anything else than IE6...
+	> li
+		display: inline-block
+		margin, padding: 0	
+		float: none
+
+	li li
+		display: block
+		float: none
+		margin: 0
+		white-space: nowrap
+
+// If JavaScript is disabled, bring submenus closer to their parent.
 .css li ul
 	margin-top: 25px
 
 .css > li > ul
 	transition: opacity .15s ease
-
-.menu li li ul
-	margin-left: 160px
-	margin-top: -24px
-
-.menu li
-	list-style: none
-	cursor: pointer
-	height: auto
-
-// For anything else than IE6...
-.menu > li
-	display: inline-block
-	margin, padding: 0
-	float: none
-
-.menu li li
-	display: block
-	float: none
-	margin: 0
-	white-space: nowrap
-
-.css h4:hover, h4.hove
-	background-color: rgba(0,0,0, .075)
-	color: #000
-	a
-		color: #000
-
-.chosen h4
-	background-color: #95a89d
-	font-weight: 700
-	color: #fff
-	a
-		color: #fff
-	&.hove
-		background-color: lighten(#95a89d, 8%)
 
 li.active > a
 	font-weight: 700
@@ -774,11 +751,22 @@ li.subsection > a
 	padding: 6px 8px
 	// Like .horizontal-arrow, but right-floated.
 	:before
-		opacity: .25
+		opacity: .3
 		content: "\25ba"
 		font-size: 60%
 		margin-left: 8px
 		float: right
+
+// Hover colors. We're using box-shadow to keep the ability to set hover-independent background colors.
+.css h4:hover, .menu h4:hover, h4.hove
+	box-shadow: inset 0 0 10em rgba(0,0,0, .075)
+
+#main_menu
+	h4:hover, h4.hove
+		background-color: #5a6c85
+		color: #fff
+		a
+			color: #fff
 
 // Quick hack for arrow colors on selected parents.
 li.hove > a:before, .menu h4.hove:after
@@ -793,27 +781,27 @@ li.hove > a:before, .menu h4.hove:after
 .menu > li > a, .menu h4
 	border-radius: 6px
 
-.context.menu
+.menu.context
 	padding-left: 1em
 	min-height: 2.5em
 	overflow: hidden
 	h4
 		padding-right: 6px
-		:hover
-			background-color: rgba(0,0,0, .075)
 		// We don't need arrows.
 		:after
 			display: none
 
-#main_menu .chosen h4, .context .chosen h4
-	&:hover, &.hove
-		background-color: lighten(#95a89d, 8%)
+.chosen h4
+	background-color: #95a89d !important
+	font-weight: 700
+	color: #fff
+	a
+		color: #fff
 
 // Hide arrows from menu items with no sub-menus.
 li.nodrop h4
-	&, .menu &, #main_menu &
-		:after
-			display: none
+	:after
+		display: none
 
 // Separator code
 li.separator
