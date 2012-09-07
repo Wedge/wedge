@@ -1066,7 +1066,7 @@ function ModifyMembergroupsettings()
 
 	// Only one thing here!
 	$config_vars = array(
-		array('permissions', 'manage_membergroups'),
+		array('permissions', 'manage_membergroups', 'exclude' => array(-1, 0)),
 		array('select', 'group_text_show', $which_groups),
 	);
 

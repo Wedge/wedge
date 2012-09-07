@@ -545,6 +545,8 @@ function MessageIndex()
 	// Deal with quick moderation.
 	if (!empty($context['topics']))
 	{
+		$context['quick_moderation'] = array();
+
 		$context['can_lock'] = allowedTo('lock_any');
 		$context['can_pin'] = allowedTo('pin_topic');
 		$context['can_move'] = allowedTo('move_any');
@@ -572,6 +574,11 @@ function MessageIndex()
 			$context['can_remove'] |= ($started && allowedTo('remove_own'));
 		}
 
+		$context['can_markread'] = $context['user']['is_logged'];
+		foreach (array('remove', 'lock', 'pin', 'move', 'merge', 'restore', 'approve', 'markread') as $qmod)
+			if (!empty($context['can_' . $qmod]))
+				$context['quick_moderation'][$qmod] = $txt['quick_mod_' . $qmod];
+
 		// Find the boards/categories they can move their topic to.
 		if ($context['can_move'])
 		{
@@ -596,7 +603,6 @@ function MessageIndex()
 			if (empty($context['move_to_boards']))
 				$context['can_move'] = false;
 		}
-		$context['can_quick_mod'] = $context['user']['is_logged'] || $context['can_approve'] || $context['can_remove'] || $context['can_lock'] || $context['can_pin'] || $context['can_move'] || $context['can_merge'] || $context['can_restore'];
 	}
 
 	// If there are children, but no topics and no ability to post topics...

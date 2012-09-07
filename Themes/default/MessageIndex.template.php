@@ -33,7 +33,7 @@ function template_main_board()
 	</div>';
 
 		// If Quick Moderation is enabled, start the form.
-		if (!empty($context['can_quick_mod']))
+		if (!empty($context['quick_moderation']))
 			echo '
 	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
 
@@ -56,7 +56,7 @@ function template_main_board()
 					<th scope="col" style="width: 14%">', template_messageindex_sortlink('replies', $txt['replies']), ' / ', template_messageindex_sortlink('views', $txt['views']), '</th>';
 
 				// Show a "select all" box for quick moderation?
-				if (empty($context['can_quick_mod']))
+				if (empty($context['quick_moderation']))
 					echo '
 					<th scope="col" class="left last_th" style="width: 22%">', template_messageindex_sortlink('last_post', $txt['last_post']), '</th>';
 				else
@@ -65,12 +65,12 @@ function template_main_board()
 			}
 
 			// Show a "select all" box for quick moderation?
-			if (!empty($context['can_quick_mod']))
+			if (!empty($context['quick_moderation']))
 				echo '
 					<th scope="col" class="last_th" style="width: 24px"><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"></th>';
 
 			// If it's on in "image" mode, don't show anything but the column.
-			elseif (!empty($context['can_quick_mod']))
+			elseif (!empty($context['quick_moderation']))
 				echo '
 					<th class="last_th" style="width: 4%">&nbsp;</th>';
 		}
@@ -91,7 +91,7 @@ function template_main_board()
 		{
 			echo '
 				<tr class="windowbg2">
-					<td colspan="', !empty($context['can_quick_mod']) ? '5' : '4', '">
+					<td colspan="', !empty($context['quick_moderation']) ? '5' : '4', '">
 						<span class="alert">!</span> ', $context['unapproved_posts_message'], '
 					</td>
 				</tr>';
@@ -146,7 +146,7 @@ function template_main_board()
 					</td>';
 
 			// Show the quick moderation options?
-			if (!empty($context['can_quick_mod']))
+			if (!empty($context['quick_moderation']))
 			{
 				echo '
 					<td class="center moderation ', $color_class, '">
@@ -157,48 +157,7 @@ function template_main_board()
 				</tr>';
 		}
 
-		if (!empty($context['can_quick_mod']))
-		{
-			echo '
-				<tr class="titlebg">
-					<td colspan="5" class="round-bottom right">
-						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
-							<option data-hide>--- ', $txt['moderate'], ' ---</option>', $context['can_remove'] ? '
-							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
-							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_pin'] ? '
-							<option value="pin">' . $txt['quick_mod_pin'] . '</option>' : '', $context['can_move'] ? '
-							<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
-							<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', $context['can_restore'] ? '
-							<option value="restore">' . $txt['quick_mod_restore'] . '</option>' : '', $context['can_approve'] ? '
-							<option value="approve">' . $txt['quick_mod_approve'] . '</option>' : '', $context['user']['is_logged'] ? '
-							<option value="markread">' . $txt['quick_mod_markread'] . '</option>' : '', '
-						</select>';
-
-			// Show a list of boards they can move the topic to.
-			if ($context['can_move'])
-			{
-				echo '
-						<select class="qaction hide" id="moveItTo" name="move_to">';
-
-				foreach ($context['move_to_boards'] as $category)
-				{
-					echo '
-							<optgroup label="', $category['name'], '">';
-					foreach ($category['boards'] as $board)
-						echo '
-								<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
-					echo '
-							</optgroup>';
-				}
-				echo '
-						</select>';
-			}
-
-			echo '
-						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return $(\'select[name=qaction]\').val() != \'\' && confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');" class="qaction">
-					</td>
-				</tr>';
-		}
+		template_messageindex_quickmod_selection();
 
 		echo '
 			</tbody>
@@ -207,7 +166,7 @@ function template_main_board()
 	<a id="bot"></a>';
 
 		// Finish off the form - again.
-		if (!empty($context['can_quick_mod']))
+		if (!empty($context['quick_moderation']))
 			echo '
 	<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 	</form>';
@@ -255,7 +214,7 @@ function template_main_blog()
 	</div>';
 
 		// If Quick Moderation is enabled, start the form.
-		if (!empty($context['can_quick_mod']))
+		if (!empty($context['quick_moderation']))
 			echo '
 	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
 
@@ -282,7 +241,7 @@ function template_main_blog()
 		{
 			echo '
 				<tr class="windowbg2">
-					<td colspan="', !empty($context['can_quick_mod']) ? '3' : '2', '">
+					<td colspan="', !empty($context['quick_moderation']) ? '3' : '2', '">
 						<span class="alert">!</span> ', $context['unapproved_posts_message'], '
 					</td>
 				</tr>';
@@ -308,7 +267,7 @@ function template_main_blog()
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
 
 			// Show the quick moderation options?
-			if (!empty($context['can_quick_mod']))
+			if (!empty($context['quick_moderation']))
 				echo '
 						<input type="checkbox" name="topics[]" class="floatright" value="', $topic['id'], '">';
 
@@ -349,49 +308,7 @@ function template_main_blog()
 				</tr>';
 		}
 
-		if (!empty($context['can_quick_mod']))
-		{
-			echo '
-				<tr class="titlebg">
-					<td colspan="5" class="round-bottom right">
-						<label><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"> ', $txt['check_all'], '</label> &nbsp;
-						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
-							<option data-hide>--- ', $txt['moderate'], ' ---</option>', $context['can_remove'] ? '
-							<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
-							<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_pin'] ? '
-							<option value="pin">' . $txt['quick_mod_pin'] . '</option>' : '', $context['can_move'] ? '
-							<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
-							<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', $context['can_restore'] ? '
-							<option value="restore">' . $txt['quick_mod_restore'] . '</option>' : '', $context['can_approve'] ? '
-							<option value="approve">' . $txt['quick_mod_approve'] . '</option>' : '', $context['user']['is_logged'] ? '
-							<option value="markread">' . $txt['quick_mod_markread'] . '</option>' : '', '
-						</select>';
-
-			// Show a list of boards they can move the topic to.
-			if ($context['can_move'])
-			{
-				echo '
-						<select class="qaction hide" id="moveItTo" name="move_to">';
-
-				foreach ($context['move_to_boards'] as $category)
-				{
-					echo '
-							<optgroup label="', $category['name'], '">';
-					foreach ($category['boards'] as $board)
-						echo '
-								<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
-					echo '
-							</optgroup>';
-				}
-				echo '
-						</select>';
-			}
-
-			echo '
-						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return $(\'select[name=qaction]\').val() != \'\' && confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');" class="qaction">
-					</td>
-				</tr>';
-		}
+		template_messageindex_quickmod_selection();
 
 		echo '
 			</tbody>
@@ -400,7 +317,7 @@ function template_main_blog()
 	<a id="bot"></a>';
 
 		// Finish off the form - again.
-		if (!empty($context['can_quick_mod']))
+		if (!empty($context['quick_moderation']))
 			echo '
 	<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 	</form>';
@@ -630,6 +547,51 @@ function template_messageindex_statistics()
 	</section>';
 }
 
+function template_messageindex_quickmod_selection()
+{
+	global $context, $txt;
+
+	if (!empty($context['quick_moderation']))
+	{
+		echo '
+				<tr class="titlebg">
+					<td colspan="5" class="round-bottom right">
+						<label><input type="checkbox" onclick="invertAll(this, this.form, \'topics[]\');"> ', $txt['check_all'], '</label> &nbsp;
+						<select class="qaction fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
+							<option data-hide>--- ', $txt['moderate'], ' ---</option>';
+		foreach ($context['quick_moderation'] as $qmod_id => $qmod_txt)
+			echo '
+							<option value="', $qmod_id, '">', $qmod_txt, '</option>';
+
+		echo '
+						</select>';
+
+		// Show a list of boards they can move the topic to.
+		if ($context['can_move'])
+		{
+			echo '
+						<select class="qaction hide" id="moveItTo" name="move_to">';
+
+			foreach ($context['move_to_boards'] as $category)
+			{
+				echo '
+							<optgroup label="', $category['name'], '">';
+				foreach ($category['boards'] as $board)
+					echo '
+								<option value="', $board['id'], '"', $board['selected'] ? ' selected' : '', '>', $board['child_level'] > 0 ? str_repeat('==', $board['child_level'] - 1) . '=&gt;' : '', ' ', $board['name'], '</option>';
+				echo '
+							</optgroup>';
+			}
+			echo '
+						</select>';
+		}
+
+		echo '
+						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return $(\'select[name=qaction]\').val() != \'\' && confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');" class="qaction">
+					</td>
+				</tr>';
+	}
+}
 
 function template_messageindex_staff()
 {
