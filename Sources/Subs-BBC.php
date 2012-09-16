@@ -1141,7 +1141,7 @@ function parsesmileys(&$message)
 		$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'];
 		$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
 
-		if (!file_exists($cssdir . '/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
+		if (!file_exists($cssdir . '/smileys' . ($context['browser']['agent'] == 'ie' && $context['browser']['version'] < 8 ? '-ie' : '') . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
 		{
 			// We're only going to cache the smileys that show up on the post editor by default.
 			// The reason is to help save bandwidth by only storing whatever is most likely to be used.
@@ -1175,7 +1175,7 @@ function replace_smileys($match)
 
 			$smiley_css_done = true;
 			$context['header'] .= '
-	<link rel="stylesheet" href="' . $boardurl . '/cache/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
+	<link rel="stylesheet" href="' . $boardurl . '/css/smileys' . ($context['browser']['agent'] == 'ie' && $context['browser']['version'] < 8 ? '-ie' : '') . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
 		}
 		return $smileyPregReplace[$match[1]];
 	}

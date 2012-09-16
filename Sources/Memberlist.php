@@ -580,8 +580,9 @@ function printMemberListRows($request)
 
 		// We need to do some work on the custom fields, because we need to be selective about it.
 		$context['members'][$member] = $memberContext[$member];
-		foreach ($context['members'][$member]['custom_fields'] as $field)
-			$context['members'][$member]['mlist_cf'][$field['colname']] = $field['value'];
+		if (!empty($context['members'][$member]['custom_fields']))
+			foreach ($context['members'][$member]['custom_fields'] as $field)
+				$context['members'][$member]['mlist_cf'][$field['colname']] = $field['value'];
 
 		$context['members'][$member]['post_percent'] = round(($context['members'][$member]['real_posts'] * 100) / $most_posts);
 		$context['members'][$member]['registered_date'] = strftime('%Y-%m-%d', $context['members'][$member]['registered_timestamp']);

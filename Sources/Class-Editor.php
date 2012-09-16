@@ -2468,7 +2468,7 @@ class wedit
 			while (empty($exists) && $max++ < 3)
 			{
 				$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
-				$filename = '/cache/smileys' . $extra . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
+				$filename = '/css/smileys' . $extra . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
 				$exists = file_exists($boarddir . $filename);
 				if (!$exists)
 					parsesmileys($dummy);
