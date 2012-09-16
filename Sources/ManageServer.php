@@ -213,7 +213,7 @@ function ModifySettings()
 // General forum settings - forum name, maintenance mode, etc.
 function ModifyGeneralSettings($return_config = false)
 {
-	global $scripturl, $context, $txt, $settings, $cachedir;
+	global $scripturl, $context, $txt, $settings;
 
 	loadLanguage('ManageSettings');
 
@@ -286,13 +286,14 @@ function ModifyGeneralSettings($return_config = false)
 		// Cached JS files are also cleaned up on the fly so this is just a small time saver.
 		foreach (array('enableCompressedData', 'obfuscate_filenames', 'minify') as $cache)
 		{
-			if (isset($_REQUEST[$cache]) && (!isset($settings[$cache]) || $_REQUEST[$cache] != $settings[$cache]) && is_callable('glob'))
+			if (isset($_REQUEST[$cache]) && (!isset($settings[$cache]) || $_REQUEST[$cache] != $settings[$cache]))
 			{
-				@array_map('unlink', glob($cachedir . '/*.j*'));
+				loadSource('Subs-Cache');
+				clean_cache('js');
 				// Note: enableCompressedData should always be tested first in the array,
 				// so we can safely remove CSS files too.
 				if ($cache == 'enableCompressedData')
-					@array_map('unlink', glob($cachedir . '/*.c*'));
+					clean_cache('css');
 				break;
 			}
 		}

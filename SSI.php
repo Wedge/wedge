@@ -22,7 +22,7 @@ global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
 global $db_connection, $settings, $context, $sc, $user_info, $topic, $board, $txt;
-global $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
+global $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd;
 
 // Remember the current configuration so it can be set back.
 $ssi_magic_quotes_runtime = function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
@@ -35,10 +35,6 @@ unset($GLOBALS['cachedir']);
 
 // Get the forum's settings for database and file paths.
 require_once(dirname(__FILE__) . '/Settings.php');
-
-// Make absolutely sure the cache directory is defined.
-if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
-	$cachedir = $boarddir . '/cache';
 
 $ssi_error_reporting = error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
 /*

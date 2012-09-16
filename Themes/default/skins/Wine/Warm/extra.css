@@ -49,6 +49,9 @@ em
 #top_section
 	display: none
 
+.wehead
+	box-shadow: none
+
 .wehead a
 	color: #666
 
@@ -57,6 +60,7 @@ em
 		color: #000
 	h1
 		margin: 28px 0 0 30px
+		text-transform: lowercase
 		a
 			color: #866
 			font: italic bold 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif

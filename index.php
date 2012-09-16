@@ -36,10 +36,6 @@ unset($GLOBALS['cachedir']);
 // Load the settings...
 require_once(dirname(__FILE__) . '/Settings.php');
 
-// Make absolutely sure the cache directory is defined.
-if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
-	$cachedir = $boarddir . '/cache';
-
 // And important includes.
 require_once($sourcedir . '/QueryString.php');
 require_once($sourcedir . '/Subs.php');

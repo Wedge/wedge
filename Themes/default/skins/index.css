@@ -21,7 +21,7 @@
  *
  * - opera, firefox, chrome, safari, ie, gecko, webkit, iphone, android.
  * - will target that browser, browser family or OS. You may also add a version number next to it. Ranges are also
- *   accepted: index.ie[-8].css will target IE 6/7/8, while index.opera12.5.css should target Opera 12.5 only.
+ *   accepted: index.ie[-8].css will target IE 6/7/8, while index.opera12.1.css should target Opera 12.1 only.
  *
  * - local, global, replace
  * - any file with the 'local' keyword won't be reused by sub-skins. Use 'global' (or no keyword) to allow re-use.
@@ -581,7 +581,7 @@ form
 	margin, padding: 0
 
 input, select, textarea
-	font: 95%/115% $main_font
+	font: 95%/1.15 $main_font
 	color: #000
 	background: $main_bg
 	box-sizing: border-box
@@ -592,52 +592,52 @@ input, select, textarea
 		border: 1px solid #6f8da9
 
 textarea
-	line-height: 130%
+	line-height: 1.3
 	border-radius: 0
 
 // No need to style input[type=reset], not using it.
 input[type=submit], input[type=button], .ie_button
-	background: #eee url($images/theme/bevel.png)
+	background: #eee
+	box-shadow: inset 1px 1px #fff, inset 25px 0 25px rgba(0,0,0, .1), 0 1px 2px rgba(0,0,0, .1)
 	margin: 0
 	outline: none
 	cursor: pointer
 	font-size: 13.5px
-	line-height: normal
+	line-height: 1.4
 	border-width: 1px
 	border-radius: 6px
-	box-shadow: 0 1px 2px rgba(0,0,0,.1)
 	padding: 3px 5px 4px
 	color: #555
 	:hover
 		background-color: #f3f3f3
 
 input.submit
-	background: url($images/buttons/submit.png) no-repeat $bevel
+	background: url($images/buttons/submit.png) no-repeat
 	background-color: #e2f3ea
 	padding-left: 23px
 	:hover final
 		background-color: #e8f9f0
 
 input.save extends input.submit
-	background: url($images/buttons/save.png) no-repeat $bevel
+	background: url($images/buttons/save.png) no-repeat
 	background-color: #dff3e8
 	:hover
 		background-color: #e5f9ed
 
 input.delete extends input.submit
-	background: url($images/buttons/delete.png) no-repeat $bevel
+	background: url($images/buttons/delete.png) no-repeat
 	background-color: #f5efe9
 	:hover
 		background-color: #fbf5ef
 
 input.new extends input.submit
-	background: url($images/buttons/new.png) no-repeat $bevel
+	background: url($images/buttons/new.png) no-repeat
 	background-color: #e0eaf6
 	:hover
 		background-color: #e6f0fc
 
 input.spell extends input.submit
-	background: url($images/buttons/spell.png) no-repeat $bevel
+	background: url($images/buttons/spell.png) no-repeat
 	background-color: #e0eaf6
 	:hover
 		background-color: #e6f0fc
@@ -1415,7 +1415,7 @@ dl#feed
 #sidebar .title final
 	margin: 0 0 15px
 	padding: 4px 0 0
-	font-size: ifnull($sidebar_title_font_size, 1.6em)
+	font-size: @ifnull ($sidebar_title_font_size, 1.6em)
 
 .title2 extends .title
 	background: none
@@ -1425,10 +1425,10 @@ dl#feed
 		color: #777
 
 .cat final, .title final
-	font: 100 1.5em/1.3em ifnull($cat_font, $head_font)
+	font: 100 1.5em/1.3em @ifnull ($cat_font, $head_font)
 
 .title final
-	font-size: ifnull($title_font_size, 1.4em)
+	font-size: @ifnull ($title_font_size, 1.4em)
 	position: relative
 
 // A general table class
@@ -1638,7 +1638,7 @@ th.last_th
 /* Don't touch this -- this hack dynamically adds language flags.
 ------------------------------------------------------------------ */
 
-{%language_flags%}
+@dynamic language_flags
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */
@@ -1663,25 +1663,18 @@ $post_font = $main_font
 $blog_font_size = 100%/140%
 $blog_font = $post_font
 
-$bevel = ", url($images/theme/bevel.png) $button_gradient"
-$bevel {ie6,ie7,ie8} = ""
-$button_gradient = ", linear-gradient(90deg, rgba(212, 212, 212, .5), rgba(212, 212, 212, 0))"
-$button_gradient {ie9} = ""
-
-$max-width = "max-width"
-$max-width {ie6} = "width"
-
 $main_bg = #fff
 $head_bg = darken(#e3e0da, 3%)
 $menu_border = rgba(220, 224, 220, .95)
 $menu_gradient = linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$menu_gradient {ie9} =   average(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$board_col = #d97b33
+
+$max-width =		@is (ie6, "width", "max-width")
+$sidebar-width =	@is (webkit, "242px", "240px") // Webkit screws up on padding/border in table mode
+
 $window_bg = darken($window_bg2, 1%) // lighten(#e3e0d0, 13%) // #f2f3ea // #f9f6f0
 $window_bg2 = #f8faf8 // lighten(#e3e0d0, 11%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent
 $window_bg3 = #f0f0f0
-$sidebar-width = "240px"
-$sidebar-width {webkit} = "242px" // Webkit screws up on padding/border in table mode
+$board_col = #d97b33
 
 // Unused, but I like to keep these around...
 $other_bg = #e7e9b8
@@ -1696,13 +1689,13 @@ $alphamix = $main_bg
 
 /* And our mixin... */
 
-mixin checkbox-styling
+@mixin checkbox-styling
 	background: none
 	border: 0
 
 /*
-// This example is here to showcase the mixin power.
-mixin example($border: 1px solid black, $width: 777px, $co = #888)
+// This example is here to showcase the mixin power. You can use : or = in param lists.
+@mixin example($border: 1px solid black, $width: 777px, $co: #888)
 	width: $width
 	font-size: 1em
 	background: $main_bg
@@ -1711,7 +1704,8 @@ mixin example($border: 1px solid black, $width: 777px, $co = #888)
 		color: $board_col
 
 .class
-	.thing
+	.thing mixes example
+		or...
 		mixin: example
 		mixin: example(1px dotted white)
 		mixin: example(,, #fff)

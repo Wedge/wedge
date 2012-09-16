@@ -2456,10 +2456,11 @@ class wedit
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
 		{
+			$extra = $context['browser']['is_ie'] && $context['browser']['version'] < 8 ? '-ie' : '';
 			$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 			$context['smiley_gzip'] = $can_gzip;
 			$context['smiley_ext'] = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
-			$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'];
+			$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . $extra . '-' . $user_info['smiley_set'];
 			$dummy = '';
 			$max = 0;
 
@@ -2467,7 +2468,7 @@ class wedit
 			while (empty($exists) && $max++ < 3)
 			{
 				$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
-				$filename = '/cache/smileys-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
+				$filename = '/cache/smileys' . $extra . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
 				$exists = file_exists($boarddir . $filename);
 				if (!$exists)
 					parsesmileys($dummy);

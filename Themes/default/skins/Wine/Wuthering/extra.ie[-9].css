@@ -2,10 +2,10 @@
 /* Misc hacks
 ------------------------------------------------------- */
 
-// .lightgrad implies a gradient, which triggers hasLayout for IE -- not good in menus!
-.menu ul unextends .lightgrad
-
 #upper_section .frame,
 #upper_section h1,
 .catbase
 	filter: none
+
+// .lightgrad implies a gradient, which triggers hasLayout for IE -- not good in menus!
+.menu ul unextends .lightgrad

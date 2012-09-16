@@ -1371,10 +1371,8 @@ div.top_row dd
 			border-top: 1px solid #bdb5b5
 			margin: 0 -30px -20px
 			// We can't inherit anything inside a @media query,
-			// so we have to reproduce .inline-block directly here.
-			section
-				display: inline-block
-				mixin: ie-inline-block
+			// so we have to reproduce (mix) .inline-block directly here.
+			section mixes .inline-block
 				width: $sidebar-width
 				vertical-align: top
 				padding: 0 8px 8px

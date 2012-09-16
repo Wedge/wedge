@@ -69,7 +69,7 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
 {
-	global $context, $settings, $footer_coding, $theme, $cachedir, $boardurl;
+	global $context, $settings, $footer_coding, $theme, $jsdir, $boardurl;
 	static $done_files = array();
 
 	if (!is_array($files))
@@ -126,11 +126,11 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
+	$final_file = $jsdir . '/' . $id . $latest_date . $ext;
 	if (!file_exists($final_file))
 		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext);
 
-	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
+	$final_script = $boardurl . '/js/' . $id . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -157,7 +157,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  */
 function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $pluginsdir, $cachedir, $boardurl, $settings, $footer_coding;
+	global $context, $pluginsdir, $jsdir, $boardurl, $settings, $footer_coding;
 	static $done_files = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -206,11 +206,11 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $cachedir . '/' . $id . $latest_date . $ext;
+	$final_file = $jsdir . '/' . $id . $latest_date . $ext;
 	if (!file_exists($final_file))
 		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext, true);
 
-	$final_script = $boardurl . '/cache/' . $id . $latest_date . $ext;
+	$final_script = $boardurl . '/js/' . $id . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -386,12 +386,10 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
 		unset($found_suffixes['webkit']);
 
+	// Build the target folder from our skin's folder names and main file name. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
+	$target_folder = trim($id . '-' . implode('-', array_filter(array_diff($files, (array) 'common', $ignore_files))), '-');
+
 	$id = array_filter(array_merge(
-		(array) $id,
-
-		// We don't need to show 'common-index-sections-extra-custom' in the main filename, do we?
-		array_diff($files, (array) 'common', $ignore_files),
-
 		array_keys(array_diff_key($found_suffixes, $ignore_versions)),
 
 		// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
@@ -400,7 +398,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	));
 
 	// Cache final file and retrieve its name.
-	$final_script = $boardurl . '/cache/' . wedge_cache_css_files($id, $latest_date, $css, $can_gzip, $ext);
+	$final_script = $boardurl . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $css, $can_gzip, $ext);
 
 	if ($is_main)
 		return $context['cached_css'] = $final_script;
@@ -507,7 +505,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
 
 	// Cache final file and retrieve its name.
-	$final_script = $boardurl . '/cache/' . wedge_cache_css_files($id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
+	$final_script = $boardurl . '/css/' . wedge_cache_css_files('', $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
 
 	// Do we just want the URL?
 	if (!$add_link)
@@ -520,6 +518,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 /**
  * Create a compact CSS file that concatenates, pre-parses and compresses a list of existing CSS files.
  *
+ * @param mixed $folder The target folder (relative to the cache folder.)
  * @param mixed $ids A filename or an array of filename radixes, such as 'index'.
  * @param integer $latest_date The most recent filedate (Unix timestamp format), to be used to differentiate the latest copy from expired ones.
  * @param string $css The CSS file to process, or an array of CSS files to process, in order, with complete path names.
@@ -527,61 +526,70 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
  * @param string $ext The extension for the final file. Default is '.css', some browsers may have problems with '.css.gz' if gzipping is enabled.
  * @return array $additional_vars An array of key-pair values to associate custom CSS variables with their intended replacements.
  */
-function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
+function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $theme, $settings, $css_vars, $context, $cachedir, $boarddir, $boardurl, $prefix;
+	global $theme, $settings, $css_vars, $context, $cssdir, $boarddir, $boardurl, $prefix;
 
 	$id = empty($settings['obfuscate_filenames']) ? implode('-', (array) $ids) : md5(implode('-', (array) $ids));
 
 	$full_name = $id . '-' . $latest_date . $ext;
-	$final_file = $cachedir . '/' . $full_name;
+	$final_folder = substr($cssdir . '/' . $folder, 0, -1);
+	$final_file = $final_folder . '/' . $full_name;
 
 	if (file_exists($final_file))
-		return $full_name;
+		return $folder . $full_name;
+
+	if (!empty($folder) && $folder != '/' && !file_exists($final_folder))
+	{
+		@mkdir($final_folder, 0755);
+		@copy($cssdir . '/index.php', $final_folder . '/index.php');
+	}
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	foreach (glob($cachedir . '/' . $id . '-*' . $ext) as $del)
+	foreach (glob($final_folder . '/' . $id . '-*' . $ext) as $del)
 		if (strpos($del, $latest_date) === false)
 			@unlink($del);
 
 	$final = '';
 	$discard_dir = strlen($boarddir) + 1;
 
-	// Load WeCSS, our sweet, short and fast CSS parser :)
+	// Load Wess, our sweet, short and fast CSS parser :)
 	loadSource('Class-CSS');
 
 	$plugins = array(
-		new wecss_dynamic(),	// Dynamic replacements through callback functions
-		new wecss_mixin(),		// CSS mixins (mixin hello($world: 0))
-		new wecss_var(),		// CSS variables ($hello_world)
-		new wecss_color(),		// CSS color transforms
-		new wecss_func(),		// Various CSS functions
-		new wecss_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
-		new wecss_math(),		// Math function (math(1px + 3px), math((4*$var)/2em)...)
-		new wecss_prefixes(),
+		new wess_dynamic(),	// Dynamic replacements through callback functions
+		new wess_mixin(),	// CSS mixins (mixin hello($world: 0))
+		new wess_var(),		// CSS variables ($hello_world)
+		new wess_if(),		// CSS conditions (@is (ie9, true, false))
+		new wess_color(),	// CSS color transforms
+		new wess_func(),	// Various CSS functions
+		new wess_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
+		new wess_math(),	// Math function (math(1px + 3px), math((4*$var)/2em)...)
+		new wess_prefixes(),
 	);
 
 	// rgba to rgb conversion for IE 6/7/8/9
 	if ($context['browser']['is_ie'])
-		$plugins[] = new wecss_rgba();
+		$plugins[] = new wess_rgba();
 
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)
 	// Note that this is called last, mostly to avoid conflicts with the semicolon character.
 	if ($gzip && !$context['browser']['is_ie6'] && !$context['browser']['is_ie7'])
-		$plugins[] = new wecss_base64();
+		$plugins[] = new wess_base64($folder);
 
 	// Default CSS variables (paths are set relative to the cache folder)
 	// !!! If subdomains are allowed, should we use absolute paths instead?
-	$images_url = '..' . str_replace($boardurl, '', $theme['images_url']);
+	$relative_root = '..' . str_repeat('/..', substr_count($folder, '/'));
+	$images_url = $relative_root . str_replace($boardurl, '', $theme['images_url']);
 	$languages = isset($context['skin_available_languages']) ? $context['skin_available_languages'] : array('english');
 	$css_vars = array(
 		'$language' => isset($context['user']['language']) && in_array($context['user']['language'], $languages) ? $context['user']['language'] : $languages[0],
 		'$images_dir' => $theme['theme_dir'] . '/images',
 		'$images' => $images_url,
 		'$theme_dir' => $theme['theme_dir'],
-		'$theme' => '..' . str_replace($boardurl, '', $theme['theme_url']),
-		'$root' => '..',
+		'$theme' => $relative_root . str_replace($boardurl, '', $theme['theme_url']),
+		'$root' => $relative_root,
 	);
 	if (!empty($additional_vars))
 		foreach ($additional_vars as $key => $val)
@@ -589,7 +597,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '
 
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ((array) $css as $file)
-		$final .= str_replace('$here', '..' . str_replace('\\', '/', str_replace($boarddir, '', dirname($file))), file_get_contents($file));
+		$final .= str_replace('$here', $relative_root . str_replace('\\', '/', str_replace($boarddir, '', dirname($file))), file_get_contents($file));
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
@@ -604,7 +612,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '
 
 	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
 	// Please note that it isn't currently used by Wedge itself, but you can use it to provide both prefixed and standard versions of a tag that isn't
-	// already taken into account by the wecss_prefixes() function (otherwise you only need to provide the unprefixed version.)
+	// already taken into account by the wess_prefixes() function (otherwise you only need to provide the unprefixed version.)
 	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
 
 	// Just like comments, we're going to preserve content tags.
@@ -646,7 +654,7 @@ function wedge_cache_css_files($ids, $latest_date, $css, $gzip = false, $ext = '
 
 	file_put_contents($final_file, $final);
 
-	return $full_name;
+	return $folder . $full_name;
 }
 
 function wedge_replace_placeholders($str, $arr, &$final)
@@ -658,7 +666,7 @@ function wedge_replace_placeholders($str, $arr, &$final)
 }
 
 // Dynamic function to cache language flags into index.css
-function dynamic_language_flags($match)
+function dynamic_language_flags()
 {
 	global $context, $settings;
 
@@ -679,7 +687,7 @@ function dynamic_language_flags($match)
 }
 
 // Dynamic function to cache admin menu icons into admenu.css
-function dynamic_admin_menu_icons($match)
+function dynamic_admin_menu_icons()
 {
 	global $context, $settings, $admin_areas, $ina;
 
@@ -730,13 +738,13 @@ function dynamic_admin_menu_icons($match)
  */
 function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext, $full_path = false)
 {
-	global $theme, $settings, $comments, $cachedir;
+	global $theme, $settings, $comments, $jsdir;
 
 	$final = '';
 	$dir = $full_path ? '' : $theme['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	foreach (glob($cachedir . '/' . $id. '*' . $ext) as $del)
+	foreach (glob($jsdir . '/' . $id. '*' . $ext) as $del)
 		if (strpos($del, $latest_date) === false)
 			@unlink($del);
 
@@ -858,17 +866,16 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
  */
 function wedge_cache_smileys($set, $smileys)
 {
-	global $cachedir, $context, $settings, $browser, $boardurl;
+	global $cssdir, $context, $settings, $browser, $boardurl;
 
 	$final = '';
 	$path = $settings['smileys_dir'] . '/' . $set . '/';
 	$url  = '..' . str_replace($boardurl, '', $settings['smileys_url']) . '/' . $set . '/';
-	$agent = $browser['agent'];
-	updateSettings(array('smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $agent . '-' . $set => $context['smiley_now']));
+	$extra = $browser['agent'] === 'ie' && $browser['version'] < 8 ? '-ie' : '';
+	updateSettings(array('smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . $extra . '-' . $set => $context['smiley_now']));
 
 	// Delete all remaining cached versions, if any (e.g. *.cgz for Safari.)
-	foreach (glob($cachedir . '/smileys-' . $agent . '-' . $set . '-*' . $context['smiley_ext']) as $del)
-		@unlink($del);
+	clean_cache('css', 'smileys' . $extra);
 
 	foreach ($smileys as $name => $smiley)
 	{
@@ -876,7 +883,7 @@ function wedge_cache_smileys($set, $smileys)
 		if (!file_exists($filename))
 			continue;
 		// Only small files should be embedded, really. We're saving on hits, not bandwidth.
-		if (($browser['is_ie'] && $browser['version'] < 7) || ($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
+		if ($extra || ($smiley['embed'] && filesize($filename) > 4096) || !$context['smiley_gzip'])
 			$smiley['embed'] = false;
 		list ($width, $height) = getimagesize($filename);
 		$ext = strtolower(substr($filename, strrpos($filename, '.') + 1));
@@ -887,7 +894,7 @@ function wedge_cache_smileys($set, $smileys)
 	if ($context['smiley_gzip'])
 		$final = gzencode($final, 9);
 
-	file_put_contents($cachedir . '/smileys-' . $agent . '-' . $set . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
+	file_put_contents($cssdir . '/smileys' . $extra . '-' . $set . '-' . $context['smiley_now'] . $context['smiley_ext'], $final);
 }
 
 /**
@@ -895,16 +902,14 @@ function wedge_cache_smileys($set, $smileys)
  */
 function theme_base_css()
 {
-	global $context, $boardurl, $settings, $cachedir;
+	global $context, $boardurl, $settings, $cssdir;
 
 	// First, let's purge the cache if any files are over a month old. This ensures we don't waste space for IE6 & co. when they die out.
 	$one_month_ago = time() - 30 * 24 * 3600;
 	if (empty($settings['last_cache_purge']) || $settings['last_cache_purge'] < $one_month_ago)
 	{
 		$search_extensions = array('.gz', '.css', '.js', '.cgz', '.jgz');
-		foreach (glob($cachedir . '/*.*') as $del)
-			if (in_array(strrchr($del, '.'), $search_extensions) && is_file($del) && filemtime($del) < $one_month_ago)
-				@unlink($del);
+		clean_cache('css', $one_month_ago);
 		updateSettings(array('last_cache_purge' => time()));
 	}
 
@@ -1090,35 +1095,63 @@ function wedge_get_skin_options()
  * Cleans some or all of the files stored in the file cache.
  *
  * @param string $extensions Optional, a comma-separated list of file extensions that should be pruned. Leave empty to clear the regular data cache (data sub-folder.)
- * @param string $filter Optional, designates a filter to match the file names against before they can be cleared from the cache folder. Leave empty to clear the regular data cache (data sub-folder.)
+ * @param string $filter Optional, designates a filter to match the files either again a name mask, or a modification date, before they can be cleared from the cache folder.
+ * @param string $force_folder Optional, used internally for recursivity.
  * @todo Figure out a better way of doing this and get rid of $sourcedir being globalled again.
  */
-function clean_cache($extensions = 'php', $filter = '')
+function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 {
-	global $cachedir, $sourcedir;
+	global $cachedir, $cssdir, $jsdir, $sourcedir;
 
-	// No directory = no game.
-	$folder = $cachedir . ($filter === '' && $extensions === 'php' ? '/data' : '');
+	$folder = $cachedir;
+	$is_recursive = false;
+	if ($extensions === 'css')
+	{
+		$folder = $cssdir;
+		$extensions = array('css', 'cgz', 'css.gz');
+		$is_recursive = true;
+	}
+	elseif ($extensions === 'js')
+	{
+		$folder = $jsdir;
+		$extensions = array('js', 'jgz', 'js.gz');
+	}
+
+	if ($force_folder)
+		$folder = $force_folder;
+
 	if (!is_dir($folder))
 		return;
 
-	if ($extensions === 'css')
-		$extensions = array('css', 'cgz', 'css.gz');
-	elseif ($extensions === 'js')
-		$extensions = array('js', 'jgz', 'js.gz');
-
-	// Remove the files in Wedge's own disk cache, if any.
 	$dh = scandir($folder, 1);
 	$exts = array_flip((array) $extensions);
+	$by_date = '';
+	if (is_integer($filter))
+	{
+		$filter = '';
+		$by_date = $filter;
+	}
+	$filter_is_folder = !$filter || strpos($force_folder, $filter) !== false;
+
+	// Remove the files in Wedge's own disk cache, if any.
 	foreach ($dh as $file)
-		if ($file[0] !== '.' && $file !== 'index.php' && (!$filter || strpos($file, $filter) !== false))
+	{
+		if ($file[0] === '.' || $file === 'index.php')
+			continue;
+		if (is_dir($file))
+			$is_recursive || clean_cache($extensions, $filter, $file);
+		elseif (($by_date && filemtime($file) < $by_date) || !$filter || strpos($file, $filter) !== false || $filter_is_folder)
 			if (!$extensions || isset($exts[wedge_get_extension($file)]))
 				@unlink($folder . '/' . $file);
+	}
 
 	// Invalidate cache, to be sure!
 	// ...as long as Collapse.php can be modified, anyway.
-	@touch($sourcedir . '/Collapse.php');
-	clearstatcache();
+	if (!$force_folder && !is_array($extensions))
+	{
+		@touch($sourcedir . '/Collapse.php');
+		clearstatcache();
+	}
 }
 
 /**
@@ -1235,14 +1268,14 @@ function cache_put_data($key, $val, $ttl = 120)
 	else
 	{
 		if ($val === null)
-			@unlink($cachedir . '/data/' . $key . '.php');
+			@unlink($cachedir . '/' . $key . '.php');
 		else
 		{
 			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=time()<' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';?' . '>';
 
 			// Check that the cache write was successful. If it fails due to low diskspace, remove the cache file.
-			if (file_put_contents($cachedir . '/data/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
-				@unlink($cachedir . '/data/' . $key . '.php');
+			if (file_put_contents($cachedir . '/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))
+				@unlink($cachedir . '/' . $key . '.php');
 		}
 	}
 
@@ -1299,11 +1332,11 @@ function cache_get_data($key, $ttl = 120)
 	elseif ($cache_type === 'xcache')
 		$val = xcache_get($key);
 	// Otherwise it's the file cache!
-	elseif (file_exists($cachedir . '/data/' . $key . '.php') && @filesize($cachedir . '/data/' . $key . '.php') > 10)
+	elseif (file_exists($cachedir . '/' . $key . '.php') && @filesize($cachedir . '/' . $key . '.php') > 10)
 	{
-		@include($cachedir . '/data/' . $key . '.php');
+		@include($cachedir . '/' . $key . '.php');
 		if (empty($valid))
-			@unlink($cachedir . '/data/' . $key . '.php');
+			@unlink($cachedir . '/' . $key . '.php');
 	}
 
 	if (isset($db_show_debug) && $db_show_debug === true)

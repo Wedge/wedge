@@ -312,7 +312,7 @@ function weEditor(opt)
 		// Mozilla text range wrap. (Standards version.)
 		else if ('selectionStart' in oTextHandle)
 		{
-			// !! Opera 12.50 Alpha has a bug in which selectionStart is broken due to textareas now using \n instead
+			// !! Opera 12.10 Beta has a bug in which selectionStart is broken due to textareas now using \n instead
 			// of \r\n newlines, while the selectionStart setter will still behave as if \r hadn't been deleted.
 			// cr/lf is a quick and dirty attempt to at least fix that... It's not perfect. Tough life.
 			// !! @todo: remove this once Opera fixes the bug...

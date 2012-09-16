@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * WeCSS is a pre-parser for CSS files, bringing new possibilities to CSS.
+ * Wess (WEdge pre-proceSS) is a pre-parser for CSS files, bringing new possibilities to CSS.
  *
  * @package wedge
  * @copyright 2010-2012 Wedgeward, wedge.org
@@ -17,7 +17,7 @@
  * Also implements some ideas from Sass (http://sass-lang.com)
  */
 
-class wecss
+class wess
 {
 	/**
 	 * The HSL to RGB and RGB to HSL functions are based on ABC algorithms from the CWI,
@@ -40,7 +40,7 @@ class wecss
 		$g = max(0, min(255, round($g)));
 		$b = max(0, min(255, round($b)));
 
-		return $a === 1 ? wecss::rgb2hex($r, $g, $b) : "rgba($r, $g, $b, $a)";
+		return $a === 1 ? wess::rgb2hex($r, $g, $b) : "rgba($r, $g, $b, $a)";
 	}
 
 	// Converts from hue to RGB
@@ -74,9 +74,9 @@ class wecss
 		$m2 = $l * 2 - $m1;
 
 		return array(
-			'r' => wecss::hue2rgb($m1, $m2, $h + 1 / 3) * 255,
-			'g' => wecss::hue2rgb($m1, $m2, $h) * 255,
-			'b' => wecss::hue2rgb($m1, $m2, $h - 1 / 3) * 255,
+			'r' => wess::hue2rgb($m1, $m2, $h + 1 / 3) * 255,
+			'g' => wess::hue2rgb($m1, $m2, $h) * 255,
+			'b' => wess::hue2rgb($m1, $m2, $h - 1 / 3) * 255,
 			'a' => $a
 		);
 	}
@@ -121,6 +121,7 @@ class wecss
 	// Converts from a string to a RGBA or HSLA color
 	protected function string2color($data)
 	{
+		// We'll only support the standard (non-CSS3) color names. Who uses 'PapayaWhip' anyway?
 		static $colors = array(
 			'aqua'		=> '00ffff', 'black'	=> '000000', 'blue'		=> '0000ff',
 			'fuchsia'	=> 'ff00ff', 'gray'		=> '808080', 'green'	=> '008000',
@@ -168,7 +169,7 @@ class wecss
 	function process(&$css) {}
 }
 
-class wecss_mixin extends wecss
+class wess_mixin extends wess
 {
 	function process(&$css)
 	{
@@ -177,10 +178,10 @@ class wecss_mixin extends wecss
 		$mix = $def = array();
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
-		if (preg_match_all('~\nmixin\s+(?:{([^}]+)}\s*)?([\w-]+)(?:\(([^()]+)\))?[^\n]*\n([\t ]+)([^\n]*\n)((?:\4[\t ]*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
+		if (preg_match_all('~@mixin\s+(?:{([^}]+)}\s*)?([\w-]+)(?:\(([^()]+)\))?[^\n]*\n([\t ]+)([^\n]*\n)((?:\4[\t ]*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
 		{
 			// We start by building an array of mixins...
-			foreach ($mixins as &$mixin)
+			foreach ($mixins as $mixin)
 			{
 				// Remove the mixin declaration
 				$css = str_replace($mixin[0], '', $css);
@@ -201,59 +202,115 @@ class wecss_mixin extends wecss
 					}
 				}
 			}
+		}
 
-			// ...And then we apply them to the CSS file.
-			if (preg_match_all('~(?<=\n)(\s*)mixin\s*:\s*([\w-]+)(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		// ...And then we apply them to the CSS file.
+		$repa = array();
+		$selector_regex = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()]+)';
+		if (preg_match_all('~(?<=\n)([\t ]*)mixin[\t ]*:[\t ]*' . $selector_regex . '[\t ]*(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		{
+			foreach ($targets as $mixin)
 			{
-				$repa = array();
-				foreach ($targets as &$mixin)
+				$rep = '';
+				$tg = $mixin[2];
+				if (isset($mix[$tg]))
 				{
-					$rep = '';
-					$tg = $mixin[2];
-					if (isset($mix[$tg]))
+					$rep = $mix[$tg];
+					if (!empty($mixin[3]))
 					{
-						$rep = $mix[$tg];
-						if (!empty($mixin[3]))
-						{
-							$variables = explode(',', $mixin[3]);
-							$i = 0;
-							foreach ($variables as $i => $var)
-								if (!empty($var))
-									$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
-						}
-
-						// Replace all missing variables with their default value.
-						if (!empty($def[$tg]))
-							$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
+						$variables = explode(',', $mixin[3]);
+						$i = 0;
+						foreach ($variables as $i => $var)
+							if (!empty($var))
+								$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
 					}
-					$repa[$mixin[0]] = $mixin[1] . str_replace("\n", "\n" . $mixin[1], $rep);
+
+					// Replace all missing variables with their default value.
+					if (!empty($def[$tg]))
+						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 				}
+				// Or is this a simple non-mixin selector we want to mix with?
+				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '[\t ]*(?:[a-z]+[\t ]*)?\n([\t ]+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
+					foreach ($selectors as $sel)
+						$rep .= rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
-				// Sort the array by key length, to avoid conflicts.
-				$keys = array_map('strlen', array_keys($repa));
-				array_multisort($keys, SORT_DESC, $repa);
+				$repa[$mixin[0]] = $mixin[1] . str_replace("\n", "\n" . $mixin[1], $rep);
+			}
+		}
 
-				$css = str_replace(array_keys($repa), array_values($repa), $css);
+		// ...We should also do '.class mixes .otherclass' here.
+		if (preg_match_all('~(?<=\n)([\t ]*)(.*?)\s+mixes\s*' . $selector_regex . '(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		{
+			foreach ($targets as $mixin)
+			{
+				$rep = '';
+				$tg = $mixin[3];
+				if (isset($mix[$tg]))
+				{
+					$rep = $mix[$tg];
+					if (!empty($mixin[4]))
+					{
+						$variables = explode(',', $mixin[4]);
+						$i = 0;
+						foreach ($variables as $i => $var)
+							if (!empty($var))
+								$rep = str_replace('$%' . $i . '%', trim($var, '" '), $rep);
+					}
+
+					// Replace all missing variables with their default value.
+					if (!empty($def[$tg]))
+						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
+				}
+				// Or is this a simple non-mixin selector we want to mix with?
+				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '[\t ]*(?:[a-z]+[\t ]*)?\n([\t ]+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
+					foreach ($selectors as $sel)
+						$rep .= rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
+
+				$repa[$mixin[0]] = $mixin[1] . $mixin[2] . "\n" . $mixin[1] . (isset($mixin[1][0]) ? $mixin[1][0] : "\t") . str_replace("\n", "\n" . $mixin[1], $rep);
+			}
+		}
+
+		if (!empty($repa))
+		{
+			// Sort the array by key length, to avoid conflicts.
+			$keys = array_map('strlen', array_keys($repa));
+			array_multisort($keys, SORT_DESC, $repa);
+
+			$css = str_replace(array_keys($repa), array_values($repa), $css);
+		}
+	}
+}
+
+// Find '@dynamic my_function', then execute dynamic_my_function() to replace them.
+// You may add parameters to the function call: @dynamic my_function(string, number)
+// Just don't use quotes around the parameters, they're all returned as trimmed strings.
+// Obviously, don't use a comma or spaces as a parameter either. Why would you do that anyway?
+class wess_dynamic extends wess
+{
+	function process(&$css)
+	{
+		static $done = array();
+
+		if (preg_match_all('~@dynamic\s+([a-z0-9_]+)(?:[\t ]+\([^)]*\))?~i', $css, $functions, PREG_SET_ORDER))
+		{
+			foreach ($functions as $func)
+			{
+				$callback = 'dynamic_' . $func[1];
+				if (is_callable($callback))
+				{
+					if (isset($done[$func[0]]))
+						continue;
+					$data = isset($func[2]) ? call_user_func_array($callback, array_map('trim', explode(',', $func[2]))) : $callback();
+					$css = preg_replace('~' . preg_quote($func[0], '~') . '~i', $data, $css);
+					$done[$func[0]] = true;
+				}
 			}
 		}
 	}
 }
 
-// Find {%my_function%}, then execute dynamic_my_function() to replace them.
-// You may add parameters to the function call: {%my_function:param%}, then
-// declare your function as dynamic_my_function($match), where $match[1] is the param.
-class wecss_dynamic extends wecss
-{
-	function process(&$css)
-	{
-		if (preg_match_all('~{%([a-z0-9_]+)(?::([^%]+))?%}~i', $css, $functions, PREG_SET_ORDER))
-			foreach ($functions as $func)
-				if (is_callable('dynamic_' . $func[1]))
-					$css = preg_replace_callback('~{%' . $func[1] . '(?::([^%]+))?%}~i', 'dynamic_' . $func[1], $css);
-	}
-}
-
-class wecss_var extends wecss
+// Dynamic CSS constants.
+class wess_var extends wess
 {
 	// Sort arrays by their content length. The trim() is 10 times slower but needed. It's still super-fast.
 	private static function lensort($a, $b)
@@ -270,7 +327,7 @@ class wecss_var extends wecss
 				$css_vars[$k] = str_replace($key, $val, $css_vars[$k]);
 
 		if (strpos($css_vars[$k], '$') !== false && $limit < 8)
-			wecss_var::develop_var($k, ++$limit);
+			wess_var::develop_var($k, ++$limit);
 	}
 
 	function process(&$css)
@@ -300,7 +357,7 @@ class wecss_var extends wecss
 		{
 			// Sort the matches by key length, to avoid conflicts as much as possible.
 			$decs = $matches[0];
-			usort($decs, 'wecss_var::lensort');
+			usort($decs, 'wess_var::lensort');
 
 			// Erase all traces of variable definitions.
 			$css = str_replace($decs, '', $css);
@@ -319,7 +376,7 @@ class wecss_var extends wecss
 			}
 
 			foreach ($css_vars as $key => $val)
-				wecss_var::develop_var($key);
+				wess_var::develop_var($key);
 
 			// Same as above, but for the actual variables.
 			$keys = array_map('strlen', array_keys($css_vars));
@@ -330,8 +387,8 @@ class wecss_var extends wecss
 				$alphamix = trim($css_vars['$alphamix'], '"');
 		}
 
-		// Replace ifnull($var1, $var2) with $var1, or $var2 if $var1 doesn't exist.
-		while (preg_match_all('~ifnull\((\$[\w-]+)\s*,\s*+(?!ifnull)([^)]+)\s*\)~i', $css, $matches))
+		// Replace @ifnull($var1, $var2) with $var1, or $var2 if $var1 doesn't exist.
+		while (preg_match_all('~@ifnull\s*\((\$[\w-]+)\s*,\s*+(?!@ifnull)\s*([^)]+)\s*\)~i', $css, $matches))
 			foreach ($matches[1] as $i => $var)
 				$css = str_replace($matches[0][$i], isset($css_vars[$var]) ? $var : $matches[2][$i], $css);
 
@@ -341,10 +398,47 @@ class wecss_var extends wecss
 	}
 }
 
+// Conditionals.
+// !! @todo: implement more!
+class wess_if extends wess
+{
+	function process(&$css)
+	{
+		global $context;
+
+		// @is (condition, if_true[, if_false])
+		// (This has got to be one of my most amusing regexes...)
+		$strex = '\s*+("(?:[^"@]|@(?!is\s*\())*"|\'(?:[^\'@]|@(?!is\s*\())*\'|(?:[^\'",@]|@(?!is\s*\())(?:[^,@]|@(?!is\s*\())*)\s*+';
+		while (preg_match_all('~@is\s*\(' . $strex . ',' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?\)~i', $css, $matches))
+		{
+			foreach ($matches[1] as $i => $match)
+			{
+				if ($match[0] == '\'' || $match[0] == '"')
+					$match = substr($match, 1, -1);
+				// !! @todo: this is a temporary implementation, until I get to write a proper parser.
+				if (hasBrowser($match))
+				{
+					if ($matches[2][$i][0] == '\'' || $matches[2][$i][0] == '"')
+						$matches[2][$i] = substr($matches[2][$i], 1, -1);
+					$css = str_replace($matches[0][$i], $matches[2][$i], $css);
+				}
+				else
+				{
+					if (!isset($matches[3][$i]))
+						$matches[3][$i] = '';
+					if ($matches[3][$i] !== '' && ($matches[3][$i][0] == '\'' || $matches[3][$i][0] == '"'))
+						$matches[3][$i] = substr($matches[3][$i], 1, -1);
+					$css = str_replace($matches[0][$i], $matches[3][$i], $css);
+				}
+			}
+		}
+	}
+}
+
 /**
  * Apply color functions to the CSS file.
  */
-class wecss_color extends wecss
+class wess_color extends wess
 {
 	// Transforms "gradient: rgba(1,2,3,.5)" into background-color, or the equivalent IE filter.
 	// Transforms "gradient: color1, color2, [angle]" into linear-gradient([angle], color1, color2), or the equivalent IE filter. Default angle is 180deg (top to bottom).
@@ -400,7 +494,7 @@ class wecss_color extends wecss
 				if (empty($m))
 					continue;
 
-				$rgb = wecss::string2color($m);
+				$rgb = wess::string2color($m);
 				if ($rgb === false)
 				{
 					// Unfortunately, the alpha() function can clash with the equivalent IE filter...
@@ -426,7 +520,7 @@ class wecss_color extends wecss
 						$arg[$i] = isset($arg[$i]) ? $arg[$i] : 0;
 				foreach ($arg as $i => $a)
 					$parg[$i] = substr($a, -1) === '%' ? ((float) substr($a, 0, -1)) / 100 : false;
-				$hsl = $hsl ? $hsl : wecss::rgb2hsl($color[0], $color[1], $color[2], $color[3]);
+				$hsl = $hsl ? $hsl : wess::rgb2hsl($color[0], $color[1], $color[2], $color[3]);
 
 				// This is where we run our color functions...
 
@@ -434,9 +528,9 @@ class wecss_color extends wecss
 				{
 					// Extract the second color from our list. Technically, we COULD
 					// have an infinite number of colors... Is it any useful, though?
-					$rgb2 = wecss::string2color(ltrim(substr($m, strlen($rgb[0])), ', '));
+					$rgb2 = wess::string2color(ltrim(substr($m, strlen($rgb[0])), ', '));
 					$color2 = $rgb2[1];
-					$hsl2 = $rgb2[2] ? $rgb2[2] : wecss::rgb2hsl($rgb2[1][0], $rgb2[1][1], $rgb2[1][2], $rgb2[1][3]);
+					$hsl2 = $rgb2[2] ? $rgb2[2] : wess::rgb2hsl($rgb2[1][0], $rgb2[1][1], $rgb2[1][2], $rgb2[1][3]);
 					$hsl['h'] = ($hsl['h'] + $hsl2['h']) / 2;
 					$hsl['s'] = ($hsl['s'] + $hsl2['s']) / 2;
 					$hsl['l'] = ($hsl['l'] + $hsl2['l']) / 2;
@@ -475,7 +569,7 @@ class wecss_color extends wecss
 				elseif ($code === 'channels')
 				{
 					if ($color === 0)
-						$color = wecss::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
+						$color = wess::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
 					$nc = array(
 						'r' => $color[0] + ($parg[0] ? $color[0] * $parg[0] : $arg[0]),
 						'g' => $color[1] + ($parg[1] ? $color[1] * $parg[1] : $arg[1]),
@@ -496,19 +590,19 @@ class wecss_color extends wecss
 						continue;
 				}
 
-				$nc = $nc ? $nc : wecss::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
-				$css = str_replace($dec, wecss::color2string($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
+				$nc = $nc ? $nc : wess::hsl2rgb($hsl['h'], $hsl['s'], $hsl['l'], $hsl['a']);
+				$css = str_replace($dec, wess::color2string($nc['r'], $nc['g'], $nc['b'], $nc['a']), $css);
 			}
 		}
 
 		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()\n,]+)';
-		$css = preg_replace_callback('~(\n[\t ]*)gradient\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wecss_color::gradient_background', $css);
+		$css = preg_replace_callback('~(\n[\t ]*)gradient\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wess_color::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
 
 // Miscellaneous helper functions...
-class wecss_func extends wecss
+class wess_func extends wess
 {
 	function process(&$css)
 	{
@@ -528,7 +622,7 @@ class wecss_func extends wecss
 	}
 }
 
-class wecss_nesting extends wecss
+class wess_nesting extends wess
 {
 	var $rules, $props;
 
@@ -565,7 +659,7 @@ class wecss_nesting extends wecss
 			// You must conform. It is my sworn duty to see that you do conform.
 
 			$tree = preg_replace("~\n\s*\n~", "\n", $tree); // Delete blank lines
-			$tree = preg_replace_callback('~^([\t ]*)~m', 'wecss_nesting::indentation', $tree);
+			$tree = preg_replace_callback('~^([\t ]*)~m', 'wess_nesting::indentation', $tree);
 			$branches = explode("\n", $tree);
 			$level = 0;
 			$tree = '';
@@ -602,6 +696,10 @@ class wecss_nesting extends wecss
 				$tree .= $l[1];
 				$ex_string = $l[1];
 			}
+
+			// Did we finish the file with an extends or unextends...? Immediately open it and close it.
+			if ((strpos($ex_string, ' extends ') !== false || strpos($ex_string, ' unextends ') !== false))
+				$tree .= " {\n}\n";
 			while ($level > 0)
 			{
 				$tree .= '}';
@@ -646,6 +744,7 @@ class wecss_nesting extends wecss
 
 		$css = $standard_nest = '';
 		$bases = $virtuals = $used_virtuals = $removals = $selector_removals = $unextends = array();
+		$selector_regex = '((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)';
 
 		// 'reset' keyword: remove earlier occurrences of a selector.
 		// e.g.: ".class reset" -> removes all previous ".class" definitions
@@ -653,7 +752,7 @@ class wecss_nesting extends wecss
 		{
 			if (strpos($node['selector'], ' reset') !== false)
 			{
-				preg_match_all('~((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~' . $selector_regex . '\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					// Start by rebuilding a full selector. For efficiency reasons, and because I'm too lazy to rework this,
@@ -694,12 +793,12 @@ class wecss_nesting extends wecss
 		}
 
 		// 'virtual' keyword: remove rule if nothing extends on it.
-		// Please note that WeCSS will only accept one virtual selector at a time.
+		// Please note that Wess will only accept one virtual selector at a time.
 		foreach ($this->rules as $n => &$node)
 		{
 			if (strpos($node['selector'], ' virtual') !== false)
 			{
-				if (preg_match('~((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)\s+virtual\b~i', $node['selector'], $matches))
+				if (preg_match('~' . $selector_regex . '\s+virtual\b~i', $node['selector'], $matches))
 				{
 					$node['selector'] = str_replace($matches[0], $matches[1], $node['selector']);
 					$virtuals[$matches[1]] = $n;
@@ -716,7 +815,7 @@ class wecss_nesting extends wecss
 			//	@remove .class, h1
 			//		background: #fff
 			//
-			// Of course you may also use just one selector, or provide no selectors; WeCSS will target all selectors in the entire file.
+			// Of course you may also use just one selector, or provide no selectors; Wess will target all selectors in the entire file.
 			if (strpos($node['selector'], '@remove') === 0)
 			{
 				$sels = preg_match('~@remove\s+(?:from\s+)?([^\n]+)~', $node['selector'], $sels) ? array_map('trim', explode(',', trim(str_replace('#wedge-quote#', '"', $sels[1]), "\x00..\x20\""))) : array();
@@ -736,7 +835,7 @@ class wecss_nesting extends wecss
 			// e.g.: ".class unextends .orig "-> cancels any earlier ".class extends .orig"
 			if (strpos($node['selector'], ' unextends') !== false)
 			{
-				preg_match_all('~((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~' . $selector_regex . '\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 					$unextends[$m[1]] = $n;
 				$node['selector'] = preg_replace('~\bunextends\b~i', '', $node['selector']);
@@ -756,7 +855,7 @@ class wecss_nesting extends wecss
 				if ($browser['is_ie6'] && strpos($node['selector'], '>') !== false)
 					$node['selector'] = ' ';
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
-				preg_match_all('~((?<![a-z])[abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"]+)[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~' . $selector_regex . '[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					$save_selector = $node['selector'];
@@ -834,7 +933,7 @@ class wecss_nesting extends wecss
 		}
 
 		// Sort the bases array by the first argument's length, and then by the third argument's length.
-		usort($bases, 'wecss_nesting::lensort');
+		usort($bases, 'wess_nesting::lensort');
 
 		// Delete any virtuals that aren't actually inherited. Additionally,
 		// ignore the $base value in case it's set by another virtual.
@@ -1109,7 +1208,7 @@ class wecss_nesting extends wecss
 
 // Simple math functions. For instance, width: math((2px * 8px)/4) should return width: 4px
 // Don't mix different unit types in the same operation, Wedge won't bother.
-class wecss_math extends wecss
+class wess_math extends wess
 {
 	function process(&$css)
 	{
@@ -1133,7 +1232,7 @@ class wecss_math extends wecss
 
 // IE 6/7/8 don't support rgba/hsla, so we're replacing them with regular rgb colors mixed with an alpha variable.
 // The only exception is the gradient function, because it accepts a #aarrggbb value.
-class wecss_rgba extends wecss
+class wess_rgba extends wess
 {
 	// Converts from a string (possibly rgba) value to a rgb string
 	private static function rgba2rgb($input)
@@ -1144,20 +1243,20 @@ class wecss_rgba extends wecss
 		if (isset($cache[$input[0]]))
 			return $cache[$input[0]];
 
-		$str = wecss::string2color($input[2]);
+		$str = wess::string2color($input[2]);
 		if (empty($str))
 			return $cache[$input[0]] = 'red';
-		list ($r, $g, $b, $a) = $str[1] ? $str[1] : wecss::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
+		list ($r, $g, $b, $a) = $str[1] ? $str[1] : wess::hsl2rgb($str[2]['h'], $str[2]['s'], $str[2]['l'], $str[2]['a']);
 
 		if ($a == 1)
-			return $cache[$input[0]] = $input[1] . wecss::rgb2hex($r, $g, $b);
+			return $cache[$input[0]] = $input[1] . wess::rgb2hex($r, $g, $b);
 		if (!empty($input[1]))
 			return $cache[$input[0]] = $input[1] . '#' . sprintf('%02x%02x%02x%02x', round($a * 255), $r, $g, $b);
 
 		// We're going to assume the matte color is white, otherwise, well, too bad.
 		if (isset($alphamix) && !is_array($alphamix))
 		{
-			$rgb = wecss::string2color($alphamix);
+			$rgb = wess::string2color($alphamix);
 			if (empty($rgb[1]) && !empty($rgb[2]))
 				$rgb[1] = hsl2rgb($rgb[2]['h'], $rgb[2]['s'], $rgb[2]['l'], $rgb[2]['a']);
 			$alphamix = $rgb[1];
@@ -1170,19 +1269,19 @@ class wecss_rgba extends wecss
 		$g = $a * $g + $ma * $alphamix[1];
 		$b = $a * $b + $ma * $alphamix[2];
 
-		return $cache[$input[0]] = wecss::rgb2hex($r, $g, $b);
+		return $cache[$input[0]] = wess::rgb2hex($r, $g, $b);
 	}
 
 	function process(&$css)
 	{
 		global $browser;
 
-		$css = preg_replace_callback('~(colorstr=)' . ($browser['is_ie8down'] ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i', 'wecss_rgba::rgba2rgb', $css);
+		$css = preg_replace_callback('~(colorstr=)' . ($browser['is_ie8down'] ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i', 'wess_rgba::rgba2rgb', $css);
 	}
 }
 
 // Fix some commonly used CSS properties/values to use prefixes as required by the current browser.
-class wecss_prefixes extends wecss
+class wess_prefixes extends wess
 {
 	/**
 	 * Fix CSS properties, i.e. rules, anything before a colon.
@@ -1257,32 +1356,32 @@ class wecss_prefixes extends wecss
 			return $opera || $ie10 ? $unchanged : $prefixed;
 		}
 
-		// IE6/7/8/9 don't support transitions, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
+		// IE6/7/8/9 don't support transitions, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if ($matches[1] === 'transition')
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 4) || ($safari && $v < 3.2))
 				return '';
-			if (($opera && $v < 12.5) || ($firefox && $v < 16) || $webkit)
+			if (($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
 			return $unchanged;
 		}
 
-		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
+		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'animation') === 0)
 		{
 			if ($ie8down || $ie9 || ($firefox && $v < 4) || ($safari && $v < 3.2))
 				return '';
-			if (($opera && $v < 12.5) || ($firefox && $v < 16) || $webkit)
+			if (($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
 			return $unchanged;
 		}
 
-		// IE6/7/8 don't support transforms, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
+		// IE6/7/8 don't support transforms, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'transform') === 0)
 		{
 			if ($ie8down || ($opera && $v < 10.5) || ($firefox && $v < 3.5) || ($safari && $v < 3.1))
 				return '';
-			if ($is9 || ($opera && $v < 12.5) || ($firefox && $v < 16) || $webkit)
+			if ($is9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
 			return $unchanged;
 		}
@@ -1309,7 +1408,7 @@ class wecss_prefixes extends wecss
 		// Note that AFAIK, repeating-* still is prefixed everywhere as of August 2012, it's fixable but give me a break for now.
 		if (strpos($matches[1], 'gradient(') !== false)
 		{
-			if (($b['is_gecko'] && $v >= 16) || ($b['is_opera'] && $v >= 12.5) || ($b['is_ie'] && $v >= 10))
+			if (($b['is_gecko'] && $v >= 16) || ($b['is_opera'] && $v >= 12.1) || ($b['is_ie'] && $v >= 10))
 				return $unchanged;
 
 			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\s*\()~', $prefix . '$1', $unchanged);
@@ -1348,7 +1447,7 @@ class wecss_prefixes extends wecss
 			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
 
 		);
-		$css = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . '):[^\n;]+[\n;]~', 'wecss_prefixes::fix_rules', $css);
+		$css = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . '):[^\n;]+[\n;]~', 'wess_prefixes::fix_rules', $css);
 
 		// Same thing for a few more rules that need a more elaborate detection...
 		$values = array(
@@ -1356,23 +1455,30 @@ class wecss_prefixes extends wecss
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
 
 		);
-		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wecss_prefixes::fix_values', $css);
+		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wess_prefixes::fix_values', $css);
 
 		// And now for some 'easy' rules that don't need our regex machine.
 		$b = $browser;
 		$v = $b['version'];
 
-		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.50+ support them unprefixed, other browsers require a prefix.
-		if (($b['is_opera'] && $v < 12.5) || ($b['is_firefox'] && $v < 16) || $b['is_webkit'])
+		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
+		if (($b['is_opera'] && $v < 12.1) || ($b['is_firefox'] && $v < 16) || $b['is_webkit'])
 			$css = str_replace('@keyframes ', '@' . $prefix . 'keyframes ', $css);
 	}
 }
 
-class wecss_base64 extends wecss
+class wess_base64 extends wess
 {
+	var $folder;
+
+	public function __construct($base_folder)
+	{
+		$this->folder = $base_folder;
+	}
+
 	function process(&$css)
 	{
-		global $boarddir;
+		global $cssdir;
 
 		$images = array();
 		if (preg_match_all('~url\(([^)]+)\)~i', $css, $matches))
@@ -1383,7 +1489,7 @@ class wecss_base64 extends wecss
 
 			foreach ($images as $img => $img_ext)
 			{
-				$absolut = $boarddir . substr($img, 2);
+				$absolut = realpath($cssdir . '/' . $this->folder . $img);
 
 				// Only small files should be embedded, really. We're saving on hits, not bandwidth.
 				if (file_exists($absolut) && filesize($absolut) <= 3072)

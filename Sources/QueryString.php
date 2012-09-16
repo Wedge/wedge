@@ -237,13 +237,13 @@ function cleanRequest()
 		$is_cache_file = in_array(strtolower(strrchr($full_request, '.')), array('.gz', '.cgz', '.jgz'));
 		if ($is_cache_file) // A cached file? Try to redirect to the latest version.
 		{
-			$regex = '~(/[^/]+-)[0-9]+\.(js\.gz|css\.gz|cgz|jgz)$~';
+			$regex = '~/(cache|css|js)(/.+?-)[0-9]+\.(js\.gz|css\.gz|cgz|jgz)$~';
 			if (preg_match($regex, $full_request, $filename))
 			{
 				// There are probably faster ways to retrieve an 'existing' cached version.
-				global $cachedir;
-				list ($first_match) = glob($cachedir . $filename[1] . '*.' . $filename[2]);
-				if (preg_match($regex, (string) $first_match, $new_filename))
+				global $boarddir;
+				$matches = glob($boarddir . '/' . $filename[1] . $filename[2] . '*.' . $filename[3]);
+				if (!empty($matches) && preg_match($regex, (string) reset($matches), $new_filename))
 				{
 					header('HTTP/1.1 301 Moved Permanently');
 					header('Location: http://' . str_replace($filename[0], $new_filename[0], $full_request));
