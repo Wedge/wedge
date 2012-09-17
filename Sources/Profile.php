@@ -730,7 +730,7 @@ function loadCustomFields($memID, $area = 'summary')
 	elseif ($area != 'summary')
 		$where .= ' AND show_profile = {string:area}';
 
-	if ($user_info['is_guest'])
+	if ($user_info['is_guest'] && $area != 'register')
 		$where .= ' AND guest_access = 1';
 
 	// Load all the relevant fields - and data.

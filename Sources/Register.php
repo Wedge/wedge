@@ -92,8 +92,6 @@ function Register($reg_errors = array())
 	if ($current_step != 1) // needs allow_user_email string
 		loadLanguage('Profile');
 
-	$context['current_forum_time_js'] = time() + $settings['time_offset'] * 3600 + date_offset_get(new DateTime);
-
 	// Add the register chain to the link tree.
 	$context['linktree'][] = array(
 		'url' => $scripturl . '?action=register',
@@ -275,7 +273,6 @@ function Register2()
 		'id_theme',
 	);
 	$possible_floats = array(
-		'time_offset',
 	);
 	$possible_bools = array(
 		'notify_announcements', 'notify_regularity', 'notify_send_body',
@@ -398,8 +395,8 @@ function Register2()
 			if ($row['field_length'] && $row['field_length'] < westr::strlen($value))
 				$custom_field_errors[] = array('custom_field_too_long', array($row['field_name'], $row['field_length']));
 
-			// Any masks to apply?
-			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
+			// Any masks to apply? (Needs to be non-empty)
+			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none' && trim($value) != '')
 			{
 				//!!! We never error on this - just ignore it at the moment...
 				if ($row['mask'] == 'email' && (!is_valid_email($value) || strlen($value) > 255))
