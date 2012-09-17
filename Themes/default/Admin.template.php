@@ -824,6 +824,40 @@ function template_show_settings()
 				// Permission group?
 				elseif ($config_var['type'] == 'permissions')
 					theme_inline_permissions($config_var['name']);
+				elseif ($config_var['type'] == 'boards')
+				{
+					echo '
+						<fieldset id="fs_', $config_var['name'], '">
+							<legend><a href="#" onclick="$(\'#fs_', $config_var['name'], '\').hide(); $(\'#fs_', $config_var['name'], '_link\').show(); return false;">', $txt['select_from_list'], '</a></legend>';
+					foreach ($context['board_listing'] as $cat_id => $cat)
+					{
+						echo '
+							<strong>', $cat['name'], '</strong> <input type="checkbox" id="catsel', $cat_id, '" onclick="selectcat(', $cat_id, ');">
+							<ul class="permission_groups">';
+
+						foreach ($cat['boards'] as $id_board => $board)
+							echo '
+								<li>&nbsp; ', $board[0] > 0 ? str_repeat('&nbsp; &nbsp; ', $board[0]) : '', '<input type="checkbox" class="cat', $cat_id, '" name="', $config_var['name'], '[', $id_board, ']" value="on"', !empty($config_var['value']) && in_array($id_board, $config_var['value']) ? ' checked' : '', '>', $board[1], '</li>';
+
+						echo '
+							</ul>';
+					}
+					add_js('
+	function selectcat(id)
+	{
+		if (!$("#catsel" + id)[0].checked)
+			$(".cat" + id).removeAttr("checked");
+		else
+			$(".cat" + id).attr("checked","checked");
+	};');
+
+					echo '
+						</fieldset>
+						<a href="#" onclick="$(\'#fs_', $config_var['name'], '\').show(); $(\'#fs_', $config_var['name'], '_link\').hide(); return false;" id="fs_', $config_var['name'], '_link" class="hide">[ ', $txt['click_to_see_more'], ' ]</a>';
+
+					add_js('$("#fs_', $config_var['name'], '").hide(); $("#fs_', $config_var['name'], '_link").show();');
+
+				}
 				// BBC selection?
 				elseif ($config_var['type'] == 'bbc')
 				{

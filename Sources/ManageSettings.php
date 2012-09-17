@@ -678,6 +678,7 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 			case 'password':
 			case 'bbc':
 			case 'float':
+			case 'boards':
 				$new_item = array($item, $name);
 				break;
 			case 'text':

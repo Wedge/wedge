@@ -2005,6 +2005,7 @@ function prepareDBSettingContext(&$config_vars)
 	$context['config_vars'] = array();
 	$inlinePermissions = array();
 	$bbcChoice = array();
+	$boardChoice = array();
 	foreach ($config_vars as $config_var)
 	{
 		// HR?
@@ -2015,6 +2016,9 @@ function prepareDBSettingContext(&$config_vars)
 			// If it has no name it doesn't have any purpose!
 			if (empty($config_var[1]))
 				continue;
+
+			if ($config_var[0] == 'boards')
+				$boardChoice[] = $config_var[1];
 
 			// Special case for inline permissions
 			if ($config_var[0] == 'permissions' && allowedTo('manage_permissions'))
@@ -2033,7 +2037,7 @@ function prepareDBSettingContext(&$config_vars)
 				'size' => !empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : (in_array($config_var[0], array('int', 'float')) ? 6 : 0),
 				'data' => array(),
 				'name' => $config_var[1],
-				'value' => !isset($config_var['value']) ? (isset($settings[$config_var[1]]) ? ($config_var[0] == 'select' || $config_var[0] == 'multi_select' ? $settings[$config_var[1]] : htmlspecialchars($settings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float')) ? 0 : '')) : $config_var['value'],
+				'value' => !isset($config_var['value']) ? (isset($settings[$config_var[1]]) ? ($config_var[0] == 'select' || $config_var[0] == 'multi_select' || $config_var[0] == 'boards' ? $settings[$config_var[1]] : htmlspecialchars($settings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float')) ? 0 : '')) : $config_var['value'],
 				'disabled' => false,
 				'invalid' => !empty($config_var['invalid']),
 				'javascript' => '',
@@ -2051,6 +2055,10 @@ function prepareDBSettingContext(&$config_vars)
 					$context['config_vars'][$config_var[1]]['max'] = $config_var['max'];
 				$context['config_vars'][$config_var[1]]['step'] = isset($config_var['step']) ? $config_var['step'] : 1;
 			}
+
+			// We need to do a little pre-emptive clean-up for boards.
+			if ($config_var[0] == 'boards')
+				$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? unserialize($context['config_vars'][$config_var[1]]['value']) : array();
 
 			// If this is a select box handle any data.
 			if (!empty($config_var[2]) && is_array($config_var[2]))
@@ -2095,6 +2103,10 @@ function prepareDBSettingContext(&$config_vars)
 		loadSource('ManagePermissions');
 		init_inline_permissions($inlinePermissions);
 	}
+
+	// If we have any board selections, we need to prep them as well
+	if (!empty($boardChoice))
+		get_inline_board_list();
 
 	// What about any BBC selection boxes?
 	if (!empty($bbcChoice))
@@ -2256,6 +2268,8 @@ function saveDBSettings(&$config_vars)
 {
 	global $context;
 
+	get_inline_board_list();
+
 	foreach ($config_vars as $var)
 	{
 		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && $var[0] != 'check' && $var[0] != 'permissions' && $var[0] != 'multi_select' && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))
@@ -2302,7 +2316,6 @@ function saveDBSettings(&$config_vars)
 		// BBC.
 		elseif ($var[0] == 'bbc')
 		{
-
 			$bbcTags = array();
 			foreach (parse_bbc(false) as $tag)
 				$bbcTags[] = $tag['tag'];
@@ -2317,6 +2330,17 @@ function saveDBSettings(&$config_vars)
 		// Permissions?
 		elseif ($var[0] == 'permissions')
 			$inlinePermissions[$var[1]] = isset($var['exclude']) ? $var['exclude'] : array();
+		elseif ($var[0] == 'boards')
+		{
+			// For security purposes we validate this line by line.
+			$options = array();
+			if (isset($_POST[$var[1]]) && is_array($_POST[$var[1]]))
+				foreach ($_POST[$var[1]] as $invar => $on)
+					if (isset($context['board_array'][$invar]))
+						$options[] = $invar;
+
+			$setArray[$var[1]] = serialize($options);
+		}
 	}
 
 	if (!empty($setArray))
@@ -2331,6 +2355,33 @@ function saveDBSettings(&$config_vars)
 
 	$context['was_saved_this_page'] = true;
 	$_SESSION['settings_saved'] = true;
+}
+
+function get_inline_board_list()
+{
+	global $context;
+
+	if (isset($context['board_listing']))
+		return;
+
+	$context['board_listing'] = array();
+	$context['board_array'] = array();
+	$request = wesql::query('
+		SELECT b.name AS board_name, b.child_level, b.id_board, c.id_cat AS id_cat, c.name AS cat_name
+		FROM {db_prefix}boards AS b
+			INNER JOIN {db_prefix}categories AS c ON (b.id_cat = c.id_cat)
+		ORDER BY b.board_order');
+	while ($row = wesql::fetch_assoc($request))
+	{
+		if (!isset($context['board_listing'][$row['id_cat']]))
+			$context['board_listing'][$row['id_cat']] = array(
+				'name' => $row['cat_name'],
+				'boards' => array(),
+			);
+		$context['board_listing'][$row['id_cat']]['boards'][$row['id_board']] = array($row['child_level'], $row['board_name']);
+		$context['board_array'][$row['id_board']] = true;
+	}
+	wesql::free_result($request);
 }
 
 ?>
