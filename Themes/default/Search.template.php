@@ -302,19 +302,19 @@ function template_results()
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
-		if (!empty($context['topics']))
+		if (!empty($context['topics']) && !empty($context['quick_moderation']))
 		{
 			echo '
 		<div class="roundframe">
 			<div class="floatright">
 				<select class="fixed" name="qaction"', $context['can_move'] ? ' onchange="$(\'#sbmoveItTo\').toggleClass(\'hide\', $(this).val() != \'move\');"' : '', '>
-					<option value="">--- ', $txt['moderate'], ' ---</option>', $context['can_remove'] ? '
-					<option value="remove">' . $txt['quick_mod_remove'] . '</option>' : '', $context['can_lock'] ? '
-					<option value="lock">' . $txt['quick_mod_lock'] . '</option>' : '', $context['can_pin'] ? '
-					<option value="pin">' . $txt['quick_mod_pin'] . '</option>' : '', $context['can_move'] ? '
-					<option value="move">' . $txt['quick_mod_move'] . ': </option>' : '', $context['can_merge'] ? '
-					<option value="merge">' . $txt['quick_mod_merge'] . '</option>' : '', '
-					<option value="markread">', $txt['quick_mod_markread'], '</option>
+					<option value="">--- ', $txt['moderate'], ' ---</option>';
+
+			foreach ($context['quick_moderation'] as $qmod_id => $qmod_txt)
+				echo '
+					<option value="', $qmod_id, '">', $qmod_txt, '</option>';
+
+			echo '
 				</select>';
 
 				if ($context['can_move'])

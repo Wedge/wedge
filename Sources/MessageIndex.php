@@ -545,7 +545,7 @@ function MessageIndex()
 	// Deal with quick moderation.
 	if (!empty($context['topics']))
 	{
-		$context['quick_moderation'] = array();
+		$quickmod = array();
 
 		$context['can_lock'] = allowedTo('lock_any');
 		$context['can_pin'] = allowedTo('pin_topic');
@@ -577,7 +577,10 @@ function MessageIndex()
 		$context['can_markread'] = $context['user']['is_logged'];
 		foreach (array('remove', 'lock', 'pin', 'move', 'merge', 'restore', 'approve', 'markread') as $qmod)
 			if (!empty($context['can_' . $qmod]))
-				$context['quick_moderation'][$qmod] = $txt['quick_mod_' . $qmod];
+				$quickmod[$qmod] = $txt['quick_mod_' . $qmod];
+
+		call_hook('select_quickmod', array(&$quickmod));
+		$context['quick_moderation'] = $quickmod;
 
 		// Find the boards/categories they can move their topic to.
 		if ($context['can_move'])

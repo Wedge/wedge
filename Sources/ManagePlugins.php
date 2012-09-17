@@ -1766,6 +1766,8 @@ function knownHooks()
 			'ssi',
 			'suggest',
 			'thought',
+			'select_quickmod',
+			'apply_quickmod',
 		),
 	);
 }

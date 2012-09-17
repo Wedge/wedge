@@ -358,7 +358,7 @@ function MergeExecute($topics = array())
 		fatal_lang_error('no_board');
 	wesql::free_result($request);
 
-	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] == 'options')
+	if (empty($_REQUEST['sa']) || $_REQUEST['sa'] == 'options' || $_REQUEST['sa'] == 'internal')
 	{
 		if (count($polls) > 1)
 		{
@@ -412,7 +412,9 @@ function MergeExecute($topics = array())
 
 		$context['page_title'] = $txt['merge'];
 		wetem::load('merge_extra_options');
-		return;
+
+		if (empty($_REQUEST['sa']) || $_REQUEST['sa'] == 'options')
+			return;
 	}
 
 	// Determine target board.
@@ -439,7 +441,7 @@ function MergeExecute($topics = array())
 			$target_subject = $topic_data[$firstTopic]['subject'];
 	}
 	// A subject was selected from the list.
-	elseif (!empty($topic_data[(int) $_POST['subject']]['subject']))
+	elseif (isset($_POST['subject']) && !empty($topic_data[(int) $_POST['subject']]['subject']))
 		$target_subject = $topic_data[(int) $_POST['subject']]['subject'];
 	// Nothing worked? Just take the subject of the first message.
 	else

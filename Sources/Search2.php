@@ -1381,11 +1381,19 @@ function Search2()
 	{
 		$boards_can = boardsAllowedTo(array('post_reply_own', 'post_reply_any', 'mark_any_notify', 'lock_any', 'lock_own', 'pin_topic', 'move_any', 'move_own', 'remove_any', 'remove_own', 'merge_any'));
 
+		$quickmod = array();
 		$context['can_lock'] = in_array(0, $boards_can['lock_any']);
 		$context['can_pin'] = in_array(0, $boards_can['pin_topic']);
 		$context['can_move'] = in_array(0, $boards_can['move_any']);
 		$context['can_remove'] = in_array(0, $boards_can['remove_any']);
 		$context['can_merge'] = in_array(0, $boards_can['merge_any']);
+
+		foreach (array('remove', 'lock', 'pin', 'move', 'merge', 'markread') as $qmod)
+			if (!empty($context['can_' . $qmod]))
+				$quickmod[$qmod] = $txt['quick_mod_' . $qmod];
+
+		call_hook('select_quickmod', array(&$quickmod));
+		$context['quick_moderation'] = $quickmod;
 
 		// What messages are we using?
 		$msg_list = array_keys($context['topics']);
