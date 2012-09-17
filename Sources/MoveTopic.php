@@ -60,6 +60,8 @@ function MoveTopic()
 	list ($id_member_started, $context['subject'], $context['is_approved']) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
+	$context['is_own_topic'] = $id_member_started == $user_info['id'];
+
 	// Can they see it - if not approved?
 	if ($settings['postmod_active'] && !$context['is_approved'])
 		isAllowedTo('approve_posts');

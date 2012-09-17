@@ -81,7 +81,10 @@ function template_main()
 								</select>
 							</dd>
 						</dl>
-					</fieldset>
+					</fieldset>';
+
+	if (!$context['is_own_topic'])
+		echo '
 					<label><input type="checkbox" name="sendPm" checked onclick="$(\'#pmArea\').slideToggle(this.checked);">', $txt['movetopic_sendpm'], '</label>
 					<fieldset id="pmArea" style="padding: .7em 1em">
 						<dl class="settings">
@@ -90,7 +93,9 @@ function template_main()
 								<textarea name="pm" rows="3" cols="40">', $txt['movetopic_default_pm'], '</textarea>
 							</dd>
 						</dl>
-					</fieldset>
+					</fieldset>';
+
+	echo '
 					<br>
 					<div class="right">
 						<input type="submit" value="', $txt['move_topic'], '" onclick="return submitThisOnce(this);" accesskey="s" class="submit">

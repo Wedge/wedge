@@ -43,7 +43,7 @@ function template_main()
 
 		if ($context['require_verification'])
 			echo '
-				<div class="verification>
+				<div class="verification">
 					<strong>', $txt['search_visual_verification_label'], ':</strong>
 					<br>', template_control_verification($context['visual_verification_id'], 'all'), '<br>
 					<input id="submit" type="submit" value="' . $txt['search'] . '" class="submit">
