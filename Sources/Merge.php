@@ -151,7 +151,7 @@ function MergeIndex()
 
 	// Get a list of boards they can navigate to to merge.
 	$request = wesql::query('
-		SELECT b.id_board, b.name AS board_name, c.name AS cat_name
+		SELECT b.id_board, b.name AS board_name, b.child_level, c.name AS cat_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 		WHERE {query_see_board}' . (!in_array(0, $merge_boards) ? '
@@ -165,7 +165,8 @@ function MergeIndex()
 		$context['boards'][] = array(
 			'id' => $row['id_board'],
 			'name' => $row['board_name'],
-			'category' => $row['cat_name']
+			'category' => $row['cat_name'],
+			'child_level' => $row['child_level'],
 		);
 	wesql::free_result($request);
 

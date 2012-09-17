@@ -61,7 +61,7 @@ function template_merge()
 	{
 		$board_list = array();
 		foreach ($context['boards'] as $board)
-			$board_list[$board['category']][$board['id']] = $board['name'];
+			$board_list[$board['category']][$board['id']] = array($board['name'], $board['child_level']);
 
 		echo '
 					<dt>
@@ -79,7 +79,7 @@ function template_merge()
 
 			foreach ($boards as $board_id => $board_name)
 				echo '
-									<option value="', $board_id, '"', $board_id == $context['target_board'] ? ' selected' : '', '>', $board_name, '</option>';
+									<option value="', $board_id, '"', $board_id == $context['target_board'] ? ' selected' : '', '>', $board_name[1] > 0 ? str_repeat('==', $board_name[1] - 1) . '=&gt; ' : '', $board_name[0], '</option>';
 
 			echo '
 								</optgroup>';

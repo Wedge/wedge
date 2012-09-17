@@ -1663,6 +1663,7 @@ function knownHooks()
 		'language' => array(
 			'lang_help',
 			'lang_who',
+			'lang_modlog',
 		),
 		'function' => array(
 			// Cornerstone items
