@@ -6,7 +6,7 @@
 
 .zoom
 	display: inline-block
-	position: relative
+	position: @is (ie[-7], "static", "relative")
 
 .zoom-base
 	// We set visibility to hidden to avoid getting 0 on child zoom-desc's height

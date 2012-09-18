@@ -178,7 +178,7 @@ class wess_mixin extends wess
 		$mix = $def = array();
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
-		if (preg_match_all('~@mixin\s+(?:{([^}]+)}\s*)?([\w-]+)(?:\(([^()]+)\))?[^\n]*\n([\t ]+)([^\n]*\n)((?:\4[\t ]*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
+		if (preg_match_all('~@mixin\s+(?:{([^}]+)}\s*)?([\w-]+)(?:\(([^()]+)\))?[^\n]*\n(\h+)([^\n]*\n)((?:\4\h*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
 		{
 			// We start by building an array of mixins...
 			foreach ($mixins as $mixin)
@@ -207,7 +207,7 @@ class wess_mixin extends wess
 		// ...And then we apply them to the CSS file.
 		$repa = array();
 		$selector_regex = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()]+)';
-		if (preg_match_all('~(?<=\n)([\t ]*)mixin[\t ]*:[\t ]*' . $selector_regex . '[\t ]*(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		if (preg_match_all('~(?<=\n)(\h*)mixin\h*:\h*' . $selector_regex . '\h*(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
 		{
 			foreach ($targets as $mixin)
 			{
@@ -230,7 +230,7 @@ class wess_mixin extends wess
 						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 				}
 				// Or is this a simple non-mixin selector we want to mix with?
-				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '[\t ]*(?:[a-z]+[\t ]*)?\n([\t ]+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
+				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-z]+\h*)?\n(\h+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
 					foreach ($selectors as $sel)
 						$rep .= rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
@@ -239,7 +239,7 @@ class wess_mixin extends wess
 		}
 
 		// ...We should also do '.class mixes .otherclass' here.
-		if (preg_match_all('~(?<=\n)([\t ]*)(.*?)\s+mixes\s*' . $selector_regex . '(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		if (preg_match_all('~(?<=\n)(\h*)(.*?)\s+mixes\s*' . $selector_regex . '(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
 		{
 			foreach ($targets as $mixin)
 			{
@@ -262,7 +262,7 @@ class wess_mixin extends wess
 						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 				}
 				// Or is this a simple non-mixin selector we want to mix with?
-				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '[\t ]*(?:[a-z]+[\t ]*)?\n([\t ]+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
+				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-z]+\h*)?\n(\h+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
 					foreach ($selectors as $sel)
 						$rep .= rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
@@ -291,7 +291,7 @@ class wess_dynamic extends wess
 	{
 		static $done = array();
 
-		if (preg_match_all('~@dynamic\s+([a-z0-9_]+)(?:[\t ]+\([^)]*\))?~i', $css, $functions, PREG_SET_ORDER))
+		if (preg_match_all('~@dynamic\s+([a-z0-9_]+)(?:\h+\([^)]*\))?~i', $css, $functions, PREG_SET_ORDER))
 		{
 			foreach ($functions as $func)
 			{
@@ -596,7 +596,7 @@ class wess_color extends wess
 		}
 
 		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()\n,]+)';
-		$css = preg_replace_callback('~(\n[\t ]*)gradient\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wess_color::gradient_background', $css);
+		$css = preg_replace_callback('~(\n\h*)gradient\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wess_color::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
@@ -659,7 +659,7 @@ class wess_nesting extends wess
 			// You must conform. It is my sworn duty to see that you do conform.
 
 			$tree = preg_replace("~\n\s*\n~", "\n", $tree); // Delete blank lines
-			$tree = preg_replace_callback('~^([\t ]*)~m', 'wess_nesting::indentation', $tree);
+			$tree = preg_replace_callback('~^(\h*)~m', 'wess_nesting::indentation', $tree);
 			$branches = explode("\n", $tree);
 			$level = 0;
 			$tree = '';
@@ -716,11 +716,11 @@ class wess_nesting extends wess
 		//
 		// !! @todo: rewrite this at the end of the parser so that we can specify a target selectors after the @replace keyword.
 
-		preg_match_all('~\n[\t ]*@replace[\t ]*{\n[\t ]*([^\n]+);\n[\t ]*([^\n]*)}~i', $tree, $replacements, PREG_SET_ORDER);
+		preg_match_all('~\n\h*@replace\h*{\n\h*([^\n]+);\n\h*([^\n]*)}~i', $tree, $replacements, PREG_SET_ORDER);
 		if (!empty($replacements))
 			foreach ($replacements as $replace)
 				$tree = str_replace($replace[1], $replace[2], $tree);
-		$tree = preg_replace('~\n[\t ]*@replace[\t ]*{\n[\t ]*[^\n]+;\n[\t ]*[^\n]*}~i', "\n", $tree);
+		$tree = preg_replace('~\n\h*@replace\h*{\n\h*[^\n]+;\n\h*[^\n]*}~i', "\n", $tree);
 
 		// And a few more pre-parsing actions...
 		// A couple of reminders on @import:
@@ -855,7 +855,7 @@ class wess_nesting extends wess
 				if ($browser['is_ie6'] && strpos($node['selector'], '>') !== false)
 					$node['selector'] = ' ';
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
-				preg_match_all('~' . $selector_regex . '[\t ]+extends[\t ]+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~' . $selector_regex . '\h+extends\h+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					$save_selector = $node['selector'];
