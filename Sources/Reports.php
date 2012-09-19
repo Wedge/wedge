@@ -309,15 +309,16 @@ function BoardPermissionsReport()
 
 	// Make sure that any plugins' language files are loaded.
 	//libxml_use_internal_errors(true);
-	foreach ($context['plugins_dir'] as $id => $path)
-	{
-		$manifest = simplexml_load_file($path . '/plugin-info.xml');
-		if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
-			continue;
-		if (!empty($manifest->newperms['filename']))
-			loadPluginLanguage($id, (string) $manifest->newperms['filename']);
-		unset($manifest);
-	}
+	if (!empty($context['plugins_dir']))
+		foreach ($context['plugins_dir'] as $id => $path)
+		{
+			$manifest = simplexml_load_file($path . '/plugin-info.xml');
+			if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
+				continue;
+			if (!empty($manifest->newperms['filename']))
+				loadPluginLanguage($id, (string) $manifest->newperms['filename']);
+			unset($manifest);
+		}
 
 	// Fetch all the board names.
 	$request = wesql::query('
@@ -582,15 +583,16 @@ function GroupPermissionsReport()
 
 	// Make sure that any plugins' language files are loaded.
 	//libxml_use_internal_errors(true);
-	foreach ($context['plugins_dir'] as $id => $path)
-	{
-		$manifest = simplexml_load_file($path . '/plugin-info.xml');
-		if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
-			continue;
-		if (!empty($manifest->newperms['filename']))
-			loadPluginLanguage($id, (string) $manifest->newperms['filename']);
-		unset($manifest);
-	}
+	if (!empty($context['plugins_dir']))
+		foreach ($context['plugins_dir'] as $id => $path)
+		{
+			$manifest = simplexml_load_file($path . '/plugin-info.xml');
+			if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
+				continue;
+			if (!empty($manifest->newperms['filename']))
+				loadPluginLanguage($id, (string) $manifest->newperms['filename']);
+			unset($manifest);
+		}
 
 	if (isset($_REQUEST['groups']))
 	{

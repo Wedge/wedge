@@ -1591,42 +1591,43 @@ function loadAllPermissions($loadType = 'classic')
 
 	// Load up any permissions from plugin-info.xml files.
 	//libxml_use_internal_errors(true);
-	foreach ($context['plugins_dir'] as $id => $path)
-	{
-		$manifest = simplexml_load_file($path . '/plugin-info.xml');
-		if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
-			continue;
-		if (!empty($manifest->newperms['filename']))
-			loadPluginLanguage($id, (string) $manifest->newperms['filename']);
-		if (!empty($manifest->newperms->groups))
-			foreach ($manifest->newperms->groups->group as $group)
-			{
-				if (empty($group['name']) || empty($group['type']) || empty($group['classic']) || empty($group['simple']))
-					continue;
-				$type = (string) $group['type'];
-				if (!isset($permissionGroups[$type]))
-					continue;
-				$permissionGroups[$type]['simple'][] = (string) $group['simple'];
-				$permissionGroups[$type]['classic'][] = (string) $group['classic'];
-				if (!empty($group['column']) && (string) $group['column'] == 'left')
-					$leftPermission['groups'][] = (string) $group['classic'];
-			}
-		if (!empty($manifest->newperms->permissionlist))
-			foreach ($manifest->newperms->permissionlist->permission as $perm)
-			{
-				if (empty($perm['type']) || empty($perm['name']) || empty($perm['classic']) || empty($perm['simple']))
-					continue;
-				$type = (string) $perm['type'];
-				if (!isset($permissionList[$type]))
-					continue;
-				$name = (string) $perm['name'];
-				$is_ownany = !empty($perm['ownany']) && ((string) $perm['ownany'] == 'true');
-				$permissionList[$type][$name] = array($is_ownany, (string) $perm['classic'], (string) $perm['simple']);
-				if ($is_ownany && !empty($perm['simpleany']))
-					$permissionList[$type][$name][] = (string) $perm['simpleany'];
-			}
-		unset($manifest);
-	}
+	if (!empty($context['plugins_dir']))
+		foreach ($context['plugins_dir'] as $id => $path)
+		{
+			$manifest = simplexml_load_file($path . '/plugin-info.xml');
+			if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
+				continue;
+			if (!empty($manifest->newperms['filename']))
+				loadPluginLanguage($id, (string) $manifest->newperms['filename']);
+			if (!empty($manifest->newperms->groups))
+				foreach ($manifest->newperms->groups->group as $group)
+				{
+					if (empty($group['name']) || empty($group['type']) || empty($group['classic']) || empty($group['simple']))
+						continue;
+					$type = (string) $group['type'];
+					if (!isset($permissionGroups[$type]))
+						continue;
+					$permissionGroups[$type]['simple'][] = (string) $group['simple'];
+					$permissionGroups[$type]['classic'][] = (string) $group['classic'];
+					if (!empty($group['column']) && (string) $group['column'] == 'left')
+						$leftPermission['groups'][] = (string) $group['classic'];
+				}
+			if (!empty($manifest->newperms->permissionlist))
+				foreach ($manifest->newperms->permissionlist->permission as $perm)
+				{
+					if (empty($perm['type']) || empty($perm['name']) || empty($perm['classic']) || empty($perm['simple']))
+						continue;
+					$type = (string) $perm['type'];
+					if (!isset($permissionList[$type]))
+						continue;
+					$name = (string) $perm['name'];
+					$is_ownany = !empty($perm['ownany']) && ((string) $perm['ownany'] == 'true');
+					$permissionList[$type][$name] = array($is_ownany, (string) $perm['classic'], (string) $perm['simple']);
+					if ($is_ownany && !empty($perm['simpleany']))
+						$permissionList[$type][$name][] = (string) $perm['simpleany'];
+				}
+			unset($manifest);
+		}
 
 	// Provide a practical way to modify permissions.
 	call_hook('load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions));
