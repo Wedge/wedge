@@ -57,17 +57,7 @@ function aeva_main($message)
 
 	// Houston, no sites = no embedding, so get out of here (after reversing any protections in place)
 	if (empty($sites))
-		return aeva_reverse_protection($message);
-
-	// Protect...
-	$message = aeva_protection(
-		array(
-			'noae' => true,
-			'noembed' => true,
-			'<noembed>' => false,
-		),
-		$message, true
-	);
+		return $message;
 
 	// No embeddable links, so reverse protection and get out of here as fast as possible.
 	if (!empty($context['aeva']['skip']))
@@ -75,7 +65,7 @@ function aeva_main($message)
 		// Clear this variable, otherwise we won't be able to embed again
 		unset($context['aeva']['skip']);
 		// Reverse protection/leftovers
-		return aeva_reverse_protection($message);
+		return $message;
 	}
 
 	// Create an array for our vars
@@ -97,7 +87,7 @@ function aeva_main($message)
 			$has[$upto] = $has_any;
 
 		// If no active http links remain (making further embedding impossible), then stop
-		if ($has_any && strpos($message, '<a href="http://') === false)
+		if ($has_any && strpos($message, '<a href="http') === false)
 			break;
 	}
 
@@ -141,7 +131,7 @@ function aeva_main($message)
 	return aeva_reverse_protection($message);
 }
 
-// Protects urls in places we don't want to touch, from being embedded or autolinked.
+// Protects urls in places we don't want to touch, from being embedded.
 // aeva_protection(
 //		array('<noembed>' => false),	= BBC/html item to protect => whether to retain it
 //		$message,						= Content
@@ -194,8 +184,8 @@ function aeva_protection($array = array(), $input, $reverse = false)
 
 		$unaltered = $input;
 
-		// Protect the item. Those in the array won't be autolinked.
-		$input = in_array($item, array('html', 'code', 'php', '<noembed>', 'noae')) ? aeva_protect_recursive($input) : aeva_protect_recursive_autolink($input);
+		// Protect the item.
+		$input = aeva_protect_recursive($input);
 
 		// Recursive error? Check for null/empty.
 		if (empty($input))
@@ -218,33 +208,6 @@ function aeva_protection($array = array(), $input, $reverse = false)
 		$context['aeva']['skip'] = true;
 
 	return $input;
-}
-
-// Protect noembed & autolink items from embedding *before* BBC parsing - wrap quotes, but don't protect
-function aeva_preprotect(&$message, $cache_id)
-{
-	if ((strpos($message, 'http://') === false && stripos($message, '[noembed]') === false) || strpos($cache_id, 'sig') !== false)
-		return false;
-
-	global $settings, $context;
-
-	if (!empty($settings['cache_enable']))
-	{
-		$context['embed_cache_enable'] = $settings['cache_enable'];
-		$settings['cache_enable'] = false;
-	}
-
-	// Replace now, so any [url] links get converted as well
-	$array = array('noembed' => false);
-
-	// Protect quotes from embedding
-	if (empty($settings['embed_quote']))
-		$array['quote'] = false;
-
-	// Protect all these items
-	$message = aeva_protection($array, $message, false);
-
-	return true;
 }
 
 // Remove any breadcrumbs (leftovers) remaining
@@ -484,7 +447,7 @@ function aeva_build_object($input)
 
 		if (!$use_object_init)
 		{
-			add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', true);
+			add_js_file('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js');
 			add_js('
 	aevams = {', substr($swo_params, 1), '};', !empty($settings['embed_expins']) ? '
 	aeinst = "' . $boardurl . '/expressInstall.swf";' : '');
@@ -694,24 +657,18 @@ function aeva_autolink_urls($input)
 {
 	global $context, $settings;
 
-	// Should haven't got here if autolinking of URLs is disabled
-	if (empty($settings['autoLinkUrls']))
-		return $input;
-
 	// Parse any URLs.... And ensure they're not already auto-linked!
-	if (preg_match('~(?<!=|\[url])(?:http://|www\.)~i', $input))
+	if (preg_match('~(?:=|\[(?:url|img(?:\s[^]]*)?)])(?:http://|www\.)~i', $input))
 	{
-		$input = strtr($input, array('&#039;' => '\'', '&quot;' => '>">', '"' => '<"<', '&lt;' => '<lt<'));
 		$input = preg_replace(
 			array(
-				'`(?<=^|[]\s>.(;\'"])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`',
-				'`(?<=^|[]\s>.(;\'"])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'
+				'`(?<=^|[\s>.(;\'"])((?:http|https|ftp|ftps)://[\w%@:|-]+(?:\.[\w%-]+)*(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-]?)`',
+				'`(?<=^|[\s>.(;\'"])(www(?:\.[\w-]+)+(?::\d+)?(?:/[\w~%.@,?&;=#+:\'\\\\-]*|[({][\w~%.@,?&;=#(){}+:\'\\\\-]*)*[/\w~%@?;=#}\\\\-])`i'
 			), array(
 				'[url]$1[/url]',
 				'[url=http://$1]$1[/url]'
 			), $input
 		);
-		$input = strtr($input, array('>">' => '&quot;', '<"<' => '"', '<lt<' => '&lt;'));
 	}
 
 	// Return it
@@ -721,7 +678,7 @@ function aeva_autolink_urls($input)
 // Protects [noae] bbcoded items - recursive. Used instead of the ACTUAL tag to prevent infinite loop.
 // The tags are lost on each recursion.
 // Known issue: anchor settings remain visible when video isn't embedded. No known "good" solution?
-function aeva_protect_recursive($input, $autolink = false)
+function aeva_protect_recursive($input)
 {
 	global $context;
 
@@ -729,28 +686,16 @@ function aeva_protect_recursive($input, $autolink = false)
 	if (empty($input))
 		return false;
 
-	// Matches found
+	// Changing http:// to noae:// should prevent ALL of the links from matching a site.
 	if (is_array($input))
-	{
-		// Auto-Link items that might have been protected before (we want html version - so false)
-		if ($autolink)
-			$input[1] = aeva_autolink_urls($input[1]);
-
-		// Changing http:// to noae:// should prevent ALL of the links from matching a site.
 		$input = str_replace('http://', 'noae://', $input[1]);
-	}
 
 	// The goddess of all regexps - works for complex nested bbcode.
 	return preg_replace_callback(
 		'~\[noae]((?>[^[]|\[(?!/?noae])|(?R))+?)\[/noae]~',
-		'aeva_protect_recursive' . ($autolink ? '_autolink' : ''),
+		'aeva_protect_recursive',
 		$input
 	);
-}
-
-function aeva_protect_recursive_autolink($input)
-{
-	return aeva_protect_recursive($input, true);
 }
 
 // The 'Lookup' function to grab a page and match a regex
@@ -949,13 +894,14 @@ function aeva_onposting($input)
 	if (!empty($settings['embed_fix_html']))
 		$input = aeva_fix_html($input);
 
-	// Will [url] BBCode links which aren't currently URL-BBCoded (so they get can get looked up/embedded by Aeva)
-	if (!empty($settings['autoLinkUrls']))
-		$input = aeva_autolink_urls($input);
-
 	// Do Lookups
 	if (!empty($settings['embed_lookups']))
+	{
+		// Will [url] BBCode links which aren't currently URL-BBCoded (so they get can get looked up/embedded by Aeva)
+		if (!empty($settings['autoLinkUrls']))
+			$input = aeva_autolink_urls($input);
 		$input = embed_lookups_match($input);
+	}
 
 	// Undo all protection and return
 	return str_replace('noae://', 'http://', $input);
@@ -1016,37 +962,6 @@ function aeva_fix_html($input)
 
 	// All sites are done.
 	return $input;
-}
-
-/*
-	Do not attempt to auto-embed if Aeva is disabled, or for
-	- Printer-friendly pages ($smileys === 'print')
-	- Messages that don't contain links
-	- Signatures/Wysiwyg window (or anywhere where $context['embed_disable'] is set)
-	- SSI functions such as ssi_recentTopics() (they tend to crash your browser)
-*/
-function aeva_parse_bbc2(&$message, &$smileys, &$cache_id)
-{
-	global $context, $settings, $txt;
-
-	if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && $smileys !== 'print' && strpos($cache_id, 'sig') === false)
-		$message = aeva_main($message);
-	else
-	{
-		// Removes any noembed
-		$message = aeva_protection(array('noembed' => false), $message, false);
-
-		// And reverses any protection already in place
-		$message = aeva_reverse_protection($message);
-	}
-
-	// Reset any technical reasons to stop
-	unset($context['embed_disable']);
-	if (isset($context['aeva']['skip']))
-		unset($context['aeva']['skip']);
-
-	if (!empty($context['embed_cache_enable']))
-		$settings['cache_enable'] = $context['embed_cache_enable'];
 }
 
 // This annoying little function is needed when the frigging server really doesn't want to cooperate...

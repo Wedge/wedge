@@ -149,13 +149,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			loadSource('media/Subs-Media');
 			aeva_protect_bbc($message);
 		}
-
-		// Protect noembed & autolink items from embedding *before* BBC parsing - wrap quotes, but don't protect
-		if (!empty($settings['embed_enabled']) && strlen($message) > 15)
-		{
-			loadSource('media/Aeva-Embed');
-			$has_link = aeva_preprotect($message, $cache_id);
-		}
 	}
 
 	// Sift out the bbc for a performance improvement.
@@ -980,14 +973,38 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	if (empty($parse_tags))
 	{
 		// Do the actual embedding
-		if (!empty($has_link))
+		if (strlen($message) > 15 && strpos($message, '<a href="') !== false)
 		{
 			loadSource('media/Aeva-Embed');
-			aeva_parse_bbc2($message, $smileys, $cache_id);
+
+			/*
+				Do not attempt to auto-embed if Aeva is disabled, or for
+				- Printer-friendly pages ($smileys === 'print')
+				- Messages that don't contain links
+				- Signatures/Wysiwyg window (or anywhere where $context['embed_disable'] is set)
+				- SSI functions such as ssi_recentTopics() (they tend to crash your browser)
+			*/
+
+			if (!empty($settings['embed_enabled']) && empty($context['embed_disable']) && strpos($message, 'http://') !== false && $smileys !== 'print' && strpos($cache_id, 'sig') === false)
+				$message = aeva_main($message);
+
+			// And reverses any protection already in place
+			$message = aeva_reverse_protection($message);
+
+			// Reset any technical reasons to stop
+			unset($context['embed_disable']);
+			if (isset($context['aeva']['skip']))
+				unset($context['aeva']['skip']);
 		}
 
-		if (function_exists('aeva_parse_bbc') && empty($disabled['media']) && stripos($message, '[media') !== false)
+		if (empty($disabled['media']) && stripos($message, '[media') !== false)
+		{
+			loadSource('media/Subs-Media');
 			aeva_parse_bbc($message, $cache_id);
+		}
+
+		if (strpos($message, '[noembed]') !== false)
+			$message = str_replace(array('[noembed]', '[/noembed]'), '', $message);
 	}
 
 	// Deal with footnotes... They're more complex, so can't be parsed like other bbcodes.
