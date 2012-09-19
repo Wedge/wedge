@@ -1298,6 +1298,50 @@ function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 					weDBPackages::remove_column((string) $column['table'], (string) $column['name']);
 	}
 
+	// Clean up permissions? Only need to do this on a full clean-up.
+	if ($fullclean && !empty($manifest->newperms))
+	{
+		$perms = array(
+			'membergroup' => array(),
+			'board' => array(),
+		);
+
+		if (!empty($manifest->newperms->permissionlist))
+			foreach ($manifest->newperms->permissionlist->permission as $permission)
+			{
+				if (empty($permission['type']) || empty($permission['name']))
+					continue;
+				$type = (string) $permission['type'];
+				if (!isset($perms[$type]))
+					continue;
+				if (!empty($permission['ownany']) && (string) $permission['ownany'] == 'true')
+				{
+					$perms[$type][] = ((string) $permission['name']) . '_own';
+					$perms[$type][] = ((string) $permission['name']) . '_any';
+				}
+				else
+					$perms[$type][] = (string) $permission['name'];
+			}
+
+		if (!empty($perms['membergroup']))
+			wesql::query('
+				DELETE FROM {db_prefix}permissions
+				WHERE permission IN ({array_string:perms})',
+				array(
+					'perms' => $perms['membergroup'],
+				)
+			);
+
+		if (!empty($perms['board']))
+			wesql::query('
+				DELETE FROM {db_prefix}board_permissions
+				WHERE permission IN ({array_string:perms})',
+				array(
+					'perms' => $perms['board'],
+				)
+			);
+	}
+
 	// Need to remove scheduled tasks. We can leave normal settings in, but scheduled tasks need to be removed, because they will mangle if accidentally run otherwise.
 	// We also should prune the entries from the task log.
 	if (!empty($manifest->scheduledtasks))

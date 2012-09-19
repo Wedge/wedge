@@ -307,6 +307,18 @@ function BoardPermissionsReport()
 	else
 		$group_clause = '1=1';
 
+	// Make sure that any plugins' language files are loaded.
+	//libxml_use_internal_errors(true);
+	foreach ($context['plugins_dir'] as $id => $path)
+	{
+		$manifest = simplexml_load_file($path . '/plugin-info.xml');
+		if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
+			continue;
+		if (!empty($manifest->newperms['filename']))
+			loadPluginLanguage($id, (string) $manifest->newperms['filename']);
+		unset($manifest);
+	}
+
 	// Fetch all the board names.
 	$request = wesql::query('
 		SELECT id_board, name, id_profile
@@ -567,6 +579,18 @@ function GroupPermissionsReport()
 
 	// We might need some of the other permissions strings
 	loadLanguage('ManagePermissions');
+
+	// Make sure that any plugins' language files are loaded.
+	//libxml_use_internal_errors(true);
+	foreach ($context['plugins_dir'] as $id => $path)
+	{
+		$manifest = simplexml_load_file($path . '/plugin-info.xml');
+		if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
+			continue;
+		if (!empty($manifest->newperms['filename']))
+			loadPluginLanguage($id, (string) $manifest->newperms['filename']);
+		unset($manifest);
+	}
 
 	if (isset($_REQUEST['groups']))
 	{
