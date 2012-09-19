@@ -38,6 +38,7 @@
 	body
 		#sidebar
 			margin: 0 -10px
+			font-size, line-height: 1.5em
 
 .smalltext
 	font-size: .6em
@@ -47,14 +48,11 @@
 .bc, .bc2
 	white-space: normal
 
-.bbc_code, .php_code
-	code
-		word-wrap: break-word
+@remove .bbc_code, .php_code
+	word-wrap: normal
 
 @remove .thought_actions
 	position: absolute
-
-@remove .thought_actions
 	opacity: 0
 
 .thought_actions

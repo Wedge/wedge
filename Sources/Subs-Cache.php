@@ -532,7 +532,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	$id = empty($settings['obfuscate_filenames']) ? implode('-', (array) $ids) : md5(implode('-', (array) $ids));
 
-	$full_name = $id . '-' . $latest_date . $ext;
+	$full_name = ($id ? $id . '-' : '') . $latest_date . $ext;
 	$final_folder = substr($cssdir . '/' . $folder, 0, -1);
 	$final_file = $final_folder . '/' . $full_name;
 
@@ -546,8 +546,8 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	}
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	foreach (glob($final_folder . '/' . $id . '-*' . $ext) as $del)
-		if (strpos($del, $latest_date) === false)
+	foreach (glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext) as $del)
+		if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, $latest_date) === false)
 			@unlink($del);
 
 	$final = '';

@@ -1,6 +1,6 @@
 
 input[type=submit], input[type=button]
-	padding: 1px 1px 2px
+	padding: 1px 2px 2px
 
 input.submit
 	padding-left: 21px
@@ -8,6 +8,3 @@ input.submit
 // Firefox doesn't support 'position: relative' on a table cell, unlike other browsers.
 table.thought_list td > div
 	position: relative
-
-.two-columns
-	width: 48.9%

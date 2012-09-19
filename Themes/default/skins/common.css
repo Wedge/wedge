@@ -8,10 +8,14 @@
 .inline-block virtual
 	display: inline-block
 	vertical-align: middle
-	// IE6 needs layout to show inline-block divs... And a default right margin from my experience.
+	// IE6/7 need layout to show inline-block divs... And a default right margin from my experience...
 	@is (ie[-7], "
 	margin-right: 6px
-	zoom: 1")
+	zoom: 1
+
+// ...And they also need inline-block to be reset to inline separately... How annoying.
+.inline-block
+	display: inline")
 
 // A descriptive style
 .plainbox virtual

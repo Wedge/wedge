@@ -448,7 +448,10 @@ select.sb
 			padding: 0 3px
 
 		.btn
-			background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)
+			@is (ie[9-], "
+			background: #dbdbdb
+			box-shadow: inset -6px 12px 6px -6px #fff", "
+			background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)")
 			position: absolute
 			border: 1px solid #707070
 			border-radius: 4px
@@ -474,7 +477,9 @@ select.sb
 			box-shadow: inset 0 0 1px 1px #9eb0ba
 
 	&.focused .display .btn, .hover .btn
-		background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5)
+		@is (ie[9-], "
+		background: #bce5fc", "
+		background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5)")
 
 	/* Dropdown styles */
 	.items
@@ -702,7 +707,6 @@ input[type=file]
 		margin-right: 2px
 
 	li ul
-		background: #f7fcf7
 		background: $menu_gradient
 		position: absolute
 		display: block
@@ -1666,10 +1670,9 @@ $blog_font = $post_font
 $main_bg = #fff
 $head_bg = darken(#e3e0da, 3%)
 $menu_border = rgba(220, 224, 220, .95)
-$menu_gradient = linear-gradient(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-
-$max-width =		@is (ie6, "width", "max-width")
+$menu_gradient =	@is (ie[-8], "average", "linear-gradient")(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
 $sidebar-width =	@is (webkit, "242px", "240px") // Webkit screws up on padding/border in table mode
+$max-width =		@is (ie6, "width", "max-width")
 
 $window_bg = darken($window_bg2, 1%) // lighten(#e3e0d0, 13%) // #f2f3ea // #f9f6f0
 $window_bg2 = #f8faf8 // lighten(#e3e0d0, 11%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent

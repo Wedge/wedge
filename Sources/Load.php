@@ -1601,6 +1601,9 @@ function detectBrowser()
 	// We're only detecting the iPad for now. Well it's a start...
 	$browser['is_tablet'] = $is_webkit && strpos($ua, 'iPad') !== false;
 
+	// Detecting broader mobile browsers. Make sure you rely on skin.xml's <mobile> setting in priority.
+	$browser['is_mobile'] = !empty($user_info['is_mobile']);
+
 	// Detect Firefox versions
 	$browser['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
 	$browser['is_firefox'] = strpos($ua, 'Gecko/') !== false;				// Firefox says "Gecko/20xx", not "like Gecko"
@@ -1664,7 +1667,7 @@ function hasBrowser($strings)
 	global $browser;
 
 	if (!is_array($strings))
-		$strings = array_flip(explode(',', $strings));
+		$strings = array_flip(array_map('trim', explode(',', $strings)));
 
 	$a = $browser['agent'];
 	$v = $browser['version'];
@@ -1680,13 +1683,18 @@ function hasBrowser($strings)
 	// Okay, so maybe we're looking for a wider range?
 	foreach ($strings as $string => $dummy)
 	{
-		if (strpos($string, $a . '[') !== 0)
+		$bracket = strpos($string, '[');
+		if (empty($browser['is_' . ($bracket === false ? $string : substr($string, 0, $bracket))]))
 			continue;
-
+		if ($bracket === false) return $string;
 		$split = explode('-', trim(substr($string, $alength, -1), ' ]'));
-		if (empty($split[0]) && $v <= $split[1]) return $string;	// ie[-8] (version 8 or earlier)
-		if (empty($split[1]) && $v >= $split[0]) return $string;	// ie[6-] (version 6 or later)
-		if ($v >= $split[0] && $v <= $split[1]) return $string;		// ie[6-8] (version 6, 7 or 8)
+		if (isset($split[1]))
+		{
+			if (empty($split[0]) && $v <= $split[1]) return $string;	// ie[-8] (version 8 or earlier)
+			if (empty($split[1]) && $v >= $split[0]) return $string;	// ie[6-] (version 6 or later)
+			if ($v >= $split[0] && $v <= $split[1]) return $string;		// ie[6-8] (version 6, 7 or 8)
+		}
+		elseif ($v == $split[0]) return $string;						// ie[8] or ie[8.0], FWIW...
 	}
 
 	return false;
@@ -2377,8 +2385,7 @@ function loadSource($source_name)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
-	global $user_info, $language, $theme, $context, $settings;
-	global $cachedir, $db_show_debug, $txt;
+	global $user_info, $language, $theme, $context, $settings, $db_show_debug, $txt;
 	static $already_loaded = array();
 
 	// Default to the user's language.
