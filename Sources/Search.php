@@ -220,7 +220,7 @@ function Search()
 
 	// Simple or not?
 	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($settings['simpleSearch']) && !isset($_REQUEST['advanced']);
-	$context['page_title'] = $txt['set_parameters'];
+	$context['page_title'] = $context['simple_search'] ? $txt['search_simple'] : $txt['search_advanced'];
 }
 
 ?>

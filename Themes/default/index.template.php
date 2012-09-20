@@ -68,6 +68,8 @@ function template_init()
 		// Our main content. Note that we can serve different content to different browsers by using an array
 		// with browser names and a "else" fallback. This can also be done in skin.xml with the
 		// <macro name="..." for="ie[-7]"> keyword. Plus, you don't have to repeat identical strings.
+		// In this case, IE 6-7 will use table tags to show the sidebar, while other browsers will rely
+		// on more accurate div tags with a 'display: table-cell' setting.
 		'offside'	=> array(
 			'ie[-7]'	=> '
 	<table id="edge"><tr><td class="top">{body}</td>',

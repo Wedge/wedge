@@ -22,60 +22,62 @@ function template_main()
 	echo '
 	<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<we:cat>
-			', !empty($theme['use_buttons']) ? '<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', $txt['set_parameters'], '
-		</we:cat>';
-
-	// Simple Search?
-	if ($context['simple_search'])
-	{
-		echo '
+			', !empty($theme['use_buttons']) ? '<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', $txt['search'], '
+		</we:cat>
 		<fieldset id="simple_search">
-			<div class="roundframe">
+			<div class="windowbg wrc">
 				<div id="search_term_input">
-					<strong>', $txt['search_for'], ':</strong>
+					<strong>', $txt['search_for'], ':</strong>';
+
+	if ($context['simple_search'])
+		echo '
 					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="search">
 					', $context['require_verification'] ? '' : '&nbsp;<input type="submit" value="' . $txt['search'] . '" class="submit">
 				</div>';
+	else
+		echo '
+					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="search">
+					<select name="searchtype">
+						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['all_words'], '</option>
+						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['any_words'], '</option>
+					</select>
+				</div>';
 
-		if (empty($settings['search_simple_fulltext']))
-			echo '
-				<p class="smalltext">', $txt['search_example'], '</p>';
+	if (empty($settings['search_simple_fulltext']))
+		echo '
+				<p>', $txt['search_example'], '</p>';
 
-		if ($context['require_verification'])
-			echo '
+	if ($context['require_verification'])
+		echo '
 				<div class="verification">
-					<strong>', $txt['search_visual_verification_label'], ':</strong>
+					<strong>', $txt['verification'], ':</strong>
 					<br>', template_control_verification($context['visual_verification_id'], 'all'), '<br>
+					', $txt['search_visual_verification_desc'], '
 					<input id="submit" type="submit" value="' . $txt['search'] . '" class="submit">
 				</div>';
 
+	if ($context['simple_search'])
 		echo '
-				<a href="', $scripturl, '?action=search;advanced" onclick="this.href += \';search=\' + encodeURIComponent(document.forms.searchform.search.value);">', $txt['search_advanced'], '</a>
-				<input type="hidden" name="advanced" value="0">
+				<hr><a href="', $scripturl, '?action=search;advanced" onclick="this.href += \';search=\' + encodeURIComponent(document.forms.searchform.search.value);">', $txt['search_advanced'], '</a>';
+
+	echo '
+				<input type="hidden" name="advanced" value="', (int) !$context['simple_search'], '">
 			</div>
 		</fieldset>';
-	}
 
 	// Advanced search!
-	else
+	if (!$context['simple_search'])
 	{
 		add_js_inline('
 	if (document.forms.searchform.search.value.indexOf("%") != -1)
 		document.forms.searchform.search.value = decodeURIComponent(document.forms.searchform.search.value);');
 
 		echo '
-		<div class="roundframe">
+		<div class="windowbg2 wrc">
+			<h6>
+				', $txt['set_parameters'], '
+			</h6>
 			<fieldset id="advanced_search">
-				<input type="hidden" name="advanced" value="1">
-				<span class="enhanced">
-					<strong>', $txt['search_for'], ':</strong>
-					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="search">
-					<select name="searchtype">
-						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['all_words'], '</option>
-						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['any_words'], '</option>
-					</select>
-				</span>', empty($settings['search_simple_fulltext']) ? '
-				<em class="smalltext">' . $txt['search_example'] . '</em>' : '', '
 				<dl id="search_options">
 					<dt>', $txt['by_user'], ':</dt>
 					<dd><input id="userspec" type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40"></dd>
@@ -94,16 +96,18 @@ function template_main()
 						<label><input type="checkbox" name="show_complete" id="show_complete" value="1"', !empty($context['search_params']['show_complete']) ? ' checked' : '', '> ', $txt['search_show_complete_messages'], '</label><br>
 						<label><input type="checkbox" name="subject_only" id="subject_only" value="1"', !empty($context['search_params']['subject_only']) ? ' checked' : '', '> ', $txt['search_subject_only'], '</label>
 					</dd>
-					<dt class="between">', $txt['search_post_age'], ': </dt>
+					<dt class="between">', $txt['search_post_age'], ':</dt>
 					<dd>', $txt['search_between'], ' <input type="text" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4">&nbsp;', $txt['search_and'], '&nbsp;<input type="text" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4"> ', $txt['days_word'], '</dd>
 				</dl>';
 
 		// Require an image to be typed to save spamming?
 		if ($context['require_verification'])
 			echo '
+				<br>
 				<p>
 					<strong>', $txt['verification'], ':</strong>
-					', template_control_verification($context['visual_verification_id'], 'all'), '
+					<br>', template_control_verification($context['visual_verification_id'], 'all'), '
+					<br>', $txt['search_visual_verification_desc'], '
 				</p>';
 
 		// If $context['search_params']['topic'] is set, that means we're searching just one topic.
@@ -120,8 +124,8 @@ function template_main()
 			echo '
 			<br>
 			<fieldset class="flow_hidden">
-				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').slideUp();"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
-				<br><label><input type="radio" name="all_boards" value="0" onclick="$(\'#searchBoardsExpand\').slideDown();"', $context['boards_check_all'] ? '' : ' checked', '> ', $txt['choose_board'], '</label>
+				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').hide(300);"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
+				<br><label><input type="radio" name="all_boards" value="0" onclick="$(\'#searchBoardsExpand\').show(300);"', $context['boards_check_all'] ? '' : ' checked', '> ', $txt['choose_board'], '</label>
 				<div id="searchBoardsExpand" class="flow_auto', $context['boards_check_all'] ? ' hide' : '', '">
 					<ul class="ignoreboards floatleft">';
 
@@ -173,17 +177,16 @@ function template_main()
 						<em>', $txt['check_all'], '</em>
 					</label>
 				</div>
-				<br class="clear">
-				<div class="padding">
+				<hr class="clear">
+				<div class="padding clearfix">
 					<input type="submit" value="', $txt['search'], '" class="submit floatright">
 				</div>
-				<br class="clear">
-			</fieldset>
-		</div>';
+			</fieldset>';
 		}
 	}
 
 	echo '
+		</div>
 	</form>';
 
 	add_js('
@@ -210,7 +213,7 @@ function template_results()
 		<we:cat>
 			', $txt['search_adjust_query'], '
 		</we:cat>
-		<div class="roundframe">';
+		<div class="windowbg wrc">';
 
 		// Did they make any typos or mistakes, perhaps?
 		if (isset($context['did_you_mean']))
