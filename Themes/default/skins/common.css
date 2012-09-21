@@ -38,12 +38,17 @@
 	background-color: #e5e5e8
 
 // A common clearfix hack for float parents, in case setting overflow: hidden on the parent isn't enough for you.
+@is (ie[-7], '
+.clearfix virtual
+	zoom: 1
+', '
 .clearfix virtual
 	:before, :after
 		content: ""
 		display: table
 	:after
 		clear: both
+')
 
 .vertical-arrow virtual
 	:after

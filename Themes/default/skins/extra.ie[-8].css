@@ -1,0 +1,7 @@
+
+// Replacement gradients for select box buttons.
+.sbox
+	.display .btn
+		background: #f2f2f2
+	&.focused .display .btn, .hover .btn
+		background: #dcefff

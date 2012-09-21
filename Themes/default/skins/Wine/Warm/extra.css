@@ -255,6 +255,22 @@ $ita_font = "Segoe UI", "Trebuchet MS", Arial, sans-serif
 $post_font = "Lucida Sans Unicode", Verdana, $main_font
 $post_font_size = 9.5pt/140%
 
+// Reset the sidebar position from right, to left.
+@remove #edge, #sidebar, #main
+	direction: ltr
+	direction: rtl
+
+/*
+	If you want to position the sidebar to the right, replace the above @remove with:
+
+	@remove #main
+		direction: ltr
+		direction: rtl
+
+	#sidebar, #offside
+		direction: ltr
+*/
+
 @replace
 	webelowine.png
 	webelow.png

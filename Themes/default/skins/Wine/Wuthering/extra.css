@@ -277,6 +277,11 @@ $post_font = $main_font
 $post_font_size = 10.5pt/140%
 $board_col = #d97b33
 
+// Reset the sidebar position from left, to right.
+@remove #edge, #sidebar, #main
+	direction: ltr
+	direction: rtl
+
 @remove
 	background: url($images/theme/bg.jpg)
 

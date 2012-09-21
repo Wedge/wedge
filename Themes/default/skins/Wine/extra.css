@@ -25,7 +25,13 @@ html
 	background-color: #693636
 	color: #ddc
 
-#sidebar // reset
+#edge
+	direction: rtl
+
+#sidebar, #main
+	direction: ltr
+
+#sidebar
 	background: $window_bg
 	display: table-cell
 	vertical-align: top
@@ -87,8 +93,7 @@ html
 ------------------------------------------------------- */
 
 .grad40
-	gradient: rgb(121,121,121), rgba(121,121,121,.1)
-	background-repeat: repeat-x
+	box-shadow: inset 0 24px 20px -8px #777
 
 .wehead extends .grad40
 .wefoot extends .grad40
@@ -286,8 +291,8 @@ ul.buttonlist
 /* CSS for smaller widths.
 ------------------------------------------------------- */
 
-// Alternatively, you can avoid precedence problems by resetting the query,
-// just by typing this instead: @media $responsive reset
+// You can avoid precedence problems by resetting the query,
+// just by adding the 'reset' keyword next to it.
 @media $responsive reset
 	body
 		#edge
@@ -300,10 +305,9 @@ ul.buttonlist
 			background: $window_bg
 			border-top: 1px solid #bdb5b5
 			margin: 0 -30px -20px
-			section
-				display: inline-block
-				width: $sidebar-width
+			section mixes .inline-block
 				vertical-align: top
+				width: $sidebar-width
 				padding: 0 8px 8px
 				margin: 8px
 				header
