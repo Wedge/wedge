@@ -9,13 +9,14 @@
 	display: inline-block
 	vertical-align: middle
 	// IE6/7 need layout to show inline-block divs... And a default right margin from my experience...
-	@is (ie[-7], "
-	margin-right: 6px
-	zoom: 1
+	@if ie[-7]
+		margin-right: 6px
+		zoom: 1
 
-// ...And they also need inline-block to be reset to inline separately... How annoying.
-.inline-block
-	display: inline")
+	// ...And they also need inline-block to be reset to inline separately... How annoying.
+	.inline-block
+		display: inline
+	@endif
 
 // A descriptive style
 .plainbox virtual
@@ -38,17 +39,16 @@
 	background-color: #e5e5e8
 
 // A common clearfix hack for float parents, in case setting overflow: hidden on the parent isn't enough for you.
-@is (ie[-7], '
 .clearfix virtual
-	zoom: 1
-', '
-.clearfix virtual
-	:before, :after
-		content: ""
-		display: table
-	:after
-		clear: both
-')
+	@if ie[-7]
+		zoom: 1
+	@else
+		:before, :after
+			content: ""
+			display: table
+		:after
+			clear: both
+	@endif
 
 .vertical-arrow virtual
 	:after

@@ -1379,16 +1379,16 @@ function aeva_admin_quotas_edit()
 	{
 		foreach ($types as $type)
 		{
-			$_POST[$type] = !isset($_POST[$type]) ? $limits[$type] : (int) $_POST[$type];
+			$_POST[$type] = max(0, !isset($_POST[$type]) ? $limits[$type] : (int) $_POST[$type]);
 
 			wesql::query('
 				UPDATE {db_prefix}media_quotas
-				SET quota = {int:limit}
+				SET quota = {int:quota}
 				WHERE id_group = {int:group}
 					AND id_profile = {int:profile}
 					AND type = {string:type}',
 				array(
-					'limit' => $_POST[$type],
+					'quota' => $_POST[$type],
 					'group' => $context['aeva_group']['id'],
 					'profile' => $context['aeva_profile']['id'],
 					'type' => $type,

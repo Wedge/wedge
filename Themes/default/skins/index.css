@@ -448,10 +448,6 @@ select.sb
 			padding: 0 3px
 
 		.btn
-			@is (ie[9-], "
-			background: #dbdbdb
-			box-shadow: inset -6px 12px 6px -6px #fff", "
-			background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)")
 			position: absolute
 			border: 1px solid #707070
 			border-radius: 4px
@@ -460,6 +456,12 @@ select.sb
 			right, top, bottom: 2px
 			color: rgba(0,0,0,.5)
 			font-size: 7px
+			@if ie[9-]
+				background: #dbdbdb
+				box-shadow: inset -6px 12px 6px -6px #fff
+			@else
+				background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)
+			@endif
 
 	&.disabled .display
 		color: #999
@@ -477,9 +479,7 @@ select.sb
 			box-shadow: inset 0 0 1px 1px #9eb0ba
 
 	&.focused .display .btn, .hover .btn
-		@is (ie[9-], "
-		background: #bce5fc", "
-		background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5)")
+		background: @is (ie[9-], "#bce5fc", "linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5)")
 
 	/* Dropdown styles */
 	.items

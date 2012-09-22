@@ -140,7 +140,7 @@ class wess
 		}
 
 		// Extract color data
-		preg_match('~(?:(rgb|hsl)a?\(\s*(\d+%?)\s*,\s*(\d+%?)\s*,\s*(\d+%?)(?:\s*\,\s*(\d*(?:\.\d+)?%?))?\s*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data, $rgb);
+		preg_match('~(?:(rgb|hsl)a?\(\h*(\d+%?)\h*,\h*(\d+%?)\h*,\h*(\d+%?)(?:\h*\,\h*(\d*(?:\.\d+)?%?))?\h*\)|#([0-9a-f]{6}|[0-9a-f]{3}))~', $data, $rgb);
 
 		$color = $hsl = 0;
 		if (empty($rgb[0]))
@@ -178,7 +178,7 @@ class wess_mixin extends wess
 		$mix = $def = array();
 
 		// Find mixin declarations, capture their tab level and stop at the first empty or unindented line.
-		if (preg_match_all('~@mixin\s+(?:{([^}]+)}\s*)?([\w-]+)(?:\(([^()]+)\))?[^\n]*\n(\h+)([^\n]*\n)((?:\4\h*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
+		if (preg_match_all('~@mixin\h+(?:{([^}]+)}\h*)?([\w-]+)(?:\(([^()]+)\))?[^\n]*\n(\h+)([^\n]*\n)((?:\4\h*[^\n]*\n)*)~i', $css, $mixins, PREG_SET_ORDER))
 		{
 			// We start by building an array of mixins...
 			foreach ($mixins as $mixin)
@@ -193,7 +193,7 @@ class wess_mixin extends wess
 				$mix[$mixin[2]] = rtrim(str_replace("\n" . $mixin[4], "\n", $mixin[5] . $mixin[6]));
 
 				// Do we have variables to set?
-				if (!empty($mixin[3]) && preg_match_all('~(\$[\w-]+)\s*[:=]\s*"?([^",]+)~', $mixin[3], $variables, PREG_SET_ORDER))
+				if (!empty($mixin[3]) && preg_match_all('~(\$[\w-]+)\h*[:=]\h*"?([^",]+)~', $mixin[3], $variables, PREG_SET_ORDER))
 				{
 					foreach ($variables as $i => $var)
 					{
@@ -239,7 +239,7 @@ class wess_mixin extends wess
 		}
 
 		// ...We should also do '.class mixes .otherclass' here.
-		if (preg_match_all('~(?<=\n)(\h*)(.*?)\s+mixes\s*' . $selector_regex . '(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		if (preg_match_all('~(?<=\n)(\h*)(.*?)\h+mixes\h*' . $selector_regex . '(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
 		{
 			foreach ($targets as $mixin)
 			{
@@ -291,7 +291,7 @@ class wess_dynamic extends wess
 	{
 		static $done = array();
 
-		if (preg_match_all('~@dynamic\s+([a-z0-9_]+)(?:\h+\([^)]*\))?~i', $css, $functions, PREG_SET_ORDER))
+		if (preg_match_all('~@dynamic\h+([a-z0-9_]+)(?:\h+\([^)]*\))?~i', $css, $functions, PREG_SET_ORDER))
 		{
 			foreach ($functions as $func)
 			{
@@ -353,7 +353,7 @@ class wess_var extends wess
 		// (index.css)		.class
 		//						border-$border-pos: 1px solid $border-col;
 
-		if (preg_match_all('~^\s*(\$[\w-]+)\s*(?:{([^}]+)}\s*)?=\s*("?)(.*)\\3;?\s*$~m', $css, $matches))
+		if (preg_match_all('~^\h*(\$[\w-]+)\h*(?:{([^}]+)}\h*)?=\h*("?)(.*)\\3;?\s*$~m', $css, $matches))
 		{
 			// Sort the matches by key length, to avoid conflicts as much as possible.
 			$decs = $matches[0];
@@ -388,7 +388,7 @@ class wess_var extends wess
 		}
 
 		// Replace @ifnull($var1, $var2) with $var1, or $var2 if $var1 doesn't exist.
-		while (preg_match_all('~@ifnull\s*\((\$[\w-]+)\s*,\s*+(?!@ifnull)\s*([^)]+)\s*\)~i', $css, $matches))
+		while (preg_match_all('~@ifnull\h*\((\$[\w-]+)\s*,\s*+(?!@ifnull)\s*([^)]+)\s*\)~i', $css, $matches))
 			foreach ($matches[1] as $i => $var)
 				$css = str_replace($matches[0][$i], isset($css_vars[$var]) ? $var : $matches[2][$i], $css);
 
@@ -398,23 +398,32 @@ class wess_var extends wess
 	}
 }
 
-// Conditionals.
-// !! @todo: implement more!
+// Conditionals. This function is called twice. The first pass is meant to be done
+// for browser conditions, and allows you to declare mixins within the branches.
+// The second pass will only treat variables, and can't contain mixins, but can be
+// contained within mixins.
 class wess_if extends wess
 {
 	function process(&$css)
 	{
 		global $context;
+		static $second_pass = false;
 
 		// @is (condition, if_true[, if_false])
 		// (This has got to be one of my most amusing regexes...)
-		$strex = '\s*+("(?:[^"@]|@(?!is\s*\())*"|\'(?:[^\'@]|@(?!is\s*\())*\'|(?:[^\'",@]|@(?!is\s*\())(?:[^,@]|@(?!is\s*\())*)\s*+';
-		while (preg_match_all('~@is\s*\(' . $strex . ',' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?\)~i', $css, $matches))
+		$strex = '\s*+("(?:[^"@]|@(?!is\h*\())*"|\'(?:[^\'@]|@(?!is\h*\())*\'|(?:[^\'",@]|@(?!is\h*\())(?:[^,@]|@(?!is\h*\())*)\s*+';
+		while (preg_match_all('~@is\h*\(' . $strex . ',' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?\)~i', $css, $matches))
 		{
 			foreach ($matches[1] as $i => $match)
 			{
+				// First, remove quotes that might be around our test...
 				if ($match[0] == '\'' || $match[0] == '"')
 					$match = substr($match, 1, -1);
+
+				// If we're executing this before mixins, don't bother doing variables.
+				if (!$second_pass && strpos($match, '$') !== false)
+					continue;
+
 				// !! @todo: this is a temporary implementation, until I get to write a proper parser.
 				if (hasBrowser($match))
 				{
@@ -432,6 +441,40 @@ class wess_if extends wess
 				}
 			}
 		}
+
+		// @if / @else / @endif
+		// This one is cleaner, but more demanding in terms of structure. @endif is required,
+		// and all three commands need to be on the same tab level. Respect this or crash Wess.
+		// You can nest commands inside @if and @else as well.
+		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]+)((?:[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER))
+		{
+			foreach ($matches as $m)
+			{
+				$match = $m[2];
+				$parts = explode($m[1] . '@else', $m[3]);
+				if (!isset($parts[1])) // no @else?
+					$parts[1] = '';
+				$remove_tabs = preg_match('~\h+~', $m[3], $tabs) ? strlen($tabs[0]) - strlen($m[1]) : 0;
+				$parts[0] = preg_replace('~\n\h{' . $remove_tabs . '}~', "\n", $parts[0]);
+				$parts[1] = preg_replace('~\n\h{' . $remove_tabs . '}~', "\n", $parts[1]);
+
+				// First, remove bracket pairs that might be around our test...
+				if (($match[0] == '(' && substr($match, -1) == ')') || ($match[0] == '{' && substr($match, -1) == '}'))
+					$match = substr($match, 1, -1);
+
+				// If we're executing this before mixins, don't bother doing variables.
+				if (!$second_pass && strpos($match, '$') !== false)
+					continue;
+
+				// !! @todo: this is a temporary implementation, until I get to write a proper parser.
+				if (hasBrowser($match))
+					$css = str_replace($m[0], $parts[0], $css);
+				else
+					$css = str_replace($m[0], $parts[1], $css);
+			}
+		}
+
+		$second_pass = true;
 	}
 }
 
@@ -596,7 +639,7 @@ class wess_color extends wess
 		}
 
 		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()\n,]+)';
-		$css = preg_replace_callback('~(\n\h*)gradient\s*:\s*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wess_color::gradient_background', $css);
+		$css = preg_replace_callback('~(\n\h*)gradient\h*:\h*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wess_color::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
@@ -727,10 +770,10 @@ class wess_nesting extends wess
 		// (1) avoid using them in CSS files. REALLY. Use <css> in custom.xml, or add_css_file(), or add_css().
 		// (2) @import won't work if used inside a suffixed file, because @import is only parsed when
 		//     found at the start of a physical file (or within <style> tags in the main HTML.)
-		$tree = preg_replace('~^(@(?:import|charset)\s+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
-		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\s*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
+		$tree = preg_replace('~^(@(?:import|charset)\h+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
+		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\h*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
 		$tree = preg_replace('~(\burl\([^)]+\))~e', 'str_replace(\':\', \'#wedge-colon#\', \'$1\')', $tree); // Protect colons (:) inside URLs
-		$tree = preg_replace('~([a-z-, ]+)\s*:(?!//)\s*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\s*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
+		$tree = preg_replace('~([a-z-, ]+)\h*:(?!//)\h*([^;}{' . ($css_syntax ? '' : '\n') . ']+?);*\h*(?=[\n}])~i', '<property name="$1" value="$2">', $tree); // Transform properties
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9](?:[^{\n]|(?=,)\n)*?)\s*{~mi', '<rule selector="$1">', $tree); // Transform selectors. Strings starting with a digit are only allowed because of keyframes.
 		$tree = preg_replace(array('~ {2,}~'), array(' '), $tree); // Remove extra spaces
 		$tree = str_replace(array('}', "\n"), array('</rule>', "\n\t"), $tree); // Close rules and indent everything one tab
@@ -752,7 +795,7 @@ class wess_nesting extends wess
 		{
 			if (strpos($node['selector'], ' reset') !== false)
 			{
-				preg_match_all('~' . $selector_regex . '\s+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~' . $selector_regex . '\h+reset\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 				{
 					// Start by rebuilding a full selector. For efficiency reasons, and because I'm too lazy to rework this,
@@ -798,7 +841,7 @@ class wess_nesting extends wess
 		{
 			if (strpos($node['selector'], ' virtual') !== false)
 			{
-				if (preg_match('~' . $selector_regex . '\s+virtual\b~i', $node['selector'], $matches))
+				if (preg_match('~' . $selector_regex . '\h+virtual\b~i', $node['selector'], $matches))
 				{
 					$node['selector'] = str_replace($matches[0], $matches[1], $node['selector']);
 					$virtuals[$matches[1]] = $n;
@@ -818,7 +861,7 @@ class wess_nesting extends wess
 			// Of course you may also use just one selector, or provide no selectors; Wess will target all selectors in the entire file.
 			if (strpos($node['selector'], '@remove') === 0)
 			{
-				$sels = preg_match('~@remove\s+(?:from\s+)?([^\n]+)~', $node['selector'], $sels) ? array_map('trim', explode(',', trim(str_replace('#wedge-quote#', '"', $sels[1]), "\x00..\x20\""))) : array();
+				$sels = preg_match('~@remove\h+(?:from\h+)?([^\n]+)~', $node['selector'], $sels) ? array_map('trim', explode(',', trim(str_replace('#wedge-quote#', '"', $sels[1]), "\x00..\x20\""))) : array();
 				foreach ($node['props'] as $remove)
 				{
 					if (empty($sels))
@@ -835,7 +878,7 @@ class wess_nesting extends wess
 			// e.g.: ".class unextends .orig "-> cancels any earlier ".class extends .orig"
 			if (strpos($node['selector'], ' unextends') !== false)
 			{
-				preg_match_all('~' . $selector_regex . '\s+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
+				preg_match_all('~' . $selector_regex . '\h+unextends\b~i', $node['selector'], $matches, PREG_SET_ORDER);
 				foreach ($matches as $m)
 					$unextends[$m[1]] = $n;
 				$node['selector'] = preg_replace('~\bunextends\b~i', '', $node['selector']);
@@ -1018,7 +1061,7 @@ class wess_nesting extends wess
 
 						foreach ($selectors as &$snippet)
 						{
-							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![\w-]|.*\s+final\b)~i', $snippet))
+							if (!isset($done[$snippet]) && preg_match('~' . $beginning . '(' . $base[1] . ')(?![\w-]|.*\h+final\b)~i', $snippet))
 							{
 								// And our magic trick happens here.
 								foreach ($base[2] as $extend)
@@ -1157,7 +1200,7 @@ class wess_nesting extends wess
 
 	private function pierce(&$data)
 	{
-		preg_match_all('~<(/?)([a-z]+)\s*(?:name="([^"]*)"\s*)?(?:(?:value|selector)="([^"]*)")?[^>]*>~s', $data, $tags, PREG_SET_ORDER);
+		preg_match_all('~<(/?)([a-z]+)\h*(?:name="([^"]*)"\h*)?(?:(?:value|selector)="([^"]*)")?[^>]*>~s', $data, $tags, PREG_SET_ORDER);
 
 		$id = 1;
 		$parent = array(0);
@@ -1404,18 +1447,18 @@ class wess_prefixes extends wess
 		$b = $browser;
 		$v = $b['version'];
 
-		// IE6/7/8/9 don't support gradients (screw 'em!), IE10 supports them unprefixed, and Firefox 16+ dropped the prefix.
+		// IE6/7/8/9 don't support gradients (screw 'em!), IE10 final supports them unprefixed, and Firefox 16+ dropped the prefix.
 		// Note that AFAIK, repeating-* still is prefixed everywhere as of August 2012, it's fixable but give me a break for now.
 		if (strpos($matches[1], 'gradient(') !== false)
 		{
 			if (($b['is_gecko'] && $v >= 16) || ($b['is_opera'] && $v >= 12.1) || ($b['is_ie'] && $v >= 10))
 				return $unchanged;
 
-			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\s*\()~', $prefix . '$1', $unchanged);
+			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\h*\()~', $prefix . '$1', $unchanged);
 
 			// !! Is it worth supporting gradians, radians and turns..? Wedge only uses degrees.
 			if (strpos($prefixed, 'deg') !== false)
-				$prefixed = preg_replace('~(gradient\s*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~e', '\'$1\' . (90 - \'$2\')', $prefixed);
+				$prefixed = preg_replace('~(gradient\h*\(\s*)(-?(?:\d+|\d*\.\d+))(?=deg\b)~e', '\'$1\' . (90 - \'$2\')', $prefixed);
 
 			if (strpos($prefixed, 'radial-gradient') !== false)
 				$prefixed = preg_replace('~(?<=radial-gradient\()([\sa-z-]+\s+)?at\s([^,]+)(?=,)~e', '\'$2\' . (\'$1\' != \'\' ? \', $1\' : \'\')', $prefixed);
