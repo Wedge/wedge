@@ -771,7 +771,7 @@ function EnablePlugin()
 
 			// If there's a filename, we have to fix its path
 			if (!empty($this_task['file']))
-				$this_task['file'] = trim('plugin;' . str_replace('$plugindir', $this_plugindir, $this_task['file']));
+				$this_task['file'] = trim('plugin;' . $manifest_id . ';' . $this_task['file']);
 			$new_tasks[] = $this_task;
 		}
 
@@ -1132,6 +1132,56 @@ function DisablePlugin()
 	// Disabling is much simpler than enabling.
 
 	$manifest_id = (string) $manifest['id'];
+
+	// This could be interesting, actually. Does this plugin declare any hooks that any other active plugin uses?
+	if (!empty($manifest->hooks->provides))
+	{
+		// OK, so this plugin offers some hooks. We need to see which of these are actually in use by active plugins.
+		$hooks_provided = array();
+		foreach ($manifest->hooks->provides->hook as $hook)
+		{
+			$hook_name = (string) $hook;
+			if (!empty($hook_name))
+				$hooks_provided[$hook_name] = true;
+		}
+
+		$conflicted_plugins = array();
+		// So now we know what hooks this plugin offers. Now let's see what other plugins use this.
+		if (!empty($hooks_provided))
+		{
+			$plugins = explode(',', $settings['enabled_plugins']);
+			foreach ($plugins as $plugin)
+			{
+				if ($plugin == $_GET['plugin'] || !file_exists($pluginsdir . '/' . $plugin . '/plugin-info.xml'))
+					continue;
+
+				// Now, we have to go and get the XML manifest for these plugins, because we have to be able to differentiate
+				// optional from required hooks, and we can't do that with what's in context, only the actual manifest.
+				$other_manifest = simplexml_load_file($pluginsdir . '/' . $plugin . '/plugin-info.xml');
+				$hooks = $other_manifest->hooks->children();
+				foreach ($hooks as $hook)
+				{
+					$type = $hook->getName();
+					if ($type != 'provides' && !empty($hook['point']))
+					{
+						$hook_point = (string) $hook['point'];
+						if (isset($hooks_provided[$hook_point]))
+						{
+							$conflicted_plugins[$plugin] = (string) $other_manifest->name;
+							break;
+						}
+					}
+				}
+				unset($other_manifest);
+			}
+		}
+
+		if (!empty($conflicted_plugins))
+		{
+			$list = '<ul><li>' . implode('</li><li>', $conflicted_plugins) . '</li></ul>';
+			fatal_lang_error('fatal_conflicted_plugins', false, array($list));
+		}
+	}
 
 	// Database changes: disable script
 	if (!empty($manifest->database->scripts->disable))

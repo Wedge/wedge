@@ -57,7 +57,7 @@ if (!defined('WEDGE'))
 // This function works out what to do!
 function AutoTask()
 {
-	global $time_start, $settings;
+	global $time_start, $settings, $context;
 
 	// Special case for doing the mail queue.
 	if (isset($_GET['scheduled']) && $_GET['scheduled'] == 'mailq')
@@ -114,11 +114,16 @@ function AutoTask()
 			);
 			$affected_rows = wesql::affected_rows();
 
-			// Does this task need us to load a file? The filename will be plugin;fullpath-to-file
+			// Does this task need us to load a file? The filename entry will be plugin;plugin-id;file
+			// But the plugin does have to be active too.
 			if (!empty($row['sourcefile']))
 			{
 				if (strpos($row['sourcefile'], 'plugin;') === 0)
-					require_once(substr($row['sourcefile'], 7) . '.php');
+				{
+					list(, $plugin_id, $filename) = explode(';', $row['sourcefile']);
+					if (!empty($filename) && !empty($context['plugins_dir'][$plugin_id]))
+						loadPluginSource($plugin_id, $filename);
+				}
 				else
 					loadSource($row['sourcefile']);
 			}
@@ -146,6 +151,18 @@ function AutoTask()
 						array()
 					);
 				}
+			}
+			elseif (!function_exists('scheduled_' . $row['task']))
+			{
+				// If it doesn't exist now, odds are it won't exist in the future either... just need to check this on its own.
+				wesql::query('
+					UPDATE {db_prefix}scheduled_tasks
+					SET disabled = 1
+					WHERE id_task = {int:id_task}',
+					array(
+						'id_task' => $row['id_task'],
+					)
+				);
 			}
 		}
 		wesql::free_result($request);
