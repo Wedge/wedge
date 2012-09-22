@@ -1165,7 +1165,7 @@ function DisablePlugin()
 					if ($type != 'provides' && !empty($hook['point']))
 					{
 						$hook_point = (string) $hook['point'];
-						if (isset($hooks_provided[$hook_point]))
+						if (isset($hooks_provided[$hook_point]) && (empty($hook['optional']) || (string) $hook['optional'] != 'yes'))
 						{
 							$conflicted_plugins[$plugin] = (string) $other_manifest->name;
 							break;
