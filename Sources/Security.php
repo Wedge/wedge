@@ -1240,8 +1240,10 @@ function checkUserRequest_blacklist()
 			"\r",
 			'grub-client',
 			'hanzoweb',
+			'Havij',
 			'MSIE 7.0;  Windows NT 5.2',
 			'Turing Machine',
+			'ZmEu',
 			// spammers
 			'; Widows ',
 			'a href=',
@@ -1340,8 +1342,47 @@ function checkUserRequest_request()
 	}
 
 	// Check for weirdness in the requested URI
-	if (!empty($_SERVER['REQUEST_URI']) && (strpos($_SERVER['REQUEST_URI'], '#') !== false || strpos($_SERVER['REQUEST_URI'], ';DECLARE%20@') !== false))
-		return $context['behavior_error'] = 'behav_rogue_chars';
+	if (!empty($_SERVER['REQUEST_URI']))
+	{
+		$rogue_chars = array(
+			'exact_contains' => array(
+				'#', // should not be in the URL that hits the site, it's not a URL component
+				';DECLARE%20@', // IIS injection attempt, even if we're not on IIS, this is still someone bad we don't want
+				'../', // avoiding path traversal vulnerabilities
+				'..\\', // again...
+			),
+			'insens_contains' => array(
+				// SQL injection probes
+				'%60information_schema%60',
+				'+%2F*%21',
+				'+and+%',
+				'+and+1%',
+				'+and+if',
+				'%27--',
+				'%27 --',
+				'%27%23',
+				'%27 %23',
+				'benchmark%28',
+				'insert+into+',
+				'r3dm0v3',
+				'select+1+from',
+				'union+all+select',
+				'union+select',
+				'waitfor+delay+',
+				'0x31303235343830303536', // specific to Havij
+				// vulnerability scanner
+				'w00tw00t',
+			),
+		);
+		foreach ($rogue_chars['exact_contains'] as $str)
+			if (strpos($_SERVER['REQUEST_URI'], $str) !== false)
+				return $context['behavior_error'] = 'behav_rogue_chars';
+
+		$insens = strtolower($_SERVER['REQUEST_URI']);
+		foreach ($rogue_chars['insens_contains'] as $str)
+			if (strpos($insens, $str) !== false)
+				return $context['behavior_error'] = 'behav_rogue_chars';
+	}
 
 	// Should not use lowercase 'via' header (only known if on Apache). Clearswift does, though they shouldn't.
 	if (isset($context['http_headers']['via']) && strpos($context['http_headers']['via'], 'Clearswift') === false && strpos($context['http_headers']['User-Agent'], 'CoralWebPrx') === false)
@@ -1427,7 +1468,7 @@ function checkUserRequest_useragent()
 	// Is it claiming to be MSN's bot?
 	elseif (stripos($context['http_headers']['User-Agent'], 'bingbot') !== false || stripos($context['http_headers']['User-Agent'], 'msnbot') !== false || stripos($context['http_headers']['User-Agent'], 'MS Search') !== false)
 	{
-		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('207.46.0.0/16', '65.52.0.0/14', '207.68.128.0/18', '207.68.192.0/20', '64.4.0.0/18', '157.54.0.0/15', '157.60.0.0/16', '157.56.0.0/14'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com')))
+		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('207.46.0.0/16', '65.52.0.0/14', '207.68.128.0/18', '207.68.192.0/20', '64.4.0.0/18', '157.54.0.0/15', '157.60.0.0/16', '157.56.0.0/14', '131.253.21.0/24', '131.253.22.0/23', '131.253.24.0/21', '131.253.32.0/20'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'msn.com')))
 			return $context['behavior_error'] = 'behav_not_msnbot';
 	}
 	// Is it claiming to be Googlebot, even?

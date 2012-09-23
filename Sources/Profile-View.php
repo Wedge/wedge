@@ -1472,7 +1472,7 @@ function TrackIP($memID = 0)
 				$ipv6[$k] = $v != '*' ? str_pad($v, 4, '0', STR_PAD_LEFT) : '%';
 			$ip_search = implode('', $ipv6);
 		}
-		
+
 		// Now get all the IP ids.
 		$query = wesql::query('
 			SELECT id_ip

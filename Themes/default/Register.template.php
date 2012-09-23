@@ -144,7 +144,7 @@ function template_registration_form()
 						<dd>
 							<select name="timezone" id="timezone">';
 	foreach ($context['user_timezones'] as $tz_id => $tz_desc)
-		echo '	
+		echo '
 								<option value="', $tz_id, '"', $tz_id == $context['user_selected_timezone'] ? ' selected' : '', '>', $tz_desc, '</option>';
 
 	echo '
