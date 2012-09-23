@@ -116,7 +116,7 @@ function template_generic_menu_dropdown()
 			$class = empty($class) ? '' : ' class="' . ltrim($class) . '"';
 
 			echo '<li', $class, '><a href="', (isset($area['url']) ? $area['url'] : $menu_context['base_url'] . ';area=' . $id), $menu_context['extra_parameters'], '">',
-					!empty($area['notice']) ? '<strong>' . $area['notice'] . '</strong>' : '', $area['icon'], $area['label'], $end_a;
+					$area['icon'], $area['label'], !empty($area['notice']) ? '<span class="note">' . $area['notice'] . '</span>' : '', $end_a;
 
 			// Is there any subsections?
 			if (!empty($area['subsections']))

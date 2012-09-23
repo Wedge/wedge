@@ -130,12 +130,20 @@ function MoveTopic()
 	if ($user_info['language'] != $language)
 	{
 		loadLanguage('ManageTopics', $language);
-		$temp1 = $txt['movetopic_default'];
-		$temp2 = $txt['movetopic_default_pm'];
+		$temp1 = str_replace(array('{auto_board}', '{auto_topic}'), array($txt['movetopic_auto_board'], $txt['movetopic_auto_topic']), $txt['movetopic_default']);
+		$temp2 = str_replace(array('{auto_board}', '{auto_topic}'), array($txt['movetopic_auto_board'], $txt['movetopic_auto_topic']), $txt['movetopic_default_pm']);
 		loadLanguage('ManageTopics');
 
 		$txt['movetopic_default'] = $temp1;
 		$txt['movetopic_default_pm'] = $temp2;
+	}
+	else
+	{
+		// In case anyone's wondering what all this strangeness is about, it means that the placeholders '[TOPIC LINK]' and '[BOARD]'
+		// can be translated, since regular users with their own language can move topics - {auto_topic} would be acceptable for the
+		// admin to have untranslated, but for regular users, it's not really as acceptable.
+		$txt['movetopic_default'] = str_replace(array('{auto_board}', '{auto_topic}'), array($txt['movetopic_auto_board'], $txt['movetopic_auto_topic']), $txt['movetopic_default']);
+		$txt['movetopic_default_pm'] = str_replace(array('{auto_board}', '{auto_topic}'), array($txt['movetopic_auto_board'], $txt['movetopic_auto_topic']), $txt['movetopic_default_pm']);
 	}
 
 	// Register this form and get a sequence number in $context.

@@ -221,7 +221,7 @@ function MembergroupIndex()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '[<a href="' . $scripturl . '?action=admin;area=membergroups;sa=add;generalgroup">' . $txt['membergroups_add_group'] . '</a>]',
+				'value' => '<form action="<URL>?action=admin;area=membergroups;sa=add;generalgroup" method="post"><input type="submit" class="new" value="' . $txt['membergroups_add_group'] . '"></form>',
 			),
 		),
 	);
@@ -332,7 +332,7 @@ function MembergroupIndex()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '[<a href="' . $scripturl . '?action=admin;area=membergroups;sa=add;postgroup">' . $txt['membergroups_add_group'] . '</a>]',
+				'value' => '<form action="<URL>?action=admin;area=membergroups;sa=add;postgroup" method="post"><input type="submit" class="new" value="' . $txt['membergroups_add_group'] . '"></form>',
 			),
 		),
 	);

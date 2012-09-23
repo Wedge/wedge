@@ -137,14 +137,14 @@ function ViewMembers()
 				'is_selected' => $_REQUEST['sa'] == 'search' || $_REQUEST['sa'] == 'query',
 			),
 			'approve' => array(
-				'label' => sprintf($txt['admin_browse_awaiting_approval'], $context['awaiting_approval']),
+				'label' => $txt['admin_members_approve'] . (!empty($context['awaiting_approval']) ? '<span class="note">' . $context['awaiting_approval'] . '</span>' : ''),
 				'description' => $txt['admin_browse_approve_desc'],
 				'url' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=approve',
 				'is_selected' => $_REQUEST['sa'] == 'browse' && !empty($_REQUEST['type']) && $_REQUEST['type'] == 'approve',
 				'disabled' => !$context['show_approve'],
 			),
 			'activate' => array(
-				'label' => sprintf($txt['admin_browse_awaiting_activate'], $context['awaiting_activation']),
+				'label' => $txt['admin_members_activate'] . (!empty($context['awaiting_activation']) ? '<span class="note">' . $context['awaiting_activation'] . '</span>' : ''),
 				'description' => $txt['admin_browse_activate_desc'],
 				'url' => $scripturl . '?action=admin;area=viewmembers;sa=browse;type=activate',
 				'is_selected' => $_REQUEST['sa'] == 'browse' && !empty($_REQUEST['type']) && $_REQUEST['type'] == 'activate',

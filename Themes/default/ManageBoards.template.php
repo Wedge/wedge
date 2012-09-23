@@ -26,7 +26,8 @@ function template_main()
 	if (!empty($context['move_board']))
 		echo '
 		<div class="information">
-			<p>', $context['move_title'], ' [<a href="', $scripturl, '?action=admin;area=manageboards">', $txt['mboards_cancel_moving'], '</a>]', '</p>
+			<div class="floatright"><form action="<URL>?action=admin;area=manageboards" method="post"><input type="submit" class="cancel" value="', $txt['mboards_cancel_moving'], '"></form></div>
+			<p>', $context['move_title'], '</p>
 		</div>';
 
 	// No categories so show a label.

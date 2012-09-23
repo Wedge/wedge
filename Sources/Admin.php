@@ -331,6 +331,7 @@ function Admin()
 			'areas' => array(
 				'viewmembers' => array(
 					'label' => $txt['admin_users'],
+					'notice' => !empty($settings['unapprovedMembers']) ? $settings['unapprovedMembers'] : '',
 					'file' => 'ManageMembers',
 					'function' => 'ViewMembers',
 					'icon' => 'members.gif',
@@ -339,6 +340,16 @@ function Admin()
 					'subsections' => array(
 						'all' => array($txt['view_all_members']),
 						'search' => array($txt['mlist_search']),
+						'approve' => array(
+							$txt['admin_members_approve'] . (!empty($settings['unapprovedMembers']) ? '<span class="note">' . $settings['unapprovedMembers'] . '</span>' : ''),
+							'enabled' => (!empty($settings['registration_method']) && $settings['registration_method'] == 2) || !empty($settings['approveAccountDeletion']),
+							'url' => '<URL>?action=admin;area=viewmembers;sa=browse;type=approve',
+						),
+						'activate' => array(
+							$txt['admin_members_activate'],
+							'enabled' => !empty($settings['registration_method']) && $settings['registration_method'] == 1,
+							'url' => '<URL>?action=admin;area=viewmembers;sa=browse;type=activate',
+						),
 					),
 				),
 				'regcenter' => array(

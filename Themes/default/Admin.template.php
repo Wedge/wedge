@@ -1186,7 +1186,7 @@ function template_edit_profile_field()
 
 	echo '
 								<span id="addopt"></span>
-								[<a href="" onclick="addOption(); return false;">', $txt['custom_edit_options_more'], '</a>]
+								<input type="submit" onclick="addOption(); return false;" class="new" value="', $txt['custom_edit_options_more'], '">
 							</div>
 						</dd>
 						<dt id="default_dt">
