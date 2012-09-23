@@ -381,7 +381,7 @@ function messageIndexBar($area)
 
 			// Add the label to the menu.
 			$pm_areas['labels']['areas']['label' . $label['id']] = array(
-				'label' => $label['name'] . (!empty($label['unread_messages']) ? ' (<strong>' . $label['unread_messages'] . '</strong>)' : ''),
+				'label' => $label['name'] . (!empty($label['unread_messages']) ? ' <span class="note">' . $label['unread_messages'] . '</span>' : ''),
 				'custom_url' => $scripturl . '?action=pm;l=' . $label['id'],
 				'unread_messages' => $label['unread_messages'],
 				'messages' => $label['messages'],
@@ -389,15 +389,15 @@ function messageIndexBar($area)
 		}
 
 		if (!empty($unread_in_labels))
-			$pm_areas['labels']['title'] .= ' (' . $unread_in_labels . ')';
+			$pm_areas['labels']['title'] .= ' <span class="notewarn">' . $unread_in_labels . '</span>';
 	}
 
 	$pm_areas['folders']['areas']['inbox']['unread_messages'] =& $context['labels'][-1]['unread_messages'];
 	$pm_areas['folders']['areas']['inbox']['messages'] =& $context['labels'][-1]['messages'];
 	if (!empty($context['labels'][-1]['unread_messages']))
 	{
-		$pm_areas['folders']['areas']['inbox']['label'] .= ' (<strong>' . $context['labels'][-1]['unread_messages'] . '</strong>)';
-		$pm_areas['folders']['title'] .= ' (' . $context['labels'][-1]['unread_messages'] . ')';
+		$pm_areas['folders']['areas']['inbox']['label'] .= ' <span class="note">' . $context['labels'][-1]['unread_messages'] . '</span>';
+		$pm_areas['folders']['title'] .= ' <span class="notewarn">' . $context['labels'][-1]['unread_messages'] . '</span>';
 	}
 
 	// Do we have a limit on the amount of messages we can keep?
@@ -3318,15 +3318,15 @@ function ManageRules()
 	wesql::free_result($request);
 
 	// Applying all rules?
-	if (isset($_GET['apply']))
+	if (isset($_REQUEST['apply']))
 	{
-		checkSession('get');
+		checkSession();
 
 		applyRules(true);
 		redirectexit('action=pm;sa=manrules');
 	}
 	// Editing a specific one?
-	if (isset($_GET['add']))
+	if (isset($_REQUEST['add']))
 	{
 		$context['rid'] = isset($_GET['rid'], $context['rules'][$_GET['rid']]) ? (int) $_GET['rid'] : 0;
 		wetem::load('add_rule');

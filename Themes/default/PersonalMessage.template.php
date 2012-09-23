@@ -1246,11 +1246,11 @@ function template_rules()
 		</tbody>
 		</table>
 		<div class="right">
-			[<a href="<URL>?action=pm;sa=manrules;add;rid=0">', $txt['pm_add_rule'], '</a>]';
+			<input type="submit" name="add" value="', $txt['pm_add_rule'], '" class="new">';
 
 	if (!empty($context['rules']))
 		echo '
-			[<a href="<URL>?action=pm;sa=manrules;apply;', $context['session_query'], '" onclick="return confirm(', JavaScriptEscape($txt['pm_js_apply_rules_confirm']), ');">', $txt['pm_apply_rules'], '</a>]';
+			<input type="submit" name="apply" value="', $txt['pm_apply_rules'], '" onclick="return confirm(', JavaScriptEscape($txt['pm_js_apply_rules_confirm']), ');" class="submit">';
 
 	if (!empty($context['rules']))
 		echo '
