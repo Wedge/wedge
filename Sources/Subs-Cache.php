@@ -255,7 +255,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	static $cached_files = array();
 
 	// Delete all duplicates and ensure $original_files is an array.
-	$original_files = array_merge(array('common' => false), array_flip((array) $original_files));
+	$original_files = array_flip((array) $original_files);
 	$files = array_keys($original_files);
 	$latest_date = 0;
 

@@ -1804,6 +1804,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// false indicates that we don't want their names to show up in the final filename.
 	// For the main file, we'll be happy with just the suffix list in the name :)
 	$context['main_css_files'] = array(
+		'common' => false,
 		'index' => false,
 		'sections' => false
 	);

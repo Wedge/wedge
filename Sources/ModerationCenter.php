@@ -40,7 +40,7 @@ function ModerationMain($dont_call = false)
 
 	// Load the language, and the template.
 	loadLanguage('ModerationCenter');
-	add_css_file('mana', true);
+	add_css_file(array('common', 'mana'), true);
 
 	$context['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
 	$context['robot_no_index'] = true;

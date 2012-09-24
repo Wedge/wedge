@@ -732,7 +732,7 @@ input[type=file]
 	// For anything else than IE6...
 	> li
 		display: inline-block
-		margin, padding: 0	
+		margin, padding: 0
 		float: none
 
 	li li
