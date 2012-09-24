@@ -1387,7 +1387,7 @@ dl#feed
 	padding: 5px 10px 5px
 	margin: 4px 0
 	border: 1px solid rgba(0,0,0, .15)
-	font: 100 1.5em/1.3em $head_font
+	font: @ifnull ($head_font_style, 100) @ifnull ($head_font_size, 1.5em/1.3em) $head_font
 	img
 		padding-right: 2px
 
@@ -1429,7 +1429,7 @@ dl#feed
 		color: #777
 
 .cat final, .title final
-	font: 100 1.5em/1.3em @ifnull ($cat_font, $head_font)
+	font: @ifnull ($head_font_style, 100) @ifnull ($head_font_size, 1.5em/1.3em) @ifnull ($cat_font, $head_font)
 
 .title final
 	font-size: @ifnull ($title_font_size, 1.4em)
