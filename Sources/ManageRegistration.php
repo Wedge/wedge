@@ -197,9 +197,7 @@ function EditAgreement()
 		checkSession();
 
 		// Off it goes to the agreement file.
-		$fp = fopen($boarddir . '/agreement' . $context['current_agreement'] . '.txt', 'w');
-		fwrite($fp, str_replace("\r", '', $_POST['agreement']));
-		fclose($fp);
+		file_put_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt', str_replace("\r", '', $_POST['agreement']));
 
 		updateSettings(array('requireAgreement' => !empty($_POST['requireAgreement'])));
 	}

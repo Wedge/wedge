@@ -939,22 +939,18 @@ function boardsAllowedTo($permissions, $check_access = true)
 		{
 			$final_list = array();
 			foreach ($permissions as $perm)
-			{
 				$final_list[$perm] = array(0);
-			}
 			return $final_list;
 		}
 
-		// Guest and guest access disabled?
+		// So we begin generally looking things up.
+		$final_list = array();
+		foreach ($permissions as $perm)
+			$final_list[$perm] = array();
+
+		// Guest and guest access disabled? No point doing anything else, they won't have permission.
 		if ($user_info['is_guest'] && empty($settings['allow_guestAccess']))
-		{
-			$final_list = array();
-			foreach ($permissions as $perm)
-			{
-				$final_list[$perm] = array();
-			}
 			return $final_list;
-		}
 
 		$boards = array();
 		$deny_boards = array();

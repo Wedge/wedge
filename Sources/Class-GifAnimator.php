@@ -141,11 +141,7 @@ class GIF_Animator
 			echo $this->GIF;
 		}
 		else
-		{
-			$handle = fopen($filename, 'wb');
-			fwrite($handle, $this->GIF);
-			fclose($handle);
-		}
+			file_put_contents($filename, $this->GIF);
 	}
 
 	/**

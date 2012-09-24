@@ -479,6 +479,7 @@ function MessageFolder()
 	$context['from_or_to'] = $context['folder'] != 'sent' ? 'from' : 'to';
 	$context['get_pmessage'] = 'prepareMessageContext';
 	$context['signature_enabled'] = $settings['signature_settings'][0] == 1;
+	$context['disabled_fields'] = isset($settings['disabled_profile_fields']) ? array_flip(explode(',', $settings['disabled_profile_fields'])) : array();
 
 	$labelQuery = $context['folder'] != 'sent' ? '
 			AND FIND_IN_SET(' . $context['current_label_id'] . ', pmr.labels) != 0' : '';

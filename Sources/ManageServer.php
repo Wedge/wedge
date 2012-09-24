@@ -1519,9 +1519,7 @@ function ModifyLanguage()
 			'~\$txt\[\'lang_rtl\'\]\s=\s[A-Za-z0-9]+;~' => '$txt[\'lang_rtl\'] = ' . (!empty($_POST['rtl']) ? 'true' : 'false') . ';',
 		);
 		$current_data = preg_replace(array_keys($replace_array), array_values($replace_array), $current_data);
-		$fp = fopen($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php', 'w+');
-		fwrite($fp, $current_data);
-		fclose($fp);
+		file_put_contents($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php', $current_data);
 
 		$madeSave = true;
 	}
@@ -1712,9 +1710,7 @@ function ModifyLanguage()
 				$file_contents = strtr($file_contents, array($save['find'] => $save['replace']));
 
 			// Save the actual changes.
-			$fp = fopen($current_file, 'w+');
-			fwrite($fp, $file_contents);
-			fclose($fp);
+			file_put_contents($current_file, $file_contents);
 
 			$madeSave = true;
 		}
