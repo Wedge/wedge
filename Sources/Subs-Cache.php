@@ -616,8 +616,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
 
 	// Just like comments, we're going to preserve content tags.
+	$i = 0;
 	preg_match_all('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~', $final, $contags);
-	$final = preg_replace('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~', 'content: wedge', $final);
+	$final = preg_replace('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~e', '\'content: wedge\' . $i++', $final);
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -641,7 +642,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// And do the same for content tags.
 	if (!empty($contags))
-		wedge_replace_placeholders('content:wedge', $contags[0], $final);
+		wedge_replace_numbered_placeholders('content:wedge', $contags[0], $final);
 
 	$final = ltrim($final, "\n");
 
@@ -657,12 +658,24 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	return $folder . $full_name;
 }
 
+// This will replace {$str}, {$str}, ... in $final with successive entries in $arr
 function wedge_replace_placeholders($str, $arr, &$final)
 {
 	$i = 0;
 	$len = strlen($str);
 	while (($pos = strpos($final, $str)) !== false)
 		$final = substr_replace($final, $arr[$i++], $pos, $len);
+}
+
+// This will replace {$str}0, {$str}1, {$str}2... in $final with the corresponding index in $arr
+function wedge_replace_numbered_placeholders($str, $arr, &$final)
+{
+	$len = strlen($str);
+	while (($pos = strpos($final, $str)) !== false)
+	{
+		$index = intval(substr($final, $pos + $len));
+		$final = substr_replace($final, $arr[$index], $pos, $len + strlen($index));
+	}
 }
 
 // Dynamic function to cache language flags into index.css

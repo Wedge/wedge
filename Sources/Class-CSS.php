@@ -455,8 +455,8 @@ class wess_if extends wess
 				if (!isset($parts[1])) // no @else?
 					$parts[1] = '';
 				$remove_tabs = preg_match('~\h+~', $m[3], $tabs) ? strlen($tabs[0]) - strlen($m[1]) : 0;
-				$parts[0] = preg_replace('~\n\h{' . $remove_tabs . '}~', "\n", $parts[0]);
-				$parts[1] = preg_replace('~\n\h{' . $remove_tabs . '}~', "\n", $parts[1]);
+				foreach ($parts as &$part)
+					$part = preg_replace('~\n\h{' . $remove_tabs . '}~', "\n", $part);
 
 				// First, remove bracket pairs that might be around our test...
 				if (($match[0] == '(' && substr($match, -1) == ')') || ($match[0] == '{' && substr($match, -1) == '}'))
@@ -466,11 +466,25 @@ class wess_if extends wess
 				if (!$second_pass && strpos($match, '$') !== false)
 					continue;
 
-				// !! @todo: this is a temporary implementation, until I get to write a proper parser.
-				if (hasBrowser($match))
-					$css = str_replace($m[0], $parts[0], $css);
-				else
-					$css = str_replace($m[0], $parts[1], $css);
+				$i = 0;
+				$num = count($parts);
+				while ($i < $num)
+				{
+					// @elseif
+					if (strtolower(substr($parts[$i], 0, 2)) == 'if')
+					{
+						$match = preg_match('~^if\h*([^\n]+)~', $parts[$i], $newif) ? trim($newif[1]) : '';
+						$parts[$i] = substr($parts[$i], strlen($newif[0]));
+						if (($match[0] == '(' && substr($match, -1) == ')') || ($match[0] == '{' && substr($match, -1) == '}'))
+							$match = substr($match, 1, -1);
+					}
+					// !! @todo: this is a temporary implementation, until I get to write a proper parser.
+					if (empty($match) || hasBrowser($match))
+						break;
+					$match = '';
+					$i++;
+				}
+				$css = str_replace($m[0], $i < $num ? $parts[$i] : '', $css);
 			}
 		}
 
