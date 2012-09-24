@@ -923,7 +923,7 @@ function AdminSearchInternal()
 			if (!empty($menu_item['subsections']))
 				foreach ($menu_item['subsections'] as $key => $sublabel)
 					if (isset($sublabel, $sublabel['label']))
-						$search_data['sections'][] = array($sublabel['label'], 'area=' . $menu_key . ';sa=' . $key);
+						$search_data['sections'][] = array($sublabel['label'], isset($sublabel['url']) ? $sublabel['url'] : 'area=' . $menu_key . ';sa=' . $key);
 		}
 	}
 
