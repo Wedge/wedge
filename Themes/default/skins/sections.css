@@ -1337,6 +1337,8 @@ div.top_row dd
 .helpc
 	cursor: help
 
+// If you don't like the icon, you can for instance replace the background
+// property with an :after pseudo-class with content: "\203b"
 .help extends ".helpc, .inline-block"
 	background: url($images/helptopics.gif) no-repeat
 	width, height: 16px
