@@ -372,8 +372,8 @@ function template_modify_board()
 								<table>
 									<tr>
 										<th></th>
-										<th>', $txt['mboards_yes'], '</th>
-										<th>', $txt['mboards_no'], '</th>
+										<th>', $txt['yes'], '</th>
+										<th>', $txt['no'], '</th>
 										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['mboards_never'], '</th>
 									</tr>';
 
@@ -408,8 +408,8 @@ function template_modify_board()
 								<table>
 									<tr>
 										<th></th>
-										<th>', $txt['mboards_yes'], '</th>
-										<th>', $txt['mboards_no'], '</th>
+										<th>', $txt['yes'], '</th>
+										<th>', $txt['no'], '</th>
 										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none;"' : '', '>', $txt['mboards_never'], '</th>
 									</tr>';
 

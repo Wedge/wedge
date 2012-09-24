@@ -931,7 +931,6 @@ function EditSmileys()
 					),
 					'data' => array(
 						'db_htmlsafe' => 'filename',
-						'class' => 'windowbg',
 					),
 					'sort' => array(
 						'default' => 'filename',
@@ -953,7 +952,6 @@ function EditSmileys()
 							else
 								return $txt[\'smileys_location_popup\'];
 						'),
-						'class' => 'windowbg',
 					),
 					'sort' => array(
 						'default' => 'FIND_IN_SET(hidden, \'' . implode(',', array_keys($smiley_locations)) . '\')',
@@ -983,7 +981,6 @@ function EditSmileys()
 
 							return $description;
 						'),
-						'class' => 'windowbg',
 					),
 					'sort' => array(
 						'default' => 'description',
@@ -1037,7 +1034,7 @@ function EditSmileys()
 							<option value="hidden">' . $txt['smileys_make_hidden'] . '</option>
 							<option value="post">' . $txt['smileys_show_on_post'] . '</option>
 							<option value="popup">' . $txt['smileys_show_on_popup'] . '</option>
-							<option value="delete">' . $txt['smileys_remove'] . '</option>
+							<option value="delete">' . $txt['remove'] . '</option>
 						</select>
 						<noscript><input type="submit" name="perform_action" value="' . $txt['go'] . '"></noscript>',
 					'style' => 'text-align: right;',

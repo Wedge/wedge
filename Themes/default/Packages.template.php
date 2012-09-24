@@ -834,7 +834,7 @@ function template_package_list()
 					// How 'bout the author?
 					if (!empty($package['author']) && $package['author']['name'] != '' && isset($package['author']['link']))
 						echo '
-								<li class="package_section">', $txt['mod_author'], ':&nbsp; ', $package['author']['link'], '</li>';
+								<li class="package_section">', $txt['author'], ':&nbsp; ', $package['author']['link'], '</li>';
 					// The homepage....
 					if ($package['author']['website']['link'] != '')
 						echo '
