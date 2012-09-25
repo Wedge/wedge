@@ -726,12 +726,13 @@ function dynamic_admin_menu_icons()
 	$rep = '';
 	foreach ($ina as $val)
 	{
-		$icon = '/images/admin/' . $val[1];
+		$is_abs = isset($val[1]) && ($val[1][0] == '/' || strpos($val[1], '://') !== false);
+		$icon = $is_abs ? $val[1] : '/images/admin/' . $val[1];
 		$rep .= '
 .admenu_icon_' . $val[0] . ' extends .inline-block
-	background: url($theme'. $icon . ') no-repeat
-	width: width($theme_dir'. $icon . ')px
-	height: height($theme_dir'. $icon . ')px';
+	background: url('. ($is_abs ? $icon : '$theme' . $icon) . ') no-repeat
+	width: width('. ($is_abs ? $icon : '$theme_dir' . $icon) . ')px
+	height: height('. ($is_abs ? $icon : '$theme_dir' . $icon) . ')px';
 	}
 	unset($ina);
 

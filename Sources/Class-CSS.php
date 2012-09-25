@@ -702,6 +702,8 @@ class wess_func extends wess
 {
 	function process(&$css)
 	{
+		global $boardurl, $boarddir;
+
 		if (!preg_match_all('~(width|height)\(([^)]+)\)~i', $css, $matches))
 			return;
 
@@ -712,7 +714,8 @@ class wess_func extends wess
 				continue;
 			$done[$file] = true;
 
-			list ($width, $height) = getimagesize($file);
+			// Get dimensions from file. Try to turn it into absolute path if a URL was given.
+			list ($width, $height) = getimagesize(str_replace($boardurl, $boarddir, $file));
 			$css = str_replace(array('width(' . $file . ')', 'height(' . $file . ')'), array($width, $height), $css);
 		}
 	}
