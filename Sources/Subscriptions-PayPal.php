@@ -180,63 +180,24 @@ class paypal_payment
 	{
 		global $settings, $txt;
 
+		loadSource('Class-WebGet');
+
 		// Put this to some default value.
 		if (!isset($_POST['txn_type']))
 			$_POST['txn_type'] = '';
 
 		// Build the request string - starting with the minimum requirement.
-		$requestString = 'cmd=_notify-validate';
+		$weget = new weget('http://' . (!empty($settings['paidsubs_test']) ? 'www.sandbox.' : 'www.') . 'paypal.com/cgi-bin/webscr');
+		$weget->setMethod('POST');
+		$weget->addPostVar('cmd', '_notify_validate');
 
 		// Now my dear, add all the posted bits.
 		foreach ($_POST as $k => $v)
-			$requestString .= '&' . $k . '=' . urlencode($v);
+			$weget->addPostVar($k, $v);
 
-		// Can we use curl?
-		if (function_exists('curl_init') && $curl = curl_init('http://www.', !empty($settings['paidsubs_test']) ? 'sandbox.' : '', 'paypal.com/cgi-bin/webscr'))
-		{
-			// Set the post data.
-			curl_setopt($curl, CURLOPT_POST, true);
-			curl_setopt($curl, CURLOPT_POSTFIELDSIZE, 0);
-			curl_setopt($curl, CURLOPT_POSTFIELDS, $requestString);
-
-			// Fetch the data returned as a string.
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-			// Fetch the data.
-			$this->return_data = curl_exec($curl);
-
-			// Close the session.
-			curl_close($curl);
-		}
-		// Otherwise good old HTTP.
-		else
-		{
-			// Setup the headers.
-			$header = 'POST /cgi-bin/webscr HTTP/1.0' . "\r\n";
-			$header .= 'Content-Type: application/x-www-form-urlencoded' . "\r\n";
-			$header .= 'Content-Length: ' . strlen ($requestString) . "\r\n\r\n";
-
-			// Open the connection.
-			$fp = fsockopen('www.' . (!empty($settings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com', 80, $errno, $errstr, 30);
-
-			// Did it work?
-			if (!$fp)
-				generateSubscriptionError($txt['paypal_could_not_connect']);
-
-			// Put the data to the port.
-			fputs($fp, $header . $requestString);
-
-			// Get the data back...
-			while (!feof($fp))
-			{
-				$this->return_data = fgets($fp, 1024);
-				if (strcmp($this->return_data, 'VERIFIED') == 0)
-					break;
-			}
-
-			// Clean up.
-			fclose($fp);
-		}
+		$this->return_data = $weget->get();
+		if (!$this->return_data)
+			generateSubscriptionError($txt['paypal_could_not_connect']);
 
 		// If this isn't verified then give up...
 		// !! This contained a comment "send an email", but we don't appear to send any?
