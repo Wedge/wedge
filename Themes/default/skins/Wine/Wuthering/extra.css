@@ -4,7 +4,6 @@
  * Copyright (c) 2010-2012, Wedgeward (http://wedge.org)
  */
 
-// Set a fontsize that will look the same in all browsers.
 body
 	background: #faefe6
 	color: #333
@@ -196,7 +195,6 @@ a, #linktree a
 
 .title
 	background-color: #e3e9ef
-	background-position: 0 -22px
 	border: 1px solid rgba(0,0,0, .15)
 
 .title2
@@ -226,7 +224,6 @@ a, #linktree a
 tr.catbg
 	th, td
 		background-color: #e3e9ef
-		background-position: 0 -28px
 		font: $subcat_font
 		&, a
 			color: #666
@@ -234,7 +231,6 @@ tr.catbg
 tr.titlebg
 	th, td
 		background-color: #e5eee5
-		background-position: 0 -28px
 		font: $subcat_font
 		&, a
 			color: #222

@@ -193,12 +193,12 @@ class wess_mixin extends wess
 				$mix[$mixin[2]] = rtrim(str_replace("\n" . $mixin[4], "\n", $mixin[5] . $mixin[6]));
 
 				// Do we have variables to set?
-				if (!empty($mixin[3]) && preg_match_all('~(\$[\w-]+)\h*[:=]\h*"?([^",]+)~', $mixin[3], $variables, PREG_SET_ORDER))
+				if (!empty($mixin[3]) && preg_match_all('~(\$[\w-]+)\h*(?:[:=]\h*"?([^",]+))?~', $mixin[3], $variables, PREG_SET_ORDER))
 				{
 					foreach ($variables as $i => $var)
 					{
 						$mix[$mixin[2]] = str_replace($var[1], '$%' . $i . '%', $mix[$mixin[2]]);
-						$def[$mixin[2]][$i] = trim($var[2], '" ');
+						$def[$mixin[2]][$i] = isset($var[2]) ? trim($var[2], '" ') : '';
 					}
 				}
 			}
@@ -207,7 +207,7 @@ class wess_mixin extends wess
 		// ...And then we apply them to the CSS file.
 		$repa = array();
 		$selector_regex = '([abipqsu]|[!+>&#*@:.a-z0-9][^{};,\n"()]+)';
-		if (preg_match_all('~(?<=\n)(\h*)mixin\h*:\h*' . $selector_regex . '\h*(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		if (preg_match_all('~(?<=\n)(\h*)mixin\h*:\h*' . $selector_regex . '\h*(?:\(([^\n]+)\))?~i', $css, $targets, PREG_SET_ORDER))
 		{
 			foreach ($targets as $mixin)
 			{
@@ -239,12 +239,12 @@ class wess_mixin extends wess
 		}
 
 		// ...We should also do '.class mixes .otherclass' here.
-		if (preg_match_all('~(?<=\n)(\h*)(.*?)\h+mixes\h*' . $selector_regex . '(?:\(([^()]+)\))?~i', $css, $targets, PREG_SET_ORDER))
+		if (preg_match_all('~(?<=\n)(\h*)(.*?)\h+mixes\h*' . $selector_regex . '(?:\(([^\n]+)\))?~i', $css, $targets, PREG_SET_ORDER))
 		{
 			foreach ($targets as $mixin)
 			{
 				$rep = '';
-				$tg = $mixin[3];
+				$tg = trim($mixin[3]);
 				if (isset($mix[$tg]))
 				{
 					$rep = $mix[$tg];
@@ -266,7 +266,8 @@ class wess_mixin extends wess
 					foreach ($selectors as $sel)
 						$rep .= rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
-				$repa[$mixin[0]] = $mixin[1] . $mixin[2] . "\n" . $mixin[1] . (isset($mixin[1][0]) ? $mixin[1][0] : "\t") . str_replace("\n", "\n" . $mixin[1], $rep);
+				$newline = "\n" . $mixin[1] . (isset($mixin[1][0]) ? $mixin[1][0] : "\t");
+				$repa[$mixin[0]] = $mixin[1] . $mixin[2] . $newline . str_replace("\n", $newline, $rep);
 			}
 		}
 
@@ -398,21 +399,58 @@ class wess_var extends wess
 	}
 }
 
-// Conditionals. This function is called twice. The first pass is meant to be done
-// for browser conditions, and allows you to declare mixins within the branches.
-// The second pass will only treat variables, and can't contain mixins, but can be
-// contained within mixins.
+// Conditionals, @if and @is (inline if).
+// If you test for a browser condition, you may place your test anywhere in the code.
+// If you test for a variable value, you can't declare mixins inside your test, because
+// the test will only be run after mixins are already transformed.
 class wess_if extends wess
 {
+	var $test_vars;
+
+	public function __construct($test_vars = false)
+	{
+		$this->test_vars = $test_vars;
+	}
+
+	// This is the variable test parser. Do not use quotes, just plain CSS. Some valid examples:
+	// $color == red / $color != red / $color / !$color / $number > 0 / $number < $other
+	function test($match)
+	{
+		preg_match('~(!?[^!=<>]*)(?:([!=<>]+)(.*))?~', $match, $ops);
+		$ops = array_map('trim', $ops);
+
+		// No operator? Test for null.
+		if (!isset($ops[2]))
+			return $ops[1] != '' && $ops[1] != '0' && ($ops[1][0] != '!' || (($val = substr($ops[1], 1)) == '' || $val == '0'));
+
+		$op1 = intval($ops[1]);
+		$op3 = intval($ops[3]);
+		if (($op1 != 0 || is_numeric($ops[1])) && ($op3 != 0 || is_numeric($ops[3])))
+		{
+			$ops[1] = $op1;
+			$ops[3] = $op3;
+		}
+		if ($ops[2] == '==' && $ops[1] == $ops[3])
+			return true;
+		if (($ops[2] == '!=' || $ops[2] == '<>') && $ops[1] != $ops[3])
+			return true;
+		if ($ops[2] == '>' && (int) $ops[1] > (int) $ops[3])
+			return true;
+		if ($ops[2] == '<' && (int) $ops[1] < (int) $ops[3])
+			return true;
+
+		return false;
+	}
+
 	function process(&$css)
 	{
 		global $context;
-		static $second_pass = false;
 
 		// @is (condition, if_true[, if_false])
 		// (This has got to be one of my most amusing regexes...)
+		$pass_this = 0;
 		$strex = '\s*+("(?:[^"@]|@(?!is\h*\())*"|\'(?:[^\'@]|@(?!is\h*\())*\'|(?:[^\'",@]|@(?!is\h*\())(?:[^,@]|@(?!is\h*\())*)\s*+';
-		while (preg_match_all('~@is\h*\(' . $strex . ',' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?\)~i', $css, $matches))
+		while (preg_match_all('~@is\h*\(' . $strex . ',' . $strex . '(?:,' . str_replace(',', ')', $strex) . ')?\)~i', $css, $matches) > $pass_this)
 		{
 			foreach ($matches[1] as $i => $match)
 			{
@@ -421,11 +459,13 @@ class wess_if extends wess
 					$match = substr($match, 1, -1);
 
 				// If we're executing this before mixins, don't bother doing variables.
-				if (!$second_pass && strpos($match, '$') !== false)
+				if (!$this->test_vars && strpos($match, '$') !== false)
+				{
+					$pass_this++;
 					continue;
+				}
 
-				// !! @todo: this is a temporary implementation, until I get to write a proper parser.
-				if (hasBrowser($match))
+				if (hasBrowser($match) || ($this->test_vars && $this->test($match)))
 				{
 					if ($matches[2][$i][0] == '\'' || $matches[2][$i][0] == '"')
 						$matches[2][$i] = substr($matches[2][$i], 1, -1);
@@ -446,7 +486,7 @@ class wess_if extends wess
 		// This one is cleaner, but more demanding in terms of structure. @endif is required,
 		// and all three commands need to be on the same tab level. Respect this or crash Wess.
 		// You can nest commands inside @if and @else as well.
-		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n]+)((?:[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER))
+		while (preg_match_all('~(?<=\n)(\h*)@if\h+([^\n' . ($this->test_vars ? '' : '$') . ']+)(\n(?:[^@]|@(?!if\h))*?)\n\1@endif~i', $css, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $m)
 			{
@@ -462,13 +502,9 @@ class wess_if extends wess
 				if (($match[0] == '(' && substr($match, -1) == ')') || ($match[0] == '{' && substr($match, -1) == '}'))
 					$match = substr($match, 1, -1);
 
-				// If we're executing this before mixins, don't bother doing variables.
-				if (!$second_pass && strpos($match, '$') !== false)
-					continue;
-
-				$i = 0;
+				$i = -1;
 				$num = count($parts);
-				while ($i < $num)
+				while (++$i < $num)
 				{
 					// @elseif
 					if (strtolower(substr($parts[$i], 0, 2)) == 'if')
@@ -478,17 +514,20 @@ class wess_if extends wess
 						if (($match[0] == '(' && substr($match, -1) == ')') || ($match[0] == '{' && substr($match, -1) == '}'))
 							$match = substr($match, 1, -1);
 					}
-					// !! @todo: this is a temporary implementation, until I get to write a proper parser.
+
+					// Browser constant test.
 					if (empty($match) || hasBrowser($match))
 						break;
+
+					// Very, very basic variable test. Please bear with me...
+					if ($this->test_vars && $this->test($match))
+						break;
+
 					$match = '';
-					$i++;
 				}
 				$css = str_replace($m[0], $i < $num ? $parts[$i] : '', $css);
 			}
 		}
-
-		$second_pass = true;
 	}
 }
 

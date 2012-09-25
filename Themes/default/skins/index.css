@@ -1697,19 +1697,22 @@ $alphamix = $main_bg
 	border: 0
 
 /*
-// This example is here to showcase the mixin power. You can use : or = in param lists.
-@mixin example($border: 1px solid black, $width: 777px, $co: #888)
-	width: $width
-	font-size: 1em
-	background: $main_bg
-	a
-		border: $border
-		color: $board_col
+	// This example is here to showcase the mixin power. You can use : or = in param lists.
 
-.class
-	.thing mixes example
-		or...
-		mixin: example
-		mixin: example(1px dotted white)
-		mixin: example(,, #fff)
+	@mixin example($border, $width: 777px, $co: #888)
+		width: $width
+		font-size: 1em
+		background: $main_bg
+		a
+			@if ($border > 0)
+				border: $border
+			@endif
+			color: $board_col
+
+	.class
+		.thing mixes example (2px)
+			or...
+			mixin: example
+			mixin: example(1px dotted white)
+			mixin: example(,, #fff)
 */

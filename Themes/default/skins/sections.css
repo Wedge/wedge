@@ -1146,9 +1146,9 @@ tr.windowbg td
 /* Styles for the statistics center.
 ------------------------------------------------- */
 #stats
-	dl
+	#main dl
 		min-height: 210px
-	div.top_row dl
+	.top_row dl
 		min-height: 150px
 
 dl.stats

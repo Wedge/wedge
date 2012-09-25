@@ -558,13 +558,14 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	$plugins = array(
 		new wess_dynamic(),	// Dynamic replacements through callback functions
-		new wess_if(),		// CSS conditions (@is (ie9, true, false))
+		new wess_if(),		// CSS conditions, first pass (browser tests)
 		new wess_mixin(),	// CSS mixins (mixin hello($world: 0))
 		new wess_var(),		// CSS variables ($hello_world)
 		new wess_color(),	// CSS color transforms
 		new wess_func(),	// Various CSS functions
-		new wess_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
 		new wess_math(),	// Math function (math(1px + 3px), math((4*$var)/2em)...)
+		new wess_if(true),	// CSS conditions, second pass (variable tests)
+		new wess_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
 		new wess_prefixes(),
 	);
 
