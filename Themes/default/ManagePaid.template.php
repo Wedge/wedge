@@ -622,11 +622,8 @@ function template_choose_payment()
 			', $gateway['title'], '
 		</we:cat>
 		<div class="windowbg wrc">
-			', $gateway['desc'], '<br>
-			<form action="', $gateway['form'], '" method="post">';
-
-		if (!empty($gateway['javascript']))
-			add_js_inline($gateway['javascript']);
+			<div id="gateway_desc">', $gateway['desc'], '</div>
+			<form action="', $gateway['form'], '" method="post" id="gateway_form">';
 
 		foreach ($gateway['hidden'] as $name => $value)
 			echo '

@@ -138,14 +138,13 @@ class paypal_display
 		}
 
 		// If it's repeatable add some JavaScript to respect this idea.
-		// !! Note: don't use jQuery in these JS strings.
 		if (!empty($sub_data['repeatable']))
 			$return_data['javascript'] = '
-				document.write(\'<label><input type="checkbox" name="do_paypal_recur" id="do_paypal_recur" checked onclick="switchPaypalRecur();">' . $txt['paid_make_recurring'] . '</label><br>\');
+				$(\'#gateway_desc\').append(\'<br><br><label><input type="checkbox" name="do_paypal_recur" id="do_paypal_recur" checked onclick="switchPaypalRecur();">' . $txt['paid_make_recurring'] . '</label>\');
 
 				function switchPaypalRecur()
 				{
-					document.getElementById("paypal_cmd").value = document.getElementById("do_paypal_recur").checked ? "_xclick-subscriptions" : "_xclick";
+					$(\'#paypal_cmd\').val( $(\'#do_paypal_recur\')[0].checked ? \'_xclick-subscriptions\' : \'_xclick\' );
 				}';
 
 		return $return_data;
@@ -187,7 +186,7 @@ class paypal_payment
 			$_POST['txn_type'] = '';
 
 		// Build the request string - starting with the minimum requirement.
-		$weget = new weget('http://' . (!empty($settings['paidsubs_test']) ? 'www.sandbox.' : 'www.') . 'paypal.com/cgi-bin/webscr');
+		$weget = new weget('https://' . (!empty($settings['paidsubs_test']) ? 'www.sandbox.' : 'www.') . 'paypal.com/cgi-bin/webscr');
 		$weget->setMethod('POST');
 		$weget->addPostVar('cmd', '_notify_validate');
 
