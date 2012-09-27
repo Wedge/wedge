@@ -1136,9 +1136,10 @@ class wess_nesting extends wess
 			}
 
 			$selectors = array_flip(array_flip($selectors));
-			foreach ($selectors as $i => $sel)
-				if (preg_match($no_virtuals_regex, $sel))
-					unset($selectors[$i]);
+			if (!empty($virtuals))
+				foreach ($selectors as $i => $sel)
+					if (preg_match($no_virtuals_regex, $sel))
+						unset($selectors[$i]);
 
 			sort($selectors);
 			$selector = implode(',', $selectors);
