@@ -59,6 +59,7 @@ function reloadSettings()
 			$settings['defaultMaxMessages'] = 15;
 		if (empty($settings['defaultMaxMembers']) || $settings['defaultMaxMembers'] <= 0 || $settings['defaultMaxMembers'] > 999)
 			$settings['defaultMaxMembers'] = 30;
+		$settings['js_lang'] = empty($settings['js_lang']) ? array() : unserialize($settings['js_lang']);
 		$settings['registered_hooks'] = empty($settings['registered_hooks']) ? array() : unserialize($settings['registered_hooks']);
 		$settings['hooks'] = $settings['registered_hooks'];
 		$settings['pretty_filters'] = unserialize($settings['pretty_filters']);
@@ -2386,8 +2387,8 @@ function loadSource($source_name)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
-	global $user_info, $language, $theme, $context, $settings, $db_show_debug, $txt;
-	static $already_loaded = array();
+	global $user_info, $language, $theme, $context, $settings, $boarddir, $db_show_debug, $txt;
+	static $already_loaded = array(), $folder_date = array();
 
 	// Default to the user's language.
 	if ($lang == '')
@@ -2408,6 +2409,25 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	$theme_name = basename($theme['theme_url']);
 	if (empty($theme_name))
 		$theme_name = 'unknown';
+
+	// Go through all potential language folders, retrieve the latest modification date,
+	// and if available, clean the JS cache to force JS file regeneration.
+	// !! This is only temp code, as it won't work on all server setups, especially Windows.
+	foreach (isset($theme['base_theme_dir']) ? array($theme['base_theme_dir'], $theme['theme_dir'], $theme['default_theme_dir']) : array($theme['theme_dir'], $theme['default_theme_dir']) as $dir)
+	{
+		if (isset($folder_date[$dir]))
+			continue;
+		$folder_date[$dir] = true;
+		$last_modified = filemtime($dir . '/languages/.');
+		$dir = str_replace($boarddir, '', $dir);
+		if (!isset($settings['langdate_' . $dir]))
+			updateSettings(array('langdate_' . $dir => $last_modified));
+		elseif ($last_modified > $settings['langdate_' . $dir])
+		{
+			updateSettings(array('langdate_' . $dir => $last_modified));
+			clean_cache('js');
+		}
+	}
 
 	// For each file open it up and write it out!
 	foreach ((array) $template_name as $template)

@@ -10,10 +10,18 @@
  * @version 0.1
  */
 
+@language index;
+
 var
 	oThought,
 	weEditors = [],
 	_formSubmitted = false,
+
+	we_loading = $txt['ajax_in_progress'],
+	we_cancel = $txt['form_cancel'],
+	we_delete = $txt['delete'],
+	we_submit = $txt['form_submit'],
+	we_ok = $txt['ok'],
 
 	// Basic browser detection. $.browser is being deprecated in jQuery,
 	// but v1.5 still has it, and Wedge will keep supporting it.

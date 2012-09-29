@@ -69,7 +69,8 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
 {
-	global $context, $settings, $footer_coding, $theme, $jsdir, $boardurl;
+	global $context, $settings, $theme, $jsdir, $boardurl;
+	global $footer_coding, $user_info, $language;
 	static $done_files = array();
 
 	if (!is_array($files))
@@ -126,7 +127,8 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $jsdir . '/' . $id . $latest_date . $ext;
+	$final_file = $jsdir . '/' . $id . (!empty($settings['js_lang'][$id]) && !empty($user_info['language']) && $user_info['language'] != $language ? $user_info['language'] . '-' : '') . $latest_date . $ext;
+
 	if (!file_exists($final_file))
 		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext);
 
@@ -547,7 +549,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	foreach (glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext) as $del)
-		if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, $latest_date) === false)
+		if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, (string) $latest_date) === false)
 			@unlink($del);
 
 	$final = '';
@@ -753,14 +755,14 @@ function dynamic_admin_menu_icons()
  */
 function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext, $full_path = false)
 {
-	global $theme, $settings, $comments, $jsdir;
+	global $theme, $settings, $comments, $jsdir, $txt;
 
 	$final = '';
 	$dir = $full_path ? '' : $theme['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	foreach (glob($jsdir . '/' . $id. '*' . $ext) as $del)
-		if (strpos($del, $latest_date) === false)
+		if (strpos($del, (string) $latest_date) === false)
 			@unlink($del);
 
 	$minify = empty($settings['minify']) ? 'none' : $settings['minify'];
@@ -795,6 +797,49 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 		preg_match('~<wedge_jquery>(.*?)</wedge_jquery>~s', $final, $jquery);
 		if (!empty($jquery[1]))
 			$final = str_replace($jquery[0], 'WEDGE_JQUERY();', $final);
+	}
+
+	// Load any requested language files, and replace all $txt['string'] occurrences.
+	// !! @todo: implement cache flush by checking for language modification deltas.
+	// In the meantime, if you update a language file, empty the JS cache folder if it fails to update.
+	if (preg_match_all('~@language\h+([\w\h,:]+)(?=[\n;])~i', $final, $languages))
+	{
+		// Format: @language ThemeLanguage, Author:Plugin:Language, Author:Plugin:Language2
+		$langstring = implode(',', $languages[1]);
+		$langlist = serialize($langs = array_map('trim', explode(',', $langstring)));
+		if (strpos($langstring, ':') !== false)
+		{
+			foreach ($langs as $i => $lng)
+				if (strpos($lng, ':') !== false && count($exp = explode(':', $lng)) == 3)
+				{
+					loadPluginLanguage($exp[0] . ':' . $exp[1], $exp[2]);
+					unset($langs[$i]);
+				}
+		}
+		loadLanguage($langs);
+		$final = str_replace($languages[0], '', $final);
+
+		if (!isset($settings['js_lang'][$id]) || $settings['js_lang'][$id] != $langlist)
+		{
+			$use_update = !empty($settings['js_lang']);
+			$settings['js_lang'][$id] = $langlist;
+			$save = $settings['js_lang'];
+			updateSettings(array('js_lang' => serialize($settings['js_lang'])), $use_update);
+			$settings['js_lang'] = $save;
+		}
+
+		if (preg_match_all('~\$txt\[([\'"])(.*?)\1]~i', $final, $strings, PREG_SET_ORDER))
+			foreach ($strings as $str)
+				if (isset($txt[$str[2]]))
+					$final = str_replace($str[0], JavaScriptEscape($txt[$str[2]]), $final);
+	}
+	// Did we remove all language files from the list? Clean it up...
+	elseif (!empty($settings['js_lang'][$id]))
+	{
+		unset($settings['js_lang'][$id]);
+		$save = $settings['js_lang'];
+		updateSettings(array('js_lang' => serialize($settings['js_lang'])), true);
+		$settings['js_lang'] = $save;
 	}
 
 	// Call the minify process, either JSMin or Packer.

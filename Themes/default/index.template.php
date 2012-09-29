@@ -583,12 +583,7 @@ function template_body_after()
 	we_theme_url = "' . $theme['theme_url'] . '";', '
 	we_sessid = "', $context['session_id'], '";
 	we_sessvar = "', $context['session_var'], '";', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
-	we_iso_case_folding = true' : '', '
-	we_loading = "', $txt['ajax_in_progress'], '";
-	we_cancel = "', $txt['form_cancel'], '";
-	we_delete = "', $txt['delete'], '";
-	we_submit = "', $txt['form_submit'], '";
-	we_ok = "', $txt['ok'], '";', empty($context['current_topic']) ? '' : '
+	we_iso_case_folding = true' : '', empty($context['current_topic']) ? '' : '
 	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '
 	we_board = ' . $context['current_board'] . ';', '
 
