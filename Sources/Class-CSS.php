@@ -1076,8 +1076,8 @@ class wess_nesting extends wess
 					$css .= $node['selector'] . ';';
 					continue;
 				}
-				// !! @todo: should this only check for @media and @keyframes, or actually give the same treatment to all @ commands?
-				if (stripos($node['selector'], '@media') === 0 || stripos($node['selector'], '@keyframes') === 0)
+				// Blocks starting with @media, @keyframes, @supports...
+				if (preg_match('~^@[a-z]+~i', $node['selector']))
 				{
 					// Are we already in a @keyword block? Then close it first...
 					if (!empty($standard_nest))

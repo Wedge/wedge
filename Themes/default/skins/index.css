@@ -437,7 +437,8 @@ select.sb
 		color: #000
 		cursor: default
 		font-weight: 400
-		height, line-height: 1.46em
+		height: 1.46em
+		line-height: 1.5em
 		overflow: hidden
 		position: relative
 		text-decoration, outline: none
