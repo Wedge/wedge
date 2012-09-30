@@ -1840,7 +1840,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		while ($row = wesql::fetch_assoc($result))
 		{
 			// There are just things we shouldn't be able to change as members.
-			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'base_theme_dir', 'base_theme_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_templates', 'theme_url')))
+			if ($row['id_member'] != 0 && in_array($row['variable'], array('actual_theme_url', 'actual_images_url', 'default_images_url', 'default_theme_dir', 'default_theme_url', 'default_template', 'images_url', 'smiley_sets_default', 'theme_dir', 'theme_id', 'theme_templates', 'theme_url')))
 				continue;
 
 			// If this is the theme_dir of the default theme, store it.
@@ -1877,10 +1877,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$theme['template_dirs'] = array();
 	// This theme first.
 	$theme['template_dirs'][] = $theme['theme_dir'];
-
-	// Based on theme (if there is one.)
-	if (!empty($theme['base_theme_dir']))
-		$theme['template_dirs'][] = $theme['base_theme_dir'];
 
 	// Lastly the default theme.
 	if ($theme['theme_dir'] != $theme['default_theme_dir'])
@@ -2413,7 +2409,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	// Go through all potential language folders, retrieve the latest modification date,
 	// and if available, clean the JS cache to force JS file regeneration.
 	// !! This is only temp code, as it won't work on all server setups, especially Windows.
-	foreach (isset($theme['base_theme_dir']) ? array($theme['base_theme_dir'], $theme['theme_dir'], $theme['default_theme_dir']) : array($theme['theme_dir'], $theme['default_theme_dir']) as $dir)
+	foreach (array($theme['theme_dir'], $theme['default_theme_dir']) as $dir)
 	{
 		if (isset($folder_date[$dir]))
 			continue;
@@ -2440,13 +2436,6 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			array($theme['theme_dir'], $template, $lang, $theme['theme_url']),
 			array($theme['theme_dir'], $template, $language, $theme['theme_url']),
 		);
-
-		// Do we have a base theme to worry about?
-		if (isset($theme['base_theme_dir']))
-		{
-			$attempts[] = array($theme['base_theme_dir'], $template, $lang, $theme['base_theme_url']);
-			$attempts[] = array($theme['base_theme_dir'], $template, $language, $theme['base_theme_url']);
-		}
 
 		// Fall back on the default theme if necessary.
 		$attempts[] = array($theme['default_theme_dir'], $template, $lang, $theme['default_theme_url']);
@@ -2597,10 +2586,6 @@ function getLanguages($use_cache = true)
 		$theme['default_theme_dir'] . '/languages',
 		$theme['actual_theme_dir'] . '/languages',
 	);
-
-	// We possibly have a base theme directory.
-	if (!empty($theme['base_theme_dir']))
-		$language_directories[] = $theme['base_theme_dir'] . '/languages';
 
 	// Initialize the array, otherwise if it's empty, Wedge won't cache it.
 	$context['languages'] = array();

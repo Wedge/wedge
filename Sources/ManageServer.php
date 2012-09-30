@@ -1185,18 +1185,13 @@ function list_getLanguages()
 	// Keep our old entries.
 	$old_txt = $txt;
 	$backup_actual_theme_dir = $theme['actual_theme_dir'];
-	$backup_base_theme_dir = !empty($theme['base_theme_dir']) ? $theme['base_theme_dir'] : '';
 
 	// Override these for now.
-	$theme['actual_theme_dir'] = $theme['base_theme_dir'] = $theme['default_theme_dir'];
+	$theme['actual_theme_dir'] = $theme['default_theme_dir'];
 	getLanguages();
 
 	// Put them back.
 	$theme['actual_theme_dir'] = $backup_actual_theme_dir;
-	if (!empty($backup_base_theme_dir))
-		$theme['base_theme_dir'] = $backup_base_theme_dir;
-	else
-		unset($theme['base_theme_dir']);
 
 	// Get the language files and data...
 	foreach ($context['languages'] as $lang)

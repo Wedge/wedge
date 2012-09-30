@@ -446,7 +446,7 @@ function updateSettings($changeArray, $update = false)
 {
 	global $settings;
 
-	if (empty($changeArray) || !is_array($changeArray))
+	if (empty($changeArray) || !is_array($changeArray) || defined('WEDGE_INSTALLER'))
 		return;
 
 	// In some cases, this may be better and faster, but for large sets we don't want so many UPDATEs.

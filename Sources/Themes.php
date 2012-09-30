@@ -254,16 +254,13 @@ function ThemeList()
 		$request = wesql::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
-			WHERE variable IN ({string:theme_dir}, {string:theme_url}, {string:images_url}, {string:base_theme_dir}, {string:base_theme_url}, {string:base_images_url})
+			WHERE variable IN ({string:theme_dir}, {string:theme_url}, {string:images_url})
 				AND id_member = {int:no_member}',
 			array(
 				'no_member' => 0,
 				'theme_dir' => 'theme_dir',
 				'theme_url' => 'theme_url',
 				'images_url' => 'images_url',
-				'base_theme_dir' => 'base_theme_dir',
-				'base_theme_url' => 'base_theme_url',
-				'base_images_url' => 'base_images_url',
 			)
 		);
 		$themes = array();
@@ -279,13 +276,6 @@ function ThemeList()
 				$setValues[] = array($id, 0, 'theme_dir', realpath($_POST['reset_dir'] . '/' . basename($th['theme_dir'])));
 				$setValues[] = array($id, 0, 'theme_url', $_POST['reset_url'] . '/' . basename($th['theme_dir']));
 				$setValues[] = array($id, 0, 'images_url', $_POST['reset_url'] . '/' . basename($th['theme_dir']) . '/' . basename($th['images_url']));
-			}
-
-			if (isset($th['base_theme_dir']) && file_exists($_POST['reset_dir'] . '/' . basename($th['base_theme_dir'])))
-			{
-				$setValues[] = array($id, 0, 'base_theme_dir', realpath($_POST['reset_dir'] . '/' . basename($th['base_theme_dir'])));
-				$setValues[] = array($id, 0, 'base_theme_url', $_POST['reset_url'] . '/' . basename($th['base_theme_dir']));
-				$setValues[] = array($id, 0, 'base_images_url', $_POST['reset_url'] . '/' . basename($th['base_theme_dir']) . '/' . basename($th['base_images_url']));
 			}
 
 			cache_put_data('theme_settings-' . $id, null, 90);
@@ -897,8 +887,6 @@ function ThemeInstall()
 	<website>http://wedge.org/</website>
 	<!-- Templates to load on startup. Default is "index". -->
 	<templates>' . (empty($theme_templates) ? 'index' : $theme_templates) . '</templates>
-	<!-- Base this theme off another? Default is blank, or no. It could be "default". -->
-	<based-on></based-on>
 </theme-info>';
 
 		// Now write it.
@@ -962,7 +950,6 @@ function ThemeInstall()
 			$xml_elements = array(
 				'name' => 'name',
 				'theme_templates' => 'templates',
-				'based_on' => 'based-on',
 			);
 			foreach ($xml_elements as $var => $name)
 				if (preg_match('~<' . $name . '>(?:<!\[CDATA\[)?(.+?)(?:\]\]>)?</' . $name . '>~', $theme_info, $match) == 1)
@@ -975,55 +962,6 @@ function ThemeInstall()
 			}
 			if (preg_match('~<extra>(?:<!\[CDATA\[)?(.+?)(?:\]\]>)?</extra>~', $theme_info, $match) == 1)
 				$install_info += unserialize($match[1]);
-		}
-
-		if (isset($install_info['based_on']))
-		{
-			if ($install_info['based_on'] == 'default')
-			{
-				$install_info['theme_url'] = $theme['default_theme_url'];
-				$install_info['images_url'] = $theme['default_images_url'];
-			}
-			elseif ($install_info['based_on'] != '')
-			{
-				$install_info['based_on'] = preg_replace('~[^A-Za-z0-9\-_ ]~', '', $install_info['based_on']);
-
-				$request = wesql::query('
-					SELECT th.value AS base_theme_dir, th2.value AS base_theme_url' . (!empty($explicit_images) ? '' : ', th3.value AS images_url') . '
-					FROM {db_prefix}themes AS th
-						INNER JOIN {db_prefix}themes AS th2 ON (th2.id_theme = th.id_theme
-							AND th2.id_member = {int:no_member}
-							AND th2.variable = {string:theme_url})' . (!empty($explicit_images) ? '' : '
-						INNER JOIN {db_prefix}themes AS th3 ON (th3.id_theme = th.id_theme
-							AND th3.id_member = {int:no_member}
-							AND th3.variable = {string:images_url})') . '
-					WHERE th.id_member = {int:no_member}
-						AND (th.value LIKE {string:based_on} OR th.value LIKE {string:based_on_path})
-						AND th.variable = {string:theme_dir}
-					LIMIT 1',
-					array(
-						'no_member' => 0,
-						'theme_url' => 'theme_url',
-						'images_url' => 'images_url',
-						'theme_dir' => 'theme_dir',
-						'based_on' => '%/' . $install_info['based_on'],
-						'based_on_path' => '%' . "\\" . $install_info['based_on'],
-					)
-				);
-				$temp = wesql::fetch_assoc($request);
-				wesql::free_result($request);
-
-				// !!! An error otherwise?
-				if (is_array($temp))
-				{
-					$install_info = $temp + $install_info;
-
-					if (empty($explicit_images) && !empty($install_info['base_theme_url']))
-						$install_info['theme_url'] = $install_info['base_theme_url'];
-				}
-			}
-
-			unset($install_info['based_on']);
 		}
 
 		// Find the newest id_theme.
@@ -1398,26 +1336,22 @@ function CopyTemplate()
 	$_GET['th'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
 
 	$request = wesql::query('
-		SELECT th1.value, th1.id_theme, th2.value
+		SELECT th1.value, th1.id_theme
 		FROM {db_prefix}themes AS th1
-			LEFT JOIN {db_prefix}themes AS th2 ON (th2.variable = {string:base_theme_dir} AND th2.id_theme = {int:current_theme})
 		WHERE th1.variable = {string:theme_dir}
 			AND th1.id_theme = {int:current_theme}
 		LIMIT 1',
 		array(
 			'current_theme' => $_GET['th'],
-			'base_theme_dir' => 'base_theme_dir',
 			'theme_dir' => 'theme_dir',
 		)
 	);
-	list ($theme_dir, $context['theme_id'], $base_theme_dir) = wesql::fetch_row($request);
+	list ($theme_dir, $context['theme_id']) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
 	if (isset($_REQUEST['template']) && preg_match('~[./\\\\:\0]~', $_REQUEST['template']) == 0)
 	{
-		if (!empty($base_theme_dir) && file_exists($base_theme_dir . '/' . $_REQUEST['template'] . '.template.php'))
-			$filename = $base_theme_dir . '/' . $_REQUEST['template'] . '.template.php';
-		elseif (file_exists($theme['default_theme_dir'] . '/' . $_REQUEST['template'] . '.template.php'))
+		if (file_exists($theme['default_theme_dir'] . '/' . $_REQUEST['template'] . '.template.php'))
 			$filename = $theme['default_theme_dir'] . '/' . $_REQUEST['template'] . '.template.php';
 		else
 			fatal_lang_error('no_access', false);
@@ -1430,9 +1364,7 @@ function CopyTemplate()
 	}
 	elseif (isset($_REQUEST['lang_file']) && preg_match('~^[^./\\\\:\0]\.[^./\\\\:\0]$~', $_REQUEST['lang_file']) != 0)
 	{
-		if (!empty($base_theme_dir) && file_exists($base_theme_dir . '/languages/' . $_REQUEST['lang_file'] . '.php'))
-			$filename = $base_theme_dir . '/languages/' . $_REQUEST['template'] . '.php';
-		elseif (file_exists($theme['default_theme_dir'] . '/languages/' . $_REQUEST['template'] . '.php'))
+		if (file_exists($theme['default_theme_dir'] . '/languages/' . $_REQUEST['template'] . '.php'))
 			$filename = $theme['default_theme_dir'] . '/languages/' . $_REQUEST['template'] . '.php';
 		else
 			fatal_lang_error('no_access', false);
@@ -1458,24 +1390,6 @@ function CopyTemplate()
 		if (preg_match('~^([^.]+\.[^.]+)\.php$~', $entry, $matches))
 			$lang_files[] = $matches[1];
 	$dir->close();
-
-	if (!empty($base_theme_dir))
-	{
-		$dir = dir($base_theme_dir);
-		while ($entry = $dir->read())
-			if (substr($entry, -13) == '.template.php' && !in_array(substr($entry, 0, -13), $templates))
-				$templates[] = substr($entry, 0, -13);
-		$dir->close();
-
-		if (file_exists($base_theme_dir . '/languages'))
-		{
-			$dir = dir($base_theme_dir . '/languages');
-			while ($entry = $dir->read())
-				if (preg_match('~^([^.]+\.[^.]+)\.php$~', $entry, $matches) && !in_array($matches[1], $lang_files))
-					$lang_files[] = $matches[1];
-			$dir->close();
-		}
-	}
 
 	natcasesort($templates);
 	natcasesort($lang_files);

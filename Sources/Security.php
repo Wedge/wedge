@@ -954,7 +954,6 @@ function boardsAllowedTo($permissions, $check_access = true)
 
 		$boards = array();
 		$deny_boards = array();
-		$final_list = array();
 		$request = wesql::query('
 			SELECT b.id_board, bp.permission, bp.add_deny
 			FROM {db_prefix}board_permissions AS bp

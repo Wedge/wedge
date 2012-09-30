@@ -1230,11 +1230,7 @@ function loadEssentialThemeData()
 	{
 		$theme['template_dirs'] = array($theme['theme_dir']);
 
-		// Based on theme (if there is one).
-		if (!empty($theme['base_theme_dir']))
-			$theme['template_dirs'][] = $theme['base_theme_dir'];
-
-		// Lastly the default theme.
+		// Then the default theme.
 		if ($theme['theme_dir'] != $theme['default_theme_dir'])
 			$theme['template_dirs'][] = $theme['default_theme_dir'];
 	}

@@ -49,8 +49,6 @@ function JSOption()
 	$reservedVars = array(
 		'actual_theme_url',
 		'actual_images_url',
-		'base_theme_dir',
-		'base_theme_url',
 		'default_images_url',
 		'default_theme_dir',
 		'default_theme_url',

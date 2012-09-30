@@ -61,6 +61,7 @@ ul.buttonlist
 	color: #999
 	:hover
 		text-decoration: underline
+		cursor: pointer
 
 /* Styles for the personal messages section.
 ------------------------------------------------- */
