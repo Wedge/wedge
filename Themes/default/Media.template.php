@@ -125,7 +125,7 @@ function template_aeva_home()
 		$more_sort = isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . ';' : '';
 		$more_asc = $context['aeva_asc'] ? 'asc;' : '';
 		echo '
-	<we:block id="recent_pics" style="overflow: visible; padding: 0">';
+	<we:block id="recent_pics">';
 
 		template_aeva_sort_options(
 			substr($galurl, 0, -1)
@@ -148,7 +148,7 @@ function template_aeva_home()
 	<we:title>
 		', $txt['media_random_items'], '
 	</we:title>
-	<we:block id="random_pics" style="overflow: visible; padding: 0">',
+	<we:block id="random_pics">',
 		$view == 'normal' ? aeva_listItems($context['random_items']) : aeva_listFiles($context['random_items']), '
 	</we:block>';
 	}

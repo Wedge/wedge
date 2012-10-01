@@ -121,6 +121,14 @@ table.aextbox
 		.item_heading
 			border-left: 0
 
+// Thumbnail hover boxes may sometimes be cut off...
+#recent_pics, #random_pics
+	overflow: visible
+	padding: 0
+
+#recent_pics header
+	margin: 2px 1px 0
+
 #viewitem
 	.actions
 		padding: 3px 8px
