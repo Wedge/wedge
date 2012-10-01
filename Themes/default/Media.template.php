@@ -121,27 +121,24 @@ function template_aeva_home()
 
 		// Page index and sorting things
 		$sort_list = array('m.id_media' => 0, 'm.time_added' => 1, 'm.title' => 2, 'm.views' => 3, 'm.weighted' => 4);
+		$more_list = isset($_GET['fw']) ? 'fw;' : '';
+		$more_sort = isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . ';' : '';
+		$more_asc = $context['aeva_asc'] ? 'asc;' : '';
 		echo '
-	<div class="titlebg sort_options">
-		<div class="view_options">
-			', $txt['media_items_view'], ': ', $view == 'normal' ? '<b>' . $txt['media_view_normal'] . '</b> <a href="' . $galurl . 'fw;'. $context['aeva_urlmore'] . '">' . $txt['media_view_filestack'] . '</a>' : '<a href="' . $galurl . $context['aeva_urlmore'] . '">' . $txt['media_view_normal'] . '</a> <b>' . $txt['media_view_filestack'] . '</b>', '
+	<we:block id="recent_pics" style="overflow: visible; padding: 0">';
+
+		template_aeva_sort_options(
+			substr($galurl, 0, -1)
+		);
+
+		echo '
+		<div>',
+			$view == 'normal' ? aeva_listItems($context['recent_items']) : aeva_listFiles($context['recent_items']), '
 		</div>
-		', $txt['media_sort_by'], ':';
-		$sort = empty($sort_list[$context['aeva_sort']]) ? 0 : $sort_list[$context['aeva_sort']];
-		for ($i = 0; $i < 5; $i++)
-			echo $sort == $i ? ' <b>' . $txt['media_sort_by_'.$i] . '</b>' :
-		' <a href="'.$galurl.'sort=' . $i . ($view == 'normal' ? '' : ';fw') . '">' . $txt['media_sort_by_'.$i] . '</a>';
-		echo '
-		| ', $txt['media_sort_order'], ':',
-		($context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_asc'] . '</b>' : ' <a href="' . $galurl . (isset($_REQUEST['sort']) ? 'sort='.$_REQUEST['sort'].';' : '') . 'asc' . ($view == 'normal' ? '' : ';fw') . '">' . $txt['media_sort_order_asc'] . '</a>'),
-		(!$context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_desc'] . '</b>' : ' <a href="' . $galurl . (isset($_REQUEST['sort']) ? 'sort=' . $_REQUEST['sort'].';' : '') . 'desc' . ($view == 'normal' ? '' : ';fw') . '">'.$txt['media_sort_order_desc'].'</a>'), '
-	</div>
-	<div id="recent_pics">',
-		$view == 'normal' ? aeva_listItems($context['recent_items']) : aeva_listFiles($context['recent_items']), '
-	</div>
-	<div class="pagesection">
-		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
-	</div>';
+		<div class="pagesection" style="padding-bottom: 0">
+			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
+		</div>
+	</we:block>';
 	}
 
 	// Random items?
@@ -151,7 +148,7 @@ function template_aeva_home()
 	<we:title>
 		', $txt['media_random_items'], '
 	</we:title>
-	<we:block id="random_pics" class="windowbg wrc" style="overflow: visible">',
+	<we:block id="random_pics" style="overflow: visible; padding: 0">',
 		$view == 'normal' ? aeva_listItems($context['random_items']) : aeva_listFiles($context['random_items']), '
 	</we:block>';
 	}
@@ -282,11 +279,11 @@ function template_aeva_item_prevnext()
 		echo '
 		<table class="mg_prevnext windowbg w100 cs0 cp4">
 			<tr class="mg_prevnext_pad">
-				<td rowspan="2">', (int) $item['prev'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['prev'] . '">&laquo;</a>' : '&laquo;', '</td>
+				<td rowspan="2">', (int) $item['prev'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['prev'] . '">&lang;&lang;</a>' : '&lang;&lang;', '</td>
 				<td style="width: 33%">', (int) $item['prev'] > 0 ? show_prevnext($item['prev'], $item['prev_thumb']) : $txt['media_prev'], '</td>
 				<td style="width: 34%" class="windowbg2">', show_prevnext(0, $item['current_thumb']), '</td>
 				<td style="width: 33%">', (int) $item['next'] > 0 ? show_prevnext($item['next'], $item['next_thumb']) : $txt['media_next'], '</td>
-				<td rowspan="2">', (int) $item['next'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next'] . '">&raquo;</a>' : '&raquo;', '</td>
+				<td rowspan="2">', (int) $item['next'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['next'] . '">&rang;&rang;</a>' : '&rang;&rang;', '</td>
 			</tr>
 			<tr class="smalltext">
 				<td>', (int) $item['prev'] > 0 ? '<a href="' . $galurl . 'sa=item;in=' . $item['prev'] . '">' . $item['prev_title'] . '</a>' : '', '</td>
@@ -322,12 +319,7 @@ function template_aeva_item_prevnext()
 
 function template_aeva_item_wrap_begin()
 {
-	global $item;
-
 	echo '
-		<we:cat>
-			', $item['title'], '
-		</we:cat>
 		<div id="itembox">';
 }
 
@@ -344,7 +336,7 @@ function template_aeva_item_main()
 	{
 		$desc_len = westr::strlen($item['description']);
 		echo '
-			<div class="mg_item_desc" style="margin: auto; text-align: ' . ($desc_len > 200 ? 'justify' : 'center') . '; width: ' . ($desc_len > 800 ? '90%' : max($item['preview_width'], 400) . 'px') . '">' . $item['description'] . '</div>';
+			<div class="mg_item_desc" style="text-align: ' . ($desc_len > 200 ? 'justify' : 'center') . '; width: ' . ($desc_len > 800 ? '90%' : max($item['preview_width'], 400) . 'px') . '">' . $item['description'] . '</div>';
 	}
 
 	if ($context['aeva_size_mismatch'])
@@ -445,7 +437,7 @@ function template_aeva_item_details()
 				<dt>', $txt['media_embed_bbc'], '</dt>
 				<dd>
 					<input id="bbc_embed" type="text" size="18" value="[media id=' . $item['id_media'] . ($item['type'] == 'image' ? '' : ' type=av') . ']" onclick="this.focus(); this.select();" readonly>
-					<a href="', $scripturl, '?action=help;in=mediatag" onclick="return reqWin(this, 600, 400, false, true);" class="help"></a>
+					<a href="', $scripturl, '?action=help;in=mediatag" onclick="return reqWin(this, 800);" class="help"></a>
 				</dd>';
 
 		// Don't show html/direct links if the helper file was deleted.
@@ -684,9 +676,10 @@ function template_aeva_item_comments()
 	global $context, $scripturl, $user_info, $options;
 
 	echo '
-		<we:cat>', !empty($settings['xmlnews_enable']) ? '
-			<a href="' . $galurl . 'sa=feed;item=' . $item['id_media'] . ';type=comments" style="text-decoration: none">
-				<span class="feed_icon"></span>
+		<we:cat>
+			', !empty($settings['xmlnews_enable']) ? '
+			<a href="' . $galurl . 'sa=feed;item=' . $item['id_media'] . ';type=comments"><span class="feed_icon"></span></a>
+			<a href="' . $galurl . 'sa=feed;item=' . $item['id_media'] . ';type=comments">
 				' . $txt['media_comments'] . '
 			</a>' : '
 			' . $txt['media_comments'], '
@@ -700,16 +693,14 @@ function template_aeva_item_comments()
 	else
 	{
 		echo '
-		<table class="cs1 cp4 w100" id="mg_coms">
-		<tr class="titlebg middle"><td colspan="4" style="padding: 0 6px">
-			<span class="smalltext comment_sort_options">
-				', $txt['media_sort_order_com'], ' -
-				<a href="', $galurl, 'sa=item;in=', $item['id_media'], isset($_REQUEST['start']) ? ';start=' . $_REQUEST['start'] : '', '">', $txt['media_sort_order_asc'], '</a>
-				<a href="', $galurl, 'sa=item;in=', $item['id_media'], ';com_desc', isset($_REQUEST['start']) ? ';start=' . $_REQUEST['start'] : '', '">', $txt['media_sort_order_desc'], '</a>
-			</span>
-		</td></tr>
-		</table>
-		<div class="pagesection">
+		<div class="comment_sort_options">
+			', $txt['media_sort_order_com'], ':
+			<select onchange="window.location = $(this).val();">
+				<option value="', $galurl, 'sa=item;in=', $item['id_media'], !empty($_REQUEST['start']) ? ';start=' . (int) $_REQUEST['start'] : '', '"', $context['aeva_asc'] ? ' selected' : '', '>', $txt['media_sort_order_asc'], '</option>
+				<option value="', $galurl, 'sa=item;in=', $item['id_media'], ';com_desc', !empty($_REQUEST['start']) ? ';start=' . (int) $_REQUEST['start'] : '', '"', $context['aeva_asc'] ? '' : ' selected', '>', $txt['media_sort_order_desc'], '</option>
+			</select>
+		</div>
+		<div class="pagesection clearfix">
 			<nav>', $txt['pages'], ': ', $item['com_page_index'], '</nav>
 		</div>';
 
@@ -1089,56 +1080,94 @@ function template_aeva_viewAlbum()
 		return;
 	}
 
-	// Page index and sorting things
-	$sort_list = array('m.id_media' => 0, 'm.time_added' => 1, 'm.title' => 2, 'm.views' => 3, 'm.weighted' => 4);
 	echo ($can_edit_items ? '
 	<form action="' . $scripturl . '?action=media;sa=quickmod;in=' . $album_data['id'] . '" method="post" enctype="multipart/form-data" id="aeva_form" name="aeva_form" onsubmit="submitonce(this);">' : '') . '
-		<div class="titlebg sort_options">
-			<div class="view_options">
-				', $txt['media_items_view'], ': ', $album_data['view'] == 'normal' ? '<b>' . $txt['media_view_normal'] . '</b> <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . ';fw;' . $context['aeva_urlmore'] . '">' . $txt['media_view_filestack'] . '</a>' : '<a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . ';' . $context['aeva_urlmore'] . '">' . $txt['media_view_normal'] . '</a> <b>' . $txt['media_view_filestack'] . '</b>', '
-			</div>
-			', $txt['media_sort_by'], ':';
-	$sort = empty($sort_list[$context['aeva_sort']]) ? 0 : $sort_list[$context['aeva_sort']];
-	for ($i = 0; $i < 5; $i++)
-		echo $sort == $i ? ' <b>' . $txt['media_sort_by_' . $i] . '</b>' :
-			' <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . ';sort=' . $i . ($album_data['view'] == 'normal' ? '' : ';fw') . '">' . $txt['media_sort_by_' . $i] . '</a>';
+	<div class="pagesection">
+		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
+	</div>
+	<we:block style="overflow: visible">';
+
+	template_aeva_sort_options(
+		$galurl . 'sa=album;in=' . $album_data['id'],
+		$album_data['options']['view'] == 'filestack',
+		strpos($album_data['options']['sort'], ' ASC') !== false
+	);
+
 	echo '
-			| ', $txt['media_sort_order'], ':',
-		($context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_asc'] . '</b>' : ' <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . ';asc' . ($album_data['view'] == 'normal' ? '' : ';fw') . '">' . $txt['media_sort_order_asc'] . '</a>'),
-		(!$context['aeva_asc'] ? ' <b>' . $txt['media_sort_order_desc'] . '</b>' : ' <a href="' . $galurl . 'sa=album;in=' . $album_data['id'] . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '') . ';desc' . ($album_data['view'] == 'normal' ? '' : ';fw') . '">' . $txt['media_sort_order_desc'] . '</a>'), '
-		</div>
-		<div class="pagesection">
-			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
-		</div>',
+		<div>',
 		$album_data['view'] == 'normal' ? aeva_listItems($context['aeva_items'], true, '', $can_edit_items) : aeva_listFiles($context['aeva_items'], $can_edit_items), '
-		<div class="pagesection" style="margin-top: 8px">', $can_edit_items ? '
-			<div class="aeva_quickmod_bar">
-				<label><input type="checkbox" id="check_all" onclick="invertAll(this, this.form, \'mod_item[\');"> ' . $txt['check_all'] . '</label>&nbsp;
-				<select name="aeva_modtype" id="modtype" tabindex="' . $context['tabindex']++ . '"' . ($can_add_playlist ? ' onchange="$(\'#aeva_my_playlists\').toggle(this.value == \'playlist\');"' : '') . '>' . ($can_approve_here ? '
-					<option value="move">' . $txt['media_move_item'] . '</option>
-					<option value="approve">' . $txt['media_admin_approve'] . '</option>
-					<option value="unapprove">' . $txt['media_admin_unapprove'] . '</option>' : '') . '
-					<option value="delete">' . $txt['media_delete_this_item'] . '</option>' . ($can_add_playlist ? '
-					<option value="playlist">' . $txt['media_add_to_playlist'] . '</option>' : '') . '
-				</select>' : '';
-		if ($can_edit_items && $can_add_playlist)
-		{
-			echo '
+		</div>
+	</we:block>
+	<div class="pagesection" style="margin-top: 8px; margin-bottom: 0">', $can_edit_items ? '
+		<div class="aeva_quickmod_bar">
+			<label><input type="checkbox" id="check_all" onclick="invertAll(this, this.form, \'mod_item[\');"> ' . $txt['check_all'] . '</label>&nbsp;
+			<select name="aeva_modtype" id="modtype" tabindex="' . $context['tabindex']++ . '"' . ($can_add_playlist ? ' onchange="$(\'#aeva_my_playlists\').toggle(this.value == \'playlist\');"' : '') . '>' . ($can_approve_here ? '
+				<option value="move">' . $txt['media_move_item'] . '</option>
+				<option value="approve">' . $txt['media_admin_approve'] . '</option>
+				<option value="unapprove">' . $txt['media_admin_unapprove'] . '</option>' : '') . '
+				<option value="delete">' . $txt['media_delete_this_item'] . '</option>' . ($can_add_playlist ? '
+				<option value="playlist">' . $txt['media_add_to_playlist'] . '</option>' : '') . '
+			</select>' : '';
+
+	if ($can_edit_items && $can_add_playlist)
+	{
+		echo '
 				<select name="aeva_playlist" id="aeva_my_playlists" class="hide">';
-			foreach ($context['aeva_my_playlists'] as $p)
-				echo '
-					<option value="' . $p['id'] . '">' . $p['name'] . '</option>';
+		foreach ($context['aeva_my_playlists'] as $p)
 			echo '
+					<option value="' . $p['id'] . '">' . $p['name'] . '</option>';
+		echo '
 				</select>';
-		}
-		echo $can_edit_items ? '
+	}
+	echo $can_edit_items ? '
 				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
 				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return $(\'#modtype\').val() == \'delete\' ? confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ') : true;">
 			</div>' : '', '
 			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
-		</div>', $can_edit_items ? '
-	</form>' : '', '
-	</div>';
+		</div>
+	</div>', $can_edit_items ? '
+	</form>' : '';
+}
+
+// Showing the list of sorting select boxes... More complicated than it looks, I'm afraid.
+// $url should be the base URL, $is_fs should tell whether the page (if an album) is
+// in filestack mode by default, and $is_ascdef does the same for ascending order.
+function template_aeva_sort_options($url, $is_fs = false, $is_ascdef = false)
+{
+	global $context, $txt;
+
+	$sort_list = array('m.id_media' => 0, 'm.time_added' => 1, 'm.title' => 2, 'm.views' => 3, 'm.weighted' => 4);
+	$is_fw = isset($_GET['fw']) || ($is_fs && !isset($_GET['nw']));
+	$more_sort = preg_replace('~;sort=\d+~', ';sort', $context['aeva_urlmore']);
+	$more = str_replace(';sort=0', '', $context['aeva_urlmore']);
+
+	echo '
+		<header class="sort_options">
+			<div class="view_options">
+				', $txt['media_items_view'], ':
+				<select id="mediaView" onchange="window.location = $(this).val();">
+					<option value="', $url, ($is_fs ? ';nw' : '') . str_replace(array(';nw', ';fw'), '', $more), '"', $is_fw ? '' : ' selected', '>' . $txt['media_view_normal'] . '</option>
+					<option value="', $url, ($is_fs ? '' : ';fw') . str_replace(array(';nw', ';fw'), '', $more), '"', $is_fw ? ' selected' : '', '>' . $txt['media_view_filestack'] . '</option>
+				</select>
+			</div>
+			<div class="sort_by_options">
+				', $txt['media_sort_by'], ':
+				<select id="mediaSort" onchange="window.location = $(this).val();">';
+
+	$sort = empty($sort_list[$context['aeva_sort']]) ? 0 : $sort_list[$context['aeva_sort']];
+	for ($i = 0; $i < 5; $i++)
+		echo '
+					<option value="', $url, str_replace(';sort', $i ? ';sort=' . $i : '', $more_sort), '"', $sort == $i ? ' selected' : '', '>' . $txt['media_sort_by_' . $i] . '</option>';
+
+	echo '
+				</select>
+				&nbsp; ', $txt['media_sort_order'], ':
+				<select id="mediaOrder" onchange="window.location = $(this).val();">
+					<option value="', $url, str_replace(array(';asc', ';desc'), '', $more) . (!$is_ascdef ? ';asc' : ''), '"', $context['aeva_asc'] ? ' selected' : '', '>', $txt['media_sort_order_asc'], '</option>
+					<option value="', $url, str_replace(array(';asc', ';desc'), '', $more) . ($is_ascdef ? ';desc' : ''), '"', $context['aeva_asc'] ? '' : ' selected', '>', $txt['media_sort_order_desc'], '</option>
+				</select>
+			</div>
+		</header>';
 }
 
 function template_aeva_unseen()
@@ -1200,7 +1229,7 @@ function template_aeva_search_searching()
 		$kl = 1;
 		foreach ($context['custom_fields'] as $field)
 			echo '
-					<label><input type="checkbox" name="fields[]" value="', $field['id'], '" id="cusla', $kl++, '"> ', sprintf($txt['media_search_in_cf'], '<i>' . $field['name'] . '</i>'), '</label><br>';
+					<label><input type="checkbox" name="fields[]" value="', $field['id'], '" id="cusla', $kl++, '"> ', sprintf($txt['media_search_in_cf'], '<em>' . $field['name'] . '</em>'), '</label><br>';
 	}
 
 	echo '
@@ -1696,7 +1725,7 @@ function template_aeva_multiUpload()
 			<div class="current-text" id="current_text"></div>
 
 			<ul id="current_list">
-				<li id="remove_me" class="hide"></li>
+				<li id="remove_me" style="display: none"></li>
 			</ul>
 			<br class="clear">
 			<div style="text-align: center" id="mu_items"><input type="submit" name="aeva_submit" value="', $txt['media_submit'], '"></div>

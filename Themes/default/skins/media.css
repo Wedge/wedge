@@ -46,18 +46,6 @@ table.aextbox
 		box-shadow: 3px 3px 4px #ccc
 		margin: 0
 
-iframe.aext
-	margin: 8px auto -8px auto
-
-.comments
-	padding: 10px
-	:after
-		clear: both
-		content: "."
-		display: block
-		height: 0pt
-		visibility: hidden
-
 .aeva_statsbar
 	border: 1px solid black
 	background: #fc9 url($images/aeva/progress.png) 0 -1px no-repeat
@@ -81,9 +69,7 @@ iframe.aext
 		padding: 0 6px 3px 6px
 
 .sort_options
-	margin-top: 8px
 	text-align: right
-	padding: 6px
 
 .notice
 	padding: 10px
@@ -142,9 +128,11 @@ iframe.aext
 		vertical-align: middle
 	.comment_sort_options
 		float: right
+		font-size: .9em
 
 #itembox
 	display: table
+	table-layout: fixed
 	width: 100%
 	section
 		margin: 12px 0
@@ -254,10 +242,14 @@ iframe.aext
 	div
 		margin: auto
 
+.mg_item_type
+	color: #a5a5a5
+
+.mg_item_desc
+	margin: auto
+
 .mg_large
-	font-size: 11pt
-	font-weight: bold
-	letter-spacing: -0.5px
+	font-weight: 700
 	padding-bottom: 4px
 
 .mg_pb4
@@ -311,18 +303,37 @@ iframe.aext
 	text-align: center
 	margin: auto
 
+.foxy_playlist
+	text-align: left
+	width: 100%
+	height: auto !important
+	overflow-x: hidden !important
+	overflow-y: auto !important
+
+.foxy_album
+	clear: both
+	border: 1px solid #888
+
+.foxy_stats
+	font-style: italic
+	padding: 0 0 8px 0
+
+.playinglo, .playinghi, .playlistlo, .playlisthi
+	color: #333
+	cursor: pointer
+
+.playinghi, .playlisthi
+	background: rgba(255,255,255, .4)
+
+.foxy_small
+	font-size: 0.85em
+	padding: 2px 0 0 0
+
 table.foxy_side
 	margin: 0 0 8px 12px
 	tr td
 		padding: 4px
 		text-align: left !important
-
-.foxy_playlist_name
-	color: inherit
-	white-space: nowrap
-	font: 16pt/20pt bold Tahoma, sans-serif
-	margin: 0
-	padding: 0
 
 .aeva_playlist_list
 	padding: 8px 8px 0 8px
@@ -332,17 +343,12 @@ table.foxy_side
 .aevera
 	vertical-align: middle
 
-.title_feed, .sort_options
-	font: 8pt Verdana, sans-serif !important
-
 .title_feed
+	font-size: .9em !important
 	img
 		vertical-align: text-top !important
 	a
 		text-decoration: none
-
-.clearfix
-	clear: both
 
 .unbrowsable
 	color: red

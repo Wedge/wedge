@@ -577,14 +577,13 @@ function aeva_sortBox($current_album, $count_items, $start, $per_page, $persort 
 {
 	global $amSettings, $context, $galurl;
 
-	$context['aeva_urlmore'] = (isset($_REQUEST['sort']) ? 'sort=' . (int) $_REQUEST['sort'] . ';' : '') . (isset($_REQUEST['asc']) ? 'asc;' : '') . (isset($_REQUEST['desc']) ? 'desc;' : '');
-
+	$urlmore = $current_album ? ($current_album['view'] == $current_album['options']['view'] ? '' : ($current_album['view'] == 'normal' ? ';nw' : ';fw')) : (isset($_REQUEST['fw']) ? ';fw' : '');
+	$urlmore .= ';sort=' . (isset($_REQUEST['sort']) ? (int) $_REQUEST['sort'] : 0) . (isset($_REQUEST['asc']) ? ';asc' : '') . (isset($_REQUEST['desc']) ? ';desc' : '');
 	$sort = preg_match('~^(m\.[a-z_]+) (A|DE)SC$~', $persort, $dt) ? $persort : 'm.id_media DESC';
-
 	$context['aeva_sort'] = $dt[1];
 	$context['aeva_asc'] = $dt[2] == 'A';
 
-	if (!empty($context['aeva_urlmore']))
+	if (!empty($urlmore))
 	{
 		$sort_list = array('m.id_media', 'm.time_added', 'm.title', 'm.views', 'm.weighted');
 		$context['aeva_sort'] = $sort = isset($_REQUEST['sort']) ? $sort_list[max(0, min(4, (int) $_REQUEST['sort']))] : $dt[1];
@@ -592,14 +591,14 @@ function aeva_sortBox($current_album, $count_items, $start, $per_page, $persort 
 		$sort .= $context['aeva_asc'] ? ' ASC' : ' DESC';
 	}
 
-	$context['aeva_urlmore'] .= $current_album ? ($current_album['view'] == 'normal' ? 'nw' : 'fw') : (isset($_REQUEST['fw']) ? 'fw' : 'nw');
-	$pageIndexURL = $current_album ? $galurl . 'sa=album;in=' . $current_album['id'] . ';' : $galurl;
+	$pageIndexURL = $current_album ? $galurl . 'sa=album;in=' . $current_album['id'] : substr($galurl, 0, -1);
 
 	// Construct the page index
-	$context['aeva_page_index'] = template_page_index($pageIndexURL . $context['aeva_urlmore'], $start, $count_items, $per_page);
+	$context['aeva_page_index'] = template_page_index($pageIndexURL . str_replace(';sort=0', '', $urlmore), $start, $count_items, $per_page);
 
 	// For templates (stack change...)
-	$context['aeva_urlmore'] = substr($context['aeva_urlmore'], 0, -3);
+	$context['aeva_urlmore'] = $urlmore;
+
 	return $sort;
 }
 

@@ -2845,7 +2845,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 		return;
 
 	aeva_addHeaders();
-	$urlmore = empty($context['aeva_urlmore']) ? '' : ';' . $context['aeva_urlmore'];
+	$urlmore = empty($context['aeva_urlmore']) ? '' : $context['aeva_urlmore'];
 	$user_is_known = !empty($context['current_action']) && $context['current_action'] == 'profile';
 	$main_user = $in_album && !empty($context['aeva_album']['owner']['id']) ? (int) $context['aeva_album']['owner']['id'] : 0;
 	$mtl = !empty($amSettings['max_title_length']) && is_numeric($amSettings['max_title_length']) ? $amSettings['max_title_length'] : 30;
