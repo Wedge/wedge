@@ -129,6 +129,9 @@ table.aextbox
 #recent_pics header
 	margin: 2px 1px 0
 
+#album_pics
+	overflow: visible
+
 #viewitem
 	.actions
 		padding: 3px 8px

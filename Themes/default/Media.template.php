@@ -125,7 +125,7 @@ function template_aeva_home()
 		$more_sort = isset($_GET['sort']) ? 'sort=' . $_GET['sort'] . ';' : '';
 		$more_asc = $context['aeva_asc'] ? 'asc;' : '';
 		echo '
-	<we:block id="recent_pics">';
+	<we:block id="recent_pics" class="windowbg">';
 
 		template_aeva_sort_options(
 			substr($galurl, 0, -1)
@@ -148,7 +148,7 @@ function template_aeva_home()
 	<we:title>
 		', $txt['media_random_items'], '
 	</we:title>
-	<we:block id="random_pics">',
+	<we:block id="random_pics" class="windowbg">',
 		$view == 'normal' ? aeva_listItems($context['random_items']) : aeva_listFiles($context['random_items']), '
 	</we:block>';
 	}
@@ -1085,7 +1085,7 @@ function template_aeva_viewAlbum()
 	<div class="pagesection">
 		<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 	</div>
-	<we:block style="overflow: visible">';
+	<we:block id="album_pics" class="windowbg">';
 
 	template_aeva_sort_options(
 		$galurl . 'sa=album;in=' . $album_data['id'],
