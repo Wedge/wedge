@@ -179,14 +179,14 @@ function template_credits()
 	foreach ($context['credits'] as $section)
 	{
 		echo '
-			<we:block class="windowbg2 wrc" header="', westr::safe($section['title']), '">';
+			<we:block class="windowbg2" header="', westr::safe($section['title']), '">';
 
-		$i = 0;
+		$i = 1;
 		$max = count($section['groups']);
 		foreach ($section['groups'] as $group)
 			echo '
 				<h6>', $group['title'], '</h6>
-				<ul', $i === $max ? ' class="last"' : '', '>
+				<ul', $i++ === $max ? ' class="last"' : '', '>
 					<li>', implode('</li>
 					<li>', $group['members']), '</li>
 				</ul>';
@@ -202,7 +202,7 @@ function template_credits()
 	echo '
 		</div>
 		<div class="two-columns">
-			<we:block class="windowbg wrc" header="', westr::safe($txt['credits_copyright']), '">
+			<we:block class="windowbg" header="', westr::safe($txt['credits_copyright']), '">
 				<h6>', $txt['credits_forum'], '</h6>
 				<ul>
 					<li>', implode('</li>
