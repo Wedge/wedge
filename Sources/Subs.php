@@ -446,8 +446,15 @@ function updateSettings($changeArray, $update = false)
 {
 	global $settings;
 
-	if (empty($changeArray) || !is_array($changeArray) || defined('WEDGE_INSTALLER'))
+	if (empty($changeArray) || !is_array($changeArray))
 		return;
+
+	if (defined('WEDGE_INSTALLER'))
+	{
+		global $incontext;
+		if (empty($incontext['enable_update_settings']))
+			return;
+	}
 
 	// In some cases, this may be better and faster, but for large sets we don't want so many UPDATEs.
 	if ($update)

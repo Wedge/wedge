@@ -265,7 +265,8 @@ function cleanRequest()
 		if (!empty($settings['enableErrorLogging']) && !empty($settings['enableError404Logging']) // make sure we REALLY want to log the error...
 		&& !$is_cache_file // don't log cached files, probably Google Cache.
 		&& strpos($full_request, '/avatar_') === false // search bot looking for a previous avatar that got regenerated since then?
-		&& strpos($full_request, '/cache/') === false // same, but with regenerated CSS or JS files?
+		&& strpos($full_request, '/css/') === false
+		&& strpos($full_request, '/js/') === false // same, but with regenerated CSS or JS files?
 		&& strpos($full_request, '/Themes/default/images/') === false // maybe some old files from the SMF era? (Remove this line if you're unsure.)
 		&& strpos($full_request, '/mobiquo/tapatalk') === false // Bad bots trying to use a JS exploit?
 		&& strpos($full_request, '/apple-touch-icon') === false // iOS looking for a big icon. If it finds it, it won't execute this anyway.

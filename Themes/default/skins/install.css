@@ -1,30 +1,35 @@
 
-input, select, textarea
-	visibility: visible
-
 #upper_section
 	.user
 		height: 4em
 	.news
 		height: 80px
 
-#main_screen
-	padding: 16px 40px 0
-	h2
-		font-size: 1.5em
-		border-bottom: 1px solid #d05800
-		line-height: 1.5em
-		margin: 0 0 0.5em 0
-		color: #d05800
+h2
+	font-weight: 400
+	line-height: 1.4em
 
-#main-steps
+#main_screen
+	padding: 16px 40px
+	h2
+		font-size: 1.4em
+		border-bottom: 1px solid #d05800
+		margin: 0 -20px 0.5em -20px
+		color: #d05800
+		.panel &
+			margin: 0 0 0.5em 0
+
+#install_logo extends .floatleft
+	margin: 20px 0 0 10px
+	position: absolute
+
+#main_steps
 	float: right
 	width: 50%
 	margin-top: 30px
 	h2
 		font-size: 1.1em
 		border-bottom: 1px solid #d05800
-		line-height: 1.1em
 		margin: 0 0 0.5em 0
 		color: #d05800
 		margin-right: 40px
@@ -39,9 +44,17 @@ input, select, textarea
 			color: #aaa
 		li.stepcurrent
 			color: #000
-			font-weight: bold
+			font-weight: 700
 		li.stepwaiting
 			color: #666
+
+#install_progress
+	font-size: 12pt
+	height: 30px
+	border: 1px solid black
+	background: white
+	margin: 120px 0 0 12%
+	width: 25%
 
 .panel
 	font-weight: normal
@@ -53,14 +66,23 @@ a:link, a:hover, a:visited
 	position: relative
 	margin: -16px 3px 0 3px
 
-.overall_progress
+#overall_progress
+	height: 30px
+	z-index: 1
+	gradient: #d1e8d4, #f2f8f2
+
+#overall_caption
 	position: relative
 	margin: -24px 3px 0 8px
 
 #version_warning
-	margin: 2ex
-	padding: 2ex
-	border: 2px dashed #a92174
-	color: black
-	background-color: #fbbbe2
 	display: none
+	margin, padding: 2ex
+	border: 2px dashed #a92174
+	background-color: #fbbbe2
+	color: black
+
+.install_details
+	font: italic .9em "Segoe UI", Arial, sans-serif
+	margin: .5em 0 2ex 2em
+	color: #666

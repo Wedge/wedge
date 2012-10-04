@@ -1165,6 +1165,7 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 
 	$folder = $cachedir;
 	$is_recursive = false;
+	$there_is_another = false;
 	if ($extensions === 'css')
 	{
 		$folder = $cssdir;
@@ -1198,11 +1199,17 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 	{
 		if ($file[0] === '.' || $file === 'index.php')
 			continue;
-		if (is_dir($file))
-			$is_recursive || clean_cache($extensions, $filter, $file);
-		elseif (($by_date && filemtime($file) < $by_date) || !$filter || strpos($file, $filter) !== false || $filter_is_folder)
+		$path = $folder . '/' . $file;
+		if (is_dir($path))
+			$is_recursive && clean_cache($extensions, $filter, $path);
+		elseif (($by_date && filemtime($path) < $by_date) || !$filter || $filter_is_folder || strpos($path, $filter) !== false)
+		{
 			if (!$extensions || isset($exts[wedge_get_extension($file)]))
-				@unlink($folder . '/' . $file);
+				@unlink($path);
+		}
+		// Protect sub-folders from deletion in case a file should remain in it.
+		else
+			$there_is_another = true;
 	}
 
 	// Invalidate cache, to be sure!
@@ -1211,6 +1218,11 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 	{
 		@touch($sourcedir . '/Collapse.php');
 		clearstatcache();
+	}
+	elseif ($force_folder && !$there_is_another)
+	{
+		@unlink($folder . '/index.php');
+		@rmdir($force_folder);
 	}
 }
 

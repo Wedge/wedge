@@ -2409,19 +2409,22 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	// Go through all potential language folders, retrieve the latest modification date,
 	// and if available, clean the JS cache to force JS file regeneration.
 	// !! This is only temp code, as it won't work on all server setups, especially Windows.
-	foreach (array($theme['theme_dir'], $theme['default_theme_dir']) as $dir)
+	if (!defined('WEDGE_INSTALLER'))
 	{
-		if (isset($folder_date[$dir]))
-			continue;
-		$folder_date[$dir] = true;
-		$last_modified = filemtime($dir . '/languages/.');
-		$dir = str_replace($boarddir, '', $dir);
-		if (!isset($settings['langdate_' . $dir]))
-			updateSettings(array('langdate_' . $dir => $last_modified));
-		elseif ($last_modified > $settings['langdate_' . $dir])
+		foreach (array($theme['theme_dir'], $theme['default_theme_dir']) as $dir)
 		{
-			updateSettings(array('langdate_' . $dir => $last_modified));
-			clean_cache('js');
+			if (isset($folder_date[$dir]))
+				continue;
+			$folder_date[$dir] = true;
+			$last_modified = filemtime($dir . '/languages/.');
+			$dir = str_replace($boarddir, '', $dir);
+			if (!isset($settings['langdate_' . $dir]))
+				updateSettings(array('langdate_' . $dir => $last_modified));
+			elseif ($last_modified > $settings['langdate_' . $dir])
+			{
+				updateSettings(array('langdate_' . $dir => $last_modified));
+				clean_cache('js');
+			}
 		}
 	}
 
