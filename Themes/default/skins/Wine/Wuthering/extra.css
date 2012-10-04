@@ -82,7 +82,7 @@ body
 		margin: 32px 30px 0 0
 		a
 			color: #78a
-			font: italic bold 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			font: italic 700 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
 			letter-spacing: -2px
 			text-shadow: white 0 1px 2px
 	input.search

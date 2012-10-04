@@ -2,7 +2,7 @@
 #header
 	li.greeting
 		font-size: 1.3em
-		font-weight: bold
+		font-weight: 700
 		line-height: 1.5em
 
 // These user menu options definitely aren't available to guests.

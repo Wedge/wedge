@@ -175,7 +175,7 @@ section.block header, .wehead
 	font-size: 1.2em
 
 .cat final
-	font: bold 1.2em/1.2em $head_font
+	font: 700 1.2em/1.2em $head_font
 
 .title final
 	font: 400 1em $main_font
@@ -227,7 +227,7 @@ section.ic
 
 // Previous/next topic links inside .posthead
 .prevnext_prev
-	font: normal 60%/1.3em Arial
+	font: 400 60%/1.3em Arial
 
 /* Post styling (still in the Display template)
 ---------------------------------------------------- */

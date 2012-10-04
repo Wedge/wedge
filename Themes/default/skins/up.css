@@ -16,7 +16,7 @@
 		margin-right: 0.5em
 	.progress-text
 		font-size: 0.9em
-		font-weight: bold
+		font-weight: 700
 
 #current_list
 	list-style: none
@@ -24,7 +24,7 @@
 	padding: 0
 
 	ul
-		padding, margin: 5px
+		margin, padding: 5px
 	li
 		display: inline-block
 		overflow: auto
@@ -52,7 +52,7 @@
 			display: block
 			clear: left
 			margin-left, height, line-height: 30px
-			font-weight: bold
+			font-weight: 700
 			overflow: hidden
 		.file-size
 			font-size: 0.9em

@@ -61,7 +61,7 @@ table.aextbox
 		padding: 0 6px 2px
 
 .info_list
-	padding, margin: 0
+	margin, padding: 0
 	li
 		display: inline
 		float: left
@@ -196,7 +196,7 @@ table.aextbox
 #viewitem .images
 	a
 		margin-right: 4px
-		font-weight: bold
+		font-weight: 700
 		text-decoration: none
 		line-height: 18px
 	img
@@ -227,7 +227,7 @@ table.aextbox
 	margin: 6px
 	border: 2px dashed #cc3344
 	background: #ffdce0
-	font-weight: bold
+	font-weight: 700
 
 .unapp
 	background: #ffd0d0
@@ -267,7 +267,7 @@ table.aextbox
 	padding-bottom: 4px
 
 .currentbutton
-	font-weight: bold
+	font-weight: 700
 
 .mgc_main, .mgc_last_edit, .mgc_icons
 	font-size: 8pt
@@ -410,9 +410,8 @@ ul.aevadesc
 		width: 100%
 
 .earlier_versions
-	font-weight: bold
-	margin: 8px
-	padding: 8px
+	font-weight: 700
+	margin, padding: 8px
 	border: 2px dotted #c63
 	border-width: 2px 0
 

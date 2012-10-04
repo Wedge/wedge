@@ -112,7 +112,7 @@ ol.search_results
 .table_caption, tr.table_caption td
 	color: #000
 	font-size: 10px
-	font-weight: bold
+	font-weight: 700
 
 .additional_row div.floatleft
 	padding: 0 0.8em
@@ -121,7 +121,7 @@ fieldset dl
 	margin: 0
 
 .information a
-	font-weight: bold
+	font-weight: 700
 
 .disabled
 	color: #777
@@ -477,7 +477,7 @@ ul.moderation_notes
 	margin: -16px
 	padding: 4px
 	.tar1
-		font-weight: bold
+		font-weight: 700
 		border: 1px solid black
 		border-right-width: 0
 	.tar2

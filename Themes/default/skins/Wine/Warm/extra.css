@@ -63,7 +63,7 @@ em
 		text-transform: lowercase
 		a
 			color: #866
-			font: italic bold 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			font: italic 700 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
 			letter-spacing: -2px
 			text-shadow: white 0 1px 2px
 		:first-letter
