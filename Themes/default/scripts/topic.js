@@ -369,11 +369,11 @@ function InTopicModeration(opt)
 				$('#' + display).show();
 
 			// Add the 'remove selected items' button.
-			if (opt.sRemoveLabel)
+			if (opt.bRemove)
 				addButton('modrem');
 
 			// Add the 'restore selected items' button.
-			if (opt.sRestoreLabel)
+			if (opt.bRestore)
 				addButton('modres');
 
 			// Adding these buttons once should be enough.
@@ -384,8 +384,8 @@ function InTopicModeration(opt)
 		iNumSelected += this.checked ? 1 : -1;
 
 		// Show the number of messages selected in the button.
-		$('.modrem a').html(opt.sRemoveLabel + ' [' + iNumSelected + ']').parent().filter(iNumSelected > 0 ? ':hidden' : ':visible').fadeToggle(iNumSelected * 300);
-		$('.modres a').html(opt.sRestoreLabel + ' [' + iNumSelected + ']').parent().filter(iNumSelected > 0 ? ':hidden' : ':visible').fadeToggle(iNumSelected * 300);
+		$('.modrem a').html($txt['quickmod_delete_selected'] + ' [' + iNumSelected + ']').parent().filter(iNumSelected > 0 ? ':hidden' : ':visible').fadeToggle(iNumSelected * 300);
+		$('.modres a').html($txt['quick_mod_restore'] + ' [' + iNumSelected + ']').parent().filter(iNumSelected > 0 ? ':hidden' : ':visible').fadeToggle(iNumSelected * 300);
 
 		// Try to restore the correct position.
 		$('#' + display + ' li').removeClass('last').filter(':visible:last').addClass('last');
@@ -400,13 +400,13 @@ function InTopicModeration(opt)
 
 		if ($(this).hasClass('modrem')) // 'this' is the remove button itself.
 		{
-			if (!confirm(opt.sRemoveConfirm))
+			if (!confirm(we_confirm))
 				return false;
 			oForm.action = oForm.action.replace(/;restore_selected=1/, '');
 		}
 		else // restore button?
 		{
-			if (!confirm(opt.sRestoreConfirm))
+			if (!confirm(we_confirm))
 				return false;
 			oForm.action = oForm.action + ';restore_selected=1';
 		}

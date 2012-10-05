@@ -543,7 +543,7 @@ function template_aeva_item_actions()
 	if ($item['can_edit'])
 		echo '
 			<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $theme['images_aeva'], '/camera_edit.png">&nbsp;', $txt['media_edit_this_item'], '</a>
-			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : ' onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"',
+			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : ' onclick="return confirm(we_confirm);"',
 			'><img src="', $theme['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
 
 	if ($item['can_edit'] && $amSettings['use_zoom'])
@@ -551,7 +551,7 @@ function template_aeva_item_actions()
 			<div class="zoom-html">
 				<form action="', $galurl, 'sa=delete;in=', $item['id_media'], '" method="post">
 					<h3>', $txt['media_delete_this_item'], '</h3>
-					<hr>', $txt['quickmod_confirm'], '
+					<hr>', $txt['generic_confirm_request'], '
 					<p class="mgra">
 						<input type="submit" value="', $txt['media_yes'], '" class="submit">
 						<input type="button" onclick="return hs.close(this);" value="', $txt['media_no'], '" class="cancel">
@@ -734,7 +734,7 @@ function template_aeva_item_comments()
 					<a href="' . $galurl . 'sa=edit;type=comment;in=' . $c['id_comment'] . '">
 						<img src="' . $theme['images_aeva'] . '/comment_edit.png"> ' . $txt['media_edit_this_item'] . '
 					</a>' : '', $c['can_delete'] ? '
-					<a href="' . $galurl . 'sa=delete;type=comment;in=' . $c['id_comment'] . '" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');">
+					<a href="' . $galurl . 'sa=delete;type=comment;in=' . $c['id_comment'] . '" onclick="return confirm(we_confirm);">
 						<img src="' . $theme['images_aeva'] . '/delete.png"> ' . $txt['media_delete_this_item'] . '
 					</a> ' : '', $c['can_report'] ? '
 					<a href="' . $galurl . 'sa=report;type=comment;in=' . $c['id_comment'] . '">
@@ -1121,7 +1121,7 @@ function template_aeva_viewAlbum()
 	}
 	echo $can_edit_items ? '
 				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return $(\'#modtype\').val() == \'delete\' ? confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ') : true;">
+				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return $(\'#modtype\').val() == \'delete\' ? confirm(we_confirm) : true;">
 			</div>' : '', '
 			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 		</div>

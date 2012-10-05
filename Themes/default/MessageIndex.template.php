@@ -587,7 +587,7 @@ function template_messageindex_quickmod_selection()
 		}
 
 		echo '
-						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return $(\'select[name=qaction]\').val() != \'\' && confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');" class="qaction">
+						<input type="submit" value="', $txt['quick_mod_go'], '" onclick="return $(\'select[name=qaction]\').val() != \'\' && confirm(we_confirm);" class="qaction">
 					</td>
 				</tr>';
 	}

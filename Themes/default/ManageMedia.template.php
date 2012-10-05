@@ -81,7 +81,7 @@ function template_aeva_admin_submissions()
 					<td>
 						<img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], ';xml\');">', $txt['media_admin_approve'], '</a>
 						<img src="', $theme['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
-						<img src="', $theme['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ') && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
+						<img src="', $theme['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return confirm(we_confirm) && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
 						<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $theme['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
 					</td>', $filter != 'albums' ? '
 					<td>' . $item['posted_on'] . '</td>' : '', '
@@ -259,7 +259,7 @@ function template_aeva_admin_maintenance_prune()
 
 	echo '
 				<tr>
-					<td class="windowbg2 right"><input type="submit" value="', $txt['media_submit'], '" name="submit_aeva" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');"></td>
+					<td class="windowbg2 right"><input type="submit" value="', $txt['media_submit'], '" name="submit_aeva" onclick="return confirm(we_confirm);"></td>
 				</tr>
 			</table>
 		</form>';
@@ -274,7 +274,7 @@ function template_aeva_admin_modlog()
 		<table class="w100 cp8 cs0">', !empty($context['aeva_logs']) ? '
 			<tr>
 				<td class="windowbg2 right">
-					<input type="submit" name="delete" value="'.$txt['media_admin_rm_selected'].'" style="margin-right: 10px" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><input type="submit" name="delete_all" value="'.$txt['media_admin_rm_all'].'" style="margin-right: 10px" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');">
+					<input type="submit" name="delete" value="'.$txt['media_admin_rm_selected'].'" style="margin-right: 10px" onclick="return confirm(we_confirm);"><input type="submit" name="delete_all" value="'.$txt['media_admin_rm_all'].'" style="margin-right: 10px" onclick="return confirm(we_confirm);">
 				</td>
 			</tr>' : '', '
 			<tr>
@@ -345,7 +345,7 @@ function template_aeva_admin_reports()
 				<td>', aeva_profile($report['reported_by']['id'], $report['reported_by']['name']), '</td>
 				<td>', $report['reported_on'], '</td>
 				<td><a href="', $scripturl, '?action=media;area=moderate;sa=reports;do=delete;items;in=', $report['id_report'], ';', $context['session_query'], '">', $txt['media_admin_del_report'], '</a>
-				<br><a href="', $scripturl, '?action=media;area=moderate;sa=reports;items;do=deleteitem;in=', $report['id_report'], ';', $context['session_query'], '" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');">', $txt['media_admin_del_report_item'], '</a></td>
+				<br><a href="', $scripturl, '?action=media;area=moderate;sa=reports;items;do=deleteitem;in=', $report['id_report'], ';', $context['session_query'], '" onclick="return confirm(we_confirm);">', $txt['media_admin_del_report_item'], '</a></td>
 			</tr>
 			<tr class="windowbg" id="tr_expand_', $report['id_report'], '" class="hide">
 				<td colspan="5">
@@ -427,7 +427,7 @@ function template_aeva_admin_perms()
 			<tr class="windowbg', $alt ? '2' : '', '">
 				<td><a href="', $context['base_url'], ';sa=view;in=', $prof['id'], '">', $prof['name'], '</a></td>
 				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ');">', $prof['albums'], '</a></td>
-				<td', !empty($prof['undeletable']) ? ' title="' . $txt['media_permissions_undeletable'] . '"' : '', '><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(', $prof['id'], ', this, ', JavaScriptEscape($txt['quickmod_confirm']), ');"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
+				<td', !empty($prof['undeletable']) ? ' title="' . $txt['media_permissions_undeletable'] . '"' : '', '><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(', $prof['id'], ', this);"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
 			</tr>
 			<tr class="windowbg', $alt ? '2' : '', ' hide" id="albums_' . $prof['id'] . '">
 				<td colspan="3" id="albums_td_' . $prof['id'] . '"></td>
@@ -565,7 +565,7 @@ function template_aeva_admin_quotas()
 			<tr class="windowbg', $alt ? '2' : '', '">
 				<td><a href="', $scripturl, '?action=admin;area=aeva_quotas;sa=view;in=', $prof['id'], ';', $context['session_query'], '">', $prof['name'], '</a></td>
 				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ', \';prof=', $prof['id'], ';xml\');">', $prof['albums'], '</a></td>
-				<td><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(', $prof['id'], ', this, ', JavaScriptEscape($txt['quickmod_confirm']), ');"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
+				<td><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(', $prof['id'], ', this);"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
 			</tr>
 			<tr class="windowbg', $alt ? '2' : '', ' hide" id="albums_' . $prof['id'] . '">
 				<td colspan="3" id="albums_td_' . $prof['id'] . '"></td>
@@ -667,7 +667,7 @@ function template_aeva_admin_fields()
 			<tr class="windowbg', $alt ? '2' : '', '">
 				<td>', $field['name'], '</td>
 				<td>', $txt['media_cf_' . $field['type']], '</td>
-				<td><a href="', $scripturl, '?action=admin;area=aeva_fields;sa=edit;in=', $field['id'], ';', $context['session_query'], '">', $txt['media_edit_this_item'], '</a> / <a href="', $scripturl, '?action=admin;area=aeva_fields;delete=', $field['id'], ';', $context['session_query'], '" onclick="return confirm(', JavaScriptEscape($txt['quickmod_confirm']), ');">', $txt['media_delete_this_item'], '</a></td>
+				<td><a href="', $scripturl, '?action=admin;area=aeva_fields;sa=edit;in=', $field['id'], ';', $context['session_query'], '">', $txt['media_edit_this_item'], '</a> / <a href="', $scripturl, '?action=admin;area=aeva_fields;delete=', $field['id'], ';', $context['session_query'], '" onclick="return confirm(we_confirm);">', $txt['media_delete_this_item'], '</a></td>
 			</tr>';
 		$alt = !$alt;
 	}

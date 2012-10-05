@@ -258,8 +258,6 @@ function template_results()
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
-		$quickmod = JavaScriptEscape($txt['quickmod_confirm']);
-
 		while ($topic = $context['get_topics']())
 		{
 			$color_class = '';
@@ -343,7 +341,7 @@ function template_results()
 
 				echo '
 				<input type="hidden" name="redirect_url" value="', $scripturl . '?action=search2;params=' . $context['params'], '">
-				<input type="submit" style="font-size: 0.8em" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && confirm(', $quickmod, ');">
+				<input type="submit" style="font-size: 0.8em" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && confirm(we_confirm);">
 			</div>
 			<br class="clear">
 		</div>';

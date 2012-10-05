@@ -274,13 +274,11 @@ function template_display_posts()
 	if ($context['can_remove_post'])
 		add_js('
 	new InTopicModeration({
-		sClass: \'inline_mod_check\',' . ($context['can_remove_post'] ? '
-		sRemoveLabel: \'' . $txt['quickmod_delete_selected'] . '\',
-		sRemoveConfirm: \'' . $txt['quickmod_confirm'] . '\',' : '') . ($context['can_restore_msg'] ? '
-		sRestoreLabel: \'' . $txt['quick_mod_restore'] . '\',
-		sRestoreConfirm: \'' . $txt['quickmod_confirm'] . '\',' : '') . '
+		sClass: \'inline_mod_check\',
 		sStrip: \'moderationbuttons\',
-		sFormId: \'quickModForm\'
+		sFormId: \'quickModForm\'' . ($context['can_restore_msg'] ? ',
+		bRestore: 1' : '') . ($context['can_remove_post'] ? ',
+		bRemove: 1' : '') . '
 	});');
 
 	add_js('

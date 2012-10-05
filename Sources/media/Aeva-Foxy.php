@@ -392,7 +392,7 @@ function aeva_foxy_playlists()
 			<strong><a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . '">' . $p['name'] . '</a></strong>
 			<br><span class="smalltext">' . sprintf($txt['media_items_from_album' . ($p['num_albums'] == 1 ? '' : 's')], $p['num_items'], $p['num_albums']) . '<br>
 			<a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . ';edit;' . $context['session_query'] . '" style="text-decoration: none"><img src="' . $theme['images_aeva'] . '/camera_edit.png" style="vertical-align: bottom"> ' . $txt['media_edit_this_item'] . '</a>
-			<a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . ';delete;' . $context['session_query'] . '" style="text-decoration: none" onclick="return confirm(' . JavaScriptEscape($txt['quickmod_confirm']) . ');"><img src="' . $theme['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a></span>
+			<a href="' . $galurl . 'sa=playlists;in=' . $p['id'] . ';delete;' . $context['session_query'] . '" style="text-decoration: none" onclick="return confirm(we_confirm);"><img src="' . $theme['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a></span>
 		</td>';
 			if ($res == 3)
 				$o .= '

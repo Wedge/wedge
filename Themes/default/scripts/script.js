@@ -17,6 +17,7 @@ var
 	weEditors = [],
 	_formSubmitted = false,
 
+	we_confirm = $txt['generic_confirm_request'],
 	we_loading = $txt['ajax_in_progress'],
 	we_cancel = $txt['form_cancel'],
 	we_delete = $txt['delete'],
@@ -633,7 +634,7 @@ function Thought(opt)
 				thought.after('\
 		<div class="thought_actions">' + (thought.data('self') !== '' ? '' : '\
 			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + ', \'' + mid + '\');">\
-			<input type="button" class="delete" value="' + we_delete + '" onclick="oThought.remove(' + tid + ');">') + '\
+			<input type="button" class="delete" value="' + we_delete + '" onclick="confirm(we_confirm) && oThought.remove(' + tid + ');">') + '\
 			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + ', \'' + mid + '\', true);">\
 		</div>');
 		};
