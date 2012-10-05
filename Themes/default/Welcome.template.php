@@ -17,10 +17,10 @@ function template_main()
 
 	echo '
 	<div class="windowbg2 wrc">
-		<h1>
+		<h6>
 			Welcome, hacker!
-		</h1>
-		<ul>
+		</h6>
+		<ul style="margin-bottom: 0">
 			<li><a href="<URL>?action=boards">Board index</a></li>';
 
 	if (!empty($context['allow_pm']))
@@ -37,10 +37,10 @@ function template_info_before()
 	global $txt;
 
 	echo '
-	<div class="roundframe" style="margin: 16px 0">
-		<we:title>
+	<we:block class="windowbg" style="margin: 16px 0">
+		<header>
 			', $txt['info_center_title'], '
-		</we:title>';
+		</header>';
 }
 
 // This one is just here to show you that layers can get _before_before,
@@ -55,19 +55,19 @@ function template_info_center_before_after()
 function template_info_after()
 {
 	echo '
-	</div>';
+	</we:block>';
 }
 
 function template_thoughts_before()
 {
 	echo '
-	<div class="roundframe" style="margin: 16px 0">';
+	<we:block class="windowbg2" style="margin: 16px 0">';
 }
 
 function template_thoughts_after()
 {
 	echo '
-	</div>';
+	</we:block>';
 }
 
 function template_thoughts($limit = 18)
@@ -78,10 +78,10 @@ function template_thoughts($limit = 18)
 
 	if (!$is_thought_page)
 		echo '
-		<we:title>
+		<header>
 			<div class="thought_icon"></div>
 			', $txt['thoughts'], '... (<a href="<URL>?s=thoughts">', $txt['all_pages'], '</a>)
-		</we:title>';
+		</header>';
 
 	echo '
 		<div class="tborder" style="margin: 5px 0 10px 0">

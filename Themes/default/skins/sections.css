@@ -73,6 +73,11 @@ section.ic
 	.stats
 		margin-top: 8px
 		padding-top: 0
+	.title
+		margin-bottom: .7em
+
+.ic + .ic .title final
+	margin-top: 0
 
 // The small stats
 #index_common_stats
@@ -121,7 +126,7 @@ img.new_posts
 
 // Previous/next topic links inside .posthead
 .prevnext_prev extends .cell
-	font: normal 1em/1.3em Arial
+	font: 400 1em/1.3em Arial
 	text-align: left
 	width: 20%
 	a
@@ -181,7 +186,7 @@ img.new_posts
 			max-width: 450px
 			float: left
 		.voted
-			font-weight: bold
+			font-weight: 700
 		.percentage
 			display: block
 			float: right
@@ -493,7 +498,7 @@ ul.buttonlist extends ul.reset
 		color: #679
 		line-height: 15px
 		&.active
-			font-weight: bold
+			font-weight: 700
 		:hover
 			color: #a54
 
@@ -678,7 +683,7 @@ fieldset.merge_options
 		float: left
 		clear: both
 		text-align: right
-		font-weight: bold
+		font-weight: 700
 	dd
 		width: 54%
 		float: right
@@ -703,7 +708,7 @@ dl.register_form
 	margin: 0
 	clear: right
 	dt
-		font-weight: normal
+		font-weight: 400
 		float: left
 		clear: both
 		width: 50%
@@ -810,7 +815,7 @@ tr.windowbg td
 	.subject p,
 	.stats
 		font-size: .85em
-		padding, margin: 0
+		margin, padding: 0
 	.lastpost
 		background-image: none
 		font-size: .85em
@@ -840,7 +845,7 @@ tr.windowbg td
 	p
 		margin: 1em 0 0
 	.alert
-		padding, margin: 0
+		margin, padding: 0
 		width: 1em
 		font-size: 1.5em
 	// Styling for mismatched tags
@@ -979,7 +984,7 @@ tr.windowbg td
 		float: left
 		margin: 0 0 3px
 		padding: 0
-		font-weight: bold
+		font-weight: 700
 		clear: both
 	dd
 		width: 50%
@@ -1022,7 +1027,7 @@ tr.windowbg td
 		float: left
 		margin: 0 0 3px
 		padding: 0
-		font-weight: bold
+		font-weight: 700
 		clear: both
 	dd
 		width: 35%
@@ -1047,7 +1052,7 @@ tr.windowbg td
 	margin: 0
 	padding: .2em .5em .1em .2em
 	font-size: 2.2em
-	font-weight: bold
+	font-weight: 700
 	color: #3f3f3f
 	float: left
 
@@ -1093,7 +1098,7 @@ tr.windowbg td
 	padding: 0
 	width: 45%
 	a
-		font-weight: bold
+		font-weight: 700
 		border-bottom: 1px solid #c4c4c4
 		padding: .1em 0
 	a:hover
@@ -1371,7 +1376,7 @@ div.top_row dd
 			width: auto
 			background: $window_bg
 			border-top: 1px solid #bdb5b5
-			margin: 0 -30px -20px
+			margin: 0 -30px 0
 			// We can't inherit anything inside a @media query,
 			// so we have to reproduce (mix) .inline-block directly here.
 			section mixes .inline-block

@@ -21,7 +21,7 @@ function template_info_center_statistics()
 
 	echo '
 	<section class="ic">
-		<we:cat>';
+		<we:title>';
 
 	if (empty($settings['trackStats']))
 		echo '
@@ -32,7 +32,7 @@ function template_info_center_statistics()
 
 	echo '
 			', $txt['forum_stats'], '
-		</we:cat>
+		</we:title>
 		<ul class="stats">
 			<li>', $context['common_stats']['total_posts'], ' ', $txt['posts_made'], ' ', $txt['in'], ' ', $context['common_stats']['total_topics'], ' ', $txt['topics'], ' ', $txt['by'], ' ', $context['common_stats']['total_members'], ' ', $txt['members'], '.</li>', !empty($theme['show_latest_member']) ? '
 			<li>' . $txt['latest_member'] . ': <strong> ' . $context['common_stats']['latest_member']['link'] . '</strong></li>' : '', !empty($context['latest_post']) ? '
@@ -50,10 +50,10 @@ function template_info_center_usersonline()
 	// "Users online" - in order of activity.
 	echo '
 	<section class="ic">
-		<we:cat>
+		<we:title>
 			', $context['show_who'] ? '<a href="' . $scripturl . '?action=who">' : '', '<img src="', $theme['images_url'], '/icons/online.gif', '" alt="', $txt['online_users'], '">', $context['show_who'] ? '</a>' : '', '
 			', $txt['online_users'], '
-		</we:cat>
+		</we:title>
 		<p class="inline stats">
 			', $context['show_who'] ? '<a href="' . $scripturl . '?action=who">' : '', comma_format($context['num_guests']), ' ', $context['num_guests'] == 1 ? $txt['guest'] : $txt['guests'], ', ' . comma_format($context['num_users_online']), ' ', $context['num_users_online'] == 1 ? $txt['user'] : $txt['users'];
 
@@ -104,10 +104,10 @@ function template_info_center_personalmsg()
 
 	echo '
 	<section class="ic">
-		<we:cat>
+		<we:title>
 			', $context['allow_pm'] ? '<a href="' . $scripturl . '?action=pm">' : '', '<img src="', $theme['images_url'], '/message_sm.gif" alt="', $txt['personal_message'], '">', $context['allow_pm'] ? '</a>' : '', '
 			', $txt['personal_messages'], '
-		</we:cat>
+		</we:title>
 		<p class="pminfo">
 			', number_context('youve_got_pms', $context['user']['messages']), '
 			', sprintf($txt['click_to_view_them'], $scripturl . '?action=pm'), '
