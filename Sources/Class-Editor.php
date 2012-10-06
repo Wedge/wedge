@@ -63,15 +63,7 @@ class wedit
 			add_css_file(array('common', 'editor'), true);
 
 			$theme['smileys_url'] = $settings['smileys_url'] . '/' . $user_info['smiley_set'];
-			add_js('
-	var oEditorStrings = {
-		wont_work: ' . JavaScriptEscape($txt['rich_edit_wont_work']) . ',
-		email: ' . JavaScriptEscape($txt['prompt_text_email']) . ',
-		ftp: ' . JavaScriptEscape($txt['prompt_text_ftp']) . ',
-		url: ' . JavaScriptEscape($txt['prompt_text_url']) . ',
-		img: ' . JavaScriptEscape($txt['prompt_text_img']) . ',
-		desc: ' . JavaScriptEscape($txt['prompt_text_desc']) . '
-	}');
+
 			add_js_file(array(
 				'scripts/editor.js',
 				'scripts/editor-func.js',

@@ -215,14 +215,14 @@ img.new_posts
 
 // Alternating backgrounds for posts
 .postbg extends .windowbg
-	background: #f2f3ee
+	background: $post_bg
 	display: table
 	// Without this, wide code blocks will break layout.
 	table-layout: fixed
 	width: 100%
 
 .postbg2 extends ".windowbg2, .postbg"
-	background: #f3f7f3
+	background: $post_bg2
 	margin: 3px 0
 
 #forumposts

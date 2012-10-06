@@ -103,13 +103,13 @@ function previewPost()
 			});
 
 			if (ignoring)
-				newPostsHTML += '<div class="ignored">' + ptxt.ignoring_user + '</div>';
+				newPostsHTML += '<div class="ignored">' + $txt['ignoring_user'] + '</div>';
 
 			newPostsHTML += '<div class="list_posts smalltext clear">' + $('message', this).text() + '</div>';
 
 			if (can_quote)
 				newPostsHTML += '<div class="actionbar"><ul class="actions"><li><a href="#postmodify" class="quote_button" onclick="return insertQuoteFast(\''
-							 + id + '\');">' + ptxt.bbc_quote + '</a></li></ul></div>';
+							 + id + '\');">' + $txt['bbc_quote'] + '</a></li></ul></div>';
 
 			// Closing the two div's opened in new_post_tpl...
 			newPostsHTML += '</div></div>';
@@ -187,7 +187,7 @@ function addPollOption()
 
 function wedgeAttachSelect(opt)
 {
-	var count = 0, attachId = 0, max = opt.max || -1,
+	var count = 0, attachId = 0, max = opt.max || -1, message_ext_error_final,
 
 	// Yay for scope issues.
 	checkExtension = function (filename)
@@ -198,14 +198,14 @@ function wedgeAttachSelect(opt)
 		var dot = filename.lastIndexOf('.');
 		if (!filename || filename.length == 0 || dot == -1)
 		{
-			opt.message_ext_error_final = opt.message_ext_error.replace(' ({ext})', '');
+			message_ext_error_final = opt.message_ext_error.replace(' ({ext})', '');
 			return false; // Pfft, didn't specify anything, or no extension
 		}
 
 		var extension = (filename.substr(dot + 1, filename.length)).toLowerCase();
 		if (!in_array(extension, opt.attachment_ext))
 		{
-			opt.message_ext_error_final = opt.message_ext_error.replace('{ext}', extension);
+			message_ext_error_final = opt.message_ext_error.replace('{ext}', extension);
 			return false;
 		}
 
@@ -251,7 +251,7 @@ function wedgeAttachSelect(opt)
 		}
 		else // Uh oh.
 		{
-			alert(opt.message_ext_error_final);
+			alert(message_ext_error_final);
 			createFileSelector();
 			$(element).remove();
 		}

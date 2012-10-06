@@ -233,12 +233,9 @@ section.ic
 ---------------------------------------------------- */
 
 // Alternating backgrounds for posts
-.postbg extends .wrc
+.postbg, .postbg2
+	base: .wrc
 	padding: 0
-
-.postbg2 extends .wrc
-	padding: 0
-	background: transparent
 
 // Poster details and list of items
 .poster
@@ -330,3 +327,4 @@ $main_bg = #fffdfa
 $head_bg = rgba(221, 200, 137, .66)
 $window_bg = #f2f3ea // #f9f6f0
 $window_bg2 = #f3f7f3
+$post_bg2 = transparent

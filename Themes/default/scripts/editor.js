@@ -19,6 +19,8 @@ function weEditor(opt)
 
 	this.bRichTextEnabled = !!opt.bWysiwyg;
 	this.bRichTextPossible = !opt.bRichEditOff && (is_ie || is_ff || is_opera || is_webkit) && !(is_iphone || is_android);
+	this.urlTxt = $txt['prompt_text_url'];
+	this.imgTxt = $txt['prompt_text_img'];
 
 	// Create some links to the editor object.
 	var
@@ -474,11 +476,11 @@ function weEditor(opt)
 				if (sCode == 'url')
 				{
 					// Ask them where to link to.
-					sText = prompt(oEditorStrings.url, 'http://');
+					sText = prompt(this.urlTxt, 'http://');
 					if (!sText)
 						return;
 
-					var sDesc = prompt(oEditorStrings.desc);
+					var sDesc = prompt($txt['prompt_text_desc']);
 					bbcode = !sDesc || sDesc == '' ? '[url]' + sText + '[/url]' : '[url=' + sText + ']' + sDesc + '[/url]';
 					this.replaceText(bbcode.replace(/\\n/g, '\n'));
 				}
@@ -486,7 +488,7 @@ function weEditor(opt)
 				else if (sCode == 'img')
 				{
 					// Ask them where to link to.
-					sText = prompt(oEditorStrings.img, 'http://');
+					sText = prompt(this.imgTxt, 'http://');
 					if (!sText)
 						return;
 
@@ -608,7 +610,7 @@ function weEditor(opt)
 	// Insert a URL link.
 	this.insertLink = function (sType)
 	{
-		var sPromptText = sType == 'email' ? oEditorStrings.email : (sType == 'ftp' ? oEditorStrings.ftp : oEditorStrings.url);
+		var sPromptText = sType == 'email' ? $txt['prompt_text_email'] : (sType == 'ftp' ? $txt['prompt_text_ftp'] : this.urlTxt);
 
 		// IE has a nice prompt for this - others don't.
 		if (sType != 'email' && sType != 'ftp' && is_ie)
@@ -641,7 +643,7 @@ function weEditor(opt)
 	{
 		if (!sSrc)
 		{
-			sSrc = prompt(oEditorStrings.img, 'http://');
+			sSrc = prompt(this.imgTxt, 'http://');
 			if (!sSrc || sSrc.length < 10)
 				return;
 		}
@@ -694,7 +696,7 @@ function weEditor(opt)
 	{
 		if (!this.bRichTextPossible)
 		{
-			alert(oEditorStrings.wont_work);
+			alert($txt['rich_edit_wont_work']);
 			return false;
 		}
 

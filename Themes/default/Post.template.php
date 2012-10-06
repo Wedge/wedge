@@ -303,11 +303,7 @@ function template_postform_after()
 		new_replies = [], reply_counter = ' . (empty($counter) ? 0 : $counter) . ',
 		can_quote = ' . ($context['can_quote'] ? 'true' : 'false') . ',
 		new_post_tpl = ' . JavaScriptEscape('<div class="windowbg%counter% wrc core_posts"><div id="msg%id%"><div class="floatleft"><h5>' . $txt['posted_by'] . ': %poster%</h5>'
-			. '<span class="smalltext">&#171;&nbsp;%date%&nbsp;&#187;</span><div class="note" id="image_new_%id%">%new%</div></div>') . ',
-		ptxt = {
-			bbc_quote: ' . JavaScriptEscape($txt['bbc_quote']) . ',
-			ignoring_user: ' . JavaScriptEscape($txt['ignoring_user']) . '
-		};');
+			. '<span class="smalltext">&#171;&nbsp;%date%&nbsp;&#187;</span><div class="note" id="image_new_%id%">%new%</div></div>') . ';');
 
 	// !!! Currently not sending poll options and option checkboxes.
 	foreach ($context['form_fields'] as $field_type => $field_items)
