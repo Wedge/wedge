@@ -37,7 +37,6 @@ html
 	vertical-align: top
 	width: $sidebar-width
 	border: 1px solid #ccc
-	background: #f2f3ea
 	border-radius: 8px
 	.title
 		font-size: 1.2em

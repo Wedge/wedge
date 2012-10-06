@@ -10,6 +10,8 @@
  * @version 0.1
  */
 
+@language index;
+
 var hide_prefixes = [];
 
 function go_up()
