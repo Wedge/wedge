@@ -89,21 +89,25 @@ function template_post_name_email()
 	if (isset($context['name'], $context['email']))
 	{
 		echo '
-					<dt>
-						<span', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) || isset($context['post_error']['bad_name']) ? ' class="error"' : '', ' id="caption_guestname">', $txt['name'], ':</span>
-					</dt>
-					<dd>
-						<input type="text" name="guestname" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
-					</dd>';
+					<dl>
+						<dt>
+							<span', isset($context['post_error']['long_name']) || isset($context['post_error']['no_name']) || isset($context['post_error']['bad_name']) ? ' class="error"' : '', ' id="caption_guestname">', $txt['name'], ':</span>
+						</dt>
+						<dd>
+							<input type="text" name="guestname" value="', $context['name'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
+						</dd>';
 
 		if (empty($settings['guest_post_no_email']))
 			echo '
-					<dt>
-						<span', isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' class="error"' : '', ' id="caption_email">', $txt['email'], ':</span>
-					</dt>
-					<dd>
-						<input type="email" name="email" value="', $context['email'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
-					</dd>';
+						<dt>
+							<span', isset($context['post_error']['no_email']) || isset($context['post_error']['bad_email']) ? ' class="error"' : '', ' id="caption_email">', $txt['email'], ':</span>
+						</dt>
+						<dd>
+							<input type="email" name="email" value="', $context['email'], '" tabindex="', $context['tabindex']++, '" class="w50" required>
+						</dd>';
+
+		echo '
+					</dl>';
 	}
 }
 
@@ -374,14 +378,13 @@ function template_post_subject()
 
 	echo '
 					</select>
-					<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">
-				</div>';
+					<input type="text" name="subject"', $context['subject'] == '' ? '' : ' value="' . $context['subject'] . '"', ' tabindex="', $context['tabindex']++, '" maxlength="80" class="w75">';
 }
 
 function template_post_header_after()
 {
 	echo '
-				</ul>
+				</div>
 				<hr class="clear">';
 }
 

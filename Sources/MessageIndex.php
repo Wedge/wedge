@@ -613,17 +613,16 @@ function MessageIndex()
 	if (!$context['no_topic_listing'])
 		wetem::add('sidebar', 'messageindex_legend');
 
+	// They can only mark read if they are logged in!
+	$context['can_mark_read'] = $context['user']['is_logged'];
+
 	// Create the button set...
 	$context['button_list'] = array(
 		'new_topic' => array('test' => 'can_post_new', 'text' => 'new_topic', 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0', 'class' => 'active'),
 		'post_poll' => array('test' => 'can_post_poll', 'text' => 'new_poll', 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0;poll'),
 		($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_board' : 'enable_board')]) . ');"', 'url' => $scripturl . '?action=notifyboard;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';board=' . $context['current_board'] . '.' . $context['start'] . ';' . $context['session_query']),
-		'markread' => array('text' => 'mark_read_short', 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_query']),
+		'markread' => array('test' => 'can_mark_read', 'text' => 'mark_read_short', 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_query']),
 	);
-
-	// They can only mark read if they are logged in!
-	if (!$context['user']['is_logged'])
-		unset($context['button_list']);
 
 	// Allow adding new buttons easily.
 	call_hook('messageindex_buttons');
