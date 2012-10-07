@@ -1760,12 +1760,32 @@ function host_from_ip($ip)
 		return $host;
 	$t = microtime(true);
 
-	// This should work for IPv4, its status is unknown for IPv6 however.
-	if (preg_match('~\d{2,3}(\.\d{1,3}){3}~', $ip) && !isset($host) && is_callable('dns_get_record'))
+	if (is_callable('dns_get_record') && !isset($host))
 	{
-		$details = @dns_get_record(implode('.', array_reverse(explode('.', $ip))) . '.in-addr.arpa', DNS_PTR);
-		if (is_array($details) && !empty($details[0]['target']))
-			$host = $details[0]['target'];
+		$arpa = '';
+		// IPv4 style first, x.y.z.a becomes a.z.y.x
+		if (preg_match('~\d{2,3}(\.\d{1,3}){3}~', $ip))
+			$arpa = implode('.', array_reverse(explode('.', $ip))) . '.in-addr.arpa';
+		else
+		{
+			// IPv6, abcd:efgh:ijkl:mnop:qrst:uvwx:yz12:3456 becomes 6.5.4.3.2.1.z.y.x.w.v.u.t.s.r.q.p.o.n.m.l.k.j.i.h.g.f.e.d.c.b.a
+			// Yes, really.
+			$ipv6 = expand_ip($ip);
+			if ($ipv6 != INVALID_IP)
+				$arpa = implode('.', str_split(strrev($ipv6))) . '.ip6.arpa';
+		}
+
+		if (!empty($arpa))
+		{
+			$details = dns_get_record($arpa, DNS_ALL);
+			if (is_array($details))
+				foreach ($details as $id => $contents)
+					if ($contents['type'] == 'PTR' && !empty($contents['target']))
+					{
+						$host = $contents['target'];
+						break;
+					}
+		}
 	}
 
 	// Try the Linux host command, perhaps?
