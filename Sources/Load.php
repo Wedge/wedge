@@ -2431,7 +2431,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	// For each file open it up and write it out!
 	foreach ((array) $template_name as $template)
 	{
-		if (!$force_reload && isset($already_loaded[$template]) && $already_loaded[$template] == $lang)
+		if (!$force_reload && isset($already_loaded[$template]) && ($already_loaded[$template] == $lang || $fallback))
 			continue;
 
 		// Obviously, the current theme is most important to check.
