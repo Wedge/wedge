@@ -717,14 +717,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if ($non_twelve_hour && strpos($str, '%p') !== false)
 		$str = str_replace('%p', strftime('%H', $time) < 12 ? 'am' : 'pm', $str);
 
-	if ($user_info['setlocale'])
-	{
-		if (!empty($txt['lang_capitalize_dates']))
-			foreach (array('%a', '%A', '%b', '%B') as $token)
-				if (strpos($str, $token) !== false)
-					$str = str_replace($token, westr::ucwords(strftime($token, $time)), $str);
-	}
-	else
+	if (empty($user_info['setlocale']))
 	{
 		// Do-it-yourself time localization. Fun.
 		foreach (array('%a' => 'days_short', '%A' => 'days', '%b' => 'months_short', '%B' => 'months') as $token => $text_label)
