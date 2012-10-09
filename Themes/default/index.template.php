@@ -22,7 +22,7 @@
 // Initialize the template... mainly little settings.
 function template_init()
 {
-	global $context, $theme, $settings, $options, $txt;
+	global $context, $theme, $settings, $txt;
 
 	// Add the theme-specific JavaScript files to our priority cache list.
 	if (!empty($context['main_js_files']))
@@ -119,14 +119,15 @@ function template_skeleton()
 						<random_news />
 					</header>
 					<menu />
-					<linktree />
 					<content_wrap>
 						<offside_wrap>
 							<main_wrap>
+								<linktree />
 								<top></top>
 								<default>
 									<main />
 								</default>
+								<linktree:bottom />
 							</main_wrap>
 						</offside_wrap>
 						<sidebar_wrap>
@@ -142,7 +143,7 @@ function template_skeleton()
 // The main block above the content.
 function template_html_before()
 {
-	global $context, $theme, $options, $txt, $settings, $boardurl, $topic;
+	global $context, $txt, $settings, $boardurl, $topic;
 
 	// Declare our HTML5 doctype, and whether to show right to left.
 	// The charset is already specified in the headers so it may be omitted,
@@ -178,7 +179,7 @@ function template_html_before()
 	// If feeds are enabled, advertise the presence of one.
 	if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || $context['user']['is_logged']))
 		echo '
-	<link rel="alternate" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '" href="<URL>?action=feed">';
+	<link rel="alternate" href="<URL>?action=feed" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '">';
 
 	// If we're viewing a topic, we should link to the previous and next pages, respectively. Search engines like this.
 	if (empty($context['robot_no_index']))
@@ -273,7 +274,7 @@ function template_search_box()
 
 function template_language_selector()
 {
-	global $context, $user_info, $theme;
+	global $context, $user_info;
 
 	if (empty($context['languages']) || count($context['languages']) < 2)
 		return;
@@ -540,7 +541,7 @@ function template_wrapper_after()
 
 function template_body_after()
 {
-	global $context, $theme, $options, $txt, $settings, $footer_coding;
+	global $context, $theme, $txt, $settings, $footer_coding;
 
 	// Include postponed inline JS, postponed HTML, and then kickstart the main
 	// JavaScript section -- files to include, main vars and functions to start.
@@ -608,13 +609,16 @@ function template_html_after()
 }
 
 // Show a linktree - the thing that says "My Community > General Category > General Discussion"...
-function template_linktree($force_show = false, $on_bottom = false)
+function template_linktree($position = 'top', $force_show = false)
 {
-	global $context, $theme, $options, $shown_linktree;
+	global $context;
+
+	if ($position === 'bottom' && empty($context['bottom_linktree']) && !$force_show)
+		return;
 
 	// itemtype is provided for validation purposes.
  	echo '
-	<div id="linktree', $on_bottom ? '_bt' : '', '" itemscope itemtype="http://schema.org/WebPage">';
+	<div id="linktree', $position === 'bottom' ? '_bt' : '', '" itemscope itemtype="http://schema.org/WebPage">';
 
 	// If linktree is empty, just return - also allow an override.
 	if (!empty($context['linktree']) && ($linksize = count($context['linktree'])) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
@@ -652,14 +656,12 @@ function template_linktree($force_show = false, $on_bottom = false)
 
 	echo '
 	</div>';
-
-	$shown_linktree = true;
 }
 
 // Show the menu up top. Something like [home] [profile] [logout]...
 function template_menu()
 {
-	global $context, $theme, $options, $txt;
+	global $context, $txt;
 
 	echo '
 	<div id="navi">
@@ -713,9 +715,6 @@ function template_footer()
 {
 	global $context, $txt, $user_info, $theme;
 
-	if (!empty($context['bottom_linktree']))
-		template_linktree(false, true);
-
 	echo '
 	<div id="footer"><div class="frame">
 		<ul class="reset">';
@@ -758,7 +757,7 @@ function template_footer()
  */
 function template_page_index($base_url, &$start, $max_value, $num_per_page, $flexible_start = false, $show_prevnext = true)
 {
-	global $settings, $options, $theme, $topicinfo, $txt, $context;
+	global $settings, $options, $topicinfo, $txt, $context;
 
 	// Save whether $start was less than 0 or not.
 	$start = (int) $start;
@@ -857,7 +856,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 // Generate a strip of buttons.
 function template_button_strip($button_strip, $direction = 'right', $strip_options = array())
 {
-	global $theme, $context, $txt;
+	global $context, $txt;
 
 	if (!is_array($strip_options))
 		$strip_options = array();

@@ -93,7 +93,7 @@
 							<menu />
 
 							<!-- The navigation bar (linktree.) -->
-							<linktree />
+							<linktree:top />
 
 							<content_wrap>
 								<main_wrap>
@@ -106,6 +106,9 @@
 									</default>
 								</main_wrap>
 							</content_wrap>
+
+							<!-- The bottom linktree. -->
+							<linktree:bottom />
 
 							<!-- Credits, validation links... -->
 							<footer />
@@ -136,7 +139,7 @@
 
 	<options>
 		<sidebar>
-			left
+			right
 		</sidebar>
 	</options>
 

@@ -918,7 +918,7 @@ function db_debug_junk()
  */
 function template_include($filename, $once = false)
 {
-	global $context, $theme, $options, $txt, $helptxt, $scripturl, $settings;
+	global $context, $theme, $txt, $helptxt, $scripturl, $settings;
 	global $user_info, $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
@@ -1180,7 +1180,7 @@ function loadTemplate($template_name, $fatal = true)
  */
 function execBlock($block_name, $fatal = false)
 {
-	global $context, $theme, $options, $txt, $db_show_debug;
+	global $context, $theme, $txt, $db_show_debug;
 
 	if (empty($block_name))
 		return;
@@ -1188,25 +1188,33 @@ function execBlock($block_name, $fatal = false)
 	if ($db_show_debug === true)
 		$context['debug']['blocks'][] = $block_name;
 
+	if (strpos($block_name, ':') !== false)
+	{
+		list ($block_name, $vars) = explode(':', $block_name, 2);
+		$vars = array_map('trim', explode(',', $vars));
+	}
+	else
+		$vars = array();
+
 	// Figure out what the template function is named.
 	$theme_function = 'template_' . $block_name;
 
 	// !!! Doing these tests is relatively slow, but there aren't that many. In case performance worsens,
 	// !!! we should cache the function list (get_defined_functions()) and isset() against the cache.
 	if (function_exists($theme_function_before = $theme_function . '_before'))
-		$theme_function_before();
+		call_user_func_array($theme_function_before, $vars);
 
 	if (function_exists($theme_function_override = $theme_function . '_override'))
-		$theme_function_override();
+		call_user_func_array($theme_function_override, $vars);
 	elseif (function_exists($theme_function))
-		$theme_function();
+		call_user_func_array($theme_function, $vars);
 	elseif ($fatal === false)
 		fatal_lang_error('template_block_error', 'template', array((string) $block_name));
 	elseif ($fatal !== 'ignore')
 		exit(log_error(sprintf(isset($txt['theme_template_error']) ? $txt['template_block_error'] : 'Unable to load the "%s" template block!', (string) $block_name), 'template'));
 
 	if (function_exists($theme_function_after = $theme_function . '_after'))
-		$theme_function_after();
+		call_user_func_array($theme_function_after, $vars);
 
 	// Are we showing debugging for templates? Just make sure not to do it before the doctype...
 	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $block_name !== 'init' && ob_get_length() > 0 && !isset($_REQUEST['xml']))
