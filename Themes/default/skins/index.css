@@ -31,7 +31,7 @@
  * The "install.css" and "report.css" files are theme-agnostic, and thus are not skinnable per se.
  *
  * Go crazy with CSS comments like this; they're automatically deleted when the cache is generated.
- * CSS cached files are put inside the /cache/ folder, so any relative URLs will fail unless they use it
+ * CSS cached files are put inside the /css/ folder, so any relative URLs will fail unless they use it
  * as their root, or use the available path variables.
  *
  * $language - current user's language - see Wine/Warm/skin.xml for details
@@ -109,8 +109,13 @@ header, footer, aside, section, article, nav
 ------------------------------------------------------- */
 
 #wedge
+	overflow: hidden
 	max-width: 1240px
+	border-radius: 8px
 	margin: auto
+
+#header
+	border-radius: 8px 8px 0 0
 
 #header, #content, #linktree
 	background: $main_bg
@@ -127,13 +132,12 @@ header, footer, aside, section, article, nav
 #content
 	color: #444
 	div.frame
-		padding: 0 30px 20px
+		padding: 0 30px
 
 #edge
 	width: 100%
 	display: table
 	table-layout: fixed
-	padding-top: 6px
 
 #sidebar
 	display: table-cell
@@ -141,7 +145,7 @@ header, footer, aside, section, article, nav
 	width: $sidebar-width
 	font-size: .9em
 	.column
-		padding: 8px 12px 12px
+		padding: 20px 0 0 20px
 		section
 			margin: 0 0 15px
 
@@ -251,6 +255,7 @@ ul#noava
 // The footer with copyright links etc.
 #footer
 	margin: auto
+	border-radius: 0 0 8px 8px
 	border-top: 1px solid #bdb5b5
 	div.frame
 		padding: 10px 20px
@@ -261,7 +266,7 @@ ul#noava
 
 	ul extends .clearfix
 		background: url($images/webelowine.png) 0 5px no-repeat
-		padding: 5px 0 10px 60px
+		padding: 5px 0 5px 60px
 		min-height: 35px
 		li
 			margin-left: 4px
@@ -614,6 +619,10 @@ input[type=submit], input[type=button], .ie_button
 	border-radius: 6px
 	padding: 3px 5px 4px
 	color: #555
+	// Old IEs have a padding bug...
+	@if ie6, ie7
+		overflow: visible
+	@endif
 	:hover
 		background-color: #f3f3f3
 
@@ -656,7 +665,7 @@ input.cancel
 
 // Declare position only here, so that inherited classes can also set it.
 input.submit
-	background-position: 5px center, 0 0, 0 0
+	background-position: 5px center
 
 input.search
 	background: rgba(255,255,235,.32) url($images/filter.gif) 5px 5px no-repeat
@@ -1119,7 +1128,7 @@ table
 
 .bbc_img
 	border: 0
-	max-width: 650px
+	max-width: 100%
 
 .bbc_table
 	font, color: inherit
@@ -1394,7 +1403,7 @@ dl#feed
 
 .cat extends .catbase
 	clear: left
-	letter-spacing: -1px
+	letter-spacing: -.5px
 	color: #666
 	a
 		border-bottom: 0 !important
@@ -1645,41 +1654,6 @@ th.last_th
 
 @dynamic language_flags
 
-/* These are our CSS variable and mixin definitions.
-------------------------------------------------------- */
-
-/*
-	They can be put anywhere, they'll be considered as globals.
-	They can contain other variables in their definition.
-	They can be rewritten later in the CSS file, or any CSS file
-	included with it. The new value will be used everywhere.
-*/
-
-$main_font = Arial, sans-serif
-$main_font_size = 88%/130%
-$menu_font = $main_font
-$big_font = "Segoe UI Light", "Segoe UI", Optima, Helvetica, Arial, sans-serif
-$head_font = "Franklin Gothic Medium", "Franklin Gothic", $big_font
-$mono_font = Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New", monospace
-$subject_font = "PT Sans", "Segoe UI", Optima, Arial, sans-serif
-
-$post_font_size = 100%/133%
-$post_font = $main_font
-$blog_font_size = 100%/140%
-$blog_font = $post_font
-
-$main_bg = #fff
-$head_bg = darken(#e3e0da, 3%)
-$menu_border = rgba(220, 224, 220, .95)
-$menu_gradient =	@is (ie[-8], "average", "linear-gradient")(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
-$sidebar-width =	@is (webkit, "242px", "240px") // Webkit screws up on padding/border in table mode
-$max-width =		@is (ie6, "width", "max-width")
-
-$window_bg = darken($window_bg2, 1%) // lighten(#e3e0d0, 13%) // #f2f3ea // #f9f6f0
-$window_bg2 = #f8faf8 // lighten(#e3e0d0, 11%) // darken(hue($main_bg, -20), .5%) // #f3f7f3 // transparent
-$window_bg3 = #f0f0f0
-$board_col = #d97b33
-
 // Unused, but I like to keep these around...
 $other_bg = #e7e9b8
 $reddish = #c60
@@ -1705,7 +1679,7 @@ $alphamix = $main_bg
 		font-size: 1em
 		background: $main_bg
 		a
-			@if ($border > 0)
+			@if $border > 0
 				border: $border
 			@endif
 			color: $board_col

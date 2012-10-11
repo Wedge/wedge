@@ -16,6 +16,9 @@
 		By Nao.
 	]]></comment>
 
+	<move block="linktree" to="content_wrap" where="first" />
+	<!move block="linktree:bottom" to="content_wrap" where="add" />
+
 	<options>
 		<sidebar>
 			left

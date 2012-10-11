@@ -21,7 +21,7 @@ body
 #wedge
 	padding: 15px 0
 
-#header, #navi, #content, #footer, #linktree
+#header, #navi, #content, #footer
 	margin: auto
 	width: 95%
 	max-width: 1200px
@@ -42,7 +42,7 @@ body
 	padding: 5px 0 0
 	overflow: hidden
 
-#content, #linktree
+#content
 	border: 1px solid #999
 	border-width: 0 1px
 	background: #faf8f6
@@ -53,18 +53,18 @@ body
 #edge
 	padding: 0
 
-#sidebar
-	background: #edefe6
+@remove #sidebar
+	border: 1px solid #ccc
+	background: #f2f3ea
+	border-radius: 8px
 
-@media $responsive
-	body #sidebar
-		top, border-radius: 0
-		border-width: 1px 0 0
-		display: block
-		margin: 0 -20px -20px
-		section header
-			color: #000
-			border: 0
+#sidebar
+	background: transparent
+	padding: 60px 0
+	.column
+		background: #edefe6
+		border: 1px solid #ccc
+		border-radius: 8px
 
 #main
 	padding: 4px 22px 12px 8px
@@ -101,16 +101,24 @@ body
 
 // The navigation list (i.e. linktree)
 #linktree
+	background: transparent
+	margin: 0 -$sidebar-width 0 0 // This is to allow the linktree to use the sidebar space...
 	ul
-		padding: .5em 20px
 		display: block
-		margin: 0
+		margin, padding, border: 0
 		font-size: 110%
-		border: 0
-		background: none
 
-#linktree_bt ul
-	border: 0
+@media $responsive
+	body
+		#sidebar
+			top, padding: 0
+			display: block
+			margin: 0 -20px -20px
+			.column
+				border, border-radius: 0
+			section header
+				color: #000
+				border: 0
 
 // The footer with copyright links etc.
 #footer extends .lightgrad
@@ -145,6 +153,8 @@ a, #linktree a
 	border-width: 1px 0
 	margin: 0 8px
 	text-align: center
+	li
+		text-align: $left
 	h4:hover, h4.hove
 		background-color: transparent
 		color: #000

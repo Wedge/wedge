@@ -1262,6 +1262,7 @@ final class wetemItem
 	function first($items)		{ wetem::first($this->target, $items); return $this; }
 	function before($items)		{ wetem::before($this->target, $items); return $this; }
 	function after($items)		{ wetem::after($this->target, $items); return $this; }
+	function move($layer, $p)	{ wetem::move($this->target, $layer, $p); return $this; }
 	function rename($layer)		{ wetem::rename($this->target, $layer); return $this; }
 	function outer($layer)		{ wetem::outer($this->target, $layer); return $this; }
 	function inner($layer)		{ wetem::inner($this->target, $layer); return $this; }
@@ -1284,6 +1285,7 @@ final class wetemItem
  * wetem::first()	- same, but prepends data to given layer
  * wetem::before()	- same, but inserts data *before* given layer or block
  * wetem::after()	- same, but inserts data *after* given layer or block
+ * wetem::move()	- moves an existing block or layer to another position in the skeleton
  *
  * wetem::layer()	- various layer creation functions (see documentation for the function)
  * wetem::rename()	- rename an existing layer
@@ -1294,7 +1296,7 @@ final class wetemItem
  * wetem::hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
  *
  * wetem::parent()	- return the name of the block/layer's parent layer
- * wetem::get()		- see weitemItem description. If you only have one action to apply, avoid using it.
+ * wetem::get()		- see wetemItem description. If you only have one action to apply, avoid using it.
  * wetem::has()		- does the skeleton have this block or layer in it?
  *					  - ::has_block($block) forces a test for blocks only
  *					  - ::has_layer($layer) forces a test for layers only
@@ -1419,6 +1421,34 @@ final class wetem
 		// Otherwise it's a layer, make sure it's removable.
 		elseif (isset(self::$layers[$layer]))
 			self::remove_layer($target);
+	}
+
+	/**
+	 * Move an existing block or layer to somewhere else in the skeleton.
+	 *
+	 * @param string $item The name of the block or layer to move.
+	 * @param string $target The target block or layer.
+	 * @param string $where The new position relative to the target: before, after, anything accepted by wetem::op.
+	 */
+	static function move($item, $target, $where)
+	{
+		if (!self::has($item) || !self::has($target))
+			return false;
+
+		if (isset(self::$layers[$item]))
+		{
+			$to_move = self::$layers[$item];
+			unset(self::$layers[$item]);
+		}
+		else
+		{
+			$parent = self::parent($item);
+			if (!$parent)
+				return false;
+			$to_move = self::$layers[$parent][$item];
+			unset(self::$layers[$parent][$item]);
+		}
+		self::op(array($item => $to_move), $target, $where, true);
 	}
 
 	/**
@@ -1647,7 +1677,7 @@ final class wetem
 		self::$layers = array();
 		self::$skeleton = $transit;
 
-		// !!! Sadly, array_walk_recursive() won't trigger on child arrays... :(
+		// Sadly, array_walk_recursive() won't trigger on child arrays... :(
 		self::reindex_recursive(self::$skeleton);
 	}
 
@@ -1844,8 +1874,9 @@ final class wetem
 	 * @param string $blocks The name of the blocks or layers to be added.
 	 * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc. If using 'before' or 'after', you may instead specify a block name.
 	 * @param string $where Where should we add the item? Check the comments inside the function for a fully documented list of positions. Non-default layers should use wetem::add() rather than wetem::load().
+	 * @param bool $force Only used when $blocks shouldn't be tempered with.
 	 */
-	private static function op($blocks, $target, $where)
+	private static function op($blocks, $target, $where, $force = false)
 	{
 		/*
 			This is the full list of $where possibilities.
@@ -1866,9 +1897,9 @@ final class wetem
 		if (empty($blocks))
 			list ($target, $blocks) = array('default', $target);
 
-		$blocks = self::list_blocks((array) $blocks);
+		if (!$force)
+			$blocks = self::list_blocks((array) $blocks);
 		$has_layer = (bool) count(array_filter($blocks, 'is_array'));
-
 		$to = self::find($target, $where);
 		if (empty($to))
 			return false;

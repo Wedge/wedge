@@ -2117,6 +2117,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 		preg_match_all('~<(?!!)(/)?([\w:,]+)\s*([^>]*?)(/?)\>~', $context['skeleton'], $match, PREG_SET_ORDER);
 		wetem::build($match);
 		unset($context['skeleton']);
+
+		if (isset($context['skeleton_moves']))
+			foreach ($context['skeleton_moves'] as $move)
+				wetem::move($move[0], $move[1], $move[2]);
 	}
 
 	// Guests may still need a name

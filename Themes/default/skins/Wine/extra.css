@@ -5,7 +5,7 @@
  */
 
 body
-	padding: 0 6px
+	padding: 6px
 
 html
 	background-image: linear-gradient(rgb(160,160,160) 0, rgba(160,160,160,.5) 242px, transparent)
@@ -55,7 +55,7 @@ html
 		font-size: .9em
 
 #main
-	padding: 4px 0 12px 30px
+	padding: 0 0 0 30px
 
 #header
 	h2
@@ -81,8 +81,15 @@ html
 	.frame
 		gradient: $head_bg, darken($head_bg, 20%)
 
+#linktree
+	margin: 0 -20px
+
+#linktree_bt
+	padding-top: 1em
+
 // The footer with copyright links etc.
 #footer
+	margin-top: 16px
 	border-top: 3px solid #bdb5b5
 	a
 		color: #fff
@@ -214,19 +221,21 @@ section.ic
 
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
-// Topic title and Quick access
+// Topic title
 .posthead extends .catbase
 	margin: 0 0 4px
 	background: rgba(0,0,0, .03)
+	box-shadow: inset 0 24px 20px -8px #bbb
 	text-shadow: white 0 1px 2px
 	color: gray
 
 #top_subject
 	font: 700 1em/20px "PT Sans", $main_font
+	letter-spacing: 0
 
 // Previous/next topic links inside .posthead
 .prevnext_prev
-	font: 400 60%/1.3em Arial
+	font: 700 60%/1.3em $main_font
 
 /* Post styling (still in the Display template)
 ---------------------------------------------------- */
@@ -291,16 +300,15 @@ ul.buttonlist
 // just by adding the 'reset' keyword next to it.
 @media $responsive reset
 	body
-		#edge
-			clear: both
-			display: table
+		padding: 0
+		#wedge
+			border-radius: 0
 		#sidebar
-			display: table-footer-group
-			box-sizing: border-box
+			display: block
 			width: auto
-			background: $window_bg
+			border, border-radius: 0
 			border-top: 1px solid #bdb5b5
-			margin: 0 -30px -20px
+			margin: 0 -30px -30px
 			section mixes .inline-block
 				vertical-align: top
 				width: $sidebar-width
