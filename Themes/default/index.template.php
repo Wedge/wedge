@@ -72,7 +72,7 @@ function template_init()
 		// on more accurate div tags with a 'display: table-cell' setting.
 		'offside'	=> array(
 			'ie[-7]'	=> '
-	<table id="edge"><tr><td class="top">{body}</td>',
+	<table id="edge" cellspacing="0"><tr><td class="top">{body}</td>',
 			'else'		=> '<div id="edge">{body}',
 		),
 

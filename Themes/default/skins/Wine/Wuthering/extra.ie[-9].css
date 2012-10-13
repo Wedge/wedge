@@ -4,7 +4,7 @@
 
 #upper_section .frame,
 #upper_section h1,
-.catbase
+.catbase, body
 	filter: none
 
 // .lightgrad implies a gradient, which triggers hasLayout for IE -- not good in menus!

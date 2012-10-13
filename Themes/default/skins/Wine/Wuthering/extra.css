@@ -5,9 +5,10 @@
  */
 
 body
+	text-align: center
 	background: #faefe6
 	color: #333
-	padding: 0
+	padding: 15px
 
 .lightgrad virtual
 	gradient: #eee, #faf8f6
@@ -19,36 +20,26 @@ body
 	box-shadow: inset 0 8px 12px -8px #fff
 
 #wedge
-	padding: 15px 0
-
-#header, #navi, #content, #footer
-	margin: auto
-	width: 95%
-	max-width: 1200px
+	text-align: $left
+	box-shadow: 0 0 6px #777
+	border: 1px solid #999
 
 #navi extends .lightgrad
 	background-color: #faf8f6
-	border: 1px solid #999
-	border-width: 0 1px
-	padding: 0
+	padding, border: 0
 
 #header extends .darkgrad
 	background-color: #faf8f6
-	border: 1px solid #999
-	border-bottom: 0
-	border-radius: 12px 12px 0 0
 
 #header div.frame
 	padding: 5px 0 0
 	overflow: hidden
 
 #content
-	border: 1px solid #999
-	border-width: 0 1px
 	background: #faf8f6
 
 #content div.frame
-	padding: 0 20px 20px
+	padding: 0 20px 0
 
 #edge
 	padding: 0
@@ -99,17 +90,45 @@ body
 		background-image: none
 		width, height: auto
 
+#linktree li unextends .horizontal-arrow
+
 // The navigation list (i.e. linktree)
 #linktree
 	background: transparent
-	margin: 0 -$sidebar-width 0 0 // This is to allow the linktree to use the sidebar space...
+	margin: 0 -math($sidebar-width + 20) 0 0 // This is to allow the linktree to use the sidebar space...
 	ul
-		display: block
-		margin, padding, border: 0
+		border-radius: 8px
+		background: linear-gradient(0deg, #fdfdfd, #ededed)
+		padding: 0
+		border: 1px solid #ccc
+		margin: 8px 0 12px
 		font-size: 110%
+		line-height: 30px
+		overflow: hidden
+	li
+		position: relative
+		margin-right: 11px
+		padding-left: 8px
+		padding-right: 5px
+		:after
+			content: ""
+			opacity: .1
+			position: absolute
+			display: inline-block
+			right: 0
+			margin-right: -15px
+			width: 15px
+			height: 30px
+			background: url($images/theme/tria.gif) 0 -30px no-repeat
+		:nth-last-child(even)
+			background: rgba(141, 137, 125, .1)
+			:after
+				background-position: 0 0
 
 @media $responsive
 	body
+		#wedge, #header, #footer
+			border-radius: 0
 		#sidebar
 			top, padding: 0
 			display: block
@@ -119,14 +138,14 @@ body
 			section header
 				color: #000
 				border: 0
+		#linktree
+			margin: 0
 
 // The footer with copyright links etc.
 #footer extends .lightgrad
 	text-align: center
 	background-color: #f4f2f3
-	border: 1px solid #999
 	border-top: 1px solid #ccc
-	border-radius: 0 0 12px 12px
 	color: #333
 	div.frame
 		padding: 10px 20px
@@ -150,7 +169,6 @@ a, #linktree a
 ------------------------------------------------------- */
 
 #main_menu
-	border-width: 1px 0
 	margin: 0 8px
 	text-align: center
 	li
@@ -279,11 +297,15 @@ $subcat_font = normal 1.1em $main_font
 $post_font = $main_font
 $post_font_size = 10.5pt/140%
 $board_col = #d97b33
+$radius = 20px
 
 // Reset the sidebar position from left, to right.
 @remove #edge, #sidebar, #main
 	direction: ltr
 	direction: rtl
+
+@remove #footer
+	margin-top: 16px
 
 @remove
 	background: url($images/theme/bg.jpg)

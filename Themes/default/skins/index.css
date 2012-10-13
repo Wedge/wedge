@@ -111,11 +111,11 @@ header, footer, aside, section, article, nav
 #wedge
 	overflow: hidden
 	max-width: 1240px
-	border-radius: 8px
+	border-radius: $radius
 	margin: auto
 
 #header
-	border-radius: 8px 8px 0 0
+	border-radius: $radius $radius 0 0
 
 #header, #content, #linktree
 	background: $main_bg
@@ -240,12 +240,12 @@ ul#noava
 		overflow: hidden
 		border: 1px dotted #999
 		border-width: 0 0 1px 0
-		li extends .horizontal-arrow
-			display: inline
-			line-height: 20px
-			padding: .5em 0
-			&.last:after
-				display: none
+	li extends .horizontal-arrow
+		display: inline
+		line-height: 20px
+		padding: .5em 0
+		&.last:after
+			display: none
 
 #linktree_bt extends #linktree
 	padding: 0
@@ -255,7 +255,7 @@ ul#noava
 // The footer with copyright links etc.
 #footer
 	margin: auto
-	border-radius: 0 0 8px 8px
+	border-radius: 0 0 $radius $radius
 	border-top: 1px solid #bdb5b5
 	div.frame
 		padding: 10px 20px

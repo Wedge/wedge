@@ -207,7 +207,7 @@
 		<aside id="sidebar"><div class="column">{body}</div></aside></macro>
 
 	<macro name="sidebar" for="ie[-7]">
-	<table id="edge"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td></macro>
+	<table id="edge" cellspacing="0"><tr><td id="sidebar" class="top"><div class="column">{body}</div></td></macro>
 
 	<macro name="offside"><div id="offside">{body}</div></div></macro>
 	<macro name="offside" for="ie[-7]"><td id="offside" class="top">{body}</td></tr></table></macro>
