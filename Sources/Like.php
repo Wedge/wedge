@@ -206,7 +206,7 @@ function DisplayLike()
 	$members_actual = loadMemberData($members);
 	if (count($members_actual) != count($members))
 	{
-		// So we couldn't find all the members. Let's get rid of the ones we're not interested in
+		// So we couldn't find all the members. Let's get rid of the ones we're not interested in.
 		$diff = array_diff($members, $members_actual);
 		foreach ($diff as $diff_item)
 			unset($likes[$diff_item]);
@@ -223,7 +223,7 @@ function DisplayLike()
 		return;
 	}
 
-	$_GET['title'] = number_context('likes_header', count($likes));
+	$_POST['t'] = number_context('likes_header', count($likes));
 
 	$context['help_text'] = '
 	<table id="likes" class="w100 cs3">';

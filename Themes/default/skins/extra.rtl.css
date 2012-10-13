@@ -127,7 +127,7 @@ th.last_th
 			padding-right: 10px
 
 // The navigation list (i.e. linktree)
-#linktree ul li
+#linktree li
 	float: right
 	padding: 0 0 0 0.5em
 

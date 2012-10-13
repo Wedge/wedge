@@ -103,7 +103,7 @@ body
 		border: 1px solid #ccc
 		margin: 8px 0 12px
 		font-size: 110%
-		line-height: 30px
+		height, line-height: 30px
 		overflow: hidden
 	li
 		position: relative
@@ -112,21 +112,23 @@ body
 		padding-right: 5px
 		:after
 			content: ""
-			opacity: .1
 			position: absolute
-			display: inline-block
-			right: 0
-			margin-right: -15px
-			width: 15px
-			height: 30px
-			background: url($images/theme/tria.gif) 0 -30px no-repeat
+			margin-right: -30px
+			width, height, right: 0
+			border: 15px solid rgba(141, 137, 125, .1)
+			border-left-color: transparent
+			clip: rect(0, 15px, 30px, 0)
 		:nth-last-child(even)
 			background: rgba(141, 137, 125, .1)
 			:after
-				background-position: 0 0
+				border: 15px solid transparent
+				border-left-color: rgba(141, 137, 125, .1)
 
 @media $responsive
 	body
+		padding: 0
+		#wedge
+			border: 0
 		#wedge, #header, #footer
 			border-radius: 0
 		#sidebar
