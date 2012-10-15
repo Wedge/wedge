@@ -235,7 +235,7 @@ ul#noava
 		color: #963
 	ul
 		padding: 7px
-		margin: 0 12px
+		margin: 0
 		list-style: none
 		overflow: hidden
 		border: 1px dotted #999
@@ -248,7 +248,7 @@ ul#noava
 			display: none
 
 #linktree_bt extends #linktree
-	padding: 0
+	padding: 1em 0 0
 	ul
 		border-width: 1px 0 0 0
 

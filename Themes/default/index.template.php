@@ -617,15 +617,23 @@ function template_linktree($position = 'top', $force_show = false)
 		return;
 
 	// itemtype is provided for validation purposes.
- 	echo '
-	<div id="linktree', $position === 'bottom' ? '_bt' : '', '" itemscope itemtype="http://schema.org/WebPage">';
+	if ($position === 'bottom')
+		echo '
+	<div id="linktree_bt">';
+	else
+		echo '
+	<div id="linktree" itemtype="http://schema.org/WebPage" itemscope>';
 
 	// If linktree is empty, just return - also allow an override.
 	if (!empty($context['linktree']) && ($linksize = count($context['linktree'])) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
 	{
 		$needs_fix = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 
-		echo '
+		if ($position === 'bottom')
+			echo '
+		<ul>';
+		else
+			echo '
 		<ul itemprop="breadcrumb">';
 
 		// Each tree item has a URL and name. Some may have extra_before and extra_after.

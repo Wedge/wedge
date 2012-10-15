@@ -231,6 +231,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 /**
  * This function adds a string to the header's inline CSS.
  * Several strings can be passed as parameters, allowing for easier conversion from an "echo" to an "add_css()" call.
+ * Please note that, obviously, this function will do nothing if you call wetem::hide() or generally don't output the HTML head.
  */
 function add_css()
 {

@@ -1098,7 +1098,7 @@ function template_aeva_viewAlbum()
 		$album_data['view'] == 'normal' ? aeva_listItems($context['aeva_items'], true, '', $can_edit_items) : aeva_listFiles($context['aeva_items'], $can_edit_items), '
 		</div>
 	</we:block>
-	<div class="pagesection" style="margin-top: 8px; margin-bottom: 0">', $can_edit_items ? '
+	<div class="pagesection" style="margin-top: 8px; margin-bottom: 0; overflow: visible">', $can_edit_items ? '
 		<div class="aeva_quickmod_bar">
 			<label><input type="checkbox" id="check_all" onclick="invertAll(this, this.form, \'mod_item[\');"> ' . $txt['check_all'] . '</label>&nbsp;
 			<select name="aeva_modtype" id="modtype" tabindex="' . $context['tabindex']++ . '"' . ($can_add_playlist ? ' onchange="$(\'#aeva_my_playlists\').toggle(this.value == \'playlist\');"' : '') . '>' . ($can_approve_here ? '
