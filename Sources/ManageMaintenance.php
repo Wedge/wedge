@@ -309,6 +309,8 @@ function MaintainCleanCache()
 
 	// Just wipe the whole cache directory!
 	clean_cache();
+	clean_cache('js');
+	clean_cache('css');
 
 	$context['maintenance_finished'] = $txt['maintain_cache'];
 }
