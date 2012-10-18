@@ -1596,11 +1596,12 @@ function detectBrowser()
 	$browser['is_webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
 	$browser['is_chrome'] = $is_webkit && (strpos($ua, 'Chrome') !== false || strpos($ua, 'CriOS') !== false);
 	$browser['is_safari'] = $is_webkit && !$browser['is_chrome'] && strpos($ua, 'Safari') !== false;
-	$browser['is_iphone'] = $is_webkit && (strpos($ua, 'iPhone') !== false || strpos($ua, 'iPod') !== false);
+	$browser['is_ios'] = $is_ios = $is_webkit && strpos($ua, '(iP') !== false;
+	$browser['is_iphone'] = $is_ios && strpos($ua, 'iPad') === false;
 	$browser['is_android'] = $is_webkit && strpos($ua, 'Android') !== false;
 
 	// We're only detecting the iPad for now. Well it's a start...
-	$browser['is_tablet'] = $is_webkit && strpos($ua, 'iPad') !== false;
+	$browser['is_tablet'] = $is_ios && !$browser['is_iphone'];
 
 	// Detecting broader mobile browsers. Make sure you rely on skin.xml's <mobile> setting in priority.
 	$browser['is_mobile'] = !empty($user_info['is_mobile']);
@@ -1625,8 +1626,8 @@ function detectBrowser()
 	$ver = isset($ver[1]) ? (float) $ver[1] : 0;
 
 	// If this is an iDevice, the iOS version should tell us more about it than the Safari version.
-	if (($browser['is_iphone'] || $browser['is_tablet']) && preg_match('~iP(?:hone|od|ad) OS (\d+(?:_\d+))~', $ua, $ios))
-		$ver = (float) str_replace('_', '.', $ios[1]);
+	if ($is_ios && preg_match('~iP(?:hone|od|ad) OS (\d+(?:_\d+))~', $ua, $ver))
+		$ver = (float) str_replace('_', '.', $ver[1]);
 
 	// Reduce to first significant sub-version (if any), e.g. v2.01 => 2, v2.50.3 => 2.5
 	$browser['version'] = floor($ver * 10) / 10;
@@ -1637,7 +1638,7 @@ function detectBrowser()
 
 	// Store our browser name...
 	$browser['agent'] = '';
-	foreach (array('opera', 'chrome', 'firefox', 'ie', 'iphone', 'android', 'tablet', 'safari', 'webkit', 'gecko') as $agent)
+	foreach (array('opera', 'ios', 'chrome', 'firefox', 'ie', 'android', 'tablet', 'safari', 'webkit', 'gecko') as $agent)
 	{
 		if ($browser['is_' . $agent])
 		{

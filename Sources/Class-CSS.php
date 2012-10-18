@@ -376,12 +376,12 @@ class wess_var extends wess
 				}
 			}
 
-			foreach ($css_vars as $key => $val)
-				wess_var::develop_var($key);
-
 			// Same as above, but for the actual variables.
 			$keys = array_map('strlen', array_keys($css_vars));
 			array_multisort($keys, SORT_DESC, $css_vars);
+
+			foreach ($css_vars as $key => $val)
+				wess_var::develop_var($key);
 
 			// We need to keep this one for later...
 			if (isset($css_vars['$alphamix']))
@@ -1400,9 +1400,9 @@ class wess_prefixes extends wess
 		$both = $prefixed . $unchanged;
 		$b = $browser;
 		$v = $b['version'];
-		list ($ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $iphone, $android, $webkit) = array(
-			$b['is_ie8down'], $b['is_ie9'], $b['is_ie10'], $b['is_opera'], $b['is_firefox'], $b['is_safari'],
-			$b['is_chrome'], $b['is_iphone'], $b['is_android'], $b['is_webkit']
+		list ($ie, $ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $iphone, $android, $webkit) = array(
+			$b['is_ie'], $b['is_ie8down'], $b['is_ie9'], $b['is_ie10'], $b['is_opera'], $b['is_firefox'],
+			$b['is_safari'], $b['is_chrome'], $b['is_iphone'], $b['is_android'], $b['is_webkit']
 		);
 
 		// Only IE6/7/8 don't support border-radius these days.
@@ -1438,10 +1438,10 @@ class wess_prefixes extends wess
 			return $unchanged;
 		}
 
-		// IE6 and IE7 don't support box-sizing, and Mozilla, older Androids and older Safaris require a prefix.
+		// IE6 and IE7 don't support box-sizing, while Mozilla, and older Androids and Safaris require a prefix.
 		if ($matches[1] === 'box-sizing')
 		{
-			if (($b['is_ie'] && $v < 8) || ($opera && $v < 9.5))
+			if (($ie && $v < 8) || ($opera && $v < 9.5))
 				return '';
 			if ($firefox || ($iphone && $v < 5) || ($safari && $v < 5.1) || ($android && $v < 4))
 				return $prefixed;
@@ -1454,6 +1454,14 @@ class wess_prefixes extends wess
 			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1) || ($safari && $v < 3.2))
 				return '';
 			return $opera || $ie10 ? $unchanged : $prefixed;
+		}
+
+		// As of October 2012, IE10 supports this unprefixed, and Firefox and Chrome need a prefix.
+		if ($matches[1] === 'font-feature-settings')
+		{
+			if ($ie && $v >= 10)
+				return $unchanged;
+			return $prefixed;
 		}
 
 		// IE6/7/8/9 don't support transitions, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
@@ -1481,12 +1489,16 @@ class wess_prefixes extends wess
 		{
 			if ($ie8down || ($opera && $v < 10.5) || ($firefox && $v < 3.5) || ($safari && $v < 3.1))
 				return '';
-			if ($is9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
+			if ($ie9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
 			return $unchanged;
 		}
 
-		// hyphens and flex box layouts either aren't supported or always require a prefix, for now.
+		// The old flexible box model... Never got out of prefix land.
+		if (strpos($matches[1], 'box-') === 0)
+			return $prefixed;
+
+		// Hyphens aren't supported or always require a prefix, for now.
 		return $both;
 	}
 
@@ -1523,10 +1535,17 @@ class wess_prefixes extends wess
 			return $prefixed;
 		}
 
+		// All browsers that support the old flexbox model will require a prefix.
+		if (strpos($matches[1], 'box') !== false)
+			return str_replace('box', $prefix . 'box', $unchanged);
+
 		// Nothing bad was found? Just ignore.
 		return $unchanged;
 	}
 
+	// Note: the old flexbox model is taken into account, but not the new one. This is because it has too many related properties and would
+	// take to long to support, especially when Opera already implemented it prefix-free. Meaning that Firefox and Chrome will probably do
+	// the same soon enough. (As of Firefox 18 and Chrome 24, they need prefixes everywhere, and Firefox requires a setting to be enabled.)
 	function process(&$css)
 	{
 		global $browser, $prefix;
@@ -1538,9 +1557,10 @@ class wess_prefixes extends wess
 			'box-shadow',					// Rectangular drop shadows
 			'box-sizing',					// Determines whether a container's width includes padding and border
 			'border-image',					// Border images
+			'font-feature-settings',		// Ligatures and other things
 			'hyphens',						// Automatic hyphens on long words
 			'column-[a-z-]+',				// Multi-column layout
-			'box-[a-z-]+',					// Flexible box model -- requires setting "display: -prefix-box" before!
+			'box-[a-z-]+',					// Old Flexbox model
 			'grid-[a-z]+',					// Grid layout
 			'transition(?:-[a-z-]+)?',		// Animated transitions
 			'animation(?:-[a-z-]+)?',		// Proper animations
@@ -1553,6 +1573,8 @@ class wess_prefixes extends wess
 		$values = array(
 
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
+			'display:\h*box\b',		// Old Flexbox model declaration
+			'\bcalc\h*\(',			// calc() function
 
 		);
 		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wess_prefixes::fix_values', $css);
