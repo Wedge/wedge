@@ -269,7 +269,7 @@ function template_main()
 			</dl>
 		</div>
 
-		<div class="two-columns windowbg wrc">
+		<div class="two-columns windowbg2 wrc">
 			<h6>
 				<span class="top_likes"></span>
 				', $txt['top_liked_posters'], '

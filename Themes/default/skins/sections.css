@@ -104,7 +104,7 @@ img.new_posts
 
 .lastpost img
 	float: right
-	padding: 4px
+	padding: 4px 0 0 4px
 
 /* Styles for the Display template (topic view).
 ---------------------------------------------------- */
@@ -812,15 +812,12 @@ tr.windowbg td
 			background-image: url($images/icons/quick_lock_my.gif)
 		&.pinned.locked.my
 			background-image: url($images/icons/quick_pin_lock_my.gif)
+	.stats,
 	.subject p,
-	.stats
+	.lastpost p
 		font-size: .85em
-		margin, padding: 0
-	.lastpost
-		background-image: none
-		font-size: .85em
-		line-height: 1.3em
-		padding: 4px
+		margin: 0
+		padding: 0 6px
 
 /* Styles for (fatal) errors.
 ------------------------------------------------- */

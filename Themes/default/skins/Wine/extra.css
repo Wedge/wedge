@@ -12,10 +12,16 @@ html
 	background-size: auto 700px
 	background-repeat: repeat-x
 
-.windowbg
+.postbg
 	background-image: linear-gradient(rgba(160,160,160,.15), rgba(160,160,160,.02) 242px, transparent)
 	background-size: auto 700px
 	background-repeat: repeat-x
+
+table.cs0 final tr.windowbg td
+	border-bottom: 1px solid rgba(255,255,255, .7)
+
+table.cs0 final tr.windowbg:last-child td
+	border-bottom: 0
 
 /* Main layout declarations (body, sidebar...)
 ------------------------------------------------------- */
@@ -332,6 +338,7 @@ $post_font_size = 9pt/140%
 
 $main_bg = #fffdfa
 $head_bg = rgba(221, 200, 137, .66)
-$window_bg = #f2f3ea // #f9f6f0
-$window_bg2 = #f3f7f3
-$post_bg2 = transparent
+$window_bg = darken(#f2f3ea, 1%)
+$window_bg2 = darken(#f3f7f3, 2%)
+$post_bg = $window_bg
+$post_bg2 = $window_bg2
