@@ -189,7 +189,7 @@ tr.titlebg th, tr.catbg th
 	background: rgba(0,0,0, .03)
 	box-shadow: none
 	text-shadow: white 0 1px 2px
-	font: 600 1.3em/20px $main_font
+	font: 700 1.3em/20px $main_font
 	img
 		vertical-align: -2px
 
@@ -257,10 +257,10 @@ $post_font_size = 9.5pt/140%
 	margin: 0 -20px
 
 @remove #wedge
-	border-radius: 8px
+	border-radius: $radius
 
 @remove #footer
-	border-radius: 0 0 8px 8px
+	border-radius: 0 0 $radius $radius
 
 // Reset the sidebar position from right, to left.
 @remove #edge, #sidebar, #main

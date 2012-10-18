@@ -48,7 +48,7 @@ function template_admin()
 				foreach ($items as $key => $url)
 					echo '
 				', $txt['new_to_wedge_' . $key], '<br>
-				&nbsp; ', sprintf($txt['new_to_wedge_' . $key . '_answer'], $url), '<br><br>';
+				&rarr; ', sprintf($txt['new_to_wedge_' . $key . '_answer'], $url), '<br><br>';
 
 				echo '
 			</div>';

@@ -1367,6 +1367,9 @@ div.top_row dd
 
 @media $responsive
 	body
+		padding: 0
+		#wedge
+			border-radius: 0
 		#edge
 			clear: both
 			display: block

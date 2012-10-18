@@ -125,11 +125,8 @@ body
 
 @media $responsive
 	body
-		padding: 0
 		#wedge
 			border: 0
-		#wedge, #header, #footer
-			border-radius: 0
 		#sidebar
 			top, padding: 0
 			display: block
