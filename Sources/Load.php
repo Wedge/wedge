@@ -1626,8 +1626,8 @@ function detectBrowser()
 	$ver = isset($ver[1]) ? (float) $ver[1] : 0;
 
 	// If this is an iDevice, the iOS version should tell us more about it than the Safari version.
-	if ($is_ios && preg_match('~iP(?:hone|od|ad) OS (\d+(?:_\d+))~', $ua, $ver))
-		$ver = (float) str_replace('_', '.', $ver[1]);
+	if ($is_ios && preg_match('~iP(?:hone|od|ad).*? OS (\d+(?:_\d+))~', $ua, $ios_ver))
+		$ver = (float) str_replace('_', '.', $ios_ver[1]);
 
 	// Reduce to first significant sub-version (if any), e.g. v2.01 => 2, v2.50.3 => 2.5
 	$browser['version'] = floor($ver * 10) / 10;

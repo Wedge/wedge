@@ -1,6 +1,7 @@
 /*!
  * jQuery IE6 hover support plug-in v1.1.0
  * Add support for the :hover CSS pseudo-selector to IE6
+ * http://github.com/gilmoreorless/jquery-ie6hover
  *
  * @requires jQuery v1.3 or later
  *
@@ -45,7 +46,7 @@
 
 				for (var j = 0, len = rules.length; j < len; j++)
 				{
-					var rule = rules[j], text = rule.selectorText, newText = [], newTextChunk = '';
+					var rule = rules[j], text = (rule && rule.selectorText) || '', newText = [], newTextChunk = '';
 					// Reset regexps to make sure we're matching at the start of the selector
 					rCheck.lastIndex = 0;
 					rIgnore.lastIndex = 0;
@@ -83,7 +84,8 @@
 
 						// Add a new CSS rule at the same place as the existing rule to keep CSS inheritance working
 						text = newText.join('');
-						sheet.addRule(text, rule.style.cssText, j);
+						if (rule.style.cssText)
+							sheet.addRule(text, rule.style.cssText, j);
 
 						// Increase the counters due to the new rule being inserted
 						j++;
