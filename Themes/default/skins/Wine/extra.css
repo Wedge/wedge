@@ -307,8 +307,13 @@ ul.buttonlist
 @media $responsive reset
 	body
 		padding: 0
-		#wedge
-			border-radius: 0
+		@if (opera)
+			#wedge, #header, #footer
+				border-radius: 0
+		@else
+			#wedge
+				border-radius: 0
+		@endif
 		#sidebar
 			display: block
 			width: auto

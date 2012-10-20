@@ -1365,8 +1365,13 @@ div.top_row dd
 @media $responsive
 	body
 		padding: 0
-		#wedge
-			border-radius: 0
+		@if (opera)
+			#wedge, #header, #footer
+				border-radius: 0
+		@else
+			#wedge
+				border-radius: 0
+		@endif
 		#edge
 			clear: both
 			display: block

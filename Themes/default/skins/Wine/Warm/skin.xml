@@ -165,10 +165,6 @@
 	$.ie6hover();
 	]]></code>
 
-	<code for="iphone,tablet"><![CDATA[
-	$('#sidebar').insertBefore('#footer');
-	]]></code>
-
 	<!--
 		CSS. This section allows you to define extra style rules that should be
 		added at the top of the page. You should prefer the use of actual CSS

@@ -60,6 +60,7 @@ body
 	font: $main_font_size $main_font
 	margin: 0
 	padding: 12px
+	transition: all .3s ease
 
 header, footer, aside, section, article, nav
 	display: block
@@ -114,8 +115,10 @@ header, footer, aside, section, article, nav
 	border-radius: $radius
 	margin: auto
 
-#header
-	border-radius: $radius $radius 0 0
+@if (opera)
+	#header
+		border-radius: $radius $radius 0 0
+@endif
 
 #header, #content, #linktree
 	background: $main_bg
@@ -255,8 +258,10 @@ ul#noava
 // The footer with copyright links etc.
 #footer
 	margin: auto
-	border-radius: 0 0 $radius $radius
 	border-top: 1px solid #bdb5b5
+	@if (opera)
+		border-radius: 0 0 $radius $radius
+	@endif
 	div.frame
 		padding: 10px 20px
 	a

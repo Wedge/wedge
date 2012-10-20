@@ -543,21 +543,7 @@ function template_aeva_item_actions()
 	if ($item['can_edit'])
 		echo '
 			<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $theme['images_aeva'], '/camera_edit.png">&nbsp;', $txt['media_edit_this_item'], '</a>
-			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '"', $amSettings['use_zoom'] ? ' class="zoom is_html"' : ' onclick="return confirm(we_confirm);"',
-			'><img src="', $theme['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
-
-	if ($item['can_edit'] && $amSettings['use_zoom'])
-		echo '
-			<div class="zoom-html">
-				<form action="', $galurl, 'sa=delete;in=', $item['id_media'], '" method="post">
-					<h3>', $txt['media_delete_this_item'], '</h3>
-					<hr>', $txt['generic_confirm_request'], '
-					<p class="mgra">
-						<input type="submit" value="', $txt['media_yes'], '" class="submit">
-						<input type="button" onclick="return hs.close(this);" value="', $txt['media_no'], '" class="cancel">
-					</p>
-				</form>
-			</div>';
+			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '" onclick="return confirm(we_confirm);"><img src="', $theme['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
 
 	if ($item['can_download'])
 		echo '

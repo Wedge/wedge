@@ -31,8 +31,4 @@
 	$.ie6hover();
 	]]></code>
 
-	<code for="iphone,tablet"><![CDATA[
-	$('#sidebar').insertAfter('#main');
-	]]></code>
-
 </skin>
