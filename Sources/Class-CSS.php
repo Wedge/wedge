@@ -264,7 +264,7 @@ class wess_mixin extends wess
 				// Or is this a simple non-mixin selector we want to mix with?
 				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-z]+\h*)?\n(\h+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
 					foreach ($selectors as $sel)
-						$rep .= rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
+						$rep .= "\n" . rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
 				$newline = "\n" . $mixin[1] . (isset($mixin[1][0]) ? $mixin[1][0] : "\t");
 				$repa[$mixin[0]] = $mixin[1] . $mixin[2] . $newline . str_replace("\n", $newline, $rep);

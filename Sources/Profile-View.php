@@ -49,7 +49,7 @@ if (!defined('WEDGE'))
 	array list_getIPMessages(int start, int items_per_page, string sort, string where, array where_vars)
 		// !!!
 
-	void TrackIP(int id_member = none)
+	void trackIP(int id_member = none)
 		// !!!
 
 	void trackEdits(int id_member)
@@ -1050,7 +1050,7 @@ function tracking($memID)
 
 	$subActions = array(
 		'activity' => array('trackActivity', $txt['trackActivity']),
-		'ip' => array('TrackIP', $txt['trackIP']),
+		'ip' => array('trackIP', $txt['trackIP']),
 		'edits' => array('trackEdits', $txt['trackEdits']),
 	);
 
@@ -1407,7 +1407,7 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 	return $messages;
 }
 
-function TrackIP($memID = 0)
+function trackIP($memID = 0)
 {
 	global $user_profile, $scripturl, $txt, $user_info, $settings, $context;
 

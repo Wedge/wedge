@@ -216,7 +216,7 @@ function CustomEmail()
 	);
 
 	// Can we see this person's email address?
-	$context['can_view_receipient_email'] = $context['show_email_address'] == 'yes_permission_override';
+	$context['can_view_recipient_email'] = $context['show_email_address'] == 'yes_permission_override';
 
 	// Are we actually sending it?
 	if (isset($_POST['send'], $_POST['email_body']))
@@ -225,24 +225,8 @@ function CustomEmail()
 
 		checkSession();
 
-		// If it's a guest sort out their names.
-		if ($user_info['is_guest'])
-		{
-			if (empty($_POST['y_name']) || $_POST['y_name'] == '_' || trim($_POST['y_name']) == '')
-				fatal_lang_error('no_name', false);
-			if (empty($_POST['y_email']))
-				fatal_lang_error('no_email', false);
-			if (!is_valid_email($_POST['y_email']))
-				fatal_lang_error('email_invalid_character', false);
-
-			$from_name = trim($_POST['y_name']);
-			$from_email = trim($_POST['y_email']);
-		}
-		else
-		{
-			$from_name = $user_info['name'];
-			$from_email = $user_info['email'];
-		}
+		$from_name = $user_info['name'];
+		$from_email = $user_info['email'];
 
 		// Check we have a body (etc).
 		if (trim($_POST['email_body']) == '' || trim($_POST['email_subject']) == '')

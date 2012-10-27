@@ -113,8 +113,8 @@ function template_custom_email()
 						', $context['recipient']['link'], '
 					</dd>';
 
-	// Can the user see the persons email?
-	if ($context['can_view_receipient_email'])
+	// Can the user see the person's email?
+	if ($context['can_view_recipient_email'])
 		echo '
 					<dt>
 						<strong>', $txt['sendtopic_receiver_email'], ':</strong>
@@ -126,34 +126,15 @@ function template_custom_email()
 				<hr>
 				<dl class="settings send_mail">';
 
-	// If it's a guest we need their details.
-	if ($context['user']['is_guest'])
-		echo '
-					<dt>
-						<label for="y_name"><strong>', $txt['sendtopic_sender_name'], ':</strong></label>
-					</dt>
-					<dd>
-						<input type="text" id="y_name" name="y_name" size="24" maxlength="40" value="', $context['user']['name'], '">
-					</dd>
-					<dt>
-						<label for="y_email"><strong>', $txt['sendtopic_sender_email'], ':</strong></label>
-						<dfn>', $txt['send_email_disclosed'], '</dfn>
-					</dt>
-					<dd>
-						<input type="text" id="y_mail" name="y_email" size="24" maxlength="50" value="', $context['user']['email'], '">
-					</dt>';
-	// Otherwise show the user that we know their email.
-	else
-		echo '
+	// Show the user that we know their email.
+	echo '
 					<dt>
 						<strong>', $txt['sendtopic_sender_email'], ':</strong>
 						<dfn>', $txt['send_email_disclosed'], '</dfn>
 					</dt>
 					<dd>
 						<em>', $context['user']['email'], '</em>
-					</dd>';
-
-	echo '
+					</dd>
 					<dt>
 						<label for="email_subject"><strong>', $txt['send_email_subject'], ':</strong></label>
 					</dt>
