@@ -558,7 +558,10 @@ $.fn.mime = function (oList, oStrings, bUseDataId)
 						+ (pms[3] ? ' class="' + pms[3] + '"' : '')
 						+ (pms[4] ? ' ' + pms[4] : '') // Custom data, such as events?
 						+ (pms[1] ? ' title="' + pms[1] + '"' : '')
-						+ '>' + pms[0] + '</a></li>';
+						+ '>' + pms[0].wereplace({
+							id: id,
+							special: this.substr(3)
+						}) + '</a></li>';
 				});
 
 				$men = $('<div class="mimenu' + (is_right_side ? ' right' : '') + '"></div>')
