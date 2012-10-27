@@ -307,15 +307,29 @@ img.new_posts
 				vertical-align: bottom
 				padding: 0 .2em
 
-		// Could also do with a grayscale filter... IE accepts "filter: gray", while other
-		// browsers will do with "filter: grayscale()". Waiting for wider implementation.
-		li.profile img
-			opacity: .3
-			transition: opacity .3s ease
-			:hover
-				filter: none
-				opacity: 1
-				transition: opacity .3s ease
+// These squares will show up next to the author name in a post. They quickly tell you
+// whether a user is online, has a website, is male/female or is a contact of yours.
+.pixelicons extends .inline-block
+	width: 15px
+	overflow: hidden
+	margin: -1px -4px 0 0
+	div extends .inline-block
+		float: left
+		margin: 0 1px 1px 0
+		width, height: 5px
+		background: gray
+		:only-child
+			width, height: 11px
+	.online
+		background: #69d249
+	.website
+		background: #c96
+	.contact
+		background: #e56717
+	.male
+		background: #7ad
+	.female
+		background: #e799a3
 
 .postarea
 	display: table-cell
@@ -1365,7 +1379,7 @@ div.top_row dd
 @media $responsive
 	body
 		padding: 0
-		@if (opera)
+		@if (opera, ios)
 			#wedge, #header, #footer
 				border-radius: 0
 		@else
@@ -1394,6 +1408,8 @@ div.top_row dd
 		#main
 			display: block
 			padding: 4px 0 12px
-
-$responsive_max_width = 1000px
-$responsive = "all and (max-width: $responsive_max_width)"
+			@if ie[-7]
+				margin-right: 0
+			#offside
+				margin: 0
+			@endif

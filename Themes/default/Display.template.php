@@ -150,7 +150,7 @@ function template_display_posts()
 			echo '
 						<div class="actionbar">';
 
-			// Can the user modify the contents of this post?  Show the modify inline image.
+			// Can the user modify the contents of this post? Show the modify inline image.
 			if ($message['can_modify'])
 				echo '
 							<div class="quick_edit" title="', $txt['modify_msg'], '" onclick="return window.oQuickModify && oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
@@ -397,10 +397,9 @@ function template_userbox(&$message)
 	echo '
 						<h4>';
 
-	// Show online and offline buttons?
-	if (!$message['member']['is_guest'])
-		echo '
-							', $context['can_send_pm'] ? '<a href="' . $message['member']['online']['href'] . '" title="' . $message['member']['online']['label'] . '">' : '', '<img src="', $message['member']['online']['image_href'], '" alt="', $message['member']['online']['text'], '">', $context['can_send_pm'] ? '</a>' : '';
+	// Show user statuses: online/offline, website, gender, is contact.
+	if ($theme['show_profile_buttons'])
+		template_user_status($message['member']);
 
 	// Show a link to the member's profile.
 	echo '
@@ -481,10 +480,6 @@ function template_userbox(&$message)
 							</li>';
 		}
 
-		// Show the profile, website, email address, and personal message buttons.
-		if ($theme['show_profile_buttons'])
-			template_profile_icons($message);
-
 		// Any custom fields for standard placement?
 		if (!empty($message['member']['custom_fields']))
 			foreach ($message['member']['custom_fields'] as $custom)
@@ -506,53 +501,31 @@ function template_userbox(&$message)
 						</ul>';
 }
 
-function template_profile_icons(&$message)
+function template_user_status(&$member)
 {
 	global $context, $theme, $txt;
 
 	echo '
-							<li class="profile">
-								<ul>';
-	// Don't show the profile button if you're not allowed to view the profile.
-	if ($message['member']['can_view_profile'])
-		echo '
-									<li><a href="', $message['member']['href'], '">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/icons/profile_sm.gif" alt="' . $txt['view_profile'] . '" title="' . $txt['view_profile'] . '">' : $txt['view_profile'], '</a></li>';
+							<div class="pixelicons">';
 
-	// Don't show an icon if they haven't specified a website.
-	if ($message['member']['website']['url'] != '' && !isset($context['disabled_fields']['website']))
-		echo '
-									<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['website'], '</a></li>';
+	// Is this user online or not?
+	echo '
+								<div', $member['online']['is_online'] ? ' class="online" title="' . $txt['online'] : ' title="' . $txt['offline'], '"></div>';
 
-	// Don't show the email address if they want it hidden.
-	if (in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
-		echo '
-									<li><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
+	// Have they specified a website?
+	echo '
+								<div', $member['website']['url'] != '' && !isset($context['disabled_fields']['website']) ? ' class="website"' : '', ' title="', $txt['website'], '"></div>';
 
-	// Since we know this person isn't a guest, you *can* message them.
-	if ($context['can_send_pm'])
-		echo '
-									<li><a href="<URL>?action=pm;sa=send;u=', $message['member']['id'], '" title="', $message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline'], '">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/im_' . ($message['member']['online']['is_online'] ? 'on' : 'off') . '.gif" alt="' . ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']) . '">' : ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']), '</a></li>';
+	// Indicate their gender, if filled in.
+	echo '
+								<div', $member['gender'] ? ' class="' . ($member['gender']['name'] == $txt['male'] ? 'male' : 'female') . '" title="' . $member['gender']['name'] . '"' : '', '></div>';
 
-	// Show the IP address if you're suitably privileged.
-	if ($message['can_see_ip'] && !empty($message['member']['ip']))
-	{
-		// Because this seems just a touch convoluted if a single line.
-		if (!$context['can_moderate_forum'])
-			echo '
-									<li><a href="<URL>?action=help;in=see_member_ip" onclick="return reqWin(this);" class="helpc"><img src="', $theme['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
-		else
-			echo '
-									<li><a href="<URL>?action=', !empty($message['member']['is_guest']) ? 'trackip' : 'profile;u=' . $message['member']['id'] . ';area=tracking;sa=ip', ';searchip=', $message['member']['ip'], '"><img src="', $theme['images_url'], '/ip.gif" alt="', $txt['ip'], ': ', $message['member']['ip'], '" title="', $txt['ip'], ': ', $message['member']['ip'], '"></a></li>';
-	}
-
-	// Maybe they want to report this post to the moderator(s)?
-	if ($context['can_report_moderator'] && !$message['is_message_author'])
-		echo '
-									<li><a href="<URL>?topic=', $context['current_topic'], '.0;action=report;msg=', $message['id'], '"><img src="', $theme['images_url'], '/report.gif" alt="', $txt['report_to_mod'], '" title="', $txt['report_to_mod'], '"></a></li>';
+	// Are they a contact of mine..?
+	echo '
+								<div', $member['is_buddy'] ? ' class="contact"' : '', ' title="' . $txt['is_' . ($member['is_buddy'] ? '' : 'not_') . 'buddy'] . '"></div>';
 
 	echo '
-								</ul>
-							</li>';
+							</div>';
 }
 
 function template_show_likes(&$message)

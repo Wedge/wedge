@@ -49,7 +49,7 @@ if (!defined('WEDGE'))
 // The central part of the board - topic display.
 function Display()
 {
-	global $scripturl, $txt, $settings, $context, $theme;
+	global $txt, $settings, $context, $theme;
 	global $options, $user_info, $board_info, $topic, $board, $boardurl;
 	global $attachments, $messages_request, $topicinfo, $language;
 
@@ -352,9 +352,9 @@ function Display()
 	$short_prev = empty($prev_title) ? '' : westr::cut($prev_title, 60);
 	$short_next = empty($next_title) ? '' : westr::cut($next_title, 60);
 	$context['prevnext_prev'] = '
-			<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '&laquo;&nbsp;<a href="' . $scripturl . '?topic=' . $prev_topic . '.0#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a>') . '</div>';
+			<div class="prevnext_prev">' . (empty($prev_topic) ? '' : '&laquo;&nbsp;<a href="<URL>?topic=' . $prev_topic . '.0#new"' . ($prev_title != $short_prev ? ' title="' . $prev_title . '"' : '') . '>' . $short_prev . '</a>') . '</div>';
 	$context['prevnext_next'] = '
-			<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="' . $scripturl . '?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
+			<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="<URL>?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
 	$context['no_prevnext'] = empty($prev_topic) && empty($next_topic);
 
 	// Check if spellchecking is both enabled and actually working. (for quick reply.)
@@ -413,7 +413,7 @@ function Display()
 	$_REQUEST['start'] = max(0, $_REQUEST['start']);
 
 	// Construct the page index, allowing for the .START method...
-	$context['page_index'] = template_page_index($scripturl . '?topic=' . $topic . '.%1$d', $_REQUEST['start'], $context['total_visible_posts'], $context['messages_per_page'], true);
+	$context['page_index'] = template_page_index('<URL>?topic=' . $topic . '.%1$d', $_REQUEST['start'], $context['total_visible_posts'], $context['messages_per_page'], true);
 	$context['start'] = $_REQUEST['start'];
 
 	// Figure out the previous/next links for header <link>.
@@ -430,12 +430,12 @@ function Display()
 			$context['page_index'] = str_replace('[<strong>1</strong>]', '[<strong>' . $txt['all_pages'] . '</strong>]', $context['page_index']);
 		// They aren't using it, but the *option* is there, at least.
 		else
-			$context['page_index'] .= '<a href="' . $scripturl . '?topic=' . $topic . '.0;all">' . $txt['all_pages'] . '</a>';
+			$context['page_index'] .= '<a href="<URL>?topic=' . $topic . '.0;all">' . $txt['all_pages'] . '</a>';
 	}
 
 	// Build the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?topic=' . $topic . '.0',
+		'url' => '<URL>?topic=' . $topic . '.0',
 		'name' => $topicinfo['subject'],
 	);
 
@@ -446,7 +446,7 @@ function Display()
 	{
 		wetem::add('sidebar', 'display_staff');
 		foreach ($board_info['moderators'] as $mod)
-			$context['link_moderators'][] = '<a href="' . $scripturl . '?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
+			$context['link_moderators'][] = '<a href="<URL>?action=profile;u=' . $mod['id'] . '" title="' . $txt['board_moderator'] . '">' . $mod['name'] . '</a>';
 	}
 
 	// Show linktree at the page foot too.
@@ -469,7 +469,7 @@ function Display()
 	$context['mark_unread_time'] = $topicinfo['new_from'];
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl . '?topic=' . $topic . '.' . $context['start'] . ($can_show_all ? ';all' : '');
+	$context['canonical_url'] = '<URL>?topic=' . $topic . '.' . $context['start'] . ($can_show_all ? ';all' : '');
 
 	// For quick reply we need a response prefix in the default forum language.
 	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix', 600)))
@@ -625,8 +625,8 @@ function Display()
 			'starter' => array(
 				'id' => $pollinfo['id_member'],
 				'name' => $row['poster_name'],
-				'href' => $pollinfo['id_member'] == 0 ? '' : $scripturl . '?action=profile;u=' . $pollinfo['id_member'],
-				'link' => $pollinfo['id_member'] == 0 ? $row['poster_name'] : '<a href="' . $scripturl . '?action=profile;u=' . $pollinfo['id_member'] . '">' . $row['poster_name'] . '</a>'
+				'href' => $pollinfo['id_member'] == 0 ? '' : '<URL>?action=profile;u=' . $pollinfo['id_member'],
+				'link' => $pollinfo['id_member'] == 0 ? $row['poster_name'] : '<a href="<URL>?action=profile;u=' . $pollinfo['id_member'] . '">' . $row['poster_name'] . '</a>'
 			)
 		);
 
@@ -1112,7 +1112,7 @@ function Display()
 		),
 		'pm' => array(
 			'caption' => 'usermenu_sendpm',
-			'action' => '\'' . $scripturl . '?action=pm;sa=send;u=%id%\'',
+			'action' => '\'<URL>?action=pm;sa=send;u=%id%\'',
 			'class' => '\'pm_button\'',
 		),
 		'we' => array(
@@ -1122,18 +1122,29 @@ function Display()
 		),
 		'po' => array(
 			'caption' => 'usermenu_showposts',
-			'action' => $short_profiles ? '\'?area=showposts\'' : '\'' . $scripturl . '?action=profile;u=%id%;area=showposts\'',
+			'action' => $short_profiles ? '\'?area=showposts\'' : '\'<URL>?action=profile;u=%id%;area=showposts\'',
 			'class' => '\'post_button\'',
 		),
 		'ab' => array(
 			'caption' => 'usermenu_addbuddy',
-			'action' => '\'' . $scripturl . '?action=buddy;u=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'<URL>?action=buddy;u=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'contact_button\'',
 		),
 		'rb' => array(
 			'caption' => 'usermenu_removebuddy',
-			'action' => '\'' . $scripturl . '?action=buddy;u=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'<URL>?action=buddy;u=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'contact_button\'',
+		),
+		'ip' => array(
+			'caption' => 'usermenu_seeip',
+			'action' => '\'<URL>?action=help;in=see_member_ip\'',
+			'class' => '\'ip_button\'',
+			'custom' => JavaScriptEscape('onclick="return reqWin(this);"'),
+		),
+		'tk' => array(
+			'caption' => 'usermenu_trackip',
+			'action' => '\'<URL>?action=profile;u=%id%;area=tracking;sa=ip;searchip=%special%\'',
+			'class' => '\'ip_button\'',
 		),
 	);
 
@@ -1142,58 +1153,58 @@ function Display()
 	$context['action_menu_items'] = array(
 		'lk' => array(
 			'caption' => 'acme_like',
-			'action' => '\'' . $scripturl . '?action=like;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'<URL>?action=like;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'like_button\'',
 		),
 		'uk' => array(
 			'caption' => 'acme_unlike',
-			'action' => '\'' . $scripturl . '?action=like;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'<URL>?action=like;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'unlike_button\'',
 		),
 		'qu' => array(
 			'caption' => 'acme_quote',
-			'action' => '\'' . $scripturl . '?action=post;quote=%id%;topic=' . $context['current_topic'] . ';last=' . $context['topic_last_message'] . '\'',
+			'action' => '\'<URL>?action=post;quote=%id%;topic=' . $context['current_topic'] . ';last=' . $context['topic_last_message'] . '\'',
 			'class' => '\'quote_button\'',
 		),
 		'mo' => array(
 			'caption' => 'acme_modify',
-			'action' => '\'' . $scripturl . '?action=post;msg=%id%;topic=' . $context['current_topic'] . '\'',
+			'action' => '\'<URL>?action=post;msg=%id%;topic=' . $context['current_topic'] . '\'',
 			'class' => '\'modify_button\'',
 		),
 		'ap' => array(
 			'caption' => 'acme_approve',
-			'action' => '\'' . $scripturl . '?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'<URL>?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'approve_button\'',
 		),
 		're' => array(
 			'caption' => 'acme_remove',
-			'action' => '\'' . $scripturl . '?action=deletemsg;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'<URL>?action=deletemsg;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'remove_button\'',
 			'custom' => JavaScriptEscape('onclick="return confirm(' . JavaScriptEscape($txt['remove_message_confirm']) . ');"'),
 		),
 		'sp' => array(
 			'caption' => 'acme_split',
-			'action' => '\'' . $scripturl . '?action=splittopics;topic=' . $context['current_topic'] . ';at=%id%\'',
+			'action' => '\'<URL>?action=splittopics;topic=' . $context['current_topic'] . ';at=%id%\'',
 			'class' => '\'split_button\'',
 		),
 		'me' => array(
 			'caption' => 'acme_merge',
-			'action' => '\'' . $scripturl . '?action=mergeposts;pid=%id%;msgid=%special%;topic=' . $context['current_topic'] . '\'',
+			'action' => '\'<URL>?action=mergeposts;pid=%id%;msgid=%special%;topic=' . $context['current_topic'] . '\'',
 			'class' => '\'mergepost_button\'',
 		),
 		'rs' => array(
 			'caption' => 'acme_restore',
-			'action' => '\'' . $scripturl . '?action=restoretopic;msgs=%id%;' . $context['session_query'] . '\'',
+			'action' => '\'<URL>?action=restoretopic;msgs=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'restore_button\'',
 		),
 		'rp' => array(
 			'caption' => 'acme_report',
-			'action' => '\'' . $scripturl . '?action=report;topic=' . $context['current_topic'] . ';msg=%id%\'',
+			'action' => '\'<URL>?action=report;topic=' . $context['current_topic'] . ';msg=%id%\'',
 			'class' => '\'report_button\'',
 		),
 		'wa' => array(
 			'caption' => 'acme_warn',
-			'action' => '\'' . $scripturl . '?action=profile;u=%special%;area=issuewarning;msg=%id%\'',
+			'action' => '\'<URL>?action=profile;u=%special%;area=issuewarning;msg=%id%\'',
 			'class' => '\'warn_button\'',
 		),
 	);
@@ -1201,25 +1212,25 @@ function Display()
 	// Lastly, set up the navigation items that we're going to be using.
 	$context['nav_buttons'] = array(
 		'normal' => array(
-			'reply' => array('test' => 'can_reply', 'text' => 'reply', 'url' => $scripturl . '?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'class' => 'active'),
-			($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_topic' : 'enable_topic')]) . ');"', 'url' => $scripturl . '?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-			'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'url' => $scripturl . '?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-			'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'url' => $scripturl . '?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
-			'print' => array('text' => 'print', 'custom' => 'rel="nofollow"', 'url' => $scripturl . '?action=printpage;topic=' . $context['current_topic'] . '.0'),
+			'reply' => array('test' => 'can_reply', 'text' => 'reply', 'url' => '<URL>?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'class' => 'active'),
+			($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_topic' : 'enable_topic')]) . ');"', 'url' => '<URL>?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'url' => '<URL>?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'url' => '<URL>?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
+			'print' => array('text' => 'print', 'custom' => 'rel="nofollow"', 'url' => '<URL>?action=printpage;topic=' . $context['current_topic'] . '.0'),
 		),
 		'mod' => array(
-			'move' => array('test' => 'can_move', 'text' => 'move_topic', 'url' => $scripturl . '?action=movetopic;topic=' . $context['current_topic'] . '.0'),
-			'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['are_sure_remove_topic']) . ');"', 'url' => $scripturl . '?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_query']),
-			'lock' => array('test' => 'can_lock', 'text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'url' => $scripturl . '?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-			'pin' => array('test' => 'can_pin', 'text' => empty($context['is_pinned']) ? 'set_pin' : 'set_unpin', 'url' => $scripturl . '?action=pin;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
-			'merge' => array('test' => 'can_merge', 'text' => 'merge', 'url' => $scripturl . '?action=mergetopics;topic=' . $context['current_topic']),
-			'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'url' => $scripturl . '?action=poll;sa=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
+			'move' => array('test' => 'can_move', 'text' => 'move_topic', 'url' => '<URL>?action=movetopic;topic=' . $context['current_topic'] . '.0'),
+			'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['are_sure_remove_topic']) . ');"', 'url' => '<URL>?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_query']),
+			'lock' => array('test' => 'can_lock', 'text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'url' => '<URL>?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'pin' => array('test' => 'can_pin', 'text' => empty($context['is_pinned']) ? 'set_pin' : 'set_unpin', 'url' => '<URL>?action=pin;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			'merge' => array('test' => 'can_merge', 'text' => 'merge', 'url' => '<URL>?action=mergetopics;topic=' . $context['current_topic']),
+			'add_poll' => array('test' => 'can_add_poll', 'text' => 'add_poll', 'url' => '<URL>?action=poll;sa=editpoll;add;topic=' . $context['current_topic'] . '.' . $context['start']),
 		),
 	);
 
 	// Restore topic. Eh? No monkey business.
 	if ($context['can_restore_topic'])
-		$context['nav_buttons']['mod']['restore'] = array('text' => 'restore_topic', 'url' => $scripturl . '?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_query']);
+		$context['nav_buttons']['mod']['restore'] = array('text' => 'restore_topic', 'url' => '<URL>?action=restoretopic;topics=' . $context['current_topic'] . ';' . $context['session_query']);
 
 	// Generic processing that doesn't apply to per-post handling.
 	call_hook('display_main');
@@ -1228,7 +1239,7 @@ function Display()
 // Callback for the message display.
 function prepareDisplayContext($reset = false)
 {
-	global $theme, $txt, $settings, $scripturl, $options, $user_info, $board_info;
+	global $theme, $txt, $settings, $options, $user_info, $board_info;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
 	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $is_new = false;
@@ -1288,7 +1299,7 @@ function prepareDisplayContext($reset = false)
 		$memberContext[$message['id_member']]['id'] = 0;
 		$memberContext[$message['id_member']]['group'] = $txt['guest_title'];
 		// Wedge supports showing guest posts, grouping them by e-mail address. Can restrict to current board: add ;board=$context['current_board']
-		$memberContext[$message['id_member']]['href'] = $scripturl . '?action=profile;u=0;area=showposts;guest=' . base64_encode($message['poster_name']);
+		$memberContext[$message['id_member']]['href'] = '<URL>?action=profile;u=0;area=showposts;guest=' . base64_encode($message['poster_name']);
 		$memberContext[$message['id_member']]['link'] = '<a href="' . $memberContext[$message['id_member']]['href'] . '">' . $message['poster_name'] . '</a>';
 		$memberContext[$message['id_member']]['email'] = $message['poster_email'];
 		$memberContext[$message['id_member']]['show_email'] = showEmailAddress(true, 0);
@@ -1334,8 +1345,8 @@ function prepareDisplayContext($reset = false)
 		'attachment' => loadAttachmentContext($message['id_msg']),
 		'alternate' => $counter % 2,
 		'id' => $message['id_msg'],
-		'href' => $scripturl . '?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
-		'link' => '<a href="' . $scripturl . '?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
+		'href' => '<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
+		'link' => '<a href="<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
 		'member' => &$memberContext[$message['id_member']],
 		'can_like' => !$context['user']['is_guest'] && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $message['id_member'] != $context['user']['id']),
 		'icon' => $message['icon'],
@@ -1402,29 +1413,23 @@ function prepareDisplayContext($reset = false)
 		// 2. Figure out that user's menu to the stack. It may be different if it's our menu.
 		$menu = array();
 
-		if ($is_me)
-		{
-			// Can't PM, email, add to buddy list
-			if ($profile_own)
-				$menu[] = 'pr';
-			if (!empty($output['member']['website']['url']))
-				$menu[] = 'we/' . $output['member']['website']['url'];
-			if ($profile_own)
-				$menu[] = 'po';
-		}
-		else
-		{
-			if ($profile_any)
-				$menu[] = 'pr';
-			if ($can_pm)
-				$menu[] = 'pm';
-			if (!empty($output['member']['website']['url']))
-				$menu[] = 'we/' . $output['member']['website']['url'];
-			if ($profile_any)
-				$menu[] = 'po';
-			if ($buddy)
-				$menu[] = $memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab';
-		}
+		if ($profile_any || ($is_me && $profile_own))
+			$menu[] = 'pr';
+
+		if ($can_pm && !$is_me)
+			$menu[] = 'pm';
+
+		if (!empty($output['member']['website']['url']))
+			$menu[] = 'we/' . $output['member']['website']['url'];
+
+		if ($profile_any || ($is_me && $profile_own))
+			$menu[] = 'po';
+
+		if ($buddy && !$is_me)
+			$menu[] = $memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab';
+
+		if ($output['can_see_ip'] && !empty($output['member']['ip']))
+			$menu[] = ($context['can_moderate_forum'] ? 'ip' : 'ip') . '/' . $output['member']['ip'];
 
 		// If we can't do anything, it's not even worth recording the user's website...
 		if (count($menu))
@@ -1494,7 +1499,7 @@ function prepareDisplayContext($reset = false)
 
 function loadAttachmentContext($id_msg)
 {
-	global $attachments, $settings, $txt, $scripturl, $topic;
+	global $attachments, $settings, $txt, $topic;
 
 	// Set up the attachment info - based on code by Meriadoc.
 	$attachmentData = array();
@@ -1508,8 +1513,8 @@ function loadAttachmentContext($id_msg)
 				'downloads' => $attachment['downloads'],
 				'size' => round($attachment['filesize'] / 1024, 2) . ' ' . $txt['kilobyte'],
 				'byte_size' => $attachment['filesize'],
-				'href' => $scripturl . '?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'],
-				'link' => '<a href="' . $scripturl . '?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'] . '">' . htmlspecialchars($attachment['filename']) . '</a>',
+				'href' => '<URL>?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'],
+				'link' => '<a href="<URL>?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_attach'] . '">' . htmlspecialchars($attachment['filename']) . '</a>',
 				'transparent' => $attachment['transparency'] == 'transparent',
 				'is_image' => !empty($attachment['width']) && !empty($attachment['height']) && !empty($settings['attachmentShowImages']),
 			);
@@ -1621,7 +1626,7 @@ function loadAttachmentContext($id_msg)
 			if (!empty($attachment['id_thumb']))
 				$attachmentData[$i]['thumbnail'] = array(
 					'id' => $attachment['id_thumb'],
-					'href' => $scripturl . '?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_thumb'] . ';image',
+					'href' => '<URL>?action=dlattach;topic=' . $topic . '.0;attach=' . $attachment['id_thumb'] . ';image',
 				);
 			$attachmentData[$i]['thumbnail']['has_thumb'] = !empty($attachment['id_thumb']);
 
