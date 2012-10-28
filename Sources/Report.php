@@ -74,7 +74,7 @@ function Report()
 
 	// Show the inputs for the comment, etc.
 	loadLanguage(array('Post', 'ManageTopics'));
-	loadTemplate('SendTopic');
+	loadTemplate('Mailer');
 
 	$context['comment_body'] = !isset($_POST['comment']) ? '' : trim($_POST['comment']);
 	$context['email_address'] = !isset($_POST['email']) ? '' : trim($_POST['email']);

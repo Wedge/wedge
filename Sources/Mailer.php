@@ -14,12 +14,12 @@
 if (!defined('WEDGE'))
 	die('Hacking attempt...');
 
-/*	The functions in this file deal with sending topics to a friend or
+/*	The functions in this file deal with sending e-mails to a friend or
 	moderator, and those functions are:
 
 	void SendTopic()
 		- sends information about a topic to a friend.
-		- uses the SendTopic template, with the main block.
+		- uses the Mailer template, with the main block.
 		- requires the send_topic permission.
 		- redirects back to the first page of the topic when done.
 		- is accessed via ?action=emailuser;sa=sendtopic.
@@ -40,7 +40,7 @@ function EmailUser()
 	$context['robot_no_index'] = true;
 
 	// Load the template.
-	loadTemplate('SendTopic');
+	loadTemplate('Mailer');
 	loadLanguage('ManageTopics');
 
 	$sub_actions = array(
