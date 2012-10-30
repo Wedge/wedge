@@ -467,7 +467,7 @@ function BrowseFiles()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="remove_submit" value="' . $txt['quickmod_delete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['confirm_delete_attachments']) . ');" class="delete">',
+				'value' => '<input type="submit" name="remove_submit" value="' . $txt['quickmod_delete_selected'] . '" onclick="return ask(' . JavaScriptEscape($txt['confirm_delete_attachments']) . ', e);" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),

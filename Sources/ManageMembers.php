@@ -606,7 +606,7 @@ function ViewMemberlist()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete_members" value="' . $txt['admin_delete_members'] . '" onclick="return confirm(' . JavaScriptEscape($txt['confirm_delete_members']) . ');" class="delete">',
+				'value' => '<input type="submit" name="delete_members" value="' . $txt['admin_delete_members'] . '" onclick="return ask(' . JavaScriptEscape($txt['confirm_delete_members']) . ', e);" class="delete">',
 			),
 		),
 	);

@@ -283,7 +283,7 @@ function ViewSpiders()
 				'position' => 'below_table_data',
 				'value' => '
 					<input type="submit" name="addSpider" value="' . $txt['spiders_add'] . '" class="new">
-					<input type="submit" name="removeSpiders" value="' . $txt['spiders_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['spider_remove_selected_confirm']) . ');" class="delete">
+					<input type="submit" name="removeSpiders" value="' . $txt['spiders_remove_selected'] . '" onclick="return ask(' . JavaScriptEscape($txt['spider_remove_selected_confirm']) . ', e);" class="delete">
 				',
 				'style' => 'text-align: right;',
 			),

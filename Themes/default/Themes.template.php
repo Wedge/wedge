@@ -214,7 +214,7 @@ function template_list_themes()
 		// You *cannot* delete the default theme. It's important!
 		if ($th['id'] != 1)
 			echo '
-			<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $th['id'], ';', $context['session_query'], '" onclick="return confirm(', JavaScriptEscape($txt['theme_remove_confirm']), ');"><img src="', $theme['images_url'], '/icons/delete.gif" alt="', $txt['theme_remove'], '" title="', $txt['theme_remove'], '"></a></span>';
+			<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $th['id'], ';', $context['session_query'], '" onclick="return ask(', JavaScriptEscape($txt['theme_remove_confirm']), ', e);"><img src="', $theme['images_url'], '/icons/delete.gif" alt="', $txt['theme_remove'], '" title="', $txt['theme_remove'], '"></a></span>';
 
 		echo '
 			<strong><a href="', $scripturl, '?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=settings">', $th['name'], '</a></strong>', !empty($th['version']) ? ' <em>(' . $th['version'] . ')</em>' : '', '
@@ -591,7 +591,7 @@ function template_copy_template()
 					<span class="floatright">';
 
 		if ($template['can_copy'])
-			echo '<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';', $context['session_query'], ';sa=copy;template=', $template['value'], '" onclick="return confirm(', JavaScriptEscape($template['already_exists'] ? $txt['themeadmin_edit_overwrite_confirm'] : $txt['themeadmin_edit_copy_confirm']), ');">', $txt['themeadmin_edit_do_copy'], '</a>';
+			echo '<a href="', $scripturl, '?action=admin;area=theme;th=', $context['theme_id'], ';', $context['session_query'], ';sa=copy;template=', $template['value'], '" onclick="return ask(', JavaScriptEscape($template['already_exists'] ? $txt['themeadmin_edit_overwrite_confirm'] : $txt['themeadmin_edit_copy_confirm']), ', e);">', $txt['themeadmin_edit_do_copy'], '</a>';
 		else
 			echo $txt['themeadmin_edit_no_copy'];
 

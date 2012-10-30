@@ -266,8 +266,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	if (!isset($context['skin_folders']))
 		wedge_get_skin_options();
 
-	$fallback_folder = $theme[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/' . reset($context['css_folders']) . '/';
-	$deep_folder = end($context['css_folders']);
+	$fallback_folder = $deep_folder = $theme[$context['skin_uses_default_theme'] ? 'default_theme_dir' : 'theme_dir'] . '/';
+	$fallback_folder .= reset($context['css_folders']) . '/';
+	$deep_folder .= end($context['css_folders']) . '/';
 	$requested_suffixes = array('' => 0) + array_flip($context['css_suffixes']);
 	$ignore_versions = array();
 	$found_suffixes = array();

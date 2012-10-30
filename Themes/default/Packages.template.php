@@ -575,7 +575,7 @@ function template_sublist(&$mod_list, $mod_heading)
 
 		echo '
 					<a href="', $scripturl, '?action=admin;area=packages;sa=list;package=', $package['filename'], '">[ ', $txt['list_files'], ' ]</a>
-					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_query'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(' . $bad . ');"' : '', '>[ ', $txt['package_delete'], ' ]</a>
+					<a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $package['filename'], ';', $context['session_query'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return ask(' . $bad . ', e);"' : '', '>[ ', $txt['package_delete'], ' ]</a>
 				</td>
 			</tr>';
 		$alt = !$alt;

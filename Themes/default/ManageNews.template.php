@@ -69,7 +69,7 @@ function template_edit_news()
 				</noscript>
 			</div>
 			<div class="floatright padding">
-				<input type="submit" name="save_items" value="', $txt['save'], '" class="save"> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return confirm(', JavaScriptEscape($txt['editnews_remove_confirm']), ');" class="delete">
+				<input type="submit" name="save_items" value="', $txt['save'], '" class="save"> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return ask(', JavaScriptEscape($txt['editnews_remove_confirm']), ', e);" class="delete">
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';

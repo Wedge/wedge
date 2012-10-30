@@ -79,21 +79,26 @@ String.prototype.wereplace = function (oReplacements)
 };
 
 /*
-	Because these functions aren't perfect, they aren't used in Wedge for now,
-	so we might as well comment out the code. But our plans are to use them ASAP.
+	Not used in Wedge for now, as it's not perfect. Might as well comment out the code. But plans are to use it ASAP.
 
 	// alert() alternative
 	function say(string, callback)
 	{
 		reqWin('', 350, string, 2, callback);
 	}
-	// confirm() alternative
-	var confirm_var = false;
-	function ask(string, e, callback)
-	{
-		return confirm_var || reqWin('', 350, string, 1, callback, e);
-	}
 */
+
+/*
+	A stylable confirm() alternative.
+	@string string: HTML content to show.
+	@object e: the current event object, if any. It must be specified if called to cancel a click, for instance.
+	@function callback: a function to call if the user agrees, if needed.
+*/
+var confirm_var = false;
+function ask(string, e, callback)
+{
+	return confirm_var || reqWin('', 350, string, 1, callback, e);
+}
 
 /*
 	Open a new popup window. The first two params are for generic pop-ups, while the rest is for confirm/alert boxes.
@@ -182,11 +187,8 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 
 	if (modal_type)
 		$('#helf')
-			.html(modal_type == 1 ?
-				'<section class="nodrag confirm">' + string + '</section>\
-				<footer><input type="button" class="submit floatleft" /><input type="button" class="delete floatright" /></footer>' :
-				'<section class="nodrag confirm">' + string + '</section>\
-				<footer><input type="button" class="submit" /></footer>')
+			.html('<section class="nodrag confirm">' + string + '</section><footer><input type="button" class="submit'
+				+ (modal_type == 1 ? ' floatleft" /><input type="button" class="delete floatright" />' : '" />') + '</footer>')
 			.each(animate_popup)
 			.find('input')
 			.val(we_cancel)
@@ -631,12 +633,12 @@ function Thought(opt)
 		{
 			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid') || '';
 			if (tid)
-				thought.after('\
-		<div class="thought_actions">' + (thought.data('self') !== '' ? '' : '\
-			<input type="button" class="submit" value="' + opt.sEdit + '" onclick="oThought.edit(' + tid + ', \'' + mid + '\');">\
-			<input type="button" class="delete" value="' + we_delete + '" onclick="confirm(we_confirm) && oThought.remove(' + tid + ');">') + '\
-			<input type="button" class="new" value="' + opt.sReply + '" onclick="oThought.edit(' + tid + ', \'' + mid + '\', true);">\
-		</div>');
+				thought.after('<div class="thought_actions">'
+					+ (thought.data('self') !== '' ? '' : '<input type="button" class="submit"><input type="button" class="delete">')
+					+ '<input type="button" class="new"></div>').next()
+				.find('.submit').val(opt.sEdit).click(function () { oThought.edit(tid, mid) })						// Submit button
+				.next().val(we_delete).click(function (e) { return ask(we_confirm, e) && oThought.remove(tid); })	// Delete button
+				.next().val(opt.sReply).click(function () { oThought.edit(tid, mid, true) });						// Reply button
 		};
 
 	// Show the input after the user has clicked the text.
@@ -657,12 +659,18 @@ function Thought(opt)
 			pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
 
 		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
-		thought.toggle(tid && is_new).after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">'
-			+ pr + '</select><input type="hidden" id="noid" value="' + (is_new ? 0 : thought.data('oid')) + '"><input type="submit" value="'
-			+ we_submit + '" onclick="oThought.submit(\'' + tid + '\', \'' + (mid || tid) + '\'); return false;" class="save"><input type="button" value="'
-			+ we_cancel + '" onclick="oThought.cancel(); return false;" class="cancel"></form>').siblings('.thought_actions').hide();
+		thought
+			.toggle(tid && is_new)
+			.after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">' + pr
+				+ '</select><input type="hidden" id="noid"><input type="button" class="save"><input type="button" class="cancel"></form>')
+			.siblings('.thought_actions').hide();
+		$('#noid').val(is_new ? 0 : thought.data('oid'))
+			.next().val(we_submit).click(function () { oThought.submit(tid, mid || tid); })	// Save button
+			.next().val(we_cancel).click(function () { oThought.cancel(); });				// Cancel button
 		$('#ntho').focus().val(cur_text);
 		$('#npriv').sb();
+
+		return false;
 	};
 
 	// Event handler for removal requests.

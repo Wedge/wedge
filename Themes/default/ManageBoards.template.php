@@ -161,7 +161,7 @@ function template_modify_category()
 	else
 		echo '
 					<input type="submit" name="edit" value="', $txt['modify'], '" onclick="return $.trim(this.form.cat_name.value) !== \'\';" tabindex="', $context['tabindex']++, '" class="save">
-					<input type="submit" name="delete" value="', $txt['mboards_delete_cat'], '" onclick="return confirm(', JavaScriptEscape($txt['catConfirm']), ');" class="delete">';
+					<input type="submit" name="delete" value="', $txt['mboards_delete_cat'], '" onclick="return ask(', JavaScriptEscape($txt['catConfirm']), ', e);" class="delete">';
 	echo '
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">';
 
@@ -621,7 +621,7 @@ function template_modify_board()
 
 	if (!isset($context['board']['is_new']) && empty($context['board']['is_recycle']))
 		echo '
-					<span', $context['board']['is_recycle'] ? ' style="visibility: hidden">' : '>', '<input type="submit" name="delete" value="', $txt['mboards_delete_board'], '" onclick="return confirm(', JavaScriptEscape($txt['boardConfirm']), ');"', ' class="delete"></span>';
+					<span', $context['board']['is_recycle'] ? ' style="visibility: hidden">' : '>', '<input type="submit" name="delete" value="', $txt['mboards_delete_board'], '" onclick="return ask(', JavaScriptEscape($txt['boardConfirm']), ', e);"', ' class="delete"></span>';
 
 	echo '
 				</div>

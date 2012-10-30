@@ -61,7 +61,7 @@ function template_main()
 		// How about... even... remove it entirely?!
 		if ($post['can_delete'])
 			echo '
-					<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove'], '</a></li>';
+					<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';recent;', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove'], '</a></li>';
 
 		if ($post['can_reply'] || $post['can_mark_notify'] || $post['can_delete'])
 			echo '

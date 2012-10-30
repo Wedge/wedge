@@ -846,8 +846,8 @@ function ViewSubscribedUsers()
 						<input type="submit" name="add" value="' . $txt['add_subscriber'] . '" class="new">
 					</div>
 					<div class="floatright">
-						<input type="submit" name="finished" value="' . $txt['complete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['complete_are_sure']) . ');" class="submit">
-						<input type="submit" name="delete" value="' . $txt['delete_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['delete_are_sure']) . ');" class="delete">
+						<input type="submit" name="finished" value="' . $txt['complete_selected'] . '" onclick="return ask(' . JavaScriptEscape($txt['complete_are_sure']) . ', e);" class="submit">
+						<input type="submit" name="delete" value="' . $txt['delete_selected'] . '" onclick="return ask(' . JavaScriptEscape($txt['delete_are_sure']) . ', e);" class="delete">
 					</div>
 				',
 			),

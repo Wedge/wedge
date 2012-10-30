@@ -209,7 +209,7 @@ function template_summary()
 		// If the person looking at the summary has permission, and the account isn't activated, give the viewer the ability to do it themselves.
 		if (!empty($context['activate_message']))
 			echo '
-				<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';save;area=activateaccount;' . $context['session_query'] . '"', ($context['activate_type'] == 4 ? ' onclick="return confirm(' . JavaScriptEscape($txt['profileConfirm']) . ');"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
+				<dt class="clear"><span class="alert">', $context['activate_message'], '</span>&nbsp;(<a href="' . $scripturl . '?action=profile;u=' . $context['id_member'] . ';save;area=activateaccount;' . $context['session_query'] . '"', ($context['activate_type'] == 4 ? ' onclick="return ask(' . JavaScriptEscape($txt['profileConfirm']) . ', e);"' : ''), '>', $context['activate_link_text'], '</a>)</dt>';
 
 		// If the current member is banned, show a message and possibly a link to the ban.
 		if (!empty($context['member']['bans']))
@@ -351,7 +351,7 @@ function template_showDrafts()
 				<div class="actionbar">
 					<ul class="actions">
 						<li><a href="', $scripturl . '?action=post;', ($post['topic']['no_edit'] || empty($post['topic']['id'])) ? 'board=' . $post['board']['id'] : 'topic=' . $post['topic']['original_topic'], '.0;draft_id=', $post['id'], '" class="reply_button">', $txt['edit_draft'], '</a></li>
-						<li><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove_draft'], '</a></li>
+						<li><a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove_draft'], '</a></li>
 					</ul>
 				</div>
 			</div>
@@ -375,7 +375,7 @@ function template_showDrafts()
 	if (!empty($context['posts']))
 		echo '
 		<div class="right padding">
-			<form action="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;deleteall" method="post" onclick="return confirm(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ');">
+			<form action="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;deleteall" method="post" onclick="return ask(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ', e);">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" value="', $txt['remove_all_drafts'], '" class="delete">
 			</form>
@@ -454,7 +454,7 @@ function template_showPosts()
 				// How about... even... remove it entirely?!
 				if ($post['can_delete'])
 					echo '
-						<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove'], '</a></li>';
+						<li><a href="', $scripturl, '?action=deletemsg;msg=', $post['id'], ';topic=', $post['topic'], ';profile;u=', $context['member']['id'], ';start=', $context['start'], ';', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove'], '</a></li>';
 
 				echo '
 					</ul>

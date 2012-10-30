@@ -91,7 +91,7 @@ function template_error_log()
 	echo '
 			<tr class="titlebg left">
 				<td colspan="3">
-					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return ask(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all2.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>';
@@ -146,7 +146,7 @@ function template_error_log()
 	echo '
 			<tr class="titlebg left">
 				<td colspan="3">
-					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return ask(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>
@@ -210,7 +210,7 @@ function template_intrusion_log()
 		echo '
 			<tr class="titlebg left">
 				<td colspan="3">
-					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return ask(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all1" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all2.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>';
@@ -261,7 +261,7 @@ function template_intrusion_log()
 		echo '
 			<tr class="titlebg left">
 				<td colspan="3">
-					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return confirm(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
+					<div class="floatright"><input type="submit" value="', $txt['remove_selection'], '" class="delete"> <input type="submit" name="delall" value="', $context['has_filter'] ? $txt['remove_filtered_results'] : $txt['remove_all'], '" onclick="return ask(', JavaScriptEscape($txt['sure_about_errorlog_remove']), ', e);" class="delete"></div>
 					<label style="line-height: 24px"><input type="checkbox" id="check_all2" onclick="invertAll(this, this.form, \'delete[]\'); this.form.check_all1.checked = this.checked;"> <strong>', $txt['check_all'], '</strong></label>
 				</td>
 			</tr>';

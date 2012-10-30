@@ -318,7 +318,7 @@ function template_edit_repo()
 				</fieldset>
 				<div class="right">
 					<input type="submit" value="', $txt['save'], '" class="save">
-					<input type="submit" name="delete" value="', $txt['plugins_repo_delete'], '" class="delete" onclick="return confirm(', JavaScriptEscape($txt['plugins_repo_delete_confirm']), ');">
+					<input type="submit" name="delete" value="', $txt['plugins_repo_delete'], '" class="delete" onclick="return ask(', JavaScriptEscape($txt['plugins_repo_delete_confirm']), ', e);">
 				</div>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" id="', $context['session_id'], '">

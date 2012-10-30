@@ -438,7 +438,7 @@ function EditSmileySets()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete" value="' . $txt['smiley_sets_delete'] . '" onclick="return confirm(' . JavaScriptEscape($txt['smiley_sets_confirm']) . ');" class="delete floatright"><span style="line-height: 25px">[<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifyset">' . $txt['smiley_sets_add'] . '</a>]&nbsp;&nbsp;</span>',
+				'value' => '<input type="submit" name="delete" value="' . $txt['smiley_sets_delete'] . '" onclick="return ask(' . JavaScriptEscape($txt['smiley_sets_confirm']) . ', e);" class="delete floatright"><span style="line-height: 25px">[<a href="' . $scripturl . '?action=admin;area=smileys;sa=modifyset">' . $txt['smiley_sets_add'] . '</a>]&nbsp;&nbsp;</span>',
 			),
 		),
 	);

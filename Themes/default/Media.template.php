@@ -543,7 +543,7 @@ function template_aeva_item_actions()
 	if ($item['can_edit'])
 		echo '
 			<a href="', $galurl, 'sa=post;in=', $item['id_media'], '"><img src="', $theme['images_aeva'], '/camera_edit.png">&nbsp;', $txt['media_edit_this_item'], '</a>
-			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '" onclick="return confirm(we_confirm);"><img src="', $theme['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
+			<a href="', $galurl, 'sa=delete;in=', $item['id_media'], '" onclick="return ask(we_confirm, e);"><img src="', $theme['images_aeva'], '/delete.png">&nbsp;', $txt['media_delete_this_item'], '</a>';
 
 	if ($item['can_download'])
 		echo '
@@ -720,7 +720,7 @@ function template_aeva_item_comments()
 					<a href="' . $galurl . 'sa=edit;type=comment;in=' . $c['id_comment'] . '">
 						<img src="' . $theme['images_aeva'] . '/comment_edit.png"> ' . $txt['media_edit_this_item'] . '
 					</a>' : '', $c['can_delete'] ? '
-					<a href="' . $galurl . 'sa=delete;type=comment;in=' . $c['id_comment'] . '" onclick="return confirm(we_confirm);">
+					<a href="' . $galurl . 'sa=delete;type=comment;in=' . $c['id_comment'] . '" onclick="return ask(we_confirm, e);">
 						<img src="' . $theme['images_aeva'] . '/delete.png"> ' . $txt['media_delete_this_item'] . '
 					</a> ' : '', $c['can_report'] ? '
 					<a href="' . $galurl . 'sa=report;type=comment;in=' . $c['id_comment'] . '">
@@ -1367,7 +1367,7 @@ function template_aeva_album_cp()
 		if ($can_manage || $album['owner']['id'] == $user_info['id'])
 			echo '
 					<img src="', $theme['images_aeva'], '/folder_edit.png">&nbsp;<a href="', $alburl, 'sa=edit;in=', $album['id'], '">', $txt['media_edit_this_item'], '</a>
-					<img src="', $theme['images_aeva'], '/folder_delete.png">&nbsp;<a href="', $alburl, 'sa=delete;in=', $album['id'], '" onclick="return confirm(', JavaScriptEscape($txt['media_admin_album_confirm']), ');">', $txt['media_admin_delete'], '</a>
+					<img src="', $theme['images_aeva'], '/folder_delete.png">&nbsp;<a href="', $alburl, 'sa=delete;in=', $album['id'], '" onclick="return ask(', JavaScriptEscape($txt['media_admin_album_confirm']), ', e);">', $txt['media_admin_delete'], '</a>
 					<img src="', $theme['images_aeva'], '/arrow_inout.png" title="', $txt['media_admin_move'], '">&nbsp;<a href="' . $alburl . 'move=' . $album['id'] . '">' . $txt['media_admin_move'] . '</a>', $album['approved'] == 0 && $can_moderate ? '
 					<img src="' . $theme['images_aeva'] . '/tick.png" title="' . $txt['media_admin_approve'] . '">&nbsp;<a href="' . $galurl . 'area=moderate;sa=submissions;do=approve;type=albums;in=' . $album['id'] . '">' . $txt['media_admin_approve'] . '</a>' : '';
 

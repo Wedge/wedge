@@ -620,7 +620,7 @@ function MessageIndex()
 	$context['button_list'] = array(
 		'new_topic' => array('test' => 'can_post_new', 'text' => 'new_topic', 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0', 'class' => 'active'),
 		'post_poll' => array('test' => 'can_post_poll', 'text' => 'new_poll', 'url' => $scripturl . '?action=post;board=' . $context['current_board'] . '.0;poll'),
-		($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_board' : 'enable_board')]) . ');"', 'url' => $scripturl . '?action=notifyboard;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';board=' . $context['current_board'] . '.' . $context['start'] . ';' . $context['session_query']),
+		($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return ask(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_board' : 'enable_board')]) . ', e);"', 'url' => $scripturl . '?action=notifyboard;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';board=' . $context['current_board'] . '.' . $context['start'] . ';' . $context['session_query']),
 		'markread' => array('test' => 'can_mark_read', 'text' => 'mark_read_short', 'url' => $scripturl . '?action=markasread;sa=board;board=' . $context['current_board'] . '.0;' . $context['session_query']),
 	);
 

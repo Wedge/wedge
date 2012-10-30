@@ -305,7 +305,7 @@ function BanList()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="removeBans" value="' . $txt['ban_remove_selected'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_remove_selected_confirm']) . ');" class="delete">',
+				'value' => '<input type="submit" name="removeBans" value="' . $txt['ban_remove_selected'] . '" onclick="return ask(' . JavaScriptEscape($txt['ban_remove_selected_confirm']) . ', e);" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),
@@ -1201,7 +1201,7 @@ function BanBrowseTriggers()
 			),
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="remove_triggers" value="' . $txt['ban_remove_selected_triggers'] . '" onclick="return confirm(' . JavaScriptEscape($txt['ban_remove_selected_triggers_confirm']) . ');" class="delete">',
+				'value' => '<input type="submit" name="remove_triggers" value="' . $txt['ban_remove_selected_triggers'] . '" onclick="return ask(' . JavaScriptEscape($txt['ban_remove_selected_triggers_confirm']) . ', e);" class="delete">',
 				'style' => 'text-align: right;',
 			),
 		),

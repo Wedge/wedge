@@ -193,7 +193,7 @@ function template_maintain_members()
 
 	echo '
 				</div>
-				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_members_confirm']), ');" class="delete"></span>
+				<span><input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return ask(', JavaScriptEscape($txt['maintain_members_confirm']), ', e);" class="delete"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
@@ -304,7 +304,7 @@ function template_maintain_topics()
 	echo '
 						</div>
 					</div>
-					<input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return confirm(', JavaScriptEscape($txt['maintain_old_confirm']), ');" class="delete">
+					<input type="submit" value="', $txt['maintain_old_remove'], '" onclick="return ask(', JavaScriptEscape($txt['maintain_old_confirm']), ', e);" class="delete">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</form>
 			</div>
