@@ -1029,7 +1029,7 @@ function EditSmileys()
 				array(
 					'position' => 'below_table_data',
 					'value' => '
-						<select name="smiley_action" onchange="makeChanges(this.value);">
+						<select name="smiley_action" onchange="makeChanges(e, this.value);">
 							<option value="-1" data-hide>' . $txt['smileys_with_selected'] . ':</option>
 							<option value="hidden">' . $txt['smileys_make_hidden'] . '</option>
 							<option value="post">' . $txt['smileys_show_on_post'] . '</option>
@@ -1041,16 +1041,11 @@ function EditSmileys()
 				),
 			),
 			'javascript' => '
-	function makeChanges(action)
+	function makeChanges(e, action)
 	{
 		if (action == \'-1\')
 			return false;
-		else if (action == \'delete\')
-		{
-			if (confirm(' . JavaScriptEscape($txt['smileys_confirm']) . '))
-				document.forms.smileyForm.submit();
-		}
-		else
+		if (action != \'delete\' || ask(' . JavaScriptEscape($txt['smileys_confirm']) . ', e))
 			document.forms.smileyForm.submit();
 		return true;
 	}

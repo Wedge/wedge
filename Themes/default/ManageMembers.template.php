@@ -240,7 +240,7 @@ function template_admin_browse()
 	if ($context['approve_list']['total_num_items'] > 20)
 	{
 		add_js_inline('
-	function onOutstandingSubmit()
+	function onOutstandingSubmit(e)
 	{
 		if (document.forms.postFormOutstanding.todo.value == "")
 			return;
@@ -255,12 +255,12 @@ function template_admin_browse()
 		else
 			message = ', JavaScriptEscape($context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate']), ';
 
-		return confirm(message + ', JavaScriptEscape(' ' . $txt['admin_browse_outstanding_warn']), ');
+		return ask(message + ', JavaScriptEscape(' ' . $txt['admin_browse_outstanding_warn']), ', e);
 	}');
 
 		echo '
 		<br>
-		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit();">
+		<form action="', $scripturl, '?action=admin;area=viewmembers" method="post" accept-charset="UTF-8" name="postFormOutstanding" id="postFormOutstanding" onsubmit="return onOutstandingSubmit(e);">
 			<we:cat>
 				', $txt['admin_browse_outstanding'], '
 			</we:cat>

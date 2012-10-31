@@ -83,7 +83,7 @@ function template_maintenance()
 			', $txt['attachment_pruning'], '
 		</we:cat>
 		<div class="windowbg wrc">
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(', $warning, ');" style="margin: 0 0 2ex 0;">
+			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0;">
 				', $txt['attachment_remove_old'], ' <input type="text" name="age" value="25" size="4"> ', $txt['days_word'], '<br>
 				', $txt['attachment_pruning_message'], ': <input type="text" name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br>
 				<input type="submit" value="', $txt['remove'], '" class="delete">
@@ -92,7 +92,7 @@ function template_maintenance()
 				<input type="hidden" name="sa" value="byAge">
 			</form>
 			<hr>
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(', $warning, ');" style="margin: 0 0 2ex 0;">
+			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0;">
 				', $txt['attachment_remove_size'], ' <input type="text" name="size" id="size" value="100" size="4"> ', $txt['kilobyte'], '<br>
 				', $txt['attachment_pruning_message'], ': <input type="text" name="notice" value="', $txt['attachment_delete_admin'], '" size="40"><br>
 				<input type="submit" value="', $txt['remove'], '" class="delete">
@@ -101,7 +101,7 @@ function template_maintenance()
 				<input type="hidden" name="sa" value="bySize">
 			</form>
 			<hr>
-			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return confirm(', $warning, ');" style="margin: 0 0 2ex 0;">
+			<form action="', $scripturl, '?action=admin;area=manageattachments" method="post" accept-charset="UTF-8" onsubmit="return ask(', $warning, ', e);" style="margin: 0 0 2ex 0;">
 				', $txt['attachment_manager_avatars_older'], ' <input type="text" name="age" value="45" size="4"> ', $txt['days_word'], '<br>
 				<input type="submit" value="', $txt['remove'], '" class="delete">
 				<input type="hidden" name="type" value="avatars">

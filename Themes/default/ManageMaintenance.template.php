@@ -167,7 +167,7 @@ function template_maintain_members()
 				<p class="maintain_members">
 					<label><input type="checkbox" name="posts" id="posts" checked> ', $txt['reattribute_increase_posts'], '</label>
 				</p>
-				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return !checkAttributeValidity() ? false : confirm(warningMessage);" class="submit"></span>
+				<span><input type="submit" id="do_attribute" value="', $txt['reattribute'], '" onclick="return checkAttributeValidity() && ask(warningMessage, e);" class="submit"></span>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
@@ -351,7 +351,7 @@ function template_maintain_topics()
 	}
 	echo '
 				</select></p>
-				<input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow();" class="submit">
+				<input type="submit" value="', $txt['move_topics_now'], '" onclick="return moveTopicsNow(e);" class="submit">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</form>
 		</div>
@@ -359,13 +359,13 @@ function template_maintain_topics()
 	<br class="clear">';
 
 	add_js('
-	function moveTopicsNow()
+	function moveTopicsNow(e)
 	{
 		if ($("#id_board_from option:selected").is(":disabled") || $("#id_board_to option:selected").is(":disabled"))
 			return false;
 		var confirmText = ', JavaScriptEscape($txt['move_topics_confirm']), ';
-		return confirm(confirmText.replace(/%board_from%/, $("#id_board_from").val().replace(/^=+&gt;&nbsp;/, \'\'))
-			.replace(/%board_to%/, $("#id_board_to").val().replace(/^=+&gt;&nbsp;/, \'\')));
+		return ask(confirmText.replace(/%board_from%/, $("#id_board_from").val().replace(/^=+&gt;&nbsp;/, \'\'))
+			.replace(/%board_to%/, $("#id_board_to").val().replace(/^=+&gt;&nbsp;/, \'\')), e);
 	}');
 }
 

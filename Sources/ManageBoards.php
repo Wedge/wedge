@@ -885,7 +885,7 @@ function EditBoardSettings($return_config = false)
 	$("#recycle_board").attr("disabled", !$("#recycle_enable").is(":checked"));');
 
 	// Warn the admin against selecting the recycle topic without selecting a board.
-	$context['force_form_onsubmit'] = 'if ($(\'#recycle_enable\').is(\':checked\') && $(\'#recycle_board\').val() == 0) { return confirm(' . JavaScriptEscape($txt['recycle_board_unselected_notice']) . '); } return true;';
+	$context['force_form_onsubmit'] = 'if ($(\'#recycle_enable\').is(\':checked\') && $(\'#recycle_board\').val() == 0) { return ask(' . JavaScriptEscape($txt['recycle_board_unselected_notice']) . ', e); } return true;';
 
 	// Doing a save?
 	if (isset($_GET['save']))

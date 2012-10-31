@@ -892,13 +892,13 @@ function GroupRequests()
 			array(
 				'position' => 'bottom_of_list',
 				'value' => '
-					<select name="req_action" onchange="if (this.value != 0 && (this.value == \'reason\' || confirm(' . $warning . '))) this.form.submit();">
+					<select name="req_action" onchange="if (this.value != 0 && (this.value == \'reason\' || ask(' . $warning . ', e))) this.form.submit();">
 						<option value="0" data-hide>' . $txt['with_selected'] . ':</option>
 						<option value="approve">' . $txt['mc_groupr_approve'] . '</option>
 						<option value="reject">' . $txt['mc_groupr_reject'] . '</option>
 						<option value="reason">' . $txt['mc_groupr_reject_w_reason'] . '</option>
 					</select>
-					<input type="submit" name="go" value="' . $txt['go'] . '" onclick="var sel = $(\'#req_action\').val(); if (sel != 0 && sel != \'reason\' && !confirm(' . $warning . ')) return false;">',
+					<input type="submit" name="go" value="' . $txt['go'] . '" onclick="var sel = $(\'#req_action\').val(); if (sel != 0 && sel != \'reason\' && !ask(' . $warning . ', e)) return false;">',
 				'align' => 'right',
 			),
 		),

@@ -2666,7 +2666,7 @@ class wedit
 		if ($this->editorOptions['drafts'] != 'none')
 			echo '
 				<input type="hidden" id="draft_id" name="draft_id" value="', empty($_REQUEST['draft_id']) ? '0' : $_REQUEST['draft_id'], '">
-				<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return ', in_array($this->editorOptions['drafts'], array('basic_post', 'auto_post')) ? 'confirm(' . JavaScriptEscape($txt['save_draft_warning']) . ') && ' : '', 'submitThisOnce(this);" accesskey="d" class="save">';
+				<input type="submit" name="draft" value="', $txt['save_draft'], '" tabindex="', $context['tabindex']++, '" onclick="return ', in_array($this->editorOptions['drafts'], array('basic_post', 'auto_post')) ? 'ask(' . JavaScriptEscape($txt['save_draft_warning']) . ', e) && ' : '', 'submitThisOnce(this);" accesskey="d" class="save">';
 
 		if (in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm')))
 			echo '

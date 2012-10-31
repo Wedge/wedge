@@ -123,7 +123,7 @@ function template_folder()
 			// Build the normal button array.
 			$conversation_buttons = array(
 				'reply' => array('text' => 'reply_to_all', 'url' => '<URL>?action=pm;sa=send;f=' . $context['folder'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';pmsg=' . $context['current_pm'] . ';u=all', 'class' => 'active'),
-				'delete' => array('text' => 'delete_conversation', 'url' => '<URL>?action=pm;sa=pmactions;pm_actions%5B' . $context['current_pm'] . '%5D=delete;conversation;f=' . $context['folder'] . ';start=' . $context['start'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';' . $context['session_query'], 'custom' => 'onclick="return confirm(' . $remove_confirm . ');"'),
+				'delete' => array('text' => 'delete_conversation', 'url' => '<URL>?action=pm;sa=pmactions;pm_actions%5B' . $context['current_pm'] . '%5D=delete;conversation;f=' . $context['folder'] . ';start=' . $context['start'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';' . $context['session_query'], 'custom' => 'onclick="return ask(' . $remove_confirm . ', e);"'),
 			);
 
 			// Show the conversation buttons.
@@ -341,7 +341,7 @@ function template_folder()
 						<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="forward_button">', $txt['quote'], '</a></li>';
 			}
 			echo '
-						<li><a href="<URL>?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return confirm(', $remove_confirm, ');" class="remove_button">', $txt['delete'], '</a></li>';
+						<li><a href="<URL>?action=pm;sa=pmactions;pm_actions%5B', $message['id'], '%5D=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_query'], '" onclick="return ask(', $remove_confirm, ', e);" class="remove_button">', $txt['delete'], '</a></li>';
 
 			if (empty($context['display_mode']))
 				echo '
@@ -454,7 +454,7 @@ function template_folder()
 			echo '
 	<div class="pagesection">
 		<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
-		<div class="floatright"><input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" style="font-weight: normal;" onclick="if (!confirm(', JavaScriptEscape($txt['delete_selected_confirm']), ')) return false;" class="delete"></div>
+		<div class="floatright"><input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" style="font-weight: normal" onclick="return ask(', JavaScriptEscape($txt['delete_selected_confirm']), ', e);" class="delete"></div>
 	</div>';
 
 		// Show a few buttons if we are in conversation mode and outputting the first message.
@@ -569,7 +569,7 @@ function template_subject_list()
 				</select>';
 
 		echo '
-				<input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" onclick="if (!confirm(', JavaScriptEscape($txt['delete_selected_confirm']), ')) return false;" class="delete">';
+				<input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" onclick="return ask(', JavaScriptEscape($txt['delete_selected_confirm']), ', e);" class="delete">';
 	}
 
 	echo '
@@ -1010,7 +1010,7 @@ function template_prune()
 	global $context, $theme, $options, $txt;
 
 	echo '
-	<form action="<URL>?action=pm;sa=prune" method="post" accept-charset="UTF-8" onsubmit="return confirm(', JavaScriptEscape($txt['pm_prune_warning']), ');">
+	<form action="<URL>?action=pm;sa=prune" method="post" accept-charset="UTF-8" onsubmit="return ask(', JavaScriptEscape($txt['pm_prune_warning']), ', e);">
 		<we:cat>
 			', $txt['pm_prune'], '
 		</we:cat>
@@ -1088,7 +1088,7 @@ function template_labels()
 		echo '
 		<div class="padding right">
 			<input type="submit" name="save" value="', $txt['save'], '" class="save">
-			<input type="submit" name="delete" value="', $txt['quickmod_delete_selected'], '" onclick="return confirm(', JavaScriptEscape($txt['pm_labels_delete']), ');" class="delete">
+			<input type="submit" name="delete" value="', $txt['quickmod_delete_selected'], '" onclick="return ask(', JavaScriptEscape($txt['pm_labels_delete']), ', e);" class="delete">
 		</div>';
 
 	echo '
@@ -1250,12 +1250,12 @@ function template_rules()
 
 	if (!empty($context['rules']))
 		echo '
-			<input type="submit" name="apply" value="', $txt['pm_apply_rules'], '" onclick="return confirm(', JavaScriptEscape($txt['pm_js_apply_rules_confirm']), ');" class="submit">';
+			<input type="submit" name="apply" value="', $txt['pm_apply_rules'], '" onclick="return ask(', JavaScriptEscape($txt['pm_js_apply_rules_confirm']), ', e);" class="submit">';
 
 	if (!empty($context['rules']))
 		echo '
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-			<input type="submit" name="delselected" value="', $txt['pm_delete_selected_rule'], '" onclick="return confirm(', JavaScriptEscape($txt['pm_js_delete_rule_confirm']), ');" class="delete">';
+			<input type="submit" name="delselected" value="', $txt['pm_delete_selected_rule'], '" onclick="return ask(', JavaScriptEscape($txt['pm_js_delete_rule_confirm']), ', e);" class="delete">';
 
 	echo '
 		</div>
@@ -1625,7 +1625,7 @@ function template_pm_drafts()
 				<div class="actionbar">
 					<ul class="actions">
 						<li><a href="<URL>?action=pm;sa=send;draft_id=', $post['id'], empty($post['pmsg']) ? '' : ';pmsg=' . $post['pmsg'], '" class="reply_button">', $txt['edit_draft'], '</a></li>
-						<li><a href="<URL>?action=pm;sa=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" class="remove_button" onclick="return confirm(', $remove_confirm, ');">', $txt['remove_draft'], '</a></li>
+						<li><a href="<URL>?action=pm;sa=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove_draft'], '</a></li>
 					</ul>
 				</div>
 			</div>
@@ -1649,7 +1649,7 @@ function template_pm_drafts()
 	if (!empty($context['posts']))
 		echo '
 		<div class="right padding">
-			<form action="<URL>?action=pm;sa=showdrafts;deleteall" method="post" onclick="return confirm(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ');">
+			<form action="<URL>?action=pm;sa=showdrafts;deleteall" method="post" onclick="return ask(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ', e);">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" value="', $txt['remove_all_drafts'], '" class="delete">
 			</form>

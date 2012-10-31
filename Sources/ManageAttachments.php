@@ -278,7 +278,7 @@ function ManageAvatarSettings($return_config = false)
 	}
 
 	// Attempt to figure out if the admin is trying to break things.
-	$context['settings_save_onclick'] = 'return $(\'#custom_avatar_enabled\').val() == 1 && ($(\'#custom_avatar_dir\').val() == \'\' || $(\'#custom_avatar_url\').val() == \'\') ? confirm(' . JavaScriptEscape($txt['custom_avatar_check_empty']) . ') : true;';
+	$context['settings_save_onclick'] = 'return $(\'#custom_avatar_enabled\').val() == 1 && ($(\'#custom_avatar_dir\').val() == \'\' || $(\'#custom_avatar_url\').val() == \'\') ? ask(' . JavaScriptEscape($txt['custom_avatar_check_empty']) . ', e) : true;';
 
 	// Prepare the context.
 	$context['post_url'] = $scripturl . '?action=admin;area=manageattachments;save;sa=avatars';

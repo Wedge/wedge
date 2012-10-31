@@ -393,25 +393,20 @@ function InTopicModeration(opt)
 		$('#' + display + ' li').removeClass('last').filter(':visible:last').addClass('last');
 	},
 
-	handleSubmit = function ()
+	handleSubmit = function (e)
 	{
+		if (!ask(we_confirm, e))
+			return false;
+
 		// Make sure this form isn't submitted in another way than this function.
 		var
 			oForm = $('#' + opt.sFormId)[0],
 			oInput = $('<input type="hidden" name="' + we_sessvar + '" />').val(we_sessid).appendTo(oForm);
 
 		if ($(this).hasClass('modrem')) // 'this' is the remove button itself.
-		{
-			if (!confirm(we_confirm))
-				return false;
 			oForm.action = oForm.action.replace(/;restore_selected=1/, '');
-		}
 		else // restore button?
-		{
-			if (!confirm(we_confirm))
-				return false;
 			oForm.action = oForm.action + ';restore_selected=1';
-		}
 
 		oForm.submit();
 		return true;

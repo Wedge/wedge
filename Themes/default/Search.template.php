@@ -341,7 +341,7 @@ function template_results()
 
 				echo '
 				<input type="hidden" name="redirect_url" value="', $scripturl . '?action=search2;params=' . $context['params'], '">
-				<input type="submit" style="font-size: 0.8em" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && confirm(we_confirm);">
+				<input type="submit" style="font-size: 0.8em" value="', $txt['quick_mod_go'], '" onclick="return this.form.qaction.value != \'\' && ask(we_confirm, e);">
 			</div>
 			<br class="clear">
 		</div>';

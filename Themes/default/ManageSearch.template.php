@@ -376,7 +376,7 @@ function template_show_spider_log()
 					', $txt['spider_log_delete_day'], '
 				</p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="submit" name="delete_entries" value="', $txt['spider_log_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && confirm(' . JavaScriptEscape($txt['spider_log_delete_confirm']) . ');" class="delete">
+				<input type="submit" name="delete_entries" value="', $txt['spider_log_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && ask(', JavaScriptEscape($txt['spider_log_delete_confirm']), ', e);" class="delete">
 			</div>
 		</form>';
 }
@@ -401,7 +401,7 @@ function template_show_spider_stats()
 					', $txt['spider_log_delete_day'], '
 				</p>
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<input type="submit" name="delete_entries" value="', $txt['spider_log_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && confirm(' . JavaScriptEscape($txt['spider_log_delete_confirm']) . ');" class="delete">
+				<input type="submit" name="delete_entries" value="', $txt['spider_log_delete_submit'], '" onclick="return ($(\'#older\').val() > 0) && ask(', JavaScriptEscape($txt['spider_log_delete_confirm']), ', e);" class="delete">
 			</div>
 		</form>';
 }

@@ -382,8 +382,8 @@ function template_sidebar_before()
 			<div class="thought_icon"></div>
 			', $txt['thought'], '
 		</we:title>
-		<a href="#" onclick="oThought.edit(\'\', \'\', true); return false;">', $txt['add_thought'], '</a> |
-		<a href="#" onclick="oThought.edit(\'\'); return false;">', $txt['edit_thought'], '</a>
+		<a href="#" onclick="return oThought.edit(\'\', \'\', true);">', $txt['add_thought'], '</a> |
+		<a href="#" onclick="return oThought.edit(\'\');">', $txt['edit_thought'], '</a>
 		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
 
 			echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>
@@ -590,8 +590,7 @@ function template_body_after()
 
 	$("#main_menu").menu();', $context['show_pm_popup'] ? '
 
-	if (confirm(' . JavaScriptEscape($txt['show_personal_messages']) . '))
-		window.open(weUrl("action=pm"));' : '';
+	ask(' . JavaScriptEscape($txt['show_personal_messages']) . ', 0, function (yes) { yes && window.open(weUrl("action=pm")); });' : '';
 
 	// Output any postponed JavaScript added by templates
 	// and mods, and close all outstanding tags. We're done!

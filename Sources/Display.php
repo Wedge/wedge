@@ -1180,7 +1180,7 @@ function Display()
 			'caption' => 'acme_remove',
 			'action' => '\'<URL>?action=deletemsg;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'remove_button\'',
-			'custom' => JavaScriptEscape('onclick="return confirm(' . JavaScriptEscape($txt['remove_message_confirm']) . ');"'),
+			'custom' => JavaScriptEscape('onclick="return ask(' . JavaScriptEscape($txt['remove_message_confirm']) . ', e);"'),
 		),
 		'sp' => array(
 			'caption' => 'acme_split',
@@ -1213,14 +1213,14 @@ function Display()
 	$context['nav_buttons'] = array(
 		'normal' => array(
 			'reply' => array('test' => 'can_reply', 'text' => 'reply', 'url' => '<URL>?action=post;topic=' . $context['current_topic'] . '.' . $context['start'] . ';last_msg=' . $context['topic_last_message'], 'class' => 'active'),
-			($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_topic' : 'enable_topic')]) . ');"', 'url' => '<URL>?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
+			($context['is_marked_notify'] ? 'unnotify' : 'notify') => array('test' => 'can_mark_notify', 'text' => $context['is_marked_notify'] ? 'unnotify' : 'notify', 'custom' => 'onclick="return ask(' . JavaScriptEscape($txt['notification_' . ($context['is_marked_notify'] ? 'disable_topic' : 'enable_topic')]) . ', e);"', 'url' => '<URL>?action=notify;sa=' . ($context['is_marked_notify'] ? 'off' : 'on') . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'mark_unread' => array('test' => 'can_mark_unread', 'text' => 'mark_unread', 'url' => '<URL>?action=markasread;sa=topic;t=' . $context['mark_unread_time'] . ';topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'send' => array('test' => 'can_send_topic', 'text' => 'send_topic', 'url' => '<URL>?action=emailuser;sa=sendtopic;topic=' . $context['current_topic'] . '.0'),
 			'print' => array('text' => 'print', 'custom' => 'rel="nofollow"', 'url' => '<URL>?action=printpage;topic=' . $context['current_topic'] . '.0'),
 		),
 		'mod' => array(
 			'move' => array('test' => 'can_move', 'text' => 'move_topic', 'url' => '<URL>?action=movetopic;topic=' . $context['current_topic'] . '.0'),
-			'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'custom' => 'onclick="return confirm(' . JavaScriptEscape($txt['are_sure_remove_topic']) . ');"', 'url' => '<URL>?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_query']),
+			'delete' => array('test' => 'can_delete', 'text' => 'remove_topic', 'custom' => 'onclick="return ask(' . JavaScriptEscape($txt['are_sure_remove_topic']) . ', e);"', 'url' => '<URL>?action=removetopic2;topic=' . $context['current_topic'] . '.0;' . $context['session_query']),
 			'lock' => array('test' => 'can_lock', 'text' => empty($context['is_locked']) ? 'set_lock' : 'set_unlock', 'url' => '<URL>?action=lock;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'pin' => array('test' => 'can_pin', 'text' => empty($context['is_pinned']) ? 'set_pin' : 'set_unpin', 'url' => '<URL>?action=pin;topic=' . $context['current_topic'] . '.' . $context['start'] . ';' . $context['session_query']),
 			'merge' => array('test' => 'can_merge', 'text' => 'merge', 'url' => '<URL>?action=mergetopics;topic=' . $context['current_topic']),

@@ -1639,7 +1639,7 @@ function template_modify_language_entries()
 	// English can't be deleted.
 	if ($context['lang_id'] != 'english')
 		echo '
-					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' onclick="confirm(', JavaScriptEscape($txt['languages_delete_confirm']), ');" class="delete">';
+					<input type="submit" name="delete_main" value="', $txt['delete'], '"', $context['lang_file_not_writable_message'] || !empty($context['file_entries']) ? ' disabled' : '', ' onclick="return ask(', JavaScriptEscape($txt['languages_delete_confirm']), ', e);" class="delete">';
 
 	echo '
 				</div>

@@ -102,7 +102,7 @@ function template_main()
 		<div class="errorbox">', $txt['theme_install_writable'], '</div>';
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=theme;sa=install" method="post" accept-charset="UTF-8" enctype="multipart/form-data" onsubmit="return confirm(', JavaScriptEscape($txt['theme_install_new_confirm']), ');">
+		<form action="', $scripturl, '?action=admin;area=theme;sa=install" method="post" accept-charset="UTF-8" enctype="multipart/form-data" onsubmit="return ask(', JavaScriptEscape($txt['theme_install_new_confirm']), ', e);">
 			<we:cat>
 				<a href="', $scripturl, '?action=help;in=theme_install" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 				', $txt['theme_install'], '

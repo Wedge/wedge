@@ -1107,7 +1107,7 @@ function template_aeva_viewAlbum()
 	}
 	echo $can_edit_items ? '
 				<input type="hidden" name="' . $context['session_var'] . '" value="' . $context['session_id'] . '">
-				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return $(\'#modtype\').val() == \'delete\' ? confirm(we_confirm) : true;">
+				<input type="submit" value="' . $txt['media_submit'] . '" name="submit_aeva" tabindex="' . $context['tabindex']++ . '" class="remove" style="margin: 0; padding: 1px 3px" onclick="return $(\'#modtype\').val() != \'delete\' || ask(we_confirm, e);">
 			</div>' : '', '
 			<nav>', $txt['pages'], ': ', $context['aeva_page_index'], '</nav>
 		</div>

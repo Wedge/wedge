@@ -757,9 +757,9 @@ function MembersAwaitingActivation()
 
 	// Set up the JavaScript function for selecting an action for the list.
 	$javascript = '
-	function onSelectChange()
+	function onSelectChange(e)
 	{
-		if (document.forms.postForm.todo.value == "")
+		if (this.value == "")
 			return;
 
 		var message = "";';
@@ -767,23 +767,23 @@ function MembersAwaitingActivation()
 	// We have special messages for approving deletion of accounts - it's surprisingly logical - honest.
 	if ($context['current_filter'] == 4)
 		$javascript .= '
-		if (document.forms.postForm.todo.value.indexOf("reject") != -1)
+		if (this.value.indexOf("reject") != -1)
 			message = "' . $txt['admin_browse_w_delete'] . '";
 		else
 			message = "' . $txt['admin_browse_w_reject'] . '";';
 	// Otherwise a nice standard message.
 	else
 		$javascript .= '
-		if (document.forms.postForm.todo.value.indexOf("delete") != -1)
+		if (this.value.indexOf("delete") != -1)
 			message = "' . $txt['admin_browse_w_delete'] . '";
-		else if (document.forms.postForm.todo.value.indexOf("reject") != -1)
+		else if (this.value.indexOf("reject") != -1)
 			message = "' . $txt['admin_browse_w_reject'] . '";
-		else if (document.forms.postForm.todo.value == "remind")
+		else if (this.value == "remind")
 			message = "' . $txt['admin_browse_w_remind'] . '";
 		else
 			message = "' . ($context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate']) . '";';
 	$javascript .= '
-		if (confirm(message + " ' . $txt['admin_browse_warn'] . '"))
+		if (ask(message + " ' . $txt['admin_browse_warn'] . '", e))
 			document.forms.postForm.submit();
 	}';
 
@@ -974,7 +974,7 @@ function MembersAwaitingActivation()
 						[<a href="' . $scripturl . '?action=admin;area=viewmembers;sa=browse;showdupes=' . ($context['show_duplicates'] ? 0 : 1) . ';type=' . $context['browse_type'] . (!empty($context['show_filter']) ? ';filter=' . $context['current_filter'] : '') . ';' . $context['session_query'] . '">' . ($context['show_duplicates'] ? $txt['dont_check_for_duplicate'] : $txt['check_for_duplicate']) . '</a>]
 					</div>
 					<div class="floatright">
-						<select name="todo" onchange="onSelectChange();">
+						<select name="todo" onchange="onSelectChange(e);">
 							' . $allowed_actions . '
 						</select>
 						<noscript><input type="submit" value="' . $txt['go'] . '"></noscript>

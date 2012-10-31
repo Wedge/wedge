@@ -57,9 +57,9 @@ function getPermAlbums(id_profile, args)
 	return false;
 }
 
-function permDelCheck(id, el)
+function permDelCheck(e, id, el)
 {
-	if (el.checked && !confirm(we_confirm))
+	if (el.checked && !ask(we_confirm, e))
 	{
 		el.checked = '';
 		return;

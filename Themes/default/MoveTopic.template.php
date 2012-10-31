@@ -57,7 +57,7 @@ function template_main()
 						</dl>
 						<label><input type="checkbox" name="enforce_subject"> ', $txt['moveTopic4'], '</label>
 					</fieldset>
-					<label><input type="checkbox" name="postRedirect"', $context['is_approved'] ? ' checked' : '', ' onclick="', $context['is_approved'] ? '' : 'if (this.checked && !confirm(' . JavaScriptEscape($txt['move_topic_unapproved_js']) . ')) return false; ', '$(\'#reasonArea\').slideToggle(this.checked);"> ', $txt['moveTopic1'], '</label><br>
+					<label><input type="checkbox" name="postRedirect"', $context['is_approved'] ? ' checked' : '', ' onclick="', $context['is_approved'] ? '' : 'if (this.checked && !ask(' . JavaScriptEscape($txt['move_topic_unapproved_js']) . ', e)) return false; ', '$(\'#reasonArea\').slideToggle(this.checked);"> ', $txt['moveTopic1'], '</label><br>
 					<fieldset id="reasonArea" style="padding: .7em 1em; margin-top: 1ex"', $context['is_approved'] ? '' : ' class="hide"', '>
 						<dl class="settings">
 							<dt>

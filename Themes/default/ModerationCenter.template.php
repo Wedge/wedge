@@ -359,7 +359,7 @@ function template_unapproved_posts()
 	echo '
 			<div class="pagesection">
 				<div class="floatright">
-					<select name="do" onchange="if (this.value != 0 && confirm(', JavaScriptEscape($txt['mc_unapproved_sure']), ')) submit();">
+					<select name="do" onchange="if (this.value != 0 && ask(', JavaScriptEscape($txt['mc_unapproved_sure']), ', e)) submit();">
 						<option value="0" data-hide>', $txt['with_selected'], ':</option>
 						<option value="approve">&nbsp;--&nbsp;', $txt['approve'], '</option>
 						<option value="delete">&nbsp;--&nbsp;', $txt['delete'], '</option>

@@ -197,7 +197,7 @@ function template_permission_index()
 					</dl>
 				</fieldset>
 				<div class="right">
-					<input type="submit" value="', $txt['permissions_set_permissions'], '" onclick="return checkSubmit();" class="submit">
+					<input type="submit" value="', $txt['permissions_set_permissions'], '" onclick="return checkSubmit(e);" class="submit">
 				</div>
 			</div>';
 
@@ -211,7 +211,7 @@ function template_permission_index()
 		sExtra: \';admin_key=app;th=1\'', '
 	});
 
-	function checkSubmit()
+	function checkSubmit(e)
 	{
 		if ((document.forms.permissionForm.predefined.value != "" && (document.forms.permissionForm.copy_from.value != "empty" || document.forms.permissionForm.permissions.value != "")) || (document.forms.permissionForm.copy_from.value != "empty" && document.forms.permissionForm.permissions.value != ""))
 		{
@@ -224,7 +224,7 @@ function template_permission_index()
 			return false;
 		}
 		if (document.forms.permissionForm.permissions.value != "" && document.forms.permissionForm.add_remove.value == "deny")
-			return confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ');
+			return ask(', JavaScriptEscape($txt['permissions_deny_dangerous']), ', e);
 
 		return true;
 	}');
@@ -444,15 +444,12 @@ function template_modify_group()
 		</div>';
 	else
 		add_js('
-	window.weUsedDeny = false;
-
-	function warnAboutDeny()
-	{
-		return window.weUsedDeny ? confirm(', JavaScriptEscape($txt['permissions_deny_dangerous']), ') : true;
-	}');
+	window.weUsedDeny = false;');
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'], '" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm" onsubmit="return warnAboutDeny();">';
+		<form action="', $scripturl, '?action=admin;area=permissions;sa=modify2;group=', $context['group']['id'], ';pid=', $context['profile']['id'],
+		'" method="post" accept-charset="UTF-8" name="permissionForm" id="permissionForm" onsubmit="return !window.weUsedDeny || ask(',
+		JavaScriptEscape($txt['permissions_deny_dangerous']), ', e);">';
 
 	if (!empty($settings['permission_enable_deny']) && $context['group']['id'] != -1)
 		echo '
