@@ -14,7 +14,7 @@
 
 var Yup = {
 
-	init: function(areas)
+	init: function (areas)
 	{
 		YUI = YAHOO.util;
 		Yup.currentProgress = $('#current_progress');
@@ -52,7 +52,7 @@ var Yup = {
 		Yup.uploader.addListener('contentReady', Yup.onContentReady);
 	},
 
-	onContentReady: function()
+	onContentReady: function ()
 	{
 		var ul = Yup.uploader;
 		ul.setAllowMultipleFiles(true);
@@ -67,19 +67,19 @@ var Yup = {
 			$('#mu_container').css('textAlign', '');
 	},
 
-	setProg: function(which, prog)
+	setProg: function (which, prog)
 	{
 		Yup[which == 'overall' ? 'overallProgress' : 'currentProgress'].css('backgroundPosition', (100 - prog) + '%');
 		Yup[which == 'current' ? 'currentProgressText3' : 'overallProgressText2'].html(prog + '%');
 	},
 
-	setOverallTotal: function(toIncrement)
+	setOverallTotal: function (toIncrement)
 	{
 		Yup.overAllTotal += toIncrement;
 		Yup.overallProgressText.html(Yup.curOverallText + ' (' + Yup.bytesToSize(Yup.overAllTotal) + ')');
 	},
 
-	setOverallProg: function(toProg)
+	setOverallProg: function (toProg)
 	{
 		Yup.setProg('overall', Math.round(((toProg + Yup.overAllProg) / Yup.overAllTotal) * 100));
 	},
@@ -94,7 +94,7 @@ var Yup = {
 			return Math.round(size / (1024 * 1024)) + ' ' + Yup.txt.mb;
 	},
 
-	onFilesSelect: function(event)
+	onFilesSelect: function (event)
 	{
 		$('#remove_me').remove();
 		var sorter = $('#sort_order').val(), myFiles = [];
@@ -137,7 +137,7 @@ var Yup = {
 		}
 	},
 
-	onUploadStart: function(event)
+	onUploadStart: function (event)
 	{
 		var file = Yup.files[Yup.lastDone];
 		$('#' + file.id).addClass('file-uploading');
@@ -145,7 +145,7 @@ var Yup = {
 		Yup.currProg = 0;
 	},
 
-	onUploadError: function(event)
+	onUploadError: function (event)
 	{
 		var err = 'The Flash upload module sent the following error.<br><br>Error type: ' + event.type + '<br>Error ID: ' + event.id + '<br><br>Error message: ' + event.status + '<br><br>';
 		try
@@ -157,11 +157,11 @@ var Yup = {
 		}
 		catch (e)
 		{
-			alert(err.replace(/<br>/g, "\n"));
+			say(err.replace(/<br>/g, "\n"));
 		}
 	},
 
-	onCompleteData: function(event)
+	onCompleteData: function (event)
 	{
 		if (typeof Yup.files[Yup.lastDone] == 'undefined')
 			return false;
@@ -229,7 +229,7 @@ var Yup = {
 		return true;
 	},
 
-	onUploadProgress: function(event)
+	onUploadProgress: function (event)
 	{
 		var prog = Math.round((event.bytesLoaded / event.bytesTotal) * 100);
 		Yup.setProg('current', prog);
@@ -238,13 +238,13 @@ var Yup = {
 		Yup.setOverallProg(event.bytesLoaded);
 	},
 
-	startNext: function()
+	startNext: function ()
 	{
 		if (Yup.files.length != Yup.lastDone && typeof Yup.files[Yup.lastDone] != 'undefined')
 			Yup.uploader.upload(Yup.files[Yup.lastDone].id, Yup.postURL, 'POST', null, 'Filedata', {});
 	},
 
-	removeFile: function(file_id)
+	removeFile: function (file_id)
 	{
 		Yup.uploader.removeFile(file_id);
 		$('#' + file_id).hide();

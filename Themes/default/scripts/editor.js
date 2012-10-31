@@ -698,7 +698,7 @@ function weEditor(opt)
 	{
 		if (!this.bRichTextPossible)
 		{
-			alert($txt['rich_edit_wont_work']);
+			say($txt['rich_edit_wont_work']);
 			return false;
 		}
 

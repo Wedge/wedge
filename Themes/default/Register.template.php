@@ -54,7 +54,7 @@ function template_registration_form()
 	{
 		if (currentAuthMethod == \'passwd\' && document.forms.registration.we_autov_pwmain.value != document.forms.registration.we_autov_pwverify.value)
 		{
-			alert(' . JavaScriptEscape($txt['register_passwords_differ_js']) . ');
+			say(' . JavaScriptEscape($txt['register_passwords_differ_js']) . ');
 			return false;
 		}
 

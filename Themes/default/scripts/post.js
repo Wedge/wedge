@@ -251,11 +251,13 @@ function wedgeAttachSelect(opt)
 			checkActive();
 		}
 		else // Uh oh.
-		{
-			alert(message_ext_error_final);
-			createFileSelector();
-			$(element).remove();
-		}
+			say(
+				message_ext_error_final,
+				function () {
+					createFileSelector();
+					$(element).remove();
+				}
+			);
 	},
 
 	prepareFileSelector = function (element)

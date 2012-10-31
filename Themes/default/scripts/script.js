@@ -16,6 +16,7 @@ var
 	oThought,
 	weEditors = [],
 	_formSubmitted = false,
+	_modalDone = false,
 
 	we_confirm = $txt['generic_confirm_request'],
 	we_loading = $txt['ajax_in_progress'],
@@ -79,25 +80,25 @@ String.prototype.wereplace = function (oReplacements)
 };
 
 /*
-	Not used in Wedge for now, as it's not perfect. Might as well comment out the code. But plans are to use it ASAP.
-
-	// alert() alternative
-	function say(string, callback)
-	{
-		reqWin('', 350, string, 2, callback);
-	}
+	A stylable alert() alternative.
+	@string string: HTML content to show.
+	[optional] @object e: the current event object, if any. Must be specified if the alert is called before moving to another page (e.g. submit).
+	[optional] @function callback: a function to call after the user clicked OK.
 */
+function say(string, e, callback)
+{
+	return _modalDone || reqWin('', 350, string, 2, callback || e, e && e.target ? e : 0);
+}
 
 /*
 	A stylable confirm() alternative.
 	@string string: HTML content to show.
-	@object e: the current event object, if any. It must be specified if called to cancel a click, for instance.
-	@function callback: a function to call if the user agrees, if needed.
+	[optional] @object e: the current event object, if any. Must be specified if the event handler uses ask() to cancel or proceed.
+	[optional] @function callback: a function to call after the user made their choice. function (answer) { if (answer) { They agreed. } }
 */
-var confirm_var = false;
 function ask(string, e, callback)
 {
-	return confirm_var || reqWin('', 350, string, 1, callback, e);
+	return _modalDone || reqWin('', 350, string, 1, callback || e, e && e.target ? e : 0);
 }
 
 /*
@@ -198,25 +199,23 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 					return;
 				if (e && $(this).hasClass('submit'))
 				{
-					confirm_var = true;
+					_modalDone = true;
 					$(e.target).trigger(e.type);
-					confirm_var = false;
+					_modalDone = false;
 				}
 			})
 			.filter('.submit')
 			.val(we_ok);
 	else
 		$('#helf')
-			.load(help_page, { t: title }, animate_popup);
-
-	// Clicking anywhere on the page should close the popup.
-	$('#help_pop').click(function (e) {
-		if (modal_type)
-			return false;
-		// If we clicked somewhere in the popup, don't close it, because we may want to select text.
-		if (!$(e.target).closest('#helf').length)
-			close_window();
-	});
+			.load(help_page, { t: title }, animate_popup)
+			// Clicking anywhere on the page should close the popup.
+			.parent() // #help_pop
+			.click(function (e) {
+				// If we clicked somewhere in the popup, don't close it, because we may want to select text.
+				if (!$(e.target).closest('#helf').length)
+					close_window();
+			});
 
 	// Return false so the click won't follow the link ;)
 	return false;
@@ -742,4 +741,5 @@ function Thought(opt)
 
 /* Optimize:
 _formSubmitted = _f
+_modalDone = _c
 */

@@ -15,9 +15,10 @@
 function template_postform_before()
 {
 	global $context, $txt;
+
 	// Start the form, the header and the container for all the markup
 	echo '
-		<form action="<URL>?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', $context['becomes_approved'] ? '' : 'alert(' . JavaScriptEscape($txt['js_post_will_require_approval']) . '); ', 'submitonce(); weSaveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');" enctype="multipart/form-data">
+		<form action="<URL>?action=', $context['destination'], ';', empty($context['current_board']) ? '' : 'board=' . $context['current_board'], '" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="', $context['becomes_approved'] ? '' : 'return say(' . JavaScriptEscape($txt['js_post_will_require_approval']) . ', e, function () { ', 'submitonce(); weSaveEntities(\'postmodify\', [\'subject\', \'', $context['postbox']->id, '\', \'guestname\', \'evtitle\', \'question\'], \'options\');', $context['becomes_approved'] ? '' : ' });', '" enctype="multipart/form-data">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>

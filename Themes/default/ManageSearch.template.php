@@ -144,7 +144,7 @@ function template_select_search_method()
 		echo '
 						<dt>
 							<label>
-								<input type="radio" name="search_index" value="fulltext"', !empty($settings['search_index']) && $settings['search_index'] == 'fulltext' ? ' checked' : '', empty($context['fulltext_index']) ? ' onclick="alert(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . '); return true;"': '', '>
+								<input type="radio" name="search_index" value="fulltext"', !empty($settings['search_index']) && $settings['search_index'] == 'fulltext' ? ' checked' : '', empty($context['fulltext_index']) ? ' onclick="say(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . ');"': '', '>
 								', $txt['search_method_fulltext_index'], '
 							</label>
 						</dt>
@@ -170,7 +170,7 @@ function template_select_search_method()
 	echo '
 						<dt>
 							<label>
-								<input type="radio" name="search_index" value="custom"', !empty($settings['search_index']) && $settings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="alert(' . JavaScriptEscape($txt['search_index_custom_warning']) . '); return true;"', '>
+								<input type="radio" name="search_index" value="custom"', !empty($settings['search_index']) && $settings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="say(' . JavaScriptEscape($txt['search_index_custom_warning']) . ');"', '>
 								', $txt['search_index_custom'], '
 							</label>
 						</dt>
