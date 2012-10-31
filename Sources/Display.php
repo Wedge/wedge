@@ -1429,7 +1429,7 @@ function prepareDisplayContext($reset = false)
 			$menu[] = $memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab';
 
 		if ($output['can_see_ip'] && !empty($output['member']['ip']))
-			$menu[] = ($context['can_moderate_forum'] ? 'ip' : 'ip') . '/' . $output['member']['ip'];
+			$menu[] = ($context['can_moderate_forum'] ? 'tk' : 'ip') . '/' . $output['member']['ip'];
 
 		// If we can't do anything, it's not even worth recording the user's website...
 		if (count($menu))

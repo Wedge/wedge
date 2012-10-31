@@ -44,7 +44,7 @@ p.moderators
 		vertical-align: -5px
 		padding: 0 2px 0 10px
 
-.mark_read
+.mark_read extends .clearfix
 	padding: 0 .5em
 
 // The newsfader
@@ -135,8 +135,7 @@ img.new_posts
 .prevnext_next extends .prevnext_prev
 	text-align: right
 
-#moderationbuttons
-	overflow: hidden
+#moderationbuttons extends .clearfix
 	margin-bottom: 6px
 
 #moderationbuttons_strip
@@ -201,10 +200,9 @@ img.new_posts
 		max-width: 100%
 		margin-top: 3px
 
-.poll_moderation
+.poll_moderation extends .clearfix
 	margin: .5em 0 0
 	padding: 0 .2em .2em 0
-	overflow: hidden
 
 #whoisviewing
 	margin: 0
@@ -1413,3 +1411,7 @@ div.top_row dd
 			#offside
 				margin: 0
 			@endif
+
+@media all and (max-width: "math($sidebar-width * 2)")
+	body #sidebar section
+		width: auto

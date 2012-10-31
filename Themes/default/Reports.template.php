@@ -76,7 +76,7 @@ function template_main()
 	foreach ($context['tables'] as $table)
 	{
 		echo '
-		<table class="table_grid w100 cs0">';
+		<table class="table_grid w100 cs0 clear">';
 
 		if (!empty($table['title']))
 			echo '

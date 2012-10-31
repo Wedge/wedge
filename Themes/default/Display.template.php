@@ -518,7 +518,7 @@ function template_user_status(&$member)
 
 	// Indicate their gender, if filled in.
 	echo '
-								<div', $member['gender'] ? ' class="' . ($member['gender']['name'] == $txt['male'] ? 'male' : 'female') . '" title="' . $member['gender']['name'] . '"' : '', '></div>';
+								<div', !empty($member['gender']['name']) ? ' class="' . ($member['gender']['name'] == $txt['male'] ? 'male' : 'female') . '" title="' . $member['gender']['name'] . '"' : '', '></div>';
 
 	// Are they a contact of mine..?
 	echo '
