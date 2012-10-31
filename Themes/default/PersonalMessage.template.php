@@ -153,10 +153,9 @@ function template_folder()
 			<a id="msg', $message['id'], '"></a>
 			<h4>';
 
-			// Show online and offline buttons?
+			// Show user statuses
 			if (!$message['member']['is_guest'])
-				echo '
-				<img src="', $message['member']['online']['image_href'], '" alt="', $message['member']['online']['text'], '">';
+				template_user_status($message['member']);
 
 			echo '
 				', $message['member']['link'], '
@@ -231,37 +230,6 @@ function template_folder()
 						<li>', $custom['value'], '</li>';
 					}
 					if ($shown)
-					echo '
-					</ul>
-				</li>';
-				}
-
-				// Show the profile, website, email address, and personal message buttons.
-				if ($theme['show_profile_buttons'])
-				{
-					echo '
-				<li class="profile">
-					<ul>';
-
-					// Show the profile button
-					echo '
-						<li><a href="', $message['member']['href'], '">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/icons/profile_sm.gif" alt="' . $txt['view_profile'] . '" title="' . $txt['view_profile'] . '">' : $txt['view_profile']), '</a></li>';
-
-					// Don't show an icon if they haven't specified a website.
-					if ($message['member']['website']['url'] != '' && !isset($context['disabled_fields']['website']))
-						echo '
-						<li><a href="', $message['member']['website']['url'], '" title="' . $message['member']['website']['title'] . '" target="_blank" class="new_win">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/www_sm.gif" alt="' . $message['member']['website']['title'] . '">' : $txt['website']), '</a></li>';
-
-					// Don't show the email address if they want it hidden.
-					if (in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
-						echo '
-						<li><a href="<URL>?action=emailuser;sa=email;uid=', $message['member']['id'], '" rel="nofollow">', ($theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email']), '</a></li>';
-
-					// Since we know this person isn't a guest, you *can* message them.
-					if ($context['can_send_pm'])
-						echo '
-						<li><a href="<URL>?action=pm;sa=send;u=', $message['member']['id'], '" title="', $message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline'], '">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/im_' . ($message['member']['online']['is_online'] ? 'on' : 'off') . '.gif" alt="' . ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']) . '">' : ($message['member']['online']['is_online'] ? $txt['pm_online'] : $txt['pm_offline']), '</a></li>';
-
 					echo '
 					</ul>
 				</li>';
@@ -454,7 +422,7 @@ function template_folder()
 			echo '
 	<div class="pagesection">
 		<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
-		<div class="floatright"><input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" style="font-weight: normal" onclick="return ask(', JavaScriptEscape($txt['delete_selected_confirm']), ', e);" class="delete"></div>
+		<div class="floatright"><input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" style="font-weight: normal;" onclick="return ask(', JavaScriptEscape($txt['delete_selected_confirm']), ', e);" class="delete"></div>
 	</div>';
 
 		// Show a few buttons if we are in conversation mode and outputting the first message.

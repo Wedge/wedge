@@ -9,14 +9,17 @@ body
 	color: #333
 	padding: 0
 
-em
-	font-family: $ita_font
+.post
+	em, strong
+		font-family: $ita_font
 
 #offside
 	display: table-cell
 
 @media $responsive
 	body
+		#main
+			padding: 4px 0 0
 		#sidebar
 			display: table-footer-group
 			background: $side_bg
@@ -126,6 +129,9 @@ dl#feed
 // !! That one's pretty much a hack...
 #siteslogan
 	margin-top: 60px
+
+.keyinfo .modified
+	font-style: normal
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
@@ -248,9 +254,9 @@ $head_bg   = rgba(233,235,186,.66)
 $body_bg   = #f6f8ef
 $side_bg   = #e8e3cb
 $footer_bg = lighten($side_bg, 5%)
-$main_font = "PT Sans", Arial, sans-serif
 $ita_font = "Segoe UI", "Trebuchet MS", Arial, sans-serif
-$post_font = "Lucida Sans Unicode", Verdana, $main_font
+$main_font = "PT Sans", Arial, Helvetica, sans-serif
+$post_font = Tahoma, Verdana, Arial, sans-serif
 $post_font_size = 9.5pt/140%
 
 @remove #linktree
@@ -279,5 +285,5 @@ $post_font_size = 9.5pt/140%
 */
 
 @replace
-	webelowine.png
-	webelow.png
+	wefoot1.png
+	wefoot2.png

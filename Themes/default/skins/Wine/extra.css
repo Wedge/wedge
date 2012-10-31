@@ -31,6 +31,14 @@ table.cs0 final tr.windowbg:last-child td
 	background-color: #693636
 	color: #ddc
 
+/* The following direction settings will magically move the sidebar to the left.
+	Apply the following to disable this in a sub-skin or custom.css:
+
+	@remove #edge, #sidebar, #main
+		direction: ltr
+		direction: rtl
+*/
+
 #edge
 	direction: rtl
 
@@ -39,7 +47,7 @@ table.cs0 final tr.windowbg:last-child td
 
 #sidebar
 	background: $window_bg
-	display: table-cell
+	display: @is (ie[-7], block, table-cell)
 	vertical-align: top
 	width: $sidebar-width
 	border: 1px solid #ccc
@@ -60,8 +68,11 @@ table.cs0 final tr.windowbg:last-child td
 	li
 		font-size: .9em
 
-#main
-	padding: 0 0 0 30px
+@if ie[-7]
+@else
+	#main
+		padding: 0 0 0 30px
+@endif
 
 #header
 	h2
@@ -76,10 +87,6 @@ table.cs0 final tr.windowbg:last-child td
 #siteslogan
 	float: right
 	color: #000
-
-@replace
-	letter-spacing: -3px
-	letter-spacing: -1px
 
 // Banner header
 #upper_section
@@ -307,7 +314,7 @@ ul.buttonlist
 @media $responsive reset
 	body
 		padding: 0
-		@if (opera)
+		@if (opera, ios)
 			#wedge, #header, #footer
 				border-radius: 0
 		@else
@@ -332,9 +339,18 @@ ul.buttonlist
 		#main
 			display: block
 			padding: 4px 0 12px
+			@if ie[-7]
+				margin-right: 0
+			#offside
+				margin: 0
+			@endif
 
-/* CSS variables.
+/* Overwriting earlier settings...
 ------------------------------------------------------- */
+
+@replace
+	letter-spacing: -3px
+	letter-spacing: -1px
 
 $head_font = "PT Sans", $main_font
 

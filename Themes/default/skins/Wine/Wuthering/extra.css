@@ -10,6 +10,9 @@ body
 	color: #333
 	padding: 15px
 
+#helf
+	text-align: $left
+
 .lightgrad virtual
 	gradient: #eee, #faf8f6
 
@@ -118,7 +121,7 @@ body
 			clip: rect(0, 40px, 30px, 15px)
 			box-shadow: 2px 0 5px #bbb
 			background: linear-gradient(0deg, #fdfdfd, #ededed)
-			border-radius: 0 20px 20px 0
+			border-radius: 0 50% 50% 0
 			z-index: 1
 		:first-child
 			padding-left: 8px
@@ -129,7 +132,7 @@ body
 
 @media $responsive
 	body
-		padding: 0 !important
+		padding: 0
 		#wedge
 			border: 0
 		#sidebar
@@ -220,7 +223,6 @@ $window_bg2 = #e8ebee
 .cat, .title
 	padding: 4px 8px
 	margin-top: 8px
-	overflow: auto
 	text-shadow: none
 	font: italic 1.15em/1.2 $head_font
 
@@ -287,10 +289,6 @@ tr.titlebg
 	.cat final
 		text-align: center
 
-#upshrinkHeaderIC
-	.cat final, .title2 final
-		font-size: 1.1em
-
 dfn
 	line-height: 140%
 
@@ -318,5 +316,5 @@ $radius = 20px
 	background: url($images/theme/bg.jpg)
 
 @replace
-	webelowine.png
-	webelow.png
+	wefoot1.png
+	wefoot2.png

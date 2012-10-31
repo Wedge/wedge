@@ -590,7 +590,7 @@ function template_body_after()
 
 	$("#main_menu").menu();', $context['show_pm_popup'] ? '
 
-	ask(' . JavaScriptEscape($txt['show_personal_messages']) . ', 0, function (yes) { yes && window.open(weUrl("action=pm")); });' : '';
+	ask(' . JavaScriptEscape($txt['show_personal_messages']) . ', function (yes) { yes && window.open(weUrl("action=pm")); });' : '';
 
 	// Output any postponed JavaScript added by templates
 	// and mods, and close all outstanding tags. We're done!
@@ -720,7 +720,7 @@ function template_menu()
 // The same footer area...
 function template_footer()
 {
-	global $context, $txt, $user_info, $theme;
+	global $context, $txt, $user_info, $theme, $boardurl;
 
 	echo '
 	<div id="footer"><div class="frame">
@@ -735,13 +735,14 @@ function template_footer()
 	// If you want to use validator.nu instead, replace the w3.org link with:
 	// "http://validator.nu/?doc=', $user_info['url'], '"
 	// !! @worg: rev.txt, facebook link
+	$is_worg = $boardurl == 'http://wedge.org';
 	echo '
-			<li class="copyright">', $txt['copyright'], ' (rev <a href="http://wedge.org/pub/feats/6108/new-revs/">', file_get_contents($theme['theme_dir'] . '/rev.txt'), '</a>)',
+			<li class="copyright">', $txt['copyright'], $worg ? ' (rev <a href="http://wedge.org/pub/feats/6108/new-revs/">' . file_get_contents($theme['theme_dir'] . '/rev.txt') . '</a>)' : '',
 			$context['show_load_time'] ? ' -</li>' : '</li><br class="clear">', '
 			<li class="links">
 				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |
-				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a> |
-				Like us on <img src="http://static.ak.fbcdn.net/rsrc.php/v1/yH/r/eIpbnVKI9lR.png" style="width: 14px; height: 14px; margin-bottom: -2px; border: 0"> <a href="http://www.facebook.com/wedgebook">Facebook</a>
+				<a id="button_html5" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_html5'], '">', $txt['html5'], '</a>', $worg ? ' |
+				Like us on <img src="http://static.ak.fbcdn.net/rsrc.php/v1/yH/r/eIpbnVKI9lR.png" style="width: 14px; height: 14px; margin-bottom: -2px; border: 0"> <a href="http://www.facebook.com/wedgebook">Facebook</a>' : '', '
 			</li>
 		</ul>
 	</div></div>';

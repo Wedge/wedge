@@ -121,6 +121,7 @@ function MessageMain()
 
 	loadLanguage('PersonalMessage');
 	loadTemplate('PersonalMessage');
+	loadTemplate('Display'); // For template_user_status
 
 	// Load up the members maximum message capacity.
 	if ($user_info['is_admin'])

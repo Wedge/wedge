@@ -270,7 +270,7 @@ ul#noava
 		text-decoration: none
 
 	ul extends .clearfix
-		background: url($images/webelowine.png) 0 5px no-repeat
+		background: url($images/wefoot1.png) 0 9px no-repeat
 		padding: 5px 0 5px 60px
 		min-height: 35px
 		li
@@ -1262,11 +1262,10 @@ tr.titlebg
 	td extends .wefoot, th extends .wefoot
 
 // The page navigation area
-.pagesection
+.pagesection extends .clearfix
 	clear: left
 	font-size: .9em
 	padding: .2em
-	overflow: hidden
 	margin-bottom: 1px
 	.floatright input
 		margin-top: 3px
