@@ -93,7 +93,7 @@ $main_font = Arial, sans-serif
 $main_font_size = 88%/130%
 $menu_font = $main_font
 $big_font = "Segoe UI Light", "Segoe UI", Optima, Helvetica, Arial, sans-serif
-$head_font = "Franklin Gothic Medium", "Franklin Gothic", $big_font
+$head_font = "Segoe UI Light", "Segoe UI", "Franklin Gothic Medium", "Franklin Gothic", $big_font
 $mono_font = Consolas, "Dejavu Sans Mono", Menlo, "Lucida Console", "Courier New", monospace
 $subject_font = "PT Sans", "Segoe UI", Optima, Arial, sans-serif
 
