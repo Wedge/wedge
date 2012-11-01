@@ -661,11 +661,11 @@ function Thought(opt)
 		thought
 			.toggle(tid && is_new)
 			.after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">' + pr
-				+ '</select><input type="hidden" id="noid"><input type="button" class="save"><input type="button" class="cancel"></form>')
+				+ '</select><input type="hidden" id="noid"><input type="submit" class="save"><input type="button" class="cancel"></form>')
 			.siblings('.thought_actions').hide();
 		$('#noid').val(is_new ? 0 : thought.data('oid'))
-			.next().val(we_submit).click(function () { oThought.submit(tid, mid || tid); })	// Save button
-			.next().val(we_cancel).click(function () { oThought.cancel(); });				// Cancel button
+			.next().val(we_submit).click(function () { oThought.submit(tid, mid || tid); return false; })	// Save button
+			.next().val(we_cancel).click(function () { oThought.cancel(); });								// Cancel button
 		$('#ntho').focus().val(cur_text);
 		$('#npriv').sb();
 
