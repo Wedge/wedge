@@ -82,6 +82,9 @@ body
 #top_section, #upper_section
 	border-bottom: 3px solid lighten($reddish, 3%)
 
+#linktree ul
+	padding: 7px 15px
+
 #linktree_bt ul
 	margin-bottom: -15px
 

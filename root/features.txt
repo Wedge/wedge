@@ -1,0 +1,187 @@
+Feature list of SMF 1.0 (not yet finished)
+
+General
+	Uses PHP and MySQL.
+	Comprehensive template system.
+	Advanced permission and user management.
+	Support for multiple languages.
+	Open and well-documented source code.
+	Designed for optimal performance and scalability.
+	Multi-media output. (HTML5, XML, Atom...)
+	Easy integration within webpages. (SSI, PHP)
+	Multi-language support by one of the largest communities.
+	Proper handling of read and unread topics/boards (not by time.)
+
+Security
+	All actions require a session based authorization code.
+	All admin actions require the user's password (and do not rely solely on cookies.)
+	Many user actions are time locked, preventing 'hammering'.
+	The number of login attempts from a certain IP can be limited and time locked.
+
+Forum settings
+	Ability to display page creation time and query count per page.
+	Put a board into maintenance mode, allowing only admins to login.
+	Word censoring, either full word or partial.
+	Ability to break up long words.
+
+Boards and categories
+	Group boards into collapsable categories.
+	Set categories as non-collapsable.
+	Reorder boards within categories, or reorder categories.
+	Create child boards under other boards.
+	Assign moderators to boards.
+	Allow certain membergroups to access a board, including guests only.
+	Configure permissions for each membergroup on the board level.
+	Ability to indicate new posts to child boards but nothing new in parent.
+
+Member registration
+	Require registration before forum entrance.
+	Require a user to agree to terms before they registers.
+	Disable member registration (allowing only moderators to register people).
+	Require email authentication by sending an authentication link.
+	Require a moderator to approve registration.
+	Register new members from the admin center.
+
+Member navigation and authentication
+	Several security checks during navigation.
+	Password reminder option, by email with confirmation. (doesn't automatically reset your password.)
+	Both cookie and session based authentication.
+	Cookies can be set locally, globally or based on the hostname.
+	Adjust expiration time of cookies.
+	Show who is online and where they are.
+
+Member tracking and tracing
+	Sortable public memberlist (accessible by a permission.)
+	Sortable admin memberlist.
+	Admin member search (based on several criterions.)
+	Show all (error) messages and IP addresses of a member. (track user)
+	Show all (error) messages from an IP address/range. (track IP)
+	See who's doing what (accessible by permission.)
+
+Statistics
+	Several board statistics (accessible by permission.)
+	Tracking of member's online time in seconds.
+	Tracking of topics, messages, members, and hits per day.
+	Individual member statistics accessible from their profile.
+
+News and announcements
+	Ability to create announcement boards (members receive a notification of topics.)
+	Member option to disable receiving announcements.
+	Email or private message your members by membergroup.
+	Show a news ticker or news fader.
+
+Communication
+	Ability to choose Sendmail or SMTP (with or without authentication.)
+	Ability to send a topic to a friend.
+	Ability to view a "printer friendly" version of topics.
+
+membergroups
+	Create membergroups to group members on permissions, access rights, and/or appearance.
+	Assign several membergroups to a single member, with one membergroup as the primary group.
+	Define membergroups that are auto-assigned based on the amount of posts a user has.
+	Determine the maximum number of personal messages a membergroup is allowed to have by group.
+	Assign graphical symbol(s) to a membergroup - by primary group.
+	Determine which membergroups are allowed to access a board.
+
+Banning
+	Ban members based on their username, email address, IP address or hostname.
+	Support of wildcards for email address, IP address and hostname.
+	Include a ban reason (viewable for the banned user).
+	Include a ban note (only viewable by the admins).
+	Chose between full ban, post ban or register ban.
+	Include an expiration time for bans.
+
+External integration
+	Integrate parts of forum software into existing website using SSI or PHP.
+		Recent topics or posts.
+		Recent news posts in a board.
+		Recent polls.
+		Several forum statistics.
+		List of users online.
+		The menu bar.
+		News.
+		Search.
+		Login/logout.
+		Today's events/birthdays/holidays.
+	Export forum data using XML/RSS
+		Latest members.
+		News.
+		Recent posts.
+
+Theme and Templating
+	Ability to allow or disallow your users to select their own theme.
+	Ability to reset all of your members to a certain theme.
+	Ability to install a new theme via your administration center.
+	XHTML 1.0 and CSS 2.0 compliant.
+	Admin can add smileys and smiley sets.
+	Members can choose which smiley set they wish to use.
+	Themes can be installed by way of the "latest and greatest themes" panel.
+	SSI can have and show layers and the like from the template system.
+
+Posting Features
+	Spell Check.
+	Quick Reply
+		Members can disable it.
+		Can be used with "Quote".
+		Also contains "Spell Check".
+	Vast number of "bulletin board codes" to use.
+	Time allowed before "Last Edited" appears.
+	'Insert Quote' feature on reply screen for all previous posts.
+
+Polls
+	Can be added or removed to existing topics.
+	Ability to set expiration date.
+	Ability to hide results till expiration of poll.
+	Ability to hide results untill after people have voted.
+	Ability to determine how many votes a user may cast.
+	Polls can have up to 256 options.
+
+Attachments
+	Allowed on a per member group or board basis.
+	The filename can be encrypted to increase the security (so you can upload .php files, etc.)
+	Ability to restrict such that only registered members can view them (disables hotlinking, mostly.)
+	Images can be embedded into posts.
+
+Calendar Support
+	Shows Birthdays, Events and Holidays.
+	Display calendar stuff on board index.
+	Link an existing topic to the calendar.
+	Allow only certain members/groups post events.
+	Event poster can edit event.
+	Events can span multiple days.
+
+Moderation Tools
+	Ability to Merge/Split topics.
+	Ability to lock a topic
+		Topics which are locked by an administrator can not unlocked by anyone else.
+	Ability to allow members to use moderation on just topics they posted.
+	"Report to moderator" link.
+	Delete or modify posts.
+	Lock, unlock, move, or delete topics.
+	Merge or split topics.
+	Sticky or unsticky topics.
+	Link or unlink topics to the calendar.
+	Recycle bin/board for all deleted topics and posts.
+	Moderation log which shows moderation activity and disallows log removal outside of 1 day.
+
+User Profiles and User Options
+	Ability to hide your email address from the public.
+	Select their favorite theme among the activated forum themes.
+	Select their smiley set from the ones available.
+	Email notification
+		New topics per board.
+		Single topics.
+		Private messages.
+	Login in invisible mode.
+	Options to hide other members' avatars and signatures.
+	Ability to download and resize avatars.
+	Personal text, avatar, signature, and all the nicities of forums can be used and are kept up to date in all your posts.
+
+User Resources
+	Icons for topics you've posted to.
+	Show new replies to *your* posts.
+	Collapsable 'Additional Options' on post screen.
+	Ability to view most recent messages.
+	List all topics that have new replies since your last visit.
+	See who is browsing the same boards or topics as you.
+	Topics that span multiple pages have the page numbers listed as well as an "all" link.
