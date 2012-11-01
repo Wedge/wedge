@@ -87,7 +87,7 @@ String.prototype.wereplace = function (oReplacements)
 */
 function say(string, e, callback)
 {
-	return _modalDone || reqWin('', 350, string, 2, callback || e, e && e.target ? e : 0);
+	return _modalDone || reqWin('', 350, string, 2, callback || (e && !e.target ? e : 0), e && e.target ? e : 0);
 }
 
 /*
@@ -98,7 +98,7 @@ function say(string, e, callback)
 */
 function ask(string, e, callback)
 {
-	return _modalDone || reqWin('', 350, string, 1, callback || e, e && e.target ? e : 0);
+	return _modalDone || reqWin('', 350, string, 1, callback || (e && !e.target ? e : 0), e && e.target ? e : 0);
 }
 
 /*
