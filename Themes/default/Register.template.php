@@ -608,7 +608,7 @@ function template_edit_reserved_words()
 			<div class="windowbg2 wrc">
 				<h4>', $txt['admin_reserved_line'], '</h4>
 				<p class="reserved_names">
-					<textarea cols="30" rows="6" id="reserved">', implode("\n", $context['reserved_words']), '</textarea>
+					<textarea cols="30" rows="6" name="reserved" id="reserved">', implode("\n", $context['reserved_words']), '</textarea>
 				</p>
 				<ul class="reset">
 					<li><label><input type="checkbox" name="matchword" id="matchword" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_word'] ? ' checked' : '', '> ', $txt['admin_match_whole'], '</label></li>

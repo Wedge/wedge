@@ -1197,7 +1197,7 @@ function EditCustomProfiles()
 				array(
 					'col_name' => 'string', 'field_name' => 'string', 'field_desc' => 'string',
 					'field_type' => 'string', 'field_length' => 'string', 'field_options' => 'string',
-					'show_reg' => 'int', 'show_mlist', 'show_display' => 'int', 'show_profile' => 'string',
+					'show_reg' => 'int', 'show_mlist' => 'int', 'show_display' => 'int', 'show_profile' => 'string',
 					'private' => 'int', 'guest_access' => 'int', 'active' => 'int', 'default_value' => 'string',
 					'can_search' => 'int', 'bbc' => 'int', 'mask' => 'string', 'enclose' => 'string', 'placement' => 'int',
 				),

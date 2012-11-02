@@ -234,7 +234,7 @@ function SetReserve()
 			'reserveCase' => (isset($_POST['matchcase']) ? '1' : '0'),
 			'reserveUser' => (isset($_POST['matchuser']) ? '1' : '0'),
 			'reserveName' => (isset($_POST['matchname']) ? '1' : '0'),
-			'reserveNames' => str_replace("\r", '', $_POST['reserved'])
+			'reserveNames' => str_replace("\r", '', isset($_POST['reserved']) ? $_POST['reserved'] : '')
 		));
 	}
 

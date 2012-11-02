@@ -57,16 +57,19 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 			echo '
 				<div class="smalltext">
 					', $verify_context['questions'][$qIndex]['q'], ':<br>
-					<input type="text" name="', $verify_id, '_vv[q][', $verify_context['questions'][$qIndex]['id'], ']" size="30" value="', $verify_context['questions'][$qIndex]['a'], '" ', $verify_context['questions'][$qIndex]['is_error'] ? 'style="border: 1px red solid;"' : '', ' tabindex="', $context['tabindex']++, '">
+					<input type="text" name="', $verify_id, '_vv[q][', $verify_context['questions'][$qIndex]['id'], ']" size="30" value="', $verify_context['questions'][$qIndex]['a'], '" ', $verify_context['questions'][$qIndex]['is_error'] ? 'style="border: 1px red solid;"' : '', 'tabindex="', $context['tabindex']++, '">
 				</div>';
 		}
 
-		if ($verify_context['do_empty_field'])
+		if ($verify_context['do_empty_field'] && empty($done_empty))
+		{
+			$done_empty = true;
 			echo '
 				<div class="smalltext vv_special">
 					', $txt['visual_verification_hidden'], ':
 					<input type="text" name="', $_SESSION[$verify_id . '_vv']['empty_field'], '" autocomplete="off" size="30" value="">
 				</div>';
+		}
 
 		if ($display_type != 'single')
 			echo '
