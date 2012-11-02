@@ -495,10 +495,9 @@ ul.actions extends ul.reset
 	div
 		padding: 0 .5em
 
-ul.buttonlist extends ul.reset
+ul.buttonlist extends "ul.reset, .clearfix"
 	margin: 5px -8px 5px 0
 	padding: 0 1% 0 0
-	overflow: hidden
 	li
 		margin, padding: 0
 		float: left

@@ -759,26 +759,27 @@ function MembersAwaitingActivation()
 	$javascript = '
 	function onSelectChange(e)
 	{
-		if (this.value == "")
-			return;
-
-		var message = "";';
+		var message = "", val = $("[name=todo]").val();
+		if (val == "")
+			return;';
 
 	// We have special messages for approving deletion of accounts - it's surprisingly logical - honest.
 	if ($context['current_filter'] == 4)
 		$javascript .= '
-		if (this.value.indexOf("reject") != -1)
+
+		if (val.indexOf("reject") != -1)
 			message = "' . $txt['admin_browse_w_delete'] . '";
 		else
 			message = "' . $txt['admin_browse_w_reject'] . '";';
 	// Otherwise a nice standard message.
 	else
 		$javascript .= '
-		if (this.value.indexOf("delete") != -1)
+
+		if (val.indexOf("delete") != -1)
 			message = "' . $txt['admin_browse_w_delete'] . '";
-		else if (this.value.indexOf("reject") != -1)
+		else if (val.indexOf("reject") != -1)
 			message = "' . $txt['admin_browse_w_reject'] . '";
-		else if (this.value == "remind")
+		else if (val == "remind")
 			message = "' . $txt['admin_browse_w_remind'] . '";
 		else
 			message = "' . ($context['browse_type'] == 'approve' ? $txt['admin_browse_w_approve'] : $txt['admin_browse_w_activate']) . '";';

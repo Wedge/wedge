@@ -62,12 +62,6 @@ table.cs0 final tr.windowbg:last-child td
 	.column
 		padding: 14px 12px 12px
 
-#userbox
-	p
-		font-size: .9em
-	li
-		font-size: .9em
-
 @if ie[-7]
 @else
 	#main

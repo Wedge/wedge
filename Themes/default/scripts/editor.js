@@ -279,8 +279,7 @@ function weEditor(opt)
 			if (oTextHandle.setSelectionRange)
 			{
 				oTextHandle.focus();
-				var goForward = is_opera ? text.split('\n').length - 1 : 0;
-				oTextHandle.setSelectionRange(begin.length + text.length + goForward, begin.length + text.length + goForward);
+				oTextHandle.setSelectionRange(begin.length + text.length, begin.length + text.length);
 			}
 			oTextHandle.scrollTop = scrollPos;
 		}
@@ -316,30 +315,22 @@ function weEditor(opt)
 		// Mozilla text range wrap. (Standards version.)
 		else if ('selectionStart' in oTextHandle)
 		{
-			// !! Opera 12.10 Beta has a bug in which selectionStart is broken due to textareas now using \n instead
-			// of \r\n newlines, while the selectionStart setter will still behave as if \r hadn't been deleted.
-			// cr/lf is a quick and dirty attempt to at least fix that... It's not perfect. Tough life.
-			// !! @todo: remove this once Opera fixes the bug...
 			var
-				cr = is_opera ? oTextHandle.value.substr(0, oTextHandle.selectionStart).split('\r').length - 1 : 0,
-				lf = is_opera ? oTextHandle.value.substr(0, oTextHandle.selectionStart).split('\n').length - 1 : 0,
 				selectionStart = oTextHandle.selectionStart,
 				selectionLength = oTextHandle.selectionEnd - selectionStart,
 				scrollPos = oTextHandle.scrollTop;
 
 			// This is where the insertion actually happens.
 			oTextHandle.value =
-				oTextHandle.value.substr(0, selectionStart + cr - lf)
+				oTextHandle.value.substr(0, selectionStart)
 				+ text1
-				+ oTextHandle.value.substr(selectionStart + cr - lf, selectionLength)
+				+ oTextHandle.value.substr(selectionStart, selectionLength)
 				+ text2
-				+ oTextHandle.value.substr(oTextHandle.selectionEnd + cr - lf);
+				+ oTextHandle.value.substr(oTextHandle.selectionEnd);
 
 			if (oTextHandle.setSelectionRange)
 			{
-				var
-					txlen1 = text1.length + (is_opera ? text1.split('\n').length - 1 : 0),
-					txlen2 = text2.length + (is_opera ? text2.split('\n').length - 1 : 0);
+				var txlen1 = text1.length, txlen2 = text2.length;
 
 				if (!selectionLength)
 					oTextHandle.setSelectionRange(selectionStart + txlen1, selectionStart + txlen1);
