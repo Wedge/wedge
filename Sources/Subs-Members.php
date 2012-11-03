@@ -935,6 +935,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 	}
 
 	// Does name case insensitive match a member group name?
+	// !! Maybe we should give a custom error message for this?
 	$request = wesql::query('
 		SELECT id_group
 		FROM {db_prefix}membergroups

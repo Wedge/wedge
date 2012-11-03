@@ -262,9 +262,12 @@ pre.file_content
 .msearch_details
 	display: block
 	width: 49%
-
-dl.right dt
-	padding-right: 10px
+	dl
+		dt
+			text-align: right
+			padding-right: 10px
+		dd
+			width: 50%
 
 
 /* Styles for the manage maintenance section.

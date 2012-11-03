@@ -630,14 +630,14 @@ function Thought(opt)
 
 		interact_thoughts = function ()
 		{
-			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid') || '';
+			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
 			if (tid)
 				thought.after('<div class="thought_actions">'
 					+ (thought.data('self') !== '' ? '' : '<input type="button" class="submit"><input type="button" class="delete">')
 					+ '<input type="button" class="new"></div>').next()
-				.find('.submit').val(opt.sEdit).click(function () { oThought.edit(tid, mid) })						// Submit button
-				.next().val(we_delete).click(function (e) { return ask(we_confirm, e) && oThought.remove(tid); })	// Delete button
-				.next().val(opt.sReply).click(function () { oThought.edit(tid, mid, true) });						// Reply button
+				.find('.new').val(opt.sReply).click(function () { oThought.edit(tid, mid, true); })					// Reply button
+				.prev().val(we_delete).click(function (e) { return ask(we_confirm, e) && oThought.remove(tid); })	// Delete button
+				.prev().val(opt.sEdit).click(function () { oThought.edit(tid, mid); });								// Submit button
 		};
 
 	// Show the input after the user has clicked the text.
@@ -647,12 +647,10 @@ function Thought(opt)
 
 		var
 			thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(),
-			privacies = opt.aPrivacy, privacy = (thought.data('prv') + '').split(','),
+			pr = '', privacies = opt.aPrivacy, privacy = (thought.data('prv') + '').split(','),
 
 			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-				was_personal.php_unhtmlspecialchars() : $('text', $.ajax(ajaxUrl + 'in=' + tid, { context: this, async: false }).responseXML).text())),
-
-			pr = '';
+				was_personal.php_unhtmlspecialchars() : $('text', $.ajax(ajaxUrl + 'in=' + tid, { context: this, async: false }).responseXML).text()));
 
 		for (p in privacies)
 			pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';

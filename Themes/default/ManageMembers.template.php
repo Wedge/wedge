@@ -25,7 +25,7 @@ function template_search_members()
 			<div class="windowbg wrc">
 				<div class="flow_hidden">
 					<div class="msearch_details floatleft">
-						<dl class="settings right">
+						<dl class="settings">
 							<dt class="right">
 								<strong>', $txt['member_id'], ':</strong>
 								<select name="types[mem_id]">
@@ -37,7 +37,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="mem_id" value="" size="6">
+								<input type="text" name="mem_id" size="6">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['age'], ':</strong>
@@ -50,7 +50,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="age" value="" size="6">
+								<input type="text" name="age" size="6">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['member_postcount'], ':</strong>
@@ -63,7 +63,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="posts" value="" size="6">
+								<input type="text" name="posts" size="6">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['date_registered'], ':</strong>
@@ -76,7 +76,7 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="reg_date" value="" size="10"><span class="smalltext">', $txt['date_format'], '</span>
+								<input type="text" name="reg_date" size="10"> <span class="smalltext">', $txt['date_format'], '</span>
 							</dd>
 							<dt class="right">
 								<strong>', $txt['viewmembers_online'], ':</strong>
@@ -89,41 +89,41 @@ function template_search_members()
 								</select>
 							</dt>
 							<dd>
-								<input type="text" name="last_online" value="" size="10"><span class="smalltext">', $txt['date_format'], '</span>
+								<input type="text" name="last_online" size="10"> <span class="smalltext">', $txt['date_format'], '</span>
 							</dd>
 						</dl>
 					</div>
 					<div class="msearch_details floatright">
-						<dl class="settings right">
+						<dl class="settings">
 							<dt class="right">
 								<strong>', $txt['username'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="membername" value="">
+								<input type="text" name="membername">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['email_address'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="email" value="">
+								<input type="text" name="email">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['website'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="website" value="">
+								<input type="text" name="website">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['location'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="location" value="">
+								<input type="text" name="location">
 							</dd>
 							<dt class="right">
 								<strong>', $txt['ip_address'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="ip" value=""', allowedTo('view_ip_address_any') ? '' : ' disabled', '>
+								<input type="text" name="ip"', allowedTo('view_ip_address_any') ? '' : ' disabled', '>
 							</dd>
 						</dl>
 					</div>
