@@ -19,7 +19,7 @@ define('WEDGE_NO_LOG', 1);
 // Get one of the admin information files from Wedge.org.
 function ViewRemote()
 {
-	global $context, $settings;
+	global $context;
 
 	wetem::hide();
 	@ini_set('memory_limit', '32M');
@@ -44,11 +44,7 @@ function ViewRemote()
 	wesql::free_result($request);
 
 	// Let's make sure we aren't going to output anything nasty.
-	@ob_end_clean();
-	if (!empty($settings['enableCompressedOutput']))
-		@ob_start('ob_gzhandler');
-	else
-		@ob_start();
+	clean_output(true);
 
 	// Make sure they know what type of file we are.
 	header('Content-Type: ' . $filetype);

@@ -1039,9 +1039,9 @@ function aeva_admin_perms_edit()
 
 function aeva_admin_perms_albums()
 {
-	global $context, $txt, $scripturl, $user_info, $galurl;
+	global $context, $txt, $scripturl, $settings, $user_info, $galurl;
 
-	ob_clean();
+	clean_output();
 
 	// Ensure we can access this profile...
 	if ($_POST['prof'] != 1)
@@ -1410,7 +1410,7 @@ function aeva_admin_quotas_albums()
 {
 	global $context, $txt, $scripturl, $user_info, $galurl;
 
-	ob_clean();
+	clean_output();
 
 	// Ensure we can access this profile...
 	if ($_POST['prof'] != 1)

@@ -155,16 +155,16 @@ function Like()
 		}
 		wesql::free_result($request);
 
-		// Any members to load? We don't need everything, just their names. Note we deliberately didn't put it in the above query, because the chances are that we actually don't want all the names.
+		// Any members to load? We don't need everything, just their names. Note we deliberately didn't
+		// put it in the above query, because the chances are that we actually don't want all the names.
 		if (!empty($members_load))
 			loadMemberData(array_keys($members_load), false, 'minimal');
 
 		loadTemplate('Display');
+
 		// Now the AJAXish data.
-		ob_end_clean();
-		if (!empty($settings['enableCompressedOutput']))
-			@ob_start('ob_gzhandler');
-		ob_start('ob_sessrewrite');
+		clean_output();
+
 		header('Content-Type: text/xml; charset=UTF-8');
 		echo '<?xml version="1.0" encoding="UTF-8"?' . '><likes>', template_show_likes($id_content), '</likes>';
 		obExit(false);

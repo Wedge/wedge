@@ -269,14 +269,11 @@ function Feed()
 	$feed_title = htmlspecialchars(strip_tags($context['forum_name'])) . (isset($feed_title) ? $feed_title : '');
 
 	// This is an xml file....
-	ob_end_clean();
-	if (!empty($settings['enableCompressedOutput']))
-		@ob_start('ob_gzhandler');
+	clean_output();
 
-	// Pretty URLs need to be rewritten
+	// Pretty URL filters need to be overloaded
 	if (!empty($settings['pretty_enable_filters']))
 	{
-		ob_start('ob_sessrewrite');
 		$insideurl = preg_quote($scripturl, '~');
 		$context['pretty']['patterns'][]  = '~(?<=<link>|<comments>|<guid>|<uri>)' . $insideurl . '([?;&](?:[^<"]*?[?;&])?(board|topic|u)=[^#<]+)~';
 		$context['pretty']['patterns'][]  = '~(?<=<category scheme=")' . $insideurl . '([?;&](?:[^<"]*?[?;&])?(board|topic|u)=[^#"]+)~';

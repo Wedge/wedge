@@ -630,6 +630,26 @@ function add_replacement($from, $to)
 }
 
 /**
+ * Cleans (or restarts) the output buffer process.
+ * Starts by flushing the buffers, then resets the gzip handler
+ * (if enabled), then resets the Pretty URLs handler (if needed).
+ */
+function clean_output($skip_full = false)
+{
+	global $settings;
+
+	ob_end_clean();
+	if (!empty($settings['enableCompressedOutput']))
+		@ob_start('ob_gzhandler');
+	else
+		ob_start();
+
+	// We may also want to trigger our dynamic rewrites...
+	if (!$skip_full && !empty($settings['pretty_enable_filters']))
+		ob_start('ob_sessrewrite');
+}
+
+/**
  * Ensures content above the main page content is loaded, including HTTP page headers.
  *
  * Several things happen here.
@@ -950,11 +970,7 @@ function template_include($filename, $once = false)
 
 	if ($file_found !== true)
 	{
-		ob_end_clean();
-		if (!empty($settings['enableCompressedOutput']))
-			@ob_start('ob_gzhandler');
-		else
-			ob_start();
+		clean_output();
 
 		// Don't cache error pages!!
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

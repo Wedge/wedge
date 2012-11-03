@@ -74,7 +74,11 @@ function template_permission_index()
 		elseif ($group['id'] == 3)
 			echo '
 							<a href="' . $scripturl . '?action=help;in=membergroup_moderator" onclick="return reqWin(this);" class="help"></a>';
-		echo '
+		if ($group['color'])
+			echo '
+							<span style="color: ', $group['color'], '">', $group['name'], '</span>';
+		else
+			echo '
 							', $group['name'];
 
 		if (!empty($group['children']))
