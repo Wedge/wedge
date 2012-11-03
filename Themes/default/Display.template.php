@@ -505,6 +505,9 @@ function template_user_status(&$member)
 {
 	global $context, $theme, $txt;
 
+	if ($member['is_guest'])
+		return;
+
 	echo '
 							<div class="pixelicons">';
 

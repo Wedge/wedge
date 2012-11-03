@@ -61,7 +61,7 @@ function Display()
 	// !!! Should we just be taking the original HTTP var and redirect to it?
 	if ((isset($context['pretty']['oldschoolquery']) || $_SERVER['HTTP_HOST'] != $board_info['url']) && !empty($settings['pretty_filters']['topics']))
 	{
-		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['seen']) ? ';seen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
+		$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['seen']) ? ';seen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewresults']) ? ';viewresults' : '');
 		header('HTTP/1.1 301 Moved Permanently');
 		redirectexit($url, false);
 	}
@@ -649,8 +649,8 @@ function Display()
 		// 3. you can see them after you voted (hide_results == 1), or
 		// 4. you've waited long enough for the poll to expire. (whether hide_results is 1 or 2.)
 		$context['allow_poll_view'] = allowedTo('moderate_board') || $pollinfo['hide_results'] == 0 || ($pollinfo['hide_results'] == 1 && $context['poll']['has_voted']) || $context['poll']['is_expired'];
-		$context['poll']['show_results'] = $context['allow_poll_view'] && (isset($_REQUEST['viewresults']) || isset($_REQUEST['viewResults']));
-		$context['show_view_results_button'] = !$context['poll']['show_results'] && $context['allow_vote'] && (!$context['allow_poll_view'] || !$context['poll']['has_voted']);
+		$context['poll']['show_results'] = $context['allow_poll_view'] && isset($_REQUEST['viewresults']);
+		$context['show_view_results_button'] = $context['allow_poll_view'] && !isset($_REQUEST['viewresults']) && $context['allow_vote'];
 
 		// You're allowed to change your vote if:
 		// 1. the poll did not expire, and
@@ -1299,7 +1299,7 @@ function prepareDisplayContext($reset = false)
 		$memberContext[$message['id_member']]['id'] = 0;
 		$memberContext[$message['id_member']]['group'] = $txt['guest_title'];
 		// Wedge supports showing guest posts, grouping them by e-mail address. Can restrict to current board: add ;board=$context['current_board']
-		$memberContext[$message['id_member']]['href'] = '<URL>?action=profile;u=0;area=showposts;guest=' . base64_encode($message['poster_name']);
+		$memberContext[$message['id_member']]['href'] = '<URL>?action=profile;guest=' . base64_encode($message['poster_name']);
 		$memberContext[$message['id_member']]['link'] = '<a href="' . $memberContext[$message['id_member']]['href'] . '">' . $message['poster_name'] . '</a>';
 		$memberContext[$message['id_member']]['email'] = $message['poster_email'];
 		$memberContext[$message['id_member']]['show_email'] = showEmailAddress(true, 0);

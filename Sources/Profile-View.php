@@ -431,36 +431,34 @@ function showPosts($memID)
 
 	$guest = '';
 	$specGuest = '';
-	$specUrl = '';
 	if (isset($_GET['guest']))
 	{
 		$memID = 0;
 		$guest = base64_decode($_GET['guest']);
 		$specGuest .= ' AND m.poster_name = {string:guest}';
-		$specUrl .= ';guest=' . $_GET['guest'];
 	}
+	else
+		// Create the tabs for the template.
+		$context[$context['profile_menu_name']]['tab_data'] = array(
+			'title' => $txt['showPosts'],
+			'description' => $txt['showPosts_help'],
+			'icon' => 'profile_sm.gif',
+			'tabs' => array(
+				'messages' => array(
+				),
+				'topics' => array(
+				),
+				'attach' => array(
+				),
+			),
+		);
 
 	// Some initial context.
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['current_member'] = $memID;
 
-	// Create the tabs for the template.
-	$context[$context['profile_menu_name']]['tab_data'] = array(
-		'title' => $txt['showPosts'],
-		'description' => $txt['showPosts_help'],
-		'icon' => 'profile_sm.gif',
-		'tabs' => array(
-			'messages' => array(
-			),
-			'topics' => array(
-			),
-			'attach' => array(
-			),
-		),
-	);
-
 	// Set the page title
-	$context['page_title'] = $txt['showPosts'] . ' - ' . (!$guest ? $user_profile[$memID]['real_name'] : base64_decode($guest));
+	$context['page_title'] = $txt['showPosts'] . ' - ' . ($guest ? base64_decode($guest) : $user_profile[$memID]['real_name']);
 
 	// Is the load average too high to allow searching just now?
 	if (!empty($context['load_average']) && !empty($settings['loadavg_show_posts']) && $context['load_average'] >= $settings['loadavg_show_posts'])
@@ -565,7 +563,7 @@ function showPosts($memID)
 	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
-	$context['page_index'] = template_page_index('<URL>?action=profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=showposts' . $specUrl . ($context['is_topics'] ? ';sa=topics' : '') . (!empty($board) ? ';board=' . $board : ''), $context['start'], $msgCount, $maxIndex);
+	$context['page_index'] = template_page_index('<URL>?action=profile' . ($guest ? ';guest=' . $_GET['guest'] : ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=showposts') . ($context['is_topics'] ? ';sa=topics' : '') . (!empty($board) ? ';board=' . $board : ''), $context['start'], $msgCount, $maxIndex);
 	$context['current_page'] = $context['start'] / $maxIndex;
 
 	// Reverse the query if we're past 50% of the pages for better performance.

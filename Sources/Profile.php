@@ -37,17 +37,23 @@ function ModifyProfile($post_errors = array())
 		loadLanguage('Profile');
 	loadTemplate('Profile');
 
+	// If we only want to see guest posts, use this shortcut.
+	if (isset($_REQUEST['guest']))
+	{
+		loadSource('Profile-View');
+		wetem::load('showPosts');
+
+		$context['profile_menu_name'] = 'dummy_menu';
+		$context['user']['is_owner'] = allowedTo('moderate_forum'); // !! or $user_info['is_admin']..?
+		showPosts(0);
+		return;
+	}
+
 	loadSource('Subs-Menu');
 
 	// Did we get the user by name...
 	if (isset($_REQUEST['user']))
-	{
-		$user = $_REQUEST['user'];
-		if (empty($user) || $user == 'guest') // viewing guest posts? Then load fake data (from your own profile)
-			$memberResult = loadMemberData($user_info['id'], false, 'profile');
-		else
-			$memberResult = loadMemberData($user, true, 'profile');
-	}
+		$memberResult = loadMemberData($_REQUEST['user'], true, 'profile');
 	// ... or by id_member?
 	elseif (!empty($_REQUEST['u']))
 		$memberResult = loadMemberData((int) $_REQUEST['u'], false, 'profile');
@@ -403,9 +409,6 @@ function ModifyProfile($post_errors = array())
 			),
 		),
 	);
-
-	if (!empty($user) && isset($_REQUEST['guest']))
-		$profile_areas['info']['areas']['showposts']['custom_url'] = $scripturl . '?action=profile;u=0;area=showposts;guest=' . $_REQUEST['guest'];
 
 	// Let modders modify profile areas easily.
 	call_hook('profile_areas', array(&$profile_areas));
