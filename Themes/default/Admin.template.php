@@ -11,6 +11,16 @@
  * @version 0.1
  */
 
+function template_admin_time_remaining()
+{
+	global $context;
+
+	echo '
+	<div class="description">
+		', $context['time_remaining'], '
+	</div>';
+}
+
 // This is the administration center home.
 function template_admin()
 {

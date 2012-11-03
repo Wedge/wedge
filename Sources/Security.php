@@ -1194,6 +1194,7 @@ function checkUserRequest_blacklist()
 			'Mozilla/2',
 			'Mozilla/3',
 			'MSIE',
+			'sqlmap/',
 			'Wordpress',
 			'"',
 			// supplied by honeypot
@@ -1220,6 +1221,11 @@ function checkUserRequest_blacklist()
 			'Python-urllib',
 			'TrackBack/',
 			'WebSite-X Suite',
+			// vulnerability scanners
+			'Morfeus',
+			'Mozilla/4.0 (Hydra)',
+			'Nessus',
+			'w3af',
 		),
 		'contains' => array(
 			// harvesters
@@ -1259,6 +1265,10 @@ function checkUserRequest_blacklist()
 			'Windows NT 5.1;)',
 			'WordPress/4.01',
 			'Xedant Human Emulator',
+			// vulnerability scanners
+			'Forest Lobster',
+			'Ming Mong',
+			'Nikto/',
 		),
 		'contains_regex' => array(
 			// spammers
