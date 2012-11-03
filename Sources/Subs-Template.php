@@ -176,7 +176,7 @@ function ob_sessrewrite($buffer)
 	// If the placeholder isn't there, it means we're probably not in a default index template,
 	// and we probably don't need to postpone any events. Otherwise, go ahead and do the magic!
 	if (!empty($cut[1]))
-		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^">]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
+		$buffer = preg_replace_callback('~<[^>]+?\son[a-z]+="[^"]*"[^>]*>~i', 'wedge_event_delayer', $cut[0]) . $cut[1];
 
 	$this_pos = strpos($buffer, empty($settings['minify_html']) ? '<!-- insert inline events here -->' : '<!--insert inline events here-->');
 	if ($this_pos !== false)

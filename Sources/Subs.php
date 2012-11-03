@@ -552,11 +552,11 @@ function cleanXml($string)
  * @param string $string A string whose contents to be quoted.
  * @return string A transformed string with contents suitably single quoted for use in JavaScript.
  */
-function JavaScriptEscape($string)
+function JavaScriptEscape($string, $escape_double_quotes = false)
 {
 	global $scripturl;
 
-	return '\'' . strtr($string, array(
+	$str = '\'' . strtr($string, array(
 		"\n" => "\\\n",
 		'\\' => '\\\\',
 		'\'' => '\\\'',
@@ -565,6 +565,10 @@ function JavaScriptEscape($string)
 		'"' . $scripturl => '"' . $scripturl . '"+"',
 		'\'' . $scripturl => '\'' . $scripturl . '\'+\''
 	)) . '\'';
+
+	if ($escape_double_quotes)
+		return str_replace('"', '&quot;', $str);
+	return $str;
 }
 
 /**

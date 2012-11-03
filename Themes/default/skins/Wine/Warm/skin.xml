@@ -93,7 +93,7 @@
 							<menu />
 
 							<!-- The navigation bar (linktree.) -->
-							<linktree:top />
+							<linktree />
 
 							<content_wrap>
 								<main_wrap>
