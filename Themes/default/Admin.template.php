@@ -16,7 +16,7 @@ function template_admin_time_remaining()
 	global $context;
 
 	echo '
-	<div class="description">
+	<div class="description" style="margin: 0 14px">
 		', $context['time_remaining'], '
 	</div>';
 }

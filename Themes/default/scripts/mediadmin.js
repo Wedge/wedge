@@ -15,10 +15,14 @@ function admin_toggle(id)
 {
 	if ($('#tr_expand_' + id).is(':hidden'))
 	{
-		$('#img_' + id).load(function () {
+		var $img = $('#img_' + id);
+		if ($img[0])
+			$img.load(function () {
+				$('#tr_expand_' + id).show().find('td').children().hide().slideDown();
+				$(this).unbind();
+			}).attr('src', weUrl('action=media;sa=media;in=' + id + ';icon'));
+		else
 			$('#tr_expand_' + id).show().find('td').children().hide().slideDown();
-			$(this).unbind();
-		}).attr('src', weUrl('action=media;sa=media;in=' + id + ';icon'));
 	}
 	else
 		$('#tr_expand_' + id).find('td').children().slideUp(500, function () { $(this).parent().parent().hide(); });

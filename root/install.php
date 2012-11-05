@@ -21,8 +21,8 @@ $GLOBALS['required_php_version'] = '5.2.4';
 
 // Database info.
 $db = array(
-	'required_server' => '5.1.0',
-	'required_client' => '4.1.0', // !!! 5.0.0?
+	'required_server' => '5.0.3',
+	'required_client' => '5.0.0',
 	'default_user' => 'mysql.default_user',
 	'default_password' => 'mysql.default_password',
 	'default_host' => 'mysql.default_host',

@@ -75,7 +75,7 @@ function template_aeva_admin_submissions()
 	{
 		echo '
 				<tr class="windowbg', $alt ? '2' : '', '" id="', $item['id'], '">
-					<td><a href="#" onclick="return admin_toggle(', $item['id'], ');"><div class="foldable" id="toggle_img_', $item['id'], '"></div></a></td>
+					<td><a href="#" onclick="return admin_toggle(', $item['id'], ');"><div class="foldable fold" id="toggle_img_', $item['id'], '"></div></a></td>
 					<td><a href="', $item['item_link'], '">', $item['title'], '</a></td>
 					<td>', $item['poster'], '</td>
 					<td>
@@ -340,7 +340,7 @@ function template_aeva_admin_reports()
 	{
 		echo '
 			<tr class="windowbg2">
-				<td><a href="#" onclick="return admin_toggle(', $report['id_report'], ');"><div class="foldable" id="toggle_img_', $report['id_report'], '"></div></a></td>
+				<td><a href="#" onclick="return admin_toggle(', $report['id_report'], ');"><div class="foldable fold" id="toggle_img_', $report['id_report'], '"></div></a></td>
 				<td><a href="', $galurl, 'sa=item;in=', $context['aeva_report_type'] == 'comment' ? $report['id2'] . '#com' . $report['id'] : $report['id'], '">', $report['title'], '</a></td>
 				<td>', aeva_profile($report['reported_by']['id'], $report['reported_by']['name']), '</td>
 				<td>', $report['reported_on'], '</td>

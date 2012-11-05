@@ -550,8 +550,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	}
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	$files = glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext);
-	if (!empty($files))
+	if (is_array($files = glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext)))
 		foreach ($files as $del)
 			if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, (string) $latest_date) === false)
 				@unlink($del);
@@ -765,8 +764,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 	$dir = $full_path ? '' : $theme['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	$files = glob($jsdir . '/' . $id. '*' . $ext);
-	if (!empty($files))
+	if (is_array($files = glob($jsdir . '/' . $id. '*' . $ext)))
 		foreach ($files as $del)
 			if (strpos($del, (string) $latest_date) === false)
 				@unlink($del);

@@ -1,5 +1,5 @@
 #### ATTENTION: You do not need to run or use this file!  The install.php script does everything for you!
-#### Install script for MySQL 5.1+
+#### Install script for MySQL 5.0.3+
 
 #
 # Table structure for table `admin_info_files`

@@ -1343,7 +1343,7 @@ function template_aeva_album_cp()
 	{
 		echo '
 			<tr class="windowbg', $album['featured'] ? '' : '2', '">
-				<td><a href="#" onclick="return admin_toggle(', $album['id'], ');"><div class="foldable" id="toggle_img_', $album['id'], '"></div></a></td>
+				<td><a href="#" onclick="return admin_toggle(', $album['id'], ');"><div class="foldable fold" id="toggle_img_', $album['id'], '"></div></a></td>
 				<td>', !empty($album['owner']['id']) ? $album['owner']['name'] : '', '</td>
 				<td', !$album['approved'] ? ' class="unapp"' : '', ' style="padding-left: ', 5 + 30 * $album['child_level'], 'px',
 				$context['aeva_moving'] !== false && ($context['aeva_moving'] == $album['id'] || $context['aeva_moving'] == $album['parent']) ? '; font-weight: bold' : '', '">';

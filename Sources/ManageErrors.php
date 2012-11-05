@@ -285,7 +285,7 @@ function ViewErrorLog()
 	// Update the all errors tab with the total number of errors
 	$context['error_types']['all']['label'] .= ' (' . $sum . ')';
 
-	if ($settings['app_error_count'] != $sum)
+	if (!isset($settings['app_error_count']) || ($settings['app_error_count'] != $sum))
 		updateErrorCount($sum);
 
 	// And this is pretty basic ;)
