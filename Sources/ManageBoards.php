@@ -697,13 +697,13 @@ function EditBoard2()
 			$boardOptions['access'][$row['id_group']] = array('id_group' => $row['id_group'], 'view_perm' => 'disallow', 'enter_perm' => 'disallow');
 		wesql::free_result($request);
 
-		if (!empty($_POST['viewgroup']))
+		if (!empty($_POST['viewgroup']) && is_array($_POST['viewgroup']))
 		{
 			foreach ($_POST['viewgroup'] as $id_group => $access)
 			{
 				if (!isset($boardOptions['access'][$id_group]))
 					continue;
-				if (empty($_POST['need_deny_perm']) && $access == 'deny')
+				if ((empty($_POST['need_deny_perm']) && $access == 'deny') || ($access != 'deny' && $access != 'allow'))
 					$access = 'disallow';
 
 				$boardOptions['access'][$id_group]['view_perm'] = $access;
@@ -716,14 +716,14 @@ function EditBoard2()
 			foreach ($boardOptions['access'] as $id_group => $access)
 				$boardOptions['access'][$id_group]['enter_perm'] = $access['view_perm'];
 		}
-		elseif (!empty($_POST['entergroup']))
+		elseif (!empty($_POST['entergroup']) && is_array($_POST['entergroup']))
 		{
 			foreach ($_POST['entergroup'] as $id_group => $access)
 			{
 				if (!isset($boardOptions['access'][$id_group]))
 					continue;
 
-				if (empty($_POST['need_deny_perm']) && $access == 'deny')
+				if ((empty($_POST['need_deny_perm']) && $access == 'deny') || ($access != 'deny' && $access != 'allow'))
 					$access = 'disallow';
 
 				$boardOptions['access'][$id_group]['enter_perm'] = $access;

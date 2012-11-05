@@ -116,23 +116,10 @@ function template_new_group()
 					</dd>';
 	}
 
-	echo '
-					<dt>
-						<strong>', $txt['membergroups_new_board'], ':</strong>', $context['post_group'] ? '
-						<dfn>' . $txt['membergroups_new_board_post_groups'] . '</dfn>' : '', '
-					</dt>
-					<dd>
-						<fieldset id="visible_boards">
-							<legend>', $txt['membergroups_new_board_desc'], '</legend>';
-	foreach ($context['boards'] as $board)
-		echo '
-							<div style="margin-left: ', $board['child_level'], 'em"><label><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked disabled' : '', '> ', $board['name'], '</label></div>';
+	if (!empty($context['boards']))
+		template_group_board_selection();
 
 	echo '
-							<br>
-							<label><input type="checkbox" id="checkall_check" onclick="invertAll(this, this.form, \'boardaccess\');"> <em>', $txt['check_all'], '</em></label>
-						</fieldset>
-					</dd>
 				</dl>
 				<div class="right">
 					<input type="submit" value="', $txt['membergroups_add_group'], '" class="new">
@@ -291,31 +278,7 @@ function template_edit_group()
 					</dd>';
 
 	if (!empty($context['boards']))
-	{
-		echo '
-					<dt>
-						<strong>', $txt['membergroups_new_board'], ':</strong>', $context['group']['is_post_group'] ? '
-						<dfn>' . $txt['membergroups_new_board_post_groups'] . '</dfn>' : '', '
-					</dt>
-					<dd>
-						<fieldset id="visible_boards" class="hide" style="width: 95%">
-							<legend><a href="#" onclick="$(\'#visible_boards, #visible_boards_link\').toggle(); return false;">', $txt['membergroups_new_board_desc'], '</a></legend>';
-
-		foreach ($context['boards'] as $board)
-			echo '
-							<div style="margin-left: ', $board['child_level'], 'em"><label><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '"', $board['selected'] ? ' checked' : '', '> ', $board['name'], '</label></div>';
-
-		echo '
-							<br>
-							<label><input type="checkbox" id="checkall_check" onclick="invertAll(this, this.form, \'boardaccess\');"> <em>', $txt['check_all'], '</em></label>
-						</fieldset>
-						<a href="#" onclick="$(\'#visible_boards, #visible_boards_link\').toggle(); return false;" id="visible_boards_link" class="hide">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
-					</dd>';
-
-		add_js('
-	$("#visible_boards_link").show();
-	$("#visible_boards").hide();');
-	}
+		template_group_board_selection();
 
 	echo '
 				</dl>
@@ -369,6 +332,89 @@ function template_edit_group()
 		}
 	}
 	swapPostGroup(', $context['group']['is_post_group'] ? 'true' : 'false', ');');
+}
+
+function template_group_board_selection()
+{
+	global $context, $txt;
+
+	echo '
+					<dt>
+						<strong>', $txt['membergroups_new_board'], ':</strong>', !empty($context['group']['is_post_group']) ? '
+						<dfn>' . $txt['membergroups_new_board_post_groups'] . '</dfn>' : '', '
+					</dt>
+					<dd>
+						<label><input type="checkbox" name="view_enter_same" id="view_enter_same"', !empty($context['view_enter_same']) ? ' checked' : '', ' onclick="$(\'#enter_perm_col\').toggle(!this.checked)"> ', $txt['membergroups_view_enter_same'], '</label><br>
+						<label><input type="checkbox" name="need_deny_perm" id="need_deny_perm"', !empty($context['need_deny_perm']) ? ' checked' : '', ' onclick="$(\'.deny_perm\').toggle(this.checked)"> ', $txt['membergroups_need_deny_perm'], '</label> <a href="<URL>?action=help;in=need_deny_perm" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a><br>
+						<br>
+						<fieldset id="view_perm_col">
+							<legend>', $txt['membergroups_board_see'], '</legend>
+							<table>
+								<tr>
+									<th></th>
+									<th>', $txt['yes'], '</th>
+									<th>', $txt['no'], '</th>
+									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['group_boards_never'], '</th>
+								</tr>';
+
+
+	foreach ($context['boards'] as $board)
+	{
+		echo '
+								<tr>
+									<td class="smalltext">
+										<span style="margin-left:', $board['child_level'], 'em">', $board['name'], '</span>
+									</td>
+									<td>
+										<input type="radio" name="viewboard[', $board['id'], ']" value="allow"', $board['view_perm'] == 'allow' ? ' checked' : '', '>
+									</td>
+									<td>
+										<input type="radio" name="viewboard[', $board['id'], ']" value="disallow"', (empty($context['need_deny_perm']) && $board['view_perm'] == 'deny') || $board['view_perm'] == 'disallow' ? ' checked' : '', '>
+									</td>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<input type="radio" name="viewboard[', $board['id'], ']" value="deny"', !empty($context['need_deny_perm']) && $board['view_perm'] == 'deny' ? ' checked' : '', '>
+									</td>
+								</tr>';
+	}
+
+	echo '
+							</table>
+						</fieldset>
+						<fieldset id="enter_perm_col"', !empty($context['view_enter_same']) ? ' style="display:none"' : '', '>
+							<legend>', $txt['membergroups_board_enter'], '</legend>
+							<table>
+								<tr>
+									<th></th>
+									<th>', $txt['yes'], '</th>
+									<th>', $txt['no'], '</th>
+									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['group_boards_never'], '</th>
+								</tr>';
+
+
+	foreach ($context['boards'] as $board)
+	{
+		echo '
+								<tr>
+									<td class="smalltext">
+										<span style="margin-left:', $board['child_level'], 'em">', $board['name'], '</span>
+									</td>
+									<td>
+										<input type="radio" name="enterboard[', $board['id'], ']" value="allow"', $board['enter_perm'] == 'allow' ? ' checked' : '', '>
+									</td>
+									<td>
+										<input type="radio" name="enterboard[', $board['id'], ']" value="disallow"', (empty($context['need_deny_perm']) && $board['enter_perm'] == 'deny') || $board['enter_perm'] == 'disallow' ? ' checked' : '', '>
+									</td>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<input type="radio" name="enterboard[', $board['id'], ']" value="deny"', !empty($context['need_deny_perm']) && $board['enter_perm'] == 'deny' ? ' checked' : '', '>
+									</td>
+								</tr>';
+	}
+
+	echo '
+							</table>
+						</fieldset>
+					</dd>';
+
 }
 
 // Templating for viewing the members of a group.

@@ -130,6 +130,13 @@ function deleteMembergroups($groups)
 		)
 	);
 	wesql::query('
+		DELETE FROM {db_prefix}board_groups
+		WHERE id_group IN ({array_int:group_list})',
+		array(
+			'group_list' => $groups,
+		)
+	);
+	wesql::query('
 		DELETE FROM {db_prefix}group_moderators
 		WHERE id_group IN ({array_int:group_list})',
 		array(

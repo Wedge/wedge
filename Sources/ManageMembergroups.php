@@ -517,23 +517,63 @@ function AddMembergroup()
 			}
 		}
 
-		// Make sure all boards selected are stored in a proper array.
-		$_POST['boardaccess'] = empty($_POST['boardaccess']) || !is_array($_POST['boardaccess']) ? array() : $_POST['boardaccess'];
-		foreach ($_POST['boardaccess'] as $key => $value)
-			$_POST['boardaccess'][$key] = (int) $value;
+		// Add the board visibility.
+		$board_access = array();
+		if (!empty($_POST['viewboard']) && is_array($_POST['viewboard']))
+		{
+			foreach ($_POST['viewboard'] as $id_board => $access)
+			{
+				$id_board = (int) $id_board;
+				if ($id_board < 0)
+					continue;
 
-		// Only do this if they have special access requirements.
-		if (!empty($_POST['boardaccess']))
-			wesql::query('
-				UPDATE {db_prefix}boards
-				SET member_groups = CASE WHEN member_groups = {string:blank_string} THEN {string:group_id_string} ELSE CONCAT(member_groups, {string:comma_group}) END
-				WHERE id_board IN ({array_int:board_list})',
+				if ((empty($_POST['need_deny_perm']) && $access == 'deny') || ($access != 'deny' && $access != 'allow'))
+					$access = 'disallow';
+
+				$board_access[$id_board]['view_perm'] = $access;
+			}
+		}
+
+		// If the enter rules are the same as the view rules, we do not care what $_POST has.
+		if (!empty($_POST['view_enter_same']))
+		{
+			foreach ($board_access as $id_board => $access)
+				$board_access[$id_board]['enter_perm'] = $access['view_perm'];
+		}
+		elseif (!empty($_POST['enterboard']))
+		{
+			foreach ($_POST['enterboard'] as $id_group => $access)
+			{
+				$id_board = (int) $id_board;
+				if ($id_board < 0)
+					continue;
+
+				if ((empty($_POST['need_deny_perm']) && $access == 'deny') || ($access != 'deny' && $access != 'allow'))
+					$access = 'disallow';
+
+				$board_access[$id_board]['enter_perm'] = $access;
+			}
+		}
+
+		// A bit of clean up before we insert DB rows
+		$insert_rows = array();
+		foreach ($board_access as $id_board => $access)
+		{
+			if (empty($access['view_perm']))
+				unset($board_access[$id_board]);
+			elseif (empty($access['enter_perm']))
+				$access['enter_perm'] = $access['view_perm'];
+
+			$insert_rows[] = array($id_board, $id_group, $access['view_perm'], $access['enter_perm']);
+		}
+		if (!empty($insert_rows))
+			wesql::insert('replace',
+				'{db_prefix}board_groups',
 				array(
-					'board_list' => $_POST['boardaccess'],
-					'blank_string' => '',
-					'group_id_string' => (string) $id_group,
-					'comma_group' => ',' . $id_group,
-				)
+					'id_board' => 'int', 'id_group' => 'int', 'view_perm' => 'string', 'enter_perm' => 'string',
+				),
+				$insert_rows,
+				array('id_board', 'id_group')
 			);
 
 		// If this is joinable then set it to show group membership in people's profiles.
@@ -582,8 +622,9 @@ function AddMembergroup()
 	wesql::free_result($result);
 
 	$result = wesql::query('
-		SELECT id_board, name, child_level
-		FROM {db_prefix}boards
+		SELECT b.id_board, b.name, child_level, c.name AS cat_name, c.id_cat
+		FROM {db_prefix}boards AS b
+			INNER JOIN {db_prefix}categories AS c ON (b.id_cat = c.id_cat)
 		ORDER BY board_order',
 		array(
 		)
@@ -594,9 +635,12 @@ function AddMembergroup()
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'child_level' => $row['child_level'],
-			'selected' => false
+			'view_perm' => 'disallow',
+			'enter_perm' => 'disallow',
 		);
 	wesql::free_result($result);
+	$context['view_enter_same'] = true;
+	$context['need_deny_perm'] = false;
 }
 
 // Deleting a membergroup by URL (not implemented).
@@ -710,6 +754,74 @@ function EditMembergroup()
 		// Time to update the boards this membergroup has access to.
 		if ($_REQUEST['group'] == 2 || $_REQUEST['group'] > 3)
 		{
+			// Prune the old permissions.
+			wesql::query('
+				DELETE FROM {db_prefix}board_groups
+				WHERE id_group = {int:group}',
+				array(
+					'group' => $_REQUEST['group'],
+				)
+			);
+
+			// Add the real visibility.
+			$board_access = array();
+			if (!empty($_POST['viewboard']) && is_array($_POST['viewboard']))
+			{
+				foreach ($_POST['viewboard'] as $id_board => $access)
+				{
+					$id_board = (int) $id_board;
+					if ($id_board < 0)
+						continue;
+
+					if ((empty($_POST['need_deny_perm']) && $access == 'deny') || ($access != 'deny' && $access != 'allow'))
+						$access = 'disallow';
+
+					$board_access[$id_board]['view_perm'] = $access;
+				}
+			}
+
+			// If the enter rules are the same as the view rules, we do not care what $_POST has.
+			if (!empty($_POST['view_enter_same']))
+			{
+				foreach ($board_access as $id_board => $access)
+					$board_access[$id_board]['enter_perm'] = $access['view_perm'];
+			}
+			elseif (!empty($_POST['enterboard']))
+			{
+				foreach ($_POST['enterboard'] as $id_group => $access)
+				{
+					$id_board = (int) $id_board;
+					if ($id_board < 0)
+						continue;
+
+					if ((empty($_POST['need_deny_perm']) && $access == 'deny') || ($access != 'deny' && $access != 'allow'))
+						$access = 'disallow';
+
+					$board_access[$id_board]['enter_perm'] = $access;
+				}
+			}
+
+			// A bit of clean up before we insert DB rows
+			$insert_rows = array();
+			foreach ($board_access as $id_board => $access)
+			{
+				if (empty($access['view_perm']))
+					unset($board_access[$id_board]);
+				elseif (empty($access['enter_perm']))
+					$access['enter_perm'] = $access['view_perm'];
+
+				$insert_rows[] = array($id_board, $id_group, $access['view_perm'], $access['enter_perm']);
+			}
+			if (!empty($insert_rows))
+				wesql::insert('replace',
+					'{db_prefix}board_groups',
+					array(
+						'id_board' => 'int', 'id_group' => 'int', 'view_perm' => 'string', 'enter_perm' => 'string',
+					),
+					$insert_rows,
+					array('id_board', 'id_group')
+				);
+
 			$_POST['boardaccess'] = empty($_POST['boardaccess']) || !is_array($_POST['boardaccess']) ? array() : $_POST['boardaccess'];
 			foreach ($_POST['boardaccess'] as $key => $value)
 				$_POST['boardaccess'][$key] = (int) $value;
@@ -997,21 +1109,38 @@ function EditMembergroup()
 	$context['boards'] = array();
 	if ($_REQUEST['group'] == 2 || $_REQUEST['group'] > 3)
 	{
+		$context['view_enter_same'] = true;
+		$context['need_deny_perm'] = false;
+
 		$result = wesql::query('
-			SELECT id_board, name, child_level, FIND_IN_SET({string:current_group}, member_groups) != 0 AS can_access
-			FROM {db_prefix}boards
+			SELECT b.id_board, b.name, child_level, IFNULL(view_perm, {string:disallow}) AS view_perm, IFNULL(enter_perm, {string:disallow}) AS enter_perm,
+				c.name AS cat_name, c.id_cat
+			FROM {db_prefix}boards AS b
+				LEFT JOIN {db_prefix}board_groups AS bg ON (b.id_board = bg.id_board AND bg.id_group = {int:current_group})
+				INNER JOIN {db_prefix}categories AS c ON (b.id_cat = c.id_cat)
 			ORDER BY board_order',
 			array(
 				'current_group' => (int) $_REQUEST['group'],
+				'disallow' => 'disallow',
 			)
 		);
 		while ($row = wesql::fetch_assoc($result))
+		{
 			$context['boards'][] = array(
 				'id' => $row['id_board'],
 				'name' => $row['name'],
 				'child_level' => $row['child_level'],
-				'selected' => !empty($row['can_access']),
+				'view_perm' => $row['view_perm'],
+				'enter_perm' => $row['enter_perm'],
+				'id_cat' => $row['id_cat'],
+				'cat_name' => $row['cat_name'],
 			);
+			if ($row['view_perm'] != $row['enter_perm'])
+				$context['view_enter_same'] = false;
+			if ($row['view_perm'] == 'deny' || $row['enter_perm'] == 'deny')
+				$context['need_deny_perm'] = true;
+		}
+
 		wesql::free_result($result);
 	}
 
