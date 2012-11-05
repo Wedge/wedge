@@ -124,7 +124,10 @@ function template_boards()
 				time, timestamp (a number that represents the time.), id (of the post), topic (topic id.),
 				link, href, subject, start (where they should go for the first unread post.),
 				and member. (which has id, name, link, href, username in it.) */
-				if (!empty($board['last_post']['id']))
+				if (!empty($board['last_post']['offlimits']))
+					echo '
+						<p>', $txt['board_off_limits'], '</p>';
+				elseif (!empty($board['last_post']['id']))
 					echo '
 						<p>
 							', strtr($txt['last_post_author_link_time'], array(

@@ -56,7 +56,7 @@ function getBoardIndex($boardIndexOptions)
 			LEFT JOIN {db_prefix}collapsed_categories AS cc ON (cc.id_cat = c.id_cat AND cc.id_member = {int:current_member})' : '')) . '
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
 			LEFT JOIN {db_prefix}members AS mods_mem ON (mods_mem.id_member = mods.id_member)
-		WHERE {query_see_board}' . (empty($boardIndexOptions['category']) ? '' : '
+		WHERE {query_list_board}' . (empty($boardIndexOptions['category']) ? '' : '
 			AND b.id_cat = {int:category}') . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
 			AND b.child_level >= {int:child_level}') : '
 			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)) . (empty($boardIndexOptions['category']) ? '' : '
@@ -247,8 +247,13 @@ function getBoardIndex($boardIndexOptions)
 			'topic' => $row_board['id_topic']
 		);
 
-		// Provide the href and link.
-		if ($row_board['subject'] != '')
+		// Provide the href and link. Except if we can't actually enter this board, or it doesn't have a subject.
+		if (!$user_info['is_admin'] && !in_array($row_board['id_board'], $user_info['qsb_boards']))
+		{
+			$row_board['poster_time'] = 0; // This should not be considered for 'latest'.
+			$this_last_post['offlimits'] = true;
+		}
+		elseif ($row_board['subject'] != '')
 		{
 			$this_last_post['href'] = $scripturl . '?topic=' . $row_board['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row_board['id_msg'] : $row_board['new_from']) . (empty($row_board['is_read']) ? ';boardseen' : '') . '#new';
 			$this_last_post['link'] = '<a href="' . $this_last_post['href'] . '" title="' . $row_board['subject'] . '">' . $row_board['short_subject'] . '</a>';
