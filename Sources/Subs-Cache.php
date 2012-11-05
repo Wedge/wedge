@@ -550,9 +550,11 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	}
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	foreach (glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext) as $del)
-		if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, (string) $latest_date) === false)
-			@unlink($del);
+	$files = glob($final_folder . '/' . ($id ? $id . '-*' : '[0-9]*') . $ext);
+	if (!empty($files))
+		foreach ($files as $del)
+			if (($id || preg_match('~/\d+\.~', $del)) && strpos($del, (string) $latest_date) === false)
+				@unlink($del);
 
 	$final = '';
 	$discard_dir = strlen($boarddir) + 1;
@@ -763,9 +765,11 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 	$dir = $full_path ? '' : $theme['theme_dir'] . '/';
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
-	foreach (glob($jsdir . '/' . $id. '*' . $ext) as $del)
-		if (strpos($del, (string) $latest_date) === false)
-			@unlink($del);
+	$files = glob($jsdir . '/' . $id. '*' . $ext);
+	if (!empty($files))
+		foreach ($files as $del)
+			if (strpos($del, (string) $latest_date) === false)
+				@unlink($del);
 
 	$minify = empty($settings['minify']) ? 'none' : $settings['minify'];
 

@@ -363,6 +363,15 @@ function deleteMembers($users, $check_not_admin = false)
 		)
 	);
 
+	// And their PM rules.
+	wesql::query('
+		DELETE FROM {db_prefix}pm_rules
+		WHERE id_member IN ({array_int:users})',
+		array(
+			'users' => $users,
+		)
+	);
+
 	// Delete drafts.
 	wesql::query('
 		DELETE FROM {db_prefix}drafts

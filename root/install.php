@@ -1377,6 +1377,7 @@ function DeleteInstall()
 	require_once($sourcedir . '/Security.php');
 	require_once($sourcedir . '/Subs-Auth.php');
 	require_once($sourcedir . '/Class-String.php');
+	westr::getInstance();
 
 	// Bring a warning over.
 	if (!empty($incontext['account_existed']))
@@ -1982,6 +1983,7 @@ function template_install_above()
 		'QueryString', 'Subs', 'Errors',
 		'Security', 'Subs-Auth', 'Class-String',
 	));
+	westr::getInstance();
 	detectBrowser();
 
 	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
