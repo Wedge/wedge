@@ -15,37 +15,20 @@ function template_main()
 {
 	global $context, $user_info, $txt;
 
-	echo '
-	<we:cat>
-		Welcome to Wedge, the upcoming computer-aided community builder.
-	</we:cat>';
-
-	if (empty($context['skin_options']['mobile']))
-		echo '
-	<div class="windowbg2 wrc home-intro">
-		Built in PHP 5 upon the SMF platform by some of its top devs (see the <a href="/pub/faq/">FAQ</a> for more) for several years,
-		Wedge allows you to create and maintain <b>message boards</b> with a modern twist. Blogs, HTML 5, CSS 3, jQuery, object
-		programming, UTF8, CSS pre-parsing, improved security, drafts, easier theming and modding? Will do! We think that once it\'s
-		released, you\'ll agree that Wedge is the <strong>best free forum software</strong> available.
-		Read the full <a href="/pub/feats/">feature list</a>. With dozens of new features, including the exclusive Aeva Media gallery system,
-		Wedge puts control back into your hands. When is it coming out? When it\'s ready.
-		<a href="/blog/">Stay tuned</a> and subscribe to our blog\'s <a href="<URL>?action=feed;board=132;sa=news">RSS feed</a> to make sure not to miss it!
-	</div>';
-
 	$n = isset($_REQUEST['n']) ? (int) $_REQUEST['n'] : 5;
 	$next = $n < 50 ? ($n < 20 ? ($n < 10 ? 10 : 20) : 50) : 100;
 
 	echo '
 	<we:cat style="margin-top: 16px">', $n == $next ? '' : '
-		<a href="?n=' . $next . '"><div class="floatleft foldable" style="margin: 5px 4px 1px 1px"></div></a>', '
 		<span class="floatright"><a href="<URL>?action=boards">', $txt['board_index'], '</a></span>
+		<a href="?n=' . $next . '" class="middle" style="display: inline-block; height: 16px"><div class="floatleft foldable"></div></a>', '
 		', $txt['recent_posts'], '
 	</we:cat>
 	<we:block class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
 		<table class="homeposts w100 cs0">';
 
 	loadSource('../SSI');
-	$naoboards = ssi_recentTopicTitles($n, $user_info['is_admin'] ? null : array(136), null, 'naos');
+	$naoboards = ssi_recentTopicTitles($n, null, null, 'naos');
 
 	$new_stuff = array();
 	if (!$user_info['is_guest'])
@@ -75,16 +58,18 @@ function template_main()
 	}
 	unset($new_stuff, $row);
 
+	$alt = '';
 	foreach ($naoboards as $post)
 	{
 		$safe = strpos($post['board']['url'], '/pub') === false;
 		$blo = strpos($post['board']['url'], '/blog') !== false;
+		$alt = $alt ? '' : '2';
 		echo '
-			<tr>
-				<td class="windowbg latestp1">
+			<tr class="windowbg', $alt, '">
+				<td class="latestp1">
 					<div>', strftime('%d/%m %H:%M', $post['timestamp']), '<br>', $post['poster']['link'], '</div>
 				</td>
-				<td class="windowbg2 latestp2">
+				<td class="latestp2">
 					', $post['board']['name'], ' &gt; ';
 
 		if ($post['is_new'] && !$user_info['is_guest'])
@@ -100,35 +85,26 @@ function template_main()
 	</we:block>';
 }
 
-function template_thoughts($limit = 18)
+function template_thoughts()
 {
-	global $context, $user_info, $txt;
+	global $context, $user_info, $txt, $theme;
 
 	if (empty($context['thoughts']))
 		return;
 
-	$is_thought_page = isset($_GET['s']) && $_GET['s'] === 'thoughts';
-
-	if (!$is_thought_page)
-		echo '
+	echo '
 		<we:cat style="margin-top: 16px">
-			<span class="floatright"><a href="<URL>?s=thoughts">', $txt['all_pages'], '</a></span>
+			<span class="floatright"><a href="<URL>?action=thoughts">', $txt['all_pages'], '</a></span>
 			<div class="thought_icon"></div>
 			', $txt['thoughts'], '...
-		</we:cat>';
-
-	echo '
+		</we:cat>
 		<div class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
 		<table class="w100 cp4 cs0 thought_list">';
 
-	if ($is_thought_page)
-		echo '
-			<tr><td colspan="2" class="titlebg" style="padding: 4px">', $txt['pages'], ': ', $context['page_index'], '</td></tr>';
-
 	if (!$user_info['is_guest'])
 		echo '
-			<tr id="new_thought">
-				<td class="bc">{date}</td><td class="windowbg thought">{uname} &raquo; {text}</td>
+			<tr id="new_thought" class="windowbg">
+				<td class="bc">%date%</td><td>%text%</td>
 			</tr>';
 
 	// @worg!!
@@ -139,20 +115,32 @@ function template_thoughts($limit = 18)
 		20 => 'friends',
 	);
 
-	foreach ($context['thoughts'] as $id => $thought)
+	if (empty($context['skin_options']['mobile']))
 	{
-		$col = empty($col) ? 2 : '';
-		echo '
+		foreach ($context['thoughts'] as $id => $thought)
+		{
+			$col = empty($col) ? 2 : '';
+			echo '
 			<tr class="windowbg', $col, '">
-				<td class="bc', $col, '">', $thought['updated'], '</td>
-				<td><div>', $thought['privacy'] != -3 ? '<div class="privacy_' . $privacy_icon[$thought['privacy']] . '"></div>' : '', '<a id="t', $id, '"></a><a href="<URL>?action=profile;u=', $thought['id_member'], '">',
+				<td class="bc', $col, '"><a href="<URL>?action=thoughts;in=', $thought['id_master'] ? $thought['id_master'] : $id, '#t', $id, '"><img src="', $theme['images_url'], '/icons/last_post.gif" class="middle"></a> ', $thought['updated'], '</td>
+				<td><div>', $thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
 				$thought['owner_name'], '</a> &raquo; ', $thought['text'], '</div></td>
 			</tr>';
+		}
 	}
-
-	if ($is_thought_page)
-		echo '
-			<tr><td colspan="2" class="titlebg" style="padding: 4px">', $txt['pages'], ': ', $context['page_index'], '</td></tr>';
+	else
+	{
+		foreach ($context['thoughts'] as $id => $thought)
+		{
+			$col = empty($col) ? 2 : '';
+			echo '
+			<tr class="windowbg', $col, '">
+				<td><a href="<URL>?action=thoughts;in=', $thought['id_master'] ? $thought['id_master'] : $id, '#t', $id, '"><img src="', $theme['images_url'], '/icons/last_post.gif" class="middle"></a> ', $thought['updated'], '
+				<br><div>', $thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
+				$thought['owner_name'], '</a> &raquo; ', $thought['text'], '</div></td>
+			</tr>';
+		}
+	}
 
 	echo '
 		</table>
