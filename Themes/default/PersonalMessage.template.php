@@ -201,11 +201,6 @@ function template_folder()
 					echo '
 				<li class="postcount">', $txt['member_postcount'], ': ', $message['member']['posts'], '</li>';
 
-				// Show the member's gender icon?
-				if (!empty($theme['show_gender']) && $message['member']['gender']['image'] != '' && !isset($context['disabled_fields']['gender']))
-					echo '
-				<li class="gender">', $txt['gender'], ': ', $message['member']['gender']['image'], '</li>';
-
 				// Show their personal text?
 				if (!empty($theme['show_blurb']) && $message['member']['blurb'] !== '')
 					echo '

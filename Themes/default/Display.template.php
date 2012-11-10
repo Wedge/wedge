@@ -446,11 +446,6 @@ function template_userbox(&$message)
 			echo '
 							<li class="postcount">', $txt['member_postcount'], ': ', $message['member']['posts'], '</li>';
 
-		// Show the member's gender icon?
-		if (!empty($theme['show_gender']) && $message['member']['gender']['image'] != '' && !isset($context['disabled_fields']['gender']))
-			echo '
-							<li class="gender">', $txt['gender'], ': ', $message['member']['gender']['image'], '</li>';
-
 		// Show their personal text?
 		if (!empty($theme['show_blurb']) && $message['member']['blurb'] !== '')
 			echo '
@@ -519,9 +514,10 @@ function template_user_status(&$member)
 	echo '
 								<div', $member['website']['url'] != '' && !isset($context['disabled_fields']['website']) ? ' class="website"' : '', ' title="', $txt['website'], '"></div>';
 
-	// Indicate their gender, if filled in.
+	// Indicate their gender, if filled in and allowed.
+	$gender = empty($theme['show_gender']) || isset($context['disabled_fields']['gender']) ? '' : (empty($member['gender']) ? '' : $member['gender']);
 	echo '
-								<div', !empty($member['gender']['name']) ? ' class="' . ($member['gender']['name'] == $txt['male'] ? 'male' : 'female') . '" title="' . $member['gender']['name'] . '"' : '', '></div>';
+								<div', $gender ? ' class="' . $gender . '" title="' . $txt[$gender] . '"' : '', '></div>';
 
 	// Are they a contact of mine..?
 	echo '

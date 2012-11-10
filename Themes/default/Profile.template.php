@@ -133,10 +133,10 @@ function template_summary()
 				<dt>', $txt['personal_text'], ': </dt>
 				<dd>', $context['member']['blurb'], '</dd>';
 
-	if (!isset($context['disabled_fields']['gender']) && !empty($context['member']['gender']['name']))
+	if (!isset($context['disabled_fields']['gender']) && !empty($context['member']['gender']))
 		echo '
 				<dt>', $txt['gender'], ': </dt>
-				<dd>', $context['member']['gender']['name'], '</dd>';
+				<dd>', $txt[$context['member']['gender']], '</dd>';
 
 	if ($context['member']['age'] !== $txt['not_applicable'])
 		echo '

@@ -169,6 +169,7 @@ function template_edit_group()
 					</dd>';
 
 	// Group type...
+	// !! FIX THIS!!!!!!!!!!!
 	if ($context['group']['allow_post_group'])
 	{
 		echo '

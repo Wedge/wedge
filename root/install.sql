@@ -2423,7 +2423,7 @@ VALUES
 	(1, 'show_modify', '1'),
 	(1, 'show_user_images', '1'),
 	(1, 'show_blurb', '1'),
-	(1, 'show_gender', '0'),
+	(1, 'show_gender', '1'),
 	(1, 'show_member_bar', '1'),
 	(1, 'linktree_link', '1'),
 	(1, 'show_profile_buttons', '1'),
