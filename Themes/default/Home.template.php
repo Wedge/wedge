@@ -15,6 +15,9 @@ function template_main()
 {
 	global $context, $user_info, $txt;
 
+	if (!$context['home_show']['topics'])
+		return;
+
 	$n = isset($_REQUEST['n']) ? (int) $_REQUEST['n'] : 5;
 	$next = $n < 50 ? ($n < 20 ? ($n < 10 ? 10 : 20) : 50) : 100;
 
@@ -145,40 +148,6 @@ function template_thoughts()
 	echo '
 		</table>
 		</div>';
-}
-
-// Only restore this if we decide to remove the board index...
-function template_quickboard()
-{
-/*
-	global $user_info;
-
-	$can_view = array_intersect($user_info['groups'], array(1, 18, 20, 21));
-	$is_team = array_intersect($user_info['groups'], array(1, 20, 21));
-
-	echo '
-	<section>
-		<we:title>
-			Quick Board List (<a href="http://wedge.org/do/boards/">full</a>)
-		</we:title>
-		<div class="padding">
-			<b><a href="http://wedge.org/pub/">The Pub</a></b>
-			<br />&nbsp;&nbsp;&nbsp;<a href="http://wedge.org/pub/faq/">FAQs</a>
-			<br />&nbsp;&nbsp;&nbsp;<a href="http://wedge.org/pub/feats/">Features</a>
-			<br />&nbsp;&nbsp;&nbsp;<a href="http://wedge.org/pub/plugins/">Plugins</a>
-			<br />&nbsp;&nbsp;&nbsp;<a href="http://wedge.org/pub/off/">Off-topic</a>
-			<br />&nbsp;&nbsp;&nbsp;<a href="http://wedge.org/pub/smf/">SMF</a>
-			<br /><b><a href="http://wedge.org/blog/">The Blog</a></b>', !empty($can_view) ? '
-			<br /><b><a href="http://wedge.org/up/">The Project</a></b>' . (!empty($is_team) ? '
-			<br /><b><a href="http://wedge.org/team/">Team board</a></b>' : '') . '
-			<br /><b><a href="http://wedge.org/code/">Feature discussion</a></b>
-			<br />&nbsp;&nbsp;&nbsp;<a href="http://wedge.org/gfx/">Theme &amp; UI</a>
-			<br />&nbsp;&nbsp;&nbsp;<a href="http://wedge.org/bzz/">Sleeping in light</a>
-			<br />&nbsp;&nbsp;&nbsp;<a href="http://wedge.org/out/">Finished!</a>
-			<br /><b><a href="http://wedge.org/off/">Off-topic</a></b>' : '', '
-		</div>
-	</section>';
-*/
 }
 
 ?>
