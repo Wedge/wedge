@@ -33,8 +33,6 @@ class westr_foundation
 
 	static function getInstance()
 	{
-		global $settings;
-
 		// Quero ergo sum
 		if (self::$instance == null)
 		{

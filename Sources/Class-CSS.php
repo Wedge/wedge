@@ -963,7 +963,7 @@ class wess_nesting extends wess
 
 					// In case we extend directly from a parent's property, make sure to keep only the first parent (reset) if we have several.
 					if (strpos($m[2], '&') !== false)
-						$m[2] = str_replace('&', reset($this->parse_ancestors($this->rules[$node['parent']])), $m[2]);
+						$m[2] = str_replace('&', reset(($this->parse_ancestors($this->rules[$node['parent']]))), $m[2]);
 
 					// And if we have multiple inheritance, add each selector to the base list.
 					$targets = array_map('trim', explode(',', trim($m[2], '"')));

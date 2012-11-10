@@ -28,7 +28,7 @@ class wesql
 
 	protected function __construct()
 	{
-		global $db_prefix, $user_info;
+		global $db_prefix;
 
 		self::$callback_values = array(
 			'db_prefix' => $db_prefix

@@ -1577,9 +1577,6 @@ function aeva_mgPost()
 			fatal_lang_error('media_edit_denied');
 	}
 
-	// Create the text editor
-	aeva_createTextEditor('desc', 'aeva_form', false, empty($data['description']) ? '' : $data['description']);
-
 	$can_auto_approve = aeva_allowedTo(array('auto_approve_item', 'moderate'), true);
 	$will_be_unapproved = $editing ? (!empty($amSettings['item_edit_unapprove']) || $still_unapproved) && !$can_auto_approve : !$can_auto_approve;
 
@@ -1587,8 +1584,11 @@ function aeva_mgPost()
 	aeva_loadQuotas(empty($albums) ? array() : array('image' => $q['image'], 'audio' => $q['audio'], 'video' => $q['video'], 'doc' => $q['doc']));
 
 	loadSource('Class-Editor');
-	$data['title'] = wedit::un_preparsecode($data['title']);
-	$data['description'] = wedit::un_preparsecode($data['description']);
+	$data['title'] = wedit::un_preparsecode(un_htmlspecialchars($data['title']));
+	$data['description'] = wedit::un_preparsecode(un_htmlspecialchars($data['description']));
+
+	// Create the text editor
+	aeva_createTextEditor('desc', 'aeva_form', false, empty($data['description']) ? '' : $data['description']);
 
 	// Construct the form
 	$context['aeva_form'] = array(

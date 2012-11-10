@@ -137,7 +137,7 @@ function reloadSettings()
 			$settings['load_average'] = @file_get_contents('/proc/loadavg');
 			if (!empty($settings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $settings['load_average'], $matches) != 0)
 				$settings['load_average'] = (float) $matches[1];
-			elseif (($settings['load_average'] = @`uptime`) != null && preg_match('~load average[s]?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $settings['load_average'], $matches) != 0)
+			elseif (can_shell_exec() && ($settings['load_average'] = `uptime`) != null && preg_match('~load average[s]?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $settings['load_average'], $matches) != 0)
 				$settings['load_average'] = (float) $matches[1];
 			else
 				unset($settings['load_average']);
@@ -155,6 +155,16 @@ function reloadSettings()
 
 	// Call pre-load hook functions.
 	call_hook('pre_load');
+}
+
+function can_shell_exec()
+{
+	static $result = null;
+	if ($result !== null)
+		return $result;
+
+	$disable_functions = explode(',', @ini_get('disable_functions') . ',' . @ini_get('suhosin.executor.func.blacklist'));
+	return $result = (is_callable('shell_exec') && !@ini_get('safe_mode') && !in_array('shell_exec', $disable_functions));
 }
 
 /**
@@ -2641,7 +2651,7 @@ function getLanguages($use_cache = true)
  */
 function loadSession()
 {
-	global $HTTP_SESSION_VARS, $settings, $boardurl, $sc;
+	global $settings, $boardurl, $sc;
 
 	// Attempt to change a few PHP settings.
 	@ini_set('session.use_cookies', true);
@@ -2758,7 +2768,7 @@ function sessionRead($session_id)
  */
 function sessionWrite($session_id, $data)
 {
-	if (preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id) == 0)
+	if (!preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id))
 		return false;
 
 	// First try to update an existing row...

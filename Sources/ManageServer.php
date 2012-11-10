@@ -471,7 +471,7 @@ function ModifyLoadBalancingSettings($return_config = false)
 	$settings['load_average'] = @file_get_contents('/proc/loadavg');
 	if (!empty($settings['load_average']) && preg_match('~^([^ ]+?) ([^ ]+?) ([^ ]+)~', $settings['load_average'], $matches) !== 0)
 		$settings['load_average'] = (float) $matches[1];
-	elseif (($settings['load_average'] = @`uptime`) !== null && preg_match('~load averages?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $settings['load_average'], $matches) !== 0)
+	elseif (can_shell_exec() && ($settings['load_average'] = `uptime`) !== null && preg_match('~load averages?: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)~i', $settings['load_average'], $matches) !== 0)
 		$settings['load_average'] = (float) $matches[1];
 	else
 		unset($settings['load_average']);

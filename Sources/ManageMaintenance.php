@@ -322,25 +322,18 @@ function MaintainEmptyUnimportantLogs()
 
 	checkSession();
 
-	// No one's online now.... MUHAHAHAHA :P.
-	// Dump the banning logs.
-	// Clear out the spam log.
-	wesql::query('
-		TRUNCATE {db_prefix}log_online, {db_prefix}log_floodcontrol');
+	// No one's online now.... MUHAHAHAHA :P
+	// Dump the banning and spam logs.
+	wesql::query('TRUNCATE {db_prefix}log_online');
+	wesql::query('TRUNCATE {db_prefix}log_floodcontrol');
 
 	// Start id_error back at 0 and dump the error log.
-	wesql::query('
-		TRUNCATE {db_prefix}log_errors');
+	wesql::query('TRUNCATE {db_prefix}log_errors');
 
 	// Last but not least, the search logs!
-	wesql::query('
-		TRUNCATE {db_prefix}log_search_topics');
-
-	wesql::query('
-		TRUNCATE {db_prefix}log_search_messages');
-
-	wesql::query('
-		TRUNCATE {db_prefix}log_search_results');
+	wesql::query('TRUNCATE {db_prefix}log_search_topics');
+	wesql::query('TRUNCATE {db_prefix}log_search_messages');
+	wesql::query('TRUNCATE {db_prefix}log_search_results');
 
 	updateSettings(array('search_pointer' => 0));
 

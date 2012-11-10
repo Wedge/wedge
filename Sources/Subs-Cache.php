@@ -623,8 +623,8 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Just like comments, we're going to preserve content tags.
 	$i = 0;
-	preg_match_all('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~', $final, $contags);
-	$final = preg_replace('~(?<=\s)content\s*:\s*(?:\'.+\'|".+")~e', '\'content: wedge\' . $i++', $final);
+	preg_match_all('~(?<=\s)content\s*:([^\n]+)~', $final, $contags);
+	$final = preg_replace('~(?<=\s)content\s*:[^\n]+~e', '\'content: wedge\' . $i++', $final);
 
 	foreach ($plugins as $plugin)
 		$plugin->process($final);
@@ -637,8 +637,8 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
 	$final = str_replace(
-		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", 'url-no-base64(', '-prefix-'),
-		array('"', "\n", ';', '}', '}', ' ', 'url(', $prefix),
+		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'url-no-base64(', '-prefix-'),
+		array('"', "\n", ';', '}', '}', ' ', '!important', 'url(', $prefix),
 		$final
 	);
 
@@ -648,7 +648,11 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// And do the same for content tags.
 	if (!empty($contags))
+	{
+		foreach ($contags[0] as $i => &$contag)
+			$contag = 'content:' . trim($contags[1][$i]);
 		wedge_replace_numbered_placeholders('content:wedge', $contags[0], $final);
+	}
 
 	$final = ltrim($final, "\n");
 
