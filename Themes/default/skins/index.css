@@ -97,7 +97,7 @@ header, footer, aside, section, article, nav
 .two-columns extends .inline-block
 	box-sizing: border-box
 	vertical-align: top
-	width: 48.9%
+	width: 48.8%
 	margin: 0 .4%
 
 // Two columns become one if viewed on a small screen.

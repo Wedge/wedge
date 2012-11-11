@@ -62,9 +62,6 @@ table.thought_list td:hover .thought_actions
 	p:first-child:last-child
 		margin-top: .5em
 
-.two-columns
-	width: 48.8%
-
 .bbc_code, .php_code
 	code
 		max-height: none

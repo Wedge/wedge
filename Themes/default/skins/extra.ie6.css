@@ -377,16 +377,7 @@ body
 .sbox .items .optgroup .label
 	zoom: normal
 
-.two-columns
-	width: 49.1%
-
 // IE6 doesn't support position: fixed...
 #help_pop
 	position: absolute
 	background: transparent
-
-// Best we can do with table-heavy IE6 is to remove the padding around the window...
-// We could instead hide the sidebar (#sidebar display: none), but people wouldn't like it.
-@media $responsive reset
-	body
-		padding: 0

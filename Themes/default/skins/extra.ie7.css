@@ -204,12 +204,3 @@ dl.settings dd
 
 .smiley
 	text-indent: 0
-
-.two-columns
-	width: 49.1%
-
-// Best we can do with table-heavy IE7 is to remove the padding around the window...
-// We could instead hide the sidebar (#sidebar display: none), but people wouldn't like it.
-@media $responsive reset
-	body
-		padding: 0

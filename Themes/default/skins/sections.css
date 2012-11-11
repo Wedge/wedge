@@ -1161,7 +1161,7 @@ tr.windowbg td
 #stats
 	#main dl
 		min-height: 210px
-	.top_row dl
+	#main .top_row dl
 		min-height: 150px
 
 dl.stats
@@ -1174,6 +1174,7 @@ dl.stats
 	dt
 		clear: both
 		float: left
+		@is (ie[-7], "width: 50%")
 	dd
 		clear, float, text-align: right
 		width: 45%
