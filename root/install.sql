@@ -2399,7 +2399,7 @@ CREATE TABLE {$db_prefix}subscriptions_groups (
 #
 
 CREATE TABLE {$db_prefix}themes (
-  id_member mediumint(8) unsigned NOT NULL default 0,
+  id_member mediumint(8) NOT NULL default 0,
   id_theme tinyint(4) unsigned NOT NULL default 1,
   variable varchar(255) NOT NULL default '',
   value text NOT NULL,
