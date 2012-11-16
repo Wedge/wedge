@@ -23,7 +23,7 @@ function template_main()
 
 	echo '
 	<we:cat style="margin-top: 16px">', $n == $next ? '' : '
-		<span class="floatright"><a href="<URL>?action=boards">', $txt['board_index'], '</a></span>
+		<span class="floatright"><a href="<URL>?action=boards">' . $txt['board_index'] . '</a></span>', '
 		<a href="?n=' . $next . '" class="middle" style="display: inline-block; height: 16px"><div class="floatleft foldable"></div></a>', '
 		', $txt['recent_posts'], '
 	</we:cat>
@@ -104,12 +104,6 @@ function template_thoughts()
 		<div class="tborder" style="margin: 5px 0 15px; padding: 2px; border: 1px solid #dcc; border-radius: 5px">
 		<table class="w100 cp4 cs0 thought_list">';
 
-	if (!$user_info['is_guest'])
-		echo '
-			<tr id="new_thought" class="windowbg">
-				<td class="bc">%date%</td><td>%text%</td>
-			</tr>';
-
 	// @worg!!
 	$privacy_icon = array(
 		-3 => 'everyone',
@@ -120,6 +114,12 @@ function template_thoughts()
 
 	if (empty($context['skin_options']['mobile']))
 	{
+		if (!$user_info['is_guest'])
+			echo '
+			<tr id="new_thought" class="windowbg">
+				<td class="bc">%date%</td><td>%text%</td>
+			</tr>';
+
 		foreach ($context['thoughts'] as $id => $thought)
 		{
 			$col = empty($col) ? 2 : '';
@@ -133,6 +133,12 @@ function template_thoughts()
 	}
 	else
 	{
+		if (!$user_info['is_guest'])
+			echo '
+			<tr id="new_thought" class="windowbg">
+				<td>%date%<br>%text%</td>
+			</tr>';
+
 		foreach ($context['thoughts'] as $id => $thought)
 		{
 			$col = empty($col) ? 2 : '';

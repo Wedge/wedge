@@ -75,14 +75,11 @@ table.aextbox
 	padding: 10px
 	text-align: center
 
-#albums
-	.data
-		padding: 0
-		overflow: auto
-	.buttonlist
-		padding-left: 0
-		img
-			vertical-align: middle
+#albums .buttonlist
+	li
+		margin: 0 1px 0 0
+	img
+		vertical-align: middle
 
 .item_heading, .item_headings
 	padding: 6px
