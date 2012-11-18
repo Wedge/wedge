@@ -723,7 +723,7 @@ function template_quick_reply()
 				<p class="alert smalltext">' . sprintf($txt['error_old_topic'], $settings['oldTopicDays']) . '</p>' : '', $context['can_reply_approved'] ? '' : '
 				<em>' . $txt['wait_for_approval'] . '</em>', !$context['can_reply_approved'] && $context['require_verification'] ? '
 				<br>' : '', '
-				<form action="<URL>?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this);" class="clearfix">
+				<form action="<URL>?board=', $context['current_board'], ';action=post2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" onsubmit="submitonce(this); weSaveEntities(\'postmodify\', ', $context['postbox']->saveEntityFields(), ');" class="clearfix">
 					<input type="hidden" name="topic" value="', $context['current_topic'], '">
 					<input type="hidden" name="subject" value="', $context['response_prefix'], $context['subject'], '">
 					<input type="hidden" name="icon" value="xx">

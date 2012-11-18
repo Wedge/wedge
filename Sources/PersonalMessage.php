@@ -1913,6 +1913,7 @@ function MessagePost()
 			'drafts' => !allowedTo('save_pm_draft') || empty($settings['masterSavePmDrafts']) ? 'none' : (!allowedTo('auto_save_pm_draft') || empty($settings['masterAutoSavePmDrafts']) || !empty($options['disable_auto_save']) ? 'basic_pm' : 'auto_pm'),
 		)
 	);
+	$context['postbox']->addEntityField('subject');
 
 	$context['bcc_value'] = '';
 
@@ -2076,6 +2077,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 			'drafts' => !allowedTo('save_pm_draft') || empty($settings['masterSavePmDrafts']) ? 'none' : (!allowedTo('auto_save_pm_draft') || empty($settings['masterAutoSavePmDrafts']) || !empty($options['disable_auto_save']) ? 'basic_pm' : 'auto_pm'),
 		)
 	);
+	$context['postbox']->addEntityField('subject');
 
 	// Check whether we need to show the code again.
 	$context['require_verification'] = !$user_info['is_admin'] && !empty($settings['pm_posts_verification']) && $user_info['posts'] < $settings['pm_posts_verification'];

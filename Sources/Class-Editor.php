@@ -52,6 +52,7 @@ class wedit
 			'custom_bbc_div' => !empty($editorOptions['custom_bbc_div']) ? $editorOptions['custom_bbc_div'] : '',
 			'custom_smiley_div' => !empty($editorOptions['custom_smiley_div']) ? $editorOptions['custom_smiley_div'] : '',
 			'drafts' => !empty($editorOptions['drafts']) ? $editorOptions['drafts'] : 'none',
+			'entity_fields' => array($editorOptions['id']),
 		);
 
 		// Stuff to do once per page only.
@@ -2671,6 +2672,21 @@ class wedit
 		if (in_array($this->editorOptions['drafts'], array('auto_post', 'auto_pm')))
 			echo '
 				<span id="draft_lastautosave"></span>';
+	}
+
+	// This is essentially a dirty form of json_encode, except that json_encode still isn't present on all 5.2 setups >_<
+	public function saveEntityFields()
+	{
+		foreach ($this->editorOptions['entity_fields'] as $field)
+			$tmp[] = '\'' . $field . '\'';
+		return '[' . implode(',', $tmp) . ']';
+	}
+
+	public function addEntityField($field)
+	{
+		if (!is_array($field))
+			$field = array($field);
+		$this->editorOptions['entity_fields'] = array_unique(array_merge($this->editorOptions['entity_fields'], $field));
 	}
 }
 

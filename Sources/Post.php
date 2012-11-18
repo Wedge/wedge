@@ -1049,6 +1049,7 @@ function Post($post_errors = array())
 			'drafts' => !allowedTo('save_post_draft') || empty($settings['masterSavePostDrafts']) || !empty($_REQUEST['msg']) ? 'none' : (!allowedTo('auto_save_post_draft') || empty($settings['masterAutoSavePostDrafts']) || !empty($options['disable_auto_save']) ? 'basic_post' : 'auto_post'),
 		)
 	);
+	$context['postbox']->addEntityField(array('subject', 'guestname', 'question'));
 
 	// Add the postbox to the list of fields in the form.
 	$context['form_fields']['text'][] = $context['postbox']->id;

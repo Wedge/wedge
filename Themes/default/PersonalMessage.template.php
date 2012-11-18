@@ -814,7 +814,7 @@ function template_send()
 	</we:cat>';
 
 	echo '
-	<form action="<URL>?action=pm;sa=send2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(); weSaveEntities(\'postmodify\', [\'subject\', \'message\']);">
+	<form action="<URL>?action=pm;sa=send2" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify" class="flow_hidden" onsubmit="submitonce(); weSaveEntities(\'postmodify\', ', $context['postbox']->saveEntityFields(), ');">
 		<div class="roundframe clear">';
 
 	// If there were errors for sending the PM, show them.
