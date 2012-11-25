@@ -2764,7 +2764,9 @@ function sessionRead($session_id)
  */
 function sessionWrite($session_id, $data)
 {
-	if (!preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id))
+	// One of those weird bugs: sometimes, when using a combination of WebKit
+	// and a certain server configuration, wesql is already shut down at this point.
+	if (!class_exists('wesql') || !preg_match('~^[a-zA-Z0-9,-]{16,32}$~', $session_id))
 		return false;
 
 	// First try to update an existing row...

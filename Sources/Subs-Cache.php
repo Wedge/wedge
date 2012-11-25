@@ -273,6 +273,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$ignore_versions = array();
 	$found_suffixes = array();
 	$found_files = array();
+	$css = array();
 
 	// !! @todo: the following is quite resource intensive... Maybe we should cache the results somehow?
 	// !! e.g. cache for several minutes, but delete cache if the filemtime for current folder or its parent folders was updated.
@@ -403,6 +404,9 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 	// Cache final file and retrieve its name.
 	$final_script = $boardurl . '/css/' . wedge_cache_css_files($target_folder . ($target_folder ? '/' : ''), $id, $latest_date, $css, $can_gzip, $ext);
+
+	if ($final_script == $boardurl . '/css/')
+		return false;
 
 	if ($is_main)
 		return $context['cached_css'] = $final_script;
@@ -604,6 +608,9 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// Load all CSS files in order, and replace $here with the current folder while we're at it.
 	foreach ((array) $css as $file)
 		$final .= str_replace('$here', $relative_root . str_replace('\\', '/', str_replace($boarddir, '', dirname($file))), file_get_contents($file));
+
+	if (empty($final)) // Nothing loaded...?
+		return false;
 
 	// CSS is always minified. It takes just a sec' to do, and doesn't impair anything.
 	$final = str_replace(array("\r\n", "\r"), "\n", $final); // Always use \n line endings.
