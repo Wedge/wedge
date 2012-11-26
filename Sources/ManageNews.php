@@ -132,6 +132,9 @@ function EditNews()
 		// Update the database.
 		updateSettings(array('news' => implode("\n", $temp_news)));
 
+		// We cached this, so clear the cache.
+		cache_put_data('news_lines', null);
+
 		logAction('news');
 	}
 	// The 'Save' button was pressed.

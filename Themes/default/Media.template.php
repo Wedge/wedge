@@ -753,7 +753,7 @@ function template_aeva_item_comments()
 		echo '
 		<div id="quickreply" style="padding-top: 4px">
 			<we:cat>
-				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="qr_expand"', $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
+				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;"><div id="qr_expand"', !empty($options['display_quick_reply']) && $options['display_quick_reply'] == 2 ? ' class="fold"' : '', '></div></a>
 				<a href="#" onclick="return window.oQuickReply && oQuickReply.swap();" onmousedown="return false;">', $txt['media_comment_this_item'], '</a>
 			</we:cat>
 			<div id="qr_options" class="hide">

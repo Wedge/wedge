@@ -200,7 +200,7 @@ class paypal_payment
 
 		// If this isn't verified then give up...
 		// !! This contained a comment "send an email", but we don't appear to send any?
-		if (strcmp($this->return_data, 'VERIFIED') != 0)
+		if (strcmp(trim($this->return_data), 'VERIFIED') != 0)
 			exit;
 
 		// Check that this is intended for us.
@@ -236,7 +236,7 @@ class paypal_payment
 	// Is this a subscription?
 	public function isSubscription()
 	{
-		if (substr($_POST['txn_type'], 0, 14) == 'subscr_payment')
+		if (substr($_POST['txn_type'], 0, 14) == 'subscr_payment' && $_POST['payment_status'] == 'Completed')
 			return true;
 		else
 			return false;
@@ -254,7 +254,7 @@ class paypal_payment
 	// How much was paid?
 	public function getCost()
 	{
-		return $_POST['tax'] + $_POST['mc_gross'];
+		return (isset($_POST['tax']) ? $_POST['tax'] : 0) + $_POST['mc_gross'];
 	}
 
 	// exit.

@@ -99,6 +99,8 @@ function Who()
 		$show_methods['guests'] = '(lo.id_member = 0 AND lo.id_spider = 0)';
 		$context['show_methods']['spiders'] = $txt['who_show_spiders_only'];
 	}
+	elseif (empty($settings['show_spider_online']) && isset($_SESSION['who_online_filter']) && $_SESSION['who_online_filter'] == 'spiders')
+		unset($_SESSION['who_online_filter']);
 
 	// Does the user prefer a different sort direction?
 	if (isset($_REQUEST['sort'], $sort_methods[$_REQUEST['sort']]))

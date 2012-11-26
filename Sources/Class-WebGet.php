@@ -153,6 +153,14 @@ class weget
 			curl_setopt($curl, CURLOPT_HEADER, false); // We don't want the header in the output
 			curl_setopt($curl, CURLOPT_NOBODY, false); // But we DO want the body
 
+			// Secure connections require a little more work
+			if ($this->secure)
+			{
+				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true); // Verify the certificates with these two
+				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+				curl_setopt($curl, CURLOPT_FORBID_REUSE, true); // Name says it all
+			}
+
 			// Setting the request type, and if it's POST, also setting up the vars.
 			if ($this->method == 'GET')
 				curl_setopt($curl, CURLOPT_HTTPGET, true);
