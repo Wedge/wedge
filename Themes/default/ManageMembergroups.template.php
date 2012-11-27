@@ -356,13 +356,48 @@ function template_group_board_selection()
 									<th>', $txt['yes'], '</th>
 									<th>', $txt['no'], '</th>
 									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['group_boards_never'], '</th>
+								</tr>
+								<tr>
+									<td class="smalltext">
+										<span class="everything" title="', $txt['group_boards_everything_desc'], '">', $txt['group_boards_everything'], '</span>
+									</td>
+									<td>
+										<input type="radio" name="vieweverything" value="allow" onchange="updateView(\'view\', this)">
+									</td>
+									<td>
+										<input type="radio" name="vieweverything" value="disallow" onchange="updateView(\'view\', this)">
+									</td>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<input type="radio" name="vieweverything" value="deny" onchange="updateView(\'view\', this)">
+									</td>
 								</tr>';
 
-
+	$last_cat = -1;
 	foreach ($context['boards'] as $board)
 	{
+		if ($board['id_cat'] != $last_cat)
+		{
+			echo '
+								<tr class="div"></tr>
+								<tr class="board_cat" data-cathead="', $board['id_cat'], '">
+									<td class="smalltext">
+										<span style="margin-left:0em">', $board['cat_name'], '</span>
+									</td>
+									<td>
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="allow" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
+									</td>
+									<td>
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="disallow" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
+									</td>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="deny" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
+									</td>
+								</tr>';
+			$last_cat = $board['id_cat'];
+		}
+
 		echo '
-								<tr>
+								<tr data-cat="', $board['id_cat'], '">
 									<td class="smalltext">
 										<span style="margin-left:', $board['child_level'], 'em">', $board['name'], '</span>
 									</td>
@@ -389,13 +424,48 @@ function template_group_board_selection()
 									<th>', $txt['yes'], '</th>
 									<th>', $txt['no'], '</th>
 									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['group_boards_never'], '</th>
+								</tr>
+								<tr>
+									<td class="smalltext">
+										<span class="everything" title="', $txt['group_boards_everything_desc'], '">', $txt['group_boards_everything'], '</span>
+									</td>
+									<td>
+										<input type="radio" name="entereverything" value="allow" onchange="updateView(\'enter\', this)">
+									</td>
+									<td>
+										<input type="radio" name="entereverything" value="disallow" onchange="updateView(\'enter\', this)">
+									</td>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<input type="radio" name="entereverything" value="deny" onchange="updateView(\'enter\', this)">
+									</td>
 								</tr>';
 
-
+	$last_cat = -1;
 	foreach ($context['boards'] as $board)
 	{
+		if ($board['id_cat'] != $last_cat)
+		{
+			echo '
+								<tr class="div"></tr>
+								<tr class="board_cat" data-cathead="', $board['id_cat'], '">
+									<td class="smalltext">
+										<span style="margin-left:0em">', $board['cat_name'], '</span>
+									</td>
+									<td>
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="allow" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
+									</td>
+									<td>
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="disallow" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
+									</td>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="deny" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
+									</td>
+								</tr>';
+			$last_cat = $board['id_cat'];
+		}
+
 		echo '
-								<tr>
+								<tr data-cat="', $board['id_cat'], '">
 									<td class="smalltext">
 										<span style="margin-left:', $board['child_level'], 'em">', $board['name'], '</span>
 									</td>
@@ -416,6 +486,24 @@ function template_group_board_selection()
 						</fieldset>
 					</dd>';
 
+	add_js('
+	function updateView(selection, obj)
+	{
+		if ((selection == "view" || selection=="enter") && (obj.value == "allow" || obj.value == "disallow" || obj.value == "deny"))
+		{
+			$(\'#\' + selection + \'_perm_col tr.board_cat input\').attr(\'checked\', false);
+			$(\'#\' + selection + \'_perm_col input[name^="\' + selection + \'"]\').filter(\'[value="\' + obj.value + \'"]\').attr(\'checked\', true);
+			$(\'input[name="\' + selection + \'everything"]\').attr(\'checked\', false);
+		}
+	};
+	function selectCat(selection, id_cat, obj)
+	{
+		if (obj.value == "allow" || obj.value == "disallow" || obj.value == "deny")
+		{
+			$(\'#\' + selection + \'_perm_col tr[data-cat="\' + id_cat + \'"] input\').filter(\'[value="\' + obj.value + \'"]\').attr(\'checked\', true);
+			$(\'#\' + selection + \'_perm_col tr.board_cat[data-cathead="\' + id_cat + \'"] input\').attr(\'checked\', false);
+		}
+	}');
 }
 
 // Templating for viewing the members of a group.

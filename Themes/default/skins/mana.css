@@ -243,9 +243,11 @@ pre.file_content
 		padding-bottom: 3px
 	#recycle_board
 		background-color: #dee
-	span.post_group, span.regular_members
+	span.post_group, span.regular_members, span.everyone
 		border-bottom: 1px dotted #000
 		cursor: help
+	tr.everyone td
+		padding-bottom: 14px
 
 .move_links
 	padding: 0 13px 0 0
@@ -256,6 +258,17 @@ pre.file_content
 #boardtheme
 	font-family: $mono_font
 
+/* Styles for the manage membergroups section.
+------------------------------------------------- */
+#groupForm
+	span.everything
+		border-bottom: 1px dotted #000
+		cursor: help
+	tr.board_cat
+		background-color: $window_bg
+		font-weight: bold
+	tr.div
+		height: 14px
 
 /* Styles for the manage members section.
 ------------------------------------------------- */

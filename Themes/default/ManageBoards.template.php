@@ -375,6 +375,20 @@ function template_modify_board()
 										<th>', $txt['yes'], '</th>
 										<th>', $txt['no'], '</th>
 										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['mboards_never'], '</th>
+									</tr>
+									<tr class="everyone">
+										<td class="smalltext">
+											<span class="everyone" title="', $txt['mboards_groups_everyone_desc'], '">', $txt['mboards_groups_everyone'], '</span>
+										</td>
+										<td>
+											<input type="radio" name="vieweveryone" value="allow" onchange="updateView(\'view\', this)">
+										</td>
+										<td>
+											<input type="radio" name="vieweveryone" value="disallow" onchange="updateView(\'view\', this)">
+										</td>
+										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+											<input type="radio" name="vieweveryone" value="deny" onchange="updateView(\'view\', this)">
+										</td>
 									</tr>';
 
 	foreach ($context['groups'] as $group)
@@ -411,6 +425,20 @@ function template_modify_board()
 										<th>', $txt['yes'], '</th>
 										<th>', $txt['no'], '</th>
 										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none;"' : '', '>', $txt['mboards_never'], '</th>
+									</tr>
+									<tr class="everyone">
+										<td class="smalltext">
+											<span class="everyone" title="', $txt['mboards_groups_everyone_desc'], '">', $txt['mboards_groups_everyone'], '</span>
+										</td>
+										<td>
+											<input type="radio" name="entereveryone" value="allow" onchange="updateView(\'enter\', this)">
+										</td>
+										<td>
+											<input type="radio" name="entereveryone" value="disallow" onchange="updateView(\'enter\', this)">
+										</td>
+										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+											<input type="radio" name="entereveryone" value="deny" onchange="updateView(\'enter\', this)">
+										</td>
 									</tr>';
 
 	foreach ($context['groups'] as $group)
@@ -646,7 +674,15 @@ function template_modify_board()
 
 	add_js('
 		}
-	});');
+	});
+	function updateView(selection, obj)
+	{
+		if ((selection == "view" || selection=="enter") && (obj.value == "allow" || obj.value == "disallow" || obj.value == "deny"))
+		{
+			$(\'#\' + selection + \'_perm_col input\').filter(\'[value="\' + obj.value + \'"]\').attr(\'checked\', true);
+			$(\'#\' + selection + \'_perm_col input[name="\' + selection + \'everyone"]\').attr(\'checked\', false);
+		}
+	};');
 
 	// JavaScript for deciding what to show.
 	add_js_inline('

@@ -634,6 +634,8 @@ function AddMembergroup()
 		$context['boards'][] = array(
 			'id' => $row['id_board'],
 			'name' => $row['name'],
+			'id_cat' => $row['id_cat'],
+			'cat_name' => $row['cat_name'],
 			'child_level' => $row['child_level'],
 			'view_perm' => 'disallow',
 			'enter_perm' => 'disallow',

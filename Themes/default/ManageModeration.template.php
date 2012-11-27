@@ -116,8 +116,8 @@ function template_modfilter_home()
 						$print_criteria[] = $str . ' ' . implode(', ', $list);
 						break;
 					default:
-						if (!empty($rules['function']))
-							$print_criteria[] = $rules['function']($criteria);
+						if (!empty($criteria['function']))
+							$print_criteria[] = $criteria['function']($criteria);
 						else
 							$print_criteria[] = $txt['modfilter_cond_unknownrule'] . ' ' . $criteria['name'];
 				}
