@@ -363,7 +363,7 @@ function template_modify_board()
 						<dfn>', $txt['mboards_groups_desc'], '</dfn>
 					</dt>
 					<dd>
-						<label><input type="checkbox" name="view_enter_same" id="view_enter_same"', !empty($context['view_enter_same']) ? ' checked' : '', ' onclick="$(\'#enter_perm_col\').toggle(!this.checked)"> ', $txt['mboards_groups_view_enter_same'], '</label><br>
+						<label><input type="checkbox" name="view_enter_same" id="view_enter_same"', !empty($context['view_enter_same']) ? ' checked' : '', ' onclick="$(\'#enter_perm_col, #offlimits_cont\').toggle(!this.checked)"> ', $txt['mboards_groups_view_enter_same'], '</label><br>
 						<label><input type="checkbox" name="need_deny_perm" id="need_deny_perm"', !empty($context['need_deny_perm']) ? ' checked' : '', ' onclick="$(\'.deny_perm\').toggle(this.checked)"> ', $txt['mboards_groups_need_deny_perm'], '</label> <a href="<URL>?action=help;in=need_deny_perm" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a><br>
 						<br>
 						<div id="view_perm_col" class="two-columns">
@@ -462,13 +462,20 @@ function template_modify_board()
 									</tr>';
 	}
 
-	// Options to choose moderators, specify as announcement board and choose whether to count posts here.
 	echo '
 								</table>
 							</fieldset>
 						</div>
 						<br class="clear"><br>
-					</dd>
+						<div id="offlimits_cont"', !empty($context['view_enter_same']) ? ' style="display:none"' : '', '>
+							<strong>', $txt['mboards_offlimits_msg'], '</strong>
+							<textarea name="offlimits_msg" rows="6" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%') . '">', $context['board']['offlimits_msg'], '</textarea>
+							<br>
+						</div>
+					</dd>';
+
+	// Options to choose moderators, specify as announcement board and choose whether to count posts here.
+	echo '
 					<dt>
 						<strong>', $txt['mboards_moderators'], ':</strong>
 						<dfn>', $txt['mboards_moderators_desc'], '</dfn>

@@ -776,6 +776,13 @@ function template_show_settings()
 				if ($config_var['type'] == 'check')
 					echo '
 						<input type="checkbox"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '"', $config_var['value'] ? ' checked' : '', ' value="1">';
+				// A yesno is a spiffier type of option that is slightly nicer than a checkbox even if it does the same thing.
+				elseif ($config_var['type'] == 'yesno')
+					echo '
+						<select name="', $config_var['name'], '" id="', $config_var['name'], '"', $javascript, $disabled, '>
+							<option value="1"', !empty($config_var['value']) ? ' selected' : '', ' style="color:green">', $txt['yes'], '</option>
+							<option value="0"', empty($config_var['value']) ? ' selected' : '', ' style="color:red">', $txt['no'], '</option>
+						</select>';
 				// Escape (via htmlspecialchars.) the text box.
 				elseif ($config_var['type'] == 'password')
 					echo '

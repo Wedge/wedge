@@ -649,6 +649,12 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdateParameters['language'] = $boardOptions['language'];
 	}
 
+	if (isset($boardOptions['offlimits_msg']))
+	{
+		$boardUpdates[] = 'offlimits_msg = {string:offlimits_msg}';
+		$boardUpdateParameters['offlimits_msg'] = $boardOptions['offlimits_msg'];
+	}
+
 	// Do the updates (if any).
 	if (!empty($boardUpdates))
 		wesql::query('
@@ -850,11 +856,11 @@ function createBoard($boardOptions)
 		'{db_prefix}boards',
 		array(
 			'id_cat' => 'int', 'name' => 'string-255', 'description' => 'string', 'board_order' => 'int',
-			'member_groups' => 'string', 'redirect' => 'string', 'url' => 'string', 'urllen' => 'int'
+			'member_groups' => 'string', 'redirect' => 'string', 'url' => 'string', 'urllen' => 'int', 'offlimits_msg' => 'string',
 		),
 		array(
 			$boardOptions['target_category'], $boardOptions['board_name'], '', 0,
-			'-1,0', '', 'dummy' . rand(100000, 999999), 11
+			'-1,0', '', 'dummy' . rand(100000, 999999), 11, '',
 		),
 		array('id_board')
 	);
@@ -1112,7 +1118,7 @@ function getBoardTree($restrict = false)
 		SELECT
 			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level, b.url,
 			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.skin, b.override_theme, b.id_profile, b.redirect,
-			b.redirect_newtab, b.num_posts, b.language, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
+			b.redirect_newtab, b.num_posts, b.language, b.num_topics, b.offlimits_msg, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)' . $restriction . '
 		ORDER BY c.cat_order, b.child_level, b.board_order',
@@ -1166,6 +1172,7 @@ function getBoardTree($restrict = false)
 				'redirect_newtab' => $row['redirect_newtab'],
 				'prev_board' => $prevBoard,
 				'language' => $row['language'],
+				'offlimits_msg' => $row['offlimits_msg'],
 			);
 			$prevBoard = $row['id_board'];
 			$last_board_order = $row['board_order'];

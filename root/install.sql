@@ -642,6 +642,7 @@ CREATE TABLE {$db_prefix}boards (
   sort_method enum('subject', 'starter', 'last_poster', 'replies', 'views', 'first_post', 'last_post') NOT NULL default 'last_post',
   sort_override enum('natural_desc', 'natural_asc', 'force_desc', 'force_asc') NOT NULL default 'natural_desc',
   language varchar(255) NOT NULL default '',
+  offlimits_msg text NOT NULL,
   PRIMARY KEY (board_order, id_board),
   UNIQUE board_id (id_board),
   UNIQUE categories (id_cat, id_board),

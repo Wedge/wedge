@@ -2263,11 +2263,11 @@ function saveDBSettings(&$config_vars)
 
 	foreach ($config_vars as $var)
 	{
-		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && $var[0] != 'check' && $var[0] != 'permissions' && $var[0] != 'multi_select' && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))
+		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && $var[0] != 'check' && $var[0] != 'yesno' && $var[0] != 'permissions' && $var[0] != 'multi_select' && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))
 			continue;
 
 		// Checkboxes!
-		elseif ($var[0] == 'check')
+		elseif ($var[0] == 'check' || $var[0] == 'yesno')
 			$setArray[$var[1]] = !empty($_POST[$var[1]]) ? '1' : '0';
 		// Select boxes!
 		elseif ($var[0] == 'select' && in_array($_POST[$var[1]], array_keys($var[2])))

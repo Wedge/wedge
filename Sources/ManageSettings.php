@@ -674,6 +674,7 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 			case 'desc':
 			case 'title':
 			case 'check':
+			case 'yesno':
 			case 'email':
 			case 'password':
 			case 'bbc':

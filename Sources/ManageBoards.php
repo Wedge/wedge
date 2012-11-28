@@ -428,6 +428,7 @@ function EditBoard()
 			'category' => (int) $_REQUEST['cat'],
 			'no_children' => true,
 			'language' => '',
+			'offlimits_msg' => '',
 		);
 	}
 	else
@@ -437,6 +438,7 @@ function EditBoard()
 		$context['board'] = $boards[$_REQUEST['boardid']];
 		$context['board']['name'] = westr::safe($context['board']['name'], ENT_COMPAT, false);
 		$context['board']['description'] = westr::safe($context['board']['description'], ENT_COMPAT, false);
+		$context['board']['offlimits_msg'] = westr::safe($context['board']['offlimits_msg'], ENT_COMPAT, false);
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
 		$context['board']['is_recycle'] = !empty($settings['recycle_enable']) && !empty($settings['recycle_board']) && $settings['recycle_board'] == $context['board']['id'];
 	}
@@ -715,6 +717,8 @@ function EditBoard2()
 		{
 			foreach ($boardOptions['access'] as $id_group => $access)
 				$boardOptions['access'][$id_group]['enter_perm'] = $access['view_perm'];
+			// If they're the same, there's no boards to be showing the 'this is off limits to you' message on, so clear it out to save space
+			$boardOptions['offlimits_msg'] = '';
 		}
 		elseif (!empty($_POST['entergroup']) && is_array($_POST['entergroup']))
 		{
@@ -728,6 +732,8 @@ function EditBoard2()
 
 				$boardOptions['access'][$id_group]['enter_perm'] = $access;
 			}
+
+			$boardOptions['offlimits_msg'] = !empty($_POST['offlimits_msg']) ? preg_replace('~&(?!amp;)~', '&amp;', $_POST['offlimits_msg']) : '';
 		}
 
 		if (empty($settings['allow_guestAccess']))

@@ -416,7 +416,7 @@ function template_messageindex_childboards()
 			and member (which has id, name, link, href, username in it.) */
 			if (!empty($board['last_post']['offlimits']))
 				echo '
-						<p>', $txt['board_off_limits'], '</p>';
+						<p>', $board['last_post']['offlimits'], '</p>';
 			elseif (!empty($board['last_post']['id']))
 				echo '
 						<p>
