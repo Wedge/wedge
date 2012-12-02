@@ -1006,7 +1006,7 @@ function DownloadLanguage()
 					'function' => create_function('$rowData', '
 						global $txt;
 
-						return \'<span style="color: \' . ($rowData[\'writable\'] ? \'green\' : \'red\') . \';">\' . ($rowData[\'writable\'] ? $txt[\'yes\'] : $txt[\'no\']) . \'</span>\';
+						return \'<span style="color: \' . ($rowData[\'writable\'] ? \'green\' : \'red\') . \'">\' . ($rowData[\'writable\'] ? $txt[\'yes\'] : $txt[\'no\']) . \'</span>\';
 					'),
 					'style' => 'text-align: center',
 				),
@@ -1019,7 +1019,7 @@ function DownloadLanguage()
 					'function' => create_function('$rowData', '
 						global $txt;
 
-						return \'<span style="color: \' . ($rowData[\'version_compare\'] == \'older\' ? \'red\' : ($rowData[\'version_compare\'] == \'same\' ? \'orange\' : \'green\')) . \';">\' . $rowData[\'version\'] . \'</span>\';
+						return \'<span style="color: \' . ($rowData[\'version_compare\'] == \'older\' ? \'red\' : ($rowData[\'version_compare\'] == \'same\' ? \'orange\' : \'green\')) . \'">\' . $rowData[\'version\'] . \'</span>\';
 					'),
 				),
 			),

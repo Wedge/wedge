@@ -394,9 +394,9 @@ function template_setorder()
 			foreach ($row as $smiley)
 			{
 				if (empty($context['move_smiley']))
-					echo '<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;move=', $smiley['id'], '"><img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: 0px solid black;" alt="', $smiley['description'], '"></a>';
+					echo '<a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;move=', $smiley['id'], '"><img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: 0 solid black" alt="', $smiley['description'], '"></a>';
 				else
-					echo '<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: ', $smiley['selected'] ? '2px solid red' : '0px solid black', ';" alt="', $smiley['description'], '"><a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';after=', $smiley['id'], ';reorder=1;', $context['session_query'], '" title="', $txt['smileys_move_here'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
+					echo '<img src="', $settings['smileys_url'], '/', $settings['smiley_sets_default'], '/', $smiley['filename'], '" style="padding: 2px; border: ', $smiley['selected'] ? '2px solid red' : '0 solid black', '" alt="', $smiley['description'], '"><a href="', $scripturl, '?action=admin;area=smileys;sa=setorder;location=', $location['id'], ';source=', $context['move_smiley'], ';after=', $smiley['id'], ';reorder=1;', $context['session_query'], '" title="', $txt['smileys_move_here'], '"><img src="', $theme['images_url'], '/smiley_select_spot.gif" alt="', $txt['smileys_move_here'], '"></a>';
 			}
 
 			echo '

@@ -355,7 +355,7 @@ function template_group_board_selection()
 									<th></th>
 									<th>', $txt['yes'], '</th>
 									<th>', $txt['no'], '</th>
-									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['group_boards_never'], '</th>
+									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>', $txt['group_boards_never'], '</th>
 								</tr>
 								<tr>
 									<td class="smalltext">
@@ -367,7 +367,7 @@ function template_group_board_selection()
 									<td>
 										<input type="radio" name="vieweverything" value="disallow" onchange="updateView(\'view\', this)">
 									</td>
-									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 										<input type="radio" name="vieweverything" value="deny" onchange="updateView(\'view\', this)">
 									</td>
 								</tr>';
@@ -381,7 +381,7 @@ function template_group_board_selection()
 								<tr class="div"></tr>
 								<tr class="board_cat" data-cathead="', $board['id_cat'], '">
 									<td class="smalltext">
-										<span style="margin-left:0em">', $board['cat_name'], '</span>
+										<span style="margin-left: 0">', $board['cat_name'], '</span>
 									</td>
 									<td>
 										<input type="radio" name="cat[', $board['id_cat'], ']" value="allow" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
@@ -389,7 +389,7 @@ function template_group_board_selection()
 									<td>
 										<input type="radio" name="cat[', $board['id_cat'], ']" value="disallow" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
 									</td>
-									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 										<input type="radio" name="cat[', $board['id_cat'], ']" value="deny" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
 									</td>
 								</tr>';
@@ -399,7 +399,7 @@ function template_group_board_selection()
 		echo '
 								<tr data-cat="', $board['id_cat'], '">
 									<td class="smalltext">
-										<span style="margin-left:', $board['child_level'], 'em">', $board['name'], '</span>
+										<span style="margin-left: ', $board['child_level'], 'em">', $board['name'], '</span>
 									</td>
 									<td>
 										<input type="radio" name="viewboard[', $board['id'], ']" value="allow"', $board['view_perm'] == 'allow' ? ' checked' : '', '>
@@ -407,7 +407,7 @@ function template_group_board_selection()
 									<td>
 										<input type="radio" name="viewboard[', $board['id'], ']" value="disallow"', (empty($context['need_deny_perm']) && $board['view_perm'] == 'deny') || $board['view_perm'] == 'disallow' ? ' checked' : '', '>
 									</td>
-									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 										<input type="radio" name="viewboard[', $board['id'], ']" value="deny"', !empty($context['need_deny_perm']) && $board['view_perm'] == 'deny' ? ' checked' : '', '>
 									</td>
 								</tr>';
@@ -416,14 +416,14 @@ function template_group_board_selection()
 	echo '
 							</table>
 						</fieldset>
-						<fieldset id="enter_perm_col"', !empty($context['view_enter_same']) ? ' style="display:none"' : '', '>
+						<fieldset id="enter_perm_col"', !empty($context['view_enter_same']) ? ' style="display: none"' : '', '>
 							<legend>', $txt['membergroups_board_enter'], '</legend>
 							<table>
 								<tr>
 									<th></th>
 									<th>', $txt['yes'], '</th>
 									<th>', $txt['no'], '</th>
-									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['group_boards_never'], '</th>
+									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>', $txt['group_boards_never'], '</th>
 								</tr>
 								<tr>
 									<td class="smalltext">
@@ -435,7 +435,7 @@ function template_group_board_selection()
 									<td>
 										<input type="radio" name="entereverything" value="disallow" onchange="updateView(\'enter\', this)">
 									</td>
-									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 										<input type="radio" name="entereverything" value="deny" onchange="updateView(\'enter\', this)">
 									</td>
 								</tr>';
@@ -449,7 +449,7 @@ function template_group_board_selection()
 								<tr class="div"></tr>
 								<tr class="board_cat" data-cathead="', $board['id_cat'], '">
 									<td class="smalltext">
-										<span style="margin-left:0em">', $board['cat_name'], '</span>
+										<span style="margin-left: 0">', $board['cat_name'], '</span>
 									</td>
 									<td>
 										<input type="radio" name="cat[', $board['id_cat'], ']" value="allow" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
@@ -457,7 +457,7 @@ function template_group_board_selection()
 									<td>
 										<input type="radio" name="cat[', $board['id_cat'], ']" value="disallow" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
 									</td>
-									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 										<input type="radio" name="cat[', $board['id_cat'], ']" value="deny" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
 									</td>
 								</tr>';
@@ -467,7 +467,7 @@ function template_group_board_selection()
 		echo '
 								<tr data-cat="', $board['id_cat'], '">
 									<td class="smalltext">
-										<span style="margin-left:', $board['child_level'], 'em">', $board['name'], '</span>
+										<span style="margin-left: ', $board['child_level'], 'em">', $board['name'], '</span>
 									</td>
 									<td>
 										<input type="radio" name="enterboard[', $board['id'], ']" value="allow"', $board['enter_perm'] == 'allow' ? ' checked' : '', '>
@@ -475,7 +475,7 @@ function template_group_board_selection()
 									<td>
 										<input type="radio" name="enterboard[', $board['id'], ']" value="disallow"', (empty($context['need_deny_perm']) && $board['enter_perm'] == 'deny') || $board['enter_perm'] == 'disallow' ? ' checked' : '', '>
 									</td>
-									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 										<input type="radio" name="enterboard[', $board['id'], ']" value="deny"', !empty($context['need_deny_perm']) && $board['enter_perm'] == 'deny' ? ' checked' : '', '>
 									</td>
 								</tr>';
@@ -581,7 +581,7 @@ function template_group_members()
 						<th', empty($context['group']['assignable']) ? ' colspan="2"' : '', '><a href="', $scripturl, '?action=', $context['current_action'], (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : ''), ';sa=members;start=', $context['start'], ';sort=posts', $context['sort_by'] == 'posts' && $context['sort_direction'] == 'up' ? ';desc' : '', ';group=', $context['group']['id'], '">', $txt['posts'], $context['sort_by'] == 'posts' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a></th>';
 	if (!empty($context['group']['assignable']))
 		echo '
-						<td style="width: 4%" class="center"><input type="checkbox" onclick="invertAll(this, this.form);"></td>';
+						<td class="center" style="width: 4%"><input type="checkbox" onclick="invertAll(this, this.form);"></td>';
 	echo '
 					</tr>
 				</thead>
@@ -691,7 +691,7 @@ function template_group_request_reason()
 					</dt>
 					<dd>
 						<input type="hidden" name="groupr[]" value="', $request['id'], '">
-						<textarea name="groupreason[', $request['id'], ']" rows="3" cols="40" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . '"></textarea>
+						<textarea name="groupreason[', $request['id'], ']" rows="3" cols="40" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '"></textarea>
 					</dd>';
 
 	echo '

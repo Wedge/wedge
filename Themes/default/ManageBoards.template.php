@@ -64,7 +64,7 @@ function template_main()
 			$alternate = !$alternate;
 
 			echo '
-					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-' . ($context['right_to_left'] ? 'right' : 'left') . ': ', 5 + 30 * $board['child_level'], 'px;', $board['move'] ? 'color: red;' : '', '"><span class="floatleft"><img src="', $theme['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $language : $board['language'], '.png"> <a href="', $scripturl, '?board=', $board['id'], '">', $board['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=settings"> <img src="' . $theme['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
+					<li', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : '', ' class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['child_level'], 'px', $board['move'] ? '; color: red' : '', '"><span class="floatleft"><img src="', $theme['default_theme_url'] . '/languages/Flag.', empty($board['language']) ? $language : $board['language'], '.png"> <a href="', $scripturl, '?board=', $board['id'], '">', $board['name'], '</a>', !empty($settings['recycle_board']) && !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board['id'] ? '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=settings"> <img src="' . $theme['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '"></a></span>' : '</span>', '
 						<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="' . $scripturl . '?action=admin;area=permissions;sa=index;pid=' . $board['permission_profile'] . ';' . $context['session_query'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
 						<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;move=', $board['id'], '">', $txt['mboards_move'], '</a></span>
 						<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span></span><br class="clear_right">
@@ -75,11 +75,11 @@ function template_main()
 				$alternate = !$alternate;
 
 				echo '
-					<li class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['move_links'][0]['child_level'], 'px;">';
+					<li class="windowbg', $alternate ? '' : '2', '" style="padding-', $context['right_to_left'] ? 'right' : 'left', ': ', 5 + 30 * $board['move_links'][0]['child_level'], 'px">';
 
 				foreach ($board['move_links'] as $link)
 					echo '
-						<a href="', $link['href'], '" class="move_links" title="', $link['label'], '"><img src="', $theme['images_url'], '/board_select_spot', $link['child_level'] > 0 ? '_child' : '', '.gif" alt="', $link['label'], '" style="padding: 0px; margin: 0px"></a>';
+						<a href="', $link['href'], '" class="move_links" title="', $link['label'], '"><img src="', $theme['images_url'], '/board_select_spot', $link['child_level'] > 0 ? '_child' : '', '.gif" alt="', $link['label'], '" style="padding: 0; margin: 0"></a>';
 
 				echo '
 					</li>';
@@ -338,7 +338,7 @@ function template_modify_board()
 						<dfn>', $txt['mboards_description_desc'], '</dfn>
 					</dt>
 					<dd>
-						<textarea name="desc" rows="6" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%') . '">', $context['board']['description'], '</textarea>
+						<textarea name="desc" rows="6" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%', '">', $context['board']['description'], '</textarea>
 					</dd>
 					<dt>
 						<strong>', $txt['permission_profile'], ':</strong>
@@ -374,7 +374,7 @@ function template_modify_board()
 										<th></th>
 										<th>', $txt['yes'], '</th>
 										<th>', $txt['no'], '</th>
-										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>', $txt['mboards_never'], '</th>
+										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>', $txt['mboards_never'], '</th>
 									</tr>
 									<tr class="everyone">
 										<td class="smalltext">
@@ -386,7 +386,7 @@ function template_modify_board()
 										<td>
 											<input type="radio" name="vieweveryone" value="disallow" onchange="updateView(\'view\', this)">
 										</td>
-										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 											<input type="radio" name="vieweveryone" value="deny" onchange="updateView(\'view\', this)">
 										</td>
 									</tr>';
@@ -406,7 +406,7 @@ function template_modify_board()
 										<td>
 											<input type="radio" name="viewgroup[', $group['id'], ']" value="disallow"', (empty($context['need_deny_perm']) && $group['view_perm'] == 'deny') || $group['view_perm'] == 'disallow' ? ' checked' : '', '>
 										</td>
-										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 											<input type="radio" name="viewgroup[', $group['id'], ']" value="deny"', !empty($context['need_deny_perm']) && $group['view_perm'] == 'deny' ? ' checked' : '', '>
 										</td>
 									</tr>';
@@ -416,7 +416,7 @@ function template_modify_board()
 								</table>
 							</fieldset>
 						</div>
-						<div id="enter_perm_col" class="two-columns"', !empty($context['view_enter_same']) ? ' style="display:none"' : '', '>
+						<div id="enter_perm_col" class="two-columns"', !empty($context['view_enter_same']) ? ' style="display: none"' : '', '>
 							<fieldset>
 								<legend>', $txt['mboards_enter_board'], '</legend>
 								<table>
@@ -424,7 +424,7 @@ function template_modify_board()
 										<th></th>
 										<th>', $txt['yes'], '</th>
 										<th>', $txt['no'], '</th>
-										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display:none;"' : '', '>', $txt['mboards_never'], '</th>
+										<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>', $txt['mboards_never'], '</th>
 									</tr>
 									<tr class="everyone">
 										<td class="smalltext">
@@ -436,7 +436,7 @@ function template_modify_board()
 										<td>
 											<input type="radio" name="entereveryone" value="disallow" onchange="updateView(\'enter\', this)">
 										</td>
-										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none"' : '', '>
+										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 											<input type="radio" name="entereveryone" value="deny" onchange="updateView(\'enter\', this)">
 										</td>
 									</tr>';
@@ -456,7 +456,7 @@ function template_modify_board()
 										<td>
 											<input type="radio" name="entergroup[', $group['id'], ']" value="disallow"', (empty($context['need_deny_perm']) && $group['enter_perm'] == 'deny') || $group['enter_perm'] == 'disallow' ? ' checked' : '', '>
 										</td>
-										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display:none;"' : '', '>
+										<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
 											<input type="radio" name="entergroup[', $group['id'], ']" value="deny"', !empty($context['need_deny_perm']) && $group['enter_perm'] == 'deny' ? ' checked' : '', '>
 										</td>
 									</tr>';
@@ -467,9 +467,9 @@ function template_modify_board()
 							</fieldset>
 						</div>
 						<br class="clear"><br>
-						<div id="offlimits_cont"', !empty($context['view_enter_same']) ? ' style="display:none"' : '', '>
+						<div id="offlimits_cont"', !empty($context['view_enter_same']) ? ' style="display: none"' : '', '>
 							<strong>', $txt['mboards_offlimits_msg'], '</strong>
-							<textarea name="offlimits_msg" rows="6" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%') . '">', $context['board']['offlimits_msg'], '</textarea>
+							<textarea name="offlimits_msg" rows="6" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%', '">', $context['board']['offlimits_msg'], '</textarea>
 							<br>
 						</div>
 					</dd>';
@@ -490,7 +490,7 @@ function template_modify_board()
 		echo '
 				<dl class="settings">
 					<dt>
-						<strong', $context['board']['topics'] ? ' style="color: gray;"' : '', '>', $txt['mboards_redirect'], ':</strong>
+						<strong', $context['board']['topics'] ? ' style="color: gray"' : '', '>', $txt['mboards_redirect'], ':</strong>
 						<dfn>', $txt['mboards_redirect_desc'], '</dfn>
 					</dt>
 					<dd>

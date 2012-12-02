@@ -443,9 +443,9 @@ function BoardPermissionsReport()
 
 				// Now actually make the data for the group look right.
 				if (empty($curData[$id_group]))
-					$curData[$id_group] = '<span style="color: red;">' . $txt['board_perms_deny'] . '</span>';
+					$curData[$id_group] = '<span style="color: red">' . $txt['board_perms_deny'] . '</span>';
 				elseif ($curData[$id_group] == 1)
-					$curData[$id_group] = '<span style="color: darkgreen;">' . $txt['board_perms_allow'] . '</span>';
+					$curData[$id_group] = '<span style="color: darkgreen">' . $txt['board_perms_allow'] . '</span>';
 				else
 					$curData[$id_group] = 'x';
 
@@ -567,7 +567,7 @@ function MemberGroupsReport()
 
 		// Board permissions.
 		foreach ($boards as $board)
-			$group['board_' . $board['id']] = in_array($row['id_group'], $board['groups']) ? '<span style="color: darkgreen;">' . $txt['board_perms_allow'] . '</span>' : 'x';
+			$group['board_' . $board['id']] = in_array($row['id_group'], $board['groups']) ? '<span style="color: darkgreen">' . $txt['board_perms_allow'] . '</span>' : 'x';
 
 		addData($group);
 	}
@@ -677,9 +677,9 @@ function GroupPermissionsReport()
 
 		// Good stuff - add the permission to the list!
 		if ($row['add_deny'])
-			$curData[$row['id_group']] = '<span style="color: darkgreen;">' . $txt['board_perms_allow'] . '</span>';
+			$curData[$row['id_group']] = '<span style="color: darkgreen">' . $txt['board_perms_allow'] . '</span>';
 		else
-			$curData[$row['id_group']] = '<span style="color: red;">' . $txt['board_perms_deny'] . '</span>';
+			$curData[$row['id_group']] = '<span style="color: red">' . $txt['board_perms_deny'] . '</span>';
 	}
 	wesql::free_result($request);
 

@@ -33,7 +33,7 @@ function template_modfilter_home()
 	foreach ($context['rules'] as $type => $rule_block)
 	{
 		echo '
-	<table class="table_grid cs0" style="width: 100%">
+	<table class="table_grid cs0 w100">
 		<thead>
 			<tr class="catbg">
 				<th scope="col" class="first_th left">', $txt['modfilter_rule_' . $type], '</th>
@@ -53,7 +53,7 @@ function template_modfilter_home()
 
 			echo '
 			<tr class="windowbg', $use_bg2 ? '2' : '', '">
-				<td style="width:30%">', isset($txt['modfilter_action_' . $action]) ? $txt['modfilter_action_' . $action] : $action, '</td>
+				<td style="width: 30%">', isset($txt['modfilter_action_' . $action]) ? $txt['modfilter_action_' . $action] : $action, '</td>
 				<td>';
 
 			$print_criteria = array();
@@ -103,7 +103,7 @@ function template_modfilter_home()
 						foreach ($list as $k => $v)
 						{
 							if (isset($context['membergroups'][$v]))
-								$list[$k] = '<a href="<URL>?action=admin;area=membergroups;sa=edit;group=' . $v . '"' . (!empty($context['membergroups'][$v]['online_color']) ? ' style="color:' . $context['membergroups'][$v]['online_color'] .'"' : '') . '>' . $context['membergroups'][$v]['group_name'] . '</a>';
+								$list[$k] = '<a href="<URL>?action=admin;area=membergroups;sa=edit;group=' . $v . '"' . (!empty($context['membergroups'][$v]['online_color']) ? ' style="color: ' . $context['membergroups'][$v]['online_color'] .'"' : '') . '>' . $context['membergroups'][$v]['group_name'] . '</a>';
 							else
 								$list[$k] = '<em>???? (#' . $v . ')</em>';
 						}
@@ -127,7 +127,7 @@ function template_modfilter_home()
 					<ul><li>', implode('</li><li>', $print_criteria), '</li></ul>';
 
 			echo '</td>
-				<td style="width: 15%" class="center"><a href="<URL>?action=admin;area=modfilters;sa=edit;type=', $type, ';rule=', ($id+1), '">', $txt['modify'], '</td>
+				<td class="center" style="width: 15%"><a href="<URL>?action=admin;area=modfilters;sa=edit;type=', $type, ';rule=', ($id+1), '">', $txt['modify'], '</td>
 			</tr>';
 		}
 		echo '

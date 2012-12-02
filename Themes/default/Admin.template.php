@@ -780,8 +780,8 @@ function template_show_settings()
 				elseif ($config_var['type'] == 'yesno')
 					echo '
 						<select name="', $config_var['name'], '" id="', $config_var['name'], '"', $javascript, $disabled, '>
-							<option value="1"', !empty($config_var['value']) ? ' selected' : '', ' style="color:green">', $txt['yes'], '</option>
-							<option value="0"', empty($config_var['value']) ? ' selected' : '', ' style="color:red">', $txt['no'], '</option>
+							<option value="1"', !empty($config_var['value']) ? ' selected' : '', ' style="color: green">', $txt['yes'], '</option>
+							<option value="0"', empty($config_var['value']) ? ' selected' : '', ' style="color: red">', $txt['no'], '</option>
 						</select>';
 				// Escape (via htmlspecialchars.) the text box.
 				elseif ($config_var['type'] == 'password')
@@ -1720,11 +1720,11 @@ function template_modify_language_entries()
 					</dd>
 					<dt>
 						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
-						<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . '">', $cached['value'], '</textarea>
+						<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $cached['value'], '</textarea>
 					</dt>
 					<dd>
 						<input type="hidden" name="comp[', $entry['key'], ']" value="', $entry['value'], '">
-						<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . '">', $entry['value'], '</textarea>
+						<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $entry['value'], '</textarea>
 					</dd>';
 			$cached = array();
 		}
@@ -1739,7 +1739,7 @@ function template_modify_language_entries()
 					</dd>
 					<dt>
 						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
-						<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . '">', $cached['value'], '</textarea>
+						<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $cached['value'], '</textarea>
 					</dt>
 					<dd>
 					</dd>';

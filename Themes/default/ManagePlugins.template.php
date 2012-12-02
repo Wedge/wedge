@@ -247,7 +247,7 @@ function template_add_plugins()
 		</table>
 		<form action="<URL>?action=admin;area=plugins;sa=add;editrepo=add" method="post">
 			<div class="floatright">
-				<div class="additional_row" style="text-align: right;"><input type="submit" name="new" value="', $txt['plugins_add_repo'], '" class="new"></div>
+				<div class="additional_row" style="text-align: right"><input type="submit" name="new" value="', $txt['plugins_add_repo'], '" class="new"></div>
 			</div>
 		</form>
 		<br class="clear">';

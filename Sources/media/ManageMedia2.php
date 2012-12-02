@@ -692,7 +692,7 @@ function aeva_admin_maintenance_finderrors()
 	{
 		$_SESSION['aeva_errors'] = array();
 		$context['aeva_maintenance_done'] = 'error';
-		$context['aeva_maintenance_message'] = '<div style="font-weight: bold">'.$txt['media_admin_finderrors_1'].'</div><ul style="margin-top: 0px; margin-bottom: 0px">';
+		$context['aeva_maintenance_message'] = '<div style="font-weight: bold">'.$txt['media_admin_finderrors_1'].'</div><ul style="margin-top: 0; margin-bottom: 0">';
 		foreach ($errors as $error)
 			$context['aeva_maintenance_message'] .= '<li>'.sprintf($txt['media_admin_finderrors_'.$error['type']], $error['id'], $galurl . 'sa=item;in=' . $error['ref_id'], $error['ref_id']).'</li>';
 		$context['aeva_maintenance_message'] .= '</ul>';

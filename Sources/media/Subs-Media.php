@@ -2884,7 +2884,7 @@ function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = 
 			<div class="zoom-html" style="width: ' . $siz[1] . 'px; height: ' . ($siz[2] + 42) . 'px; overflow: visible !important">
 				' . trim($match) : '')) . '
 				<div class="aelink">' . ($i['has_preview'] ? '
-					<a class="fullsize" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em;">&oplus;</span>' : '') . '
+					<a class="fullsize" href="' . ($i['type'] == 'embed' ? $i['embed_url'] : $galurl . 'sa=media;in=' . $i['id']) . '">' . $txt['media_zoom'] . '</a> <span style="font-weight: bold; font-size: 1.2em">&oplus;</span>' : '') . '
 					<a href="' . $galurl . 'sa=item;in=' . $i['id'] . $urlmore . '">' . $txt['media_gotolink'] . '</a>' . (!empty($i['comments']) ? '
 					<img src="' . $theme['images_aeva'] . '/comment.gif"> ' . $i['comments'] : '') . '
 				</div>

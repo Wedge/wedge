@@ -100,8 +100,8 @@ function template_main()
 
 			if (!empty($member['post_percent']))
 				echo '
-						<div class="bar" style="width: ', $member['post_percent'] + 4, 'px;">
-							<div style="width: ', $member['post_percent'], 'px;"></div>
+						<div class="bar" style="width: ', $member['post_percent'] + 4, 'px">
+							<div style="width: ', $member['post_percent'], 'px"></div>
 						</div>';
 
 			echo '

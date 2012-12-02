@@ -219,7 +219,7 @@ function template_notes()
 
 		echo '
 					<div class="floatleft post_note">
-						<input type="text" name="new_note" value="', $txt['mc_click_add_note'], '" style="width: 95%;" onclick="if (this.value == \'', $txt['mc_click_add_note'], '\') this.value = \'\';">
+						<input type="text" name="new_note" value="', $txt['mc_click_add_note'], '" style="width: 95%" onclick="if (this.value == \'', $txt['mc_click_add_note'], '\') this.value = \'\';">
 					</div>
 					<div class="floatright">
 						<input type="submit" name="makenote" value="', $txt['mc_add_note'], '" class="new">
@@ -432,7 +432,7 @@ function template_viewmodreport()
 				<p>', $comment['member']['link'], ': ', $comment['message'], ' <em class="smalltext">(', $comment['time'], ')</em></p>';
 
 	echo '
-				<textarea rows="3" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 60%; min-width: 60%' : 'width: 60%') . ';" name="mod_comment"></textarea>
+				<textarea rows="3" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 60%; min-width: 60%' : 'width: 60%', '" name="mod_comment"></textarea>
 				<div style="padding: 8px 7% 0 0; text-align: right">
 					<input type="submit" name="add_comment" value="', $txt['mc_modreport_add_mod_comment'], '" class="new">
 				</div>

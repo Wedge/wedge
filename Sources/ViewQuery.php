@@ -132,8 +132,8 @@ function ViewQuery()
 		}
 
 		echo '
-	<div id="qq', $q, '" style="margin-bottom: 2ex;">
-		<a', $is_select_query ? ' href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '"' : '', ' style="font-weight: bold; text-decoration: none;">
+	<div id="qq', $q, '" style="margin-bottom: 2ex">
+		<a', $is_select_query ? ' href="' . $scripturl . '?action=viewquery;qq=' . ($q + 1) . '#qq' . $q . '"' : '', ' style="font-weight: bold; text-decoration: none">
 			', westr::nl2br(str_replace("\t", '&nbsp;&nbsp;&nbsp;', htmlspecialchars($query_data['q']))), '
 		</a>
 		<br>';

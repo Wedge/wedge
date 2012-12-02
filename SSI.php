@@ -1337,8 +1337,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 					<dt>', $option['option'], '</dt>
 					<dd>
 						<div class="ssi_poll_bar" style="border: 1px solid #666; height: 1em">
-							<div class="ssi_poll_bar_fill" style="background: #ccf; height: 1em; width: ', $option['percent'], '%;">
-							</div>
+							<div class="ssi_poll_bar_fill" style="background: #ccf; height: 1em; width: ', $option['percent'], '%"></div>
 						</div>
 						', $option['votes'], ' (', $option['percent'], '%)
 					</dd>';
@@ -1654,7 +1653,7 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 					<a href="', $news['href'], '">', $news['subject'], '</a>
 				</h3>
 				<div class="news_timestamp">', $news['time'], ' ', $txt['by'], ' ', $news['poster']['link'], '</div>
-				<div class="news_body" style="padding: 2ex 0;">', $news['body'], '</div>
+				<div class="news_body" style="padding: 2ex 0">', $news['body'], '</div>
 				', $news['link'], $news['locked'] ? '' : ' | ' . $news['comment_link'], '
 			</div>';
 

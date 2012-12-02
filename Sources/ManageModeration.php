@@ -244,7 +244,7 @@ function AddFilterRule()
 		FROM {db_prefix}membergroups
 		ORDER BY id_group');
 	while ($row = wesql::fetch_assoc($request))
-		$context['grouplist'][$row['min_posts'] == -1 ? 'assign' : 'post'][$row['id_group']] = !empty($row['online_color']) ? '<span style="color:' . $row['online_color'] . '">' . $row['group_name'] . '</span>' : '<span>' . $row['group_name'] . '</span>';
+		$context['grouplist'][$row['min_posts'] == -1 ? 'assign' : 'post'][$row['id_group']] = !empty($row['online_color']) ? '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>' : '<span>' . $row['group_name'] . '</span>';
 	wesql::free_result($request);
 }
 

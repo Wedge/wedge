@@ -13,7 +13,7 @@
 
 class weMoDe
 {
-	public function isMobile()
+	static function isMobile()
 	{
 		if (empty($_SERVER['HTTP_USER_AGENT']))
 			return false;

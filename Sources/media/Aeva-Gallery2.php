@@ -1012,7 +1012,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 				$separated = true;
 			}
 			$groups[$row['id']] = array(
-				'<span' . ($row['is_post_group'] ? ' style="border-bottom: 1px dotted;" title="' . $txt['mboards_groups_post_group'] . '"' :
+				'<span' . ($row['is_post_group'] ? ' style="border-bottom: 1px dotted" title="' . $txt['mboards_groups_post_group'] . '"' :
 					(isset($primary_groups[$row['id']]) ? ' style="font-weight: bold" title="' . $txt['media_admin_membergroups_primary'] . '"' : ''))
 					. '>' . $row['name'] . '</span>' . ($row['is_post_group'] ? ' (' . $row['min_posts'] . ')' : ''),
 				in_array($row['id'], $access),

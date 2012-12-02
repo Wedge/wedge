@@ -26,7 +26,7 @@ function template_pm_before()
 		<we:title>
 			<span class="floatleft">', $txt['pm_capacity'], ':</span>
 			<span class="floatleft capacity_bar">
-				<span class="', $context['limit_bar']['percent'] > 85 ? 'full' : ($context['limit_bar']['percent'] > 40 ? 'filled' : 'empty'), '" style="width: ', $context['limit_bar']['percent'] / 10, 'em;"></span>
+				<span class="', $context['limit_bar']['percent'] > 85 ? 'full' : ($context['limit_bar']['percent'] > 40 ? 'filled' : 'empty'), '" style="width: ', $context['limit_bar']['percent'] / 10, 'em"></span>
 			</span>
 			<span class="floatright', $context['limit_bar']['percent'] > 90 ? ' alert' : '', '">', $context['limit_bar']['text'], '</span>
 		</we:title>';
@@ -417,7 +417,7 @@ function template_folder()
 			echo '
 	<div class="pagesection">
 		<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
-		<div class="floatright"><input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" style="font-weight: normal;" onclick="return ask(', JavaScriptEscape($txt['delete_selected_confirm']), ', e);" class="delete"></div>
+		<div class="floatright"><input type="submit" name="del_selected" value="', $txt['quickmod_delete_selected'], '" style="font-weight: normal" onclick="return ask(', JavaScriptEscape($txt['delete_selected_confirm']), ', e);" class="delete"></div>
 	</div>';
 
 		// Show a few buttons if we are in conversation mode and outputting the first message.
@@ -1124,7 +1124,7 @@ function template_report_message()
 					<strong>', $txt['pm_report_reason'], ':</strong>
 				</dt>
 				<dd>
-					<textarea name="reason" rows="4" cols="70" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 80%; min-width: 80%' : 'width: 80%') . ';"></textarea>
+					<textarea name="reason" rows="4" cols="70" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 80%; min-width: 80%' : 'width: 80%', '"></textarea>
 				</dd>
 			</dl>
 			<div class="right">

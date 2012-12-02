@@ -631,7 +631,7 @@ function template_edit_browse()
 				<td>';
 
 		if ($file['is_editable'])
-			echo '<a href="', $file['href'], '"', $file['is_template'] ? ' style="font-weight: bold;"' : '', '>', $file['filename'], '</a>';
+			echo '<a href="', $file['href'], '"', $file['is_template'] ? ' style="font-weight: bold"' : '', '>', $file['filename'], '</a>';
 
 		elseif ($file['is_directory'])
 			echo '<a href="', $file['href'], '" class="is_directory">', $file['filename'], '</a>';
@@ -779,7 +779,7 @@ function template_edit_style()
 				', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '<br>';
 
 	echo '
-				<textarea name="entire_file" cols="80" rows="20" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%') . '; font-family: monospace; margin-top: 1ex; white-space: pre">', $context['entire_file'], '</textarea><br>
+				<textarea name="entire_file" cols="80" rows="20" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '; font-family: monospace; margin-top: 1ex; white-space: pre">', $context['entire_file'], '</textarea><br>
 				<div class="right" style="margin: 4px 5% 0">
 					<input type="submit" name="save" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="save">
 					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);">

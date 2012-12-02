@@ -105,7 +105,7 @@ function template_select_search_method()
 				', $txt['search_method'], '
 			</we:cat>
 			<div class="information">
-				<div class="smalltext" style="font-weight: normal;"><a href="', $scripturl, '?action=help;in=search_why_use_index" onclick="return reqWin(this);">', $txt['search_create_index_why'], '</a></div>
+				<div class="smalltext" style="font-weight: normal"><a href="', $scripturl, '?action=help;in=search_why_use_index" onclick="return reqWin(this);">', $txt['search_create_index_why'], '</a></div>
 			</div>
 			<div class="windowbg wrc">
 				<dl class="settings">';

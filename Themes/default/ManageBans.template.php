@@ -171,7 +171,7 @@ function template_ban_edit()
 	{
 		echo '
 			<br>
-			<form action="', $scripturl, '?action=admin;area=ban;sa=edit" method="post" accept-charset="UTF-8" style="padding: 0px;margin: 0px;" onsubmit="return ask(', JavaScriptEscape($txt['ban_remove_selected_triggers_confirm']), ', e);">
+			<form action="', $scripturl, '?action=admin;area=ban;sa=edit" method="post" accept-charset="UTF-8" style="padding: 0; margin: 0" onsubmit="return ask(', JavaScriptEscape($txt['ban_remove_selected_triggers_confirm']), ', e);">
 				<table class="table_grid w100 cs0">
 					<thead>
 						<tr class="catbg">
