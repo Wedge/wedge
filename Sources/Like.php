@@ -18,11 +18,11 @@ function Like()
 {
 	global $topic, $user_info, $context, $user_profile, $settings;
 
-	if (empty($user_info['id']) || empty($settings['likes_enabled']))
-		fatal_lang_error('no_access', false);
-
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'view')
 		return DisplayLike();
+
+	if (empty($user_info['id']) || empty($settings['likes_enabled']))
+		fatal_lang_error('no_access', false);
 
 	// We might be doing a topic.
 	if (empty($topic) || empty($_REQUEST['msg']) || (int) $_REQUEST['msg'] == 0)

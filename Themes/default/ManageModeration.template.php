@@ -477,106 +477,12 @@ function template_modfilter_boards()
 
 function template_modfilter_postcount()
 {
-	global $context, $txt;
-
-	$js_conds = array();
-	echo '
-		<br>', $txt['modfilter_postcount_is'], '
-		<select name="rangesel" onchange="validatePostcount();">';
-
-	foreach (array('lt', 'lte', 'eq', 'gte', 'gt') as $item)
-	{
-		// Step through the possible ranges - but also store the JS versions away for later.
-		echo '
-			<option value="', $item, '">', $txt['modfilter_range_' . $item], '</option>';
-		$js_conds[] = $item . ': ' . JavaScriptEscape($txt['modfilter_range_' . $item]);
-	}
-
-	echo '
-		</select>
-		<input type="text" size="5" name="postcount" style="padding: 3px 5px 5px 5px" onchange="validatePostcount();">
-		<div class="pagesection ruleSave">
-			<div class="floatright">
-				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addPostcount(e);">
-			</div>
-		</div>';
-
-	add_js('
-	function validatePostcount()
-	{
-		var
-			applies_type = $("#rulecontainer select[name=rangesel]").val(),
-			postcount = $("#rulecontainer input[name=postcount]").val(),
-			pc_num = parseInt(postcount);
-
-		$("#rulecontainer .ruleSave").toggle(in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0);
-	};
-
-	function addPostcount(e)
-	{
-		e.preventDefault();
-		var
-			range = {' . implode(',', $js_conds) . '},
-			pc = ' . JavaScriptEscape($txt['modfilter_cond_postcount']) . ',
-			applies_type = $("#rulecontainer select[name=rangesel]").val(),
-			postcount = $("#rulecontainer input[name=postcount]").val(),
-			pc_num = parseInt(postcount);
-
-		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && postcount == pc_num && pc_num >= 0)
-			addRow(pc, range[applies_type] + " " + postcount, "postcount", applies_type + ";" + postcount);
-	};');
+	template_range_modfilter('postcount');
 }
 
 function template_modfilter_links()
 {
-	global $context, $txt;
-
-	$js_conds = array();
-	echo '
-		<br>', $txt['modfilter_links_is'], '
-		<select name="rangesel" onchange="validateLinks();">';
-
-	foreach (array('lt', 'lte', 'eq', 'gte', 'gt') as $item)
-	{
-		// Step through the possible ranges - but also store the JS versions away for later.
-		echo '
-			<option value="', $item, '">', $txt['modfilter_range_' . $item], '</option>';
-		$js_conds[] = $item . ': ' . JavaScriptEscape($txt['modfilter_range_' . $item]);
-	}
-
-	echo '
-		</select>
-		<input type="text" size="5" name="links" style="padding: 3px 5px 5px 5px" onchange="validateLinks();">
-		<div class="pagesection ruleSave">
-			<div class="floatright">
-				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="addLinks(e);">
-			</div>
-		</div>';
-
-	add_js('
-	function validateLinks()
-	{
-		var
-			applies_type = $("#rulecontainer select[name=rangesel]").val(),
-			links = $("#rulecontainer input[name=links]").val(),
-			pc_num = parseInt(links);
-
-		$("#rulecontainer .ruleSave").toggle(in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && links == pc_num && pc_num >= 0);
-	};
-
-	function addLinks(e)
-	{
-		e.preventDefault();
-		var
-			range = {' . implode(',', $js_conds) . '},
-			pc = ' . JavaScriptEscape($txt['modfilter_condtype_links']) . ',
-			applies_type = $("#rulecontainer select[name=rangesel]").val(),
-			links = $("#rulecontainer input[name=links]").val(),
-			pc_num = parseInt(links);
-
-		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && links == pc_num && pc_num >= 0)
-			addRow(pc, range[applies_type] + " " + links, "links", applies_type + ";" + links);
-	};');
+	template_range_modfilter('links');
 }
 
 function template_modfilter_warning()
@@ -694,6 +600,61 @@ function template_regex_modfilter($type)
 
 		if (in_array(applies_type, ["begins", "contains", "ends", "matches", "regex"]) && criteria != "")
 			addRow(types[applies_type], criteria + " " + (casesens ? strCaseSens : strCaseInsens), "' . $type . '", applies_type + ";" + (casesens ? "casesens=yes;" : "casesens=no;") + criteria);
+	};');
+}
+
+// This is very generic for handling numeric range selections
+// It requires the number be an integer and non zero. If you want anything more,
+// you'll have to roll your own in your plugin, but that's no huge deal, it's not like most of this has to change.
+function template_range_modfilter($type)
+{
+	global $context, $txt;
+	$utype = ucfirst($type);
+
+	$js_conds = array();
+	echo '
+		<br>', $txt['modfilter_' . $type . '_is'], '
+		<select name="rangesel" onchange="validate', $utype, '();">';
+
+	foreach (array('lt', 'lte', 'eq', 'gte', 'gt') as $item)
+	{
+		echo '
+			<option value="', $item, '">', $txt['modfilter_range_' . $item], '</option>';
+		$js_conds[] = $item . ': ' . JavaScriptEscape($txt['modfilter_range_' . $item]);
+	}
+
+	echo '
+		</select>
+		<input type="text" size="5" name="', $type, '" style="padding: 3px 5px 5px 5px" onchange="validate', $utype, '();">
+		<div class="pagesection ruleSave">
+			<div class="floatright">
+				<input class="new" type="submit" value="', $txt['modfilter_condition_done'], '" onclick="add', $utype, '(e);">
+			</div>
+		</div>';
+
+	add_js('
+	function validate', $utype, '()
+	{
+		var
+			applies_type = $("#rulecontainer select[name=rangesel]").val(),
+			' . $type . ' = $("#rulecontainer input[name=' . $type . ']").val(),
+			pc_num = parseInt(' . $type . ');
+
+		$("#rulecontainer .ruleSave").toggle(in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && ' . $type . ' == pc_num && pc_num >= 0);
+	};
+
+	function add', $utype, '(e)
+	{
+		e.preventDefault();
+		var
+			range = {' . implode(',', $js_conds) . '},
+			pc = ' . JavaScriptEscape($txt['modfilter_cond_' . $type]) . ',
+			applies_type = $("#rulecontainer select[name=rangesel]").val(),
+			' . $type . ' = $("#rulecontainer input[name=' . $type . ']").val(),
+			pc_num = parseInt(' . $type . ');
+
+		if (in_array(applies_type, ["lt", "lte", "eq", "gte", "gt"]) && ' . $type . ' == pc_num && pc_num >= 0)
+			addRow(pc, range[applies_type] + " " + ' . $type . ', "' . $type . '", applies_type + ";" + ' . $type . ');
 	};');
 }
 
