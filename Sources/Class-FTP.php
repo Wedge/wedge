@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // http://www.faqs.org/rfcs/rfc959.html
 class ftp_connection
 {
-	public $connection, $error, $last_message, $pasv;
+	public $connection, $error, $last_message, $pasv, $debug;
 
 	// Create a new FTP connection...
 	public function __construct($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@wedge.org')
@@ -26,6 +26,7 @@ class ftp_connection
 		$this->connection = 'no_connection';
 		$this->error = false;
 		$this->pasv = array();
+		$this->debug = false;
 
 		if ($ftp_server !== null)
 			$this->connect($ftp_server, $ftp_port, $ftp_user, $ftp_pass);
@@ -57,7 +58,7 @@ class ftp_connection
 		}
 
 		// Send the username, it should ask for a password.
-		fwrite($this->connection, 'USER ' . $ftp_user . "\r\n");
+		$this->sendMsg('USER ' . $ftp_user);
 		if (!$this->check_response(331))
 		{
 			$this->error = 'bad_username';
@@ -65,12 +66,23 @@ class ftp_connection
 		}
 
 		// Now send the password... and hope it goes okay.
-		fwrite($this->connection, 'PASS ' . $ftp_pass . "\r\n");
+		$this->sendMsg('PASS ' . $ftp_pass);
 		if (!$this->check_response(230))
 		{
 			$this->error = 'bad_password';
 			return;
 		}
+	}
+
+	// This exists almost totally for debugging, though it is slightly nicer than raw fwrites.
+	// Only fwrites that are likely to succeed should come here. If there's a reasonable
+	// chance the message will fail, @fwrite it yourself thanks.
+	public function sendMsg($message)
+	{
+		if ($this->debug)
+			echo 'Sending: ', $message, '<br>';
+
+		fwrite($this->connection, $message . "\r\n");
 	}
 
 	public function chdir($ftp_path)
@@ -82,7 +94,7 @@ class ftp_connection
 		if ($ftp_path !== '/' && substr($ftp_path, -1) === '/')
 			$ftp_path = substr($ftp_path, 0, -1);
 
-		fwrite($this->connection, 'CWD ' . $ftp_path . "\r\n");
+		$this->sendMsg('CWD ' . $ftp_path);
 		if (!$this->check_response(250))
 		{
 			$this->error = 'bad_path';
@@ -101,7 +113,7 @@ class ftp_connection
 			$ftp_file = '.';
 
 		// Convert the chmod value from octal (0777) to text ("777").
-		fwrite($this->connection, 'SITE CHMOD ' . decoct($chmod) . ' ' . $ftp_file . "\r\n");
+		$this->sendMsg('SITE CHMOD ' . decoct($chmod) . ' ' . $ftp_file);
 		if (!$this->check_response(200))
 		{
 			$this->error = 'bad_file';
@@ -118,10 +130,10 @@ class ftp_connection
 			return false;
 
 		// Delete file X.
-		fwrite($this->connection, 'DELE ' . $ftp_file . "\r\n");
+		$this->sendMsg('DELE ' . $ftp_file);
 		if (!$this->check_response(250))
 		{
-			fwrite($this->connection, 'RMD ' . $ftp_file . "\r\n");
+			$this->sendMsg('RMD ' . $ftp_file);
 
 			// Still no love?
 			if (!$this->check_response(250))
@@ -139,7 +151,11 @@ class ftp_connection
 		// Wait for a response that isn't continued with -, but don't wait too long.
 		$time = time();
 		do
+		{
 			$this->last_message = fgets($this->connection, 1024);
+			if ($this->debug)
+				echo 'Response checking, last message: ' . $this->last_message . '<br><br>';
+		}
 		while ((strlen($this->last_message) < 4 || substr($this->last_message, 0, 1) == ' ' || substr($this->last_message, 3, 1) != ' ') && time() - $time < 5);
 
 		// Was the desired response returned?
@@ -156,12 +172,18 @@ class ftp_connection
 		@fwrite($this->connection, 'PASV' . "\r\n");
 		$time = time();
 		do
+		{
 			$response = fgets($this->connection, 1024);
+			if ($this->debug)
+				echo 'PASV response: ' . $response . '<br><br>';
+		}
 		while (substr($response, 3, 1) != ' ' && time() - $time < 5);
 
 		// If it's not 227, we weren't given an IP and port, which means it failed.
 		if (substr($response, 0, 4) != '227 ')
 		{
+			if ($this->debug)
+				echo '(invalid?) PASV response received: ' . $response . '<br><br>';
 			$this->error = 'bad_response';
 			return false;
 		}
@@ -175,6 +197,8 @@ class ftp_connection
 
 		// This is pretty simple - store it for later use ;)
 		$this->pasv = array('ip' => $match[1] . '.' . $match[2] . '.' . $match[3] . '.' . $match[4], 'port' => $match[5] * 256 + $match[6]);
+		if ($this->debug)
+			echo 'We will connect to ' . $this->pasv['ip'] . ' on port ' . $this->pasv['port'] . '<br><br>';
 
 		return true;
 	}
@@ -190,7 +214,7 @@ class ftp_connection
 			return false;
 
 		// Seems logical enough, so far...
-		fwrite($this->connection, 'STOR ' . $ftp_file . "\r\n");
+		$this->sendMsg('STOR ' . $ftp_file);
 
 		// Okay, now we connect to the data port. If it doesn't work out, it's probably "file already exists", etc.
 		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
@@ -212,6 +236,143 @@ class ftp_connection
 		return true;
 	}
 
+	public function get($remotefile, $localpath = null)
+	{
+		// First, we have to be connected... very important.
+		if (!is_resource($this->connection))
+			return false;
+
+		// Remember, $remote is the file name on its own (assume ./$remote if that helps)
+		// while $localpath is the full local path
+		if (!is_null($localpath))
+		{
+			$localcon = @fopen($localpath, 'w+b');
+			if (!$localcon)
+			{
+				$this->error = 'invalid_local_path';
+				return false;
+			}
+		}
+		else
+		{
+			$data = '';
+		}
+
+		// Force binary transmission.
+		$this->sendMsg('TYPE I');
+
+		// Next up, passive mode.
+		if (!$this->passive())
+			return false;
+
+		$this->sendMsg('SIZE ' . $remotefile);
+		$size = -1;
+		if ($this->check_response(213))
+		{
+			list(, $size) = explode(' ', $this->last_message);
+			if ($this->debug)
+				echo 'Expected size ' . $size . ' bytes';
+		}
+
+		$this->sendMsg('RETR ' . $remotefile);
+
+		// Now we connect to the data port and get stuff.
+		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
+		if (!$fp || !$this->check_response(150))
+		{
+			$this->error = 'bad_file';
+			@fclose($fp);
+			if (!isset($data))
+				fclose($localcon);
+			return false;
+		}
+
+		while (!feof($fp))
+		{
+			$block = fread($fp, 4096);
+			if (isset($data))
+				$data .= $block;
+			else
+				fwrite($localcon, $block);
+		}
+		fclose($fp);
+
+		if (!isset($data))
+			fclose($localcon);
+
+		// All done?
+		if (!$this->check_response(226))
+		{
+			$this->error = 'bad_response';
+			return false;
+		}
+
+		if ($size != -1 && ((isset($data) && strlen($data) != (int) $size) || (!isset($data) && filesize($localpath) != (int) $size)))
+		{
+			$this->error = 'incomplete_file';
+			return false;
+		}
+
+		return isset($data) ? $data : true;
+	}
+
+	public function put($localpath, $remotefile)
+	{
+		// First, we have to be connected... very important. And with passive mode.
+		if (!is_resource($this->connection) || !$this->passive())
+			return false;
+
+		// Remember, $remote is the file name on its own (assume ./$remote if that helps)
+		// while $localpath is the full local path
+		$localcon = file_exists($localpath) ? @fopen($localpath, 'rb') : false;
+		if (!$localcon)
+		{
+			$this->error = 'invalid_local_path';
+			return false;
+		}
+
+		// There's none of this type shifting nonsense. Binary and only binary here.
+		fwrite($this->connection, 'TYPE I' . "\r\n");
+		fwrite($this->connection, 'STOR ' . $remotefile . "\r\n");
+
+		// Now we connect to the data port and do what we gotta do.
+		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
+		if (!$fp || !$this->check_response(150))
+		{
+			$this->error = 'bad_response';
+			@fclose($fp);
+			fclose($localcon);
+			return false;
+		}
+
+		while (!feof($localcon))
+		{
+			$block = fread($localcon, 4096);
+			while (!empty($block))
+			{
+				$written = @fwrite($fp, $block);
+				if ($written === false)
+				{
+					$this->error = 'bad_response';
+					@fclose($fp);
+					fclose($localcon);
+					return false;
+				}
+				$block = substr($block, $written);
+			}
+		}
+
+		fclose($fp);
+		fclose($localcon);
+		if (!$this->check_response(226))
+		{
+			$this->error = 'bad_response';
+			return false;
+		}
+
+		return true;
+	}
+
 	public function list_dir($ftp_path = '', $search = false)
 	{
 		// Are we even connected...?
@@ -223,7 +384,7 @@ class ftp_connection
 			return false;
 
 		// Get the listing!
-		fwrite($this->connection, 'LIST -1' . ($search ? 'R' : '') . ($ftp_path == '' ? '' : ' ' . $ftp_path) . "\r\n");
+		$this->sendMsg('LIST -1' . ($search ? 'R' : '') . ($ftp_path == '' ? '' : ' ' . $ftp_path));
 
 		// Connect, assuming we've got a connection.
 		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
@@ -297,7 +458,7 @@ class ftp_connection
 			return false;
 
 		// Make this new beautiful directory!
-		fwrite($this->connection, 'MKD ' . $ftp_dir . "\r\n");
+		$this->sendMsg('MKD ' . $ftp_dir);
 		if (!$this->check_response(257))
 		{
 			$this->error = 'bad_file';

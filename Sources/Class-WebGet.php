@@ -206,26 +206,9 @@ class weget
 
 			// Create new connection, and in passive mode.
 			$ftp = new ftp_connection(($this->secure ? 'ssl://' : '') . $this->domain, $this->port, 'anonymous', $webmaster_email);
-			if ($ftp->error !== false || !$ftp->passive())
+			$data = $ftp->get($this->path);
+			if (!$data)
 				return false;
-
-			// I want that one *points*!
-			fwrite($ftp->connection, 'RETR ' . $this->path . "\r\n");
-
-			// If we're here, passive mode worked, so open the connection.
-			$fp = @fsockopen($ftp->pasv['ip'], $ftp->pasv['port'], $err, $err, 5);
-			if (!$fp)
-				return false;
-
-			// The server should now say something in acknowledgement.
-			$ftp->check_response(150);
-
-			while (!feof($fp))
-				$data .= fread($fp, 4096);
-			fclose($fp);
-
-			// All done, right? Good.
-			$ftp->check_response(226);
 			$ftp->close();
 		}
 		elseif ($this->protocol == 'http')
