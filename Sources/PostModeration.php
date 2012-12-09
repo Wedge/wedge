@@ -155,7 +155,7 @@ function UnapprovedPosts()
 			$details[$anItem] = array();
 			$details[$anItem]['subject'] = $row['subject'];
 			$details[$anItem]['topic'] = $row['id_topic'];
-			$details[$anItem]['member'] = $row[$context['current_view'] == 'topics' 'id_member_started' : 'id_member'];
+			$details[$anItem]['member'] = $row[$context['current_view'] == 'topics' ? 'id_member_started' : 'id_member'];
 			$details[$anItem]['board'] = $row['id_board'];
 		}
 		wesql::free_result($request);

@@ -207,7 +207,7 @@ function DisplayLike()
 	if (count($members_actual) != count($members))
 	{
 		// So we couldn't find all the members. Let's get rid of the ones we're not interested in.
-		$diff = array_diff($members, $members_actual);
+		$diff = array_diff($members, (array) $members_actual);
 		foreach ($diff as $diff_item)
 			unset($likes[$diff_item]);
 	}
@@ -220,6 +220,7 @@ function DisplayLike()
 	if (empty($likes))
 	{
 		$context['help_text'] = $txt['nobody_likes_this'];
+		$_POST['t'] = $txt['nobody_likes_this'];
 		return;
 	}
 

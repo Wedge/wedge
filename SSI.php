@@ -164,7 +164,8 @@ if (!isset($_SESSION['USER_AGENT']) && (!isset($_GET['ssi_function']) || $_GET['
 	$_SESSION['USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
 
 // Call a function passed by GET.
-if (isset($_GET['ssi_function']) && function_exists('ssi_' . $_GET['ssi_function']))
+$disallowed = array('queryPosts');
+if (isset($_GET['ssi_function']) && function_exists('ssi_' . $_GET['ssi_function']) && !in_array($_GET['ssi_function'], $disallowed))
 {
 	call_user_func('ssi_' . $_GET['ssi_function']);
 	exit;
@@ -316,7 +317,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (!$user_info['is_guest'] ? '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:current_member})' : '') . '
-		' . (empty($query_where) ? '' : 'WHERE ' . $query_where) . '
+		' . (empty($query_where) ? 'WHERE {query_wanna_see_board}' : 'WHERE ' . $query_where) . '
 		ORDER BY ' . $query_order . '
 		' . ($query_limit == '' ? '' : 'LIMIT ' . $query_limit),
 		array_merge($query_where_params, array(
