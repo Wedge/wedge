@@ -419,6 +419,73 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	<link rel="stylesheet" href="' . $final_script . '">';
 }
 
+function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false)
+{
+	global $context, $settings, $theme, $boardurl, $pluginsdir;
+
+	if (empty($context['plugins_dir'][$plugin_name]))
+		return;
+
+	if (!is_array($original_files))
+		$original_files = (array) $original_files;
+
+	// Delete all duplicates.
+	$files = array_keys(array_flip($original_files));
+	$basefiles = array();
+
+	foreach ($files as $file)
+	{
+		if (substr($file, -4) === '.css')
+			$file = substr($file, 0, -4);
+		$basefiles[] = substr(strrchr($file, '/'), 1);
+		foreach ($context['css_suffixes'] as $gen)
+			$files[] = $file . '.' . $gen;
+	}
+
+	$latest_date = 0;
+	$found_suffixes = array();
+
+	foreach ($files as $i => &$file)
+	{
+		$full_path = $context['plugins_dir'][$plugin_name] . '/' . $file . '.css';
+		if (!file_exists($full_path))
+		{
+			unset($files[$i]);
+			continue;
+		}
+
+		$file = $full_path;
+		$latest_date = max($latest_date, filemtime($full_path));
+	}
+
+	$pluginurl = '..' . str_replace($boardurl, '', $context['plugins_url'][$plugin_name]);
+
+	// We need to cache different versions for different browsers, even if we don't have overrides available.
+	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
+	$id = array_filter(array_merge(
+		array($context['enabled_plugins'][$plugin_name]),
+		$basefiles,
+		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
+		isset($context['user']) && $context['user']['language'] !== 'english' ? (array) $context['user']['language'] : array()
+	));
+
+	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
+
+	// Cache final file and retrieve its name.
+	$final_script = $boardurl . '/css/' . wedge_cache_css_files('', $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
+
+	if ($final_script == $boardurl . '/css/')
+		return false;
+
+	// Do we just want the URL?
+	if (!$add_link)
+		return $final_script;
+
+	$context['header'] .= '
+	<link rel="stylesheet" href="' . $final_script . '">';
+}
+
 // This function will sort a CSS file list in this order:
 // skins/index, skins/index.suffix.css, skins/SubSkin/index.css,
 // skins/sections.css, skins/SubSkin/sections.suffix.css, etc.
@@ -460,67 +527,6 @@ function sort_skin_files($a, $b)
 		elseif ($j === $file)
 			return 1;
 	return 0;
-}
-
-function add_plugin_css_file($plugin_name, $original_files = array(), $add_link = false)
-{
-	global $context, $settings, $theme, $boardurl, $pluginsdir;
-
-	if (empty($context['plugins_dir'][$plugin_name]))
-		return;
-
-	if (!is_array($original_files))
-		$original_files = (array) $original_files;
-
-	// Delete all duplicates.
-	$files = array_keys(array_flip($original_files));
-	$basefiles = array();
-
-	foreach ($files as $file)
-	{
-		$basefiles[] = substr(strrchr($file, '/'), 1);
-		foreach ($context['css_suffixes'] as $gen)
-			$files[] = $file . '.' . $gen;
-	}
-
-	$latest_date = 0;
-
-	foreach ($files as $i => &$file)
-	{
-		$full_path = $context['plugins_dir'][$plugin_name] . '/' . $file . '.css';
-		if (!file_exists($full_path))
-		{
-			unset($files[$i]);
-			continue;
-		}
-
-		$file = $full_path;
-		$latest_date = max($latest_date, filemtime($full_path));
-	}
-
-	$pluginurl = '..' . str_replace($boardurl, '', $context['plugins_url'][$plugin_name]);
-
-	// We need to cache different versions for different browsers, even if we don't have overrides available.
-	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-	$id = array_filter(array_merge(
-		array($context['enabled_plugins'][$plugin_name]),
-		$basefiles,
-		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
-		isset($context['user']) && $context['user']['language'] !== 'english' ? (array) $context['user']['language'] : array()
-	));
-
-	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
-
-	// Cache final file and retrieve its name.
-	$final_script = $boardurl . '/css/' . wedge_cache_css_files('', $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
-
-	// Do we just want the URL?
-	if (!$add_link)
-		return $final_script;
-
-	$context['header'] .= '
-	<link rel="stylesheet" href="' . $final_script . '">';
 }
 
 /**
