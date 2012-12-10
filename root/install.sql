@@ -1748,6 +1748,18 @@ CREATE TABLE {$db_prefix}moderators (
 ) ENGINE=MyISAM;
 
 #
+# Table structure for table `mod_filter_msg`
+#
+
+CREATE TABLE {$db_prefix}mod_filter_msg (
+  id_rule smallint(5) unsigned NOT NULL,
+  rule_type varchar(10) NOT NULL default '',
+  lang varchar(255) NOT NULL default '',
+  msg text NOT NULL,
+  PRIMARY KEY (id_rule, rule_type, lang)
+) ENGINE=MyISAM;
+
+#
 # Table structure for table `package_servers`
 #
 

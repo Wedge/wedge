@@ -103,6 +103,9 @@ function Display()
 	if (!empty($_REQUEST['start']) && (!is_numeric($_REQUEST['start']) || $_REQUEST['start'] % $context['messages_per_page'] != 0))
 		$context['robot_no_index'] = true;
 
+	// OK, set up for the joy that is meta description. The rest we do in the bowels of prepareDisplayContext.
+	$context['meta_description'] = '<META-DESCRIPTION>';
+
 	// Add 1 to the number of views of this topic.
 	if (!$user_info['possibly_robot'] && (empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic))
 	{
@@ -1375,6 +1378,18 @@ function prepareDisplayContext($reset = false)
 		'last_post_id' => $context['last_msg_id'],
 	);
 
+	if (isset($_SESSION['mod_filter'][$message['id_msg']]))
+	{
+		if ($output['approved'])
+		{
+			unset($_SESSION['mod_filter'][$message['id_msg']]);
+			if (empty($_SESSION['mod_filter']))
+				unset($_SESSION['mod_filter']);
+		}
+		else
+			$output['unapproved_msg'] = $_SESSION['mod_filter'][$message['id_msg']];
+	}
+
 	// Keep showing the New logo on every unread post in Newest First mode. Otherwise it gets confusing.
 	if (empty($options['view_newest_first']))
 		$is_new |= empty($message['is_read']);
@@ -1488,6 +1503,11 @@ function prepareDisplayContext($reset = false)
 	$output['has_buttons'] = $context['can_quote'] || $output['can_modify'] || !empty($context['action_menu'][$output['id']]);
 
 	call_hook('display_post_done', array(&$counter, &$output));
+
+	// Fixing the meta description. We do it here because we pull things post by post.
+	// Since that's the case, the header has already been done by the point we get to here.
+	if (!isset($context['meta_description_repl']))
+		$context['meta_description_repl'] = preg_replace('~\s+~', ' ', strip_tags(str_replace('<br>', ' ', $output['body'])));
 
 	if (empty($options['view_newest_first']))
 		$counter++;

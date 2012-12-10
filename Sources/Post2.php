@@ -476,7 +476,20 @@ function Post2()
 		$becomesApproved = true;
 
 	if (isset($doModeration['prevent']))
-		$post_errors[] = 'not_permitted_content';
+	{
+		$warnings = fetchFilterMessages($doModeration['prevent']);
+
+		if (!empty($warnings))
+		{
+			foreach ($warnings as $k => $v)
+			{
+				$txt['error_modfilter_msg_' . $k] = $v;
+				$post_errors[] = 'modfilter_msg_' . $k;
+			}
+		}
+		else
+			$post_errors[] = 'not_permitted_content';
+	}
 	elseif (isset($doModeration['moderate']))
 		$becomesApproved = !empty($approve_has_changed) ? $becomesApproved : false;
 	else
@@ -824,6 +837,10 @@ function Post2()
 			$topic = $topicOptions['id'];
 	}
 
+	// If we moderated this post from moderation filters...
+	if (empty($doModeration['prevent']) && !empty($doModeration['moderate']))
+		$_SESSION['mod_filter'][$msgOptions['id']] = fetchFilterMessages($doModeration['moderate']);
+
 	// Marking read should be done even for editing messages....
 	// Mark all the parents read, since you just posted and they will be unread.
 	if (!$user_info['is_guest'] && !empty($board_info['parent_boards']))
@@ -1090,6 +1107,64 @@ function notifyMembersBoard(&$topicData)
 			'is_sent' => 1,
 		)
 	);
+}
+
+function fetchFilterMessages($details)
+{
+	global $user_info, $language;
+
+	// We need to go and see if we can find some messages for this.
+	$messages = array();
+	$warnings = array(
+		'posts' => array(),
+		'topics' => array(),
+	);
+	foreach ($details as $consequence)
+		if (isset($warnings[$consequence[0]]))
+			$warnings[$consequence[0]][$consequence[1]] = array();
+
+	$clause = array();
+	$criteria = array();
+	foreach ($warnings as $type => $ids)
+	{
+		if (empty($ids))
+			continue;
+		$criteria['rule_' . $type] = $type;
+		$criteria['values_' . $type] = array_keys($ids);
+		$clause[] = '(rule_type = {string:rule_' . $type . '} AND id_rule IN ({array_int:values_' . $type . '}))';
+	}
+
+	// If there was a problem, clean the array out, as if we didn't find any
+	if (empty($clause))
+	{
+		foreach ($warnings as $type => $ids)
+			$warnings[$type] = array();
+	}
+	else
+	{
+		$request = wesql::query('
+			SELECT id_rule, rule_type, lang, msg
+			FROM {db_prefix}mod_filter_msg
+			WHERE ' . implode(' OR ', $clause),
+			$criteria);
+		while ($row = wesql::fetch_assoc($request))
+			if (isset($warnings[$row['rule_type']][$row['id_rule']]))
+				$warnings[$row['rule_type']][$row['id_rule']][$row['lang']] = $row['msg'];
+		wesql::free_result($request);
+	}
+
+	foreach ($warnings as $rule_type => $warn_msgs)
+		foreach ($warn_msgs as $msg_id => $langs)
+		{
+			if (isset($_SESSION['language'], $langs[$_SESSION['language']]))
+				$messages[] = $langs[$_SESSION['language']];
+			elseif (isset($langs[$user_info['language']]))
+				$messages[] = $langs[$user_info['language']];
+			elseif (isset($qa[$language]))
+				$messages[] = $langs[$language];
+		}
+
+	return $messages;
 }
 
 ?>

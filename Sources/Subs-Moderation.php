@@ -222,9 +222,10 @@ function checkPostModeration($subject, $body)
 			else
 				$applyAction = false;
 
+			$msg = !empty($criteria['msg']) ? (int) $criteria['msg'] : 0;
 			// Did we match on any of that?
 			if ($applyAction)
-				$returnActions[(string) $criteria['for']] = true;
+				$returnActions[(string) $criteria['for']][] = array((string) $rule_block['for'], $msg);
 		}
 	}
 

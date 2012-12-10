@@ -53,7 +53,7 @@ function template_modfilter_home()
 
 			echo '
 			<tr class="windowbg', $use_bg2 ? '2' : '', '">
-				<td style="width: 30%">', isset($txt['modfilter_action_' . $action]) ? $txt['modfilter_action_' . $action] : $action, '</td>
+				<td style="width: 30%">', isset($txt['modfilter_action_' . $action]) ? $txt['modfilter_action_' . $action] : $action, !empty($rules['msg']) ? '<div class="smalltext"><a href="<URL>?action=admin;area=modfilters;sa=msgpopup;ruletype=' . $type . ';rule=' . $rules['msg'] . '" onclick="return reqWin(this);">(' . $txt['modfilter_msg'] . ')</a></div>' : '', '</td>
 				<td>';
 
 			$print_criteria = array();
@@ -262,6 +262,19 @@ function template_modfilter_edit()
 				</div>
 				<div id="rulecontainer"></div>
 			</fieldset>
+			<fieldset id="fs_langs" class="hide">
+				<legend>', $txt['modfilter_msg_popup_title'], '</legend>
+				<p>', $txt['modfilter_lang_msg'], '</p>
+				<dl class="settings">';
+
+	foreach ($context['lang_msg'] as $lang => $entry)
+		echo '
+					<dt><span class="flag_', $lang, '"></span> ', $entry['name'], '</dt>
+					<dd><textarea name="msg_', $lang, '">', $entry['msg'], '</textarea></dd>';
+
+	echo '
+				</dl>
+			</fieldset>
 			<div class="pagesection">
 				<div class="floatright">
 					<div class="additional_row right">
@@ -291,12 +304,14 @@ function template_modfilter_edit()
 		{
 			$("#fs_applies").show();
 
-			var applies = $("input:radio[name=applies]:checked").val();
+			var applies = $("input:radio[name=applies]:checked").val(),
+				action = $("#action").val();
 			$("#fs_conds").toggle(applies == "posts" || applies == "topics");
 			$("#btnSave").toggle((applies == "posts" || applies == "topics") && $("#conds_notempty tr").length > 0);
+			$("#fs_langs").toggle((applies == "posts" || applies == "topics") && (action == "prevent" || action == "moderate"));
 		}
 		else
-			$("#fs_applies, #fs_conds, #btnSave").hide();
+			$("#fs_applies, #fs_conds, #fs_langs, #btnSave").hide();
 	};
 	updateForm();
 

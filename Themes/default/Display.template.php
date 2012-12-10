@@ -133,8 +133,8 @@ function template_display_posts()
 
 		if (!$message['approved'] && $message['member']['id'] != 0 && $message['member']['id'] == $context['user']['id'])
 			echo '
-							<div class="approve_post">
-								', $txt['post_awaiting_approval'], '
+							<div class="approve_post errorbox">
+								', $txt['post_awaiting_approval'], !empty($message['unapproved_msg']) ? '<ul><li>' . implode('</li><li>', $message['unapproved_msg']) . '</li></ul>' : '', '
 							</div>';
 
 		echo '

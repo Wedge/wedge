@@ -737,7 +737,7 @@ function template_footer()
 	// !! @worg: rev.txt, facebook link
 	$is_worg = $boardurl == 'http://wedge.org';
 	echo '
-			<li class="copyright">', $txt['copyright'], $is_worg ? ' (rev <a href="http://wedge.org/pub/feats/6108/new-revs/">' . file_get_contents($theme['theme_dir'] . '/rev.txt') . '</a>)' : '',
+			<li class="copyright">', $txt['copyright'],
 			$context['show_load_time'] ? ' -</li>' : '</li><br class="clear">', '
 			<li class="links">
 				<a id="site_credits" href="<URL>?action=credits">', $txt['site_credits'], '</a> |

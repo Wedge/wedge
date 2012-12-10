@@ -332,6 +332,8 @@ img.new_posts
 .postarea
 	display: table-cell
 	padding: 0 15px
+	.errorbox
+		margin-bottom: 10px
 
 // Posts and personal messages displayed throughout the forum.
 .post, .personalmessage

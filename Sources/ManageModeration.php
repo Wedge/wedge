@@ -26,6 +26,7 @@ function ManageModeration()
 		'edit' => 'ModifyFilterRule',
 		'save' => 'SaveFilterRule',
 		'approveall' => 'ManageModApprove',
+		'msgpopup' => 'ModFilterPopup',
 	);
 
 	$_REQUEST['sa'] = !empty($_REQUEST['sa']) && isset($subactions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'home';
@@ -128,9 +129,11 @@ function ManageModHome()
 				}
 				if (!empty($rule_params))
 				{
+					$msg = !empty($criteria['msg']) ? (int) $criteria['msg'] : 0;
 					$context['rules'][$this_block][] = array(
 						'action' => $action,
 						'criteria' => $rule_params,
+						'msg' => $msg,
 					);
 				}
 			}
@@ -246,6 +249,14 @@ function AddFilterRule()
 	while ($row = wesql::fetch_assoc($request))
 		$context['grouplist'][$row['min_posts'] == -1 ? 'assign' : 'post'][$row['id_group']] = !empty($row['online_color']) ? '<span style="color: ' . $row['online_color'] . '">' . $row['group_name'] . '</span>' : '<span>' . $row['group_name'] . '</span>';
 	wesql::free_result($request);
+
+	$context['lang_msg'] = array();
+	getLanguages();
+	foreach ($context['languages'] as $id => $entry)
+		$context['lang_msg'][$id] = array(
+			'name' => $entry['name'],
+			'msg' => '',
+		);
 }
 
 function ModifyFilterRule()
@@ -255,13 +266,29 @@ function ModifyFilterRule()
 	// Get some of the basic stuff set up
 	AddFilterRule();
 
-	$context['page_title'] = $txt['modfilter_editrule'];
-
 	// Now we figure out what we're trying to edit and actually get the relevant details.
 	$type = empty($_GET['type']) || ($_GET['type'] != 'topics' && $_GET['type'] != 'posts') ? '' : $_GET['type'];
 	$id = empty($_GET['rule']) ? 0 : (int) $_GET['rule'];
 	if (empty($settings['postmod_rules']) || empty($type) || empty($id))
 		fatal_lang_error('modfilter_rule_not_found');
+
+	// Just extend this with the list of actual messages people have entered, if any.
+	$request = wesql::query('
+		SELECT lang, msg
+		FROM {db_prefix}mod_filter_msg
+		WHERE id_rule = {int:rule}
+			AND rule_type = {string:rule_type}',
+		array(
+			'rule' => $id,
+			'rule_type' => $type,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		if (isset($context['lang_msg'][$row['lang']]))
+			$context['lang_msg'][$row['lang']]['msg'] = htmlspecialchars($row['msg']);
+	wesql::free_result($request);
+
+	$context['page_title'] = $txt['modfilter_editrule'];
 
 	$id--; // We pushed it +1 through the URL so that we wouldn't spuriously get 0 entries which are ambiguous. So we need to correct it here.
 
@@ -332,8 +359,13 @@ function SaveFilterRule()
 
 	if (!empty($_POST['delete']))
 	{
-		if (!empty($_POST['prev_type']) && ($_POST['prev_type'] == 'posts' || $_POST['prev_type'] == 'topics') && !empty($_POST['prev_id']) && (int) $_POST['prev_id'] > 0)
+		$_POST['prev_id'] = isset($_POST['prev_id']) ? (int) $_POST['prev_id'] : 0;
+		if (!empty($_POST['prev_type']) && ($_POST['prev_type'] == 'posts' || $_POST['prev_type'] == 'topics') && $_POST['prev_id'] > 0)
+		{
 			deleteRuleNode($rules, $_POST['prev_type'], ((int) $_POST['prev_id']) - 1);
+			updateCriteriaNodes($rules, $_POST['prev_type'], $_POST['prev_id']);
+		}
+
 		cleanupRuleNodes($rules);
 		$result = (count($rules->children()) > 0) ? $rules->asXML() : '';
 		updateSettings(array('postmod_rules' => $result));
@@ -393,9 +425,37 @@ function SaveFilterRule()
 		}
 	}
 
+	// Let's see about the different messages we have to play with. Do we have any?
+	$lang_msg = array();
+	getLanguages();
+	foreach ($context['languages'] as $id => $entry)
+	{
+		if (!empty($_POST['msg_' . $id]) && trim($_POST['msg_' . $id]) !== '')
+			$lang_msg[$id] = $_POST['msg_' . $id];
+	}
+	$insert_row = array();
+	if (!empty($lang_msg))
+	{
+		$msg_id = count($rulecontainer->children());
+		foreach ($lang_msg as $lang_id => $msg)
+			$insert_row[] = array($msg_id, $_POST['applies'], $lang_id, $msg);
+		$criteria->addAttribute('msg', $msg_id);
+	}
+	if (!empty($insert_row))
+		wesql::insert('',
+			'{db_prefix}mod_filter_msg',
+			array('id_rule' => 'int', 'rule_type' => 'string', 'lang' => 'string', 'msg' => 'string'),
+			$insert_row,
+			array('id_rule', 'rule_type', 'lang')
+		);
+
 	// Are we modifying a rule? Then we should strip the original node before proceeding.
 	if (!empty($_POST['prev_type']) && ($_POST['prev_type'] == 'posts' || $_POST['prev_type'] == 'topics') && !empty($_POST['prev_id']) && (int) $_POST['prev_id'] > 0)
-		deleteRuleNode($rules, $_POST['prev_type'], ((int) $_POST['prev_id']) - 1);
+	{
+		$_POST['prev_id'] = (int) $_POST['prev_id'];
+		deleteRuleNode($rules, $_POST['prev_type'], $_POST['prev_id'] - 1);
+		updateCriteriaNodes($rules, $_POST['applies'], $_POST['prev_id']);
+	}
 
 	cleanupRuleNodes($rules);
 	$result = (count($rules->children()) > 0) ? $rules->asXML() : '';
@@ -558,6 +618,45 @@ function deleteRuleNode(&$rules, $parent_branch, $node_position)
 		unset($rules->rule[$branch_pos]->criteria[$node_position]);
 }
 
+function updateCriteriaNodes(&$rules, $rule_type, $previous_id)
+{
+	$findcontainer = $rules->xpath('rule[@for="' . $_POST['applies'] . '"]');
+	if (empty($findcontainer))
+		return; // If we didn't find it, there's nothing to do here.
+
+	$rulecontainer = $findcontainer[0];
+	if (count($rulecontainer->children) > $previous_id)
+		return; // There were not enough children, so return.
+
+	foreach ($rulecontainer->criteria as $criteria)
+		if (!empty($criteria['msg']))
+		{
+			$msg = (int) $criteria['msg'];
+			if ($msg > $previous_id)
+				$criteria['msg'] = (int) $criteria['msg'] - 1;
+		}
+
+	wesql::query('
+		DELETE FROM {db_prefix}mod_filter_msg
+		WHERE id_rule = {int:rule}
+			AND rule_type = {string:applies}',
+		array(
+			'rule' => $previous_id,
+			'applies' => $rule_type,
+		)
+	);
+	wesql::query('
+		UPDATE {db_prefix}mod_filter_msg
+		SET id_rule = id_rule - 1
+		WHERE id_rule > {int:rule}
+			AND rule_type = {string:applies}',
+		array(
+			'rule' => $previous_id,
+			'applies' => $rule_type,
+		)
+	);
+}
+
 function cleanupRuleNodes(&$rules)
 {
 	$prune = array();
@@ -574,6 +673,55 @@ function cleanupRuleNodes(&$rules)
 		foreach ($prune as $prune_pos)
 			unset($rules->rule[$prune_pos]);
 	}
+}
+
+function ModFilterPopup()
+{
+	global $context, $txt;
+
+	loadTemplate('Help');
+	loadLanguage('Help');
+	wetem::hide();
+	wetem::load('popup');
+
+	$_GET['rule'] = isset($_GET['rule']) ? (int) $_GET['rule'] : 0;
+	$_GET['ruletype'] = isset($_GET['ruletype']) && ($_GET['ruletype'] == 'posts' || $_GET['ruletype'] == 'topics') ? $_GET['ruletype'] : '';
+
+	$context['rule_msgs'] = array();
+	$_POST['t'] = $txt['modfilter_msg_popup_title'];
+	if ($_GET['rule'] > 0)
+	{
+		$request = wesql::query('
+			SELECT lang, msg
+			FROM {db_prefix}mod_filter_msg
+			WHERE id_rule = {int:rule}
+				AND rule_type = {string:rule_type}',
+			array(
+				'rule' => $_GET['rule'],
+				'rule_type' => $_GET['ruletype'],
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+			$context['rule_msgs'][$row['lang']] = $row['msg'];
+		wesql::free_result($request);
+	}
+
+	if (empty($context['rule_msgs']))
+		return $context['help_text'] = $txt['modfilter_msg_no_lang'];
+
+	// Anything using the help popup is a bit weird.
+	$context['help_text'] = '
+	<table class="w100 cs3" id="rules">';
+
+	foreach ($context['rule_msgs'] as $lang => $msg)
+		$context['help_text'] .= '
+		<tr>
+			<td class="flag"><span class="flag_' . $lang . '"></span></td>
+			<td>' . $msg . '</td>
+		</tr>';
+
+	$context['help_text'] .= '
+	</table>';
 }
 
 ?>

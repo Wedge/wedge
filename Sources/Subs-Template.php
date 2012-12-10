@@ -155,6 +155,9 @@ function ob_sessrewrite($buffer)
 	// Very fast on-the-fly replacement of <URL>...
 	$buffer = str_replace('<URL>', $scripturl, $buffer);
 
+	if (isset($context['meta_description'], $context['meta_description_repl']))
+		$buffer = str_replace($context['meta_description'], $context['meta_description_repl'], $buffer);
+
 	// A regex-ready $scripturl, useful later.
 	$preg_scripturl = preg_quote($scripturl, '~');
 

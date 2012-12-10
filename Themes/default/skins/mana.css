@@ -518,4 +518,20 @@ ul.moderation_notes
 .pretty_prefix
 	margin: 0 0 1em 3em
 
+#helf
+	#rules
+		td.flag
+			width: 30px
+			vertical-align: top
+
+#fs_langs
+	dl.settings
+		dt
+			padding-left: 10px
+			width: 15%
+		dd
+			width: 81%
+			textarea
+				width: 450px
+
 $mono_font = Consolas, "Dejavu Sans Mono", Monaco, "Lucida Console", "Courier New", monospace
