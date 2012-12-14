@@ -822,6 +822,7 @@ function EnablePlugin()
 
 			$this_bbcode = array(
 				'tag' => (string) $bbcode['tag'],
+				'len' => strlen((string) $bbcode['tag']),
 				'bbctype' => (string) $bbcode['type'],
 				'before_code' => !empty($bbcode->{'before-code'}) ? (string) $bbcode->{'before-code'} : '',
 				'after_code' => !empty($bbcode->{'after-code'}) ? (string) $bbcode->{'after-code'} : '',
@@ -1016,6 +1017,7 @@ function EnablePlugin()
 				'{db_prefix}bbcode',
 				array(
 					'tag' => 'string',
+					'len' => 'int',
 					'bbctype' => 'string',
 					'before_code' => 'string',
 					'after_code' => 'string',

@@ -1513,7 +1513,7 @@ class wedit
 		// Allow mods to modify BBC buttons.
 		// Read the PHP docs on array_splice() to
 		// position a button in a specific place
-		call_hook('bbc_buttons', array(&$context['bbc_tags']));
+		call_hook('bbc_buttons', array(&$this->bbc));
 
 		// Show the toggle?
 		if (empty($settings['disable_wysiwyg']))
@@ -2532,7 +2532,7 @@ class wedit
 						$context['footer_js'] .= '
 				[' .
 					'\'button\', ' . (empty($this->disabled_tags[$tag['code']]) ? '1, ' : '0, ') . (!is_array($tag['image']) ?
-					JavaScriptEscape($theme['images_url'] . '/bbc/' . $tag['image'] . '.gif') . ', ' :
+					(strpos($tag['image'], '//') !== false ? JavaScriptEscape($tag['image']) : JavaScriptEscape($theme['images_url'] . '/bbc/' . $tag['image'] . '.gif')) . ', ' :
 					'[' . ($tag['image'][0] + 1) * 23 . ', ' . $tag['image'][1] * 22 . '], ') .
 					JavaScriptEscape($tag['code']) . ', ' .
 					JavaScriptEscape($tag['before']) . ', ' .
