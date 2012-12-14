@@ -710,7 +710,7 @@ function ModFilterPopup()
 		return $context['help_text'] = $txt['modfilter_msg_no_lang'];
 
 	// Anything using the help popup is a bit weird.
-	$context['help_text'] = '
+	$context['help_text'] = $txt['modfilter_msg_popup'] . '
 	<table class="w100 cs3" id="rules">';
 
 	foreach ($context['rule_msgs'] as $lang => $msg)
