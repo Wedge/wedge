@@ -231,8 +231,7 @@ function GroupList()
 					'value' => $txt['membergroups_members_top'],
 				),
 				'data' => array(
-					'comma_format' => true,
-					'db' => 'num_members',
+					'comma_format' => 'num_members',
 				),
 			),
 		),
