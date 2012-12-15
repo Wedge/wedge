@@ -135,6 +135,18 @@ function createList($listOptions)
 			elseif (isset($column['data']['eval']))
 				$cur_data['value'] = eval(preg_replace('~%([a-zA-Z0-9_-]+)%~', '$list_item[\'$1\']', $column['data']['eval']));
 
+			// A nicely formatted number.
+			elseif (isset($column['data']['comma_format']))
+				$cur_data['value'] = comma_format($list_item[$column['data']['comma_format']]);
+
+			// A straight DB-containing-timestamp formatted time (allowing for timezones etc.)
+			elseif (isset($column['data']['timeformat']))
+				$cur_data['value'] = timeformat($list_item[$column['data']['timeformat']]);
+
+			// In case you want the time as it is in the display, 'on <date>, <time>' or '<Today> at <time>'.
+			elseif (isset($column['data']['on_timeformat']))
+				$cur_data['value'] = on_timeformat($list_item[$column['data']['timeformat']]);
+
 			// A literal value.
 			elseif (isset($column['data']['value']))
 				$cur_data['value'] = $column['data']['value'];
@@ -142,12 +154,6 @@ function createList($listOptions)
 			// Empty value.
 			else
 				$cur_data['value'] = '';
-
-			// Allow for basic formatting.
-			if (!empty($column['data']['comma_format']))
-				$cur_data['value'] = comma_format($cur_data['value']);
-			elseif (!empty($column['data']['timeformat']))
-				$cur_data['value'] = timeformat($cur_data['value']);
 
 			// Set a style class for this column?
 			if (isset($column['data']['class']))
