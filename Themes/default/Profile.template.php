@@ -1840,6 +1840,7 @@ function template_issueWarning()
 	template_load_warning_variables();
 
 	// !!! Should we really calculate these? jQuery should have done most of it already...
+	// !!! This is also reused in the admin settings now. If this gets rewritten, fix that too please.
 	add_js('
 	var isMoving;
 	function setWarningBarPos(e, changeAmount)

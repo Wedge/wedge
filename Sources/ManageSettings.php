@@ -150,9 +150,9 @@ function ModifyWarningSettings($return_config = false)
 
 	$config_vars = array(
 			// Warning system?
-			array('int', 'warning_watch', 'help' => 'warning_enable', 'max' => 100, 'subtext' => $txt['setting_warning_watch_subtext']),
-			'moderate' => array('int', 'warning_moderate', 'max' => 100, 'subtext' => $txt['setting_warning_moderate_subtext']),
-			array('int', 'warning_mute', 'max' => 100, 'subtext' => $txt['setting_warning_mute_subtext']),
+			array('percent', 'warning_watch', 'help' => 'warning_enable', 'subtext' => $txt['setting_warning_watch_subtext']),
+			'moderate' => array('percent', 'warning_moderate', 'subtext' => $txt['setting_warning_moderate_subtext']),
+			array('percent', 'warning_mute', 'subtext' => $txt['setting_warning_mute_subtext']),
 		'',
 			'rem1' => array('int', 'user_limit', 'max' => 100, 'subtext' => $txt['setting_user_limit_subtext']),
 			'rem2' => array('int', 'warning_decrement', 'max' => 100, 'subtext' => $txt['setting_warning_decrement_subtext']),
@@ -711,7 +711,7 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 				$new_item = $array;
 				break;
 			case 'percent':
-				$array = array($item, $name)l
+				$array = array($item, $name);
 				$new_item = $array;
 				break;
 			case 'permissions':
