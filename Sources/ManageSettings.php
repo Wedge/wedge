@@ -710,6 +710,10 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 						$array[$attr] = (int) $element[$attr];
 				$new_item = $array;
 				break;
+			case 'percent':
+				$array = array($item, $name)l
+				$new_item = $array;
+				break;
 			case 'permissions':
 				$array = array($item, $name);
 				if (!empty($element['noguests']) && $element['noguests'] == 'yes')

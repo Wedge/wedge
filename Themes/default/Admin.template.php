@@ -904,6 +904,81 @@ function template_show_settings()
 				elseif ($config_var['type'] == 'int')
 					echo '
 						<input type="number"', $javascript, $disabled, ' name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', $config_var['size'] ? ' size="' . $config_var['size'] . '"' : '', ' min="', isset($config_var['min']) ? $config_var['min'] : 0, '"', isset($config_var['max']) ? ' max="' . $config_var['max'] . '"' : '', ' step="', !empty($config_var['step']) ? $config_var['step'] : 1, '">';
+				// Percentage?
+				elseif ($config_var['type'] == 'percent')
+				{
+					// !!! This is a thinly ported version of the Profile/Warnings one. If you fix this up for jQuery please do the profile one too.
+					echo '
+						<div id="', $config_var['name'], '_div1" class="hide">
+							<div>
+								<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeLevel(\'', $config_var['name'], '\', -5); return false;" onmousedown="return false;">[-]</a></span>
+								<div class="floatleft" id="', $config_var['name'], '_contain" style="font-size: 8pt; height: 12pt; width: 200px; border: 1px solid black; background-color: white; padding: 1px; position: relative">
+									<div id="', $config_var['name'], '_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold" onmousedown="e.preventDefault();">', $config_var['value'], '%</div>
+									<div id="', $config_var['name'], '_progress" style="width: ', $config_var['value'], '%; height: 12pt; z-index: 1; background-color: blue">&nbsp;</div>
+								</div>
+								<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeLevel(\'', $config_var['name'], '\', 5); return false;" onmousedown="return false;">[+]</a></span>
+							</div>
+							<input type="hidden" name="', $config_var['name'], '" id="', $config_var['name'], '_level" value="SAME">
+						</div>
+						<div id="', $config_var['name'], '_div2">
+							<input type="number" name="', $config_var['name'], '_nojs" id="', $config_var['name'], '_nojs" size="6" maxlength="4" min="0" max="100" value="', $config_var['value'], '">
+						</div>';
+
+					if (empty($context['already_showing_percent']))
+					{
+						$context['already_showing_percent'] = true;
+						add_js('
+	var isMoving;
+	function setBarPos(item, e, changeAmount)
+	{
+		var
+			barWidth = 200, mouse = e.pageX,
+			percent, size, color = "blue", effectText = "";
+
+		// Are we passing the amount to change it by?
+		if (changeAmount)
+			percent = $("#" + item + "_level").val() == "SAME" ?
+				parseInt($("#" + item + "_nojs").val(), 10) + changeAmount :
+				parseInt($("#" + item + "_level").val(), 10) + changeAmount;
+		// If not then it\'s a mouse thing.
+		else
+		{
+			if (e.type == "mousedown" && e.which == 1)
+				isMoving = true;
+			if (e.type == "mouseup")
+				isMoving = false;
+			if (!isMoving)
+				return false;
+
+			// Get the position of the container.
+			var position = $("#" + item + "_contain").offset().left;
+			percent = Math.round(Math.round(((mouse - position) / barWidth) * 100) / 5) * 5;
+		}
+
+		percent = Math.min(Math.max(percent, 0), 100);
+		size = barWidth * (percent/100);
+		$("#" + item + "_progress").css({ width: size + "px", backgroundColor: color });
+		$("#" + item + "_text").css("color", percent < 50 ? "black" : (percent < 60 ? (color == "green" ? "#ccc" : "black") : "white")).html(percent + "%");
+		$("#" + item + "_level").val(percent);
+		$("#cur_level_div").html(effectText);
+	};
+
+	function changeLevel(item, amount)
+	{
+		setBarPos(item, false, amount);
+	}');
+					}
+
+					// This is very nasty but I can't immediately think of a better way of doing it.
+					add_js('
+	$("#', $config_var['name'], '_contain").bind("mousedown mousemove mouseup", setBarPos_', $config_var['name'], ').mouseleave(function () { isMoving = false; });
+	$("#', $config_var['name'], '_div1").show();
+	$("#', $config_var['name'], '_div2").hide();
+	function setBarPos_', $config_var['name'], '(e)
+	{
+		setBarPos("', $config_var['name'], '", e, false);
+	};');
+				}
 				// Assume it must be a text box.
 				else
 					echo '

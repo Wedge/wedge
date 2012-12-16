@@ -2028,7 +2028,7 @@ function prepareDBSettingContext(&$config_vars)
 				'size' => !empty($config_var[2]) && !is_array($config_var[2]) ? $config_var[2] : (in_array($config_var[0], array('int', 'float')) ? 6 : 0),
 				'data' => array(),
 				'name' => $config_var[1],
-				'value' => !isset($config_var['value']) ? (isset($settings[$config_var[1]]) ? ($config_var[0] == 'select' || $config_var[0] == 'multi_select' || $config_var[0] == 'boards' ? $settings[$config_var[1]] : htmlspecialchars($settings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float')) ? 0 : '')) : $config_var['value'],
+				'value' => !isset($config_var['value']) ? (isset($settings[$config_var[1]]) ? ($config_var[0] == 'select' || $config_var[0] == 'multi_select' || $config_var[0] == 'boards' ? $settings[$config_var[1]] : htmlspecialchars($settings[$config_var[1]])) : (in_array($config_var[0], array('int', 'float', 'percent')) ? 0 : '')) : $config_var['value'],
 				'disabled' => false,
 				'invalid' => !empty($config_var['invalid']),
 				'javascript' => '',
@@ -2263,7 +2263,7 @@ function saveDBSettings(&$config_vars)
 
 	foreach ($config_vars as $var)
 	{
-		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && $var[0] != 'check' && $var[0] != 'yesno' && $var[0] != 'permissions' && $var[0] != 'multi_select' && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))
+		if (!isset($var[1]) || (!isset($_POST[$var[1]]) && !in_array($var[0], array('check', 'yesno', 'permissions', 'multi_select')) && ($var[0] != 'bbc' || !isset($_POST[$var[1] . '_enabledTags']))))
 			continue;
 
 		// Checkboxes!
@@ -2295,6 +2295,13 @@ function saveDBSettings(&$config_vars)
 		// Floating point!
 		elseif ($var[0] == 'float')
 			$setArray[$var[1]] = (float) $_POST[$var[1]];
+		// Percentage!
+		elseif ($var[0] == 'percent')
+		{
+			if ($_POST[$var[1]] == 'SAME') // Non-JS fallback just in case
+				$_POST[$var[1]] = isset($_POST[$var[1] . '_nojs']) ? $_POST[$var[1] . '_nojs'] : 0;
+			$setArray[$var[1]] = max(min((int) $_POST[$var[1]], 100), 0);
+		}
 		// Text!
 		elseif ($var[0] == 'text' || $var[0] == 'large_text' || $var[0] == 'email')
 			$setArray[$var[1]] = $_POST[$var[1]];
