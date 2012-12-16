@@ -78,7 +78,7 @@ function Home()
 				'per_page' => 10,
 			)
 		);
-		$is_touch = $context['browser']['is_iphone'] || $context['browser']['is_tablet'];
+		$is_touch = $context['browser']['is_android'] || $context['browser']['is_ios'];
 		$thoughts = array();
 		while ($row = wesql::fetch_assoc($request))
 		{

@@ -20,7 +20,7 @@ function weEditor(opt)
 	 */
 
 	this.bRichTextEnabled = !!opt.bWysiwyg;
-	this.bRichTextPossible = !opt.bRichEditOff && (is_ie || is_ff || is_opera || is_webkit) && !(is_iphone || is_android);
+	this.bRichTextPossible = !opt.bRichEditOff && (is_ie || is_ff || is_opera || is_webkit) && !(is_ios || is_android);
 	this.urlTxt = $txt['prompt_text_url'];
 	this.imgTxt = $txt['prompt_text_img'];
 

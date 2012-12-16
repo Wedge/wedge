@@ -19,7 +19,7 @@
  * - guest, member, admin, rtl, m#, b#, c#
  * - will target guests, members, administrators, RTL languages, member #, board # or category #.
  *
- * - opera, firefox, chrome, safari, ie, gecko, webkit, iphone, android.
+ * - opera, firefox, chrome, safari, ie, gecko, webkit, ios, android.
  * - will target that browser, browser family or OS. You may also add a version number next to it. Ranges are also
  *   accepted: index.ie[-8].css will target IE 6/7/8, while index.opera12.1.css should target Opera 12.1 only.
  *

@@ -27,7 +27,6 @@ var
 
 	// Basic browser detection. $.browser is being deprecated in jQuery,
 	// but v1.5 still has it, and Wedge will keep supporting it.
-	ua = navigator.userAgent.toLowerCase(),
 
 	// If you need support for more browsers, just test for $.browser.version yourself...
 	is_opera = !!$.browser.opera,
@@ -35,11 +34,10 @@ var
 
 	// The webkit ones. Oh my, that's a long list... Right now we're only supporting iOS and generic Android browsers.
 	is_webkit = !!$.browser.webkit,
-	is_chrome = ua.indexOf('chrome') != -1,
-	is_iphone = is_webkit && (ua.indexOf('iphone') != -1 || ua.indexOf('ipod') != -1),
-	is_tablet = is_webkit && ua.indexOf('ipad') != -1,
-	is_android = is_webkit && ua.indexOf('android') != -1,
-	is_safari = is_webkit && !is_chrome && !is_iphone && !is_android && !is_tablet,
+	is_chrome = navigator.userAgent.indexOf('Chrome') != -1,
+	is_ios = is_webkit && navigator.userAgent.indexOf('(iP') != -1,
+	is_android = is_webkit && navigator.userAgent.indexOf('Android') != -1,
+	is_safari = is_webkit && !is_chrome && !is_android && !is_ios,
 
 	// This should allow us to catch more touch devices like smartphones and tablets...
 	is_touch = 'ontouchstart' in document.documentElement,
@@ -177,7 +175,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 		.attr('id', 'help_pop')
 		.width(viewport_width)
 		.height(viewport_height)
-		.css({ top: is_ie6 || is_iphone ? $(window).scrollTop() : 0 })
+		.css({ top: is_ie6 || is_ios ? $(window).scrollTop() : 0 })
 		.fadeIn()
 		.append(
 			$('<div></div>')

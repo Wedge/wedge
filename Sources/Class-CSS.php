@@ -414,6 +414,8 @@ class wess_if extends wess
 
 	// This is the variable test parser. Do not use quotes, just plain CSS. Some valid examples:
 	// $color == red / $color != red / $color / !$color / $number > 0 / $number < $other
+	// !! @todo: add support for logical AND/OR (as in browser tests), as well as parenthesis
+	// (precedence) for more complex tests, e.g. '($color == red || $color == blue) && $number > 0'.
 	function test($match)
 	{
 		preg_match('~(!?[^!=<>]*)(?:([!=<>]+)(.*))?~', $match, $ops);
@@ -1400,9 +1402,10 @@ class wess_prefixes extends wess
 		$both = $prefixed . $unchanged;
 		$b = $browser;
 		$v = $b['version'];
-		list ($ie, $ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $iphone, $android, $webkit) = array(
+		$ov = $b['os_version'];
+		list ($ie, $ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
 			$b['is_ie'], $b['is_ie8down'], $b['is_ie9'], $b['is_ie10'], $b['is_opera'], $b['is_firefox'],
-			$b['is_safari'], $b['is_chrome'], $b['is_iphone'], $b['is_android'], $b['is_webkit']
+			$b['is_safari'] && !$b['is_ios'], $b['is_chrome'], $b['is_ios'], $b['is_android'] && $b['is_webkit'] && !$b['is_chrome'], $b['is_webkit']
 		);
 
 		// Only IE6/7/8 don't support border-radius these days.
@@ -1411,7 +1414,7 @@ class wess_prefixes extends wess
 			if ($ie8down || ($opera && $v < 10.5))
 				return '';
 			// Older browsers require a prefix...
-			if (($firefox && $v < 4) || ($safari && $v < 5) || ($iphone && $v < 4) || ($android && $v < 2.2))
+			if (($firefox && $v < 4) || ($ios && $ov < 4) || ($safari && $v < 5) || ($android && $ov < 2.2))
 				return $prefixed;
 			return $unchanged;
 		}
@@ -1431,7 +1434,7 @@ class wess_prefixes extends wess
 		{
 			if ($ie8down || ($opera && $v < 10.5))
 				return '';
-			if (($firefox && $v < 4) || ($iphone && $v < 5) || ($safari && $v < 5.1))
+			if (($firefox && $v < 4) || ($ios && $ov < 5) || ($safari && $v < 5.1))
 				return $prefixed;
 			if ($android)
 				return $both;
@@ -1443,7 +1446,7 @@ class wess_prefixes extends wess
 		{
 			if (($ie && $v < 8) || ($opera && $v < 9.5))
 				return '';
-			if ($firefox || ($iphone && $v < 5) || ($safari && $v < 5.1) || ($android && $v < 4))
+			if ($firefox || ($ios && $ov < 5) || ($safari && $v < 5.1) || ($android && $ov < 4))
 				return $prefixed;
 			return $unchanged;
 		}

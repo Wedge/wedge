@@ -778,11 +778,15 @@ function Post2()
 
 	$_POST['icon'] = !empty($attachIDs) && $_POST['icon'] == 'xx' ? 'clip' : (isset($_POST['icon']) ? $_POST['icon'] : 'xx');
 
-	// Magical device dependent icons.
-	if ($_POST['icon'] == 'xx')
-		foreach (array('android', 'iphone', 'tablet') as $device)
-			if (!empty($context['browser']['is_' . $device]))
-				$_POST['icon'] = $device;
+	// Magical device-dependent icons.
+	if ($_POST['icon'] == 'xx' && $context['browser']['is_mobile'])
+	{
+		$_POST['icon'] = 'wireless'; // Ye olde mobile icon...
+		if ($context['browser']['is_ios'])
+			$_POST['icon'] = strpos($context['browser']['ua'], 'iPad') === false ? 'iphone' : 'tablet';
+		elseif ($context['browser']['is_android'])
+			$_POST['icon'] = 'android';
+	}
 
 	// Collect all parameters for the creation or modification of a post.
 	$msgOptions = array(

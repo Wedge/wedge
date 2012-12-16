@@ -62,8 +62,7 @@ table.cs0 final tr.windowbg:last-child td
 	.column
 		padding: 14px 12px 12px
 
-@if ie[-7]
-@else
+@if !ie[-7]
 	#main
 		padding: 0 0 0 30px
 @endif
@@ -272,6 +271,7 @@ ul.buttonlist
 		text-decoration: none
 		border: 1px solid rgba(0,0,0, .07)
 		border-radius: 6px
+		line-height: 25px
 		&.active
 			background: #8a8ca5
 			color: #fff

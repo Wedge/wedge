@@ -1226,19 +1226,20 @@ function aeva_viewItem()
 	$item_data['custom_fields'] = aeva_loadCustomFields($item_data['id_media']);
 
 	// End it!
+	// !! Add support for Retina iPads..? (They should be able to see the sidebar stuff really.)
 	$context['item_data'] = $item_data;
 	wetem::load(array(
 		'aeva_item_init',
 		'aeva_item_prevnext',
 		'aeva_item_wrap_begin',
-		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'] || (!empty($context['skin_options']['sidebar']) && $context['skin_options']['sidebar'] != 'right') ? '' : 'aeva_item_details',
+		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ios'] || (!empty($context['skin_options']['sidebar']) && $context['skin_options']['sidebar'] != 'right') ? '' : 'aeva_item_details',
 		'aeva_item_main',
-		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'] || empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] == 'right' ? '' : 'aeva_item_details',
+		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ios'] || empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] == 'right' ? '' : 'aeva_item_details',
 		'aeva_item_wrap_end',
 		'aeva_item_actions',
 		'aeva_item_comments',
 	));
-	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_iphone'])
+	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ios'])
 		wetem::add('sidebar', 'aeva_item_details');
 }
 
