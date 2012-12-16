@@ -910,13 +910,13 @@ function template_show_settings()
 					// !!! This is a thinly ported version of the Profile/Warnings one. If you fix this up for jQuery please do the profile one too.
 					echo '
 						<div id="', $config_var['name'], '_div1" class="hide">
-							<div>
-								<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeLevel(\'', $config_var['name'], '\', -5); return false;" onmousedown="return false;">[-]</a></span>
-								<div class="floatleft" id="', $config_var['name'], '_contain" style="font-size: 8pt; height: 12pt; width: 200px; border: 1px solid black; background-color: white; padding: 1px; position: relative">
-									<div id="', $config_var['name'], '_text" style="padding-top: 1pt; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold" onmousedown="e.preventDefault();">', $config_var['value'], '%</div>
-									<div id="', $config_var['name'], '_progress" style="width: ', $config_var['value'], '%; height: 12pt; z-index: 1; background-color: blue">&nbsp;</div>
+							<div class="percent">
+								<span class="floatleft"><a href="#" onclick="changeLevel(\'', $config_var['name'], '\', -5); return false;" onmousedown="return false;">[-]</a></span>
+								<div class="floatleft container" id="', $config_var['name'], '_contain" style="width: 200px">
+									<div id="', $config_var['name'], '_text" class="text" onmousedown="e.preventDefault();">', $config_var['value'], '%</div>
+									<div id="', $config_var['name'], '_progress" class="progress" style="width: ', $config_var['value'], '%">&nbsp;</div>
 								</div>
-								<span class="floatleft" style="padding: 0 .5em"><a href="#" onclick="changeLevel(\'', $config_var['name'], '\', 5); return false;" onmousedown="return false;">[+]</a></span>
+								<span class="floatleft"><a href="#" onclick="changeLevel(\'', $config_var['name'], '\', 5); return false;" onmousedown="return false;">[+]</a></span>
 							</div>
 							<input type="hidden" name="', $config_var['name'], '" id="', $config_var['name'], '_level" value="SAME">
 						</div>
@@ -933,7 +933,7 @@ function template_show_settings()
 	{
 		var
 			barWidth = 200, mouse = e.pageX,
-			percent, size, color = "blue", effectText = "";
+			percent, size, color = "", effectText = "";
 
 		// Are we passing the amount to change it by?
 		if (changeAmount)
@@ -957,7 +957,11 @@ function template_show_settings()
 
 		percent = Math.min(Math.max(percent, 0), 100);
 		size = barWidth * (percent/100);
-		$("#" + item + "_progress").css({ width: size + "px", backgroundColor: color });
+		var newpc = { width: size + "px" };
+		if (color != "")
+			newpc.backgroundColor = color;
+
+		$("#" + item + "_progress").css(newpc);
 		$("#" + item + "_text").css("color", percent < 50 ? "black" : (percent < 60 ? (color == "green" ? "#ccc" : "black") : "white")).html(percent + "%");
 		$("#" + item + "_level").val(percent);
 		$("#cur_level_div").html(effectText);

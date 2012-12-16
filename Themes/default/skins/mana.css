@@ -500,6 +500,64 @@ ul.moderation_notes
 		border: 1px solid black
 		border-left-width: 0
 
+/* Styles for percentage selectors
+------------------------------------------------- */
+div.percent
+	span
+		padding: 0 .5em
+	.container
+		font-size: 8pt
+		height: 12pt
+		border: 1px solid black
+		background-color: white
+		padding: 1px
+		position: relative
+	.text
+		padding_top: 1pt
+		width: 100%
+		z-index: 2
+		color: black
+		position: absolute
+		text-align: center
+		font-weight: bold
+		cursor: default
+	.progress
+		height: 12pt
+		z-index: 1
+		background-color: #95a89d
+
+/* Styles for the ban setup area.
+------------------------------------------------- */
+.ban_items, .ban_selector
+	background: url($images/admin/ban_items.png) no-repeat
+	width: 16px
+	height: 16px
+	margin: 0 auto
+
+.ban_selector
+	display: inline
+	margin: 0
+	padding-left: 16px
+	margin-right: 4px
+
+.ban_items_id_member
+	background-position: 0 0
+
+.ban_items_email
+	background-position: 0 -16px
+
+.ban_items_ip_address
+	background-position: 0 -32px
+
+.ban_items_hostname
+	background-position: 0 -48px
+
+.ban_soft
+	background-position: 0 -64px
+
+.ban_hard
+	background-position: 0 -80px
+
 /* Miscellaneous.
 ------------------------------------------------- */
 #admin #main, #manage_boards, #manage_maintenance, #manage_mail
