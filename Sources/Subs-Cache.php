@@ -304,7 +304,11 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			if (!empty($suffix_string) && $brow = hasBrowser($suffixes))
 			{
 				$requested_suffixes[$brow] = true;
-				if ($brow != $context['browser']['agent'] . $context['browser']['version'])
+				// !! CSS file suffixes can do what hasBrowser() strings do, except for the following:
+				// - No negative statements (e.g. '!chrome')
+				// - No logical AND statements (e.g. 'chrome && ios')
+				// If you need to use these, you should use @if and @is commands inside the CSS file.
+				if ($brow != $context['browser']['agent'] . $context['browser']['version'] && $brow != $context['browser']['os'] . $context['browser']['os_version'])
 					$ignore_versions[$brow] = true;
 			}
 			$suffixes_to_keep = array_intersect_key($suffixes, $requested_suffixes);
@@ -647,6 +651,11 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// Remove extra whitespace.
 	$final = preg_replace('~\s*([][+:;,>{}\s])\s*~', '$1', $final);
+
+	// This is a bit quirky, like me, as we want to simplify paths but may still break non-path strings in the process.
+	// At this point in the code, thought, strings should be hidden from view so it sounds okay to do that.
+	while (preg_match('~/(?:\.[^.]*|[^.:*?"<>|/][^:*?"<>|/]*)/\.\./~', $final, $relpath))
+		$final = str_replace($relpath[0], '/', $final);
 
 	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
 	$final = str_replace(

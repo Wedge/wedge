@@ -1423,6 +1423,8 @@ function checkUserRequest_request()
 		return false;
 
 	// Proxy-Connection isn't a real header.
+	// !! Doesn't this get thrown on Firefox < v18 when a proxy is enabled?
+	// https://developer.mozilla.org/en-US/docs/Site_Compatibility_for_Firefox_18
 	if (isset($context['http_headers']['Proxy-Connection']))
 		return $context['behavior_error'] = 'behav_proxy_connection';
 
