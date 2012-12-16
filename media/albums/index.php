@@ -1,6 +1,6 @@
 <?php
 
-// Protect album folders
-exit;
+// Redirect to the upper level.
+header('Location: ../');
 
 ?>
