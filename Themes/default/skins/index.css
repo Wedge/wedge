@@ -1523,7 +1523,7 @@ dl#feed
 	padding: .5em
 
 // Container for the JavaScript popup version
-#help_pop
+#popup
 	position: fixed
 	z-index: 1
 	left, top: 0

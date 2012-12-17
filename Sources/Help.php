@@ -40,7 +40,7 @@ function Help()
 	if (substr($_GET['in'], 0, 14) == 'permissionhelp')
 		loadLanguage('ManagePermissions');
 
-	loadTemplate('Help');
+	loadTemplate('GenericPopup');
 	wetem::hide();
 
 	// Set the page title to something relevant.
@@ -50,7 +50,7 @@ function Help()
 	wetem::load('popup');
 
 	// What help string should be used?
-	$context['help_text'] = isset($helptxt[$_GET['in']]) ? $helptxt[$_GET['in']] : (isset($txt[$_GET['in']]) ? $txt[$_GET['in']] : $_GET['in']);
+	$context['popup_contents'] = isset($helptxt[$_GET['in']]) ? $helptxt[$_GET['in']] : (isset($txt[$_GET['in']]) ? $txt[$_GET['in']] : $_GET['in']);
 }
 
 ?>

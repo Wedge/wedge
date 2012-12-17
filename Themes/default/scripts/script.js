@@ -121,7 +121,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 		previous_target = $('#helf').data('src'),
 		close_window = function ()
 		{
-			$('#help_pop').fadeOut(function () { $(this).remove(); });
+			$('#popup').fadeOut(function () { $(this).remove(); });
 		},
 		animate_popup = function ()
 		{
@@ -166,13 +166,13 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 	}
 
 	// Clicking the help icon twice should close the popup.
-	if ($('#help_pop').remove().length && previous_target == help_page)
+	if ($('#popup').remove().length && previous_target == help_page)
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE6.
 	$('body').append(
 		$('<div></div>')
-		.attr('id', 'help_pop')
+		.attr('id', 'popup')
 		.width(viewport_width)
 		.height(viewport_height)
 		.css({ top: is_ie6 || is_ios ? $(window).scrollTop() : 0 })
@@ -208,7 +208,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 		$('#helf')
 			.load(help_page, { t: title }, animate_popup)
 			// Clicking anywhere on the page should close the popup.
-			.parent() // #help_pop
+			.parent() // #popup
 			.click(function (e) {
 				// If we clicked somewhere in the popup, don't close it, because we may want to select text.
 				if (!$(e.target).closest('#helf').length)

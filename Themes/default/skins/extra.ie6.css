@@ -378,6 +378,6 @@ body
 	zoom: normal
 
 // IE6 doesn't support position: fixed...
-#help_pop
+#popup
 	position: absolute
 	background: transparent

@@ -212,31 +212,31 @@ function DisplayLike()
 			unset($likes[$diff_item]);
 	}
 
-	loadTemplate('Help');
+	loadTemplate('GenericPopup');
 	loadLanguage('Help');
 	wetem::hide();
 	wetem::load('popup');
 
 	if (empty($likes))
 	{
-		$context['help_text'] = $txt['nobody_likes_this'];
+		$context['popup_contents'] = $txt['nobody_likes_this'];
 		$_POST['t'] = $txt['nobody_likes_this'];
 		return;
 	}
 
 	$_POST['t'] = number_context('likes_header', count($likes));
 
-	$context['help_text'] = '
+	$context['popup_contents'] = '
 	<table id="likes" class="w100 cs3">';
 
 	foreach ($likes as $member => $like_time)
 	{
 		loadMemberContext($member);
-		$context['help_text'] .= '
+		$context['popup_contents'] .= '
 		<tr><td class="ava">' . $memberContext[$member]['avatar']['image'] . '</td><td class="link">' . $memberContext[$member]['link'] . '</td><td class="right">' . timeformat($like_time) . '</td></tr>';
 	}
 
-	$context['help_text'] .= '
+	$context['popup_contents'] .= '
 	</table>';
 }
 

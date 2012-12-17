@@ -317,7 +317,7 @@ function PluginReadme()
 	global $context, $txt, $pluginsdir;
 
 	// Let's start and fire up the template. We're reusing the nice popup, so load templates and set up various things.
-	loadTemplate('Help');
+	loadTemplate('GenericPopup');
 	loadLanguage('Help');
 	wetem::hide();
 	$context['page_title'] = $txt['plugin_manager'] . ' - ' . $txt['help'];
@@ -383,10 +383,10 @@ function PluginReadme()
 			$name = '<h6>' . $name . '</h6>';
 		}
 
-		$context['help_text'] = $name . parse_bbc($contents);
+		$context['popup_contents'] = $name . parse_bbc($contents);
 	}
 	else
-		$context['help_text'] = $txt['invalid_plugin_readme'];
+		$context['popup_contents'] = $txt['invalid_plugin_readme'];
 }
 
 function EnablePlugin()

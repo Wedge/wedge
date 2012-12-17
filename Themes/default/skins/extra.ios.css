@@ -67,5 +67,5 @@ table.thought_list td:hover
 h4 .mime
 	position: absolute
 
-#ajax_in_progress, #help_pop
+#ajax_in_progress, #popup
 	position: absolute

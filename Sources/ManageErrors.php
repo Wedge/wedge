@@ -671,10 +671,10 @@ function ViewFile()
 
 	$file_data = array_slice($file_data, $min - 1, $max - $min);
 
-	$context['page_title'] = $context['help_title'] = strtr($file, array('"' => '\\"'));
+	$context['page_title'] = $_POST['t'] = strtr($file, array('"' => '\\"'));
 
 	// The file URL will be inserted into the <header>.
-	$context['help_text'] = '
+	$context['popup_contents'] = '
 		<table id="fileviewer" class="w100 cp0 cs0">';
 
 	$alt = '';
@@ -683,24 +683,24 @@ function ViewFile()
 		$alt = $alt ? '' : '2';
 		$line_num = $index + $min;
 		$is_target = $line_num == $line;
-		$context['help_text'] .= '
+		$context['popup_contents'] .= '
 			<tr class="windowbg' . $alt . '">
 				<td class="nowrap right' . ($is_target ? ' tar1">==&gt;' : '">') . $line_num . ':</td>
 				<td class="nowrap left' . ($is_target ? ' tar2">' : '">') . $body . '</td>
 			</tr>';
 	}
 
-	$context['help_text'] .= '
+	$context['popup_contents'] .= '
 		</table>';
 
 	if (empty($file_data))
 	{
 		loadLanguage('ManageMaintenance');
-		$context['help_text'] = $txt['file_out_of_bounds'];
+		$context['popup_contents'] = $txt['file_out_of_bounds'];
 	}
 
+	loadTemplate('GenericPopup');
 	loadLanguage('Help');
-	loadTemplate('Help');
 	wetem::hide();
 	wetem::load('popup');
 }

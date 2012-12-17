@@ -679,7 +679,7 @@ function ModFilterPopup()
 {
 	global $context, $txt;
 
-	loadTemplate('Help');
+	loadTemplate('GenericPopup');
 	loadLanguage('Help');
 	wetem::hide();
 	wetem::load('popup');
@@ -707,20 +707,20 @@ function ModFilterPopup()
 	}
 
 	if (empty($context['rule_msgs']))
-		return $context['help_text'] = $txt['modfilter_msg_no_lang'];
+		return $context['popup_contents'] = $txt['modfilter_msg_no_lang'];
 
 	// Anything using the help popup is a bit weird.
-	$context['help_text'] = $txt['modfilter_msg_popup'] . '
+	$context['popup_contents'] = $txt['modfilter_msg_popup'] . '
 	<table class="w100 cs3" id="rules">';
 
 	foreach ($context['rule_msgs'] as $lang => $msg)
-		$context['help_text'] .= '
+		$context['popup_contents'] .= '
 		<tr>
 			<td class="flag"><span class="flag_' . $lang . '"></span></td>
 			<td>' . $msg . '</td>
 		</tr>';
 
-	$context['help_text'] .= '
+	$context['popup_contents'] .= '
 	</table>';
 }
 

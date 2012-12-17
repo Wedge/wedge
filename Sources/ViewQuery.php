@@ -84,7 +84,7 @@ function ViewQuery()
 		.smalltext { font-size: xx-small }
 	</style>
 </head>
-<body id="help_popup">
+<body id="helf">
 	<div class="windowbg wrc">';
 
 	foreach ($_SESSION['debug'] as $q => $query_data)
