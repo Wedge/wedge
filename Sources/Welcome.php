@@ -127,7 +127,7 @@ function Welcome()
 			'me' => $user_info['id']
 		)
 	);
-	$is_touch = $context['browser']['is_android'] || $context['browser']['is_ios'];
+	$is_touch = we::is('android,ios');
 	$thoughts = array();
 	while ($row = wesql::fetch_assoc($request))
 	{

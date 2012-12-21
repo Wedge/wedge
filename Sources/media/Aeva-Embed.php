@@ -287,13 +287,10 @@ function aeva_build_object($input)
 
 	$arr =& $sites[$upto];
 	$use_object_init = (isset($_REQUEST['action']) && $_REQUEST['action'] == '.xml') || isset($_REQUEST['xml']) || WEDGE == 'SSI' || !empty($settings['embed_noscript']) || !empty($context['embed_mg_hack']);
-	$use_object = $use_object_init || (!empty($arr['plugin']) && $arr['plugin'] != 'flash') || !empty($arr['allow-script']) || ($arr['id'] == 'yav' && $context['browser']['is_firefox']);
+	$use_object = $use_object_init || (!empty($arr['plugin']) && $arr['plugin'] != 'flash') || !empty($arr['allow-script']) || ($arr['id'] == 'yav' && we::is('firefox'));
 
 	$object = $extra_js = '';
 	$link = '<a href="<aeva-link>" target="_blank" class="aeva_link bbc_link new_win"><aeva-title></a>';
-
-	if (!isset($context['browser']['is_ie8']) && !$context['browser']['is_ie'])
-		$context['browser']['is_ie'] = $context['browser']['is_ie8'] = strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 8') !== false;
 
 	// Depending on the plugin, use different parameters
 	if (empty($arr['plugin']) || $arr['plugin'] == 'flash')
@@ -356,8 +353,8 @@ function aeva_build_object($input)
 				'allowScriptAccess' => 'never', 'controls' => 'imagewindow', 'console' => 'video', 'autostart' => 'false',
 			),
 			'src' => 'src',
-			'extra' => ($context['browser']['is_ie'] ? '<object id="rvocx" classid="clsid:cfcdaa03-8be4-11cf-b84b-0020afbbccfa" width="$8px" height="30px"><param name="src" value="$1"><param name="autostart" value="false"><param name="controls" value="ControlPanel"><param name="console" value="video">' : '') .
-				'<embed src="$1" width="$8px" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="false"></embed>' . ($context['browser']['is_ie'] ? '</object>' : ''),
+			'extra' => (we::is('ie') ? '<object id="rvocx" classid="clsid:cfcdaa03-8be4-11cf-b84b-0020afbbccfa" width="$8px" height="30px"><param name="src" value="$1"><param name="autostart" value="false"><param name="controls" value="ControlPanel"><param name="console" value="video">' : '') .
+				'<embed src="$1" width="$8px" height="30" controls="ControlPanel" type="audio/x-pn-realaudio-plugin" console="video" autostart="false"></embed>' . (we::is('ie') ? '</object>' : ''),
 		);
 	}
 
@@ -416,7 +413,7 @@ function aeva_build_object($input)
 			if ($use_object)
 			{
 				$embed_params .= ' ' . $a . '="' . $b . '"';
-				if ($context['browser']['is_ie'])
+				if (we::is('ie'))
 					$object_params .= '<param name="' . $a . '" value="' . $b . '">';
 			}
 		}
@@ -426,7 +423,7 @@ function aeva_build_object($input)
 	if (!empty($arr['show-flashvars']) && $use_object)
 	{
 		$embed_params .= ' flashvars="<flashvars>"';
-		if ($context['browser']['is_ie'])
+		if (we::is('ie'))
 			$object_params .= '<param name="flashvars" value="<flashvars>">';
 	}
 
@@ -522,7 +519,7 @@ function aeva_build_object($input)
 	// Build the <object> (Non-Mac IE Only)
 	elseif ($use_object)
 	{
-		if ($context['browser']['is_ie'])
+		if (we::is('ie'))
 			$object .= '<object classid="' . $plugin['classid'] . '" ' .
 				(!empty($plugin['codebase']) ? 'codebase="' . $plugin['codebase'] . '" ' : '') .
 				'type="' . $plugin['type'] . '" width="' . $sw . '" height="' . $sh . '">' .
@@ -537,7 +534,7 @@ function aeva_build_object($input)
 			$object .= '<noembed>' . $link . '</noembed>';
 
 		// If using <object> remember to close it
-		if ($context['browser']['is_ie'])
+		if (we::is('ie'))
 			$object .= '</object>';
 	}
 	else

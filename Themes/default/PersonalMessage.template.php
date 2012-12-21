@@ -1124,7 +1124,7 @@ function template_report_message()
 					<strong>', $txt['pm_report_reason'], ':</strong>
 				</dt>
 				<dd>
-					<textarea name="reason" rows="4" cols="70" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 80%; min-width: 80%' : 'width: 80%', '"></textarea>
+					<textarea name="reason" rows="4" cols="70" style="', we::is('ie8') ? 'width: 635px; max-width: 80%; min-width: 80%' : 'width: 80%', '"></textarea>
 				</dd>
 			</dl>
 			<div class="right">

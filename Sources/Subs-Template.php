@@ -391,7 +391,7 @@ function ob_sessrewrite($buffer)
 	);
 
 	// If the session is not cookied, or they are a crawler, add the session ID to all URLs.
-	if (empty($_COOKIE) && SID != '' && empty($context['no_sid_thank_you']) && empty($context['browser']['possibly_robot']))
+	if (empty($_COOKIE) && SID != '' && empty($context['no_sid_thank_you']) && !we::$browser['possibly_robot'])
 	{
 		$buffer = preg_replace('~(?<!<link rel="canonical" href=")' . $preg_scripturl . '(?!\?' . preg_quote(SID, '~') . ')(?:\?|(?="))~', $scripturl . '?' . SID . ';', $buffer);
 		$buffer = str_replace('"' . $scripturl . '?' . SID . ';"', '"' . $scripturl . '?' . SID . '"', $buffer);

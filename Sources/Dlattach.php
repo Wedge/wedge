@@ -156,7 +156,7 @@ function Dlattach()
 
 	// Send the attachment headers.
 	header('Pragma: ');
-	if (!$context['browser']['is_gecko'])
+	if (!we::is('gecko'))
 		header('Content-Transfer-Encoding: binary');
 	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 525600 * 60) . ' GMT');
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($filename)) . ' GMT');
@@ -165,7 +165,7 @@ function Dlattach()
 	header('ETag: ' . $eTag);
 
 	// IE 6 just doesn't play nice. As dirty as this seems, it works.
-	if ($context['browser']['is_ie6'] && isset($_REQUEST['image']))
+	if (we::is('ie6') && isset($_REQUEST['image']))
 		unset($_REQUEST['image']);
 
 	// Make sure the mime type warrants an inline display.
@@ -178,7 +178,7 @@ function Dlattach()
 
 	else
 	{
-		header('Content-Type: application/octet' . ($context['browser']['is_ie'] || $context['browser']['is_opera'] ? '' : '-') . 'stream');
+		header('Content-Type: application/octet' . (we::is('ie,opera') ? '' : '-') . 'stream');
 		if (isset($_REQUEST['image']))
 			unset($_REQUEST['image']);
 	}
@@ -199,9 +199,9 @@ function Dlattach()
 	$disposition = !isset($_REQUEST['image']) ? 'attachment' : 'inline';
 
 	// Different browsers like different standards...
-	if ($context['browser']['is_ie8down'])
+	if (we::is('ie8down'))
 		header('Content-Disposition: ' . $disposition . '; filename="' . urlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)) . '"');
-	elseif ($context['browser']['is_safari'])
+	elseif (we::is('safari'))
 		header('Content-Disposition: ' . $disposition . '; filename="' . $real_filename . '"');
 	else
 		header('Content-Disposition: ' . $disposition . '; filename*=UTF-8\'\'' . rawurlencode(preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $real_filename)));

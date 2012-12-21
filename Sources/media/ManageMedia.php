@@ -1780,7 +1780,7 @@ function aeva_refreshPage($next)
 	global $context;
 
 	// Stupid IE doesn't refresh correctly to an URL with semicolons in it...
-	if ($context['browser']['is_ie'])
+	if (we::is('ie'))
 		$next = str_replace(';', '&', $next);
 	$context['header'] .= '
 	<meta http-equiv="refresh" content="1; url=' . $next . '">';

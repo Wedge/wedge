@@ -125,7 +125,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
+	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
 
 	$final_file = $jsdir . '/' . $id . (!empty($settings['js_lang'][$id]) && !empty($user_info['language']) && $user_info['language'] != $language ? $user_info['language'] . '-' : '') . $latest_date . $ext;
 
@@ -206,7 +206,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? ($context['browser']['is_safari'] ? '.jgz' : '.js.gz') : '.js';
+	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
 
 	$final_file = $jsdir . '/' . $id . $latest_date . $ext;
 	if (!file_exists($final_file))
@@ -301,16 +301,17 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 			$suffixes = array_flip(explode(',', $suffix_string));
 
 			// If we found our browser version in the suffix list, then add to the list of files to load.
-			if (!empty($suffix_string) && $brow = hasBrowser($suffixes))
+			if (!empty($suffix_string) && $brow = we::analyze($suffixes))
 			{
 				$requested_suffixes[$brow] = true;
-				// !! CSS file suffixes can do what hasBrowser() strings do, except for the following:
+				// !! CSS file suffixes can do what we::is() strings do, except for the following:
 				// - No negative statements (e.g. '!chrome')
 				// - No logical AND statements (e.g. 'chrome && ios')
 				// If you need to use these, you should use @if and @is commands inside the CSS file.
-				if ($brow != $context['browser']['agent'] . $context['browser']['version'] && $brow != $context['browser']['os'] . $context['browser']['os_version'])
+				if ($brow != we::$browser['agent'] . we::$browser['version'] && $brow != we::$browser['os'] . we::$browser['os_version'])
 					$ignore_versions[$brow] = true;
 			}
+
 			$suffixes_to_keep = array_intersect_key($suffixes, $requested_suffixes);
 
 			// If we find a local suffix in the filename, only process it if it's at the final level.
@@ -381,7 +382,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
+	$ext = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
 
 	// Don't add the flow control keywords to the final URL. If you add a local/global override
 	// and decide to remove it later, simply reupload other CSS files or empty your cache.
@@ -389,10 +390,10 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 
 	// We need to cache different versions for different browsers, even if we don't have overrides available.
 	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
-	$found_suffixes[$context['browser']['agent'] . $context['browser']['version']] = true;
+	$found_suffixes[we::$browser['agent'] . we::$browser['version']] = true;
 
 	// Make sure to only keep 'webkit' if we have no other browser name on record.
-	if ($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit')
+	if (we::is('webkit') && we::$browser['agent'] != 'webkit')
 		unset($found_suffixes['webkit']);
 
 	// Build the target folder from our skin's folder names and main file name. We don't need to show 'common-index-sections-extra-custom' in the main filename, though!
@@ -469,12 +470,12 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 	$id = array_filter(array_merge(
 		array($context['enabled_plugins'][$plugin_name]),
 		$basefiles,
-		array_diff($context['css_suffixes'], array($context['browser']['is_webkit'] && $context['browser']['agent'] != 'webkit' ? 'webkit' : '')),
+		array_diff($context['css_suffixes'], array(we::is('webkit') && we::$browser['agent'] != 'webkit' ? 'webkit' : '')),
 		isset($context['user']) && $context['user']['language'] !== 'english' ? (array) $context['user']['language'] : array()
 	));
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-	$ext = $can_gzip ? ($context['browser']['agent'] == 'safari' ? '.cgz' : '.css.gz') : '.css';
+	$ext = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
 
 	// Cache final file and retrieve its name.
 	$final_script = $boardurl . '/css/' . wedge_cache_css_files('', $id, $latest_date, $files, $can_gzip, $ext, array('$plugindir' => $context['plugins_url'][$plugin_name]));
@@ -589,13 +590,13 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	);
 
 	// rgba to rgb conversion for IE 6/7/8/9
-	if ($context['browser']['is_ie'])
+	if (we::is('ie'))
 		$plugins[] = new wess_rgba();
 
 	// No need to start the Base64 plugin if we can't gzip the result or the browser can't see it...
 	// (Probably should use more specific browser sniffing.)
 	// Note that this is called last, mostly to avoid conflicts with the semicolon character.
-	if ($gzip && !$context['browser']['is_ie6'] && !$context['browser']['is_ie7'])
+	if ($gzip && !we::is('ie6,ie7'))
 		$plugins[] = new wess_base64($folder);
 
 	// Default CSS variables (paths are set relative to the cache folder)
@@ -636,7 +637,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
 	// Please note that it isn't currently used by Wedge itself, but you can use it to provide both prefixed and standard versions of a tag that isn't
 	// already taken into account by the wess_prefixes() function (otherwise you only need to provide the unprefixed version.)
-	$prefix = $context['browser']['is_opera'] ? '-o-' : ($context['browser']['is_webkit'] ? '-webkit-' : ($context['browser']['is_gecko'] ? '-moz-' : ($context['browser']['is_ie'] ? '-ms-' : '')));
+	$prefix = we::is('opera') ? '-o-' : (we::is('webkit') ? '-webkit-' : (we::is('gecko') ? '-moz-' : (we::is('ie') ? '-ms-' : '')));
 
 	// Just like comments, we're going to preserve content tags.
 	$i = 0;
@@ -956,12 +957,12 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
  */
 function wedge_cache_smileys($set, $smileys)
 {
-	global $cssdir, $context, $settings, $browser, $boardurl;
+	global $cssdir, $context, $settings, $boardurl;
 
 	$final = '';
 	$path = $settings['smileys_dir'] . '/' . $set . '/';
 	$url  = '..' . str_replace($boardurl, '', $settings['smileys_url']) . '/' . $set . '/';
-	$extra = $browser['agent'] === 'ie' && $browser['version'] < 8 ? '-ie' : '';
+	$extra = we::is('ie6,ie7') ? '-ie' : '';
 	updateSettings(array('smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . $extra . '-' . $set => $context['smiley_now']));
 
 	// Delete all remaining cached versions, if any (e.g. *.cgz for Safari.)
@@ -1131,14 +1132,14 @@ function wedge_get_skin_options()
 
 		if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
 			foreach ($matches as $match)
-				if (!empty($match[3]) && (empty($match[2]) || hasBrowser($match[2])))
+				if (!empty($match[3]) && (empty($match[2]) || we::is($match[2])))
 					$context['skin_replace'][trim($match[3], "\x00..\x1F")] = array(trim($match[4], "\x00..\x1F"), !empty($match[1]));
 
 		if (strpos($set, '</css>') !== false && preg_match_all('~<css(?:\s+for="([^"]+)")?(?:\s+include="([^"]+)")?\s*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</css>~s', $set, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[3]) && (empty($match[1]) || hasBrowser($match[1])))
+				if (!empty($match[3]) && (empty($match[1]) || we::is($match[1])))
 					add_css(rtrim($match[3], "\t"));
 				if (!empty($match[2]))
 				{
@@ -1156,7 +1157,7 @@ function wedge_get_skin_options()
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[1]) && !hasBrowser($match[1]))
+				if (!empty($match[1]) && !we::is($match[1]))
 					continue;
 
 				if (!empty($match[2]))
@@ -1177,7 +1178,7 @@ function wedge_get_skin_options()
 		{
 			foreach ($matches as $match)
 			{
-				if (!empty($match[2]) && !hasBrowser($match[2]))
+				if (!empty($match[2]) && !we::is($match[2]))
 					continue;
 				$context['macros'][$match[1]] = array(
 					'has_if' => strpos($match[3], '<if:') !== false,

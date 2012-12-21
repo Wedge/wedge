@@ -154,7 +154,7 @@ function template_html_before()
 	<meta charset="utf-8">';
 
 	// Our alltime favorites don't really like HTML5...
-	if ($context['browser']['is_ie8down'])
+	if (we::is('ie8down'))
 		echo '
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>';
 
@@ -304,7 +304,7 @@ function template_random_news()
 		return;
 
 	echo '
-			<h2>', $txt['news'], $context['browser']['is_ie6'] || $context['browser']['is_ie7'] ? ' > ' : '', '</h2>
+			<h2>', $txt['news'], we::is('ie6,ie7') ? ' > ' : '', '</h2>
 			<p>', $context['random_news_line'], '</p>';
 }
 
@@ -561,7 +561,7 @@ function template_body_after()
 	// If user has loaded at least a page in the current session,
 	// assume their script files are cached and run them in the header.
 	// IE 6-8 should always put it below because they're too slow anyway.
-	if (!$context['browser']['is_ie8down'] && isset($_SESSION['js_loaded']))
+	if (!we::is('ie8down') && isset($_SESSION['js_loaded']))
 	{
 		$context['header'] .= theme_base_js(1);
 		echo '
@@ -626,7 +626,7 @@ function template_linktree($position = 'top', $force_show = false)
 	// If linktree is empty, just return - also allow an override.
 	if (!empty($context['linktree']) && ($linksize = count($context['linktree'])) !== 1 && (empty($context['dont_default_linktree']) || $force_show))
 	{
-		$needs_fix = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
+		$needs_fix = we::is('ie6,ie7');
 
 		if ($position === 'bottom')
 			echo '

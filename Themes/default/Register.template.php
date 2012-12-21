@@ -412,7 +412,7 @@ function template_verification_sound()
 	<div class="popuptext center">
 		<audio src="', $context['verification_sound_href'], '" controls id="audio">';
 
-	if ($context['browser']['is_ie'])
+	if (we::is('ie'))
 		echo '
 			<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
 				<param name="AutoStart" value="1">

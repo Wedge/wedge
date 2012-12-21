@@ -2636,7 +2636,7 @@ function aeva_showThumbnail($data)
 				($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $i . ($type == 'preview' ? '' : ';preview')
 				. ($amSettings['use_zoom'] ? '" class="zoom">' : '">') : '')
 				. '<img src="' . $scripturl . '?action=media;sa=media;in=' . $i
-				. ($type == 'full' && !$context['browser']['possibly_robot'] ? ';v'
+				. ($type == 'full' && !we::$browser['possibly_robot'] ? ';v'
 				: ($type == 'preview' || ($width > $amSettings['max_thumb_width']) ? ';preview' : ';thumb')) . '"' . $my_width . ' class="aext">'
 				. ($show_bigger ? '</a>' : '')
 				. ($no_zoom ? '' : '<div class="zoom-overlay"><div class="aelink"><a href="' . $scripturl . '?action=media;sa=item;in=' . $i . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>');
@@ -3558,7 +3558,7 @@ function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 	if (empty($_GET['action']) || $_GET['action'] != 'media')
 		add_css_file('media', true);
 
-	if ((empty($_GET['action']) || $_GET['action'] != 'media') && (($context['browser']['is_firefox'] && $pfx = 'moz') || ($context['browser']['is_safari'] && $pfx = 'webkit')))
+	if ((empty($_GET['action']) || $_GET['action'] != 'media') && ((we::is('firefox') && $pfx = 'moz') || (we::is('safari') && $pfx = 'webkit')))
 		add_css('
 		.pics td { -' . $pfx . '-border-radius: 5px; }
 		.aeva_rounded { -' . $pfx . '-border-radius: 5px; }');

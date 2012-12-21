@@ -779,12 +779,12 @@ function Post2()
 	$_POST['icon'] = !empty($attachIDs) && $_POST['icon'] == 'xx' ? 'clip' : (isset($_POST['icon']) ? $_POST['icon'] : 'xx');
 
 	// Magical device-dependent icons.
-	if ($_POST['icon'] == 'xx' && $context['browser']['is_mobile'])
+	if ($_POST['icon'] == 'xx' && we::$browser['is_mobile'])
 	{
 		$_POST['icon'] = 'wireless'; // Ye olde mobile icon...
-		if ($context['browser']['is_ios'])
-			$_POST['icon'] = strpos($context['browser']['ua'], 'iPad') === false ? 'iphone' : 'tablet';
-		elseif ($context['browser']['is_android'])
+		if (we::is('ios'))
+			$_POST['icon'] = strpos(we::$ua, 'iPad') === false ? 'iphone' : 'tablet';
+		elseif (we::is('android'))
 			$_POST['icon'] = 'android';
 	}
 
@@ -943,9 +943,9 @@ function Post2()
 
 	// Return to post if the mod is on.
 	if (isset($_REQUEST['msg']) && !empty($_REQUEST['goback']))
-		redirectexit('topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'], $context['browser']['is_ie']);
+		redirectexit('topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'], we::is('ie'));
 	elseif (!empty($_REQUEST['goback']))
-		redirectexit('topic=' . $topic . '.new#new', $context['browser']['is_ie']);
+		redirectexit('topic=' . $topic . '.new#new', we::is('ie'));
 	// Dut-dut-duh-duh-DUH-duh-dut-duh-duh!  *dances to the Final Fantasy Fanfare...*
 	else
 		redirectexit('board=' . $board . '.0');

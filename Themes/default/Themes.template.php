@@ -712,7 +712,7 @@ function template_edit_style()
 			{
 			');
 
-	if ($context['browser']['is_ie'])
+	if (we::is('ie'))
 		add_js('
 				for (var j = 0, sheets = frames["css_preview_box"].document.styleSheets; j < sheets.length; j++)
 				{
@@ -779,7 +779,7 @@ function template_edit_style()
 				', $txt['theme_edit_no_save'], ': ', $context['allow_save_filename'], '<br>';
 
 	echo '
-				<textarea name="entire_file" cols="80" rows="20" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '; font-family: monospace; margin-top: 1ex; white-space: pre">', $context['entire_file'], '</textarea><br>
+				<textarea name="entire_file" cols="80" rows="20" style="', we::is('ie8') ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '; font-family: monospace; margin-top: 1ex; white-space: pre">', $context['entire_file'], '</textarea><br>
 				<div class="right" style="margin: 4px 5% 0">
 					<input type="submit" name="save" value="', $txt['theme_edit_save'], '"', $context['allow_save'] ? '' : ' disabled', ' style="margin-top: 1ex" class="save">
 					<input type="button" value="', $txt['themeadmin_edit_preview'], '" onclick="refreshPreview(false);">

@@ -264,11 +264,9 @@ function wedge_main()
 	// Load the current user's permissions.
 	loadPermissions();
 
+	// Load the current theme. Note that ?theme=1 will also work, may be used for guest theming.
 	// Attachments don't require the entire theme to be loaded.
-	if ($action === 'dlattach' && (!empty($settings['allow_guestAccess']) && $user_info['is_guest']))
-		detectBrowser();
-	// Load the current theme.  (note that ?theme=1 will also work, may be used for guest theming.)
-	else
+	if ($action !== 'dlattach' || empty($settings['allow_guestAccess']) || !$user_info['is_guest'])
 		loadTheme();
 
 	// Check if the user should be disallowed access.

@@ -229,7 +229,7 @@ function template_thought()
 			. ' <span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $th['privacy'] . '"'
 			. (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
 			. ($user_info['id'] == $uid || $user_info['is_admin'] ? ' data-self' : '')
-			. ($context['browser']['is_android'] || $context['browser']['is_ios'] ? ' onclick="return true;"' : '') . '><span>' . $thought . '</span></span></div>';
+			. (we::is('android,ios') ? ' onclick="return true;"' : '') . '><span>' . $thought . '</span></span></div>';
 	}
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>

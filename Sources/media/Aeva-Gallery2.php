@@ -2717,7 +2717,7 @@ function aeva_massDownloadSend()
 
 	// Get the headers....
 	header('Pragma: ');
-	if (!$context['browser']['is_gecko'])
+	if (!we::is('gecko'))
 		header('Content-Transfer-Encoding: binary');
 	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 525600 * 60) . ' GMT');
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($path)) . ' GMT');
@@ -2726,14 +2726,14 @@ function aeva_massDownloadSend()
 	header('Content-Encoding: none');
 	header('Connection: close');
 	header('ETag: ' . md5_file($path));
-	header('Content-Type: application/octet' . ($context['browser']['is_ie'] || $context['browser']['is_opera'] ? '' : '-') . 'stream');
+	header('Content-Type: application/octet' . (we::is('ie,opera') ? '' : '-') . 'stream');
 
 	$filename = aeva_entities2utf($filename);
 
 	$att = 'Content-Disposition: attachment; filename';
-	if ($context['browser']['is_ie8down'])
+	if (we::is('ie8down'))
 		header($att . '="' . urlencode($filename) . '"');
-	elseif ($context['browser']['is_safari'])
+	elseif (we::is('safari'))
 		header($att . '="' . $filename . '"');
 	else
 		header($att . '*=UTF-8\'\'' . rawurlencode($filename));

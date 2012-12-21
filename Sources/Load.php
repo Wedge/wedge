@@ -185,6 +185,11 @@ function loadUserSettings()
 {
 	global $settings, $user_settings, $cookiename, $user_info, $language, $db_prefix, $boardurl;
 
+	// First, start by initializing the system object.
+	// Ultimately, all user info should be moved there.
+	loadSource('Class-System');
+	we::getInstance();
+
 	$id_member = 0;
 
 	// Check first the hook, then the cookie, and last the session.
@@ -372,11 +377,10 @@ function loadUserSettings()
 		$user_settings['transparency'] = we_resetTransparency($user_settings['id_attach'], $filename, $user_settings['filename']) ? 'transparent' : 'opaque';
 	}
 
+	// Get mobile status.
 	if (!isset($_SESSION['is_mobile']))
-	{
-		loadSource('Class-MoDe');
-		$_SESSION['is_mobile'] = weMoDe::isMobile();
-	}
+		$_SESSION['is_mobile'] = we::is_mobile();
+
 	$user_info['is_mobile'] = $_SESSION['is_mobile'];
 
 	// Set up the $user_info array.
@@ -1572,211 +1576,6 @@ function we_resetTransparency($id_attach, $path, $real_name)
 }
 
 /**
- * Attempts to detect the browser, including version, needed for browser specific fixes and behaviours, and populates $context['browser'] with the findings.
- *
- * In all cases, general branch as well as major version is detected for, meaning that not only would Internet Explorer 8 be detected, so would Internet Explorer generically. This also sets flags for general emulation behavior later on, plus handling some types of robot.
- *
- * Current browsers detected via $browser['agent']:
- * - Opera
- * - Firefox
- * - Chrome
- * - Safari
- * - Webkit (used in Safari, Chrome, Android stock browser...)
- * - Gecko engine (used in Firefox and compatible)
- * - Internet Explorer (plus tests for IE6 and above)
- *
- * Current OSes detected via $browser['os']:
- * - iOS (Safari Mobile is the only browser engine allowed on iPhone, iPod, iPad etc.)
- * - Android
- * - Windows (and versions equal to or above XP)
- * - More generic mobile devices also available through $browser['is_mobile']
- */
-function detectBrowser()
-{
-	global $context, $browser, $user_info;
-
-	// The following determines the user agent (browser) as best it can.
-	$browser['ua'] = $ua = $_SERVER['HTTP_USER_AGENT'];
-	$browser['is_opera'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false;
-
-	// Detect Webkit and related
-	$browser['is_webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
-	$browser['is_chrome'] = $is_webkit && (strpos($ua, 'Chrome') !== false || strpos($ua, 'CriOS') !== false);
-	$browser['is_safari'] = $is_webkit && !$browser['is_chrome'] && strpos($ua, 'Safari') !== false;
-
-	// Detecting broader mobile browsers. Make sure you rely on skin.xml's <mobile> setting in priority.
-	$browser['is_mobile'] = !empty($user_info['is_mobile']);
-
-	// Detect Firefox versions
-	$browser['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
-	$browser['is_firefox'] = strpos($ua, 'Gecko/') !== false;				// Firefox says "Gecko/20xx", not "like Gecko"
-
-	// Internet Explorer is often "emulated".
-	$browser['is_ie'] = $is_ie = !$browser['is_opera'] && !$browser['is_gecko'] && strpos($ua, 'MSIE') !== false;
-
-	// Retrieve the version number, as a floating point.
-	// Chrome for iOS uses the Safari Mobile string and replaces Version with CriOS.
-	preg_match('~' . (
-			$browser['is_opera'] || $browser['is_safari'] ? 'version[/ ]' :
-			($browser['is_firefox'] ? 'firefox/' :
-			($browser['is_ie'] ? 'msie ' :
-			($browser['is_chrome'] ? 'c(?:hrome|rios)/' :
-			'applewebkit/')))
-		) . '([\d.]+)~i', $ua, $ver)
-	|| preg_match('~(?:version|opera)[/ ]([\d.]+)~i', $ua, $ver);
-	$ver = isset($ver[1]) ? (float) $ver[1] : 0;
-
-	// Reduce to first significant sub-version (if any), e.g. v2.01 => 2, v2.50.3 => 2.5
-	$browser['version'] = floor($ver * 10) / 10;
-
-	$browser['is_ie8down'] = $is_ie && $ver <= 8;
-	for ($i = 6; $i <= 10; $i++)
-		$browser['is_ie' . $i] = $is_ie && $ver == $i;
-
-	// Store our browser name... Start with specific browsers, end with generic engines.
-	foreach (array('opera', 'chrome', 'firefox', 'ie', 'safari', 'webkit', 'gecko', '') as $agent)
-	{
-		$browser['agent'] = $agent;
-		if (!$agent || $browser['is_' . $agent])
-			break;
-	}
-
-	// Determine current OS and version if it can turn out to be useful; currently
-	// Windows XP and above, or iOS 4 and above, or Android 2 and above.
-	// !! Should we add BlackBerry, Firefox OS and others..?
-	$browser['is_windows'] = strpos($ua, 'Windows ') !== false;
-	$browser['is_android'] = strpos($ua, 'Android') !== false;
-	$browser['is_ios'] = $is_webkit && strpos($ua, '(iP') !== false;
-	if ($browser['is_windows'])
-	{
-		if (preg_match('~Windows(?: NT)? (\d+\.\d+)~', $ua, $ver))
-			$os_ver = max(5.1, (float) $ver[1]);
-		// Fallback, just to be sure.
-		else
-			foreach (array('8' => 6.2, '7' => 6.1, 'Vista' => 6, 'XP' => 5.1) as $key => $os_ver)
-				if (strpos($ua, 'Windows ' . $key) !== false)
-					break;
-	}
-	elseif ($browser['is_android'] && preg_match('~Android(?: (\d+\.\d))?~', $ua, $ver))
-		$os_ver = max(2, (float) $ver[1]);
-	elseif ($browser['is_ios'] && preg_match('~ OS (\d+(?:_\d))~', $ua, $ver))
-		$os_ver = max(3, (float) str_replace('_', '.', $ver[1]));
-
-	$browser['os'] = '';
-	foreach (array('windows', 'android', 'ios') as $os)
-		if ($browser['is_' . $os])
-			$browser['os'] = $os;
-
-	// !! Note that rounding to an integer (instead of the first significant sub-version)
-	// could probably help reduce the number of cached files by a large margin. Opinions?
-	$browser['os_version'] = isset($os_ver) ? floor($os_ver * 10) / 10 : '';
-
-	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
-	$browser['possibly_robot'] = !empty($user_info['possibly_robot']);
-
-	// Robots shouldn't be logging in or registering. So, they aren't a bot. Better to be wrong than sorry (or people won't be able to log in!), anyway.
-	if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register'))) || empty($user_info['is_guest']))
-		$browser['possibly_robot'] = false;
-
-	// A small reference to the usual place...
-	$context['browser'] =& $browser;
-
-	// And we'll also let you modify the browser array ASAP.
-	call_hook('detect_browser');
-}
-
-/**
- * Analyzes the given array keys (or comma-separated list), and tries to determine if it encompasses the current browser version.
- * Can deal with relatively complex strings. e.g., "firefox, !mobile && ie[-7]" means "if browser is Firefox, or is a desktop version of IE 6 or IE 7".
- * Returns the string that was recognized as the browser, or false if nothing was found.
- */
-function hasBrowser($strings)
-{
-	global $browser;
-
-	if (!is_array($strings))
-		$strings = array_flip(array_map('trim', explode(',', $strings)));
-
-	$a = $browser['agent'];
-	$o = $browser['os'];
-	$bv = $browser['version'];
-	$ov = $browser['os_version'];
-
-	// A quick browser test.
-	if (isset($strings[$a])) return $a;											// Example match: ie (any version of the browser.)
-	if (isset($strings[$a . $bv])) return $a . $bv;								// ie7 (only)
-	if (isset($strings[$a . '[' . $bv . ']'])) return $a . '[' . $bv . ']';		// ie[7] (same as above)
-	if (isset($strings[$a . '[-' . $bv . ']'])) return $a . '[-' . $bv . ']';	// ie[-7] (up to version 7)
-	if (isset($strings[$a . '[' . $bv . '-]'])) return $a . '[' . $bv . '-]';	// ie[7-] (version 7 and above)
-
-	// A quick OS test.
-	if (isset($strings[$o])) return $o;											// Example match: windows (any version of the OS.)
-	if (isset($strings[$o . $ov])) return $o . $ov;								// windows6.1 (only Windows 7)
-	if (isset($strings[$o . '[' . $ov . ']'])) return $o . '[' . $ov . ']';		// windows[6.1] (same as above)
-	if (isset($strings[$o . '[-' . $ov . ']'])) return $o . '[-' . $ov . ']';	// windows[-6.1] (up to Windows 7)
-	if (isset($strings[$o . '[' . $ov . '-]'])) return $o . '[' . $ov . '-]';	// windows[6.1-] (Windows 7 and above)
-
-	$alength = strlen($a) + 1;
-	$olength = strlen($o) + 1;
-
-	// Okay, so maybe we're looking for a wider range?
-	foreach ($strings as $string => $dummy)
-	{
-		$and = strpos($string, '&'); // Is there a && or & in the query? Meaning all parts of this one should return true.
-		if ($and !== false)
-		{
-			$test_all = true;
-			foreach (array_map('trim', preg_split('~&+~', $string)) as $finger)
-				$test_all &= hasBrowser($finger) !== false;
-			if ($test_all)
-				return $string;
-			continue;
-		}
-
-		$bracket = strpos($string, '['); // Is there a version request?
-		$real_browser = $bracket === false ? $string : substr($string, 0, $bracket);
-
-		// First, negative tests.
-		if ($string[0] === '!')
-		{
-			$is_os_test = $browser['os'] == substr($real_browser, 1);
-			if (empty($browser['is_' . substr($real_browser, 1)]))
-				return $string;
-			if ($bracket === false)
-				continue;
-			$split = explode('-', trim(substr($string, $is_os_test ? $olength : $alength, -1), ' ]'));
-			$v = $is_os_test ? $ov : $bv;
-			if (isset($split[1]))
-			{
-				if (empty($split[0]) && $v <= $split[1]) continue;	// !ie[-8] (isn't version 8 or earlier)
-				if (empty($split[1]) && $v >= $split[0]) continue;	// !ie[6-] (isn't version 6 or later)
-				if ($v >= $split[0] && $v <= $split[1]) continue;	// !ie[6-8] (isn't version 6, 7 or 8)
-			}
-			elseif ($v == $split[0]) continue;						// !ie[8] or !ie[8.0], FWIW...
-			return $string;
-		}
-
-		// And now, positive tests.
-		if (empty($browser['is_' . $real_browser]))
-			continue;
-		if ($bracket === false)
-			return $string;
-		$is_os_test = $browser['os'] == $real_browser;
-		$split = explode('-', trim(substr($string, $is_os_test ? $olength : $alength, -1), ' ]'));
-		$v = $is_os_test ? $ov : $bv;
-		if (isset($split[1]))
-		{
-			if (empty($split[0]) && $v <= $split[1]) return $string;	// ie[-8] (version 8 or earlier)
-			if (empty($split[1]) && $v >= $split[0]) return $string;	// ie[6-] (version 6 or later)
-			if ($v >= $split[0] && $v <= $split[1]) return $string;		// ie[6-8] (version 6, 7 or 8)
-		}
-		elseif ($v == $split[0]) return $string;						// ie[8] or ie[8.0], FWIW...
-	}
-
-	return false;
-}
-
-/**
  * Load all the details of a theme, given its ID.
  *
  * - Identify the theme to be loaded, from parameter or an external source: theme parameter in the URL, previously theme parameter in the URL and now in session, the user's preference, a board specific theme, and lastly the forum's default theme.
@@ -2106,11 +1905,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// A bug in some versions of IIS under CGI (older ones) makes cookie setting not work with Location: headers.
 	$context['server']['needs_login_fix'] = $context['server']['is_cgi'] && $context['server']['is_iis'];
 
-	// Detect the browser. This is separated out because it's also used in attachment downloads.
-	detectBrowser();
-
 	// Add support for media queries to IE 6-8. Don't wanna waste time on other browsers.
-	if ($context['browser']['is_ie8down'])
+	if (we::is('ie8down'))
 		add_js_file('scripts/respond.js');
 
 	// Set the top level linktree up
@@ -2171,7 +1967,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 			foreach ($theme['macros'] as $name => $contents)
 			{
 				if (is_array($contents))
-					$contents = ($version = hasBrowser($contents)) !== false ? $contents[$version] : (isset($contents['else']) ? $contents['else'] : '{body}');
+					$contents = ($version = we::analyze($contents)) !== false ? $contents[$version] : (isset($contents['else']) ? $contents['else'] : '{body}');
 
 				$context['macros'][$name] = array(
 					'has_if' => strpos($contents, '<if:') !== false,
@@ -2225,16 +2021,16 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// CSS suffixes are used for cached CSS filenames.
 	// Add Webkit fixes -- there are so many popular browsers based on it.
-	if ($context['browser']['is_webkit'] && $context['browser']['agent'] !== 'webkit')
+	if (we::is('webkit') && we::$browser['agent'] !== 'webkit')
 		$context['css_suffixes'][] = 'webkit';
 
 	// Add any potential browser-based fixes.
-	if ($context['browser']['agent'])
-		$context['css_suffixes'][] = $context['browser']['agent'] . $context['browser']['version'];
+	if (isset(we::$browser['agent']))
+		$context['css_suffixes'][] = we::$browser['agent'] . we::$browser['version'];
 
 	// Add any potential OS-based fixes.
-	if ($context['browser']['os'])
-		$context['css_suffixes'][] = $context['browser']['os'] . $context['browser']['os_version'];
+	if (isset(we::$browser['os']))
+		$context['css_suffixes'][] = we::$browser['os'] . we::$browser['os_version'];
 
 	// RTL languages require an additional stylesheet.
 	if ($context['right_to_left'])
@@ -2277,7 +2073,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	if ((!empty($settings['mail_next_send']) && $settings['mail_next_send'] < $time && empty($settings['mail_queue_use_cron'])) || empty($settings['next_task_time']) || $settings['next_task_time'] < $time)
 	{
 		$is_task = empty($settings['next_task_time']) || $settings['next_task_time'] < $time;
-		if ($context['browser']['possibly_robot'])
+		if (we::$browser['possibly_robot'])
 		{
 			//!!! Maybe move this somewhere better?!
 			loadSource('ScheduledTasks');

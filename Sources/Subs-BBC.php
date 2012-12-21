@@ -210,7 +210,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	{
 		// It's likely this will change if the message is modified.
 		$cache_key = 'parse:' . $cache_id . '-' . md5(md5($message) . '-' . $smileys . (empty($disabled) ? '' : implode(',', array_keys($disabled)))
-					. serialize($context['browser']) . $txt['lang_locale'] . $user_info['time_offset'] . $user_info['time_format']);
+					. serialize(we::$browser) . $txt['lang_locale'] . $user_info['time_offset'] . $user_info['time_format']);
 
 		if (($temp = cache_get_data($cache_key, 240)) != null)
 			return $temp;
@@ -1154,11 +1154,11 @@ function parsesmileys(&$message)
 
 		$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 		$context['smiley_gzip'] = $can_gzip;
-		$context['smiley_ext'] = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
-		$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . $context['browser']['agent'] . '-' . $user_info['smiley_set'];
+		$context['smiley_ext'] = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
+		$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . we::$browser['agent'] . '-' . $user_info['smiley_set'];
 		$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
 
-		if (!file_exists($cssdir . '/smileys' . ($context['browser']['agent'] == 'ie' && $context['browser']['version'] < 8 ? '-ie' : '') . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
+		if (!file_exists($cssdir . '/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
 		{
 			// We're only going to cache the smileys that show up on the post editor by default.
 			// The reason is to help save bandwidth by only storing whatever is most likely to be used.
@@ -1192,7 +1192,7 @@ function replace_smileys($match)
 
 			$smiley_css_done = true;
 			$context['header'] .= '
-	<link rel="stylesheet" href="' . $boardurl . '/css/smileys' . ($context['browser']['agent'] == 'ie' && $context['browser']['version'] < 8 ? '-ie' : '') . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
+	<link rel="stylesheet" href="' . $boardurl . '/css/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
 		}
 		return $smileyPregReplace[$match[1]];
 	}

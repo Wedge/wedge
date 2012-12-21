@@ -338,7 +338,7 @@ function template_modify_board()
 						<dfn>', $txt['mboards_description_desc'], '</dfn>
 					</dt>
 					<dd>
-						<textarea name="desc" rows="6" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%', '">', $context['board']['description'], '</textarea>
+						<textarea name="desc" rows="6" style="', we::is('ie8') ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%', '">', $context['board']['description'], '</textarea>
 					</dd>
 					<dt>
 						<strong>', $txt['permission_profile'], ':</strong>
@@ -469,7 +469,7 @@ function template_modify_board()
 						<br class="clear"><br>
 						<div id="offlimits_cont"', !empty($context['view_enter_same']) ? ' style="display: none"' : '', '>
 							<strong>', $txt['mboards_offlimits_msg'], '</strong>
-							<textarea name="offlimits_msg" rows="6" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%', '">', $context['board']['offlimits_msg'], '</textarea>
+							<textarea name="offlimits_msg" rows="6" style="', we::is('ie8') ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%', '">', $context['board']['offlimits_msg'], '</textarea>
 							<br>
 						</div>
 					</dd>';

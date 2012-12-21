@@ -307,7 +307,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		</div>' : $output;
 
 			case 'video/quicktime':
-				if ($context['browser']['is_ie'])
+				if (we::is('ie'))
 					$output .= '
 		<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" codebase="http://www.apple.com/qtactivex/qtplugin.cab" width="' . $width . '" height="' . ($height + 15) . '">
 			<param name="src" value="' . $galurl . 'sa=media;in=' . $id_file . ';v">
@@ -320,7 +320,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 			<embed src="' . $galurl . 'sa=media;in=' . $id_file . ';v" width="' . $width . '" height="' . ($height + 15) . '" type="' . $mime . '"
 				pluginspage="http://www.apple.com/quicktime/download/" controller="true" autoplay="false" loop="false" wmode="transparent">';
 
-				if ($context['browser']['is_ie'])
+				if (we::is('ie'))
 					$output .='
 		</object>';
 
@@ -339,7 +339,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 		if (!isset($class_id))
 			$class_id = 'CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95';
 
-		if ($context['browser']['is_ie'])
+		if (we::is('ie'))
 			$output .= '
 		<object classid="' . $class_id . '" width="' . $width . '" height="' . $height . '">
 			<param name="wmode" value="transparent">
@@ -354,7 +354,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 			<embed src="' . $galurl . 'sa=media;in=' . $id_file . ';v' . (isset($upcook) ? $upcook : '')
 			. '" width="' . $width . '" height="' . ($height+42) . '" type="' . $mime . '" controller="true" autoplay="false" autostart="0" loop="false" wmode="transparent">';
 
-		if ($context['browser']['is_ie'])
+		if (we::is('ie'))
 			$output .= '
 		</object>';
 	}

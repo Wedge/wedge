@@ -182,7 +182,7 @@ class wedit
 		$text = preg_replace('~</p>\s*(?!<)~i', '</p><br>', $text);
 
 		// Safari/webkit wraps lines in Wysiwyg in <div>'s.
-		if ($context['browser']['is_webkit'])
+		if (we::is('webkit'))
 			$text = preg_replace(array('~<div(?:\s(?:[^<>]*?))?\>~i', '</div>'), array('<br>', ''), $text);
 
 		// If there's a trailing break get rid of it - Firefox tends to add one.
@@ -2432,7 +2432,7 @@ class wedit
 			echo '
 				<div id="smileyBox_', $this->id, '"></div>';
 
-		if ($context['browser']['is_ie'])
+		if (we::is('ie'))
 			add_js('
 	$("#', $this->id, '").bind("select click keyup change", function () { this.caretPos = document.selection.createRange().duplicate(); });');
 
@@ -2440,7 +2440,7 @@ class wedit
 		echo '
 				<div class="writer">
 					<div>
-						<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', $context['browser']['is_ie8'] ? '600' : $this->columns,
+						<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', we::is('ie8') ? '600' : $this->columns,
 						'" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, $has_error ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
 					</div>
 					<div id="', $this->id, '_resizer" style="width: ', $this->width, '" class="hide richedit_resize"></div>
@@ -2450,10 +2450,10 @@ class wedit
 		// Smileys
 		if ((!empty($this->smileys['postform']) || !empty($this->smileys['popup'])) && !$this->disable_smiley_box)
 		{
-			$extra = $context['browser']['is_ie'] && $context['browser']['version'] < 8 ? '-ie' : '';
+			$extra = we::is('ie6,ie7') ? '-ie' : '';
 			$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 			$context['smiley_gzip'] = $can_gzip;
-			$context['smiley_ext'] = $can_gzip ? ($context['browser']['is_safari'] ? '.cgz' : '.css.gz') : '.css';
+			$context['smiley_ext'] = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
 			$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . $extra . '-' . $user_info['smiley_set'];
 			$dummy = '';
 			$max = 0;
@@ -2500,7 +2500,7 @@ class wedit
 			add_js('
 		},
 		sSmileyRowTemplate: ' . JavaScriptEscape('<div>%smileyRow%</div>') . ',
-		sSmileyTemplate: ' . ($context['browser']['is_ie'] ? JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"><img src="')
+		sSmileyTemplate: ' . (we::is('ie') ? JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"><img src="')
 			. ' + we_theme_url + \'/images/blank.gif\' + ' . JavaScriptEscape('" class="%smileySource%" /></div>')
 			: JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"></div>')) . ',
 		sSmileyBoxTemplate: ' . JavaScriptEscape('<div class="inline-block">%smileyRows%<div class="more"></div></div> <div class="inline-block">%moreSmileys%</div>') . ',
@@ -2586,7 +2586,7 @@ class wedit
 
 			add_js('
 		],
-		sButtonTemplate: ' . ($context['browser']['is_ie'] ? JavaScriptEscape(
+		sButtonTemplate: ' . (we::is('ie') ? JavaScriptEscape(
 			'<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%">
 				<img id="%buttonId%" src="') . ' + we_theme_url + \'/images/blank.gif\' + '
 			. JavaScriptEscape('" align="bottom" width="23" height="22" alt="%buttonDescription%" title="%buttonDescription%" /></div></div>') : JavaScriptEscape(

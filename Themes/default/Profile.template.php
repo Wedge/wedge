@@ -17,7 +17,7 @@ function template_profile_top()
 	global $context;
 
 	// Prevent Chrome from auto completing fields when viewing/editing other members' profiles
-	if ($context['browser']['is_chrome'] && !$context['user']['is_owner'])
+	if (we::is('chrome') && !$context['user']['is_owner'])
 		add_js('
 	$(\'input[type="text"], input[type="password"]\').attr("autocomplete", "off");');
 
@@ -1550,7 +1550,7 @@ function template_groupMembership()
 				</we:cat>
 				<div class="roundframe">
 					', $txt['request_group_membership_desc'], ':
-					<textarea name="reason" rows="4" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%', '"></textarea>
+					<textarea name="reason" rows="4" style="', we::is('ie8') ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%', '"></textarea>
 					<div class="right" style="margin: 0.5em 0.5% 0">
 						<input type="hidden" name="gid" value="', $context['group_request']['id'], '">
 						<input type="submit" name="req" value="', $txt['submit_request'], '" class="submit">

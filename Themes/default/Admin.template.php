@@ -613,7 +613,7 @@ function template_not_done()
 		echo '
 			<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex">
 				<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative">
-					<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['continue_percent'], '%</div>
+					<div style="padding-top: ', we::is('webkit') ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['continue_percent'], '%</div>
 					<div style="width: ', $context['continue_percent'], '%; height: 12pt; z-index: 1; background-color: red">&nbsp;</div>
 				</div>
 			</div>';
@@ -623,7 +623,7 @@ function template_not_done()
 			<div style="padding-left: 20%; padding-right: 20%; margin-top: 1ex">
 				<span class="smalltext">', $context['substep_title'], '</span>
 				<div style="font-size: 8pt; height: 12pt; border: 1px solid black; background-color: white; padding: 1px; position: relative">
-					<div style="padding-top: ', $context['browser']['is_webkit'] ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['substep_continue_percent'], '%</div>
+					<div style="padding-top: ', we::is('webkit') ? '2pt' : '1pt', '; width: 100%; z-index: 2; color: black; position: absolute; text-align: center; font-weight: bold">', $context['substep_continue_percent'], '%</div>
 					<div style="width: ', $context['substep_continue_percent'], '%; height: 12pt; z-index: 1; background-color: blue">&nbsp;</div>
 				</div>
 			</div>';
@@ -1451,7 +1451,7 @@ function template_add_language()
 
 	echo '
 				</fieldset>
-				<div class="right">', $context['browser']['is_ie'] ? '
+				<div class="right">', we::is('ie') ? '
 					<input type="text" name="ie_fix" class="hide"> ' : '', '
 					<input type="submit" name="we_add_sub" value="', $txt['search'], '" class="submit">
 				</div>
@@ -1799,11 +1799,11 @@ function template_modify_language_entries()
 					</dd>
 					<dt>
 						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
-						<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $cached['value'], '</textarea>
+						<textarea name="entry[', $cached['key'], ']" cols="40" rows="', $cached['rows'] < 2 ? 2 : $cached['rows'], '" style="', we::is('ie8') ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $cached['value'], '</textarea>
 					</dt>
 					<dd>
 						<input type="hidden" name="comp[', $entry['key'], ']" value="', $entry['value'], '">
-						<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $entry['value'], '</textarea>
+						<textarea name="entry[', $entry['key'], ']" cols="40" rows="', $entry['rows'] < 2 ? 2 : $entry['rows'], '" style="', we::is('ie8') ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $entry['value'], '</textarea>
 					</dd>';
 			$cached = array();
 		}
@@ -1818,7 +1818,7 @@ function template_modify_language_entries()
 					</dd>
 					<dt>
 						<input type="hidden" name="comp[', $cached['key'], ']" value="', $cached['value'], '">
-						<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="', $context['browser']['is_ie8'] ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $cached['value'], '</textarea>
+						<textarea name="entry[', $cached['key'], ']" cols="40" rows="2" style="', we::is('ie8') ? 'width: 635px; max-width: 96%; min-width: 96%' : 'width: 96%', '">', $cached['value'], '</textarea>
 					</dt>
 					<dd>
 					</dd>';

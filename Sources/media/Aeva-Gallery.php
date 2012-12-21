@@ -1232,14 +1232,14 @@ function aeva_viewItem()
 		'aeva_item_init',
 		'aeva_item_prevnext',
 		'aeva_item_wrap_begin',
-		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ios'] || (!empty($context['skin_options']['sidebar']) && $context['skin_options']['sidebar'] != 'right') ? '' : 'aeva_item_details',
+		we::is('ie6,ie7,ios') || (!empty($context['skin_options']['sidebar']) && $context['skin_options']['sidebar'] != 'right') ? '' : 'aeva_item_details',
 		'aeva_item_main',
-		$context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ios'] || empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] == 'right' ? '' : 'aeva_item_details',
+		we::is('ie6,ie7,ios') || empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] == 'right' ? '' : 'aeva_item_details',
 		'aeva_item_wrap_end',
 		'aeva_item_actions',
 		'aeva_item_comments',
 	));
-	if ($context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ios'])
+	if (we::is('ie6,ie7,ios'))
 		wetem::add('sidebar', 'aeva_item_details');
 }
 
@@ -2423,7 +2423,7 @@ function aeva_getMedia()
 
 	// Send it
 	header('Pragma: ');
-	if (!$context['browser']['is_gecko'])
+	if (!we::is('gecko'))
 		header('Content-Transfer-Encoding: binary');
 	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 525600 * 60) . ' GMT');
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($path)) . ' GMT');
@@ -2446,14 +2446,14 @@ function aeva_getMedia()
 	{
 		header('Connection: close');
 		header('ETag: ' . md5_file($path));
-		header('Content-Type: application/octet' . ($context['browser']['is_ie'] || $context['browser']['is_opera'] ? '' : '-') . 'stream');
+		header('Content-Type: application/octet' . (we::is('ie,opera') ? '' : '-') . 'stream');
 
 		$filename = aeva_entities2utf($filename);
 
 		$att = 'Content-Disposition: attachment; filename';
-		if ($context['browser']['is_ie8down'])
+		if (we::is('ie8down'))
 			header($att . '="' . urlencode($filename) . '"');
-		elseif ($context['browser']['is_safari'])
+		elseif (we::is('safari'))
 			header($att . '="' . $filename . '"');
 		else
 			header($att . '*=UTF-8\'\'' . rawurlencode($filename));

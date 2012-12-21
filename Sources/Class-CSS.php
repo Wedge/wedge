@@ -371,7 +371,7 @@ class wess_var extends wess
 				else
 				{
 					$ls = explode(',', strtolower($matches[2][$i]));
-					if (array_intersect($ls, $context['css_suffixes']) || hasBrowser(array_flip($ls)))
+					if (array_intersect($ls, $context['css_suffixes']) || we::analyze(array_flip($ls)))
 						$css_vars[$matches[1][$i]] = rtrim($matches[4][$i], '; ');
 				}
 			}
@@ -467,7 +467,7 @@ class wess_if extends wess
 					continue;
 				}
 
-				if (hasBrowser($match) || ($this->test_vars && $this->test($match)))
+				if (we::is($match) || ($this->test_vars && $this->test($match)))
 				{
 					if ($matches[2][$i][0] == '\'' || $matches[2][$i][0] == '"')
 						$matches[2][$i] = substr($matches[2][$i], 1, -1);
@@ -518,7 +518,7 @@ class wess_if extends wess
 					}
 
 					// Browser constant test.
-					if (empty($match) || hasBrowser($match))
+					if (empty($match) || we::is($match))
 						break;
 
 					// Very, very basic variable test. Please bear with me...
@@ -543,28 +543,26 @@ class wess_color extends wess
 	// The angle parameter is optional. You can either use a direction (to left...), or the angle of the destination (0deg = from bottom to top)
 	protected static function gradient_background($input)
 	{
-		global $browser;
-
 		$bg1 = $input[2];
 		$bg2 = empty($input[3]) ? $bg1 : $input[3];
 		$dir = empty($input[4]) ? '180deg' : $input[4];
 
 		// IE 6, 7 and 8 will need a filter to apply the transparency effect, except for IE9. Also, IE8 can do without hasLayout.
-		if ($browser['is_ie8down'] || ($browser['is_ie9'] && $bg1 != $bg2))
+		if (we::is('ie8down') || (we::is('ie9') && $bg1 != $bg2))
 		{
 			if (preg_match('~^#[0-9a-f]{3}$~i', $bg1))
 				$bg1 = '#' . $bg1[1] . $bg1[1] . $bg1[2] . $bg1[2] . $bg1[3] . $bg1[3];
 			if (preg_match('~^#[0-9a-f]{3}$~i', $bg2))
 				$bg2 = '#' . $bg2[1] . $bg2[1] . $bg2[2] . $bg2[2] . $bg2[3] . $bg2[3];
-			return $input[1] . 'background: none' . $input[1] . ($browser['is_ie6'] || $browser['is_ie7'] ? 'zoom: 1' . $input[1] : '') .
+			return $input[1] . 'background: none' . $input[1] . (we::is('ie6,ie7') ? 'zoom: 1' . $input[1] : '') .
 				'filter:progid:DXImageTransform.Microsoft.Gradient(startColorStr=' . $bg1 . ',endColorStr=' . $bg2 . ($dir == 'left' ? ',GradientType=1' : '') . ')';
 		}
 
 		// Better than nothing...
-		if ($browser['is_ie'] && $browser['version'] < 10)
+		if (we::is('ie') && we::$browser['version'] < 10)
 			return $input[1] . 'background-color: ' . $bg1;
 
-		return $input[1] . 'background: ' . sprintf($browser['is_safari'] && $browser['version'] < 5.1 ?
+		return $input[1] . 'background: ' . sprintf(we::is('safari') && we::$browser['version'] < 5.1 ?
 			'-webkit-gradient(linear, 0%% 0%%, ' . ($dir == 'left' ? '100%% 0%%' : '0%% 100%%') . ', from(%1$s), to(%2$s))' :
 			'linear-gradient(' . ($dir == '180deg' ? '' : $dir . ', ') . '%1$s, %2$s)',
 			$bg1,
@@ -575,8 +573,6 @@ class wess_color extends wess
 	// Now, go with the actual color parsing.
 	function process(&$css)
 	{
-		global $browser;
-
 		$nodupes = array();
 
 		// No need for a recursive regex, as we shouldn't have more than one level of nested brackets...
@@ -740,8 +736,6 @@ class wess_nesting extends wess
 
 	function process(&$css)
 	{
-		global $browser;
-
 		/******************************************************************************
 		 Process nested selectors
 		 ******************************************************************************/
@@ -953,7 +947,7 @@ class wess_nesting extends wess
 			{
 				// A quick hack to turn direct selectors into normal selectors when in IE6. This is because it ignores direct selectors, as well as
 				// any selectors declared alongside them. If you still want these selectors to inherit something, do it manually in *.ie6.css!
-				if ($browser['is_ie6'] && strpos($node['selector'], '>') !== false)
+				if (we::is('ie6') && strpos($node['selector'], '>') !== false)
 					$node['selector'] = ' ';
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
 				preg_match_all('~' . $selector_regex . '\h+extends\h+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
@@ -1376,9 +1370,7 @@ class wess_rgba extends wess
 
 	function process(&$css)
 	{
-		global $browser;
-
-		$css = preg_replace_callback('~(colorstr=)' . ($browser['is_ie8down'] ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i', 'wess_rgba::rgba2rgb', $css);
+		$css = preg_replace_callback('~(colorstr=)' . (we::is('ie8down') ? '?' : '') . '((?:rgb|hsl)a?\([^()]*\))~i', 'wess_rgba::rgba2rgb', $css);
 	}
 }
 
@@ -1394,13 +1386,13 @@ class wess_prefixes extends wess
 	 */
 	private static function fix_rules($matches)
 	{
-		global $browser, $prefix;
+		global $prefix;
 
 		// Some shortcuts...
 		$unchanged = $matches[0];
 		$prefixed = $prefix . $unchanged;
 		$both = $prefixed . $unchanged;
-		$b = $browser;
+		$b = we::$browser;
 		$v = $b['version'];
 		$ov = $b['os_version'];
 		list ($ie, $ie8down, $ie9, $ie10, $opera, $firefox, $safari, $chrome, $ios, $android, $webkit) = array(
@@ -1513,10 +1505,10 @@ class wess_prefixes extends wess
 	 */
 	private static function fix_values($matches)
 	{
-		global $browser, $prefix;
+		global $prefix;
 
 		$unchanged = $matches[0];
-		$b = $browser;
+		$b = we::$browser;
 		$v = $b['version'];
 
 		// IE6/7/8/9 don't support gradients (screw 'em!), IE10 final supports them unprefixed, and Firefox 16+ dropped the prefix.
@@ -1551,7 +1543,7 @@ class wess_prefixes extends wess
 	// the same soon enough. (As of Firefox 18 and Chrome 24, they need prefixes everywhere, and Firefox requires a setting to be enabled.)
 	function process(&$css)
 	{
-		global $browser, $prefix;
+		global $prefix;
 
 		// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
 		$rules = array(
@@ -1583,7 +1575,7 @@ class wess_prefixes extends wess
 		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wess_prefixes::fix_values', $css);
 
 		// And now for some 'easy' rules that don't need our regex machine.
-		$b = $browser;
+		$b = we::$browser;
 		$v = $b['version'];
 
 		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.

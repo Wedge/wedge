@@ -1978,13 +1978,14 @@ function template_install_above()
 	$jsdir = $boarddir . '/js';
 	$sourcedir = $boarddir . '/Sources';
 	require_once($sourcedir . '/Load.php');
-	// !!! I dunno if we have to load all of these, but better safe than sorry.
+	// !!! Dunno if we need to load all of these. Better safe than sorry.
 	loadSource(array(
-		'QueryString', 'Subs', 'Errors',
-		'Security', 'Subs-Auth', 'Class-String',
+		'QueryString', 'Subs',
+		'Errors', 'Security', 'Subs-Auth',
+		'Class-String', 'Class-System',
 	));
 	westr::getInstance();
-	detectBrowser();
+	we::getInstance();
 
 	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 	$host = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
@@ -1997,7 +1998,7 @@ function template_install_above()
 	$theme['default_theme_url'] = $boardurl . '/Themes/default';
 	$theme['images_url'] = $boardurl . '/Themes/default/images';
 	$context['css_folders'] = array('skins');
-	$context['css_suffixes'] = array($context['browser']['agent']);
+	$context['css_suffixes'] = array(we::$browser['agent']);
 	$settings['minify'] = 'packer';
 
 	echo '<!DOCTYPE html>

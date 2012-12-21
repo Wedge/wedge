@@ -295,7 +295,7 @@ function template_postform_after()
 		</form>';
 
 	// When using Go Back due to fatal_error, allow the form to be re-submitted with changes, through a non-standard DOM event.
-	if ($context['browser']['is_firefox'])
+	if (we::is('firefox'))
 		add_js('
 	addEventListener("pageshow", function () { document.forms.postmodify.message.readOnly = false; }, false);');
 
