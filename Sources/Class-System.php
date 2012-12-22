@@ -28,7 +28,7 @@ class we
 		return false;
 	}
 
-	static function getInstance()
+	public static function getInstance()
 	{
 		// Quero ergo sum
 		if (self::$instance == null)
@@ -55,7 +55,7 @@ class we
 	 * - Populate we::$user with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, theme information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level, URL and user groups)
 	 * - Establish board access rights based as an SQL clause (based on user groups) in we::$user['query_see_board'], and a subset of this to include ignore boards preferences into we::$user['query_wanna_see_board'].
 	 */
-	function init_user()
+	public function init_user()
 	{
 		global $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl;
 
@@ -461,7 +461,7 @@ class we
 	 * - Windows (and versions equal to or above XP)
 	 * - More generic mobile devices also available through we::is_mobile()
 	 */
-	static function init_browser()
+	public static function init_browser()
 	{
 		global $context;
 
@@ -566,7 +566,7 @@ class we
 	}
 
 	// Mobile detection code is based on an early version of Mobile_Detect (MIT license).
-	static function is_mobile()
+	public static function is_mobile()
 	{
 		if (empty($_SERVER['HTTP_USER_AGENT']))
 			return false;
@@ -598,7 +598,7 @@ class we
 	/**
 	 * Alias to the analyzer. Send in a short, simple string.
 	 */
-	static function is($string)
+	public static function is($string)
 	{
 		if ($string === (array) $string)
 			return self::analyze($string);
@@ -618,7 +618,7 @@ class we
 	 * Can deal with relatively complex strings. e.g., "firefox, !mobile && ie[-7]" means "if browser is Firefox, or is a desktop version of IE 6 or IE 7".
 	 * Returns the string that was recognized as the browser, or false if nothing was found.
 	 */
-	function analyze($strings)
+	public static function analyze($strings)
 	{
 		if (!is_array($strings))
 			$strings = array_flip(array_map('trim', explode(',', $strings)));

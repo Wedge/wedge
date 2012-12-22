@@ -42,6 +42,7 @@ require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
+require_once($sourcedir . '/Class-System.php');
 
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
@@ -224,7 +225,7 @@ function wedge_main()
 		exit;
 
 	// Load the user's cookie (or set as guest) and load their settings.
-	loadUserSettings();
+	we::getInstance();
 
 	// Get rid of ?PHPSESSID for robots.
 	if (we::$user['possibly_robot'] && strpos(we::$user['url'], 'PHPSESSID=') !== false)

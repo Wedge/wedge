@@ -60,6 +60,7 @@ require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
+require_once($sourcedir . '/Class-System.php');
 
 // Initate the database connection and define some database functions to use.
 loadDatabase();
@@ -123,7 +124,7 @@ unset($board, $topic);
 $context['linktree'] = array();
 
 // Load the user and their cookie, as well as their settings.
-loadUserSettings();
+we::getInstance();
 
 // Load the current user's permissions....
 loadPermissions();

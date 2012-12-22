@@ -167,14 +167,6 @@ function can_shell_exec()
 	return $result = (is_callable('shell_exec') && !@ini_get('safe_mode') && !in_array('shell_exec', $disable_functions));
 }
 
-// Initialize the system object.
-// It contains all user and browser-related information.
-function loadUserSettings()
-{
-	loadSource('Class-System');
-	we::getInstance();
-}
-
 /**
  * Validate whether we are dealing with a board, and whether the current user has access to that board.
  *
