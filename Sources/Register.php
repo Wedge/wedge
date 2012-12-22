@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 // Begin the registration process.
 function Register($reg_errors = array())
 {
-	global $txt, $boarddir, $context, $theme, $settings, $user_info;
+	global $txt, $boarddir, $context, $theme, $settings;
 	global $language, $scripturl, $cur_profile;
 
 	// Is this an incoming AJAX check?
@@ -102,8 +102,8 @@ function Register($reg_errors = array())
 	if ($context['require_agreement'])
 	{
 		// Have we got a localized one?
-		if (file_exists($boarddir . '/agreement.' . $user_info['language'] . '.txt'))
-			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.' . $user_info['language'] . '.txt'), true, 'agreement_' . $user_info['language']);
+		if (file_exists($boarddir . '/agreement.' . we::$user['language'] . '.txt'))
+			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.' . we::$user['language'] . '.txt'), true, 'agreement_' . we::$user['language']);
 		elseif (file_exists($boarddir . '/agreement.txt'))
 			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.txt'), true, 'agreement');
 		else
@@ -149,7 +149,7 @@ function Register($reg_errors = array())
 		$context['user']['is_owner'] = true;
 
 		// Here, and here only, emulate the permissions the user would have to do this.
-		$user_info['permissions'] = array_merge($user_info['permissions'], array('profile_account_own', 'profile_extra_own'));
+		we::$user['permissions'] = array_merge(we::$user['permissions'], array('profile_account_own', 'profile_extra_own'));
 		$reg_fields = explode(',', $settings['registration_fields']);
 
 		// We might have had some submissions on this front - go check.
@@ -196,7 +196,7 @@ function Register($reg_errors = array())
 function Register2()
 {
 	global $scripturl, $txt, $settings, $context;
-	global $user_info, $options, $theme;
+	global $options, $theme;
 
 	// Start collecting together any errors.
 	$reg_errors = array();

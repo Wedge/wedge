@@ -24,20 +24,20 @@ if (!defined('WEDGE'))
  */
 function createWaveFile($word)
 {
-	global $theme, $user_info, $context;
+	global $theme, $context;
 
 	// Allow max 2 requests per 20 seconds.
-	if (($ip = cache_get_data('wave_file/' . $user_info['ip'], 20)) > 2 || ($ip2 = cache_get_data('wave_file/' . $user_info['ip2'], 20)) > 2)
+	if (($ip = cache_get_data('wave_file/' . we::$user['ip'], 20)) > 2 || ($ip2 = cache_get_data('wave_file/' . we::$user['ip2'], 20)) > 2)
 		exit(header('HTTP/1.1 400 Bad Request'));
-	cache_put_data('wave_file/' . $user_info['ip'], $ip ? $ip + 1 : 1, 20);
-	cache_put_data('wave_file/' . $user_info['ip2'], $ip2 ? $ip2 + 1 : 1, 20);
+	cache_put_data('wave_file/' . we::$user['ip'], $ip ? $ip + 1 : 1, 20);
+	cache_put_data('wave_file/' . we::$user['ip2'], $ip2 ? $ip2 + 1 : 1, 20);
 
 	// Fixate randomization for this word.
 	mt_srand(end(unpack('n', md5($word . session_id()))));
 
 	// Try to see if there's a sound font in the user's language.
-	if (file_exists($theme['default_theme_dir'] . '/fonts/sound/a.' . $user_info['language'] . '.wav'))
-		$sound_language = $user_info['language'];
+	if (file_exists($theme['default_theme_dir'] . '/fonts/sound/a.' . we::$user['language'] . '.wav'))
+		$sound_language = we::$user['language'];
 
 	// English should be there.
 	elseif (file_exists($theme['default_theme_dir'] . '/fonts/sound/a.english.wav'))

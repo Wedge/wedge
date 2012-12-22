@@ -61,7 +61,7 @@ function RemindMe()
 // Pick a reminder type.
 function RemindPick()
 {
-	global $context, $txt, $scripturl, $user_info, $webmaster_email, $language, $settings;
+	global $context, $txt, $scripturl, $webmaster_email, $language, $settings;
 
 	checkSession();
 
@@ -143,7 +143,7 @@ function RemindPick()
 		$replacements = array(
 			'REALNAME' => $row['real_name'],
 			'REMINDLINK' => $scripturl . '?action=reminder;sa=setpassword;u=' . $row['id_member'] . ';code=' . $password,
-			'IP' => format_ip($user_info['ip']),
+			'IP' => format_ip(we::$user['ip']),
 			'MEMBERNAME' => $row['member_name'],
 		);
 

@@ -147,7 +147,7 @@ function AnnouncementSelectMembergroup()
 function AnnouncementSend()
 {
 	global $topic, $board, $board_info, $context, $settings;
-	global $language, $scripturl, $txt, $user_info;
+	global $language, $scripturl, $txt;
 
 	checkSession();
 

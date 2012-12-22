@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 function Unread()
 {
 	global $board, $txt, $scripturl;
-	global $user_info, $context, $theme, $settings, $options;
+	global $context, $theme, $settings, $options;
 
 	// Guests can't have unread things, we don't know anything about them.
 	is_not_guest();

@@ -56,7 +56,7 @@ if (!defined('WEDGE'))
 // Who's online, and what are they doing?
 function Who()
 {
-	global $context, $scripturl, $user_info, $txt, $settings, $memberContext;
+	global $context, $scripturl, $txt, $settings, $memberContext;
 
 	// Permissions, permissions, permissions.
 	isAllowedTo('who_view');
@@ -273,7 +273,7 @@ function Who()
 
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $context, $txt, $user_info, $settings, $theme, $scripturl;
+	global $context, $txt, $settings, $theme, $scripturl;
 
 	if (!allowedTo('who_view'))
 		return array();

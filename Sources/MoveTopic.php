@@ -42,7 +42,7 @@ if (!defined('WEDGE'))
 // Move a topic.  Give the moderator a chance to post a reason.
 function MoveTopic()
 {
-	global $txt, $board, $topic, $user_info, $context, $language, $scripturl, $theme, $settings;
+	global $txt, $board, $topic, $context, $language, $scripturl, $theme, $settings;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -127,7 +127,7 @@ function MoveTopic()
 
 	$context['back_to_topic'] = isset($_REQUEST['goback']);
 
-	if ($user_info['language'] != $language)
+	if (we::$user['language'] != $language)
 	{
 		loadLanguage('ManageTopics', $language);
 		$temp1 = str_replace(array('{auto_board}', '{auto_topic}'), array($txt['movetopic_auto_board'], $txt['movetopic_auto_topic']), $txt['movetopic_default']);
@@ -154,7 +154,7 @@ function MoveTopic()
 function MoveTopic2()
 {
 	global $txt, $board, $topic, $scripturl, $settings, $context;
-	global $board, $language, $user_info;
+	global $board, $language;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -251,7 +251,7 @@ function MoveTopic2()
 				// Get a response prefix, but in the forum's default language.
 				if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
 				{
-					if ($language === $user_info['language'])
+					if ($language === we::$user['language'])
 						$context['response_prefix'] = $txt['response_prefix'];
 					else
 					{
@@ -293,7 +293,7 @@ function MoveTopic2()
 	if (isset($_POST['postRedirect']))
 	{
 		// Should be in the boardwide language.
-		if ($user_info['language'] != $language)
+		if (we::$user['language'] != $language)
 			loadLanguage('ManageTopics', $language);
 
 		$_POST['reason'] = westr::htmlspecialchars($_POST['reason'], ENT_QUOTES);
@@ -346,7 +346,7 @@ function MoveTopic2()
 	if (isset($_POST['sendPm']))
 	{
 		// Should be in the boardwide language.
-		if ($user_info['language'] != $language)
+		if (we::$user['language'] != $language)
 			loadLanguage('ManageTopics', $language);
 
 		// Make it basically safe but DO NOT preparse it! The PM system does that itself, not here.
@@ -430,7 +430,7 @@ function MoveTopic2()
 // Moves one or more topics to a specific board. (doesn't check permissions.)
 function moveTopics($topics, $toBoard)
 {
-	global $user_info, $settings;
+	global $settings;
 
 	// Empty array?
 	if (empty($topics))

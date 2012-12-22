@@ -57,7 +57,7 @@ class we
 	 */
 	function init_user()
 	{
-		global $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl, $user_info;
+		global $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl;
 
 		$id_member = 0;
 
@@ -439,8 +439,6 @@ class we
 		self::$user =& $user;
 		self::$is_admin =& $user['is_admin'];
 		self::$is_guest =& $user['is_guest'];
-
-		$user_info =& $user; // !! Temporary.
 	}
 
 	/**

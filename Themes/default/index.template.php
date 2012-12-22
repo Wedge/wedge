@@ -274,13 +274,13 @@ function template_search_box()
 
 function template_language_selector()
 {
-	global $context, $user_info;
+	global $context;
 
 	if (empty($context['languages']) || count($context['languages']) < 2)
 		return;
 
-	$qmark = strpos($user_info['url'], '?');
-	$lng = $qmark === false ? substr(strrchr($user_info['url'], '/'), 1) . '?' : substr($user_info['url'], strrpos(substr($user_info['url'], 0, $qmark), '/') + 1) . ';';
+	$qmark = strpos(we::$user['url'], '?');
+	$lng = $qmark === false ? substr(strrchr(we::$user['url'], '/'), 1) . '?' : substr(we::$user['url'], strrpos(substr(we::$user['url'], 0, $qmark), '/') + 1) . ';';
 	if (strpos($lng, 'language=') !== false)
 		$lng = preg_replace('~([;&?])language=[a-z]+[;&]~i', '$1', $lng);
 
@@ -332,7 +332,7 @@ function template_sidebar_wrap_before()
 
 function template_sidebar_before()
 {
-	global $txt, $context, $settings, $user_info;
+	global $txt, $context, $settings;
 
 	if ($context['user']['is_logged'] || !empty($context['show_login_bar']))
 		echo '
@@ -393,7 +393,7 @@ function template_sidebar_before()
 	oThought = new Thought({
 		aPrivacy: [[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
 		// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
-		in_array(20, $user_info['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]],
+		in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]],
 		sSubmit: "', $txt['form_submit'], '", sEdit: "', $txt['edit_thought'], '", sReply: "', $txt['reply'], '",
 		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
 		sLabelThought: ', JavaScriptEscape($txt['thought']), '
@@ -720,7 +720,7 @@ function template_menu()
 // The same footer area...
 function template_footer()
 {
-	global $context, $txt, $user_info, $theme, $boardurl;
+	global $context, $txt, $theme, $boardurl;
 
 	echo '
 	<div id="footer"><div class="frame">
@@ -733,7 +733,7 @@ function template_footer()
 
 	// Show the credit page (forum admin/mod team and credits), and a link to an HTML conformity checker, for geeks.
 	// If you want to use validator.nu instead, replace the w3.org link with:
-	// "http://validator.nu/?doc=', $user_info['url'], '"
+	// "http://validator.nu/?doc=', we::$user['url'], '"
 	// !! @worg: rev.txt, facebook link
 	$is_worg = $boardurl == 'http://wedge.org';
 	echo '

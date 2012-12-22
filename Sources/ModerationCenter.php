@@ -21,15 +21,15 @@ if (!defined('WEDGE'))
 // Entry point for the moderation center.
 function ModerationMain($dont_call = false)
 {
-	global $txt, $context, $scripturl, $settings, $user_info, $theme, $options;
+	global $txt, $context, $scripturl, $settings, $theme, $options;
 
 	// Don't run this twice... and don't conflict with the admin bar.
 	if (isset($context['admin_area']))
 		return;
 
-	$context['can_moderate_boards'] = $user_info['mod_cache']['bq'] != '0=1';
-	$context['can_moderate_groups'] = $user_info['mod_cache']['gq'] != '0=1';
-	$context['can_moderate_approvals'] = $settings['postmod_active'] && !empty($user_info['mod_cache']['ap']);
+	$context['can_moderate_boards'] = we::$user['mod_cache']['bq'] != '0=1';
+	$context['can_moderate_groups'] = we::$user['mod_cache']['gq'] != '0=1';
+	$context['can_moderate_approvals'] = $settings['postmod_active'] && !empty(we::$user['mod_cache']['ap']);
 
 	// Everyone using this area must be allowed here!
 	if (!$context['can_moderate_boards'] && !$context['can_moderate_groups'] && !$context['can_moderate_approvals'])
@@ -188,7 +188,7 @@ function ModerationMain($dont_call = false)
 // This function basically is the home page of the moderation center.
 function ModerationHome()
 {
-	global $txt, $context, $scripturl, $settings, $user_info, $user_settings;
+	global $txt, $context, $scripturl, $settings, $user_settings;
 
 	loadTemplate('ModerationCenter');
 
@@ -230,9 +230,9 @@ function ModerationHome()
 // Just prepares the time stuff for the Wedge latest news.
 function ModBlockLatestNews()
 {
-	global $context, $user_info;
+	global $context;
 
-	$context['time_format'] = urlencode($user_info['time_format']);
+	$context['time_format'] = urlencode(we::$user['time_format']);
 
 	// Return the template to use.
 	return 'latest_news';
@@ -282,7 +282,7 @@ function ModBlockWatchedUsers()
 // Show an area for the moderator to type into.
 function ModBlockNotes()
 {
-	global $context, $scripturl, $txt, $user_info;
+	global $context, $scripturl, $txt;
 
 	// Are we saving a note?
 	if (isset($_POST['makenote'], $_POST['new_note']))
@@ -301,7 +301,7 @@ function ModBlockNotes()
 					'body' => 'string', 'log_time' => 'int',
 				),
 				array(
-					we::$id, $user_info['name'], 'modnote', '', $_POST['new_note'], time(),
+					we::$id, we::$user['name'], 'modnote', '', $_POST['new_note'], time(),
 				),
 				array('id_comment')
 			);
@@ -406,12 +406,12 @@ function ModBlockNotes()
 // Show a list of the most recent reported posts.
 function ModBlockReportedPosts()
 {
-	global $context, $user_info, $scripturl;
+	global $context, $scripturl;
 
 	// Got the info already?
-	$cachekey = md5(serialize($user_info['mod_cache']['bq']));
+	$cachekey = md5(serialize(we::$user['mod_cache']['bq']));
 	$context['reported_posts'] = array();
-	if ($user_info['mod_cache']['bq'] == '0=1')
+	if (we::$user['mod_cache']['bq'] == '0=1')
 		return 'reported_posts_block';
 
 	if (($reported_posts = cache_get_data('reported_posts_' . $cachekey, 90)) === null)
@@ -423,7 +423,7 @@ function ModBlockReportedPosts()
 				IFNULL(mem.id_member, 0) AS id_author
 			FROM {db_prefix}log_reported AS lr
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lr.id_member)
-			WHERE' . ($user_info['mod_cache']['bq'] == '1=1' ? '' : ' lr.' . $user_info['mod_cache']['bq'] . ' AND ') . '
+			WHERE' . (we::$user['mod_cache']['bq'] == '1=1' ? '' : ' lr.' . we::$user['mod_cache']['bq'] . ' AND ') . '
 				lr.closed = {int:not_closed}
 				AND lr.ignore_all = {int:not_ignored}
 			ORDER BY lr.time_updated DESC
@@ -468,11 +468,11 @@ function ModBlockReportedPosts()
 // Show a list of all the group requests they can see.
 function ModBlockGroupRequests()
 {
-	global $context, $user_info, $scripturl;
+	global $context, $scripturl;
 
 	$context['group_requests'] = array();
 	// Make sure they can even moderate someone!
-	if ($user_info['mod_cache']['gq'] == '0=1')
+	if (we::$user['mod_cache']['gq'] == '0=1')
 		return 'group_requests_block';
 
 	// What requests are outstanding?
@@ -481,7 +481,7 @@ function ModBlockGroupRequests()
 		FROM {db_prefix}log_group_requests AS lgr
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = lgr.id_member)
 			INNER JOIN {db_prefix}membergroups AS mg ON (mg.id_group = lgr.id_group)
-		WHERE ' . ($user_info['mod_cache']['gq'] == '1=1' || $user_info['mod_cache']['gq'] == '0=1' ? $user_info['mod_cache']['gq'] : 'lgr.' . $user_info['mod_cache']['gq']) . '
+		WHERE ' . (we::$user['mod_cache']['gq'] == '1=1' || we::$user['mod_cache']['gq'] == '0=1' ? we::$user['mod_cache']['gq'] : 'lgr.' . we::$user['mod_cache']['gq']) . '
 		ORDER BY lgr.id_request DESC
 		LIMIT 10',
 		array(
@@ -515,7 +515,7 @@ function ModBlockGroupRequests()
 // Browse all the reported posts...
 function ReportedPosts()
 {
-	global $txt, $context, $scripturl, $settings, $user_info;
+	global $txt, $context, $scripturl, $settings;
 
 	loadTemplate('ModerationCenter');
 
@@ -526,7 +526,7 @@ function ReportedPosts()
 	);
 
 	// This comes under the umbrella of moderating posts.
-	if ($user_info['mod_cache']['bq'] == '0=1')
+	if (we::$user['mod_cache']['bq'] == '0=1')
 		isAllowedTo('moderate_forum');
 
 	// Are they wanting to view a particular report?
@@ -551,7 +551,7 @@ function ReportedPosts()
 			UPDATE {db_prefix}log_reported
 			SET ' . (isset($_GET['ignore']) ? 'ignore_all = {int:ignore_all}' : 'closed = {int:closed}') . '
 			WHERE id_report = {int:id_report}
-				AND ' . $user_info['mod_cache']['bq'],
+				AND ' . we::$user['mod_cache']['bq'],
 			array(
 				'ignore_all' => isset($_GET['ignore']) ? (int) $_GET['ignore'] : 0,
 				'closed' => isset($_GET['close']) ? (int) $_GET['close'] : 0,
@@ -578,7 +578,7 @@ function ReportedPosts()
 				UPDATE {db_prefix}log_reported
 				SET closed = {int:is_closed}
 				WHERE id_report IN ({array_int:report_list})
-					AND ' . $user_info['mod_cache']['bq'],
+					AND ' . we::$user['mod_cache']['bq'],
 				array(
 					'report_list' => $toClose,
 					'is_closed' => 1,
@@ -596,7 +596,7 @@ function ReportedPosts()
 		SELECT COUNT(*)
 		FROM {db_prefix}log_reported AS lr
 		WHERE lr.closed = {int:view_closed}
-			AND ' . ($user_info['mod_cache']['bq'] == '1=1' || $user_info['mod_cache']['bq'] == '0=1' ? $user_info['mod_cache']['bq'] : 'lr.' . $user_info['mod_cache']['bq']),
+			AND ' . (we::$user['mod_cache']['bq'] == '1=1' || we::$user['mod_cache']['bq'] == '0=1' ? we::$user['mod_cache']['bq'] : 'lr.' . we::$user['mod_cache']['bq']),
 		array(
 			'view_closed' => $context['view_closed'],
 		)
@@ -616,7 +616,7 @@ function ReportedPosts()
 		FROM {db_prefix}log_reported AS lr
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lr.id_member)
 		WHERE lr.closed = {int:view_closed}
-			AND ' . ($user_info['mod_cache']['bq'] == '1=1' || $user_info['mod_cache']['bq'] == '0=1' ? $user_info['mod_cache']['bq'] : 'lr.' . $user_info['mod_cache']['bq']) . '
+			AND ' . (we::$user['mod_cache']['bq'] == '1=1' || we::$user['mod_cache']['bq'] == '0=1' ? we::$user['mod_cache']['bq'] : 'lr.' . we::$user['mod_cache']['bq']) . '
 		ORDER BY lr.time_updated DESC
 		LIMIT ' . $context['start'] . ', 10',
 		array(
@@ -686,10 +686,10 @@ function ReportedPosts()
 //!!! As for most things in this file, this needs to be moved somewhere appropriate.
 function ModerateGroups()
 {
-	global $txt, $context, $scripturl, $settings, $user_info;
+	global $txt, $context, $scripturl, $settings;
 
 	// You need to be allowed to moderate groups...
-	if ($user_info['mod_cache']['gq'] == '0=1')
+	if (we::$user['mod_cache']['gq'] == '0=1')
 		isAllowedTo('manage_membergroups');
 
 	// Load the group templates.
@@ -712,9 +712,9 @@ function ModerateGroups()
 // How many open reports do we have?
 function recountOpenReports()
 {
-	global $user_info, $context;
+	global $context;
 
-	if (empty($user_info['mod_cache']))
+	if (empty(we::$user['mod_cache']))
 	{
 		loadSource('Subs-Auth');
 		rebuildModCache();
@@ -723,7 +723,7 @@ function recountOpenReports()
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_reported
-		WHERE ' . $user_info['mod_cache']['bq'] . '
+		WHERE ' . we::$user['mod_cache']['bq'] . '
 			AND closed = {int:not_closed}
 			AND ignore_all = {int:not_ignored}',
 		array(
@@ -745,7 +745,7 @@ function recountOpenReports()
 
 function ModReport()
 {
-	global $user_info, $context, $scripturl, $txt;
+	global $context, $scripturl, $txt;
 
 	// Have to at least give us something
 	if (empty($_REQUEST['report']))
@@ -762,7 +762,7 @@ function ModReport()
 		FROM {db_prefix}log_reported AS lr
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lr.id_member)
 		WHERE lr.id_report = {int:id_report}
-			AND ' . ($user_info['mod_cache']['bq'] == '1=1' || $user_info['mod_cache']['bq'] == '0=1' ? $user_info['mod_cache']['bq'] : 'lr.' . $user_info['mod_cache']['bq']) . '
+			AND ' . (we::$user['mod_cache']['bq'] == '1=1' || we::$user['mod_cache']['bq'] == '0=1' ? we::$user['mod_cache']['bq'] : 'lr.' . we::$user['mod_cache']['bq']) . '
 		LIMIT 1',
 		array(
 			'id_report' => $_REQUEST['report'],
@@ -794,7 +794,7 @@ function ModReport()
 					'id_notice' => 'int', 'body' => 'string', 'log_time' => 'int',
 				),
 				array(
-					we::$id, $user_info['name'], 'reportc', '',
+					we::$id, we::$user['name'], 'reportc', '',
 					$_REQUEST['report'], $newComment, time(),
 				),
 				array('id_comment')
@@ -1031,7 +1031,7 @@ function ShowNotice()
 // View watched users.
 function ViewWatchedUsers()
 {
-	global $settings, $context, $txt, $scripturl, $user_info;
+	global $settings, $context, $txt, $scripturl;
 
 	// Some important context!
 	$context['page_title'] = $txt['mc_watched_users_title'];
@@ -1257,7 +1257,7 @@ function list_getWatchedUserCount($approve_query)
 
 function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $dummy)
 {
-	global $txt, $scripturl, $settings, $user_info, $context;
+	global $txt, $scripturl, $settings, $context;
 
 	$request = wesql::query('
 		SELECT id_member, real_name, last_login, posts, warning
@@ -1292,7 +1292,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 		// First get the latest messages from these users.
 		$request = wesql::query('
 			SELECT m.id_member, MAX(m.id_msg) AS last_post_id
-			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
+			FROM {db_prefix}messages AS m' . (we::$user['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
 			WHERE m.id_member IN ({array_int:member_list})' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 				AND m.approved = {int:is_approved}') . '
@@ -1328,7 +1328,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 
 		$request = wesql::query('
 			SELECT MAX(m.poster_time) AS last_post, MAX(m.id_msg) AS last_post_id, m.id_member
-			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
+			FROM {db_prefix}messages AS m' . (we::$user['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
 			WHERE m.id_member IN ({array_int:member_list})' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 				AND m.approved = {int:is_approved}') . '
@@ -1351,7 +1351,7 @@ function list_getWatchedUsers($start, $items_per_page, $sort, $approve_query, $d
 
 function list_getWatchedUserPostsCount($approve_query)
 {
-	global $settings, $user_info;
+	global $settings;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
@@ -1373,7 +1373,7 @@ function list_getWatchedUserPostsCount($approve_query)
 
 function list_getWatchedUserPosts($start, $items_per_page, $sort, $approve_query, $delete_boards)
 {
-	global $txt, $scripturl, $settings, $user_info;
+	global $txt, $scripturl, $settings;
 
 	$request = wesql::query('
 		SELECT m.id_msg, m.id_topic, m.id_board, m.id_member, m.subject, m.body, m.poster_time,
@@ -1562,7 +1562,7 @@ function list_getWarningCount()
 
 function list_getWarnings($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $settings, $user_info;
+	global $txt, $scripturl, $settings;
 
 	$request = wesql::query('
 		SELECT IFNULL(mem.id_member, 0) AS id_member, IFNULL(mem.real_name, lc.member_name) AS member_name_col,
@@ -1598,7 +1598,7 @@ function list_getWarnings($start, $items_per_page, $sort)
 // Load all the warning templates.
 function ViewWarningTemplates()
 {
-	global $settings, $context, $txt, $scripturl, $user_info;
+	global $settings, $context, $txt, $scripturl;
 
 	// Submitting a new one?
 	if (isset($_POST['add']))
@@ -1741,7 +1741,7 @@ function ViewWarningTemplates()
 
 function list_getWarningTemplateCount()
 {
-	global $settings, $user_info;
+	global $settings;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
@@ -1762,7 +1762,7 @@ function list_getWarningTemplateCount()
 
 function list_getWarningTemplates($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $settings, $user_info;
+	global $txt, $scripturl, $settings;
 
 	$request = wesql::query('
 		SELECT lc.id_comment, IFNULL(mem.id_member, 0) AS id_member,
@@ -1799,7 +1799,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 // Edit a warning template.
 function ModifyWarningTemplate()
 {
-	global $context, $txt, $user_info;
+	global $context, $txt;
 
 	$context['id_template'] = isset($_REQUEST['tid']) ? (int) $_REQUEST['tid'] : 0;
 	$context['is_edit'] = $context['id_template'];
@@ -1913,7 +1913,7 @@ function ModifyWarningTemplate()
 					'recipient_name' => 'string-255', 'body' => 'string-65535', 'log_time' => 'int',
 				),
 				array(
-					we::$id, $user_info['name'], 'warntpl', $recipient_id,
+					we::$id, we::$user['name'], 'warntpl', $recipient_id,
 					$_POST['template_title'], $_POST['template_body'], time(),
 				),
 				array('id_comment')
@@ -1930,7 +1930,7 @@ function ModifyWarningTemplate()
 // Change moderation preferences.
 function ModerationSettings()
 {
-	global $context, $txt, $scripturl, $user_settings, $user_info;
+	global $context, $txt, $scripturl, $user_settings;
 
 	// Some useful context stuff.
 	loadTemplate('ModerationCenter');

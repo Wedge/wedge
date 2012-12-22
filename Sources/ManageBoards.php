@@ -365,7 +365,7 @@ function EditCategory2()
 //		- Silently make a default pretty board URL if the feature is disabled (we might need it later)
 function EditBoard()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $settings, $user_info;
+	global $txt, $context, $cat_tree, $boards, $boardList, $settings;
 
 	loadTemplate('ManageBoards');
 	loadSource('Subs-Boards');
@@ -388,7 +388,7 @@ function EditBoard()
 		$subdomains[] = ($subdo = substr($row[0], 0, strpos($row[0], '/'))) ? $subdo : $row[0];
 	wesql::free_result($request);
 	// !!! @todo: Should we allow users to create boards using their profile URL as root?
-	//	$subdomains[] = 'my.' . $_SERVER['HTTP_HOST'] . '/' . $user_info['username'];
+	//	$subdomains[] = 'my.' . $_SERVER['HTTP_HOST'] . '/' . we::$user['username'];
 	$subdomains = array_unique($subdomains);
 
 	// id_board must be a number....

@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Create a menu...
 function createMenu($menuData, $menuOptions = array())
 {
-	global $context, $theme, $options, $txt, $settings, $scripturl, $user_info, $options;
+	global $context, $theme, $options, $txt, $settings, $scripturl, $options;
 
 	// First are we toggling use of the side bar generally?
 	if (isset($_GET['togglebar']) && !we::$is_guest)

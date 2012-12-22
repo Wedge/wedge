@@ -44,7 +44,7 @@ if (!defined('WEDGE'))
 // The main admin handling function.
 function Admin()
 {
-	global $txt, $context, $scripturl, $settings, $user_info;
+	global $txt, $context, $scripturl, $settings;
 	global $theme, $options, $boardurl, $admin_areas;
 
 	// Load the language strings for use in the menu...
@@ -764,7 +764,7 @@ function Admin()
 // The main administration section.
 function AdminHome()
 {
-	global $txt, $scripturl, $context, $user_info, $boardurl, $settings;
+	global $txt, $scripturl, $context, $boardurl, $settings;
 
 	wetem::load('admin');
 	$context['page_title'] = $txt['admin_center'];

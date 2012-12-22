@@ -112,7 +112,7 @@ function ManageNews()
 // Let the administrator(s) edit the news.
 function EditNews()
 {
-	global $txt, $settings, $context, $user_info;
+	global $txt, $settings, $context;
 
 	loadSource('Class-Editor');
 
@@ -451,7 +451,7 @@ function ComposeMailing()
 function SendMailing($clean_only = false)
 {
 	global $txt, $context;
-	global $scripturl, $settings, $user_info;
+	global $scripturl, $settings;
 
 	// How many to send at once? Quantity depends on whether we are queueing or not.
 	$num_at_once = empty($settings['mail_queue']) ? 60 : 1000;

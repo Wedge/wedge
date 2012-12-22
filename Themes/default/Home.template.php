@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $user_info, $txt;
+	global $context, $txt;
 
 	if (!$context['home_show']['topics'])
 		return;
@@ -34,7 +34,7 @@ function template_main()
 	$naoboards = ssi_recentTopicTitles($n, null, null, 'naos');
 
 	$new_stuff = array();
-	if (!$user_info['is_guest'])
+	if (!we::$is_guest)
 		foreach ($naoboards as $post)
 			if ($post['is_new'])
 				$new_stuff[] = $post['topic'];
@@ -51,7 +51,7 @@ function template_main()
 					AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
 			GROUP BY m.id_topic',
 			array(
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 				'new_stuff' => $new_stuff
 			)
 		);
@@ -75,7 +75,7 @@ function template_main()
 				<td class="latestp2">
 					', $post['board']['name'], ' &gt; ';
 
-		if ($post['is_new'] && !$user_info['is_guest'])
+		if ($post['is_new'] && !we::$is_guest)
 			echo isset($nb_new[$post['topic']]) ? '<a href="' . $post['href'] . '" class="note">' . $nb_new[$post['topic']] . '</a> ' : '';
 
 		echo '<a href="', $post['href'], $safe ? '" style="color: ' . ($blo ? '#a62' : 'green') : '', '">', $post['subject'], '</a>
@@ -90,7 +90,7 @@ function template_main()
 
 function template_thoughts()
 {
-	global $context, $user_info, $txt, $theme;
+	global $context, $txt, $theme;
 
 	if (empty($context['thoughts']))
 		return;
@@ -114,7 +114,7 @@ function template_thoughts()
 
 	if (empty($context['skin_options']['mobile']))
 	{
-		if (!$user_info['is_guest'])
+		if (!we::$is_guest)
 			echo '
 			<tr id="new_thought" class="windowbg">
 				<td class="bc">%date%</td><td>%text%</td>
@@ -133,7 +133,7 @@ function template_thoughts()
 	}
 	else
 	{
-		if (!$user_info['is_guest'])
+		if (!we::$is_guest)
 			echo '
 			<tr id="new_thought" class="windowbg">
 				<td>%date%<br>%text%</td>

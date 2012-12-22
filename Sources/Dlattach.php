@@ -39,7 +39,7 @@ define('WEDGE_NO_LOG', 1);
  */
 function Dlattach()
 {
-	global $txt, $settings, $user_info, $scripturl, $context, $topic;
+	global $txt, $settings, $scripturl, $context, $topic;
 
 	// Some defaults that we need.
 	$context['no_last_modified'] = true;
@@ -96,7 +96,7 @@ function Dlattach()
 		isAllowedTo('approve_posts');
 
 	// Update the download counter (unless it's a thumbnail.)
-	if (!$user_info['possibly_robot'] && $attachment_type != 3)
+	if (!we::$user['possibly_robot'] && $attachment_type != 3)
 		wesql::query('
 			UPDATE LOW_PRIORITY {db_prefix}attachments
 			SET downloads = downloads + 1

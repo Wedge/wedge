@@ -27,7 +27,7 @@ define('WEDGE_NO_LOG', 1);
  */
 function ViewQuery()
 {
-	global $scripturl, $user_info, $theme, $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
+	global $scripturl, $theme, $context, $db_connection, $settings, $boarddir, $txt, $db_show_debug;
 
 	$show_debug = isset($db_show_debug) && $db_show_debug === true;
 	// We should have debug mode enabled, as well as something to display!

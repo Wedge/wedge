@@ -28,7 +28,7 @@ if (!defined('WEDGE'))
 // Perform the actual logging-in.
 function Login2()
 {
-	global $txt, $scripturl, $user_info, $user_settings;
+	global $txt, $scripturl, $user_settings;
 	global $cookiename, $maintenance, $settings, $context, $sc;
 
 	// Load cookie authentication stuff and subsidiary login stuff.

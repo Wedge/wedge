@@ -464,7 +464,7 @@ function template_ssi_below()
 
 function template_homepage_sample1($method = 'source')
 {
-	global $user_info, $boarddir;
+	global $boarddir;
 
 	$header = '<!DOCTYPE html>
 <html>

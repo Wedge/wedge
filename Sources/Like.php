@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 
 function Like()
 {
-	global $topic, $user_info, $context, $user_profile, $settings;
+	global $topic, $context, $user_profile, $settings;
 
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'view')
 		return DisplayLike();

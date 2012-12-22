@@ -270,19 +270,17 @@ function updateStats($type, $parameter1 = null, $parameter2 = null)
  */
 function updateMyData($data)
 {
-	global $user_info;
-
 	if (empty($data) || !is_array($data))
 		return;
 
 	foreach ($data as $key => $val)
-		$user_info['data'][$key] = $val;
+		we::$user['data'][$key] = $val;
 
 	// @todo: should we add a hook for individual variables in the data field?
 	updateMemberData(
 		we::$id,
 		array(
-			'data' => serialize($user_info['data'])
+			'data' => serialize(we::$user['data'])
 		)
 	);
 }
@@ -302,7 +300,7 @@ function updateMyData($data)
  */
 function updateMemberData($members, $data)
 {
-	global $settings, $user_info;
+	global $settings;
 
 	$parameters = array();
 	if (is_array($members))
@@ -344,7 +342,7 @@ function updateMemberData($members, $data)
 		{
 			// Fetch a list of member_names if necessary
 			if ((array) $members === (array) we::$id)
-				$member_names = array($user_info['username']);
+				$member_names = array(we::$user['username']);
 			else
 			{
 				$member_names = array();
@@ -644,12 +642,12 @@ function number_context($string, $number, $format_comma = true)
  */
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
-	global $context, $user_info, $txt, $settings;
+	global $context, $txt, $settings;
 	static $non_twelve_hour, $year_shortcut, $nowtime, $now;
 
 	// Offset the time.
 	if (!$offset_type)
-		$time = $log_time + ($user_info['time_offset'] + $settings['time_offset']) * 3600;
+		$time = $log_time + (we::$user['time_offset'] + $settings['time_offset']) * 3600;
 	// Just the forum offset?
 	else
 		$time = $log_time + ($offset_type == 'forum' ? $settings['time_offset'] * 3600 : 0);
@@ -658,7 +656,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if ($log_time < 0)
 		$log_time = 0;
 
-	$format =& $user_info['time_format'];
+	$format =& we::$user['time_format'];
 
 	// Today and Yesterday?
 	if ($show_today === true && $settings['todayMod'] >= 1)
@@ -721,7 +719,7 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if ($non_twelve_hour && strpos($str, '%p') !== false)
 		$str = str_replace('%p', strftime('%H', $time) < 12 ? 'am' : 'pm', $str);
 
-	if (empty($user_info['setlocale']))
+	if (empty(we::$user['setlocale']))
 	{
 		// Do-it-yourself time localization. Fun.
 		foreach (array('%a' => 'days_short', '%A' => 'days', '%b' => 'months_short', '%B' => 'months') as $token => $text_label)
@@ -786,14 +784,14 @@ function on_date($time, $upper = false)
  */
 function forum_time($use_user_offset = true, $timestamp = null)
 {
-	global $user_info, $settings;
+	global $settings;
 
 	if ($timestamp === null)
 		$timestamp = time();
 	elseif ($timestamp == 0)
 		return 0;
 
-	return $timestamp + ($settings['time_offset'] + ($use_user_offset ? $user_info['time_offset'] : 0)) * 3600;
+	return $timestamp + ($settings['time_offset'] + ($use_user_offset ? we::$user['time_offset'] : 0)) * 3600;
 }
 
 /**
@@ -848,7 +846,7 @@ function shorten_subject($subject, $len)
  */
 function writeLog($force = false)
 {
-	global $user_info, $user_settings, $context, $settings, $topic, $board;
+	global $user_settings, $context, $settings, $topic, $board;
 
 	// If we are showing who is viewing a topic, let's see if we are, and force an update if so - to make it accurate.
 	if (!empty($settings['display_who_viewing']) && ($topic || $board))
@@ -865,7 +863,7 @@ function writeLog($force = false)
 	}
 
 	// Are they a spider we should be tracking? Mode = 1 gets tracked on its spider check...
-	if (!empty($user_info['possibly_robot']) && !empty($settings['spider_mode']) && $settings['spider_mode'] > 1)
+	if (!empty(we::$user['possibly_robot']) && !empty($settings['spider_mode']) && $settings['spider_mode'] > 1)
 	{
 		loadSource('ManageSearchEngines');
 		logSpider();
@@ -893,7 +891,7 @@ function writeLog($force = false)
 		$serialized = '';
 
 	// Guests use 0, members use their session ID.
-	$session_id = we::$is_guest ? 'ip' . $user_info['ip'] : session_id();
+	$session_id = we::$is_guest ? 'ip' . we::$user['ip'] : session_id();
 
 	// Grab the last all-of-Wedge-specific log_online deletion time.
 	$do_delete = cache_get_data('log_online-update', 30) < time() - 30;
@@ -923,7 +921,7 @@ function writeLog($force = false)
 			WHERE session = {string:session}',
 			array(
 				'log_time' => time(),
-				'ip' => get_ip_identifier($user_info['ip']),
+				'ip' => get_ip_identifier(we::$user['ip']),
 				'url' => $serialized,
 				'session' => $session_id,
 			)
@@ -952,7 +950,7 @@ function writeLog($force = false)
 		wesql::insert($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
 			array('session' => 'string', 'id_member' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string'),
-			array($session_id, we::$id, empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), get_ip_identifier($user_info['ip']), $serialized),
+			array($session_id, we::$id, empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), get_ip_identifier(we::$user['ip']), $serialized),
 			array('session')
 		);
 	}
@@ -965,19 +963,19 @@ function writeLog($force = false)
 		$_SESSION['timeOnlineUpdated'] = time();
 
 	// Set their login time, if not already done within the last minute.
-	if (WEDGE != 'SSI' && !empty($user_info['last_login']) && $user_info['last_login'] < time() - 60)
+	if (WEDGE != 'SSI' && !empty(we::$user['last_login']) && we::$user['last_login'] < time() - 60)
 	{
 		// Don't count longer than 15 minutes.
 		if (time() - $_SESSION['timeOnlineUpdated'] > 60 * 15)
 			$_SESSION['timeOnlineUpdated'] = time();
 
 		$user_settings['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
-		updateMemberData(we::$id, array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP'], 'total_time_logged_in' => $user_settings['total_time_logged_in']));
+		updateMemberData(we::$id, array('last_login' => time(), 'member_ip' => we::$user['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP'], 'total_time_logged_in' => $user_settings['total_time_logged_in']));
 
 		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
 			cache_put_data('user_settings-' . we::$id, $user_settings, 60);
 
-		$user_info['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
+		we::$user['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
 		$_SESSION['timeOnlineUpdated'] = time();
 	}
 }
@@ -1061,7 +1059,7 @@ function redirectexit($setLocation = '', $refresh = false, $permanent = false)
  */
 function logAction($action, $extra = array(), $log_type = 'moderate')
 {
-	global $settings, $user_info;
+	global $settings;
 
 	$log_types = array(
 		'moderate' => 1,
@@ -1151,7 +1149,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 			'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
 		),
 		array(
-			time(), $log_types[$log_type], we::$id, get_ip_identifier($user_info['ip']), $action,
+			time(), $log_types[$log_type], we::$id, get_ip_identifier(we::$user['ip']), $action,
 			$board_id, $topic_id, $msg_id, serialize($extra),
 		),
 		array('id_action')
@@ -1229,7 +1227,7 @@ function trackStats($stats = array())
  */
 function spamProtection($error_type)
 {
-	global $settings, $txt, $user_info;
+	global $settings, $txt;
 
 	// Certain types take less/more time.
 	$timeOverrides = array(
@@ -1262,7 +1260,7 @@ function spamProtection($error_type)
 	wesql::insert('replace',
 		'{db_prefix}log_floodcontrol',
 		array('ip' => 'int', 'log_time' => 'int', 'log_type' => 'string'),
-		array(get_ip_identifier($user_info['ip']), time(), $error_type),
+		array(get_ip_identifier(we::$user['ip']), time(), $error_type),
 		array('ip', 'log_type')
 	);
 
@@ -1410,8 +1408,7 @@ function url_image_size($url)
  */
 function setupThemeContext($forceload = false)
 {
-	global $settings, $user_info, $scripturl, $context;
-	global $options, $txt, $maintenance, $user_settings;
+	global $settings, $scripturl, $context, $options, $txt, $maintenance, $user_settings;
 	static $loaded = false;
 
 	// Under SSI this function can be called more then once. That can cause some problems.
@@ -1436,15 +1433,15 @@ function setupThemeContext($forceload = false)
 
 	if (!we::$is_guest)
 	{
-		$context['user']['messages'] =& $user_info['messages'];
-		$context['user']['unread_messages'] =& $user_info['unread_messages'];
+		$context['user']['messages'] =& we::$user['messages'];
+		$context['user']['unread_messages'] =& we::$user['unread_messages'];
 
 		// Personal message popup...
-		if ($user_info['unread_messages'] > (isset($_SESSION['unread_messages']) ? $_SESSION['unread_messages'] : 0))
+		if (we::$user['unread_messages'] > (isset($_SESSION['unread_messages']) ? $_SESSION['unread_messages'] : 0))
 			$context['user']['popup_messages'] = true;
 		else
 			$context['user']['popup_messages'] = false;
-		$_SESSION['unread_messages'] = $user_info['unread_messages'];
+		$_SESSION['unread_messages'] = we::$user['unread_messages'];
 
 		if (allowedTo('moderate_forum'))
 			$context['unapproved_members'] = (!empty($settings['registration_method']) && $settings['registration_method'] == 2) || !empty($settings['approveAccountDeletion']) ? $settings['unapprovedMembers'] : 0;
@@ -1452,12 +1449,12 @@ function setupThemeContext($forceload = false)
 		$context['user']['avatar'] = array();
 
 		// Figure out the avatar... uploaded?
-		if ($user_info['avatar']['url'] == '' && !empty($user_info['avatar']['id_attach']))
-			$context['user']['avatar']['href'] = $user_info['avatar']['custom_dir'] ? $settings['custom_avatar_url'] . '/' . $user_info['avatar']['filename'] : $scripturl . '?action=dlattach;attach=' . $user_info['avatar']['id_attach'] . ';type=avatar';
+		if (we::$user['avatar']['url'] == '' && !empty(we::$user['avatar']['id_attach']))
+			$context['user']['avatar']['href'] = we::$user['avatar']['custom_dir'] ? $settings['custom_avatar_url'] . '/' . we::$user['avatar']['filename'] : $scripturl . '?action=dlattach;attach=' . we::$user['avatar']['id_attach'] . ';type=avatar';
 		// Full URL?
-		elseif (strpos($user_info['avatar']['url'], 'http://') === 0)
+		elseif (strpos(we::$user['avatar']['url'], 'http://') === 0)
 		{
-			$context['user']['avatar']['href'] = $user_info['avatar']['url'];
+			$context['user']['avatar']['href'] = we::$user['avatar']['url'];
 
 			if ($settings['avatar_action_too_large'] == 'option_html_resize' || $settings['avatar_action_too_large'] == 'option_js_resize')
 			{
@@ -1468,12 +1465,12 @@ function setupThemeContext($forceload = false)
 			}
 		}
 		// Gravatar?
-		elseif (strpos($user_info['avatar']['url'], 'gravatar://') === 0)
+		elseif (strpos(we::$user['avatar']['url'], 'gravatar://') === 0)
 		{
-			if ($user_info['avatar']['url'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
-				$context['user']['avatar']['href'] = get_gravatar_url($user_info['email']);
+			if (we::$user['avatar']['url'] === 'gravatar://' || empty($settings['gravatarAllowExtraEmail']))
+				$context['user']['avatar']['href'] = get_gravatar_url(we::$user['email']);
 			else
-				$context['user']['avatar']['href'] = get_gravatar_url(substr($user_info['avatar']['url'], 11));
+				$context['user']['avatar']['href'] = get_gravatar_url(substr(we::$user['avatar']['url'], 11));
 
 			if (!empty($settings['avatar_max_width_external']))
 				$context['user']['avatar']['width'] = $settings['avatar_max_width_external'];
@@ -1481,19 +1478,19 @@ function setupThemeContext($forceload = false)
 				$context['user']['avatar']['height'] = $settings['avatar_max_height_external'];
 		}
 		// Otherwise we assume it's server stored?
-		elseif ($user_info['avatar']['url'] != '')
-			$context['user']['avatar']['href'] = $settings['avatar_url'] . '/' . htmlspecialchars($user_info['avatar']['url']);
+		elseif (we::$user['avatar']['url'] != '')
+			$context['user']['avatar']['href'] = $settings['avatar_url'] . '/' . htmlspecialchars(we::$user['avatar']['url']);
 
-		$opaque = !empty($user_info['avatar']['id_attach']) && $user_info['avatar']['transparent'] ? '' : 'opaque ';
+		$opaque = !empty(we::$user['avatar']['id_attach']) && we::$user['avatar']['transparent'] ? '' : 'opaque ';
 
 		if (!empty($context['user']['avatar']))
 			$context['user']['avatar']['image'] = '<img class="' . $opaque . 'avatar" src="' . $context['user']['avatar']['href'] . '"' . (isset($context['user']['avatar']['width']) ? ' width="' . $context['user']['avatar']['width'] . '"' : '') . (isset($context['user']['avatar']['height']) ? ' height="' . $context['user']['avatar']['height'] . '"' : '') . '>';
 
 		// Figure out how long they've been logged in.
 		$context['user']['total_time_logged_in'] = array(
-			'days' => floor($user_info['total_time_logged_in'] / 86400),
-			'hours' => floor(($user_info['total_time_logged_in'] % 86400) / 3600),
-			'minutes' => floor(($user_info['total_time_logged_in'] % 3600) / 60)
+			'days' => floor(we::$user['total_time_logged_in'] / 86400),
+			'hours' => floor((we::$user['total_time_logged_in'] % 86400) / 3600),
+			'minutes' => floor((we::$user['total_time_logged_in'] % 3600) / 60)
 		);
 	}
 	else
@@ -1949,7 +1946,7 @@ function create_button($name, $alt, $label = '', $custom = '', $force_use = fals
  */
 function setupMenuContext()
 {
-	global $context, $settings, $user_info, $board_info, $txt, $scripturl;
+	global $context, $settings, $board_info, $txt, $scripturl;
 
 	// Set up the menu privileges.
 	$context['allow_search'] = allowedTo('search_posts');
@@ -1963,17 +1960,17 @@ function setupMenuContext()
 	$cacheTime = $settings['lastActive'] * 60;
 
 	// All the items we can possible want and then some, try pulling the final list of items from cache first.
-	if (($menu_items = cache_get_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $cacheTime)) === null || time() - $cacheTime <= $settings['settings_updated'])
+	if (($menu_items = cache_get_data('menu_items-' . implode('_', we::$user['groups']) . '-' . we::$user['language'], $cacheTime)) === null || time() - $cacheTime <= $settings['settings_updated'])
 	{
 		// Recalculate the number of unseen media items
-		if (!empty($user_info['media_unseen']) && $user_info['media_unseen'] == -1)
+		if (!empty(we::$user['media_unseen']) && we::$user['media_unseen'] == -1)
 		{
 			loadSource('media/Subs-Media');
 			loadMediaSettings();
 		}
 
 		$error_count = allowedTo('admin_forum') ? (!empty($settings['app_error_count']) ? $settings['app_error_count'] : '') : '';
-		$can_view_unseen = allowedTo('media_access_unseen') && isset($user_info['media_unseen']) && $user_info['media_unseen'] > 0;
+		$can_view_unseen = allowedTo('media_access_unseen') && isset(we::$user['media_unseen']) && we::$user['media_unseen'] > 0;
 		$has_new_pm = !we::$is_guest && !empty($context['user']['unread_messages']);
 		$is_b = !empty($board_info['id']);
 
@@ -2052,18 +2049,18 @@ function setupMenuContext()
 					'modlog' => array(
 						'title' => $txt['modlog_view'],
 						'href' => $scripturl . '?action=moderate;area=modlog',
-						'show' => !empty($settings['log_enabled_moderate']) && !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'show' => !empty($settings['log_enabled_moderate']) && !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1',
 					),
 					'reports' => array(
 						'title' => $txt['mc_reported_posts'],
 						'href' => $scripturl . '?action=moderate;area=reports',
-						'show' => !empty($user_info['mod_cache']) && $user_info['mod_cache']['bq'] != '0=1',
+						'show' => !empty(we::$user['mod_cache']) && we::$user['mod_cache']['bq'] != '0=1',
 						'notice' => $context['open_mod_reports'],
 					),
 					'poststopics' => array(
 						'title' => $txt['mc_unapproved_poststopics'],
 						'href' => $scripturl . '?action=moderate;area=postmod;sa=posts',
-						'show' => $settings['postmod_active'] && !empty($user_info['mod_cache']['ap']),
+						'show' => $settings['postmod_active'] && !empty(we::$user['mod_cache']['ap']),
 					),
 					'unappmembers' => array(
 						'title' => $txt['unapproved_members'],
@@ -2133,7 +2130,7 @@ function setupMenuContext()
 			),
 			'media' => array(
 				'title' => isset($txt['media_gallery']) ? $txt['media_gallery'] : 'Media',
-				'notice' => $can_view_unseen ? $user_info['media_unseen'] : '',
+				'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
 				'href' => $scripturl . '?action=media',
 				'show' => !empty($settings['media_enabled']) && allowedTo('media_access'),
 				'sub_items' => array(
@@ -2144,7 +2141,7 @@ function setupMenuContext()
 					),
 					'unseen' => array(
 						'title' => $txt['media_unseen'],
-						'notice' => $can_view_unseen ? $user_info['media_unseen'] : '',
+						'notice' => $can_view_unseen ? we::$user['media_unseen'] : '',
 						'href' => $scripturl . '?action=media;sa=unseen',
 						'show' => $can_view_unseen,
 					),
@@ -2171,13 +2168,13 @@ function setupMenuContext()
 				'title' => $txt['login'],
 				'href' => $scripturl . '?action=login',
 				'show' => we::$is_guest,
-				'nofollow' => !empty($user_info['possibly_robot']),
+				'nofollow' => !empty(we::$user['possibly_robot']),
 			),
 			'register' => array(
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=register',
 				'show' => we::$is_guest && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
-				'nofollow' => !empty($user_info['possibly_robot']),
+				'nofollow' => !empty(we::$user['possibly_robot']),
 			),
 			'logout' => array(
 				'title' => $txt['logout'],
@@ -2223,7 +2220,7 @@ function setupMenuContext()
 		}
 
 		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
-			cache_put_data('menu_items-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], $menu_items, $cacheTime);
+			cache_put_data('menu_items-' . implode('_', we::$user['groups']) . '-' . we::$user['language'], $menu_items, $cacheTime);
 	}
 
 	$context['menu_items'] =& $menu_items;
@@ -2308,14 +2305,14 @@ function call_hook($hook, $parameters = array())
 
 function call_lang_hook($hook)
 {
-	global $settings, $user_info, $language, $txt, $helptxt;
+	global $settings, $language, $txt, $helptxt;
 
 	if (empty($settings['hooks'][$hook]))
 		return false;
 
 	static $lang = null;
 	if ($lang === null)
-		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
+		$lang = isset(we::$user['language']) ? we::$user['language'] : $language;
 
 	foreach ($settings['hooks'][$hook] as $function)
 	{

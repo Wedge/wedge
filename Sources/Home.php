@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 // Welcome to the show.
 function Home()
 {
-	global $context, $theme, $txt, $scripturl, $settings, $user_info;
+	global $context, $theme, $txt, $scripturl, $settings;
 
 	// Here are a few variables to make it easy to enable or disable a feature on the default homepage...
 	$context['home_show']['topics'] = true;
@@ -68,7 +68,7 @@ function Home()
 				OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 				OR h.privacy = {int:members}
 				OR FIND_IN_SET(' . implode(', h.privacy)
-				OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)') . '
+				OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)') . '
 			ORDER BY h.id_thought DESC
 			LIMIT {int:per_page}',
 			array(
@@ -160,7 +160,7 @@ function Home()
 		);
 		$context += getMembersOnlineStats($membersOnlineOptions);
 
-		$context['show_buddies'] = !empty($user_info['buddies']);
+		$context['show_buddies'] = !empty(we::$user['buddies']);
 
 		// Are we showing all membergroups on the board index?
 		if (!empty($theme['show_group_key']))

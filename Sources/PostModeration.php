@@ -41,7 +41,7 @@ function PostModerationMain()
 // View all unapproved posts.
 function UnapprovedPosts()
 {
-	global $txt, $scripturl, $context, $user_info;
+	global $txt, $scripturl, $context;
 
 	$context['current_view'] = isset($_GET['sa']) && $_GET['sa'] == 'topics' ? 'topics' : 'replies';
 	$context['page_title'] = $txt['mc_unapproved_posts'];
@@ -292,7 +292,7 @@ function UnapprovedPosts()
 // Approve a post, just the one.
 function ApproveMessage()
 {
-	global $user_info, $topic, $board;
+	global $topic, $board;
 
 	checkSession('get');
 

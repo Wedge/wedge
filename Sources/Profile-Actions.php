@@ -70,7 +70,7 @@ function activateAccount($memID)
 // Issue/manage a user's warning status.
 function issueWarning($memID)
 {
-	global $txt, $scripturl, $settings, $user_info, $mbname;
+	global $txt, $scripturl, $settings, $mbname;
 	global $context, $cur_profile, $memberContext;
 
 	// Get all the actual settings.
@@ -202,7 +202,7 @@ function issueWarning($memID)
 						'log_time' => 'int', 'id_notice' => 'int', 'counter' => 'int', 'body' => 'string-65534',
 					),
 					array(
-						we::$id, $user_info['name'], 'warning', $memID, $cur_profile['real_name'],
+						we::$id, we::$user['name'], 'warning', $memID, $cur_profile['real_name'],
 						time(), $id_notice, $level_change, $_POST['warn_reason'],
 					),
 					array('id_comment')
@@ -392,7 +392,7 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 // Present a screen to make sure the user wants to be deleted
 function deleteAccount($memID)
 {
-	global $txt, $context, $user_info, $settings, $cur_profile;
+	global $txt, $context, $settings, $cur_profile;
 
 	if (!$context['user']['is_owner'])
 		isAllowedTo('profile_remove_any');
@@ -409,7 +409,7 @@ function deleteAccount($memID)
 
 function deleteAccount2($profile_vars, $post_errors, $memID)
 {
-	global $user_info, $context, $cur_profile, $settings;
+	global $context, $cur_profile, $settings;
 
 	// Try to get more time...
 	@set_time_limit(600);
@@ -536,7 +536,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 // Function for doing all the paid subscription stuff - kinda.
 function subscriptions($memID)
 {
-	global $context, $txt, $settings, $scripturl, $user_profile, $user_info;
+	global $context, $txt, $settings, $scripturl, $user_profile;
 
 	// Load the paid template anyway.
 	loadTemplate('ManagePaid');

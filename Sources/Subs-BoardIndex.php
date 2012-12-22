@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
 
 function getBoardIndex($boardIndexOptions)
 {
-	global $scripturl, $user_info, $settings, $txt;
+	global $scripturl, $settings, $txt;
 	global $theme, $context, $language;
 
 	// For performance, track the latest post while going through the boards.
@@ -79,7 +79,7 @@ function getBoardIndex($boardIndexOptions)
 	while ($row_board = wesql::fetch_assoc($result_boards))
 	{
 		// Perhaps we are ignoring this board?
-		$ignoreThisBoard = in_array($row_board['id_board'], $user_info['ignoreboards']);
+		$ignoreThisBoard = in_array($row_board['id_board'], we::$user['ignoreboards']);
 		$row_board['is_read'] = !empty($row_board['is_read']) || $ignoreThisBoard ? '1' : '0';
 
 		if ($boardIndexOptions['include_categories'])
@@ -143,7 +143,7 @@ function getBoardIndex($boardIndexOptions)
 					'redirect_newtab' => $row_board['is_redirect'] ? $row_board['redirect_newtab'] : 0,
 					'unapproved_topics' => $row_board['unapproved_topics'],
 					'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
-					'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
+					'can_approve_posts' => !empty(we::$user['mod_cache']['ap']) && (we::$user['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], we::$user['mod_cache']['ap'])),
 					'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
 					'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>',
 					'language' => $row_board['language'],
@@ -176,7 +176,7 @@ function getBoardIndex($boardIndexOptions)
 				'is_redirect' => $row_board['is_redirect'],
 				'unapproved_topics' => $row_board['unapproved_topics'],
 				'unapproved_posts' => $row_board['unapproved_posts'] - $row_board['unapproved_topics'],
-				'can_approve_posts' => !empty($user_info['mod_cache']['ap']) && ($user_info['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], $user_info['mod_cache']['ap'])),
+				'can_approve_posts' => !empty(we::$user['mod_cache']['ap']) && (we::$user['mod_cache']['ap'] == array(0) || in_array($row_board['id_board'], we::$user['mod_cache']['ap'])),
 				'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
 				'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['board_name'] . '</a>'
 			);
@@ -248,7 +248,7 @@ function getBoardIndex($boardIndexOptions)
 		);
 
 		// Provide the href and link. Except if we can't actually enter this board, or it doesn't have a subject.
-		if (!we::$is_admin && !in_array($row_board['id_board'], $user_info['qsb_boards']))
+		if (!we::$is_admin && !in_array($row_board['id_board'], we::$user['qsb_boards']))
 		{
 			$row_board['poster_time'] = 0; // This should not be considered for 'latest'.
 			$this_last_post['offlimits'] = !empty($row_board['offlimits_msg']) ? $row_board['offlimits_msg'] : $txt['board_off_limits'];

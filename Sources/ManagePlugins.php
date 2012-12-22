@@ -1555,7 +1555,7 @@ function AddPlugin()
 
 function browsePluginRepo()
 {
-	global $context, $user_info;
+	global $context;
 
 	$repo_id = (int) $_GET['browserepo'];
 	if ($repo_id > 0)

@@ -33,7 +33,7 @@ define('WEDGE_NO_LOG', 1);
 // Set an option via javascript.
 function JSOption()
 {
-	global $theme, $user_info, $options;
+	global $theme, $options;
 
 	// Check the session id.
 	checkSession('get');

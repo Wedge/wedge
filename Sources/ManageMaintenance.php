@@ -345,7 +345,7 @@ function MaintainEmptyUnimportantLogs()
 function ConvertUtf8()
 {
 	global $scripturl, $context, $txt, $language;
-	global $settings, $user_info, $db_prefix;
+	global $settings, $db_prefix;
 
 	// Show me your badge!
 	isAllowedTo('admin_forum');
@@ -426,7 +426,7 @@ function ConvertUtf8()
 		$context['charset_about_detected'] = sprintf($txt['utf8_detected_charset'], $language, $context['charset_detected']);
 
 		// Go back to your own language.
-		loadLanguage('index', $user_info['language'], true);
+		loadLanguage('index', we::$user['language'], true);
 
 		// Show a warning if the character set seems not to be supported.
 		if (!isset($charsets[strtr(strtolower($context['charset_detected']), array('utf' => 'UTF', 'iso' => 'ISO'))]))

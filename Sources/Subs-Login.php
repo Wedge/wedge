@@ -77,7 +77,7 @@ function checkActivation()
 
 function DoLogin()
 {
-	global $txt, $scripturl, $user_info, $user_settings;
+	global $txt, $scripturl, $user_settings;
 	global $cookiename, $maintenance, $settings, $context;
 
 	// Load cookie authentication stuff.
@@ -132,14 +132,14 @@ function DoLogin()
 	wesql::free_result($request);
 
 	// You've logged in, haven't you?
-	updateMemberData(we::$id, array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']));
+	updateMemberData(we::$id, array('last_login' => time(), 'member_ip' => we::$user['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']));
 
 	// Get rid of the online entry for that old guest....
 	wesql::query('
 		DELETE FROM {db_prefix}log_online
 		WHERE session = {string:session}',
 		array(
-			'session' => 'ip' . $user_info['ip'],
+			'session' => 'ip' . we::$user['ip'],
 		)
 	);
 	$_SESSION['log_time'] = 0;

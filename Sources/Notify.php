@@ -36,7 +36,7 @@ if (!defined('WEDGE'))
 // Turn on/off notifications...
 function Notify()
 {
-	global $scripturl, $txt, $topic, $user_info, $context;
+	global $scripturl, $txt, $topic, $context;
 
 	// Make sure they aren't a guest or something - guests can't really receive notifications!
 	is_not_guest();
@@ -108,7 +108,7 @@ function Notify()
 
 function BoardNotify()
 {
-	global $scripturl, $txt, $board, $user_info, $context;
+	global $scripturl, $txt, $board, $context;
 
 	// Permissions are an important part of anything ;).
 	is_not_guest();

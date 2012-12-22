@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
  */
 function getBaseRuleVars($admin = false)
 {
-	global $user_info, $board;
+	global $board;
 
 	/* Valid types are:
 
@@ -53,11 +53,11 @@ function getBaseRuleVars($admin = false)
 		),
 		'postcount' => array(
 			'type' => 'range',
-			'current' => $user_info['posts'],
+			'current' => we::$user['posts'],
 		),
 		'warning' => array(
 			'type' => 'range',
-			'current' => $user_info['warning'],
+			'current' => we::$user['warning'],
 		),
 		'subject' => array(
 			'type' => 'regex',
@@ -68,11 +68,11 @@ function getBaseRuleVars($admin = false)
 		'groups' => array(
 			'type' => 'multi-id',
 			'cast' => 'int',
-			'current' => $user_info['groups'],
+			'current' => we::$user['groups'],
 		),
 		'permission' => array(
 			'type' => 'multi-id',
-			'current' => $user_info['permissions'],
+			'current' => we::$user['permissions'],
 			'admin_override' => we::$is_admin,
 		),
 		'links' => array(
@@ -99,7 +99,7 @@ function getBaseRuleVars($admin = false)
 
 function checkPostModeration($subject, $body)
 {
-	global $settings, $user_info, $topic, $context;
+	global $settings, $topic, $context;
 
 	$returnActions = array();
 

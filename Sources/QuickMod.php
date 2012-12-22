@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 
 function QuickModeration()
 {
-	global $board, $user_info, $settings, $context;
+	global $board, $settings, $context;
 
 	// Check the session = get or post.
 	checkSession('request');
@@ -212,7 +212,7 @@ function quickMod_pin($topic_data, $boards_can)
 
 function quickMod_move($topic_data, $boards_can)
 {
-	global $settings, $board, $user_info;
+	global $settings, $board;
 
 	// If they're not an admin: for each post, figure out what the privileges are for the board it is in, and whether they can actually do that.
 	if (!in_array(0, $boards_can['move_any']))
@@ -332,7 +332,7 @@ function quickMod_move($topic_data, $boards_can)
 
 function quickMod_remove($topic_data, $boards_can)
 {
-	global $settings, $user_info;
+	global $settings;
 
 	// If they're not an admin: for each post, figure out what the privileges are for the board it is in, and whether they can actually do that.
 	if (!in_array(0, $boards_can['remove_any']))
@@ -366,8 +366,6 @@ function quickMod_remove($topic_data, $boards_can)
 
 function quickMod_lock($topic_data, $boards_can)
 {
-	global $user_info;
-
 	// If they're not an admin: for each post, figure out what the privileges are for the board it is in, and whether they can actually do that.
 	if (!in_array(0, $boards_can['lock_any']))
 	{
@@ -419,7 +417,7 @@ function quickMod_merge($topic_data, $boards_can)
 
 function quickMod_approve($topic_data, $boards_can)
 {
-	global $settings, $board, $user_info;
+	global $settings, $board;
 
 	// If they're not an admin: for each post, figure out what the privileges are for the board it is in, and whether they can actually do that.
 	if (!in_array(0, $boards_can['move_any']))
@@ -453,7 +451,7 @@ function quickMod_approve($topic_data, $boards_can)
 
 function quickMod_markread($topic_data, $boards_can)
 {
-	global $settings, $user_info;
+	global $settings;
 
 	$markArray = array();
 	foreach ($topic_data as $topic => $data)

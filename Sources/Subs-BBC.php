@@ -58,7 +58,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
  */
 function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
 {
-	global $txt, $context, $settings, $user_info;
+	global $txt, $context, $settings;
 	static $bbc_codes = array(), $bbc_types = array(), $itemcodes = array(), $no_autolink_tags = array();
 	static $master_codes = null, $strlower = null, $disabled, $feet = 0;
 
@@ -210,7 +210,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	{
 		// It's likely this will change if the message is modified.
 		$cache_key = 'parse:' . $cache_id . '-' . md5(md5($message) . '-' . $smileys . (empty($disabled) ? '' : implode(',', array_keys($disabled)))
-					. serialize(we::$browser) . $txt['lang_locale'] . $user_info['time_offset'] . $user_info['time_format']);
+					. serialize(we::$browser) . $txt['lang_locale'] . we::$user['time_offset'] . we::$user['time_format']);
 
 		if (($temp = cache_get_data($cache_key, 240)) != null)
 			return $temp;
@@ -1082,11 +1082,11 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
  */
 function parsesmileys(&$message)
 {
-	global $user_info, $smileyPregReplace;
+	global $smileyPregReplace;
 	static $smileyPregSearch = '';
 
 	// No smiley set at all?!
-	if ($user_info['smiley_set'] === 'none')
+	if (we::$user['smiley_set'] === 'none')
 		return;
 
 	// If the smiley array hasn't been set, do it now.
@@ -1155,10 +1155,10 @@ function parsesmileys(&$message)
 		$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 		$context['smiley_gzip'] = $can_gzip;
 		$context['smiley_ext'] = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
-		$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . we::$browser['agent'] . '-' . $user_info['smiley_set'];
+		$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . '-' . we::$browser['agent'] . '-' . we::$user['smiley_set'];
 		$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
 
-		if (!file_exists($cssdir . '/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
+		if (!file_exists($cssdir . '/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . '-' . we::$user['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext']))
 		{
 			// We're only going to cache the smileys that show up on the post editor by default.
 			// The reason is to help save bandwidth by only storing whatever is most likely to be used.
@@ -1168,7 +1168,7 @@ function parsesmileys(&$message)
 			if (!empty($cache))
 			{
 				loadSource('Subs-Cache');
-				wedge_cache_smileys($user_info['smiley_set'], $cache);
+				wedge_cache_smileys(we::$user['smiley_set'], $cache);
 			}
 		}
 
@@ -1188,11 +1188,11 @@ function replace_smileys($match)
 	{
 		if (empty($smiley_css_done))
 		{
-			global $boardurl, $settings, $context, $user_info;
+			global $boardurl, $settings, $context;
 
 			$smiley_css_done = true;
 			$context['header'] .= '
-	<link rel="stylesheet" href="' . $boardurl . '/css/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
+	<link rel="stylesheet" href="' . $boardurl . '/css/smileys' . (we::is('ie6,ie7') ? '-ie' : '') . '-' . we::$user['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'] . '">';
 		}
 		return $smileyPregReplace[$match[1]];
 	}

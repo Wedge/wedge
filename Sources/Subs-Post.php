@@ -386,7 +386,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 // Send off a personal message.
 function sendpm($recipients, $subject, $message, $store_outbox = false, $from = null, $pm_head = 0)
 {
-	global $context, $scripturl, $txt, $user_info, $language, $settings;
+	global $context, $scripturl, $txt, $language, $settings;
 
 	// Make sure the PM language file is loaded, we might need something out of it.
 	loadLanguage('PersonalMessage');
@@ -403,12 +403,12 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	if ($from === null)
 		$from = array(
 			'id' => we::$id,
-			'name' => $user_info['name'],
-			'username' => $user_info['username']
+			'name' => we::$user['name'],
+			'username' => we::$user['username']
 		);
 	// Probably not needed.  /me something should be of the typer.
 	else
-		$user_info['name'] = $from['name'];
+		we::$user['name'] = $from['name'];
 
 	// This is the one that will go in their inbox.
 	$htmlmessage = westr::htmlspecialchars($message, ENT_QUOTES);
@@ -494,7 +494,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		foreach ($criteria as $criterium)
 		{
 			$match = false;
-			if (($criterium['t'] == 'mid' && $criterium['v'] == $from['id']) || ($criterium['t'] == 'gid' && in_array($criterium['v'], $user_info['groups'])) || ($criterium['t'] == 'sub' && strpos($subject, $criterium['v']) !== false) || ($criterium['t'] == 'msg' && strpos($message, $criterium['v']) !== false))
+			if (($criterium['t'] == 'mid' && $criterium['v'] == $from['id']) || ($criterium['t'] == 'gid' && in_array($criterium['v'], we::$user['groups'])) || ($criterium['t'] == 'sub' && strpos($subject, $criterium['v']) !== false) || ($criterium['t'] == 'msg' && strpos($message, $criterium['v']) !== false))
 				$delete = true;
 			// If we're adding and one criteria don't match then we stop!
 			elseif (!$row['is_or'])
@@ -943,7 +943,7 @@ function server_parse($message, $socket, $response)
 // Notify members that something has happened to a topic they marked!
 function sendNotifications($topics, $type, $exclude = array(), $members_only = array())
 {
-	global $txt, $scripturl, $language, $user_info;
+	global $txt, $scripturl, $language;
 	global $settings, $context;
 
 	// Can't do it if there's no topics.
@@ -981,7 +981,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			'body' => $row['body'],
 			'last_id' => $row['id_last_msg'],
 			'topic' => $row['id_topic'],
-			'name' => $user_info['name'],
+			'name' => we::$user['name'],
 			'exclude' => '',
 		);
 	}
@@ -1095,7 +1095,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 	}
 	wesql::free_result($members);
 
-	if (isset($current_language) && $current_language != $user_info['language'])
+	if (isset($current_language) && $current_language != we::$user['language'])
 		loadLanguage('Post');
 
 	// Sent!
@@ -1138,7 +1138,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 // - Mandatory parameters are set.
 function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $txt, $settings, $context;
+	global $txt, $settings, $context;
 
 	// Set optional parameters to the default value.
 	$msgOptions['icon'] = empty($msgOptions['icon']) ? 'xx' : $msgOptions['icon'];
@@ -1151,7 +1151,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
 	$topicOptions['pin_mode'] = isset($topicOptions['pin_mode']) ? $topicOptions['pin_mode'] : null;
 	$posterOptions['id'] = empty($posterOptions['id']) ? 0 : (int) $posterOptions['id'];
-	$posterOptions['ip'] = empty($posterOptions['ip']) ? $user_info['ip'] : $posterOptions['ip'];
+	$posterOptions['ip'] = empty($posterOptions['ip']) ? we::$user['ip'] : $posterOptions['ip'];
 
 	// We need to know if the topic is approved. If we're told that's great - if not find out.
 	if (!$settings['postmod_active'])
@@ -1205,8 +1205,8 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		}
 		else
 		{
-			$posterOptions['name'] = $user_info['name'];
-			$posterOptions['email'] = $user_info['email'];
+			$posterOptions['name'] = we::$user['name'];
+			$posterOptions['email'] = we::$user['email'];
 		}
 	}
 
@@ -1442,7 +1442,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		// Are you the one that happened to create this post?
 		if (we::$id == $posterOptions['id'])
-			$user_info['posts']++;
+			we::$user['posts']++;
 		updateMemberData($posterOptions['id'], array('posts' => '+'));
 	}
 
@@ -1797,7 +1797,7 @@ function createAttachment(&$attachmentOptions)
 // !!!
 function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $settings, $context;
+	global $settings, $context;
 
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;
@@ -2234,7 +2234,7 @@ function approveTopics($topics, $approve = true)
 // A special function for handling the hell which is sending approval notifications.
 function sendApprovalNotifications(&$topicData)
 {
-	global $txt, $scripturl, $language, $user_info;
+	global $txt, $scripturl, $language;
 	global $settings, $context;
 
 	// Clean up the data...
@@ -2340,7 +2340,7 @@ function sendApprovalNotifications(&$topicData)
 	}
 	wesql::free_result($members);
 
-	if (isset($current_language) && $current_language != $user_info['language'])
+	if (isset($current_language) && $current_language != we::$user['language'])
 		loadLanguage('Post');
 
 	// Sent!
@@ -2490,7 +2490,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 // This simple function gets a list of all administrators and sends them an email to let them know a new member has joined.
 function adminNotify($type, $memberID, $member_name = null)
 {
-	global $txt, $settings, $language, $scripturl, $user_info, $context;
+	global $txt, $settings, $language, $scripturl, $context;
 
 	// If the setting isn't enabled then just exit.
 	$notify_list = !empty($settings['notify_new_registration']) ? unserialize($settings['notify_new_registration']) : array();
@@ -2551,13 +2551,13 @@ function adminNotify($type, $memberID, $member_name = null)
 	}
 	wesql::free_result($request);
 
-	if (isset($current_language) && $current_language != $user_info['language'])
+	if (isset($current_language) && $current_language != we::$user['language'])
 		loadLanguage('Login');
 }
 
 function loadEmailTemplate($template, $replacements = array(), $lang = '', $loadLang = true)
 {
-	global $txt, $mbname, $scripturl, $theme, $user_info, $context;
+	global $txt, $mbname, $scripturl, $theme, $context;
 
 	// First things first, load up the email templates language file, if we need to.
 	if ($loadLang)
@@ -2605,12 +2605,11 @@ function loadEmailTemplate($template, $replacements = array(), $lang = '', $load
 
 function user_info_callback($matches)
 {
-	global $user_info;
 	if (empty($matches[1]))
 		return '';
 
 	$use_ref = true;
-	$ref =& $user_info;
+	$ref =& we::$user;
 
 	foreach (explode('.', $matches[1]) as $index)
 	{
@@ -2641,7 +2640,7 @@ function user_info_callback($matches)
  */
 function saveDraft($is_pm, $id_context = 0)
 {
-	global $context, $txt, $board, $user_info, $settings;
+	global $context, $txt, $board, $settings;
 
 	// Do the basics first.
 	if (we::$is_guest || !empty($_REQUEST['msg']))

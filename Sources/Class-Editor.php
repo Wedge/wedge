@@ -25,7 +25,7 @@ class wedit
 
 	public function __construct($editorOptions)
 	{
-		global $txt, $settings, $options, $context, $theme, $user_info, $scripturl;
+		global $txt, $settings, $options, $context, $theme, $scripturl;
 
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
@@ -63,7 +63,7 @@ class wedit
 			loadLanguage('Post');
 			add_css_file(array('common', 'editor'), true);
 
-			$theme['smileys_url'] = $settings['smileys_url'] . '/' . $user_info['smiley_set'];
+			$theme['smileys_url'] = $settings['smileys_url'] . '/' . we::$user['smiley_set'];
 
 			add_js_file(array(
 				'scripts/editor.js',
@@ -1562,7 +1562,7 @@ class wedit
 
 	public function loadSmileys()
 	{
-		global $settings, $user_info, $txt;
+		global $settings, $txt;
 
 		if ($this->smileys !== null)
 			return;
@@ -1573,7 +1573,7 @@ class wedit
 		);
 
 		// Load smileys - don't bother to run a query if we're not using the database's ones anyhow.
-		if (empty($settings['smiley_enable']) && $user_info['smiley_set'] != 'none')
+		if (empty($settings['smiley_enable']) && we::$user['smiley_set'] != 'none')
 		{
 			$this->smileys['postform'][] = array(
 				'smileys' => array(
@@ -1703,7 +1703,7 @@ class wedit
 				'isLast' => true,
 			);
 		}
-		elseif ($user_info['smiley_set'] != 'none')
+		elseif (we::$user['smiley_set'] != 'none')
 		{
 			if (($temp = cache_get_data('smiley_poster', 480)) == null)
 			{
@@ -1748,7 +1748,7 @@ class wedit
 	// Parses some bbc before sending into the database...
 	public static function preparsecode(&$message, $previewing = false, &$post_errors = null)
 	{
-		global $user_info, $settings, $context;
+		global $settings, $context;
 
 		// This line makes all languages *theoretically* work even with the wrong charset ;)
 		$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
@@ -1811,10 +1811,10 @@ class wedit
 				wedit::fixTags($parts[$i]);
 
 				// Replace /me.+?\n with [me=name]dsf[/me]\n.
-				if (strpos($user_info['name'], '[') !== false || strpos($user_info['name'], ']') !== false || strpos($user_info['name'], '\'') !== false || strpos($user_info['name'], '"') !== false)
-					$parts[$i] = preg_replace('~(\A|\n)/me(?: |&nbsp;)([^\n]*)(?:\z)?~i', '$1[me=&quot;' . $user_info['name'] . '&quot;]$2[/me]', $parts[$i]);
+				if (strpos(we::$user['name'], '[') !== false || strpos(we::$user['name'], ']') !== false || strpos(we::$user['name'], '\'') !== false || strpos(we::$user['name'], '"') !== false)
+					$parts[$i] = preg_replace('~(\A|\n)/me(?: |&nbsp;)([^\n]*)(?:\z)?~i', '$1[me=&quot;' . we::$user['name'] . '&quot;]$2[/me]', $parts[$i]);
 				else
-					$parts[$i] = preg_replace('~(\A|\n)/me(?: |&nbsp;)([^\n]*)(?:\z)?~i', '$1[me=' . $user_info['name'] . ']$2[/me]', $parts[$i]);
+					$parts[$i] = preg_replace('~(\A|\n)/me(?: |&nbsp;)([^\n]*)(?:\z)?~i', '$1[me=' . we::$user['name'] . ']$2[/me]', $parts[$i]);
 
 				if (!$previewing && strpos($parts[$i], '[html]') !== false)
 				{
@@ -1828,7 +1828,7 @@ class wedit
 				}
 
 				// Let's look at the time tags...
-				$parts[$i] = preg_replace('~\[time(?:=(absolute))*\](.+?)\[/time\]~ie', '\'[time]\' . (is_numeric(\'$2\') || @strtotime(\'$2\') == 0 ? \'$2\' : strtotime(\'$2\') - (\'$1\' == \'absolute\' ? 0 : (($settings[\'time_offset\'] + $user_info[\'time_offset\']) * 3600))) . \'[/time]\'', $parts[$i]);
+				$parts[$i] = preg_replace('~\[time(?:=(absolute))*\](.+?)\[/time\]~ie', '\'[time]\' . (is_numeric(\'$2\') || @strtotime(\'$2\') == 0 ? \'$2\' : strtotime(\'$2\') - (\'$1\' == \'absolute\' ? 0 : (($settings[\'time_offset\'] + we::$user[\'time_offset\']) * 3600))) . \'[/time]\'', $parts[$i]);
 
 				// Change the color specific tags to [color=the color].
 				$parts[$i] = preg_replace('~\[(black|blue|green|red|white)\]~', '[color=$1]', $parts[$i]);		// First do the opening tags.
@@ -2417,7 +2417,7 @@ class wedit
 
 	public function outputEditor()
 	{
-		global $context, $theme, $options, $txt, $settings, $scripturl, $user_info, $boarddir, $boardurl, $smiley_css_done;
+		global $context, $theme, $options, $txt, $settings, $scripturl, $boarddir, $boardurl, $smiley_css_done;
 
 		$smileycontainer = empty($this->editorOptions['custom_smiley_div']) ? 'smileyBox_' . $this->id : $this->editorOptions['custom_smiley_div'];
 		$bbccontainer = empty($this->editorOptions['custom_bbc_div']) ? 'bbcBox_' . $this->id : $this->editorOptions['custom_bbc_div'];
@@ -2454,7 +2454,7 @@ class wedit
 			$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 			$context['smiley_gzip'] = $can_gzip;
 			$context['smiley_ext'] = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
-			$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . $extra . '-' . $user_info['smiley_set'];
+			$var_name = 'smiley_cache-' . str_replace('.', '', $context['smiley_ext']) . $extra . '-' . we::$user['smiley_set'];
 			$dummy = '';
 			$max = 0;
 
@@ -2462,7 +2462,7 @@ class wedit
 			while (empty($exists) && $max++ < 3)
 			{
 				$context['smiley_now'] = empty($settings[$var_name]) ? time() : $settings[$var_name];
-				$filename = '/css/smileys' . $extra . '-' . $user_info['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
+				$filename = '/css/smileys' . $extra . '-' . we::$user['smiley_set'] . '-' . $context['smiley_now'] . $context['smiley_ext'];
 				$exists = file_exists($boarddir . $filename);
 				if (!$exists)
 					parsesmileys($dummy);

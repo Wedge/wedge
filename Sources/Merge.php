@@ -80,7 +80,7 @@ function MergeTopics()
 // Merge two topics together.
 function MergeIndex()
 {
-	global $txt, $board, $topic, $context, $scripturl, $user_info, $settings;
+	global $txt, $board, $topic, $context, $scripturl, $settings;
 
 	if (!isset($topic))
 		fatal_lang_error('no_access', false);
@@ -218,7 +218,7 @@ function MergeIndex()
 // Now that the topic IDs are known, do the proper merging.
 function MergeExecute($topics = array())
 {
-	global $user_info, $txt, $context, $scripturl, $language, $settings, $topic;
+	global $txt, $context, $scripturl, $language, $settings, $topic;
 
 	// Check the session.
 	checkSession('request');
@@ -604,7 +604,7 @@ function MergeExecute($topics = array())
 	// Grab the response prefix (like 'Re: ') in the default forum language.
 	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
 	{
-		if ($language === $user_info['language'])
+		if ($language === we::$user['language'])
 			$context['response_prefix'] = $txt['response_prefix'];
 		else
 		{
@@ -823,7 +823,7 @@ function MergeDone()
 
 function MergePosts($error_report = true)
 {
-	global $settings, $user_info, $txt, $theme, $user_info;
+	global $settings, $txt, $theme;
 
 	loadLanguage('Errors');
 	if (!is_bool($error_report))

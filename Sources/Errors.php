@@ -26,7 +26,7 @@ if (!defined('WEDGE'))
  */
 function log_error($error_message, $error_type = 'general', $file = null, $line = null, $referrer = null)
 {
-	global $txt, $settings, $user_info, $scripturl, $last_error, $context, $full_request, $pluginsdir;
+	global $txt, $settings, $scripturl, $last_error, $context, $full_request, $pluginsdir;
 	static $plugin_dir = null;
 
 	// Check if error logging is actually on.
@@ -77,13 +77,13 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	// Just in case there's no id_member or IP set yet.
 	if (empty(we::$id))
 		we::$id = 0;
-	if (empty($user_info['ip']))
-		$user_info['ip'] = '';
-	if (empty($user_info['url']))
-		$user_info['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['REAL_HTTP_HOST']) . $_SERVER['REQUEST_URI'];
+	if (empty(we::$user['ip']))
+		we::$user['ip'] = '';
+	if (empty(we::$user['url']))
+		we::$user['url'] = (empty($_SERVER['REAL_HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['REAL_HTTP_HOST']) . $_SERVER['REQUEST_URI'];
 
 	// Find the best query string we can...
-	$query_string = $user_info['url'];
+	$query_string = we::$user['url'];
 
 	// Is this an external 404 error? Then the referrer URL might be of more help.
 	if (!empty($referrer))
@@ -140,7 +140,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$file = '';
 
 	// Don't log the same error countless times, as we can get in a cycle of depression...
-	$error_info = array(we::$id, time(), get_ip_identifier($user_info['ip']), $query_string, $error_message, $error_type, $file, $line);
+	$error_info = array(we::$id, time(), get_ip_identifier(we::$user['ip']), $query_string, $error_message, $error_type, $file, $line);
 	if (empty($last_error) || $last_error != $error_info)
 	{
 		// Insert the error into the database.
@@ -204,7 +204,7 @@ function fatal_error($error, $log = 'general', $header = 403)
  */
 function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header = 403)
 {
-	global $txt, $language, $settings, $user_info, $context;
+	global $txt, $language, $settings, $context;
 	static $fatal_error_called = false;
 
 	issue_http_header($header);
@@ -225,7 +225,7 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array(), $header 
 	if ($log || (!empty($settings['enableErrorLogging']) && $settings['enableErrorLogging'] == 2))
 	{
 		loadLanguage('Errors', $language);
-		$reload_lang_file = !empty($user_info['language']) && $language != $user_info['language'];
+		$reload_lang_file = !empty(we::$user['language']) && $language != we::$user['language'];
 		$error_message = empty($sprintf) ? $txt[$error] : vsprintf($txt[$error], $sprintf);
 		log_error($error_message, $log);
 	}
@@ -483,7 +483,7 @@ function show_db_error($loadavg = false)
  */
 function updateOnlineWithError($error, $is_lang, $sprintf = array())
 {
-	global $user_info, $settings;
+	global $settings;
 
 	// Don't bother if Who's Online is disabled.
 	if (empty($settings['who_enabled']))

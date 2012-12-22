@@ -1066,7 +1066,7 @@ function DownloadLanguage()
 // This lists all the current languages and allows editing of them.
 function ModifyLanguages()
 {
-	global $txt, $context, $scripturl, $user_info, $language, $boarddir;
+	global $txt, $context, $scripturl, $language, $boarddir;
 
 	// Setting a new default?
 	if (!empty($_POST['set_default']) && !empty($_POST['def_language']))

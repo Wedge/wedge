@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
 // Retrieve a list and several other statistics of the users currently online.
 function getMembersOnlineStats($membersOnlineOptions)
 {
-	global $context, $scripturl, $user_info, $settings, $txt;
+	global $context, $scripturl, $settings, $txt;
 
 	// The list can be sorted in several ways.
 	$allowed_sort_options = array(
@@ -101,7 +101,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 		$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 
 		// Buddies get counted and highlighted.
-		$is_buddy = in_array($row['id_member'], $user_info['buddies']);
+		$is_buddy = in_array($row['id_member'], we::$user['buddies']);
 		if ($is_buddy)
 		{
 			$membersOnlineStats['num_buddies']++;
@@ -246,7 +246,7 @@ function trackStatsUsersOnline($total_users_online)
 // Get the list of users viewing a board/topic
 function getMembersOnlineDetails($type = 'board')
 {
-	global $context, $user_info, $board, $topic, $scripturl;
+	global $context, $board, $topic, $scripturl;
 
 	if ($type !== 'board' && $type !== 'topic')
 		return;
@@ -266,7 +266,7 @@ function getMembersOnlineDetails($type = 'board')
 		array(
 			'reg_member_group' => 0,
 			'in_url_string' => $type === 'board' ? ('s:5:"board";i:' . $board . ';') : ('s:5:"topic";i:' . $topic . ';'),
-			'session' => we::$is_guest ? 'ip' . $user_info['ip'] : session_id(),
+			'session' => we::$is_guest ? 'ip' . we::$user['ip'] : session_id(),
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
@@ -276,7 +276,7 @@ function getMembersOnlineDetails($type = 'board')
 
 		$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 
-		$is_buddy = in_array($row['id_member'], $user_info['buddies']);
+		$is_buddy = in_array($row['id_member'], we::$user['buddies']);
 		if ($is_buddy)
 			$link = '<strong>' . $link . '</strong>';
 

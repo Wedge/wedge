@@ -1424,7 +1424,7 @@ function ImportSmileys($smileyPath)
 
 function EditMessageIcons()
 {
-	global $user_info, $settings, $context, $theme, $txt;
+	global $settings, $context, $theme, $txt;
 	global $boarddir, $scripturl;
 
 	// Get a list of icons.
@@ -1670,8 +1670,6 @@ function EditMessageIcons()
 
 function list_getMessageIcons($start, $items_per_page, $sort)
 {
-	global $user_info;
-
 	$request = wesql::query('
 		SELECT m.id_icon, m.title, m.filename, m.icon_order, m.id_board, b.name AS board_name
 		FROM {db_prefix}message_icons AS m

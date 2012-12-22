@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  */
 function PrintPage()
 {
-	global $topic, $txt, $scripturl, $context, $user_info, $board_info, $settings;
+	global $topic, $txt, $scripturl, $context, $board_info, $settings;
 
 	// Redirect to the board list if no valid topic id is provided.
 	if (empty($topic))

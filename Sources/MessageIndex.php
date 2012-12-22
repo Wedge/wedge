@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 function MessageIndex()
 {
 	global $txt, $scripturl, $board, $settings, $context;
-	global $options, $theme, $board_info, $user_info;
+	global $options, $theme, $board_info;
 
 	// If this is a redirection board head off.
 	if ($board_info['redirect'])

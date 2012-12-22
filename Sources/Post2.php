@@ -66,7 +66,7 @@ if (!defined('WEDGE'))
  */
 function Post2()
 {
-	global $board, $topic, $txt, $settings, $context, $user_info, $board_info, $options;
+	global $board, $topic, $txt, $settings, $context, $board_info, $options;
 
 	// Sneaking off, are we?
 	if (empty($_POST) && empty($topic))
@@ -112,7 +112,7 @@ function Post2()
 	call_hook('post_pre_validate', array(&$post_errors));
 
 	// Wrong verification code?
-	if (!we::$is_admin && !we::is('mod') && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1)))
+	if (!we::$is_admin && !we::$user['is_mod'] && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1)))
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -405,7 +405,7 @@ function Post2()
 	else
 	{
 		if (we::$is_guest)
-			$user_info['name'] = $_POST['guestname'];
+			we::$user['name'] = $_POST['guestname'];
 
 		// preparsecode will fix common mistakes, as well as possibly return error messages if available.
 		wedit::preparsecode($_POST['message'], false, $post_errors);
@@ -457,8 +457,8 @@ function Post2()
 	// If the user isn't a guest, get his or her name and email.
 	elseif (!isset($_REQUEST['msg']))
 	{
-		$_POST['guestname'] = $user_info['username'];
-		$_POST['email'] = $user_info['email'];
+		$_POST['guestname'] = we::$user['username'];
+		$_POST['email'] = we::$user['email'];
 	}
 
 	// OK, we've made all the checks we're going to make here. Time to engage any hooks. Most of this stuff is in $_POST, so very little to pass.
@@ -822,7 +822,7 @@ function Post2()
 		if (time() - $row['poster_time'] > $settings['edit_wait_time'] || we::$id != $row['id_member'])
 		{
 			$msgOptions['modify_time'] = time();
-			$msgOptions['modify_name'] = $user_info['name'];
+			$msgOptions['modify_name'] = we::$user['name'];
 			$msgOptions['modify_member'] = we::$id;
 		}
 
@@ -901,7 +901,7 @@ function Post2()
 			$notifyData = array(
 				'body' => $_POST['message'],
 				'subject' => $_POST['subject'],
-				'name' => $user_info['name'],
+				'name' => we::$user['name'],
 				'poster' => we::$id,
 				'msg' => $msgOptions['id'],
 				'board' => $board,
@@ -967,7 +967,7 @@ function Post2()
  */
 function notifyMembersBoard(&$topicData)
 {
-	global $txt, $scripturl, $language, $user_info;
+	global $txt, $scripturl, $language;
 	global $settings, $board, $context;
 
 	loadSource('Subs-Post');
@@ -1115,7 +1115,7 @@ function notifyMembersBoard(&$topicData)
 
 function fetchFilterMessages($details)
 {
-	global $user_info, $language;
+	global $language;
 
 	// We need to go and see if we can find some messages for this.
 	$messages = array();
@@ -1162,8 +1162,8 @@ function fetchFilterMessages($details)
 		{
 			if (isset($_SESSION['language'], $langs[$_SESSION['language']]))
 				$messages[] = $langs[$_SESSION['language']];
-			elseif (isset($langs[$user_info['language']]))
-				$messages[] = $langs[$user_info['language']];
+			elseif (isset($langs[we::$user['language']]))
+				$messages[] = $langs[we::$user['language']];
 			elseif (isset($qa[$language]))
 				$messages[] = $langs[$language];
 		}

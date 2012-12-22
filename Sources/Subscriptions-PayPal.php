@@ -43,7 +43,7 @@ class paypal_display
 	// What do we want?
 	public function fetchGatewayFields($unique_id, $sub_data, $value, $period, $return_url)
 	{
-		global $settings, $txt, $boardurl, $user_info;
+		global $settings, $txt, $boardurl;
 
 		$return_data = array(
 			'form' => 'https://www.' . (!empty($settings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com/cgi-bin/webscr',
@@ -117,7 +117,7 @@ class paypal_display
 			'uzbek_latin' => 'UZ',
 			'vietnamese' => 'VN',
 		);
-		$return_data['hidden']['lc'] = isset($langs[$user_info['language']]) ? $langs[$user_info['language']] : 'US';
+		$return_data['hidden']['lc'] = isset($langs[we::$user['language']]) ? $langs[we::$user['language']] : 'US';
 
 		// Now stuff that depends on what we're doing.
 		if ($sub_data['flexible'])

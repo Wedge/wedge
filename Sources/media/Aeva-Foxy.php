@@ -45,7 +45,7 @@ if (!defined('WEDGE'))
 
 function aeva_foxy_playlist()
 {
-	global $context, $scripturl, $txt, $user_info, $galurl, $theme;
+	global $context, $scripturl, $txt, $galurl, $theme;
 
 	$context['page_title'] = '<span class="mg_item_type">' . $txt['media_playlist'] . '</span>';
 	$id = empty($_GET['in']) ? 0 : (int) $_GET['in'];
@@ -267,7 +267,7 @@ function aeva_foxy_playlist()
 
 function aeva_foxy_playlists()
 {
-	global $amSettings, $context, $txt, $scripturl, $user_info, $theme, $galurl;
+	global $amSettings, $context, $txt, $scripturl, $theme, $galurl;
 
 	$context['page_title'] = $txt['media_playlists'];
 
@@ -430,8 +430,6 @@ function aeva_foxy_playlists()
 
 function aeva_foxy_my_playlists()
 {
-	global $user_info;
-
 	$request = wesql::query('
 		SELECT
 			pl.id_playlist, pl.name, pl.views, i.title,
@@ -463,7 +461,7 @@ function aeva_foxy_my_playlists()
 
 function aeva_foxy_item_page_playlists($item)
 {
-	global $context, $txt, $scripturl, $user_info, $theme, $galurl;
+	global $context, $txt, $scripturl, $theme, $galurl;
 
 	// Any playlist being deleted?
 	if (isset($_GET['premove']))
@@ -554,7 +552,7 @@ function aeva_foxy_item_page_playlists($item)
 
 function aeva_foxy_get_board_list($current_board)
 {
-	global $user_info, $txt;
+	global $txt;
 
 	$topic_boards = $topic_cats = array();
 	$write_boards = boardsAllowedTo('post_new');
@@ -635,7 +633,7 @@ function aeva_foxy_latest_topic($id_owner, $current_album = 0)
 // is inherited from your previous linked topic's, if any.
 function aeva_foxy_create_topic($id_album, $album_name, $board, $lock = false, $mark_as_read = false)
 {
-	global $txt, $user_info;
+	global $txt;
 
 	loadSource('Subs-Post');
 
@@ -678,7 +676,7 @@ function aeva_foxy_create_topic($id_album, $album_name, $board, $lock = false, $
 
 function aeva_foxy_notify_items($album, $items)
 {
-	global $user_info, $txt;
+	global $txt;
 
 	$request = wesql::query('
 		SELECT a.name, a.id_topic, t.id_board
@@ -762,7 +760,7 @@ function aeva_foxy_remote_preview(&$my_file, &$local_file, &$dir, &$name, &$widt
 
 function aeva_foxy_feed()
 {
-	global $context, $scripturl, $txt, $settings, $user_info;
+	global $context, $scripturl, $txt, $settings;
 	global $amSettings, $query_this, $db_show_debug;
 
 	$amSettings['max_feed_items'] = !isset($amSettings['max_feed_items']) ? 10 : $amSettings['max_feed_items'];
@@ -924,7 +922,7 @@ function aeva_foxy_feed()
 
 function aeva_foxy_get_xml_items()
 {
-	global $user_info, $scripturl, $settings, $galurl, $amSettings;
+	global $scripturl, $settings, $galurl, $amSettings;
 	global $query_this, $theme, $context, $txt;
 
 	$postmod = isset($settings['postmod_active']) ? $settings['postmod_active'] : false;
@@ -972,7 +970,7 @@ function aeva_foxy_get_xml_items()
 
 function aeva_foxy_get_xml_comments()
 {
-	global $user_info, $scripturl, $settings, $galurl, $amSettings;
+	global $scripturl, $settings, $galurl, $amSettings;
 	global $query_this, $theme, $context, $txt;
 
 	$postmod = isset($settings['postmod_active']) ? $settings['postmod_active'] : false;
@@ -1025,7 +1023,7 @@ function aeva_foxy_get_xml_comments()
 
 function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_media DESC', $field_sort = 0)
 {
-	global $context, $amSettings, $scripturl, $boarddir, $txt, $user_info, $theme, $galurl, $boardurl;
+	global $context, $amSettings, $scripturl, $boarddir, $txt, $theme, $galurl, $boardurl;
 
 	$det = empty($details) || $details[0] == 'all' ? 'all' : ($details[0] == 'no_name' ? 'no_name' : '');
 	if ($det == 'all' || $det == 'no_name')
@@ -1350,7 +1348,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 
 function aeva_foxy_fill_player(&$playlist, $type = 'audio', &$details, $play = 0, $wid = 470, $hei = 430, $thei = 70)
 {
-	global $user_info, $scripturl, $boardurl, $amSettings, $context, $theme, $txt;
+	global $scripturl, $boardurl, $amSettings, $context, $theme, $txt;
 	static $swo = 0;
 
 	$swo++;

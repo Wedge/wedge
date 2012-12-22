@@ -53,7 +53,7 @@ function Ajax()
  */
 function GetJumpTo()
 {
-	global $user_info, $context, $settings, $scripturl;
+	global $context, $settings, $scripturl;
 
 	// Find the boards/cateogories they can see.
 	// Note: you can set $context['current_category'] if you have too many boards and it kills performance.
@@ -102,9 +102,9 @@ function ListMessageIcons()
 
 function Thought()
 {
-	global $context, $user_info;
+	global $context;
 
-	// !! We need $user_info if we're going to allow the editing of older messages... Don't forget to check for sessions?
+	// !! We need we::$user if we're going to allow the editing of older messages... Don't forget to check for sessions?
 	if (we::$is_guest)
 		exit;
 
@@ -252,9 +252,10 @@ function Thought()
 					// A complete hack, not ashamed of it :)
 					if ($member !== we::$id)
 					{
-						$real_user = $user_info;
+						$real_user = we::$user;
+						$real_id = we::$id;
 						we::$id = $member;
-						$user_info['data'] = $data;
+						we::$user['data'] = $data;
 					}
 					updateMyData(array(
 						'id_thought' => $id_thought,
@@ -262,7 +263,10 @@ function Thought()
 						'thought_privacy' => $privacy,
 					));
 					if (!empty($real_user))
-						$user_info = $real_user;
+					{
+						we::$user = $real_user;
+						we::$id = $real_id;
+					}
 				}
 
 				// Similarly, we should update their personal text with the latest valid value.
@@ -327,7 +331,7 @@ function Thought()
 		$last_thought = wesql::insert_id();
 
 		$user_id = $pid ? (empty($last_member) ? we::$id : $last_member) : 0;
-		$user_name = empty($last_name) ? $user_info['name'] : $last_name;
+		$user_name = empty($last_name) ? we::$user['name'] : $last_name;
 
 		call_hook('thought_add', array(&$privacy, &$text, &$pid, &$mid, &$last_thought, &$user_id, &$user_name));
 	}

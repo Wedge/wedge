@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
  */
 function Boards()
 {
-	global $txt, $user_info, $settings, $context, $theme, $scripturl, $options;
+	global $txt, $settings, $context, $theme, $scripturl, $options;
 
 	loadTemplate('Boards');
 	loadTemplate('InfoCenter');
@@ -96,7 +96,7 @@ function Boards()
 	);
 	$context += getMembersOnlineStats($membersOnlineOptions);
 
-	$context['show_buddies'] = !empty($user_info['buddies']);
+	$context['show_buddies'] = !empty(we::$user['buddies']);
 
 	// Are we showing all membergroups on the board index?
 	if (!empty($theme['show_group_key']))

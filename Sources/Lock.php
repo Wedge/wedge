@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  */
 function Lock()
 {
-	global $topic, $user_info, $board;
+	global $topic, $board;
 
 	// Just quit if there's no topic to lock.
 	if (empty($topic))

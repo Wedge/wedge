@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 function JSModify()
 {
 	global $settings, $board, $topic, $txt;
-	global $user_info, $context, $language;
+	global $context, $language;
 
 	// We have to have a topic!
 	if (empty($topic))
@@ -178,7 +178,7 @@ function JSModify()
 			if (time() - $row['poster_time'] > $settings['edit_wait_time'] || we::$id != $row['id_member'])
 			{
 				$msgOptions['modify_time'] = time();
-				$msgOptions['modify_name'] = $user_info['name'];
+				$msgOptions['modify_name'] = we::$user['name'];
 				$msgOptions['modify_member'] = we::$id;
 			}
 		}
@@ -202,7 +202,7 @@ function JSModify()
 			// Get the proper (default language) response prefix first.
 			if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
 			{
-				if ($language === $user_info['language'])
+				if ($language === we::$user['language'])
 					$context['response_prefix'] = $txt['response_prefix'];
 				else
 				{

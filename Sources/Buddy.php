@@ -26,8 +26,6 @@ if (!defined('WEDGE'))
 
 function Buddy()
 {
-	global $user_info;
-
 	checkSession('get');
 
 	isAllowedTo('profile_identity_own');
@@ -38,22 +36,22 @@ function Buddy()
 	$_REQUEST['u'] = (int) $_REQUEST['u'];
 
 	// Remove if it's already there...
-	if (in_array($_REQUEST['u'], $user_info['buddies']))
+	if (in_array($_REQUEST['u'], we::$user['buddies']))
 	{
-		$user_info['buddies'] = array_diff($user_info['buddies'], array($_REQUEST['u']));
+		we::$user['buddies'] = array_diff(we::$user['buddies'], array($_REQUEST['u']));
 		$buddy_action = 'remove';
 	}
 	// ...or add if it's not and if it's not you.
 	elseif (we::$id != $_REQUEST['u'])
 	{
-		$user_info['buddies'][] = (int) $_REQUEST['u'];
+		we::$user['buddies'][] = (int) $_REQUEST['u'];
 		$buddy_action = 'add';
 	}
 
 	if (isset($buddy_action))
 	{
 		// Update the settings.
-		updateMemberData(we::$id, array('buddy_list' => implode(',', $user_info['buddies'])));
+		updateMemberData(we::$id, array('buddy_list' => implode(',', we::$user['buddies'])));
 
 		// Call a hook, just in case we want to do something with this. Let's pass both the user we're adding/removing, and what we did with them.
 		call_hook('buddy', array((int) $_REQUEST['u'], $buddy_action));

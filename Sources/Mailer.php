@@ -225,8 +225,8 @@ function CustomEmail()
 
 		checkSession();
 
-		$from_name = $user_info['name'];
-		$from_email = $user_info['email'];
+		$from_name = we::$user['name'];
+		$from_email = we::$user['email'];
 
 		// Check we have a body (etc).
 		if (trim($_POST['email_body']) == '' || trim($_POST['email_subject']) == '')

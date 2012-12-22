@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
  */
 function QuoteFast()
 {
-	global $settings, $user_info, $txt, $theme, $context;
+	global $settings, $txt, $theme, $context;
 
 	loadLanguage('Post');
 	loadSource('Class-Editor');

@@ -414,7 +414,7 @@ function updateSettingsFile($config_vars)
 
 function updateAdminPreferences()
 {
-	global $options, $context, $theme, $user_info;
+	global $options, $context, $theme;
 
 	// This must exist!
 	if (!isset($context['admin_preferences']))

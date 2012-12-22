@@ -18,7 +18,7 @@ if (!defined('WEDGE'))
 // Main auto embed function
 function aeva_main($message)
 {
-	global $context, $settings, $sites, $upto, $user_info, $sourcedir;
+	global $context, $settings, $sites, $upto, $sourcedir;
 
 	// Auto-embedding is disabled. We shouldn't have got this far, but if we have... get out of here.
 	if (empty($settings['embed_enabled']))

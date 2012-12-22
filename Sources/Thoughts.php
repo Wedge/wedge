@@ -18,7 +18,7 @@ if (!defined('WEDGE'))
 // Not exactly optimized for speed, but we can always rewrite it later.
 function Thoughts()
 {
-	global $context, $txt, $user_info;
+	global $context, $txt;
 
 	// Some initial context.
 	loadTemplate('Thoughts');
@@ -71,7 +71,7 @@ function Thoughts()
 				OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 				OR h.privacy = {int:members}') . '
 				OR FIND_IN_SET(' . implode(', h.privacy)
-				OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
+				OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)
 			)
 			ORDER BY h.id_thought',
 			array(
@@ -148,7 +148,7 @@ function populate_sub_thoughts(&$here, &$thought)
 
 function latestThoughts($memID = 0)
 {
-	global $context, $txt, $user_info;
+	global $context, $txt;
 
 	// Some initial context.
 	loadTemplate('Thoughts');
@@ -166,7 +166,7 @@ function latestThoughts($memID = 0)
 			h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 			OR h.privacy = {int:members}') . '
 			OR FIND_IN_SET(' . implode(', h.privacy)
-			OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
+			OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)
 		)') . '
 		LIMIT 1',
 		array(
@@ -196,7 +196,7 @@ function latestThoughts($memID = 0)
 			h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 			OR h.privacy = {int:members}') . '
 			OR FIND_IN_SET(' . implode(', h.privacy)
-			OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
+			OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)
 		)') . '
 		ORDER BY h.id_thought DESC
 		LIMIT {int:start}, {int:per_page}',
@@ -233,7 +233,7 @@ function latestThoughts($memID = 0)
 					OR h_parent.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 					OR h_parent.privacy = {int:members}') . '
 					OR FIND_IN_SET(' . implode(', h_parent.privacy)
-					OR FIND_IN_SET(', $user_info['groups']) . ', h_parent.privacy)
+					OR FIND_IN_SET(', we::$user['groups']) . ', h_parent.privacy)
 				))
 			LEFT JOIN
 				{db_prefix}thoughts AS h_child ON (h_child.id_parent = h.id_thought)

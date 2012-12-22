@@ -47,7 +47,7 @@ if (!defined('WEDGE'))
 // Entry point, permission checks, admin bars, etc.
 function Groups()
 {
-	global $context, $txt, $scripturl, $user_info;
+	global $context, $txt, $scripturl;
 
 	// The sub-actions that we can do. Format "Function Name, Mod Bar Index if appropriate".
 	$subActions = array(
@@ -65,7 +65,7 @@ function Groups()
 	loadTemplate('ManageMembergroups');
 
 	// If we can see the moderation center, and this has a mod bar entry, add the mod center bar.
-	if (allowedTo('access_mod_center') || $user_info['mod_cache']['bq'] != '0=1' || $user_info['mod_cache']['gq'] != '0=1' || allowedTo('manage_membergroups'))
+	if (allowedTo('access_mod_center') || we::$user['mod_cache']['bq'] != '0=1' || we::$user['mod_cache']['gq'] != '0=1' || allowedTo('manage_membergroups'))
 	{
 		loadSource('ModerationCenter');
 		$_GET['area'] = $_REQUEST['sa'] == 'requests' ? 'groups' : 'viewgroups';
@@ -89,7 +89,7 @@ function Groups()
 // This very simply lists the groups, nothing snazy.
 function GroupList()
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $theme, $settings;
+	global $txt, $scripturl, $user_profile, $context, $theme, $settings;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -244,7 +244,7 @@ function GroupList()
 // Get the group information for the list.
 function list_getGroups($start, $items_per_page, $sort)
 {
-	global $txt, $scripturl, $user_info, $theme;
+	global $txt, $scripturl, $theme;
 
 	// Yep, find the groups...
 	$request = wesql::query('
@@ -374,7 +374,7 @@ function list_getGroupCount()
 // Display members of a group, and allow adding of members to a group. Silly function name though ;)
 function MembergroupMembers()
 {
-	global $txt, $scripturl, $context, $settings, $user_info, $theme;
+	global $txt, $scripturl, $context, $settings, $theme;
 
 	$_REQUEST['group'] = isset($_REQUEST['group']) ? (int) $_REQUEST['group'] : 0;
 
@@ -617,18 +617,18 @@ function MembergroupMembers()
 // Show and manage all group requests.
 function GroupRequests()
 {
-	global $txt, $context, $scripturl, $user_info, $settings, $language;
+	global $txt, $context, $scripturl, $settings, $language;
 
 	// Set up the template stuff...
 	$context['page_title'] = $txt['mc_group_requests'];
 	wetem::load('show_list');
 
 	// Verify we can be here.
-	if ($user_info['mod_cache']['gq'] == '0=1')
+	if (we::$user['mod_cache']['gq'] == '0=1')
 		isAllowedTo('manage_membergroups');
 
 	// Normally, we act normally...
-	$where = $user_info['mod_cache']['gq'] == '1=1' || $user_info['mod_cache']['gq'] == '0=1' ? $user_info['mod_cache']['gq'] : 'lgr.' . $user_info['mod_cache']['gq'];
+	$where = we::$user['mod_cache']['gq'] == '1=1' || we::$user['mod_cache']['gq'] == '0=1' ? we::$user['mod_cache']['gq'] : 'lgr.' . we::$user['mod_cache']['gq'];
 	$where_parameters = array();
 
 	// We've submitted?
@@ -760,7 +760,7 @@ function GroupRequests()
 						);
 					}
 
-					$lastLng = $user_info['language'];
+					$lastLng = we::$user['language'];
 					foreach ($email_details as $email)
 					{
 						$replacements = array(
@@ -777,7 +777,7 @@ function GroupRequests()
 				else
 				{
 					// Same as for approving, kind of.
-					$lastLng = $user_info['language'];
+					$lastLng = we::$user['language'];
 					foreach ($email_details as $email)
 					{
 						$custom_reason = isset($_POST['groupreason'], $_POST['groupreason'][$email['rid']]) ? $_POST['groupreason'][$email['rid']] : '';

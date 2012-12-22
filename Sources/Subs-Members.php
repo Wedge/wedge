@@ -75,7 +75,7 @@ if (!defined('WEDGE'))
 // Delete a group of/single member.
 function deleteMembers($users, $check_not_admin = false)
 {
-	global $settings, $user_info;
+	global $settings;
 
 	// Try give us a while to sort this out...
 	@set_time_limit(600);
@@ -161,8 +161,8 @@ function deleteMembers($users, $check_not_admin = false)
 
 		// Add it to the administration log for future reference.
 		$log_inserts[] = array(
-			time(), 3, we::$id, get_ip_identifier($user_info['ip']), 'delete_member',
-			0, 0, 0, serialize(array('member' => $user[0], 'name' => $user[1], 'member_acted' => $user_info['name'])),
+			time(), 3, we::$id, get_ip_identifier(we::$user['ip']), 'delete_member',
+			0, 0, 0, serialize(array('member' => $user[0], 'name' => $user[1], 'member_acted' => we::$user['name'])),
 		);
 
 		// Remove any cached data if enabled.
@@ -459,7 +459,7 @@ function deleteMembers($users, $check_not_admin = false)
 function registerMember(&$regOptions, $return_errors = false)
 {
 	global $scripturl, $txt, $settings, $context;
-	global $user_info, $options, $theme;
+	global $options, $theme;
 
 	loadLanguage('Login');
 
@@ -623,7 +623,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'password_salt' => substr(md5(mt_rand()), 0, 4),
 		'posts' => 0,
 		'date_registered' => time(),
-		'member_ip' => $regOptions['interface'] == 'admin' ? '127.0.0.1' : $user_info['ip'],
+		'member_ip' => $regOptions['interface'] == 'admin' ? '127.0.0.1' : we::$user['ip'],
 		'member_ip2' => $regOptions['interface'] == 'admin' ? '127.0.0.1' : $_SERVER['BAN_CHECK_IP'],
 		'validation_code' => $validation_code,
 		'real_name' => $regOptions['username'],
@@ -864,7 +864,7 @@ function registerMember(&$regOptions, $return_errors = false)
 // Check if a name is in the reserved words list. (name, current member id, name/username?.)
 function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal = true)
 {
-	global $user_info, $settings, $context;
+	global $settings, $context;
 
 	// No cheating with entities please.
 	// Although it's unlikely there are entities in UTF8 mode, never say never.

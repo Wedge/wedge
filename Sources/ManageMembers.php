@@ -159,7 +159,7 @@ function ViewMembers()
 // View all members.
 function ViewMemberlist()
 {
-	global $txt, $scripturl, $context, $settings, $user_info;
+	global $txt, $scripturl, $context, $settings;
 
 	// Set the current sub action.
 	$context['sub_action'] = $_REQUEST['sa'];
@@ -590,9 +590,7 @@ function ViewMemberlist()
 				),
 				'data' => array(
 					'function' => create_function('$rowData', '
-						global $user_info;
-
-						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_member\'] . \'"\' . ($rowData[\'id_member\'] == $user_info[\'id\'] || $rowData[\'id_group\'] == 1 || in_array(1, explode(\',\', $rowData[\'additional_groups\'])) ? \' disabled\' : \'\') . \'>\';
+						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_member\'] . \'"\' . ($rowData[\'id_member\'] == we::$id || $rowData[\'id_group\'] == 1 || in_array(1, explode(\',\', $rowData[\'additional_groups\'])) ? \' disabled\' : \'\') . \'>\';
 					'),
 					'class' => 'center',
 				),
@@ -1038,7 +1036,7 @@ function MembersAwaitingActivation()
 // Do the approve/activate/delete stuff
 function AdminApprove()
 {
-	global $txt, $context, $scripturl, $settings, $language, $user_info;
+	global $txt, $context, $scripturl, $settings, $language;
 
 	// First, check our session.
 	checkSession();
@@ -1249,7 +1247,7 @@ function AdminApprove()
 	}
 
 	// Back to the user's language!
-	if (isset($current_language) && $current_language != $user_info['language'])
+	if (isset($current_language) && $current_language != we::$user['language'])
 	{
 		loadLanguage('index');
 		loadLanguage('ManageMembers');
@@ -1263,7 +1261,7 @@ function AdminApprove()
 		foreach ($member_info as $member)
 		{
 			$log_inserts[] = array(
-				time(), 3, we::$id, get_ip_identifier($user_info['ip']), $log_action,
+				time(), 3, we::$id, get_ip_identifier(we::$user['ip']), $log_action,
 				0, 0, 0, serialize(array('member' => $member['id'])),
 			);
 		}

@@ -62,7 +62,7 @@ define('WEDGE_NO_LOG', 1);
 function Feed()
 {
 	global $topic, $board, $board_info, $context, $scripturl, $txt;
-	global $settings, $query_this, $user_info, $domain;
+	global $settings, $query_this, $domain;
 
 	// If it's not enabled, die.
 	if (empty($settings['xmlnews_enable']))
@@ -445,7 +445,7 @@ function getXmlMembers($xml_format)
 
 function getXmlNews($xml_format)
 {
-	global $user_info, $scripturl, $settings;
+	global $scripturl, $settings;
 	global $board, $query_this, $theme, $context;
 
 	/* Find the latest posts that:
@@ -553,7 +553,7 @@ function getXmlNews($xml_format)
 
 function getXmlRecent($xml_format)
 {
-	global $user_info, $scripturl, $settings;
+	global $scripturl, $settings;
 	global $board, $query_this, $theme, $context;
 
 	$done = false;
@@ -671,7 +671,7 @@ function getXmlRecent($xml_format)
 // This is obviously not the case right now... And is pretty much useless. :-/
 function getXmlProfile($xml_format)
 {
-	global $scripturl, $memberContext, $user_profile, $settings, $user_info;
+	global $scripturl, $memberContext, $user_profile, $settings;
 
 	// You must input a valid user....
 	if (empty($_GET['u']) || loadMemberData((int) $_GET['u']) === false)

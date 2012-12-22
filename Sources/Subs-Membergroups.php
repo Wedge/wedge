@@ -235,7 +235,7 @@ function deleteMembergroups($groups)
 // Remove one or more members from one or more membergroups.
 function removeMembersFromGroups($members, $groups = null, $permissionCheckDone = false)
 {
-	global $user_info, $settings;
+	global $settings;
 
 	// You're getting nowhere without this permission, unless of course you are the group's moderator.
 	if (!$permissionCheckDone)
@@ -371,7 +371,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 	);
 	while ($row = wesql::fetch_assoc($request))
 		$log_inserts[] = array(
-			time(), 3, we::$id, $user_info['ip'], 'removed_from_group',
+			time(), 3, we::$id, we::$user['ip'], 'removed_from_group',
 			0, 0, 0, serialize(array('group' => $group_names[$row['id_group']], 'member' => $row['id_member'])),
 		);
 	wesql::free_result($request);
@@ -407,7 +407,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 		foreach (explode(',', $row['additional_groups']) as $group)
 			if (in_array($group, $groups))
 				$log_inserts[] = array(
-					time(), 3, we::$id, get_ip_identifier($user_info['ip']), 'removed_from_group',
+					time(), 3, we::$id, get_ip_identifier(we::$user['ip']), 'removed_from_group',
 					0, 0, 0, serialize(array('group' => $group_names[$group], 'member' => $row['id_member'])),
 				);
 
@@ -458,7 +458,7 @@ function removeMembersFromGroups($members, $groups = null, $permissionCheckDone 
 						  available. If not, assign it to the additional group. */
 function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDone = false)
 {
-	global $user_info, $settings;
+	global $settings;
 
 	// Show your licence, but only if it hasn't been done yet.
 	if (!$permissionCheckDone)
@@ -587,7 +587,7 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 	$log_inserts = array();
 	foreach ($members as $member)
 		$log_inserts[] = array(
-			time(), 3, we::$id, get_ip_identifier($user_info['ip']), 'added_to_group',
+			time(), 3, we::$id, get_ip_identifier(we::$user['ip']), 'added_to_group',
 			0, 0, 0, serialize(array('group' => $group_names[$group], 'member' => $member)),
 		);
 

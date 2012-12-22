@@ -38,7 +38,7 @@ if (!defined('WEDGE'))
 function Search2()
 {
 	global $settings, $sourcedir, $txt, $db_connection;
-	global $user_info, $context, $options, $messages_request, $boards_can;
+	global $context, $options, $messages_request, $boards_can;
 	global $excludedWords, $participants, $searchAPI;
 
 	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
@@ -311,7 +311,7 @@ function Search2()
 				AND b.id_board != {int:recycle_board_id}' : '') : '
 				AND b.id_board IN ({array_int:selected_search_boards})'),
 			array(
-				'boards_allowed_to_see' => $user_info[$see_board],
+				'boards_allowed_to_see' => we::$user[$see_board],
 				'empty_string' => '',
 				'selected_search_boards' => empty($_REQUEST['brd']) ? array() : $_REQUEST['brd'],
 				'recycle_board_id' => $settings['recycle_board'],
@@ -1479,7 +1479,7 @@ function Search2()
 
 	// Consider the search complete!
 	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
-		cache_put_data('search_start:' . (we::$is_guest ? $user_info['ip'] : we::$id), null, 90);
+		cache_put_data('search_start:' . (we::$is_guest ? we::$user['ip'] : we::$id), null, 90);
 
 	$context['key_words'] =& $searchArray;
 
@@ -1499,7 +1499,7 @@ function Search2()
 // !!! Fix this, update it, whatever... from Display.php mainly.
 function prepareSearchContext($reset = false)
 {
-	global $txt, $settings, $user_info;
+	global $txt, $settings;
 	global $memberContext, $context, $theme, $options, $messages_request;
 	global $boards_can, $participants;
 

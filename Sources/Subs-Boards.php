@@ -80,7 +80,7 @@ if (!defined('WEDGE'))
 // Mark a board or multiple boards read.
 function markBoardsRead($boards, $unread = false)
 {
-	global $user_info, $settings;
+	global $settings;
 
 	// Force $boards to be an array.
 	if (!is_array($boards))
@@ -188,7 +188,7 @@ function markBoardsRead($boards, $unread = false)
 // Mark one or more boards as read.
 function MarkRead()
 {
-	global $board, $topic, $user_info, $board_info, $settings;
+	global $board, $topic, $board_info, $settings;
 
 	// No Guests allowed!
 	is_not_guest();
@@ -1108,7 +1108,7 @@ function fixChildren($parent, $newLevel, $newParent)
 // Restrict to their own boards anyone who's not an admin
 function getBoardTree($restrict = false)
 {
-	global $cat_tree, $boards, $boardList, $txt, $settings, $user_info;
+	global $cat_tree, $boards, $boardList, $txt, $settings;
 
 	$restriction = we::$is_admin || !$restrict ? '' : '
 				AND b.id_owner = ' . (int) we::$id;

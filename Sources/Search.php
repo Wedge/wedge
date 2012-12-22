@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
 // Ask the user what they want to search for.
 function Search()
 {
-	global $txt, $scripturl, $settings, $user_info, $context;
+	global $txt, $scripturl, $settings, $context;
 
 	// Is the load average too high to allow searching just now?
 	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
@@ -143,7 +143,7 @@ function Search()
 			'id' => $row['id_board'],
 			'name' => $row['name'],
 			'child_level' => $row['child_level'],
-			'selected' => (empty($context['search_params']['brd']) && (empty($settings['recycle_enable']) || $row['id_board'] != $settings['recycle_board']) && !in_array($row['id_board'], $user_info['ignoreboards'])) || (!empty($context['search_params']['brd']) && in_array($row['id_board'], $context['search_params']['brd']))
+			'selected' => (empty($context['search_params']['brd']) && (empty($settings['recycle_enable']) || $row['id_board'] != $settings['recycle_board']) && !in_array($row['id_board'], we::$user['ignoreboards'])) || (!empty($context['search_params']['brd']) && in_array($row['id_board'], $context['search_params']['brd']))
 		);
 
 		// If a board wasn't checked that probably should have been, ensure the board selection is selected!

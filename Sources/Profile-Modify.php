@@ -118,7 +118,7 @@ if (!defined('WEDGE'))
 // This defines every profile field known to man.
 function loadProfileFields($force_reload = false)
 {
-	global $context, $profile_fields, $txt, $scripturl, $settings, $user_info, $old_profile, $cur_profile, $language;
+	global $context, $profile_fields, $txt, $scripturl, $settings, $old_profile, $cur_profile, $language;
 
 	// Don't load this twice!
 	if (!empty($profile_fields) && !$force_reload)
@@ -231,22 +231,22 @@ function loadProfileFields($force_reload = false)
 		),
 		'date_registered' => array(
 			'type' => 'text',
-			'value' => empty($cur_profile['date_registered']) ? $txt['not_applicable'] : strftime('%Y-%m-%d', $cur_profile['date_registered'] + ($user_info['time_offset'] + $settings['time_offset']) * 3600),
+			'value' => empty($cur_profile['date_registered']) ? $txt['not_applicable'] : strftime('%Y-%m-%d', $cur_profile['date_registered'] + (we::$user['time_offset'] + $settings['time_offset']) * 3600),
 			'label' => $txt['date_registered'],
 			'log_change' => true,
 			'permission' => 'moderate_forum',
 			'input_validate' => create_function('&$value', '
-				global $txt, $user_info, $settings, $cur_profile, $context;
+				global $txt, $settings, $cur_profile, $context;
 
 				// Bad date! Go try again - please?
 				if (($value = strtotime($value)) === -1)
 				{
 					$value = $cur_profile[\'date_registered\'];
-					return $txt[\'invalid_registration\'] . \' \' . strftime(\'%d %b %Y \' . (strpos($user_info[\'time_format\'], \'%H\') !== false ? \'%I:%M:%S %p\' : \'%H:%M:%S\'), forum_time(false));
+					return $txt[\'invalid_registration\'] . \' \' . strftime(\'%d %b %Y \' . (strpos(we::$user[\'time_format\'], \'%H\') !== false ? \'%I:%M:%S %p\' : \'%H:%M:%S\'), forum_time(false));
 				}
 				// As long as it doesn\'t equal "N/A"...
-				elseif ($value != $txt[\'not_applicable\'] && $value != strtotime(strftime(\'%Y-%m-%d\', $cur_profile[\'date_registered\'] + ($user_info[\'time_offset\'] + $settings[\'time_offset\']) * 3600)))
-					$value = $value - ($user_info[\'time_offset\'] + $settings[\'time_offset\']) * 3600;
+				elseif ($value != $txt[\'not_applicable\'] && $value != strtotime(strftime(\'%Y-%m-%d\', $cur_profile[\'date_registered\'] + (we::$user[\'time_offset\'] + $settings[\'time_offset\']) * 3600)))
+					$value = $value - (we::$user[\'time_offset\'] + $settings[\'time_offset\']) * 3600;
 				else
 					$value = $cur_profile[\'date_registered\'];
 
@@ -351,7 +351,7 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_identity',
 			'prehtml' => allowedTo('admin_forum') && isset($_GET['changeusername']) ? '<div class="alert">' . $txt['username_warning'] . '</div>' : '',
 			'input_validate' => create_function('&$value', '
-				global $context, $user_info, $cur_profile;
+				global $context, $cur_profile;
 
 				if (allowedTo(\'admin_forum\'))
 				{
@@ -360,7 +360,7 @@ function loadProfileFields($force_reload = false)
 
 					// Maybe they are trying to change their password as well?
 					$resetPassword = true;
-					if (isset($_POST[\'passwrd1\'], $_POST[\'passwrd2\']) && $_POST[\'passwrd1\'] != \'\' && $_POST[\'passwrd1\'] == $_POST[\'passwrd2\'] && validatePassword($_POST[\'passwrd1\'], $value, array($cur_profile[\'real_name\'], $user_info[\'username\'], $user_info[\'name\'], $user_info[\'email\'])) == null)
+					if (isset($_POST[\'passwrd1\'], $_POST[\'passwrd2\']) && $_POST[\'passwrd1\'] != \'\' && $_POST[\'passwrd1\'] == $_POST[\'passwrd2\'] && validatePassword($_POST[\'passwrd1\'], $value, array($cur_profile[\'real_name\'], we::$user[\'username\'], we::$user[\'name\'], we::$user[\'email\'])) == null)
 						$resetPassword = false;
 
 					// Do the reset... this will send them an email too.
@@ -386,7 +386,7 @@ function loadProfileFields($force_reload = false)
 
 			// Note this will only work if passwrd2 also exists!
 			'input_validate' => create_function('&$value', '
-				global $user_info, $cur_profile, $txt;
+				global $cur_profile, $txt;
 
 				// If we didn\'t try it then ignore it!
 				if ($value == \'\')
@@ -398,7 +398,7 @@ function loadProfileFields($force_reload = false)
 
 				// Let\'s get the validation function into play...
 				loadSource(\'Subs-Auth\');
-				$passwordErrors = validatePassword($value, $cur_profile[\'member_name\'], array($cur_profile[\'real_name\'], $user_info[\'username\'], $user_info[\'name\'], $user_info[\'email\']));
+				$passwordErrors = validatePassword($value, $cur_profile[\'member_name\'], array($cur_profile[\'real_name\'], we::$user[\'username\'], we::$user[\'name\'], we::$user[\'email\']));
 
 				// Were there errors?
 				if ($passwordErrors != null)
@@ -567,7 +567,7 @@ function loadProfileFields($force_reload = false)
 			'callback_func' => 'timeformat_modify',
 			'permission' => 'profile_extra',
 			'preload' => create_function('', '
-				global $context, $user_info, $txt, $cur_profile, $settings;
+				global $context, $txt, $cur_profile, $settings;
 
 				$context[\'easy_timeformats\'] = array(
 					array(\'format\' => \'\', \'title\' => $txt[\'timeformat_default\']),
@@ -579,7 +579,7 @@ function loadProfileFields($force_reload = false)
 				);
 
 				$context[\'member\'][\'time_format\'] = $cur_profile[\'time_format\'];
-				$context[\'current_forum_time\'] = timeformat(time() - $user_info[\'time_offset\'] * 3600 + date_offset_get(new DateTime), false);
+				$context[\'current_forum_time\'] = timeformat(time() - we::$user[\'time_offset\'] * 3600 + date_offset_get(new DateTime), false);
 				$context[\'current_forum_time_js\'] = time() + $settings[\'time_offset\'] * 3600;
 				$context[\'current_forum_time_hour\'] = (int) strftime(\'%H\', forum_time(false));
 				return true;
@@ -874,7 +874,7 @@ function saveProfileFields()
 // Save the profile changes....
 function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 {
-	global $user_info, $txt, $settings, $user_profile, $context, $theme;
+	global $txt, $settings, $user_profile, $context, $theme;
 
 	// These make life easier....
 	$old_profile =& $user_profile[$memID];
@@ -1103,7 +1103,7 @@ function makeNotificationChanges($memID)
 // Save any changes to the custom profile fields...
 function makeCustomFieldChanges($memID, $area, $sanitize = true)
 {
-	global $context, $user_profile, $user_info, $settings;
+	global $context, $user_profile, $settings;
 
 	if ($sanitize && isset($_POST['customfield']))
 		$_POST['customfield'] = htmlspecialchars__recursive($_POST['customfield']);
@@ -1174,7 +1174,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 				'id_log' => 2,
 				'log_time' => time(),
 				'id_member' => $memID,
-				'ip' => get_ip_identifier($user_info['ip']),
+				'ip' => get_ip_identifier(we::$user['ip']),
 				'extra' => serialize(array('previous' => !empty($user_profile[$memID]['options'][$row['col_name']]) ? $user_profile[$memID]['options'][$row['col_name']] : '', 'new' => $value, 'applicator' => we::$id)),
 			);
 			$changes[] = array(1, $row['col_name'], $value, $memID);
@@ -1476,7 +1476,7 @@ function account($memID)
 
 function forumProfile($memID)
 {
-	global $context, $user_profile, $user_info, $txt, $settings;
+	global $context, $user_profile, $txt, $settings;
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_extra_own', 'profile_extra_any')))
@@ -1619,7 +1619,7 @@ function options($memID)
 // Display the notifications and settings for changes.
 function notification($memID)
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $settings, $theme;
+	global $txt, $scripturl, $user_profile, $context, $settings, $theme;
 
 	// Gonna want this for the list.
 	loadSource('Subs-List');
@@ -1828,12 +1828,12 @@ function notification($memID)
 
 function list_getTopicNotificationCount($memID)
 {
-	global $user_info, $context;
+	global $context;
 
 	$request = wesql::query('
 		SELECT COUNT(*)
-		FROM {db_prefix}log_notify AS ln' . ($user_info['query_see_topic'] === '1=1' ? '' : '
-			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic AND {query_see_topic})') . ($user_info['query_see_board'] === '1=1' ? '' : '
+		FROM {db_prefix}log_notify AS ln' . (we::$user['query_see_topic'] === '1=1' ? '' : '
+			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = ln.id_topic AND {query_see_topic})') . (we::$user['query_see_board'] === '1=1' ? '' : '
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
 		WHERE ln.id_member = {int:selected_member}',
 		array(
@@ -1848,7 +1848,7 @@ function list_getTopicNotificationCount($memID)
 
 function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $txt, $scripturl, $user_info, $context;
+	global $txt, $scripturl, $context;
 
 	// All the topics with notification on...
 	$request = wesql::query('
@@ -1904,7 +1904,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 
 function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 {
-	global $txt, $scripturl, $user_info;
+	global $txt, $scripturl;
 
 	$request = wesql::query('
 		SELECT b.id_board, b.name, IFNULL(lb.id_msg, 0) AS board_read, b.id_msg_updated
@@ -1985,7 +1985,7 @@ function loadThemeOptions($memID)
 
 function ignoreboards($memID)
 {
-	global $txt, $user_info, $context, $settings, $cur_profile;
+	global $txt, $context, $settings, $cur_profile;
 
 	// Have the admins enabled this option?
 	if (empty($settings['allow_ignore_boards']))
@@ -2910,7 +2910,7 @@ function profileSendActivation()
 // Function to allow the user to choose group membership etc...
 function groupMembership($memID)
 {
-	global $txt, $scripturl, $user_profile, $user_info, $context, $settings;
+	global $txt, $scripturl, $user_profile, $context, $settings;
 
 	$curMember = $user_profile[$memID];
 	$context['primary_group'] = $curMember['id_group'];
@@ -3004,7 +3004,7 @@ function groupMembership($memID)
 // This function actually makes all the group changes...
 function groupMembership2($profile_vars, $post_errors, $memID)
 {
-	global $user_info, $context, $user_profile, $settings, $txt, $scripturl, $language;
+	global $context, $user_profile, $settings, $txt, $scripturl, $language;
 
 	// Let's be extra cautious...
 	if (!$context['user']['is_owner'] || empty($settings['show_group_membership']))

@@ -552,7 +552,7 @@ function RemoveTheme()
 // Choose a theme from a list.
 function PickTheme()
 {
-	global $txt, $context, $settings, $user_info, $language, $theme, $scripturl;
+	global $txt, $context, $settings, $language, $theme, $scripturl;
 
 	loadLanguage('Themes');
 	loadTemplate('Themes');
@@ -619,8 +619,8 @@ function PickTheme()
 	if ($u === null || !allowedTo('admin_forum'))
 	{
 		$context['specify_member'] = '';
-		$context['current_theme'] = $user_info['theme'];
-		$context['current_skin'] = empty($user_info['theme']) ? '' : $user_info['skin'];
+		$context['current_theme'] = we::$user['theme'];
+		$context['current_skin'] = empty(we::$user['theme']) ? '' : we::$user['skin'];
 	}
 	// Everyone can't choose just one.
 	elseif ($u == '0')
@@ -743,8 +743,8 @@ function PickTheme()
 		// The thumbnail needs the correct path.
 		$theme['images_url'] =& $theme_data['images_url'];
 
-		if (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . $user_info['language'] . '.php'))
-			include($theme_data['theme_dir'] . '/languages/Settings.' . $user_info['language'] . '.php');
+		if (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . we::$user['language'] . '.php'))
+			include($theme_data['theme_dir'] . '/languages/Settings.' . we::$user['language'] . '.php');
 		elseif (file_exists($theme_data['theme_dir'] . '/languages/Settings.' . $language . '.php'))
 			include($theme_data['theme_dir'] . '/languages/Settings.' . $language . '.php');
 		else
@@ -1543,8 +1543,6 @@ function wedge_show_skins(&$th, &$style, $current_theme_id = '', $current_skin =
 
 function wedge_update_skin($mem, $id_theme, $skin)
 {
-	global $user_info;
-
 	if (we::is('mobile'))
 		updateMemberData($mem, array(
 			'id_theme_mobile' => $id_theme,

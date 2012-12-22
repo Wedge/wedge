@@ -79,7 +79,7 @@ function ManageScheduledTasks()
 // List all the scheduled task in place on the forum.
 function ScheduledTasks()
 {
-	global $context, $txt, $user_info, $settings, $scripturl;
+	global $context, $txt, $settings, $scripturl;
 
 	// Mama, setup the template first - cause it's like the most important bit, like pickle in a sandwich.
 	// ... ironically I don't like pickle. </grudge>
@@ -315,7 +315,7 @@ function list_getScheduledTasks($start, $items_per_page, $sort)
 // Function for editing a task.
 function EditTask()
 {
-	global $context, $txt, $user_info, $settings;
+	global $context, $txt, $settings;
 
 	// Just set up some lovely context stuff.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'tasks';

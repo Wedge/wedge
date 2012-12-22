@@ -95,7 +95,7 @@ function Poll()
 // Allow the user to vote.
 function Vote()
 {
-	global $topic, $txt, $user_info, $settings;
+	global $topic, $txt, $settings;
 
 	// Make sure you can vote.
 	isAllowedTo('poll_vote');
@@ -287,7 +287,7 @@ function Vote()
 // Lock the voting for a poll.
 function LockVoting()
 {
-	global $topic, $user_info;
+	global $topic;
 
 	checkSession('get');
 
@@ -341,7 +341,7 @@ function LockVoting()
 // Ask what to change in a poll.
 function EditPoll()
 {
-	global $txt, $user_info, $context, $topic, $board, $scripturl;
+	global $txt, $context, $topic, $board, $scripturl;
 
 	loadLanguage('Post');
 	loadTemplate('Poll');
@@ -619,7 +619,7 @@ function EditPoll()
 function EditPoll2()
 {
 	global $txt, $topic, $board, $context;
-	global $settings, $user_info;
+	global $settings;
 
 	// Sneaking off, are we?
 	if (empty($_POST))
@@ -772,7 +772,7 @@ function EditPoll2()
 			),
 			array(
 				$_POST['question'], $_POST['poll_hide'], $_POST['poll_voters_visible'], $_POST['poll_max_votes'], $_POST['poll_expire'], we::$id,
-				$user_info['username'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
+				we::$user['username'], $_POST['poll_change_vote'], $_POST['poll_guest_vote'],
 			),
 			array('id_poll')
 		);
@@ -913,7 +913,7 @@ function EditPoll2()
 // Remove a poll from a topic without removing the topic.
 function RemovePoll()
 {
-	global $topic, $user_info;
+	global $topic;
 
 	// Verify the session.
 	checkSession('get');

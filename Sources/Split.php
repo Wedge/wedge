@@ -162,7 +162,7 @@ function SplitIndex()
 // Alright, you've decided what you want to do with it.... now to do it.
 function SplitExecute()
 {
-	global $txt, $board, $topic, $context, $user_info, $settings;
+	global $txt, $board, $topic, $context, $settings;
 
 	// Check the session to make sure they meant to do this.
 	checkSession();
@@ -501,7 +501,7 @@ function SplitSelectTopics()
 // Actually and selectively split the topics out.
 function SplitSelectionExecute()
 {
-	global $txt, $board, $topic, $context, $user_info;
+	global $txt, $board, $topic, $context;
 
 	// Make sure the session id was passed with post.
 	checkSession();
@@ -522,7 +522,7 @@ function SplitSelectionExecute()
 // Split a topic in two topics.
 function splitTopic($split1_id_topic, $split_messages, $new_subject)
 {
-	global $user_info, $topic, $board, $settings, $txt;
+	global $topic, $board, $settings, $txt;
 
 	// Nothing to split?
 	if (empty($split_messages))

@@ -130,7 +130,6 @@ function Ban()
 function BanList()
 {
 	global $txt, $context, $ban_request, $ban_counts, $scripturl;
-	global $user_info;
 
 	// User pressed the 'remove selection button'.
 	if (!empty($_POST['removeBans']) && !empty($_POST['remove']) && is_array($_POST['remove']))
@@ -158,8 +157,8 @@ function BanList()
 	}
 
 	// Create a date string so we don't overload them with date info.
-	if (preg_match('~%[AaBbCcDdeGghjmuYy](?:[^%]*%[AaBbCcDdeGghjmuYy])*~', $user_info['time_format'], $matches) == 0 || empty($matches[0]))
-		$context['ban_time_format'] = $user_info['time_format'];
+	if (preg_match('~%[AaBbCcDdeGghjmuYy](?:[^%]*%[AaBbCcDdeGghjmuYy])*~', we::$user['time_format'], $matches) == 0 || empty($matches[0]))
+		$context['ban_time_format'] = we::$user['time_format'];
 	else
 		$context['ban_time_format'] = $matches[0];
 

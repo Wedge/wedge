@@ -18,7 +18,7 @@ class wesql
 {
 	protected static $instance; // container for self
 	protected static $_db_con; // store the database connection (normally)
-	protected static $callback_values; // store the special replacements for $user_info items
+	protected static $callback_values; // store the special replacements for we::$user items
 
 	// What kind of class are you, anyway? One of a kind!
 	private function __clone()
@@ -531,7 +531,7 @@ class wesql
 
 	public static function value_replacement__callback($matches)
 	{
-		global $db_callback, $user_info, $db_prefix;
+		global $db_callback, $db_prefix;
 
 		list ($values, $connection) = $db_callback;
 		if ($connection === null)

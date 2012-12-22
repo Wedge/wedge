@@ -32,8 +32,6 @@ if (!defined('WEDGE'))
  */
 function getBoardList($boardListOptions = array())
 {
-	global $user_info;
-
 	if (isset($boardListOptions['excluded_boards'], $boardListOptions['included_boards']))
 		trigger_error('getBoardList(): Setting both excluded_boards and included_boards is not allowed.', E_USER_ERROR);
 

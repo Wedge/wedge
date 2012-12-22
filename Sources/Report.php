@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  */
 function Report()
 {
-	global $txt, $topic, $settings, $user_info, $context;
+	global $txt, $topic, $settings, $context;
 
 	$context['robot_no_index'] = true;
 
@@ -96,7 +96,7 @@ function Report()
  */
 function ReportToModerator2()
 {
-	global $txt, $scripturl, $topic, $board, $user_info, $settings, $language, $context;
+	global $txt, $scripturl, $topic, $board, $settings, $language, $context;
 
 	// Make sure they aren't spamming.
 	spamProtection('report');
@@ -126,7 +126,7 @@ function ReportToModerator2()
 
 		isBannedEmail($_POST['email'], 'cannot_post', sprintf($txt['you_are_post_banned'], $txt['guest_title']));
 
-		$user_info['email'] = htmlspecialchars($_POST['email']);
+		we::$user['email'] = htmlspecialchars($_POST['email']);
 	}
 
 	// Could they get the right verification code?
@@ -174,7 +174,7 @@ function ReportToModerator2()
 	wesql::free_result($request);
 
 	$poster_name = un_htmlspecialchars($message['real_name']) . ($message['real_name'] != $message['poster_name'] ? ' (' . $message['poster_name'] . ')' : '');
-	$reporterName = un_htmlspecialchars($user_info['name']) . ($user_info['name'] != $user_info['username'] && $user_info['username'] != '' ? ' (' . $user_info['username'] . ')' : '');
+	$reporterName = un_htmlspecialchars(we::$user['name']) . (we::$user['name'] != we::$user['username'] && we::$user['username'] != '' ? ' (' . we::$user['username'] . ')' : '');
 	$subject = un_htmlspecialchars($message['subject']);
 
 	// Get a list of members with the moderate_board permission.
@@ -263,8 +263,8 @@ function ReportToModerator2()
 					'member_ip' => 'int', 'comment' => 'string', 'time_sent' => 'int',
 				),
 				array(
-					$id_report, we::$id, $user_info['name'], $user_info['email'],
-					get_ip_identifier($user_info['ip']), $poster_comment, time(),
+					$id_report, we::$id, we::$user['name'], we::$user['email'],
+					get_ip_identifier(we::$user['ip']), $poster_comment, time(),
 				),
 				array('id_comment')
 			);
@@ -308,7 +308,7 @@ function ReportToModerator2()
 		$emaildata = loadEmailTemplate('report_to_moderator', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
 
 		// Send it to the moderator.
-		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], $user_info['email'], null, false, 2);
+		sendmail($row['email_address'], $emaildata['subject'], $emaildata['body'], we::$user['email'], null, false, 2);
 	}
 	wesql::free_result($request);
 

@@ -68,7 +68,7 @@ if (!defined('WEDGE'))
  */
 function Post($post_errors = array())
 {
-	global $txt, $scripturl, $topic, $topic_info, $settings, $board, $user_info;
+	global $txt, $scripturl, $topic, $topic_info, $settings, $board;
 	global $board_info, $context, $theme, $options, $language;
 
 	$context['form_fields'] = array(
@@ -301,7 +301,7 @@ function Post($post_errors = array())
 	// Get a response prefix (like 'Re:') in the default forum language.
 	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
 	{
-		if ($language === $user_info['language'])
+		if ($language === we::$user['language'])
 			$context['response_prefix'] = $txt['response_prefix'];
 		else
 		{
@@ -468,7 +468,7 @@ function Post($post_errors = array())
 			$_REQUEST['email'] = htmlspecialchars($_REQUEST['email']);
 			$context['email'] = $_REQUEST['email'];
 
-			$user_info['name'] = $_REQUEST['guestname'];
+			we::$user['name'] = $_REQUEST['guestname'];
 		}
 
 		// Only show the preview stuff if they hit Preview.
@@ -1104,7 +1104,7 @@ function Post($post_errors = array())
 	$context['is_first_post'] = $context['is_new_topic'] || (isset($_REQUEST['msg']) && $_REQUEST['msg'] == $id_first_msg);
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = !we::is('mod') && !we::$is_admin && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
+	$context['require_verification'] = !we::$user['is_mod'] && !we::$is_admin && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');

@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
 // Allow the change or view of profiles...
 function ModifyProfile($post_errors = array())
 {
-	global $txt, $scripturl, $user_info, $context, $user_profile, $cur_profile;
+	global $txt, $scripturl, $context, $user_profile, $cur_profile;
 	global $settings, $memberContext, $profile_vars, $post_errors, $options;
 
 	// Don't reload this as we may have processed error strings.
@@ -589,7 +589,7 @@ function ModifyProfile($post_errors = array())
 			$good_password = in_array(true, call_hook('verify_password', array($cur_profile['member_name'], $_POST['oldpasswrd'], false)), true);
 
 			// Bad password!!!
-			if (!$good_password && $user_info['passwd'] != sha1(strtolower($cur_profile['member_name']) . $_POST['oldpasswrd']))
+			if (!$good_password && we::$user['passwd'] != sha1(strtolower($cur_profile['member_name']) . $_POST['oldpasswrd']))
 				$post_errors[] = 'bad_password';
 
 			// Warn other elements not to jump the gun and do custom changes!
@@ -599,7 +599,7 @@ function ModifyProfile($post_errors = array())
 
 		// Change the IP address in the database.
 		if ($context['user']['is_owner'])
-			$profile_vars['member_ip'] = $user_info['ip'];
+			$profile_vars['member_ip'] = we::$user['ip'];
 
 		// Now call the sub-action function...
 		if ($current_area == 'activateaccount')
@@ -663,7 +663,7 @@ function ModifyProfile($post_errors = array())
 						'id_log' => 2,
 						'log_time' => time(),
 						'id_member' => $memID,
-						'ip' => get_ip_identifier($user_info['ip']),
+						'ip' => get_ip_identifier(we::$user['ip']),
 						'extra' => serialize(array_merge($v, array('applicator' => we::$id))),
 					);
 
@@ -715,7 +715,7 @@ function ModifyProfile($post_errors = array())
 // Load any custom fields for this area... no area means load all, 'summary' loads all public ones.
 function loadCustomFields($memID, $area = 'summary')
 {
-	global $context, $txt, $user_profile, $user_info, $theme, $scripturl;
+	global $context, $txt, $user_profile, $theme, $scripturl;
 
 	// Get the right restrictions in place...
 	$where = 'active = 1';

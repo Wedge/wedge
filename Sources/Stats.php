@@ -32,7 +32,7 @@ if (!defined('WEDGE'))
 // Display some useful/interesting board statistics.
 function Stats()
 {
-	global $txt, $scripturl, $settings, $user_info, $context;
+	global $txt, $scripturl, $settings, $context;
 
 	isAllowedTo('view_stats');
 

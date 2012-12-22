@@ -228,7 +228,7 @@ function InMaintenance()
 
 function adminLogin()
 {
-	global $context, $scripturl, $txt, $user_info;
+	global $context, $scripturl, $txt;
 
 	loadLanguage('Admin');
 	loadTemplate('Login');
@@ -236,7 +236,7 @@ function adminLogin()
 	// They used a wrong password, log it and unset that.
 	if (isset($_POST['admin_hash_pass']) || isset($_POST['admin_pass']))
 	{
-		$txt['security_wrong'] = sprintf($txt['security_wrong'], isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $txt['unknown'], $_SERVER['HTTP_USER_AGENT'], format_ip($user_info['ip']));
+		$txt['security_wrong'] = sprintf($txt['security_wrong'], isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $txt['unknown'], $_SERVER['HTTP_USER_AGENT'], format_ip(we::$user['ip']));
 		log_error($txt['security_wrong'], 'critical');
 
 		if (isset($_POST['admin_hash_pass']))
@@ -321,7 +321,7 @@ function construct_query_string($get)
 // Find members by email address, username, or real name.
 function findMembers($names, $use_wildcards = false, $buddies_only = false, $max = 500)
 {
-	global $scripturl, $user_info, $settings;
+	global $scripturl, $settings;
 
 	// If it's not already an array, make it one.
 	if (!is_array($names))
@@ -371,7 +371,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 			AND is_activated IN (1, 11)
 		LIMIT {int:limit}',
 		array(
-			'buddy_list' => $user_info['buddies'],
+			'buddy_list' => we::$user['buddies'],
 			'member_name_search' => $member_name . ' ' . $comparison . ' \'' . implode( '\' OR ' . $member_name . ' ' . $comparison . ' \'', $names) . '\'',
 			'real_name_search' => $real_name . ' ' . $comparison . ' \'' . implode( '\' OR ' . $real_name . ' ' . $comparison . ' \'', $names) . '\'',
 			'email_condition' => $email_condition,
@@ -511,8 +511,6 @@ function validatePassword($password, $username, $restrict_in = array())
 // Quickly find out what this user can and cannot do.
 function rebuildModCache()
 {
-	global $user_info;
-
 	// What groups can they moderate?
 	$group_query = allowedTo('manage_membergroups') ? '1=1' : '0=1';
 
@@ -572,7 +570,7 @@ function rebuildModCache()
 	$_SESSION['mc'] = array(
 		'time' => time(),
 		// This looks a bit funny but protects against the login redirect.
-		'id' => we::$id && $user_info['name'] ? we::$id : 0,
+		'id' => we::$id && we::$user['name'] ? we::$id : 0,
 		'gq' => $group_query,
 		'bq' => $board_query,
 		'ap' => boardsAllowedTo('approve_posts'),
@@ -580,7 +578,7 @@ function rebuildModCache()
 		'mq' => $mod_query,
 	);
 
-	$user_info['mod_cache'] = $_SESSION['mc'];
+	we::$user['mod_cache'] = $_SESSION['mc'];
 }
 
 ?>

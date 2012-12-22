@@ -71,7 +71,7 @@ if (!defined('WEDGE'))
 // View a summary.
 function summary($memID)
 {
-	global $context, $memberContext, $txt, $settings, $user_info, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_profile, $scripturl;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -250,7 +250,7 @@ function summary($memID)
 // Show the user's drafts.
 function showDrafts($memID)
 {
-	global $context, $memberContext, $txt, $settings, $user_info, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_profile, $scripturl;
 
 	// Attempt to load the member's profile data.
 	if (!loadMemberContext($memID) || !isset($memberContext[$memID]))
@@ -426,7 +426,7 @@ function showDrafts($memID)
 // Show all posts by the current user
 function showPosts($memID)
 {
-	global $txt, $user_info, $scripturl, $settings;
+	global $txt, $scripturl, $settings;
 	global $context, $user_profile, $board;
 
 	$guest = '';
@@ -512,7 +512,7 @@ function showPosts($memID)
 		$request = wesql::query('
 			SELECT COUNT(t.id_topic)
 			FROM {db_prefix}topics AS t
-				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)' . ($user_info['query_see_board'] == '1=1' ? '' : '
+				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)' . (we::$user['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
 			WHERE t.id_member_started = {int:current_member}' . $specGuest . (!empty($board) ? '
 				AND t.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
@@ -526,7 +526,7 @@ function showPosts($memID)
 	else
 		$request = wesql::query('
 			SELECT COUNT(m.id_msg)
-			FROM {db_prefix}messages AS m' . ($user_info['query_see_board'] == '1=1' ? '' : '
+			FROM {db_prefix}messages AS m' . (we::$user['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
 			WHERE m.id_member = {int:current_member}' . $specGuest . (!empty($board) ? '
 				AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
@@ -763,7 +763,7 @@ function showPosts($memID)
 // Show all the attachments of a user.
 function showAttachments($memID)
 {
-	global $txt, $user_info, $scripturl, $settings, $board;
+	global $txt, $scripturl, $settings, $board;
 	global $context, $user_profile;
 
 	// OBEY permissions!
@@ -864,7 +864,7 @@ function showAttachments($memID)
 
 function statPanel($memID)
 {
-	global $txt, $scripturl, $context, $user_profile, $user_info, $settings;
+	global $txt, $scripturl, $context, $user_profile, $settings;
 
 	$context['page_title'] = $txt['statPanel_showStats'] . ' ' . $user_profile[$memID]['real_name'];
 
@@ -996,7 +996,7 @@ function statPanel($memID)
 		array(
 			'current_member' => $memID,
 			'top_ten_thousand_topics' => $settings['totalTopics'] - 10000,
-			'time_offset' => (($user_info['time_offset'] + $settings['time_offset']) * 3600),
+			'time_offset' => ((we::$user['time_offset'] + $settings['time_offset']) * 3600),
 		)
 	);
 	$maxPosts = $realPosts = 0;
@@ -1011,7 +1011,7 @@ function statPanel($memID)
 
 		$context['posts_by_time'][$row['hour']] = array(
 			'hour' => $row['hour'],
-			'hour_format' => stripos($user_info['time_format'], '%p') === false ? $row['hour'] : date('g a', mktime($row['hour'])),
+			'hour_format' => stripos(we::$user['time_format'], '%p') === false ? $row['hour'] : date('g a', mktime($row['hour'])),
 			'posts' => $row['post_count'],
 			'posts_percent' => 0,
 			'is_last' => $row['hour'] == 23,
@@ -1025,7 +1025,7 @@ function statPanel($memID)
 			if (!isset($context['posts_by_time'][$hour]))
 				$context['posts_by_time'][$hour] = array(
 					'hour' => $hour,
-					'hour_format' => stripos($user_info['time_format'], '%p') === false ? $hour : date('g a', mktime($hour)),
+					'hour_format' => stripos(we::$user['time_format'], '%p') === false ? $hour : date('g a', mktime($hour)),
 					'posts' => 0,
 					'posts_percent' => 0,
 					'relative_percent' => 0,
@@ -1407,14 +1407,14 @@ function list_getIPMessages($start, $items_per_page, $sort, $where, $where_vars 
 
 function trackIP($memID = 0)
 {
-	global $user_profile, $scripturl, $txt, $user_info, $settings, $context;
+	global $user_profile, $scripturl, $txt, $settings, $context;
 
 	// Can the user do this?
 	isAllowedTo('moderate_forum');
 
 	if ($memID == 0)
 	{
-		$context['ip'] = $user_info['ip'];
+		$context['ip'] = we::$user['ip'];
 		loadTemplate('Profile');
 		loadLanguage('Profile');
 		wetem::load('trackIP');
@@ -1963,7 +1963,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 function showPermissions($memID)
 {
 	global $scripturl, $txt, $board, $settings;
-	global $user_profile, $context, $user_info;
+	global $user_profile, $context;
 
 	// Verify if the user has sufficient permissions.
 	isAllowedTo('manage_permissions');

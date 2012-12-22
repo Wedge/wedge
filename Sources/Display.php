@@ -50,7 +50,7 @@ if (!defined('WEDGE'))
 function Display()
 {
 	global $txt, $settings, $context, $theme;
-	global $options, $user_info, $board_info, $topic, $board, $boardurl;
+	global $options, $board_info, $topic, $board, $boardurl;
 	global $attachments, $messages_request, $topicinfo, $language;
 
 	// What are you gonna display if these are empty?!
@@ -107,7 +107,7 @@ function Display()
 	$context['meta_description'] = '<META-DESCRIPTION>';
 
 	// Add 1 to the number of views of this topic.
-	if (!$user_info['possibly_robot'] && (empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic))
+	if (!we::$user['possibly_robot'] && (empty($_SESSION['last_read_topic']) || $_SESSION['last_read_topic'] != $topic))
 	{
 		wesql::query('
 			UPDATE {db_prefix}topics
@@ -364,7 +364,7 @@ function Display()
 	$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = !we::is('mod') && !we::$is_admin && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
+	$context['require_verification'] = !we::$user['is_mod'] && !we::$is_admin && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');
@@ -477,7 +477,7 @@ function Display()
 	// For quick reply we need a response prefix in the default forum language.
 	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix', 600)))
 	{
-		if ($language === $user_info['language'])
+		if ($language === we::$user['language'])
 			$context['response_prefix'] = $txt['response_prefix'];
 		else
 		{
@@ -1242,7 +1242,7 @@ function Display()
 // Callback for the message display.
 function prepareDisplayContext($reset = false)
 {
-	global $theme, $txt, $settings, $options, $user_info, $board_info;
+	global $theme, $txt, $settings, $options, $board_info;
 	global $memberContext, $context, $messages_request, $topic, $attachments, $topicinfo;
 
 	static $counter = null, $can_pm = null, $profile_own = null, $profile_any = null, $buddy = null, $is_new = false;
@@ -1681,7 +1681,7 @@ function loadAttachmentContext($id_msg)
 // In-topic quick moderation.
 function QuickInTopicModeration()
 {
-	global $topic, $board, $user_info, $settings, $context;
+	global $topic, $board, $settings, $context;
 
 	// Check the session = get or post.
 	checkSession('request');
@@ -1785,7 +1785,7 @@ function QuickInTopicModeration()
 
 function prepareLikeContext($messages)
 {
-	global $context, $user_profile, $user_info;
+	global $context, $user_profile;
 
 	$context['liked_posts'] = array();
 	if (empty($messages))

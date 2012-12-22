@@ -96,7 +96,7 @@ if (!defined('WEDGE'))
 // This helps organize things...
 function MessageMain()
 {
-	global $txt, $scripturl, $context, $user_info, $user_settings, $settings;
+	global $txt, $scripturl, $context, $user_settings, $settings;
 
 	// No guests!
 	is_not_guest();
@@ -134,7 +134,7 @@ function MessageMain()
 			FROM {db_prefix}membergroups
 			WHERE id_group IN ({array_int:users_groups})',
 			array(
-				'users_groups' => $user_info['groups'],
+				'users_groups' => we::$user['groups'],
 			)
 		);
 		list ($maxMessage, $minMessage) = wesql::fetch_row($request);
@@ -149,14 +149,14 @@ function MessageMain()
 	// Prepare the context for the capacity bar.
 	if (!empty($context['message_limit']))
 	{
-		$bar = ($user_info['messages'] * 100) / $context['message_limit'];
+		$bar = (we::$user['messages'] * 100) / $context['message_limit'];
 
 		$context['limit_bar'] = array(
-			'messages' => $user_info['messages'],
+			'messages' => we::$user['messages'],
 			'allowed' => $context['message_limit'],
 			'percent' => $bar,
 			'bar' => min(100, (int) $bar),
-			'text' => sprintf($txt['pm_currently_using'], $user_info['messages'], round($bar, 1)),
+			'text' => sprintf($txt['pm_currently_using'], we::$user['messages'], round($bar, 1)),
 		);
 	}
 
@@ -298,7 +298,7 @@ function MessageMain()
 // A sidebar to easily access different areas of the section
 function messageIndexBar($area)
 {
-	global $txt, $context, $scripturl, $settings, $theme, $user_info, $options;
+	global $txt, $context, $scripturl, $settings, $theme, $options;
 
 	$pm_areas = array(
 		'folders' => array(
@@ -404,14 +404,14 @@ function messageIndexBar($area)
 	// Do we have a limit on the amount of messages we can keep?
 	if (!empty($context['message_limit']))
 	{
-		$bar = round(($user_info['messages'] * 100) / $context['message_limit'], 1);
+		$bar = round((we::$user['messages'] * 100) / $context['message_limit'], 1);
 
 		$context['limit_bar'] = array(
-			'messages' => $user_info['messages'],
+			'messages' => we::$user['messages'],
 			'allowed' => $context['message_limit'],
 			'percent' => $bar,
 			'bar' => $bar > 100 ? 100 : (int) $bar,
-			'text' => sprintf($txt['pm_currently_using'], $user_info['messages'], $bar)
+			'text' => sprintf($txt['pm_currently_using'], we::$user['messages'], $bar)
 		);
 	}
 
@@ -447,7 +447,7 @@ function messageIndexBar($area)
 function MessageFolder()
 {
 	global $txt, $scripturl, $settings, $context, $subjects_request;
-	global $messages_request, $user_info, $recipients, $options, $memberContext, $user_settings;
+	global $messages_request, $recipients, $options, $memberContext, $user_settings;
 
 	// Changing view? 0 = all at once, 1 = one at a time, 2 = conversation mode
 	if (isset($_GET['view']))
@@ -896,7 +896,7 @@ function MessageFolder()
 function prepareMessageContext($type = 'subject', $reset = false)
 {
 	global $txt, $scripturl, $settings, $context, $messages_request, $memberContext, $recipients;
-	global $user_info, $subjects_request;
+	global $subjects_request;
 
 	// Count the current message number....
 	static $counter = null, $last_subject = '', $temp_pm_selected = null;
@@ -1028,8 +1028,6 @@ function prepareMessageContext($type = 'subject', $reset = false)
 
 function MarkUnread()
 {
-	global $user_info;
-
 	checkSession('get');
 
 	$id_pm = isset($_GET['pmid']) ? (int) $_GET['pmid'] : 0;
@@ -1131,7 +1129,7 @@ function MessageSearch()
 
 function MessageSearch2()
 {
-	global $scripturl, $settings, $user_info, $context, $txt;
+	global $scripturl, $settings, $context, $txt;
 	global $memberContext;
 
 	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
@@ -1589,7 +1587,7 @@ function MessageSearch2()
 // Send a new message?
 function MessagePost()
 {
-	global $txt, $scripturl, $settings, $user_profile, $context, $options, $language, $user_info;
+	global $txt, $scripturl, $settings, $user_profile, $context, $options, $language;
 
 	isAllowedTo('pm_send');
 
@@ -1612,7 +1610,7 @@ function MessagePost()
 	$_REQUEST['draft_id'] = isset($_REQUEST['draft_id']) ? (int) $_REQUEST['draft_id'] : 0;
 
 	// Check whether we've gone over the limit of messages we can send per hour.
-	if (!empty($settings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
+	if (!empty($settings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && we::$user['mod_cache']['bq'] == '0=1' && we::$user['mod_cache']['gq'] == '0=1')
 	{
 		// How many messages have they sent this last hour?
 		$request = wesql::query('
@@ -1689,7 +1687,7 @@ function MessagePost()
 		// Add 'Re: ' to it....
 		if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
 		{
-			if ($language === $user_info['language'])
+			if ($language === we::$user['language'])
 				$context['response_prefix'] = $txt['response_prefix'];
 			else
 			{
@@ -1917,7 +1915,7 @@ function MessagePost()
 
 	$context['bcc_value'] = '';
 
-	$context['require_verification'] = !we::$is_admin && !empty($settings['pm_posts_verification']) && $user_info['posts'] < $settings['pm_posts_verification'];
+	$context['require_verification'] = !we::$is_admin && !empty($settings['pm_posts_verification']) && we::$user['posts'] < $settings['pm_posts_verification'];
 	if ($context['require_verification'])
 	{
 		$verificationOptions = array(
@@ -1935,7 +1933,6 @@ function MessagePost()
 function messagePostError($error_types, $named_recipients, $recipient_ids = array())
 {
 	global $txt, $context, $scripturl, $settings;
-	global $user_info;
 
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
@@ -2080,7 +2077,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 	$context['postbox']->addEntityField('subject');
 
 	// Check whether we need to show the code again.
-	$context['require_verification'] = !we::$is_admin && !empty($settings['pm_posts_verification']) && $user_info['posts'] < $settings['pm_posts_verification'];
+	$context['require_verification'] = !we::$is_admin && !empty($settings['pm_posts_verification']) && we::$user['posts'] < $settings['pm_posts_verification'];
 	if ($context['require_verification'])
 	{
 		$verificationOptions = array(
@@ -2104,7 +2101,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 function MessagePost2()
 {
 	global $txt, $context;
-	global $user_info, $settings, $scripturl;
+	global $settings, $scripturl;
 
 	isAllowedTo('pm_send');
 	loadSource(array('Subs-Auth', 'Class-Editor'));
@@ -2117,7 +2114,7 @@ function MessagePost2()
 	list ($settings['max_pm_recipients'], $settings['pm_posts_verification'], $settings['pm_posts_per_hour']) = explode(',', $settings['pm_spam_settings']);
 
 	// Check whether we've gone over the limit of messages we can send per hour - fatal error if fails!
-	if (!empty($settings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && $user_info['mod_cache']['bq'] == '0=1' && $user_info['mod_cache']['gq'] == '0=1')
+	if (!empty($settings['pm_posts_per_hour']) && !allowedTo(array('admin_forum', 'moderate_forum', 'send_mail')) && we::$user['mod_cache']['bq'] == '0=1' && we::$user['mod_cache']['gq'] == '0=1')
 	{
 		// How many have they sent this last hour?
 		$request = wesql::query('
@@ -2206,7 +2203,7 @@ function MessagePost2()
 	}
 
 	// Wrong verification code?
-	if (!we::$is_admin && !empty($settings['pm_posts_verification']) && $user_info['posts'] < $settings['pm_posts_verification'])
+	if (!we::$is_admin && !empty($settings['pm_posts_verification']) && we::$user['posts'] < $settings['pm_posts_verification'])
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -2396,7 +2393,7 @@ function getPmRecipients(&$recipientList, &$namedRecipientList, &$namesNotFound)
 // This function performs all additional stuff...
 function MessageActionsApply()
 {
-	global $txt, $context, $user_info, $options;
+	global $txt, $context, $options;
 
 	checkSession('request');
 
@@ -2584,7 +2581,7 @@ function MessageKillAll()
 // This function allows the user to delete all messages older than so many days.
 function MessagePrune()
 {
-	global $txt, $context, $user_info, $scripturl;
+	global $txt, $context, $scripturl;
 
 	// Actually delete the messages.
 	if (isset($_REQUEST['age']))
@@ -2652,8 +2649,6 @@ function MessagePrune()
 // Delete the specified personal messages.
 function deleteMessages($personal_messages, $folder = null, $owner = null)
 {
-	global $user_info;
-
 	if ($owner === null)
 		$owner = array(we::$id);
 	elseif (empty($owner))
@@ -2716,9 +2711,9 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 			// If this is the current member we need to make their message count correct.
 			if (we::$id == $row['id_member'])
 			{
-				$user_info['messages'] -= $row['num_deleted_messages'];
+				we::$user['messages'] -= $row['num_deleted_messages'];
 				if (!($row['is_read']))
-					$user_info['unread_messages'] -= $row['num_deleted_messages'];
+					we::$user['unread_messages'] -= $row['num_deleted_messages'];
 			}
 		}
 		wesql::free_result($request);
@@ -2784,8 +2779,6 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 // Mark personal messages read.
 function markMessages($personal_messages = null, $label = null, $owner = null)
 {
-	global $user_info;
-
 	if ($owner === null)
 		$owner = we::$id;
 
@@ -2810,7 +2803,7 @@ function markMessages($personal_messages = null, $label = null, $owner = null)
 
 function recalculateUnread($owner)
 {
-	global $context, $user_info;
+	global $context;
 
 	if ($owner == we::$id)
 		foreach ($context['labels'] as $label)
@@ -2846,15 +2839,15 @@ function recalculateUnread($owner)
 	cache_put_data('labelCounts:' . $owner, $context['labels'], 720);
 	updateMemberData($owner, array('unread_messages' => $total_unread));
 
-	// If it was for the current member, reflect this in the $user_info array too.
+	// If it was for the current member, reflect this in the we::$user array too.
 	if ($owner == we::$id)
-		$user_info['unread_messages'] = $total_unread;
+		we::$user['unread_messages'] = $total_unread;
 }
 
 // This function handles adding, deleting and editing labels on messages.
 function ManageLabels()
 {
-	global $txt, $context, $user_info, $scripturl;
+	global $txt, $context, $scripturl;
 
 	// Build the link tree elements...
 	$context['linktree'][] = array(
@@ -3062,7 +3055,7 @@ function ManageLabels()
 // Edit Personal Message Settings
 function MessageSettings()
 {
-	global $txt, $user_info, $context, $scripturl, $profile_vars, $cur_profile, $user_profile;
+	global $txt, $context, $scripturl, $profile_vars, $cur_profile, $user_profile;
 
 	// Need this for the display.
 	loadSource(array('Profile', 'Profile-Modify'));
@@ -3114,7 +3107,7 @@ function MessageSettings()
 function ReportMessage()
 {
 	global $txt, $context, $scripturl;
-	global $user_info, $language, $settings;
+	global $language, $settings;
 
 	// Check that this feature is even enabled!
 	if (empty($_REQUEST['pmsg']))
@@ -3242,7 +3235,7 @@ function ReportMessage()
 				loadLanguage('PersonalMessage', $cur_language, false);
 
 				// Make the body.
-				$report_body = str_replace(array('{REPORTER}', '{SENDER}'), array(un_htmlspecialchars($user_info['name']), $memberFromName), $txt['pm_report_pm_user_sent']);
+				$report_body = str_replace(array('{REPORTER}', '{SENDER}'), array(un_htmlspecialchars(we::$user['name']), $memberFromName), $txt['pm_report_pm_user_sent']);
 				$report_body .= "\n" . '[b]' . $_POST['reason'] . '[/b]' . "\n\n";
 				if (!empty($recipients))
 					$report_body .= $txt['pm_report_pm_other_recipients'] . ' ' . implode(', ', $recipients) . "\n\n";
@@ -3280,7 +3273,7 @@ function ReportMessage()
 // List all rules, and allow adding/entering etc....
 function ManageRules()
 {
-	global $txt, $context, $user_info, $scripturl;
+	global $txt, $context, $scripturl;
 
 	// The link tree - gotta have this :o
 	$context['linktree'][] = array(
@@ -3505,7 +3498,7 @@ function ManageRules()
 // This will apply rules to all unread messages. If all_messages is set will, clearly, do it to all!
 function applyRules($all_messages = false)
 {
-	global $user_info, $context, $options;
+	global $context, $options;
 
 	// Want this - duh!
 	loadRules();
@@ -3608,7 +3601,7 @@ function applyRules($all_messages = false)
 // Load up all the rules for the current user.
 function loadRules($reload = false)
 {
-	global $user_info, $context;
+	global $context;
 
 	if (isset($context['rules']) && !$reload)
 		return;
@@ -3644,8 +3637,6 @@ function loadRules($reload = false)
 // Check if the PM is available to the current user.
 function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 {
-	global $user_info;
-
 	$request = wesql::query('
 		SELECT
 			pm.id_member_from = {int:id_current_member} AND pm.deleted_by_sender = {int:not_deleted} AS valid_for_outbox,
@@ -3692,7 +3683,7 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 
 function MessageDrafts()
 {
-	global $context, $memberContext, $txt, $settings, $user_info, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_profile, $scripturl;
 
 	loadLanguage('PersonalMessage');
 

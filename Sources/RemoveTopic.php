@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 // Completely remove an entire topic.
 function RemoveTopic2()
 {
-	global $user_info, $topic, $board, $context, $settings;
+	global $topic, $board, $context, $settings;
 
 	// Make sure they aren't being lead around by someone. (:@)
 	checkSession('get');
@@ -59,7 +59,7 @@ function RemoveTopic2()
 	list ($starter, $subject, $approved, $b_type) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if ($starter == we::$id && !allowedTo('remove_any') && ($b_type == 'forum' || we::is('mod')))
+	if ($starter == we::$id && !allowedTo('remove_any') && ($b_type == 'forum' || we::$user['is_mod']))
 		isAllowedTo('remove_own');
 	else
 		isAllowedTo('remove_any');
@@ -83,7 +83,7 @@ function RemoveTopic2()
 // Remove just a single post.
 function DeleteMessage()
 {
-	global $user_info, $topic, $board, $settings;
+	global $topic, $board, $settings;
 
 	checkSession('get');
 
@@ -551,7 +551,7 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 // Remove a specific message, including permission checks.
 function removeMessage($message, $decreasePostCount = true)
 {
-	global $board, $settings, $user_info, $context;
+	global $board, $settings, $context;
 
 	if (empty($message) || !is_numeric($message))
 		return false;

@@ -691,7 +691,7 @@ function PackageInstallTest()
 function PackageInstall()
 {
 	global $boarddir, $txt, $context, $boardurl, $scripturl, $settings;
-	global $user_info, $sourcedir;
+	global $sourcedir;
 
 	// Make sure we don't install this mod twice.
 	checkSubmitOnce('check');
@@ -1007,7 +1007,7 @@ function PackageInstall()
 						'not_installed' => 0,
 						'current_time' => time(),
 						'package_id' => $row['package_id'],
-						'member_name' => $user_info['name'],
+						'member_name' => we::$user['name'],
 					)
 				);
 			}
@@ -1067,7 +1067,7 @@ function PackageInstall()
 				),
 				array(
 					$packageInfo['filename'], $packageInfo['name'], $packageInfo['id'], $packageInfo['version'],
-					we::$id, $user_info['name'], time(),
+					we::$id, we::$user['name'], time(),
 					$is_upgrade ? 2 : 1, $failed_step_insert, $themes_installed,
 					0, $db_changes,
 				),

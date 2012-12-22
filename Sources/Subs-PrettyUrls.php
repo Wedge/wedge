@@ -132,7 +132,7 @@ function trimpercent($str)
 // Check a new pretty URL against the list of existing boards to ensure there won't be a conflict.
 function is_already_taken($url, $id, $id_owner)
 {
-	global $context, $user_info, $action_list, $boardurl;
+	global $context, $action_list, $boardurl;
 
 	// Is the board name in the action list?
 	$board_name = substr($url, strlen($boardurl) + 1);

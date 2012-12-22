@@ -163,7 +163,7 @@ function Memberlist()
 // List all members, page by page.
 function MLAll()
 {
-	global $txt, $scripturl, $user_info;
+	global $txt, $scripturl;
 	global $settings, $context;
 
 	// The chunk size for the cached index.
@@ -401,7 +401,7 @@ function MLAll()
 // Search for members...
 function MLSearch()
 {
-	global $txt, $scripturl, $context, $user_info, $settings;
+	global $txt, $scripturl, $context, $settings;
 
 	$context['page_title'] = $txt['mlist_search'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
@@ -548,7 +548,7 @@ function MLSearch()
 
 function printMemberListRows($request)
 {
-	global $scripturl, $txt, $user_info, $settings;
+	global $scripturl, $txt, $settings;
 	global $context, $theme, $memberContext;
 
 	// Get the most posts.

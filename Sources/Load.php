@@ -427,7 +427,7 @@ function loadBoard()
 		if ($board_info['banned_member'] && !$board_info['allowed_member'])
 			$board_info['error'] = 'access';
 
-		if (!we::$is_admin && !in_array($board_info['id'], $user_info['qsb_boards']))
+		if (!we::$is_admin && !in_array($board_info['id'], we::$user['qsb_boards']))
 		{
 			if (!we::$user['is_mod'] && (!empty($board_info['owner_id']) && we::$id != $board_info['owner_id']))
 			{
@@ -471,7 +471,7 @@ function loadBoard()
 		// own personal language set? (User preference beats board, which beats forum default)
 		if (!empty($board_info['language']) && empty($user_settings['lngfile']))
 		{
-			$user_info['language'] = $board_info['language'];
+			we::$user['language'] = $board_info['language'];
 			$user_settings['lngfile'] = $board_info['language'];
 		}
 	}
@@ -515,11 +515,11 @@ function loadBoard()
 	}
 
 	if (we::$user['is_mod'])
-		$user_info['groups'][] = 3;
+		we::$user['groups'][] = 3;
 }
 
 /**
- * Load the current user's permissions, to be stored in $user_info['permissions']
+ * Load the current user's permissions, to be stored in we::$user['permissions']
  *
  * - If the user is an admin, simply validate that they have not been banned then return.
  * - Attempt to load from cache (level 2+ caching only); if matched, apply ban restrictions and return.
@@ -532,7 +532,7 @@ function loadBoard()
  */
 function loadPermissions()
 {
-	global $user_info, $board, $board_info, $settings;
+	global $board, $board_info, $settings;
 
 	if (we::$is_admin)
 	{
@@ -542,28 +542,28 @@ function loadPermissions()
 
 	if (!empty($settings['cache_enable']))
 	{
-		$cache_groups = $user_info['groups'];
+		$cache_groups = we::$user['groups'];
 		asort($cache_groups);
 		$cache_groups = implode(',', $cache_groups);
 		// If it's a spider then cache it different.
-		if ($user_info['possibly_robot'])
+		if (we::$user['possibly_robot'])
 			$cache_groups .= '-spider';
 
 		if ($settings['cache_enable'] >= 2 && !empty($board) && ($temp = cache_get_data('permissions:' . $cache_groups . ':' . $board, 240)) != null && time() - 240 > $settings['settings_updated'])
 		{
-			list ($user_info['permissions']) = $temp;
+			list (we::$user['permissions']) = $temp;
 			banPermissions();
 
 			return;
 		}
 		elseif (($temp = cache_get_data('permissions:' . $cache_groups, 240)) != null && time() - 240 > $settings['settings_updated'])
-			list ($user_info['permissions'], $removals) = $temp;
+			list (we::$user['permissions'], $removals) = $temp;
 	}
 
 	// If it is detected as a robot, and we are restricting permissions as a special group - then implement this.
-	$spider_restrict = $user_info['possibly_robot'] && !empty($settings['spider_mode']) && !empty($settings['spider_group']) ? ' OR (id_group = {int:spider_group} AND add_deny = 0)' : '';
+	$spider_restrict = we::$user['possibly_robot'] && !empty($settings['spider_mode']) && !empty($settings['spider_group']) ? ' OR (id_group = {int:spider_group} AND add_deny = 0)' : '';
 
-	if (empty($user_info['permissions']))
+	if (empty(we::$user['permissions']))
 	{
 		// Get the general permissions.
 		$request = wesql::query('
@@ -572,7 +572,7 @@ function loadPermissions()
 			WHERE id_group IN ({array_int:member_groups})
 				' . $spider_restrict,
 			array(
-				'member_groups' => $user_info['groups'],
+				'member_groups' => we::$user['groups'],
 				'spider_group' => !empty($settings['spider_group']) ? $settings['spider_group'] : 0,
 			)
 		);
@@ -582,12 +582,12 @@ function loadPermissions()
 			if (empty($row['add_deny']))
 				$removals[] = $row['permission'];
 			else
-				$user_info['permissions'][] = $row['permission'];
+				we::$user['permissions'][] = $row['permission'];
 		}
 		wesql::free_result($request);
 
 		if (isset($cache_groups))
-			cache_put_data('permissions:' . $cache_groups, array($user_info['permissions'], $removals), 240);
+			cache_put_data('permissions:' . $cache_groups, array(we::$user['permissions'], $removals), 240);
 	}
 
 	// Get the board permissions.
@@ -604,7 +604,7 @@ function loadPermissions()
 				' . $spider_restrict . ')
 				AND id_profile = {int:id_profile}',
 			array(
-				'member_groups' => $user_info['groups'],
+				'member_groups' => we::$user['groups'],
 				'id_profile' => $board_info['profile'],
 				'spider_group' => !empty($settings['spider_mode']) && !empty($settings['spider_group']) ? $settings['spider_group'] : 0,
 			)
@@ -614,17 +614,17 @@ function loadPermissions()
 			if (empty($row['add_deny']))
 				$removals[] = $row['permission'];
 			else
-				$user_info['permissions'][] = $row['permission'];
+				we::$user['permissions'][] = $row['permission'];
 		}
 		wesql::free_result($request);
 	}
 
 	// Remove all the permissions they shouldn't have ;).
 	if (!empty($settings['permission_enable_deny']))
-		$user_info['permissions'] = array_diff($user_info['permissions'], $removals);
+		we::$user['permissions'] = array_diff(we::$user['permissions'], $removals);
 
 	if (isset($cache_groups) && !empty($board) && $settings['cache_enable'] >= 2)
-		cache_put_data('permissions:' . $cache_groups . ':' . $board, array($user_info['permissions'], null), 240);
+		cache_put_data('permissions:' . $cache_groups . ':' . $board, array(we::$user['permissions'], null), 240);
 
 	// Banned? Watch, don't touch..
 	banPermissions();
@@ -638,7 +638,7 @@ function loadPermissions()
 			rebuildModCache();
 		}
 		else
-			$user_info['mod_cache'] = $_SESSION['mc'];
+			we::$user['mod_cache'] = $_SESSION['mc'];
 	}
 }
 
@@ -654,7 +654,7 @@ function loadPermissions()
  */
 function loadMemberData($users, $is_name = false, $set = 'normal')
 {
-	global $user_profile, $settings, $board_info, $user_info;
+	global $user_profile, $settings, $board_info;
 
 	// Can't just look for no users. :P
 	if (empty($users))
@@ -945,7 +945,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
  */
 function loadMemberContext($user, $full_profile = false)
 {
-	global $memberContext, $user_profile, $txt, $scripturl, $user_info;
+	global $memberContext, $user_profile, $txt, $scripturl;
 	global $context, $settings, $board_info, $theme;
 	static $dataLoaded = array();
 
@@ -977,7 +977,7 @@ function loadMemberContext($user, $full_profile = false)
 
 	$profile['is_online'] = (!empty($profile['show_online']) || allowedTo('moderate_forum')) && $profile['is_online'] > 0;
 	// Setup the buddy status here (One whole in_array call saved :P)
-	$profile['buddy'] = in_array($profile['id_member'], $user_info['buddies']);
+	$profile['buddy'] = in_array($profile['id_member'], we::$user['buddies']);
 	$buddy_list = !empty($profile['buddy_list']) ? explode(',', $profile['buddy_list']) : array();
 
 	// If we're always html resizing, assume it's too large.
@@ -1041,7 +1041,7 @@ function loadMemberContext($user, $full_profile = false)
 		'group_badges' => array(),
 		'warning' => $profile['warning'],
 		'warning_status' => empty($settings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= 10 ? 'ban' : ($settings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($settings['warning_watch']) && $settings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
-		'local_time' => isset($profile['time_offset']) ? timeformat(time() + ($profile['time_offset'] - $user_info['time_offset']) * 3600, false) : 0,
+		'local_time' => isset($profile['time_offset']) ? timeformat(time() + ($profile['time_offset'] - we::$user['time_offset']) * 3600, false) : 0,
 		'media' => isset($profile['media_items']) ? array(
 			'total_items' => $profile['media_items'],
 			'total_comments' => $profile['media_comments'],
@@ -1202,7 +1202,7 @@ function we_resetTransparency($id_attach, $path, $real_name)
  */
 function loadTheme($id_theme = 0, $initialize = true)
 {
-	global $user_info, $user_settings, $board_info, $boarddir, $footer_coding;
+	global $user_settings, $board_info, $boarddir, $footer_coding;
 	global $txt, $boardurl, $scripturl, $mbname, $settings, $language;
 	global $context, $theme, $options, $ssi_theme;
 
@@ -1223,10 +1223,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$skin = !empty($_SESSION['skin']) ? $_SESSION['skin'] : '';
 	}
 	// The theme is just the user's choice. (Might use ?board=1;theme=0 to force board theme.)
-	elseif (!empty($user_info['theme']) && !isset($_REQUEST['theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
+	elseif (!empty(we::$user['theme']) && !isset($_REQUEST['theme']) && (!empty($settings['theme_allow']) || allowedTo('admin_forum')))
 	{
-		$id_theme = $user_info['theme'];
-		$skin = $user_info['skin'];
+		$id_theme = we::$user['theme'];
+		$skin = we::$user['skin'];
 	}
 	// The theme is the forum's mobile default.
 	elseif (we::is('mobile'))
@@ -1449,20 +1449,20 @@ function loadTheme($id_theme = 0, $initialize = true)
 		'is_logged' => !we::$is_guest,
 		'is_guest' => &we::$user['is_guest'],
 		'is_admin' => &we::$user['is_admin'],
-		'username' => &$user_info['username'],
-		'language' => &$user_info['language'],
-		'email' => &$user_info['email'],
-		'ignoreusers' => &$user_info['ignoreusers'],
-		'data' => &$user_info['data'],
+		'username' => &we::$user['username'],
+		'language' => &we::$user['language'],
+		'email' => &we::$user['email'],
+		'ignoreusers' => &we::$user['ignoreusers'],
+		'data' => &we::$user['data'],
 	);
 	if (!$context['user']['is_guest'])
-		$context['user']['name'] = $user_info['name'];
+		$context['user']['name'] = we::$user['name'];
 	elseif ($context['user']['is_guest'] && !empty($txt['guest_title']))
 		$context['user']['name'] = $txt['guest_title'];
 
 	// Determine the current smiley set
-	$user_info['smiley_set'] = (!in_array($user_info['smiley_set'], explode(',', $settings['smiley_sets_known'])) && $user_info['smiley_set'] != 'none') || empty($settings['smiley_sets_enable']) ? (!empty($theme['smiley_sets_default']) ? $theme['smiley_sets_default'] : $settings['smiley_sets_default']) : $user_info['smiley_set'];
-	$context['user']['smiley_set'] = $user_info['smiley_set'];
+	we::$user['smiley_set'] = (!in_array(we::$user['smiley_set'], explode(',', $settings['smiley_sets_known'])) && we::$user['smiley_set'] != 'none') || empty($settings['smiley_sets_enable']) ? (!empty($theme['smiley_sets_default']) ? $theme['smiley_sets_default'] : $settings['smiley_sets_default']) : we::$user['smiley_set'];
+	$context['user']['smiley_set'] = we::$user['smiley_set'];
 
 	// Some basic information...
 	if (!isset($context['header']))
@@ -1608,7 +1608,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// Allow overriding the board wide time/number formats.
 	if (empty($user_settings['time_format']) && !empty($txt['time_format']))
-		$user_info['time_format'] = $txt['time_format'];
+		we::$user['time_format'] = $txt['time_format'];
 
 	if (isset($theme['use_default_images']) && $theme['use_default_images'] == 'always')
 	{
@@ -1618,7 +1618,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	}
 	// Make a special URL for the language.
 	// !!! $txt['image_lang'] isn't defined anywhere...
-	$theme['lang_images_url'] = $theme['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : $user_info['language']);
+	$theme['lang_images_url'] = $theme['images_url'] . '/' . (!empty($txt['image_lang']) ? $txt['image_lang'] : we::$user['language']);
 
 	// Set the character set from the template.
 	$context['right_to_left'] = !empty($txt['lang_rtl']);
@@ -1780,7 +1780,7 @@ function loadPluginTemplate($plugin_name, $template_name, $fatal = true)
 
 function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = true, $force_reload = false)
 {
-	global $context, $settings, $user_info, $language, $txt, $db_show_debug;
+	global $context, $settings, $language, $txt, $db_show_debug;
 	static $already_loaded = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -1788,7 +1788,7 @@ function loadPluginLanguage($plugin_name, $template_name, $lang = '', $fatal = t
 
 	// Default to the user's language.
 	if ($lang == '')
-		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
+		$lang = isset(we::$user['language']) ? we::$user['language'] : $language;
 
 	if (!$force_reload && isset($already_loaded[$template_name]) && $already_loaded[$template_name] == $lang)
 		return $lang;
@@ -1866,12 +1866,12 @@ function loadSource($source_name)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
-	global $user_info, $language, $theme, $context, $settings, $boarddir, $db_show_debug, $txt;
+	global $language, $theme, $context, $settings, $boarddir, $db_show_debug, $txt;
 	static $already_loaded = array(), $folder_date = array();
 
 	// Default to the user's language.
 	if ($lang == '')
-		$lang = isset($user_info['language']) ? $user_info['language'] : $language;
+		$lang = isset(we::$user['language']) ? we::$user['language'] : $language;
 
 	// Do we want the English version of language file as fallback?
 	if (empty($settings['disable_language_fallback']) && $lang !== 'english')
@@ -1960,9 +1960,9 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that. And only once.
 		if ($found && !$fallback && $template === 'index')
 		{
-			$user_info['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
-			if (empty($user_info['time_format']))
-				$user_info['time_format'] = $txt['time_format'];
+			we::$user['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
+			if (empty(we::$user['time_format']))
+				we::$user['time_format'] = $txt['time_format'];
 		}
 
 		// Keep track of what we're up to soldier.

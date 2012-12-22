@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Find the ten most recent posts.
 function Recent()
 {
-	global $txt, $scripturl, $user_info, $context, $settings, $board;
+	global $txt, $scripturl, $context, $settings, $board;
 
 	loadTemplate('Recent');
 	$context['page_title'] = $txt['recent_posts'];

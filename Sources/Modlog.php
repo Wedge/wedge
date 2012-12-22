@@ -33,7 +33,7 @@ if (!defined('WEDGE'))
 // Show the moderation log
 function ViewModlog()
 {
-	global $txt, $settings, $context, $scripturl, $user_info, $theme;
+	global $txt, $settings, $context, $scripturl, $theme;
 
 	// Are we looking at the moderation log or the administration log.
 	$context['log_type'] = isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'adminlog' ? 3 : 1;
@@ -304,9 +304,7 @@ function ViewModlog()
 // Get the number of mod log entries.
 function list_getModLogEntryCount($query_string = '', $query_params = array(), $log_type = 1)
 {
-	global $user_info;
-
-	$modlog_query = allowedTo('admin_forum') || $user_info['mod_cache']['bq'] == '1=1' ? '1=1' : ($user_info['mod_cache']['bq'] == '0=1' ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr($user_info['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr($user_info['mod_cache']['bq'], array('id_board' => 't.id_board'))));
+	$modlog_query = allowedTo('admin_forum') || we::$user['mod_cache']['bq'] == '1=1' ? '1=1' : (we::$user['mod_cache']['bq'] == '0=1' ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr(we::$user['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr(we::$user['mod_cache']['bq'], array('id_board' => 't.id_board'))));
 
 	$result = wesql::query('
 		SELECT COUNT(*)
@@ -333,9 +331,9 @@ function list_getModLogEntryCount($query_string = '', $query_params = array(), $
 
 function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '', $query_params = array(), $log_type = 1)
 {
-	global $context, $scripturl, $txt, $user_info;
+	global $context, $scripturl, $txt;
 
-	$modlog_query = allowedTo('admin_forum') || $user_info['mod_cache']['bq'] == '1=1' ? '1=1' : ($user_info['mod_cache']['bq'] == '0=1' ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr($user_info['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr($user_info['mod_cache']['bq'], array('id_board' => 't.id_board'))));
+	$modlog_query = allowedTo('admin_forum') || we::$user['mod_cache']['bq'] == '1=1' ? '1=1' : (we::$user['mod_cache']['bq'] == '0=1' ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr(we::$user['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr(we::$user['mod_cache']['bq'], array('id_board' => 't.id_board'))));
 
 	// Do a little bit of self protection.
 	if (!isset($context['hoursdisable']))
