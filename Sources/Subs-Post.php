@@ -609,8 +609,8 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 			}
 		}
 
-		// If the receiving account is banned (>=10) or pending deletion (4), refuse to send the PM.
-		if ($row['is_activated'] >= 10 || ($row['is_activated'] == 4 && !we::$is_admin))
+		// If the receiving account is banned (>=20) or pending deletion (4), refuse to send the PM.
+		if ($row['is_activated'] >= 20 || ($row['is_activated'] == 4 && !we::$is_admin))
 		{
 			$log['failed'][$row['id_member']] = sprintf($txt['pm_error_user_cannot_read'], $row['real_name']);
 			unset($all_to[array_search($row['id_member'], $all_to)]);

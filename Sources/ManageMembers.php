@@ -261,7 +261,7 @@ function ViewMemberlist()
 				'values' => array('0', '1', '2'),
 			),
 			'activated' => array(
-				'db_fields' => array('CASE WHEN is_activated IN (1, 11) THEN 1 ELSE 0 END'),
+				'db_fields' => array('CASE WHEN is_activated IN (1, 11, 21) THEN 1 ELSE 0 END'),
 				'type' => 'checkbox',
 				'values' => array('0', '1'),
 			),

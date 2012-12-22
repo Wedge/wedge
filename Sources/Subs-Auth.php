@@ -368,7 +368,7 @@ function findMembers($names, $use_wildcards = false, $buddies_only = false, $max
 		WHERE ({raw:member_name_search}
 			OR {raw:real_name_search} {raw:email_condition})
 			' . ($buddies_only ? 'AND id_member IN ({array_int:buddy_list})' : '') . '
-			AND is_activated IN (1, 11)
+			AND is_activated IN (1, 11, 21)
 		LIMIT {int:limit}',
 		array(
 			'buddy_list' => we::$user['buddies'],

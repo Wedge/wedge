@@ -36,7 +36,7 @@ function checkActivation()
 		$context['login_errors'] = array();
 
 	// What is the true activation status of this account?
-	$activation_status = $user_settings['is_activated'] > 10 ? $user_settings['is_activated'] - 10 : $user_settings['is_activated'];
+	$activation_status = $user_settings['is_activated'] % 10;
 
 	// Check if the account is activated - COPPA first...
 	if ($activation_status == 5)

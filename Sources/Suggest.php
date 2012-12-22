@@ -60,7 +60,7 @@ function Suggest_Search_Member()
 		FROM {db_prefix}members
 		WHERE real_name LIKE {string:search}' . (!empty($context['search_param']['buddies']) ? '
 			AND id_member IN ({array_int:buddy_list})' : '') . '
-			AND is_activated IN (1, 11)
+			AND is_activated IN (1, 11, 21)
 		LIMIT ' . (westr::strlen($_REQUEST['search']) <= 2 ? '100' : '800'),
 		array(
 			'buddy_list' => we::$user['buddies'],

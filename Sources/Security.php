@@ -319,8 +319,8 @@ function is_not_banned($forceCheck = false)
 			log_ban(array_merge(isset($_SESSION['ban']['cannot_access']) ? $_SESSION['ban']['cannot_access']['ids'] : array(), isset($_SESSION['ban']['cannot_post']) ? $_SESSION['ban']['cannot_post']['ids'] : array(), isset($_SESSION['ban']['cannot_login']) ? $_SESSION['ban']['cannot_login']['ids'] : array()));
 
 		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up.
-		if (we::$id && (($user_settings['is_activated'] >= 10 && !$flag_is_activated)
-			|| ($user_settings['is_activated'] < 10 && $flag_is_activated)))
+		if (we::$id && (($user_settings['is_activated'] >= 20 && !$flag_is_activated)
+			|| ($user_settings['is_activated'] < 20 && $flag_is_activated)))
 		{
 			loadSource('ManageBans');
 			updateBanMembers();

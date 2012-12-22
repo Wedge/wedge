@@ -151,14 +151,15 @@ function summary($memID)
 	}
 
 	// If the user is awaiting activation, and the viewer has permission - setup some activation context messages.
-	if ($context['member']['is_activated'] % 10 != 1 && allowedTo('moderate_forum'))
+	$state = $context['member']['is_activated'] % 10;
+	if ($state != 1 && allowedTo('moderate_forum'))
 	{
 		$context['activate_type'] = $context['member']['is_activated'];
 		// What should the link text be?
-		$context['activate_link_text'] = in_array($context['member']['is_activated'], array(3, 4, 5, 13, 14, 15)) ? $txt['account_approve'] : $txt['account_activate'];
+		$context['activate_link_text'] = in_array($state, array(3, 4, 5)) ? $txt['account_approve'] : $txt['account_activate'];
 
 		// Should we show a custom message?
-		$context['activate_message'] = isset($txt['account_activate_method_' . $context['member']['is_activated'] % 10]) ? $txt['account_activate_method_' . $context['member']['is_activated'] % 10] : $txt['account_not_activated'];
+		$context['activate_message'] = isset($txt['account_activate_method_' . $state]) ? $txt['account_activate_method_' . $state] : $txt['account_not_activated'];
 	}
 
 	// Is the signature even enabled on this forum?

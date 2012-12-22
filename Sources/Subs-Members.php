@@ -1254,7 +1254,7 @@ function populateDuplicateMembers(&$members)
 			'id' => $row['id_member'],
 			'name' => $row['member_name'],
 			'email' => $row['email_address'],
-			'is_banned' => $row['is_activated'] > 10,
+			'is_banned' => $row['is_activated'] > 20,
 			'ip' => $row['member_ip'],
 			'ip2' => $row['member_ip2'],
 		);
@@ -1293,7 +1293,7 @@ function populateDuplicateMembers(&$members)
 			'id' => $row['id_member'],
 			'name' => $row['member_name'],
 			'email' => $row['email_address'],
-			'is_banned' => $row['is_activated'] > 10,
+			'is_banned' => $row['is_activated'] > 20,
 			'ip' => $row['poster_ip'],
 			'ip2' => $row['poster_ip'],
 		);
