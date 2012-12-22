@@ -53,7 +53,7 @@ function Search()
 	// This is hard coded maximum string length.
 	$context['search_string_limit'] = 100;
 
-	$context['require_verification'] = $user_info['is_guest'] && !empty($settings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']);
+	$context['require_verification'] = we::$is_guest && !empty($settings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']);
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');

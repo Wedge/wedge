@@ -137,7 +137,7 @@ function Post($post_errors = array())
 			WHERE t.id_topic = {int:current_topic}
 			LIMIT 1',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'current_topic' => $topic,
 			)
 		);
@@ -150,12 +150,12 @@ function Post($post_errors = array())
 
 		if (empty($_REQUEST['msg']))
 		{
-			if ($user_info['is_guest'] && !allowedTo('post_reply_any') && (!$settings['postmod_active'] || !allowedTo('post_unapproved_replies_any')))
+			if (we::$is_guest && !allowedTo('post_reply_any') && (!$settings['postmod_active'] || !allowedTo('post_unapproved_replies_any')))
 				is_not_guest();
 
 			// By default the reply will be approved...
 			$context['becomes_approved'] = true;
-			if ($id_member_poster != $user_info['id'])
+			if ($id_member_poster != we::$id)
 			{
 				if ($settings['postmod_active'] && allowedTo('post_unapproved_replies_any') && !allowedTo('post_reply_any'))
 					$context['becomes_approved'] = false;
@@ -173,7 +173,7 @@ function Post($post_errors = array())
 		else
 			$context['becomes_approved'] = true;
 
-		$context['can_lock'] = allowedTo('lock_any') || ($user_info['id'] == $id_member_poster && allowedTo('lock_own'));
+		$context['can_lock'] = allowedTo('lock_any') || (we::$id == $id_member_poster && allowedTo('lock_own'));
 		$context['can_pin'] = allowedTo('pin_topic');
 
 		$context['notify'] = !empty($context['notify']);
@@ -225,7 +225,7 @@ function Post($post_errors = array())
 		if (empty($topic))
 			isAllowedTo('poll_post');
 		// This is an old topic - but it is yours! Can you add to it?
-		elseif ($user_info['id'] == $id_member_poster && !allowedTo('poll_add_any'))
+		elseif (we::$id == $id_member_poster && !allowedTo('poll_add_any'))
 			isAllowedTo('poll_add_own');
 		// If you're not the owner, can you add to any poll?
 		else
@@ -326,7 +326,7 @@ function Post($post_errors = array())
 				$post_errors[] = array('long_message', $settings['max_messageLength']);
 
 			// Are you... a guest?
-			if ($user_info['is_guest'])
+			if (we::$is_guest)
 			{
 				$_REQUEST['guestname'] = !isset($_REQUEST['guestname']) ? '' : trim($_REQUEST['guestname']);
 				$_REQUEST['email'] = !isset($_REQUEST['email']) ? '' : trim($_REQUEST['email']);
@@ -458,7 +458,7 @@ function Post($post_errors = array())
 		}
 
 		// Are you... a guest?
-		if ($user_info['is_guest'])
+		if (we::$is_guest)
 		{
 			$_REQUEST['guestname'] = !isset($_REQUEST['guestname']) ? '' : trim($_REQUEST['guestname']);
 			$_REQUEST['email'] = !isset($_REQUEST['email']) ? '' : trim($_REQUEST['email']);
@@ -539,17 +539,17 @@ function Post($post_errors = array())
 				$attachment_stuff[] = $row2;
 			wesql::free_result($request);
 
-			if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
+			if ($row['id_member'] == we::$id && !allowedTo('modify_any'))
 			{
 				// Give an extra five minutes over the disable time threshold, so they can type - assuming the post is public.
 				if ($row['approved'] && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 					fatal_lang_error('modify_post_time_passed', false);
-				elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_own'))
+				elseif ($row['id_member_poster'] == we::$id && !allowedTo('modify_own'))
 					isAllowedTo('modify_replies');
 				else
 					isAllowedTo('modify_own');
 			}
-			elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_any'))
+			elseif ($row['id_member_poster'] == we::$id && !allowedTo('modify_any'))
 				isAllowedTo('modify_replies');
 			else
 				isAllowedTo('modify_any');
@@ -635,17 +635,17 @@ function Post($post_errors = array())
 			$attachment_stuff[] = $row2;
 		wesql::free_result($request);
 
-		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
+		if ($row['id_member'] == we::$id && !allowedTo('modify_any'))
 		{
 			// Give an extra five minutes over the disable time threshold, so they can type - assuming the post is public.
 			if ($row['approved'] && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
-			elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_own'))
+			elseif ($row['id_member_poster'] == we::$id && !allowedTo('modify_own'))
 				isAllowedTo('modify_replies');
 			else
 				isAllowedTo('modify_own');
 		}
-		elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('modify_any'))
+		elseif ($row['id_member_poster'] == we::$id && !allowedTo('modify_any'))
 			isAllowedTo('modify_replies');
 		else
 			isAllowedTo('modify_any');
@@ -692,7 +692,7 @@ function Post($post_errors = array())
 		$context['use_smileys'] = true;
 		$context['icon'] = 'xx';
 
-		if ($user_info['is_guest'])
+		if (we::$is_guest)
 		{
 			$context['name'] = isset($_SESSION['guest_name']) ? $_SESSION['guest_name'] : '';
 			$context['email'] = isset($_SESSION['guest_email']) ? $_SESSION['guest_email'] : '';
@@ -832,7 +832,7 @@ function Post($post_errors = array())
 			{
 				$temp_start++;
 
-				if (preg_match('~^post_tmp_' . $user_info['id'] . '_\d+$~', $attachID) == 0)
+				if (preg_match('~^post_tmp_' . we::$id . '_\d+$~', $attachID) == 0)
 				{
 					unset($_SESSION['temp_attachments'][$attachID]);
 					continue;
@@ -923,7 +923,7 @@ function Post($post_errors = array())
 				if (!is_writable($current_attach_dir))
 					fatal_lang_error('attachments_no_write', 'critical');
 
-				$attachID = 'post_tmp_' . $user_info['id'] . '_' . $temp_start++;
+				$attachID = 'post_tmp_' . we::$id . '_' . $temp_start++;
 				$_SESSION['temp_attachments'][$attachID] = basename($_FILES['attachment']['name'][$n]);
 				$context['current_attachments'][$attachID] = array('name' => htmlspecialchars(basename($_FILES['attachment']['name'][$n])));
 
@@ -988,7 +988,7 @@ function Post($post_errors = array())
 
 	// Hang on, we might be loading a draft.
 	$_REQUEST['draft_id'] = isset($_REQUEST['draft_id']) ? (int) $_REQUEST['draft_id'] : 0;
-	if (!empty($_REQUEST['draft_id']) && !empty($user_info['id']) && allowedTo('save_post_draft') && empty($_POST['subject']) && empty($_POST['message']))
+	if (!empty($_REQUEST['draft_id']) && !empty(we::$id) && allowedTo('save_post_draft') && empty($_POST['subject']) && empty($_POST['message']))
 	{
 		$query = wesql::query('
 			SELECT subject, body, extra
@@ -999,7 +999,7 @@ function Post($post_errors = array())
 			LIMIT 1',
 			array(
 				'draft' => $_REQUEST['draft_id'],
-				'member' => $user_info['id'],
+				'member' => we::$id,
 				'not_pm' => 0,
 			)
 		);
@@ -1104,7 +1104,7 @@ function Post($post_errors = array())
 	$context['is_first_post'] = $context['is_new_topic'] || (isset($_REQUEST['msg']) && $_REQUEST['msg'] == $id_first_msg);
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || ($user_info['is_guest'] && $settings['posts_require_captcha'] == -1));
+	$context['require_verification'] = !we::is('mod') && !we::$is_admin && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');

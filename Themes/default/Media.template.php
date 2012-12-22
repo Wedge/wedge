@@ -14,7 +14,7 @@
 
 function template_aeva_header()
 {
-	global $context, $txt, $amSettings, $scripturl, $theme, $user_info;
+	global $context, $txt, $amSettings, $scripturl, $theme;
 
 	// Show Media tabs, except if not inside the gallery itself or if uploading via a popup
 	if (empty($context['current_board']) && !isset($_REQUEST['noh']))
@@ -325,7 +325,7 @@ function template_aeva_item_wrap_begin()
 
 function template_aeva_item_main()
 {
-	global $item, $galurl, $context, $txt, $scripturl, $theme, $boardurl, $user_info, $options;
+	global $item, $galurl, $context, $txt, $scripturl, $theme, $boardurl, $options;
 
 	echo '
 		<div id="media-item">',
@@ -343,7 +343,7 @@ function template_aeva_item_main()
 		echo '
 			<div class="unapproved_yet">', $txt['media_size_mismatch'], '</div>';
 
-	if (!$item['approved'] && ($item['member']['id'] == $user_info['id']) && !aeva_allowedTo('moderate') && !aeva_allowedTo('auto_approve_item'))
+	if (!$item['approved'] && ($item['member']['id'] == we::$id) && !aeva_allowedTo('moderate') && !aeva_allowedTo('auto_approve_item'))
 		echo '
 			<div class="unapproved_yet">', $txt['media_will_be_approved'], '</div>';
 
@@ -357,7 +357,7 @@ function template_aeva_item_main()
 
 function template_aeva_item_details()
 {
-	global $galurl, $context, $amSettings, $txt, $scripturl, $theme, $boardurl, $user_info, $options;
+	global $galurl, $context, $amSettings, $txt, $scripturl, $theme, $boardurl, $options;
 
 	$item =& $context['item_data'];
 	$in_sidebar = wetem::parent('aeva_item_details') == 'sidebar';
@@ -512,7 +512,7 @@ function template_aeva_item_wrap_end()
 
 function template_aeva_item_actions()
 {
-	global $item, $galurl, $txt, $amSettings, $theme, $context, $scripturl, $user_info;
+	global $item, $galurl, $txt, $amSettings, $theme, $context, $scripturl;
 
 	if (!$item['can_report'] && !$item['can_edit'] && !$item['can_approve'] && !$item['can_download'] && !$item['can_add_playlist'])
 		return;
@@ -620,7 +620,7 @@ function template_aeva_item_actions()
 
 function template_aeva_item_playlists()
 {
-	global $item, $txt, $galurl, $user_info, $context;
+	global $item, $txt, $galurl, $context;
 
 	if (!isset($item['playlists']) || empty($item['playlists']['current']))
 		return;
@@ -643,7 +643,7 @@ function template_aeva_item_playlists()
 			<td>
 				<strong><a href="', $galurl, 'sa=playlists;in=', $p['id'], '">', $p['name'], '</a></strong>', empty($p['owner_id']) ? '' : '
 				' . $txt['media_by'] . ' <a href="' . $scripturl . '?action=profile;in=' . $p['owner_id'] . ';area=aeva">' . $p['owner_name'] . '</a>', '
-				<br><span class="smalltext">', $txt['media_items'], ': ', $p['num_items'], $p['owner_id'] != $user_info['id'] && !$user_info['is_admin'] ? '' : '<br>
+				<br><span class="smalltext">', $txt['media_items'], ': ', $p['num_items'], $p['owner_id'] != we::$id && !we::$is_admin ? '' : '<br>
 				<a href="' . $galurl . 'sa=item;in=' . $id . ';premove=' . $p['id'] . ';' . $context['session_query'] . '" style="text-decoration: none"><img src="' . $theme['images_aeva'] . '/delete.png" style="vertical-align: bottom"> ' . $txt['media_delete_this_item'] . '</a>',
 				'</span>
 			</td>', $res == 3 ? '
@@ -659,7 +659,7 @@ function template_aeva_item_playlists()
 function template_aeva_item_comments()
 {
 	global $item, $galurl, $txt, $theme, $settings;
-	global $context, $scripturl, $user_info, $options;
+	global $context, $scripturl, $options;
 
 	echo '
 		<we:cat>
@@ -970,7 +970,7 @@ function template_aeva_form()
 
 function template_aeva_viewAlbum()
 {
-	global $context, $txt, $galurl, $scripturl, $settings, $theme, $user_info;
+	global $context, $txt, $galurl, $scripturl, $settings, $theme;
 
 	$album_data =& $context['album_data'];
 
@@ -1021,7 +1021,7 @@ function template_aeva_viewAlbum()
 		{
 			echo '
 				<li><a href="', $galurl, 'area=mya;sa=edit;in=', $album_data['id'], '"><span><img src="', $theme['images_aeva'], '/folder_edit.png"> ', $txt['media_edit_this_item'], '</span></a></li>';
-			if ($user_info['is_admin'])
+			if (we::$is_admin)
 				echo '
 				<li><a href="', $scripturl, '?action=admin;area=aeva_maintenance;sa=index;album=', $album_data['id'], ';', $context['session_query'], '"><span><img src="', $theme['images_aeva'], '/maintain.gif" title="', $txt['media_admin_labels_maintenance'], '"> ', $txt['media_admin_labels_maintenance'], '</span></a></li>';
 			if (aeva_allowedTo('moderate') && $album_data['approved'] == 0)
@@ -1317,7 +1317,7 @@ function template_aeva_viewUserAlbums()
 
 function template_aeva_album_cp()
 {
-	global $txt, $scripturl, $galurl, $context, $theme, $alburl, $user_info;
+	global $txt, $scripturl, $galurl, $context, $theme, $alburl;
 
 	echo '
 		<table class="bordercolor w100 cs1 cp8">
@@ -1364,7 +1364,7 @@ function template_aeva_album_cp()
 				</td>
 				<td class="album_moderation">';
 
-		if ($can_manage || $album['owner']['id'] == $user_info['id'])
+		if ($can_manage || $album['owner']['id'] == we::$id)
 			echo '
 					<img src="', $theme['images_aeva'], '/folder_edit.png">&nbsp;<a href="', $alburl, 'sa=edit;in=', $album['id'], '">', $txt['media_edit_this_item'], '</a>
 					<img src="', $theme['images_aeva'], '/folder_delete.png">&nbsp;<a href="', $alburl, 'sa=delete;in=', $album['id'], '" onclick="return ask(', JavaScriptEscape($txt['media_admin_album_confirm']), ', e);">', $txt['media_admin_delete'], '</a>
@@ -1722,7 +1722,7 @@ function template_aeva_multiUpload()
 // Profile summary template
 function template_aeva_profile_summary()
 {
-	global $txt, $galurl, $context, $theme, $scripturl, $user_info, $galurl, $settings;
+	global $txt, $galurl, $context, $theme, $scripturl, $galurl, $settings;
 
 	$member =& $context['aeva_member'];
 	$can_feed = !empty($settings['xmlnews_enable']);
@@ -1941,12 +1941,12 @@ function template_aeva_whoRatedWhat()
 // Filestack view for gallery
 function aeva_listFiles($items, $can_moderate = false)
 {
-	global $galurl, $scripturl, $context, $txt, $theme, $user_info;
+	global $galurl, $scripturl, $context, $txt, $theme;
 
 	$can_moderate_one = $can_moderate_here = aeva_allowedTo('moderate');
 	if (!$can_moderate_one)
 		foreach ($items as $item)
-			$can_moderate_one |= $item['poster_id'] == $user_info['id'];
+			$can_moderate_one |= $item['poster_id'] == we::$id;
 
 	echo '
 		<table class="bordercolor w100 cs1 cp4">
@@ -1962,7 +1962,7 @@ function aeva_listFiles($items, $can_moderate = false)
 	$alt = false;
 	foreach ($items as $item)
 	{
-		$check = $can_moderate && ($can_moderate_here || $item['poster_id'] == $user_info['id']) ? '
+		$check = $can_moderate && ($can_moderate_here || $item['poster_id'] == we::$id) ? '
 				<td class="bottom"><input type="checkbox" name="mod_item[' . $item['id'] . ']"></td>' : '';
 		echo '
 			<tr class="windowbg', $alt ? '2' : '', $item['approved'] ? '' : ' unapp', '">

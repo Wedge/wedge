@@ -301,7 +301,7 @@ function ModBlockNotes()
 					'body' => 'string', 'log_time' => 'int',
 				),
 				array(
-					$user_info['id'], $user_info['name'], 'modnote', '', $_POST['new_note'], time(),
+					we::$id, $user_info['name'], 'modnote', '', $_POST['new_note'], time(),
 				),
 				array('id_comment')
 			);
@@ -735,7 +735,7 @@ function recountOpenReports()
 	wesql::free_result($request);
 
 	$_SESSION['rc'] = array(
-		'id' => $user_info['id'],
+		'id' => we::$id,
 		'time' => time(),
 		'reports' => $open_reports,
 	);
@@ -794,7 +794,7 @@ function ModReport()
 					'id_notice' => 'int', 'body' => 'string', 'log_time' => 'int',
 				),
 				array(
-					$user_info['id'], $user_info['name'], 'reportc', '',
+					we::$id, $user_info['name'], 'reportc', '',
 					$_REQUEST['report'], $newComment, time(),
 				),
 				array('id_comment')
@@ -1618,7 +1618,7 @@ function ViewWarningTemplates()
 				'delete_ids' => $_POST['deltpl'],
 				'warntpl' => 'warntpl',
 				'generic' => 0,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -1635,7 +1635,7 @@ function ViewWarningTemplates()
 				'delete_ids' => $_POST['deltpl'],
 				'warntpl' => 'warntpl',
 				'generic' => 0,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 	}
@@ -1751,7 +1751,7 @@ function list_getWarningTemplateCount()
 		array(
 			'warntpl' => 'warntpl',
 			'generic' => 0,
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 		)
 	);
 	list ($totalWarns) = wesql::fetch_row($request);
@@ -1777,7 +1777,7 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 		array(
 			'warntpl' => 'warntpl',
 			'generic' => 0,
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 		)
 	);
 	$templates = array();
@@ -1830,7 +1830,7 @@ function ModifyWarningTemplate()
 				'id' => $context['id_template'],
 				'warntpl' => 'warntpl',
 				'generic' => 0,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -1839,7 +1839,7 @@ function ModifyWarningTemplate()
 				'title' => $row['template_title'],
 				'body' => westr::htmlspecialchars($row['body']),
 				'personal' => $row['id_recipient'],
-				'can_edit_personal' => $row['id_member'] == $user_info['id'],
+				'can_edit_personal' => $row['id_member'] == we::$id,
 			);
 		}
 		wesql::free_result($request);
@@ -1870,7 +1870,7 @@ function ModifyWarningTemplate()
 		$_POST['template_body'] = strtr($_POST['template_body'], array('<br>' => "\n"));
 
 		// Is this personal?
-		$recipient_id = !empty($_POST['make_personal']) ? $user_info['id'] : 0;
+		$recipient_id = !empty($_POST['make_personal']) ? we::$id : 0;
 
 		// If we are this far it's save time.
 		if ($context['is_edit'])
@@ -1890,7 +1890,7 @@ function ModifyWarningTemplate()
 					'id' => $context['id_template'],
 					'warntpl' => 'warntpl',
 					'generic' => 0,
-					'current_member' => $user_info['id'],
+					'current_member' => we::$id,
 				)
 			);
 
@@ -1913,7 +1913,7 @@ function ModifyWarningTemplate()
 					'recipient_name' => 'string-255', 'body' => 'string-65535', 'log_time' => 'int',
 				),
 				array(
-					$user_info['id'], $user_info['name'], 'warntpl', $recipient_id,
+					we::$id, $user_info['name'], 'warntpl', $recipient_id,
 					$_POST['template_title'], $_POST['template_body'], time(),
 				),
 				array('id_comment')
@@ -1995,7 +1995,7 @@ function ModerationSettings()
 		if ($context['can_moderate_boards'] && !empty($_POST['mod_notify_report']))
 			$pref_binary |= ($_POST['mod_notify_report'] == 2 ? 1 : 2);
 
-		updateMemberData($user_info['id'], array('mod_prefs' => $mod_blocks . '|' . $pref_binary));
+		updateMemberData(we::$id, array('mod_prefs' => $mod_blocks . '|' . $pref_binary));
 	}
 
 	// What blocks does the user currently have selected?

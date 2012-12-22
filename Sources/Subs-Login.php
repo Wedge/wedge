@@ -88,7 +88,7 @@ function DoLogin()
 
 	// Get ready to set the cookie...
 	$username = $user_settings['member_name'];
-	$user_info['id'] = $user_settings['id_member'];
+	we::$id = $user_settings['id_member'];
 
 	// Bam! Cookie set. A session too, just in case.
 	setLoginCookie(60 * $settings['cookieTime'], $user_settings['id_member'], sha1($user_settings['passwd'] . $user_settings['password_salt']));
@@ -97,15 +97,16 @@ function DoLogin()
 	if (isset($_SESSION['failed_login']))
 		unset($_SESSION['failed_login']);
 
-	$user_info['is_guest'] = false;
+	we::$cache = array();
+	we::$user['is_guest'] = false;
 	$user_settings['additional_groups'] = explode(',', $user_settings['additional_groups']);
-	$user_info['is_admin'] = $user_settings['id_group'] == 1 || in_array(1, $user_settings['additional_groups']);
+	we::$user['is_admin'] = $user_settings['id_group'] == 1 || in_array(1, $user_settings['additional_groups']);
 
 	// Are you banned?
 	is_not_banned(true);
 
 	// An administrator, set up the login so they don't have to type it again.
-	if ($user_info['is_admin'])
+	if (we::$is_admin)
 	{
 		$_SESSION['admin_time'] = time();
 		unset($_SESSION['just_registered']);
@@ -121,7 +122,7 @@ function DoLogin()
 		WHERE id_member = {int:id_member}
 			AND last_login = 0',
 		array(
-			'id_member' => $user_info['id'],
+			'id_member' => we::$id,
 		)
 	);
 	if (wesql::num_rows($request) == 1)
@@ -131,7 +132,7 @@ function DoLogin()
 	wesql::free_result($request);
 
 	// You've logged in, haven't you?
-	updateMemberData($user_info['id'], array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']));
+	updateMemberData(we::$id, array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP']));
 
 	// Get rid of the online entry for that old guest....
 	wesql::query('
@@ -145,7 +146,7 @@ function DoLogin()
 
 	// Just log you back out if it's in maintenance mode and you AREN'T an admin.
 	if (empty($maintenance) || allowedTo('admin_forum'))
-		redirectexit('action=login2;sa=check;member=' . $user_info['id'], $context['server']['needs_login_fix']);
+		redirectexit('action=login2;sa=check;member=' . we::$id, $context['server']['needs_login_fix']);
 	else
 		redirectexit('action=logout;' . $context['session_query'], $context['server']['needs_login_fix']);
 }

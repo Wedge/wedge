@@ -106,7 +106,7 @@ function issueWarning($memID)
 				AND comment_type = {string:warning}
 				AND log_time > {int:day_time_period}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'selected_member' => $memID,
 				'day_time_period' => time() - 86400,
 				'warning' => 'warning',
@@ -202,7 +202,7 @@ function issueWarning($memID)
 						'log_time' => 'int', 'id_notice' => 'int', 'counter' => 'int', 'body' => 'string-65534',
 					),
 					array(
-						$user_info['id'], $user_info['name'], 'warning', $memID, $cur_profile['real_name'],
+						we::$id, $user_info['name'], 'warning', $memID, $cur_profile['real_name'],
 						time(), $id_notice, $level_change, $_POST['warn_reason'],
 					),
 					array('id_comment')
@@ -304,7 +304,7 @@ function issueWarning($memID)
 		array(
 			'warntpl' => 'warntpl',
 			'generic' => 0,
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
@@ -453,7 +453,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 	loadSource('Subs-Members');
 
 	// Do you have permission to delete others profiles, or is that your profile you wanna delete?
-	if ($memID != $user_info['id'])
+	if ($memID != we::$id)
 	{
 		isAllowedTo('profile_remove_any');
 

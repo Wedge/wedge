@@ -21,7 +21,7 @@ define('WEDGE', 'SSI');
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;
 global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
-global $db_connection, $settings, $context, $sc, $user_info, $topic, $board, $txt;
+global $db_connection, $settings, $context, $sc, $topic, $board, $txt;
 global $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd;
 
 // Remember the current configuration so it can be set back.
@@ -120,8 +120,6 @@ header('Content-Type: text/html; charset=UTF-8');
 
 // Get rid of $board and $topic... do stuff loadBoard would do.
 unset($board, $topic);
-$user_info['is_mod'] = false;
-$context['user']['is_mod'] =& $user_info['is_mod'];
 $context['linktree'] = array();
 
 // Load the user and their cookie, as well as their settings.
@@ -132,11 +130,11 @@ loadPermissions();
 
 // Enforce 'guests cannot browse the forum' if that's what the admin wants.
 // We need to remove all permissions, plus remove board access, to make sure everything in SSI behaves.
-if (empty($settings['allow_guestAccess']) && $user_info['is_guest'])
+if (empty($settings['allow_guestAccess']) && we::$is_guest)
 {
-	$user_info['permissions'] = array();
-	$user_info['query_see_board'] = '0=1';
-	$user_info['query_wanna_see_board'] = '0=1';
+	we::$user['permissions'] = array();
+	we::$user['query_see_board'] = '0=1';
+	we::$user['query_wanna_see_board'] = '0=1';
 }
 
 // Load the current or SSI theme. (just use $ssi_theme = id_theme;)
@@ -176,7 +174,7 @@ if (isset($_GET['ssi_function']))
 elseif (basename($_SERVER['PHP_SELF']) == 'SSI.php')
 {
 	loadLanguage('Errors', '', false);
-	exit(sprintf($txt['ssi_not_direct'], $user_info['is_admin'] ? '\'' . addslashes(__FILE__) . '\'' : '\'SSI.php\''));
+	exit(sprintf($txt['ssi_not_direct'], we::$is_admin ? '\'' . addslashes(__FILE__) . '\'' : '\'SSI.php\''));
 }
 
 error_reporting($ssi_error_reporting);
@@ -244,7 +242,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 // Recent post list: Board | Subject by | Poster | Date
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
-	global $context, $theme, $txt, $db_prefix, $settings, $user_info;
+	global $context, $theme, $txt, $db_prefix, $settings;
 
 	// Excluding certain boards...
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
@@ -265,7 +263,7 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 		AND b.id_board NOT IN ({array_int:exclude_boards})') . '
 		' . ($include_boards === null ? '' : '
 		AND b.id_board IN ({array_int:include_boards})') . '
-		AND {query_wanna_see_board}' . (empty($user_info['can_skip_approval']) ? '
+		AND {query_wanna_see_board}' . (empty(we::$user['can_skip_approval']) ? '
 		AND m.approved = 1' : '');
 
 	$query_where_params = array(
@@ -281,15 +279,13 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 // Fetch a post with a particular ID. By default will only show if you have permission to the see the board in question - this can be overriden.
 function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method = 'echo')
 {
-	global $user_info;
-
 	// Allow the user to request more than one - why not?
 	$post_ids = is_array($post_ids) ? $post_ids : array($post_ids);
 
 	// Restrict the posts required...
 	$query_where = '
 		m.id_msg IN ({array_int:message_list})' . ($override_permissions ? '' : '
-			AND {query_wanna_see_board}') . (empty($user_info['can_skip_approval']) ? '
+			AND {query_wanna_see_board}') . (empty(we::$user['can_skip_approval']) ? '
 			AND m.approved = {int:is_approved}' : '');
 	$query_where_params = array(
 		'message_list' => $post_ids,
@@ -303,25 +299,25 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 // This removes code duplication in other queries - don't call it direct unless you really know what you're up to.
 function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
 {
-	global $context, $theme, $scripturl, $txt, $db_prefix, $user_info;
+	global $context, $theme, $scripturl, $txt, $db_prefix;
 
 	// Find all the posts. Newer ones will have higher IDs.
 	$request = wesql::query('
 		SELECT
 			m.poster_time, m.subject, m.id_topic, m.id_member, m.id_msg, m.id_board, b.name AS board_name,
-			IFNULL(mem.real_name, m.poster_name) AS poster_name, ' . ($user_info['is_guest'] ? '1 AS is_read, 0 AS new_from' : '
+			IFNULL(mem.real_name, m.poster_name) AS poster_name, ' . (we::$is_guest ? '1 AS is_read, 0 AS new_from' : '
 			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) >= m.id_msg_modified AS is_read,
 			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from') . ', ' . ($limit_body ? 'SUBSTRING(m.body, 1, 384) AS body' : 'm.body') . ', m.smileys_enabled
 		FROM {db_prefix}messages AS m
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (!$user_info['is_guest'] ? '
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (!we::$is_guest ? '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:current_member})' : '') . '
 		' . (empty($query_where) ? 'WHERE {query_wanna_see_board}' : 'WHERE ' . $query_where) . '
 		ORDER BY ' . $query_order . '
 		' . ($query_limit == '' ? '' : 'LIMIT ' . $query_limit),
 		array_merge($query_where_params, array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 		))
 	);
 	$posts = array();
@@ -396,7 +392,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 // Recent topic list: [Board] | Subject by | Poster | Date
 function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $just_titles = false)
 {
-	global $context, $settings, $theme, $scripturl, $txt, $db_prefix, $user_info;
+	global $context, $settings, $theme, $scripturl, $txt, $db_prefix;
 
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
 		$exclude_boards = array($settings['recycle_board']);
@@ -428,7 +424,7 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			AND t.id_last_msg >= {int:min_message_id}' . (empty($exclude_boards) ? '' : '
 			AND b.id_board NOT IN ({array_int:exclude_boards})') . '' . (empty($include_boards) ? '' : '
 			AND b.id_board IN ({array_int:include_boards})') . '
-			AND {query_wanna_see_board}' . (empty($user_info['can_skip_approval']) ? '
+			AND {query_wanna_see_board}' . (empty(we::$user['can_skip_approval']) ? '
 			AND ml.approved = {int:is_approved}' : '') . '
 		ORDER BY t.id_last_msg DESC
 		LIMIT ' . $num_recent,
@@ -451,19 +447,19 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 	$request = wesql::query('
 		SELECT
 			t.id_topic, ml.poster_time, mf.subject, ml.id_member, ml.id_msg, t.num_replies, t.num_views,
-			IFNULL(mem.real_name, ml.poster_name) AS poster_name, ' . ($user_info['is_guest'] ? '1 AS is_read, 0 AS new_from' : '
+			IFNULL(mem.real_name, ml.poster_name) AS poster_name, ' . (we::$is_guest ? '1 AS is_read, 0 AS new_from' : '
 			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) >= ml.id_msg_modified AS is_read,
 			IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1 AS new_from') . ($just_titles ? '' : ', SUBSTRING(ml.body, 1, 384) AS body') . ', ml.smileys_enabled, ml.icon
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 			INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ml.id_member)' . (!$user_info['is_guest'] ? '
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = ml.id_member)' . (!we::$is_guest ? '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = t.id_board AND lmr.id_member = {int:current_member})' : '') . '
 		WHERE t.id_topic IN ({array_int:topic_list})
 		ORDER BY t.id_last_msg DESC',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'topic_list' => array_keys($topics),
 		)
 	);
@@ -509,8 +505,8 @@ function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boar
 			'preview' => $just_titles ? '' : $row['body'],
 			'time' => timeformat($row['poster_time']),
 			'timestamp' => forum_time(true, $row['poster_time']),
-			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row['id_msg'] : $row['new_from']) . ($row['is_read'] ? '' : ';seen') . '#new',
-			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row['id_msg'] : $row['new_from']) . '#new" rel="nofollow">' . $row['subject'] . '</a>',
+			'href' => $scripturl . '?topic=' . $row['id_topic'] . '.msg' . (we::$is_guest ? $row['id_msg'] : $row['new_from']) . ($row['is_read'] ? '' : ';seen') . '#new',
+			'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.msg' . (we::$is_guest ? $row['id_msg'] : $row['new_from']) . '#new" rel="nofollow">' . $row['subject'] . '</a>',
 			// Retained for compatibility - is technically incorrect!
 			'new' => !empty($row['is_read']),
 			'is_new' => empty($row['is_read']),
@@ -596,12 +592,12 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 // Show boards by activity.
 function ssi_topBoards($num_top = 10, $output_method = 'echo')
 {
-	global $context, $theme, $db_prefix, $txt, $scripturl, $user_info, $settings;
+	global $context, $theme, $db_prefix, $txt, $scripturl, $settings;
 
 	// Find boards with lots of posts.
 	$request = wesql::query('
 		SELECT
-			b.name, b.num_topics, b.num_posts, b.id_board,' . (!$user_info['is_guest'] ? ' 1 AS is_read' : '
+			b.name, b.num_topics, b.num_posts, b.id_board,' . (!we::$is_guest ? ' 1 AS is_read' : '
 			(IFNULL(lb.id_msg, 0) >= b.id_last_msg) AS is_read') . '
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
@@ -610,7 +606,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 		ORDER BY b.num_posts DESC
 		LIMIT ' . $num_top,
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'recycle_board' => (int) $settings['recycle_board'],
 		)
 	);
@@ -654,7 +650,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 // Shows the top topics.
 function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $user_info, $settings, $context;
+	global $db_prefix, $txt, $scripturl, $settings, $context;
 
 	if ($settings['totalMessages'] > 100000)
 	{
@@ -845,10 +841,10 @@ function ssi_fetchGroupMembers($group_id, $output_method = 'echo')
 // Fetch some member data!
 function ssi_queryMembers($query_where, $query_where_params = array(), $query_limit = '', $query_order = 'id_member DESC', $output_method = 'echo')
 {
-	global $context, $theme, $scripturl, $txt, $db_prefix, $user_info;
+	global $context, $theme, $scripturl, $txt, $db_prefix;
 	global $settings, $memberContext;
 
-	if (empty($settings['allow_guestAccess']) && $user_info['is_guest'])
+	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
 
 	// Fetch the members in question.
@@ -954,9 +950,9 @@ function ssi_boardStats($output_method = 'echo')
 // Shows a list of online users:  YY Guests, ZZ Users and then a list...
 function ssi_whosOnline($output_method = 'echo')
 {
-	global $user_info, $txt, $theme, $settings;
+	global $txt, $theme, $settings;
 
-	if (empty($settings['allow_guestAccess']) && $user_info['is_guest'])
+	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
 
 	loadSource('Subs-MembersOnline');
@@ -982,7 +978,7 @@ function ssi_whosOnline($output_method = 'echo')
 		', comma_format($return['num_guests']), ' ', $return['num_guests'] == 1 ? $txt['guest'] : $txt['guests'], ', ', comma_format($return['num_users_online']), ' ', $return['num_users_online'] == 1 ? $txt['user'] : $txt['users'];
 
 	$bracketList = array();
-	if (!empty($user_info['buddies']))
+	if (!empty(we::$user['buddies']))
 		$bracketList[] = comma_format($return['num_buddies']) . ' ' . ($return['num_buddies'] == 1 ? $txt['buddy'] : $txt['buddies']);
 	if (!empty($return['num_spiders']))
 		$bracketList[] = comma_format($return['num_spiders']) . ' ' . ($return['num_spiders'] == 1 ? $txt['spider'] : $txt['spiders']);
@@ -1015,20 +1011,20 @@ function ssi_logOnline($output_method = 'echo')
 // Shows a login box.
 function ssi_login($redirect_to = '', $output_method = 'echo')
 {
-	global $scripturl, $txt, $user_info;
+	global $scripturl, $txt;
 
 	if ($redirect_to != '')
 		$_SESSION['login_url'] = $redirect_to;
 
-	if ($output_method != 'echo' || !$user_info['is_guest'])
-		return $user_info['is_guest'];
+	if ($output_method != 'echo' || !we::$is_guest)
+		return we::$is_guest;
 
 	echo '
 		<form action="', $scripturl, '?action=login2" method="post" accept-charset="UTF-8">
 			<table class="ssi_table cs1 cp0">
 				<tr>
 					<td class="right"><label for="user">', $txt['username'], ':</label>&nbsp;</td>
-					<td><input type="text" id="user" name="user" size="9" value="', $user_info['username'], '"></td>
+					<td><input type="text" id="user" name="user" size="9" value="', we::$user['username'], '"></td>
 				</tr><tr>
 					<td class="right"><label for="passwrd">', $txt['password'], ':</label>&nbsp;</td>
 					<td><input type="password" name="passwrd" id="passwrd" size="9"></td>
@@ -1052,7 +1048,7 @@ function ssi_topPoll($output_method = 'echo')
 // Show the most recently posted poll.
 function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $theme, $boardurl, $user_info, $context, $settings;
+	global $db_prefix, $txt, $theme, $boardurl, $context, $settings;
 
 	$boardsAllowed = array_intersect(boardsAllowedTo('poll_view'), boardsAllowedTo('poll_vote'));
 
@@ -1068,14 +1064,14 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 			LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_poll = p.id_poll AND lp.id_member > {int:no_member} AND lp.id_member = {int:current_member})
 		WHERE p.voting_locked = {int:voting_opened}
 			AND (p.expire_time = {int:no_expiration} OR {int:current_time} < p.expire_time)
-			AND ' . ($user_info['is_guest'] ? 'p.guest_vote = {int:guest_vote_allowed}' : 'lp.id_choice IS NULL') . '
+			AND ' . (we::$is_guest ? 'p.guest_vote = {int:guest_vote_allowed}' : 'lp.id_choice IS NULL') . '
 			AND {query_wanna_see_board}' . (!in_array(0, $boardsAllowed) ? '
 			AND b.id_board IN ({array_int:boards_allowed_list})' : '') . (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 			AND b.id_board != {int:recycle_enable}' : '') . '
 		ORDER BY ' . ($topPollInstead ? 'pc.votes' : 'p.id_poll') . ' DESC
 		LIMIT 1',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'boards_allowed_list' => $boardsAllowed,
 			'guest_vote_allowed' => 1,
 			'no_member' => 0,
@@ -1093,7 +1089,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 		return array();
 
 	// If this is a guest who's voted we'll through ourselves to show poll to show the results.
-	if ($user_info['is_guest'] && (!$row['guest_vote'] || (isset($_COOKIE['guest_poll_vote']) && in_array($row['id_poll'], explode(',', $_COOKIE['guest_poll_vote'])))))
+	if (we::$is_guest && (!$row['guest_vote'] || (isset($_COOKIE['guest_poll_vote']) && in_array($row['id_poll'], explode(',', $_COOKIE['guest_poll_vote'])))))
 		return ssi_showPoll($row['id_topic'], $output_method);
 
 	$request = wesql::query('
@@ -1182,7 +1178,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 
 function ssi_showPoll($topic = null, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $theme, $boardurl, $user_info, $context;
+	global $db_prefix, $txt, $theme, $boardurl, $context;
 
 	$boardsAllowed = boardsAllowedTo('poll_view');
 
@@ -1221,9 +1217,9 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 	// Check if they can vote.
 	if (!empty($row['expire_time']) && $row['expire_time'] < time())
 		$allow_vote = false;
-	elseif ($user_info['is_guest'] && $row['guest_vote'] && (!isset($_COOKIE['guest_poll_vote']) || !in_array($row['id_poll'], explode(',', $_COOKIE['guest_poll_vote']))))
+	elseif (we::$is_guest && $row['guest_vote'] && (!isset($_COOKIE['guest_poll_vote']) || !in_array($row['id_poll'], explode(',', $_COOKIE['guest_poll_vote']))))
 		$allow_vote = true;
-	elseif ($user_info['is_guest'])
+	elseif (we::$is_guest)
 		$allow_vote = false;
 	elseif (!empty($row['voting_locked']) || !allowedTo('poll_vote', $row['id_board']))
 		$allow_vote = false;
@@ -1236,7 +1232,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 				AND id_member = {int:current_member}
 			LIMIT 1',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'current_poll' => $row['id_poll'],
 			)
 		);
@@ -1355,7 +1351,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 // Takes care of voting - don't worry, this is done automatically.
 function ssi_pollVote()
 {
-	global $context, $db_prefix, $user_info, $sc, $settings;
+	global $context, $db_prefix, $sc, $settings;
 
 	if (!isset($_POST[$context['session_var']]) || $_POST[$context['session_var']] != $sc || empty($_POST['options']) || !isset($_POST['poll']))
 	{
@@ -1388,7 +1384,7 @@ function ssi_pollVote()
 		WHERE p.id_poll = {int:current_poll}
 		LIMIT 1',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'current_poll' => $_POST['poll'],
 		)
 	);
@@ -1397,7 +1393,7 @@ function ssi_pollVote()
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
 
-	if (!empty($row['voting_locked']) || ($row['selected'] != -1 && !$user_info['is_guest']) || (!empty($row['expire_time']) && time() > $row['expire_time']))
+	if (!empty($row['voting_locked']) || ($row['selected'] != -1 && !we::$is_guest) || (!empty($row['expire_time']) && time() > $row['expire_time']))
 		redirectexit('topic=' . $row['id_topic'] . '.0');
 
 	// Too many options checked?
@@ -1405,7 +1401,7 @@ function ssi_pollVote()
 		redirectexit('topic=' . $row['id_topic'] . '.0');
 
 	// It's a guest who has already voted?
-	if ($user_info['is_guest'])
+	if (we::$is_guest)
 	{
 		// Guest voting disabled?
 		if (!$row['guest_vote'])
@@ -1422,7 +1418,7 @@ function ssi_pollVote()
 		$id = (int) $id;
 
 		$options[] = $id;
-		$inserts[] = array($_POST['poll'], $user_info['id'], $id);
+		$inserts[] = array($_POST['poll'], we::$id, $id);
 	}
 
 	// Add their vote in to the tally.
@@ -1444,7 +1440,7 @@ function ssi_pollVote()
 	);
 
 	// Track the vote if a guest.
-	if ($user_info['is_guest'])
+	if (we::$is_guest)
 	{
 		$_COOKIE['guest_poll_vote'] = !empty($_COOKIE['guest_poll_vote']) ? ($_COOKIE['guest_poll_vote'] . ',' . $row['id_poll']) : $row['id_poll'];
 
@@ -1691,7 +1687,7 @@ function ssi_checkPassword($id = null, $password = null, $is_username = false)
 // We want to show the recent attachments outside of the forum.
 function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(), $output_method = 'echo')
 {
-	global $context, $settings, $scripturl, $txt, $theme, $user_info;
+	global $context, $settings, $scripturl, $txt, $theme;
 
 	// We want to make sure that we only get attachments for boards that we can see *if* any.
 	$attachments_boards = boardsAllowedTo('view_attachments');
@@ -1719,7 +1715,7 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 			AND att.attachment_type = 0' . ($attachments_boards === array(0) ? '' : '
 			AND m.id_board IN ({array_int:boards_can_see})') . (!empty($attachment_ext) ? '
 			AND att.fileext IN ({array_string:attachment_ext})' : '') .
-			(empty($user_info['can_skip_approval']) ? '
+			(empty(we::$user['can_skip_approval']) ? '
 			AND m.approved = 1' : '') . '
 		ORDER BY att.id_attach DESC
 		LIMIT {int:num_attachments}',

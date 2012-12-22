@@ -43,7 +43,7 @@ function getBoardIndex($boardIndexOptions)
 			CASE WHEN b.redirect != {string:blank_string} THEN 1 ELSE 0 END AS is_redirect, b.redirect_newtab,
 			b.num_posts, b.num_topics, b.unapproved_posts, b.unapproved_topics, b.id_parent, b.language,
 			IFNULL(m.poster_time, 0) AS poster_time, IFNULL(mem.member_name, m.poster_name) AS poster_name,
-			m.subject, m.id_topic, IFNULL(mem.real_name, m.poster_name) AS real_name, b.offlimits_msg,' . ($user_info['is_guest'] ? ' 1 AS is_read, 0 AS new_from,' : '
+			m.subject, m.id_topic, IFNULL(mem.real_name, m.poster_name) AS real_name, b.offlimits_msg,' . (we::$is_guest ? ' 1 AS is_read, 0 AS new_from,' : '
 			(IFNULL(lb.id_msg, 0) >= b.id_msg_updated) AS is_read, IFNULL(lb.id_msg, -1) + 1 AS new_from,' . ($boardIndexOptions['include_categories'] ? '
 			c.can_collapse, IFNULL(cc.id_member, 0) AS is_collapsed,' : '')) . '
 			IFNULL(mem.id_member, 0) AS id_member, m.id_msg,
@@ -51,7 +51,7 @@ function getBoardIndex($boardIndexOptions)
 		FROM {db_prefix}boards AS b' . ($boardIndexOptions['include_categories'] ? '
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)' : '') . '
 			LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
-			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . ($user_info['is_guest'] ? '' : '
+			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (we::$is_guest ? '' : '
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})' . ($boardIndexOptions['include_categories'] ? '
 			LEFT JOIN {db_prefix}collapsed_categories AS cc ON (cc.id_cat = c.id_cat AND cc.id_member = {int:current_member})' : '')) . '
 			LEFT JOIN {db_prefix}moderators AS mods ON (mods.id_board = b.id_board)
@@ -62,7 +62,7 @@ function getBoardIndex($boardIndexOptions)
 			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)) . (empty($boardIndexOptions['category']) ? '' : '
 			ORDER BY b.board_order'),
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'child_level' => $boardIndexOptions['base_level'],
 			'category' => $boardIndexOptions['category'],
 			'blank_string' => '',
@@ -248,14 +248,14 @@ function getBoardIndex($boardIndexOptions)
 		);
 
 		// Provide the href and link. Except if we can't actually enter this board, or it doesn't have a subject.
-		if (!$user_info['is_admin'] && !in_array($row_board['id_board'], $user_info['qsb_boards']))
+		if (!we::$is_admin && !in_array($row_board['id_board'], $user_info['qsb_boards']))
 		{
 			$row_board['poster_time'] = 0; // This should not be considered for 'latest'.
 			$this_last_post['offlimits'] = !empty($row_board['offlimits_msg']) ? $row_board['offlimits_msg'] : $txt['board_off_limits'];
 		}
 		elseif ($row_board['subject'] != '')
 		{
-			$this_last_post['href'] = $scripturl . '?topic=' . $row_board['id_topic'] . '.msg' . ($user_info['is_guest'] ? $row_board['id_msg'] : $row_board['new_from']) . (empty($row_board['is_read']) ? ';boardseen' : '') . '#new';
+			$this_last_post['href'] = $scripturl . '?topic=' . $row_board['id_topic'] . '.msg' . (we::$is_guest ? $row_board['id_msg'] : $row_board['new_from']) . (empty($row_board['is_read']) ? ';boardseen' : '') . '#new';
 			$this_last_post['link'] = '<a href="' . $this_last_post['href'] . '" title="' . $row_board['subject'] . '">' . $row_board['short_subject'] . '</a>';
 		}
 		else

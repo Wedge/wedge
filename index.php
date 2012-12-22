@@ -215,7 +215,7 @@ if (!empty($context['app_error_count']))
 // The main controlling function.
 function wedge_main()
 {
-	global $settings, $theme, $user_info, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
+	global $settings, $theme, $board, $topic, $board_info, $maintenance, $sourcedir, $action_list;
 
 	$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
@@ -227,14 +227,14 @@ function wedge_main()
 	loadUserSettings();
 
 	// Get rid of ?PHPSESSID for robots.
-	if ($user_info['possibly_robot'] && strpos($user_info['url'], 'PHPSESSID=') !== false)
+	if (we::$user['possibly_robot'] && strpos(we::$user['url'], 'PHPSESSID=') !== false)
 	{
-		$correcturl = preg_replace('/([\?&]PHPSESSID=[^&]*)/', '', $user_info['url']);
+		$correcturl = preg_replace('/([\?&]PHPSESSID=[^&]*)/', '', we::$user['url']);
 		$correcturl = str_replace(array('index.php&', 'index.php??'), 'index.php?', $correcturl);
 		$correcturl = str_replace(array('/&?', '/??', '/&'), '/?', $correcturl);
 		$correcturl = preg_replace('/&$|\?$/', '', $correcturl);
 
-		if ($correcturl != $user_info['url'])
+		if ($correcturl != we::$user['url'])
 		{
 			header('HTTP/1.1 301 Moved Permanently');
 			header('Location: ' . $correcturl);
@@ -266,7 +266,7 @@ function wedge_main()
 
 	// Load the current theme. Note that ?theme=1 will also work, may be used for guest theming.
 	// Attachments don't require the entire theme to be loaded.
-	if ($action !== 'dlattach' || empty($settings['allow_guestAccess']) || !$user_info['is_guest'])
+	if ($action !== 'dlattach' || empty($settings['allow_guestAccess']) || !we::$is_guest)
 		loadTheme();
 
 	// Check if the user should be disallowed access.
@@ -274,7 +274,7 @@ function wedge_main()
 
 	// If we are in a topic and don't have permission to approve it then duck out now.
 	if (!empty($topic) && $action !== 'feed' && empty($board_info['cur_topic_approved']) && !allowedTo('approve_posts'))
-		if ($user_info['id'] != $board_info['cur_topic_starter'] || $user_info['is_guest'])
+		if (we::$id != $board_info['cur_topic_starter'] || we::$is_guest)
 			fatal_lang_error('not_a_topic', false);
 
 	// Is the forum in maintenance mode? (doesn't apply to administrators.)
@@ -295,7 +295,7 @@ function wedge_main()
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($settings['allow_guestAccess']) && $user_info['is_guest'] && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'mailq', 'verificationcode'))))
+	elseif (empty($settings['allow_guestAccess']) && we::$is_guest && (empty($action) || !in_array($action, array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'mailq', 'verificationcode'))))
 	{
 		loadSource('Subs-Auth');
 		return 'KickGuest';

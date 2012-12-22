@@ -70,7 +70,7 @@ function add_js_inline()
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
 {
 	global $context, $settings, $theme, $jsdir, $boardurl;
-	global $footer_coding, $user_info, $language;
+	global $footer_coding, $language;
 	static $done_files = array();
 
 	if (!is_array($files))
@@ -127,7 +127,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $jsdir . '/' . $id . (!empty($settings['js_lang'][$id]) && !empty($user_info['language']) && $user_info['language'] != $language ? $user_info['language'] . '-' : '') . $latest_date . $ext;
+	$final_file = $jsdir . '/' . $id . (!empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '') . $latest_date . $ext;
 
 	if (!file_exists($final_file))
 		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext);
@@ -1020,12 +1020,10 @@ function theme_base_css()
 
 	if (!empty($context['header_css']))
 	{
-		global $user_info;
-
 		// Replace $behavior with the forum's root URL in context, because pretty URLs complicate things in IE.
 		if (strpos($context['header_css'], '$behavior') !== false)
-			$context['header_css'] = str_replace('$behavior', strpos($boardurl, '://' . $user_info['host']) !== false ? $boardurl
-				: preg_replace('~(?<=://)([^/]+)~', $user_info['host'], $boardurl), $context['header_css']);
+			$context['header_css'] = str_replace('$behavior', strpos($boardurl, '://' . we::$user['host']) !== false ? $boardurl
+				: preg_replace('~(?<=://)([^/]+)~', we::$user['host'], $boardurl), $context['header_css']);
 	}
 
 	return '
@@ -1040,7 +1038,7 @@ function theme_base_css()
  */
 function theme_base_js($indenting = 0)
 {
-	global $context,$user_info;
+	global $context;
 
 	$tab = str_repeat("\t", $indenting);
 	return (!empty($context['remote_js_files']) ? '

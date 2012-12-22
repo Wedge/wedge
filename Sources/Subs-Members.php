@@ -99,7 +99,7 @@ function deleteMembers($users, $check_not_admin = false)
 	{
 		list ($user) = $users;
 
-		if ($user == $user_info['id'])
+		if ($user == we::$id)
 			isAllowedTo('profile_remove_own');
 		else
 			isAllowedTo('profile_remove_any');
@@ -138,7 +138,7 @@ function deleteMembers($users, $check_not_admin = false)
 		return;
 
 	// Make sure they aren't trying to delete administrators if they aren't one.  But don't bother checking if it's just themself.
-	if (!empty($admins) && ($check_not_admin || (!allowedTo('admin_forum') && (count($users) != 1 || $users[0] != $user_info['id']))))
+	if (!empty($admins) && ($check_not_admin || (!allowedTo('admin_forum') && (count($users) != 1 || $users[0] != we::$id))))
 	{
 		$users = array_diff($users, $admins);
 		foreach ($admins as $id)
@@ -161,7 +161,7 @@ function deleteMembers($users, $check_not_admin = false)
 
 		// Add it to the administration log for future reference.
 		$log_inserts[] = array(
-			time(), 3, $user_info['id'], get_ip_identifier($user_info['ip']), 'delete_member',
+			time(), 3, we::$id, get_ip_identifier($user_info['ip']), 'delete_member',
 			0, 0, 0, serialize(array('member' => $user[0], 'name' => $user[1], 'member_acted' => $user_info['name'])),
 		);
 
@@ -479,7 +479,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	elseif ($regOptions['interface'] == 'guest')
 	{
 		// You cannot register twice...
-		if (empty($user_info['is_guest']))
+		if (empty(we::$is_guest))
 			redirectexit();
 
 		// Make sure they didn't just register with this session.

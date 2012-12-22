@@ -402,7 +402,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 
 	if ($from === null)
 		$from = array(
-			'id' => $user_info['id'],
+			'id' => we::$id,
 			'name' => $user_info['name'],
 			'username' => $user_info['username']
 		);
@@ -610,7 +610,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 		}
 
 		// If the receiving account is banned (>=10) or pending deletion (4), refuse to send the PM.
-		if ($row['is_activated'] >= 10 || ($row['is_activated'] == 4 && !$user_info['is_admin']))
+		if ($row['is_activated'] >= 10 || ($row['is_activated'] == 4 && !we::$is_admin))
 		{
 			$log['failed'][$row['id_member']] = sprintf($txt['pm_error_user_cannot_read'], $row['real_name']);
 			unset($all_to[array_search($row['id_member'], $all_to)]);
@@ -1032,7 +1032,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			(empty($members_only) ? '' : ' AND ln.id_member IN ({array_int:members_only})') . '
 		ORDER BY mem.lngfile',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'topic_list' => $topics,
 			'notify_types' => $type == 'reply' ? '4' : '3',
 			'notify_regularity' => 2,
@@ -1106,7 +1106,7 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			WHERE id_topic IN ({array_int:topic_list})
 				AND id_member != {int:current_member}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'topic_list' => $topics,
 				'is_sent' => 1,
 			)
@@ -1180,7 +1180,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$posterOptions['name'] = $txt['guest_title'];
 			$posterOptions['email'] = '';
 		}
-		elseif ($posterOptions['id'] != $user_info['id'])
+		elseif ($posterOptions['id'] != we::$id)
 		{
 			$request = wesql::query('
 				SELECT member_name, email_address
@@ -1332,7 +1332,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		trackStats(array('posts' => '+'));
 
 		// Merging a double post...
-		if (!empty($settings['merge_post_auto']) && !($user_info['is_admin'] && empty($settings['merge_post_admin_double_post'])))
+		if (!empty($settings['merge_post_auto']) && !(we::$is_admin && empty($settings['merge_post_admin_double_post'])))
 		{
 			$_REQUEST['msgid'] = $msgOptions['id'];
 			$_REQUEST['pid'] = $msgOptions['id'];
@@ -1388,7 +1388,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	}
 
 	// Mark inserted topic as read (only for the user calling this function).
-	if (!empty($topicOptions['mark_as_read']) && !$user_info['is_guest'])
+	if (!empty($topicOptions['mark_as_read']) && !we::$is_guest)
 	{
 		// Since it's likely they *read* it before replying, let's try an UPDATE first.
 		if (!$new_topic)
@@ -1441,7 +1441,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	if (!empty($posterOptions['update_post_count']) && !empty($posterOptions['id']) && $msgOptions['approved'])
 	{
 		// Are you the one that happened to create this post?
-		if ($user_info['id'] == $posterOptions['id'])
+		if (we::$id == $posterOptions['id'])
 			$user_info['posts']++;
 		updateMemberData($posterOptions['id'], array('posts' => '+'));
 	}
@@ -1888,7 +1888,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	);
 
 	// Mark the edited post as read.
-	if (!empty($topicOptions['mark_as_read']) && !$user_info['is_guest'])
+	if (!empty($topicOptions['mark_as_read']) && !we::$is_guest)
 	{
 		// Since it's likely they *read* it before editing, let's try an UPDATE first.
 		wesql::query('
@@ -1897,7 +1897,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			WHERE id_member = {int:current_member}
 				AND id_topic = {int:id_topic}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'id_msg' => $settings['maxMsgID'],
 				'id_topic' => $topicOptions['id'],
 			)
@@ -1910,7 +1910,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			wesql::insert('ignore',
 				'{db_prefix}log_topics',
 				array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-				array($topicOptions['id'], $user_info['id'], $settings['maxMsgID']),
+				array($topicOptions['id'], we::$id, $settings['maxMsgID']),
 				array('id_topic', 'id_member')
 			);
 		}
@@ -2252,7 +2252,7 @@ function sendApprovalNotifications(&$topicData)
 		$topicData[$topic][$msgKey]['body'] = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc($topicData[$topic][$msgKey]['body'], false), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
 
 		$topics[] = $msg['id'];
-		$digest_insert[] = array($msg['topic'], $msg['id'], 'reply', $user_info['id']);
+		$digest_insert[] = array($msg['topic'], $msg['id'], 'reply', we::$id);
 	}
 
 	// These need to go into the digest too...
@@ -2351,7 +2351,7 @@ function sendApprovalNotifications(&$topicData)
 			WHERE id_topic IN ({array_int:topic_list})
 				AND id_member != {int:current_member}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'topic_list' => $topics,
 				'is_sent' => 1,
 			)
@@ -2644,7 +2644,7 @@ function saveDraft($is_pm, $id_context = 0)
 	global $context, $txt, $board, $user_info, $settings;
 
 	// Do the basics first.
-	if ($user_info['is_guest'] || !empty($_REQUEST['msg']))
+	if (we::$is_guest || !empty($_REQUEST['msg']))
 		return false;
 
 	// Is it a post, and if so what's the permission like? Failing that, PMs?
@@ -2693,7 +2693,7 @@ function saveDraft($is_pm, $id_context = 0)
 				'draft' => $_REQUEST['draft_id'],
 				'is_pm' => $is_pm ? 1 : 0,
 				'id_context' => $id_context,
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 			)
 		);
 
@@ -2747,7 +2747,7 @@ function saveDraft($is_pm, $id_context = 0)
 				'post_time' => time(),
 				'extra' => $extra,
 				'id_draft' => $_REQUEST['draft_id'],
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 				'is_pm' => !empty($is_pm) ? 1 : 0,
 				'id_context' => $id_context,
 			)
@@ -2771,7 +2771,7 @@ function saveDraft($is_pm, $id_context = 0)
 			'extra' => 'string',
 		),
 		array(
-			$user_info['id'],
+			we::$id,
 			$subject,
 			$message,
 			time(),

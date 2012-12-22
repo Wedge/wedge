@@ -92,7 +92,7 @@ if (!defined('WEDGE'))
 function aeva_moveItems()
 {
 	// Handles moving of items from one album to another
-	global $context, $scripturl, $galurl, $txt, $user_info, $amSettings;
+	global $context, $scripturl, $galurl, $txt, $amSettings;
 
 	// Load the item's data
 	$ids = !empty($_POST['ids']) ? $_POST['ids'] : (array) (!empty($_GET['in']) ? (int) $_GET['in'] : 0);
@@ -118,7 +118,7 @@ function aeva_moveItems()
 	$can_moderate = aeva_allowedTo('moderate');
 	$can_edit_own = aeva_allowedTo('edit_own_item');
 	while ($row = wesql::fetch_assoc($request))
-		if ($can_moderate || ($can_edit_own && $row['id_member'] == $user_info['id']))
+		if ($can_moderate || ($can_edit_own && $row['id_member'] == we::$id))
 			$items[] = $row;
 	wesql::free_result($request);
 	if (empty($items))
@@ -287,8 +287,8 @@ function aeva_moveItems()
 				'name' => $items[0]['name'],
 			),
 			'action_by' => array(
-				'id' => $user_info['id'],
-				'name' => $user_info['name'],
+				'id' => we::$id,
+				'name' => we::$user['name'],
 			),
 			'extra_info' => array(
 				'val8' => $album_id . ',' . $context['aeva_albums'][$album_id]['name'],
@@ -314,7 +314,7 @@ function aeva_moveItems()
 function aeva_unseen()
 {
 	// Handles the viewing of unseen files
-	global $galurl, $scripturl, $amSettings, $txt, $user_info, $context;
+	global $galurl, $scripturl, $amSettings, $txt, $context;
 
 	is_not_guest();
 	$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
@@ -335,7 +335,7 @@ function aeva_unseen()
 		foreach ($pageseen as $item)
 			if ((int) $item > 0)
 				media_markSeen((int) $item, 'force_insert');
-		media_resetUnseen($user_info['id']);
+		media_resetUnseen(we::$id);
 	}
 
 	// Get the total items to show
@@ -349,17 +349,17 @@ function aeva_unseen()
 		AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time
 		{raw:album}' . (!aeva_allowedTo('moderate') ? '
 		AND m.approved = 1' : '') . '
-		LIMIT 1', array('album' => $album, 'user' => $user_info['id'])
+		LIMIT 1', array('album' => $album, 'user' => we::$id)
 	);
 	list ($total_items) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if (empty($total_items) && !$user_info['is_guest'])
+	if (empty($total_items) && !we::$is_guest)
 	{
 		// Quick test to see if we should optimize the log_media table...
 		$request = wesql::query('
 			SELECT id_media FROM {db_prefix}media_log_media WHERE id_media > 0 AND id_member = {int:user} LIMIT 1',
-			array('user' => $user_info['id'])
+			array('user' => we::$id)
 		);
 		list ($remaining) = wesql::fetch_row($request);
 		wesql::free_result($request);
@@ -387,7 +387,7 @@ function aeva_unseen()
 		AND m.approved = 1' : '') . '
 		ORDER BY m.log_last_access_time DESC
 		LIMIT {int:start},{int:per_page}',
-		array('start' => $start, 'per_page' => $per_page, 'album' => $album, 'user' => $user_info['id'])
+		array('start' => $start, 'per_page' => $per_page, 'album' => $album, 'user' => we::$id)
 	));
 
 	$comment_list = array();
@@ -408,7 +408,7 @@ function aeva_unseen()
 			WHERE c.id_media IN (' . implode(',', $comment_list) . ')
 			AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < c.posted_on
 			GROUP BY c.id_media',
-			array('user' => $user_info['id'])
+			array('user' => we::$id)
 		);
 		while ($row = wesql::fetch_assoc($request))
 			$context['aeva_items'][$row['id_media']]['new_comments'] = $row['co'];
@@ -425,7 +425,7 @@ function aeva_unseen()
 // Handles searching of items
 function aeva_mgSearch()
 {
-	global $galurl, $txt, $amSettings, $user_info, $context, $scripturl;
+	global $galurl, $txt, $amSettings, $context, $scripturl;
 
 	// Let's see what all albums they can search in
 	aeva_getAlbums();
@@ -559,7 +559,7 @@ function aeva_mgSearch()
 			AND m.approved = 1' : '') . '
 			ORDER BY m.id_media DESC
 			LIMIT {int:start}, {int:per_page}',
-			array('user' => $user_info['id'], 'mem' => !empty($members_to_filter) ? implode(' OR m.id_member = ',$members_to_filter) : '', 'album' => $filters['album'],
+			array('user' => we::$id, 'mem' => !empty($members_to_filter) ? implode(' OR m.id_member = ',$members_to_filter) : '', 'album' => $filters['album'],
 			'search' => $searching_for, 'start' => isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0, 'per_page' => empty($context['current_board']) ? 15 : 30)
 		));
 
@@ -572,7 +572,7 @@ function aeva_mgSearch()
 			WHERE {query_see_album_hidden} AND (' . $query . ')' . (!aeva_allowedTo('moderate') ? '
 			AND m.approved = 1' : ''),
 			array(
-				'user' => $user_info['id'],
+				'user' => we::$id,
 				'mem' => !empty($members_to_filter) ? implode(' OR m.id_member = ', $members_to_filter) : '',
 				'album' => $filters['album'],
 				'search' => $searching_for
@@ -632,7 +632,7 @@ function aeva_mgSearch()
 function aeva_listAlbums()
 {
 	// Handles viewing of all the albums out there
-	global $txt, $amSettings, $user_info, $scripturl, $galurl, $context;
+	global $txt, $amSettings, $scripturl, $galurl, $context;
 
 	// Just load it!
 	$start = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
@@ -656,7 +656,7 @@ function aeva_listAlbums()
 		FROM {db_prefix}media_albums AS a
 		WHERE {query_see_album_nocheck}
 			AND a.child_level = 0' . (!aeva_allowedTo('moderate') ? '
-			AND ((a.approved = 1 AND a.hidden = 0) OR a.album_of = ' . $user_info['id'] . ')' : ''),
+			AND ((a.approved = 1 AND a.hidden = 0) OR a.album_of = ' . we::$id . ')' : ''),
 		array()
 	);
 	$total_items = wesql::num_rows($request);
@@ -679,7 +679,7 @@ function aeva_listAlbums()
 function aeva_mgStats()
 {
 	// Handles the stat pages
-	global $amSettings, $user_info, $context, $txt, $galurl;
+	global $amSettings, $context, $txt, $galurl;
 
 	/*******************************************************
 	Let's see what all we got at the stats page:
@@ -760,7 +760,7 @@ function aeva_mgStats()
 // Manages your albums' control panel
 function aeva_albumCP($is_admin = false)
 {
-	global $user_info, $context, $txt, $galurl, $alburl, $scripturl, $theme;
+	global $context, $txt, $galurl, $alburl, $scripturl, $theme;
 
 	$alburl = $is_admin ? $scripturl . '?action=admin;area=aeva_albums;' . $context['session_query'] . ';' : $galurl . 'area=mya;';
 	if (!$is_admin)
@@ -791,7 +791,7 @@ function aeva_albumCP($is_admin = false)
 	// Load the albums
 	if (!$is_admin)
 	{
-		$quicklist = aeva_getQuickAlbums('a.album_of = ' . $user_info['id'], 'master');
+		$quicklist = aeva_getQuickAlbums('a.album_of = ' . we::$id, 'master');
 		aeva_getAlbums(empty($quicklist) ? '1=0' : 'a.master IN (' . implode(',', $quicklist) . ')', 1, false, 'a.album_of, a.child_level, a.a_order', '', false, 100);
 	}
 	else
@@ -856,7 +856,7 @@ function aeva_editAlbum()
 
 function aeva_addAlbum($is_admin = false, $is_add = true)
 {
-	global $context, $scripturl, $galurl, $amSettings, $txt, $user_info, $theme;
+	global $context, $scripturl, $galurl, $amSettings, $txt, $theme;
 
 	$is_edit = !$is_add;
 
@@ -882,15 +882,15 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		else
 		{
 			// Get our album tree
-			$quicklist = aeva_getQuickAlbums('a.album_of = ' . $user_info['id'] . ' AND a.master = a.id_album');
+			$quicklist = aeva_getQuickAlbums('a.album_of = ' . we::$id . ' AND a.master = a.id_album');
 			// Add all albums in our tree
-			aeva_getAlbums('a.album_of = ' . $user_info['id'] . (empty($quicklist) ? '' : ' OR a.master IN (' . implode(',', $quicklist) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
+			aeva_getAlbums('a.album_of = ' . we::$id . (empty($quicklist) ? '' : ' OR a.master IN (' . implode(',', $quicklist) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
 		}
 
 		$_albums = array();
 		foreach ($context['aeva_album_list'] as $list)
 		{
-			$albums[$list] = str_repeat('-', $context['aeva_albums'][$list]['child_level']) . ($context['aeva_albums'][$list]['owner']['id'] == $user_info['id'] && !$is_admin ? ' '
+			$albums[$list] = str_repeat('-', $context['aeva_albums'][$list]['child_level']) . ($context['aeva_albums'][$list]['owner']['id'] == we::$id && !$is_admin ? ' '
 								: ' [' . $context['aeva_albums'][$list]['owner']['name'] . '] ') . $context['aeva_albums'][$list]['name'] . '&nbsp;';
 			$_albums[$list] = $context['aeva_albums'][$list];
 		}
@@ -907,8 +907,8 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		$allowed_write = '';
 		$denied_members = '';
 		$denied_write = '';
-		$owner = $user_info['id'];
-		$owner_display_name = $user_info['name'];
+		$owner = we::$id;
+		$owner_display_name = we::$user['name'];
 		$id_topic = 0;
 		$id_album = 0;
 		$big_icon = 0;
@@ -1000,7 +1000,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			FROM {db_prefix}membergroups AS g
 			WHERE (g.id_group > 3 OR g.id_group = 2)
 			ORDER BY g.min_posts, g.id_group ASC',
-			array('user_id' => $user_info['id'])
+			array('user_id' => we::$id)
 		);
 		$separated = false;
 		while ($row = wesql::fetch_assoc($request))
@@ -1079,7 +1079,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		);
 	wesql::free_result($request);
 
-	list ($ex_board, $ex_locked) = aeva_foxy_latest_topic($user_info['id'], $id_album);
+	list ($ex_board, $ex_locked) = aeva_foxy_latest_topic(we::$id, $id_album);
 	$topic_boards = aeva_foxy_get_board_list($ex_board);
 
 	// Build the form
@@ -1157,13 +1157,13 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		'owner_name' => array(
 			'label' => $txt['media_owner'],
 			'type' => 'info',
-			'value' => $is_add ? $user_info['name'] : $owner_display_name,
+			'value' => $is_add ? we::$user['name'] : $owner_display_name,
 		),
 		'owner_change' => array(
 			'label' => $txt['media_owner'],
 			'type' => 'text',
 			'fieldname' => 'change_owner',
-			'value' => $is_add ? $user_info['username'] : $owner_name,
+			'value' => $is_add ? we::$user['username'] : $owner_name,
 			'custom' => 'maxlength="30" id="change_owner"',
 		),
 		'featured' => array(
@@ -1764,7 +1764,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 // Moves a album
 function aeva_moveAlbum()
 {
-	global $context, $user_info;
+	global $context;
 
 	// Load all the current albums
 	aeva_getAlbums('', 0, false);
@@ -1777,7 +1777,7 @@ function aeva_moveAlbum()
 	$pos = $_REQUEST['pos'];
 	$src = $context['aeva_albums'][$_REQUEST['src']];
 
-	if ($src['owner']['id'] != $user_info['id'] && !aeva_allowedTo('moderate'))
+	if ($src['owner']['id'] != we::$id && !aeva_allowedTo('moderate'))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 	// Get their new order, child level and parent
@@ -1822,7 +1822,7 @@ function aeva_moveAlbum()
 // Deletes an album and the items/comments in it
 function aeva_deleteAlbum($id = 0, $from_approval = false)
 {
-	global $context, $amSettings, $user_info, $scripturl;
+	global $context, $amSettings, $scripturl;
 
 	$id = empty($id) ? (int) $_GET['in'] : $id;
 
@@ -1840,7 +1840,7 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 	list ($id_album, $dir, $icon, $big_icon, $owner, $file, $big_file, $big_dir, $approved, $name, $parent, $master) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if (($owner != $user_info['id'] || !aeva_allowedTo('moderate_own_albums')) && !aeva_allowedTo('moderate'))
+	if (($owner != we::$id || !aeva_allowedTo('moderate_own_albums')) && !aeva_allowedTo('moderate'))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 	// Are we messed up with the directories?
@@ -1967,8 +1967,8 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 				'id' => $id_album,
 			),
 			'action_by' => array(
-				'id' => $user_info['id'],
-				'name' => $user_info['name'],
+				'id' => we::$id,
+				'name' => we::$user['name'],
 			),
 		);
 		aeva_logModAction($opts);
@@ -1978,7 +1978,7 @@ function aeva_deleteAlbum($id = 0, $from_approval = false)
 // Handles the Mass Upload page
 function aeva_massUpload()
 {
-	global $amSettings, $txt, $context, $user_info, $theme, $galurl, $settings, $cookiename;
+	global $amSettings, $txt, $context, $theme, $galurl, $settings, $cookiename;
 
 	// Modifying item's title?
 	if (isset($_POST['submit_title_update']))
@@ -2159,8 +2159,8 @@ function aeva_massUpload()
 			'id_preview' => $id_preview,
 			'time' => $time,
 			'album' => (int) $_REQUEST['album'],
-			'id_member' => $user_info['id'],
-			'mem_name' => $user_info['name'],
+			'id_member' => we::$id,
+			'mem_name' => we::$user['name'],
 			'approved' => aeva_allowedTo('auto_approve_item') || aeva_allowedTo('moderate') ? 1 : 0,
 		);
 
@@ -2185,7 +2185,7 @@ function aeva_massUpload()
 // Modifying item's title?
 function aeva_massUploadFinish()
 {
-	global $context, $amSettings, $user_info, $galurl, $sourcedir;
+	global $context, $amSettings, $galurl, $sourcedir;
 
 	// Unset it
 	unset($_POST['submit_title_update']);
@@ -2222,7 +2222,7 @@ function aeva_massUploadFinish()
 	while ($row = wesql::fetch_assoc($request))
 	{
 		$album = $row['album_id'];
-		if ($row['id_member'] == $user_info['id'] || aeva_allowedTo('moderate'))
+		if ($row['id_member'] == we::$id || aeva_allowedTo('moderate'))
 			$act_items[] = $row['id_media'];
 	}
 	wesql::free_result($request);
@@ -2521,7 +2521,7 @@ function aeva_whoRatedWhat()
 // Multi download
 function aeva_massDownload()
 {
-	global $txt, $context, $amSettings, $scripturl, $user_info, $galurl;
+	global $txt, $context, $amSettings, $scripturl, $galurl;
 
 	// This function is for taking the user's input on what to download
 
@@ -2583,7 +2583,7 @@ function aeva_massDownload()
 // Creating an archive..the bad guy
 function aeva_massDownloadCreate()
 {
-	global $context, $scripturl, $txt, $user_info, $galurl, $amSettings, $time_start;
+	global $context, $scripturl, $txt, $galurl, $amSettings, $time_start;
 
 	if (empty($context['aeva_album']))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
@@ -2651,12 +2651,12 @@ function aeva_massDownloadCreate()
 	@ini_set('memory_limit', '128M');
 
 	// Let's see if we're starting afresh
-	if (!empty($_SESSION['aeva_mdl']['num_done']) && !file_exists($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
+	if (!empty($_SESSION['aeva_mdl']['num_done']) && !file_exists($amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
 		$_SESSION['aeva_mdl']['num_done'] = 0;
-	elseif (empty($_SESSION['aeva_mdl']['num_done']) && file_exists($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
+	elseif (empty($_SESSION['aeva_mdl']['num_done']) && file_exists($amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
 	{
-		@unlink($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album'] . '_data');
-		@unlink($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album'] . '_other');
+		@unlink($amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album'] . '_data');
+		@unlink($amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album'] . '_other');
 	}
 
 	// Setup the zip handler
@@ -2674,7 +2674,7 @@ function aeva_massDownloadCreate()
 		$item = $album_items[$_SESSION['aeva_mdl']['items'][$i]];
 
 		// Add this to the archive.
-		$zip->addFileDataToCache(file_get_contents($amSettings['data_dir_path'] . '/' . $item['directory'] . '/' . aeva_getEncryptedFilename($item['filename'], $item['id_file'])), $item['filename'], $amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album']);
+		$zip->addFileDataToCache(file_get_contents($amSettings['data_dir_path'] . '/' . $item['directory'] . '/' . aeva_getEncryptedFilename($item['filename'], $item['id_file'])), $item['filename'], $amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album']);
 
 		$_SESSION['aeva_mdl']['num_done']++;
 	}
@@ -2683,7 +2683,7 @@ function aeva_massDownloadCreate()
 	if ($_SESSION['aeva_mdl']['num_done'] < $compte)
 	{
 		// Save it...
-		$zip->saveFile($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album']);
+		$zip->saveFile($amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album']);
 
 		wetem::load('aeva_done');
 		$context['aeva_done_txt'] = sprintf($txt['media_multi_dl_wait'], $_SESSION['aeva_mdl']['num_done'], $compte);
@@ -2693,7 +2693,7 @@ function aeva_massDownloadCreate()
 	else
 	{
 		// Archive it properly...
-		$zip->saveAsZip($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album']);
+		$zip->saveAsZip($amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album']);
 
 		aeva_massDownloadSend();
 	}
@@ -2702,12 +2702,12 @@ function aeva_massDownloadCreate()
 // Downloading the archive...
 function aeva_massDownloadSend()
 {
-	global $context, $amSettings, $user_info;
+	global $context, $amSettings;
 
-	if (!file_exists($amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
+	if (!file_exists($amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album'] . '_data'))
 		die('Hacking attempt...');
 
-	$path = $amSettings['data_dir_path'] . '/tmp/' . $user_info['id'] . '_' . $_SESSION['aeva_mdl']['album'] . '_data';
+	$path = $amSettings['data_dir_path'] . '/tmp/' . we::$id . '_' . $_SESSION['aeva_mdl']['album'] . '_data';
 	$filename = '[' . date('Y-m-d', $_SESSION['aeva_mdl']['time']) . '] ' . $_SESSION['aeva_mdl']['album_name'] . '.zip';
 
 	if (ini_get('zlib.output_compression'))

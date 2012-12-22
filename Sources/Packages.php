@@ -1003,7 +1003,7 @@ function PackageInstall()
 						time_removed = {int:current_time}
 					WHERE package_id = {string:package_id}',
 					array(
-						'current_member' => $user_info['id'],
+						'current_member' => we::$id,
 						'not_installed' => 0,
 						'current_time' => time(),
 						'package_id' => $row['package_id'],
@@ -1067,7 +1067,7 @@ function PackageInstall()
 				),
 				array(
 					$packageInfo['filename'], $packageInfo['name'], $packageInfo['id'], $packageInfo['version'],
-					$user_info['id'], $user_info['name'], time(),
+					we::$id, $user_info['name'], time(),
 					$is_upgrade ? 2 : 1, $failed_step_insert, $themes_installed,
 					0, $db_changes,
 				),

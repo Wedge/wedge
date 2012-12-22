@@ -44,7 +44,7 @@ function ModifyProfile($post_errors = array())
 		wetem::load('showPosts');
 
 		$context['profile_menu_name'] = 'dummy_menu';
-		$context['user']['is_owner'] = allowedTo('moderate_forum'); // !! or $user_info['is_admin']..?
+		$context['user']['is_owner'] = allowedTo('moderate_forum'); // !! or we::$is_admin..?
 		showPosts(0);
 		return;
 	}
@@ -59,7 +59,7 @@ function ModifyProfile($post_errors = array())
 		$memberResult = loadMemberData((int) $_REQUEST['u'], false, 'profile');
 	// If it was just ?action=profile, edit your own profile.
 	else
-		$memberResult = loadMemberData($user_info['id'], false, 'profile');
+		$memberResult = loadMemberData(we::$id, false, 'profile');
 
 	// Check if loadMemberData() has returned a valid result.
 	if (!is_array($memberResult))
@@ -75,7 +75,7 @@ function ModifyProfile($post_errors = array())
 	$context['member'] = $memberContext[$memID];
 
 	// Is this the profile of the user himself or herself?
-	$context['user']['is_owner'] = $memID == $user_info['id'];
+	$context['user']['is_owner'] = $memID == we::$id;
 
 	/* Define all the sections within the profile area!
 		We start by defining the permission required - then Wedge takes this and turns it into the relevant context ;)
@@ -456,7 +456,7 @@ function ModifyProfile($post_errors = array())
 	$profile_include_data = createMenu($profile_areas, $menuOptions);
 
 	// No menu means no access.
-	if (!$profile_include_data && (!$user_info['is_guest'] || validateSession()))
+	if (!$profile_include_data && (!we::$is_guest || validateSession()))
 		fatal_lang_error('no_access', false);
 
 	// Make a note of the Unique ID for this menu.
@@ -537,19 +537,19 @@ function ModifyProfile($post_errors = array())
 
 	// Build the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=profile' . ($memID != $user_info['id'] ? ';u=' . $memID : ''),
+		'url' => $scripturl . '?action=profile' . ($memID != we::$id ? ';u=' . $memID : ''),
 		'name' => sprintf($txt['profile_of_username'], $context['member']['name']),
 	);
 
 	if (!empty($profile_include_data['label']))
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=profile' . ($memID != $user_info['id'] ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'],
+			'url' => $scripturl . '?action=profile' . ($memID != we::$id ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'],
 			'name' => $profile_include_data['label'],
 		);
 
 	if (!empty($profile_include_data['current_subsection']) && $profile_include_data['subsections'][$profile_include_data['current_subsection']][0] != $profile_include_data['label'])
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=profile' . ($memID != $user_info['id'] ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'] . ';sa=' . $profile_include_data['current_subsection'],
+			'url' => $scripturl . '?action=profile' . ($memID != we::$id ? ';u=' . $memID : '') . ';area=' . $profile_include_data['current_area'] . ';sa=' . $profile_include_data['current_subsection'],
 			'name' => $profile_include_data['subsections'][$profile_include_data['current_subsection']][0],
 		);
 
@@ -664,7 +664,7 @@ function ModifyProfile($post_errors = array())
 						'log_time' => time(),
 						'id_member' => $memID,
 						'ip' => get_ip_identifier($user_info['ip']),
-						'extra' => serialize(array_merge($v, array('applicator' => $user_info['id']))),
+						'extra' => serialize(array_merge($v, array('applicator' => we::$id))),
 					);
 
 				wesql::insert('',
@@ -722,7 +722,7 @@ function loadCustomFields($memID, $area = 'summary')
 	if (!allowedTo('admin_forum') && $area != 'register')
 	{
 		// If it's the owner they can see two types of private fields, regardless.
-		if ($memID == $user_info['id'])
+		if ($memID == we::$id)
 			$where .= $area == 'summary' ? ' AND private < 3' : ' AND (private = 0 OR private = 2)';
 		else
 			$where .= $area == 'summary' ? ' AND private < 2' : ' AND private = 0';
@@ -733,7 +733,7 @@ function loadCustomFields($memID, $area = 'summary')
 	elseif ($area != 'summary')
 		$where .= ' AND show_profile = {string:area}';
 
-	if ($user_info['is_guest'] && $area != 'register')
+	if (we::$is_guest && $area != 'register')
 		$where .= ' AND guest_access = 1';
 
 	// Load all the relevant fields - and data.

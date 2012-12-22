@@ -20,7 +20,7 @@ function createMenu($menuData, $menuOptions = array())
 	global $context, $theme, $options, $txt, $settings, $scripturl, $user_info, $options;
 
 	// First are we toggling use of the side bar generally?
-	if (isset($_GET['togglebar']) && !$user_info['is_guest'])
+	if (isset($_GET['togglebar']) && !we::$is_guest)
 	{
 		// Save the new dropdown menu state.
 		wesql::insert('replace',
@@ -28,7 +28,7 @@ function createMenu($menuData, $menuOptions = array())
 			array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
 			array(
 				array(
-					$user_info['id'],
+					we::$id,
 					$theme['theme_id'],
 					'use_sidebar_menu',
 					empty($options['use_sidebar_menu']) ? '1' : '0',
@@ -40,7 +40,7 @@ function createMenu($menuData, $menuOptions = array())
 		// Clear the theme settings cache for this user.
 		$themes = explode(',', $settings['knownThemes']);
 		foreach ($themes as $th)
-			cache_put_data('theme_settings-' . $th . ':' . $user_info['id'], null, 60);
+			cache_put_data('theme_settings-' . $th . ':' . we::$id, null, 60);
 
 		// Redirect as this seems to work best.
 		redirectexit(
@@ -280,7 +280,7 @@ function createMenu($menuData, $menuOptions = array())
 	if (empty($menuOptions['menu_type']))
 	{
 		$menuOptions['menu_type'] = '_' . (empty($options['use_sidebar_menu']) ? 'dropdown' : 'sidebar');
-		$menu_context['can_toggle_drop_down'] = !$user_info['is_guest'];
+		$menu_context['can_toggle_drop_down'] = !we::$is_guest;
 	}
 	else
 		$menu_context['can_toggle_drop_down'] = !empty($menuOptions['can_toggle_drop_down']);

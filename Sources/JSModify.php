@@ -55,7 +55,7 @@ function JSModify()
 				AND (m.id_member != {int:guest_id} AND m.id_member = {int:current_member})' : '
 				AND (m.approved = {int:is_approved} OR (m.id_member != {int:guest_id} AND m.id_member = {int:current_member}))')),
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'current_topic' => $topic,
 				'id_msg' => empty($_REQUEST['msg']) ? 't.id_first_msg' : (int) $_REQUEST['msg'],
 				'is_approved' => 1,
@@ -73,23 +73,23 @@ function JSModify()
 		if (!empty($row['locked']))
 			isAllowedTo('moderate_board');
 
-		if ($row['id_member'] == $user_info['id'] && !allowedTo('modify_any'))
+		if ($row['id_member'] == we::$id && !allowedTo('modify_any'))
 		{
 			if ((!$settings['postmod_active'] || $row['approved']) && !empty($settings['edit_disable_time']) && $row['poster_time'] + ($settings['edit_disable_time'] + 5) * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
-			elseif ($row['id_member_started'] == $user_info['id'] && !allowedTo('modify_own'))
+			elseif ($row['id_member_started'] == we::$id && !allowedTo('modify_own'))
 				isAllowedTo('modify_replies');
 			else
 				isAllowedTo('modify_own');
 		}
 		// Otherwise, they're locked out; someone who can modify the replies is needed.
-		elseif ($row['id_member_started'] == $user_info['id'] && !allowedTo('modify_any'))
+		elseif ($row['id_member_started'] == we::$id && !allowedTo('modify_any'))
 			isAllowedTo('modify_replies');
 		else
 			isAllowedTo('modify_any');
 
 		// Only log this action if it wasn't your message.
-		$moderationAction = $row['id_member'] != $user_info['id'];
+		$moderationAction = $row['id_member'] != we::$id;
 	}
 
 	$post_errors = array();
@@ -136,7 +136,7 @@ function JSModify()
 
 	if (isset($_POST['lock']))
 	{
-		if (!allowedTo(array('lock_any', 'lock_own')) || (!allowedTo('lock_any') && $user_info['id'] != $row['id_member']))
+		if (!allowedTo(array('lock_any', 'lock_own')) || (!allowedTo('lock_any') && we::$id != $row['id_member']))
 			unset($_POST['lock']);
 		elseif (!allowedTo('lock_any'))
 		{
@@ -175,11 +175,11 @@ function JSModify()
 		if ((isset($_POST['subject']) && $_POST['subject'] != $row['subject']) || (isset($_POST['message']) && $_POST['message'] != $row['body']))
 		{
 			// And even then only if the time has passed...
-			if (time() - $row['poster_time'] > $settings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
+			if (time() - $row['poster_time'] > $settings['edit_wait_time'] || we::$id != $row['id_member'])
 			{
 				$msgOptions['modify_time'] = time();
 				$msgOptions['modify_name'] = $user_info['name'];
-				$msgOptions['modify_member'] = $user_info['id'];
+				$msgOptions['modify_member'] = we::$id;
 			}
 		}
 		// If nothing was changed there's no need to add an entry to the moderation log.
@@ -197,7 +197,7 @@ function JSModify()
 		}
 
 		// Changing the first subject updates other subjects to 'Re: new_subject'.
-		if (isset($_POST['subject'], $_REQUEST['change_all_subjects']) && $row['id_first_msg'] == $row['id_msg'] && !empty($row['num_replies']) && (allowedTo('modify_any') || ($row['id_member_started'] == $user_info['id'] && allowedTo('modify_replies'))))
+		if (isset($_POST['subject'], $_REQUEST['change_all_subjects']) && $row['id_first_msg'] == $row['id_msg'] && !empty($row['num_replies']) && (allowedTo('modify_any') || ($row['id_member_started'] == we::$id && allowedTo('modify_replies'))))
 		{
 			// Get the proper (default language) response prefix first.
 			if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))

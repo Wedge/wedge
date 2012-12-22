@@ -139,7 +139,7 @@ function obExit($start = null, $do_finish = null, $from_index = false, $from_fat
  */
 function ob_sessrewrite($buffer)
 {
-	global $scripturl, $settings, $user_info, $context, $db_prefix, $session_var;
+	global $scripturl, $settings, $context, $db_prefix, $session_var;
 	global $txt, $time_start, $db_count, $db_show_debug, $cached_urls, $use_cache, $member_colors;
 
 	// Just quit if $scripturl is set to nothing, or the SID is not defined. (SSI?)
@@ -374,7 +374,7 @@ function ob_sessrewrite($buffer)
 	// If guests/users can't view user profiles, we might as well unlink them!
 	if (!allowedTo('profile_view_any'))
 		$buffer = preg_replace(
-			'~<a\b[^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile' . (!$user_info['is_guest'] && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . $user_info['id'] . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
+			'~<a\b[^>]+href="' . $preg_scripturl . '\?(?:[^"]+)?\baction=profile' . (!we::$is_guest && allowedTo('profile_view_own') ? ';(?:[^"]+;)?u=(?!' . we::$id . ')' : '') . '[^"]*"[^>]*>(.*?)</a>~',
 			'$1', $buffer
 		);
 	// Now we'll color profile links based on membergroup.
@@ -514,7 +514,7 @@ function ob_sessrewrite($buffer)
 		$new_load_time = microtime(true);
 		$loadTime = $txt['page_created'] . sprintf($txt['seconds_with_' . ($db_count > 1 ? 'queries' : 'query')], $new_load_time - $time_start, $db_count);
 		$queriesDiff = $db_count - $old_db_count;
-		if ($user_info['is_admin'])
+		if (we::$is_admin)
 			$loadTime .= '</li>
 			<li class="rd">(' . $txt['dynamic_replacements'] . ': ' . sprintf($txt['seconds_with_' . ($queriesDiff > 1 ? 'queries' : 'query')], $new_load_time - $old_load_time, $queriesDiff) . ')';
 		$buffer = str_replace('<!-- insert stats here -->', $loadTime, $buffer);
@@ -579,7 +579,7 @@ function wedge_indenazi($match)
 // A callback function to replace the buffer's URLs with their cached URLs
 function pretty_buffer_callback($matches)
 {
-	global $cached_urls, $scripturl, $use_cache, $session_var, $user_info;
+	global $cached_urls, $scripturl, $use_cache, $session_var;
 	static $immediate_cache = array();
 
 	if (isset($immediate_cache[$matches[0]]))
@@ -698,7 +698,7 @@ function start_output()
  */
 function while_we_re_here()
 {
-	global $txt, $settings, $context, $user_info, $boarddir, $cachedir;
+	global $txt, $settings, $context, $boarddir, $cachedir;
 	static $checked_security_files = false, $showed_banned = false, $showed_behav_error = false;
 
 	// If this page was loaded through jQuery, it's likely we've already had the warning shown in its container...
@@ -719,7 +719,7 @@ function while_we_re_here()
 				<p>', $txt[$context['behavior_error'] . '_log'], '</p>
 			</div>';
 	}
-	elseif (!$checked_security_files && !$user_info['is_guest'] && allowedTo('admin_forum'))
+	elseif (!$checked_security_files && !we::$is_guest && allowedTo('admin_forum'))
 	{
 		$checked_security_files = true;
 		$security_files = array('import.php', 'install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
@@ -763,7 +763,7 @@ function while_we_re_here()
 		$showed_banned = true;
 		echo '
 			<div class="windowbg wrc alert" style="margin: 2ex; padding: 2ex; border: 2px dashed red">
-				', sprintf($txt['you_are_post_banned'], $user_info['is_guest'] ? $txt['guest_title'] : $user_info['name']);
+				', sprintf($txt['you_are_post_banned'], we::$is_guest ? $txt['guest_title'] : we::$user['name']);
 
 		if (!empty($_SESSION['ban']['cannot_post']['reason']))
 			echo '
@@ -942,7 +942,7 @@ function db_debug_junk()
 function template_include($filename, $once = false)
 {
 	global $context, $theme, $txt, $helptxt, $scripturl, $settings;
-	global $user_info, $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
+	global $boardurl, $boarddir, $maintenance, $mtitle, $mmessage;
 	static $templates = array();
 
 	// We want to be able to figure out any errors...

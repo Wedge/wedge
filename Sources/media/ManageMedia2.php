@@ -707,7 +707,7 @@ function aeva_admin_maintenance_finderrors()
 // Handles the pruning page
 function aeva_admin_maintenance_prune()
 {
-	global $context, $txt, $scripturl, $user_info;
+	global $context, $txt, $scripturl;
 
 	// Load the albums
 	if (empty($context['aeva_maintain_album']))
@@ -782,8 +782,8 @@ function aeva_admin_maintenance_prune()
 			'type' => 'prune',
 			'subtype' => 'item',
 			'action_by' => array(
-				'id' => $user_info['id'],
-				'name' => $user_info['name'],
+				'id' => we::$id,
+				'name' => we::$user['name'],
 			),
 			'extra_info' => array(
 				'val8' => $deleted['items'],
@@ -838,8 +838,8 @@ function aeva_admin_maintenance_prune()
 			'type' => 'prune',
 			'subtype' => 'comment',
 			'action_by' => array(
-				'id' => $user_info['id'],
-				'name' => $user_info['name'],
+				'id' => we::$id,
+				'name' => we::$user['name'],
 			),
 			'extra' => array(
 				'val8' => $deleted['items'],
@@ -1398,8 +1398,6 @@ function aeva_admin_bans_add()
 // Deletes a ban entry
 function aeva_admin_bans_delete()
 {
-	global $user_info;
-
 	// Let's get some important data
 	$request = wesql::query('
 		SELECT v.val1, v.val2, mem.real_name
@@ -1437,8 +1435,8 @@ function aeva_admin_bans_delete()
 			'name' => $mem_name,
 		),
 		'action_by' => array(
-			'id' => $user_info['id'],
-			'name' => $user_info['name'],
+			'id' => we::$id,
+			'name' => we::$user['name'],
 		),
 		'extra_info' => array(
 			'val8' => $type,

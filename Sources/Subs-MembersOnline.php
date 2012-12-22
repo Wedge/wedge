@@ -266,7 +266,7 @@ function getMembersOnlineDetails($type = 'board')
 		array(
 			'reg_member_group' => 0,
 			'in_url_string' => $type === 'board' ? ('s:5:"board";i:' . $board . ';') : ('s:5:"topic";i:' . $topic . ';'),
-			'session' => $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id(),
+			'session' => we::$is_guest ? 'ip' . $user_info['ip'] : session_id(),
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))

@@ -246,8 +246,8 @@ function Feed()
 	$cache_t = microtime(true);
 
 	// Get the associative array representing the xml.
-	if (!empty($settings['cache_enable']) && (!$user_info['is_guest'] || $settings['cache_enable'] >= 3))
-		$xml = cache_get_data('xmlfeed-' . $xml_format . ':' . ($user_info['is_guest'] ? '' : $user_info['id'] . '-') . $cachekey, 240);
+	if (!empty($settings['cache_enable']) && (!we::$is_guest || $settings['cache_enable'] >= 3))
+		$xml = cache_get_data('xmlfeed-' . $xml_format . ':' . (we::$is_guest ? '' : we::$id . '-') . $cachekey, 240);
 	if (empty($xml))
 	{
 		if ($xml_format == 'atom')
@@ -261,9 +261,9 @@ function Feed()
 		}
 		$xml = $subActions[$_GET['sa']][0]($xml_format);
 
-		if (!empty($settings['cache_enable']) && (($user_info['is_guest'] && $settings['cache_enable'] >= 3)
-		|| (!$user_info['is_guest'] && microtime(true) - $cache_t > 0.2)))
-			cache_put_data('xmlfeed-' . $xml_format . ':' . ($user_info['is_guest'] ? '' : $user_info['id'] . '-') . $cachekey, $xml, 240);
+		if (!empty($settings['cache_enable']) && ((we::$is_guest && $settings['cache_enable'] >= 3)
+		|| (!we::$is_guest && microtime(true) - $cache_t > 0.2)))
+			cache_put_data('xmlfeed-' . $xml_format . ':' . (we::$is_guest ? '' : we::$id . '-') . $cachekey, $xml, 240);
 	}
 
 	$feed_title = htmlspecialchars(strip_tags($context['forum_name'])) . (isset($feed_title) ? $feed_title : '');

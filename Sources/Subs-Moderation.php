@@ -49,7 +49,7 @@ function getBaseRuleVars($admin = false)
 		),
 		'userid' => array(
 			'type' => 'id',
-			'current' => (string) $user_info['id'],
+			'current' => (string) we::$id,
 		),
 		'postcount' => array(
 			'type' => 'range',
@@ -73,7 +73,7 @@ function getBaseRuleVars($admin = false)
 		'permission' => array(
 			'type' => 'multi-id',
 			'current' => $user_info['permissions'],
-			'admin_override' => $user_info['is_admin'],
+			'admin_override' => we::$is_admin,
 		),
 		'links' => array(
 			'type' => 'range',

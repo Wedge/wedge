@@ -44,7 +44,7 @@ function Buddy()
 		$buddy_action = 'remove';
 	}
 	// ...or add if it's not and if it's not you.
-	elseif ($user_info['id'] != $_REQUEST['u'])
+	elseif (we::$id != $_REQUEST['u'])
 	{
 		$user_info['buddies'][] = (int) $_REQUEST['u'];
 		$buddy_action = 'add';
@@ -53,7 +53,7 @@ function Buddy()
 	if (isset($buddy_action))
 	{
 		// Update the settings.
-		updateMemberData($user_info['id'], array('buddy_list' => implode(',', $user_info['buddies'])));
+		updateMemberData(we::$id, array('buddy_list' => implode(',', $user_info['buddies'])));
 
 		// Call a hook, just in case we want to do something with this. Let's pass both the user we're adding/removing, and what we did with them.
 		call_hook('buddy', array((int) $_REQUEST['u'], $buddy_action));

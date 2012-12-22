@@ -34,7 +34,7 @@ function Login2()
 	// Load cookie authentication stuff and subsidiary login stuff.
 	loadSource(array('Subs-Auth', 'Subs-Login'));
 
-	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && !$user_info['is_guest'])
+	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && !we::$is_guest)
 	{
 		if (isset($_COOKIE[$cookiename]) && preg_match('~^a:[34]:\{i:0;(i:\d{1,6}|s:[1-8]:"\d{1,8}");i:1;s:(0|40):"([a-fA-F0-9]{40})?";i:2;[id]:\d{1,14};(i:3;i:\d;)?\}$~', $_COOKIE[$cookiename]) === 1)
 			list (,, $timeout) = @unserialize($_COOKIE[$cookiename]);
@@ -44,17 +44,17 @@ function Login2()
 			trigger_error('Login2(): Cannot be logged in without a session or cookie', E_USER_ERROR);
 
 		$user_settings['password_salt'] = substr(md5(mt_rand()), 0, 4);
-		updateMemberData($user_info['id'], array('password_salt' => $user_settings['password_salt']));
+		updateMemberData(we::$id, array('password_salt' => $user_settings['password_salt']));
 
-		setLoginCookie($timeout - time(), $user_info['id'], sha1($user_settings['passwd'] . $user_settings['password_salt']));
+		setLoginCookie($timeout - time(), we::$id, sha1($user_settings['passwd'] . $user_settings['password_salt']));
 
-		redirectexit('action=login2;sa=check;member=' . $user_info['id'], $context['server']['needs_login_fix']);
+		redirectexit('action=login2;sa=check;member=' . we::$id, $context['server']['needs_login_fix']);
 	}
 	// Double check the cookie...
 	elseif (isset($_GET['sa']) && $_GET['sa'] == 'check')
 	{
 		// Strike!  You're outta there!
-		if ($_GET['member'] != $user_info['id'])
+		if ($_GET['member'] != we::$id)
 			fatal_lang_error('login_cookie_error', false);
 
 		// Some whitelisting for login_url...
@@ -71,7 +71,7 @@ function Login2()
 	}
 
 	// Beyond this point you are assumed to be a guest trying to login.
-	if (!$user_info['is_guest'])
+	if (!we::$is_guest)
 		redirectexit();
 
 	// Are you guessing with a script that doesn't keep the session id?

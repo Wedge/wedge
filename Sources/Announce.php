@@ -201,7 +201,7 @@ function AnnouncementSend()
 		ORDER BY mem.id_member
 		LIMIT ' . $chunkSize,
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'group_list' => $_POST['who'],
 			'notify_announcements' => 1,
 			'is_activated' => 1,

@@ -21,11 +21,10 @@ function pretty_generate_url($text, $is_board = false, $slash = false)
 
 	if (strpos(strtolower($text), '[en]') !== false)
 	{
-		global $user_info;
-		$lang = $user_info['language'];
-		$user_info['language'] = 'english';
+		$lang = we::$user['language'];
+		we::$user['language'] = 'english';
 		parse_lang($text);
-		$user_info['language'] = $lang;
+		we::$user['language'] = $lang;
 	}
 
 	// Do you know your ABCs?
@@ -146,7 +145,7 @@ function is_already_taken($url, $id, $id_owner)
 	$query = wesql::query('
 		SELECT id_board, url, id_owner
 		FROM {db_prefix}boards AS b
-		WHERE (b.url = {string:url} AND b.id_board != {int:id})' . ($user_info['is_admin'] ? '' : '
+		WHERE (b.url = {string:url} AND b.id_board != {int:id})' . (we::$is_admin ? '' : '
 			OR (SUBSTRING(b.url, 1, {int:slashlen}) = {string:slash} AND b.id_owner != {int:owner})
 			OR (b.url = SUBSTRING({string:url}, 1, urllen) AND b.id_owner != {int:owner})') . '
 		LIMIT 1',

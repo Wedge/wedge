@@ -108,7 +108,7 @@ function MessageIndex()
 	}
 
 	// Mark current and parent boards as seen.
-	if (!$user_info['is_guest'])
+	if (!we::$is_guest)
 	{
 		// We can't know they read it if we allow prefetches.
 		if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
@@ -121,7 +121,7 @@ function MessageIndex()
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-			array($settings['maxMsgID'], $user_info['id'], $board),
+			array($settings['maxMsgID'], we::$id, $board),
 			array('id_member', 'id_board')
 		);
 
@@ -133,7 +133,7 @@ function MessageIndex()
 				WHERE id_member = {int:current_member}
 					AND id_board IN ({array_int:board_list})',
 				array(
-					'current_member' => $user_info['id'],
+					'current_member' => we::$id,
 					'board_list' => array_keys($board_info['parent_boards']),
 					'id_msg' => $settings['maxMsgID'],
 				)
@@ -156,7 +156,7 @@ function MessageIndex()
 			LIMIT 1',
 			array(
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		$context['is_marked_notify'] = wesql::num_rows($request) != 0;
@@ -172,7 +172,7 @@ function MessageIndex()
 						AND id_member = {int:current_member}',
 					array(
 						'current_board' => $board,
-						'current_member' => $user_info['id'],
+						'current_member' => we::$id,
 						'is_sent' => 0,
 					)
 				);
@@ -187,7 +187,7 @@ function MessageIndex()
 	$context['page_title'] = strip_tags($board_info['name']);
 
 	// Set the variables up for the template.
-	$context['can_mark_notify'] = allowedTo('mark_notify') && !$user_info['is_guest'];
+	$context['can_mark_notify'] = allowedTo('mark_notify') && !we::$is_guest;
 	$context['can_post_new'] = allowedTo('post_new') || ($settings['postmod_active'] && allowedTo('post_unapproved_topics'));
 	$context['can_post_poll'] = allowedTo('poll_post') && $context['can_post_new'];
 	$context['can_moderate_forum'] = allowedTo('moderate_forum');
@@ -288,7 +288,7 @@ function MessageIndex()
 			LIMIT {int:start}, {int:maxindex}',
 			array(
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'id_member_guest' => 0,
 				'start' => $start,
 				'maxindex' => $maxindex,
@@ -312,7 +312,7 @@ function MessageIndex()
 		$result = wesql::query('
 			SELECT
 				t.id_topic, t.num_replies, t.locked, t.num_views, t.is_pinned, t.id_poll, t.id_previous_board,
-				' . ($user_info['is_guest'] ? '0' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from,
+				' . (we::$is_guest ? '0' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from,
 				t.id_last_msg, t.approved, t.unapproved_posts, ml.poster_time AS last_poster_time,
 				ml.id_msg_modified, ml.subject AS last_subject, ml.icon AS last_icon,
 				ml.poster_name AS last_member_name, ml.id_member AS last_id_member,
@@ -325,7 +325,7 @@ function MessageIndex()
 				INNER JOIN {db_prefix}messages AS ml ON (ml.id_msg = t.id_last_msg)
 				INNER JOIN {db_prefix}messages AS mf ON (mf.id_msg = t.id_first_msg)
 				LEFT JOIN {db_prefix}members AS meml ON (meml.id_member = ml.id_member)
-				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)' . ($user_info['is_guest'] ? '' : '
+				LEFT JOIN {db_prefix}members AS memf ON (memf.id_member = mf.id_member)' . (we::$is_guest ? '' : '
 				LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = t.id_topic AND lt.id_member = {int:current_member})
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})'). '
 			WHERE ' . ($pre_query ? 't.id_topic IN ({array_int:topic_list})' : 't.id_board = {int:current_board}') . '
@@ -335,7 +335,7 @@ function MessageIndex()
 			array(
 				'first_body' => $board_info['type'] == 'blog' ? 'mf.body AS first_body' : 'SUBSTRING(mf.body, 1, 385) AS first_body',
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'topic_list' => $topic_ids,
 				'find_set_topics' => implode(',', $topic_ids),
 				'start' => $start,
@@ -492,8 +492,8 @@ function MessageIndex()
 					'preview' => $row['last_body'],
 					'icon' => $row['last_icon'],
 					'icon_url' => $theme[$context['icon_sources'][$row['last_icon']]] . '/post/' . $row['last_icon'] . '.gif',
-					'href' => $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
-					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . ($user_info['is_guest'] ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
+					'href' => $scripturl . '?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')),
+					'link' => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . (we::$is_guest ? ('.' . (!empty($options['view_newest_first']) ? 0 : ((int) (($row['num_replies']) / $context['pageindex_multiplier'])) * $context['pageindex_multiplier']) . '#msg' . $row['id_last_msg']) : (($row['num_replies'] == 0 ? '.0' : '.msg' . $row['id_last_msg']) . '#new')) . '" ' . ($row['num_replies'] == 0 ? '' : 'rel="nofollow"') . '>' . $row['last_subject'] . '</a>'
 				),
 				'is_pinned' => !empty($row['is_pinned']),
 				'is_locked' => !empty($row['locked']),
@@ -512,7 +512,7 @@ function MessageIndex()
 				'views' => $row['num_views'],
 				'approved' => $row['approved'],
 				'unapproved_posts' => $row['unapproved_posts'],
-				'can_reply' => !empty($row['locked']) ? $can_moderate : $can_reply_any || ($can_reply_own && $row['first_id_member'] == $user_info['id']),
+				'can_reply' => !empty($row['locked']) ? $can_moderate : $can_reply_any || ($can_reply_own && $row['first_id_member'] == we::$id),
 				'style' => $color_class,
 			);
 		}
@@ -522,7 +522,7 @@ function MessageIndex()
 		if ($fake_ascending)
 			$context['topics'] = array_reverse($context['topics'], true);
 
-		if (!empty($settings['enableParticipation']) && !$user_info['is_guest'] && !empty($topic_ids))
+		if (!empty($settings['enableParticipation']) && !we::$is_guest && !empty($topic_ids))
 		{
 			$result = wesql::query('
 				SELECT id_topic
@@ -532,7 +532,7 @@ function MessageIndex()
 				GROUP BY id_topic
 				LIMIT ' . count($topic_ids),
 				array(
-					'current_member' => $user_info['id'],
+					'current_member' => we::$id,
 					'topic_list' => $topic_ids,
 				)
 			);
@@ -560,7 +560,7 @@ function MessageIndex()
 		// Set permissions for all the topics.
 		foreach ($context['topics'] as $t => $topic)
 		{
-			$started = $topic['first_post']['member']['id'] == $user_info['id'];
+			$started = $topic['first_post']['member']['id'] == we::$id;
 			$context['topics'][$t]['quick_mod'] = array(
 				'lock' => allowedTo('lock_any') || ($started && allowedTo('lock_own')),
 				'pin' => allowedTo('pin_topic'),

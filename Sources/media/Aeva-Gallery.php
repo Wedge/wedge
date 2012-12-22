@@ -74,7 +74,7 @@ if (!defined('WEDGE'))
 
 function aeva_initGallery($gal_url = null)
 {
-	global $amSettings, $settings, $user_info, $galurl, $scripturl, $galurl2, $txt, $context, $theme;
+	global $amSettings, $settings, $galurl, $scripturl, $galurl2, $txt, $context, $theme;
 
 	// Call the all-important file
 	loadSource('media/Subs-Media');
@@ -132,7 +132,7 @@ function aeva_initGallery($gal_url = null)
 		'album' => array('function' => 'aeva_viewAlbum'),
 		'item' => array('function' => 'aeva_viewItem'),
 		'post' => array(
-			'enabled' => !$user_info['is_guest'],
+			'enabled' => !we::$is_guest,
 			'function' => 'aeva_mgPost',
 		),
 		'comment' => array(
@@ -283,7 +283,7 @@ function aeva_initGallery($gal_url = null)
 					'icon' => 'album.png',
 				),
 				'unseen' => array(
-					'label' => $txt['media_unseen'] . (empty($user_info['media_unseen']) || $user_info['media_unseen'] == -1 ? '' : ' [<b>' . $user_info['media_unseen'] . '</b>]'),
+					'label' => $txt['media_unseen'] . (empty(we::$user['media_unseen']) || we::$user['media_unseen'] == -1 ? '' : ' [<b>' . we::$user['media_unseen'] . '</b>]'),
 					'icon' => 'eye.png',
 					'enabled' => aeva_allowedTo('access_unseen'),
 				),
@@ -315,7 +315,7 @@ function aeva_initGallery($gal_url = null)
 					'icon' => 'images.png',
 				),
 				'post' => array(
-					'enabled' => !$user_info['is_guest'],
+					'enabled' => !we::$is_guest,
 					'label' => $txt['media_add_item'],
 					'href' => $galurl . 'sa=post',
 					'icon' => 'camera_add.png',
@@ -496,14 +496,14 @@ function aeva_initGallery($gal_url = null)
 function aeva_home()
 {
 	// This function loads up Aeva Media's home page
-	global $txt, $context, $amSettings, $user_info, $galurl;
+	global $txt, $context, $amSettings, $galurl;
 
 	// Templates
 	wetem::load('aeva_home');
 
 	$context['aeva_welcome'] = parse_bbc(!empty($amSettings['welcome']) ? $amSettings['welcome'] : (isset($txt['media_welcome']) ? $txt['media_welcome'] : $txt['media_default_welcome']));
 
-	if ($user_info['is_admin'])
+	if (we::$is_admin)
 	{
 		$is_dir = aeva_foolProof();
 		if ($is_dir !== 1)
@@ -605,11 +605,11 @@ function aeva_sortBox($current_album, $count_items, $start, $per_page, $persort 
 function aeva_viewAlbum()
 {
 	// This function's job is to handle stuff when someone is viewing a album.
-	global $context, $txt, $amSettings, $user_info, $galurl, $scripturl;
+	global $context, $txt, $amSettings, $galurl, $scripturl;
 
 	$album = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
 	$current_album =& $context['aeva_album'];
-	$is_owner = !$user_info['is_guest'] && $user_info['id'] == $current_album['owner']['id'];
+	$is_owner = !we::$is_guest && we::$id == $current_album['owner']['id'];
 
 	if (empty($album) || empty($current_album))
 		fatal_lang_error('media_album_denied', !empty($amSettings['log_access_errors']));
@@ -632,14 +632,14 @@ function aeva_viewAlbum()
 			WHERE {query_see_album}
 			AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time
 			AND a.id_album = {int:album}' . (!aeva_allowedTo('moderate') ? '
-			AND m.approved = 1' : ''), array('album' => $album, 'user' => $user_info['id'])
+			AND m.approved = 1' : ''), array('album' => $album, 'user' => we::$id)
 		);
 		list ($total_items) = wesql::num_rows($request);
 		while ($row = wesql::fetch_row($request))
 			if ((int) $row[0] > 0)
 				media_markSeen((int) $row[0], 'force_insert');
 		wesql::free_result($request);
-		media_resetUnseen($user_info['id']);
+		media_resetUnseen(we::$id);
 	}
 	else
 	{
@@ -654,18 +654,18 @@ function aeva_viewAlbum()
 			AND IFNULL(lm.time, IFNULL(lm_all.time, 0)) < m.log_last_access_time
 			AND a.id_album = {int:album}' . (!aeva_allowedTo('moderate') ? '
 			AND m.approved = 1' : '') . '
-			LIMIT 1', array('album' => $album, 'user' => $user_info['id'])
+			LIMIT 1', array('album' => $album, 'user' => we::$id)
 		);
 		list ($total_items) = wesql::fetch_row($request);
 		wesql::free_result($request);
 	}
 
-	if (empty($total_items) && !$user_info['is_guest'])
+	if (empty($total_items) && !we::$is_guest)
 	{
 		// Quick test to see if we should optimize the log_media table...
 		$request = wesql::query('
 			SELECT id_media FROM {db_prefix}media_log_media WHERE id_media > 0 AND id_member = {int:user} LIMIT 1',
-			array('user' => $user_info['id'])
+			array('user' => we::$id)
 		);
 		list ($remaining) = wesql::fetch_row($request);
 		wesql::free_result($request);
@@ -736,7 +736,7 @@ function aeva_prevNextThumb($myurl, &$prev)
 function aeva_viewItem()
 {
 	// Comes into play when you're viewing a single item
-	global $scripturl, $galurl, $txt, $amSettings, $user_info, $context, $db_prefix, $memberContext, $theme, $boarddir;
+	global $scripturl, $galurl, $txt, $amSettings, $context, $db_prefix, $memberContext, $theme, $boarddir;
 
 	// Set the item ID
 	$item = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
@@ -747,7 +747,7 @@ function aeva_viewItem()
 	// Get the item info!
 	$item_data = aeva_getItemData($item);
 	$item_data['last_edited_by'] = !empty($item_data['last_edited_by']) && $item_data['last_edited_by'] != $item_data['id_member'] ? $item_data['last_edited_by'] : -2;
-	$is_owner = !$user_info['is_guest'] && $item_data['id_member'] == $user_info['id'];
+	$is_owner = !we::$is_guest && $item_data['id_member'] == we::$id;
 	$path = $amSettings['data_dir_path'] . '/' . $item_data['directory'] . '/' . aeva_getEncryptedFilename($item_data['filename'], $item_data['id_file']);
 	$cur_filesize = @filesize($path);
 	$context['aeva_size_mismatch'] = $item_data['filesize'] != $cur_filesize && !empty($item_data['filesize']) && $cur_filesize !== false;
@@ -763,7 +763,7 @@ function aeva_viewItem()
 
 	// If we got so far, the user can see this item, so mark it as seen if it's new!
 	if ($item_data['is_new'] && media_markSeen($item_data['id_media']))
-		media_resetUnseen($user_info['id']);
+		media_resetUnseen(we::$id);
 
 	if (isset($_REQUEST['noh']))
 	{
@@ -792,7 +792,7 @@ function aeva_viewItem()
 		FROM {db_prefix}media_log_ratings
 		WHERE id_member = {int:user_id}
 		AND id_media = {int:media_id}',
-		array('user_id' => $user_info['id'], 'media_id' => $item_data['id_media'])
+		array('user_id' => we::$id, 'media_id' => $item_data['id_media'])
 	);
 	// Allowed to re-rate? OK then re-rate the item!
 	$row = wesql::fetch_assoc($request);
@@ -845,7 +845,7 @@ function aeva_viewItem()
 				SET rating = {int:rating}
 				WHERE id_member = {int:member}
 					AND id_media = {int:media}',
-				array('rating' => $rating, 'member' => $user_info['id'], 'media' => $item_data['id_media'])
+				array('rating' => $rating, 'member' => we::$id, 'media' => $item_data['id_media'])
 			);
 		}
 		else
@@ -861,7 +861,7 @@ function aeva_viewItem()
 			wesql::insert('',
 				'{db_prefix}media_log_ratings',
 				array('id_media', 'id_member', 'rating', 'time'),
-				array($item_data['id_media'], $user_info['id'], $rating, time())
+				array($item_data['id_media'], we::$id, $rating, time())
 			);
 		}
 		aeva_updateWeighted();
@@ -874,7 +874,7 @@ function aeva_viewItem()
 			FROM {db_prefix}media_log_ratings
 			WHERE id_member = {int:user_id}
 			AND id_media = {int:media_id}',
-			array('user_id' => $user_info['id'], 'media_id' => $item_data['id_media'])
+			array('user_id' => we::$id, 'media_id' => $item_data['id_media'])
 		);
 		// Allowed to re-rate? OK then re-rate the item!
 		$row = wesql::fetch_assoc($request);
@@ -928,7 +928,7 @@ function aeva_viewItem()
 		{raw:approvals}
 		ORDER BY com.id_comment {raw:sort}
 		LIMIT {int:start},{int:per_page}',
-		array('media' => $item_data['id_media'], 'sort' => $sort, 'per_page' => $per_page, 'approvals' => !aeva_allowedTo('moderate') ? 'AND (com.approved = 1 OR com.id_member = ' . $user_info['id'] . ')' : '', 'start' => $start));
+		array('media' => $item_data['id_media'], 'sort' => $sort, 'per_page' => $per_page, 'approvals' => !aeva_allowedTo('moderate') ? 'AND (com.approved = 1 OR com.id_member = ' . we::$id . ')' : '', 'start' => $start));
 	$item_data['comments'] = array();
 	$item_data['no_comments'] = false;
 	$members = array();
@@ -961,7 +961,7 @@ function aeva_viewItem()
 					'on' => timeformat($row['last_edited']),
 				),
 				'counter' => $counter,
-				'can_edit' => aeva_allowedTo('moderate') || (aeva_allowedTo('edit_own_com') && $row['id_member'] == $user_info['id']),
+				'can_edit' => aeva_allowedTo('moderate') || (aeva_allowedTo('edit_own_com') && $row['id_member'] == we::$id),
 				'can_report' => aeva_allowedTo('report_com'),
 				'approved' => $row['approved'],
 			);
@@ -1022,7 +1022,7 @@ function aeva_viewItem()
 		ORDER BY ' . $sort,
 		array(
 			'current_album' => $item_data['album_id'],
-			'approvals' => !aeva_allowedTo('moderate') ? 'AND (approved = 1 OR id_member = ' . $user_info['id'] . ')' : ''
+			'approvals' => !aeva_allowedTo('moderate') ? 'AND (approved = 1 OR id_member = ' . we::$id . ')' : ''
 		));
 
 	// And fetch the ones just before and just after the current one.
@@ -1166,7 +1166,7 @@ function aeva_viewItem()
 	{
 		$parents = array_reverse($item_data['album_parents']);
 		foreach ($parents as $p)
-			if (!$p['hidden'] || $p['owner'] == $user_info['id'])
+			if (!$p['hidden'] || $p['owner'] == we::$id)
 				add_linktree($galurl . 'sa=album;in=' . $p['id'], $p['name']);
 	}
 	add_linktree($galurl . 'sa=item;in=' . $item_data['id_media'], $item_data['title']);
@@ -1203,7 +1203,7 @@ function aeva_viewItem()
 	{
 		$allowed_albums = albumsAllowedTo('add_' . $item_data['type'] . 's');
 		// This one only selects the user's own albums... Would this save processing time for admins with large galleries?
-		//	aeva_getAlbums(aeva_allowedTo('moderate') ? 'a.album_of = ' . (int) $user_info['id'] : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', $allowed_albums) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
+		//	aeva_getAlbums(aeva_allowedTo('moderate') ? 'a.album_of = ' . (int) we::$id : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', $allowed_albums) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
 		aeva_getAlbums(aeva_allowedTo('moderate') ? '' : (empty($allowed_albums) ? '1=0' : 'a.id_album IN (' . implode(',', array_keys($allowed_albums)) . ')'), 1, false, 'a.album_of, a.child_level, a.a_order');
 		$sep = $prev_owner = -1;
 		foreach ($context['aeva_album_list'] as $k => $list)
@@ -1245,7 +1245,7 @@ function aeva_viewItem()
 
 function aeva_mgComment()
 {
-	global $context, $scripturl, $galurl, $amSettings, $txt, $db_prefix, $user_info;
+	global $context, $scripturl, $galurl, $amSettings, $txt, $db_prefix;
 
 	// Get the item info
 	$request = wesql::query('
@@ -1301,7 +1301,7 @@ function aeva_mgComment()
 		wesql::insert('',
 			'{db_prefix}media_comments',
 			array('id_member', 'id_media', 'id_album', 'message', 'posted_on', 'approved'),
-			array($user_info['id'], $item_data['id_media'], $item_data['album_id'], $comment, time(), $approved)
+			array(we::$id, $item_data['id_media'], $item_data['album_id'], $comment, time(), $approved)
 		);
 		$id_comment = wesql::insert_id();
 
@@ -1310,7 +1310,7 @@ function aeva_mgComment()
 			wesql::query('
 				UPDATE {db_prefix}members
 				SET media_comments = media_comments + 1
-				WHERE id_member = {int:mem}',array('mem' => $user_info['id']));
+				WHERE id_member = {int:mem}',array('mem' => we::$id));
 
 			wesql::query('
 				UPDATE {db_prefix}media_items
@@ -1344,7 +1344,7 @@ function aeva_mgComment()
 function aeva_mgReport()
 {
 	// Handles reporting of comments/items
-	global $txt, $galurl, $db_prefix, $user_info, $context;
+	global $txt, $galurl, $db_prefix, $context;
 
 	$type = $_GET['type'] == 'comment' ? 'com' : 'item';
 
@@ -1413,8 +1413,8 @@ function aeva_mgReport()
 			'{db_prefix}media_variables',
 			$type == 'com' ? array('type', 'val1', 'val2', 'val3', 'val4') : array('type', 'val1', 'val2', 'val3', 'val4', 'val5'),
 			$type == 'com' ?
-				array('comment_report', $user_info['id'], time(), $reason, $dat['id_comment']) :
-				array('item_report', $user_info['id'], time(), $reason, $dat['id_media'], $dat['title'])
+				array('comment_report', we::$id, time(), $reason, $dat['id_comment']) :
+				array('item_report', we::$id, time(), $reason, $dat['id_media'], $dat['title'])
 		);
 		aeva_increaseSettings($type == 'com' ? 'num_reported_comments' : 'num_reported_items');
 		wetem::load('aeva_done');
@@ -1434,7 +1434,7 @@ function aeva_mgReport()
 // Handles adding/editing of items
 function aeva_mgPost()
 {
-	global $amSettings, $txt, $galurl, $context, $user_info, $options, $settings;
+	global $amSettings, $txt, $galurl, $context, $options, $settings;
 
 	$editing = false;
 	$context['page_title'] = $txt['media_add_item'];
@@ -1455,7 +1455,7 @@ function aeva_mgPost()
 			INNER JOIN {db_prefix}media_albums AS a ON (a.id_album = m.album_id)
 			WHERE {query_see_album} AND m.id_member = {int:me}
 			ORDER BY m.id_media DESC
-			LIMIT 1', array('me' => $user_info['id']));
+			LIMIT 1', array('me' => we::$id));
 
 		list ($latest_album) = wesql::num_rows($request) == 0 ? array(0) : wesql::fetch_row($request);
 		wesql::free_result($request);
@@ -1961,8 +1961,8 @@ function aeva_mgPost()
 			'id_preview' => $id_preview,
 			'time' => $time,
 			'embed_url' => $embed_url,
-			'id_member' => $user_info['id'],
-			'mem_name' => $user_info['name'],
+			'id_member' => we::$id,
+			'mem_name' => we::$user['name'],
 			'approved' => $will_be_unapproved ? 0 : ($still_unapproved ? 0 : 1),
 		);
 
@@ -2100,7 +2100,7 @@ function aeva_mgEdit()
 
 function aeva_mgEditCom()
 {
-	global $txt, $context, $galurl, $user_info, $settings;
+	global $txt, $context, $galurl, $settings;
 
 	// Load comment data
 	$request = wesql::query('
@@ -2119,7 +2119,7 @@ function aeva_mgEditCom()
 	wesql::free_result($request);
 
 	// Are you allowed to access?
-	if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('edit_own_com') || $com_data['id_member'] != $user_info['id']))
+	if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('edit_own_com') || $com_data['id_member'] != we::$id))
 		fatal_lang_error('media_com_edit_denied');
 
 	// The form!
@@ -2168,7 +2168,7 @@ function aeva_mgEditCom()
 			SET message = {string:message}' . ($skip_log ? '' : ', last_edited = {int:time}, last_edited_name = {string:name}, last_edited_by = {string:user_id}') . '
 			WHERE id_comment = {int:id}',
 			array(
-				'message' => $new_message, 'time' => time(), 'name' => $user_info['name'], 'user_id' => $user_info['id'], 'id' => $com_data['id_comment']
+				'message' => $new_message, 'time' => time(), 'name' => we::$user['name'], 'user_id' => we::$id, 'id' => $com_data['id_comment']
 			)
 		);
 
@@ -2192,7 +2192,7 @@ function aeva_mgEditCom()
 // A common function to delete comments and items
 function aeva_delete()
 {
-	global $galurl, $amSettings, $user_info, $db_prefix, $txt;
+	global $galurl, $amSettings, $db_prefix, $txt;
 
 	if (empty($_GET['type']))
 	{
@@ -2207,7 +2207,7 @@ function aeva_delete()
 			fatal_lang_error('media_item_not_found', !empty($amSettings['log_access_errors']));
 		$item_data = wesql::fetch_assoc($request);
 		wesql::free_result($request);
-		if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('moderate_own_albums') || $item_data['album_of'] != $user_info['id']) && (!aeva_allowedTo('edit_own_item') || $item_data['id_member'] != $user_info['id']))
+		if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('moderate_own_albums') || $item_data['album_of'] != we::$id) && (!aeva_allowedTo('edit_own_item') || $item_data['id_member'] != we::$id))
 			fatal_lang_error('media_delete_denied');
 		// Delete it
 		aeva_deleteItems($item_data['id_media']);
@@ -2227,7 +2227,7 @@ function aeva_delete()
 			fatal_lang_error('media_com_not_found');
 		$com_data = wesql::fetch_assoc($request);
 		wesql::free_result($request);
-		if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('moderate_own_albums') || $com_data['album_of'] != $user_info['id']) && (!aeva_allowedTo('edit_own_com') || $com_data['id_member'] != $user_info['id']))
+		if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('moderate_own_albums') || $com_data['album_of'] != we::$id) && (!aeva_allowedTo('edit_own_com') || $com_data['id_member'] != we::$id))
 			fatal_lang_error('media_delete_denied');
 		// Delete it
 		aeva_deleteComments($com_data['id_comment']);
@@ -2243,7 +2243,7 @@ function aeva_delete()
 // Quick moderation inside album pages...
 function aeva_quickmodAlbum()
 {
-	global $galurl, $amSettings, $user_info, $db_prefix, $txt;
+	global $galurl, $amSettings, $db_prefix, $txt;
 
 	checkSession('post');
 
@@ -2263,7 +2263,7 @@ function aeva_quickmodAlbum()
 	$can_edit_own = aeva_allowedTo('edit_own_item');
 	$can_approve = $can_moderate || aeva_allowedTo('auto_approve_item');
 	while ($row = wesql::fetch_assoc($request))
-		if ($can_moderate || ($can_edit_own && $row['id_member'] == $user_info['id']))
+		if ($can_moderate || ($can_edit_own && $row['id_member'] == we::$id))
 			$item_data[$row['id_media']] = $row;
 	wesql::free_result($request);
 	if (empty($item_data) || empty($_POST['aeva_modtype']))
@@ -2305,7 +2305,7 @@ function aeva_quickmodAlbum()
 // A common function to approve/unapprove items
 function aeva_mgApprove()
 {
-	global $galurl, $amSettings, $user_info, $db_prefix, $txt;
+	global $galurl, $amSettings, $db_prefix, $txt;
 
 	$approval = isset($_GET['sa']) && $_GET['sa'] == 'approve' ? 1 : 0;
 	if (empty($_GET['type']))
@@ -2322,7 +2322,7 @@ function aeva_mgApprove()
 		$item_data = wesql::fetch_assoc($request);
 		wesql::free_result($request);
 
-		if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('auto_approve_item') || $item_data['id_member'] != $user_info['id']))
+		if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('auto_approve_item') || $item_data['id_member'] != we::$id))
 			fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
 		aeva_approveItems(array($item_data['id_media'] => $item_data['title']), $approval);
@@ -2334,7 +2334,7 @@ function aeva_mgApprove()
 
 function aeva_addView()
 {
-	global $context, $user_info;
+	global $context;
 
 	if (!isset($_REQUEST['in']))
 		die('Hacking attempt...');
@@ -2349,7 +2349,7 @@ function aeva_addView()
 	);
 
 	if (media_markSeen($id))
-		media_resetUnseen($user_info['id']);
+		media_resetUnseen(we::$id);
 
 	echo '<?xml version="1.0" encoding="UTF-8"?', '>';
 	obExit(false);
@@ -2483,10 +2483,7 @@ function aeva_getMedia()
 
 	// Could use output buffers to put all calls into one. May not be worth the effort.
 	if ($is_new && media_markSeen($id))
-	{
-		global $user_info;
-		media_resetUnseen($user_info['id']);
-	}
+		media_resetUnseen(we::$id);
 
 	// Update download count if the download was successful.
 	if (isset($_REQUEST['dl']))

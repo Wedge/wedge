@@ -61,7 +61,7 @@ function Report()
 	wesql::free_result($result);
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = $user_info['is_guest'] && !empty($settings['guests_report_require_captcha']);
+	$context['require_verification'] = we::$is_guest && !empty($settings['guests_report_require_captcha']);
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');
@@ -116,7 +116,7 @@ function ReportToModerator2()
 	$poster_comment = strtr(westr::htmlspecialchars($_POST['comment']), array("\r" => '', "\n" => '', "\t" => ''));
 
 	// Guests need to provide their address!
-	if ($user_info['is_guest'])
+	if (we::$is_guest)
 	{
 		$_POST['email'] = !isset($_POST['email']) ? '' : trim($_POST['email']);
 		if ($_POST['email'] === '')
@@ -130,7 +130,7 @@ function ReportToModerator2()
 	}
 
 	// Could they get the right verification code?
-	if ($user_info['is_guest'] && !empty($settings['guests_report_require_captcha']))
+	if (we::$is_guest && !empty($settings['guests_report_require_captcha']))
 	{
 		loadSource('Subs-Editor');
 		$verificationOptions = array(
@@ -263,7 +263,7 @@ function ReportToModerator2()
 					'member_ip' => 'int', 'comment' => 'string', 'time_sent' => 'int',
 				),
 				array(
-					$id_report, $user_info['id'], $user_info['name'], $user_info['email'],
+					$id_report, we::$id, $user_info['name'], $user_info['email'],
 					get_ip_identifier($user_info['ip']), $poster_comment, time(),
 				),
 				array('id_comment')

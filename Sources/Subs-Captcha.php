@@ -36,7 +36,7 @@ function showCodeImage($code)
 		return false;
 
 	// Special case to allow the admin center to show samples.
-	$imageType = ($user_info['is_admin'] && isset($_GET['type']) && in_array($_GET['type'], $context['captcha_types'])) ? $_GET['type'] : $context['captcha_types'][array_rand($context['captcha_types'])];
+	$imageType = (we::$is_admin && isset($_GET['type']) && in_array($_GET['type'], $context['captcha_types'])) ? $_GET['type'] : $context['captcha_types'][array_rand($context['captcha_types'])];
 
 	@ini_set('memory_limit', '90M');
 

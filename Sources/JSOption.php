@@ -43,7 +43,7 @@ function JSOption()
 		exit;
 
 	// Sorry, guests can't go any further than this..
-	if ($user_info['is_guest'] || $user_info['id'] == 0)
+	if (we::$is_guest || we::$id == 0)
 		obExit(false);
 
 	$reservedVars = array(
@@ -70,7 +70,7 @@ function JSOption()
 	if (isset($_GET['th']) || isset($_GET['id']))
 	{
 		// Invalidate the current themes cache too.
-		cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . $user_info['id'], null, 60);
+		cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . we::$id, null, 60);
 
 		$theme['theme_id'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
 	}
@@ -91,11 +91,11 @@ function JSOption()
 	wesql::insert('replace',
 		'{db_prefix}themes',
 		array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-		array($theme['theme_id'], $user_info['id'], $_GET['var'], is_array($_GET['val']) ? implode(',', $_GET['val']) : $_GET['val']),
+		array($theme['theme_id'], we::$id, $_GET['var'], is_array($_GET['val']) ? implode(',', $_GET['val']) : $_GET['val']),
 		array('id_theme', 'id_member', 'variable')
 	);
 
-	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . $user_info['id'], null, 60);
+	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . we::$id, null, 60);
 
 	// Don't output anything...
 	exit;

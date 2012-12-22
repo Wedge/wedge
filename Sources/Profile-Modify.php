@@ -1131,7 +1131,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			- The data is not invisible to users but editable by the owner (or if it is the user is not the owner)
 			- The area isn't registration, and if it is that the field is not suppossed to be shown there.
 		*/
-		if ($row['private'] != 0 && !allowedTo('admin_forum') && ($memID != $user_info['id'] || $row['private'] != 2) && ($area != 'register' || $row['show_reg'] == 0))
+		if ($row['private'] != 0 && !allowedTo('admin_forum') && ($memID != we::$id || $row['private'] != 2) && ($area != 'register' || $row['show_reg'] == 0))
 			continue;
 
 		// Validate the user data.
@@ -1175,7 +1175,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 				'log_time' => time(),
 				'id_member' => $memID,
 				'ip' => get_ip_identifier($user_info['ip']),
-				'extra' => serialize(array('previous' => !empty($user_profile[$memID]['options'][$row['col_name']]) ? $user_profile[$memID]['options'][$row['col_name']] : '', 'new' => $value, 'applicator' => $user_info['id'])),
+				'extra' => serialize(array('previous' => !empty($user_profile[$memID]['options'][$row['col_name']]) ? $user_profile[$memID]['options'][$row['col_name']] : '', 'new' => $value, 'applicator' => we::$id)),
 			);
 			$changes[] = array(1, $row['col_name'], $value, $memID);
 			$user_profile[$memID]['options'][$row['col_name']] = $value;
@@ -1870,7 +1870,7 @@ function list_getTopicNotifications($start, $items_per_page, $sort, $memID)
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:items_per_page}',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'selected_member' => $memID,
 			'sort' => $sort,
 			'offset' => $start,
@@ -1915,7 +1915,7 @@ function list_getBoardNotifications($start, $items_per_page, $sort, $memID)
 			AND {query_see_board}
 		ORDER BY ' . $sort,
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'selected_member' => $memID,
 		)
 	);

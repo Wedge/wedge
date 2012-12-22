@@ -56,7 +56,7 @@ function template_pm_after()
 
 function template_folder()
 {
-	global $context, $theme, $options, $settings, $txt, $user_info;
+	global $context, $theme, $options, $settings, $txt;
 
 	$is_mobile = !empty($context['skin_options']['mobile']);
 
@@ -148,7 +148,7 @@ function template_folder()
 			$window_class = $message['alternate'] == 0 ? '' : '2';
 
 			echo '
-	<div class="postbg', $window_class, $message['member']['id'] === $user_info['id'] ? ' self' : '', ' pm"><div class="post_wrapper">
+	<div class="postbg', $window_class, $message['member']['id'] === we::$id ? ' self' : '', ' pm"><div class="post_wrapper">
 		<div class="poster">
 			<a id="msg', $message['id'], '"></a>
 			<h4>';

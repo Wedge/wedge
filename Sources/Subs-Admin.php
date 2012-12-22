@@ -438,12 +438,12 @@ function updateAdminPreferences()
 	wesql::insert('replace',
 		'{db_prefix}themes',
 		array('id_member' => 'int', 'id_theme' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-		array($user_info['id'], 1, 'admin_preferences', $options['admin_preferences']),
+		array(we::$id, 1, 'admin_preferences', $options['admin_preferences']),
 		array('id_member', 'id_theme', 'variable')
 	);
 
 	// Make sure we invalidate any cache.
-	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . $user_info['id'], null, 0);
+	cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . we::$id, null, 0);
 }
 
 // Send all the administrators a lovely email.

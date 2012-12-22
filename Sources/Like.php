@@ -21,7 +21,7 @@ function Like()
 	if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'view')
 		return DisplayLike();
 
-	if (empty($user_info['id']) || empty($settings['likes_enabled']))
+	if (empty(we::$id) || empty($settings['likes_enabled']))
 		fatal_lang_error('no_access', false);
 
 	// We might be doing a topic.
@@ -58,7 +58,7 @@ function Like()
 			$in_topic = $id_topic == $topic;
 		}
 		wesql::free_result($request);
-		if (!$in_topic || (empty($settings['likes_own_posts']) && $id_author == $user_info['id']))
+		if (!$in_topic || (empty($settings['likes_own_posts']) && $id_author == we::$id))
 			fatal_lang_error('not_a_topic', false);
 
 		$context['redirect_from_like'] = 'topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'];
@@ -77,7 +77,7 @@ function Like()
 		array(
 			'id_content' => $id_content,
 			'content_type' => $content_type,
-			'user' => $user_info['id'],
+			'user' => we::$id,
 		)
 	);
 
@@ -93,7 +93,7 @@ function Like()
 			array(
 				'id_content' => $id_content,
 				'content_type' => $content_type,
-				'user' => $user_info['id'],
+				'user' => we::$id,
 			)
 		);
 		$now_liked = false;
@@ -104,7 +104,7 @@ function Like()
 		wesql::insert('',
 			'{db_prefix}likes',
 			array('id_content' => 'int', 'content_type' => 'string-6', 'id_member' => 'int', 'like_time' => 'int'),
-			array($id_content, $content_type, $user_info['id'], $like_time),
+			array($id_content, $content_type, we::$id, $like_time),
 			array('id_content', 'content_type', 'id_member')
 		);
 		$now_liked = true;
@@ -135,7 +135,7 @@ function Like()
 		while ($row = wesql::fetch_assoc($request))
 		{
 			// If it's us, log it as being us.
-			if ($row['id_member'] == $user_info['id'])
+			if ($row['id_member'] == we::$id)
 				$context['liked_posts'][$row['id_content']]['you'] = true;
 			// Otherwise, add it to the list, and if it's a member whose name we don't have, save that separately too. But only if we have up to 2 names.
 			elseif (empty($context['liked_posts'][$row['id_content']]['names']) || count($context['liked_posts'][$row['id_content']]['names']) < 2)

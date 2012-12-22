@@ -283,7 +283,7 @@ function UnreadReplies()
 			GROUP BY m.id_topic',
 			array(
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'string_zero' => '0',
 				'db_error_skip' => true,
 			)
@@ -300,7 +300,7 @@ function UnreadReplies()
 					INNER JOIN {db_prefix}topics_posted_in AS pi ON (pi.id_topic = lt.id_topic)
 				WHERE lt.id_member = {int:current_member}',
 				array(
-					'current_member' => $user_info['id'],
+					'current_member' => we::$id,
 					'db_error_skip' => true,
 				)
 			) !== false;
@@ -333,7 +333,7 @@ function UnreadReplies()
 				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg
 				AND {query_see_topic}',
 			array_merge($query_parameters, array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			))
 		);
 		list ($num_topics, $min_message) = wesql::fetch_row($request);
@@ -390,7 +390,7 @@ function UnreadReplies()
 			ORDER BY {raw:order}
 			LIMIT {int:offset}, {int:limit}',
 			array_merge($query_parameters, array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'min_message' => (int) $min_message,
 				'order' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
 				'offset' => $_REQUEST['start'],
@@ -429,7 +429,7 @@ function UnreadReplies()
 		ORDER BY ' . $_REQUEST['sort'] . ($ascending ? '' : ' DESC') . '
 		LIMIT ' . count($topics),
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'topic_list' => $topics,
 		)
 	);
@@ -598,7 +598,7 @@ function UnreadReplies()
 				AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
 			GROUP BY m.id_topic',
 			array(
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 				'new_stuff' => $topic_ids
 			)
 		);

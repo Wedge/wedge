@@ -68,7 +68,7 @@ function Thoughts()
 			)
 			AND (
 				h.id_member = {int:me}
-				OR h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
+				OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 				OR h.privacy = {int:members}') . '
 				OR FIND_IN_SET(' . implode(', h.privacy)
 				OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
@@ -76,7 +76,7 @@ function Thoughts()
 			ORDER BY h.id_thought',
 			array(
 				'think' => $think,
-				'me' => $user_info['id'],
+				'me' => we::$id,
 				'everyone' => -3,
 				'members' => 0,
 			)
@@ -159,18 +159,18 @@ function latestThoughts($memID = 0)
 	$request = wesql::query('
 		SELECT COUNT(h.id_thought)
 		FROM {db_prefix}thoughts AS h
-		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && ($user_info['id'] == $memID) ? '' : '
+		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && (we::$id == $memID) ? '' : '
 		AND (' . ($memID ? '' : '
 			h.id_member = {int:me}
 			OR ') . '
-			h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
+			h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 			OR h.privacy = {int:members}') . '
 			OR FIND_IN_SET(' . implode(', h.privacy)
 			OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
 		)') . '
 		LIMIT 1',
 		array(
-			'me' => $user_info['id'],
+			'me' => we::$id,
 			'id_member' => $memID,
 			'everyone' => -3,
 			'members' => 0,
@@ -189,11 +189,11 @@ function latestThoughts($memID = 0)
 	$request = wesql::query('
 		SELECT h.id_thought
 		FROM {db_prefix}thoughts AS h
-		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && ($user_info['id'] == $memID) ? '' : '
+		WHERE ' . (!$memID ? '1=1' : 'h.id_member = {int:id_member}') . ($memID && (we::$id == $memID) ? '' : '
 		AND (' . ($memID ? '' : '
 			h.id_member = {int:me}
 			OR ') . '
-			h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
+			h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 			OR h.privacy = {int:members}') . '
 			OR FIND_IN_SET(' . implode(', h.privacy)
 			OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)
@@ -201,7 +201,7 @@ function latestThoughts($memID = 0)
 		ORDER BY h.id_thought DESC
 		LIMIT {int:start}, {int:per_page}',
 		array(
-			'me' => $user_info['id'],
+			'me' => we::$id,
 			'id_member' => $memID,
 			'everyone' => -3,
 			'members' => 0,
@@ -230,7 +230,7 @@ function latestThoughts($memID = 0)
 			LEFT JOIN
 				{db_prefix}thoughts AS h_parent ON (h_parent.id_thought = h.id_parent AND (
 					h_parent.id_member = {int:me}
-					OR h_parent.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
+					OR h_parent.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 					OR h_parent.privacy = {int:members}') . '
 					OR FIND_IN_SET(' . implode(', h_parent.privacy)
 					OR FIND_IN_SET(', $user_info['groups']) . ', h_parent.privacy)
@@ -245,7 +245,7 @@ function latestThoughts($memID = 0)
 			ORDER BY h.id_thought DESC',
 			array(
 				'think' => $think,
-				'me' => $user_info['id'],
+				'me' => we::$id,
 				'everyone' => -3,
 				'members' => 0,
 			)

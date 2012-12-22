@@ -60,7 +60,7 @@ function Notify()
 				AND id_topic = {int:current_topic}
 			LIMIT 1',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'current_topic' => $topic,
 			)
 		);
@@ -82,7 +82,7 @@ function Notify()
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_topic' => 'int'),
-			array($user_info['id'], $topic),
+			array(we::$id, $topic),
 			array('id_member', 'id_topic')
 		);
 	}
@@ -96,7 +96,7 @@ function Notify()
 			WHERE id_member = {int:current_member}
 				AND id_topic = {int:current_topic}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'current_topic' => $topic,
 			)
 		);
@@ -133,7 +133,7 @@ function BoardNotify()
 			LIMIT 1',
 			array(
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		$context['notification_set'] = wesql::num_rows($request) != 0;
@@ -156,7 +156,7 @@ function BoardNotify()
 		wesql::insert('ignore',
 			'{db_prefix}log_notify',
 			array('id_member' => 'int', 'id_board' => 'int'),
-			array($user_info['id'], $board),
+			array(we::$id, $board),
 			array('id_member', 'id_board')
 		);
 	}
@@ -172,7 +172,7 @@ function BoardNotify()
 				AND id_board = {int:current_board}',
 			array(
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 	}

@@ -411,7 +411,7 @@ function aeva_admin_albums_delete()
 // Handles the FTP import area
 function aeva_admin_FTPImport()
 {
-	global $amSettings, $context, $txt, $scripturl, $user_info, $time_start;
+	global $amSettings, $context, $txt, $scripturl, $time_start;
 
 	// Load the map
 	list ($context['ftp_map'], $context['ftp_folder_list']) = aeva_get_dir_map($amSettings['data_dir_path'] . '/ftp');
@@ -523,9 +523,9 @@ function aeva_admin_FTPImport()
 				'title' => $name,
 				'time' => $time,
 				'album' => $context['ftp_folder_albums'][$file[1]],
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 				'approved' => 1,
-				'mem_name' => $user_info['name'],
+				'mem_name' => we::$user['name'],
 			);
 			$id_item = aeva_createItem($iOpts);
 
@@ -555,7 +555,7 @@ function aeva_admin_FTPImport()
 // Handles the permission area...
 function aeva_admin_perms()
 {
-	global $context, $txt, $user_info, $scripturl, $amSettings;
+	global $context, $txt, $scripturl, $amSettings;
 
 	$context['base_url'] = $scripturl . '?action=admin;area=aeva_perms;' . $context['session_query'];
 
@@ -692,7 +692,7 @@ function aeva_admin_perms()
 // Sets permissions quickly
 function aeva_admin_perms_quick()
 {
-	global $context, $scripturl, $txt, $user_info;
+	global $context, $scripturl, $txt;
 
 	// Load the permission profle.
 	if ($_REQUEST['profile'] == 1)
@@ -727,7 +727,7 @@ function aeva_admin_perms_quick()
 		FROM {db_prefix}membergroups AS g
 		WHERE (g.id_group > 3 OR g.id_group = 2)
 		ORDER BY g.min_posts, g.id_group ASC',
-		array('user_id' => $user_info['id'])
+		array('user_id' => we::$id)
 	);
 	while ($row = wesql::fetch_assoc($request))
 		$groups[] = $row['id'];
@@ -826,7 +826,7 @@ function aeva_admin_perms_quick()
 // A not so hefty function to add permission profiles
 function aeva_admin_perms_add()
 {
-	global $context, $scripturl, $txt, $user_info;
+	global $context, $scripturl, $txt;
 
 	if (empty($_POST['name']) || empty($_POST['submit_aeva']))
 		fatal_lang_error('media_name_empty');
@@ -843,7 +843,7 @@ function aeva_admin_perms_add()
 // Used for viewing membergroups in the permission area..
 function aeva_admin_perms_view()
 {
-	global $context, $txt, $scripturl, $user_info, $settings;
+	global $context, $txt, $scripturl, $settings;
 
 	// Load the profile
 	if (!isset($_REQUEST['in']))
@@ -899,7 +899,7 @@ function aeva_admin_perms_view()
 // Editing one membergroup?
 function aeva_admin_perms_edit()
 {
-	global $context, $txt, $scripturl, $user_info;
+	global $context, $txt, $scripturl;
 
 	// Load the profile
 	if (!isset($_REQUEST['in']))
@@ -1039,7 +1039,7 @@ function aeva_admin_perms_edit()
 
 function aeva_admin_perms_albums()
 {
-	global $context, $txt, $scripturl, $settings, $user_info, $galurl;
+	global $context, $txt, $scripturl, $settings, $galurl;
 
 	clean_output();
 
@@ -1093,7 +1093,7 @@ function aeva_admin_perms_albums()
 // Membergroup quota's main function. This is soooo similar to permission profiles...
 function aeva_admin_quotas()
 {
-	global $txt, $context, $user_info, $amSettings;
+	global $txt, $context, $amSettings;
 
 	// Doing any do-da-do?
 	$sa = array(
@@ -1227,7 +1227,7 @@ function aeva_admin_quotas_add()
 // Viewing a single group?
 function aeva_admin_quotas_view()
 {
-	global $scripturl, $txt, $context, $user_info;
+	global $scripturl, $txt, $context;
 
 	// Not set?
 	if (!isset($_REQUEST['in']))
@@ -1408,7 +1408,7 @@ function aeva_admin_quotas_edit()
 
 function aeva_admin_quotas_albums()
 {
-	global $context, $txt, $scripturl, $user_info, $galurl;
+	global $context, $txt, $scripturl, $galurl;
 
 	clean_output();
 
@@ -1686,7 +1686,7 @@ function aeva_admin_fields_edit()
 
 function aeva_getMembergroups($perms = false)
 {
-	global $txt, $user_info;
+	global $txt;
 
 	$request = wesql::query('
 		SELECT COUNT(*) AS total
@@ -1706,7 +1706,7 @@ function aeva_getMembergroups($perms = false)
 		FROM {db_prefix}membergroups AS g
 		WHERE ' . ($perms ? 'g.id_group > 3 OR g.id_group = 2' : 'g.id_group != 3') . '
 		ORDER BY g.min_posts, g.id_group ASC',
-		array('user_id' => $user_info['id'])
+		array('user_id' => we::$id)
 	);
 	$separated = false;
 	$normalGroups = array();

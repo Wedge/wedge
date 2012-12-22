@@ -266,7 +266,7 @@ function showDrafts($memID)
 				AND id_member = {int:member}',
 			array(
 				'not_pm' => 0,
-				'member' => $user_info['id'],
+				'member' => we::$id,
 			)
 		);
 
@@ -284,7 +284,7 @@ function showDrafts($memID)
 			LIMIT 1',
 			array(
 				'draft' => $draft_id,
-				'member' => $user_info['id'],
+				'member' => we::$id,
 			)
 		);
 
@@ -497,7 +497,7 @@ function showPosts($memID)
 		removeMessage((int) $_GET['delete']);
 
 		// Add it to the mod log.
-		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != $user_info['id']))
+		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != we::$id))
 			logAction('delete', array('topic' => $info[2], 'subject' => $info[0], 'member' => $info[1], 'board' => $info[3]));
 
 		// Back to... where we are now ;).
@@ -691,7 +691,7 @@ function showPosts($memID)
 			'approved' => $row['approved'],
 		);
 
-		if ($user_info['id'] == $row['id_member_started'])
+		if (we::$id == $row['id_member_started'])
 			$board_ids['own'][$row['id_board']][] = $counter;
 		$board_ids['any'][$row['id_board']][] = $counter;
 	}

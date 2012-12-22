@@ -33,7 +33,7 @@ template_ssi_above();
 
 	<h2>Include Code</h2>
 	<p>To use SSI.php in your page add at the very top of your page before the &lt;html&gt; tag on line 1 of your php file:</p>
-	<div class="bbc_code"><header>Code: <a href="#" onclick="return weSelectText(this);" class="codeoperation">[Select]</a></header><code>&lt;?php require(&quot;<?php echo addslashes($user_info['is_admin'] ? realpath($boarddir . '/SSI.php') : 'SSI.php'); ?>&quot;); ?&gt;</code></div>
+	<div class="bbc_code"><header>Code: <a href="#" onclick="return weSelectText(this);" class="codeoperation">[Select]</a></header><code>&lt;?php require(&quot;<?php echo addslashes(we::$is_admin ? realpath($boarddir . '/SSI.php') : 'SSI.php'); ?>&quot;); ?&gt;</code></div>
 
 	<h2>Some notes on usage</h2>
 	<p>All the functions have an output method parameter.  This can either be &quot;echo&quot; (the default) or &quot;array&quot;</p>
@@ -77,7 +77,7 @@ template_ssi_above();
 			<li><a href="#" onclick="return showSSIBlock('ssi_quickSearch');">Quick Search Box</a></li>
 			<li><a href="#" onclick="return showSSIBlock('ssi_recentAttachments');">Recent Attachments</a></li>
 		</ul>
-		<?php if ($user_info['is_admin']) { ?>
+		<?php if (we::$is_admin) { ?>
 		<h3>Advanced Functions <span class="help" title="Functions that require additional tweaking, not just copy and paste."></span></h3>
 		<ul>
 			<li><a href="#" onclick="return showSSIBlock('ssi_showPoll');">Show Single Poll</a></li>
@@ -512,7 +512,7 @@ function template_homepage_sample1($method = 'source')
 
 	if ($method == 'source')
 	{
-		$header = '<?php require("' . ($user_info['is_admin'] ? addslashes(realpath($boarddir . '/SSI.php')) : 'SSI.php') . '"); ?>' . "\n" . $header;
+		$header = '<?php require("' . (we::$is_admin ? addslashes(realpath($boarddir . '/SSI.php')) : 'SSI.php') . '"); ?>' . "\n" . $header;
 		return $header . template_homepage_sample1_html() . $footer;
 	}
 	else

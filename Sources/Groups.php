@@ -102,7 +102,7 @@ function GroupList()
 			AND mg.group_type != {int:is_protected}') . '
 		ORDER BY group_name',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'min_posts' => -1,
 			'mod_group' => 3,
 			'is_protected' => 1,
@@ -257,7 +257,7 @@ function list_getGroups($start, $items_per_page, $sort)
 			AND mg.group_type != {int:is_protected}') . '
 		ORDER BY group_name',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'min_posts' => -1,
 			'mod_group' => 3,
 			'is_protected' => 1,
@@ -429,7 +429,7 @@ function MembergroupMembers()
 			'name' => $row['real_name']
 		);
 
-		if ($user_info['id'] == $row['id_member'] && $context['group']['group_type'] != 1)
+		if (we::$id == $row['id_member'] && $context['group']['group_type'] != 1)
 			$context['group']['can_moderate'] = true;
 	}
 	wesql::free_result($request);

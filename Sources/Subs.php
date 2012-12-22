@@ -280,7 +280,7 @@ function updateMyData($data)
 
 	// @todo: should we add a hook for individual variables in the data field?
 	updateMemberData(
-		$user_info['id'],
+		we::$id,
 		array(
 			'data' => serialize($user_info['data'])
 		)
@@ -343,7 +343,7 @@ function updateMemberData($members, $data)
 		if (count($vars_to_integrate) != 0)
 		{
 			// Fetch a list of member_names if necessary
-			if ((array) $members === (array) $user_info['id'])
+			if ((array) $members === (array) we::$id)
 				$member_names = array($user_info['username']);
 			else
 			{
@@ -893,7 +893,7 @@ function writeLog($force = false)
 		$serialized = '';
 
 	// Guests use 0, members use their session ID.
-	$session_id = $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
+	$session_id = we::$is_guest ? 'ip' . $user_info['ip'] : session_id();
 
 	// Grab the last all-of-Wedge-specific log_online deletion time.
 	$do_delete = cache_get_data('log_online-update', 30) < time() - 30;
@@ -939,12 +939,12 @@ function writeLog($force = false)
 	// Otherwise, we have to delete and insert.
 	if (empty($_SESSION['log_time']))
 	{
-		if ($do_delete || !empty($user_info['id']))
+		if ($do_delete || !empty(we::$id))
 			wesql::query('
 				DELETE FROM {db_prefix}log_online
-				WHERE ' . ($do_delete ? 'log_time < {int:log_time}' : '') . ($do_delete && !empty($user_info['id']) ? ' OR ' : '') . (empty($user_info['id']) ? '' : 'id_member = {int:current_member}'),
+				WHERE ' . ($do_delete ? 'log_time < {int:log_time}' : '') . ($do_delete && !empty(we::$id) ? ' OR ' : '') . (empty(we::$id) ? '' : 'id_member = {int:current_member}'),
 				array(
-					'current_member' => $user_info['id'],
+					'current_member' => we::$id,
 					'log_time' => time() - $settings['lastActive'] * 60,
 				)
 			);
@@ -952,7 +952,7 @@ function writeLog($force = false)
 		wesql::insert($do_delete ? 'ignore' : 'replace',
 			'{db_prefix}log_online',
 			array('session' => 'string', 'id_member' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'int', 'url' => 'string'),
-			array($session_id, $user_info['id'], empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), get_ip_identifier($user_info['ip']), $serialized),
+			array($session_id, we::$id, empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), get_ip_identifier($user_info['ip']), $serialized),
 			array('session')
 		);
 	}
@@ -972,10 +972,10 @@ function writeLog($force = false)
 			$_SESSION['timeOnlineUpdated'] = time();
 
 		$user_settings['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
-		updateMemberData($user_info['id'], array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP'], 'total_time_logged_in' => $user_settings['total_time_logged_in']));
+		updateMemberData(we::$id, array('last_login' => time(), 'member_ip' => $user_info['ip'], 'member_ip2' => $_SERVER['BAN_CHECK_IP'], 'total_time_logged_in' => $user_settings['total_time_logged_in']));
 
 		if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
-			cache_put_data('user_settings-' . $user_info['id'], $user_settings, 60);
+			cache_put_data('user_settings-' . we::$id, $user_settings, 60);
 
 		$user_info['total_time_logged_in'] += time() - $_SESSION['timeOnlineUpdated'];
 		$_SESSION['timeOnlineUpdated'] = time();
@@ -1151,7 +1151,7 @@ function logAction($action, $extra = array(), $log_type = 'moderate')
 			'id_board' => 'int', 'id_topic' => 'int', 'id_msg' => 'int', 'extra' => 'string-65534',
 		),
 		array(
-			time(), $log_types[$log_type], $user_info['id'], get_ip_identifier($user_info['ip']), $action,
+			time(), $log_types[$log_type], we::$id, get_ip_identifier($user_info['ip']), $action,
 			$board_id, $topic_id, $msg_id, serialize($extra),
 		),
 		array('id_action')
@@ -1434,7 +1434,7 @@ function setupThemeContext($forceload = false)
 
 	$context['random_news_line'] = $n > 0 ? $context['news_lines'][mt_rand(0, $n - 1)] : '';
 
-	if (!$user_info['is_guest'])
+	if (!we::$is_guest)
 	{
 		$context['user']['messages'] =& $user_info['messages'];
 		$context['user']['unread_messages'] =& $user_info['unread_messages'];
@@ -1954,7 +1954,7 @@ function setupMenuContext()
 	// Set up the menu privileges.
 	$context['allow_search'] = allowedTo('search_posts');
 	$context['allow_admin'] = allowedTo(array('admin_forum', 'manage_boards', 'manage_permissions', 'moderate_forum', 'manage_membergroups', 'manage_bans', 'send_mail', 'edit_news', 'manage_attachments', 'manage_smileys'));
-	$context['allow_edit_profile'] = !$user_info['is_guest'] && allowedTo(array('profile_view_own', 'profile_view_any', 'profile_identity_own', 'profile_identity_any', 'profile_extra_own', 'profile_extra_any', 'profile_remove_own', 'profile_remove_any', 'moderate_forum', 'manage_membergroups', 'profile_title_own', 'profile_title_any'));
+	$context['allow_edit_profile'] = !we::$is_guest && allowedTo(array('profile_view_own', 'profile_view_any', 'profile_identity_own', 'profile_identity_any', 'profile_extra_own', 'profile_extra_any', 'profile_remove_own', 'profile_remove_any', 'moderate_forum', 'manage_membergroups', 'profile_title_own', 'profile_title_any'));
 	$context['allow_memberlist'] = allowedTo('view_mlist');
 	$context['allow_moderation_center'] = allowedTo('access_mod_center');
 	$context['allow_pm'] = !empty($settings['pm_enabled']) && allowedTo('pm_read');
@@ -1974,7 +1974,7 @@ function setupMenuContext()
 
 		$error_count = allowedTo('admin_forum') ? (!empty($settings['app_error_count']) ? $settings['app_error_count'] : '') : '';
 		$can_view_unseen = allowedTo('media_access_unseen') && isset($user_info['media_unseen']) && $user_info['media_unseen'] > 0;
-		$has_new_pm = !$user_info['is_guest'] && !empty($context['user']['unread_messages']);
+		$has_new_pm = !we::$is_guest && !empty($context['user']['unread_messages']);
 		$is_b = !empty($board_info['id']);
 
 		$items = array(
@@ -2170,19 +2170,19 @@ function setupMenuContext()
 			'login' => array(
 				'title' => $txt['login'],
 				'href' => $scripturl . '?action=login',
-				'show' => $user_info['is_guest'],
+				'show' => we::$is_guest,
 				'nofollow' => !empty($user_info['possibly_robot']),
 			),
 			'register' => array(
 				'title' => $txt['register'],
 				'href' => $scripturl . '?action=register',
-				'show' => $user_info['is_guest'] && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
+				'show' => we::$is_guest && (empty($settings['registration_method']) || $settings['registration_method'] != 3),
 				'nofollow' => !empty($user_info['possibly_robot']),
 			),
 			'logout' => array(
 				'title' => $txt['logout'],
 				'href' => $scripturl . '?action=logout;' . $context['session_query'],
-				'show' => !$user_info['is_guest'],
+				'show' => !we::$is_guest,
 			),
 		);
 
@@ -2240,7 +2240,7 @@ function setupMenuContext()
 		$current_action = isset($_REQUEST['u']) && $_REQUEST['u'] > 0 ? 'profile' : 'admin';
 	elseif ($context['current_action'] == 'register2')
 		$current_action = 'register';
-	elseif ($context['current_action'] == 'login2' || ($user_info['is_guest'] && $context['current_action'] == 'reminder'))
+	elseif ($context['current_action'] == 'login2' || (we::$is_guest && $context['current_action'] == 'reminder'))
 		$current_action = 'login';
 	elseif ($context['current_action'] == 'groups' && $context['allow_moderation_center'])
 		$current_action = 'admin';

@@ -1360,7 +1360,7 @@ function AdminAccount()
 function DeleteInstall()
 {
 	global $txt, $incontext, $context, $scripturl, $boardurl, $cookiename, $cachedir, $cssdir, $jsdir;
-	global $current_wedge_version, $sourcedir, $settings, $user_info;
+	global $current_wedge_version, $sourcedir, $settings;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['block'] = 'delete_install';
@@ -1477,8 +1477,8 @@ function DeleteInstall()
 		scheduled_fetchRemoteFiles(); // Now go get those files!
 
 		// We've just installed!
-		$user_info['ip'] = $_SERVER['REMOTE_ADDR'];
-		$user_info['id'] = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
+		we::$user['ip'] = $_SERVER['REMOTE_ADDR'];
+		we::$id = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
 		logAction('install', array('version' => WEDGE_VERSION), 'admin');
 	}
 

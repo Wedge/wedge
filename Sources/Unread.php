@@ -251,7 +251,7 @@ function Unread()
 				AND id_board = {int:current_board}',
 			array(
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		list ($earliest_msg) = wesql::fetch_row($request);
@@ -265,7 +265,7 @@ function Unread()
 				LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = b.id_board AND lmr.id_member = {int:current_member})
 			WHERE {query_see_board}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		list ($earliest_msg) = wesql::fetch_row($request);
@@ -288,7 +288,7 @@ function Unread()
 				FROM {db_prefix}log_topics
 				WHERE id_member = {int:current_member}',
 				array(
-					'current_member' => $user_info['id'],
+					'current_member' => we::$id,
 				)
 			);
 			list ($earliest_msg2) = wesql::fetch_row($request);
@@ -327,7 +327,7 @@ function Unread()
 				AND t.id_last_msg > {int:earliest_msg}') . '
 				AND {query_see_topic}',
 			array_merge($query_parameters, array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'db_error_skip' => true,
 			))
@@ -348,7 +348,7 @@ function Unread()
 				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg
 				AND {query_see_topic}',
 			array_merge($query_parameters, array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 			))
 		);
@@ -397,7 +397,7 @@ function Unread()
 			ORDER BY {raw:sort}
 			LIMIT {int:offset}, {int:limit}',
 			array_merge($query_parameters, array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'min_message' => $min_message,
 				'is_approved' => 1,
 				'sort' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
@@ -419,7 +419,7 @@ function Unread()
 				AND IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)) < t.id_last_msg
 				AND {query_see_topic}',
 			array_merge($query_parameters, array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'earliest_msg' => !empty($earliest_msg) ? $earliest_msg : 0,
 				'id_msg_last_visit' => $_SESSION['id_msg_last_visit'],
 			))
@@ -470,7 +470,7 @@ function Unread()
 			ORDER BY {raw:order}
 			LIMIT {int:offset}, {int:limit}',
 			array_merge($query_parameters, array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'min_message' => $min_message,
 				'is_approved' => 1,
 				'order' => $_REQUEST['sort'] . ($ascending ? '' : ' DESC'),
@@ -644,7 +644,7 @@ function Unread()
 				AND (m.id_msg > IFNULL(lt.id_msg, IFNULL(lmr.id_msg, 0)))
 			GROUP BY m.id_topic',
 			array(
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 				'new_stuff' => $topic_ids
 			)
 		);
@@ -663,7 +663,7 @@ function Unread()
 			GROUP BY id_topic
 			LIMIT ' . count($topic_ids),
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'topic_list' => $topic_ids,
 			)
 		);

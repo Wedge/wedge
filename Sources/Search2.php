@@ -298,7 +298,7 @@ function Search2()
 		wesql::free_result($request);
 	}
 	// Select all boards you've selected AND are allowed to see.
-	elseif ($user_info['is_admin'] && (!empty($search_params['advanced']) || !empty($_REQUEST['brd'])))
+	elseif (we::$is_admin && (!empty($search_params['advanced']) || !empty($_REQUEST['brd'])))
 		$search_params['brd'] = empty($_REQUEST['brd']) ? array() : $_REQUEST['brd'];
 	else
 	{
@@ -669,7 +669,7 @@ function Search2()
 		$context['search_params']['userspec'] = westr::htmlspecialchars($context['search_params']['userspec']);
 
 	// Do we have captcha enabled?
-	if ($user_info['is_guest'] && !empty($settings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
+	if (we::$is_guest && !empty($settings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
 	{
 		// If we come from another search box tone down the error...
 		if (!isset($_REQUEST['search_vv']))
@@ -1454,7 +1454,7 @@ function Search2()
 			$context['topics'] = array();
 
 		// If we want to know who participated in what then load this now.
-		if (!empty($settings['enableParticipation']) && !$user_info['is_guest'])
+		if (!empty($settings['enableParticipation']) && !we::$is_guest)
 		{
 			$result = wesql::query('
 				SELECT id_topic
@@ -1464,7 +1464,7 @@ function Search2()
 				GROUP BY id_topic
 				LIMIT ' . count($participants),
 				array(
-					'current_member' => $user_info['id'],
+					'current_member' => we::$id,
 					'topic_list' => array_keys($participants),
 				)
 			);
@@ -1479,7 +1479,7 @@ function Search2()
 
 	// Consider the search complete!
 	if (!empty($settings['cache_enable']) && $settings['cache_enable'] >= 2)
-		cache_put_data('search_start:' . ($user_info['is_guest'] ? $user_info['ip'] : $user_info['id']), null, 90);
+		cache_put_data('search_start:' . (we::$is_guest ? $user_info['ip'] : we::$id), null, 90);
 
 	$context['key_words'] =& $searchArray;
 
@@ -1625,7 +1625,7 @@ function prepareSearchContext($reset = false)
 
 	$body_highlighted = $message['body'];
 	$subject_highlighted = $message['subject'];
-	$started = $message['first_member_id'] == $user_info['id'];
+	$started = $message['first_member_id'] == we::$id;
 	$id_board = $message['id_board'];
 
 	$output = array_merge($context['topics'][$message['id_msg']], array(

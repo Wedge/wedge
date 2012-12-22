@@ -60,7 +60,7 @@ function MoveTopic()
 	list ($id_member_started, $context['subject'], $context['is_approved']) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	$context['is_own_topic'] = $id_member_started == $user_info['id'];
+	$context['is_own_topic'] = $id_member_started == we::$id;
 
 	// Can they see it - if not approved?
 	if ($settings['postmod_active'] && !$context['is_approved'])
@@ -68,7 +68,7 @@ function MoveTopic()
 
 	// Permission check!
 	if (!allowedTo('move_any'))
-		isAllowedTo($id_member_started == $user_info['id'] ? 'move_own' : 'move_any');
+		isAllowedTo($id_member_started == we::$id ? 'move_own' : 'move_any');
 
 	// Where can they move it to?
 	$boards = empty($settings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
@@ -186,7 +186,7 @@ function MoveTopic2()
 
 	// Permission check!
 	if (!allowedTo('move_any'))
-		isAllowedTo($id_member_started == $user_info['id'] ? 'move_own' : 'move_any');
+		isAllowedTo($id_member_started == we::$id ? 'move_own' : 'move_any');
 
 	// Where can they move it to?
 	$boards = empty($settings['ignoreMoveVsNew']) ? boardsAllowedTo('post_new') : array(0);
@@ -317,7 +317,7 @@ function MoveTopic2()
 			'mark_as_read' => true,
 		);
 		$posterOptions = array(
-			'id' => $user_info['id'],
+			'id' => we::$id,
 			'update_post_count' => empty($pcounter),
 		);
 		createPost($msgOptions, $topicOptions, $posterOptions);
@@ -415,7 +415,7 @@ function MoveTopic2()
 	moveTopics($topic, $_POST['toboard']);
 
 	// Log that they moved this topic.
-	if (!allowedTo('move_own') || $id_member_started != $user_info['id'])
+	if (!allowedTo('move_own') || $id_member_started != we::$id)
 		logAction('move', array('topic' => $topic, 'board_from' => $board, 'board_to' => $_POST['toboard']));
 	// Notify people that this topic has been moved?
 	sendNotifications($topic, 'move');
@@ -706,19 +706,19 @@ function moveTopics($topics, $toBoard)
 			LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
 		WHERE b.id_board = {int:id_board}',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'id_board' => $toBoard,
 		)
 	);
 	list ($isSeen) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if (!empty($isSeen) && !$user_info['is_guest'])
+	if (!empty($isSeen) && !we::$is_guest)
 	{
 		wesql::insert('replace',
 			'{db_prefix}log_boards',
 			array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-			array($toBoard, $user_info['id'], $settings['maxMsgID']),
+			array($toBoard, we::$id, $settings['maxMsgID']),
 			array('id_board', 'id_member')
 		);
 	}

@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
  */
 function Collapse()
 {
-	global $user_info, $context, $settings;
+	global $context, $settings;
 
 	// Just in case, no need, no need.
 	$context['robot_no_index'] = true;
@@ -40,7 +40,7 @@ function Collapse()
 	{
 		// And collapse/expand/toggle the category.
 		loadSource('Subs-Categories');
-		collapseCategories(array((int) $_REQUEST['c']), $_REQUEST['sa'], array($user_info['id']));
+		collapseCategories(array((int) $_REQUEST['c']), $_REQUEST['sa'], array(we::$id));
 	}
 
 	// And go back to the board list.

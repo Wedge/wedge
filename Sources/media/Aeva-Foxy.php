@@ -97,11 +97,11 @@ function aeva_foxy_playlist()
 			INNER JOIN {db_prefix}media_playlists AS pl ON (pl.id_playlist = p.id_playlist)
 			INNER JOIN {db_prefix}media_items AS m ON (p.id_media = m.id_media)
 			INNER JOIN {db_prefix}media_albums AS a ON (m.album_id = a.id_album)
-			WHERE (pl.id_member = {int:me} ' . ($user_info['is_admin'] ? 'OR pl.id_member = 0' : 'AND pl.id_member != 0') . ')
+			WHERE (pl.id_member = {int:me} ' . (we::$is_admin ? 'OR pl.id_member = 0' : 'AND pl.id_member != 0') . ')
 			AND p.id_playlist = {int:playlist}
 			ORDER BY p.play_order ASC',
 			array(
-				'me' => $user_info['id'],
+				'me' => we::$id,
 				'playlist' => $id,
 			)
 		);
@@ -257,7 +257,7 @@ function aeva_foxy_playlist()
 			$id = wesql::insert('',
 				'{db_prefix}media_playlists',
 				array('name' => 'string', 'description' => 'string', 'id_member' => 'int'),
-				array($name, $desc, $user_info['id'])
+				array($name, $desc, we::$id)
 			);
 		redirectexit($scripturl . '?action=media;sa=playlists' . ($id ? ';done=' . $id : ''));
 	}
@@ -280,10 +280,10 @@ function aeva_foxy_playlists()
 		LEFT JOIN {db_prefix}media_playlist_data AS pld ON (pld.id_playlist = pl.id_playlist)
 		LEFT JOIN {db_prefix}media_items AS i ON (i.id_media = pld.id_media)
 		LEFT JOIN {db_prefix}media_albums AS a ON (i.album_id = a.id_album)
-		WHERE pl.id_member = {int:me} ' . ($user_info['is_admin'] ? 'OR pl.id_member = 0' : 'AND pl.id_member != 0') . '
+		WHERE pl.id_member = {int:me} ' . (we::$is_admin ? 'OR pl.id_member = 0' : 'AND pl.id_member != 0') . '
 		GROUP BY pl.id_playlist
 		ORDER BY pl.id_playlist ASC',
-		array('me' => $user_info['id'])
+		array('me' => we::$id)
 	);
 
 	$my_playlists = array();
@@ -440,10 +440,10 @@ function aeva_foxy_my_playlists()
 		LEFT JOIN {db_prefix}media_playlist_data AS pld ON (pld.id_playlist = pl.id_playlist)
 		LEFT JOIN {db_prefix}media_items AS i ON (i.id_media = pld.id_media)
 		LEFT JOIN {db_prefix}media_albums AS a ON (i.album_id = a.id_album)
-		WHERE pl.id_member = {int:me} ' . ($user_info['is_admin'] ? 'OR pl.id_member = 0' : 'AND pl.id_member != 0') . '
+		WHERE pl.id_member = {int:me} ' . (we::$is_admin ? 'OR pl.id_member = 0' : 'AND pl.id_member != 0') . '
 		GROUP BY pl.id_playlist
 		ORDER BY pl.id_playlist ASC',
-		array('me' => $user_info['id'])
+		array('me' => we::$id)
 	);
 
 	$my_playlists = array();
@@ -491,7 +491,7 @@ function aeva_foxy_item_page_playlists($item)
 			fatal_lang_error('media_edit_denied');
 
 		// Make sure this playlist belongs to self...
-		if (!$user_info['is_admin'])
+		if (!we::$is_admin)
 		{
 			$request = wesql::query('
 				SELECT id_member
@@ -503,7 +503,7 @@ function aeva_foxy_item_page_playlists($item)
 			wesql::free_result($request);
 		}
 
-		if ($user_info['is_admin'] || $owner == $user_info['id'])
+		if (we::$is_admin || $owner == we::$id)
 			foreach ($items as $it)
 				wesql::insert('ignore',
 					'{db_prefix}media_playlist_data',
@@ -655,7 +655,7 @@ function aeva_foxy_create_topic($id_album, $album_name, $board, $lock = false, $
 		'mark_as_read' => $mark_as_read,
 	);
 	$posterOptions = array(
-		'id' => $user_info['id'],
+		'id' => we::$id,
 		'update_post_count' => true,
 	);
 
@@ -709,7 +709,7 @@ function aeva_foxy_notify_items($album, $items)
 		'board' => $linked_board,
 	);
 	$posterOptions = array(
-		'id' => $user_info['id'],
+		'id' => we::$id,
 		'update_post_count' => true,
 	);
 
@@ -882,7 +882,7 @@ function aeva_foxy_feed()
 	$cachekey = md5(serialize($cachekey) . (!empty($query_this) ? $query_this : ''));
 
 	// Get the associative array representing the xml.
-	if ($cache_it = $user_info['is_guest'] && !empty($settings['cache_enable']) && $settings['cache_enable'] >= 3)
+	if ($cache_it = we::$is_guest && !empty($settings['cache_enable']) && $settings['cache_enable'] >= 3)
 		$xml = cache_get_data('aevafeed:' . $cachekey, 240);
 	if (empty($xml))
 	{
@@ -1323,7 +1323,7 @@ function aeva_foxy_album($id, $type, $wid = 0, $details = '', $sort = 'm.id_medi
 			. ($has_type['video'] ? $has_type['video'] . ' ' . $txt['media_foxy_stats_video' . ($has_type['video'] > 1 ? 's' : '')] . ($has_type['image'] ? ' ' . $txt['media_and'] . ' ' : ', ') : '')
 			. ($has_type['image'] ? $has_type['image'] . ' ' . $txt['media_foxy_stats_image' . ($has_type['image'] > 1 ? 's' : '')] . ', ' : '');
 		$box = substr($box, 0, -2) . ' ' . sprintf($txt['media_from_album' . (count($has_album) > 1 ? 's' : '')], count($has_album))
-			. ($type == 'playl' && ($user_info['is_admin'] || ($playlist_owner_id == $user_info['id'] && aeva_allowedTo('add_playlists'))) ? ' - <a href="' . $scripturl . '?action=media;sa=playlists;in=' . $id . ';edit;' . $context['session_query'] . '"><img src="' . $theme['images_aeva'] . '/camera_edit.png" class="bottom"> ' . $txt['media_edit_this_item'] . '</a>' : '') . '</div>';
+			. ($type == 'playl' && (we::$is_admin || ($playlist_owner_id == we::$id && aeva_allowedTo('add_playlists'))) ? ' - <a href="' . $scripturl . '?action=media;sa=playlists;in=' . $id . ';edit;' . $context['session_query'] . '"><img src="' . $theme['images_aeva'] . '/camera_edit.png" class="bottom"> ' . $txt['media_edit_this_item'] . '</a>' : '') . '</div>';
 
 		$box .= !empty($playlist_description) && in_array('description', $details) ? parse_bbc($playlist_description) : '';
 
@@ -1384,7 +1384,7 @@ function aeva_foxy_fill_player(&$playlist, $type = 'audio', &$details, $play = 0
 		$tx .= ' (' . floor($i['duration'] / 60) . ':' . ($i['duration'] % 60 < 10 ? '0' : '') . ($i['duration'] % 60) . ')';
 
 		$tx .= '<div style="float: right; text-align: right">';
-		if (aeva_allowedTo('moderate') || $user_info['id'] == $i['owner'])
+		if (aeva_allowedTo('moderate') || we::$id == $i['owner'])
 			$tx .= '<a href="' . $scripturl . '?action=media;sa=post;in=' . $i['id'] . '" onclick="lnFlag=1;">' . $txt['modify'] . '</a><div class="foxy_small">';
 		$tx .= (in_array('votes', $details) || in_array('none', $details) ? aeva_showStars($i['voters'] > 0 ? $i['rating'] / $i['voters'] : 0)
 			. ($i['voters'] > 0 ? '<br>' . ($i['voters'] == 0 ? 0 : sprintf('%.2f', $i['rating'] / $i['voters'])) . '/5 (' . $i['voters']

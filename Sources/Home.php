@@ -65,14 +65,14 @@ function Home()
 			LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
 			LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
 			WHERE h.id_member = {int:me}
-				OR h.privacy = {int:everyone}' . ($user_info['is_guest'] ? '' : '
+				OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
 				OR h.privacy = {int:members}
 				OR FIND_IN_SET(' . implode(', h.privacy)
 				OR FIND_IN_SET(', $user_info['groups']) . ', h.privacy)') . '
 			ORDER BY h.id_thought DESC
 			LIMIT {int:per_page}',
 			array(
-				'me' => $user_info['id'],
+				'me' => we::$id,
 				'everyone' => -3,
 				'members' => 0,
 				'per_page' => 10,
@@ -98,8 +98,8 @@ function Home()
 
 			$thought =& $thoughts[$row['id_thought']];
 			$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"'
-				. (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
-				. ($user_info['id'] == $row['id_member'] || $user_info['is_admin'] ? ' data-self' : '')
+				. (!we::$is_guest ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
+				. (we::$id == $row['id_member'] || we::$is_admin ? ' data-self' : '')
 				. ($is_touch ? ' onclick="return true;"' : '') . '><span>' . $thought['text'] . '</span></span>';
 
 			if (!empty($row['id_parent_owner']))

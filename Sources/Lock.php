@@ -53,7 +53,7 @@ function Lock()
 
 	// Can you lock topics here, mister?
 	$user_lock = !allowedTo('lock_any');
-	if ($user_lock && $starter == $user_info['id'])
+	if ($user_lock && $starter == we::$id)
 		isAllowedTo('lock_own');
 	else
 		isAllowedTo('lock_any');

@@ -889,9 +889,9 @@ function MergePosts($error_report = true)
 			return;
 	}
 
-	if (((!empty($msn['0']['id_member']) && !empty($msn['1']['id_member'])) || $user_info['id'] == 1) && $msn['0']['id_board'] == $msn['1']['id_board'])
+	if (((!empty($msn['0']['id_member']) && !empty($msn['1']['id_member'])) || we::$id == 1) && $msn['0']['id_board'] == $msn['1']['id_board'])
 	{
-		if ($msn['0']['common_id'] == $msn['1']['common_id'] && (allowedTo('modify_any') || (allowedTo('modify_own') && $msn['0']['id_member'] == $user_info['id'])))
+		if ($msn['0']['common_id'] == $msn['1']['common_id'] && (allowedTo('modify_any') || (allowedTo('modify_own') && $msn['0']['id_member'] == we::$id)))
 		{
 			// Let's merge it and use a separator
 			if (!empty($settings['merge_post_custom_separator']))

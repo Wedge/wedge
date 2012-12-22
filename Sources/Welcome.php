@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 // Welcome to the show.
 function Welcome()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings, $language, $user_info;
+	global $context, $theme, $options, $txt, $scripturl, $settings, $language;
 
 	// Load the 'Welcome' template.
 	loadTemplate('Welcome');
@@ -73,7 +73,7 @@ function Welcome()
 	);
 	$context += getMembersOnlineStats($membersOnlineOptions);
 
-	$context['show_buddies'] = !empty($user_info['buddies']);
+	$context['show_buddies'] = !empty(we::$user['buddies']);
 
 	// Are we showing all membergroups on the board index?
 	if (!empty($theme['show_group_key']))
@@ -120,11 +120,11 @@ function Welcome()
 		LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
 		LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
 		WHERE h.id_member = {int:me}
-			OR (h.privacy' . ($user_info['is_guest'] ? ' IN (0, 1))' : ' IN (0, 1, 2))
+			OR (h.privacy' . (we::$is_guest ? ' IN (0, 1))' : ' IN (0, 1, 2))
 			OR (h.privacy = 3 AND (FIND_IN_SET({int:me}, m.buddy_list) != 0))') . '
 		ORDER BY h.id_thought DESC LIMIT ' . ($page * 30) . ', ' . $limit,
 		array(
-			'me' => $user_info['id']
+			'me' => we::$id
 		)
 	);
 	$is_touch = we::is('android,ios');
@@ -146,7 +146,7 @@ function Welcome()
 		);
 
 		$thought =& $thoughts[$row['id_thought']];
-		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"' . (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '') . ($is_touch ? ' onclick="return true;"' : '') . '><span>' . $thought['text'] . '</span></span>';
+		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"' . (!we::$is_guest ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '') . ($is_touch ? ' onclick="return true;"' : '') . '><span>' . $thought['text'] . '</span></span>';
 
 		if (!empty($row['id_parent_owner']))
 		{

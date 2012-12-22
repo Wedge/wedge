@@ -148,7 +148,7 @@ function aeva_modCP_submissions()
 // Approves an unapproved item
 function aeva_modCP_submissions_approve()
 {
-	global $user_info, $context, $galurl;
+	global $context, $galurl;
 
 	$items = isset($_POST['items']) && isset($_POST['submit_aeva']) && is_array($_POST['items']) ? $_POST['items'] : array((int) @$_REQUEST['in']);
 	$type = $_REQUEST['type'];
@@ -196,8 +196,8 @@ function aeva_modCP_submissions_approve()
 					'name' => $name,
 				),
 				'action_by' => array(
-					'id' => $user_info['id'],
-					'name' => $user_info['name'],
+					'id' => we::$id,
+					'name' => we::$user['name'],
 				),
 				'extra_info' => array(
 					'val8' => 'album',
@@ -259,8 +259,8 @@ function aeva_modCP_submissions_approve()
 					'name' => $name,
 				),
 				'action_by' => array(
-					'id' => $user_info['id'],
-					'name' => $user_info['name'],
+					'id' => we::$id,
+					'name' => we::$user['name'],
 				),
 				'extra_info' => array(
 					'val8' => 'item',
@@ -323,8 +323,8 @@ function aeva_modCP_submissions_approve()
 					'name' => $name,
 				),
 				'action_by' => array(
-					'id' => $user_info['id'],
-					'name' => $user_info['name'],
+					'id' => we::$id,
+					'name' => we::$user['name'],
 				),
 				'extra_info' => array(
 					'val8' => 'comment',
@@ -352,7 +352,7 @@ function aeva_modCP_submissions_approve()
 // Basically deletes a item or a comment.
 function aeva_modCP_submissions_delete()
 {
-	global $user_info, $context, $galurl;
+	global $context, $galurl;
 
 	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : '';
 
@@ -389,8 +389,8 @@ function aeva_modCP_submissions_delete()
 				'name' => $row['title'],
 			),
 			'action_by' => array(
-				'id' => $user_info['id'],
-				'name' => $user_info['name'],
+				'id' => we::$id,
+				'name' => we::$user['name'],
 			),
 			'extra_info' => array(
 				'val8' => $type == 'albums' ? 'album' : ($type == 'coms' ? 'comment' : 'item'),
@@ -498,8 +498,6 @@ function aeva_modCP_reports()
 // Deletes a report
 function aeva_modCP_reports_delete()
 {
-	global $user_info;
-
 	// Fetch the report
 	$request = wesql::query('
 		SELECT id, val4, val5, type
@@ -532,8 +530,8 @@ function aeva_modCP_reports_delete()
 			'name' => $report['val5'],
 		),
 		'action_by' => array(
-			'id' => $user_info['id'],
-			'name' => $user_info['name'],
+			'id' => we::$id,
+			'name' => we::$user['name'],
 		),
 		'extra_info' => array(
 			'val8' => $report['type'],
@@ -545,8 +543,6 @@ function aeva_modCP_reports_delete()
 // Deletes a reported item
 function aeva_modCP_reports_deleteItem()
 {
-	global $user_info;
-
 	// Get the item which we need to delete
 	$request = wesql::query('
 		SELECT id, val4, val5, type
@@ -575,8 +571,8 @@ function aeva_modCP_reports_deleteItem()
 			'name' => $report['val5'],
 		),
 		'action_by' => array(
-			'id' => $user_info['id'],
-			'name' => $user_info['name'],
+			'id' => we::$id,
+			'name' => we::$user['name'],
 		),
 		'extra_info' => array(
 			'val8' => $report['type'],

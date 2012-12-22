@@ -523,7 +523,7 @@ function rebuildModCache()
 			FROM {db_prefix}group_moderators
 			WHERE id_member = {int:current_member}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		$groups = array();
@@ -552,14 +552,14 @@ function rebuildModCache()
 
 	// What boards are they the moderator of?
 	$boards_mod = array();
-	if (!$user_info['is_guest'])
+	if (!we::$is_guest)
 	{
 		$request = wesql::query('
 			SELECT id_board
 			FROM {db_prefix}moderators
 			WHERE id_member = {int:current_member}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
@@ -572,7 +572,7 @@ function rebuildModCache()
 	$_SESSION['mc'] = array(
 		'time' => time(),
 		// This looks a bit funny but protects against the login redirect.
-		'id' => $user_info['id'] && $user_info['name'] ? $user_info['id'] : 0,
+		'id' => we::$id && $user_info['name'] ? we::$id : 0,
 		'gq' => $group_query,
 		'bq' => $board_query,
 		'ap' => boardsAllowedTo('approve_posts'),

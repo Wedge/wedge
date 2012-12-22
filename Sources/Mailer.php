@@ -155,10 +155,10 @@ function SendTopic()
 // Allow a user to send an email.
 function CustomEmail()
 {
-	global $context, $settings, $user_info, $txt, $scripturl;
+	global $context, $settings, $txt, $scripturl;
 
 	// Can the user even see this information?
-	if ($user_info['is_guest'])
+	if (we::$is_guest)
 		fatal_lang_error('no_access', false);
 
 	// Are we sending to a user?

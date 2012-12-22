@@ -202,7 +202,7 @@ function template_check_username()
 
 function template_thought()
 {
-	global $context, $user_info, $theme, $scripturl;
+	global $context, $theme, $scripturl;
 
 	$th =& $context['return_thought'];
 	$thought = $th['thought'];
@@ -227,8 +227,8 @@ function template_thought()
 			. '<a href="<URL>?action=profile;u=' . $uid . '">' . $th['user_name'] . '</a> &raquo;'
 			. ' @<a href="<URL>?action=profile;u=' . $th['parent_id'] . '">' . $th['parent_name'] . '</a>&gt;'
 			. ' <span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $th['privacy'] . '"'
-			. (!$user_info['is_guest'] ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
-			. ($user_info['id'] == $uid || $user_info['is_admin'] ? ' data-self' : '')
+			. (!we::$is_guest ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
+			. (we::$id == $uid || we::$is_admin ? ' data-self' : '')
 			. (we::is('android,ios') ? ' onclick="return true;"' : '') . '><span>' . $thought . '</span></span></div>';
 	}
 

@@ -72,7 +72,7 @@ function template_thoughts_after()
 
 function template_thoughts($limit = 18)
 {
-	global $txt, $user_info, $context;
+	global $txt, $context;
 
 	$is_thought_page = isset($_GET['s']) && $_GET['s'] === 'thoughts';
 
@@ -91,7 +91,7 @@ function template_thoughts($limit = 18)
 		echo '
 			<tr><td colspan="2" class="titlebg" style="padding: 4px">', $txt['pages'], ': ', $context['page_index'], '</td></tr>';
 
-	if (!$user_info['is_guest'])
+	if (!we::$is_guest)
 		echo '
 			<tr id="new_thought">
 				<td class="bc">%date%</td><td class="windowbg thought">%uname% &raquo; %text%</td>

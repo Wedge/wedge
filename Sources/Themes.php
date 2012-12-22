@@ -580,7 +580,7 @@ function PickTheme()
 		// Save for this user.
 		if ($u === null || !allowedTo('admin_forum'))
 		{
-			wedge_update_skin($user_info['id'], $id, $css);
+			wedge_update_skin(we::$id, $id, $css);
 			// Redirect to the last page visited, if available -- useful for a skin selector :)
 			redirectexit(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'action=skin');
 		}
@@ -595,7 +595,7 @@ function PickTheme()
 		elseif ($u == '-1')
 		{
 			// Let's assume the admin is in mobile mode. Meaning they want to change the default mobile skin...
-			if (!empty($user_info['is_mobile']))
+			if (we::is('mobile'))
 				updateSettings(array(
 					'theme_guests_mobile' => $id,
 					'theme_skin_guests_mobile' => $css
@@ -633,8 +633,8 @@ function PickTheme()
 	elseif ($u == '-1')
 	{
 		$context['specify_member'] = ';u=-1';
-		$context['current_theme'] = !empty($user_info['is_mobile']) ? $settings['theme_guests_mobile'] : $settings['theme_guests'];
-		$context['current_skin'] = !empty($user_info['is_mobile']) ? $settings['theme_skin_guests_mobile'] : $settings['theme_skin_guests'];
+		$context['current_theme'] = we::is('mobile') ? $settings['theme_guests_mobile'] : $settings['theme_guests'];
+		$context['current_skin'] = we::is('mobile') ? $settings['theme_skin_guests_mobile'] : $settings['theme_skin_guests'];
 	}
 	// Someone else :P
 	else
@@ -642,7 +642,7 @@ function PickTheme()
 		$context['specify_member'] = ';u=' . (int) $u;
 
 		$request = wesql::query('
-			SELECT ' . (!empty($user_info['is_mobile']) ? 'id_theme_mobile, skin_mobile' : 'id_theme, skin') . '
+			SELECT ' . (we::is('mobile') ? 'id_theme_mobile, skin_mobile' : 'id_theme, skin') . '
 			FROM {db_prefix}members
 			WHERE id_member = {int:current_member}
 			LIMIT 1',
@@ -1545,7 +1545,7 @@ function wedge_update_skin($mem, $id_theme, $skin)
 {
 	global $user_info;
 
-	if (!empty($user_info['is_mobile']))
+	if (we::is('mobile'))
 		updateMemberData($mem, array(
 			'id_theme_mobile' => $id_theme,
 			'skin_mobile' => $skin

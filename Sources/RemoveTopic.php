@@ -59,13 +59,13 @@ function RemoveTopic2()
 	list ($starter, $subject, $approved, $b_type) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
-	if ($starter == $user_info['id'] && !allowedTo('remove_any') && ($b_type == 'forum' || $user_info['is_mod']))
+	if ($starter == we::$id && !allowedTo('remove_any') && ($b_type == 'forum' || we::is('mod')))
 		isAllowedTo('remove_own');
 	else
 		isAllowedTo('remove_any');
 
 	// Can they see the topic?
-	if ($settings['postmod_active'] && !$approved && $starter != $user_info['id'])
+	if ($settings['postmod_active'] && !$approved && $starter != we::$id)
 		isAllowedTo('approve_posts');
 
 	// Notify people that this topic has been removed.
@@ -74,7 +74,7 @@ function RemoveTopic2()
 	removeTopics($topic);
 
 	// Note, only log topic ID in native form if it's not gone forever.
-	if (allowedTo('remove_any') || (allowedTo('remove_own') && $starter == $user_info['id']))
+	if (allowedTo('remove_any') || (allowedTo('remove_own') && $starter == we::$id))
 		logAction('remove', array((empty($settings['recycle_enable']) || $settings['recycle_board'] != $board ? 'topic' : 'old_topic_id') => $topic, 'subject' => $subject, 'member' => $starter, 'board' => $board));
 
 	redirectexit('board=' . $board . '.0');
@@ -108,22 +108,22 @@ function DeleteMessage()
 	wesql::free_result($request);
 
 	// Verify they can see this!
-	if ($settings['postmod_active'] && !$approved && !empty($poster) && $poster != $user_info['id'])
+	if ($settings['postmod_active'] && !$approved && !empty($poster) && $poster != we::$id)
 		isAllowedTo('approve_posts');
 
-	if ($poster == $user_info['id'])
+	if ($poster == we::$id)
 	{
 		if (!allowedTo('delete_own'))
 		{
-			if ($starter == $user_info['id'] && !allowedTo('delete_any'))
+			if ($starter == we::$id && !allowedTo('delete_any'))
 				isAllowedTo('delete_replies');
 			elseif (!allowedTo('delete_any'))
 				isAllowedTo('delete_own');
 		}
-		elseif (!allowedTo('delete_any') && ($starter != $user_info['id'] || !allowedTo('delete_replies')) && !empty($settings['edit_disable_time']) && $post_time + $settings['edit_disable_time'] * 60 < time())
+		elseif (!allowedTo('delete_any') && ($starter != we::$id || !allowedTo('delete_replies')) && !empty($settings['edit_disable_time']) && $post_time + $settings['edit_disable_time'] * 60 < time())
 			fatal_lang_error('modify_post_time_passed', false);
 	}
-	elseif ($starter == $user_info['id'] && !allowedTo('delete_any'))
+	elseif ($starter == we::$id && !allowedTo('delete_any'))
 		isAllowedTo('delete_replies');
 	else
 		isAllowedTo('delete_any');
@@ -131,7 +131,7 @@ function DeleteMessage()
 	// If the full topic was removed go back to the board.
 	$full_topic = removeMessage($_REQUEST['msg']);
 
-	if (allowedTo('delete_any') && (!allowedTo('delete_own') || $poster != $user_info['id']))
+	if (allowedTo('delete_any') && (!allowedTo('delete_own') || $poster != we::$id))
 		logAction('delete', array('topic' => $topic, 'subject' => $subject, 'member' => $poster, 'board' => $board));
 
 	// We want to redirect back to recent action.
@@ -587,11 +587,11 @@ function removeMessage($message, $decreasePostCount = true)
 			$delete_replies = boardsAllowedTo('delete_replies');
 			$delete_replies = in_array(0, $delete_replies) || in_array($row['id_board'], $delete_replies);
 
-			if ($row['id_member'] == $user_info['id'])
+			if ($row['id_member'] == we::$id)
 			{
 				if (!$delete_own)
 				{
-					if ($row['id_member_poster'] == $user_info['id'])
+					if ($row['id_member_poster'] == we::$id)
 					{
 						if (!$delete_replies)
 							fatal_lang_error('cannot_delete_replies', 'permission');
@@ -599,10 +599,10 @@ function removeMessage($message, $decreasePostCount = true)
 					else
 						fatal_lang_error('cannot_delete_own', 'permission');
 				}
-				elseif (($row['id_member_poster'] != $user_info['id'] || !$delete_replies) && !empty($settings['edit_disable_time']) && $row['poster_time'] + $settings['edit_disable_time'] * 60 < time())
+				elseif (($row['id_member_poster'] != we::$id || !$delete_replies) && !empty($settings['edit_disable_time']) && $row['poster_time'] + $settings['edit_disable_time'] * 60 < time())
 					fatal_lang_error('modify_post_time_passed', false);
 			}
-			elseif ($row['id_member_poster'] == $user_info['id'])
+			elseif ($row['id_member_poster'] == we::$id)
 			{
 				if (!$delete_replies)
 					fatal_lang_error('cannot_delete_replies', 'permission');
@@ -612,7 +612,7 @@ function removeMessage($message, $decreasePostCount = true)
 		}
 
 		// Can't delete an unapproved message, if you can't see it!
-		if ($settings['postmod_active'] && !$row['approved'] && $row['id_member'] != $user_info['id'] && !(in_array(0, $delete_any) || in_array($row['id_board'], $delete_any)))
+		if ($settings['postmod_active'] && !$row['approved'] && $row['id_member'] != we::$id && !(in_array(0, $delete_any) || in_array($row['id_board'], $delete_any)))
 		{
 			$approve_posts = boardsAllowedTo('approve_posts');
 			if (!in_array(0, $approve_posts) && !in_array($row['id_board'], $approve_posts))
@@ -622,24 +622,24 @@ function removeMessage($message, $decreasePostCount = true)
 	else
 	{
 		// Check permissions to delete this message.
-		if ($row['id_member'] == $user_info['id'])
+		if ($row['id_member'] == we::$id)
 		{
 			if (!allowedTo('delete_own'))
 			{
-				if ($row['id_member_poster'] == $user_info['id'] && !allowedTo('delete_any'))
+				if ($row['id_member_poster'] == we::$id && !allowedTo('delete_any'))
 					isAllowedTo('delete_replies');
 				elseif (!allowedTo('delete_any'))
 					isAllowedTo('delete_own');
 			}
-			elseif (!allowedTo('delete_any') && ($row['id_member_poster'] != $user_info['id'] || !allowedTo('delete_replies')) && !empty($settings['edit_disable_time']) && $row['poster_time'] + $settings['edit_disable_time'] * 60 < time())
+			elseif (!allowedTo('delete_any') && ($row['id_member_poster'] != we::$id || !allowedTo('delete_replies')) && !empty($settings['edit_disable_time']) && $row['poster_time'] + $settings['edit_disable_time'] * 60 < time())
 				fatal_lang_error('modify_post_time_passed', false);
 		}
-		elseif ($row['id_member_poster'] == $user_info['id'] && !allowedTo('delete_any'))
+		elseif ($row['id_member_poster'] == we::$id && !allowedTo('delete_any'))
 			isAllowedTo('delete_replies');
 		else
 			isAllowedTo('delete_any');
 
-		if ($settings['postmod_active'] && !$row['approved'] && $row['id_member'] != $user_info['id'] && !allowedTo('delete_own'))
+		if ($settings['postmod_active'] && !$row['approved'] && $row['id_member'] != we::$id && !allowedTo('delete_own'))
 			isAllowedTo('approve_posts');
 	}
 
@@ -673,7 +673,7 @@ function removeMessage($message, $decreasePostCount = true)
 				$remove_own = in_array(0, $remove_own) || in_array($row['id_board'], $remove_own);
 			}
 
-			if ($row['id_member'] != $user_info['id'] && !$remove_any)
+			if ($row['id_member'] != we::$id && !$remove_any)
 				fatal_lang_error('cannot_remove_any', 'permission');
 			elseif (!$remove_any && !$remove_own)
 				fatal_lang_error('cannot_remove_own', 'permission');
@@ -681,7 +681,7 @@ function removeMessage($message, $decreasePostCount = true)
 		else
 		{
 			// Check permissions to delete a whole topic.
-			if ($row['id_member'] != $user_info['id'])
+			if ($row['id_member'] != we::$id)
 				isAllowedTo('remove_any');
 			elseif (!allowedTo('remove_any'))
 				isAllowedTo('remove_own');
@@ -764,7 +764,7 @@ function removeMessage($message, $decreasePostCount = true)
 				LEFT JOIN {db_prefix}log_boards AS lb ON (lb.id_board = b.id_board AND lb.id_member = {int:current_member})
 			WHERE b.id_board = {int:recycle_board}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'recycle_board' => $settings['recycle_board'],
 			)
 		);
@@ -840,20 +840,20 @@ function removeMessage($message, $decreasePostCount = true)
 			);
 
 			// Mark recycled topic as read.
-			if (!$user_info['is_guest'])
+			if (!we::$is_guest)
 				wesql::insert('replace',
 					'{db_prefix}log_topics',
 					array('id_topic' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($topicID, $user_info['id'], $settings['maxMsgID']),
+					array($topicID, we::$id, $settings['maxMsgID']),
 					array('id_topic', 'id_member')
 				);
 
 			// Mark recycle board as seen, if it was marked as seen before.
-			if (!empty($isRead) && !$user_info['is_guest'])
+			if (!empty($isRead) && !we::$is_guest)
 				wesql::insert('replace',
 					'{db_prefix}log_boards',
 					array('id_board' => 'int', 'id_member' => 'int', 'id_msg' => 'int'),
-					array($settings['recycle_board'], $user_info['id'], $settings['maxMsgID']),
+					array($settings['recycle_board'], we::$id, $settings['maxMsgID']),
 					array('id_board', 'id_member')
 				);
 

@@ -105,7 +105,7 @@ function Thought()
 	global $context, $user_info;
 
 	// !! We need $user_info if we're going to allow the editing of older messages... Don't forget to check for sessions?
-	if ($user_info['is_guest'])
+	if (we::$is_guest)
 		exit;
 
 	// !! Should we use censorText at store time, or display time...? $context['user'] (Load.php:1696) begs to differ.
@@ -165,7 +165,7 @@ function Thought()
 			AND id_member = {int:id_member}
 			LIMIT 1'),
 			array(
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 				'original_id' => $_GET['in'],
 			)
 		);
@@ -191,7 +191,7 @@ function Thought()
 			WHERE t.id_thought = {int:original_id}' . (allowedTo('moderate_forum') ? '' : '
 			AND t.id_member = {int:id_member}'),
 			array(
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 				'original_id' => $oid,
 			)
 		);
@@ -250,10 +250,10 @@ function Thought()
 				if (!empty($id_thought))
 				{
 					// A complete hack, not ashamed of it :)
-					if ($member !== $user_info['id'])
+					if ($member !== we::$id)
 					{
 						$real_user = $user_info;
-						$user_info['id'] = $member;
+						we::$id = $member;
 						$user_info['data'] = $data;
 					}
 					updateMyData(array(
@@ -317,7 +317,7 @@ function Thought()
 			INSERT IGNORE INTO {db_prefix}thoughts (id_parent, id_member, id_master, privacy, updated, thought)
 			VALUES ({int:id_parent}, {int:id_member}, {int:id_master}, {string:privacy}, {int:updated}, {string:thought})', array(
 				'id_parent' => $pid,
-				'id_member' => $user_info['id'],
+				'id_member' => we::$id,
 				'id_master' => $mid,
 				'privacy' => $privacy,
 				'updated' => time(),
@@ -326,7 +326,7 @@ function Thought()
 		);
 		$last_thought = wesql::insert_id();
 
-		$user_id = $pid ? (empty($last_member) ? $user_info['id'] : $last_member) : 0;
+		$user_id = $pid ? (empty($last_member) ? we::$id : $last_member) : 0;
 		$user_name = empty($last_name) ? $user_info['name'] : $last_name;
 
 		call_hook('thought_add', array(&$privacy, &$text, &$pid, &$mid, &$last_thought, &$user_id, &$user_name));
@@ -356,7 +356,7 @@ function Thought()
 		// for performance reasons. Personal texts are likely to change, so BBC changes
 		// shouldn't have a major influence on these fields. Correct me if I'm wrong.
 		if ($privacy == -3)
-			updateMemberData($user_info['id'], array('personal_text' => parse_bbc_inline($text)));
+			updateMemberData(we::$id, array('personal_text' => parse_bbc_inline($text)));
 	}
 }
 

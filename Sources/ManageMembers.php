@@ -174,7 +174,7 @@ function ViewMemberlist()
 		{
 			$_POST['delete'][$key] = (int) $value;
 			// Don't delete yourself, idiot.
-			if ($value == $user_info['id'])
+			if ($value == we::$id)
 				unset($_POST['delete'][$key]);
 		}
 
@@ -1263,7 +1263,7 @@ function AdminApprove()
 		foreach ($member_info as $member)
 		{
 			$log_inserts[] = array(
-				time(), 3, $user_info['id'], get_ip_identifier($user_info['ip']), $log_action,
+				time(), 3, we::$id, get_ip_identifier($user_info['ip']), $log_action,
 				0, 0, 0, serialize(array('member' => $member['id'])),
 			);
 		}

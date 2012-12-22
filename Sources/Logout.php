@@ -42,7 +42,7 @@ function Logout($internal = false, $redirect = true)
 	unset($_SESSION['first_login']);
 
 	// Just ensure they aren't a guest!
-	if (!$user_info['is_guest'])
+	if (!we::$is_guest)
 	{
 		// Pass the logout information to hooks.
 		call_hook('logout', array($user_settings['member_name']));
@@ -52,7 +52,7 @@ function Logout($internal = false, $redirect = true)
 			DELETE FROM {db_prefix}log_online
 			WHERE id_member = {int:current_member}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 	}

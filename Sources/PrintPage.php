@@ -72,12 +72,12 @@ function PrintPage()
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . ($settings['postmod_active'] && !allowedTo('approve_posts') ? '
-			AND (m.approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR m.id_member = {int:current_member}') . ')' : '') . '
+			AND (m.approved = {int:is_approved}' . (we::$is_guest ? '' : ' OR m.id_member = {int:current_member}') . ')' : '') . '
 		ORDER BY m.id_msg',
 		array(
 			'current_topic' => $topic,
 			'is_approved' => 1,
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 		)
 	);
 	$context['posts'] = array();

@@ -75,8 +75,8 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	$line = ($line == null) ? 0 : (int) $line;
 
 	// Just in case there's no id_member or IP set yet.
-	if (empty($user_info['id']))
-		$user_info['id'] = 0;
+	if (empty(we::$id))
+		we::$id = 0;
 	if (empty($user_info['ip']))
 		$user_info['ip'] = '';
 	if (empty($user_info['url']))
@@ -140,7 +140,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		$file = '';
 
 	// Don't log the same error countless times, as we can get in a cycle of depression...
-	$error_info = array($user_info['id'], time(), get_ip_identifier($user_info['ip']), $query_string, $error_message, $error_type, $file, $line);
+	$error_info = array(we::$id, time(), get_ip_identifier($user_info['ip']), $query_string, $error_message, $error_type, $file, $line);
 	if (empty($last_error) || $last_error != $error_info)
 	{
 		// Insert the error into the database.
@@ -489,7 +489,7 @@ function updateOnlineWithError($error, $is_lang, $sprintf = array())
 	if (empty($settings['who_enabled']))
 		return;
 
-	$session_id = !isset($user_info['is_guest']) || $user_info['is_guest'] ? 'ip' . $user_info['ip'] : session_id();
+	$session_id = class_exists('we') && we::$is_guest ? 'ip' . we::$user['ip'] : session_id();
 
 	// First, we have to get the online log, because we need to break apart the serialized string.
 	$query = wesql::query('

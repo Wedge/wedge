@@ -381,7 +381,7 @@ function EditBoard()
 		SELECT url
 		FROM {db_prefix}boards
 		WHERE id_owner = {int:user_id}',
-		array('user_id' => (int) $user_info['id'])
+		array('user_id' => (int) we::$id)
 	);
 	$subdomains = array(0 => $_SERVER['HTTP_HOST']);
 	while ($row = wesql::fetch_row($request))

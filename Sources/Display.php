@@ -126,16 +126,16 @@ function Display()
 		SELECT
 			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll, t.id_member_started,
 			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, t.tags, ms.poster_time,
-			' . ($user_info['is_guest'] ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
+			' . (we::$is_guest ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
 			' . (!empty($settings['recycle_board']) && $settings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
 		FROM {db_prefix}topics AS t
-			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)' . ($user_info['is_guest'] ? '' : '
+			INNER JOIN {db_prefix}messages AS ms ON (ms.id_msg = t.id_first_msg)' . (we::$is_guest ? '' : '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = {int:current_topic} AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = {int:current_board} AND lmr.id_member = {int:current_member})') . '
 		WHERE t.id_topic = {int:current_topic}
 		LIMIT 1',
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'current_topic' => $topic,
 			'current_board' => $board,
 		)
@@ -156,7 +156,7 @@ function Display()
 	// If this topic has unapproved posts, we need to work out how many posts the user can see, for page indexing.
 	// We also need to discount the first post if this is a blog board.
 	$including_first = $topicinfo['approved'] && $board_info['type'] == 'board' ? 1 : 0;
-	if ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !$user_info['is_guest'] && !allowedTo('approve_posts'))
+	if ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !we::$is_guest && !allowedTo('approve_posts'))
 	{
 		$request = wesql::query('
 			SELECT COUNT(id_member) AS my_unapproved_posts
@@ -166,7 +166,7 @@ function Display()
 				AND approved = 0',
 			array(
 				'current_topic' => $topic,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 			)
 		);
 		list ($myUnapprovedPosts) = wesql::fetch_row($request);
@@ -184,7 +184,7 @@ function Display()
 		if ($_REQUEST['start'] === 'new')
 		{
 			// Guests automatically go to the last post.
-			if ($user_info['is_guest'])
+			if (we::$is_guest)
 				$_REQUEST['start'] = 'msg' . $topicinfo['id_last_msg'];
 			else
 			{
@@ -198,7 +198,7 @@ function Display()
 					LIMIT 1',
 					array(
 						'current_board' => $board,
-						'current_member' => $user_info['id'],
+						'current_member' => we::$id,
 						'current_topic' => $topic,
 					)
 				);
@@ -226,9 +226,9 @@ function Display()
 					FROM {db_prefix}messages
 					WHERE id_msg < {int:virtual_msg}
 						AND id_topic = {int:current_topic}' . ($settings['postmod_active'] && $topicinfo['unapproved_posts'] && !allowedTo('approve_posts') ? '
-						AND (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
+						AND (approved = {int:is_approved}' . (we::$is_guest ? '' : ' OR id_member = {int:current_member}') . ')' : ''),
 					array(
-						'current_member' => $user_info['id'],
+						'current_member' => we::$id,
 						'current_topic' => $topic,
 						'virtual_msg' => $virtual_msg,
 						'is_approved' => 1,
@@ -330,7 +330,7 @@ function Display()
 			)',
 			array(
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'current_topic' => $topic,
 				'current_subject' => $topicinfo['subject'],
 				'current_replies' => $topicinfo['num_replies'],
@@ -364,7 +364,7 @@ function Display()
 	$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
 
 	// Do we need to show the visual verification image?
-	$context['require_verification'] = !$user_info['is_mod'] && !$user_info['is_admin'] && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || ($user_info['is_guest'] && $settings['posts_require_captcha'] == -1));
+	$context['require_verification'] = !we::is('mod') && !we::$is_admin && !empty($settings['posts_require_captcha']) && ($user_info['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])
 	{
 		loadSource('Subs-Editor');
@@ -463,7 +463,7 @@ function Display()
 	$context['is_poll'] = $topicinfo['id_poll'] > 0 && allowedTo('poll_view');
 
 	// Did this user start the topic or not?
-	$context['user']['started'] = $user_info['id'] == $topicinfo['id_member_started'] && !$user_info['is_guest'];
+	$context['user']['started'] = we::$id == $topicinfo['id_member_started'] && !we::$is_guest;
 	$context['topic_starter_id'] = $topicinfo['id_member_started'];
 
 	// Set the topic's information for the template.
@@ -530,7 +530,7 @@ function Display()
 				LEFT JOIN {db_prefix}log_polls AS lp ON (lp.id_choice = pc.id_choice AND lp.id_poll = {int:id_poll} AND lp.id_member = {int:current_member} AND lp.id_member != {int:not_guest})
 			WHERE pc.id_poll = {int:id_poll}',
 			array(
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'id_poll' => $topicinfo['id_poll'],
 				'not_guest' => 0,
 			)
@@ -550,7 +550,7 @@ function Display()
 
 		// Can we actually see who the voters were? (Assuming there were some voters)
 		// voters_visible -> 0 = admin only, 1 = admin + creator only, 2 = members, 3 = anyone
-		if ($realtotal > 0 && ($user_info['is_admin'] || ($pollinfo['voters_visible'] == 1 && $context['user']['started']) || ($pollinfo['voters_visible'] == 2 && !$user_info['is_guest']) || ($pollinfo['voters_visible'] == 3)))
+		if ($realtotal > 0 && (we::$is_admin || ($pollinfo['voters_visible'] == 1 && $context['user']['started']) || ($pollinfo['voters_visible'] == 2 && !we::$is_guest) || ($pollinfo['voters_visible'] == 3)))
 		{
 			$pollinfo['showing_voters'] = true;
 			$request = wesql::query('
@@ -570,7 +570,7 @@ function Display()
 		}
 
 		// If this is a guest we need to do our best to work out if they have voted, and what they voted for.
-		if ($user_info['is_guest'] && $pollinfo['guest_vote'] && allowedTo('poll_vote'))
+		if (we::$is_guest && $pollinfo['guest_vote'] && allowedTo('poll_vote'))
 		{
 			if (!empty($_COOKIE['guest_poll_vote']) && preg_match('~^[0-9,;]+$~', $_COOKIE['guest_poll_vote']) && strpos($_COOKIE['guest_poll_vote'], ';' . $topicinfo['id_poll'] . ',') !== false)
 			{
@@ -644,7 +644,7 @@ function Display()
 		// 4. the poll is not locked, and
 		// 5. you have the proper permissions, and
 		// 6. you haven't already voted before.
-		$context['allow_vote'] = !$context['poll']['is_expired'] && (!$user_info['is_guest'] || ($pollinfo['guest_vote'] && allowedTo('poll_vote'))) && empty($pollinfo['voting_locked']) && allowedTo('poll_vote') && !$context['poll']['has_voted'];
+		$context['allow_vote'] = !$context['poll']['is_expired'] && (!we::$is_guest || ($pollinfo['guest_vote'] && allowedTo('poll_vote'))) && empty($pollinfo['voting_locked']) && allowedTo('poll_vote') && !$context['poll']['has_voted'];
 
 		// You're allowed to view the results if:
 		// 1. you're just a super-nice-guy, or
@@ -662,7 +662,7 @@ function Display()
 		// 4. you have the proper permissions, and
 		// 5. you have already voted, and
 		// 6. the poll creator has said you can!
-		$context['allow_change_vote'] = !$context['poll']['is_expired'] && !$user_info['is_guest'] && empty($pollinfo['voting_locked']) && allowedTo('poll_vote') && $context['poll']['has_voted'] && $context['poll']['change_vote'];
+		$context['allow_change_vote'] = !$context['poll']['is_expired'] && !we::$is_guest && empty($pollinfo['voting_locked']) && allowedTo('poll_vote') && $context['poll']['has_voted'] && $context['poll']['change_vote'];
 
 		// You're allowed to return to voting options if:
 		// 1. you are (still) allowed to vote.
@@ -753,11 +753,11 @@ function Display()
 		FROM {db_prefix}messages
 		WHERE id_topic = {int:current_topic}' . (!$settings['postmod_active'] || allowedTo('approve_posts') ? '' : '
 		GROUP BY id_msg
-		HAVING (approved = {int:is_approved}' . ($user_info['is_guest'] ? '' : ' OR id_member = {int:current_member}') . ')') . '
+		HAVING (approved = {int:is_approved}' . (we::$is_guest ? '' : ' OR id_member = {int:current_member}') . ')') . '
 		ORDER BY id_msg' . ($ascending ? '' : ' DESC') . ($context['messages_per_page'] == -1 ? '' : '
 		LIMIT ' . $start . ', ' . $limit),
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'current_topic' => $topic,
 			'is_approved' => 1,
 			'blank_id_member' => 0,
@@ -819,7 +819,7 @@ function Display()
 	}
 
 	// Guests can't mark topics read or for notifications, just can't sorry.
-	if (!$user_info['is_guest'])
+	if (!we::$is_guest)
 	{
 		$mark_at_msg = max($messages);
 		if ($mark_at_msg >= $topicinfo['id_last_msg'])
@@ -832,7 +832,7 @@ function Display()
 					'id_member' => 'int', 'id_topic' => 'int', 'id_msg' => 'int',
 				),
 				array(
-					$user_info['id'], $topic, $mark_at_msg,
+					we::$id, $topic, $mark_at_msg,
 				),
 				array('id_member', 'id_topic')
 			);
@@ -847,7 +847,7 @@ function Display()
 			LIMIT 2',
 			array(
 				'current_board' => $board,
-				'current_member' => $user_info['id'],
+				'current_member' => we::$id,
 				'current_topic' => $topic,
 			)
 		);
@@ -868,7 +868,7 @@ function Display()
 						AND id_member = {int:current_member}',
 					array(
 						'current_board' => $board,
-						'current_member' => $user_info['id'],
+						'current_member' => we::$id,
 						'current_topic' => $topic,
 						'is_not_sent' => 0,
 					)
@@ -896,7 +896,7 @@ function Display()
 					AND t.id_last_msg > {int:id_msg_last_visit}'),
 				array(
 					'current_board' => $board,
-					'current_member' => $user_info['id'],
+					'current_member' => we::$id,
 					'id_msg_last_visit' => (int) $_SESSION['id_msg_last_visit'],
 				)
 			);
@@ -919,7 +919,7 @@ function Display()
 			wesql::insert('replace',
 				'{db_prefix}log_boards',
 				array('id_msg' => 'int', 'id_member' => 'int', 'id_board' => 'int'),
-				array($settings['maxMsgID'], $user_info['id'], $board),
+				array($settings['maxMsgID'], we::$id, $board),
 				array('id_member', 'id_board')
 			);
 		}
@@ -1053,7 +1053,7 @@ function Display()
 	$context['can_reply_approved'] = $context['can_reply'];
 	$context['can_reply'] |= $context['can_reply_unapproved'];
 	$context['can_quote'] = $context['can_reply'] && (empty($settings['disabledBBC']) || !in_array('quote', explode(',', $settings['disabledBBC'])));
-	$context['can_mark_unread'] = !$user_info['is_guest'];
+	$context['can_mark_unread'] = !we::$is_guest;
 	// Prevent robots from accessing the Post template
 	$context['can_reply'] &= empty($context['possibly_robot']);
 
@@ -1292,7 +1292,7 @@ function prepareDisplayContext($reset = false)
 	$message['subject'] = $message['subject'] != '' ? $message['subject'] : $txt['no_subject'];
 
 	// Are you allowed to remove at least a single reply?
-	$context['can_remove_post'] |= allowedTo('delete_own') && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 >= time()) && $message['id_member'] == $user_info['id'];
+	$context['can_remove_post'] |= allowedTo('delete_own') && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 >= time()) && $message['id_member'] == we::$id;
 
 	// If it couldn't load, or the user was a guest.... someday may be done with a guest table.
 	if (!loadMemberContext($message['id_member'], true))
@@ -1310,9 +1310,9 @@ function prepareDisplayContext($reset = false)
 	}
 	else
 	{
-		$memberContext[$message['id_member']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member'] == $user_info['id'] && allowedTo('profile_view_own'));
+		$memberContext[$message['id_member']]['can_view_profile'] = allowedTo('profile_view_any') || ($message['id_member'] == we::$id && allowedTo('profile_view_own'));
 		$memberContext[$message['id_member']]['is_topic_starter'] = $message['id_member'] == $context['topic_starter_id'];
-		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && (allowedTo('issue_warning') || (!$user_info['is_guest'] && !empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member'] == $user_info['id'])));
+		$memberContext[$message['id_member']]['can_see_warning'] = !isset($context['disabled_fields']['warning_status']) && $memberContext[$message['id_member']]['warning_status'] && (allowedTo('issue_warning') || (!we::$is_guest && !empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $message['id_member'] == we::$id)));
 	}
 
 	$memberContext[$message['id_member']]['ip'] = format_ip($message['poster_ip']);
@@ -1371,10 +1371,10 @@ function prepareDisplayContext($reset = false)
 		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
-		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))),
-		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
-		'can_see_ip' => allowedTo('view_ip_address_any') || (!empty($user_info['id']) && $message['id_member'] == $user_info['id'] && allowedTo('view_ip_address_own')),
-		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'])),
+		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))),
+		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
+		'can_see_ip' => allowedTo('view_ip_address_any') || (!empty(we::$id) && $message['id_member'] == we::$id && allowedTo('view_ip_address_own')),
+		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == we::$id)),
 		'last_post_id' => $context['last_msg_id'],
 	);
 
@@ -1411,7 +1411,7 @@ function prepareDisplayContext($reset = false)
 	}
 
 	// Is this user the message author?
-	$output['is_message_author'] = $is_me = $message['id_member'] == $user_info['id'];
+	$output['is_message_author'] = $is_me = $message['id_member'] == we::$id;
 
 	// Now, to business. Is it not a guest, and we haven't done this before?
 	if ($output['member']['id'] != 0 && !isset($context['user_menu'][$output['member']['id']]))
@@ -1717,7 +1717,7 @@ function QuickInTopicModeration()
 		list ($starter) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$allowed_all = $starter == $user_info['id'];
+		$allowed_all = $starter == we::$id;
 	}
 	else
 		$allowed_all = false;
@@ -1735,7 +1735,7 @@ function QuickInTopicModeration()
 			AND id_member = {int:current_member}' : '') . '
 		LIMIT ' . count($messages),
 		array(
-			'current_member' => $user_info['id'],
+			'current_member' => we::$id,
 			'current_topic' => $topic,
 			'message_list' => $messages,
 		)
@@ -1776,7 +1776,7 @@ function QuickInTopicModeration()
 		removeMessage($message);
 
 		// Log this moderation action ;).
-		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != $user_info['id']))
+		if (allowedTo('delete_any') && (!allowedTo('delete_own') || $info[1] != we::$id))
 			logAction('delete', array('topic' => $topic, 'subject' => $info[0], 'member' => $info[1], 'board' => $board));
 	}
 
@@ -1809,7 +1809,7 @@ function prepareLikeContext($messages)
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// If it's us, log it as being us.
-		if ($row['id_member'] == $user_info['id'])
+		if ($row['id_member'] == we::$id)
 			$context['liked_posts'][$row['id_content']]['you'] = true;
 		// Otherwise, add it to the list, and if it's a member whose name we don't have, save that separately too. But only if we have up to 2 names.
 		elseif (empty($context['liked_posts'][$row['id_content']]['names']) || count($context['liked_posts'][$row['id_content']]['names']) < 2)

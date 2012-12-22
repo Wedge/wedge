@@ -311,7 +311,7 @@ function determineActions($urls, $preferred_prefix = false)
 	call_hook('who_allowed', array(&$allowedActions));
 
 	if (!is_array($urls))
-		$url_list = array(array($urls, $user_info['id']));
+		$url_list = array(array($urls, we::$id));
 	else
 		$url_list = $urls;
 
@@ -563,7 +563,7 @@ function determineActions($urls, $preferred_prefix = false)
 		while ($row = wesql::fetch_assoc($result))
 		{
 			// If they aren't allowed to view this person's profile, skip it.
-			if (!allowedTo('profile_view_any') && $user_info['id'] != $row['id_member'])
+			if (!allowedTo('profile_view_any') && we::$id != $row['id_member'])
 				continue;
 
 			// Set their action on each - session/text to sprintf.

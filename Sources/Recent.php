@@ -175,7 +175,7 @@ function Recent()
 		'name' => $context['page_title']
 	);
 
-	$key = 'recent-' . $user_info['id'] . '-' . md5(serialize(array_diff_key($query_parameters, array('max_id_msg' => 0)))) . '-' . (int) $_REQUEST['start'];
+	$key = 'recent-' . we::$id . '-' . md5(serialize(array_diff_key($query_parameters, array('max_id_msg' => 0)))) . '-' . (int) $_REQUEST['start'];
 	if (empty($settings['cache_enable']) || ($messages = cache_get_data($key, 120)) == null)
 	{
 		$done = false;
@@ -299,7 +299,7 @@ function Recent()
 			'delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($settings['edit_disable_time']) || $row['poster_time'] + $settings['edit_disable_time'] * 60 >= time()),
 		);
 
-		if ($user_info['id'] == $row['id_first_member'])
+		if (we::$id == $row['id_first_member'])
 			$board_ids['own'][$row['id_board']][] = $row['id_msg'];
 		$board_ids['any'][$row['id_board']][] = $row['id_msg'];
 	}
@@ -339,7 +339,7 @@ function Recent()
 
 				// Okay, looks like they can do it for these posts.
 				foreach ($board_ids[$type][$board_id] as $counter)
-					if ($type == 'any' || $context['posts'][$counter]['poster']['id'] == $user_info['id'])
+					if ($type == 'any' || $context['posts'][$counter]['poster']['id'] == we::$id)
 						$context['posts'][$counter][$allowed] = true;
 			}
 		}

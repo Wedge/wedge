@@ -56,7 +56,7 @@ function QuickModeration()
 	else
 		$redirect_url = isset($_POST['redirect_url']) ? $_POST['redirect_url'] : (isset($_SESSION['old_url']) ? $_SESSION['old_url'] : '');
 
-	if (!isset($_REQUEST['qaction'], $quickMod[$_REQUEST['qaction']]) || !is_array($_REQUEST['topics']) || $user_info['is_guest'])
+	if (!isset($_REQUEST['qaction'], $quickMod[$_REQUEST['qaction']]) || !is_array($_REQUEST['topics']) || we::$is_guest)
 		redirectexit($redirect_url);
 
 	// Now we know that we're at least trying to perform a valid action, can we actually do it?
@@ -139,7 +139,7 @@ function QuickModeration()
 				// 2b, verify what they want to do against whether they have permission. Some qmod actions might need to do their own specific checks. That's fine, but they can do them themselves.
 				if ($thisAction[0])
 				{
-					if ((count(array_intersect($board_intersect, $boards_can[$thisAction[1] . '_any'])) == 0) && ($row['id_member_started'] != $user_info['id'] || (count(array_intersect($board_intersect, $boards_can[$thisAction[1] . '_own'])) == 0)))
+					if ((count(array_intersect($board_intersect, $boards_can[$thisAction[1] . '_any'])) == 0) && ($row['id_member_started'] != we::$id || (count(array_intersect($board_intersect, $boards_can[$thisAction[1] . '_own'])) == 0)))
 						continue;
 				}
 				else
@@ -222,7 +222,7 @@ function quickMod_move($topic_data, $boards_can)
 			if (!in_array($this_topic['id_board'], $boards_can['move_any']))
 			{
 				// So they can't just (un)lock *any* topic. That makes things more complicated. It needs to be their topic and they have to have permission
-				if ($this_topic['id_member_started'] != $user_info['id'] || !in_array($this_topic['id_board'], $boards_can['move_own']))
+				if ($this_topic['id_member_started'] != we::$id || !in_array($this_topic['id_board'], $boards_can['move_own']))
 					unset($topic_data[$topic]);
 			}
 		}
@@ -342,7 +342,7 @@ function quickMod_remove($topic_data, $boards_can)
 			if (!in_array($this_topic['id_board'], $boards_can['remove_any']))
 			{
 				// So they can't just (un)lock *any* topic. That makes things more complicated. It needs to be their topic and they have to have permission
-				if ($this_topic['id_member_started'] != $user_info['id'] || !in_array($this_topic['id_board'], $boards_can['remove_own']))
+				if ($this_topic['id_member_started'] != we::$id || !in_array($this_topic['id_board'], $boards_can['remove_own']))
 					unset($topic_data[$topic]);
 			}
 		}
@@ -376,7 +376,7 @@ function quickMod_lock($topic_data, $boards_can)
 			if (!in_array($this_topic['id_board'], $boards_can['lock_any']))
 			{
 				// So they can't just (un)lock *any* topic. That makes things more complicated. It needs to be their topic, not locked by a moderator and they have to have permission
-				if ($this_topic['id_member_started'] != $user_info['id'] || $this_topic['locked'] == 1 || !in_array($this_topic['id_board'], $boards_can['lock_own']))
+				if ($this_topic['id_member_started'] != we::$id || $this_topic['locked'] == 1 || !in_array($this_topic['id_board'], $boards_can['lock_own']))
 					unset($topic_data[$topic]);
 			}
 		}
@@ -429,7 +429,7 @@ function quickMod_approve($topic_data, $boards_can)
 			if (!in_array($this_topic['id_board'], $boards_can['move_any']))
 			{
 				// So they can't just (un)lock *any* topic. That makes things more complicated. It needs to be their topic and they have to have permission
-				if ($this_topic['id_member_started'] != $user_info['id'] || !in_array($this_topic['id_board'], $boards_can['move_own']))
+				if ($this_topic['id_member_started'] != we::$id || !in_array($this_topic['id_board'], $boards_can['move_own']))
 					unset($topic_data[$topic]);
 			}
 		}
@@ -457,7 +457,7 @@ function quickMod_markread($topic_data, $boards_can)
 
 	$markArray = array();
 	foreach ($topic_data as $topic => $data)
-		$markArray[] = array($settings['maxMsgID'], $user_info['id'], $topic);
+		$markArray[] = array($settings['maxMsgID'], we::$id, $topic);
 
 	wesql::insert('replace',
 		'{db_prefix}log_topics',
