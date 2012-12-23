@@ -543,20 +543,32 @@ div.percent
 .ban_items_id_member
 	background-position: 0 0
 
-.ban_items_email
+.ban_items_member_name
 	background-position: 0 -16px
 
-.ban_items_ip_address
+.ban_items_email
 	background-position: 0 -32px
 
-.ban_items_hostname
+.ban_items_ip_address
 	background-position: 0 -48px
 
-.ban_soft
+.ban_items_hostname
 	background-position: 0 -64px
 
-.ban_hard
+.ban_soft
 	background-position: 0 -80px
+
+.ban_hard
+	background-position: 0 -96px
+
+textarea.ban
+	width: 300px
+	height: 55px
+
+.ban_criteria_ip_address
+	.ban_width
+		width: 40px
+		margin-top: 5px
 
 /* Miscellaneous.
 ------------------------------------------------- */

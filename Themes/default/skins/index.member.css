@@ -17,7 +17,7 @@ ul.actions
 
 // These may be seen by guests, but it's unlikely, and they won't bother if the icons don't show up anyway.
 ul.buttonlist
-	a.lock, a.pin, a.add_poll
+	a.lock, a.pin, a.add_poll, a.merge
 		padding-left: 22px
 		background-image: url($images/small_lock.gif)
 		background-position: 6px 2px
@@ -27,6 +27,9 @@ ul.buttonlist
 		background-image: url($images/small_pin.gif)
 	a.add_poll
 		background-image: url($images/small_poll.gif)
+	a.merge
+		background-image: url($images/small_merge.gif)
+		padding-left: 21px
 
 .table_list a.unreadlink
 	font-size: .9em
