@@ -417,7 +417,7 @@ function ob_sessrewrite($buffer)
 
 		foreach ($context['pretty']['patterns'] as $pattern)
 		{
-			preg_match_all($pattern, $buffer, $matches, PREG_PATTERN_ORDER);
+			preg_match_all($pattern, $buffer, $matches);
 			foreach ($matches[1] as $match)
 			{
 				// Rip out everything that shouldn't be cached

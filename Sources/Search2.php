@@ -419,7 +419,7 @@ function Search2()
 	$no_regexp = preg_match('~&#(?:\d{1,7}|x[0-9a-fA-F]{1,6});~', $stripped_query) === 1;
 
 	// Extract phrase parts first (e.g. some words "this is a phrase" some more words.)
-	preg_match_all('/(?:^|\s)([-]?)"([^"]+)"(?:$|\s)/', $stripped_query, $matches, PREG_PATTERN_ORDER);
+	preg_match_all('/(?:^|\s)([-]?)"([^"]+)"(?:$|\s)/', $stripped_query, $matches);
 	$phraseArray = $matches[2];
 
 	// Remove the phrase parts and extract the words.

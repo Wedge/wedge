@@ -707,7 +707,7 @@ class Shrinker {
 			$args = substr($args, 1, -1);
 
 			if ($args != '_no_shrink_') {
-				preg_match_all($this->VARS, $block, $matches, PREG_PATTERN_ORDER);
+				preg_match_all($this->VARS, $block, $matches);
 				$vars = preg_replace($this->VAR, ';var', implode(';', $matches[0]));
 				while (preg_match($this->BRACKETS, $vars)) {
 					$vars = preg_replace($this->BRACKETS, '', $vars);
@@ -719,7 +719,7 @@ class Shrinker {
 			// process each identifier
 			if ($args != '_no_shrink_') {
 				$count = 0;
-				preg_match_all($this->IDENTIFIER, $args.','.$vars, $matches, PREG_PATTERN_ORDER);
+				preg_match_all($this->IDENTIFIER, $args.','.$vars, $matches);
 				$processed = array();
 				foreach ($matches[0] as $id) {
 					if (empty($processed[$id])) {

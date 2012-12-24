@@ -13,7 +13,6 @@
 
 class we
 {
-	protected static $instance; // container for self
 	static $ua;					// User agent string (we::$ua)
 	static $browser;			// Browser array
 	static $user;				// All user information
@@ -30,16 +29,19 @@ class we
 
 	public static function getInstance($load_user = true)
 	{
-		// Quero ergo sum
-		if (self::$instance == null)
+		static $instance = null;
+
+		// Generate one and only one instance.
+		if ($instance == null)
 		{
-			self::$instance = new self();
+			$instance = new self();
+			$instance->ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 			if ($load_user)
-				self::$instance->init_user();
-			self::$instance->init_browser();
+				$instance->init_user();
+			$instance->init_browser();
 		}
 
-		return self::$instance;
+		return $instance;
 	}
 
 	/**
@@ -56,7 +58,7 @@ class we
 	 * - Populate we::$user with lots of useful information (id, username, email, password, language, whether the user is a guest or admin, theme information, post count, IP address, time format/offset, avatar, smileys, PM counts, buddy list, ignore user/board preferences, warning level, URL and user groups)
 	 * - Establish board access rights based as an SQL clause (based on user groups) in we::$user['query_see_board'], and a subset of this to include ignore boards preferences into we::$user['query_wanna_see_board'].
 	 */
-	public function init_user()
+	protected static function init_user()
 	{
 		global $settings, $user_settings, $cookiename, $language, $db_prefix, $boardurl;
 
@@ -86,7 +88,7 @@ class we
 			list ($id_member, $password) = @unserialize($_COOKIE[$cookiename]);
 			$id_member = !empty($id_member) && strlen($password) > 0 ? (int) $id_member : 0;
 		}
-		elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($settings['disableCheckUA'])))
+		elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == self::$ua || !empty($settings['disableCheckUA'])))
 		{
 			// !!! Perhaps we can do some more checking on this, such as on the first octet of the IP?
 			list ($id_member, $password, $login_span) = @unserialize($_SESSION['login_' . $cookiename]);
@@ -227,7 +229,7 @@ class we
 				$user['possibly_robot'] = isset($_SESSION['id_robot']) ? $_SESSION['id_robot'] : 0;
 			// If we haven't turned on proper spider hunts then have a guess!
 			else
-				$user['possibly_robot'] = (strpos($_SERVER['HTTP_USER_AGENT'], 'Mozilla') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') === false) || preg_match('~(?:bot|slurp|crawl|spider)~', strtolower($_SERVER['HTTP_USER_AGENT']));
+				$user['possibly_robot'] = (strpos(self::$ua, 'Mozilla') === false && strpos(self::$ua, 'Opera') === false) || preg_match('~(?:bot|slurp|crawl|spider)~', strtolower(self::$ua));
 		}
 
 		// Figure out the new time offset.
@@ -251,8 +253,6 @@ class we
 		if (!isset($_SESSION['is_mobile']))
 			$_SESSION['is_mobile'] = self::is_mobile();
 
-		$user['is_mobile'] = $_SESSION['is_mobile'];
-
 		// Set up the we::$user array.
 		$user += array(
 			'username' => $username,
@@ -263,8 +263,9 @@ class we
 			'is_guest' => $id_member == 0,
 			'is_admin' => in_array(1, $user['groups']),
 			'is_mod' => false,
-			'theme' => $user['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? 0 : $user_settings['id_theme_mobile']) : (empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme']),
-			'skin' => $user['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['id_theme']) ? '' : $user_settings['skin']),
+			'is_mobile' => $_SESSION['is_mobile'],
+			'theme' => $_SESSION['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? 0 : $user_settings['id_theme_mobile']) : (empty($user_settings['id_theme']) ? 0 : $user_settings['id_theme']),
+			'skin' => $_SESSION['is_mobile'] ? (empty($user_settings['id_theme_mobile']) ? '' : $user_settings['skin_mobile']) : (empty($user_settings['id_theme']) ? '' : $user_settings['skin']),
 			'last_login' => empty($user_settings['last_login']) ? 0 : $user_settings['last_login'],
 			'ip' => $_SERVER['REMOTE_ADDR'],
 			'ip2' => $_SERVER['BAN_CHECK_IP'],
@@ -462,13 +463,13 @@ class we
 	 * - Windows (and versions equal to or above XP)
 	 * - More generic mobile devices also available through we::is_mobile()
 	 */
-	public static function init_browser()
+	protected static function init_browser()
 	{
 		global $context;
 
 		// The following determines the user agent (browser) as best it can.
-		$ua = $_SERVER['HTTP_USER_AGENT'];
-		$browser['is_opera'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Opera') !== false;
+		$ua = self::$ua;
+		$browser['is_opera'] = strpos($ua, 'Opera') !== false;
 
 		// Detect Webkit and related
 		$browser['is_webkit'] = $is_webkit = strpos($ua, 'AppleWebKit') !== false;
@@ -497,14 +498,12 @@ class we
 		|| preg_match('~(?:version|opera)[/ ]([\d.]+)~i', $ua, $ver);
 		$ver = isset($ver[1]) ? (float) $ver[1] : 0;
 
-	/* WIP...
-
-		// No need storing version numbers for outdated versions.
-		if ($browser['is_opera'])		$ver = max(8, $ver);
-		elseif ($browser['is_chrome'])	$ver = max(18, $ver);
-		elseif ($browser['is_firefox'])	$ver = max(14, $ver);
+		// No need to store version numbers for outdated versions.
+		if ($browser['is_opera'])		$ver = max(11, $ver);
+		elseif ($browser['is_chrome'])	$ver = max(20, $ver);
+		elseif ($browser['is_firefox'])	$ver = $ver < 5 ? max(3, $ver) : max(16, $ver); // Pre-v5 Firefox remains popular.
+		elseif ($browser['is_safari'])	$ver = max(4, $ver);
 		elseif ($browser['is_ie'])		$ver = max(6, $ver);
-	*/
 
 		// Reduce to first significant sub-version (if any), e.g. v2.01 => 2, v2.50.3 => 2.5
 		$browser['version'] = floor($ver * 10) / 10;
@@ -559,7 +558,6 @@ class we
 			$browser['possibly_robot'] = false;
 
 		// Save the results...
-		self::$ua = $ua;
 		self::$browser = $browser;
 
 		// And we'll also let you modify the browser array ASAP.
@@ -567,12 +565,12 @@ class we
 	}
 
 	// Mobile detection code is based on an early version of Mobile_Detect (MIT license).
-	public static function is_mobile()
+	protected static function is_mobile()
 	{
-		if (empty($_SERVER['HTTP_USER_AGENT']))
+		if (empty(self::$ua))
 			return false;
 
-		$ua = strtolower($_SERVER['HTTP_USER_AGENT']);
+		$ua = strtolower(self::$ua);
 
 		if (isset($_SERVER['HTTP_PROFILE']) || isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']))
 			return true;

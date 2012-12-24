@@ -2062,7 +2062,7 @@ class wedit
 		if (!empty($settings['max_image_width']) || !empty($settings['max_image_height']))
 		{
 			// Find all the img tags - with or without width and height.
-			preg_match_all('~\[img(\s+width=\d+)?(\s+height=\d+)?(\s+width=\d+)?\](.+?)\[/img\]~is', $message, $matches, PREG_PATTERN_ORDER);
+			preg_match_all('~\[img(\s+width=\d+)?(\s+height=\d+)?(\s+width=\d+)?\](.+?)\[/img\]~is', $message, $matches);
 
 			$replaces = array();
 			foreach ($matches[0] as $match => $dummy)

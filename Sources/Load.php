@@ -1221,7 +1221,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$skin = we::$user['skin'];
 	}
 	// The theme is the forum's mobile default.
-	elseif (we::is('mobile'))
+	elseif (we::$user['is_mobile'])
 	{
 		$id_theme = $settings['theme_guests_mobile'];
 		$skin = $settings['theme_skin_guests_mobile'];
@@ -1260,8 +1260,8 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Time to determine our CSS list...
 	// First, load our requested skin folder.
 	$context['skin'] = empty($skin) ? (empty($id_theme) ?
-		(!we::is('mobile') ? $settings['theme_skin_guests'] : $settings['theme_skin_guests_mobile']) :
-		(!we::is('mobile') ? 'skins' : 'skins/Wireless')) :
+		(we::$user['is_mobile'] ? $settings['theme_skin_guests_mobile'] : $settings['theme_skin_guests']) :
+		(we::$user['is_mobile'] ? 'skins/Wireless' : 'skins')) :
 		($skin === 'skins' || strpos($skin, 'skins/') === 0 ? '' : 'skins/') . $skin;
 	$folders = explode('/', $context['skin']);
 	$context['css_folders'] = array();

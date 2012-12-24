@@ -1289,7 +1289,7 @@ function MessageSearch2()
 		$context['search_errors']['invalid_search_string'] = true;
 
 	// Extract phrase parts first (e.g. some words "this is a phrase" some more words.)
-	preg_match_all('~(?:^|\s)([-]?)"([^"]+)"(?:$|\s)~u', $search_params['search'], $matches, PREG_PATTERN_ORDER);
+	preg_match_all('~(?:^|\s)([-]?)"([^"]+)"(?:$|\s)~u', $search_params['search'], $matches);
 	$searchArray = $matches[2];
 
 	// Remove the phrase parts and extract the words.

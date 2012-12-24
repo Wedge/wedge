@@ -276,7 +276,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				}
 
 				// Do <img ...> - with security... action= -> action-.
-				preg_match_all('~&lt;img\s+src=(&quot;)?((?:https?://|ftps?://)\S+?)\\1(?:\s+alt=(&quot;.*?&quot;|\S*?))?(?:\s*/)?&gt;~i', $data, $matches, PREG_PATTERN_ORDER);
+				preg_match_all('~&lt;img\s+src=(&quot;)?((?:https?://|ftps?://)\S+?)\\1(?:\s+alt=(&quot;.*?&quot;|\S*?))?(?:\s*/)?&gt;~i', $data, $matches);
 				if (!empty($matches[0]))
 				{
 					$replaces = array();

@@ -1403,7 +1403,7 @@ class wess_prefixes extends wess
 		// Only IE6/7/8 don't support border-radius these days.
 		if ($matches[1] === 'border-radius')
 		{
-			if ($ie8down || ($opera && $v < 10.5))
+			if ($ie8down)
 				return '';
 			// Older browsers require a prefix...
 			if (($firefox && $v < 4) || ($ios && $ov < 4) || ($safari && $v < 5) || ($android && $ov < 2.2))
@@ -1414,7 +1414,7 @@ class wess_prefixes extends wess
 		// Only newer Chrome and Safari versions support border-image without a prefix.
 		if ($matches[1] === 'border-image')
 		{
-			if ($ie || ($opera && $v < 10.5))
+			if ($ie)
 				return '';
 			if ($chrome || ($safari && $v >= 6))
 				return $unchanged;
@@ -1424,7 +1424,7 @@ class wess_prefixes extends wess
 		// IE6/7/8 don't support box-shadow, and Safari Mobile requires a prefix up to version 5.
 		if ($matches[1] === 'box-shadow')
 		{
-			if ($ie8down || ($opera && $v < 10.5))
+			if ($ie8down)
 				return '';
 			if (($firefox && $v < 4) || ($ios && $ov < 5) || ($safari && $v < 5.1))
 				return $prefixed;
@@ -1436,7 +1436,7 @@ class wess_prefixes extends wess
 		// IE6 and IE7 don't support box-sizing, while Mozilla, and older Androids and Safaris require a prefix.
 		if ($matches[1] === 'box-sizing')
 		{
-			if (($ie && $v < 8) || ($opera && $v < 9.5))
+			if ($ie && $v < 8)
 				return '';
 			if ($firefox || ($ios && $ov < 5) || ($safari && $v < 5.1) || ($android && $ov < 4))
 				return $prefixed;
@@ -1446,7 +1446,7 @@ class wess_prefixes extends wess
 		// IE6/7/8/9 don't support columns, IE10 and Opera support them, other browsers require a prefix.
 		if (strpos($matches[1], 'column-') === 0)
 		{
-			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1) || ($safari && $v < 3.2))
+			if ($ie8down || $ie9 || ($firefox && $v < 3.6) || ($opera && $v < 11.1))
 				return '';
 			return $opera || $ie10 ? $unchanged : $prefixed;
 		}
@@ -1462,7 +1462,7 @@ class wess_prefixes extends wess
 		// IE6/7/8/9 don't support transitions, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if ($matches[1] === 'transition')
 		{
-			if ($ie8down || $ie9 || ($firefox && $v < 4) || ($safari && $v < 3.2))
+			if ($ie8down || $ie9 || ($firefox && $v < 4))
 				return '';
 			if (($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
@@ -1472,7 +1472,7 @@ class wess_prefixes extends wess
 		// IE6/7/8/9 don't support animations, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'animation') === 0)
 		{
-			if ($ie8down || $ie9 || ($firefox && $v < 4) || ($safari && $v < 3.2))
+			if ($ie8down || $ie9 || ($firefox && $v < 4))
 				return '';
 			if (($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
@@ -1482,7 +1482,7 @@ class wess_prefixes extends wess
 		// IE6/7/8 don't support transforms, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (strpos($matches[1], 'transform') === 0)
 		{
-			if ($ie8down || ($opera && $v < 10.5) || ($firefox && $v < 3.5) || ($safari && $v < 3.1))
+			if ($ie8down || ($firefox && $v < 3.5))
 				return '';
 			if ($ie9 || ($opera && $v < 12.1) || ($firefox && $v < 16) || $webkit)
 				return $prefixed;
