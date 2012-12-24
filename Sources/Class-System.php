@@ -28,13 +28,14 @@ class we
 		return false;
 	}
 
-	public static function getInstance()
+	public static function getInstance($load_user = true)
 	{
 		// Quero ergo sum
 		if (self::$instance == null)
 		{
 			self::$instance = new self();
-			self::$instance->init_user();
+			if ($load_user)
+				self::$instance->init_user();
 			self::$instance->init_browser();
 		}
 

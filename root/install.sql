@@ -109,6 +109,23 @@ CREATE TABLE {$db_prefix}ban_items (
 ) ENGINE=MyISAM;
 
 #
+# Table structure for table `bans`
+#
+
+CREATE TABLE {$db_prefix}bans (
+  id_ban int(10) unsigned NOT NULL auto_increment,
+  hardness tinyint(3) unsigned NOT NULL default 0,
+  ban_type enum('id_member', 'member_name', 'email', 'ip_address', 'hostname') NOT NULL,
+  ban_content varchar(255) NOT NULL default '',
+  ban_reason varchar(255) NOT NULL default '',
+  extra text NOT NULL,
+  added int(10) unsigned NOT NULL default 0,
+  member_added mediumint(8) unsigned NOT NULL default 0,
+  PRIMARY KEY (id_ban),
+  KEY ban_type (ban_type)
+) ENGINE=MyISAM;
+
+#
 # Table structure for table `bbcode`
 #
 
@@ -140,6 +157,7 @@ CREATE TABLE {$db_prefix}bbcode (
 #
 # Dumping data for table `bbcode`
 #
+
 INSERT INTO {$db_prefix}bbcode
 	(`id_bbcode`, `tag`, `len`, `bbctype`, `before_code`, `after_code`, `content`, `disabled_before`, `disabled_after`, `disabled_content`, `block_level`, `test`, `validate_func`, `disallow_children`, `require_parents`, `require_children`, `parsed_tags_allowed`, `quoted`, `params`, `trim_wspace`, `id_plugin`)
 VALUES
@@ -149,7 +167,7 @@ VALUES
 	(4, 'bdo', 3, 'unparsed_equals', '<bdo dir="$1">', '</bdo>', '', '', '', '', 1, '(rtl|ltr)\\]', '', '', '', '', '', 'none', '', 'none', ''),
 	(5, 'br', 2, 'closed', '', '', '<br>', '', '', '', 0, '', '', '', '', '', '', 'none', '', 'none', ''),
 	(6, 'center', 6, 'parsed', '<div class="center">', '</div>', '', '', '', '', 1, '', '', '', '', '', '', 'none', '', 'none', ''),
-	(7, 'code', 4, 'unparsed_content', '', '', '<div class="bbc_code"><header>{{code}}: <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>', '', '', '', 1, '', 'if (!isset($disabled[''code'']))\n{\n	if (we::is(''gecko,opera''))\n		$tag[''content''] .= ''<span class="bbc_pre"><code>$1</code></span></div>'';\n	else\n 		$tag[''content''] .= ''<code>$1</code></div>'';\n\n	$php_parts = preg_split(''~(&lt;\\?php|\\?&gt;)~'', $data, -1, PREG_SPLIT_DELIM_CAPTURE);\n\n	for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)\n	{\n		// Do PHP code coloring?\n		if ($php_parts[$php_i] != ''&lt;?php'')\n			continue;\n\n		$php_string = '''';\n		while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != ''?&gt;'')\n		{\n			$php_string .= $php_parts[$php_i];\n			$php_parts[$php_i++] = '''';\n		}\n		$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);\n	}\n\n	// Fix the PHP code stuff...\n	$data = str_replace("<span class=\\"bbc_pre\\">\\t</span>", "\\t", implode('''', $php_parts));\n\n	// Older browsers are annoying, aren''t they?\n	if (!we::is(''gecko''))\n		$data = str_replace("\\t", "<span class=\\"bbc_pre\\">\\t</span>", $data);\n\n	// Fix IE line breaks to actually be copyable.\n	if (we::is(''ie'')\n		$data = str_replace(''<br>'', ''&#13;'', $data);\n}', '', '', '', '', 'none', '', 'none', ''),
+	(7, 'code', 4, 'unparsed_content', '', '', '<div class="bbc_code"><header>{{code}}: <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>', '', '', '', 1, '', 'if (!isset($disabled[''code'']))\n{\n	if (we::is(''gecko,opera''))\n		$tag[''content''] .= ''<span class="bbc_pre"><code>$1</code></span></div>'';\n	else\n 		$tag[''content''] .= ''<code>$1</code></div>'';\n\n	$php_parts = preg_split(''~(&lt;\\?php|\\?&gt;)~'', $data, -1, PREG_SPLIT_DELIM_CAPTURE);\n\n	for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)\n	{\n		// Do PHP code coloring?\n		if ($php_parts[$php_i] != ''&lt;?php'')\n			continue;\n\n		$php_string = '''';\n		while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != ''?&gt;'')\n		{\n			$php_string .= $php_parts[$php_i];\n			$php_parts[$php_i++] = '''';\n		}\n		$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);\n	}\n\n	// Fix the PHP code stuff...\n	$data = str_replace("<span class=\\"bbc_pre\\">\\t</span>", "\\t", implode('''', $php_parts));\n\n	// Older browsers are annoying, aren''t they?\n	if (!we::is(''gecko''))\n		$data = str_replace("\\t", "<span class=\\"bbc_pre\\">\\t</span>", $data);\n\n	// Fix IE line breaks to actually be copyable.\n	if (we::is(''ie''))\n		$data = str_replace(''<br>'', ''&#13;'', $data);\n}', '', '', '', '', 'none', '', 'none', ''),
 	(8, 'code', 4, 'unparsed_equals_content', '', '', '<div class="bbc_code"><header>{{code}}: ($2) <a href="#" onclick="return weSelectText(this);" class="codeoperation">{{code_select}}</a></header>', '', '', '', 1, '', 'if (!isset($disabled[''code'']))\n{\n	if (we::is(''gecko,opera''))\n		$tag[''content''] .= ''<span class="bbc_pre"><code>$1</code></span></div>'';\n	else\n 		$tag[''content''] .= ''<code>$1</code></div>'';\n\n	$php_parts = preg_split(''~(&lt;\\?php|\\?&gt;)~'', $data[0], -1, PREG_SPLIT_DELIM_CAPTURE);\n\n	for ($php_i = 0, $php_n = count($php_parts); $php_i < $php_n; $php_i++)\n	{\n		// Do PHP code coloring?\n		if ($php_parts[$php_i] != ''&lt;?php'')\n			continue;\n\n		$php_string = '''';\n		while ($php_i + 1 < count($php_parts) && $php_parts[$php_i] != ''?&gt;'')\n		{\n			$php_string .= $php_parts[$php_i];\n			$php_parts[$php_i++] = '''';\n		}\n		$php_parts[$php_i] = highlight_php_code($php_string . $php_parts[$php_i]);\n	}\n\n	// Fix the PHP code stuff...\n	$data[0] = str_replace("<span class=\\"bbc_pre\\">\\t</span>", "\\t", implode('''', $php_parts));\n\n	// Older browsers are annoying, aren''t they?\n	if (!we::is(''gecko''))\n		$data[0] = str_replace("\\t", "<span class=\\"bbc_pre\\">\\t</span>", $data[0]);\n\n	// Fix IE line breaks to actually be copyable.\n	if (we::is(''ie''))\n		$data[0] = str_replace(''<br>'', ''&#13;'', $data[0]);\n}', '', '', '', '', 'none', '', 'none', ''),
 	(9, 'color', 5, 'unparsed_equals', '<span style="color: $1" class="bbc_color">', '</span>', '', '', '', '', 0, '(#[\\da-fA-F]{3}|#[\\da-fA-F]{6}|[A-Za-z]{1,20}|rgb\\(\\d{1,3}, ?\\d{1,3}, ?\\d{1,3}\\))\\]', '', '', '', '', '', 'none', '', 'none', ''),
 	(10, 'email', 5, 'unparsed_content', '', '', '<a href="mailto:$1" class="bbc_email">$1</a>', '', '', '', 0, '', '$data = strtr($data, array(''<br>'' => ''''));', '', '', '', '', 'none', '', 'none', ''),
@@ -216,6 +234,7 @@ CREATE TABLE {$db_prefix}board_groups (
 #
 # Dumping data for table `board_groups`
 #
+
 INSERT INTO {$db_prefix}board_groups
 	(`id_board`, `id_group`, `view_perm`, `enter_perm`)
 VALUES
@@ -1628,6 +1647,7 @@ CREATE TABLE {$db_prefix}members (
   skin varchar(255) NOT NULL default '',
   skin_mobile varchar(255) NOT NULL default '',
   is_activated tinyint(3) unsigned NOT NULL default 1,
+  active_state_change int(10) unsigned NOT NULL default 0,
   validation_code varchar(10) NOT NULL default '',
   secret_question varchar(255) NOT NULL default '',
   secret_answer varchar(64) NOT NULL default '',
@@ -2148,11 +2168,6 @@ VALUES
 	('allow_hideOnline', '1'),
 	('spamWaitTime', '5'),
 	('pm_spam_settings', '10,5,20'),
-	('reserveWord', '0'),
-	('reserveCase', '1'),
-	('reserveUser', '1'),
-	('reserveName', '1'),
-	('reserveNames', '{$default_reserved_names}'),
 	('autoLinkUrls', '1'),
 	('banLastUpdated', '0'),
 	('smileys_dir', '{$boarddir}/Smileys'),

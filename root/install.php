@@ -967,7 +967,6 @@ function DatabasePopulation()
 	foreach ($txt as $key => $value)
 		if (substr($key, 0, 8) == 'default_')
 			$replaces['{$' . $key . '}'] = wesql::escape_string($value);
-	$replaces['{$default_reserved_names}'] = strtr($replaces['{$default_reserved_names}'], array('\\\\n' => '\\n'));
 
 	// Add UTF-8 to the table definitions. We do this so that if we need to modify the syntax later, we can do it once instead of per table!
 	$replaces[') ENGINE=MyISAM;'] = ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
@@ -1091,6 +1090,34 @@ function DatabasePopulation()
 				),
 				array('variable')
 			);
+	}
+
+	// Now we set up the default non-registrable names.
+	$rows = array();
+	if (!empty($txt['default_reserved_names']))
+	{
+		$items = explode('\n', $txt['default_reserved_names']);
+		$extra = serialize(array('case_sens' => true, 'type' => 'contains'));
+		foreach ($items as $item)
+			$rows[] = array(
+				'hardness' => 0,
+				'ban_type' => 'member_name',
+				'ban_content' => $item,
+				'ban_reason' => '',
+				'extra' => $extra,
+				'added' => time(),
+				'member_added' => 0,
+			);
+
+		wesql::insert('insert',
+			'{db_prefix}bans',
+			array(
+				'hardness' => 'int', 'ban_type' => 'string', 'ban_content' => 'string',
+				'ban_reason' => 'string', 'extra' => 'string', 'added' => 'int', 'member_added' => 'int',
+			),
+			$rows,
+			array('id_ban')
+		);
 	}
 
 	// Let's optimize those new tables.
@@ -1470,6 +1497,9 @@ function DeleteInstall()
 
 	// Now is the perfect time to fetch the Wedge files.
 	require_once($sourcedir . '/ScheduledTasks.php');
+	require_once($sourcedir . '/Class-System.php');
+	require_once($sourcedir . '/QueryString.php');
+	we::getInstance(false);
 	// Sanity check that they loaded earlier!
 	if (isset($settings['recycle_board']))
 	{
@@ -1479,6 +1509,7 @@ function DeleteInstall()
 		// We've just installed!
 		we::$user['ip'] = $_SERVER['REMOTE_ADDR'];
 		we::$id = isset($incontext['member_id']) ? $incontext['member_id'] : 0;
+		$_SERVER['BAN_CHECK_IP'] = $_SERVER['REMOTE_ADDR'];
 		logAction('install', array('version' => WEDGE_VERSION), 'admin');
 	}
 
@@ -1985,7 +2016,7 @@ function template_install_above()
 		'Class-String', 'Class-System',
 	));
 	westr::getInstance();
-	we::getInstance();
+	we::getInstance(false);
 
 	// Fill in the server URL for the current user. This is user-specific, as they may be using a different URL than the script's default URL (Pretty URL, secure access...)
 	$host = empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['HTTP_HOST'];
