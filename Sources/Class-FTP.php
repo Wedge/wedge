@@ -373,6 +373,50 @@ class ftp_connection
 		return true;
 	}
 
+	public function put_string($string, $remotefile)
+	{
+		// First, we have to be connected... very important. And with passive mode.
+		if (!is_resource($this->connection) || !$this->passive())
+			return false;
+
+		// There's none of this type shifting nonsense. Binary and only binary here.
+		fwrite($this->connection, 'TYPE I' . "\r\n");
+		fwrite($this->connection, 'STOR ' . $remotefile . "\r\n");
+
+		// Now we connect to the data port and do what we gotta do.
+		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
+		if (!$fp || !$this->check_response(150))
+		{
+			$this->error = 'bad_response';
+			@fclose($fp);
+			return false;
+		}
+
+		$sent = 0;
+		$total = strlen($string);
+		while ($sent < $total)
+		{
+			$block = substr($string, 0, 4096);
+			$written = @fwrite($fp, $block);
+			if ($written === false)
+			{
+				$this->error = 'bad_response';
+				@fclose($fp);
+				return false;
+			}
+			$sent += strlen($written);
+		}
+
+		fclose($fp);
+		if (!$this->check_response(226))
+		{
+			$this->error = 'bad_response';
+			return false;
+		}
+
+		return true;
+	}
+
 	public function list_dir($ftp_path = '', $search = false)
 	{
 		// Are we even connected...?

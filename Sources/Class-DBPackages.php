@@ -29,7 +29,7 @@ class wedbPackages
 			self::$instance = new self();
 			self::$reservedTables = array();
 
-			$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'ban_items',
+			$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'bans', 'ban_items',
 			'board_members', 'board_permissions', 'boards', 'categories', 'collapsed_categories',
 			'custom_fields', 'drafts', 'group_moderators', 'log_actions', 'log_activity', 'log_boards', 'log_comments',
 			'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_intrusion', 'log_mark_read', 'log_notify',

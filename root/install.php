@@ -1097,7 +1097,7 @@ function DatabasePopulation()
 	if (!empty($txt['default_reserved_names']))
 	{
 		$items = explode('\n', $txt['default_reserved_names']);
-		$extra = serialize(array('case_sens' => true, 'type' => 'contains'));
+		$extra = serialize(array('case_sens' => true, 'type' => 'containing'));
 		foreach ($items as $item)
 			$rows[] = array(
 				'hardness' => 0,
