@@ -494,7 +494,7 @@ function scheduled_daily_maintenance()
 		wesql::query('
 			DELETE FRM {db_prefix}members
 			WHERE date_registered < {int:earliest}
-				AND is_activated = 1',
+				AND is_activated = 0',
 			array(
 				'earliest' => time() - (86400 * $settings['purge_unactivated_days']),
 			)
