@@ -416,6 +416,19 @@ function Post2()
 				$post_errors[] = 'no_message';
 	}
 
+	// Just some quick corrections.
+	if (!empty($settings['correctExclamations']))
+		$_POST['subject'] = preg_replace('~([!?]){2,}~', '\\1', $_POST['subject']);
+	if (!empty($settings['correctShouting']))
+	{
+		if (($total = westr::strlen($_POST['subject'])) > 10)
+		{
+			$upper = @preg_match_all('~\p{Lu}~', $_POST['subject'], $matches);
+			if (floor($upper / $total * 100) >= $settings['correctShouting'])
+				$_POST['subject'] = westr::ucwords(westr::strtolower($_POST['subject']));
+		}
+	}
+
 	// Validate the poll...
 	if (isset($_REQUEST['poll']))
 	{

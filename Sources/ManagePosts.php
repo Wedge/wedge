@@ -341,6 +341,9 @@ function ModifyTopicSettings($return_config = false)
 			// Some simple bools...
 			array('check', 'enableParticipation'),
 		'',
+			array('check', 'correctExclamations'),
+			array('percent', 'correctShouting'),
+		'',
 			// Pagination etc...
 			array('int', 'oldTopicDays', 'postinput' => $txt['manageposts_days'], 'subtext' => $txt['oldTopicDays_zero']),
 			array('int', 'defaultMaxTopics', 'postinput' => $txt['manageposts_topics']),
