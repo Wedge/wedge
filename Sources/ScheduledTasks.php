@@ -489,6 +489,17 @@ function scheduled_daily_maintenance()
 			)
 		);
 
+	// Prune any members who are unactivated. But only if the setting is for 1 day or more, and we're using email activation or email activation+admin approval.
+	if (!empty($settings['purge_unactivated_days']) && ($settings['registration_method'] == 1 || $settings['registration_method'] == 4))
+		wesql::query('
+			DELETE FRM {db_prefix}members
+			WHERE date_registered < {int:earliest}
+				AND is_activated = 1',
+			array(
+				'earliest' => time() - (86400 * $settings['purge_unactivated_days']),
+			)
+		);
+
 	// Clear out the error and intrusion logs.
 	if (!empty($settings['pruningOptions']) && strpos($settings['pruningOptions'], ',') !== false)
 		list ($settings['pruneErrorLog']) = explode(',', $settings['pruningOptions']);

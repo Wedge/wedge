@@ -233,6 +233,7 @@ function ModifyRegistrationSettings($return_config = false)
 
 	$config_vars = array(
 			array('select', 'registration_method', array(0 => $txt['setting_registration_standard'], 1 => $txt['setting_registration_activate'], 2 => $txt['setting_registration_approval'], 4 => $txt['setting_registration_both'], 3=> $txt['setting_registration_disabled'])),
+			array('int', 'purge_unactivated_days', 'max' => 30, 'subtext' => $txt['purge_unactivated_days_subtext'], 'postinput' => $txt['purge_unactivated_days_postinput']),
 			array('multi_select', 'notify_new_registration', $members_approve),
 			array('check', 'send_welcomeEmail'),
 			array('check', 'send_validation_onChange'),

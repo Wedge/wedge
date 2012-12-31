@@ -1356,7 +1356,7 @@ function prepareDisplayContext($reset = false)
 		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
 		'on_time' => on_timeformat($message['poster_time']),
-		'timestamp' => forum_time(true, $message['poster_time']),
+		'timestamp' => $message['poster_time'], // Don't apply time offset here. This is only used for displaying the time to mobile users, and timeformat() is called for that (which adjusts for timezone)
 		'counter' => $board_info['type'] == 'board' ? $counter : ($counter == $context['start'] ? 0 : $counter),
 		'modified' => array(
 			'on_time' => on_timeformat($message['modified_time']),
