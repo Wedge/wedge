@@ -72,9 +72,451 @@ if (!defined('WEDGE'))
 
 	void updateBanMembers()
 		- updates the members table to match the new bans.
-		- is_activated >= 10: a member is banned.
+		- is_activated >= 20: a member is banned.
 */
 
+function ManageBan()
+{
+	global $context, $txt, $scripturl;
+
+	isAllowedTo('manage_bans');
+
+	loadTemplate('ManageBans');
+	loadLanguage('ManageBans');
+
+	$subActions = array(
+		'hard' => 'createBanList',
+		'soft' => 'createBanList',
+		'add' => 'BanListAdd',
+		'edit' => 'BanListEdit',
+		'settings' => 'BanListSettings',
+	);
+
+	// Default the sub-action to 'view ban list'.
+	$context['sub_action'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'hard';
+
+	$context['page_title'] = $txt['ban_title'];
+
+	// Tabs for browsing the different ban functions.
+	$context[$context['admin_menu_name']]['tab_data'] = array(
+		'title' => $txt['ban_title'],
+		'description' => $txt['ban_general_description'],
+		'tabs' => array(
+			'hard' => array(
+				'description' => $txt['ban_description_hard'],
+				'href' => $scripturl . '?action=admin;area=ban;sa=hard',
+				'is_selected' => $context['sub_action'] == 'hard',
+			),
+			'soft' => array(
+				'description' => $txt['ban_description_soft'],
+				'href' => $scripturl . '?action=admin;area=ban;sa=soft',
+				'is_selected' => $context['sub_action'] == 'soft',
+			),
+			'add' => array(
+				'description' => $txt['ban_description_add'],
+				'href' => $scripturl . '?action=admin;area=ban;sa=add',
+				'is_selected' => $context['sub_action'] == 'add',
+			),
+			'settings' => array(
+				'description' => $txt['ban_description_settings'],
+				'href' => $scripturl . '?action=admin;area=ban;sa=settings',
+				'is_selected' => $context['sub_action'] == 'settings',
+			),
+		),
+	);
+
+	// Call the right function for this sub-acton.
+	$subActions[$context['sub_action']]();
+}
+
+function createBanList()
+{
+	global $context, $txt, $theme;
+
+	$ban_is_hard = $context['sub_action'] == 'hard';
+
+	$listOptions = array(
+		'id' => 'ban_list',
+		'items_per_page' => 20,
+		'base_href' => '<URL>?action=admin;area=ban;sa=' . ($ban_is_hard ? 'hard' : 'soft'),
+		'default_sort_col' => 'added',
+		'default_sort_dir' => 'desc',
+		'get_items' => array(
+			'function' => 'list_getBansByType',
+			'params' => array('hard_ban' => $ban_is_hard),
+		),
+		'get_count' => array(
+			'function' => 'list_numBansByType',
+			'params' => array('hard_ban' => $ban_is_hard),
+		),
+		'no_items_label' => $txt['ban_no_entries'],
+		'columns' => array(
+			'name' => array(
+				'header' => array(
+					'value' => $txt['ban_type'],
+				),
+				'data' => array(
+					'function' => create_function('$rowData', '
+						global $txt;
+						return \'<div class="ban_items ban_items_\' . $rowData[\'ban_type\'] . \'" title="\' . $txt[\'ban_type_\' . $rowData[\'ban_type\']] . \'"></div>\';
+					'),
+				),
+				'sort' => array(
+					'default' => 'ban_type',
+					'reverse' => 'ban_type DESC',
+				),
+			),
+			'ban_content' => array(
+				'header' => array(
+					'value' => $txt['ban_content'],
+					'class' => 'left',
+				),
+				'data' => array(
+					'function' => create_function('$rowData', '
+						global $user_profile, $txt, $settings;
+						$extra = !empty($rowData[\'extra\']) ? @unserialize($rowData[\'extra\']) : array();
+
+						switch($rowData[\'ban_type\'])
+						{
+							case \'id_member\':
+								$uid = (int) $rowData[\'ban_content\'];
+								if (isset($user_profile[$uid]))
+									return sprintf($txt[\'ban_id_member_is\'], \'<URL>?action=profile;u=\' . $uid, $user_profile[$uid][\'real_name\']);
+								else
+									return \'<em>\' . sprintf($txt[\'ban_invalid_member\'], $uid) . \'</em>\';
+								break;
+							case \'member_name\':
+								$case_sens = !empty($extra[\'case_sens\']) ? $txt[\'ban_member_names_case_matters\'] : \'\';
+								$type = !empty($extra[\'type\']) && in_array($extra[\'type\'], array(\'beginning\', \'containing\', \'ending\')) ? $extra[\'type\'] : \'matching\';
+								return sprintf($txt[\'ban_member_names_\' . $type], $rowData[\'ban_content\'], $case_sens);
+								break;
+							case \'email\':
+								if (strpos($rowData[\'ban_content\'], \'*@\') === 0)
+									return sprintf($txt[\'ban_entire_domain\'], substr($rowData[\'ban_content\'], 2));
+								elseif (strpos($rowData[\'ban_content\'], \'@*\') === 0)
+									return sprintf($txt[\'ban_entire_tld\'], substr($rowData[\'ban_content\'], 2));
+								else
+								{
+									if (!empty($extra[\'gmail_style\']))
+									{
+										list($user, $domain) = explode(\'@\', $rowData[\'ban_content\']);
+										if (strpos($user, \'+\') !== false)
+											list($user, $label) = explode(\'+\', $user);
+
+										$user = str_replace(\'.\', \'\', $user);
+										return sprintf($txt[\'ban_gmail_style_email\'], $user, $domain) . \' <a href="<URL>?action=help;in=ban_gmail_style" onclick="return reqWin(this);" class="help"></a>\';
+									}
+									else
+										return $rowData[\'ban_content\'];
+								}
+								break;
+							case \'ip_address\':
+								switch (strlen($rowData[\'ban_content\']))
+								{
+									case 32: // single address
+										return format_ip($rowData[\'ban_content\']);
+									case 65: // range
+										list($start, $end) = explode(\'-\', $rowData[\'ban_content\']);
+										return format_ip($start) . \' - \' . format_ip($end);
+								}
+								return $row[\'ban_content\'];
+								break;
+							case \'hostname\':
+								if (strpos($rowData[\'ban_content\'], \'*.\') === 0)
+								{
+									$domain = substr($rowData[\'ban_content\'], 2);
+									// We might have stripped too much, let us check
+									if (strpos($domain, \'.\') === false)
+										$domain = \'*.\' . $domain;
+									$response = sprintf($txt[\'ban_entire_hostname\'], $domain);
+								}
+								else
+									$response = $rowData[\'ban_content\'];
+
+								if (!empty($settings[\'disableHostnameLookup\']))
+									$response = \'<span class="error">\' . $response . \'</span> <a href="<URL>?action=help;in=no_hostname_ban" class="help" onclick="return reqWin(this);"></a>\';
+								return $response;
+								break;
+						}
+					'),
+				),
+			),
+			'reason' => array(
+				'header' => array(
+					'value' => $txt['ban_reason'],
+					'class' => 'left',
+				),
+				'data' => array(
+					'db' => 'ban_reason',
+					'class' => 'smalltext',
+				),
+				'sort' => array(
+					'default' => 'LENGTH(ban_reason) > 0 DESC, ban_reason',
+					'reverse' => 'LENGTH(ban_reason) > 0, ban_reason DESC',
+				),
+			),
+			'added' => array(
+				'header' => array(
+					'value' => $txt['ban_added'],
+				),
+				'data' => array(
+					'timeformat' => 'added',
+				),
+				'sort' => array(
+					'default' => 'added',
+					'reverse' => 'added DESC',
+				),
+			),
+			'member_added' => array(
+				'header' => array(
+					'value' => $txt['ban_added_by'],
+				),
+				'data' => array(
+					'function' => create_function('$rowData', '
+						global $txt;
+						return empty($rowData[\'member_added\']) ? $txt[\'not_applicable\'] : \'<a href="<URL>?action=profile;u=\' . $rowData[\'member_added\'] . \'">\' . $rowData[\'member_name\'] . \'</a>\';'
+					),
+				),
+				'sort' => array(
+					'default' => 'member_added',
+					'reverse' => 'member_added DESC',
+				),
+			),
+			'actions' => array(
+				'header' => array(
+					'value' => '',
+				),
+				'data' => array(
+					'function' => create_function('$rowData', '
+						global $settings, $txt;
+						if (empty($settings[\'disableHostnameLookup\']) || $rowData[\'ban_type\'] != \'hostname\')
+							return sprintf(\'<a href="<URL>?action=admin;area=ban;sa=edit;ban=%1$d">%2$s</a>\', $rowData[\'id_ban\'], $txt[\'modify\']);
+						else
+							return \'\';
+					'),
+					'style' => 'text-align: center;',
+				),
+			),
+			'check' => array(
+				'header' => array(
+					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);">',
+				),
+				'data' => array(
+					'sprintf' => array(
+						'format' => '<input type="checkbox" name="remove[]" value="%1$d">',
+						'params' => array(
+							'id_ban' => false,
+						),
+					),
+					'style' => 'text-align: center',
+				),
+			),
+		),
+		'form' => array(
+			'href' => '<URL>?action=admin;area=ban;sa=' . ($ban_is_hard ? 'hard' : 'soft'),
+		),
+		'additional_rows' => array(
+			array(
+				'position' => 'below_table_data',
+				'value' => '<input type="submit" name="removeBans" value="' . $txt['ban_remove_selected'] . '" onclick="return ask(' . JavaScriptEscape($txt['ban_remove_selected_confirm']) . ', e);" class="delete">',
+				'style' => 'text-align: right;',
+			),
+		),
+	);
+
+	loadSource('Subs-List');
+	createList($listOptions);
+
+	wetem::load('show_list');
+	$context['default_list'] = 'ban_list';
+}
+
+function BanListAdd()
+{
+	global $txt, $context, $settings;
+
+	$context['ban_details'] = array(
+		'id_ban' => 0,
+		'hardness' => 'soft',
+		'ban_type' => '',
+		'ban_content' => '',
+		'ban_reason' => '',
+		'extra' => array(),
+	);
+
+	$context['ban_types'] = array('id_member', 'member_name', 'email', 'ip_address');
+	if (empty($settings['disableHostnameLookup']))
+		$context['ban_types'][] = 'hostname';
+
+	$context['page_title'] = $txt['ban_add'];
+	wetem::load('ban_details');
+
+	add_js_file('scripts/suggest.js');
+	add_js('
+	oToAutoSuggest = new weAutoSuggest({
+		bItemList: true,
+		sControlId: \'ban_id_member_content\',
+		sPostName: \'ban_id_member_content\',
+		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
+		bItemList: false
+	});
+
+	function updateIP_form()
+	{
+		var ipv6 = $(\'#ban_type_ip\').val() == \'ipv6\';
+		$(\'.ipv4\').toggle(!ipv6);
+		$(\'.ipv6\').toggle(ipv6);
+		$(\'.ip_end, .ip_start .ban_width\').toggle($(\'#ban_ip_range\').val() != 0);
+	};
+	updateIP_form();');
+}
+
+function BanListEdit()
+{
+	global $txt, $context, $settings;
+
+	$_REQUEST['ban'] = isset($_REQUEST['ban']) ? (int) $_REQUEST['ban'] : 0;
+
+	if (!empty($_REQUEST['ban']))
+	{
+		$request = wesql::query('
+			SELECT id_ban, hardness, ban_type, ban_content, ban_reason, extra
+			FROM {db_prefix}bans
+			WHERE id_ban = {int:ban}',
+			array(
+				'ban' => $_REQUEST['ban'],
+			)
+		);
+		if (wesql::num_rows($request) != 0)
+			$context['ban_details'] = wesql::fetch_assoc($request);
+		wesql::free_result($request);
+
+		if (empty($settings['disableHostnameLookup']) && $context['ban_details']['ban_type'] == 'hostname')
+			fatal_lang_error('ban_no_modify', false);
+	}
+
+	$context['ban_types'] = array('id_member', 'email', 'ip_address');
+	if (empty($settings['disableHostnameLookup']))
+		$context['ban_types'][] = 'hostname';
+
+	// OK, so are we saving?
+	if (!empty($_GET['save']))
+	{
+		$context['errors'] = array();
+
+		$context['ban_details'] = array(
+			'id_ban' => $_REQUEST['ban'],
+			'hardness' => isset($_POST['ban_hardness']) && $_POST['ban_hardness'] == 'hard' ? 'hard' : 'soft',
+		);
+
+		if (empty($_POST['ban_type']))
+		{
+		
+		}
+
+		// Successful? Save and exit, otherwise let this function just continue to show the editing area
+		if (empty($context['errors']))
+		{
+			redirectexit('action=admin;area=ban;sa=');
+		}
+	}
+
+	// Did we find a ban?
+	if (empty($context['ban_details']))
+		return BanListAdd();
+
+	$context['page_title'] = $txt['ban_edit'];
+	wetem::load('ban_details');
+}
+
+function list_getBansByType($start, $items_per_page, $sort, $params)
+{
+	$ban_is_hard = !empty($params);
+	$request = wesql::query('
+		SELECT ba.id_ban, ba.ban_type, ba.ban_content, ba.ban_reason, ba.extra, ba.added, mem.id_member AS member_added, mem.member_name
+		FROM {db_prefix}bans AS ba
+			LEFT JOIN {db_prefix}members AS mem ON (ba.member_added = mem.id_member)
+		WHERE hardness = {int:ban_hardness}
+		ORDER BY {raw:sort}
+		LIMIT {int:offset}, {int:limit}',
+		array(
+			'ban_hardness' => $ban_is_hard ? 1 : 0,
+			'sort' => $sort,
+			'offset' => $start,
+			'limit' => $items_per_page,
+		)
+	);
+	$bans = array();
+	$members = array();
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$bans[$row['id_ban']] = $row;
+		if ($row['ban_type'] == 'id_member')
+			$members[] = (int) $row['ban_content'];
+	}
+	wesql::free_result($request);
+
+	if (!empty($members))
+		loadMemberData($members, false, 'minimal');
+	return $bans;
+}
+
+function list_numBansByType($params)
+{
+	$ban_is_hard = !empty($params);
+	$request = wesql::query('
+		SELECT COUNT(*) AS num_bans
+		FROM {db_prefix}bans
+		WHERE hardness = {int:ban_hardness}',
+		array(
+			'ban_hardness' => $ban_is_hard ? 1 : 0,
+		)
+	);
+	list ($numBans) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	return $numBans;
+}
+
+function BanListSettings($return_config = false)
+{
+	global $txt, $context;
+
+	loadSource('ManageServer');
+
+	// These will be defined in ManageBans.language.php. But even if we came here via admin search, that will be loaded.
+	$config_vars = array(
+		array('percent', 'softban_blankpage', 'subtext' => $txt['softban_percent_subtext']),
+		array('percent', 'softban_nosearch', 'subtext' => $txt['softban_percent_subtext']),
+	);
+
+	// Settings to add:
+	// Loading delay in seconds (range 1-15)
+	// Flood time multipler
+	// RSS disabled chance
+	// Redirection chance
+	// Redirection URL
+	// Prevent soft-banned IPs from registering
+	// When a user is banned, add them to which group
+
+	if ($return_config)
+		return $config_vars;
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		checkSession();
+		saveDBSettings($config_vars);
+		redirectexit('action=admin;area=ban;sa=settings');
+	}
+
+	$context['post_url'] = '<URL>?action=admin;area=ban;sa=settings;save';
+	$context['settings_title'] = $txt['ban_settings'];
+	wetem::load('show_settings');
+	prepareDBSettingContext($config_vars);
+}
+
+// --------------------------------------------------------------------------------------------------------------
 // Ban center.
 function Ban()
 {
@@ -1473,9 +1915,9 @@ function updateBanMembers()
 			{
 				$allMembers[] = $row['id_member'];
 				// Do they need an update?
-				if ($row['is_activated'] < 10)
+				if ($row['is_activated'] < 20)
 				{
-					$updates[($row['is_activated'] + 10)][] = $row['id_member'];
+					$updates[($row['is_activated'] + 20)][] = $row['id_member'];
 					$newMembers[] = $row['id_member'];
 				}
 			}
@@ -1495,7 +1937,7 @@ function updateBanMembers()
 
 	// Find members that are wrongfully marked as banned.
 	$request = wesql::query('
-		SELECT mem.id_member, mem.is_activated - 10 AS new_value
+		SELECT mem.id_member, mem.is_activated - 20 AS new_value
 		FROM {db_prefix}members AS mem
 			LEFT JOIN {db_prefix}ban_items AS bi ON (bi.id_member = mem.id_member OR mem.email_address LIKE bi.email_address)
 			LEFT JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group AND bg.cannot_access = {int:cannot_access_activated} AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time}))
@@ -1504,7 +1946,7 @@ function updateBanMembers()
 		array(
 			'cannot_access_activated' => 1,
 			'current_time' => time(),
-			'ban_flag' => 10,
+			'ban_flag' => 20,
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))

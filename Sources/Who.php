@@ -301,7 +301,6 @@ function determineActions($urls, $preferred_prefix = false)
 		'search' => array('search_posts'),
 		'search2' => array('search_posts'),
 		'setcensor' => array('moderate_forum'),
-		'setreserve' => array('moderate_forum'),
 		'stats' => array('view_stats'),
 		'viewErrorLog' => array('admin_forum'),
 		'viewmembers' => array('moderate_forum'),

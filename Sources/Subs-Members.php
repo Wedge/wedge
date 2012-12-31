@@ -865,44 +865,92 @@ function registerMember(&$regOptions, $return_errors = false)
 function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal = true)
 {
 	global $settings, $context;
+	static $rules = null;
+
+	if ($rules === null)
+	{
+		$rules = array(
+			array('ban_content' => '*', 'extra' => array()),
+		);
+		$request = wesql::query('
+			SELECT ban_content, extra
+			FROM {db_prefix}bans
+			WHERE ban_type = {string:member_name}
+			ORDER BY null',
+			array(
+				'member_name' => 'member_name',
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+		{
+			if (!empty($row['extra']))
+				$row['extra'] = unserialize($row['extra']);
+			$rules[] = $row;
+		}
+	}
 
 	// No cheating with entities please.
 	// Although it's unlikely there are entities in UTF8 mode, never say never.
-	$replaceEntities = create_function('$string', '
+	$replaceEntities = create_function('$messages', '
+		$string = $messages[2];
 		$num = $string[0] === \'x\' ? hexdec(substr($string, 1)) : (int) $string;
 		if ($num === 0x202E || $num === 0x202D) return \'\'; if (in_array($num, array(0x22, 0x26, 0x27, 0x3C, 0x3E))) return \'&#\' . $num . \';\';
 		return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? \'\' : ($num < 0x80 ? chr($num) : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ? chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) : chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63))));'
 	);
 
-	$name = preg_replace('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$replaceEntities(\'\\2\')', $name);
-	$checkName = westr::strtolower($name);
+	$entity_test = '~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~';
+	$name = preg_replace_callback($entity_test, $replaceEntities, $name);
+	$name_lower = westr::strtolower($name);
 
 	// Administrators are never restricted ;).
-	if (!allowedTo('moderate_forum') && ((!empty($settings['reserveName']) && $is_name) || !empty($settings['reserveUser']) && !$is_name))
+	if (empty($settings['ban_membername_style']))
+		$settings['ban_membername_style'] = 'both';
+
+	// true if 
+	if (!empty($rules) && !allowedTo('moderate_forum') && ($settings['ban_membername_style'] == 'both' || ($is_name ? $settings['ban_membername_style'] == 'display' : $settings['ban_membername_style'] == 'user')))
 	{
-		$reservedNames = explode("\n", $settings['reserveNames']);
-		// Case sensitive check?
-		$checkMe = empty($settings['reserveCase']) ? $checkName : $name;
-
-		// Check each name in the list...
-		foreach ($reservedNames as $reserved)
+		foreach ($rules as $rule)
 		{
-			if ($reserved == '')
-				continue;
+			// We need to fix any entities
+			$rule['ban_content'] = preg_replace_callback($entity_test, $replaceEntities, $rule['ban_content']);
 
-			// The admin might've used entities too, level the playing field.
-			$reservedCheck = preg_replace('~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e', '$replaceEntities(\'\\2\')', $reserved);
+			// Is this case insensitive?
+			if (!empty($rule['extra']['case_sens']))
+			{
+				$rule_value = $rule['ban_content'];
+				$compare_name = $name;
+			}
+			else
+			{
+				$rule_value = westr::strtolower($rule['ban_content']);
+				$compare_name = $name_lower;
+			}
 
-			// Case sensitive name?
-			if (empty($settings['reserveCase']))
-				$reservedCheck = westr::strtolower($reservedCheck);
+			$type = isset($rule['extra']['type']) ? $rule['extra']['type'] : 'matching';
+			$match = false;
+			switch ($type)
+			{
+				case 'matching':
+					$match = $compare_name == $rule_value;
+					break;
+				case 'beginning':
+					$match = preg_match('~^' . preg_quote($rule_value, '~') . '~', $compare_name);
+					break;
+				case 'containing':
+					$match = preg_match('~' . preg_quote($rule_value, '~') . '~', $compare_name);
+					break;
+				case 'ending':
+					$match = preg_match('~^' . preg_quote($rule_value, '~') . '$~', $compare_name);
+					break;
+			}
 
-			// If it's not just entire word, check for it in there somewhere...
-			if ($checkMe == $reservedCheck || (westr::strpos($checkMe, $reservedCheck) !== false && empty($settings['reserveWord'])))
+			if ($match)
+			{
 				if ($fatal)
-					fatal_lang_error('username_reserved', false, array($reserved));
+					fatal_lang_error('username_reserved', false, array($rule_value));
 				else
 					return true;
+			}
 		}
 
 		$censor_name = $name;
@@ -912,15 +960,6 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 			else
 				return true;
 	}
-
-	// Characters we just shouldn't allow, regardless.
-	// !!! Add more...?
-	foreach (array('*') as $char)
-		if (strpos($checkName, $char) !== false)
-			if ($fatal)
-				fatal_lang_error('username_reserved', false, array($char));
-			else
-				return true;
 
 	// Get rid of any SQL parts of the reserved name...
 	$checkName = strtr($name, array('_' => '\\_', '%' => '\\%'));

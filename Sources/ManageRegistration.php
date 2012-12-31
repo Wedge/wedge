@@ -34,7 +34,6 @@ function RegCenter()
 	$subActions = array(
 		'register' => array('AdminRegister', 'moderate_forum'),
 		'agreement' => array('EditAgreement', 'admin_forum'),
-		'reservednames' => array('SetReserve', 'admin_forum'),
 		'settings' => array('ModifyRegistrationSettings', 'admin_forum'),
 	);
 
@@ -60,9 +59,6 @@ function RegCenter()
 			),
 			'agreement' => array(
 				'description' => $txt['registration_agreement_desc'],
-			),
-			'reservednames' => array(
-				'description' => $txt['admin_reserved_desc'],
 			),
 			'settings' => array(
 				'description' => $txt['admin_settings_desc'],
@@ -208,48 +204,6 @@ function EditAgreement()
 
 	wetem::load('edit_agreement');
 	$context['page_title'] = $txt['registration_agreement'];
-}
-
-/**
- * Display (and save) the options for usernames that are not allowed within the forum registration (and that users cannot change to later)
- *
- * - Accessed via ?action=admin;area=regcenter;sa=reservednames (within the registration center in the admin panel)
- * - Unlike most of the smaller admin functions, this relies on its own template (reserved_words block of Register template), to manage the large textarea that forms the entry point for reserved names.
- * - Provides access to the options: reserved words to be checked as whole words (as opposed to matching anywhere), matching case too, and whether it is set on username and/or display name.
- * - It should be noted that the method used to display the textarea's contents (i.e. one name per line) is the way it is internally stored too; it is important to note there is no XSS protection here (intentionally)
- * - Requires admin_forum permission.
- */
-function SetReserve()
-{
-	global $txt, $context, $settings;
-
-	// Submitting new reserved words.
-	if (!empty($_POST['save_reserved_names']))
-	{
-		checkSession();
-
-		// Set all the options....
-		updateSettings(array(
-			'reserveWord' => (isset($_POST['matchword']) ? '1' : '0'),
-			'reserveCase' => (isset($_POST['matchcase']) ? '1' : '0'),
-			'reserveUser' => (isset($_POST['matchuser']) ? '1' : '0'),
-			'reserveName' => (isset($_POST['matchname']) ? '1' : '0'),
-			'reserveNames' => str_replace("\r", '', isset($_POST['reserved']) ? $_POST['reserved'] : '')
-		));
-	}
-
-	// Get the reserved word options and words.
-	$settings['reserveNames'] = str_replace('\n', "\n", $settings['reserveNames']);
-	$context['reserved_words'] = explode("\n", $settings['reserveNames']);
-	$context['reserved_word_options'] = array();
-	$context['reserved_word_options']['match_word'] = $settings['reserveWord'] == '1';
-	$context['reserved_word_options']['match_case'] = $settings['reserveCase'] == '1';
-	$context['reserved_word_options']['match_user'] = $settings['reserveUser'] == '1';
-	$context['reserved_word_options']['match_name'] = $settings['reserveName'] == '1';
-
-	// Ready the template......
-	wetem::load('edit_reserved_words');
-	$context['page_title'] = $txt['admin_reserved_set'];
 }
 
 /**

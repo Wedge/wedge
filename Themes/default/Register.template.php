@@ -596,34 +596,4 @@ function template_edit_agreement()
 		<br class="clear">';
 }
 
-function template_edit_reserved_words()
-{
-	global $context, $theme, $options, $scripturl, $txt;
-
-	echo '
-		<we:cat>
-			', $txt['admin_reserved_set'], '
-		</we:cat>
-		<form id="registration_agreement" action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8">
-			<div class="windowbg2 wrc">
-				<h4>', $txt['admin_reserved_line'], '</h4>
-				<p class="reserved_names">
-					<textarea cols="30" rows="6" name="reserved" id="reserved">', implode("\n", $context['reserved_words']), '</textarea>
-				</p>
-				<ul class="reset">
-					<li><label><input type="checkbox" name="matchword" id="matchword" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_word'] ? ' checked' : '', '> ', $txt['admin_match_whole'], '</label></li>
-					<li><label><input type="checkbox" name="matchcase" id="matchcase" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_case'] ? ' checked' : '', '> ', $txt['admin_match_case'], '</label></li>
-					<li><label><input type="checkbox" name="matchuser" id="matchuser" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_user'] ? ' checked' : '', '> ', $txt['admin_check_user'], '</label></li>
-					<li><label><input type="checkbox" name="matchname" id="matchname" tabindex="', $context['tabindex']++, '"', $context['reserved_word_options']['match_name'] ? ' checked' : '', '> ', $txt['admin_check_display'], '</label></li>
-				</ul>
-				<div class="right">
-					<input type="submit" value="', $txt['save'], '" name="save_reserved_names" tabindex="', $context['tabindex']++, '" style="margin: 1ex" class="save">
-					<input type="hidden" name="sa" value="reservednames">
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				</div>
-			</div>
-		</form>
-		<br class="clear">';
-}
-
 ?>

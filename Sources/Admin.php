@@ -252,7 +252,7 @@ function Admin()
 					'file' => 'media/ManageMedia',
 					'function' => 'aeva_admin_init',
 					'subsections' => array(
-						'config' => array($txt['media_admin_settings_config'], ),
+						'config' => array($txt['media_admin_settings_config']),
 						'meta' => array($txt['media_admin_settings_meta'], 'enabled' => !empty($settings['media_enabled'])),
 						'layout' => array($txt['media_admin_settings_layout'], 'enabled' => !empty($settings['media_enabled'])),
 					),
@@ -362,7 +362,6 @@ function Admin()
 					'subsections' => array(
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
 						'agreement' => array($txt['registration_agreement'], 'admin_forum'),
-						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
 						'',
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
@@ -409,14 +408,15 @@ function Admin()
 				'ban' => array(
 					'label' => $txt['ban_title'],
 					'file' => 'ManageBans',
-					'function' => 'Ban',
+					'function' => 'ManageBan',
 					'icon' => 'ban.gif',
 					'bigicon' => 'ban_list.png',
 					'permission' => 'manage_bans',
 					'subsections' => array(
-						'list' => array($txt['ban_edit_list']),
-						'add' => array($txt['ban_add_new']),
-						'browse' => array($txt['ban_trigger_browse']),
+						'hard' => array($txt['ban_hard']),
+						'soft' => array($txt['ban_soft']),
+						'add' => array($txt['ban_add']),
+						'settings' => array($txt['ban_settings']),
 					),
 				),
 				'memberoptions' => array(
@@ -890,13 +890,13 @@ function AdminSearchInternal()
 	// Load a lot of language files.
 	loadLanguage(array(
 		'Help', 'ManageMail', 'ManageSettings', 'ManageBoards', 'ManagePaid', 'ManagePermissions', 'Search',
-		'Login', 'ManageSmileys', 'ManageMaintenance',
+		'Login', 'ManageSmileys', 'ManageMaintenance', 'ManageBans',
 	));
 
 	// All the files we need to include.
 	loadSource(array(
 		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManageMemberOptions', 'ManagePaid', 'ManageMaintenance',
-		'ManagePermissions', 'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys',
+		'ManagePermissions', 'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageBans',
 	));
 
 	/* This is the huge array that defines everything... it's a huge array of items formatted as follows:
@@ -967,6 +967,7 @@ function AdminSearchInternal()
 			array('ModifySubscriptionSettings', 'area=paidsubscribe;sa=settings'),
 			array('ModifyLogSettings', 'area=logs;sa=settings'),
 			array('ModifyPmSettings', 'area=pm'),
+			array('BanListSettings', 'area=bans;sa=settings'),
 		),
 		'preferences' => array(
 			array('ModifyMemberPreferences', 'area=memberoptions;sa=prefs'),
