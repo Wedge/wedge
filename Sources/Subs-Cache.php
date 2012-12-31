@@ -1252,10 +1252,9 @@ function clean_cache($extensions = 'php', $filter = '', $force_folder = '')
 	}
 
 	// Invalidate cache, to be sure!
-	// ...as long as Collapse.php can be modified, anyway.
 	if (!$force_folder && !is_array($extensions))
 	{
-		@touch($sourcedir . '/Collapse.php');
+		@fclose(@fopen($cachedir . '/cache.lock', 'w'));
 		clearstatcache();
 	}
 	elseif ($force_folder && !$there_is_another)
@@ -1337,7 +1336,11 @@ function cache_put_data($key, $val, $ttl = 120)
 	}
 
 	if (empty($settings['cache_hash']))
-		$settings['cache_hash'] = md5($boardurl . filemtime($sourcedir . '/Collapse.php'));
+	{
+		if (!file_exists($cachedir))
+			@fclose(@fopen($cachedir . '/cache.lock', 'w'));
+		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
+	}
 
 	$key = $settings['cache_hash'] . '-' . bin2hex($key);
 
