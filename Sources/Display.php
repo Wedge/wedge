@@ -1373,7 +1373,7 @@ function prepareDisplayContext($reset = false)
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
 		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
-		'can_see_ip' => allowedTo('view_ip_address_any') || (!empty(we::$id) && $message['id_member'] == we::$id && allowedTo('view_ip_address_own')),
+		'can_see_ip' => allowedTo('manage_bans'),
 		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == we::$id)),
 		'last_post_id' => $context['last_msg_id'],
 	);

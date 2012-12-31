@@ -1138,7 +1138,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'profile_upload_avatar',
 		'profile_remote_avatar',
 		'profile_remove_own',
-		'view_ip_address_own',
 	));
 	$groupLevels['board']['standard'] = array_merge($groupLevels['board']['restrict'], array(
 		'save_post_draft',
@@ -1185,7 +1184,6 @@ function setPermissionLevel($level, $group, $profile = 'null')
 		'admin_forum',
 		'manage_permissions',
 		'edit_news',
-		'view_ip_address_any',
 		'profile_identity_any',
 		'profile_extra_any',
 		'profile_signature_any',
@@ -1484,7 +1482,6 @@ function loadAllPermissions($loadType = 'classic')
 			'manage_permissions' => array(false, 'member_admin', 'administrate'),
 			'manage_bans' => array(false, 'member_admin', 'administrate'),
 			'send_mail' => array(false, 'member_admin', 'administrate'),
-			'view_ip_address' => array(true, 'member_admin', 'administrate', 'administrate'),
 			'issue_warning' => array(false, 'member_admin', 'moderate_general'),
 
 			'profile_view' => array(true, 'profile', 'view_basic_info', 'view_basic_info'),
@@ -2261,8 +2258,6 @@ function loadIllegalGuestPermissions()
 		'manage_attachments',
 		'manage_smileys',
 		'edit_news',
-		'view_ip_address_own',
-		'view_ip_address_any',
 		'access_mod_center',
 		'moderate_forum',
 		'issue_warning',

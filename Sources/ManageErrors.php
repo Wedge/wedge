@@ -53,6 +53,7 @@ function ViewErrorLog()
 
 	// Check for the administrative permission to do this.
 	isAllowedTo('admin_forum');
+	$context['can_see_ip'] = allowedTo('manage_bans');
 
 	// Templates, etc...
 	loadLanguage(array('Errors', 'ManageMaintenance'));
@@ -68,6 +69,8 @@ function ViewErrorLog()
 		'file' => $txt['file'],
 		'line' => $txt['line'],
 	);
+	if (!$context['can_see_ip'])
+		unset($filters['ip']);
 
 	// Set up the filtering...
 	if (isset($_GET['value'], $_GET['filter'], $filters[$_GET['filter']]))
@@ -141,7 +144,7 @@ function ViewErrorLog()
 			'member' => array(
 				'id' => $row['id_member'],
 				'ip' => $row['ip'],
-				'display_ip' => format_ip($row['display_ip']),
+				'display_ip' => $context['can_see_ip'] ? format_ip($row['display_ip']) : '',
 			),
 			'time' => timeformat($row['log_time']),
 			'timestamp' => $row['log_time'],
@@ -350,6 +353,8 @@ function ViewIntrusionLog()
 	// Check for the administrative permission to do this.
 	isAllowedTo('admin_forum');
 
+	$context['can_see_ip'] = allowedTo('manage_bans');
+
 	// Templates, etc...
 	loadLanguage('ManageMaintenance');
 	loadLanguage('Security');
@@ -365,6 +370,9 @@ function ViewIntrusionLog()
 		'protocol' => $txt['request_protocol'],
 		'user_agent' => $txt['user_agent'],
 	);
+
+	if (!$context['can_see_ip'])
+		unset($filters['ip']);
 
 	// Set up the filtering...
 	if (isset($_GET['value'], $_GET['filter'], $filters[$_GET['filter']]))
@@ -430,7 +438,7 @@ function ViewIntrusionLog()
 			'member' => array(
 				'id' => $row['id_member'],
 				'ip' => $row['ip'],
-				'display_ip' => format_ip($row['display_ip']),
+				'display_ip' => $context['can_see_ip'] ? format_ip($row['display_ip']) : '',
 			),
 			'time' => timeformat($row['event_time']),
 			'timestamp' => $row['event_time'],

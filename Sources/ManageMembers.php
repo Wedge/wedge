@@ -295,7 +295,7 @@ function ViewMemberlist()
 		);
 
 		// Can they see all IP addresses? If not, they shouldn't see any.
-		if (!allowedTo('view_ip_address_any'))
+		if (!allowedTo('manage_bans'))
 			unset($params['ip']);
 
 		// !!! Validate a little more.
@@ -610,7 +610,7 @@ function ViewMemberlist()
 	);
 
 	// Can they see all IP addresses? If not, they shouldn't see any.
-	if (!allowedTo('view_ip_address_any'))
+	if (!$context['can_see_ip'])
 		unset($listOptions['columns']['ip']);
 
 	// Without enough permissions, don't show 'delete members' checkboxes.
@@ -713,6 +713,10 @@ function MembersAwaitingActivation()
 		'date_registered' => array('label' => $txt['admin_browse_registered']),
 		'last_login' => array('label' => $txt['admin_browse_login']),
 	);
+	// If they can't see IP addresses, they can't sort by them either.
+	$context['can_see_ip'] = allowedTo('manage_bans');
+	if (!$context['can_see_ip'])
+		unset($context['columns']['member_ip']);
 
 	// Are we showing duplicate information?
 	if (isset($_GET['showdupes']))
@@ -994,9 +998,13 @@ function MembersAwaitingActivation()
 	else
 		unset($listOptions['columns']['duplicates']);
 
-	// Only show hostname on duplicates as it takes a lot of time.
-	if (!$context['show_duplicates'] || !empty($settings['disableHostnameLookup']))
+	// Only show hostname on duplicates as it takes a lot of time. Note that you can't see hostname if you can't see IP.
+	if (!$context['show_duplicates'] || !empty($settings['disableHostnameLookup']) || !$context['can_see_ip'])
 		unset($listOptions['columns']['hostname']);
+
+	// And don't show them the IP address.
+	if (!$context['can_see_ip'])
+		unset($listOptions['columns']['ip']);
 
 	// Is there any need to show filters?
 	if (isset($context['available_filters']) && count($context['available_filters']) > 1)
@@ -1025,9 +1033,6 @@ function MembersAwaitingActivation()
 			'class' => 'smalltext left',
 		);
 
-	// Can they see all IP addresses? If not, they shouldn't see any.
-	if (!allowedTo('view_ip_address_any'))
-		unset($listOptions['columns']['ip']);
 	// Now that we have all the options, create the list.
 	loadSource('Subs-List');
 	createList($listOptions);
@@ -1258,10 +1263,11 @@ function AdminApprove()
 	{
 		$log_action = $_POST['todo'] == 'remind' ? 'remind_member' : 'approve_member';
 		$log_inserts = array();
+		$our_ip = get_ip_identifier(we::$user['ip']); // Yes, even though it's statically held in that function, no point in even calling it if we don't have to.
 		foreach ($member_info as $member)
 		{
 			$log_inserts[] = array(
-				time(), 3, we::$id, get_ip_identifier(we::$user['ip']), $log_action,
+				time(), 3, we::$id, $our_ip, $log_action,
 				0, 0, 0, serialize(array('member' => $member['id'])),
 			);
 		}

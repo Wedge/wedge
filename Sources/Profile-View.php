@@ -127,18 +127,15 @@ function summary($memID)
 		);
 	}
 
-	if (allowedTo('view_ip_address_any') || (allowedTo('view_ip_address_own') && $context['user']['is_owner']))
+	$context['can_see_ip'] = allowedTo('manage_bans');
+	if ($context['can_see_ip'])
 	{
 		// Make sure it's a valid ip address; otherwise, don't bother...
 		if (preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/', $memberContext[$memID]['ip']) == 1 && empty($settings['disableHostnameLookup']))
 			$context['member']['hostname'] = host_from_ip($memberContext[$memID]['ip']);
 		else
 			$context['member']['hostname'] = '';
-
-		$context['can_see_ip'] = true;
 	}
-	else
-		$context['can_see_ip'] = false;
 
 	// Can we see what the user is doing?
 	if (!empty($settings['who_enabled']) && allowedTo('who_view') && (allowedTo('moderate_forum') || !empty($user_profile[$memID]['show_online'])))
@@ -1053,7 +1050,10 @@ function tracking($memID)
 		'edits' => array('trackEdits', $txt['trackEdits']),
 	);
 
-	$context['tracking_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : 'activity';
+	$context['tracking_area'] = isset($_GET['sa'], $subActions[$_GET['sa']]) ? $_GET['sa'] : (allowedTo('manage_bans') ? 'activity' : (allowedTo('moderate_forum') ? 'edits' : ''));
+
+	if (empty($context['tracking_area']))
+		isAllowedTo('moderate_forum');
 
 	// Create the tabs for the template.
 	$context[$context['profile_menu_name']]['tab_data'] = array(
@@ -1086,7 +1086,7 @@ function trackActivity($memID)
 	global $user_profile, $context;
 
 	// Verify if the user has sufficient permissions.
-	isAllowedTo('moderate_forum');
+	isAllowedTo('manage_bans');
 
 	$context['last_ip'] = $user_profile[$memID]['member_ip'];
 	if ($context['last_ip'] != $user_profile[$memID]['member_ip2'])
@@ -1411,7 +1411,7 @@ function trackIP($memID = 0)
 	global $user_profile, $scripturl, $txt, $settings, $context;
 
 	// Can the user do this?
-	isAllowedTo('moderate_forum');
+	isAllowedTo('manage_bans');
 
 	if ($memID == 0)
 	{

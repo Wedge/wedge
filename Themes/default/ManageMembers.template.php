@@ -123,7 +123,7 @@ function template_search_members()
 								<strong>', $txt['ip_address'], ':</strong>
 							</dt>
 							<dd>
-								<input type="text" name="ip"', allowedTo('view_ip_address_any') ? '' : ' disabled', '>
+								<input type="text" name="ip"', allowedTo('manage_bans') ? '' : ' disabled', '>
 							</dd>
 						</dl>
 					</div>

@@ -171,8 +171,8 @@ function ModifyProfile($post_errors = array())
 					'file' => 'Profile-View',
 					'function' => 'tracking',
 					'subsections' => array(
-						'activity' => array($txt['trackActivity'], 'moderate_forum'),
-						'ip' => array($txt['trackIP'], 'moderate_forum'),
+						'activity' => array($txt['trackActivity'], 'manage_bans'),
+						'ip' => array($txt['trackIP'], 'manage_bans'),
 						'edits' => array($txt['trackEdits'], 'moderate_forum'),
 					),
 					'permission' => array(

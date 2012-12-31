@@ -194,7 +194,7 @@ function Who()
 		// Send the information to the template.
 		$context['members'][$row['session']] = array(
 			'id' => $row['id_member'],
-			'ip' => allowedTo('view_ip_address_any') || ($row['id_member'] == $context['user']['id'] && allowedTo('view_ip_address_own')) ? format_ip($row['ip']) : '',
+			'ip' => allowedTo('manage_bans') ? format_ip($row['ip']) : '',
 			// It is *going* to be today or yesterday, so why keep that information in there?
 			'time' => strtr(timeformat($row['log_time']), array($txt['today'] => '', $txt['yesterday'] => '')),
 			'timestamp' => forum_time(true, $row['log_time']),

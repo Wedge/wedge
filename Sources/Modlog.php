@@ -294,6 +294,10 @@ function ViewModlog()
 		),
 	);
 
+	// Can they see all IP addresses? If not, they shouldn't see any.
+	if (!allowedTo('manage_bans'))
+		unset($listOptions['columns']['ip']);
+
 	// Create the watched user list.
 	createList($listOptions);
 
@@ -334,14 +338,11 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	global $context, $scripturl, $txt;
 
 	$modlog_query = allowedTo('admin_forum') || we::$user['mod_cache']['bq'] == '1=1' ? '1=1' : (we::$user['mod_cache']['bq'] == '0=1' ? 'lm.id_board = 0 AND lm.id_topic = 0' : (strtr(we::$user['mod_cache']['bq'], array('id_board' => 'b.id_board')) . ' AND ' . strtr(we::$user['mod_cache']['bq'], array('id_board' => 't.id_board'))));
+	$see_IP = allowedTo('manage_bans');
 
 	// Do a little bit of self protection.
 	if (!isset($context['hoursdisable']))
 		$context['hoursdisable'] = 24;
-
-	// Can they see the IP address?
-	$see_ownIP = allowedTo('view_ip_address_own');
-	$see_anyIP = allowedTo('view_ip_address_any');
 
 	// Here we have the query getting the log details.
 	$result = wesql::query('
@@ -427,10 +428,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 
 		// IP Info?
 		if (isset($row['extra']['ip_range']))
-			if ($see_anyIP || ($see_ownIP && $row['id_member'] == $context['user']['id']))
-				$row['extra']['ip_range'] = '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['extra']['ip_range'] . '">' . $row['extra']['ip_range'] . '</a>';
-			else
-				$row['extra']['ip_range'] = $txt['logged'];
+			$row['extra']['ip_range'] = '<a href="' . $scripturl . '?action=trackip;searchip=' . $row['extra']['ip_range'] . '">' . $row['extra']['ip_range'] . '</a>';
 
 		// Email?
 		if (isset($row['extra']['email']))
@@ -448,7 +446,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 		// The array to go to the template. Note here that action is set to a "default" value of the action doesn't match anything in the descriptions. Allows easy adding of logging events with basic details.
 		$entries[$row['id_action']] = array(
 			'id' => $row['id_action'],
-			'ip' => $see_anyIP || ($see_ownIP && $row['id_member'] == $context['user']['id']) ? format_ip($row['ip']) : $txt['logged'],
+			'ip' => $see_IP ? format_ip($row['ip']) : $txt['logged'],
 			'position' => empty($row['real_name']) && empty($row['group_name']) ? $txt['guest'] : $row['group_name'],
 			'moderator_link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>' : (empty($row['real_name']) ? ($txt['guest'] . (!empty($row['extra']['member_acted']) ? ' (' . $row['extra']['member_acted'] . ')' : '')) : $row['real_name']),
 			'time' => timeformat($row['log_time']),
