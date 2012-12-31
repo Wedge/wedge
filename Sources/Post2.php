@@ -518,6 +518,12 @@ function Post2()
 			$_POST['pin'] = 0;
 	}
 
+	// Whether we're going onwards to actually save this, or whether we're going back because of errors,
+	// attachments submitted in the form will be in the wrong order.
+	if (!empty($_FILES['attachment']))
+		foreach ($_FILES['attachment'] as $key => $details)
+			$_FILES['attachment'][$key] = array_reverse($details);
+
 	// Any mistakes?
 	if (!empty($post_errors))
 	{

@@ -151,6 +151,20 @@ function Activate()
 		return;
 	}
 
+	// OK, so at this point in theory we're all good. Except maybe we're not. They've activated their email, but maybe the admin wants to approve it too?
+	if (!empty($settings['registration_method']) && $settings['registration_method'] == 4)
+	{
+		loadTemplate('Register');
+		wetem::load('after');
+		$context += array(
+			'page_title' => $txt['register'],
+			'title' => $txt['registration_successful'],
+			'description' => $txt['approval_after_registration'],
+		);
+		updateMemberData($row['id_member'], array('is_activated' => 3, 'validation_code' => ''));
+		return;
+	}
+
 	// Let the hook know that they've been activated!
 	call_hook('activate', array($row['member_name']));
 

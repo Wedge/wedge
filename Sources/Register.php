@@ -327,6 +327,18 @@ function Register2()
 	}
 	$context['user_selected_timezone'] = isset($_POST['timezone']) ? $_POST['timezone'] : 'Europe/London';
 
+	if (!empty($settings['coppaAge']) && empty($_SESSION['skip_coppa']))
+		$require = 'coppa';
+	else
+	{
+		$msg = array(
+			0 => 'nothing',
+			1 => 'activation',
+			2 => 'approval',
+			4 => 'both',
+		);
+		$require = isset($settings['registration_method'], $msg[$settings['registration_method']]) ? $msg[$settings['registration_method']] : 'both';
+	}
 	// Set the options needed for registration.
 	$regOptions = array(
 		'interface' => 'guest',
@@ -338,7 +350,7 @@ function Register2()
 		'check_password_strength' => true,
 		'check_email_ban' => true,
 		'send_welcome_email' => !empty($settings['send_welcomeEmail']),
-		'require' => !empty($settings['coppaAge']) && empty($_SESSION['skip_coppa']) ? 'coppa' : (empty($settings['registration_method']) ? 'nothing' : ($settings['registration_method'] == 1 ? 'activation' : 'approval')),
+		'require' => $require,
 		'extra_register_vars' => array(),
 		'theme_vars' => array(),
 	);

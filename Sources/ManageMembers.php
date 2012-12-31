@@ -163,6 +163,7 @@ function ViewMemberlist()
 
 	// Set the current sub action.
 	$context['sub_action'] = $_REQUEST['sa'];
+	$context['can_see_ip'] = allowedTo('manage_bans');
 
 	// Are we performing a delete?
 	if (isset($_POST['delete_members']) && !empty($_POST['delete']) && allowedTo('profile_remove_any'))

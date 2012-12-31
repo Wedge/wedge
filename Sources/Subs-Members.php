@@ -514,7 +514,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	// Generate a validation code if it's supposed to be emailed.
 	$validation_code = '';
-	if ($regOptions['require'] == 'activation')
+	if ($regOptions['require'] == 'activation' || $regOptions['require'] == 'both')
 		$validation_code = generateValidationCode();
 
 	// If you haven't put in a password generate one.
@@ -661,7 +661,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	elseif ($regOptions['require'] == 'nothing')
 		$regOptions['register_vars']['is_activated'] = 1;
 	// Maybe it must be activated by email?
-	elseif ($regOptions['require'] == 'activation')
+	elseif ($regOptions['require'] == 'activation' || $regOptions['require'] == 'both')
 		$regOptions['register_vars']['is_activated'] = 0;
 	// Otherwise it must be awaiting approval!
 	else
@@ -768,7 +768,7 @@ function registerMember(&$regOptions, $return_errors = false)
 	// Administrative registrations are a bit different...
 	if ($regOptions['interface'] == 'admin')
 	{
-		if ($regOptions['require'] == 'activation')
+		if ($regOptions['require'] == 'activation' || $regOptions['require'] == 'both') // If this is set from the admin panel, assume the admin has approved it!
 			$email_message = 'admin_register_activate';
 		elseif (!empty($regOptions['send_welcome_email']))
 			$email_message = 'admin_register_immediate';
@@ -813,7 +813,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		adminNotify('standard', $memberID, $regOptions['username']);
 	}
 	// Need to activate their account - or fall under COPPA.
-	elseif ($regOptions['require'] == 'activation' || $regOptions['require'] == 'coppa')
+	elseif ($regOptions['require'] == 'activation' || $regOptions['require'] == 'both' || $regOptions['require'] == 'coppa')
 	{
 		$replacements = array(
 			'REALNAME' => $regOptions['register_vars']['real_name'],
@@ -822,7 +822,7 @@ function registerMember(&$regOptions, $return_errors = false)
 			'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
 		);
 
-		if ($regOptions['require'] == 'activation')
+		if ($regOptions['require'] == 'activation' || $regOptions['require'] == 'both')
 			$replacements += array(
 				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $memberID . ';code=' . $validation_code,
 				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $memberID,
@@ -833,7 +833,13 @@ function registerMember(&$regOptions, $return_errors = false)
 				'COPPALINK' => $scripturl . '?action=coppa;u=' . $memberID,
 			);
 
-		$emaildata = loadEmailTemplate('register_' . ($regOptions['require'] == 'activation' ? 'activate' : 'coppa'), $replacements);
+		if ($regOptions['require'] == 'both')
+			$email_tmpl = 'activate_approve';
+		elseif ($regOptions['require'] == 'coppa')
+			$email_tmpl = 'coppa';
+		else
+			$email_tmpl = 'activate';
+		$emaildata = loadEmailTemplate('register_' . $email_tmpl, $replacements);
 
 		sendmail($regOptions['email'], $emaildata['subject'], $emaildata['body'], null, null, false, 0);
 	}
