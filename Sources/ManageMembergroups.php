@@ -57,7 +57,7 @@ if (!defined('WEDGE'))
 		- also handles the delete button of the edit form.
 		- redirects to ?action=admin;area=membergroups.
 
-	void ModifyMembergroupsettings()
+	void ModifyMembergroupSettings()
 		- set some general membergroup settings and permissions.
 		- called by ?action=admin;area=membergroups;sa=settings
 		- requires the admin_forum permission (and manage_permissions for
@@ -77,7 +77,7 @@ function ModifyMembergroups()
 		'edit' => array('EditMembergroup', 'manage_membergroups'),
 		'index' => array('MembergroupIndex', 'manage_membergroups'),
 		'members' => array('MembergroupMembers', 'manage_membergroups', 'Groups'),
-		'settings' => array('ModifyMembergroupsettings', 'admin_forum'),
+		'settings' => array('ModifyMembergroupSettings', 'admin_forum'),
 	);
 
 	// Default to sub action 'index' or 'settings' depending on permissions.
@@ -1173,9 +1173,9 @@ function EditMembergroup()
 }
 
 // Set general membergroup settings.
-function ModifyMembergroupsettings()
+function ModifyMembergroupSettings()
 {
-	global $context, $scripturl, $settings, $txt;
+	global $context, $scripturl, $settings, $txt, $theme;
 
 	wetem::load('show_settings');
 	$context['page_title'] = $txt['membergroups_settings'];
@@ -1199,7 +1199,26 @@ function ModifyMembergroupsettings()
 	$config_vars = array(
 		array('permissions', 'manage_membergroups', 'exclude' => array(-1, 0)),
 		array('select', 'group_text_show', $which_groups),
+		array('title', 'membergroup_badges'),
+		array('desc', 'membergroup_badges_desc'),
+		array('callback', 'badge_order'),
 	);
+
+	// Doing badges is complicated.
+	add_js_file('scripts/jquery-ui-1.8.24.js');
+	$context['badges'] = array();
+	$request = wesql::query('
+		SELECT id_group, group_name, min_posts, online_color, show_when, display_order, stars
+		FROM {db_prefix}membergroups
+		ORDER BY display_order');
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$stars = explode('#', $row['stars']);
+		if (!empty($stars[0]) && !empty($stars[1]))
+			$row['badge'] = str_repeat('<img src="' . str_replace('$language', $context['user']['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
+		$context['badges'][$row['id_group']] = $row;
+	}
+	wesql::free_result($request);
 
 	if (isset($_REQUEST['save']))
 	{
@@ -1210,6 +1229,53 @@ function ModifyMembergroupsettings()
 
 		// Yeppers, saving this...
 		saveDBSettings($config_vars);
+
+		// Now we need to handle the groups. We already got the current groups, so this should be fairly simple.
+		$collected = 0;
+		if (!empty($_POST['group']) && is_array($_POST['group']))
+		{
+			foreach ($_POST['group'] as $group)
+			{
+				$collected++;
+				$group = (int) $group;
+				if (isset($context['badges'][$group]))
+					$context['badges'][$group]['new_order'] = $collected;
+			}
+			// Did we get all the groups?
+			if ($collected < count($context['badges']))
+				foreach ($context['badges'] as $k => $v)
+					if (!isset($v['new_order']))
+						$context['badges'][$k]['new_order'] = $collected++;
+		}
+		if (!empty($_POST['show_when']) && is_array($_POST['show_when']))
+			foreach ($_POST['show_when'] as $k => $v)
+				if (isset($context['badges'][$k]))
+					$context['badges'][$k]['new_show'] = (int) $v;
+
+		foreach ($context['badges'] as $gid => $details)
+		{
+			$array = array();
+			if (isset($details['new_order']) && $details['display_order'] != $details['new_order'])
+				$array['display_order'] = $details['new_order'];
+			if (isset($details['new_show']) && $details['show_when'] != $details['new_show'])
+				$array['show_when'] = $details['new_show'];
+
+			if (!empty($array))
+			{
+				$clauses = array();
+				foreach ($array as $k => $v)
+					$clauses[] = $k . ' = {int:' . $k . '}';
+
+				$array['id_group'] = $gid;
+				wesql::query('
+					UPDATE {db_prefix}membergroups
+					SET ' . implode(', ', $clauses) . '
+					WHERE id_group = {int:id_group}',
+					$array);
+			}
+		}
+		cache_put_data('member-badges', null);
+
 		redirectexit('action=admin;area=membergroups;sa=settings');
 	}
 

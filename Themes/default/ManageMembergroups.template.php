@@ -703,4 +703,58 @@ function template_group_request_reason()
 		</form>';
 }
 
+function template_callback_badge_order()
+{
+	global $context, $txt;
+
+	$show_when = array(
+		0 => 'never',
+		1 => 'always',
+		2 => 'primary',
+		3 => 'cond',
+	);
+
+	echo '
+			<ul>';
+	foreach ($show_when as $type)
+		echo '
+				<li><strong>', $txt['membergroup_show_when_' . $type], '</strong> - ', $txt['membergroup_show_when_desc_' . $type], '</li>';
+	echo '
+			</ul>
+			<ul id="sortable">';
+	foreach ($context['badges'] as $badge)
+	{
+		echo '
+			<li class="badge windowbg">
+				<input type="hidden" name="group[]" value="', $badge['id_group'], '">
+				<span class="handle"></span>
+
+				<span class="group">', !empty($badge['online_color']) ? '<span style="color:' . $badge['online_color'] . '">' . $badge['group_name'] . '</span>' : $badge['group_name'], $badge['min_posts'] >= 0 ? '<dfn>' . $txt['membergroup_badge_postcount'] . '</dfn>' : '', '</span>
+				<span class="badge">', !empty($badge['badge']) ? $badge['badge'] : $txt['membergroup_badges_nobadge'], '</span>';
+
+		if (!empty($badge['badge']))
+		{
+			echo '
+				<select name="show_when[', $badge['id_group'], ']">';
+			foreach ($show_when as $k => $v)
+			{
+				if ($k == 2 && $badge['min_posts'] >= 0)
+					continue; // The option for 'primary' doesn't exist or make sense for post count groups.
+				echo '
+					<option value="', $k, '"', $badge['show_when'] == $k ? ' selected' : '', '>', $txt['membergroup_show_when_' . $v], '</option>';
+			}
+			echo '
+				</select>';
+		}
+
+		echo '
+				<br class="clear">
+			</li>';
+	}
+
+	add_js('
+		$(\'#sortable\').sortable({ handle: \'.handle\' });
+		$(\'#sortable\').disableSelection();');
+}
+
 ?>

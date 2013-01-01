@@ -270,6 +270,36 @@ pre.file_content
 	tr.div
 		height: 14px
 
+#sortable
+	clear: both
+	list-style-type: none
+	width: 80%
+	margin: 0
+	padding: 0
+	li
+		border: 1px dotted gray
+		margin: 4px
+		padding: 10px
+		cursor: default
+		span.handle
+			float: left
+			width: 10px
+			height: 10px
+			display: block
+			margin-right: 10px
+			border: 1px dotted black
+			cursor: n-resize
+		span.group
+			float: left
+			display: inline-block
+			min-width: 200px
+		span.badge
+			float: left
+			display: inline-block
+			min-width: 150px
+			img
+				margin: 0
+
 /* Styles for the manage members section.
 ------------------------------------------------- */
 .msearch_details
