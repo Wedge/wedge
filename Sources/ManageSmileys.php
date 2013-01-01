@@ -134,7 +134,7 @@ function EditSmileySettings($return_config = false)
 	$config_vars = array(
 		array('title', 'settings'),
 			// Inline permissions.
-			array('permissions', 'manage_smileys'),
+			array('permissions', 'manage_smileys', 'exclude' => array(-1)),
 			array('check', 'smiley_enable', 'subtext' => $txt['smileys_enable_subtext']),
 		'',
 			array('select', 'smiley_sets_default', $smiley_context),
@@ -155,7 +155,6 @@ function EditSmileySettings($return_config = false)
 
 	// Finish up the form...
 	$context['post_url'] = $scripturl . '?action=admin;area=smileys;save;sa=settings';
-	$context['permissions_excluded'] = array(-1);
 
 	// Saving the settings?
 	if (isset($_GET['save']))

@@ -466,7 +466,7 @@ function weSelectText(oCurElement)
 	};
 
 	// Make sure to only call this on one element...
-	$.fn.menu = function ()
+	$.fn.wmenu = function ()
 	{
 		var $elem = this.show();
 		this.find('li').each(function () {

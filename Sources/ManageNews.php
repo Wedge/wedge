@@ -803,7 +803,6 @@ function ModifyNewsSettings($return_config = false)
 
 	// Wrap it all up nice and warm...
 	$context['post_url'] = $scripturl . '?action=admin;area=news;save;sa=settings';
-	$context['permissions_excluded'] = array(-1);
 
 	// Add some JavaScript at the bottom...
 	add_js('

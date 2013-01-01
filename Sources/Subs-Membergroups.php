@@ -644,7 +644,7 @@ function cache_getMembergroupList()
 		WHERE hidden = {int:not_hidden}
 			AND id_group != {int:mod_group}
 			AND online_color != {string:blank_string}
-		ORDER BY group_name',
+		ORDER BY display_order',
 		array(
 			'not_hidden' => 0,
 			'mod_group' => 3,

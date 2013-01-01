@@ -1000,7 +1000,7 @@ function GeneralPermissionSettings($return_config = false)
 	$config_vars = array(
 		array('title', 'settings'),
 			// Inline permissions.
-			array('permissions', 'manage_permissions'),
+			array('permissions', 'manage_permissions', 'exclude' => array(-1, 0)),
 		'',
 			// A few useful settings
 			array('check', 'permission_enable_deny', 0, $txt['permission_settings_enable_deny'], 'help' => 'permissions_deny'),
@@ -1018,7 +1018,6 @@ function GeneralPermissionSettings($return_config = false)
 
 	// Don't let guests have these permissions.
 	$context['post_url'] = $scripturl . '?action=admin;area=permissions;save;sa=settings';
-	$context['permissions_excluded'] = array(-1);
 
 	// Saving the settings?
 	if (isset($_GET['save']))

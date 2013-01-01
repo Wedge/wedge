@@ -588,7 +588,7 @@ function template_body_after()
 	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '
 	we_board = ' . $context['current_board'] . ';', '
 
-	$("#main_menu").menu();', $context['show_pm_popup'] ? '
+	$("#main_menu").wmenu();', $context['show_pm_popup'] ? '
 
 	ask(' . JavaScriptEscape($txt['show_personal_messages']) . ', function (yes) { yes && window.open(weUrl("action=pm")); });' : '';
 

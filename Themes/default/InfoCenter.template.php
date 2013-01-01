@@ -80,7 +80,7 @@ function template_info_center_usersonline()
 			', sprintf($txt['users_active'], $settings['lastActive']), ':<br>', implode(', ', $context['list_users_online']);
 
 		// Showing membergroups?
-		if (!empty($theme['show_group_key']) && !empty($context['membergroups']))
+		if (!empty($settings['show_group_key']) && !empty($context['membergroups']))
 			echo '
 			<br>[' . implode(']&nbsp;&nbsp;[', $context['membergroups']) . ']';
 	}

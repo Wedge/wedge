@@ -1173,18 +1173,9 @@ function EditMembergroup()
 }
 
 // Set general membergroup settings.
-function ModifyMembergroupSettings()
+function ModifyMembergroupSettings($return_config = false)
 {
 	global $context, $scripturl, $settings, $txt, $theme;
-
-	wetem::load('show_settings');
-	$context['page_title'] = $txt['membergroups_settings'];
-
-	// Needed for the settings functions.
-	loadSource('ManageServer');
-
-	// Don't allow assignment of guests.
-	$context['permissions_excluded'] = array(-1);
 
 	// !! Show we add a hook for plugins to add to these options...?
 	$which_groups = array(
@@ -1195,14 +1186,22 @@ function ModifyMembergroupSettings()
 		'cond' => $txt['group_show_cond']
 	);
 
-	// Only one thing here!
 	$config_vars = array(
 		array('permissions', 'manage_membergroups', 'exclude' => array(-1, 0)),
 		array('select', 'group_text_show', $which_groups),
+		array('check', 'show_group_key'),
 		array('title', 'membergroup_badges'),
 		array('desc', 'membergroup_badges_desc'),
 		array('callback', 'badge_order'),
 	);
+
+	if ($return_config)
+		return $config_vars;
+
+	// Needed for the settings functions.
+	loadSource('ManageServer');
+	wetem::load('show_settings');
+	$context['page_title'] = $txt['membergroups_settings'];
 
 	// Doing badges is complicated.
 	add_js_file('scripts/jquery-ui-1.8.24.js');

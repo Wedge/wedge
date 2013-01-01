@@ -163,7 +163,7 @@ function Home()
 		$context['show_buddies'] = !empty(we::$user['buddies']);
 
 		// Are we showing all membergroups on the board index?
-		if (!empty($theme['show_group_key']))
+		if (!empty($settings['show_group_key']))
 			$context['membergroups'] = cache_quick_get('membergroup_list', 'Subs-Membergroups', 'cache_getMembergroupList', array());
 
 		// Track most online statistics? (Subs-MembersOnline.php)

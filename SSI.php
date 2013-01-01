@@ -993,7 +993,7 @@ function ssi_whosOnline($output_method = 'echo')
 			', implode(', ', $return['list_users_online']);
 
 	// Showing membergroups?
-	if (!empty($theme['show_group_key']) && !empty($return['membergroups']))
+	if (!empty($settings['show_group_key']) && !empty($return['membergroups']))
 		echo '<br />
 			[' . implode(']&nbsp;&nbsp;[', $return['membergroups']) . ']';
 }

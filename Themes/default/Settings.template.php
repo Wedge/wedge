@@ -55,10 +55,6 @@ function template_settings()
 			'id' => 'show_latest_member',
 			'label' => $txt['latest_members'],
 		),
-		array(
-			'id' => 'show_group_key',
-			'label' => $txt['show_group_key'],
-		),
 	'',
 		array(
 			'id' => 'show_modify',

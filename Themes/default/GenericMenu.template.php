@@ -148,7 +148,7 @@ function template_generic_menu_dropdown()
 	</ul>';
 
 	add_js('
-	$("#amen' . ($mid > 1 ? '_' . ($mid - 1) : '') . '").menu();');
+	$("#amen' . ($mid > 1 ? '_' . ($mid - 1) : '') . '").wmenu();');
 }
 
 // Some code for showing a tabbed view.

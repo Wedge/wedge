@@ -890,12 +890,12 @@ function AdminSearchInternal()
 	// Load a lot of language files.
 	loadLanguage(array(
 		'Help', 'ManageMail', 'ManageSettings', 'ManageBoards', 'ManagePaid', 'ManagePermissions', 'Search',
-		'Login', 'ManageSmileys', 'ManageMaintenance', 'ManageBans',
+		'Login', 'ManageSmileys', 'ManageMaintenance', 'ManageBans', 'ManageMembers',
 	));
 
 	// All the files we need to include.
 	loadSource(array(
-		'ManageSettings', 'ManageBoards', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManageMemberOptions', 'ManagePaid', 'ManageMaintenance',
+		'ManageSettings', 'ManageBoards', 'ManageMembergroups', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManageMemberOptions', 'ManagePaid', 'ManageMaintenance',
 		'ManagePermissions', 'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageBans',
 	));
 
@@ -968,6 +968,7 @@ function AdminSearchInternal()
 			array('ModifyLogSettings', 'area=logs;sa=settings'),
 			array('ModifyPmSettings', 'area=pm'),
 			array('BanListSettings', 'area=bans;sa=settings'),
+			array('ModifyMembergroupSettings', 'area=membergroups;sa=settings'),
 		),
 		'preferences' => array(
 			array('ModifyMemberPreferences', 'area=memberoptions;sa=prefs'),

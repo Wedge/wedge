@@ -860,7 +860,7 @@ function EditBoardSettings($return_config = false)
 	$config_vars = array(
 		array('title', 'settings'),
 			// Inline permissions.
-			array('permissions', 'manage_boards'),
+			array('permissions', 'manage_boards', 'exclude' => array(-1)),
 		'',
 			// Other board settings.
 			array('check', 'countChildPosts'),
@@ -879,7 +879,6 @@ function EditBoardSettings($return_config = false)
 
 	// Don't let guests have these permissions.
 	$context['post_url'] = $scripturl . '?action=admin;area=manageboards;save;sa=settings';
-	$context['permissions_excluded'] = array(-1);
 
 	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
 
