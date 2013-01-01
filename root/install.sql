@@ -1568,6 +1568,7 @@ CREATE TABLE {$db_prefix}membergroups (
   min_posts mediumint(9) NOT NULL default '-1',
   max_messages smallint(5) unsigned NOT NULL default 0,
   show_when tinyint(3) unsigned NOT NULL default 0,
+  display_order smallint(5) unsigned NOT NULL default 0,
   stars varchar(255) NOT NULL default '',
   group_type tinyint(3) NOT NULL default 0,
   hidden tinyint(3) NOT NULL default 0,
@@ -1581,16 +1582,16 @@ CREATE TABLE {$db_prefix}membergroups (
 #
 
 INSERT INTO {$db_prefix}membergroups
-	(id_group, group_name, description, online_color, min_posts, show_when, stars, group_type)
+	(id_group, group_name, description, online_color, min_posts, show_when, display_order, stars, group_type)
 VALUES
-	(1, '{$default_administrator_group}', '', '#d2653a', -1, 1, '5#rankadmin.gif', 1),
-	(2, '{$default_global_moderator_group}', '', '#c18933', -1, 2, '5#rankgmod.gif', 0),
-	(3, '{$default_moderator_group}', '', '', -1, 3, '5#rankmod.gif', 0),
-	(4, '{$default_newbie_group}', '', '', 0, 2, '1#rank.gif', 0),
-	(5, '{$default_junior_group}', '', '', 50, 2, '2#rank.gif', 0),
-	(6, '{$default_full_group}', '', '', 100, 2, '3#rank.gif', 0),
-	(7, '{$default_senior_group}', '', '', 250, 2, '4#rank.gif', 0),
-	(8, '{$default_hero_group}', '', '#5e8e75', 500, 2, '5#rank.gif', 0);
+	(1, '{$default_administrator_group}', '', '#d2653a', -1, 1, 1, '5#rankadmin.gif', 1),
+	(2, '{$default_global_moderator_group}', '', '#c18933', -1, 2, 2, '5#rankgmod.gif', 0),
+	(3, '{$default_moderator_group}', '', '', -1, 3, 3, '5#rankmod.gif', 0),
+	(4, '{$default_newbie_group}', '', '', 0, 2, 4, '1#rank.gif', 0),
+	(5, '{$default_junior_group}', '', '', 50, 2, 5, '2#rank.gif', 0),
+	(6, '{$default_full_group}', '', '', 100, 2, 6, '3#rank.gif', 0),
+	(7, '{$default_senior_group}', '', '', 250, 2, 7, '4#rank.gif', 0),
+	(8, '{$default_hero_group}', '', '#5e8e75', 500, 2, 8, '5#rank.gif', 0);
 # --------------------------------------------------------
 
 #

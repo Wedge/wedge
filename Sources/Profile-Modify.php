@@ -2851,7 +2851,7 @@ function profileReloadUser()
 		setLoginCookie(60 * $settings['cookieTime'], $context['id_member'], sha1(sha1(strtolower($cur_profile['member_name']) . un_htmlspecialchars($_POST['passwrd2'])) . $cur_profile['password_salt']));
 	}
 
-	loadUserSettings();
+	we::getInstance();
 	writeLog();
 }
 
@@ -2890,7 +2890,7 @@ function profileSendActivation()
 	if (isset($_COOKIE[$cookiename]))
 		$_COOKIE[$cookiename] = '';
 
-	loadUserSettings();
+	we::getInstance();
 
 	$context['user']['is_logged'] = false;
 	$context['user']['is_guest'] = true;
