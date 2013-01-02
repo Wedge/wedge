@@ -133,7 +133,6 @@ loadPermissions();
 // We need to remove all permissions, plus remove board access, to make sure everything in SSI behaves.
 if (empty($settings['allow_guestAccess']) && we::$is_guest)
 {
-	we::$user['permissions'] = array();
 	we::$user['query_see_board'] = '0=1';
 	we::$user['query_wanna_see_board'] = '0=1';
 }

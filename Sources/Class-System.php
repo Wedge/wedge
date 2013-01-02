@@ -27,7 +27,7 @@ class we
 		return false;
 	}
 
-	public static function getInstance($load_user = true)
+	public static function &getInstance($load_user = true)
 	{
 		static $instance = null;
 
@@ -35,10 +35,10 @@ class we
 		if ($instance == null)
 		{
 			$instance = new self();
-			$instance->ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+			self::$ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 			if ($load_user)
-				$instance->init_user();
-			$instance->init_browser();
+				self::init_user();
+			self::init_browser();
 		}
 
 		return $instance;

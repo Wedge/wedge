@@ -37,8 +37,8 @@ class wedbPackages
 			'log_search_messages', 'log_search_results', 'log_search_subjects', 'log_search_topics', 'log_topics', 'mail_queue',
 			'membergroups', 'members', 'message_icons', 'messages', 'moderators', 'package_servers',
 			'permission_profiles', 'permissions', 'personal_messages', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls',
-			'pretty_topic_urls', 'pretty_urls_cache', 'scheduled_tasks', 'sessions', 'settings', 'smileys', 'spiders',
-			'subscriptions', 'subscriptions_groups', 'themes', 'topics');
+			'pretty_topic_urls', 'pretty_urls_cache', 'privacy_boards', 'privacy_thoughts', 'privacy_topics', 'scheduled_tasks',
+			'sessions', 'settings', 'smileys', 'spiders', 'subscriptions', 'subscriptions_groups', 'themes', 'topics');
 
 			foreach ($reservedTables as $k => $table_name)
 				self::$reservedTables[$k] = strtolower($db_prefix . $table_name);
