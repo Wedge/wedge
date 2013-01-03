@@ -37,12 +37,12 @@ unset($GLOBALS['cachedir']);
 require_once(dirname(__FILE__) . '/Settings.php');
 
 // And important includes.
+require_once($sourcedir . '/Class-System.php');
 require_once($sourcedir . '/QueryString.php');
 require_once($sourcedir . '/Subs.php');
 require_once($sourcedir . '/Errors.php');
 require_once($sourcedir . '/Load.php');
 require_once($sourcedir . '/Security.php');
-require_once($sourcedir . '/Class-System.php');
 
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)

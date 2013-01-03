@@ -789,7 +789,7 @@ function allowedTo($permission, $boards = null)
 	if (empty($permission))
 		return true;
 
-	// You're never allowed to do something if your data hasn't been loaded yet!
+	// You're never allowed to do something if the system object hasn't been loaded yet!
 	if (!class_exists('we'))
 		return false;
 

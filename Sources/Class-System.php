@@ -13,19 +13,13 @@
 
 class we
 {
-	static $ua;					// User agent string (we::$ua)
-	static $browser;			// Browser array
-	static $user;				// All user information
-	static $id;					// User's member ID
-	static $is_admin;			// we::$is_admin -- or use the slower we::is('admin')
-	static $is_guest;			// we::$is_guest -- or use the slower we::is('guest')
-	static $cache;				// Cache of parsed strings
+	static $ua, $browser;			// User agent string (we::$ua) and subsequent browser array.
+	static $user, $id;				// All user information, plus their ID
+	static $is_admin, $is_guest;	// we::$is_admin/$is_guest -- or use the slower we::is('admin')/is('guest')
+	static $cache;					// Cache of parsed strings
 
 	// What kind of class are you, anyway? One of a kind!
-	private function __clone()
-	{
-		return false;
-	}
+	private function __clone() {}
 
 	public static function &getInstance($load_user = true)
 	{
