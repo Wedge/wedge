@@ -1155,4 +1155,13 @@ function AdminLogs()
 	$log_functions[$sub_action][1]();
 }
 
+// This is to safely load possibly untrusted XML files with SimpleXML.
+// We don't want to have SXML fetching DTDs or XSLT stylesheets for any reason.
+// Returns either the file's content or false for a failure.
+function safe_sxml_load($file)
+{
+	$content = @file_get_contents($file);
+	return empty($content) ? false : simplexml_load_string(preg_replace('~\s*<(!DOCTYPE|xsl)[^>]+?>\s*~i', '', $content));
+}
+
 ?>

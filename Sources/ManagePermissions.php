@@ -1590,7 +1590,7 @@ function loadAllPermissions($loadType = 'classic')
 	if (!empty($context['plugins_dir']))
 		foreach ($context['plugins_dir'] as $id => $path)
 		{
-			$manifest = simplexml_load_file($path . '/plugin-info.xml');
+			$manifest = safe_sxml_load($path . '/plugin-info.xml');
 			if ($manifest === false || empty($manifest->name) || empty($manifest->version) || empty($manifest->newperms))
 				continue;
 			if (!empty($manifest->newperms['filename']))

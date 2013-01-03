@@ -650,7 +650,7 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 	if (empty($plugin_id) || empty($context['plugins_dir'][$plugin_id]) || !file_exists($context['plugins_dir'][$plugin_id] . '/plugin-info.xml'))
 		redirectexit('action=admin');
 
-	$manifest = simplexml_load_file($context['plugins_dir'][$plugin_id] . '/plugin-info.xml');
+	$manifest = safe_sxml_load($context['plugins_dir'][$plugin_id] . '/plugin-info.xml');
 	if (empty($manifest->{'settings-page'}))
 		redirectexit('action=admin');
 

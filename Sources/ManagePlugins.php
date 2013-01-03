@@ -81,7 +81,7 @@ function ListPlugins()
 
 				if (filetype($pluginsdir . '/' . $folder) == 'dir' && file_exists($pluginsdir . '/' . $folder . '/plugin-info.xml'))
 				{
-					$manifest = simplexml_load_file($pluginsdir . '/' . $folder . '/plugin-info.xml');
+					$manifest = safe_sxml_load($pluginsdir . '/' . $folder . '/plugin-info.xml');
 					if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 						continue;
 
@@ -339,7 +339,7 @@ function PluginReadme()
 	// Lastly, does the package know this readme?
 	if ($valid)
 	{
-		$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+		$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
 
 		if (!empty($manifest->readmes))
 		{
@@ -399,7 +399,7 @@ function EnablePlugin()
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
-	$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+	$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
 	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
@@ -1123,7 +1123,7 @@ function DisablePlugin()
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
-	$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+	$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
 	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
@@ -1159,7 +1159,7 @@ function DisablePlugin()
 
 				// Now, we have to go and get the XML manifest for these plugins, because we have to be able to differentiate
 				// optional from required hooks, and we can't do that with what's in context, only the actual manifest.
-				$other_manifest = simplexml_load_file($pluginsdir . '/' . $plugin . '/plugin-info.xml');
+				$other_manifest = safe_sxml_load($pluginsdir . '/' . $plugin . '/plugin-info.xml');
 				$hooks = $other_manifest->hooks->children();
 				foreach ($hooks as $hook)
 				{
@@ -1258,7 +1258,7 @@ function RemovePlugin()
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
-	$manifest = simplexml_load_file($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+	$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
 	if ($manifest === false || empty($manifest->name) || empty($manifest->version))
 		fatal_lang_error('fatal_not_valid_plugin_remove', false);
 
