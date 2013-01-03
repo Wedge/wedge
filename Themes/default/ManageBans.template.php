@@ -464,7 +464,7 @@ function template_ban_details()
 									<input type="number" size="3" min="0" max="255" name="ipv4_end_1">&bull;
 									<input type="number" size="3" min="0" max="255" name="ipv4_end_2">&bull;
 									<input type="number" size="3" min="0" max="255" name="ipv4_end_3">
-								</span>		
+								</span>
 								<span class="ipv6">
 									<input type="text" size="38" maxlength="39" name="ipv6_end">
 								</span>

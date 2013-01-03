@@ -411,7 +411,7 @@ function BanListEdit()
 
 		if (empty($_POST['ban_type']))
 		{
-		
+
 		}
 
 		// Successful? Save and exit, otherwise let this function just continue to show the editing area
