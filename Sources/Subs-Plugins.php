@@ -184,4 +184,169 @@ function deleteFiletree(&$class, $dir, $delete_dir = true)
 	return $value;
 }
 
+/**
+ * Prepare the first stage of plugin installation: validate the file has been uploaded satisfactorily.
+ */
+function uploaded_plugin_validate()
+{
+	global $context, $txt;
+
+	// So, if we're here, the plugin has literally just been uploaded.
+	if (empty($_FILES['plugin']['tmp_name']) || !is_uploaded_file($_FILES['plugin']['tmp_name']))
+		fatal_lang_error('plugins_invalid_upload', false);
+
+	// Now we attempt to process the ZIP file.
+	try
+	{
+		// Get the contents, scan the contents for a valid plugin-info.xml file
+		$zip = new wextr($_FILES['plugin']['tmp_name']);
+		$list = $zip->list_contents();
+
+		$idx = array();
+		foreach ($list as $i => $file)
+			if (!$file['is_folder'] && ($file['filename'] == 'plugin-info.xml' || preg_match('~/plugin-info\.xml$~', $file['filename'])))
+				$idx[] = $i;
+
+		if (count($idx) != 1)
+		{
+			@unlink($_FILES['plugin']['tmp_name']);
+			fatal_lang_error('plugins_invalid_plugin_' . (empty($idx) ? 'no_info' : 'overinfo'), false);
+		}
+
+		// Get said plugin-info.xml file and attempt to make sense of it.
+		$file = $zip->extractByIndex($idx);
+	}
+	catch(wextr_UnableRead_Exception $e)
+	{
+		@unlink($_FILES['plugin']['tmp_name']);
+		fatal_lang_error('plugins_unable_read', false);
+	}
+	catch(wextr_InvalidZip_Exception $e)
+	{
+		@unlink($_FILES['plugin']['tmp_name']);
+		fatal_lang_error('plugins_invalid_zip', false);
+	}
+	catch(Exception $e)
+	{
+		@unlink($_FILES['plugin']['tmp_name']);
+		fatal_lang_error('plugins_generic_error', false, array(get_class($e), $e->getLine()));
+	}
+
+	// If we're here, we know that the package could be read and that $file contains the plugin-info.xml file. But is it valid?
+	$manifest = simplexml_load_string(preg_replace('~\s*<(!DOCTYPE|xsl)[^>]+?>\s*~i', '', $file[$idx[0]]['content']));
+
+	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
+	{
+		@unlink($_FILES['plugin']['tmp_name']);
+		fatal_lang_error('plugins_invalid_plugin_no_info', false);
+	}
+	
+	// Check the list of requirements stated by the package in terms of PHP, MySQL, required functions.
+	if (!empty($manifest->{'min-versions'}))
+	{
+		$min_versions = testRequiredVersions($manifest->{'min-versions'});
+		foreach (array('php', 'mysql') as $test)
+			if (isset($min_versions[$test]))
+				fatal_lang_error('fatal_install_error_min' . $test, false, $min_versions[$test]);
+	}
+
+	// Required functions?
+	if (!empty($manifest->{'required-functions'}))
+	{
+		$required_functions = testRequiredFunctions($manifest->{'required_functions'});
+		if (!empty($required_functions))
+			fatal_lang_error('fatal_install_error_reqfunc', false, westr::htmlspecialchars(implode(', ', $required_functions)));
+	}
+
+	// !!! Should we test for all the hooks too? That's pretty heavy work and it's not like we don't have a ton to do right now!
+
+	// What we do need to do, though, is check against plugins that we have currently enabled. (Not enabled... they can fix that themselves from the main listing.)
+	$_SESSION['uploadplugin'] = array(
+		'file' => $_FILES['plugin']['tmp_name'],
+		'size' => $_FILES['plugin']['size'],
+		'name' => $_FILES['plugin']['name'],
+		'mtime' => filemtime($_FILES['plugin']['tmp_name']),
+		'md5' => md5_file($_FILES['plugin']['tmp_name']),
+	);
+
+	$id = (string) $manifest['id'];
+	if (isset($context['plugins_dir'][$id]))
+	{
+		$context['page_title'] = $txt['plugin_duplicate_detected_title'];
+		// We want to get the existing plugin's name. We know what plugin to look at.
+		//$context['existing_plugin']
+		$existing_plugin = safe_sxml_load($context['plugins_dir'][$id] . '/plugin-info.xml');
+		$context['existing_plugin'] = (string) $existing_plugin->name . ' ' . (string) $existing_plugin->version;
+		$context['new_plugin'] = (string) $manifest->name . ' ' . (string) $manifest->version;
+		wetem::load('upload_duplicate_detected');
+	}
+	else
+	{
+		// All the hoops here are mostly for shared servers, and we might as well take it easy a moment now we're successful for now.
+		$context['page_title'] = $txt['plugin_upload_successful_title'];
+		$context['form_url'] = '<URL>?action=admin;area=plugins;sa=add;upload;stage=1';
+		$context['description'] = $txt['plugin_upload_successful'];
+		wetem::load('upload_generic_progress');
+	}
+}
+
+// Accepts the <min-versions> element and returns an key/value array, key is what isn't met, value is array (available, required)
+function testRequiredVersions($manifest_element)
+{
+	$min_versions = array();
+	$check_for = array('php', 'mysql');
+
+	if (!empty($manifest_element))
+	{
+		$versions = $manifest_element->children();
+		foreach ($versions as $version)
+			if (in_array($version->getName(), $check_for))
+				$min_versions[$version->getName()] = (string) $version;
+	}
+
+	$required_versions = array();
+
+	// So, minimum versions? PHP?
+	if (!empty($min_versions['php']))
+	{
+		// Users might insert 5 or 5.3 or 5.3.0. version_compare considers 5.3 to be less than 5.3.0. So we have to normalize it.
+		preg_match('~^\d(\.\d){2}~', $min_versions['php'] . '.0.0', $matches);
+		if (!empty($matches[0]) && version_compare($matches[0], PHP_VERSION, '>='))
+			$required_versions['php'] = array($matches[0], PHP_VERSION);
+	}
+
+	// MySQL?
+	if (!empty($min_versions['mysql']))
+	{
+		wesql::extend('extra');
+		$mysql_version = wedbExtra::get_version();
+
+		preg_match('~^\d(\.\d){2}~', $min_versions['mysql'] . '.0.0', $matches);
+		if (!empty($matches[0]) && version_compare($matches[0], $mysql_version, '>='))
+			$required_versions['mysql'] = array($matches[0], $mysql_version);
+	}
+
+	return $required_versions;
+}
+
+// Accepts the <required-functions> element and returns an array of functions that aren't available.
+function testRequiredFunctions($manifest_element)
+{
+	$required_functions = array();
+	foreach ($manifest_element->{'php-function'} as $function)
+	{
+		$function = trim((string) $function[0]);
+		if (!empty($function))
+			$required_functions[$function] = true;
+	}
+	foreach ($required_functions as $function => $dummy)
+		if (is_callable($function))
+			unset($required_functions[$function]);
+
+	if (empty($required_functions))
+		return array();
+	else
+		return array_keys($required_functions); // Can't array-flip because we will end up overwriting our values.
+}
+
 ?>

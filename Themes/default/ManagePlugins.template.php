@@ -152,10 +152,10 @@ function template_browse()
 
 function template_remove()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
-	<form action="', $scripturl, '?action=admin;area=plugins;sa=remove;plugin=', $_GET['plugin'], ';commit" method="post">
+	<form action="<URL>?action=admin;area=plugins;sa=remove;plugin=', $_GET['plugin'], ';commit" method="post">
 		<div class="windowbg2 wrc">
 			<p><strong>', sprintf($txt['remove_plugin_desc'], $context['plugin_name']), '</strong></p>
 			<p>', $txt['remove_plugin_blurb'], '</p>
@@ -169,9 +169,7 @@ function template_remove()
 				<legend>', $txt['remove_plugin_delete'], '</legend>
 				', $txt['remove_plugin_delete_desc'], '<br>
 				<input name="delete" type="submit" class="delete floatright" value="', $txt['remove_plugin_delete'], '">
-			</fieldset>';
-
-	echo '
+			</fieldset>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>
@@ -323,6 +321,51 @@ function template_edit_repo()
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" id="', $context['session_id'], '">
 		</form>';
+}
+
+function template_upload_generic_progress()
+{
+	global $context, $txt;
+
+	echo '
+		<we:cat>', $context['page_title'],'</we:cat>
+		<form action="', $context['form_url'], '" method="post">
+			<div class="windowbg2 wrc">
+				<p>', $context['description'], '</p>
+				<input type="submit" class="submit" value="', $txt['not_done_continue'], '">';
+	if (!empty($context['continue_post']))
+		foreach ($context['continue_post'] as $k => $v)
+			echo '
+				<input type="hidden" name="', $k, '" value="', $v, '">';
+	echo '
+			</div>
+		</form>';
+}
+
+function template_upload_duplicate_detected()
+{
+	global $txt, $context;
+
+	echo '
+	<we:cat>', $txt['plugin_duplicate_detected_title'], '</we:cat>
+	<form action="<URL>?action=admin;area=plugins;sa=add;upload;stage=1;duplicate" method="post">
+		<div class="windowbg2 wrc">
+			<p>', sprintf($txt['plugin_duplicate_detected'], $context['new_plugin'], $context['existing_plugin']), '</p>
+			<fieldset>
+				<legend>', $txt['plugin_duplicate_cancel'], '</legend>
+				', $txt['plugin_duplicate_cancel_desc'], '<br>
+				<input name="delete" type="submit" class="delete floatright" value="', $txt['plugin_duplicate_cancel'], '">
+			</fieldset>
+			<br>
+			<fieldset>
+				<legend>', $txt['plugin_duplicate_proceed'], '</legend>
+				', $txt['plugin_duplicate_proceed_desc'], '<br>
+				<input name="upgrade" type="submit" class="submit floatright" value="', $txt['plugin_duplicate_proceed'], '">
+			</fieldset>
+		</div>
+		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+	</form>
+	<br class="clear">';
 }
 
 ?>

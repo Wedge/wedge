@@ -21,6 +21,7 @@ function PluginsHome()
 	// General stuff
 	loadLanguage('ManagePlugins');
 	loadTemplate('ManagePlugins');
+	loadSource('Subs-Plugins');
 	define('WEDGE_PLUGIN', 1); // Any scripts that are run from here, should *really* test that this is defined and exit if not.
 
 	// Because our good friend the GenericMenu complains otherwise.
@@ -63,9 +64,6 @@ function ListPlugins()
 	$context['available_plugins'] = array();
 
 	$hooks = knownHooks();
-	$mysql_version = null;
-
-	$check_for = array('php', 'mysql');
 
 	// 1. Step through the directory, figure out what's there and what's not, and store everything that's valid in $context['available_plugins'].
 	// Since we explicitly want folders at this point, we don't want to use scandir.
@@ -121,37 +119,13 @@ function ListPlugins()
 					if (empty($plugin['author_email']) || !is_valid_email($plugin['author_email']))
 						$plugin['author_email'] = '';
 
-					$min_versions = array();
+					// Test minimum versions of things.
 					if (!empty($manifest->{'min-versions'}))
 					{
-						$versions = $manifest->{'min-versions'}->children();
-						foreach ($versions as $version)
-							if (in_array($version->getName(), $check_for))
-								$min_versions[$version->getName()] = (string) $version;
-					}
-
-					// So, minimum versions? PHP?
-					if (!empty($min_versions['php']))
-					{
-						// Users might insert 5 or 5.3 or 5.3.0. version_compare considers 5.3 to be less than 5.3.0. So we have to normalize it.
-						preg_match('~^\d(\.\d){2}~', $min_versions['php'] . '.0.0', $matches);
-						if (!empty($matches[0]) && version_compare($matches[0], PHP_VERSION, '>='))
-							$plugin['install_errors']['minphp'] = sprintf($txt['install_error_minphp'], $matches[0], PHP_VERSION);
-					}
-
-					// MySQL?
-					if (!empty($min_versions['mysql']))
-					{
-						if (is_null($mysql_version))
-						{
-							// Only get this once, and then if we have to. Save the query-whales!
-							wesql::extend('extra');
-							$mysql_version = wedbExtra::get_version();
-						}
-
-						preg_match('~^\d(\.\d){2}~', $min_versions['mysql'] . '.0.0', $matches);
-						if (!empty($matches[0]) && version_compare($matches[0], $mysql_version, '>='))
-							$plugin['install_errors']['minmysql'] = sprintf($txt['install_error_minmysql'], $matches[0], $mysql_version);
+						$min_versions = testRequiredVersions($manifest->{'min-versions'});
+						foreach (array('php', 'mysql') as $test)
+							if (isset($min_versions[$test]))
+								$plugin['install_errors']['min' . $test] = sprintf($txt['install_error_min' . $test], $min_versions[$test][0], $min_versions[$test][1]);
 					}
 
 					// Required functions?
@@ -414,34 +388,12 @@ function EnablePlugin()
 		fatal_lang_error('fatal_duplicate_id', false);
 
 	// OK, so we need to go through and validate that we have everything we need.
-	$min_versions = array();
-	$check_for = array('php', 'mysql');
 	if (!empty($manifest->{'min-versions'}))
 	{
-		$versions = $manifest->{'min-versions'}->children();
-		foreach ($versions as $version)
-			if (in_array($version->getName(), $check_for))
-				$min_versions[$version->getName()] = (string) $version;
-	}
-
-	// So, minimum versions? PHP?
-	if (!empty($min_versions['php']))
-	{
-		// Users might insert 5 or 5.3 or 5.3.0. version_compare considers 5.3 to be less than 5.3.0. So we have to normalize it.
-		preg_match('~^\d(\.\d){2}~', $min_versions['php'] . '.0.0', $matches);
-		if (!empty($matches[0]) && version_compare($matches[0], PHP_VERSION, '>='))
-			fatal_lang_error('fatal_install_error_minphp', false, array($matches[0], PHP_VERSION));
-	}
-
-	// MySQL?
-	if (!empty($min_versions['mysql']))
-	{
-		wesql::extend('extra');
-		$mysql_version = wedbExtra::get_version();
-
-		preg_match('~^\d(\.\d){2}~', $min_versions['mysql'] . '.0.0', $matches);
-		if (!empty($matches[0]) && version_compare($matches[0], $mysql_version, '>='))
-			fatal_lang_error('fatal_install_error_minmysql', false, array($matches[0], $mysql_version));
+		$min_versions = testRequiredVersions($manifest->{'min-versions'});
+		foreach (array('php', 'mysql') as $test)
+			if (isset($min_versions[$test]))
+				fatal_lang_error('fatal_install_error_min' . $test, false, $min_versions[$test]);
 	}
 
 	// Required functions?
@@ -1252,8 +1204,6 @@ function RemovePlugin()
 {
 	global $scripturl, $txt, $context, $pluginsdir;
 
-	loadSource('Subs-Plugins');
-
 	//libxml_use_internal_errors(true);
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
@@ -1492,26 +1442,6 @@ function isViablePlugin()
 	return (!empty($_GET['plugin']) && strpos($_GET['plugin'], DIRECTORY_SEPARATOR) === false && $_GET['plugin'][0] != '.' && filetype($pluginsdir . '/' . $_GET['plugin']) == 'dir' && file_exists($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml'));
 }
 
-// Accepts the <required-functions> element and returns an array of functions that aren't available.
-function testRequiredFunctions($manifest_element)
-{
-	$required_functions = array();
-	foreach ($manifest_element->{'php-function'} as $function)
-	{
-		$function = trim((string) $function[0]);
-		if (!empty($function))
-			$required_functions[$function] = true;
-	}
-	foreach ($required_functions as $function => $dummy)
-		if (is_callable($function))
-			unset($required_functions[$function]);
-
-	if (empty($required_functions))
-		return array();
-	else
-		return array_keys($required_functions); // Can't array-flip because we will end up overwriting our values.
-}
-
 // This is a routing agent to the relevant aspect of adding plugins to the system.
 function AddPlugin()
 {
@@ -1530,7 +1460,7 @@ function AddPlugin()
 		browsePluginRepo();
 	elseif (!empty($_GET['editrepo']))
 		editPluginRepo();
-	elseif (!empty($_GET['upload']))
+	elseif (isset($_GET['upload']))
 		uploadPlugin();
 	else
 	{
@@ -1751,6 +1681,16 @@ function editPluginRepo()
 
 function uploadPlugin()
 {
+	// From the point of view of this function, setting up a plugin is a doddle, we just delegate everything.
+	// Subs-Plugin.php on the other hand, not so amused.
+	loadSource(array('Subs-Plugins', 'Class-ZipExtract'));
+	$subs = array(
+		0 => 'uploaded_plugin_validate',
+	);
+
+	$_REQUEST['stage'] = isset($_GET['stage'], $subs[$_GET['stage']]) ? $_GET['stage'] : 0;
+
+	$subs[$_REQUEST['stage']]();
 }
 
 function knownHooks()
