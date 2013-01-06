@@ -380,8 +380,8 @@ function is_not_banned($forceCheck = false)
 		$old_name = isset(we::$user['name']) && we::$user['name'] != '' ? we::$user['name'] : $txt['guest_title'];
 		we::$user['name'] = '';
 		we::$user['username'] = '';
-		we::$user['is_guest'] = true;
-		we::$user['is_admin'] = false;
+		we::$is_guest = true;
+		we::$is_admin = false;
 		we::$cache = array();
 		we::$id = 0;
 		we::$user['permissions'] = array();
@@ -428,8 +428,8 @@ function is_not_banned($forceCheck = false)
 		$old_name = isset(we::$user['name']) && we::$user['name'] != '' ? we::$user['name'] : $txt['guest_title'];
 		we::$user['name'] = '';
 		we::$user['username'] = '';
-		we::$user['is_guest'] = true;
-		we::$user['is_admin'] = false;
+		we::$is_guest = true;
+		we::$is_admin = false;
 		we::$cache = array();
 		we::$id = 0;
 		we::$user['permissions'] = array();
@@ -788,10 +788,6 @@ function allowedTo($permission, $boards = null)
 	// You're always allowed to do nothing. (unless you're a working man, MR. LAZY :P!)
 	if (empty($permission))
 		return true;
-
-	// You're never allowed to do something if the system object hasn't been loaded yet!
-	if (!class_exists('we'))
-		return false;
 
 	// Administrators are supermen :P
 	if (we::$is_admin)

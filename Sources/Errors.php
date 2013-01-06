@@ -489,7 +489,7 @@ function updateOnlineWithError($error, $is_lang, $sprintf = array())
 	if (empty($settings['who_enabled']))
 		return;
 
-	$session_id = class_exists('we') && we::$is_guest ? 'ip' . we::$user['ip'] : session_id();
+	$session_id = we::$is_guest ? 'ip' . we::$user['ip'] : session_id();
 
 	// First, we have to get the online log, because we need to break apart the serialized string.
 	$query = wesql::query('

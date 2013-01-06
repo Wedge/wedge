@@ -1204,7 +1204,7 @@ function ModifyMembergroupSettings($return_config = false)
 	$context['page_title'] = $txt['membergroups_settings'];
 
 	// Doing badges is complicated.
-	add_js_file('scripts/jquery-ui-1.8.24.js');
+	add_jquery_ui();
 	$context['badges'] = array();
 	$request = wesql::query('
 		SELECT id_group, group_name, min_posts, online_color, show_when, display_order, stars

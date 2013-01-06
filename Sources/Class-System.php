@@ -431,7 +431,7 @@ class we
 		wesql::register_replacement('query_wanna_see_board', $user['query_wanna_see_board']);
 		wesql::register_replacement('query_wanna_list_board', $user['query_wanna_list_board']);
 
-		self::$id =& $id_member;
+		self::$id = $id_member;
 		self::$user =& $user;
 		self::$is_admin =& $user['is_admin'];
 		self::$is_guest =& $user['is_guest'];
@@ -477,8 +477,7 @@ class we
 		$browser['is_gecko'] = !$is_webkit && strpos($ua, 'Gecko') !== false;	// Mozilla and compatible
 		$browser['is_firefox'] = strpos($ua, 'Gecko/') !== false;				// Firefox says "Gecko/20xx", not "like Gecko"
 
-		// Internet Explorer is often "emulated".
-		$browser['is_ie'] = $is_ie = !$browser['is_opera'] && !$browser['is_gecko'] && strpos($ua, 'MSIE') !== false;
+		$browser['is_ie'] = $is_ie = strpos($ua, 'MSIE') !== false;
 
 		// Retrieve the version number, as a floating point.
 		// Chrome for iOS uses the Safari Mobile string and replaces Version with CriOS.
@@ -548,7 +547,7 @@ class we
 		$browser['possibly_robot'] = !empty(self::$user['possibly_robot']);
 
 		// Robots shouldn't be logging in or registering. So, they aren't a bot. Better to be wrong than sorry (or people won't be able to log in!), anyway.
-		if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register'))) || empty(self::$user['is_guest']))
+		if ((isset($_REQUEST['action']) && in_array($_REQUEST['action'], array('login', 'login2', 'register'))) || !self::$is_guest)
 			$browser['possibly_robot'] = false;
 
 		// Save the results...

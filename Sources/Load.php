@@ -1447,17 +1447,17 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['user'] = array(
 		'id' => we::$id,
 		'is_logged' => !we::$is_guest,
-		'is_guest' => &we::$user['is_guest'],
-		'is_admin' => &we::$user['is_admin'],
+		'is_guest' => &we::$is_guest,
+		'is_admin' => &we::$is_admin,
 		'username' => &we::$user['username'],
 		'language' => &we::$user['language'],
 		'email' => &we::$user['email'],
 		'ignoreusers' => &we::$user['ignoreusers'],
 		'data' => &we::$user['data'],
 	);
-	if (!$context['user']['is_guest'])
+	if (!we::$is_guest)
 		$context['user']['name'] = we::$user['name'];
-	elseif ($context['user']['is_guest'] && !empty($txt['guest_title']))
+	elseif (!empty($txt['guest_title']))
 		$context['user']['name'] = $txt['guest_title'];
 
 	// Determine the current smiley set
@@ -1744,7 +1744,7 @@ function weInitJS()
 		$remote = array(
 			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
 			'jquery' =>		'http://code.jquery.com/jquery-1.5.2.min.js',
-			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.2.min.js',
+			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.5.2.min.js',
 		);
 		$context['remote_js_files'] = array($remote[$settings['jquery_origin']]);
 		$context['main_js_files'] = array(

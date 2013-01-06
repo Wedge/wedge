@@ -25,30 +25,28 @@ var
 	we_submit = $txt['form_submit'],
 	we_ok = $txt['ok'],
 
-	// Basic browser detection. $.browser is being deprecated in jQuery,
-	// but v1.5 still has it, and Wedge will keep supporting it.
+	// Basic browser detection. Do not trust it blindlessly. Still, it can be helpful.
+	ua = function (str) { return navigator.userAgent.toLowerCase().indexOf(str) != -1; },
 
-	// If you need support for more browsers, just test for $.browser.version yourself...
-	is_opera = !!$.browser.opera,
-	is_ff = !!$.browser.mozilla,
+	is_opera = ua('opera'),
+	is_ff = !ua('compatible') && ua('mozilla'),
 
-	// The webkit ones. Oh my, that's a long list... Right now we're only supporting iOS and generic Android browsers.
-	is_webkit = !!$.browser.webkit,
-	is_chrome = navigator.userAgent.indexOf('Chrome') != -1,
-	is_ios = is_webkit && navigator.userAgent.indexOf('(iP') != -1,
-	is_android = is_webkit && navigator.userAgent.indexOf('Android') != -1,
+	// The Webkit ones. Oh my, that's a long list... Right now we're only supporting iOS and generic Android browsers.
+	is_webkit = ua('webkit'),
+	is_chrome = is_webkit && ua('chrome'),
+	is_ios = is_webkit && ua('(ip'),
+	is_android = is_webkit && ua('android'),
 	is_safari = is_webkit && !is_chrome && !is_android && !is_ios,
 
 	// This should allow us to catch more touch devices like smartphones and tablets...
 	is_touch = 'ontouchstart' in document.documentElement,
 
-	// IE gets version variables as well. Do you have to ask why..?
-	is_ie = !!$.browser.msie && !is_opera,
-	is_ie6 = is_ie && $.browser.version == 6,
-	is_ie7 = is_ie && $.browser.version == 7,
-	is_ie8 = is_ie && $.browser.version == 8,
-	is_ie8down = is_ie && $.browser.version < 9,
-	is_ie9up = is_ie && !is_ie8down;
+	// IE gets versioned, too. Do you have to ask why..?
+	is_ie = ua('msie'),
+	is_ie6 = is_ie && ua('msie 6'),
+	is_ie7 = is_ie && ua('msie 7'),
+	is_ie8 = is_ie && ua('msie 8'),
+	is_ie8down = is_ie6 || is_ie7 || is_ie8;
 
 // Replace the default jQuery easing type for animations.
 $.easing.swing2 = $.easing.swing;

@@ -98,9 +98,9 @@ function DoLogin()
 		unset($_SESSION['failed_login']);
 
 	we::$cache = array();
-	we::$user['is_guest'] = false;
+	we::$is_guest = false;
 	$user_settings['additional_groups'] = explode(',', $user_settings['additional_groups']);
-	we::$user['is_admin'] = $user_settings['id_group'] == 1 || in_array(1, $user_settings['additional_groups']);
+	we::$is_admin = $user_settings['id_group'] == 1 || in_array(1, $user_settings['additional_groups']);
 
 	// Are you banned?
 	is_not_banned(true);

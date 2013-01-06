@@ -216,17 +216,17 @@ function uploaded_plugin_validate()
 		// Get said plugin-info.xml file and attempt to make sense of it.
 		$file = $zip->extractByIndex($idx);
 	}
-	catch(wextr_UnableRead_Exception $e)
+	catch (wextr_UnableRead_Exception $e)
 	{
 		@unlink($_FILES['plugin']['tmp_name']);
 		fatal_lang_error('plugins_unable_read', false);
 	}
-	catch(wextr_InvalidZip_Exception $e)
+	catch (wextr_InvalidZip_Exception $e)
 	{
 		@unlink($_FILES['plugin']['tmp_name']);
 		fatal_lang_error('plugins_invalid_zip', false);
 	}
-	catch(Exception $e)
+	catch (Exception $e)
 	{
 		@unlink($_FILES['plugin']['tmp_name']);
 		fatal_lang_error('plugins_generic_error', false, array(get_class($e), $e->getLine()));

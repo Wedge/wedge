@@ -229,6 +229,34 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 }
 
 /**
+ * If you want to use jQuery UI in your plugins, call this simple function.
+ * This allows you to stay up to date because jQuery and jQuery UI versions
+ * need to be in sync, e.g. jQuery 1.5.2 is associated with jQuery UI 1.8.24.
+ * Oh, and please avoid including jQuery UI if you can do without it... So heavy.
+ */
+function add_jquery_ui()
+{
+	global $settings, $context;
+	static $done = false;
+
+	if ($done)
+		return;
+	$done = true;
+
+	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
+		add_js_file('scripts/jquery-ui-1.8.24.js');
+	else
+	{
+		$remote = array(
+			'google' =>		'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js',
+			'jquery' =>		'http://code.jquery.com/ui/1.8.24/jquery-ui.min.js',
+			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.24/jquery-ui.min.js',
+		);
+		add_js_file($remote[$settings['jquery_origin']], true);
+	}
+}
+
+/**
  * This function adds a string to the header's inline CSS.
  * Several strings can be passed as parameters, allowing for easier conversion from an "echo" to an "add_css()" call.
  * Please note that, obviously, this function will do nothing if you call wetem::hide() or generally don't output the HTML head.
