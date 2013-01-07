@@ -264,7 +264,7 @@ function showDrafts($memID)
 				AND id_member = {int:member}',
 			array(
 				'not_pm' => 0,
-				'member' => we::$id,
+				'member' => $memID,
 			)
 		);
 
@@ -282,7 +282,7 @@ function showDrafts($memID)
 			LIMIT 1',
 			array(
 				'draft' => $draft_id,
-				'member' => we::$id,
+				'member' => $memID,
 			)
 		);
 

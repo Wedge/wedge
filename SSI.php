@@ -162,7 +162,7 @@ if (!isset($_SESSION['USER_AGENT']) && (!isset($_GET['ssi_function']) || $_GET['
 	$_SESSION['USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
 
 // Call a function passed by GET.
-$disallowed = array('queryPosts');
+$disallowed = array('queryPosts', 'fetchPosts', 'fetchMember', 'fetchGroupMembers', 'queryMembers');
 if (isset($_GET['ssi_function']) && function_exists('ssi_' . $_GET['ssi_function']) && !in_array($_GET['ssi_function'], $disallowed))
 {
 	call_user_func('ssi_' . $_GET['ssi_function']);

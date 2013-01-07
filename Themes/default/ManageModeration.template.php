@@ -436,8 +436,8 @@ function template_modfilter_boards()
 	global $context, $txt;
 	echo '
 		<br>
-		<label><input type="radio" name="appliesboard" onchange="validateGroups();" value="id"> ', $txt['modfilter_applies_all'], '</label><br>
-		<label><input type="radio" name="appliesboard" onchange="validateGroups();" value="except-id"> ', $txt['modfilter_applies_allexcept'], '</label><br>';
+		<label><input type="radio" name="appliesboard" onchange="validateBoards();" value="id"> ', $txt['modfilter_applies_all'], '</label><br>
+		<label><input type="radio" name="appliesboard" onchange="validateBoards();" value="except-id"> ', $txt['modfilter_applies_allexcept'], '</label><br>';
 
 	foreach ($context['boardlist'] as $id_cat => $cat)
 	{
