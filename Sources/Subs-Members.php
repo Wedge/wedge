@@ -539,13 +539,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 		// Password isn't legal?
 		if ($passwordError != null)
-		{
-			loadLanguage('Errors');
-			if ($passwordError == 'short')
-				$txt['profile_error_password_short'] = sprintf($txt['profile_error_password_short'], empty($settings['password_strength']) ? 4 : 8);
-
-			$reg_errors[] = array('lang', 'profile_error_password_' . $passwordError);
-		}
+			$reg_errors[] = array('lang', 'profile_error_password_' . $passwordError, false, empty($settings['password_strength']) ? array(4) : array(8));
 	}
 
 	// You may not be allowed to register this email.
@@ -568,6 +562,12 @@ function registerMember(&$regOptions, $return_errors = false)
 	if (wesql::num_rows($request) != 0)
 		$reg_errors[] = array('lang', 'email_in_use', false, array(htmlspecialchars($regOptions['email'])));
 	wesql::free_result($request);
+
+	// Registration might have added its own things that we need to validate.
+	$ext_valid = call_hook('register_validate', array(&$regOptions));
+	foreach ($ext_valid as $func => $retval)
+		if (!empty($retval))
+			$reg_errors = array_merge($retval, $reg_errors);
 
 	// If we found any errors we need to do something about it right away!
 	foreach ($reg_errors as $key => $error)
@@ -741,6 +741,8 @@ function registerMember(&$regOptions, $return_errors = false)
 		array('id_member')
 	);
 	$memberID = wesql::insert_id();
+
+	call_hook('register_post', array(&$regOptions, &$theme_vars, &$memberID));
 
 	// Update the number of members and latest member's info - and pass the name, but remove the 's.
 	if ($regOptions['register_vars']['is_activated'] == 1)

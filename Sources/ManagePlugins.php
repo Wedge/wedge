@@ -1740,6 +1740,8 @@ function knownHooks()
 			'reset_pass',
 			'other_passwords',
 			'register',
+			'register_validate',
+			'register_post',
 			'activate',
 			'delete_member',
 			'delete_member_multiple',

@@ -189,7 +189,7 @@ function deleteFiletree(&$class, $dir, $delete_dir = true)
  */
 function uploaded_plugin_validate()
 {
-	global $context, $txt;
+	global $context, $txt, $cachedir;
 
 	// So, if we're here, the plugin has literally just been uploaded.
 	if (empty($_FILES['plugin']['tmp_name']) || !is_uploaded_file($_FILES['plugin']['tmp_name']))
@@ -261,12 +261,17 @@ function uploaded_plugin_validate()
 	// !!! Should we test for all the hooks too? That's pretty heavy work and it's not like we don't have a ton to do right now!
 
 	// What we do need to do, though, is check against plugins that we have currently enabled. (Not enabled... they can fix that themselves from the main listing.)
+	// And we need to store this and make sure it won't be automatically garbage collected.
+	$new_file = 'post_plugin_' . we::$id;
+	if (!move_uploaded_file($_FILES['plugin']['tmp_name'], $cachedir . '/' . $new_file))
+		fatal_lang_error('plugins_invalid_upload', false);
+
 	$_SESSION['uploadplugin'] = array(
-		'file' => $_FILES['plugin']['tmp_name'],
+		'file' => $new_file,
 		'size' => $_FILES['plugin']['size'],
 		'name' => $_FILES['plugin']['name'],
-		'mtime' => filemtime($_FILES['plugin']['tmp_name']),
-		'md5' => md5_file($_FILES['plugin']['tmp_name']),
+		'mtime' => filemtime($cachedir . '/' . $new_file),
+		'md5' => md5_file($cachedir . '/' . $new_file),
 	);
 
 	$id = (string) $manifest['id'];
