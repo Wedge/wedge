@@ -350,7 +350,7 @@ function is_not_banned($forceCheck = false)
 			}
 			if (!empty($update))
 			{
-				updateMember(we::$id, array('is_activated' => $user_settings['is_activated'] + $update));
+				updateMemberData(we::$id, array('is_activated' => $user_settings['is_activated'] + $update));
 				updateStats('member');
 			}
 		}
