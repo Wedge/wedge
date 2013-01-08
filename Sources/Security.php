@@ -43,7 +43,7 @@ if (!defined('WEDGE'))
 		- log the current user in the ban logs.
 		- increment the hit counters for the specified ban ID's (if any.)
 
-	void isBannedEmail(string email, string restriction, string error)
+	void isBannedEmail(string email, string error)
 		- check if a given email is banned.
 		- performs an immediate ban if the turns turns out positive.
 
@@ -234,6 +234,26 @@ function is_not_banned($forceCheck = false)
 		$ban_query_vars = array('current_time' => time());
 		$flag_is_activated = false;
 
+		// Is their email address banned?
+		if (strlen(we::$user['email']) != 0)
+		{
+			$email_check = isBannedEmail(we::$user['email'], '', true);
+
+			foreach ($email_check as $email_ban)
+				if ($email_ban['hard'])
+				{
+					$_SESSION['ban']['cannot_access']['ids'][] = $email_ban['id'];
+					if (!empty($email_ban['msg']))
+						$_SESSION['ban']['cannot_access']['reason'] = $email_ban['msg'];
+					$flag_is_activated = 'hard';
+				}
+				elseif ($flag_is_activated == false)
+					$flag_is_activated = 'soft';
+
+			if (!empty($_SESSION['ban']['cannot_access']['ids']) && !isset($_SESSION['ban']['cannot_access']['reason']))
+				$_SESSION['ban']['cannot_access']['reason'] = '';
+		}
+
 		// Check both IP addresses.
 		foreach (array('ip', 'ip2') as $ip_number)
 		{
@@ -262,13 +282,6 @@ function is_not_banned($forceCheck = false)
 							AND bi.ip_low2 = 255 AND bi.ip_high2 = 255
 							AND bi.ip_low3 = 255 AND bi.ip_high3 = 255
 							AND bi.ip_low4 = 255 AND bi.ip_high4 = 255)';
-		}
-
-		// Is their email address banned?
-		if (strlen(we::$user['email']) != 0)
-		{
-			$ban_query[] = '({string:email} LIKE bi.email_address)';
-			$ban_query_vars['email'] = we::$user['email'];
 		}
 
 		// How about this user?
@@ -307,23 +320,39 @@ function is_not_banned($forceCheck = false)
 						if (!isset($_SESSION['ban']['expire_time']) || ($_SESSION['ban']['expire_time'] != 0 && ($row['expire_time'] == 0 || $row['expire_time'] > $_SESSION['ban']['expire_time'])))
 							$_SESSION['ban']['expire_time'] = $row['expire_time'];
 
-						if (!we::$is_guest && $restriction == 'cannot_access' && ($row['id_member'] == we::$id || $row['email_address'] == we::$user['email']))
+						if (!we::$is_guest && $restriction == 'cannot_access' && $row['id_member'] == we::$id)
 							$flag_is_activated = true;
 					}
 			}
 			wesql::free_result($request);
 		}
 
-		// Mark the cannot_access and cannot_post bans as being 'hit'.
-		if (isset($_SESSION['ban']['cannot_access']) || isset($_SESSION['ban']['cannot_post']) || isset($_SESSION['ban']['cannot_login']))
-			log_ban(array_merge(isset($_SESSION['ban']['cannot_access']) ? $_SESSION['ban']['cannot_access']['ids'] : array(), isset($_SESSION['ban']['cannot_post']) ? $_SESSION['ban']['cannot_post']['ids'] : array(), isset($_SESSION['ban']['cannot_login']) ? $_SESSION['ban']['cannot_login']['ids'] : array()));
-
-		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up.
-		if (we::$id && (($user_settings['is_activated'] >= 20 && !$flag_is_activated)
-			|| ($user_settings['is_activated'] < 20 && $flag_is_activated)))
+		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up. But we're not going to go mad and re-evaluate all the bans - just the ones for this person.
+		if (we::$id)
 		{
-			loadSource('ManageBans');
-			updateBanMembers();
+			$update = 0;
+			if ($user_settings['is_activated'] >= 20)
+			{
+				if ($flag_is_activated != 'hard')
+					$update = $flag_is_activated == 'soft' ? -10 : -20; // Shouldn't be hard banned, drop them down to soft banned or unbanned entirely as appropriate.
+			}
+			elseif ($user_settings['is_activated'] >= 10)
+			{
+				if ($flag_is_activated == 'hard')
+					$update = 10; // They're already softbanned (10-19), update them to hard banned (20-29)
+				elseif (!$flag_is_activated)
+					$update = -10; // They're softbanned with no reason to be, drop them down to 0-9
+			}
+			elseif ($flag_is_activated)
+			{
+				// So, not banned but should be.
+				$update = $flag_is_activated == 'soft' ? 10 : 20;
+			}
+			if (!empty($update))
+			{
+				updateMember(we::$id, array('is_activated' => $user_settings['is_activated'] + $update));
+				updateStats('member');
+			}
 		}
 	}
 
@@ -334,23 +363,18 @@ function is_not_banned($forceCheck = false)
 		foreach ($bans as $key => $value)
 			$bans[$key] = (int) $value;
 		$request = wesql::query('
-			SELECT bi.id_ban, bg.reason
-			FROM {db_prefix}ban_items AS bi
-				INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
-			WHERE bi.id_ban IN ({array_int:ban_list})
-				AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time})
-				AND bg.cannot_access = {int:cannot_access}
-			LIMIT ' . count($bans),
+			SELECT id_ban, extra
+			FROM {db_prefix}bans
+			WHERE id_ban IN ({array_int:bans})',
 			array(
-				'cannot_access' => 1,
-				'ban_list' => $bans,
-				'current_time' => time(),
+				'bans' => $bans,
 			)
 		);
 		while ($row = wesql::fetch_assoc($request))
 		{
+			$extra = !empty($row['extra']) ? @unserialize($row['extra']) : array();
 			$_SESSION['ban']['cannot_access']['ids'][] = $row['id_ban'];
-			$_SESSION['ban']['cannot_access']['reason'] = $row['reason'];
+			$_SESSION['ban']['cannot_access']['reason'] = !empty($extra['message']) ? $extra['message'] : '';
 		}
 		wesql::free_result($request);
 
@@ -407,7 +431,7 @@ function is_not_banned($forceCheck = false)
 		writeLog(true);
 
 		// You banned, sucka!
-		fatal_lang_error('your_ban', 'user', array($old_name, (empty($_SESSION['ban']['cannot_access']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_access']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never'])));
+		fatal_lang_error('your_ban', false, array($old_name, (empty($_SESSION['ban']['cannot_access']['reason']) ? '' : '<br>' . $_SESSION['ban']['cannot_access']['reason']) . '<br>' . (!empty($_SESSION['ban']['expire_time']) ? sprintf($txt['your_ban_expires'], timeformat($_SESSION['ban']['expire_time'], false)) : $txt['your_ban_expires_never'])));
 
 		// If we get here, something's gone wrong.... but let's try anyway.
 		trigger_error('Hacking attempt...', E_USER_ERROR);
@@ -557,7 +581,7 @@ function log_ban($ban_ids = array(), $email = null)
 }
 
 // Checks if a given email address might be banned.
-function isBannedEmail($email, $restriction, $error)
+function isBannedEmail($email, $error, $return = false)
 {
 	global $txt;
 
@@ -565,54 +589,116 @@ function isBannedEmail($email, $restriction, $error)
 	if (empty($email) || trim($email) == '')
 		return;
 
-	// Let's start with the bans based on your IP/hostname/memberID...
-	$ban_ids = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['ids'] : array();
-	$ban_reason = isset($_SESSION['ban'][$restriction]) ? $_SESSION['ban'][$restriction]['reason'] : '';
+	$return_value = array();
 
-	// ...and add to that the email address you're trying to register.
-	$request = wesql::query('
-		SELECT bi.id_ban, bg.' . $restriction . ', bg.cannot_access, bg.reason
-		FROM {db_prefix}ban_items AS bi
-			INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
-		WHERE {string:email} LIKE bi.email_address
-			AND (bg.' . $restriction . ' = {int:cannot_access} OR bg.cannot_access = {int:cannot_access})
-			AND (bg.expire_time IS NULL OR bg.expire_time >= {int:now})',
-		array(
-			'email' => $email,
-			'cannot_access' => 1,
-			'now' => time(),
-		)
-	);
-	while ($row = wesql::fetch_assoc($request))
+	// So now we find all the banned emails. If it's a soft ban, we just throw an error message. If it's a hard ban, we lock them out too.
+	$bans = cache_get_data('bans_email');
+	if ($bans === null)
 	{
-		if (!empty($row['cannot_access']))
+		$bans = array();
+		$request = wesql::query('
+			SELECT id_ban, hardness, ban_content, ban_reason, extra
+			FROM {db_prefix}bans
+			WHERE ban_type = {string:email}',
+			array(
+				'email' => 'email',
+			)
+		);
+
+		while ($row = wesql::fetch_assoc($request))
 		{
-			$_SESSION['ban']['cannot_access']['ids'][] = $row['id_ban'];
-			$_SESSION['ban']['cannot_access']['reason'] = $row['reason'];
+			$extra = !empty($row['extra']) ? @unserialize($row['extra']) : array();
+			$ban = array(
+				'id' => $row['id_ban'],
+				'hard' => $row['hardness'] == 1,
+				'reason' => $row['ban_reason'],
+				'message' => !empty($extra['message']) ? $extra['message'] : '',
+			);
+
+			// So, split up the user and domain parts of the email, and lower-case everything. The specification actually spells out case insensitivity.
+			list($user, $domain) = explode('@', strtolower($row['ban_content']));
+			// GMail style ignores dots and +labels
+			if (!empty($extra['gmail_style']))
+			{
+				$ban['gmail'] = true;
+				if (strpos($user, '+') !== false)
+					list($user, $label) = explode('+', $user);
+				if ($domain == 'gmail.com' || $domain == 'googlemail.com')
+					$user = str_replace('.', '', $user);
+			}
+
+			if ($user == '*')
+				$ban['domain'] = $domain;
+			elseif (strpos($domain, '*') === 0)
+				$ban['tld'] = '~' . preg_quote(ltrim($domain, '*'), '~') . '$~';
+			elseif (strpos($user, '*') !== false)
+			{
+				list($b, $a) = explode('*', $user);
+				$ban['match'] = '~' . preg_quote($b, '~') . '.*' . preg_quote($a, '~') . '~';
+			}
+			else
+				$ban['content'] = $user . '@' . $domain;
+			$bans[] = $ban;
 		}
-		if (!empty($row[$restriction]))
+		cache_put_data('bans_email', $bans, 240);
+		wesql::free_result($request);
+	}
+
+	// Now we're operating on the real details.
+	$email = strtolower($email);
+	list ($user, $domain) = explode('@', $email);
+	// To avoid recalculating this every time, let's get a few things sorted out.
+	list ($gmail_user) = explode('+', $user);
+	$gmail_user_strict = str_replace('.', '', $gmail_user) . '@' . $domain;
+	$gmail_user .= '@' . $domain;
+
+	// And so it begins.
+	foreach ($bans as $ban)
+	{
+		if (isset($ban['content'])) // First, we test for exact match. And if not specified, move on to the next type of test. We keep it separated otherwise things fall through when they're not supposed to.
 		{
-			$ban_ids[] = $row['id_ban'];
-			$ban_reason = $row['reason'];
+			$content = !empty($ban['gmail']) ? ($domain == 'gmail.com' || $domain == 'googlemail.com' ? $gmail_user_strict : $gmail_user) : $email;
+			if ($ban['content'] != $content)
+				continue;
+		}
+		elseif (isset($ban['domain'])) // Then we test for matching domain
+		{
+			if ($ban['domain'] != $domain)
+				continue;
+		}
+		elseif (isset($ban['tld'])) // Then we test for TLD matches
+		{
+			if (!preg_match($ban['tld'], $domain))
+				continue;
+		}
+		else // And lastly, wildcard match on address.
+		{
+			if (!preg_match($ban['match'], $email))
+				continue;
+		}
+
+		if ($return)
+			$return_value[] = array(
+				'id' => $ban['id'],
+				'msg' => $ban['message'],
+				'hard' => $ban['hard'],
+			);
+		else
+		{
+			// OK, if we're still here, this ban matched. Hard bans mean good bye. Go and boil your bottoms, you sons of a silly person.
+			if ($ban['hard'])
+			{
+				$_SESSION['ban']['cannot_access']['reason'] = $ban['message'];
+				$_SESSION['ban']['last_checked'] = time();
+				$_SESSION['ban']['cannot_access']['ids'][] = $ban['id'];
+				fatal_lang_error('your_ban', false, array($txt['guest_title'], $_SESSION['ban']['cannot_access']['reason']));
+			}
+			else
+				fatal_error($error . $ban['message'], false);
 		}
 	}
-	wesql::free_result($request);
 
-	// You're in biiig trouble. Banned for the rest of this session!
-	if (isset($_SESSION['ban']['cannot_access']))
-	{
-		log_ban($_SESSION['ban']['cannot_access']['ids']);
-		$_SESSION['ban']['last_checked'] = time();
-
-		fatal_lang_error('your_ban', false, array($txt['guest_title'], $_SESSION['ban']['cannot_access']['reason']));
-	}
-
-	if (!empty($ban_ids))
-	{
-		// Log this ban for future reference.
-		log_ban($ban_ids, $email);
-		fatal_error($error . $ban_reason, false);
-	}
+	return $return_value;
 }
 
 // Make sure the user's correct session was passed, and they came from here. (type can be post, get, or request.)

@@ -544,7 +544,7 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	// You may not be allowed to register this email.
 	if (!empty($regOptions['check_email_ban']))
-		isBannedEmail($regOptions['email'], 'cannot_register', $txt['ban_register_prohibited']);
+		isBannedEmail($regOptions['email'], $txt['ban_register_prohibited']);
 
 	// Check if the email address is in use.
 	$request = wesql::query('

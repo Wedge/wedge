@@ -27,6 +27,12 @@ function template_browse()
 				<dt><strong>', $txt['mailqueue_oldest'], '</strong></dt>
 				<dd>', $context['oldest_mail'], '</dd>
 			</dl>
+			<form action="<URL>?action=admin;area=mailqueue;sa=clear;', $context['session_query'], '" method="post">
+				<div class="floatright">
+					<input type="submit" name="delete_redirects" value="', $txt['mailqueue_clear_list'], '" class="submit" onclick="return ask(', JavaScriptEscape($txt['mailqueue_clear_list_warning']), ', e);">
+				</div>
+			</form>
+			<br class="clear">
 		</div>';
 
 	template_show_list('mail_queue');

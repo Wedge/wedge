@@ -124,7 +124,7 @@ function ReportToModerator2()
 		elseif (!is_valid_email($_POST['email']))
 			$post_errors[] = 'bad_email';
 
-		isBannedEmail($_POST['email'], 'cannot_post', sprintf($txt['you_are_post_banned'], $txt['guest_title']));
+		isBannedEmail($_POST['email'], sprintf($txt['you_are_post_banned'], $txt['guest_title']));
 
 		we::$user['email'] = htmlspecialchars($_POST['email']);
 	}

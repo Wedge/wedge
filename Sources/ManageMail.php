@@ -206,7 +206,7 @@ function BrowseMailQueue()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '[<a href="' . $scripturl . '?action=admin;area=mailqueue;sa=clear;' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mailqueue_clear_list_warning']) . ', e);">' . $txt['mailqueue_clear_list'] . '</a>] <input type="submit" name="delete_redirects" value="' . $txt['delete'] . '" onclick="return ask(we_confirm, e);" class="delete">',
+				'value' => '<input type="submit" name="delete_redirects" value="' . $txt['delete'] . '" onclick="return ask(we_confirm, e);" class="delete">',
 			),
 		),
 	);

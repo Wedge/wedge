@@ -84,7 +84,7 @@ function Activate()
 			fatal_lang_error('valid_email_needed', false, array(htmlspecialchars($_POST['new_email'])));
 
 		// Make sure their email isn't banned.
-		isBannedEmail($_POST['new_email'], 'cannot_register', $txt['ban_register_prohibited']);
+		isBannedEmail($_POST['new_email'], $txt['ban_register_prohibited']);
 
 		// Ummm... don't even dare try to take someone else's email!!
 		$request = wesql::query('
