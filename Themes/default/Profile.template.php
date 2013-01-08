@@ -375,7 +375,7 @@ function template_showDrafts()
 	if (!empty($context['posts']))
 		echo '
 		<div class="right padding">
-			<form action="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;deleteall" method="post" onclick="return ask(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ', e);">
+			<form action="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=showdrafts;deleteall" method="post" onsubmit="return ask(', JavaScriptEscape($txt['remove_all_drafts_confirm']), ', e);">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" value="', $txt['remove_all_drafts'], '" class="delete">
 			</form>

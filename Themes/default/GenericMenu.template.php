@@ -17,7 +17,7 @@ function template_generic_menu_sidebar()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// Which menu are we rendering?
-	$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 1;
+	$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 0;
 	$menu_context =& $context['menu_data_' . $context['cur_menu_id']];
 
 	// For every section that appears on the sidebar...
@@ -78,15 +78,15 @@ function template_generic_menu_dropdown()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// Which menu are we rendering?
-	$mid = $context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 1;
-	$menu_context =& $context['menu_data_' . $mid];
+	$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 0;
+	$menu_context =& $context['menu_data_' . $context['cur_menu_id']];
 
 	if (!empty($menu_context['can_toggle_drop_down']))
 		echo '
 	<a href="', $menu_context['toggle_url'], '"><img src="', $context['menu_image_path'], '/change_menu', $context['right_to_left'] ? '2' : '', '.png" id="menu_toggle"></a>';
 
 	echo '
-	<ul id="amen', $mid > 1 ? '_' . ($mid - 1) : '', '" class="css menu">';
+	<ul id="amen', $context['cur_menu_id'] ? '_' . $context['cur_menu_id'] : '', '" class="css menu">';
 
 	// IE6 needs an extra space to avoid breaking layout. Ah ah.
 	$end_a = we::is('ie6') ? ' </a>' : '</a>';
@@ -146,9 +146,6 @@ function template_generic_menu_dropdown()
 
 	echo '
 	</ul>';
-
-	add_js('
-	$("#amen' . ($mid > 1 ? '_' . ($mid - 1) : '') . '").wmenu();');
 }
 
 // Some code for showing a tabbed view.
@@ -157,7 +154,7 @@ function template_generic_tabs()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	// Search for the current area. Make sure we're playing with the correct menu!
-	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 1)];
+	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 0)];
 
 	if (!empty($menu_context['sections']))
 		foreach ($menu_context['sections'] as $section)

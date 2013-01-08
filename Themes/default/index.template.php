@@ -566,8 +566,7 @@ function template_body_after()
 		$context['header'] .= theme_base_js(1);
 		echo '
 <script><!-- // --><![CDATA[
-	<!-- insert inline events here -->
-	$("select").sb();';
+	<!-- insert inline events here -->';
 	}
 	else
 	{
@@ -586,18 +585,14 @@ function template_body_after()
 	we_sessvar = "', $context['session_var'], '";', $context['server']['iso_case_folding'] && isset($context['main_js_files']['scripts/sha1.js']) ? '
 	we_iso_case_folding = true' : '', empty($context['current_topic']) ? '' : '
 	we_topic = ' . $context['current_topic'] . ';', empty($context['current_board']) ? '' : '
-	we_board = ' . $context['current_board'] . ';', '
-
-	$("#main_menu").wmenu();', $context['show_pm_popup'] ? '
+	we_board = ' . $context['current_board'] . ';', $context['show_pm_popup'] ? '
 
 	ask(' . JavaScriptEscape($txt['show_personal_messages']) . ', function (yes) { yes && window.open(weUrl("action=pm")); });' : '';
 
 	// Output any postponed JavaScript added by templates
 	// and mods, and close all outstanding tags. We're done!
 	// $context['footer_js'] assumes the <script> tag is already output.
-	echo $context['footer_js'], empty($footer_coding) ? '
-<script><!-- // --><![CDATA[' : '', '
-	bindEvents();
+	echo $context['footer_js'], '
 // ]]></script>
 </body>';
 }

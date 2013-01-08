@@ -196,7 +196,12 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 				if (e && $(this).hasClass('submit'))
 				{
 					_modalDone = true;
-					$(e.target).trigger(e.type);
+					// The location trick is required by non-HTML5 browsers.
+					// To save 4 bytes here, <a> tags only accept ask() through onclick.
+					if (e.target.href)
+						location = e.target.href;
+					else
+						$(e.target).trigger(e.type);
 					_modalDone = false;
 				}
 			})
@@ -244,19 +249,6 @@ function invertAll(oInvertCheckbox, oForm, sMask)
 	$.each(oForm, function () {
 		if (this.name && !this.disabled && (!sMask || this.name.indexOf(sMask) === 0|| this.id.indexOf(sMask) === 0))
 			this.checked = oInvertCheckbox.checked;
-	});
-}
-
-// Bind all delayed inline events to their respective DOM elements.
-function bindEvents(items)
-{
-	// If $items isn't specified, do it for all elements with a delayed event.
-	$(items || '*[data-eve]').each(function ()
-	{
-		var that = $(this);
-		$.each(that.attr('data-eve').split(' '), function () {
-			that.bind(eves[this][0], eves[this][1]);
-		});
 	});
 }
 
@@ -463,29 +455,52 @@ function weSelectText(oCurElement)
 		$('#' + id).children().andSelf().removeClass('hove').find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
 	};
 
-	// Make sure to only call this on one element...
-	$.fn.wmenu = function ()
+	_buildMenus = function ()
 	{
-		var $elem = this.show();
-		this.find('li').each(function () {
-			$(this).attr('id', 'li' + menu_baseId++)
-				.bind('mouseenter focus', menu_show_me)
-				.bind('mouseleave blur', menu_hide_me)
-				// Disable double clicks...
-				.mousedown(false)
-				// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
-				.filter(':has(>a,>h4>a)')
-				.click(function () {
-					$('.hove').removeClass('hove');
-					$elem.find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
-				});
-		});
-
+		$('.css.menu').each(function () {
+			var $elem = $(this).show();
+			$(this).find('li').each(function () {
+				$(this).attr('id', 'li' + menu_baseId++)
+					.bind('mouseenter focus', menu_show_me)
+					.bind('mouseleave blur', menu_hide_me)
+					// Disable double clicks...
+					.mousedown(false)
+					// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
+					.filter(':has(>a,>h4>a)')
+					.click(function () {
+						$('.hove').removeClass('hove');
+						$elem.find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
+					});
+			});
+		})
 		// Now that JS is ready to take action... Disable the pure CSS menu!
-		$('.css.menu').removeClass('css');
-		return this;
+		.removeClass('css');
 	};
+
 })();
+
+
+/**
+ * ready()
+ * This function is important. It loads as soon as the DOM is built, i.e. after everything's loaded.
+ */
+$(function ()
+{
+	// Transform existing select boxes into our super boxes.
+	$('select').sb();
+
+	// Put some JS into our CSS menus.
+	_buildMenus();
+
+	// Bind all delayed inline events to their respective DOM elements.
+	$('*[data-eve]').each(function ()
+	{
+		var that = $(this);
+		$.each(that.attr('data-eve').split(' '), function () {
+			that.bind(eves[this][0], eves[this][1]);
+		});
+	});
+});
 
 
 // *** weToggle class.
@@ -735,5 +750,6 @@ function Thought(opt)
 
 /* Optimize:
 _formSubmitted = _f
+_buildMenus = _b
 _modalDone = _c
 */

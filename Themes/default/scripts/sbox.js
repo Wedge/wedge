@@ -604,7 +604,3 @@
 	};
 
 })();
-
-// Only run through this if we are at the end of the page.
-if (window.eves)
-	$('select').sb();

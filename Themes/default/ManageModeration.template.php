@@ -322,7 +322,13 @@ function template_modfilter_edit()
 			$("#rulecontainer").html($("#container_" + $("#condtype").val()).html());
 			$("#rulecontainer .ruleSave").hide();
 
-			bindEvents("#rulecontainer input[data-eve], #rulecontainer select[data-eve]");
+			$("#rulecontainer input[data-eve], #rulecontainer select[data-eve]").each(function () {
+				var that = $(this);
+				$.each(that.attr("data-eve").split(" "), function () {
+					that.bind(eves[this][0], eves[this][1]);
+				});
+			});
+
 			$("#rulecontainer div.sbox").remove();
 			$("#rulecontainer select").sb();
 		}

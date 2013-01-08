@@ -83,7 +83,7 @@ function createMenu($menuData, $menuOptions = array())
 	*/
 
 	// Every menu gets a unique ID, these are shown in first in, first out order.
-	$context['max_menu_id'] = isset($context['max_menu_id']) ? $context['max_menu_id'] + 1 : 1;
+	$context['max_menu_id'] = isset($context['max_menu_id']) ? $context['max_menu_id'] + 1 : 0;
 
 	// This will be all the data for this menu - and we'll make a shortcut to it to aid readability here.
 	$context['menu_data_' . $context['max_menu_id']] = array();
