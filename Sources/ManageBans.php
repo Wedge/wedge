@@ -490,6 +490,8 @@ function BanListSettings($return_config = false)
 		array('percent', 'softban_nosearch', 'subtext' => $txt['softban_percent_subtext']),
 	);
 
+	call_hook('settings_bans', array(&$config_vars, &$return_config));
+
 	// Settings to add:
 	// Loading delay in seconds (range 1-15)
 	// Flood time multipler

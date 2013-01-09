@@ -232,7 +232,7 @@ function ModifySpamSettings($return_config = false)
 			array('callback', 'question_answer_list'),
 	);
 
-	call_hook('spam_settings', array(&$config_vars, &$return_config));
+	call_hook('settings_spam', array(&$config_vars, &$return_config));
 
 	if ($return_config)
 		return $config_vars;
