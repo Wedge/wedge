@@ -488,6 +488,7 @@ function BanListSettings($return_config = false)
 	$config_vars = array(
 		array('percent', 'softban_blankpage', 'subtext' => $txt['softban_percent_subtext']),
 		array('percent', 'softban_nosearch', 'subtext' => $txt['softban_percent_subtext']),
+		array('yesno', 'softban_disableregistration', 'subtext' => $txt['softban_disableregistration_desc']),
 	);
 
 	call_hook('settings_bans', array(&$config_vars, &$return_config));
@@ -498,7 +499,6 @@ function BanListSettings($return_config = false)
 	// RSS disabled chance
 	// Redirection chance
 	// Redirection URL
-	// Prevent soft-banned IPs from registering
 	// When a user is banned, add them to which group
 
 	if ($return_config)

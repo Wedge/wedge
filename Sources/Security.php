@@ -435,6 +435,16 @@ function is_not_banned($forceCheck = false)
 	// Fix up the banning permissions.
 	if (isset(we::$user['permissions']))
 		banPermissions();
+
+	// Soft bans in play?
+	if (!empty($_SESSION['ban']['soft']))
+	{
+		if (!empty($settings['softban_blankpage']) && mt_rand(0, 100) < (int) $settings['softban_blankpage'])
+			die; // No Prayer For The Dying
+
+		if (!empty($settings['softban_disableregistration']))
+			$settings['registration_method'] = 3; // Stranger In A Strange Land
+	}
 }
 
 // Fix permissions according to ban status.
