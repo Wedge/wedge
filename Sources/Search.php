@@ -32,6 +32,9 @@ function Search()
 {
 	global $txt, $scripturl, $settings, $context;
 
+	// Search may be disabled if they're softly banned.
+	soft_ban('search');
+
 	// Is the load average too high to allow searching just now?
 	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);

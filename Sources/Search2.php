@@ -41,6 +41,9 @@ function Search2()
 	global $context, $options, $messages_request, $boards_can;
 	global $excludedWords, $participants, $searchAPI;
 
+	// Search may be disabled if they're softly banned.
+	soft_ban('search');
+
 	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
 

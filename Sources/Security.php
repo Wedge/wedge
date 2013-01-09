@@ -234,54 +234,39 @@ function is_not_banned($forceCheck = false)
 		$ban_query_vars = array('current_time' => time());
 		$flag_is_activated = false;
 
+		$ban_list = array();
 		// Is their email address banned?
 		if (strlen(we::$user['email']) != 0)
 		{
 			$email_check = isBannedEmail(we::$user['email'], '', true);
-
-			foreach ($email_check as $email_ban)
-				if ($email_ban['hard'])
-				{
-					$_SESSION['ban']['cannot_access']['ids'][] = $email_ban['id'];
-					if (!empty($email_ban['msg']))
-						$_SESSION['ban']['cannot_access']['reason'] = $email_ban['msg'];
-					$flag_is_activated = 'hard';
-				}
-				elseif ($flag_is_activated == false)
-					$flag_is_activated = 'soft';
-
-			if (!empty($_SESSION['ban']['cannot_access']['ids']) && !isset($_SESSION['ban']['cannot_access']['reason']))
-				$_SESSION['ban']['cannot_access']['reason'] = '';
+			if (!empty($email_check))
+				$ban_list = array_merge($ban_list, $email_check);
 		}
 
 		// Check both IP addresses.
 		foreach (array('ip', 'ip2') as $ip_number)
 		{
-			// Check if we have a valid IP address.
-			if (preg_match('/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/', we::$user[$ip_number], $ip_parts) == 1)
-			{
-				$ban_query[] = '((' . $ip_parts[1] . ' BETWEEN bi.ip_low1 AND bi.ip_high1)
-							AND (' . $ip_parts[2] . ' BETWEEN bi.ip_low2 AND bi.ip_high2)
-							AND (' . $ip_parts[3] . ' BETWEEN bi.ip_low3 AND bi.ip_high3)
-							AND (' . $ip_parts[4] . ' BETWEEN bi.ip_low4 AND bi.ip_high4))';
+			$bans = check_banned_ip(we::$user[$ip_number]);
+			if (is_array($bans))
+				$ban_list = array_merge($ban_list, $bans);
+		}
 
-				// IP was valid, maybe there's also a hostname...
-				if (empty($settings['disableHostnameLookup']))
-				{
-					$hostname = host_from_ip(we::$user[$ip_number]);
-					if (strlen($hostname) > 0)
-					{
-						$ban_query[] = '({string:hostname} LIKE bi.hostname)';
-						$ban_query_vars['hostname'] = $hostname;
-					}
-				}
+		foreach ($ban_list as $ban)
+			if ($ban['hard'])
+			{
+				$_SESSION['ban']['cannot_access']['ids'][] = $ban['id'];
+				if (!empty($ban['msg']))
+					$_SESSION['ban']['cannot_access']['reason'] = $ban['msg'];
+				$flag_is_activated = 'hard';
 			}
-			// We use '255.255.255.255' for 'unknown' since it's not valid anyway.
-			elseif (we::$user['ip'] == 'unknown')
-				$ban_query[] = '(bi.ip_low1 = 255 AND bi.ip_high1 = 255
-							AND bi.ip_low2 = 255 AND bi.ip_high2 = 255
-							AND bi.ip_low3 = 255 AND bi.ip_high3 = 255
-							AND bi.ip_low4 = 255 AND bi.ip_high4 = 255)';
+			elseif ($flag_is_activated == false)
+				$flag_is_activated = 'soft';
+
+		if (!empty($_SESSION['ban']['cannot_access']['ids']))
+		{
+			$_SESSION['ban']['cannot_access']['ids'] = array_unique($_SESSION['ban']['cannot_access']['ids']);
+			if (!isset($_SESSION['ban']['cannot_access']['reason']))
+				$_SESSION['ban']['cannot_access']['reason'] = '';
 		}
 
 		// How about this user?
@@ -289,42 +274,6 @@ function is_not_banned($forceCheck = false)
 		{
 			$ban_query[] = 'bi.id_member = {int:id_member}';
 			$ban_query_vars['id_member'] = we::$id;
-		}
-
-		// Check the ban, if there's information.
-		if (!empty($ban_query))
-		{
-			$restrictions = array(
-				'cannot_access',
-				'cannot_login',
-				'cannot_post',
-				'cannot_register',
-			);
-			$request = wesql::query('
-				SELECT bi.id_ban, bi.email_address, bi.id_member, bg.cannot_access, bg.cannot_register,
-					bg.cannot_post, bg.cannot_login, bg.reason, IFNULL(bg.expire_time, 0) AS expire_time
-				FROM {db_prefix}ban_items AS bi
-					INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time}))
-				WHERE
-					(' . implode(' OR ', $ban_query) . ')',
-				$ban_query_vars
-			);
-			// Store every type of ban that applies to you in your session.
-			while ($row = wesql::fetch_assoc($request))
-			{
-				foreach ($restrictions as $restriction)
-					if (!empty($row[$restriction]))
-					{
-						$_SESSION['ban'][$restriction]['reason'] = $row['reason'];
-						$_SESSION['ban'][$restriction]['ids'][] = $row['id_ban'];
-						if (!isset($_SESSION['ban']['expire_time']) || ($_SESSION['ban']['expire_time'] != 0 && ($row['expire_time'] == 0 || $row['expire_time'] > $_SESSION['ban']['expire_time'])))
-							$_SESSION['ban']['expire_time'] = $row['expire_time'];
-
-						if (!we::$is_guest && $restriction == 'cannot_access' && $row['id_member'] == we::$id)
-							$flag_is_activated = true;
-					}
-			}
-			wesql::free_result($request);
 		}
 
 		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up. But we're not going to go mad and re-evaluate all the bans - just the ones for this person.
@@ -354,6 +303,10 @@ function is_not_banned($forceCheck = false)
 				updateStats('member');
 			}
 		}
+
+		// Are they soft banned? Doesn't have to be a specific member. Could be an IP soft ban.
+		if ($flag_is_activated == 'soft')
+			$_SESSION['ban']['soft'] = true;
 	}
 
 	// Hey, I know you! You're ehm...
@@ -561,6 +514,21 @@ function banPermissions()
 		$context['open_mod_reports'] = 0;
 }
 
+// Disable a feature if they are soft-banned and their luck has run out for now.
+function soft_ban($feature)
+{
+	global $settings, $txt;
+	if (empty($_SESSION['ban']['soft']))
+		return;
+
+	if (!empty($settings['softban_no' . $feature]))
+	{
+		$chance = (int) $settings['softban_no' . $feature];
+		if (mt_rand(0, 100) <= $chance)
+			fatal_lang_error('loadavg_' . $feature . '_disabled', false);
+	}
+}
+
 // Log a ban in the database.
 function log_ban($ban_ids = array(), $email = null)
 {
@@ -580,6 +548,73 @@ function log_ban($ban_ids = array(), $email = null)
 		);
 }
 
+function check_banned_ip($ip)
+{
+	static $ips = null;
+
+	if ($ip == INVALID_IP)
+		return false;
+
+	$return_value = array();
+
+	// We call this multiple times, so we store it statically as well as caching. If it's null, it's the first time we're here, so try to pull from cache.
+	// If it's null the second time, we still don't have it from cache and need to get it from there. IOW, it isn't a typo, heh.
+	if ($ips === null)
+		$ips = cache_get_data('bans_ip', 300);
+	if ($ips === null)
+	{
+		$ips = array();
+		$request = wesql::query('
+			SELECT id_ban, hardness, ban_content, ban_reason, extra
+			FROM {db_prefix}bans
+			WHERE ban_type = {string:ip_address}',
+			array(
+				'ip_address' => 'ip_address',
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+		{
+			$extra = !empty($row['extra']) ? @unserialize($row['extra']) : array();
+			$ban = array(
+				'id' => $row['id_ban'],
+				'hard' => $row['hardness'] == 1,
+				'reason' => $row['ban_reason'],
+				'message' => !empty($extra['message']) ? $extra['message'] : '',
+			);
+			if (strpos($row['ban_content'], '-') !== false)
+				$ban['range'] = explode('-', $row['ban_content']);
+			else
+				$ban['ip'] = $row['ban_content'];
+
+			$ips[] = $ban;
+		}
+		cache_put_data('bans_ip', $ips, 300);
+		wesql::free_result($request);
+	}
+		
+	foreach ($ips as $ban)
+	{
+		if (isset($ban['ip']))
+		{
+			if ($ban['ip'] != $ip)
+				continue; // single address not matched, leave
+		}
+		else
+		{
+			if ($ip < $ban['range'][0] || $ip > $ban['range'][1])
+				continue; // the address is either before or after the range we've set, thus not in it
+		}
+
+		$return_value[] = array(
+			'id' => $ban['id'],
+			'msg' => $ban['message'],
+			'hard' => $ban['hard'],
+		);
+	}
+
+	return $return_value;
+}
+
 // Checks if a given email address might be banned.
 function isBannedEmail($email, $error, $return = false)
 {
@@ -592,7 +627,7 @@ function isBannedEmail($email, $error, $return = false)
 	$return_value = array();
 
 	// So now we find all the banned emails. If it's a soft ban, we just throw an error message. If it's a hard ban, we lock them out too.
-	$bans = cache_get_data('bans_email');
+	$bans = cache_get_data('bans_email', 240);
 	if ($bans === null)
 	{
 		$bans = array();
