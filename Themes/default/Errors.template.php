@@ -5,7 +5,7 @@
  * Displays fatal errors, the error log, and handles showing buggy lines within file context, to help with debugging.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -286,5 +286,3 @@ function template_intrusion_log()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>';
 }
-
-?>

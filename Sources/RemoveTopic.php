@@ -5,7 +5,7 @@
  * The contents of this file handle the deletion of topics, posts, and related paraphernalia.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1468,5 +1468,3 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 
 	updateLastMessages(array($from_board, $target_board));
 }
-
-?>

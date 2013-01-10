@@ -331,5 +331,3 @@ class JSMin
 class JSMin_UnterminatedStringException extends Exception {}
 class JSMin_UnterminatedCommentException extends Exception {}
 class JSMin_UnterminatedRegExpException extends Exception {}
-
-?>

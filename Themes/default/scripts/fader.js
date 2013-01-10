@@ -4,7 +4,7 @@
  * All code related to showing rotating elements on a page, e.g. news fader.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

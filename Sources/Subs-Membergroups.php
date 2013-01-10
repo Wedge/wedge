@@ -5,7 +5,7 @@
  * Contains various supporting functions for manipulation of and gathering information about membergroups.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -758,5 +758,3 @@ function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 
 	return $groups;
 }
-
-?>

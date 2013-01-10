@@ -5,7 +5,7 @@
  * This file handles the core of quick (inline) edit functionality.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -285,5 +285,3 @@ function JSModify()
 	else
 		obExit(false);
 }
-
-?>

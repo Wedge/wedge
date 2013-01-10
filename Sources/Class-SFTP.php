@@ -9729,5 +9729,3 @@ class Crypt_AES extends Crypt_Rijndael
 		return pack('N*', $state[0], $state[1], $state[2], $state[3]);
 	}
 }
-
-?>

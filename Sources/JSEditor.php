@@ -5,7 +5,7 @@
  * Handles the processing required to switch between WYSIWYG and BBCode-only editing modes.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -47,5 +47,3 @@ function JSEditor()
 
 	$context['message'] = westr::htmlspecialchars($context['message']);
 }
-
-?>

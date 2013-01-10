@@ -5,7 +5,7 @@
  * The interface for splitting topics.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -217,5 +217,3 @@ function template_select()
 		bAlt = false; $("#messages_not_selected li > div").each(fAlt);
 	}');
 }
-
-?>

@@ -2319,5 +2319,3 @@ class getid3_riff extends getid3_handler
 	}
 
 }
-
-?>

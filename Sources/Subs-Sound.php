@@ -5,7 +5,7 @@
  * This file carries the foundation of the non-visual (audible) CAPTCHA support.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -107,5 +107,3 @@ function createWaveFile($word)
 	// Nothing more to add.
 	exit;
 }
-
-?>

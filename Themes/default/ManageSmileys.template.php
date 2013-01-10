@@ -5,7 +5,7 @@
  * The interface for adding/editing/configuring smileys and smiley packs, and message icons.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -508,5 +508,3 @@ function template_editicon()
 			</div>
 		</form>';
 }
-
-?>

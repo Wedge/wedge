@@ -5,7 +5,7 @@
  * The interfaces for sending topics to people, reporting to moderators and the custom email function.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -229,5 +229,3 @@ function template_report()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 }
-
-?>

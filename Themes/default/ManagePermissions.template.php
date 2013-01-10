@@ -5,7 +5,7 @@
  * Displays the permission index, plus the full permission configuration for each group.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1010,5 +1010,3 @@ function template_inline_permissions()
 	$("#', $context['current_permission'], '").hide();
 	$("#', $context['current_permission'], '_groups_link").show();');
 }
-
-?>

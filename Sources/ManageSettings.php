@@ -5,7 +5,7 @@
  * Common administration settings are declared and managed in this file.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -761,5 +761,3 @@ function ModifySettingsPageHandler($return_config = false, $plugin_id = null)
 	wetem::load('show_settings');
 	prepareDBSettingContext($config_vars);
 }
-
-?>

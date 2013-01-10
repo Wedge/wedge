@@ -1291,5 +1291,3 @@ class getid3_lib
 	}
 
 }
-
-?>

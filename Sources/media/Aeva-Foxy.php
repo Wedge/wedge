@@ -7,7 +7,7 @@
  * Licensed exclusively for use in Wedge.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1454,5 +1454,3 @@ function aeva_foxy_fill_player(&$playlist, $type = 'audio', &$details, $play = 0
 
 	return $tx;
 }
-
-?>

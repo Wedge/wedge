@@ -454,5 +454,3 @@ class wextr_InvalidBlock_Exception extends Exception {}
 class wextr_InvalidRecord_Exception extends Exception {}
 class wextr_Encrypted_Exception extends Exception {}
 class wextr_UnsupportedCompress_Exception extends Exception {}
-
-?>

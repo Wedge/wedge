@@ -5,7 +5,7 @@
  * Displays the search and browse features for the admin-only member list as well as handling member preferences.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -423,5 +423,3 @@ function template_admin_member_prefs()
 		}
 	};');
 }
-
-?>

@@ -5,7 +5,7 @@
  * This file contains a standard way of displaying side/drop down menus for Wedge.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -321,5 +321,3 @@ function destroyMenu($menu_id = 'last')
 	wetem::remove($context[$menu_name]['template_name']);
 	unset($context[$menu_name]);
 }
-
-?>

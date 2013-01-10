@@ -6,7 +6,7 @@
  * Uses portions written by Shitiz Garg.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1785,5 +1785,3 @@ function aeva_refreshPage($next)
 	$context['header'] .= '
 	<meta http-equiv="refresh" content="1; url=' . $next . '">';
 }
-
-?>

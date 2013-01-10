@@ -5,7 +5,7 @@
  * The Who's Who of Wedge Wardens. Keeps track of all the credits, and displays them to everyone, or just within the admin panel.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -131,13 +131,13 @@ function Credits($in_admin = false)
 		),
 		'images' => array(
 			'famfamfam' => '<a href="http://famfamfam.com/">FamFamFam</a> Flags &amp; Silk &copy; Mark James, 2005',
-			'icons' => '<a href="http://www.everaldo.com/crystal/">Crystal Icons</a> &copy; Crystal Project, 2001-2012',
+			'icons' => '<a href="http://www.everaldo.com/">Crystal Icons</a> &copy; Crystal Project, 2001-2012',
 			'diagona' => '<a href="http://p.yusukekamiyamane.com/">Diagona</a> &copy; Y&#363;suke Kamiyamane',
 		),
 		'tools' => array(
 			'idtags' => '<a href="http://getid3.org">GetID3</a>',
-			'exif' => '<a href="http://www.zenphoto.org/trac/wiki/ExifixerLibrary">Exifixer</a>',
-			'player' => '<a href="http://www.longtailvideo.com/players/jw-flv-player/">JW Player</a>',
+			'exif' => '<a href="http://www.zenphoto.org/trac/wiki/ExifixerLibrary/">Exifixer</a>',
+			'player' => '<a href="http://www.longtailvideo.com/jw-player/">JW Player</a>',
 			'uploader' => '<a href="http://developer.yahoo.com/yui/">Yahoo! UI Uploader</a>',
 		),
 		'mods' => array(
@@ -166,5 +166,3 @@ function Credits($in_admin = false)
 		$context['page_title'] = $txt['credits_site'];
 	}
 }
-
-?>

@@ -5,7 +5,7 @@
  * This file handles evaluating rules of post moderation.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -253,5 +253,3 @@ function count_links_post($subject, $body)
 	// Then lastly we count the number of [url] items.
 	return substr_count($body, '[url]');
 }
-
-?>

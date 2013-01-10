@@ -10,7 +10,7 @@
  * Then, you can access the FunctionToCall() function from Source-File.php with the URL index.php?action=action-in-url.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -361,5 +361,3 @@ function index_action($hook_action = 'default_action')
 	loadSource('Boards');
 	return 'Boards';
 }
-
-?>

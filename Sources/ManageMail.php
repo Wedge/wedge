@@ -5,7 +5,7 @@
  * Configuration of mail, and more usefully, the mail queue.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -412,5 +412,3 @@ function time_since($time_diff)
 	else
 		return sprintf($time_diff == 1 ? $txt['mq_second'] : $txt['mq_seconds'], $time_diff);
 }
-
-?>

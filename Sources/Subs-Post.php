@@ -5,7 +5,7 @@
  * Various support routines for posting, including sending mail and similar operations.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -2797,5 +2797,3 @@ function draftXmlReturn($draft, $is_pm)
 	// We send the otherwise fully completed URL back through the buffer, just in case Pretty URLs would reformat it for us.
 	obExit(false);
 }
-
-?>

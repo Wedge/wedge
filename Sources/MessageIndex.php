@@ -5,7 +5,7 @@
  * Prepares the listing of topics in a given forum or blog board, as well as any sub-boards.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -630,5 +630,3 @@ function MessageIndex()
 	if (empty($settings['display_flags']))
 		$settings['display_flags'] = 'none';
 }
-
-?>

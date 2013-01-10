@@ -5,7 +5,7 @@
  * Displays the membergroups, plus the add/edit panels for membergroups, all the members in a group, and group request rejection.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -756,5 +756,3 @@ function template_callback_badge_order()
 		$(\'#sortable\').sortable({ handle: \'.handle\' });
 		$(\'#sortable\').disableSelection();');
 }
-
-?>

@@ -5,7 +5,7 @@
  * Displays the configuration options for the different search backends.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -405,5 +405,3 @@ function template_show_spider_stats()
 			</div>
 		</form>';
 }
-
-?>

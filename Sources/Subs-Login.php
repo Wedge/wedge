@@ -5,7 +5,7 @@
  * Initializes the administration panel area for Wedge and routes the request appropriately.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -340,5 +340,3 @@ function validatePasswordFlood($id_member, $password_flood_value = false, $was_c
 	// Otherwise set the member's data. If they're correct on their first attempt then we actually clear it, otherwise we set it!
 	updateMemberData($id_member, array('passwd_flood' => $was_correct && $number_tries == 1 ? '' : $time_stamp . '|' . $number_tries));
 }
-
-?>

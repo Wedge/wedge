@@ -5,7 +5,7 @@
  * Bootstraps enough of Wedge to be able to integrate content into external PHP pages.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1799,5 +1799,3 @@ function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(),
 	echo '
 		</table>';
 }
-
-?>

@@ -5,7 +5,7 @@
  * Sending topics to a moderator, both the main form and the handling of that form.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -318,5 +318,3 @@ function ReportToModerator2()
 	// Back to the post we reported!
 	redirectexit('reportsent;topic=' . $topic . '.msg' . $_POST['msg'] . '#msg' . $_POST['msg']);
 }
-
-?>

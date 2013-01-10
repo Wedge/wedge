@@ -5,7 +5,7 @@
  * Displays the main listing of boards.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -261,5 +261,3 @@ function template_boards_below()
 			echo '<div class="mark_read">', template_button_strip($mark_read_button), '</div>';
 	}
 }
-
-?>

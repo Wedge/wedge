@@ -5,7 +5,7 @@
  * This file provides the handling for some of the AJAX operations, namely the very generic ones fired through action=ajax.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -363,5 +363,3 @@ function Thought()
 			updateMemberData(we::$id, array('personal_text' => parse_bbc_inline($text)));
 	}
 }
-
-?>

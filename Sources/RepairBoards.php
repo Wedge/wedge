@@ -5,7 +5,7 @@
  * Processes the various tables for the "Find/Repair" maintenance option.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1581,5 +1581,3 @@ function createSalvageArea()
 	// Restore the user's language.
 	loadLanguage('Admin');
 }
-
-?>

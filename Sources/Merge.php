@@ -5,7 +5,7 @@
  * Handles merging of topics and posts, both the interface and processing.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1068,5 +1068,3 @@ function MergePosts($error_report = true)
 	else
 		return;
 }
-
-?>

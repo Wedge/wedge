@@ -767,5 +767,3 @@ class Shrinker {
 		return $shortId;
 	}
 }
-
-?>

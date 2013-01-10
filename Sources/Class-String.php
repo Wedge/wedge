@@ -5,7 +5,7 @@
  * This file handles string processing. Please note that this is what we feel to be the sanest method of providing everything, but it's really not pretty.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -339,5 +339,3 @@ class westr extends westr_mb
 		}
 	}
 }
-
-?>

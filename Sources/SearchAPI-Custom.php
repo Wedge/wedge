@@ -5,7 +5,7 @@
  * Provides information and support functions for custom index searching, for the Search framework.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -197,5 +197,3 @@ class custom_search
 		return $ignoreRequest;
 	}
 }
-
-?>

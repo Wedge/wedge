@@ -5,7 +5,7 @@
  * Various maintenance-related tasks, including member re-attribution, cleaning the forum cache and so on.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1850,5 +1850,3 @@ function MaintainMassMoveTopics()
 
 	redirectexit('action=admin;area=maintain;sa=topics;done=massmove');
 }
-
-?>

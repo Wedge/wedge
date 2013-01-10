@@ -5,7 +5,7 @@
  * Creates the generic sidebar/dropdown menu as used in the admin and profile areas.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -252,5 +252,3 @@ function template_show_generic_tabs(&$tabs, &$menu_context = array(), $class = '
 	echo '
 	</ul>';
 }
-
-?>

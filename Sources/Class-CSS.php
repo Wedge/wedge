@@ -5,7 +5,7 @@
  * Wess (WEdge pre-proceSS) is a pre-parser for CSS files, bringing new possibilities to CSS.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1619,5 +1619,3 @@ class wess_base64 extends wess
 		}
 	}
 }
-
-?>

@@ -25,7 +25,7 @@ Package, or a derivative of this Package.
 vi. The Wedgeward Website is defined as http://wedge.org/.
 
 vii. Wedgeward is defined as the copyright holders of the Wedge package
-(Peter Spicer and René-Gilles Deberdt), and the product of their association.
+(Peter Spicer and RenÃ©-Gilles Deberdt), and the product of their association.
 
 Agreement
 -------------------------------------------------------------------------------
@@ -43,9 +43,6 @@ this Package, support fees for installation or other services, and hosting
 fees for hosting the Software may, however, be imposed.
 	d. Any Distribution of this Package, whether as a Modified Package
 or not, requires express written consent from Wedgeward.
-	e. Your name is not Jonathan Valentin (aka "vbgamer45") or Alex Kühne
-(aka "Akyhne"), and you don't work with any company associated with them,
-including but not limited to Samson Software of Bloomingdale, Illinois.
 
 2. You may make Modifications to this Package or a derivative of it, and
 distribute your Modifications in a form that is separate from the Package,
@@ -83,5 +80,5 @@ EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR ANY DIRECT, INDIRECT,
 INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES ARISING IN ANY WAY
 OUT OF THE USE OR MISUSE OF THIS PACKAGE.
 
-	Last Update: March 24, 2011
-	(c) 2010-2012 by Wedgeward (Peter Spicer & René-Gilles Deberdt)
+	Last Update: December 31, 2012
+	Wedge (c) 2010-2013 by Wedgeward (Peter Spicer & RenÃ©-Gilles Deberdt)

@@ -5,7 +5,7 @@
  * Displays the list of topics in a forum board, or snippets of topics in a list for blog boards.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -610,5 +610,3 @@ function template_messageindex_staff()
 		</p>
 	</section>';
 }
-
-?>

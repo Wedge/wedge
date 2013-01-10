@@ -523,8 +523,4 @@ class getid3_real extends getid3_handler
 		}
 		return $fourcc;
 	}
-
 }
-
-
-?>

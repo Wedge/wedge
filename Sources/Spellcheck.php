@@ -5,7 +5,7 @@
  * This file contains those functions dealing with spell checking.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -110,5 +110,3 @@ function Spellcheck()
 	wetem::load('spellcheck');
 	wetem::hide();
 }
-
-?>

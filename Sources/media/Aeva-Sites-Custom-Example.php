@@ -5,7 +5,7 @@
  * Sample for a site integration using Aeva.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -139,5 +139,3 @@ Here, you can also change specific settings for existing sites, with a bit of co
 							ensure that they work for future compatibility.
 
 */
-
-?>

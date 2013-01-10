@@ -5,7 +5,7 @@
  * Dealing with topic moderation-type operations right from the list of topics.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -464,5 +464,3 @@ function quickMod_markread($topic_data, $boards_can)
 		array('id_member', 'id_topic')
 	);
 }
-
-?>

@@ -5,7 +5,7 @@
  * Provides .tar.gz and .zip decompression support with a simple XML parser to handle XML package files.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -2536,5 +2536,3 @@ if (!function_exists('wedge_crc32'))
 		return $crc;
 	}
 }
-
-?>

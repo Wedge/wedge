@@ -5,7 +5,7 @@
  * Registers new members directly, validates existing usernames, and similar processes.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -519,5 +519,3 @@ function RegisterCheckUsername()
 		$context['valid_username'] &= isReservedName($context['checked_username'], 0, false, false) ? 0 : 1;
 	}
 }
-
-?>

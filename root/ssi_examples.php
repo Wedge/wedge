@@ -5,7 +5,7 @@
  * Display various examples of using SSI functionality.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -512,7 +512,7 @@ function template_homepage_sample1($method = 'source')
 
 	if ($method == 'source')
 	{
-		$header = '<?php require("' . (we::$is_admin ? addslashes(realpath($boarddir . '/SSI.php')) : 'SSI.php') . '"); ?>' . "\n" . $header;
+		$header = '<' . '?php require("' . (we::$is_admin ? addslashes(realpath($boarddir . '/SSI.php')) : 'SSI.php') . '"); ?' . ">\n" . $header;
 		return $header . template_homepage_sample1_html() . $footer;
 	}
 	else
@@ -564,7 +564,7 @@ function template_homepage_sample1_php()
 function template_homepage_sample1_html()
 {
 	$result = '
-<?php
+<' . '?php
 // Using array method to show shorter display style.
 $topics = ssi_recentTopics(8, null, null, \'array\');
 
@@ -578,18 +578,16 @@ foreach ($topics as $topic)
 }
 
 unset($topics);
-?>
+?' . '>
 		</ul><br />
 		<h3>Online Users</h3>
-		<?php ssi_logOnline(); ?>
+		<' . '?php ssi_logOnline(); ?' . '>
 	</div>
 	<div id="content">
-		<?php ssi_welcome(); ?><br /><br />
+		<' . '?php ssi_welcome(); ?' . '><br /><br />
 		<h2>News</h2>
-		<?php ssi_boardNews(); ?>
+		<' . '?php ssi_boardNews(); ?' . '>
 	</div>';
 
 	return $result;
 }
-
-?>

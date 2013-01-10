@@ -6,7 +6,7 @@
  * Uses portions written by Karl Benson.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -367,7 +367,7 @@ function aeva_write_file($arrays)
  * Uses portions written by Karl Benson.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -464,5 +464,3 @@ function aeva_settings(&$dest, &$array, $type, $checkall)
 		$dest['embed_' . $type . '_items'][2]['embed_' . $arr['id']] = array($link, !$arr['disabled'], 'force_name' => 'embed_' . $type . '[' . $arr['id'] . ']');
 	}
 }
-
-?>

@@ -6,7 +6,7 @@
  * Uses portions written by Shitiz Garg.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -3668,5 +3668,3 @@ function aeva_showStars($rating, $class = 'aevera')
 
 	return '<img src="' . $theme['images_aeva'] . '/star' . $star . '.gif"' . ($class ? ' class="' . $class . '"' : '') . ' alt="' . $title_star . '" title="' . $title_star . '">';
 }
-
-?>

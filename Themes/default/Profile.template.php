@@ -5,7 +5,7 @@
  * Displays all profile-related information.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -2655,5 +2655,3 @@ function template_profile_smiley_pick()
 						</select> <img id="smileypr" src="', $context['member']['smiley_set']['id'] != 'none' ? $settings['smileys_url'] . '/' . ($context['member']['smiley_set']['id'] != '' ? $context['member']['smiley_set']['id'] : (!empty($theme['smiley_sets_default']) ? $theme['smiley_sets_default'] : $settings['smiley_sets_default'])) . '/smiley.gif' : $theme['images_url'] . '/blank.gif', '" alt=":)" class="top" style="padding-left: 20px">
 					</dd>';
 }
-
-?>

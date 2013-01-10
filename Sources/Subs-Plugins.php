@@ -5,7 +5,7 @@
  * General file handling for the plugin manager.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -353,5 +353,3 @@ function testRequiredFunctions($manifest_element)
 	else
 		return array_keys($required_functions); // Can't array-flip because we will end up overwriting our values.
 }
-
-?>

@@ -6,7 +6,7 @@
  * Uses portions written by Shitiz Garg.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -581,5 +581,3 @@ function aeva_utf8_chr($code)
 	if ($code < 65536) return chr(($code >> 12) + 224) . chr((($code >> 6) & 63) + 128) . chr(($code & 63) + 128);
 	if ($code < 2097152) return chr($code >> 18 + 240) . chr((($code >> 12) & 63) + 128) . chr(($code >> 6) & 63 + 128) . chr($code & 63 + 128);
 }
-
-?>

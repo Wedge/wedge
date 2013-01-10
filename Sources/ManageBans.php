@@ -5,7 +5,7 @@
  * All functionality related to banning members.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1969,5 +1969,3 @@ function updateBanMembers()
 	// Update the latest member and our total members as banning may change them.
 	updateStats('member');
 }
-
-?>

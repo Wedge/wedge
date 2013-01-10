@@ -5,7 +5,7 @@
  * Contains a backup of the master settings.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  */
 
@@ -71,5 +71,3 @@ foreach (array('cache', 'css', 'js') as $var)
 	if (!file_exists($$dir))
 		exit('Missing cache folder: $' . $dir . ' (' . $$dir . ')');
 }
-
-?>

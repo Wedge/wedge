@@ -5,7 +5,7 @@
  * Filters URLs for pretty formatting purposes.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -356,5 +356,3 @@ function pretty_filter_profiles(&$urls)
 				$url['replacement'] = $boardurl . $prefix . (!empty($memberNames[$url['profile_id']]) ? $memberNames[$url['profile_id']] . '/' : ($url['this_is_me'] ? $me_postfix : 'guest/')) . $url['match1'] . $url['match3'];
 	}
 }
-
-?>

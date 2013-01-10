@@ -5,7 +5,7 @@
  * The registration agreement and form, as well as the COPPA form.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -595,5 +595,3 @@ function template_edit_agreement()
 		</div>
 		<br class="clear">';
 }
-
-?>

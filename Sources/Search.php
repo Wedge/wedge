@@ -5,7 +5,7 @@
  * Gathers all relevant information for the purpose of displaying a search form to the user.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -225,5 +225,3 @@ function Search()
 	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($settings['simpleSearch']) && !isset($_REQUEST['advanced']);
 	$context['page_title'] = $context['simple_search'] ? $txt['search_simple'] : $txt['search_advanced'];
 }
-
-?>

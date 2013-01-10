@@ -1890,5 +1890,3 @@ class getid3_mp3 extends getid3_handler
 	}
 
 }
-
-?>

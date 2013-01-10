@@ -5,7 +5,7 @@
  * Lists thought threads and recent thoughts.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -278,5 +278,3 @@ function latestThoughts($memID = 0)
 		wesql::free_result($request);
 	}
 }
-
-?>

@@ -5,7 +5,7 @@
  * Provides the configuration for attachments and avatars, as well as functionality to browse and remove existing files.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -1689,5 +1689,3 @@ function attachDirStatus($dir, $expected_files)
 	else
 		return array('ok', false, $dir_size);
 }
-
-?>

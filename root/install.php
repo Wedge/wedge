@@ -5,7 +5,7 @@
  * This file handles installing Wedge, and more importantly running all the database creation steps.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -2112,7 +2112,7 @@ function template_install_below()
 	echo '
 	</div></div></div></div></div></div>
 	<div id="footer"><div class="frame" style="height: 30px; line-height: 30px">
-		<a href="http://wedge.org/" title="Free Forum Software" target="_blank" class="new_win">Wedge &copy; 2010&ndash;2012, Wedgeward</a>
+		<a href="http://wedge.org/" title="Free Forum Software" target="_blank" class="new_win">Wedge &copy; 2010-2013, Wedgeward</a>
 	</div></div>
 	</div>
 	<script><!-- // --><![CDATA[
@@ -2493,5 +2493,3 @@ function template_delete_install()
 		<br>
 		', $txt['good_luck'];
 }
-
-?>

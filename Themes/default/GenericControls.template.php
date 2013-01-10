@@ -5,7 +5,7 @@
  * Displays the visual verification interface.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -89,5 +89,3 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 	if ($display_type == 'single')
 		return true;
 }
-
-?>

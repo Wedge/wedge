@@ -5,7 +5,7 @@
  * Handles the settings for the core forum configuration (paths, database, cookies), plus language configuration.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -2381,5 +2381,3 @@ function get_inline_board_list()
 	}
 	wesql::free_result($request);
 }
-
-?>

@@ -5,7 +5,7 @@
  * Generates reports for administrators over users, their permissions and so on.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -961,5 +961,3 @@ function setKeys($method = 'rows', $keys = array(), $reverse = false)
 	// Rows or columns?
 	$context['key_method'] = $method == 'rows' ? 'rows' : 'cols';
 }
-
-?>

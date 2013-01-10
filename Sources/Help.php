@@ -5,7 +5,7 @@
  * This file provides the handling of the help popups.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -52,5 +52,3 @@ function Help()
 	// What help string should be used?
 	$context['popup_contents'] = isset($helptxt[$_GET['in']]) ? $helptxt[$_GET['in']] : (isset($txt[$_GET['in']]) ? $txt[$_GET['in']] : $_GET['in']);
 }
-
-?>

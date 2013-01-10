@@ -5,7 +5,7 @@
  * Pluggable payment gateway for subscriptions paid through PayPal.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -325,5 +325,3 @@ class paypal_payment
 		wesql::free_result($request);
 	}
 }
-
-?>

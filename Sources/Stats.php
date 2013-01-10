@@ -5,7 +5,7 @@
  * Gathers the statistics from the entire forum.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -723,5 +723,3 @@ function getDailyStats($condition_string, $condition_parameters = array())
 		);
 	wesql::free_result($days_result);
 }
-
-?>

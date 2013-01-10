@@ -1634,5 +1634,3 @@ class getid3_asf extends getid3_handler
 	}
 
 }
-
-?>

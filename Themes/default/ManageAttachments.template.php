@@ -5,7 +5,7 @@
  * Displays the configuration of attachments and avatars, and allows to browse the uploaded files.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -175,5 +175,3 @@ function template_attachment_paths()
 {
 	template_show_list('attach_paths');
 }
-
-?>

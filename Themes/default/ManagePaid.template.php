@@ -5,7 +5,7 @@
  * Displays the configuration options as well as profile area for paid subscriptions.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -651,5 +651,3 @@ function template_paid_done()
 			<a href="', $scripturl, '?action=profile;u=', $context['member']['id'], ';area=subscriptions">', $txt['paid_sub_return'], '</a>
 		</div>';
 }
-
-?>

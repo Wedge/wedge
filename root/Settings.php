@@ -71,5 +71,3 @@ foreach (array('cache', 'css', 'js') as $var)
 	if (!file_exists($$dir))
 		exit('Missing cache folder: $' . $dir . ' (' . $$dir . ')');
 }
-
-?>

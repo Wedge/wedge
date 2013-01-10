@@ -5,7 +5,7 @@
  * Handles gathering data on, and allowing editing of, user profiles - can include preferences too.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1

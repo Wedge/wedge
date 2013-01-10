@@ -155,5 +155,3 @@ function template_thoughts()
 		</table>
 		</div>';
 }
-
-?>

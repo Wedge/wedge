@@ -5,7 +5,7 @@
  * Displays generic lists according to createList() instructions.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -185,5 +185,3 @@ function template_additional_rows($row_position, $cur_list)
 		echo '
 		<div class="additional_row', empty($row['class']) ? '' : ' ' . $row['class'], '"', empty($row['style']) ? '' : ' style="' . $row['style'] . '"', '>', $row['value'], '</div>';
 }
-
-?>

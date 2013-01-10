@@ -5,7 +5,7 @@
  * Handles the generation and validation of visual verifications and CAPTCHAs, as well as delegating image/sound generation elsewhere.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -335,5 +335,3 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 	// Say that everything went well chaps.
 	return true;
 }
-
-?>

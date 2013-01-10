@@ -5,7 +5,7 @@
  * Displays the interface to request a password reminder.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -179,5 +179,3 @@ function template_ask()
 	};
 	var verificationHandle = new weRegister("creator", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ', regTextStrings);');
 }
-
-?>

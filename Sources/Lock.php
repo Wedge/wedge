@@ -5,7 +5,7 @@
  * Handles locking and unlocking topics from the main topic view.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -91,5 +91,3 @@ function Lock()
 	// Back to the topic!
 	redirectexit('topic=' . $topic . '.' . $_REQUEST['start']);
 }
-
-?>

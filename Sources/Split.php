@@ -5,7 +5,7 @@
  * Handles splitting of topics, both the interface and processing.
  *
  * @package wedge
- * @copyright 2010-2012 Wedgeward, wedge.org
+ * @copyright 2010-2013 Wedgeward, wedge.org
  * @license http://wedge.org/license/
  *
  * @version 0.1
@@ -807,5 +807,3 @@ function splitTopic($split1_id_topic, $split_messages, $new_subject)
 	// Return the ID of the newly created topic.
 	return $split2_id_topic;
 }
-
-?>
