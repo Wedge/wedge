@@ -60,7 +60,9 @@ body
 	font: $main_font_size $main_font
 	margin: 0
 	padding: 12px
-	transition: all .3s ease
+	@if !ie10 && !chrome
+		transition: all .3s ease
+	@endif
 
 header, footer, aside, section, article, nav
 	display: block

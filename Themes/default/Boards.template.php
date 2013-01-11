@@ -243,7 +243,7 @@ function template_boards_below()
 {
 	global $context;
 
-	if ($context['user']['is_logged'])
+	if (!we::$is_guest)
 	{
 		echo '
 	<ul id="posting_icons" class="reset floatleft">';

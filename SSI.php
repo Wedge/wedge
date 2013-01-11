@@ -193,18 +193,18 @@ function ssi_run()
 // Display a welcome message, like:  Hey, User, you have 0 messages, 0 are new.
 function ssi_welcome($output_method = 'echo')
 {
-	global $context, $txt, $settings;
+	global $txt, $settings;
 
 	if ($output_method == 'echo')
 	{
-		if ($context['user']['is_guest'])
+		if (we::$is_guest)
 			echo sprintf((empty($settings['registration_method']) || $settings['registration_method'] != 3) ? $txt['welcome_guest'] : $txt['welcome_guest_noregister'], $txt['guest_title']);
 		else
-			echo $txt['hello_member'], ' <strong>', $context['user']['name'], '</strong>', allowedTo('pm_read') ? ', ' . str_replace('{new}', number_context('unread_pms', $context['user']['unread_messages']), number_context('you_have_msg', $context['user']['messages'])) : '';
+			echo $txt['hello_member'], ' <strong>', we::$user['name'], '</strong>', allowedTo('pm_read') ? ', ' . str_replace('{new}', number_context('unread_pms', we::$user['unread_messages']), number_context('you_have_msg', we::$user['messages'])) : '';
 	}
 	// Don't echo... then do what?!
 	else
-		return $context['user'];
+		return we::$user;
 }
 
 // Display a menu bar, like is displayed at the top of the forum.
@@ -228,7 +228,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 		$_SESSION['logout_url'] = $redirect_to;
 
 	// Guests can't log out.
-	if ($context['user']['is_guest'])
+	if (we::$is_guest)
 		return false;
 
 	$link = '<a href="' . $scripturl . '?action=logout;' . $context['session_query'] . '">' . $txt['logout'] . '</a>';
@@ -242,7 +242,7 @@ function ssi_logout($redirect_to = '', $output_method = 'echo')
 // Recent post list: Board | Subject by | Poster | Date
 function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $limit_body = true)
 {
-	global $context, $theme, $txt, $db_prefix, $settings;
+	global $theme, $txt, $db_prefix, $settings;
 
 	// Excluding certain boards...
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
@@ -299,7 +299,7 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 // This removes code duplication in other queries - don't call it direct unless you really know what you're up to.
 function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
 {
-	global $context, $theme, $scripturl, $txt, $db_prefix;
+	global $theme, $scripturl, $txt, $db_prefix;
 
 	// Find all the posts. Newer ones will have higher IDs.
 	$request = wesql::query('
@@ -392,7 +392,7 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 // Recent topic list: [Board] | Subject by | Poster | Date
 function ssi_recentTopics($num_recent = 8, $exclude_boards = null, $include_boards = null, $output_method = 'echo', $just_titles = false)
 {
-	global $context, $settings, $theme, $scripturl, $txt, $db_prefix;
+	global $settings, $theme, $scripturl, $txt, $db_prefix;
 
 	if ($exclude_boards === null && !empty($settings['recycle_enable']) && $settings['recycle_board'] > 0)
 		$exclude_boards = array($settings['recycle_board']);
@@ -552,9 +552,9 @@ function ssi_recentTopicTitles($num_recent = 8, $exclude_boards = null, $include
 // Show the top poster's name and profile link.
 function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 {
-	global $db_prefix, $scripturl, $context, $settings;
+	global $db_prefix, $scripturl, $settings;
 
-	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
+	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
 
 	// Find the latest poster.
@@ -592,7 +592,7 @@ function ssi_topPoster($topNumber = 1, $output_method = 'echo')
 // Show boards by activity.
 function ssi_topBoards($num_top = 10, $output_method = 'echo')
 {
-	global $context, $theme, $db_prefix, $txt, $scripturl, $settings;
+	global $theme, $db_prefix, $txt, $scripturl, $settings;
 
 	// Find boards with lots of posts.
 	$request = wesql::query('
@@ -650,7 +650,7 @@ function ssi_topBoards($num_top = 10, $output_method = 'echo')
 // Shows the top topics.
 function ssi_topTopics($type = 'replies', $num_topics = 10, $output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $settings, $context;
+	global $db_prefix, $txt, $scripturl, $settings;
 
 	if ($settings['totalMessages'] > 100000)
 	{
@@ -750,7 +750,7 @@ function ssi_latestMember($output_method = 'echo')
 {
 	global $db_prefix, $txt, $scripturl, $context, $settings;
 
-	if ($context['user']['is_guest'] && empty($settings['allow_guestAccess']))
+	if (we::$is_guest && empty($settings['allow_guestAccess']))
 		return '';
 
 	if ($output_method == 'echo')
@@ -841,8 +841,7 @@ function ssi_fetchGroupMembers($group_id, $output_method = 'echo')
 // Fetch some member data!
 function ssi_queryMembers($query_where, $query_where_params = array(), $query_limit = '', $query_order = 'id_member DESC', $output_method = 'echo')
 {
-	global $context, $theme, $scripturl, $txt, $db_prefix;
-	global $settings, $memberContext;
+	global $theme, $scripturl, $txt, $db_prefix, $settings, $memberContext;
 
 	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
@@ -907,9 +906,9 @@ function ssi_queryMembers($query_where, $query_where_params = array(), $query_li
 // Show some basic stats:  Total This: XXXX, etc.
 function ssi_boardStats($output_method = 'echo')
 {
-	global $db_prefix, $txt, $scripturl, $settings, $context;
+	global $db_prefix, $txt, $scripturl, $settings;
 
-	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
+	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
 
 	$totals = array(
@@ -1455,7 +1454,7 @@ function ssi_pollVote()
 // Show a search box.
 function ssi_quickSearch($output_method = 'echo')
 {
-	global $scripturl, $txt, $context;
+	global $scripturl, $txt;
 
 	if (!allowedTo('search_posts'))
 		return '';
@@ -1474,7 +1473,7 @@ function ssi_news($output_method = 'echo')
 {
 	global $context, $settings;
 
-	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
+	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
 
 	if ($output_method != 'echo')
@@ -1486,9 +1485,9 @@ function ssi_news($output_method = 'echo')
 // Show the latest news, with a template... by board.
 function ssi_boardNews($board = null, $limit = null, $start = null, $length = null, $output_method = 'echo')
 {
-	global $scripturl, $db_prefix, $txt, $theme, $settings, $context;
+	global $scripturl, $db_prefix, $txt, $theme, $settings;
 
-	if (empty($settings['allow_guestAccess']) && $context['user']['is_guest'])
+	if (empty($settings['allow_guestAccess']) && we::$is_guest)
 		return array();
 
 	loadLanguage('Stats');
@@ -1687,7 +1686,7 @@ function ssi_checkPassword($id = null, $password = null, $is_username = false)
 // We want to show the recent attachments outside of the forum.
 function ssi_recentAttachments($num_attachments = 10, $attachment_ext = array(), $output_method = 'echo')
 {
-	global $context, $settings, $scripturl, $txt, $theme;
+	global $settings, $scripturl, $txt, $theme;
 
 	// We want to make sure that we only get attachments for boards that we can see *if* any.
 	$attachments_boards = boardsAllowedTo('view_attachments');

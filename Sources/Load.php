@@ -1060,7 +1060,7 @@ function loadMemberContext($user, $full_profile = false)
 		{
 			$stars = explode('#', $badge);
 			if (!empty($stars[0]) && !empty($stars[1]))
-				$memberContext[$user]['group_badges'][] = str_repeat('<img src="' . str_replace('$language', $context['user']['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
+				$memberContext[$user]['group_badges'][] = str_repeat('<img src="' . str_replace('$language', we::$user['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
 		}
 	}
 
@@ -1189,7 +1189,6 @@ function we_resetTransparency($id_attach, $path, $real_name)
  * - Save details to cache as appropriate.
  * - Prepare the list of folders to examine in priority for template loading (i.e. this theme's folder first, then default, but can include others)
  * - Identify if the user has come to the board from the wrong place (e.g. a www in the URL that shouldn't be there) so it can be fixed.
- * - Push common details into $context['user'] for the current user.
  * - Identify what smiley set should be used.
  * - Initialize $context['header'] and $context['footer'] for later use, as well as some $theme paths, some global $context values, $txt initially.
  * - Set up common server-side settings for later reference (in case of server configuration specific tweaks)
@@ -1443,26 +1442,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 				$context['linktree'][$k]['url'] = strtr($dummy['url'], array($oldurl => $boardurl));
 		}
 	}
-	// Set up the contextual user array
-	$context['user'] = array(
-		'id' => we::$id,
-		'is_logged' => !we::$is_guest,
-		'is_guest' => &we::$is_guest,
-		'is_admin' => &we::$is_admin,
-		'username' => &we::$user['username'],
-		'language' => &we::$user['language'],
-		'email' => &we::$user['email'],
-		'ignoreusers' => &we::$user['ignoreusers'],
-		'data' => &we::$user['data'],
-	);
-	if (!we::$is_guest)
-		$context['user']['name'] = we::$user['name'];
-	elseif (!empty($txt['guest_title']))
-		$context['user']['name'] = $txt['guest_title'];
 
 	// Determine the current smiley set
 	we::$user['smiley_set'] = (!in_array(we::$user['smiley_set'], explode(',', $settings['smiley_sets_known'])) && we::$user['smiley_set'] != 'none') || empty($settings['smiley_sets_enable']) ? (!empty($theme['smiley_sets_default']) ? $theme['smiley_sets_default'] : $settings['smiley_sets_default']) : we::$user['smiley_set'];
-	$context['user']['smiley_set'] = we::$user['smiley_set'];
 
 	// Some basic information...
 	if (!isset($context['header']))
@@ -1597,10 +1579,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 			foreach ($context['skeleton_moves'] as $move)
 				wetem::move($move[0], $move[1], $move[2]);
 	}
-
-	// Guests may still need a name
-	if ($context['user']['is_guest'] && empty($context['user']['name']))
-		$context['user']['name'] = $txt['guest_title'];
 
 	// Any theme-related strings that need to be loaded?
 	if (!empty($theme['require_theme_strings']))

@@ -13,7 +13,7 @@
 
 function template_main_board()
 {
-	global $context, $theme, $options, $scripturl, $settings, $txt, $language;
+	global $context, $theme, $options, $settings, $txt, $language;
 
 	echo '
 	<a id="top"></a>';
@@ -35,7 +35,7 @@ function template_main_board()
 		// If Quick Moderation is enabled, start the form.
 		if (!empty($context['quick_moderation']))
 			echo '
-	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
+	<form action="<URL>?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
 
 		echo '
 	<div class="topic_table" id="messageindex">
@@ -111,12 +111,12 @@ function template_main_board()
 					<td class="subject ', $alternate_class, $topic['is_posted_in'] ? ' my' : '', '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['id'] . '" ondblclick="modify_topic(' . $topic['id'] . ', ' . $topic['first_post']['id'] . ');"' : ''), '>
 							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '">',
-							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
+							$topic['new'] && !we::$is_guest ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
 							'</span>', $topic['is_pinned'] ? '</strong>' : '';
 
 			// Is this topic new? (assuming they are logged in!)
-			if ($topic['new'] && $context['user']['is_logged'])
+			if ($topic['new'] && !we::$is_guest)
 					echo '
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
 
@@ -191,7 +191,7 @@ function template_main_board()
 
 function template_main_blog()
 {
-	global $context, $theme, $options, $scripturl, $settings, $txt, $language, $board_info;
+	global $context, $theme, $options, $settings, $txt, $language, $board_info;
 
 	echo '
 	<a id="top"></a>';
@@ -216,7 +216,7 @@ function template_main_blog()
 		// If Quick Moderation is enabled, start the form.
 		if (!empty($context['quick_moderation']))
 			echo '
-	<form action="', $scripturl, '?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
+	<form action="<URL>?action=quickmod;board=', $context['current_board'], '.', $context['start'], '" method="post" accept-charset="UTF-8" class="clear" name="quickModForm" id="quickModForm">';
 
 		echo '
 	<div class="topic_table" id="messageindex">
@@ -257,12 +257,12 @@ function template_main_blog()
 					<td class="subject ', $use_bg2 ? 'windowbg2' : 'windowbg', $topic['style'], '">
 						<div', (!empty($topic['quick_mod']['modify']) ? ' id="topic_' . $topic['first_post']['id'] . '" ondblclick="modify_topic(\'' . $topic['id'] . '\', \'' . $topic['first_post']['id'] . '\');"' : ''), '>
 							', $topic['is_pinned'] ? '<strong>' : '', '<span id="msg_' . $topic['first_post']['id'] . '" class="blog title">', '<img src="', $topic['first_post']['icon_url'], '" class="middle">&nbsp;',
-							$topic['new'] && $context['user']['is_logged'] ? $topic['new_link'] : $topic['first_post']['link'],
+							$topic['new'] && !we::$is_guest ? $topic['new_link'] : $topic['first_post']['link'],
 							!$context['can_approve_posts'] && !$topic['approved'] ? '&nbsp;<em>(' . $txt['awaiting_approval'] . ')</em>' : '',
 							'</span>', $topic['is_pinned'] ? '</strong>' : '';
 
 			// Is this topic new? (assuming they are logged in!)
-			if ($topic['new'] && $context['user']['is_logged'])
+			if ($topic['new'] && !we::$is_guest)
 					echo '
 							<a href="', $topic['new_href'], '" id="newicon', $topic['first_post']['id'], '" class="note">', $txt['new'], '</a>';
 
@@ -287,13 +287,13 @@ function template_main_blog()
 
 				if (!empty($topic['replies']))
 					echo '
-							<a href="', $topic['new'] && $context['user']['is_logged'] ? $topic['new_href'] : $topic['first_post']['href'], '">', number_context('num_replies', $topic['replies']), '</a>', $topic['can_reply'] ? ' | ' : '';
+							<a href="', $topic['new'] && !we::$is_guest ? $topic['new_href'] : $topic['first_post']['href'], '">', number_context('num_replies', $topic['replies']), '</a>', $topic['can_reply'] ? ' | ' : '';
 
 				if ($topic['can_reply'])
 				{
 					// If quick reply is open, point directly to it, otherwise use the regular reply page
 					if (empty($options['display_quick_reply']) || $options['display_quick_reply'] != 2)
-						$reply_url = $scripturl . '?action=post;topic=' . $topic['id'] . '.0;last_msg=' . $topic['last_post']['id'];
+						$reply_url = '<URL>?action=post;topic=' . $topic['id'] . '.0;last_msg=' . $topic['last_post']['id'];
 					else
 						$reply_url = substr($topic['last_post']['href'], 0, strpos($topic['last_post']['href'], '#')) . '#quickreply';
 
@@ -342,7 +342,7 @@ function template_main_blog()
 
 function template_messageindex_childboards()
 {
-	global $context, $theme, $options, $scripturl, $settings, $txt, $language;
+	global $context, $theme, $options, $settings, $txt, $language;
 
 	if (!empty($context['boards']) && (!empty($options['show_children']) || $context['start'] == 0))
 	{
@@ -360,7 +360,7 @@ function template_messageindex_childboards()
 			echo '
 				<tr id="board_', $board['id'], '" class="windowbg2">
 					<td class="icon windowbg"', !empty($board['children']) ? ' rowspan="2"' : '', '>
-						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
+						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || we::$is_guest ? $board['href'] : '<URL>?action=unread;board=' . $board['id'] . '.0;children'), '">';
 
 			// If this board is told to have a custom icon, use it.
 			if (!empty($board['custom_class']))
@@ -388,7 +388,7 @@ function template_messageindex_childboards()
 			// Has it outstanding posts for approval?
 			if ($board['can_approve_posts'] && ($board['unapproved_posts'] || $board['unapproved_topics']))
 				echo '
-						<a href="', $scripturl, '?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
+						<a href="<URL>?action=moderate;area=postmod;sa=', ($board['unapproved_topics'] > 0 ? 'topics' : 'posts'), ';brd=', $board['id'], ';', $context['session_query'], '" title="', sprintf($txt['unapproved_posts'], $board['unapproved_topics'], $board['unapproved_posts']), '" class="moderation_link">(!)</a>';
 
 			echo '
 
@@ -443,14 +443,14 @@ function template_messageindex_childboards()
 					if (!$child['is_redirect'])
 					{
 						$child_title = ($child['new'] ? $txt['new_posts'] : $txt['old_posts']) . ' (' . number_context('num_topics', $child['topics']) . ', ' . number_context('num_posts', $child['posts']) . ')';
-						$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="' . $scripturl . '?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new'] . '</a>' : '');
+						$child['link'] = '<a href="' . $child['href'] . '"' . ($child['new'] ? ' class="new_posts"' : '') . ' title="' . $child_title . '">' . $child['name'] . '</a>' . ($child['new'] ? ' <a href="<URL>?action=unread;board=' . $child['id'] . '" title="' . $child_title . '" class="note new_posts">' . $txt['new'] . '</a>' : '');
 					}
 					else
 						$child['link'] = '<a href="' . $child['href'] . '" title="' . number_context('num_redirects', $child['posts']) . '">' . $child['name'] . '</a>';
 
 					// Has it posts awaiting approval?
 					if ($child['can_approve_posts'] && ($child['unapproved_posts'] | $child['unapproved_topics']))
-						$child['link'] .= ' <a href="' . $scripturl . '?action=moderate;area=postmod;sa=' . ($child['unapproved_topics'] > 0 ? 'topics' : 'posts') . ';brd=' . $child['id'] . ';' . $context['session_query'] . '" title="' . sprintf($txt['unapproved_posts'], $child['unapproved_topics'], $child['unapproved_posts']) . '" class="moderation_link">(!)</a>';
+						$child['link'] .= ' <a href="<URL>?action=moderate;area=postmod;sa=' . ($child['unapproved_topics'] > 0 ? 'topics' : 'posts') . ';brd=' . $child['id'] . ';' . $context['session_query'] . '" title="' . sprintf($txt['unapproved_posts'], $child['unapproved_topics'], $child['unapproved_posts']) . '" class="moderation_link">(!)</a>';
 
 					$children[] = $child['new'] ? '<strong>' . $child['link'] . '</strong>' : $child['link'];
 				}
@@ -468,22 +468,22 @@ function template_messageindex_childboards()
 
 function template_messageindex_draft()
 {
-	global $context, $txt, $scripturl;
+	global $txt;
 
 	echo '
 	<div class="windowbg" id="profile_success">
-		', str_replace('{draft_link}', $scripturl . '?action=profile;area=showdrafts', $txt['draft_saved']), '
+		', str_replace('{draft_link}', '<URL>?action=profile;area=showdrafts', $txt['draft_saved']), '
 	</div>';
 }
 
 function template_messageindex_sortlink($sort, $caption)
 {
-	global $context, $theme, $scripturl;
+	global $context, $theme;
 
 	if (empty($context['can_reorder']))
 		echo $caption; // !!! If we want the direction indicator: , $context['sort_by'] == $sort ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '';
 	else
-		echo '<a href="', $scripturl, '?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>';
+		echo '<a href="<URL>?board=', $context['current_board'], '.', $context['start'], ';sort=', $sort, $context['sort_by'] == $sort && $context['sort_direction'] == 'up' ? ';desc' : '', '">', $caption, $context['sort_by'] == $sort ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>';
 }
 
 function template_messageindex_whoviewing()
@@ -509,7 +509,7 @@ function template_messageindex_whoviewing()
 
 function template_messageindex_legend()
 {
-	global $theme, $txt, $context, $settings;
+	global $theme, $txt, $settings;
 
 	echo '
 	<section>
@@ -520,7 +520,7 @@ function template_messageindex_legend()
 		<p>
 			<img src="' . $theme['images_url'] . '/icons/quick_lock.gif" class="middle"> ', $txt['locked_topic'], '<br>
 			<img src="' . $theme['images_url'] . '/icons/quick_pin.gif" class="middle"> ', $txt['pinned_topic'], '<br>
-			<img src="' . $theme['images_url'] . '/topic/normal_poll.png" class="middle"> ' . $txt['poll'], '<br>', !empty($settings['enableParticipation']) && $context['user']['is_logged'] ? '
+			<img src="' . $theme['images_url'] . '/topic/normal_poll.png" class="middle"> ' . $txt['poll'], '<br>', !empty($settings['enableParticipation']) && !we::$is_guest ? '
 			<img src="' . $theme['images_url'] . '/topic/my_normal_post.png" class="middle"> ' . $txt['participation_caption'] : '', '
 		</p>
 	</section>';
@@ -531,7 +531,7 @@ function template_messageindex_legend()
 // !!! it based on !empty($context['current_board']) or something?
 function template_messageindex_statistics()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings, $board_info;
+	global $context, $theme, $options, $txt, $settings, $board_info;
 
 	if (!$theme['show_stats_index'])
 		return;
@@ -541,7 +541,7 @@ function template_messageindex_statistics()
 	echo '
 	<section>
 		<we:title>
-			<a href="', $scripturl, '?board=', $context['current_board'], ';action=stats"><img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
+			<a href="<URL>?board=', $context['current_board'], ';action=stats"><img src="', $theme['images_url'], '/icons/info.gif" alt="', $txt[$type . '_stats'], '"></a>
 			', $txt[$type . '_stats'], '
 		</we:title>
 		<p>

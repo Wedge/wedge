@@ -22,7 +22,7 @@ function template_moderation_center()
 			', $txt['moderation_center'], '
 		</we:cat>
 		<div class="information">
-			<strong>', $txt['hello_guest'], ' ', $context['user']['name'], '!</strong>
+			<strong>', $txt['hello_guest'], ' ', we::$user['name'], '!</strong>
 			<p>
 				', $txt['mc_description'], '
 			</p>

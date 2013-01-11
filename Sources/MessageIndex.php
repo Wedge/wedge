@@ -574,7 +574,7 @@ function MessageIndex()
 			$context['can_remove'] |= ($started && allowedTo('remove_own'));
 		}
 
-		$context['can_markread'] = $context['user']['is_logged'];
+		$context['can_markread'] = !we::$is_guest;
 		foreach (array('remove', 'lock', 'pin', 'move', 'merge', 'restore', 'approve', 'markread') as $qmod)
 			if (!empty($context['can_' . $qmod]))
 				$quickmod[$qmod] = $txt['quick_mod_' . $qmod];
@@ -614,7 +614,7 @@ function MessageIndex()
 		wetem::add('sidebar', 'messageindex_legend');
 
 	// They can only mark read if they are logged in!
-	$context['can_mark_read'] = $context['user']['is_logged'];
+	$context['can_mark_read'] = !we::$is_guest;
 
 	// Create the button set...
 	$context['button_list'] = array(

@@ -108,7 +108,7 @@ function Thought()
 	if (we::$is_guest)
 		exit;
 
-	// !! Should we use censorText at store time, or display time...? $context['user'] (Load.php:1696) begs to differ.
+	// !! Should we use censorText at store time, or display time...? we::$user (Load.php:1696) begs to differ.
 	$text = isset($_POST['text']) ? westr::htmlspecialchars(trim($_POST['text']), ENT_QUOTES) : '';
 	if (empty($text) && empty($_GET['in']) && !isset($_REQUEST['remove']))
 		exit;

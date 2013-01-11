@@ -2892,8 +2892,7 @@ function profileSendActivation()
 
 	we::getInstance();
 
-	$context['user']['is_logged'] = false;
-	$context['user']['is_guest'] = true;
+	we::$is_guest = true;
 
 	// Send them to the done-with-registration-login screen.
 	loadTemplate('Register');

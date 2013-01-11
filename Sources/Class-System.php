@@ -250,7 +250,7 @@ class we
 		// Set up the we::$user array.
 		$user += array(
 			'username' => $username,
-			'name' => isset($user_settings['real_name']) ? $user_settings['real_name'] : '',
+			'name' => $id_member == 0 ? (!empty($txt['guest_title']) ? $txt['guest_title'] : 'Guest') : (isset($user_settings['real_name']) ? $user_settings['real_name'] : ''),
 			'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
 			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $language : $user_settings['lngfile'],

@@ -28,7 +28,7 @@ function template_init()
 	if (!empty($context['main_js_files']))
 	{
 		$context['main_js_files']['scripts/theme.js'] = false;
-		if ($context['user']['is_guest'] && empty($context['disable_login_hashing']) && !empty($context['show_login_bar']))
+		if (we::$is_guest && empty($context['disable_login_hashing']) && !empty($context['show_login_bar']))
 			$context['main_js_files']['scripts/sha1.js'] = true;
 	}
 
@@ -177,7 +177,7 @@ function template_html_before()
 	<link rel="search" href="<URL>?action=search">';
 
 	// If feeds are enabled, advertise the presence of one.
-	if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || $context['user']['is_logged']))
+	if (!empty($settings['xmlnews_enable']) && (!empty($settings['allow_guestAccess']) || !we::$is_guest))
 		echo '
 	<link rel="alternate" href="<URL>?action=feed" type="application/atom+xml" title="', $context['forum_name_html_safe'], ' - ', $txt['feed'], '">';
 
@@ -319,7 +319,7 @@ function template_logo_toggler()
 	new weToggle({', empty($options['collapse_header']) ? '' : '
 		isCollapsed: true,', '
 		aSwapContainers: [\'upper_section\'],
-		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],', $context['user']['is_guest'] ? '
+		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],', we::$is_guest ? '
 		sCookie: \'upshrink\'' : '
 		sOptionName: \'collapse_header\'', '
 	});');
@@ -334,20 +334,20 @@ function template_sidebar_before()
 {
 	global $txt, $context, $settings;
 
-	if ($context['user']['is_logged'] || !empty($context['show_login_bar']))
+	if (!we::$is_guest || !empty($context['show_login_bar']))
 		echo '
 	<section>
 		<we:title>
-			<span class="greeting">', sprintf($txt['hello_member_ndt'], $context['user']['name']), '</span>
+			<span class="greeting">', sprintf($txt['hello_member_ndt'], we:$user['name']), '</span>
 		</we:title>
 		<div id="userbox">';
 
 	// If the user is logged in, display stuff like their name, new messages, etc.
-	if ($context['user']['is_logged'])
+	if (!we::$is_guest)
 	{
-		echo empty($context['user']['avatar']) ? '
+		echo empty(we::$user['avatar']) ? '
 			<ul id="noava">' : '
-			' . $context['user']['avatar']['image'] . '
+			' . we::$user['avatar']['image'] . '
 			<ul>', '
 				<li><a href="<URL>?action=unread">', $txt['show_unread'], '</a></li>
 				<li><a href="<URL>?action=unreadreplies">', $txt['show_unread_replies'], '</a></li>';
@@ -364,15 +364,15 @@ function template_sidebar_before()
 	</section>';
 
 		// Is the forum in maintenance mode?
-		if ($context['in_maintenance'] && $context['user']['is_admin'])
+		if ($context['in_maintenance'] && we::$is_admin)
 			echo '
 	<section>
 		<p class="notice">', $txt['maintain_mode_on'], '</p>
 	</section>';
 
 		// This is where we'll show the Thought postbox.
-		$thought_id = isset($context['user']['data']['id_thought']) ? $context['user']['data']['id_thought'] : 0;
-		$thought_prv = isset($context['user']['data']['thought_privacy']) ? $context['user']['data']['thought_privacy'] : 1;
+		$thought_id = isset(we::$user['data']['id_thought']) ? we::$user['data']['id_thought'] : 0;
+		$thought_prv = isset(we::$user['data']['thought_privacy']) ? we::$user['data']['thought_privacy'] : 1;
 
 		if (allowedTo('post_thought'))
 		{
@@ -386,7 +386,7 @@ function template_sidebar_before()
 		<a href="#" onclick="return oThought.edit(\'\');">', $txt['edit_thought'], '</a>
 		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
 
-			echo empty($context['user']['data']['thought']) ? $txt['no_thought_yet'] : $context['user']['data']['thought'], '</span></div>
+			echo empty(we::$user['data']['thought']) ? $txt['no_thought_yet'] : we::$user['data']['thought'], '</span></div>
 	</section>';
 
 			add_js('

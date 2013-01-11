@@ -40,7 +40,7 @@ function ViewQuery()
 	elseif ($settings['db_show_debug_who'] == 'mod')
 		$show_debug &= allowedTo('moderate_forum');
 	elseif ($settings['db_show_debug_who'] == 'regular')
-		$show_debug &= $context['user']['is_logged'];
+		$show_debug &= !we::$is_guest;
 	else
 		$show_debug &= ($settings['db_show_debug_who'] == 'any');
 
@@ -51,7 +51,7 @@ function ViewQuery()
 	elseif ($settings['db_show_debug_who_log'] == 'mod')
 		$show_debug_query &= allowedTo('moderate_forum');
 	elseif ($settings['db_show_debug_who_log'] == 'regular')
-		$show_debug_query &= $context['user']['is_logged'];
+		$show_debug_query &= !we::$is_guest;
 	else
 		$show_debug_query &= ($settings['db_show_debug_who_log'] == 'any');
 
