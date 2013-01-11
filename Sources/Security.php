@@ -607,13 +607,10 @@ function check_banned_ip($ip)
 		if (isset($ban['ip']))
 		{
 			if ($ban['ip'] != $ip)
-				continue; // single address not matched, leave
+				continue; // Single address not matched, leave.
 		}
-		else
-		{
-			if ($ip < $ban['range'][0] || $ip > $ban['range'][1])
-				continue; // the address is either before or after the range we've set, thus not in it
-		}
+		elseif ($ip < $ban['range'][0] || $ip > $ban['range'][1])
+			continue; // The address is either before or after the range we've set, thus not in it.
 
 		$return_value[] = array(
 			'id' => $ban['id'],
@@ -662,6 +659,7 @@ function isBannedEmail($email, $error, $return = false)
 
 			// So, split up the user and domain parts of the email, and lower-case everything. The specification actually spells out case insensitivity.
 			list($user, $domain) = explode('@', strtolower($row['ban_content']));
+
 			// GMail style ignores dots and +labels
 			if (!empty($extra['gmail_style']))
 			{
