@@ -561,14 +561,14 @@ function scheduled_auto_optimize()
 	if ($delay)
 		return false;
 
-	wesql::extend();
+	loadSource('Class-DBPackages');
 
 	// Get all the tables.
-	$tables = wedbExtra::list_tables(false, $db_prefix . '%');
+	$tables = wedbPackages::list_tables(false, $db_prefix . '%');
 
 	// Actually do the optimisation.
 	foreach ($tables as $table)
-		wedbExtra::optimize_table($table);
+		wedbPackages::optimize_table($table);
 
 	// Return for the log...
 	return true;

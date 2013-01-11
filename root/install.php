@@ -1121,11 +1121,11 @@ function DatabasePopulation()
 	}
 
 	// Let's optimize those new tables.
-	wesql::extend();
-	$tables = wedbExtra::list_tables($db_name, $db_prefix . '%');
+	require_once($sourcedir . '/Class-DBPackages.php');
+	$tables = wedbPackages::list_tables($db_name, $db_prefix . '%');
 	foreach ($tables as $table)
 	{
-		wedbExtra::optimize_table($table) != -1 or $db_messed = true;
+		wedbPackages::optimize_table($table) != -1 or $db_messed = true;
 
 		if (!empty($db_messed))
 		{

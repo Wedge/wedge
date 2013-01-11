@@ -338,7 +338,7 @@ function template_sidebar_before()
 		echo '
 	<section>
 		<we:title>
-			<span class="greeting">', sprintf($txt['hello_member_ndt'], we:$user['name']), '</span>
+			<span class="greeting">', sprintf($txt['hello_member_ndt'], we::$user['name']), '</span>
 		</we:title>
 		<div id="userbox">';
 

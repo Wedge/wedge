@@ -73,11 +73,11 @@ function getServerVersions($checkFor)
 	// Now let's check for the Database.
 	if (in_array('db_server', $checkFor))
 	{
-		wesql::extend();
+		loadSource('Class-DBPackages');
 		if (!wesql::is_connected())
 			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
 		else
-			$versions['db_server'] = array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => wedbExtra::get_version());
+			$versions['db_server'] = array('title' => sprintf($txt['support_versions_db'], 'MySQL'), 'version' => wedbPackages::get_version());
 	}
 
 	// Now the right hand column

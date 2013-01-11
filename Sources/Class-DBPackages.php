@@ -16,20 +16,14 @@ if (!defined('WEDGE'))
 
 class wedbPackages
 {
-	protected static $reservedTables, $instance;
-
-	public static function getInstance()
+	public static function is_reserved_table($table)
 	{
 		global $db_prefix;
+		static $reserved = null;
 
-		// Quero ergo sum
-		if (self::$instance == null)
+		if ($reserved === null)
 		{
-			// Things we do on creation; it's like a constructor but not quite.
-			self::$instance = new self();
-			self::$reservedTables = array();
-
-			$reservedTables = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'bans', 'ban_items',
+			$items = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'bans', 'ban_items',
 			'board_members', 'board_permissions', 'boards', 'categories', 'collapsed_categories',
 			'custom_fields', 'drafts', 'group_moderators', 'log_actions', 'log_activity', 'log_boards', 'log_comments',
 			'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_intrusion', 'log_mark_read', 'log_notify',
@@ -39,15 +33,10 @@ class wedbPackages
 			'permission_profiles', 'permissions', 'personal_messages', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls',
 			'pretty_topic_urls', 'pretty_urls_cache', 'privacy_boards', 'privacy_thoughts', 'privacy_topics', 'scheduled_tasks',
 			'sessions', 'settings', 'smileys', 'spiders', 'subscriptions', 'subscriptions_groups', 'themes', 'topics');
-
-			foreach ($reservedTables as $k => $table_name)
-				self::$reservedTables[$k] = strtolower($db_prefix . $table_name);
-
-			// We in turn may need the extra stuff.
-			wesql::extend('extra');
+			foreach ($items as $table_name)
+				$reserved[] = strtolower($db_prefix . $table_name);
 		}
-
-		return self::$instance;
+		return in_array(str_to_lower($table), $reserved);
 	}
 
 	// Create a table.
@@ -64,10 +53,10 @@ class wedbPackages
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
 		// First - no way do we touch Wedge tables.
-		if (in_array(strtolower($table_name), self::$reservedTables))
+		if (self::is_reserved_table($table_name))
 			return false;
 
-		$tables = wedbExtra::list_tables();
+		$tables = self::list_tables();
 		$creating = true;
 		if (in_array($full_table_name, $tables))
 		{
@@ -289,11 +278,11 @@ class wedbPackages
 		$table_name = str_replace('{db_prefix}', $db_prefix, $table_name);
 
 		// God no - dropping one of these = bad.
-		if (in_array(strtolower($table_name), self::$reservedTables))
+		if (self::is_reserved_table($table_name))
 			return false;
 
 		// Does it exist?
-		if (in_array($full_table_name, wedbExtra::list_tables()))
+		if (in_array($full_table_name, self::list_tables()))
 		{
 			$query = 'DROP TABLE ' . $table_name;
 			wesql::query(
@@ -306,7 +295,7 @@ class wedbPackages
 			return true;
 		}
 
-		// Otherwise do 'nout.
+		// Otherwise do nothing.
 		return false;
 	}
 
@@ -708,5 +697,210 @@ class wedbPackages
 		wesql::free_result($result);
 
 		return $indexes;
+	}
+
+	// Get the version number.
+	public static function get_version()
+	{
+		$request = wesql::query('SELECT VERSION()');
+		list ($ver) = wesql::fetch_row($request);
+		wesql::free_result($request);
+		return $ver;
+	}
+
+	// Backup $table to $backup_table.
+	public static function backup_table($table, $backup_table)
+	{
+		global $db_prefix;
+
+		$table = str_replace('{db_prefix}', $db_prefix, $table);
+
+		// First, get rid of the old table.
+		wesql::query('
+			DROP TABLE IF EXISTS {raw:backup_table}',
+			array(
+				'backup_table' => $backup_table,
+			)
+		);
+
+		// Can we do this the quick way?
+		$result = wesql::query('
+			CREATE TABLE {raw:backup_table} LIKE {raw:table}',
+			array(
+				'backup_table' => $backup_table,
+				'table' => $table
+		));
+		// If this failed, we go old school.
+		if ($result)
+		{
+			$request = wesql::query('
+				INSERT INTO {raw:backup_table}
+				SELECT *
+				FROM {raw:table}',
+				array(
+					'backup_table' => $backup_table,
+					'table' => $table
+				));
+
+			// Old school or no school?
+			if ($request)
+				return $request;
+		}
+
+		// At this point, the quick method failed.
+		$result = wesql::query('
+			SHOW CREATE TABLE {raw:table}',
+			array(
+				'table' => $table,
+			)
+		);
+		list (, $create) = wesql::fetch_row($result);
+		wesql::free_result($result);
+
+		$create = preg_split('/[\n\r]/', $create);
+
+		$auto_inc = '';
+		// Default engine type.
+		$engine = 'MyISAM';
+		$charset = '';
+		$collate = '';
+
+		foreach ($create as $k => $l)
+		{
+			// Get the name of the auto_increment column.
+			if (strpos($l, 'auto_increment'))
+				$auto_inc = trim($l);
+
+			// For the engine type, see if we can work out what it is.
+			if (strpos($l, 'ENGINE') !== false || strpos($l, 'TYPE') !== false)
+			{
+				// Extract the engine type.
+				preg_match('~(ENGINE|TYPE)=(\w+)(\sDEFAULT)?(\sCHARSET=(\w+))?(\sCOLLATE=(\w+))?~', $l, $match);
+
+				if (!empty($match[1]))
+					$engine = $match[1];
+
+				if (!empty($match[2]))
+					$engine = $match[2];
+
+				if (!empty($match[5]))
+					$charset = $match[5];
+
+				if (!empty($match[7]))
+					$collate = $match[7];
+			}
+
+			// Skip everything but keys...
+			if (strpos($l, 'KEY') === false)
+				unset($create[$k]);
+		}
+
+		if (!empty($create))
+			$create = '(
+				' . implode('
+				', $create) . ')';
+		else
+			$create = '';
+
+		$request = wesql::query('
+			CREATE TABLE {raw:backup_table} {raw:create}
+			ENGINE={raw:engine}' . (empty($charset) ? '' : ' CHARACTER SET {raw:charset}' . (empty($collate) ? '' : ' COLLATE {raw:collate}')) . '
+			SELECT *
+			FROM {raw:table}',
+			array(
+				'backup_table' => $backup_table,
+				'table' => $table,
+				'create' => $create,
+				'engine' => $engine,
+				'charset' => empty($charset) ? '' : $charset,
+				'collate' => empty($collate) ? '' : $collate,
+			)
+		);
+
+		if ($auto_inc != '')
+		{
+			if (preg_match('~\`(.+?)\`\s~', $auto_inc, $match) != 0 && substr($auto_inc, -1, 1) == ',')
+				$auto_inc = substr($auto_inc, 0, -1);
+
+			wesql::query('
+				ALTER TABLE {raw:backup_table}
+				CHANGE COLUMN {raw:column_detail} {raw:auto_inc}',
+				array(
+					'backup_table' => $backup_table,
+					'column_detail' => $match[1],
+					'auto_inc' => $auto_inc,
+				)
+			);
+		}
+
+		return $request;
+	}
+
+	// Optimize a table - return data freed!
+	public static function optimize_table($table)
+	{
+		global $db_name, $db_prefix;
+
+		$table = str_replace('{db_prefix}', $db_prefix, $table);
+
+		// Get how much overhead there is.
+		$request = wesql::query('
+				SHOW TABLE STATUS LIKE {string:table_name}',
+				array(
+					'table_name' => str_replace('_', '\_', $table),
+				)
+			);
+		$row = wesql::fetch_assoc($request);
+		wesql::free_result($request);
+
+		$data_before = isset($row['Data_free']) ? $row['Data_free'] : 0;
+		$request = wesql::query('
+				OPTIMIZE TABLE `{raw:table}`',
+				array(
+					'table' => $table,
+				)
+			);
+		if (!$request)
+			return -1;
+
+		// How much left?
+		$request = wesql::query('
+				SHOW TABLE STATUS LIKE {string:table}',
+				array(
+					'table' => str_replace('_', '\_', $table),
+				)
+			);
+		$row = wesql::fetch_assoc($request);
+		wesql::free_result($request);
+
+		$total_change = isset($row['Data_free']) && $data_before > $row['Data_free'] ? $data_before / 1024 : 0;
+
+		return $total_change;
+	}
+
+	// List all the tables in the database.
+	public static function list_tables($db = false, $filter = false)
+	{
+		global $db_name;
+
+		$db = $db == false ? $db_name : $db;
+		$db = trim($db);
+		$filter = $filter == false ? '' : ' LIKE \'' . $filter . '\'';
+
+		$request = wesql::query('
+			SHOW TABLES
+			FROM `{raw:db}`
+			{raw:filter}',
+			array(
+				'db' => $db[0] == '`' ? strtr($db, array('`' => '')) : $db,
+				'filter' => $filter,
+			)
+		);
+		$tables = array();
+		while ($row = wesql::fetch_row($request))
+			$tables[] = $row[0];
+		wesql::free_result($request);
+
+		return $tables;
 	}
 }

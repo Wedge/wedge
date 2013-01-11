@@ -481,11 +481,11 @@ function EnablePlugin()
 		$int_types = array('tinyint', 'smallint', 'mediumint', 'int', 'bigint');
 		$float_types = array('float', 'real', 'double');
 
-		wesql::extend('packages');
+		loadSource('Class-DBPackages');
 		$new_tables = $new_columns = $new_indexes = array();
 		$existing_columns = $existing_indexes = array();
 
-		$existing_tables = wedbExtra::list_tables();
+		$existing_tables = wedbPackages::list_tables();
 
 		// First, pass through and collate a list of tables, columns and indexes that we are expecting to deal with. That way we know what we're going to have to query for.
 		if (!empty($manifest->database->tables))
@@ -1285,7 +1285,7 @@ function commitRemovePlugin($fullclean, &$manifest, &$remote_class)
 
 	if ($fullclean && !empty($manifest->database))
 	{
-		wesql::extend('packages');
+		loadSource('Class-DBPackages');
 
 		// Pass each table we find to the drop-table routine. That already does its own checking as to whether the table exists or not.
 		if (!empty($manifest->database->tables))

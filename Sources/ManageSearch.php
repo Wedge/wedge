@@ -71,8 +71,6 @@ function ManageSearch()
 	loadLanguage('Search');
 	loadTemplate('ManageSearch');
 
-	wesql::extend('search');
-
 	$subActions = array(
 		'settings' => 'EditSearchSettings',
 		'weights' => 'EditWeights',
@@ -205,72 +203,68 @@ function EditSearchMethod()
 	$context[$context['admin_menu_name']]['current_subsection'] = 'method';
 	$context['page_title'] = $txt['search_method_title'];
 	wetem::load('select_search_method');
-	$context['supports_fulltext'] = wedbSearch::supports('fulltext');
 
 	// Load any apis.
 	$context['search_apis'] = loadSearchAPIs();
 
 	// Detect whether a fulltext index is set.
-	if ($context['supports_fulltext'])
+	$request = wesql::query('
+		SHOW INDEX
+		FROM {db_prefix}messages',
+		array(
+		)
+	);
+	$context['fulltext_index'] = '';
+	if ($request !== false || wesql::num_rows($request) != 0)
 	{
+		while ($row = wesql::fetch_assoc($request))
+			if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
+				$context['fulltext_index'][] = $row['Key_name'];
+		wesql::free_result($request);
+
+		if (is_array($context['fulltext_index']))
+			$context['fulltext_index'] = array_unique($context['fulltext_index']);
+	}
+
+	$request = wesql::query('
+		SHOW COLUMNS
+		FROM {db_prefix}messages',
+		array(
+		)
+	);
+	if ($request !== false)
+	{
+		while ($row = wesql::fetch_assoc($request))
+			if ($row['Field'] == 'body' && $row['Type'] == 'mediumtext')
+				$context['cannot_create_fulltext'] = true;
+		wesql::free_result($request);
+	}
+
+	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
 		$request = wesql::query('
-			SHOW INDEX
-			FROM {db_prefix}messages',
+			SHOW TABLE STATUS
+			FROM {string:database_name}
+			LIKE {string:table_name}',
 			array(
+				'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
+				'table_name' => str_replace('_', '\_', $match[2]) . 'messages',
 			)
 		);
-		$context['fulltext_index'] = '';
-		if ($request !== false || wesql::num_rows($request) != 0)
-		{
-			while ($row = wesql::fetch_assoc($request))
-				if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
-					$context['fulltext_index'][] = $row['Key_name'];
-			wesql::free_result($request);
-
-			if (is_array($context['fulltext_index']))
-				$context['fulltext_index'] = array_unique($context['fulltext_index']);
-		}
-
+	else
 		$request = wesql::query('
-			SHOW COLUMNS
-			FROM {db_prefix}messages',
+			SHOW TABLE STATUS
+			LIKE {string:table_name}',
 			array(
+				'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
 			)
 		);
-		if ($request !== false)
-		{
-			while ($row = wesql::fetch_assoc($request))
-				if ($row['Field'] == 'body' && $row['Type'] == 'mediumtext')
-					$context['cannot_create_fulltext'] = true;
-			wesql::free_result($request);
-		}
 
-		if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-			$request = wesql::query('
-				SHOW TABLE STATUS
-				FROM {string:database_name}
-				LIKE {string:table_name}',
-				array(
-					'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
-					'table_name' => str_replace('_', '\_', $match[2]) . 'messages',
-				)
-			);
-		else
-			$request = wesql::query('
-				SHOW TABLE STATUS
-				LIKE {string:table_name}',
-				array(
-					'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
-				)
-			);
-
-		if ($request !== false)
-		{
-			while ($row = wesql::fetch_assoc($request))
-				if ((isset($row['Type']) && strtolower($row['Type']) != 'myisam') || (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam'))
-					$context['cannot_create_fulltext'] = true;
-			wesql::free_result($request);
-		}
+	if ($request !== false)
+	{
+		while ($row = wesql::fetch_assoc($request))
+			if ((isset($row['Type']) && strtolower($row['Type']) != 'myisam') || (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam'))
+				$context['cannot_create_fulltext'] = true;
+		wesql::free_result($request);
 	}
 
 	if (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'createfulltext')
@@ -320,8 +314,8 @@ function EditSearchMethod()
 	{
 		checkSession('get');
 
-		wesql::extend();
-		$tables = wedbExtra::list_tables(false, $db_prefix . 'log_search_words');
+		loadSource('Class-DBPackages');
+		$tables = wedbPackages::list_tables(false, $db_prefix . 'log_search_words');
 		if (!empty($tables))
 		{
 			wesql::query('
@@ -494,8 +488,9 @@ function CreateMessageIndex()
 
 		if ($context['start'] === 0)
 		{
-			wesql::extend();
-			$tables = wedbExtra::list_tables(false, $db_prefix . 'log_search_words');
+			loadSource('Class-DBPackages');
+
+			$tables = wedbPackages::list_tables(false, $db_prefix . 'log_search_words');
 			if (!empty($tables))
 			{
 				wesql::query('
@@ -505,7 +500,7 @@ function CreateMessageIndex()
 				);
 			}
 
-			wedbSearch::create_word_search($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
+			create_word_search($index_properties[$context['index_settings']['bytes_per_word']]['column_definition']);
 
 			// Temporarily switch back to not using a search index.
 			if (!empty($settings['search_index']) && $settings['search_index'] == 'custom')
@@ -711,4 +706,26 @@ function loadSearchAPIs()
 	}
 
 	return $apis;
+}
+
+function create_word_search($size)
+{
+	if ($size == 'small' || $size == 'medium')
+		$size .= 'int'; // since small or medium => smallint or mediumint
+	else
+		$size = 'int'; // yeah, largeint isn't a real field
+
+	wedbPackages::create_table(
+		'{db_prefix}log_search_words',
+		array(
+			array('name' => 'id_word', 'size' => $size, 'unsigned' => true, 'null' => false, 'default' => 0),
+			array('name' => 'id_msg', 'size' => 'int', 'unsigned' => true, 'null' => false, 'default' => 0),
+		),
+		array(
+			array(
+				'type' => 'primary',
+				'columns' => array('id_word', 'id_msg'),
+			),
+		)
+	);
 }

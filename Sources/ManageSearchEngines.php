@@ -987,7 +987,7 @@ function recacheSpiderNames()
 // Sort the search engine table by user agent name to avoid misidentification of engine.
 function sortSpiderTable()
 {
-	wesql::extend('packages');
+	loadSource('Class-DBPackages');
 
 	// Add a sorting column.
 	wedbPackages::add_column('{db_prefix}spiders', array('name' => 'temp_order', 'size' => 8, 'type' => 'mediumint', 'null' => false));

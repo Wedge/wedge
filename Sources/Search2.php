@@ -102,9 +102,6 @@ function Search2()
 
 	loadSource(array('Display', 'Subs-Package'));
 
-	// Search has a special database set.
-	wesql::extend('search');
-
 	// Load up the search API we are going to use.
 	$settings['search_index'] = empty($settings['search_index']) ? 'standard' : $settings['search_index'];
 	if (!file_exists($sourcedir . '/SearchAPI-' . ucwords($settings['search_index']) . '.php'))

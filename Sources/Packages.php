@@ -938,7 +938,7 @@ function PackageInstall()
 				global $db_package_log;
 
 				// We'll likely want the package specific database functionality!
-				wesql::extend('packages');
+				loadSource('Class-DBPackages');
 
 				// Let the file work its magic ;)
 				require($boarddir . '/Packages/temp/' . $context['base_path'] . $action['filename']);
@@ -1083,7 +1083,7 @@ function PackageInstall()
 	if (!empty($db_changes) && !empty($_POST['do_db_changes']))
 	{
 		// We're gonna be needing the package db functions!
-		wesql::extend('packages');
+		loadSource('Class-DBPackages');
 
 		foreach ($db_changes as $change)
 		{

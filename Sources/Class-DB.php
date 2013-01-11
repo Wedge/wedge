@@ -83,15 +83,6 @@ class wesql
 		return self::$_db_con = $connection;
 	}
 
-	public static function extend($type = 'extra')
-	{
-		global $sourcedir;
-		$type = ucfirst($type);
-
-		require_once($sourcedir . '/Class-DB' . $type . '.php'); // loadSource is not available for this.
-		call_user_func(array('wedb' . $type, 'getInstance')); // can't do this any other way prior to PHP 5.3.0 wherein $type::getInstance() is possible.
-	}
-
 	public static function fix_prefix(&$db_prefix, $db_name)
 	{
 		$db_prefix = is_numeric($db_prefix[0]) ? $db_name . '.' . $db_prefix : '`' . $db_name . '`.' . $db_prefix;
