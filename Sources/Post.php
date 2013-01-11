@@ -1198,6 +1198,7 @@ function getTopic()
 			'is_approved' => 1,
 		)
 	);
+	$igu = array_flip(we::$user['ignoreusers']);
 	$context['previous_posts'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
@@ -1215,7 +1216,7 @@ function getTopic()
 			'timestamp' => forum_time(true, $row['poster_time']),
 			'id' => $row['id_msg'],
 			'is_new' => !empty($context['new_replies']),
-			'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($row['id_member'], $context['user']['ignoreusers']),
+			'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && isset($igu[$row['id_member']]),
 		);
 
 		if (!empty($context['new_replies']))

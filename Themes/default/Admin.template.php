@@ -41,7 +41,7 @@ function template_admin()
 			</div>
 		</div>';
 
-	if ($context['user']['is_admin'])
+	if (we::$is_admin)
 	{
 		if (empty($options['hide_admin_intro']))
 		{

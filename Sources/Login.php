@@ -24,10 +24,10 @@ if (!defined('WEDGE'))
 
 function Login()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	// You're not a guest, why are you here?
-	if (!$context['user']['is_guest'])
+	if (!we::$is_guest)
 		redirectexit();
 
 	// We need to load the Login template/language file.
@@ -44,7 +44,7 @@ function Login()
 
 	// Add the login chain to the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=login',
+		'url' => '<URL>?action=login',
 		'name' => $txt['login'],
 	);
 

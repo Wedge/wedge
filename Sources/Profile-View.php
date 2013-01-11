@@ -85,7 +85,7 @@ function summary($memID)
 		'can_issue_warning' => allowedTo('issue_warning'),
 	);
 	$context['member'] =& $memberContext[$memID];
-	$context['can_view_warning'] = (allowedTo('issue_warning') && !$context['user']['is_owner']) || (!empty($settings['warning_show']) && ($settings['warning_show'] > 1 || $context['user']['is_owner']));
+	$context['can_view_warning'] = (allowedTo('issue_warning') && !we::$user['is_owner']) || (!empty($settings['warning_show']) && ($settings['warning_show'] > 1 || we::$user['is_owner']));
 
 	// Set a canonical URL for this page.
 	$context['canonical_url'] = $scripturl . '?action=profile;u=' . $memID;
@@ -513,7 +513,7 @@ function showPosts($memID)
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)' . (we::$user['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board AND {query_see_board})') . '
 			WHERE t.id_member_started = {int:current_member}' . $specGuest . (!empty($board) ? '
-				AND t.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
+				AND t.id_board = {int:board}' : '') . (we::$user['is_owner'] ? '' : '
 				AND {query_see_topic}'),
 			array(
 				'current_member' => $memID,
@@ -527,7 +527,7 @@ function showPosts($memID)
 			FROM {db_prefix}messages AS m' . (we::$user['query_see_board'] == '1=1' ? '' : '
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND {query_see_board})') . '
 			WHERE m.id_member = {int:current_member}' . $specGuest . (!empty($board) ? '
-				AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+				AND m.id_board = {int:board}' : '') . (!$settings['postmod_active'] || we::$user['is_owner'] ? '' : '
 				AND m.approved = {int:is_approved}'),
 			array(
 				'current_member' => $memID,
@@ -544,8 +544,8 @@ function showPosts($memID)
 		FROM {db_prefix}messages AS m
 		INNER JOIN {db_prefix}topics AS t ON (m.id_topic = t.id_topic)
 		WHERE m.id_member = {int:current_member}' . (!empty($board) ? '
-			AND m.id_board = {int:board}' : '') . ($context['user']['is_owner'] ? '' : '
-			AND {query_see_topic}') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND m.id_board = {int:board}' : '') . (we::$user['is_owner'] ? '' : '
+			AND {query_see_topic}') . (!$settings['postmod_active'] || we::$user['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
 		array(
 			'current_member' => $memID,
@@ -561,7 +561,7 @@ function showPosts($memID)
 	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
-	$context['page_index'] = template_page_index('<URL>?action=profile' . ($guest ? ';guest=' . $_GET['guest'] : ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=showposts') . ($context['is_topics'] ? ';sa=topics' : '') . (!empty($board) ? ';board=' . $board : ''), $context['start'], $msgCount, $maxIndex);
+	$context['page_index'] = template_page_index('<URL>?action=profile' . ($guest ? ';guest=' . $_GET['guest'] : (we::$user['is_owner'] ? '' : ';u=' . $memID) . ';area=showposts') . ($context['is_topics'] ? ';sa=topics' : '') . (!empty($board) ? ';board=' . $board : ''), $context['start'], $msgCount, $maxIndex);
 	$context['current_page'] = $context['start'] / $maxIndex;
 
 	// Reverse the query if we're past 50% of the pages for better performance.
@@ -604,7 +604,7 @@ function showPosts($memID)
 				WHERE t.id_member_started = {int:current_member}' . $specGuest . (!empty($board) ? '
 					AND t.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
-					AND {query_see_board}' . ($context['user']['is_owner'] ? '' : '
+					AND {query_see_board}' . (we::$user['is_owner'] ? '' : '
 					AND {query_see_topic}' . (!$settings['postmod_active'] ? '' : ' AND m.approved = {int:is_approved}')) . '
 				ORDER BY t.id_first_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
@@ -630,7 +630,7 @@ function showPosts($memID)
 				WHERE m.id_member = {int:current_member}' . $specGuest . (!empty($board) ? '
 					AND b.id_board = {int:board}' : '') . (empty($range_limit) ? '' : '
 					AND ' . $range_limit) . '
-					AND {query_see_board}' . ($context['user']['is_owner'] ? '' : '
+					AND {query_see_board}' . (we::$user['is_owner'] ? '' : '
 					AND {query_see_topic}' . (!$settings['postmod_active'] ? '' : ' AND m.approved = {int:is_approved}')) . '
 				ORDER BY m.id_msg ' . ($reverse ? 'ASC' : 'DESC') . '
 				LIMIT ' . $start . ', ' . $maxIndex,
@@ -781,8 +781,8 @@ function showAttachments($memID)
 			AND a.id_msg != {int:no_message}
 			AND m.id_member = {int:current_member}' . (!empty($board) ? '
 			AND b.id_board = {int:board}' : '') . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_list})' : '') . ($context['user']['is_owner'] ? '' : '
-			AND {query_see_topic}') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND b.id_board IN ({array_int:boards_list})' : '') . (we::$user['is_owner'] ? '' : '
+			AND {query_see_topic}') . (!$settings['postmod_active'] || we::$user['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}'),
 		array(
 			'boards_list' => $boardsAllowed,
@@ -824,7 +824,7 @@ function showAttachments($memID)
 			AND a.id_msg != {int:no_message}
 			AND m.id_member = {int:current_member}' . (!empty($board) ? '
 			AND b.id_board = {int:board}' : '') . (!in_array(0, $boardsAllowed) ? '
-			AND b.id_board IN ({array_int:boards_list})' : '') . (!$settings['postmod_active'] || $context['user']['is_owner'] ? '' : '
+			AND b.id_board IN ({array_int:boards_list})' : '') . (!$settings['postmod_active'] || we::$user['is_owner'] ? '' : '
 			AND m.approved = {int:is_approved}') . '
 		ORDER BY {raw:sort}
 		LIMIT {int:offset}, {int:limit}',
@@ -2144,7 +2144,7 @@ function viewWarning($memID)
 	global $settings, $context, $txt, $scripturl;
 
 	// Firstly, can we actually even be here?
-	if (!allowedTo('issue_warning') && (empty($settings['warning_show']) || ($settings['warning_show'] == 1 && !$context['user']['is_owner'])))
+	if (!allowedTo('issue_warning') && (empty($settings['warning_show']) || ($settings['warning_show'] == 1 && !we::$user['is_owner'])))
 		fatal_lang_error('no_access', false);
 
 	// Make sure things which are disabled stay disabled.

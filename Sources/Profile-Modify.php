@@ -646,11 +646,12 @@ function loadProfileFields($force_reload = false)
 	);
 
 	$disabled_fields = !empty($settings['disabled_profile_fields']) ? explode(',', $settings['disabled_profile_fields']) : array();
+	$is_owner = we::$user['is_owner'];
 	// For each of the above let's take out the bits which don't apply - to save memory and security!
 	foreach ($profile_fields as $key => $field)
 	{
 		// Do we have permission to do this?
-		if (isset($field['permission']) && !allowedTo(($context['user']['is_owner'] ? array($field['permission'] . '_own', $field['permission'] . '_any') : $field['permission'] . '_any')) && !allowedTo($field['permission']))
+		if (isset($field['permission']) && !allowedTo(($is_owner ? array($field['permission'] . '_own', $field['permission'] . '_any') : $field['permission'] . '_any')) && !allowedTo($field['permission']))
 			unset($profile_fields[$key]);
 
 		// Is it enabled?
@@ -751,7 +752,7 @@ function saveProfileFields()
 
 	// This allows variables to call activities when they save - by default just to reload their settings
 	$context['profile_execute_on_save'] = array();
-	if ($context['user']['is_owner'])
+	if (we::$user['is_owner'])
 		$context['profile_execute_on_save']['reload_user'] = 'profileReloadUser';
 
 	// Assume we log nothing.
@@ -856,7 +857,7 @@ function saveProfileFields()
 	}
 
 	//!!! Temporary
-	if ($context['user']['is_owner'])
+	if (we::$user['is_owner'])
 		$changeOther = allowedTo(array('profile_extra_any', 'profile_extra_own'));
 	else
 		$changeOther = allowedTo('profile_extra_any');
@@ -880,7 +881,7 @@ function saveProfileChanges(&$profile_vars, &$post_errors, $memID)
 	$old_profile =& $user_profile[$memID];
 
 	// Permissions...
-	if ($context['user']['is_owner'])
+	if (we::$user['is_owner'])
 	{
 		$changeIdentity = allowedTo(array('profile_identity_any', 'profile_identity_own'));
 		$changeOther = allowedTo(array('profile_extra_any', 'profile_extra_own'));
@@ -1211,7 +1212,7 @@ function editBuddyIgnoreLists($memID)
 	global $context, $txt, $scripturl, $settings, $user_profile;
 
 	// Do a quick check to ensure people aren't getting here illegally!
-	if (!$context['user']['is_owner'] || empty($settings['enable_buddylist']))
+	if (!we::$user['is_owner'] || empty($settings['enable_buddylist']))
 		fatal_lang_error('no_access', false);
 
 	// Can we email the user direct?
@@ -1940,7 +1941,7 @@ function loadThemeOptions($memID)
 	if (isset($_POST['default_options']))
 		$_POST['options'] = isset($_POST['options']) ? $_POST['options'] + $_POST['default_options'] : $_POST['default_options'];
 
-	if ($context['user']['is_owner'])
+	if (we::$user['is_owner'])
 	{
 		$context['member']['options'] = $options;
 		if (isset($_POST['options']) && is_array($_POST['options']))
@@ -2135,6 +2136,7 @@ function profileLoadGroups()
 			'newbie_group' => 4,
 		)
 	);
+	$lng = we::$user['language'];
 	while ($row = wesql::fetch_assoc($request))
 	{
 		// We should skip the administrator group if they don't have the admin_forum permission!
@@ -2146,7 +2148,7 @@ function profileLoadGroups()
 		{
 			$stars = explode('#', $row['stars']);
 			if (!empty($stars[0]) && !empty($stars[1]))
-				$badge = str_repeat('<img src="' . str_replace('$language', $context['user']['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
+				$badge = str_repeat('<img src="' . str_replace('$language', $lng, $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
 		}
 
 		$context['member_groups'][$row['id_group']] = array(
@@ -2219,9 +2221,9 @@ function profileLoadAvatarData()
 		'selection' => $cur_profile['avatar'] == '' || stristr($cur_profile['avatar'], 'http://') ? '' : $cur_profile['avatar'],
 		'id_attach' => $cur_profile['id_attach'],
 		'filename' => $cur_profile['filename'],
-		'allow_server_stored' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_server_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_upload' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
-		'allow_external' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!$context['user']['is_owner'] && allowedTo('profile_extra_any'))),
+		'allow_server_stored' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_server_avatar') || (!we::$user['is_owner'] && allowedTo('profile_extra_any'))),
+		'allow_upload' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_upload_avatar') || (!we::$user['is_owner'] && allowedTo('profile_extra_any'))),
+		'allow_external' => (empty($settings['gravatarEnabled']) || empty($settings['gravatarOverride'])) && (allowedTo('profile_remote_avatar') || (!we::$user['is_owner'] && allowedTo('profile_extra_any'))),
 		'allow_gravatar' => !empty($settings['gravatarEnabled']),
 	);
 
@@ -2360,7 +2362,7 @@ function profileSaveGroups(&$value)
 	// If we are changing group status, update permission cache as necessary.
 	if ($value != $old_profile['id_group'] || isset($profile_vars['additional_groups']))
 	{
-		if ($context['user']['is_owner'])
+		if (we::$user['is_owner'])
 			$_SESSION['mc']['time'] = 0;
 		else
 			updateSettings(array('settings_updated' => time()));
@@ -3006,7 +3008,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 	global $context, $user_profile, $settings, $txt, $scripturl, $language;
 
 	// Let's be extra cautious...
-	if (!$context['user']['is_owner'] || empty($settings['show_group_membership']))
+	if (!we::$user['is_owner'] || empty($settings['show_group_membership']))
 		isAllowedTo('manage_membergroups');
 	if (!isset($_REQUEST['gid']) && !isset($_POST['primary']))
 		fatal_lang_error('no_access', false);
@@ -3257,7 +3259,7 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 	$addGroups = implode(',', array_flip($addGroups));
 
 	// Ensure that we don't cache permissions if the group is changing.
-	if ($context['user']['is_owner'])
+	if (we::$user['is_owner'])
 		$_SESSION['mc']['time'] = 0;
 	else
 		updateSettings(array('settings_updated' => time()));

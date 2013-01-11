@@ -1574,7 +1574,7 @@ function aeva_mgPost()
 		);
 
 		// Can you edit it?
-		if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('edit_own_item') || $data['item_member'] != $context['user']['id']))
+		if (!aeva_allowedTo('moderate') && (!aeva_allowedTo('edit_own_item') || $data['item_member'] != we::$id))
 			fatal_lang_error('media_edit_denied');
 	}
 
@@ -1660,13 +1660,13 @@ function aeva_mgPost()
 			'type' => 'file',
 			'subtext' => $txt['media_force_thumbnail_desc'] . ($editing ? $txt['media_force_thumbnail_edit'] : ''),
 			'add_text' => $editing ? '<p><img src="' . $galurl . 'sa=media;in=' . $data['id_media'] . ';thumb" style="padding-left: 4px"></p>' : '',
-			'colspan' => aeva_allowedTo('moderate') || $data['album_owner'] == $context['user']['id'] ? 2 : 0,
+			'colspan' => aeva_allowedTo('moderate') || $data['album_owner'] == we::$id ? 2 : 0,
 		),
 		'as_icon' => array(
 			'label' => '',
 			'type' => 'checkbox',
 			'options' => array(array($txt['media_use_as_album_icon'], 'force_name' => 'as_icon')),
-			'perm' => aeva_allowedTo('moderate') || $data['album_owner'] == $context['user']['id'],
+			'perm' => aeva_allowedTo('moderate') || $data['album_owner'] == we::$id,
 		),
 		'session' => array(
 			'fieldname' => $context['session_var'],

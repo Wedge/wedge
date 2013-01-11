@@ -3069,8 +3069,8 @@ function MessageSettings()
 	loadLanguage('Profile');
 	loadTemplate('Profile');
 
+	we::$user['is_owner'] = true;
 	$context['page_title'] = $txt['pm_settings'];
-	$context['user']['is_owner'] = true;
 	$context['id_member'] = we::$id;
 	$context['require_password'] = false;
 	$context['menu_item_selected'] = 'settings';

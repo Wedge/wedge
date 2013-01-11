@@ -707,7 +707,7 @@ function while_we_re_here()
 
 	// May seem contrived, but this is done in case the body and default layer aren't there...
 	// Was there a security error for the admin?
-	if (!$showed_behav_error && $context['user']['is_admin'] && !empty($context['behavior_error']))
+	if (!$showed_behav_error && we::$is_admin && !empty($context['behavior_error']))
 	{
 		$showed_behav_error = true;
 		loadLanguage('Security');
@@ -805,7 +805,7 @@ function db_debug_junk()
 
 	// Check groups
 	if (empty($settings['db_show_debug_who']) || $settings['db_show_debug_who'] == 'admin')
-		$show_debug &= $context['user']['is_admin'];
+		$show_debug &= we::$is_admin;
 	elseif ($settings['db_show_debug_who'] == 'mod')
 		$show_debug &= allowedTo('moderate_forum');
 	elseif ($settings['db_show_debug_who'] == 'regular')
@@ -816,7 +816,7 @@ function db_debug_junk()
 	// Now, who can see the query log? Need to have the ability to see any of this anyway.
 	$show_debug_query = $show_debug;
 	if (empty($settings['db_show_debug_who_log']) || $settings['db_show_debug_who_log'] == 'admin')
-		$show_debug_query &= $context['user']['is_admin'];
+		$show_debug_query &= we::$is_admin;
 	elseif ($settings['db_show_debug_who_log'] == 'mod')
 		$show_debug_query &= allowedTo('moderate_forum');
 	elseif ($settings['db_show_debug_who_log'] == 'regular')
@@ -1164,7 +1164,7 @@ function loadTemplate($template_name, $fatal = true)
 		$theme['default_theme_dir'] = $boarddir . '/Themes/default';
 		$theme['template_dirs'][] = $theme['default_theme_dir'];
 
-		if (!empty($context['user']['is_admin']) && !isset($_GET['th']))
+		if (we::$is_admin && !isset($_GET['th']))
 		{
 			loadLanguage('Errors');
 			echo '

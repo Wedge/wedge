@@ -36,7 +36,7 @@ function ViewQuery()
 
 	// Check groups
 	if (empty($settings['db_show_debug_who']) || $settings['db_show_debug_who'] == 'admin')
-		$show_debug &= $context['user']['is_admin'];
+		$show_debug &= we::$is_admin;
 	elseif ($settings['db_show_debug_who'] == 'mod')
 		$show_debug &= allowedTo('moderate_forum');
 	elseif ($settings['db_show_debug_who'] == 'regular')
@@ -47,7 +47,7 @@ function ViewQuery()
 	// Now, who can see the query log? Need to have the ability to see any of this anyway.
 	$show_debug_query = $show_debug;
 	if (empty($settings['db_show_debug_who_log']) || $settings['db_show_debug_who_log'] == 'admin')
-		$show_debug_query &= $context['user']['is_admin'];
+		$show_debug_query &= we::$is_admin;
 	elseif ($settings['db_show_debug_who_log'] == 'mod')
 		$show_debug_query &= allowedTo('moderate_forum');
 	elseif ($settings['db_show_debug_who_log'] == 'regular')

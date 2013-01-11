@@ -80,7 +80,7 @@ function issueWarning($memID)
 	$issueErrors = array();
 
 	// Doesn't hurt to be overly cautious.
-	if (($context['user']['is_owner'] && !$cur_profile['warning']) || !allowedTo('issue_warning'))
+	if ((we::$user['is_owner'] && !$cur_profile['warning']) || !allowedTo('issue_warning'))
 		fatal_lang_error('no_access', false);
 
 	// Make sure things which are disabled stay disabled.
@@ -135,7 +135,7 @@ function issueWarning($memID)
 
 		// This cannot be empty!
 		$_POST['warn_reason'] = isset($_POST['warn_reason']) ? trim($_POST['warn_reason']) : '';
-		if ($_POST['warn_reason'] == '' && !$context['user']['is_owner'])
+		if ($_POST['warn_reason'] == '' && !we::$user['is_owner'])
 			$issueErrors[] = 'warning_no_reason';
 		$_POST['warn_reason'] = westr::htmlspecialchars($_POST['warn_reason']);
 
@@ -194,7 +194,7 @@ function issueWarning($memID)
 		if (empty($issueErrors))
 		{
 			// Log what we've done!
-			if (!$context['user']['is_owner'])
+			if (!we::$user['is_owner'])
 				wesql::insert('',
 					'{db_prefix}log_comments',
 					array(
@@ -212,7 +212,7 @@ function issueWarning($memID)
 			updateMemberData($memID, array('warning' => $_POST['warning_level']));
 
 			// Leave a lovely message.
-			$context['profile_updated'] = $context['user']['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_warning_success'];
+			$context['profile_updated'] = we::$user['is_owner'] ? $txt['profile_updated_own'] : $txt['profile_warning_success'];
 		}
 		else
 		{
@@ -394,16 +394,16 @@ function deleteAccount($memID)
 {
 	global $txt, $context, $settings, $cur_profile;
 
-	if (!$context['user']['is_owner'])
+	if (!we::$user['is_owner'])
 		isAllowedTo('profile_remove_any');
 	elseif (!allowedTo('profile_remove_any'))
 		isAllowedTo('profile_remove_own');
 
 	// Permissions for removing stuff...
-	$context['can_delete_posts'] = !$context['user']['is_owner'] && allowedTo('moderate_forum');
+	$context['can_delete_posts'] = !we::$user['is_owner'] && allowedTo('moderate_forum');
 
 	// Can they do this, or will they need approval?
-	$context['needs_approval'] = $context['user']['is_owner'] && !empty($settings['approveAccountDeletion']) && !allowedTo('moderate_forum');
+	$context['needs_approval'] = we::$user['is_owner'] && !empty($settings['approveAccountDeletion']) && !allowedTo('moderate_forum');
 	$context['page_title'] = $txt['deleteAccount'] . ': ' . $cur_profile['real_name'];
 }
 
@@ -416,7 +416,7 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
 
 	// !!! Add a way to delete pms as well?
 
-	if (!$context['user']['is_owner'])
+	if (!we::$user['is_owner'])
 		isAllowedTo('profile_remove_any');
 	elseif (!allowedTo('profile_remove_any'))
 		isAllowedTo('profile_remove_own');

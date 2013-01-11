@@ -1381,8 +1381,8 @@ function aeva_admin_bans_add()
 				'name' => $mems,
 			),
 			'action_by' => array(
-				'id' => $context['user']['id'],
-				'name' => $context['user']['name'],
+				'id' => we::$id,
+				'name' => we::$user['name'],
 			),
 			'extra_info' => array(
 				'val8' => $type,

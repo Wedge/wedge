@@ -267,7 +267,7 @@ function template_edit_group()
 					</dt>
 					<dd>
 						', $txt['membergroups_images_url'], '
-						<input type="text" name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', we_theme_url + \'/images/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', $context['user']['language'], '\') : \'blank.gif\'));" size="20">
+						<input type="text" name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value && this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; $(\'#star_preview\').attr(\'src\', we_theme_url + \'/images/\' + (this.value && this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', we::$user['language'], '\') : \'blank.gif\'));" size="20">
 						<img id="star_preview" src="', $theme['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '">
 					</dd>
 					<dt>
@@ -620,7 +620,7 @@ function template_group_members()
 						<td', empty($context['group']['assignable']) ? ' colspan="2"' : '', '>', $member['posts'], '</td>';
 		if (!empty($context['group']['assignable']))
 			echo '
-						<td class="center" style="width: 4%"><input type="checkbox" name="rem[]" value="', $member['id'], '"', ($context['user']['id'] == $member['id'] && $context['group']['id'] == 1 ? ' onclick="return !this.checked || ask(' . JavaScriptEscape($txt['membergroups_members_deadmin_confirm']) . ', e);"' : ''), '></td>';
+						<td class="center" style="width: 4%"><input type="checkbox" name="rem[]" value="', $member['id'], '"', (we::$id == $member['id'] && $context['group']['id'] == 1 ? ' onclick="return !this.checked || ask(' . JavaScriptEscape($txt['membergroups_members_deadmin_confirm']) . ', e);"' : ''), '></td>';
 		echo '
 					</tr>';
 	}

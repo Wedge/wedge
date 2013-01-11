@@ -146,7 +146,7 @@ function Register($reg_errors = array())
 		loadLanguage('Profile');
 		loadTemplate('Profile');
 
-		$context['user']['is_owner'] = true;
+		we::$user['is_owner'] = true;
 
 		// Here, and here only, emulate the permissions the user would have to do this.
 		we::$user['permissions'] = array_merge(we::$user['permissions'], array('profile_account_own', 'profile_extra_own'));

@@ -463,7 +463,7 @@ function Display()
 	$context['is_poll'] = $topicinfo['id_poll'] > 0 && allowedTo('poll_view');
 
 	// Did this user start the topic or not?
-	$context['user']['started'] = we::$id == $topicinfo['id_member_started'] && !we::$is_guest;
+	we::$user['started'] = we::$id == $topicinfo['id_member_started'] && !we::$is_guest;
 	$context['topic_starter_id'] = $topicinfo['id_member_started'];
 
 	// Set the topic's information for the template.
@@ -550,7 +550,7 @@ function Display()
 
 		// Can we actually see who the voters were? (Assuming there were some voters)
 		// voters_visible -> 0 = admin only, 1 = admin + creator only, 2 = members, 3 = anyone
-		if ($realtotal > 0 && (we::$is_admin || ($pollinfo['voters_visible'] == 1 && $context['user']['started']) || ($pollinfo['voters_visible'] == 2 && !we::$is_guest) || ($pollinfo['voters_visible'] == 3)))
+		if ($realtotal > 0 && (we::$is_admin || ($pollinfo['voters_visible'] == 1 && we::$user['started']) || ($pollinfo['voters_visible'] == 2 && !we::$is_guest) || ($pollinfo['voters_visible'] == 3)))
 		{
 			$pollinfo['showing_voters'] = true;
 			$request = wesql::query('
@@ -619,8 +619,8 @@ function Display()
 			'change_vote' => !empty($pollinfo['change_vote']),
 			'is_locked' => !empty($pollinfo['voting_locked']),
 			'options' => array(),
-			'lock' => allowedTo('poll_lock_any') || ($context['user']['started'] && allowedTo('poll_lock_own')),
-			'edit' => allowedTo('poll_edit_any') || ($context['user']['started'] && allowedTo('poll_edit_own')),
+			'lock' => allowedTo('poll_lock_any') || (we::$user['started'] && allowedTo('poll_lock_own')),
+			'edit' => allowedTo('poll_edit_any') || (we::$user['started'] && allowedTo('poll_edit_own')),
 			'allowed_warning' => $pollinfo['max_votes'] > 1 ? sprintf($txt['poll_options6'], min(count($pollOptions), $pollinfo['max_votes'])) : '',
 			'is_expired' => !empty($pollinfo['expire_time']) && $pollinfo['expire_time'] < time(),
 			'expire_time' => !empty($pollinfo['expire_time']) ? timeformat($pollinfo['expire_time']) : 0,
@@ -1041,10 +1041,10 @@ function Display()
 		'can_reply_unapproved' => 'post_unapproved_replies',
 	);
 	foreach ($anyown_permissions as $contextual => $perm)
-		$context[$contextual] = allowedTo($perm . '_any') || ($context['user']['started'] && allowedTo($perm . '_own'));
+		$context[$contextual] = allowedTo($perm . '_any') || (we::$user['started'] && allowedTo($perm . '_own'));
 
 	// Cleanup all the permissions with extra stuff...
-	$context['can_mark_notify'] &= !$context['user']['is_guest'];
+	$context['can_mark_notify'] &= !we::$is_guest;
 	$context['can_add_poll'] &= $topicinfo['id_poll'] <= 0;
 	$context['can_remove_poll'] &= $topicinfo['id_poll'] > 0;
 	$context['can_reply'] &= empty($topicinfo['locked']) || allowedTo('moderate_board');
@@ -1060,7 +1060,7 @@ function Display()
 	$context['can_send_topic'] = (!$settings['postmod_active'] || $topicinfo['approved']) && allowedTo('send_topic');
 
 	// Start this off for quick moderation - it will be or'd for each post.
-	$context['can_remove_post'] = allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']);
+	$context['can_remove_post'] = allowedTo('delete_any') || (allowedTo('delete_replies') && we::$user['started']);
 
 	// Can restore topic? That's if the topic is in the recycle board and has a previous restore state.
 	$context['can_restore_topic'] &= !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board && !empty($topicinfo['id_previous_board']);
@@ -1351,7 +1351,7 @@ function prepareDisplayContext($reset = false)
 		'href' => '<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'],
 		'link' => '<a href="<URL>?topic=' . $topic . '.msg' . $message['id_msg'] . '#msg' . $message['id_msg'] . '" rel="nofollow">' . $message['subject'] . '</a>',
 		'member' => &$memberContext[$message['id_member']],
-		'can_like' => !$context['user']['is_guest'] && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $message['id_member'] != $context['user']['id']),
+		'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $message['id_member'] != we::$id),
 		'icon' => $message['icon'],
 		'icon_url' => $theme[$context['icon_sources'][$message['icon']]] . '/post/' . $message['icon'] . '.gif',
 		'subject' => $message['subject'],
@@ -1368,11 +1368,11 @@ function prepareDisplayContext($reset = false)
 		'new' => empty($message['is_read']) && !$is_new,
 		'approved' => $message['approved'],
 		'first_new' => isset($context['start_from']) && $context['start_from'] == $counter,
-		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], $context['user']['ignoreusers']),
+		'is_ignored' => !empty($settings['enable_buddylist']) && !empty($options['posts_apply_ignore_list']) && in_array($message['id_member'], we::$user['ignoreusers']),
 		'can_approve' => !$message['approved'] && $context['can_approve'],
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
-		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))),
-		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
+		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && we::$user['started']) || (allowedTo('modify_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time()))),
+		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && we::$user['started']) || (allowedTo('delete_own') && $message['id_member'] == we::$id && (empty($settings['edit_disable_time']) || $message['poster_time'] + $settings['edit_disable_time'] * 60 > time())),
 		'can_see_ip' => allowedTo('manage_bans'),
 		'can_mergeposts' => $merge_safe && !empty($context['last_user_id']) && $context['last_user_id'] == (empty($message['id_member']) ? (empty($message['poster_email']) ? $message['poster_name'] : $message['poster_email']) : $message['id_member']) && (allowedTo('modify_any') || (allowedTo('modify_own') && $message['id_member'] == we::$id)),
 		'last_post_id' => $context['last_msg_id'],

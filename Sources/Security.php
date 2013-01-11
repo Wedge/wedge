@@ -362,15 +362,6 @@ function is_not_banned($forceCheck = false)
 		we::$cache = array();
 		we::$id = 0;
 		we::$user['permissions'] = array();
-		$context['user'] = array(
-			'id' => 0,
-			'username' => '',
-			'name' => $txt['guest_title'],
-			'is_guest' => true,
-			'is_logged' => false,
-			'is_admin' => false,
-			'language' => we::$user['language'],
-		);
 
 		// A goodbye present.
 		loadSource('Subs-Auth');
@@ -410,15 +401,6 @@ function is_not_banned($forceCheck = false)
 		we::$cache = array();
 		we::$id = 0;
 		we::$user['permissions'] = array();
-		$context['user'] = array(
-			'id' => 0,
-			'username' => '',
-			'name' => $txt['guest_title'],
-			'is_guest' => true,
-			'is_logged' => false,
-			'is_admin' => false,
-			'language' => we::$user['language'],
-		);
 
 		// Wedge's Wipe 'n Clean(r) erases all traces.
 		$_GET['action'] = '';

@@ -228,7 +228,7 @@ function PackageGBrowse()
 		$server = '';
 		$url = $_GET['absolute'];
 		$name = '';
-		$_GET['package'] = $url . '/packages.xml?language=' . $context['user']['language'];
+		$_GET['package'] = $url . '/packages.xml?language=' . we::$user['language'];
 
 		// Clear any "relative" URL. Since "server" is not present, "relative" is garbage.
 		unset($_GET['relative']);
@@ -251,7 +251,7 @@ function PackageGBrowse()
 
 	// Attempt to connect. If unsuccessful... try the URL.
 	if (!isset($_GET['package']) || file_exists($_GET['package']))
-		$_GET['package'] = $url . '/packages.xml?language=' . $context['user']['language'];
+		$_GET['package'] = $url . '/packages.xml?language=' . we::$user['language'];
 
 	// Check to be sure the packages.xml file actually exists where it is should be... or dump out.
 	if ((isset($_GET['absolute']) || isset($_GET['relative'])) && !url_exists($_GET['package']))

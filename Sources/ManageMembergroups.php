@@ -1214,7 +1214,7 @@ function ModifyMembergroupSettings($return_config = false)
 	{
 		$stars = explode('#', $row['stars']);
 		if (!empty($stars[0]) && !empty($stars[1]))
-			$row['badge'] = str_repeat('<img src="' . str_replace('$language', $context['user']['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
+			$row['badge'] = str_repeat('<img src="' . str_replace('$language', we::$user['language'], $theme['images_url'] . '/' . $stars[1]) . '">', $stars[0]);
 		$context['badges'][$row['id_group']] = $row;
 	}
 	wesql::free_result($request);

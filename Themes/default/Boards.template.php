@@ -23,6 +23,7 @@ function template_boards()
 	new (is it new?), collapse_href (href to collapse/expand), collapse_image (up/down image),
 	and boards. (see below.) */
 	$alt = false;
+	$is_guest = we::$is_guest;
 	foreach ($context['categories'] as $category)
 	{
 		// If there are no parent boards we can see, avoid showing an empty category (unless it's collapsed)
@@ -41,7 +42,7 @@ function template_boards()
 			echo '
 							<a class="collapse" href="', $category['collapse_href'], '">', $category['collapse_image'], '</a>';
 
-		if (!$context['user']['is_guest'] && !empty($category['show_unread']))
+		if (!$is_guest && !empty($category['show_unread']))
 			echo '
 							<a class="unreadlink" href="', $scripturl, '?action=unread;c=', $category['id'], '">', $txt['view_unread_category'], '</a>';
 
@@ -71,7 +72,7 @@ function template_boards()
 				echo '
 				<tr id="board_', $board['id'], '" class="windowbg', $alt ? '2' : '', '">
 					<td class="icon"', !empty($board['children']) ? ' rowspan="2"' : '', '>
-						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', ($board['is_redirect'] || $context['user']['is_guest'] ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children'), '">';
+						<a', $board['redirect_newtab'] ? ' target="_blank"' : '', ' href="', $board['is_redirect'] || $is_guest ? $board['href'] : $scripturl . '?action=unread;board=' . $board['id'] . '.0;children', '">';
 
 				// If this board is told to have a custom icon, use it.
 				if (!empty($board['custom_class']))
@@ -233,7 +234,7 @@ function template_boards_newsfader()
 		isCollapsed: true,', '
 		aSwapContainers: [\'fadeScroller\'],
 		aSwapImages: [{ sId: \'newsupshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],
-		oThemeOptions: { bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ', sOptionName: \'collapse_news_fader\' }', $context['user']['is_guest'] ? ',
+		oThemeOptions: { bUseThemeSettings: ', we::$is_guest ? 'false' : 'true', ', sOptionName: \'collapse_news_fader\' }', we::$is_guest ? ',
 		sCookieName: \'newsupshrink\'' : '', '
 	});');
 	}

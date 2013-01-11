@@ -431,8 +431,8 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 		array_keys(array_diff_key($found_suffixes, $ignore_versions)),
 
 		// And the language. Only do it if the skin allows for multiple languages and we're not in English mode.
-		isset($context['user'], $context['skin_available_languages']) && $context['user']['language'] !== 'english'
-			&& count($context['skin_available_languages']) > 1 ? (array) $context['user']['language'] : array()
+		isset($context['skin_available_languages']) && we::$user['language'] !== 'english'
+			&& count($context['skin_available_languages']) > 1 ? (array) we::$user['language'] : array()
 	));
 
 	// Cache final file and retrieve its name.
@@ -499,7 +499,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 		array($context['enabled_plugins'][$plugin_name]),
 		$basefiles,
 		array_diff($context['css_suffixes'], array(we::is('webkit') && we::$browser['agent'] != 'webkit' ? 'webkit' : '')),
-		isset($context['user']) && $context['user']['language'] !== 'english' ? (array) $context['user']['language'] : array()
+		we::$user['language'] !== 'english' ? (array) we::$user['language'] : array()
 	));
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
@@ -633,7 +633,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$images_url = $relative_root . str_replace($boardurl, '', $theme['images_url']);
 	$languages = isset($context['skin_available_languages']) ? $context['skin_available_languages'] : array('english');
 	$css_vars = array(
-		'$language' => isset($context['user']['language']) && in_array($context['user']['language'], $languages) ? $context['user']['language'] : $languages[0],
+		'$language' => isset(we::$user['language']) && in_array(we::$user['language'], $languages) ? we::$user['language'] : $languages[0],
 		'$images_dir' => $theme['theme_dir'] . '/images',
 		'$images' => $images_url,
 		'$theme_dir' => $theme['theme_dir'],

@@ -53,13 +53,13 @@ function template_main()
 							<label for="y_name"><strong>', $txt['sendtopic_sender_name'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="y_name" name="y_name" maxlength="40" value="', $context['user']['name'], '" class="w50">
+							<input type="text" id="y_name" name="y_name" maxlength="40" value="', we::$user['name'], '" class="w50">
 						</dd>
 						<dt>
 							<label for="y_email"><strong>', $txt['sendtopic_sender_email'], ':</strong></label>
 						</dt>
 						<dd>
-							<input type="text" id="y_email" name="y_email" maxlength="50" value="', $context['user']['email'], '" class="w50">
+							<input type="text" id="y_email" name="y_email" maxlength="50" value="', we::$user['email'], '" class="w50">
 						</dd>
 						<dt>
 							<label for="comment"><strong>', $txt['sendtopic_comment'], ':</strong></label>
@@ -133,7 +133,7 @@ function template_custom_email()
 						<dfn>', $txt['send_email_disclosed'], '</dfn>
 					</dt>
 					<dd>
-						<em>', $context['user']['email'], '</em>
+						<em>', we::$user['email'], '</em>
 					</dd>
 					<dt>
 						<label for="email_subject"><strong>', $txt['send_email_subject'], ':</strong></label>
@@ -194,7 +194,7 @@ function template_report()
 				<br>
 				<dl class="settings" id="report_post">';
 
-	if ($context['user']['is_guest'])
+	if (we::$is_guest)
 		echo '
 					<dt>
 						<label for="email_address">', $txt['email'], '</label>:

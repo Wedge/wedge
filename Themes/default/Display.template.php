@@ -131,7 +131,7 @@ function template_display_posts()
 		echo '
 						<div class="post">';
 
-		if (!$message['approved'] && $message['member']['id'] != 0 && $message['member']['id'] == $context['user']['id'])
+		if (!$message['approved'] && $message['member']['id'] != 0 && $message['member']['id'] == we::$id)
 			echo '
 							<div class="approve_post errorbox">
 								', $txt['post_awaiting_approval'], !empty($message['unapproved_msg']) ? '<ul><li>' . implode('</li><li>', $message['unapproved_msg']) . '</li></ul>' : '', '
@@ -736,7 +736,7 @@ function template_quick_reply()
 					<input type="hidden" name="seqnum" value="', $context['form_sequence_number'], '">';
 
 	// Guests just need more.
-	if ($context['user']['is_guest'])
+	if (we::$is_guest)
 			echo '
 					<strong>', $txt['name'], ':</strong> <input type="text" name="guestname" value="', $context['name'], '" size="25" tabindex="', $context['tabindex']++, '" required>
 					<strong>', $txt['email'], ':</strong> <input type="email" name="email" value="', $context['email'], '" size="25" tabindex="', $context['tabindex']++, '" required><br>';

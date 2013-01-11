@@ -44,7 +44,7 @@ function ModifyProfile($post_errors = array())
 		wetem::load('showPosts');
 
 		$context['profile_menu_name'] = 'dummy_menu';
-		$context['user']['is_owner'] = allowedTo('moderate_forum'); // !! or we::$is_admin..?
+		we::$user['is_owner'] = allowedTo('moderate_forum'); // !! or we::$is_admin..?
 		showPosts(0);
 		return;
 	}
@@ -75,7 +75,7 @@ function ModifyProfile($post_errors = array())
 	$context['member'] = $memberContext[$memID];
 
 	// Is this the profile of the user himself or herself?
-	$context['user']['is_owner'] = $memID == we::$id;
+	we::$user['is_owner'] = $memID == we::$id;
 
 	/* Define all the sections within the profile area!
 		We start by defining the permission required - then Wedge takes this and turns it into the relevant context ;)
@@ -182,7 +182,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'viewwarning' => array(
 					'label' => $txt['profile_view_warnings'],
-					'enabled' => $cur_profile['warning'] && $context['user']['is_owner'] && !empty($settings['warning_show']),
+					'enabled' => $cur_profile['warning'] && we::$user['is_owner'] && !empty($settings['warning_show']),
 					'file' => 'Profile-View',
 					'function' => 'viewWarning',
 					'permission' => array(
@@ -199,7 +199,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['account'],
 					'file' => 'Profile-Modify',
 					'function' => 'account',
-					'enabled' => $context['user']['is_admin'] || ($cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups']))),
+					'enabled' => we::$is_admin || ($cur_profile['id_group'] != 1 && !in_array(1, explode(',', $cur_profile['additional_groups']))),
 					'sc' => 'post',
 					'password' => true,
 					'permission' => array(
@@ -275,7 +275,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['editBuddyIgnoreLists'],
 					'file' => 'Profile-Modify',
 					'function' => 'editBuddyIgnoreLists',
-					'enabled' => !empty($settings['enable_buddylist']) && $context['user']['is_owner'],
+					'enabled' => !empty($settings['enable_buddylist']) && we::$user['is_owner'],
 					'sc' => 'post',
 					'subsections' => array(
 						'buddies' => array($txt['editBuddies']),
@@ -290,7 +290,7 @@ function ModifyProfile($post_errors = array())
 					'label' => $txt['groupmembership'],
 					'file' => 'Profile-Modify',
 					'function' => 'groupMembership',
-					'enabled' => !empty($settings['show_group_membership']) && $context['user']['is_owner'],
+					'enabled' => !empty($settings['show_group_membership']) && we::$user['is_owner'],
 					'sc' => 'request',
 					'permission' => array(
 						'own' => array('profile_view_own'),
@@ -378,7 +378,7 @@ function ModifyProfile($post_errors = array())
 				),
 				'issuewarning' => array(
 					'label' => $txt['profile_issue_warning'],
-					'enabled' => (!$context['user']['is_owner'] || $context['user']['is_admin']),
+					'enabled' => (!we::$user['is_owner'] || we::$is_admin),
 					'file' => 'Profile-Actions',
 					'function' => 'issueWarning',
 					'permission' => array(
@@ -428,11 +428,11 @@ function ModifyProfile($post_errors = array())
 			if (is_numeric($area_id))
 				continue;
 			// If it said no permissions that meant it wasn't valid!
-			if (empty($area['permission'][$context['user']['is_owner'] ? 'own' : 'any']))
+			if (empty($area['permission'][we::$user['is_owner'] ? 'own' : 'any']))
 				$area['enabled'] = false;
 			// Otherwise pick the right set.
 			else
-				$area['permission'] = $area['permission'][$context['user']['is_owner'] ? 'own' : 'any'];
+				$area['permission'] = $area['permission'][we::$user['is_owner'] ? 'own' : 'any'];
 
 			// Password required?
 			if (!empty($area['password']))
@@ -449,7 +449,7 @@ function ModifyProfile($post_errors = array())
 	$menuOptions = array(
 		'disable_url_session_check' => true,
 		'current_area' => $current_area,
-		'action' => 'profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID),
+		'action' => 'profile' . (we::$user['is_owner'] ? '' : ';u=' . $memID),
 	);
 
 	// Actually create the menu!
@@ -558,7 +558,7 @@ function ModifyProfile($post_errors = array())
 	wetem::add(array('top', 'default'), 'profile_top');
 
 	// All the subactions that require a user password in order to validate.
-	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
+	$check_password = we::$user['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
 	$context['require_password'] = $check_password;
 
 	// These will get populated soon!
@@ -569,7 +569,7 @@ function ModifyProfile($post_errors = array())
 	if ($context['completed_save'])
 	{
 		// If it's someone elses profile then validate the session.
-		if (!$context['user']['is_owner'])
+		if (!we::$user['is_owner'])
 			validateSession();
 
 		// Clean up the POST variables.
@@ -598,7 +598,7 @@ function ModifyProfile($post_errors = array())
 		}
 
 		// Change the IP address in the database.
-		if ($context['user']['is_owner'])
+		if (we::$user['is_owner'])
 			$profile_vars['member_ip'] = we::$user['ip'];
 
 		// Now call the sub-action function...
@@ -620,7 +620,7 @@ function ModifyProfile($post_errors = array())
 			$msg = groupMembership2($profile_vars, $post_errors, $memID);
 
 			// Whatever we've done, we have nothing else to do here...
-			redirectexit('action=profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=groupmembership' . (!empty($msg) ? ';msg=' . $msg : ''));
+			redirectexit('action=profile' . (we::$user['is_owner'] ? '' : ';u=' . $memID) . ';area=groupmembership' . (!empty($msg) ? ';msg=' . $msg : ''));
 		}
 		elseif (in_array($current_area, array('account', 'forumprofile', 'options', 'pmprefs')))
 			saveProfileFields();
@@ -684,7 +684,7 @@ function ModifyProfile($post_errors = array())
 					$saveFunc();
 
 			// Let them know it worked!
-			$context['profile_updated'] = $context['user']['is_owner'] ? $txt['profile_updated_own'] : sprintf($txt['profile_updated_else'], $cur_profile['member_name']);
+			$context['profile_updated'] = we::$user['is_owner'] ? $txt['profile_updated_own'] : sprintf($txt['profile_updated_else'], $cur_profile['member_name']);
 
 			// Invalidate any cached data.
 			cache_put_data('member_data-profile-' . $memID, null, 0);
@@ -699,10 +699,10 @@ function ModifyProfile($post_errors = array())
 			$context['modify_error'][$error_type] = true;
 	}
 	// If it's you then we should redirect upon save.
-	elseif (!empty($profile_vars) && $context['user']['is_owner'])
+	elseif (!empty($profile_vars) && we::$user['is_owner'])
 		redirectexit('action=profile;area=' . $current_area . ';updated');
 	elseif (!empty($force_redirect))
-		redirectexit('action=profile' . ($context['user']['is_owner'] ? '' : ';u=' . $memID) . ';area=' . $current_area);
+		redirectexit('action=profile' . (we::$user['is_owner'] ? '' : ';u=' . $memID) . ';area=' . $current_area);
 
 	// Call the appropriate subaction function.
 	$profile_include_data['function']($memID);

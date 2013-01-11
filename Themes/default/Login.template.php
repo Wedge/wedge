@@ -171,7 +171,7 @@ function template_admin_login()
 	$context['main_js_files']['scripts/sha1.js'] = true;
 
 	echo '
-<form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', $context['user']['username'], '\', \'', $context['session_id'], '\');">
+<form action="', $scripturl, $context['get_data'], '" method="post" accept-charset="UTF-8" name="frmLogin" id="frmLogin" onsubmit="hashAdminPassword(this, \'', we::$user['username'], '\', \'', $context['session_id'], '\');">
 	<div class="login" id="admin_login">
 		<we:cat>
 			<img src="', $theme['images_url'], '/icons/login_sm.gif">

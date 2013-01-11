@@ -497,7 +497,7 @@ function template_user_subscription()
 				echo '
 				<div><strong>', $txt['paid_duration'], ':</strong> ', $subscription['length'], '</div>';
 
-			if ($context['user']['is_owner'])
+			if (we::$user['is_owner'])
 			{
 				echo '
 				<strong>', $txt['paid_cost'], ':</strong>';

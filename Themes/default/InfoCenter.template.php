@@ -99,7 +99,7 @@ function template_info_center_personalmsg()
 {
 	global $context, $theme, $options, $txt, $scripturl, $settings;
 
-	if ($context['user']['is_guest'] || $theme['show_stats_index'])
+	if (we::$is_guest || $theme['show_stats_index'])
 		return;
 
 	echo '
@@ -109,7 +109,7 @@ function template_info_center_personalmsg()
 			', $txt['personal_messages'], '
 		</we:title>
 		<p class="pminfo">
-			', number_context('youve_got_pms', $context['user']['messages']), '
+			', number_context('youve_got_pms', we::$user['messages']), '
 			', sprintf($txt['click_to_view_them'], $scripturl . '?action=pm'), '
 		</p>
 	</section>';
