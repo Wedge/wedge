@@ -217,7 +217,7 @@ function ModifySpamSettings($return_config = false)
 			array('check', 'search_enable_captcha'),
 			// This, my friend, is a cheat :p
 			'guest_verify' => array('check', 'guests_require_captcha', 'subtext' => $txt['setting_guests_require_captcha_desc']),
-			array('int', 'posts_require_captcha', 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0) $(\'#guests_require_captcha\').attr({ checked: true, disabled: true }); else $(\'#guests_require_captcha\').attr(\'disabled\', false);'),
+			array('int', 'posts_require_captcha', 'max' => 999999, 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0) $(\'#guests_require_captcha\').attr({ checked: true, disabled: true }); else $(\'#guests_require_captcha\').attr(\'disabled\', false);'),
 			array('check', 'guests_report_require_captcha'),
 			// Visual verification.
 			array('title', 'configure_captcha'),

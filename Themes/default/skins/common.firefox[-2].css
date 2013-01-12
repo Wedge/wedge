@@ -1,6 +1,0 @@
-
-// Firefox 2.x doesn't support inline-block. This hack will still suck,
-// but at least the layout won't break horribly. Hopefully.
-.inline-block
-	display: -moz-inline-box
-	display: inline-block

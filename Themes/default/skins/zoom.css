@@ -107,3 +107,9 @@
 		color: #fff
 		.mg_desc
 			color: #aaa
+
+// Safari, prior to 5.1, didnt't support linear-gradient but webkit-gradient instead.
+@if safari[-5.09]
+	.zoom-glass
+		background: -webkit-gradient(linear, left bottom, left top, from(#fff), to(rgba(128,128,128, .5)), color-stop(50%, rgba(255,255,255, .9)))
+@endif

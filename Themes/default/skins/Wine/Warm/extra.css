@@ -15,6 +15,9 @@ body
 
 #offside
 	display: table-cell
+	@if ios
+		display: block
+	@endif
 
 @media $responsive
 	body
@@ -248,6 +251,11 @@ tr.titlebg th, tr.catbg th
 		color: #000
 		:hover
 			background: #e3eae3
+
+@if ie[-9]
+	.catbase, header, #upper_section h1, #footer
+		filter: none
+@endif
 
 /* These are our CSS variable and mixin definitions.
 ------------------------------------------------------- */

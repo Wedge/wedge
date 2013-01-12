@@ -117,7 +117,7 @@ header, footer, aside, section, article, nav
 	border-radius: $radius
 	margin: auto
 
-@if (opera)
+@if opera
 	#header
 		border-radius: $radius $radius 0 0
 @endif
@@ -261,7 +261,7 @@ ul#noava
 #footer
 	margin: auto
 	border-top: 1px solid #bdb5b5
-	@if (opera)
+	@if opera
 		border-radius: 0 0 $radius $radius
 	@endif
 	div.frame
@@ -469,11 +469,16 @@ select.sb
 			right, top, bottom: 2px
 			color: rgba(0,0,0,.5)
 			font-size: 7px
-			@if ie[9-]
-				background: #dbdbdb
-				box-shadow: inset -6px 12px 6px -6px #fff
+			// Replacement gradients for select box buttons.
+			@if ie[-8]
+				background: #f2f2f2
 			@else
-				background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)
+				@if ie[9-]
+					background: #dbdbdb
+					box-shadow: inset -6px 12px 6px -6px #fff
+				@else
+					background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)
+				@endif
 			@endif
 
 	&.disabled .display
@@ -492,7 +497,11 @@ select.sb
 			box-shadow: inset 0 0 1px 1px #9eb0ba
 
 	&.focused .display .btn, .hover .btn
-		background: @is (ie[9-], "#bce5fc", "linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5)")
+		@if ie
+			background: @is (ie[-8], #dcefff, #bce5fc)
+		@else
+			background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bce5fc 50%, #a7d9f5)
+		@endif
 
 	/* Dropdown styles */
 	.items
@@ -624,7 +633,7 @@ input[type=submit], input[type=button], .ie_button
 	line-height: 1.4
 	border-width: 1px
 	border-radius: 6px
-	padding: 3px 5px 4px
+	padding: @is (firefox, 1px 2px 2px, 3px 5px 4px)
 	color: #555
 	// Old IEs have a padding bug...
 	@if ie6, ie7
@@ -636,7 +645,7 @@ input[type=submit], input[type=button], .ie_button
 input.submit
 	background: url($images/buttons/submit.png) no-repeat
 	background-color: #e2f3ea
-	padding-left: 23px
+	padding-left: @is (firefox, 21px, 23px)
 	:hover final
 		background-color: #e8f9f0
 

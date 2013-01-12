@@ -6,6 +6,9 @@
 
 body
 	padding: 6px
+	@if ie
+		gradient: rgb(160,160,160), rgb(255,255,255)
+	@endif
 
 html
 	background-image: linear-gradient(rgb(160,160,160) 0, rgba(160,160,160,.5) 242px, transparent)
@@ -86,6 +89,10 @@ table.cs0 final tr.windowbg:last-child td
 	background: url($images/theme/bg.jpg)
 	.frame
 		gradient: $head_bg, darken($head_bg, 20%)
+	@if ie6
+		h1
+			filter: none
+	@endif
 
 #linktree
 	margin: 0 -20px
@@ -140,6 +147,11 @@ table.cs0 final tr.windowbg:last-child td
 #main_menu
 	h4, h4 a
 		color: #fff
+
+@if ie6
+	#navi, #top_section
+		background: #928585
+@endif
 
 /* Generic, mostly color-related, classes.
 ------------------------------------------------------- */
@@ -234,6 +246,9 @@ section.ic
 	box-shadow: inset 0 24px 20px -8px #bbb
 	text-shadow: white 0 1px 2px
 	color: gray
+	@if ie
+		filter: none
+	@endif
 
 #top_subject
 	font: 700 1em/20px "PT Sans", $main_font
@@ -338,6 +353,12 @@ ul.buttonlist
 			#offside
 				margin: 0
 			@endif
+
+@if ie8
+	@media $responsive
+		body #edge
+			table-layout: auto
+@endif
 
 /* Overwriting earlier settings...
 ------------------------------------------------------- */

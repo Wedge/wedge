@@ -154,12 +154,15 @@ table.aextbox
 	padding: 16px 0
 
 #media-details
-	display: table-cell
+	display: @is (ie[-7], block, table-cell)
 	vertical-align: middle
 	overflow: visible
+	@if ie[-7]
+		width: 100%
+	@endif
 	dt
 		font-weight: 700
-		line-height: .9em
+		line-height: @is (ie[-7], 1.2em, .9em)
 		width: auto
 		margin: 5px 0
 	dd
@@ -442,6 +445,9 @@ table.aelista
 .ae_details
 	position: relative
 	padding: 4px 0 0 0
+	@if ie[-7]
+		left: 0
+	@endif
 
 .aevisio
 	position: absolute
@@ -465,7 +471,12 @@ table.aelista
 	margin: auto
 
 .indpic
-	display: inline-block
+	display: @is (ie[-7], inline, inline-block)
 	vertical-align: middle
 	text-align: center
 	margin: 5px 10px 0
+
+@if ie[-7]
+	#sidebar section.block
+		width: 180px
+@endif

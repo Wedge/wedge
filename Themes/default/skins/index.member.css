@@ -185,6 +185,12 @@ ul.buttonlist
 table.thought_list td
 	position: relative
 
+	@if firefox
+		// Firefox doesn't support 'position: relative' on a table cell, unlike other browsers.
+		> div
+			position: relative
+	@endif
+
 .thought_actions
 	position: absolute
 	right: 8px

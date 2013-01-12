@@ -37,3 +37,21 @@
 
 .inner
 	border-top: 0
+
+@if ios
+	.postarea
+		margin-left: 0
+
+	// We want really comfortable menu items for use in wireless devices.
+	.mimenu ul li
+		font-size: 1.8em
+		line-height: 1.3em
+		padding: 10px
+		vertical-align: top
+
+	.tinyuser > ul.actions
+		margin-top: 0
+
+	.poster
+		height: 75px
+@endif
