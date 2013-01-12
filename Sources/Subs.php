@@ -1440,7 +1440,10 @@ function setupThemeContext($forceload = false)
 		if (allowedTo('moderate_forum'))
 			$context['unapproved_members'] = (!empty($settings['registration_method']) && $settings['registration_method'] == 2) || !empty($settings['approveAccountDeletion']) ? $settings['unapprovedMembers'] : 0;
 
-		we::$user['avatar'] = array();
+		if (empty(we::$user['avatar']))
+			we::$user['avatar'] = array();
+		if (!isset(we::$user['avatar']['href']))
+			we::$user['avatar']['href'] = '';
 
 		// Figure out the avatar... uploaded?
 		if (we::$user['avatar']['url'] == '' && !empty(we::$user['avatar']['id_attach']))
