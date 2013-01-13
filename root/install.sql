@@ -2200,7 +2200,6 @@ VALUES
 	('recycle_board', '2'),
 	('maxMsgID', '1'),
 	('enableAllMessages', '0'),
-	('max_urlLength', '50'),
 	('knownThemes', '1,2,3'),
 	('who_enabled', '1'),
 	('display_who_viewing', '2'),

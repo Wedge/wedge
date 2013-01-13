@@ -424,6 +424,9 @@ function is_not_banned($forceCheck = false)
 		if (!empty($settings['softban_blankpage']) && mt_rand(0, 100) < (int) $settings['softban_blankpage'])
 			die; // No Prayer For The Dying
 
+		if (!empty($settings['softban_redirect']) && !empty($settings['softban_redirect_url']) && mt_rand(0, 100) < (int) $settings['softban_redirect'])
+			redirectexit($settings['softban_redirect_url']); // Run To The Hills
+
 		if (!empty($settings['softban_disableregistration']))
 			$settings['registration_method'] = 3; // Stranger In A Strange Land
 	}

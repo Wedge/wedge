@@ -488,6 +488,10 @@ function BanListSettings($return_config = false)
 	$config_vars = array(
 		array('percent', 'softban_blankpage', 'subtext' => $txt['softban_percent_subtext']),
 		array('percent', 'softban_nosearch', 'subtext' => $txt['softban_percent_subtext']),
+		'',
+		array('percent', 'softban_redirect', 'subtext' => $txt['softban_redirect_subtext']),
+		array('text', 'softban_redirect_url'),
+		'',
 		array('yesno', 'softban_disableregistration', 'subtext' => $txt['softban_disableregistration_desc']),
 	);
 
@@ -507,6 +511,10 @@ function BanListSettings($return_config = false)
 	// Saving?
 	if (isset($_GET['save']))
 	{
+		// Validate the URL. filter_var will do the brunt of the work, just it validates for any kind of URL, not just http ones.
+		if (empty($_POST['softban_redirect_url']) || stripos($_POST['softban_redirect_url'], 'http') !== 0 || !filter_var($_POST['softban_redirect_url'], FILTER_VALIDATE_URL))
+			$_POST['softban_redirect_url'] = '';
+			
 		checkSession();
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=ban;sa=settings');
