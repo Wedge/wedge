@@ -737,25 +737,6 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			$message = substr($message, 0, $pos) . "\n" . $tag['before'] . "\n" . substr($message, $pos1);
 			$pos += strlen($tag['before']) + 1;
 		}
-		// Trim the urls
-		elseif ($tag['type'] === 'unparsed_content' && $tag['tag'] === 'url')
-		{
-			$pos2 = stripos($message, '[/' . substr($message, $pos + 1, 3) . ']', $pos1);
-			if ($pos2 === false)
-				continue;
-
-			$data = substr($message, $pos1, $pos2 - $pos1);
-
-			if (!empty($tag['block_level']) && substr($data, 0, 4) === '<br>')
-				$data = substr($data, 4);
-
-			if (isset($tag['validate']))
-				$tag['validate']($tag, $data, $disabled);
-
-			$code = strtr($tag['content'], array('$1' => $data, '$2' => trim_url($data)));
-			$message = substr($message, 0, $pos) . $code . substr($message, $pos2 + 6);
-			$pos += strlen($code) - 1;
-		}
 		// Don't parse the content, just skip it.
 		elseif ($tag['type'] === 'unparsed_content')
 		{
@@ -1238,32 +1219,6 @@ function highlight_php_code($code)
 	$buffer = preg_replace('~WEDGE_TAB(?:</(?:font|span)><(?:font color|span style)="[^"]*?">)?\\(\\);~', '<span class="bbc_pre">' . "\t" . '</span>', $buffer);
 
 	return strtr($buffer, array('\'' => '&#039;', '<code>' => '', '</code>' => ''));
-}
-
-/**
- * Shorten URLs
- *
- * This feature was shamelessly inspired by a mod by JayBachatero, which should have been made a core feature long ago. Thanks, man!
- *
- * @param string $url URL that should be shortened, in case it's longer than $settings['max_urlLength']
- * @return string The resulting string
- */
-function trim_url($url)
-{
-	global $settings;
-
-	$settings['max_urlLength'] = isset($settings['max_urlLength']) ? $settings['max_urlLength'] : 50;
-	if (empty($settings['max_urlLength']))
-		return $url;
-
-	$u = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
-
-	// Check the length of the url
-	if (westr::strlen($u) <= $settings['max_urlLength'])
-		return $url;
-
-	$break = $settings['max_urlLength'] / 2;
-	return str_replace('&amp;hellip;', '&hellip;', htmlentities(preg_replace('/&[^&;]*$/', '', westr::substr($u, 0, floor($break))) . '&hellip;' . preg_replace('/^\d+;/', '', westr::substr($u, -ceil($break)))));
 }
 
 /**
