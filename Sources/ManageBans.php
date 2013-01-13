@@ -492,17 +492,16 @@ function BanListSettings($return_config = false)
 		array('percent', 'softban_redirect', 'subtext' => $txt['softban_redirect_subtext']),
 		array('text', 'softban_redirect_url'),
 		'',
+		array('int', 'softban_delay_min', 'min' => 0, 'max' => 15),
+		array('int', 'softban_delay_max', 'min' => 0, 'max' => 15, 'subtext' => $txt['softban_delay_max_subtext']),
+		'',
 		array('yesno', 'softban_disableregistration', 'subtext' => $txt['softban_disableregistration_desc']),
 	);
 
 	call_hook('settings_bans', array(&$config_vars, &$return_config));
 
 	// Settings to add:
-	// Loading delay in seconds (range 1-15)
 	// Flood time multipler
-	// RSS disabled chance
-	// Redirection chance
-	// Redirection URL
 	// When a user is banned, add them to which group
 
 	if ($return_config)
@@ -514,6 +513,14 @@ function BanListSettings($return_config = false)
 		// Validate the URL. filter_var will do the brunt of the work, just it validates for any kind of URL, not just http ones.
 		if (empty($_POST['softban_redirect_url']) || stripos($_POST['softban_redirect_url'], 'http') !== 0 || !filter_var($_POST['softban_redirect_url'], FILTER_VALIDATE_URL))
 			$_POST['softban_redirect_url'] = '';
+
+		// If they's done something odd like make the max more than the min...
+		if (isset($_POST['softban_delay_min'], $_POST['softban_delay_max']) && (int) $_POST['softban_delay_max'] < (int) $_POST['softban_delay_min'])
+		{
+			$temp = $_POST['softban_delay_max'];
+			$_POST['softban_delay_max'] = $_POST['softban_delay_min'];
+			$_POST['softban_delay_min'] = $temp;
+		}
 			
 		checkSession();
 		saveDBSettings($config_vars);

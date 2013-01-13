@@ -427,6 +427,9 @@ function is_not_banned($forceCheck = false)
 		if (!empty($settings['softban_redirect']) && !empty($settings['softban_redirect_url']) && mt_rand(0, 100) < (int) $settings['softban_redirect'])
 			redirectexit($settings['softban_redirect_url']); // Run To The Hills
 
+		if (!empty($settings['softban_delay_max']))
+			usleep(mt_rand(!empty($settings['softban_delay_min']) ? $settings['softban_delay_min'] * 1000000 : 0, $settings['softban_delay_max'] * 1000000));
+
 		if (!empty($settings['softban_disableregistration']))
 			$settings['registration_method'] = 3; // Stranger In A Strange Land
 	}
