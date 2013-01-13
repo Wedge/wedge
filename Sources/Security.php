@@ -521,28 +521,10 @@ function soft_ban($feature)
 	}
 }
 
-// Log a ban in the database.
-function log_ban($ban_ids = array(), $email = null)
-{
-	// Don't log web accelerators, it's very confusing...
-	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
-		return;
-
-	// One extra point for these bans.
-	if (!empty($ban_ids))
-		wesql::query('
-			UPDATE {db_prefix}ban_items
-			SET hits = hits + 1
-			WHERE id_ban IN ({array_int:ban_ids})',
-			array(
-				'ban_ids' => $ban_ids,
-			)
-		);
-}
-
 function check_banned_ip($ip)
 {
-	static $ips = null;
+	global $settings;
+	static $ips = null, $hostnames = null;
 
 	if ($ip == INVALID_IP)
 		return false;
@@ -550,20 +532,13 @@ function check_banned_ip($ip)
 	$return_value = array();
 
 	// We call this multiple times, so we store it statically as well as caching. If it's null, it's the first time we're here, so try to pull from cache.
-	// If it's null the second time, we still don't have it from cache and need to get it from there. IOW, it isn't a typo, heh.
+	// If it's null the second time, we still don't have it from cache and need to get it from there. IOW, it isn't a typo, heh. Same for $hostnames, too.
 	if ($ips === null)
 		$ips = cache_get_data('bans_ip', 300);
 	if ($ips === null)
 	{
 		$ips = array();
-		$request = wesql::query('
-			SELECT id_ban, hardness, ban_content, ban_reason, extra
-			FROM {db_prefix}bans
-			WHERE ban_type = {string:ip_address}',
-			array(
-				'ip_address' => 'ip_address',
-			)
-		);
+		$request = query_for_bans('ip_address');
 		while ($row = wesql::fetch_assoc($request))
 		{
 			$extra = !empty($row['extra']) ? @unserialize($row['extra']) : array();
@@ -601,6 +576,57 @@ function check_banned_ip($ip)
 		);
 	}
 
+	// Hang on, though. What about hosts?
+	if (empty($settings['disableHostnameLookup']))
+	{
+		$this_hostname = strtolower(host_from_ip(format_ip($ip)));
+		if (strlen($this_hostname) > 0)
+		{
+			// No point trying to actually get the data if there is nothing valid to check against! See above for why this is checked twice.
+			if ($hostnames === null)
+				$hostnames = cache_get_data('bans_hostname', 480);
+			if ($hostnames === null)
+			{
+				$hostnames = array();
+				$request = query_for_bans('hostname');
+				while ($row = wesql::fetch_assoc($request))
+				{
+					$extra = !empty($row['extra']) ? @unserialize($row['extra']) : array();
+					$ban = array(
+						'id' => $row['id_ban'],
+						'hard' => $row['hardness'] == 1,
+						'reason' => $row['ban_reason'],
+						'message' => !empty($extra['message']) ? $extra['message'] : '',
+					);
+					if (strpos($row['ban_content'], '*.') === 0)
+						$ban['match'] = '~' . strtolower(preg_quote(substr($row['ban_content'], 2), '~')) . '$~';
+					else
+						$ban['content'] = strtolower($row['ban_content']);
+					$hostnames[] = $ban;
+				}
+				cache_put_data('bans_hostname', $hostnames, 480);
+				wesql::free_result($request);
+			}
+
+			foreach ($hostnames as $ban)
+			{
+				if (isset($ban['content']))
+				{
+					if ($ban['content'] != $this_hostname)
+						continue;
+				}
+				elseif (!preg_match($ban['match'], $this_hostname))
+					continue;
+
+				$return_value[] = array(
+					'id' => $ban['id'],
+					'msg' => $ban['message'],
+					'hard' => $ban['hard'],
+				);
+			}
+		}
+	}
+
 	return $return_value;
 }
 
@@ -620,14 +646,7 @@ function isBannedEmail($email, $error, $return = false)
 	if ($bans === null)
 	{
 		$bans = array();
-		$request = wesql::query('
-			SELECT id_ban, hardness, ban_content, ban_reason, extra
-			FROM {db_prefix}bans
-			WHERE ban_type = {string:email}',
-			array(
-				'email' => 'email',
-			)
-		);
+		$request = query_for_bans('email');
 
 		while ($row = wesql::fetch_assoc($request))
 		{
@@ -724,6 +743,18 @@ function isBannedEmail($email, $error, $return = false)
 	}
 
 	return $return_value;
+}
+
+function query_for_bans($type)
+{
+	return wesql::query('
+		SELECT id_ban, hardness, ban_content, ban_reason, extra
+		FROM {db_prefix}bans
+		WHERE ban_type = {string:type}',
+		array(
+			'type' => $type,
+		)
+	);
 }
 
 // Make sure the user's correct session was passed, and they came from here. (type can be post, get, or request.)
@@ -1338,6 +1369,7 @@ function checkUserRequest_blacklist()
 			'Python-urllib',
 			'TrackBack/',
 			'WebSite-X Suite',
+			'xpymep',
 			// vulnerability scanners
 			'Morfeus',
 			'Mozilla/4.0 (Hydra)',
