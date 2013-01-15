@@ -390,7 +390,11 @@ em
 // The 'New' icon, generally speaking.
 .note extends .inline-block
 	border-radius: 7px
-	gradient: #fa6, #d76
+	@if ie[-9]
+		background-color: #eb8c66
+	@else
+		gradient: #fa6, #d76
+	@endif
 	color: #fff !important
 	font: 700 7.5pt/100% Tahoma, Arial, sans-serif
 	text-transform: uppercase
@@ -402,11 +406,19 @@ em
 
 // Same, but scarier.
 .notewarn extends .note
-	gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
+	@if ie[-9]
+		background-color: #d55a61
+	@else
+		gradient: lighten(#d55a61, 10%), lighten(#b63c47, 10%)
+	@endif
 
 // Same, but positive.
 .notenice extends .note
-	gradient: rgb(100, 175, 100), rgb(100, 190, 100)
+	@if ie[-9]
+		background-color: rgb(100, 175, 100)
+	@else
+		gradient: rgb(100, 175, 100), rgb(100, 190, 100)
+	@endif
 
 // We worship his shadow.
 .hide
@@ -472,13 +484,11 @@ select.sb
 			// Replacement gradients for select box buttons.
 			@if ie[-8]
 				background: #f2f2f2
+			@elseif ie
+				background: #dbdbdb
+				box-shadow: inset -6px 12px 6px -6px #fff
 			@else
-				@if ie[9-]
-					background: #dbdbdb
-					box-shadow: inset -6px 12px 6px -6px #fff
-				@else
-					background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)
-				@endif
+				background: linear-gradient(#f2f2f2, #ebebeb 50%, #dbdbdb 50%, #cfcfcf)
 			@endif
 
 	&.disabled .display
@@ -633,7 +643,13 @@ input[type=submit], input[type=button], .ie_button
 	line-height: 1.4
 	border-width: 1px
 	border-radius: 6px
-	padding: @is (firefox, 1px 2px 2px, 3px 5px 4px)
+	@if firefox
+		padding: 1px 2px 2px
+	@elseif ie9
+		padding: 4px 4px 2px
+	@else
+		padding: 3px 5px 4px
+	@endif
 	color: #555
 	// Old IEs have a padding bug...
 	@if ie6, ie7
@@ -733,12 +749,17 @@ input[type=file]
 		margin-right: 2px
 
 	li ul
-		background: $menu_gradient
 		position: absolute
 		display: block
 		border: 1px solid #bbb
 		z-index: 42
-		box-shadow: 2px 2px 3px 0 rgba(0,0,0, .2)
+		@if ie9
+			background: #fff
+			box-shadow: inset 0 50px 50px rgba(232, 236, 232, .96), 2px 2px 3px 0 rgba(0,0,0, .2)
+		@else
+			background: $menu_gradient
+			box-shadow: 2px 2px 3px 0 rgba(0,0,0, .2)
+		@endif
 		border-radius: 0 10px 10px 0
 		clear: left
 		visibility: hidden
@@ -1131,7 +1152,7 @@ table
 .codeoperation
 	font-weight: 400
 
-// Styling for BBC tags
+// Styling for BBC tags. Also ensure that long URLs don't break layout.
 .bbc_link
 	:link, :visited
 		color: #789

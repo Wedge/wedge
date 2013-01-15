@@ -494,7 +494,7 @@ class we
 		// No need to store version numbers for outdated versions.
 		if ($browser['is_opera'])		$ver = max(11, $ver);
 		elseif ($browser['is_chrome'])	$ver = max(20, $ver);
-		elseif ($browser['is_firefox'])	$ver = $ver < 5 ? max(3, $ver) : max(16, $ver); // Pre-v5 Firefox remains popular.
+		elseif ($browser['is_firefox'])	$ver = $ver < 5 ? max(3, $ver) : max(15, $ver); // Pre-v5 Firefox remains popular.
 		elseif ($browser['is_safari'])	$ver = max(4, $ver);
 		elseif ($browser['is_ie'])		$ver = max(6, $ver);
 
@@ -529,7 +529,7 @@ class we
 					if (strpos($ua, 'Windows ' . $key) !== false)
 						break;
 		}
-		elseif ($browser['is_android'] && preg_match('~Android(?: (\d+\.\d))?~', $ua, $ver))
+		elseif ($browser['is_android'] && preg_match('~Android (\d+\.\d)~', $ua, $ver))
 			$os_ver = max(2, (float) $ver[1]);
 		elseif ($browser['is_ios'] && preg_match('~ OS (\d+(?:_\d))~', $ua, $ver))
 			$os_ver = max(3, (float) str_replace('_', '.', $ver[1]));

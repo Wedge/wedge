@@ -714,7 +714,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	if ($gzip)
 		$final = gzencode($final, 9);
 
-	file_put_contents($final_file, $final);
+	@file_put_contents($final_file, $final);
 
 	return $folder . $full_name;
 }

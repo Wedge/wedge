@@ -475,6 +475,11 @@ table.aelista
 	vertical-align: middle
 	text-align: center
 	margin: 5px 10px 0
+	@if opera
+		/* Opera tends to add an horizontal scrollbar on the body in album pages.
+			This also forces me to add a hack to zoomedia.js... Grmpf. */
+		position: relative
+	@endif
 
 @if ie[-7]
 	#sidebar section.block

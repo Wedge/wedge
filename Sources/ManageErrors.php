@@ -659,14 +659,11 @@ function ViewFile()
 
 	// Decode the file and get the line
 	$file = realpath(base64_decode($_REQUEST['file']));
-	$real_board = realpath($boarddir);
-	$real_source = realpath($sourcedir);
-	$basename = strtolower(basename($file));
-	$ext = strrchr($basename, '.');
 	$line = isset($_REQUEST['line']) ? (int) $_REQUEST['line'] : 0;
+	$basename = strtolower(basename($file));
 
 	// Make sure the file we are looking for is one they are allowed to look at
-	if ($ext != '.php' || (strpos($file, $real_board) === false || strpos($file, $real_source) === false) || ($basename == 'settings.php' || $basename == 'settings_bak.php') || strpos($file, $cachedir) !== false || !is_readable($file))
+	if (strrchr($basename, '.') != '.php' || $basename == 'settings.php' || $basename == 'settings_bak.php' || (strpos($file, realpath($boarddir)) === false && strpos($file, realpath($sourcedir)) === false) || strpos($file, realpath($cachedir)) !== false || !is_readable($file))
 		fatal_lang_error('error_bad_file', true, array(htmlspecialchars($file)));
 
 	// Get the min and max lines

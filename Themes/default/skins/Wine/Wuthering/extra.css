@@ -90,6 +90,8 @@ $darkgrad = #f3f2f0
 
 #siteslogan
 	float: left
+	letter-spacing: -1px
+	text-shadow: #ddd 1px 1px 2px
 
 // The upper_section, float the two each way
 #upper_section
@@ -300,6 +302,12 @@ tr.titlebg
 ------------------------------------------------- */
 #forumposts .cat final
 	margin-bottom: 3px
+	@if ie
+		@if ie7
+			margin-top: 8px
+		@endif
+		clear: both
+	@endif
 
 .left_menu
 	list-style: none
@@ -335,6 +343,9 @@ $radius = 20px
 
 @remove #footer
 	margin-top: 16px
+
+@remove #siteslogan
+	color: #000
 
 @remove
 	background: url($images/theme/bg.jpg)

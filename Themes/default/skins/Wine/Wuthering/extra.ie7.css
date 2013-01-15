@@ -2,11 +2,6 @@
 .cat input[type=checkbox]
 	margin: 0 4px
 
-#content
-	#forumposts .cat
-		margin-top: 8px
-		clear: both
-
 /* Misc hacks
 ------------------------------------------------------- */
 .cat final
