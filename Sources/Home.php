@@ -105,7 +105,7 @@ function Home()
 			if (!empty($row['id_parent_owner']))
 			{
 				if (empty($row['parent_name']) && !isset($txt['deleted_thought']))
-						loadLanguage('Post');
+					loadLanguage('Post');
 				$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . (empty($row['parent_name']) ? $txt['deleted_thought'] : $row['parent_name']) . '</a>&gt; ' . $thought['text'];
 			}
 		}

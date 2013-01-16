@@ -17,61 +17,93 @@ function template_edit_news()
 	global $context, $scripturl, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=news;sa=editnews" method="post" accept-charset="UTF-8" name="postmodify" id="postmodify">
-			<table class="table_grid w100 cs0">
-				<thead>
-					<tr class="catbg">
-						<th class="first_th w50">', $txt['admin_edit_news'], '</th>
-						<th class="left" style="width: 45%">', $txt['preview'], '</th>
-						<th class="last_th center" style="width: 5%"><input type="checkbox" onclick="invertAll(this, this.form);"></th>
-					</tr>
-				</thead>
-				<tbody>';
+		<div class="windowbg2 wrc">
+			<form action="<URL>?action=admin;area=news;sa=editnews" method="post">
+				<ul id="sortable">';
 
-	// Loop through all the current news items so you can edit/remove them.
+	// Reuse the privacy keys from thoughts but some don't quite tie up with the meanings here.
+	$display = array(
+		'e' => 'everyone',
+		'm' => 'members',
+		's' => 'friends',
+		'a' => 'justme',
+	);
 	foreach ($context['admin_current_news'] as $admin_news)
-		echo '
-					<tr class="windowbg2 center">
-						<td>
-							<div style="margin-bottom: 2ex"><textarea rows="3" cols="65" name="news[]" style="', we::is('ie8') ? 'width: 635px; max-width: 85%; min-width: 85%' : 'width: 85%', '">', $admin_news['unparsed'], '</textarea></div>
-						</td>
-						<td class="left top">
-							<div style="overflow: auto; width: 100%; height: 10ex">', $admin_news['parsed'], '</div>
-						</td>
-						<td>
-							<input type="checkbox" name="remove[]" value="', $admin_news['id'], '">
-						</td>
-					</tr>';
+	{
+		if (!isset($display[$admin_news['privacy']]))
+			$admin_news['privacy'] = 'a';
 
-	// This provides an empty text box to add a news item to the site.
+		// Order can be passed through as-is, but the others have to be incremented so that they're never 0.
+		echo '
+					<li class="windowbg">
+						<span class="handle"></span>
+						<div class="floatright">
+							<input type="submit" name="modify[', ($admin_news['id'] + 1), ']" value="', $txt['modify'], '" class="submit">
+							<input type="submit" name="delete[', ($admin_news['id'] + 1), ']" value="', $txt['delete'], '" class="delete" onclick="return ask(', JavaScriptEscape($txt['editnews_remove_confirm']), ', e);">
+							<input type="hidden" name="order[]" value="', $admin_news['id'], '">
+							<br>
+							<div style="margin-top:0.5em"><div class="privacy_', $display[$admin_news['privacy']], '"></div> ', $txt['editnews_privacy_' . $admin_news['privacy']], '</div>
+						</div>
+						', $admin_news['parsed'], '
+						<br class="clear">
+					</li>';
+	}
+
 	echo '
-					<tr id="moreNews" class="windowbg2 center hide">
-						<td><div id="moreNewsItems"></div></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="floatleft padding">
-				<div id="moreNewsItems_link" class="hide"><a href="#" onclick="addNewsItem(); return false;">', $txt['editnews_clickadd'], '</a></div>';
+				</ul>
+				<br class="clear">
+				<div class="right">
+					<input type="submit" name="add" value="', $txt['editnews_add'], '" class="new">
+					<input type="submit" name="saveorder" value="', $txt['editnews_saveorder'], '" class="save" id="saveorder">
+				</div>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			</form>
+		</div>';
 
 	add_js('
-	$("#moreNewsItems_link").show();
-	function addNewsItem()
-	{
-		$("#moreNews").show();
-		$("#moreNewsItems").append(\'<div style="margin-bottom: 2ex;"><textarea rows="3" cols="65" name="news[]" style="' . (we::is('ie8') ? 'width: 635px; max-width: 85%; min-width: 85%' : 'width: 85%') . '"><\' + \'/textarea><\' + \'/div>\');
-	}');
+		$(\'#sortable\').sortable({ handle: \'.handle\', update: function( event, ui ) { $(\'#saveorder\').show(); } });
+		$(\'#sortable\').disableSelection();
+		$(\'#saveorder\').hide();');
+}
+
+function template_edit_news_item()
+{
+	global $context, $txt;
 
 	echo '
-				<noscript>
-					<div style="margin-bottom: 2ex"><textarea rows="3" cols="65" style="', we::is('ie8') ? 'width: 635px; max-width: 85%; min-width: 85%' : 'width: 85%', '" name="news[]"></textarea></div>
-				</noscript>
-			</div>
-			<div class="floatright padding">
-				<input type="submit" name="save_items" value="', $txt['save'], '" class="save"> <input type="submit" name="delete_selection" value="', $txt['editnews_remove_selected'], '" onclick="return ask(', JavaScriptEscape($txt['editnews_remove_confirm']), ', e);" class="delete">
+		<we:cat>', $context['page_title'], '</we:cat>';
+
+	$display = array(
+		'e' => 'everyone',
+		'm' => 'members',
+		's' => 'friends',
+		'a' => 'justme',
+	);
+
+	echo '
+		<form action="<URL>?action=admin;area=news;sa=editnews" method="post">
+			<div class="windowbg2 wrc">
+				<div class="buttons">',
+					$context['postbox']->outputEditor(), '
+				</div>
+				<br>
+				<div class="floatright">',
+					$context['postbox']->outputButtons(), '
+				</div>
+				<div class="privacy">
+					', $txt['editnews_visible'], '
+					<select name="privacy">';
+	foreach ($display as $id => $item)
+		echo '
+						<option value="', $id, '"', $context['editnews']['privacy'] == $id ? ' selected' : '', '>&lt;div class="privacy_', $item, '"&gt;&lt;/div&gt; ', $txt['editnews_privacy_' . $id], '</option>';
+	echo '
+					</select>
+				</div>
+
+				<br class="clear">
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<input type="hidden" name="newsid" value="', $context['editnews']['id'], '">
 		</form>';
 }
 

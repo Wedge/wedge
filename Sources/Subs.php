@@ -1424,6 +1424,37 @@ function setupThemeContext($forceload = false)
 
 	// Get some news...
 	$context['news_lines'] = cache_quick_get('news_lines', 'ManageNews', 'cache_getNews', array());
+	// Apply permissions to that little lot. We can't do that at cache time because we need to expressly fetch everything.
+	foreach ($context['news_lines'] as $id => &$item)
+	{
+		// The letter is allowed to be e, m, s or a for everyone, signed-in members, staff or admins only
+		switch ($item[0])
+		{
+			case 'a':
+				if (!we::$is_admin && allowedTo('admin_forum'))
+				{
+					unset($context['news_lines'][$id]);
+					continue;
+				}
+				break;
+			case 's':
+				if (!we::$is_admin && !allowedTo(array('moderate_forum', 'moderate_board')))
+				{
+					unset($context['news_lines'][$id]);
+					continue;
+				}
+				break;
+			case 'm':
+				if (we::$is_guest)
+				{
+					unset($context['news_lines'][$id]);
+					continue;
+				}
+				break;
+		}
+
+		$item = substr($item, 1);
+	}
 	$context['fader_news_lines'] = array();
 	// Gotta be special for the javascript.
 	for ($i = 0, $n = count($context['news_lines']); $i < $n; $i++)

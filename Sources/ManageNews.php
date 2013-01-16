@@ -116,61 +116,137 @@ function EditNews()
 
 	loadSource('Class-Editor');
 
-	// The 'remove selected' button was pressed.
-	if (!empty($_POST['delete_selection']) && !empty($_POST['remove']))
+	if (!empty($_POST['saveorder']) && !empty($_POST['order']) && is_array($_POST['order']))
 	{
 		checkSession();
+		$news_lines = explode("\n", $settings['news']);
 
-		// Store the news temporarily in this array.
-		$temp_news = explode("\n", $settings['news']);
-
-		// Remove the items that were selected.
-		foreach ($temp_news as $i => $news)
-			if (in_array($i, $_POST['remove']))
-				unset($temp_news[$i]);
-
-		// Update the database.
-		updateSettings(array('news' => implode("\n", $temp_news)));
-
-		// We cached this, so clear the cache.
-		cache_put_data('news_lines', null);
-
-		logAction('news');
-	}
-	// The 'Save' button was pressed.
-	elseif (!empty($_POST['save_items']))
-	{
-		checkSession();
-
-		foreach ($_POST['news'] as $i => $news)
+		// First, get the order into something we can work with.
+		foreach ($_POST['order'] as $k => $v)
+			$_POST['order'][$k] = (int) $v;
+		$_POST['order'] = array_flip($_POST['order']);
+		foreach ($_POST['order'] as $new_pos => $item)
 		{
-			if (trim($news) == '')
-				unset($_POST['news'][$i]);
+			if (isset($news_lines[$new_pos]))
+				$_POST['order'][$new_pos] = $news_lines[$new_pos];
 			else
-			{
-				$_POST['news'][$i] = westr::htmlspecialchars($_POST['news'][$i], ENT_QUOTES);
-				wedit::preparsecode($_POST['news'][$i]);
-			}
+				unset($_POST['order'][$new_pos]);
 		}
-
-		// Send the new news to the database.
-		updateSettings(array('news' => implode("\n", $_POST['news'])));
-
-		// We cached this, so clear the cache.
+		// So, that should largely be it, in theory. Just check there aren't any items left lying around
+		foreach ($news_lines as $old_pos => $item)
+		{
+			if (!isset($_POST['order'][$old_pos]))
+				$_POST['order']['old' . $old_pos] = $item;
+		}
+		updateSettings(array('news' => implode("\n", $_POST['order'])));
 		cache_put_data('news_lines', null);
-
-		// Log this into the moderation log.
+	}
+	elseif (!empty($_POST['add']))
+	{
+		$context['editnews'] = array(
+			'privacy' => 'e',
+			'id' => -1,
+		);
+		$context['page_title'] = $txt['editnews_add'];
+		$context['postbox'] = new wedit(
+			array(
+				'id' => 'message',
+				'value' => '',
+				'labels' => array(
+					'post_button' => $txt['save'],
+				),
+				'buttons' => array(
+					array(
+						'name' => 'post_button',
+						'button_text' => $txt['save'],
+						'onclick' => 'return submitThisOnce(this);',
+						'accesskey' => 's',
+					),
+				),
+				'height' => '250px',
+				'width' => '100%',
+				'drafts' => 'none',
+			)
+		);
+		wetem::load('edit_news_item');
+		return;
+	}
+	elseif (!empty($_POST['modify']) && is_array($_POST['modify']))
+	{
+		$news_lines = explode("\n", $settings['news']);
+		$keys = array_keys($_POST['modify']);
+		$id = (int) $keys[0] - 1;
+		if ($id >= 0 && !empty($news_lines[$id]))
+		{
+			$context['editnews'] = array(
+				'privacy' => $news_lines[$id][0],
+				'id' => $id + 1,
+			);
+			$context['page_title'] = $txt['editnews_edit'];
+			$context['postbox'] = new wedit(
+				array(
+					'id' => 'message',
+					'value' => wedit::un_preparsecode(substr($news_lines[$id], 1)),
+					'labels' => array(
+						'post_button' => $txt['save'],
+					),
+					'buttons' => array(
+						array(
+							'name' => 'post_button',
+							'button_text' => $txt['save'],
+							'onclick' => 'return submitThisOnce(this);',
+							'accesskey' => 's',
+						),
+					),
+					'height' => '250px',
+					'width' => '100%',
+					'drafts' => 'none',
+				)
+			);
+			wetem::load('edit_news_item');
+			return;
+		}
+	}
+	elseif (!empty($_POST['post_button']) && !empty($_POST['newsid']) && (int) $_POST['newsid'] != 0 && !empty($_POST['message']) && westr::htmltrim($_POST['message']) !== '')
+	{
+		checkSession();
+		wedit::preparseWYSIWYG('message');
+		$news_lines = explode("\n", $settings['news']);
+		$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
+		wedit::preparsecode($_POST['message']);
+		$id = $_POST['newsid'] == -1 ? -1 : $_POST['newsid'] - 1;
+		$privacy = isset($_POST['privacy']) && in_array($_POST['privacy'], array('e', 'm', 's', 'a')) ? $_POST['privacy'] : 'a'; // if not specified, assume admin only, just in case
+		$news_lines[$id] = $privacy . $_POST['message'];
+		updateSettings(array('news' => implode("\n", $news_lines)));
 		logAction('news');
+		cache_put_data('news_lines', null);
+	}
+	elseif (!empty($_POST['delete']) && is_array($_POST['delete']))
+	{
+		checkSession();
+		$keys = array_keys($_POST['delete']);
+		$id = (int) $keys[0] - 1;
+		if ($id >= 0)
+		{
+			$news_lines = explode("\n", $settings['news']);
+			unset($news_lines[$id]);
+			updateSettings(array('news' => implode("\n", $news_lines)));
+		}
+		logAction('news');
+		cache_put_data('news_lines', null);
 	}
 
 	// Ready the current news.
 	foreach (explode("\n", $settings['news']) as $id => $line)
 		$context['admin_current_news'][$id] = array(
 			'id' => $id,
-			'unparsed' => wedit::un_preparsecode($line),
-			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc($line)),
+			'privacy' => $line[0],
+			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc(substr($line,1), true)),
 		);
 
+	add_jquery_ui();
+	add_css('
+	#sortable { width: 98% } #sortable .floatright { margin-left: 1em; margin-right: 1em }');
 	wetem::load('edit_news');
 	$context['page_title'] = $txt['admin_edit_news'];
 }
