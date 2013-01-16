@@ -1431,7 +1431,7 @@ function setupThemeContext($forceload = false)
 		switch ($item[0])
 		{
 			case 'a':
-				if (!we::$is_admin && allowedTo('admin_forum'))
+				if (!we::$is_admin && !allowedTo('admin_forum'))
 				{
 					unset($context['news_lines'][$id]);
 					continue;
@@ -1457,10 +1457,10 @@ function setupThemeContext($forceload = false)
 	}
 	$context['fader_news_lines'] = array();
 	// Gotta be special for the javascript.
-	for ($i = 0, $n = count($context['news_lines']); $i < $n; $i++)
-		$context['fader_news_lines'][$i] = strtr(addslashes($context['news_lines'][$i]), array('/' => '\/', '<a href=' => '<a hre" + "f='));
+	foreach ($context['news_lines'] as $i => $item)
+		$context['fader_news_lines'][$i] = strtr(addslashes($item), array('/' => '\/', '<a href=' => '<a hre" + "f='));
 
-	$context['random_news_line'] = $n > 0 ? $context['news_lines'][mt_rand(0, $n - 1)] : '';
+	$context['random_news_line'] = !empty($context['news_lines']) ? $context['news_lines'][array_rand($context['news_lines'])] : '';
 
 	if (!we::$is_guest)
 	{
