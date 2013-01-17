@@ -10,16 +10,16 @@
 	if anything use url-no-base64() instead!
 -------------------------------------------------------------------------- */
 
-// A common inline-block hack (for old IE compatibility.)
+// A common inline-block hack (for old IE/Firefox compatibility.)
 .inline-block virtual
-	display: inline-block
-	vertical-align: middle
 
 	// Firefox 2.x doesn't support inline-block.
 	@if firefox[-2]
 		display: -moz-inline-box
-		display: inline-block
 	@endif
+
+	display: inline-block
+	vertical-align: middle
 
 	// IE6/7 need layout to show inline-block divs... And a default right margin from my experience...
 	@if ie[-7]

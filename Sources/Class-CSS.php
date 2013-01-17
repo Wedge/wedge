@@ -229,8 +229,8 @@ class wess_mixin extends wess
 					if (!empty($def[$tg]))
 						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 				}
-				// Or is this a simple non-mixin selector we want to mix with?
-				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-z]+\h*)?\n(\h+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
+				// Or is this a simple non-mixin selector we want to mix with? (Child selector aren't allowed.)
+				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
 					foreach ($selectors as $sel)
 						$rep .= rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
@@ -261,8 +261,8 @@ class wess_mixin extends wess
 					if (!empty($def[$tg]))
 						$rep = preg_replace('~\$%(\d+)%~e', '$def[$tg][(int) \'$1\']', $rep);
 				}
-				// Or is this a simple non-mixin selector we want to mix with?
-				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-z]+\h*)?\n(\h+)([^\n]*\n)((?:\3[^\n]*\n)*)~i', $css, $selectors, PREG_SET_ORDER))
+				// Or is this a simple non-mixin selector we want to mix with? (Child selector aren't allowed.)
+				elseif (preg_match_all('~(?<=\n)' . preg_quote($tg, '~') . '\h*(?:[a-zA-Z]+\h*)?\v+(\h+)([^\v]*\v+)((?:\1[^\v]*\v+)*)~', $css, $selectors, PREG_SET_ORDER))
 					foreach ($selectors as $sel)
 						$rep .= "\n" . rtrim(str_replace("\n" . $sel[1], "\n", $sel[2] . $sel[3]));
 
@@ -901,6 +901,8 @@ class wess_nesting extends wess
 			}
 		}
 
+		$is_ie6 = we::is('ie6');
+
 		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
 		foreach ($this->rules as $n => &$node)
 		{
@@ -946,8 +948,8 @@ class wess_nesting extends wess
 			if (strpos($node['selector'], 'extends') !== false)
 			{
 				// A quick hack to turn direct selectors into normal selectors when in IE6. This is because it ignores direct selectors, as well as
-				// any selectors declared alongside them. If you still want these selectors to inherit something, do it manually in *.ie6.css!
-				if (we::is('ie6') && strpos($node['selector'], '>') !== false)
+				// any selectors declared alongside them. If you still want these selectors to inherit something, do it manually in an '@if ie6' block!
+				if ($is_ie6 && strpos($node['selector'], '>') !== false)
 					$node['selector'] = ' ';
 				$node['selector'] = str_replace('#wedge-quote#', '"', $node['selector']);
 				preg_match_all('~' . $selector_regex . '\h+extends\h+("[^\n{"]+"|[^\n,{"]+)~i', $node['selector'], $matches, PREG_SET_ORDER);
