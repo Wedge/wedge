@@ -38,7 +38,7 @@ function splitQuote(e)
 		pos = lcs.indexOf('[', pos) + 1;
 		if (!pos)
 			break;
-		tag = selection.substring(pos, lcs.indexOf(']', pos + 1));
+		tag = selection.substr(pos, lcs.indexOf(']', pos + 1) - pos);
 		has_slash = tag[0] == '/';
 		bbcode = tag.substr(+has_slash);
 		baretag = ((nextBreak = /[\s=]/.exec(bbcode)) ? bbcode.substr(0, bbcode.indexOf(nextBreak)) : bbcode).toLowerCase();

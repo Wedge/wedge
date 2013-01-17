@@ -360,21 +360,6 @@ ul.buttonlist
 			table-layout: auto
 @endif
 
-/* Overwriting earlier settings...
-------------------------------------------------------- */
-
 @replace
 	letter-spacing: -3px
 	letter-spacing: -1px
-
-$head_font = "PT Sans", $main_font
-
-$post_font = Verdana, $main_font
-$post_font_size = 9pt/140%
-
-$main_bg = #fffdfa
-$head_bg = rgba(221, 200, 137, .66)
-$window_bg = darken(#f2f3ea, 1%)
-$window_bg2 = darken(#f3f7f3, 2%)
-$post_bg = $window_bg
-$post_bg2 = $window_bg2

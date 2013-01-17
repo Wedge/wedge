@@ -29,7 +29,6 @@ var
 	ua = function (str) { return navigator.userAgent.toLowerCase().indexOf(str) != -1; },
 
 	is_opera = ua('opera'),
-	is_ff = !ua('compatible') && ua('mozilla'),
 
 	// The Webkit ones. Oh my, that's a long list... Right now we're only supporting iOS and generic Android browsers.
 	is_webkit = ua('webkit'),
@@ -46,7 +45,9 @@ var
 	is_ie6 = is_ie && ua('msie 6'),
 	is_ie7 = is_ie && ua('msie 7'),
 	is_ie8 = is_ie && ua('msie 8'),
-	is_ie8down = is_ie6 || is_ie7 || is_ie8;
+	is_ie8down = is_ie6 || is_ie7 || is_ie8,
+
+	is_ff = !is_webkit && !is_ie && ua('mozilla');
 
 // Replace the default jQuery easing type for animations.
 $.easing.swing2 = $.easing.swing;
@@ -429,7 +430,7 @@ function weSelectText(oCurElement)
 				.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 12 : 39 } : { marginLeft: w })
 				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 });
 
-		clearTimeout(menu_delay[id.substring(2)]);
+		clearTimeout(menu_delay[id.substr(2)]);
 
 		$(this).siblings('li').each(function () { menu_hide_children(this.id); });
 	},
@@ -446,7 +447,7 @@ function weSelectText(oCurElement)
 		var id = this.id;
 		$(e.relatedTarget).closest('.menu').length ?
 			menu_hide_children(id) :
-			menu_delay[id.substring(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
+			menu_delay[id.substr(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
 	},
 
 	// Hide all children menus.

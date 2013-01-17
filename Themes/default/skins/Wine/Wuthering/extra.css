@@ -117,6 +117,8 @@ $darkgrad = #f3f2f0
 		@if !firefox && !ie[-7]
 			display: table-cell
 			vertical-align: middle
+		@elseif firefox
+			display: inline-block
 		@endif
 		position: relative
 		padding: 5px 0 5px 36px

@@ -31,7 +31,7 @@ var
 
 function playerReady(thePlayer)
 {
-	thisPlayer = thePlayer.id.substring(6);
+	thisPlayer = thePlayer.id.substr(6);
 	if (player[thisPlayer])
 		return;
 
