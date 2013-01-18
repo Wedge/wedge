@@ -2134,6 +2134,7 @@ function loadSession()
 		// Use database sessions?
 		if (!empty($settings['databaseSession_enable']))
 		{
+			@ini_set('session.serialize_handler', 'php');
 			session_set_save_handler('sessionOpen', 'sessionClose', 'sessionRead', 'sessionWrite', 'sessionDestroy', 'sessionGC');
 			@ini_set('session.gc_probability', '1');
 		}

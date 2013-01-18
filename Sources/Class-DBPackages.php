@@ -36,7 +36,7 @@ class wedbPackages
 			foreach ($items as $table_name)
 				$reserved[] = strtolower($db_prefix . $table_name);
 		}
-		return in_array(str_to_lower($table), $reserved);
+		return in_array(strtolower($table), $reserved);
 	}
 
 	// Create a table.

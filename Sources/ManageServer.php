@@ -1073,7 +1073,8 @@ function ModifyLanguages()
 	{
 		checkSession();
 
-		if ($_POST['def_language'] != $language)
+		$languages = getLanguages();
+		if ($_POST['def_language'] != $language && isset($languages[$_POST['def_language']]))
 		{
 			loadSource('Subs-Admin');
 			updateSettingsFile(array('language' => '\'' . $_POST['def_language'] . '\''));
