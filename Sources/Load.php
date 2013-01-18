@@ -1710,9 +1710,11 @@ function weInitJS()
 {
 	global $settings, $context;
 
+	$version = '1.5.2'; // !!! When v2.0 is out, change to -- we::is('ie[-8]') ? '1.9' : '2.0';
+
 	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
 		$context['main_js_files'] = array(
-			'scripts/jquery-1.5.2.js' => true,
+			'scripts/jquery-' . $version . '.js' => true,
 			'scripts/script.js' => true,
 			'scripts/sbox.js' => false,
 			'scripts/custom.js' => false
@@ -1720,9 +1722,9 @@ function weInitJS()
 	else
 	{
 		$remote = array(
-			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
-			'jquery' =>		'http://code.jquery.com/jquery-1.5.2.min.js',
-			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.5.2.min.js',
+			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/' . $version . '/jquery.min.js',
+			'jquery' =>		'http://code.jquery.com/jquery-' . $version . '.min.js',
+			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jquery/jquery-' . $version . '.min.js',
 		);
 		$context['remote_js_files'] = array($remote[$settings['jquery_origin']]);
 		$context['main_js_files'] = array(

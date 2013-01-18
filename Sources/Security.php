@@ -945,10 +945,12 @@ function allowedTo($permission, $boards = null)
 	if ($boards === null)
 	{
 		// Check if they can do it.
-		if (!is_array($permission) && in_array($permission, we::$user['permissions']))
+		$perms = isset(we::$user['permissions']) ? we::$user['permissions'] : array();
+
+		if (!is_array($permission) && in_array($permission, $perms))
 			return true;
 		// Search for any of a list of permissions.
-		elseif (is_array($permission) && count(array_intersect($permission, we::$user['permissions'])) != 0)
+		elseif (is_array($permission) && count(array_intersect($permission, $perms)) != 0)
 			return true;
 		// You aren't allowed, by default.
 		else

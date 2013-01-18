@@ -1806,7 +1806,7 @@ function host_from_ip($ip)
 
 		if (!empty($arpa))
 		{
-			$details = dns_get_record($arpa, DNS_ALL);
+			$details = @dns_get_record($arpa, DNS_ALL);
 			if (is_array($details))
 				foreach ($details as $id => $contents)
 					if ($contents['type'] == 'PTR' && !empty($contents['target']))

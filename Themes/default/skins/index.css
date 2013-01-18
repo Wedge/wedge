@@ -1157,12 +1157,13 @@ table
 	:link, :visited
 		color: #789
 
-.bbc_link.raw extends .inline-block
-	white-space: nowrap
-	overflow: hidden
-	text-overflow: ellipsis
-	max-width: 24em
-	vertical-align: bottom
+	span
+		:before
+			content: "\2026"
+		span
+			text-indent: -999em
+			font: 0/0 Arial
+			overflow: hidden
 
 .bbc_size
 	line-height: 1.4em

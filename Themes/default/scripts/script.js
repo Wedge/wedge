@@ -487,6 +487,13 @@ function weSelectText(oCurElement)
  */
 $(function ()
 {
+	// Shorten all raw URLs in user content. The spans allow for the actual link to be retained when copying/pasting the page content.
+	$('.bbc_link').each(function () {
+		var link = $(this).html();
+		if (link.indexOf('://') != -1 && link.length > 30)
+			$(this).html(link.substr(0, 15) + '<span><span>' + link.substr(15, link.length - 30) + '</span></span>' + link.substr(link.length - 15));
+	});
+
 	// Transform existing select boxes into our super boxes.
 	$('select').sb();
 
