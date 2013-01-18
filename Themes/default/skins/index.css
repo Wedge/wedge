@@ -1152,11 +1152,8 @@ table
 .codeoperation
 	font-weight: 400
 
-// Styling for BBC tags. Also ensure that long URLs don't break layout.
+// Styling for [url] tags. Also ensures that long URLs don't break layout.
 .bbc_link
-	:link, :visited
-		color: #789
-
 	span
 		:before
 			content: "\2026"
@@ -1164,6 +1161,8 @@ table
 			text-indent: -999em
 			font: 0/0 Arial
 			overflow: hidden
+	:link, :visited
+		color: #789
 
 .bbc_size
 	line-height: 1.4em

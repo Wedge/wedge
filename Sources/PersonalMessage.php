@@ -3201,7 +3201,7 @@ function ReportMessage()
 		wesql::free_result($request);
 
 		if ($hidden_recipients)
-			$recipients[] = number_content('pm_report_pm_hidden', $hidden_recipients);
+			$recipients[] = number_context('pm_report_pm_hidden', $hidden_recipients);
 
 		// Now let's get out and loop through the admins.
 		$request = wesql::query('

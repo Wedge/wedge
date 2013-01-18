@@ -36,10 +36,22 @@ $darkgrad = #f3f2f0
 
 #header
 	background: $darkgrad
-
-#header div.frame
-	padding: 5px 0 0
-	overflow: hidden
+	div.frame
+		padding: 5px 0 0
+		overflow: hidden
+	h2, p
+		color: #000
+	h1
+		float: right
+		margin: 32px 30px 0 0
+		a
+			color: #78a
+			font: italic 700 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
+			letter-spacing: -2px
+			text-shadow: white 0 1px 2px
+	input.search
+		background-color: rgb(235,225,215)
+		color: #000
 
 #content
 	background: #faf8f6
@@ -73,21 +85,6 @@ $darkgrad = #f3f2f0
 	border: 0
 	padding: 0 20px 10px
 
-#header
-	h2, p
-		color: #000
-	h1
-		float: right
-		margin: 32px 30px 0 0
-		a
-			color: #78a
-			font: italic 700 3em "Segoe UI", "Trebuchet MS", Georgia, Geneva, verdana, sans-serif
-			letter-spacing: -2px
-			text-shadow: white 0 1px 2px
-	input.search
-		background-color: rgb(235,225,215)
-		color: #000
-
 #siteslogan
 	float: left
 	letter-spacing: -1px
@@ -114,11 +111,13 @@ $darkgrad = #f3f2f0
 		margin: 8px 0 12px
 		overflow: hidden
 	li
-		@if !firefox && !ie[-7]
+		@if firefox
+			display: inline-block
+		@elseif ie[-7]
+			mixin: .inline-block
+		@else
 			display: table-cell
 			vertical-align: middle
-		@elseif firefox
-			display: inline-block
 		@endif
 		position: relative
 		padding: 5px 0 5px 36px

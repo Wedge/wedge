@@ -489,9 +489,9 @@ $(function ()
 {
 	// Shorten all raw URLs in user content. The spans allow for the actual link to be retained when copying/pasting the page content.
 	$('.bbc_link').each(function () {
-		var link = $(this).html();
-		if (link.indexOf('://') != -1 && link.length > 30)
-			$(this).html(link.substr(0, 15) + '<span><span>' + link.substr(15, link.length - 30) + '</span></span>' + link.substr(link.length - 15));
+		var link = $(this).html().php_unhtmlspecialchars();
+		if (link.indexOf('://') != -1 && link.length > 50)
+			$(this).html(link.substr(0, 25) + '<span><span>' + link.substr(25, link.length - 50) + '</span></span><wbr>' + link.substr(link.length - 25));
 	});
 
 	// Transform existing select boxes into our super boxes.
