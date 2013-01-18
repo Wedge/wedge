@@ -1248,7 +1248,7 @@ function template_add_rule()
 	{
 		if (criteriaNum == 0)
 			for (var i = 0; i < document.forms.addrule.elements.length; i++)
-				if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
+				if (document.forms.addrule.elements[i].id.slice(0, 8) == "ruletype")
 					criteriaNum++;
 
 		criteriaNum++;
@@ -1265,7 +1265,7 @@ function template_add_rule()
 	{
 		if (actionNum == 0)
 			for (var i = 0; i < document.forms.addrule.elements.length; i++)
-				if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
+				if (document.forms.addrule.elements[i].id.slice(0, 7) == "acttype")
 					actionNum++;
 
 		actionNum++;
@@ -1318,7 +1318,7 @@ function template_add_rule()
 
 		for (var i = 0; i < document.forms.addrule.elements.length; i++)
 		{
-			if (document.forms.addrule.elements[i].id.substr(0, 8) == "ruletype")
+			if (document.forms.addrule.elements[i].id.slice(0, 8) == "ruletype")
 			{
 				if (foundCriteria)
 					joinText = $("#logic").val() == \'and\' ? ', JavaScriptEscape(' ' . $txt['pm_readable_and'] . ' '), ' : ', JavaScriptEscape(' ' . $txt['pm_readable_or'] . ' '), ';
@@ -1350,7 +1350,7 @@ function template_add_rule()
 					hadBuddy = true;
 				}
 			}
-			if (document.forms.addrule.elements[i].id.substr(0, 7) == "acttype")
+			if (document.forms.addrule.elements[i].id.slice(0, 7) == "acttype")
 			{
 				if (foundAction)
 					joinText = ', JavaScriptEscape(' ' . $txt['pm_readable_and'] . ' '), ';

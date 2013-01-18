@@ -47,7 +47,7 @@ function template_display_posts()
 
 		// msg123 serves as the anchor, as well as an easy way to find the message ID,
 		// or other classes (such as can-mod), from within it. For instance,
-		// var id_msg = $(this).closest('.root').attr('id').substr(3);
+		// var id_msg = $(this).closest('.root').attr('id').slice(3);
 		echo '
 			<div id="msg', $message['id'], '" class="root',
 				$message['alternate'] == 0 ? ' postbg' : ' postbg2',

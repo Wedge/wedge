@@ -672,8 +672,8 @@ function template_edit_style()
 		var anchor = "";
 		if (url.indexOf("#") != -1)
 		{
-			anchor = url.substr(url.indexOf("#"));
-			url = url.substr(0, url.indexOf("#"));
+			anchor = url.slice(url.indexOf("#"));
+			url = url.slice(0, url.indexOf("#"));
 		}
 
 		$.get(

@@ -2368,7 +2368,7 @@ function template_profile_signature_modify()
 			oldSignature = currentSignature;
 
 			if (currentSignature.replace(/\r/g, "").length > maxLength)
-				document.forms.creator.signature.value = currentSignature.replace(/\r/g, "").substring(0, maxLength);
+				document.forms.creator.signature.value = currentSignature.replace(/\r/g, "").slice(0, maxLength);
 			currentSignature = document.forms.creator.signature.value.replace(/\r/g, "");
 		}
 
@@ -2422,8 +2422,7 @@ function template_profile_avatar_select()
 		cat = $("#cat")[0],
 		file = $("#file")[0],
 		selavatar = "' . $context['avatar_selected'] . '",
-		avatardir = "' . $settings['avatar_url'] . '/",
-		size = avatar.alt.substr(3, 2) + " " + avatar.alt.substr(0, 2) + String.fromCharCode(117, 98, 116);
+		avatardir = "' . $settings['avatar_url'] . '/";
 
 	if (avatar.src.indexOf("blank.gif") > -1)
 		changeSel(selavatar);
@@ -2446,8 +2445,8 @@ function template_profile_avatar_select()
 			for (i = 0; i < files.length; i++)
 				if (files[i].indexOf(val) == 0)
 				{
-					var filename = files[i].substr(files[i].indexOf("/") + 1);
-					var showFilename = filename.substr(0, filename.lastIndexOf("."));
+					var filename = files[i].slice(files[i].indexOf("/") + 1);
+					var showFilename = filename.slice(0, filename.lastIndexOf("."));
 					showFilename = showFilename.replace(/[_]/g, " ");
 
 					file.options[count] = new Option(showFilename, files[i]);
@@ -2481,7 +2480,7 @@ function template_profile_avatar_select()
 
 		$("#avatar").attr({
 			src: avatardir + $(file).val(),
-			alt: file.options[file.selectedIndex].text + (file.options[file.selectedIndex].text == size ? "!" : "")
+			alt: file.options[file.selectedIndex].text
 		}).css({
 			width: "",
 			height: ""

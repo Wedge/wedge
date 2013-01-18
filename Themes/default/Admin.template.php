@@ -1041,7 +1041,7 @@ function template_show_custom_profile()
 	var iNumChecks = document.forms.standardProfileFields.length;
 	for (var i = 0; i < iNumChecks; i++)
 		if (document.forms.standardProfileFields[i].id.indexOf(\'reg_\') == 0)
-			document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.substr(4)).checked;');
+			document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.slice(4)).checked;');
 
 	// Custom fields.
 	template_show_list('custom_profile_fields');

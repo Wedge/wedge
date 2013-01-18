@@ -177,7 +177,7 @@ function template_select()
 			{
 				// Loop through the list to try and find an item to insert after.
 				curList.find("li > div").each(function () {
-					var p = parseInt(this.parentNode.id.substr(curSection.length + 1));
+					var p = parseInt(this.parentNode.id.slice(curSection.length + 1));
 					if (p < curId)
 					{
 						// This would be a nice place to insert the row.

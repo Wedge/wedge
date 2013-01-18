@@ -24,7 +24,7 @@ function template_main()
 		if (pollOptionNum == 0)
 		{
 			for (var i = 0; i < document.forms.postmodify.elements.length; i++)
-				if (document.forms.postmodify.elements[i].id.substr(0, 8) == "options-")
+				if (document.forms.postmodify.elements[i].id.slice(0, 8) == "options-")
 					pollOptionNum++;
 		}
 		pollOptionNum++;

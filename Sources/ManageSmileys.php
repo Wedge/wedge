@@ -1054,8 +1054,8 @@ function EditSmileys()
 
 		if (knownSmileys.length == 0)
 			for (i = 0, n = document.images.length; i < n; i++)
-				if (document.images[i].id.substr(0, 6) == \'smiley\')
-					knownSmileys.push(document.images[i].id.substr(6));
+				if (document.images[i].id.slice(0, 6) == \'smiley\')
+					knownSmileys.push(document.images[i].id.slice(6));
 
 		for (i = 0; i < knownSmileys.length; i++)
 			$("#smiley" + knownSmileys[i]).attr("src", "' . $settings['smileys_url'] . '/" + newSet + "/" + document.forms.smileyForm["smileys[" + knownSmileys[i] + "][filename]"].value);
