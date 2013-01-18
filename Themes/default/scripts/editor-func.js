@@ -29,7 +29,7 @@ function splitQuote(e)
 	}
 
 	var
-		selection = this.value.substr(0, selectionStart), lcs = selection.toLowerCase(), nextBreak, has_slash,
+		selection = this.value.slice(0, selectionStart), lcs = selection.toLowerCase(), nextBreak, has_slash,
 		lcsl = lcs.length, pos = 0, tag, bbcode, taglist = [], baretags = [], baretag, extag, log_tags = true;
 
 	// Build a list of opened tags...
@@ -38,10 +38,10 @@ function splitQuote(e)
 		pos = lcs.indexOf('[', pos) + 1;
 		if (!pos)
 			break;
-		tag = selection.substr(pos, lcs.indexOf(']', pos + 1) - pos);
+		tag = selection.slice(pos, lcs.indexOf(']', pos + 1));
 		has_slash = tag[0] == '/';
-		bbcode = tag.substr(+has_slash);
-		baretag = ((nextBreak = /[\s=]/.exec(bbcode)) ? bbcode.substr(0, bbcode.indexOf(nextBreak)) : bbcode).toLowerCase();
+		bbcode = tag.slice(+has_slash);
+		baretag = ((nextBreak = /[\s=]/.exec(bbcode)) ? bbcode.slice(0, bbcode.indexOf(nextBreak)) : bbcode).toLowerCase();
 
 		// Is it a closer tag?
 		if (has_slash)

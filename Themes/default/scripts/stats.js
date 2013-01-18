@@ -30,7 +30,7 @@ function weStatsCenter(oOptions)
 		$.get(weUrl('action=stats;collapse=' + oToggle.opt.sMonthId + ';xml'));
 
 		// Remove the month rows from the year toggle.
-		var aNewContainers = [], oYearToggle = oYears[oToggle.opt.sMonthId.substr(0, 4)].oToggle;
+		var aNewContainers = [], oYearToggle = oYears[oToggle.opt.sMonthId.slice(0, 4)].oToggle;
 
 		$.each(oYearToggle.opt.aSwapContainers, function (i, container) {
 			if (!in_array(container, oToggle.opt.aSwapContainers))
@@ -58,7 +58,7 @@ function weStatsCenter(oOptions)
 				$('month', oXMLDoc).each(function () {
 					var
 						sMonthId = this.getAttribute('id'),
-						sYearId = sMonthId.substr(0, 4),
+						sYearId = sMonthId.slice(0, 4),
 						sStart = $('#tr_month_' + sMonthId)[0].rowIndex + 1;
 
 					// Within the current months, check out all the days.

@@ -146,7 +146,7 @@ weAutoSuggest.prototype.handleSubmit = function()
 	{
 		var sLastSearch = this.sLastSearch.toLowerCase(), entry = this.aCache[i];
 
-		if (sLastSearch == entry.sItemName.toLowerCase().substr(0, sLastSearch.length))
+		if (sLastSearch == entry.sItemName.toLowerCase().slice(0, sLastSearch.length))
 		{
 			// Exact match?
 			if (sLastSearch.length == entry.sItemName.length)
@@ -238,7 +238,7 @@ weAutoSuggest.prototype.removeLastSearchString = function ()
 		}
 
 		// Now remove anything from iStartString upwards.
-		this.oTextHandle.val(this.oTextHandle.val().substr(0, iStartString));
+		this.oTextHandle.val(this.oTextHandle.val().slice(0, iStartString));
 	}
 	// Just take it all.
 	else
@@ -410,14 +410,14 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 	// We're only actually interested in the last string.
 	var sSearchString = this.oTextHandle.val().replace(/^("[^"]+",[ ]*)+/, '').replace(/^([^,]+,[ ]*)+/, '');
 	if (sSearchString[0] == '"')
-		sSearchString = sSearchString.substr(1);
+		sSearchString = sSearchString.slice(1);
 
 	// Stop replication ASAP.
 	var sRealLastSearch = this.sLastSearch;
 	this.sLastSearch = sSearchString;
 
 	// Either nothing or we've completed a sentence.
-	if (sSearchString == '' || sSearchString.substr(sSearchString.length - 1) == '"')
+	if (sSearchString == '' || sSearchString.slice(-1) == '"')
 		return this.populateDiv([]);
 
 	// Nothing?
@@ -432,11 +432,11 @@ weAutoSuggest.prototype.autoSuggestUpdate = function ()
 		this.autoSuggestHide();
 		return true;
 	}
-	else if (sSearchString.substr(0, sRealLastSearch.length) == sRealLastSearch)
+	else if (sSearchString.slice(0, sRealLastSearch.length) == sRealLastSearch)
 	{
 		// Instead of hitting the server again, just narrow down the results...
 		for (var aNewCache = [], j = 0, k = 0; k < this.aCache.length; k++)
-			if (this.aCache[k].sItemName.substr(0, sSearchString.length).toLowerCase() == sLowercaseSearch)
+			if (this.aCache[k].sItemName.slice(0, sSearchString.length).toLowerCase() == sLowercaseSearch)
 				aNewCache[j++] = this.aCache[k];
 
 		this.aCache = [];

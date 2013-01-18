@@ -72,7 +72,7 @@
 			var qs			= styles.match(  /@media[^\{]+\{([^\{\}]*\{[^\}\{]*\})+/gi ),
 				ql			= qs && qs.length || 0,
 				//try to get CSS path
-				href		= href.substr( 0, href.lastIndexOf( "/" )),
+				href		= href.slice( 0, href.lastIndexOf( "/" )),
 				repUrls		= function( css ){
 					return css.replace( /(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g, "$1" + href + "$2$3" );
 				},

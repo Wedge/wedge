@@ -164,7 +164,7 @@ function addPollOption()
 {
 	if (!pollOptionNum)
 		$.each(postmod.elements, function () {
-			if (this.id.substr(0, 8) == 'options-')
+			if (this.id.slice(0, 8) == 'options-')
 			{
 				pollOptionNum++;
 				pollTabIndex = this.tabIndex;
@@ -203,7 +203,7 @@ function wedgeAttachSelect(opt)
 			return false; // Pfft, didn't specify anything, or no extension
 		}
 
-		var extension = (filename.substr(dot + 1, filename.length)).toLowerCase();
+		var extension = filename.slice(dot + 1).toLowerCase();
 		if (!in_array(extension, opt.attachment_ext))
 		{
 			message_ext_error_final = opt.message_ext_error.replace('{ext}', extension);

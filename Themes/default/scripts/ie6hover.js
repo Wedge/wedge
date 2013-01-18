@@ -80,7 +80,7 @@
 
 						// Make sure to catch any remaining bit of CSS text that wasn't matched
 						if (textIndex < text.length)
-							newText.push(text.substr(textIndex));
+							newText.push(text.slice(textIndex));
 
 						// Add a new CSS rule at the same place as the existing rule to keep CSS inheritance working
 						text = newText.join('');

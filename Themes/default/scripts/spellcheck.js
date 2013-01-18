@@ -50,16 +50,16 @@ function spellCheck(formName, fieldName)
 			continue;
 
 		// Ignore code blocks.
-		if (aResult[0].substr(0, 5).toLowerCase() == '[code')
+		if (aResult[0].slice(0, 5).toLowerCase() == '[code')
 			bInCode = true;
 
 		// Glad we're out of that code block!
-		else if (bInCode && aResult[0].substr(0, 7).toLowerCase() == '[/code]')
+		else if (bInCode && aResult[0].slice(0, 7).toLowerCase() == '[/code]')
 			bInCode = false;
 
 		// Now let's get to business.
 		else if (!bInCode && aResult[0].match(/^[^[<]/) && aResult[0].toUpperCase() != aResult[0])
-			aWords.push(aResult[0].substr(iOffset1, iOffset2 - iOffset1 + 1) + '|' + (iOffset1 + sText.substr(0, aResult.index).length) + '|' + (iOffset2 + sText.substr(0, aResult.index).length));
+			aWords.push(aResult[0].slice(iOffset1, iOffset2 + 1) + '|' + (iOffset1 + aResult.index) + '|' + (iOffset2 + aResult.index));
 	}
 
 	// Open the window...

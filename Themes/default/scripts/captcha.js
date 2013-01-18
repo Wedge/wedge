@@ -17,12 +17,12 @@ function weCaptcha(imageURL, uniqueID)
 	{
 		// Make sure we are using a new rand code.
 		var
-			new_url = imageURL.substr(0, imageURL.indexOf('rand=') + 5),
+			new_url = imageURL.slice(0, imageURL.indexOf('rand=') + 5),
 			hexstr = '0123456789abcdef';
 
 		// Quick and dirty way of converting decimal to hex
 		for (var i = 0; i < 32; i++)
-			new_url += hexstr.substr(Math.floor(Math.random() * 16), 1);
+			new_url += hexstr[Math.floor(Math.random() * 16)];
 
 		$('#verification_image_' + uniqueID).attr('src', new_url);
 

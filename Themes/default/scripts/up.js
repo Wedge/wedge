@@ -110,7 +110,7 @@ var Yup = {
 		for (i in myFiles)
 		{
 			var file = event.fileList[myFiles[i][0]];
-			var exten = file.name.substr(file.name.lastIndexOf('.') + 1, file.name.length), err = '';
+			var exten = file.name.slice(file.name.lastIndexOf('.') + 1), err = '';
 
 			if (file.size >  Yup.php_limit)
 				err = 'tl_php';

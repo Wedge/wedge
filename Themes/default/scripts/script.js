@@ -430,7 +430,7 @@ function weSelectText(oCurElement)
 				.css(is_top ? { marginTop: is_ie6 || is_ie7 ? 12 : 39 } : { marginLeft: w })
 				.animate(is_top ? { marginTop: is_ie6 || is_ie7 ? 6 : 33 } : { marginLeft: w - 5 });
 
-		clearTimeout(menu_delay[id.substr(2)]);
+		clearTimeout(menu_delay[id.slice(2)]);
 
 		$(this).siblings('li').each(function () { menu_hide_children(this.id); });
 	},
@@ -447,7 +447,7 @@ function weSelectText(oCurElement)
 		var id = this.id;
 		$(e.relatedTarget).closest('.menu').length ?
 			menu_hide_children(id) :
-			menu_delay[id.substr(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
+			menu_delay[id.slice(2)] = setTimeout(function () { menu_hide_children(id); }, 250);
 	},
 
 	// Hide all children menus.
@@ -491,7 +491,7 @@ $(function ()
 	$('.bbc_link').each(function () {
 		var link = $(this).html().php_unhtmlspecialchars();
 		if (link.indexOf('://') != -1 && link.length > 50)
-			$(this).html(link.substr(0, 25) + '<span><span>' + link.substr(25, link.length - 50) + '</span></span><wbr>' + link.substr(link.length - 25));
+			$(this).html(link.slice(0, 25) + '<span><span>' + link.slice(25, -25) + '</span></span><wbr>' + link.slice(-25));
 	});
 
 	// Transform existing select boxes into our super boxes.

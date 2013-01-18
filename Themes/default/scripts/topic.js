@@ -141,7 +141,7 @@ function QuickReply(opt)
 	// When a user presses quote, put it in the quick reply box (if expanded).
 	this.quote = function (iMessage)
 	{
-		var iMessageId = $(iMessage).closest('.root').attr('id').substr(3);
+		var iMessageId = $(iMessage).closest('.root').attr('id').slice(3);
 
 		if (!bCollapsed)
 		{
@@ -223,7 +223,7 @@ function QuickModify(opt)
 	// Function called when a user presses the edit button.
 	this.modifyMsg = function (iMessage)
 	{
-		var iMessageId = $(iMessage).closest('.root').attr('id').substr(3);
+		var iMessageId = $(iMessage).closest('.root').attr('id').slice(3);
 
 		// Did we press the Quick Modify button by error while trying to submit? Oops.
 		if (sCurMessageId == iMessageId)
@@ -414,7 +414,7 @@ function InTopicModeration(opt)
 
 	// Add checkboxes to all the messages.
 	$('.' + opt.sClass).each(function () {
-		$('<input type="checkbox" name="msgs[]" value="' + this.id.substr(17) + '"></input>')
+		$('<input type="checkbox" name="msgs[]" value="' + this.id.slice(17) + '"></input>')
 		.click(handleClick)
 		.appendTo(this);
 	});
@@ -494,7 +494,7 @@ function IconList()
 
 	// Replace all message icons by icons with hoverable and clickable div's.
 	$('.can-mod').each(function () {
-		var id = this.id.substr(3);
+		var id = this.id.slice(3);
 		$(this)
 			.find('.messageicon')
 			.addClass('iconbox')
@@ -539,14 +539,14 @@ $.fn.mime = function (oList, oStrings, bUseDataId)
 					is_right_side = $mime.css('textAlign') === 'right',
 					sHTML = '', href = $mime[0].href,
 					// Extract the context id from the parent message
-					id = bUseDataId ? $mime.data('id') : $mime.closest('.root').attr('id').substr(3);
+					id = bUseDataId ? $mime.data('id') : $mime.closest('.root').attr('id').slice(3);
 
 				$.each(oList[id], function ()
 				{
-					var pms = oStrings[this.substr(0, 2)],
+					var pms = oStrings[this.slice(0, 2)],
 						sLink = pms[2] ? pms[2].wereplace({
 							id: id,
-							special: this.substr(3)
+							special: this.slice(3)
 						}) : href;
 
 					sHTML += '<li><a href="' + (sLink.charAt(0) == '?' ? href : '') + sLink + '"'
@@ -555,7 +555,7 @@ $.fn.mime = function (oList, oStrings, bUseDataId)
 						+ (pms[1] ? ' title="' + pms[1] + '"' : '')
 						+ '>' + pms[0].wereplace({
 							id: id,
-							special: this.substr(3)
+							special: this.slice(3)
 						}) + '</a></li>';
 				});
 

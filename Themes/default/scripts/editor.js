@@ -173,9 +173,9 @@ function weEditor(opt)
 				var sUrlInfo = this.getAttribute('href');
 				if (sUrlInfo)
 				{
-					if (sUrlInfo.substr(0, 3) == 'ftp')
+					if (sUrlInfo.slice(0, 3) == 'ftp')
 						sCrumbName = 'ftp';
-					else if (sUrlInfo.substr(0, 6) == 'mailto')
+					else if (sUrlInfo.slice(0, 6) == 'mailto')
 						sCrumbName = 'email';
 				}
 			}
@@ -271,10 +271,10 @@ function weEditor(opt)
 		else if ('selectionStart' in oTextHandle)
 		{
 			var
-				begin = oTextHandle.value.substr(0, oTextHandle.selectionStart),
+				begin = oTextHandle.value.slice(0, oTextHandle.selectionStart),
 				scrollPos = oTextHandle.scrollTop;
 
-			oTextHandle.value = begin + text + oTextHandle.value.substr(oTextHandle.selectionEnd);
+			oTextHandle.value = begin + text + oTextHandle.value.slice(oTextHandle.selectionEnd);
 
 			if (oTextHandle.setSelectionRange)
 			{
@@ -322,20 +322,17 @@ function weEditor(opt)
 
 			// This is where the insertion actually happens.
 			oTextHandle.value =
-				oTextHandle.value.substr(0, selectionStart)
-				+ text1
-				+ oTextHandle.value.substr(selectionStart, selectionLength)
-				+ text2
-				+ oTextHandle.value.substr(oTextHandle.selectionEnd);
+				oTextHandle.value.slice(0, selectionStart) + text1
+				+ oTextHandle.value.slice(selectionStart, oTextHandle.selectionEnd) + text2
+				+ oTextHandle.value.slice(oTextHandle.selectionEnd);
 
+			// The selection values are now reset, so we'll have to use the ones we cached in the above var.
 			if (oTextHandle.setSelectionRange)
 			{
-				var txlen1 = text1.length, txlen2 = text2.length;
-
 				if (!selectionLength)
-					oTextHandle.setSelectionRange(selectionStart + txlen1, selectionStart + txlen1);
+					oTextHandle.setSelectionRange(selectionStart + text1.length, selectionStart + text1.length);
 				else
-					oTextHandle.setSelectionRange(selectionStart, selectionStart + txlen1 + txlen2 + selectionLength);
+					oTextHandle.setSelectionRange(selectionStart, selectionStart + text1.length + text2.length + selectionLength);
 				oTextHandle.focus();
 			}
 			oTextHandle.scrollTop = scrollPos;
@@ -399,13 +396,13 @@ function weEditor(opt)
 				else
 				{
 					iMoveCursorBack = iMoveCursorBack || 0;
-					this.we_execCommand('inserthtml', false, sText.substr(0, sText.length - iMoveCursorBack));
+					this.we_execCommand('inserthtml', false, sText.slice(0, -iMoveCursorBack));
 
 					// Does the cursor needs to be repositioned?
 					if (iMoveCursorBack)
 					{
 						var oSelection = getSelect();
-						oSelection.getRangeAt(0).insertNode(oFrameDoc.createTextNode(sText.substr(sText.length - iMoveCursorBack)));
+						oSelection.getRangeAt(0).insertNode(oFrameDoc.createTextNode(sText.slice(-iMoveCursorBack)));
 					}
 				}
 			}
@@ -662,7 +659,7 @@ function weEditor(opt)
 				cText = oText[0].caretPos.text;
 
 			else if ('selectionStart' in oText[0])
-				cText = oText[0].value.substr(oText[0].selectionStart, oText[0].selectionEnd - oText[0].selectionStart);
+				cText = oText[0].value.slice(oText[0].selectionStart, oText[0].selectionEnd);
 
 			else
 				return;

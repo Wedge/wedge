@@ -1721,10 +1721,11 @@ function weInitJS()
 		);
 	else
 	{
+		$protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 'https://' : 'http://';
 		$remote = array(
-			'google' =>		'http://ajax.googleapis.com/ajax/libs/jquery/' . $version . '/jquery.min.js',
-			'jquery' =>		'http://code.jquery.com/jquery-' . $version . '.min.js',
-			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jquery/jquery-' . $version . '.min.js',
+			'google' =>		$protocol . 'ajax.googleapis.com/ajax/libs/jquery/' . $version . '/jquery.min.js',
+			'microsoft' =>	$protocol . 'ajax.aspnetcdn.com/ajax/jquery/jquery-' . $version . '.min.js',
+			'jquery' =>		$protocol . 'code.jquery.com/jquery-' . $version . '.min.js',
 		);
 		$context['remote_js_files'] = array($remote[$settings['jquery_origin']]);
 		$context['main_js_files'] = array(

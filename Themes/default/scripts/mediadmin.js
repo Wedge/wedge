@@ -35,7 +35,7 @@ function admin_toggle(id)
 function admin_toggle_all()
 {
 	$('tr[id^="tr_expand"]').each(function () {
-		admin_toggle(this.id.substr(10));
+		admin_toggle(this.id.slice(10));
 	});
 
 	return false;

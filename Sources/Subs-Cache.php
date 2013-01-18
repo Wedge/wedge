@@ -249,10 +249,11 @@ function add_jquery_ui()
 		add_js_file('scripts/jquery-ui-' . $version . '.js');
 	else
 	{
+		$protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 'https://' : 'http://';
 		$remote = array(
-			'google' =>		'http://ajax.googleapis.com/ajax/libs/jqueryui/' . $version . '/jquery-ui.min.js',
-			'jquery' =>		'http://code.jquery.com/ui/' . $version . '/jquery-ui.min.js',
-			'microsoft' =>	'http://ajax.aspnetcdn.com/ajax/jquery.ui/' . $version . '/jquery-ui.min.js',
+			'google' =>		$protocol . 'ajax.googleapis.com/ajax/libs/jqueryui/' . $version . '/jquery-ui.min.js',
+			'microsoft' =>	$protocol . 'ajax.aspnetcdn.com/ajax/jquery.ui/' . $version . '/jquery-ui.min.js',
+			'jquery' =>		$protocol . 'code.jquery.com/ui/' . $version . '/jquery-ui.min.js',
 		);
 		add_js_file($remote[$settings['jquery_origin']], true);
 	}
