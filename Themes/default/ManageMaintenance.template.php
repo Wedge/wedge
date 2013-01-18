@@ -391,9 +391,7 @@ function template_optimize()
 
 	// How did we go?
 	echo '
-				<br>', $context['num_tables_optimized'] == 0 ? $txt['database_already_optimized'] : $context['num_tables_optimized'] . ' ' . $txt['database_optimized'];
-
-	echo '
+				<br>', number_context('database_optimized', $context['num_tables_optimized']), '
 			</p>
 			<p><a href="', $scripturl, '?action=admin;area=maintain">', $txt['maintain_return'], '</a></p>
 		</div>
