@@ -25,9 +25,10 @@ if (!defined('WEDGE'))
  * @param mixed $smileys Whether smileys should be parsed too, transmitted to parse_bbc()
  * @param string $cache_id If specified, a quasi-unique key for the item being parsed, transmitted to parse_bbc()
  * @param bool $short_list A boolean, true by default, specifying whether to disable the parsing of inline bbcode that is scarcely used, or that could slightly disrupt layout, such as colors, sub and sup.
+ * @param int $owner The user id of the owner, if applicable and appropriate.
  * @return mixed See parse_bbc()
  */
-function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list = true)
+function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list = true, $owner = 0)
 {
 	return parse_bbc($message, $smileys, $cache_id, $short_list ?
 		array(
@@ -38,7 +39,7 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
 			'b', 'u', 'i', 's',
 			'email', 'ftp', 'iurl', 'url', 'nobbc',
 			'abbr', 'me', 'sub', 'sup', 'time', 'color',
-		)
+		), $owner
 	);
 }
 
@@ -54,11 +55,12 @@ function parse_bbc_inline($message, $smileys = true, $cache_id = '', $short_list
  * @param mixed $smileys Whether smileys should be parsed too, prior to (and in addition to) any bbcode, defaults to true. Nominally this is a boolean value, true for 'parse smileys', false for not, however the function also accepts the string 'print', for parsing in the print-page environment, which disables non printable tags and smileys.
  * @param string $cache_id If specified, a quasi-unique key for the item being parsed, so that if it took over 0.05 seconds, it can be cached. (The final key used for the cache takes the supplied key and includes details such as the user's locale and time offsets, an MD5 digest of the message and other details that potentially affect the way parsing occurs)
  * @param array $parse_tags An array of tags that will be allowed for this parse only. (This overrides any user settings for what is and is not allowed. Additionally, runs with this set are never cached, regardless of cache id being set)
+ * @param int $owner The user id of the owner, if applicable and appropriate.
  * @return mixed If $message was boolean false, the return set is the master list of available bbcode, otherwise it is the parsed message.
  */
-function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
+function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array(), $owner = 0)
 {
-	global $txt, $context, $settings;
+	global $txt, $context, $settings, $user_profile;
 	static $bbc_codes = array(), $bbc_types = array(), $itemcodes = array(), $no_autolink_tags = array();
 	static $master_codes = null, $strlower = null, $disabled, $feet = 0;
 
@@ -1030,7 +1032,16 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	}
 
 	// Is there anything we want to do just before we go home?
-	call_hook('post_bbc_parse', array(&$message, &$smileys, $cache_id));
+	call_hook('post_bbc_parse', array(&$message, &$smileys, $cache_id, $parse_tags, $owner));
+
+	// There might possibly be some things to do.
+	if (!empty($owner) && !empty($user_profile[$owner]))
+	{
+		// Have you been naughty? Well, have you?
+		// !!! Note that there might be other punishments yet, so leave these as two separate ifs.
+		if (!empty($user_profile[$owner]['sanctions']['disemvowel']) && $user_profile[$owner]['sanctions']['disemvowel'] < time())
+			$message = disemvowel($message);
+	}
 
 	// Cache the output if it took some time...
 	if (isset($cache_key, $cache_t) && microtime(true) - $cache_t > 0.05)
@@ -1297,4 +1308,77 @@ function &censorText(&$text, $force = false)
 	// Censoring isn't so very complicated :P.
 	$text = preg_replace($censor_vulgar, $censor_proper, $text);
 	return $text;
+}
+
+/**
+ * Attempts to strip all the vowels out of a post, usually for troublemakers, leaving their posts readable but easily ignorable.
+ *
+ * May exhibit strange behaviour with accented characters. Not sure there's a good way around that.
+ *
+ * @param string The message, should be already mostly HTML parsed, just needing final clean-up before leaving the bbc parser
+ * @return string The message, with hopefully the best complement of vowels removed
+ */
+function disemvowel($message)
+{
+	$parts = preg_split('~(<.+?>)~', $message, null, PREG_SPLIT_DELIM_CAPTURE);
+	$inside_script = $inside_cdata = $inside_comment = false;
+	foreach ($parts as $id => &$part)
+	{
+		if (empty($part))
+			continue;
+
+		// We need to do special handling for funky tags because of plugin authors and crazy admins who inject scripts and other badness via bbcodes.
+		if (stripos($part, '<script') === 0)
+		{
+			$inside_script = true;
+			continue;
+		}
+		elseif ($inside_script)
+		{
+			if (stripos($part, '</script') !== false)
+				$inside_script = false;
+
+			continue;
+		}
+
+		// We don't have to worry about comments most of the time because the only normal use is to insulate script code - but that should be covered by the above
+		if (stripos($part, '<!--') === 0)
+		{
+			$inside_comment = true;
+			continue;
+		}
+		elseif ($inside_comment)
+		{
+			if (stripos($part, '-->') !== false)
+				$inside_comment = false;
+
+			continue;
+		}
+
+		// CDATA is rare but we gotta check.
+		if (stripos($part, '<![CDATA[') === 0)
+		{
+			$inside_cdata = true;
+			continue;
+		}
+		elseif ($inside_comment)
+		{
+			if (stripos($part, ']]>') !== false)
+				$inside_cdata = false;
+
+			continue;
+		}
+
+		// Now that icky is out the way
+		if ($part[0] === '<')
+			continue;
+
+		// Now, comes Mr Super Happy Fun Time: parse all entities out, try to transliterate where possible, strip the vowels, then re-entify it. Not cheap, either.
+		$part = html_entity_decode($part, ENT_QUOTES, 'UTF-8');
+		if (is_callable('iconv'))
+			$part = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $part);
+		$part = htmlspecialchars(preg_replace('~[aeiou]~i', '', $part), ENT_QUOTES, 'UTF-8');
+	}
+
+	return implode('', $parts);
 }

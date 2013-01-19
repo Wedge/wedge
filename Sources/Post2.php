@@ -210,7 +210,7 @@ function Post2()
 		}
 
 		// So you wanna (un)pin this... Let's see.
-		if (isset($_POST['pin']) && ($_POST['pin'] == $topic_info['is_pinned'] || !allowedTo('pin_topic')))
+		if (isset($_POST['pin']) && ((empty($_POST['pin']) == empty($topic_info['is_pinned'])) || !allowedTo('pin_topic')))
 			unset($_POST['pin']);
 
 		if (isset($_REQUEST['draft']))
@@ -317,7 +317,7 @@ function Post2()
 		}
 
 		// Change the pinned status of this topic?
-		if (isset($_POST['pin']) && (!allowedTo('pin_topic') || $_POST['pin'] == $topic_info['is_pinned']))
+		if (isset($_POST['pin']) && (!allowedTo('pin_topic') || (empty($_POST['pin']) == empty($topic_info['is_pinned']))))
 			unset($_POST['pin']);
 
 		if ($row['id_member'] == we::$id && !allowedTo('modify_any'))
@@ -512,7 +512,7 @@ function Post2()
 		elseif (isset($doModeration['unlock']))
 			$_POST['lock'] = 0;
 
-		if (isset($doModeration['pin']))
+		if (isset($doModeration['pin']) && empty($topic_info['is_pinned'])) // If it's unpinned, that's fine, but if it's already pinned, it might have some... interesting effects to drop its position automatically.
 			$_POST['pin'] = 1;
 		elseif (isset($doModeration['unpin']))
 			$_POST['pin'] = 0;

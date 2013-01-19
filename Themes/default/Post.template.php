@@ -615,3 +615,43 @@ function template_spellcheck()
 </body>
 </html>';
 }
+
+// For ordering pinned topics. Perhaps should be elsewhere?
+function template_order_pinned()
+{
+	global $context, $txt;
+
+	echo '
+		<we:cat>', $txt['order_pinned_topics'], '</we:cat>
+		<p class="description">', $txt['order_pinned_topics_desc'], '</p>
+		<div class="windowbg2 wrc">
+			<form action="', $context['this_url'], '" method="post">
+				<ul id="sortable" class="topic_table">';
+	foreach ($context['pinned_topics'] as $topic)
+		echo '
+					<li class="windowbg2 subject pinned">
+						<span class="handle"></span>
+						<div class="floatleft w50">
+							<strong><a href="<URL>?topic=', $topic['id_topic'], '.0" target="_blank">', $topic['subject'], '</a></strong>
+							<p>', $txt['started_by'], ' ', !empty($topic['starter_id']) ? '<a href="<URL>?action=profile;u=' . $topic['starter_id'] . '">' . $topic['starter_name'] . '</a>' : $topic['starter_name'], '</p>
+						</div>
+						<div class="floatleft lastpost">
+							<p>', sprintf($txt['order_last_post_by'], !empty($topic['updated_id']) ? '<a href="<URL>?action=profile;u=' . $topic['updated_id'] . '">' . $topic['updated_name'] . '</a>' : $topic['updated_name'], on_timeformat($topic['poster_time'])), '</p>
+						</div>
+						<br class="clear">
+						<input type="hidden" name="order[]" value="', $topic['id_topic'], '">
+					</li>';
+	echo '
+				</ul>
+				<br>
+				<div class="right">
+					<input type="submit" value="', $txt['save'], '" class="submit">
+				</div>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			</form>
+		</div>';
+
+	add_js('
+		$(\'#sortable\').sortable({ handle: \'.handle\' });
+		$(\'#sortable\').disableSelection();');
+}

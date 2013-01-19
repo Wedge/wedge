@@ -45,7 +45,7 @@ function JSModify()
 	// Assume the first message if no message ID was given.
 	$request = wesql::query('
 			SELECT
-				t.locked, t.num_replies, t.id_member_started, t.id_first_msg,
+				t.locked, t.num_replies, t.id_member_started, t.id_first_msg, t.is_pinned,
 				m.id_msg, m.id_member, m.poster_time, m.subject, m.smileys_enabled, m.body, m.icon,
 				m.modified_time, m.modified_name, m.modified_member, m.approved
 			FROM {db_prefix}messages AS m
@@ -166,7 +166,7 @@ function JSModify()
 			'id' => $topic,
 			'board' => $board,
 			'lock_mode' => isset($_POST['lock']) ? (int) $_POST['lock'] : null,
-			'pin_mode' => isset($_POST['pin']) ? (int) $_POST['pin'] : null,
+			'pin_mode' => isset($_POST['pin']) && !(empty($_POST['pin']) == empty($row['is_pinned'])) ? (int) $_POST['pin'] : null,
 			'mark_as_read' => true,
 		);
 		$posterOptions = array();

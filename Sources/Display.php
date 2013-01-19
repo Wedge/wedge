@@ -308,7 +308,7 @@ function Display()
 					FROM {db_prefix}topics AS t' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
 					WHERE {query_see_topic}
 						AND t.id_board = {int:current_board}
-						AND ' . $sort . ' ' . $sort_methods[$sort_by]['cmp'] . '
+						AND ((' . $sort . ' ' . $sort_methods[$sort_by]['cmp'] . ' AND t.is_pinned >= {int:current_pinned}) OR t.is_pinned > {int:current_pinned})
 					ORDER BY t.is_pinned' . ($ascending ? ' DESC' : '') . ', ' . $sort . ($ascending ? ' DESC' : '') . '
 					LIMIT 1
 				)
@@ -323,7 +323,7 @@ function Display()
 					FROM {db_prefix}topics AS t' . (isset($sort_methods[$sort_by]['join']) ? $sort_methods[$sort_by]['join'] : '') . '
 					WHERE {query_see_topic}
 						AND t.id_board = {int:current_board}
-						AND ' . $sort . ' ' . str_replace('>', '<', $sort_methods[$sort_by]['cmp']) . '
+						AND ((' . $sort . ' ' . str_replace('>', '<', $sort_methods[$sort_by]['cmp']) . ' AND t.is_pinned <= {int:current_pinned}) OR t.is_pinned < {int:current_pinned})
 					ORDER BY t.is_pinned' . (!$ascending ? ' DESC' : '') . ', ' . $sort . (!$ascending ? ' DESC' : '') . '
 					LIMIT 1
 				)
@@ -337,6 +337,7 @@ function Display()
 				'current_views' => $topicinfo['num_views'],
 				'current_first_msg' => $topicinfo['id_first_msg'],
 				'current_last_msg' => $topicinfo['id_last_msg'],
+				'current_pinned' => $topicinfo['is_pinned'],
 			)
 		);
 
@@ -1341,7 +1342,7 @@ function prepareDisplayContext($reset = false)
 		$context['current_post_length'] = 0;
 
 	// Run BBC interpreter on the message.
-	$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
+	$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg'], array(), $message['id_member']);
 
 	// Compose the memory eat- I mean message array.
 	$output = array(
