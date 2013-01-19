@@ -485,9 +485,6 @@ function EditBoard()
 	}
 	wesql::free_result($request);
 
-	if (empty($settings['allow_guestAccess']))
-		unset($context['groups'][-1]);
-
 	// For new boards, we need to simply set up defaults for each of the groups
 	$context['view_enter_same'] = true;
 	$context['need_deny_perm'] = false;
@@ -529,6 +526,9 @@ function EditBoard()
 				$context['groups'][$id_group]['enter_perm'] = 'disallow';
 		}
 	}
+
+	if (empty($settings['allow_guestAccess']))
+		unset($context['groups'][-1]);
 
 	// Category doesn't exist, man... sorry.
 	if (!isset($boardList[$curBoard['category']]))
