@@ -275,7 +275,7 @@ $window_bg2 = #e8ebee
 			text-decoration: none
 
 @if ie[-9]
-	.catbase, body, #upper_section .frame, #upper_section h1
+	.catbase, body, #header, #navi, #footer, #upper_section .frame, #upper_section h1
 		filter: none
 
 	// .lightgrad implies a gradient, which triggers hasLayout for IE -- not good in menus!

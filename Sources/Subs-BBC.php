@@ -200,7 +200,8 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	}
 
 	// Purify quotes. Whitespace is trimmed from both inside and outside them.
-	$message = preg_replace('~(?:<br>|&nbsp;|\s)*(\[noae])?\[(/?)quote\b([^]]*)](\[/noae])?(?:<br>|&nbsp;|\s)*~is', '$1[$2quote$3]$4', $message);
+	if (empty($parse_tags))
+		$message = preg_replace('~(?:<br>|&nbsp;|\s)*(\[noae])?\[(/?)quote\b([^]]*)](\[/noae])?(?:<br>|&nbsp;|\s)*~is', '$1[$2quote$3]$4', $message);
 
 	// !! We could do the same for images..?
 	//	$message = preg_replace('~(?:<br>|&nbsp;|\s)*(\[url=[^]]*?)?\[img\b([^]]*)]([^\[]+?)\[/img](\[/url])?(<br>|&nbsp;|\s)*~is', '$1[img$2]$3[/img]$4', $message);

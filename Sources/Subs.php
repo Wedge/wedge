@@ -797,19 +797,14 @@ function forum_time($use_user_offset = true, $timestamp = null)
 /**
  * Reconverts a number of the translations performed by {@link preparsecode()} with respect to HTML entity characters (e.g. angle brackets, quotes, apostrophes)
  *
- * This function effectively performs mostly as htmlspecialchars_decode(ENT_QUOTES) for the important characters, however it also adds the apostrophe and non-breaking spaces.
+ * This function effectively performs htmlspecialchars_decode(ENT_QUOTES) for the important characters, adding to it the apostrophe and non-breaking spaces.
  *
  * @param string $string A string that has been converted through {@link preparsecode()} previously; this ensures the common HTML entities, non breaking spaces and apostrophes are not subject to double conversion or being over-escaped when submitted back to the editor component.
  * @return string The string, with the characters converted back.
  */
 function un_htmlspecialchars($string)
 {
-	static $translation;
-
-	if (!isset($translation))
-		$translation = array_flip(get_html_translation_table(HTML_SPECIALCHARS, ENT_QUOTES)) + array('&#039;' => '\'', '&nbsp;' => ' ');
-
-	return strtr($string, $translation);
+	return strtr(htmlspecialchars_decode($string, ENT_QUOTES), array('&#039;' => '\'', '&nbsp;' => ' '));
 }
 
 /**
