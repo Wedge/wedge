@@ -529,6 +529,10 @@ function ob_sessrewrite($buffer)
 	if (!empty($settings['minify_html']))
 		$buffer = preg_replace("~\n\t+~", "\n", $buffer);
 
+	// Strip protocol and/or domain name out of links that share it (them) with the current page's URL.
+	$buffer = preg_replace('~(<[^>]+\s(?:href|src|action)=")' . preg_quote(we::$user['server'], '~') . '/(?!/)~', '$1/', $buffer);
+	$buffer = preg_replace('~(<[^>]+\s(?:href|src|action)=")' . preg_quote(substr(we::$user['server'], 0, strpos(we::$user['server'], '://')), '~') . '://~', '$1//', $buffer);
+
 	// Return the changed buffer, and make a final optimization.
 	return preg_replace("~\n// ]]></script>\n*<script><!-- // --><!\[CDATA\[~", '', $buffer);
 }

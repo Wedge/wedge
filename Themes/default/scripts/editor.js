@@ -706,22 +706,13 @@ function weEditor(opt)
 					// What is this new view we have?
 					this.bRichTextEnabled = $('message', oXMLDoc).attr('view') != '0';
 
-					if (this.bRichTextEnabled)
-					{
-						$Frame.show();
-						oText.hide();
-					}
-					else
-					{
-						sText = sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-						$Frame.hide();
-						oText.show();
-					}
+					$Frame.show();
+					oText.hide();
 
 					// First we focus.
 					this.setFocus();
 
-					this.insertText(sText, true);
+					this.insertText(this.bRichTextEnabled ? sText : sText.php_unhtmlspecialchars(), true);
 
 					// Record the new status.
 					$('#' + opt.sUniqueId + '_mode').val(+this.bRichTextEnabled);
@@ -762,7 +753,7 @@ function weEditor(opt)
 					{
 						// The spellcheckable text.
 						var sText = $('message', oXMLDoc).text();
-						oText.val(sText.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));
+						oText.val(sText.php_unhtmlspecialchars());
 						spellCheck(sFormId, opt.sUniqueId);
 					}
 				}

@@ -489,8 +489,8 @@ $(function ()
 {
 	// Shorten all raw URLs in user content. The spans allow for the actual link to be retained when copying/pasting the page content.
 	$('.bbc_link').each(function () {
-		var html = $(this).html(), link = html.php_unhtmlspecialchars();
-		if (html == this.href && link.length > 50)
+		var link = $(this).text();
+		if (link == this.href && link.length > 50)
 			$(this).html(link.slice(0, 25) + '<span><span>' + link.slice(25, -25) + '</span></span><wbr>' + link.slice(-25));
 	});
 
