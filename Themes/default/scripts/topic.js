@@ -150,7 +150,7 @@ function QuickReply(opt)
 				weUrl('action=quotefast;xml'),
 				{
 					quote: iMessageId,
-					mode: +oEditorHandle_message.bRichTextEnabled
+					mode: +oEditorHandle_message.isWysiwyg
 				},
 				function (XMLDoc)
 				{
@@ -185,6 +185,7 @@ function QuickReply(opt)
 			$('#' + opt.sSmileyDiv).slideDown(500);
 		if (opt.sBbcDiv != '' || opt.sSmileyDiv != '')
 			$('#' + opt.sSwitchMode).slideUp(500);
+		// !!! Are we positive that QuickReply always refers to oEditorHandle_message?
 		if (opt.bUsingWysiwyg)
 			oEditorHandle_message.toggleView(true);
 	};

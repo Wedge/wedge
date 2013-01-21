@@ -1,8 +1,7 @@
 /*!
  * Wedge
  *
- * weEditor manages the post editor for you, both in its plain text and WYSIWTF versions.
- * (I did say WYSIWTF, no typos here.)
+ * weEditor manages the post editor, both in its plain text and WYSIWIG versions.
  *
  * @package wedge
  * @copyright 2010-2013 Wedgeward, wedge.org
@@ -11,7 +10,7 @@
  * @version 0.1
  */
 
-@language index, Post;
+@language Post;
 
 function weEditor(opt)
 {
@@ -19,8 +18,8 @@ function weEditor(opt)
 	 * Global and local variables
 	 */
 
-	this.bRichTextEnabled = !!opt.bWysiwyg;
-	this.bRichTextPossible = !opt.bRichEditOff && (is_ie || is_ff || is_opera || is_webkit) && !(is_ios || is_android);
+	this.isWysiwyg = !!opt.bWysiwyg;
+	this.canWysiwyg = !opt.bWysiwygOff;
 	this.urlTxt = $txt['prompt_text_url'];
 	this.imgTxt = $txt['prompt_text_img'];
 
@@ -94,7 +93,7 @@ function weEditor(opt)
 	// Return the current text.
 	this.getText = function (bPrepareEntities, bModeOverride, undefined)
 	{
-		var sText, bCurMode = bModeOverride !== undefined ? bModeOverride : this.bRichTextEnabled;
+		var sText, bCurMode = bModeOverride !== undefined ? bModeOverride : this.isWysiwyg;
 
 		if (!bCurMode || !oFrameDoc)
 		{
@@ -121,7 +120,7 @@ function weEditor(opt)
 	this.updateEditorControls = function ()
 	{
 		// Everything else is specific to HTML mode.
-		if (!this.bRichTextEnabled)
+		if (!this.isWysiwyg)
 		{
 			// Set none of the buttons active.
 			if (opt.oBBCBox)
@@ -249,7 +248,7 @@ function weEditor(opt)
 	// Set the HTML content to be that of the text box - if we are in wysiwyg mode.
 	this.doSubmit = function ()
 	{
-		if (this.bRichTextEnabled)
+		if (this.isWysiwyg)
 			oText.val($FrameBody.html());
 	};
 
@@ -355,7 +354,7 @@ function weEditor(opt)
 		// Erase it all?
 		if (bClear)
 		{
-			if (this.bRichTextEnabled)
+			if (this.isWysiwyg)
 			{
 				$FrameBody.html(sText);
 
@@ -375,7 +374,7 @@ function weEditor(opt)
 		else
 		{
 			this.setFocus();
-			if (this.bRichTextEnabled)
+			if (this.isWysiwyg)
 			{
 				// IE croaks if you have an image selected and try to insert!
 				if (oFrameDoc.selection && oFrameDoc.selection.type != 'Text' && oFrameDoc.selection.type != 'None' && oFrameDoc.selection.clear)
@@ -396,13 +395,13 @@ function weEditor(opt)
 				else
 				{
 					iMoveCursorBack = iMoveCursorBack || 0;
-					this.we_execCommand('inserthtml', false, sText.slice(0, -iMoveCursorBack));
+					this.we_execCommand('inserthtml', false, sText.slice(0, sText.length - iMoveCursorBack));
 
 					// Does the cursor needs to be repositioned?
 					if (iMoveCursorBack)
 					{
 						var oSelection = getSelect();
-						oSelection.getRangeAt(0).insertNode(oFrameDoc.createTextNode(sText.slice(-iMoveCursorBack)));
+						oSelection.getRangeAt(0).insertNode(oFrameDoc.createTextNode(sText.slice(sText.length - iMoveCursorBack)));
 					}
 				}
 			}
@@ -428,7 +427,7 @@ function weEditor(opt)
 		var handle = oText[0], smileytext = oSmileyProperties[0];
 
 		// In text mode we just add it in as we always did.
-		if (!this.bRichTextEnabled)
+		if (!this.isWysiwyg)
 		{
 			if (handle.createTextRange)
 			{
@@ -460,7 +459,7 @@ function weEditor(opt)
 		else
 		{
 			// In text this is easy...
-			if (!this.bRichTextEnabled)
+			if (!this.isWysiwyg)
 			{
 				// URL popup?
 				if (sCode == 'url')
@@ -534,7 +533,7 @@ function weEditor(opt)
 		// Changing font face?
 		if (oSelectProperties[1] == 'sel_face')
 		{
-			if (!this.bRichTextEnabled)
+			if (!this.isWysiwyg)
 				this.surroundText('[font=' + sValue.replace(/"/, '') + ']', '[/font]');
 			else // WYSIWYG
 				this.we_execCommand('fontname', false, sValue);
@@ -542,7 +541,7 @@ function weEditor(opt)
 		// Font size?
 		else if (oSelectProperties[1] == 'sel_size')
 		{
-			if (!this.bRichTextEnabled)
+			if (!this.isWysiwyg)
 				this.surroundText('[size=' + this.aFontSizes[sValue] + 'pt]', '[/size]');
 			else // WYSIWYG
 				this.insertStyle({ fontSize: this.aFontSizes[sValue] + 'pt' });
@@ -550,13 +549,13 @@ function weEditor(opt)
 		// Or color even?
 		else if (oSelectProperties[1] == 'sel_color')
 		{
-			if (!this.bRichTextEnabled)
+			if (!this.isWysiwyg)
 				this.surroundText('[color=' + sValue + ']', '[/color]');
 			else // WYSIWYG
 				this.we_execCommand('forecolor', false, sValue);
 		}
 
-		if (!this.bRichTextEnabled)
+		if (!this.isWysiwyg)
 			sel.attr('selectedIndex', 0).sb();
 
 		this.updateEditorControls();
@@ -644,7 +643,7 @@ function weEditor(opt)
 	this.removeFormatting = function ()
 	{
 		// Do both at once.
-		if (this.bRichTextEnabled)
+		if (this.isWysiwyg)
 		{
 			this.we_execCommand('removeFormat');
 			this.we_execCommand('unlink');
@@ -684,14 +683,11 @@ function weEditor(opt)
 	// Toggle wysiwyg/normal mode.
 	this.toggleView = function (bView)
 	{
-		if (!this.bRichTextPossible)
-		{
-			say($txt['rich_edit_wont_work']);
+		if (!this.canWysiwyg)
 			return false;
-		}
 
 		// Overriding or alternating?
-		bView |= !this.bRichTextEnabled;
+		bView |= !this.isWysiwyg;
 
 		$.ajax(
 			weUrl('action=jseditor;xml;view=' + +bView + ';' + we_sessvar + '=' + we_sessid),
@@ -704,7 +700,7 @@ function weEditor(opt)
 					var sText = $('message', oXMLDoc).text();
 
 					// What is this new view we have?
-					this.bRichTextEnabled = $('message', oXMLDoc).attr('view') != '0';
+					this.isWysiwyg = $('message', oXMLDoc).attr('view') != '0';
 
 					$Frame.show();
 					oText.hide();
@@ -712,10 +708,10 @@ function weEditor(opt)
 					// First we focus.
 					this.setFocus();
 
-					this.insertText(this.bRichTextEnabled ? sText : sText.php_unhtmlspecialchars(), true);
+					this.insertText(this.isWysiwyg ? sText : sText.php_unhtmlspecialchars(), true);
 
 					// Record the new status.
-					$('#' + opt.sUniqueId + '_mode').val(+this.bRichTextEnabled);
+					$('#' + opt.sUniqueId + '_mode').val(+this.isWysiwyg);
 
 					// Rebuild the bread crumb!
 					this.updateEditorControls();
@@ -727,7 +723,7 @@ function weEditor(opt)
 	// Set the focus for the editing window.
 	this.setFocus = function ()
 	{
-		if (!this.bRichTextEnabled)
+		if (!this.isWysiwyg)
 			oText[0].focus();
 		else if (is_ff || is_opera)
 			$Frame[0].focus();
@@ -742,7 +738,7 @@ function weEditor(opt)
 			return false;
 
 		// If we're in HTML mode we need to get the non-HTML text.
-		if (this.bRichTextEnabled)
+		if (this.isWysiwyg)
 			$.ajax(
 				weUrl('action=jseditor;xml;view=0;' + we_sessvar + '=' + we_sessid),
 				{
@@ -769,7 +765,7 @@ function weEditor(opt)
 	this.spellCheckEnd = function ()
 	{
 		// If HTML edit put the text back!
-		if (this.bRichTextEnabled)
+		if (this.isWysiwyg)
 			$.ajax(
 				weUrl('action=jseditor;xml;view=1;' + we_sessvar + '=' + we_sessid),
 				{
@@ -930,7 +926,7 @@ function weEditor(opt)
 		var newHeight = Math.max(30, oEvent.pageY - oCurrentResize.old_y + oCurrentResize.cur_height);
 
 		// Do the HTML editor - but only if it's enabled!
-		if (that.bRichTextPossible)
+		if (that.canWysiwyg)
 			$Frame.height(newHeight);
 
 		// Do the text box regardless!
@@ -954,21 +950,22 @@ function weEditor(opt)
 	 */
 
 	// Ensure the currentText is set correctly depending on the mode.
-	if (sCurrentText === '' && !this.bRichTextEnabled)
+	if (sCurrentText === '' && !this.isWysiwyg)
 		sCurrentText = oText.html().php_unhtmlspecialchars();
 
 	// Only try to do this if rich text is supported.
-	if (this.bRichTextPossible)
+	if (this.canWysiwyg)
 	{
 		// Make the iframe itself, give it its proper dimensions, stick it next to the current text area, and give it an ID.
-		var $Frame = $('<iframe class="rich_editor" id="html_' + opt.sUniqueId + '" src="about:blank" tabindex="' + oText[0].tabIndex + '"></iframe>')
+		var $Frame = $('<iframe seamless id="html_' + opt.sUniqueId + '" src="about:blank" tabindex="' + oText[0].tabIndex + '"></iframe>')
+			.addClass('rich')
 			.width(opt.sEditWidth || '70%')
 			.height(opt.sEditHeight || 150)
 			.insertAfter(oText)
-			.toggle(this.bRichTextEnabled);
+			.toggle(this.isWysiwyg);
 
 		// Hide the textarea if wysiwyg is on - and vice versa.
-		oText.toggle(!this.bRichTextEnabled);
+		oText.toggle(!this.isWysiwyg);
 
 		// Create some handy shortcuts.
 		var
@@ -985,19 +982,12 @@ function weEditor(opt)
 		$FrameBody[0].dir = $(document).find('html')[0].dir;
 
 		// Mark it as editable...
-		if ($FrameBody[0].contentEditable)
-			$FrameBody[0].contentEditable = true;
-		else
-		{
-			$Frame.show();
-			oFrameDoc.designMode = 'on';
-			$Frame.hide();
-		}
+		$FrameBody[0].contentEditable = true;
 
 		$('link[rel=stylesheet]').each(function() { $Frame.contents().find('head').append($('<p>').append($(this).clone()).html()); });
 
 		// Apply the class and set the frame padding/margin inside the editor.
-		$FrameBody.addClass('rich_editor');
+		$FrameBody.addClass('rich').parent().addClass('rich');
 
 		// Attach functions to the key and mouse events.
 		$(oFrameDoc)
@@ -1016,7 +1006,7 @@ function weEditor(opt)
 	}
 	// If we can't do advanced stuff, then just do the basics.
 	else
-		this.bRichTextEnabled = false;
+		this.isWysiwyg = false;
 
 	if (opt.oDrafts)
 		oText.keyup(function () {
@@ -1024,7 +1014,7 @@ function weEditor(opt)
 		});
 
 	// Make sure we set the message mode correctly.
-	$('#' + opt.sUniqueId + '_mode').val(+this.bRichTextEnabled);
+	$('#' + opt.sUniqueId + '_mode').val(+this.isWysiwyg);
 
 	// Show the resizer.
 	var sizer = $('#' + opt.sUniqueId + '_resizer');
@@ -1048,7 +1038,7 @@ function weEditor(opt)
 	}
 
 	// Set the text - if WYSIWYG is enabled that is.
-	if (this.bRichTextEnabled)
+	if (this.isWysiwyg)
 	{
 		this.insertText(sCurrentText, true);
 

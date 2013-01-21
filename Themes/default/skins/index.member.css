@@ -52,7 +52,12 @@ ul.buttonlist
 
 #qm_post
 	margin-bottom: 10px
-	width: 100%
+	@if ie[-8]
+		max-width, min-width: 100%
+		width: 635px
+	@else
+		width: 100%
+	@endif
 
 .qm_error
 	border: 1px solid red

@@ -30,16 +30,22 @@ class wedit
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
 
-		// Needs an id that we will be using
+		// Needs an id that we will be using.
 		assert(isset($editorOptions['id']));
 		if (empty($editorOptions['value']))
 			$editorOptions['value'] = '';
+
+		// WYSIWYG only works if BBC is enabled
+		$settings['disable_wysiwyg'] = !empty($settings['disable_wysiwyg']) || empty($settings['enableBBC']);
+
+		// We should also disable it on devices that don't support contentEditable.
+		$settings['disable_wysiwyg'] &= !we::is('android[-2.9],ios[-4.9],firefox[-3]') && !isset($_SERVER['HTTP_X_OPERAMINI_PHONE_UA']);
 
 		$this->editorOptions = array(
 			'id' => $editorOptions['id'],
 			'value' => $editorOptions['value'],
 			'rich_value' => wedit::bbc_to_html($editorOptions['value']),
-			'rich_active' => empty($settings['disable_wysiwyg']) && (!empty($options['wysiwyg_default']) || !empty($editorOptions['force_rich']) || !empty($_REQUEST[$editorOptions['id'] . '_mode'])),
+			'rich_active' => !$settings['disable_wysiwyg'] && (!empty($options['wysiwyg_default']) || !empty($editorOptions['force_rich']) || !empty($_REQUEST[$editorOptions['id'] . '_mode'])),
 			'disable_smiley_box' => !empty($editorOptions['disable_smiley_box']),
 			'columns' => isset($editorOptions['columns']) ? $editorOptions['columns'] : 60,
 			'rows' => isset($editorOptions['rows']) ? $editorOptions['rows'] : 15,
@@ -86,7 +92,7 @@ class wedit
 	<input type="hidden" name="spellstring" value="">
 </form>';
 
-				// Also make sure that spell check works with rich edit.
+				// Also make sure that spell check works with Wysiwyg mode.
 				add_js('
 	function spellCheckDone()
 	{
@@ -1516,7 +1522,7 @@ class wedit
 		call_hook('bbc_buttons', array(&$this->bbc));
 
 		// Show the toggle?
-		if (empty($settings['disable_wysiwyg']))
+		if (!$settings['disable_wysiwyg'])
 			array_push(
 				$this->bbc[count($this->bbc) - 1],
 				array(),
@@ -2443,7 +2449,7 @@ class wedit
 						<textarea class="editor" name="', $this->id, '" id="', $this->id, '" rows="', $this->rows, '" cols="', we::is('ie8') ? '600' : $this->columns,
 						'" tabindex="', ++$context['tabindex'], '" style="width: ', $this->width, '; height: ', $this->height, $has_error ? '; border: 1px solid red' : '', '">', $this->value, '</textarea>
 					</div>
-					<div id="', $this->id, '_resizer" style="width: ', $this->width, '" class="hide richedit_resize"></div>
+					<div id="', $this->id, '_resizer" style="width: ', $this->width, '" class="hide rich_resize"></div>
 				</div>
 				<input type="hidden" name="', $this->id, '_mode" id="', $this->id, '_mode" value="0">';
 
@@ -2634,11 +2640,11 @@ class wedit
 	var oEditorHandle_' . $this->id . ' = new weEditor({
 		sFormId: ' . JavaScriptEscape($this->form) . ',
 		sUniqueId: ' . JavaScriptEscape($this->id) . ($this->rich_active ? ',
-		bWysiwyg: true' : '') . ',
+		bWysiwyg: true' : '') . (!$settings['disable_wysiwyg'] ? '' : ',
+		bWysiwygOff: true') . ',
 		sText: ' . JavaScriptEscape($this->rich_active ? $this->rich_value : '') . ',
 		sEditWidth: ' . JavaScriptEscape($this->width) . ',
-		sEditHeight: ' . JavaScriptEscape($this->height) . (empty($settings['disable_wysiwyg']) ? '' : ',
-		bRichEditOff: true') . ',
+		sEditHeight: ' . JavaScriptEscape($this->height) . ',
 		oSmileyBox: ' . (!empty($this->smileys['postform']) && !$this->disable_smiley_box ? 'oSmileyBox_' . $this->id : 'null') . ',
 		oBBCBox: ' . ($this->show_bbc ? 'oBBCBox_' . $this->id : 'null') . ',
 		oDrafts: ' . ($auto_drafts ? 'oAutoSave' : 'false') . '

@@ -96,21 +96,6 @@ li.separator
 
 /* Editor
 ------------------------------------------------------- */
-// This is the WYSIWYG editor
-.rich_editor
-	background-color: #fff
-	color: #000
-	font-family: verdana
-	font-size: x-small
-	border: none
-	p
-		margin: 0
-	a img
-		border: 0
-
-.richedit_resize
-	padding: 0 !important
-
 // No support for box-sizing...
 #preview_section > .postbg
 	width: auto

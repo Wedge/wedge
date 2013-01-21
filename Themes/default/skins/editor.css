@@ -1,38 +1,51 @@
 
 // This is the editor's playground.
-.editor, .rich_editor
+.editor
 	display: block
 	border: 1px solid #808080
 	color: #000
 	cursor: text
 	padding: 2px
 	margin: 0
+	text-align: left
 	box-sizing: border-box
-	/* Remove IE's scrollbar if not needed. */
-	$editor_overflow
-	/* Remove Firefox and Chrome's resize handles. No need to create new satellite files just for that... */
-	$editor_resize
+	@if ie[-10]
+		/* IE forces a scrollbar otherwise. */
+		overflow: auto
+	@endif
+	@if webkit, firefox
+		/* Remove Firefox and Chrome's resize handles. */
+		resize: none
+	@endif
 
 // And the WYSIWYG version.
-.rich_editor
-	background: #fff
+iframe.rich
+	box-sizing: border-box
+	border: 1px solid black
+	margin, padding: 0
+
+html.rich
+	height: 100%
+	overflow: auto
+
+// Override any iframe/html/body background.
+.rich
+	background: $main_bg
 	.smiley
 		margin: 0 2px
-
-iframe.rich_editor
-	padding: 2px
 
 // textarea has a font-size of 95% by default, but it's inherited from the body's 88%.
 // As we're applying this to the body, we want to calculate 95% of 88% instead.
 // Plus, that's a nice sample of what Wess can do.
-body.rich_editor
-	border, padding: 0
+body.rich extends .editor
+	border: 0
+	min-height: 100%
 	font-size: math(.95*88)%
 
 // The resize handle.
-.richedit_resize
+.rich_resize
 	height: 5px
-	padding: 0 2px
+	padding: @is (ie, 0, 0 2px)
 	font-size: 0
 	background: #eee url($images/bbc/resize-handle.gif) no-repeat 50% 1px
 	box-sizing: border-box
@@ -166,6 +179,3 @@ ul.post_options
 	kbd
 		color: #600
 		font-size: 120%
-
-$editor_overflow {ie[-10]} = "overflow: auto"
-$editor_resize {webkit,firefox} = "resize: none"

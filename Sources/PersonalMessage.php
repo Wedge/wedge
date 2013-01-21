@@ -1885,8 +1885,6 @@ function MessagePost()
 		'name' => $txt['new_message']
 	);
 
-	$settings['disable_wysiwyg'] = !empty($settings['disable_wysiwyg']) || empty($settings['enableBBC']);
-
 	// Now create the editor.
 	$context['postbox'] = new wedit(
 		array(

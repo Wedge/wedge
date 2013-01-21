@@ -20,7 +20,7 @@ function previewPost()
 		if (this in postmod)
 		{
 			// Handle the WYSIWYG editor.
-			if (this == postbox && posthandle && posthandle.bRichTextEnabled)
+			if (this == postbox && posthandle && posthandle.isWysiwyg)
 			{
 				params['message_mode'] = 1;
 				params[this] = posthandle.getText(false);
@@ -138,7 +138,7 @@ function previewPost()
 function insertQuoteFast(msg)
 {
 	$.get(
-		weUrl('action=quotefast;quote=' + msg + ';xml;mode=' + +posthandle.bRichTextEnabled),
+		weUrl('action=quotefast;quote=' + msg + ';xml;mode=' + +posthandle.isWysiwyg),
 		function (XMLDoc) {
 			posthandle.insertText($('quote', XMLDoc).text(), false, true);
 		}

@@ -61,6 +61,7 @@ function template_post_errors()
 function template_post_approval()
 {
 	global $context, $txt;
+
 	// If this won't be approved let them know!
 	if (!$context['becomes_approved'])
 	{
@@ -75,6 +76,7 @@ function template_post_approval()
 function template_post_locked()
 {
 	global $context, $txt;
+
 	// If it's locked, show a message to warn the replyer.
 	echo '
 				<p class="information', $context['locked'] ? '' : ' hide', '" id="lock_warning">
@@ -132,6 +134,7 @@ function template_post_additional_options()
 {
 	// !!! This needs to be rewritten to be extensible, declared in Post.php and available as a simple list to be iterated over.
 	global $theme, $txt, $options, $context, $settings;
+
 	// If the admin has enabled the hiding of the additional options - show a link and image for it.
 	if (!empty($settings['additional_options_collapsable']))
 		echo '
@@ -158,6 +161,7 @@ function template_post_additional_options()
 function template_post_attachments()
 {
 	global $context, $txt, $settings;
+
 	// If this post already has attachments on it - give information about them.
 	if (!empty($context['current_attachments']))
 	{
@@ -170,11 +174,13 @@ function template_post_attachments()
 						<input type="hidden" name="attach_del[]" value="0">
 						', $txt['uncheck_unwatchd_attach'], ':
 					</dd>';
+
 		foreach ($context['current_attachments'] as $id => $attachment)
 			echo '
 					<dd class="smalltext">
 						<label><input type="checkbox" id="attachment_', $id, '" name="attach_del[]" value="', $id, '"', empty($attachment['unchecked']) ? ' checked' : '', ' onclick="oAttach.checkActive();"> ', $attachment['name'], '</label>
 					</dd>';
+
 		echo '
 				</dl>';
 	}
@@ -367,6 +373,7 @@ function template_post_header_before()
 function template_post_subject()
 {
 	global $context, $txt;
+
 	// Now show the subject box for this post.
 	echo '
 					<strong>', $txt['message_icon'], ' / <span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span></strong>
@@ -627,6 +634,7 @@ function template_order_pinned()
 		<div class="windowbg2 wrc">
 			<form action="', $context['this_url'], '" method="post">
 				<ul id="sortable" class="topic_table">';
+
 	foreach ($context['pinned_topics'] as $topic)
 		echo '
 					<li class="windowbg2 subject pinned">
@@ -641,6 +649,7 @@ function template_order_pinned()
 						<br class="clear">
 						<input type="hidden" name="order[]" value="', $topic['id_topic'], '">
 					</li>';
+
 	echo '
 				</ul>
 				<br>

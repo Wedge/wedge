@@ -1122,9 +1122,6 @@ function Post($post_errors = array())
 		$context['error_type'] = 'minor';
 	}
 
-	// WYSIWYG only works if BBC is enabled
-	$settings['disable_wysiwyg'] = !empty($settings['disable_wysiwyg']) || empty($settings['enableBBC']);
-
 	// Register this form in the session variables.
 	checkSubmitOnce('register');
 
