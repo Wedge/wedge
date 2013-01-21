@@ -176,11 +176,6 @@ function template_remove()
 	<br class="clear">';
 }
 
-function template_request_connect_details()
-{
-
-}
-
 function template_add_plugins()
 {
 	global $context, $txt;
@@ -338,6 +333,7 @@ function template_upload_generic_progress()
 			echo '
 				<input type="hidden" name="', $k, '" value="', $v, '">';
 	echo '
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 			</div>
 		</form>';
 }
@@ -354,7 +350,7 @@ function template_upload_duplicate_detected()
 			<fieldset>
 				<legend>', $txt['plugin_duplicate_cancel'], '</legend>
 				', $txt['plugin_duplicate_cancel_desc'], '<br>
-				<input name="delete" type="submit" class="delete floatright" value="', $txt['plugin_duplicate_cancel'], '">
+				<input name="cancel" type="submit" class="delete floatright" value="', $txt['plugin_duplicate_cancel'], '">
 			</fieldset>
 			<br>
 			<fieldset>
@@ -366,4 +362,109 @@ function template_upload_duplicate_detected()
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 	</form>
 	<br class="clear">';
+}
+
+function template_upload_connection_details()
+{
+	global $txt, $context;
+
+	echo '
+	<we:cat>', $txt['plugin_connection_details_title'], '</we:cat>';
+
+	if (!empty($context['ftp_details']['error']))
+	{
+		echo '
+	<div class="errorbox" id="errors">
+		<h3 id="error_serious">', $txt['plugin_ftp_error'], '</h3>
+		<ul class="error" id="error_list">';
+
+		foreach ($context['ftp_details']['error'] as $err)
+			echo '
+			<li>', $txt['plugin_ftp_error_' . $err], '</li>';
+		echo '
+		</ul>
+	</div>';
+	}
+
+	echo '
+	<form action="<URL>?action=admin;area=plugins;sa=add;upload;stage=1" method="post">
+		<div class="windowbg2 wrc">
+			<p>', $txt['plugin_connection_details'], '</p>
+			<fieldset>
+				<legend>', $txt['plugin_connection_details_title'], '</legend>
+				', $txt['plugin_connection_required'], '
+				<dl class="settings">
+					<dt>
+						<label for="ftp_server">', $txt['plugin_ftp_server'], '</label>
+					</dt>
+					<dd>
+						<input type="text" size="42" name="server" id="ftp_server" value="', /* Servalan? */ htmlspecialchars($context['ftp_details']['server'], ENT_QUOTES), '" style="width: 99%"><!-- We are not the 1% -->
+					<dt>
+						<label for="ftp_username">', $txt['plugin_ftp_username'], '</label>
+					</dt>
+					<dd>
+						<input type="text" size="42" name="user" id="ftp_username" value="', htmlspecialchars($context['ftp_details']['user'], ENT_QUOTES), '" style="width: 99%">
+					</dd>
+					<dt>
+						<label for="ftp_password">', $txt['plugin_ftp_password'], '</label>
+					</dt>
+					<dd>
+						<input type="password" size="42" name="password" id="ftp_password" style="width: 99%">
+					</dd>
+					<dt>
+						<label for="ftp_type">', $txt['plugin_ftp_type'], '</label>
+					</dt>
+					<dd>
+						<select name="type" id="ftp_type" onchange="update_server(this.value);">
+							<option value="ftp"', $context['ftp_details']['type'] == 'ftp' ? ' selected' : '', '>FTP</option>
+							<option value="sftp"', $context['ftp_details']['type'] == 'sftp' ? ' selected' : '', '>SFTP</option>
+						</select>
+					</dd>
+					<dt>
+						<label for="ftp_port">', $txt['plugin_ftp_port'], '</label>
+					</dt>
+					<dd>
+						<input type="number" min="1" max="65535" size="5" id="ftp_port" name="port" value="', $context['ftp_details']['port'], '">
+					</dd>
+					<dt class="path">
+						<label for="ftp_path">', $txt['plugin_ftp_path'], '</label>
+					</dt>
+					<dd class="path">
+						<input type="path" size="42" name="path" id="ftp_path" style="width: 99%" value="', /* We don't need another hero, but we do need to know the way home */ htmlspecialchars($context['ftp_details']['path'], ENT_QUOTES), '">
+					</dd>
+				</dl>
+				<div class="right">
+					<label><input type="checkbox" name="savedetails" checked> ', $txt['plugin_ftp_save'], '</label>
+				</div>
+				<br class="clear">
+				<input type="submit" name="connect" class="submit floatright" value="', $txt['plugin_connection'], '">
+			</fieldset>
+			<fieldset>
+				<legend>', $txt['plugin_connection_cancel_oops'], '</legend>
+				', $txt['plugin_connection_cancel'], '
+				<br>
+				<input type="submit" name="cancel" class="delete floatright" value="', $txt['plugin_connection_button'], '">
+			</fieldset>
+		</div>
+		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+	</form>
+	<br class="clear">';
+
+	// If using SFTP, hide the path variable, and whichever we go to, if the port is at the old default, update it
+	add_js('
+	function update_server(type)
+	{
+		if (type == "ftp")
+		{
+			$(".path").show();
+			if ($("#ftp_port").val() == 22)
+				$("#ftp_port").val(21);
+		}
+		else
+		{
+			$(".path").hide();
+			if ($("#ftp_port").val() == 21)
+				$("#ftp_port").val(22);
+		}
+	};');
 }

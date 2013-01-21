@@ -560,8 +560,8 @@ class ftp_connection
 	public function close()
 	{
 		// Goodbye!
-		fwrite($this->connection, 'QUIT' . "\r\n");
-		fclose($this->connection);
+		@fwrite($this->connection, 'QUIT' . "\r\n");
+		@fclose($this->connection);
 
 		return true;
 	}

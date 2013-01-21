@@ -1686,7 +1686,8 @@ function uploadPlugin()
 	// Subs-Plugin.php on the other hand, not so amused.
 	loadSource(array('Subs-Plugins', 'Class-ZipExtract'));
 	$subs = array(
-		0 => 'uploaded_plugin_validate',
+		0 => 'uploadedPluginValidate',
+		1 => 'uploadedPluginConnection',
 	);
 
 	$_REQUEST['stage'] = isset($_GET['stage'], $subs[$_GET['stage']]) ? $_GET['stage'] : 0;

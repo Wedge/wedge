@@ -187,9 +187,13 @@ function deleteFiletree(&$class, $dir, $delete_dir = true)
 /**
  * Prepare the first stage of plugin installation: validate the file has been uploaded satisfactorily.
  */
-function uploaded_plugin_validate()
+function uploadedPluginValidate()
 {
 	global $context, $txt, $cachedir;
+
+	// It's just possible, however unlikely, that the user has done something silly.
+	if (isset($_SESSION['uploadplugin']))
+		redirectexit('action=admin;area=plugins;sa=add;upload;stage=1;' . $context['session_query']);
 
 	// So, if we're here, the plugin has literally just been uploaded.
 	if (empty($_FILES['plugin']['tmp_name']) || !is_uploaded_file($_FILES['plugin']['tmp_name']))
@@ -266,20 +270,21 @@ function uploaded_plugin_validate()
 	if (!move_uploaded_file($_FILES['plugin']['tmp_name'], $cachedir . '/' . $new_file))
 		fatal_lang_error('plugins_invalid_upload', false);
 
+	$id = (string) $manifest['id'];
+
 	$_SESSION['uploadplugin'] = array(
 		'file' => $new_file,
 		'size' => $_FILES['plugin']['size'],
 		'name' => $_FILES['plugin']['name'],
 		'mtime' => filemtime($cachedir . '/' . $new_file),
 		'md5' => md5_file($cachedir . '/' . $new_file),
+		'id' => $id,
 	);
 
-	$id = (string) $manifest['id'];
 	if (isset($context['plugins_dir'][$id]))
 	{
 		$context['page_title'] = $txt['plugin_duplicate_detected_title'];
 		// We want to get the existing plugin's name. We know what plugin to look at.
-		//$context['existing_plugin']
 		$existing_plugin = safe_sxml_load($context['plugins_dir'][$id] . '/plugin-info.xml');
 		$context['existing_plugin'] = (string) $existing_plugin->name . ' ' . (string) $existing_plugin->version;
 		$context['new_plugin'] = (string) $manifest->name . ' ' . (string) $manifest->version;
@@ -293,6 +298,194 @@ function uploaded_plugin_validate()
 		$context['description'] = $txt['plugin_upload_successful'];
 		wetem::load('upload_generic_progress');
 	}
+}
+
+function uploadedPluginConnection()
+{
+	global $cachedir, $boarddir, $settings, $context, $pluginsdir, $txt;
+
+	// If we already have details, pass through to the next stage.
+	if (isset($_SESSION['plugin_ftp']))
+		redirectexit('action=admin;area=plugins;sa=add;upload;stage=2;' . $context['session_query']);
+
+	// Are we here with a valid plugin?
+	$state = validate_plugin_session();
+	if (!empty($state))
+	{
+		// Oh dear, something went wrong. Clean up the file if we can.
+		if (!empty($_SESSION['uploadplugin']['file']))
+			@unlink($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+		unset($_SESSION['uploadplugin']);
+		fatal_lang_error($state, false);
+	}
+
+	// OK, so we have the plugin here. Next we're going to be getting some S/FTP details, but before we do, was it a duplicate to deal with?
+	checkSession('request');
+	if (isset($_POST['cancel']))
+	{
+		// OK, so we're not proceeding with this one, fair enough.
+		@unlink($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+		unset($_SESSION['uploadplugin']);
+		redirectexit('action=admin;area=plugins');
+	}
+	else
+		$_SESSION['uploadplugin']['delete'] = true; // We need to get S/FTP details before we can proceed to install. But flag the existing one for deletion later.
+
+	// OK, so we need to get some details. Let's start with some details.
+	$context['ftp_details'] = array(
+		'server' => 'localhost',
+		'user' => '',
+		'password' => '',
+		'port' => '21',
+		'type' => 'ftp',
+		'path' => realpath($pluginsdir),
+	);
+
+	if (!empty($settings['ftp_details']))
+	{
+		$new = @unserialize($settings['ftp_details']);
+		if (!empty($new))
+			$context['ftp_details'] = array_merge($context['ftp_detalis'], $new);
+	}
+
+	// OK, just in case, they might have supplied something.
+	foreach (array('server', 'user', 'password') as $item)
+		if (isset($_POST[$item]))
+			$context['ftp_details'][$item] = $_POST[$item];
+	if (isset($_POST['port']))
+	{
+		$_POST['port'] = (int) $_POST['port'];
+		if ($_POST['port'] >= 1 && $_POST['port'] <= 65535)
+			$context['ftp_details']['port'] = $_POST['port'];
+	}
+	if (isset($_POST['type']) && ($_POST['type'] == 'ftp' || $_POST['type'] == 'sftp'))
+		$context['ftp_details']['type'] = $_POST['type'];
+
+	// Lastly, the path. The path is serious voodoo evil stuff. Mostly at this stage we're relying on the user to get it right, we hope. SFTP doesn't need this, we already have the real path there.
+	if (!empty($_POST['path']))
+		$context['ftp_details']['path'] = $_POST['path'];
+
+	// OK, so the password is the one thing the user must have supplied. That's never saved except in session, and we only do that once validating connection.
+	if (!empty($context['ftp_details']['password']))
+	{
+		if ($context['ftp_details']['type'] == 'ftp')
+		{
+			loadSource('Class-FTP');
+			$ftp = new ftp_connection($context['ftp_details']['server'], $context['ftp_details']['port'], $context['ftp_details']['user'], $context['ftp_details']['password']);
+			if (!empty($ftp->error))
+				$context['ftp_details']['error'][] = $ftp->error;
+			elseif (!empty($context['ftp_details']['path']) && $context['ftp_details']['path'] != '/')
+			{
+				// No error so far, let's validate the path now.
+				$paths = explode(DIRECTORY_SEPARATOR, $context['ftp_details']['path']);
+				while (!empty($paths))
+				{
+					$lpath = implode('/', $paths);
+					if ($ftp->chdir($lpath))
+					{
+						// We matched the entire path we have. That seems promising.
+						$dir = $ftp->list_dir();
+						if (!$dir)
+						{
+							$context['ftp_details']['error'][] = 'wrong_folder';
+							break;
+						}
+						// So we have a folder and it has some files in. Does it, perhaps, have an index.php file?
+						elseif (preg_match('~^index\.php$~m', $dir))
+						{
+							$data = $ftp->get('index.php');
+							if ($data)
+							{
+								if (strpos($data, 'Plugins folder. Please leave me be.') !== false)
+								{
+									$context['ftp_details']['found'] = true;
+									$context['ftp_details']['path'] = $lpath;
+									break;
+								}
+							}
+						}
+					}
+					else
+					{
+						// OK, so we didn't match, lop off another folder and try again.
+						array_shift($paths);
+					}
+				}
+			}
+			$ftp->close();
+		}
+	}
+
+	if (!empty($context['ftp_details']['found']))
+	{
+		// We remember some things for next time - but not the password, of course.
+		if (!empty($_POST['savedetails']))
+		{
+			$ftp_settings = array();
+			foreach (array('server', 'user', 'port', 'type', 'path') as $item)
+				$ftp_settings[$item] = $context['ftp_details'];
+			updateSettings(array('ftp_settings' => serialize($ftp_settings)));
+		}
+
+		// Now we need to save the details in the session for later. Just get clean first.
+		unset($context['ftp_details']['found']);
+		$context['ftp_details']['password'] = obfuscate_pass($context['ftp_details']['password']);
+		$_SESSION['plugin_ftp'] = $context['ftp_details'];
+
+		$context['page_title'] = $txt['plugin_connection_successful_title'];
+		$context['form_url'] = '<URL>?action=admin;area=plugins;sa=add;upload;stage=2';
+		$context['description'] = $txt['plugin_connection_successful'];
+		wetem::load('upload_generic_progress');
+	}
+	else
+	{
+		// Bah, one way or another, we didn't find it.
+		$context['page_title'] = $txt['plugin_connection_details_title'];
+		wetem::load('upload_connection_details');
+		return;
+	}
+}
+
+/**
+ * Attempts to hide the FTP password while it remains in the session.
+ *
+ * @param string $pass The string to be obfuscated (or the string to be returned)
+ * @return string The string obfuscated or unobfuscated; the process is reversible.
+*/
+function obfuscate_pass($pass)
+{
+	$n = strlen($pass);
+
+	$salt = session_id();
+	while (strlen($salt) < $n)
+		$salt .= session_id();
+
+	for ($i = 0; $i < $n; $i++)
+		$pass{$i} = chr(ord($pass{$i}) ^ (ord($salt{$i}) - 32));
+
+	return $pass;
+}
+
+/**
+ * Attempts to validate the plugin file with what was stored in session when the plugin was initially uploaded.
+ *
+ * @return mixed Boolean false if there were no errors, otherwise the key of the language error string to be displayed, this allows for whichever stage of plugin handling to do its own proper clean-up.
+ */
+function validate_plugin_session()
+{
+	global $cachedir;
+
+	if (empty($_SESSION['uploadplugin']) || empty($_SESSION['uploadplugin']['file']))
+		return 'plugins_unable_read';
+
+	$filename = $cachedir . '/' . $_SESSION['uploadplugin']['file'];
+	if (!file_exists($filename) || filesize($filename) != $_SESSION['uploadplugin']['size'])
+		return 'plugins_uploaded_error';
+
+	if (filemtime($filename) != $_SESSION['uploadplugin']['mtime'] || md5_file($filename) != $_SESSION['uploadplugin']['md5'])
+		return 'plugins_uploaded_tampering';
+
+	return false;
 }
 
 // Accepts the <min-versions> element and returns an key/value array, key is what isn't met, value is array (available, required)
