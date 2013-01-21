@@ -466,7 +466,7 @@ function EditBoard()
 
 	// Load membergroups.
 	$request = wesql::query('
-		SELECT group_name, id_group, min_posts
+		SELECT group_name, id_group, min_posts, online_color
 		FROM {db_prefix}membergroups
 		WHERE id_group > {int:moderator_group} OR id_group = {int:global_moderator}
 		ORDER BY min_posts, id_group != {int:global_moderator}, group_name',
@@ -479,7 +479,7 @@ function EditBoard()
 	{
 		$context['groups'][(int) $row['id_group']] = array(
 			'id' => $row['id_group'],
-			'name' => trim($row['group_name']),
+			'name' => !empty($row['online_color']) ? '<span style="color:' . $row['online_color'] . '">' . trim($row['group_name']) . '</span>' : trim($row['group_name']),
 			'is_post_group' => $row['min_posts'] != -1,
 		);
 	}

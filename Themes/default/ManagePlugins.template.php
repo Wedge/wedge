@@ -214,7 +214,7 @@ function template_add_plugins()
 		{
 			echo '
 				<tr class="windowbg', $use_bg2 ? '2' : '', '">
-					<td>', $repo['name'], $repo['auth'] ? ' <span class="plugin_auth inline-block" title="' . $txt['plugins_repo_auth'] . '"></span>' : '', '</td>
+					<td>', $repo['name'], $repo['auth'] ? ' <span class="plugin_auth" title="' . $txt['plugins_repo_auth'] . '"></span>' : '', '</td>
 					<td class="center">';
 
 			// While it's fairly straightforward here, it may be more complex in future.
@@ -319,7 +319,7 @@ function template_edit_repo()
 					<input type="submit" name="delete" value="', $txt['plugins_repo_delete'], '" class="delete" onclick="return ask(', JavaScriptEscape($txt['plugins_repo_delete_confirm']), ', e);">
 				</div>
 			</div>
-			<input type="hidden" name="', $context['session_var'], '" id="', $context['session_id'], '">
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 }
 

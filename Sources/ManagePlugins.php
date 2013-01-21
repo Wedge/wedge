@@ -1523,7 +1523,7 @@ function editPluginRepo()
 	global $context, $txt;
 
 	// Are we perhaps deleting? Y U NO LIEK ME?
-	if (isset($_GET['delete'], $_GET['editrepo']))
+	if (isset($_POST['delete'], $_GET['editrepo']))
 	{
 		checkSession();
 		$repo_id = (int) $_GET['editrepo'];
@@ -1543,6 +1543,7 @@ function editPluginRepo()
 	// Are we saving?
 	if (isset($_GET['save'], $_GET['editrepo']))
 	{
+		checkSession();
 		// Is it pre-existing? If so, get the details of it.
 		$repo_id = (int) $_GET['editrepo'];
 		if ($repo_id > 0)
