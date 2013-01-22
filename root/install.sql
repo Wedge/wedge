@@ -2211,7 +2211,6 @@ VALUES
 	('smiley_sets_default', 'default'),
 	('requireAgreement', '1'),
 	('unapprovedMembers', '0'),
-	('package_make_backups', '1'),
 	('databaseSession_enable', '{$databaseSession_enable}'),
 	('databaseSession_loose', '1'),
 	('databaseSession_lifetime', '2880'),

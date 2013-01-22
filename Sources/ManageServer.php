@@ -1440,13 +1440,6 @@ function ModifyLanguage()
 		// !!! Todo: FTP Controls?
 		loadSource('Subs-Package');
 
-		// First, make a backup?
-		if (!empty($settings['package_make_backups']) && (!isset($_SESSION['last_backup_for']) || $_SESSION['last_backup_for'] != $context['lang_id'] . '$$$'))
-		{
-			$_SESSION['last_backup_for'] = $context['lang_id'] . '$$$';
-			package_create_backup('backup_lang_' . $context['lang_id']);
-		}
-
 		// Second, loop through the array to remove the files.
 		foreach ($lang_dirs as $curPath)
 		{

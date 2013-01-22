@@ -77,8 +77,6 @@ function PackageGet()
 		// !!! 'help' => 'registrations',
 		'description' => $txt['package_manager_desc'],
 		'tabs' => array(
-			'browse' => array(
-			),
 			'packageget' => array(
 				'description' => $txt['download_packages_desc'],
 			),
@@ -86,7 +84,7 @@ function PackageGet()
 				'description' => $txt['package_file_perms_desc'],
 			),
 			'options' => array(
-				'description' => $txt['package_install_options_ftp_why'],
+				'description' => '',
 			),
 		),
 	);
@@ -612,20 +610,20 @@ function PackageDownload()
 		fatal_lang_error('package_cant_download', false);
 
 	if ($context['package']['type'] == 'modification')
-		$context['package']['install']['link'] = '<a href="' . $scripturl . '?action=admin;area=packages;sa=install;package=' . $context['package']['filename'] . '">[ ' . $txt['install_mod'] . ' ]</a>';
+		$context['package']['install']['link'] = '(former link to install mod)';
 	elseif ($context['package']['type'] == 'avatar')
-		$context['package']['install']['link'] = '<a href="' . $scripturl . '?action=admin;area=packages;sa=install;package=' . $context['package']['filename'] . '">[ ' . $txt['use_avatars'] . ' ]</a>';
+		$context['package']['install']['link'] = '(former link to install avatar)';
 	elseif ($context['package']['type'] == 'language')
-		$context['package']['install']['link'] = '<a href="' . $scripturl . '?action=admin;area=packages;sa=install;package=' . $context['package']['filename'] . '">[ ' . $txt['add_languages'] . ' ]</a>';
+		$context['package']['install']['link'] = '(former link to install lang)';
 	else
 		$context['package']['install']['link'] = '';
 
-	$context['package']['list_files']['link'] = '<a href="' . $scripturl . '?action=admin;area=packages;sa=list;package=' . $context['package']['filename'] . '">[ ' . $txt['list_files'] . ' ]</a>';
+	$context['package']['list_files']['link'] = '(link to list files)';
 
 	// Free a little bit of memory...
 	unset($context['package']['xml']);
 
-	$context['page_title'] = $txt['download_success'];
+	$context['page_title'] = 'successful!';
 }
 
 // Upload a new package to the directory.
@@ -696,19 +694,19 @@ function PackageUpload()
 	}
 
 	if ($context['package']['type'] == 'modification')
-		$context['package']['install']['link'] = '<a href="' . $scripturl . '?action=admin;area=packages;sa=install;package=' . $context['package']['filename'] . '">[ ' . $txt['install_mod'] . ' ]</a>';
+		$context['package']['install']['link'] = '(former link to install mod)';
 	elseif ($context['package']['type'] == 'avatar')
-		$context['package']['install']['link'] = '<a href="' . $scripturl . '?action=admin;area=packages;sa=install;package=' . $context['package']['filename'] . '">[ ' . $txt['use_avatars'] . ' ]</a>';
+		$context['package']['install']['link'] = '(former link to install avatar)';
 	elseif ($context['package']['type'] == 'language')
-		$context['package']['install']['link'] = '<a href="' . $scripturl . '?action=admin;area=packages;sa=install;package=' . $context['package']['filename'] . '">[ ' . $txt['add_languages'] . ' ]</a>';
+		$context['package']['install']['link'] = '(former link to install lang)';
 	else
 		$context['package']['install']['link'] = '';
 
-	$context['package']['list_files']['link'] = '<a href="' . $scripturl . '?action=admin;area=packages;sa=list;package=' . $context['package']['filename'] . '">[ ' . $txt['list_files'] . ' ]</a>';
+	$context['package']['list_files']['link'] = '(link to list files)';
 
 	unset($context['package']['xml']);
 
-	$context['page_title'] = $txt['package_uploaded_success'];
+	$context['page_title'] = 'successful!';
 }
 
 // Add a package server to the list.

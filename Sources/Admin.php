@@ -604,11 +604,6 @@ function Admin()
 					'subsections' => array(
 						'plugins' => array($txt['plugin_manager']),
 						'add' => array($txt['plugins_add_plugins']),
-						/*'browse' => array($txt['browse_packages']),
-						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
-						'perms' => array($txt['package_file_perms']),
-						'',
-						'options' => array($txt['package_settings']),*/
 					),
 				),
 				'packages' => array(
@@ -619,11 +614,8 @@ function Admin()
 					'icon' => 'packages.gif',
 					'bigicon' => 'plugin_manager.png',
 					'subsections' => array(
-						'browse' => array($txt['browse_packages']),
 						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
 						'perms' => array($txt['package_file_perms']),
-						'',
-						'options' => array($txt['package_settings']),
 					),
 				),
 			),
