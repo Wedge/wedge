@@ -616,6 +616,16 @@ function MessageIndex()
 	// They can only mark read if they are logged in!
 	$context['can_mark_read'] = !we::$is_guest;
 	$context['can_order_pinned'] = allowedTo('pin_topic');
+	if ($context['can_order_pinned'])
+	{
+		// We shold check that we're on the first page and that there's something to reorder. Fortunately this is the same test - we look at what we're displaying and check for pinnedness.
+		$is_pinned = 0;
+		if (!empty($context['topics']))
+			foreach ($context['topics'] as $t => $topic)
+				if ($topic['is_pinned'])
+					$is_pinned++;
+		$context['can_order_pinned'] = $is_pinned > 1;
+	}
 
 	// Create the button set...
 	$context['button_list'] = array(

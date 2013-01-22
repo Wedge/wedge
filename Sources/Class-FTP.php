@@ -417,6 +417,44 @@ class ftp_connection
 		return true;
 	}
 
+	public function raw_list($ftp_path = '')
+	{
+		// Are we even connected...?
+		if (!is_resource($this->connection))
+			return false;
+
+		// Passive... non-agressive...
+		if (!$this->passive())
+			return false;
+
+		// Get the listing!
+		$this->sendMsg('NLST' . ($ftp_path == '' ? '' : ' ' . $ftp_path));
+
+		// Connect, assuming we've got a connection.
+		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
+		if (!$fp || !$this->check_response(array(150, 125)))
+		{
+			$this->error = 'bad_response';
+			@fclose($fp);
+			return false;
+		}
+
+		// Read in the file listing.
+		$data = '';
+		while (!feof($fp))
+			$data .= fread($fp, 4096);
+		fclose($fp);
+
+		// Everything go okay?
+		if (!$this->check_response(226))
+		{
+			$this->error = 'bad_response';
+			return false;
+		}
+
+		return $data;
+	}
+
 	public function list_dir($ftp_path = '', $search = false)
 	{
 		// Are we even connected...?
