@@ -104,6 +104,19 @@ class ftp_connection
 		return true;
 	}
 
+	public function cdup()
+	{
+		if (!is_resource($this->connection))
+			return false;
+		$this->sendMsg('CDUP');
+		if (!$this->check_response(250))
+		{
+			$this->error = 'bad_path';
+			return false;
+		}
+		return true;
+	}
+
 	public function chmod($ftp_file, $chmod)
 	{
 		if (!is_resource($this->connection))

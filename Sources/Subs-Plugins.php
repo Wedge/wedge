@@ -11,6 +11,9 @@
  * @version 0.1
  */
 
+if (!defined('WEDGE'))
+	die('Hacking attempt...');
+
 function getWritableObject()
 {
 	global $pluginsdir, $context, $settings, $boarddir;
@@ -217,6 +220,10 @@ function uploadedPluginValidate()
 			fatal_lang_error('plugins_invalid_plugin_' . (empty($idx) ? 'no_info' : 'overinfo'), false);
 		}
 
+		// If the plugin file is not exactly plugin-info.xml, we need to store the path of it because that's an exclusion path later.
+		if ($file['filename'] != 'plugin-info.xml')
+			$_SESSION['uploadplugin']['trunc'] = substr($file['filename'], 0, strrpos($file['filename'], '/') + 1);
+
 		// Get said plugin-info.xml file and attempt to make sense of it.
 		$file = $zip->extractByIndex($idx);
 	}
@@ -279,6 +286,7 @@ function uploadedPluginValidate()
 		'mtime' => filemtime($cachedir . '/' . $new_file),
 		'md5' => md5_file($cachedir . '/' . $new_file),
 		'id' => $id,
+		'manifest' => $idx,
 	);
 
 	if (isset($context['plugins_dir'][$id]))
@@ -306,16 +314,13 @@ function uploadedPluginConnection()
 
 	// If we already have details, pass through to the next stage.
 	if (isset($_SESSION['plugin_ftp']))
-		redirectexit('action=admin;area=plugins;sa=add;upload;stage=2;' . $context['session_query']);
+		redirectexit('action=admin;area=plugins;sa=add;upload;stage=' . (!empty($_SESSION['uploadplugin']['delete']) ? 2 : 3) . ';' . $context['session_query']);
 
 	// Are we here with a valid plugin?
 	$state = validate_plugin_session();
 	if (!empty($state))
 	{
-		// Oh dear, something went wrong. Clean up the file if we can.
-		if (!empty($_SESSION['uploadplugin']['file']))
-			@unlink($cachedir . '/' . $_SESSION['uploadplugin']['file']);
-		unset($_SESSION['uploadplugin']);
+		clean_up_plugin_session();
 		fatal_lang_error($state, false);
 	}
 
@@ -384,7 +389,7 @@ function uploadedPluginConnection()
 					if ($ftp->chdir($lpath))
 					{
 						// We matched the entire path we have. That seems promising.
-						$dir = $ftp->list_dir();
+						$dir = $ftp->raw_list();
 						if (!$dir)
 						{
 							$context['ftp_details']['error'][] = 'wrong_folder';
@@ -433,7 +438,7 @@ function uploadedPluginConnection()
 		$_SESSION['plugin_ftp'] = $context['ftp_details'];
 
 		$context['page_title'] = $txt['plugin_connection_successful_title'];
-		$context['form_url'] = '<URL>?action=admin;area=plugins;sa=add;upload;stage=2';
+		$context['form_url'] = '<URL>?action=admin;area=plugins;sa=add;upload;stage=' . (!empty($_SESSION['uploadplugin']['delete']) ? 2 : 3);
 		$context['description'] = $txt['plugin_connection_successful'];
 		wetem::load('upload_generic_progress');
 	}
@@ -444,6 +449,207 @@ function uploadedPluginConnection()
 		wetem::load('upload_connection_details');
 		return;
 	}
+}
+
+function uploadedPluginPrune()
+{
+	global $context, $txt;
+
+	// So, this is primarily to deal with plugins that need dealing with.
+	if (empty($_SESSION['uploadplugin']['delete']) || empty($_SESSION['uploadplugin']['id']) || empty($context['plugins_dir'][$_SESSION['uploadplugin']['id']]))
+		redirectexit('action=admin;area=plugins;sa=add;upload;stage=3;' . $context['session_query']);
+
+	checkSession('request');
+
+	// So we know the plugin exists and is currently active. If it's not currently active, the user can deal with it on the main screen.
+	$manifest = safe_sxml_load($context['plugins_dir'][$_SESSION['uploadplugin']['id']] . '/plugin-info.xml');
+	$manifest_id = (string) $manifest['id'];
+
+	// Just like regular disabling, check that it's not using anything existing.
+	$test = test_hooks_conflict($manifest);
+	if (!empty($test))
+	{
+		clean_up_plugin_session();
+		$list = '<ul><li>' . implode('</li><li>', $test) . '</li></ul>';
+		fatal_lang_error('fatal_conflicted_plugins', false, array($list));
+	}
+
+	$state = validate_plugin_session();
+	if (!empty($state))
+	{
+		clean_up_plugin_session();
+		fatal_lang_error($state, false);
+	}
+
+	// !!! Import rest of DisablePlugin, namely clean up of tasks, bbcode and all things settings.
+
+	// So at this stage, we know we can go ahead and delete everything. We need to start with the list of folders.
+	$path = $context['plugins_dir'][$_SESSION['uploadplugin']['id']];
+	$dirs = array();
+	$files = RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
+	$repl = array($path => '', DIRECTORY_SEPARATOR => '/');
+	foreach ($files as $name => $f)
+		if (is_dir($name))
+			$dirs[] = strtr($name, $repl);
+	unset($files);
+	$dirs[] = '/';
+	$dirs = array_reverse($dirs);
+
+	// Now we have a list of paths, from plugindir, to systematically enter and play Cyberman on.
+	if ($_SESSION['ftp_details']['type'] == 'ftp')
+	{
+		loadSource('Class-FTP');
+		$ftp = new ftp_connection($_SESSION['ftp_details']['server'], $_SESSION['ftp_details']['port'], $_SESSION['ftp_details']['user'], obfuscate_pass($_SESSION['ftp_details']['password']));
+		if ($ftp->error)
+		{
+			$ftp->close();
+			clean_up_plugin_session();
+			fatal_lang_error('plugin_ftp_error_' . $ftp->error);
+		}
+
+		$path = rtrim($_SESSION['ftp_details']['path'], '/');
+		foreach ($dirs as $dir)
+		{
+			$this_path = $path . dir;
+			$ftp->chdir($this_path);
+			$data = $ftp->raw_list();
+			if ($data)
+			{
+				$success = true;
+				$files = explode("\n", $data);
+				foreach ($files as $file)
+				{
+					$file = trim($file);
+					if ($file == '.' || $file == '..')
+						continue;
+					$success &= $ftp->unlink($file);
+				}
+				if ($success && $ftp->cdup())
+					$success &= $ftp->unlink(substr(strrchr($dir, '/'), 1));
+
+				if (!$success)
+				{
+					$ftp->close();
+					clean_up_plugin_session();
+					fatal_lang_error('remove_plugin_files_still_there', false, substr(strrchr($this_path, '/'), 1));
+				}
+			}
+			$ftp->close();
+		}
+	}
+
+	unset ($_SESSION['uploadplugin']['delete']);
+	$context['page_title'] = $txt['plugin_files_pruned_title'];
+	$context['form_url'] = '<URL>?action=admin;area=plugins;sa=add;upload;stage=3';
+	$context['description'] = $txt['plugin_files_pruned'];
+	wetem::load('upload_generic_progress');
+}
+
+function uploadedPluginFolders()
+{
+	global $context, $txt, $cachedir, $pluginsdir;
+
+	if (!empty($_SESSION['uploadplugin']['folders']))
+		redirectexit('action=admin;area=plugins;sa=add;upload;stage=3;' . $context['session_query']);
+
+	$state = validate_plugin_session();
+	if (!empty($state))
+	{
+		clean_up_plugin_session();
+		fatal_lang_error($state, false);
+	}
+
+	checkSession('request');
+
+	// Now we get the job of going through and figuring out what folders we need.
+	loadSource('Class-ZipExtract');
+	$folders = array(''); // We want an empty entry, this represents the plugin's root folder
+	$file_count = 0;
+	try
+	{
+		$zip = new wextr($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+		$list = $zip->list_contents();
+
+		if (!empty($_SESSION['uploadplugin']['trunc']))
+			$trunc = '~^' . preg_quote($_SESSION['uploadplugin']['trunc'], '~') . '~i';
+
+		foreach ($list as $i => $file)
+		{
+			if (!$file['is_folder'])
+				$file_count++; // We're already going through the zip, let's count how many actual files there are while we're here
+
+			// We may have learned earlier on that there's a folder inside a folder here... this should fix it.
+			if (isset($trunc))
+				$file['filename'] = preg_replace($trunc, '', $file['filename']);
+
+			if ($file['is_folder'])
+				$folders[$file['filename']] = true;
+			elseif (($pos = strpos($file['filename'], '/')) !== false)
+				$folders[substr($file['filename'], 0, $pos + 1)] = true;
+		}
+		sort($folders);
+	}
+	catch ( Exception $e )
+	{
+		clean_up_plugin_session();
+		fatal_lang_error('plugins_invalid_zip', false);
+	}
+
+	// Attempt to come up with a plugin filename: strip the extension and try to parse out daft names
+	$filename = preg_replace('~\.zip$~i', '', basename($_SESSION['uploadplugin']['name']));
+	if (is_callable('iconv'))
+		$filename = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $filename);
+
+	if (strpos($filename, './') !== false)
+		$filename = preg_replace('~\.\.?/~', '', $filename);
+
+	if (empty($filename))
+		$filename = 'plugin';
+
+	// Having come up with a hopefully sane name, were there any duplicates?
+	if (dir_exists($pluginsdir . '/' . $filename))
+	{
+		$count = 1;
+		while (dir_exists($pluginsdir . '/' . $filename . '_' . $count))
+			$count++;
+
+		$filename .= '_' . $count;
+	}
+
+	// Now we add the server path so we don't do it in the loop.
+	$filename = $_SESSION['ftp_details']['path'] . '/' . $filename . '/';
+
+	// Now we have a list of folders that need uploading, of course we do need to create the master folder too.
+	if ($_SESSION['ftp_details']['type'] == 'ftp')
+	{
+		loadSource('Class-FTP');
+		$ftp = new ftp_connection($_SESSION['ftp_details']['server'], $_SESSION['ftp_details']['port'], $_SESSION['ftp_details']['user'], obfuscate_pass($_SESSION['ftp_details']['password']));
+		if ($ftp->error)
+		{
+			clean_up_plugin_session();
+			fatal_lang_error('plugin_ftp_error_' . $ftp->error, false);
+		}
+
+		foreach ($folders as $folder)
+		{
+			if (!$ftp->create_dir($filename . $folder))
+			{
+				clean_up_plugin_session();
+				fatal_lang_error('plugins_unable_write', false);
+			}
+		}
+	}
+
+	$_SESSION['uploadplugin']['folders'] = true;
+	$context['page_title'] = $txt['plugin_folders_created_title'];
+	$context['form_url'] = '<URL>?action=admin;area=plugins;sa=add;upload;stage=4';
+	$context['description'] = $txt['plugin_folders_created'];
+	wetem::load('upload_generic_progress');
+}
+
+function uploadedPluginFiles()
+{
+
 }
 
 /**
@@ -545,4 +751,64 @@ function testRequiredFunctions($manifest_element)
 		return array();
 	else
 		return array_keys($required_functions); // Can't array-flip because we will end up overwriting our values.
+}
+
+function test_hooks_conflict($manifest)
+{
+	global $context, $plugins_dir, $settings;
+
+	// This could be interesting, actually. Does this plugin declare any hooks that any other active plugin uses?
+	if (!empty($manifest->hooks->provides))
+	{
+		// OK, so this plugin offers some hooks. We need to see which of these are actually in use by active plugins.
+		$hooks_provided = array();
+		foreach ($manifest->hooks->provides->hook as $hook)
+		{
+			$hook_name = (string) $hook;
+			if (!empty($hook_name))
+				$hooks_provided[$hook_name] = true;
+		}
+
+		$conflicted_plugins = array();
+		// So now we know what hooks this plugin offers. Now let's see what other plugins use this.
+		if (!empty($hooks_provided))
+		{
+			$plugins = explode(',', $settings['enabled_plugins']);
+			foreach ($plugins as $plugin)
+			{
+				if ($plugin == $_GET['plugin'] || !file_exists($pluginsdir . '/' . $plugin . '/plugin-info.xml'))
+					continue;
+
+				// Now, we have to go and get the XML manifest for these plugins, because we have to be able to differentiate
+				// optional from required hooks, and we can't do that with what's in context, only the actual manifest.
+				$other_manifest = safe_sxml_load($pluginsdir . '/' . $plugin . '/plugin-info.xml');
+				$hooks = $other_manifest->hooks->children();
+				foreach ($hooks as $hook)
+				{
+					$type = $hook->getName();
+					if ($type != 'provides' && !empty($hook['point']))
+					{
+						$hook_point = (string) $hook['point'];
+						if (isset($hooks_provided[$hook_point]) && (empty($hook['optional']) || (string) $hook['optional'] != 'yes'))
+						{
+							$conflicted_plugins[$plugin] = (string) $other_manifest->name;
+							break;
+						}
+					}
+				}
+				unset($other_manifest);
+			}
+		}
+	}
+
+	return !empty($conflicted_plugins) ? $conflicted_plugins : false;
+}
+
+function clean_up_plugin_session()
+{
+	global $cachedir;
+
+	if (!empty($_SESSION['uploadplugin']['file']))
+		@unlink($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+	unset($_SESSION['uploadplugin'], $_SESSION['ftp_details']);
 }
