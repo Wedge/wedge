@@ -13,7 +13,20 @@
 
 function template_main()
 {
-	global $context, $txt;
+	global $context, $txt, $boardurl;
+
+	echo '
+	<we:cat>
+		', $txt['wedge_home_title'], '
+	</we:cat>';
+
+	if (empty($context['skin_options']['mobile']))
+		echo '
+	<div class="home-intro">
+		<img src="http://wedge.org/wedge.png" style="width: 130px; height: 135px; float: left; margin-top: 0" />
+		<div class="windowbg2 wrc" style="margin: 16px 0 0 146px">', $txt['wedge_home_intro'], '
+		</div>
+	</div>';
 
 	if (!$context['home_show']['topics'])
 		return;
@@ -31,7 +44,7 @@ function template_main()
 		<table class="homeposts w100 cs0">';
 
 	loadSource('../SSI');
-	$naoboards = ssi_recentTopicTitles($n, null, null, 'naos');
+	$naoboards = ssi_recentTopicTitles($n, we::$is_admin || ($boardurl != 'http://wedge.org') ? null : array(136), null, 'naos');
 
 	$new_stuff = array();
 	if (!we::$is_guest)
