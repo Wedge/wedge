@@ -2,7 +2,7 @@
 /**
  * Wedge
  *
- * Contains several package-related database operations, like creating new tables.
+ * Contains several specialized database operations, like creating new tables.
  *
  * @package wedge
  * @copyright 2010-2013 Wedgeward, wedge.org
@@ -23,16 +23,19 @@ class wedbPackages
 
 		if ($reserved === null)
 		{
-			$items = array('admin_info_files', 'approval_queue', 'attachments', 'ban_groups', 'bans', 'ban_items',
-			'board_members', 'board_permissions', 'boards', 'categories', 'collapsed_categories',
-			'custom_fields', 'drafts', 'group_moderators', 'log_actions', 'log_activity', 'log_boards', 'log_comments',
-			'log_digest', 'log_errors', 'log_floodcontrol', 'log_group_requests', 'log_intrusion', 'log_mark_read', 'log_notify',
-			'log_online', 'log_packages', 'log_polls', 'log_reported', 'log_reported_comments', 'log_scheduled_tasks',
-			'log_search_messages', 'log_search_results', 'log_search_subjects', 'log_search_topics', 'log_topics', 'mail_queue',
-			'membergroups', 'members', 'message_icons', 'messages', 'moderators', 'package_servers',
-			'permission_profiles', 'permissions', 'personal_messages', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls',
-			'pretty_topic_urls', 'pretty_urls_cache', 'privacy_boards', 'privacy_thoughts', 'privacy_topics', 'scheduled_tasks',
-			'sessions', 'settings', 'smileys', 'spiders', 'subscriptions', 'subscriptions_groups', 'themes', 'topics');
+			$items = array(
+				'admin_info_files', 'approval_queue', 'attachments',
+				'ban_groups', 'bans', 'ban_items', 'board_members', 'board_permissions', 'boards',
+				'categories', 'collapsed_categories', 'custom_fields', 'drafts', 'group_moderators',
+				'log_actions', 'log_activity', 'log_boards', 'log_comments', 'log_digest', 'log_errors',
+				'log_floodcontrol', 'log_group_requests', 'log_intrusion', 'log_mark_read', 'log_notify',
+				'log_online', 'log_polls', 'log_reported', 'log_reported_comments', 'log_scheduled_tasks',
+				'log_search_messages', 'log_search_results', 'log_search_subjects', 'log_search_topics', 'log_topics',
+				'mail_queue', 'membergroups', 'members', 'message_icons', 'messages', 'moderators', 'permission_profiles', 'package_servers',
+				'permissions', 'personal_messages', 'pm_recipients', 'pm_rules', 'poll_choices', 'polls', 'pretty_topic_urls',
+				'pretty_urls_cache', 'privacy_boards', 'privacy_thoughts', 'privacy_topics', 'scheduled_tasks', 'sessions',
+				'settings', 'smileys', 'spiders', 'subscriptions', 'subscriptions_groups', 'themes', 'topics'
+			);
 			foreach ($items as $table_name)
 				$reserved[] = strtolower($db_prefix . $table_name);
 		}

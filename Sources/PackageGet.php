@@ -286,7 +286,8 @@ function PackageGBrowse()
 	// By default we use an unordered list, unless there are no lists with more than one package.
 	$context['list_type'] = 'ul';
 
-	$instmods = loadInstalledPackages();
+	// !! Removed. Function won't work without a rewrite anyway.
+	// $instmods = loadInstalledPackages();
 
 	$installed_mods = array();
 	// Look through the list of installed mods...

@@ -65,11 +65,6 @@ if (!defined('WEDGE'))
 		- will return false if the file is "moved permanently" or similar.
 		- returns true if the remote url exists.
 
-	array loadInstalledPackages()
-		- loads and returns an array of installed packages.
-		- gets this information from Packages/installed.list.
-		- returns the array of data.
-
 	array getPackageInfo(string filename)
 		- loads a package's information and returns a representative array.
 		- expects the file to be a package in Packages/.
@@ -453,60 +448,6 @@ function url_exists($url)
 	fclose($fid);
 
 	return preg_match('~^HTTP/.+\s+(20[01]|30[127])~i', $head) == 1;
-}
-
-// Load the installed packages.
-function loadInstalledPackages()
-{
-	global $boarddir;
-
-	// First, check that the database is valid, installed.list is still king.
-	$install_file = implode('', file($boarddir . '/Packages/installed.list'));
-	if (trim($install_file) == '')
-	{
-		wesql::query('
-			UPDATE {db_prefix}log_packages
-			SET install_state = {int:not_installed}',
-			array(
-				'not_installed' => 0,
-			)
-		);
-
-		// Don't have anything left, so send an empty array.
-		return array();
-	}
-
-	// Load the packages from the database - note this is ordered by install time to ensure latest package uninstalled first.
-	$request = wesql::query('
-		SELECT id_install, package_id, filename, name, version
-		FROM {db_prefix}log_packages
-		WHERE install_state != {int:not_installed}
-		ORDER BY time_installed DESC',
-		array(
-			'not_installed' => 0,
-		)
-	);
-	$installed = array();
-	$found = array();
-	while ($row = wesql::fetch_assoc($request))
-	{
-		// Already found this? If so don't add it twice!
-		if (in_array($row['package_id'], $found))
-			continue;
-
-		$found[] = $row['package_id'];
-
-		$installed[] = array(
-			'id' => $row['id_install'],
-			'name' => $row['name'],
-			'filename' => $row['filename'],
-			'package_id' => $row['package_id'],
-			'version' => $row['version'],
-		);
-	}
-	wesql::free_result($request);
-
-	return $installed;
 }
 
 function getPackageInfo($gzfilename)

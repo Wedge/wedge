@@ -1021,30 +1021,6 @@ CREATE TABLE {$db_prefix}log_online (
 ) ENGINE=MyISAM;
 
 #
-# Table structure for table `log_packages`
-#
-
-CREATE TABLE {$db_prefix}log_packages (
-  id_install int(10) unsigned NOT NULL auto_increment,
-  filename varchar(255) NOT NULL default '',
-  package_id varchar(255) NOT NULL default '',
-  name varchar(255) NOT NULL default '',
-  version varchar(255) NOT NULL default '',
-  id_member_installed mediumint(8) NOT NULL default 0,
-  member_installed varchar(255) NOT NULL default '',
-  time_installed int(10) NOT NULL default 0,
-  id_member_removed mediumint(8) NOT NULL default 0,
-  member_removed varchar(255) NOT NULL default '',
-  time_removed int(10) NOT NULL default 0,
-  install_state tinyint(3) NOT NULL default 1,
-  failed_steps text NOT NULL,
-  themes_installed varchar(255) NOT NULL default '',
-  db_changes text NOT NULL,
-  PRIMARY KEY (id_install),
-  KEY filename (filename(15))
-) ENGINE=MyISAM;
-
-#
 # Table structure for table `log_polls`
 #
 

@@ -530,14 +530,6 @@ tr.windowbg2
 .search_results_posts .buttons
 	padding: 5px 0 0 1em
 
-
-/* Styles for the package manager.
-------------------------------------------------- */
-#package_list
-	ol, ol li
-		margin-left: 0
-		margin-right: 50px
-
 #manage_boards
 	ul, li
 		overflow: hidden
