@@ -1158,9 +1158,14 @@ table
 		:before
 			content: "\2026"
 		span
-			text-indent: -999em
-			font: 0/0 Arial
-			overflow: hidden
+			@if safari
+				position: absolute
+				clip: rect(1px, 1px, 1px, 1px)
+			@else
+				text-indent: -999em
+				font: 0/0 Arial
+				overflow: hidden
+			@endif
 	:link, :visited
 		color: #789
 

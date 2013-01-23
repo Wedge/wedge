@@ -9,10 +9,6 @@ body
 	color: #333
 	padding: 0
 
-.post
-	em, strong
-		font-family: $ita_font
-
 #offside
 	display: table-cell
 	@if ios
@@ -85,12 +81,6 @@ body
 #top_section, #upper_section
 	border-bottom: 3px solid lighten($reddish, 3%)
 
-#linktree ul
-	padding: 7px 15px
-
-#linktree_bt ul
-	margin-bottom: -15px
-
 #main
 	display: block
 	padding: 16px 8px 0
@@ -138,6 +128,46 @@ dl#feed
 
 .keyinfo .modified
 	font-style: normal
+
+/* Restyling the linktree. For big arrow fans.
+------------------------------------------------------- */
+#linktree li unextends .horizontal-arrow
+
+// The navigation list (i.e. linktree)
+#linktree
+	background: transparent
+	ul
+		background: $main_bg
+		padding: 0
+		border: 1px solid #ddd
+		border-width: 0 0 1px
+		overflow: hidden
+		text-overflow: ellipsis
+	li
+		display: inline-block
+		position: relative
+		padding: 5px 5px 5px 26px
+		:after
+			content: ""
+			display: block
+			width, height, top: 0
+			right: -34px // for some reason, it has to be 34, not 30...
+			position: absolute
+			border-top, border-bottom, border-right: 15px solid transparent
+			border-left: 15px solid $main_bg
+			z-index: 1
+		:nth-last-child(even)
+			background: darken($main_bg, 6%)
+			:after
+				right: -30px
+				border-left: 15px solid darken($main_bg, 6%)
+		:first-child
+			padding-left: 8px
+			border-radius: 8px 0 0 8px
+
+#linktree_bt ul
+	margin-bottom: -18px
+	border-width: 1px 0 0 0
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
@@ -265,9 +295,9 @@ $head_bg   = rgba(233,235,186,.66)
 $body_bg   = #f6f8ef
 $side_bg   = #e8e3cb
 $footer_bg = lighten($side_bg, 5%)
-$ita_font = "Segoe UI", "Trebuchet MS", Arial, sans-serif
-$main_font = "PT Sans", Arial, Helvetica, sans-serif
-$post_font = Tahoma, Verdana, Arial, sans-serif
+$main_font = "Open Sans", Verdana, Arial, sans-serif
+$post_font = "Open Sans", Verdana, Arial, sans-serif
+$main_font_size = 88%/140%
 $post_font_size = 9.5pt/140%
 
 @remove #linktree

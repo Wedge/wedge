@@ -450,7 +450,7 @@ function template_upload_connection_details()
 	</form>
 	<br class="clear">';
 
-	// If using SFTP, hide the path variable, and whichever we go to, if the port is at the old default, update it
+	// If using SFTP, hide the path variable, and whichever we go to, if the port is at the old default, update it.
 	add_js('
 	function update_server(type)
 	{

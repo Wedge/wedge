@@ -166,21 +166,24 @@
 	]]></code>
 
 	<!--
-		CSS. This section allows you to define extra style rules that should be
+		Raw CSS. This section allows you to define extra style rules that should be
 		added at the top of the page. You should prefer the use of actual CSS
 		files, unless you need to include an external file like a web font (by
 		using the include parameter), or your inline styles use the "$behavior"
 		keyword, which is mandatory if you want to use behavior files for IE.
-
-		Examples (remove the ! from the css tags):
-		<!css>.windowbg { behavior: url($behavior/Themes/default/PIE.htc); }</css>
-		<!css include="http://fonts.googleapis.com/css?family=Droid+Sans:400,700"></css>
-		Note that it isn't recommended to use web fonts on stock installs.
 	-->
 
 	<css for="no_browser"><![CDATA[
 	.ie_sucks_anyway {}
 	]]></css>
+
+	<!--
+		CSS files. Mostly for web fonts, really.
+		Note that it isn't recommended to use web fonts on stock installs.
+		Open Sans is one of the lightest ones you could find, though.
+	-->
+
+	<css include="http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700"></css>
 
 	<!--
 		Macros. These examples are actually fairly useless since they just

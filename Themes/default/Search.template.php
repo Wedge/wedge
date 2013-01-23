@@ -186,7 +186,6 @@ function template_main()
 	}
 
 	echo '
-		</div>
 	</form>';
 
 	add_js('

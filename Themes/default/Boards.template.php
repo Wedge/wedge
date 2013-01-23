@@ -226,7 +226,7 @@ function template_boards_newsfader()
 		add_js('
 	new weFader({
 		control: \'fadeScroller\',
-		template: ', JavaScriptEscape('%1$s'), ',
+		template: \'%1$s\',
 		delay: ', empty($settings['newsfader_time']) ? 5000 : $settings['newsfader_time'], '
 	});
 

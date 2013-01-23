@@ -123,23 +123,23 @@ $darkgrad = #f3f2f0
 		padding: 5px 0 5px 36px
 		:after
 			content: ""
-			position: absolute
 			margin-left: -20px
 			width: 40px
 			left: 100%
 			top, bottom: 0
+			position: absolute
 			clip: rect(0, 999px, 999px, 20px) // avoid box shadow remnants on the left
 			box-shadow: 2px 0 5px #bbb
 			background: linear-gradient(0deg, #fdfdfd, #ededed)
 			border-radius: 0 50% 50% 0
 			z-index: 1
-		:first-child
-			padding-left: 8px
-			border-radius: 8px 0 0 8px
 		:nth-last-child(even)
 			background: linear-gradient(0deg, darken(#fdfdfd, 5%), darken(#ededed, 5%))
 			:after
 				background: linear-gradient(0deg, darken(#fdfdfd, 5%), darken(#ededed, 5%))
+		:first-child
+			padding-left: 8px
+			border-radius: 8px 0 0 8px
 
 @media $responsive
 	body
