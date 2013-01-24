@@ -368,6 +368,10 @@ function aeva_unseen()
 			aeva_markAllSeen();
 	}
 
+	// If we're asking for a page that doesn't exist, show the last one.
+	if ($total_items <= $start)
+		$start = floor(max(0, $total_items - 1) / $per_page) * $per_page;
+
 	// Now get the items!
 	$context['aeva_items'] = aeva_fillMediaArray(wesql::query('
 		SELECT
@@ -386,7 +390,7 @@ function aeva_unseen()
 		{raw:album}' . (!aeva_allowedTo('moderate') ? '
 		AND m.approved = 1' : '') . '
 		ORDER BY m.log_last_access_time DESC
-		LIMIT {int:start},{int:per_page}',
+		LIMIT {int:start}, {int:per_page}',
 		array('start' => $start, 'per_page' => $per_page, 'album' => $album, 'user' => we::$id)
 	));
 

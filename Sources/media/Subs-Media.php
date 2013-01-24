@@ -3638,12 +3638,16 @@ function aeva_getItemData($item)
 			LEFT JOIN {db_prefix}media_files AS p ON (p.id_file = m.id_preview)
 			LEFT JOIN {db_prefix}media_files AS t ON (t.id_file = m.id_thumb)
 			LEFT JOIN {db_prefix}members AS mem2 ON (mem2.id_member = m.last_edited_by)
-			LEFT JOIN {db_prefix}media_log_media AS lm ON (lm.id_media = m.id_media AND lm.id_member = m.id_member)
-			LEFT JOIN {db_prefix}media_log_media AS lm_all ON (lm_all.id_media = 0 AND lm_all.id_member = m.id_member)
+			LEFT JOIN {db_prefix}media_log_media AS lm ON (lm.id_media = m.id_media AND lm.id_member = {int:id_member})
+			LEFT JOIN {db_prefix}media_log_media AS lm_all ON (lm_all.id_media = 0 AND lm_all.id_member = {int:id_member})
 		WHERE m.id_media = {int:id_media}
 		{raw:approvals}
 		LIMIT 1',
-		array('id_media' => $item, 'approvals' => !aeva_allowedTo('moderate') ? 'AND (m.approved = 1 OR m.id_member = ' . we::$id . ')' : '')
+		array(
+			'id_media' => $item,
+			'id_member' => we::$id,
+			'approvals' => !aeva_allowedTo('moderate') ? 'AND (m.approved = 1 OR m.id_member = ' . we::$id . ')' : '',
+		)
 	);
 	if (wesql::num_rows($request) == 0)
 		fatal_lang_error('media_item_not_found', !empty($amSettings['log_access_errors']));
