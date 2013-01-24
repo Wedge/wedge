@@ -419,9 +419,12 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	// and decide to remove it later, simply reupload other CSS files or empty your cache.
 	unset($found_suffixes['local'], $found_suffixes['global'], $found_suffixes['replace']);
 
-	// We need to cache different versions for different browsers, even if we don't have overrides available.
-	// This is because Wedge also transforms regular CSS to add vendor prefixes and the like.
+	// We need to cache different versions for different browsers/OSes, even if we don't have overrides available.
+	// This is because Wedge may use '@if browser' in the CSS, and also adds vendor prefixes automatically.
 	$found_suffixes[we::$browser['agent'] . we::$browser['version']] = true;
+	
+	// Windows being the most likely OS, we're shortening it to 'win' to save bytes in HTML pages.
+	$found_suffixes[str_replace('dows', '', we::$browser['os']) . we::$browser['os_version']] = true;
 
 	// Make sure to only keep 'webkit' if we have no other browser name on record.
 	if (we::is('webkit') && we::$browser['agent'] != 'webkit')

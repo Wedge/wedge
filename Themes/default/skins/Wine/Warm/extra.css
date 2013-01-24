@@ -9,11 +9,11 @@ body
 	color: #333
 	padding: 0
 
+h5
+	font-weight: 400
+
 #offside
-	display: table-cell
-	@if ios
-		display: block
-	@endif
+	display: @is (ios, block, table-cell)
 
 @media $responsive
 	body
@@ -137,10 +137,11 @@ dl#feed
 #linktree
 	background: transparent
 	ul
+		border-radius: 8px
 		background: $main_bg
 		padding: 0
 		border: 1px solid #ddd
-		border-width: 0 0 1px
+		margin: 16px 20px 0
 		overflow: hidden
 		text-overflow: ellipsis
 	li
@@ -151,23 +152,21 @@ dl#feed
 			content: ""
 			display: block
 			width, height, top: 0
-			right: -34px // for some reason, it has to be 34, not 30...
+			right: -30px
 			position: absolute
-			border-top, border-bottom, border-right: 15px solid transparent
+			border: 15px solid transparent
 			border-left: 15px solid $main_bg
 			z-index: 1
 		:nth-last-child(even)
 			background: darken($main_bg, 6%)
 			:after
-				right: -30px
 				border-left: 15px solid darken($main_bg, 6%)
 		:first-child
 			padding-left: 8px
 			border-radius: 8px 0 0 8px
 
 #linktree_bt ul
-	margin-bottom: -18px
-	border-width: 1px 0 0 0
+	margin: 0 20px 0
 
 /* Styles for the dropdown menus.
 ------------------------------------------------------- */
@@ -228,10 +227,11 @@ tr.titlebg th, tr.catbg th
 /* Styles for section headers.
 ------------------------------------------------------- */
 .catbase
-	background: rgba(0,0,0, .03)
+	background: rgba(0,0,0, .025)
 	box-shadow: none
+	border: 0
 	text-shadow: white 0 1px 2px
-	font: 700 1.3em/20px $main_font
+	font: 400 1.3em/20px $main_font
 	img
 		vertical-align: -2px
 
@@ -249,8 +249,17 @@ tr.titlebg th, tr.catbg th
 		color: lighten(channels(gray, 30%), 10%) !important
 
 .cat final
-	border: 1px solid rgba(0,0,0, 0.15)
 	color: gray
+
+.posthead
+	background: none
+
+#top_subject
+	font: 400 1.1em/20px $main_font
+	letter-spacing: 0
+
+.prevnext_prev
+	font: 400 70%/1.3em $main_font
 
 .table_grid
 	tr.catbg, tr.titlebg
@@ -265,10 +274,6 @@ tr.titlebg th, tr.catbg th
 
 #qr_expand
 	margin-top: -2px
-
-#top_subject
-	font-family: inherit
-	font-size: 1.1em
 
 #search_form
 	input.search
@@ -298,7 +303,7 @@ $footer_bg = lighten($side_bg, 5%)
 $main_font = "Open Sans", Verdana, Arial, sans-serif
 $post_font = "Open Sans", Verdana, Arial, sans-serif
 $main_font_size = 88%/140%
-$post_font_size = 9.5pt/140%
+$post_font_size = 9.7pt/140%
 
 @remove #linktree
 	margin: 0 -20px
@@ -313,6 +318,16 @@ $post_font_size = 9.5pt/140%
 @remove #edge, #sidebar, #main
 	direction: ltr
 	direction: rtl
+
+@remove #top_subject
+	font: 700 1em/20px $main_font
+	letter-spacing: 0
+
+@remove .prevnext_prev
+	font: 700 60%/1.3em $main_font
+
+@remove .board_list td.info a.subject
+	font: 700 120% $head_font
 
 /*
 	If you want to position the sidebar to the right, replace the above @remove with:

@@ -2,7 +2,7 @@
 /* Overwriting earlier settings...
 ------------------------------------------------------- */
 
-$head_font = "PT Sans", $main_font
+$head_font = $main_font
 
 $post_font = Verdana, $main_font
 $post_font_size = 9pt/140%

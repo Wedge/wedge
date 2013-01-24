@@ -251,7 +251,7 @@ section.ic
 	@endif
 
 #top_subject
-	font: 700 1em/20px "PT Sans", $main_font
+	font: 700 1em/20px $main_font
 	letter-spacing: 0
 
 // Previous/next topic links inside .posthead

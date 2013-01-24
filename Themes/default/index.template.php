@@ -637,8 +637,7 @@ function template_linktree($position = 'top', $force_show = false)
 		$num = 0;
 		foreach ($context['linktree'] as &$tree)
 		{
-			echo '
-			<li', ++$num == $linksize ? ' class="last"' : '', '>';
+			echo '<li', ++$num == $linksize ? ' class="last"' : '', '>';
 
 			// Show something before the link?
 			if (isset($tree['extra_before']))
@@ -655,8 +654,7 @@ function template_linktree($position = 'top', $force_show = false)
 			if ($needs_fix)
 				echo ' > ';
 		}
-		echo '
-		</ul>';
+		echo '</ul>';
 	}
 
 	echo '
