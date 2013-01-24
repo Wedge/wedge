@@ -359,21 +359,12 @@ function BanListAdd()
 		sPostName: \'ban_id_member_content\',
 		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		bItemList: false
-	});
-
-	function updateIP_form()
-	{
-		var ipv6 = $(\'#ban_type_ip\').val() == \'ipv6\';
-		$(\'.ipv4\').toggle(!ipv6);
-		$(\'.ipv6\').toggle(ipv6);
-		$(\'.ip_end, .ip_start .ban_width\').toggle($(\'#ban_ip_range\').val() != 0);
-	};
-	updateIP_form();');
+	});');
 }
 
 function BanListEdit()
 {
-	global $txt, $context, $settings;
+	global $txt, $context, $settings, $user_profile;
 
 	$_REQUEST['ban'] = isset($_REQUEST['ban']) ? (int) $_REQUEST['ban'] : 0;
 
@@ -391,11 +382,14 @@ function BanListEdit()
 			$context['ban_details'] = wesql::fetch_assoc($request);
 		wesql::free_result($request);
 
-		if (empty($settings['disableHostnameLookup']) && $context['ban_details']['ban_type'] == 'hostname')
+		if (!empty($settings['disableHostnameLookup']) && $context['ban_details']['ban_type'] == 'hostname')
 			fatal_lang_error('ban_no_modify', false);
 	}
 
-	$context['ban_types'] = array('id_member', 'email', 'ip_address');
+	if (!empty($context['ban_details']['extra']))
+		$context['ban_details']['extra'] = @unserialize($context['ban_details']['extra']);
+
+	$context['ban_types'] = array('id_member', 'member_name', 'email', 'ip_address');
 	if (empty($settings['disableHostnameLookup']))
 		$context['ban_types'][] = 'hostname';
 
@@ -417,13 +411,87 @@ function BanListEdit()
 		// Successful? Save and exit, otherwise let this function just continue to show the editing area
 		if (empty($context['errors']))
 		{
-			redirectexit('action=admin;area=ban;sa=');
+			redirectexit('action=admin;area=ban;sa=' . !empty($context['ban_details']['hardness']) ? 'hard' : 'soft');
 		}
 	}
 
 	// Did we find a ban?
 	if (empty($context['ban_details']))
 		return BanListAdd();
+
+	switch ($context['ban_details']['ban_type'])
+	{
+		case 'id_member':
+			$loaded = loadMemberData((int) $context['ban_details']['ban_content'], false, 'minimal');
+			if (!empty($loaded))
+				$context['ban_details']['ban_member'] = $user_profile[$loaded[0]]['real_name'];
+			break;
+		case 'member_name':
+			$context['ban_details']['ban_name'] = $context['ban_details']['ban_content'];
+			$context['ban_details']['name_type'] = !empty($context['ban_details']['extra']['type']) && in_array($context['ban_details']['extra']['type'], array('beginning', 'containing', 'ending')) ? $context['ban_details']['extra']['type'] : 'matching';
+			break;
+		case 'email':
+			if (strpos($context['ban_details']['ban_content'], '*@') === 0)
+			{
+				$context['ban_details']['email_type'] = 'domain';
+				$context['ban_details']['ban_email'] = substr($context['ban_details']['ban_content'], 2);
+			}
+			elseif (strpos($context['ban_details']['ban_content'], '@*') === 0)
+			{
+				$context['ban_details']['email_type'] = 'tld';
+				$context['ban_details']['ban_email'] = substr($context['ban_details']['ban_content'], 2);
+			}
+			else
+			{
+				$context['ban_details']['email_type'] = 'specific';
+				if (!empty($context['ban_details']['extra']['gmail_style']))
+				{
+					list($user, $domain) = explode('@', $context['ban_details']['ban_content']);
+					if (strpos($user, '+') !== false)
+						list($user, $label) = explode('+', $user);
+					$user = str_replace('.', '', $user);
+					$context['ban_details']['ban_email'] = $user . '@' . $domain;
+				}
+				else
+					$context['ban_details']['ban_email'] = $context['ban_details']['ban_content'];
+			}
+			break;
+		case 'ip_address':
+			$context['ban_details']['ip_range'] = strlen($context['ban_details']['ban_content']) != 32;
+			if ($context['ban_details']['ip_range'])
+				$range = explode('-', $context['ban_details']['ban_content']);
+			else
+				$range = array($context['ban_details']['ban_content'], INVALID_IP); // It's a dummy value but we use it to keep the code sane-ish.
+
+			$context['ban_details']['ip_octets'] = array();
+			$items = array('start', 'end');
+			if (is_ipv4($range[0]))
+			{
+				$context['ban_details']['ip_type'] = 'ipv4';
+				foreach ($range as $key => $item)
+					for ($i = 0; $i <= 3; $i++)
+						$context['ban_details']['ip_octets'][$items[$key] . '_' . $i] = hexdec(substr($item, 24 + $i * 2, 2));
+			}
+			else
+			{
+				$context['ban_details']['ip_type'] = 'ipv6';
+				foreach ($range as $key => $item)
+					$context['ban_details']['ipv6'][$items[$key]] = format_ip($item);
+			}
+			break;
+		case 'hostname':
+			if (strpos($context['ban_details']['ban_content'], '*.') === 0)
+			{
+				$domain = substr($context['ban_details']['ban_content'], 2);
+				// We might have stripped too much, let us check
+				if (strpos($domain, '.') === false)
+					$domain = '*.' . $domain;
+				$context['ban_details']['hostname'] = $domain;
+			}
+			else
+				$context['ban_details']['hostname'] = $context['ban_details']['ban_content'];
+			break;
+	}
 
 	$context['page_title'] = $txt['ban_edit'];
 	wetem::load('ban_details');

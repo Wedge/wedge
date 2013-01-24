@@ -369,7 +369,7 @@ function template_ban_details()
 							<select name="ban_type" id="ban_type" onchange="updateForm()">';
 	foreach ($context['ban_types'] as $type)
 		echo '
-								<option value="', $type, '">&lt;div class="ban_selector ban_items_', $type, '"&gt;&lt;/div&gt; ', $txt['ban_type_title_' . $type], '</option>';
+								<option value="', $type, '"', $type == $context['ban_details']['ban_type'] ? ' selected' : '', '>&lt;div class="ban_selector ban_items_', $type, '"&gt;&lt;/div&gt; ', $txt['ban_type_title_' . $type], '</option>';
 	echo '
 							</select>
 						</dd>';
@@ -378,7 +378,7 @@ function template_ban_details()
 	echo '
 						<dt class="ban_criteria_id_member">', $txt['ban_type_id_member_type'], '</dt>
 						<dd class="ban_criteria_id_member">
-							<input type="text" value="" id="ban_id_member_content" name="ban_id_member_content" size="15" maxlength="100">
+							<input type="text" value="', !empty($context['ban_details']['ban_member']) ? $context['ban_details']['ban_member'] : '', '" id="ban_id_member_content" name="ban_id_member_content" size="15" maxlength="100">
 						</dd>';
 
 	// Banning types of names
@@ -386,19 +386,20 @@ function template_ban_details()
 						<dd class="ban_criteria_member_name">', $txt['ban_member_note'], '</dd>
 						<dt class="ban_criteria_member_name">', $txt['ban_type_member_name'], '</dt>
 						<dd class="ban_criteria_member_name">
-							<select name="ban_member_name_select">
-								<option value="begin">', $txt['ban_member_names_select_beginning'], '</option>
-								<option value="end">', $txt['ban_member_names_select_ending'], '</option>
-								<option value="contain">', $txt['ban_member_names_select_containing'], '</option>
-								<option value="match">', $txt['ban_member_names_select_matching'], '</option>
+							<select name="ban_member_name_select">';
+	$types = array('begin' => 'beginning', 'end' => 'ending', 'contain' => 'containing', 'match' => 'matching');
+	foreach ($types as $key => $value)
+		echo '
+								<option value="', $key, '"', !empty($context['ban_details']['name_type']) && $context['ban_details']['name_type'] == $value ? ' selected' : '', '>', $txt['ban_member_names_select_' . $value], '</option>';
+	echo '
 							</select>
-							<input type="text" name="ban_member_name_content" size="20" maxlength="100">
+							<input type="text" name="ban_member_name_content" size="20" maxlength="100" value="', !empty($context['ban_details']['ban_name']) ? $context['ban_details']['ban_name'] : '', '">
 						</dd>
 						<dt class="ban_criteria_member_name">', $txt['ban_member_case_sensitive'], ' <dfn>', $txt['ban_member_case_sensitive_desc'], '</dfn></dt>
 						<dd class="ban_criteria_member_name">
 							<select name="ban_member_name_case_sens">
-								<option value="0">', $txt['no'], '</option>
-								<option value="1">', $txt['yes'], '</option>
+								<option value="0"', empty($context['ban_details']['extra']['case_sens']) ? ' selected' : '', '>', $txt['no'], '</option>
+								<option value="1"', !empty($context['ban_details']['extra']['case_sens']) ? ' selected' : '', '>', $txt['yes'], '</option>
 							</select>
 						</dd>';
 
@@ -409,18 +410,18 @@ function template_ban_details()
 							<select name="ban_type_email">';
 	foreach (array('specific', 'domain', 'tld') as $type)
 		echo '
-								<option value="', $type, '">', $txt['ban_type_email_type_' . $type], '</option>';
+								<option value="', $type, '"', !empty($context['ban_details']['email_type']) && $context['ban_details']['email_type'] == $type ? ' selected' : '', '>', $txt['ban_type_email_type_' . $type], '</option>';
 
 	echo '
 							</select>
 						</dd>
 						<dt class="ban_criteria_email">', $txt['ban_type_email_content'], '</dt>
 						<dd class="ban_criteria_email">
-							<input type="text" value="" name="ban_email_content" size="30" maxlength="100">
+							<input type="text" name="ban_email_content" size="30" maxlength="100" value="', !empty($context['ban_details']['ban_email']) ? $context['ban_details']['ban_email'] : '', '">
 						</dd>
 						<dt class="ban_criteria_email"><a href="<URL>?action=help;in=ban_gmail_style" class="help" onclick="return reqWin(this);"></a> ', $txt['ban_email_gmail_style'], '</dt>
 						<dd class="ban_criteria_email">
-							<input type="checkbox" value="1" name="ban_gmail_style">
+							<input type="checkbox" value="1"', !empty($context['ban_details']['extra']['gmail_style']) ? ' checked' : '', ' name="ban_gmail_style">
 						</dd>';
 
 	// This is a warning that applies to both IP and hostnames. It's carefully worded for that.
@@ -432,50 +433,44 @@ function template_ban_details()
 						<dt class="ban_criteria_ip_address">', $txt['ban_type_ip_address'], '</dt>
 						<dd class="ban_criteria_ip_address">
 							<select name="ban_type_ip" id="ban_type_ip" onchange="updateIP_form();">
-								<option value="ipv4">IPv4 (xxx.yyy.zzz.aaa)</option>
-								<option value="ipv6">IPv6 (xxxx:yyyy:zzzz::aaaa)</option>
+								<option value="ipv4"', !empty($context['ban_details']['ip_type']) && $context['ban_details']['ip_type'] == 'ipv4' ? ' selected' : '', '>IPv4 (xxx.yyy.zzz.aaa)</option>
+								<option value="ipv6"', !empty($context['ban_details']['ip_type']) && $context['ban_details']['ip_type'] == 'ipv6' ? ' selected' : '', '>IPv6 (xxxx:yyyy:zzzz::aaaa)</option>
 							</select>
 						</dd>
 						<dt class="ban_criteria_ip_address">', $txt['ban_type_ip_range'], '</dt>
 						<dd class="ban_criteria_ip_address">
 							<select name="ban_ip_range" id="ban_ip_range" onchange="updateIP_form();">
-								<option value="0">', $txt['no'], '</option>
-								<option value="1">', $txt['yes'], '</option>
+								<option value="0"', empty($context['ban_details']['ip_range']) ? ' selected' : '', '>', $txt['no'], '</option>
+								<option value="1"', !empty($context['ban_details']['ip_range']) ? ' selected' : '', '>', $txt['yes'], '</option>
 							</select>
 						</dd>
 						<dt class="ban_criteria_ip_address">', $txt['ban_type_ip_address_details'], '</dt>
-						<dd class="ban_criteria_ip_address">
-							<div class="ip_start">
-								<div class="ban_width floatleft">', $txt['ban_type_range_start'], '</div>
-								<span class="ipv4">
-									<input type="number" size="3" min="0" max="255" name="ipv4_start_0">&bull;
-									<input type="number" size="3" min="0" max="255" name="ipv4_start_1">&bull;
-									<input type="number" size="3" min="0" max="255" name="ipv4_start_2">&bull;
-									<input type="number" size="3" min="0" max="255" name="ipv4_start_3">
+						<dd class="ban_criteria_ip_address">';
+	foreach (array('start', 'end') as $item)
+	{
+		echo '
+							<div class="ip_', $item, '">
+								<div class="ban_width floatleft">', $txt['ban_type_range_' . $item], '</div>
+								<span class="ipv4">';
+		for ($i = 0; $i <= 3; $i++)
+			echo '
+								<input type="number" size="3" min="0" max="255" value="', !empty($context['ban_details']['ip_octets'][$item . '_' . $i]) ? $context['ban_details']['ip_octets'][$item . '_' . $i] : 0, '" name="ipv4_', $item, '_', $i, '">', $i < 3 ? '&bull;' : '';
+		echo '
 								</span>
 								<span class="ipv6">
-									<input type="text" size="38" maxlength="39" name="ipv6_start">
+									<input type="text" size="38" maxlength="39" name="ipv6_', $item, '" value="', !empty($context['ban_details']['ipv6'][$item]) ? $context['ban_details']['ipv6'][$item] : '', '">
 								</span>
-							</div>
-							<div class="ip_end">
-								<div class="ban_width floatleft">', $txt['ban_type_range_end'], '</div>
-								<span class="ipv4">
-									<input type="number" size="3" min="0" max="255" name="ipv4_end_0">&bull;
-									<input type="number" size="3" min="0" max="255" name="ipv4_end_1">&bull;
-									<input type="number" size="3" min="0" max="255" name="ipv4_end_2">&bull;
-									<input type="number" size="3" min="0" max="255" name="ipv4_end_3">
-								</span>
-								<span class="ipv6">
-									<input type="text" size="38" maxlength="39" name="ipv6_end">
-								</span>
-							</div>
+							</div>';
+	}
+
+	echo '
 						</dd>';
 
 	// Banning a hostname
 	echo '
 					<dt class="ban_criteria_hostname">', $txt['ban_type_hostname'], ' <dfn>', $txt['ban_type_hostname_wildcard'], '</dfn></dt>
 					<dd class="ban_criteria_hostname">
-						<input type="text" name="ban_hostname_content" size="30" maxlength="100">
+						<input type="text" name="ban_hostname_content" size="30" maxlength="100" value="', !empty($context['ban_details']['hostname']) ? $context['ban_details']['hostname'] : '', '">
 					</dd>';
 
 	// All done, back to the rest of the form fun
@@ -487,11 +482,11 @@ function template_ban_details()
 					<dl class="settings">
 						<dt>', $txt['ban_reason'], ' <dfn>', $txt['ban_reason_subtext'], '</dfn></dt>
 						<dd>
-							<textarea name="ban_reason" class="ban"></textarea>
+							<textarea name="ban_reason" class="ban">', !empty($context['ban_details']['ban_reason']) ? $context['ban_details']['ban_reason'] : '', '</textarea>
 						</dd>
 						<dt class="ban_message">', $txt['ban_message'], ' <dfn>', $txt['ban_message_subtext'], '</dfn></dt>
 						<dd class="ban_message">
-							<textarea name="ban_message" class="ban"></textarea>
+							<textarea name="ban_message" class="ban">', !empty($context['ban_details']['extra']['message']) ? $context['ban_details']['extra']['message'] : '', '</textarea>
 						</dd>
 					</dl>
 				</fieldset>
@@ -514,5 +509,14 @@ function template_ban_details()
 		$(\'.ban_criteria_id_member, .ban_criteria_member_name, .ban_criteria_email, .ban_criteria_ip_address, .ban_criteria_hostname\').hide();
 		$(\'.ban_criteria_\' + type).show();
 	};
-	updateForm();');
+	updateForm();
+
+	function updateIP_form()
+	{
+		var ipv6 = $(\'#ban_type_ip\').val() == \'ipv6\';
+		$(\'.ipv4\').toggle(!ipv6);
+		$(\'.ipv6\').toggle(ipv6);
+		$(\'.ip_end, .ip_start .ban_width\').toggle($(\'#ban_ip_range\').val() != 0);
+	};
+	updateIP_form();');
 }
