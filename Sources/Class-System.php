@@ -571,15 +571,15 @@ class we
 		if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/vnd.wap.wml') !== false || strpos($_SERVER['HTTP_ACCEPT'], 'application/vnd.wap.xhtml+xml') !== false))
 			return true;
 
+		// Note: Google recommends that Android smartphones indicate the 'Mobile' keyword. Tablets shouldn't have it.
 		foreach (explode('|', implode('|', array(
-			'Generic' => 'mobile',
-			'iOS' => 'iphone|ipod|ipad',
-			'Android' => 'android',
-			'BlackBerry' => 'blackberry|rim tablet',
+			'Generic' => 'mobile', // Mainly for Android smartphones -- excludes tablets.
+			'iOS' => 'iphone|ipod', // iPad tablets can perfectly handle non-mobile layouts...
+			'BlackBerry' => 'blackberry',
 			'Symbian' => 'symbian',
-			'Windows' => 'windows ce|windows phone',
+			'Windows' => 'windows ce|windows phone', // Surface tablets omit the Phone keyword. This should be good enough.
 			'PalmOS' => 'palm|avantgo|plucker|xiino',
-			'Others' => 'kindle|silk|samsung|htc|playstation|nintendo|wap|up.|bolt|opera mobi'
+			'Others' => 'samsung|htc|playstation|nintendo|wap|up.|bolt|opera mobi'
 		))) as $device)
 			if (strpos($ua, $device) !== false)
 				return true;

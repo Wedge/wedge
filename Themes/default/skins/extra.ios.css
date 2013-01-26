@@ -1,10 +1,14 @@
 
-// Main area should have slightly larger text.
 #main
 	display: block
 	padding: 4px 4px 8px
-	font-size: 1.4em
-	line-height: 1.5em
+
+// Main area should have slightly larger text.
+// Enclose it in a media query to ensure it doesn't touch iPads.
+@media all and (min-device-width: 1000px)
+	#main
+		font-size: 1.4em
+		line-height: 1.5em
 
 // Make the poster info area less prominent.
 .poster

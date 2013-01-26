@@ -690,7 +690,7 @@ class wess_color extends wess
 		}
 
 		$colval = '((?:rgb|hsl)a?\([^()]+\)|[^()\n,]+)';
-		$css = preg_replace_callback('~(\n\h*)gradient\h*:\h*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(top|left))?~i', 'wess_color::gradient_background', $css);
+		$css = preg_replace_callback('~(\n\h*)gradient\h*:\h*' . $colval . '(?:\s*,\s*' . $colval . ')?(?:\s*,\s*(-?\w+(?: \w+)?)?)?~i', 'wess_color::gradient_background', $css);
 		$css = str_replace('alpha_ms_wedge', 'alpha', $css);
 	}
 }
@@ -756,8 +756,8 @@ class wess_nesting extends wess
 			$tree = preg_replace("~\n\s*\n~", "\n", $tree); // Delete blank lines
 			$tree = preg_replace_callback('~^(\h*)~m', 'wess_nesting::indentation', $tree);
 			$branches = explode("\n", $tree);
+			$tree = $ex_string = '';
 			$level = 0;
-			$tree = '';
 			foreach ($branches as &$line)
 			{
 				$l = explode(':', $line, 2);

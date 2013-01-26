@@ -69,8 +69,7 @@ function add_js_inline()
  */
 function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow = false, $ignore_files = array())
 {
-	global $context, $settings, $theme, $jsdir, $boardurl;
-	global $footer_coding, $language;
+	global $context, $settings, $theme, $jsdir, $boardurl, $footer_coding, $language;
 	static $done_files = array();
 
 	if (!is_array($files))
@@ -124,15 +123,14 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	$id = $is_default_theme ? $id : substr(strrchr($theme['theme_dir'], '/'), 1) . '-' . $id;
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
+	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $jsdir . '/' . $id . (!empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '') . $latest_date . $ext;
+	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
+		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip);
 
-	if (!file_exists($final_file))
-		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext);
-
-	$final_script = $boardurl . '/js/' . $id . $latest_date . $ext;
+	$final_script = $boardurl . '/js/' . $id . $lang_name . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -159,7 +157,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
  */
 function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = false, $is_out_of_flow = false)
 {
-	global $context, $pluginsdir, $jsdir, $boardurl, $settings, $footer_coding;
+	global $context, $pluginsdir, $jsdir, $boardurl, $settings, $footer_coding, $language;
 	static $done_files = array();
 
 	if (empty($context['plugins_dir'][$plugin_name]))
@@ -205,14 +203,14 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	$id = substr(strrchr($context['plugins_dir'][$plugin_name], '/'), 1) . '-' . $id;
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
+	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.jgz' : '.js.gz') : '.js';
 
-	$final_file = $jsdir . '/' . $id . $latest_date . $ext;
-	if (!file_exists($final_file))
-		wedge_cache_js($id, $latest_date, $final_file, $files, $can_gzip, $ext, true);
+	if (!file_exists($jsdir . '/' . $id . $lang_name . $latest_date . $ext))
+		wedge_cache_js($id, $lang_name, $latest_date, $ext, $files, $can_gzip, true);
 
-	$final_script = $boardurl . '/js/' . $id . $latest_date . $ext;
+	$final_script = $boardurl . '/js/' . $id . $lang_name . $latest_date . $ext;
 
 	// Do we just want the URL?
 	if ($is_out_of_flow)
@@ -422,8 +420,6 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	// We need to cache different versions for different browsers/OSes, even if we don't have overrides available.
 	// This is because Wedge may use '@if browser' in the CSS, and also adds vendor prefixes automatically.
 	$found_suffixes[we::$browser['agent'] . we::$browser['version']] = true;
-	
-	// Windows being the most likely OS, we're shortening it to 'win' to save bytes in HTML pages.
 	$found_suffixes[str_replace('dows', '', we::$browser['os']) . we::$browser['os_version']] = true;
 
 	// Make sure to only keep 'webkit' if we have no other browser name on record.
@@ -808,18 +804,18 @@ function dynamic_admin_menu_icons()
 /**
  * Create a compact JS file that concatenates and compresses a list of existing JS files.
  *
- * @param string $id Name of the file to create, unobfuscated, minus the date component
- * @param int $latest_date Date of the most recent JS file in the list, used to force recaching
- * @param string $final_file Final name of the file to create (obfuscated, with date, etc.)
- * @param array $js List of all JS files to concatenate
- * @param bool $gzip Should we gzip the resulting file?
+ * @param string $id Name of the file to create, minus the date and extension.
+ * @param string $lang_name Name of the user's language, if needed.
+ * @param int $latest_date Date of the most recent JS file in the list, used to force recaching.
  * @param string $ext The file extension to use.
+ * @param array $js List of all JS files to concatenate.
+ * @param bool $gzip Should we gzip the resulting file?
  * @param bool $full_path Whether or not the file list provided is using a full physical path or not, typically not (so it falls to the theme directory instead)
- * @return int Returns the current timestamp, for use in caching
+ * @return int Returns the current timestamp, for use in caching.
  */
-function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext, $full_path = false)
+function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false, $full_path = false)
 {
-	global $theme, $settings, $comments, $jsdir, $txt;
+	global $theme, $settings, $comments, $jsdir, $txt, $language;
 
 	$final = '';
 	$dir = $full_path ? '' : $theme['theme_dir'] . '/';
@@ -867,10 +863,10 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 	// Load any requested language files, and replace all $txt['string'] occurrences.
 	// !! @todo: implement cache flush by checking for language modification deltas.
 	// In the meantime, if you update a language file, empty the JS cache folder if it fails to update.
-	if (preg_match_all('~@language\h+([\w\h,:]+)(?=[\n;])~i', $final, $languages))
+	if (preg_match_all('~@language\h+([^\n]+)~i', $final, $languages))
 	{
 		// Format: @language ThemeLanguage, Author:Plugin:Language, Author:Plugin:Language2
-		$langstring = implode(',', $languages[1]);
+		$langstring = implode(',', rtrim($languages[1], ';'));
 		$langlist = serialize($langs = array_map('trim', explode(',', $langstring)));
 		if (strpos($langstring, ':') !== false)
 		{
@@ -891,6 +887,8 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 			$save = $settings['js_lang'];
 			updateSettings(array('js_lang' => serialize($settings['js_lang'])), $use_update);
 			$settings['js_lang'] = $save;
+			// We need to fix the language string for first time use. $lang_name is passed by reference.
+			$lang_name = !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
 		}
 
 		if (preg_match_all('~\$txt\[([\'"])(.*?)\1]~i', $final, $strings, PREG_SET_ORDER))
@@ -905,6 +903,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 		$save = $settings['js_lang'];
 		updateSettings(array('js_lang' => serialize($settings['js_lang'])), true);
 		$settings['js_lang'] = $save;
+		$lang_name = '';
 	}
 
 	// Call the minify process, either JSMin or Packer.
@@ -980,7 +979,7 @@ function wedge_cache_js($id, $latest_date, $final_file, $js, $gzip = false, $ext
 	if ($gzip)
 		$final = gzencode($final, 9);
 
-	file_put_contents($final_file, $final);
+	file_put_contents($jsdir . '/' . $id . $lang_name . $latest_date . $ext, $final);
 }
 
 /**
