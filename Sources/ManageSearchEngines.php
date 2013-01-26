@@ -488,7 +488,7 @@ function SpiderCheck()
 			break;
 	}
 
-	// If this is low server tracking then log the spider here as oppossed to the main logging function.
+	// If this is low server tracking then log the spider here as opposed to the main logging function.
 	if (!empty($settings['spider_mode']) && $settings['spider_mode'] == 1 && !empty($_SESSION['id_robot']))
 		logSpider();
 
@@ -496,7 +496,7 @@ function SpiderCheck()
 }
 
 // Log the spider presence online.
-//!!! Different file?
+// !!! Different file?
 function logSpider()
 {
 	global $settings, $context;

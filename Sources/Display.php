@@ -1143,7 +1143,6 @@ function Display()
 			'caption' => 'usermenu_seeip',
 			'action' => '\'<URL>?action=help;in=see_member_ip\'',
 			'class' => '\'ip_button\'',
-			'custom' => JavaScriptEscape('onclick="return reqWin(this);"'),
 		),
 		'tk' => array(
 			'caption' => 'usermenu_trackip',
@@ -1184,7 +1183,6 @@ function Display()
 			'caption' => 'acme_remove',
 			'action' => '\'<URL>?action=deletemsg;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
 			'class' => '\'remove_button\'',
-			'custom' => JavaScriptEscape('onclick="return ask(' . JavaScriptEscape($txt['remove_message_confirm']) . ', e);"'),
 		),
 		'sp' => array(
 			'caption' => 'acme_split',
@@ -1445,7 +1443,12 @@ function prepareDisplayContext($reset = false)
 			$menu[] = $memberContext[$message['id_member']]['is_buddy'] ? 'rb' : 'ab';
 
 		if ($output['can_see_ip'] && !empty($output['member']['ip']))
+		{
 			$menu[] = ($context['can_moderate_forum'] ? 'tk' : 'ip') . '/' . $output['member']['ip'];
+			if (!$context['can_moderate_forum'])
+				add_js_unique('
+	$(".ip_button").live("click", function (e) { return reqWin(this); });');
+		}
 
 		// If we can't do anything, it's not even worth recording the user's website...
 		if (count($menu))
@@ -1469,7 +1472,11 @@ function prepareDisplayContext($reset = false)
 
 		// How about... even... remove it entirely?!
 		if ($output['can_remove'])
+		{
 			$menu[] = 're';
+			add_js_unique('
+	$(".remove_button").live("click", function (e) { return ask(' . JavaScriptEscape($txt['remove_message_confirm']) . ', e); })');
+		}
 
 		// What about splitting it off the rest of the topic?
 		if ($context['can_split'] && !empty($context['real_num_replies']))

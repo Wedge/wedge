@@ -498,15 +498,12 @@ div.percent
 ------------------------------------------------- */
 .ban_items, .ban_selector
 	background: url($images/admin/ban_items.png) no-repeat
-	width: 16px
-	height: 16px
+	width, height: 16px
 	margin: 0 auto
 
-.ban_selector
-	display: inline
-	margin: 0
-	padding-left: 16px
-	margin-right: 4px
+.ban_selector extends .inline-block
+	margin-right: 3px
+	vertical-align: -3px
 
 .ban_items_id_member
 	background-position: 0 0

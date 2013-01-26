@@ -552,7 +552,6 @@ $.fn.mime = function (oList, oStrings, bUseDataId)
 
 					sHTML += '<li><a href="' + (sLink.charAt(0) == '?' ? href : '') + sLink + '"'
 						+ (pms[3] ? ' class="' + pms[3] + '"' : '')
-						+ (pms[4] ? ' ' + pms[4] : '') // Custom data, such as events?
 						+ (pms[1] ? ' title="' + pms[1] + '"' : '')
 						+ '>' + pms[0].wereplace({
 							id: id,
