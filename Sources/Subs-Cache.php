@@ -863,10 +863,10 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	// Load any requested language files, and replace all $txt['string'] occurrences.
 	// !! @todo: implement cache flush by checking for language modification deltas.
 	// In the meantime, if you update a language file, empty the JS cache folder if it fails to update.
-	if (preg_match_all('~@language\h+([^\n]+)~i', $final, $languages))
+	if (preg_match_all('~@language\h+([^\n;]+)~i', $final, $languages))
 	{
 		// Format: @language ThemeLanguage, Author:Plugin:Language, Author:Plugin:Language2
-		$langstring = implode(',', rtrim($languages[1], ';'));
+		$langstring = implode(',', $languages[1]);
 		$langlist = serialize($langs = array_map('trim', explode(',', $langstring)));
 		if (strpos($langstring, ':') !== false)
 		{
