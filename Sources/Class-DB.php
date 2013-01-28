@@ -290,7 +290,7 @@ class wesql
 		list ($file, $line) = self::error_backtrace('', '', 'return', __FILE__, __LINE__);
 
 		// Decide which connection to use
-		$connection = $connection == null ? self::$_db_con : $connection;
+		$connection = $connection === null ? self::$_db_con : $connection;
 
 		// This is the error message...
 		$query_error = mysql_error($connection);
@@ -527,6 +527,9 @@ class wesql
 		list ($values, $connection) = $db_callback;
 		if ($connection === null)
 			$connection = self::$_db_con;
+
+		if (!is_resource($connection))
+			show_db_error();
 
 		if (isset(self::$callback_values[$matches[1]]))
 			return self::$callback_values[$matches[1]];

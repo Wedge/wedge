@@ -688,7 +688,7 @@ function validate_plugin_session()
 	if (!file_exists($filename) || filesize($filename) != $_SESSION['uploadplugin']['size'])
 		return 'plugins_uploaded_error';
 
-	if (filemtime($filename) != $_SESSION['uploadplugin']['mtime'] || md5_file($filename) != $_SESSION['uploadplugin']['md5'])
+	if (filemtime($filename) != $_SESSION['uploadplugin']['mtime'] || md5_file($filename) !== $_SESSION['uploadplugin']['md5'])
 		return 'plugins_uploaded_tampering';
 
 	return false;

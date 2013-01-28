@@ -1450,7 +1450,7 @@ function cache_get_data($key, $ttl = 120)
 	}
 
 	if (empty($settings['cache_hash']))
-		$settings['cache_hash'] = md5($boardurl . filemtime($sourcedir . '/Collapse.php'));
+		$settings['cache_hash'] = md5($boardurl . filemtime($cachedir . '/cache.lock'));
 
 	$key = $settings['cache_hash'] . '-' . bin2hex($key);
 

@@ -798,13 +798,13 @@ function DownloadLanguage()
 				$context_data['writable'] = true;
 
 			// Finally, do we actually think the content has changed?
-			if ($file['size'] == filesize($boarddir . '/' . $file['filename']) && $file['md5'] == md5_file($boarddir . '/' . $file['filename']))
+			if ($file['size'] == filesize($boarddir . '/' . $file['filename']) && $file['md5'] === md5_file($boarddir . '/' . $file['filename']))
 			{
 				$context_data['exists'] = 'same';
 				$context_data['default_copy'] = false;
 			}
 			// Attempt to discover newline character differences.
-			elseif ($file['md5'] == md5(preg_replace("~[\r]?\n~", "\r\n", file_get_contents($boarddir . '/' . $file['filename']))))
+			elseif ($file['md5'] === md5(preg_replace("~[\r]?\n~", "\r\n", file_get_contents($boarddir . '/' . $file['filename']))))
 			{
 				$context_data['exists'] = 'same';
 				$context_data['default_copy'] = false;
