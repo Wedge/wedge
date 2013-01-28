@@ -1396,7 +1396,7 @@ class wess_prefixes extends wess
 	 * @param string $matches The actual CSS contents
 	 * @return string Updated CSS contents with fixed code
 	 */
-	private static function fix_rules($matches)
+	private function fix_rules($matches)
 	{
 		// Some shortcuts...
 		$unchanged = $matches[0];
@@ -1513,7 +1513,7 @@ class wess_prefixes extends wess
 	 * @param string $matches The actual CSS contents
 	 * @return string Updated CSS contents with fixed code
 	 */
-	private static function fix_values($matches)
+	private function fix_values($matches)
 	{
 		$unchanged = $matches[0];
 		$b = we::$browser;
@@ -1572,7 +1572,7 @@ class wess_prefixes extends wess
 			'transform(?:-[a-z-]+)?',		// 2D/3D transformations (transform, transform-style, transform-origin...)
 
 		);
-		$css = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . '):[^\n;]+[\n;]~', 'wess_prefixes::fix_rules', $css);
+		$css = preg_replace_callback('~(?<!-)(' . implode('|', $rules) . '):[^\n;]+[\n;]~', array($this, 'fix_rules'), $css);
 
 		// Same thing for a few more rules that need a more elaborate detection...
 		$values = array(
@@ -1583,7 +1583,7 @@ class wess_prefixes extends wess
 			'\bcalc\h*\(',					// calc() function
 
 		);
-		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wess_prefixes::fix_values', $css);
+		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', array($this, 'fix_values'), $css);
 
 		// And now for some 'easy' rules that don't need our regex machine.
 		$b = we::$browser;

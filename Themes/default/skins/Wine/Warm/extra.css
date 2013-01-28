@@ -18,7 +18,7 @@ h4, h5
 @media $responsive
 	body
 		#main
-			padding: 4px 0 0
+			padding: 0
 		#sidebar
 			display: table-footer-group
 			background: $side_bg
@@ -48,6 +48,8 @@ h4, h5
 		color: #744
 	.column
 		padding: 20px 25px 10px 15px
+	ul
+		list-style-type: none
 
 #top_section
 	display: none
@@ -83,17 +85,14 @@ h4, h5
 
 #main
 	display: block
-	padding: 16px 8px 0
+	padding: 0 8px
 
 #footer
-	border-top: 5px solid average($footer_bg, $body_bg)
-	background: $footer_bg
+	border-top: 1px solid #c3d0de
+	gradient: darken($body_bg, 0%), darken($body_bg, 10%), 200deg
 	color: #333
 	ul li a
 		color: #679
-
-#sidebar ul
-	list-style-type: none
 
 dl#feed
 	dt, dd
@@ -135,11 +134,10 @@ dl#feed
 
 // The navigation list (i.e. linktree)
 #linktree
-	background: transparent
 	ul
 		border-radius: 8px
 		background: $main_bg
-		padding: 0
+		padding: 1px
 		border: 1px solid #ddd
 		margin: 16px 20px 0
 		overflow: hidden
@@ -328,6 +326,9 @@ $post_font_size = 9.7pt/140%
 
 @remove .board_list td.info a.subject
 	font: 700 120% $head_font
+
+@remove .pinned span
+	font-weight: 700
 
 /*
 	If you want to position the sidebar to the right, replace the above @remove with:
