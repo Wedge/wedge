@@ -19,16 +19,16 @@
  * - guest, member, admin, rtl, m#, b#, c#
  * - will target guests, members, administrators, RTL languages, member #, board # or category #.
  *
- * - opera, firefox, chrome, safari, ie, gecko, webkit, ios, android.
- * - will target that browser, browser family or OS. You may also add a version number next to it. Ranges are also
- *   accepted: index.ie[-8].css will target IE 6/7/8, while index.opera12.1.css should target Opera 12.1 only.
+ * - opera, firefox, chrome, safari, ie, gecko, webkit (also with version number/range: ie[6-7], firefox[-3.5])
+ * - windows, ios, android (also with version number/range: ios[5.1-], windows6.1)
+ * - will target that browser, browser family or OS.
  *
  * - local, global, replace
  * - any file with the 'local' keyword won't be reused by sub-skins. Use 'global' (or no keyword) to allow re-use.
  *   Finally, 'replace' will do the opposite and, just like replace-type skins do, it will forget any parent files
  *   with the same keywords (e.g. index.replace,ie6.css will replace the parent's index.ie6.css file if it exists.)
  *
- * The "install.css" and "report.css" files are theme-agnostic, and thus are not skinnable per se.
+ * Files "install.css" and "report.css" are theme-agnostic, and thus are not skinnable per se.
  *
  * Go crazy with CSS comments like this; they're automatically deleted when the cache is generated.
  * CSS cached files are put inside the /css/ folder, so any relative URLs will fail unless they use it
@@ -186,6 +186,18 @@ ul#noava
 	vertical-align: top
 	min-height: 200px
 	padding: 4px 22px 12px 4px
+
+// Main area should have slightly larger text on high-density devices.
+// The max device width ensures it doesn't touch tablets.
+@media all and (min-device-pixel-ratio: 1.5) and (max-width: 1000px)
+	body
+		font-size: 120%
+		.menu > li > span
+			margin-top: 8px
+		#header h1
+			margin-top: 10px
+		#siteslogan
+			margin-top: 45px
 
 // Top header (search box, etc.)
 #top_section
@@ -625,8 +637,11 @@ input, select, textarea
 	border-radius: 5px
 	border: 1px solid #abadb3
 	padding: 4px 5px
-	:hover, :focus
-		border: 1px solid #6f8da9
+	// Chrome 26 will behave badly if we do this. Silly!
+	@if !chrome
+		:hover, :focus
+			border: 1px solid #6f8da9
+	@endif
 
 textarea
 	line-height: 1.3
@@ -1338,6 +1353,8 @@ tr.titlebg
 	background-color: #e8d8cf
 	.windowbg2&
 		background: #f2e3d9
+	span
+		font-weight: 700
 
 // Locked posts get a different shade, too!
 .locked
@@ -1685,8 +1702,8 @@ h6
 ------------------------------------------------------- */
 
 @media print
-	#headerarea
-		display: none
+	#header, #navi, #sidebar
+		display: none !important
 
 /* A few more header styles...
 ------------------------------------------------------- */
@@ -1705,7 +1722,6 @@ th.last_th
 
 // Unused, but I like to keep these around...
 $other_bg = #e7e9b8
-$reddish = #c60
 
 /*
 	$alphamix is a RGB value that should stand for your main area's background. You

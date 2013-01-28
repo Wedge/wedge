@@ -577,7 +577,7 @@ function sort_skin_files($a, $b)
  */
 function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false, $ext = '.css', $additional_vars = array())
 {
-	global $theme, $settings, $css_vars, $context, $cssdir, $boarddir, $boardurl, $prefix;
+	global $theme, $settings, $css_vars, $context, $cssdir, $boarddir, $boardurl;
 
 	$id = empty($settings['obfuscate_filenames']) ? implode('-', (array) $ids) : md5(implode('-', (array) $ids));
 
@@ -607,16 +607,16 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	loadSource('Class-CSS');
 
 	$plugins = array(
-		new wess_dynamic(),	// Dynamic replacements through callback functions
-		new wess_if(),		// CSS conditions, first pass (browser tests)
-		new wess_mixin(),	// CSS mixins (mixin hello($world: 0))
-		new wess_var(),		// CSS variables ($hello_world)
-		new wess_color(),	// CSS color transforms
-		new wess_func(),	// Various CSS functions
-		new wess_math(),	// Math function (math(1px + 3px), math((4*$var)/2em)...)
-		new wess_if(true),	// CSS conditions, second pass (variable tests)
-		new wess_nesting(),	// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
-		new wess_prefixes(),
+		new wess_dynamic(),		// Dynamic replacements through callback functions
+		new wess_if(),			// CSS conditions, first pass (browser tests)
+		new wess_mixin(),		// CSS mixins (mixin hello($world: 0))
+		new wess_var(),			// CSS variables ($hello_world)
+		new wess_color(),		// CSS color transforms
+		new wess_func(),		// Various CSS functions
+		new wess_math(),		// Math function (math(1px + 3px), math((4*$var)/2em)...)
+		new wess_if(true),		// CSS conditions, second pass (variable tests)
+		new wess_nesting(),		// Nested selectors (.hello { .world { color: 0 } }) + selector inheritance (.hello { base: .world })
+		new wess_prefixes(),	// Automatically adds browser prefixes for many frequent elements, or manually through -prefix.
 	);
 
 	// rgba to rgb conversion for IE 6/7/8/9
@@ -664,11 +664,6 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	$final = preg_replace('~\n\t*//[^\n]*~', "\n", $final); // Strip comments at the beginning of lines.
 	$final = preg_replace('~//[ \t][^\n]*~', '', $final); // Strip remaining comments like me. OMG does this mean I'm gonn
 
-	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
-	// Please note that it isn't currently used by Wedge itself, but you can use it to provide both prefixed and standard versions of a tag that isn't
-	// already taken into account by the wess_prefixes() function (otherwise you only need to provide the unprefixed version.)
-	$prefix = we::is('opera') ? '-o-' : (we::is('webkit') ? '-webkit-' : (we::is('gecko') ? '-moz-' : (we::is('ie') ? '-ms-' : '')));
-
 	// Just like comments, we're going to preserve content tags.
 	$i = 0;
 	preg_match_all('~(?<=\s)content\s*:([^\n]+)~', $final, $contags);
@@ -688,10 +683,10 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 	while (preg_match('~/(?:\.[^.]*|[^.:*?"<>|/][^:*?"<>|/]*)/\.\./~', $final, $relpath))
 		$final = str_replace($relpath[0], '/', $final);
 
-	// Remove double quote hacks, remaining whitespace, no-base64 tricks, and replace browser prefixes.
+	// Remove double quote hacks, remaining whitespace, and no-base64 tricks.
 	$final = str_replace(
-		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'url-no-base64(', '-prefix-'),
-		array('"', "\n", ';', '}', '}', ' ', '!important', 'url(', $prefix),
+		array('#wedge-quote#', "\n\n", ';;', ';}', "}\n", "\t", ' !important', 'url-no-base64('),
+		array('"', "\n", ';', '}', '}', ' ', '!important', 'url('),
 		$final
 	);
 

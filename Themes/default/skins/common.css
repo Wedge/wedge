@@ -111,6 +111,7 @@ $blog_font = $post_font
 
 $main_bg = #fff
 $head_bg = darken(#e3e0da, 3%)
+$reddish = #c60
 $menu_border = rgba(220, 224, 220, .95)
 $menu_gradient =	@is (ie[-8], "average", "linear-gradient")(rgba(232, 236, 232, .96), rgba(255, 255, 255, .96))
 $sidebar-width =	@is (webkit, "262px", "260px") // Webkit screws up on padding/border in table mode

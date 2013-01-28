@@ -2139,9 +2139,9 @@ class wedit
 		$replaces = array();
 
 		if ($hasEqualSign)
-			preg_match_all('~\[(' . $myTag . ')=([^\]]*?)\](?:(.+?)\[/(' . $myTag . ')\])?~is', $message, $matches);
+			preg_match_all('~\[(' . $myTag . ')=([^]]*?)\](?:(.+?)\[/(' . $myTag . ')\])?~is', $message, $matches);
 		else
-			preg_match_all('~\[(' . $myTag . ($hasExtra ? '(?:[^\]]*?)' : '') . ')\](.+?)\[/(' . $myTag . ')\]~is', $message, $matches);
+			preg_match_all('~\[(' . $myTag . ($hasExtra ? '(?:[^]]*?)' : '') . ')\](.+?)\[/(' . $myTag . ')\]~is', $message, $matches);
 
 		foreach ($matches[0] as $k => $dummy)
 		{
@@ -2158,7 +2158,7 @@ class wedit
 					break;
 			}
 
-			if (!$found && $protocols[0] === 'http')
+			if (!$found && $protocols[0] === 'http' && $replace !== '')
 			{
 				if ($replace[0] === '/')
 					$replace = $domain_url . $replace;

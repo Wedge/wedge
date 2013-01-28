@@ -1379,6 +1379,16 @@ class wess_rgba extends wess
 // Fix some commonly used CSS properties/values to use prefixes as required by the current browser.
 class wess_prefixes extends wess
 {
+	// Build a prefix variable, enabling you to use "-prefix-something" to get it replaced with your browser's own flavor, e.g. "-moz-something".
+	// Please note that it isn't currently used by Wedge itself, but you can use it to provide both prefixed and standard versions of a tag that isn't
+	// already taken into account by the wess_prefixes() function (otherwise you only need to provide the unprefixed version.)
+	var $prefix = '';
+
+	public function __construct()
+	{
+		$this->prefix = we::is('opera') ? '-o-' : (we::is('webkit') ? '-webkit-' : (we::is('gecko') ? '-moz-' : (we::is('ie') ? '-ms-' : '')));
+	}
+
 	/**
 	 * Fix CSS properties, i.e. rules, anything before a colon.
 	 * Compatibility sheet is adapted from caniuse.com
@@ -1388,11 +1398,9 @@ class wess_prefixes extends wess
 	 */
 	private static function fix_rules($matches)
 	{
-		global $prefix;
-
 		// Some shortcuts...
 		$unchanged = $matches[0];
-		$prefixed = $prefix . $unchanged;
+		$prefixed = $this->prefix . $unchanged;
 		$both = $prefixed . $unchanged;
 		$b = we::$browser;
 		$v = $b['version'];
@@ -1507,8 +1515,6 @@ class wess_prefixes extends wess
 	 */
 	private static function fix_values($matches)
 	{
-		global $prefix;
-
 		$unchanged = $matches[0];
 		$b = we::$browser;
 		$v = $b['version'];
@@ -1520,7 +1526,7 @@ class wess_prefixes extends wess
 			if (($b['is_gecko'] && $v >= 16) || ($b['is_opera'] && $v >= 12.1) || ($b['is_ie'] && $v >= 10))
 				return $unchanged;
 
-			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\h*\()~', $prefix . '$1', $unchanged);
+			$prefixed = preg_replace('~(?<=[\s:])([a-z][a-z-]+-gradient\h*\()~', $this->prefix . '$1', $unchanged);
 
 			// !! Is it worth supporting gradians, radians and turns..? Wedge only uses degrees.
 			if (strpos($prefixed, 'deg') !== false)
@@ -1534,7 +1540,11 @@ class wess_prefixes extends wess
 
 		// All browsers that support the old flexbox model will require a prefix.
 		if (strpos($matches[1], 'box') !== false)
-			return str_replace('box', $prefix . 'box', $unchanged);
+			return str_replace('box', $this->prefix . 'box', $unchanged);
+
+		// All browsers support device-pixel-ratio only with prefixes, but Firefox screwed it up.
+		if (strpos($matches[1], 'pixel-ratio') !== false)
+			return we::is('firefox') ? $matches[2] . '-moz' . substr($unchanged, 3) : $this->prefix . $unchanged;
 
 		// Nothing bad was found? Just ignore.
 		return $unchanged;
@@ -1545,8 +1555,6 @@ class wess_prefixes extends wess
 	// the same soon enough. (As of Firefox 18 and Chrome 24, they need prefixes everywhere, and Firefox requires a setting to be enabled.)
 	function process(&$css)
 	{
-		global $prefix;
-
 		// Some prominent CSS3 may or may not need a prefix. Wedge will take care of that for you.
 		$rules = array(
 
@@ -1570,8 +1578,9 @@ class wess_prefixes extends wess
 		$values = array(
 
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
-			'display:\h*box\b',		// Old Flexbox model declaration
-			'\bcalc\h*\(',			// calc() function
+			'(min|max)-device-pixel-ratio',	// Useful for responsive design
+			'display:\h*box\b',				// Old Flexbox model declaration
+			'\bcalc\h*\(',					// calc() function
 
 		);
 		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', 'wess_prefixes::fix_values', $css);
@@ -1582,7 +1591,11 @@ class wess_prefixes extends wess
 
 		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (($b['is_opera'] && $v < 12.1) || ($b['is_firefox'] && $v < 16) || $b['is_webkit'])
-			$css = str_replace('@keyframes ', '@' . $prefix . 'keyframes ', $css);
+			$css = str_replace('@keyframes ', '@' . $this->prefix . 'keyframes ', $css);
+
+		// And finally, listen to the author -- you may add a prefix manually, that will be automatically turned into the current
+		// browser's official prefix. e.g. add "-prefix-my-rule" and Wess will turn it into "-moz-my-rule" for Firefox users.
+		$css = str_replace('~(?<![\w-])-prefix-(?=[a-z-])~', $this->prefix, $css);
 	}
 }
 
