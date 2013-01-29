@@ -47,13 +47,7 @@ function Search2()
 	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
 
-	// No, no, no... this is a bit hard on the server, so don't you go prefetching it!
-	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
-	{
-		ob_end_clean();
-		header('HTTP/1.1 403 Forbidden');
-		exit;
-	}
+	preventPrefetch();
 
 	$weight_factors = array(
 		'frequency',

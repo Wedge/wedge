@@ -23,12 +23,7 @@ function Unread()
 	is_not_guest();
 
 	// Prefetching + lots of MySQL work = bad mojo.
-	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
-	{
-		ob_end_clean();
-		header('HTTP/1.1 403 Forbidden');
-		exit;
-	}
+	preventPrefetch();
 
 	$context['start'] = (int) $_REQUEST['start'];
 	$context['topics_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['topics_per_page']) ? $options['topics_per_page'] : $settings['defaultMaxTopics'];

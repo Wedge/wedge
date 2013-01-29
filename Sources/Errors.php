@@ -398,8 +398,7 @@ function show_db_error($loadavg = false)
 	global $db_connection, $webmaster_email, $db_last_error, $db_error_send;
 
 	// Just check we're not in any buffers, just in case.
-	for ($i = ob_get_level(); $i > 0; $i--)
-		@ob_end_clean();
+	while (@ob_end_clean());
 
 	// Don't cache this page!
 	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');

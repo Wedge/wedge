@@ -491,13 +491,9 @@ function loadBoard()
 		);
 
 		// If it's a prefetching agent or we're requesting an attachment.
-		if ((isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch') || (!empty($_REQUEST['action']) && $_REQUEST['action'] === 'dlattach'))
-		{
-			ob_end_clean();
-			header('HTTP/1.1 403 Forbidden');
-			exit;
-		}
-		elseif (we::$is_guest)
+		preventPrefetch(!empty($_REQUEST['action']) && $_REQUEST['action'] === 'dlattach');
+
+		if (we::$is_guest)
 		{
 			loadLanguage('Errors');
 			is_not_guest($txt['topic_gone']);

@@ -111,12 +111,7 @@ function MessageIndex()
 	if (!we::$is_guest)
 	{
 		// We can't know they read it if we allow prefetches.
-		if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
-		{
-			ob_end_clean();
-			header('HTTP/1.1 403 Prefetch Forbidden');
-			exit;
-		}
+		preventPrefetch();
 
 		wesql::insert('replace',
 			'{db_prefix}log_boards',

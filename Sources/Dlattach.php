@@ -136,7 +136,7 @@ function Dlattach()
 		list ($modified_since) = explode(';', $_SERVER['HTTP_IF_MODIFIED_SINCE']);
 		if (strtotime($modified_since) >= filemtime($filename))
 		{
-			ob_end_clean();
+			while (@ob_end_clean());
 
 			// Answer the question - no, it hasn't been modified ;)
 			header('HTTP/1.1 304 Not Modified');
@@ -148,7 +148,7 @@ function Dlattach()
 	$eTag = '"' . substr($_REQUEST['attach'] . $real_filename . filemtime($filename), 0, 64) . '"';
 	if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) && strpos($_SERVER['HTTP_IF_NONE_MATCH'], $eTag) !== false)
 	{
-		ob_end_clean();
+		while (@ob_end_clean());
 
 		header('HTTP/1.1 304 Not Modified');
 		exit;
@@ -233,8 +233,7 @@ function Dlattach()
 	if (filesize($filename) > 4194304)
 	{
 		// Forcibly end any output buffering going on.
-		while (@ob_get_level() > 0)
-			@ob_end_clean();
+		while (@ob_end_clean());
 
 		$fp = fopen($filename, 'rb');
 		while (!feof($fp))

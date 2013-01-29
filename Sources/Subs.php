@@ -1272,6 +1272,20 @@ function spamProtection($error_type)
 }
 
 /**
+ * Mozilla sometimes does prefetching. This is hard on the server, so prevent it in time-critical functions.
+ * The $always parameter allows us to pass alternative conditions to send a 403 error.
+ */
+function preventPrefetch($always = false)
+{
+	if ($always || (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch'))
+	{
+		while (@ob_end_clean());
+		header('HTTP/1.1 403' . ($always ? '' : ' Prefetch') . ' Forbidden');
+		exit;
+	}
+}
+
+/**
  * Determines whether an email address is malformed or not.
  */
 function is_valid_email($email)

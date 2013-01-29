@@ -696,11 +696,7 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 
 	// And do the same for content tags.
 	if (!empty($contags))
-	{
-		foreach ($contags[0] as $i => &$contag)
-			$contag = 'content:' . trim($contags[1][$i]);
 		wedge_replace_numbered_placeholders('content:wedge', $contags[0], $final);
-	}
 
 	$final = ltrim($final, "\n");
 
