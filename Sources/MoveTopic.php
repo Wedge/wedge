@@ -153,8 +153,7 @@ function MoveTopic()
 // Execute the move.
 function MoveTopic2()
 {
-	global $txt, $board, $topic, $scripturl, $settings, $context;
-	global $board, $language;
+	global $txt, $board, $topic, $scripturl, $settings, $context, $board, $language;
 
 	if (empty($topic))
 		fatal_lang_error('no_access', false);
@@ -249,18 +248,7 @@ function MoveTopic2()
 			if (isset($_POST['enforce_subject']))
 			{
 				// Get a response prefix, but in the forum's default language.
-				if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
-				{
-					if ($language === we::$user['language'])
-						$context['response_prefix'] = $txt['response_prefix'];
-					else
-					{
-						loadLanguage('index', $language, false);
-						$context['response_prefix'] = $txt['response_prefix'];
-						loadLanguage('index');
-					}
-					cache_put_data('response_prefix', $context['response_prefix'], 600);
-				}
+				getRePrefix();
 
 				wesql::query('
 					UPDATE {db_prefix}messages

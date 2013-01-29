@@ -1277,11 +1277,34 @@ function spamProtection($error_type)
  */
 function preventPrefetch($always = false)
 {
-	if ($always || (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch'))
+	global $settings;
+
+	if ($always || (empty($settings['allow_prefetching']) && isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch'))
 	{
 		while (@ob_end_clean());
 		header('HTTP/1.1 403' . ($always ? '' : ' Prefetch') . ' Forbidden');
 		exit;
+	}
+}
+
+/**
+ * Get a response prefix (like 'Re:') in the default forum language.
+ */
+function getRePrefix()
+{
+	global $context, $language, $txt;
+
+	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix', 600)))
+	{
+		if ($language === we::$user['language'])
+			$context['response_prefix'] = $txt['response_prefix'];
+		else
+		{
+			loadLanguage('index', $language, false);
+			$context['response_prefix'] = $txt['response_prefix'];
+			loadLanguage('index');
+		}
+		cache_put_data('response_prefix', $context['response_prefix'], 600);
 	}
 }
 

@@ -32,8 +32,7 @@ if (!defined('WEDGE'))
  */
 function JSModify()
 {
-	global $settings, $board, $topic, $txt;
-	global $context, $language;
+	global $settings, $board, $topic, $txt, $context;
 
 	// We have to have a topic!
 	if (empty($topic))
@@ -200,18 +199,7 @@ function JSModify()
 		if (isset($_POST['subject'], $_REQUEST['change_all_subjects']) && $row['id_first_msg'] == $row['id_msg'] && !empty($row['num_replies']) && (allowedTo('modify_any') || ($row['id_member_started'] == we::$id && allowedTo('modify_replies'))))
 		{
 			// Get the proper (default language) response prefix first.
-			if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
-			{
-				if ($language === we::$user['language'])
-					$context['response_prefix'] = $txt['response_prefix'];
-				else
-				{
-					loadLanguage('index', $language, false);
-					$context['response_prefix'] = $txt['response_prefix'];
-					loadLanguage('index');
-				}
-				cache_put_data('response_prefix', $context['response_prefix'], 600);
-			}
+			getRePrefix();
 
 			wesql::query('
 				UPDATE {db_prefix}messages

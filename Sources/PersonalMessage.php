@@ -96,7 +96,7 @@ if (!defined('WEDGE'))
 // This helps organize things...
 function MessageMain()
 {
-	global $txt, $scripturl, $context, $user_settings, $settings;
+	global $txt, $context, $user_settings, $settings;
 
 	// No guests!
 	is_not_guest();
@@ -258,7 +258,7 @@ function MessageMain()
 
 	// Build the linktree for all the actions...
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm',
+		'url' => '<URL>?action=pm',
 		'name' => $txt['personal_messages']
 	);
 
@@ -298,7 +298,7 @@ function MessageMain()
 // A sidebar to easily access different areas of the section
 function messageIndexBar($area)
 {
-	global $txt, $context, $scripturl, $settings, $theme, $options;
+	global $txt, $context, $settings, $theme, $options;
 
 	$pm_areas = array(
 		'folders' => array(
@@ -306,24 +306,24 @@ function messageIndexBar($area)
 			'areas' => array(
 				'send' => array(
 					'label' => $txt['new_message'],
-					'custom_url' => $scripturl . '?action=pm;sa=send',
+					'custom_url' => '<URL>?action=pm;sa=send',
 					'permission' => allowedTo('pm_send'),
 				),
 				'',
 				'inbox' => array(
 					'label' => $txt['inbox'],
 					'notice' => '',
-					'custom_url' => $scripturl . '?action=pm',
+					'custom_url' => '<URL>?action=pm',
 				),
 				'sent' => array(
 					'label' => $txt['sent_items'],
-					'custom_url' => $scripturl . '?action=pm;f=sent',
+					'custom_url' => '<URL>?action=pm;f=sent',
 				),
 				'',
 				'showdrafts' => array(
 					'label' => $txt['pm_menu_drafts'],
 					'notice' => '',
-					'custom_url' => $scripturl . '?action=pm;sa=showdrafts',
+					'custom_url' => '<URL>?action=pm;sa=showdrafts',
 					'permission' => allowedTo('save_pm_draft'),
 				),
 			),
@@ -337,11 +337,11 @@ function messageIndexBar($area)
 			'areas' => array(
 				'search' => array(
 					'label' => $txt['pm_search_bar_title'],
-					'custom_url' => $scripturl . '?action=pm;sa=search',
+					'custom_url' => '<URL>?action=pm;sa=search',
 				),
 				'prune' => array(
 					'label' => $txt['pm_prune'],
-					'custom_url' => $scripturl . '?action=pm;sa=prune'
+					'custom_url' => '<URL>?action=pm;sa=prune'
 				),
 			),
 		),
@@ -350,16 +350,16 @@ function messageIndexBar($area)
 			'areas' => array(
 				'manlabels' => array(
 					'label' => $txt['pm_manage_labels'],
-					'custom_url' => $scripturl . '?action=pm;sa=manlabels',
+					'custom_url' => '<URL>?action=pm;sa=manlabels',
 				),
 				'manrules' => array(
 					'label' => $txt['pm_manage_rules'],
-					'custom_url' => $scripturl . '?action=pm;sa=manrules',
+					'custom_url' => '<URL>?action=pm;sa=manrules',
 				),
 				'',
 				'settings' => array(
 					'label' => $txt['pm_settings'],
-					'custom_url' => $scripturl . '?action=pm;sa=settings',
+					'custom_url' => '<URL>?action=pm;sa=settings',
 				),
 			),
 		),
@@ -383,7 +383,7 @@ function messageIndexBar($area)
 			// Add the label to the menu.
 			$pm_areas['labels']['areas']['label' . $label['id']] = array(
 				'label' => $label['name'] . (!empty($label['unread_messages']) ? ' <span class="note">' . $label['unread_messages'] . '</span>' : ''),
-				'custom_url' => $scripturl . '?action=pm;l=' . $label['id'],
+				'custom_url' => '<URL>?action=pm;l=' . $label['id'],
 				'unread_messages' => $label['unread_messages'],
 				'messages' => $label['messages'],
 			);
@@ -418,7 +418,7 @@ function messageIndexBar($area)
 	loadSource('Subs-Menu');
 
 	// What page is this, again?
-	$current_page = $scripturl . '?action=pm' . (!empty($_REQUEST['sa']) ? ';sa=' . $_REQUEST['sa'] : '') . (!empty($context['folder']) ? ';f=' . $context['folder'] : '') . (!empty($context['current_label_id']) ? ';l=' . $context['current_label_id'] : '');
+	$current_page = '<URL>?action=pm' . (!empty($_REQUEST['sa']) ? ';sa=' . $_REQUEST['sa'] : '') . (!empty($context['folder']) ? ';f=' . $context['folder'] : '') . (!empty($context['current_label_id']) ? ';l=' . $context['current_label_id'] : '');
 
 	// Set a few options for the menu.
 	$menuOptions = array(
@@ -446,7 +446,7 @@ function messageIndexBar($area)
 // A folder, ie. inbox/sent etc.
 function MessageFolder()
 {
-	global $txt, $scripturl, $settings, $context, $subjects_request;
+	global $txt, $settings, $context, $subjects_request;
 	global $messages_request, $recipients, $options, $memberContext, $user_settings;
 
 	// Changing view? 0 = all at once, 1 = one at a time, 2 = conversation mode
@@ -520,14 +520,14 @@ function MessageFolder()
 	// Now, build the link tree!
 	if ($context['current_label_id'] == -1)
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=pm;f=' . $context['folder'],
+			'url' => '<URL>?action=pm;f=' . $context['folder'],
 			'name' => $pmbox
 		);
 
 	// Build it further for a label.
 	if ($context['current_label_id'] != -1)
 		$context['linktree'][] = array(
-			'url' => $scripturl . '?action=pm;f=' . $context['folder'] . ';l=' . $context['current_label_id'],
+			'url' => '<URL>?action=pm;f=' . $context['folder'] . ';l=' . $context['current_label_id'],
 			'name' => $txt['pm_current_label'] . ': ' . $context['current_label']
 		);
 
@@ -635,13 +635,13 @@ function MessageFolder()
 	}
 
 	// Set up the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=pm;f=' . $context['folder'] . (isset($_REQUEST['l']) ? ';l=' . (int) $_REQUEST['l'] : '') . ';sort=' . $context['sort_by'] . ($descending ? ';desc' : ''), $_GET['start'], $max_messages, $settings['defaultMaxMessages']);
+	$context['page_index'] = template_page_index('<URL>?action=pm;f=' . $context['folder'] . (isset($_REQUEST['l']) ? ';l=' . (int) $_REQUEST['l'] : '') . ';sort=' . $context['sort_by'] . ($descending ? ';desc' : ''), $_GET['start'], $max_messages, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
 	// Determine the navigation context.
 	$context['links'] = array(
-		'prev' => $_GET['start'] >= $settings['defaultMaxMessages'] ? $scripturl . '?action=pm;start=' . ($_GET['start'] - $settings['defaultMaxMessages']) : '',
-		'next' => $_GET['start'] + $settings['defaultMaxMessages'] < $max_messages ? $scripturl . '?action=pm;start=' . ($_GET['start'] + $settings['defaultMaxMessages']) : '',
+		'prev' => $_GET['start'] >= $settings['defaultMaxMessages'] ? '<URL>?action=pm;start=' . ($_GET['start'] - $settings['defaultMaxMessages']) : '',
+		'next' => $_GET['start'] + $settings['defaultMaxMessages'] < $max_messages ? '<URL>?action=pm;start=' . ($_GET['start'] + $settings['defaultMaxMessages']) : '',
 	);
 
 	// First work out what messages we need to see - if grouped is a little trickier...
@@ -799,7 +799,7 @@ function MessageFolder()
 		{
 			$id =& $row['id_pm'];
 			if ($context['folder'] == 'sent' || empty($row['bcc']))
-				$recipients[$id][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
+				$recipients[$id][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="<URL>?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
 			if ($context['folder'] == 'sent' && isset($posters[$id]) && $posters[$id] == we::$id)
 				$context['message_replied'][$id] = (isset($context['message_replied'][$id]) ? $context['message_replied'][$id] : 0) + (($row['is_read'] & 2) >> 1);
@@ -895,7 +895,7 @@ function MessageFolder()
 // Get a personal message for the theme. (Used to save memory.)
 function prepareMessageContext($type = 'subject', $reset = false)
 {
-	global $txt, $scripturl, $settings, $context, $messages_request, $memberContext, $recipients;
+	global $txt, $settings, $context, $messages_request, $memberContext, $recipients;
 	global $subjects_request;
 
 	// Count the current message number....
@@ -927,7 +927,7 @@ function prepareMessageContext($type = 'subject', $reset = false)
 			'member' => array(
 				'id' => $subject['id_member_from'],
 				'name' => $subject['from_name'],
-				'link' => $subject['not_guest'] ? '<a href="' . $scripturl . '?action=profile;u=' . $subject['id_member_from'] . '">' . $subject['from_name'] . '</a>' : $subject['from_name'],
+				'link' => $subject['not_guest'] ? '<a href="<URL>?action=profile;u=' . $subject['id_member_from'] . '">' . $subject['from_name'] . '</a>' : $subject['from_name'],
 			),
 			'recipients' => &$recipients[$subject['id_pm']],
 			'subject' => $subject['subject'],
@@ -1057,7 +1057,7 @@ function MarkUnread()
 
 function MessageSearch()
 {
-	global $context, $txt, $scripturl, $settings;
+	global $context, $txt, $settings;
 
 	if (isset($_REQUEST['params']))
 	{
@@ -1122,15 +1122,14 @@ function MessageSearch()
 	$context['page_title'] = $txt['pm_search_title'];
 	wetem::load('search');
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm;sa=search',
+		'url' => '<URL>?action=pm;sa=search',
 		'name' => $txt['pm_search_bar_title'],
 	);
 }
 
 function MessageSearch2()
 {
-	global $scripturl, $settings, $context, $txt;
-	global $memberContext;
+	global $settings, $context, $txt, $memberContext;
 
 	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
@@ -1474,7 +1473,7 @@ function MessageSearch2()
 		loadMemberData($posters);
 
 	// Sort out the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=pm;sa=search2;params=' . $context['params'], $_GET['start'], $numResults, $settings['search_results_per_page'], false);
+	$context['page_index'] = template_page_index('<URL>?action=pm;sa=search2;params=' . $context['params'], $_GET['start'], $numResults, $settings['search_results_per_page'], false);
 
 	$context['message_labels'] = array();
 	$context['message_replied'] = array();
@@ -1497,7 +1496,7 @@ function MessageSearch2()
 		while ($row = wesql::fetch_assoc($request))
 		{
 			if ($context['folder'] == 'sent' || empty($row['bcc']))
-				$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
+				$recipients[$row['id_pm']][empty($row['bcc']) ? 'to' : 'bcc'][] = empty($row['id_member_to']) ? $txt['guest_title'] : '<a href="<URL>?action=profile;u=' . $row['id_member_to'] . '">' . $row['to_name'] . '</a>';
 
 			if ($row['id_member_to'] == we::$id && $context['folder'] != 'sent')
 			{
@@ -1553,7 +1552,7 @@ function MessageSearch2()
 			// Parse out any BBC...
 			$row['body'] = parse_bbc($row['body'], true, 'pm' . $row['id_pm']);
 
-			$href = $scripturl . '?action=pm;f=' . $context['folder'] . (isset($context['first_label'][$row['id_pm']]) ? ';l=' . $context['first_label'][$row['id_pm']] : '') . ';pmid=' . ($context['display_mode'] == 2 && isset($real_pm_ids[$head_pms[$row['id_pm']]]) ? $real_pm_ids[$head_pms[$row['id_pm']]] : $row['id_pm']) . '#msg' . $row['id_pm'];
+			$href = '<URL>?action=pm;f=' . $context['folder'] . (isset($context['first_label'][$row['id_pm']]) ? ';l=' . $context['first_label'][$row['id_pm']] : '') . ';pmid=' . ($context['display_mode'] == 2 && isset($real_pm_ids[$head_pms[$row['id_pm']]]) ? $real_pm_ids[$head_pms[$row['id_pm']]] : $row['id_pm']) . '#msg' . $row['id_pm'];
 			$is_replied_to =& $context['message_replied'][$row['id_pm']];
 			$context['personal_messages'][$row['id_pm']] = array(
 				'id' => $row['id_pm'],
@@ -1579,7 +1578,7 @@ function MessageSearch2()
 	wetem::load('search_results');
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'search';
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm;sa=search',
+		'url' => '<URL>?action=pm;sa=search',
 		'name' => $txt['pm_search_bar_title'],
 	);
 }
@@ -1587,7 +1586,7 @@ function MessageSearch2()
 // Send a new message?
 function MessagePost()
 {
-	global $txt, $scripturl, $settings, $user_profile, $context, $options, $language;
+	global $txt, $settings, $user_profile, $context, $options;
 
 	isAllowedTo('pm_send');
 
@@ -1685,18 +1684,8 @@ function MessagePost()
 		censorText($row_quoted['body']);
 
 		// Add 'Re: ' to it....
-		if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
-		{
-			if ($language === we::$user['language'])
-				$context['response_prefix'] = $txt['response_prefix'];
-			else
-			{
-				loadLanguage('index', $language, false);
-				$context['response_prefix'] = $txt['response_prefix'];
-				loadLanguage('index');
-			}
-			cache_put_data('response_prefix', $context['response_prefix'], 600);
-		}
+		getRePrefix();
+
 		$form_subject = $row_quoted['subject'];
 		if ($context['reply'] && trim($context['response_prefix']) != '' && westr::strpos($form_subject, trim($context['response_prefix'])) !== 0)
 			$form_subject = $context['response_prefix'] . $form_subject;
@@ -1726,8 +1715,8 @@ function MessagePost()
 				'name' => $row_quoted['real_name'],
 				'username' => $row_quoted['member_name'],
 				'id' => $row_quoted['id_member'],
-				'href' => !empty($row_quoted['id_member']) ? $scripturl . '?action=profile;u=' . $row_quoted['id_member'] : '',
-				'link' => !empty($row_quoted['id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row_quoted['id_member'] . '">' . $row_quoted['real_name'] . '</a>' : $row_quoted['real_name'],
+				'href' => !empty($row_quoted['id_member']) ? '<URL>?action=profile;u=' . $row_quoted['id_member'] : '',
+				'link' => !empty($row_quoted['id_member']) ? '<a href="<URL>?action=profile;u=' . $row_quoted['id_member'] . '">' . $row_quoted['real_name'] . '</a>' : $row_quoted['real_name'],
 			),
 			'subject' => $row_quoted['subject'],
 			'on_time' => on_timeformat($row_quoted['msgtime']),
@@ -1881,7 +1870,7 @@ function MessagePost()
 
 	// And build the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm;sa=send',
+		'url' => '<URL>?action=pm;sa=send',
 		'name' => $txt['new_message']
 	);
 
@@ -1930,7 +1919,7 @@ function MessagePost()
 // An error in the message...
 function messagePostError($error_types, $named_recipients, $recipient_ids = array())
 {
-	global $txt, $context, $scripturl, $settings;
+	global $txt, $context, $settings;
 
 	$context['menu_data_' . $context['pm_menu_id']]['current_area'] = 'send';
 
@@ -2009,8 +1998,8 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 				'name' => $row_quoted['real_name'],
 				'username' => $row_quoted['member_name'],
 				'id' => $row_quoted['id_member'],
-				'href' => !empty($row_quoted['id_member']) ? $scripturl . '?action=profile;u=' . $row_quoted['id_member'] : '',
-				'link' => !empty($row_quoted['id_member']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row_quoted['id_member'] . '">' . $row_quoted['real_name'] . '</a>' : $row_quoted['real_name'],
+				'href' => !empty($row_quoted['id_member']) ? '<URL>?action=profile;u=' . $row_quoted['id_member'] : '',
+				'link' => !empty($row_quoted['id_member']) ? '<a href="<URL>?action=profile;u=' . $row_quoted['id_member'] . '">' . $row_quoted['real_name'] . '</a>' : $row_quoted['real_name'],
 			),
 			'subject' => $row_quoted['subject'],
 			'on_time' => on_timeformat($row_quoted['msgtime']),
@@ -2021,7 +2010,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 
 	// Build the link tree....
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm;sa=send',
+		'url' => '<URL>?action=pm;sa=send',
 		'name' => $txt['new_message']
 	);
 
@@ -2098,8 +2087,7 @@ function messagePostError($error_types, $named_recipients, $recipient_ids = arra
 // Send it!
 function MessagePost2()
 {
-	global $txt, $context;
-	global $settings, $scripturl;
+	global $txt, $context, $settings;
 
 	isAllowedTo('pm_send');
 	loadSource(array('Subs-Auth', 'Class-Editor'));
@@ -2579,7 +2567,7 @@ function MessageKillAll()
 // This function allows the user to delete all messages older than so many days.
 function MessagePrune()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	// Actually delete the messages.
 	if (isset($_REQUEST['age']))
@@ -2636,7 +2624,7 @@ function MessagePrune()
 
 	// Build the link tree elements.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm;sa=prune',
+		'url' => '<URL>?action=pm;sa=prune',
 		'name' => $txt['pm_prune']
 	);
 
@@ -2845,11 +2833,11 @@ function recalculateUnread($owner)
 // This function handles adding, deleting and editing labels on messages.
 function ManageLabels()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	// Build the link tree elements...
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm;sa=manlabels',
+		'url' => '<URL>?action=pm;sa=manlabels',
 		'name' => $txt['pm_manage_labels']
 	);
 
@@ -3053,13 +3041,13 @@ function ManageLabels()
 // Edit Personal Message Settings
 function MessageSettings()
 {
-	global $txt, $context, $scripturl, $profile_vars, $cur_profile, $user_profile;
+	global $txt, $context, $profile_vars, $cur_profile, $user_profile;
 
 	// Need this for the display.
 	loadSource(array('Profile', 'Profile-Modify'));
 
 	// We want them to submit back to here.
-	$context['profile_custom_submit_url'] = $scripturl . '?action=pm;sa=settings;save';
+	$context['profile_custom_submit_url'] = '<URL>?action=pm;sa=settings;save';
 
 	loadMemberData(we::$id, false, 'profile');
 	$cur_profile = $user_profile[we::$id];
@@ -3077,7 +3065,7 @@ function MessageSettings()
 
 	// Add our position to the linktree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm;sa=settings',
+		'url' => '<URL>?action=pm;sa=settings',
 		'name' => $txt['pm_settings']
 	);
 
@@ -3104,8 +3092,7 @@ function MessageSettings()
 // Allows a user to report a personal message they receive to the administrator.
 function ReportMessage()
 {
-	global $txt, $context, $scripturl;
-	global $language, $settings;
+	global $txt, $context, $scripturl, $language, $settings;
 
 	// Check that this feature is even enabled!
 	if (empty($_REQUEST['pmsg']))
@@ -3271,11 +3258,11 @@ function ReportMessage()
 // List all rules, and allow adding/entering etc....
 function ManageRules()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context;
 
 	// The link tree - gotta have this :o
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=pm;sa=manrules',
+		'url' => '<URL>?action=pm;sa=manrules',
 		'name' => $txt['pm_manage_rules']
 	);
 
@@ -3681,7 +3668,7 @@ function isAccessiblePM($pmID, $validFor = 'in_or_outbox')
 
 function MessageDrafts()
 {
-	global $context, $memberContext, $txt, $settings, $user_profile, $scripturl;
+	global $context, $memberContext, $txt, $settings, $user_profile;
 
 	loadLanguage('PersonalMessage');
 
@@ -3749,7 +3736,7 @@ function MessageDrafts()
 	$maxIndex = (int) $settings['defaultMaxMessages'];
 
 	// Make sure the starting place makes sense and construct our friend the page index.
-	$context['page_index'] = template_page_index($scripturl . '?action=pm;sa=showdrafts', $context['start'], $msgCount, $maxIndex);
+	$context['page_index'] = template_page_index('<URL>?action=pm;sa=showdrafts', $context['start'], $msgCount, $maxIndex);
 	$context['current_page'] = $context['start'] / $maxIndex;
 
 	// Reverse the query if we're past 50% of the pages for better performance.
@@ -3827,7 +3814,7 @@ function MessageDrafts()
 			{
 				$context['posts'][$id]['recipients'][$recType] = array();
 				foreach ($recList as $recipient)
-					$context['posts'][$id]['recipients'][$recType][] = '<a href="' . $scripturl . '?action=profile;u=' . $recipient . '" target="_blank">' . $user_profile[$recipient]['real_name'] . '</a>';
+					$context['posts'][$id]['recipients'][$recType][] = '<a href="<URL>?action=profile;u=' . $recipient . '" target="_blank">' . $user_profile[$recipient]['real_name'] . '</a>';
 			}
 		}
 	}

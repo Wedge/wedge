@@ -51,7 +51,7 @@ function Display()
 {
 	global $txt, $settings, $context, $theme;
 	global $options, $board_info, $topic, $board, $boardurl;
-	global $attachments, $messages_request, $topicinfo, $language;
+	global $attachments, $messages_request, $topicinfo;
 
 	// What are you gonna display if these are empty?!
 	if (empty($topic))
@@ -84,12 +84,7 @@ function Display()
 	);
 
 	// Not only does a prefetch make things slower for the server, but it makes it impossible to know if they read it.
-	if (isset($_SERVER['HTTP_X_MOZ']) && $_SERVER['HTTP_X_MOZ'] == 'prefetch')
-	{
-		ob_end_clean();
-		header('HTTP/1.1 403 Prefetch Forbidden');
-		exit;
-	}
+	preventPrefetch();
 
 	// How much are we sticking on each page?
 	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
@@ -476,18 +471,7 @@ function Display()
 	$context['canonical_url'] = '<URL>?topic=' . $topic . '.' . $context['start'] . ($can_show_all ? ';all' : '');
 
 	// For quick reply we need a response prefix in the default forum language.
-	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix', 600)))
-	{
-		if ($language === we::$user['language'])
-			$context['response_prefix'] = $txt['response_prefix'];
-		else
-		{
-			loadLanguage('index', $language, false);
-			$context['response_prefix'] = $txt['response_prefix'];
-			loadLanguage('index');
-		}
-		cache_put_data('response_prefix', $context['response_prefix'], 600);
-	}
+	getRePrefix();
 
 	// Create the poll info if it exists.
 	if ($context['is_poll'])
@@ -1118,6 +1102,11 @@ function Display()
 			'caption' => 'usermenu_sendpm',
 			'action' => '\'<URL>?action=pm;sa=send;u=%id%\'',
 			'class' => '\'pm_button\'',
+		),
+		'em' => array(
+			'caption' => 'usermenu_sendemail',
+			'action' => '\'<URL>?action=emailuser;sa=email;uid=%id%\'',
+			'class' => '\'email_button\'',
 		),
 		'we' => array(
 			'caption' => 'usermenu_website',

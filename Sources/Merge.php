@@ -218,7 +218,7 @@ function MergeIndex()
 // Now that the topic IDs are known, do the proper merging.
 function MergeExecute($topics = array())
 {
-	global $txt, $context, $scripturl, $language, $settings, $topic;
+	global $txt, $context, $scripturl, $settings, $topic;
 
 	// Check the session.
 	checkSession('request');
@@ -602,18 +602,7 @@ function MergeExecute($topics = array())
 	);
 
 	// Grab the response prefix (like 'Re: ') in the default forum language.
-	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
-	{
-		if ($language === we::$user['language'])
-			$context['response_prefix'] = $txt['response_prefix'];
-		else
-		{
-			loadLanguage('index', $language, false);
-			$context['response_prefix'] = $txt['response_prefix'];
-			loadLanguage('index');
-		}
-		cache_put_data('response_prefix', $context['response_prefix'], 600);
-	}
+	getRePrefix();
 
 	// Change the topic IDs of all messages that will be merged.  Also adjust subjects if 'enforce subject' was checked.
 	wesql::query('

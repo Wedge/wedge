@@ -69,7 +69,7 @@ if (!defined('WEDGE'))
 function Post($post_errors = array())
 {
 	global $txt, $scripturl, $topic, $topic_info, $settings, $board;
-	global $board_info, $context, $theme, $options, $language;
+	global $board_info, $context, $theme, $options;
 
 	$context['form_fields'] = array(
 		'text' => array('subject', 'icon', 'guestname', 'email', 'evtitle', 'question', 'topic'),
@@ -298,19 +298,7 @@ function Post($post_errors = array())
 			$oldTopicError = true;
 	}
 
-	// Get a response prefix (like 'Re:') in the default forum language.
-	if (!isset($context['response_prefix']) && !($context['response_prefix'] = cache_get_data('response_prefix')))
-	{
-		if ($language === we::$user['language'])
-			$context['response_prefix'] = $txt['response_prefix'];
-		else
-		{
-			loadLanguage('index', $language, false);
-			$context['response_prefix'] = $txt['response_prefix'];
-			loadLanguage('index');
-		}
-		cache_put_data('response_prefix', $context['response_prefix'], 600);
-	}
+	getRePrefix();
 
 	// Previewing, modifying, or posting?
 	if (isset($_REQUEST['message']) || !empty($post_errors))
