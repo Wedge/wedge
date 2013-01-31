@@ -188,7 +188,7 @@ function addPollOption()
 
 function wedgeAttachSelect(opt)
 {
-	var count = 0, attachId = 0, max = opt.max || -1, message_ext_error_final,
+	var count = 0, attachId = 0, max = opt.max || -1, message_ext_error_final, current_element,
 
 	// Yay for scope issues.
 	checkExtension = function (filename)
@@ -284,7 +284,8 @@ function wedgeAttachSelect(opt)
 			if (this.checked)
 				session_attach++;
 		});
-		current_element.disabled = max != -1 && max <= session_attach + count;
+		if (current_element)
+			current_element.disabled = max != -1 && max <= session_attach + count;
 	};
 
 	// And finally, we begin.
