@@ -236,6 +236,7 @@ function ModifyGeneralSettings($return_config = false)
 		array('minify', $txt['minify'], 'db', 'select', array(
 			'none' => array('none', $txt['minify_none']),
 			'jsmin' => array('jsmin', $txt['minify_jsmin']),
+			'closure' => array('closure', $txt['minify_closure']),
 			'packer' => array('packer', $txt['minify_packer']),
 		), 'minify'),
 		array('jquery_origin', $txt['jquery_origin'], 'db', 'select', array(

@@ -112,10 +112,10 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		$is_default_theme &= $target === 'default_theme_';
 		$add = $theme[$target . 'dir'] . '/' . $file;
 
-		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
+		// Turn scripts/name.min.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
 		// Don't add theme.js, sbox.js and custom.js files to the final filename, to save a few bytes on all pages.
 		if (!isset($ignore_files[$file]))
-			$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
+			$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, strpos($file, '.min.js') !== false ? -7 : -3)) . '-';
 
 		$latest_date = max($latest_date, filemtime($add));
 	}
@@ -192,8 +192,8 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 		if (!file_exists($file))
 			unset($files[$k]);
 
-		// Turn scripts/name.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
-		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, -3)) . '-';
+		// Turn scripts/name.min.js into 'name', and plugin/other.js into 'plugin_other' for the final filename.
+		$id .= str_replace(array('scripts/', '/'), array('', '_'), substr(strrchr($file, '/'), 1, strpos($file, '.min.js') !== false ? -7 : -3)) . '-';
 		$latest_date = max($latest_date, filemtime($file));
 	}
 
@@ -244,7 +244,7 @@ function add_jquery_ui()
 	$version = '1.8.24'; // 1.9.2 for later
 
 	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
-		add_js_file('scripts/jquery-ui-' . $version . '.js');
+		add_js_file('scripts/jquery-ui-' . $version . '.min.js');
 	else
 	{
 		$protocol = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off' ? 'https://' : 'http://';
@@ -713,12 +713,13 @@ function wedge_cache_css_files($folder, $ids, $latest_date, $css, $gzip = false,
 }
 
 // This will replace {$str}, {$str}, ... in $final with successive entries in $arr
-function wedge_replace_placeholders($str, $arr, &$final)
+// $add_nl can be used to add newlines around the replacements.
+function wedge_replace_placeholders($str, $arr, &$final, $add_nl = false)
 {
 	$i = 0;
 	$len = strlen($str);
 	while (($pos = strpos($final, $str)) !== false)
-		$final = substr_replace($final, $arr[$i++], $pos, $len);
+		$final = substr_replace($final, $add_nl ? "\n" . $arr[$i++] . "\n" : $arr[$i++], $pos, $len);
 }
 
 // This will replace {$str}0, {$str}1, {$str}2... in $final with the corresponding index in $arr
@@ -807,9 +808,11 @@ function dynamic_admin_menu_icons()
 function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false, $full_path = false)
 {
 	global $theme, $settings, $comments, $jsdir, $txt, $language;
+	static $closure_failed = false;
 
 	$final = '';
 	$dir = $full_path ? '' : $theme['theme_dir'] . '/';
+	$no_packing = array();
 
 	// Delete cached versions, unless they have the same timestamp (i.e. up to date.)
 	if (is_array($files = glob($jsdir . '/' . $id. '*' . $ext)))
@@ -823,8 +826,14 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	{
 		$cont = file_get_contents($dir . $file);
 
+		// We make sure to remove any minified files, to be re-added later.
+		if ($minify !== 'none' && strpos($file, '.min.js') !== false)
+		{
+			$no_packing[] = $cont;
+			$cont = 'WEDGE_NO_PACKING();';
+		}
 		// Replace long variable names with shorter ones. Our own quick super-minifier!
-		if (preg_match("~/\* Optimize:\n(.*?)\n\*/~s", $cont, $match))
+		elseif (preg_match("~/\* Optimize:\n(.*?)\n\*/~s", $cont, $match))
 		{
 			$match = explode("\n", $match[1]);
 			$search = $replace = array();
@@ -843,18 +852,10 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		$final .= $cont;
 	}
 
-	// We make sure to remove jQuery (if present) before we pack the file.
-	if (strpos($id, 'jquery') !== false)
-	{
-		preg_match('~<wedge_jquery>(.*?)</wedge_jquery>~s', $final, $jquery);
-		if (!empty($jquery[1]))
-			$final = str_replace($jquery[0], 'WEDGE_JQUERY();', $final);
-	}
-
 	// Load any requested language files, and replace all $txt['string'] occurrences.
 	// !! @todo: implement cache flush by checking for language modification deltas.
 	// In the meantime, if you update a language file, empty the JS cache folder if it fails to update.
-	if (preg_match_all('~@language\h+([^\n;]+)~i', $final, $languages))
+	if (preg_match_all('~@language\h+([^\n;]+)[\n;]~i', $final, $languages))
 	{
 		// Format: @language ThemeLanguage, Author:Plugin:Language, Author:Plugin:Language2
 		$langstring = implode(',', $languages[1]);
@@ -885,7 +886,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		if (preg_match_all('~\$txt\[([\'"])(.*?)\1]~i', $final, $strings, PREG_SET_ORDER))
 			foreach ($strings as $str)
 				if (isset($txt[$str[2]]))
-					$final = str_replace($str[0], JavaScriptEscape($txt[$str[2]]), $final);
+					$final = str_replace($str[0], westr::entity_to_js_code(westr::utf8_to_entity(JavaScriptEscape($txt[$str[2]]))), $final);
 	}
 	// Did we remove all language files from the list? Clean it up...
 	elseif (!empty($settings['js_lang'][$id]))
@@ -897,59 +898,83 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		$lang_name = '';
 	}
 
-	// Call the minify process, either JSMin or Packer.
-	if ($minify === 'jsmin')
+	if (!$closure_failed && !is_callable('curl_exec') && !preg_match('~1|yes|on|true~i', @ini_get('allow_url_fopen')))
+		$closure_failed = true;
+
+	// Call the minify process, either JSMin, Packer or Closure.
+	if ($minify === 'closure' && !$closure_failed) // Google Closure version
 	{
-		loadSource('Class-JSMin');
-		$final = JSMin::minify($final);
+		// We want to keep the copyright-type comments, starting with /*!, which Closure usually removes...
+		preg_match_all('~/\*!\n.*?\*/~s', $final, $comments);
+		if (!empty($comments[0]))
+			$final = str_replace($comments[0], 'WEDGE_COMMENT();', $final);
+
+		// We're requesting the JSON version because it makes error handling a bit cleaner.
+		$data = 'output_info=compiled_code&output_format=json&js_code=' . urlencode(preg_replace('~/\*.*?\*/~s', '', $final));
+
+		if (is_callable('curl_init'))
+		{
+			// We're going to handle a request to the Closure web service. Ohhh, so excited.
+			$ch = curl_init('http://closure-compiler.appspot.com/compile');
+
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
+			curl_setopt($ch, CURLOPT_POST, 1);
+
+			// Move it!
+			$packed_js = curl_exec($ch);
+
+			// Now get off my lawn!
+			curl_close($ch);
+		}
+		else
+		{
+			$packed_js = file_get_contents(
+				'http://closure-compiler.appspot.com/compile',
+				false, stream_context_create(
+					array('http' => array(
+						'method' => 'POST',
+						'header' => 'Content-type: application/x-www-form-urlencoded',
+						'content' => $data,
+						'max_redirects' => 0,
+						'timeout' => 15,
+					))
+				)
+			);
+		}
+
+		$packed_js = json_decode($packed_js);
+
+		if (!empty($packed_js->errors) || !empty($packed_js->serverErrors))
+		{
+			log_error('Google Closure Compiler - ' . print_r(empty($packed_js->errors) ? $packed_js->serverErrors : $packed_js->errors, true));
+			$closure_failed = true;
+		}
+		elseif (!empty($packed_js->compiledCode))
+			$final = $packed_js->compiledCode;
+		else // No data received? Must be a timeout or something...
+			$closure_failed = true;
+
+		unset($packed_js, $data);
+
+		if (!empty($comments[0]))
+			wedge_replace_placeholders('WEDGE_COMMENT();', $comments[0], $final, true);
 	}
-	elseif ($minify === 'packer')
+
+	if ($minify === 'packer' || $closure_failed)
 	{
 		// We want to keep the copyright-type comments, starting with /*!, which Packer usually removes...
-		preg_match_all("~(/\*!\n.*?\*/)~s", $final, $comments);
-		if (!empty($comments[1]))
-			$final = preg_replace("~/\*!\n.*?\*/~s", 'WEDGE_COMMENT();', $final);
+		preg_match_all('~/\*!\n.*?\*/~s', $final, $comments);
+		if (!empty($comments[0]))
+			$final = str_replace($comments[0], 'WEDGE_COMMENT();', $final);
 
 		loadSource('Class-Packer');
 		$packer = new Packer;
 		$final = $packer->pack($final);
 
-		if (!empty($comments[1]))
-			foreach ($comments[1] as $comment)
-				$final = substr_replace($final, "\n" . $comment . "\n", strpos($final, 'WEDGE_COMMENT();'), 16);
-
-		/*
-			Adding a semicolon after a function/prototype var declaration is mandatory in Packer.
-			The original SMF code didn't bother with that, and developers are advised NOT to
-			follow that 'advice'. If you can't fix your scripts, uncomment the following
-			block. Semicolons will be added automatically, at a small performance cost.
-		*/
-
-		/*
-		$max = strlen($final);
-		$i = 0;
-		$alphabet = array_flip(array_merge(range('A', 'Z'), range('a', 'z')));
-		while (true)
-		{
-			$i = strpos($final, '=function(', $i);
-			if ($i === false)
-				break;
-			$k = strpos($final, '{', $i) + 1;
-			$m = 1;
-			while ($m > 0 && $k <= $max)
-			{
-				$d = $final[$k++];
-				$m += $d === '{' ? 1 : ($d === '}' ? -1 : 0);
-			}
-			$e = $k < $max ? $final[$k] : $final[$k - 1];
-			if (isset($alphabet[$e]))
-			{
-				$final = substr_replace($final, ';', $k, 0);
-				$max++;
-			}
-			$i++;
-		}
-		*/
+		if (!empty($comments[0]))
+			wedge_replace_placeholders('WEDGE_COMMENT();', $comments[0], $final, true);
 
 		/*
 			Another note: Packer doesn't seem to support things like this:
@@ -957,15 +982,55 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 			It can be fixed by replacing the $VAR_TIDY line in Class-Packer.php with:
 				private $VAR_TIDY = '/\\b(var|function)\\b|\\s(in\\s+[^;{]+|in(?=[);]|$))/';
 			But this is (relatively) untested, so I chose not to include it.
+
+			Also, adding a semicolon after a function/prototype var declaration is MANDATORY in Packer.
+			The original SMF code didn't bother with that, and developers are advised NOT to
+			follow that 'advice'. If you can't fix your scripts, uncomment the following
+			block. Semicolons will be added automatically, at a small performance cost.
+		*/
+		/*
+			$max = strlen($final);
+			$i = 0;
+			$alphabet = array_flip(array_merge(range('A', 'Z'), range('a', 'z')));
+			while (true)
+			{
+				$i = strpos($final, '=function(', $i);
+				if ($i === false)
+					break;
+				$k = strpos($final, '{', $i) + 1;
+				$m = 1;
+				while ($m > 0 && $k <= $max)
+				{
+					$d = $final[$k++];
+					$m += $d === '{' ? 1 : ($d === '}' ? -1 : 0);
+				}
+				$e = $k < $max ? $final[$k] : $final[$k - 1];
+				if (isset($alphabet[$e]))
+				{
+					$final = substr_replace($final, ';', $k, 0);
+					$max++;
+				}
+				$i++;
+			}
 		*/
 	}
+	elseif ($minify === 'jsmin')
+	{
+		loadSource('Class-JSMin');
+		$final = JSMin::minify($final);
+	}
 
-	// ...And we restore jQuery.
-	if (isset($jquery, $jquery[1]))
-		$final = str_replace('WEDGE_JQUERY();', trim($jquery[1]) . "\n", $final);
+	// ...And we restore jQuery and other pre-minified files.
+	if (!empty($no_packing))
+		wedge_replace_placeholders('WEDGE_NO_PACKING();', $no_packing, $final, true);
 
 	// Remove the copyright years and version information, in case you're a paranoid android.
-	$final = preg_replace("~/\*!(?:[^*]|\*[^/])*?@package wedge.*?\*/~s", "/*!\n * @package wedge\n * @copyright Wedgeward, wedge.org\n * @license http://wedge.org/license/\n */", $final);
+	// Then remove the extra whitespace that we may have added around comments to avoid glitches.
+	$final = preg_replace(
+		array("~/\*!(?:[^*]|\*[^/])*?@package wedge.*?\*/~s", "~(^|\n)\n/\*~", "~\*/\n~"),
+		array("/*!\n * @package wedge\n * @copyright Wedgeward, wedge.org\n * @license http://wedge.org/license/\n */", "$1/*", "*/"),
+		$final
+	);
 
 	if ($gzip)
 		$final = gzencode($final, 9);

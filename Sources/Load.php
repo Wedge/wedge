@@ -1706,11 +1706,11 @@ function weInitJS()
 {
 	global $settings, $context;
 
-	$version = '1.5.2'; // !!! When v2.0 is out, change to -- we::is('ie[-8]') ? '1.9' : '2.0';
+	$version = '1.5.2'; // !!! When v2.0 is out, change to -- we::is('ie[-8]') ? '1.9.0' : '2.0.0';
 
 	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
 		$context['main_js_files'] = array(
-			'scripts/jquery-' . $version . '.js' => true,
+			'scripts/jquery-' . $version . '.min.js' => true,
 			'scripts/script.js' => true,
 			'scripts/sbox.js' => false,
 			'scripts/custom.js' => false

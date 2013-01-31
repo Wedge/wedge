@@ -734,41 +734,12 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 		if ($simple)
 			$string = preg_replace('~&#(\d{3,8});~e', 'chr(\'$1\')', $string);
 		else
-		{
-			$fixchar = create_function('$n', '
-				if ($n < 128)
-					return chr($n);
-				elseif ($n < 2048)
-					return chr(192 | $n >> 6) . chr(128 | $n & 63);
-				elseif ($n < 65536)
-					return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
-				else
-					return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);');
-
-			$string = preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $string);
-		}
+			$string = westr::entity_to_utf8($string);
 	}
 
 	// Convert all special characters to HTML entities...just for Hotmail :-\
 	if ($hotmail_fix)
-	{
-		$entityConvert = create_function('$c', '
-			$len = strlen($c);
-			$cc = ord($c[0]);
-			if ($len === 1 && $cc <= 0x7F)
-				return $c;
-			elseif ($len === 2 && $cc >= 0xC0 && $cc <= 0xDF)
-				return "&#" . ((($cc ^ 0xC0) << 6) + (ord($c[1]) ^ 0x80)) . ";";
-			elseif ($len === 3 && $cc >= 0xE0 && $cc <= 0xEF)
-				return "&#" . ((($cc ^ 0xE0) << 12) + ((ord($c[1]) ^ 0x80) << 6) + (ord($c[2]) ^ 0x80)) . ";";
-			elseif ($len === 4 && $cc >= 0xF0 && $cc <= 0xF7)
-				return "&#" . ((($cc ^ 0xF0) << 18) + ((ord($c[1]) ^ 0x80) << 12) + ((ord($c[2]) ^ 0x80) << 6) + (ord($c[3]) ^ 0x80)) . ";";
-			else
-				return "";');
-
-		// Convert all 'special' characters to HTML entities.
-		return array('UTF-8', preg_replace('~([\x80-\x{10FFFF}])~eu', '$entityConvert(\'\1\')', $string), '7bit');
-	}
+		return array('UTF-8', westr::utf8_to_entity($string), '7bit');
 
 	// We don't need to mess with the subject line if no special characters were in it..
 	elseif (!$hotmail_fix && preg_match('~([^\x09\x0A\x0D\x20-\x7F])~', $string) === 1)
