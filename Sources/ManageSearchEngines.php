@@ -541,7 +541,7 @@ function logSpider()
 		if ($settings['spider_mode'] > 2)
 		{
 			$url = $_GET + array('USER_AGENT' => $_SERVER['HTTP_USER_AGENT']);
-			unset($url['sesc'], $url[$context['session_var']]);
+			unset($url[$context['session_var']]);
 			$url = serialize($url);
 		}
 		else
