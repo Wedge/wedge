@@ -168,7 +168,11 @@ function template_remove()
 			<fieldset>
 				<legend>', $txt['remove_plugin_delete'], '</legend>
 				', $txt['remove_plugin_delete_desc'], '<br>
-				<input name="delete" type="submit" class="delete floatright" value="', $txt['remove_plugin_delete'], '">
+				<input name="delete" type="submit" class="delete floatright" value="', $txt['remove_plugin_delete'], '"', !empty($context['requires_maint']) ? ' disabled' : '', '>';
+	if (!empty($context['requires_maint']))
+		echo '
+				<div class="errorbox plugin_error">', $txt['remove_plugin_maint'], '</div>';
+	echo '
 			</fieldset>
 		</div>
 		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

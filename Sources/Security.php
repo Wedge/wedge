@@ -768,18 +768,18 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 {
 	global $sc, $settings, $boardurl;
 
-	// Is it in as $_POST['sc']?
+	// Is it in as $_POST?
 	if ($type == 'post')
 	{
-		$check = isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($settings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null);
+		$check = isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : null;
 		if ($check !== $sc)
 			$error = 'session_timeout';
 	}
 
-	// How about $_GET['sesc']?
+	// How about $_GET?
 	elseif ($type == 'get')
 	{
-		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($settings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : null);
+		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : null;
 		if ($check !== $sc)
 			$error = 'session_verify_fail';
 	}
@@ -787,7 +787,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	// Or can it be in either?
 	elseif ($type == 'request')
 	{
-		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (empty($settings['strictSessionCheck']) && isset($_GET['sesc']) ? $_GET['sesc'] : (isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : (empty($settings['strictSessionCheck']) && isset($_POST['sc']) ? $_POST['sc'] : null)));
+		$check = isset($_GET[$_SESSION['session_var']]) ? $_GET[$_SESSION['session_var']] : (isset($_POST[$_SESSION['session_var']]) ? $_POST[$_SESSION['session_var']] : null);
 
 		if ($check !== $sc)
 			$error = 'session_verify_fail';

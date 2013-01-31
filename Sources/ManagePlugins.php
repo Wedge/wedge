@@ -55,7 +55,7 @@ function PluginsHome()
 
 function ListPlugins()
 {
-	global $scripturl, $txt, $context, $pluginsdir;
+	global $scripturl, $txt, $context, $pluginsdir, $maintenance;
 
 	wetem::load('browse');
 	$context['page_title'] = $txt['plugin_manager'];
@@ -103,6 +103,7 @@ function ListPlugins()
 						'acp_url' => '',
 						'install_errors' => array(),
 						'enabled' => false,
+						'maint' => array(),
 					);
 
 					// Use the supplied link if, well, given, but failing that check to see if they used an auto admin page.
@@ -194,6 +195,9 @@ function ListPlugins()
 						}
 					}
 
+					// Is there anything it has to do in maintenance mode?
+					$plugin['maint'] = get_maint_requirements($manifest);
+
 					// OK, add to the list.
 					$context['available_plugins'][strtolower($plugin['name'] . $folder)] = $plugin;
 				}
@@ -262,7 +266,14 @@ function ListPlugins()
 			}
 	}
 
-	// 5. Deal with any filtering. We have to do it here, rather than earlier, simply because we need to have processed everything beforehand.
+	// 5. Deal with any plugins that are not currently enabled, but want to be in maintenance mode to do so.
+	// If we're not in maintenance, the plugin isn't enabled and it wants maintenance mode to be able to do so.
+	if ($maintenance == 0)
+		foreach ($context['available_plugins'] as $id => $plugin)
+			if (!$plugin['enabled'] && !empty($plugin['maint']) && in_array('enable', $plugin['maint']))
+				$context['available_plugins'][$id]['install_errors']['maint_mode'] = $txt['install_error_maint_mode'];
+
+	// 6. Deal with any filtering. We have to do it here, rather than earlier, simply because we need to have processed everything beforehand.
 	$context['filter_plugins'] = array(
 		'all' => 0,
 		'enabled' => 0,
@@ -365,7 +376,7 @@ function PluginReadme()
 
 function EnablePlugin()
 {
-	global $context, $pluginsdir, $settings;
+	global $context, $pluginsdir, $settings, $maintenance;
 
 	checkSession('request');
 
@@ -402,6 +413,14 @@ function EnablePlugin()
 		$required_functions = testRequiredFunctions($manifest->{'required_functions'});
 		if (!empty($required_functions))
 			fatal_lang_error('fatal_install_error_reqfunc', false, westr::htmlspecialchars(implode(', ', $required_functions)));
+	}
+
+	// Does the plugin require maintenance mode?
+	if ($maintenance == 0)
+	{
+		$maint = get_maint_requirements($manifest);
+		if (!empty($maint) && in_array('enable', $maint))
+			fatal_lang_error('fatal_install_error_maint_mode', false);
 	}
 
 	// Hooks associated with this plugin.
@@ -1159,7 +1178,7 @@ function DisablePlugin()
 
 function RemovePlugin()
 {
-	global $scripturl, $txt, $context, $pluginsdir;
+	global $scripturl, $txt, $context, $pluginsdir, $maintenance;
 
 	//libxml_use_internal_errors(true);
 	if (!isViablePlugin())
@@ -1181,6 +1200,14 @@ function RemovePlugin()
 		// Just displaying the form.
 		wetem::load('remove');
 		$context['page_title'] = $txt['remove_plugin'];
+
+		// If this requires maintenance mode to clean house, tell the user.
+		if ($maintenance == 0)
+		{
+			$maint = get_maint_requirements($manifest);
+			if (!empty($maint) && in_array('remove-clean', $maint))
+				$context['requires_maint'] = true;
+		}
 	}
 	else
 	{
@@ -1193,6 +1220,16 @@ function RemovePlugin()
 		);
 		if (isset($_POST['nodelete']))
 			$context['remote_callback']['post_data']['nodelete'] = 1;
+		elseif (isset($_POST['delete']))
+		{
+			// We need to test whether this thing needs some work.
+			if ($maintenance == 0)
+			{
+				$maint = get_maint_requirements($manifest);
+				if (!empty($maint) && in_array('remove-clean', $maint))
+					fatal_lang_error('fatal_install_error_maint_mode', false);
+			}
+		}
 
 		// Check that the entire tree is deletable.
 		$all_writable = true;

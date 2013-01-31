@@ -879,7 +879,7 @@ function writeLog($force = false)
 			$context['session_query'] = $context['session_var'] . '=' . $_SESSION['session_value'];
 		}
 
-		unset($serialized['sesc'], $serialized[$context['session_var']]);
+		unset($serialized[$context['session_var']]);
 		$serialized = serialize($serialized);
 	}
 	else

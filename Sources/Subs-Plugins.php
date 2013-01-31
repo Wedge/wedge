@@ -753,6 +753,18 @@ function testRequiredFunctions($manifest_element)
 		return array_keys($required_functions); // Can't array-flip because we will end up overwriting our values.
 }
 
+function get_maint_requirements($manifest)
+{
+	if (!empty($manifest['maintenance']))
+	{
+		$opt = (string) $manifest['maintenance'];
+		$maint = explode(',', $opt);
+		if (!empty($maint))
+			return array_intersect($maint, array('enable', 'remove-clean')); // Maybe others later?
+	}
+	return array();
+}
+
 function test_hooks_conflict($manifest)
 {
 	global $context, $plugins_dir, $settings;

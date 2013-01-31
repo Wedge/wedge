@@ -80,6 +80,7 @@ ol.search_results
 
 .plugin_error
 	max-width: 40%
+	margin-left: 0.5em
 
 .plugin_auth extends .inline-block
 	margin-left: 2px
