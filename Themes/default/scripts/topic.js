@@ -537,7 +537,7 @@ $.fn.mime = function (oList, oStrings, bUseDataId)
 			{
 				var
 					$mime = $(this).children().first(),
-					is_right_side = $mime.css('textAlign') === 'right',
+					right_side = $mime.css('textAlign') === 'right' ? ' right' : '',
 					sHTML = '', href = $mime[0].href,
 					// Extract the context id from the parent message
 					id = bUseDataId ? $mime.data('id') : $mime.closest('.root').attr('id').slice(3);
@@ -559,24 +559,20 @@ $.fn.mime = function (oList, oStrings, bUseDataId)
 						}) + '</a></li>';
 				});
 
-				$men = $('<div class="mimenu' + (is_right_side ? ' right' : '') + '"></div>')
+				$men = $('<div class="mimenu' + right_side + '"></div>')
 					.html('<ul class="actions">' + sHTML + '</ul>')
 					.insertAfter($mime);
 
 				$(this)
 					// This is the starter position (or end position if we're closing the menu.)
-					.data('start', {
-						opacity: 0,
+					.data('start', $.extend({
+						top: $mime.height(),
 						// If we start from a 60x60 square, the animation looks nicer.
 						width: 60,
 						height: 60,
+						opacity: 0,
 						paddingTop: 0,
-						top: $mime.height(),
-						// We need to force left to 0, otherwise IE doesn't like it.
-						left: !is_right_side ? 0 : 'auto',
-						// And if we're animating from the right, we'll simply force right to 0.
-						right: is_right_side ? 0 : 'auto'
-					})
+					}, right_side ? { right: 0 } : { left: 0 }))
 					.data('end', {
 						opacity: 1,
 						width: $men.width(),

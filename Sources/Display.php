@@ -1103,11 +1103,6 @@ function Display()
 			'action' => '\'<URL>?action=pm;sa=send;u=%id%\'',
 			'class' => '\'pm_button\'',
 		),
-		'em' => array(
-			'caption' => 'usermenu_sendemail',
-			'action' => '\'<URL>?action=emailuser;sa=email;uid=%id%\'',
-			'class' => '\'email_button\'',
-		),
 		'we' => array(
 			'caption' => 'usermenu_website',
 			'action' => '\'%special%\'',

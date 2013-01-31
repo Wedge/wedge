@@ -1288,7 +1288,7 @@ function checkUserBehavior()
 				$context['error_message'] .= '<br><br>' . $txt[$block];
 			$context['error_message'] .= '<br><br>' . $txt['behavior_footer'];
 
-			$context['error_message'] = str_replace('{email_address}', str_replace("@", "+REMOVEME@REMOVEME.", $webmaster_email), $context['error_message']);
+			$context['error_message'] = str_replace('{email_address}', str_replace('@', '+REMOVEME@REMOVEME.', $webmaster_email), $context['error_message']);
 			$context['error_message'] = str_replace('{incident}', '#' . $error_id, $context['error_message']);
 
 			// And we're done. Spit out header if appropriate, footer and blocks.
@@ -1546,7 +1546,7 @@ function checkUserRequest_request()
 		return $context['behavior_error'] = 'behav_invalid_via';
 
 	// A known referrer spammer
-	if (isset($context['http_headers']['Via']) && (stripos($context['http_headers']['Via'], "pinappleproxy") !== false || stripos($context['http_headers']['Via'], "PCNETSERVER") !== false || stripos($context['http_headers']['Via'], "Invisiware") !== false))
+	if (isset($context['http_headers']['Via']) && (stripos($context['http_headers']['Via'], 'pinappleproxy') !== false || stripos($context['http_headers']['Via'], 'PCNETSERVER') !== false || stripos($context['http_headers']['Via'], 'Invisiware') !== false))
 		return $context['behavior_error'] = 'behav_banned_via_proxy';
 
 	// Known spambot headers
@@ -1555,7 +1555,7 @@ function checkUserRequest_request()
 
 	// Are we in compliance with RFC 2965 sections 3.3.5 and 9.1? Specifically, bots wanting new-style cookies should send Cookie2 as a header.
 	// Apparently this does not work on the first edition Kindle, but really... though it's not a forum platform, it's not like it's hard to override.
-	if (isset($context['http_headers']['Cookie']) && strpos($context['http_headers']['Cookie'], '$Version=0') !== false && !isset($context['http_headers']['Cookie2']) && strpos($context['http_headers']['User-Agent'], "Kindle/") === false)
+	if (isset($context['http_headers']['Cookie']) && strpos($context['http_headers']['Cookie'], '$Version=0') !== false && !isset($context['http_headers']['Cookie2']) && strpos($context['http_headers']['User-Agent'], 'Kindle/') === false)
 		return $context['behavior_error'] = 'behav_bot_rfc2965';
 
 	// OK, are we doing the big scary strict tests? If not, bail. Some of these tests will fail on weird things like some corporate proxy servers so we don't do them by default.
@@ -1569,7 +1569,7 @@ function checkUserRequest_request()
 		return $context['behavior_error'] = 'behav_proxy_connection';
 
 	// Connections claiming HTTP/1.1 should not use HTTP/1.0 caching instructions
-	if ($_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.1' && isset($context['http_headers']['Pragma']) && strpos($context['http_headers']['Pragma'], "no-cache") !== false && !isset($context['http_headers']['Cache-Control']))
+	if ($_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.1' && isset($context['http_headers']['Pragma']) && strpos($context['http_headers']['Pragma'], 'no-cache') !== false && !isset($context['http_headers']['Cache-Control']))
 		return $context['behavior_error'] = 'behav_pragma';
 
 	// RFC 2616 14.39 states that if TE is specified as a header, Connection: TE must also be specified.
@@ -1579,7 +1579,7 @@ function checkUserRequest_request()
 
 	// When specified, Range should exist and not begin with a 0 for requesting (since it's requesting a follow-on partial dataset)
 	// whois.sc is broken by this. So are Facebook, LiveJournal and MovableType (for which exceptions have been made, for FB and OpenID in particular)
-	if (isset($context['http_headers']['Range']) && strpos($context['http_headers']['Range'], "=0-") !== false && (strpos($context['http_headers']['User-Agent'], "MovableType") !== 0 && strpos($context['http_headers']['User-Agent'], "URI::Fetch") !== 0 && strpos($context['http_headers']['User-Agent'], "php-openid/") !== 0 && strpos($context['http_headers']['User-Agent'], "facebookexternalhit") !== 0))
+	if (isset($context['http_headers']['Range']) && strpos($context['http_headers']['Range'], '=0-') !== false && (strpos($context['http_headers']['User-Agent'], 'MovableType') !== 0 && strpos($context['http_headers']['User-Agent'], 'URI::Fetch') !== 0 && strpos($context['http_headers']['User-Agent'], 'php-openid/') !== 0 && strpos($context['http_headers']['User-Agent'], 'facebookexternalhit') !== 0))
 		return $context['behavior_error'] = 'behav_invalid_range';
 
 	return false;
@@ -1631,7 +1631,7 @@ function checkUserRequest_useragent()
 			return $context['behavior_error'] = 'behav_not_msnbot';
 	}
 	// Is it claiming to be Googlebot, even?
-	elseif (stripos($context['http_headers']['User-Agent'], 'Googlebot') !== FALSE || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false || stripos($context['http_headers']['User-Agent'], 'Google Web Preview') !== false)
+	elseif (stripos($context['http_headers']['User-Agent'], 'Googlebot') !== false || stripos($context['http_headers']['User-Agent'], 'Mediapartners-Google') !== false || stripos($context['http_headers']['User-Agent'], 'Google Web Preview') !== false)
 	{
 		if ((!match_cidr($_SERVER['REMOTE_ADDR'], array('66.249.64.0/19', '64.233.160.0/19', '72.14.192.0/18', '203.208.32.0/19', '74.125.0.0/16', '216.239.32.0/19', '209.85.128.0/17'))) || (empty($settings['disableHostnameLookup']) && !test_ip_host($_SERVER['REMOTE_ADDR'], 'googlebot.com')))
 			return $context['behavior_error'] = 'behav_not_googlebot';
@@ -1640,7 +1640,7 @@ function checkUserRequest_useragent()
 	elseif (stripos($context['http_headers']['User-Agent'], 'Mozilla') === 0)
 	{
 		// The main test for Mozilla is the same as the standard needing Accept header. But Google Desktop didn't previously support it, and since there's some legacy stuff, we except it for now.
-		if (strpos($context['http_headers']['User-Agent'], "Google Desktop") === false && strpos($context['http_headers']['User-Agent'], "PLAYSTATION 3") === false && !isset($context['http_headers']['Accept']))
+		if (strpos($context['http_headers']['User-Agent'], 'Google Desktop') === false && strpos($context['http_headers']['User-Agent'], 'PLAYSTATION 3') === false && !isset($context['http_headers']['Accept']))
 			return $context['behavior_error'] = 'behav_no_accept';
 	}
 
@@ -1663,7 +1663,7 @@ function checkUserRequest_post()
 
 	// Catch a few completely broken spambots
 	foreach ($_POST as $key => $value) {
-		if (strpos($key, "	document.write") !== false)
+		if (strpos($key, '	document.write') !== false)
 			return $context['behavior_error'] = 'behav_rogue_chars';
 	}
 

@@ -14,7 +14,7 @@
 
 (function ($) {
 
-	$.fn.zoomedia = function (options, onComplete)
+	$.fn.zoomedia = function (options)
 	{
 		var
 			double_clicked, img, $img, $fullsize, $anchor,
