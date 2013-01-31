@@ -743,34 +743,27 @@ function read_entry(&$result,$in,$seek,$intel,$ifd_name,$globalOffset) {
 			$result[$ifd_name]['MakerNote']['RawData'] = $data;
 		}
 		if (preg_match('/NIKON/i',$make)) {
-			require_once(dirname(__FILE__).'/makers/nikon.php');
 			parseNikon($data,$result);
 			$result[$ifd_name]['KnownMaker'] = 1;
 		} else if (preg_match('/OLYMPUS/i',$make)) {
-			require_once(dirname(__FILE__).'/makers/olympus.php');
 			parseOlympus($data,$result,$seek,$globalOffset);
 			$result[$ifd_name]['KnownMaker'] = 1;
 		} else if (preg_match('/Canon/i',$make)) {
-			require_once(dirname(__FILE__).'/makers/canon.php');
 			parseCanon($data,$result,$seek,$globalOffset);
 			$result[$ifd_name]['KnownMaker'] = 1;
 		} else if (preg_match('/FUJIFILM/i',$make)) {
-			require_once(dirname(__FILE__).'/makers/fujifilm.php');
 			parseFujifilm($data,$result);
 			$result[$ifd_name]['KnownMaker'] = 1;
 		} else if (preg_match('/SANYO/i',$make)) {
-			require_once(dirname(__FILE__).'/makers/sanyo.php');
 			parseSanyo($data,$result,$seek,$globalOffset);
 			$result[$ifd_name]['KnownMaker'] = 1;
 		} else if (preg_match('/Panasonic/i',$make)) {
-			require_once(dirname(__FILE__).'/makers/panasonic.php');
 			parsePanasonic($data,$result,$seek,$globalOffset);
 			$result[$ifd_name]['KnownMaker'] = 1;
 		} else {
 			$result[$ifd_name]['KnownMaker'] = 0;
 		}
 	} else if ($tag_name == 'GPSInfoOffset') {
-		require_once(dirname(__FILE__).'/makers/gps.php');
 		$formated_data = formatData($type,$tag,$intel,$data);
 		$result[$ifd_name]['GPSInfo'] = $formated_data;
 		parseGPS($data,$result,$formated_data,$seek,$globalOffset);
