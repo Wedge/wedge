@@ -416,6 +416,7 @@ function Admin()
 						'hard' => array($txt['ban_hard']),
 						'soft' => array($txt['ban_soft']),
 						'add' => array($txt['ban_add']),
+						'edit' => array($txt['ban_edit'], 'enabled' => isset($_REQUEST['ban'])),
 						'settings' => array($txt['ban_settings']),
 					),
 				),

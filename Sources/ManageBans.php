@@ -77,7 +77,7 @@ if (!defined('WEDGE'))
 
 function ManageBan()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	isAllowedTo('manage_bans');
 
@@ -104,22 +104,29 @@ function ManageBan()
 		'tabs' => array(
 			'hard' => array(
 				'description' => $txt['ban_description_hard'],
-				'href' => $scripturl . '?action=admin;area=ban;sa=hard',
+				'href' => '<URL>?action=admin;area=ban;sa=hard',
 				'is_selected' => $context['sub_action'] == 'hard',
 			),
 			'soft' => array(
 				'description' => $txt['ban_description_soft'],
-				'href' => $scripturl . '?action=admin;area=ban;sa=soft',
+				'href' => '<URL>?action=admin;area=ban;sa=soft',
 				'is_selected' => $context['sub_action'] == 'soft',
 			),
 			'add' => array(
 				'description' => $txt['ban_description_add'],
-				'href' => $scripturl . '?action=admin;area=ban;sa=add',
+				'href' => '<URL>?action=admin;area=ban;sa=add',
+				'enabled' => $context['sub_action'] != 'edit',
 				'is_selected' => $context['sub_action'] == 'add',
+			),
+			'edit' => array(
+				'description' => $txt['ban_description_edit'],
+				'href' => !empty($_REQUEST['ban']) ? '<URL>?action=admin;area=ban;sa=edit;ban=' . ((int) $_REQUEST['ban']) : '<URL>?action=admin;area=ban;sa=add',
+				'enabled' => $context['sub_action'] == 'edit',
+				'is_selected' => $context['sub_action'] == 'edit',
 			),
 			'settings' => array(
 				'description' => $txt['ban_description_settings'],
-				'href' => $scripturl . '?action=admin;area=ban;sa=settings',
+				'href' => '<URL>?action=admin;area=ban;sa=settings',
 				'is_selected' => $context['sub_action'] == 'settings',
 			),
 		),
@@ -365,11 +372,6 @@ function BanListAdd()
 function BanListEdit()
 {
 	global $txt, $context, $settings, $user_profile;
-
-	$context[$context['admin_menu_name']]['tab_data']['tabs']['hard']['is_selected'] = false;
-	$context[$context['admin_menu_name']]['tab_data']['tabs']['add']['is_selected'] = true;
-	$context[$context['admin_menu_name']]['tab_data']['tabs']['add']['description'] = $txt['ban_description_edit'];
-	$context[$context['admin_menu_name']]['tab_data']['tabs']['add']['title'] = $txt['ban_edit'];
 
 	$_REQUEST['ban'] = isset($_REQUEST['ban']) ? (int) $_REQUEST['ban'] : 0;
 
@@ -634,7 +636,7 @@ function BanListEdit()
 
 	// Did we find a ban?
 	if (empty($context['ban_details']))
-		return BanListAdd();
+		redirectexit('action=admin;area=ban;sa=add');
 
 	switch ($context['ban_details']['ban_type'])
 	{
