@@ -1313,7 +1313,7 @@ function getRePrefix()
  */
 function is_valid_email($email)
 {
-	return preg_match('~^[\w=+/-][\w=\'+/.-]*@[\w-]+(\.[\w-]+)*(\.\w{2,6})$~', $email);
+	return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
 /**

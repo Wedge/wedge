@@ -366,6 +366,11 @@ function BanListEdit()
 {
 	global $txt, $context, $settings, $user_profile;
 
+	$context[$context['admin_menu_name']]['tab_data']['tabs']['hard']['is_selected'] = false;
+	$context[$context['admin_menu_name']]['tab_data']['tabs']['add']['is_selected'] = true;
+	$context[$context['admin_menu_name']]['tab_data']['tabs']['add']['description'] = $txt['ban_description_edit'];
+	$context[$context['admin_menu_name']]['tab_data']['tabs']['add']['title'] = $txt['ban_edit'];
+
 	$_REQUEST['ban'] = isset($_REQUEST['ban']) ? (int) $_REQUEST['ban'] : 0;
 
 	if (!empty($_REQUEST['ban']))
@@ -381,6 +386,7 @@ function BanListEdit()
 		if (wesql::num_rows($request) != 0)
 			$context['ban_details'] = wesql::fetch_assoc($request);
 		wesql::free_result($request);
+		$context['ban_details']['hardness'] = !empty($context['ban_details']['hardness']) ? 'hard' : 'soft';
 
 		if (!empty($settings['disableHostnameLookup']) && $context['ban_details']['ban_type'] == 'hostname')
 			fatal_lang_error('ban_no_modify', false);
@@ -393,25 +399,236 @@ function BanListEdit()
 	if (empty($settings['disableHostnameLookup']))
 		$context['ban_types'][] = 'hostname';
 
+	$context['page_title'] = $txt['ban_edit'];
+	wetem::load('ban_details');
+
 	// OK, so are we saving?
-	if (!empty($_GET['save']))
+	if (isset($_GET['save']))
 	{
 		$context['errors'] = array();
 
 		$context['ban_details'] = array(
 			'id_ban' => $_REQUEST['ban'],
 			'hardness' => isset($_POST['ban_hardness']) && $_POST['ban_hardness'] == 'hard' ? 'hard' : 'soft',
+			'ban_type' => !empty($_POST['ban_type']) ? $_POST['ban_type'] : '',
+			'ban_reason' => !empty($_POST['ban_reason']) ? westr::safe($_POST['ban_reason'], ENT_QUOTES) : '',
+			'extra' => array(),
+			'ban_content' => '',
 		);
 
-		if (empty($_POST['ban_type']))
-		{
+		if (!empty($_POST['ban_message']) && trim(westr::safe($_POST['ban_message']) !== ''))
+			$context['ban_details']['extra']['message'] = westr::safe($_POST['ban_message'], ENT_QUOTES);
 
+		switch ($context['ban_details']['ban_type'])
+		{
+			case 'id_member':
+				if (empty($_POST['ban_id_member_content']))
+					$context['errors']['ban_invalid_member'] = $txt['ban_invalid_member'];
+				else
+				{
+					// Attempt to find the member name given.
+					loadSource('Subs-Auth');
+					$found_members = findMembers(array($_POST['ban_id_member_content']));
+					if (!empty($found_members))
+					{
+						$member = array_shift($found_members);
+						$context['ban_details']['ban_content'] = $member['id']; // We only want the id_member, we'll requery it later though :/
+					}
+					else
+						$context['errors']['ban_invalid_member'] = $txt['ban_invalid_member'];
+				}
+				break;
+			case 'member_name':
+				$context['ban_details']['extra'] = empty($_POST['ban_member_name_select']) || !in_array($_POST['ban_member_name_select'], array('begin', 'contain', 'end')) ? 'match' : $_POST['ban_member_name_select'];
+				if (empty($_POST['ban_member_name_content']))
+					$context['errors']['ban_invalid_membername'] = $txt['ban_invalid_membername'];
+				else
+					$context['ban_details']['ban_content'] = $_POST['ban_member_name_content'];
+				if (!empty($_POST['ban_member_name_case_sens']))
+					$context['ban_details']['extra']['case_sens'] = true;
+				else
+					unset($context['ban_details']['extra']['case_sens']);
+				break;
+			case 'email':
+				if (!empty($_POST['ban_gmail_style']))
+					$context['ban_details']['extra']['gmail_style'] = true;
+				else
+					unset($context['ban_details']['extra']['gmail_style']);
+
+				if (empty($_POST['ban_type_email']) || $_POST['ban_type_email'] == 'specific')
+				{
+					$context['ban_details']['email_type'] = 'specific';
+					if (!empty($_POST['ban_email_content']))
+					{
+						// We want to allow wildcards in the username (but not domain), and also use filter_var to make life easy.
+						$email = $_POST['ban_email_content'];
+						if (strpos($email, '@') !== false)
+						{
+							list ($user, $domain) = explode('@', $email);
+							$user = str_replace('*', '', $user);
+							if (filter_var($user . '@' . $domain, FILTER_VALIDATE_EMAIL))
+								$context['ban_details']['ban_content'] = $email;
+							else
+							{
+								$context['ban_details']['ban_content'] = '*@' . westr::safe($email, ENT_QUOTES);
+								$context['errors']['ban_invalid_email'] = $txt['ban_invalid_email'];
+							}
+						}
+						else
+						{
+							$context['ban_details']['ban_content'] = '*@' . westr::safe($email, ENT_QUOTES);
+							$context['errors']['ban_invalid_email'] = $txt['ban_invalid_email'];
+						}
+					}
+				}
+				elseif ($_POST['ban_type_email'] == 'domain')
+				{
+					$context['ban_details']['email_type'] = 'domain';
+					if (!empty($_POST['ban_email_content']))
+					{
+						// Strip anything before a leading @ just in case
+						$email = trim($_POST['ban_email_content']);
+						if ($pos = strrpos($email, '@') !== false)
+							$email = substr($email, $pos);
+
+						// Now validate the domain and if it is sane, reassemble and reset ready for the template
+						if (filter_var('test@' . $email, FILTER_VALIDATE_EMAIL))
+							$context['ban_details']['ban_content'] = '*@' . $email;
+						else
+						{
+							// It wasn't valid. So, enforce that it is safe for redisplay, then flag as error.
+							$context['ban_details']['ban_content'] = '*@' . westr::safe(trim($_POST['ban_email_content']), ENT_QUOTES);
+							$context['errors']['ban_invalid_email'] = $txt['ban_invalid_email'];
+						}
+					}
+				}
+				elseif ($_POST['ban_type_email'] == 'tld')
+				{
+					$context['ban_details']['email_type'] = 'tld';
+					if (!empty($_POST['ban_email_content']))
+					{
+						// Start by stripping any leading * (e.g. *.tld becomes .tld) and also check that we didn't get *.*.tld nonsense.
+						$email = trim($_POST['ban_email_content']);
+						if ($pos = strrpos($email, '*') !== false)
+							$email = substr($email, $pos);
+						$email = preg_replace('~\.+~', '.', $email);
+						// Right, so now we should have .tld stuff only. This is not efficient?
+						if (preg_match('~(\.?\pL(\pL|\d)*\.)*(\pL{2,})~i', $email))
+							$context['ban_details']['ban_content'] = '@*' . ($email[0] != '.' ? '.' : '') . $email;
+						else
+						{
+							// It wasn't valid. So, enforce that it is safe for redisplay, then flag as error.
+							$context['ban_details']['ban_content'] = '@*' . westr::safe($email, ENT_QUOTES);
+							$context['errors']['ban_invalid_email'] = 'ban_invalid_email';
+						}
+					}
+				}
+
+				if (empty($context['ban_details']['ban_content']))
+					$context['errors']['ban_invalid_email'] = 'ban_invalid_email';
+
+				break;
+			case 'ip_address':
+				$check = !empty($_POST['ban_ip_range']) ? array('start', 'end') : array('start');
+				$results = array();
+				if (empty($_POST['ban_type_ip']) || $_POST['ban_type_ip'] == 'ipv4')
+				{
+					foreach ($check as $check_item)
+					{
+						$ip = array();
+						for ($i = 0; $i <= 3; $i++)
+						{
+							$item = 'ipv4_' . $check_item . '_' . $i;
+							if (isset($_POST[$item]) && is_numeric($_POST[$item]))
+								$ip[] = (int) $_POST[$item];
+							else
+								break;
+						}
+						if (count($ip) == 4)
+						{
+							$v = implode('.', $ip);
+							if (filter_var($v, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
+								$results[] = expand_ip($v);
+						}
+					}
+				}
+				else
+				{
+					foreach ($check as $check_item)
+						if (!empty($_POST['ipv6_' . $check_item]) && filter_var($v, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6))
+							$results[] = expand_ip($_POST['ipv6_' . $check_item]);
+				}
+
+				if (!empty($results))
+				{
+					sort($results);
+					$context['ban_details']['ban_content'] = implode('-', $results);
+				}
+				else
+					$context['errors']['ban_invalid_ip_address'] = $txt['ban_invalid_ip_address'];
+
+				break;
+			case 'hostname':
+				if (!empty($_POST['ban_hostname_content']) && preg_match('~^(\*\.)?((\pL|\d)+\.)*(\pL{2,})$~i', $_POST['ban_hostname_content']))
+					$context['ban_details']['ban_content'] = $_POST['ban_hostname_content'];
+				else
+				{
+					$context['errors']['ban_invalid_hostname'] = $txt['ban_invalid_hostname'];
+					$context['ban_details']['ban_content'] = !empty($_POST['ban_hostname_content']) ? westr::safe($_POST['ban_hostname_content'], ENT_QUOTES) : '';
+				}
+				break;
+			default:
+				$context['errors']['ban_invalid_type'] = $txt['ban_invalid_type'];
+				break;
 		}
 
-		// Successful? Save and exit, otherwise let this function just continue to show the editing area
+		if (trim($context['ban_details']['ban_reason']) === '')
+			$context['errors']['ban_invalid_reason'] = $txt['ban_invalid_reason'];
+
+		// Successful? Save and exit, otherwise let this function just continue to show the editing area - to pull apart what we just did. Still, better this way.
 		if (empty($context['errors']))
 		{
-			redirectexit('action=admin;area=ban;sa=' . !empty($context['ban_details']['hardness']) ? 'hard' : 'soft');
+			if (empty($context['ban_details']['id_ban']))
+			{
+				wesql::insert('insert',
+					'{db_prefix}bans',
+					array(
+						'hardness' => 'int', 'ban_type' => 'string', 'ban_content' => 'string', 'ban_reason' => 'string',
+						'extra' => 'string', 'added' => 'int', 'member_added' => 'int',
+					),
+					array(
+						$context['ban_details']['hardness'] == 'hard' ? 1 : 0, $context['ban_details']['ban_type'], $context['ban_details']['ban_content'], $context['ban_details']['ban_reason'],
+						!empty($context['ban_details']['extra']) ? serialize($context['ban_details']['extra']) : '', time(), we::$id,
+					),
+					array('id_ban')
+				);
+			}
+			else
+			{
+				wesql::insert('replace',
+					'{db_prefix}bans',
+					array(
+						'id_ban', 'hardness' => 'int', 'ban_type' => 'string', 'ban_content' => 'string',
+						'ban_reason' => 'string', 'extra' => 'string', 'added' => 'int', 'member_added' => 'int',
+					),
+					array(
+						$context['ban_details']['id_ban'], $context['ban_details']['hardness'] == 'hard' ? 1 : 0, $context['ban_details']['ban_type'], $context['ban_details']['ban_content'],
+						$context['ban_details']['ban_reason'], !empty($context['ban_details']['extra']) ? serialize($context['ban_details']['extra']) : '', time(), we::$id,
+					),
+					array('id_ban')
+				);
+			}
+
+			// member_name doesn't need caching, it's only hit up occasionally.
+			$caches = array(
+				'id_member' => 'bans_id_member',
+				'email' => 'bans_email',
+				'ip_address' => 'bans_ip',
+				'hostname' => 'bans_hostname',
+			);
+			if (isset($caches[$context['ban_details']['ban_type']]))
+				cache_put_data($caches[$context['ban_details']['ban_type']], null);
+			redirectexit('action=admin;area=ban;sa=' . $context['ban_details']['hardness']);
 		}
 	}
 
@@ -427,7 +644,7 @@ function BanListEdit()
 				$context['ban_details']['ban_member'] = $user_profile[$loaded[0]]['real_name'];
 			break;
 		case 'member_name':
-			$context['ban_details']['ban_name'] = $context['ban_details']['ban_content'];
+			$context['ban_details']['ban_name'] = westr::safe($context['ban_details']['ban_content'], ENT_QUOTES);
 			$context['ban_details']['name_type'] = !empty($context['ban_details']['extra']['type']) && in_array($context['ban_details']['extra']['type'], array('beginning', 'containing', 'ending')) ? $context['ban_details']['extra']['type'] : 'matching';
 			break;
 		case 'email':
@@ -492,9 +709,6 @@ function BanListEdit()
 				$context['ban_details']['hostname'] = $context['ban_details']['ban_content'];
 			break;
 	}
-
-	$context['page_title'] = $txt['ban_edit'];
-	wetem::load('ban_details');
 }
 
 function list_getBansByType($start, $items_per_page, $sort, $params)

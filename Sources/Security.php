@@ -527,6 +527,54 @@ function soft_ban($feature)
 	}
 }
 
+function check_banned_member($id_member)
+{
+	// Guests will never trip this.
+	if (we::$is_guest)
+		return array();
+
+	$return_value = array();
+	$bans = cache_get_data('bans_id_member', 600);
+
+	if ($bans === null)
+	{
+		$bans = array();
+		$request = query_for_bans('id_member');
+
+		while ($row = wesql::fetch_assoc($request))
+		{
+			$extra = !empty($row['extra']) ? @unserialize($row['extra']) : array();
+			$ban = array(
+				'id' => $row['id_ban'],
+				'hard' => $row['hardness'] == 1,
+				'message' => !empty($extra['message']) ? $extra['message'] : '',
+			);
+
+			if (!empty($row['ban_content']) && (int) $row['ban_content'] > 0)
+			{
+				$ban['member'] = (int) $row['ban_content'];
+				$bans[] = $ban;
+			}
+		}
+
+		cache_put_data('bans_id_member', $bans, 600);
+		wesql::free_result($request);
+	}
+
+	// And so it begins.
+	foreach ($bans as $ban)
+	{
+		if (we::$id == $ban['member'])
+			$return_value[] = array(
+				'id' => $ban['id'],
+				'msg' => $ban['message'],
+				'hard' => $ban['hard'],
+			);
+	}
+
+	return $return_value;
+}
+
 function check_banned_ip($ip)
 {
 	global $settings;
@@ -551,7 +599,6 @@ function check_banned_ip($ip)
 			$ban = array(
 				'id' => $row['id_ban'],
 				'hard' => $row['hardness'] == 1,
-				'reason' => $row['ban_reason'],
 				'message' => !empty($extra['message']) ? $extra['message'] : '',
 			);
 			if (strpos($row['ban_content'], '-') !== false)
@@ -601,7 +648,6 @@ function check_banned_ip($ip)
 					$ban = array(
 						'id' => $row['id_ban'],
 						'hard' => $row['hardness'] == 1,
-						'reason' => $row['ban_reason'],
 						'message' => !empty($extra['message']) ? $extra['message'] : '',
 					);
 					if (strpos($row['ban_content'], '*.') === 0)
@@ -660,7 +706,6 @@ function isBannedEmail($email, $error, $return = false)
 			$ban = array(
 				'id' => $row['id_ban'],
 				'hard' => $row['hardness'] == 1,
-				'reason' => $row['ban_reason'],
 				'message' => !empty($extra['message']) ? $extra['message'] : '',
 			);
 
@@ -754,7 +799,7 @@ function isBannedEmail($email, $error, $return = false)
 function query_for_bans($type)
 {
 	return wesql::query('
-		SELECT id_ban, hardness, ban_content, ban_reason, extra
+		SELECT id_ban, hardness, ban_content, extra
 		FROM {db_prefix}bans
 		WHERE ban_type = {string:type}',
 		array(
