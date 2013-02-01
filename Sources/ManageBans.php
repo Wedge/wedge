@@ -142,6 +142,28 @@ function createBanList()
 
 	$ban_is_hard = $context['sub_action'] == 'hard';
 
+	// And delete any?
+	if (!empty($_POST['removeBans']) && !empty($_POST['remove']) && is_array($_POST['remove']))
+	{
+		checkSession();
+
+		// Make sure every entry is a proper integer.
+		foreach ($_POST['remove'] as $index => $ban_id)
+			$_POST['remove'][(int) $index] = (int) $ban_id;
+
+		// Unban them all!
+		wesql::query('
+			DELETE FROM {db_prefix}bans
+			WHERE id_ban IN ({array_int:ban_list})',
+			array(
+				'ban_list' => $_POST['remove'],
+			)
+		);
+
+		// Check if anyone is no longer banned that previously was.
+		updateBannedMembers();
+	}
+
 	$listOptions = array(
 		'id' => 'ban_list',
 		'items_per_page' => 20,
@@ -621,15 +643,8 @@ function BanListEdit()
 				);
 			}
 
-			// member_name doesn't need caching, it's only hit up occasionally.
-			$caches = array(
-				'id_member' => 'bans_id_member',
-				'email' => 'bans_email',
-				'ip_address' => 'bans_ip',
-				'hostname' => 'bans_hostname',
-			);
-			if (isset($caches[$context['ban_details']['ban_type']]))
-				cache_put_data($caches[$context['ban_details']['ban_type']], null);
+			updateBannedMembers();
+
 			redirectexit('action=admin;area=ban;sa=' . $context['ban_details']['hardness']);
 		}
 	}
@@ -815,6 +830,86 @@ function BanListSettings($return_config = false)
 	$context['settings_title'] = $txt['ban_settings'];
 	wetem::load('show_settings');
 	prepareDBSettingContext($config_vars);
+}
+
+function updateBannedMembers()
+{
+	// Let's start by figuring out who is currently banned, then we can establish everything from there.
+	$current_banned = array();
+	$request = wesql::query('
+		SELECT id_member, is_activated
+		FROM {db_prefix}members
+		WHERE is_activated >= {int:ban_threshold}',
+		array(
+			'ban_threshold' => 10,
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$current_banned[$row['id_member']] = array(
+			'current' => $row['is_activated'] >= 20 ? 'hard' : 'soft',
+		);
+	wesql::free_result($request);
+
+	// Now, we know who is supposed to be banned, let's get all our bans and see what we can do about them.
+	$bans = array();
+	$request = wesql::query('
+		SELECT ban_type, hardness, ban_content, extra
+		FROM {db_prefix}bans
+		WHERE ban_type != {string:membername}',
+		array(
+			'membername' => 'member_name',
+		)
+	);
+	while ($row = wesql::fetch_assoc($request))
+		$bans[$row['ban_type']][] = array(
+			'hardness' => $row['hardness'],
+			'content' => $row['ban_content'],
+			'extra' => !empty($row['extra']) ? @unserialize($row['extra']) : array(),
+		);
+	wesql::free_result($request);
+
+	// Let's start going through them. First, start by trying to match bans to members and setting the new banned flag.
+	if (!empty($bans['id_member']))
+		foreach ($bans['id_member'] as $ban)
+			$current_banned[$ban['content']]['new'] = $ban['hardness'] ? 'hard' : 'soft';
+
+	// Now we check emails
+
+	// Now we check IP addresses
+
+	// Now we check hostnames if enabled
+
+	// OK, so now we've established everything.
+	$changes = array();
+	foreach ($current_banned as $id_member => $ban_status)
+	{
+		if (empty($ban_status['new'])) // No longer banned, then?
+			$changes[$id_member] = $ban_status['current'] == 'hard' ? -20 : -10;
+		elseif (empty($ban_status['current'])) // Not currently banned, soon fix that.
+			$changes[$id_member] = $ban_status['new'] == 'hard' ? 20 : 10;
+		elseif ($ban_status['new'] != $ban_status['current']) // So, you're banned currently, and your ban status is changing. If you were soft banned, you're now hard banned and vice versa. Easy to fix.
+			$changes[$id_member] = $ban_status['new'] == 'hard' ? 10 : -10;
+	}
+
+	// Ouch :'(
+	if (!empty($changes))
+		foreach ($changes as $id_member => $change)
+			wesql::query('
+				UPDATE {db_prefix}members
+				SET is_activated = is_activated + {int:change}
+				WHERE id_member = {int:id_member}',
+				array(
+					'id_member' => $id_member,
+					'change' => $change,
+				)
+			);
+
+	// No more caching this ban!
+	updateSettings(array('banLastUpdated' => time()));
+	foreach (array('bans_id_member', 'bans_email', 'bans_ip', 'bans_hostname') as $cache)
+		cache_put_data($cache, null);
+
+	updateStats('member');
 }
 
 // --------------------------------------------------------------------------------------------------------------
