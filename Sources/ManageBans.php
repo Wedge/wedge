@@ -433,7 +433,7 @@ function BanListEdit()
 
 		$context['ban_details'] = array(
 			'id_ban' => $_REQUEST['ban'],
-			'hardness' => isset($_POST['ban_hardness']) && $_POST['ban_hardness'] == 'hard' ? 'hard' : 'soft',
+			'hardness' => isset($_POST['hardness']) && $_POST['hardness'] == 'hard' ? 'hard' : 'soft',
 			'ban_type' => !empty($_POST['ban_type']) ? $_POST['ban_type'] : '',
 			'ban_reason' => !empty($_POST['ban_reason']) ? westr::safe($_POST['ban_reason'], ENT_QUOTES) : '',
 			'extra' => array(),
@@ -632,7 +632,7 @@ function BanListEdit()
 				wesql::insert('replace',
 					'{db_prefix}bans',
 					array(
-						'id_ban', 'hardness' => 'int', 'ban_type' => 'string', 'ban_content' => 'string',
+						'id_ban' => 'int', 'hardness' => 'int', 'ban_type' => 'string', 'ban_content' => 'string',
 						'ban_reason' => 'string', 'extra' => 'string', 'added' => 'int', 'member_added' => 'int',
 					),
 					array(
@@ -855,9 +855,9 @@ function updateBannedMembers()
 	$request = wesql::query('
 		SELECT ban_type, hardness, ban_content, extra
 		FROM {db_prefix}bans
-		WHERE ban_type != {string:membername}',
+		WHERE ban_type IN ({array_string:ban_types})',
 		array(
-			'membername' => 'member_name',
+			'ban_types' => array('id_member', 'email'),
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
@@ -873,11 +873,101 @@ function updateBannedMembers()
 		foreach ($bans['id_member'] as $ban)
 			$current_banned[$ban['content']]['new'] = $ban['hardness'] ? 'hard' : 'soft';
 
-	// Now we check emails
+	// We check emails now. Emails are cool.
+	if (!empty($bans['email']))
+	{
+		// This is a bit more complex. We need to subdivide between specific addresses (with/out wildcards), entire domains and entire TLDs
+		$matches = array();
+		$gmail = array();
 
-	// Now we check IP addresses
+		foreach ($bans['email'] as $ban)
+		{
+			$ban['content'] = strtolower($ban['content']);
 
-	// Now we check hostnames if enabled
+			if (strpos($ban['content'], '@*') === 0)
+				$matches[$ban['hardness']][] = '%' . substr($ban['content'], strrpos($ban['content'], '*'));
+			elseif (strpos($ban['content'], '*@') === 0)
+				$matches[$ban['hardness']][] = '%' . substr($ban['content'], 1);
+			else
+			{
+				if (empty($ban['extra']['gmail_style']))
+					$matches[$ban['hardness']][] = str_replace('*', '%', $ban['content']);
+				else
+				{
+					list ($user, $domain) = explode('@', $ban['content']);
+					if (strpos($user, '+') !== false)
+						list ($user, $label) = explode('+', $user);
+					$user = str_replace(array('*', '.'), array('%', ''), $user);
+					$gmail[$ban['hardness']][$domain][] = $user;
+				}
+			}
+		}
+
+		// So, step one, see if we matched straight emails or domains or tlds. That's the easy part.
+		if (!empty($matches))
+		{
+			foreach ($matches as $hardness => $emails)
+			{
+				$criteria = array();
+				$params = array();
+				foreach ($emails as $k => $v)
+				{
+					$criteria['domain_' . $k] = 'email_address LIKE {string:domain_' . $k . '}';
+					$params['domain_' . $k] = $v;
+				}
+				$request = wesql::query('
+					SELECT id_member
+					FROM {db_prefix}members
+					WHERE ' . implode(' OR ', $criteria),
+					$params
+				);
+				$this_hardness = $hardness == 0 ? 'soft' : 'hard';
+				while ($row = wesql::fetch_assoc($request))
+					if (!isset($current_banned[$row['id_member']]['new']) || $current_banned[$row['id_member']]['new'] != 'hard') // We're trying to see if they would still be banned.
+						$current_banned[$row['id_member']]['new'] = $this_hardness;
+
+				wesql::free_result($request);
+			}
+		}
+
+		// Step two, GMail style bans. These are sucky for performance.
+		if (!empty($gmail))
+		{
+			$params = array();
+			foreach ($gmail as $hardness => $domains)
+			{
+				$email_domains = array_keys($domains);
+				$criteria = array();
+				$params = array();
+				foreach ($email_domains as $k => $v)
+				{
+					$criteria['domain_' . $k] = 'email_address LIKE {string:domain_' . $k . '}';
+					$params['domain_' . $k] = $v;
+				}
+
+				$request = wesql::query('
+					SELECT id_member, email_address
+					FROM {db_prefix}members
+					WHERE ' . implode(' OR ', $criteria),
+					$params
+				);
+				$this_hardness = $hardness == 0 ? 'soft' : 'hard';
+				while ($row = wesql::fetch_assoc($request))
+				{
+					list ($user, $domain) = explode('@', strtolower($row['email_address']));
+					if (strpos($user, '+') !== false)
+						list ($user, $label) = explode('+', $user);
+					$user = str_replace('.', '', $user);
+					if (in_array($user, $domains[$domain]))
+					{
+						if (!isset($current_banned[$row['id_member']]['new']) || $current_banned[$row['id_member']]['new'] != 'hard')
+							$current_banned[$row['id_member']]['new'] = $this_hardness;
+					}
+				}
+				wesql::free_result($request);
+			}
+		}
+	}
 
 	// OK, so now we've established everything.
 	$changes = array();
