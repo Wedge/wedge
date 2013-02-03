@@ -211,11 +211,9 @@ function template_maintain_members()
 	<br class="clear">';
 
 	add_js_file('scripts/suggest.js');
-
 	add_js('
 	new weAutoSuggest({
-		sControlId: \'to\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+		sControlId: \'to\'
 	});');
 }
 

@@ -597,11 +597,9 @@ function template_editBuddies()
 	</form>';
 
 	add_js_file('scripts/suggest.js');
-
 	add_js('
 	new weAutoSuggest({
-		sControlId: \'new_buddy\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+		sControlId: \'new_buddy\'
 	});');
 }
 
@@ -666,11 +664,9 @@ function template_editIgnoreList()
 	</form>';
 
 	add_js_file('scripts/suggest.js');
-
 	add_js('
 	new weAutoSuggest({
-		sControlId: \'new_ignore\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+		sControlId: \'new_ignore\'
 	});');
 }
 

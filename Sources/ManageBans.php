@@ -331,7 +331,6 @@ function BanListAdd()
 		bItemList: true,
 		sControlId: \'ban_id_member_content\',
 		sPostName: \'ban_id_member_content\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		bItemList: false
 	});');
 }

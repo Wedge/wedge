@@ -300,7 +300,6 @@ function template_edit_group()
 		bItemList: true,
 		sControlId: "group_moderators",
 		sPostName: "moderator_list",
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		aListItems: {');
 
 		foreach ($context['group']['moderators'] as $id_member => $member_name)
@@ -658,13 +657,11 @@ function template_group_members()
 	if (!empty($context['group']['assignable']))
 	{
 		add_js_file('scripts/suggest.js');
-
 		add_js('
 	new weAutoSuggest({
 		bItemList: true,
 		sControlId: "toAdd",
-		sPostName: "member_add",
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+		sPostName: "member_add"
 	});');
 	}
 }

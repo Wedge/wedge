@@ -1255,8 +1255,7 @@ function template_aeva_search_searching()
 	new weAutoSuggest({
 		bItemList: true,
 		sControlId: \'sch_mem\',
-		sPostName:  \'sch_mem_list\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+		sPostName:  \'sch_mem_list\'
 	});');
 }
 

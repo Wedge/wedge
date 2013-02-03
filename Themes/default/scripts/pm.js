@@ -47,7 +47,6 @@ function wePersonalMessageSend(opt)
 		bItemList: true,
 		sControlId: opt.sToControlId,
 		sPostName: 'recipient_to',
-		sTextDeleteItem: opt.sTextDeleteItem,
 		aListItems: opt.aToRecipients
 	});
 	oToAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);
@@ -56,7 +55,6 @@ function wePersonalMessageSend(opt)
 		bItemList: true,
 		sControlId: opt.sBccControlId,
 		sPostName: 'recipient_bcc',
-		sTextDeleteItem: opt.sTextDeleteItem,
 		aListItems: opt.aBccRecipients
 	});
 	oBccAutoSuggest.registerCallback('onBeforeAddItem', onAddItem);

@@ -214,21 +214,18 @@ function template_email_members()
 
 	// Make the javascript stuff visible.
 	add_js_file('scripts/suggest.js');
-
 	add_js('
 	$("#advanced_select_div").show();
 	new weAutoSuggest({
 		bItemList: true,
 		sControlId: \'members\',
 		sPostName: \'member_list\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		aListItems: {}
 	});
 	new weAutoSuggest({
 		bItemList: true,
 		sControlId: \'exclude_members\',
 		sPostName: \'exclude_member_list\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		aListItems: {}
 	});');
 }

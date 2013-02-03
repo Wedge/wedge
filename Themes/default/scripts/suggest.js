@@ -10,6 +10,8 @@
  * @version 0.1
  */
 
+@language index;
+
 function weAutoSuggest(oOptions)
 {
 	this.opt = oOptions;
@@ -266,7 +268,7 @@ weAutoSuggest.prototype.addItemLink = function (sItemId, sItemName, bFromSubmit)
 				item_href: weUrl((this.opt.sURLMask || 'action=profile;u=%item_id%').wereplace({ item_id: sItemId })),
 				item_name: sItemName,
 				images_url: we_theme_url + '/images',
-				delete_text: this.opt.sTextDeleteItem || ''
+				delete_text: this.opt.sTextDeleteItem || $txt['autosuggest_delete_item']
 			})
 		).appendTo(this.oItemList);
 		$('#' + eid).find('img').click(function () { that.deleteAddedItem(sItemId); });

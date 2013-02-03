@@ -1273,11 +1273,9 @@ function aeva_admin_bans_add()
 	$context['aeva_curr_members'] = implode(',',$context['aeva_curr_members']);
 
 	add_js_file('scripts/suggest.js');
-
 	add_js('
 	new weAutoSuggest({
-		sControlId: \'banning\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+		sControlId: \'banning\'
 	});');
 
 	// Construct the form

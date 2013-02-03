@@ -1101,16 +1101,13 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 			' . $key . ': ' . JavaScriptEscape($val) . ',';
 
 	add_js('
-	var sDelSuggest = ', JavaScriptEscape($txt['autosuggest_delete_item']), ';
 	new weAutoSuggest({
-		sControlId: \'change_owner\',
-		sTextDeleteItem: sDelSuggest
+		sControlId: \'change_owner\'
 	});
 	new weAutoSuggest({
 		bItemList: true,
 		sControlId: \'allowed_members\',
 		sPostName:  \'allowed_members_list\',
-		sTextDeleteItem: sDelSuggest,
 		aListItems: {', $memlists[1], '
 		}
 	});
@@ -1118,7 +1115,6 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		bItemList: true,
 		sControlId: \'allowed_write\',
 		sPostName:  \'allowed_write_list\',
-		sTextDeleteItem: sDelSuggest,
 		aListItems: {', $memlists[2], '
 		}
 	});
@@ -1126,7 +1122,6 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		bItemList: true,
 		sControlId: \'denied_members\',
 		sPostName:  \'denied_members_list\',
-		sTextDeleteItem: sDelSuggest,
 		aListItems: {', $memlists[3], '
 		}
 	});
@@ -1134,7 +1129,6 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 		bItemList: true,
 		sControlId: \'denied_write\',
 		sPostName:  \'denied_write_list\',
-		sTextDeleteItem: sDelSuggest,
 		aListItems: {', $memlists[4], '
 		}
 	});');

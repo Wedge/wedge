@@ -666,13 +666,11 @@ function template_modify_board()
 	<br class="clear">';
 
 	add_js_file('scripts/suggest.js');
-
 	add_js('
 	new weAutoSuggest({
 		bItemList: true,
 		sControlId: \'moderators\',
 		sPostName: \'moderator_list\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), ',
 		aListItems: {');
 
 	foreach ($context['board']['moderators'] as $id_member => $member_name)

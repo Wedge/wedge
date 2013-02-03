@@ -416,8 +416,7 @@ function template_modify_user_subscription()
 
 	add_js('
 	new weAutoSuggest({
-		sControlId: \'name_control\',
-		sTextDeleteItem: ', JavaScriptEscape($txt['autosuggest_delete_item']), '
+		sControlId: \'name_control\'
 	});');
 
 	if (!empty($context['pending_payments']))
