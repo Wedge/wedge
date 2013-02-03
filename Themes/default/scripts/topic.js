@@ -58,7 +58,7 @@ function modify_topic(topic_id, first_msg_id)
 
 		set_hidden_topic_areas(true);
 		in_edit_mode = false;
-		$('body').unbind('.mt');
+		$('body').off('.mt');
 		return false;
 	},
 
@@ -113,7 +113,7 @@ function modify_topic(topic_id, first_msg_id)
 	cur_topic_id = topic_id;
 
 	// Clicking outside the edit area will save the topic.
-	$('body').bind('click.mt', function (e) {
+	$('body').on('click.mt', function (e) {
 		if (in_edit_mode && !$(e.target).closest('#topic_' + cur_topic_id).length)
 			save();
 	});
@@ -487,9 +487,9 @@ function IconList()
 
 
 		// If user clicks outside, this will close the list.
-		$('body').bind('mousedown.ic', function () {
+		$('body').on('mousedown.ic', function () {
 			oContainerDiv.fadeOut();
-			$('body').unbind('mousedown.ic');
+			$('body').off('mousedown.ic');
 		});
 	};
 

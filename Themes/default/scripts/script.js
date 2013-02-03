@@ -462,8 +462,8 @@ function weSelectText(oCurElement)
 			var $elem = $(this).show();
 			$(this).find('li').each(function () {
 				$(this).attr('id', 'li' + menu_baseId++)
-					.bind('mouseenter focus', menu_show_me)
-					.bind('mouseleave blur', menu_hide_me)
+					.on('mouseenter focus', menu_show_me)
+					.on('mouseleave blur', menu_hide_me)
 					// Disable double clicks...
 					.mousedown(false)
 					// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
@@ -505,7 +505,7 @@ $(function ()
 	{
 		var that = $(this);
 		$.each(that.attr('data-eve').split(' '), function () {
-			that.bind(eves[this][0], eves[this][1]);
+			that.on(eves[this][0], eves[this][1]);
 		});
 	});
 });
@@ -625,7 +625,7 @@ function JumpTo(control, id)
 					});
 
 					// Add the remaining items after the currently selected item.
-					$('#' + control).find('select').unbind('focus').append(sList).sb().change(function () {
+					$('#' + control).find('select').off('focus').append(sList).sb().change(function () {
 						location = parseInt($val = $(this).val()) ? weUrl('board=' + $val + '.0') : $val;
 					});
 

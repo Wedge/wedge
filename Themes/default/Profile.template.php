@@ -1973,7 +1973,7 @@ function template_issueWarning()
 						<div class="smalltext">', $txt['profile_warning_impact'], ':<br>';
 
 	add_js('
-	$("#warning_contain").bind("mousedown mousemove mouseup", setWarningBarPos).mouseleave(function () { isMoving = false; });
+	$("#warning_contain").on("mousedown mousemove mouseup", setWarningBarPos).mouseleave(function () { isMoving = false; });
 	$("#warndiv1").show();
 	$("#warndiv2").hide();');
 

@@ -975,7 +975,7 @@ function template_show_settings()
 
 					// This is very nasty but I can't immediately think of a better way of doing it.
 					add_js('
-	$("#', $config_var['name'], '_contain").bind("mousedown mousemove mouseup", setBarPos_', $config_var['name'], ').mouseleave(function () { isMoving = false; });
+	$("#', $config_var['name'], '_contain").on("mousedown mousemove mouseup", setBarPos_', $config_var['name'], ').mouseleave(function () { isMoving = false; });
 	$("#', $config_var['name'], '_div1").show();
 	$("#', $config_var['name'], '_div2").hide();
 	function setBarPos_', $config_var['name'], '(e)

@@ -50,7 +50,7 @@ function addListeners()
 		player[thisPlayer].addControllerListener('ITEM', 'itemListener');
 		player[thisPlayer].addModelListener('STATE', 'stateListener');
 		player[thisPlayer].sendEvent('LOAD', myplaylist[thisPlayer]);
-		$('#foxlist' + thisPlayer).bind('selectstart', false);
+		$('#foxlist' + thisPlayer).on('selectstart', false);
 	}
 	else
 		setTimeout(addListeners, 100);

@@ -1706,9 +1706,14 @@ function weInitJS()
 {
 	global $settings, $context;
 
-	$version = '1.5.2'; // !!! When v2.0 is out, change to -- we::is('ie[-8]') ? '1.9.0' : '2.0.0';
+	$version = we::is('ie[-8]') ? '1.9.0' : '2.0.0b1';
+	$origin = empty($settings['jquery_origin']) ? 'local' : $settings['jquery_origin'];
 
-	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
+	// !! Temp code or permanent? We won't always need to test for jQuery's beta status...
+	if ($origin !== 'local' && $origin !== 'jquery' && (strpos($version, 'b') !== false || strpos($version, 'rc') !== false))
+		$origin = 'jquery';
+
+	if ($origin === 'local')
 		$context['main_js_files'] = array(
 			'scripts/jquery-' . $version . '.min.js' => true,
 			'scripts/script.js' => true,
@@ -1723,7 +1728,7 @@ function weInitJS()
 			'microsoft' =>	$protocol . 'ajax.aspnetcdn.com/ajax/jquery/jquery-' . $version . '.min.js',
 			'jquery' =>		$protocol . 'code.jquery.com/jquery-' . $version . '.min.js',
 		);
-		$context['remote_js_files'] = array($remote[$settings['jquery_origin']]);
+		$context['remote_js_files'] = array($remote[$origin]);
 		$context['main_js_files'] = array(
 			'scripts/script.js' => true,
 			'scripts/sbox.js' => false,

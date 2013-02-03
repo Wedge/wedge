@@ -1431,7 +1431,7 @@ function prepareDisplayContext($reset = false)
 			$menu[] = ($context['can_moderate_forum'] ? 'tk' : 'ip') . '/' . $output['member']['ip'];
 			if (!$context['can_moderate_forum'])
 				add_js_unique('
-	$(".ip_button").live("click", function (e) { return reqWin(this); });');
+	$(".actions").on("click, ".ip_button", function (e) { return reqWin(this); });');
 		}
 
 		// If we can't do anything, it's not even worth recording the user's website...
@@ -1459,7 +1459,7 @@ function prepareDisplayContext($reset = false)
 		{
 			$menu[] = 're';
 			add_js_unique('
-	$(".remove_button").live("click", function (e) { return ask(' . JavaScriptEscape($txt['remove_message_confirm']) . ', e); })');
+	$(".actions").on("click", ".remove_button", function (e) { return ask(' . JavaScriptEscape($txt['remove_message_confirm']) . ', e); })');
 		}
 
 		// What about splitting it off the rest of the topic?

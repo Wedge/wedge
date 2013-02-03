@@ -58,11 +58,11 @@
 
 			// Use namespaces on any events not inside our zoom box.
 			$(document)
-				.bind('click.zoom', function (e) {
+				.on('click.zoom', function (e) {
 					if (active && e.target.id != 'zoom' && !$(e.target).closest('#zoom:visible').length)
 						hide();
 				})
-				.bind('keyup.zoom', function (e) {
+				.on('keyup.zoom', function (e) {
 					if (active && e.which == 27)
 						hide();
 				});
@@ -182,7 +182,7 @@
 
 			var $frame = $anchor.next('.zoom-html');
 			if (!$frame.width())
-				$('<img>').bind('load.zoom', whenReady).attr('src', url);
+				$('<img>').on('load.zoom', whenReady).attr('src', url);
 			else
 				whenReady.call($frame.clone().addClass('nodrag').appendTo($zoom_content).show()[0]);
 
@@ -197,7 +197,7 @@
 			{
 				var pos = $img.offset();
 				loading(pos.left + $img.width() / 2, pos.top + $img.height() / 2);
-				$img.unbind('load.zoom').load(function ()
+				$img.off('load.zoom').load(function ()
 				{
 					var
 						wt = img.naturalWidth,
@@ -243,7 +243,7 @@
 			{
 				var loa = $('<div class="zoom-loading">' + (lang.loading || '') + '</div>').click(function () {
 					zooming = false;
-					$('img').unbind('load.zoom');
+					$('img').off('load.zoom');
 					$(this).remove();
 					return false;
 				}).mousedown(false);
@@ -266,8 +266,8 @@
 			if (zooming || !active)
 				return false;
 			zooming = true;
-			$($zoom, $zoom_content).unbind();
-			$(document).unbind('.zoom');
+			$($zoom, $zoom_content).off();
+			$(document).off('.zoom');
 
 			if (options.noScale)
 				$zoom_content.html('');

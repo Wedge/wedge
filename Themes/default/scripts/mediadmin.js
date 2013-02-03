@@ -19,7 +19,7 @@ function admin_toggle(id)
 		if ($img[0])
 			$img.load(function () {
 				$('#tr_expand_' + id).show().find('td').children().hide().slideDown();
-				$(this).unbind();
+				$(this).off();
 			}).attr('src', weUrl('action=media;sa=media;in=' + id + ';icon'));
 		else
 			$('#tr_expand_' + id).show().find('td').children().hide().slideDown();

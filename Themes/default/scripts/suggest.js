@@ -49,8 +49,8 @@ function weAutoSuggest(oOptions)
 
 	// Disable autocomplete in any browser by obfuscating the name.
 	oText.attr({ name: 'dummy_' + Math.floor(Math.random() * 1000000), autocomplete: 'off' })
-		.bind(is_opera || is_ie ? 'keypress keydown' : 'keydown', function (oEvent) { return that.handleKey(oEvent); })
-		.bind('keyup change focus', function () { return that.autoSuggestUpdate(); })
+		.on(is_opera || is_ie ? 'keypress keydown' : 'keydown', function (oEvent) { return that.handleKey(oEvent); })
+		.on('keyup change focus', function () { return that.autoSuggestUpdate(); })
 		.blur(function () { return that.autoSuggestHide(); });
 
 	if (this.bItemList)

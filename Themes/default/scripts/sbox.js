@@ -61,7 +61,7 @@
 
 			// For accessibility/styling, and an easy custom .trigger('close') shortcut.
 			$sb.append($display, $dd)
-				.bind('close', closeSB)
+				.on('close', closeSB)
 				.attr('aria-owns', $dd.attr('id'))
 				.find('.details').remove();
 
@@ -105,14 +105,14 @@
 			// Attach the original select box's event attributes to our display area.
 			if ($orig.attr('data-eve'))
 				$.each($orig.attr('data-eve').split(' '), function () {
-					$display.bind(eves[this][0], eves[this][1]);
+					$display.on(eves[this][0], eves[this][1]);
 				});
 
 			// Bind events
 			if (!$orig.is(':disabled'))
 			{
 				// Causes focus if original is focused
-				$orig.bind('focus.sb', function () {
+				$orig.on('focus.sb', function () {
 					blurAllButMe();
 					focusSB();
 				});
@@ -137,7 +137,7 @@
 					.mousedown(false);
 
 				if (!is_ie8down)
-					$(window).bind('resize.sb', function ()
+					$(window).on('resize.sb', function ()
 					{
 						clearTimeout(resizeTimeout);
 						resizeTimeout = setTimeout(function () { if ($sb.hasClass('open')) openSB(1); }, 50);
@@ -189,10 +189,8 @@
 
 			// Destroy existing data
 			$sb.remove();
-			$orig.removeClass('sb')
-				.unbind('.sb');
-			$(window)
-				.unbind('.sb');
+			$orig.removeClass('sb').off('.sb');
+			$(window).off('.sb');
 
 			loadSB();
 
@@ -213,7 +211,7 @@
 					.animate(is_opera ? { opacity: 'toggle' } : { opacity: 'toggle', height: 'toggle' }, instantClose == 1 ? 0 : 100)
 					.attr('aria-hidden', true);
 			}
-			$(document).unbind('.sb');
+			$(document).off('.sb');
 		},
 
 		// When the user clicks outside the sb
@@ -467,16 +465,16 @@
 
 			$sb.addClass('focused');
 			$(document)
-				.unbind('.sb')
-				.bind(keyfunc, keyPress)
-				.bind('mousedown.sb', closeAndUnbind);
+				.off('.sb')
+				.on(keyfunc, keyPress)
+				.on('mousedown.sb', closeAndUnbind);
 		},
 
 		// When the sb is blurred (by tab or click), disable hotkey selection
 		blurSB = function ()
 		{
 			$sb.removeClass('focused');
-			$(document).unbind(keyfunc);
+			$(document).off(keyfunc);
 		};
 
 		loadSB();
@@ -566,19 +564,19 @@
 			iMouse = e.pageY;
 			startPos = parseInt($thumb.css('top')) || 0;
 			$(document)
-				.bind('mousemove.sc', drag)
-				.bind('mouseup.sc', function () { $(document).unbind('.sc'); return false; });
+				.on('mousemove.sc', drag)
+				.on('mouseup.sc', function () { $(document).off('.sc'); return false; });
 			return false;
 		});
 
 		$dd
-			.bind('DOMMouseScroll mousewheel', wheel)
+			.on('DOMMouseScroll mousewheel', wheel)
 			// This should add support for scrolling on touch devices.
-			.bind('touchstart', function (e) {
+			.on('touchstart', function (e) {
 				iTouch = e.originalEvent.touches[0].pageY;
 				startPos = parseInt($thumb.css('top'));
 			})
-			.bind('touchmove', function (e) {
+			.on('touchmove', function (e) {
 				scrollTo(startPos - e.originalEvent.touches[0].pageY + iTouch);
 				e.preventDefault();
 			});

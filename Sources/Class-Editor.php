@@ -2440,7 +2440,7 @@ class wedit
 
 		if (we::is('ie'))
 			add_js('
-	$("#', $this->id, '").bind("select click keyup change", function () { this.caretPos = document.selection.createRange().duplicate(); });');
+	$("#', $this->id, '").on("select click keyup change", function () { this.caretPos = document.selection.createRange().duplicate(); });');
 
 		$has_error = isset($context['post_error']) && (isset($context['post_error']['no_message']) || in_array(array('long_message', $settings['max_messageLength']), $context['post_error']));
 		echo '

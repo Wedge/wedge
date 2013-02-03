@@ -450,12 +450,12 @@ wedge_autoDraft.prototype.draftSend = function ()
 		that = this,
 		lastSavedDiv = this.opt.sLastNote;
 
-	if (draftInfo.message === '')
-		return;
-
 	// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
 	if (draftInfo.message_mode == 1)
 		draftInfo.message = $('#html_' + this.opt.sEditor).html();
+
+	if (draftInfo.message === '')
+		return;
 
 	// This isn't nice either, but nicer than the above, sorry.
 	draftInfo[we_sessvar] = we_sessid;
@@ -485,7 +485,7 @@ wedge_autoDraft.prototype.draftSend = function ()
 	// Going through this will set $context['is_ajax'] on the request.
 	$.post(sUrl, draftInfo, function (data)
 	{
-		$('#remove_draft').unbind('click'); // Just in case bad stuff happens.
+		$('#remove_draft').off('click'); // Just in case bad stuff happens.
 
 		var
 			obj = $('#lastsave', data),
@@ -504,15 +504,3 @@ wedge_autoDraft.prototype.draftSend = function ()
 		});
 	});
 };
-
-
-/*
-	Always keep the session alive when editing a textarea!
-*/
-
-$('textarea,.rich').live('focusin', function () {
-	$('textarea,.rich').die();
-	setInterval(function () {
-		$.get(weUrl('action=keepalive;time=' + $.now()));
-	}, 8e5);
-});

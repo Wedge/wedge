@@ -325,7 +325,7 @@ function template_modfilter_edit()
 			$("#rulecontainer input[data-eve], #rulecontainer select[data-eve]").each(function () {
 				var that = $(this);
 				$.each(that.attr("data-eve").split(" "), function () {
-					that.bind(eves[this][0], eves[this][1]);
+					that.on(eves[this][0], eves[this][1]);
 				});
 			});
 

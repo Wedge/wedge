@@ -562,7 +562,7 @@ function weEditor(opt)
 
 		// A hack to force removing focus from the select boxes...
 		sel.prev().removeClass('focused');
-		$(document).unbind('.sb');
+		$(document).off('.sb');
 
 		if (opt.oDrafts)
 			opt.oDrafts.needsUpdate(true);
@@ -939,8 +939,8 @@ function weEditor(opt)
 	{
 		// Remove the event...
 		$(document)
-			.unbind('mousemove', resizeOver)
-			.unbind('mouseup', endResize);
+			.off('mousemove', resizeOver)
+			.off('mouseup', endResize);
 
 		return false;
 	};
@@ -991,8 +991,8 @@ function weEditor(opt)
 
 		// Attach functions to the key and mouse events.
 		$(oFrameDoc)
-			.bind('keydown', shortcutCheck)
-			.bind('keyup mouseup', function ()
+			.on('keydown', shortcutCheck)
+			.on('keyup mouseup', function ()
 			{
 				if (opt.oDrafts)
 					opt.oDrafts.needsUpdate(true);
@@ -1001,8 +1001,8 @@ function weEditor(opt)
 				that.updateEditorControls();
 			});
 		oText
-			.bind('keydown', shortcutCheck)
-			.bind('keydown', splitQuote)[0].instanceRef = this;
+			.on('keydown', shortcutCheck)
+			.on('keydown', splitQuote)[0].instanceRef = this;
 	}
 	// If we can't do advanced stuff, then just do the basics.
 	else
@@ -1020,7 +1020,7 @@ function weEditor(opt)
 	var sizer = $('#' + opt.sUniqueId + '_resizer');
 	if (sizer.length)
 	{
-		sizer.show().bind('mousedown', function (oEvent) {
+		sizer.show().on('mousedown', function (oEvent) {
 			// This is the method called after clicking the resize bar.
 			if (!oEvent)
 				return true;
@@ -1030,8 +1030,8 @@ function weEditor(opt)
 
 			// Set the necessary events for resizing.
 			$(document)
-				.bind('mousemove', resizeOver)
-				.bind('mouseup', endResize);
+				.on('mousemove', resizeOver)
+				.on('mouseup', endResize);
 
 			return false;
 		});
@@ -1056,4 +1056,11 @@ function weEditor(opt)
 	this.registerShortcut('d', 'alt', 'draft');
 
 	this.updateEditorControls();
+
+	// Always keep the session alive when editing a textarea!
+	$(oFrameDoc, oText).one('focusin', function () {
+		setInterval(function () {
+			$.get(weUrl('action=keepalive;time=' + $.now()));
+		}, 8e5);
+	});
 }
