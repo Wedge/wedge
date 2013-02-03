@@ -213,26 +213,28 @@ fieldset dl
 	clear: both
 	list-style-type: none
 	width: 80%
-	margin: 0
-	padding: 0
+	margin, padding: 0
 	li
 		border: 1px dotted gray
+		border-left: 0
 		margin: 4px
 		padding: 10px
 		cursor: default
-		span.handle
-			float: left
+		position: relative
+		.handle
 			width: 10px
-			height: 10px
-			display: block
-			margin-right: 10px
-			border: 1px dotted black
+			background: #ddd
+			background: linear-gradient(90deg, #bbb 0px, transparent 1px, transparent 3px)
+			background-size: 4px 10px
+			position: absolute
+			left, top, bottom: 0
 			cursor: n-resize
-		span.group
+		.sortme
 			float: left
 			display: inline-block
+			margin-left: 12px
 			min-width: 200px
-		span.badge
+		.badge
 			float: left
 			display: inline-block
 			min-width: 150px

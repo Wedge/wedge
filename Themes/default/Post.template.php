@@ -639,7 +639,7 @@ function template_order_pinned()
 		echo '
 					<li class="windowbg2 subject pinned">
 						<span class="handle"></span>
-						<div class="floatleft w50">
+						<div class="floatleft sortme w50">
 							<strong><a href="<URL>?topic=', $topic['id_topic'], '.0" target="_blank">', $topic['subject'], '</a></strong>
 							<p>', $txt['started_by'], ' ', !empty($topic['starter_id']) ? '<a href="<URL>?action=profile;u=' . $topic['starter_id'] . '">' . $topic['starter_name'] . '</a>' : $topic['starter_name'], '</p>
 						</div>

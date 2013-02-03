@@ -93,7 +93,7 @@ function OrderPin()
 	{
 		checkSession();
 
-		// Whatever happens, we need to get the sticky topics in this board.
+		// Whatever happens, we need to get the pinned topics in this board.
 		$topics = array();
 		$request = wesql::query('
 			SELECT id_topic, is_pinned
@@ -187,6 +187,7 @@ function OrderPin()
 		add_jquery_ui();
 		add_css('
 	#sortable { width: 98% } #sortable .floatright { margin-left: 1em; margin-right: 1em }');
+
 		loadTemplate('Post'); // !!! Is there a better place for this?
 		loadLanguage('Post');
 

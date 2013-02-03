@@ -260,7 +260,7 @@ ul#noava
 	li extends .horizontal-arrow
 		display: inline
 		line-height: 20px
-		padding: .5em 0
+		padding: .5em .5em .5em 0
 		&.last:after
 			display: none
 
@@ -769,8 +769,8 @@ input[type=file]
 		border: 1px solid #bbb
 		z-index: 42
 		@if ie9
-			background: #fff
-			box-shadow: inset 0 50px 50px rgba(232, 236, 232, .96), 2px 2px 3px 0 rgba(0,0,0, .2)
+			background: #fcfcfc
+			box-shadow: inset 0 50px 50px rgba(232, 236, 232, .8), 2px 2px 3px 0 rgba(0,0,0, .2)
 		@else
 			background: $menu_gradient
 			box-shadow: 2px 2px 3px 0 rgba(0,0,0, .2)

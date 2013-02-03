@@ -241,7 +241,9 @@ function add_jquery_ui()
 		return;
 	$done = true;
 
-	$version = '1.8.24'; // 1.9.2 for later
+	// !! Note: should we add an $add_css flag to add the CSS file?
+	// http://code.jquery.com/ui/$version/themes/base/jquery-ui.css
+	$version = '1.10.0';
 
 	if (empty($settings['jquery_origin']) || $settings['jquery_origin'] === 'local')
 		add_js_file('scripts/jquery-ui-' . $version . '.min.js');

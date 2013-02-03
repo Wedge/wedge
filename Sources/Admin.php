@@ -417,6 +417,7 @@ function Admin()
 						'soft' => array($txt['ban_soft']),
 						'add' => array($txt['ban_add']),
 						'edit' => array($txt['ban_edit'], 'enabled' => isset($_REQUEST['ban'])),
+						'',
 						'settings' => array($txt['ban_settings']),
 					),
 				),
@@ -429,6 +430,7 @@ function Admin()
 					'permission' => 'admin_forum',
 					'subsections' => array(
 						'options' => array($txt['configure_options']),
+						'',
 						'sig' => array($txt['signature_settings_short']),
 						'prefs' => array($txt['admin_member_prefs']),
 						'profile' => array($txt['custom_profile_shorttitle']),

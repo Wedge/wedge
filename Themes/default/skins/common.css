@@ -67,22 +67,22 @@
 
 .vertical-arrow virtual
 	:after
-		opacity: .3
-		font: .6em/1 Arial
+		opacity: .4
+		font: .66em/1 Arial
 		vertical-align: .12em
 		content: "\a0\a0\25bc"
 	&:hover:after
-		opacity: .5
+		opacity: 1
 		transition: opacity .5s
 
 .horizontal-arrow virtual
 	:after
-		opacity: .3
-		font: .6em/1 Arial
+		opacity: .4
+		font: .66em/1 Arial
 		vertical-align: .12em
 		content: "\a0\a0\25ba"
 	&:hover:after
-		opacity: .5
+		opacity: 1
 		transition: opacity .5s
 
 /* Common and helper variable.
