@@ -280,8 +280,8 @@ function ModifyRegistrationSettings($return_config = false)
 	function checkCoppa()
 	{
 		var coppaDisabled = $(\'#coppaAge\').val() == 0;
-		$(\'#coppaType\').attr(\'disabled\', coppaDisabled);
-		$(\'#coppaPost, #coppaFax, #coppaPhone\').attr(\'disabled\', coppaDisabled || $(\'#coppaType\').val() != 1);
+		$(\'#coppaType\').prop(\'disabled\', coppaDisabled);
+		$(\'#coppaPost, #coppaFax, #coppaPhone\').prop(\'disabled\', coppaDisabled || $(\'#coppaType\').val() != 1);
 	}
 	checkCoppa();');
 

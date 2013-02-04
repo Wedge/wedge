@@ -138,7 +138,7 @@ function ModifySignatureSettings($return_config = false)
 			array('int', 'signature_max_length', 'subtext' => $txt['signature_zero_no_max']),
 			array('int', 'signature_max_lines', 'subtext' => $txt['signature_zero_no_max']),
 			array('int', 'signature_max_font_size', 'subtext' => $txt['signature_max_font_size_subtext']),
-			array('check', 'signature_allow_smileys', 'onclick' => '$(\'#signature_max_smileys\').attr(\'disabled\', !this.checked);'),
+			array('check', 'signature_allow_smileys', 'onclick' => '$(\'#signature_max_smileys\').prop(\'disabled\', !this.checked);'),
 			array('int', 'signature_max_smileys', 'subtext' => $txt['signature_zero_no_max']),
 		'',
 			// Image settings.
@@ -158,7 +158,7 @@ function ModifySignatureSettings($return_config = false)
 
 	// Disable the max smileys option if we don't allow smileys at all!
 	add_js('
-	$(\'#signature_max_smileys\').attr(\'disabled\', !($(\'#signature_allow_smileys\').attr(\'checked\')));');
+	$(\'#signature_max_smileys\').prop(\'disabled\', !($(\'#signature_allow_smileys\').prop(\'checked\')));');
 
 	// Load all the signature settings.
 	list ($sig_limits, $sig_bbc) = explode(':', $settings['signature_settings']);

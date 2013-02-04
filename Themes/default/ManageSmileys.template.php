@@ -224,14 +224,14 @@ function template_addsmiley()
 	function swapUploads()
 	{
 		var enabled = !$("#uploadSmiley").is(":disabled");
-		$("#uploadSmiley").attr("disabled", enabled);
+		$("#uploadSmiley").prop("disabled", enabled);
 		$("#uploadMore").slideToggle(enabled);
 	}
 
 	function selectMethod(element)
 	{
-		$("#method-existing").attr("checked", element != "upload");
-		$("#method-upload").attr("checked", element == "upload");
+		$("#method-existing").prop("checked", element != "upload");
+		$("#method-upload").prop("checked", element == "upload");
 	}');
 
 	echo '

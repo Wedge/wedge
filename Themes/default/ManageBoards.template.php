@@ -275,7 +275,7 @@ function template_modify_board()
 
 		// The first select box gives the user the option to position it before, after or as a child of another board.
 		echo '
-						<select id="order" name="placement" onchange="if ($(this).val() == \'\') $(\'#board_order\').attr(\'disabled\', \'disabled\'); else $(\'#board_order\').removeAttr(\'disabled\'); $(\'#board_order\').sb();">
+						<select id="order" name="placement" onchange="$(\'#board_order\').prop(\'disabled\', $(this).val() == \'\'); $(\'#board_order\').sb();">
 							', !isset($context['board']['is_new']) ? '<option value="">(' . $txt['mboards_unchanged'] . ')</option>' : '', '
 							<option value="after">' . $txt['mboards_order_after'] . '...</option>
 							<option value="child">' . $txt['mboards_order_child_of'] . '...</option>
@@ -684,8 +684,8 @@ function template_modify_board()
 	{
 		if ((selection == "view" || selection=="enter") && (obj.value == "allow" || obj.value == "disallow" || obj.value == "deny"))
 		{
-			$(\'#\' + selection + \'_perm_col input\').filter(\'[value="\' + obj.value + \'"]\').attr(\'checked\', true);
-			$(\'#\' + selection + \'_perm_col input[name="\' + selection + \'everyone"]\').attr(\'checked\', false);
+			$(\'#\' + selection + \'_perm_col input\').filter(\'[value="\' + obj.value + \'"]\').prop(\'checked\', true);
+			$(\'#\' + selection + \'_perm_col input[name="\' + selection + \'everyone"]\').prop(\'checked\', false);
 		}
 	};');
 

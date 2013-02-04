@@ -340,8 +340,8 @@
 			has_changed = $orig.val() !== $selected.data('value');
 
 			// Update the original <select>
-			$orig.find('option').attr('selected', false);
-			$selected.data('orig').attr('selected', true);
+			$orig.find('option')[0].selected = false;
+			$selected.data('orig')[0].selected = true;
 			$orig_item = $selected;
 		},
 

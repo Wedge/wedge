@@ -820,7 +820,7 @@ function ModifyNewsSettings($return_config = false)
 			array('int', 'newsfader_time', 'min' => 100),
 		'',
 			// Just the remaining settings.
-			array('check', 'xmlnews_enable', 'onclick' => '$(\'#xmlnews_maxlen\').attr(\'disabled\', !this.checked);'),
+			array('check', 'xmlnews_enable', 'onclick' => '$(\'#xmlnews_maxlen\').prop(\'disabled\', !this.checked);'),
 			array('int', 'xmlnews_maxlen', 'subtext' => $txt['xmlnews_maxlen_subtext']),
 			array('check', 'xmlnews_sidebar'),
 	);
@@ -839,7 +839,7 @@ function ModifyNewsSettings($return_config = false)
 
 	// Add some JavaScript at the bottom...
 	add_js('
-	$("#xmlnews_maxlen").attr("disabled", !$("#xmlnews_enable").is(":checked"));');
+	$("#xmlnews_maxlen").prop("disabled", !$("#xmlnews_enable").is(":checked"));');
 
 	// Saving the settings?
 	if (isset($_GET['save']))

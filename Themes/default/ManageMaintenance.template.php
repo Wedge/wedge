@@ -101,7 +101,7 @@ function template_maintain_members()
 		$("#membersIcon").toggleClass("fold", membersSwap);
 		$("#membersText").html(membersSwap ? ', JavaScriptEscape($txt['maintain_members_choose']), ' : ', JavaScriptEscape($txt['maintain_members_all']), ');
 		$("#membersPanel").slideToggle(membersSwap);
-		$("#membersForm input[type=checkbox]").attr("checked", !membersSwap);
+		$("#membersForm input[type=checkbox]").prop("checked", !membersSwap);
 	}
 
 	var warningMessage = \'\';
@@ -127,7 +127,7 @@ function template_maintain_members()
 			warningMessage = warningMessage.replace(/%type%/, ', JavaScriptEscape($txt['reattribute_confirm_username']), ').replace(/%find%/, $("#from_name").val());
 		}
 
-		$("#do_attribute").attr("disabled", !valid);
+		$("#do_attribute").prop("disabled", !valid);
 
 		setTimeout(checkAttributeValidity, 500);
 		return valid;
@@ -147,13 +147,13 @@ function template_maintain_members()
 						<label><input type="radio" name="type" id="type_email" value="email" checked>', $txt['reattribute_email'], '</label>
 					</dt>
 					<dd>
-						<input type="text" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').attr(\'checked\', true); $(\'#from_name\').val(\'\');">
+						<input type="text" name="from_email" id="from_email" value="" onclick="$(\'#type_email\').prop(\'checked\', true); $(\'#from_name\').val(\'\');">
 					</dd>
 					<dt>
 						<label><input type="radio" name="type" id="type_name" value="name">', $txt['reattribute_username'], '</label>
 					</dt>
 					<dd>
-						<input type="text" name="from_name" id="from_name" value="" onclick="$(\'#type_name\').attr(\'checked\', true); $(\'#from_email\').val(\'\');">
+						<input type="text" name="from_name" id="from_name" value="" onclick="$(\'#type_name\').prop(\'checked\', true); $(\'#from_email\').val(\'\');">
 					</dd>
 				</dl>
 				<dl class="settings">
@@ -239,7 +239,7 @@ function template_maintain_topics()
 		$("#rotIcon").toggleClass("fold", rotSwap);
 		$("#rotText").html(rotSwap ? ', JavaScriptEscape($txt['maintain_old_choose']), ' : ', JavaScriptEscape($txt['maintain_old_all']), ');
 		$("#rotPanel").slideToggle(rotSwap);
-		$("#rotPanel input[type=checkbox]").attr("checked", !rotSwap);
+		$("#rotPanel input[type=checkbox]").prop("checked", !rotSwap);
 	}');
 
 	echo '

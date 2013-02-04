@@ -830,7 +830,7 @@ function template_file_permissions()
 					<dt>
 						<label><input type="radio" name="method" value="predefined" id="method_predefined">
 						<strong>', $txt['package_file_perms_predefined'], ':</strong></label>
-						<select name="predefined" onchange="$(\'#method_predefined\').attr(\'checked\', true);">
+						<select name="predefined" onchange="$(\'#method_predefined\').prop(\'checked\', true);">
 							<option value="restricted" selected>', $txt['package_file_perms_pre_restricted'], '</option>
 							<option value="standard">', $txt['package_file_perms_pre_standard'], '</option>
 							<option value="free">', $txt['package_file_perms_pre_free'], '</option>

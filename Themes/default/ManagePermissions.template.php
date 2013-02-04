@@ -681,16 +681,16 @@ function template_modify_group_simple($type)
 		if (empty($settings['permission_enable_deny']) || $context['group']['id'] == -1)
 			add_js('
 			if (typeof forceState != "undefined")
-				$("#select_" + groupPermissions[id_group][i]).attr("checked", forceState == "on");
+				$("#select_" + groupPermissions[id_group][i]).prop("checked", forceState == "on");
 
 			thisState = $("#select_" + groupPermissions[id_group][i])[0].checked ? "on" : "off";');
 		else
 			add_js('
 			if (typeof forceState != "undefined")
 			{
-				$("#select_on_" + groupPermissions[id_group][i]).attr("checked", forceState == "on");
-				$("#select_off_" + groupPermissions[id_group][i]).attr("checked", forceState == "off");
-				$("#select_deny_" + groupPermissions[id_group][i]).attr("checked", forceState == "deny");
+				$("#select_on_" + groupPermissions[id_group][i]).prop("checked", forceState == "on");
+				$("#select_off_" + groupPermissions[id_group][i]).prop("checked", forceState == "off");
+				$("#select_deny_" + groupPermissions[id_group][i]).prop("checked", forceState == "deny");
 			}
 
 			if ($("#select_on_" + groupPermissions[id_group][i])[0].checked)
@@ -714,12 +714,12 @@ function template_modify_group_simple($type)
 		// First, check the right master is selected!
 		if (empty($settings['permission_enable_deny']) || $context['group']['id'] == -1)
 			add_js('
-		$("#group_select_" + id_group).attr("checked", curState == "on");');
+		$("#group_select_" + id_group).prop("checked", curState == "on");');
 		else
 			add_js('
-		$("#group_select_on_" + id_group).attr("checked", curState == "on");
-		$("#group_select_off_" + id_group).attr("checked", curState == "off");
-		$("#group_select_deny_" + id_group).attr("checked", curState == "deny");');
+		$("#group_select_on_" + id_group).prop("checked", curState == "on");
+		$("#group_select_off_" + id_group).prop("checked", curState == "off");
+		$("#group_select_deny_" + id_group).prop("checked", curState == "deny");');
 
 		// Force the display?
 		add_js('

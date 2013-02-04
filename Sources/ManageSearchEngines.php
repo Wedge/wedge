@@ -76,7 +76,7 @@ function ManageSearchEngineSettings($return_config = false)
 	foreach ($config_vars as $variable)
 		if ($variable[1] != 'spider_mode')
 			$javascript_function .= '
-			$(\'#' . $variable[1] . '\').attr(\'disabled\', disabledState);';
+			$(\'#' . $variable[1] . '\').prop(\'disabled\', disabledState);';
 
 	$javascript_function .= '
 		}

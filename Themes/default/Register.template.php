@@ -444,7 +444,7 @@ function template_admin_register()
 	{
 		var f = document.forms.postForm;
 		if (f.emailActivate.checked || f.password.value == "")
-			$(f.emailPassword).attr({ disabled: true, checked: true });
+			$(f.emailPassword).prop({ disabled: true, checked: true });
 		else
 			f.emailPassword.disabled = false;
 	}');

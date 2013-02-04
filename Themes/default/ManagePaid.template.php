@@ -141,7 +141,7 @@ function template_modify_subscription()
 
 	echo '
 						<div class="right">
-							<label><input type="checkbox" id="allowed_groups_check_all" onclick="$(\'.allowed_groups\').attr(\'checked\', $(\'#allowed_groups_check_all\').attr(\'checked\'));"> ', $txt['check_all'], '</label>
+							<label><input type="checkbox" id="allowed_groups_check_all" onclick="$(\'.allowed_groups\').prop(\'checked\', this.checked);"> ', $txt['check_all'], '</label>
 						</div>
 					</dd>
 				</dl>

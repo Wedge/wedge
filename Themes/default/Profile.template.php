@@ -1328,7 +1328,7 @@ function template_profile_pm_settings()
 										<label for="pm_prefs">', $txt['pm_display_mode'], ':</label>
 								</dt>
 								<dd>
-										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 && !($(\'#copy_to_outbox\').attr(\'checked\'))) say(', JavaScriptEscape($txt['pm_recommend_enable_outbox']), ');">
+										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 && !($(\'#copy_to_outbox\').prop(\'checked\'))) say(', JavaScriptEscape($txt['pm_recommend_enable_outbox']), ');">
 											<option value="0"', $context['display_mode'] == 0 ? ' selected' : '', '>', $txt['pm_display_mode_all'], '</option>
 											<option value="1"', $context['display_mode'] == 1 ? ' selected' : '', '>', $txt['pm_display_mode_one'], '</option>
 											<option value="2"', $context['display_mode'] == 2 ? ' selected' : '', '>', $txt['pm_display_mode_linked'], '</option>
@@ -1893,7 +1893,7 @@ function template_issueWarning()
 	function modifyWarnNotify()
 	{
 		var enable = $("#warn_notify").is(":checked");
-		$("#warn_sub, #warn_body, #warn_temp").attr("disabled", !enable);
+		$("#warn_sub, #warn_body, #warn_temp").prop("disabled", !enable);
 		$("#warn_temp").sb();
 		$("#new_template_link").toggle(enable);
 	}
@@ -2433,7 +2433,7 @@ function template_profile_avatar_select()
 		var val = $(cat).val(), i, count = 0;
 		if (val.indexOf("/") > 0)
 		{
-			$(file).css("display", "inline").attr("disabled", false);
+			$(file).css("display", "inline").prop("disabled", false);
 
 			for (i = file.length; i >= 0; i--)
 				file.options[i] = null;
@@ -2464,7 +2464,7 @@ function template_profile_avatar_select()
 		}
 		else
 		{
-			$(file).hide().attr("disabled", true);
+			$(file).hide().prop("disabled", true);
 			$("#avatar").attr("src", avatardir + val).css({ width: "", height: "" });
 		}
 	}

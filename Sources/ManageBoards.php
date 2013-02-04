@@ -864,7 +864,7 @@ function EditBoardSettings($return_config = false)
 		'',
 			// Other board settings.
 			array('check', 'countChildPosts'),
-			array('check', 'recycle_enable', 'onclick' => '$(\'#recycle_board\').attr(\'disabled\', !this.checked);'),
+			array('check', 'recycle_enable', 'onclick' => '$(\'#recycle_board\').prop(\'disabled\', !this.checked);'),
 			array('select', 'recycle_board', $recycle_boards),
 			array('check', 'allow_ignore_boards'),
 		'',
@@ -887,7 +887,7 @@ function EditBoardSettings($return_config = false)
 
 	// Add some JavaScript stuff for the recycle box.
 	add_js('
-	$("#recycle_board").attr("disabled", !$("#recycle_enable").is(":checked"));');
+	$("#recycle_board").prop("disabled", !$("#recycle_enable").is(":checked"));');
 
 	// Warn the admin against selecting the recycle topic without selecting a board.
 	$context['force_form_onsubmit'] = 'if ($(\'#recycle_enable\').is(\':checked\') && $(\'#recycle_board\').val() == 0) { return ask(' . JavaScriptEscape($txt['recycle_board_unselected_notice']) . ', e); } return true;';

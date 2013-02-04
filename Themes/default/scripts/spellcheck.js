@@ -225,7 +225,7 @@ function nextWord(ignoreall)
 
 		alert(txt.done);
 
-		$('input[name=change], input[name=changeall], input[name=ignore], input[name=ignoreall]').attr('disabled', true);
+		$('input[name=change], input[name=changeall], input[name=ignore], input[name=ignoreall]').prop('disabled', true);
 
 		// Put line feeds back...
 		mispstr = mispstr.replace(/_\|_/g, "\n");

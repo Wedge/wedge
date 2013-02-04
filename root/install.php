@@ -2483,7 +2483,7 @@ function template_delete_install()
 			function doTheDelete()
 			{
 				$.get("', $installurl, '?delete=1&ts_" + $.now());
-				$(this).attr("disabled", true);
+				this.disabled = true;
 			}
 		// ]]></script>
 		<br>';

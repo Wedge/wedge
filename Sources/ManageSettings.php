@@ -217,7 +217,7 @@ function ModifySpamSettings($return_config = false)
 			array('check', 'search_enable_captcha'),
 			// This, my friend, is a cheat :p
 			'guest_verify' => array('check', 'guests_require_captcha', 'subtext' => $txt['setting_guests_require_captcha_desc']),
-			array('int', 'posts_require_captcha', 'max' => 999999, 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => 'if (this.value > 0) $(\'#guests_require_captcha\').attr({ checked: true, disabled: true }); else $(\'#guests_require_captcha\').attr(\'disabled\', false);'),
+			array('int', 'posts_require_captcha', 'max' => 999999, 'subtext' => $txt['posts_require_captcha_desc'], 'onchange' => '$(\'#guests_require_captcha\').prop(this.value > 0 ? { disabled: true, checked: true } : { disabled: false });'),
 			array('check', 'guests_report_require_captcha'),
 			// Visual verification.
 			array('title', 'configure_captcha'),
@@ -354,7 +354,7 @@ function ModifySpamSettings($return_config = false)
 	// Some minor javascript for the guest post setting.
 	if ($settings['posts_require_captcha'])
 		add_js('
-	$(\'#guests_require_captcha\').attr(\'disabled\', true);');
+	$(\'#guests_require_captcha\').prop(\'disabled\', true);');
 
 	$context['post_url'] = $scripturl . '?action=admin;area=antispam;save';
 	$context['page_title'] = $context['settings_title'] = $txt['antispam_settings'];

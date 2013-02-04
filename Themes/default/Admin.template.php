@@ -862,10 +862,7 @@ function template_show_settings()
 					add_js('
 	function selectcat(id)
 	{
-		if (!$("#catsel" + id)[0].checked)
-			$(".cat" + id).removeAttr("checked");
-		else
-			$(".cat" + id).attr("checked","checked");
+		$(".cat" + id).prop("checked", $("#catsel" + id).prop("checked"));
 	};');
 
 					echo '
@@ -1063,11 +1060,11 @@ function template_edit_profile_field()
 		$("#default_dt, #default_dd").toggle(curType == "check");
 		$("#mask_dt, #mask_dd").toggle(curType == "text");
 		$("#regex_div").toggle(curType == "text" && $("#mask").val() == "regex");
-		$("#display").attr("disabled", false);
+		$("#display").prop("disabled", false);
 
 		// Cannot show this on the topic
 		if (curType == "textarea" || privStatus >= 2)
-			$("#display").attr("checked", false).attr("disabled", true);
+			$("#display").prop({ checked: false, disabled: true });
 
 		// Able to show to guests?
 		$("#guest_access_dt, #guest_access_dd").toggle(privStatus < 2);
@@ -1138,7 +1135,7 @@ function template_edit_profile_field()
 			{
 				case "display":	// these are checkboxes
 				case "bbc":
-					$("input[name=\"" + i + "\"]").attr("checked", insertTemplate.templates[field][i]);
+					$("input[name=\"" + i + "\"]").prop("checked", insertTemplate.templates[field][i]);
 					break;
 				case "field_desc": // these are textareas
 				case "enclose":

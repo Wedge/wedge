@@ -82,7 +82,7 @@ function template_new_group()
 							<legend>', $txt['membergroups_select_permission_type'], '</legend>
 
 							<label><input type="radio" name="perm_type" id="perm_type_inherit" value="inherit" checked> ', $txt['membergroups_new_as_inherit'], ':</label>
-							<select name="inheritperm" id="inheritperm_select" onclick="$(\'#perm_type_inherit\').attr(\'checked\', true);">
+							<select name="inheritperm" id="inheritperm_select" onclick="$(\'#perm_type_inherit\').prop(\'checked\', true);">
 								<option value="-1">', $txt['membergroups_guests'], '</option>
 								<option value="0" selected>', $txt['membergroups_members'], '</option>';
 
@@ -94,7 +94,7 @@ function template_new_group()
 							</select><br>
 
 							<label><input type="radio" name="perm_type" id="perm_type_copy" value="copy"> ', $txt['membergroups_new_as_copy'], ':</label>
-							<select name="copyperm" id="copyperm_select" onclick="$(\'#perm_type_copy\').attr(\'checked\', true);">
+							<select name="copyperm" id="copyperm_select" onclick="$(\'#perm_type_copy\').prop(\'checked\', true);">
 								<option value="-1">', $txt['membergroups_guests'], '</option>
 								<option value="0" selected>', $txt['membergroups_members'], '</option>';
 
@@ -106,7 +106,7 @@ function template_new_group()
 							</select><br>
 
 							<label><input type="radio" name="perm_type" id="perm_type_predefined" value="predefined"> ', $txt['membergroups_new_as_type'], ':</label>
-							<select name="level" id="level_select" onclick="$(\'#perm_type_predefined\').attr(\'checked\', true);">
+							<select name="level" id="level_select" onclick="$(\'#perm_type_predefined\').prop(\'checked\', true);">
 								<option value="restrict">', $txt['permitgroups_restrict'], '</option>
 								<option value="standard" selected>', $txt['permitgroups_standard'], '</option>
 								<option value="moderator">', $txt['permitgroups_moderator'], '</option>
@@ -490,17 +490,17 @@ function template_group_board_selection()
 	{
 		if ((selection == "view" || selection=="enter") && (obj.value == "allow" || obj.value == "disallow" || obj.value == "deny"))
 		{
-			$(\'#\' + selection + \'_perm_col tr.board_cat input\').attr(\'checked\', false);
-			$(\'#\' + selection + \'_perm_col input[name^="\' + selection + \'"]\').filter(\'[value="\' + obj.value + \'"]\').attr(\'checked\', true);
-			$(\'input[name="\' + selection + \'everything"]\').attr(\'checked\', false);
+			$(\'#\' + selection + \'_perm_col tr.board_cat input\').prop(\'checked\', false);
+			$(\'#\' + selection + \'_perm_col input[name^="\' + selection + \'"]\').filter(\'[value="\' + obj.value + \'"]\').prop(\'checked\', true);
+			$(\'input[name="\' + selection + \'everything"]\').prop(\'checked\', false);
 		}
 	};
 	function selectCat(selection, id_cat, obj)
 	{
 		if (obj.value == "allow" || obj.value == "disallow" || obj.value == "deny")
 		{
-			$(\'#\' + selection + \'_perm_col tr[data-cat="\' + id_cat + \'"] input\').filter(\'[value="\' + obj.value + \'"]\').attr(\'checked\', true);
-			$(\'#\' + selection + \'_perm_col tr.board_cat[data-cathead="\' + id_cat + \'"] input\').attr(\'checked\', false);
+			$(\'#\' + selection + \'_perm_col tr[data-cat="\' + id_cat + \'"] input\').filter(\'[value="\' + obj.value + \'"]\').prop(\'checked\', true);
+			$(\'#\' + selection + \'_perm_col tr.board_cat[data-cathead="\' + id_cat + \'"] input\').prop(\'checked\', false);
 		}
 	}');
 }
@@ -726,7 +726,7 @@ function template_callback_badge_order()
 				<input type="hidden" name="group[]" value="', $badge['id_group'], '">
 				<span class="handle"></span>
 
-				<span class="group">', !empty($badge['online_color']) ? '<span style="color:' . $badge['online_color'] . '">' . $badge['group_name'] . '</span>' : $badge['group_name'], $badge['min_posts'] >= 0 ? '<dfn>' . $txt['membergroup_badge_postcount'] . '</dfn>' : '', '</span>
+				<span class="sortme">', !empty($badge['online_color']) ? '<span style="color:' . $badge['online_color'] . '">' . $badge['group_name'] . '</span>' : $badge['group_name'], $badge['min_posts'] >= 0 ? '<dfn>' . $txt['membergroup_badge_postcount'] . '</dfn>' : '', '</span>
 				<span class="badge">', !empty($badge['badge']) ? $badge['badge'] : $txt['membergroup_badges_nobadge'], '</span>';
 
 		if (!empty($badge['badge']))
