@@ -159,7 +159,7 @@ function Thought()
 	if (!empty($_GET['in']))
 	{
 		$request = wesql::query('
-			SELECT id_thought, privacy, thought
+			SELECT thought
 			FROM {db_prefix}thoughts
 			WHERE id_thought = {int:original_id}' . (allowedTo('moderate_forum') ? '' : '
 			AND id_member = {int:id_member}
@@ -169,16 +169,12 @@ function Thought()
 				'original_id' => $_GET['in'],
 			)
 		);
-		list ($id_thought, $privacy, $thought) = wesql::fetch_row($request);
+		list ($thought) = wesql::fetch_row($request);
 		wesql::free_result($request);
 
-		$context['return_thought'] = array(
-			'id_thought' => $id_thought,
-			'thought' => un_htmlspecialchars($thought),
-			'privacy' => $privacy,
-		);
-
-		return;
+		// Cheating a little... Just return plain text. This bypasses a bug in jQuery 1.9.
+		echo un_htmlspecialchars($thought);
+		exit;
 	}
 
 	// Is it an edit?

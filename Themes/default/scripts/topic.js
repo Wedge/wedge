@@ -335,7 +335,7 @@ function QuickModify(opt)
 			}
 		)
 		// Unexpected error...?
-		.error(
+		.fail(
 			function (XHR, textStatus, errorThrown) {
 				$('#error_box').html(textStatus + (errorThrown ? ' - ' + errorThrown : ''));
 			}

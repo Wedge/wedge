@@ -669,7 +669,7 @@ function Thought(opt)
 			pr = '', privacies = opt.aPrivacy, privacy = (thought.data('prv') + '').split(','),
 
 			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-				was_personal.php_unhtmlspecialchars() : $('text', $.ajax(ajaxUrl + 'in=' + tid, { context: this, async: false }).responseXML).text()));
+				was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + 'in=' + tid, { async: false }).responseText));
 
 		for (p in privacies)
 			pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
