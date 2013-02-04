@@ -1561,19 +1561,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		// Now we'll override all of these...
 		loadSource('Subs-Cache');
 		wedge_get_skin_options();
-
-		// Did we find an override for the skeleton? If not, load the default one.
-		if (empty($context['skeleton']))
-			execBlock('skeleton', 'ignore');
-
-		// Now we have a $context['skeleton'] (original or overridden), we can feed it to the template object.
-		preg_match_all('~<(?!!)(/)?([\w:,]+)\s*([^>]*?)(/?)\>~', $context['skeleton'], $match, PREG_SET_ORDER);
-		wetem::build($match);
-		unset($context['skeleton']);
-
-		if (isset($context['skeleton_moves']))
-			foreach ($context['skeleton_moves'] as $move)
-				wetem::move($move[0], $move[1], $move[2]);
 	}
 
 	// Any theme-related strings that need to be loaded?

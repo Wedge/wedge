@@ -12,11 +12,11 @@
  */
 
 /*
-	This template is probably the most important one in the theme.
-	It defines the skeleton, i.e. the list of layers and blocks, starting
-	with the html, body, main and sidebar layers among others.
-	It also defines various blocks of interest like linktree (which displays
-	the navigation hierarchy), menu (for the main menu), or button_strip.
+	This template is probably the most important one in the theme. It defines
+	the functions to be called by the layers and blocks defined in the main
+	skeleton. Some layers of interest are: html, body, main and sidebar.
+	Blocks of interest include linktree (which displays the navigation
+	hierarchy), menu (for the main menu), or button_strip.
 */
 
 // Initialize the template... mainly little settings.
@@ -98,49 +98,6 @@ function template_init()
 			{body}',
 
 	);
-}
-
-/*
-	The magical function where the layer/block layout is established.
-	A layer is an array of blocks. Layers have '_before' and '_after' functions,
-	but they're not mandatory. Blocks only have one function but can be overloaded.
-	You can comment your skeleton with the usual <!-- HTML comment --> tags.
-	Finally, you can redefine a skeleton through skin.xml (see the Warm skin for a sample.)
-*/
-function template_skeleton()
-{
-	global $context;
-
-	$context['skeleton'] = '
-		<html>
-			<body>
-				<wrapper>
-					<header>
-						<logo_toggler />
-						<search_box />
-						<language_selector />
-						<random_news />
-					</header>
-					<menu />
-					<content_wrap>
-						<offside_wrap>
-							<main_wrap>
-								<linktree />
-								<top></top>
-								<default>
-									<main />
-								</default>
-								<linktree:bottom />
-							</main_wrap>
-						</offside_wrap>
-						<sidebar_wrap>
-							<sidebar></sidebar>
-						</sidebar_wrap>
-					</content_wrap>
-					<footer />
-				</wrapper>
-			</body>
-		</html>';
 }
 
 // The main block above the content.

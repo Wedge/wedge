@@ -1178,6 +1178,8 @@ function wedge_get_skin_options()
 			$set = file_get_contents($fold . '/skin.xml');
 			if (file_exists($fold . 'custom.xml'))
 				$set .= file_get_contents($fold . '/custom.xml');
+			if (file_exists($fold . 'skeleton.xml'))
+				$skeleton = file_get_contents($fold . '/skeleton.xml');
 
 			// If this is a replace-type skin, forget all of the parent folders.
 			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
@@ -1189,25 +1191,24 @@ function wedge_get_skin_options()
 
 	$context['skin_uses_default_theme'] = $is_default_theme;
 
+	if (!empty($skeleton) && strpos($skeleton, '</skeleton>') !== false && preg_match('~<skeleton>(.*?)</skeleton>~s', $skeleton, $match))
+	{
+		// Now we have a $skeleton, we can feed it to the template object.
+		preg_match_all('~<(?!!)(/)?([\w:,]+)\s*([^>]*?)(/?)\>~', $match[1], $match, PREG_SET_ORDER);
+		wetem::build($match);
+		unset($skeleton);
+	}
+
 	// The deepest skin gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
-		if (strpos($set, '</skeleton>') !== false && preg_match('~<skeleton>(.*?)</skeleton>~s', $set, $match))
-		{
-			$context['skeleton'] = $match[1];
-
-			// We need to erase the skeleton from the skin file, in case
-			// one of the layers/blocks has the same name as a skin keyword.
-			$set = str_replace($match[1], '', $set);
-		}
-
 		if (strpos($set, '<move') !== false && preg_match_all('~<move(?:\s+[a-z]+="[^"]+")*\s*/>~', $set, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $match)
 			{
 				preg_match_all('~\s([a-z]+)="([^"]+)"~', $match[0], $v);
 				if (($block = array_search('block', $v[1], true)) !== false && ($where = array_search('where', $v[1], true)) !== false && ($to = array_search('to', $v[1], true)) !== false)
-					$context['skeleton_moves'][] = array($v[2][$block], $v[2][$to], $v[2][$where]);
+					$skeleton_moves[] = array($v[2][$block], $v[2][$to], $v[2][$where]);
 			}
 		}
 
@@ -1279,6 +1280,10 @@ function wedge_get_skin_options()
 		if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
 			$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
 	}
+
+	if (isset($skeleton_moves))
+		foreach ($skeleton_moves as $move)
+			wetem::move($move[0], $move[1], $move[2]);
 }
 
 /**

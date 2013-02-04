@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+	The magical place where the layer/block layout is established.
+	A layer is an array of blocks. Layers have optional '_before' and '_after' functions.
+	Blocks only have one function but can be overloaded.
+	Variables are accepted in functions, see <linktree:bottom />.
+	You can comment your skeleton with HTML comment tags, like this one.
+
+	Finally, you can redefine a skeleton by adding a skeleton.xml file to your skin. See the Warm skin for a sample.
+-->
+<skeleton>
+	<html>
+		<body>
+			<wrapper>
+				<header>
+					<logo_toggler />
+					<search_box />
+					<language_selector />
+					<random_news />
+				</header>
+				<menu />
+				<content_wrap>
+					<offside_wrap>
+						<main_wrap>
+							<linktree />
+							<top></top>
+							<default>
+								<main />
+							</default>
+							<linktree:bottom />
+						</main_wrap>
+					</offside_wrap>
+					<sidebar_wrap>
+						<sidebar></sidebar>
+					</sidebar_wrap>
+				</content_wrap>
+				<footer />
+			</wrapper>
+		</body>
+	</html>
+</skeleton>
