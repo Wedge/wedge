@@ -140,7 +140,7 @@ function template_thoughts()
 			<tr class="windowbg', $col, '">
 				<td class="bc', $col, '"><a href="<URL>?action=thoughts;in=', $thought['id_master'] ? $thought['id_master'] : $id, '#t', $id, '"><img src="', $theme['images_url'], '/icons/last_post.gif" class="middle"></a> ', $thought['updated'], '</td>
 				<td><div>', $thought['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$thought['privacy']] . '"></div>' : '', '<a href="<URL>?action=profile;u=', $thought['id_member'], '" id="t', $id, '">',
-				$thought['owner_name'], '</a> &raquo; ', $thought['text'], '</div></td>
+				$thought['owner_name'], '</a> &raquo; ', $thought['text'], template_thought_likes($id), '</div></td>
 			</tr>';
 		}
 	}
@@ -167,4 +167,52 @@ function template_thoughts()
 	echo '
 		</table>
 		</div>';
+}
+
+function template_thought_likes($id_thought)
+{
+	global $context, $txt, $user_profile, $settings;
+
+	if (empty($settings['likes_enabled']))
+		return;
+
+	$string = '';
+	$likes =& $context['liked_posts'][$id_thought];
+	$you_like = !empty($likes['you']);
+
+	if (!empty($likes))
+	{
+		// Simplest case, it's just you.
+		if ($you_like && empty($likes['names']))
+		{
+			$string = $txt['you_like_this'];
+			$num_likes = 1;
+		}
+		// So we have some names to display?
+		elseif (!empty($likes['names']))
+		{
+			$base_id = $you_like ? 'you_' : '';
+			if (!empty($likes['others']))
+				$string = number_context($base_id . 'n_like_this', $likes['others']);
+			else
+				$string = $txt[$base_id . count($likes['names']) . '_like_this'];
+
+			// OK so at this point we have the string with the number of 'others' added, and also 'You' if appropriate. Now to add other names.
+			foreach ($likes['names'] as $k => $v)
+				$string = str_replace('{name' . ($k + 1) . '}', '<a href="<URL>?action=profile;u=' . $v . '">' . $user_profile[$v]['real_name'] . '</a>', $string);
+			$num_likes = ($you_like ? 1 : 0) + count($likes['names']) + (empty($likes['others']) ? 0 : $likes['others']);
+		}
+	}
+	else
+		$num_likes = 0;
+
+	$show_likes = $num_likes ? '<span class="note' . ($you_like ? 'nice' : '') . '">' . $num_likes . '</span>' : '';
+
+	if (!empty($context['thoughts'][$id_thought]['can_like']))
+		echo '
+								<a href="<URL>?action=like;thought;msg=', $id_thought, ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
+								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=like;sa=view;type=think;cid=' . $id_thought . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
+	elseif ($num_likes)
+		echo '
+								<span class="like_button" title="', strip_tags($string), '"> <a href="<URL>?action=like;sa=view;type=think;cid=' . $id_thought . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a></span>';
 }

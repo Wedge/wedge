@@ -94,6 +94,7 @@ function Home()
 				'privacy' => $row['privacy'],
 				'updated' => timeformat($row['updated']),
 				'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'])) : parse_bbc_inline($row['thought']),
+				'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 			);
 
 			$thought =& $thoughts[$row['id_thought']];
@@ -112,6 +113,13 @@ function Home()
 		wesql::free_result($request);
 
 		$context['thoughts'] =& $thoughts;
+
+		if (!empty($settings['likes_enabled']) && !empty($context['thoughts']))
+		{
+			$ids = array_keys($context['thoughts']);
+			loadSource('Display'); // Might as well reuse this, but of course no doubt we'll hive this off somewhere else in the future.
+			prepareLikeContext($ids, 'think');
+		}
 	}
 
 	/* Retrieve the categories and boards.

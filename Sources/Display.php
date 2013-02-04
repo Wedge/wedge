@@ -1775,7 +1775,7 @@ function QuickInTopicModeration()
 	redirectexit(!empty($topicGone) ? 'board=' . $board : 'topic=' . $topic . '.' . $_REQUEST['start']);
 }
 
-function prepareLikeContext($messages)
+function prepareLikeContext($messages, $type = 'post')
 {
 	global $context, $user_profile;
 
@@ -1790,11 +1790,11 @@ function prepareLikeContext($messages)
 		SELECT id_content, id_member
 		FROM {db_prefix}likes
 		WHERE id_content IN ({array_int:messages})
-			AND content_type = {string:post}
+			AND content_type = {string:type}
 		ORDER BY like_time',
 		array(
 			'messages' => $messages,
-			'post' => 'post',
+			'type' => $type,
 		)
 	);
 

@@ -25,7 +25,7 @@ function Like()
 		fatal_lang_error('no_access', false);
 
 	// We might be doing a topic.
-	if (empty($topic) || empty($_REQUEST['msg']) || (int) $_REQUEST['msg'] == 0)
+	if (empty($_REQUEST['msg']) || (int) $_REQUEST['msg'] == 0)
 	{
 		// If it isn't a topic, check the external handler, just in case. They'll have to be checking $_REQUEST themselves, and performing their own session check.
 		$result = call_hook('like_handler', array(&$changes));
@@ -40,28 +40,68 @@ function Like()
 		checkSession('get');
 
 		$id_content = (int) $_REQUEST['msg'];
-		$content_type = 'post';
-
-		// Validate this message is in this topic.
-		$request = wesql::query('
-			SELECT id_topic, id_member
-			FROM {db_prefix}messages
-			WHERE id_msg = {int:msg}',
-			array(
-				'msg' => $id_content,
-			)
-		);
-		$in_topic = false;
-		if (wesql::num_rows($request) != 0)
+		if (isset($_GET['thought']))
 		{
-			list ($id_topic, $id_author) = wesql::fetch_row($request);
-			$in_topic = $id_topic == $topic;
-		}
-		wesql::free_result($request);
-		if (!$in_topic || (empty($settings['likes_own_posts']) && $id_author == we::$id))
-			fatal_lang_error('not_a_topic', false);
+			$content_type = 'think';
 
-		$context['redirect_from_like'] = 'topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'];
+			$request = wesql::query('
+				SELECT
+					h.id_thought, h.id_member
+				FROM {db_prefix}thoughts AS h
+				WHERE h.id_thought = {int:tid}
+					AND (
+						h.id_member = {int:me}
+						OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
+						OR h.privacy = {int:members}
+						OR FIND_IN_SET(' . implode(', h.privacy)
+						OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)') . '
+					)',
+				array(
+					'tid' => $id_content,
+					'me' => we::$id,
+					'everyone' => -3,
+					'members' => 0,
+					'per_page' => 10,
+				)
+			);
+
+			$valid = false;
+			if (wesql::num_rows($request) != 0)
+			{
+				list ($id_topic, $id_author) = wesql::fetch_row($request);
+				$valid = true;
+			}
+			wesql::free_result($request);
+			if (!$valid || (empty($settings['likes_own_posts']) && $id_author == we::$id))
+				fatal_lang_error('no_access', false);
+
+			$context['redirect_from_like'] = '#thought_update' . $id_content;
+		}
+		else
+		{
+			$content_type = 'post';
+
+			// Validate this message is in this topic.
+			$request = wesql::query('
+				SELECT id_topic, id_member
+				FROM {db_prefix}messages
+				WHERE id_msg = {int:msg}',
+				array(
+					'msg' => $id_content,
+				)
+			);
+			$in_topic = false;
+			if (wesql::num_rows($request) != 0)
+			{
+				list ($id_topic, $id_author) = wesql::fetch_row($request);
+				$in_topic = $id_topic == $topic;
+			}
+			wesql::free_result($request);
+			if (!$in_topic || (empty($settings['likes_own_posts']) && $id_author == we::$id))
+				fatal_lang_error('not_a_topic', false);
+
+			$context['redirect_from_like'] = 'topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'];
+		}
 	}
 
 	if (empty($id_content) || empty($content_type))
