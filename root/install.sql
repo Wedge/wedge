@@ -68,47 +68,6 @@ CREATE TABLE {$db_prefix}attachments (
 ) ENGINE=MyISAM;
 
 #
-# Table structure for table `ban_groups`
-#
-
-CREATE TABLE {$db_prefix}ban_groups (
-  id_ban_group smallint(5) NOT NULL auto_increment,
-  name varchar(20) NOT NULL default '',
-  ban_time int(10) unsigned NOT NULL default 0,
-  expire_time int(10) unsigned,
-  cannot_access tinyint(3) unsigned NOT NULL default 0,
-  cannot_register tinyint(3) unsigned NOT NULL default 0,
-  cannot_post tinyint(3) unsigned NOT NULL default 0,
-  cannot_login tinyint(3) unsigned NOT NULL default 0,
-  reason varchar(255) NOT NULL default '',
-  notes text NOT NULL,
-  PRIMARY KEY (id_ban_group)
-) ENGINE=MyISAM;
-
-#
-# Table structure for table `ban_items`
-#
-
-CREATE TABLE {$db_prefix}ban_items (
-  id_ban mediumint(8) unsigned NOT NULL auto_increment,
-  id_ban_group smallint(5) NOT NULL default 0,
-  ip_low1 tinyint(3) unsigned NOT NULL default 0,
-  ip_high1 tinyint(3) unsigned NOT NULL default 0,
-  ip_low2 tinyint(3) unsigned NOT NULL default 0,
-  ip_high2 tinyint(3) unsigned NOT NULL default 0,
-  ip_low3 tinyint(3) unsigned NOT NULL default 0,
-  ip_high3 tinyint(3) unsigned NOT NULL default 0,
-  ip_low4 tinyint(3) unsigned NOT NULL default 0,
-  ip_high4 tinyint(3) unsigned NOT NULL default 0,
-  hostname varchar(255) NOT NULL default '',
-  email_address varchar(255) NOT NULL default '',
-  id_member mediumint(8) unsigned NOT NULL default 0,
-  hits mediumint(8) unsigned NOT NULL default 0,
-  PRIMARY KEY (id_ban),
-  KEY id_ban_group (id_ban_group)
-) ENGINE=MyISAM;
-
-#
 # Table structure for table `bans`
 #
 

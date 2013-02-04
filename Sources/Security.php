@@ -230,11 +230,17 @@ function is_not_banned($forceCheck = false)
 			'email' => we::$user['email'],
 		);
 
-		$ban_query = array();
-		$ban_query_vars = array('current_time' => time());
 		$flag_is_activated = false;
 
 		$ban_list = array();
+		// Check the user id first of all.
+		if (we::$id)
+		{
+			$member_check = check_banned_member(we::$id);
+			if (!empty($member_check))
+				$ban_list = array_merge($ban_list, $member_check);
+		}
+
 		// Is their email address banned?
 		if (strlen(we::$user['email']) != 0)
 		{
@@ -267,13 +273,6 @@ function is_not_banned($forceCheck = false)
 			$_SESSION['ban']['cannot_access']['ids'] = array_unique($_SESSION['ban']['cannot_access']['ids']);
 			if (!isset($_SESSION['ban']['cannot_access']['reason']))
 				$_SESSION['ban']['cannot_access']['reason'] = '';
-		}
-
-		// How about this user?
-		if (!we::$is_guest && !empty(we::$id))
-		{
-			$ban_query[] = 'bi.id_member = {int:id_member}';
-			$ban_query_vars['id_member'] = we::$id;
 		}
 
 		// If for whatever reason the is_activated flag seems wrong, do a little work to clear it up. But we're not going to go mad and re-evaluate all the bans - just the ones for this person.
@@ -530,7 +529,7 @@ function soft_ban($feature)
 function check_banned_member($id_member)
 {
 	// Guests will never trip this.
-	if (we::$is_guest)
+	if (empty($id_member))
 		return array();
 
 	$return_value = array();
@@ -564,7 +563,7 @@ function check_banned_member($id_member)
 	// And so it begins.
 	foreach ($bans as $ban)
 	{
-		if (we::$id == $ban['member'])
+		if ($id_member == $ban['member'])
 			$return_value[] = array(
 				'id' => $ban['id'],
 				'msg' => $ban['message'],

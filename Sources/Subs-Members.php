@@ -403,8 +403,9 @@ function deleteMembers($users, $check_not_admin = false)
 
 	// If you don't exist we can't ban you.
 	wesql::query('
-		DELETE FROM {db_prefix}ban_items
-		WHERE id_member IN ({array_int:users})',
+		DELETE FROM {db_prefix}bans
+		WHERE ban_type = {string:id_member}
+			AND ban_content IN ({array_string:users})',
 		array(
 			'users' => $users,
 		)

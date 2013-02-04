@@ -217,8 +217,7 @@ function template_post_attachments()
 	var oAttach = new wedgeAttachSelect({
 		file_item: "attachment1",
 		file_container: "attachments_container",
-		max: ' . $context['max_allowed_attachments'] . ',
-		message_txt_delete: ' . JavaScriptEscape($txt['remove']));
+		max: ' . $context['max_allowed_attachments']);
 
 		// This is purely setting it up to be displayed in a JSON friendly fashion without having a JSON function handy.
 		// Included here since it seemed almost more related to display than logic.

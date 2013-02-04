@@ -233,7 +233,7 @@ function wedgeAttachSelect(opt)
 			$('<div></div>')
 				.html('&nbsp; &nbsp;' + element.value)
 				.prepend(
-					$('<input type="button" class="delete" style="margin-top: 4px" value="' + opt.message_txt_delete + '" />').click(function () {
+					$('<input type="button" class="delete" style="margin-top: 4px" value="' + $txt['remove'] + '" />').click(function () {
 						// Remove element from form
 						$(this.parentNode.el).remove();
 						$(this.parentNode).slideUp(500, function() {

@@ -169,77 +169,53 @@ function summary($memID)
 		// Can they edit the ban?
 		$context['can_edit_ban'] = allowedTo('manage_bans');
 
-		$ban_query = array();
-		$ban_query_vars = array(
-			'time' => time(),
-		);
-		$ban_query[] = 'id_member = ' . $context['member']['id'];
+		$groups = array($user_profile[$memID]['id_group']);
+		if (!empty($user_profile[$memID]['additional_groups']))
+			$groups += explode(',', $user_profile[$memID]['additional_groups']);
 
-		// Valid IP?
-		if (preg_match('/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/', $memberContext[$memID]['ip'], $ip_parts) == 1)
+		// Administrators are never banned as such.
+		if (!in_array(1, $groups))
 		{
-			$ban_query[] = '((' . $ip_parts[1] . ' BETWEEN bi.ip_low1 AND bi.ip_high1)
-						AND (' . $ip_parts[2] . ' BETWEEN bi.ip_low2 AND bi.ip_high2)
-						AND (' . $ip_parts[3] . ' BETWEEN bi.ip_low3 AND bi.ip_high3)
-						AND (' . $ip_parts[4] . ' BETWEEN bi.ip_low4 AND bi.ip_high4))';
+			$ban_ids = array();
 
-			// Do we have a hostname already?
-			if (!empty($context['member']['hostname']))
+			// User ban
+			$member_bans = check_banned_member($memID);
+			if (!empty($member_bans))
+				foreach ($member_bans as $ban)
+					$ban_ids[] = $ban['id'];
+
+			// Emails...
+			$email_bans = isBannedEmail($context['member']['email'], '', true);
+			if (!empty($email_bans))
+				foreach ($email_bans as $ban)
+					$ban_ids[] = $ban['id'];
+
+			// IP and hostname bans...
+			if (!empty($memberContext[$memID]['ip']))
 			{
-				$ban_query[] = '({string:hostname} LIKE hostname)';
-				$ban_query_vars['hostname'] = $context['member']['hostname'];
+				$ip = expand_ip($memberContext[$memID]['ip']);
+				$ip_hostname_bans = check_banned_ip($ip);
+				if (!empty($ip_hostname_bans))
+					foreach ($ip_hostname_bans as $ban)
+						$ban_ids[] = $ban['id'];
+			}
+
+			// Now get all the rest of the details.
+			if (!empty($ban_ids))
+			{
+				$request = wesql::query('
+					SELECT id_ban, hardness, ban_type, ban_content, ban_reason
+					FROM {db_prefix}bans
+					WHERE id_ban IN ({array_int:bans})',
+					array(
+						'bans' => $ban_ids,
+					)
+				);
+				while ($row = wesql::fetch_assoc($request))
+					$context['member']['bans'][$row['id_ban']] = $row;
+				wesql::free_result($request);
 			}
 		}
-		// Use '255.255.255.255' for 'unknown' - it's not valid anyway.
-		elseif ($memberContext[$memID]['ip'] == 'unknown')
-			$ban_query[] = '(bi.ip_low1 = 255 AND bi.ip_high1 = 255
-						AND bi.ip_low2 = 255 AND bi.ip_high2 = 255
-						AND bi.ip_low3 = 255 AND bi.ip_high3 = 255
-						AND bi.ip_low4 = 255 AND bi.ip_high4 = 255)';
-
-		// Check their email as well...
-		if (strlen($context['member']['email']) != 0)
-		{
-			$ban_query[] = '({string:email} LIKE bi.email_address)';
-			$ban_query_vars['email'] = $context['member']['email'];
-		}
-
-		// So... are they banned? Dying to know!
-		$request = wesql::query('
-			SELECT bg.id_ban_group, bg.name, bg.cannot_access, bg.cannot_post, bg.cannot_register,
-				bg.cannot_login, bg.reason
-			FROM {db_prefix}ban_items AS bi
-				INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group AND (bg.expire_time IS NULL OR bg.expire_time > {int:time}))
-			WHERE (' . implode(' OR ', $ban_query) . ')',
-			$ban_query_vars
-		);
-		while ($row = wesql::fetch_assoc($request))
-		{
-			// Work out what restrictions we actually have.
-			$ban_restrictions = array();
-			foreach (array('access', 'register', 'login', 'post') as $type)
-				if ($row['cannot_' . $type])
-					$ban_restrictions[] = $txt['ban_type_' . $type];
-
-			// No actual ban in place?
-			if (empty($ban_restrictions))
-				continue;
-
-			// Prepare the link for context.
-			$ban_explanation = sprintf($txt['user_cannot_due_to'], implode(', ', $ban_restrictions), '<a href="' . $scripturl . '?action=admin;area=ban;sa=edit;bg=' . $row['id_ban_group'] . '">' . $row['name'] . '</a>');
-
-			$context['member']['bans'][$row['id_ban_group']] = array(
-				'reason' => empty($row['reason']) ? '' : '<br><br><strong>' . $txt['ban_reason'] . ':</strong> ' . $row['reason'],
-				'cannot' => array(
-					'access' => !empty($row['cannot_access']),
-					'register' => !empty($row['cannot_register']),
-					'post' => !empty($row['cannot_post']),
-					'login' => !empty($row['cannot_login']),
-				),
-				'explanation' => $ban_explanation,
-			);
-		}
-		wesql::free_result($request);
 	}
 
 	loadCustomFields($memID);

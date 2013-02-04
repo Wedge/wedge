@@ -422,61 +422,18 @@ function ComposeMailing()
 	// We need a couple strings from the email template file and sendtopic_send from ManageTopics.
 	loadLanguage(array('EmailTemplates', 'ManageTopics'));
 
-	// Get a list of all full banned users.  Use their Username and email to find them.  Only get the ones that can't login to turn off notification.
+	// Get a list of all full banned users. Only get the ones that can't login to turn off notification.
 	$request = wesql::query('
-		SELECT DISTINCT mem.id_member
-		FROM {db_prefix}ban_groups AS bg
-			INNER JOIN {db_prefix}ban_items AS bi ON (bg.id_ban_group = bi.id_ban_group)
-			INNER JOIN {db_prefix}members AS mem ON (bi.id_member = mem.id_member)
-		WHERE (bg.cannot_access = {int:cannot_access} OR bg.cannot_login = {int:cannot_login})
-			AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time})',
+		SELECT mem.id_member
+		FROM {db_prefix}members
+		WHERE is_activated >= {int:full_ban}',
 		array(
-			'cannot_access' => 1,
-			'cannot_login' => 1,
-			'current_time' => time(),
+			'full_ban' => 20,
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
 		$context['recipients']['exclude_members'][] = $row['id_member'];
 	wesql::free_result($request);
-
-	$request = wesql::query('
-		SELECT DISTINCT bi.email_address
-		FROM {db_prefix}ban_items AS bi
-			INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
-		WHERE (bg.cannot_access = {int:cannot_access} OR bg.cannot_login = {int:cannot_login})
-			AND (COALESCE(bg.expire_time, 1=1) OR bg.expire_time > {int:current_time})
-			AND bi.email_address != {string:blank_string}',
-		array(
-			'cannot_access' => 1,
-			'cannot_login' => 1,
-			'current_time' => time(),
-			'blank_string' => '',
-		)
-	);
-	$condition_array = array();
-	$condition_array_params = array();
-	$count = 0;
-	while ($row = wesql::fetch_assoc($request))
-	{
-		$condition_array[] = '{string:email_' . $count . '}';
-		$condition_array_params['email_' . $count++] = $row['email_address'];
-	}
-	wesql::free_result($request);
-
-	if (!empty($condition_array))
-	{
-		$request = wesql::query('
-			SELECT id_member
-			FROM {db_prefix}members
-			WHERE email_address IN(' . implode(', ', $condition_array) . ')',
-			$condition_array_params
-		);
-		while ($row = wesql::fetch_assoc($request))
-			$context['recipients']['exclude_members'][] = $row['id_member'];
-
-		wesql::free_result($request);
-	}
 
 	// Did they select moderators - if so add them as specific members...
 	if ((!empty($context['recipients']['groups']) && in_array(3, $context['recipients']['groups'])) || (!empty($context['recipients']['exclude_groups']) && in_array(3, $context['recipients']['exclude_groups'])))

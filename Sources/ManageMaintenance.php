@@ -727,8 +727,6 @@ function ConvertEntities()
 
 	// A list of tables ready for conversion.
 	$tables = array(
-		'ban_groups',
-		'ban_items',
 		'boards',
 		'categories',
 		'log_errors',

@@ -221,7 +221,7 @@ function template_summary()
 
 			foreach ($context['member']['bans'] as $ban)
 				echo '
-					<dfn>', $ban['explanation'], '</dfn>';
+					<dfn>', $ban['ban_reason'], ' (<a href="<URL>?action=admin;area=ban;sa=edit;ban=', $ban['id_ban'], '">', $txt['modify'], '</a>)</dfn>';
 
 			echo '
 				</dt>';
