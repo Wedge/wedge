@@ -1726,7 +1726,7 @@ function weInitJS()
 		$remote = array(
 			'google' =>		$protocol . 'ajax.googleapis.com/ajax/libs/jquery/' . $version . '/jquery.min.js',
 			'microsoft' =>	$protocol . 'ajax.aspnetcdn.com/ajax/jquery/jquery-' . $version . '.min.js',
-			'jquery' =>		$protocol . 'code.jquery.com/jquery-' . $version . '.min.js',
+			'jquery' =>		'http://code.jquery.com/jquery-' . $version . '.min.js', // Doesn't support HTTPS.
 		);
 		$context['remote_js_files'] = array($remote[$origin]);
 		$context['main_js_files'] = array(

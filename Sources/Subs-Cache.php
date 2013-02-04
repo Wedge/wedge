@@ -253,7 +253,7 @@ function add_jquery_ui()
 		$remote = array(
 			'google' =>		$protocol . 'ajax.googleapis.com/ajax/libs/jqueryui/' . $version . '/jquery-ui.min.js',
 			'microsoft' =>	$protocol . 'ajax.aspnetcdn.com/ajax/jquery.ui/' . $version . '/jquery-ui.min.js',
-			'jquery' =>		$protocol . 'code.jquery.com/ui/' . $version . '/jquery-ui.min.js',
+			'jquery' =>		'http://code.jquery.com/ui/' . $version . '/jquery-ui.min.js', // Doesn't support HTTPS.
 		);
 		add_js_file($remote[$settings['jquery_origin']], true);
 	}
