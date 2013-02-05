@@ -19,6 +19,7 @@ if (isset($sourcedir))
 	require_once($sourcedir . '/Subs-BBC.php');
 	require_once($sourcedir . '/Subs-Cache.php');
 	require_once($sourcedir . '/Subs-Template.php');
+	require_once($sourcedir . '/Class-Skeleton.php');
 }
 
 /**

@@ -1202,13 +1202,14 @@ function wedge_get_skin_options()
 	// The deepest skin gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
+		// Did we ask to move blocks/layers around in the skeleton?
 		if (strpos($set, '<move') !== false && preg_match_all('~<move(?:\s+[a-z]+="[^"]+")*\s*/>~', $set, $matches, PREG_SET_ORDER))
 		{
 			foreach ($matches as $match)
 			{
 				preg_match_all('~\s([a-z]+)="([^"]+)"~', $match[0], $v);
 				if (($block = array_search('block', $v[1], true)) !== false && ($where = array_search('where', $v[1], true)) !== false && ($to = array_search('to', $v[1], true)) !== false)
-					$skeleton_moves[] = array($v[2][$block], $v[2][$to], $v[2][$where]);
+					wetem::move($v[2][$block], $v[2][$to], $v[2][$where]);
 			}
 		}
 
@@ -1280,10 +1281,6 @@ function wedge_get_skin_options()
 		if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
 			$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
 	}
-
-	if (isset($skeleton_moves))
-		foreach ($skeleton_moves as $move)
-			wetem::move($move[0], $move[1], $move[2]);
 }
 
 /**
