@@ -1211,8 +1211,7 @@ table
 .bbc_tt
 	font-family: $mono_font
 
-.bbc_pre
-	display: inline
+.bbc_pre extends .inline-block
 	white-space: pre
 	margin, padding: 0
 

@@ -311,7 +311,7 @@ img.new_posts
 	width: 15px
 	overflow: hidden
 	margin: -1px -4px 0 0
-	div extends .inline-block
+	i extends .inline-block
 		float: left
 		margin: 0 1px 1px 0
 		width, height: 5px

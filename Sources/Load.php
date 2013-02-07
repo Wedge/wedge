@@ -1504,7 +1504,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = '';
 	$context['skin_options'] = array();
-	wetem::getInstance();
+	wetem::createMainSkeleton();
 
 	// If output is fully XML, or the print-friendly version, or the spellchecking page,
 	// skip the index template entirely. Don't use macros in their templates!
@@ -1693,7 +1693,7 @@ function weInitJS()
 {
 	global $settings, $context;
 
-	$version = we::$browser['is_ie8down'] ? '1.9.0' : '2.0.0b1';
+	$version = we::is('ie[-8],firefox[-3.6]') ? '1.9.0' : '2.0.0b1';
 	$origin = empty($settings['jquery_origin']) ? 'local' : $settings['jquery_origin'];
 
 	// !! Temp code or permanent? We won't always need to test for jQuery's beta status...

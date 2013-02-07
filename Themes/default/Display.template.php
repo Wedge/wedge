@@ -504,27 +504,27 @@ function template_user_status(&$member)
 		return;
 
 	echo '
-							<div class="pixelicons">';
+							<span class="pixelicons">';
 
 	// Is this user online or not?
 	echo '
-								<div', $member['online']['is_online'] ? ' class="online" title="' . $txt['online'] : ' title="' . $txt['offline'], '"></div>';
+								<i', $member['online']['is_online'] ? ' class="online" title="' . $txt['online'] : ' title="' . $txt['offline'], '"></i>';
 
 	// Have they specified a website?
 	echo '
-								<div', $member['website']['url'] != '' && !isset($context['disabled_fields']['website']) ? ' class="website"' : '', ' title="', $txt['website'], '"></div>';
+								<i', $member['website']['url'] != '' && !isset($context['disabled_fields']['website']) ? ' class="website"' : '', ' title="', $txt['website'], '"></i>';
 
 	// Indicate their gender, if filled in and allowed.
 	$gender = empty($theme['show_gender']) || isset($context['disabled_fields']['gender']) ? '' : (empty($member['gender']) ? '' : $member['gender']);
 	echo '
-								<div', $gender ? ' class="' . $gender . '" title="' . $txt[$gender] . '"' : '', '></div>';
+								<i', $gender ? ' class="' . $gender . '" title="' . $txt[$gender] . '"' : '', '></i>';
 
 	// Are they a contact of mine..?
 	echo '
-								<div', $member['is_buddy'] ? ' class="contact"' : '', ' title="' . $txt['is_' . ($member['is_buddy'] ? '' : 'not_') . 'buddy'] . '"></div>';
+								<i', $member['is_buddy'] ? ' class="contact"' : '', ' title="' . $txt['is_' . ($member['is_buddy'] ? '' : 'not_') . 'buddy'] . '"></i>';
 
 	echo '
-							</div>';
+							</span>';
 }
 
 function template_show_likes(&$message)

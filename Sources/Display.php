@@ -1431,7 +1431,7 @@ function prepareDisplayContext($reset = false)
 			$menu[] = ($context['can_moderate_forum'] ? 'tk' : 'ip') . '/' . $output['member']['ip'];
 			if (!$context['can_moderate_forum'])
 				add_js_unique('
-	$(".actions").on("click, ".ip_button", function (e) { return reqWin(this); });');
+	$("h4").on("click", ".ip_button", function (e) { return reqWin(this); });');
 		}
 
 		// If we can't do anything, it's not even worth recording the user's website...

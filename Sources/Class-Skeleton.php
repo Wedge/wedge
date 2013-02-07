@@ -16,166 +16,103 @@ if (!defined('WEDGE'))
 
 /*************
  *
- * This is a helper class that holds a template layer or block.
+ * This is the skeleton object.
  *
- * It is provided to allow plugins to use method chaining on a single item. If you don't need
- * to chain calls, then use the static methods in the wetem object.
+ * It is used to manage skeleton arrays that hold
+ * all of the layers and blocks in a template or mini-template.
  *
- * You can access an item by using wetem::get('item'), and then you would apply calls to it.
- * For instance, if you wanted to get block sidebar_dummy's parent, rename it to sidebar2
- * and insert a new layer into it, you may want to do it this way:
+ * Skeletons themselves can't be accessed from outside the object.
+ * Thus, you'll have to rely on the public functions to manipulate them.
  *
- * wetem::get('sidebar_dummy')->parent()->rename('sidebar2')->inner('inside_sidebar');
+ * $skeleton->load()	- load a block ('block_name'), layer (array('layer_name' => array())) or array of these *into* a given layer
+ * $skeleton->replace()	- same, but deletes existing sub-layers in the process
+ * $skeleton->add()		- same, but adds data to given layer
+ * $skeleton->first()	- same, but prepends data to given layer
+ * $skeleton->before()	- same, but inserts data *before* given layer or block
+ * $skeleton->after()	- same, but inserts data *after* given layer or block
+ * $skeleton->move()	- moves an existing block or layer to another position in the skeleton
  *
- *************/
-
-final class wetemItem
-{
-	private $target;
-
-	function __construct($to = '')
-	{
-		if (!$to)
-			$to = 'default';
-		$this->target = $to;
-	}
-
-	// Remove specified layer/block from the skeleton. (Non-chainable)
-	function remove()
-	{
-		wetem::remove($this->target);
-	}
-
-	// The following are chainable aliases to the equivalent wetem:: functions.
-	function load($items)		{ wetem::load($this->target, $items); return $this; }
-	function replace($items)	{ wetem::replace($this->target, $items); return $this; }
-	function add($items)		{ wetem::add($this->target, $items); return $this; }
-	function first($items)		{ wetem::first($this->target, $items); return $this; }
-	function before($items)		{ wetem::before($this->target, $items); return $this; }
-	function after($items)		{ wetem::after($this->target, $items); return $this; }
-	function move($layer, $p)	{ wetem::move($this->target, $layer, $p); return $this; }
-	function rename($layer)		{ wetem::rename($this->target, $layer); return $this; }
-	function outer($layer)		{ wetem::outer($this->target, $layer); return $this; }
-	function inner($layer)		{ wetem::inner($this->target, $layer); return $this; }
-	function parent()			{ return wetem::get(wetem::parent($this->target)); }
-}
-
-/*************
+ * $skeleton->layer()	- various layer creation functions (see documentation for the function)
+ * $skeleton->rename()	- rename an existing layer
+ * $skeleton->outer()	- wrap a new outer layer around the given layer
+ * $skeleton->inner()	- inject a new inner layer directly below the given layer
+ * $skeleton->remove()	- remove a block or layer from the skeleton
  *
- * This is the template object.
+ * $skeleton->hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
  *
- * It is used to manage the skeleton array that holds
- * all of the layers and blocks in the template.
- *
- * The skeleton itself can't be accessed from outside the object.
- * Thus, you'll have to rely on the public functions to manipulate it.
- *
- * wetem::load()	- load a block ('block_name'), layer (array('layer_name' => array())) or array of these *into* a given layer
- * wetem::replace()	- same, but deletes existing sub-layers in the process
- * wetem::add()		- same, but adds data to given layer
- * wetem::first()	- same, but prepends data to given layer
- * wetem::before()	- same, but inserts data *before* given layer or block
- * wetem::after()	- same, but inserts data *after* given layer or block
- * wetem::move()	- moves an existing block or layer to another position in the skeleton
- *
- * wetem::layer()	- various layer creation functions (see documentation for the function)
- * wetem::rename()	- rename an existing layer
- * wetem::outer()	- wrap a new outer layer around the given layer
- * wetem::inner()	- inject a new inner layer directly below the given layer
- * wetem::remove()	- remove a block or layer from the skeleton
- *
- * wetem::hide()	- erase the skeleton and replace it with a simple structure (template-less pages)
- *
- * wetem::parent()	- return the name of the block/layer's parent layer
- * wetem::get()		- see wetemItem description. If you only have one action to apply, avoid using it.
- * wetem::has()		- does the skeleton have this block or layer in it?
- *					  - ::has_block($block) forces a test for blocks only
- *					  - ::has_layer($layer) forces a test for layers only
+ * $skeleton->parent()	- return the name of the block/layer's parent layer
+ * $skeleton->get()		- see weSkeletonItem description. If you only have one action to apply, avoid using it.
+ * $skeleton->has()		- does the skeleton have this block or layer in it?
+ *						- ->has_block($block) forces a test for blocks only
+ *						- ->has_layer($layer) forces a test for layers only
  *
  *************/
 
-final class wetem
+class weSkeleton
 {
-	private static $instance;				// container for self
-	private static $skeleton = array();		// store the full skeleton array
-	private static $layers = array();		// store shortcuts to individual layers
-	private static $opt = array();			// options for individual layers/block
-	private static $obj = array();			// store shortcuts to individual layer/block objects
-	private static $hidden = false;			// did we call hide()?
-
-	// What kind of class are you, anyway? One of a kind!
-	private function __clone()
-	{
-		return false;
-	}
-
-	// Bootstrap's bootstraps
-	static function getInstance()
-	{
-		// Squeletto ergo sum
-		if (self::$instance == null)
-			self::$instance = new self();
-
-		return self::$instance;
-	}
+	private $skeleton = array();	// store the full skeleton array
+	private $layers = array();		// store shortcuts to individual layers
+	private $opt = array();			// options for individual layers/block
+	private $obj = array();			// store shortcuts to individual layer/block objects
+	private $hidden = false;		// did we call hide()?
 
 	// Does the skeleton hold a specific layer or block?
-	static function has($item)
+	function has($item)
 	{
-		return (bool) self::parent($item);
+		return (bool) $this->parent($item);
 	}
 
 	// Does the skeleton hold a specific block?
-	static function has_block($block)
+	function has_block($block)
 	{
-		return !isset(self::$layers[$block]) && self::parent($block) !== false;
+		return !isset($this->layers[$block]) && $this->parent($block) !== false;
 	}
 
 	// Does the skeleton hold a specific layer?
-	static function has_layer($layer)
+	function has_layer($layer)
 	{
-		return isset(self::$layers[$layer]);
+		return isset($this->layers[$layer]);
 	}
 
 	/**
 	 * Build the multi-dimensional layout skeleton array from an single-dimension array of tags.
 	 */
-	static function build(&$arr)
+	function build(&$arr)
 	{
 		// Unset any pending layer objects.
-		if (!empty(self::$obj))
-			foreach (self::$obj as &$layer)
+		if (!empty($this->obj))
+			foreach ($this->obj as &$layer)
 				$layer = null;
 
-		self::parse($arr, self::$skeleton);
+		$this->parse($arr, $this->skeleton);
 	}
 
 	/**
 	 * This is where we render the HTML page!
 	 */
-	static function render()
+	function render()
 	{
-		if (empty(self::$layers['default']))
+		if (empty($this->layers['default']))
 			fatal_lang_error('default_layer_missing');
 
-		self::render_recursive(reset(self::$skeleton), key(self::$skeleton));
+		$this->render_recursive(reset($this->skeleton), key($this->skeleton));
 	}
 
 	/**
-	 * Returns a wetemItem object representing the first layer or block we need.
+	 * Returns a weSkeletonItem object representing the first layer or block we need.
 	 *
 	 * @param string $targets A layer or block, or array of layers or blocks to look for.
 	 */
-	static function get($targets = '')
+	function get($targets = '')
 	{
-		$to = self::find($targets);
+		$to = $this->find($targets);
 		// Not a valid block/layer? Return the default layer.
 		// @todo: add a proper error message for this... Like, 'Not a valid layer or block!'
 		if ($to === false)
 			$to = 'default';
-		if (!isset(self::$obj[$to]))
-			self::$obj[$to] = new wetemItem($to);
-		return self::$obj[$to];
+		if (!isset($this->obj[$to]))
+			$this->obj[$to] = new weSkeletonItem($this, $to);
+		return $this->obj[$to];
 	}
 
 	/***********************************************************************************
@@ -185,15 +122,15 @@ final class wetem
 	 ***********************************************************************************/
 
 	// Add contents before the specified layer or block.
-	static function before($target, $contents = '')
+	function before($target, $contents = '')
 	{
-		return wetem::op($contents, $target, 'before');
+		return $this->op($contents, $target, 'before');
 	}
 
 	// Add contents after the specified layer or block.
-	static function after($target, $contents = '')
+	function after($target, $contents = '')
 	{
-		return wetem::op($contents, $target, 'after');
+		return $this->op($contents, $target, 'after');
 	}
 
 	/**
@@ -203,15 +140,15 @@ final class wetem
 	 *
 	 * @param string $item The name of the block or layer to remove.
 	 */
-	static function remove($target)
+	function remove($target)
 	{
-		$layer = self::parent($target);
+		$layer = $this->parent($target);
 		// If it's a valid block, just remove it.
-		if ($layer && !is_array(self::$layers[$layer][$target]))
-			unset(self::$layers[$layer][$target]);
+		if ($layer && !is_array($this->layers[$layer][$target]))
+			unset($this->layers[$layer][$target]);
 		// Otherwise it's a layer, make sure it's removable.
-		elseif (isset(self::$layers[$layer]))
-			self::remove_layer($target);
+		elseif (isset($this->layers[$layer]))
+			$this->remove_layer($target);
 	}
 
 	/**
@@ -219,27 +156,27 @@ final class wetem
 	 *
 	 * @param string $item The name of the block or layer to move.
 	 * @param string $target The target block or layer.
-	 * @param string $where The new position relative to the target: before, after, anything accepted by wetem::op.
+	 * @param string $where The new position relative to the target: before, after, anything accepted by $this->op.
 	 */
-	static function move($item, $target, $where)
+	function move($item, $target, $where)
 	{
-		if (!self::has($item) || !self::has($target))
+		if (!$this->has($item) || !$this->has($target))
 			return false;
 
-		if (isset(self::$layers[$item]))
+		if (isset($this->layers[$item]))
 		{
-			$to_move = self::$layers[$item];
-			unset(self::$layers[$item]);
+			$to_move = $this->layers[$item];
+			unset($this->layers[$item]);
 		}
 		else
 		{
-			$parent = self::parent($item);
+			$parent = $this->parent($item);
 			if (!$parent)
 				return false;
-			$to_move = self::$layers[$parent][$item];
-			unset(self::$layers[$parent][$item]);
+			$to_move = $this->layers[$parent][$item];
+			unset($this->layers[$parent][$item]);
 		}
-		self::op(array($item => $to_move), $target, $where, true);
+		$this->op(array($item => $to_move), $target, $where, true);
 	}
 
 	/**
@@ -248,9 +185,9 @@ final class wetem
 	 * @param string $child The name of the block or layer. Really.
 	 * @return mixed Returns either the name of the parent layer, or FALSE if not found.
 	 */
-	static function parent($child)
+	function parent($child)
 	{
-		foreach (self::$layers as $id => &$layer)
+		foreach ($this->layers as $id => &$layer)
 			if (isset($layer[$child]))
 				return $id;
 
@@ -264,59 +201,59 @@ final class wetem
 	 *************************************************************************/
 
 	// Replace specified layer's contents with our new contents. Leave its existing layers alone.
-	static function load($target, $contents = '')
+	function load($target, $contents = '')
 	{
-		return wetem::op($contents, $target, 'load');
+		return $this->op($contents, $target, 'load');
 	}
 
 	// Add contents inside specified layer, at the end. (jQuery equivalent: .append())
-	static function add($target, $contents = '')
+	function add($target, $contents = '')
 	{
-		return wetem::op($contents, $target, 'add');
+		return $this->op($contents, $target, 'add');
 	}
 
 	// Add contents inside specified layer, at the beginning. (jQuery equivalent: .prepend())
-	static function first($target, $contents = '')
+	function first($target, $contents = '')
 	{
-		return wetem::op($contents, $target, 'first');
+		return $this->op($contents, $target, 'first');
 	}
 
 	// Replace specified layer's contents with our new contents.
-	static function replace($target, $contents = '')
+	function replace($target, $contents = '')
 	{
-		return wetem::op($contents, $target, 'replace');
+		return $this->op($contents, $target, 'replace');
 	}
 
 	// Rename the current layer to $target.
-	static function rename($target, $new_name)
+	function rename($target, $new_name)
 	{
-		if (empty($target) || empty($new_name) || $target == 'default' || !isset(self::$layers[$target]))
+		if (empty($target) || empty($new_name) || $target == 'default' || !isset($this->layers[$target]))
 			return false;
-		$result = self::insert_layer($new_name, $target, 'rename');
-		$result &= self::remove_layer($target);
+		$result = $this->insert_layer($new_name, $target, 'rename');
+		$result &= $this->remove_layer($target);
 		return $result ? $new_name : false;
 	}
 
 	// Wrap a new layer around the current one. (Equivalent to jQuery's wrap)
 	// @todo: accept blocks, as we should be able to add layers around them.
-	static function outer($target, $new_layer = '')
+	function outer($target, $new_layer = '')
 	{
 		if (empty($new_layer))
 			list ($target, $new_layer) = array('default', $target);
-		if (!isset(self::$layers[$target]))
+		if (!isset($this->layers[$target]))
 			return false;
-		return self::insert_layer($new_layer, $target, 'outer');
+		return $this->insert_layer($new_layer, $target, 'outer');
 	}
 
 	// Wrap a new layer around the current one's contents. (Equivalent to jQuery's wrapInner)
-	static function inner($target, $new_layer = '')
+	function inner($target, $new_layer = '')
 	{
 		if (empty($new_layer))
 			list ($target, $new_layer) = array('default', $target);
-		if (!isset(self::$layers[$target]))
+		if (!isset($this->layers[$target]))
 			return false;
-		self::$layers[$target] = array($new_layer => self::$layers[$target]);
-		self::$layers[$new_layer] =& self::$layers[$target][$new_layer];
+		$this->layers[$target] = array($new_layer => $this->layers[$target]);
+		$this->layers[$new_layer] =& $this->layers[$target][$new_layer];
 		return $new_layer;
 	}
 
@@ -325,56 +262,56 @@ final class wetem
 	 *
 	 * @param array $layer The layers we want to keep, or 'html' for the main html/body layers. Leave empty to just keep the default layer.
 	 */
-	static function hide($layer = '')
+	function hide($layer = '')
 	{
 		global $context;
 
-		if (empty(self::$layers['default']))
-			self::$layers['default'] = array('main' => true);
+		if (empty($this->layers['default']))
+			$this->layers['default'] = array('main' => true);
 
 		// We only keep the default layer and its content. (e.g. we're inside an Ajax frame)
 		if (empty($layer))
-			self::$skeleton = array(
+			$this->skeleton = array(
 				'dummy' => array(
-					'default' => self::$layers['default']
+					'default' => $this->layers['default']
 				)
 			);
 		// Or we only keep the HTML headers, body definition and content (e.g. we're inside a popup window)
 		elseif ($layer === 'html')
-			self::$skeleton = array(
+			$this->skeleton = array(
 				'html' => array(
 					'body' => array(
-						'default' => self::$layers['default']
+						'default' => $this->layers['default']
 					)
 				)
 			);
 		// Or finally... Do we want to keep/add a specific layer, like 'print' maybe?
 		else
-			self::$skeleton = array(
+			$this->skeleton = array(
 				'dummy' => array(
 					$layer => array(
-						'default' => self::$layers['default']
+						'default' => $this->layers['default']
 					)
 				)
 			);
-		self::reindex();
+		$this->reindex();
 
 		// Give plugins/themes a simple way to know we're hiding it all.
-		$context['hide_chrome'] = self::$hidden = true;
+		$context['hide_chrome'] = $this->hidden = true;
 	}
 
 	/**
 	 * Add a layer dynamically.
 	 *
 	 * A layer is a special block that contains other blocks/layers instead of a dedicated template function.
-	 * These can also be done through the equivalent wetem:: functions, by specifying array('layer' => array()) as the contents.
+	 * These can also be done through the equivalent weSkeleton or wetem methods, by specifying array('layer' => array()) as the contents.
 	 *
 	 * @param string $layer The name of the layer to be called. e.g. 'layer' will attempt to load 'template_layer_before' and 'template_layer_after' functions.
 	 * @param string $target Which layer to add it relative to, e.g. 'body' (overall page, outside the wrapper divs), etc. Leave empty to wrap around the default layer (which doesn't accept any positioning, either.)
 	 * @param string $where Where should we add the layer? Check the comments inside the function for a fully documented list of positions.
 	 * @return mixed Returns false if a problem occurred, otherwise the name of the inserted layer.
 	 */
-	static function layer($layer, $target = '', $where = 'replace')
+	function layer($layer, $target = '', $where = 'replace')
 	{
 		/*
 			This is the full list of $where possibilities.
@@ -391,23 +328,23 @@ final class wetem
 			$target = 'default';
 
 		// Target layer doesn't exist..? Enter brooding mode.
-		if (!isset(self::$layers[$target]))
+		if (!isset($this->layers[$target]))
 			return false;
 
 		if ($where === 'before' || $where === 'after')
-			self::insert_layer($layer, $target, $where);
+			$this->insert_layer($layer, $target, $where);
 		elseif ($where === 'replace')
 		{
-			self::insert_layer($layer, $target, $where);
-			self::remove_layer($target);
+			$this->insert_layer($layer, $target, $where);
+			$this->remove_layer($target);
 		}
 		elseif ($where === 'first' || $where === 'add')
 		{
 			if ($where === 'first')
-				self::$layers[$target] = array_merge(array($layer => array()), self::$layers[$target]);
+				$this->layers[$target] = array_merge(array($layer => array()), $this->layers[$target]);
 			else
-				self::$layers[$target][$layer] = array();
-			self::$layers[$layer] =& self::$layers[$target][$layer];
+				$this->layers[$target][$layer] = array();
+			$this->layers[$layer] =& $this->layers[$target][$layer];
 		}
 		else
 			return false;
@@ -421,10 +358,10 @@ final class wetem
 	 **********************************************************************/
 
 	/**
-	 * Builds the skeleton array (self::$skeleton) and the layers array (self::$layers)
+	 * Builds the skeleton array ($this->skeleton) and the layers array ($this->layers)
 	 * based on the contents of $context['skeleton'].
 	 */
-	private static function parse(&$arr, &$dest, &$pos = 0, $name = '')
+	private function parse(&$arr, &$dest, &$pos = 0, $name = '')
 	{
 		for ($c = count($arr); $pos < $c;)
 		{
@@ -433,7 +370,7 @@ final class wetem
 			// Ending a layer?
 			if (!empty($tag[1]))
 			{
-				self::$layers[$name] =& $dest;
+				$this->layers[$name] =& $dest;
 				return;
 			}
 
@@ -441,7 +378,7 @@ final class wetem
 			if (empty($tag[4]))
 			{
 				$dest[$tag[2]] = array();
-				self::parse($arr, $dest[$tag[2]], $pos, $tag[2]);
+				$this->parse($arr, $dest[$tag[2]], $pos, $tag[2]);
 			}
 			// Then it's a block...
 			else
@@ -452,7 +389,7 @@ final class wetem
 			{
 				preg_match_all('~(\w+)="([^"]+)"?~', $tag[3], $options, PREG_SET_ORDER);
 				foreach ($options as $option)
-					self::$opt[$option[1]][$tag[2]] = $option[2];
+					$this->opt[$option[1]][$tag[2]] = $option[2];
 			}
 		}
 	}
@@ -461,33 +398,33 @@ final class wetem
 	 * Rebuilds $layers according to the current skeleton.
 	 * The skeleton builder doesn't call this because it does it automatically.
 	 */
-	private static function reindex()
+	private function reindex()
 	{
 		// Save $skeleton as raw data to ensure it doesn't get erased next.
-		$transit = unserialize(serialize(self::$skeleton));
-		self::$layers = array();
-		self::$skeleton = $transit;
+		$transit = unserialize(serialize($this->skeleton));
+		$this->layers = array();
+		$this->skeleton = $transit;
 
 		// Sadly, array_walk_recursive() won't trigger on child arrays... :(
-		self::reindex_recursive(self::$skeleton);
+		$this->reindex_recursive($this->skeleton);
 	}
 
-	private static function reindex_recursive(&$here)
+	private function reindex_recursive(&$here)
 	{
 		foreach ($here as $id => &$item)
 		{
 			if (is_array($item))
 			{
-				self::$layers[$id] =& $item;
-				self::reindex_recursive($item);
+				$this->layers[$id] =& $item;
+				$this->reindex_recursive($item);
 			}
 		}
 	}
 
-	private static function render_recursive(&$here, $key)
+	private function render_recursive(&$here, $key)
 	{
-		if (isset(self::$opt['indent'][$key]))
-			echo '<inden@zi=', $key, '=', self::$opt['indent'][$key], '>';
+		if (isset($this->opt['indent'][$key]))
+			echo '<inden@zi=', $key, '=', $this->opt['indent'][$key], '>';
 
 		// Show the _before part of the layer.
 		execBlock($key . '_before', 'ignore');
@@ -499,10 +436,10 @@ final class wetem
 		{
 			// If the item is an array, then it's a layer. Otherwise, it's a block.
 			if (is_array($temp))
-				self::render_recursive($temp, $id);
-			elseif (isset(self::$opt['indent'][$id]))
+				$this->render_recursive($temp, $id);
+			elseif (isset($this->opt['indent'][$id]))
 			{
-				echo '<inden@zi=', $id, '=', self::$opt['indent'][$id], '>';
+				echo '<inden@zi=', $id, '=', $this->opt['indent'][$id], '>';
 				execBlock($id);
 				echo '</inden@zi=', $id, '>';
 			}
@@ -513,11 +450,11 @@ final class wetem
 		// Show the _after part of the layer
 		execBlock($key . '_after', 'ignore');
 
-		if (isset(self::$opt['indent'][$key]))
+		if (isset($this->opt['indent'][$key]))
 			echo '</inden@zi=', $key, '>';
 
 		// !! We should probably move this directly to template_html_after() and forget the buffering thing...
-		if ($key === 'html' && !isset($_REQUEST['xml']) && !self::$hidden)
+		if ($key === 'html' && !isset($_REQUEST['xml']) && !$this->hidden)
 			db_debug_junk();
 	}
 
@@ -527,14 +464,14 @@ final class wetem
 	 * @param string $targets A layer or block, or array of layers or blocks to look for. Leave empty to use the default layer.
 	 * @param string $where The magic keyword. See definition for ::op().
 	 */
-	private static function find($targets = '', $where = '')
+	private function find($targets = '', $where = '')
 	{
 		// Find the first target layer that isn't wishful thinking.
 		foreach ((array) $targets as $layer)
 		{
 			if (empty($layer))
 				$layer = 'default';
-			if (isset(self::$layers[$layer]))
+			if (isset($this->layers[$layer]))
 			{
 				$to = $layer;
 				break;
@@ -550,7 +487,7 @@ final class wetem
 				return false;
 
 			// Or maybe we're looking for a block..?
-			$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator(self::$skeleton)));
+			$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($this->skeleton)));
 			foreach ((array) $targets as $block)
 			{
 				if (isset($all_blocks[$block]))
@@ -564,13 +501,13 @@ final class wetem
 		return $to;
 	}
 
-	private static function list_blocks($items)
+	private function list_blocks($items)
 	{
 		$blocks = array();
 		foreach ($items as $key => $val)
 		{
 			if (is_array($val))
-				$blocks[$key] = self::list_blocks($val);
+				$blocks[$key] = $this->list_blocks($val);
 			else
 				$blocks[$val] = true;
 		}
@@ -584,13 +521,13 @@ final class wetem
 	 * @param string $target Name of the parent layer to target.
 	 * @param string $where Determines where to position the source layer relative to the target.
 	 */
-	private static function insert_layer($source, $target = 'default', $where = 'outer')
+	private function insert_layer($source, $target = 'default', $where = 'outer')
 	{
-		$lay = self::parent($target);
+		$lay = $this->parent($target);
 		$lay = $lay ? $lay : 'default';
-		if (!isset(self::$layers[$lay]))
+		if (!isset($this->layers[$lay]))
 			return false;
-		$dest =& self::$layers[$lay];
+		$dest =& $this->layers[$lay];
 
 		$temp = array();
 		foreach ($dest as $key => &$value)
@@ -610,15 +547,15 @@ final class wetem
 		$dest = $temp;
 		// We need to reindex, in case the layer had child layers.
 		if ($where !== 'after' && $where !== 'before')
-			self::reindex();
+			$this->reindex();
 		return true;
 	}
 
 	// Helper function to remove a layer from the page.
-	private static function remove_layer($layer)
+	private function remove_layer($layer)
 	{
 		// Does the layer at least exist...?
-		if (!isset(self::$layers[$layer]) || $layer === 'default')
+		if (!isset($this->layers[$layer]) || $layer === 'default')
 			return false;
 
 		// Determine whether removing this layer would also remove the default layer. Which you may not.
@@ -627,7 +564,7 @@ final class wetem
 		while ($loop)
 		{
 			$loop = false;
-			foreach (self::$layers as $id => &$curlay)
+			foreach ($this->layers as $id => &$curlay)
 			{
 				if (isset($curlay[$current]))
 				{
@@ -641,20 +578,20 @@ final class wetem
 		}
 
 		// This isn't a direct parent of 'default', so we can safely remove it.
-		self::$skeleton = self::remove_item($layer);
-		self::reindex();
+		$this->skeleton = $this->remove_item($layer);
+		$this->reindex();
 		return true;
 	}
 
-	private static function remove_item($item, $from = array(), $level = 0)
+	private function remove_item($item, $from = array(), $level = 0)
 	{
 		if (empty($from))
-			$from = self::$skeleton;
+			$from = $this->skeleton;
 
 		$ret = array();
 		foreach ($from as $key => $val)
 			if ($key !== $item)
-				$ret[$key] = is_array($val) && !empty($val) ? self::remove_item($item, $val, $level + 1) : $val;
+				$ret[$key] = is_array($val) && !empty($val) ? $this->remove_item($item, $val, $level + 1) : $val;
 
 		return $ret;
 	}
@@ -664,10 +601,10 @@ final class wetem
 	 *
 	 * @param string $blocks The name of the blocks or layers to be added.
 	 * @param string $target Which layer to load this function in, e.g. 'default' (main contents), 'top' (above the main area), 'sidebar' (sidebar area), etc. If using 'before' or 'after', you may instead specify a block name.
-	 * @param string $where Where should we add the item? Check the comments inside the function for a fully documented list of positions. Non-default layers should use wetem::add() rather than wetem::load().
+	 * @param string $where Where should we add the item? Check the comments inside the function for a fully documented list of positions. Non-default layers should use wetem::add()/$skeleton->add() rather than load().
 	 * @param bool $force Only used when $blocks shouldn't be tempered with.
 	 */
-	private static function op($blocks, $target, $where, $force = false)
+	private function op($blocks, $target, $where, $force = false)
 	{
 		/*
 			This is the full list of $where possibilities.
@@ -689,9 +626,9 @@ final class wetem
 			list ($target, $blocks) = array('default', $target);
 
 		if (!$force)
-			$blocks = self::list_blocks((array) $blocks);
+			$blocks = $this->list_blocks((array) $blocks);
 		$has_layer = (bool) count(array_filter($blocks, 'is_array'));
-		$to = self::find($target, $where);
+		$to = $this->find($target, $where);
 		if (empty($to))
 			return false;
 
@@ -702,55 +639,55 @@ final class wetem
 		if ($where === 'load' || $where === 'replace')
 		{
 			// Most likely case: no child layers (or erase all). Replace away!
-			if ($where === 'replace' || !isset(self::$layers[$to]) || count(self::$layers[$to]) === count(self::$layers[$to], COUNT_RECURSIVE))
+			if ($where === 'replace' || !isset($this->layers[$to]) || count($this->layers[$to]) === count($this->layers[$to], COUNT_RECURSIVE))
 			{
-				self::$layers[$to] = $blocks;
+				$this->layers[$to] = $blocks;
 				// If we erase, we might have to delete layer entries.
 				if ($where === 'replace' || $has_layer)
-					self::reindex();
+					$this->reindex();
 				return $to;
 			}
 
 			// Otherwise, we're in for some fun... :-/
-			$keys = array_keys(self::$layers[$to]);
+			$keys = array_keys($this->layers[$to]);
 			foreach ($keys as $id)
 			{
-				if (!is_array(self::$layers[$to][$id]))
+				if (!is_array($this->layers[$to][$id]))
 				{
 					// We're going to insert our item(s) right before the first block we find...
 					if (!isset($offset))
 					{
 						$offset = array_search($id, $keys, true);
-						self::$layers[$to] = array_merge(array_slice(self::$layers[$to], 0, $offset, true), $blocks, array_slice(self::$layers[$to], $offset, null, true));
+						$this->layers[$to] = array_merge(array_slice($this->layers[$to], 0, $offset, true), $blocks, array_slice($this->layers[$to], $offset, null, true));
 					}
 					// ...And then we delete the other block(s) and leave the layers where they are.
-					unset(self::$layers[$to][$id]);
+					unset($this->layers[$to][$id]);
 				}
 			}
 
 			// So, we found a layer but no blocks..? Add our blocks at the end.
 			if (!isset($offset))
-				self::$layers[$to] += $blocks;
+				$this->layers[$to] += $blocks;
 
-			self::reindex();
+			$this->reindex();
 			return $to;
 		}
 
 		elseif ($where === 'add')
-			self::$layers[$to] += $blocks;
+			$this->layers[$to] += $blocks;
 
 		elseif ($where === 'first')
-			self::$layers[$to] = array_merge(array_reverse($blocks), self::$layers[$to]);
+			$this->layers[$to] = array_merge(array_reverse($blocks), $this->layers[$to]);
 
 		elseif ($where === 'before' || $where === 'after')
 		{
-			foreach (self::$layers as &$layer)
+			foreach ($this->layers as &$layer)
 			{
 				if (!isset($layer[$to]))
 					continue;
 
 				$layer = array_insert($layer, $to, $blocks, $where === 'after');
-				self::reindex();
+				$this->reindex();
 				return $to;
 			}
 		}
@@ -758,8 +695,111 @@ final class wetem
 			return false;
 
 		if ($has_layer)
-			self::reindex();
+			$this->reindex();
 
 		return $to;
 	}
+}
+
+/*************
+ *
+ * This is a helper class that holds a template layer or block.
+ *
+ * It is provided to allow plugins to use method chaining on a single item.
+ * If you don't need to chain calls, then use skeleton object methods instead.
+ *
+ * You can access an item by using $skeleton->get('item') or wetem::get('item'), and then you would apply calls to it.
+ * For instance, if you wanted to get block sidebar_dummy's parent, rename it to sidebar2
+ * and insert a new layer into it, you may want to do it this way:
+ *
+ * wetem::get('sidebar_dummy')->parent()->rename('sidebar2')->inner('inside_sidebar');
+ * $skeleton->get('pluginbar')->parent()->rename('explugin')->inner('inside_plugin');
+ *
+ *************/
+
+final class weSkeletonItem
+{
+	private $target;
+	private $skeleton;
+
+	function __construct($that, $to = '')
+	{
+		if (!$to)
+			$to = 'default';
+		$this->target = $to;
+		$this->skeleton = $that;
+	}
+
+	// Remove specified layer/block from the skeleton. (Non-chainable)
+	function remove()
+	{
+		$this->skeleton->remove($this->target);
+	}
+
+	// The following are chainable aliases to the equivalent functions.
+	function load($items)		{ $this->skeleton->load($this->target, $items); return $this; }
+	function replace($items)	{ $this->skeleton->replace($this->target, $items); return $this; }
+	function add($items)		{ $this->skeleton->add($this->target, $items); return $this; }
+	function first($items)		{ $this->skeleton->first($this->target, $items); return $this; }
+	function before($items)		{ $this->skeleton->before($this->target, $items); return $this; }
+	function after($items)		{ $this->skeleton->after($this->target, $items); return $this; }
+	function move($layer, $p)	{ $this->skeleton->move($this->target, $layer, $p); return $this; }
+	function rename($layer)		{ $this->skeleton->rename($this->target, $layer); return $this; }
+	function outer($layer)		{ $this->skeleton->outer($this->target, $layer); return $this; }
+	function inner($layer)		{ $this->skeleton->inner($this->target, $layer); return $this; }
+	function parent()			{ return $this->skeleton->get($this->skeleton->parent($this->target)); }
+}
+
+/*************
+ *
+ * This is the main skeleton object.
+ *
+ * To facilitate calling it without adding a global variable, it is enclosed in
+ * a static class called wetem that redirects all calls to the regular dynamic class.
+ *
+ * For instance, instead of doing $mainSkeleton->load('block_name'), you simply call wetem::load('block_name').
+ * Generally, simply replace a "$skeleton->" call with "wetem::" and you're in control of the main skeleton.
+ *
+ *************/
+
+final class wetem extends weSkeleton
+{
+	private static $main = null; // container for main skeleton
+
+	// There can be only one main skeleton.
+	private function __clone()
+	{
+		return false;
+	}
+
+	// Bootstrap's bootstraps
+	static function createMainSkeleton()
+	{
+		// Squeletto ergo sum
+		if (self::$main != null)
+			return;
+
+		self::$main = new weSkeleton();
+	}
+
+	function has($item)									{ return self::$main->has($item); }
+	function has_block($block)							{ return self::$main->has_block($block); }
+	function has_layer($layer)							{ return self::$main->has_layer($layer); }
+	function build(&$arr)								{		 self::$main->build($arr); }
+	function render()									{		 self::$main->render(); }
+	function get($targets = '')							{ return self::$main->get($targets); }
+	function before($target, $contents = '')			{ return self::$main->before($target, $contents); }
+	function after($target, $contents = '')				{ return self::$main->after($target, $contents); }
+	function remove($target)							{		 self::$main->remove($target); }
+	function move($item, $target, $where)				{ return self::$main->move($item, $target, $where); }
+	function parent($child)								{ return self::$main->parent($child); }
+	function load($target, $contents = '')				{ return self::$main->load($target, $contents); }
+	function add($target, $contents = '')				{ return self::$main->add($target, $contents); }
+	function first($target, $contents = '')				{ return self::$main->first($target, $contents); }
+	function replace($target, $contents = '')			{ return self::$main->replace($target, $contents); }
+	function rename($target, $new_name)					{ return self::$main->rename($target, $new_name); }
+	function outer($target, $new_layer = '')			{ return self::$main->outer($target, $new_layer); }
+	function inner($target, $new_layer = '')			{ return self::$main->inner($target, $new_layer); }
+	function hide($layer = '')							{ return self::$main->hide($layer); }
+	function layer($layer, $target = '', $where = '')	{ return self::$main->layer($layer, $target, $where ? $where : 'replace'); }
 }
