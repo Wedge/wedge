@@ -67,7 +67,8 @@ function Display()
 	}
 
 	// Load the proper template and/or block.
-	loadTemplate('Display');
+	loadTemplate('Display'); // Topic page
+	loadTemplate('Msg'); // Message skeleton
 	wetem::load(
 		array(
 			'report_success',

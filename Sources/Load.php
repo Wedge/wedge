@@ -1503,6 +1503,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Initializing the Wedge templating magic.
 	$context['macros'] = array();
 	$context['skeleton'] = '';
+	$context['skeleton_ops'] = array();
 	$context['skin_options'] = array();
 
 	// If output is fully XML, or the print-friendly version, or the spellchecking page,

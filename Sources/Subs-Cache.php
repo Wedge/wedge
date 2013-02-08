@@ -1154,6 +1154,31 @@ function wedge_get_extension($file)
 	return $ext;
 }
 
+function wedge_get_skeleton_operations($set, $op, $required_vars = array())
+{
+	global $context;
+
+	if (strpos($set, '<' . $op) === false || !preg_match_all('~<' . $op . '(?:\s+[a-z]+="[^"]+")*\s*/?>~', $set, $matches, PREG_SET_ORDER))
+		return;
+
+	foreach ($matches as $match)
+	{
+		preg_match_all('~\s([a-z]+)="([^"]+)"~', $match[0], $v);
+		$id = array_search('id', $v[1], true);
+		$id = $id !== false ? $id : 'main';
+		$match_all = true;
+		$arr = array($op);
+		foreach ($required_vars as $var)
+		{
+			$match_all &= ($item = array_search($var, $v[1], true)) !== false;
+			if (!$match_all)
+				continue 2;
+			$arr[] = $v[2][$item];
+		}
+		$context['skeleton_ops'][$v[2][$id]][] = $arr;
+	}
+}
+
 /**
  * Parses the current skin's skin.xml and skeleton.xml files, and those above them.
  */
@@ -1198,15 +1223,17 @@ function wedge_get_skin_options()
 	if (!empty($skeleton) && strpos($skeleton, '</skeleton>') !== false && preg_match_all('~<skeleton(?:\s*id="([^"]+)"\s*)?>(.*?)</skeleton>~s', $skeleton, $matches, PREG_SET_ORDER))
 		foreach ($matches as $match)
 			$context['skeleton'][empty($match[1]) ? 'main' : $match[1]] = $match[2];
+
+	// Did we ask to do post-loading operations on blocks/layers of the skeleton?
+	wedge_get_skeleton_operations($skeleton, 'move', array('block', 'to', 'where'));
+	wedge_get_skeleton_operations($skeleton, 'rename', array('block', 'to'));
+	wedge_get_skeleton_operations($skeleton, 'remove', array('block'));
+
 	unset($skeleton, $match, $matches);
 
 	// The deepest skin gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
-		// Did we ask to move blocks/layers around in the skeleton?
-		if (strpos($set, '<move') !== false && preg_match_all('~<move(?:\s+[a-z]+="[^"]+")*\s*/>~', $set, $matches, PREG_SET_ORDER))
-			$context['skeleton_moves'] = $matches;
-
 		// Skin options, such as <sidebar> position.
 		if (strpos($set, '</options>') !== false && preg_match('~<options>(.*?)</options>~s', $set, $match))
 		{

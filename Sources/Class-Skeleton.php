@@ -65,6 +65,16 @@ class weSkeleton
 		if (!empty($context['skeleton'][$id]))
 			$this->build($context['skeleton'][$id]);
 		$this->id = $id;
+
+		// If this is the main skeleton and it's empty, it means it's a barebones skeleton.
+		// Give it a couple of layers to allow it to load the main content.
+		if ($id === 'main' && empty($context['skeleton'][$id]))
+			self::hide();
+
+		// Apply all skeleton operations now.
+		if (!empty($context['skeleton_ops'][$id]))
+			foreach ($context['skeleton_ops'][$id] as $op)
+				call_user_func_array(array($this, $op[0]), array_slice($op, 1));
 	}
 
 	// Does the skeleton hold a specific layer or block?
@@ -798,7 +808,7 @@ final class wetem extends weSkeleton
 	}
 
 	// Bootstrap's bootstraps
-	static function createMainSkeleton($type)
+	static function createMainSkeleton()
 	{
 		global $context;
 
@@ -807,20 +817,6 @@ final class wetem extends weSkeleton
 			return;
 
 		self::$main = new weSkeleton('main');
-
-		// If this is empty, it means it's a barebones skeleton.
-		// Give it a couple of layers to allow it to load the main content.
-		if (empty($context['skeleton']['main']))
-			self::hide();
-
-		// !! We're doing this here only for now. Will need to accomodate for <move id="msg"> etc. and be moved to weSkeleton!
-		foreach ($context['skeleton_moves'] as $match)
-		{
-			preg_match_all('~\s([a-z]+)="([^"]+)"~', $match[0], $v);
-			if (($block = array_search('block', $v[1], true)) !== false && ($where = array_search('where', $v[1], true)) !== false && ($to = array_search('to', $v[1], true)) !== false)
-				self::move($v[2][$block], $v[2][$to], $v[2][$where]);
-		}
-
 	}
 
 	function has($item)									{ return self::$main->has($item); }
