@@ -1155,7 +1155,7 @@ function wedge_get_extension($file)
 }
 
 /**
- * Analyzes the current skin's skin.xml file (and those above it) and retrieves its options.
+ * Parses the current skin's skin.xml and skeleton.xml files, and those above them.
  */
 function wedge_get_skin_options()
 {
@@ -1163,6 +1163,7 @@ function wedge_get_skin_options()
 
 	$is_default_theme = true;
 	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
+	$skeleton = '';
 
 	// We will rebuild the css folder list, in case we have a replace-type skin in our path.
 	$context['skin_folders'] = array();
@@ -1173,13 +1174,15 @@ function wedge_get_skin_options()
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $theme[$target . 'dir'] . '/' . $folder . '/';
 
+		// Remember all of the skeletons we can find.
+		if (file_exists($fold . 'skeleton.xml'))
+			$skeleton .= file_get_contents($fold . '/skeleton.xml');
+
 		if (file_exists($fold . 'skin.xml'))
 		{
 			$set = file_get_contents($fold . '/skin.xml');
 			if (file_exists($fold . 'custom.xml'))
 				$set .= file_get_contents($fold . '/custom.xml');
-			if (file_exists($fold . 'skeleton.xml'))
-				$skeleton = file_get_contents($fold . '/skeleton.xml');
 
 			// If this is a replace-type skin, forget all of the parent folders.
 			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
@@ -1191,27 +1194,18 @@ function wedge_get_skin_options()
 
 	$context['skin_uses_default_theme'] = $is_default_theme;
 
-	if (!empty($skeleton) && strpos($skeleton, '</skeleton>') !== false && preg_match('~<skeleton>(.*?)</skeleton>~s', $skeleton, $match))
-	{
-		// Now we have a $skeleton, we can feed it to the template object.
-		preg_match_all('~<(?!!)(/)?([\w:,]+)\s*([^>]*?)(/?)\>~', $match[1], $match, PREG_SET_ORDER);
-		wetem::build($match);
-		unset($skeleton);
-	}
+	// Find skeletons and feed them to the $context['skeleton'] array for later parsing.
+	if (!empty($skeleton) && strpos($skeleton, '</skeleton>') !== false && preg_match_all('~<skeleton(?:\s*id="([^"]+)"\s*)?>(.*?)</skeleton>~s', $skeleton, $matches, PREG_SET_ORDER))
+		foreach ($matches as $match)
+			$context['skeleton'][empty($match[1]) ? 'main' : $match[1]] = $match[2];
+	unset($skeleton, $match, $matches);
 
 	// The deepest skin gets CSS/JavaScript attention.
 	if (!empty($set))
 	{
 		// Did we ask to move blocks/layers around in the skeleton?
 		if (strpos($set, '<move') !== false && preg_match_all('~<move(?:\s+[a-z]+="[^"]+")*\s*/>~', $set, $matches, PREG_SET_ORDER))
-		{
-			foreach ($matches as $match)
-			{
-				preg_match_all('~\s([a-z]+)="([^"]+)"~', $match[0], $v);
-				if (($block = array_search('block', $v[1], true)) !== false && ($where = array_search('where', $v[1], true)) !== false && ($to = array_search('to', $v[1], true)) !== false)
-					wetem::move($v[2][$block], $v[2][$to], $v[2][$where]);
-			}
-		}
+			$context['skeleton_moves'] = $matches;
 
 		// Skin options, such as <sidebar> position.
 		if (strpos($set, '</options>') !== false && preg_match('~<options>(.*?)</options>~s', $set, $match))

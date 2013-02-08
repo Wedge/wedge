@@ -13,7 +13,7 @@
 
 function template_display_posts()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings, $board_info;
+	global $context, $theme, $options, $txt, $scripturl, $settings, $board_info, $msg;
 
 	// OK, we're going to need this!
 	add_js_file('scripts/topic.js');
@@ -24,248 +24,40 @@ function template_display_posts()
 			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.modifySave()">';
 
 	$ignoredMsgs = array();
-	$removableMessageIDs = array();
-	$is_mobile = !empty($context['skin_options']['mobile']);
-	$alternate = false;
+	$context['is_mobile'] = !empty($context['skin_options']['mobile']);
+	$message_skeleton = new weSkeleton('msg');
 
 	// Get all the messages...
-	while ($message = $context['get_message']())
+	while ($msg = $context['get_message']())
 	{
-		$ignoring = false;
-		$alternate = !$alternate;
-		if ($message['can_remove'])
-			$removableMessageIDs[] = $message['id'];
+		$context['ignoring'] = false;
+		if (!$msg['can_modify'] && !$msg['has_buttons'] && !$msg['can_like'] && empty($context['liked_posts'][$msg['id']]))
+			$message_skeleton->skip('msg_actionbar'); // Mamanim! Just this once!
 
 		// Are we ignoring this message?
-		if (!empty($message['is_ignored']))
-			$ignoredMsgs[] = $ignoring = $message['id'];
+		if (!empty($msg['is_ignored']))
+			$ignoredMsgs[] = $context['ignoring'] = $msg['id'];
 
-		// Show a "new" anchor if this message is new.
-		if ($message['first_new'] && (!$context['first_new_message'] || !empty($_REQUEST['start'])))
-			echo '
-			<a id="new"></a>';
-
-		// msg123 serves as the anchor, as well as an easy way to find the message ID,
-		// or other classes (such as can-mod), from within it. For instance,
-		// var id_msg = $(this).closest('.root').attr('id').slice(3);
-		echo '
-			<div id="msg', $message['id'], '" class="root',
-				$message['alternate'] == 0 ? ' postbg' : ' postbg2',
-				$message['approved'] ? '' : ' approve',
-				$message['can_modify'] ? ' can-mod' : '',
-				$is_mobile ? ' mobile' : '',
-				$message['id'] !== $context['first_message'] ? '' : ' first-post',
-				empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] === 'right' ? '' : ' right-side',
-			'">
-				<div class="post_wrapper">';
-
-		// Show information about the poster of this message.
-		if (empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] !== 'left')
-			echo '
-					<div class="poster">',
-						template_userbox($message), '
-					</div>';
-
-		// Done with the information about the poster... on to the post itself.
-		echo '
-					<div class="postarea">';
-
-		if (!$is_mobile)
-		{
-			echo '
-						<div class="postheader">';
-
-			// Show a checkbox for quick moderation?
-			if ($message['can_remove'])
-				echo '
-							<span class="inline_mod_check"></span>';
-
-			echo '
-							<div class="keyinfo">
-								<div class="messageicon">
-									<img src="', $message['icon_url'] . '">
-								</div>
-								<h5>
-									<a href="', $message['href'], '" rel="nofollow">', $message['subject'], '</a>', $message['new'] ? '
-									<div class="note">' . $txt['new'] . '</div>' : '', '
-								</h5>
-								<span>&#171; ', !empty($message['counter']) ? sprintf($txt['reply_number'], $message['counter']) : '', ' ', $message['on_time'], ' &#187;</span>
-								<span class="modified">', $theme['show_modify'] && !empty($message['modified']['name']) ?
-									// Show "Last Edit on Date by Person" if this post was edited.
-									strtr($txt[$message['modified']['name'] !== $message['member']['name'] ? 'last_edit' : 'last_edit_mine'], array(
-										'{date}' => $message['modified']['on_time'],
-										'{name}' => !empty($message['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $message['modified']['member'] . '">' . $message['modified']['name'] . '</a>' : $message['modified']['name']
-									)) : '',
-								'</span>
-							</div>
-						</div>';
-		}
-		else
+		if ($context['is_mobile'])
 		{
 			// If we're in mobile mode, we'll move the Quote and Modify buttons to the Action menu.
-			$menu = isset($context['action_menu'][$message['id']]) ? $context['action_menu'][$message['id']] : array();
+			$menu = isset($context['action_menu'][$msg['id']]) ? $context['action_menu'][$msg['id']] : array();
 
 			// Insert them after the previous message's id.
-			if ($message['can_modify'])
+			if ($msg['can_modify'])
 				array_unshift($menu, 'mo');
 
 			if ($context['can_quote'])
 				array_unshift($menu, 'qu');
 
-			$context['action_menu'][$message['id']] = $menu;
+			$context['action_menu'][$msg['id']] = $menu;
 			$context['action_menu_items_show'] += array_flip($menu);
 		}
 
-		// Ignoring this user? Hide the post.
-		if ($ignoring)
-			echo '
-						<div class="ignored">
-							', $txt['ignoring_user'], '
-						</div>';
-
-		if ($is_mobile)
-			echo '
-						<h5></h5>';
-
-		// Show the post itself, finally!
-		echo '
-						<div class="post">';
-
-		if (!$message['approved'] && $message['member']['id'] != 0 && $message['member']['id'] == we::$id)
-			echo '
-							<div class="approve_post errorbox">
-								', $txt['post_awaiting_approval'], !empty($message['unapproved_msg']) ? '<ul><li>' . implode('</li><li>', $message['unapproved_msg']) . '</li></ul>' : '', '
-							</div>';
-
-		echo '
-							<div class="inner">', $message['body'], '</div>
-						</div>';
-
-		if ($ignoring)
-			echo '
-						<footer>';
-
-		if ($message['can_modify'] || $message['has_buttons'] || $message['can_like'] || !empty($context['liked_posts'][$message['id']]))
-		{
-			echo '
-						<div class="actionbar">';
-
-			// Can the user modify the contents of this post? Show the modify inline image.
-			if ($message['can_modify'])
-				echo '
-							<div class="quick_edit" title="', $txt['modify_msg'], '" onclick="return window.oQuickModify && oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
-
-			if ($message['has_buttons'])
-			{
-				echo '
-							<ul class="actions">';
-
-				// Can they reply? Have they turned on quick reply?
-				if ($context['can_quote'] && !empty($options['display_quick_reply']) && !$is_mobile)
-					echo '
-								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
-
-				// So... quick reply is off, but they *can* reply?
-				elseif ($context['can_quote'] && !$is_mobile)
-					echo '
-								<li><a href="<URL>?action=post;quote=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
-
-				// Can the user modify the contents of this post?
-				if ($message['can_modify'] && !$is_mobile)
-					echo '
-								<li><a href="<URL>?action=post;msg=', $message['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
-
-				if (!empty($context['action_menu'][$message['id']]))
-					echo '
-								<li><a class="acme more_button">', $txt[$is_mobile ? 'actions_button' : 'more_actions'], '</a></li>';
-
-				echo '
-							</ul>';
-			}
-
-			// Did anyone like this post?
-			if (!empty($settings['likes_enabled']) && ($message['can_like'] || !empty($context['liked_posts'][$message['id']])))
-				template_show_likes($message);
-
-			echo '
-						</div>';
-		}
-
-		// Assuming there are attachments...
-		if (!empty($message['attachment']))
-		{
-			echo '
-						<div class="attachments">
-							<div style="overflow: ', we::is('firefox') ? 'visible' : 'auto', '">';
-
-			foreach ($message['attachment'] as $attachment)
-			{
-				if ($attachment['is_image'])
-				{
-					if ($attachment['thumbnail']['has_thumb'])
-						echo '
-								<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" class="zoom"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
-					else
-						echo '
-								<img src="', $attachment['href'], ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"><br>';
-				}
-				echo '
-								<a href="', $attachment['href'], '"><img src="' . $theme['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a>
-								(', $attachment['size'], $attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] : '', ' - ', number_context($attachment['is_image'] ? 'attach_viewed' : 'attach_downloaded', $attachment['downloads']), ')<br>';
-			}
-
-			echo '
-							</div>
-						</div>';
-		}
-
-		// Are there any custom profile fields for above the signature?
-		if (!empty($message['member']['custom_fields']))
-		{
-			foreach ($message['member']['custom_fields'] as $custom)
-			{
-				if ($custom['placement'] != 2 || empty($custom['value']))
-					continue;
-				if (empty($shown))
-				{
-					$shown = true;
-					echo '
-						<div class="custom_fields_above_signature">
-							<ul class="reset nolist">';
-				}
-				echo '
-								<li>', $custom['value'], '</li>';
-			}
-			if (!empty($shown))
-				echo '
-							</ul>
-						</div>';
-		}
-
-		// Show the member's signature?
-		if (!empty($message['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
-			echo '
-						<div class="signature">', $message['member']['signature'], '</div>';
-
-		if ($ignoring)
-			echo '
-					</footer>';
-
-		echo '
-					</div>';
-
-		// Show information about the poster of this message.
-		if (!empty($context['skin_options']['sidebar']) && $context['skin_options']['sidebar'] === 'left')
-			echo '
-					<div class="poster">',
-						template_userbox($message), '
-					</div>';
-
-		echo '
-				</div>
-			</div>
-			<hr class="post_separator">';
+		// And finally... Render the skeleton for this message!
+		$message_skeleton->render();
 	}
+	unset($msg, $message_skeleton);
 
 	echo '
 			</form>
@@ -369,27 +161,57 @@ function template_display_posts()
 	}
 }
 
-function template_userbox(&$message)
-{
-	global $context, $settings, $txt, $theme, $options;
 
-	$is_mobile = !empty($context['skin_options']['mobile']);
+function template_msg_wrap_before()
+{
+	global $msg, $context;
+
+	// Show a "new" anchor if this message is new.
+	if ($msg['first_new'] && (!$context['first_new_message'] || !empty($_REQUEST['start'])))
+		echo '
+			<a id="new"></a>';
+
+	// msg123 serves as the anchor, as well as an easy way to find the message ID,
+	// or other classes (such as can-mod), from within it. For instance,
+	// var id_msg = $(this).closest('.root').attr('id').slice(3);
+	echo '
+			<div id="msg', $msg['id'], '" class="root',
+				$msg['alternate'] == 0 ? ' postbg' : ' postbg2',
+				$msg['approved'] ? '' : ' approve',
+				$msg['can_modify'] ? ' can-mod' : '',
+				$context['is_mobile'] ? ' mobile' : '',
+				$msg['id'] !== $context['first_message'] ? '' : ' first-post',
+				empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] === 'right' ? '' : ' right-side', '">
+				<div class="post_wrapper">';
+}
+
+// Show information about the poster of this message.
+function template_msg_author_before()
+{
+	echo '
+					<div class="poster">';
+}
+
+function template_msg_author()
+{
+	global $msg, $context, $settings, $txt, $theme, $options;
+
 	$gts = !empty($settings['group_text_show']) ? $settings['group_text_show'] : 'cond';
 
-	if ($is_mobile)
+	if ($context['is_mobile'])
 	{
-		if (!empty($context['action_menu'][$message['id']]))
+		if (!empty($context['action_menu'][$msg['id']]))
 			echo '
 						<div class="tinyuser">
-							<span>', timeformat($message['timestamp']), '</span>
+							<span>', timeformat($msg['timestamp']), '</span>
 						</div>';
 
 		// Show avatar for mobile skins
-		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))
+		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
 			echo '
 						<div class="avatar">
-							<a href="<URL>?action=profile;u=', $message['member']['id'], '">
-								', $message['member']['avatar']['image'], '
+							<a href="<URL>?action=profile;u=', $msg['member']['id'], '">
+								', $msg['member']['avatar']['image'], '
 							</a>
 						</div>';
 	}
@@ -399,63 +221,63 @@ function template_userbox(&$message)
 
 	// Show user statuses: online/offline, website, gender, is contact.
 	if ($theme['show_profile_buttons'])
-		template_user_status($message['member']);
+		template_user_status($msg['member']);
 
 	// Show a link to the member's profile.
 	echo '
-							<a href="', $message['member']['href'], '" data-id="', $message['member']['id'], '" class="umme">', $message['member']['name'], '</a>
+							<a href="', $msg['member']['href'], '" data-id="', $msg['member']['id'], '" class="umme">', $msg['member']['name'], '</a>
 						</h4>
 						<ul class="info">';
 
 	// Show the member's custom title, if they have one.
-	if (!empty($message['member']['title']) && !$is_mobile)
+	if (!empty($msg['member']['title']) && !$context['is_mobile'])
 		echo '
-							<li class="mtitle">', $message['member']['title'], '</li>';
+							<li class="mtitle">', $msg['member']['title'], '</li>';
 
 	// Show the member's primary group (like 'Administrator') if they have one, and if allowed.
-	if (!empty($message['member']['group']) && ($gts === 'all' || $gts === 'normal' || $gts === 'cond'))
+	if (!empty($msg['member']['group']) && ($gts === 'all' || $gts === 'normal' || $gts === 'cond'))
 		echo '
-							<li class="membergroup">', $message['member']['group'], '</li>';
+							<li class="membergroup">', $msg['member']['group'], '</li>';
 
 	// Don't show these things for guests or mobile skins.
-	if (!$message['member']['is_guest'] && !$is_mobile)
+	if (!$msg['member']['is_guest'] && !$context['is_mobile'])
 	{
 		// Show the post-based group if allowed by $settings['group_text_show'].
-		if (!empty($message['member']['post_group']) && ($gts === 'all' || $gts === 'post' || ($gts === 'cond' && empty($message['member']['group']))))
+		if (!empty($msg['member']['post_group']) && ($gts === 'all' || $gts === 'post' || ($gts === 'cond' && empty($msg['member']['group']))))
 			echo '
-							<li class="postgroup">', $message['member']['post_group'], '</li>';
+							<li class="postgroup">', $msg['member']['post_group'], '</li>';
 
-		if (!empty($message['member']['group_badges']))
+		if (!empty($msg['member']['group_badges']))
 			echo '
 							<li class="stars">
 								<div>', implode('</div>
-								<div>', $message['member']['group_badges']), '</div>
+								<div>', $msg['member']['group_badges']), '</div>
 							</li>';
 
 		// Show avatars, images, etc.?
-		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($message['member']['avatar']['image']))
+		if (!empty($theme['show_user_images']) && !empty($options['show_avatars']) && !empty($msg['member']['avatar']['image']))
 			echo '
 							<li class="avatar">
-								<a href="<URL>?action=profile;u=', $message['member']['id'], '">
-									', $message['member']['avatar']['image'], '
+								<a href="<URL>?action=profile;u=', $msg['member']['id'], '">
+									', $msg['member']['avatar']['image'], '
 								</a>
 							</li>';
 
 		// Show how many posts they have made.
 		if (!isset($context['disabled_fields']['posts']))
 			echo '
-							<li class="postcount">', $txt['member_postcount'], ': ', $message['member']['posts'], '</li>';
+							<li class="postcount">', $txt['member_postcount'], ': ', $msg['member']['posts'], '</li>';
 
 		// Show their personal text?
-		if (!empty($theme['show_blurb']) && $message['member']['blurb'] !== '')
+		if (!empty($theme['show_blurb']) && $msg['member']['blurb'] !== '')
 			echo '
-							<li class="blurb">', $message['member']['blurb'], '</li>';
+							<li class="blurb">', $msg['member']['blurb'], '</li>';
 
 		// Any custom fields to show as icons?
-		if (!empty($message['member']['custom_fields']))
+		if (!empty($msg['member']['custom_fields']))
 		{
 			$shown = false;
-			foreach ($message['member']['custom_fields'] as $custom)
+			foreach ($msg['member']['custom_fields'] as $custom)
 			{
 				if ($custom['placement'] != 1 || empty($custom['value']))
 					continue;
@@ -476,24 +298,277 @@ function template_userbox(&$message)
 		}
 
 		// Any custom fields for standard placement?
-		if (!empty($message['member']['custom_fields']))
-			foreach ($message['member']['custom_fields'] as $custom)
+		if (!empty($msg['member']['custom_fields']))
+			foreach ($msg['member']['custom_fields'] as $custom)
 				if (empty($custom['placement']) || empty($custom['value']))
 					echo '
 							<li class="custom">', $custom['title'], ': ', $custom['value'], '</li>';
 
 		// Are we showing the warning status?
-		if ($message['member']['can_see_warning'])
+		if ($msg['member']['can_see_warning'])
 			echo '
-							<li class="warning">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $message['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $message['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $message['member']['warning_status']], '">', $context['can_issue_warning'] && $message['member']['warning_status'] != 'ban' ? '</a>' : '', ' <span class="warn_', $message['member']['warning_status'], '">', $txt['warn_' . $message['member']['warning_status']], '</span></li>';
+							<li class="warning">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'ban' ? '<a href="<URL>?action=profile;u=' . $msg['member']['id'] . ';area=issuewarning">' : '', '<img src="', $theme['images_url'], '/warning_', $msg['member']['warning_status'], '.gif" alt="', $txt['user_warn_' . $msg['member']['warning_status']], '">', $context['can_issue_warning'] && $msg['member']['warning_status'] != 'ban' ? '</a>' : '', ' <span class="warn_', $msg['member']['warning_status'], '">', $txt['warn_' . $msg['member']['warning_status']], '</span></li>';
 	}
 	// Otherwise, show the guest's email.
-	elseif (!$is_mobile && !empty($message['member']['email']) && in_array($message['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
+	elseif (!$context['is_mobile'] && !empty($msg['member']['email']) && in_array($msg['member']['show_email'], array('yes_permission_override', 'no_through_forum')))
 		echo '
-							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $message['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
+							<li class="email"><a href="<URL>?action=emailuser;sa=email;msg=', $msg['id'], '" rel="nofollow">', $theme['use_image_buttons'] ? '<img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . '">' : $txt['email'], '</a></li>';
 
 	echo '
 						</ul>';
+}
+
+function template_msg_author_after()
+{
+	echo '
+					</div>';
+}
+
+// Done with the information about the poster... on to the post itself.
+function template_msg_area_before()
+{
+	echo '
+					<div class="postarea">';
+}
+
+function template_msg_area_after()
+{
+	echo '
+					</div>';
+}
+
+function template_msg_header()
+{
+	global $msg, $context, $theme, $txt;
+
+	// !!! REMOVE THIS!!!
+	if ($context['is_mobile'])
+	{
+		echo '
+						<h5></h5>';
+		return;
+	}
+
+	echo '
+						<div class="postheader">';
+
+	// Show a checkbox for quick moderation?
+	if ($msg['can_remove'])
+		echo '
+							<span class="inline_mod_check"></span>';
+
+	echo '
+							<div class="keyinfo">
+								<div class="messageicon">
+									<img src="', $msg['icon_url'] . '">
+								</div>
+								<h5>
+									<a href="', $msg['href'], '" rel="nofollow">', $msg['subject'], '</a>', $msg['new'] ? '
+									<div class="note">' . $txt['new'] . '</div>' : '', '
+								</h5>
+								<span>&#171; ', !empty($msg['counter']) ? sprintf($txt['reply_number'], $msg['counter']) : '', ' ', $msg['on_time'], ' &#187;</span>
+								<span class="modified">', $theme['show_modify'] && !empty($msg['modified']['name']) ?
+									// Show "Last Edit on Date by Person" if this post was edited.
+									strtr($txt[$msg['modified']['name'] !== $msg['member']['name'] ? 'last_edit' : 'last_edit_mine'], array(
+										'{date}' => $msg['modified']['on_time'],
+										'{name}' => !empty($msg['modified']['member']) ? '<a href="<URL>?action=profile;u=' . $msg['modified']['member'] . '">' . $msg['modified']['name'] . '</a>' : $msg['modified']['name']
+									)) : '',
+								'</span>
+							</div>
+						</div>';
+}
+
+function template_msg_ignored()
+{
+	global $context, $txt;
+
+	// Ignoring this user? Hide the post.
+	if ($context['ignoring'])
+		echo '
+						<div class="ignored">
+							', $txt['ignoring_user'], '
+						</div>';
+}
+
+// Show the post itself, finally!
+function template_msg_body_before()
+{
+	echo '
+						<div class="post">';
+}
+
+function template_msg_body()
+{
+	global $msg, $txt;
+
+	if (!$msg['approved'] && $msg['member']['id'] != 0 && $msg['member']['id'] == we::$id)
+		echo '
+							<div class="approve_post errorbox">
+								', $txt['post_awaiting_approval'], !empty($msg['unapproved_msg']) ? '<ul><li>' . implode('</li><li>', $msg['unapproved_msg']) . '</li></ul>' : '', '
+							</div>';
+
+	echo '
+							<div class="inner">', $msg['body'], '</div>';
+}
+
+function template_msg_body_after()
+{
+	echo '
+						</div>';
+}
+
+function template_msg_bottom_before()
+{
+	global $context;
+
+	if ($context['ignoring'])
+		echo '
+						<footer>';
+}
+
+function template_msg_actionbar_before()
+{
+	echo '
+						<div class="actionbar">';
+}
+
+function template_msg_actionbar()
+{
+	global $msg, $context, $options, $txt;
+
+	// Can the user modify the contents of this post? Show the modify inline image.
+	if ($msg['can_modify'])
+		echo '
+							<div class="quick_edit" title="', $txt['modify_msg'], '" onclick="return window.oQuickModify && oQuickModify.modifyMsg(this);" onmousedown="return false;">&nbsp;</div>';
+
+	if ($msg['has_buttons'])
+	{
+		echo '
+							<ul class="actions">';
+
+		// Can they reply? Have they turned on quick reply?
+		if ($context['can_quote'] && !empty($options['display_quick_reply']) && !$context['is_mobile'])
+			echo '
+								<li><a href="<URL>?action=post;quote=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button" onclick="return window.oQuickReply && oQuickReply.quote(this);">', $txt['quote'], '</a></li>';
+
+		// So... quick reply is off, but they *can* reply?
+		elseif ($context['can_quote'] && !$context['is_mobile'])
+			echo '
+								<li><a href="<URL>?action=post;quote=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], ';last=', $context['topic_last_message'], '" class="quote_button">', $txt['quote'], '</a></li>';
+
+		// Can the user modify the contents of this post?
+		if ($msg['can_modify'] && !$context['is_mobile'])
+			echo '
+								<li><a href="<URL>?action=post;msg=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
+
+		if (!empty($context['action_menu'][$msg['id']]))
+			echo '
+								<li><a class="acme more_button">', $txt[$context['is_mobile'] ? 'actions_button' : 'more_actions'], '</a></li>';
+
+		echo '
+							</ul>';
+	}
+}
+
+function template_msg_actionbar_after()
+{
+	global $msg, $context, $settings;
+
+	// Did anyone like this post?
+	if (!empty($settings['likes_enabled']) && ($msg['can_like'] || !empty($context['liked_posts'][$msg['id']])))
+		template_show_likes($msg);
+
+	echo '
+						</div>';
+}
+
+function template_msg_attachments()
+{
+	global $msg, $theme;
+
+	// Assuming there are attachments...
+	if (empty($msg['attachment']))
+		return;
+
+	echo '
+						<div class="attachments">
+							<div style="overflow: ', we::is('firefox') ? 'visible' : 'auto', '">';
+
+	foreach ($msg['attachment'] as $attachment)
+	{
+		if ($attachment['is_image'])
+		{
+			if ($attachment['thumbnail']['has_thumb'])
+				echo '
+								<a href="', $attachment['href'], ';image" id="link_', $attachment['id'], '" class="zoom"><img src="', $attachment['thumbnail']['href'], '" id="thumb_', $attachment['id'], '"></a><br>';
+			else
+				echo '
+								<img src="', $attachment['href'], ';image" width="' . $attachment['width'] . '" height="' . $attachment['height'] . '"><br>';
+		}
+		echo '
+								<a href="', $attachment['href'], '"><img src="' . $theme['images_url'] . '/icons/clip.gif" class="middle">&nbsp;' . $attachment['name'] . '</a>
+								(', $attachment['size'], $attachment['is_image'] ? ', ' . $attachment['real_width'] . 'x' . $attachment['real_height'] : '', ' - ', number_context($attachment['is_image'] ? 'attach_viewed' : 'attach_downloaded', $attachment['downloads']), ')<br>';
+	}
+
+	echo '
+							</div>
+						</div>';
+}
+
+function template_msg_customfields()
+{
+	global $msg;
+
+	// Are there any custom profile fields for above the signature?
+	if (empty($msg['member']['custom_fields']))
+		return;
+
+	foreach ($msg['member']['custom_fields'] as $custom)
+	{
+		if ($custom['placement'] != 2 || empty($custom['value']))
+			continue;
+		if (empty($shown))
+		{
+			$shown = true;
+			echo '
+						<div class="custom_fields_above_signature">
+							<ul class="reset nolist">';
+		}
+		echo '
+								<li>', $custom['value'], '</li>';
+	}
+
+	if (!empty($shown))
+		echo '
+							</ul>
+						</div>';
+}
+
+function template_msg_signature()
+{
+	global $msg, $context, $options;
+
+	// Show the member's signature?
+	if (!empty($msg['member']['signature']) && !empty($options['show_signatures']) && $context['signature_enabled'])
+		echo '
+						<div class="signature">', $msg['member']['signature'], '</div>';
+}
+
+function template_msg_bottom_after()
+{
+	global $context;
+
+	if ($context['ignoring'])
+		echo '
+						</footer>';
+}
+
+function template_msg_wrap_after()
+{
+	echo '
+				</div>
+			</div>
+			<hr class="post_separator">';
 }
 
 function template_user_status(&$member)
@@ -527,12 +602,12 @@ function template_user_status(&$member)
 							</span>';
 }
 
-function template_show_likes(&$message)
+function template_show_likes()
 {
-	global $context, $txt, $user_profile;
+	global $msg, $context, $txt, $user_profile;
 
 	$string = '';
-	$likes =& $context['liked_posts'][$message['id']];
+	$likes =& $context['liked_posts'][$msg['id']];
 	$you_like = !empty($likes['you']);
 
 	if (!empty($likes))
@@ -571,13 +646,13 @@ function template_show_likes(&$message)
 							<div class="post_like">';
 
 	// Can they use the Like button?
-	if ($message['can_like'])
+	if ($msg['can_like'])
 		echo '
-								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $message['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
-								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=like;sa=view;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
+								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $msg['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
+								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=like;sa=view;type=post;cid=' . $msg['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
 	elseif ($num_likes)
 		echo '
-								<span class="like_button" title="', strip_tags($string), '"> <a href="<URL>?action=like;sa=view;type=post;cid=' . $message['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a></span>';
+								<span class="like_button" title="', strip_tags($string), '"> <a href="<URL>?action=like;sa=view;type=post;cid=' . $msg['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a></span>';
 
 	echo '
 							</div>';

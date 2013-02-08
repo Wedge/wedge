@@ -39,3 +39,20 @@
 		</body>
 	</html>
 </skeleton>
+
+<skeleton id="msg">
+	<msg_wrap>
+		<msg_author />
+		<msg_area>
+			<msg_header />
+			<msg_ignored />
+			<msg_body />
+			<msg_bottom>
+				<msg_actionbar />
+				<msg_attachments />
+				<msg_customfields />
+				<msg_signature />
+			</msg_bottom>
+		</msg_area>
+	</msg_wrap>
+</skeleton>

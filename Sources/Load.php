@@ -1504,7 +1504,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = '';
 	$context['skin_options'] = array();
-	wetem::createMainSkeleton();
 
 	// If output is fully XML, or the print-friendly version, or the spellchecking page,
 	// skip the index template entirely. Don't use macros in their templates!
@@ -1513,7 +1512,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 		if (isset($_REQUEST['xml']))
 			loadTemplate('Xml');
 		loadLanguage('index');
-		wetem::hide();
 	}
 	else
 	{
@@ -1562,6 +1560,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 		loadSource('Subs-Cache');
 		wedge_get_skin_options();
 	}
+
+	// We should have all our skeletons ready. Create the main one!
+	wetem::createMainSkeleton();
 
 	// Any theme-related strings that need to be loaded?
 	if (!empty($theme['require_theme_strings']))

@@ -55,6 +55,17 @@ class weSkeleton
 	private $opt = array();			// options for individual layers/block
 	private $obj = array();			// store shortcuts to individual layer/block objects
 	private $hidden = false;		// did we call hide()?
+	var $skip = array();			// list of blocks to skip in the next pass
+	var $id = '';					// name of the skeleton
+
+	function __construct($id)
+	{
+		global $context;
+
+		if (!empty($context['skeleton'][$id]))
+			$this->build($context['skeleton'][$id]);
+		$this->id = $id;
+	}
 
 	// Does the skeleton hold a specific layer or block?
 	function has($item)
@@ -75,27 +86,15 @@ class weSkeleton
 	}
 
 	/**
-	 * Build the multi-dimensional layout skeleton array from an single-dimension array of tags.
-	 */
-	function build(&$arr)
-	{
-		// Unset any pending layer objects.
-		if (!empty($this->obj))
-			foreach ($this->obj as &$layer)
-				$layer = null;
-
-		$this->parse($arr, $this->skeleton);
-	}
-
-	/**
 	 * This is where we render the HTML page!
 	 */
 	function render()
 	{
-		if (empty($this->layers['default']))
+		if ($this->id === 'main' && empty($this->layers['default']))
 			fatal_lang_error('default_layer_missing');
 
 		$this->render_recursive(reset($this->skeleton), key($this->skeleton));
+		$this->skip = array();
 	}
 
 	/**
@@ -131,6 +130,16 @@ class weSkeleton
 	function after($target, $contents = '')
 	{
 		return $this->op($contents, $target, 'after');
+	}
+
+	/**
+	 * Skip a block or layer from the next render pass.
+	 * This is only useful for non-main skeletons, obviously.
+	 * If you want to remove the target for all passes, use remove().
+	 */
+	function skip($target)
+	{
+		$this->skip[$target] = true;
 	}
 
 	/**
@@ -258,9 +267,9 @@ class weSkeleton
 	}
 
 	/**
-	 * A quick alias to tell Wedge to hide blocks that don't belong to the main flow (default layer).
+	 * A quick alias to create a basic skeleton with nothing to distract your attention.
 	 *
-	 * @param array $layer The layers we want to keep, or 'html' for the main html/body layers. Leave empty to just keep the default layer.
+	 * @param array $layer The layer we want to keep, or 'html' for the main html/body layers. Leave empty to just keep the default layer.
 	 */
 	function hide($layer = '')
 	{
@@ -285,7 +294,7 @@ class weSkeleton
 					)
 				)
 			);
-		// Or finally... Do we want to keep/add a specific layer, like 'print' maybe?
+		// Or finally... Keep/add a specific layer, like 'print' or 'report'.
 		else
 			$this->skeleton = array(
 				'dummy' => array(
@@ -358,10 +367,24 @@ class weSkeleton
 	 **********************************************************************/
 
 	/**
+	 * Build the multi-dimensional layout skeleton array from a string of tags.
+	 */
+	private function build($str)
+	{
+		// Unset any pending layer objects.
+		if (!empty($this->obj))
+			foreach ($this->obj as &$layer)
+				$layer = null;
+
+		preg_match_all('~<(?!!)(/)?([\w:,]+)\s*([^>]*?)(/?)\>~', $str, $arr, PREG_SET_ORDER);
+		$this->parse($arr, $this->skeleton);
+	}
+
+	/**
 	 * Builds the skeleton array ($this->skeleton) and the layers array ($this->layers)
 	 * based on the contents of $context['skeleton'].
 	 */
-	private function parse(&$arr, &$dest, &$pos = 0, $name = '')
+	private function parse($arr, &$dest, &$pos = 0, $name = '')
 	{
 		for ($c = count($arr); $pos < $c;)
 		{
@@ -429,11 +452,14 @@ class weSkeleton
 		// Show the _before part of the layer.
 		execBlock($key . '_before', 'ignore');
 
-		if ($key === 'top' || $key === 'default')
+		if ($this->id === 'main' && ($key === 'top' || $key === 'default'))
 			while_we_re_here();
 
 		foreach ($here as $id => $temp)
 		{
+			if (isset($this->skip[$id]))
+				continue;
+
 			// If the item is an array, then it's a layer. Otherwise, it's a block.
 			if (is_array($temp))
 				$this->render_recursive($temp, $id);
@@ -722,10 +748,8 @@ final class weSkeletonItem
 	private $target;
 	private $skeleton;
 
-	function __construct($that, $to = '')
+	function __construct($that, $to = 'default')
 	{
-		if (!$to)
-			$to = 'default';
 		$this->target = $to;
 		$this->skeleton = $that;
 	}
@@ -747,6 +771,7 @@ final class weSkeletonItem
 	function rename($layer)		{ $this->skeleton->rename($this->target, $layer); return $this; }
 	function outer($layer)		{ $this->skeleton->outer($this->target, $layer); return $this; }
 	function inner($layer)		{ $this->skeleton->inner($this->target, $layer); return $this; }
+	function skip()				{ $this->skeleton->skip($this->target); return $this; }
 	function parent()			{ return $this->skeleton->get($this->skeleton->parent($this->target)); }
 }
 
@@ -773,23 +798,39 @@ final class wetem extends weSkeleton
 	}
 
 	// Bootstrap's bootstraps
-	static function createMainSkeleton()
+	static function createMainSkeleton($type)
 	{
+		global $context;
+
 		// Squeletto ergo sum
 		if (self::$main != null)
 			return;
 
-		self::$main = new weSkeleton();
+		self::$main = new weSkeleton('main');
+
+		// If this is empty, it means it's a barebones skeleton.
+		// Give it a couple of layers to allow it to load the main content.
+		if (empty($context['skeleton']['main']))
+			self::hide();
+
+		// !! We're doing this here only for now. Will need to accomodate for <move id="msg"> etc. and be moved to weSkeleton!
+		foreach ($context['skeleton_moves'] as $match)
+		{
+			preg_match_all('~\s([a-z]+)="([^"]+)"~', $match[0], $v);
+			if (($block = array_search('block', $v[1], true)) !== false && ($where = array_search('where', $v[1], true)) !== false && ($to = array_search('to', $v[1], true)) !== false)
+				self::move($v[2][$block], $v[2][$to], $v[2][$where]);
+		}
+
 	}
 
 	function has($item)									{ return self::$main->has($item); }
 	function has_block($block)							{ return self::$main->has_block($block); }
 	function has_layer($layer)							{ return self::$main->has_layer($layer); }
-	function build(&$arr)								{		 self::$main->build($arr); }
 	function render()									{		 self::$main->render(); }
 	function get($targets = '')							{ return self::$main->get($targets); }
 	function before($target, $contents = '')			{ return self::$main->before($target, $contents); }
 	function after($target, $contents = '')				{ return self::$main->after($target, $contents); }
+	function skip($target)								{ return self::$main->skip($target); }
 	function remove($target)							{		 self::$main->remove($target); }
 	function move($item, $target, $where)				{ return self::$main->move($item, $target, $where); }
 	function parent($child)								{ return self::$main->parent($child); }
