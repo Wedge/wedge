@@ -347,7 +347,19 @@ function QuickModify(opt)
 	this.modifyCancel = modifyCancel;
 }
 
+function LikePost(obj)
+{
+	var iMessageId = $(obj).closest('.root').attr('id').slice(3);
 
+	show_ajax();
+	$.get(obj.href, function (response)
+	{
+		hide_ajax();
+		$('#msg' + iMessageId + ' .post_like').replaceWith(response);
+	});
+
+	return false;
+}
 
 function InTopicModeration(opt)
 {

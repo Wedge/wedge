@@ -451,12 +451,14 @@ function template_user_status(&$member)
 							</span>';
 }
 
-function template_show_likes()
+function template_show_likes($id_msg = 0, $can_like = false)
 {
 	global $msg, $context, $txt, $user_profile;
 
 	$string = '';
-	$likes =& $context['liked_posts'][$msg['id']];
+	$id_msg = !empty($msg['id']) ? $msg['id'] : $id_msg;
+	$can_like = isset($msg['can_like']) ? $msg['can_like'] : $can_like;
+	$likes =& $context['liked_posts'][$id_msg];
 	$you_like = !empty($likes['you']);
 
 	if (!empty($likes))
@@ -487,21 +489,17 @@ function template_show_likes()
 
 	$show_likes = $num_likes ? '<span class="note' . ($you_like ? 'nice' : '') . '">' . $num_likes . '</span>' : '';
 
-	// Is this an Ajax request to get who likes what?
-	if (isset($_REQUEST['xml']))
-		return $string;
-
 	echo '
 							<div class="post_like">';
 
 	// Can they use the Like button?
-	if ($msg['can_like'])
+	if ($can_like)
 		echo '
-								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $msg['id'], ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', '>',
-								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=like;sa=view;type=post;cid=' . $msg['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
+								<a href="<URL>?action=like;topic=', $context['current_topic'], ';msg=', $id_msg, ';', $context['session_query'], '" class="', $you_like ? 'un' : '', 'like_button"', empty($string) ? '' : ' title="' . strip_tags($string) . '"', ' onclick="return LikePost(this);">',
+								$txt[$you_like ? 'unlike' : 'like'], '</a>', $num_likes ? ' <a href="<URL>?action=like;sa=view;type=post;cid=' . $id_msg . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a>' : '';
 	elseif ($num_likes)
 		echo '
-								<span class="like_button" title="', strip_tags($string), '"> <a href="<URL>?action=like;sa=view;type=post;cid=' . $msg['id'] . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a></span>';
+								<span class="like_button" title="', strip_tags($string), '"> <a href="<URL>?action=like;sa=view;type=post;cid=' . $id_msg . '" class="fadein" onclick="return reqWin(this);">' . $show_likes . '</a></span>';
 
 	echo '
 							</div>';

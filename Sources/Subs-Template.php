@@ -658,7 +658,7 @@ function clean_output($skip_full = false)
 		ob_start();
 
 	// We may also want to trigger our dynamic rewrites...
-	if (!$skip_full && !empty($settings['pretty_enable_filters']))
+	if (!$skip_full || !empty($settings['pretty_enable_filters']))
 		ob_start('ob_sessrewrite');
 }
 

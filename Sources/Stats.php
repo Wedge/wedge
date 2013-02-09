@@ -536,8 +536,8 @@ function Stats()
 	$likes_result = wesql::query('
 		SELECT COUNT(k.id_member) AS likes, m.id_member, m.real_name, msg.id_msg, msg.id_topic, msg.subject
 		FROM {db_prefix}likes AS k
-		LEFT JOIN {db_prefix}messages AS msg ON k.id_content = msg.id_msg AND k.content_type = {string:post}
-		LEFT JOIN {db_prefix}members AS m ON msg.id_member = m.id_member
+			INNER JOIN {db_prefix}messages AS msg ON k.id_content = msg.id_msg AND k.content_type = {string:post}
+			LEFT JOIN {db_prefix}members AS m ON msg.id_member = m.id_member
 		GROUP BY msg.id_msg
 		ORDER BY likes DESC
 		LIMIT 10',

@@ -154,7 +154,7 @@ function Like()
 
 	call_hook('liked_content', array(&$content_type, &$id_content, &$now_liked, &$like_time));
 
-	if (isset($_REQUEST['xml']))
+	if ($context['is_ajax'])
 	{
 		// OK, we're going to send some details back to the user through the magic of AJAX. We need to get those details, first of all.
 		$members_load = array();
@@ -200,13 +200,13 @@ function Like()
 		if (!empty($members_load))
 			loadMemberData(array_keys($members_load), false, 'minimal');
 
-		loadTemplate('Display');
+		loadTemplate('Msg');
 
 		// Now the AJAXish data.
 		clean_output();
 
-		header('Content-Type: text/xml; charset=UTF-8');
-		echo '<?xml version="1.0" encoding="UTF-8"?' . '><likes>', template_show_likes($id_content), '</likes>';
+		header('Content-Type: text/plain; charset=UTF-8');
+		template_show_likes($id_content, true); // We must be able to like it otherwise we wouldn't be here!
 		obExit(false);
 	}
 	else

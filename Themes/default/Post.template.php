@@ -377,7 +377,7 @@ function template_post_subject()
 	echo '
 					<strong>', $txt['message_icon'], ' / <span', isset($context['post_error']['no_subject']) ? ' class="error"' : '', ' id="caption_subject">', $txt['subject'], ':</span></strong>
 					<hr style="height: 0; margin: 4px">
-					<select name="icon" id="icon" tabindex="', $context['tabindex']++, '" onchange="showimage();">';
+					<select name="icon" id="icon" tabindex="', $context['tabindex']++, '">';
 
 	// Loop through each message icon allowed, adding it to the drop down list.
 	foreach ($context['icons'] as $icon)
