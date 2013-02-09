@@ -829,13 +829,13 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		$cont = file_get_contents($dir . $file);
 
 		// We make sure to remove any minified files, to be re-added later.
-		if ($minify !== 'none' && strpos($file, '.min.js') !== false)
+		if (strpos($file, '.min.js') !== false)
 		{
-			$no_packing[] = $cont;
+			$no_packing[] = preg_replace('~\n//[^\n]+$~', '', $cont);
 			$cont = 'WEDGE_NO_PACKING();';
 		}
 		// Replace long variable names with shorter ones. Our own quick super-minifier!
-		elseif (preg_match("~/\* Optimize:\n(.*?)\n\*/~s", $cont, $match))
+		elseif (preg_match('~/\* Optimize:\n(.*?)\n\*/~s', $cont, $match))
 		{
 			$match = explode("\n", $match[1]);
 			$search = $replace = array();
@@ -847,7 +847,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 			}
 			$cont = str_replace($search, $replace, $cont);
 			if ($minify == 'none')
-				$cont = preg_replace("~/\* Optimize:\n(.*?)\n\*/~s", '', $cont);
+				$cont = preg_replace('~/\* Optimize:\n(.*?)\n\*/~s', '', $cont);
 		}
 		// An UglifyJS-inspired trick. We're taking it on the safe side though.
 		$cont = preg_replace(array('~\bfalse\b~', '~\btrue\b~'), array('!1', '!0'), $cont);
@@ -1029,8 +1029,8 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	// Remove the copyright years and version information, in case you're a paranoid android.
 	// Then remove the extra whitespace that we may have added around comments to avoid glitches.
 	$final = preg_replace(
-		array("~/\*!(?:[^*]|\*[^/])*?@package wedge.*?\*/~s", "~(^|\n)\n/\*~", "~\*/\n~"),
-		array("/*!\n * @package wedge\n * @copyright Wedgeward, wedge.org\n * @license http://wedge.org/license/\n */", "$1/*", "*/"),
+		array('~/\*!(?:[^*]|\*[^/])*?@package wedge.*?\*/~s', '~(^|\n)\n/\*~', '~\*/\n~'),
+		array("/*!\n * @package wedge\n * @copyright Wedgeward, wedge.org\n * @license http://wedge.org/license/\n */", '$1/*', '*/'),
 		$final
 	);
 
@@ -1164,18 +1164,19 @@ function wedge_get_skeleton_operations($set, $op, $required_vars = array())
 	foreach ($matches as $match)
 	{
 		preg_match_all('~\s([a-z]+)="([^"]+)"~', $match[0], $v);
-		$id = array_search('id', $v[1], true);
-		$id = $id !== false ? $id : 'main';
+		$pos_id = array_search('id', $v[1], true);
+		$id = $pos_id !== false ? $v[2][$pos_id] : 'main';
 		$match_all = true;
 		$arr = array($op);
 		foreach ($required_vars as $var)
 		{
-			$match_all &= ($item = array_search($var, $v[1], true)) !== false;
+			$match_all &= ($pos = array_search($var, $v[1], true)) !== false;
 			if (!$match_all)
 				continue 2;
-			$arr[] = $v[2][$item];
+			$arr[] = $v[2][$pos];
 		}
-		$context['skeleton_ops'][$v[2][$id]][] = $arr;
+		// Only one operation allowed per item per skeleton. Latest one has priority.
+		$context['skeleton_ops'][$id][$op . $arr[1]] = $arr;
 	}
 }
 
@@ -1198,21 +1199,26 @@ function wedge_get_skin_options()
 		$target = $not_default && file_exists($theme['theme_dir'] . '/' . $folder) ? 'theme_' : 'default_theme_';
 		$is_default_theme &= $target === 'default_theme_';
 		$fold = $theme[$target . 'dir'] . '/' . $folder . '/';
+		$set = '';
 
 		// Remember all of the skeletons we can find.
 		if (file_exists($fold . 'skeleton.xml'))
 			$skeleton .= file_get_contents($fold . '/skeleton.xml');
 
 		if (file_exists($fold . 'skin.xml'))
-		{
 			$set = file_get_contents($fold . '/skin.xml');
-			if (file_exists($fold . 'custom.xml'))
-				$set .= file_get_contents($fold . '/custom.xml');
 
-			// If this is a replace-type skin, forget all of the parent folders.
-			if ($folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
-				$context['skin_folders'] = array();
+		// custom.xml files might be used to override both skin.xml and skeleton.xml...
+		if (file_exists($fold . 'custom.xml'))
+		{
+			$custom = file_get_contents($fold . '/custom.xml');
+			$skeleton .= $custom;
+			$set .= $custom;
 		}
+
+		// If this is a replace-type skin, forget all of the parent folders.
+		if ($set && $folder !== 'skins' && strpos($set, '</type>') !== false && preg_match('~<type>([^<]+)</type>~', $set, $match) && strtolower(trim($match[1])) === 'replace')
+			$context['skin_folders'] = array();
 
 		$context['skin_folders'][] = array($fold, $target);
 	}
