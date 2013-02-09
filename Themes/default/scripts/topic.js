@@ -14,6 +14,33 @@
 
 var hide_prefixes = [];
 
+// Expand an attached thumbnail
+function expandThumb(thumbID)
+{
+	var img = $('#thumb_' + thumbID)[0], link = $('#link_' + thumbID)[0], tmp = img.src;
+
+	img.src = link.href;
+	img.style.width = '';
+	img.style.height = '';
+	link.href = tmp;
+
+	return false;
+}
+
+function likePost(obj)
+{
+	var iMessageId = $(obj).closest('.root').attr('id').slice(3);
+
+	show_ajax();
+	$.post(obj.href, function (response)
+	{
+		hide_ajax();
+		$('#msg' + iMessageId + ' .post_like').replaceWith(response);
+	});
+
+	return false;
+}
+
 function go_up()
 {
 	$('html,body').animate({ scrollTop: 0 }, 1000);
@@ -25,7 +52,6 @@ function go_down()
 	$('html,body').animate({ scrollTop: $(document).height() - $(window).height() }, 1000);
 	return false;
 }
-
 
 function modify_topic(topic_id, first_msg_id)
 {
@@ -347,20 +373,6 @@ function QuickModify(opt)
 	this.modifyCancel = modifyCancel;
 }
 
-function LikePost(obj)
-{
-	var iMessageId = $(obj).closest('.root').attr('id').slice(3);
-
-	show_ajax();
-	$.get(obj.href, function (response)
-	{
-		hide_ajax();
-		$('#msg' + iMessageId + ' .post_like').replaceWith(response);
-	});
-
-	return false;
-}
-
 function InTopicModeration(opt)
 {
 	var bButtonsShown = false, iNumSelected = 0,
@@ -515,20 +527,6 @@ function IconList()
 			.click(function () { openPopup(this, id); });
 	});
 }
-
-
-
-// Expand an attached thumbnail
-function expandThumb(thumbID)
-{
-	var img = $('#thumb_' + thumbID)[0], link = $('#link_' + thumbID)[0], tmp = img.src;
-	img.src = link.href;
-	img.style.width = '';
-	img.style.height = '';
-	link.href = tmp;
-	return false;
-}
-
 
 
 // *** Mini-menu (mime) plugin. Yay.

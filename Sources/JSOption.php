@@ -39,7 +39,7 @@ function JSOption()
 	checkSession('get');
 
 	// If no variables are provided, leave the hell out of here.
-	if (empty($_GET['var']) || !isset($_GET['val']))
+	if (empty($_POST['v']) || !isset($_POST['val']))
 		exit;
 
 	// Sorry, guests can't go any further than this..
@@ -63,35 +63,35 @@ function JSOption()
 	);
 
 	// Can't change reserved vars.
-	if (in_array(strtolower($_GET['var']), $reservedVars))
+	if (in_array(strtolower($_POST['v']), $reservedVars))
 		exit;
 
 	// Use a specific theme?
-	if (isset($_GET['th']) || isset($_GET['id']))
+	if (isset($_GET['th']))
 	{
 		// Invalidate the current themes cache too.
 		cache_put_data('theme_settings-' . $theme['theme_id'] . ':' . we::$id, null, 60);
 
-		$theme['theme_id'] = isset($_GET['th']) ? (int) $_GET['th'] : (int) $_GET['id'];
+		$theme['theme_id'] = (int) $_GET['th'];
 	}
 
 	// If this is the admin preferences the passed value will just be an element of it.
-	if ($_GET['var'] == 'admin_preferences')
+	if ($_POST['v'] == 'admin_preferences')
 	{
 		$options['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
 		// New thingy...
 		if (isset($_GET['admin_key']) && strlen($_GET['admin_key']) < 5)
-			$options['admin_preferences'][$_GET['admin_key']] = $_GET['val'];
+			$options['admin_preferences'][$_GET['admin_key']] = $_POST['val'];
 
 		// Change the value to be something nice,
-		$_GET['val'] = serialize($options['admin_preferences']);
+		$_POST['val'] = serialize($options['admin_preferences']);
 	}
 
 	// Update the option.
 	wesql::insert('replace',
 		'{db_prefix}themes',
 		array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
-		array($theme['theme_id'], we::$id, $_GET['var'], is_array($_GET['val']) ? implode(',', $_GET['val']) : $_GET['val']),
+		array($theme['theme_id'], we::$id, $_POST['v'], is_array($_POST['val']) ? implode(',', $_POST['val']) : $_POST['val']),
 		array('id_theme', 'id_member', 'variable')
 	);
 

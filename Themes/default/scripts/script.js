@@ -558,7 +558,7 @@ function weToggle(opt)
 
 		// Set a theme option through javascript.
 		if (!bInit && opt.sOptionName)
-			$.get(weUrl('action=jsoption;var=' + opt.sOptionName + ';val=' + collapsed + ';' + we_sessvar + '=' + we_sessid + (opt.sExtra || '') + ';time=' + $.now()));
+			$.post(weUrl('action=jsoption;' + we_sessvar + '=' + we_sessid + (opt.sExtra || '')), { v: opt.sOptionName, val: collapsed });
 	};
 
 	// Reverse the current state.
@@ -602,7 +602,7 @@ function JumpTo(control, id)
 			show_ajax();
 
 			// Fill the select box with entries loaded through Ajax.
-			$.get(
+			$.post(
 				weUrl('action=ajax;sa=jumpto;xml'),
 				function (XMLDoc) {
 					$('we item', XMLDoc).each(function ()

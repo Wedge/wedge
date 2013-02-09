@@ -16,7 +16,7 @@ function template_main()
 	global $context, $txt, $boardurl;
 
 	echo '
-	<we:cat>
+	<we:cat class="wtop">
 		', $txt['wedge_home_title'], '
 	</we:cat>';
 
