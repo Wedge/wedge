@@ -536,12 +536,7 @@ function weToggle(opt)
 
 		// Loop through all the images that need to be toggled.
 		$.each(opt.aSwapImages || [], function () {
-			$('#' + this.sId).toggleClass('fold', !bCollapse).attr('title', bCollapse && this.altCollapsed ? this.altCollapsed : this.altExpanded);
-		});
-
-		// Loop through all the links that need to be toggled.
-		$.each(opt.aSwapLinks || [], function () {
-			$('#' + this.sId).html(bCollapse && this.msgCollapsed ? this.msgCollapsed : this.msgExpanded);
+			$('#' + this).toggleClass('fold', !bCollapse).attr('title', opt.title || $txt['upshrink_description']);
 		});
 
 		// Now go through all the sections to be collapsed.
@@ -579,12 +574,12 @@ function weToggle(opt)
 
 	// Initialize the images to be clickable.
 	$.each(opt.aSwapImages || [], function () {
-		$('#' + this.sId).show().data('that', that).click(toggle_me).css({ visibility: 'visible' }).css('cursor', 'pointer').mousedown(false);
+		$('#' + this).show().data('that', that).click(toggle_me).css({ visibility: 'visible' }).css('cursor', 'pointer').mousedown(false);
 	});
 
 	// Initialize links.
 	$.each(opt.aSwapLinks || [], function () {
-		$('#' + this.sId).show().data('that', that).click(toggle_me);
+		$('#' + this).show().data('that', that).click(toggle_me);
 	});
 }
 
@@ -637,10 +632,14 @@ function JumpTo(control, id)
 
 
 // *** Thought class.
-function Thought(opt)
+function Thought(privacies)
 {
 	var
 		ajaxUrl = weUrl('action=ajax;sa=thought;xml;'),
+		sReply = $txt['reply'],
+		sNoText = $txt['no_thought_yet'],
+		sLabelThought = $txt['thought'],
+		sEdit = $txt['edit_thought'],
 
 		// Make that personal text editable (again)!
 		cancel = function () {
@@ -654,9 +653,9 @@ function Thought(opt)
 				thought.after('<div class="thought_actions">'
 					+ (thought.data('self') !== '' ? '' : '<input type="button" class="submit"><input type="button" class="delete">')
 					+ '<input type="button" class="new"></div>').next()
-				.find('.new').val(opt.sReply).click(function () { oThought.edit(tid, mid, true); })					// Reply button
+				.find('.new').val(sReply).click(function () { oThought.edit(tid, mid, true); })						// Reply button
 				.prev().val(we_delete).click(function (e) { return ask(we_confirm, e) && oThought.remove(tid); })	// Delete button
-				.prev().val(opt.sEdit).click(function () { oThought.edit(tid, mid); });								// Submit button
+				.prev().val(sEdit).click(function () { oThought.edit(tid, mid); });									// Submit button
 		};
 
 	// Show the input after the user has clicked the text.
@@ -666,9 +665,9 @@ function Thought(opt)
 
 		var
 			thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(),
-			pr = '', privacies = opt.aPrivacy, privacy = (thought.data('prv') + '').split(','),
+			pr = '', privacy = (thought.data('prv') + '').split(','),
 
-			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == opt.sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
+			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
 				was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + 'in=' + tid, { async: false }).responseText));
 
 		for (p in privacies)
@@ -750,8 +749,9 @@ function Thought(opt)
 
 	this.cancel = cancel;
 
+	$('#thought_update span').html($('#thought_update span').html() || sNoText);
 	$('#thought_update')
-		.attr('title', opt.sLabelThought)
+		.attr('title', sLabelThought)
 		.click(function () { oThought.edit(''); });
 	$('.thought').each(interact_thoughts);
 }

@@ -341,19 +341,8 @@ function template_postform_after()
 			"postAttachment",
 			"postAttachment2"
 		],
-		aSwapImages: [
-			{
-				sId: "postMoreExpand",
-				altExpanded: "-",
-				altCollapsed: "+"
-			}
-		],
-		aSwapLinks: [
-			{
-				sId: "postMoreExpandLink",
-				msgExpanded: ' . JavaScriptEscape($txt['post_additionalopt']) . '
-			}
-		]
+		aSwapImages: ["postMoreExpand"],
+		aSwapLinks: ["postMoreExpandLink"]
 	});');
 	}
 
@@ -540,7 +529,7 @@ function template_show_previous_posts()
 			"msg' . $post_id . ' .list_posts",
 			"msg' . $post_id . ' .actions"
 		],
-		aSwapLinks: [{ sId: "msg' . $post_id . ' .ignored" }]
+		aSwapLinks: ["msg' . $post_id . ' .ignored"]
 	});');
 }
 

@@ -233,7 +233,7 @@ function template_boards_newsfader()
 	new weToggle({', empty($options['collapse_news_fader']) ? '' : '
 		isCollapsed: true,', '
 		aSwapContainers: [\'fadeScroller\'],
-		aSwapImages: [{ sId: \'newsupshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],
+		aSwapImages: [\'newsupshrink\'],
 		oThemeOptions: { bUseThemeSettings: ', we::$is_guest ? 'false' : 'true', ', sOptionName: \'collapse_news_fader\' }', we::$is_guest ? ',
 		sCookieName: \'newsupshrink\'' : '', '
 	});');

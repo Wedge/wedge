@@ -279,7 +279,7 @@ function template_logo_toggler()
 	new weToggle({', empty($options['collapse_header']) ? '' : '
 		isCollapsed: true,', '
 		aSwapContainers: [\'upper_section\'],
-		aSwapImages: [{ sId: \'upshrink\', altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ' }],', we::$is_guest ? '
+		aSwapImages: [\'upshrink\'],', we::$is_guest ? '
 		sCookie: \'upshrink\'' : '
 		sOptionName: \'collapse_header\'', '
 	});');
@@ -331,11 +331,12 @@ function template_sidebar_before()
 	</section>';
 
 		// This is where we'll show the Thought postbox.
-		$thought_id = isset(we::$user['data']['id_thought']) ? we::$user['data']['id_thought'] : 0;
-		$thought_prv = isset(we::$user['data']['thought_privacy']) ? we::$user['data']['thought_privacy'] : 1;
-
 		if (allowedTo('post_thought'))
 		{
+			$thought		= isset(we::$user['data']['thought']) ?			we::$user['data']['thought'] : '';
+			$thought_id		= isset(we::$user['data']['id_thought']) ?		we::$user['data']['id_thought'] : 0;
+			$thought_prv	= isset(we::$user['data']['thought_privacy']) ?	we::$user['data']['thought_privacy'] : 1;
+
 			echo '
 	<section>
 		<we:title>
@@ -344,20 +345,13 @@ function template_sidebar_before()
 		</we:title>
 		<a href="#" onclick="return oThought.edit(\'\', \'\', true);">', $txt['add_thought'], '</a> |
 		<a href="#" onclick="return oThought.edit(\'\');">', $txt['edit_thought'], '</a>
-		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>';
-
-			echo empty(we::$user['data']['thought']) ? $txt['no_thought_yet'] : we::$user['data']['thought'], '</span></div>
+		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>', $thought, '</span></div>
 	</section>';
 
 			add_js('
-	oThought = new Thought({
-		aPrivacy: [[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
+	oThought = new Thought([[-3, "everyone", "', $txt['privacy_public'], '"], [0, "members", "', $txt['privacy_members'], '"], ',
 		// !! @worg This is temporary code for use on Wedge.org. Clean this up!!
-		in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]],
-		sSubmit: "', $txt['form_submit'], '", sEdit: "', $txt['edit_thought'], '", sReply: "', $txt['reply'], '",
-		sNoText: ', JavaScriptEscape($txt['no_thought_yet']), ',
-		sLabelThought: ', JavaScriptEscape($txt['thought']), '
-	});');
+		in_array(20, we::$user['groups']) ? '[20, "friends", "Friends"], ' : '', '[5, "justme", "', $txt['privacy_self'], '"]]);');
 		}
 	}
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...

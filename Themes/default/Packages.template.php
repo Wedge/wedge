@@ -293,7 +293,7 @@ function template_package_list()
 	new weToggle({
 		isCollapsed: ', count($ps['items']) == 1 || $section_count == 1 ? 'false' : 'true', ',
 		aSwapContainers: [\'package_section_', $section, '\'],
-		aSwapImages: [{ sId: \'ps_img_', $section, '\' }]
+		aSwapImages: [\'ps_img_', $section, '\']
 	});');
 
 			foreach ($ps['items'] as $id => $package)
@@ -302,7 +302,7 @@ function template_package_list()
 	new weToggle({
 		isCollapsed: true,
 		aSwapContainers: [\'package_section_', $section, '_pkg_', $id, '\'],
-		aSwapImages: [{ sId: \'ps_img_', $section, '_pkg_', $id, '\' }]
+		aSwapImages: [\'ps_img_', $section, '_pkg_', $id, '\']
 	});');
 		}
 	}

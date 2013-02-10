@@ -1668,7 +1668,7 @@ function template_download_language()
 		add_js('
 			null
 		],
-		aSwapImages: [{ sId: \'toggle_image_', $th, '\' }]
+		aSwapImages: [\'toggle_image_', $th, '\']
 	});');
 	}
 }

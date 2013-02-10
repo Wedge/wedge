@@ -133,19 +133,8 @@ function weStatsCenter(oOptions)
 					that.onBeforeCollapseYear(this);
 				},
 				aSwapContainers: [],
-				aSwapImages: [
-					{
-						sId: oOptions.sYearImageIdPrefix + sYearId,
-						altExpanded: '-',
-						altCollapsed: '+'
-					}
-				],
-				aSwapLinks: [
-					{
-						sId: oOptions.sYearLinkIdPrefix + sYearId,
-						msgExpanded: sYearId
-					}
-				]
+				aSwapImages: [oOptions.sYearImageIdPrefix + sYearId],
+				aSwapLinks: [oOptions.sYearLinkIdPrefix + sYearId]
 			});
 		}
 
@@ -177,19 +166,8 @@ function weStatsCenter(oOptions)
 					that.onBeforeExpandMonth(this);
 				},
 				aSwapContainers: [],
-				aSwapImages: [
-					{
-						sId: oOptions.sMonthImageIdPrefix + sMonthId,
-						altExpanded: '-',
-						altCollapsed: '+'
-					}
-				],
-				aSwapLinks: [
-					{
-						sId: oOptions.sMonthLinkIdPrefix + sMonthId,
-						msgExpanded: $('#' + oOptions.sMonthLinkIdPrefix + sMonthId).html()
-					}
-				]
+				aSwapImages: [oOptions.sMonthImageIdPrefix + sMonthId],
+				aSwapLinks: [oOptions.sMonthLinkIdPrefix + sMonthId]
 			});
 
 			oCurYear.oToggle.opt.aSwapContainers.push(this.id);

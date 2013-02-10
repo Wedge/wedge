@@ -125,7 +125,7 @@ function previewPost()
 					'msg' + this + ' .list_posts',
 					'msg' + this + ' .actionbar'
 				],
-				aSwapLinks: [{ sId: 'msg' + this + ' .ignored' }]
+				aSwapLinks: ['msg' + this + ' .ignored']
 			});
 		});
 

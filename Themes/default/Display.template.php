@@ -101,9 +101,11 @@ function template_display_posts()
 			\'msg' . $msgid . ' .inner\',
 			\'msg' . $msgid . ' ' . (empty($context['liked_posts'][$msgid]) ? '.actionbar' : '.actions') . '\'
 		],
-		aSwapLinks: [{ sId: \'msg' . $msgid . ' .ignored\' }]
+		aSwapLinks: [\'msg' . $msgid . ' .ignored\']
 	});');
 
+	// !! These should probably be put in a more generic template or
+	// !! source file, so that non-topics can also easily use mini-menus.
 	if (!empty($context['user_menu']))
 	{
 		$context['footer_js'] .= '
