@@ -122,7 +122,7 @@ function template_admin()
 				$area['bigicon'] = '<img src="' . $context['menu_image_path'] . '/features_and_options.png" style="width: 32px; height: 32px">';
 
 			echo '
-			<div class="admin_item"><a href="', $scripturl, '?action=admin;area=', $area_id, ';' , $context['session_query'], '">', $area['bigicon'], '<br>', $area['label'], '</a></div>';
+			<div class="admin_item"><a href="', isset($area['url']) ? $area['url'] : '<URL>?action=admin;area=' . $area_id, ';', $context['session_query'], '">', $area['bigicon'], '<br>', $area['label'], '</a></div>';
 		}
 
 		echo '
