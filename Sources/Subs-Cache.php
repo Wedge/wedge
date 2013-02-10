@@ -120,7 +120,8 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 		$latest_date = max($latest_date, filemtime($add));
 	}
 
-	$id = $is_default_theme ? $id : substr(strrchr($theme['theme_dir'], '/'), 1) . '-' . $id;
+	// Add the 'm' keyword for member files -- using 'member' would add an extra couple of bytes per page for no reason.
+	$id = ($is_default_theme ? $id : substr(strrchr($theme['theme_dir'], '/'), 1) . '-' . $id) . (we::$is_guest ? '' : 'm-');
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
@@ -200,7 +201,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 	if (empty($files))
 		return;
 
-	$id = substr(strrchr($context['plugins_dir'][$plugin_name], '/'), 1) . '-' . $id;
+	$id = substr(strrchr($context['plugins_dir'][$plugin_name], '/'), 1) . '-' . $id . (we::$is_guest ? '' : 'member-');
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
@@ -795,6 +796,11 @@ function dynamic_admin_menu_icons()
 	return $rep;
 }
 
+function wedge_js_replace_ifs($match)
+{
+	return $match[1] == (we::$is_guest ? 'guest' : 'member') ? $match[2] : (isset($match[3]) ? $match[3] : '');
+}
+
 /**
  * Create a compact JS file that concatenates and compresses a list of existing JS files.
  *
@@ -899,6 +905,9 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 		$settings['js_lang'] = $save;
 		$lang_name = '';
 	}
+
+	// Member or guest? We need a (short) callback function because it preserves all quotes.
+	$final = preg_replace_callback('~@if\s*\(?(guest|member)\b\)?(.*?)(?:@else\b(.*?))?@endif\b~is', 'wedge_js_replace_ifs', $final);
 
 	if (!$closure_failed && !is_callable('curl_exec') && !preg_match('~1|yes|on|true~i', @ini_get('allow_url_fopen')))
 		$closure_failed = true;

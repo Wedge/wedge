@@ -166,7 +166,6 @@ function template_html_before()
 	<meta name="robots" content="noindex">';
 
 	echo '
-	<meta name="generator" content="Wedge">
 </head>';
 }
 
@@ -279,9 +278,8 @@ function template_logo_toggler()
 	new weToggle({', empty($options['collapse_header']) ? '' : '
 		isCollapsed: true,', '
 		aSwapContainers: [\'upper_section\'],
-		aSwapImages: [\'upshrink\'],', we::$is_guest ? '
-		sCookie: \'upshrink\'' : '
-		sOptionName: \'collapse_header\'', '
+		aSwapImages: [\'upshrink\'],
+		sOption: \'collapse_header\'
 	});');
 }
 

@@ -540,20 +540,22 @@ function weToggle(opt)
 		});
 
 		// Now go through all the sections to be collapsed.
-		$.each(opt.aSwapContainers, function () {
+		$.each(opt.aSwapContainers || [], function () {
 			$('#' + this)[bCollapse ? 'slideUp' : 'slideDown'](bInit ? 0 : 250);
 		});
 
 		// Update the new state.
 		collapsed = +bCollapse;
 
-		// Update the cookie, if desired.
-		if (opt.sCookie)
-			document.cookie = opt.sCookie + '=' + collapsed;
-
-		// Set a theme option through javascript.
-		if (!bInit && opt.sOptionName)
-			$.post(weUrl('action=jsoption;' + we_sessvar + '=' + we_sessid + (opt.sExtra || '')), { v: opt.sOptionName, val: collapsed });
+		@if guest
+			// Update the cookie, if desired.
+			if (opt.sOption)
+				document.cookie = opt.sOption + '=' + collapsed;
+		@else
+			// Set a theme option through javascript.
+			if (!bInit && opt.sOption)
+				$.post(weUrl('action=jsoption;' + we_sessvar + '=' + we_sessid + (opt.sExtra || '')), { v: opt.sOption, val: collapsed });
+		@endif
 	};
 
 	// Reverse the current state.
@@ -569,7 +571,7 @@ function weToggle(opt)
 	// If cookies are enabled and our toggler cookie is set to '1', override the initial state.
 	// Note: the cookie retrieval code is below, you can turn it into a function by replacing opt.sCookie with a param.
 	// It's not used anywhere else in Wedge, which is why we won't bother with a weCookie object.
-	if (opt.isCollapsed || (opt.sCookie && document.cookie.search('\\b' + opt.sCookie + '\\s*=\\s*1\\b') != -1))
+	if (@if (member) opt.isCollapsed @else opt.sCookie && document.cookie.search('\\b' + opt.sCookie + '\\s*=\\s*1\\b') != -1 @endif)
 		this.cs(true, true);
 
 	// Initialize the images to be clickable.
@@ -631,130 +633,132 @@ function JumpTo(control, id)
 }
 
 
-// *** Thought class.
-function Thought(privacies)
-{
-	var
-		ajaxUrl = weUrl('action=ajax;sa=thought;xml;'),
-		sReply = $txt['reply'],
-		sNoText = $txt['no_thought_yet'],
-		sLabelThought = $txt['thought'],
-		sEdit = $txt['edit_thought'],
+@if member
+	// *** Thought class.
+	function Thought(privacies)
+	{
+		var
+			ajaxUrl = weUrl('action=ajax;sa=thought;xml;'),
+			sReply = $txt['reply'],
+			sNoText = $txt['no_thought_yet'],
+			sLabelThought = $txt['thought'],
+			sEdit = $txt['edit_thought'],
 
-		// Make that personal text editable (again)!
-		cancel = function () {
-			$('#thought_form').siblings().show().end().remove();
-		},
+			// Make that personal text editable (again)!
+			cancel = function () {
+				$('#thought_form').siblings().show().end().remove();
+			},
 
-		interact_thoughts = function ()
+			interact_thoughts = function ()
+			{
+				var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
+				if (tid)
+					thought.after('<div class="thought_actions">'
+						+ (thought.data('self') !== '' ? '' : '<input type="button" class="submit"><input type="button" class="delete">')
+						+ '<input type="button" class="new"></div>').next()
+					.find('.new').val(sReply).click(function () { oThought.edit(tid, mid, true); })						// Reply button
+					.prev().val(we_delete).click(function (e) { return ask(we_confirm, e) && oThought.remove(tid); })	// Delete button
+					.prev().val(sEdit).click(function () { oThought.edit(tid, mid); });									// Submit button
+			};
+
+		// Show the input after the user has clicked the text.
+		this.edit = function (tid, mid, is_new, text, p)
 		{
-			var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
-			if (tid)
-				thought.after('<div class="thought_actions">'
-					+ (thought.data('self') !== '' ? '' : '<input type="button" class="submit"><input type="button" class="delete">')
-					+ '<input type="button" class="new"></div>').next()
-				.find('.new').val(sReply).click(function () { oThought.edit(tid, mid, true); })						// Reply button
-				.prev().val(we_delete).click(function (e) { return ask(we_confirm, e) && oThought.remove(tid); })	// Delete button
-				.prev().val(sEdit).click(function () { oThought.edit(tid, mid); });									// Submit button
+			cancel();
+
+			var
+				thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(),
+				pr = '', privacy = (thought.data('prv') + '').split(','),
+
+				cur_text = is_new ? text || '' : (was_personal.toLowerCase() == sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
+					was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + 'in=' + tid, { async: false }).responseText));
+
+			for (p in privacies)
+				pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
+
+			// Hide current thought and edit/modify/delete links, and add tools to write new thought.
+			thought
+				.toggle(tid && is_new)
+				.after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">' + pr
+					+ '</select><input type="hidden" id="noid"><input type="submit" class="save"><input type="button" class="cancel"></form>')
+				.siblings('.thought_actions').hide();
+			$('#noid').val(is_new ? 0 : thought.data('oid'))
+				.next().val(we_submit).click(function () { oThought.submit(tid, mid || tid); return false; })	// Save button
+				.next().val(we_cancel).click(function () { oThought.cancel(); });								// Cancel button
+			$('#ntho').focus().val(cur_text);
+			$('#npriv').sb();
+
+			return false;
 		};
 
-	// Show the input after the user has clicked the text.
-	this.edit = function (tid, mid, is_new, text, p)
-	{
-		cancel();
+		// Event handler for removal requests.
+		this.remove = function (tid)
+		{
+			var toDelete = $('#thought_update' + tid);
 
-		var
-			thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(),
-			pr = '', privacy = (thought.data('prv') + '').split(','),
+			show_ajax();
 
-			cur_text = is_new ? text || '' : (was_personal.toLowerCase() == sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-				was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + 'in=' + tid, { async: false }).responseText));
+			$.post(
+				ajaxUrl + 'remove',
+				{ oid: toDelete.data('oid') }
+			);
 
-		for (p in privacies)
-			pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
+			// We'll be assuming Wedge uses table tags to show thought lists.
+			toDelete.closest('tr').remove();
 
-		// Hide current thought and edit/modify/delete links, and add tools to write new thought.
-		thought
-			.toggle(tid && is_new)
-			.after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">' + pr
-				+ '</select><input type="hidden" id="noid"><input type="submit" class="save"><input type="button" class="cancel"></form>')
-			.siblings('.thought_actions').hide();
-		$('#noid').val(is_new ? 0 : thought.data('oid'))
-			.next().val(we_submit).click(function () { oThought.submit(tid, mid || tid); return false; })	// Save button
-			.next().val(we_cancel).click(function () { oThought.cancel(); });								// Cancel button
-		$('#ntho').focus().val(cur_text);
-		$('#npriv').sb();
+			hide_ajax();
+		};
 
-		return false;
-	};
+		// Event handler for clicking submit.
+		this.submit = function (tid, mid)
+		{
+			show_ajax();
 
-	// Event handler for removal requests.
-	this.remove = function (tid)
-	{
-		var toDelete = $('#thought_update' + tid);
-
-		show_ajax();
-
-		$.post(
-			ajaxUrl + 'remove',
-			{ oid: toDelete.data('oid') }
-		);
-
-		// We'll be assuming Wedge uses table tags to show thought lists.
-		toDelete.closest('tr').remove();
-
-		hide_ajax();
-	};
-
-	// Event handler for clicking submit.
-	this.submit = function (tid, mid)
-	{
-		show_ajax();
-
-		$.post(
-			ajaxUrl,
-			{
-				parent: tid,
-				master: mid,
-				oid: $('#noid').val(),
-				privacy: $('#npriv').val(),
-				text: $('#ntho').val()
-			},
-			function (XMLDoc)
-			{
-				var
-					$text = $('text', XMLDoc),
-					$new_thought = $('#new_thought'),
-					new_id = '#thought_update' + (tid ? $text.attr('id') : '');
-
-				// Is this a thought reply?
-				if (!$(new_id).length)
+			$.post(
+				ajaxUrl,
 				{
-					$new_thought.after($('<tr>').addClass($new_thought.attr('class')).html(
-						$new_thought.html().wereplace({
-							date: $('date', XMLDoc).text(),
-							text: $text.text()
-						})
-					));
-					$(new_id).each(interact_thoughts);
+					parent: tid,
+					master: mid,
+					oid: $('#noid').val(),
+					privacy: $('#npriv').val(),
+					text: $('#ntho').val()
+				},
+				function (XMLDoc)
+				{
+					var
+						$text = $('text', XMLDoc),
+						$new_thought = $('#new_thought'),
+						new_id = '#thought_update' + (tid ? $text.attr('id') : '');
+
+					// Is this a thought reply?
+					if (!$(new_id).length)
+					{
+						$new_thought.after($('<tr>').addClass($new_thought.attr('class')).html(
+							$new_thought.html().wereplace({
+								date: $('date', XMLDoc).text(),
+								text: $text.text()
+							})
+						));
+						$(new_id).each(interact_thoughts);
+					}
+					// If not, it's food for thought -- either new, or an edit.
+					else
+						$(new_id).find('span').html($text.text());
+					cancel();
+					hide_ajax();
 				}
-				// If not, it's food for thought -- either new, or an edit.
-				else
-					$(new_id).find('span').html($text.text());
-				cancel();
-				hide_ajax();
-			}
-		);
-	};
+			);
+		};
 
-	this.cancel = cancel;
+		this.cancel = cancel;
 
-	$('#thought_update span').html($('#thought_update span').html() || sNoText);
-	$('#thought_update')
-		.attr('title', sLabelThought)
-		.click(function () { oThought.edit(''); });
-	$('.thought').each(interact_thoughts);
-}
+		$('#thought_update span').html($('#thought_update span').html() || sNoText);
+		$('#thought_update')
+			.attr('title', sLabelThought)
+			.click(function () { oThought.edit(''); });
+		$('.thought').each(interact_thoughts);
+	}
+@endif
 
 /* Optimize:
 _formSubmitted = _f

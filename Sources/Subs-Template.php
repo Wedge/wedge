@@ -189,9 +189,9 @@ function ob_sessrewrite($buffer)
 			$thing = 'eves = {';
 			foreach ($context['delayed_events'] as $eve)
 				$thing .= '
-			' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
+		' . $eve[0] . ': ["' . $eve[1] . '", function (e) { ' . $eve[2] . ' }],';
 			$thing = substr($thing, 0, -1) . '
-		};';
+	};';
 		}
 		else
 			$thing = 'eves = 1;';
@@ -538,6 +538,11 @@ function ob_sessrewrite($buffer)
 		$buffer = preg_replace('~' . $strip_protocol . '((?:[^.]|\.(?!css))*?")~', '$1//$2', $buffer);
 	else
 		$buffer = preg_replace('~' . $strip_protocol . '~', '$1//', $buffer);
+
+	// The lesser of two evils. Add empty alt params to img tags that don't have them.
+	// Takes bandwidth, but only does it for validator bots. They started the war.
+	if (isset(we::$ua) && strpos(strtolower(we::$ua), 'validator') !== false)
+		$buffer = preg_replace('~<img\s((?:[^a>]|a(?!lt\b))+)>~', '<img alt $1>', $buffer);
 
 	// Return the changed buffer, and make a final optimization.
 	return preg_replace("~\n// ]]></script>\n*<script><!-- // --><!\[CDATA\[~", '', $buffer);

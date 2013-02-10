@@ -234,8 +234,7 @@ function template_boards_newsfader()
 		isCollapsed: true,', '
 		aSwapContainers: [\'fadeScroller\'],
 		aSwapImages: [\'newsupshrink\'],
-		oThemeOptions: { bUseThemeSettings: ', we::$is_guest ? 'false' : 'true', ', sOptionName: \'collapse_news_fader\' }', we::$is_guest ? ',
-		sCookieName: \'newsupshrink\'' : '', '
+		sOption: \'collapse_news_fader\'
 	});');
 	}
 }

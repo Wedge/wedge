@@ -416,91 +416,93 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 	Handles auto-saving of posts.
 */
 
-function wedge_autoDraft(opt)
-{
-	this.opt = opt;
-	this.opt.needsUpdate = false;
-
-	var that = this;
-	if (opt.iFreq)
-		this.opt.timer = setInterval(function () { that.draftSend.call(that); }, opt.iFreq);
-}
-
-wedge_autoDraft.prototype.needsUpdate = function (update)
-{
-	this.opt.needsUpdate = update;
-};
-
-wedge_autoDraft.prototype.draftSend = function ()
-{
-	if (!this.opt.needsUpdate)
-		return;
-
-	this.opt.needsUpdate = false;
-
-	var
-		sUrl = $('#' + this.opt.sForm).attr('action'),
-		draftInfo = {
-			draft: '',
-			draft_id: $('#draft_id').val(),
-			subject: $('#' + this.opt.sForm + ' input[name="subject"]').val(),
-			message: $('#' + this.opt.sEditor).val(),
-			message_mode: $('#' + this.opt.sEditor + '_mode').val()
-		},
-		that = this,
-		lastSavedDiv = this.opt.sLastNote;
-
-	// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
-	if (draftInfo.message_mode == 1)
-		draftInfo.message = $('#html_' + this.opt.sEditor).html();
-
-	if (draftInfo.message === '')
-		return;
-
-	// This isn't nice either, but nicer than the above, sorry.
-	draftInfo[we_sessvar] = we_sessid;
-
-	// Depending on what we're doing, there might be other things we need to save, like topic details or PM recipients.
-	if (this.opt.sType == 'auto_post')
+@if member
+	function wedge_autoDraft(opt)
 	{
-		draftInfo.topic = $('#' + this.opt.sForm + ' input[name="topic"]').val();
-		draftInfo.icon = $('#' + this.opt.sForm + ' input[name="icon"]').val();
-	}
-	else if (this.opt.sType == 'auto_pm')
-	{
-		// Since we're here, we only need to bother with the JS, since the auto suggest will be available and will have already sorted out user ids.
-		// This is not nice, though.
-		var recipients = [];
-		$('#' + this.opt.sForm + ' input[name="recipient_to\\[\\]"]').each(function () { recipients.push($(this).val()); });
-		if (recipients.length)
-			draftInfo['recipient_to[]'] = recipients;
+		this.opt = opt;
+		this.opt.needsUpdate = false;
 
-		recipients = [];
-		$('#' + this.opt.sForm + ' input[name="recipient_bcc\\[\\]"]').each(function () { recipients.push($(this).val()); });
-		if (recipients.length)
-			draftInfo['recipient_bcc[]'] = recipients;
+		var that = this;
+		if (opt.iFreq)
+			this.opt.timer = setInterval(function () { that.draftSend.call(that); }, opt.iFreq);
 	}
 
-	// We need to indicate that we're calling this to request XML.
-	// Going through this will set $context['is_ajax'] on the request.
-	$.post(sUrl, draftInfo, function (data)
+	wedge_autoDraft.prototype.needsUpdate = function (update)
 	{
-		$('#remove_draft').off('click'); // Just in case bad stuff happens.
+		this.opt.needsUpdate = update;
+	};
+
+	wedge_autoDraft.prototype.draftSend = function ()
+	{
+		if (!this.opt.needsUpdate)
+			return;
+
+		this.opt.needsUpdate = false;
 
 		var
-			obj = $('#lastsave', data),
-			draft_id = obj.attr('draft'),
-			url = obj.attr('url').wereplace({ id: draft_id + ';' + we_sessvar + '=' + we_sessid });
+			sUrl = $('#' + this.opt.sForm).attr('action'),
+			draftInfo = {
+				draft: '',
+				draft_id: $('#draft_id').val(),
+				subject: $('#' + this.opt.sForm + ' input[name="subject"]').val(),
+				message: $('#' + this.opt.sEditor).val(),
+				message_mode: $('#' + this.opt.sEditor + '_mode').val()
+			},
+			that = this,
+			lastSavedDiv = this.opt.sLastNote;
 
-		$('#draft_id').val(draft_id);
-		$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val(that.opt.sRemove));
-		$('#remove_draft').click(function () {
-			$.get(url, function () {
-				$('#' + lastSavedDiv).empty();
-				$('#draft_id').val('0');
+		// We're doing the whole WYSIWYG thing, but just for fun, we need to extract the object's frame
+		if (draftInfo.message_mode == 1)
+			draftInfo.message = $('#html_' + this.opt.sEditor).html();
+
+		if (draftInfo.message === '')
+			return;
+
+		// This isn't nice either, but nicer than the above, sorry.
+		draftInfo[we_sessvar] = we_sessid;
+
+		// Depending on what we're doing, there might be other things we need to save, like topic details or PM recipients.
+		if (this.opt.sType == 'auto_post')
+		{
+			draftInfo.topic = $('#' + this.opt.sForm + ' input[name="topic"]').val();
+			draftInfo.icon = $('#' + this.opt.sForm + ' input[name="icon"]').val();
+		}
+		else if (this.opt.sType == 'auto_pm')
+		{
+			// Since we're here, we only need to bother with the JS, since the auto suggest will be available and will have already sorted out user ids.
+			// This is not nice, though.
+			var recipients = [];
+			$('#' + this.opt.sForm + ' input[name="recipient_to\\[\\]"]').each(function () { recipients.push($(this).val()); });
+			if (recipients.length)
+				draftInfo['recipient_to[]'] = recipients;
+
+			recipients = [];
+			$('#' + this.opt.sForm + ' input[name="recipient_bcc\\[\\]"]').each(function () { recipients.push($(this).val()); });
+			if (recipients.length)
+				draftInfo['recipient_bcc[]'] = recipients;
+		}
+
+		// We need to indicate that we're calling this to request XML.
+		// Going through this will set $context['is_ajax'] on the request.
+		$.post(sUrl, draftInfo, function (data)
+		{
+			$('#remove_draft').off('click'); // Just in case bad stuff happens.
+
+			var
+				obj = $('#lastsave', data),
+				draft_id = obj.attr('draft'),
+				url = obj.attr('url').wereplace({ id: draft_id + ';' + we_sessvar + '=' + we_sessid });
+
+			$('#draft_id').val(draft_id);
+			$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val(that.opt.sRemove));
+			$('#remove_draft').click(function () {
+				$.get(url, function () {
+					$('#' + lastSavedDiv).empty();
+					$('#draft_id').val('0');
+				});
+				clearInterval(that.opt.timer);
+				return false;
 			});
-			clearInterval(that.opt.timer);
-			return false;
 		});
-	});
-};
+	};
+@endif

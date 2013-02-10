@@ -20,7 +20,10 @@ function template_display_posts()
 
 	// Show the topic information - icon, subject, etc.
 	echo '
-		<div id="forumposts"', $board_info['type'] == 'board' ? '' : ' class="blog"', '>
+		<div id="forumposts"', $board_info['type'] == 'board' ? '' : ' class="blog"', '>';
+
+	if (!we::$is_guest)
+		echo '
 			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.modifySave()">';
 
 	$ignoredMsgs = array();
@@ -59,8 +62,11 @@ function template_display_posts()
 	}
 	unset($msg, $message_skeleton);
 
+	if (!we::$is_guest)
+		echo '
+			</form>';
+
 	echo '
-			</form>
 		</div>';
 
 	if ($context['can_remove_post'])
@@ -73,7 +79,8 @@ function template_display_posts()
 		bRemove: 1' : '') . '
 	});');
 
-	add_js('
+	if (!we::$is_guest)
+		add_js('
 	var oQuickModify = new QuickModify({
 		sSubject: ' . JavaScriptEscape('<input type="text" id="qm_subject" value="%subject%" size="80" maxlength="80" tabindex="' . $context['tabindex']++ . '">') . ',
 		sBody: ' . JavaScriptEscape('

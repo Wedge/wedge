@@ -137,3 +137,6 @@ $radius = 8px
 /* maximum window width for the browser to trigger the low-res responsive CSS mode. */
 $responsive_max_width = 1000px
 $responsive = "all and (max-width: $responsive_max_width)"
+
+/* list of browsers that support the latest flexbox model (i.e. display: flex) */
+$supports_flexbox = firefox[20-], chrome[21-], opera[12.1-]

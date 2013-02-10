@@ -210,9 +210,9 @@ function template_permission_index()
 	new weToggle({', empty($context['show_advanced_options']) ? '
 		isCollapsed: true,' : '', '
 		aSwapContainers: [\'permissions_panel_advanced\'],
-		aSwapImages: [\'permissions_panel_toggle\']', we::$is_guest ? '' : ',
-		sOptionName: \'admin_preferences\',
-		sExtra: \';admin_key=app;th=1\'', '
+		aSwapImages: [\'permissions_panel_toggle\'],
+		sOption: \'admin_preferences\',
+		sExtra: \';admin_key=app;th=1\'
 	});
 
 	function checkSubmit(e)
