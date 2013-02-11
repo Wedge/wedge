@@ -117,14 +117,7 @@ function template_set_password()
 	add_js_file('scripts/register.js');
 
 	add_js('
-	var regTextStrings = {
-		"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
-		"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',
-		"password_numbercase": ', JavaScriptEscape($txt['registration_password_numbercase']), ',
-		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
-		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
-	};
-	var verificationHandle = new weRegister("reminder_form", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ', regTextStrings);');
+	new weRegister("reminder_form", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ');');
 }
 
 function template_ask()
@@ -170,12 +163,5 @@ function template_ask()
 	add_js_file('scripts/register.js');
 
 	add_js('
-	var regTextStrings = {
-		"password_short": ', JavaScriptEscape($txt['registration_password_short']), ',
-		"password_reserved": ', JavaScriptEscape($txt['registration_password_reserved']), ',
-		"password_numbercase": ', JavaScriptEscape($txt['registration_password_numbercase']), ',
-		"password_no_match": ', JavaScriptEscape($txt['registration_password_no_match']), ',
-		"password_valid": ', JavaScriptEscape($txt['registration_password_valid']), '
-	};
-	var verificationHandle = new weRegister("creator", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ', regTextStrings);');
+	new weRegister("creator", ', empty($settings['password_strength']) ? 0 : $settings['password_strength'], ');');
 }

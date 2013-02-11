@@ -134,7 +134,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 
 	// Add javascript for the object.
 	if ($thisVerification['show_visual'])
-		add_js('
+		add_js_unique('
 	$(\'.vv_special\').remove();
 	var verification' . $verificationOptions['id'] . 'Handle = new weCaptcha("' . $thisVerification['image_href'] . '", "' . $verificationOptions['id'] . '");');
 

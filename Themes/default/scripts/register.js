@@ -10,93 +10,83 @@
  * @version 0.1
  */
 
-function weRegister(formID, passwordDifficultyLevel, regTextStrings)
-{
-	this.addVerify = addVerificationField;
-	this.autoSetup = autoSetup;
-	this.refreshMainPassword = refreshMainPassword;
-	this.refreshVerifyPassword = refreshVerifyPassword;
+@language Login;
 
+function weRegister(formID, passwordDifficultyLevel)
+{
 	var
 		verificationFields = [],
 		verificationFieldLength = 0,
-		textStrings = regTextStrings ? regTextStrings : [],
-		passwordLevel = passwordDifficultyLevel ? passwordDifficultyLevel : 0;
+		txt_username_valid = $txt['registration_username_available'],
+		txt_username_invalid = $txt['registration_username_unavailable'],
+		txt_username_check = $txt['registration_username_check'],
+		txt_password_short = $txt['registration_password_short'],
+		txt_password_reserved = $txt['registration_password_reserved'],
+		txt_password_numbercase = $txt['registration_password_numbercase'],
+		txt_password_no_match = $txt['registration_password_no_match'],
+		txt_password_valid = $txt['registration_password_valid'];
 
-	// Setup all the fields!
-	autoSetup(formID);
-
-	// This is a field which requires some form of verification check.
-	function addVerificationField(fieldType, fieldID)
+	// This will automatically pick up all the necessary verification fields and initialize their visual status.
+	$('#' + formID).find('input[type="text"][id*="autov"], input[type="password"][id*="autov"]').each(function ()
 	{
-		// Check the field exists.
-		var inputHandle = $('#' + fieldID);
-		if (!inputHandle.length)
-			return;
+		var curType = 0, eventHandler = false, id = this.id;
 
-		// Get the handles.
-		var
-			imageHandle = $('#' + fieldID + '_img'),
-			// !!! Looks like this one is never used...
-			divHandle = $('#' + fieldID + '_div'),
-			eventHandler = false;
-
-		// What is the event handler?
-		if (fieldType == 'pwmain')
-			eventHandler = refreshMainPassword;
-		else if (fieldType == 'pwverify')
-			eventHandler = refreshVerifyPassword;
-		else if (fieldType == 'username')
-			eventHandler = refreshUsername;
-		else if (fieldType == 'reserved')
-			eventHandler = refreshMainPassword;
-
-		// Store this field.
-		verificationFields[fieldType == 'reserved' ? fieldType + verificationFieldLength : fieldType] = [
-			fieldID, inputHandle[0], imageHandle, divHandle[0], fieldType, inputHandle[0].className
-		];
-
-		// Keep a count to it!
-		verificationFieldLength++;
-
-		// Step to it!
-		if (eventHandler)
+		// Username can only be done with XML.
+		if (id.indexOf('username') != -1)
 		{
-			// Username will auto-check on blur!
-			inputHandle.keyup(eventHandler).blur(autoCheckUsername);
-			eventHandler();
+			curType = 'username';
+			eventHandler = refreshUsername;
+		}
+		else if (id.indexOf('pwmain') != -1)
+		{
+			curType = 'pwmain';
+			eventHandler = refreshMainPassword;
+		}
+		else if (id.indexOf('pwverify') != -1)
+		{
+			curType = 'pwverify';
+			eventHandler = refreshVerifyPassword;
+		}
+		// This means this field is reserved and cannot be contained in the password!
+		else if (id.indexOf('reserve') != -1)
+		{
+			curType = 'reserved';
+			eventHandler = refreshMainPassword;
 		}
 
-		// Make the div visible!
-		divHandle.show();
-	}
+		// If we're happy let's add this element!
+		if (curType)
+		{
+			// This is a field which requires some form of verification check.
+			// Get the handles.
+			var $imageHandle = $('#' + id + '_img'), $inputHandle = $('#' + id);
+			if ($inputHandle.length)
+			{
+				// Store this field.
+				verificationFields[curType == 'reserved' ? curType + verificationFieldLength : curType] = [
+					id, $inputHandle[0], $imageHandle, curType, $inputHandle[0].className
+				];
 
-	// This function will automatically pick up all the necessary verification fields and initialize their visual status.
-	function autoSetup(formID)
-	{
-		return !!($('#' + formID).find('input[type="text"][id*="autov"], input[type="password"][id*="autov"]').each(function () {
-			var curType = 0, id = this.id;
+				// Keep a count to it!
+				verificationFieldLength++;
 
-			// Username can only be done with XML.
-			if (id.indexOf('username') != -1)
-				curType = 'username';
-			else if (id.indexOf('pwmain') != -1)
-				curType = 'pwmain';
-			else if (id.indexOf('pwverify') != -1)
-				curType = 'pwverify';
-			// This means this field is reserved and cannot be contained in the password!
-			else if (id.indexOf('reserve') != -1)
-				curType = 'reserved';
+				// Step to it!
+				if (eventHandler)
+				{
+					// Username will auto-check on blur!
+					$inputHandle.keyup(eventHandler).blur(autoCheckUsername);
+					eventHandler();
+				}
 
-			// If we're happy let's add this element!
-			if (curType)
-				addVerificationField(curType, id);
+				// Make the div visible!
+				$('#' + id + '_div').show();
+			}
+		}
 
-			// If this is the username do we also have a button to find the user?
-			if (curType == 'username')
-				$('#' + id + '_link').click(checkUsername);
-		}).length);
-	}
+		// If this is the username do we also have a button to find the user?
+		if (curType == 'username')
+			$('#' + id + '_link').click(checkUsername);
+	});
 
 	// What is the password state?
 	function refreshMainPassword(called_from_verify)
@@ -104,36 +94,34 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 		if (!verificationFields.pwmain)
 			return false;
 
-		var curPass = verificationFields.pwmain[1].value, stringIndex = '';
+		var curPass = verificationFields.pwmain[1].value, result = '';
 
 		// Is it a valid length?
-		if ((curPass.length < 8 && passwordLevel >= 1) || curPass.length < 4)
-			stringIndex = 'password_short';
+		if ((curPass.length < 8 && passwordDifficultyLevel >= 1) || curPass.length < 4)
+			result = txt_password_short;
 
 		// More than basic?
-		if (passwordLevel >= 1)
+		if (passwordDifficultyLevel >= 1)
 		{
 			// If there is a username, check it's not in the password!
 			if (verificationFields.username && verificationFields.username[1].value && curPass.indexOf(verificationFields.username[1].value) != -1)
-				stringIndex = 'password_reserved';
+				result = txt_password_reserved;
 
 			// Any reserved fields?
 			for (var i in verificationFields)
-				if (verificationFields[i][4] == 'reserved' && verificationFields[i][1].value && curPass.indexOf(verificationFields[i][1].value) != -1)
-					stringIndex = 'password_reserved';
+				if (verificationFields[i][3] == 'reserved' && verificationFields[i][1].value && curPass.indexOf(verificationFields[i][1].value) != -1)
+					result = txt_password_reserved;
 
 			// Finally - is it hard and, as such, requiring mixed cases and numbers?
-			if ((passwordLevel > 1) && ((curPass == curPass.toLowerCase()) || (!curPass.match(/(\D\d|\d\D)/))))
-				stringIndex = 'password_numbercase';
+			if ((passwordDifficultyLevel > 1) && ((curPass == curPass.toLowerCase()) || (!curPass.match(/(\D\d|\d\D)/))))
+				result = txt_password_numbercase;
 		}
 
-		var isValid = stringIndex == '' ? true : false;
-		if (stringIndex == '')
-			stringIndex = 'password_valid';
+		var isValid = result == '';
 
 		// Set the image.
-		setVerificationImage(verificationFields.pwmain[2], isValid, textStrings[stringIndex] ? textStrings[stringIndex] : '');
-		verificationFields.pwmain[1].className = verificationFields.pwmain[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
+		setVerificationImage(verificationFields.pwmain[2], isValid, result || txt_password_valid);
+		verificationFields.pwmain[1].className = verificationFields.pwmain[4] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
 
 		// As this has changed the verification one may have too!
 		if (verificationFields.pwverify && !called_from_verify)
@@ -150,12 +138,10 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 			return false;
 
 		// Check and set valid status!
-		var
-			isValid = verificationFields.pwmain[1].value == verificationFields.pwverify[1].value && refreshMainPassword(true),
-			alt = textStrings[isValid ? 'password_valid' : 'password_no_match'] ? textStrings[isValid ? 'password_valid' : 'password_no_match'] : '';
+		var isValid = verificationFields.pwmain[1].value == verificationFields.pwverify[1].value && refreshMainPassword(true);
 
-		setVerificationImage(verificationFields.pwverify[2], isValid, alt);
-		verificationFields.pwverify[1].className = verificationFields.pwverify[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
+		setVerificationImage(verificationFields.pwverify[2], isValid, isValid ? txt_password_valid : txt_password_no_match);
+		verificationFields.pwverify[1].className = verificationFields.pwverify[4] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
 
 		return true;
 	}
@@ -168,10 +154,9 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 
 		// Restore the class name.
 		if (verificationFields.username[1].className)
-			verificationFields.username[1].className = verificationFields.username[5];
+			verificationFields.username[1].className = verificationFields.username[4];
 		// Check the image is correct.
-		var alt = textStrings.username_check ? textStrings.username_check : '';
-		setVerificationImage(verificationFields.username[2], 'check', alt);
+		setVerificationImage(verificationFields.username[2], 'check', txt_username_check);
 
 		// Check the password is still OK.
 		refreshMainPassword();
@@ -200,34 +185,24 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 			show_ajax();
 
 		// Request a search on that username.
-		$.get(weUrl('action=register;sa=usernamecheck;xml;username=' + encodeURIComponent(curUsername)), checkUsernameCallback);
+		$.get(weUrl('action=register;sa=usernamecheck;xml;username=' + encodeURIComponent(curUsername)), function (XMLDoc)
+		{
+			var isValid = $('username', XMLDoc).attr('valid') == 1;
+
+			verificationFields.username[1].className = verificationFields.username[4] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
+			setVerificationImage(verificationFields.username[2], isValid, isValid ? txt_username_valid : txt_username_invalid);
+
+			hide_ajax();
+		});
 
 		return true;
 	}
 
-	// Callback for getting the username data.
-	function checkUsernameCallback(XMLDoc)
-	{
-		var
-			isValid = $('username', XMLDoc).attr('valid') == 1,
-			alt = textStrings['username_' + (isValid ? 'valid' : 'invalid')];
-
-		verificationFields.username[1].className = verificationFields.username[5] + ' ' + (isValid ? 'valid' : 'invalid') + '_input';
-		setVerificationImage(verificationFields.username[2], isValid, alt);
-
-		hide_ajax();
-	}
-
 	// Set the image to be the correct type.
-	function setVerificationImage(imageHandle, imageIcon, alt)
+	function setVerificationImage($imageHandle, imageIcon, alt)
 	{
-		if (!imageHandle.length)
-			return false;
-		if (!alt)
-			alt = '*';
-
-		imageHandle.attr({
-			src: we_theme_url + '/images/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check.gif' : 'field_valid.gif') : 'field_invalid.gif'),
+		$imageHandle.attr({
+			src: we_theme_url + '/images/icons/' + (imageIcon ? (imageIcon == 'check' ? 'field_check' : 'field_valid') : 'field_invalid') + '.gif',
 			alt: alt,
 			title: alt
 		});
@@ -235,13 +210,3 @@ function weRegister(formID, passwordDifficultyLevel, regTextStrings)
 		return true;
 	}
 }
-
-/* Optimize:
-verificationFields = v
-verificationFieldLength = vl
-textStrings = ts
-passwordLevel = pl
-inputHandle = ih
-imageHandle = mh
-divHandle = dh
-*/

@@ -1432,12 +1432,13 @@ function aeva_foxy_fill_player(&$playlist, $type = 'audio', &$details, $play = 0
 		'video' => 1,
 		'sound' => 2
 	);
+	$js = '';
 	foreach ($playlist as $i)
-		$context['footer_js'] .= $i['id'] . ',' . $i['duration'] . ',' . $arrtypes[$i['type']] . ',"' . $i['ext'] . '"], [';
+		$js .= $i['id'] . ',' . $i['duration'] . ',' . $arrtypes[$i['type']] . ',"' . $i['ext'] . '"], [';
 	$first = reset($playlist);
-	$context['footer_js'] = substr($context['footer_js'], 0, -3) . '];';
+	$js = substr($js, 0, -3) . '];';
 
-	add_js('
+	add_js($js . '
 
 	weplay({
 		swo: "', $swo, '",

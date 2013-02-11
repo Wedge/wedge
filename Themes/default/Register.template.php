@@ -61,18 +61,7 @@ function template_registration_form()
 		return true;
 	}
 
-	var regTextStrings = {
-		"username_valid": ' . JavaScriptEscape($txt['registration_username_available']) . ',
-		"username_invalid": ' . JavaScriptEscape($txt['registration_username_unavailable']) . ',
-		"username_check": ' . JavaScriptEscape($txt['registration_username_check']) . ',
-		"password_short": ' . JavaScriptEscape($txt['registration_password_short']) . ',
-		"password_reserved": ' . JavaScriptEscape($txt['registration_password_reserved']) . ',
-		"password_numbercase": ' . JavaScriptEscape($txt['registration_password_numbercase']) . ',
-		"password_no_match": ' . JavaScriptEscape($txt['registration_password_no_match']) . ',
-		"password_valid": ' . JavaScriptEscape($txt['registration_password_valid']) . '
-	};
-
-	var verificationHandle = new weRegister("registration", ' . (empty($settings['password_strength']) ? 0 : $settings['password_strength']) . ', regTextStrings);');
+	new weRegister("registration", ' . (empty($settings['password_strength']) ? 0 : $settings['password_strength']) . ');');
 
 	// Any errors?
 	if (!empty($context['registration_errors']))
@@ -114,7 +103,7 @@ function template_registration_form()
 						</dd>
 						<dt><strong><label for="we_autov_reserve1">', $txt['email'], ':</label></strong></dt>
 						<dd>
-							<input type="email" name="email" id="we_autov_reserve1" size="30" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '" required>
+							<input type="email" name="email" id="we_autov_reserve1" size="30" placeholder="', $txt['email_placeholder'], '" tabindex="', $context['tabindex']++, '" value="', isset($context['email']) ? $context['email'] : '', '" required>
 						</dd>
 						<dt><strong><label for="allow_email">', $txt['allow_user_email'], ':</label></strong></dt>
 						<dd>
@@ -389,50 +378,6 @@ function template_coppa_form()
 			</tr>
 		</table>
 		<br>';
-}
-
-// Show a window containing the spoken verification code.
-function template_verification_sound()
-{
-	global $context, $theme, $options, $txt;
-
-	echo '<!DOCTYPE html>
-<html', $context['right_to_left'] ? ' dir="rtl"' : '', '>
-<head>
-	<meta charset="utf-8">
-	<meta name="robots" content="noindex">
-	<title>', $context['page_title'], '</title>',
-	theme_base_css(),
-	theme_base_js(1);
-
-	// Just show the help text and a "close window" link.
-	echo '
-</head>
-<body style="margin: 1ex">
-	<div class="popuptext center">
-		<audio src="', $context['verification_sound_href'], '" controls id="audio">';
-
-	if (we::is('ie'))
-		echo '
-			<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
-				<param name="AutoStart" value="1">
-				<param name="FileName" value="', $context['verification_sound_href'], '">
-			</object>';
-	else
-		echo '
-			<object type="audio/x-wav" data="', $context['verification_sound_href'], '">
-				<a href="', $context['verification_sound_href'], '" rel="nofollow">', $context['verification_sound_href'], '</a>
-			</object>';
-
-	echo '
-		</audio>
-		<br>
-		<a href="#" onclick="$(\'#audio\')[0].play();">', $txt['visual_verification_sound_again'], '</a><br>
-		<a href="#" onclick="$(\'#helf\').remove(); return false;">', $txt['visual_verification_sound_close'], '</a><br>
-		<a href="', $context['verification_sound_href'], '" rel="nofollow">', $txt['visual_verification_sound_direct'], '</a>
-	</div>
-</body>
-</html>';
 }
 
 function template_admin_register()

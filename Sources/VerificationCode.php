@@ -19,7 +19,7 @@ define('WEDGE_NO_LOG', 1);
 // Show the verification code or let it hear.
 function VerificationCode()
 {
-	global $settings, $context, $scripturl;
+	global $settings, $context, $scripturl, $txt;
 
 	$verification_id = isset($_GET['vid']) ? $_GET['vid'] : '';
 	$code = $verification_id && isset($_SESSION[$verification_id . '_vv'], $_SESSION[$verification_id . '_vv']['code']) ? $_SESSION[$verification_id . '_vv']['code'] : (isset($_SESSION['visual_verification_code']) ? $_SESSION['visual_verification_code'] : '');
@@ -31,12 +31,34 @@ function VerificationCode()
 	// Show a window that will play the verification code.
 	elseif (isset($_REQUEST['sound']))
 	{
-		loadLanguage('Login');
-		loadTemplate('Register');
-
-		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
-		wetem::load('verification_sound');
+		loadLanguage(array('Help', 'Login'));
+		loadTemplate('GenericPopup');
 		wetem::hide();
+		wetem::load('popup');
+
+		$context['page_title'] = $txt['visual_verification_sound'];
+		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
+
+		$context['popup_contents'] = '
+		<audio src="' . $context['verification_sound_href'] . '" controls id="audio">';
+
+		if (we::is('ie'))
+			$context['popup_contents'] .= '
+			<object classid="clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95" type="audio/x-wav">
+				<param name="AutoStart" value="1">
+				<param name="FileName" value="' . $context['verification_sound_href'] . '">
+			</object>';
+		else
+			$context['popup_contents'] .= '
+			<object type="audio/x-wav" data="' . $context['verification_sound_href'] . '">
+				<a href="' . $context['verification_sound_href'] . '" rel="nofollow">' . $context['verification_sound_href'] . '</a>
+			</object>';
+
+		$context['popup_contents'] .= '
+		</audio>
+		<br>
+		<a href="#" onclick="$(\'#audio\')[0].play(); return false;">' . $txt['visual_verification_sound_again'] . '</a><br>
+		<a href="' . $context['verification_sound_href'] . '" rel="nofollow">' . $txt['visual_verification_sound_direct'] . '</a>';
 
 		obExit();
 	}

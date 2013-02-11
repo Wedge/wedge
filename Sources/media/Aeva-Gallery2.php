@@ -2046,16 +2046,17 @@ function aeva_massUpload()
 		quotas: {');
 
 		$filetypes = array('im' => 'image', 'au' => 'audio', 'vi' => 'video', 'do' => 'doc');
+		$js = '';
 		if (!empty($context['allowed_types']))
 		{
 			foreach ($context['allowed_types'] as $filetype => $exts)
 				if (isset($filetypes[$filetype]))
 					foreach ($exts as $ext)
-						$context['footer_js'] .= ' "' . substr(strrchr($ext, '.'), 1) . '": ' . (int) $context['aeva_max_file_size'][$filetypes[$filetype]] . ',';
-			$context['footer_js'] = substr($context['footer_js'], 0, -1) . ' ';
+						$js .= ' "' . substr(strrchr($ext, '.'), 1) . '": ' . (int) $context['aeva_max_file_size'][$filetypes[$filetype]] . ',';
+			$js = substr($js, 0, -1) . ' ';
 		}
 
-		add_js('}
+		add_js($js . '}
 	});');
 
 		return;

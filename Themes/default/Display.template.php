@@ -111,63 +111,70 @@ function template_display_posts()
 		aSwapLinks: [\'msg' . $msgid . ' .ignored\']
 	});');
 
+	$js = '';
+
 	// !! These should probably be put in a more generic template or
 	// !! source file, so that non-topics can also easily use mini-menus.
 	if (!empty($context['user_menu']))
 	{
-		$context['footer_js'] .= '
+		$js .= '
 	$(".umme").mime({';
 
 		foreach ($context['user_menu'] as $user => $linklist)
-			$context['footer_js'] .= '
+			$js .= '
 		' . $user. ': ["' . implode('", "', $linklist) . '"],';
 
-		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
+		$js = substr($js, 0, -1) . '
 	}, {';
+
 		foreach ($context['user_menu_items'] as $key => $pmi)
 		{
 			if (!isset($context['user_menu_items_show'][$key]))
 				continue;
-			$context['footer_js'] .= '
+			$js .= '
 		' . $key . ': [';
 			foreach ($pmi as $type => $item)
 				if ($type === 'caption')
-					$context['footer_js'] .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
+					$js .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
 				else
-					$context['footer_js'] .= $item . ', ';
-			$context['footer_js'] = substr($context['footer_js'], 0, -2) . '],';
+					$js .= $item . ', ';
+			$js = substr($js, 0, -2) . '],';
 		}
-		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
+		$js = substr($js, 0, -1) . '
 	}, true);';
 	}
 
 	if (!empty($context['action_menu']))
 	{
-		$context['footer_js'] .= '
+		$js .= '
 	$(".acme").mime({';
 
 		foreach ($context['action_menu'] as $post => $linklist)
-			$context['footer_js'] .= '
+			$js .= '
 		' . $post . ': ["' . implode('", "', $linklist) . '"],';
 
-		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
+		$js = substr($js, 0, -1) . '
 	}, {';
+
 		foreach ($context['action_menu_items'] as $key => $pmi)
 		{
 			if (!isset($context['action_menu_items_show'][$key]))
 				continue;
-			$context['footer_js'] .= '
+			$js .= '
 		' . $key . ': [';
 			foreach ($pmi as $type => $item)
 				if ($type === 'caption')
-					$context['footer_js'] .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
+					$js .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
 				else
-					$context['footer_js'] .= $item . ', ';
-			$context['footer_js'] = substr($context['footer_js'], 0, -2) . '],';
+					$js .= $item . ', ';
+			$js = substr($js, 0, -2) . '],';
 		}
-		$context['footer_js'] = substr($context['footer_js'], 0, -1) . '
+		$js = substr($js, 0, -1) . '
 	});';
 	}
+
+	if (!empty($js))
+		add_js($js);
 }
 
 function template_topic_poll()

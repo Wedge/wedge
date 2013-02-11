@@ -64,13 +64,15 @@ function template_folder()
 	add_js('
 	var currentLabels = [], allLabels = { ');
 
+	$js = '';
+
 	foreach ($context['labels'] as $label)
-		$context['footer_js'] .= '\'' . $label['id'] . '\': ' . JavaScriptEscape($label['name']) . ', ';
+		$js .= '\'' . $label['id'] . '\': ' . JavaScriptEscape($label['name']) . ', ';
 
 	if (!empty($context['labels']))
-		$context['footer_js'] = substr($context['footer_js'], 0, -2);
+		$js = substr($js, 0, -2);
 
-	add_js(' };
+	add_js($js . ' };
 	function loadLabelChoices()
 	{
 		var

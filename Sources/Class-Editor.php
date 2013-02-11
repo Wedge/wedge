@@ -2478,32 +2478,32 @@ class wedit
 				$context['header'] .= '
 	<link rel="stylesheet" href="' . $boardurl . $filename . '">';
 
+			$js = '';
+			foreach ($this->smileys as $location => $smileyRows)
+			{
+				$js .= '
+			' . $location . ': [';
+				foreach ($smileyRows as $smileyRow)
+				{
+					$js .= '[';
+					foreach ($smileyRow['smileys'] as $smiley)
+						$js .= '
+				[' . JavaScriptEscape($smiley['code']) . ', ' . JavaScriptEscape($smiley['class']) . ', ' . JavaScriptEscape($smiley['description']) . ']' . (empty($smiley['isLast']) ? ',' : '');
+
+				$js .= '
+			]' . (empty($smileyRow['isLast']) ? ',
+			' : '');
+				}
+				$js .= ']' . ($location === 'postform' ? ',' : '');
+			}
+
 			add_js('
 	var oSmileyBox_' . $this->id . ' = new weSmileyBox({
 		id: ' . JavaScriptEscape($this->id) . ',
 		sContainer: ' . JavaScriptEscape($smileycontainer) . ',
 		sClickHandler: function (o) { oEditorHandle_' . $this->id . '.insertSmiley(o); },
-		oSmileyLocations: {');
-
-			foreach ($this->smileys as $location => $smileyRows)
-			{
-				$context['footer_js'] .= '
-			' . $location . ': [';
-				foreach ($smileyRows as $smileyRow)
-				{
-					$context['footer_js'] .= '[';
-					foreach ($smileyRow['smileys'] as $smiley)
-						$context['footer_js'] .= '
-				[' . JavaScriptEscape($smiley['code']) . ', ' . JavaScriptEscape($smiley['class']) . ', ' . JavaScriptEscape($smiley['description']) . ']' . (empty($smiley['isLast']) ? ',' : '');
-
-				$context['footer_js'] .= '
-			]' . (empty($smileyRow['isLast']) ? ',
-			' : '');
-				}
-				$context['footer_js'] .= ']' . ($location === 'postform' ? ',' : '');
-			}
-
-			add_js('
+		oSmileyLocations: {'
+			. $js . '
 		},
 		sSmileyRowTemplate: ' . JavaScriptEscape('<div>%smileyRow%</div>') . ',
 		sSmileyTemplate: ' . (we::is('ie') ? JavaScriptEscape('<div class="smiley %smileySource% smpost" title="%smileyDesc%" id="%smileyId%"><img src="')
@@ -2517,25 +2517,19 @@ class wedit
 
 		if ($this->show_bbc)
 		{
-			add_js('
-	var oBBCBox_' . $this->id . ' = new weButtonBox({
-		sContainer: ' . JavaScriptEscape($bbccontainer) . ',
-		sButtonClickHandler: function (o) { oEditorHandle_' . $this->id . '.handleButtonClick(o); },
-		sSelectChangeHandler: function (o) { oEditorHandle_' . $this->id . '.handleSelectChange(o); },
-		sSprite: we_theme_url + \'/images/bbc/sprite.png\',
-		aButtonRows: [');
-
 			// Here loop through the array, printing the images/rows/separators!
+			$js = '';
+			$last_row = count($this->bbc) - 1;
 			foreach ($this->bbc as $i => $buttonRow)
 			{
-				$context['footer_js'] .= '
+				$js .= '
 			[';
 				foreach ($buttonRow as $tag)
 				{
 					// Is there a "before" part for this bbc button? If not, it can't be a button!!
 					// In order, we show: sType, bEnabled, sImage/sPos, sCode, sBefore, sAfter, sDescription.
 					if (isset($tag['before']))
-						$context['footer_js'] .= '
+						$js .= '
 				[' .
 					'\'button\', ' . (empty($this->disabled_tags[$tag['code']]) ? '1, ' : '0, ') . (!is_array($tag['image']) ?
 					(strpos($tag['image'], '//') !== false ? JavaScriptEscape($tag['image']) : JavaScriptEscape($theme['images_url'] . '/bbc/' . $tag['image'] . '.gif')) . ', ' :
@@ -2548,7 +2542,7 @@ class wedit
 
 					// Must be a divider then.
 					else
-						$context['footer_js'] .= '
+						$js .= '
 				[]' . (empty($tag['isLast']) ? ',' : '');
 				}
 
@@ -2561,22 +2555,22 @@ class wedit
 						$fonts = array_filter(array_map('trim', preg_split('~[\s,]+~', $settings['editorFonts'])));
 						if (!empty($fonts))
 						{
-							$context['footer_js'] .= ',
+							$js .= ',
 				["select", "sel_face", {"": ' . JavaScriptEscape($txt['font_face']);
 							foreach ($fonts as $font)
-								$context['footer_js'] .= ', "' . strtolower($font) . '": "' . $font . '"';
-							$context['footer_js'] .= '}]';
+								$js .= ', "' . strtolower($font) . '": "' . $font . '"';
+							$js .= '}]';
 						}
 					}
 
 					// Font sizes anyone?
 					if (!isset($this->disabled_tags['size']))
-						$context['footer_js'] .= ',
+						$js .= ',
 				["select", "sel_size", { "": ' . JavaScriptEscape($txt['font_size']) . ', 1: "6pt", 2: "8pt", 3: "10pt", 4: "12pt", 5: "14pt", 6: "18pt", 7: "24pt" }]';
 
 					// Print a drop down list for all the colors we allow!
 					if (!isset($this->disabled_tags['color']))
-						$context['footer_js'] .= ',
+						$js .= ',
 				["select", "sel_color", {
 					"": ' . JavaScriptEscape($txt['change_color']) . ',
 					"black": ' . JavaScriptEscape($txt['black']) . ', "red": ' . JavaScriptEscape($txt['red']) . ', "orange": ' . JavaScriptEscape($txt['orange']) . ',
@@ -2586,11 +2580,18 @@ class wedit
 					"yellow": ' . JavaScriptEscape($txt['yellow']) . ', "beige": ' . JavaScriptEscape($txt['beige']) . ', "white": ' . JavaScriptEscape($txt['white']) . '
 				}]';
 				}
-				$context['footer_js'] .= '
-			]' . ($i == count($this->bbc) - 1 ? '' : ',');
+				$js .= '
+			]' . ($i == $last_row ? '' : ',');
 			}
 
 			add_js('
+	var oBBCBox_' . $this->id . ' = new weButtonBox({
+		sContainer: ' . JavaScriptEscape($bbccontainer) . ',
+		sButtonClickHandler: function (o) { oEditorHandle_' . $this->id . '.handleButtonClick(o); },
+		sSelectChangeHandler: function (o) { oEditorHandle_' . $this->id . '.handleSelectChange(o); },
+		sSprite: we_theme_url + \'/images/bbc/sprite.png\',
+		aButtonRows: ['
+			. $js . '
 		],
 		sButtonTemplate: ' . (we::is('ie') ? JavaScriptEscape(
 			'<div class="bbc_button" id="%buttonId%"><div style="background: url(%buttonSrc%) -%posX%px -%posY%px no-repeat" title="%buttonDescription%">
@@ -2617,8 +2618,7 @@ class wedit
 		sEditor: ' . JavaScriptEscape($this->id) . ',
 		sType: ' . JavaScriptEscape($this->editorOptions['drafts']) . ',
 		sLastNote: \'draft_lastautosave\',
-		iFreq: ', (empty($settings['masterAutoSaveDraftsDelay']) ? 30000 : $settings['masterAutoSaveDraftsDelay'] * 1000), ',
-		sRemove: ', JavaScriptEscape($txt['remove_draft']), '
+		iFreq: ', (empty($settings['masterAutoSaveDraftsDelay']) ? 30000 : $settings['masterAutoSaveDraftsDelay'] * 1000), '
 	});');
 
 		// Get a list of all the tags that are not disabled.

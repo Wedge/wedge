@@ -10,6 +10,8 @@
  * @version 0.1
  */
 
+@language index;
+
 // Split a quote (or any unclosed tag) if we press Shift+Enter inside it.
 function splitQuote(e)
 {
@@ -494,7 +496,7 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 				url = obj.attr('url').wereplace({ id: draft_id + ';' + we_sessvar + '=' + we_sessid });
 
 			$('#draft_id').val(draft_id);
-			$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val(that.opt.sRemove));
+			$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val($txt['remove_draft']));
 			$('#remove_draft').click(function () {
 				$.get(url, function () {
 					$('#' + lastSavedDiv).empty();
