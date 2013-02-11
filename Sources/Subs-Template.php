@@ -848,6 +848,8 @@ function db_debug_junk()
 	if (!$show_debug)
 		return;
 
+	loadLanguage('Stats');
+
 	if (empty($_SESSION['view_queries']))
 		$_SESSION['view_queries'] = 0;
 	if (empty($context['debug']['language_files']))

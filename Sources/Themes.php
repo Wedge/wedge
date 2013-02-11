@@ -357,7 +357,7 @@ function SetThemeSettings()
 	// Select the best fitting tab.
 	$context[$context['admin_menu_name']]['current_subsection'] = 'list';
 
-	loadLanguage('Admin');
+	loadLanguage(array('Admin', 'Profile'));
 	isAllowedTo('admin_forum');
 
 	// Validate inputs/user.
@@ -1524,21 +1524,33 @@ function &wedge_find_skin($target, &$root)
 
 /**
  * Return a list of <option> variables for use in Themes and ManageBoard templates.
+ * $show_defaults will add an indicator next to default (desktop and mobile) skins.
  */
-function wedge_show_skins(&$th, &$style, $current_theme_id = '', $current_skin = '', $filler = '')
+function wedge_show_skins(&$th, &$style, $current_theme_id = '', $current_skin = '', $filler = '', $show_defaults = false)
 {
-	global $context;
+	global $context, $settings, $txt;
 
 	$last = count($style);
 	$current = 1;
+	$output = '';
 	foreach ($style as $sty)
 	{
-		$intro = $filler . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ';
-		echo '<option value="', $th['id'], '_', base64_encode($sty['dir']), '"', empty($context['do_not_select_skin']) && $current_theme_id == $th['id'] && $current_skin == $sty['dir'] ? ' selected' : '', '>', $intro, $sty['name'], '</option>';
+		$intro = !$show_defaults || $filler ? $filler . ($current == $last ? '&#9492;' : '&#9500;') . '&mdash; ' : '';
+		$output .= '<option value="' . $th['id'] . '_' . base64_encode($sty['dir']) . '"' . ($current_theme_id == $th['id'] && $current_skin == $sty['dir'] ? ' selected' : '') . '>' . $intro . $sty['name'];
+		$context['skin_names'][$sty['dir']] = $sty['name'];
+		if ($show_defaults)
+		{
+			if ($sty['dir'] == $settings['theme_skin_guests'])
+				$output .= ' &lt;small style="color: #aaa"&gt;' . $txt['skin_default'] . '&lt;/small&gt;';
+			elseif ($sty['dir'] == $settings['theme_skin_guests_mobile'])
+				$output .=' &lt;small style="color: #aaa"&gt;' . $txt['skin_default_mobile'] . '&lt;/small&gt;';
+		}
+		$output .= '</option>';
 		if (!empty($sty['skins']))
-			wedge_show_skins($th, $sty['skins'], $current_theme_id, $current_skin, $current == $last ? $filler . '&nbsp;&nbsp;&nbsp;' : $filler . '&#9130;&nbsp;&nbsp;');
+			$output .= wedge_show_skins($th, $sty['skins'], $current_theme_id, $current_skin, $current == $last ? $filler . '&nbsp;&nbsp;&nbsp;' : $filler . '&#9130;&nbsp;&nbsp;', $show_defaults);
 		$current++;
 	}
+	return $output;
 }
 
 function wedge_update_skin($mem, $id_theme, $skin)

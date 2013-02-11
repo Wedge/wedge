@@ -1231,6 +1231,8 @@ div.top_row dd
 #mlist_search
 	margin: auto
 	width: 520px
+	span
+		padding: 8px
 
 /* Styles for the basic search section.
 ------------------------------------------------- */

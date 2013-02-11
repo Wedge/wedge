@@ -173,22 +173,24 @@ function template_search()
 							<strong>', $txt['search_for'], ':</strong>
 							<input type="search" name="search" value="', $context['old_search'], '" size="28" class="search"> <input type="submit" value="' . $txt['search'] . '">
 						</div>
-						<span class="floatleft">';
+						<div class="padding">
+							<span class="floatleft">';
 
 	$count = 0;
 	foreach ($context['search_fields'] as $id => $title)
 	{
 		echo '
-							<label><input type="checkbox" name="fields[]" value="', $id, '"', in_array($id, $context['search_defaults']) ? ' checked' : '', '>', $title, '</label><br>';
+								<label><input type="checkbox" name="fields[]" value="', $id, '"', in_array($id, $context['search_defaults']) ? ' checked' : '', '>', $title, '</label><br>';
 		// Halfway through?
 		if (round(count($context['search_fields']) / 2) == ++$count)
 			echo '
-						</span>
-						<span class="floatleft">';
+							</span>
+							<span class="floatleft">';
 	}
 
 	echo '
-						</span>
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>

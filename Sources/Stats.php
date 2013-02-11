@@ -504,13 +504,13 @@ function Stats()
 		// Figure out which things to show... (days, hours, minutes, etc.)
 		$timelogged = '';
 		if ($timeDays > 0)
-			$timelogged .= $timeDays . $txt['totalTimeLogged5'];
+			$timelogged .= $timeDays . $txt['totalTimeLogged_d_short'];
 		// Don't bother to show hours for your forum barflies.
 		if (($timeHours > 0 || $timeDays < 30) && $timeDays < 100)
-			$timelogged .= $timeHours . $txt['totalTimeLogged6'];
+			$timelogged .= $timeHours . $txt['totalTimeLogged_h_short'];
 		// And don't show minutes for your... more... humanoid regulars.
 		if ($timeDays < 30)
-			$timelogged .= floor(($row_members['total_time_logged_in'] % 3600) / 60) . $txt['totalTimeLogged7'];
+			$timelogged .= floor(($row_members['total_time_logged_in'] % 3600) / 60) . $txt['totalTimeLogged_m_short'];
 
 		$context['top_time_online'][] = array(
 			'id' => $row_members['id_member'],
