@@ -18,6 +18,7 @@ if (!defined('WEDGE'))
 class ftp_connection
 {
 	public $connection, $error, $last_message, $pasv, $debug;
+	private $ftp_server;
 
 	// Create a new FTP connection...
 	public function __construct($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@wedge.org')
@@ -72,6 +73,9 @@ class ftp_connection
 			$this->error = 'bad_password';
 			return;
 		}
+
+		// Yay? Store for later.
+		$this->ftp_server = $ftp_server;
 	}
 
 	// This exists almost totally for debugging, though it is slightly nicer than raw fwrites.
@@ -182,7 +186,7 @@ class ftp_connection
 			return false;
 
 		// Request a passive connection - this means, we'll talk to you, you don't talk to us.
-		@fwrite($this->connection, 'PASV' . "\r\n");
+		$this->sendMsg('PASV');
 		$time = time();
 		do
 		{
@@ -192,26 +196,63 @@ class ftp_connection
 		}
 		while (substr($response, 3, 1) != ' ' && time() - $time < 5);
 
-		// If it's not 227, we weren't given an IP and port, which means it failed.
-		if (substr($response, 0, 4) != '227 ')
+		// First, check for a server telling us we have to use EPSV
+		if (substr($response, 0, 2) == '42' && stripos($response, 'epsv'))
 		{
+			$this->sendMsg('EPSV');
+			do
+			{
+				$response = fgets($this->connection, 1024);
+				if ($this->debug)
+					echo 'PASV response: ' . $response . '<br><br>';
+			}
+			while (substr($response, 3, 1) != ' ' && time() - $time < 5);
+
+			if (substr($response, 0, 4) != '229 ')
+			{
+				if ($this->debug)
+					echo '(invalid?) PASV response received: ' . $response . '<br><br>';
+				$this->error = 'bad_response';
+				return false;
+			}
+
+			if (preg_match('~\|\|([0-9a-f:]*)\|(\d+)\|~i', $response, $match))
+			{
+				$this->pasv = array('ip' => (empty($match[1]) ? $this->ftp_server : $match[1]), 'port' => $match[2], 'epsv' => true);
+				if ($this->debug)
+					echo 'We will connect to ' . $this->pasv['ip'] . ' on port ' . $this->pasv['port'] . ' with EPSV<br><br>';
+			}
+			else
+			{
+				if ($this->debug)
+					echo '(invalid?) PASV response received: ' . $response . '<br><br>';
+				$this->error = 'bad_response';
+				return false;
+			}
+		}
+		else
+		{
+			// If it's not 227, we weren't given an IP and port, which means it failed.
+			if (substr($response, 0, 4) != '227 ')
+			{
+				if ($this->debug)
+					echo '(invalid?) PASV response received: ' . $response . '<br><br>';
+				$this->error = 'bad_response';
+				return false;
+			}
+
+			// Snatch the IP and port information, or die horribly trying...
+			if (preg_match('~\((\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))\)~', $response, $match) == 0)
+			{
+				$this->error = 'bad_response';
+				return false;
+			}
+
+			// This is pretty simple - store it for later use ;)
+			$this->pasv = array('ip' => $match[1] . '.' . $match[2] . '.' . $match[3] . '.' . $match[4], 'port' => $match[5] * 256 + $match[6], 'epsv' => false);
 			if ($this->debug)
-				echo '(invalid?) PASV response received: ' . $response . '<br><br>';
-			$this->error = 'bad_response';
-			return false;
+				echo 'We will connect to ' . $this->pasv['ip'] . ' on port ' . $this->pasv['port'] . '<br><br>';
 		}
-
-		// Snatch the IP and port information, or die horribly trying...
-		if (preg_match('~\((\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))\)~', $response, $match) == 0)
-		{
-			$this->error = 'bad_response';
-			return false;
-		}
-
-		// This is pretty simple - store it for later use ;)
-		$this->pasv = array('ip' => $match[1] . '.' . $match[2] . '.' . $match[3] . '.' . $match[4], 'port' => $match[5] * 256 + $match[6]);
-		if ($this->debug)
-			echo 'We will connect to ' . $this->pasv['ip'] . ' on port ' . $this->pasv['port'] . '<br><br>';
 
 		return true;
 	}
@@ -271,8 +312,16 @@ class ftp_connection
 			$data = '';
 		}
 
+		if ($this->debug)
+			echo 'Getting ' . $remotefile;
+
 		// Force binary transmission.
 		$this->sendMsg('TYPE I');
+		if (!$this->check_response(200))
+		{
+			$this->error = 'bad_response';
+			return false;
+		}
 
 		// Next up, passive mode.
 		if (!$this->passive())
@@ -326,6 +375,8 @@ class ftp_connection
 			return false;
 		}
 
+		if ($this->debug && isset($data))
+			echo 'Data received: ' . htmlspecialchars($data);
 		return isset($data) ? $data : true;
 	}
 
@@ -464,6 +515,9 @@ class ftp_connection
 			$this->error = 'bad_response';
 			return false;
 		}
+
+		if ($this->debug)
+			echo 'Listing response: ' . $data;
 
 		return $data;
 	}

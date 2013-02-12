@@ -131,7 +131,7 @@ function Credits($in_admin = false)
 		),
 		'images' => array(
 			'famfamfam' => '<a href="http://famfamfam.com/">FamFamFam</a> Flags &amp; Silk &copy; Mark James, 2005',
-			'icons' => '<a href="http://www.everaldo.com/">Crystal Icons</a> &copy; Crystal Project, 2001-2012',
+			'icons' => '<a href="http://commons.wikimedia.org/wiki/Crystal_Clear">Crystal Icons</a> &copy; Crystal Project, 2001-2012',
 			'diagona' => '<a href="http://p.yusukekamiyamane.com/">Diagona</a> &copy; Y&#363;suke Kamiyamane',
 		),
 		'tools' => array(

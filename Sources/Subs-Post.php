@@ -59,7 +59,7 @@ if (!defined('WEDGE'))
 		- with hotmail_fix set all higher ASCII characters are converted to
 		  HTML entities to assure proper display of the mail.
 		- uses character set custom_charset if set.
-		- returns an array containing the character set, the converted string
+		- returns an array containing the converted string
 		  and the transport method.
 
 	bool smtp_mail(array mail_to_array, string subject, string message,
@@ -181,12 +181,12 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 		$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w%.,?&;=#-]+)?)~', '<a href="$1">$1</a>', $message);
 	}
 
-	list (, $from_name) = mimespecialchars(addcslashes($from !== null ? $from : $context['forum_name'], '<>()\'\\"'), true, $hotmail_fix, $line_break);
-	list (, $subject) = mimespecialchars($subject, true, $hotmail_fix, $line_break);
+	list ($from_name) = mimespecialchars(addcslashes($from !== null ? $from : $context['forum_name'], '<>()\'\\"'), true, $hotmail_fix, $line_break);
+	list ($subject) = mimespecialchars($subject, true, $hotmail_fix, $line_break);
 
 	// Construct the mail headers...
-	$headers = 'From: "' . $from_name . '" <' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . '>' . $line_break;
-	$headers .= $from !== null ? 'Reply-To: "' . $from_name . '" <' . $from . '>' . $line_break : '';
+	$headers = 'From: ' . $from_name . ' <' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . '>' . $line_break;
+	$headers .= $from !== null ? 'Reply-To: ' . $from_name . ' <' . $from . '>' . $line_break : '';
 	$headers .= 'Return-Path: ' . (empty($settings['mail_from']) ? $webmaster_email : $settings['mail_from']) . $line_break;
 	$headers .= 'Date: ' . gmdate('D, d M Y H:i:s') . ' -0000' . $line_break;
 
@@ -215,18 +215,18 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 		$no_html_message = un_htmlspecialchars(strip_tags(strtr($orig_message, array('</title>' => $line_break))));
 
 		// But, then, dump it and use a plain one for dinosaur clients.
-		list (, $plain_message) = mimespecialchars($no_html_message, false, true, $line_break);
+		list ($plain_message) = mimespecialchars($no_html_message, false, true, $line_break);
 		$message = $plain_message . $line_break . '--' . $mime_boundary . $line_break;
 
 		// This is the plain text version.  Even if no one sees it, we need it for spam checkers.
-		list ($charset, $plain_charset_message, $encoding) = mimespecialchars($no_html_message, false, false, $line_break);
-		$message .= 'Content-Type: text/plain; charset=' . $charset . $line_break;
+		list ($plain_charset_message, $encoding) = mimespecialchars($no_html_message, false, false, $line_break);
+		$message .= 'Content-Type: text/plain; charset=UTF-8' . $line_break;
 		$message .= 'Content-Transfer-Encoding: ' . $encoding . $line_break . $line_break;
 		$message .= $plain_charset_message . $line_break . '--' . $mime_boundary . $line_break;
 
 		// This is the actual HTML message, prim and proper.  If we wanted images, they could be inlined here (with multipart/related, etc.)
-		list ($charset, $html_message, $encoding) = mimespecialchars($orig_message, false, $hotmail_fix, $line_break);
-		$message .= 'Content-Type: text/html; charset=' . $charset . $line_break;
+		list ($html_message, $encoding) = mimespecialchars($orig_message, false, $hotmail_fix, $line_break);
+		$message .= 'Content-Type: text/html; charset=UTF-8' . $line_break;
 		$message .= 'Content-Transfer-Encoding: ' . ($encoding == '' ? '7bit' : $encoding) . $line_break . $line_break;
 		$message .= $html_message . $line_break . '--' . $mime_boundary . '--';
 	}
@@ -234,12 +234,12 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	else
 	{
 		// Send a plain message first, for the older web clients.
-		list (, $plain_message) = mimespecialchars($orig_message, false, true, $line_break);
+		list ($plain_message) = mimespecialchars($orig_message, false, true, $line_break);
 		$message = $plain_message . $line_break . '--' . $mime_boundary . $line_break;
 
 		// Now add an encoded message using the forum's character set.
-		list ($charset, $encoded_message, $encoding) = mimespecialchars($orig_message, false, false, $line_break);
-		$message .= 'Content-Type: text/plain; charset=' . $charset . $line_break;
+		list ($encoded_message, $encoding) = mimespecialchars($orig_message, false, false, $line_break);
+		$message .= 'Content-Type: text/plain; charset=UTF-8' . $line_break;
 		$message .= 'Content-Transfer-Encoding: ' . $encoding . $line_break . $line_break;
 		$message .= $encoded_message . $line_break . '--' . $mime_boundary . '--';
 	}
@@ -755,11 +755,11 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 		else
 			$string = chunk_split($string, 76, $line_break);
 
-		return array('UTF-8', $string, 'base64');
+		return array($string, 'base64');
 	}
 
 	else
-		return array('UTF-8', $string, '7bit');
+		return array($string, '7bit');
 }
 
 // Send an email via SMTP.

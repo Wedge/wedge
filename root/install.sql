@@ -2038,7 +2038,7 @@ INSERT INTO {$db_prefix}settings
 	(variable, value)
 VALUES
 	('weVersion', '{$wedge_version}'),
-	('news', '{$default_news}'),
+	('news', 'e{$default_news}'),
 	('todayMod', '2'),
 	('enablePreviousNext', '1'),
 	('password_strength', '1'),
