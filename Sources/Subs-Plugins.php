@@ -378,12 +378,10 @@ function uploadedPluginConnection()
 		{
 			loadSource('Class-FTP');
 			$ftp = new ftp_connection($context['ftp_details']['server'], $context['ftp_details']['port'], $context['ftp_details']['user'], $context['ftp_details']['password']);
-			$ftp->debug = true;
 			if (!empty($ftp->error))
 				$context['ftp_details']['error'][] = $ftp->error;
 			elseif (!empty($context['ftp_details']['path']) && $context['ftp_details']['path'] != '/')
 			{
-				$done = array();
 				// No error so far, let's validate the path now.
 				$paths = explode(DIRECTORY_SEPARATOR, $context['ftp_details']['path']);
 				while (!empty($paths))
@@ -391,12 +389,6 @@ function uploadedPluginConnection()
 					$lpath = '/' . ltrim(implode('/', $paths), '/');
 					if ($ftp->chdir($lpath))
 					{
-						if ($ftp->debug)
-							echo 'Trying ' . $lpath;
-						if (in_array($lpath, $done))
-							die('LOOP SEE LOOP');
-						else
-							$done[] = $lpath;
 						// We matched the entire path we have. That seems promising.
 						$dir = $ftp->raw_list();
 						if (!$dir)
@@ -420,24 +412,13 @@ function uploadedPluginConnection()
 										break;
 									}
 								}
-								elseif ($ftp->debug)
-								{
-									echo $ftp->error, 'We examined an index.php file but it was not the right one: ' . htmlspecialchars($data);
-								}
 							}
 							else
-							{
-								if ($ftp->debug)
-									echo 'No index.php found in listing';
 								array_shift($paths);
-							}
 						}
 					}
 					else
-					{
-						// OK, so we didn't match, lop off another folder and try again.
-						array_shift($paths);
-					}
+						array_shift($paths); // OK, so we didn't match, lop off another folder and try again.
 				}
 			}
 			$ftp->close();
@@ -648,7 +629,6 @@ function uploadedPluginFolders()
 		$filename = $_SESSION['plugin_ftp']['path'] . '/' . $filename . '/';
 		loadSource('Class-FTP');
 		$ftp = new ftp_connection($_SESSION['plugin_ftp']['server'], $_SESSION['plugin_ftp']['port'], $_SESSION['plugin_ftp']['user'], obfuscate_pass($_SESSION['plugin_ftp']['password']));
-		$ftp->debug = true;
 		if ($ftp->error)
 		{
 			clean_up_plugin_session();
@@ -677,7 +657,13 @@ function uploadedPluginFiles()
 	global $context, $txt, $cachedir, $pluginsdir;
 
 	if (isset($_SESSION['uploadplugin']['flist']) && empty($_SESSION['uploadplugin']['flist']))
-		redirectexit('action=admin;area=plugins;sa=add;upload;stage=5;' . $context['session_query']);
+	{
+		clean_up_plugin_session();
+		$context['page_title'] = $txt['plugin_files_unpacked_title'];
+		$context['form_url'] = '<URL>?action=admin;area=plugins';
+		$context['description'] = $txt['plugin_files_unpacked'];
+		wetem::load('upload_generic_progress');
+	}
 
 	$state = validate_plugin_session();
 	if (!empty($state))
@@ -721,7 +707,6 @@ function uploadedPluginFiles()
 		$base_folder = $_SESSION['plugin_ftp']['path'] . '/' . $_SESSION['uploadplugin']['pfolder'];
 		loadSource('Class-FTP');
 		$ftp = new ftp_connection($_SESSION['plugin_ftp']['server'], $_SESSION['plugin_ftp']['port'], $_SESSION['plugin_ftp']['user'], obfuscate_pass($_SESSION['plugin_ftp']['password']));
-		$ftp->debug = true;
 		if ($ftp->error)
 		{
 			clean_up_plugin_session();
@@ -735,8 +720,6 @@ function uploadedPluginFiles()
 
 			while (!empty($_SESSION['uploadplugin']['flist']))
 			{
-				if ($ftp->debug)
-					echo 'Ids to unpack: ', print_r($_SESSION['uploadplugin']['flist'], true);
 				$file_id = array_shift($_SESSION['uploadplugin']['flist']);
 				$files = $zip->extractByIndex(array($file_id));
 				$file = &$files[$file_id];
@@ -744,9 +727,9 @@ function uploadedPluginFiles()
 			}
 			$ftp->close();
 			clean_up_plugin_session();
-			$context['page_title'] = 'Yo uploaded';
+			$context['page_title'] = $txt['plugin_files_unpacked_title'];
 			$context['form_url'] = '<URL>?action=admin;area=plugins';
-			$context['description'] = 'Plugin was uploaded successfully or some shit. You can now go back to the plugins page and enable it, fo\'shizzle.';
+			$context['description'] = $txt['plugin_files_unpacked'];
 			wetem::load('upload_generic_progress');
 		}
 		catch ( Exception $e )
