@@ -772,6 +772,7 @@ function AdminHome()
 		'left' => array(
 			'add_boards' => '<URL>?action=admin;area=manageboards',
 			'mod_filters' => '<URL>?action=admin;area=modfilters',
+			'default_skin' => '<URL>?action=admin;area=theme;sa=admin',
 		),
 		'right' => array(
 			'censored' => '<URL>?action=admin;area=postsettings;sa=censor',

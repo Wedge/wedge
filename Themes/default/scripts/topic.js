@@ -421,26 +421,30 @@ function QuickReply(opt)
 
 		handleSubmit = function (e)
 		{
-			if (!ask(we_confirm, e))
-				return false;
+			return ask(we_confirm, e, function (proceed)
+			{
+				if (proceed)
+				{
+					// Make sure this form isn't submitted in another way than this function.
+					var
+						oForm = $('#' + opt.sFormId)[0],
+						oInput = $('<input type="hidden" name="' + we_sessvar + '" />').val(we_sessid).appendTo(oForm);
 
-			// Make sure this form isn't submitted in another way than this function.
-			var
-				oForm = $('#' + opt.sFormId)[0],
-				oInput = $('<input type="hidden" name="' + we_sessvar + '" />').val(we_sessid).appendTo(oForm);
+					if ($(this).parent().hasClass('modrem')) // 'this' is the remove button itself.
+						oForm.action = oForm.action.replace(/[?;]restore_selected=1/, '');
+					else // restore button?
+						oForm.action = oForm.action + (oForm.action.search(/[?;]/) == -1 ? '?' : ';') + 'restore_selected=1';
 
-			if ($(this).hasClass('modrem')) // 'this' is the remove button itself.
-				oForm.action = oForm.action.replace(/;restore_selected=1/, '');
-			else // restore button?
-				oForm.action = oForm.action + ';restore_selected=1';
+					oForm.submit();
+				}
 
-			oForm.submit();
-			return true;
+				return proceed;
+			});
 		};
 
 		// Add checkboxes to all the messages.
 		$('.' + opt.sClass).each(function () {
-			$('<input type="checkbox" name="msgs[]" value="' + this.id.slice(17) + '"></input>')
+			$('<input type="checkbox" name="msgs[]" value="' + $(this).closest('.root').attr('id').slice(3) + '"></input>')
 			.click(handleClick)
 			.appendTo(this);
 		});

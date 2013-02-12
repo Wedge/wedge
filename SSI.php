@@ -938,6 +938,8 @@ function ssi_boardStats($output_method = 'echo')
 	if ($output_method != 'echo')
 		return $totals;
 
+	loadLanguage('Stats');
+
 	echo '
 		', $txt['total_members'], ': <a href="', $scripturl . '?action=mlist">', comma_format($totals['members']), '</a><br />
 		', $txt['total_posts'], ': ', comma_format($totals['posts']), '<br />

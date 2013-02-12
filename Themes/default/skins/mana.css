@@ -200,12 +200,14 @@ fieldset dl
 /* Styles for the manage membergroups section.
 ------------------------------------------------- */
 #groupForm
+	td
+		padding: 4px
 	span.everything
 		border-bottom: 1px dotted #000
 		cursor: help
 	tr.board_cat
 		background-color: $window_bg
-		font-weight: bold
+		font-weight: 700
 	tr.div
 		height: 14px
 
@@ -490,9 +492,9 @@ div.percent
 		width: 100%
 		z-index: 2
 		color: black
+		font-weight: 700
 		position: absolute
 		text-align: center
-		font-weight: bold
 		cursor: default
 	.progress
 		height: 12pt

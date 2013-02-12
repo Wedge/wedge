@@ -2234,7 +2234,7 @@ function template_profile_group_manage()
 						<dfn>', $txt['primary_membergroup_subtext'], '</dfn>
 					</dt>
 					<dd>
-						<select name="id_group" ', (we::$user['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1 && !ask(' . JavaScriptEscape($txt['deadmin_confirm']) . ', e)) $(this).val(1).sb();"' : ''), '>';
+						<select name="id_group" ', (we::$user['is_owner'] && $context['member']['group_id'] == 1 ? 'onchange="if (this.value != 1) ask(' . JavaScriptEscape($txt['deadmin_confirm']) . ', e, function (go) { if (!go) $(this).val(1).sb(); });"' : ''), '>';
 
 	// Fill the select box with all primary member groups that can be assigned to a member.
 	foreach ($context['member_groups'] as $member_group)

@@ -25,11 +25,11 @@ function template_new_group()
 	global $context, $theme, $options, $scripturl, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=membergroups;sa=add" method="post" accept-charset="UTF-8">
+		<form action="', $scripturl, '?action=admin;area=membergroups;sa=add" method="post" accept-charset="UTF-8" id="groupForm">
 			<we:cat>
 				', $txt['membergroups_new_group'], '
 			</we:cat>
-			<div class="windowbg wrc">
+			<div class="windowbg2 wrc">
 				<dl class="settings">
 					<dt>
 						<label for="group_name_input"><strong>', $txt['membergroups_group_name'], ':</strong></label>
@@ -205,7 +205,7 @@ function template_edit_group()
 						<label for="group_hidden_input"><strong>', $txt['membergroups_edit_hidden'], ':</strong></label>
 					</dt>
 					<dd>
-						<select name="group_hidden" id="group_hidden_input" onchange="if (this.value == 2 && !ask(', JavaScriptEscape($txt['membergroups_edit_hidden_warning']), ', e)) $(this).val(0).sb();">
+						<select name="group_hidden" id="group_hidden_input" onchange="if (this.value == 2) ask(', JavaScriptEscape($txt['membergroups_edit_hidden_warning']), ', e, function (go) { if (!go) $(this).val(0).sb(); });">
 							<option value="0"', $context['group']['hidden'] ? '' : ' selected', '>', $txt['membergroups_edit_hidden_no'], '</option>
 							<option value="1"', $context['group']['hidden'] == 1 ? ' selected' : '', '>', $txt['membergroups_edit_hidden_boardindex'], '</option>
 							<option value="2"', $context['group']['hidden'] == 2 ? ' selected' : '', '>', $txt['membergroups_edit_hidden_all'], '</option>
@@ -356,7 +356,7 @@ function template_group_board_selection()
 									<th>', $txt['no'], '</th>
 									<th class="deny_perm"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>', $txt['group_boards_never'], '</th>
 								</tr>
-								<tr>
+								<tr class="all">
 									<td class="smalltext">
 										<span class="everything" title="', $txt['group_boards_everything_desc'], '">', $txt['group_boards_everything'], '</span>
 									</td>
@@ -379,17 +379,17 @@ function template_group_board_selection()
 			echo '
 								<tr class="div"></tr>
 								<tr class="board_cat" data-cathead="', $board['id_cat'], '">
-									<td class="smalltext">
+									<td>
 										<span style="margin-left: 0">', $board['cat_name'], '</span>
 									</td>
 									<td>
-										<input type="radio" name="cat[', $board['id_cat'], ']" value="allow" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="allow" onchange="selectCat(\'view\',', $board['id_cat'], ', this);">
 									</td>
 									<td>
-										<input type="radio" name="cat[', $board['id_cat'], ']" value="disallow" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="disallow" onchange="selectCat(\'view\',', $board['id_cat'], ', this);">
 									</td>
 									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
-										<input type="radio" name="cat[', $board['id_cat'], ']" value="deny" onchange="selectCat(\'view\',', $board['id_cat'], ',this);">
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="deny" onchange="selectCat(\'view\',', $board['id_cat'], ', this);">
 									</td>
 								</tr>';
 			$last_cat = $board['id_cat'];
@@ -447,17 +447,17 @@ function template_group_board_selection()
 			echo '
 								<tr class="div"></tr>
 								<tr class="board_cat" data-cathead="', $board['id_cat'], '">
-									<td class="smalltext">
+									<td>
 										<span style="margin-left: 0">', $board['cat_name'], '</span>
 									</td>
 									<td>
-										<input type="radio" name="cat[', $board['id_cat'], ']" value="allow" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="allow" onchange="selectCat(\'enter\',', $board['id_cat'], ', this);">
 									</td>
 									<td>
-										<input type="radio" name="cat[', $board['id_cat'], ']" value="disallow" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="disallow" onchange="selectCat(\'enter\',', $board['id_cat'], ', this);">
 									</td>
 									<td class="deny_perm center"', empty($context['need_deny_perm']) ? ' style="display: none"' : '', '>
-										<input type="radio" name="cat[', $board['id_cat'], ']" value="deny" onchange="selectCat(\'enter\',', $board['id_cat'], ',this);">
+										<input type="radio" name="cat[', $board['id_cat'], ']" value="deny" onchange="selectCat(\'enter\',', $board['id_cat'], ', this);">
 									</td>
 								</tr>';
 			$last_cat = $board['id_cat'];
@@ -490,17 +490,17 @@ function template_group_board_selection()
 	{
 		if ((selection == "view" || selection=="enter") && (obj.value == "allow" || obj.value == "disallow" || obj.value == "deny"))
 		{
-			$(\'#\' + selection + \'_perm_col tr.board_cat input\').prop(\'checked\', false);
-			$(\'#\' + selection + \'_perm_col input[name^="\' + selection + \'"]\').filter(\'[value="\' + obj.value + \'"]\').prop(\'checked\', true);
-			$(\'input[name="\' + selection + \'everything"]\').prop(\'checked\', false);
+			$("#" + selection + "_perm_col tr.board_cat input").prop("checked", false);
+			$("#" + selection + "_perm_col input[name^=" + selection + "]").filter("[value=" + obj.value + "]").prop("checked", true);
+			$("input[name=" + selection + "everything]").prop("checked", true);
 		}
 	};
 	function selectCat(selection, id_cat, obj)
 	{
 		if (obj.value == "allow" || obj.value == "disallow" || obj.value == "deny")
 		{
-			$(\'#\' + selection + \'_perm_col tr[data-cat="\' + id_cat + \'"] input\').filter(\'[value="\' + obj.value + \'"]\').prop(\'checked\', true);
-			$(\'#\' + selection + \'_perm_col tr.board_cat[data-cathead="\' + id_cat + \'"] input\').prop(\'checked\', false);
+			$("#" + selection + "_perm_col tr[data-cat=" + id_cat + "] input").filter("[value=" + obj.value + "]").prop("checked", true);
+			$("#" + selection + "_perm_col tr.board_cat[data-cathead=" + id_cat + "] input").prop("checked", false);
 		}
 	}');
 }
@@ -515,7 +515,7 @@ function template_group_members()
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
-			<div class="windowbg wrc">
+			<div class="windowbg2 wrc">
 				<dl class="settings">
 					<dt>
 						<strong>', $txt['name'], ':</strong>
@@ -677,7 +677,7 @@ function template_group_request_reason()
 			<we:cat>
 				', $txt['mc_groups_reason_title'], '
 			</we:cat>
-			<div class="windowbg wrc">
+			<div class="windowbg2 wrc">
 				<dl class="settings">';
 
 	// Loop through and print out a reason box for each...
