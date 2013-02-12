@@ -396,8 +396,13 @@ class ftp_connection
 		}
 
 		// There's none of this type shifting nonsense. Binary and only binary here.
-		fwrite($this->connection, 'TYPE I' . "\r\n");
-		fwrite($this->connection, 'STOR ' . $remotefile . "\r\n");
+		$this->sendMsg('TYPE I');
+		if (!$this->check_response(200))
+		{
+			$this->error = 'bad_response';
+			return false;
+		}
+		$this->sendMsg('STOR ' . $remotefile);
 
 		// Now we connect to the data port and do what we gotta do.
 		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
@@ -444,8 +449,14 @@ class ftp_connection
 			return false;
 
 		// There's none of this type shifting nonsense. Binary and only binary here.
-		fwrite($this->connection, 'TYPE I' . "\r\n");
-		fwrite($this->connection, 'STOR ' . $remotefile . "\r\n");
+		$this->sendMsg('TYPE I');
+		if (!$this->check_response(200))
+		{
+			$this->error = 'bad_response';
+			return false;
+		}
+		
+		$this->sendMsg('STOR ' . $remotefile);
 
 		// Now we connect to the data port and do what we gotta do.
 		$fp = @fsockopen($this->pasv['ip'], $this->pasv['port'], $err, $err, 5);
@@ -456,19 +467,15 @@ class ftp_connection
 			return false;
 		}
 
-		$sent = 0;
-		$total = strlen($string);
-		while ($sent < $total)
+		for ($sent = 0, $lastwrite = 0, $size = strlen($string); $sent < $size; $sent += $lastwrite)
 		{
-			$block = substr($string, 0, 4096);
-			$written = @fwrite($fp, $block);
-			if ($written === false)
+			$lastwrite = @fwrite($fp, substr($string, $sent));
+			if ($lastwrite === false)
 			{
 				$this->error = 'bad_response';
 				@fclose($fp);
 				return false;
 			}
-			$sent += strlen($written);
 		}
 
 		fclose($fp);
@@ -566,7 +573,7 @@ class ftp_connection
 			$listing = $this->list_dir('', true);
 		$listing = explode("\n", $listing);
 
-		@fwrite($this->connection, 'PWD' . "\r\n");
+		$this->sendMsg('PWD');
 		$time = time();
 		do
 			$response = fgets($this->connection, 1024);

@@ -273,7 +273,7 @@ function uploadedPluginValidate()
 
 	// What we do need to do, though, is check against plugins that we have currently enabled. (Not enabled... they can fix that themselves from the main listing.)
 	// And we need to store this and make sure it won't be automatically garbage collected.
-	$new_file = 'post_plugin_' . we::$id;
+	$new_file = 'post_plugin_' . we::$id . '.zip';
 	if (!move_uploaded_file($_FILES['plugin']['tmp_name'], $cachedir . '/' . $new_file))
 		fatal_lang_error('plugins_invalid_upload', false);
 
@@ -286,7 +286,7 @@ function uploadedPluginValidate()
 		'mtime' => filemtime($cachedir . '/' . $new_file),
 		'md5' => md5_file($cachedir . '/' . $new_file),
 		'id' => $id,
-		'manifest' => $idx,
+		'manifest' => $idx[0],
 	);
 
 	if (isset($context['plugins_dir'][$id]))
@@ -377,17 +377,25 @@ function uploadedPluginConnection()
 		{
 			loadSource('Class-FTP');
 			$ftp = new ftp_connection($context['ftp_details']['server'], $context['ftp_details']['port'], $context['ftp_details']['user'], $context['ftp_details']['password']);
+			$ftp->debug = true;
 			if (!empty($ftp->error))
 				$context['ftp_details']['error'][] = $ftp->error;
 			elseif (!empty($context['ftp_details']['path']) && $context['ftp_details']['path'] != '/')
 			{
+				$done = array();
 				// No error so far, let's validate the path now.
 				$paths = explode(DIRECTORY_SEPARATOR, $context['ftp_details']['path']);
 				while (!empty($paths))
 				{
-					$lpath = implode('/', $paths);
+					$lpath = '/' . ltrim(implode('/', $paths), '/');
 					if ($ftp->chdir($lpath))
 					{
+						if ($ftp->debug)
+							echo 'Trying ' . $lpath;
+						if (in_array($lpath, $done))
+							die('LOOP SEE LOOP');
+						else
+							$done[] = $lpath;
 						// We matched the entire path we have. That seems promising.
 						$dir = $ftp->raw_list();
 						if (!$dir)
@@ -396,17 +404,31 @@ function uploadedPluginConnection()
 							break;
 						}
 						// So we have a folder and it has some files in. Does it, perhaps, have an index.php file?
-						elseif (preg_match('~^index\.php$~m', $dir))
+						else
 						{
-							$data = $ftp->get('index.php');
-							if ($data)
+							$dir = preg_split('~\s+~', $dir);
+							if (in_array('index.php', $dir))
 							{
-								if (strpos($data, 'Plugins folder. Please leave me be.') !== false)
+								$data = $ftp->get('index.php');
+								if ($data)
 								{
-									$context['ftp_details']['found'] = true;
-									$context['ftp_details']['path'] = $lpath;
-									break;
+									if (strpos($data, 'Plugins folder. Please leave me be.') !== false)
+									{
+										$context['ftp_details']['found'] = true;
+										$context['ftp_details']['path'] = $lpath;
+										break;
+									}
 								}
+								elseif ($ftp->debug)
+								{
+									echo $ftp->error, 'We examined an index.php file but it was not the right one: ' . htmlspecialchars($data);
+								}
+							}
+							else
+							{
+								if ($ftp->debug)
+									echo 'No index.php found in listing';
+								array_shift($paths);
 							}
 						}
 					}
@@ -428,7 +450,7 @@ function uploadedPluginConnection()
 		{
 			$ftp_settings = array();
 			foreach (array('server', 'user', 'port', 'type', 'path') as $item)
-				$ftp_settings[$item] = $context['ftp_details'];
+				$ftp_settings[$item] = $context['ftp_details'][$item];
 			updateSettings(array('ftp_settings' => serialize($ftp_settings)));
 		}
 
@@ -496,10 +518,10 @@ function uploadedPluginPrune()
 	$dirs = array_reverse($dirs);
 
 	// Now we have a list of paths, from plugindir, to systematically enter and play Cyberman on.
-	if ($_SESSION['ftp_details']['type'] == 'ftp')
+	if ($_SESSION['plugin_ftp']['type'] == 'ftp')
 	{
 		loadSource('Class-FTP');
-		$ftp = new ftp_connection($_SESSION['ftp_details']['server'], $_SESSION['ftp_details']['port'], $_SESSION['ftp_details']['user'], obfuscate_pass($_SESSION['ftp_details']['password']));
+		$ftp = new ftp_connection($_SESSION['plugin_ftp']['server'], $_SESSION['plugin_ftp']['port'], $_SESSION['plugin_ftp']['user'], obfuscate_pass($_SESSION['plugin_ftp']['password']));
 		if ($ftp->error)
 		{
 			$ftp->close();
@@ -507,7 +529,7 @@ function uploadedPluginPrune()
 			fatal_lang_error('plugin_ftp_error_' . $ftp->error);
 		}
 
-		$path = rtrim($_SESSION['ftp_details']['path'], '/');
+		$path = rtrim($_SESSION['plugin_ftp']['path'], '/');
 		foreach ($dirs as $dir)
 		{
 			$this_path = $path . dir;
@@ -550,7 +572,7 @@ function uploadedPluginFolders()
 	global $context, $txt, $cachedir, $pluginsdir;
 
 	if (!empty($_SESSION['uploadplugin']['folders']))
-		redirectexit('action=admin;area=plugins;sa=add;upload;stage=3;' . $context['session_query']);
+		redirectexit('action=admin;area=plugins;sa=add;upload;stage=4;' . $context['session_query']);
 
 	$state = validate_plugin_session();
 	if (!empty($state))
@@ -607,23 +629,25 @@ function uploadedPluginFolders()
 		$filename = 'plugin';
 
 	// Having come up with a hopefully sane name, were there any duplicates?
-	if (dir_exists($pluginsdir . '/' . $filename))
+	if (is_dir($pluginsdir . '/' . $filename))
 	{
 		$count = 1;
-		while (dir_exists($pluginsdir . '/' . $filename . '_' . $count))
+		while (is_dir($pluginsdir . '/' . $filename . '_' . $count))
 			$count++;
 
 		$filename .= '_' . $count;
 	}
-
-	// Now we add the server path so we don't do it in the loop.
-	$filename = $_SESSION['ftp_details']['path'] . '/' . $filename . '/';
+	$_SESSION['uploadplugin']['pfolder'] = $filename;
+	echo 'Plugin folder is "', $filename, '"';
 
 	// Now we have a list of folders that need uploading, of course we do need to create the master folder too.
-	if ($_SESSION['ftp_details']['type'] == 'ftp')
+	if ($_SESSION['plugin_ftp']['type'] == 'ftp')
 	{
+		// Now we add the server path so we don't do it in the loop.
+		$filename = $_SESSION['plugin_ftp']['path'] . '/' . $filename . '/';
 		loadSource('Class-FTP');
-		$ftp = new ftp_connection($_SESSION['ftp_details']['server'], $_SESSION['ftp_details']['port'], $_SESSION['ftp_details']['user'], obfuscate_pass($_SESSION['ftp_details']['password']));
+		$ftp = new ftp_connection($_SESSION['plugin_ftp']['server'], $_SESSION['plugin_ftp']['port'], $_SESSION['plugin_ftp']['user'], obfuscate_pass($_SESSION['plugin_ftp']['password']));
+		$ftp->debug = true;
 		if ($ftp->error)
 		{
 			clean_up_plugin_session();
@@ -649,7 +673,87 @@ function uploadedPluginFolders()
 
 function uploadedPluginFiles()
 {
+	global $context, $txt, $cachedir, $pluginsdir;
 
+	if (isset($_SESSION['uploadplugin']['flist']) && empty($_SESSION['uploadplugin']['flist']))
+		redirectexit('action=admin;area=plugins;sa=add;upload;stage=5;' . $context['session_query']);
+
+	$state = validate_plugin_session();
+	if (!empty($state))
+	{
+		clean_up_plugin_session();
+		fatal_lang_error($state, false);
+	}
+
+	checkSession('request');
+
+	// Now we get the job of going through and figuring out what folders we need.
+	loadSource('Class-ZipExtract');
+
+	// So, we're here. We have something to do. First, figure out if we need our todo list figuring out.
+	if (!isset($_SESSION['uploadplugin']['flist']))
+	{
+		try
+		{
+			$zip = new wextr($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+			$list = $zip->list_contents();
+
+			$files = array();
+			// We want all the actual files in order, but not the manifest. We will add that to the end of the list so we do it last.
+			foreach ($list as $i => $file)
+				if (!$file['is_folder'] && $i != $_SESSION['uploadplugin']['manifest'])
+					$files[] = $i;
+			$files[] = $_SESSION['uploadplugin']['manifest'];
+			$_SESSION['uploadplugin']['flist'] = $files;
+			$_SESSION['uploadplugin']['fcount'] = count($files);
+		}
+		catch ( Exception $e )
+		{
+			clean_up_plugin_session();
+			fatal_lang_error('plugins_invalid_zip', false);
+		}
+	}
+
+	// Right. We know what we're unpacking. We know where it is being unpacked to. Let's do dis fing.
+	if ($_SESSION['plugin_ftp']['type'] == 'ftp')
+	{
+		$base_folder = $_SESSION['plugin_ftp']['path'] . '/' . $_SESSION['uploadplugin']['pfolder'];
+		loadSource('Class-FTP');
+		$ftp = new ftp_connection($_SESSION['plugin_ftp']['server'], $_SESSION['plugin_ftp']['port'], $_SESSION['plugin_ftp']['user'], obfuscate_pass($_SESSION['plugin_ftp']['password']));
+		$ftp->debug = true;
+		if ($ftp->error)
+		{
+			clean_up_plugin_session();
+			fatal_lang_error('plugin_ftp_error_' . $ftp->error, false);
+		}
+
+		try
+		{
+			if (!isset($zip))
+				$zip = new wextr($cachedir . '/' . $_SESSION['uploadplugin']['file']);
+
+			while (!empty($_SESSION['uploadplugin']['flist']))
+			{
+				if ($ftp->debug)
+					echo 'Ids to unpack: ', print_r($_SESSION['uploadplugin']['flist'], true);
+				$file_id = array_shift($_SESSION['uploadplugin']['flist']);
+				$files = $zip->extractByIndex(array($file_id));
+				$file = &$files[$file_id];
+				$ftp->put_string($file['content'], $base_folder . '/' . $file['filename']);
+			}
+			$ftp->close();
+			clean_up_plugin_session();
+			$context['page_title'] = 'Yo uploaded';
+			$context['form_url'] = '<URL>?action=admin;area=plugins';
+			$context['description'] = 'Plugin was uploaded successfully or some shit. You can now go back to the plugins page and enable it, fo\'shizzle.';
+			wetem::load('upload_generic_progress');
+		}
+		catch ( Exception $e )
+		{
+			clean_up_plugin_session();
+			fatal_lang_error('plugins_invalid_zip', false);
+		}
+	}
 }
 
 /**
@@ -822,5 +926,5 @@ function clean_up_plugin_session()
 
 	if (!empty($_SESSION['uploadplugin']['file']))
 		@unlink($cachedir . '/' . $_SESSION['uploadplugin']['file']);
-	unset($_SESSION['uploadplugin'], $_SESSION['ftp_details']);
+	unset($_SESSION['uploadplugin'], $_SESSION['plugin_ftp']);
 }
