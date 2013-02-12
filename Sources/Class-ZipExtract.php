@@ -117,7 +117,7 @@ class wextr
 			$this->_getNextFileEntry();
 
 			$new_indexes[$id] = $entry;
-			$new_indexes[$id]['content'] = fread($this->zip_fd, $entry['compressed_size']);
+			$new_indexes[$id]['content'] = $entry['compressed_size'] > 0 ? fread($this->zip_fd, $entry['compressed_size']) : '';
 			if ($entry['compression'] == 8)
 				$new_indexes[$id]['content'] = gzinflate($new_indexes[$id]['content']);
 			if (strlen($new_indexes[$id]['content']) != $entry['uncompressed_size'])

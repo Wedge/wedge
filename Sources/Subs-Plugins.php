@@ -346,17 +346,18 @@ function uploadedPluginConnection()
 		'path' => realpath($pluginsdir),
 	);
 
-	if (!empty($settings['ftp_details']))
+	if (!empty($settings['ftp_settings']))
 	{
-		$new = @unserialize($settings['ftp_details']);
+		$new = @unserialize($settings['ftp_settings']);
 		if (!empty($new))
-			$context['ftp_details'] = array_merge($context['ftp_detalis'], $new);
+			$context['ftp_details'] = array_merge($context['ftp_details'], $new);
 	}
 
 	// OK, just in case, they might have supplied something.
 	foreach (array('server', 'user', 'password') as $item)
 		if (isset($_POST[$item]))
 			$context['ftp_details'][$item] = $_POST[$item];
+
 	if (isset($_POST['port']))
 	{
 		$_POST['port'] = (int) $_POST['port'];
@@ -585,7 +586,7 @@ function uploadedPluginFolders()
 
 	// Now we get the job of going through and figuring out what folders we need.
 	loadSource('Class-ZipExtract');
-	$folders = array(''); // We want an empty entry, this represents the plugin's root folder
+	$folders = array('' => true); // We want an empty entry, this represents the plugin's root folder
 	$file_count = 0;
 	try
 	{
@@ -609,7 +610,7 @@ function uploadedPluginFolders()
 			elseif (($pos = strpos($file['filename'], '/')) !== false)
 				$folders[substr($file['filename'], 0, $pos + 1)] = true;
 		}
-		sort($folders);
+		ksort($folders);
 	}
 	catch ( Exception $e )
 	{
@@ -654,7 +655,7 @@ function uploadedPluginFolders()
 			fatal_lang_error('plugin_ftp_error_' . $ftp->error, false);
 		}
 
-		foreach ($folders as $folder)
+		foreach ($folders as $folder => $state)
 		{
 			if (!$ftp->create_dir($filename . $folder))
 			{
