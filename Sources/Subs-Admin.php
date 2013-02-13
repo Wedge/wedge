@@ -80,7 +80,7 @@ function getServerVersions($checkFor)
 	if (in_array('safe_mode', $checkFor))
 	{
 		// It used to be simple. Now it isn't, with safe mode being deprecated and phased out.
-		$safe_mode = @ini_get('safe_mode');
+		$safe_mode = ini_get('safe_mode');
 		$safe_mode = !(empty($safe_mode) || $safe_mode == 'off');
 		$versions['safe_mode'] = array(
 			'title' => $txt['support_safe_mode'],

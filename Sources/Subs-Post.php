@@ -1469,7 +1469,7 @@ function createAttachment(&$attachmentOptions)
 		$attachmentOptions['post'] = 0;
 
 	$already_uploaded = preg_match('~^post_tmp_' . $attachmentOptions['poster'] . '_\d+$~', $attachmentOptions['tmp_name']) != 0;
-	$file_restricted = @ini_get('open_basedir') != '' && !$already_uploaded;
+	$file_restricted = ini_get('open_basedir') != '' && !$already_uploaded;
 
 	if ($already_uploaded)
 		$attachmentOptions['tmp_name'] = $attach_dir . '/' . $attachmentOptions['tmp_name'];

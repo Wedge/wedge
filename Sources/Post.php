@@ -862,7 +862,7 @@ function Post($post_errors = array())
 				if ($_FILES['attachment']['name'][$n] == '')
 					continue;
 
-				if (!is_uploaded_file($_FILES['attachment']['tmp_name'][$n]) || (@ini_get('open_basedir') == '' && !file_exists($_FILES['attachment']['tmp_name'][$n])))
+				if (!is_uploaded_file($_FILES['attachment']['tmp_name'][$n]) || (ini_get('open_basedir') == '' && !file_exists($_FILES['attachment']['tmp_name'][$n])))
 					fatal_lang_error('attach_timeout', 'critical');
 
 				if (!empty($settings['attachmentSizeLimit']) && $_FILES['attachment']['size'][$n] > $settings['attachmentSizeLimit'] * 1024)

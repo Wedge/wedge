@@ -38,7 +38,7 @@ function aeva_admin_embed()
 		loadSource('media/Aeva-Embed');
 
 		// Unlikely, but we might need more umph.
-		@ini_set('memory_limit', '64M');
+		ini_set('memory_limit', '64M');
 
 		// Domo arigato, misutaa Robotto
 		$url = 'http://www.google.com/robots.txt';

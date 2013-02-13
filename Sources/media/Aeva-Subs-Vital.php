@@ -501,7 +501,7 @@ function aeva_getEncryptedFilename($name, $id, $check_for_encrypted = false, $bo
 // Returns a php.ini size limit, in bytes
 function aeva_getPHPSize($size)
 {
-	if (preg_match('/^([\d\.]+)([gmk])?$/i', @ini_get($size), $m))
+	if (preg_match('/^([\d\.]+)([gmk])?$/i', ini_get($size), $m))
 	{
 		$value = $m[1];
 		if (isset($m[2]))

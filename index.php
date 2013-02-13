@@ -163,7 +163,7 @@ elseif (isset($_GET['imperative']))
 if (!empty($settings['enableCompressedOutput']) && !headers_sent())
 {
 	// If zlib is being used, turn off output compression.
-	if (@ini_get('zlib.output_compression') >= 1 || @ini_get('output_handler') == 'ob_gzhandler')
+	if (ini_get('zlib.output_compression') >= 1 || ini_get('output_handler') == 'ob_gzhandler')
 		$settings['enableCompressedOutput'] = '0';
 	else
 	{

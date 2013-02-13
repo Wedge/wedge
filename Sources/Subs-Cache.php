@@ -909,7 +909,7 @@ function wedge_cache_js($id, &$lang_name, $latest_date, $ext, $js, $gzip = false
 	// Member or guest? We need a (short) callback function because it preserves all quotes.
 	$final = preg_replace_callback('~@if\s*\(?(guest|member)\b\)?(.*?)(?:@else\b(.*?))?@endif\b~is', 'wedge_js_replace_ifs', $final);
 
-	if (!$closure_failed && !is_callable('curl_exec') && !preg_match('~1|yes|on|true~i', @ini_get('allow_url_fopen')))
+	if (!$closure_failed && !is_callable('curl_exec') && !preg_match('~1|yes|on|true~i', ini_get('allow_url_fopen')))
 		$closure_failed = true;
 
 	// Call the minify process, either JSMin, Packer or Closure.

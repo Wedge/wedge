@@ -542,6 +542,17 @@ function cleanXml($string)
 }
 
 /**
+ * Helper function to return a simple text string to an Ajax request.
+ */
+function returnAjax($output)
+{
+	clean_output();
+	header('Content-Type: text/plain; charset=UTF-8');
+	echo $output;
+	obExit(false);
+}
+
+/**
  * Sanitizes strings that might be passed through to JavaScript.
  *
  * Multiple instances of scripts will need to be adjusted through the codebase if passed to JavaScript through the template. This function will handle quoting of the string's contents, including providing the encapsulating quotes (so no need to echo '"', JavaScriptEscape($var), '"'; but simply echo JavaScriptEscape($var); instead)

@@ -281,7 +281,7 @@ function BoardPermissionsReport()
 	global $context, $txt, $settings;
 
 	// Get as much memory as possible as this can be big.
-	@ini_set('memory_limit', '256M');
+	ini_set('memory_limit', '256M');
 
 	if (isset($_REQUEST['boards']))
 	{

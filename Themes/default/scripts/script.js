@@ -295,10 +295,10 @@ function ajaxRating()
 {
 	show_ajax();
 	$.post(
-		$('#ratingF').attr('action') + ';xml',
+		$('#ratingF').attr('action'),
 		{ rating: $('#rating').val() },
-		function (XMLDoc) {
-			$('#ratingE').html($('item', XMLDoc).text());
+		function (new_contents) {
+			$('#ratingF').parent().html(new_contents);
 			$('#rating').sb();
 			hide_ajax();
 		}
@@ -625,7 +625,6 @@ function JumpTo(control, id)
 					$('#' + control).find('select').off('focus').append(sList).sb().change(function () {
 						location = parseInt($val = $(this).val()) ? weUrl('board=' + $val + '.0') : $val;
 					});
-
 					hide_ajax();
 				}
 			);
@@ -696,8 +695,6 @@ function JumpTo(control, id)
 		{
 			var toDelete = $('#thought_update' + tid);
 
-			show_ajax();
-
 			$.post(
 				ajaxUrl + 'remove',
 				{ oid: toDelete.data('oid') }
@@ -705,8 +702,6 @@ function JumpTo(control, id)
 
 			// We'll be assuming Wedge uses table tags to show thought lists.
 			toDelete.closest('tr').remove();
-
-			hide_ajax();
 		};
 
 		// Event handler for clicking submit.

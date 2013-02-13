@@ -406,7 +406,7 @@ function template_aeva_item_details()
 				<dt>' . $txt['media_downloads'] . '</dt>
 				<dd>' . $item['downloads'] . '</dd>' : '', $item['can_rate'] || $item['voters'] > 0 ? '
 				<dt>' . $txt['media_rating'] . '</dt>
-				<dd id="ratingE">' . template_aeva_rating_object($item) . '</dd>' : '', !empty($item['num_comments']) ? '
+				<dd>' . template_aeva_rating_object($item) . '</dd>' : '', !empty($item['num_comments']) ? '
 				<dt>' . $txt['media_comments'] . '</dt>
 				<dd>' . $item['num_comments'] . '</dd>' : '';
 
@@ -2020,12 +2020,4 @@ function template_aeva_rating_object($item)
 				</form>';
 
 	return $object;
-}
-
-function template_aeva_xml_rated()
-{
-	global $context, $txt;
-
-	echo '<?xml version="1.0" encoding="UTF-8"?', '>
-<item><![CDATA[', template_aeva_rating_object($context['item_data']), ']]></item>';
 }

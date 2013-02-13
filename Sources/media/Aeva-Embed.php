@@ -702,7 +702,7 @@ function aeva_lookup_and_match($regex, $url, $fetch_title = '')
 	@set_time_limit(600);
 
 	// Hmm we might need more...
-	@ini_set('memory_limit', '64M');
+	ini_set('memory_limit', '64M');
 
 	// Go get 'em tiger
 	$data = @aeva_fetch($url);
@@ -1039,7 +1039,7 @@ function aeva_fetch($url, $test_connection = false)
 		return false;
 
 	$data = '';
-	@ini_set('user_agent', 'Mozilla/4.0 (Compatible; PHP/Wedge; http://wedge.org)');
+	ini_set('user_agent', 'Mozilla/4.0 (Compatible; PHP/Wedge; http://wedge.org)');
 	aeva_download_to_string($url, $data);
 	if (!empty($data))
 		return $data;

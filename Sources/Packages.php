@@ -114,7 +114,7 @@ function PackagePermissions()
 	}
 
 	// This is a memory eat.
-	@ini_set('memory_limit', '128M');
+	ini_set('memory_limit', '128M');
 	@set_time_limit(600);
 
 	// Load up some FTP stuff.

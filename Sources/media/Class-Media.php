@@ -211,7 +211,7 @@ class media_handler
 		$destName = $source . '_thumb.tmp';
 
 		// Ask for more memory: we need it for this, and it'll only happen once!
-		@ini_set('memory_limit', '128M');
+		ini_set('memory_limit', '128M');
 
 		$success = false;
 		$sizes = getimagesize($source);
@@ -342,7 +342,7 @@ class media_handler
 		elseif ($this->image_handler == 2)
 		{
 			// Buy some memory
-			@ini_set('memory_limit', '48M');
+			ini_set('memory_limit', '48M');
 
 			$this->imagick->resizeImage($width, $height, 1, 1);
 			$success = $this->imagick->writeImage($dest);
@@ -352,7 +352,7 @@ class media_handler
 		elseif ($this->image_handler == 3)
 		{
 			// Buy some memory
-			@ini_set('memory_limit', '48M');
+			ini_set('memory_limit', '48M');
 
 			MagickResizeImage($this->magick, $width, $height, MW_LanczosFilter, 1);
 			$success = MagickWriteImage($this->magick, $dest);
@@ -390,7 +390,7 @@ class media_handler
 			return false;
 
 		// Try to buy some (a lot of) memory
-		@ini_set('memory_limit', '128M');
+		ini_set('memory_limit', '128M');
 		if (($frame = @$this->ffmpeg->getFrame(5)) == false)
 			return false;
 

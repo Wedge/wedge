@@ -48,7 +48,7 @@ function cleanRequest()
 	$scripturl = $boardurl . (!empty($settings['pretty_remove_index']) && isset($_COOKIE[session_name()]) ? '/' : '/index.php');
 
 	// What function to use to reverse magic quotes - if sybase is on we assume that the database sensibly has the right unescape function!
-	$removeMagicQuoteFunction = @ini_get('magic_quotes_sybase') || strtolower(@ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
+	$removeMagicQuoteFunction = ini_get('magic_quotes_sybase') || strtolower(ini_get('magic_quotes_sybase')) == 'on' ? 'unescapestring__recursive' : 'stripslashes__recursive';
 
 	// Save some memory.. (since we don't use these anyway.)
 	unset($GLOBALS['HTTP_POST_VARS'], $GLOBALS['HTTP_POST_FILES']);
@@ -78,7 +78,7 @@ function cleanRequest()
 		exit;
 	}
 
-	$supports_semicolon = strpos(@ini_get('arg_separator.input'), ';') !== false;
+	$supports_semicolon = strpos(ini_get('arg_separator.input'), ';') !== false;
 
 	// Are we going to need to parse the ; out?
 	if (!$supports_semicolon && !empty($_SERVER['QUERY_STRING']))

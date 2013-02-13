@@ -103,8 +103,8 @@ function initialize_inputs()
 	{
 		ob_start();
 
-		if (@ini_get('session.save_handler') == 'user')
-			@ini_set('session.save_handler', 'files');
+		if (ini_get('session.save_handler') == 'user')
+			ini_set('session.save_handler', 'files');
 		if (function_exists('session_start'))
 			@session_start();
 	}
@@ -112,8 +112,8 @@ function initialize_inputs()
 	{
 		ob_start('ob_gzhandler');
 
-		if (@ini_get('session.save_handler') == 'user')
-			@ini_set('session.save_handler', 'files');
+		if (ini_get('session.save_handler') == 'user')
+			ini_set('session.save_handler', 'files');
 		session_start();
 
 		if (!headers_sent())
@@ -462,7 +462,7 @@ function Welcome()
 		$error = 'error_missing_files';
 	// Very simple check on the session.save_path for Windows.
 	// !!! Move this down later if they don't use database-driven sessions?
-	elseif (@ini_get('session.save_path') == '/tmp' && substr(__FILE__, 1, 2) == ':\\')
+	elseif (ini_get('session.save_path') == '/tmp' && substr(__FILE__, 1, 2) == ':\\')
 		$error = 'error_session_save_path';
 	// What about GD2 and related functions?
 	elseif (!checkGD2())
@@ -692,16 +692,16 @@ function DatabaseSettings()
 	if (function_exists('mysql_connect'))
 	{
 		if (isset($db['default_host']))
-			$incontext['db']['server'] = @ini_get($db['default_host']) or $incontext['db']['server'] = 'localhost';
+			$incontext['db']['server'] = ini_get($db['default_host']) or $incontext['db']['server'] = 'localhost';
 		if (isset($db['default_user']))
 		{
-			$incontext['db']['user'] = @ini_get($db['default_user']);
-			$incontext['db']['name'] = @ini_get($db['default_user']);
+			$incontext['db']['user'] = ini_get($db['default_user']);
+			$incontext['db']['name'] = ini_get($db['default_user']);
 		}
 		if (isset($db['default_password']))
-			$incontext['db']['pass'] = @ini_get($db['default_password']);
+			$incontext['db']['pass'] = ini_get($db['default_password']);
 		if (isset($db['default_port']))
-			$db_port = @ini_get($db['default_port']);
+			$db_port = ini_get($db['default_port']);
 	}
 
 	// Override for repost.
@@ -860,7 +860,7 @@ function ForumSettings()
 	$incontext['detected_url'] = 'http' . (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 's' : '') . '://' . $host . substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
 
 	// Check if the database sessions will even work.
-	$incontext['test_dbsession'] = @ini_get('session.auto_start') != 1;
+	$incontext['test_dbsession'] = ini_get('session.auto_start') != 1;
 
 	$incontext['continue'] = 1;
 

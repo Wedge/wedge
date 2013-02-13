@@ -881,7 +881,7 @@ function AdminSearchInternal()
 	global $context, $txt, $helptxt, $scripturl, $settings_search, $settings;
 
 	// Try to get some more memory.
-	@ini_set('memory_limit', '128M');
+	ini_set('memory_limit', '128M');
 
 	// Load a lot of language files.
 	loadLanguage(array(

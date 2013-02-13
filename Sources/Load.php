@@ -163,8 +163,8 @@ function can_shell_exec()
 	if ($result !== null)
 		return $result;
 
-	$disable_functions = explode(',', @ini_get('disable_functions') . ',' . @ini_get('suhosin.executor.func.blacklist'));
-	return $result = (is_callable('shell_exec') && !@ini_get('safe_mode') && !in_array('shell_exec', $disable_functions));
+	$disable_functions = explode(',', ini_get('disable_functions') . ',' . ini_get('suhosin.executor.func.blacklist'));
+	return $result = (is_callable('shell_exec') && !ini_get('safe_mode') && !in_array('shell_exec', $disable_functions));
 }
 
 /**
@@ -2093,26 +2093,26 @@ function loadSession()
 	global $settings, $boardurl, $sc;
 
 	// Attempt to change a few PHP settings.
-	@ini_set('session.use_cookies', true);
-	@ini_set('session.use_only_cookies', false);
-	@ini_set('url_rewriter.tags', '');
-	@ini_set('session.use_trans_sid', false);
-	@ini_set('arg_separator.output', '&amp;');
+	ini_set('session.use_cookies', true);
+	ini_set('session.use_only_cookies', false);
+	ini_set('url_rewriter.tags', '');
+	ini_set('session.use_trans_sid', false);
+	ini_set('arg_separator.output', '&amp;');
 
 	if (!empty($settings['globalCookies']))
 	{
 		$parsed_url = parse_url($boardurl);
 
 		if (preg_match('~^\d{1,3}(\.\d{1,3}){3}$~', $parsed_url['host']) == 0 && preg_match('~(?:[^.]+\.)?([^.]{2,}\..+)\z~i', $parsed_url['host'], $parts) == 1)
-			@ini_set('session.cookie_domain', '.' . $parts[1]);
+			ini_set('session.cookie_domain', '.' . $parts[1]);
 	}
 	// !!! Set the session cookie path?
 
 	// If it's already been started... probably best to skip this.
-	if ((@ini_get('session.auto_start') == 1 && !empty($settings['databaseSession_enable'])) || session_id() == '')
+	if ((ini_get('session.auto_start') == 1 && !empty($settings['databaseSession_enable'])) || session_id() == '')
 	{
 		// Attempt to end the already-started session.
-		if (@ini_get('session.auto_start') == 1)
+		if (ini_get('session.auto_start') == 1)
 			@session_write_close();
 
 		// This is here to stop people from using bad junky PHPSESSIDs.
@@ -2127,12 +2127,12 @@ function loadSession()
 		// Use database sessions?
 		if (!empty($settings['databaseSession_enable']))
 		{
-			@ini_set('session.serialize_handler', 'php');
+			ini_set('session.serialize_handler', 'php');
 			session_set_save_handler('sessionOpen', 'sessionClose', 'sessionRead', 'sessionWrite', 'sessionDestroy', 'sessionGC');
-			@ini_set('session.gc_probability', '1');
+			ini_set('session.gc_probability', '1');
 		}
-		elseif (@ini_get('session.gc_maxlifetime') <= 1440 && !empty($settings['databaseSession_lifetime']))
-			@ini_set('session.gc_maxlifetime', max($settings['databaseSession_lifetime'], 60));
+		elseif (ini_get('session.gc_maxlifetime') <= 1440 && !empty($settings['databaseSession_lifetime']))
+			ini_set('session.gc_maxlifetime', max($settings['databaseSession_lifetime'], 60));
 
 		session_start();
 

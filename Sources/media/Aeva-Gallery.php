@@ -330,24 +330,24 @@ function aeva_initGallery($gal_url = null)
 		$media_areas['admin'] = array(
 			'title' => $txt['media_admin'],
 			'icon' => 'cog.png',
-			'href' => $scripturl . '?action=admin;area=aeva_settings;' . $context['session_query'],
+			'href' => '<URL>?action=admin;area=aeva_settings;' . $context['session_query'],
 			'permission' => array('media_manage'),
 			'areas' => array(
 				'settings' => array(
 					'label' => $txt['media_admin_labels_settings'],
-					'href' => $scripturl . '?action=admin;area=aeva_settings;' . $context['session_query'],
+					'href' => '<URL>?action=admin;area=aeva_settings;' . $context['session_query'],
 				),
 				'embed' => array(
 					'label' => $txt['media_admin_labels_embed'],
-					'href' => $scripturl . '?action=admin;area=aeva_embed;' . $context['session_query'],
+					'href' => '<URL>?action=admin;area=aeva_embed;' . $context['session_query'],
 				),
 				'albums' => array(
 					'label' => $txt['media_admin_labels_albums'],
-					'href' => $scripturl . '?action=admin;area=aeva_albums;' . $context['session_query'],
+					'href' => '<URL>?action=admin;area=aeva_albums;' . $context['session_query'],
 				),
 				'maintenance' => array(
 					'label' => $txt['media_admin_labels_maintenance'],
-					'href' => $scripturl . '?action=admin;area=aeva_maintenance;' . $context['session_query'],
+					'href' => '<URL>?action=admin;area=aeva_maintenance;' . $context['session_query'],
 				),
 			),
 		);
@@ -395,7 +395,7 @@ function aeva_initGallery($gal_url = null)
 	loadSource('Subs-Menu');
 	createMenu($media_areas, $menuOptions);
 
-	if (!isset($_REQUEST['xml']))
+	if (!$context['is_ajax'])
 	{
 		wetem::add('top', array('aeva_header', 'aeva_tabs'));
 
@@ -605,7 +605,7 @@ function aeva_sortBox($current_album, $count_items, $start, $per_page, $persort 
 function aeva_viewAlbum()
 {
 	// This function's job is to handle stuff when someone is viewing a album.
-	global $context, $txt, $amSettings, $galurl, $scripturl;
+	global $context, $txt, $amSettings, $galurl;
 
 	$album = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
 	$current_album =& $context['aeva_album'];
@@ -709,7 +709,7 @@ function aeva_viewAlbum()
 	// Make the linktree
 	add_linktree($galurl . 'sa=vua', $txt['media_albums']);
 	if (!empty($master_album['owner']['id']))
-		add_linktree($scripturl . '?action=profile;u=' . $master_album['owner']['id'] . ';area=aeva', $master_album['owner']['name']);
+		add_linktree('<URL>?action=profile;u=' . $master_album['owner']['id'] . ';area=aeva', $master_album['owner']['name']);
 
 	$parents = array_reverse(aeva_getAlbumParents($current_album['id'], $current_album['master']));
 	foreach ($parents as $p)
@@ -736,7 +736,7 @@ function aeva_prevNextThumb($myurl, &$prev)
 function aeva_viewItem()
 {
 	// Comes into play when you're viewing a single item
-	global $scripturl, $galurl, $txt, $amSettings, $context, $db_prefix, $memberContext, $theme, $boarddir;
+	global $galurl, $txt, $amSettings, $context, $db_prefix, $memberContext, $theme, $boarddir;
 
 	// Set the item ID
 	$item = isset($_REQUEST['in']) ? (int) $_REQUEST['in'] : 0;
@@ -760,30 +760,6 @@ function aeva_viewItem()
 	$amSettings['use_zoom'] &= empty($peralbum['zoom']) || $peralbum['zoom'] == 'yes';
 	$context['aeva_has_preview'] = (bool) $item_data['has_preview'];
 	$amSettings['show_linking_code'] = empty($amSettings['show_linking_code']) || ($item_data['type'] == 'unknown') ? 0 : (1 + (file_exists($boarddir . '/MGalleryItem.php') ? 0 : 1));
-
-	// If we got so far, the user can see this item, so mark it as seen if it's new!
-	if ($item_data['is_new'] && media_markSeen($item_data['id_media']))
-		media_resetUnseen(we::$id);
-
-	if (isset($_REQUEST['noh']))
-	{
-		$title = str_replace(array("'", '"'), array('\\\'', '\\\'\\\''), un_htmlspecialchars($item_data['title']));
-		$is_image = is_array($item_data) && isset($item_data['type']) && ($item_data['type'] == 'image'
-					|| ($item_data['type'] == 'embed' && preg_match('/\.(?:jpe?g?|gif|png|bmp)/i', $item_data['embed_url'])));
-		$context['header'] .= '
-	<script><!-- // --><![CDATA[
-		function insertTag()
-		{
-			if (window.opener)
-			{
-				var mytag = \'[media id=' . $item_data['id_media'] . ' type=' . ($is_image ? ($context['aeva_has_preview'] ? 'preview' : 'full') : 'av') . ' align=center caption="' . $title . '"]\';
-				window.opener.oEditorHandle_' . $_REQUEST['noh'] . '.insertText(mytag);
-				window.close();
-			}
-		}
-		insertTag();
-	// ]]></script>';
-	}
 
 	// Handle rating and stuff
 	// Any previous rates?
@@ -813,7 +789,12 @@ function aeva_viewItem()
 	{
 		// Make sure the user is allowed to rate
 		if (!aeva_allowedTo('rate_items'))
+		{
+			if ($context['is_ajax'])
+				returnAjax($txt['media_rate_denied']);
+
 			fatal_lang_error('media_rate_denied');
+		}
 
 		// Make sure it is valid
 		$rating = (int) $_POST['rating'];
@@ -824,7 +805,12 @@ function aeva_viewItem()
 		if ($item_data['user_rated'])
 		{
 			if ($amSettings['enable_re-rating'] == '0')
+			{
+				if ($context['is_ajax'])
+					returnAjax($txt['media_re-rating_denied']);
+
 				fatal_lang_error('media_re-rating_denied');
+			}
 
 			wesql::query('
 				UPDATE {db_prefix}media_items
@@ -895,12 +881,32 @@ function aeva_viewItem()
 	$item_data['avg_rating'] = $item_data['voters'] > 0 ? ($item_data['rating']/$item_data['voters']) : 0;
 	$item_data['can_rate'] = aeva_allowedTo('rate_items') && (!$item_data['user_rated'] || $amSettings['enable_re-rating'] == '1');
 
-	// XML?
-	if (isset($_REQUEST['xml'], $_POST['rating']))
+	// Ajax rating?
+	if ($context['is_ajax'] && isset($_POST['rating']))
+		returnAjax(template_aeva_rating_object($item_data));
+
+	// If we got so far, the user can see this item, so mark it as seen if it's new!
+	if ($item_data['is_new'] && media_markSeen($item_data['id_media']))
+		media_resetUnseen(we::$id);
+
+	if (isset($_REQUEST['noh']))
 	{
-		$context['item_data'] = $item_data;
-		wetem::load('aeva_xml_rated');
-		return true;
+		$title = str_replace(array("'", '"'), array('\\\'', '\\\'\\\''), un_htmlspecialchars($item_data['title']));
+		$is_image = is_array($item_data) && isset($item_data['type']) && ($item_data['type'] == 'image'
+					|| ($item_data['type'] == 'embed' && preg_match('/\.(?:jpe?g?|gif|png|bmp)/i', $item_data['embed_url'])));
+		$context['header'] .= '
+	<script><!-- // --><![CDATA[
+		function insertTag()
+		{
+			if (window.opener)
+			{
+				var mytag = \'[media id=' . $item_data['id_media'] . ' type=' . ($is_image ? ($context['aeva_has_preview'] ? 'preview' : 'full') : 'av') . ' align=center caption="' . $title . '"]\';
+				window.opener.oEditorHandle_' . $_REQUEST['noh'] . '.insertText(mytag);
+				window.close();
+			}
+		}
+		insertTag();
+	// ]]></script>';
 	}
 
 	// Playlists
@@ -1245,7 +1251,7 @@ function aeva_viewItem()
 
 function aeva_mgComment()
 {
-	global $context, $scripturl, $galurl, $amSettings, $txt, $db_prefix;
+	global $context, $galurl, $amSettings, $txt, $db_prefix;
 
 	// Get the item info
 	$request = wesql::query('

@@ -963,7 +963,7 @@ function template_include($filename, $once = false)
 	static $templates = array();
 
 	// We want to be able to figure out any errors...
-	@ini_set('track_errors', '1');
+	ini_set('track_errors', '1');
 
 	// Don't include the file more than once, if $once is true.
 	if ($once && in_array($filename, $templates))
