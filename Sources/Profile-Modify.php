@@ -368,6 +368,7 @@ function loadProfileFields($force_reload = false)
 						resetPassword($context[\'id_member\'], $value);
 					elseif ($value !== null)
 					{
+						loadLanguage(\'Login\');
 						validateUsername($context[\'id_member\'], $value);
 						updateMemberData($context[\'id_member\'], array(\'member_name\' => $value));
 					}

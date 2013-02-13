@@ -1087,12 +1087,11 @@ function parsesmileys(&$message)
 	{
 		global $settings, $txt, $context, $cssdir;
 
-		// Use the default smileys if it is disabled. (Better for "portability" of smileys.)
+		// Use the default smileys if custom smileys are disabled. (Better for "portability".)
 		if (empty($settings['smiley_enable']))
 		{
 			$smileysfrom = array('>:D', ':D', '::)', '>:(', ':))', ':)', ';)', ';D', ':(', ':o', '8)', ':P', '???', ':-[', ':-X', ':-*', ':\'(', ':-\\', '^-^', 'O0', 'C:-)', 'O:-)', ':edit:');
 			$smileysto = array('evil.gif', 'cheesy.gif', 'rolleyes.gif', 'angry.gif', 'laugh.gif', 'smiley.gif', 'wink.gif', 'grin.gif', 'sad.gif', 'shocked.gif', 'cool.gif', 'tongue.gif', 'huh.gif', 'embarrassed.gif', 'lipsrsealed.gif', 'kiss.gif', 'cry.gif', 'undecided.gif', 'azn.gif', 'afro.gif', 'police.gif', 'angel.gif', 'edit.gif');
-			$smileysdescs = array('', $txt['icon_cheesy'], $txt['icon_rolleyes'], $txt['icon_angry'], '', $txt['icon_smiley'], $txt['icon_wink'], $txt['icon_grin'], $txt['icon_sad'], $txt['icon_shocked'], $txt['icon_cool'], $txt['icon_tongue'], $txt['icon_huh'], $txt['icon_embarrassed'], $txt['icon_lips'], $txt['icon_kiss'], $txt['icon_cry'], $txt['icon_undecided'], '', '', '', '', $txt['icon_edit']);
 			$smileysdiv = array();
 			foreach ($smileysto as $file)
 				$smileysdiv[] = array('embed' => true, 'name' => str_replace('.', '_', $file));
@@ -1103,19 +1102,17 @@ function parsesmileys(&$message)
 			if (($temp = cache_get_data('smiley_parser', 480)) == null || !isset($temp[3]) || !is_array($temp[3]))
 			{
 				$result = wesql::query('
-					SELECT code, filename, description, hidden
+					SELECT code, filename, hidden
 					FROM {db_prefix}smileys',
 					array()
 				);
 				$smileysfrom = array();
 				$smileysto = array();
-				$smileysdescs = array();
 				$smileysdiv = array();
 				while ($row = wesql::fetch_assoc($result))
 				{
 					$smileysfrom[] = $row['code'];
 					$smileysto[] = $row['filename'];
-					$smileysdescs[] = $row['description'];
 					$smileysdiv[] = array(
 						'embed' => $row['hidden'] == 0,
 						'name' => preg_replace(array('~[^\w]~', '~_+~'), array('_', '_'), $row['filename'])
@@ -1123,10 +1120,10 @@ function parsesmileys(&$message)
 				}
 				wesql::free_result($result);
 
-				cache_put_data('smiley_parser', array($smileysfrom, $smileysto, $smileysdescs, $smileysdiv), 480);
+				cache_put_data('smiley_parser', array($smileysfrom, $smileysto, $smileysdiv), 480);
 			}
 			else
-				list ($smileysfrom, $smileysto, $smileysdescs, $smileysdiv) = $temp;
+				list ($smileysfrom, $smileysto, $smileysdiv) = $temp;
 		}
 
 		// This smiley regex makes sure it doesn't parse smileys within code tags (so [url=mailto:David@bla.com] doesn't parse the :D smiley)

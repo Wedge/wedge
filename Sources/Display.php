@@ -386,10 +386,12 @@ function Display()
 	$context['is_marked_notify'] = false;
 
 	// Did we report a post to a moderator just now?
-	$context['report_sent'] = isset($_GET['reportsent']);
+	if ($context['report_sent'] = isset($_GET['reportsent']))
+		loadLanguage('Post');
 
 	// Did someone save a conventional draft?
-	$context['draft_saved'] = isset($_GET['draftsaved']);
+	if ($context['draft_saved'] = isset($_GET['draftsaved']))
+		loadLanguage('Post');
 
 	// Let's get nosey, who is viewing this topic?
 	if (!empty($settings['display_who_viewing']))

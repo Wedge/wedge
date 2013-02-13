@@ -25,7 +25,7 @@ class wedit
 
 	public function __construct($editorOptions)
 	{
-		global $txt, $settings, $options, $context, $theme, $scripturl;
+		global $settings, $options, $context, $theme, $scripturl;
 
 		if (!is_array($editorOptions))
 			$editorOptions = array($editorOptions);
@@ -1672,32 +1672,32 @@ class wedit
 					array(
 						'code' => 'O0',
 						'class' => 'afro_gif',
-						'description' => '', // $txt['icon_evil'],
+						'description' => '',
 					),
 					array(
 						'code' => '>:D',
 						'class' => 'evil_gif',
-						'description' => '', // $txt['icon_evil'],
+						'description' => '',
 					),
 					array(
 						'code' => '^-^',
 						'class' => 'azn_gif',
-						'description' => '', // $txt['icon_evil'],
+						'description' => '',
 					),
 					array(
 						'code' => ':))',
 						'class' => 'laugh_gif',
-						'description' => '', // $txt['icon_evil'],
+						'description' => '',
 					),
 					array(
 						'code' => 'O:-)',
 						'class' => 'angel_gif',
-						'description' => '', // $txt['icon_evil'],
+						'description' => '',
 					),
 					array(
 						'code' => 'C:-)',
 						'class' => 'police_gif',
-						'description' => '', // $txt['icon_evil'],
+						'description' => '',
 					),
 					array(
 						'code' => ':edit:',

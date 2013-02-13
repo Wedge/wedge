@@ -39,7 +39,10 @@ function MessageIndex()
 	// Did someone save a conventional draft of a new topic? If so, add it as a block but make sure we don't screw other things up.
 	$templates = array();
 	if (isset($_GET['draftsaved']))
+	{
+		loadLanguage('Post');
 		$templates[] = 'messageindex_draft';
+	}
 	$templates[] = $board_info['type'] == 'blog' ? 'main_blog' : 'main_board';
 	wetem::load($templates);
 	wetem::add('sidebar', 'messageindex_statistics');

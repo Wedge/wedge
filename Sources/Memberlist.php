@@ -52,6 +52,7 @@ function Memberlist()
 	// Make sure they can view the memberlist.
 	isAllowedTo('view_mlist');
 
+	loadLanguage('ManageMembers');
 	loadTemplate('Memberlist');
 
 	$context['listing_by'] = !empty($_GET['sa']) ? $_GET['sa'] : 'all';

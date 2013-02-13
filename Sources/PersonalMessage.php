@@ -113,10 +113,12 @@ function MessageMain()
 		$session_timeout = checkSession('post', '', false) != '';
 		$draft = saveDraft(true, isset($_REQUEST['replied_to']) ? (int) $_REQUEST['replied_to'] : 0);
 		if (!empty($draft) && !$session_timeout)
-			if ($context['is_ajax'])
-				draftXmlReturn($draft, true);
-			else
+		{
+			if (!$context['is_ajax'])
 				redirectexit('action=pm;draftsaved');
+			loadLanguage('Post');
+			draftXmlReturn($draft, true);
+		}
 	}
 
 	loadLanguage('PersonalMessage');
@@ -165,7 +167,8 @@ function MessageMain()
 		$context['pm_sent'] = true;
 
 	// Did someone save a conventional draft?
-	$context['draft_saved'] = isset($_GET['draftsaved']);
+	if ($context['draft_saved'] = isset($_GET['draftsaved']))
+		loadLanguage('Post');
 
 	// Now we have the labels, and assuming we have unsorted mail, apply our rules!
 	if ($user_settings['new_pm'])

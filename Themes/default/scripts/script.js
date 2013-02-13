@@ -165,7 +165,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 	}
 
 	// Clicking the help icon twice should close the popup.
-	if ($('#popup').remove().length && previous_target == help_page)
+	if ($('#popup').remove().length && previous_target && previous_target == help_page)
 		return false;
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE6.
