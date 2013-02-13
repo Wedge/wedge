@@ -857,7 +857,7 @@ function saveProfileFields()
 		}
 	}
 
-	//!!! Temporary
+	// !! Temporary
 	if (we::$user['is_owner'])
 		$changeOther = allowedTo(array('profile_extra_any', 'profile_extra_own'));
 	else
@@ -1156,7 +1156,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			// Any masks?
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
 			{
-				//!!! We never error on this - just ignore it at the moment...
+				// !! We never error on this - just ignore it at the moment...
 				if ($row['mask'] == 'email' && (!is_valid_email($value) || strlen($value) > 255))
 					$value = '';
 				elseif ($row['mask'] == 'number')

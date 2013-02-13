@@ -1586,7 +1586,7 @@ function loadAllPermissions($loadType = 'classic')
 	}
 
 	// Load up any permissions from plugin-info.xml files.
-	//libxml_use_internal_errors(true);
+	// !! libxml_use_internal_errors(true); ??
 	if (!empty($context['plugins_dir']))
 		foreach ($context['plugins_dir'] as $id => $path)
 		{

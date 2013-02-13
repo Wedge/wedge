@@ -144,7 +144,7 @@ class paypal_display
 
 				function switchPaypalRecur()
 				{
-					$(\'#paypal_cmd\').val( $(\'#do_paypal_recur\')[0].checked ? \'_xclick-subscriptions\' : \'_xclick\' );
+					$(\'#paypal_cmd\').val($(\'#do_paypal_recur\')[0].checked ? \'_xclick-subscriptions\' : \'_xclick\');
 				}';
 
 		return $return_data;

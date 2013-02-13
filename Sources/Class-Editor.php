@@ -1083,7 +1083,7 @@ class wedit
 						if (!empty($inlineElements))
 						{
 							$parts[$i] .= '[/' . implode('][/', array_reverse($inlineElements)) . ']';
-							//$inlineElements = array();
+							// !! $inlineElements = array(); ??
 						}
 
 						$inCode = true;
@@ -1113,7 +1113,7 @@ class wedit
 						if (!empty($inlineElements))
 						{
 							$parts[$i] .= '[/' . implode('][/', array_reverse($inlineElements)) . ']';
-							//$inlineElements = array();
+							// !! $inlineElements = array(); ??
 						}
 
 						$inNoBbc = true;

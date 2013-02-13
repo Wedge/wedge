@@ -40,7 +40,7 @@ class GIF_Animator
 			'image' => $this->gifString($image),
 			'delay' => $delay,
 			'transparency' => $transparency,
-			'disposal' => ($disposal ? 2 : 3), // 2 = restore to bgcol, 3 = restore to previous ;; these are bit numbers!
+			'disposal' => $disposal ? 2 : 3, // 2 = restore to bgcol, 3 = restore to previous ;; these are bit numbers!
 		);
 	}
 
@@ -59,11 +59,12 @@ class GIF_Animator
 		$this->GIF = 'GIF89a';
 
 		$global_byte = $this->byteAt(0, 10);
-		if ( $global_byte & 0x80 ) {
+		if ($global_byte & 0x80)
+		{
 			$cmap = 3 * (2 << ($global_byte & 0x07));
 
-			$this->GIF .= substr ( $this->buffer[0]['image'], 6, 7);
-			$this->GIF .= substr ( $this->buffer[0]['image'], 13, 3 * (2 << ($global_byte & 0x07)));
+			$this->GIF .= substr($this->buffer[0]['image'], 6, 7);
+			$this->GIF .= substr($this->buffer[0]['image'], 13, 3 * (2 << ($global_byte & 0x07)));
 			$this->GIF .= "!\377\13NETSCAPE2.0\3\1" . $this->stringWord($playback) . "\0";
 		}
 
@@ -91,23 +92,24 @@ class GIF_Animator
 
 			$Locals_rgb = substr($image, 13, 3 * $local_length);
 
-			$Locals_ext = "!\xF9\x04" . chr ($disposal + ($transparent_idx != -1 ? 1 : 0)) . $this->stringWord($delay) . ($transparent_idx != -1 ? chr($transparent_idx) : "\x0") . "\x0";
+			$Locals_ext = "!\xF9\x04" . chr($disposal + ($transparent_idx != -1 ? 1 : 0)) . $this->stringWord($delay) . ($transparent_idx != -1 ? chr($transparent_idx) : "\x0") . "\x0";
 
-			switch ($Locals_tmp[0]) {
+			switch ($Locals_tmp[0])
+			{
 				case "!":
-					$Locals_img = substr ( $Locals_tmp, 8, 10 );
-					$Locals_tmp = substr ( $Locals_tmp, 18, strlen ( $Locals_tmp ) - 18 );
+					$Locals_img = substr($Locals_tmp, 8, 10);
+					$Locals_tmp = substr($Locals_tmp, 18, strlen($Locals_tmp) - 18);
 					break;
 				case ",":
-					$Locals_img = substr ( $Locals_tmp, 0, 10 );
-					$Locals_tmp = substr ( $Locals_tmp, 10, strlen ( $Locals_tmp ) - 10 );
+					$Locals_img = substr($Locals_tmp, 0, 10);
+					$Locals_tmp = substr($Locals_tmp, 10, strlen($Locals_tmp) - 10);
 					break;
 			}
 
-			if ( $local_byte & 0x80 && $i != 0)
+			if ($local_byte & 0x80 && $i != 0)
 			{
 				if ($global_palette === $Locals_rgb)
-					$this->GIF .= ( $Locals_ext . $Locals_img . $Locals_tmp );
+					$this->GIF .= $Locals_ext . $Locals_img . $Locals_tmp;
 				else
 				{
 					$byte = ord($Locals_img[9]);
@@ -115,13 +117,11 @@ class GIF_Animator
 					$byte &= 0xF8;
 					$byte |= ($global_length == $local_length ? ($global_byte & 0x07) : ($local_byte & 0x07));
 					$Locals_img[9] = chr($byte);
-					$this->GIF .= ($Locals_ext . $Locals_img . $Locals_rgb . $Locals_tmp);
+					$this->GIF .= $Locals_ext . $Locals_img . $Locals_rgb . $Locals_tmp;
 				}
 			}
 			else
-			{
-				$this->GIF .= ($Locals_ext . $Locals_img . $Locals_tmp);
-			}
+				$this->GIF .= $Locals_ext . $Locals_img . $Locals_tmp;
 		}
 
 		// Assemble the footers
@@ -160,7 +160,8 @@ class GIF_Animator
 	 *
 	 * @param int $int A word-length integer (16 bit) to be converted
 	 */
-	protected function stringWord ($int) {
+	protected function stringWord ($int)
+	{
 		return chr($int & 0xFF) . chr(($int >> 8) & 0xFF);
 	}
 

@@ -1007,7 +1007,7 @@ class getid3_quicktime extends getid3_handler
 				$atom_structure['version']        = getid3_lib::BigEndian2Int(substr($atom_data,  0, 1));
 				$atom_structure['flags_raw']      = getid3_lib::BigEndian2Int(substr($atom_data,  1, 3)); // hardcoded: 0x0000
 				$atom_structure['number_entries'] = getid3_lib::BigEndian2Int(substr($atom_data,  4, 4));
-				for ($i = 0; $i < $atom_structure['number_entries']; $i++ ) {
+				for ($i = 0; $i < $atom_structure['number_entries']; $i++) {
 					$atom_structure['edit_list'][$i]['track_duration'] =   getid3_lib::BigEndian2Int(substr($atom_data, 8 + ($i * 12) + 0, 4));
 					$atom_structure['edit_list'][$i]['media_time']     =   getid3_lib::BigEndian2Int(substr($atom_data, 8 + ($i * 12) + 4, 4));
 					$atom_structure['edit_list'][$i]['media_rate']     = getid3_lib::FixedPoint16_16(substr($atom_data, 8 + ($i * 12) + 8, 4));
@@ -1181,7 +1181,7 @@ class getid3_quicktime extends getid3_handler
 				// puts an 8-byte placeholder atom before any atoms it may have to update the size of.
 				// In this way, if the atom needs to be converted from a 32-bit to a 64-bit atom, the
 				// placeholder atom can be overwritten to obtain the necessary 8 extra bytes.
-				// The placeholder atom has a type of kWideAtomPlaceholderType ( 'wide' ).
+				// The placeholder atom has a type of kWideAtomPlaceholderType ('wide').
 				break;
 
 

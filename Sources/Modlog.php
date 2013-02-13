@@ -22,7 +22,7 @@ if (!defined('WEDGE'))
 		- is accessed via ?action=moderate;area=modlog.
 
 	int list_getModLogEntries()
-		//!!!
+		// !!
 
 	array list_getModLogEntries($start, $items_per_page, $sort, $query_string = '', $query_params = array(), $log_type = 1)
 		- Gets the moderation log entries that match the specified paramaters

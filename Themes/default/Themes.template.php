@@ -847,7 +847,7 @@ function template_edit_file()
 			', $txt['error_session_timeout'], '
 		</div>';
 
-	//Is this file writeable?
+	// Is this file writeable?
 	if (!$context['allow_save'])
 		echo '
 		<div class="errorbox">

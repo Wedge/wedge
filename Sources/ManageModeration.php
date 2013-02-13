@@ -340,7 +340,7 @@ function SaveFilterRule()
 	if (empty($_POST['modaction']) || !in_array($_POST['modaction'], $context['modfilter_action_list']))
 		fatal_lang_error('modfilter_error_saving');
 
-	//libxml_use_internal_errors();
+	// !! libxml_use_internal_errors(); ??
 	// So we're saving. Whatever we are doing, we're going to need the existing (or new) rules in SimpleXML.
 	if (empty($settings['postmod_rules']))
 		$rules = new SimpleXMLElement('<rules />');

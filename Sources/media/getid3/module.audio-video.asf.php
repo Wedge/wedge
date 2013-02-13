@@ -603,7 +603,7 @@ class getid3_asf extends getid3_handler
 							case 'wm/year':
 							case 'year':
 							case 'date':
-								$thisfile_asf_comments['year'] = array( $this->TrimTerm($thisfile_asf_extendedcontentdescriptionobject_contentdescriptor_current['value']));
+								$thisfile_asf_comments['year'] = array($this->TrimTerm($thisfile_asf_extendedcontentdescriptionobject_contentdescriptor_current['value']));
 								break;
 
 							case 'wm/lyrics':

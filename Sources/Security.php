@@ -489,7 +489,7 @@ function banPermissions()
 		we::$user['permissions'] = array_diff(we::$user['permissions'], array_keys($permission_change));
 	}
 
-	//!!! Find a better place to call this? Needs to be after permissions loaded!
+	// !! Find a better place to call this? Needs to be after permissions loaded!
 	// Finally, some bits we cache in the session because it saves queries.
 	if (isset($_SESSION['mc']) && $_SESSION['mc']['time'] > $settings['settings_updated'] && $_SESSION['mc']['id'] == we::$id)
 		we::$user['mod_cache'] = $_SESSION['mc'];

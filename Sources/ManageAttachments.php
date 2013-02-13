@@ -301,11 +301,11 @@ function BrowseFiles()
 	// Set the options for the list component.
 	$listOptions = array(
 		'id' => 'file_list',
-		'title' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ( $context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments'))],
+		'title' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ($context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments'))],
 		'items_per_page' => $settings['defaultMaxMessages'],
 		'base_href' => $scripturl . '?action=admin;area=manageattachments;sa=browse' . ($context['browse_type'] === 'avatars' ? ';avatars' : ($context['browse_type'] === 'thumbs' ? ';thumbs' : '')),
 		'default_sort_col' => 'name',
-		'no_items_label' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ( $context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments')) . '_no_entries'],
+		'no_items_label' => $txt['attachment_manager_' . ($context['browse_type'] === 'avatars' ? 'avatars' : ($context['browse_type'] === 'thumbs' ? 'thumbs' : 'attachments')) . '_no_entries'],
 		'get_items' => array(
 			'function' => 'list_getFiles',
 			'params' => array(
@@ -812,7 +812,7 @@ function removeAttachments($condition, $query_type = '', $return_affected_messag
 {
 	global $settings;
 
-	//!!! This might need more work!
+	// !! This might need more work!
 	$new_condition = array();
 	$query_parameter = array(
 		'thumb_attachment_type' => 3,
@@ -949,7 +949,7 @@ function RepairAttachments()
 				redirectexit('action=admin;area=manageattachments;sa=maintenance');
 
 			$_SESSION['attachments_to_fix'] = array();
-			//!!! No need to do this I think.
+			// !! No need to do this I think.
 			foreach ($_POST['to_fix'] as $key => $value)
 				$_SESSION['attachments_to_fix'][] = $value;
 		}

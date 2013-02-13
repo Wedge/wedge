@@ -329,7 +329,7 @@ function deleteMembers($users, $check_not_admin = false)
 	);
 
 	// Make their votes appear as guest votes - at least it keeps the totals right.
-	//!!! Consider adding back in cookie protection.
+	// !! Consider adding back in cookie protection.
 	wesql::query('
 		UPDATE {db_prefix}log_polls
 		SET id_member = {int:guest_id}
@@ -1296,7 +1296,7 @@ function populateDuplicateMembers(&$members)
 	$duplicate_ids = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
-		//$duplicate_ids[] = $row['id_member'];
+		// !! $duplicate_ids[] = $row['id_member']; ??
 
 		$member_context = array(
 			'id' => $row['id_member'],

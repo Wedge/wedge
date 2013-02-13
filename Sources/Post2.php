@@ -1080,7 +1080,7 @@ function notifyMembersBoard(&$topicData)
 		foreach ($boards[$rowmember['id_board']] as $key)
 		{
 			// Don't notify the guy who started the topic!
-			//!!! In this case actually send them a "it's approved hooray" email
+			// !! In this case actually send them a "it's approved hooray" email
 			if ($topicData[$key]['poster'] == $rowmember['id_member'])
 				continue;
 

@@ -329,7 +329,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 							$no_autolink_area = true;
 
 				// Don't go backwards.
-				//!!! Don't think is the real solution....
+				// !! Don't think is the real solution....
 				if (isset($lastAutoPos) && $pos < $lastAutoPos)
 					$no_autolink_area = true;
 				$lastAutoPos = $pos;

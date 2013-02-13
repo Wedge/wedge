@@ -657,7 +657,7 @@ function MessageFolder()
 				INNER JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm
 					AND pmr.id_member = {int:current_member}
 					AND pmr.deleted = {int:deleted_by}
-					' . $labelQuery . ')') . ($context['sort_by'] == 'name' ? ( '
+					' . $labelQuery . ')') . ($context['sort_by'] == 'name' ? ('
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = {raw:pm_member})') : '') . '
 			WHERE ' . ($context['folder'] == 'sent' ? 'pm.id_member_from = {int:current_member}
 				AND pm.deleted_by_sender = {int:deleted_by}' : '1=1') . (empty($pmsg) ? '' : '
@@ -685,7 +685,7 @@ function MessageFolder()
 				INNER JOIN {db_prefix}pm_recipients AS pmr ON (pmr.id_pm = pm.id_pm
 					AND pmr.id_member = {int:current_member}
 					AND pmr.deleted = {int:is_deleted}
-					' . $labelQuery . ')') . ($context['sort_by'] == 'name' ? ( '
+					' . $labelQuery . ')') . ($context['sort_by'] == 'name' ? ('
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = {raw:pm_member})') : '') . '
 			WHERE ' . ($context['folder'] == 'sent' ? 'pm.id_member_from = {raw:current_member}
 				AND pm.deleted_by_sender = {int:is_deleted}' : '1=1') . (empty($pmsg) ? '' : '
@@ -3498,7 +3498,7 @@ function applyRules($all_messages = false)
 	// Just unread ones?
 	$ruleQuery = $all_messages ? '' : ' AND pmr.is_new = 1';
 
-	//!!! Apply all should have timeout protection!
+	// !! Apply all should have timeout protection!
 	// Get all the messages that match this.
 	$request = wesql::query('
 		SELECT

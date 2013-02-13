@@ -69,7 +69,7 @@ function ListPlugins()
 	// Since we explicitly want folders at this point, we don't want to use scandir.
 	if (!empty($pluginsdir))
 	{
-		//libxml_use_internal_errors(true);
+		// !! libxml_use_internal_errors(true); ??
 		if ($handle = opendir($pluginsdir))
 		{
 			while (($folder = readdir($handle)) !== false)
@@ -380,7 +380,7 @@ function EnablePlugin()
 
 	checkSession('request');
 
-	//libxml_use_internal_errors(true);
+	// !! libxml_use_internal_errors(true); ??
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 
@@ -1093,7 +1093,7 @@ function DisablePlugin($manifest = null, $plugin = null)
 	{
 		checkSession('request');
 
-		//libxml_use_internal_errors(true);
+		// !! libxml_use_internal_errors(true); ??
 		if (!isViablePlugin())
 			fatal_lang_error('fatal_not_valid_plugin', false);
 
@@ -1190,7 +1190,7 @@ function RemovePlugin()
 {
 	global $scripturl, $txt, $context, $pluginsdir, $maintenance;
 
-	//libxml_use_internal_errors(true);
+	// !! libxml_use_internal_errors(true); ??
 	if (!isViablePlugin())
 		fatal_lang_error('fatal_not_valid_plugin', false);
 

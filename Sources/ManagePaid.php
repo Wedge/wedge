@@ -1502,7 +1502,7 @@ function addSubscription($id_subscribe, $id_member, $renewal = 0, $forceStartTim
 			'current_member' => $id_member,
 		)
 	);
-	//!!! Don't really need to do this twice... Though it's a slightly different query now...
+	// !! Don't really need to do this twice... Though it's a slightly different query now...
 	if (wesql::num_rows($request) != 0)
 	{
 		list ($id_sublog, $endtime, $starttime) = wesql::fetch_row($request);

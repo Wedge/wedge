@@ -1005,7 +1005,7 @@ function DatabasePopulation()
 		if (wesql::query($current_statement, array('security_override' => true, 'db_error_skip' => true), $db_connection) === false)
 		{
 			// Error 1050: Table already exists!
-			//!!! Needs to be made better!
+			// !! Needs to be made better!
 			if (mysql_errno($db_connection) === 1050 && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 			{
 				$exists[] = $match[1];

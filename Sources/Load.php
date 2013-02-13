@@ -1642,7 +1642,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$is_task = empty($settings['next_task_time']) || $settings['next_task_time'] < $time;
 		if (we::$browser['possibly_robot'])
 		{
-			//!!! Maybe move this somewhere better?!
+			// !! Maybe move this somewhere better?!
 			loadSource('ScheduledTasks');
 
 			// What to do, what to do?!

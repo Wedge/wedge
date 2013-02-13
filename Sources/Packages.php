@@ -48,7 +48,7 @@ function Packages()
 {
 	global $txt, $scripturl, $context;
 
-	//!!! Remove this!
+	// !! Remove this!
 	if (isset($_GET['get']) || isset($_GET['pgdownload']))
 	{
 		loadSource('PackageGet');
@@ -427,7 +427,7 @@ function fetchPerms__recursive($path, &$data, $level)
 	// Are we actually interested in saving this data?
 	$save_data = empty($context['only_find']) || $context['only_find'] == $path;
 
-	//!!! Shouldn't happen - but better error message?
+	// !! Shouldn't happen - but better error message?
 	if (!is_dir($path))
 		fatal_lang_error('no_access', false);
 

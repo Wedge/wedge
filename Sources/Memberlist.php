@@ -495,7 +495,7 @@ function MLSearch()
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_id_group} THEN mem.id_post_group ELSE mem.id_group END)' .
 				(empty($customJoin) ? '' : implode('
 				', $customJoin)) . '
-			WHERE (' . implode( ' ' . $query . ' OR ', $fields) . ' ' . $query . $condition . ')
+			WHERE (' . implode(' ' . $query . ' OR ', $fields) . ' ' . $query . $condition . ')
 				AND mem.is_activated = {int:is_activated}',
 			$query_parameters
 		);
@@ -513,7 +513,7 @@ function MLSearch()
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_id_group} THEN mem.id_post_group ELSE mem.id_group END)' .
 				(empty($customJoin) ? '' : implode('
 				', $customJoin)) . '
-			WHERE (' . implode( ' ' . $query . ' OR ', $fields) . ' ' . $query . $condition . ')
+			WHERE (' . implode(' ' . $query . ' OR ', $fields) . ' ' . $query . $condition . ')
 				AND mem.is_activated = {int:is_activated}
 			LIMIT ' . $_REQUEST['start'] . ', ' . $settings['defaultMaxMembers'],
 			$query_parameters

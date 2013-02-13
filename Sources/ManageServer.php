@@ -1412,7 +1412,7 @@ function ModifyLanguage()
 				if (preg_match('~^([A-Za-z0-9_-]+)\.' . $context['lang_id'] . '\.php$~', $entry, $matches) == 0)
 					continue;
 
-				//!!! Temp!
+				// !! Temp!
 				if ($matches[1] == 'EmailTemplates')
 					continue;
 
@@ -1788,7 +1788,7 @@ function cleanLangString($string, $to_display = true)
 				if (!empty($matches[1]))
 				{
 					// Come up with some pseudo thing to indicate this is a var.
-					//!!! Do better than this, please!
+					// !! Do better than this, please!
 					$new_string .= '{%' . $matches[1] . '%}';
 
 					// We're not going to reparse this.

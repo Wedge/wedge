@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // This is a handling function for all things post moderation...
 function PostModerationMain()
 {
-	//!!! We'll shift these later bud.
+	// !! We'll shift these later bud.
 	loadLanguage('ModerationCenter');
 	loadTemplate('ModerationCenter');
 
@@ -50,7 +50,7 @@ function UnapprovedPosts()
 	$approve_boards = boardsAllowedTo('approve_posts');
 
 	// If we filtered by board remove ones outside of this board.
-	//!!! Put a message saying we're filtered?
+	// !! Put a message saying we're filtered?
 	if (isset($_REQUEST['brd']))
 	{
 		$filter_board = array((int) $_REQUEST['brd']);

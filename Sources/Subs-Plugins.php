@@ -597,7 +597,7 @@ function uploadedPluginFolders()
 		}
 		ksort($folders);
 	}
-	catch ( Exception $e )
+	catch (Exception $e)
 	{
 		clean_up_plugin_session();
 		fatal_lang_error('plugins_invalid_zip', false);
@@ -697,7 +697,7 @@ function uploadedPluginFiles()
 			$_SESSION['uploadplugin']['flist'] = $files;
 			$_SESSION['uploadplugin']['fcount'] = count($files);
 		}
-		catch ( Exception $e )
+		catch (Exception $e)
 		{
 			clean_up_plugin_session();
 			fatal_lang_error('plugins_invalid_zip', false);
@@ -735,7 +735,7 @@ function uploadedPluginFiles()
 			$context['description'] = $txt['plugin_files_unpacked'];
 			wetem::load('upload_generic_progress');
 		}
-		catch ( Exception $e )
+		catch (Exception $e)
 		{
 			clean_up_plugin_session();
 			fatal_lang_error('plugins_invalid_zip', false);

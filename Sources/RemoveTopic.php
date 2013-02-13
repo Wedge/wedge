@@ -1221,7 +1221,7 @@ function mergePosts($msgs = array(), $from_topic, $target_topic)
 {
 	global $context, $settings;
 
-	//!!! This really needs to be rewritten to take a load of messages from ANY topic, it's also inefficient.
+	// !! This really needs to be rewritten to take a load of messages from ANY topic, it's also inefficient.
 
 	// Is it an array?
 	if (!is_array($msgs))

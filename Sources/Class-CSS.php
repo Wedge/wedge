@@ -282,10 +282,12 @@ class wess_mixin extends wess
 	}
 }
 
-// Find '@dynamic my_function', then execute dynamic_my_function() to replace them.
-// You may add parameters to the function call: @dynamic my_function(string, number)
-// Just don't use quotes around the parameters, they're all returned as trimmed strings.
-// Obviously, don't use a comma or spaces as a parameter either. Why would you do that anyway?
+/**
+ * Find '@dynamic my_function', then execute dynamic_my_function() to replace them.
+ * You may add parameters to the function call: @dynamic my_function(string, number)
+ * Just don't use quotes around the parameters, they're all returned as trimmed strings.
+ * Obviously, don't use a comma or spaces as a parameter either. Why would you do that anyway?
+ */
 class wess_dynamic extends wess
 {
 	function process(&$css)
@@ -338,22 +340,23 @@ class wess_var extends wess
 		// Reuse CSS variables from Wedge.
 		$css_vars = isset($css_vars) ? $css_vars : array();
 
-		// Double quotes are only required for empty strings.
-		// Authors can specific conditions for the variable to be set,
-		// depending on the browser, rtl, guest or member, i.e. anything
-		// set in $context['css_suffixes']. Like this:
-		//
-		//		$variable = "rgba(2,4,6,.5)";
-		//		$variable {ie6,ie7,ie8} = rgb(1,2,3);
-		//
-		// The only reason we're not accepting ":" in declarations is that
-		// we want to be able to do this: (Check the last line carefully)
-		//
-		// (index.css)		$border-pos = right
-		// (index.rtl.css)	$border-pos = left
-		// (index.css)		.class
-		//						border-$border-pos: 1px solid $border-col;
+		/*
+			Double quotes are only required for empty strings.
+			Authors can specific conditions for the variable to be set,
+			depending on the browser, rtl, guest or member, i.e. anything
+			set in $context['css_suffixes']. Like this:
 
+				$variable = "rgba(2,4,6,.5)";
+				$variable {ie6,ie7,ie8} = rgb(1,2,3);
+
+			The only reason we're not accepting ":" in declarations is that
+			we want to be able to do this: (Check the last line carefully)
+
+			(index.css)		$border-pos = right
+			(index.rtl.css)	$border-pos = left
+			(index.css)		.class
+								border-$border-pos: 1px solid $border-col
+		*/
 		if (preg_match_all('~^\h*(\$[\w-]+)\h*(?:{([^}]+)}\h*)?=\h*("?)(.*)\\3;?\s*$~m', $css, $matches))
 		{
 			// Sort the matches by key length, to avoid conflicts as much as possible.
@@ -399,10 +402,12 @@ class wess_var extends wess
 	}
 }
 
-// Conditionals, @if and @is (inline if).
-// If you test for a browser condition, you may place your test anywhere in the code.
-// If you test for a variable value, you can't declare mixins inside your test, because
-// the test will only be run after mixins are already transformed.
+/**
+ * Conditionals, @if and @is (inline if).
+ * If you test for a browser condition, you may place your test anywhere in the code.
+ * If you test for a variable value, you can't declare mixins inside your test, because
+ * the test will only be run after mixins are already transformed.
+ */
 class wess_if extends wess
 {
 	var $test_vars;
@@ -414,10 +419,10 @@ class wess_if extends wess
 
 	// This is the variable test parser. Do not use quotes, just plain CSS. Some valid examples:
 	// $color == red / $color != red / $color / !$color / $number > 0 / $number < $other
-	// !! @todo: add support for logical AND/OR (as in browser tests), as well as parenthesis
-	// (precedence) for more complex tests, e.g. '($color == red || $color == blue) && $number > 0'.
 	function test($match)
 	{
+		// !! @todo: add support for logical AND/OR (as in browser tests), as well as parenthesis
+		// (precedence) for more complex tests, e.g. '($color == red || $color == blue) && $number > 0'.
 		preg_match('~(!?[^!=<>]*)(?:([!=<>]+)(.*))?~', $match, $ops);
 		$ops = array_map('trim', $ops);
 
@@ -747,12 +752,13 @@ class wess_nesting extends wess
 		$css_syntax = strpos($tree, "{\n") !== false && strpos($tree, "\n}") !== false;
 		if (!$css_syntax)
 		{
-			// Nope? Then let's have fun with our simplified syntax.
+			/*
+				Nope? Then let's have fun with our simplified syntax.
 
-			// WARNING: make sure to only use always tabs OR always spaces, and do proper
-			// structure nesting. Otherwise, the file won't parse properly.
-			// You must conform. It is my sworn duty to see that you do conform.
-
+				WARNING: make sure to only use always tabs OR always spaces, and do proper
+				structure nesting. Otherwise, the file won't parse properly.
+				You must conform. It is my sworn duty to see that you do conform.
+			*/
 			$tree = preg_replace("~\n\s*\n~", "\n", $tree); // Delete blank lines
 			$tree = preg_replace_callback('~^(\h*)~m', 'wess_nesting::indentation', $tree);
 			$branches = explode("\n", $tree);
@@ -802,26 +808,28 @@ class wess_nesting extends wess
 			}
 		}
 
-		// '@replace' command: replaces any string with another. Just put @replace on a line, and add
-		// two indented lines: search string on the first, replacement string on the second. For instance:
-		//
-		// 	@replace
-		//		rule: search
-		//		rule: replace
-		//
-		// !! @todo: rewrite this at the end of the parser so that we can specify a target selectors after the @replace keyword.
+		/*
+			'@replace' command: replaces any string with another. Just put @replace on a line, and add
+			two indented lines: search string on the first, replacement string on the second. For instance:
 
+			@replace
+				rule: search
+				rule: replace
+		*/
+		// !! @todo: rewrite this at the end of the parser so that we can specify target selectors after the @replace keyword.
 		preg_match_all('~\n\h*@replace\h*{\n\h*([^\n]+);\n\h*([^\n]*)}~i', $tree, $replacements, PREG_SET_ORDER);
 		if (!empty($replacements))
 			foreach ($replacements as $replace)
 				$tree = str_replace($replace[1], $replace[2], $tree);
 		$tree = preg_replace('~\n\h*@replace\h*{\n\h*[^\n]+;\n\h*[^\n]*}~i', "\n", $tree);
 
-		// And a few more pre-parsing actions...
-		// A couple of reminders on @import:
-		// (1) avoid using them in CSS files. REALLY. Use <css> in custom.xml, or add_css_file(), or add_css().
-		// (2) @import won't work if used inside a suffixed file, because @import is only parsed when
-		//     found at the start of a physical file (or within <style> tags in the main HTML.)
+		/*
+			And a few more pre-parsing actions...
+			A couple of reminders on @import:
+			(1) avoid using them in CSS files. REALLY. Use <css> in custom.xml, or add_css_file(), or add_css().
+			(2) @import won't work if used inside a suffixed file, because @import is only parsed when
+				found at the start of a physical file (or within <style> tags in the main HTML.)
+		*/
 		$tree = preg_replace('~^(@(?:import|charset)\h+[^{}\n]*);?$~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line @rules into selectors
 		$tree = preg_replace('~^([!+>&#*@:.a-z0-9][^{};]*?\h*reset);~mi', '<rule selector="$1"></rule>', $tree); // Transform single-line resets into selectors
 		$tree = preg_replace('~(\burl\([^)]+\))~e', 'str_replace(\':\', \'#wedge-colon#\', \'$1\')', $tree); // Protect colons (:) inside URLs
@@ -906,13 +914,15 @@ class wess_nesting extends wess
 		// Replace ".class extends .original_class, .class2 extends .other_class" with ".class, .class2"
 		foreach ($this->rules as $n => &$node)
 		{
-			// '@remove' command: remove properties as specified. To remove all "background: #fff" rules from .class and h1
-			// and associated selectors (anything that inherits .class or h1, or is inherited by it), use this:
-			//
-			//	@remove .class, h1
-			//		background: #fff
-			//
-			// Of course you may also use just one selector, or provide no selectors; Wess will target all selectors in the entire file.
+			/*
+				'@remove' command: remove properties as specified. To remove all "background: #fff" rules from .class and h1
+				and associated selectors (anything that inherits .class or h1, or is inherited by it), use this:
+
+				@remove .class, h1
+					background: #fff
+
+				Of course you may also use just one selector, or provide no selectors; Wess will target all selectors in the entire file.
+			*/
 			if (strpos($node['selector'], '@remove') === 0)
 			{
 				$sels = preg_match('~@remove\h+(?:from\h+)?([^\n]+)~', $node['selector'], $sels) ? array_map('trim', explode(',', trim(str_replace('#wedge-quote#', '"', $sels[1]), "\x00..\x20\""))) : array();

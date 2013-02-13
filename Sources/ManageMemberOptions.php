@@ -1134,7 +1134,7 @@ function EditCustomProfiles()
 						);
 				}
 			}
-			//!!! Maybe we should adjust based on new text length limits?
+			// !! Maybe we should adjust based on new text length limits?
 		}
 
 		// Do the insertion/updates.

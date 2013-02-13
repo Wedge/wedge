@@ -190,7 +190,7 @@ function ManageMaintenance()
 	if (isset($activity))
 		$subActions[$subAction]['activities'][$activity]();
 
-	//converted to UTF-8? show a small maintenance info
+	// Converted to UTF-8? Show a maintenance notice.
 	if (isset($_GET['done']) && $_GET['done'] == 'convertutf8')
 		$context['maintenance_finished'] = $txt['utf8_title'];
 }

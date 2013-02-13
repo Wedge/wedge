@@ -308,7 +308,7 @@ function BoardPermissionsReport()
 		$group_clause = '1=1';
 
 	// Make sure that any plugins' language files are loaded.
-	//libxml_use_internal_errors(true);
+	// !! libxml_use_internal_errors(true); ??
 	if (!empty($context['plugins_dir']))
 		foreach ($context['plugins_dir'] as $id => $path)
 		{
@@ -582,7 +582,7 @@ function GroupPermissionsReport()
 	loadLanguage('ManagePermissions');
 
 	// Make sure that any plugins' language files are loaded.
-	//libxml_use_internal_errors(true);
+	// !! libxml_use_internal_errors(true); ??
 	if (!empty($context['plugins_dir']))
 		foreach ($context['plugins_dir'] as $id => $path)
 		{

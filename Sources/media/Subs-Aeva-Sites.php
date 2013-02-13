@@ -2247,7 +2247,7 @@ $sites = array(
 		'pattern' => 'http://(?:www\.|images\.)?stupidvideos\.com/(?:video/[^"\#]*?\#|images/player/player\.swf\?sa=1&(?:amp;)?sk=7&(?:amp;)?si=2&(?:amp;)?i=)(\d{1,10})',
 		'movie' => 'http://images.stupidvideos.com/images/player/player.swf?sa=1&sk=7&si=2&i=$2',
 		'size' => array(451, 433),
-		//http://www.stupidvideos.com/video/Woman_Vs_Parking_Gate/#170731
+		// http://www.stupidvideos.com/video/Woman_Vs_Parking_Gate/#170731
 		'fix-html-pattern' => '<object [^>]*><param name="movie" value="http://images\.stupidvideos\.com/images/player/player\.swf\?sa=1&(?:amp;)?sk=\d&(?:amp;)?si=\d&(?:amp;)?i=(\d{1,10})"></param><embed[^<>]*?></embed></object>',
 		'fix-html-url' => 'http://images.stupidvideos.com/images/player/player.swf?sa=1&sk=7&si=2&i=$1',
 		'lookup-url' => 'http://(?:www\.)?stupidvideos\.com/video/(?:[^"\]\#]*)',

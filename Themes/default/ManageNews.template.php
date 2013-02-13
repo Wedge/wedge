@@ -61,7 +61,7 @@ function template_edit_news()
 		</div>';
 
 	add_js('
-		$(\'#sortable\').sortable({ handle: \'.handle\', update: function( event, ui ) { $(\'#saveorder\').show(); } });
+		$(\'#sortable\').sortable({ handle: \'.handle\', update: function (event, ui) { $(\'#saveorder\').show(); } });
 		$(\'#sortable\').disableSelection();
 		$(\'#saveorder\').hide();');
 }

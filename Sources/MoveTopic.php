@@ -346,7 +346,6 @@ function MoveTopic2()
 			$txt['movetopic_auto_topic'] => '[iurl=' . $scripturl . '?topic=' . $topic . '.0]' . $subject . '[/iurl]'
 		));
 
-		//$id_member_started
 		$recipients = array(
 			'to' => array($id_member_started),
 			'bcc' => array(),

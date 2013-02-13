@@ -410,7 +410,7 @@ function Register2()
 			// Any masks to apply? (Needs to be non-empty)
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none' && trim($value) != '')
 			{
-				//!!! We never error on this - just ignore it at the moment...
+				// !! We never error on this - just ignore it at the moment...
 				if ($row['mask'] == 'email' && (!is_valid_email($value) || strlen($value) > 255))
 					$custom_field_errors[] = array('custom_field_invalid_email', array($row['field_name']));
 				elseif ($row['mask'] == 'number' && preg_match('~[^\d]~', $value))

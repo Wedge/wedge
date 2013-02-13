@@ -36,7 +36,7 @@ if (!defined('WEDGE'))
 
 	bool AddMailQueue(bool flush = true, array to_array = array(), string subject = '', string message = '',
 		string headers = '', bool send_html = false, int priority = 3)
-		//!!
+		// !!
 
 	array sendpm(array recipients, string subject, string message,
 			bool store_outbox = false, array from = current_member, int pm_head = 0)
@@ -509,7 +509,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	wesql::free_result($request);
 
 	// Load the membergrounp message limits.
-	//!!! Consider caching this?
+	// !! Consider caching this?
 	static $message_limit_cache = array();
 	if (!allowedTo('moderate_forum') && empty($message_limit_cache))
 	{
@@ -2388,7 +2388,7 @@ function updateLastMessages($setboards, $id_msg = 0)
 			$parents = getBoardParents($id_board);
 
 		// Ignore any parents on the top child level.
-		//!!! Why?
+		// !! Why?
 		foreach ($parents as $id => $parent)
 		{
 			if ($parent['level'] != 0)

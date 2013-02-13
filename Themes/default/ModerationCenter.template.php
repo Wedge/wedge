@@ -64,7 +64,7 @@ function template_latest_news()
 		</div>';
 
 	// This requires a lot of javascript...
-	//!!! Put this in its own file!!
+	// !! Put this in its own file!!
 	if (empty($settings['disable_wedge_js']))
 		add_js_file(array(
 			$scripturl . '?action=viewremote;filename=current-version.js',
