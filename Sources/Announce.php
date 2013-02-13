@@ -287,4 +287,3 @@ function getAnnounceGroups()
 	$groups = array_diff($access['enter_allow'], $access['enter_deny']);
 	return $groups;
 }
-?>

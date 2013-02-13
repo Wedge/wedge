@@ -1980,4 +1980,3 @@ class getid3_matroska extends getid3_handler
 	}
 
 }
-?>

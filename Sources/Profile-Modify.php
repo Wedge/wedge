@@ -3370,4 +3370,3 @@ function get_wedge_timezones()
 		'Pacific/Kiritimati' => '[UTC+14:00] Kiritimati',
 	);
 }
-?>
