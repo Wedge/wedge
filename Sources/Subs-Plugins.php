@@ -430,7 +430,7 @@ function uploadedPluginConnection()
 		// We remember some things for next time - but not the password, of course.
 		if (!empty($_POST['savedetails']))
 		{
-			$ftp_settings = array();
+			$ftp_settings = !empty($settings['ftp_settings']) ? @unserialize($settings['ftp_settings']) : array();
 			foreach (array('server', 'user', 'port', 'type', 'path') as $item)
 				$ftp_settings[$item] = $context['ftp_details'][$item];
 			updateSettings(array('ftp_settings' => serialize($ftp_settings)));
@@ -450,6 +450,8 @@ function uploadedPluginConnection()
 	{
 		// Bah, one way or another, we didn't find it.
 		$context['page_title'] = $txt['plugin_connection_details_title'];
+		$context['callback_url'] = '<URL>?action=admin;area=plugins;sa=add;upload;stage=1';
+		$context['general_description'] = $txt['plugin_connection_details'];
 		wetem::load('upload_connection_details');
 		return;
 	}
@@ -457,7 +459,7 @@ function uploadedPluginConnection()
 
 function uploadedPluginPrune()
 {
-	global $context, $txt;
+	global $context, $txt, $pluginsdir;
 
 	// So, this is primarily to deal with plugins that need dealing with.
 	if (empty($_SESSION['uploadplugin']['delete']) || empty($_SESSION['uploadplugin']['id']) || empty($context['plugins_dir'][$_SESSION['uploadplugin']['id']]))
@@ -485,7 +487,9 @@ function uploadedPluginPrune()
 		fatal_lang_error($state, false);
 	}
 
-	// !!! Import rest of DisablePlugin, namely clean up of tasks, bbcode and all things settings.
+	$path = explode(DIRECTORY_SEPARATOR, realpath($context['plugins_dir'][$_SESSION['uploadplugin']['id']]));
+	$plugin = array_pop($path);
+	DisablePlugin($manifest, $plugin);
 
 	// So at this stage, we know we can go ahead and delete everything. We need to start with the list of folders.
 	$path = $context['plugins_dir'][$_SESSION['uploadplugin']['id']];
@@ -620,7 +624,6 @@ function uploadedPluginFolders()
 		$filename .= '_' . $count;
 	}
 	$_SESSION['uploadplugin']['pfolder'] = $filename;
-	echo 'Plugin folder is "', $filename, '"';
 
 	// Now we have a list of folders that need uploading, of course we do need to create the master folder too.
 	if ($_SESSION['plugin_ftp']['type'] == 'ftp')

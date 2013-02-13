@@ -373,7 +373,7 @@ function template_upload_connection_details()
 	global $txt, $context;
 
 	echo '
-	<we:cat>', $txt['plugin_connection_details_title'], '</we:cat>';
+	<we:cat>', $context['page_title'], '</we:cat>';
 
 	if (!empty($context['ftp_details']['error']))
 	{
@@ -391,9 +391,9 @@ function template_upload_connection_details()
 	}
 
 	echo '
-	<form action="<URL>?action=admin;area=plugins;sa=add;upload;stage=1" method="post">
+	<form action="', $context['callback_url'], '" method="post">
 		<div class="windowbg2 wrc">
-			<p>', $txt['plugin_connection_details'], '</p>
+			<p>', $context['general_description'], '</p>
 			<fieldset>
 				<legend>', $txt['plugin_connection_details_title'], '</legend>
 				', $txt['plugin_connection_required'], '

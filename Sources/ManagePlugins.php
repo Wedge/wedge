@@ -1084,23 +1084,32 @@ function EnablePlugin()
 	redirectexit('action=admin;area=plugins');
 }
 
-function DisablePlugin()
+function DisablePlugin($manifest = null, $plugin = null)
 {
 	global $context, $pluginsdir, $settings;
 
-	checkSession('request');
+	// We might be coming from the user's request or a separate process. If from elsewhere, we don't need to do all the checks.
+	if (empty($manifest) || empty($plugin))
+	{
+		checkSession('request');
 
-	//libxml_use_internal_errors(true);
-	if (!isViablePlugin())
-		fatal_lang_error('fatal_not_valid_plugin', false);
+		//libxml_use_internal_errors(true);
+		if (!isViablePlugin())
+			fatal_lang_error('fatal_not_valid_plugin', false);
 
-	$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
-	if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
-		fatal_lang_error('fatal_not_valid_plugin', false);
+		$manifest = safe_sxml_load($pluginsdir . '/' . $_GET['plugin'] . '/plugin-info.xml');
+		if ($manifest === false || empty($manifest['id']) || empty($manifest->name) || empty($manifest->author) || empty($manifest->version))
+			fatal_lang_error('fatal_not_valid_plugin', false);
 
-	// Already installed?
-	if (!in_array($_GET['plugin'], $context['enabled_plugins']))
-		fatal_lang_error('fatal_already_disabled', false);
+		// Already installed?
+		if (!in_array($_GET['plugin'], $context['enabled_plugins']))
+			fatal_lang_error('fatal_already_disabled', false);
+	}
+	else
+	{
+		// $manifest was already set up for us helpfully elsewhere.
+		$_GET['plugin'] = $plugin;
+	}
 
 	// Disabling is much simpler than enabling.
 
@@ -1173,7 +1182,8 @@ function DisablePlugin()
 		)
 	);
 
-	redirectexit('action=admin;area=plugins');
+	if (empty($plugin))
+		redirectexit('action=admin;area=plugins');
 }
 
 function RemovePlugin()
