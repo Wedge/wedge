@@ -217,7 +217,7 @@ function Post2()
 		{
 			$draft = saveDraft(false, $topic);
 			if (!empty($draft) && !in_array('session_timeout', $post_errors))
-				if ($context['is_ajax'])
+				if (we::$is_ajax)
 					draftXmlReturn($draft, false);
 				else
 					redirectexit('topic=' . $topic . '.msg' . $topic_info['id_last_msg'] . ';draftsaved#msg' . $topic_info['id_last_msg']);
@@ -265,7 +265,7 @@ function Post2()
 		{
 			$draft = saveDraft(false, false); // technically, it's 0 but there's something semantically feel-good about saying false here, that we don't have a 'context'/topic.
 			if (!empty($draft) && !in_array('session_timeout', $post_errors))
-				if ($context['is_ajax'])
+				if (we::$is_ajax)
 					draftXmlReturn($draft, false);
 				else
 					redirectexit('board=' . $board . '.0;draftsaved');

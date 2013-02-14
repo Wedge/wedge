@@ -600,7 +600,7 @@ function JumpTo(control, id)
 
 			// Fill the select box with entries loaded through Ajax.
 			$.post(
-				weUrl('action=ajax;sa=jumpto;xml'),
+				weUrl('action=ajax;sa=jumpto'),
 				function (XMLDoc) {
 					$('we item', XMLDoc).each(function ()
 					{
@@ -637,7 +637,7 @@ function JumpTo(control, id)
 	function Thought(privacies)
 	{
 		var
-			ajaxUrl = weUrl('action=ajax;sa=thought;xml;'),
+			ajaxUrl = weUrl('action=ajax;sa=thought;'),
 			sReply = $txt['reply'],
 			sNoText = $txt['no_thought_yet'],
 			sLabelThought = $txt['thought'],

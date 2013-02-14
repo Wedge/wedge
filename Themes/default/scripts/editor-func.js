@@ -484,21 +484,19 @@ weButtonBox.prototype.setSelect = function (sSelectName, sValue)
 				draftInfo['recipient_bcc[]'] = recipients;
 		}
 
-		// We need to indicate that we're calling this to request XML.
-		// Going through this will set $context['is_ajax'] on the request.
 		$.post(sUrl, draftInfo, function (data)
 		{
-			$('#remove_draft').off('click'); // Just in case bad stuff happens.
+			$('#remove_draft').off(); // Just in case bad stuff happens.
 
 			var
-				obj = $('#lastsave', data),
-				draft_id = obj.attr('draft'),
+				obj = $('draft', data),
+				draft_id = obj.attr('id'),
 				url = obj.attr('url').wereplace({ id: draft_id + ';' + we_sessvar + '=' + we_sessid });
 
 			$('#draft_id').val(draft_id);
 			$('#' + lastSavedDiv).html(obj.text() + ' &nbsp; ').append($('<input type="button" id="remove_draft" class="delete">').val($txt['remove_draft']));
 			$('#remove_draft').click(function () {
-				$.get(url, function () {
+				$.post(url, function () {
 					$('#' + lastSavedDiv).empty();
 					$('#draft_id').val('0');
 				});

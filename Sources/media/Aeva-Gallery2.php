@@ -2008,7 +2008,9 @@ function aeva_massUpload()
 	if (!$context['aeva_album']['can_upload'] && !allowedToAccessAlbum($id_album))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
-	if (empty($_REQUEST['upcook']))
+	we::$is_ajax |= !empty($_REQUEST['upcook']);
+
+	if ($we::$is_ajax)
 	{
 		wetem::load('aeva_multiUpload');
 		$max_php_size = (int) min(aeva_getPHPSize('upload_max_filesize'), aeva_getPHPSize('post_max_size'));
@@ -2025,7 +2027,7 @@ function aeva_massUpload()
 			$allowed_exts[] = '{description: "' . $txt['media_filetype_' . $filetype] . '", extensions: "' . implode(';', $exts) . '"}';
 
 		// HTML Headers
-		$context['aeva_submit_url'] = $galurl . 'sa=mass;album=' . $id_album . ';xml;upcook=' . urlencode(base64_encode($_COOKIE[$cookiename]));
+		$context['aeva_submit_url'] = $galurl . 'sa=mass;album=' . $id_album . ';upcook=' . urlencode(base64_encode($_COOKIE[$cookiename]));
 		add_js_file('http://yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&amp;2.9.0/build/element/element-min.js&amp;2.9.0/build/uploader/uploader-min.js', true);
 		add_js_file('scripts/up.js');
 		add_js('

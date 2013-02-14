@@ -220,7 +220,7 @@ function wedge_main()
 
 	$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
-	// Special case: session keep-alive, output a transparent pixel.
+	// Special case: session keep-alive, do nothing.
 	if ($action === 'keepalive')
 		exit;
 
@@ -320,10 +320,6 @@ function wedge_main()
 			return 'Display';
 		}
 	}
-
-	// Compatibility with SMF feeds
-	if ($action === '.xml')
-		$action = 'feed';
 
 	// Allow modifying $action_list easily. (It's a global by now.)
 	call_hook('action_list');

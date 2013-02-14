@@ -96,7 +96,7 @@ function Post($post_errors = array())
 
 	loadSource('Subs-Post');
 
-	if (isset($_REQUEST['xml']))
+	if (we::$is_ajax)
 	{
 		wetem::load('post');
 
@@ -460,7 +460,7 @@ function Post($post_errors = array())
 		}
 
 		// Only show the preview stuff if they hit Preview.
-		if ($really_previewing == true || isset($_REQUEST['xml']))
+		if ($really_previewing == true || we::$is_ajax)
 		{
 			// Set up the preview message and subject and censor them...
 			$context['preview_message'] = $form_message;
@@ -481,7 +481,7 @@ function Post($post_errors = array())
 				$context['preview_subject'] = '<em>' . $txt['no_subject'] . '</em>';
 
 			// Protect any CDATA blocks.
-			if (isset($_REQUEST['xml']))
+			if (we::$is_ajax)
 				$context['preview_message'] = strtr($context['preview_message'], array(']]>' => ']]]]><![CDATA[>'));
 		}
 
@@ -1114,7 +1114,7 @@ function Post($post_errors = array())
 	checkSubmitOnce('register');
 
 	// Finally, load the template.
-	if (!isset($_REQUEST['xml']))
+	if (!we::$is_ajax)
 	{
 		loadTemplate('Post');
 		wetem::load(
@@ -1159,7 +1159,7 @@ function getTopic()
 {
 	global $topic, $settings, $context, $counter, $options;
 
-	if (isset($_REQUEST['xml']))
+	if (we::$is_ajax)
 		$limit = '
 		LIMIT ' . (empty($context['new_replies']) ? '0' : $context['new_replies']);
 	else

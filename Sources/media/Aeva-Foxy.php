@@ -760,8 +760,7 @@ function aeva_foxy_remote_preview(&$my_file, &$local_file, &$dir, &$name, &$widt
 
 function aeva_foxy_feed()
 {
-	global $context, $scripturl, $txt, $settings;
-	global $amSettings, $query_this, $db_show_debug;
+	global $context, $scripturl, $txt, $settings, $amSettings, $query_this;
 
 	$amSettings['max_feed_items'] = !isset($amSettings['max_feed_items']) ? 10 : $amSettings['max_feed_items'];
 	if (empty($amSettings['max_feed_items']))
@@ -898,6 +897,7 @@ function aeva_foxy_feed()
 		$context['pretty']['patterns'][] = '~(?<=<link>|<guid>)' . $insideurl . '([?;&](action)=[^#<]+)~';
 	}
 
+	clean_output();
 	header('Content-Type: application/rss+xml; charset=UTF-8');
 
 	// First, output the xml header.
@@ -916,7 +916,6 @@ function aeva_foxy_feed()
 	</channel>
 </rss>';
 
-	$db_show_debug = false;
 	obExit(false);
 }
 

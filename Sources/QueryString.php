@@ -293,6 +293,10 @@ function cleanRequest()
 	// Add entities to GET. This is kinda like the slashes on everything else.
 	$_GET = htmlspecialchars__recursive($_GET);
 
+	// Compatibility with SMF feeds
+	if (isset($_GET['action']) && $_GET['action'] === '.xml')
+		$_GET['action'] = 'feed';
+
 	// Let's not depend on the ini settings... why even have COOKIE in there, anyway?
 	$_REQUEST = $_POST + $_GET;
 
@@ -495,9 +499,6 @@ function cleanRequest()
 		elseif (!match_internal_subnets($_SERVER['HTTP_X_FORWARDED_FOR']) || $internal_subnet)
 			$_SERVER['BAN_CHECK_IP'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
 	}
-
-	// Is this a page requested through jQuery? If yes, set is_ajax so we can choose to show only the template's default block.
-	$context['is_ajax'] = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
 	// Make sure we know the URL of the current request.
 	if (empty($_SERVER['REQUEST_URI']))

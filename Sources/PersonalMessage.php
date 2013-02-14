@@ -114,8 +114,9 @@ function MessageMain()
 		$draft = saveDraft(true, isset($_REQUEST['replied_to']) ? (int) $_REQUEST['replied_to'] : 0);
 		if (!empty($draft) && !$session_timeout)
 		{
-			if (!$context['is_ajax'])
+			if (!we::$is_ajax)
 				redirectexit('action=pm;draftsaved');
+
 			loadLanguage('Post');
 			draftXmlReturn($draft, true);
 		}
@@ -3707,7 +3708,7 @@ function MessageDrafts()
 			)
 		);
 
-		if (isset($_GET['xml']))
+		if (we::$is_ajax)
 			obExit(false);
 		else
 			redirectexit('action=pm;sa=showdrafts');

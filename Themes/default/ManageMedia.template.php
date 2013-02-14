@@ -79,9 +79,9 @@ function template_aeva_admin_submissions()
 					<td><a href="', $item['item_link'], '">', $item['title'], '</a></td>
 					<td>', $item['poster'], '</td>
 					<td>
-						<img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], ';xml\');">', $txt['media_admin_approve'], '</a>
+						<img src="', $theme['images_aeva'], '/tick.png" title="', $txt['media_admin_approve'], '"> <a href="#" onclick="return doSubAction(\'', $scripturl, '?action=media;area=moderate;sa=submissions;do=approve;in=', $item['id'], ';type=', $filter, ';', $context['session_query'], '\');">', $txt['media_admin_approve'], '</a>
 						<img src="', $theme['images_aeva'], '/folder_edit.png" title="', $txt['media_admin_edit'], '"> <a href="', $item['edit_link'], '">', $txt['media_admin_edit'], '</a>
-						<img src="', $theme['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return ask(we_confirm, e) && doSubAction(\'', $item['del_link'], ';xml\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
+						<img src="', $theme['images_aeva'], '/folder_delete.png" title="', $txt['media_admin_delete'], '"> <a href="#" onclick="return ask(we_confirm, e) && doSubAction(\'', $item['del_link'], '\');">', $txt['media_admin_delete'], '</a>', $filter == 'items' ? '
 						<a href="' . $galurl . 'sa=media;in=' . $item['id'] . ';preview"' . ($amSettings['use_zoom'] ? ' class="zoom"' : '') . '><img src="' . $theme['images_aeva'] . '/magnifier.png"> ' . $txt['media_admin_view_image'] . '</a>' : '', '
 					</td>', $filter != 'albums' ? '
 					<td>' . $item['posted_on'] . '</td>' : '', '
@@ -564,7 +564,7 @@ function template_aeva_admin_quotas()
 		echo '
 			<tr class="windowbg', $alt ? '2' : '', '">
 				<td><a href="', $scripturl, '?action=admin;area=aeva_quotas;sa=view;in=', $prof['id'], ';', $context['session_query'], '">', $prof['name'], '</a></td>
-				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ', \';prof=', $prof['id'], ';xml\');">', $prof['albums'], '</a></td>
+				<td><a href="#" onclick="return getPermAlbums(', $prof['id'], ', \';prof=', $prof['id'], '\');">', $prof['albums'], '</a></td>
 				<td><input name="delete_prof_', $prof['id'], '" type="checkbox" onclick="return permDelCheck(e, ', $prof['id'], ', this);"', !empty($prof['undeletable']) ? ' disabled' : '', '></td>
 			</tr>
 			<tr class="windowbg', $alt ? '2' : '', ' hide" id="albums_' . $prof['id'] . '">

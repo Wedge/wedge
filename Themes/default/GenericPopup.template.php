@@ -18,7 +18,7 @@ function template_popup()
 	$title = isset($_POST['t']) ? $_POST['t'] : '';
 
 	// Since this is a popup of its own we need to start the html, unless we're coming from jQuery.
-	if ($context['is_ajax'])
+	if (we::$is_ajax)
 	{
 		// By default, this is a help popup.
 		echo '

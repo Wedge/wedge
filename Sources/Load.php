@@ -1506,11 +1506,12 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['skeleton_ops'] = array();
 	$context['skin_options'] = array();
 
-	// If output is fully XML, or the print-friendly version, or the spellchecking page,
-	// skip the index template entirely. Don't use macros in their templates!
-	if (isset($_REQUEST['xml']) || !empty($_REQUEST['action']) && ($_REQUEST['action'] == 'printpage' || $_REQUEST['action'] == 'spellcheck'))
+	// If output is an Ajax request, or printer-friendly, or the spell-check
+	// page, skip the index template entirely, and don't load skeletons.
+	// Don't use macros in their templates!
+	if (we::$is_ajax || (!empty($_REQUEST['action']) && ($_REQUEST['action'] == 'feed' || $_REQUEST['action'] == 'printpage' || $_REQUEST['action'] == 'spellcheck')))
 	{
-		if (isset($_REQUEST['xml']))
+		if (we::$is_ajax)
 			loadTemplate('Xml');
 		loadLanguage('index');
 	}

@@ -85,7 +85,8 @@ function Search2()
 	$context['search_string_limit'] = 100;
 
 	loadLanguage('Search');
-	if (!isset($_REQUEST['xml']))
+
+	if (!we::$is_ajax)
 		loadTemplate('Search');
 	// If we're doing Ajax we need to use the XML template's results block.
 	else

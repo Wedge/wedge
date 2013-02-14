@@ -36,7 +36,7 @@ function weEditor(opt)
 		that = this,
 
 		// Get a reference to the textarea.
-		oText = $('#' + opt.sUniqueId);
+		$oText = $('#' + opt.sUniqueId);
 
 	// This is all the elements that can have a simple execCommand.
 	this.oSimpleExec = {
@@ -97,7 +97,7 @@ function weEditor(opt)
 
 		if (!bCurMode || !oFrameDoc)
 		{
-			sText = oText.val();
+			sText = $oText.val();
 			if (bPrepareEntities)
 				sText = sText.replace(/</g, '#welt#').replace(/>/g, '#wegt#').replace(/&/g, '#weamp#');
 		}
@@ -249,14 +249,14 @@ function weEditor(opt)
 	this.doSubmit = function ()
 	{
 		if (this.isWysiwyg)
-			oText.val($FrameBody.html());
+			$oText.val($FrameBody.html());
 	};
 
 
 	// Replaces the currently selected text with the passed text.
 	this.replaceText = function (text)
 	{
-		var oTextHandle = oText[0];
+		var oTextHandle = $oText[0];
 
 		// Attempt to create a text range (IE).
 		if ('caretPos' in oTextHandle && oTextHandle.createTextRange)
@@ -293,7 +293,7 @@ function weEditor(opt)
 	// Surrounds the selected text with text1 and text2.
 	this.surroundText = function (text1, text2)
 	{
-		var oTextHandle = oText[0];
+		var oTextHandle = $oText[0];
 
 		// Can a text range be created? (IE version.)
 		if ('caretPos' in oTextHandle && oTextHandle.createTextRange)
@@ -369,7 +369,7 @@ function weEditor(opt)
 				}
 			}
 			else
-				oText.val(sText);
+				$oText.val(sText);
 		}
 		else
 		{
@@ -424,7 +424,7 @@ function weEditor(opt)
 
 	this.insertSmiley = function (oSmileyProperties)
 	{
-		var handle = oText[0], smileytext = oSmileyProperties[0];
+		var handle = $oText[0], smileytext = oSmileyProperties[0];
 
 		// In text mode we just add it in as we always did.
 		if (!this.isWysiwyg)
@@ -654,11 +654,11 @@ function weEditor(opt)
 			// Get the current selection first.
 			var cText;
 
-			if (oText[0].caretPos)
-				cText = oText[0].caretPos.text;
+			if ($oText[0].caretPos)
+				cText = $oText[0].caretPos.text;
 
-			else if ('selectionStart' in oText[0])
-				cText = oText[0].value.slice(oText[0].selectionStart, oText[0].selectionEnd);
+			else if ('selectionStart' in $oText[0])
+				cText = $oText[0].value.slice($oText[0].selectionStart, $oText[0].selectionEnd);
 
 			else
 				return;
@@ -688,34 +688,31 @@ function weEditor(opt)
 
 		// Overriding or alternating?
 		bView |= !this.isWysiwyg;
+		var that = this;
 
-		$.ajax(
-			weUrl('action=jseditor;xml;view=' + +bView + ';' + we_sessvar + '=' + we_sessid),
+		$.post(
+			weUrl('action=jseditor;view=' + +bView + ';' + we_sessvar + '=' + we_sessid),
+			{ message: this.getText(true, !bView) },
+			function (oXMLDoc)
 			{
-				data: { message: this.getText(true, !bView) },
-				context: this,
-				type: 'POST',
-				success: function (oXMLDoc)
-				{
-					var sText = $('message', oXMLDoc).text();
+				var sText = $('message', oXMLDoc).text();
 
-					// What is this new view we have?
-					this.isWysiwyg = $('message', oXMLDoc).attr('view') != '0';
+				// What is this new view we have?
+				that.isWysiwyg = $('message', oXMLDoc).attr('view') != '0';
 
-					$Frame.show();
-					oText.hide();
+				$oText.toggle();
+				$Frame.toggle();
 
-					// First we focus.
-					this.setFocus();
+				// First we focus.
+				that.setFocus();
 
-					this.insertText(this.isWysiwyg ? sText : sText.php_unhtmlspecialchars(), true);
+				that.insertText(that.isWysiwyg ? sText : sText.php_unhtmlspecialchars(), true);
 
-					// Record the new status.
-					$('#' + opt.sUniqueId + '_mode').val(+this.isWysiwyg);
+				// Record the new status.
+				$('#' + opt.sUniqueId + '_mode').val(+that.isWysiwyg);
 
-					// Rebuild the bread crumb!
-					this.updateEditorControls();
-				}
+				// Rebuild the bread crumb!
+				that.updateEditorControls();
 			}
 		);
 	};
@@ -724,7 +721,7 @@ function weEditor(opt)
 	this.setFocus = function ()
 	{
 		if (!this.isWysiwyg)
-			oText[0].focus();
+			$oText[0].focus();
 		else if (is_ff || is_opera)
 			$Frame[0].focus();
 		else
@@ -739,19 +736,14 @@ function weEditor(opt)
 
 		// If we're in HTML mode we need to get the non-HTML text.
 		if (this.isWysiwyg)
-			$.ajax(
-				weUrl('action=jseditor;xml;view=0;' + we_sessvar + '=' + we_sessid),
+			$.post(
+				weUrl('action=jseditor;view=0;' + we_sessvar + '=' + we_sessid),
+				{ message: this.getText(true, 1) },
+				function (oXMLDoc)
 				{
-					data: { message: this.getText(true, 1) },
-					context: this,
-					type: 'POST',
-					success: function (oXMLDoc)
-					{
-						// The spellcheckable text.
-						var sText = $('message', oXMLDoc).text();
-						oText.val(sText.php_unhtmlspecialchars());
-						spellCheck(sFormId, opt.sUniqueId);
-					}
+					// The spellcheckable text.
+					$oText.val($('message', oXMLDoc).text().php_unhtmlspecialchars());
+					spellCheck(sFormId, opt.sUniqueId);
 				}
 			);
 		// Otherwise start spell-checking right away.
@@ -764,21 +756,18 @@ function weEditor(opt)
 	// Function called when the Spellchecker is finished and ready to pass back.
 	this.spellCheckEnd = function ()
 	{
+		var that = this;
+
 		// If HTML edit put the text back!
 		if (this.isWysiwyg)
-			$.ajax(
-				weUrl('action=jseditor;xml;view=1;' + we_sessvar + '=' + we_sessid),
+			$.post(
+				weUrl('action=jseditor;view=1;' + we_sessvar + '=' + we_sessid),
+				{ message: this.getText(true, 0) },
+				function (oXMLDoc)
 				{
-					data: { message: this.getText(true, 0) },
-					context: this,
-					type: 'POST',
-					success: function (oXMLDoc)
-					{
-						// The corrected text.
-						var sText = $('message', oXMLDoc).text();
-						this.insertText(sText, true);
-						this.setFocus();
-					}
+					// The corrected text.
+					that.insertText($('message', oXMLDoc).text(), true);
+					that.setFocus();
 				}
 			);
 		else
@@ -930,7 +919,7 @@ function weEditor(opt)
 			$Frame.height(newHeight);
 
 		// Do the text box regardless!
-		oText.height(newHeight);
+		$oText.height(newHeight);
 
 		return false;
 	},
@@ -951,21 +940,21 @@ function weEditor(opt)
 
 	// Ensure the currentText is set correctly depending on the mode.
 	if (sCurrentText === '' && !this.isWysiwyg)
-		sCurrentText = oText.html().php_unhtmlspecialchars();
+		sCurrentText = $oText.html().php_unhtmlspecialchars();
 
 	// Only try to do this if rich text is supported.
 	if (this.canWysiwyg)
 	{
 		// Make the iframe itself, give it its proper dimensions, stick it next to the current text area, and give it an ID.
-		var $Frame = $('<iframe seamless id="html_' + opt.sUniqueId + '" src="about:blank" tabindex="' + oText[0].tabIndex + '"></iframe>')
+		var $Frame = $('<iframe seamless id="html_' + opt.sUniqueId + '" src="about:blank" tabindex="' + $oText[0].tabIndex + '"></iframe>')
 			.addClass('rich')
 			.width(opt.sEditWidth || '70%')
 			.height(opt.sEditHeight || 150)
-			.insertAfter(oText)
+			.insertAfter($oText)
 			.toggle(this.isWysiwyg);
 
 		// Hide the textarea if wysiwyg is on - and vice versa.
-		oText.toggle(!this.isWysiwyg);
+		$oText.toggle(!this.isWysiwyg);
 
 		// Create some handy shortcuts.
 		var
@@ -1000,7 +989,7 @@ function weEditor(opt)
 				// Rebuild the breadcrumb.
 				that.updateEditorControls();
 			});
-		oText
+		$oText
 			.on('keydown', shortcutCheck)
 			.on('keydown', splitQuote)[0].instanceRef = this;
 	}
@@ -1009,7 +998,7 @@ function weEditor(opt)
 		this.isWysiwyg = false;
 
 	if (opt.oDrafts)
-		oText.keyup(function () {
+		$oText.keyup(function () {
 			opt.oDrafts.needsUpdate(true);
 		});
 
@@ -1026,7 +1015,7 @@ function weEditor(opt)
 				return true;
 
 			oCurrentResize.old_y = oEvent.pageY;
-			oCurrentResize.cur_height = oText.height();
+			oCurrentResize.cur_height = $oText.height();
 
 			// Set the necessary events for resizing.
 			$(document)
@@ -1058,7 +1047,7 @@ function weEditor(opt)
 	this.updateEditorControls();
 
 	// Always keep the session alive when editing a textarea!
-	$(oFrameDoc, oText).one('focusin', function () {
+	$(oFrameDoc, $oText).one('focusin', function () {
 		setInterval(function () {
 			$.get(weUrl('action=keepalive;time=' + $.now()));
 		}, 8e5);

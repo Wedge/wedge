@@ -2758,12 +2758,11 @@ function saveDraft($is_pm, $id_context = 0)
 
 function draftXmlReturn($draft, $is_pm)
 {
-	global $txt, $context, $scripturl;
+	global $txt, $scripturl;
+
 	header('Content-Type: text/xml; charset=UTF-8');
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<response>
-	<info id="lastsave" draft="', $draft, '" url="', $scripturl, $is_pm ? '?action=pm;sa=showdrafts;delete=%id%;xml' : '?action=profile;area=showdrafts;delete=%id%;xml', '"><![CD', 'ATA[', $txt['last_saved_on'], ': ', timeformat(time()), ']', ']></info>
-</response>';
+<draft id="', $draft, '" url="', $scripturl, $is_pm ? '?action=pm;sa=showdrafts;delete=%id%' : '?action=profile;area=showdrafts;delete=%id%', '"><![CD', 'ATA[', $txt['last_saved_on'], ': ', timeformat(time()), ']', ']></info>';
 
 	// We send the otherwise fully completed URL back through the buffer, just in case Pretty URLs would reformat it for us.
 	obExit(false);

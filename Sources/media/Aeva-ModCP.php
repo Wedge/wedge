@@ -153,13 +153,13 @@ function aeva_modCP_submissions_approve()
 	$items = isset($_POST['items']) && isset($_POST['submit_aeva']) && is_array($_POST['items']) ? $_POST['items'] : array((int) @$_REQUEST['in']);
 	$type = $_REQUEST['type'];
 
-	if (isset($_REQUEST['xml']))
-		header('Content-Type: text/xml; charset=ISO-8859-1');
+	if (we::$is_ajax)
+		header('Content-Type: text/xml; charset=UTF-8');
 
 	if (!in_array($type, array('albums', 'items', 'coms')))
 	{
-		if (isset($_REQUEST['xml']))
-			exit('<?xml version="1.0" encoding="ISO-8859-1"?' . '>
+		if (we::$is_ajax)
+			exit('<?xml version="1.0" encoding="UTF-8"?' . '>
 <ret>
 	<id>' . $items[0] . '</id>
 	<succ>false</succ>
@@ -339,8 +339,8 @@ function aeva_modCP_submissions_approve()
 	}
 
 	// Everything done :)
-	if (isset($_REQUEST['xml']))
-		exit('<?xml version="1.0" encoding="ISO-8859-1"?' . '>
+	if (we::$is_ajax)
+		exit('<?xml version="1.0" encoding="UTF-8"?' . '>
 <ret>
 	<id>' . $items[0] . '</id>
 	<succ>true</succ>
@@ -399,10 +399,10 @@ function aeva_modCP_submissions_delete()
 		aeva_logModAction($opts);
 	}
 
-	if (isset($_REQUEST['xml']))
+	if (we::$is_ajax)
 	{
-		header('Content-Type: text/xml; charset=ISO-8859-1');
-		exit('<?xml version="1.0" encoding="ISO-8859-1"?' . '>
+		header('Content-Type: text/xml; charset=UTF-8');
+		exit('<?xml version="1.0" encoding="UTF-8"?' . '>
 <ret>
 	<id>' . (int) $_REQUEST['in'] . '</id>
 	<succ>true</succ>

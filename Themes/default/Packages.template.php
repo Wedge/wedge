@@ -453,7 +453,7 @@ function template_control_chmod()
 			sPostData += (sPostData.length == 0 ? "" : "&") + oPostData[i] + "=" + encodeURIComponent($("#" + oPostData[i]).val());
 
 		// Post the data out.
-		$.post(weUrl(\'action=admin;area=packages;sa=ftptest;xml;' . $context['session_query'] . '\'), sPostData, testFTPResults);
+		$.post(weUrl(\'action=admin;area=packages;sa=ftptest;' . $context['session_query'] . '\'), sPostData, testFTPResults);
 	}
 	function testFTPResults(oXMLDoc)
 	{
@@ -529,7 +529,7 @@ function template_file_permissions()
 
 		// Otherwise we need to get the wicked thing.
 		show_ajax();
-		$.get(weUrl("action=admin;area=packages;onlyfind=" + encodeURIComponent(folderReal) + ";sa=perms;xml;', $context['session_query'], '"), onNewFolderReceived);
+		$.get(weUrl("action=admin;area=packages;onlyfind=" + encodeURIComponent(folderReal) + ";sa=perms;', $context['session_query'], '"), onNewFolderReceived);
 
 		return false;
 	}
@@ -543,7 +543,7 @@ function template_file_permissions()
 	{
 		show_ajax();
 
-		$.get(weUrl("action=admin;area=packages;fileoffset=" + (parseInt(this.offset) + ', $context['file_limit'], ') + ";onlyfind=" + this.path.php_urlencode() + ";sa=perms;xml;', $context['session_query'], '"), onNewFolderReceived);
+		$.get(weUrl("action=admin;area=packages;fileoffset=" + (parseInt(this.offset) + ', $context['file_limit'], ') + ";onlyfind=" + this.path.php_urlencode() + ";sa=perms;', $context['session_query'], '"), onNewFolderReceived);
 	}
 	function repeatString(sString, iTime)
 	{

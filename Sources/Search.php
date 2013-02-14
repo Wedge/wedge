@@ -40,8 +40,9 @@ function Search()
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	loadLanguage('Search');
-	// Don't load this in XML mode.
-	if (!isset($_REQUEST['xml']))
+
+	// Don't load this in Ajax mode.
+	if (!we::$is_ajax)
 		loadTemplate('Search');
 
 	// Check the user's permissions.
