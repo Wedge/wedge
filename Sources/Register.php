@@ -381,7 +381,8 @@ function Register2()
 	$request = wesql::query('
 		SELECT col_name, field_name, field_type, field_length, mask, show_reg
 		FROM {db_prefix}custom_fields
-		WHERE active = {int:is_active}',
+		WHERE active = {int:is_active}
+		ORDER BY position',
 		array(
 			'is_active' => 1,
 		)

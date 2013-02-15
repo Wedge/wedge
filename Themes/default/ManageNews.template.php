@@ -18,8 +18,7 @@ function template_edit_news()
 
 	echo '
 		<div class="windowbg2 wrc">
-			<form action="<URL>?action=admin;area=news;sa=editnews" method="post">
-				<ul id="sortable">';
+			<form action="<URL>?action=admin;area=news;sa=editnews" method="post">';
 
 	// Reuse the privacy keys from thoughts but some don't quite tie up with the meanings here.
 	$display = array(
@@ -28,13 +27,21 @@ function template_edit_news()
 		's' => 'friends',
 		'a' => 'justme',
 	);
-	foreach ($context['admin_current_news'] as $admin_news)
-	{
-		if (!isset($display[$admin_news['privacy']]))
-			$admin_news['privacy'] = 'a';
-
-		// Order can be passed through as-is, but the others have to be incremented so that they're never 0.
+	if (empty($context['admin_current_news']))
 		echo '
+				<div class="information">', $txt['editnews_no_news'], '</div>';
+	else
+	{
+		echo '
+				<ul id="sortable">';
+
+		foreach ($context['admin_current_news'] as $admin_news)
+		{
+			if (!isset($display[$admin_news['privacy']]))
+				$admin_news['privacy'] = 'a';
+
+			// Order can be passed through as-is, but the others have to be incremented so that they're never 0.
+			echo '
 					<li class="windowbg">
 						<span class="handle"></span>
 						<div class="floatright">
@@ -47,10 +54,12 @@ function template_edit_news()
 						', $admin_news['parsed'], '
 						<br class="clear">
 					</li>';
+		}
+		echo '
+				</ul>';
 	}
 
 	echo '
-				</ul>
 				<br class="clear">
 				<div class="right">
 					<input type="submit" name="add" value="', $txt['editnews_add'], '" class="new">

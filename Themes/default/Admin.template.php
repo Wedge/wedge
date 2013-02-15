@@ -1034,14 +1034,60 @@ function template_show_custom_profile()
 	// Standard fields.
 	template_show_list('standard_profile_fields');
 
-	add_js_inline('
+	// Custom fields.
+	echo '
+		<we:title>', $txt['custom_profile_title'], '</we:title>
+		<form action="<URL>?action=admin;area=memberoptions;sa=profileedit" method="post">';
+
+	if (empty($context['custom_fields']))
+		echo '
+			<div class="information">', $txt['custom_profile_none'], '</div>';
+	else
+	{
+		echo '
+			<ul id="sortable">';
+
+		foreach ($context['custom_fields'] as $id => $field)
+		{
+			echo '
+				<li class="windowbg">
+					<span class="handle"></span>
+					<div class="floatright">
+						<input type="submit" name="modify[', $id, ']" value="', $txt['modify'], '" class="submit">
+						<input type="hidden" name="order[]" value="', $id, '">
+					</div>
+					<span class="sortme">', $field['field_name'], '</span>
+					<span class="badge">', $field['field_type_formatted'], '</span>
+					<div class="badge"><span class="cf_', $field['active_type'], '"><div class="icon"></div> ', $txt['custom_profile_' . $field['active_type']], '</div>
+					<div class="floatleft">', sprintf($txt['custom_profile_placement'], $field['placement_text']), '</div>
+					<br class="clear">
+				</li>';
+		}
+
+		echo '
+			</ul>';
+	}
+
+	echo '
+			<br class="clear">
+			<div class="right">
+				<input type="submit" name="add" value="', $txt['custom_profile_make_new'], '" class="new">
+				<input type="submit" name="saveorder" value="', $txt['editnews_saveorder'], '" class="save" id="saveorder">
+			</div>
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+		</form>';
+
+	//template_show_list('custom_profile_fields');
+
+	add_js('
 	var iNumChecks = document.forms.standardProfileFields.length;
 	for (var i = 0; i < iNumChecks; i++)
 		if (document.forms.standardProfileFields[i].id.indexOf(\'reg_\') == 0)
-			document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.slice(4)).checked;');
+			document.forms.standardProfileFields[i].disabled = document.forms.standardProfileFields[i].disabled || !document.getElementById(\'active_\' + document.forms.standardProfileFields[i].id.slice(4)).checked;
 
-	// Custom fields.
-	template_show_list('custom_profile_fields');
+	$(\'#sortable\').sortable({ handle: \'.handle\', update: function (event, ui) { $(\'#saveorder\').show(); } });
+	$(\'#sortable\').disableSelection();
+	$(\'#saveorder\').hide();');
 }
 
 // Edit a profile field?
@@ -1237,12 +1283,14 @@ function template_edit_profile_field()
 							<strong>', $txt['custom_edit_picktype'], ':</strong>
 						</dt>
 						<dd>
-							<select name="field_type" id="field_type" onchange="updateInputBoxes();">
-								<option value="text"', $context['field']['type'] == 'text' ? ' selected' : '', '>', $txt['custom_profile_type_text'], '</option>
-								<option value="textarea"', $context['field']['type'] == 'textarea' ? ' selected' : '', '>', $txt['custom_profile_type_textarea'], '</option>
-								<option value="select"', $context['field']['type'] == 'select' ? ' selected' : '', '>', $txt['custom_profile_type_select'], '</option>
-								<option value="radio"', $context['field']['type'] == 'radio' ? ' selected' : '', '>', $txt['custom_profile_type_radio'], '</option>
-								<option value="check"', $context['field']['type'] == 'check' ? ' selected' : '', '>', $txt['custom_profile_type_check'], '</option>
+							<select name="field_type" id="field_type" onchange="updateInputBoxes();">';
+
+	$field_types = array('text', 'textarea', 'select', 'radio', 'check');
+	foreach ($field_types as $type)
+		echo '
+								<option value="', $type, '"', $context['field']['type'] == $type ? ' selected' : '', '>&lt;div class="cf_items cf_', $type, '"&gt;&lt;/div&gt; ', $txt['custom_profile_type_' . $type] . '</option>';
+
+	echo '
 							</select>
 						</dd>
 						<dt id="max_length_dt">

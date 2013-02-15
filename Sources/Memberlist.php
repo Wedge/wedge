@@ -126,7 +126,8 @@ function Memberlist()
 	$request = wesql::query('
 		SELECT col_name, field_name
 		FROM {db_prefix}custom_fields
-		WHERE show_mlist = {int:show_mlist}',
+		WHERE show_mlist = {int:show_mlist}
+		ORDER BY position',
 		array(
 			'show_mlist' => 1,
 		)

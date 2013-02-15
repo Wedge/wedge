@@ -211,7 +211,7 @@ function EditNews()
 	{
 		checkSession();
 		wedit::preparseWYSIWYG('message');
-		$news_lines = explode("\n", $settings['news']);
+		$news_lines = !empty($settings['news']) ? explode("\n", $settings['news']) : array();
 		$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
 		wedit::preparsecode($_POST['message']);
 		$id = $_POST['newsid'] == -1 ? -1 : $_POST['newsid'] - 1;
@@ -230,19 +230,23 @@ function EditNews()
 		{
 			$news_lines = explode("\n", $settings['news']);
 			unset($news_lines[$id]);
-			updateSettings(array('news' => implode("\n", $news_lines)));
+			if (empty($news_lines))
+				updateSettings(array('news' => ''));
+			else
+				updateSettings(array('news' => implode("\n", $news_lines)));
 		}
 		logAction('news');
 		cache_put_data('news_lines', null);
 	}
 
 	// Ready the current news.
-	foreach (explode("\n", $settings['news']) as $id => $line)
-		$context['admin_current_news'][$id] = array(
-			'id' => $id,
-			'privacy' => $line[0],
-			'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc(substr($line,1), true)),
-		);
+	if (!empty($settings['news']))
+		foreach (explode("\n", $settings['news']) as $id => $line)
+			$context['admin_current_news'][$id] = array(
+				'id' => $id,
+				'privacy' => $line[0],
+				'parsed' => preg_replace('~<([/]?)form[^>]*?[>]*>~i', '<em class="smalltext">&lt;$1form&gt;</em>', parse_bbc(substr($line,1), true)),
+			);
 
 	add_jquery_ui();
 	add_css('

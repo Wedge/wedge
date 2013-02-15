@@ -542,6 +542,45 @@ textarea.ban
 		width: 40px
 		margin-top: 5px
 
+/* Styles for custom fields.
+------------------------------------------------- */
+.cf_items extends .inline-block
+	background: url($images/admin/field_types.png) no-repeat
+	width, height: 16px
+	margin: 0 3px 0 0
+	vertical-align: -3px
+
+.cf_text
+	background-position: 0 0
+
+.cf_textarea
+	background-position: 0 -16px
+
+.cf_select
+	background-position: 0 -32px
+
+.cf_radio
+	background-position: 0 -48px
+
+.cf_check
+	background-position: 0 -64px
+
+.cf_active
+	color: green
+
+.cf_active, .cf_inactive
+	.icon extends .inline-block
+		background: url($images/admin/active.png)
+		background-position: 0 0
+		width, height: 16px
+		margin: 0 3px 0 0
+		vertical-align: -3px
+
+.cf_inactive
+	color: red
+	.icon
+		background-position: 0 -16px
+
 /* Miscellaneous.
 ------------------------------------------------- */
 #admin #main, #manage_boards, #manage_maintenance, #manage_mail

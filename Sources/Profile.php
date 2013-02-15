@@ -742,7 +742,8 @@ function loadCustomFields($memID, $area = 'summary')
 			col_name, field_name, field_desc, field_type, field_length, field_options,
 			default_value, bbc, enclose, placement
 		FROM {db_prefix}custom_fields
-		WHERE ' . $where,
+		WHERE ' . $where . '
+		ORDER BY position',
 		array(
 			'area' => $area === 'theme' ? 'options' : $area,
 		)

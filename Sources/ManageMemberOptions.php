@@ -543,9 +543,6 @@ function ShowCustomProfiles()
 		'base_href' => $scripturl . '?action=admin;area=memberoptions;sa=profile',
 		'get_items' => array(
 			'function' => 'list_getProfileFields',
-			'params' => array(
-				true,
-			),
 		),
 		'columns' => array(
 			'field' => array(
@@ -599,181 +596,55 @@ function ShowCustomProfiles()
 	);
 	createList($listOptions);
 
-	$listOptions = array(
-		'id' => 'custom_profile_fields',
-		'title' => $txt['custom_profile_title'],
-		'base_href' => $scripturl . '?action=admin;area=memberoptions;sa=profile',
-		'default_sort_col' => 'field_name',
-		'no_items_label' => $txt['custom_profile_none'],
-		'items_per_page' => 25,
-		'get_items' => array(
-			'function' => 'list_getProfileFields',
-			'params' => array(
-				false,
-			),
-		),
-		'get_count' => array(
-			'function' => 'list_getProfileFieldSize',
-		),
-		'columns' => array(
-			'field_name' => array(
-				'header' => array(
-					'value' => $txt['custom_profile_fieldname'],
-					'style' => 'text-align: left;',
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $scripturl;
+	$context['custom_fields'] = array();
+	$request = wesql::query('
+		SELECT id_field, col_name, field_name, field_desc, field_type, active, placement, position
+		FROM {db_prefix}custom_fields
+		ORDER BY position');
 
-						return sprintf(\'<a href="%1$s?action=admin;area=memberoptions;sa=profileedit;fid=%2$d">%3$s</a><div class="smalltext">%4$s</div>\', $scripturl, $rowData[\'id_field\'], $rowData[\'field_name\'], $rowData[\'field_desc\']);
-					'),
-					'style' => 'width: 62%;',
-				),
-				'sort' => array(
-					'default' => 'field_name',
-					'reverse' => 'field_name DESC',
-				),
-			),
-			'field_type' => array(
-				'header' => array(
-					'value' => $txt['custom_profile_fieldtype'],
-					'style' => 'text-align: left;',
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						$textKey = sprintf(\'custom_profile_type_%1$s\', $rowData[\'field_type\']);
-						return isset($txt[$textKey]) ? $txt[$textKey] : $textKey;
-					'),
-					'style' => 'width: 15%;',
-				),
-				'sort' => array(
-					'default' => 'field_type',
-					'reverse' => 'field_type DESC',
-				),
-			),
-			'active' => array(
-				'header' => array(
-					'value' => $txt['custom_profile_active'],
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return $rowData[\'active\'] ? $txt[\'yes\'] : $txt[\'no\'];
-					'),
-					'style' => 'width: 8%; text-align: center;',
-				),
-				'sort' => array(
-					'default' => 'active DESC',
-					'reverse' => 'active',
-				),
-			),
-			'placement' => array(
-				'header' => array(
-					'value' => $txt['custom_profile_placement'],
-				),
-				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return $txt[\'custom_profile_placement_\' . (empty($rowData[\'placement\']) ? \'standard\' : ($rowData[\'placement\'] == 1 ? \'withicons\' : \'abovesignature\'))];
-					'),
-					'style' => 'width: 8%; text-align: center;',
-				),
-				'sort' => array(
-					'default' => 'placement DESC',
-					'reverse' => 'placement',
-				),
-			),
-			'show_on_registration' => array(
-				'header' => array(
-					'value' => $txt['modify'],
-				),
-				'data' => array(
-					'sprintf' => array(
-						'format' => '<a href="' . $scripturl . '?action=admin;area=memberoptions;sa=profileedit;fid=%1$s">' . $txt['modify'] . '</a>',
-						'params' => array(
-							'id_field' => false,
-						),
-					),
-					'style' => 'width: 15%; text-align: center;',
-				),
-			),
-		),
-		'form' => array(
-			'href' => $scripturl . '?action=admin;area=memberoptions;sa=profileedit',
-			'name' => 'customProfileFields',
-		),
-		'additional_rows' => array(
-			array(
-				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="new" value="' . $txt['custom_profile_make_new'] . '" class="new">',
-				'style' => 'text-align: right;',
-			),
-		),
+	$placements = array(
+		0 => 'standard',
+		1 => 'withicons',
+		2 => 'abovesignature',
 	);
-	createList($listOptions);
+
+	while ($row = wesql::fetch_assoc($request))
+	{
+		if (!isset($placements[$row['placement']]))
+			$row['placement'] = 0;
+		$row['placement_text'] = $txt['custom_edit_placement_' . $placements[$row['placement']]];
+		$row['active_type'] = !empty($row['active']) ? 'active' : 'inactive';
+		$row['field_type_formatted'] = !isset($txt['custom_profile_type_' . $row['field_type']]) ? $row['field_type'] : '<div class="cf_items cf_' . $row['field_type'] . '"></div> ' . $txt['custom_profile_type_' . $row['field_type']];
+		$context['custom_fields'][$row['id_field']] = $row;
+	}
+	wesql::free_result($request);
+
+	add_jquery_ui();
+	add_css('
+	#sortable { width: 98% }');
 }
 
-function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
+function list_getProfileFields($start, $items_per_page, $sort)
 {
 	global $txt, $settings;
 
 	$list = array();
 
-	if ($standardFields)
-	{
-		$standard_fields = array('location', 'gender', 'website', 'posts', 'warning_status');
-		$fields_no_registration = array('posts', 'warning_status');
-		$disabled_fields = isset($settings['disabled_profile_fields']) ? explode(',', $settings['disabled_profile_fields']) : array();
-		$registration_fields = isset($settings['registration_fields']) ? explode(',', $settings['registration_fields']) : array();
+	$standard_fields = array('location', 'gender', 'website', 'posts', 'warning_status');
+	$fields_no_registration = array('posts', 'warning_status');
+	$disabled_fields = isset($settings['disabled_profile_fields']) ? explode(',', $settings['disabled_profile_fields']) : array();
+	$registration_fields = isset($settings['registration_fields']) ? explode(',', $settings['registration_fields']) : array();
 
-		foreach ($standard_fields as $field)
-			$list[] = array(
-				'id' => $field,
-				'label' => isset($txt['standard_profile_field_' . $field]) ? $txt['standard_profile_field_' . $field] : (isset($txt[$field]) ? $txt[$field] : $field),
-				'disabled' => in_array($field, $disabled_fields),
-				'on_register' => in_array($field, $registration_fields) && !in_array($field, $fields_no_registration),
-				'can_show_register' => !in_array($field, $fields_no_registration),
-			);
-	}
-	else
-	{
-		// Load all the fields.
-		$request = wesql::query('
-			SELECT id_field, col_name, field_name, field_desc, field_type, active, placement
-			FROM {db_prefix}custom_fields
-			ORDER BY {raw:sort}
-			LIMIT {int:start}, {int:items_per_page}',
-			array(
-				'sort' => $sort,
-				'start' => $start,
-				'items_per_page' => $items_per_page,
-			)
+	foreach ($standard_fields as $field)
+		$list[] = array(
+			'id' => $field,
+			'label' => isset($txt['standard_profile_field_' . $field]) ? $txt['standard_profile_field_' . $field] : (isset($txt[$field]) ? $txt[$field] : $field),
+			'disabled' => in_array($field, $disabled_fields),
+			'on_register' => in_array($field, $registration_fields) && !in_array($field, $fields_no_registration),
+			'can_show_register' => !in_array($field, $fields_no_registration),
 		);
-		while ($row = wesql::fetch_assoc($request))
-			$list[] = $row;
-		wesql::free_result($request);
-	}
 
 	return $list;
-}
-
-function list_getProfileFieldSize()
-{
-	$request = wesql::query('
-		SELECT COUNT(*)
-		FROM {db_prefix}custom_fields',
-		array(
-		)
-	);
-
-	list ($numProfileFields) = wesql::fetch_row($request);
-	wesql::free_result($request);
-
-	return $numProfileFields;
 }
 
 // Edit some profile fields?
@@ -781,8 +652,57 @@ function EditCustomProfiles()
 {
 	global $txt, $scripturl, $context, $theme;
 
+	if (isset($_POST['saveorder'], $_POST['order']) && is_array($_POST['order']))
+	{
+		checkSession();
+
+		// We need all the ids we currently have.
+		$position = array();
+		$request = wesql::query('
+			SELECT id_field, position
+			FROM {db_prefix}custom_fields');
+		while ($row = wesql::fetch_assoc($request))
+			$position[(int) $row['id_field']] = array('old' => $row['position'], 'new' => 1);
+		wesql::free_result($request);
+
+		if (empty($position))
+			redirectexit('action=admin;area=memberoptions;sa=profile');
+
+		foreach ($_POST['order'] as $pos => $fid)
+		{
+			$pos = (int) $pos + 1; // starts at 0, don't really want that
+			$fid = (int) $fid;
+			if ($fid < 1 || empty($position[$fid]) || $pos < 1)
+				continue;
+
+			$position[$fid]['new'] = $pos;
+		}
+
+		foreach ($position as $id => $details)
+			if ($details['old'] != $details['new'])
+				wesql::query('
+					UPDATE {db_prefix}custom_fields
+					SET position = {int:new_pos}
+					WHERE id_field = {int:field}',
+					array(
+						'field' => $id,
+						'new_pos' => $details['new'],
+					)
+				);
+
+		updateProfileFieldsCache();
+		redirectexit('action=admin;area=memberoptions;sa=profile');
+	}
+
 	// Sort out the context!
-	$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;
+	if (isset($_POST['modify']) && is_array($_POST['modify']))
+	{
+		$keys = array_keys($_POST['modify']);
+		$context['fid'] = (int) array_shift($keys);
+	}
+	else
+		$context['fid'] = isset($_GET['fid']) ? (int) $_GET['fid'] : 0;
+
 	$context[$context['admin_menu_name']]['current_subsection'] = 'profile';
 	$context['page_title'] = $context['fid'] ? $txt['custom_edit_title'] : $txt['custom_add_title'];
 	wetem::load('edit_profile_field');
@@ -1192,6 +1112,14 @@ function EditCustomProfiles()
 		}
 		else
 		{
+			// Need to get the current max - so we can insert this at the end.
+			$request = wesql::query('
+				SELECT MAX(position)
+				FROM {db_prefix}custom_fields');
+			list ($position) = wesql::fetch_row($request);
+			wesql::free_result($request);
+			$position = (int) $position + 1; // Just in case it was NULL.
+
 			wesql::insert('',
 				'{db_prefix}custom_fields',
 				array(
@@ -1199,14 +1127,14 @@ function EditCustomProfiles()
 					'field_type' => 'string', 'field_length' => 'string', 'field_options' => 'string',
 					'show_reg' => 'int', 'show_mlist' => 'int', 'show_display' => 'int', 'show_profile' => 'string',
 					'private' => 'int', 'guest_access' => 'int', 'active' => 'int', 'default_value' => 'string',
-					'can_search' => 'int', 'bbc' => 'int', 'mask' => 'string', 'enclose' => 'string', 'placement' => 'int',
+					'can_search' => 'int', 'bbc' => 'int', 'mask' => 'string', 'enclose' => 'string', 'placement' => 'int', 'position' => 'int',
 				),
 				array(
 					$colname, $_POST['field_name'], $_POST['field_desc'],
 					$_POST['field_type'], $field_length, $field_options,
 					$show_reg, $show_mlist, $show_display, $show_profile,
 					$private, $guest_access, $active, $default,
-					$can_search, $bbc, $mask, $enclose, $placement,
+					$can_search, $bbc, $mask, $enclose, $placement, $position,
 				),
 				array('id_field')
 			);
@@ -1250,41 +1178,45 @@ function EditCustomProfiles()
 	// Rebuild display cache etc.
 	if (isset($_POST['delete']) || isset($_POST['save']))
 	{
-		checkSession();
-
-		$request = wesql::query('
-			SELECT col_name, field_name, field_type, bbc, enclose, placement, guest_access
-			FROM {db_prefix}custom_fields
-			WHERE show_display = {int:is_displayed}
-				AND active = {int:active}
-				AND private != {int:not_owner_only}
-				AND private != {int:not_admin_only}',
-			array(
-				'is_displayed' => 1,
-				'active' => 1,
-				'not_owner_only' => 2,
-				'not_admin_only' => 3,
-			)
-		);
-
-		$fields = array();
-		while ($row = wesql::fetch_assoc($request))
-		{
-			$fields[] = array(
-				'colname' => strtr($row['col_name'], array('|' => '', ';' => '')),
-				'title' => strtr($row['field_name'], array('|' => '', ';' => '')),
-				'type' => $row['field_type'],
-				'bbc' => $row['bbc'] ? '1' : '0',
-				'placement' => !empty($row['placement']) ? $row['placement'] : '0',
-				'enclose' => !empty($row['enclose']) ? $row['enclose'] : '',
-				'show_guest' => !empty($row['guest_access']),
-			);
-		}
-		wesql::free_result($request);
-
-		updateSettings(array('displayFields' => !empty($fields) ? serialize($fields) : ''));
+		updateProfileFieldsCache();
 		redirectexit('action=admin;area=memberoptions;sa=profile');
 	}
+}
+
+function updateProfileFieldsCache()
+{
+	$request = wesql::query('
+		SELECT col_name, field_name, field_type, bbc, enclose, placement, guest_access
+		FROM {db_prefix}custom_fields
+		WHERE show_display = {int:is_displayed}
+			AND active = {int:active}
+			AND private != {int:not_owner_only}
+			AND private != {int:not_admin_only}
+		ORDER BY position',
+		array(
+			'is_displayed' => 1,
+			'active' => 1,
+			'not_owner_only' => 2,
+			'not_admin_only' => 3,
+		)
+	);
+
+	$fields = array();
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$fields[] = array(
+			'colname' => strtr($row['col_name'], array('|' => '', ';' => '')),
+			'title' => strtr($row['field_name'], array('|' => '', ';' => '')),
+			'type' => $row['field_type'],
+			'bbc' => $row['bbc'] ? '1' : '0',
+			'placement' => !empty($row['placement']) ? $row['placement'] : '0',
+			'enclose' => !empty($row['enclose']) ? $row['enclose'] : '',
+			'show_guest' => !empty($row['guest_access']),
+		);
+	}
+	wesql::free_result($request);
+
+	updateSettings(array('displayFields' => !empty($fields) ? serialize($fields) : ''));
 }
 
 function ModifyWhosOnline($return_config = false)
