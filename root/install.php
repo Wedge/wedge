@@ -495,9 +495,10 @@ function CheckFilesWritable()
 		'attachments',
 		'avatars',
 		'cache',
+		'css',
+		'js',
 		'Smileys',
 		'Themes',
-		'agreement.txt',
 		'Settings.php',
 		'Settings_bak.php'
 	);

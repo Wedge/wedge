@@ -55,7 +55,7 @@ if (file_exists(dirname(__FILE__) . '/install.php'))
 }
 
 # Make sure the paths are correct... at least try to fix them.
-if (!file_exists($boarddir) && file_exists(dirname(__FILE__) . '/agreement.txt'))
+if (!file_exists($boarddir) && file_exists(dirname(__FILE__) . '/SSI.php'))
 	$boarddir = dirname(__FILE__);
 if (!file_exists($sourcedir) && file_exists($boarddir . '/Sources'))
 	$sourcedir = $boarddir . '/Sources';

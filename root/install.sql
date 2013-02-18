@@ -759,6 +759,22 @@ CREATE TABLE {$db_prefix}group_moderators (
 ) ENGINE=MyISAM;
 
 #
+# Table structure for table `language_changes`
+#
+
+CREATE TABLE {$db_prefix}language_changes (
+  id_theme tinyint(3) unsigned NOT NULL,
+  id_lang varchar(32) NOT NULL,
+  lang_file varchar(64) NOT NULL,
+  lang_var varchar(8) NOT NULL,
+  lang_key varchar(64) NOT NULL,
+  lang_string text NOT NULL,
+  serial tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY (id_theme, id_lang, lang_file, lang_key),
+  KEY lang_file (id_theme, id_lang, lang_file)
+) ENGINE=MyISAM;
+
+#
 # Table structure for table `likes`
 #
 CREATE TABLE {$db_prefix}likes (

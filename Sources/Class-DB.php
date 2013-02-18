@@ -280,7 +280,7 @@ class wesql
 
 	public static function serious_error($db_string, $connection = null)
 	{
-		global $txt, $context, $webmaster_email, $settings, $db_last_error, $db_persist;
+		global $txt, $context, $webmaster_email, $settings, $db_last_error, $db_persist, $cachedir;
 		global $db_server, $db_user, $db_passwd, $db_name, $db_show_debug, $ssi_db_user, $ssi_db_passwd;
 
 		if (isset($txt) && !isset($txt['mysql_error_space']))
@@ -357,12 +357,10 @@ class wesql
 			if (!empty($fix_tables))
 			{
 				// Subs-Admin.php for updateSettingsFile(), Subs-Post.php for sendmail().
-				loadSource(array('Subs-Admin', 'Subs-Post'));
+				loadSource('Subs-Post');
 
 				// Make a note of the REPAIR...
-				cache_put_data('db_last_error', time(), 600);
-				if (($temp = cache_get_data('db_last_error', 600)) === null)
-					updateSettingsFile(array('db_last_error' => time()));
+				@touch($cachedir . '/error.lock');
 
 				// Attempt to find and repair the broken table.
 				foreach ($fix_tables as $table)
