@@ -487,56 +487,45 @@ function template_edit_agreement()
 			', $txt['registration_agreement'], '
 		</we:cat>';
 
-	// Warning for if the file isn't writable.
-	if (!empty($context['warning']))
-		echo '
-		<p class="error">', $context['warning'], '</p>';
-
-	echo '
-		<div class="windowbg2 wrc" id="registration_agreement">';
-
-	// Is there more than one language to choose from?
-	if (count($context['editable_agreements']) > 1)
+	// Is there a postbox? If not, we're displaying the list of languages.
+	if (empty($context['postbox']))
 	{
 		echo '
-			<div class="information">
-				<form action="', $scripturl, '?action=admin;area=regcenter" id="change_reg" method="post" accept-charset="UTF-8" style="display: inline">
-					<strong>', $txt['admin_agreement_select_language'], ':</strong>&nbsp;
-					<select name="agree_lang" onchange="$(\'#change_reg\').submit();" tabindex="', $context['tabindex']++, '">';
+		<div class="windowbg2 wrc">
+			<strong>', $txt['admin_agreement_select_language'], ':</strong>&nbsp;
+			<ul>';
 
-		foreach ($context['editable_agreements'] as $file => $name)
+		foreach ($context['languages'] as $lang)
 			echo '
-						<option value="', $file, '"', $context['current_agreement'] == $file ? ' selected' : '', '>', $name, '</option>';
+				<li><span class="flag_', $lang['filename'], '"></span> <a href="<URL>?action=admin;area=regcenter;sa=agreement;agreelang=', $lang['filename'], '">', $lang['name'], '</a></li>';
 
 		echo '
-					</select>
-					<div class="right">
-						<input type="hidden" name="sa" value="agreement">
-						<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-						<input type="submit" name="change" value="', $txt['admin_agreement_select_language_change'], '" tabindex="', $context['tabindex']++, '" class="submit">
-					</div>
-				</form>
-			</div>';
-	}
-
-	echo '
-			<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8">';
-
-	// Show the actual agreement in an oversized text box.
-	echo '
-				<p class="agreement">
-					<textarea cols="70" rows="20" name="agreement" id="agreement">', $context['agreement'], '</textarea>
-				</p>
+			</ul>
+			<form action="<URL>?action=admin;area=regcenter;sa=agreement" method="post" accept-charset="UTF-8">
 				<p>
 					<label><input type="checkbox" name="requireAgreement" id="requireAgreement"', $context['require_agreement'] ? ' checked' : '', ' tabindex="', $context['tabindex']++, '" value="1"> ', $txt['admin_agreement'], '.</label>
 				</p>
+				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<div class="right">
-					<input type="submit" value="', $txt['save'], '" tabindex="', $context['tabindex']++, '" class="save">
-					<input type="hidden" name="agree_lang" value="', $context['current_agreement'], '">
+					<input type="submit" class="save" name="updatelang" value="', $txt['save'], '">
+				</div>
+			</form>
+		</div>';
+	}
+	else
+	{
+		echo '
+		<div class="windowbg2 wrc" id="registration_agreement">
+			<form action="<URL>?action=admin;area=regcenter" method="post" accept-charset="UTF-8">
+				', $context['postbox']->outputEditor(), '
+				<div class="right">
+					<input type="hidden" name="agreelang" value="', $context['agreelang'], '">
 					<input type="hidden" name="sa" value="agreement">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+					', $context['postbox']->outputButtons(), '
 				</div>
 			</form>
 		</div>
 		<br class="clear">';
+	}
 }

@@ -159,47 +159,67 @@ function AdminRegister()
  * - Accessed by ?action=admin;area=regcenter;sa=agreement
  * - Calls upon the edit_agreement block of the Admin template.
  * - Requires the admin_forum permission.
- * - If multiple languages are provided, it will attempt to edit agreement.language.txt in the top level board directory, or failing that, agreement.txt.
+ * - Uses the language changes system to track the current version of each language's registration agreement.
  */
 function EditAgreement()
 {
-	global $txt, $boarddir, $context, $settings, $theme;
+	global $txt, $context, $settings, $cachedir;
 
-	// By default we look at agreement.txt.
-	$context['current_agreement'] = '';
-
-	// Is there more than one to edit?
-	$context['editable_agreements'] = array(
-		'' => $txt['admin_agreement_default'],
-	);
-
-	// Get our languages.
+	// Get all the agreements.
 	getLanguages();
 
-	// Try to figure out if we have more agreements.
-	foreach ($context['languages'] as $lang)
+	if (isset($_GET['agreelang'], $context['languages'][$_GET['agreelang']]))
 	{
-		if (file_exists($boarddir . '/agreement.' . $lang['filename'] . '.txt'))
-		{
-			$context['editable_agreements']['.' . $lang['filename']] = $lang['name'];
-			// Are we editing this?
-			if (isset($_POST['agree_lang']) && $_POST['agree_lang'] == '.' . $lang['filename'])
-				$context['current_agreement'] = '.' . $lang['filename'];
-		}
-	}
+		loadSource('Class-Editor');
+		$context['agreelang'] = $_GET['agreelang'];
+		loadLanguage('Agreement', $context['agreelang'], false, true);
 
-	if (isset($_POST['agreement']))
+		$context['postbox'] = new wedit(
+			array(
+				'id' => 'message',
+				'value' => wedit::un_preparsecode($txt['registration_agreement_body']),
+				'labels' => array(
+					'post_button' => $txt['save'],
+				),
+				'buttons' => array(
+					array(
+						'name' => 'post_button',
+						'button_text' => $txt['save'],
+						'onclick' => 'return submitThisOnce(this);',
+						'accesskey' => 's',
+					),
+				),
+				'height' => '250px',
+				'width' => '100%',
+				'drafts' => 'none',
+			)
+		);
+	}
+	elseif (isset($_POST['message'], $_POST['agreelang'], $context['languages'][$_POST['agreelang']]))
 	{
 		checkSession();
+		loadSource('Class-Editor');
+		wedit::preparseWYSIWYG('message');
+		$_POST['message'] = westr::htmlspecialchars($_POST['message'], ENT_QUOTES);
+		wedit::preparsecode($_POST['message']);
 
-		// Off it goes to the agreement file.
-		file_put_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt', str_replace("\r", '', $_POST['agreement']));
+		wesql::insert('replace',
+			'{db_prefix}language_changes',
+			array('id_theme' => 'int', 'id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
+			array(1, $_POST['agreelang'], 'Agreement', 'txt', 'registration_agreement_body', $_POST['message'], 0),
+			array('id_theme', 'id_lang', 'lang_file', 'lang_var', 'lang_key')
+		);
 
+		// And forcibly clean the cache...
+		foreach (glob($cachedir . '/lang_*_*_Agreement.php') as $filename)
+			@unlink($filename);
+	}
+	elseif (isset($_POST['updatelang']))
+	{
+		checkSession();
 		updateSettings(array('requireAgreement' => !empty($_POST['requireAgreement'])));
 	}
 
-	$context['agreement'] = file_exists($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? htmlspecialchars(file_get_contents($boarddir . '/agreement' . $context['current_agreement'] . '.txt')) : '';
-	$context['warning'] = is_writable($boarddir . '/agreement' . $context['current_agreement'] . '.txt') ? '' : $txt['agreement_not_writable'];
 	$context['require_agreement'] = !empty($settings['requireAgreement']);
 
 	wetem::load('edit_agreement');

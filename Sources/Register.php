@@ -101,13 +101,8 @@ function Register($reg_errors = array())
 	// If you have to agree to the agreement, it needs to be fetched from the file.
 	if ($context['require_agreement'])
 	{
-		// Have we got a localized one?
-		if (file_exists($boarddir . '/agreement.' . we::$user['language'] . '.txt'))
-			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.' . we::$user['language'] . '.txt'), true, 'agreement_' . we::$user['language']);
-		elseif (file_exists($boarddir . '/agreement.txt'))
-			$context['agreement'] = parse_bbc(file_get_contents($boarddir . '/agreement.txt'), true, 'agreement');
-		else
-			$context['agreement'] = '';
+		loadLanguage('Agreement');
+		$context['agreement'] = !empty($txt['registration_agreement_body']) ? parse_bbc($txt['registration_agreement_body'], true, 'agreement') : '';
 	}
 
 	// Prepare the time gate! Do it like so, in case later steps want to reset the limit for any reason, but make sure the time is the current one.

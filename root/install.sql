@@ -770,7 +770,7 @@ CREATE TABLE {$db_prefix}language_changes (
   lang_key varchar(64) NOT NULL,
   lang_string text NOT NULL,
   serial tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (id_theme, id_lang, lang_file, lang_key),
+  PRIMARY KEY (id_theme, id_lang, lang_file, lang_var, lang_key),
   KEY lang_file (id_theme, id_lang, lang_file)
 ) ENGINE=MyISAM;
 

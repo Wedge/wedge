@@ -1413,7 +1413,7 @@ function ModifyLanguage()
 					continue;
 
 				// !! Temp!
-				if ($matches[1] == 'EmailTemplates')
+				if ($matches[1] == 'EmailTemplates' || $matches[1] == 'Agreement')
 					continue;
 
 				if (!isset($context['possible_files'][$th]))

@@ -943,6 +943,7 @@ function loadMemberContext($user, $full_profile = false)
 {
 	global $memberContext, $user_profile, $txt, $scripturl;
 	global $context, $settings, $board_info, $theme;
+	static $ban_threshold = null;
 	static $dataLoaded = array();
 
 	// If this person's data is already loaded, skip it.
@@ -957,6 +958,9 @@ function loadMemberContext($user, $full_profile = false)
 		trigger_error('loadMemberContext(): member id ' . $user . ' not previously loaded by loadMemberData()', E_USER_WARNING);
 		return false;
 	}
+
+	if (empty($ban_threshold))
+		$ban_threshold = $user == we::$id ? 20 : 10;
 
 	// Well, it's loaded now anyhow.
 	$dataLoaded[$user] = true;
@@ -1036,7 +1040,7 @@ function loadMemberContext($user, $full_profile = false)
 		'post_group' => $profile['post_group'],
 		'group_badges' => array(),
 		'warning' => $profile['warning'],
-		'warning_status' => empty($settings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= 10 ? 'ban' : ($settings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($settings['warning_watch']) && $settings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
+		'warning_status' => empty($settings['warning_mute']) ? '' : (isset($profile['is_activated']) && $profile['is_activated'] >= $ban_threshold ? 'ban' : ($settings['warning_mute'] <= $profile['warning'] ? 'mute' : (!empty($settings['warning_moderate']) && $settings['warning_moderate'] <= $profile['warning'] ? 'moderate' : (!empty($settings['warning_watch']) && $settings['warning_watch'] <= $profile['warning'] ? 'watch' : '')))),
 		'local_time' => isset($profile['time_offset']) ? timeformat(time() + ($profile['time_offset'] - we::$user['time_offset']) * 3600, false) : 0,
 		'media' => isset($profile['media_items']) ? array(
 			'total_items' => $profile['media_items'],
@@ -1838,7 +1842,7 @@ function loadSource($source_name)
  */
 function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload = false, $fallback = false)
 {
-	global $language, $theme, $context, $settings, $boarddir, $db_show_debug, $txt;
+	global $language, $theme, $context, $settings, $boarddir, $db_show_debug, $txt, $helptxt, $cachedir;
 	static $already_loaded = array(), $folder_date = array();
 
 	// Default to the user's language.
@@ -1861,33 +1865,43 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 	if (empty($theme_name))
 		$theme_name = 'unknown';
 
-	// Go through all potential language folders, retrieve the latest modification date,
-	// and if available, clean the JS cache to force JS file regeneration.
-	// !! This is only temp code, as it won't work on all server setups, especially Windows.
-	if (!defined('WEDGE_INSTALLER'))
-	{
-		foreach (array($theme['theme_dir'], $theme['default_theme_dir']) as $dir)
-		{
-			if (isset($folder_date[$dir]))
-				continue;
-			$folder_date[$dir] = true;
-			$last_modified = filemtime($dir . '/languages/.');
-			$dir = str_replace($boarddir, '', $dir);
-			if (!isset($settings['langdate_' . $dir]))
-				updateSettings(array('langdate_' . $dir => $last_modified));
-			elseif ($last_modified > $settings['langdate_' . $dir])
-			{
-				updateSettings(array('langdate_' . $dir => $last_modified));
-				clean_cache('js');
-			}
-		}
-	}
-
 	// For each file open it up and write it out!
 	foreach ((array) $template_name as $template)
 	{
 		if (!$force_reload && isset($already_loaded[$template]) && ($already_loaded[$template] == $lang || $fallback))
 			continue;
+
+		if (!defined('WEDGE_INSTALLER'))
+		{
+			// So, firstly try to get this from the file cache.
+			$filename = $cachedir . '/lang_' . $theme['theme_id'] . '_' . $lang . '_' . $template . '.php';
+			if (file_exists($filename))
+			{
+				@include($filename);
+				if (!empty($val))
+				{
+					$val = @unserialize($val);
+					foreach ($val as $file => $content)
+						if (isset($$file))
+							$$file = array_merge($$file, $content);
+					$loaded = true;
+				}
+			}
+
+			if (isset($loaded))
+			{
+				// If we've pulled it from cache, add it to the debug list, the internal list of what we've done then skip.
+				$context['debug']['language_files'][] = $template . '.' . $lang . ' (' . $theme_name . ', cached)'; // !!! Yes, I know.
+				$already_loaded[$template] = $lang;
+				continue;
+			}
+			
+			// OK, this is messy. We need to load the file, grab any changes from the DB, but not touch the existing $txt state.
+			$oldhelptxt = $helptxt;
+			$oldtxt = $txt;
+			$txt = array();
+			$helptxt = array();
+		}
 
 		// Obviously, the current theme is most important to check.
 		$attempts = array(
@@ -1935,6 +1949,66 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			we::$user['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
 			if (empty(we::$user['time_format']))
 				we::$user['time_format'] = $txt['time_format'];
+		}
+
+		if (!defined('WEDGE_INSTALLER'))
+		{
+			if ($found)
+			{
+				// So, now we need to get from the DB.
+				$request = wesql::query('
+					SELECT id_theme, lang_var, lang_key, lang_string, serial
+					FROM {db_prefix}language_changes
+					WHERE id_theme IN ({array_int:theme})
+						AND id_lang = {string:lang}
+						AND lang_file = {string:lang_file}',
+					array(
+						'theme' => ($theme['theme_id'] == 1 ? array(1) : array(1, (int) $theme['theme_id'])),
+						'lang' => $lang,
+						'lang_file' => $template,
+					)
+				);
+				$additions = array('txt' => array(), 'helptxt' => array());
+				while ($row = wesql::fetch_assoc($request))
+				{
+					// This might look a bit weird. But essentially we might be loading two things from two themes.
+					// If we don't have it already, use it. If we do have it already but it's not the default theme we're adding, replace it.
+					if ($row['lang_var'] == 'txt')
+					{
+						if (!isset($additions['txt'][$row['lang_key']]) || $row['id_theme'] != 1)
+						{
+							$txt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
+							$additions['txt'][$row['lang_key']] = true;
+						}
+					}
+					elseif ($row['lang_var'] == 'helptxt')
+					{
+						if (!isset($additions['helptxt'][$row['lang_key']]) || $row['id_theme'] != 1)
+						{
+							$helptxt[$row['lang_key']] = !empty($row['serial']) ? @unserialize($row['lang_string']) : $row['lang_string'];
+							$additions['helptxt'][$row['lang_key']] = true;
+						}
+					}
+				}
+				wesql::free_result($request);
+
+				// Now cache this sucker.
+				$filename = $cachedir . '/lang_' . $theme['theme_id'] . '_' . $lang . '_' . $template . '.php';
+				$val = array();
+				if (!empty($txt))
+					$val['txt'] = $txt;
+				if (!empty($helptxt))
+					$val['helptxt'] = $helptxt;
+				$cache_data = '<' . '?php if(defined(\'WEDGE\'))$val=\'' . addcslashes(serialize($val), '\\\'') . '\';?' . '>';
+				if (file_put_contents($filename, $cache_data, LOCK_EX) !== strlen($cache_data))
+					@unlink($filename);
+
+				// Now fix the master variables.
+				if (!empty($txt) || !empty($oldtxt))
+					$txt = array_merge($oldtxt, $txt);
+				if (!empty($helptxt) || !empty($oldhelptxt))
+					$helptxt = array_merge($oldhelptxt, $helptxt);
+			}
 		}
 
 		// Keep track of what we're up to soldier.
