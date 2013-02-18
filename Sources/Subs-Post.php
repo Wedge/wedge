@@ -2534,13 +2534,11 @@ function loadEmailTemplate($template, $replacements = array(), $lang = '', $load
 	if ($loadLang)
 		loadLanguage('EmailTemplates', $lang);
 
-	if (!isset($txt['emails'][$template]))
+	if (!isset($txt['emailtemplate_' . $template]))
 		fatal_lang_error('email_no_template', 'template', array($template));
 
-	$ret = array(
-		'subject' => $txt['emails'][$template]['subject'],
-		'body' => $txt['emails'][$template]['body'],
-	);
+	// Just makes it slightly easier to read.
+	$ret = $txt['emailtemplate_' . $template];
 
 	// Add in the default replacements.
 	$replacements += array(

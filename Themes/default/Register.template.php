@@ -481,6 +481,12 @@ function template_edit_agreement()
 {
 	global $context, $theme, $options, $scripturl, $txt;
 
+	if (!empty($context['was_saved']))
+		echo '
+		<div class="windowbg" id="profile_success">
+			', $txt['changes_saved'], '
+		</div>';
+
 	// Just a big box to edit the text file ;).
 	echo '
 		<we:cat>

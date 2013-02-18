@@ -213,11 +213,14 @@ function EditAgreement()
 		// And forcibly clean the cache...
 		foreach (glob($cachedir . '/lang_*_*_Agreement.php') as $filename)
 			@unlink($filename);
+
+		$context['was_saved'] = true;
 	}
 	elseif (isset($_POST['updatelang']))
 	{
 		checkSession();
 		updateSettings(array('requireAgreement' => !empty($_POST['requireAgreement'])));
+		$context['was_saved'] = true;
 	}
 
 	$context['require_agreement'] = !empty($settings['requireAgreement']);
