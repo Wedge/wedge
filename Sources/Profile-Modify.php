@@ -387,7 +387,7 @@ function loadProfileFields($force_reload = false)
 
 			// Note this will only work if passwrd2 also exists!
 			'input_validate' => create_function('&$value', '
-				global $cur_profile, $txt;
+				global $cur_profile, $txt, $setting;
 
 				// If we didn\'t try it then ignore it!
 				if ($value == \'\')

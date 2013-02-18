@@ -1077,7 +1077,7 @@ function template_show_custom_profile()
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 		</form>';
 
-	//template_show_list('custom_profile_fields');
+	// !! template_show_list('custom_profile_fields'); ??
 
 	add_js('
 	var iNumChecks = document.forms.standardProfileFields.length;

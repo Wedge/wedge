@@ -2010,7 +2010,7 @@ function aeva_massUpload()
 
 	we::$is_ajax |= !empty($_REQUEST['upcook']);
 
-	if ($we::$is_ajax)
+	if (we::$is_ajax)
 	{
 		wetem::load('aeva_multiUpload');
 		$max_php_size = (int) min(aeva_getPHPSize('upload_max_filesize'), aeva_getPHPSize('post_max_size'));
