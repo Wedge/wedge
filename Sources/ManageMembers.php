@@ -1145,7 +1145,7 @@ function AdminApprove()
 			foreach ($member_info as $member)
 			{
 				$replacements = array(
-					'NAME' => $member['name'],
+					'REALNAME' => $member['name'],
 					'USERNAME' => $member['username'],
 					'PROFILELINK' => $scripturl . '?action=profile;u=' . $member['id'],
 					'FORGOTPASSWORDLINK' => $scripturl . '?action=reminder',
@@ -1185,7 +1185,7 @@ function AdminApprove()
 			);
 
 			$replacements = array(
-				'USERNAME' => $member['name'],
+				'REALNAME' => $member['name'],
 				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $member['id'] . ';code=' . $validation_code,
 				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $member['id'],
 				'ACTIVATIONCODE' => $validation_code,
@@ -1241,7 +1241,7 @@ function AdminApprove()
 		foreach ($member_info as $member)
 		{
 			$replacements = array(
-				'USERNAME' => $member['name'],
+				'REALNAME' => $member['name'],
 				'ACTIVATIONLINK' => $scripturl . '?action=activate;u=' . $member['id'] . ';code=' . $member['code'],
 				'ACTIVATIONLINKWITHOUTCODE' => $scripturl . '?action=activate;u=' . $member['id'],
 				'ACTIVATIONCODE' => $member['code'],

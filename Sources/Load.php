@@ -1897,7 +1897,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			}
 			
 			// OK, this is messy. We need to load the file, grab any changes from the DB, but not touch the existing $txt state.
-			$oldhelptxt = $helptxt;
+			$oldhelptxt = !empty($helptxt) ? (array) $helptxt : array();
 			$oldtxt = $txt;
 			$txt = array();
 			$helptxt = array();

@@ -660,7 +660,7 @@ function GroupRequests()
 			// Get the details of all the members concerned...
 			$request = wesql::query('
 				SELECT lgr.id_request, lgr.id_member, lgr.id_group, mem.email_address, mem.id_group AS primary_group,
-					mem.additional_groups AS additional_groups, mem.lngfile, mem.member_name, mem.notify_types,
+					mem.additional_groups AS additional_groups, mem.lngfile, mem.real_name, mem.notify_types,
 					mg.hidden, mg.group_name
 				FROM {db_prefix}log_group_requests AS lgr
 					INNER JOIN {db_prefix}members AS mem ON (mem.id_member = lgr.id_member)
@@ -712,7 +712,7 @@ function GroupRequests()
 					$email_details[] = array(
 						'rid' => $row['id_request'],
 						'member_id' => $row['id_member'],
-						'member_name' => $row['member_name'],
+						'real_name' => $row['real_name'],
 						'group_id' => $row['id_group'],
 						'group_name' => $row['group_name'],
 						'email' => $row['email_address'],
@@ -764,7 +764,7 @@ function GroupRequests()
 					foreach ($email_details as $email)
 					{
 						$replacements = array(
-							'USERNAME' => $email['member_name'],
+							'REALNAME' => $email['real_name'],
 							'GROUPNAME' => $email['group_name'],
 						);
 
@@ -783,12 +783,12 @@ function GroupRequests()
 						$custom_reason = isset($_POST['groupreason'], $_POST['groupreason'][$email['rid']]) ? $_POST['groupreason'][$email['rid']] : '';
 
 						$replacements = array(
-							'USERNAME' => $email['member_name'],
+							'REALNAME' => $email['real_name'],
 							'GROUPNAME' => $email['group_name'],
 						);
 
 						if (!empty($custom_reason))
-							$replacements['REASON'] = $custom_reason;
+							$replacements['REFUSEREASON'] = $custom_reason;
 
 						$emaildata = loadEmailTemplate(empty($custom_reason) ? 'mc_group_reject' : 'mc_group_reject_reason', $replacements, $email['language']);
 

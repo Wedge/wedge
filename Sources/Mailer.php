@@ -131,8 +131,8 @@ function SendTopic()
 
 	$replacements = array(
 		'TOPICSUBJECT' => $row['subject'],
-		'SENDERNAME' => $_POST['y_name'],
-		'RECPNAME' => $_POST['r_name'],
+		'SENDERNAMEMANUAL' => $_POST['y_name'],
+		'RECPNAMEMANUAL' => $_POST['r_name'],
 		'TOPICLINK' => $scripturl . '?topic=' . $topic . '.0',
 	);
 

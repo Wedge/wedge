@@ -162,6 +162,7 @@ function Activate()
 			'description' => $txt['approval_after_registration'],
 		);
 		updateMemberData($row['id_member'], array('is_activated' => 3, 'validation_code' => ''));
+		adminNotify('approval', $row['id_member'], $row['member_name']);
 		return;
 	}
 

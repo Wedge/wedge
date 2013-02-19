@@ -49,22 +49,32 @@ function ManageMail()
 	wetem::load('show_settings');
 
 	$subActions = array(
-		'browse' => 'BrowseMailQueue',
-		'clear' => 'ClearMailQueue',
 		'settings' => 'ModifyMailSettings',
+		'templates' => 'ModifyEmailTemplates',
 	);
 
-	// By default we want to browse
-	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : 'browse';
-	if (empty($settings['mail_queue']))
-		$_REQUEST['sa'] = 'settings';
+	if (!empty($settings['mail_queue']))
+		$subActions += array(
+			'browse' => 'BrowseMailQueue',
+			'clear' => 'ClearMailQueue',
+		);
 
-	$context['sub_action'] = $_REQUEST['sa'];
+	// By default we want to browse - if the queue's enabled.
+	$context['sub_action'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (empty($settings['mail_queue']) ? 'settings' : 'browse');
 
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['mailqueue_title'],
 		'description' => $txt['mailqueue_desc'],
+		'tabs' => array(
+			'browse' => array(
+			),
+			'settings' => array(
+			),
+			'templates' => array(
+				'description' => $txt['mailqueue_templates_desc'],
+			),
+		),
 	);
 
 	// Call the right function for this sub-acton.
@@ -311,6 +321,152 @@ function ModifyMailSettings($return_config = false)
 
 	// We need to use this instead of prepareDBSettingsContext because some of this stuff goes in Settings.php itself.
 	prepareServerSettingsContext($config_vars);
+}
+
+function ModifyEmailTemplates()
+{
+	global $context, $txt, $mbname, $theme;
+
+	getLanguages();
+
+	loadTemplate('ManageMail');
+
+	$lang = isset($_REQUEST['emaillang'], $context['languages'][$_REQUEST['emaillang']]) ? $_REQUEST['emaillang'] : 'english'; // Always fall back to that.
+	loadLanguage('EmailTemplates', $lang);
+
+	// This is where we add all the fields that a given template might provide access to. Yay.
+	$context['email_templates'] = array(
+		'register_immediate' => array('register', array('username', 'realname', 'password', 'forgotpasswordlink')),
+		'register_activate' => array('register', array('username', 'realname', 'password', 'forgotpasswordlink', 'activationlink', 'activationcode', 'activationlinkwithoutcode')),
+		'register_activate_approve' => array('register', array('username', 'realname', 'password', 'forgotpasswordlink', 'activationlink', 'activationcode', 'activationlinkwithoutcode')),
+		'register_pending' => array('register', array('username', 'realname', 'password', 'forgotpasswordlink')),
+		'register_coppa' => array('register', array('username', 'realname', 'password', 'forgotpasswordlink', 'coppalink')),
+		'resend_activate_message' => array('register', array('username', 'realname', 'forgotpasswordlink', 'activationlink', 'activationcode', 'activationlinkwithoutcode')),
+
+		'admin_register_immediate' => array('register_admin', array('username', 'realname', 'password', 'forgotpasswordlink', 'activationlink', 'activationcode', 'activationlinkwithoutcode')),
+		'admin_register_activate' => array('register_admin', array('username', 'realname', 'password', 'forgotpasswordlink', 'activationlink', 'activationcode', 'activationlinkwithoutcode')),
+		'admin_approve_activation' => array('register_admin', array('realname', 'activationlink', 'activationcode', 'activationlinkwithoutcode')),
+		'admin_approve_remind' => array('register_admin', array('realname', 'activationlink', 'activationcode', 'activationlinkwithoutcode')),
+		'admin_approve_accept' => array('register_admin', array('username', 'realname', 'profilelink', 'forgotpasswordlink')),
+		'admin_approve_reject' => array('register_admin', array('username')),
+		'admin_approve_delete' => array('register_admin', array('username')),
+
+		'forgot_password' => array('account_changes', array('username', 'realname', 'remindlink', 'ip')),
+		'change_password' => array('account_changes', array('username', 'realname', 'password')),
+		'activate_reactivate' => array('account_changes', array('activationlink', 'activationcode', 'activationlinkwithoutcode')),
+
+		'new_announcement' => array('notify_content', array('topicsubject', 'message', 'topiclink')),
+		'notify_boards' => array('notify_content', array('topicsubject', 'topiclink', 'unsubscribelink')),
+		'notify_boards_body' => array('notify_content', array('topicsubject', 'topiclink', 'unsubscribelink', 'message')),
+		'notify_boards_once' => array('notify_content', array('topicsubject', 'topiclink', 'unsubscribelink')),
+		'notify_boards_once_body' => array('notify_content', array('topicsubject', 'topiclink', 'unsubscribelink', 'message')),
+		'notification_reply' => array('notify_content', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink')),
+		'notification_reply_body' => array('notify_content', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink', 'message')),
+		'notification_reply_once' => array('notify_content', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink')),
+		'notification_reply_body_once' => array('notify_content', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink', 'message')),
+
+		'notification_pin' => array('notify_moderation', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink')),
+		'notification_lock' => array('notify_moderation', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink')),
+		'notification_unlock' => array('notify_moderation', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink')),
+		'notification_remove' => array('notify_moderation', array('topicsubject', 'postername')),
+		'notification_move' => array('notify_moderation', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink')),
+		'notification_merge' => array('notify_moderation', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink')),
+		'notification_split' => array('notify_moderation', array('topicsubject', 'topiclink', 'postername', 'unsubscribelink')),
+
+		'request_membership' => array('group_membership', array('recpname', 'appyname', 'groupname', 'reason', 'modlink')),
+		'mc_group_approve' => array('group_membership', array('realname', 'groupname')),
+		'mc_group_reject' => array('group_membership', array('realname', 'groupname')),
+		'mc_group_reject_reason' => array('group_membership', array('realname', 'groupname', 'refusereason')),
+
+		'send_topic' => array('user_email', array('sendernamemanual', 'recpnamemanual', 'topicsubject', 'topiclink')),
+		'send_topic_comment' => array('user_email', array('sendernamemanual', 'recpnamemanual', 'topicsubject', 'topiclink', 'comment')),
+		'send_email' => array('user_email', array('emailsubject', 'emailbody', 'sendername', 'recpname')),
+
+		'paid_subscription_new' => array('paid_subs', array('subscrname', 'subname', 'subuser', 'subemail', 'price', 'profilelink', 'date')),
+		'paid_subscription_reminder' => array('paid_subs', array('subscrname', 'realname', 'profilelinksubs', 'end_date')),
+		'paid_subscription_refund' => array('paid_subs', array('username', 'realname', 'idmember', 'subscrname', 'refundname', 'refunduser', 'profilelink', 'date')),
+		'paid_subscription_error' => array('paid_subs', array('username', 'realname', 'idmember', 'suberror')),
+
+		'report_to_moderator' => array('moderator', array('topicsubject', 'topiclink', 'postername', 'reportername', 'comment', 'reportlink')),
+		'scheduled_approval' => array('moderator', array('realname', 'message')),
+		'admin_notify' => array('moderator', array('username', 'profilelink')),
+		'admin_notify_approval' => array('moderator', array('username', 'profilelink', 'approvallink')),
+		'admin_attachments_full' => array('moderator', array('username', 'realname', 'idmember')),
+	);
+
+	if (isset($_POST['save'], $_POST['email'], $context['email_templates'][$_POST['email']]))
+	{
+		checkSession();
+
+		// !!! Bored of this now. Can't be arsed to do actual validation right now and force flow back to the form to make the user do it right.
+		// I have spent all day, literally, on this stuff and it is dull as dishwater.
+
+		foreach (array('subject', 'body') as $item)
+			$_POST[$item] = isset($_POST[$item]) ? trim($_POST[$item]) : '';
+
+		$new_entry = array(
+			'desc' => $txt['emailtemplate_' . $_POST['email']]['desc'],
+			'subject' => !empty($_POST['subject']) ? westr::safe($_POST['subject'], ENT_QUOTES) : $txt['emailtemplate_' . $_POST['email']]['subject'],
+			'body' => !empty($_POST['body']) ? westr::safe($_POST['body'], ENT_QUOTES) : $txt['emailtemplate_' . $_POST['email']]['body'],
+		);
+
+		wesql::insert('replace',
+			'{db_prefix}language_changes',
+			array('id_theme' => 'int', 'id_lang' => 'string', 'lang_file' => 'string', 'lang_var' => 'string', 'lang_key' => 'string', 'lang_string' => 'string', 'serial' => 'int'),
+			array(1, $lang, 'EmailTemplates', 'txt', 'emailtemplate_' . $_POST['email'], serialize($new_entry), 1),
+			array('id_theme', 'id_lang', 'lang_file', 'lang_var', 'lang_key')
+		);
+
+		foreach (glob($cachedir . '/lang_*_*_EmailTemplates.php') as $filename)
+			@unlink($filename);
+
+		$_SESSION['was_saved'] = true;
+		redirectexit('action=admin;area=mailqueue;sa=templates;emaillang=' . $lang);
+	}
+	elseif (isset($_GET['email'], $context['email_templates'][$_GET['email']]))
+	{
+		// Need to inject these items in. See loadEmailTemplate() in Subs-Post.php.
+		$items = array(
+			'forumname' => $mbname,
+			'scripturl' => '<URL>',
+			'themeurl' => $theme['theme_url'],
+			'imagesurl' => $theme['images_url'],
+			'default_themeurl' => $theme['default_theme_url'],
+			'regards' => str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
+		);
+		foreach ($items as $k => $v)
+			$txt['template_repl_' . $k] = sprintf($txt['template_repl_' . $k], $v);
+
+		$context['emailtemplate'] = array(
+			'email' => $_GET['email'],
+			'lang' => $lang,
+			'desc' => $txt['emailtemplate_' . $_GET['email']]['desc'],
+			'subject' => westr::safe($txt['emailtemplate_' . $_GET['email']]['subject'], ENT_QUOTES),
+			'body' => westr::safe($txt['emailtemplate_' . $_GET['email']]['body'], ENT_QUOTES),
+			'replacement_items' => array_merge(
+				array('forumname', 'scripturl', 'themeurl', 'imagesurl', 'default_themeurl', 'regards'),
+				$context['email_templates'][$_GET['email']][1]
+			)
+		);
+		wetem::load('email_edit');
+	}
+	else
+	{
+		$context['email_groups'] = array();
+		foreach ($context['email_templates'] as $template => $details)
+			$context['email_groups'][$details[0]][] = $template;
+
+		if (!empty($_SESSION['was_saved']))
+		{
+			$context['was_saved'] = true;
+			unset($_SESSION['was_saved']);
+		}
+
+		wetem::load('email_template_list');
+		add_css('
+	.roundframe { margin-bottom: 1em }
+	.roundframe.smalltext { font-size: .85em; line-height: 120% }');
+	}
 }
 
 // This function clears the mail queue of all emails, and at the end redirects to browse.

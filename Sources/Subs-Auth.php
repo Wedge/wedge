@@ -406,14 +406,14 @@ function resetPassword($memID, $username = null)
 
 	// Get some important details.
 	$request = wesql::query('
-		SELECT member_name, email_address, lngfile
+		SELECT member_name, real_name, email_address, lngfile
 		FROM {db_prefix}members
 		WHERE id_member = {int:id_member}',
 		array(
 			'id_member' => $memID,
 		)
 	);
-	list ($user, $email, $lngfile) = wesql::fetch_row($request);
+	list ($user, $display_user, $email, $lngfile) = wesql::fetch_row($request);
 	wesql::free_result($request);
 
 	if ($username !== null)
@@ -441,6 +441,7 @@ function resetPassword($memID, $username = null)
 
 	$replacements = array(
 		'USERNAME' => $user,
+		'REALNAME' => $display_user,
 		'PASSWORD' => $newPassword,
 	);
 

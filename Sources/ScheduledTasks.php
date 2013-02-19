@@ -391,7 +391,7 @@ function scheduled_approval_notification()
 
 		$replacements = array(
 			'REALNAME' => $member['name'],
-			'BODY' => $emailbody,
+			'MESSAGE' => $emailbody,
 		);
 
 		$emaildata = loadEmailTemplate('scheduled_approval', $replacements, $current_language);
@@ -1535,9 +1535,9 @@ function scheduled_paid_subscriptions()
 		$subs_reminded[] = $row['id_sublog'];
 
 		$replacements = array(
-			'PROFILE_LINK' => $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=subscriptions',
+			'PROFILELINKSUBS' => $scripturl . '?action=profile;u=' . $row['id_member'] . ';area=subscriptions',
 			'REALNAME' => $row['member_name'],
-			'SUBSCRIPTION' => $row['name'],
+			'SUBSCRNAME' => $row['name'],
 			'END_DATE' => strip_tags(timeformat($row['end_time'])),
 		);
 

@@ -144,7 +144,7 @@ function RemindPick()
 			'REALNAME' => $row['real_name'],
 			'REMINDLINK' => $scripturl . '?action=reminder;sa=setpassword;u=' . $row['id_member'] . ';code=' . $password,
 			'IP' => format_ip(we::$user['ip']),
-			'MEMBERNAME' => $row['member_name'],
+			'USERNAME' => $row['member_name'],
 		);
 
 		$emaildata = loadEmailTemplate('forgot_password', $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);

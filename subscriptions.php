@@ -160,7 +160,7 @@ if ($gatewayClass->isRefund())
 	if (!empty($settings['paid_email']) && $settings['paid_email'] == 2)
 	{
 		$replacements = array(
-			'NAME' => $subscription_info['name'],
+			'SUBSCRNAME' => $subscription_info['name'],
 			'REFUNDNAME' => $member_info['member_name'],
 			'REFUNDUSER' => $member_info['real_name'],
 			'PROFILELINK' => $scripturl . '?action=profile;u=' . $member_id,
@@ -244,7 +244,7 @@ elseif ($gatewayClass->isPayment() || $gatewayClass->isSubscription())
 	if (!empty($settings['paid_email']) && $settings['paid_email'] == 2 && $notify)
 	{
 		$replacements = array(
-			'NAME' => $subscription_info['name'],
+			'SUBSCRNAME' => $subscription_info['name'],
 			'SUBNAME' => $member_info['member_name'],
 			'SUBUSER' => $member_info['real_name'],
 			'SUBEMAIL' => $member_info['email_address'],
@@ -269,7 +269,7 @@ function generateSubscriptionError($text)
 	if (!empty($settings['paid_email']))
 	{
 		$replacements = array(
-			'ERROR' => $text,
+			'SUBERROR' => $text,
 		);
 
 		emailAdmins('paid_subscription_error', $replacements, $notify_users);

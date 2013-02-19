@@ -507,7 +507,8 @@ function Admin()
 					'subsections' => array(
 						'browse' => array($txt['mailqueue_browse'], 'admin_forum', 'enabled' => !empty($settings['mail_queue'])),
 						'',
-						'settings' => array($txt['mailqueue_settings'], 'admin_forum', 'enabled' => !empty($settings['mail_queue'])),
+						'settings' => array($txt['mailqueue_settings'], 'admin_forum'),
+						'templates' => array($txt['mailqueue_templates'], 'admin_forum'),
 					),
 				),
 				'',

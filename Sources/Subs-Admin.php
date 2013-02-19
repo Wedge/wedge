@@ -485,8 +485,8 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 	{
 		// Stick their particulars in the replacement data.
 		$replacements['IDMEMBER'] = $row['id_member'];
-		$replacements['REALNAME'] = $row['member_name'];
-		$replacements['USERNAME'] = $row['real_name'];
+		$replacements['REALNAME'] = $row['real_name'];
+		$replacements['USERNAME'] = $row['member_name'];
 
 		// Load the data from the template.
 		$emaildata = loadEmailTemplate($template, $replacements, empty($row['lngfile']) || empty($settings['userLanguage']) ? $language : $row['lngfile']);
