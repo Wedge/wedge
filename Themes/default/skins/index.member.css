@@ -36,12 +36,9 @@ ul.buttonlist
 	float: right
 
 // The quick edit button
-.quick_edit
-	background: url($images/icons/modify_inline.gif) no-repeat 0 -1px
-	display: inline
-	width, height: 20px
+.quick_edit extends .edit_button
 	clear, float: right
-	margin: 0 20px 0 -3px
+	margin: 0 9px 0 -2px
 	cursor: pointer
 
 #error_box

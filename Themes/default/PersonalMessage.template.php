@@ -294,7 +294,7 @@ function template_folder()
 					// Is there than more than one recipient you can reply to?
 					if ($message['number_recipients'] > 1)
 						echo '
-						<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=all"class="reply_all_button">', $txt['reply_to_all'], '</a></li>';
+						<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=all"class="reply_button">', $txt['reply_to_all'], '</a></li>';
 
 					echo '
 						<li><a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '" class="reply_button">', $txt['reply'], '</a></li>
@@ -716,18 +716,15 @@ function template_search_results()
 
 			if ($context['can_send_pm'])
 			{
-				$quote_button = create_button('quote.gif', 'quote', 'quote', 'class="middle"');
-				$reply_button = create_button('im_reply.gif', 'reply', 'reply', 'class="middle"');
-
 				// You can only reply if they are not a guest...
 				if (!$message['member']['is_guest'])
 					echo '
-						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '">', $quote_button, '</a>', $context['menu_separator'], '
-						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '">', $reply_button, '</a> ', $context['menu_separator'];
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote;u=', $context['folder'] == 'sent' ? '' : $message['member']['id'], '" class="quote_button">', $txt['quote'], '</a>', $context['menu_separator'], '
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';u=', $message['member']['id'], '" class="reply_button">', $txt['reply'], '</a> ', $context['menu_separator'];
 				// This is for "forwarding" - even if the member is gone.
 				else
 					echo '
-						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $quote_button, '</a>', $context['menu_separator'];
+						<a href="<URL>?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote" class="quote_button">', $txt['quote'], '</a>', $context['menu_separator'];
 			}
 
 			echo '
@@ -1563,10 +1560,6 @@ function template_pm_drafts()
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
-	// Button shortcuts
-	$edit_button = create_button('modify_inline.gif', 'edit_draft', 'edit_draft', 'class="middle"');
-	$remove_button = create_button('delete.gif', 'remove_draft', 'remove_draft', 'class="middle"');
-
 	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
 
 	// For every post to be displayed, give it its own subtable, and show the important details of the post.
@@ -1588,7 +1581,7 @@ function template_pm_drafts()
 		echo '
 				<div class="actionbar">
 					<ul class="actions">
-						<li><a href="<URL>?action=pm;sa=send;draft_id=', $post['id'], empty($post['pmsg']) ? '' : ';pmsg=' . $post['pmsg'], '" class="reply_button">', $txt['edit_draft'], '</a></li>
+						<li><a href="<URL>?action=pm;sa=send;draft_id=', $post['id'], empty($post['pmsg']) ? '' : ';pmsg=' . $post['pmsg'], '" class="edit_button">', $txt['edit_draft'], '</a></li>
 						<li><a href="<URL>?action=pm;sa=showdrafts;delete=', $post['id'], ';', $context['session_query'], '" class="remove_button" onclick="return ask(', $remove_confirm, ', e);">', $txt['remove_draft'], '</a></li>
 					</ul>
 				</div>

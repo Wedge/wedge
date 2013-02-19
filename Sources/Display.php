@@ -1159,7 +1159,7 @@ function Display()
 		'mo' => array(
 			'caption' => 'acme_modify',
 			'action' => '<URL>?action=post;msg=%1%;topic=' . $context['current_topic'] . '',
-			'class' => 'modify_button',
+			'class' => 'edit_button',
 		),
 		'ap' => array(
 			'caption' => 'acme_approve',

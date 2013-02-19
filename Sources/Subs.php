@@ -1978,36 +1978,6 @@ function text2words($text, $max_chars = 20, $encrypt = false)
 }
 
 /**
- * Create a 'button', comprised of an icon and a text string, subject to theme settings.
- *
- * This function first looks to see if the theme specifies its own button system, and if it does not (or, $force_use is true), this function manages the button generation.
- *
- * If the theme directs that image buttons should not be used, the button will simply be the text string dictated by $alt. If the theme does use image buttons, it looks to see if it uses full images, or image+text, and generates the appropriate HTML.
- *
- * @param string $name Name of the button, which is also the base of the filename of the image to be used.
- * @param string $alt The key within $txt to use as the alt-text of the image, or the textual caption if there is no image.
- * @param string $label The key within $txt to use in the event of image/text composite buttons.
- * @param string $custom Any additional custom parameters to attach to the img item in the HTML, perhaps an HTML class, inline style or similar.
- * @param bool $force_use By default, this function will transfer control of creating buttons to the theme if it provides for such; setting this value to true forces this to override the theme.
- * @return string The HTML for the given button.
- */
-function create_button($name, $alt, $label = '', $custom = '', $force_use = false)
-{
-	global $theme, $txt, $context;
-
-	// Does the current loaded theme have this and we are not forcing the usage of this function?
-	if (function_exists('template_create_button') && !$force_use)
-		return template_create_button($name, $alt, $label = '', $custom = '');
-
-	if (!$theme['use_image_buttons'])
-		return $txt[$alt];
-	elseif (!empty($theme['use_buttons']))
-		return '<img src="' . $theme['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>' . (isset($txt[$label]) ? '&nbsp;' . $txt[$label] : '');
-	else
-		return '<img src="' . $theme['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
-}
-
-/**
  * This function handles the processing of the main application menu presented to the user.
  *
  * Notes:

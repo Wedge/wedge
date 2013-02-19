@@ -322,10 +322,6 @@ function template_showDrafts()
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
 
-	// Button shortcuts
-	$edit_button = create_button('modify_inline.gif', 'edit_draft', 'edit_draft', 'class="middle"');
-	$remove_button = create_button('delete.gif', 'remove_draft', 'remove_draft', 'class="middle"');
-
 	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
 
 	// For every post to be displayed, give it its own subtable, and show the important details of the post.
@@ -395,12 +391,6 @@ function template_showPosts()
 		<div class="pagesection">
 			<nav>', $txt['pages'], ': ', $context['page_index'], '</nav>
 		</div>';
-
-	// Button shortcuts
-	$quote_button = create_button('quote.gif', 'quote', 'quote', 'class="middle"');
-	$reply_button = create_button('reply_sm.gif', 'reply', 'reply', 'class="middle"');
-	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'class="middle"');
-	$notify_button = create_button('notify_sm.gif', 'notify_replies', 'notify', 'class="middle"');
 
 	$remove_confirm = JavaScriptEscape($txt['remove_message_confirm']);
 
@@ -550,7 +540,7 @@ function template_editBuddies()
 				<th class="first_th left" scope="col" style="width: 20%">', $txt['name'], '</th>
 				<th scope="col">', $txt['online_status'], '</th>
 				<th scope="col">', $txt['email'], '</th>
-				<th class="last_th" scope="col"></th>
+				<th class="last_th" scope="col">', $txt['buddy_remove'], '</th>
 			</tr>';
 
 	// If they don't have any buddies don't list them!
@@ -569,7 +559,7 @@ function template_editBuddies()
 				<td class="left">', $buddy['link'], '</td>
 				<td><a href="', $buddy['online']['href'], '"><img src="', $buddy['online']['image_href'], '" alt="', $buddy['online']['label'], '" title="', $buddy['online']['label'], '"></a></td>
 				<td>', ($buddy['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '"></a>'), '</td>
-				<td><a href="<URL>?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies;remove=', $buddy['id'], ';', $context['session_query'], '"><img src="', $theme['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '"></a></td>
+				<td><a href="<URL>?action=profile;u=', $context['id_member'], ';area=lists;sa=buddies;remove=', $buddy['id'], ';', $context['session_query'], '"><span class="remove_button" style="display: inline-block"></span></a></td>
 			</tr>';
 
 		$alternate = !$alternate;
@@ -617,7 +607,7 @@ function template_editIgnoreList()
 				<th class="first_th" scope="col" style="width: 20%">', $txt['name'], '</th>
 				<th scope="col">', $txt['online_status'], '</th>
 				<th scope="col">', $txt['email'], '</th>
-				<th class="last_th" scope="col"></th>
+				<th class="last_th" scope="col">', $txt['ignore_remove'], '</th>
 			</tr>';
 
 	// If they don't have anyone on their ignore list, don't list it!
@@ -636,7 +626,7 @@ function template_editIgnoreList()
 				<td class="left">', $member['link'], '</td>
 				<td><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '"></a></td>
 				<td>', ($member['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>'), '</td>
-				<td><a href="<URL>?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_query'], '"><img src="', $theme['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '"></a></td>
+				<td><a href="<URL>?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_query'], '"><span class="remove_button" style="display: inline-block"></span></a></td>
 			</tr>';
 
 		$alternate = !$alternate;

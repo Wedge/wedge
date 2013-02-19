@@ -158,11 +158,6 @@ function QuickModeration()
 	if (!empty($topic_ids))
 		$thisAction[2]($topic_ids, $boards_can);
 
-	// !!! How best to make this hookable?
-	updateSettings(array(
-		'calendar_updated' => time(),
-	));
-
 	if (!empty($board))
 		updateLastMessages(array($board));
 

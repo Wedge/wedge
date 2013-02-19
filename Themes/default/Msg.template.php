@@ -308,7 +308,7 @@ function template_msg_actionbar()
 		// Can the user modify the contents of this post?
 		if ($msg['can_modify'] && !$context['is_mobile'])
 			echo '
-								<li><a href="<URL>?action=post;msg=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
+								<li><a href="<URL>?action=post;msg=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="edit_button">', $txt['modify'], '</a></li>';
 
 		if (!empty($context['mini_menu']['action'][$msg['id']]))
 			echo '

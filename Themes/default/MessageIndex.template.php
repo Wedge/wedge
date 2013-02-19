@@ -512,7 +512,7 @@ function template_messageindex_legend()
 	echo '
 	<section>
 		<we:title>
-			<img src="', $theme['images_url'], '/icons/assist.gif">
+			<img src="', $theme['images_url'], '/icons/field_invalid.gif">
 			', $txt['legend'], '
 		</we:title>
 		<p>

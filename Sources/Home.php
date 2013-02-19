@@ -216,7 +216,7 @@ function Home()
 		'mo' => array(
 			'caption' => 'thome_edit',
 			'action' => '',
-			'class' => 'modify_button',
+			'class' => 'edit_button',
 			'click' => 'return oThought.edit(%1%, %2%)',
 		),
 		'de' => array(

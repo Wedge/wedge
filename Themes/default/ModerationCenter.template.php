@@ -313,10 +313,6 @@ function template_unapproved_posts()
 				', $txt['mc_unapproved_posts'], '
 			</we:cat>';
 
-	// Make up some buttons
-	$approve_button = create_button('approve.gif', 'approve', 'approve', 'class="middle"');
-	$remove_button = create_button('delete.gif', 'remove_message', 'remove', 'class="middle"');
-
 	// No posts?
 	if (empty($context['unapproved_items']))
 		echo '
@@ -340,12 +336,12 @@ function template_unapproved_posts()
 			<div class="windowbg', $item['alternate'] ? '' : '2', ' wrc core_posts">
 				<div class="post">', $item['body'], '</div>
 				<span class="floatright">
-					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';approve=', $item['id'], '">', $approve_button, '</a>';
+					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';approve=', $item['id'], '" class="approve_button">', $txt['approve'], '</a>';
 
 				if ($item['can_delete'])
 					echo '
 					', $context['menu_separator'], '
-					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';delete=', $item['id'], '">', $remove_button, '</a>';
+					<a href="', $scripturl, '?action=moderate;area=postmod;sa=', $context['current_view'], ';start=', $context['start'], ';', $context['session_query'], ';delete=', $item['id'], '" class="remove_button">', $txt['remove_message'], '</a>';
 
 				echo '
 					<input type="checkbox" name="item[]" value="', $item['id'], '" checked> ';
@@ -496,11 +492,7 @@ function template_viewmodreport()
 // Callback function for showing a watched users post in the table.
 function template_user_watch_post_callback($post)
 {
-	global $scripturl, $context, $txt, $delete_button;
-
-	// We'll have a delete please bob.
-	if (empty($delete_button))
-		$delete_button = create_button('delete.gif', 'remove_message', 'remove', 'class="middle"');
+	global $scripturl, $context, $txt;
 
 	$output_html = '
 					<div>
@@ -511,7 +503,7 @@ function template_user_watch_post_callback($post)
 
 	if ($post['can_delete'])
 		$output_html .= '
-							<a href="' . $scripturl . '?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_watched_users_delete_post']) . ', e);">' . $delete_button . '</a>
+							<a href="' . $scripturl . '?action=moderate;area=userwatch;sa=post;delete=' . $post['id'] . ';start=' . $context['start'] . ';' . $context['session_query'] . '" onclick="return ask(' . JavaScriptEscape($txt['mc_watched_users_delete_post']) . ', e);" class="remove_button">' . $txt['remove_message'] . '</a>
 							<input type="checkbox" name="delete[]" value="' . $post['id'] . '">';
 
 	$output_html .= '
@@ -675,4 +667,30 @@ function template_warn_template()
 		</form>
 	</div>
 	<br class="clear">';
+}
+
+/**
+ * Create a 'button', comprised of an icon and a text string, subject to theme settings.
+ *
+ * This function first looks to see if the theme specifies its own button system, and if it does not (or, $force_use is true), this function manages the button generation.
+ *
+ * If the theme directs that image buttons should not be used, the button will simply be the text string dictated by $alt. If the theme does use image buttons, it looks to see if it uses full images, or image+text, and generates the appropriate HTML.
+ *
+ * @param string $name Name of the button, which is also the base of the filename of the image to be used.
+ * @param string $alt The key within $txt to use as the alt-text of the image, or the textual caption if there is no image.
+ * @param string $label The key within $txt to use in the event of image/text composite buttons.
+ * @param string $custom Any additional custom parameters to attach to the img item in the HTML, perhaps an HTML class, inline style or similar.
+ * @param bool $force_use By default, this function will transfer control of creating buttons to the theme if it provides for such; setting this value to true forces this to override the theme.
+ * @return string The HTML for the given button.
+ */
+function create_button($name, $alt, $label = '', $custom = '')
+{
+	global $theme, $txt, $context;
+
+	if (!$theme['use_image_buttons'])
+		return $txt[$alt];
+	elseif (!empty($theme['use_buttons']))
+		return '<img src="' . $theme['images_url'] . '/buttons/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>' . (isset($txt[$label]) ? '&nbsp;' . $txt[$label] : '');
+	else
+		return '<img src="' . $theme['lang_images_url'] . '/' . $name . '" alt="' . $txt[$alt] . '" ' . $custom . '>';
 }

@@ -425,7 +425,7 @@ img.new_posts
 
 .quote_button extends .vbtn
 	background-position: 3px 0
-.modify_button extends .vbtn
+.edit_button extends .vbtn
 	background-position: 0 -61px
 .remove_button extends .vbtn
 	background-position: 0 -30px
@@ -434,8 +434,6 @@ img.new_posts
 .restore_button extends .vbtn
 	background-position: 0 -120px
 .reply_button extends .vbtn
-	background-position: 0 -180px
-.reply_all_button extends .vbtn
 	background-position: 0 -180px
 .notify_button extends .vbtn // !! Is this worth having sprited..?
 	background-position: 0 -210px

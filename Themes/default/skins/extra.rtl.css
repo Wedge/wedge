@@ -235,7 +235,7 @@ span.percent
 	background-position: 100% 0
 .remove_button
 	background-position: 100% -30px
-.modify_button
+.edit_button
 	background-position: 100% -60px
 .approve_button
 	background-position: 100% -90px
@@ -244,8 +244,6 @@ span.percent
 .split_button
 	background-position: 100% -150px
 .reply_button
-	background-position: 100% -180px
-.reply_all_button
 	background-position: 100% -180px
 .notify_button
 	background-position: 100% -210px

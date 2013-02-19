@@ -214,7 +214,7 @@ function template_list_themes()
 		// You *cannot* delete the default theme. It's important!
 		if ($th['id'] != 1)
 			echo '
-			<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $th['id'], ';', $context['session_query'], '" onclick="return ask(', JavaScriptEscape($txt['theme_remove_confirm']), ', e);"><img src="', $theme['images_url'], '/icons/delete.gif" alt="', $txt['theme_remove'], '" title="', $txt['theme_remove'], '"></a></span>';
+			<span class="floatright"><a href="', $scripturl, '?action=admin;area=theme;sa=remove;th=', $th['id'], ';', $context['session_query'], '" onclick="return ask(', JavaScriptEscape($txt['theme_remove_confirm']), ', e);" class="remove_button">', $txt['delete'], '</a></span>';
 
 		echo '
 			<strong><a href="', $scripturl, '?action=admin;area=theme;th=', $th['id'], ';', $context['session_query'], ';sa=settings">', $th['name'], '</a></strong>', !empty($th['version']) ? ' <em>(' . $th['version'] . ')</em>' : '', '
