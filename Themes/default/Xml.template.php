@@ -226,10 +226,7 @@ function template_thought()
 		$thought = '<div>' . ($th['privacy'] != -3 ? '<div class="privacy_' . @$privacy_icon[$th['privacy']] . '"></div>' : '') . '<a id="t' . $id . '"></a>'
 			. '<a href="<URL>?action=profile;u=' . $uid . '">' . $th['user_name'] . '</a> &raquo;'
 			. ' @<a href="<URL>?action=profile;u=' . $th['parent_id'] . '">' . $th['parent_name'] . '</a>&gt;'
-			. ' <span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $th['privacy'] . '"'
-			. (!we::$is_guest ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
-			. (we::$id == $uid || we::$is_admin ? ' data-self' : '')
-			. (we::is('android,ios') ? ' onclick="return true;"' : '') . '><span>' . $thought . '</span></span></div>';
+			. ' <span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $th['privacy'] . '"><span>' . $thought . '</span></span></div>';
 	}
 
 	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>

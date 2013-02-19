@@ -49,7 +49,7 @@ function template_msg_author()
 
 	if ($context['is_mobile'])
 	{
-		if (!empty($context['action_menu'][$msg['id']]))
+		if (!empty($context['mini_menu']['action'][$msg['id']]))
 			echo '
 						<div class="tinyuser">
 							<span>', timeformat($msg['timestamp']), '</span>
@@ -310,7 +310,7 @@ function template_msg_actionbar()
 			echo '
 								<li><a href="<URL>?action=post;msg=', $msg['id'], ';topic=', $context['current_topic'], '.', $context['start'], '" class="modify_button">', $txt['modify'], '</a></li>';
 
-		if (!empty($context['action_menu'][$msg['id']]))
+		if (!empty($context['mini_menu']['action'][$msg['id']]))
 			echo '
 								<li><a class="acme more_button">', $txt[$context['is_mobile'] ? 'actions_button' : 'more_actions'], '</a></li>';
 

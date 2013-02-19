@@ -44,7 +44,7 @@ function template_display_posts()
 		if ($context['is_mobile'])
 		{
 			// If we're in mobile mode, we'll move the Quote and Modify buttons to the Action menu.
-			$menu = isset($context['action_menu'][$msg['id']]) ? $context['action_menu'][$msg['id']] : array();
+			$menu = isset($context['mini_menu']['action'][$msg['id']]) ? $context['mini_menu']['action'][$msg['id']] : array();
 
 			// Insert them after the previous message's id.
 			if ($msg['can_modify'])
@@ -53,8 +53,8 @@ function template_display_posts()
 			if ($context['can_quote'])
 				array_unshift($menu, 'qu');
 
-			$context['action_menu'][$msg['id']] = $menu;
-			$context['action_menu_items_show'] += array_flip($menu);
+			$context['mini_menu']['action'][$msg['id']] = $menu;
+			$context['mini_menu_items_show']['action'] += array_flip($menu);
 		}
 
 		// And finally... Render the skeleton for this message!
@@ -111,70 +111,9 @@ function template_display_posts()
 		aSwapLinks: [\'msg' . $msgid . ' .ignored\']
 	});');
 
-	$js = '';
-
-	// !! These should probably be put in a more generic template or
-	// !! source file, so that non-topics can also easily use mini-menus.
-	if (!empty($context['user_menu']))
-	{
-		$js .= '
-	$(".umme").mime({';
-
-		foreach ($context['user_menu'] as $user => $linklist)
-			$js .= '
-		' . $user. ': ["' . implode('", "', $linklist) . '"],';
-
-		$js = substr($js, 0, -1) . '
-	}, {';
-
-		foreach ($context['user_menu_items'] as $key => $pmi)
-		{
-			if (!isset($context['user_menu_items_show'][$key]))
-				continue;
-			$js .= '
-		' . $key . ': [';
-			foreach ($pmi as $type => $item)
-				if ($type === 'caption')
-					$js .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
-				else
-					$js .= $item . ', ';
-			$js = substr($js, 0, -2) . '],';
-		}
-		$js = substr($js, 0, -1) . '
-	}, true);';
-	}
-
-	if (!empty($context['action_menu']))
-	{
-		$js .= '
-	$(".acme").mime({';
-
-		foreach ($context['action_menu'] as $post => $linklist)
-			$js .= '
-		' . $post . ': ["' . implode('", "', $linklist) . '"],';
-
-		$js = substr($js, 0, -1) . '
-	}, {';
-
-		foreach ($context['action_menu_items'] as $key => $pmi)
-		{
-			if (!isset($context['action_menu_items_show'][$key]))
-				continue;
-			$js .= '
-		' . $key . ': [';
-			foreach ($pmi as $type => $item)
-				if ($type === 'caption')
-					$js .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : '\'\'') . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : '\'\'') . ', ';
-				else
-					$js .= $item . ', ';
-			$js = substr($js, 0, -2) . '],';
-		}
-		$js = substr($js, 0, -1) . '
-	});';
-	}
-
-	if (!empty($js))
-		add_js($js);
+	// Show mini-menus.
+	template_mini_menu('user', 'umme');
+	template_mini_menu('action', 'acme');
 }
 
 function template_topic_poll()

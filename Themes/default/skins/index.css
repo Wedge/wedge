@@ -635,7 +635,7 @@ input, select, textarea
 	background: $main_bg
 	box-sizing: border-box
 	border-radius: 5px
-	border: 1px solid #abadb3
+	border: 1px solid #bbb
 	padding: 4px 5px
 	// Chrome 26 will behave badly if we do this. Silly!
 	@if !chrome
@@ -912,13 +912,15 @@ li.separator
 		width: 100%
 		height: 11px
 		padding-bottom: 3px
-		background: url($images/theme/menurow.gif) no-repeat 0 3px
+		background: url($images/theme/menurow.gif) no-repeat 14px 5px
 
 .mimenu
 	ul > li:first-child:before
-		top: 0
+		left, top: 0
 	&.right ul > li:first-child:before
-		background-position: 66% 3px
+		background-position: 100% 5px
+		border-right: 14px solid transparent
+		box-sizing: border-box
 
 /* Top-level menu icons.
 ------------------------------------------------------- */
@@ -1310,8 +1312,9 @@ section.block extends .wrc
 	dl.settings
 		margin: 0
 
-.bc, .bc2
+.bc
 	white-space: nowrap
+	font-size: .9em
 	width: 5%
 
 tr.catbg

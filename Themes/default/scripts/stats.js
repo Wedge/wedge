@@ -12,7 +12,7 @@
 
 function weStatsCenter(oOptions)
 {
-	this.onBeforeCollapseYear = function (oToggle)
+	this.onCollapseYear = function (oToggle)
 	{
 		// Tell Wedge that all underlying months have disappeared.
 		$.each(oYears[oToggle.opt.sYearId].oMonths, function () {
@@ -21,7 +21,7 @@ function weStatsCenter(oOptions)
 		});
 	};
 
-	this.onBeforeCollapseMonth = function (oToggle)
+	this.onCollapseMonth = function (oToggle)
 	{
 		if (oToggle.bCollapsed)
 			return;
@@ -40,7 +40,7 @@ function weStatsCenter(oOptions)
 		oYearToggle.opt.aSwapContainers = aNewContainers;
 	};
 
-	this.onBeforeExpandMonth = function (oToggle)
+	this.onExpandMonth = function (oToggle)
 	{
 		// Ignore if we're still loading the previous batch.
 		if (bIsLoading)
@@ -129,8 +129,8 @@ function weStatsCenter(oOptions)
 			oCurYear.oToggle = new weToggle({
 				isCollapsed: oCurYear.bIsCollapsed,
 				sYearId: sYearId,
-				onBeforeCollapse: function () {
-					that.onBeforeCollapseYear(this);
+				onCollapse: function () {
+					that.onCollapseYear(this);
 				},
 				aSwapContainers: [],
 				aSwapImages: [oOptions.sYearImageIdPrefix + sYearId],
@@ -159,11 +159,11 @@ function weStatsCenter(oOptions)
 			oCurMonth.oToggle = new weToggle({
 				isCollapsed: oCurMonth.bIsCollapsed,
 				sMonthId: sMonthId,
-				onBeforeCollapse: function () {
-					that.onBeforeCollapseMonth(this);
+				onCollapse: function () {
+					that.onCollapseMonth(this);
 				},
-				onBeforeExpand: function () {
-					that.onBeforeExpandMonth(this);
+				onExpand: function () {
+					that.onExpandMonth(this);
 				},
 				aSwapContainers: [],
 				aSwapImages: [oOptions.sMonthImageIdPrefix + sMonthId],

@@ -342,7 +342,7 @@ function template_sidebar_before()
 			', $txt['thought'], '
 		</we:title>
 		<a href="#" onclick="return oThought.edit(\'\', \'\', true);">', $txt['add_thought'], '</a> |
-		<a href="#" onclick="return oThought.edit(\'\');">', $txt['edit_thought'], '</a>
+		<a href="#" onclick="return oThought.edit(\'\');">', $txt['thome_edit'], '</a>
 		<div class="my thought" id="thought_update" data-oid="', $thought_id, '" data-prv="', $thought_prv, '"><span>', $thought, '</span></div>
 	</section>';
 
@@ -660,6 +660,40 @@ function template_menu()
 	}
 	echo '</ul>
 	</div>';
+}
+
+function template_mini_menu($menu, $class)
+{
+	global $context, $txt;
+
+	if (empty($context['mini_menu'][$menu]))
+		return;
+
+	$js = '
+	$(".' . $class . '").mime({';
+
+	foreach ($context['mini_menu'][$menu] as $post => $linklist)
+		$js .= '
+		' . $post . ': ["' . implode('", "', $linklist) . '"],';
+
+	$js = substr($js, 0, -1) . '
+	}, {';
+
+	foreach ($context['mini_menu_items'][$menu] as $key => $pmi)
+	{
+		if (!isset($context['mini_menu_items_show'][$menu][$key]))
+			continue;
+		$js .= '
+		' . $key . ': [';
+		foreach ($pmi as $type => $item)
+			if ($type === 'caption')
+				$js .= (isset($txt[$item]) ? JavaScriptEscape($txt[$item]) : "''") . ', ' . (isset($txt[$item . '_desc']) ? JavaScriptEscape($txt[$item . '_desc']) : "''") . ', ';
+			else
+				$js .= "'$item', ";
+		$js = substr($js, 0, -2) . '],';
+	}
+	add_js(substr($js, 0, -1) . '
+	});');
 }
 
 // The same footer area...

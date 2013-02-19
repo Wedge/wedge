@@ -150,7 +150,7 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 					opacity: 'show',
 					top: '+=20'
 				})
-				.dragslide();
+				.ds();
 		};
 
 	// Try and get the title for the current link.
@@ -170,14 +170,14 @@ function reqWin(from, desired_width, string, modal_type, callback, e)
 
 	// We create the popup inside a dummy div to fix positioning in freakin' IE6.
 	$('body').append(
-		$('<div></div>')
+		$('<div>')
 		.attr('id', 'popup')
 		.width(viewport_width)
 		.height(viewport_height)
 		.css({ top: is_ie6 || is_ios ? $(window).scrollTop() : 0 })
 		.fadeIn()
 		.append(
-			$('<div></div>')
+			$('<div>')
 			.attr('id', 'helf')
 			.data('src', help_page)
 		)
@@ -279,7 +279,7 @@ function expandPages(spanNode, firstPage, lastPage, perPage)
 function show_ajax()
 {
 	$('body').append(
-		$('<div id="ajax_in_progress"></div>')
+		$('<div id="ajax_in_progress">')
 			.html('<a href="#" onclick="hide_ajax();" title="' + (we_cancel || '') + '"></a>' + we_loading)
 			.css(is_ie6 ? { position: 'absolute', top: $(window).scrollTop() } : {})
 	);
@@ -353,50 +353,108 @@ function weSelectText(oCurElement)
 }
 
 
-(function ()
+/**
+ * Drag & slide plugin.
+ * You may set an area as non-draggable by adding the nodrag class to it.
+ * This way, you can drag the element, but still access UI elements within it.
+ */
+
+$.fn.ds = function ()
 {
 	var origMouse, currentPos, currentDrag = 0;
 
-	// You may set an area as non-draggable by adding the nodrag class to it.
-	// This way, you can drag the element, but still access UI elements within it.
-	$.fn.dragslide = function () {
-		// Updates the position during the dragging process
-		$(document)
-			.mousemove(function (e) {
-				if (currentDrag)
-				{
-					$(currentDrag).css({
-						left: currentPos.x + e.pageX - origMouse.x,
-						top: currentPos.y + e.pageY - origMouse.y
-					});
-					return false;
-				}
-			})
-			.mouseup(function () {
-				if (currentDrag)
-					return !!(currentDrag = 0);
-			});
-
-		return this
-			.css('cursor', 'move')
-			// Start the dragging process
-			.mousedown(function (e) {
-				if ($(e.target).closest('.nodrag').length)
-					return true;
-
-				$(this).css('zIndex', 999);
-
-				origMouse = { x: e.pageX, y: e.pageY };
-				currentPos = { x: parseInt(this.offsetLeft, 10), y: parseInt(this.offsetTop, 10) };
-				currentDrag = this;
-
+	// Updates the position during the dragging process
+	$(document)
+		.mousemove(function (e) {
+			if (currentDrag)
+			{
+				$(currentDrag).css({
+					left: currentPos.x + e.pageX - origMouse.x,
+					top: currentPos.y + e.pageY - origMouse.y
+				});
 				return false;
-			})
-			.find('.nodrag')
-			.css('cursor', 'default');
-	};
+			}
+		})
+		.mouseup(function () {
+			if (currentDrag)
+				return !!(currentDrag = 0);
+		});
 
-})();
+	this // 'return this' to make it chainable... Costs extra space.
+		.css('cursor', 'move')
+		// Start the dragging process
+		.mousedown(function (e) {
+			if ($(e.target).closest('.nodrag').length)
+				return true;
+
+			$(this).css('zIndex', 999);
+
+			origMouse = { x: e.pageX, y: e.pageY };
+			currentPos = { x: parseInt(this.offsetLeft, 10), y: parseInt(this.offsetTop, 10) };
+			currentDrag = this;
+
+			return false;
+		})
+		.find('.nodrag')
+		.css('cursor', 'default');
+};
+
+
+/**
+ * Mini-menu (mime) plugin. Yay.
+ * Supposed to be generic, but good luck using it in plugins...
+ */
+
+$.fn.mime = function (oList, oStrings)
+{
+	this.each(function ()
+	{
+		var
+			$mime = $(this),
+			id = $mime.data('id') || $mime.closest('.root').attr('id').slice(3), // Extract the context id from the parent message
+			$men = $('<div class="mimenu"><ul class="actions">').hide(),
+			pms;
+
+		$.each(oList[id], function ()
+		{
+			pms = oStrings[this.slice(0, 2)];
+
+			$men.find('ul').append('<li><a>').find('a:last')
+				.html(pms[0].wereplace({ 1: id, 2: this.slice(3) }))
+				.attr('title', pms[1])
+				.attr('class', pms[3])
+				.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : '')
+				.on(pms[4] ? { click: new Function('e', pms[4].wereplace({ 1: id, 2: this.slice(3) })) } : {}); // eval, bad! No user input, good!
+		});
+
+		$mime.wrap('<span class="mime">').after($men).parent().hover(
+			function () { $men.stop(true).show().animate(visiblePosition, 300, function () { $men.css('overflow', 'visible') }); },
+			function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }
+		);
+
+		var
+			// Not storing these saves two bytes... But makes the plugin 20% slower to start.
+			wi = $men.width(),
+			he = $men.height(),
+
+			hiddenPosition = {
+				opacity: 0,
+				// If we start from halfway into it, the animation looks nicer.
+				width:  wi / 2,
+				height: he / 2,
+				paddingTop: 0
+			},
+
+			visiblePosition = {
+				opacity: 1,
+				width: wi,
+				height: he,
+				paddingTop: $men.css('paddingTop')
+			};
+
+		$men.css(hiddenPosition).toggleClass('right', $mime.offset().left > $(window).width() / 2);
+	});
+};
 
 
 /**
@@ -404,7 +462,7 @@ function weSelectText(oCurElement)
  * May not show, but it took years to refine it.
  */
 
-(function ()
+$.fn.mm = function ()
 {
 	var menu_baseId = 0, menu_delay = [],
 
@@ -456,29 +514,23 @@ function weSelectText(oCurElement)
 		$('#' + id).children().andSelf().removeClass('hove').find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
 	};
 
-	_buildMenus = function ()
-	{
-		$('.css.menu').each(function () {
-			var $elem = $(this).show();
-			$(this).find('li').each(function () {
-				$(this).attr('id', 'li' + menu_baseId++)
-					.on('mouseenter focus', menu_show_me)
-					.on('mouseleave blur', menu_hide_me)
-					// Disable double clicks...
-					.mousedown(false)
-					// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
-					.filter(':has(>a,>h4>a)')
-					.click(function () {
-						$('.hove').removeClass('hove');
-						$elem.find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
-					});
-			});
-		})
-		// Now that JS is ready to take action... Disable the pure CSS menu!
-		.removeClass('css');
-	};
-
-})();
+	this.each(function () {
+		var $elem = $(this);
+		$elem.find('li').each(function () {
+			$(this).attr('id', 'li' + menu_baseId++)
+				.on('mouseenter focus', menu_show_me)
+				.on('mouseleave blur', menu_hide_me)
+				// Disable double clicks...
+				.mousedown(false)
+				// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
+				.filter(':has(>a,>h4>a)')
+				.click(function () {
+					$('.hove').removeClass('hove');
+					$elem.find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);
+				});
+		});
+	});
+};
 
 
 /**
@@ -497,8 +549,8 @@ $(function ()
 	// Transform existing select boxes into our super boxes.
 	$('select').sb();
 
-	// Put some JS into our CSS menus.
-	_buildMenus();
+	// Now replace our pure CSS menus with JS-powered versions.
+	$('.menu').removeClass('css').mm();
 
 	// Bind all delayed inline events to their respective DOM elements.
 	$('*[data-eve]').each(function ()
@@ -508,6 +560,9 @@ $(function ()
 			that.on(eves[this][0], eves[this][1]);
 		});
 	});
+
+	if (is_android)
+		$('.umme').click(false);
 });
 
 
@@ -527,12 +582,12 @@ function weToggle(opt)
 	this.cs = function (bCollapse, bInit)
 	{
 		// Handle custom function hook before collapse.
-		if (!bInit && bCollapse && opt.onBeforeCollapse)
-			opt.onBeforeCollapse.call(this);
+		if (!bInit && bCollapse && opt.onCollapse)
+			opt.onCollapse.call(this);
 
 		// Handle custom function hook before expand.
-		else if (!bInit && !bCollapse && opt.onBeforeExpand)
-			opt.onBeforeExpand.call(this);
+		else if (!bInit && !bCollapse && opt.onExpand)
+			opt.onExpand.call(this);
 
 		// Loop through all the images that need to be toggled.
 		$.each(opt.aSwapImages || [], function () {
@@ -638,30 +693,15 @@ function JumpTo(control, id)
 	{
 		var
 			ajaxUrl = weUrl('action=ajax;sa=thought;'),
-			sReply = $txt['reply'],
 			sNoText = $txt['no_thought_yet'],
-			sLabelThought = $txt['thought'],
-			sEdit = $txt['edit_thought'],
 
 			// Make that personal text editable (again)!
 			cancel = function () {
 				$('#thought_form').siblings().show().end().remove();
-			},
-
-			interact_thoughts = function ()
-			{
-				var thought = $(this), tid = thought.data('tid'), mid = thought.data('mid');
-				if (tid)
-					thought.after('<div class="thought_actions">'
-						+ (thought.data('self') !== '' ? '' : '<input type="button" class="submit"><input type="button" class="delete">')
-						+ '<input type="button" class="new"></div>').next()
-					.find('.new').val(sReply).click(function () { oThought.edit(tid, mid, true); })						// Reply button
-					.prev().val(we_delete).click(function (e) { return ask(we_confirm, e) && oThought.remove(tid); })	// Delete button
-					.prev().val(sEdit).click(function () { oThought.edit(tid, mid); });									// Submit button
 			};
 
 		// Show the input after the user has clicked the text.
-		this.edit = function (tid, mid, is_new, text, p)
+		this.edit = function (tid, mid, is_new)
 		{
 			cancel();
 
@@ -669,8 +709,8 @@ function JumpTo(control, id)
 				thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(),
 				pr = '', privacy = (thought.data('prv') + '').split(','),
 
-				cur_text = is_new ? text || '' : (was_personal.toLowerCase() == sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-					was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + 'in=' + tid, { async: false }).responseText));
+				cur_text = is_new ? '' : (was_personal.toLowerCase() == sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
+					was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + 'in=' + tid, { async: false }).responseText)), p;
 
 			for (p in privacies)
 				pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
@@ -734,7 +774,6 @@ function JumpTo(control, id)
 								text: $text.text()
 							})
 						));
-						$(new_id).each(interact_thoughts);
 					}
 					// If not, it's food for thought -- either new, or an edit.
 					else
@@ -749,14 +788,12 @@ function JumpTo(control, id)
 
 		$('#thought_update span').html($('#thought_update span').html() || sNoText);
 		$('#thought_update')
-			.attr('title', sLabelThought)
+			.attr('title', $txt['thought'])
 			.click(function () { oThought.edit(''); });
-		$('.thought').each(interact_thoughts);
 	}
 @endif
 
 /* Optimize:
 _formSubmitted = _f
-_buildMenus = _b
 _modalDone = _c
 */

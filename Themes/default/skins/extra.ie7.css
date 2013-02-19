@@ -126,7 +126,7 @@ li.separator
 	width: 20%
 	padding-right: 0
 
-ul.actions
+.actions
 	display: block
 	width: 40%
 	float: right
@@ -169,12 +169,6 @@ input.cancel
 
 #thought_form input[type=submit]
 	background-position: -99px -99px
-
-.thought_actions
-	display: none
-
-table.thought_list td:hover .thought_actions
-	display: inline-block
 
 // Without this, the clear: both on dt will fail.
 dl.settings dd

@@ -243,7 +243,7 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg wrc">
 			<h6>
-				<span class="top_likes"></span>
+				<span class="like_button" style="vertical-align: 2px; padding: 0 11px 0"></span>
 				', $txt['top_liked'], '
 			</h6>
 			<dl class="stats">';
@@ -271,7 +271,7 @@ function template_main()
 
 		<div class="two-columns"><div class="windowbg2 wrc">
 			<h6>
-				<span class="top_likes"></span>
+				<span class="like_button" style="vertical-align: 2px; padding: 0 11px 0"></span>
 				', $txt['top_liked_posters'], '
 			</h6>
 			<dl class="stats">';

@@ -50,7 +50,7 @@ if (!defined('WEDGE'))
 function Display()
 {
 	global $txt, $settings, $context, $theme;
-	global $options, $board_info, $topic, $board, $boardurl;
+	global $options, $board_info, $topic, $board;
 	global $attachments, $messages_request, $topicinfo;
 
 	// What are you gonna display if these are empty?!
@@ -1093,108 +1093,108 @@ function Display()
 
 	// "Mini-menu's small in size, but it's very wise."
 	$short_profiles = !empty($settings['pretty_filters']['profiles']);
-	$context['user_menu'] = array();
-	$context['user_menu_items_show'] = array();
-	$context['user_menu_items'] = array(
+	$context['mini_menu']['user'] = array();
+	$context['mini_menu_items_show']['user'] = array();
+	$context['mini_menu_items']['user'] = array(
 		'pr' => array(
 			'caption' => 'usermenu_profile',
-			'action' => '\'\'',
-			'class' => '\'profile_button\'',
+			'action' => '',
+			'class' => 'profile_button',
 		),
 		'pm' => array(
 			'caption' => 'usermenu_sendpm',
-			'action' => '\'<URL>?action=pm;sa=send;u=%id%\'',
-			'class' => '\'pm_button\'',
+			'action' => '<URL>?action=pm;sa=send;u=%1%',
+			'class' => 'pm_button',
 		),
 		'we' => array(
 			'caption' => 'usermenu_website',
-			'action' => '\'%special%\'',
-			'class' => '\'www_button\'',
+			'action' => '%2%',
+			'class' => 'www_button',
 		),
 		'po' => array(
 			'caption' => 'usermenu_showposts',
-			'action' => $short_profiles ? '\'?area=showposts\'' : '\'<URL>?action=profile;u=%id%;area=showposts\'',
-			'class' => '\'post_button\'',
+			'action' => $short_profiles ? '?area=showposts' : '<URL>?action=profile;u=%1%;area=showposts',
+			'class' => 'post_button',
 		),
 		'ab' => array(
 			'caption' => 'usermenu_addbuddy',
-			'action' => '\'<URL>?action=buddy;u=%id%;' . $context['session_query'] . '\'',
-			'class' => '\'contact_button\'',
+			'action' => '<URL>?action=buddy;u=%1%;' . $context['session_query'] . '',
+			'class' => 'contact_button',
 		),
 		'rb' => array(
 			'caption' => 'usermenu_removebuddy',
-			'action' => '\'<URL>?action=buddy;u=%id%;' . $context['session_query'] . '\'',
-			'class' => '\'contact_button\'',
+			'action' => '<URL>?action=buddy;u=%1%;' . $context['session_query'] . '',
+			'class' => 'contact_button',
 		),
 		'ip' => array(
 			'caption' => 'usermenu_seeip',
-			'action' => '\'<URL>?action=help;in=see_member_ip\'',
-			'class' => '\'ip_button\'',
+			'action' => '<URL>?action=help;in=see_member_ip',
+			'class' => 'ip_button',
 		),
 		'tk' => array(
 			'caption' => 'usermenu_trackip',
-			'action' => '\'<URL>?action=profile;u=%id%;area=tracking;sa=ip;searchip=%special%\'',
-			'class' => '\'ip_button\'',
+			'action' => '<URL>?action=profile;u=%1%;area=tracking;sa=ip;searchip=%2%',
+			'class' => 'ip_button',
 		),
 	);
 
-	$context['action_menu'] = array();
-	$context['action_menu_items_show'] = array();
-	$context['action_menu_items'] = array(
+	$context['mini_menu']['action'] = array();
+	$context['mini_menu_items_show']['action'] = array();
+	$context['mini_menu_items']['action'] = array(
 		'lk' => array(
 			'caption' => 'acme_like',
-			'action' => '\'<URL>?action=like;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
-			'class' => '\'like_button\'',
+			'action' => '<URL>?action=like;topic=' . $context['current_topic'] . ';msg=%1%;' . $context['session_query'] . '',
+			'class' => 'like_button',
 		),
 		'uk' => array(
 			'caption' => 'acme_unlike',
-			'action' => '\'<URL>?action=like;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
-			'class' => '\'unlike_button\'',
+			'action' => '<URL>?action=like;topic=' . $context['current_topic'] . ';msg=%1%;' . $context['session_query'] . '',
+			'class' => 'unlike_button',
 		),
 		'qu' => array(
 			'caption' => 'acme_quote',
-			'action' => '\'<URL>?action=post;quote=%id%;topic=' . $context['current_topic'] . ';last=' . $context['topic_last_message'] . '\'',
-			'class' => '\'quote_button\'',
+			'action' => '<URL>?action=post;quote=%1%;topic=' . $context['current_topic'] . ';last=' . $context['topic_last_message'] . '',
+			'class' => 'quote_button',
 		),
 		'mo' => array(
 			'caption' => 'acme_modify',
-			'action' => '\'<URL>?action=post;msg=%id%;topic=' . $context['current_topic'] . '\'',
-			'class' => '\'modify_button\'',
+			'action' => '<URL>?action=post;msg=%1%;topic=' . $context['current_topic'] . '',
+			'class' => 'modify_button',
 		),
 		'ap' => array(
 			'caption' => 'acme_approve',
-			'action' => '\'<URL>?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
-			'class' => '\'approve_button\'',
+			'action' => '<URL>?action=moderate;area=postmod;sa=approve;topic=' . $context['current_topic'] . ';msg=%1%;' . $context['session_query'] . '',
+			'class' => 'approve_button',
 		),
 		're' => array(
 			'caption' => 'acme_remove',
-			'action' => '\'<URL>?action=deletemsg;topic=' . $context['current_topic'] . ';msg=%id%;' . $context['session_query'] . '\'',
-			'class' => '\'remove_button\'',
+			'action' => '<URL>?action=deletemsg;topic=' . $context['current_topic'] . ';msg=%1%;' . $context['session_query'] . '',
+			'class' => 'remove_button',
 		),
 		'sp' => array(
 			'caption' => 'acme_split',
-			'action' => '\'<URL>?action=splittopics;topic=' . $context['current_topic'] . ';at=%id%\'',
-			'class' => '\'split_button\'',
+			'action' => '<URL>?action=splittopics;topic=' . $context['current_topic'] . ';at=%1%',
+			'class' => 'split_button',
 		),
 		'me' => array(
 			'caption' => 'acme_merge',
-			'action' => '\'<URL>?action=mergeposts;pid=%id%;msgid=%special%;topic=' . $context['current_topic'] . '\'',
-			'class' => '\'mergepost_button\'',
+			'action' => '<URL>?action=mergeposts;pid=%1%;msgid=%2%;topic=' . $context['current_topic'] . '',
+			'class' => 'mergepost_button',
 		),
 		'rs' => array(
 			'caption' => 'acme_restore',
-			'action' => '\'<URL>?action=restoretopic;msgs=%id%;' . $context['session_query'] . '\'',
-			'class' => '\'restore_button\'',
+			'action' => '<URL>?action=restoretopic;msgs=%1%;' . $context['session_query'] . '',
+			'class' => 'restore_button',
 		),
 		'rp' => array(
 			'caption' => 'acme_report',
-			'action' => '\'<URL>?action=report;topic=' . $context['current_topic'] . ';msg=%id%\'',
-			'class' => '\'report_button\'',
+			'action' => '<URL>?action=report;topic=' . $context['current_topic'] . ';msg=%1%',
+			'class' => 'report_button',
 		),
 		'wa' => array(
 			'caption' => 'acme_warn',
-			'action' => '\'<URL>?action=profile;u=%special%;area=issuewarning;msg=%id%\'',
-			'class' => '\'warn_button\'',
+			'action' => '<URL>?action=profile;u=%2%;area=issuewarning;msg=%1%',
+			'class' => 'warn_button',
 		),
 	);
 
@@ -1400,7 +1400,7 @@ function prepareDisplayContext($reset = false)
 	$output['is_message_author'] = $is_me = $message['id_member'] == we::$id;
 
 	// Now, to business. Is it not a guest, and we haven't done this before?
-	if ($output['member']['id'] != 0 && !isset($context['user_menu'][$output['member']['id']]))
+	if ($output['member']['id'] != 0 && !isset($context['mini_menu']['user'][$output['member']['id']]))
 	{
 		// 1. Preparation, since we'd rather not figure this stuff out time and again if we can help it.
 		if ($can_pm === null)
@@ -1440,11 +1440,11 @@ function prepareDisplayContext($reset = false)
 		// If we can't do anything, it's not even worth recording the user's website...
 		if (count($menu))
 		{
-			$context['user_menu'][$output['member']['id']] = $menu;
+			$context['mini_menu']['user'][$output['member']['id']] = $menu;
 			$amenu = array();
 			foreach ($menu as $mid => $name)
 				$amenu[substr($name, 0, 2)] = true;
-			$context['user_menu_items_show'] += $amenu;
+			$context['mini_menu_items_show']['user'] += $amenu;
 		}
 	}
 
@@ -1486,23 +1486,23 @@ function prepareDisplayContext($reset = false)
 		// If we can't do anything, it's not even worth recording the last message ID...
 		if (!empty($menu))
 		{
-			$context['action_menu'][$output['id']] = $menu;
+			$context['mini_menu']['action'][$output['id']] = $menu;
 			$amenu = array();
 			foreach ($menu as $mid => $name)
 				$amenu[substr($name, 0, 2)] = true;
-			$context['action_menu_items_show'] += $amenu;
+			$context['mini_menu_items_show']['action'] += $amenu;
 		}
 	}
 
 	// Don't forget to set this to true in the following hook if you're going to add a non-menu button.
-	$output['has_buttons'] = $context['can_quote'] || $output['can_modify'] || !empty($context['action_menu'][$output['id']]);
+	$output['has_buttons'] = $context['can_quote'] || $output['can_modify'] || !empty($context['mini_menu']['action'][$output['id']]);
 
 	call_hook('display_post_done', array(&$counter, &$output));
 
 	// Fixing the meta description. We do it here because we pull things post by post.
 	// Since that's the case, the header has already been done by the point we get to here.
 	if (!isset($context['meta_description_repl']))
-		$context['meta_description_repl'] = preg_replace('~\s+~', ' ', strip_tags(str_replace('<br>', ' ', $output['body'])));
+		$context['meta_description_repl'] = preg_replace('~\s+~', ' ', strip_tags(str_replace(array('"', '<br>'), array('\'', ' '), $output['body'])));
 
 	if (empty($options['view_newest_first']))
 		$counter++;

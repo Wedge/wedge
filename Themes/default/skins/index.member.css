@@ -6,7 +6,7 @@
 		line-height: 1.5em
 
 // These user menu options definitely aren't available to guests.
-ul.actions
+.actions
 	.contact_button
 		background-image: url($images/icons/online.gif)
 		background-position: 0 0
@@ -121,7 +121,7 @@ ul.buttonlist
 		.btn
 			line-height: 13px
 
-#personal_drafts ul.actions
+#personal_drafts .actions
 	padding-right: 0
 
 #searchLabelsExpand li
@@ -174,7 +174,6 @@ ul.buttonlist
 .thought
 	ul
 		margin, padding: 0 0 0 8px
-		padding: 0 0 0 8px
 	li
 		margin, padding: 0
 
@@ -186,32 +185,6 @@ ul.buttonlist
 	background: url($images/icons/thought.gif) no-repeat
 	width: width($images_dir/icons/thought.gif)px
 	height: height($images_dir/icons/thought.gif)px
-
-table.thought_list td
-	position: relative
-
-	@if firefox
-		// Firefox doesn't support 'position: relative' on a table cell, unlike other browsers.
-		> div
-			position: relative
-	@endif
-
-.thought_actions
-	position: absolute
-	right: 8px
-	top: 50%
-	opacity: 0
-	transition: opacity .3s ease
-	margin-top: -11px // Min height is at 22px
-	input
-		margin: 0 2px
-		padding-top, padding-bottom: 2px
-
-table.thought_list td:hover
-	.thought_actions
-		opacity: 1
-	.hide
-		display: none
 
 #new_thought
 	display: none

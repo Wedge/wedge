@@ -221,7 +221,7 @@ span.percent
 	margin: 0 10px 0 -3px
 
 // The action buttons
-ul.actions
+.actions
 	margin: 0.9em 0 0 11px
 	float, clear, text-align: left
 	li
@@ -230,26 +230,27 @@ ul.actions
 		a
 			padding: 0 20px 0 0
 			float: left
-	.quote_button
-		background-position: 100% 0
-	.remove_button
-		background-position: 100% -30px
-	.modify_button
-		background-position: 100% -60px
-	.approve_button
-		background-position: 100% -90px
-	.restore_button
-		background-position: 100% -120px
-	.split_button
-		background-position: 100% -150px
-	.reply_button
-		background-position: 100% -180px
-	.reply_all_button
-		background-position: 100% -180px
-	.notify_button
-		background-position: 100% -210px
-	.mergepost_button
-		background-position: 100% -242px
+
+.quote_button
+	background-position: 100% 0
+.remove_button
+	background-position: 100% -30px
+.modify_button
+	background-position: 100% -60px
+.approve_button
+	background-position: 100% -90px
+.restore_button
+	background-position: 100% -120px
+.split_button
+	background-position: 100% -150px
+.reply_button
+	background-position: 100% -180px
+.reply_all_button
+	background-position: 100% -180px
+.notify_button
+	background-position: 100% -210px
+.mergepost_button
+	background-position: 100% -242px
 
 .post
 	clear: left

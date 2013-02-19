@@ -42,22 +42,11 @@
 	line-height: 1.2em
 
 // The thought list should give more space to thoughts themselves.
-.bc, .bc2
+.bc
 	white-space: normal
 
 @remove .bbc_code, .php_code
 	word-wrap: normal
-
-@remove .thought_actions
-	position: absolute
-	opacity: 0
-
-.thought_actions
-	display: none
-
-table.thought_list td:hover
-	.thought_actions
-		display: inline
 
 // iOS needs its hacks, too. Don't even bother, this one makes absolutely
 // no frigging sense. If set to 'relative', the menu refuses to show up.

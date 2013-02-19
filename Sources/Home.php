@@ -78,7 +78,7 @@ function Home()
 				'per_page' => 10,
 			)
 		);
-		$is_touch = we::is('android,ios');
+
 		$thoughts = array();
 		while ($row = wesql::fetch_assoc($request))
 		{
@@ -98,10 +98,7 @@ function Home()
 			);
 
 			$thought =& $thoughts[$row['id_thought']];
-			$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"'
-				. (!we::$is_guest ? ' data-tid="' . $id . '"' . ($mid && $mid != $id ? ' data-mid="' . $mid . '"' : '') : '')
-				. (we::$id == $row['id_member'] || we::$is_admin ? ' data-self' : '')
-				. ($is_touch ? ' onclick="return true;"' : '') . '><span>' . $thought['text'] . '</span></span>';
+			$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
 
 			if (!empty($row['id_parent_owner']))
 			{
@@ -184,5 +181,79 @@ function Home()
 		$context['show_who'] = allowedTo('who_view') && !empty($settings['who_enabled']);
 
 		call_hook('info_center');
+	}
+
+	/* Mini-menu for thoughts.
+	-------------------------- */
+
+	if (we::$is_guest)
+		return;
+
+	$context['mini_menu']['thought'] = array();
+	$context['mini_menu_items_show']['thought'] = array();
+	$context['mini_menu_items']['thought'] = array(
+		'lk' => array(
+			'caption' => 'acme_like',
+			'action' => '<URL>?action=like;thought;msg=%1%;' . $context['session_query'],
+			'class' => 'like_button',
+		),
+		'uk' => array(
+			'caption' => 'acme_unlike',
+			'action' => '<URL>?action=like;thought;msg=%1%;' . $context['session_query'],
+			'class' => 'unlike_button',
+		),
+		'cx' => array(
+			'caption' => 'thome_context',
+			'action' => '<URL>?action=thoughts;in=%2%#t%1%',
+			'class' => 'context_button',
+		),
+		're' => array(
+			'caption' => 'thome_reply',
+			'action' => '',
+			'class' => 'quote_button',
+			'click' => 'return oThought.edit(%1%, %2%, true)',
+		),
+		'mo' => array(
+			'caption' => 'thome_edit',
+			'action' => '',
+			'class' => 'modify_button',
+			'click' => 'return oThought.edit(%1%, %2%)',
+		),
+		'de' => array(
+			'caption' => 'thome_remove',
+			'action' => '',
+			'class' => 'remove_button',
+			'click' => 'return ask(we_confirm, e, function (go) { if (go) oThought.remove(%1%); return false; })',
+		),
+	);
+
+	foreach ($thoughts as $tho)
+	{
+		$menu = array();
+
+		if ($tho['can_like'])
+			$menu[] = empty($context['liked_posts'][$tho['id']]['you']) ? 'lk' : 'uk';
+
+		$menu[] = 'cx/' . ($tho['id_master'] ? $tho['id_master'] : $tho['id']);
+
+		if (!we::$is_guest)
+			$menu[] = 're/' . $tho['id_master'];
+
+		// Can we delete?
+		if ($tho['id_member'] == we::$id || we::$is_admin)
+		{
+			$menu[] = 'mo/' . $tho['id_master'];
+			$menu[] = 'de';
+		}
+
+		// If we can't do anything, it's not even worth recording the last message ID...
+		if (!empty($menu))
+		{
+			$context['mini_menu']['thought'][$tho['id']] = $menu;
+			$amenu = array();
+			foreach ($menu as $mid => $name)
+				$amenu[substr($name, 0, 2)] = true;
+			$context['mini_menu_items_show']['thought'] += $amenu;
+		}
 	}
 }

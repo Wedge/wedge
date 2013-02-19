@@ -279,7 +279,6 @@ img.new_posts
 		font: 400 120%/120% $subject_font
 
 	ul.info extends ul.reset
-		padding: 0
 		margin: 0 12px 0 20px
 		line-height: 1.2em
 		font-size: 90%
@@ -394,72 +393,88 @@ img.new_posts
 			background: #e0e0f0
 
 // The action buttons
-ul.actions extends ul.reset
+.actions
 	padding: 0 3% 0 0
-	clear, text-align: right
+	margin: 0
 	vertical-align: bottom
 	li extends .inline-block
+		padding: 0
 		margin: 0 0 0 5px
+	.actionbar &
+		float: right
+	img
+		vertical-align: middle
 	a
 		word-wrap: normal
 		display: block
-		height: 20px
-		padding: 0 4px 0 22px
-		background: url($images/theme/actions.png) no-repeat 0 -500px
 		:hover
 			color: #a70
 
-	/**
-	 * This is where you can change the reply/edit/delete etc. icons for your posts.
-	 * You can either modify the actions.png sprite file (in which case you just
-	 * need to set background-position to the correction position as seen below),
-	 * or simply use another file like this: background: url($here/file) no-repeat 0 0
-	 */
+/**
+ * This is where you can change the reply/edit/delete etc. icons for your posts.
+ * You can either modify the actions.png sprite file (in which case you just
+ * need to set background-position to the correction position as seen below),
+ * or simply use another file like this: background: url($here/file) no-repeat 0 0
+ */
 
-	.quote_button
-		background-position: 3px 0
-	.modify_button
-		background-position: 0 -61px
-	.more_button extends .upshrinks
-		background-position: -18px 2px
-	.remove_button
-		background-position: 0 -30px
-	.approve_button
-		background-position: 3px -90px
-	.restore_button
-		background-position: 0 -120px
-	.reply_button
-		background-position: 0 -180px
-	.reply_all_button
-		background-position: 0 -180px
-	.notify_button
-		background-position: 0 -210px
-	.split_button
-		background-position: 4px -150px
-	.mergepost_button
-		background-position: 4px -242px
-	.report_button
-		background-image: url-no-base64($images/report.png)
-		background-position: 2px 0
-	.warn_button
-		background-image: url-no-base64($images/warn.gif)
-		background-position: 2px 0
-	.profile_button
-		background-image: url-no-base64($images/icons/profile_sm.gif)
-		background-position: 0 0
-	.email_button
-		background-image: url-no-base64($images/email_sm.gif)
-		background-position: 0 0
-	.ip_button
-		background-image: url-no-base64($images/ip.gif)
-		background-position: 0 0
-	.www_button
-		background-image: url-no-base64($images/www_sm.gif)
-		background-position: 0 0
-	// !!! While waiting for better icons... Here's a temp.
-	.post_button
-		background-image: url-no-base64($images/new_some.png)
-		background-position: 0 0
+// Sprited action buttons
+.vbtn virtual
+	background: url($images/theme/actions.png) 0 0 no-repeat
+	padding: 0 4px 0 22px
+	height: 20px
+
+.quote_button extends .vbtn
+	background-position: 3px 0
+.modify_button extends .vbtn
+	background-position: 0 -61px
+.remove_button extends .vbtn
+	background-position: 0 -30px
+.approve_button extends .vbtn
+	background-position: 3px -90px
+.restore_button extends .vbtn
+	background-position: 0 -120px
+.reply_button extends .vbtn
+	background-position: 0 -180px
+.reply_all_button extends .vbtn
+	background-position: 0 -180px
+.notify_button extends .vbtn // !! Is this worth having sprited..?
+	background-position: 0 -210px
+.split_button extends .vbtn
+	background-position: 4px -150px
+.mergepost_button extends .vbtn
+	background-position: 4px -242px
+.like_button extends .vbtn
+	background-position: 2px -270px
+	.actionbar &
+		font-size: 1.2em
+.unlike_button extends ".vbtn, .like_button"
+	background-position: 2px -300px
+
+.report_button extends .vbtn
+	background-image: url-no-base64($images/report.png)
+	background-position: 2px 0
+.warn_button extends .vbtn
+	background-image: url-no-base64($images/warn.gif)
+	background-position: 2px 0
+.profile_button extends .vbtn
+	background-image: url-no-base64($images/icons/profile_sm.gif)
+.email_button extends .vbtn
+	background-image: url-no-base64($images/email_sm.gif)
+.ip_button extends .vbtn
+	background-image: url-no-base64($images/ip.gif)
+.www_button extends .vbtn
+	background-image: url-no-base64($images/www_sm.gif)
+
+// !!! While waiting for better icons... Here's a temp.
+.post_button extends .vbtn
+	background-image: url-no-base64($images/new_some.png)
+.context_button extends .vbtn
+	background-image: url-no-base64($images/icons/last_post.gif)
+	background-position: 4px 3px
+
+/**
+ * End of list.
+ */
 
 .inner
 	margin: 0 1em 0 0
@@ -474,9 +489,8 @@ ul.actions extends ul.reset
 .actionbar extends .clearfix
 	padding: 6px 0 4px
 	border-top: 1px solid #ccc
-	ul.actions
+	.actions
 		float: right
-		clear: none
 		a
 			color: darken(#47a, 80%)
 			opacity: .6
@@ -519,12 +533,12 @@ ul.buttonlist extends "ul.reset, .clearfix"
 ---------------------------------------------------- */
 
 // Wrapper span that will contain the menu...
-.mime
+.mime extends .inline-block
 	position: relative
 
-// Styling for the parent link when the menu is open.
-span.hover > a
-	text-decoration: underline
+	// Styling for the parent link when the menu is open.
+	:hover > a
+		text-decoration: underline
 
 // Styling for the mini-menu container below the parent link...
 .mimenu
@@ -532,10 +546,14 @@ span.hover > a
 	position: absolute
 	padding: 10px 0 0
 	font: 400 14px/20px $main_font
+	top: 100%
+	left: -10px
+	&.right
+		left: auto
+		right: -10px
 
 	// ...And for the mini-menu itself (phew.)
 	ul
-		width: auto
 		white-space: nowrap
 		background: #fbfbf8 // rgba(255,255,255, .5)
 		margin: 0
@@ -1193,20 +1211,6 @@ dl.stats
 			opacity: 1
 			transition: opacity .3s ease
 
-.like_button extends ul.actions a
-	background-position: 2px -270px
-	padding: 0 0 0 22px
-	font-size: 1.2em
-	display: inline-block
-
-.unlike_button extends .like_button
-	background-position: 2px -300px
-
-.top_likes extends .like_button
-	display: inline-block
-	vertical-align: -5px
-	padding: 0 3px 0 16px
-
 div.top_row dd
 	width: auto
 
@@ -1322,6 +1326,12 @@ div.top_row dd
 
 #qr_expand, #postMoreExpand, #newsupshrink
 	base: .foldable
+
+// Action button, but depends on upshrink image.
+.more_button extends .upshrinks
+	background-position: -18px 2px
+	padding: 0 4px 0 22px
+	height: 20px
 
 /* Board status icons.
 ------------------------------------------------- */

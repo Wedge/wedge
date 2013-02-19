@@ -177,7 +177,7 @@
 						active = true;
 					}
 				)
-				.dragslide();
+				.ds();
 			};
 
 			var $frame = $anchor.next('.zoom-html');
