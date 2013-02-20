@@ -1937,10 +1937,19 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 		}
 
 		// That couldn't be found! Log the error, but *try* to continue normally.
-		if (!$found && $fatal)
+		if (!$found)
 		{
-			log_error(sprintf($txt['theme_language_error'], $template . '.' . $lang, 'template'));
-			break;
+			if (isset($txt))
+			{
+				$txt = $oldtxt;
+				$helptxt = $oldhelptxt;
+			}
+
+			if ($fatal)
+			{
+				log_error(sprintf($txt['theme_language_error'], $template . '.' . $lang, 'template'));
+				break;
+			}
 		}
 
 		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that. And only once.
