@@ -85,7 +85,7 @@ function Admin()
 				'',
 				'languages' => array(
 					'label' => $txt['language_configuration'],
-					'file' => 'ManageServer',
+					'file' => 'ManageLanguages',
 					'function' => 'ManageLanguages',
 					'icon' => 'languages.gif',
 					'bigicon' => 'languages.png',
@@ -887,13 +887,13 @@ function AdminSearchInternal()
 	// Load a lot of language files.
 	loadLanguage(array(
 		'Help', 'ManageMail', 'ManageSettings', 'ManageBoards', 'ManagePaid', 'ManagePermissions', 'Search',
-		'Login', 'ManageSmileys', 'ManageMaintenance', 'ManageBans', 'ManageMembers',
+		'Login', 'ManageSmileys', 'ManageBans', 'ManageMembers', 'ManageMaintenance',
 	));
 
 	// All the files we need to include.
 	loadSource(array(
 		'ManageSettings', 'ManageBoards', 'ManageMembergroups', 'ManageNews', 'ManageAttachments', 'ManageMail', 'ManageMemberOptions', 'ManagePaid', 'ManageMaintenance',
-		'ManagePermissions', 'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageBans',
+		'ManagePermissions', 'ManagePosts', 'ManageRegistration', 'ManageSearch', 'ManageSearchEngines', 'ManageServer', 'ManageSmileys', 'ManageBans', 'ManageLanguages',
 	));
 
 	/* This is the huge array that defines everything... it's a huge array of items formatted as follows:

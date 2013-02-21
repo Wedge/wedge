@@ -2146,7 +2146,7 @@ function getLanguages($use_cache = true)
 			// Try including this to retrieve the country code. If it doesn't work -- can live with it.
 			@include($entry);
 			$context['languages'][$matches[1]] = array(
-				'name' => westr::ucwords(strtr($matches[1], array('_' => ' '))),
+				'name' => $txt['lang_name'],
 				'code' => isset($txt['lang_dictionary']) ? $txt['lang_dictionary'] : '',
 				'filename' => $matches[1],
 				'location' => $entry,
