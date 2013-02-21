@@ -158,25 +158,6 @@ if (!function_exists('template_button_strip'))
 	}
 }
 
-function template_jump_to()
-{
-	global $context, $scripturl, $settings;
-
-	echo '<', '?xml version="1.0" encoding="UTF-8"?', '>
-<we>';
-	$url = !empty($settings['pretty_enable_filters']) ? $scripturl . '?board=' : '';
-	foreach ($context['jump_to'] as $category)
-	{
-		echo '
-	<item type="c"><![CDATA[', cleanXml($category['name']), ']]></item>';
-		foreach ($category['boards'] as $board)
-			echo '
-	<item level="', $board['child_level'], '" id="', $board['id'], '"', $url ? ' url="' . $url . $board['id'] . '.0"' : '', '><![CDATA[', cleanXml($board['name']), ']]></item>';
-	}
-	echo '
-</we>';
-}
-
 function template_message_icons()
 {
 	global $context;

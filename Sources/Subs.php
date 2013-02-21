@@ -542,14 +542,31 @@ function cleanXml($string)
 }
 
 /**
- * Helper function to return a simple text string to an Ajax request.
+ * Helper function to return an Ajax request, either xml, JS object or plain text, bypassing the skeleton system.
  */
-function returnAjax($output)
+function returnAjax($output, $type = '')
 {
+	$mime = array(
+		'xml' => 'text/xml',
+		'json' => 'application/json',
+	);
+	if (is_array($output))
+		$type = 'json';
+
 	clean_output();
-	header('Content-Type: text/plain; charset=UTF-8');
-	echo $output;
+	header('Content-Type: ' . (isset($mime[$type]) ? $mime[$type] : 'text/plain') . '; charset=UTF-8');
+	echo $type == 'json' ? str_replace('\\/', '/', we_json_encode($output)) : $output;
 	obExit(false);
+}
+
+// Fallback function for json_encode().
+function we_json_encode($str)
+{
+	if (function_exists('json_encode'))
+		return json_encode($str);
+
+	loadSource('Class-JSON');
+	return weJSON::encode($str);
 }
 
 /**

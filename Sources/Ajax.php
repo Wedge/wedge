@@ -63,24 +63,25 @@ function GetJumpTo()
 		'selected_board' => isset($context['current_board']) ? $context['current_board'] : 0,
 		'current_category' => isset($context['current_category']) ? $context['current_category'] : null, // null to list all categories
 	);
-	$context['jump_to'] = getBoardList($boardListOptions);
+	$url = !empty($settings['pretty_enable_filters']) ? $scripturl . '?board=' : '';
+	$jump_to = getBoardList($boardListOptions);
+	$json = array();
 
-	// Make the board safe for display.
-	foreach ($context['jump_to'] as $id_cat => $cat)
+	foreach ($jump_to as $id_cat => $cat)
 	{
-		$context['jump_to'][$id_cat]['name'] = un_htmlspecialchars(strip_tags($cat['name']));
+		$json[] = array(
+			'name' => un_htmlspecialchars(strip_tags($cat['name'])),
+		);
 		foreach ($cat['boards'] as $id_board => $board)
-			$context['jump_to'][$id_cat]['boards'][$id_board]['name'] = un_htmlspecialchars(strip_tags($board['name']));
+			$json[] = array(
+				'level' => (int) $board['child_level'],
+				'id' => $url ? $url . $board['id'] . '.0' : $board['id'],
+				'name' => un_htmlspecialchars(strip_tags($board['name'])),
+			);
 	}
 
-	// Pretty URLs need to be rewritten.
-	if (!empty($settings['pretty_enable_filters']))
-	{
-		ob_start('ob_sessrewrite');
-		$context['pretty']['patterns'][] =  '~(?<=url=")' . preg_quote($scripturl, '~') . '([?;&](board)=[^"]+)~';
-	}
-
-	wetem::load('jump_to');
+	// This will be returned as JSON, saving bytes and processing time.
+	returnAjax($json);
 }
 
 /**

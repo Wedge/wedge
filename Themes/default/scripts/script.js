@@ -15,7 +15,7 @@
 var
 	oThought,
 	weEditors = [],
-	_formSubmitted = false,
+	_formSubmitted,
 	_modalDone = false,
 
 	we_confirm = $txt['generic_confirm_request'],
@@ -25,10 +25,8 @@ var
 	we_submit = $txt['form_submit'],
 	we_ok = $txt['ok'],
 
-	// Basic browser detection. Do not trust it blindlessly. Still, it can be helpful.
+	// Basic browser detector. Do not trust it blindlessly. Still, it can be helpful.
 	ua = function (str) { return navigator.userAgent.toLowerCase().indexOf(str) != -1; },
-
-	is_opera = ua('opera'),
 
 	// The Webkit ones. Oh my, that's a long list... Right now we're only supporting iOS and generic Android browsers.
 	is_webkit = ua('webkit'),
@@ -39,6 +37,8 @@ var
 
 	// This should allow us to catch more touch devices like smartphones and tablets...
 	is_touch = 'ontouchstart' in document.documentElement,
+
+	is_opera = ua('opera'),
 
 	// IE gets versioned, too. Do you have to ask why..?
 	is_ie = ua('msie'),
@@ -424,7 +424,7 @@ $.fn.mime = function (oList, oStrings)
 				.attr('title', pms[1])
 				.attr('class', pms[3])
 				.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : '')
-				.on(pms[4] ? { click: new Function('e', pms[4].wereplace({ 1: id, 2: this.slice(3) })) } : {}); // eval, bad! No user input, good!
+				.click(new Function('e', pms[4] ? pms[4].wereplace({ 1: id, 2: this.slice(3) }) : '')); // eval, bad! No user input, good!
 		});
 
 		$mime.wrap('<span class="mime">').after($men).parent().hover(
@@ -433,18 +433,16 @@ $.fn.mime = function (oList, oStrings)
 		);
 
 		var
-			// Not storing these saves two bytes... But makes the plugin 20% slower to start.
 			wi = $men.width(),
 			he = $men.height(),
 
+			// If we start from halfway into it, the animation looks nicer.
 			hiddenPosition = {
 				opacity: 0,
-				// If we start from halfway into it, the animation looks nicer.
 				width:  wi / 2,
 				height: he / 2,
 				paddingTop: 0
 			},
-
 			visiblePosition = {
 				opacity: 1,
 				width: wi,
@@ -656,24 +654,22 @@ function JumpTo(control, id)
 			// Fill the select box with entries loaded through Ajax.
 			$.post(
 				weUrl('action=ajax;sa=jumpto'),
-				function (XMLDoc) {
-					$('we item', XMLDoc).each(function ()
+				function (board_list)
+				{
+					$.each(board_list, function ()
 					{
-						var
-							that = $(this),
-							// This removes entities from the name...
-							name = that.text().replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
+						// !! This removes entities from the name... Is this still useful?
+						// this.name = this.name.replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
 
 						// Just for the record, we don't NEED to close the optgroup at the end
 						// of the list, even if it doesn't feel right. Saves us a few bytes...
-						if (that.attr('type') == 'c') // Category?
-							sList += '<optgroup label="' + name + '">';
-						else
-							// Show the board option, with special treatment for the current one.
-							sList += '<option value="' + (that.attr('url') || that.attr('id')) + '"'
-									+ (that.attr('id') == id ? ' disabled>=> ' + name + ' &lt;=' :
-										'>' + new Array(+that.attr('level') + 1).join('&nbsp;&nbsp;&nbsp;&nbsp;') + name)
+						if (this.id) // Show the board option, with special treatment for the current one.
+							sList += '<option value="' + this.id + '"'
+									+ (this.id == id ? ' disabled>=> ' + this.name + ' &lt;=' :
+										'>' + new Array(+this.level + 1).join('&nbsp;&nbsp;&nbsp;&nbsp;') + this.name)
 									+ '</option>';
+						else // Category?
+							sList += '<optgroup label="' + this.name + '">';
 					});
 
 					// Add the remaining items after the currently selected item.
@@ -692,7 +688,7 @@ function JumpTo(control, id)
 	function Thought(privacies)
 	{
 		var
-			ajaxUrl = weUrl('action=ajax;sa=thought;'),
+			ajaxUrl = weUrl('action=ajax;sa=thought'),
 			sNoText = $txt['no_thought_yet'],
 
 			// Make that personal text editable (again)!
@@ -709,18 +705,17 @@ function JumpTo(control, id)
 				thought = $('#thought_update' + tid), was_personal = thought.find('span').first().html(),
 				pr = '', privacy = (thought.data('prv') + '').split(','),
 
-				cur_text = is_new ? '' : (was_personal.toLowerCase() == sNoText.toLowerCase() ? '' : (was_personal.indexOf('<') == -1 ?
-					was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + 'in=' + tid, { async: false }).responseText)), p;
+				cur_text = is_new || was_personal == sNoText ? '' : (was_personal.indexOf('<') == -1 ?
+					was_personal.php_unhtmlspecialchars() : $.ajax(ajaxUrl + ';in=' + tid, { async: false }).responseText), p;
 
 			for (p in privacies)
 				pr += '<option value="' + privacies[p][0] + '"' + (in_array(privacies[p][0] + '', privacy) ? ' selected' : '') + '>&lt;div class="privacy_' + privacies[p][1] + '"&gt;&lt;/div&gt;' + privacies[p][2] + '</option>';
 
-			// Hide current thought and edit/modify/delete links, and add tools to write new thought.
+			// Hide current thought, and add tools to write new thought.
 			thought
 				.toggle(tid && is_new)
 				.after('<form id="thought_form"><input type="text" maxlength="255" id="ntho"><select id="npriv">' + pr
-					+ '</select><input type="hidden" id="noid"><input type="submit" class="save"><input type="button" class="cancel"></form>')
-				.siblings('.thought_actions').hide();
+					+ '</select><input type="hidden" id="noid"><input type="submit" class="save"><input type="button" class="cancel"></form>');
 			$('#noid').val(is_new ? 0 : thought.data('oid'))
 				.next().val(we_submit).click(function () { oThought.submit(tid, mid || tid); return false; })	// Save button
 				.next().val(we_cancel).click(function () { oThought.cancel(); });								// Cancel button
@@ -736,7 +731,7 @@ function JumpTo(control, id)
 			var toDelete = $('#thought_update' + tid);
 
 			$.post(
-				ajaxUrl + 'remove',
+				ajaxUrl + ';remove',
 				{ oid: toDelete.data('oid') }
 			);
 
