@@ -47,16 +47,16 @@
 		loadSB = function ()
 		{
 			// Create the new sb
-			$sb = $('<div class="sbox ' + $orig.attr('class') + '" id="sb' + ($orig.attr('id') || ++unique) + '" role="listbox"></div>')
+			$sb = $('<div class="sbox ' + $orig.attr('class') + '" id="sb' + ($orig.attr('id') || ++unique) + '" role="listbox">')
 				.attr('aria-haspopup', true);
 
-			$display = $('<div class="display" id="sbd' + ++unique + '"></div>')
+			$display = $('<div class="display" id="sbd' + ++unique + '">')
 				// Generate the display markup
 				.append(optionFormat($orig.data('default') || $orig.find('option:selected')))
 				.append('<div class="btn">&#9660;</div>');
 
 			// Generate the dropdown markup
-			$dd = $('<div class="items" id="sbdd' + unique + '" role="menu" onselectstart="return false;"></div>')
+			$dd = $('<div class="items" id="sbdd' + unique + '" role="menu" onselectstart="return false;">')
 				.attr('aria-hidden', true);
 
 			// For accessibility/styling, and an easy custom .trigger('close') shortcut.
@@ -153,13 +153,13 @@
 		// Create new markup from an <option>
 		createOption = function ($option)
 		{
-			$option = $option || $('<option></option>');
+			$option = $option || $('<option>');
 
 			// If you want to hide an option (e.g. placeholder),
 			// you can use the magic word: <option data-hide>
 			var visible = $option.attr('data-hide') !== '';
 
-			return $('<div id="sbo' + ++unique + '" role="option"></div>')
+			return $('<div id="sbo' + ++unique + '" role="option">')
 				.data('orig', $option)
 				.data('value', $option.attr('value') || '')
 				.attr('aria-disabled', !!$option.is(':disabled'))
@@ -167,7 +167,7 @@
 				.toggleClass('selected', $option.is(':selected'))
 				.toggle(visible)
 				.append(
-					$('<div class="item"></div>')
+					$('<div class="item">')
 						.attr('style', $option.attr('style') || '')
 						.addClass($option.attr('class'))
 						.append(optionFormat($option))
@@ -178,26 +178,6 @@
 		optionFormat = function ($dom)
 		{
 			return '<div class="text">' + (($dom.text ? $dom.text().replace(/\|/g, '</div><div class="details">') : $dom + '') || '&nbsp;') + '</div>';
-		},
-
-		// Destroy then load, maintaining open/focused state if applicable
-		reloadSB = function ()
-		{
-			var wasOpen = $sb.hasClass('open'), wasFocused = $sb.hasClass('focused');
-
-			closeSB(1);
-
-			// Destroy existing data
-			$sb.remove();
-			$orig.removeClass('sb').off('.sb');
-			$(window).off('.sb');
-
-			loadSB();
-
-			if (wasOpen)
-				openSB(1);
-			else if (wasFocused)
-				focusSB();
 		},
 
 		// Hide and reset dropdown markup
@@ -235,7 +215,7 @@
 		centerOnSelected = function ()
 		{
 			if (scrollbar)
-				scrollbar.st($selected.is(':hidden') ? 0 : $selected.position().top, $selected.height());
+				scrollbar.scrollTo($selected.is(':hidden') ? 0 : $selected.position().top, $selected.height());
 			else
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
@@ -477,8 +457,28 @@
 			$(document).off(keyfunc);
 		};
 
+		// Destroy then load, maintaining open/focused state if applicable
+		this.re = function ()
+		{
+			var wasOpen = $sb.hasClass('open'), wasFocused = $sb.hasClass('focused');
+
+			closeSB(1);
+
+			// Destroy existing data
+			$sb.remove();
+			$orig.removeClass('sb').off('.sb');
+			scrollbar = '';
+			$(window).off('.sb');
+
+			loadSB();
+
+			if (wasOpen)
+				openSB(1);
+			else if (wasFocused)
+				focusSB();
+		};
+
 		loadSB();
-		this.re = reloadSB;
 	},
 
 	/*
@@ -496,24 +496,15 @@
 			startPos = 0, iMouse, iScroll = 0,
 			thumbAxis, viewportAxis, contentAxis,
 			$content, $scrollbar, $thumb,
-			scrollbarRatio, newwi, iTouch,
-
-		wheel = function (e)
-		{
-			// Below: (wheelDelta * 40/120) or (-detail * 40/3) = 40 pixels per wheel movement
-			iScroll = Math.min(contentAxis - viewportAxis, Math.max(0, iScroll - (e.originalEvent.wheelDelta || -e.originalEvent.detail * 40) / 3));
-			$thumb.css('top', iScroll / scrollbarRatio);
-			$content.css('top', -iScroll);
-			e.preventDefault();
-		},
+			scrollbarRatio, iTouch,
 
 		drag = function (e)
 		{
 			scrollTo(startPos + e.pageY - iMouse);
 			return false;
-		},
+		};
 
-		scrollTo = function (iTop, iHeight)
+		this.scrollTo = function (iTop, iHeight)
 		{
 			if (iHeight)
 				iTop = (iTop - viewportAxis / 2 + iHeight / 2) / scrollbarRatio;
@@ -523,29 +514,12 @@
 			$content.css('top', -iScroll);
 		};
 
-		this.st = scrollTo;
-		this.update = function ()
-		{
-			viewportAxis = $dd.height();
-			$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
-			$content = $dd.find('.overview');
-			contentAxis = $content.height();
-			$thumb = $scrollbar.find('div');
-
-			scrollbarRatio = contentAxis / viewportAxis;
-			thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
-
-			// Set size.
-			iMouse = $thumb.offset().top;
-			$thumb.height(thumbAxis);
-		};
-
 		if ($dd.find('.viewport').length)
 			return;
 
-		$dd.width('auto').contents().wrapAll('<div class="viewport"><div class="overview"></div></div>');
+		$dd.width('auto').contents().wrapAll('<div class="viewport"><div class="overview">');
 
-		newwi = $dd.width();
+		var newwi = $dd.width();
 
 		$dd.append('<div class="scrollbar"><div></div></div>');
 
@@ -555,7 +529,18 @@
 		$dd.width(newwi + 15)
 			.find('.viewport').height($dd.height());
 
-		this.update();
+		viewportAxis = $dd.height();
+		$scrollbar = $dd.find('.scrollbar').height(viewportAxis);
+		$content = $dd.find('.overview');
+		contentAxis = $content.height();
+		$thumb = $scrollbar.find('div');
+
+		scrollbarRatio = contentAxis / viewportAxis;
+		thumbAxis = Math.min(viewportAxis, viewportAxis / scrollbarRatio);
+
+		// Set size.
+		iMouse = $thumb.offset().top;
+		$thumb.height(thumbAxis);
 
 		// Set events
 		$scrollbar.mousedown(drag);
@@ -570,7 +555,14 @@
 		});
 
 		$dd
-			.on('DOMMouseScroll mousewheel', wheel)
+			.on('DOMMouseScroll mousewheel', function (e)
+			{
+				// Below: (wheelDelta * 40/120) or (-detail * 40/3) = 40 pixels per wheel movement
+				iScroll = Math.min(contentAxis - viewportAxis, Math.max(0, iScroll - (e.originalEvent.wheelDelta || -e.originalEvent.detail * 40) / 3));
+				$thumb.css('top', iScroll / scrollbarRatio);
+				$content.css('top', -iScroll);
+				e.preventDefault();
+			})
 			// This should add support for scrolling on touch devices.
 			.on('touchstart', function (e) {
 				iTouch = e.originalEvent.touches[0].pageY;
@@ -600,5 +592,4 @@
 				$e.data('sb', new SelectBox($e));
 		});
 	};
-
 })();
