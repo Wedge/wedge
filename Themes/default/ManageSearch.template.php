@@ -127,8 +127,6 @@ function template_select_search_method()
 
 	echo '
 				</dl>
-				', $context['double_index'] ? '<div class="information">
-				' . $txt['search_double_index'] . '</div>' : '', '
 				<fieldset class="search_settings floatleft">
 					<legend>', $txt['search_index'], '</legend>
 					<dl>
@@ -137,37 +135,7 @@ function template_select_search_method()
 								<input type="radio" name="search_index" value=""', empty($settings['search_index']) ? ' checked' : '', '>
 								', $txt['search_index_none'], '
 							</label>
-						</dt>';
-
-	if ($context['supports_fulltext'])
-	{
-		echo '
-						<dt>
-							<label>
-								<input type="radio" name="search_index" value="fulltext"', !empty($settings['search_index']) && $settings['search_index'] == 'fulltext' ? ' checked' : '', empty($context['fulltext_index']) ? ' onclick="say(' . JavaScriptEscape($txt['search_method_fulltext_warning']) . ');"': '', '>
-								', $txt['search_method_fulltext_index'], '
-							</label>
 						</dt>
-						<dd>
-							<span class="smalltext">';
-
-	if (empty($context['fulltext_index']) && empty($context['cannot_create_fulltext']))
-		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_no_index_exists'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=createfulltext;', $context['session_query'], '">', $txt['search_method_fulltext_create'], '</a>]';
-	elseif (empty($context['fulltext_index']) && !empty($context['cannot_create_fulltext']))
-		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_fulltext_cannot_create'];
-	else
-		echo '
-								<strong>', $txt['search_index_label'], ':</strong> ', $txt['search_method_index_already_exists'], ' [<a href="', $scripturl, '?action=admin;area=managesearch;sa=removefulltext;', $context['session_query'], '">', $txt['search_method_fulltext_remove'], '</a>]<br>
-								<strong>', $txt['search_index_size'], ':</strong> ', $context['table_info']['fulltext_length'];
-
-	echo '
-								</span>
-						</dd>';
-	}
-
-	echo '
 						<dt>
 							<label>
 								<input type="radio" name="search_index" value="custom"', !empty($settings['search_index']) && $settings['search_index'] == 'custom' ? ' checked' : '', $context['custom_index'] ? '' : ' onclick="say(' . JavaScriptEscape($txt['search_index_custom_warning']) . ');"', '>
@@ -223,6 +191,7 @@ function template_select_search_method()
 					<input type="submit" name="save" value="', $txt['search_method_save'], '" class="save floatright">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				</div>
+				<br class="clear">
 			</div>
 			<div class="clear"></div>
 		</form>';

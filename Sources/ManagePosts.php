@@ -229,42 +229,6 @@ function ModifyPostSettings($return_config = false)
 	{
 		checkSession();
 
-		// If we're changing the message length let's check the column is big enough.
-		// !!! @todo: Delete? Is it not already done in Wedge...?
-		if (!empty($_POST['max_messageLength']) && $_POST['max_messageLength'] != $settings['max_messageLength'])
-		{
-			loadSource('Class-DBPackages');
-
-			$colData = wedbPackages::list_columns('{db_prefix}messages', true);
-			foreach ($colData as $column)
-				if ($column['name'] == 'body')
-					$body_type = $column['type'];
-
-			$indData = wedbPackages::list_indexes('{db_prefix}messages', true);
-			foreach ($indData as $index)
-				foreach ($index['columns'] as $column)
-					if ($column == 'body' && $index['type'] == 'fulltext')
-						$fulltext = true;
-
-			if (isset($body_type) && $_POST['max_messageLength'] > 65535 && $body_type == 'text')
-			{
-				// !!! Show an error message?!
-				// MySQL only likes fulltext indexes on text columns... for now?
-				if (!empty($fulltext))
-					$_POST['max_messageLength'] = 65535;
-				else
-				{
-					// Make it longer so we can do their limit.
-					wedbPackages::change_column('{db_prefix}messages', 'body', array('type' => 'mediumtext'));
-				}
-			}
-			elseif (isset($body_type) && $_POST['max_messageLength'] <= 65535 && $body_type != 'text')
-			{
-				// Shorten the column so we can have the benefit of fulltext searching again!
-				wedbPackages::change_column('{db_prefix}messages', 'body', array('type' => 'text'));
-			}
-		}
-
 		saveDBSettings($config_vars);
 		redirectexit('action=admin;area=postsettings;sa=posts');
 	}

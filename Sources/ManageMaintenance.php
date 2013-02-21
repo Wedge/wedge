@@ -416,10 +416,6 @@ function ConvertUtf8()
 		if ($db_character_set === 'utf8' && !empty($settings['global_character_set']) && $settings['global_character_set'] === 'UTF-8')
 			fatal_lang_error('utf8_already_utf8');
 
-		// Cannot do conversion if using a fulltext index
-		if (!empty($settings['search_index']) && $settings['search_index'] == 'fulltext')
-			fatal_lang_error('utf8_cannot_convert_fulltext');
-
 		// Grab the character set from the default language file.
 		loadLanguage('index', $language, true);
 		$context['charset_detected'] = $txt['lang_character_set'];

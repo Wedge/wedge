@@ -43,7 +43,6 @@ if (!defined('WEDGE'))
 		- requires the admin_forum permission.
 		- uses the 'select_search_method' block of the ManageSearch
 		  template.
-		- allows to create and delete a fulltext index on the messages table.
 		- allows to delete a custom index (that CreateMessageIndex() created).
 		- calculates the size of the current search indexes in use.
 
@@ -75,9 +74,7 @@ function ManageSearch()
 		'settings' => 'EditSearchSettings',
 		'weights' => 'EditWeights',
 		'method' => 'EditSearchMethod',
-		'createfulltext' => 'EditSearchMethod',
 		'removecustom' => 'EditSearchMethod',
-		'removefulltext' => 'EditSearchMethod',
 		'createmsgindex' => 'CreateMessageIndex',
 	);
 
@@ -207,110 +204,7 @@ function EditSearchMethod()
 	// Load any apis.
 	$context['search_apis'] = loadSearchAPIs();
 
-	// Detect whether a fulltext index is set.
-	$request = wesql::query('
-		SHOW INDEX
-		FROM {db_prefix}messages',
-		array(
-		)
-	);
-	$context['fulltext_index'] = '';
-	if ($request !== false || wesql::num_rows($request) != 0)
-	{
-		while ($row = wesql::fetch_assoc($request))
-			if ($row['Column_name'] == 'body' && (isset($row['Index_type']) && $row['Index_type'] == 'FULLTEXT' || isset($row['Comment']) && $row['Comment'] == 'FULLTEXT'))
-				$context['fulltext_index'][] = $row['Key_name'];
-		wesql::free_result($request);
-
-		if (is_array($context['fulltext_index']))
-			$context['fulltext_index'] = array_unique($context['fulltext_index']);
-	}
-
-	$request = wesql::query('
-		SHOW COLUMNS
-		FROM {db_prefix}messages',
-		array(
-		)
-	);
-	if ($request !== false)
-	{
-		while ($row = wesql::fetch_assoc($request))
-			if ($row['Field'] == 'body' && $row['Type'] == 'mediumtext')
-				$context['cannot_create_fulltext'] = true;
-		wesql::free_result($request);
-	}
-
-	if (preg_match('~^`(.+?)`\.(.+?)$~', $db_prefix, $match) !== 0)
-		$request = wesql::query('
-			SHOW TABLE STATUS
-			FROM {string:database_name}
-			LIKE {string:table_name}',
-			array(
-				'database_name' => '`' . strtr($match[1], array('`' => '')) . '`',
-				'table_name' => str_replace('_', '\_', $match[2]) . 'messages',
-			)
-		);
-	else
-		$request = wesql::query('
-			SHOW TABLE STATUS
-			LIKE {string:table_name}',
-			array(
-				'table_name' => str_replace('_', '\_', $db_prefix) . 'messages',
-			)
-		);
-
-	if ($request !== false)
-	{
-		while ($row = wesql::fetch_assoc($request))
-			if ((isset($row['Type']) && strtolower($row['Type']) != 'myisam') || (isset($row['Engine']) && strtolower($row['Engine']) != 'myisam'))
-				$context['cannot_create_fulltext'] = true;
-		wesql::free_result($request);
-	}
-
-	if (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'createfulltext')
-	{
-		checkSession('get');
-
-		// Make sure it's gone before creating it.
-		wesql::query('
-			ALTER TABLE {db_prefix}messages
-			DROP INDEX body',
-			array(
-				'db_error_skip' => true,
-			)
-		);
-
-		wesql::query('
-			ALTER TABLE {db_prefix}messages
-			ADD FULLTEXT body (body)',
-			array(
-			)
-		);
-
-		$context['fulltext_index'] = 'body';
-	}
-	elseif (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'removefulltext' && !empty($context['fulltext_index']))
-	{
-		checkSession('get');
-
-		wesql::query('
-			ALTER TABLE {db_prefix}messages
-			DROP INDEX ' . implode(',
-			DROP INDEX ', $context['fulltext_index']),
-			array(
-				'db_error_skip' => true,
-			)
-		);
-
-		$context['fulltext_index'] = '';
-
-		// Go back to the default search method.
-		if (!empty($settings['search_index']) && $settings['search_index'] == 'fulltext')
-			updateSettings(array(
-				'search_index' => '',
-			));
-	}
-	elseif (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'removecustom')
+	if (!empty($_REQUEST['sa']) && $_REQUEST['sa'] == 'removecustom')
 	{
 		checkSession('get');
 
@@ -340,7 +234,7 @@ function EditSearchMethod()
 	{
 		checkSession();
 		updateSettings(array(
-			'search_index' => empty($_POST['search_index']) || (!in_array($_POST['search_index'], array('fulltext', 'custom')) && !isset($context['search_apis'][$_POST['search_index']])) ? '' : $_POST['search_index'],
+			'search_index' => empty($_POST['search_index']) || ($_POST['search_index'] != 'custom' && !isset($context['search_apis'][$_POST['search_index']])) ? '' : $_POST['search_index'],
 			'search_force_index' => isset($_POST['search_force_index']) ? '1' : '0',
 			'search_match_words' => isset($_POST['search_match_words']) ? '1' : '0',
 		));
@@ -349,7 +243,6 @@ function EditSearchMethod()
 	$context['table_info'] = array(
 		'data_length' => 0,
 		'index_length' => 0,
-		'fulltext_length' => 0,
 		'custom_index_length' => 0,
 	);
 
@@ -378,7 +271,6 @@ function EditSearchMethod()
 		$row = wesql::fetch_assoc($request);
 		$context['table_info']['data_length'] = $row['Data_length'];
 		$context['table_info']['index_length'] = $row['Index_length'];
-		$context['table_info']['fulltext_length'] = $row['Index_length'];
 		wesql::free_result($request);
 	}
 
@@ -422,7 +314,6 @@ function EditSearchMethod()
 
 	$context['custom_index'] = !empty($settings['search_custom_index_config']);
 	$context['partial_custom_index'] = !empty($settings['search_custom_index_resume']) && empty($settings['search_custom_index_config']);
-	$context['double_index'] = !empty($context['fulltext_index']) && $context['custom_index'];
 }
 
 function CreateMessageIndex()
@@ -696,7 +587,7 @@ function loadSearchAPIs()
 					$apis[$index_name] = array(
 						'filename' => $file,
 						'setting_index' => $index_name,
-						'has_template' => in_array($index_name, array('custom', 'fulltext', 'standard')),
+						'has_template' => in_array($index_name, array('custom', 'standard')),
 						'label' => $index_name && isset($txt['search_index_' . $index_name]) ? $txt['search_index_' . $index_name] : '',
 						'desc' => $index_name && isset($txt['search_index_' . $index_name . '_desc']) ? $txt['search_index_' . $index_name . '_desc'] : '',
 					);
@@ -718,8 +609,8 @@ function create_word_search($size)
 	wedbPackages::create_table(
 		'{db_prefix}log_search_words',
 		array(
-			array('name' => 'id_word', 'size' => $size, 'unsigned' => true, 'null' => false, 'default' => 0),
-			array('name' => 'id_msg', 'size' => 'int', 'unsigned' => true, 'null' => false, 'default' => 0),
+			array('name' => 'id_word', 'type' => $size, 'unsigned' => true, 'null' => false, 'default' => 0),
+			array('name' => 'id_msg', 'type' => 'int', 'unsigned' => true, 'null' => false, 'default' => 0),
 		),
 		array(
 			array(

@@ -1684,7 +1684,7 @@ CREATE TABLE {$db_prefix}messages (
   modified_time int(10) unsigned NOT NULL default 0,
   modified_name varchar(255) NOT NULL default '',
   modified_member mediumint(8) unsigned NOT NULL default 0,
-  body text NOT NULL,
+  body mediumtext NOT NULL,
   icon varchar(16) NOT NULL default 'xx',
   approved tinyint(3) NOT NULL default 1,
   PRIMARY KEY (id_msg),

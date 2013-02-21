@@ -230,7 +230,7 @@ function EditNews()
 		{
 			$news_lines = explode("\n", $settings['news']);
 			unset($news_lines[$id]);
-			updateSettings(array('news' => empty($news_lines) ? '': implode("\n", $news_lines)));
+			updateSettings(array('news' => empty($news_lines) ? '' : implode("\n", $news_lines)));
 		}
 		logAction('news');
 		cache_put_data('news_lines', null);

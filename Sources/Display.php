@@ -1502,7 +1502,7 @@ function prepareDisplayContext($reset = false)
 	// Fixing the meta description. We do it here because we pull things post by post.
 	// Since that's the case, the header has already been done by the point we get to here.
 	if (!isset($context['meta_description_repl']))
-		$context['meta_description_repl'] = preg_replace('~\s+~', ' ', strip_tags(str_replace(array('"', '<br>'), array('\'', ' '), $output['body'])));
+		$context['meta_description_repl'] = westr::cut(preg_replace('~\s+~', ' ', strip_tags(str_replace(array('"', '<br>'), array('\'', ' '), $output['body']))), 160);
 
 	if (empty($options['view_newest_first']))
 		$counter++;

@@ -407,10 +407,6 @@ function Search2()
 	// Make the query lower case. It's gonna be case insensitive anyway.
 	$stripped_query = un_htmlspecialchars(westr::strtolower($stripped_query));
 
-	// This (hidden) setting will do fulltext searching in the most basic way.
-	if (!empty($settings['search_simple_fulltext']))
-		$stripped_query = strtr($stripped_query, array('"' => ''));
-
 	$no_regexp = preg_match('~&#(?:\d{1,7}|x[0-9a-fA-F]{1,6});~', $stripped_query) === 1;
 
 	// Extract phrase parts first (e.g. some words "this is a phrase" some more words.)

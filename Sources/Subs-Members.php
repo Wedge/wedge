@@ -327,6 +327,13 @@ function deleteMembers($users, $check_not_admin = false)
 			'users' => $users,
 		)
 	);
+	wesql::query('
+		DELETE FROM {db_prefix}likes
+		WHERE id_member IN ({array_int:users})',
+		array(
+			'users' => $users,
+		)
+	);
 
 	// Make their votes appear as guest votes - at least it keeps the totals right.
 	// !! Consider adding back in cookie protection.
@@ -407,6 +414,7 @@ function deleteMembers($users, $check_not_admin = false)
 		WHERE ban_type = {string:id_member}
 			AND ban_content IN ({array_string:users})',
 		array(
+			'id_member' => 'id_member',
 			'users' => $users,
 		)
 	);

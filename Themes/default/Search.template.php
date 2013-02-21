@@ -43,8 +43,7 @@ function template_main()
 					</select>
 				</div>';
 
-	if (empty($settings['search_simple_fulltext']))
-		echo '
+	echo '
 				<p>', $txt['search_example'], '</p>';
 
 	if ($context['require_verification'])

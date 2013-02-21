@@ -485,6 +485,32 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			);
 	}
 
+	// Likes. Need to get the message ids - we may already have them, we may not.
+	if (!isset($messages))
+	{
+		$messages = array();
+		$request = wesql::query('
+			SELECT id_msg
+			FROM {db_prefix}messages
+			WHERE id_topic IN ({array_int:topics})',
+			array(
+				'topics' => $topics,
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+			$messages[] = $row['id_msg'];
+		wesql::free_result($request);
+	}
+	wesql::query('
+		DELETE FROM {db_prefix}likes
+		WHERE id_content IN ({array_int:messages})
+			AND content_type = {string:content_type}',
+		array(
+			'messages' => $messages,
+			'content_type' => 'post',
+		)
+	);
+
 	// Delete anything related to the topic.
 	wesql::query('
 		DELETE FROM {db_prefix}messages
