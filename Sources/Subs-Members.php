@@ -712,9 +712,6 @@ function registerMember(&$regOptions, $return_errors = false)
 		foreach ($regOptions['theme_vars'] as $var => $value)
 			$theme_vars[$var] = $value;
 
-	// Call an optional function to validate the users' input.
-	call_hook('register', array(&$regOptions, &$theme_vars));
-
 	// Right, now let's prepare for insertion.
 	$knownInts = array(
 		'date_registered', 'posts', 'id_group', 'last_login', 'instant_messages', 'unread_messages',
@@ -725,6 +722,9 @@ function registerMember(&$regOptions, $return_errors = false)
 	$knownFloats = array(
 		'time_offset',
 	);
+
+	// Call an optional function to validate the users' input.
+	call_hook('register', array(&$regOptions, &$theme_vars, &$knownInts, &$knownFloats));
 
 	$column_names = array();
 	$values = array();

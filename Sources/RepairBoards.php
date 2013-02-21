@@ -96,9 +96,6 @@ function RepairBoards()
 
 		loadSource('Subs-Boards');
 
-		// Get the MySQL version for future reference.
-		$mysql_version = wesql::server_info($db_connection);
-
 		// Actually do the fix.
 		findForumErrors(true);
 

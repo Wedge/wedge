@@ -974,8 +974,11 @@ function makeThemeChanges($memID, $id_theme)
 	);
 
 	// Can't change reserved vars.
-	if ((isset($_POST['options']) && array_intersect($_POST['options'], $reservedVars) != array()) || (isset($_POST['default_options']) && count(array_intersect($_POST['default_options'], $reservedVars)) > 0))
-		fatal_lang_error('no_access', false);
+	foreach (array('options', 'default_options') as $item)
+		if (isset($_POST[$item]) && is_array($_POST[$item]))
+			foreach ($_POST[$item] as $k => $v)
+				if (in_array($k, $reservedVars))
+					fatal_lang_error('no_access', false);
 
 	// Don't allow any overriding of custom fields with default or non-default options.
 	$request = wesql::query('

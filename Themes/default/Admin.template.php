@@ -1896,13 +1896,15 @@ function template_callback_question_answer_list()
 			<div class="right">
 				<input type="button" class="new" value="', $txt['setup_verification_add'], '" onclick="addNewRow();">
 			</div>
-			<table class="w100 cs0">
-				<tbody id="antispam">
+			<table class="w100 cs0" id="antispam">
+				<thead>
 					<tr>
 						<th></th>
 						<th>', $txt['setup_verification_question'], '</th>
 						<th>', $txt['setup_verification_answer'], '</th>
-					</tr>';
+					</tr>
+				</thead>
+				<tbody>';
 
 	if (!empty($context['qa_verification_qas']))
 	{
