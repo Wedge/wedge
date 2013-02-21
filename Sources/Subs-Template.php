@@ -680,7 +680,7 @@ function start_output()
 {
 	global $settings, $context, $theme;
 
-	if (!we::$is_ajax)
+	if (!AJAX)
 		setupThemeContext();
 
 	// Print stuff to prevent caching of pages (except on attachment errors, etc.)
@@ -689,11 +689,11 @@ function start_output()
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 		header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-		if (!we::$is_ajax)
+		if (!AJAX)
 			header('Content-Type: text/html; charset=UTF-8');
 	}
 
-	header('Content-Type: text/' . (we::$is_ajax ? 'xml' : 'html') . '; charset=UTF-8');
+	header('Content-Type: text/' . (AJAX ? 'xml' : 'html') . '; charset=UTF-8');
 
 	$context['show_load_time'] = !empty($settings['timeLoadPageEnable']);
 
@@ -717,7 +717,7 @@ function while_we_re_here()
 	static $checked_security_files = false, $showed_banned = false, $showed_behav_error = false;
 
 	// If this page was loaded through jQuery, it's likely we've already had the warning shown in its container...
-	if (we::$is_ajax)
+	if (AJAX)
 		return;
 
 	// May seem contrived, but this is done in case the body and default layer aren't there...
@@ -1253,7 +1253,7 @@ function execBlock($block_name, $fatal = false)
 		call_user_func_array($theme_function_after, $vars);
 
 	// Are we showing debugging for templates? Just make sure not to do it before the doctype...
-	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $block_name !== 'init' && ob_get_length() > 0 && !we::$is_ajax)
+	if (allowedTo('admin_forum') && isset($_REQUEST['debug']) && $block_name !== 'init' && ob_get_length() > 0 && !AJAX)
 		echo '
 <div style="font-size: 8pt; border: 1px dashed red; background: orange; text-align: center; font-weight: bold">---- ', $block_name, ' ends ----</div>';
 }

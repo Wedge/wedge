@@ -153,12 +153,12 @@ function aeva_modCP_submissions_approve()
 	$items = isset($_POST['items']) && isset($_POST['submit_aeva']) && is_array($_POST['items']) ? $_POST['items'] : array((int) @$_REQUEST['in']);
 	$type = $_REQUEST['type'];
 
-	if (we::$is_ajax)
+	if (AJAX)
 		header('Content-Type: text/xml; charset=UTF-8');
 
 	if (!in_array($type, array('albums', 'items', 'coms')))
 	{
-		if (we::$is_ajax)
+		if (AJAX)
 			exit('<?xml version="1.0" encoding="UTF-8"?' . '>
 <ret>
 	<id>' . $items[0] . '</id>
@@ -339,7 +339,7 @@ function aeva_modCP_submissions_approve()
 	}
 
 	// Everything done :)
-	if (we::$is_ajax)
+	if (AJAX)
 		exit('<?xml version="1.0" encoding="UTF-8"?' . '>
 <ret>
 	<id>' . $items[0] . '</id>
@@ -399,7 +399,7 @@ function aeva_modCP_submissions_delete()
 		aeva_logModAction($opts);
 	}
 
-	if (we::$is_ajax)
+	if (AJAX)
 	{
 		header('Content-Type: text/xml; charset=UTF-8');
 		exit('<?xml version="1.0" encoding="UTF-8"?' . '>

@@ -85,7 +85,7 @@ function SplitTopics()
 	isAllowedTo('split_any');
 
 	// Load up the "dependencies" - the template, getMsgMemberID(), and sendNotifications().
-	if (!we::$is_ajax)
+	if (!AJAX)
 		loadTemplate('Split');
 
 	loadSource(array('Subs-Boards', 'Subs-Post'));
@@ -241,14 +241,14 @@ function SplitSelectTopics()
 	$context['new_subject'] = $_REQUEST['subname'];
 
 	// Using the "select" block.
-	if (!we::$is_ajax)
+	if (!AJAX)
 		wetem::load('select');
 
 	// Are we using a custom messages per page?
 	$context['messages_per_page'] = empty($settings['disableCustomPerPage']) && !empty($options['messages_per_page']) ? $options['messages_per_page'] : $settings['defaultMaxMessages'];
 
 	// Get the message ID's from before the move.
-	if (we::$is_ajax)
+	if (AJAX)
 	{
 		$original_msgs = array(
 			'not_selected' => array(),
@@ -441,7 +441,7 @@ function SplitSelectTopics()
 	}
 
 	// The XMLhttp (Ajax) method only needs the stuff that changed, so let's compare.
-	if (we::$is_ajax)
+	if (AJAX)
 	{
 		$changes = array(
 			'remove' => array(

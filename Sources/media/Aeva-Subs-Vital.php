@@ -281,7 +281,7 @@ function aeva_embedObject($obj, $id_file, $cur_width = 0, $cur_height = 0, $desc
 			case 'video/mp4':
 			case 'video/3gpp':
 
-				if (we::$is_ajax || WEDGE == 'SSI' || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'feed'))
+				if (AJAX || WEDGE == 'SSI' || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'feed'))
 				{
 					$output .= '
 		<embed src="' . aeva_theme_url('player.swf') . '" flashvars="file=' . $galurl . 'sa=media;in=' . $id_file . $increm

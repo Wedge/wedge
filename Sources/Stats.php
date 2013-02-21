@@ -56,7 +56,7 @@ function Stats()
 	}
 
 	// Handle the Ajax request.
-	if (we::$is_ajax)
+	if (AJAX)
 	{
 		// Collapsing stats only needs adjustments of the session variables.
 		if (!empty($_REQUEST['collapse']))

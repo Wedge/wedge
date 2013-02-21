@@ -42,7 +42,7 @@ function Search()
 	loadLanguage('Search');
 
 	// Don't load this in Ajax mode.
-	if (!we::$is_ajax)
+	if (!AJAX)
 		loadTemplate('Search');
 
 	// Check the user's permissions.

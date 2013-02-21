@@ -86,7 +86,7 @@ function Search2()
 
 	loadLanguage('Search');
 
-	if (!we::$is_ajax)
+	if (!AJAX)
 		loadTemplate('Search');
 	// If we're doing Ajax we need to use the XML template's results block.
 	else

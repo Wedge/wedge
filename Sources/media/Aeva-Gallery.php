@@ -395,7 +395,7 @@ function aeva_initGallery($gal_url = null)
 	loadSource('Subs-Menu');
 	createMenu($media_areas, $menuOptions);
 
-	if (!we::$is_ajax)
+	if (!AJAX)
 	{
 		wetem::add('top', array('aeva_header', 'aeva_tabs'));
 
@@ -790,7 +790,7 @@ function aeva_viewItem()
 		// Make sure the user is allowed to rate
 		if (!aeva_allowedTo('rate_items'))
 		{
-			if (we::$is_ajax)
+			if (AJAX)
 				returnAjax($txt['media_rate_denied']);
 
 			fatal_lang_error('media_rate_denied');
@@ -806,7 +806,7 @@ function aeva_viewItem()
 		{
 			if ($amSettings['enable_re-rating'] == '0')
 			{
-				if (we::$is_ajax)
+				if (AJAX)
 					returnAjax($txt['media_re-rating_denied']);
 
 				fatal_lang_error('media_re-rating_denied');
@@ -882,7 +882,7 @@ function aeva_viewItem()
 	$item_data['can_rate'] = aeva_allowedTo('rate_items') && (!$item_data['user_rated'] || $amSettings['enable_re-rating'] == '1');
 
 	// Ajax rating?
-	if (we::$is_ajax && isset($_POST['rating']))
+	if (AJAX && isset($_POST['rating']))
 		returnAjax(template_aeva_rating_object($item_data));
 
 	// If we got so far, the user can see this item, so mark it as seen if it's new!

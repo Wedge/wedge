@@ -108,7 +108,7 @@ function validateSession()
 	is_not_guest();
 
 	// If we're using Ajax, give an additional ten minutes grace as an admin can't log in.
-	$refreshTime = we::$is_ajax ? 4200 : 3600;
+	$refreshTime = AJAX ? 4200 : 3600;
 
 	// Is the security option off? Or are they already logged in?
 	if (!empty($settings['securityDisable']) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time()))
@@ -172,7 +172,7 @@ function is_not_guest($message = '')
 	writeLog(true);
 
 	// Just die.
-	if (we::$is_ajax)
+	if (AJAX)
 		obExit(false);
 
 	// Attempt to detect if they came from dlattach.
@@ -896,7 +896,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	// A session error occurred, show the error.
 	elseif ($is_fatal)
 	{
-		if (we::$is_ajax)
+		if (AJAX)
 		{
 			while (@ob_end_clean());
 			header('HTTP/1.1 403 Forbidden - Session timeout');

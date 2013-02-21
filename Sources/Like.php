@@ -154,7 +154,7 @@ function Like()
 
 	call_hook('liked_content', array(&$content_type, &$id_content, &$now_liked, &$like_time));
 
-	if (we::$is_ajax)
+	if (AJAX)
 	{
 		// OK, we're going to send some details back to the user through the magic of AJAX. We need to get those details, first of all.
 		$members_load = array();

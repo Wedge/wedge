@@ -123,6 +123,7 @@ function add_js_file($files = array(), $is_direct_url = false, $is_out_of_flow =
 	// Add the 'm' keyword for member files -- using 'member' would add an extra couple of bytes per page for no reason.
 	$id = ($is_default_theme ? $id : substr(strrchr($theme['theme_dir'], '/'), 1) . '-' . $id) . (we::$is_guest ? '' : 'm-');
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
+	$latest_date %= 1000000;
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
@@ -203,6 +204,7 @@ function add_plugin_js_file($plugin_name, $files = array(), $is_direct_url = fal
 
 	$id = substr(strrchr($context['plugins_dir'][$plugin_name], '/'), 1) . '-' . $id . (we::$is_guest ? '' : 'member-');
 	$id = !empty($settings['obfuscate_filenames']) ? md5(substr($id, 0, -1)) . '-' : $id;
+	$latest_date %= 1000000;
 
 	$lang_name = !empty($settings['js_lang'][$id]) && !empty(we::$user['language']) && we::$user['language'] != $language ? we::$user['language'] . '-' : '';
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
@@ -412,6 +414,7 @@ function add_css_file($original_files = array(), $add_link = false, $is_main = f
 	$folder = end($context['css_folders']);
 	$id = $context['skin_uses_default_theme'] || (!$is_main && $theme['theme_dir'] === 'default') ? '' : substr(strrchr($theme['theme_dir'], '/'), 1) . '-';
 	$id = $folder === 'skins' ? substr($id, 0, -1) : $id . str_replace('/', '-', strpos($folder, 'skins/') === 0 ? substr($folder, 6) : $folder);
+	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
@@ -506,6 +509,7 @@ function add_plugin_css_file($plugin_name, $original_files = array(), $add_link 
 		array_diff($context['css_suffixes'], array(we::is('webkit') && we::$browser['agent'] != 'webkit' ? 'webkit' : '')),
 		we::$user['language'] !== 'english' ? (array) we::$user['language'] : array()
 	));
+	$latest_date %= 1000000;
 
 	$can_gzip = !empty($settings['enableCompressedData']) && function_exists('gzencode') && isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 	$ext = $can_gzip ? (we::is('safari') ? '.cgz' : '.css.gz') : '.css';
@@ -1514,7 +1518,7 @@ function cache_put_data($key, $val, $ttl = 120)
 			@unlink($cachedir . '/' . $key . '.php');
 		else
 		{
-			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=time()<' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';?' . '>';
+			$cache_data = '<' . '?php if(defined(\'WEDGE\')&&$valid=time()<' . (time() + $ttl) . ')$val=\'' . addcslashes($val, '\\\'') . '\';';
 
 			// Check that the cache write was successful. If it fails due to low diskspace, remove the cache file.
 			if (file_put_contents($cachedir . '/' . $key . '.php', $cache_data, LOCK_EX) !== strlen($cache_data))

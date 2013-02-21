@@ -2008,9 +2008,7 @@ function aeva_massUpload()
 	if (!$context['aeva_album']['can_upload'] && !allowedToAccessAlbum($id_album))
 		fatal_lang_error('media_accessDenied', !empty($amSettings['log_access_errors']));
 
-	we::$is_ajax |= !empty($_REQUEST['upcook']);
-
-	if (we::$is_ajax)
+	if (AJAX)
 	{
 		wetem::load('aeva_multiUpload');
 		$max_php_size = (int) min(aeva_getPHPSize('upload_max_filesize'), aeva_getPHPSize('post_max_size'));

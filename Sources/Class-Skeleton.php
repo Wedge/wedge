@@ -490,7 +490,7 @@ class weSkeleton
 			echo '</inden@zi=', $key, '>';
 
 		// !! We should probably move this directly to template_html_after() and forget the buffering thing...
-		if ($key === 'html' && !we::$is_ajax && !$this->hidden)
+		if ($key === 'html' && !AJAX && !$this->hidden)
 			db_debug_junk();
 	}
 

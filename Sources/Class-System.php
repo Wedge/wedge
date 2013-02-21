@@ -16,7 +16,6 @@ class we
 	static $ua, $browser;			// User agent string (we::$ua) and subsequent browser array.
 	static $user, $id;				// All user information, plus their ID
 	static $is_admin, $is_guest;	// we::$is_admin/$is_guest -- or use the slower we::is('admin')/is('guest')
-	static $is_ajax;				// we::$is_ajax -- is this page an Ajax response?
 	static $cache;					// Cache of parsed strings
 
 	// What kind of class are you, anyway? One of a kind!
@@ -73,9 +72,6 @@ class we
 				}
 			}
 		}
-
-		// Is this a page requested through jQuery? If yes, set we::$is_ajax so we can choose to show only the template's default block.
-		self::$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
 		// Aeva Media's Flash-based mass-upload feature doesn't carry the cookie with it.
 		if (isset($_REQUEST['upcook']))
@@ -152,7 +148,7 @@ class we
 			// 2. XML feeds and Ajax requests don't count either.
 			// 3. If it was set within this session, no need to set it again.
 			// 4. New session, yet updated < five hours ago? Maybe cache can help.
-			if (WEDGE != 'SSI' && !self::$is_ajax && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($settings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
+			if (WEDGE != 'SSI' && !AJAX && (!isset($_REQUEST['action']) || $_REQUEST['action'] != 'feed') && empty($_SESSION['id_msg_last_visit']) && (empty($settings['cache_enable']) || ($_SESSION['id_msg_last_visit'] = cache_get_data('user_last_visit-' . $id_member, 5 * 3600)) === null))
 			{
 				// Do a quick query to make sure this isn't a mistake.
 				$result = wesql::query('

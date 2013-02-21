@@ -218,7 +218,7 @@ function JSModify()
 			logAction('modify', array('topic' => $topic, 'message' => $row['id_msg'], 'member' => $row['id_member'], 'board' => $board));
 	}
 
-	if (we::$is_ajax)
+	if (AJAX)
 	{
 		wetem::load('modifydone');
 		if (empty($post_errors) && isset($msgOptions['subject'], $msgOptions['body']))

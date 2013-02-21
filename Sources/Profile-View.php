@@ -262,7 +262,7 @@ function showDrafts($memID)
 			)
 		);
 
-		if (we::$is_ajax)
+		if (AJAX)
 			obExit(false);
 		else
 			redirectexit('action=profile;u=' . $memID . ';area=showdrafts');

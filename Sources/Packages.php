@@ -339,7 +339,7 @@ function PackagePermissions()
 	if (!empty($_REQUEST['find']))
 		$context['look_for'][] = base64_decode($_REQUEST['find']);
 	// Only that tree?
-	$context['only_find'] = we::$is_ajax && !empty($_REQUEST['onlyfind']) ? $_REQUEST['onlyfind'] : '';
+	$context['only_find'] = AJAX && !empty($_REQUEST['onlyfind']) ? $_REQUEST['onlyfind'] : '';
 	if ($context['only_find'])
 		$context['look_for'][] = $context['only_find'];
 
@@ -397,7 +397,7 @@ function PackagePermissions()
 	}
 
 	// Is this actually xml?
-	if (we::$is_ajax)
+	if (AJAX)
 	{
 		loadTemplate('Xml');
 		wetem::load('generic_xml');
@@ -415,7 +415,7 @@ function fetchPerms__recursive($path, &$data, $level)
 			$isLikelyPath = true;
 
 	// Is this where we stop?
-	if (we::$is_ajax && !empty($context['look_for']) && !$isLikelyPath)
+	if (AJAX && !empty($context['look_for']) && !$isLikelyPath)
 		return;
 	elseif ($level > $context['default_level'] && !$isLikelyPath)
 		return;
@@ -492,7 +492,7 @@ function fetchPerms__recursive($path, &$data, $level)
 			$additional_data['type'] = $type;
 
 		// If there's an offset ignore any folders in XML mode.
-		if (we::$is_ajax && $context['file_offset'] == 0)
+		if (AJAX && $context['file_offset'] == 0)
 		{
 			$context['xml_data']['folders']['children'][] = array(
 				'attributes' => array(
@@ -509,7 +509,7 @@ function fetchPerms__recursive($path, &$data, $level)
 				'value' => $folder,
 			);
 		}
-		elseif (!we::$is_ajax)
+		elseif (!AJAX)
 		{
 			if (isset($data['contents'][$folder]))
 				$data['contents'][$folder] = array_merge($data['contents'][$folder], $additional_data);
@@ -540,7 +540,7 @@ function fetchPerms__recursive($path, &$data, $level)
 		);
 
 		// XML?
-		if (we::$is_ajax)
+		if (AJAX)
 		{
 			$context['xml_data']['folders']['children'][] = array(
 				'attributes' => array(

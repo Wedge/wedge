@@ -86,7 +86,7 @@ class wedit
 				add_js_file('scripts/spellcheck.js');
 
 				// Some hidden information is needed in order to make the spell checking work.
-				if (!we::$is_ajax)
+				if (!AJAX)
 					$context['footer'] .= '
 <form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
 	<input type="hidden" name="spellstring" value="">
