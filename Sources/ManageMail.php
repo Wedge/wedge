@@ -432,7 +432,7 @@ function ModifyEmailTemplates()
 			'themeurl' => $theme['theme_url'],
 			'imagesurl' => $theme['images_url'],
 			'default_themeurl' => $theme['default_theme_url'],
-			'regards' => str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
+			'regards' => str_replace('{FORUMNAME}', $context['forum_name'], $txt['regards_team']),
 		);
 		foreach ($items as $k => $v)
 			$txt['template_repl_' . $k] = sprintf($txt['template_repl_' . $k], $v);

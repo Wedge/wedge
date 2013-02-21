@@ -734,7 +734,7 @@ function scheduled_daily_digest()
 			'move' => $txt['digest_mod_act_move'],
 			'merge' => $txt['digest_mod_act_merge'],
 			'split' => $txt['digest_mod_act_split'],
-			'bye' => str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']),
+			'bye' => str_replace('{FORUMNAME}', $context['forum_name'], $txt['regards_team']),
 		);
 	}
 
@@ -744,8 +744,8 @@ function scheduled_daily_digest()
 	{
 		// Do the start stuff!
 		$email = array(
-			'subject' => $mbname . ' - ' . $langtxt[$lang]['subject'],
-			'body' => $member['name'] . ',' . "\n\n" . $langtxt[$lang]['intro'] . "\n" . $scripturl . '?action=profile;u=' . $member['id'] . ";area=notification\n",
+			'subject' => $mbname . ' - ' . $langtxt[$member['lang']]['subject'],
+			'body' => $member['name'] . ',' . "\n\n" . $langtxt[$member['lang']]['intro'] . "\n" . $scripturl . '?action=profile;u=' . $member['id'] . ";area=notification\n",
 			'email' => $member['email'],
 		);
 
@@ -759,10 +759,10 @@ function scheduled_daily_digest()
 					{
 						if (!$titled)
 						{
-							$email['body'] .= "\n" . $langtxt[$lang]['new_topics'] . ':' . "\n" . '-----------------------------------------------';
+							$email['body'] .= "\n" . $langtxt[$member['lang']]['new_topics'] . ':' . "\n" . '-----------------------------------------------';
 							$titled = true;
 						}
-						$email['body'] .= "\n" . sprintf($langtxt[$lang]['topic_lines'], $topic['subject'], $board['name']);
+						$email['body'] .= "\n" . sprintf($langtxt[$member['lang']]['topic_lines'], $topic['subject'], $board['name']);
 					}
 			if ($titled)
 				$email['body'] .= "\n";
@@ -778,7 +778,7 @@ function scheduled_daily_digest()
 					{
 						if (!$titled)
 						{
-							$email['body'] .= "\n" . $langtxt[$lang]['new_replies'] . ':' . "\n" . '-----------------------------------------------';
+							$email['body'] .= "\n" . $langtxt[$member['lang']]['new_replies'] . ':' . "\n" . '-----------------------------------------------';
 							$titled = true;
 						}
 						$email['body'] .= "\n" . ($topic['count'] == 1 ? sprintf($langtxt[$lang]['replies_one'], $topic['subject']) : sprintf($langtxt[$lang]['replies_many'], $topic['count'], $topic['subject']));
@@ -801,10 +801,10 @@ function scheduled_daily_digest()
 					{
 						if (!$titled)
 						{
-							$email['body'] .= "\n" . $langtxt[$lang]['mod_actions'] . ':' . "\n" . '-----------------------------------------------';
+							$email['body'] .= "\n" . $langtxt[$members['lang']]['mod_actions'] . ':' . "\n" . '-----------------------------------------------';
 							$titled = true;
 						}
-						$email['body'] .= "\n" . sprintf($langtxt[$lang][$note_type], $topic['subject']);
+						$email['body'] .= "\n" . sprintf($langtxt[$members['lang']][$note_type], $topic['subject']);
 					}
 
 		}
@@ -812,7 +812,7 @@ function scheduled_daily_digest()
 			$email['body'] .= "\n";
 
 		// Then just say our goodbyes!
-		$email['body'] .= "\n\n" . str_replace('{forum_name}', $context['forum_name'], $txt['regards_team']);
+		$email['body'] .= "\n\n" . $langtxt[$member['lang']]['bye'];
 
 		// Send it - low priority!
 		sendmail($email['email'], $email['subject'], $email['body'], null, null, false, 4);
