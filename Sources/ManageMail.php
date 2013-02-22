@@ -78,7 +78,7 @@ function ManageMail()
 	);
 
 	// Call the right function for this sub-acton.
-	$subActions[$_REQUEST['sa']]();
+	$subActions[$context['sub_action']]();
 }
 
 // Display the mail queue...
@@ -381,6 +381,7 @@ function ModifyEmailTemplates()
 		'send_topic' => array('user_email', array('sendernamemanual', 'recpnamemanual', 'topicsubject', 'topiclink')),
 		'send_topic_comment' => array('user_email', array('sendernamemanual', 'recpnamemanual', 'topicsubject', 'topiclink', 'comment')),
 		'send_email' => array('user_email', array('emailsubject', 'emailbody', 'sendername', 'recpname')),
+		'pm_email' => array('user_email', array('sendername', 'subject', 'message', 'replylink')),
 
 		'paid_subscription_new' => array('paid_subs', array('subscrname', 'subname', 'subuser', 'subemail', 'price', 'profilelink', 'date')),
 		'paid_subscription_reminder' => array('paid_subs', array('subscrname', 'realname', 'profilelinksubs', 'end_date')),

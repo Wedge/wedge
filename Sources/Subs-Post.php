@@ -686,24 +686,20 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	censorText($message);
 	censorText($subject);
 	$message = trim(un_htmlspecialchars(strip_tags(strtr(parse_bbc(htmlspecialchars($message), false), array('<br>' => "\n", '</div>' => "\n", '</li>' => "\n", '&#91;' => '[', '&#93;' => ']')))));
-	$languages_to_load = array('index', 'PersonalMessage');
+
+	$replacements = array(
+		'SENDERNAME' => un_htmlspecialchars($from['name']),
+		'SUBJECT' => $subject,
+		'MESSAGE' => $message,
+		'REPLYLINK' => $scripturl . '?action=pm;sa=send;f=inbox;pmsg=' . $id_pm . ';quote;u=' . $from['id'],
+	);
 
 	foreach ($notifications as $lang => $notification_list)
 	{
-		// Make sure to use the right language.
-		loadLanguage($languages_to_load, $lang, false);
-
-		// Replace the right things in the message strings.
-		$mailsubject = str_replace(array('SUBJECT', 'SENDER'), array($subject, un_htmlspecialchars($from['name'])), $txt['new_pm_subject']);
-		$mailmessage = str_replace(array('SUBJECT', 'MESSAGE', 'SENDER'), array($subject, $message, un_htmlspecialchars($from['name'])), str_replace('{forum_name}', $context['forum_name'], $txt['pm_email']));
-		$mailmessage .= "\n\n" . $txt['instant_reply'] . ' ' . $scripturl . '?action=pm;sa=send;f=inbox;pmsg=' . $id_pm . ';quote;u=' . $from['id'];
-
-		// Off the notification email goes!
-		sendmail($notification_list, $mailsubject, $mailmessage, null, 'p' . $id_pm, false, 2, null, true);
+		// We already prepared the replacements, which are not lang-specific beforehand, yay!
+		$emaildata = loadEmailTemplate('pm_email', $replacements, $lang, true);
+		sendmail($notification_list, $emaildata['subject'], $emaildata['body'], null, 'p' . $id_pm, false, 2, null, true);
 	}
-
-	// Back to what we were on before!
-	loadLanguage($languages_to_load);
 
 	// Add one to their unread and read message counts.
 	foreach ($all_to as $k => $id)
