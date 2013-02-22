@@ -1873,8 +1873,9 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 
 		if (!defined('WEDGE_INSTALLER'))
 		{
+			$tid = !empty($theme['theme_id']) ? $theme['theme_id'] : 1;
 			// So, firstly try to get this from the file cache.
-			$filename = $cachedir . '/lang_' . $theme['theme_id'] . '_' . $lang . '_' . $template . '.php';
+			$filename = $cachedir . '/lang_' . $tid . '_' . $lang . '_' . $template . '.php';
 			if (file_exists($filename))
 			{
 				@include($filename);
@@ -1893,6 +1894,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				// If we've pulled it from cache, add it to the debug list, the internal list of what we've done then skip.
 				$context['debug']['language_files'][] = $template . '.' . $lang . ' (' . $theme_name . ', cached)'; // !!! Yes, I know.
 				$already_loaded[$template] = $lang;
+				unset($loaded);
 				continue;
 			}
 			
@@ -1952,16 +1954,9 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 			}
 		}
 
-		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that. And only once.
-		if ($found && !$fallback && $template === 'index')
-		{
-			we::$user['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
-			if (empty(we::$user['time_format']))
-				we::$user['time_format'] = $txt['time_format'];
-		}
-
 		if (!defined('WEDGE_INSTALLER'))
 		{
+			$tid = !empty($theme['theme_id']) ? $theme['theme_id'] : 1;
 			if ($found)
 			{
 				// So, now we need to get from the DB.
@@ -1972,7 +1967,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 						AND id_lang = {string:lang}
 						AND lang_file = {string:lang_file}',
 					array(
-						'theme' => ($theme['theme_id'] == 1 ? array(1) : array(1, (int) $theme['theme_id'])),
+						'theme' => ($tid == 1 ? array(1) : array(1, (int) $tid)),
 						'lang' => $lang,
 						'lang_file' => $template,
 					)
@@ -2002,7 +1997,7 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				wesql::free_result($request);
 
 				// Now cache this sucker.
-				$filename = $cachedir . '/lang_' . $theme['theme_id'] . '_' . $lang . '_' . $template . '.php';
+				$filename = $cachedir . '/lang_' . $tid . '_' . $lang . '_' . $template . '.php';
 				$val = array();
 				if (!empty($txt))
 					$val['txt'] = $txt;
@@ -2018,6 +2013,14 @@ function loadLanguage($template_name, $lang = '', $fatal = true, $force_reload =
 				if (!empty($helptxt) || !empty($oldhelptxt))
 					$helptxt = array_merge($oldhelptxt, $helptxt);
 			}
+		}
+
+		// The index language file contains the locale. If that's what we're loading, we're changing time locales, so reload that. And only once.
+		if ($found && !$fallback && $template === 'index')
+		{
+			we::$user['setlocale'] = setlocale(LC_TIME, $txt['lang_locale'] . '.utf-8', $txt['lang_locale'] . '.utf8');
+			if (empty(we::$user['time_format']))
+				we::$user['time_format'] = $txt['time_format'];
 		}
 
 		// Keep track of what we're up to soldier.

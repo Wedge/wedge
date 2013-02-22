@@ -887,7 +887,7 @@ function AdminSearchInternal()
 	// Load a lot of language files.
 	loadLanguage(array(
 		'Help', 'ManageMail', 'ManageSettings', 'ManageBoards', 'ManagePaid', 'ManagePermissions', 'Search',
-		'Login', 'ManageSmileys', 'ManageBans', 'ManageMembers', 'ManageMaintenance',
+		'Login', 'ManageSmileys', 'ManageMaintenance', 'ManageBans', 'ManageMembers',
 	));
 
 	// All the files we need to include.
