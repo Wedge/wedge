@@ -584,7 +584,7 @@ function ModifyLanguages()
 					'function' => create_function('$rowData', '
 						global $txt;
 
-						return $rowData[\'dictionary\'] ? $txt[\'languages_orients_rtl\'] : $txt[\'languages_orients_ltr\'];
+						return $rowData[\'rtl\'] ? $txt[\'languages_orients_rtl\'] : $txt[\'languages_orients_ltr\'];
 					'),
 				),
 			),

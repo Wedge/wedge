@@ -905,10 +905,10 @@ function AdminSearchInternal()
 	$search_data = array(
 		// All the major sections of the forum.
 		'sections' => array(
+			array('CAPTCHA', 'area=antispam'),
 		),
 		'settings' => array(
 			array('COPPA', 'area=regcenter;sa=settings'),
-			array('CAPTCHA', 'area=antispam'),
 		),
 		'preferences' => array(
 		),
