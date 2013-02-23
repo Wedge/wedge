@@ -535,6 +535,9 @@ class wesql
 		if (!isset($matches[2]))
 			self::error_backtrace('Invalid value inserted or no type specified.', '', E_USER_ERROR, __FILE__, __LINE__);
 
+		if ($matches[1] == 'literal')
+			return sprintf('\'%1$s\'', mysql_real_escape_string($matches[2], $connection));
+
 		if (!isset($values[$matches[2]]))
 			self::error_backtrace('The database value you\'re trying to insert does not exist: ' . htmlspecialchars($matches[2]), '', E_USER_ERROR, __FILE__, __LINE__);
 
