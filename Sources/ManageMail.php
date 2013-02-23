@@ -325,7 +325,7 @@ function ModifyMailSettings($return_config = false)
 
 function ModifyEmailTemplates()
 {
-	global $context, $txt, $mbname, $theme;
+	global $context, $txt, $mbname, $theme, $cachedir;
 
 	getLanguages();
 

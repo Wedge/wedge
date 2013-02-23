@@ -120,7 +120,7 @@ function Display()
 	// Get all the important topic info.
 	$request = wesql::query('
 		SELECT
-			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll, t.id_member_started,
+			t.num_replies, t.num_views, t.locked, ms.subject, t.is_pinned, t.id_poll, t.id_member_started, ms.icon,
 			t.id_first_msg, t.id_last_msg, t.approved, t.unapproved_posts, t.privacy, t.tags, ms.poster_time,
 			' . (we::$is_guest ? 't.id_last_msg + 1' : 'IFNULL(lt.id_msg, IFNULL(lmr.id_msg, -1)) + 1') . ' AS new_from
 			' . (!empty($settings['recycle_board']) && $settings['recycle_board'] == $board ? ', id_previous_board, id_previous_topic' : '') . '
@@ -1044,6 +1044,8 @@ function Display()
 	$context['can_mark_unread'] = !we::$is_guest;
 	// Prevent robots from accessing the Post template
 	$context['can_reply'] &= empty($context['possibly_robot']);
+	// Check that the first post's icon is not a moved icon - i.e. the thread has been moved!
+	$context['can_merge'] &= $topicinfo['icon'] != 'moved';
 
 	$context['can_send_topic'] = (!$settings['postmod_active'] || $topicinfo['approved']) && allowedTo('send_topic');
 

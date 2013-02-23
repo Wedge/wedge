@@ -119,7 +119,7 @@ function MergeIndex()
 
 	// Get the topic's subject.
 	$request = wesql::query('
-		SELECT m.subject
+		SELECT m.subject, m.icon
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 		WHERE t.id_topic = {int:id_topic}
@@ -134,8 +134,12 @@ function MergeIndex()
 	);
 	if (wesql::num_rows($request) == 0)
 		fatal_lang_error('no_board');
-	list ($subject) = wesql::fetch_row($request);
+	list ($subject, $icon) = wesql::fetch_row($request);
 	wesql::free_result($request);
+
+	// Before we begin, is this a moved notice? We can't merge those with things.
+	if ($icon == 'moved')
+		fatal_lang_error('cannot_merge_moved', 'user');
 
 	// Tell the template a few things..
 	$context['origin_topic'] = $topic;
@@ -172,7 +176,7 @@ function MergeIndex()
 
 	// Get some topics to merge it with.
 	$request = wesql::query('
-		SELECT t.id_topic, m.subject, m.id_member, IFNULL(mem.real_name, m.poster_name) AS poster_name
+		SELECT t.id_topic, m.subject, m.id_member, IFNULL(mem.real_name, m.poster_name) AS poster_name, m.icon
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_first_msg)
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -193,6 +197,9 @@ function MergeIndex()
 	$context['topics'] = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
+		if ($row['icon'] == 'moved')
+			continue; // We should ignore moved topics, but it's cheaper to do it here.
+
 		censorText($row['subject']);
 
 		$context['topics'][] = array(
@@ -246,7 +253,7 @@ function MergeExecute($topics = array())
 	// Get info about the topics and polls that will be merged.
 	$request = wesql::query('
 		SELECT
-			t.id_topic, t.id_board, t.id_poll, t.num_views, t.is_pinned, t.approved, t.num_replies, t.unapproved_posts,
+			t.id_topic, t.id_board, t.id_poll, t.num_views, t.is_pinned, t.approved, t.num_replies, t.unapproved_posts, m1.icon,
 			m1.subject, m1.poster_time AS time_started, IFNULL(mem1.id_member, 0) AS id_member_started, IFNULL(mem1.real_name, m1.poster_name) AS name_started,
 			m2.poster_time AS time_updated, IFNULL(mem2.id_member, 0) AS id_member_updated, IFNULL(mem2.real_name, m2.poster_name) AS name_updated
 		FROM {db_prefix}topics AS t
@@ -270,6 +277,9 @@ function MergeExecute($topics = array())
 	$polls = array();
 	while ($row = wesql::fetch_assoc($request))
 	{
+		if ($row['icon'] == 'moved')
+			fatal_lang_error('cannot_merge_moved', 'user');
+
 		// Make a note for the board counts...
 		if (!isset($boardTotals[$row['id_board']]))
 			$boardTotals[$row['id_board']] = array(
