@@ -215,7 +215,7 @@
 		centerOnSelected = function ()
 		{
 			if (scrollbar)
-				scrollbar.scrollTo($selected.is(':hidden') ? 0 : $selected.position().top, $selected.height());
+				scrollbar.st($selected.is(':hidden') ? 0 : $selected.position().top, $selected.height());
 			else
 				$dd.scrollTop($dd.scrollTop() + $selected.offset().top - $dd.offset().top - $dd.height() / 2 + $selected.outerHeight(true) / 2);
 		},
@@ -493,18 +493,19 @@
 	ScrollBar = function ($dd)
 	{
 		var
-			startPos = 0, iMouse, iScroll = 0,
+			that = this, startPos = 0, iMouse, iScroll = 0,
 			thumbAxis, viewportAxis, contentAxis,
 			$content, $scrollbar, $thumb,
 			scrollbarRatio, iTouch,
 
 		drag = function (e)
 		{
-			scrollTo(startPos + e.pageY - iMouse);
+			that.st(startPos + e.pageY - iMouse);
 			return false;
 		};
 
-		this.scrollTo = function (iTop, iHeight)
+		// Scroll to...
+		that.st = function (iTop, iHeight)
 		{
 			if (iHeight)
 				iTop = (iTop - viewportAxis / 2 + iHeight / 2) / scrollbarRatio;
@@ -569,7 +570,7 @@
 				startPos = parseInt($thumb.css('top'));
 			})
 			.on('touchmove', function (e) {
-				scrollTo(startPos - e.originalEvent.touches[0].pageY + iTouch);
+				that.st(startPos - e.originalEvent.touches[0].pageY + iTouch);
 				e.preventDefault();
 			});
 	};

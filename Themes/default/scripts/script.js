@@ -560,7 +560,7 @@ $(function ()
 	});
 
 	if (is_android)
-		$('.umme').click(false);
+		$('.umme,.subsection>a,.menu>li:not(.nodrop)>h4>a').click(false);
 });
 
 
