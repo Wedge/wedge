@@ -612,14 +612,13 @@ function Admin()
 				),
 				'packages' => array(
 					'label' => 'Packages (old)',
-					'file' => 'Packages',
-					'function' => 'Packages',
+					'file' => 'PackageGet',
+					'function' => 'PackageGet',
 					'permission' => array('admin_forum'),
 					'icon' => 'packages.gif',
 					'bigicon' => 'plugin_manager.png',
 					'subsections' => array(
 						'packageget' => array($txt['download_packages'], 'url' => $scripturl . '?action=admin;area=packages;sa=packageget;get'),
-						'perms' => array($txt['package_file_perms']),
 					),
 				),
 			),

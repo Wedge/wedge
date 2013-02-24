@@ -56,7 +56,6 @@ function PackageGet()
 		'browse' => 'PackageGBrowse',
 		'download' => 'PackageDownload',
 		'remove' => 'PackageServerRemove',
-		'upload' => 'PackageUpload',
 	);
 
 	// Now let's decide where we are taking this...
@@ -592,7 +591,7 @@ function PackageDownload()
 		fatal_lang_error($packageInfo);
 
 	// Use FTP if necessary.
-	create_chmod_control(array($boarddir . '/Packages/' . $package_name), array('destination_url' => $scripturl . '?action=admin;area=packages;get;sa=download' . (isset($_GET['server']) ? ';server=' . $_GET['server'] : '') . (isset($_REQUEST['auto']) ? ';auto' : '') . ';package=' . $_REQUEST['package'] . (isset($_REQUEST['conflict']) ? ';conflict' : '') . ';' . $context['session_query'], 'crash_on_error' => true));
+	//create_chmod_control(array($boarddir . '/Packages/' . $package_name), array('destination_url' => $scripturl . '?action=admin;area=packages;get;sa=download' . (isset($_GET['server']) ? ';server=' . $_GET['server'] : '') . (isset($_REQUEST['auto']) ? ';auto' : '') . ';package=' . $_REQUEST['package'] . (isset($_REQUEST['conflict']) ? ';conflict' : '') . ';' . $context['session_query'], 'crash_on_error' => true));
 	loadSource('Class-WebGet');
 	$weget = new weget($url . $_REQUEST['package']);
 	$data = $weget->get();
@@ -622,89 +621,6 @@ function PackageDownload()
 	$context['package']['list_files']['link'] = '(link to list files)';
 
 	// Free a little bit of memory...
-	unset($context['package']['xml']);
-
-	$context['page_title'] = 'successful!';
-}
-
-// Upload a new package to the directory.
-function PackageUpload()
-{
-	global $txt, $scripturl, $boarddir, $context;
-
-	// Setup the correct template, even though I'll admit we ain't downloading ;)
-	wetem::load('downloaded');
-
-	// !!! TODO: Use FTP if the Packages directory is not writable.
-
-	// Check the file was even sent!
-	if (!isset($_FILES['package']['name']) || $_FILES['package']['name'] == '')
-		fatal_lang_error('package_upload_error_nofile');
-	elseif (!is_uploaded_file($_FILES['package']['tmp_name']) || (ini_get('open_basedir') == '' && !file_exists($_FILES['package']['tmp_name'])))
-		fatal_lang_error('package_upload_error_failure');
-
-	// Make sure it has a sane filename.
-	$_FILES['package']['name'] = preg_replace(array('/\s/', '/\.{2,}/', '/[^\w.-]/'), array('_', '.', ''), $_FILES['package']['name']);
-
-	if (strtolower(substr($_FILES['package']['name'], -4)) != '.zip' && strtolower(substr($_FILES['package']['name'], -4)) != '.tgz' && strtolower(substr($_FILES['package']['name'], -7)) != '.tar.gz')
-		fatal_lang_error('package_upload_error_supports', false, array('zip, tgz, tar.gz'));
-
-	// We only need the filename...
-	$packageName = basename($_FILES['package']['name']);
-
-	// Setup the destination and throw an error if the file is already there!
-	$destination = $boarddir . '/Packages/' . $packageName;
-	// !!! Maybe just roll it like we do for downloads?
-	if (file_exists($destination))
-		fatal_lang_error('package_upload_error_exists');
-
-	// Now move the file.
-	move_uploaded_file($_FILES['package']['tmp_name'], $destination);
-	@chmod($destination, 0777);
-
-	// If we got this far that should mean it's available.
-	$context['package'] = getPackageInfo($packageName);
-	$context['package_server'] = '';
-
-	// Not really a package, you lazy bum!
-	if (!is_array($context['package']))
-	{
-		@unlink($destination);
-		loadLanguage('Errors');
-		fatal_lang_error('package_upload_error_broken', false, $txt[$context['package']]);
-	}
-	// Is it already uploaded, maybe?
-	elseif ($dir = @scandir($boarddir . '/Packages'))
-	{
-		foreach ($dir as $package)
-		{
-			if ($package == '.' || $package == '..' || $package == 'temp' || $package == $packageName || (!(is_dir($boarddir . '/Packages/' . $package) && file_exists($boarddir . '/Packages/' . $package . '/plugin-info.xml')) && substr(strtolower($package), -7) != '.tar.gz' && substr(strtolower($package), -4) != '.tgz' && substr(strtolower($package), -4) != '.zip'))
-				continue;
-
-			$packageInfo = getPackageInfo($package);
-			if (!is_array($packageInfo))
-				continue;
-
-			if ($packageInfo['id'] == $context['package']['id'] && $packageInfo['version'] == $context['package']['version'])
-			{
-				@unlink($destination);
-				loadLanguage('Errors');
-				fatal_lang_error('package_upload_error_exists');
-			}
-		}
-	}
-
-	if ($context['package']['type'] == 'modification')
-		$context['package']['install']['link'] = '(former link to install mod)';
-	elseif ($context['package']['type'] == 'avatar')
-		$context['package']['install']['link'] = '(former link to install avatar)';
-	elseif ($context['package']['type'] == 'language')
-		$context['package']['install']['link'] = '(former link to install lang)';
-	else
-		$context['package']['install']['link'] = '';
-
-	$context['package']['list_files']['link'] = '(link to list files)';
-
 	unset($context['package']['xml']);
 
 	$context['page_title'] = 'successful!';
