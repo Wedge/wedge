@@ -162,12 +162,9 @@ function ThemeAdmin()
 		$request = wesql::query('
 			SELECT id_theme, value AS name
 			FROM {db_prefix}themes
-			WHERE variable = {string:name}
+			WHERE variable = {literal:name}
 				AND id_member = 0
-			ORDER BY id_theme',
-			array(
-				'name' => 'name',
-			)
+			ORDER BY id_theme'
 		);
 		$context['themes'] = array();
 		while ($row = wesql::fetch_assoc($request))
@@ -254,13 +251,10 @@ function ThemeList()
 		$request = wesql::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
-			WHERE variable IN ({string:theme_dir}, {string:theme_url}, {string:images_url})
+			WHERE variable IN ({literal:theme_dir}, {literal:theme_url}, {literal:images_url})
 				AND id_member = {int:no_member}',
 			array(
 				'no_member' => 0,
-				'theme_dir' => 'theme_dir',
-				'theme_url' => 'theme_url',
-				'images_url' => 'images_url',
 			)
 		);
 		$themes = array();
@@ -299,14 +293,10 @@ function ThemeList()
 	$request = wesql::query('
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
-		WHERE variable IN ({string:name}, {string:theme_dir}, {string:theme_url}, {string:images_url})
+		WHERE variable IN ({literal:name}, {literal:theme_dir}, {literal:theme_url}, {literal:images_url})
 			AND id_member = {int:no_member}',
 		array(
 			'no_member' => 0,
-			'name' => 'name',
-			'theme_dir' => 'theme_dir',
-			'theme_url' => 'theme_url',
-			'images_url' => 'images_url',
 		)
 	);
 	$context['themes'] = array();
@@ -661,17 +651,13 @@ function PickTheme()
 		$request = wesql::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
-			WHERE variable IN ({string:name}, {string:theme_url}, {string:theme_dir}, {string:images_url})' . (!allowedTo('admin_forum') ? '
+			WHERE variable IN ({literal:name}, {literal:theme_url}, {literal:theme_dir}, {literal:images_url})' . (!allowedTo('admin_forum') ? '
 				AND id_theme IN ({array_string:known_themes})' : '') . '
 				AND id_theme != {int:default_theme}
 				AND id_member = {int:no_member}',
 			array(
 				'default_theme' => 0,
-				'name' => 'name',
 				'no_member' => 0,
-				'theme_url' => 'theme_url',
-				'theme_dir' => 'theme_dir',
-				'images_url' => 'images_url',
 				'known_themes' => explode(',', $settings['knownThemes']),
 			)
 		);
@@ -794,12 +780,11 @@ function ThemeInstall()
 			FROM {db_prefix}themes
 			WHERE id_theme = {int:current_theme}
 				AND id_member = {int:no_member}
-				AND variable = {string:name}
+				AND variable = {literal:name}
 			LIMIT 1',
 			array(
 				'current_theme' => (int) $_GET['theme_id'],
 				'no_member' => 0,
-				'name' => 'name',
 			)
 		);
 		list ($theme_name) = wesql::fetch_row($result);
@@ -861,13 +846,12 @@ function ThemeInstall()
 		$request = wesql::query('
 			SELECT value
 			FROM {db_prefix}themes
-			WHERE variable = {string:theme_templates}
+			WHERE variable = {literal:theme_templates}
 				AND id_member = {int:no_member}
 				AND id_theme = {int:default_theme}',
 			array(
 				'no_member' => 0,
 				'default_theme' => 1,
-				'theme_templates' => 'theme_templates',
 			)
 		);
 		list ($theme_templates) = wesql::fetch_row($request);
@@ -1013,12 +997,9 @@ function EditTheme()
 		$request = wesql::query('
 			SELECT id_theme, variable, value
 			FROM {db_prefix}themes
-			WHERE variable IN ({string:name}, {string:theme_dir}, {string:theme_templates})
+			WHERE variable IN ({literal:name}, {literal:theme_dir}, {literal:theme_templates})
 				AND id_member = {int:no_member}',
 			array(
-				'name' => 'name',
-				'theme_dir' => 'theme_dir',
-				'theme_templates' => 'theme_templates',
 				'no_member' => 0,
 			)
 		);
@@ -1079,12 +1060,11 @@ function EditTheme()
 	$request = wesql::query('
 		SELECT value, id_theme
 		FROM {db_prefix}themes
-		WHERE variable = {string:theme_dir}
+		WHERE variable = {literal:theme_dir}
 			AND id_theme = {int:current_theme}
 		LIMIT 1',
 		array(
 			'current_theme' => $_GET['th'],
-			'theme_dir' => 'theme_dir',
 		)
 	);
 	list ($theme_dir, $context['theme_id']) = wesql::fetch_row($request);
@@ -1160,12 +1140,11 @@ function EditTheme()
 				$request = wesql::query('
 					SELECT value
 					FROM {db_prefix}themes
-					WHERE variable = {string:theme_url}
+					WHERE variable = {literal:theme_url}
 						AND id_theme = {int:current_theme}
 					LIMIT 1',
 					array(
 						'current_theme' => $_GET['th'],
-						'theme_url' => 'theme_url',
 					)
 				);
 				list ($theme_url) = wesql::fetch_row($request);
@@ -1338,12 +1317,11 @@ function CopyTemplate()
 	$request = wesql::query('
 		SELECT th1.value, th1.id_theme
 		FROM {db_prefix}themes AS th1
-		WHERE th1.variable = {string:theme_dir}
+		WHERE th1.variable = {literal:theme_dir}
 			AND th1.id_theme = {int:current_theme}
 		LIMIT 1',
 		array(
 			'current_theme' => $_GET['th'],
-			'theme_dir' => 'theme_dir',
 		)
 	);
 	list ($theme_dir, $context['theme_id']) = wesql::fetch_row($request);

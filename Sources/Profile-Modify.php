@@ -3113,12 +3113,11 @@ function groupMembership2($profile_vars, $post_errors, $memID)
 			SELECT COUNT(permission)
 			FROM {db_prefix}permissions
 			WHERE id_group = {int:selected_group}
-				AND permission = {string:admin_forum}
+				AND permission = {literal:admin_forum}
 				AND add_deny = {int:not_denied}',
 			array(
 				'selected_group' => $group_id,
 				'not_denied' => 1,
-				'admin_forum' => 'admin_forum',
 			)
 		);
 		list ($disallow) = wesql::fetch_row($request);

@@ -423,10 +423,9 @@ function updateAdminPreferences()
 	wesql::query('
 		DELETE FROM {db_prefix}themes
 		WHERE id_theme != {int:default_theme}
-		AND variable = {string:admin_preferences}',
+		AND variable = {literal:admin_preferences}',
 		array(
 			'default_theme' => 1,
-			'admin_preferences' => 'admin_preferences',
 		)
 	);
 
@@ -454,13 +453,12 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 	$request = wesql::query('
 		SELECT id_group
 		FROM {db_prefix}permissions
-		WHERE permission = {string:admin_forum}
+		WHERE permission = {literal:admin_forum}
 			AND add_deny = {int:add_deny}
 			AND id_group != {int:id_group}',
 		array(
 			'add_deny' => 1,
 			'id_group' => 0,
-			'admin_forum' => 'admin_forum',
 		)
 	);
 	$groups = array(1);

@@ -320,10 +320,9 @@ function ModBlockNotes()
 		wesql::query('
 			DELETE FROM {db_prefix}log_comments
 			WHERE id_comment = {int:note}
-				AND comment_type = {string:type}',
+				AND comment_type = {literal:modnote}',
 			array(
 				'note' => $_GET['delete'],
-				'type' => 'modnote',
 			)
 		);
 
@@ -341,10 +340,7 @@ function ModBlockNotes()
 			SELECT COUNT(*)
 			FROM {db_prefix}log_comments AS lc
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
-			WHERE lc.comment_type = {string:modnote}',
-			array(
-				'modnote' => 'modnote',
-			)
+			WHERE lc.comment_type = {literal:modnote}'
 		);
 		list ($moderator_notes_total) = wesql::fetch_row($request);
 		wesql::free_result($request);
@@ -361,11 +357,10 @@ function ModBlockNotes()
 				lc.log_time, lc.body, lc.id_comment AS id_note
 			FROM {db_prefix}log_comments AS lc
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
-			WHERE lc.comment_type = {string:modnote}
+			WHERE lc.comment_type = {literal:modnote}
 			ORDER BY id_comment DESC
 			LIMIT {int:offset}, 10',
 			array(
-				'modnote' => 'modnote',
 				'offset' => $offset,
 			)
 		);
@@ -862,10 +857,9 @@ function ModReport()
 		FROM {db_prefix}log_comments AS lc
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
 		WHERE lc.id_notice = {int:id_report}
-			AND lc.comment_type = {string:reportc}',
+			AND lc.comment_type = {literal:reportc}',
 		array(
 			'id_report' => $context['report']['id'],
-			'reportc' => 'reportc',
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
@@ -1545,10 +1539,7 @@ function list_getWarningCount()
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
-		WHERE comment_type = {string:warning}',
-		array(
-			'warning' => 'warning',
-		)
+		WHERE comment_type = {literal:warning}'
 	);
 	list ($totalWarns) = wesql::fetch_row($request);
 	wesql::free_result($request);
@@ -1567,12 +1558,9 @@ function list_getWarnings($start, $items_per_page, $sort)
 		FROM {db_prefix}log_comments AS lc
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
 			LEFT JOIN {db_prefix}members AS mem2 ON (mem2.id_member = lc.id_recipient)
-		WHERE lc.comment_type = {string:warning}
+		WHERE lc.comment_type = {literal:warning}
 		ORDER BY ' . $sort . '
-		LIMIT ' . $start . ', ' . $items_per_page,
-		array(
-			'warning' => 'warning',
-		)
+		LIMIT ' . $start . ', ' . $items_per_page
 	);
 	$warnings = array();
 	while ($row = wesql::fetch_assoc($request))
@@ -1608,11 +1596,10 @@ function ViewWarningTemplates()
 			SELECT recipient_name
 			FROM {db_prefix}log_comments
 			WHERE id_comment IN ({array_int:delete_ids})
-				AND comment_type = {string:warntpl}
+				AND comment_type = {literal:warntpl}
 				AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})',
 			array(
 				'delete_ids' => $_POST['deltpl'],
-				'warntpl' => 'warntpl',
 				'generic' => 0,
 				'current_member' => we::$id,
 			)
@@ -1625,11 +1612,10 @@ function ViewWarningTemplates()
 		wesql::query('
 			DELETE FROM {db_prefix}log_comments
 			WHERE id_comment IN ({array_int:delete_ids})
-				AND comment_type = {string:warntpl}
+				AND comment_type = {literal:warntpl}
 				AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})',
 			array(
 				'delete_ids' => $_POST['deltpl'],
-				'warntpl' => 'warntpl',
 				'generic' => 0,
 				'current_member' => we::$id,
 			)
@@ -1742,10 +1728,9 @@ function list_getWarningTemplateCount()
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
-		WHERE comment_type = {string:warntpl}
+		WHERE comment_type = {literal:warntpl}
 			AND (id_recipient = {string:generic} OR id_recipient = {int:current_member})',
 		array(
-			'warntpl' => 'warntpl',
 			'generic' => 0,
 			'current_member' => we::$id,
 		)
@@ -1766,12 +1751,11 @@ function list_getWarningTemplates($start, $items_per_page, $sort)
 			lc.log_time, lc.body
 		FROM {db_prefix}log_comments AS lc
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
-		WHERE lc.comment_type = {string:warntpl}
+		WHERE lc.comment_type = {literal:warntpl}
 			AND (id_recipient = {string:generic} OR id_recipient = {int:current_member})
 		ORDER BY ' . $sort . '
 		LIMIT ' . $start . ', ' . $items_per_page,
 		array(
-			'warntpl' => 'warntpl',
 			'generic' => 0,
 			'current_member' => we::$id,
 		)
@@ -1820,11 +1804,10 @@ function ModifyWarningTemplate()
 			SELECT id_member, id_recipient, recipient_name AS template_title, body
 			FROM {db_prefix}log_comments
 			WHERE id_comment = {int:id}
-				AND comment_type = {string:warntpl}
+				AND comment_type = {literal:warntpl}
 				AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})',
 			array(
 				'id' => $context['id_template'],
-				'warntpl' => 'warntpl',
 				'generic' => 0,
 				'current_member' => we::$id,
 			)
@@ -1876,7 +1859,7 @@ function ModifyWarningTemplate()
 				UPDATE {db_prefix}log_comments
 				SET id_recipient = {int:personal}, recipient_name = {string:title}, body = {string:body}
 				WHERE id_comment = {int:id}
-					AND comment_type = {string:warntpl}
+					AND comment_type = {literal:warntpl}
 					AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})'.
 					($recipient_id ? ' AND id_member = {int:current_member}' : ''),
 				array(
@@ -1884,7 +1867,6 @@ function ModifyWarningTemplate()
 					'title' => $_POST['template_title'],
 					'body' => $_POST['template_body'],
 					'id' => $context['id_template'],
-					'warntpl' => 'warntpl',
 					'generic' => 0,
 					'current_member' => we::$id,
 				)

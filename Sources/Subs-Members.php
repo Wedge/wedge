@@ -272,10 +272,9 @@ function deleteMembers($users, $check_not_admin = false)
 	wesql::query('
 		DELETE FROM {db_prefix}log_comments
 		WHERE id_recipient IN ({array_int:users})
-			AND comment_type = {string:warntpl}',
+			AND comment_type = {literal:warntpl}',
 		array(
 			'users' => $users,
-			'warntpl' => 'warntpl',
 		)
 	);
 	wesql::query('
@@ -891,11 +890,8 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 		$request = wesql::query('
 			SELECT ban_content, extra
 			FROM {db_prefix}bans
-			WHERE ban_type = {string:member_name}
-			ORDER BY null',
-			array(
-				'member_name' => 'member_name',
-			)
+			WHERE ban_type = {literal:member_name}
+			ORDER BY null'
 		);
 		while ($row = wesql::fetch_assoc($request))
 		{

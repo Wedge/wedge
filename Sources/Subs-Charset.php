@@ -560,11 +560,7 @@ function fix_serialized_columns()
 	$request = wesql::query('
 		SELECT id_action, extra
 		FROM {db_prefix}log_actions
-		WHERE action IN ({string:remove}, {string:delete})',
-		array(
-			'remove' => 'remove',
-			'delete' => 'delete',
-		)
+		WHERE action IN ({literal:remove}, {literal:delete})'
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{

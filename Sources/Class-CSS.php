@@ -523,7 +523,7 @@ class wess_if extends wess
 					}
 
 					// Browser constant test.
-					if (empty($match) || we::is($match))
+					if (empty($match) || we::is($match) || ($match == 'guest' && we::$is_guest) || ($match == 'member' && !we::$is_guest))
 						break;
 
 					// Very, very basic variable test. Please bear with me...
@@ -1605,7 +1605,7 @@ class wess_prefixes extends wess
 
 		// And finally, listen to the author -- you may add a prefix manually, that will be automatically turned into the current
 		// browser's official prefix. e.g. add "-prefix-my-rule" and Wess will turn it into "-moz-my-rule" for Firefox users.
-		$css = str_replace('~(?<![\w-])-prefix-(?=[a-z-])~', $this->prefix, $css);
+		$css = preg_replace('~(?<![\w-])-prefix-(?=[a-z-])~', $this->prefix, $css);
 	}
 }
 

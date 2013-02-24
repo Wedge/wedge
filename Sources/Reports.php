@@ -227,9 +227,8 @@ function BoardReport()
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 			LEFT JOIN {db_prefix}boards AS par ON (par.id_board = b.id_parent)
-			LEFT JOIN {db_prefix}themes AS th ON (th.id_theme = b.id_theme AND th.variable = {string:name})',
+			LEFT JOIN {db_prefix}themes AS th ON (th.id_theme = b.id_theme AND th.variable = {literal:name})',
 		array(
-			'name' => 'name',
 			'text_none' => $txt['none'],
 		)
 	);
@@ -517,13 +516,12 @@ function MemberGroupsReport()
 		SELECT mg.id_group, mg.group_name, mg.online_color, mg.min_posts, mg.max_messages, mg.stars,
 			CASE WHEN bp.permission IS NOT NULL OR mg.id_group = {int:admin_group} THEN 1 ELSE 0 END AS can_moderate
 		FROM {db_prefix}membergroups AS mg
-			LEFT JOIN {db_prefix}board_permissions AS bp ON (bp.id_group = mg.id_group AND bp.id_profile = {int:default_profile} AND bp.permission = {string:moderate_board})
+			LEFT JOIN {db_prefix}board_permissions AS bp ON (bp.id_group = mg.id_group AND bp.id_profile = {int:default_profile} AND bp.permission = {literal:moderate_board})
 		ORDER BY mg.min_posts, CASE WHEN mg.id_group < {int:newbie_group} THEN mg.id_group ELSE 4 END, mg.group_name',
 		array(
 			'admin_group' => 1,
 			'default_profile' => 1,
 			'newbie_group' => 4,
-			'moderate_board' => 'moderate_board',
 		)
 	);
 

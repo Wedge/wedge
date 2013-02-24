@@ -235,13 +235,12 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
 			WHERE m.id_topic IN ({array_int:topics})
-				AND m.icon != {string:recycled}
+				AND m.icon != {literal:recycled}
 				AND b.count_posts = {int:do_count_posts}
 				AND m.approved = {int:is_approved}
 			GROUP BY m.id_member',
 			array(
 				'do_count_posts' => 0,
-				'recycled' => 'recycled',
 				'topics' => $topics,
 				'is_approved' => 1,
 			)
@@ -297,11 +296,10 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			// Mark recycled topics as recycled.
 			wesql::query('
 				UPDATE {db_prefix}messages
-				SET icon = {string:recycled}
+				SET icon = {literal:recycled}
 				WHERE id_topic IN ({array_int:recycle_topics})',
 				array(
 					'recycle_topics' => $recycleTopics,
-					'recycled' => 'recycled',
 				)
 			);
 
@@ -504,10 +502,9 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 	wesql::query('
 		DELETE FROM {db_prefix}likes
 		WHERE id_content IN ({array_int:messages})
-			AND content_type = {string:content_type}',
+			AND content_type = {literal:post}',
 		array(
 			'messages' => $messages,
-			'content_type' => 'post',
 		)
 	);
 
@@ -839,14 +836,13 @@ function removeMessage($message, $decreasePostCount = true)
 				SET
 					id_topic = {int:id_topic},
 					id_board = {int:recycle_board},
-					icon = {string:recycled},
+					icon = {literal:recycled},
 					approved = {int:is_approved}
 				WHERE id_msg = {int:id_msg}',
 				array(
 					'id_topic' => $topicID,
 					'recycle_board' => $settings['recycle_board'],
 					'id_msg' => $message,
-					'recycled' => 'recycled',
 					'is_approved' => 1,
 				)
 			);
@@ -1144,10 +1140,9 @@ function RestoreTopic()
 		if (!empty($messages))
 			wesql::query('
 				UPDATE {db_prefix}messages
-				SET icon = {string:icon}
+				SET icon = {literal:xx}
 				WHERE id_msg IN ({array_int:messages})',
 				array(
-					'icon' => 'xx',
 					'messages' => $messages,
 				)
 			);
@@ -1188,10 +1183,9 @@ function RestoreTopic()
 			// Let's remove the recycled icon.
 			wesql::query('
 				UPDATE {db_prefix}messages
-				SET icon = {string:icon}
+				SET icon = {literal:xx}
 				WHERE id_topic = {int:id_topic}',
 				array(
-					'icon' => 'xx',
 					'id_topic' => $row['id_topic'],
 				)
 			);

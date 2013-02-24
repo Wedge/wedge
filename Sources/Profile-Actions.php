@@ -105,13 +105,12 @@ function issueWarning($memID)
 			FROM {db_prefix}log_comments
 			WHERE id_recipient = {int:selected_member}
 				AND id_member = {int:current_member}
-				AND comment_type = {string:warning}
+				AND comment_type = {literal:warning}
 				AND log_time > {int:day_time_period}',
 			array(
 				'current_member' => we::$id,
 				'selected_member' => $memID,
 				'day_time_period' => time() - 86400,
-				'warning' => 'warning',
 			)
 		);
 		list ($current_applied) = wesql::fetch_row($request);
@@ -301,10 +300,9 @@ function issueWarning($memID)
 	$request = wesql::query('
 		SELECT recipient_name AS template_title, body
 		FROM {db_prefix}log_comments
-		WHERE comment_type = {string:warntpl}
+		WHERE comment_type = {literal:warntpl}
 			AND (id_recipient = {int:generic} OR id_recipient = {int:current_member})',
 		array(
-			'warntpl' => 'warntpl',
 			'generic' => 0,
 			'current_member' => we::$id,
 		)
@@ -341,10 +339,9 @@ function list_getUserWarningCount($memID)
 		SELECT COUNT(*)
 		FROM {db_prefix}log_comments
 		WHERE id_recipient = {int:selected_member}
-			AND comment_type = {string:warning}',
+			AND comment_type = {literal:warning}',
 		array(
 			'selected_member' => $memID,
-			'warning' => 'warning',
 		)
 	);
 	list ($total_warnings) = wesql::fetch_row($request);
@@ -364,12 +361,11 @@ function list_getUserWarnings($start, $items_per_page, $sort, $memID)
 		FROM {db_prefix}log_comments AS lc
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = lc.id_member)
 		WHERE lc.id_recipient = {int:selected_member}
-			AND lc.comment_type = {string:warning}
+			AND lc.comment_type = {literal:warning}
 		ORDER BY ' . $sort . '
 		LIMIT ' . $start . ', ' . $items_per_page,
 		array(
 			'selected_member' => $memID,
-			'warning' => 'warning',
 		)
 	);
 	$previous_warnings = array();

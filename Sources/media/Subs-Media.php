@@ -222,9 +222,8 @@ function media_is_not_banned()
 	$request = wesql::query('
 		SELECT id, type, val1, val2, val3
 		FROM {db_prefix}media_variables
-		WHERE type = {string:ban}
+		WHERE type = {literal:ban}
 		AND val1 = {int:id_member}', array(
-			'ban' => 'ban',
 			'id_member' => we::$id
 		)
 	);
@@ -677,7 +676,7 @@ function allowedToAccessItem($id, $is_file_id = false)
 // Load the gallery's critical settings and variables
 function loadMediaSettings($gal_url = null, $load_template = false, $load_language = false)
 {
-	global $amSettings, $settings, $context, $txt, $scripturl, $galurl, $galurl2, $theme, $amOverride;
+	global $amSettings, $settings, $context, $txt, $galurl, $galurl2, $theme, $amOverride;
 	static $am_loaded = false;
 
 	if ($load_template)
@@ -771,7 +770,7 @@ function loadMediaSettings($gal_url = null, $load_template = false, $load_langua
 
 	// $galurl got the URL to gallery for subactions, and $galurl2 got URL for gallery for main page
 	if ($gal_url == null || empty($gal_url) || $gal_url == false)
-		$galurl = $scripturl . '?action=media;';
+		$galurl = '<URL>?action=media;';
 	else
 		$galurl = $gal_url;
 
@@ -849,11 +848,11 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 			q.id_profile = a.id_quota_profile AND
 			q.id_group IN ({array_int:groups}) AND
 			q.type = CASE p.permission
-				WHEN {string:add_image} THEN {string:image}
-				WHEN {string:add_audio} THEN {string:audio}
-				WHEN {string:add_video} THEN {string:video}
-				WHEN {string:add_embed} THEN {string:embed}
-				WHEN {string:add_doc} THEN {string:doc}
+				WHEN {literal:add_images} THEN {literal:image}
+				WHEN {literal:add_audios} THEN {literal:audio}
+				WHEN {literal:add_videos} THEN {literal:video}
+				WHEN {literal:add_embeds} THEN {literal:embed}
+				WHEN {literal:add_docs} THEN {literal:doc}
 			END
 		)
 		WHERE p.permission IN ({array_string:permissions})
@@ -875,16 +874,6 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 	$request = wesql::query($query, array(
 		'groups' => we::$user['groups'],
 		'permissions' => $permission,
-		'add_image' => 'add_images',
-		'add_video' => 'add_videos',
-		'add_audio' => 'add_audios',
-		'add_embed' => 'add_embeds',
-		'add_doc' => 'add_docs',
-		'image' => 'image',
-		'audio' => 'audio',
-		'video' => 'video',
-		'embed' => 'embed',
-		'doc' => 'doc',
 	));
 	$albums = array();
 	if ($details)
@@ -905,7 +894,7 @@ function albumsAllowedTo($permission, $details = false, $need_write = true)
 // Loads the current album... Handles a great deal of security
 function aeva_loadAlbum($album_id = 0)
 {
-	global $context, $theme, $galurl, $txt, $amSettings, $scripturl;
+	global $context, $theme, $galurl, $txt, $amSettings;
 
 	// Let's see if we got anything we can get an ID from?
 	// This is gonna be complex
@@ -1042,7 +1031,7 @@ function aeva_loadAlbum($album_id = 0)
 			'width' => $album_info['width'],
 			'height' => $album_info['height'],
 			'url' => $album_info['icon'] > 0 ? $icon_url : '',
-			'src' => $album_info['icon'] > 0 ? '<div class="aea' . $trans . '" style="width: ' . $album_info['width'] . 'px; height: ' . $album_info['height'] . 'px; background: url(' . $icon_url . ')"><a href="'.$scripturl.'?action=media;sa=album;in='.$album_info['id_album'].'">&nbsp;</a></div>' : '',
+			'src' => $album_info['icon'] > 0 ? '<div class="aea' . $trans . '" style="width: ' . $album_info['width'] . 'px; height: ' . $album_info['height'] . 'px; background: url(' . $icon_url . ')"><a href="<URL>?action=media;sa=album;in='.$album_info['id_album'].'">&nbsp;</a></div>' : '',
 		),
 		'bigicon' => $bw <= $mw && $bh <= $mh ? array($bw, $bh) : (round($mw * $bh / $bw) <= $mh ? array($mw, round($mw * $bh / $bw)) : array(round($mh * $bw / $bh), $mh)),
 		'bigicon_resized' => $bw > $mw || $bh > $mh,
@@ -1082,7 +1071,7 @@ function aeva_getQuickAlbums($custom = '', $field = 'id_album')
 // This function loads all the data of every album out there
 function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $order = true, $limit = '', $separate_children = false, $need_desc = false, $need_icon = false)
 {
-	global $context, $galurl, $albums, $boardurl, $boarddir, $amSettings, $scripturl, $txt;
+	global $context, $galurl, $albums, $amSettings, $txt;
 
 	if ($order === true)
 		$order = 'a.child_level, a.a_order';
@@ -1175,8 +1164,8 @@ function aeva_getAlbums($custom = '', $security_level = 2, $approved = true, $or
 				'height' => $row['height'],
 				'url' => $row['icon'] > 0 ? $icon_url : '',
 				'src' => $row['icon'] > 0 ? ($row['width'] > 0 ?
-					'<div class="aea' . $trans . '" style="width: ' . $row['width'] . 'px; height: ' . $row['height'] . 'px; background: url(' . $icon_url . ')"><a href="' . $scripturl . '?action=media;sa=album;in=' . $row['id_album'] . '">&nbsp;</a></div>' :
-					'<a href="' . $scripturl . '?action=media;sa=album;in=' . $row['id_album'] . '"><img src="' . $icon_url . '"></a>') : '',
+					'<div class="aea' . $trans . '" style="width: ' . $row['width'] . 'px; height: ' . $row['height'] . 'px; background: url(' . $icon_url . ')"><a href="<URL>?action=media;sa=album;in=' . $row['id_album'] . '">&nbsp;</a></div>' :
+					'<a href="<URL>?action=media;sa=album;in=' . $row['id_album'] . '"><img src="' . $icon_url . '"></a>') : '',
 			);
 		}
 	}
@@ -2441,14 +2430,12 @@ function aeva_timeformat($log_time)
 			return $txt['media_yesterday'];
 	}
 
-	if (we::$user['setlocale'])
+	if (!empty(we::$user['setlocale']))
 		$str = str_replace('%b', westr::ucwords(strftime('%b', $time)), $str);
 	else
-	{
 		foreach (array('%b' => 'months_short', '%B' => 'months') as $token => $text_label)
 			if (strpos($str, $token) !== false)
 				$str = str_replace($token, $txt[$text_label][(int) strftime('%m', $time)], $str);
-	}
 
 	$i = strftime($str, $time);
 	if (preg_match('/(^| )0([0-9] )/', $i, $dt))
@@ -2515,7 +2502,7 @@ function aeva_parse_bbc_each($data)
 
 function aeva_showThumbnail($data)
 {
-	global $scripturl, $txt, $amSettings, $context;
+	global $txt, $amSettings, $context;
 	static $counter = 0;
 
 	if (!isset($amSettings) || count($amSettings) < 10)
@@ -2611,7 +2598,7 @@ function aeva_showThumbnail($data)
 		if ($resun)
 			media_resetUnseen(we::$id);
 		if (count($ids) == 1)
-			$inside_caption = '<div class="aeva_inside_caption"><div class="aelink"><a href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>';
+			$inside_caption = '<div class="aeva_inside_caption"><div class="aelink"><a href="<URL>?action=media;sa=item;in=' . $id . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>';
 	}
 	elseif ($type == 'box')
 		$box = aeva_listItems(aeva_getMediaItems(-1, count($ids), 'm.id_media', true, array(), 'm.id_media IN (' . $id . ')'), false, $align == 'none' ? '' : $align);
@@ -2621,17 +2608,17 @@ function aeva_showThumbnail($data)
 	{
 		foreach ($ids as $i)
 			$box .=
-				($show_bigger ? '<a href="' . $scripturl . '?action=media;sa=media;in=' . $i . ($type == 'preview' ? '' : ';preview')
+				($show_bigger ? '<a href="<URL>?action=media;sa=media;in=' . $i . ($type == 'preview' ? '' : ';preview')
 				. ($amSettings['use_zoom'] ? '" class="zoom">' : '">') : '')
-				. '<img src="' . $scripturl . '?action=media;sa=media;in=' . $i
+				. '<img src="<URL>?action=media;sa=media;in=' . $i
 				. ($type == 'full' && !we::$browser['possibly_robot'] ? ';v'
 				: ($type == 'preview' || ($width > $amSettings['max_thumb_width']) ? ';preview' : ';thumb')) . '"' . $my_width . ' class="aext">'
 				. ($show_bigger ? '</a>' : '')
-				. ($no_zoom ? '' : '<div class="zoom-overlay"><div class="aelink"><a href="' . $scripturl . '?action=media;sa=item;in=' . $i . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>');
+				. ($no_zoom ? '' : '<div class="zoom-overlay"><div class="aelink"><a href="<URL>?action=media;sa=item;in=' . $i . '">' . $txt['media_gotolink'] . '</a></div>' . ($caption != $txt['media_gotolink'] ? $caption : '') . '</div>');
 	}
 	if (empty($box))
 		$box = $txt['media_tag_no_items'];
-	$caption_box = ($type != 'link' && $caption == $txt['media_gotolink']) ? '' : '<div class="aeva_caption">' . ($type == 'link' ? '<a href="' . $scripturl . '?action=media;sa=item;in=' . $id . '">' : '') . $caption . ($type == 'link' ? '</a>' : '') . '</div>';
+	$caption_box = ($type != 'link' && $caption == $txt['media_gotolink']) ? '' : '<div class="aeva_caption">' . ($type == 'link' ? '<a href="<URL>?action=media;sa=item;in=' . $id . '">' : '') . $caption . ($type == 'link' ? '</a>' : '') . '</div>';
 
 	$data =
 		($show_main_div ? '<table class="aextbox"' . ($align ? ' style="margin: ' . ($align == 'left' ? '0 auto 0 0' : ($align == 'right' ? '0 0 0 auto' : 'auto')) . '"' : '')
@@ -2826,7 +2813,7 @@ function aeva_listChildren(&$albums, $skip_table = false)
 // Block for showing item lists
 function aeva_listItems($items, $in_album = false, $align = '', $can_moderate = false)
 {
-	global $scripturl, $txt, $galurl, $theme, $context, $amSettings, $settings;
+	global $txt, $galurl, $theme, $context, $amSettings, $settings;
 	static $in_page = 0;
 
 	if (empty($items))
@@ -3018,7 +3005,6 @@ function aeva_getMediaItems($start = 0, $limit = 1, $sort = '', $all_albums = tr
 		ORDER BY {raw:sort}' : '') . '
 		LIMIT ' . (!empty($start) ? '{int:start},' : '') . '{int:limit}',
 		array(
-			'user' => 'user',
 			'user_id' => we::$id,
 			'album' => $all_albums ? 0 : (int) $context['aeva_album']['id'],
 			'albums_in' => count($albums) > 0 ? ' AND a.id_album IN (' . implode(',', $albums) . ')' : '',
@@ -3034,7 +3020,7 @@ function aeva_getMediaItems($start = 0, $limit = 1, $sort = '', $all_albums = tr
 // Gets random or recent comments
 function aeva_getMediaComments($start, $limit, $random = false, $albums = array(), $custom = '')
 {
-	global $scripturl, $txt;
+	global $txt;
 
 	$request = wesql::query('
 		SELECT
@@ -3065,7 +3051,7 @@ function aeva_getMediaComments($start, $limit, $random = false, $albums = array(
 	{
 		$items[] = array(
 			'id_comment' => $row['id_comment'],
-			'url' => $scripturl . '?action=media;sa=item;in=' . $row['id_media'] . '#com' . $row['id_comment'],
+			'url' => '<URL>?action=media;sa=item;in=' . $row['id_media'] . '#com' . $row['id_comment'],
 			'id_member' => $row['id_member'],
 			'media_title' => $row['title'],
 			'member_link' => empty($row['member_name']) ? $txt['guest'] : aeva_profile($row['id_member'], $row['member_name']),
@@ -3311,7 +3297,6 @@ function aeva_userStats($userid = 0, $latest_images_limit = 0)
 		AND approved = 1',
 		array(
 			'user_id' => $userid,
-			'user' => 'user',
 		)
 	);
 
@@ -3423,9 +3408,9 @@ function aeva_theme_url($file)
 
 function aeva_profile($id, $name, $func = 'aeva')
 {
-	global $scripturl, $txt;
+	global $txt;
 
-	return empty($id) ? (empty($name) ? $txt['guest'] : $name) : ('<a href="' . $scripturl . '?action=profile;u=' . $id . ';area=' . $func . '">' . $name .'</a>');
+	return empty($id) ? (empty($name) ? $txt['guest'] : $name) : ('<a href="<URL>?action=profile;u=' . $id . ';area=' . $func . '">' . $name .'</a>');
 }
 
 function media_markSeen($id, $options = '', $user = -1)
@@ -3530,7 +3515,7 @@ function aeva_markAllSeen()
 
 function aeva_addHeaders($autosize = true, $use_zoomedia = true)
 {
-	global $context, $txt, $settings, $amSettings, $scripturl;
+	global $context, $txt, $settings, $amSettings;
 	static $done = false;
 
 	if ($done)

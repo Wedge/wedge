@@ -982,10 +982,9 @@ function MergePosts($error_report = true)
 			$query = wesql::query('
 				SELECT id_content, id_member
 				FROM {db_prefix}likes
-				WHERE id_content IN ({array_int:ids}) AND content_type = {string:post}',
+				WHERE id_content IN ({array_int:ids}) AND content_type = {literal:post}',
 				array(
 					'ids' => array($newpostid, $oldpostid),
-					'post' => 'post',
 				)
 			);
 			while ($row = wesql::fetch_assoc($query))
@@ -1000,11 +999,10 @@ function MergePosts($error_report = true)
 					wesql::query('
 						DELETE FROM {db_prefix}likes
 						WHERE id_content = {int:oldpostid}
-							AND content_type = {string:post}
+							AND content_type = {literal:post}
 							AND id_member IN ({array_int:likesboth})',
 						array(
 							'oldpostid' => $oldpostid,
-							'post' => 'post',
 							'likesboth' => $liked_both,
 						)
 					);
@@ -1016,12 +1014,11 @@ function MergePosts($error_report = true)
 						UPDATE {db_prefix}likes
 						SET id_content = {int:newpostid}
 						WHERE id_content = {int:oldpostid}
-							AND content_type = {string:post}
+							AND content_type = {literal:post}
 							AND id_member IN ({array_int:likesold})',
 						array(
 							'newpostid' => $newpostid,
 							'oldpostid' => $oldpostid,
-							'post' => 'post',
 							'likesold' => $liked_old,
 						)
 					);

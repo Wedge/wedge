@@ -748,13 +748,11 @@ function timeformat($log_time, $show_today = true, $offset_type = false)
 	if ($non_twelve_hour && strpos($str, '%p') !== false)
 		$str = str_replace('%p', strftime('%H', $time) < 12 ? 'am' : 'pm', $str);
 
+	// Do-it-yourself time localization. Fun.
 	if (empty(we::$user['setlocale']))
-	{
-		// Do-it-yourself time localization. Fun.
 		foreach (array('%a' => 'days_short', '%A' => 'days', '%b' => 'months_short', '%B' => 'months') as $token => $text_label)
 			if (strpos($str, $token) !== false)
 				$str = str_replace($token, $txt[$text_label][(int) strftime($token === '%a' || $token === '%A' ? '%w' : '%m', $time)], $str);
-	}
 
 	// Windows doesn't support %e; on some versions, strftime fails altogether if used, so let's prevent that.
 	if ($context['server']['is_windows'] && strpos($str, '%e') !== false)

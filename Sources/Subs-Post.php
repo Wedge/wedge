@@ -332,11 +332,10 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 		wesql::query('
 			UPDATE {db_prefix}settings
 			SET value = {string:nextSendTime}
-			WHERE variable = {string:mail_next_send}
+			WHERE variable = {literal:mail_next_send}
 				AND value = {string:no_outstanding}',
 			array(
 				'nextSendTime' => $nextSendTime,
-				'mail_next_send' => 'mail_next_send',
 				'no_outstanding' => '0',
 			)
 		);
