@@ -529,10 +529,7 @@ function sendpm($recipients, $subject, $message, $store_outbox = false, $from = 
 	$request = wesql::query('
 		SELECT id_group, add_deny
 		FROM {db_prefix}permissions
-		WHERE permission = {string:read_permission}',
-		array(
-			'read_permission' => 'pm_read',
-		)
+		WHERE permission = {literal:pm_read}'
 	);
 
 	while ($row = wesql::fetch_assoc($request))
@@ -2345,11 +2342,10 @@ function updateLastMessages($setboards, $id_msg = 0)
 			FROM {db_prefix}topics
 			WHERE id_board IN ({array_int:board_list})
 				AND approved = {int:is_approved}
-				AND privacy = {string:default_privacy}
+				AND privacy = {literal:default}
 			GROUP BY id_board',
 			array(
 				'board_list' => $setboards,
-				'default_privacy' => 'default',
 				'is_approved' => 1,
 			)
 		);

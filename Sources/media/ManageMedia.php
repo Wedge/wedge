@@ -619,10 +619,9 @@ function aeva_admin_perms()
 		wesql::query('
 			DELETE FROM {db_prefix}media_variables
 			WHERE id IN ({array_int:id})
-				AND type = {string:prof}',
+				AND type = {literal:perm_profile}',
 			array(
 				'id' => $to_delete,
-				'prof' => 'perm_profile',
 			)
 		);
 
@@ -654,10 +653,9 @@ function aeva_admin_perms()
 		),
 	);
 	$request = wesql::query('
-		SELECT v.id, v.val1
-		FROM {db_prefix}media_variables AS v
-		WHERE v.type = {string:type}',
-		array('type' => 'perm_profile')
+		SELECT id, val1
+		FROM {db_prefix}media_variables
+		WHERE type = {literal:perm_profile}'
 	);
 	while ($row = wesql::fetch_assoc($request))
 		$context['aeva_profiles'][$row['id']] = array(
@@ -705,10 +703,9 @@ function aeva_admin_perms_quick()
 		$request = wesql::query('
 			SELECT id, val1
 			FROM {db_prefix}media_variables
-			WHERE id = {int:id} AND type = {string:type}',
+			WHERE id = {int:id} AND type = {literal:perm_profile}',
 			array(
 				'id' => (int) $_REQUEST['profile'],
-				'type' => 'perm_profile',
 			)
 		);
 		if (wesql::num_rows($request) == 0)
@@ -860,10 +857,9 @@ function aeva_admin_perms_view()
 			SELECT id, val1
 			FROM {db_prefix}media_variables
 			WHERE id = {int:id}
-				AND type = {string:type}',
+				AND type = {literal:perm_profile}',
 			array(
 				'id' => (int) $_REQUEST['in'],
-				'type' => 'perm_profile',
 			)
 		);
 		if (wesql::num_rows($request) == 0)
@@ -921,10 +917,9 @@ function aeva_admin_perms_edit()
 			SELECT id, val1
 			FROM {db_prefix}media_variables
 			WHERE id = {int:id}
-				AND type = {string:type}',
+				AND type = {literal:perm_profile}',
 			array(
 				'id' => $rid,
-				'type' => 'perm_profile',
 			)
 		);
 		if (wesql::num_rows($request) == 0)
@@ -1050,10 +1045,9 @@ function aeva_admin_perms_albums()
 			SELECT id
 			FROM {db_prefix}media_variables
 			WHERE id = {int:id}
-				AND type = {string:type}',
+				AND type = {literal:perm_profile}',
 			array(
 				'id' => (int) $_POST['prof'],
-				'type' => 'perm_profile',
 			)
 		);
 		if (wesql::num_rows($request) == 0)
@@ -1141,10 +1135,9 @@ function aeva_admin_quotas()
 		wesql::query('
 			DELETE FROM {db_prefix}media_variables
 			WHERE id IN ({array_int:id})
-				AND type = {string:prof}',
+				AND type = {literal:quota_prof}',
 			array(
 				'id' => $to_delete,
-				'prof' => 'quota_prof',
 			)
 		);
 
@@ -1170,8 +1163,7 @@ function aeva_admin_quotas()
 	$request = wesql::query('
 		SELECT id, val1
 		FROM {db_prefix}media_variables
-		WHERE type = {string:type}',
-		array('type' => 'quota_prof')
+		WHERE type = {literal:quota_prof}'
 	);
 	$context['aeva_profiles'] = array(
 		1 => array(
@@ -1244,10 +1236,9 @@ function aeva_admin_quotas_view()
 			SELECT id, val1
 			FROM {db_prefix}media_variables
 			WHERE id = {int:id}
-				AND type = {string:type}',
+				AND type = {literal:quota_prof}',
 			array(
 				'id' => (int) $_REQUEST['in'],
-				'type' => 'quota_prof',
 			)
 		);
 		if (wesql::num_rows($request) == 0)
@@ -1286,9 +1277,8 @@ function aeva_admin_quotas_edit()
 			SELECT id, val1
 			FROM {db_prefix}media_variables
 			WHERE id = {int:id}
-				AND type = {string:type}',
+				AND type = {literal:quota_prof}',
 			array(
-				'type' => 'quota_prof',
 				'id' => (int) $_REQUEST['in'],
 			)
 		);
@@ -1419,10 +1409,9 @@ function aeva_admin_quotas_albums()
 			SELECT id
 			FROM {db_prefix}media_variables
 			WHERE id = {int:id}
-				AND type = {string:type}',
+				AND type = {literal:quota_prof}',
 			array(
 				'id' => (int) $_POST['prof'],
-				'type' => 'quota_prof',
 			)
 		);
 		if (wesql::num_rows($request) == 0)

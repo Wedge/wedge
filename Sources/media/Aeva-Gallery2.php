@@ -210,7 +210,11 @@ function aeva_moveItems()
 					UPDATE {db_prefix}media_files
 					SET id_album = {int:album}, directory = {string:dir}
 					WHERE id_file = {int:file}',
-					array('file' => $i['id_thumb'], 'dir' => $_new_dir, 'album' => $album_id)
+					array(
+						'file' => $i['id_thumb'],
+						'dir' => $_new_dir,
+						'album' => $album_id,
+					)
 				);
 			}
 			if ($i['id_preview'] > 4 && file_exists($amSettings['data_dir_path'] . '/' . $i['preview_dir'] . '/' . aeva_getEncryptedFilename($i['preview_file'], $i['id_preview'])))
@@ -227,7 +231,11 @@ function aeva_moveItems()
 					UPDATE {db_prefix}media_files
 					SET id_album = {int:album}, directory = {string:dir}
 					WHERE id_file = {int:file}',
-					array('file' => $i['id_preview'], 'dir' => $_new_dir, 'album' => $album_id)
+					array(
+						'file' => $i['id_preview'],
+						'dir' => $_new_dir,
+						'album' => $album_id,
+					)
 				);
 			}
 			if ($i['id_file'] != 0 && file_exists($main_file))
@@ -244,7 +252,11 @@ function aeva_moveItems()
 					UPDATE {db_prefix}media_files
 					SET id_album = {int:album}, directory = {string:dir}
 					WHERE id_file = {int:file}',
-					array('file' => $i['id_file'], 'dir' => $_new_dir, 'album' => $album_id)
+					array(
+						'file' => $i['id_file'],
+						'dir' => $_new_dir,
+						'album' => $album_id,
+					)
 				);
 			}
 
@@ -1053,8 +1065,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	$request = wesql::query('
 		SELECT id, val1
 		FROM {db_prefix}media_variables
-		WHERE type = {string:type}',
-		array('type' => 'perm_profile')
+		WHERE type = {literal:perm_profile}'
 	);
 	while ($row = wesql::fetch_assoc($request))
 		$profs[$row['id']] = array(
@@ -1073,8 +1084,7 @@ function aeva_addAlbum($is_admin = false, $is_add = true)
 	$request = wesql::query('
 		SELECT id, val1
 		FROM {db_prefix}media_variables
-		WHERE type = {string:type}',
-		array('type' => 'quota_prof')
+		WHERE type = {literal:quota_prof}'
 	);
 	while ($row = wesql::fetch_assoc($request))
 		$quota_profs[$row['id']] = array(

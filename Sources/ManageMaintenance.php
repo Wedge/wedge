@@ -267,9 +267,9 @@ function MaintainTopics()
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
 		WHERE {query_see_board}
-			AND redirect = {string:blank_redirect}',
+			AND redirect = {string:empty}',
 		array(
-			'blank_redirect' => '',
+			'empty' => '',
 		)
 	);
 	$context['categories'] = array();
@@ -400,10 +400,7 @@ function ConvertUtf8()
 		$request = wesql::query('
 			SHOW FULL COLUMNS
 			FROM {db_prefix}messages
-			LIKE {string:body_like}',
-			array(
-				'body_like' => 'body',
-			)
+			LIKE {literal:body}'
 		);
 		$column_info = wesql::fetch_assoc($request);
 		wesql::free_result($request);
@@ -1050,10 +1047,10 @@ function AdminBoardRecount()
 			wesql::query('
 				UPDATE {db_prefix}boards
 				SET num_posts = {int:num_posts}
-				WHERE redirect = {string:redirect}',
+				WHERE redirect = {string:empty}',
 				array(
 					'num_posts' => 0,
-					'redirect' => '',
+					'empty' => '',
 				)
 			);
 
@@ -1695,11 +1692,10 @@ function MaintainRecountPosts()
 		FROM {db_prefix}messages
 		WHERE id_member IN ({array_int:members})
 			AND id_board IN ({array_int:boards})
-			AND icon != {string:moved_icon}',
+			AND icon != {literal:moved}',
 		array(
 			'members' => $members,
 			'boards' => $boards,
-			'moved_icon' => 'moved',
 		)
 	);
 

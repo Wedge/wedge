@@ -195,10 +195,9 @@ function ModifySubscriptionSettings($return_config = false)
 			wesql::query('
 				UPDATE {db_prefix}scheduled_tasks
 				SET disabled = {int:disabled}
-				WHERE task = {string:task}',
+				WHERE task = {literal:paid_subscriptions}',
 				array(
 					'disabled' => $new_value ? 0 : 1,
-					'task' => 'paid_subscriptions',
 				)
 			);
 

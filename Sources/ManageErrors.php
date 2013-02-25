@@ -266,10 +266,7 @@ function ViewErrorLog()
 		SELECT error_type, COUNT(*) AS num_errors
 		FROM {db_prefix}log_errors
 		GROUP BY error_type
-		ORDER BY error_type = {string:critical_type} DESC, error_type ASC',
-		array(
-			'critical_type' => 'critical',
-		)
+		ORDER BY error_type = {literal:critical} DESC, error_type ASC'
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{
@@ -554,10 +551,7 @@ function ViewIntrusionLog()
 		SELECT error_type, COUNT(*) AS num_errors
 		FROM {db_prefix}log_intrusion
 		GROUP BY error_type
-		ORDER BY error_type = {string:critical_type} DESC, error_type ASC',
-		array(
-			'critical_type' => 'critical',
-		)
+		ORDER BY error_type = {literal:critical} DESC, error_type ASC'
 	);
 	while ($row = wesql::fetch_assoc($request))
 	{

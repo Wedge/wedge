@@ -616,10 +616,7 @@ function EditBoard()
 	$request = wesql::query('
 		SELECT id_theme AS id, value AS dir
 		FROM {db_prefix}themes
-		WHERE variable = {string:dir}',
-		array(
-			'dir' => 'theme_dir',
-		)
+		WHERE variable = {literal:theme_dir}'
 	);
 	while ($row = wesql::fetch_assoc($request))
 		$context['themes'][$row['id']]['skins'] = wedge_get_skin_list($row['dir'] . '/skins');
@@ -844,9 +841,9 @@ function EditBoardSettings($return_config = false)
 		SELECT b.id_board, b.name AS board_name, c.name AS cat_name
 		FROM {db_prefix}boards AS b
 			LEFT JOIN {db_prefix}categories AS c ON (c.id_cat = b.id_cat)
-		WHERE redirect = {string:empty_string}',
+		WHERE redirect = {string:empty}',
 		array(
-			'empty_string' => '',
+			'empty' => '',
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))

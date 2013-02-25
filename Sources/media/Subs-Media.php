@@ -446,12 +446,11 @@ function aeva_createAlbumSubdir($album_id)
 		SELECT val2
 		FROM {db_prefix}media_variables
 		WHERE val1 = {int:album_id}
-		AND type = {string:type}
+		AND type = {literal:dir}
 		ORDER BY id DESC
 		LIMIT 1',
 		array(
 			'album_id' => $album_id,
-			'type' => 'dir',
 		)
 	);
 
@@ -524,7 +523,10 @@ function aeva_createAlbumDir($album_id, $create_sub_dir = true)
 			UPDATE {db_prefix}media_albums
 			SET directory = {string:directory}
 			WHERE id_album = {int:id_album}',
-			array('directory' => $new_dir_name, 'id_album' => $album_id)
+			array(
+				'directory' => $new_dir_name,
+				'id_album' => $album_id,
+			)
 		);
 		if (wesql::affected_rows() == 0)
 			return false;
@@ -577,10 +579,12 @@ function aeva_getSuitableDir($album_id)
 		SELECT val1, val2
 		FROM {db_prefix}media_variables
 		WHERE val1 = {int:album_id}
-		AND type = {string:type}
+		AND type = {literal:dir}
 		ORDER BY id DESC
 		LIMIT 1',
-		array('album_id' => $album_id, 'type' => 'dir')
+		array(
+			'album_id' => $album_id,
+		)
 	);
 
 	if (wesql::num_rows($request) == 0)
@@ -1377,10 +1381,9 @@ function aeva_deleteItems($id, $rmFiles = true, $log = true)
 	wesql::query('
 		DELETE FROM {db_prefix}media_variables
 		WHERE val4 IN ({array_int:media})
-			AND type = {string:type}',
+			AND type = {literal:item_report}',
 		array(
 			'media' => $ids,
-			'type' => 'item_report',
 		)
 	);
 	$total_deleted = wesql::affected_rows();
@@ -1521,10 +1524,9 @@ function aeva_deleteComments($id, $log = true)
 	wesql::query('
 		DELETE FROM {db_prefix}media_variables
 		WHERE val4 IN ({array_int:media})
-			AND type = {string:type}',
+			AND type = {literal:comment_report}',
 		array(
 			'media' => $ids,
-			'type' => 'comment_report',
 		)
 	);
 	$total_deleted = wesql::affected_rows();

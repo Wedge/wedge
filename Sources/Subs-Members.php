@@ -877,7 +877,7 @@ function registerMember(&$regOptions, $return_errors = false)
 }
 
 // Check if a name is in the reserved words list. (name, current member id, name/username?.)
-function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal = true)
+function isReservedName($name, $current_id_member = 0, $is_name = true, $fatal = true)
 {
 	global $settings, $context;
 	static $rules = null;
@@ -974,18 +974,18 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 	}
 
 	// Get rid of any SQL parts of the reserved name...
-	$checkName = strtr($name, array('_' => '\\_', '%' => '\\%'));
+	$check_name = strtr($name, array('_' => '\\_', '%' => '\\%'));
 
 	// Make sure they don't want someone else's name.
 	$request = wesql::query('
 		SELECT id_member
 		FROM {db_prefix}members
-		WHERE ' . (empty($current_ID_MEMBER) ? '' : 'id_member != {int:current_member}
+		WHERE ' . (empty($current_id_member) ? '' : 'id_member != {int:current_member}
 			AND ') . '(real_name LIKE {string:check_name} OR member_name LIKE {string:check_name})
 		LIMIT 1',
 		array(
-			'current_member' => $current_ID_MEMBER,
-			'check_name' => $checkName,
+			'current_member' => $current_id_member,
+			'check_name' => $check_name,
 		)
 	);
 	if (wesql::num_rows($request) > 0)
@@ -1002,7 +1002,7 @@ function isReservedName($name, $current_ID_MEMBER = 0, $is_name = true, $fatal =
 		WHERE group_name LIKE {string:check_name}
 		LIMIT 1',
 		array(
-			'check_name' => $checkName,
+			'check_name' => $check_name,
 		)
 	);
 	if (wesql::num_rows($request) > 0)
@@ -1149,7 +1149,7 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board AND b.count_posts = {int:count_posts})
 			WHERE m.id_member = {int:guest_id}
 				AND m.approved = {int:is_approved}
-				AND m.icon != {string:recycled_icon}' . (empty($email) ? '' : '
+				AND m.icon != {literal:recycled}' . (empty($email) ? '' : '
 				AND m.poster_email = {string:email_address}') . (empty($membername) ? '' : '
 				AND m.poster_name = {string:member_name}'),
 			array(
@@ -1158,7 +1158,6 @@ function reattributePosts($memID, $email = false, $membername = false, $post_cou
 				'email_address' => $email,
 				'member_name' => $membername,
 				'is_approved' => 1,
-				'recycled_icon' => 'recycled',
 			)
 		);
 		list ($messageCount) = wesql::fetch_row($request);

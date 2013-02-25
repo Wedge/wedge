@@ -104,8 +104,7 @@ function RemindPick()
 			FROM {db_prefix}members
 			WHERE email_address = {string:email_address}
 			LIMIT 1',
-			array_merge($where_params, array(
-			))
+			$where_params
 		);
 		if (wesql::num_rows($request) == 0)
 		{

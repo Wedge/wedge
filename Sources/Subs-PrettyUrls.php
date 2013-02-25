@@ -202,10 +202,12 @@ function pretty_update_topic($subject, $topic_id)
 	// Update the database
 	wesql::query('
 		REPLACE INTO {db_prefix}pretty_topic_urls (id_topic, pretty_url)
-		VALUES ({int:topic_id}, {string:pretty_text})', array(
+		VALUES ({int:topic_id}, {string:pretty_text})',
+		array(
 			'topic_id' => $topic_id,
 			'pretty_text' => $pretty_text
-		));
+		)
+	);
 
 	// Count this query!
 	if (isset($context))

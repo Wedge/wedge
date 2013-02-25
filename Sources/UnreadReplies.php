@@ -262,10 +262,10 @@ function UnreadReplies()
 		// The main benefit of this temporary table is not that it's faster; it's that it avoids locks later.
 		$have_temp_table = wesql::query('
 			CREATE TEMPORARY TABLE {db_prefix}topics_posted_in (
-				id_topic mediumint(8) unsigned NOT NULL default {string:string_zero},
-				id_board smallint(5) unsigned NOT NULL default {string:string_zero},
-				id_last_msg int(10) unsigned NOT NULL default {string:string_zero},
-				id_msg int(10) unsigned NOT NULL default {string:string_zero},
+				id_topic mediumint(8) unsigned NOT NULL default {string:zero},
+				id_board smallint(5) unsigned NOT NULL default {string:zero},
+				id_last_msg int(10) unsigned NOT NULL default {string:zero},
+				id_msg int(10) unsigned NOT NULL default {string:zero},
 				PRIMARY KEY (id_topic)
 			)
 			SELECT t.id_topic, t.id_board, t.id_last_msg, IFNULL(lmr.id_msg, 0) AS id_msg' . (!in_array($_REQUEST['sort'], array('t.id_last_msg', 't.id_topic')) ? ', ' . $_REQUEST['sort'] . ' AS sort_key' : '') . '
@@ -279,8 +279,8 @@ function UnreadReplies()
 			array(
 				'current_board' => $board,
 				'current_member' => we::$id,
-				'string_zero' => '0',
 				'db_error_skip' => true,
+				'zero' => '0',
 			)
 		) !== false;
 

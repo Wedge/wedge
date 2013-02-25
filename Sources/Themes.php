@@ -179,11 +179,8 @@ function ThemeAdmin()
 		$request = wesql::query('
 			SELECT id_theme, value AS dir
 			FROM {db_prefix}themes
-			WHERE variable = {string:dir}
-				AND id_member = 0',
-			array(
-				'dir' => 'theme_dir',
-			)
+			WHERE variable = {literal:theme_dir}
+				AND id_member = 0'
 		);
 		while ($row = wesql::fetch_assoc($request))
 			$context['themes'][$row['id_theme']]['skins'] = wedge_get_skin_list($row['dir'] . '/skins');
