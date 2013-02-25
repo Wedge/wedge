@@ -1115,7 +1115,7 @@ function EditMembergroup()
 		$context['need_deny_perm'] = false;
 
 		$result = wesql::query('
-			SELECT b.id_board, b.name, child_level, IFNULL(view_perm, {string:disallow}) AS view_perm, IFNULL(enter_perm, {string:disallow}) AS enter_perm,
+			SELECT b.id_board, b.name, child_level, IFNULL(view_perm, {literal:disallow}) AS view_perm, IFNULL(enter_perm, {literal:disallow}) AS enter_perm,
 				c.name AS cat_name, c.id_cat
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}board_groups AS bg ON (b.id_board = bg.id_board AND bg.id_group = {int:current_group})
@@ -1123,7 +1123,6 @@ function EditMembergroup()
 			ORDER BY board_order',
 			array(
 				'current_group' => (int) $_REQUEST['group'],
-				'disallow' => 'disallow',
 			)
 		);
 		while ($row = wesql::fetch_assoc($result))

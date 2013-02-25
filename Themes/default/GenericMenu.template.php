@@ -244,7 +244,7 @@ function template_show_generic_tabs(&$tabs, &$menu_context = array(), $class = '
 	// If you're showing custom tabs, make sure to provide 'url' and 'label' for each tab.
 	foreach ($tabs as $sa => $tab)
 		if (!empty($tab) && empty($tab['disabled']) && isset($tab['label']))
-			echo '<li', !empty($tab['is_selected']) ? ' class="chosen"' : '', '><h4><a href="',
+			echo '<li class="', !empty($tab['is_selected']) ? 'chosen ' : '', 'nodrop"><h4><a href="',
 				isset($tab['url']) ? $tab['url'] : $menu_context['base_url'] . ';area=' . $menu_context['current_area'] . ';sa=' . $sa,
 				isset($menu_context['extra_parameters']) ? $menu_context['extra_parameters'] : '', '">', $tab['label'], '</a></h4></li>';
 

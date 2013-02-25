@@ -2203,10 +2203,7 @@ class wedit
 		$result = wesql::query('
 			SELECT tag, block_level
 			FROM {db_prefix}bbcode
-			WHERE bbctype != {string:closed}',
-			array(
-				'closed' => 'closed'
-			)
+			WHERE bbctype != {literal:closed}'
 		);
 		$is_block = array();
 		while ($row = wesql::fetch_row($result))

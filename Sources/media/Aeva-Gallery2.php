@@ -2535,10 +2535,9 @@ function aeva_massDownload()
 		FROM {db_prefix}media_items
 		WHERE approved = 1
 		AND album_id = {int:id}
-		AND type != {string:embed}',
+		AND type != {literal:embed}',
 		array(
 			'id' => $context['aeva_album']['id'],
-			'embed' => 'embed',
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))
@@ -2596,10 +2595,9 @@ function aeva_massDownloadCreate()
 			INNER JOIN {db_prefix}media_albums AS a ON (m.album_id = a.id_album)
 		WHERE m.approved = 1
 		AND m.album_id = {int:id}
-		AND m.type != {string:embed}',
+		AND m.type != {literal:embed}',
 		array(
 			'id' => $context['aeva_album']['id'],
-			'embed' => 'embed',
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))

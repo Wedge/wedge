@@ -77,7 +77,7 @@ function ManageMail()
 		),
 	);
 
-	// Call the right function for this sub-acton.
+	// Call the right function for this sub-action.
 	$subActions[$context['sub_action']]();
 }
 

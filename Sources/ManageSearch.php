@@ -101,7 +101,7 @@ function ManageSearch()
 		),
 	);
 
-	// Call the right function for this sub-acton.
+	// Call the right function for this sub-action.
 	$subActions[$_REQUEST['sa']]();
 }
 
@@ -547,10 +547,7 @@ function CreateMessageIndex()
 		updateSettings(array('search_index' => 'custom', 'search_custom_index_config' => serialize($context['index_settings'])));
 		wesql::query('
 			DELETE FROM {db_prefix}settings
-			WHERE variable = {string:search_custom_index_resume}',
-			array(
-				'search_custom_index_resume' => 'search_custom_index_resume',
-			)
+			WHERE variable = {literal:search_custom_index_resume}'
 		);
 	}
 }

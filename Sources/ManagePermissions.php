@@ -1781,15 +1781,13 @@ function init_inline_permissions($permission_details)
 		);
 
 	$request = wesql::query('
-		SELECT id_group, CASE WHEN add_deny = {int:denied} THEN {string:deny} ELSE {string:on} END AS status, permission
+		SELECT id_group, CASE WHEN add_deny = {int:denied} THEN {literal:deny} ELSE {literal:on} END AS status, permission
 		FROM {db_prefix}permissions
 		WHERE id_group IN (-1, 0)
 			AND permission IN ({array_string:permissions})',
 		array(
 			'denied' => 0,
 			'permissions' => $permissions,
-			'deny' => 'deny',
-			'on' => 'on',
 		)
 	);
 	while ($row = wesql::fetch_assoc($request))

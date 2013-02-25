@@ -482,8 +482,7 @@ function aeva_admin_maintenance_recount()
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}media_variables
-		WHERE type = {string:type}',
-		array('type' => 'item_report')
+		WHERE type = {literal:item_report}'
 	);
 	$total_reported_items = 0;
 	list ($total_reported_items) = wesql::fetch_row($request);
@@ -494,8 +493,7 @@ function aeva_admin_maintenance_recount()
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}media_variables
-		WHERE type = {string:type}',
-		array('type' => 'comment_report')
+		WHERE type = {literal:comment_report}'
 	);
 	$total_reported_comments = 0;
 	list ($total_reported_comments) = wesql::fetch_row($request);
@@ -674,17 +672,15 @@ function aeva_admin_maintenance_finderrors()
 	// It means the file itself is small enough, so we use that. Otherwise, set the big icon to 0.
 	wesql::query('
 		UPDATE {db_prefix}media_albums AS a, {db_prefix}media_items AS m
-		SET a.bigicon = IF(m.id_preview > 0, m.id_preview, IF(m.type = {string:image}, m.id_file, 0))
-		WHERE a.bigicon = 0 AND a.icon != 0 AND m.id_thumb = a.icon',
-		array('image' => 'image')
+		SET a.bigicon = IF(m.id_preview > 0, m.id_preview, IF(m.type = {literal:image}, m.id_file, 0))
+		WHERE a.bigicon = 0 AND a.icon != 0 AND m.id_thumb = a.icon'
 	);
 	// Delete bigicon entries where the file's database entry doesn't exist. (Shouldn't happen, but I found one in my own gallery, so...)
 	wesql::query('
 		UPDATE {db_prefix}media_albums AS a
 		LEFT JOIN {db_prefix}media_files AS m ON (m.id_file = a.bigicon)
 		SET a.bigicon = 0
-		WHERE (a.bigicon > 0 AND m.id_file IS NULL)',
-		array()
+		WHERE (a.bigicon > 0 AND m.id_file IS NULL)'
 	);
 
 	// Time to compile the errors if any
@@ -1203,8 +1199,7 @@ function aeva_admin_bans()
 	$request = wesql::query('
 		SELECT COUNT(*)
 		FROM {db_prefix}media_variables
-		WHERE type = {string:ban}',
-		array('ban' => 'ban')
+		WHERE type = {literal:ban}'
 	);
 	list ($total_logs) = wesql::fetch_row($request);
 	wesql::free_result($request);
@@ -1214,11 +1209,10 @@ function aeva_admin_bans()
 		SELECT v.id, v.val1, v.val2, v.val3, v.val4, mem.real_name
 		FROM {db_prefix}media_variables AS v
 			INNER JOIN {db_prefix}members AS mem ON (mem.id_member = v.val1)
-		WHERE v.type = {string:ban}
+		WHERE v.type = {literal:ban}
 		ORDER BY v.val2 DESC
 		LIMIT {int:start}, {int:limit}',
 		array(
-			'ban' => 'ban',
 			'start' => (int) $_REQUEST['start'],
 			'limit' => 20,
 		)
@@ -1341,10 +1335,9 @@ function aeva_admin_bans_add()
 		$request = wesql::query('
 			SELECT id
 			FROM {db_prefix}media_variables
-			WHERE type = {string:ban}
+			WHERE type = {literal:ban}
 			AND val1 = {int:id_member}',
 			array(
-				'ban' => 'ban',
 				'id_member' => $id_mem
 			)
 		);
@@ -1402,10 +1395,9 @@ function aeva_admin_bans_delete()
 		FROM {db_prefix}media_variables AS v
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = v.val1)
 		WHERE id = {int:id}
-		AND type = {string:type}',
+		AND type = {literal:ban}',
 		array(
 			'id' => (int) $_REQUEST['in'],
-			'type' => 'ban',
 		)
 	);
 	if (wesql::num_rows($request) == 0)
@@ -1417,10 +1409,9 @@ function aeva_admin_bans_delete()
 	wesql::query('
 		DELETE FROM {db_prefix}media_variables
 		WHERE id = {int:id}
-			AND type = {string:type}',
+			AND type = {literal:ban}',
 		array(
 			'id' => (int) $_REQUEST['in'],
-			'type' => 'ban',
 		)
 	);
 
@@ -1453,10 +1444,9 @@ function aeva_admin_bans_edit()
 		SELECT v.val1, v.val2, v.val3, v.val4, mem.real_name
 		FROM {db_prefix}media_variables AS v
 			INNER JOIN {db_prefix}members AS mem ON (v.val1 = mem.id_member)
-		WHERE type = {string:type}
+		WHERE type = {literal:ban}
 		AND id = {int:id}',
 		array(
-			'type' => 'ban',
 			'id' => (int) $_REQUEST['in'],
 		)
 	);

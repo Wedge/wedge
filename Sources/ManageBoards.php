@@ -603,10 +603,7 @@ function EditBoard()
 	$request = wesql::query('
 		SELECT id_theme AS id, value AS name
 		FROM {db_prefix}themes
-		WHERE variable = {string:name}',
-		array(
-			'name' => 'name',
-		)
+		WHERE variable = {literal:name}'
 	);
 	$context['themes'] = array();
 	while ($row = wesql::fetch_assoc($request))
