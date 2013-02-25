@@ -251,11 +251,10 @@ function scheduled_approval_notification()
 	$request = wesql::query('
 		SELECT id_group, id_profile, add_deny
 		FROM {db_prefix}board_permissions
-		WHERE permission = {string:approve_posts}
+		WHERE permission = {literal:approve_posts}
 			AND id_profile IN ({array_int:profile_list})',
 		array(
 			'profile_list' => $profiles,
-			'approve_posts' => 'approve_posts',
 		)
 	);
 	$perms = array();
@@ -438,11 +437,10 @@ function scheduled_daily_maintenance()
 				SELECT id_recipient, MAX(log_time) AS last_warning
 				FROM {db_prefix}log_comments
 				WHERE id_recipient IN ({array_int:member_list})
-					AND comment_type = {string:warning}
+					AND comment_type = {literal:warning}
 				GROUP BY id_recipient',
 				array(
 					'member_list' => array_keys($members),
-					'warning' => 'warning',
 				)
 			);
 			$member_changes = array();
@@ -910,11 +908,10 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		wesql::query('
 			UPDATE {db_prefix}settings
 			SET value = {string:next_mail_send}
-			WHERE variable = {string:mail_next_send}
+			WHERE variable = {literal:mail_next_send}
 				AND value = {string:last_send}',
 			array(
 				'next_mail_send' => time() + $delay,
-				'mail_next_send' => 'mail_next_send',
 				'last_send' => $settings['mail_next_send'],
 			)
 		);
@@ -991,11 +988,10 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		wesql::query('
 			UPDATE {db_prefix}settings
 			SET value = {string:no_send}
-			WHERE variable = {string:mail_next_send}
+			WHERE variable = {literal:mail_next_send}
 				AND value = {string:last_mail_send}',
 			array(
 				'no_send' => '0',
-				'mail_next_send' => 'mail_next_send',
 				'last_mail_send' => $settings['mail_next_send'],
 			)
 		);
@@ -1047,16 +1043,15 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			array('variable')
 		);
 
-		// If we have failed to many times, tell mail to wait a bit and try again.
+		// If we have failed too many times, tell mail to wait a bit and try again.
 		if ($settings['mail_failed_attempts'] > 5)
 			wesql::query('
 				UPDATE {db_prefix}settings
-				SET value = {string:mail_next_send}
-				WHERE variable = {string:next_mail_send}
+				SET value = {string:next_mail_send}
+				WHERE variable = {literal:mail_next_send}
 					AND value = {string:last_send}',
 				array(
 					'next_mail_send' => time() + 60,
-					'mail_next_send' => 'mail_next_send',
 					'last_send' => $settings['mail_next_send'],
 			));
 
@@ -1075,10 +1070,9 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		wesql::query('
 			UPDATE {db_prefix}settings
 			SET value = {string:zero}
-			WHERE variable = {string:mail_failed_attempts}',
+			WHERE variable = {literal:mail_failed_attempts}',
 			array(
 				'zero' => '0',
-				'mail_failed_attempts' => 'mail_failed_attempts',
 		));
 
 	// Had something to send...

@@ -103,8 +103,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			SELECT tag, len, bbctype, before_code, after_code, content, disabled_before,
 				disabled_after, disabled_content, block_level, test, validate_func, disallow_children,
 				require_parents, require_children, parsed_tags_allowed, quoted, params, trim_wspace
-			FROM {db_prefix}bbcode',
-			array()
+			FROM {db_prefix}bbcode'
 		);
 
 		while ($row = wesql::fetch_assoc($result))
@@ -1103,8 +1102,7 @@ function parsesmileys(&$message)
 			{
 				$result = wesql::query('
 					SELECT code, filename, hidden
-					FROM {db_prefix}smileys',
-					array()
+					FROM {db_prefix}smileys'
 				);
 				$smileysfrom = array();
 				$smileysto = array();

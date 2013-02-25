@@ -337,11 +337,10 @@ function DownloadLanguage()
 			SELECT id_theme, value
 			FROM {db_prefix}themes
 			WHERE id_member = {int:no_member}
-				AND variable = {string:theme_dir}
+				AND variable = {literal:theme_dir}
 				AND (' . implode(' OR ', $value_data['query']) . ')',
 			array_merge($value_data['params'], array(
 				'no_member' => 0,
-				'theme_dir' => 'theme_dir',
 				'index_compare_explode' => 'value LIKE \'%' . implode('\' OR value LIKE \'%', $indexes) . '\'',
 			))
 		);
@@ -362,12 +361,11 @@ function DownloadLanguage()
 				SELECT id_theme, value
 				FROM {db_prefix}themes
 				WHERE id_member = {int:no_member}
-					AND variable = {string:name}
+					AND variable = {literal:name}
 					AND id_theme IN ({array_int:theme_list})',
 				array(
 					'theme_list' => array_keys($themes),
 					'no_member' => 0,
-					'name' => 'name',
 				)
 			);
 			while ($row = wesql::fetch_assoc($request))
@@ -786,12 +784,10 @@ function ModifyLanguage()
 		FROM {db_prefix}themes
 		WHERE id_theme != {int:default_theme}
 			AND id_member = {int:no_member}
-			AND variable IN ({string:name}, {string:theme_dir})',
+			AND variable IN ({literal:name}, {literal:theme_dir})',
 		array(
 			'default_theme' => 1,
 			'no_member' => 0,
-			'name' => 'name',
-			'theme_dir' => 'theme_dir',
 		)
 	);
 	$themes = array(
