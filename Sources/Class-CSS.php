@@ -1552,9 +1552,13 @@ class wess_prefixes extends wess
 		if (strpos($matches[1], 'box') !== false)
 			return str_replace('box', $this->prefix . 'box', $unchanged);
 
+		// The final flexbox model doesn't require a prefix. But Chrome wants to use it.
+		if ($b['is_chrome'] && $v >= 21 && strpos($matches[1], 'flex') !== false)
+			return str_replace(array('inline-flex', 'flex'), array($this->prefix . 'inline-flex', $this->prefix . 'flex'), $unchanged);
+
 		// All browsers support device-pixel-ratio only with prefixes, but Firefox screwed it up.
 		if (strpos($matches[1], 'pixel-ratio') !== false)
-			return we::is('firefox') ? $matches[2] . '-moz' . substr($unchanged, 3) : $this->prefix . $unchanged;
+			return $b['is_firefox'] ? $matches[2] . '-moz' . substr($unchanged, 3) : $this->prefix . $unchanged;
 
 		// Nothing bad was found? Just ignore.
 		return $unchanged;
@@ -1588,9 +1592,9 @@ class wess_prefixes extends wess
 		$values = array(
 
 			'background(?:-image)?:([^\n;]*?(?<!-o-)(?:linear|radial)-gradient\([^)]+\)[^\n;]*)',	// Gradients (linear, radial, repeating...)
-			'(min|max)-device-pixel-ratio',	// Useful for responsive design
-			'display:\h*box\b',				// Old Flexbox model declaration
-			'\bcalc\h*\(',					// calc() function
+			'display:\h*(inline-flex|flex(?:box)?|box)\b',	// Flexbox model declarations (all 3)
+			'(min|max)-device-pixel-ratio',					// Useful for responsive design
+			'\bcalc\h*\(',									// calc() function
 
 		);
 		$css = preg_replace_callback('~(?<!-)(' . implode('|', $values) . ')[\n;]~', array($this, 'fix_values'), $css);
@@ -1602,6 +1606,10 @@ class wess_prefixes extends wess
 		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (($b['is_opera'] && $v < 12.1) || ($b['is_firefox'] && $v < 16) || $b['is_webkit'])
 			$css = str_replace('@keyframes ', '@' . $this->prefix . 'keyframes ', $css);
+
+		// Chrome 21+ supports the latest flexbox model... But with a prefix. Go figure.
+		if ($b['is_chrome'] && $v >= 21)
+			$css = preg_replace('~\b(order|justify-content|align-(?:content|items|self)|flex(?:-[a-z]+)?)\h*:~', $this->prefix . '$1:', $css);
 
 		// And finally, listen to the author -- you may add a prefix manually, that will be automatically turned into the current
 		// browser's official prefix. e.g. add "-prefix-my-rule" and Wess will turn it into "-moz-my-rule" for Firefox users.

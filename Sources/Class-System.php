@@ -571,6 +571,8 @@ class we
 		if (isset($_SERVER['HTTP_ACCEPT']) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/vnd.wap.wml') !== false || strpos($_SERVER['HTTP_ACCEPT'], 'application/vnd.wap.xhtml+xml') !== false))
 			return true;
 
+		$is_mobile = false;
+
 		// Note: Google recommends that Android smartphones indicate the 'Mobile' keyword. Tablets shouldn't have it.
 		foreach (explode('|', implode('|', array(
 			'Generic' => 'mobile', // Mainly for Android smartphones -- excludes tablets.
@@ -579,12 +581,23 @@ class we
 			'Symbian' => 'symbian',
 			'Windows' => 'windows ce|windows phone', // Surface tablets omit the Phone keyword. This should be good enough.
 			'PalmOS' => 'palm|avantgo|plucker|xiino',
-			'Others' => 'samsung|htc|playstation|nintendo|wap|up.|bolt|opera mobi'
+			'Others' => 'samsung|htc|playstation|nintendo|opera mobi'
 		))) as $device)
 			if (strpos($ua, $device) !== false)
-				return true;
+			{
+				$is_mobile = true;
+				break;
+			}
 
-		return false;
+		// We'll take everything, except HTC and Samsung's Android tablets, and tablets adding 'Mobile' but not fooled by Chrome.
+		if ($is_mobile)
+		{
+			$is_mobile &= strpos($ua, 'flyer') === false; // HTC Flyer may have 'mobile' in its UA...
+			$is_mobile &= strpos($ua, 'samsung') === false || strpos($ua, 'mobile') !== false || strpos($ua, 'android') === false; // Samsung tablets
+			$is_mobile &= strpos($ua, 'chrome') === false || preg_match('~chrome/[.0-9]* mobile~', $ua); // Chrome helps us here.
+		}
+
+		return $is_mobile;
 	}
 
 	/**
@@ -613,7 +626,12 @@ class we
 	public static function analyze($strings)
 	{
 		if (!is_array($strings))
+		{
+			// If working on a string, we'll group brackets together, and split the rest.
+			while (strpos($strings, '(') !== false)
+				$strings = preg_replace('~\(([^)]+)\)~e', '"<" . str_replace(array(",", "&"), array(chr(20), chr(21)), "$1") . ">"', $strings);
 			$strings = array_flip(array_map('trim', explode(',', $strings)));
+		}
 
 		$browser = self::$browser;
 		$a = $browser['agent'];
@@ -641,39 +659,44 @@ class we
 		// Okay, so maybe we're looking for a wider range?
 		foreach ($strings as $string => $dummy)
 		{
-			$and = strpos($string, '&'); // Is there a && or & in the query? Meaning all parts of this one should return true.
+			if (empty($string) || $string === '!')
+				continue;
+
+			// Is there a && or & in the query? Meaning all parts of this one should return true.
+			$and = strpos($string, '&');
 			if ($and !== false)
 			{
 				$test_all = true;
 				foreach (array_map('trim', preg_split('~&+~', $string)) as $finger)
 					$test_all &= self::is($finger) !== false;
+
 				if ($test_all)
+					return $string;
+				continue;
+			}
+
+			// First, negative tests.
+			if ($string[0] === '!')
+			{
+				// If it's a group, fix its separators first.
+				$string = $string[1] === '<' ? str_replace(array(chr(20), chr(21)), array(',', '&'), trim($string, '!<>')) : substr($string, 1);
+
+				if (!self::is($string))
+					return $string;
+				continue;
+			}
+
+			// If it's a group, fix its separators first.
+			if ($string[0] === '<')
+			{
+				$string = self::is(str_replace(array(chr(20), chr(21)), array(',', '&'), trim($string, '<>')));
+				if ($string)
 					return $string;
 				continue;
 			}
 
 			$bracket = strpos($string, '['); // Is there a version request?
 			$real_browser = $bracket === false ? $string : substr($string, 0, $bracket);
-
-			// First, negative tests.
-			if ($string[0] === '!')
-			{
-				$is_os_test = $browser['os'] == substr($real_browser, 1);
-				if (empty($browser['is_' . substr($real_browser, 1)]))
-					return $string;
-				if ($bracket === false)
-					continue;
-				$split = explode('-', trim(substr($string, $is_os_test ? $olength : $alength, -1), ' ]'));
-				$v = $is_os_test ? $ov : $bv;
-				if (isset($split[1]))
-				{
-					if (empty($split[0]) && $v <= $split[1]) continue;	// !ie[-8] (isn't version 8 or earlier)
-					if (empty($split[1]) && $v >= $split[0]) continue;	// !ie[6-] (isn't version 6 or later)
-					if ($v >= $split[0] && $v <= $split[1]) continue;	// !ie[6-8] (isn't version 6, 7 or 8)
-				}
-				elseif ($v == $split[0]) continue;						// !ie[8] or !ie[8.0], FWIW...
-				return $string;
-			}
 
 			// And now, positive tests.
 			if (empty($browser['is_' . $real_browser]))
