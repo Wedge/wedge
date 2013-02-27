@@ -208,7 +208,7 @@ img.new_posts
 	margin: 0
 	padding: .5em
 
-/* Post styling (still in the Display template)
+/* Post styling (Msg template)
 ---------------------------------------------------- */
 
 // Alternating backgrounds for posts
@@ -241,15 +241,21 @@ img.new_posts
 
 // Poster and postarea + moderation area underneath
 .post_wrapper
-	display: table-row
-	overflow: auto
-	width: 100%
+	@if $supports_flex
+		display: flex
+	@else
+		display: table-row
+		overflow: auto
+		width: 100%
+	@endif
 
 // Post title, date and action list
 .postheader extends .flow_hidden
+	@if !($supports_flex)
+		display: table
+		table-layout: fixed
+	@endif
 	width: 100%
-	display: table
-	table-layout: fixed
 	padding: 10px 0 5px
 	border-bottom: 1px solid #ccc
 	h5
@@ -269,7 +275,9 @@ img.new_posts
 // Poster details and list of items
 .poster
 	width: 14em
-	display: table-cell
+	@if !($supports_flex)
+		display: table-cell
+	@endif
 	background: rgba(0,0,0, .025)
 	padding: 10px 12px 12px 0
 	vertical-align: top
@@ -329,8 +337,16 @@ img.new_posts
 		background: #e799a3
 
 .postarea
-	display: table-cell
 	padding: 0 15px
+	@if $supports_flex
+		display: flex
+		flex-direction: column
+		align-items: stretch
+		min-width: 0
+		width: 100%
+	@else
+		display: table-cell
+	@endif
 	.errorbox
 		margin-bottom: 10px
 
@@ -343,6 +359,10 @@ img.new_posts
 .post
 	padding: 0
 	margin: 1.2em 0
+	@if $supports_flex
+		.root &
+			flex: 1
+	@endif
 
 // All the signatures used in the forum. You might want to add max-height here ;)
 .signature, .attachments
@@ -400,8 +420,6 @@ img.new_posts
 	li extends .inline-block
 		padding: 0
 		margin: 0 0 0 5px
-	.actionbar &
-		float: right
 	img
 		vertical-align: middle
 	a
@@ -470,12 +488,22 @@ img.new_posts
 	background-image: url-no-base64($images/icons/last_post.gif)
 	background-position: 4px 3px
 
+// These user menu options definitely aren't available to guests.
+@if member
+	.contact_button extends .vbtn
+		background-image: url($images/icons/online.gif)
+		background-position: 0 0
+		padding-left: 26px
+	.pm_button extends .vbtn
+		background-image: url($images/im_on.gif)
+		background-position: 0 0
+@endif
+
 /**
  * End of list.
  */
 
 .inner
-	margin: 0 1em 0 0
 	padding: 0 .7em
 
 .smiley extends .inline-block
@@ -559,11 +587,9 @@ ul.buttonlist extends "ul.reset, .clearfix"
 		border: 1px solid rgba(0,0,0, .2)
 		border-radius: 5px
 		box-shadow: 1px 1px 6px rgba(0,0,0, .25)
-		overflow: hidden
 
 		li
 			background-color: $window_bg
-			overflow: hidden
 			display: block
 			margin: 0
 			padding: 1px 2px
@@ -1168,11 +1194,17 @@ tr.windowbg td
 	width: 80%
 	font-size: .9em
 
-.thought_list li:target > div
-	padding: 4px 8px
-	margin: 4px 0
-	border: 1px solid #fff
-	background: #f0fff0
+.thought_list
+	li:target > div
+		padding: 4px 8px
+		margin: 4px 0
+		border: 1px solid #fff
+		background: #f0fff0
+	@if member
+		// Make life easier for members...
+		.mimenu
+			top: 80%
+	@endif
 
 /* Styles for the statistics center.
 ------------------------------------------------- */

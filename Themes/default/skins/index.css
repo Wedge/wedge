@@ -853,6 +853,8 @@ li.hove > a:before, .menu h4.hove:after
 	padding-left: 1em
 	min-height: 2.5em
 	overflow: hidden
+	> li
+		display: inline
 	h4
 		padding-right: 6px
 		// We don't need arrows.
@@ -905,22 +907,21 @@ li.separator
 
 // Used in both normal and mini-menus...
 .menu h4 + ul, .mimenu ul
-	> li:first-child:before
+	:before
 		position: absolute
 		content: ""
 		top: -11px
 		width: 100%
 		height: 11px
 		padding-bottom: 3px
-		background: url($images/theme/menurow.gif) no-repeat 14px 5px
+		background: url($images/theme/menurow.gif) no-repeat 15px 5px
 
-.mimenu
-	ul > li:first-child:before
-		left, top: 0
-	&.right ul > li:first-child:before
-		background-position: 100% 5px
-		border-right: 14px solid transparent
-		box-sizing: border-box
+.mimenu ul:before
+	background-position: 15px 5px
+	left, top: 0
+	.right&
+		background-position: 85% 5px
+		background-position: calc(100% - 15px) 5px
 
 /* Top-level menu icons.
 ------------------------------------------------------- */
@@ -1213,7 +1214,7 @@ table
 .bbc_tt
 	font-family: $mono_font
 
-.bbc_pre extends .inline-block
+.bbc_pre
 	white-space: pre
 	margin, padding: 0
 
@@ -1335,6 +1336,11 @@ tr.titlebg
 		padding: .3em 0 .3em
 		a[data-href]
 			font-weight: 700
+		> strong
+			:before
+				content: "["
+			:after
+				content: "]"
 
 // Colors for background of posts requiring approval
 .approve
