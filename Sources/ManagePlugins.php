@@ -1430,7 +1430,7 @@ function executePluginScript($type, $file)
 	{
 		$full_path = strtr($file, array('$plugindir' => $pluginsdir . '/' . $_GET['plugin']));
 		if (empty($file) || substr($file, -4) != '.php' || strpos($file, '$plugindir/') !== 0 || !file_exists($full_path))
-			fatal_lang_error('fatal_install_' . $type . '_missing', false, empty($file) ? $txt['na'] : htmlspecialchars($file));
+			fatal_lang_error('fatal_install_' . $type . '_missing', false, empty($file) ? $txt['not_applicable'] : htmlspecialchars($file));
 
 		// This is just here as reference for what is available.
 		global $txt, $boarddir, $sourcedir, $settings, $context, $theme, $pluginsdir;
