@@ -152,7 +152,7 @@ function template_html_before()
 	<link rel="next" href="', $context['links']['next'], '">';
 	}
 
-	if (!empty($context['skin_options']['mobile']))
+	if (!empty($context['skin_options']['mobile']) && !we::is('opera[11-], ie[10-]'))
 		echo '
 	<meta name="viewport" content="width=device-width, initial-scale=0.7, maximum-scale=2.0, minimum-scale=0.7, user-scalable=1">';
 
@@ -799,7 +799,7 @@ function template_page_index($base_url, &$start, $max_value, $num_per_page, $fle
 	if (!$start_invalid)
 	{
 		$page_num = ($start / $num_per_page + 1);
-		$pageindex .= '[<strong>' . $page_num . '</strong>] ';
+		$pageindex .= '<strong>' . $page_num . '</strong> ';
 		if ($page_num > 1 && !isset($context['page_indicator']))
 			$context['page_indicator'] = number_context('page_indicator', $page_num);
 	}

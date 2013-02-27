@@ -1084,7 +1084,7 @@ class wess_nesting extends wess
 					$css .= $node['selector'] . ';';
 					continue;
 				}
-				// Blocks starting with @media, @keyframes, @supports...
+				// Blocks starting with @media, @keyframes, @supports, @viewport...
 				if (preg_match('~^@[a-z]+~i', $node['selector']))
 				{
 					// Are we already in a @keyword block? Then close it first...
@@ -1606,6 +1606,10 @@ class wess_prefixes extends wess
 		// IE6/7/8/9 don't support keyframes, IE10, Firefox 16+ and Opera 12.10+ support them unprefixed, other browsers require a prefix.
 		if (($b['is_opera'] && $v < 12.1) || ($b['is_firefox'] && $v < 16) || $b['is_webkit'])
 			$css = str_replace('@keyframes ', '@' . $this->prefix . 'keyframes ', $css);
+
+		// IE10+ and Opera 11+ support @viewport, but prefixed. Other browsers...? No idea.
+		if (($b['is_opera'] && $v >= 11) || ($b['is_ie'] && $v >= 10))
+			$css = str_replace('@viewport', '@' . $this->prefix . 'viewport', $css);
 
 		// Chrome 21+ supports the latest flexbox model... But with a prefix. Go figure.
 		if ($b['is_chrome'] && $v >= 21)

@@ -55,3 +55,8 @@
 	.poster
 		height: 75px
 @endif
+
+@viewport
+	width: device-width
+	min-zoom, zoom: .7 // minimum-scale and initial-scale
+	max-zoom: 2 // maximum-scale

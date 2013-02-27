@@ -56,7 +56,7 @@
 				.append('<div class="btn">&#9660;</div>');
 
 			// Generate the dropdown markup
-			$dd = $('<div class="items" id="sbdd' + unique + '" role="menu" onselectstart="return false;">')
+			$dd = $('<div class="items" id="sbdd' + unique + '" role="menu" onselectstart="return!1;">')
 				.attr('aria-hidden', true);
 
 			// For accessibility/styling, and an easy custom .trigger('close') shortcut.
@@ -73,7 +73,7 @@
 					var $og = $(this), $optgroup;
 					if ($og.is('optgroup'))
 					{
-						$dd.append($optgroup = $('<div class="optgroup"><div class="label">' + $og.attr('label') + '</div></div>'));
+						$dd.append($optgroup = $('<div class="optgroup"><div class="label">' + $og.attr('label') + '</div>'));
 						$og.find('option').each(function () { $dd.append(createOption($(this)).addClass('sub')); });
 						if ($og.is(':disabled'))
 							$optgroup.nextAll().andSelf()
@@ -177,7 +177,7 @@
 		// Formatting for the display
 		optionFormat = function ($dom)
 		{
-			return '<div class="text">' + (($dom.text ? $dom.text().replace(/\|/g, '</div><div class="details">') : $dom + '') || '&nbsp;') + '</div>';
+			return '<div class="text">' + (($dom.text ? $dom.text().split('|').join('</div><div class="details">') : $dom + '') || '&nbsp;') + '</div>';
 		},
 
 		// Hide and reset dropdown markup
@@ -522,7 +522,7 @@
 
 		var newwi = $dd.width();
 
-		$dd.append('<div class="scrollbar"><div></div></div>');
+		$dd.append('<div class="scrollbar"><div>');
 
 		$dd.find('.scrollbar')
 			.height($dd.height());

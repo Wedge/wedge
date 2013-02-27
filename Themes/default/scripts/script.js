@@ -71,7 +71,7 @@ String.prototype.wereplace = function (oReplacements)
 	var sSearch, sResult = this;
 	// .replace() uses $ as a meta-character in replacement strings, so we need to convert it to $$$$ first.
 	for (sSearch in oReplacements)
-		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), (oReplacements[sSearch] + '').replace(/\$/g, '$$$$'));
+		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), (oReplacements[sSearch] + '').split('$').join('$$$$'));
 
 	return sResult;
 };

@@ -523,6 +523,7 @@ class weSkeleton
 				return false;
 
 			// Or maybe we're looking for a block..?
+			$to = false;
 			$all_blocks = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($this->skeleton)));
 			foreach ((array) $targets as $block)
 			{
