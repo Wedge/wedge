@@ -69,9 +69,9 @@ String.prototype.php_unhtmlspecialchars = function ()
 String.prototype.wereplace = function (oReplacements)
 {
 	var sSearch, sResult = this;
-	// .replace() uses $ as a meta-character in replacement strings, so we need to convert it to $$$$ first.
+	// .replace() uses $ as a meta-character in replacement strings, so we need to convert it to $$ first.
 	for (sSearch in oReplacements)
-		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), (oReplacements[sSearch] + '').split('$').join('$$$$'));
+		sResult = sResult.replace(new RegExp('%' + sSearch + '%', 'g'), (oReplacements[sSearch] + '').split('$').join('$$'));
 
 	return sResult;
 };
@@ -423,7 +423,7 @@ $.fn.mime = function (oList, oStrings)
 				.html(pms[0].wereplace({ 1: id, 2: this.slice(3) }))
 				.attr('title', pms[1])
 				.attr('class', pms[3])
-				.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : '')
+				.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : $mime.attr('href') || '')
 				.click(new Function('e', pms[4] ? pms[4].wereplace({ 1: id, 2: this.slice(3) }) : '')); // eval, bad! No user input, good!
 		});
 

@@ -72,7 +72,9 @@ class media_handler
 				$this->image_handler = 0;
 			elseif (empty($context['im_commands']))
 			{
-				@exec('convert -help', $ret);
+				$ret = array();
+				if (function_exists('exec'))
+					@exec('convert -help', $ret);
 				$context['im_commands'] = array();
 				foreach ($ret as $command)
 					if (preg_match('/^\s?[+-]([a-z\-]+) /', trim($command), $match))
@@ -151,7 +153,8 @@ class media_handler
 	// Tests ImageMagick (command-line)
 	function testImageMagick()
 	{
-		@exec('convert -version', $test_im);
+		if (function_exists('exec'))
+			@exec('convert -version', $test_im);
 		return isset($test_im, $test_im[0]) && preg_match('/ImageMagick\s([\d\.]+)/', $test_im[0], $ver) ? $ver[1] : false;
 	}
 
@@ -371,11 +374,12 @@ class media_handler
 			$ext = aeva_getExt($this->src);
 			$trans = $ext == 'png' || $ext == 'gif' ? (isset($context['im_commands']['alpha']) ? ' -alpha set' : ' -matte') : '';
 			// [0] requests the first layer. On animated GIFs, this is important.
-			@exec("convert \"{$this->src}[0]\" -$type {$width}x{$height}{$quality}{$trans} \"$dest\" 2>&1", $err, $success);
-			if (isset($err[0]))
+			if (function_exists('exec'))
+				@exec("convert \"{$this->src}[0]\" -$type {$width}x{$height}{$quality}{$trans} \"$dest\" 2>&1", $err, $success);
+			if (isset($err, $err[0]))
 				log_error("ImageMagick error:\n\n" . $err[0]);
 
-			return $success == 0;
+			return isset($success) && $success == 0;
 		}
 	}
 
@@ -441,7 +445,7 @@ class media_handler
 			{
 				// Adding a space after %h to make sure the height isn't
 				// mixed with the second frame's width in animated GIFs.
-				$run = @exec('identify -format "%w %h " "' . $this->src . '"', $ret, $success);
+				$run = function_exists('exec') ? @exec('identify -format "%w %h " "' . $this->src . '"', $ret, $success) : false;
 				return $run && isset($ret, $ret[0]) ? explode(' ', $ret[0]) : array(0, 0);
 			}
 		}
