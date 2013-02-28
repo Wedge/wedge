@@ -241,7 +241,7 @@ img.new_posts
 
 // Poster and postarea + moderation area underneath
 .post_wrapper
-	@if $supports_flex
+	@if can_flex
 		display: flex
 	@else
 		display: table-row
@@ -251,7 +251,7 @@ img.new_posts
 
 // Post title, date and action list
 .postheader extends .flow_hidden
-	@if !($supports_flex)
+	@if !can_flex
 		display: table
 		table-layout: fixed
 	@endif
@@ -275,7 +275,7 @@ img.new_posts
 // Poster details and list of items
 .poster
 	width: 14em
-	@if !($supports_flex)
+	@if !can_flex
 		display: table-cell
 	@endif
 	background: rgba(0,0,0, .025)
@@ -338,7 +338,7 @@ img.new_posts
 
 .postarea
 	padding: 0 15px
-	@if $supports_flex
+	@if can_flex
 		display: flex
 		flex-direction: column
 		align-items: stretch
@@ -359,7 +359,7 @@ img.new_posts
 .post
 	padding: 0
 	margin: 1.2em 0
-	@if $supports_flex
+	@if can_flex
 		.root &
 			flex: 1
 	@endif

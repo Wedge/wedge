@@ -137,15 +137,3 @@ $radius = 8px
 /* Maximum window width for the browser to trigger the low-res responsive CSS mode. */
 $responsive_max_width = 1000px
 $responsive = "all and (max-width: $responsive_max_width)"
-
-/* List of browsers that support the STANDARD flexbox model (i.e. display: flex) */
-/* Chrome supports it with a prefix. */
-$supports_flex = firefox[20-], chrome[21-], opera[12.1-]
-
-/* List of browsers that support the previous/TWEEN flexbox model (i.e. display: flexbox) */
-/* Really, it's just IE10... Or any browser, if you use the Flexie polyfill. All require a prefix. */
-$supports_flex_flexbox = ie[10]
-
-/* List of browsers that support the OLD flexbox model (i.e. display: box) */
-/* All require a prefix. */
-$supports_flex_box = firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-]

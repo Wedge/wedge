@@ -539,6 +539,14 @@ class we
 			if ($browser['is_' . $os])
 				$browser['os'] = $os;
 
+		// Firefox OS doesn't advertise itself, but can officially be detected this way.
+		if (empty($browser['os']) && $browser['is_firefox'] && strpos($ua, '(Mobile;') !== false)
+		{
+			$browser['os'] = 'ffos';
+			$browser['is_mobile'] = we::$user['is_mobile'] = true;
+			$os_var = '';
+		}
+
 		// !! Note that rounding to an integer (instead of the first significant sub-version)
 		// could probably help reduce the number of cached files by a large margin. Opinions?
 		$browser['os_version'] = isset($os_ver) ? floor($os_ver * 10) / 10 : '';

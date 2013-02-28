@@ -24,7 +24,7 @@ define('WEDGE', 1);
 // Get everything started up...
 if (function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
-error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
+error_reporting(E_ALL | E_STRICT);
 $time_start = microtime(true);
 
 // Makes sure that headers can be sent!

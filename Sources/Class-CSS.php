@@ -453,6 +453,25 @@ class wess_if extends wess
 	{
 		global $context;
 
+		// Convert some useful capability tests.
+		if (!$this->var)
+		{
+			// List of browsers that support the STANDARD flexbox model (i.e. display: flex)
+			// Chrome supports it with a prefix.
+			if (strpos($css, 'can_flex') !== false)
+				$css = preg_replace('~\bcan_flex\b~', '(firefox[20-], chrome[21-], opera[12.1-])', $css);
+
+			// List of browsers that support the previous/TWEEN flexbox model (i.e. display: flexbox)
+			// Really, it's just IE10... Or any browser, if you use the Flexie polyfill. All require a prefix.
+			if (strpos($css, 'can_flex_flexbox') !== false)
+				$css = preg_replace('~\bcan_flex_flexbox\b~', 'ie10', $css);
+
+			// List of browsers that support the OLD flexbox model (i.e. display: box)
+			// All require a prefix.
+			if (strpos($css, 'can_flex_box') !== false)
+				$css = preg_replace('~\bcan_flex_box\b~', '(firefox[2-], chrome[4-], safari[3.1-] && !ios, ios[3.2-])', $css);
+		}
+
 		// @is (condition, if_true[, if_false])
 		// (This has got to be one of my most amusing regexes...)
 		$pass_this = 0;
