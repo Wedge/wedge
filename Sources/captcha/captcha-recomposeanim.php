@@ -44,7 +44,7 @@ class captcha_recomposeanim
 	{
 		$this->width = 230;
 		$this->height = 36;
-		$this->size = 26;
+		$this->size = 22;
 
 		$this->generate_pixelmap();
 
@@ -127,7 +127,7 @@ class captcha_recomposeanim
 
 		$this->pixelmap = array();
 		for ($i = 0, $n = strlen($this->code); $i < $n; $i++)
-			imagettftext($image, $this->size, 0, $i * 36 + mt_rand(7, 12), $this->height - mt_rand(3, 5), -$white, $theme['default_theme_dir'] . '/fonts/Screenge.ttf', substr($this->code, $i, 1));
+			imagettftext($image, $this->size, 0, $i * 36 + mt_rand(7, 12), $this->height - mt_rand(3, 5), -$white, $theme['default_theme_dir'] . '/fonts/wecaptcha1.ttf', substr($this->code, $i, 1));
 			// ^^ Note the slightly odd - syntax above. This is because for some reason you have to do this to turn off antialiasing.
 
 		// OK, now we have our control image. Let's get the pixelmap. Sorry, server, this IS going to hurt.

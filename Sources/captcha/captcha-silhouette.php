@@ -23,7 +23,7 @@ class captcha_silhouette
 		global $theme;
 
 		// Create a background
-		$width = 300;
+		$width = 500;
 		$height = 100;
 		$this->image = imagecreate($width, $height);
 		$black = imagecolorallocate($this->image, 0, 0, 0);
@@ -43,7 +43,7 @@ class captcha_silhouette
 		}
 
 		for ($i = 0, $n = strlen($code); $i < $n; $i++)
-			imagettftext($this->image, 50, 0, $i * 45 + mt_rand(18, 22), mt_rand(60, 80), $black, $theme['default_theme_dir'] . '/fonts/Screenge.ttf', substr($code, $i, 1));
+			imagettftext($this->image, 50, 0, $i * 80 + mt_rand(18, 22), mt_rand(70, 90), $black, $theme['default_theme_dir'] . '/fonts/wecaptcha1.ttf', substr($code, $i, 1));
 
 		return $this->image;
 	}

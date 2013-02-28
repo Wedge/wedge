@@ -22,8 +22,8 @@ class captcha_grid
 	{
 		global $theme;
 
-		$width = 230;
-		$height = 36;
+		$width = 380;
+		$height = 70;
 		$this->image = imagecreate($width, $height);
 
 		$bg = imagecolorallocate($this->image, 0, 0, 0);
@@ -38,10 +38,10 @@ class captcha_grid
 		for ($x = 0; $x < $width; $x += $grid_size)
 			imageline($this->image, $x, 0, $x, $height - 1, $fg);
 
-		$size = 26;
+		$size = 40;
 
 		for ($i = 0, $n = strlen($code); $i < $n; $i++)
-			imagettftext($this->image, $size, 0, $i * 36 + mt_rand(12, 15), $height - mt_rand(3, 5), $fg, $theme['default_theme_dir'] . '/fonts/Screenge.ttf', substr($code, $i, 1));
+			imagettftext($this->image, $size, 0, $i * 60 + mt_rand(16, 22), $height - mt_rand(3, 5), $fg, $theme['default_theme_dir'] . '/fonts/wecaptcha1.ttf', substr($code, $i, 1));
 
 		return $this->image;
 	}
