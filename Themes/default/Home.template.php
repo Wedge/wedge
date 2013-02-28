@@ -20,7 +20,7 @@ function template_main()
 		', $txt['wedge_home_title'], '
 	</we:cat>';
 
-	if (empty($context['skin_options']['mobile']))
+	if (!SKIN_MOBILE)
 		echo '
 	<div class="home-intro">
 		<img src="http://wedge.org/wedge.png" style="width: 130px; height: 135px; float: left; margin-top: 0" />
@@ -127,7 +127,7 @@ function template_thoughts()
 		20 => 'friends',
 	);
 
-	if (empty($context['skin_options']['mobile']))
+	if (!SKIN_MOBILE)
 	{
 		if (!we::$is_guest)
 			echo '

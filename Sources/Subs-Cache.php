@@ -1200,6 +1200,7 @@ function wedge_get_skin_options()
 {
 	global $theme, $context, $scripturl;
 
+	$skin_options = array();
 	$is_default_theme = true;
 	$not_default = $theme['theme_dir'] !== $theme['default_theme_dir'];
 	$skeleton = '';
@@ -1258,7 +1259,7 @@ function wedge_get_skin_options()
 		{
 			preg_match_all('~<([\w-]+)>(.*?)</\\1>~s', $match[1], $options, PREG_SET_ORDER);
 			foreach ($options as $option)
-				$context['skin_options'][$option[1]] = trim($option[2]);
+				$skin_options[$option[1]] = trim($option[2]);
 		}
 
 		if (strpos($set, '</replace>') !== false && preg_match_all('~<replace(?:\s+(regex(?:="[^"]+")?))?(?:\s+for="([^"]+)")?\s*>\s*<from>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</from>\s*<to>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</to>\s*</replace>~s', $set, $matches, PREG_SET_ORDER))
@@ -1321,6 +1322,12 @@ function wedge_get_skin_options()
 		if (strpos($set, '</languages>') !== false && preg_match('~<languages>(.*?)</languages>~s', $set, $match))
 			$context['skin_available_languages'] = array_map('trim', preg_split('~[\s,]+~', $match[1]));
 	}
+
+	define('SKIN_MOBILE', !empty($skin_options['mobile']));
+	define('SKIN_SIDEBAR', isset($skin_options['sidebar']) ? $skin_options['sidebar'] : 'right');
+	unset($skin_options['mobile'], $skin_options['sidebar']);
+	foreach ($skin_options as $key => $val)
+		define('SKIN_' . strtoupper($key), $val);
 }
 
 /**

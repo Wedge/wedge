@@ -112,7 +112,7 @@ function template_boards()
 						<p class="moderators">', count($board['moderators']) == 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
 
 				// Show some basic information about the number of posts, etc.
-				if (empty($context['skin_options']['mobile']))
+				if (!SKIN_MOBILE)
 					echo '
 					</td>
 					<td class="stats">

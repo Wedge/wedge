@@ -50,7 +50,7 @@ function template_main_board()
 					<th scope="col" class="first_th" style="width: 4%">&nbsp;</th>
 					<th scope="col" class="left">', template_messageindex_sortlink('subject', $txt['subject']), ' / ', template_messageindex_sortlink('starter', $txt['started_by']), '</th>';
 
-			if (empty($context['skin_options']['mobile']))
+			if (!SKIN_MOBILE)
 			{
 				echo '
 					<th scope="col" style="width: 14%">', template_messageindex_sortlink('replies', $txt['replies']), ' / ', template_messageindex_sortlink('views', $txt['views']), '</th>';
@@ -124,7 +124,7 @@ function template_main_board()
 							</p>
 						</div>';
 
-			if (empty($context['skin_options']['mobile']))
+			if (!SKIN_MOBILE)
 				echo '
 					</td>
 					<td class="stats ', $color_class, '">
@@ -398,7 +398,7 @@ function template_messageindex_childboards()
 						<p class="moderators">', count($board['moderators']) === 1 ? $txt['moderator'] : $txt['moderators'], ': ', implode(', ', $board['link_moderators']), '</p>';
 
 			// Show some basic information about the number of posts, etc.
-			if (empty($context['skin_options']['mobile']))
+			if (!SKIN_MOBILE)
 				echo '
 					</td>
 					<td class="stats windowbg">

@@ -58,7 +58,7 @@ function template_folder()
 {
 	global $context, $theme, $options, $settings, $txt;
 
-	$is_mobile = !empty($context['skin_options']['mobile']);
+	$is_mobile = SKIN_MOBILE;
 
 	// The ever helpful JavaScript!
 	add_js('

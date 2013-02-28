@@ -43,13 +43,7 @@ function createMenu($menuData, $menuOptions = array())
 			cache_put_data('theme_settings-' . $th . ':' . we::$id, null, 60);
 
 		// Redirect as this seems to work best.
-		redirectexit(
-			isset($menuOptions['toggle_redirect_url']) ? $menuOptions['toggle_redirect_url'] : 'action=' .
-			(!empty($_GET['action']) ? $_GET['action'] : 'admin') .
-			(!empty($_GET['u']) ? ';u=' . $_GET['u'] : '') . ';area=' .
-			(!empty($_GET['area']) ? $_GET['area'] : 'index') . ';sa=' .
-			(!empty($_GET['sa']) ? $_GET['sa'] : 'settings') . ';' . $context['session_query']
-		);
+		redirectexit(str_replace(array('?togglebar', ';togglebar'), array('?', ';'), we::$user['url']));
 	}
 
 	// Work out where we should get our images from.

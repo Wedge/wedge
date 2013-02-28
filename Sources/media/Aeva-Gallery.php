@@ -1238,9 +1238,9 @@ function aeva_viewItem()
 		'aeva_item_init',
 		'aeva_item_prevnext',
 		'aeva_item_wrap_begin',
-		we::is('ie6,ie7,ios') || (!empty($context['skin_options']['sidebar']) && $context['skin_options']['sidebar'] != 'right') ? '' : 'aeva_item_details',
+		we::is('ie6,ie7,ios') || SKIN_SIDEBAR !== 'right') ? '' : 'aeva_item_details',
 		'aeva_item_main',
-		we::is('ie6,ie7,ios') || empty($context['skin_options']['sidebar']) || $context['skin_options']['sidebar'] == 'right' ? '' : 'aeva_item_details',
+		we::is('ie6,ie7,ios') || SKIN_SIDEBAR === 'right' ? '' : 'aeva_item_details',
 		'aeva_item_wrap_end',
 		'aeva_item_actions',
 		'aeva_item_comments',
@@ -2171,7 +2171,7 @@ function aeva_mgEditCom()
 		// Seems fine, update it then!
 		wesql::query('
 			UPDATE {db_prefix}media_comments
-			SET message = {string:message}' . ($skip_log ? '' : ', last_edited = {int:time}, last_edited_name = {string:name}, last_edited_by = {string:user_id}') . '
+			SET message = {string:message}' . ($skip_log ? '' : ', last_edited = {int:time}, last_edited_name = {string:name}, last_edited_by = {int:user_id}') . '
 			WHERE id_comment = {int:id}',
 			array(
 				'message' => $new_message, 'time' => time(), 'name' => we::$user['name'], 'user_id' => we::$id, 'id' => $com_data['id_comment']
