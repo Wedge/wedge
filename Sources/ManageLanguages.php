@@ -87,6 +87,8 @@ function AddLanguage()
 {
 	global $context, $txt, $scripturl;
 
+	loadTemplate('ManageLanguages');
+
 	// Are we searching for new languages courtesy of Wedge?
 	if (!empty($_POST['we_add_sub']))
 	{
@@ -137,6 +139,7 @@ function DownloadLanguage()
 {
 	global $context, $boarddir, $txt, $scripturl, $settings;
 
+	loadTemplate('ManageLanguages');
 	loadLanguage('ManageSettings');
 	loadSource('Subs-Package');
 
@@ -167,15 +170,8 @@ function DownloadLanguage()
 			$install_files[] = $file;
 		}
 
-		// Call this in case we have work to do.
-		$file_status = create_chmod_control($chmod_files);
-		$files_left = $file_status['files']['notwritable'];
-
-		// Something not writable?
-		if (!empty($files_left))
-			$context['error_message'] = $txt['languages_download_not_chmod'];
 		// Otherwise, go go go!
-		elseif (!empty($install_files))
+		if (!empty($install_files))
 		{
 			// !!! @todo: Update with Wedge language files.
 			$archive_content = read_tgz_file('http://wedge.org/files/fetch_language.php?version=' . urlencode(WEDGE_VERSION) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
@@ -375,36 +371,6 @@ function DownloadLanguage()
 			}
 			wesql::free_result($request);
 		}
-	}
-
-	// Before we go to far can we make anything writable, eh, eh?
-	if (!empty($context['make_writable']))
-	{
-		// What is left to be made writable?
-		$file_status = create_chmod_control($context['make_writable']);
-		$context['still_not_writable'] = $file_status['files']['notwritable'];
-
-		// Mark those which are now writable as such.
-		foreach ($context['files'] as $type => $data)
-		{
-			if ($type == 'lang')
-			{
-				foreach ($data as $k => $file)
-					if (!$file['writable'] && !in_array($file['destination'], $context['still_not_writable']))
-						$context['files'][$type][$k]['writable'] = true;
-			}
-			else
-			{
-				foreach ($data as $th => $files)
-					foreach ($files as $k => $file)
-						if (!$file['writable'] && !in_array($file['destination'], $context['still_not_writable']))
-							$context['files'][$type][$th][$k]['writable'] = true;
-			}
-		}
-
-		// Are we going to need more language stuff?
-		if (!empty($context['still_not_writable']))
-			loadLanguage('Packages');
 	}
 
 	// This is the list for the main files.
@@ -658,7 +624,7 @@ function list_getLanguages()
 			'default' => $language == $lang['filename'] || ($language == '' && $lang['filename'] == 'english'),
 			'locale' => $txt['lang_locale'],
 			'name' => '<span class="flag_' . $lang['filename'] . '"></span> ' . $txt['lang_name'],
-			'dictionary' => $txt['lang_dictionary'],
+			'dictionary' => $txt['lang_dictionary'] . ' (' . $txt['lang_spelling'] . ')',
 			'rtl' => $txt['lang_rtl'],
 		);
 	}
@@ -747,14 +713,52 @@ function ModifyLanguage()
 {
 	global $theme, $context, $txt, $settings, $boarddir, $language;
 
+	// First up, validate the language selected.
+	getLanguages(false);
+	if (!isset($_GET['lid'], $context['languages'][$_GET['lid']]))
+		redirectexit('action=admin;area=languages;sa=edit');
+
+	$context['lang_id'] = $_GET['lid'];
+
+	loadTemplate('ManageLanguages');
 	loadLanguage('ManageSettings');
 
 	// Select the languages tab.
 	$context['menu_data_' . $context['admin_menu_id']]['current_subsection'] = 'edit';
 	$context['page_title'] = $txt['edit_languages'];
-	wetem::load('modify_language_entries');
+	$context[$context['admin_menu_name']]['tab_data']['tabs']['edit']['description'] = $txt['languages_area_edit_desc'];
+
+	$context['linktree'][] = array(
+		'name' => $context['languages'][$context['lang_id']]['name'],
+		'url' => '<URL>?action=admin;area=languages;sa=editlang;lid=' . $context['lang_id'],
+	);
 
 	$context['lang_id'] = $_GET['lid'];
+
+	// Some stuff we do is set entirely outside of this area. But let's make it easy to get to, eh?
+	$context['other_files'] = array(
+		'<URL>?action=admin;area=mailqueue;sa=templates' => $txt['language_edit_email_templates'],
+		'<URL>?action=admin;area=regcenter;sa=agreement' => $txt['language_edit_reg_agreement'],
+	);
+
+	// For everything else there's Mast... Darn advertising in my brain again.
+	$context['language_files'] = array(
+		'default' => array(
+			'main' => array(
+				'name' => $txt['language_edit_main'],
+				'files' => array(
+					'index' => 'index', // this is purely to preempt what happens later!
+				),
+			),
+			'admin' => array(
+				'name' => $txt['language_edit_admin'],
+				'files' => array(),
+			),
+		),
+		'plugins' => array(),
+		'themes' => array(),
+	);
+
 	if (empty($_REQUEST['tfid']) || strpos($_REQUEST['tfid'], '|') === false)
 		list ($theme_id, $file_id) = array(1, '');
 	else
@@ -774,11 +778,13 @@ function ModifyLanguage()
 		$path = '';
 	$path .= '/';
 
-	// Clean the ID - just in case.
-	preg_match('~([A-Za-z0-9_-]+)~', $context['lang_id'], $matches);
-	$context['lang_id'] = $matches[1];
-
 	// Get all the theme data.
+	$themes = array(
+		1 => array(
+			'name' => $txt['dvc_default'],
+			'theme_dir' => $theme['default_theme_dir'],
+		),
+	);
 	$request = wesql::query('
 		SELECT id_theme, variable, value
 		FROM {db_prefix}themes
@@ -790,14 +796,11 @@ function ModifyLanguage()
 			'no_member' => 0,
 		)
 	);
-	$themes = array(
-		1 => array(
-			'name' => $txt['dvc_default'],
-			'theme_dir' => $theme['default_theme_dir'],
-		),
-	);
 	while ($row = wesql::fetch_assoc($request))
+	{
 		$themes[$row['id_theme']][$row['variable']] = $row['value'];
+		$context['language_files']['themes'][$row['id_theme']][$row['variable']] = $row['value'];
+	}
 	wesql::free_result($request);
 
 	// This will be where we look
@@ -825,6 +828,9 @@ function ModifyLanguage()
 				'name' => substr(strrchr($plugin_id, ':'), 1),
 				'theme_dir' => $plugin_path,
 			);
+			$context['language_files']['plugins'][$plugin_id] = array(
+				'name' => str_replace(array('-', '_'), ' ', substr(strrchr($plugin_id, ':'), 1)),
+			);
 			$lang_dirs[$plugin_id] = array('' => $plugin_path);
 			// We really might as well use SPL for this. I mean, we could do it otherwise but this is almost certainly faster.
 			$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($plugin_path), RecursiveIteratorIterator::SELF_FIRST);
@@ -836,14 +842,10 @@ function ModifyLanguage()
 				}
 
 			if (empty($lang_dirs[$plugin_id]))
-				unset($lang_dirs[$plugin_id], $themes[$plugin_id]);
+				unset($lang_dirs[$plugin_id], $themes[$plugin_id], $context['language_files']['plugins'][$plugin_id]);
 		}
 	}
 
-	if (isset($context['plugins_dir'][$theme_id]))
-		$current_file = $file_id ? $context['plugins_dir'][$theme_id] . $path . $file_id . '.' . $context['lang_id'] . '.php' : '';
-	else
-		$current_file = $file_id ? $lang_dirs[$theme_id] . $path . $file_id . '.' . $context['lang_id'] . '.php' : '';
 
 	// Now for every theme get all the files and stick them in context!
 	$context['possible_files'] = array();
@@ -855,6 +857,14 @@ function ModifyLanguage()
 		if (!is_array($theme_dirs))
 			$theme_dirs = array('' => $theme_dirs);
 
+		// Sift out now where this is likely to go.
+		if ($th == 1)
+			$dest = 'default';
+		elseif (is_numeric($th))
+			$dest = 'themes';
+		else
+			$dest = 'plugins';
+
 		foreach ($theme_dirs as $path_prefix => $theme_dir)
 		{
 			// Open it up.
@@ -865,8 +875,8 @@ function ModifyLanguage()
 				if (preg_match('~^([A-Za-z0-9_-]+)\.' . $context['lang_id'] . '\.php$~', $entry, $matches) == 0)
 					continue;
 
-				// !! Temp!
-				if ($matches[1] == 'EmailTemplates' || $matches[1] == 'Agreement')
+				// We don't do the email templates or the registration agreement here.
+				if ($dest != 'plugins' && ($matches[1] == 'EmailTemplates' || $matches[1] == 'Agreement' || $matches[1] == 'Install'))
 					continue;
 
 				if (!isset($context['possible_files'][$th]))
@@ -876,14 +886,44 @@ function ModifyLanguage()
 						'files' => array(),
 					);
 
-				$context['possible_files'][$th]['files'][] = array(
-					'id' => $path_prefix . $matches[1],
-					'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
-					'selected' => $theme_id == $th && $file_id == $matches[1],
-				);
+				if ($th == $theme_id && $matches[1] == $file_id)
+					$context['selected_file'] = array(
+						'source_id' => $theme_id,
+						'lang_id' => $path_prefix . $matches[1],
+						'name' => isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1],
+						'path' => (isset($context['plugins_dir'][$theme_id]) ? $context['plugins_dir'][$theme_id] : $lang_dirs[$theme_id]) . $path . $file_id . '.' . $context['lang_id'] . '.php',
+					);
+
+				$langfile = isset($txt['lang_file_desc_' . $matches[1]]) ? $txt['lang_file_desc_' . $matches[1]] : $matches[1];
+
+				switch ($dest)
+				{
+					case 'default':
+						$loc = ($matches[1] == 'Admin' || $matches[1] == 'Modlog' || strpos($matches[1], 'Manage') !== false) ? 'admin' : 'main';
+						$context['language_files']['default'][$loc]['files'][$path_prefix . $matches[1]] = $langfile;
+						break;
+					case 'themes':
+						$context['language_files']['themes'][$th]['files'][$path_prefix . $matches[1]] = $langfile;
+						break;
+					case 'plugins':
+						$context['language_files']['plugins'][$th]['files'][$path_prefix . $matches[1]] = $langfile;
+						break;
+				}
 			}
 			$dir->close();
 		}
+	}
+
+	// Let's go clean up.
+	foreach (array('plugins', 'themes') as $type)
+	{
+		foreach ($context['language_files'][$type] as $item => $content)
+		{
+			if (empty($content['files']))
+				unset($context['language_files'][$type][$item]);
+		}
+		if (empty($context['language_files'][$type]))
+			unset($context['language_files'][$type]);
 	}
 
 	// We no longer wish to speak this language.
@@ -946,440 +986,73 @@ function ModifyLanguage()
 		redirectexit('action=admin;area=languages;sa=edit;' . $context['session_query']);
 	}
 
-	// Saving primary settings?
-	$madeSave = false;
-	if (!empty($_POST['save_main']) && !$current_file)
+	// If we are editing something, let's send it off. We still have to do all the preceding stuff anyway
+	// because it allows us to completely validate that what we're editing exists.
+	if (!empty($context['selected_file']))
 	{
-		checkSession();
-
-		// Read in the current file.
-		$current_data = implode('', file($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php'));
-		// These are the replacements. old => new
-		$replace_array = array(
-			'~\$txt\[\'lang_locale\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_locale\'] = \'' . addslashes($_POST['locale']) . '\';',
-			'~\$txt\[\'lang_dictionary\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_dictionary\'] = \'' . addslashes($_POST['dictionary']) . '\';',
-			'~\$txt\[\'lang_spelling\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_spelling\'] = \'' . addslashes($_POST['spelling']) . '\';',
-			'~\$txt\[\'lang_rtl\'\]\s=\s[A-Za-z0-9]+;~' => '$txt[\'lang_rtl\'] = ' . (!empty($_POST['rtl']) ? 'true' : 'false') . ';',
-		);
-		$current_data = preg_replace(array_keys($replace_array), array_values($replace_array), $current_data);
-		file_put_contents($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php', $current_data);
-
-		$madeSave = true;
-	}
-
-	// Quickly load index language entries.
-	$old_txt = $txt;
-	require($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
-	$context['lang_file_not_writable_message'] = is_writable($theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php') ? '' : sprintf($txt['lang_file_not_writable'], $theme['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php');
-	// Setup the primary settings context.
-	$context['primary_settings'] = array(
-		'name' => westr::ucwords(strtr($context['lang_id'], array('_' => ' ', '-utf8' => ''))),
-		'locale' => $txt['lang_locale'],
-		'dictionary' => $txt['lang_dictionary'],
-		'spelling' => $txt['lang_spelling'],
-		'rtl' => $txt['lang_rtl'],
-	);
-
-	// Restore normal service.
-	$txt = $old_txt;
-
-	// Are we saving?
-	$save_strings = array();
-	if (isset($_POST['save_entries']) && !empty($_POST['entry']))
-	{
-		checkSession();
-
-		// Clean each entry!
-		foreach ($_POST['entry'] as $k => $v)
-		{
-			// Only try to save if it's changed!
-			if ($_POST['entry'][$k] != $_POST['comp'][$k])
-				$save_strings[$k] = cleanLangString($v, false);
-		}
-	}
-
-	// If we are editing a file work away at that.
-	if ($current_file)
-	{
-		$context['entries_not_writable_message'] = is_writable($current_file) ? '' : sprintf($txt['lang_entries_not_writable'], $current_file);
-
-		$entries = array();
-		// We can't just require it I'm afraid - otherwise we pass in all kinds of variables!
-		$multiline_cache = '';
-		foreach (file($current_file) as $line)
-		{
-			// Got a new entry?
-			if ($line[0] == '$' && !empty($multiline_cache))
-			{
-				preg_match('~\$(helptxt|txt)\[\'(.+)\'\]\s=\s(.+);~', strtr($multiline_cache, array("\n" => '', "\t" => '')), $matches);
-				if (!empty($matches[3]))
-				{
-					$entries[$matches[2]] = array(
-						'type' => $matches[1],
-						'full' => $matches[0],
-						'entry' => $matches[3],
-					);
-					$multiline_cache = '';
-				}
-			}
-			$multiline_cache .= $line . "\n";
-		}
-		// Last entry to add?
-		if ($multiline_cache)
-		{
-			preg_match('~\$(helptxt|txt)\[\'(.+)\'\]\s=\s(.+);~', strtr($multiline_cache, array("\n" => '', "\t" => '')), $matches);
-			if (!empty($matches[3]))
-				$entries[$matches[2]] = array(
-					'type' => $matches[1],
-					'full' => $matches[0],
-					'entry' => $matches[3],
-				);
-		}
-
-		// These are the entries we can definitely save.
-		$final_saves = array();
-
-		$context['file_entries'] = array();
-		foreach ($entries as $entryKey => $entryValue)
-		{
-			// Ignore some things we set separately.
-			$ignore_files = array('lang_locale', 'lang_dictionary', 'lang_spelling', 'lang_rtl');
-			if (in_array($entryKey, $ignore_files))
-				continue;
-
-			// These are arrays that need breaking out.
-			$arrays = array('days', 'days_short', 'months', 'months_titles', 'months_short');
-			if (in_array($entryKey, $arrays))
-			{
-				// Get off the first bits.
-				$entryValue['entry'] = substr($entryValue['entry'], strpos($entryValue['entry'], '(') + 1, strrpos($entryValue['entry'], ')') - strpos($entryValue['entry'], '('));
-				$entryValue['entry'] = explode(',', strtr($entryValue['entry'], array(' ' => '')));
-
-				// Now create an entry for each item.
-				$cur_index = 0;
-				$save_cache = array(
-					'enabled' => false,
-					'entries' => array(),
-				);
-				foreach ($entryValue['entry'] as $id => $subValue)
-				{
-					// Is this a new index?
-					if (preg_match('~^(\d+)~', $subValue, $matches))
-					{
-						$cur_index = $matches[1];
-						$subValue = substr($subValue, strpos($subValue, '\''));
-					}
-
-					// Clean up some bits.
-					$subValue = strtr($subValue, array('"' => '', '\'' => '', ')' => ''));
-
-					// Can we save?
-					if (isset($save_strings[$entryKey . '-+- ' . $cur_index]))
-					{
-						$save_cache['entries'][$cur_index] = strtr($save_strings[$entryKey . '-+- ' . $cur_index], array('\'' => ''));
-						$save_cache['enabled'] = true;
-					}
-					else
-						$save_cache['entries'][$cur_index] = $subValue;
-
-					$context['file_entries'][] = array(
-						'key' => $entryKey . '-+- ' . $cur_index,
-						'value' => $subValue,
-						'rows' => 1,
-					);
-					$cur_index++;
-				}
-
-				// Do we need to save?
-				if ($save_cache['enabled'])
-				{
-					// Format the string, checking the indexes first.
-					$items = array();
-					$cur_index = 0;
-					foreach ($save_cache['entries'] as $k2 => $v2)
-					{
-						// Manually show the custom index.
-						if ($k2 != $cur_index)
-						{
-							$items[] = $k2 . ' => \'' . $v2 . '\'';
-							$cur_index = $k2;
-						}
-						else
-							$items[] = '\'' . $v2 . '\'';
-
-						$cur_index++;
-					}
-					// Now create the string!
-					$final_saves[$entryKey] = array(
-						'find' => $entryValue['full'],
-						'replace' => '$' . $entryValue['type'] . '[\'' . $entryKey . '\'] = array(' . implode(', ', $items) . ');',
-					);
-				}
-			}
-			else
-			{
-				// Saving?
-				if (isset($save_strings[$entryKey]) && $save_strings[$entryKey] != $entryValue['entry'])
-				{
-					// !!! Fix this properly.
-					if ($save_strings[$entryKey] == '')
-						$save_strings[$entryKey] = '\'\'';
-
-					// Set the new value.
-					$entryValue['entry'] = $save_strings[$entryKey];
-					// And we know what to save now!
-					$final_saves[$entryKey] = array(
-						'find' => $entryValue['full'],
-						'replace' => '$' . $entryValue['type'] . '[\'' . $entryKey . '\'] = ' . $save_strings[$entryKey] . ';',
-					);
-				}
-
-				$editing_string = cleanLangString($entryValue['entry'], true);
-				$context['file_entries'][] = array(
-					'key' => $entryKey,
-					'value' => $editing_string,
-					'rows' => (int) (strlen($editing_string) / 38) + substr_count($editing_string, "\n") + 1,
-				);
-			}
-		}
-
-		// Any saves to make?
-		if (!empty($final_saves))
-		{
-			checkSession();
-
-			$file_contents = implode('', file($current_file));
-			foreach ($final_saves as $save)
-				$file_contents = strtr($file_contents, array($save['find'] => $save['replace']));
-
-			// Save the actual changes.
-			file_put_contents($current_file, $file_contents);
-
-			$madeSave = true;
-		}
-
-		// Another restore.
-		$txt = $old_txt;
-	}
-
-	// If we saved, redirect.
-	if ($madeSave)
-		redirectexit('action=admin;area=languages;sa=editlang;lid=' . $context['lang_id']);
-}
-
-// This function could be two functions - either way it cleans language entries to/from display.
-function cleanLangString($string, $to_display = true)
-{
-	// If going to display we make sure it doesn't have any HTML in it - etc.
-	$new_string = '';
-	if ($to_display)
-	{
-		// Are we in a string (0 = no, 1 = single quote, 2 = parsed)
-		$in_string = 0;
-		$is_escape = false;
-		for ($i = 0; $i < strlen($string); $i++)
-		{
-			// Handle ecapes first.
-			if ($string{$i} == '\\')
-			{
-				// Toggle the escape.
-				$is_escape = !$is_escape;
-				// If we're now escaped don't add this string.
-				if ($is_escape)
-					continue;
-			}
-			// Special case - parsed string with line break etc?
-			elseif (($string{$i} == 'n' || $string{$i} == 't') && $in_string == 2 && $is_escape)
-			{
-				// Put the escape back...
-				$new_string .= $string{$i} == 'n' ? "\n" : "\t";
-				$is_escape = false;
-				continue;
-			}
-			// Have we got a single quote?
-			elseif ($string{$i} == '\'')
-			{
-				// Already in a parsed string, or escaped in a linear string, means we print it - otherwise something special.
-				if ($in_string != 2 && ($in_string != 1 || !$is_escape))
-				{
-					// Is it the end of a single quote string?
-					if ($in_string == 1)
-						$in_string = 0;
-					// Otherwise it's the start!
-					else
-						$in_string = 1;
-
-					// Don't actually include this character!
-					continue;
-				}
-			}
-			// Otherwise a double quote?
-			elseif ($string{$i} == '"')
-			{
-				// Already in a single quote string, or escaped in a parsed string, means we print it - otherwise something special.
-				if ($in_string != 1 && ($in_string != 2 || !$is_escape))
-				{
-					// Is it the end of a double quote string?
-					if ($in_string == 2)
-						$in_string = 0;
-					// Otherwise it's the start!
-					else
-						$in_string = 2;
-
-					// Don't actually include this character!
-					continue;
-				}
-			}
-			// A join/space outside of a string is simply removed.
-			elseif ($in_string == 0 && (empty($string{$i}) || $string{$i} == '.'))
-				continue;
-			// Start of a variable?
-			elseif ($in_string == 0 && $string{$i} == '$')
-			{
-				// Find the whole of it!
-				preg_match('~([$\w\'[\]-]+)~', substr($string, $i), $matches);
-				if (!empty($matches[1]))
-				{
-					// Come up with some pseudo thing to indicate this is a var.
-					// !! Do better than this, please!
-					$new_string .= '{%' . $matches[1] . '%}';
-
-					// We're not going to reparse this.
-					$i += strlen($matches[1]) - 1;
-				}
-
-				continue;
-			}
-			// Right, if we're outside of a string we have DANGER, DANGER!
-			elseif ($in_string == 0)
-			{
-				continue;
-			}
-
-			// Actually add the character to the string!
-			$new_string .= $string{$i};
-			// If anything was escaped it ain't any longer!
-			$is_escape = false;
-		}
-
-		// Unhtml then rehtml the whole thing!
-		$new_string = htmlspecialchars(un_htmlspecialchars($new_string));
+		return ModifyLanguageEntries();
 	}
 	else
 	{
-		// Keep track of what we're doing...
-		$in_string = 0;
-		// This is for deciding whether to HTML a quote.
-		$in_html = false;
-		for ($i = 0; $i < strlen($string); $i++)
-		{
-			// Handle line breaks!
-			if ($string{$i} == "\n" || $string{$i} == "\t")
-			{
-				// Are we in a string? Is it the right type?
-				if ($in_string == 1)
-				{
-					// Change type!
-					$new_string .= '\' . "\\' . ($string{$i} == "\n" ? 'n' : 't');
-					$in_string = 2;
-				}
-				elseif ($in_string == 2)
-					$new_string .= '\\' . ($string{$i} == "\n" ? 'n' : 't');
-				// Otherwise start one off - joining if required.
-				else
-					$new_string .= ($new_string ? ' . ' : '') . '"\\' . ($string{$i} == "\n" ? 'n' : 't');
+		wetem::load('modify_language_list');
+	}
+}
 
-				continue;
-			}
-			// We don't do parsed strings apart from for breaks.
-			elseif ($in_string == 2)
-			{
-				$in_string = 0;
-				$new_string .= '"';
-			}
+function ModifyLanguageEntries()
+{
+	global $context, $txt, $helptxt;
 
-			// Not in a string yet?
-			if ($in_string != 1)
-			{
-				$in_string = 1;
-				$new_string .= ($new_string ? ' . ' : '') . '\'';
-			}
+	wetem::load('modify_entries');
 
-			// Is this a variable?
-			if ($string{$i} == '{' && $string{$i + 1} == '%' && $string{$i + 2} == '$')
-			{
-				// Grab the variable.
-				preg_match('~\{%([$\'[\]-]+)%\}~', substr($string, $i), $matches);
-				if (!empty($matches[1]))
-				{
-					if ($in_string == 1)
-						$new_string .= '\' . ';
-					elseif ($new_string)
-						$new_string .= ' . ';
+	$context['entries'] = array();
 
-					$new_string .= $matches[1];
-					$i += strlen($matches[1]) + 3;
-					$in_string = 0;
-				}
+	// Now we load the existing content.
+	$oldtxt = $txt;
+	$oldhelptxt = $helptxt;
+	$txt = array();
+	$helptxt = array();
 
-				continue;
-			}
-			// Is this a lt sign?
-			elseif ($string{$i} == '<')
-			{
-				// Probably HTML?
-				if ($string{$i + 1} != ' ')
-					$in_html = true;
-				// Assume we need an entity...
-				else
-				{
-					$new_string .= '&lt;';
-					continue;
-				}
-			}
-			// What about gt?
-			elseif ($string{$i} == '>')
-			{
-				// Will it be HTML?
-				if ($in_html)
-					$in_html = false;
-				// Otherwise we need an entity...
-				else
-				{
-					$new_string .= '&gt;';
-					continue;
-				}
-			}
-			// Is it a slash? If so escape it...
-			if ($string{$i} == '\\')
-				$new_string .= '\\';
-			// The infamous double quote?
-			elseif ($string{$i} == '"')
-			{
-				// If we're in HTML we leave it as a quote - otherwise we entity it.
-				if (!$in_html)
-				{
-					$new_string .= '&quot;';
-					continue;
-				}
-			}
-			// A single quote?
-			elseif ($string{$i} == '\'')
-			{
-				// Must be in a string so escape it.
-				$new_string .= '\\';
-			}
+	// Start by straight up loading the file.
+	@include($context['selected_file']['path']);
+	foreach ($txt as $k => $v)
+		$context['entries']['txt_' . $k] = array(
+			'master' => $v,
+		);
+	foreach ($helptxt as $k => $v)
+		$context['entries']['helptxt_' . $k] = array(
+			'master' => $v,
+		);
+	// We can put the original files back now, we care not about the actual information.
+	$txt = $oldtxt;
+	$helptxt = $oldhelptxt;
 
-			// Finally add the character to the string!
-			$new_string .= $string{$i};
-		}
-
-		// If we ended as a string then close it off.
-		if ($in_string == 1)
-			$new_string .= '\'';
-		elseif ($in_string == 2)
-			$new_string .= '"';
+	// Now we load everything else. Is this a conventional 'theme' string?
+	if (!isset($context['plugins_dir'][$context['selected_file']['source_id']]))
+	{
+		$request = wesql::query('
+			SELECT lang_var, lang_key, lang_string, serial
+			FROM {db_prefix}language_changes
+			WHERE id_theme = {int:id_theme}
+				AND id_lang = {string:lang}
+				AND lang_file = {string:lang_file}',
+			array(
+				'id_theme' => (int) $context['selected_file']['source_id'],
+				'lang' => $context['lang_id'],
+				'lang_file' => $context['selected_file']['lang_id'],
+			)
+		);
+		while ($row = wesql::fetch_assoc($request))
+			if ($row['lang_var'] == 'txt' || $row['lang_var'] == 'helptxt')
+				$context['entries'][$row['lang_var'] . '_' . $row['lang_key']]['current'] = $row['serial'] ? @unserialize($row['lang_string']) : $row['lang_string'];
+		wesql::free_result($request);
+	}
+	else
+	{
+		// !!! We don't know how to handle plugins yet :(
 	}
 
-	return $new_string;
+	// There are certain entries we do not allow touching from here. Declared once, but restricted on both loading and saving.
+	$restricted_entries = array('txt_lang_name', 'txt_lang_locale', 'txt_lang_dictionary', 'txt_lang_spelling', 'txt_lang_rtl');
+	foreach ($restricted_entries as $item)
+		unset($context['entries'][$item]);
 }
