@@ -28,7 +28,7 @@ function template_msg_wrap_before()
 				$msg['alternate'] == 0 ? ' postbg' : ' postbg2',
 				$msg['approved'] ? '' : ' approve',
 				$msg['can_modify'] ? ' can-mod' : '',
-				SKIN_MOBILE ? ' mobile' : '',
+				$context['is_mobile'] ? ' mobile' : '',
 				$msg['id'] !== $context['first_message'] ? '' : ' first-post',
 				SKIN_SIDEBAR === 'right' ? '' : ' right-side', '">
 				<div class="post_wrapper">';

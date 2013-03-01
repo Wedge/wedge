@@ -1508,7 +1508,6 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['macros'] = array();
 	$context['skeleton'] = '';
 	$context['skeleton_ops'] = array();
-	$context['skin_options'] = array();
 
 	// If output is an Ajax request, or printer-friendly, or the spell-check
 	// page, skip the index template entirely, and don't load skeletons.

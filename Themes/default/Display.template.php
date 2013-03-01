@@ -27,7 +27,7 @@ function template_display_posts()
 			<form action="<URL>?action=quickmod2;topic=', $context['current_topic'], '.', $context['start'], '" method="post" accept-charset="UTF-8" name="quickModForm" id="quickModForm" style="margin: 0" onsubmit="return window.oQuickModify && oQuickModify.modifySave()">';
 
 	$ignoredMsgs = array();
-	$is_mobile = SKIN_MOBILE;
+	$context['is_mobile'] = SKIN_MOBILE;
 	$message_skeleton = new weSkeleton('msg');
 
 	// Get all the messages...
@@ -41,7 +41,7 @@ function template_display_posts()
 		if (!empty($msg['is_ignored']))
 			$ignoredMsgs[] = $context['ignoring'] = $msg['id'];
 
-		if ($is_mobile)
+		if ($context['is_mobile'])
 		{
 			// If we're in mobile mode, we'll move the Quote and Modify buttons to the Action menu.
 			$menu = isset($context['mini_menu']['action'][$msg['id']]) ? $context['mini_menu']['action'][$msg['id']] : array();

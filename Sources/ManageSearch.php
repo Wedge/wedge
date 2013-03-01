@@ -63,7 +63,7 @@ if (!defined('WEDGE'))
 
 function ManageSearch()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	isAllowedTo('admin_forum');
 
@@ -107,7 +107,7 @@ function ManageSearch()
 
 function EditSearchSettings($return_config = false)
 {
-	global $txt, $context, $scripturl, $sourcedir, $settings;
+	global $txt, $context, $sourcedir, $settings;
 
 	loadLanguage('ManageSettings');
 

@@ -114,9 +114,9 @@ function ViewErrorLog()
 	$context['page_index'] = template_page_index($scripturl . '?action=admin;area=logs;sa=errorlog' . ($context['sort_direction'] == 'up' ? ';asc' : '') . (isset($filter) ? $filter['href'] : ''), $_GET['start'], $num_errors, $settings['defaultMaxMessages']);
 	$context['start'] = $_GET['start'];
 
-	// Find and sort out the errors.
+	// Find and sort out the errors. 10KB per message log should be enough. And help prevent page crashes.
 	$request = wesql::query('
-		SELECT id_error, id_member, ip, li.member_ip AS display_ip, url, log_time, message, error_type, file, line
+		SELECT id_error, id_member, ip, li.member_ip AS display_ip, url, log_time, SUBSTR(message, 1, 10240) AS message, error_type, file, line
 		FROM {db_prefix}log_errors AS le
 			LEFT JOIN {db_prefix}log_ips AS li ON (le.ip = li.id_ip)' . (isset($filter) ? '
 		WHERE ' . $filter['variable'] . ' LIKE {string:filter}' : '') . '

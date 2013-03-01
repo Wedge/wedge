@@ -454,7 +454,7 @@ class wess_if extends wess
 		global $context;
 
 		// Convert some useful capability tests.
-		if (!$this->var)
+		if (!$this->test_vars)
 		{
 			// List of browsers that support the STANDARD flexbox model (i.e. display: flex)
 			// Chrome supports it with a prefix.
