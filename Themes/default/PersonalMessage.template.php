@@ -549,10 +549,8 @@ function template_search()
 	add_js('
 	function expandCollapseLabels()
 	{
-		var current = $("#searchLabelsExpand").is(":visible");
-
-		$("#searchLabelsExpand").toggle(!current);
-		$("#expandLabelsIcon").toggleClass("fold", !current);
+		$("#searchLabelsExpand").toggle(300);
+		$("#expandLabelsIcon").toggleClass("fold");
 	}');
 
 	if (!empty($context['search_errors']))
@@ -614,7 +612,7 @@ function template_search()
 		<fieldset class="labels">
 			<div class="roundframe">
 				<we:title2>
-					<a href="#" onclick="expandCollapseLabels(); return false;"><div class="foldable" id="expandLabelsIcon"></div></a> <a href="#" onclick="expandCollapseLabels(); return false;"><strong>', $txt['pm_search_choose_label'], '</strong></a>
+					<a href="#" onclick="expandCollapseLabels(); return false;"><div class="foldable" id="expandLabelsIcon"></div></a> <a href="#" onclick="expandCollapseLabels(); return false;">', $txt['pm_search_choose_label'], '</a>
 				</we:title2>
 				<ul id="searchLabelsExpand" class="reset', $context['check_all'] ? ' hide' : '', '">';
 

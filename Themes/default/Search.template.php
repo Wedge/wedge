@@ -95,7 +95,7 @@ function template_main()
 			<fieldset class="flow_hidden">
 				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').hide(300);"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
 				<br><label><input type="radio" name="all_boards" value="0" onclick="$(\'#searchBoardsExpand\').show(300);"', $context['boards_check_all'] ? '' : ' checked', '> ', $txt['choose_board'], '</label>
-				<div id="searchBoardsExpand" class="flow_auto', $context['boards_check_all'] ? ' hide' : '', '">
+				<div id="searchBoardsExpand"', $context['boards_check_all'] ? ' class="hide"' : '', '>
 					<ul class="ignoreboards floatleft">';
 
 		$i = 0;

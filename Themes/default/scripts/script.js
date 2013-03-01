@@ -518,10 +518,10 @@ $.fn.mm = function ()
 			$(this).attr('id', 'li' + menu_baseId++)
 				.on('mouseenter focus', menu_show_me)
 				.on('mouseleave blur', menu_hide_me)
-				// Disable double clicks...
-				.mousedown(false)
+				// Disable double clicks... (Except in the search box.)
+				.mousedown($(this).has('>input'))
 				// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
-				.filter(':has(>a,>h4>a)')
+				.has('>a,>h4>a')
 				.click(function () {
 					$('.hove').removeClass('hove');
 					$elem.find('ul').css({ visibility: 'hidden' }).css(is_ie8down ? '' : 'opacity', 0);

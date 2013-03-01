@@ -1278,12 +1278,8 @@ div.top_row dd
 	text-align: center !important
 	margin: 0
 
-#search_term_input
+#simple_search
 	font-size: 115%
-	.search
-		background-position: 5px 4px
-	.submit
-		background-position: 4px 3px, 0 0, 0 0
 
 #searchform
 	fieldset

@@ -199,7 +199,7 @@ ul#noava
 		#siteslogan
 			margin-top: 45px
 
-// Top header (search box, etc.)
+// Top header
 #top_section
 	overflow: hidden
 	padding: 8px 30px
@@ -210,15 +210,10 @@ ul#noava
 			padding: 0
 		h2 extends .horizontal-arrow
 			margin-right: 0
-		form
-			text-align, float: right
 
 #header
 	a
 		color: #fff
-	#search_form
-		a
-			color: #47a
 	h2
 		color: #939380
 	// The main title
@@ -229,6 +224,19 @@ ul#noava
 			color: #766
 			letter-spacing: -1px
 			font: 100 3em/1em $big_font
+
+// The search box, with a few hacks to allow for a drop-down menu...
+#search_form
+	float: right
+	a
+		color: #000
+	ul
+		padding: 0
+	li, input
+		outline: none
+		cursor: text
+	input[type=submit]
+		cursor: pointer
 
 #siteslogan
 	float: left
