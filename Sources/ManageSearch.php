@@ -109,12 +109,14 @@ function EditSearchSettings($return_config = false)
 {
 	global $txt, $context, $scripturl, $sourcedir, $settings;
 
+	loadLanguage('ManageSettings');
+
 	// What are we editing anyway?
 	$config_vars = array(
 			// Permission...
 			array('permissions', 'search_posts'),
 			// Some simple settings.
-			array('check', 'simpleSearch'),
+			array('check', 'search_enable_captcha'),
 			array('int', 'search_results_per_page'),
 			array('int', 'search_max_results', 'subtext' => $txt['search_max_results_disable']),
 		'',
@@ -152,7 +154,7 @@ function EditSearchSettings($return_config = false)
 	}
 
 	// Prep the template!
-	$context['post_url'] = $scripturl . '?action=admin;area=managesearch;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=managesearch;save;sa=settings';
 	$context['settings_title'] = $txt['search_settings_title'];
 
 	prepareDBSettingContext($config_vars);

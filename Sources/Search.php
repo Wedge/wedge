@@ -17,8 +17,7 @@ if (!defined('WEDGE'))
 /*	These functions are here for searching, and they are:
 
 	void Search()
-		- shows the screen to search forum posts (action=search), and uses the
-		  simple version if the simpleSearch setting is enabled.
+		- shows the screen to search forum posts (action=search)
 		- uses the main block of the Search template.
 		- uses the Search language file.
 		- requires the search_posts permission.
@@ -222,7 +221,5 @@ function Search()
 		$context['search_topic']['link'] = '<a href="' . $context['search_topic']['href'] . '">' . $context['search_topic']['subject'] . '</a>';
 	}
 
-	// Simple or not?
-	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($settings['simpleSearch']) && !isset($_REQUEST['advanced']);
-	$context['page_title'] = $context['simple_search'] ? $txt['search_simple'] : $txt['search_advanced'];
+	$context['page_title'] = $txt['search'];
 }

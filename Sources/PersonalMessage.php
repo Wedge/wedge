@@ -1063,6 +1063,8 @@ function MessageSearch()
 {
 	global $context, $txt, $settings;
 
+	loadLanguage('Search');
+
 	if (isset($_REQUEST['params']))
 	{
 		$temp_params = explode('|"|', base64_decode(strtr($_REQUEST['params'], array(' ' => '+'))));
@@ -1122,7 +1124,6 @@ function MessageSearch()
 		}
 	}
 
-	$context['simple_search'] = isset($context['search_params']['advanced']) ? empty($context['search_params']['advanced']) : !empty($settings['simpleSearch']) && !isset($_REQUEST['advanced']);
 	$context['page_title'] = $txt['pm_search_title'];
 	wetem::load('search');
 	$context['linktree'][] = array(
@@ -1137,6 +1138,8 @@ function MessageSearch2()
 
 	if (!empty($context['load_average']) && !empty($settings['loadavg_search']) && $context['load_average'] >= $settings['loadavg_search'])
 		fatal_lang_error('loadavg_search_disabled', false);
+
+	loadLanguage('Search');
 
 	// !!! For the moment force the folder to the inbox.
 	$context['folder'] = 'inbox';
@@ -1160,10 +1163,6 @@ function MessageSearch2()
 	}
 
 	$context['start'] = isset($_GET['start']) ? (int) $_GET['start'] : 0;
-
-	// Store whether simple search was used (needed if the user wants to do another query).
-	if (!isset($search_params['advanced']))
-		$search_params['advanced'] = empty($_REQUEST['advanced']) ? 0 : 1;
 
 	// 1 => 'allwords' (default, don't set as param) / 2 => 'anywords'.
 	if (!empty($search_params['searchtype']) || (!empty($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 2))
@@ -1248,7 +1247,7 @@ function MessageSearch2()
 
 	// Sort out any labels we may be searching by.
 	$labelQuery = '';
-	if ($context['folder'] == 'inbox' && !empty($search_params['advanced']) && $context['currently_using_labels'])
+	if ($context['folder'] == 'inbox' && $context['currently_using_labels'])
 	{
 		// Came here from pagination? Put them back into $_REQUEST for sanitization.
 		if (isset($search_params['labels']))

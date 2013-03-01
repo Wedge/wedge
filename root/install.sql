@@ -2096,7 +2096,6 @@ VALUES
 	('totalMembers', '0'),
 	('totalTopics', '1'),
 	('totalMessages', '1'),
-	('simpleSearch', '0'),
 	('censor_vulgar', ''),
 	('censor_proper', ''),
 	('allow_no_censored', '0'),

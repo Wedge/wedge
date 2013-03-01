@@ -1466,7 +1466,7 @@ function ssi_quickSearch($output_method = 'echo')
 
 	echo '
 		<form action="', $scripturl, '?action=search2" method="post" accept-charset="UTF-8">
-			<input type="hidden" name="advanced" value="0" /><input type="text" name="search" size="30"> <input type="search" value="', $txt['search'], '" class="submit" />
+			<input type="text" name="search" size="30"> <input type="search" value="', $txt['search'], '" class="submit" />
 		</form>';
 }
 

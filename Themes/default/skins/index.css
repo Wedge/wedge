@@ -216,6 +216,9 @@ ul#noava
 #header
 	a
 		color: #fff
+	#search_form
+		a
+			color: #47a
 	h2
 		color: #939380
 	// The main title
@@ -939,10 +942,6 @@ li.separator
 
 #m_board extends #m_home
 	background-position: -74px 0
-
-#m_search extends #m_home
-	background-position: -131px 0
-	height: 17px
 
 #m_admin extends #m_home
 	background-position: -36px 0

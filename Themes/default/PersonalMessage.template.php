@@ -565,71 +565,52 @@ function template_search()
 	<form action="<URL>?action=pm;sa=search2" method="post" accept-charset="UTF-8" name="searchform" id="searchform">
 		<we:cat>
 			', $txt['pm_search_title'], '
-		</we:cat>';
-
-	if ($context['simple_search'])
-	{
-		echo '
-		<fieldset id="simple_search">
-			<div class="roundframe">
+		</we:cat>
+		<div class="windowbg wrc">
+			<fieldset id="simple_search">
 				<div id="search_term_input">
-					<strong>', $txt['pm_search_text'], ':</strong>
-					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="search">
-					<input type="submit" value="', $txt['pm_search_go'], '">
-				</div>
-				<a href="<URL>?action=pm;sa=search;advanced" onclick="this.href += \';search=\' + encodeURIComponent(document.forms.searchform.search.value);">', $txt['pm_search_advanced'], '</a>
-				<input type="hidden" name="advanced" value="0">
-			</div>
-		</fieldset>';
-	}
-
-	// Advanced search!
-	else
-	{
-		add_js('
-	if (document.forms.searchform.search.value.indexOf("%") != -1)
-		document.forms.searchform.search.value = decodeURIComponent(document.forms.searchform.search.value);');
-
-		echo '
-		<fieldset id="advanced_search">
-			<div class="roundframe">
-				<input type="hidden" name="advanced" value="1">
-				<span class="enhanced">
-					<strong>', $txt['pm_search_text'], ':</strong>
+					<strong>', $txt['search_for'], ':</strong>
 					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' size="40" class="search">
 					<select name="searchtype">
-						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['pm_search_match_all'], '</option>
-						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['pm_search_match_any'], '</option>
+						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['all_words'], '</option>
+						<option value="2"', !empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['any_words'], '</option>
 					</select>
-				</span>
+				</div>
+			</fieldset>
+		</div>
+		<div class="windowbg2 wrc">
+			<h6>
+				', $txt['set_parameters'], '
+			</h6>
+			<fieldset id="advanced_search">
 				<dl id="search_options">
-					<dt>', $txt['pm_search_user'], ':</dt>
+					<dt>', $txt['by_user'], ':</dt>
 					<dd><input type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="40"></dd>
-					<dt>', $txt['pm_search_order'], ':</dt>
+					<dt>', $txt['search_order'], ':</dt>
 					<dd>
 						<select name="sort">
-							<option value="relevance|desc">', $txt['pm_search_orderby_relevant_first'], '</option>
-							<option value="id_pm|desc">', $txt['pm_search_orderby_recent_first'], '</option>
-							<option value="id_pm|asc">', $txt['pm_search_orderby_old_first'], '</option>
+							<option value="relevance|desc">', $txt['search_orderby_relevant_first'], '</option>
+							<option value="id_pm|desc">', $txt['search_orderby_recent_first'], '</option>
+							<option value="id_pm|asc">', $txt['search_orderby_old_first'], '</option>
 						</select>
 					</dd>
-					<dt class="options">', $txt['pm_search_options'], ':</dt>
+					<dt class="options">', $txt['search_options'], ':</dt>
 					<dd class="options">
 						<label><input type="checkbox" name="show_complete" id="show_complete" value="1"', !empty($context['search_params']['show_complete']) ? ' checked' : '', '> ', $txt['pm_search_show_complete'], '</label><br>
 						<label><input type="checkbox" name="subject_only" id="subject_only" value="1"', !empty($context['search_params']['subject_only']) ? ' checked' : '', '> ', $txt['pm_search_subject_only'], '</label>
 					</dd>
 					<dt class="between">', $txt['pm_search_post_age'], ':</dt>
-					<dd>', $txt['pm_search_between'], ' <input type="text" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="5">&nbsp;', $txt['pm_search_between_and'], '&nbsp;<input type="text" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="5"> ', $txt['pm_search_between_days'], '</dd>
+					<dd>', $txt['pm_search_between'], ' <input type="number" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4" min="0" max="9999">&nbsp;', $txt['pm_search_between_and'], '&nbsp;<input type="number" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['pm_search_between_days'], '</dd>
 				</dl>', !$context['currently_using_labels'] ? '
 				<hr>
 				<input type="submit" value="' . $txt['pm_search_go'] . '" class="submit floatright">' : '', '
-			</div>
-		</fieldset>';
+			</fieldset>
+		</div>';
 
 		// Do we have some labels setup? If so offer to search by them!
-		if ($context['currently_using_labels'])
-		{
-			echo '
+	if ($context['currently_using_labels'])
+	{
+		echo '
 		<fieldset class="labels">
 			<div class="roundframe">
 				<we:title2>
@@ -637,14 +618,14 @@ function template_search()
 				</we:title2>
 				<ul id="searchLabelsExpand" class="reset', $context['check_all'] ? ' hide' : '', '">';
 
-			foreach ($context['search_labels'] as $label)
-				echo '
+		foreach ($context['search_labels'] as $label)
+			echo '
 					<li>
 						<label><input type="checkbox" id="searchlabel_', $label['id'], '" name="searchlabel[', $label['id'], ']" value="', $label['id'], '"', $label['checked'] ? ' checked' : '', '>
 						', $label['name'], '</label>
 					</li>';
 
-			echo '
+		echo '
 				</ul>
 				<p>
 					<span class="floatleft"><label><input type="checkbox" name="all" id="check_all" value=""', $context['check_all'] ? ' checked' : '', ' onclick="invertAll(this, this.form, \'searchlabel\');"> <em>', $txt['check_all'], '</em></label></span>
@@ -652,7 +633,6 @@ function template_search()
 				</p>
 			</div>
 		</fieldset>';
-		}
 	}
 
 	echo '

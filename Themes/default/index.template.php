@@ -215,8 +215,8 @@ function template_search_box()
 	echo '
 			<form id="search_form" action="<URL>?action=search2" method="post" accept-charset="UTF-8">
 				<input type="search" name="search" value="" class="search">
-				<input type="submit" value="', $txt['search'], '">
-				<input type="hidden" name="advanced" value="0">';
+				<input type="submit" value="', $txt['search'], '"><br>
+				<a href="<URL>?action=search">', $txt['search_advanced'], '</a>';
 
 	// Search within current topic?
 	if (!empty($context['current_topic']))

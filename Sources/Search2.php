@@ -138,10 +138,6 @@ function Search2()
 			$search_params['brd'] = empty($search_params['brd']) ? array() : explode(',', $search_params['brd']);
 	}
 
-	// Store whether simple search was used (needed if the user wants to do another query).
-	if (!isset($search_params['advanced']))
-		$search_params['advanced'] = empty($_REQUEST['advanced']) ? 0 : 1;
-
 	// 1 => 'allwords' (default, don't set as param) / 2 => 'anywords'.
 	if (!empty($search_params['searchtype']) || (!empty($_REQUEST['searchtype']) && $_REQUEST['searchtype'] == 2))
 		$search_params['searchtype'] = 2;
@@ -293,20 +289,18 @@ function Search2()
 		wesql::free_result($request);
 	}
 	// Select all boards you've selected AND are allowed to see.
-	elseif (we::$is_admin && (!empty($search_params['advanced']) || !empty($_REQUEST['brd'])))
+	elseif (we::$is_admin && !empty($_REQUEST['brd']))
 		$search_params['brd'] = empty($_REQUEST['brd']) ? array() : $_REQUEST['brd'];
 	else
 	{
-		$see_board = empty($search_params['advanced']) ? 'query_wanna_see_board' : 'query_see_board';
 		$request = wesql::query('
 			SELECT b.id_board
 			FROM {db_prefix}boards AS b
-			WHERE {raw:boards_allowed_to_see}
+			WHERE {query_see_board}
 				AND redirect = {string:empty_string}' . (empty($_REQUEST['brd']) ? (!empty($settings['recycle_enable']) && $settings['recycle_board'] > 0 ? '
 				AND b.id_board != {int:recycle_board_id}' : '') : '
 				AND b.id_board IN ({array_int:selected_search_boards})'),
 			array(
-				'boards_allowed_to_see' => we::$user[$see_board],
 				'empty_string' => '',
 				'selected_search_boards' => empty($_REQUEST['brd']) ? array() : $_REQUEST['brd'],
 				'recycle_board_id' => $settings['recycle_board'],

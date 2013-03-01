@@ -2054,23 +2054,6 @@ function setupMenuContext()
 					),
 				),
 			),
-			'search' => array(
-				'title' => $txt['search'],
-				'href' => $scripturl . '?action=search',
-				'show' => $context['allow_search'],
-				'sub_items' => array(
-					'search' => array(
-						'title' => $txt['search_simple'],
-						'href' => $scripturl . '?action=search',
-						'show' => $context['allow_search'] && !empty($settings['simpleSearch']),
-					),
-					'advanced_search' => array(
-						'title' => $txt['search_advanced'],
-						'href' => $scripturl . '?action=search;advanced',
-						'show' => $context['allow_search'] && !empty($settings['simpleSearch']),
-					),
-				),
-			),
 			'admin' => array(
 				'title' => $txt['admin'],
 				'href' => $scripturl . ($context['allow_admin'] ? '?action=admin' : '?action=moderate'),
@@ -2288,8 +2271,6 @@ function setupMenuContext()
 
 	if (isset($menu_items[$context['current_action']]))
 		$current_action = $context['current_action'];
-	elseif ($context['current_action'] == 'search2')
-		$current_action = 'search';
 	elseif ($context['current_action'] == 'theme')
 		$current_action = isset($_REQUEST['u']) && $_REQUEST['u'] > 0 ? 'profile' : 'admin';
 	elseif ($context['current_action'] == 'register2')

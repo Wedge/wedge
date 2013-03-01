@@ -1268,7 +1268,7 @@ div.top_row dd
 	span
 		padding: 8px
 
-/* Styles for the basic search section.
+/* Styles for the search section.
 ------------------------------------------------- */
 #searchform, #simple_search p
 	padding: .5em
@@ -1285,8 +1285,6 @@ div.top_row dd
 	.submit
 		background-position: 4px 3px, 0 0, 0 0
 
-/* Styles for the advanced search section.
-------------------------------------------------- */
 #searchform
 	fieldset
 		text-align: left
@@ -1308,6 +1306,8 @@ div.top_row dd
 		padding: .2em
 		text-align: right
 		width: 20%
+	dt.between
+		margin-top: 6px
 	dd
 		width: 75%
 		float: left

@@ -24,18 +24,10 @@ function template_main()
 		<we:cat>
 			', !empty($theme['use_buttons']) ? '<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', $txt['search'], '
 		</we:cat>
-		<fieldset id="simple_search">
-			<div class="windowbg wrc">
+		<div class="windowbg wrc">
+			<fieldset id="simple_search">
 				<div id="search_term_input">
-					<strong>', $txt['search_for'], ':</strong>';
-
-	if ($context['simple_search'])
-		echo '
-					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="search">
-					', $context['require_verification'] ? '' : '&nbsp;<input type="submit" value="' . $txt['search'] . '" class="submit">
-				</div>';
-	else
-		echo '
+					<strong>', $txt['search_for'], ':</strong>
 					<input type="search" name="search"', !empty($context['search_params']['search']) ? ' value="' . $context['search_params']['search'] . '"' : '', ' maxlength="', $context['search_string_limit'], '" size="40" class="search">
 					<select name="searchtype">
 						<option value="1"', empty($context['search_params']['searchtype']) ? ' selected' : '', '>', $txt['all_words'], '</option>
@@ -52,26 +44,14 @@ function template_main()
 					<strong>', $txt['verification'], ':</strong>
 					<br>', template_control_verification($context['visual_verification_id'], 'all'), '<br>
 					', $txt['search_visual_verification_desc'], '
-					<input id="submit" type="submit" value="' . $txt['search'] . '" class="submit">
 				</div>';
 
-	if ($context['simple_search'])
-		echo '
-				<hr><a href="', $scripturl, '?action=search;advanced" onclick="this.href += \';search=\' + encodeURIComponent(document.forms.searchform.search.value);">', $txt['search_advanced'], '</a>';
-
 	echo '
-				<input type="hidden" name="advanced" value="', (int) !$context['simple_search'], '">
-			</div>
-		</fieldset>';
+			</fieldset>
+		</div>';
 
-	// Advanced search!
-	if (!$context['simple_search'])
-	{
-		add_js_inline('
-	if (document.forms.searchform.search.value.indexOf("%") != -1)
-		document.forms.searchform.search.value = decodeURIComponent(document.forms.searchform.search.value);');
-
-		echo '
+	// Now for all the fun options.
+	echo '
 		<div class="windowbg2 wrc">
 			<h6>
 				', $txt['set_parameters'], '
@@ -96,31 +76,21 @@ function template_main()
 						<label><input type="checkbox" name="subject_only" id="subject_only" value="1"', !empty($context['search_params']['subject_only']) ? ' checked' : '', '> ', $txt['search_subject_only'], '</label>
 					</dd>
 					<dt class="between">', $txt['search_post_age'], ':</dt>
-					<dd>', $txt['search_between'], ' <input type="text" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4">&nbsp;', $txt['search_and'], '&nbsp;<input type="text" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4"> ', $txt['days_word'], '</dd>
+					<dd>', $txt['search_between'], ' <input type="number" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4" min="0" max="9999">&nbsp;', $txt['search_and'], '&nbsp;<input type="number" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['days_word'], '</dd>
 				</dl>';
 
-		// Require an image to be typed to save spamming?
-		if ($context['require_verification'])
-			echo '
-				<br>
-				<p>
-					<strong>', $txt['verification'], ':</strong>
-					<br>', template_control_verification($context['visual_verification_id'], 'all'), '
-					<br>', $txt['search_visual_verification_desc'], '
-				</p>';
-
-		// If $context['search_params']['topic'] is set, that means we're searching just one topic.
-		if (!empty($context['search_params']['topic']))
-			echo '
+	// If $context['search_params']['topic'] is set, that means we're searching just one topic.
+	if (!empty($context['search_params']['topic']))
+		echo '
 				<p>', $txt['search_specific_topic'], ' &quot;', $context['search_topic']['link'], '&quot;.</p>
 				<input type="hidden" name="topic" value="', $context['search_topic']['id'], '">';
 
-		echo '
+	echo '
 			</fieldset>';
 
-		if (empty($context['search_params']['topic']))
-		{
-			echo '
+	if (empty($context['search_params']['topic']))
+	{
+		echo '
 			<br>
 			<fieldset class="flow_hidden">
 				<label><input type="radio" name="all_boards" value="1" onclick="$(\'#searchBoardsExpand\').hide(300);"', $context['boards_check_all'] ? ' checked' : '', '> ', $txt['all_boards'], '</label>
@@ -128,28 +98,28 @@ function template_main()
 				<div id="searchBoardsExpand" class="flow_auto', $context['boards_check_all'] ? ' hide' : '', '">
 					<ul class="ignoreboards floatleft">';
 
-			$i = 0;
+		$i = 0;
 
-			// Vanity card #342. I offered this code to SMF back in June 2010, and the other devs promptly rejected it. Their loss!
-			// Categories MUST be taken into account by $i, in case they each have very different numbers of boards. -- Nao
+		// Vanity card #342. I offered this code to SMF back in June 2010, and the other devs promptly rejected it. Their loss!
+		// Categories MUST be taken into account by $i, in case they each have very different numbers of boards. -- Nao
 
-			$limit = max(12, ceil(($context['num_boards'] + count($context['categories'])) / 2));
-			foreach ($context['categories'] as $category)
-			{
-				if ($i++ == $limit)
-					echo '
+		$limit = max(12, ceil(($context['num_boards'] + count($context['categories'])) / 2));
+		foreach ($context['categories'] as $category)
+		{
+			if ($i++ == $limit)
+				echo '
 					</ul>
 					<ul class="ignoreboards floatright">';
 
-				echo '
+			echo '
 						<li class="category">
 							<a href="#" onclick="selectBoards([', implode(', ', $category['child_ids']), ']); return false;">', $category['name'], '</a>
 							<ul>';
 
-				foreach ($category['boards'] as $board)
-				{
-					if ($i++ == $limit)
-						echo '
+			foreach ($category['boards'] as $board)
+			{
+				if ($i++ == $limit)
+					echo '
 							</ul>
 						</li>
 					</ul>
@@ -157,18 +127,18 @@ function template_main()
 						<li class="category">
 							<ul>';
 
-					echo '
+				echo '
 								<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em">
 									<label><input type="checkbox" id="brd', $board['id'], '" name="brd[', $board['id'], ']" value="', $board['id'], '"', $board['selected'] ? ' checked' : '', '> ', $board['name'], '</label>
 								</li>';
-				}
-
-				echo '
-							</ul>
-						</li>';
 			}
 
 			echo '
+							</ul>
+						</li>';
+		}
+
+		echo '
 					</ul>
 					<br class="clear"><br>
 					<label class="padding">
@@ -181,10 +151,10 @@ function template_main()
 					<input type="submit" value="', $txt['search'], '" class="submit floatright">
 				</div>
 			</fieldset>';
-		}
 	}
 
 	echo '
+		</div>
 	</form>';
 
 	add_js('
