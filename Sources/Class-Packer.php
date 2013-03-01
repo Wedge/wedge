@@ -115,10 +115,6 @@ class Map implements Iterator {
 		return $result;
 	}
 
-	public function map($callback) {
-		return array_map($callback, array_values($this->values));
-	}
-
 	public function pluck($key) {
 		$result = array();
 		foreach ($this->values as $value) {
@@ -298,7 +294,7 @@ class RegGrp extends Collection {
 		return $arguments[0];
 	}
 
-	public function put($key, $item = null) {
+	public function put($key = '', $item = null) {
 		if (!($item instanceof RegGrpItem)) {
 			$item = new RegGrpItem($key, $item);
 		}
@@ -365,7 +361,7 @@ class Words extends Collection {
 		return $diff == 0 ? $word1->index - $word2->index : $diff;
 	}
 
-	public function add($word) {
+	public function add($word, $item = null) {
 		if (!$this->has($word)) parent::add($word);
 		$word = $this->get($word);
 		if ($word->index == 0) {
@@ -375,7 +371,7 @@ class Words extends Collection {
 		return $word;
 	}
 
-	public function put($key, $item = null) {
+	public function put($key = '', $item = null) {
 		if (!($item instanceof Word)) {
 			$item = new Word($key);
 		}
@@ -423,7 +419,7 @@ class Parser extends RegGrp {
 		'STRING2'		=> '"(\\\\.|[^"\\\\])*?"'
 	);
 
-	public function put($expression, $replacement) {
+	public function put($expression = '', $replacement = null) {
 		parent::put(Parser::$dictionary->exec($expression), $replacement);
 	}
 }

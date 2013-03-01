@@ -41,7 +41,6 @@ function JSEditor()
 	{
 		$_REQUEST['message'] = un_htmlspecialchars($_REQUEST['message']);
 		$_REQUEST['message'] = strtr($_REQUEST['message'], array('#wecol#' => ';', '#welt#' => '&lt;', '#wegt#' => '&gt;', '#weamp#' => '&amp;'));
-
 		$context['message'] = wedit::html_to_bbc($_REQUEST['message']);
 	}
 
