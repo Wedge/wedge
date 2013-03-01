@@ -625,6 +625,54 @@ tr.catbg .sbox, tr.titlebg .sbox
 .qaction
 	font-size: .85em
 
+/* Top-level menu icons.
+------------------------------------------------------- */
+// It may look complicated, but it isn't. Just fetch documentation on
+// image spriting. You can also simply use single images to show icons.
+
+#m_home
+	float: left
+	width, height: 16px
+	padding: 0
+	margin: 4px 4px 0 2px
+	background-repeat: no-repeat
+	background-image: url($images/icons/sprite.png)
+	background-position: -74px 0
+
+#m_board extends #m_home
+	background-position: -74px 0
+
+#m_admin extends #m_home
+	background-position: -36px 0
+
+#m_profile extends #m_home
+	background-position: 0 0
+
+#m_pm extends #m_home
+	background-position: -93px 0
+
+#m_pm_unread extends #m_home
+	background-position: -112px 0
+
+#m_media extends #m_home
+	background-position: -54px 0
+	width: 18px
+
+#m_mlist extends #m_home
+	background-position: -19px 0
+	width: 14px
+
+#m_login extends #m_home
+	background-position: -149px 0
+	width: 15px
+
+#m_register extends #m_home
+	background-position: -167px 0
+
+#m_logout extends #m_home
+	background-position: -131px 0
+	width: 15px
+
 /* Styles for buttons and other form elements
 ------------------------------------------------------- */
 
@@ -658,7 +706,7 @@ input[type=submit], input[type=button], .ie_button
 	outline: none
 	cursor: pointer
 	font-size: 13.5px
-	line-height: 1.4
+	line-height: 1.2
 	border-width: 1px
 	border-radius: 6px
 	@if firefox
@@ -717,10 +765,14 @@ input.cancel
 input.submit
 	background-position: 5px center
 
-input.search
-	background: rgba(255,255,235,.32) url($images/filter.gif) 5px 5px no-repeat
-	padding-left: 24px
+input.search extends #m_home
+	background-color: rgba(255,255,235,.32)
+	background-position: -184px 3px
+	padding: 4px 5px 4px 25px
 	height: 25px
+	width: auto
+	float: none
+	margin: 0 2px
 
 // All input elements that are checkboxes or radio buttons shouldn't have a border around them.
 input[type=checkbox], input[type=radio]
@@ -925,54 +977,6 @@ li.separator
 	.right&
 		background-position: 85% 5px
 		background-position: calc(100% - 15px) 5px
-
-/* Top-level menu icons.
-------------------------------------------------------- */
-// It may look complicated, but it isn't. Just fetch documentation on
-// image spriting. You can also simply use single images to show icons.
-
-#m_home
-	float: left
-	width, height: 16px
-	padding: 0
-	margin: 4px 4px 0 2px
-	background-repeat: no-repeat
-	background-image: url($images/icons/sprite.png)
-	background-position: -74px 0
-
-#m_board extends #m_home
-	background-position: -74px 0
-
-#m_admin extends #m_home
-	background-position: -36px 0
-
-#m_profile extends #m_home
-	background-position: 0 0
-
-#m_pm extends #m_home
-	background-position: -93px 0
-
-#m_pm_unread extends #m_home
-	background-position: -112px 0
-
-#m_media extends #m_home
-	background-position: -54px 0
-	width: 18px
-
-#m_mlist extends #m_home
-	background-position: -19px 0
-	width: 14px
-
-#m_login extends #m_home
-	background-position: -168px 0
-	width: 15px
-
-#m_register extends #m_home
-	background-position: -186px 0
-
-#m_logout extends #m_home
-	background-position: -150px 0
-	width: 15px
 
 /* Common positioning/sizing classes to ease styling.
 ------------------------------------------------------- */
