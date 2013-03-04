@@ -607,8 +607,6 @@ function addMembersToGroup($members, $group, $type = 'auto', $permissionCheckDon
 
 function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 {
-	global $scripturl, $txt;
-
 	$request = wesql::query('
 		SELECT id_member, real_name
 		FROM {db_prefix}members
@@ -620,7 +618,7 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 	);
 	$members = array();
 	while ($row = wesql::fetch_assoc($request))
-		$members[$row['id_member']] = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+		$members[$row['id_member']] = '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 	wesql::free_result($request);
 
 	// If there are more than $limit members, add a 'more' link.
@@ -636,8 +634,6 @@ function listMembergroupMembers_Href(&$members, $membergroup, $limit = null)
 // Retrieve a list of (visible) membergroups used by the cache.
 function cache_getMembergroupList()
 {
-	global $scripturl;
-
 	$request = wesql::query('
 		SELECT id_group, group_name, online_color
 		FROM {db_prefix}membergroups
@@ -653,7 +649,7 @@ function cache_getMembergroupList()
 	);
 	$groupCache = array();
 	while ($row = wesql::fetch_assoc($request))
-		$groupCache[] = '<a href="' . $scripturl . '?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
+		$groupCache[] = '<a href="<URL>?action=groups;sa=members;group=' . $row['id_group'] . '" ' . ($row['online_color'] ? 'style="color: ' . $row['online_color'] . '"' : '') . '>' . $row['group_name'] . '</a>';
 	wesql::free_result($request);
 
 	return array(
@@ -665,7 +661,7 @@ function cache_getMembergroupList()
 
 function list_getMembergroups($start, $items_per_page, $sort, $membergroup_type)
 {
-	global $txt, $scripturl, $context, $theme;
+	global $txt, $context, $theme;
 
 	$groups = array();
 

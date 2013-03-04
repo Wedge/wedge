@@ -18,7 +18,7 @@ function template_main()
 
 function template_servers()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	if (!empty($context['package_ftp']['error']))
 			echo '
@@ -41,7 +41,7 @@ function template_servers()
 			<p>
 				', $txt['package_ftp_why_download'], '
 			</p>
-			<form action="', $scripturl, '?action=admin;area=packages;get" method="post" accept-charset="UTF-8">
+			<form action="<URL>?action=admin;area=packages;get" method="post" accept-charset="UTF-8">
 				<dl class="settings">
 					<dt>
 						<label for="ftp_server">', $txt['package_ftp_server'], ':</label>
@@ -86,8 +86,8 @@ function template_servers()
 		echo '
 					<li class="flow_auto">
 						<span class="floatleft">' . $server['name'] . '</span>
-						<span class="package_server floatright"><a href="' . $scripturl . '?action=admin;area=packages;get;sa=remove;server=' . $server['id'] . ';', $context['session_query'], '">[ ' . $txt['delete'] . ' ]</a></span>
-						<span class="package_server floatright"><a href="' . $scripturl . '?action=admin;area=packages;get;sa=browse;server=' . $server['id'] . '">[ ' . $txt['package_browse'] . ' ]</a></span>
+						<span class="package_server floatright"><a href="<URL>?action=admin;area=packages;get;sa=remove;server=' . $server['id'] . ';', $context['session_query'], '">[ ' . $txt['delete'] . ' ]</a></span>
+						<span class="package_server floatright"><a href="<URL>?action=admin;area=packages;get;sa=browse;server=' . $server['id'] . '">[ ' . $txt['package_browse'] . ' ]</a></span>
 					</li>';
 
 	echo '
@@ -95,7 +95,7 @@ function template_servers()
 			</fieldset>
 			<fieldset>
 				<legend>' . $txt['add_server'] . '</legend>
-				<form action="' . $scripturl . '?action=admin;area=packages;get;sa=add" method="post" accept-charset="UTF-8">
+				<form action="<URL>?action=admin;area=packages;get;sa=add" method="post" accept-charset="UTF-8">
 					<dl class="settings">
 						<dt>
 							<strong>' . $txt['server_name'] . ':</strong>
@@ -118,7 +118,7 @@ function template_servers()
 			</fieldset>
 			<fieldset>
 				<legend>', $txt['package_download_by_url'], '</legend>
-				<form action="', $scripturl, '?action=admin;area=packages;get;sa=download;byurl;', $context['session_query'], '" method="post" accept-charset="UTF-8">
+				<form action="<URL>?action=admin;area=packages;get;sa=download;byurl;', $context['session_query'], '" method="post" accept-charset="UTF-8">
 					<dl class="settings">
 						<dt>
 							<strong>' . $txt['serverurl'] . ':</strong>
@@ -145,7 +145,7 @@ function template_servers()
 
 function template_package_confirm()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -159,7 +159,7 @@ function template_package_confirm()
 
 function template_package_list()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -291,7 +291,7 @@ function template_package_list()
 
 function template_downloaded()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -307,6 +307,6 @@ function template_downloaded()
 				</li>
 			</ul>
 			<br><br>
-			<p><a href="', $scripturl, '?action=admin;area=packages;get;sa=browse;server=' . $context['package_server'], '">[ ', $txt['back'], ' ]</a></p>
+			<p><a href="<URL>?action=admin;area=packages;get;sa=browse;server=' . $context['package_server'], '">[ ', $txt['back'], ' ]</a></p>
 		</div>';
 }

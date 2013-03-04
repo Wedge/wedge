@@ -14,7 +14,7 @@
 // This contains the html for the generic sidebar.
 function template_generic_menu_sidebar()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Which menu are we rendering?
 	$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 0;
@@ -75,7 +75,7 @@ function template_generic_menu_sidebar()
 // This contains the html for the generic dropdown menu.
 function template_generic_menu_dropdown()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Which menu are we rendering?
 	$context['cur_menu_id'] = isset($context['cur_menu_id']) ? $context['cur_menu_id'] + 1 : 0;
@@ -151,7 +151,7 @@ function template_generic_menu_dropdown()
 // Some code for showing a tabbed view.
 function template_generic_tabs()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Search for the current area. Make sure we're playing with the correct menu!
 	$menu_context =& $context['menu_data_' . (isset($context['cur_menu_id']) ? $context['cur_menu_id'] : 0)];
@@ -219,7 +219,7 @@ function template_generic_tabs()
 
 	if (!empty($selected_tab['help']) || !empty($tab_context['help']))
 		echo '
-		<a href="', $scripturl, '?action=help;in=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>';
+		<a href="<URL>?action=help;in=', !empty($selected_tab['help']) ? $selected_tab['help'] : $tab_context['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>';
 
 	echo '
 		', $tab_context['title'], '

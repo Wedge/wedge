@@ -56,7 +56,7 @@ if (!defined('WEDGE'))
 // Who's online, and what are they doing?
 function Who()
 {
-	global $context, $scripturl, $txt, $settings, $memberContext;
+	global $context, $txt, $settings, $memberContext;
 
 	// Permissions, permissions, permissions.
 	isAllowedTo('who_view');
@@ -158,7 +158,7 @@ function Who()
 	wesql::free_result($request);
 
 	// Prepare some page index variables.
-	$context['page_index'] = template_page_index($scripturl . '?action=who;sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';show=' . $context['show_by'], $_REQUEST['start'], $totalMembers, $settings['defaultMaxMembers']);
+	$context['page_index'] = template_page_index('<URL>?action=who;sort=' . $context['sort_by'] . ($context['sort_direction'] == 'up' ? ';asc' : '') . ';show=' . $context['show_by'], $_REQUEST['start'], $totalMembers, $settings['defaultMaxMembers']);
 	$context['start'] = $_REQUEST['start'];
 
 	// Look for people online, provided they don't mind if you see they are.
@@ -244,7 +244,7 @@ function Who()
 	// Setup the linktree and page title (do it down here because the language files are now loaded..)
 	$context['page_title'] = $txt['who_title'];
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=who',
+		'url' => '<URL>?action=who',
 		'name' => $txt['who_title']
 	);
 
@@ -273,7 +273,7 @@ function Who()
 
 function determineActions($urls, $preferred_prefix = false)
 {
-	global $context, $txt, $settings, $theme, $scripturl;
+	global $context, $txt, $settings, $theme;
 
 	if (!allowedTo('who_view'))
 		return array();

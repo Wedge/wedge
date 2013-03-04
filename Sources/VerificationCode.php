@@ -19,7 +19,7 @@ define('WEDGE_NO_LOG', 1);
 // Show the verification code or let it hear.
 function VerificationCode()
 {
-	global $settings, $context, $scripturl, $txt;
+	global $settings, $context, $txt;
 
 	$verification_id = isset($_GET['vid']) ? $_GET['vid'] : '';
 	$code = $verification_id && isset($_SESSION[$verification_id . '_vv'], $_SESSION[$verification_id . '_vv']['code']) ? $_SESSION[$verification_id . '_vv']['code'] : (isset($_SESSION['visual_verification_code']) ? $_SESSION['visual_verification_code'] : '');
@@ -37,7 +37,7 @@ function VerificationCode()
 		wetem::load('popup');
 
 		$context['page_title'] = $txt['visual_verification_sound'];
-		$context['verification_sound_href'] = $scripturl . '?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
+		$context['verification_sound_href'] = '<URL>?action=verificationcode;rand=' . md5(mt_rand()) . ($verification_id ? ';vid=' . $verification_id : '') . ';format=.wav';
 
 		$context['popup_contents'] = '
 		<audio src="' . $context['verification_sound_href'] . '" controls id="audio">';

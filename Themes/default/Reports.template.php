@@ -14,10 +14,10 @@
 // Choose which type of report to run?
 function template_report_type()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=reports" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=reports" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['generate_reports'], '
 			</we:cat>
@@ -52,12 +52,12 @@ function template_report_type()
 // This is the standard template for showing reports in.
 function template_main()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Build the reports button array.
 	$report_buttons = array(
-		'generate_reports' => array('text' => 'generate_reports', 'url' => $scripturl . '?action=admin;area=reports', 'class' => 'active'),
-		'print' => array('text' => 'print', 'url' => $scripturl . '?action=admin;area=reports;rt=' . $context['report_type']. ';st=print', 'custom' => 'target="_blank"'),
+		'generate_reports' => array('text' => 'generate_reports', 'url' => '<URL>?action=admin;area=reports', 'class' => 'active'),
+		'print' => array('text' => 'print', 'url' => '<URL>?action=admin;area=reports;rt=' . $context['report_type']. ';st=print', 'custom' => 'target="_blank"'),
 	);
 
 	echo '
@@ -158,7 +158,7 @@ function template_report_before()
 
 function template_print()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Go through each table!
 	foreach ($context['tables'] as $table)

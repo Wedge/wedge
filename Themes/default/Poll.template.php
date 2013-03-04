@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	// Some javascript for adding more options.
 	add_js('
@@ -36,7 +36,7 @@ function template_main()
 	// Start the main poll form.
 	echo '
 	<div id="edit_poll">
-		<form action="' . $scripturl . '?action=poll;sa=editpoll2', $context['is_edit'] ? '' : ';add', ';topic=' . $context['current_topic'] . '.' . $context['start'] . '" method="post" accept-charset="UTF-8" onsubmit="submitonce(); weSaveEntities(\'postmodify\', [\'question\'], \'options-\');" name="postmodify" id="postmodify">
+		<form action="<URL>?action=poll;sa=editpoll2', $context['is_edit'] ? '' : ';add', ';topic=' . $context['current_topic'] . '.' . $context['start'] . '" method="post" accept-charset="UTF-8" onsubmit="submitonce(); weSaveEntities(\'postmodify\', [\'question\'], \'options-\');" name="postmodify" id="postmodify">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>';

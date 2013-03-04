@@ -25,7 +25,7 @@ if (!defined('WEDGE'))
 // Retrieve a list and several other statistics of the users currently online.
 function getMembersOnlineStats($membersOnlineOptions)
 {
-	global $context, $scripturl, $settings, $txt;
+	global $context, $settings, $txt;
 
 	// The list can be sorted in several ways.
 	$allowed_sort_options = array(
@@ -98,7 +98,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 			continue;
 		}
 
-		$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+		$link = '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 
 		// Buddies get counted and highlighted.
 		$is_buddy = in_array($row['id_member'], we::$user['buddies']);
@@ -114,7 +114,7 @@ function getMembersOnlineStats($membersOnlineOptions)
 			'username' => $row['member_name'],
 			'name' => $row['real_name'],
 			'group' => $row['id_group'],
-			'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
+			'href' => '<URL>?action=profile;u=' . $row['id_member'],
 			'link' => $link,
 			'is_buddy' => $is_buddy,
 			'hidden' => empty($row['show_online']),
@@ -246,7 +246,7 @@ function trackStatsUsersOnline($total_users_online)
 // Get the list of users viewing a board/topic
 function getMembersOnlineDetails($type = 'board')
 {
-	global $context, $board, $topic, $scripturl;
+	global $context, $board, $topic;
 
 	if ($type !== 'board' && $type !== 'topic')
 		return;
@@ -274,7 +274,7 @@ function getMembersOnlineDetails($type = 'board')
 		if (empty($row['id_member']))
 			continue;
 
-		$link = '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
+		$link = '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>';
 
 		$is_buddy = in_array($row['id_member'], we::$user['buddies']);
 		if ($is_buddy)
@@ -288,7 +288,7 @@ function getMembersOnlineDetails($type = 'board')
 			'username' => $row['member_name'],
 			'name' => $row['real_name'],
 			'group' => $row['id_group'],
-			'href' => $scripturl . '?action=profile;u=' . $row['id_member'],
+			'href' => '<URL>?action=profile;u=' . $row['id_member'],
 			'link' => $link,
 			'is_buddy' => $is_buddy,
 			'hidden' => empty($row['show_online']),

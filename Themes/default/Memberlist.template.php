@@ -14,19 +14,19 @@
 // Displays a sortable listing of all members registered on the forum.
 function template_main()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
-		'view_all_members' => array('text' => 'view_all_members', 'url' => $scripturl . '?action=mlist;sa=all', 'class' => 'active'),
-		'mlist_search' => array('text' => 'mlist_search', 'url' => $scripturl . '?action=mlist;sa=search'),
+		'view_all_members' => array('text' => 'view_all_members', 'url' => '<URL>?action=mlist;sa=all', 'class' => 'active'),
+		'mlist_search' => array('text' => 'mlist_search', 'url' => '<URL>?action=mlist;sa=search'),
 	);
 
 	echo '
 	<div class="main_section" id="memberlist">
 		<we:cat>', !isset($context['old_search']) ? '
 			<span class="floatright">' . $context['letter_links'] . '</span>' : '', '
-			<a class="memfeed" href="', $scripturl, '?action=feed;sa=members"><div class="feed_icon"></div></a>
+			<a class="memfeed" href="<URL>?action=feed;sa=members"><div class="feed_icon"></div></a>
 			', $txt['members_list'];
 
 	echo '
@@ -76,7 +76,7 @@ function template_main()
 						', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['text'] . '">' : '', $theme['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '">' : $member['online']['label'], $context['can_send_pm'] ? '</a>' : '', '
 					</td>
 					<td class="left">', $member['link'], '</td>
-					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
+					<td class="windowbg2">', $member['show_email'] == 'no' ? '' : '<a href="<URL>?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $theme['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '"></a>', '</td>';
 
 		if (!isset($context['disabled_fields']['website']))
 			echo '
@@ -133,7 +133,7 @@ function template_main()
 	if (isset($context['old_search']))
 		echo '
 			<div class="floatright">
-				<a href="', $scripturl, '?action=mlist;sa=search;search=', $context['old_search_value'], '">', $txt['mlist_search_again'], '</a>
+				<a href="<URL>?action=mlist;sa=search;search=', $context['old_search_value'], '">', $txt['mlist_search_again'], '</a>
 			</div>';
 
 	echo '
@@ -144,17 +144,17 @@ function template_main()
 // A page allowing people to search the member list.
 function template_search()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Build the memberlist button array.
 	$memberlist_buttons = array(
-		'view_all_members' => array('text' => 'view_all_members', 'url' => $scripturl . '?action=mlist;sa=all'),
-		'mlist_search' => array('text' => 'mlist_search', 'url' => $scripturl . '?action=mlist;sa=search', 'class' => 'active'),
+		'view_all_members' => array('text' => 'view_all_members', 'url' => '<URL>?action=mlist;sa=all'),
+		'mlist_search' => array('text' => 'mlist_search', 'url' => '<URL>?action=mlist;sa=search', 'class' => 'active'),
 	);
 
 	// Start the submission form for the search!
 	echo '
-	<form action="', $scripturl, '?action=mlist;sa=search" method="post" accept-charset="UTF-8">
+	<form action="<URL>?action=mlist;sa=search" method="post" accept-charset="UTF-8">
 		<div id="memberlist">
 			<we:cat>', !empty($theme['use_buttons']) ? '
 				<img src="' . $theme['images_url'] . '/buttons/search.gif">' : '', '

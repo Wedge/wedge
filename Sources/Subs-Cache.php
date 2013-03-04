@@ -1198,7 +1198,7 @@ function wedge_get_skeleton_operations($set, $op, $required_vars = array())
  */
 function wedge_get_skin_options()
 {
-	global $theme, $context, $scripturl;
+	global $theme, $context;
 
 	$skin_options = array();
 	$is_default_theme = true;

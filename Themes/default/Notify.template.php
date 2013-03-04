@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -23,14 +23,14 @@ function template_main()
 		<div class="roundframe">
 			<p>', $context['notification_set'] ? $txt['notify_deactivate'] : $txt['notify_request'], '</p>
 			<p>
-				<strong><a href="', $scripturl, '?action=notify;sa=', $context['notification_set'] ? 'off' : 'on', ';topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_query'], '">', $txt['yes'], '</a> - <a href="', $context['topic_href'], '">', $txt['no'], '</a></strong>
+				<strong><a href="<URL>?action=notify;sa=', $context['notification_set'] ? 'off' : 'on', ';topic=', $context['current_topic'], '.', $context['start'], ';', $context['session_query'], '">', $txt['yes'], '</a> - <a href="', $context['topic_href'], '">', $txt['no'], '</a></strong>
 			</p>
 		</div>';
 }
 
 function template_notify_board()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -40,7 +40,7 @@ function template_notify_board()
 		<div class="roundframe">
 			<p>', $context['notification_set'] ? $txt['notifyboard_turnoff'] : $txt['notifyboard_turnon'], '</p>
 			<p>
-				<strong><a href="', $scripturl, '?action=notifyboard;sa=', $context['notification_set'] ? 'off' : 'on', ';board=', $context['current_board'], '.', $context['start'], ';', $context['session_query'], '">', $txt['yes'], '</a> - <a href="', $context['board_href'], '">', $txt['no'], '</a></strong>
+				<strong><a href="<URL>?action=notifyboard;sa=', $context['notification_set'] ? 'off' : 'on', ';board=', $context['current_board'], '.', $context['start'], ';', $context['session_query'], '">', $txt['yes'], '</a> - <a href="', $context['board_href'], '">', $txt['no'], '</a></strong>
 			</p>
 		</div>';
 }

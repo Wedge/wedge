@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 
 function createList($listOptions)
 {
-	global $context, $theme, $options, $txt, $settings, $scripturl;
+	global $context, $theme, $options, $txt, $settings;
 
 	assert(isset($listOptions['id']));
 	assert(isset($listOptions['columns']));

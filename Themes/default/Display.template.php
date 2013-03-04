@@ -13,7 +13,7 @@
 
 function template_display_posts()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings, $board_info, $msg;
+	global $context, $theme, $options, $txt, $settings, $board_info, $msg;
 
 	// OK, we're going to need this!
 	add_js_file('scripts/topic.js');

@@ -28,7 +28,7 @@ if (!defined('WEDGE'))
 function Register($reg_errors = array())
 {
 	global $txt, $boarddir, $context, $theme, $settings;
-	global $language, $scripturl, $cur_profile;
+	global $language, $cur_profile;
 
 	if (isset($_GET['reagree']) && we::$user['activated'] == 6)
 	{
@@ -100,7 +100,7 @@ function Register($reg_errors = array())
 
 	// Add the register chain to the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=register',
+		'url' => '<URL>?action=register',
 		'name' => $txt['register'],
 	);
 
@@ -196,7 +196,7 @@ function Register($reg_errors = array())
 // Actually register the member.
 function Register2()
 {
-	global $scripturl, $txt, $settings, $context;
+	global $txt, $settings, $context;
 	global $options, $theme;
 
 	// Start collecting together any errors.

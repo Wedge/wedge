@@ -13,7 +13,7 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
 		<we:cat>
@@ -27,7 +27,7 @@ function template_main()
 		<div class="two-columns"><div class="windowbg wrc top_row">
 			<dl class="stats">
 				<dt>', $txt['total_members'], ':</dt>
-				<dd>', $context['show_member_list'] ? '<a href="' . $scripturl . '?action=mlist">' . $context['num_members'] . '</a>' : $context['num_members'], '</dd>
+				<dd>', $context['show_member_list'] ? '<a href="<URL>?action=mlist">' . $context['num_members'] . '</a>' : $context['num_members'], '</dd>
 				<dt>', $txt['total_posts'], ':</dt>
 				<dd>', $context['num_posts'], '</dd>
 				<dt>', $txt['total_topics'], ':</dt>

@@ -24,7 +24,7 @@ function template_admin_time_remaining()
 // This is the administration center home.
 function template_admin()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// Welcome the admin, and mention any outstanding updates.
 	echo '
@@ -82,13 +82,13 @@ function template_admin()
 		e.preventDefault();
 		$("#admin_intro input").hide();
 		$("#admin_intro").slideUp();
-		$.get(weUrl("action=jsoption;th=1;var=hide_admin_intro;val=1;" + we_sessvar + "=" + we_sessid + ";time=" + $.now()));
+		$.post(weUrl("action=jsoption;th=1;" + we_sessvar + "=" + we_sessid + ";time=" + $.now()), { v: "hide_admin_intro", val: 1 });
 	};');
 		}
 
 		echo '
 		<div id="quick_search">
-			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright">
+			<form action="<URL>?action=admin;area=search" method="post" accept-charset="UTF-8" class="floatright">
 				<input type="search" name="search_term" placeholder="', $txt['admin_search'], '" class="search">
 				<select name="search_type">
 					<option value="internal"', empty($context['admin_preferences']['sb']) || $context['admin_preferences']['sb'] == 'internal' ? ' selected' : '', '>', $txt['admin_search_type_internal'], '</option>
@@ -140,12 +140,12 @@ function template_admin()
 // Display the "live news" from wedge.org.
 function template_admin_live_news()
 {
-	global $txt, $scripturl;
+	global $txt;
 
 	echo '
 	<section>
 		<we:title>
-			<a href="', $scripturl, '?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="<URL>?action=help;in=live_news" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['live'], '
 		</we:title>
 		<div id="wedge_news">', $txt['lfyi'], '</div>
@@ -155,7 +155,7 @@ function template_admin_live_news()
 // Display version numbers and who the admins are.
 function template_admin_support_info()
 {
-	global $scripturl, $txt, $context;
+	global $txt, $context;
 
 	// Show the user version information from their server.
 	echo '
@@ -169,7 +169,7 @@ function template_admin_support_info()
 			<em id="yourVersion">', $context['forum_version'], '</em><br>
 			', $txt['support_versions_current'], ':
 			<em id="wedgeVersion">??</em><br>
-			', $context['can_admin'] ? '<a href="' . $scripturl . '?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
+			', $context['can_admin'] ? '<a href="<URL>?action=admin;area=maintain;sa=routine;activity=version">' . $txt['version_check_more'] . '</a>' : '', '<br>';
 
 	// Display all the members who can administrate the forum.
 	echo '
@@ -190,12 +190,12 @@ function template_admin_support_info()
 // Show some support information and credits to those who helped make this.
 function template_credits()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	// Display latest support questions from wedge.org
 	echo '
 		<we:cat>
-			<a href="', $scripturl, '?action=help;in=latest_support" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+			<a href="<URL>?action=help;in=latest_support" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 			', $txt['support_latest'], '
 		</we:cat>
 		<div class="windowbg2 wrc">
@@ -246,7 +246,7 @@ function template_credits()
 // Displays information about file versions installed, and compares them to current version.
 function template_view_versions()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -284,8 +284,8 @@ function template_view_versions()
 
 	// And the JS to include all the version numbers, not to mention the actual information we need.
 	add_js_file(array(
-		$scripturl . '?action=viewremote;filename=current-version.js',
-		$scripturl . '?action=viewremote;filename=detailed-version.js',
+		'<URL>?action=viewremote;filename=current-version.js',
+		'<URL>?action=viewremote;filename=detailed-version.js',
 	), true);
 
 	add_js('
@@ -525,11 +525,11 @@ function template_view_versions()
 // Form for stopping people using naughty words, etc.
 function template_edit_censored()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	// First section is for adding/removing words from the censored list.
 	echo '
-		<form action="', $scripturl, '?action=admin;area=postsettings;sa=censor" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=postsettings;sa=censor" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $txt['admin_censored_words'], '
 			</we:cat>
@@ -600,7 +600,7 @@ function template_edit_censored()
 // Maintenance is a lovely thing, isn't it?
 function template_not_done()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<we:cat>
@@ -629,7 +629,7 @@ function template_not_done()
 			</div>';
 
 	echo '
-			<form action="', $scripturl, $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0" name="autoSubmit" id="autoSubmit">
+			<form action="<URL>', $context['continue_get_data'], '" method="post" accept-charset="UTF-8" style="margin: 0" name="autoSubmit" id="autoSubmit">
 				<div style="margin: 1ex; text-align: right"><input type="submit" name="cont" value="', westr::htmlspecialchars($txt['not_done_continue']), '"></div>
 				', $context['continue_post_data'], '
 			</form>
@@ -656,7 +656,7 @@ function template_not_done()
 // Template for showing settings (of any kind, really!)
 function template_show_settings()
 {
-	global $context, $txt, $theme, $scripturl;
+	global $context, $txt, $theme;
 
 	if ($context['was_saved'])
 		echo '
@@ -703,7 +703,7 @@ function template_show_settings()
 
 			<we:cat>
 				<div', !empty($config_var['class']) ? ' class="' . $config_var['class'] . '"' : '', !empty($config_var['force_div_id']) ? ' id="' . $config_var['force_div_id'] . '"' : '', '>', $config_var['help'] ? '
-					<a href="' . $scripturl . '?action=help;in=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
+					<a href="<URL>?action=help;in=' . $config_var['help'] . '" onclick="return reqWin(this);" class="help" title="' . $txt['help'] . '"></a>' : '', '
 					', $config_var['label'], '
 				</div>
 			</we:cat>';
@@ -760,7 +760,7 @@ function template_show_settings()
 				// Show the [?] button.
 				if ($config_var['help'])
 					echo '
-						<label for="', $config_var['name'], '"><a id="setting_', $config_var['name'], '" href="', $scripturl, '?action=help;in=', $config_var['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+						<label for="', $config_var['name'], '"><a id="setting_', $config_var['name'], '" href="<URL>?action=help;in=', $config_var['help'], '" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 							<span id="span_', $config_var['name'], '"', $config_var['disabled'] ? ' class="disabled"' : ($config_var['invalid'] ? ' class="error"' : ''), '>', $config_var['label'], $subtext, $config_var['type'] == 'password' ? '<br><em>' . $txt['admin_confirm_password'] . '</em>' : '', '</span>
 						</label>
 					</dt>';
@@ -885,7 +885,7 @@ function template_show_settings()
 						foreach ($bbcColumn as $bbcTag)
 							echo '
 								<li class="list_bbc floatleft">
-									<label><input type="checkbox" name="', $config_var['name'], '_enabledTags[]" id="tag_', $config_var['name'], '_', $bbcTag['tag'], '" value="', $bbcTag['tag'], '"', !in_array($bbcTag['tag'], $context['bbc_sections'][$config_var['name']]['disabled']) ? ' checked' : '', '> ', $bbcTag['tag'], '</label>', $bbcTag['show_help'] ? ' (<a href="' . $scripturl . '?action=help;in=tag_' . $bbcTag['tag'] . '" onclick="return reqWin(this);">?</a>)' : '', '
+									<label><input type="checkbox" name="', $config_var['name'], '_enabledTags[]" id="tag_', $config_var['name'], '_', $bbcTag['tag'], '" value="', $bbcTag['tag'], '"', !in_array($bbcTag['tag'], $context['bbc_sections'][$config_var['name']]['disabled']) ? ' checked' : '', '> ', $bbcTag['tag'], '</label>', $bbcTag['show_help'] ? ' (<a href="<URL>?action=help;in=tag_' . $bbcTag['tag'] . '" onclick="return reqWin(this);">?</a>)' : '', '
 								</li>';
 					}
 					echo '
@@ -1029,7 +1029,7 @@ function template_show_settings()
 // Template for showing custom profile fields.
 function template_show_custom_profile()
 {
-	global $context, $txt, $theme, $scripturl;
+	global $context, $txt, $theme;
 
 	// Standard fields.
 	template_show_list('standard_profile_fields');
@@ -1093,7 +1093,7 @@ function template_show_custom_profile()
 // Edit a profile field?
 function template_edit_profile_field()
 {
-	global $context, $txt, $theme, $scripturl;
+	global $context, $txt, $theme;
 
 	// All the javascript for this page - quite a bit!
 	add_js('
@@ -1126,7 +1126,7 @@ function template_edit_profile_field()
 	}');
 
 	echo '
-		<form action="', $scripturl, '?action=admin;area=memberoptions;sa=profileedit;fid=', $context['fid'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
+		<form action="<URL>?action=admin;area=memberoptions;sa=profileedit;fid=', $context['fid'], ';', $context['session_query'], '" method="post" accept-charset="UTF-8">
 			<we:cat>
 				', $context['page_title'], '
 			</we:cat>
@@ -1267,7 +1267,7 @@ function template_edit_profile_field()
 							</select>
 						</dd>
 						<dt>
-							<a id="field_show_enclosed" href="', $scripturl, '?action=help;in=field_show_enclosed" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+							<a id="field_show_enclosed" href="<URL>?action=help;in=field_show_enclosed" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 							<strong>', $txt['custom_edit_enclose'], ':</strong>
 							<dfn>', $txt['custom_edit_enclose_desc'], '</dfn>
 						</dt>
@@ -1314,7 +1314,7 @@ function template_edit_profile_field()
 							<input type="checkbox" name="bbc"', $context['field']['bbc'] ? ' checked' : '', '>
 						</dd>
 						<dt id="options_dt">
-							<a href="', $scripturl, '?action=help;in=customoptions" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+							<a href="<URL>?action=help;in=customoptions" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 							<strong>', $txt['custom_edit_options'], ':</strong>
 							<dfn>', $txt['custom_edit_options_desc'], '</dfn>
 						</dt>
@@ -1342,7 +1342,7 @@ function template_edit_profile_field()
 					<legend>', $txt['custom_edit_advanced'], '</legend>
 					<dl class="settings">
 						<dt id="mask_dt">
-							<a id="custom_mask" href="', $scripturl, '?action=help;in=custom_mask" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
+							<a id="custom_mask" href="<URL>?action=help;in=custom_mask" onclick="return reqWin(this);" class="help" title="', $txt['help'], '"></a>
 							<strong>', $txt['custom_edit_mask'], ':</strong>
 							<dfn>', $txt['custom_edit_mask_desc'], '</dfn>
 						</dt>
@@ -1408,12 +1408,12 @@ function template_edit_profile_field()
 // Results page for an admin search.
 function template_admin_search_results()
 {
-	global $context, $txt, $theme, $options, $scripturl;
+	global $context, $txt, $theme, $options;
 
 	echo '
 	<we:cat>
 		<div class="floatright">
-			<form action="', $scripturl, '?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline" id="quick_search">
+			<form action="<URL>?action=admin;area=search" method="post" accept-charset="UTF-8" style="font-weight: normal; display: inline" id="quick_search">
 				<input type="search" name="search_term" value="', $context['search_term'], '" class="search">
 				<input type="hidden" name="search_type" value="', $context['search_type'], '">
 				<input type="submit" name="search_go" value="', $txt['admin_search_results_again'], '">
@@ -1577,7 +1577,7 @@ function template_callback_question_answer_list()
 // Repairing boards.
 function template_repair_boards()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt;
 
 	echo '
 		<we:cat>
@@ -1606,14 +1606,14 @@ function template_repair_boards()
 				', $txt['errors_fix'], '
 			</p>
 			<p class="padding">
-				<strong><a href="', $scripturl, '?action=admin;area=repairboards;fixErrors;', $context['session_query'], '">', $txt['yes'], '</a> - <a href="', $scripturl, '?action=admin;area=maintain">', $txt['no'], '</a></strong>
+				<strong><a href="<URL>?action=admin;area=repairboards;fixErrors;', $context['session_query'], '">', $txt['yes'], '</a> - <a href="<URL>?action=admin;area=maintain">', $txt['no'], '</a></strong>
 			</p>';
 		}
 		else
 			echo '
 			<p>', $txt['maintain_no_errors'], '</p>
 			<p class="padding">
-				<a href="', $scripturl, '?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
+				<a href="<URL>?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
 			</p>';
 
 	}
@@ -1625,7 +1625,7 @@ function template_repair_boards()
 			<p>
 				', $txt['errors_do_recount'], '
 			</p>
-			<form action="', $scripturl, '?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
+			<form action="<URL>?action=admin;area=maintain;sa=routine;activity=recount" id="recount_form" method="post">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="submit" name="recount" id="recount_now" value="', westr::htmlspecialchars($txt['errors_recount_now']), '">
 			</form>';
@@ -1635,7 +1635,7 @@ function template_repair_boards()
 			echo '
 			<p>', $txt['errors_fixed'], '</p>
 			<p class="padding">
-				<a href="', $scripturl, '?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
+				<a href="<URL>?action=admin;area=maintain;sa=routine">', $txt['maintain_return'], '</a>
 			</p>';
 		}
 	}
@@ -1665,7 +1665,7 @@ function template_repair_boards()
 // Pretty URLs
 function template_pretty_urls()
 {
-	global $context, $scripturl, $txt, $settings, $boardurl;
+	global $context, $txt, $settings, $boardurl;
 
 	if (!empty($context['pretty']['chrome']['menu']))
 	{
@@ -1697,7 +1697,7 @@ function template_pretty_urls()
 		', $txt['pretty_settings'], '
 	</we:cat>
 	<div class="windowbg2 wrc">
-		<form id="adminsearch" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">';
+		<form id="adminsearch" action="<URL>?action=admin;area=featuresettings;sa=pretty;save" method="post" accept-charset="UTF-8">';
 
 	// Display the filters
 	if (!empty($context['pretty']['filters']))
@@ -1758,7 +1758,7 @@ function template_pretty_urls()
 		', $txt['pretty_maintenance'], '
 	</we:cat>
 	<div class="windowbg wrc">
-		<form id="pretty_maintain_refill" action="', $scripturl, '?action=admin;area=featuresettings;sa=pretty;refill" method="post" accept-charset="UTF-8">
+		<form id="pretty_maintain_refill" action="<URL>?action=admin;area=featuresettings;sa=pretty;refill" method="post" accept-charset="UTF-8">
 			<input type="submit" value="', $txt['pretty_refill'], '">
 		</form>
 	</div>';

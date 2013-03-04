@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 // Welcome to the show.
 function Welcome()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings, $language;
+	global $context, $theme, $options, $txt, $settings, $language;
 
 	// Load the 'Welcome' template.
 	loadTemplate('Welcome');
@@ -36,7 +36,7 @@ function Welcome()
 	// loadLanguage('Welcome');
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl;
+	$context['canonical_url'] = '<URL>';
 
 	// Do not let search engines index anything if there is a random thing in $_GET.
 	if (!empty($_GET))

@@ -13,11 +13,11 @@
 
 function template_main()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<br>
-	<form action="', $scripturl, '?action=reminder;sa=picktype" method="post" accept-charset="UTF-8">
+	<form action="<URL>?action=reminder;sa=picktype" method="post" accept-charset="UTF-8">
 		<div class="login">
 			<we:cat>
 				', $txt['authentication_reminder'], '
@@ -37,11 +37,11 @@ function template_main()
 
 function template_reminder_pick()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 	<br>
-	<form action="', $scripturl, '?action=reminder;sa=picktype" method="post" accept-charset="UTF-8">
+	<form action="<URL>?action=reminder;sa=picktype" method="post" accept-charset="UTF-8">
 		<div class="login">
 			<we:cat>
 				', $txt['authentication_reminder'], '
@@ -66,7 +66,7 @@ function template_reminder_pick()
 
 function template_sent()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $theme, $options, $txt;
 
 	echo '
 		<br>
@@ -80,11 +80,11 @@ function template_sent()
 
 function template_set_password()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
 	<br>
-	<form action="', $scripturl, '?action=reminder;sa=setpassword2" name="reminder_form" id="reminder_form" method="post" accept-charset="UTF-8">
+	<form action="<URL>?action=reminder;sa=setpassword2" name="reminder_form" id="reminder_form" method="post" accept-charset="UTF-8">
 		<div class="login">
 			<we:cat>
 				', $context['page_title'], '
@@ -122,11 +122,11 @@ function template_set_password()
 
 function template_ask()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
 	<br>
-	<form action="', $scripturl, '?action=reminder;sa=secret2" method="post" accept-charset="UTF-8" name="creator" id="creator">
+	<form action="<URL>?action=reminder;sa=secret2" method="post" accept-charset="UTF-8" name="creator" id="creator">
 		<div class="login">
 			<we:cat>
 				', $txt['authentication_reminder'], '

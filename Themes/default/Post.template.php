@@ -471,7 +471,7 @@ function template_make_poll()
 // Previous post handling
 function template_show_previous_posts()
 {
-	global $context, $theme, $options, $txt, $scripturl, $settings;
+	global $context, $theme, $options, $txt, $settings;
 
 	echo '
 		<div id="recent" class="flow_hidden main_section">

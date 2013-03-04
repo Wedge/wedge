@@ -30,7 +30,7 @@ if (!defined('WEDGE'))
 
 function checkActivation()
 {
-	global $context, $txt, $scripturl, $user_settings, $settings;
+	global $context, $txt, $user_settings, $settings;
 
 	if (!isset($context['login_errors']))
 		$context['login_errors'] = array();
@@ -41,7 +41,7 @@ function checkActivation()
 	// Check if the account is activated - COPPA first...
 	if ($activation_status == 5)
 	{
-		$context['login_errors'][] = $txt['coppa_no_concent'] . ' <a href="' . $scripturl . '?action=coppa;member=' . $user_settings['id_member'] . '">' . $txt['coppa_need_more_details'] . '</a>';
+		$context['login_errors'][] = $txt['coppa_no_concent'] . ' <a href="<URL>?action=coppa;member=' . $user_settings['id_member'] . '">' . $txt['coppa_need_more_details'] . '</a>';
 		return false;
 	}
 	// Awaiting approval still?
@@ -69,7 +69,7 @@ function checkActivation()
 		if (!empty($settings['enableErrorPasswordLogging']))
 			log_error($txt['activate_not_completed1'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', false);
 
-		$context['login_errors'][] = $txt['activate_not_completed1'] . ' <a href="' . $scripturl . '?action=activate;sa=resend;u=' . $user_settings['id_member'] . '">' . $txt['activate_not_completed2'] . '</a>';
+		$context['login_errors'][] = $txt['activate_not_completed1'] . ' <a href="<URL>?action=activate;sa=resend;u=' . $user_settings['id_member'] . '">' . $txt['activate_not_completed2'] . '</a>';
 		return false;
 	}
 	return true;
@@ -77,7 +77,7 @@ function checkActivation()
 
 function DoLogin()
 {
-	global $txt, $scripturl, $user_settings;
+	global $txt, $user_settings;
 	global $cookiename, $maintenance, $settings, $context;
 
 	// Load cookie authentication stuff.

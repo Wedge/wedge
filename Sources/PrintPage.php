@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
  */
 function PrintPage()
 {
-	global $topic, $txt, $scripturl, $context, $board_info, $settings;
+	global $topic, $txt, $context, $board_info, $settings;
 
 	// Redirect to the board list if no valid topic id is provided.
 	if (empty($topic))
@@ -101,5 +101,5 @@ function PrintPage()
 	wesql::free_result($request);
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl . '?topic=' . $topic . '.0';
+	$context['canonical_url'] = '<URL>?topic=' . $topic . '.0';
 }
