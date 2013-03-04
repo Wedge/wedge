@@ -20,7 +20,7 @@ if (!defined('WEDGE'))
  * Logging is disabled if $settings['enableErrorLogging'] is unset or 0.
  *
  * @param string $error_message The final error message (not, for example, a key in $txt) to be logged, prior to any entity encoding.
- * @param mixed $error_type A string denoting the type of error being logged for the purposes of filtering: 'general', 'critical', 'database', 'undefined_vars', 'user', 'template', 'debug'. Alternatively can be specified as boolean false to override the error message being logged.
+ * @param mixed $error_type A string denoting the type of error being logged for the purposes of filtering: 'general', 'critical', 'database', 'undefined_vars', 'mail', 'user', 'template', 'debug'. Alternatively can be specified as boolean false to override the error message being logged.
  * @param mixed $file Specify the file path that the error occurred in. If not supplied, no attempt will be made to back-check (it is normally only supplied from the error-handler; workflow instanced errors do not generally record filename.
  * @param mixed $line The line number an error occurred on. Like $file, this is only generally supplied by a PHP error; errors such as permissions or other application type errors do not have this logged.
  */
@@ -114,6 +114,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 		'critical',
 		'database',
 		'undefined_vars',
+		'mail',
 		'password',
 		'user',
 		'template',
@@ -134,6 +135,10 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 				break;
 			}
 		}
+
+	// Also, mail related errors may be logged unexpectedly.
+	if (strpos($error_message, '2: mail()') === 0)
+		$error_type = 'mail';
 
 	// If we found the filename manually, unlog it now.
 	if (isset($found_filename))

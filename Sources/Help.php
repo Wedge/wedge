@@ -24,7 +24,7 @@ if (!defined('WEDGE'))
  */
 function Help()
 {
-	global $txt, $helptxt, $context, $scripturl;
+	global $txt, $helptxt, $context;
 
 	if (!isset($_GET['in']) || !is_string($_GET['in']))
 		fatal_lang_error('no_access', false);

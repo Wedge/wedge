@@ -275,7 +275,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 			if (!mail(strtr($to, array("\r" => '', "\n" => '')), $subject, $message, $headers))
 			{
 				loadLanguage('Post');
-				log_error(sprintf($txt['mail_send_unable'], $to));
+				log_error(sprintf($txt['mail_send_unable'], $to), 'mail');
 				$mail_result = false;
 			}
 

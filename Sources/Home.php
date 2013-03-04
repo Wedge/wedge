@@ -27,7 +27,7 @@ if (!defined('WEDGE'))
 // Welcome to the show.
 function Home()
 {
-	global $context, $theme, $txt, $scripturl, $settings;
+	global $context, $theme, $txt, $settings;
 
 	// Here are a few variables to make it easy to enable or disable a feature on the default homepage...
 	$context['home_show']['topics'] = true;
@@ -40,7 +40,7 @@ function Home()
 	loadLanguage('Home');
 
 	// Set a canonical URL for this page.
-	$context['canonical_url'] = $scripturl;
+	$context['canonical_url'] = '<URL>';
 
 	// Do not let search engines index anything if there is a random thing in $_GET.
 	if (!empty($_GET))

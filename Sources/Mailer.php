@@ -34,7 +34,7 @@ if (!defined('WEDGE'))
 // The main handling function for sending specialist (or otherwise) emails to a user.
 function EmailUser()
 {
-	global $topic, $txt, $context, $scripturl;
+	global $topic, $txt, $context;
 
 	// Don't index anything here.
 	$context['robot_no_index'] = true;
@@ -155,7 +155,7 @@ function SendTopic()
 // Allow a user to send an email.
 function CustomEmail()
 {
-	global $context, $settings, $txt, $scripturl;
+	global $context, $settings, $txt;
 
 	// Can the user even see this information?
 	if (we::$is_guest)
@@ -212,7 +212,7 @@ function CustomEmail()
 		'name' => $row['name'],
 		'email' => $row['email'],
 		'email_link' => ($context['show_email_address'] == 'yes_permission_override' ? '<em>' : '') . '<a href="mailto:' . $row['email'] . '">' . $row['email'] . '</a>' . ($context['show_email_address'] == 'yes_permission_override' ? '</em>' : ''),
-		'link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['name'] . '</a>' : $row['name'],
+		'link' => $row['id_member'] ? '<a href="<URL>?action=profile;u=' . $row['id_member'] . '">' . $row['name'] . '</a>' : $row['name'],
 	);
 
 	// Can we see this person's email address?

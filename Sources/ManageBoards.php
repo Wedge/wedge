@@ -114,7 +114,7 @@ function ManageBoards()
 // The main control panel thing.
 function ManageBoardsMain()
 {
-	global $txt, $context, $cat_tree, $boards, $boardList, $scripturl, $txt;
+	global $txt, $context, $cat_tree, $boards, $boardList, $txt;
 
 	loadTemplate('ManageBoards');
 
@@ -179,7 +179,7 @@ function ManageBoardsMain()
 					$context['categories'][$catid]['move_link'] = array(
 						'child_level' => 0,
 						'label' => $txt['mboards_order_before'] . ' \'' . htmlspecialchars($boards[$boardid]['name']) . '\'',
-						'href' => $scripturl . '?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=before;' . $context['session_query'],
+						'href' => '<URL>?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=before;' . $context['session_query'],
 					);
 
 				if (!$context['categories'][$catid]['boards'][$boardid]['move'])
@@ -187,12 +187,12 @@ function ManageBoardsMain()
 					array(
 						'child_level' => $boards[$boardid]['level'],
 						'label' => $txt['mboards_order_after'] . '\'' . htmlspecialchars($boards[$boardid]['name']) . '\'',
-						'href' => $scripturl . '?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=after;' . $context['session_query'],
+						'href' => '<URL>?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=after;' . $context['session_query'],
 					),
 					array(
 						'child_level' => $boards[$boardid]['level'] + 1,
 						'label' => $txt['mboards_order_child_of'] . ' \'' . htmlspecialchars($boards[$boardid]['name']) . '\'',
-						'href' => $scripturl . '?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=child;' . $context['session_query'],
+						'href' => '<URL>?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_board=' . $boardid . ';move_to=child;' . $context['session_query'],
 					),
 				);
 
@@ -221,7 +221,7 @@ function ManageBoardsMain()
 				$context['categories'][$catid]['move_link'] = array(
 					'child_level' => 0,
 					'label' => $txt['mboards_order_before'] . ' \'' . htmlspecialchars($tree['node']['name']) . '\'',
-					'href' => $scripturl . '?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_cat=' . $catid . ';move_to=top;' . $context['session_query'],
+					'href' => '<URL>?action=admin;area=manageboards;sa=move;src_board=' . $context['move_board'] . ';target_cat=' . $catid . ';move_to=top;' . $context['session_query'],
 				);
 		}
 	}
@@ -833,7 +833,7 @@ function EditBoard2()
 
 function EditBoardSettings($return_config = false)
 {
-	global $context, $txt, $settings, $scripturl;
+	global $context, $txt, $settings;
 
 	// Load the boards list - for the recycle bin!
 	$recycle_boards = array('');
@@ -872,7 +872,7 @@ function EditBoardSettings($return_config = false)
 	loadSource(array('ManagePermissions', 'ManageServer'));
 
 	// Don't let guests have these permissions.
-	$context['post_url'] = $scripturl . '?action=admin;area=manageboards;save;sa=settings';
+	$context['post_url'] = '<URL>?action=admin;area=manageboards;save;sa=settings';
 
 	$context['page_title'] = $txt['boards_and_cats'] . ' - ' . $txt['settings'];
 

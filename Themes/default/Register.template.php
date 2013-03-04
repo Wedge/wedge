@@ -14,10 +14,10 @@
 // Before showing users a registration form, show them the registration agreement.
 function template_registration_agreement()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $txt;
 
 	echo '
-		<form action="', $scripturl, '?action=register" method="post" accept-charset="UTF-8" id="registration">
+		<form action="<URL>?action=register" method="post" accept-charset="UTF-8" id="registration">
 			<we:cat>
 				', $txt['registration_agreement'], '
 			</we:cat>
@@ -39,13 +39,12 @@ function template_registration_agreement()
 			</div>
 			<input type="hidden" name="step" value="1">
 		</form>';
-
 }
 
 // Before registering - get their information.
 function template_registration_form()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $theme, $txt, $settings;
 
 	add_js_file('scripts/register.js');
 
@@ -82,7 +81,7 @@ function template_registration_form()
 	}
 
 	echo '
-		<form action="', $scripturl, '?action=register2" method="post" accept-charset="UTF-8" name="registration" id="registration" onsubmit="return verifyAgree();">
+		<form action="<URL>?action=register2" method="post" accept-charset="UTF-8" name="registration" id="registration" onsubmit="return verifyAgree();">
 			<we:cat>
 				', $txt['registration_form'], '
 			</we:cat>
@@ -290,7 +289,7 @@ function template_registration_form()
 // After registration... all done ;).
 function template_after()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $txt;
 
 	// Not much to see here, just a quick... "you're now registered!" or what have you.
 	echo '
@@ -307,7 +306,7 @@ function template_after()
 // Template for giving instructions about COPPA activation.
 function template_coppa()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $txt;
 
 	// Formulate a nice complicated message!
 	echo '
@@ -317,7 +316,7 @@ function template_coppa()
 		<div class="windowbg2 wrc">
 			<p>', $context['coppa']['body'], '</p>
 			<p>
-				<span><a href="', $scripturl, '?action=coppa;form;member=', $context['coppa']['id'], '" target="_blank" class="new_win">', $txt['coppa_form_link_popup'], '</a> | <a href="', $scripturl, '?action=coppa;form;dl;member=', $context['coppa']['id'], '">', $txt['coppa_form_link_download'], '</a></span>
+				<span><a href="<URL>?action=coppa;form;member=', $context['coppa']['id'], '" target="_blank" class="new_win">', $txt['coppa_form_link_popup'], '</a> | <a href="<URL>?action=coppa;form;dl;member=', $context['coppa']['id'], '">', $txt['coppa_form_link_download'], '</a></span>
 			</p>
 			<p>', $context['coppa']['many_options'] ? $txt['coppa_send_to_two_options'] : $txt['coppa_send_to_one_option'], '</p>';
 
@@ -349,7 +348,7 @@ function template_coppa()
 // An easily printable form for giving permission to access the forum for a minor.
 function template_coppa_form()
 {
-	global $context, $theme, $options, $txt, $scripturl;
+	global $context, $txt;
 
 	// Show the form (As best we can)
 	echo '
@@ -382,7 +381,7 @@ function template_coppa_form()
 
 function template_admin_register()
 {
-	global $context, $theme, $options, $scripturl, $txt, $settings;
+	global $context, $txt, $settings;
 
 	add_js('
 	function onCheckChange()
@@ -398,7 +397,7 @@ function template_admin_register()
 		<we:cat>
 			', $txt['admin_browse_register_new'], '
 		</we:cat>
-		<form action="', $scripturl, '?action=admin;area=regcenter" method="post" accept-charset="UTF-8" name="postForm" id="postForm">
+		<form action="<URL>?action=admin;area=regcenter" method="post" accept-charset="UTF-8" name="postForm" id="postForm">
 			<div class="windowbg2 wrc">
 				<div id="register_screen">';
 
@@ -479,7 +478,7 @@ function template_admin_register()
 // Form for editing the agreement shown for people registering to the forum.
 function template_edit_agreement()
 {
-	global $context, $theme, $options, $scripturl, $txt;
+	global $context, $txt;
 
 	if (!empty($context['was_saved']))
 		echo '
