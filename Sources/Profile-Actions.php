@@ -53,7 +53,7 @@ function activateAccount($memID)
 		call_hook('activate', array($user_profile[$memID]['member_name']));
 
 		// Actually update this member now, as it guarantees the unapproved count can't get corrupted.
-		updateMemberData($context['id_member'], array('is_activated' => $user_profile[$memID]['is_activated'] >= 20 ? 21 : 1, 'validation_code' => ''));
+		updateMemberData($context['id_member'], array('is_activated' => $user_profile[$memID]['is_activated'] >= 20 ? 21 : 1, 'active_state_change' => time(), 'validation_code' => ''));
 
 		// If we are doing approval, update the stats for the member just in case.
 		if (in_array($user_profile[$memID]['is_activated'], array(3, 4, 13, 14, 23, 24)))

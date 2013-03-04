@@ -30,6 +30,12 @@ function Register($reg_errors = array())
 	global $txt, $boarddir, $context, $theme, $settings;
 	global $language, $scripturl, $cur_profile;
 
+	if (isset($_GET['reagree']) && we::$user['activated'] == 6)
+	{
+		loadSource('Subs-Auth');
+		return Reagree();
+	}
+
 	// Is this an incoming AJAX check?
 	if (isset($_GET['sa']) && $_GET['sa'] == 'usernamecheck')
 		return RegisterCheckUsername();
@@ -102,7 +108,7 @@ function Register($reg_errors = array())
 	if ($context['require_agreement'])
 	{
 		loadLanguage('Agreement');
-		$context['agreement'] = !empty($txt['registration_agreement_body']) ? parse_bbc($txt['registration_agreement_body'], true, 'agreement') : '';
+		$context['agreement'] = !empty($txt['registration_agreement_body']) ? parse_bbc($txt['registration_agreement_body'], true, 'agreement_' . we::$user['language']) : '';
 	}
 
 	// Prepare the time gate! Do it like so, in case later steps want to reset the limit for any reason, but make sure the time is the current one.

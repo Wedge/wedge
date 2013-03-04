@@ -103,6 +103,15 @@ function Post2()
 	// No errors as yet.
 	$post_errors = array();
 
+	// Let's get this out the way uber-early.
+	if (we::$user['activated'] == 6)
+	{
+		// They haven't re-agreed, but it's a soft reagreement force (if it weren't, they wouldn't be here anyway!)
+		// Don't worry about figuring out where they came from, they're not supposed to be here generally.
+		$txt['error_reagree_reply'] = sprintf($txt['reagree_reply'], '<URL>?action=register;reagree');
+		$post_errors[] = 'reagree_reply';
+	}
+
 	// If the session has timed out, let the user re-submit their form.
 	if (checkSession('post', '', false) != '')
 		$post_errors[] = 'session_timeout';

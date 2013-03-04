@@ -64,7 +64,7 @@ function checkActivation()
 		}
 	}
 	// Standard activation?
-	elseif ($activation_status != 1)
+	elseif ($activation_status != 1 && $activation_status != 6)
 	{
 		if (!empty($settings['enableErrorPasswordLogging']))
 			log_error($txt['activate_not_completed1'] . ' - <span class="remove">' . $user_settings['member_name'] . '</span>', false);

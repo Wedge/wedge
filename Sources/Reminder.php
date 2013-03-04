@@ -117,7 +117,7 @@ function RemindPick()
 	wesql::free_result($request);
 
 	// If the user isn't activated/approved, give them some feedback on what to do next.
-	if ($row['is_activated'] != 1)
+	if ($row['is_activated'] != 1 && $row['is_activated'] != 6)
 	{
 		// Awaiting approval...
 		if (trim($row['validation_code']) == '')

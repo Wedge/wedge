@@ -655,6 +655,7 @@ function registerMember(&$regOptions, $return_errors = false)
 		'ignore_boards' => '',
 		'smiley_set' => '',
 		'data' => '',
+		'active_state_change' => time(),
 	);
 
 	// Setup the activation status on this new account so it is correct - firstly is it an under age account?

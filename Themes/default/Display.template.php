@@ -233,6 +233,16 @@ function template_topic_poll()
 		</we:block>';
 }
 
+function template_reagree_warning()
+{
+	global $context, $txt;
+
+	echo '
+		<div class="errorbox" id="errors">
+			', $txt['reagree_reply'], '
+		</div>';
+}
+
 function template_quick_reply()
 {
 	global $options, $txt, $context, $settings;

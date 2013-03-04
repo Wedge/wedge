@@ -1056,8 +1056,20 @@ function Display()
 	$context['can_restore_topic'] &= !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board && !empty($topicinfo['id_previous_board']);
 	$context['can_restore_msg'] &= !empty($settings['recycle_enable']) && $settings['recycle_board'] == $board && !empty($topicinfo['id_previous_topic']);
 
+	// Phew. After all that...
+	if ($context['can_reply'] && we::$user['activated'] == 6)
+	{
+		// They haven't re-agreed, but it's a soft reagreement force (if it weren't, they wouldn't be here anyway!)
+		// So they can view but no posting.
+		$context['can_reply'] = $context['can_quote'] = $context['can_reply_unapproved'] = $context['can_reply_approved'] = false;
+		$txt['reagree_reply'] = sprintf($txt['reagree_reply'], '<URL>?action=register;reagree');
+		$last_msg = max($messages);
+		$_SESSION['reagree_url'] = '<URL>?topic=' . $context['current_topic'] . '.msg' . $last_msg . '#msg' . $last_msg;
+		wetem::before('quick_reply', 'reagree_warning');
+	}
+
 	// Load up the "double post" sequencing magic.
-	if (!empty($options['display_quick_reply']))
+	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 	{
 		checkSubmitOnce('register');
 		$context['name'] = isset($_SESSION['guest_name']) ? $_SESSION['guest_name'] : '';

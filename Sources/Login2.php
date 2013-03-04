@@ -28,8 +28,7 @@ if (!defined('WEDGE'))
 // Perform the actual logging-in.
 function Login2()
 {
-	global $txt, $scripturl, $user_settings;
-	global $cookiename, $maintenance, $settings, $context, $sc;
+	global $txt, $user_settings, $cookiename, $maintenance, $settings, $context, $sc;
 
 	// Load cookie authentication stuff and subsidiary login stuff.
 	loadSource(array('Subs-Auth', 'Subs-Login'));
@@ -105,7 +104,7 @@ function Login2()
 
 	// Add the login chain to the link tree.
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=login',
+		'url' => '<URL>?action=login',
 		'name' => $txt['login'],
 	);
 

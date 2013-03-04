@@ -208,6 +208,20 @@ function KickGuest()
 	$context['page_title'] = $txt['login'];
 }
 
+function Reagree()
+{
+	global $txt, $context, $settings;
+
+	loadLanguage(array('Agreement', 'Login'));
+	loadTemplate('Login');
+
+	$context['agreement'] = parse_bbc($txt['registration_agreement_body'], true, 'agreement_' . we::$user['language']);
+	$context['agree_type'] = !empty($settings['agreement_force']) ? $txt['registration_reagreement_force'] : $txt['registration_reagreement_postonly'];
+
+	wetem::load('reagreement');
+	$context['page_title'] = $txt['registration_agreement'];
+}
+
 // Display a message about the forum being in maintenance mode, etc.
 function InMaintenance()
 {

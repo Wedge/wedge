@@ -111,10 +111,10 @@ function ViewMembers()
 	}
 
 	// For the page header... do we show activation?
-	$context['show_activate'] = (!empty($settings['registration_method']) && $settings['registration_method'] == 1) || !empty($context['awaiting_activation']);
+	$context['show_activate'] = (!empty($settings['registration_method']) && ($settings['registration_method'] == 1 || $settings['registration_method'] == 4)) || !empty($context['awaiting_activation']);
 
 	// What about approval?
-	$context['show_approve'] = (!empty($settings['registration_method']) && $settings['registration_method'] == 2) || !empty($context['awaiting_approval']) || !empty($settings['approveAccountDeletion']);
+	$context['show_approve'] = (!empty($settings['registration_method']) && ($settings['registration_method'] == 2 || $settings['registration_method'] == 4)) || !empty($context['awaiting_approval']) || !empty($settings['approveAccountDeletion']);
 
 	// We have to override what the menu code thinks is the right tab - some of these are not defined in the master admin menu.
 	$context[$context['admin_menu_name']]['current_subsection'] = $_REQUEST['sa'];
@@ -1123,10 +1123,11 @@ function AdminApprove()
 		// Approve/activate this member.
 		wesql::query('
 			UPDATE {db_prefix}members
-			SET validation_code = {string:blank_string}, is_activated = {int:is_activated}
+			SET validation_code = {string:blank_string}, is_activated = {int:is_activated}, active_state_change = {int:active_state_change}
 			WHERE is_activated = {int:activated_status}' . $condition,
 			array(
 				'is_activated' => 1,
+				'active_state_change' => time(),
 				'time_before' => empty($timeBefore) ? 0 : $timeBefore,
 				'members' => empty($members) ? array() : $members,
 				'activated_status' => $current_filter,

@@ -268,3 +268,24 @@ function template_resend()
 			</div>
 		</form>';
 }
+
+function template_reagreement()
+{
+	global $context, $theme, $options, $txt, $settings;
+
+	echo '
+		<form action="<URL>?action=activate;reagree" method="post" accept-charset="UTF-8" id="registration">
+			<we:cat>
+				', $txt['registration_agreement'], '
+			</we:cat>
+			<div class="information">', $context['agree_type'], '</div>
+			<div class="roundframe">
+				<p>', $context['agreement'], '</p>
+			</div>
+			<div id="confirm_buttons">
+				<input type="submit" name="accept_agreement" value="', $txt['agreement_agree'], '" class="submit">
+			</div>
+			<input type="hidden" name="u" value="', we::$id, '">
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+		</form>';
+}

@@ -49,7 +49,7 @@ function Activate()
 
 	// Get the code from the database...
 	$request = wesql::query('
-		SELECT id_member, validation_code, member_name, real_name, email_address, is_activated, passwd, lngfile
+		SELECT id_member, validation_code, member_name, real_name, email_address, is_activated, active_state_change, passwd, lngfile
 		FROM {db_prefix}members' . (empty($_REQUEST['u']) ? '
 		WHERE member_name = {string:email_address} OR email_address = {string:email_address}' : '
 		WHERE id_member = {int:id_member}') . '
@@ -72,6 +72,29 @@ function Activate()
 
 	$row = wesql::fetch_assoc($request);
 	wesql::free_result($request);
+
+	// This might be a really simple one, reagreeing to an updated reg agreement
+	if (isset($_GET['reagree']) && $row['is_activated'] == 6)
+	{
+		checkSession();
+		updateMemberData($row['id_member'], array('is_activated' => 1, 'active_state_change' => time(), 'validation_code' => ''));
+
+		loadTemplate('Register');
+		wetem::load('after');
+		$context += array(
+			'page_title' => $txt['registration_agreement'],
+			'title' => $txt['registration_agreement'],
+			'description' => $txt['agreement_reagreed'],
+		);
+
+		if (!empty($_SESSION['reagree_url']))
+		{
+			$context['description'] .= '<br><br><a href="' . $_SESSION['reagree_url'] . '">' . $txt['agreement_return_to'] . '</a>';
+			unset($_SESSION['reagree_url']);
+		}
+
+		return;
+	}
 
 	// Change their email address? (they probably tried a fake one first :P.)
 	if (isset($_POST['new_email'], $_REQUEST['passwd']) && sha1(strtolower($row['member_name']) . $_REQUEST['passwd']) == $row['passwd'] && ($row['is_activated'] == 0 || $row['is_activated'] == 2))
@@ -141,7 +164,7 @@ function Activate()
 		elseif ($row['validation_code'] == '')
 		{
 			loadLanguage('Profile');
-			fatal_lang_error('registration_not_approved', false, array($scripturl . '?action=activate;user=' . $_row['member_name']));
+			fatal_lang_error('registration_not_approved', false, array('<URL>?action=activate;user=' . $_row['member_name']));
 		}
 
 		wetem::load('retry_activate');
@@ -166,11 +189,20 @@ function Activate()
 		return;
 	}
 
+	// OK, so we would theoretically activate them, but just before we do...
+	if (!empty($settings['agreementUpdated']) && $settings['agreementUpdated'] > $row['active_state_change'])
+	{
+		updateMemberData($row['id_member'], array('is_activated' => 6, 'active_state_change' => time()));
+		loadSource('Subs-Auth');
+		Reagree();
+		return;
+	}
+
 	// Let the hook know that they've been activated!
 	call_hook('activate', array($row['member_name']));
 
 	// Validation complete - update the database!
-	updateMemberData($row['id_member'], array('is_activated' => 1, 'validation_code' => ''));
+	updateMemberData($row['id_member'], array('is_activated' => 1, 'active_state_change' => time(), 'validation_code' => ''));
 
 	// Also do a proper member stat re-evaluation.
 	updateStats('member', false);

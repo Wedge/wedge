@@ -127,7 +127,8 @@ class we
 					$check = false;
 
 				// Wrong password or not activated - either way, you're going nowhere.
-				$id_member = $check && ($user_settings['is_activated'] % 10 == 1) ? $user_settings['id_member'] : 0;
+				$real_status = $user_settings['is_activated'] % 10;
+				$id_member = $check && ($real_status == 1 || $real_status == 6) ? $user_settings['id_member'] : 0;
 			}
 			else
 				$id_member = 0;
@@ -252,6 +253,7 @@ class we
 			'username' => $username,
 			'name' => $id_member == 0 ? (!empty($txt['guest_title']) ? $txt['guest_title'] : 'Guest') : (isset($user_settings['real_name']) ? $user_settings['real_name'] : ''),
 			'email' => isset($user_settings['email_address']) ? $user_settings['email_address'] : '',
+			'activated' => !empty($user_settings['is_activated']) ? $user_settings['is_activated'] : 0,
 			'passwd' => isset($user_settings['passwd']) ? $user_settings['passwd'] : '',
 			'language' => empty($user_settings['lngfile']) || empty($settings['userLanguage']) ? $language : $user_settings['lngfile'],
 			'is_guest' => $id_member == 0,

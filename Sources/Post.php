@@ -1110,6 +1110,15 @@ function Post($post_errors = array())
 		$context['error_type'] = 'minor';
 	}
 
+	// If they're pending reagreement to agreement... they can't post.
+	if (we::$user['activated'] == 6 && !in_array('reagree_reply', $post_errors))
+	{
+		// They haven't re-agreed, but it's a soft reagreement force (if it weren't, they wouldn't be here anyway!)
+		// Don't worry about figuring out where they came from, they're not supposed to be here generally.
+		$context['post_error']['messages'][] = str_replace('<a href', '<a target="_blank" href', sprintf($txt['reagree_reply'], '<URL>?action=register;reagree'));
+		$context['error_type'] = 'minor';
+	}
+
 	// Register this form in the session variables.
 	checkSubmitOnce('register');
 

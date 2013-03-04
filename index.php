@@ -301,6 +301,13 @@ function wedge_main()
 		loadSource('Subs-Auth');
 		return 'KickGuest';
 	}
+	// The user might need to reagree to the agreement
+	elseif (!empty($settings['agreement_force']) && (we::$user['activated'] == 6 && !we::$is_admin) && (empty($action) || !in_array($action, array('login', 'login2', 'logout', 'reminder', 'activate', 'mailq', 'post2', 'pm')))) // post2 is here so we don't break drafts for posts because that would really suck otherwise and PMs are allowed in case someone wants to discuss it
+	{
+		loadSource('Subs-Auth');
+		return 'Reagree';
+	}
+	// Or not...
 	elseif (empty($action))
 	{
 		// Action and board are both empty... Go home!

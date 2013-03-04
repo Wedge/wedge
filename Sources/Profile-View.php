@@ -153,7 +153,7 @@ function summary($memID)
 	{
 		$context['activate_type'] = $context['member']['is_activated'];
 		// What should the link text be?
-		$context['activate_link_text'] = in_array($state, array(3, 4, 5)) ? $txt['account_approve'] : $txt['account_activate'];
+		$context['activate_link_text'] = in_array($state, array(3, 4, 5, 6)) ? $txt['account_approve'] : $txt['account_activate'];
 
 		// Should we show a custom message?
 		$context['activate_message'] = isset($txt['account_activate_method_' . $state]) ? $txt['account_activate_method_' . $state] : $txt['account_not_activated'];
