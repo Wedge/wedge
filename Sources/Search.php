@@ -29,7 +29,7 @@ if (!defined('WEDGE'))
 // Ask the user what they want to search for.
 function Search()
 {
-	global $txt, $scripturl, $settings, $context;
+	global $txt, $settings, $context;
 
 	// Search may be disabled if they're softly banned.
 	soft_ban('search');
@@ -39,17 +39,21 @@ function Search()
 		fatal_lang_error('loadavg_search_disabled', false);
 
 	loadLanguage('Search');
+	loadTemplate('Search');
 
-	// Don't load this in Ajax mode.
-	if (!AJAX)
-		loadTemplate('Search');
+	// Popup mode?
+	if (AJAX)
+	{
+		wetem::load('search_ajax');
+		return;
+	}
 
 	// Check the user's permissions.
 	isAllowedTo('search_posts');
 
 	// Link tree....
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=search',
+		'url' => '<URL>?action=search',
 		'name' => $txt['search']
 	);
 
@@ -195,7 +199,7 @@ function Search()
 
 		$context['search_topic'] = array(
 			'id' => $context['search_params']['topic'],
-			'href' => $scripturl . '?topic=' . $context['search_params']['topic'] . '.0',
+			'href' => '<URL>?topic=' . $context['search_params']['topic'] . '.0',
 		);
 
 		$request = wesql::query('

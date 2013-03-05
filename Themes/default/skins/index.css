@@ -201,7 +201,6 @@ ul#noava
 
 // Top header
 #top_section
-	overflow: hidden
 	padding: 8px 30px
 	.frame
 		p, h2
@@ -228,15 +227,8 @@ ul#noava
 // The search box, with a few hacks to allow for a drop-down menu...
 #search_form
 	float: right
-	a
-		color: #000
-	ul
-		padding: 0
-	li, input
-		outline: none
-		cursor: text
-	input[type=submit]
-		cursor: pointer
+	.mimenu
+		width: 100%
 
 #siteslogan
 	float: left
@@ -247,9 +239,9 @@ ul#noava
 
 // Banner header
 #upper_section
-	height: 95px
 	overflow: hidden
 	width: 100%
+	height: 95px
 	.frame
 		width: 100%
 		height: 95px

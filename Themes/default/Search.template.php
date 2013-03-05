@@ -170,6 +170,70 @@ function template_main()
 	}');
 }
 
+function template_search_ajax()
+{
+	global $context, $txt;
+
+	echo '
+		<ul class="actions"><li>
+		<div id="search_popup">
+			<h6>
+				', $txt['search_scope'], '
+			</h6>
+			<select name="search_type">';
+
+	if (!empty($context['current_topic']))
+		echo '
+				<option value="topic" selected>', $txt['search_this_topic'], '</option>';
+	if (!empty($context['current_board']))
+		echo '
+				<option value="board"', empty($context['current_topic']) ? ' selected' : '', '>', $txt['search_this_board'], '</option>';
+
+	echo '
+				<option value="everywhere">', $txt['search_everywhere'], '</option>
+			</select>
+			<h6>
+				', $txt['set_parameters'], '
+			</h6>
+			<div id="advanced_search">
+				<dl>
+					<dt>', $txt['by_user'], ':</dt>
+					<dd><input id="userspec" type="text" name="userspec" value="', empty($context['search_params']['userspec']) ? '*' : $context['search_params']['userspec'], '" size="30"></dd>
+					<dt>', $txt['search_order'], ':</dt>
+					<dd>
+						<select id="sort" name="sort">
+							<option value="relevance|desc">', $txt['search_orderby_relevant_first'], '</option>
+							<option value="num_replies|desc">', $txt['search_orderby_large_first'], '</option>
+							<option value="num_replies|asc">', $txt['search_orderby_small_first'], '</option>
+							<option value="id_msg|desc">', $txt['search_orderby_recent_first'], '</option>
+							<option value="id_msg|asc">', $txt['search_orderby_old_first'], '</option>
+						</select>
+					</dd>
+					<dt class="options">', $txt['search_options'], ':</dt>
+					<dd class="options">
+						<label><input type="checkbox" name="show_complete" id="show_complete" value="1"', !empty($context['search_params']['show_complete']) ? ' checked' : '', '> ', $txt['search_show_complete_messages'], '</label><br>
+						<label><input type="checkbox" name="subject_only" id="subject_only" value="1"', !empty($context['search_params']['subject_only']) ? ' checked' : '', '> ', $txt['search_subject_only'], '</label>
+					</dd>
+					<dt class="between">', $txt['search_post_age'], ':</dt>
+					<dd>', $txt['search_between'], ' <input type="number" name="minage" value="', empty($context['search_params']['minage']) ? '0' : $context['search_params']['minage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['search_and'], ' <input type="number" name="maxage" value="', empty($context['search_params']['maxage']) ? '9999' : $context['search_params']['maxage'], '" size="5" maxlength="4" min="0" max="9999"> ', $txt['days_word'], '</dd>
+				</dl>';
+
+	// If $context['search_params']['topic'] is set, that means we're searching just one topic.
+	if (!empty($context['search_params']['topic']))
+		echo '
+				<p>', $txt['search_specific_topic'], ' &quot;', $context['search_topic']['link'], '&quot;.</p>
+				<input type="hidden" name="topic" value="', $context['search_topic']['id'], '">';
+
+	echo '
+			</div>
+			<hr>
+			<input type="submit" class="submit floatright" value="', $txt['search'], '">
+			<input type="button" onclick="location = \'<URL>?action=search\'" value="', $txt['more_actions'], '">
+			<br class="clear">
+		</div>
+		</li></ul>';
+}
+
 function template_results()
 {
 	global $context, $theme, $options, $txt, $scripturl, $message;

@@ -1311,6 +1311,23 @@ div.top_row dd
 		margin: 0 0 0 .5em
 		text-align: left
 
+#search_popup
+	padding: .8em
+	color: #444
+	#advanced_search
+		border, padding: 0
+		font-size: .9em
+		white-space: normal
+		dt, dd
+			max-width: 100%
+			max-width: calc(100% - 1em)
+			width: auto
+			clear: both
+	.sbox
+		display: block
+	input[type=number]
+		width: 50px
+
 /* Styles for the search results page.
 ------------------------------------------------- */
 .topic_table .bbc_quote

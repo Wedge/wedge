@@ -117,6 +117,19 @@ function Search2()
 		$searchAPI = new standard_search();
 	}
 
+	// Did the user provide a scope preference?
+	if (isset($_REQUEST['search_type']))
+	{
+		// Topic: do nothing, board: erase any topic IDs, everywhere: erase any options.
+		if ($_REQUEST['search_type'] == 'board')
+			unset($_REQUEST['topic']);
+		elseif ($_REQUEST['search_type'] == 'everywhere')
+			unset($_REQUEST['topic'], $_REQUEST['brd']);
+	}
+	// No scope was picked within the search form, perhaps because of a JS error? Clean it up.
+	if (isset($_REQUEST['brd'], $_REQUEST['topic']))
+		unset($_REQUEST['brd']);
+
 	// $search_params will carry all settings that differ from the default search parameters.
 	// That way, the URLs involved in a search page will be kept as short as possible.
 	$search_params = array();

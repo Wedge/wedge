@@ -412,22 +412,24 @@ $.fn.mime = function (oList, oStrings)
 		var
 			$mime = $(this),
 			id = $mime.data('id') || $mime.closest('.root').attr('id').slice(3), // Extract the context id from the parent message
-			$men = $('<div class="mimenu"><ul class="actions">').hide(),
+			$men = $('<div class="mimenu"><ul class="actions"></ul></div>').hide(),
 			pms;
 
 		$.each(oList[id], function ()
 		{
 			pms = oStrings[this.slice(0, 2)];
 
-			$men.find('ul').append('<li><a>').find('a:last')
+			$('<a>')
 				.html(pms[0].wereplace({ 1: id, 2: this.slice(3) }))
 				.attr('title', pms[1])
 				.attr('class', pms[3])
 				.attr('href', pms[2] ? (pms[2][0] == '?' ? $mime.attr('href') || '' : '') + pms[2].wereplace({ 1: id, 2: this.slice(3) }) : $mime.attr('href') || '')
-				.click(new Function('e', pms[4] ? pms[4].wereplace({ 1: id, 2: this.slice(3) }) : '')); // eval, bad! No user input, good!
+				.click(new Function('e', pms[4] ? pms[4].wereplace({ 1: id, 2: this.slice(3) }) : '')) // eval, bad! No user input, good!
+				.wrap('<li>').parent()
+				.appendTo($men.find('ul'));
 		});
 
-		$mime.wrap('<span class="mime">').after($men).parent().hover(
+		$mime.wrap('<span class="mime"></span>').after($men).parent().hover(
 			function () { $men.stop(true).show().animate(visiblePosition, 300, function () { $men.css('overflow', 'visible') }); },
 			function () { $men.stop(true).animate(hiddenPosition, 200, function () { $men.hide(); }); }
 		);
@@ -518,8 +520,8 @@ $.fn.mm = function ()
 			$(this).attr('id', 'li' + menu_baseId++)
 				.on('mouseenter focus', menu_show_me)
 				.on('mouseleave blur', menu_hide_me)
-				// Disable double clicks... (Except in the search box.)
-				.mousedown($(this).has('>input'))
+				// Disable double clicks...
+				.mousedown(false)
 				// Clicking a link will immediately close the menu -- giving a feeling of responsiveness.
 				.has('>a,>h4>a')
 				.click(function () {
@@ -559,8 +561,40 @@ $(function ()
 		});
 	});
 
-	if (is_android)
+	// Disable parent links on hover-impaired browsers.
+	if (is_touch)
 		$('.umme,.subsection>a,.menu>li:not(.nodrop)>h4>a').click(false);
+
+	// Show a pop-up with more options when focusing the quick search box.
+	var opened;
+	$('#search_form .search').focus(function () {
+		if (opened)
+			return;
+		var $pop = $('#search_form')
+			.addClass('mime')
+			.append('<div>')
+			.find('div').last()
+			.addClass('mimenu')
+			.hide()
+			.load(weUrl('action=search' + (window.we_topic ? ';topic=' + we_topic : '') + (window.we_board ? ';board=' + we_board : '')), function () {
+				$pop.show(300).find('select').sb();
+			});
+		opened = true;
+		$(document).on('click.sf', function (e) {
+			if ($(e.target).closest('#search_form').length)
+				return;
+			opened = false;
+			$(document).off('.sf');
+			$pop.hide(function () { $(this).remove(); });
+		}).on('keyup.sf', function (e) {
+			// keydown target holds previous element, keyup holds next one. Found this by myself, eheh.
+			if (e.altKey || e.ctrlKey || e.keyCode != 9 || $(e.target).closest('#search_form').length)
+				return;
+			opened = false;
+			$(document).off('.sf');
+			$pop.hide(function () { $(this).remove(); });
+		});
+	});
 });
 
 

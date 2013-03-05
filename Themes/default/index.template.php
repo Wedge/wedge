@@ -214,24 +214,20 @@ function template_search_box()
 
 	echo '
 			<form id="search_form" action="<URL>?action=search2" method="post" accept-charset="UTF-8">
-			<ul class="css menu"><li class="nodrop">
-				<h4>
-					<input type="search" name="search" value="" class="search">
-					<input type="submit" value="', $txt['search'], '">';
+				<input type="search" name="search" value="" class="search">
+				<input type="submit" value="', $txt['search'], '">';
 
 	// Search within current topic?
 	if (!empty($context['current_topic']))
 			echo '
-					<input type="hidden" name="topic" value="', $context['current_topic'], '">';
+				<input type="hidden" name="topic" value="', $context['current_topic'], '">';
+
 	// Or within current board?
-	elseif (!empty($context['current_board']))
+	if (!empty($context['current_board']))
 		echo '
-					<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
+				<input type="hidden" name="brd[', $context['current_board'], ']" value="', $context['current_board'], '">';
 
 	echo '
-				</h4>
-				<ul><li><a href="<URL>?action=search">', $txt['search_advanced'], '</a></li></ul>
-			</li></ul>
 			</form>';
 }
 
