@@ -1699,7 +1699,7 @@ function weInitJS()
 {
 	global $settings, $context;
 
-	$version = we::is('ie[-8],firefox[-3.6]') ? '1.9.1' : '2.0.0b1';
+	$version = we::is('ie[-8],firefox[-3.6]') ? '1.9.1' : '2.0.0b2';
 	$origin = empty($settings['jquery_origin']) ? 'local' : $settings['jquery_origin'];
 
 	// !! Temp code or permanent? We won't always need to test for jQuery's beta status...
