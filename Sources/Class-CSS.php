@@ -24,7 +24,7 @@ class wess
 	 * based on 'Fundamentals of Interactive Computer Graphics' (J.D. Foley, 1982.)
 	 */
 
-	protected function rgb2hex($r, $g, $b)
+	protected static function rgb2hex($r, $g, $b)
 	{
 		$hex = sprintf('%02x%02x%02x', $r, $g, $b);
 		if (preg_match('~^([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3?$~i', $hex, $m))
@@ -33,7 +33,7 @@ class wess
 	}
 
 	// Converts from a RGBA color to a string
-	protected function color2string($r, $g, $b, $a)
+	protected static function color2string($r, $g, $b, $a)
 	{
 		$a = max(0, min(1, $a));
 		$r = max(0, min(255, round($r)));
@@ -44,7 +44,7 @@ class wess
 	}
 
 	// Converts from hue to RGB
-	protected function hue2rgb($m1, $m2, $h)
+	protected static function hue2rgb($m1, $m2, $h)
 	{
 		$h < 0 ? $h++ : ($h > 1 ? $h-- : '');
 
@@ -62,7 +62,7 @@ class wess
 	 * Algorithm from the CSS3 spec: http://www.w3.org/TR/css3-color/
 	 * $h(ue) is in degrees, $s(aturation) and $l(ightness) are in percents
 	 */
-	protected function hsl2rgb($h, $s, $l, $a)
+	protected static function hsl2rgb($h, $s, $l, $a)
 	{
 		while ($h < 0)
 			$h += 360;
@@ -85,7 +85,7 @@ class wess
 	 * Converts from RGB to HSL
 	 * $r/$g/$b are RGB values (0-255)
 	 */
-	protected function rgb2hsl($r, $g, $b, $a)
+	protected static function rgb2hsl($r, $g, $b, $a)
 	{
 		$r /= 255;
 		$g /= 255;
@@ -119,7 +119,7 @@ class wess
 	}
 
 	// Converts from a string to a RGBA or HSLA color
-	protected function string2color($data)
+	protected static function string2color($data)
 	{
 		// We'll only support the standard (non-CSS3) color names. Who uses 'PapayaWhip' anyway?
 		static $colors = array(

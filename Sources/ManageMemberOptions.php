@@ -57,7 +57,7 @@ function ManageMemberOptions()
 	);
 
 	// By default do the basic settings.
-	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : array_shift(array_keys($subActions));
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : key($subActions);
 	$context['sub_action'] = $_REQUEST['sa'];
 
 	// Load up all the tabs...
