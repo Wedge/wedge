@@ -460,7 +460,7 @@ function template_subject_list()
 				<a href="<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=date', $context['sort_by'] == 'date' && $context['sort_direction'] == 'up' ? ';desc' : '', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', '">', $txt['date'], $context['sort_by'] == 'date' ? ' <img src="' . $theme['images_url'] . '/sort_' . $context['sort_direction'] . '.gif">' : '', '</a>
 			</th>
 			<th class="left">
-				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="window.location=\'<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(this).val();">';
+				<span class="floatright">', $txt['pm_view'], ': <select name="view" id="selPMView" onchange="location = \'<URL>?action=pm;f=', $context['folder'], ';start=', $context['start'], ';sort=', $context['sort_by'], $context['sort_direction'] == 'up' ? '' : ';desc', $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';view=\' + $(this).val();">';
 
 	foreach ($context['view_select_types'] as $display_mode => $display_desc)
 		echo '

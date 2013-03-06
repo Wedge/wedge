@@ -38,7 +38,6 @@ $darkgrad = #f3f2f0
 	background: $darkgrad
 	div.frame
 		padding: 5px 0 0
-		overflow: hidden
 	h2, p
 		color: #000
 	h1
@@ -347,6 +346,14 @@ $radius = 20px
 
 @remove #siteslogan
 	color: #000
+
+@remove #search_form input[type=submit]
+	background: #938983
+	border-color: #bbb #888 #888 #bbb
+	color: white
+
+@remove #search_form input[type=submit]:hover
+	background: #a39993
 
 @remove
 	background: url($images/theme/bg.jpg)
