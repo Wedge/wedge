@@ -106,6 +106,9 @@ function Thought()
 {
 	global $context;
 
+	if (isset($_REQUEST['personal']))
+		ThoughtPersonal();
+
 	// !! We need we::$user if we're going to allow the editing of older messages... Don't forget to check for sessions?
 	if (we::$is_guest)
 		exit;
@@ -266,33 +269,9 @@ function Thought()
 						we::$id = $real_id;
 					}
 				}
-
-				// Similarly, we should update their personal text with the latest valid value.
-				$request = wesql::query('
-					SELECT id_thought, thought
-					FROM {db_prefix}thoughts
-					WHERE id_member = {int:member}
-					AND privacy = {int:heed_my_words}
-					ORDER BY id_thought DESC
-					LIMIT 1',
-					array(
-						'member' => $member,
-						'heed_my_words' => -3,
-					)
-				);
-				list ($personal_id_thought, $personal_thought) = wesql::fetch_row($request);
-				wesql::free_result($request);
-
-				// Update their user data to use the new valid thought.
-				if (!empty($personal_id_thought))
-					updateMemberData($member, array('personal_text' => parse_bbc_inline($personal_thought)));
 			}
 
-			// We don't need to pass the updated personal text stuff anywhere, that can be hooked from
-			// hooking into updating member data if you should so wish. But in case you need the new valid ID...
-			if (empty($personal_id_thought))
-				$personal_id_thought = 0;
-			call_hook('thought_delete', array(&$last_thought, &$last_text, &$personal_id_thought));
+			call_hook('thought_delete', array(&$last_thought, &$last_text));
 			exit;
 		}
 		// If it's similar to the earlier version, don't update the time.
@@ -348,16 +327,37 @@ function Thought()
 
 	// Only update the thought area if it's a public comment, and isn't a comment on another thought...
 	if (!$pid && !empty($last_thought))
-	{
 		updateMyData(array(
 			'id_thought' => $last_thought,
 			'thought' => $text,
 			'thought_privacy' => $privacy,
 		));
-		// If the thought is visible to everyone, we can store it as personal text. We'll also parse it now,
-		// for performance reasons. Personal texts are likely to change, so BBC changes
-		// shouldn't have a major influence on these fields. Correct me if I'm wrong.
-		if ($privacy == -3)
-			updateMemberData(we::$id, array('personal_text' => parse_bbc_inline($text)));
-	}
+}
+
+function ThoughtPersonal()
+{
+	// !! Also check for sessions..?
+	if (we::$is_guest || empty($_REQUEST['in']))
+		exit;
+
+	// Get the thought text, and ensure it's from the current member.
+	$request = wesql::query('
+		SELECT id_thought, thought
+		FROM {db_prefix}thoughts
+		WHERE id_member = {int:member}
+		AND id_thought = {int:thought}
+		LIMIT 1',
+		array(
+			'member' => we::$id,
+			'thought' => $_REQUEST['in'],
+		)
+	);
+	list ($personal_id_thought, $personal_thought) = wesql::fetch_row($request);
+	wesql::free_result($request);
+
+	// Update their user data to use the new valid thought.
+	if (!empty($personal_id_thought))
+		updateMemberData(we::$id, array('personal_text' => parse_bbc_inline($personal_thought)));
+
+	exit;
 }

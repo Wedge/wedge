@@ -132,6 +132,9 @@ function Thoughts()
 
 		foreach (array_reverse(array_keys($thoughts)) as $nb)
 			$context['thoughts'][$nb] = $thoughts[$nb];
+
+		// Mini-menu.
+		setupThoughtMenu();
 	}
 }
 
@@ -146,9 +149,78 @@ function populate_sub_thoughts(&$here, &$thought)
 	}
 }
 
+function embedThoughts($to_show = 10)
+{
+	global $context, $txt, $settings;
+
+	// Some initial context.
+	loadTemplate('Thoughts');
+	wetem::add('thoughts');
+
+	$request = wesql::query('
+		SELECT
+			h.updated, h.thought, h.id_thought, h.id_parent, h.privacy,
+			h.id_member, h.id_master, h2.id_member AS id_parent_owner,
+			m.real_name AS owner_name, mp.real_name AS parent_name, m.posts
+		FROM {db_prefix}thoughts AS h
+		LEFT JOIN {db_prefix}thoughts AS h2 ON (h.id_parent = h2.id_thought)
+		LEFT JOIN {db_prefix}members AS m ON (h.id_member = m.id_member)
+		LEFT JOIN {db_prefix}members AS mp ON (h2.id_member = mp.id_member)
+		WHERE h.id_member = {int:me}
+			OR h.privacy = {int:everyone}' . (we::$is_guest ? '' : '
+			OR h.privacy = {int:members}
+			OR FIND_IN_SET(' . implode(', h.privacy)
+			OR FIND_IN_SET(', we::$user['groups']) . ', h.privacy)') . '
+		ORDER BY h.id_thought DESC
+		LIMIT {int:per_page}',
+		array(
+			'me' => we::$id,
+			'everyone' => -3,
+			'members' => 0,
+			'per_page' => $to_show,
+		)
+	);
+
+	$thoughts = array();
+	while ($row = wesql::fetch_assoc($request))
+	{
+		$id = $row['id_thought'];
+		$mid = $row['id_master'];
+		$thoughts[$row['id_thought']] = array(
+			'id' => $row['id_thought'],
+			'id_member' => $row['id_member'],
+			'id_parent' => $row['id_parent'],
+			'id_master' => $mid,
+			'id_parent_owner' => $row['id_parent_owner'],
+			'owner_name' => $row['owner_name'],
+			'privacy' => $row['privacy'],
+			'updated' => timeformat($row['updated']),
+			'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'])) : parse_bbc_inline($row['thought']),
+			'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
+		);
+
+		$thought =& $thoughts[$row['id_thought']];
+		$thought['text'] = '<span class="thought" id="thought_update' . $id . '" data-oid="' . $id . '" data-prv="' . $thought['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
+
+		if (!empty($row['id_parent_owner']))
+		{
+			if (empty($row['parent_name']) && !isset($txt['deleted_thought']))
+				loadLanguage('Post');
+			$thought['text'] = '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . (empty($row['parent_name']) ? $txt['deleted_thought'] : $row['parent_name']) . '</a>&gt; ' . $thought['text'];
+		}
+	}
+	wesql::free_result($request);
+
+	$context['thoughts'] =& $thoughts;
+
+	// Mini-menu.
+	if (!empty($thoughts))
+		setupThoughtMenu();
+}
+
 function latestThoughts($memID = 0)
 {
-	global $context, $txt;
+	global $context, $txt, $settings;
 
 	// Some initial context.
 	loadTemplate('Thoughts');
@@ -222,7 +294,7 @@ function latestThoughts($memID = 0)
 				h.updated, h.thought, h.id_thought, h.id_parent, h.id_member,
 				h.id_master, h_parent.id_member AS id_parent_owner, h.privacy,
 				m.real_name AS owner_name, m_parent.real_name AS parent_name,
-				h_child.id_thought > 0 AS has_children
+				m.posts, h_child.id_thought > 0 AS has_children
 			FROM
 				{db_prefix}thoughts AS h
 			LEFT JOIN
@@ -260,21 +332,118 @@ function latestThoughts($memID = 0)
 				'id_parent_owner' => $row['id_parent_owner'],
 				'owner_name' => $row['owner_name'],
 				'updated' => timeformat($row['updated']),
-				'text' => $row['thought'],
+				'text' => $row['posts'] < 10 ? preg_replace('~\</?a(?:\s[^>]+)?\>(?:https?://)?~', '', parse_bbc_inline($row['thought'])) : parse_bbc_inline($row['thought']),
 				'privacy' => $row['privacy'],
 				'has_children' => $row['has_children'],
+				'can_like' => !we::$is_guest && !empty($settings['likes_enabled']) && (!empty($settings['likes_own_posts']) || $row['id_member'] != we::$id),
 			);
+
+			$thought['text'] = '<span class="thought" id="thought_update' . $row['id_thought'] . '" data-oid="' . $row['id_thought'] . '" data-prv="' . $thought['privacy'] . '"><span>' . $thought['text'] . '</span></span>';
 
 			if (!empty($thought['id_master']))
 			{
 				if (empty($thought['parent_name']) && !isset($txt['deleted_thought']))
 					loadLanguage('Post');
-				$thought['text'] = (empty($row['parent_name']) ? '@' . $txt['deleted_thought'] : '@<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . $row['parent_name'] . '</a>') . '&gt; ' . parse_bbc_inline($row['thought']);
+				$thought['text'] = '@' . (empty($row['parent_name']) ? $txt['deleted_thought'] : '<a href="<URL>?action=profile;u=' . $row['id_parent_owner'] . '">' . $row['parent_name'] . '</a>') . '&gt; ' . $thought['text'];
 			}
 			if ($row['has_children'])
 				$thought['text'] .= ' <em>(&hellip;)</em>';
 			$context['thoughts'][$thought['id']] = $thought;
 		}
 		wesql::free_result($request);
+
+		// Mini-menu.
+		setupThoughtMenu();
 	}
+}
+
+function setupThoughtMenu()
+{
+	global $context, $settings;
+
+	$thoughts =& $context['thoughts'];
+
+	if (!empty($settings['likes_enabled']) && !empty($context['thoughts']))
+	{
+		$ids = array_keys($thoughts);
+		loadSource('Display'); // Might as well reuse this, but of course no doubt we'll hive this off somewhere else in the future.
+		prepareLikeContext($ids, 'think');
+	}
+
+	$context['mini_menu']['thought'] = array();
+	$context['mini_menu_items_show']['thought'] = array();
+	$context['mini_menu_items']['thought'] = array(
+		'lk' => array(
+			'caption' => 'acme_like',
+			'action' => '<URL>?action=like;thought;msg=%1%;' . $context['session_query'],
+			'class' => 'like_button',
+		),
+		'uk' => array(
+			'caption' => 'acme_unlike',
+			'action' => '<URL>?action=like;thought;msg=%1%;' . $context['session_query'],
+			'class' => 'unlike_button',
+		),
+		'cx' => array(
+			'caption' => 'thome_context',
+			'action' => '<URL>?action=thoughts;in=%2%#t%1%',
+			'class' => 'context_button',
+		),
+		're' => array(
+			'caption' => 'thome_reply',
+			'action' => '',
+			'class' => 'quote_button',
+			'click' => 'return oThought.edit(%1%, %2%, true)',
+		),
+		'mo' => array(
+			'caption' => 'thome_edit',
+			'action' => '',
+			'class' => 'edit_button',
+			'click' => 'return oThought.edit(%1%, %2%)',
+		),
+		'de' => array(
+			'caption' => 'thome_remove',
+			'action' => '',
+			'class' => 'remove_button',
+			'click' => 'return ask(we_confirm, e, function (go) { if (go) return oThought.remove(%1%); })',
+		),
+		'bl' => array(
+			'caption' => 'thome_personal',
+			'action' => '',
+			'class' => 'like_button', // Anything better...? A 'favorite' icon, maybe..?
+			'click' => 'return oThought.personal(%1%)',
+		),
+	);
+
+	foreach ($thoughts as $tho)
+	{
+		$menu = array();
+
+		if (!empty($tho['can_like']))
+			$menu[] = empty($context['liked_posts'][$tho['id']]['you']) ? 'lk' : 'uk';
+
+		$menu[] = 'cx/' . ($tho['id_master'] ? $tho['id_master'] : $tho['id']);
+
+		if (!we::$is_guest)
+			$menu[] = 're/' . $tho['id_master'];
+
+		// Can we edit, delete and blurbify?
+		if ($tho['id_member'] == we::$id || we::$is_admin)
+		{
+			$menu[] = 'mo/' . $tho['id_master'];
+			$menu[] = 'de';
+			$menu[] = 'bl';
+		}
+
+		// If we can't do anything, it's not even worth recording the last message ID...
+		if (!empty($menu))
+		{
+			$context['mini_menu']['thought'][$tho['id']] = $menu;
+			$amenu = array();
+			foreach ($menu as $mid => $name)
+				$amenu[substr($name, 0, 2)] = true;
+			$context['mini_menu_items_show']['thought'] += $amenu;
+		}
+	}
+
+	template_mini_menu('thought', 'thome', true);
 }

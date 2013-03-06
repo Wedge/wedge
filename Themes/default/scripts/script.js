@@ -768,6 +768,18 @@ function JumpTo(control)
 
 			// We'll be assuming Wedge uses table tags to show thought lists.
 			toDelete.closest('tr').remove();
+
+			return false;
+		};
+
+		// Event handler for personal text requests.
+		this.personal = function (tid)
+		{
+			$.post(
+				ajaxUrl + ';in=' + tid + ';personal'
+			);
+
+			return false;
 		};
 
 		// Event handler for clicking submit.
