@@ -119,7 +119,6 @@ $action_list = array(
 	'search2' => array('Search2.php', 'Search2'),
 	'sendtopic' => array('Mailer.php', 'EmailUser'),
 	'skin' => array('Themes.php', 'PickTheme'),
-	'spellcheck' => array('Spellcheck.php', 'Spellcheck'),
 	'splittopics' => array('Split.php', 'SplitTopics'),
 	'stats' => array('Stats.php', 'Stats'),
 	'suggest' => array('Suggest.php', 'Suggest'),

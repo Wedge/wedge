@@ -1509,10 +1509,10 @@ function loadTheme($id_theme = 0, $initialize = true)
 	$context['skeleton'] = '';
 	$context['skeleton_ops'] = array();
 
-	// If output is an Ajax request, or printer-friendly, or the spell-check
+	// If output is an Ajax request, or printer-friendly
 	// page, skip the index template entirely, and don't load skeletons.
 	// Don't use macros in their templates!
-	if (AJAX || (!empty($_REQUEST['action']) && ($_REQUEST['action'] == 'feed' || $_REQUEST['action'] == 'printpage' || $_REQUEST['action'] == 'spellcheck')))
+	if (AJAX || (!empty($_REQUEST['action']) && ($_REQUEST['action'] == 'feed' || $_REQUEST['action'] == 'printpage')))
 	{
 		if (AJAX)
 			loadTemplate('Xml');

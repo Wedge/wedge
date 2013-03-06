@@ -1610,8 +1610,6 @@ function aeva_createTextEditor($post_box_name, $post_box_form, $forceDisableBBC 
 {
 	global $context, $settings, $txt;
 
-	$settings['enableSpellChecking'] = false;
-
 	loadSource('Class-Editor');
 	$context['postbox'] = new wedit(
 		array(

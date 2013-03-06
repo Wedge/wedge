@@ -1285,11 +1285,6 @@ function template_edit_options()
 			<br>
 		</form>';
 
-	// Any final spellchecking stuff?
-	if (!empty($context['show_spellchecking']))
-		echo '
-		<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="<URL>?action=spellcheck"><input type="hidden" name="spellstring" value=""></form>';
-
 	// Some JavaScript!
 	add_js_inline('
 	function checkProfileSubmit()
@@ -1318,7 +1313,7 @@ function template_profile_pm_settings()
 										<label for="pm_prefs">', $txt['pm_display_mode'], ':</label>
 								</dt>
 								<dd>
-										<select name="pm_prefs" id="pm_prefs" onchange="if (this.value == 2 && !($(\'#copy_to_outbox\').prop(\'checked\'))) say(', JavaScriptEscape($txt['pm_recommend_enable_outbox']), ');">
+										<select name="pm_prefs" id="pm_prefs">
 											<option value="0"', $context['display_mode'] == 0 ? ' selected' : '', '>', $txt['pm_display_mode_all'], '</option>
 											<option value="1"', $context['display_mode'] == 1 ? ' selected' : '', '>', $txt['pm_display_mode_one'], '</option>
 											<option value="2"', $context['display_mode'] == 2 ? ' selected' : '', '>', $txt['pm_display_mode_linked'], '</option>
@@ -1375,13 +1370,6 @@ function template_profile_pm_settings()
 						</dl>
 						<hr>
 						<dl>
-								<dt>
-										<label for="copy_to_outbox"> ', $txt['copy_to_outbox'], '</label>
-								</dt>
-								<dd>
-										<input type="hidden" name="default_options[copy_to_outbox]" value="0">
-										<input type="checkbox" name="default_options[copy_to_outbox]" id="copy_to_outbox" value="1"', !empty($context['member']['options']['copy_to_outbox']) ? ' checked' : '', '>
-								</dd>
 								<dt>
 										<label for="pm_remove_inbox_label">', $txt['pm_remove_inbox_label'], '</label>
 								</dt>
@@ -2305,13 +2293,7 @@ function template_profile_signature_modify()
 						<dfn>', $context['signature_minposts'], '</dfn>';
 
 	echo '
-						<br>';
-
-	if ($context['show_spellchecking'])
-		echo '
-						<input type="button" value="', $txt['spell_check'], '" onclick="spellCheck(\'creator\', \'signature\');" class="spell">';
-
-		echo '
+						<br>
 					</dt>
 					<dd>
 						<textarea class="editor" onkeyup="calcCharLeft();" name="signature" rows="5" cols="50">', $context['member']['signature'], '</textarea><br>';
@@ -2327,10 +2309,6 @@ function template_profile_signature_modify()
 
 	echo '
 					</dd>';
-
-	// Load the spell checker?
-	if ($context['show_spellchecking'])
-		add_js_file('scripts/spellcheck.js');
 
 	// Some JavaScript used to count how many characters have been used so far in the signature.
 	add_js('

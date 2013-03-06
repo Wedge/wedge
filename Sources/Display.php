@@ -357,9 +357,6 @@ function Display()
 			<div class="prevnext_next">' . (empty($next_topic) ? '' : '<a href="<URL>?topic=' . $next_topic . '.0#new"' . ($next_title != $short_next ? ' title="' . $next_title . '"' : '') . '>' . $short_next . '</a>&nbsp;&raquo;') . '</div>';
 	$context['no_prevnext'] = empty($prev_topic) && empty($next_topic);
 
-	// Check if spellchecking is both enabled and actually working. (for quick reply.)
-	$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
-
 	// Do we need to show the visual verification image?
 	$context['require_verification'] = !we::$user['is_mod'] && !we::$is_admin && !empty($settings['posts_require_captcha']) && (we::$user['posts'] < $settings['posts_require_captcha'] || (we::$is_guest && $settings['posts_require_captcha'] == -1));
 	if ($context['require_verification'])

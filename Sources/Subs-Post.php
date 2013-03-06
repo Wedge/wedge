@@ -16,7 +16,7 @@ if (!defined('WEDGE'))
 
 /*	This file contains those functions pertaining to posting, and other such
 	operations, including sending emails, ims, blocking spam, preparsing posts,
-	spell checking, and the post box.  This is done with the following:
+	and the post box.  This is done with the following:
 
 	bool sendmail(array to, string subject, string message,
 			string message_id = auto, string from = webmaster,
@@ -39,7 +39,7 @@ if (!defined('WEDGE'))
 		// !!
 
 	array sendpm(array recipients, string subject, string message,
-			bool store_outbox = false, array from = current_member, int pm_head = 0)
+			array from = current_member, int pm_head = 0)
 		- sends an personal message from the specified person to the
 		  specified people. (from defaults to the user.)
 		- recipients should be an array containing the arrays 'to' and 'bcc',
@@ -383,7 +383,7 @@ function AddMailQueue($flush = false, $to_array = array(), $subject = '', $messa
 }
 
 // Send off a personal message.
-function sendpm($recipients, $subject, $message, $store_outbox = false, $from = null, $pm_head = 0)
+function sendpm($recipients, $subject, $message, $store_outbox = true, $from = null, $pm_head = 0)
 {
 	global $context, $scripturl, $txt, $language, $settings;
 

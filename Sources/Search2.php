@@ -556,7 +556,7 @@ function Search2()
 	}
 
 	// *** Spell checking
-	$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
+	$context['show_spellchecking'] = function_exists('pspell_new');
 	if ($context['show_spellchecking'])
 	{
 		// Windows fix.

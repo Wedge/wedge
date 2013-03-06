@@ -749,12 +749,6 @@ input.new extends input.submit
 	:hover
 		background-color: #e6f0fc
 
-input.spell extends input.submit
-	background: url($images/buttons/spell.png) no-repeat
-	background-color: #e0eaf6
-	:hover
-		background-color: #e6f0fc
-
 input.cancel
 	background-color: #fff0e3
 	padding-left: 5px

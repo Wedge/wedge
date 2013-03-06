@@ -1277,7 +1277,6 @@ function ModifyMemberPreferences($return_config = false)
 		array('check', 'auto_notify', 'display' => 'pm'),
 		array('check', 'popup_messages', 'display' => 'pm'),
 		array('check', 'view_newest_pm_first', 'display' => 'pm'),
-		array('check', 'copy_to_outbox', 'display' => 'pm'),
 		array('check', 'pm_remove_inbox_label', 'display' => 'pm'),
 		'',
 		array('select', 'topics_per_page', array(

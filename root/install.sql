@@ -2415,7 +2415,6 @@ VALUES
 	(-1, 1, 'display_quick_reply', '2'),
 	(-1, 1, 'posts_apply_ignore_list', '1'),
 	(-1, 1, 'return_to_post', '1'),
-	(-1, 1, 'copy_to_outbox', '1'),
 	(-1, 1, 'show_signatures', '1'),
 	(-1, 1, 'show_avatars', '1'),
 	(-1, 1, 'new_reply_warning', '1');

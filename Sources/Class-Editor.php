@@ -79,27 +79,6 @@ class wedit
 				'scripts/editor-func.js' => false,
 				'scripts/post.js' => false
 			));
-
-			$context['show_spellchecking'] = !empty($settings['enableSpellChecking']) && function_exists('pspell_new');
-			if ($context['show_spellchecking'])
-			{
-				add_js_file('scripts/spellcheck.js');
-
-				// Some hidden information is needed in order to make the spell checking work.
-				if (!AJAX)
-					$context['footer'] .= '
-<form name="spell_form" id="spell_form" method="post" accept-charset="UTF-8" target="spellWindow" action="' . $scripturl . '?action=spellcheck">
-	<input type="hidden" name="spellstring" value="">
-</form>';
-
-				// Also make sure that spell check works with Wysiwyg mode.
-				add_js('
-	function spellCheckDone()
-	{
-		for (i = 0; i < weEditors.length; i++)
-			setTimeout("weEditors[" + i + "].spellCheckEnd()", 150);
-	}');
-			}
 		}
 
 		$this->loadBBC();
@@ -2662,10 +2641,6 @@ class wedit
 			echo '
 				<input type="submit" name="', $button['name'], '" value="', $button['button_text'], '" tabindex="', $context['tabindex']++, '"', !empty($button['onclick']) ? ' onclick="' . $button['onclick'] . '"' : '', !empty($button['accesskey']) ? ' accesskey="' . $button['accesskey'] . '"' : '', $class, '>';
 		}
-
-		if ($context['show_spellchecking'])
-			echo '
-				<input type="button" value="', $txt['spell_check'], '" tabindex="', $context['tabindex']++, '" onclick="oEditorHandle_', $this->id, '.spellCheckStart();" class="spell">';
 
 		// These two buttons get added semi-magically rather than not.
 		if ($this->editorOptions['drafts'] != 'none')

@@ -861,12 +861,11 @@ function template_send()
 				', template_control_verification($context['visual_verification_id'], 'all'), '
 			</div>';
 
-	// Send, Preview, spellcheck buttons.
+	// Send, Preview buttons.
 	echo '
 			<div class="postbuttons">', $context['postbox']->outputButtons(), '
 			</div>
 			<div id="shortcuts">
-				<label><input type="checkbox" name="outbox" id="outbox" value="1" tabindex="', $context['tabindex']++, '"', $context['copy_to_outbox'] ? ' checked' : '', '> ', $txt['pm_save_outbox'], '</label>
 				<span class="smalltext">', $txt['shortcuts'], '</span>
 			</div>
 			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">

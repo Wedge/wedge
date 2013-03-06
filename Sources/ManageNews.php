@@ -774,7 +774,7 @@ function SendMailing($clean_only = false)
 			if (!$context['send_pm'])
 				sendmail($row['email_address'], $subject, $message, null, null, !empty($_POST['send_html']), 5);
 			else
-				sendpm(array('to' => array($row['id_member']), 'bcc' => array()), $subject, $message);
+				sendpm(array('to' => array($row['id_member']), 'bcc' => array()), $subject, $message, false);
 		}
 		wesql::free_result($result);
 	}

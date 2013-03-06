@@ -728,52 +728,6 @@ function weEditor(opt)
 			oFrameWindow.focus();
 	};
 
-	// Start up the spellchecker!
-	this.spellCheckStart = function ()
-	{
-		if (!spellCheck)
-			return false;
-
-		// If we're in HTML mode we need to get the non-HTML text.
-		if (this.isWysiwyg)
-			$.post(
-				weUrl('action=jseditor;view=0;' + we_sessvar + '=' + we_sessid),
-				{ message: this.getText(true, 1) },
-				function (oXMLDoc)
-				{
-					// The spellcheckable text.
-					$oText.val($('message', oXMLDoc).text().php_unhtmlspecialchars());
-					spellCheck(sFormId, opt.sUniqueId);
-				}
-			);
-		// Otherwise start spell-checking right away.
-		else
-			spellCheck(sFormId, opt.sUniqueId);
-
-		return true;
-	};
-
-	// Function called when the Spellchecker is finished and ready to pass back.
-	this.spellCheckEnd = function ()
-	{
-		var that = this;
-
-		// If HTML edit put the text back!
-		if (this.isWysiwyg)
-			$.post(
-				weUrl('action=jseditor;view=1;' + we_sessvar + '=' + we_sessid),
-				{ message: this.getText(true, 0) },
-				function (oXMLDoc)
-				{
-					// The corrected text.
-					that.insertText($('message', oXMLDoc).text(), true);
-					that.setFocus();
-				}
-			);
-		else
-			this.setFocus();
-	};
-
 	// Register a keyboard shortcut. ('s', 'ctrl,alt', 'submit') => ctrl+alt+s calls shortcutCheck with the 'submit' param.
 	this.registerShortcut = function (sLetter, sModifiers, sCodeName)
 	{
