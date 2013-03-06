@@ -674,7 +674,7 @@ function weToggle(opt)
 
 
 // *** JumpTo class.
-function JumpTo(control, id)
+function JumpTo(control)
 {
 	$('#' + control)
 		.html('<select><option data-hide>=> ' + $('#' + control).text() + '</option></select>')
@@ -687,19 +687,16 @@ function JumpTo(control, id)
 
 			// Fill the select box with entries loaded through Ajax.
 			$.post(
-				weUrl('action=ajax;sa=jumpto'),
+				weUrl('action=ajax;sa=jumpto' + (window.we_board ? ';board=' + we_board : '')),
 				function (board_list)
 				{
 					$.each(board_list, function ()
 					{
-						// !! This removes entities from the name... Is this still useful?
-						// this.name = this.name.replace(/&(amp;)?#(\d+);/g, function (sInput, sDummy, sNum) { return String.fromCharCode(+sNum); });
-
 						// Just for the record, we don't NEED to close the optgroup at the end
 						// of the list, even if it doesn't feel right. Saves us a few bytes...
 						if (this.id) // Show the board option, with special treatment for the current one.
 							sList += '<option value="' + this.id + '"'
-									+ (this.id == id ? ' disabled>=> ' + this.name + ' &lt;=' :
+									+ (this.id == 'skip' ? ' disabled>=> ' + this.name + ' &lt;=' :
 										'>' + new Array(+this.level + 1).join('&nbsp;&nbsp;&nbsp;&nbsp;') + this.name)
 									+ '</option>';
 						else // Category?

@@ -381,10 +381,10 @@ function template_sidebar_before()
 // Show the Quick Access (JumpTo) select box.
 function template_sidebar_quick_access()
 {
-	global $context, $txt;
+	global $txt;
 
 	add_js('
-	new JumpTo(\'jump_to\'', !empty($context['current_board']) && empty($context['current_topic']) ? ', ' . $context['current_board'] : '', ');');
+	new JumpTo("jump_to");');
 
 	echo '
 	<section>
@@ -713,7 +713,7 @@ function template_footer()
 	// Show the credit page (forum admin/mod team and credits), and a link to an HTML conformity checker, for geeks.
 	// If you want to use validator.nu instead, replace the w3.org link with:
 	// "http://validator.nu/?doc=', we::$user['url'], '"
-	// !! @worg: rev.txt, facebook link
+	// !! @worg: facebook link
 	$is_worg = $boardurl == 'http://wedge.org';
 	echo '
 			<li class="copyright">', $txt['copyright'],

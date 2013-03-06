@@ -17,7 +17,7 @@ if (!defined('WEDGE'))
 // Create a menu...
 function createMenu($menuData, $menuOptions = array())
 {
-	global $context, $theme, $options, $txt, $settings, $scripturl, $options;
+	global $context, $theme, $options, $txt, $settings, $options;
 
 	// First are we toggling use of the side bar generally?
 	if (isset($_GET['togglebar']) && !we::$is_guest)
@@ -217,7 +217,7 @@ function createMenu($menuData, $menuOptions = array())
 	}
 
 	// Should we use a custom base url, or use the default?
-	$menu_context['base_url'] = isset($menuOptions['base_url']) ? $menuOptions['base_url'] : $scripturl . '?action=' . $menu_context['current_action'];
+	$menu_context['base_url'] = isset($menuOptions['base_url']) ? $menuOptions['base_url'] : '<URL>?action=' . $menu_context['current_action'];
 
 	// What about the toggle url?
 	$menu_context['toggle_url'] = isset($menuOptions['toggle_url']) ? $menuOptions['toggle_url'] : $menu_context['base_url'] . (!empty($menu_context['current_area']) ? ';area=' . $menu_context['current_area'] : '') . (!empty($menu_context['current_subsection']) ? ';sa=' . $menu_context['current_subsection'] : '') . $menu_context['extra_parameters'] . ';togglebar';

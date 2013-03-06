@@ -32,7 +32,7 @@ if (!defined('WEDGE'))
 // Display some useful/interesting board statistics.
 function Stats()
 {
-	global $txt, $scripturl, $settings, $context;
+	global $txt, $settings, $context;
 
 	isAllowedTo('view_stats');
 
@@ -79,7 +79,7 @@ function Stats()
 
 	// Build the link tree......
 	$context['linktree'][] = array(
-		'url' => $scripturl . '?action=stats',
+		'url' => '<URL>?action=stats',
 		'name' => $txt['stats_center']
 	);
 	$context['page_title'] = $context['forum_name'] . ' - ' . $txt['stats_center'];
@@ -230,8 +230,8 @@ function Stats()
 			'name' => $row_members['real_name'],
 			'id' => $row_members['id_member'],
 			'num_posts' => $row_members['posts'],
-			'href' => $scripturl . '?action=profile;u=' . $row_members['id_member'],
-			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
+			'href' => '<URL>?action=profile;u=' . $row_members['id_member'],
+			'link' => '<a href="<URL>?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
 		);
 
 		$max_num_posts = max($max_num_posts, $row_members['posts']);
@@ -266,8 +266,8 @@ function Stats()
 			'id' => $row_board['id_board'],
 			'name' => $row_board['name'],
 			'num_posts' => $row_board['num_posts'],
-			'href' => $scripturl . '?board=' . $row_board['id_board'] . '.0',
-			'link' => '<a href="' . $scripturl . '?board=' . $row_board['id_board'] . '.0">' . $row_board['name'] . '</a>'
+			'href' => '<URL>?board=' . $row_board['id_board'] . '.0',
+			'link' => '<a href="<URL>?board=' . $row_board['id_board'] . '.0">' . $row_board['name'] . '</a>'
 		);
 
 		$max_num_posts = max($max_num_posts, $row_board['num_posts']);
@@ -330,13 +330,13 @@ function Stats()
 			'board' => array(
 				'id' => $row_topic_reply['id_board'],
 				'name' => $row_topic_reply['name'],
-				'href' => $scripturl . '?board=' . $row_topic_reply['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row_topic_reply['id_board'] . '.0">' . $row_topic_reply['name'] . '</a>'
+				'href' => '<URL>?board=' . $row_topic_reply['id_board'] . '.0',
+				'link' => '<a href="<URL>?board=' . $row_topic_reply['id_board'] . '.0">' . $row_topic_reply['name'] . '</a>'
 			),
 			'subject' => $row_topic_reply['subject'],
 			'num_replies' => $row_topic_reply['num_replies'],
-			'href' => $scripturl . '?topic=' . $row_topic_reply['id_topic'] . '.0',
-			'link' => '<a href="' . $scripturl . '?topic=' . $row_topic_reply['id_topic'] . '.0">' . $row_topic_reply['subject'] . '</a>'
+			'href' => '<URL>?topic=' . $row_topic_reply['id_topic'] . '.0',
+			'link' => '<a href="<URL>?topic=' . $row_topic_reply['id_topic'] . '.0">' . $row_topic_reply['subject'] . '</a>'
 		);
 
 		$max_num_replies = max($max_num_replies, $row_topic_reply['num_replies']);
@@ -398,13 +398,13 @@ function Stats()
 			'board' => array(
 				'id' => $row_topic_views['id_board'],
 				'name' => $row_topic_views['name'],
-				'href' => $scripturl . '?board=' . $row_topic_views['id_board'] . '.0',
-				'link' => '<a href="' . $scripturl . '?board=' . $row_topic_views['id_board'] . '.0">' . $row_topic_views['name'] . '</a>'
+				'href' => '<URL>?board=' . $row_topic_views['id_board'] . '.0',
+				'link' => '<a href="<URL>?board=' . $row_topic_views['id_board'] . '.0">' . $row_topic_views['name'] . '</a>'
 			),
 			'subject' => $row_topic_views['subject'],
 			'num_views' => $row_topic_views['num_views'],
-			'href' => $scripturl . '?topic=' . $row_topic_views['id_topic'] . '.0',
-			'link' => '<a href="' . $scripturl . '?topic=' . $row_topic_views['id_topic'] . '.0">' . $row_topic_views['subject'] . '</a>'
+			'href' => '<URL>?topic=' . $row_topic_views['id_topic'] . '.0',
+			'link' => '<a href="<URL>?topic=' . $row_topic_views['id_topic'] . '.0">' . $row_topic_views['subject'] . '</a>'
 		);
 
 		$max_num_views = max($max_num_views, $row_topic_views['num_views']);
@@ -462,8 +462,8 @@ function Stats()
 			'name' => $row_members['real_name'],
 			'id' => $row_members['id_member'],
 			'num_topics' => $members[$row_members['id_member']],
-			'href' => $scripturl . '?action=profile;u=' . $row_members['id_member'],
-			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
+			'href' => '<URL>?action=profile;u=' . $row_members['id_member'],
+			'link' => '<a href="<URL>?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
 		);
 
 		$max_num_topics = max($max_num_topics, $members[$row_members['id_member']]);
@@ -517,8 +517,8 @@ function Stats()
 			'name' => $row_members['real_name'],
 			'time_online' => $timelogged,
 			'seconds_online' => $row_members['total_time_logged_in'],
-			'href' => $scripturl . '?action=profile;u=' . $row_members['id_member'],
-			'link' => '<a href="' . $scripturl . '?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
+			'href' => '<URL>?action=profile;u=' . $row_members['id_member'],
+			'link' => '<a href="<URL>?action=profile;u=' . $row_members['id_member'] . '">' . $row_members['real_name'] . '</a>'
 		);
 
 		$max_time_online = max($max_time_online, $row_members['total_time_logged_in']);
@@ -630,8 +630,8 @@ function Stats()
 				'month' => sprintf('%02d', $row_months['stats_month']),
 				'year' => $row_months['stats_year']
 			),
-			'href' => $scripturl . '?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $id_month . '#m' . $id_month,
-			'link' => '<a href="' . $scripturl . '?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $id_month . '#m' . $id_month . '">' . $txt['months'][(int) $row_months['stats_month']] . ' ' . $row_months['stats_year'] . '</a>',
+			'href' => '<URL>?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $id_month . '#m' . $id_month,
+			'link' => '<a href="<URL>?action=stats;' . ($expanded ? 'collapse' : 'expand') . '=' . $id_month . '#m' . $id_month . '">' . $txt['months'][(int) $row_months['stats_month']] . ' ' . $row_months['stats_year'] . '</a>',
 			'month' => $txt['months'][(int) $row_months['stats_month']],
 			'year' => $row_months['stats_year'],
 			'new_topics' => comma_format($row_months['topics']),

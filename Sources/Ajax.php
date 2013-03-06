@@ -65,6 +65,7 @@ function GetJumpTo()
 	);
 	$url = !empty($settings['pretty_enable_filters']) ? $scripturl . '?board=' : '';
 	$jump_to = getBoardList($boardListOptions);
+	$skip_this = isset($_REQUEST['board']) ? $_REQUEST['board'] : 0;
 	$json = array();
 
 	foreach ($jump_to as $id_cat => $cat)
@@ -72,10 +73,10 @@ function GetJumpTo()
 		$json[] = array(
 			'name' => un_htmlspecialchars(strip_tags($cat['name'])),
 		);
-		foreach ($cat['boards'] as $id_board => $board)
+		foreach ($cat['boards'] as $board)
 			$json[] = array(
 				'level' => (int) $board['child_level'],
-				'id' => $url ? $url . $board['id'] . '.0' : $board['id'],
+				'id' => $board['id'] == $skip_this ? 'skip' : ($url ? $url . $board['id'] . '.0' : $board['id']),
 				'name' => un_htmlspecialchars(strip_tags($board['name'])),
 			);
 	}

@@ -235,7 +235,7 @@ function template_topic_poll()
 
 function template_reagree_warning()
 {
-	global $context, $txt;
+	global $txt;
 
 	echo '
 		<div class="errorbox" id="errors">
